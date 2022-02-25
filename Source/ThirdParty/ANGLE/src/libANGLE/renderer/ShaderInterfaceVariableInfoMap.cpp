@@ -11,8 +11,6 @@
 namespace rx
 {
 
-const uint32_t ShaderInterfaceVariableInfo::kInvalid;
-
 ShaderInterfaceVariableInfo::ShaderInterfaceVariableInfo() {}
 
 // ShaderInterfaceVariableInfoMap implementation.

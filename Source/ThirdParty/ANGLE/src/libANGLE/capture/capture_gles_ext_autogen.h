@@ -19,6 +19,8 @@ namespace gl
 
 // Method Captures
 
+// GL_ANDROID_extension_pack_es31a
+
 // GL_ANGLE_base_vertex_base_instance
 angle::CallCapture CaptureDrawArraysInstancedBaseInstanceANGLE(const State &glState,
                                                                bool isCallValid,
@@ -1695,6 +1697,8 @@ angle::CallCapture CaptureValidateProgramPipelineEXT(const State &glState,
                                                      bool isCallValid,
                                                      ProgramPipelineID pipelinePacked);
 
+// GL_EXT_shader_framebuffer_fetch
+
 // GL_EXT_shader_framebuffer_fetch_non_coherent
 angle::CallCapture CaptureFramebufferFetchBarrierEXT(const State &glState, bool isCallValid);
 
@@ -2271,6 +2275,18 @@ angle::CallCapture CapturePointSizePointerOES(const State &glState,
                                               const void *pointer);
 
 // GL_OES_point_sprite
+
+// GL_OES_primitive_bounding_box
+angle::CallCapture CapturePrimitiveBoundingBoxOES(const State &glState,
+                                                  bool isCallValid,
+                                                  GLfloat minX,
+                                                  GLfloat minY,
+                                                  GLfloat minZ,
+                                                  GLfloat minW,
+                                                  GLfloat maxX,
+                                                  GLfloat maxY,
+                                                  GLfloat maxZ,
+                                                  GLfloat maxW);
 
 // GL_OES_query_matrix
 angle::CallCapture CaptureQueryMatrixxOES(const State &glState,

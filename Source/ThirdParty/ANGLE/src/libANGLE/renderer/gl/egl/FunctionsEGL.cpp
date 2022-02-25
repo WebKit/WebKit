@@ -195,13 +195,22 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
     ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->swapIntervalPtr, eglSwapInterval);
 
     mEGLDisplay = mFnPtrs->getDisplayPtr(nativeDisplay);
-    if (mEGLDisplay == EGL_NO_DISPLAY)
+    if (mEGLDisplay != EGL_NO_DISPLAY)
     {
-        return egl::EglNotInitialized() << "Failed to get system egl display";
+        if (mFnPtrs->initializePtr(mEGLDisplay, &majorVersion, &minorVersion) != EGL_TRUE)
+        {
+            return egl::Error(mFnPtrs->getErrorPtr(), "Failed to initialize system egl");
+        }
     }
-    if (mFnPtrs->initializePtr(mEGLDisplay, &majorVersion, &minorVersion) != EGL_TRUE)
+    else
     {
-        return egl::Error(mFnPtrs->getErrorPtr(), "Failed to initialize system egl");
+        // If no display was available, try to fallback to the first available
+        // native device object's display.
+        mEGLDisplay = getNativeDisplay(&majorVersion, &minorVersion);
+        if (mEGLDisplay == EGL_NO_DISPLAY)
+        {
+            return egl::EglNotInitialized() << "Failed to get system egl display";
+        }
     }
     if (majorVersion < 1 || (majorVersion == 1 && minorVersion < 4))
     {
@@ -217,7 +226,7 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
     const char *extensions = queryString(EGL_EXTENSIONS);
     if (!extensions)
     {
-        return egl::Error(mFnPtrs->getErrorPtr(), "Faild to query extensions in system egl");
+        return egl::Error(mFnPtrs->getErrorPtr(), "Failed to query extensions in system egl");
     }
     angle::SplitStringAlongWhitespace(extensions, &mExtensions);
 
@@ -295,6 +304,64 @@ egl::Error FunctionsEGL::terminate()
         return egl::NoError();
     }
     return egl::Error(mFnPtrs->getErrorPtr());
+}
+
+EGLDisplay FunctionsEGL::getNativeDisplay(int *major, int *minor)
+{
+    // We haven't queried extensions yet since some platforms require a display
+    // to do so. We'll query them now since we need some for this fallback, and
+    // then re-query them again later once we have the display.
+    const char *extensions = queryString(EGL_EXTENSIONS);
+    if (!extensions)
+    {
+        return EGL_NO_DISPLAY;
+    }
+    angle::SplitStringAlongWhitespace(extensions, &mExtensions);
+
+    // This fallback mechanism makes use of:
+    // - EGL_EXT_device_enumeration or EGL_EXT_device_base for eglQueryDevicesEXT
+    // - EGL_EXT_platform_base for eglGetPlatformDisplayEXT
+    // - EGL_EXT_platform_device for EGL_PLATFORM_DEVICE_EXT
+    PFNEGLQUERYDEVICESEXTPROC queryDevices;
+    PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplay;
+    bool hasQueryDevicesEXT =
+        hasExtension("EGL_EXT_device_enumeration") || hasExtension("EGL_EXT_device_base");
+    bool hasPlatformBaseEXT   = hasExtension("EGL_EXT_platform_base");
+    bool hasPlatformDeviceEXT = hasExtension("EGL_EXT_platform_device");
+    if (!hasQueryDevicesEXT || !hasPlatformBaseEXT || !hasPlatformDeviceEXT)
+    {
+        return EGL_NO_DISPLAY;
+    }
+    if (!SetPtr(&queryDevices, getProcAddress("eglQueryDevicesEXT")) ||
+        !SetPtr(&getPlatformDisplay, getProcAddress("eglGetPlatformDisplayEXT")))
+    {
+        return EGL_NO_DISPLAY;
+    }
+
+    // Get a list of native device objects.
+    const EGLint kMaxDevices = 32;
+    EGLDeviceEXT eglDevices[kMaxDevices];
+    EGLint numDevices = 0;
+    if (!queryDevices(kMaxDevices, eglDevices, &numDevices))
+    {
+        return EGL_NO_DISPLAY;
+    }
+
+    // Look for the first native device that gives us a valid display.
+    for (EGLint i = 0; i < numDevices; i++)
+    {
+        EGLDisplay display = getPlatformDisplay(EGL_PLATFORM_DEVICE_EXT, eglDevices[i], nullptr);
+        if (mFnPtrs->getErrorPtr() != EGL_SUCCESS)
+        {
+            continue;
+        }
+        if (mFnPtrs->initializePtr(display, major, minor) == EGL_TRUE)
+        {
+            return display;
+        }
+    }
+
+    return EGL_NO_DISPLAY;
 }
 
 class FunctionsGLEGL : public FunctionsGL

@@ -93,22 +93,11 @@ bool LoadTraceInfoFromJSON(const std::string &traceName,
     traceInfoOut->drawSurfaceHeight         = meta["DrawSurfaceHeight"].GetInt();
     traceInfoOut->drawSurfaceWidth          = meta["DrawSurfaceWidth"].GetInt();
 
-    // TODO(http://anglebug.com/5133): Drop the GetInt versions after trace update
-    if (meta["DrawSurfaceColorSpace"].IsString())
-    {
-        angle::HexStringToUInt(meta["DrawSurfaceColorSpace"].GetString(),
-                               &traceInfoOut->drawSurfaceColorSpace);
-        angle::HexStringToUInt(meta["DisplayPlatformType"].GetString(),
-                               &traceInfoOut->displayPlatformType);
-        angle::HexStringToUInt(meta["DisplayDeviceType"].GetString(),
-                               &traceInfoOut->displayDeviceType);
-    }
-    else
-    {
-        traceInfoOut->drawSurfaceColorSpace = meta["DrawSurfaceColorSpace"].GetInt();
-        traceInfoOut->displayPlatformType   = meta["DisplayPlatformType"].GetInt();
-        traceInfoOut->displayDeviceType     = meta["DisplayDeviceType"].GetInt();
-    }
+    angle::HexStringToUInt(meta["DrawSurfaceColorSpace"].GetString(),
+                           &traceInfoOut->drawSurfaceColorSpace);
+    angle::HexStringToUInt(meta["DisplayPlatformType"].GetString(),
+                           &traceInfoOut->displayPlatformType);
+    angle::HexStringToUInt(meta["DisplayDeviceType"].GetString(), &traceInfoOut->displayDeviceType);
 
     traceInfoOut->configRedBits     = meta["ConfigRedBits"].GetInt();
     traceInfoOut->configGreenBits   = meta["ConfigGreenBits"].GetInt();

@@ -235,22 +235,229 @@ kernel void fixIndexBuffer(
                 onOutIndex = prim;
                 break;
             case MtlFixIndexBufferKeyLines:
-                onIndex = prim * 2 + 0;
-                onOutIndex = prim * 2 + 0;
+                onIndex = prim * 2;
+                onOutIndex = prim * 2;
                 break;
             case MtlFixIndexBufferKeyLineStrip:
                 onIndex = prim;
-                onOutIndex = prim * 2 + 0;
+                onOutIndex = prim * 2;
                 break;
             case MtlFixIndexBufferKeyTriangles:
-                onIndex = prim * 3 + 0;
-                onOutIndex = prim * 3 + 0;
+                onIndex = prim * 3;
+                onOutIndex = prim * 3;
                 break;
             case MtlFixIndexBufferKeyTriangleStrip:
                 onIndex = prim;
-                onOutIndex = prim * 3 + 0;
+                onOutIndex = prim * 3;
                 break;
         }
         outputPrimitive(indexBufferUint16, indexBufferUint32, outIndexBufferUint16, outIndexBufferUint32, restartIndex, indexCount, baseIndex, onIndex, onOutIndex);
+    }
+}
+
+
+
+static inline void generatePrimitive(
+                                   device ushort *outIndexBufferUint16,
+                                   device uint   *outIndexBufferUint32,
+                                   const uint firstVertex,
+                                   const uint indexCount,
+                                   thread uint &baseIndex,
+                                   uint onIndex,
+                                   uint primCount,
+                                   thread uint &onOutIndex
+                                   )
+{
+    if(baseIndex > onIndex) return; // skipped indices while processing
+#define WRITE_IDX(_idx, _val) \
+({ \
+    if(outIndexBufferIsUint16) \
+    { \
+        outIndexBufferUint16[(_idx)] = _val + firstVertex; \
+    } \
+    if(outIndexBufferIsUint32) \
+    { \
+        outIndexBufferUint32[(_idx)] = _val + firstVertex; \
+    } \
+    _idx++; \
+})
+    switch(fixIndexBufferMode)
+    {
+        case MtlFixIndexBufferKeyPoints:
+        {
+            WRITE_IDX(onOutIndex, onIndex);
+        }
+        break;
+        case MtlFixIndexBufferKeyLines:
+        {
+            auto tmpIndex0 = onIndex + 0;
+            auto tmpIndex1 = onIndex + 1;
+            if(fixIndexBufferKey & MtlFixIndexBufferKeyProvokingVertexLast)
+            {
+                WRITE_IDX(onOutIndex, tmpIndex1);
+                WRITE_IDX(onOutIndex, tmpIndex0);
+            }
+            else
+            {
+                WRITE_IDX(onOutIndex, tmpIndex0);
+                WRITE_IDX(onOutIndex, tmpIndex1);
+            }
+        }
+        break;
+        case MtlFixIndexBufferKeyLineLoop:
+        {
+            auto tmpIndex0 = onIndex + 0;
+            auto tmpIndex1 = (onIndex + 1) % primCount;
+            if(fixIndexBufferKey & MtlFixIndexBufferKeyProvokingVertexLast)
+            {
+                WRITE_IDX(onOutIndex, tmpIndex1);
+                WRITE_IDX(onOutIndex, tmpIndex0);
+            }
+            else
+            {
+                WRITE_IDX(onOutIndex, tmpIndex0);
+                WRITE_IDX(onOutIndex, tmpIndex1);
+            }
+        }
+        break;
+        case MtlFixIndexBufferKeyLineStrip:
+        {
+            auto tmpIndex0 = onIndex + 0;
+            auto tmpIndex1 = onIndex + 1;
+            if(fixIndexBufferKey & MtlFixIndexBufferKeyProvokingVertexLast)
+            {
+                WRITE_IDX(onOutIndex, tmpIndex1);
+                WRITE_IDX(onOutIndex, tmpIndex0);
+            }
+            else
+            {
+                WRITE_IDX(onOutIndex, tmpIndex0);
+                WRITE_IDX(onOutIndex, tmpIndex1);
+            }
+        }
+        break;
+        case MtlFixIndexBufferKeyTriangles:
+        {
+            auto tmpIndex0 = onIndex + 0;
+            auto tmpIndex1 = onIndex + 1;
+            auto tmpIndex2 = onIndex + 2;
+            if(fixIndexBufferKey & MtlFixIndexBufferKeyProvokingVertexLast)
+            {
+                WRITE_IDX(onOutIndex, tmpIndex2);
+                WRITE_IDX(onOutIndex, tmpIndex0);
+                WRITE_IDX(onOutIndex, tmpIndex1);
+            }
+            else
+            {
+                WRITE_IDX(onOutIndex, tmpIndex0);
+                WRITE_IDX(onOutIndex, tmpIndex1);
+                WRITE_IDX(onOutIndex, tmpIndex2);
+            }
+        }
+        break;
+        case MtlFixIndexBufferKeyTriangleStrip:
+        {
+            uint isOdd = ((onIndex - baseIndex) & 1); // fixes winding. provoking fixed later.
+            auto tmpIndex0 = onIndex + 0 + isOdd;
+            auto tmpIndex1 = onIndex + 1 - isOdd;
+            auto tmpIndex2 = onIndex + 2;
+            if(fixIndexBufferKey & MtlFixIndexBufferKeyProvokingVertexLast)
+            {
+                WRITE_IDX(onOutIndex, tmpIndex2); // 2 is always the provoking vertex .: do not need to do anything special with isOdd
+                WRITE_IDX(onOutIndex, tmpIndex0);
+                WRITE_IDX(onOutIndex, tmpIndex1);
+            }
+            else
+            {
+                if(isOdd)
+                {
+                    WRITE_IDX(onOutIndex, tmpIndex1); // in the case of odd this is REALLY (onIndex + 0) // provoking vertex
+                    WRITE_IDX(onOutIndex, tmpIndex2);
+                    WRITE_IDX(onOutIndex, tmpIndex0);
+                }
+                else
+                {
+                    WRITE_IDX(onOutIndex, tmpIndex0); // in the case of even this is (onIndex + 0) // provoking vertex
+                    WRITE_IDX(onOutIndex, tmpIndex1);
+                    WRITE_IDX(onOutIndex, tmpIndex2);
+                }
+            }
+            // assert never worse that worst-case expansion
+            assert(onOutIndex <= (onIndex + 1) * 3);
+            assert(onOutIndex <= (indexCount - 2) * 3);
+            break;
+        }
+        case MtlFixIndexBufferKeyTriangleFan:
+        {
+            auto tmpIndex0 = 0;
+            auto tmpIndex1 = onIndex + 1;
+            auto tmpIndex2 = onIndex + 2;
+            // Provoking Vertex for triangle fans does not use the pivot index for flat shading data.
+            if(fixIndexBufferKey & MtlFixIndexBufferKeyProvokingVertexLast)
+            {
+                WRITE_IDX(onOutIndex, tmpIndex2);
+                WRITE_IDX(onOutIndex, tmpIndex0);
+                WRITE_IDX(onOutIndex, tmpIndex1);
+            }
+            else
+            {
+                WRITE_IDX(onOutIndex, tmpIndex1);
+                WRITE_IDX(onOutIndex, tmpIndex2);
+                WRITE_IDX(onOutIndex, tmpIndex0);
+            }
+        }
+        break;
+
+    }
+#undef WRITE_IDX
+}
+
+
+
+kernel void genIndexBuffer(
+                           device ushort *outIndexBufferUint16 [[ buffer(1), function_constant(outIndexBufferIsUint16) ]],
+                           device uint   *outIndexBufferUint32 [[ buffer(1), function_constant(outIndexBufferIsUint32) ]],
+                           constant uint &indexCount [[ buffer(2) ]],
+                           constant uint &primCount [[ buffer(3) ]],
+                           constant uint &firstVertex [[ buffer(4) ]],
+                           uint prim [[thread_position_in_grid]])
+{
+    uint baseIndex = 0;
+    uint onIndex = onIndex;
+    uint onOutIndex = onOutIndex;
+    if(prim < primCount)
+    {
+        switch(fixIndexBufferMode)
+        {
+            case MtlFixIndexBufferKeyPoints:
+                onIndex = prim;
+                onOutIndex = prim;
+                break;
+            case MtlFixIndexBufferKeyLines:
+                onIndex = prim * 2;
+                onOutIndex = prim * 2;
+                break;
+            case MtlFixIndexBufferKeyLineStrip:
+                onIndex = prim;
+                onOutIndex = prim * 2;
+                break;
+            case MtlFixIndexBufferKeyLineLoop:
+                onIndex = prim;
+                onOutIndex = prim * 2;
+                break;
+            case MtlFixIndexBufferKeyTriangles:
+                onIndex = prim * 3;
+                onOutIndex = prim * 3;
+                break;
+            case MtlFixIndexBufferKeyTriangleStrip:
+                onIndex = prim;
+                onOutIndex = prim * 3;
+                break;
+            case MtlFixIndexBufferKeyTriangleFan:
+                onIndex = prim;
+                onOutIndex = prim * 3;
+                break;
+        }
+        generatePrimitive(outIndexBufferUint16, outIndexBufferUint32, firstVertex, indexCount, baseIndex, onIndex, primCount, onOutIndex);
     }
 }

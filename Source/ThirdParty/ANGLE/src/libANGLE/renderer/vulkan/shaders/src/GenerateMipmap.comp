@@ -76,8 +76,6 @@ shared AF4 spd_intermediate[16][16];
 #endif
 shared AU1 spd_counter;
 
-#define SPD_NO_WAVE_OPERATIONS
-
 // Use a linear sampler to sample from mip 0 instead of multiple loads and manual averaging.
 #define SPD_LINEAR_SAMPLER
 

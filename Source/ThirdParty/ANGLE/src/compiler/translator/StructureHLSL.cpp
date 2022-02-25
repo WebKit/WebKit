@@ -462,15 +462,15 @@ TString StructureHLSL::addBuiltInConstructor(const TType &type, const TIntermSeq
 
     if (ctorType.isMatrix() && ctorParameters.size() == 1)
     {
-        int rows               = ctorType.getRows();
-        int cols               = ctorType.getCols();
+        uint8_t rows           = ctorType.getRows();
+        uint8_t cols           = ctorType.getCols();
         const TType &parameter = ctorParameters[0];
 
         if (parameter.isScalar())
         {
-            for (int col = 0; col < cols; col++)
+            for (uint8_t col = 0; col < cols; col++)
             {
-                for (int row = 0; row < rows; row++)
+                for (uint8_t row = 0; row < rows; row++)
                 {
                     constructor += TString((row == col) ? "x0" : "0.0");
 
@@ -483,9 +483,9 @@ TString StructureHLSL::addBuiltInConstructor(const TType &type, const TIntermSeq
         }
         else if (parameter.isMatrix())
         {
-            for (int col = 0; col < cols; col++)
+            for (uint8_t col = 0; col < cols; col++)
             {
-                for (int row = 0; row < rows; row++)
+                for (uint8_t row = 0; row < rows; row++)
                 {
                     if (row < parameter.getRows() && col < parameter.getCols())
                     {
@@ -562,7 +562,7 @@ TString StructureHLSL::addBuiltInConstructor(const TType &type, const TIntermSeq
             }
             else if (parameter.isMatrix())
             {
-                int column = 0;
+                uint8_t column = 0;
                 while (remainingComponents > 0 && column < parameter.getCols())
                 {
                     constructor += "[" + str(column) + "]";

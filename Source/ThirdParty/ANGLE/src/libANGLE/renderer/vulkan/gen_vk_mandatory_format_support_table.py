@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # Copyright 2018 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -112,9 +112,9 @@ def main():
         outputs = [out_file_name]
 
         if sys.argv[1] == 'inputs':
-            print ','.join(inputs)
+            print(','.join(inputs))
         elif sys.argv[1] == 'outputs':
-            print ','.join(outputs)
+            print(','.join(outputs))
         else:
             print('Invalid script parameters')
             return 1
@@ -127,12 +127,12 @@ def main():
     vk_format_map = angle_format.load_json(vk_format_map_path)
     vk_cases = [
         gen_format_case(format_id, vk_format, vk_map)
-        for format_id, vk_format in vk_format_map["map"].iteritems()
+        for format_id, vk_format in sorted(vk_format_map["map"].items())
     ]
 
     output_cpp = TEMPLATE_TABLE_AUTOGEN_CPP.format(
         format_case_data=",\n".join(vk_cases),
-        script_name=__file__,
+        script_name=os.path.basename(__file__),
         out_file_name=out_file_name,
         input_file_name=input_file_name)
 

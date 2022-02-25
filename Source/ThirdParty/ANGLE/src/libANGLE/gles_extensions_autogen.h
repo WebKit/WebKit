@@ -59,6 +59,10 @@ struct Extensions
     bool framebufferBlitAny() const { return (framebufferBlitANGLE || framebufferBlitNV); }
     bool geometryShaderAny() const { return (geometryShaderEXT || geometryShaderOES); }
     bool instancedArraysAny() const { return (instancedArraysANGLE || instancedArraysEXT); }
+    bool primitiveBoundingBoxAny() const
+    {
+        return (primitiveBoundingBoxEXT || primitiveBoundingBoxOES);
+    }
     bool shaderIoBlocksAny() const { return (shaderIoBlocksEXT || shaderIoBlocksOES); }
     bool textureBorderClampAny() const { return (textureBorderClampEXT || textureBorderClampOES); }
     bool textureBufferAny() const { return (textureBufferEXT || textureBufferOES); }
@@ -214,6 +218,9 @@ struct Extensions
     // GL_OES_element_index_uint
     bool elementIndexUintOES = false;
 
+    // GL_ANDROID_extension_pack_es31a
+    bool extensionPackEs31aANDROID = false;
+
     // GL_EXT_external_buffer
     bool externalBufferEXT = false;
 
@@ -310,6 +317,9 @@ struct Extensions
     // GL_EXT_primitive_bounding_box
     bool primitiveBoundingBoxEXT = false;
 
+    // GL_OES_primitive_bounding_box
+    bool primitiveBoundingBoxOES = false;
+
     // GL_EXT_protected_textures
     bool protectedTexturesEXT = false;
 
@@ -351,6 +361,9 @@ struct Extensions
 
     // GL_EXT_separate_shader_objects
     bool separateShaderObjectsEXT = false;
+
+    // GL_EXT_shader_framebuffer_fetch
+    bool shaderFramebufferFetchEXT = false;
 
     // GL_EXT_shader_framebuffer_fetch_non_coherent
     bool shaderFramebufferFetchNonCoherentEXT = false;

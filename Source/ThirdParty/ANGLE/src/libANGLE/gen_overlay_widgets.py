@@ -121,7 +121,7 @@ def extract_type_and_constructor(properties):
 
 
 def get_font_size_constant(properties):
-    return 'kFontLayer' + properties['font'].capitalize()
+    return 'kFontMip' + properties['font'].capitalize()
 
 
 def is_graph_type(type):
@@ -250,8 +250,8 @@ def generate_widget_init_helper(widget, is_graph_description=False):
     if is_text_type(widget.type):
         # Attributes deriven from text properties
         font_size = widget.font
-        width = str(widget.length) + ' * kFontGlyphWidths[fontSize]'
-        height = 'kFontGlyphHeights[fontSize]'
+        width = str(widget.length) + ' * (kFontGlyphWidth >> fontSize)'
+        height = '(kFontGlyphHeight >> fontSize)'
     else:
         # Attributes deriven from graph properties
         width = str(widget.bar_width) + ' * static_cast<uint32_t>(widget->runningValues.size())'

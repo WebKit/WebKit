@@ -11,6 +11,7 @@
 #include "common/PackedEnums.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
+#include "restricted_traces/restricted_traces_export.h"
 #include "tests/perf_tests/ANGLEPerfTest.h"
 #include "tests/perf_tests/ANGLEPerfTestArgs.h"
 #include "tests/perf_tests/DrawCallPerfParams.h"
@@ -18,8 +19,6 @@
 #include "util/egl_loader_autogen.h"
 #include "util/png_utils.h"
 #include "util/test_utils.h"
-
-#include "restricted_traces/restricted_traces_autogen.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/istreamwrapper.h>
@@ -955,9 +954,9 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
     }
 
     // Adreno gives a driver error with empty/small draw calls. http://anglebug.com/5823
-    if (traceNameIs("hill_climb_racing"))
+    if (traceNameIs("hill_climb_racing") || traceNameIs("dead_trigger_2"))
     {
-        if (IsAndroid() && (IsPixel2() || IsPixel4()) &&
+        if (IsAndroid() && (IsPixel2() || IsPixel4() || IsPixel4XL()) &&
             mParams.driver == GLESDriverType::SystemEGL)
         {
             mSkipTest = true;
@@ -1155,6 +1154,41 @@ TracePerfTest::TracePerfTest(const TracePerfParams &params)
     if (traceNameIs("asphalt_9"))
     {
         addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
+    }
+
+    if (traceNameIs("pubg_mobile_launch"))
+    {
+        // http://anglebug.com/6850 - Crashing in Nvidia GLES driver.
+        if (IsLinux() && IsNVIDIA() && mParams.driver != GLESDriverType::AngleEGL)
+        {
+            mSkipTest = true;
+        }
+    }
+
+    if (traceNameIs("dead_by_daylight"))
+    {
+        addExtensionPrerequisite("GL_EXT_shader_framebuffer_fetch");
+    }
+
+    if (traceNameIs("war_planet_online"))
+    {
+        addExtensionPrerequisite("GL_KHR_texture_compression_astc_ldr");
+    }
+
+    if (traceNameIs("lords_mobile"))
+    {
+        // http://anglebug.com/7000 - glTexStorage2DEXT is not exposed on Pixel 4 native
+        addExtensionPrerequisite("GL_EXT_texture_storage");
+    }
+
+    if (traceNameIs("marvel_strike_force"))
+    {
+        // http://anglebug.com/7017 - Qualcomm native driver gets confused about the state of a
+        // buffer that was recreated during the trace
+        if ((IsAndroid() && IsQualcomm()) && mParams.driver != GLESDriverType::AngleEGL)
+        {
+            mSkipTest = true;
+        }
     }
 
     ASSERT(mParams.surfaceType == SurfaceType::Window || gEnableAllTraceTests);
@@ -1936,15 +1970,17 @@ void RegisterTraceTests()
     }
 
     // Load JSON data.
-    std::stringstream tracesJsonStream;
-    tracesJsonStream << rootTracePath << GetPathSeparator() << "restricted_traces.json";
-    std::string tracesJsonPath = tracesJsonStream.str();
-
     std::vector<std::string> traces;
-    if (!LoadTraceNamesFromJSON(tracesJsonPath, &traces))
     {
-        ERR() << "Unable to load traces from JSON file: " << tracesJsonPath;
-        return;
+        std::stringstream tracesJsonStream;
+        tracesJsonStream << rootTracePath << GetPathSeparator() << "restricted_traces.json";
+        std::string tracesJsonPath = tracesJsonStream.str();
+
+        if (!LoadTraceNamesFromJSON(tracesJsonPath, &traces))
+        {
+            ERR() << "Unable to load traces from JSON file: " << tracesJsonPath;
+            return;
+        }
     }
 
     std::vector<TraceInfo> traceInfos;
@@ -1958,9 +1994,8 @@ void RegisterTraceTests()
         TraceInfo traceInfo = {};
         if (!LoadTraceInfoFromJSON(trace, traceJsonPath, &traceInfo))
         {
-            static_assert(sizeof(TraceInfo) == sizeof(trace_angle::TraceInfo), "Size mismatch");
-            trace_angle::TraceInfo autogenFormatInfo = trace_angle::GetTraceInfo(trace.c_str());
-            memcpy(&traceInfo, &autogenFormatInfo, sizeof(TraceInfo));
+            ERR() << "Unable to load traced data from JSON file: " << traceJsonPath;
+            return;
         }
 
         traceInfos.push_back(traceInfo);

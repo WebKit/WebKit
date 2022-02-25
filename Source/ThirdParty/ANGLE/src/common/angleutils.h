@@ -24,6 +24,7 @@
 #include <cstdarg>
 #include <cstddef>
 #include <fstream>
+#include <mutex>
 #include <set>
 #include <sstream>
 #include <string>
@@ -236,6 +237,32 @@ inline bool IsLittleEndian()
     return isLittleEndian;
 }
 
+// Helper class to use a mutex with the control of boolean.
+class ConditionalMutex final : angle::NonCopyable
+{
+  public:
+    ConditionalMutex() : mUseMutex(true) {}
+    void init(bool useMutex) { mUseMutex = useMutex; }
+    void lock()
+    {
+        if (mUseMutex)
+        {
+            mMutex.lock();
+        }
+    }
+    void unlock()
+    {
+        if (mUseMutex)
+        {
+            mMutex.unlock();
+        }
+    }
+
+  private:
+    std::mutex mMutex;
+    bool mUseMutex;
+};
+
 // snprintf is not defined with MSVC prior to to msvc14
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #    define snprintf _snprintf
@@ -393,7 +420,7 @@ inline bool IsLittleEndian()
 #    define ANGLE_FORMAT_PRINTF(fmt, args)
 #endif
 
-ANGLE_FORMAT_PRINTF(1,0)
+ANGLE_FORMAT_PRINTF(1, 0)
 size_t FormatStringIntoVector(const char *fmt, va_list vararg, std::vector<char> &buffer);
 
 // Format messes up the # inside the macro.
@@ -444,6 +471,15 @@ inline bool IsASan()
 #else
     return false;
 #endif  // defined(ANGLE_WITH_ASAN)
+}
+
+inline bool IsMSan()
+{
+#if defined(ANGLE_WITH_MSAN)
+    return true;
+#else
+    return false;
+#endif  // defined(ANGLE_WITH_MSAN)
 }
 
 inline bool IsTSan()

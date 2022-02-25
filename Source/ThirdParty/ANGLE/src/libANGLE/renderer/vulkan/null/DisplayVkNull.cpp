@@ -8,10 +8,10 @@
 //
 
 #include "DisplayVkNull.h"
-#include "WindowSurfaceVkNull.h"
 
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/SurfaceVk.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
 
 namespace rx
@@ -27,7 +27,7 @@ bool DisplayVkNull::isValidNativeWindow(EGLNativeWindowType window) const
 SurfaceImpl *DisplayVkNull::createWindowSurfaceVk(const egl::SurfaceState &state,
                                                   EGLNativeWindowType window)
 {
-    return new WindowSurfaceVkNull(state, window);
+    return new OffscreenSurfaceVk(state, mRenderer);
 }
 
 const char *DisplayVkNull::getWSIExtension() const
@@ -47,10 +47,7 @@ egl::ConfigSet DisplayVkNull::generateConfigs()
     return egl_vk::GenerateConfigs(kColorFormats, egl_vk::kConfigDepthStencilFormats, this);
 }
 
-void DisplayVkNull::checkConfigSupport(egl::Config *config)
-{
-    config->surfaceType &= ~EGL_WINDOW_BIT;
-}
+void DisplayVkNull::checkConfigSupport(egl::Config *config) {}
 
 bool IsVulkanNullDisplayAvailable()
 {

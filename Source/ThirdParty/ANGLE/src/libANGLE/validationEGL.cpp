@@ -564,6 +564,7 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
         bool enableD3D11on12         = false;
         bool presentPathSpecified    = false;
         bool luidSpecified           = false;
+        bool deviceIdSpecified       = false;
 
         Optional<EGLAttrib> majorVersion;
         Optional<EGLAttrib> minorVersion;
@@ -759,6 +760,16 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
                             return false;
                     }
                     break;
+                case EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE:
+                case EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE:
+                    if (!clientExtensions.platformANGLEDeviceId)
+                    {
+                        val->setError(EGL_BAD_ATTRIBUTE,
+                                      "EGL_ANGLE_platform_angle_device_id is not supported");
+                        return false;
+                    }
+                    deviceIdSpecified = true;
+                    break;
                 default:
                     break;
             }
@@ -837,6 +848,19 @@ bool ValidateGetPlatformDisplayCommon(const ValidationContext *val,
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "If either EGL_PLATFORM_ANGLE_D3D_LUID_HIGH_ANGLE "
                               "and/or EGL_PLATFORM_ANGLE_D3D_LUID_LOW_ANGLE are "
+                              "specified, at least one must non-zero.");
+                return false;
+            }
+        }
+
+        if (deviceIdSpecified)
+        {
+            if (attribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0) == 0 &&
+                attribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0) == 0)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE,
+                              "If either EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE "
+                              "and/or EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE are "
                               "specified, at least one must non-zero.");
                 return false;
             }
@@ -1436,13 +1460,6 @@ bool ValidateCreateContextAttribute(const ValidationContext *val,
             }
             break;
 
-        case EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_KHR:
-            val->setError(EGL_BAD_ATTRIBUTE,
-                          "EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_KHR is not"
-                          " valid for GLES with EGL 1.4 and KHR_create_context. Use"
-                          " EXT_create_context_robustness.");
-            return false;
-
         case EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT:
             if (!display->getExtensions().createContextRobustness)
             {
@@ -1450,6 +1467,23 @@ bool ValidateCreateContextAttribute(const ValidationContext *val,
                 return false;
             }
             break;
+
+        case EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY:
+        {
+            // We either need to have -
+            // 1. EGL 1.5 which added support for this as part of core spec
+            // 2. EGL_KHR_create_context extension which requires EGL 1.4
+            constexpr EGLint kRequiredMajorVersion = 1;
+            constexpr EGLint kRequiredMinorVersion = 5;
+            if ((kEglMajorVersion < kRequiredMajorVersion ||
+                 kEglMinorVersion < kRequiredMinorVersion) &&
+                !display->getExtensions().createContext)
+            {
+                val->setError(EGL_BAD_ATTRIBUTE);
+                return false;
+            }
+            break;
+        }
 
         case EGL_CONTEXT_OPENGL_NO_ERROR_KHR:
             if (!display->getExtensions().createContextNoError)
@@ -1676,6 +1710,7 @@ bool ValidateCreateContextAttributeValue(const ValidationContext *val,
             break;
 
         case EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY_EXT:
+        case EGL_CONTEXT_OPENGL_RESET_NOTIFICATION_STRATEGY:
             if (value != EGL_LOSE_CONTEXT_ON_RESET_EXT && value != EGL_NO_RESET_NOTIFICATION_EXT)
             {
                 val->setError(EGL_BAD_ATTRIBUTE);
@@ -3199,12 +3234,12 @@ bool ValidateCreateImage(const ValidationContext *val,
                 break;
 
             case EGL_TEXTURE_INTERNAL_FORMAT_ANGLE:
-                if (!displayExtensions.imageD3D11Texture)
+                if (!displayExtensions.imageD3D11Texture && !displayExtensions.vulkanImageANGLE)
                 {
                     val->setError(
                         EGL_BAD_PARAMETER,
-                        "EGL_TEXTURE_INTERNAL_FORMAT_ANGLE and EGL_TEXTURE_TYPE_ANGLE cannot "
-                        "be used without EGL_ANGLE_image_d3d11_texture support.");
+                        "EGL_TEXTURE_INTERNAL_FORMAT_ANGLE cannot be used without "
+                        "EGL_ANGLE_image_d3d11_texture or EGL_ANGLE_vulkan_image support.");
                     return false;
                 }
                 break;
@@ -5978,6 +6013,13 @@ bool ValidateSwapBuffersWithFrameTokenANGLE(const ValidationContext *val,
     return true;
 }
 
+bool ValidatePrepareSwapBuffersANGLE(const ValidationContext *val,
+                                     const Display *display,
+                                     const Surface *surface)
+{
+    return ValidateSwapBuffers(val, display, surface);
+}
+
 bool ValidateSignalSyncKHR(const ValidationContext *val,
                            const Display *display,
                            const Sync *sync,
@@ -6459,6 +6501,18 @@ bool ValidateExportVkImageANGLE(const ValidationContext *val,
     }
 
     return true;
+}
+
+bool ValidateSetDamageRegionKHR(const ValidationContext *val,
+                                const Display *display,
+                                const Surface *surface,
+                                const EGLint *rects,
+                                EGLint n_rects)
+{
+    ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
+    ANGLE_VALIDATION_TRY(ValidateSurface(val, display, surface));
+
+    return false;
 }
 
 }  // namespace egl

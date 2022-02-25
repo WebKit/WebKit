@@ -32,6 +32,12 @@ enum class WidgetId
     VulkanShaderBufferDSHitRate,
     // Buffer Allocations Made By vk::DynamicBuffer.
     VulkanDynamicBufferAllocations,
+    // Total size of all descriptor set caches
+    VulkanDescriptorCacheSize,
+    // Number of cached Texture descriptor sets
+    VulkanTextureDescriptorCacheSize,
+    // Number of cached default uniform descriptor sets
+    VulkanUniformDescriptorCacheSize,
 
     InvalidEnum,
     EnumCount = InvalidEnum,
@@ -48,6 +54,9 @@ enum class WidgetId
     PROC(VulkanWriteDescriptorSetCount)         \
     PROC(VulkanDescriptorSetAllocations)        \
     PROC(VulkanShaderBufferDSHitRate)           \
-    PROC(VulkanDynamicBufferAllocations)
+    PROC(VulkanDynamicBufferAllocations)        \
+    PROC(VulkanDescriptorCacheSize)             \
+    PROC(VulkanTextureDescriptorCacheSize)      \
+    PROC(VulkanUniformDescriptorCacheSize)
 
 }  // namespace gl

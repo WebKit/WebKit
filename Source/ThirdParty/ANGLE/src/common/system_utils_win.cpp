@@ -21,10 +21,10 @@ namespace
 
 std::string GetPath(HMODULE module)
 {
-    std::array<char, MAX_PATH> executableFileBuf;
-    DWORD executablePathLen = GetModuleFileNameA(module, executableFileBuf.data(),
+    std::array<wchar_t, MAX_PATH> executableFileBuf;
+    DWORD executablePathLen = GetModuleFileNameW(module, executableFileBuf.data(),
                                                  static_cast<DWORD>(executableFileBuf.size()));
-    return (executablePathLen > 0 ? std::string(executableFileBuf.data()) : "");
+    return Narrow(executablePathLen > 0 ? executableFileBuf.data() : L"");
 }
 
 std::string GetDirectory(HMODULE module)
@@ -53,18 +53,18 @@ const char *GetSharedLibraryExtension()
 
 Optional<std::string> GetCWD()
 {
-    std::array<char, MAX_PATH> pathBuf;
-    DWORD result = GetCurrentDirectoryA(static_cast<DWORD>(pathBuf.size()), pathBuf.data());
+    std::array<wchar_t, MAX_PATH> pathBuf;
+    DWORD result = GetCurrentDirectoryW(static_cast<DWORD>(pathBuf.size()), pathBuf.data());
     if (result == 0)
     {
         return Optional<std::string>::Invalid();
     }
-    return std::string(pathBuf.data());
+    return Narrow(pathBuf.data());
 }
 
 bool SetCWD(const char *dirName)
 {
-    return (SetCurrentDirectoryA(dirName) == TRUE);
+    return (SetCurrentDirectoryW(Widen(dirName).c_str()) == TRUE);
 }
 
 const char *GetPathSeparatorForEnvironmentVar()
@@ -118,7 +118,8 @@ bool IsDirectory(const char *filename)
 {
     WIN32_FILE_ATTRIBUTE_DATA fileInformation;
 
-    BOOL result = GetFileAttributesExA(filename, GetFileExInfoStandard, &fileInformation);
+    BOOL result =
+        GetFileAttributesExW(Widen(filename).c_str(), GetFileExInfoStandard, &fileInformation);
     if (result)
     {
         DWORD attribs = fileInformation.dwFileAttributes;
@@ -154,9 +155,9 @@ std::string GetModuleDirectory()
 #if !defined(ANGLE_IS_WINUWP)
     static int placeholderSymbol = 0;
     HMODULE module               = nullptr;
-    if (GetModuleHandleExA(
+    if (GetModuleHandleExW(
             GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-            reinterpret_cast<LPCSTR>(&placeholderSymbol), &module))
+            reinterpret_cast<LPCWSTR>(&placeholderSymbol), &module))
     {
         return GetDirectory(module);
     }
@@ -167,6 +168,70 @@ std::string GetModuleDirectory()
 std::string GetRootDirectory()
 {
     return "C:\\";
+}
+
+std::string GetLibraryPath(void *libraryHandle)
+{
+    if (!libraryHandle)
+    {
+        return "";
+    }
+
+    std::array<wchar_t, MAX_PATH> buffer;
+    if (GetModuleFileNameW(reinterpret_cast<HMODULE>(libraryHandle), buffer.data(),
+                           buffer.size()) == 0)
+    {
+        return "";
+    }
+
+    return Narrow(buffer.data());
+}
+
+void *GetLibrarySymbol(void *libraryHandle, const char *symbolName)
+{
+    if (!libraryHandle)
+    {
+        fprintf(stderr, "Module was not loaded\n");
+        return nullptr;
+    }
+
+    return reinterpret_cast<void *>(
+        GetProcAddress(reinterpret_cast<HMODULE>(libraryHandle), symbolName));
+}
+
+void CloseSystemLibrary(void *libraryHandle)
+{
+    if (libraryHandle)
+    {
+        FreeLibrary(reinterpret_cast<HMODULE>(libraryHandle));
+    }
+}
+std::string Narrow(const std::wstring_view &utf16)
+{
+    if (utf16.empty())
+    {
+        return {};
+    }
+    int requiredSize = WideCharToMultiByte(CP_UTF8, 0, utf16.data(), static_cast<int>(utf16.size()),
+                                           nullptr, 0, nullptr, nullptr);
+    std::string utf8(requiredSize, '\0');
+    WideCharToMultiByte(CP_UTF8, 0, utf16.data(), static_cast<int>(utf16.size()), &utf8[0],
+                        requiredSize, nullptr, nullptr);
+    return utf8;
+}
+
+std::wstring Widen(const std::string_view &utf8)
+{
+    if (utf8.empty())
+    {
+        return {};
+    }
+    int requiredSize =
+        MultiByteToWideChar(CP_UTF8, 0, utf8.data(), static_cast<int>(utf8.size()), nullptr, 0);
+    std::wstring utf16(requiredSize, L'\0');
+    MultiByteToWideChar(CP_UTF8, 0, utf8.data(), static_cast<int>(utf8.size()), &utf16[0],
+                        requiredSize);
+    return utf16;
 }
 
 }  // namespace angle

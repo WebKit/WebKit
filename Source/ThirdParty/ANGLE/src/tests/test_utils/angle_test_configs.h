@@ -341,6 +341,14 @@ inline PlatformParameters WithVulkanPreferCPUForBufferSubData(const PlatformPara
     paramsOut.eglParameters.WithVulkanPreferCPUForBufferSubData = EGL_TRUE;
     return paramsOut;
 }
+
+inline PlatformParameters WithForceSubmitImmutableTextureUpdates(const PlatformParameters &params)
+{
+    PlatformParameters withForceSubmitImmutableTextureUpdates = params;
+    withForceSubmitImmutableTextureUpdates.eglParameters.forceSubmitImmutableTextureUpdates =
+        EGL_TRUE;
+    return withForceSubmitImmutableTextureUpdates;
+}
 }  // namespace angle
 
 #endif  // ANGLE_TEST_CONFIGS_H_

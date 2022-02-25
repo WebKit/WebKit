@@ -149,7 +149,7 @@ def gl_format_channels(internal_format):
         if (internal_format.find('ALPHA') >= 0):
             return 'la'
         return 'l'
-    if channels_string == 'SRGB':
+    if channels_string == 'SRGB' or channels_string == 'RGB':
         if (internal_format.find('ALPHA') >= 0):
             return 'rgba'
         return 'rgb'
@@ -166,6 +166,11 @@ def get_internal_format_initializer(internal_format, format_id):
     gl_channels = gl_format_channels(internal_format)
     gl_format_no_alpha = gl_channels == 'rgb' or gl_channels == 'l'
     component_type, bits, channels = get_format_info(format_id)
+
+    # ETC2 punchthrough formats have per-pixel alpha values but a zero-filled block is parsed as opaque black.
+    # Ensure correct initialization when the formats are emulated.
+    if 'PUNCHTHROUGH_ALPHA1_ETC2' in internal_format and 'ETC2' not in format_id:
+        return 'Initialize4ComponentData<GLubyte, 0x00, 0x00, 0x00, 0xFF>'
 
     if not gl_format_no_alpha or channels != 'rgba':
         return 'nullptr'

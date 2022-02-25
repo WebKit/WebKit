@@ -95,7 +95,7 @@ angle::Result FramebufferMtl::invalidate(const gl::Context *context,
                                          size_t count,
                                          const GLenum *attachments)
 {
-    return invalidateImpl(mtl::GetImpl(context), count, attachments);
+    return invalidateImpl(context, count, attachments);
 }
 
 angle::Result FramebufferMtl::invalidateSub(const gl::Context *context,
@@ -105,7 +105,7 @@ angle::Result FramebufferMtl::invalidateSub(const gl::Context *context,
 {
     if (area.encloses(getCompleteRenderArea()))
     {
-        return invalidateImpl(mtl::GetImpl(context), count, attachments);
+        return invalidateImpl(context, count, attachments);
     }
     return angle::Result::Continue;
 }
@@ -877,7 +877,7 @@ void FramebufferMtl::onFrameEnd(const gl::Context *context)
         mtl::RenderCommandEncoder *encoder = contextMtl->getRenderCommandEncoder();
 
         constexpr GLenum dsAttachments[] = {GL_DEPTH, GL_STENCIL};
-        (void)invalidateImpl(contextMtl, 2, dsAttachments);
+        (void)invalidateImpl(context, 2, dsAttachments);
         if (mBackbuffer->getSamples() > 1)
         {
             encoder->setColorStoreAction(MTLStoreActionMultisampleResolve, 0);
@@ -1134,6 +1134,19 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
             OverrideMTLClearColor(texture, clearOpts.clearColor.value(),
                                   &colorAttachment.clearColor);
         }
+        else
+        {
+            colorAttachment.loadAction = MTLLoadActionLoad;
+        }
+
+        if (colorAttachment.hasImplicitMSTexture())
+        {
+            colorAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
+        }
+        else
+        {
+            colorAttachment.storeAction = MTLStoreActionStore;
+        }
     }
 
     if (clearOpts.clearDepth.valid())
@@ -1141,11 +1154,37 @@ angle::Result FramebufferMtl::clearWithLoadOpRenderPassNotStarted(
         tempDesc.depthAttachment.loadAction = MTLLoadActionClear;
         tempDesc.depthAttachment.clearDepth = clearOpts.clearDepth.value();
     }
+    else
+    {
+        tempDesc.depthAttachment.loadAction = MTLLoadActionLoad;
+    }
+
+    if (tempDesc.depthAttachment.hasImplicitMSTexture())
+    {
+        tempDesc.depthAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
+    }
+    else
+    {
+        tempDesc.depthAttachment.storeAction = MTLStoreActionStore;
+    }
 
     if (clearOpts.clearStencil.valid())
     {
         tempDesc.stencilAttachment.loadAction   = MTLLoadActionClear;
         tempDesc.stencilAttachment.clearStencil = clearOpts.clearStencil.value();
+    }
+    else
+    {
+        tempDesc.stencilAttachment.loadAction = MTLLoadActionLoad;
+    }
+
+    if (tempDesc.stencilAttachment.hasImplicitMSTexture())
+    {
+        tempDesc.stencilAttachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
+    }
+    else
+    {
+        tempDesc.stencilAttachment.storeAction = MTLStoreActionStore;
     }
 
     // Start new render encoder with loadOp=Clear
@@ -1315,10 +1354,11 @@ angle::Result FramebufferMtl::clearImpl(const gl::Context *context,
     return clearWithDraw(context, clearColorBuffers, clearOpts);
 }
 
-angle::Result FramebufferMtl::invalidateImpl(ContextMtl *contextMtl,
+angle::Result FramebufferMtl::invalidateImpl(const gl::Context *context,
                                              size_t count,
                                              const GLenum *attachments)
 {
+    ContextMtl *contextMtl = mtl::GetImpl(context);
     gl::DrawBufferMask invalidateColorBuffers;
     bool invalidateDepthBuffer   = false;
     bool invalidateStencilBuffer = false;
@@ -1388,6 +1428,12 @@ angle::Result FramebufferMtl::invalidateImpl(ContextMtl *contextMtl,
             encoder->setStencilStoreAction(MTLStoreActionDontCare);
         }
     }
+
+    // Do not encode any further commands in this render pass which can affect the
+    // framebuffer, or their effects will be lost.
+    contextMtl->endEncoding(false);
+    // Reset discard flag.
+    onStartedDrawingToFrameBuffer(context);
 
     return angle::Result::Continue;
 }

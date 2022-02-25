@@ -1302,6 +1302,141 @@ void main()
     glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
 }
 
+// Variations:
+//
+// - bool: whether to use WebGL compatibility mode.
+using StateChangeTestWebGL2Params = std::tuple<angle::PlatformParameters, bool>;
+
+std::string StateChangeTestWebGL2Print(
+    const ::testing::TestParamInfo<StateChangeTestWebGL2Params> &paramsInfo)
+{
+    const StateChangeTestWebGL2Params &params = paramsInfo.param;
+    std::ostringstream out;
+
+    out << std::get<0>(params);
+
+    if (std::get<1>(params))
+    {
+        out << "__WebGLCompatibility";
+    }
+
+    return out.str();
+}
+
+// State change test verifying both ES3 and WebGL2 specific behaviors.
+// Test is parameterized to allow execution with and without WebGL validation.
+// Note that this can not inherit from StateChangeTest due to the need to use ANGLETestWithParam.
+class StateChangeTestWebGL2 : public ANGLETestWithParam<StateChangeTestWebGL2Params>
+{
+  protected:
+    StateChangeTestWebGL2()
+    {
+        setWindowWidth(kWidth);
+        setWindowHeight(kHeight);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        if (testing::get<1>(GetParam()))
+            setWebGLCompatibilityEnabled(true);
+    }
+
+    struct TestResources
+    {
+        GLTexture colorTexture;
+        GLFramebuffer framebuffer;
+    };
+
+    void setupResources(TestResources &resources)
+    {
+        glBindTexture(GL_TEXTURE_2D, resources.colorTexture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kWidth, kHeight);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        EXPECT_GL_NO_ERROR();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, resources.framebuffer);
+        EXPECT_GL_NO_ERROR();
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                               resources.colorTexture, 0);
+        EXPECT_GL_NO_ERROR();
+    }
+
+    // Use a larger window/framebuffer size than 1x1 (though not much larger) to
+    // increase the chances that random garbage will appear.
+    static constexpr GLsizei kWidth  = 4;
+    static constexpr GLsizei kHeight = 4;
+};
+
+// Note: tested multiple other combinations:
+//
+// - Clearing/drawing to the framebuffer after invalidating, without using a
+//   secondary FBO
+// - Clearing the framebuffer after invalidating, using a secondary FBO
+// - Invalidating after clearing/drawing to the FBO, to verify WebGL's behavior
+//   that after invalidation, the framebuffer is either unmodified, or cleared
+//   to transparent black
+//
+// This combination, drawing after invalidating plus copying from the drawn-to
+// texture, was the only one which provoked the original bug in the Metal
+// backend with the following command line arguments:
+//
+// MTL_DEBUG_LAYER=1 MTL_DEBUG_LAYER_VALIDATE_LOAD_ACTIONS=1 \
+//    MTL_DEBUG_LAYER_VALIDATE_STORE_ACTIONS=1 \
+//    MTL_DEBUG_LAYER_VALIDATE_UNRETAINED_RESOURCES=4 \
+//    angle_end2end_tests ...
+//
+// See anglebug.com/6923.
+
+TEST_P(StateChangeTestWebGL2, InvalidateThenDrawFBO)
+{
+    GLint origFramebuffer = 0;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &origFramebuffer);
+
+    TestResources resources;
+    setupResources(resources);
+
+    ANGLE_GL_PROGRAM(drawGreen, essl3_shaders::vs::Simple(), essl3_shaders::fs::Green());
+
+    const GLenum attachment = GL_COLOR_ATTACHMENT0;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, resources.framebuffer);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Clear to red to start.
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Invalidate framebuffer.
+    glInvalidateFramebuffer(GL_FRAMEBUFFER, 1, &attachment);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw green.
+    // Important to use a vertex buffer because WebGL doesn't support client-side arrays.
+    constexpr bool useVertexBuffer = true;
+    drawQuad(drawGreen.get(), essl3_shaders::PositionAttrib(), 0.5f, 1.0f, useVertexBuffer);
+    EXPECT_GL_NO_ERROR();
+
+    // Bind original framebuffer.
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, origFramebuffer);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resources.framebuffer);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    // Blit from user's framebuffer to the window.
+    //
+    // This step is crucial to catch bugs in the Metal backend's use of no-op load/store actions.
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    // Verify results.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, origFramebuffer);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+}
+
 // Simple state change tests for line loop drawing. There is some very specific handling of line
 // line loops in Vulkan and we need to test switching between drawElements and drawArrays calls to
 // validate every edge cases.
@@ -7023,7 +7158,7 @@ void main()
 }
 
 // Negative test for EXT_primitive_bounding_box
-TEST_P(SimpleStateChangeTestES31, PrimitiveBoundingBoxNegativeTest)
+TEST_P(SimpleStateChangeTestES31, PrimitiveBoundingBoxEXTNegativeTest)
 {
     ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_EXT_primitive_bounding_box"));
 
@@ -7032,6 +7167,19 @@ TEST_P(SimpleStateChangeTestES31, PrimitiveBoundingBoxNegativeTest)
 
     GLfloat boundingBox[8] = {0};
     glGetFloatv(GL_PRIMITIVE_BOUNDING_BOX_EXT, boundingBox);
+    EXPECT_GL_ERROR(GL_INVALID_ENUM);
+}
+
+// Negative test for OES_primitive_bounding_box
+TEST_P(SimpleStateChangeTestES31, PrimitiveBoundingBoxOESNegativeTest)
+{
+    ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_OES_primitive_bounding_box"));
+
+    glPrimitiveBoundingBoxEXT(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    GLfloat boundingBox[8] = {0};
+    glGetFloatv(GL_PRIMITIVE_BOUNDING_BOX_OES, boundingBox);
     EXPECT_GL_ERROR(GL_INVALID_ENUM);
 }
 
@@ -7353,6 +7501,37 @@ TEST_P(SimpleStateChangeTestES3, RespecifyBufferAfterBeginTransformFeedback)
     glBeginTransformFeedback(GL_TRIANGLES);
     glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, sizeof(float) * 3 * 4 * 6, nullptr, GL_STREAM_DRAW);
     glDrawArrays(GL_TRIANGLES, 0, 6);
+    glEndTransformFeedback();
+}
+
+// Test a bug angleproject:6998 in TransformFeedback code path by allocating paddingBuffer first and
+// then allocate another buffer and then deallocate paddingBuffer and then allocate buffer again.
+// This new buffer will be allocated in the space where paddingBuffer was allocated which causing
+// XFB generate VVL error.
+TEST_P(SimpleStateChangeTestES3, RespecifyBufferAfterBeginTransformFeedbackInDeletedPaddingBuffer)
+{
+    std::vector<std::string> tfVaryings = {"gl_Position"};
+    ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(testProgram, essl3_shaders::vs::Simple(),
+                                        essl3_shaders::fs::Green(), tfVaryings,
+                                        GL_INTERLEAVED_ATTRIBS);
+    glUseProgram(testProgram);
+
+    GLuint paddingBuffer;
+    glGenBuffers(1, &paddingBuffer);
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, paddingBuffer);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, 256, nullptr, GL_STREAM_DRAW);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, buffer);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, sizeof(float) * 3 * 2 * 7, nullptr, GL_STREAM_DRAW);
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer);
+    // Delete padding buffer, expecting the next bufferData call will reuse the space of
+    // paddingBuffer whose offset is smaller than buffer's offset, which triggers the bug.
+    glDeleteBuffers(1, &paddingBuffer);
+    glBeginTransformFeedback(GL_TRIANGLES);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, sizeof(float) * 3 * 4 * 6, nullptr, GL_STREAM_DRAW);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glEndTransformFeedback();
 }
 
 // Regression test for a bug in the Vulkan backend where a draw-based copy after a deferred flush
@@ -7510,6 +7689,158 @@ TEST_P(VertexAttribArrayStateChangeTest, Basic)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+TEST_P(SimpleStateChangeTestES3, DepthOnlyToColorAttachmentPreservesBlendState)
+{
+
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec4 position;
+attribute vec4 color;
+varying vec4 colorOut;
+
+void main()
+{
+    gl_Position = position;
+    colorOut = color;
+})";
+
+    constexpr char kFS[] = R"(precision highp float;
+varying vec4 colorOut;
+
+void main()
+{
+    gl_FragColor = colorOut;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+    GLint posAttribLocation = glGetAttribLocation(program, "position");
+    ASSERT_NE(-1, posAttribLocation);
+    GLint colorAttribLocation = glGetAttribLocation(program, "color");
+    ASSERT_NE(-1, colorAttribLocation);
+
+    GLBuffer vertexBuffer;
+    GLTexture texture;
+    GLFramebuffer framebuffer;
+    GLRenderbuffer depthRenderbuffer;
+    GLFramebuffer depthFramebuffer;
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
+    const float posAttribData[] = {
+        -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f,
+    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof(posAttribData), posAttribData, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    constexpr int kWidth  = 1;
+    constexpr int kHeight = 1;
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kWidth, kHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, kWidth, kHeight);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, depthFramebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                              depthRenderbuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glDisable(GL_DEPTH_TEST);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glVertexAttribPointer(posAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(posAttribLocation);
+    glDisableVertexAttribArray(colorAttribLocation);
+    glVertexAttrib4f(colorAttribLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    glUseProgram(program);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glEnable(GL_BLEND);
+    glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
+    glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, depthFramebuffer);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glUseProgram(0);
+}
+
+// Tests a bug where we wouldn't update our cached base/max levels in Vulkan.
+TEST_P(SimpleStateChangeTestES3, MaxLevelChange)
+{
+    // Initialize an immutable texture with 2 levels.
+    std::vector<GLColor> bluePixels(4, GLColor::blue);
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexStorage2D(GL_TEXTURE_2D, 2, GL_RGBA8, 2, 2);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 2, 2, GL_RGBA, GL_UNSIGNED_BYTE, bluePixels.data());
+    glTexSubImage2D(GL_TEXTURE_2D, 1, 0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::yellow);
+
+    // Set up draw resources.
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    glUseProgram(testProgram);
+
+    GLint posLoc = glGetAttribLocation(testProgram, essl1_shaders::PositionAttrib());
+    ASSERT_NE(-1, posLoc);
+
+    std::array<Vector3, 6> quadVerts = GetQuadVertices();
+
+    GLBuffer vao;
+    glBindBuffer(GL_ARRAY_BUFFER, vao);
+    glBufferData(GL_ARRAY_BUFFER, quadVerts.size() * sizeof(quadVerts[0]), quadVerts.data(),
+                 GL_STATIC_DRAW);
+    glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posLoc);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Draw with the 2x2 mip / max level 1.
+    glViewport(0, 0, 2, 2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Draw with the 1x1 mip / max level 2.
+    glViewport(2, 0, 1, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Draw with the 2x2 mip / max level 1.
+    glViewport(0, 2, 2, 2);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Draw with the 1x1 mip / max level 2.
+    glViewport(2, 2, 1, 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(2, 0, GLColor::yellow);
+    EXPECT_PIXEL_COLOR_EQ(0, 2, GLColor::blue);
+    EXPECT_PIXEL_COLOR_EQ(2, 2, GLColor::yellow);
+}
 }  // anonymous namespace
 
 ANGLE_INSTANTIATE_TEST_ES2(StateChangeTest);
@@ -7518,6 +7849,12 @@ ANGLE_INSTANTIATE_TEST_ES2(StateChangeRenderTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(StateChangeTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(StateChangeTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(StateChangeTestWebGL2);
+ANGLE_INSTANTIATE_TEST_COMBINE_1(StateChangeTestWebGL2,
+                                 StateChangeTestWebGL2Print,
+                                 testing::Bool(),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(StateChangeRenderTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(StateChangeRenderTestES3);

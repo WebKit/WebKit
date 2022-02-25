@@ -961,11 +961,12 @@ void GenMetalTraverser::emitType(const TType &type, const EmitTypeConfig &etConf
 
     if (type.isVector())
     {
-        mOut << type.getNominalSize();
+        mOut << static_cast<uint32_t>(type.getNominalSize());
     }
     else if (type.isMatrix())
     {
-        mOut << type.getCols() << "x" << type.getRows();
+        mOut << static_cast<uint32_t>(type.getCols()) << "x"
+             << static_cast<uint32_t>(type.getRows());
     }
 
     if (!isUBO)
@@ -1057,7 +1058,8 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
             break;
 
         case TQualifier::EvqFragDepth:
-            mOut << " [[depth(any)]]";
+            mOut << " [[depth(any), function_constant(" << sh::mtl::kDepthWriteEnabledConstName
+                 << ")]]";
             break;
 
         case TQualifier::EvqSampleMask:
@@ -1531,10 +1533,10 @@ bool GenMetalTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
                 }
                 else
                 {
-                    int maxSize;
+                    uint32_t maxSize;
                     if (leftType.isArray())
                     {
-                        maxSize = static_cast<int>(leftType.getOutermostArraySize()) - 1;
+                        maxSize = leftType.getOutermostArraySize() - 1;
                     }
                     else
                     {
@@ -1886,16 +1888,22 @@ GenMetalTraverser::FuncToName GenMetalTraverser::BuildFuncToName()
     putAngle("texture1DLod");
     putAngle("texture1DProjLod");
     putAngle("texture2D");
+    putAngle("texture2DGradEXT");
     putAngle("texture2DLod");
+    putAngle("texture2DLodEXT");
     putAngle("texture2DProj");
-    putAngle("texture2DRect");
+    putAngle("texture2DProjGradEXT");
     putAngle("texture2DProjLod");
+    putAngle("texture2DProjLodEXT");
+    putAngle("texture2DRect");
     putAngle("texture2DRectProj");
     putAngle("texture3D");
     putAngle("texture3DLod");
     putAngle("texture3DProjLod");
     putAngle("textureCube");
+    putAngle("textureCubeGradEXT");
     putAngle("textureCubeLod");
+    putAngle("textureCubeLodEXT");
     putAngle("textureCubeProjLod");
     putAngle("textureGrad");
     putAngle("textureGradOffset");

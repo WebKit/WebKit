@@ -18,6 +18,16 @@ declare_args() {
   angle_enable_vulkan_gpu_trace_events = false
 }
 
+declare_args() {
+  # Enable custom secondary command buffers for outside render pass commands only
+  angle_enable_custom_vulkan_outside_render_pass_cmd_buffers =
+      angle_enable_custom_vulkan_cmd_buffers
+
+  # Enable custom secondary command buffers for render pass commands only
+  angle_enable_custom_vulkan_render_pass_cmd_buffers =
+      angle_enable_custom_vulkan_cmd_buffers
+}
+
 _vulkan_backend_sources = [
   "BufferVk.cpp",
   "BufferVk.h",
@@ -136,12 +146,10 @@ if (angle_use_vulkan_null_display) {
   _vulkan_backend_sources += [
     "null/DisplayVkNull.cpp",
     "null/DisplayVkNull.h",
-    "null/WindowSurfaceVkNull.cpp",
-    "null/WindowSurfaceVkNull.h",
   ]
 }
 
-if (is_linux) {
+if (is_linux || is_chromeos) {
   _vulkan_backend_sources += [
     "linux/DisplayVkLinux.cpp",
     "linux/DisplayVkLinux.h",
@@ -223,8 +231,11 @@ config("angle_vulkan_backend_config") {
   if (angle_enable_swiftshader) {
     defines += [ "ANGLE_ENABLE_SWIFTSHADER" ]
   }
-  if (angle_enable_custom_vulkan_cmd_buffers) {
-    defines += [ "ANGLE_USE_CUSTOM_VULKAN_CMD_BUFFERS=1" ]
+  if (angle_enable_custom_vulkan_outside_render_pass_cmd_buffers) {
+    defines += [ "ANGLE_USE_CUSTOM_VULKAN_OUTSIDE_RENDER_PASS_CMD_BUFFERS=1" ]
+  }
+  if (angle_enable_custom_vulkan_render_pass_cmd_buffers) {
+    defines += [ "ANGLE_USE_CUSTOM_VULKAN_RENDER_PASS_CMD_BUFFERS=1" ]
   }
   if (angle_enable_vulkan_gpu_trace_events) {
     defines += [ "ANGLE_ENABLE_VULKAN_GPU_TRACE_EVENTS=1" ]
@@ -235,7 +246,6 @@ config("angle_vulkan_backend_config") {
 }
 
 angle_source_set("angle_vk_mem_alloc_wrapper") {
-  defines = [ "VMA_USE_STL_CONTAINERS=1" ]
   deps = [
     "$angle_root/src/common/vulkan:angle_vulkan_headers",
     "$angle_vulkan_memory_allocator_dir",
@@ -291,7 +301,7 @@ angle_source_set("angle_vulkan_backend") {
     data_deps += [ "$angle_root/src/common/vulkan:vulkan_validation_layers" ]
   }
 
-  if (is_linux) {
+  if (is_linux || is_chromeos) {
     deps += [ "$angle_root/src/common/linux:angle_dma_buf" ]
   }
 

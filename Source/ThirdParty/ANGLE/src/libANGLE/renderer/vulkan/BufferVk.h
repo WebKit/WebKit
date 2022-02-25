@@ -34,11 +34,8 @@ struct ConversionBuffer
     // One state value determines if we need to re-stream vertex data.
     bool dirty;
 
-    // One additional state value keeps the last allocation offset.
-    VkDeviceSize lastAllocationOffset;
-
-    // The conversion is stored in a dynamic buffer.
-    vk::DynamicBuffer data;
+    // Where the conversion data is stored.
+    std::unique_ptr<vk::BufferHelper> data;
 };
 
 enum class BufferUpdateType
@@ -114,10 +111,10 @@ class BufferVk : public BufferImpl
         // submission, since this function is only called when trying to get the underlying
         // BufferHelper object so it can be used in a command.
         mHasBeenReferencedByGPU = true;
-        return *mBuffer.get();
+        return mBuffer;
     }
 
-    bool isBufferValid() const { return mBuffer.get() != nullptr; }
+    bool isBufferValid() const { return mBuffer.valid(); }
     bool isCurrentlyInUse(ContextVk *contextVk) const;
 
     angle::Result mapImpl(ContextVk *contextVk, GLbitfield access, void **mapPtr);
@@ -140,22 +137,6 @@ class BufferVk : public BufferImpl
                                                 bool hostVisible);
 
   private:
-    angle::Result initializeShadowBuffer(ContextVk *contextVk,
-                                         gl::BufferBinding target,
-                                         size_t size);
-    void initializeHostVisibleBufferPool(ContextVk *contextVk);
-
-    ANGLE_INLINE uint8_t *getShadowBuffer(size_t offset)
-    {
-        return (mShadowBuffer.getCurrentBuffer() + offset);
-    }
-
-    ANGLE_INLINE const uint8_t *getShadowBuffer(size_t offset) const
-    {
-        return (mShadowBuffer.getCurrentBuffer() + offset);
-    }
-
-    void updateShadowBuffer(const uint8_t *data, size_t size, size_t offset);
     angle::Result updateBuffer(ContextVk *contextVk,
                                const uint8_t *data,
                                size_t size,
@@ -168,16 +149,11 @@ class BufferVk : public BufferImpl
                                const uint8_t *data,
                                size_t size,
                                size_t offset);
-    angle::Result allocMappedStagingBuffer(ContextVk *contextVk,
-                                           size_t size,
-                                           vk::DynamicBuffer **stagingBuffer,
-                                           VkDeviceSize *stagingBufferOffset,
-                                           uint8_t **mapPtr);
-    angle::Result flushMappedStagingBuffer(ContextVk *contextVk,
-                                           vk::DynamicBuffer *stagingBuffer,
-                                           VkDeviceSize stagingBufferOffset,
-                                           size_t size,
-                                           size_t offset);
+    angle::Result allocStagingBuffer(ContextVk *contextVk,
+                                     vk::MemoryCoherency coherency,
+                                     VkDeviceSize size,
+                                     uint8_t **mapPtr);
+    angle::Result flushStagingBuffer(ContextVk *contextVk, VkDeviceSize offset, VkDeviceSize size);
     angle::Result acquireAndUpdate(ContextVk *contextVk,
                                    const uint8_t *data,
                                    size_t updateSize,
@@ -194,9 +170,6 @@ class BufferVk : public BufferImpl
                                              VkDeviceSize offset,
                                              VkDeviceSize size,
                                              uint8_t **mapPtr);
-    angle::Result handleDeviceLocalBufferUnmap(ContextVk *contextVk,
-                                               VkDeviceSize offset,
-                                               VkDeviceSize size);
     angle::Result setDataImpl(ContextVk *contextVk,
                               const uint8_t *data,
                               size_t size,
@@ -208,6 +181,8 @@ class BufferVk : public BufferImpl
     angle::Result acquireBufferHelper(ContextVk *contextVk,
                                       size_t sizeInBytes,
                                       BufferUpdateType updateType);
+
+    bool isExternalBuffer() const { return mClientBuffer != nullptr; }
 
     struct VertexConversionBuffer : public ConversionBuffer
     {
@@ -226,30 +201,24 @@ class BufferVk : public BufferImpl
         size_t offset;
     };
 
-    std::unique_ptr<vk::BufferHelper> mBuffer;
+    vk::BufferHelper mBuffer;
+
+    // If not null, this is the external memory pointer passed from client API.
+    void *mClientBuffer;
 
     uint32_t mMemoryTypeIndex;
     // Memory/Usage property that will be used for memory allocation.
     VkMemoryPropertyFlags mMemoryPropertyFlags;
 
-    // DynamicBuffer to aid map operations of buffers when they are not host visible.
-    vk::DynamicBuffer mHostVisibleBufferPool;
-    VkDeviceSize mHostVisibleBufferOffset;
-
-    // For GPU-read only buffers glMap* latency is reduced by maintaining a copy
-    // of the buffer which is writeable only by the CPU. The contents are updated on all
-    // glData/glSubData/glCopy calls. With this, a glMap* call becomes a non-blocking
-    // operation by elimnating the need to wait on any recorded or in-flight GPU commands.
-    // We use DynamicShadowBuffer class to encapsulate all the bookeeping logic.
-    vk::DynamicShadowBuffer mShadowBuffer;
-
-    // A buffer pool to service GL_MAP_INVALIDATE_RANGE_BIT -style uploads.
-    vk::DynamicBuffer *mMapInvalidateRangeStagingBuffer;
-    VkDeviceSize mMapInvalidateRangeStagingBufferOffset;
-    uint8_t *mMapInvalidateRangeMappedPtr;
+    // The staging buffer to aid map operations. This is used when buffers are not host visible or
+    // for performance optimization when only a smaller range of buffer is mapped.
+    vk::BufferHelper mStagingBuffer;
 
     // A cache of converted vertex data.
     std::vector<VertexConversionBuffer> mVertexConversionBuffers;
+
+    // Tracks whether mStagingBuffer has been mapped to user or not
+    bool mIsStagingBufferMapped;
 
     // Tracks if BufferVk object has valid data or not.
     bool mHasValidData;

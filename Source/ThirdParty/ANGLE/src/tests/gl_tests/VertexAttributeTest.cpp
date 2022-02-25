@@ -3854,6 +3854,126 @@ void main(void) {
     EXPECT_GL_NO_ERROR();
 }
 
+// Covers a bug with integer formats and an element size larger than the vertex stride.
+TEST_P(VertexAttributeTestES3, StrideSmallerThanIntegerElementSize)
+{
+    constexpr char kVS[] = R"(#version 300 es
+in vec4 position;
+in ivec2 intAttrib;
+in vec2 floatAttrib;
+out vec4 colorVarying;
+void main()
+{
+    gl_Position = position;
+    if (vec2(intAttrib) == floatAttrib)
+    {
+        colorVarying = vec4(0, 1, 0, 1);
+    }
+    else
+    {
+        colorVarying = vec4(1, 0, 0, 1);
+    }
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision mediump float;
+in vec4 colorVarying;
+out vec4 fragColor;
+void main()
+{
+    fragColor = colorVarying;
+})";
+
+    ANGLE_GL_PROGRAM(testProgram, kVS, kFS);
+    glUseProgram(testProgram);
+
+    GLBuffer positionBuffer;
+    {
+        const std::array<Vector3, 6> &quadVerts = GetQuadVertices();
+
+        glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+        glBufferData(GL_ARRAY_BUFFER, quadVerts.size() * sizeof(quadVerts[0]), quadVerts.data(),
+                     GL_STATIC_DRAW);
+
+        GLint posLoc = glGetAttribLocation(testProgram, "position");
+        ASSERT_NE(posLoc, -1);
+        glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnableVertexAttribArray(posLoc);
+    }
+
+    GLBuffer intBuffer;
+    {
+        std::array<GLbyte, 12> intData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+
+        glBindBuffer(GL_ARRAY_BUFFER, intBuffer);
+        glBufferData(GL_ARRAY_BUFFER, intData.size() * sizeof(intData[0]), intData.data(),
+                     GL_STATIC_DRAW);
+
+        GLint intLoc = glGetAttribLocation(testProgram, "intAttrib");
+        ASSERT_NE(intLoc, -1);
+        glVertexAttribIPointer(intLoc, 2, GL_BYTE, 1, nullptr);
+        glEnableVertexAttribArray(intLoc);
+    }
+
+    GLBuffer floatBuffer;
+    {
+        std::array<GLfloat, 12> floatData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+
+        glBindBuffer(GL_ARRAY_BUFFER, floatBuffer);
+        glBufferData(GL_ARRAY_BUFFER, floatData.size() * sizeof(floatData[0]), floatData.data(),
+                     GL_STATIC_DRAW);
+
+        GLint floatLoc = glGetAttribLocation(testProgram, "floatAttrib");
+        ASSERT_NE(floatLoc, -1);
+        glVertexAttribPointer(floatLoc, 2, GL_FLOAT, GL_FALSE, 4, nullptr);
+        glEnableVertexAttribArray(floatLoc);
+    }
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+}
+
+// Create a vertex array with an empty array buffer and attribute offsets.
+// This succeded in the end2end and capture/replay tests, but resulted in a trace
+// producing a GL error when using MEC.
+// Validation complained about the following:
+// "Client data cannot be used with a non-default vertex array object."
+
+// To capture this test with MEC run:
+// mkdir src/tests/capture_replay_tests/empty_array_buffer_test
+// ANGLE_CAPTURE_ENABLED=1 ANGLE_CAPTURE_FRAME_START=2 \
+// ANGLE_CAPTURE_FRAME_END=2 ANGLE_CAPTURE_LABEL=empty_array_buffer_test \
+// ANGLE_CAPTURE_OUT_DIR=src/tests/capture_replay_tests/empty_array_buffer_test \
+// ./out/Debug/angle_end2end_tests \
+// --gtest_filter="VertexAttributeTestES3.EmptyArrayBuffer/ES3_Vulkan"
+TEST_P(VertexAttributeTestES3, EmptyArrayBuffer)
+{
+    GLVertexArray vertexArray;
+    glBindVertexArray(vertexArray);
+
+    GLBuffer emptyArrayBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, emptyArrayBuffer);
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(0, 4, GL_UNSIGNED_BYTE, GL_TRUE, 20, reinterpret_cast<const void *>(16));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 20, reinterpret_cast<const void *>(8));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 20, nullptr);
+    EXPECT_GL_NO_ERROR();
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    EXPECT_GL_NO_ERROR();
+
+    // Swap a frame for MEC
+    swapBuffers();
+}
+
 // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/5577
 #if !defined(__APPLE__)
 #    define EMULATED_VAO_CONFIGS                                          \

@@ -10,12 +10,12 @@
 #define LIBANGLE_RENDERER_GLSLANG_WRAPPER_UTILS_H_
 
 #include <functional>
+#include "common/spirv/spirv_types.h"
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/renderer_utils.h"
 
 namespace rx
 {
-
 class ShaderInterfaceVariableInfoMap;
 constexpr gl::ShaderMap<const char *> kDefaultUniformNames = {
     {gl::ShaderType::Vertex, sh::vk::kDefaultUniformsNameVS},

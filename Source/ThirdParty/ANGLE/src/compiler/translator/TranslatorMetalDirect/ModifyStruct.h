@@ -42,9 +42,9 @@ class ModifyStructConfig
     {
         // Valid return values are [0, 1, 2, 3, 4].
         // If original dim >= return value, the field remains untouched.
-        using Func = int (*)(const TField &);
-        static int DontSaturate(const TField &) { return 0; }
-        static int FullySaturate(const TField &) { return 4; }
+        using Func = uint8_t (*)(const TField &);
+        static uint8_t DontSaturate(const TField &) { return 0; }
+        static uint8_t FullySaturate(const TField &) { return 4; }
     };
 
   public:

@@ -18,6 +18,8 @@ namespace gl
 {
 class Context;
 
+// GL_ANDROID_extension_pack_es31a
+
 // GL_ANGLE_base_vertex_base_instance
 bool ValidateDrawArraysInstancedBaseInstanceANGLE(const Context *context,
                                                   angle::EntryPoint entryPoint,
@@ -1678,6 +1680,8 @@ bool ValidateValidateProgramPipelineEXT(const Context *context,
                                         angle::EntryPoint entryPoint,
                                         ProgramPipelineID pipelinePacked);
 
+// GL_EXT_shader_framebuffer_fetch
+
 // GL_EXT_shader_framebuffer_fetch_non_coherent
 bool ValidateFramebufferFetchBarrierEXT(const Context *context, angle::EntryPoint entryPoint);
 
@@ -2246,6 +2250,18 @@ bool ValidatePointSizePointerOES(const Context *context,
                                  const void *pointer);
 
 // GL_OES_point_sprite
+
+// GL_OES_primitive_bounding_box
+bool ValidatePrimitiveBoundingBoxOES(const Context *context,
+                                     angle::EntryPoint entryPoint,
+                                     GLfloat minX,
+                                     GLfloat minY,
+                                     GLfloat minZ,
+                                     GLfloat minW,
+                                     GLfloat maxX,
+                                     GLfloat maxY,
+                                     GLfloat maxZ,
+                                     GLfloat maxW);
 
 // GL_OES_query_matrix
 bool ValidateQueryMatrixxOES(const Context *context,

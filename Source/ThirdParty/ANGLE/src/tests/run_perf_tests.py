@@ -77,13 +77,18 @@ def _popen(*args, **kwargs):
 
 def run_command_with_output(argv, stdoutfile, env=None, cwd=None, log=True):
     assert stdoutfile
-    with io.open(stdoutfile, 'wb') as writer:
+    with io.open(stdoutfile, 'wb') as writer, \
+          io.open(stdoutfile, 'rb', 1) as reader:
         process = _popen(argv, env=env, cwd=cwd, stdout=writer, stderr=subprocess.STDOUT)
         test_env.forward_signals([process])
         while process.poll() is None:
+            if log:
+                sys.stdout.write(reader.read().decode('utf-8'))
             # This sleep is needed for signal propagation. See the
             # wait_with_signals() docstring.
             time.sleep(0.1)
+        if log:
+            sys.stdout.write(reader.read().decode('utf-8'))
         return process.returncode
 
 
@@ -94,7 +99,7 @@ def _run_and_get_output(args, cmd, env):
         if args.xvfb:
             exit_code = xvfb.run_executable(cmd, env, stdoutfile=tempfile_path)
         else:
-            exit_code = run_command_with_output(cmd, env=env, stdoutfile=tempfile_path, log=False)
+            exit_code = run_command_with_output(cmd, env=env, stdoutfile=tempfile_path, log=True)
         with open(tempfile_path) as f:
             for line in f:
                 lines.append(line.strip())
@@ -318,6 +323,10 @@ def main():
             sys.exit(1)
         args.shard_count = int(env.pop('GTEST_TOTAL_SHARDS'))
         args.shard_index = int(env.pop('GTEST_SHARD_INDEX'))
+
+    # The harness currently uploads all traces in a batch, which is very slow.
+    # TODO: Reduce lag from trace uploads and remove this. http://anglebug.com/6854
+    env['DEVICE_TIMEOUT_MULTIPLIER'] = '20'
 
     # Get test list
     cmd = [get_binary_name(args.test_suite), '--list-tests', '--verbose']

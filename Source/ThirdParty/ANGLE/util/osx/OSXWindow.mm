@@ -50,6 +50,18 @@ static std::set<OSXWindow *> &AllWindows()
     }
     [super sendEvent:nsEvent];
 }
+
+// Override internal method to try to diagnose unexpected crashes in Core Animation.
+// anglebug.com/6570
+// See also:
+//   https://github.com/microsoft/appcenter-sdk-apple/issues/1944
+//   https://stackoverflow.com/questions/220159/how-do-you-print-out-a-stack-trace-to-the-console-log-in-cocoa
+- (void)_crashOnException:(NSException *)exception
+{
+    NSLog(@"*** OSXWindow aborting on exception:  <%@> %@", [exception name], [exception reason]);
+    NSLog(@"%@", [exception callStackSymbols]);
+    abort();
+}
 @end
 
 // The Delegate receiving application-wide events.

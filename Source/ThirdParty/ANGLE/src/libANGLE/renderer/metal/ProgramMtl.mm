@@ -674,11 +674,22 @@ angle::Result ProgramMtl::getSpecializedShader(ContextMtl *context,
                 coverageMaskEnabledStr =
                     [NSString stringWithUTF8String:sh::mtl::kCoverageMaskEnabledConstName];
             }
+            
 
             funcConstants = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
             [funcConstants setConstantValue:&emulateCoverageMask
                                        type:MTLDataTypeBool
                                    withName:coverageMaskEnabledStr];
+            
+            NSString *depthWriteEnabledStr = 
+                [NSString stringWithUTF8String:sh::mtl::kDepthWriteEnabledConstName];
+            
+            MTLPixelFormat depthPixelFormat =
+                (MTLPixelFormat)renderPipelineDesc.outputDescriptor.depthAttachmentPixelFormat;
+            BOOL fragDepthWriteEnabled = depthPixelFormat != MTLPixelFormatInvalid;
+            [funcConstants setConstantValue:&fragDepthWriteEnabled
+                                       type:MTLDataTypeBool
+                                   withName:depthWriteEnabledStr];
         }
 
     }  // gl::ShaderType::Fragment

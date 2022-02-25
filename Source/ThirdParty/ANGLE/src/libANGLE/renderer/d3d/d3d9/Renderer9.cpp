@@ -3296,7 +3296,7 @@ std::string Renderer9::getVendorString() const
     return GetVendorString(getVendorId());
 }
 
-std::string Renderer9::getVersionString() const
+std::string Renderer9::getVersionString(bool includeFullVersion) const
 {
     std::ostringstream versionString;
     std::string driverName(mAdapterIdentifier.Driver);
@@ -3306,10 +3306,14 @@ std::string Renderer9::getVersionString() const
     }
     else
     {
-        versionString << "D3D9 ";
+        versionString << "D3D9";
     }
-    versionString << "-";
-    versionString << GetDriverVersionString(mAdapterIdentifier.DriverVersion);
+
+    if (includeFullVersion)
+    {
+        versionString << " -";
+        versionString << GetDriverVersionString(mAdapterIdentifier.DriverVersion);
+    }
 
     return versionString.str();
 }

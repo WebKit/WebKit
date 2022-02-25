@@ -71,6 +71,9 @@ class Resource : angle::NonCopyable
     bool isCPUReadMemDirty() const { return mUsageRef->cpuReadMemDirty; }
     void resetCPUReadMemDirty() { mUsageRef->cpuReadMemDirty = false; }
 
+    virtual size_t estimatedByteSize() const = 0;
+    virtual id getID() const                 = 0;
+
   protected:
     Resource();
     // Share the GPU usage ref with other resource
@@ -269,6 +272,9 @@ class Texture final : public Resource,
 
     // Explicitly sync content between CPU and GPU
     void syncContent(ContextMtl *context, mtl::BlitCommandEncoder *encoder);
+    void setEstimatedByteSize(size_t bytes) { mEstimatedByteSize = bytes; }
+    size_t estimatedByteSize() const override { return mEstimatedByteSize; }
+    id getID() const override { return get(); }
 
   private:
     using ParentClass = WrappedObject<id<MTLTexture>>;
@@ -335,6 +341,8 @@ class Texture final : public Resource,
     TextureRef mStencilView;
     // Readable copy of texture
     TextureRef mReadCopy;
+
+    size_t mEstimatedByteSize = 0;
 };
 
 class Buffer final : public Resource,
@@ -384,6 +392,9 @@ class Buffer final : public Resource,
 
     // Explicitly sync content between CPU and GPU
     void syncContent(ContextMtl *context, mtl::BlitCommandEncoder *encoder);
+
+    size_t estimatedByteSize() const override { return size(); }
+    id getID() const override { return get(); }
 
   private:
     Buffer(ContextMtl *context, bool forceUseSharedMem, size_t size, const uint8_t *data);

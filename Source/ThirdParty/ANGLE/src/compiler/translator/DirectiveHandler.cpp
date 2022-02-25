@@ -162,6 +162,78 @@ void TDirectiveHandler::handleExtension(const angle::pp::SourceLocation &loc,
                 iter->second = behaviorVal;
             }
         }
+        // All the extensions listed in the spec here:
+        // https://www.khronos.org/registry/OpenGL/extensions/ANDROID/ANDROID_extension_pack_es31a.txt
+        // are implicitly enabled when GL_ANDROID_extension_pack_es31a is enabled
+        if (name == "GL_ANDROID_extension_pack_es31a")
+        {
+            constexpr char kGeometryShaderExtName[]      = "GL_EXT_geometry_shader";
+            constexpr char kTessellationShaderExtName[]  = "GL_EXT_tessellation_shader";
+            constexpr char kGpuShader5ExtName[]          = "GL_EXT_gpu_shader5";
+            constexpr char kTextureBufferExtName[]       = "GL_EXT_texture_buffer";
+            constexpr char kTextureCubeMapArrayExtName[] = "GL_EXT_texture_cube_map_array";
+            constexpr char kSampleVariablesExtName[]     = "GL_OES_sample_variables";
+            constexpr char kShaderMultisampleInterpolationExtName[] =
+                "GL_OES_shader_multisample_interpolation";
+            constexpr char kShaderImageAtomicExtName[] = "GL_OES_shader_image_atomic";
+            constexpr char kTextureStorageMultisample2dArrayExtName[] =
+                "GL_OES_texture_storage_multisample_2d_array";
+            iter = mExtensionBehavior.find(GetExtensionByName(kGeometryShaderExtName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+
+            iter = mExtensionBehavior.find(GetExtensionByName(kTessellationShaderExtName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+
+            iter = mExtensionBehavior.find(GetExtensionByName(kGpuShader5ExtName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+
+            iter = mExtensionBehavior.find(GetExtensionByName(kTextureBufferExtName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+
+            iter = mExtensionBehavior.find(GetExtensionByName(kTextureCubeMapArrayExtName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+
+            iter = mExtensionBehavior.find(GetExtensionByName(kSampleVariablesExtName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+
+            iter =
+                mExtensionBehavior.find(GetExtensionByName(kShaderMultisampleInterpolationExtName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+
+            iter = mExtensionBehavior.find(GetExtensionByName(kShaderImageAtomicExtName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+
+            iter = mExtensionBehavior.find(
+                GetExtensionByName(kTextureStorageMultisample2dArrayExtName));
+            if (iter != mExtensionBehavior.end())
+            {
+                iter->second = behaviorVal;
+            }
+        }
         // EXT_shader_io_blocks is implicitly enabled when EXT_geometry_shader or
         // EXT_tessellation_shader is enabled.
         if (name == "GL_EXT_geometry_shader" || name == "GL_EXT_tessellation_shader")

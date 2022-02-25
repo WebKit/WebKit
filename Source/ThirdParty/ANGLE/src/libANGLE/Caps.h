@@ -164,6 +164,7 @@ struct TypePrecision
     TypePrecision &operator=(const TypePrecision &other);
 
     void setIEEEFloat();
+    void setIEEEHalfFloat();
     void setTwosComplementInt(unsigned int bits);
     void setSimulatedFloat(unsigned int range, unsigned int precision);
     void setSimulatedInt(unsigned int range);
@@ -713,6 +714,9 @@ struct ClientExtensions
 
     // EGL_ANGLE_platform_angle_device_context_volatile_cgl
     bool platformANGLEDeviceContextVolatileCgl = false;
+
+    // EGL_ANGLE_platform_angle_device_id
+    bool platformANGLEDeviceId = false;
 
     // EGL_ANGLE_device_creation
     bool deviceCreation = false;

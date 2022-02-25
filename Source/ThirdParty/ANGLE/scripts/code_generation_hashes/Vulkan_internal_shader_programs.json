@@ -92,25 +92,25 @@
   "src/libANGLE/renderer/vulkan/shaders/gen/FullScreenTri.vert.00000000.inc":
     "378a69c33285857dc494568e2fee54c7",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000000.inc":
-    "6df92b358d1275a7fce55aaa89f7435d",
+    "a2aa13c7fefaa7859d7de6392e20bbaa",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000001.inc":
-    "ab0fe71d6a13817ae5e040c6fcd2bb0d",
+    "030d2d590830e5adddd740be48cef76a",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000002.inc":
-    "4234660aa5800cb16e1647969c7a6ea0",
+    "871b39094144bd397273ed55f7ff60b5",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000003.inc":
-    "1b2e7615b07eba027a72d1f29ef97fac",
+    "298ab0e5bd28f165afbb9022f6da8d4b",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000004.inc":
-    "f7476b8cadb37d78afbc59fc943495b7",
+    "c7567df64e76546731d981ba28c8277b",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000005.inc":
-    "73569c028c348b9de102a7e0273af2d8",
+    "e7d3f4e95236783e514c384e8c320ed1",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000006.inc":
-    "dbe876f573d6178e57c58c496305d004",
+    "b5acc4fd02f746fb2450e6ac1ff2aead",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000007.inc":
-    "019cd6e54296ae3419d5883a6722e4d7",
+    "961aa4386a6664c083ebaa681a32ebbd",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000008.inc":
-    "d6b3374373bf3bb272a34db9d23fb39a",
+    "878adcbd9f2915c860808a637655e00d",
   "src/libANGLE/renderer/vulkan/shaders/gen/GenerateMipmap.comp.00000009.inc":
-    "74b9244ce2b5b9e0ff6c5be9d14796ea",
+    "3c211ff89cc69d889237d3949a4110d1",
   "src/libANGLE/renderer/vulkan/shaders/gen/ImageClear.frag.00000000.inc":
     "f88d897af7e22d98d5552285ddb80371",
   "src/libANGLE/renderer/vulkan/shaders/gen/ImageClear.frag.00000001.inc":
@@ -261,22 +261,10 @@
     "41f89aa95e279a36cc398d74c0a5a5af",
   "src/libANGLE/renderer/vulkan/shaders/gen/ImageCopy.frag.0000002A.inc":
     "15689fb00c6bf4d2d828898d043cdd8a",
-  "src/libANGLE/renderer/vulkan/shaders/gen/OverlayCull.comp.00000000.inc":
-    "4b21cfe1dc25ef1fd0c41d9f6971094a",
-  "src/libANGLE/renderer/vulkan/shaders/gen/OverlayCull.comp.00000001.inc":
-    "c0334a7da459bba7918bd95260ec4471",
-  "src/libANGLE/renderer/vulkan/shaders/gen/OverlayCull.comp.00000002.inc":
-    "35fbd6fa0dcd2cd0acb7056531906dc1",
-  "src/libANGLE/renderer/vulkan/shaders/gen/OverlayCull.comp.00000003.inc":
-    "d90a95c616f06e7b96dc7897db232703",
-  "src/libANGLE/renderer/vulkan/shaders/gen/OverlayCull.comp.00000004.inc":
-    "8a6a0b78d9de1ba16945097fb33e1119",
-  "src/libANGLE/renderer/vulkan/shaders/gen/OverlayCull.comp.00000005.inc":
-    "83626be8291a8a4364076cf82e714507",
-  "src/libANGLE/renderer/vulkan/shaders/gen/OverlayDraw.comp.00000000.inc":
-    "cccfaa2f3f70dfb8d204689a4a17e355",
-  "src/libANGLE/renderer/vulkan/shaders/gen/OverlayDraw.comp.00000001.inc":
-    "e3d99398731135cd072661d5789ba7d1",
+  "src/libANGLE/renderer/vulkan/shaders/gen/OverlayDraw.frag.00000000.inc":
+    "8fcbdd5d4d69697e28ff016e2d15f0d5",
+  "src/libANGLE/renderer/vulkan/shaders/gen/OverlayDraw.vert.00000000.inc":
+    "7c6873b4adbfd7ca626a2e2801a96a47",
   "src/libANGLE/renderer/vulkan/shaders/src/BlitResolve.frag":
     "0b16d3ad95d7dbc2ce7175462152e4f9",
   "src/libANGLE/renderer/vulkan/shaders/src/BlitResolve.frag.json":
@@ -304,9 +292,9 @@
   "src/libANGLE/renderer/vulkan/shaders/src/FullScreenTri.vert":
     "dacf19aaec8cfc9d2d0c05230a11613b",
   "src/libANGLE/renderer/vulkan/shaders/src/GenerateMipmap.comp":
-    "ec72e3ce787ca499c684eaa7c96bcc74",
+    "95480305550361b5ae0ebefbb2186b35",
   "src/libANGLE/renderer/vulkan/shaders/src/GenerateMipmap.comp.json":
-    "99543d519f0afe66713498e5d7873871",
+    "99059b16df3c5ed396edad3d525ec5c5",
   "src/libANGLE/renderer/vulkan/shaders/src/ImageClear.frag":
     "d96164f5560ca721aeb0355df88a7f29",
   "src/libANGLE/renderer/vulkan/shaders/src/ImageClear.frag.json":
@@ -315,18 +303,14 @@
     "7fbc40bc5eca0de0024f538b6c37b50d",
   "src/libANGLE/renderer/vulkan/shaders/src/ImageCopy.frag.json":
     "f6b69ba316a5565400c2875e5da14b73",
-  "src/libANGLE/renderer/vulkan/shaders/src/OverlayCull.comp":
-    "c89a0d185f7723e0c221c135aa4f48a3",
-  "src/libANGLE/renderer/vulkan/shaders/src/OverlayCull.comp.json":
-    "e5fd5bb63707753601e197635316430e",
-  "src/libANGLE/renderer/vulkan/shaders/src/OverlayDraw.comp":
-    "e3e098b2349352c9e12ab34bc5f0a53c",
-  "src/libANGLE/renderer/vulkan/shaders/src/OverlayDraw.comp.json":
-    "af79e5153c99cdb1e6b551b11bbf7f6b",
+  "src/libANGLE/renderer/vulkan/shaders/src/OverlayDraw.frag":
+    "7e303a21c1881d6461c34ac7e2ad19ff",
+  "src/libANGLE/renderer/vulkan/shaders/src/OverlayDraw.vert":
+    "5aa33152fce5b9261c4d427ad2babdd7",
   "src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.cpp":
-    "190b5413334a960ab072609fec1adbff",
+    "3fedeb617757e84d58c86e0d3c1d2e02",
   "src/libANGLE/renderer/vulkan/vk_internal_shaders_autogen.h":
-    "5815a3b35ba80dded6396055281bb674",
+    "383c8c080c5c55bd764a1db11775e562",
   "tools/glslang/glslang_validator.exe.sha1":
     "17e862cc6f462fecbf50b24ed6544a27",
   "tools/glslang/glslang_validator.sha1":

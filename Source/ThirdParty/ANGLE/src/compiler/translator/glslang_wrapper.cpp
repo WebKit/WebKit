@@ -10,6 +10,7 @@
 //   This file is separated as glslang's header contains conflicting macro definitions with ANGLE's.
 //
 
+#include "common/spirv/spirv_types.h"
 #include "compiler/translator/glslang_wrapper.h"
 
 // glslang has issues with some specific warnings.

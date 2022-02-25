@@ -117,7 +117,6 @@ class TSymbolTableBase
     TSymbol *m_gl_SecondaryFragDataEXT                       = nullptr;
     TSymbol *m_gl_FragDepthEXT                               = nullptr;
     TSymbol *m_gl_LastFragData                               = nullptr;
-    TSymbol *m_gl_LastFragDataNonCoherent                    = nullptr;
     TSymbol *m_gl_LastFragDataNV                             = nullptr;
     TSymbol *m_gl_SampleMaskIn                               = nullptr;
     TSymbol *m_gl_SampleMaskInES3_2                          = nullptr;
@@ -143,10 +142,14 @@ class TSymbolTableBase
     TSymbol *m_gl_inTCSES3_2                                 = nullptr;
     TSymbol *m_gl_outTCS                                     = nullptr;
     TSymbol *m_gl_outTCSES3_2                                = nullptr;
+    TSymbol *m_gl_BoundingBoxTCS                             = nullptr;
+    TSymbol *m_gl_BoundingBoxTCSES3_2                        = nullptr;
     TSymbol *m_gl_PositionTCS                                = nullptr;
     TSymbol *m_gl_PositionTCSES3_2                           = nullptr;
     TSymbol *m_gl_BoundingBoxEXTTCS                          = nullptr;
     TSymbol *m_gl_BoundingBoxEXTTCSES3_2                     = nullptr;
+    TSymbol *m_gl_BoundingBoxOESTCS                          = nullptr;
+    TSymbol *m_gl_BoundingBoxOESTCSES3_2                     = nullptr;
     TSymbol *m_gl_TessLevelOuterTES                          = nullptr;
     TSymbol *m_gl_TessLevelOuterTESES3_2                     = nullptr;
     TSymbol *m_gl_TessLevelInnerTES                          = nullptr;

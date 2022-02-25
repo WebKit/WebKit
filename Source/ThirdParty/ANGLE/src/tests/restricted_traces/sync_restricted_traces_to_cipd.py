@@ -90,10 +90,11 @@ def main(args):
             retval = pool.map_async(sync_trace, zipped_args).get(LONG_TIMEOUT)
         except KeyboardInterrupt:
             pool.terminate()
+            pool.join()
         except Exception as e:
             print('got exception: %r, terminating the pool' % (e,))
             pool.terminate()
-        pool.join()
+            pool.join()
     else:
         retval = map(sync_trace, zipped_args)
 

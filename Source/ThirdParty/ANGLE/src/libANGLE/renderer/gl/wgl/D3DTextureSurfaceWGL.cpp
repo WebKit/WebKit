@@ -179,6 +179,7 @@ egl::Error GetD3D9TextureInfo(EGLenum buftype,
 egl::Error GetD3DTextureInfo(EGLenum buftype,
                              EGLClientBuffer clientBuffer,
                              ID3D11Device *d3d11Device,
+                             ID3D11Device1 *d3d11Device1,
                              size_t *width,
                              size_t *height,
                              const angle::Format **angleFormat,
@@ -213,6 +214,12 @@ egl::Error GetD3DTextureInfo(EGLenum buftype,
         ID3D11Texture2D *texture11 = nullptr;
         HRESULT result = d3d11Device->OpenSharedResource(shareHandle, __uuidof(ID3D11Texture2D),
                                                          reinterpret_cast<void **>(&texture11));
+        if (FAILED(result) && d3d11Device1)
+        {
+            result = d3d11Device1->OpenSharedResource1(shareHandle, __uuidof(ID3D11Texture2D),
+                                                       reinterpret_cast<void **>(&texture11));
+        }
+
         if (FAILED(result))
         {
             return egl::EglBadParameter() << "Failed to open share handle, " << gl::FmtHR(result);
@@ -236,12 +243,14 @@ D3DTextureSurfaceWGL::D3DTextureSurfaceWGL(const egl::SurfaceState &state,
                                            DisplayWGL *display,
                                            HDC deviceContext,
                                            ID3D11Device *displayD3D11Device,
+                                           ID3D11Device1 *displayD3D11Device1,
                                            const FunctionsGL *functionsGL,
                                            const FunctionsWGL *functionsWGL)
     : SurfaceWGL(state),
       mBuftype(buftype),
       mClientBuffer(clientBuffer),
       mDisplayD3D11Device(displayD3D11Device),
+      mDisplayD3D11Device1(displayD3D11Device1),
       mDisplay(display),
       mStateManager(stateManager),
       mFunctionsGL(functionsGL),
@@ -289,17 +298,18 @@ D3DTextureSurfaceWGL::~D3DTextureSurfaceWGL()
 
 egl::Error D3DTextureSurfaceWGL::ValidateD3DTextureClientBuffer(EGLenum buftype,
                                                                 EGLClientBuffer clientBuffer,
-                                                                ID3D11Device *d3d11Device)
+                                                                ID3D11Device *d3d11Device,
+                                                                ID3D11Device1 *d3d11Device1)
 {
-    return GetD3DTextureInfo(buftype, clientBuffer, d3d11Device, nullptr, nullptr, nullptr, nullptr,
-                             nullptr);
+    return GetD3DTextureInfo(buftype, clientBuffer, d3d11Device, d3d11Device1, nullptr, nullptr,
+                             nullptr, nullptr, nullptr);
 }
 
 egl::Error D3DTextureSurfaceWGL::initialize(const egl::Display *display)
 {
     IUnknown *device = nullptr;
-    ANGLE_TRY(GetD3DTextureInfo(mBuftype, mClientBuffer, mDisplayD3D11Device, &mWidth, &mHeight,
-                                &mColorFormat, &mObject, &device));
+    ANGLE_TRY(GetD3DTextureInfo(mBuftype, mClientBuffer, mDisplayD3D11Device, mDisplayD3D11Device1,
+                                &mWidth, &mHeight, &mColorFormat, &mObject, &device));
 
     if (mColorFormat)
     {

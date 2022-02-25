@@ -142,6 +142,11 @@ constexpr size_t kInlineConstDataMaxSize = 4 * 1024;
 constexpr size_t kDefaultUniformsMaxSize = 4 * 1024;
 constexpr uint32_t kMaxViewports         = 1;
 
+// Restrict in-flight resource usage to 400 MB.
+// A render pass can use more than 400MB, but the command buffer
+// will be flushed next time
+constexpr const size_t kMaximumResidentMemorySizeInBytes = 400 * 1024 * 1024;
+
 constexpr uint32_t kVertexAttribBufferStrideAlignment = 4;
 // Alignment requirement for offset passed to setVertex|FragmentBuffer
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST

@@ -64,16 +64,13 @@ constexpr char kUBSanOptionsEnvVar[] = "UBSAN_OPTIONS";
 // Ideally we could use a separate timeout for the slow first test.
 // Allow sanitized tests to run more slowly.
 #if defined(NDEBUG) && !defined(ANGLE_WITH_SANITIZER)
-constexpr int kDefaultTestTimeout = 60;
-#else
-constexpr int kDefaultTestTimeout  = 120;
-#endif
-constexpr int kSlowTestTimeoutScale = 3;
-#if defined(NDEBUG)
+constexpr int kDefaultTestTimeout  = 60;
 constexpr int kDefaultBatchTimeout = 300;
 #else
+constexpr int kDefaultTestTimeout  = 120;
 constexpr int kDefaultBatchTimeout = 600;
 #endif
+constexpr int kSlowTestTimeoutScale  = 3;
 constexpr int kDefaultBatchSize      = 256;
 constexpr double kIdleMessageTimeout = 15.0;
 constexpr int kDefaultMaxProcesses   = 16;
@@ -964,6 +961,17 @@ void GTestListTests(const std::map<TestIdentifier, TestResult> &resultsMap)
         }
     }
 }
+
+// On Android, batching is done on the host, i.e. externally.
+// TestSuite executes on the device and should just passthrough all args to GTest.
+bool UsesExternalBatching()
+{
+#if defined(ANGLE_PLATFORM_ANDROID)
+    return true;
+#else
+    return false;
+#endif
+}
 }  // namespace
 
 // static
@@ -1093,6 +1101,12 @@ TestSuite::TestSuite(int *argc, char **argv)
             mChildProcessArgs.push_back(argv[argIndex]);
         }
         ++argIndex;
+    }
+
+    if (UsesExternalBatching() && mBotMode)
+    {
+        printf("Bot mode is mutually exclusive with external batching.\n");
+        exit(EXIT_FAILURE);
     }
 
     mTestResults.currentTestTimeout = mTestTimeout;
@@ -1242,38 +1256,26 @@ TestSuite::TestSuite(int *argc, char **argv)
         // If there's only one shard, we can use the testSet as defined above.
         if (mShardCount > 1)
         {
-            testSet = GetShardTests(testSet, mShardIndex, mShardCount, &mTestFileLines,
-                                    alsoRunDisabledTests);
-
-            if (!mBotMode)
+            if (!mBotMode && !UsesExternalBatching())
             {
-                mFilterString = GetTestFilter(testSet);
-
-                if (filterArgIndex.valid())
-                {
-                    argv[filterArgIndex.value()] = const_cast<char *>(mFilterString.c_str());
-                }
-                else
-                {
-                    // Note that we only add a filter string if we previously deleted a shard
-                    // index/count argument. So we will have space for the new filter string in
-                    // argv.
-                    AddArg(argc, argv, mFilterString.c_str());
-                }
-
-                // Force-re-initialize GoogleTest flags to load the shard filter.
-                testing::internal::ParseGoogleTestFlagsOnly(argc, argv);
+                printf("Sharding is only supported in bot mode or external batching.\n");
+                exit(EXIT_FAILURE);
+            }
+            // With external batching, we must use exactly the testSet as defined externally.
+            // But when listing tests, we do need to apply sharding ourselves,
+            // since we use our own implementation for listing tests and not GTest directly.
+            if (!UsesExternalBatching() || mGTestListTests || mListTests)
+            {
+                testSet = GetShardTests(testSet, mShardIndex, mShardCount, &mTestFileLines,
+                                        alsoRunDisabledTests);
             }
         }
     }
 
+    if (!testSet.empty())
     {
         std::stringstream fakeTestName;
-        fakeTestName << kArtifactsFakeTestName;
-        if (mShardIndex != -1)
-        {
-            fakeTestName << "-Shard" << std::setfill('0') << std::setw(2) << mShardIndex;
-        }
+        fakeTestName << kArtifactsFakeTestName << '-' << testSet[0].testName;
         mTestResults.testArtifactsFakeTestName = fakeTestName.str();
     }
 
@@ -1786,7 +1788,8 @@ int TestSuite::run()
                     SplitString(batchStdout, "\r\n", WhitespaceHandling::TRIM_WHITESPACE,
                                 SplitResult::SPLIT_WANT_NONEMPTY);
                 constexpr size_t kKeepLines = 10;
-                printf("Last %d lines of batch stdout:\n", static_cast<int>(kKeepLines));
+                printf("Batch timeout! Last %d lines of batch stdout:\n",
+                       static_cast<int>(kKeepLines));
                 for (size_t lineNo = lines.size() - std::min(lines.size(), kKeepLines);
                      lineNo < lines.size(); ++lineNo)
                 {

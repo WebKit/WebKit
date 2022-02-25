@@ -5,23 +5,26 @@ ANGLE provides OpenGL ES 3.1 and EGL 1.5 libraries and tests. You can use these 
 ## Development setup
 
 ### Version Control
+
 ANGLE uses git for version control. Helpful documentation can be found at [http://git-scm.com/documentation](http://git-scm.com/documentation).
 
-### Required Tools
-On all platforms:
+### Required First Setup (do this first)
 
+Required on all platforms:
+
+ * [Python 3](https://www.python.org/downloads/) must be available in your path.
  * [depot_tools](https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up)
    * Required to download dependencies (with gclient), generate build files (with GN), and compile ANGLE (with ninja).
    * Ensure `depot_tools` is in your path as it provides ninja for compilation.
- * For Googlers, run `download_from_google_storage --config` to login to Google Storage.
+ * For Googlers, run `download_from_google_storage --config` to login to Google Storage before fetching the source.
 
 On Windows:
 
  * ***IMPORTANT: Set `DEPOT_TOOLS_WIN_TOOLCHAIN=0` in your environment if you are not a Googler.***
- * Install [Visual Studio Community 2019](https://visualstudio.microsoft.com/vs/)
+ * Install [Visual Studio Community 2022](https://visualstudio.microsoft.com/vs/)
  * Install the [Windows 10 SDK, latest version](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk).
    * You can install it through Visual Studio Installer if available.
-   * Required for GN-generated Visual Studio projects, the Debug runtime for D3D11, and the D3D Compiler DLL.
+   * The SDK is required for GN-generated Visual Studio projects, the D3D Debug runtime, and the latest HLSL Compiler runtime.
  * (optional) See the [Chromium Windows build instructions](https://chromium.googlesource.com/chromium/src/+/main/docs/windows_build_instructions.md) for more info.
 
 On Linux:
@@ -38,14 +41,12 @@ On MacOS:
 ### Getting the source
 
 ```
-git clone https://chromium.googlesource.com/angle/angle
+mkdir angle
 cd angle
-python scripts/bootstrap.py
-gclient sync
-git checkout main
+fetch angle
 ```
 
-If you're contributing code, you will also need to set up the commit-msg hook. See [ContributingCode#getting-started-with-gerrit](ContributingCode.md#getting-started-with-gerrit) for more detailed instructions.
+If you're contributing code, you will also need to set up the Git `commit-msg` hook. See [ContributingCode#getting-started-with-gerrit](ContributingCode.md#getting-started-with-gerrit) for instructions.
 
 On Linux only, you need to install all the necessary dependencies before going further by running this command:
 ```
@@ -57,78 +58,83 @@ After this completes successfully, you are ready to generate the ninja files:
 gn gen out/Debug
 ```
 
-On Windows only, ensure you **set `DEPOT_TOOLS_WIN_TOOLCHAIN=0` in your environment** (if you are not a Googler).
+If you had trouble checking out the code, please inspect the error message. As
+a reminder, on Windows, ensure you **set `DEPOT_TOOLS_WIN_TOOLCHAIN=0` in
+your environment if you are not a Googler**. If you are a Googler, ensure you
+ran `download_from_google_storage --config`.
 
-GN will generate ninja files. The default build options build ANGLE with clang and in release mode.
-Often, the default options are the desired ones, but they can be changed by running
-`gn args out/Debug`. Some options that are commonly overriden for development are:
+GN will generate ninja files. The default build options build ANGLE with clang
+and in release mode. Often, the default options are the desired ones, but
+they can be changed by running `gn args out/Debug`. Some options that are
+commonly overriden for development are:
 
 ```
-is_component_build = false         (links dependencies into the build targets)
-target_cpu = "x86"                 (default is "x64")
-is_clang = false (NOT RECOMMENDED) (to use system default compiler instead of clang)
-is_debug = false                   (for release builds. is_debug = true is the default)
-angle_assert_always_on = true      (enable release asserts and debug layers)
+is_component_build = true/false      (false forces static links of dependencies)
+target_cpu = "x64"/"x86"             (the default is "x64")
+is_debug = true/false                (use false for release builds. is_debug = true is the default)
+angle_assert_always_on = true/false  (enables release asserts and runtime debug layers)
+is_clang = false (NOT RECOMMENDED)   (to use system default compiler instead of clang)
 ```
 
 For a release build run `gn args out/Release` and set `is_debug = false`.
+Optionally set `angle_assert_always_on = true` for Release testing.
 
-On Windows, you can build for the Universal Windows Platform (UWP) by setting `target_os = "winuwp"` in the args.
-Setting `is_component_build = false` is highly recommended to support moving libEGL.dll and libGLESv2.dll to an
-application's directory and being self-contained, instead of depending on other DLLs (d3dcompiler_47.dll is still
-needed for the Direct3D backend).
+On Windows, you can build for the Universal Windows Platform (UWP) by setting
+`target_os = "winuwp"` in the args. Setting `is_component_build = false` is
+highly recommended to support moving libEGL.dll and libGLESv2.dll to an
+application's directory and being self-contained, instead of depending on
+other DLLs (d3dcompiler_47.dll is still needed for the Direct3D backend). We
+also recommend using `is_clang = false` with UWP.
 
 For more information on GN run `gn help`.
 
-Ninja can be used to compile on all platforms with one of the following commands:
+Use `autoninja` to compile on all platforms with one of the following commands:
+
 ```
 autoninja -C out/Debug
 autoninja -C out/Release
 ```
-Ninja automatically calls GN to regenerate the build files on any configuration change.
 
-Ensure `depot_tools` is in your path as it provides ninja.
+`depot_tools` provides `autoninja`, so it should be available in your path
+from earlier steps. Ninja automatically calls GN to regenerate the build
+files on any configuration change. `autoninja` automatically specifies a
+thread count to `ninja` based on your system configuration.
 
 ### Building with Goma (Google employees only)
 
-In addition, Google employees should use goma, a distributed compilation
-system. Detailed information is available internally but the relevant gn arg
-is:
+In addition, we highly recommend Google employees use goma, a distributed
+compilation system. Detailed information is available internally. To enable
+Goma set the GN arg:
 
 ```
 use_goma = true
 ```
 
-To get any benefit from goma it is important to pass a large -j value to
-ninja. A good default is 10*numCores to 20*numCores. If you run autoninja then
-it will automatically pass an appropriate -j value to ninja for goma or not.
-
-```
-$ autoninja -C out\Debug
-```
-
 ### Building and Debugging with Visual Studio
 
 To generate the Visual Studio solution in `out/Debug/angle-debug.sln`:
+
 ```
-gn gen out/Debug --sln=angle-debug --ide=vs2019
+gn gen out/Debug --sln=angle-debug --ide=vs2022
 ```
 
 In Visual Studio:
  1. Open the ANGLE solution file `out/Debug/angle-debug.sln`.
- 2. It is recommended you still use `autoninja` from the command line to build.
- 3. If you do want to build in the solution, "Build Solution" is not functional with GN. Build one target at a time.
+ 2. We recommended you use `autoninja` from a command line to build manually.
+ 3. "Build Solution" from the IDE is broken with GN. You can use the IDE to build one target or one file at a time.
 
-Once the build completes all ANGLE libraries, tests, and samples will be located in `out/Debug`.
+Once the build completes, all ANGLE libraries, tests, and samples will be located in `out/Debug`.
 
 ### Building ANGLE for Android
 
 See the Android specific [documentation](DevSetupAndroid.md#ANGLE-for-Android).
 
 ## Application Development with ANGLE
+
 This sections describes how to use ANGLE to build an OpenGL ES application.
 
 ### Choosing a Backend
+
 ANGLE can use a variety of backing renderers based on platform.  On Windows, it defaults to D3D11 where it's available,
 or D3D9 otherwise.  On other desktop platforms, it defaults to GL.  On mobile, it defaults to GLES.
 

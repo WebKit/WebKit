@@ -120,7 +120,7 @@ ANGLE_NO_DISCARD bool ReplaceArrayOfMatrixVarying(TCompiler *compiler,
     {
         TIntermBinary *tempMatrixIndexed =
             new TIntermBinary(EOpIndexDirect, tempReplaceSymbol->deepCopy(), CreateIndexNode(i));
-        for (int col = 0; col < type.getCols(); ++col)
+        for (uint8_t col = 0; col < type.getCols(); ++col)
         {
 
             TIntermBinary *tempMatrixColIndexed = new TIntermBinary(

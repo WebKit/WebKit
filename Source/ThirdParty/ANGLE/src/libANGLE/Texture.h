@@ -184,6 +184,9 @@ class TextureState final : private angle::NonCopyable
     friend bool operator==(const TextureState &a, const TextureState &b);
 
     bool computeSamplerCompleteness(const SamplerState &samplerState, const State &state) const;
+    bool computeSamplerCompletenessForCopyImage(const SamplerState &samplerState,
+                                                const State &state) const;
+
     bool computeMipmapCompleteness() const;
     bool computeLevelCompleteness(TextureTarget target, size_t level) const;
     SamplerFormat computeRequiredSamplerFormat(const SamplerState &samplerState) const;
@@ -513,6 +516,8 @@ class Texture final : public RefCountObject<TextureID>,
     void signalDirtyStorage(InitState initState);
 
     bool isSamplerComplete(const Context *context, const Sampler *optionalSampler);
+    bool isSamplerCompleteForCopyImage(const Context *context,
+                                       const Sampler *optionalSampler) const;
 
     GLenum getImplementationColorReadFormat(const Context *context) const;
     GLenum getImplementationColorReadType(const Context *context) const;

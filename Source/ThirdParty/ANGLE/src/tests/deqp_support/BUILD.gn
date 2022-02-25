@@ -221,6 +221,7 @@ copy("vk_gl_cts_data_data_gles31_shaders_es32") {
 copy("vk_gl_cts_data_data_gles31_shaders_gl45") {
   sources = [
     "$deqp_path/data/gles31/shaders/gl45/arrays_of_arrays.test",
+    "$deqp_path/data/gles31/shaders/gl45/implicit_conversions.test",
     "$deqp_path/data/gles31/shaders/gl45/linkage_geometry.test",
     "$deqp_path/data/gles31/shaders/gl45/linkage_geometry_uniform_types.test",
     "$deqp_path/data/gles31/shaders/gl45/linkage_geometry_varying_types.test",

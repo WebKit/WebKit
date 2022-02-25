@@ -12,8 +12,12 @@
 
 #include "libANGLE/renderer/DeviceImpl.h"
 
+#include "common/vulkan/vk_headers.h"
+
 namespace rx
 {
+
+class RendererVk;
 
 class DeviceVk : public DeviceImpl
 {
@@ -27,6 +31,27 @@ class DeviceVk : public DeviceImpl
                             void **outValue) override;
     EGLint getType() override;
     void generateExtensions(egl::DeviceExtensions *outExtensions) const override;
+    RendererVk *getRenderer() const { return mRenderer; }
+
+  private:
+    // Wrappers for some global vulkan methods which need to read env variables.
+    // The wrappers will set those env variables before calling those global methods.
+    static VKAPI_ATTR VkResult VKAPI_CALL
+    WrappedCreateInstance(const VkInstanceCreateInfo *pCreateInfo,
+                          const VkAllocationCallbacks *pAllocator,
+                          VkInstance *pInstance);
+    static VKAPI_ATTR VkResult VKAPI_CALL
+    WrappedEnumerateInstanceExtensionProperties(const char *pLayerName,
+                                                uint32_t *pPropertyCount,
+                                                VkExtensionProperties *pProperties);
+    static VKAPI_ATTR VkResult VKAPI_CALL
+    WrappedEnumerateInstanceLayerProperties(uint32_t *pPropertyCount,
+                                            VkLayerProperties *pProperties);
+    static VKAPI_ATTR VkResult VKAPI_CALL WrappedEnumerateInstanceVersion(uint32_t *pApiVersion);
+    static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL WrappedGetInstanceProcAddr(VkInstance instance,
+                                                                               const char *pName);
+
+    RendererVk *mRenderer = nullptr;
 };
 
 }  // namespace rx

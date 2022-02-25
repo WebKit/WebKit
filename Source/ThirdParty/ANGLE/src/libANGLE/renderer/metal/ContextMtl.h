@@ -432,6 +432,12 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                        const void *indices,
                                        GLsizei instances);
 
+    angle::Result drawArraysProvokingVertexImpl(const gl::Context *context,
+                                                gl::PrimitiveMode mode,
+                                                GLsizei first,
+                                                GLsizei count,
+                                                GLsizei instances);
+
     angle::Result drawArraysImpl(const gl::Context *context,
                                  gl::PrimitiveMode mode,
                                  GLint first,
@@ -444,7 +450,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                    gl::DrawElementsType type,
                                    const void *indices,
                                    GLsizei instanceCount);
-
+    void flushCommandBufferIfNeeded();
     void updateExtendedState(const gl::State &glState);
 
     void updateViewport(FramebufferMtl *framebufferMtl,
@@ -504,8 +510,10 @@ class ContextMtl : public ContextImpl, public mtl::Context
         DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
     };
 
-    // Must keep this in sync with DriverUniformExtended::createUniformFields in:
-    // src/compiler/translator/tree_util/DriverUniform.h
+    // Must keep this in sync with DriverUniform::createUniformFields in:
+    // src/compiler/translator/tree_util/DriverUniform.cpp
+    // and DriverUniformMetal::createUniformFields in:
+    // src/compiler/translator/DriverUniformMetal.cpp
     struct DriverUniforms
     {
         float viewport[4];
@@ -528,9 +536,11 @@ class ContextMtl : public ContextImpl, public mtl::Context
         float halfRenderArea[2];
         float flipXY[2];
         float negFlipXY[2];
-        uint32_t emulatedInstanceID;
         uint32_t coverageMask;
+        uint32_t unusedMetal;
     };
+    static_assert(sizeof(DriverUniforms) % (sizeof(uint32_t) * 4) == 0,
+                  "DriverUniforms should be 16 bytes aligned");
 
     struct DefaultAttribute
     {

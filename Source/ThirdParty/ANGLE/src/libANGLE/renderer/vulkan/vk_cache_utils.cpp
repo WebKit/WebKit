@@ -1329,6 +1329,11 @@ void InitializeSpecializationInfo(
                     offsetof(vk::SpecializationConstants, drawableHeight);
                 (*specializationEntriesOut)[id].size = sizeof(specConsts.drawableHeight);
                 break;
+            case sh::vk::SpecializationConstantId::Dither:
+                (*specializationEntriesOut)[id].offset =
+                    offsetof(vk::SpecializationConstants, dither);
+                (*specializationEntriesOut)[id].size = sizeof(specConsts.dither);
+                break;
             default:
                 UNREACHABLE();
                 break;
@@ -1633,6 +1638,8 @@ void GraphicsPipelineDesc::initDefaults(const ContextVk *contextVk)
     mRasterizationAndMultisampleStateInfo.bits.alphaToCoverageEnable = 0;
     mRasterizationAndMultisampleStateInfo.bits.alphaToOneEnable      = 0;
 
+    mDepthStencilStateInfo.enable.viewportNegativeOneToOne =
+        contextVk->getFeatures().supportsDepthClipControl.enabled;
     mDepthStencilStateInfo.enable.depthTest  = 0;
     mDepthStencilStateInfo.enable.depthWrite = 0;
     SetBitField(mDepthStencilStateInfo.depthCompareOpAndSurfaceRotation.depthCompareOp,
@@ -1695,6 +1702,9 @@ void GraphicsPipelineDesc::initDefaults(const ContextVk *contextVk)
 
     mDrawableSize.width  = 1;
     mDrawableSize.height = 1;
+
+    mDither.emulatedDitherControl = 0;
+    mDither.unused                = 0;
 }
 
 angle::Result GraphicsPipelineDesc::initializePipeline(
@@ -1913,6 +1923,17 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
     viewportState.pViewports    = nullptr;
     viewportState.scissorCount  = 1;
     viewportState.pScissors     = nullptr;
+
+    VkPipelineViewportDepthClipControlCreateInfoEXT depthClipControl = {};
+    if (contextVk->getFeatures().supportsDepthClipControl.enabled)
+    {
+        depthClipControl.sType =
+            VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLIP_CONTROL_CREATE_INFO_EXT;
+        depthClipControl.negativeOneToOne =
+            static_cast<VkBool32>(mDepthStencilStateInfo.enable.viewportNegativeOneToOne);
+
+        viewportState.pNext = &depthClipControl;
+    }
 
     const PackedRasterizationAndMultisampleStateInfo &rasterAndMS =
         mRasterizationAndMultisampleStateInfo;
@@ -2163,13 +2184,24 @@ void GraphicsPipelineDesc::updateVertexInput(GraphicsPipelineTransitionBits *tra
     transition->set(kBit + 1);
 }
 
-void GraphicsPipelineDesc::updateTopology(GraphicsPipelineTransitionBits *transition,
-                                          gl::PrimitiveMode drawMode)
+void GraphicsPipelineDesc::setTopology(gl::PrimitiveMode drawMode)
 {
     VkPrimitiveTopology vkTopology = gl_vk::GetPrimitiveTopology(drawMode);
     SetBitField(mInputAssemblyAndColorBlendStateInfo.primitive.topology, vkTopology);
+}
 
+void GraphicsPipelineDesc::updateTopology(GraphicsPipelineTransitionBits *transition,
+                                          gl::PrimitiveMode drawMode)
+{
+    setTopology(drawMode);
     transition->set(ANGLE_GET_TRANSITION_BIT(mInputAssemblyAndColorBlendStateInfo, primitive));
+}
+
+void GraphicsPipelineDesc::updateDepthClipControl(GraphicsPipelineTransitionBits *transition,
+                                                  bool negativeOneToOne)
+{
+    SetBitField(mDepthStencilStateInfo.enable.viewportNegativeOneToOne, negativeOneToOne);
+    transition->set(ANGLE_GET_TRANSITION_BIT(mDepthStencilStateInfo, enable));
 }
 
 void GraphicsPipelineDesc::updatePrimitiveRestartEnabled(GraphicsPipelineTransitionBits *transition,
@@ -2290,6 +2322,26 @@ void GraphicsPipelineDesc::updateBlendColor(GraphicsPipelineTransitionBits *tran
     }
 }
 
+void GraphicsPipelineDesc::setSingleBlend(uint32_t colorIndexGL,
+                                          bool enabled,
+                                          VkBlendOp op,
+                                          VkBlendFactor srcFactor,
+                                          VkBlendFactor dstFactor)
+{
+    mInputAssemblyAndColorBlendStateInfo.blendEnableMask |= static_cast<uint8_t>(1 << colorIndexGL);
+
+    PackedColorBlendAttachmentState &blendAttachmentState =
+        mInputAssemblyAndColorBlendStateInfo.attachments[colorIndexGL];
+
+    blendAttachmentState.colorBlendOp = op;
+    blendAttachmentState.alphaBlendOp = op;
+
+    blendAttachmentState.srcColorBlendFactor = srcFactor;
+    blendAttachmentState.dstColorBlendFactor = dstFactor;
+    blendAttachmentState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+    blendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+}
+
 void GraphicsPipelineDesc::updateBlendEnabled(GraphicsPipelineTransitionBits *transition,
                                               gl::DrawBufferMask blendEnabledMask)
 {
@@ -2341,6 +2393,7 @@ void GraphicsPipelineDesc::updateBlendFuncs(GraphicsPipelineTransitionBits *tran
 }
 
 void GraphicsPipelineDesc::resetBlendFuncsAndEquations(GraphicsPipelineTransitionBits *transition,
+                                                       const gl::BlendStateExt &blendStateExt,
                                                        gl::DrawBufferMask previousAttachmentsMask,
                                                        gl::DrawBufferMask newAttachmentsMask)
 {
@@ -2348,7 +2401,9 @@ void GraphicsPipelineDesc::resetBlendFuncsAndEquations(GraphicsPipelineTransitio
     // We need to clear blend funcs and equations for attachments in P that are not in N.  That is
     // attachments in P&~N.
     const gl::DrawBufferMask attachmentsToClear = previousAttachmentsMask & ~newAttachmentsMask;
-    constexpr size_t kSizeBits                  = sizeof(PackedColorBlendAttachmentState) * 8;
+    // We also need to restore blend funcs and equations for attachments in N that are not in P.
+    const gl::DrawBufferMask attachmentsToAdd = newAttachmentsMask & ~previousAttachmentsMask;
+    constexpr size_t kSizeBits                = sizeof(PackedColorBlendAttachmentState) * 8;
 
     for (size_t attachmentIndex : attachmentsToClear)
     {
@@ -2364,6 +2419,12 @@ void GraphicsPipelineDesc::resetBlendFuncsAndEquations(GraphicsPipelineTransitio
 
         transition->set(ANGLE_GET_INDEXED_TRANSITION_BIT(mInputAssemblyAndColorBlendStateInfo,
                                                          attachments, attachmentIndex, kSizeBits));
+    }
+
+    if (attachmentsToAdd.any())
+    {
+        updateBlendFuncs(transition, blendStateExt, attachmentsToAdd);
+        updateBlendEquations(transition, blendStateExt, attachmentsToAdd);
     }
 }
 
@@ -2668,6 +2729,16 @@ uint32_t GraphicsPipelineDesc::getSubpass() const
     return mRasterizationAndMultisampleStateInfo.bits.subpass;
 }
 
+void GraphicsPipelineDesc::updateEmulatedDitherControl(GraphicsPipelineTransitionBits *transition,
+                                                       uint16_t value)
+{
+    // Make sure we don't waste time resetting this to zero in the common no-dither case.
+    ASSERT(value != 0 || mDither.emulatedDitherControl != 0);
+
+    mDither.emulatedDitherControl = value;
+    transition->set(ANGLE_GET_TRANSITION_BIT(mDither, emulatedDitherControl));
+}
+
 void GraphicsPipelineDesc::updateRenderPassDesc(GraphicsPipelineTransitionBits *transition,
                                                 const RenderPassDesc &renderPassDesc)
 {
@@ -2794,17 +2865,17 @@ bool DescriptorSetLayoutDesc::operator==(const DescriptorSetLayoutDesc &other) c
 }
 
 void DescriptorSetLayoutDesc::update(uint32_t bindingIndex,
-                                     VkDescriptorType type,
+                                     VkDescriptorType descriptorType,
                                      uint32_t count,
                                      VkShaderStageFlags stages,
                                      const Sampler *immutableSampler)
 {
-    ASSERT(static_cast<size_t>(type) < std::numeric_limits<uint16_t>::max());
+    ASSERT(static_cast<size_t>(descriptorType) < std::numeric_limits<uint16_t>::max());
     ASSERT(count < std::numeric_limits<uint16_t>::max());
 
     PackedDescriptorSetBinding &packedBinding = mPackedDescriptorSetLayout[bindingIndex];
 
-    SetBitField(packedBinding.type, type);
+    SetBitField(packedBinding.type, descriptorType);
     SetBitField(packedBinding.count, count);
     SetBitField(packedBinding.stages, stages);
     packedBinding.immutableSampler = VK_NULL_HANDLE;
@@ -2856,7 +2927,9 @@ void DescriptorSetLayoutDesc::unpackBindings(DescriptorSetLayoutBindingVector *b
 }
 
 // PipelineLayoutDesc implementation.
-PipelineLayoutDesc::PipelineLayoutDesc() : mDescriptorSetLayouts{}, mPushConstantRanges{} {}
+PipelineLayoutDesc::PipelineLayoutDesc()
+    : mDescriptorSetLayouts{}, mPushConstantRange{}, mPadding(0)
+{}
 
 PipelineLayoutDesc::~PipelineLayoutDesc() = default;
 
@@ -2865,7 +2938,7 @@ PipelineLayoutDesc::PipelineLayoutDesc(const PipelineLayoutDesc &other) = defaul
 PipelineLayoutDesc &PipelineLayoutDesc::operator=(const PipelineLayoutDesc &rhs)
 {
     mDescriptorSetLayouts = rhs.mDescriptorSetLayouts;
-    mPushConstantRanges   = rhs.mPushConstantRanges;
+    mPushConstantRange    = rhs.mPushConstantRange;
     return *this;
 }
 
@@ -2885,21 +2958,13 @@ void PipelineLayoutDesc::updateDescriptorSetLayout(DescriptorSetIndex setIndex,
     mDescriptorSetLayouts[setIndex] = desc;
 }
 
-void PipelineLayoutDesc::updatePushConstantRange(gl::ShaderType shaderType,
+void PipelineLayoutDesc::updatePushConstantRange(VkShaderStageFlags stageMask,
                                                  uint32_t offset,
                                                  uint32_t size)
 {
-    ASSERT(shaderType == gl::ShaderType::Vertex || shaderType == gl::ShaderType::Fragment ||
-           shaderType == gl::ShaderType::Geometry || shaderType == gl::ShaderType::Compute);
-    PackedPushConstantRange &packed = mPushConstantRanges[shaderType];
-    packed.offset                   = offset;
-    packed.size                     = size;
-}
-
-const PushConstantRangeArray<PackedPushConstantRange> &PipelineLayoutDesc::getPushConstantRanges()
-    const
-{
-    return mPushConstantRanges;
+    SetBitField(mPushConstantRange.offset, offset);
+    SetBitField(mPushConstantRange.size, size);
+    SetBitField(mPushConstantRange.stageMask, stageMask);
 }
 
 // PipelineHelper implementation.
@@ -2919,122 +2984,10 @@ void PipelineHelper::addTransition(GraphicsPipelineTransitionBits bits,
     mTransitions.emplace_back(bits, desc, pipeline);
 }
 
-TextureDescriptorDesc::TextureDescriptorDesc() : mMaxIndex(0)
-{
-    mSerials.fill({kInvalidImageOrBufferViewSubresourceSerial, kInvalidSamplerSerial});
-}
-
-TextureDescriptorDesc::~TextureDescriptorDesc()                                  = default;
-TextureDescriptorDesc::TextureDescriptorDesc(const TextureDescriptorDesc &other) = default;
-TextureDescriptorDesc &TextureDescriptorDesc::operator=(const TextureDescriptorDesc &other) =
-    default;
-
-void TextureDescriptorDesc::update(size_t index,
-                                   ImageOrBufferViewSubresourceSerial viewSerial,
-                                   SamplerSerial samplerSerial)
-{
-    if (index >= mMaxIndex)
-    {
-        mMaxIndex = static_cast<uint32_t>(index + 1);
-    }
-
-    mSerials[index].view    = viewSerial;
-    mSerials[index].sampler = samplerSerial;
-}
-
-size_t TextureDescriptorDesc::hash() const
-{
-    return angle::ComputeGenericHash(&mSerials, sizeof(TexUnitSerials) * mMaxIndex);
-}
-
-void TextureDescriptorDesc::reset()
-{
-    memset(mSerials.data(), 0, sizeof(mSerials[0]) * mMaxIndex);
-    mMaxIndex = 0;
-}
-
-bool TextureDescriptorDesc::operator==(const TextureDescriptorDesc &other) const
-{
-    if (mMaxIndex != other.mMaxIndex)
-        return false;
-
-    if (mMaxIndex == 0)
-        return true;
-
-    return memcmp(mSerials.data(), other.mSerials.data(), sizeof(TexUnitSerials) * mMaxIndex) == 0;
-}
-
-// UniformsAndXfbDescriptorDesc implementation.
-UniformsAndXfbDescriptorDesc::UniformsAndXfbDescriptorDesc()
-{
-    reset();
-}
-
-UniformsAndXfbDescriptorDesc::~UniformsAndXfbDescriptorDesc() = default;
-UniformsAndXfbDescriptorDesc::UniformsAndXfbDescriptorDesc(
-    const UniformsAndXfbDescriptorDesc &other)                      = default;
-UniformsAndXfbDescriptorDesc &UniformsAndXfbDescriptorDesc::operator=(
-    const UniformsAndXfbDescriptorDesc &other) = default;
-
-size_t UniformsAndXfbDescriptorDesc::hash() const
-{
-    ASSERT(mBufferCount > 0);
-
-    return angle::ComputeGenericHash(&mBufferSerials, sizeof(mBufferSerials[0]) * mBufferCount) ^
-           angle::ComputeGenericHash(
-               &mXfbBufferOffsets,
-               sizeof(mXfbBufferOffsets[0]) * (mBufferCount - kDefaultUniformBufferCount));
-}
-
-void UniformsAndXfbDescriptorDesc::reset()
-{
-    mBufferCount = 0;
-    memset(&mBufferSerials, 0, sizeof(mBufferSerials));
-    memset(&mXfbBufferOffsets, 0, sizeof(mXfbBufferOffsets));
-}
-
-bool UniformsAndXfbDescriptorDesc::operator==(const UniformsAndXfbDescriptorDesc &other) const
-{
-    if (mBufferCount != other.mBufferCount)
-    {
-        return false;
-    }
-
-    ASSERT(mBufferCount > 0);
-
-    return memcmp(&mBufferSerials, &other.mBufferSerials,
-                  sizeof(mBufferSerials[0]) * mBufferCount) == 0 &&
-           memcmp(&mXfbBufferOffsets, &other.mXfbBufferOffsets,
-                  sizeof(mXfbBufferOffsets[0]) * (mBufferCount - kDefaultUniformBufferCount)) == 0;
-}
-
-// ShaderBuffersDescriptorDesc implementation.
-ShaderBuffersDescriptorDesc::ShaderBuffersDescriptorDesc()
-{
-    reset();
-}
-
-ShaderBuffersDescriptorDesc::~ShaderBuffersDescriptorDesc() = default;
-
-ShaderBuffersDescriptorDesc::ShaderBuffersDescriptorDesc(const ShaderBuffersDescriptorDesc &other) =
-    default;
-
-ShaderBuffersDescriptorDesc &ShaderBuffersDescriptorDesc::operator=(
-    const ShaderBuffersDescriptorDesc &other) = default;
-
-size_t ShaderBuffersDescriptorDesc::hash() const
+// DescriptorSetDesc implementation.
+size_t DescriptorSetDesc::hash() const
 {
     return angle::ComputeGenericHash(mPayload.data(), sizeof(mPayload[0]) * mPayload.size());
-}
-
-void ShaderBuffersDescriptorDesc::reset()
-{
-    mPayload.clear();
-}
-
-bool ShaderBuffersDescriptorDesc::operator==(const ShaderBuffersDescriptorDesc &other) const
-{
-    return mPayload == other.mPayload;
 }
 
 // FramebufferDesc implementation.
@@ -3404,16 +3357,6 @@ angle::Result SamplerDesc::init(ContextVk *contextVk, Sampler *sampler) const
         createInfo.addressModeW            = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
         createInfo.anisotropyEnable        = VK_FALSE;
         createInfo.unnormalizedCoordinates = VK_FALSE;
-        // VUID-VkSamplerCreateInfo-minFilter VkCreateSampler:
-        // VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT
-        // specifies that the format can have different chroma, min, and mag filters. However,
-        // VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT is
-        // not supported for VkSamplerYcbcrConversionCreateInfo.format = VK_FORMAT_UNDEFINED so
-        // minFilter/magFilter needs to be equal to chromaFilter.
-        // HardwareBufferImageSiblingVkAndroid() forces VK_FILTER_NEAREST, so force
-        // VK_FILTER_NEAREST here too.
-        createInfo.magFilter = VK_FILTER_NEAREST;
-        createInfo.minFilter = VK_FILTER_NEAREST;
     }
 
     VkSamplerCustomBorderColorCreateInfoEXT customBorderColorInfo = {};
@@ -3421,7 +3364,7 @@ angle::Result SamplerDesc::init(ContextVk *contextVk, Sampler *sampler) const
         createInfo.addressModeV == VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER ||
         createInfo.addressModeW == VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER)
     {
-        ASSERT((contextVk->getRenderer()->getFeatures().supportsCustomBorderColorEXT.enabled));
+        ASSERT((contextVk->getRenderer()->getFeatures().supportsCustomBorderColor.enabled));
         customBorderColorInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT;
 
         customBorderColorInfo.customBorderColor.float32[0] = mBorderColor.red;
@@ -3824,24 +3767,11 @@ angle::Result PipelineLayoutCache::getPipelineLayout(
         }
     }
 
-    const vk::PushConstantRangeArray<vk::PackedPushConstantRange> &descPushConstantRanges =
-        desc.getPushConstantRanges();
-
-    gl::ShaderVector<VkPushConstantRange> pushConstantRanges;
-
-    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
-    {
-        const vk::PackedPushConstantRange &pushConstantDesc = descPushConstantRanges[shaderType];
-        if (pushConstantDesc.size > 0)
-        {
-            VkPushConstantRange range;
-            range.stageFlags = gl_vk::kShaderStageMap[shaderType];
-            range.offset     = pushConstantDesc.offset;
-            range.size       = pushConstantDesc.size;
-
-            pushConstantRanges.push_back(range);
-        }
-    }
+    const vk::PackedPushConstantRange &descPushConstantRange = desc.getPushConstantRange();
+    VkPushConstantRange pushConstantRange;
+    pushConstantRange.stageFlags = descPushConstantRange.stageMask;
+    pushConstantRange.offset     = descPushConstantRange.offset;
+    pushConstantRange.size       = descPushConstantRange.size;
 
     // No pipeline layout found. We must create a new one.
     VkPipelineLayoutCreateInfo createInfo = {};
@@ -3849,8 +3779,11 @@ angle::Result PipelineLayoutCache::getPipelineLayout(
     createInfo.flags                      = 0;
     createInfo.setLayoutCount             = static_cast<uint32_t>(setLayoutHandles.size());
     createInfo.pSetLayouts                = setLayoutHandles.data();
-    createInfo.pushConstantRangeCount     = static_cast<uint32_t>(pushConstantRanges.size());
-    createInfo.pPushConstantRanges        = pushConstantRanges.data();
+    if (pushConstantRange.size > 0)
+    {
+        createInfo.pushConstantRangeCount = 1;
+        createInfo.pPushConstantRanges    = &pushConstantRange;
+    }
 
     vk::PipelineLayout newLayout;
     ANGLE_VK_TRY(context, newLayout.init(context->getDevice(), createInfo));
@@ -4027,20 +3960,10 @@ void DriverUniformsDescriptorSetCache::destroy(RendererVk *rendererVk)
 }
 
 // DescriptorSetCache implementation.
-template <typename Key, VulkanCacheType CacheType>
-void DescriptorSetCache<Key, CacheType>::destroy(RendererVk *rendererVk)
+void DescriptorSetCache::destroy(RendererVk *rendererVk, VulkanCacheType cacheType)
 {
-    this->accumulateCacheStats(rendererVk);
+    accumulateCacheStats(cacheType, rendererVk);
     mPayload.clear();
+    mCacheStats.reset();
 }
-
-// RendererVk's methods are not accessible in vk_cache_utils.h
-// Below declarations are needed to avoid linker errors.
-template class DescriptorSetCache<vk::TextureDescriptorDesc, VulkanCacheType::TextureDescriptors>;
-
-template class DescriptorSetCache<vk::UniformsAndXfbDescriptorDesc,
-                                  VulkanCacheType::UniformsAndXfbDescriptors>;
-
-template class DescriptorSetCache<vk::ShaderBuffersDescriptorDesc,
-                                  VulkanCacheType::ShaderBuffersDescriptors>;
 }  // namespace rx

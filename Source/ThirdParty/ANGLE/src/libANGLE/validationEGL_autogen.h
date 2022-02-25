@@ -251,6 +251,11 @@ bool ValidateReacquireHighPowerGPUANGLE(const ValidationContext *val,
                                         const gl::Context *ctxPacked);
 bool ValidateHandleGPUSwitchANGLE(const ValidationContext *val, const egl::Display *dpyPacked);
 
+// EGL_ANGLE_prepare_swap_buffers
+bool ValidatePrepareSwapBuffersANGLE(const ValidationContext *val,
+                                     const egl::Display *dpyPacked,
+                                     const Surface *surfacePacked);
+
 // EGL_ANGLE_program_cache_control
 bool ValidateProgramCacheGetAttribANGLE(const ValidationContext *val,
                                         const egl::Display *dpyPacked,
@@ -402,6 +407,13 @@ bool ValidateQuerySurface64KHR(const ValidationContext *val,
 bool ValidateUnlockSurfaceKHR(const ValidationContext *val,
                               const egl::Display *dpyPacked,
                               const Surface *surfacePacked);
+
+// EGL_KHR_partial_update
+bool ValidateSetDamageRegionKHR(const ValidationContext *val,
+                                const egl::Display *dpyPacked,
+                                const Surface *surfacePacked,
+                                const EGLint *rects,
+                                EGLint n_rects);
 
 // EGL_KHR_reusable_sync
 bool ValidateSignalSyncKHR(const ValidationContext *val,

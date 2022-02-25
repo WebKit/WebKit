@@ -123,7 +123,9 @@ class FramebufferMtl : public FramebufferImpl
   private:
     void reset();
     gl::FramebufferStatus checkPackedDepthStencilAttachment() const;
-    angle::Result invalidateImpl(ContextMtl *contextMtl, size_t count, const GLenum *attachments);
+    angle::Result invalidateImpl(const gl::Context *context,
+                                 size_t count,
+                                 const GLenum *attachments);
     angle::Result blitWithDraw(const gl::Context *context,
                                FramebufferMtl *srcFrameBuffer,
                                bool blitColorBuffer,

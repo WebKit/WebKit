@@ -20,6 +20,7 @@
 #include "libANGLE/angletypes.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "test_utils/gl_raii.h"
+#include "util/random_utils.h"
 
 using namespace angle;
 
@@ -30,13 +31,14 @@ class VulkanPerformanceCounterTest : public ANGLETest
   protected:
     VulkanPerformanceCounterTest()
     {
-        // Depth required for SwapShouldInvalidateDepthAfterClear.
+        // Depth/Stencil required for SwapShouldInvalidate*.
         // Also RGBA8 is required to avoid the clear for emulated alpha.
         setConfigRedBits(8);
         setConfigGreenBits(8);
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
         setConfigDepthBits(24);
+        setConfigStencilBits(8);
     }
 
     const rx::vk::PerfCounters &hackANGLE() const
@@ -174,6 +176,16 @@ class VulkanPerformanceCounterTest : public ANGLETest
 
 class VulkanPerformanceCounterTest_ES31 : public VulkanPerformanceCounterTest
 {};
+
+class VulkanPerformanceCounterTest_MSAA : public VulkanPerformanceCounterTest
+{
+  protected:
+    VulkanPerformanceCounterTest_MSAA() : VulkanPerformanceCounterTest()
+    {
+        setSamples(4);
+        setMultisampleEnabled(true);
+    }
+};
 
 // Tests that texture updates to unused textures don't break the RP.
 TEST_P(VulkanPerformanceCounterTest, NewTextureDoesNotBreakRenderPass)
@@ -821,6 +833,9 @@ TEST_P(VulkanPerformanceCounterTest, InvalidateDraw)
 // - Scenario: invalidate, draw, disable
 TEST_P(VulkanPerformanceCounterTest, InvalidateDrawDisable)
 {
+    // http://anglebug.com/6857
+    ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsVulkan());
+
     const rx::vk::PerfCounters &counters = hackANGLE();
     rx::vk::PerfCounters expected;
 
@@ -3186,7 +3201,126 @@ TEST_P(VulkanPerformanceCounterTest, BufferSubDataShouldNotTriggerSyncState)
     EXPECT_EQ(hackANGLE().vertexArraySyncStateCalls, 1u);
 }
 
+// Verifies that rendering to backbuffer discards depth/stencil.
+TEST_P(VulkanPerformanceCounterTest, SwapShouldInvalidateDepthStencil)
+{
+    const rx::vk::PerfCounters &counters = hackANGLE();
+    rx::vk::PerfCounters expected;
+
+    // Expect rpCount+1, depth(Clears+1, Loads+0, Stores+0), stencil(Clears+1, Load+0, Stores+0)
+    setExpectedCountersForInvalidateTest(counters, 1, 1, 0, 0, 1, 0, 0, &expected);
+
+    // Clear to verify that _some_ counters did change (as opposed to for example all being reset on
+    // swap)
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_ALWAYS);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 0x00, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Swap buffers to implicitely resolve
+    swapBuffers();
+    compareDepthStencilCountersForInvalidateTest(counters, expected);
+}
+
+// Verifies that rendering to MSAA backbuffer discards depth/stencil.
+TEST_P(VulkanPerformanceCounterTest_MSAA, SwapShouldInvalidateDepthStencil)
+{
+    const rx::vk::PerfCounters &counters = hackANGLE();
+    rx::vk::PerfCounters expected;
+
+    // Expect rpCount+1, depth(Clears+1, Loads+0, Stores+0), stencil(Clears+1, Load+0, Stores+0)
+    setExpectedCountersForInvalidateTest(counters, 1, 1, 0, 0, 1, 0, 0, &expected);
+
+    // Clear to verify that _some_ counters did change (as opposed to for example all being reset on
+    // swap)
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_ALWAYS);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 0x00, 0xFF);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+
+    ANGLE_GL_PROGRAM(drawGreen, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    drawQuad(drawGreen, essl1_shaders::PositionAttrib(), 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Swap buffers to implicitely resolve
+    swapBuffers();
+    compareDepthStencilCountersForInvalidateTest(counters, expected);
+}
+
+// Tests that uniform updates eventually stop updating descriptor sets.
+TEST_P(VulkanPerformanceCounterTest, UniformUpdatesHitDescriptorSetCache)
+{
+    ANGLE_GL_PROGRAM(testProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::UniformColor());
+    glUseProgram(testProgram);
+    GLint posLoc = glGetAttribLocation(testProgram, essl1_shaders::PositionAttrib());
+    GLint uniLoc = glGetUniformLocation(testProgram, essl1_shaders::ColorUniform());
+
+    std::array<Vector3, 6> quadVerts = GetQuadVertices();
+
+    GLBuffer vbo;
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, quadVerts.size() * sizeof(quadVerts[0]), quadVerts.data(),
+                 GL_STATIC_DRAW);
+
+    glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posLoc);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Choose a number of iterations sufficiently large to ensure all uniforms are cached.
+    constexpr int kIterations = 2000;
+
+    RNG rng;
+
+    // First pass: cache all the uniforms.
+    for (int iteration = 0; iteration < kIterations; ++iteration)
+    {
+        Vector3 randomVec3 = RandomVec3(rng.randomInt(), 0.0f, 1.0f);
+
+        glUniform4f(uniLoc, randomVec3.x(), randomVec3.y(), randomVec3.z(), 1.0f);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        GLColor expectedColor = GLColor(randomVec3);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, expectedColor, 5);
+    }
+
+    ASSERT_GL_NO_ERROR();
+
+    uint32_t expectedCacheMisses = hackANGLE().uniformsAndXfbDescriptorSetCacheMisses;
+    EXPECT_GT(expectedCacheMisses, 0u);
+
+    // Second pass: ensure all the uniforms are cached.
+    for (int iteration = 0; iteration < kIterations; ++iteration)
+    {
+        Vector3 randomVec3 = RandomVec3(rng.randomInt(), 0.0f, 1.0f);
+
+        glUniform4f(uniLoc, randomVec3.x(), randomVec3.y(), randomVec3.z(), 1.0f);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        GLColor expectedColor = GLColor(randomVec3);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, expectedColor, 5);
+    }
+
+    ASSERT_GL_NO_ERROR();
+
+    uint32_t actualCacheMisses = hackANGLE().uniformsAndXfbDescriptorSetCacheMisses;
+    EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
+}
+
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest, ES3_VULKAN());
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_ES31, ES31_VULKAN());
+ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_MSAA, ES3_VULKAN());
 
 }  // anonymous namespace

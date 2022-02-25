@@ -10,133 +10,22 @@ index 5502cca..fdabb39 100644
  /third_party/rapidjson/src
  /third_party/requests/src
  /third_party/six
-diff --git a/include/platform/FeaturesMtl.h b/include/platform/FeaturesMtl.h
-index 7d9aec2..165bb47 100644
---- a/include/platform/FeaturesMtl.h
-+++ b/include/platform/FeaturesMtl.h
-@@ -21,11 +21,6 @@ struct FeaturesMtl : FeatureSetBase
-         "has_base_vertex_instanced_draw", FeatureCategory::MetalFeatures,
-         "The renderer supports base vertex instanced draw", &members};
- 
--    // Support depth texture filtering
--    Feature hasDepthTextureFiltering = {
--        "has_depth_texture_filtering", FeatureCategory::MetalFeatures,
--        "The renderer supports depth texture's filtering other than nearest", &members};
--
-     // Support explicit memory barrier
-     Feature hasExplicitMemBarrier = {"has_explicit_mem_barrier_mtl", FeatureCategory::MetalFeatures,
-                                      "The renderer supports explicit memory barrier", &members};
-diff --git a/scripts/code_generation_hashes/Metal_format_table.json b/scripts/code_generation_hashes/Metal_format_table.json
-index 49bfa90..bf68a8b 100644
---- a/scripts/code_generation_hashes/Metal_format_table.json
-+++ b/scripts/code_generation_hashes/Metal_format_table.json
-@@ -4,9 +4,9 @@
-   "src/libANGLE/renderer/angle_format_map.json":
-     "951e1bceaba86eecb5c23173e897d092",
-   "src/libANGLE/renderer/metal/gen_mtl_format_table.py":
--    "1d6c9a286282b37a94acbf7fa35d97b1",
-+    "cf0f32a98630ef4dabcf203c66d8e4ff",
-   "src/libANGLE/renderer/metal/mtl_format_map.json":
--    "9199f9f2cf9bd7eb218a2bba3a7c0177",
-+    "04a80596b75c287f525dac9769219cb2",
-   "src/libANGLE/renderer/metal/mtl_format_table_autogen.mm":
--    "abd7d711b401b1fb4a21053046f40fb0"
-+    "b413ae3c84956871988e5e01cc1c92ce"
- }
-\ No newline at end of file
-diff --git a/scripts/create-symlink-to-altroot.sh b/scripts/create-symlink-to-altroot.sh
-new file mode 100755
-index 0000000..d5293a0
---- /dev/null
-+++ b/scripts/create-symlink-to-altroot.sh
-@@ -0,0 +1,30 @@
-+#!/bin/zsh
-+
-+set -e
-+
-+if [[ -z "${OUTPUT_ALTERNATE_ROOT_PATH}" ]]; then
-+    exit 0
-+fi
-+
-+if [[ "${SKIP_INSTALL}" = "YES" ]]; then
-+    exit 0
-+fi
-+
-+# Convert eg. `/System/Library/PrivateFrameworks` to `../../..`
-+RELATIVE_PATH_FROM_SYMLINK_TO_ROOT=$(echo "${ALTERNATE_ROOT_PATH}" | sed -E -e "s/\/[a-zA-Z0-9_]+/..\//g" -e "s/\/$//")
-+SYMLINK_VALUE="${RELATIVE_PATH_FROM_SYMLINK_TO_ROOT}${INSTALL_PATH}/${FULL_PRODUCT_NAME}"
-+
-+if [[ -L "${OUTPUT_ALTERNATE_ROOT_PATH}" ]]; then
-+    EXISTING_SYMLINK_VALUE=$(readlink "${OUTPUT_ALTERNATE_ROOT_PATH}")
-+
-+    if [[ "${EXISTING_SYMLINK_VALUE}" == "${SYMLINK_VALUE}" ]]; then
-+        exit 0
-+    fi
-+
-+    echo "warning: existing symlink is incorrect; expected ${SYMLINK_VALUE}, got ${EXISTING_SYMLINK_VALUE}"
-+elif [[ -e "${OUTPUT_ALTERNATE_ROOT_PATH}" ]]; then
-+    echo "error: expected a symlink at ${OUTPUT_ALTERNATE_ROOT_PATH}"
-+    exit 1
-+fi
-+
-+ln -sf "${SYMLINK_VALUE}" "${OUTPUT_ALTERNATE_ROOT_PATH}"
 diff --git a/scripts/run_code_generation.py b/scripts/run_code_generation.py
-index 9710b2e..c0a9a13 100755
+index adc9bd9..a6ef39f 100755
 --- a/scripts/run_code_generation.py
 +++ b/scripts/run_code_generation.py
-@@ -13,6 +13,7 @@ import os
- import subprocess
- import sys
- import platform
-+import argparse
+@@ -256,8 +256,11 @@ def main():
+                 f = open(os.path.basename(script), "r")
+                 if subprocess.call([get_executable_name(f.readline()),
+                                     os.path.basename(script)]) != 0:
++                    print('Error Running ' + name + ' code generator')
+                     sys.exit(1)
+                 f.close()
++            else:
++                print('Verifying ' + name + ' code generator')
  
- script_dir = sys.path[0]
- root_dir = os.path.abspath(os.path.join(script_dir, '..'))
-@@ -214,11 +215,31 @@ def main():
-     all_new_hashes = {}
-     any_dirty = False
- 
--    verify_only = False
--    if len(sys.argv) > 1 and sys.argv[1] == '--verify-no-dirty':
--        verify_only = True
-+    parser = argparse.ArgumentParser(description='Generate ANGLE internal code.')
-+    parser.add_argument(
-+        '-v',
-+        '--verify-no-dirty',
-+        dest='verify_only',
-+        type=bool,
-+        help='verify hashes are not dirty')
-+    parser.add_argument(
-+        '-g', '--generator', action='append', nargs='*', type=str, dest='specifiedGenerators'),
-+
-+    args = parser.parse_args()
-+    filteredGenerators = args.specifiedGenerators[0]
-+    verify_only = args.verify_only
-+    ranGenerators = {}
-+
-+    if (filteredGenerators):
-+        ranGenerators = {k: v for k, v in generators.items() if k in filteredGenerators}
-+    else:
-+        ranGenerators = generators
-+
-+    if (len(ranGenerators) == 0):
-+        print("No valid generators specified.")
-+        return -1
- 
--    for name, script in sorted(generators.items()):
-+    for name, script in sorted(ranGenerators.items()):
-         info = auto_script(script)
-         fname = get_hash_file_name(name)
-         filenames = info['inputs'] + info['outputs'] + [script]
-@@ -257,7 +278,7 @@ def main():
-             sys.exit(1)
- 
-         # Update the output hashes again since they can be formatted.
--        for name, script in sorted(generators.items()):
-+        for name, script in sorted(ranGenerators.items()):
-             info = auto_script(script)
-             fname = get_hash_file_name(name)
-             update_output_hashes(name, info['outputs'], all_new_hashes[fname])
+         # Update the hash dictionary.
+         all_new_hashes[fname] = new_hashes
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index ebe282c..758fb06 100644
 --- a/src/common/utilities.cpp
@@ -181,56 +70,8 @@ index 497ef88..47213c9 100644
  
  #ifdef ANGLE_ENABLE_METAL_SPIRV
  #    include "compiler/translator/TranslatorMetal.h"
-diff --git a/src/compiler/translator/TranslatorMetal.cpp b/src/compiler/translator/TranslatorMetal.cpp
-index 7ac4749..d25b72a 100644
---- a/src/compiler/translator/TranslatorMetal.cpp
-+++ b/src/compiler/translator/TranslatorMetal.cpp
-@@ -32,13 +32,6 @@
- namespace sh
- {
- 
--namespace mtl
--{
--/** extern */
--const char kCoverageMaskEnabledConstName[]      = "ANGLECoverageMaskEnabled";
--const char kRasterizerDiscardEnabledConstName[] = "ANGLERasterizerDisabled";
--}  // namespace mtl
--
- namespace
- {
- 
-diff --git a/src/compiler/translator/TranslatorMetalConstantNames.cpp b/src/compiler/translator/TranslatorMetalConstantNames.cpp
-new file mode 100644
-index 0000000..515cc6e
---- /dev/null
-+++ b/src/compiler/translator/TranslatorMetalConstantNames.cpp
-@@ -0,0 +1,24 @@
-+//
-+// Copyright 2019 The ANGLE Project Authors. All rights reserved.
-+// Use of this source code is governed by a BSD-style license that can be
-+// found in the LICENSE file.
-+//
-+// TranslatorMetalConstantNames:
-+// Implementation of constant values used in both translator
-+// backends.
-+
-+#include <stdio.h>
-+
-+#include "GLSLANG/ShaderLang.h"
-+
-+namespace sh
-+{
-+
-+namespace mtl
-+{
-+/** extern */
-+const char kCoverageMaskEnabledConstName[]      = "ANGLECoverageMaskEnabled";
-+const char kRasterizerDiscardEnabledConstName[] = "ANGLERasterizerDisabled";
-+}  // namespace mtl
-+
-+}  // namespace sh
 diff --git a/src/compiler/translator/TranslatorMetalDirect.cpp b/src/compiler/translator/TranslatorMetalDirect.cpp
-index 2e143ba..9da5ad2 100644
+index 7f665c1..5958101 100644
 --- a/src/compiler/translator/TranslatorMetalDirect.cpp
 +++ b/src/compiler/translator/TranslatorMetalDirect.cpp
 @@ -950,7 +950,6 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
@@ -242,10 +83,10 @@ index 2e143ba..9da5ad2 100644
          {
              if (!ReplaceVariable(this, root, BuiltInVariable::gl_VertexIndex(), &kgl_VertexIDMetal))
 diff --git a/src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp b/src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp
-index e13d6e7..f9bb4e9 100644
+index 019cfcf..25c911e 100644
 --- a/src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp
 +++ b/src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp
-@@ -1738,7 +1738,6 @@ void GenMetalTraverser::emitFunctionSignature(const TFunction &func)
+@@ -1740,7 +1740,6 @@ void GenMetalTraverser::emitFunctionSignature(const TFunction &func)
          const TVariable &param = *func.getParam(i);
          emitFunctionParameter(func, param);
      }
@@ -318,7 +159,7 @@ index 81ff272..9d2b43b 100644
      mNewNameBuffer.clear();
      mNewNameBuffer += '_';
 diff --git a/src/compiler/translator/TranslatorMetalDirect/ModifyStruct.cpp b/src/compiler/translator/TranslatorMetalDirect/ModifyStruct.cpp
-index 7fe13a6..299a2f9 100644
+index bcc5d65..60758fb 100644
 --- a/src/compiler/translator/TranslatorMetalDirect/ModifyStruct.cpp
 +++ b/src/compiler/translator/TranslatorMetalDirect/ModifyStruct.cpp
 @@ -601,7 +601,7 @@ class ConvertStructState : angle::NonCopyable
@@ -356,6 +197,18 @@ index d2eab0b..2ec2d2c 100644
  /* Bison interface for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+diff --git a/src/compiler/translator/glslang_wrapper.cpp b/src/compiler/translator/glslang_wrapper.cpp
+index 187f350..3de7597 100644
+--- a/src/compiler/translator/glslang_wrapper.cpp
++++ b/src/compiler/translator/glslang_wrapper.cpp
+@@ -10,6 +10,7 @@
+ //   This file is separated as glslang's header contains conflicting macro definitions with ANGLE's.
+ //
+ 
++#include "common/spirv/spirv_types.h"
+ #include "compiler/translator/glslang_wrapper.h"
+ 
+ // glslang has issues with some specific warnings.
 diff --git a/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp b/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp
 index 55e2f8b..4237558 100644
 --- a/src/compiler/translator/tree_ops/apple/UnfoldShortCircuitAST.cpp
@@ -388,8 +241,48 @@ index ad3cc08..75069c5 100644
  namespace sh
  {
  
+diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
+index 685b235..93b6676 100755
+--- a/src/libANGLE/Context.cpp
++++ b/src/libANGLE/Context.cpp
+@@ -9207,7 +9207,7 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
+     ASSERT(mCurrentDrawSurface == nullptr);
+     ASSERT(mCurrentReadSurface == nullptr);
+ 
+-    Framebuffer *newDefaultFramebuffer = nullptr;
++    std::unique_ptr<gl::Framebuffer> newDefaultFramebuffer;
+ 
+     mCurrentDrawSurface = drawSurface;
+     mCurrentReadSurface = readSurface;
+@@ -9219,7 +9219,7 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
+     }
+     else
+     {
+-        newDefaultFramebuffer = new Framebuffer(this, mImplementation.get(), readSurface);
++        newDefaultFramebuffer = std::make_unique<gl::Framebuffer>(this, mImplementation.get(), readSurface);
+     }
+     ASSERT(newDefaultFramebuffer);
+ 
+@@ -9230,14 +9230,14 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
+ 
+     // Update default framebuffer, the binding of the previous default
+     // framebuffer (or lack of) will have a nullptr.
+-    mState.mFramebufferManager->setDefaultFramebuffer(newDefaultFramebuffer);
++    mState.mFramebufferManager->setDefaultFramebuffer(newDefaultFramebuffer.release());
+     if (mState.getDrawFramebuffer() == nullptr)
+     {
+-        bindDrawFramebuffer(newDefaultFramebuffer->id());
++        bindDrawFramebuffer(mState.mFramebufferManager->getDefaultFramebuffer()->id());
+     }
+     if (mState.getReadFramebuffer() == nullptr)
+     {
+-        bindReadFramebuffer(newDefaultFramebuffer->id());
++        bindReadFramebuffer(mState.mFramebufferManager->getDefaultFramebuffer()->id());
+     }
+ 
+     return egl::NoError();
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 1535a99..a6016d5 100644
+index 2f7c3dc..4a87f0d 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -402,181 +295,53 @@ index 1535a99..a6016d5 100644
  #include "libANGLE/State.h"
  
  #include <string.h>
-diff --git a/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp
-new file mode 100644
-index 0000000..801e604
---- /dev/null
-+++ b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp
-@@ -0,0 +1,81 @@
-+//
-+// Copyright 2021 The ANGLE Project Authors. All rights reserved.
-+// Use of this source code is governed by a BSD-style license that can be
-+// found in the LICENSE file.
-+//
-+// ShaderInterfaceVariableInfoMap.cpp:
-+//    Implements helper class for shader compilers
-+//
-+
-+#include "libANGLE/renderer/ShaderInterfaceVariableInfoMap.h"
-+namespace rx
-+{
-+
-+const uint32_t ShaderInterfaceVariableInfo::kInvalid;
-+
-+ShaderInterfaceVariableInfo::ShaderInterfaceVariableInfo() {}
-+
-+// ShaderInterfaceVariableInfoMap implementation.
-+ShaderInterfaceVariableInfoMap::ShaderInterfaceVariableInfoMap() = default;
-+
-+ShaderInterfaceVariableInfoMap::~ShaderInterfaceVariableInfoMap() = default;
-+
-+void ShaderInterfaceVariableInfoMap::clear()
-+{
-+    for (VariableNameToInfoMap &shaderMap : mData)
-+    {
-+        shaderMap.clear();
-+    }
-+}
-+
-+bool ShaderInterfaceVariableInfoMap::contains(gl::ShaderType shaderType,
-+                                              const std::string &variableName) const
-+{
-+    return mData[shaderType].find(variableName) != mData[shaderType].end();
-+}
-+
-+const ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::get(
-+    gl::ShaderType shaderType,
-+    const std::string &variableName) const
-+{
-+    auto it = mData[shaderType].find(variableName);
-+    ASSERT(it != mData[shaderType].end());
-+    return it->second;
-+}
-+
-+ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::get(gl::ShaderType shaderType,
-+                                                                 const std::string &variableName)
-+{
-+    auto it = mData[shaderType].find(variableName);
-+    ASSERT(it != mData[shaderType].end());
-+    return it->second;
-+}
-+
-+void ShaderInterfaceVariableInfoMap::markAsDuplicate(gl::ShaderType shaderType,
-+                                                     const std::string &variableName)
-+{
-+    ASSERT(contains(shaderType, variableName));
-+    mData[shaderType][variableName].isDuplicate = true;
-+}
-+
-+ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::add(gl::ShaderType shaderType,
-+                                                                 const std::string &variableName)
-+{
-+    ASSERT(!contains(shaderType, variableName));
-+    return mData[shaderType][variableName];
-+}
-+
-+ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::addOrGet(
-+    gl::ShaderType shaderType,
-+    const std::string &variableName)
-+{
-+    return mData[shaderType][variableName];
-+}
-+
-+ShaderInterfaceVariableInfoMap::Iterator ShaderInterfaceVariableInfoMap::getIterator(
-+    gl::ShaderType shaderType) const
-+{
-+    return Iterator(mData[shaderType].begin(), mData[shaderType].end());
-+}
-+
-+}  // namespace rx
-diff --git a/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h
-new file mode 100644
-index 0000000..851985a
---- /dev/null
-+++ b/src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.h
-@@ -0,0 +1,63 @@
-+//
-+// Copyright 2021 The ANGLE Project Authors. All rights reserved.
-+// Use of this source code is governed by a BSD-style license that can be
-+// found in the LICENSE file.
-+//
-+// Header for the shared ShaderInterfaceVariableInfoMap class, used by both the
-+// Metal and Direct Metal backends.
-+#ifndef ShaderInterfaceVariableInfoMap_hpp
-+#define ShaderInterfaceVariableInfoMap_hpp
-+
-+#include <functional>
-+
-+#include <stdio.h>
-+#include "libANGLE/renderer/ProgramImpl.h"
-+#include "libANGLE/renderer/glslang_wrapper_utils.h"
-+#include "libANGLE/renderer/renderer_utils.h"
-+namespace rx
-+{
-+
-+// TODO: http://anglebug.com/4524: Need a different hash key than a string, since that's slow to
-+// calculate.
-+class ShaderInterfaceVariableInfoMap final : angle::NonCopyable
-+{
-+  public:
-+    ShaderInterfaceVariableInfoMap();
-+    ~ShaderInterfaceVariableInfoMap();
-+
-+    void clear();
-+    bool contains(gl::ShaderType shaderType, const std::string &variableName) const;
-+    const ShaderInterfaceVariableInfo &get(gl::ShaderType shaderType,
-+                                           const std::string &variableName) const;
-+    ShaderInterfaceVariableInfo &get(gl::ShaderType shaderType, const std::string &variableName);
-+    ShaderInterfaceVariableInfo &add(gl::ShaderType shaderType, const std::string &variableName);
-+    void markAsDuplicate(gl::ShaderType shaderType, const std::string &variableName);
-+    ShaderInterfaceVariableInfo &addOrGet(gl::ShaderType shaderType,
-+                                          const std::string &variableName);
-+    size_t variableCount(gl::ShaderType shaderType) const { return mData[shaderType].size(); }
-+
-+    using VariableNameToInfoMap = angle::HashMap<std::string, ShaderInterfaceVariableInfo>;
-+
-+    class Iterator final
-+    {
-+      public:
-+        Iterator(VariableNameToInfoMap::const_iterator beginIt,
-+                 VariableNameToInfoMap::const_iterator endIt)
-+            : mBeginIt(beginIt), mEndIt(endIt)
-+        {}
-+        VariableNameToInfoMap::const_iterator begin() { return mBeginIt; }
-+        VariableNameToInfoMap::const_iterator end() { return mEndIt; }
-+
-+      private:
-+        VariableNameToInfoMap::const_iterator mBeginIt;
-+        VariableNameToInfoMap::const_iterator mEndIt;
-+    };
-+
-+    Iterator getIterator(gl::ShaderType shaderType) const;
-+
-+  private:
-+    gl::ShaderMap<VariableNameToInfoMap> mData;
-+};
-+
-+}  // namespace rx
-+#endif /* ShaderInterfaceVariableInfoMap_hpp */
+diff --git a/src/libANGLE/Surface.cpp b/src/libANGLE/Surface.cpp
+index 1cd8a00..8b2186e 100644
+--- a/src/libANGLE/Surface.cpp
++++ b/src/libANGLE/Surface.cpp
+@@ -624,10 +624,10 @@ Error Surface::getBufferAge(const gl::Context *context, EGLint *age) const
+     return mImplementation->getBufferAge(context, age);
+ }
+ 
+-gl::Framebuffer *Surface::createDefaultFramebuffer(const gl::Context *context,
++std::unique_ptr<gl::Framebuffer> Surface::createDefaultFramebuffer(const gl::Context *context,
+                                                                    egl::Surface *readSurface)
+ {
+-    return new gl::Framebuffer(context, this, readSurface);
++    return std::make_unique<gl::Framebuffer>(context, this, readSurface);
+ }
+ 
+ gl::InitState Surface::initState(const gl::ImageIndex & /*imageIndex*/) const
+diff --git a/src/libANGLE/Surface.h b/src/libANGLE/Surface.h
+index 98a3b86..0856a62 100644
+--- a/src/libANGLE/Surface.h
++++ b/src/libANGLE/Surface.h
+@@ -105,7 +105,7 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
+     void setFixedWidth(EGLint width);
+     void setFixedHeight(EGLint height);
+ 
+-    gl::Framebuffer *createDefaultFramebuffer(const gl::Context *context,
++    std::unique_ptr<gl::Framebuffer> createDefaultFramebuffer(const gl::Context *context,
+                                                               egl::Surface *readSurface);
+ 
+     const Config *getConfig() const;
+@@ -216,8 +216,6 @@ class Surface : public LabeledObject, public gl::FramebufferAttachmentObject
+     ~Surface() override;
+     rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override;
+ 
+-    gl::Framebuffer *createDefaultFramebuffer(const Display *display);
+-
+     // ANGLE-only method, used internally
+     friend class gl::Texture;
+     Error releaseTexImageFromTexture(const gl::Context *context);
 diff --git a/src/libANGLE/renderer/driver_utils.cpp b/src/libANGLE/renderer/driver_utils.cpp
-index dab8868..bd9753a 100644
+index bfdf0ff..6e50976 100644
 --- a/src/libANGLE/renderer/driver_utils.cpp
 +++ b/src/libANGLE/renderer/driver_utils.cpp
-@@ -146,6 +146,8 @@ const char *GetVendorString(uint32_t vendorId)
-             return "ARM";
-         case VENDOR_ID_APPLE:
-             return "Apple";
-+        case VENDOR_ID_MICROSOFT:
-+            return "Microsoft";
-         case VENDOR_ID_BROADCOM:
-             return "Broadcom";
-         case VENDOR_ID_GOOGLE:
-@@ -160,6 +162,12 @@ const char *GetVendorString(uint32_t vendorId)
-             return "Imagination Technologies";
-         case VENDOR_ID_QUALCOMM:
+@@ -164,6 +164,10 @@ const char *GetVendorString(uint32_t vendorId)
              return "Qualcomm";
-+        case VENDOR_ID_SAMSUNG:
-+            return "Samsung";
+         case VENDOR_ID_SAMSUNG:
+             return "Samsung Electronics Co., Ltd.";
 +        case VENDOR_ID_VMWARE:
 +            return "VMware";
 +        case VENDOR_ID_VIVANTE:
@@ -584,18 +349,6 @@ index dab8868..bd9753a 100644
          case 0xba5eba11:  // Mock vendor ID used for tests.
              return "Test";
          case 0:
-diff --git a/src/libANGLE/renderer/driver_utils.h b/src/libANGLE/renderer/driver_utils.h
-index 382a8be..40629e5 100644
---- a/src/libANGLE/renderer/driver_utils.h
-+++ b/src/libANGLE/renderer/driver_utils.h
-@@ -21,6 +21,7 @@ enum VendorID : uint32_t
-     VENDOR_ID_AMD     = 0x1002,
-     VENDOR_ID_APPLE   = 0x106B,
-     VENDOR_ID_ARM     = 0x13B5,
-+    VENDOR_ID_MICROSOFT = 0x1414,
-     // Broadcom devices won't use PCI, but this is their Vulkan vendor id.
-     VENDOR_ID_BROADCOM = 0x14E4,
-     VENDOR_ID_GOOGLE   = 0x1AE0,
 diff --git a/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp b/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp
 index a2b44d2..20ec85a 100644
 --- a/src/libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp
@@ -617,153 +370,19 @@ index a2b44d2..20ec85a 100644
  
      return true;
  }
-diff --git a/src/libANGLE/renderer/glslang_wrapper_utils.cpp b/src/libANGLE/renderer/glslang_wrapper_utils.cpp
-index ac1799c..91d8dc6 100644
---- a/src/libANGLE/renderer/glslang_wrapper_utils.cpp
-+++ b/src/libANGLE/renderer/glslang_wrapper_utils.cpp
-@@ -4683,72 +4683,6 @@ UniformBindingInfo::UniformBindingInfo(uint32_t bindingIndex,
- 
- UniformBindingInfo::UniformBindingInfo() {}
- 
--// ShaderInterfaceVariableInfo implementation.
--ShaderInterfaceVariableInfo::ShaderInterfaceVariableInfo() {}
--
--// ShaderInterfaceVariableInfoMap implementation.
--ShaderInterfaceVariableInfoMap::ShaderInterfaceVariableInfoMap() = default;
--
--ShaderInterfaceVariableInfoMap::~ShaderInterfaceVariableInfoMap() = default;
--
--void ShaderInterfaceVariableInfoMap::clear()
--{
--    for (VariableNameToInfoMap &shaderMap : mData)
--    {
--        shaderMap.clear();
--    }
--}
--
--bool ShaderInterfaceVariableInfoMap::contains(gl::ShaderType shaderType,
--                                              const std::string &variableName) const
--{
--    return mData[shaderType].find(variableName) != mData[shaderType].end();
--}
--
--const ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::get(
--    gl::ShaderType shaderType,
--    const std::string &variableName) const
--{
--    auto it = mData[shaderType].find(variableName);
--    ASSERT(it != mData[shaderType].end());
--    return it->second;
--}
--
--ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::get(gl::ShaderType shaderType,
--                                                                 const std::string &variableName)
--{
--    auto it = mData[shaderType].find(variableName);
--    ASSERT(it != mData[shaderType].end());
--    return it->second;
--}
--
--void ShaderInterfaceVariableInfoMap::markAsDuplicate(gl::ShaderType shaderType,
--                                                     const std::string &variableName)
--{
--    ASSERT(contains(shaderType, variableName));
--    mData[shaderType][variableName].isDuplicate = true;
--}
--
--ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::add(gl::ShaderType shaderType,
--                                                                 const std::string &variableName)
--{
--    ASSERT(!contains(shaderType, variableName));
--    return mData[shaderType][variableName];
--}
--
--ShaderInterfaceVariableInfo &ShaderInterfaceVariableInfoMap::addOrGet(
--    gl::ShaderType shaderType,
--    const std::string &variableName)
--{
--    return mData[shaderType][variableName];
--}
--
--ShaderInterfaceVariableInfoMap::Iterator ShaderInterfaceVariableInfoMap::getIterator(
--    gl::ShaderType shaderType) const
--{
--    return Iterator(mData[shaderType].begin(), mData[shaderType].end());
--}
--
- // Strip indices from the name.  If there are non-zero indices, return false to indicate that this
- // image uniform doesn't require set/binding.  That is done on index 0.
- bool GetImageNameWithoutIndices(std::string *name)
 diff --git a/src/libANGLE/renderer/glslang_wrapper_utils.h b/src/libANGLE/renderer/glslang_wrapper_utils.h
-index 787193c..3f9cdc6 100644
+index d27715d..75d252f 100644
 --- a/src/libANGLE/renderer/glslang_wrapper_utils.h
 +++ b/src/libANGLE/renderer/glslang_wrapper_utils.h
-@@ -10,13 +10,13 @@
+@@ -10,7 +10,6 @@
  #define LIBANGLE_RENDERER_GLSLANG_WRAPPER_UTILS_H_
  
  #include <functional>
 -
--#include "common/spirv/spirv_types.h"
+ #include "common/spirv/spirv_types.h"
  #include "libANGLE/renderer/ProgramImpl.h"
  #include "libANGLE/renderer/renderer_utils.h"
- 
- namespace rx
- {
-+
-+class ShaderInterfaceVariableInfoMap;
- constexpr gl::ShaderMap<const char *> kDefaultUniformNames = {
-     {gl::ShaderType::Vertex, sh::vk::kDefaultUniformsNameVS},
-     {gl::ShaderType::TessControl, sh::vk::kDefaultUniformsNameTCS},
-@@ -136,48 +136,6 @@ struct ShaderInterfaceVariableInfo
-     bool isDuplicate = false;
- };
- 
--// TODO: http://anglebug.com/4524: Need a different hash key than a string, since that's slow to
--// calculate.
--class ShaderInterfaceVariableInfoMap final : angle::NonCopyable
--{
--  public:
--    ShaderInterfaceVariableInfoMap();
--    ~ShaderInterfaceVariableInfoMap();
--
--    void clear();
--    bool contains(gl::ShaderType shaderType, const std::string &variableName) const;
--    const ShaderInterfaceVariableInfo &get(gl::ShaderType shaderType,
--                                           const std::string &variableName) const;
--    ShaderInterfaceVariableInfo &get(gl::ShaderType shaderType, const std::string &variableName);
--    ShaderInterfaceVariableInfo &add(gl::ShaderType shaderType, const std::string &variableName);
--    void markAsDuplicate(gl::ShaderType shaderType, const std::string &variableName);
--    ShaderInterfaceVariableInfo &addOrGet(gl::ShaderType shaderType,
--                                          const std::string &variableName);
--    size_t variableCount(gl::ShaderType shaderType) const { return mData[shaderType].size(); }
--
--    using VariableNameToInfoMap = angle::HashMap<std::string, ShaderInterfaceVariableInfo>;
--
--    class Iterator final
--    {
--      public:
--        Iterator(VariableNameToInfoMap::const_iterator beginIt,
--                 VariableNameToInfoMap::const_iterator endIt)
--            : mBeginIt(beginIt), mEndIt(endIt)
--        {}
--        VariableNameToInfoMap::const_iterator begin() { return mBeginIt; }
--        VariableNameToInfoMap::const_iterator end() { return mEndIt; }
--
--      private:
--        VariableNameToInfoMap::const_iterator mBeginIt;
--        VariableNameToInfoMap::const_iterator mEndIt;
--    };
--
--    Iterator getIterator(gl::ShaderType shaderType) const;
--
--  private:
--    gl::ShaderMap<VariableNameToInfoMap> mData;
--};
--
- bool GetImageNameWithoutIndices(std::string *name);
- 
- // Get the mapped sampler name.
-@@ -199,7 +157,7 @@ void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
+@@ -158,7 +157,7 @@ void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
                                               bool isTransformFeedbackStage,
                                               GlslangProgramInterfaceInfo *programInterfaceInfo,
                                               ShaderInterfaceVariableInfoMap *variableInfoMapOut);
@@ -772,7 +391,7 @@ index 787193c..3f9cdc6 100644
  // Retrieves the compiled SPIR-V code for each shader stage, and calls |GlslangAssignLocations|.
  void GlslangGetShaderSpirvCode(const GlslangSourceOptions &options,
                                 const gl::ProgramState &programState,
-@@ -212,6 +170,7 @@ angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
+@@ -171,6 +170,7 @@ angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
                                          const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                          const angle::spirv::Blob &initialSpirvBlob,
                                          angle::spirv::Blob *spirvBlobOut);
@@ -802,188 +421,227 @@ index 279923f..900aea8 100644
              {
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
+diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
+index df9a6e6..6552432 100644
+--- a/src/libANGLE/renderer/metal/DisplayMtl.mm
++++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
+@@ -254,9 +254,10 @@ bool IsMetalDisplayAvailable()
+         }
+     }
+ 
+-    NSMutableArray<id<MTLDevice>> *externalGPUs   = [[NSMutableArray alloc] init];
+-    NSMutableArray<id<MTLDevice>> *integratedGPUs = [[NSMutableArray alloc] init];
+-    NSMutableArray<id<MTLDevice>> *discreteGPUs   = [[NSMutableArray alloc] init];
++    auto externalGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
++    auto integratedGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
++    auto discreteGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
++
+     for (id<MTLDevice> device in deviceList.get())
+     {
+         if (device.removable)
+@@ -278,7 +279,7 @@ bool IsMetalDisplayAvailable()
+     if (attribs.get(EGL_POWER_PREFERENCE_ANGLE, 0) == EGL_HIGH_POWER_ANGLE)
+     {
+         // Search for a discrete GPU first.
+-        for (id<MTLDevice> device in discreteGPUs)
++        for (id<MTLDevice> device in discreteGPUs.get())
+         {
+             if (![device isHeadless])
+                 return device;
+@@ -287,7 +288,7 @@ bool IsMetalDisplayAvailable()
+     else if (attribs.get(EGL_POWER_PREFERENCE_ANGLE, 0) == EGL_LOW_POWER_ANGLE)
+     {
+         // If we've selected a low power device, look through integrated devices.
+-        for (id<MTLDevice> device in integratedGPUs)
++        for (id<MTLDevice> device in integratedGPUs.get())
+         {
+             if (![device isHeadless])
+                 return device;
+@@ -310,6 +311,17 @@ bool IsMetalDisplayAvailable()
+         }
+     }
+ 
++    // Default to use a low power device, look through integrated devices.
++    for (id<MTLDevice> device in integratedGPUs.get())
++    {
++        if (![device isHeadless])
++            return device;
++    }
++
++    // If we selected a low power device and there's no low-power devices avaialble, return the
++    // first (default) device.
++    if (deviceList.get().count > 0)
++        return deviceList[0];
+ #endif
+     // If we can't find anything, or are on a platform that doesn't support power options, create a
+     // default device.
+@@ -1203,8 +1215,7 @@ bool IsMetalDisplayAvailable()
+ bool DisplayMtl::supports32BitFloatFiltering() const
+ {
+ #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
+-    (defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_14_0) || \
+-    (defined(__TVOS_14_0) && __TV_OS_VERSION_MIN_REQUIRED >= __TVOS_14_0)
++    (defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_14_0)
+     if (@available(ios 14.0, macOS 11.0, *))
+     {
+         return [mMetalDevice supports32BitFloatFiltering];
 diff --git a/src/libANGLE/renderer/metal/FrameBufferMtl.mm b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-index d3f9794..5847177 100644
+index 9b47460..fcce2e2 100644
 --- a/src/libANGLE/renderer/metal/FrameBufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/FrameBufferMtl.mm
-@@ -809,9 +809,7 @@ void RoundValueAndAdjustCorrespondingValue(float a,
- 
-     mtl::RenderPassAttachmentDesc &attachment = *attachmentOut;
- 
--    if (!forceDepthStencilMultisampleLoad &&
--        (attachment.storeAction == MTLStoreActionDontCare ||
--         attachment.storeAction == MTLStoreActionMultisampleResolve))
-+    if (!forceDepthStencilMultisampleLoad && attachment.storeAction == MTLStoreActionDontCare)
-     {
-         // If we previously discarded attachment's content, then don't need to load it.
-         attachment.loadAction = MTLLoadActionDontCare;
-@@ -1617,5 +1615,4 @@ void RoundValueAndAdjustCorrespondingValue(float a,
+@@ -1661,5 +1661,4 @@ void RoundValueAndAdjustCorrespondingValue(float a,
  
      return angle::Result::Continue;
  }
 -
  }
-diff --git a/src/libANGLE/renderer/metal/ProgramMtl.h b/src/libANGLE/renderer/metal/ProgramMtl.h
-index 0e15681..96b77e2 100644
---- a/src/libANGLE/renderer/metal/ProgramMtl.h
-+++ b/src/libANGLE/renderer/metal/ProgramMtl.h
-@@ -18,6 +18,7 @@
- #include "common/Optional.h"
- #include "common/utilities.h"
- #include "libANGLE/renderer/ProgramImpl.h"
-+#include "libANGLE/renderer/ShaderInterfaceVariableInfoMap.h"
- #include "libANGLE/renderer/glslang_wrapper_utils.h"
- #include "libANGLE/renderer/metal/mtl_buffer_pool.h"
- #include "libANGLE/renderer/metal/mtl_command_buffer.h"
+diff --git a/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm b/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm
+index ab7283a..1000867 100644
+--- a/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm
++++ b/src/libANGLE/renderer/metal/IOSurfaceSurfaceMtl.mm
+@@ -219,12 +219,10 @@ int FindIOSurfaceFormatIndex(GLenum internalFormat, GLenum type)
+         return false;
+     }
+ 
+-    // Check that the format matches this IOSurface plane
+-    if (IOSurfaceGetBytesPerElementOfPlane(ioSurface, plane) !=
+-        kIOSurfaceFormats[formatIndex].componentBytes)
+-    {
+-        return false;
+-    }
++    // FIXME: Check that the format matches this IOSurface plane for pixel formats that we know of.
++    // We could map IOSurfaceGetPixelFormat to expected type plane and format type.
++    // However, the caller might supply us non-public pixel format, which makes exhaustive checks
++    // problematic.
+ 
+     return true;
+ }
+diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
+index f14f15c..4ae9f8f 100644
+--- a/src/libANGLE/renderer/metal/ProgramMtl.mm
++++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
+@@ -589,7 +589,7 @@ void InitArgumentBufferEncoder(mtl::Context *context,
+ 
+     mtl::TranslatedShaderInfo *translatedMslInfo = &mMslShaderTranslateInfo[shaderType];
+     ProgramShaderObjVariantMtl *shaderVariant;
+-    MTLFunctionConstantValues *funcConstants = nil;
++    mtl::AutoObjCObj<MTLFunctionConstantValues> funcConstants;
+ 
+     if (shaderType == gl::ShaderType::Vertex)
+     {
+@@ -639,7 +639,7 @@ void InitArgumentBufferEncoder(mtl::Context *context,
+                     [NSString stringWithUTF8String:sh::mtl::kRasterizerDiscardEnabledConstName];
+             }
+ 
+-            funcConstants = [[MTLFunctionConstantValues alloc] init];
++            funcConstants = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
+             [funcConstants setConstantValue:&emulateDiscard
+                                        type:MTLDataTypeBool
+                                    withName:discardEnabledStr];
+@@ -675,14 +675,15 @@ void InitArgumentBufferEncoder(mtl::Context *context,
+                     [NSString stringWithUTF8String:sh::mtl::kCoverageMaskEnabledConstName];
+             }
+             
+-            NSString *depthWriteEnabledStr =
+-                [NSString stringWithUTF8String:sh::mtl::kDepthWriteEnabledConstName];
+ 
+-            funcConstants = [[MTLFunctionConstantValues alloc] init];
++            funcConstants = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
+             [funcConstants setConstantValue:&emulateCoverageMask
+                                        type:MTLDataTypeBool
+                                    withName:coverageMaskEnabledStr];
+             
++            NSString *depthWriteEnabledStr = 
++                [NSString stringWithUTF8String:sh::mtl::kDepthWriteEnabledConstName];
++            
+             MTLPixelFormat depthPixelFormat =
+                 (MTLPixelFormat)renderPipelineDesc.outputDescriptor.depthAttachmentPixelFormat;
+             BOOL fragDepthWriteEnabled = depthPixelFormat != MTLPixelFormatInvalid;
+@@ -705,12 +706,12 @@ void InitArgumentBufferEncoder(mtl::Context *context,
+         setConstantValue:&(context->getDisplay()->getFeatures().allowSamplerCompareLod.enabled)
+                     type:MTLDataTypeBool
+                 withName:@"ANGLEUseSampleCompareLod"];
++
+     // Create Metal shader object
+     ANGLE_MTL_OBJC_SCOPE
+     {
+         ANGLE_TRY(CreateMslShader(context, translatedMslInfo->metalLibrary, SHADER_ENTRY_NAME,
+-                                  funcConstants, &shaderVariant->metalShader));
+-        [funcConstants ANGLE_MTL_AUTORELEASE];
++                                  funcConstants.get(), &shaderVariant->metalShader));
+     }
+ 
+     // Store reference to the translated source for easily querying mapped bindings later.
 diff --git a/src/libANGLE/renderer/metal/SurfaceMtl.mm b/src/libANGLE/renderer/metal/SurfaceMtl.mm
-index 161ed51..95006fe 100644
+index 6855e45..daa0e59 100644
 --- a/src/libANGLE/renderer/metal/SurfaceMtl.mm
 +++ b/src/libANGLE/renderer/metal/SurfaceMtl.mm
-@@ -770,5 +770,4 @@
+@@ -775,5 +775,4 @@
  {
      mSize.height = height;
  }
 -
  }
-diff --git a/src/libANGLE/renderer/metal/gen_mtl_format_table.py b/src/libANGLE/renderer/metal/gen_mtl_format_table.py
-index aa0a522..3c59d6b 100644
---- a/src/libANGLE/renderer/metal/gen_mtl_format_table.py
-+++ b/src/libANGLE/renderer/metal/gen_mtl_format_table.py
-@@ -364,7 +364,7 @@ def gen_image_map_switch_es3_case(angle_format, actual_angle_format_info, angle_
+diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.h b/src/libANGLE/renderer/metal/VertexArrayMtl.h
+index 86e6a28..f57ae66 100644
+--- a/src/libANGLE/renderer/metal/VertexArrayMtl.h
++++ b/src/libANGLE/renderer/metal/VertexArrayMtl.h
+@@ -151,7 +151,7 @@ class VertexArrayMtl : public VertexArrayImpl
+     mtl::BufferPool mDynamicIndexData;
  
+     std::vector<uint32_t> mEmulatedInstanceAttribs;
+-
++    bool mElementArrayDirty = true;
+     bool mVertexArrayDirty = true;
+ };
+ }  // namespace rx
+diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.mm b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
+index ba0c505..682b711 100644
+--- a/src/libANGLE/renderer/metal/VertexArrayMtl.mm
++++ b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
+@@ -273,6 +273,7 @@ inline void SetDefaultVertexBufferLayout(mtl::VertexBufferLayoutDesc *layout)
+             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:
+             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER_DATA:
+             {
++                mElementArrayDirty = true;
+                 break;
+             }
  
- # Generate format conversion switch case (ASTC LDR/HDR case)
--def gen_image_map_switch_astc_case(angle_format, angle_to_gl, angle_to_mtl_map):
-+def gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl, angle_to_mtl_map):
-     gl_format = angle_to_gl[angle_format]
+@@ -475,7 +476,21 @@ inline void SetDefaultVertexBufferLayout(mtl::VertexBufferLayoutDesc *layout)
+                 }
  
-     def gen_format_assign_code(actual_angle_format, angle_to_mtl_map):
-@@ -383,6 +383,20 @@ def gen_image_map_switch_astc_case(angle_format, angle_to_gl, angle_to_mtl_map):
-                                      gen_format_assign_code)
- 
- 
-+def gen_image_map_switch_astc_case_watchos(angle_format, angle_to_gl, angle_to_mtl_map):
-+    gl_format = angle_to_gl[angle_format]
+                 desc.layouts[bufferIdx].stride = mCurrentArrayBufferStrides[v];
++            }
++        }  // for (v)
++    }
 +
-+    def gen_format_assign_code(actual_angle_format, angle_to_mtl_map):
-+        return image_format_assign_template1.format(
-+            actual_angle_format=actual_angle_format,
-+            mtl_format=angle_to_mtl_map[actual_angle_format] + "LDR",
-+            init_function=angle_format_utils.get_internal_format_initializer(
-+                gl_format, actual_angle_format))
++    if(dirty || mElementArrayDirty)
++    {
++        mElementArrayDirty = false;
++        const gl::ProgramExecutable *executable = glContext->getState().getProgramExecutable();
++        const gl::AttributesMask &programActiveAttribsMask =
++                executable->getActiveAttribLocationsMask();
+ 
++        for (uint32_t v = 0; v < mtl::kMaxVertexAttribs; ++v)
++        {
++            uint32_t bufferIdx    = mtl::kVboBindingIndexStart + v;
++            uint32_t bufferOffset = static_cast<uint32_t>(mCurrentArrayBufferOffsets[v]);
+             if (mCurrentArrayBuffers[v])
+             {
+                 cmdEncoder->setVertexBuffer(mCurrentArrayBuffers[v]->getCurrentBuffer(),
+@@ -488,10 +503,11 @@ inline void SetDefaultVertexBufferLayout(mtl::VertexBufferLayoutDesc *layout)
+                 cmdEncoder->setVertexBytes(mCurrentArrayInlineDataPointers[v],
+                                            mCurrentArrayInlineDataSizes[v], bufferIdx);
+             }
 +
-+    return gen_image_map_switch_case(angle_format, angle_format, angle_to_mtl_map,
-+                                     gen_format_assign_code)
+         }
+-        }  // for (v)
+     }
+ 
 +
-+
- def gen_image_map_switch_string(image_table, angle_to_gl):
-     angle_override = image_table["override"]
-     mac_override = image_table["override_mac"]
-@@ -448,19 +462,36 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
-     for angle_format in sorted(sim_override.keys()):
-         switch_data += gen_image_map_switch_simple_case(angle_format, sim_override[angle_format],
-                                                         angle_to_gl, sim_angle_to_mtl)
-+    switch_data += "#if TARGET_OS_IOS || TARGET_OS_TV\n"
-     for angle_format in sorted(astc_tpl_map.keys()):
--        switch_data += gen_image_map_switch_astc_case(angle_format, angle_to_gl, astc_tpl_map)
-+        switch_data += gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl,
-+                                                             astc_tpl_map)
-+    switch_data += "#elif TARGET_OS_WATCH\n"
-+
-+    for angle_format in sorted(astc_tpl_map.keys()):
-+        switch_data += gen_image_map_switch_astc_case_watchos(angle_format, angle_to_gl,
-+                                                              astc_tpl_map)
-+    switch_data += "#endif // TARGET_OS_IOS || TARGET_OS_TV \n "
-     # iOS specific
--    switch_data += "#elif TARGET_OS_IOS || TARGET_OS_TV\n"
-+    switch_data += "#elif TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST\n"
-     for angle_format in sorted(ios_specific_map.keys()):
-         switch_data += gen_image_map_switch_simple_case(angle_format, angle_format, angle_to_gl,
-                                                         ios_specific_map)
-     for angle_format in sorted(ios_override.keys()):
-         switch_data += gen_image_map_switch_simple_case(angle_format, ios_override[angle_format],
-                                                         angle_to_gl, ios_angle_to_mtl)
-+    switch_data += "#if TARGET_OS_IOS || TARGET_OS_TV\n"
-     for angle_format in sorted(astc_tpl_map.keys()):
--        switch_data += gen_image_map_switch_astc_case(angle_format, angle_to_gl, astc_tpl_map)
--    switch_data += "#endif\n"
-+        switch_data += gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl,
-+                                                             astc_tpl_map)
-+
-+    switch_data += "#elif TARGET_OS_WATCH\n"
-+
-+    for angle_format in sorted(astc_tpl_map.keys()):
-+        switch_data += gen_image_map_switch_astc_case_watchos(angle_format, angle_to_gl,
-+                                                              astc_tpl_map)
-+    switch_data += "#endif // TARGET_OS_IOS || TARGET_OS_TV\n"
-+    switch_data += "#endif // TARGET_OS_IPHONE\n"
+     *vertexDescChanged = dirty;
  
-     # Try to support all iOS formats on newer macOS with Apple GPU.
-     switch_data += "#if (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))\n"
-@@ -475,8 +506,9 @@ def gen_image_map_switch_string(image_table, angle_to_gl):
-                                                             angle_to_gl, ios_specific_map)
-     # ASTC LDR or HDR
-     for angle_format in sorted(astc_tpl_map.keys()):
--        switch_data += gen_image_map_switch_astc_case(angle_format, angle_to_gl, astc_tpl_map)
--    switch_data += "#endif\n"
-+        switch_data += gen_image_map_switch_astc_case_iosmac(angle_format, angle_to_gl,
-+                                                             astc_tpl_map)
-+    switch_data += "#endif // TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101600)) \n"
- 
-     switch_data += "        default:\n"
-     switch_data += "            this->metalFormat = MTLPixelFormatInvalid;\n"
-@@ -505,7 +537,7 @@ def gen_image_mtl_to_angle_switch_string(image_table):
-     switch_data += "#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST\n"
- 
-     # iOS + macOS 11.0+ specific
--    switch_data += "#if TARGET_OS_IOS || TARGET_OS_TV || (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))\n"
-+    switch_data += "#if TARGET_OS_IPHONE || (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101600))\n"
-     for angle_format in sorted(ios_specific_map.keys()):
-         # ETC1_R8G8B8_UNORM_BLOCK is a duplicated of ETC2_R8G8B8_UNORM_BLOCK
-         if angle_format == 'ETC1_R8G8B8_UNORM_BLOCK':
-@@ -515,9 +547,12 @@ def gen_image_mtl_to_angle_switch_string(image_table):
-     for angle_format in sorted(astc_tpl_map.keys()):
-         switch_data += case_image_mtl_to_angle_template.format(
-             mtl_format=astc_tpl_map[angle_format] + "LDR", angle_format=angle_format)
-+    switch_data += "#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX \n"
-+    for angle_format in sorted(astc_tpl_map.keys()):
-         switch_data += case_image_mtl_to_angle_template.format(
-             mtl_format=astc_tpl_map[angle_format] + "HDR", angle_format=angle_format)
--    switch_data += "#endif  // TARGET_OS_IOS || TARGET_OS_TV || mac 11.0+\n"
-+    switch_data += "#endif // TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX\n"
-+    switch_data += "#endif  // TARGET_OS_IPHONE || mac 11.0+\n"
- 
-     switch_data += "        default:\n"
-     switch_data += "            return angle::FormatID::NONE;\n"
-@@ -586,7 +621,8 @@ def gen_vertex_map_switch_string(vertex_table):
- def gen_mtl_format_caps_init_string(map_image):
-     caps = map_image['caps']
-     mac_caps = map_image['caps_mac']
--    ios_caps = map_image['caps_ios']
-+    ios_platform_caps = map_image['caps_ios_platform']
-+    ios_specific_caps = map_image['caps_ios_spcific']
-     caps_init_str = ''
- 
-     def cap_to_param(caps, key):
-@@ -616,12 +652,15 @@ def gen_mtl_format_caps_init_string(map_image):
-     caps_init_str += caps_to_cpp(mac_caps)
-     caps_init_str += "#endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST\n"
- 
--    caps_init_str += "#if (TARGET_OS_IOS && !TARGET_OS_MACCATALYST) || TARGET_OS_TV || \\\n"
-+    caps_init_str += "#if (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST) || \\\n"
-     caps_init_str += "    (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))\n"
- 
--    caps_init_str += caps_to_cpp(ios_caps)
-+    caps_init_str += caps_to_cpp(ios_platform_caps)
- 
--    caps_init_str += "#endif\n"
-+    caps_init_str += "#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX\n"
-+    caps_init_str += caps_to_cpp(ios_specific_caps)
-+    caps_init_str += "#endif // TARGET_OS_IOS || TARGET_OS_TV || mac 11.0+ \n"
-+    caps_init_str += "#endif // TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST || mac 11.0+ \n"
- 
-     return caps_init_str
- 
+     return angle::Result::Continue;
 diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 index c3be11f..204ebb9 100644
 --- a/src/libANGLE/renderer/metal/mtl_buffer_pool.h
@@ -998,1124 +656,83 @@ index c3be11f..204ebb9 100644
  };
  
 diff --git a/src/libANGLE/renderer/metal/mtl_format_map.json b/src/libANGLE/renderer/metal/mtl_format_map.json
-index 2a63665..6d80191 100644
+index c4520cd..a4e8c69 100644
 --- a/src/libANGLE/renderer/metal/mtl_format_map.json
 +++ b/src/libANGLE/renderer/metal/mtl_format_map.json
-@@ -74,7 +74,6 @@
-             "D32_FLOAT": "MTLPixelFormatDepth32Float",
-             "S8_UINT": "MTLPixelFormatStencil8",
-             "D32_FLOAT_S8X24_UINT": "MTLPixelFormatDepth32Float_Stencil8",
--            "B10G10R10A2_UNORM": "MTLPixelFormatBGR10A2Unorm",
-             "R10G10B10A2_UINT": "MTLPixelFormatRGB10A2Uint",
-             "R10G10B10A2_UNORM": "MTLPixelFormatRGB10A2Unorm",
-             "R11G11B10_FLOAT": "MTLPixelFormatRG11B10Float",
-@@ -105,20 +104,20 @@
-             "EAC_R11_SNORM_BLOCK": "MTLPixelFormatEAC_R11Snorm",
-             "EAC_R11G11_UNORM_BLOCK": "MTLPixelFormatEAC_RG11Unorm",
-             "EAC_R11G11_SNORM_BLOCK": "MTLPixelFormatEAC_RG11Snorm",
--            "ASTC_4x4_SRGB_BLOCK": "MTLPixelFormatASTC_4x4_sRGB",
--            "ASTC_5x4_SRGB_BLOCK": "MTLPixelFormatASTC_5x4_sRGB",
--            "ASTC_5x5_SRGB_BLOCK": "MTLPixelFormatASTC_5x5_sRGB",
--            "ASTC_6x5_SRGB_BLOCK": "MTLPixelFormatASTC_6x5_sRGB",
--            "ASTC_6x6_SRGB_BLOCK": "MTLPixelFormatASTC_6x6_sRGB",
--            "ASTC_8x5_SRGB_BLOCK": "MTLPixelFormatASTC_8x5_sRGB",
--            "ASTC_8x6_SRGB_BLOCK": "MTLPixelFormatASTC_8x6_sRGB",
--            "ASTC_8x8_SRGB_BLOCK": "MTLPixelFormatASTC_8x8_sRGB",
--            "ASTC_10x5_SRGB_BLOCK": "MTLPixelFormatASTC_10x5_sRGB",
--            "ASTC_10x6_SRGB_BLOCK": "MTLPixelFormatASTC_10x6_sRGB",
--            "ASTC_10x8_SRGB_BLOCK": "MTLPixelFormatASTC_10x8_sRGB",
--            "ASTC_10x10_SRGB_BLOCK": "MTLPixelFormatASTC_10x10_sRGB",
--            "ASTC_12x10_SRGB_BLOCK": "MTLPixelFormatASTC_12x10_sRGB",
--            "ASTC_12x12_SRGB_BLOCK": "MTLPixelFormatASTC_12x12_sRGB"
-+            "ASTC_4x4_SRGB_BLOCK" : "MTLPixelFormatASTC_4x4_sRGB",
-+            "ASTC_5x4_SRGB_BLOCK" : "MTLPixelFormatASTC_5x4_sRGB",
-+            "ASTC_5x5_SRGB_BLOCK" : "MTLPixelFormatASTC_5x5_sRGB",
-+            "ASTC_6x5_SRGB_BLOCK" : "MTLPixelFormatASTC_6x5_sRGB",
-+            "ASTC_6x6_SRGB_BLOCK" : "MTLPixelFormatASTC_6x6_sRGB",
-+            "ASTC_8x5_SRGB_BLOCK" : "MTLPixelFormatASTC_8x5_sRGB",
-+            "ASTC_8x6_SRGB_BLOCK" : "MTLPixelFormatASTC_8x6_sRGB",
-+            "ASTC_8x8_SRGB_BLOCK" : "MTLPixelFormatASTC_8x8_sRGB",
-+            "ASTC_10x5_SRGB_BLOCK" : "MTLPixelFormatASTC_10x5_sRGB",
-+            "ASTC_10x6_SRGB_BLOCK" : "MTLPixelFormatASTC_10x6_sRGB",
-+            "ASTC_10x8_SRGB_BLOCK" : "MTLPixelFormatASTC_10x8_sRGB",
-+            "ASTC_10x10_SRGB_BLOCK" : "MTLPixelFormatASTC_10x10_sRGB",
-+            "ASTC_12x10_SRGB_BLOCK" : "MTLPixelFormatASTC_12x10_sRGB",
-+            "ASTC_12x12_SRGB_BLOCK" : "MTLPixelFormatASTC_12x12_sRGB"
+@@ -121,14 +121,6 @@
+             "ASTC_12x12_SRGB_BLOCK": "MTLPixelFormatASTC_12x12_sRGB"
          },
          "map_sim": {
+-            "PVRTC1_RGB_4BPP_UNORM_BLOCK": "MTLPixelFormatPVRTC_RGB_4BPP",
+-            "PVRTC1_RGB_2BPP_UNORM_BLOCK": "MTLPixelFormatPVRTC_RGB_2BPP",
+-            "PVRTC1_RGBA_4BPP_UNORM_BLOCK": "MTLPixelFormatPVRTC_RGBA_4BPP",
+-            "PVRTC1_RGBA_2BPP_UNORM_BLOCK": "MTLPixelFormatPVRTC_RGBA_2BPP",
+-            "PVRTC1_RGB_2BPP_UNORM_SRGB_BLOCK": "MTLPixelFormatPVRTC_RGB_2BPP_sRGB",
+-            "PVRTC1_RGB_4BPP_UNORM_SRGB_BLOCK": "MTLPixelFormatPVRTC_RGB_4BPP_sRGB",
+-            "PVRTC1_RGBA_2BPP_UNORM_SRGB_BLOCK": "MTLPixelFormatPVRTC_RGBA_2BPP_sRGB",
+-            "PVRTC1_RGBA_4BPP_UNORM_SRGB_BLOCK": "MTLPixelFormatPVRTC_RGBA_4BPP_sRGB",
              "ETC1_R8G8B8_UNORM_BLOCK": "MTLPixelFormatETC2_RGB8",
-@@ -130,7 +129,7 @@
-             "ETC2_R8G8B8A8_SRGB_BLOCK": "MTLPixelFormatEAC_RGBA8_sRGB",
-             "EAC_R11_UNORM_BLOCK": "MTLPixelFormatEAC_R11Unorm",
-             "EAC_R11_SNORM_BLOCK": "MTLPixelFormatEAC_R11Snorm",
--            "EAC_R11G11_UNORM_BLOCK": "MTLPixelFormatEAC_R11Unorm",
-+            "EAC_R11G11_UNORM_BLOCK": "MTLPixelFormatEAC_RG11Unorm",
-             "EAC_R11G11_SNORM_BLOCK": "MTLPixelFormatEAC_RG11Snorm",
-             "ASTC_4x4_SRGB_BLOCK": "MTLPixelFormatASTC_4x4_sRGB",
-             "ASTC_5x4_SRGB_BLOCK": "MTLPixelFormatASTC_5x4_sRGB",
-@@ -145,21 +144,7 @@
-             "ASTC_10x8_SRGB_BLOCK": "MTLPixelFormatASTC_10x8_sRGB",
-             "ASTC_10x10_SRGB_BLOCK": "MTLPixelFormatASTC_10x10_sRGB",
-             "ASTC_12x10_SRGB_BLOCK": "MTLPixelFormatASTC_12x10_sRGB",
--            "ASTC_12x12_SRGB_BLOCK": "MTLPixelFormatASTC_12x12_sRGB",
--            "ASTC_4x4_UNORM_BLOCK": "MTLPixelFormatASTC_4x4_LDR",
--            "ASTC_5x4_UNORM_BLOCK": "MTLPixelFormatASTC_5x4_LDR",
--            "ASTC_5x5_UNORM_BLOCK": "MTLPixelFormatASTC_5x5_LDR",
--            "ASTC_6x5_UNORM_BLOCK": "MTLPixelFormatASTC_6x5_LDR",
--            "ASTC_6x6_UNORM_BLOCK": "MTLPixelFormatASTC_6x6_LDR",
--            "ASTC_8x5_UNORM_BLOCK": "MTLPixelFormatASTC_8x5_LDR",
--            "ASTC_8x6_UNORM_BLOCK": "MTLPixelFormatASTC_8x6_LDR",
--            "ASTC_8x8_UNORM_BLOCK": "MTLPixelFormatASTC_8x8_LDR",
--            "ASTC_10x5_UNORM_BLOCK": "MTLPixelFormatASTC_10x5_LDR",
--            "ASTC_10x6_UNORM_BLOCK": "MTLPixelFormatASTC_10x6_LDR",
--            "ASTC_10x8_UNORM_BLOCK": "MTLPixelFormatASTC_10x8_LDR",
--            "ASTC_10x10_UNORM_BLOCK": "MTLPixelFormatASTC_10x10_LDR",
--            "ASTC_12x10_UNORM_BLOCK": "MTLPixelFormatASTC_12x10_LDR",
--            "ASTC_12x12_UNORM_BLOCK": "MTLPixelFormatASTC_12x12_LDR"
-+            "ASTC_12x12_SRGB_BLOCK": "MTLPixelFormatASTC_12x12_sRGB"
-         },
-         "map_astc_tpl": {
-             "ASTC_4x4_UNORM_BLOCK": "MTLPixelFormatASTC_4x4_",
-@@ -230,7 +215,8 @@
-             "R5G6B5_UNORM": "R8G8B8A8_UNORM",
-             "R5G5B5A1_UNORM": "R8G8B8A8_UNORM",
-             "D24_UNORM_S8_UINT": "D32_FLOAT_S8X24_UINT",
--            "R4G4B4A4_UNORM": "R8G8B8A8_UNORM"
-+            "R4G4B4A4_UNORM": "R8G8B8A8_UNORM",
-+            "D16_UNORM": "D32_FLOAT"
-         },
-         "override_mac_bc1": {
-             "BC1_RGB_UNORM_BLOCK": {
-@@ -261,6 +247,8 @@
-         "d24s8_fallbacks_mac": {
-             "D24_UNORM_S8_UINT": "D32_FLOAT_S8X24_UINT"
-         },
-+        "fallbacks_ios": {
-+        },
-         "caps": {
-             "MTLPixelFormatA8Unorm":{
-                 "filterable": "true",
-@@ -623,7 +611,7 @@
-                 "colorRenderable": "true"
-             },
-             "MTLPixelFormatDepth32Float":{
--                "filterable": "display->supportsEitherGPUFamily(1, 1)",
-+                "filterable": "display->supports32BitFloatFiltering()",
-                 "writable": "false",
-                 "blendable": "false",
-                 "multisample": "true",
-@@ -641,7 +629,7 @@
-                 "depthRenderable": "true"
-             },
-             "MTLPixelFormatDepth32Float_Stencil8":{
--                "filterable": "display->supportsEitherGPUFamily(1, 1)",
-+                "filterable": "display->supports32BitFloatFiltering()",
-                 "writable": "false",
-                 "blendable": "false",
-                 "multisample": "true",
-@@ -661,13 +649,13 @@
-                 "depthRenderable": "true"
-             },
-             "MTLPixelFormatDepth24Unorm_Stencil8":{
--                "filterable": "display->supportsMacGPUFamily(1)",
-+                "filterable": "display->supportsMacGPUFamily(1) && display->supportsDepth24Stencil8PixelFormat()",
-                 "writable": "false",
-                 "blendable": "false",
-                 "multisample": "true",
-                 "resolve": "supportDepthStencilAutoResolve",
-                 "colorRenderable": "false",
--                "depthRenderable": "display->supportsMacGPUFamily(1)"
-+                "depthRenderable": "display->supportsMacGPUFamily(1) && display->supportsDepth24Stencil8PixelFormat()"
-             },
-             "MTLPixelFormatBC1_RGBA":{
-                 "filterable": "true"
-@@ -712,7 +700,7 @@
-                 "filterable": "true"
-             }
-         },
--        "caps_ios": {
-+        "caps_ios_platform": {
-             "MTLPixelFormatR8Unorm_sRGB":{
-                 "filterable": "display->supportsAppleGPUFamily(1)",
-                 "writable": "display->supportsAppleGPUFamily(2)",
-@@ -898,7 +886,10 @@
-             },
-             "MTLPixelFormatASTC_12x12_sRGB":{
-                 "filterable": "display->supportsAppleGPUFamily(2)"
-+            }
-         },
-+        "caps_ios_spcific" :
-+        {
-             "MTLPixelFormatASTC_4x4_HDR":{
-                 "filterable": "display->supportsAppleGPUFamily(6)"
-             },
+             "ETC2_R8G8B8_UNORM_BLOCK": "MTLPixelFormatETC2_RGB8",
+             "ETC2_R8G8B8_SRGB_BLOCK": "MTLPixelFormatETC2_RGB8_sRGB",
 diff --git a/src/libANGLE/renderer/metal/mtl_format_table_autogen.mm b/src/libANGLE/renderer/metal/mtl_format_table_autogen.mm
-index e43160e..05adf69 100644
+index 9d19c85..b5d90ff 100644
 --- a/src/libANGLE/renderer/metal/mtl_format_table_autogen.mm
 +++ b/src/libANGLE/renderer/metal/mtl_format_table_autogen.mm
-@@ -33,8 +33,6 @@
-     {
-         case MTLPixelFormatA8Unorm:
-             return angle::FormatID::A8_UNORM;
--        case MTLPixelFormatBGR10A2Unorm:
--            return angle::FormatID::B10G10R10A2_UNORM;
-         case MTLPixelFormatBGRA8Unorm:
-             return angle::FormatID::B8G8R8A8_UNORM;
-         case MTLPixelFormatBGRA8Unorm_sRGB:
-@@ -161,7 +159,7 @@
-         case MTLPixelFormatDepth24Unorm_Stencil8:
-             return angle::FormatID::D24_UNORM_S8_UINT;
- #endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
--#if TARGET_OS_IOS || TARGET_OS_TV || (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))
-+#if TARGET_OS_IPHONE || (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101600))
-         case MTLPixelFormatASTC_10x10_sRGB:
-             return angle::FormatID::ASTC_10x10_SRGB_BLOCK;
-         case MTLPixelFormatASTC_10x5_sRGB:
-@@ -238,61 +236,63 @@
-             return angle::FormatID::R8_UNORM_SRGB;
-         case MTLPixelFormatASTC_10x10_LDR:
-             return angle::FormatID::ASTC_10x10_UNORM_BLOCK;
--        case MTLPixelFormatASTC_10x10_HDR:
--            return angle::FormatID::ASTC_10x10_UNORM_BLOCK;
-         case MTLPixelFormatASTC_10x5_LDR:
-             return angle::FormatID::ASTC_10x5_UNORM_BLOCK;
--        case MTLPixelFormatASTC_10x5_HDR:
--            return angle::FormatID::ASTC_10x5_UNORM_BLOCK;
-         case MTLPixelFormatASTC_10x6_LDR:
-             return angle::FormatID::ASTC_10x6_UNORM_BLOCK;
--        case MTLPixelFormatASTC_10x6_HDR:
--            return angle::FormatID::ASTC_10x6_UNORM_BLOCK;
-         case MTLPixelFormatASTC_10x8_LDR:
-             return angle::FormatID::ASTC_10x8_UNORM_BLOCK;
--        case MTLPixelFormatASTC_10x8_HDR:
--            return angle::FormatID::ASTC_10x8_UNORM_BLOCK;
-         case MTLPixelFormatASTC_12x10_LDR:
-             return angle::FormatID::ASTC_12x10_UNORM_BLOCK;
--        case MTLPixelFormatASTC_12x10_HDR:
--            return angle::FormatID::ASTC_12x10_UNORM_BLOCK;
-         case MTLPixelFormatASTC_12x12_LDR:
-             return angle::FormatID::ASTC_12x12_UNORM_BLOCK;
--        case MTLPixelFormatASTC_12x12_HDR:
--            return angle::FormatID::ASTC_12x12_UNORM_BLOCK;
-         case MTLPixelFormatASTC_4x4_LDR:
-             return angle::FormatID::ASTC_4x4_UNORM_BLOCK;
--        case MTLPixelFormatASTC_4x4_HDR:
--            return angle::FormatID::ASTC_4x4_UNORM_BLOCK;
-         case MTLPixelFormatASTC_5x4_LDR:
-             return angle::FormatID::ASTC_5x4_UNORM_BLOCK;
--        case MTLPixelFormatASTC_5x4_HDR:
--            return angle::FormatID::ASTC_5x4_UNORM_BLOCK;
-         case MTLPixelFormatASTC_5x5_LDR:
-             return angle::FormatID::ASTC_5x5_UNORM_BLOCK;
--        case MTLPixelFormatASTC_5x5_HDR:
--            return angle::FormatID::ASTC_5x5_UNORM_BLOCK;
-         case MTLPixelFormatASTC_6x5_LDR:
-             return angle::FormatID::ASTC_6x5_UNORM_BLOCK;
--        case MTLPixelFormatASTC_6x5_HDR:
--            return angle::FormatID::ASTC_6x5_UNORM_BLOCK;
-         case MTLPixelFormatASTC_6x6_LDR:
-             return angle::FormatID::ASTC_6x6_UNORM_BLOCK;
--        case MTLPixelFormatASTC_6x6_HDR:
--            return angle::FormatID::ASTC_6x6_UNORM_BLOCK;
-         case MTLPixelFormatASTC_8x5_LDR:
-             return angle::FormatID::ASTC_8x5_UNORM_BLOCK;
--        case MTLPixelFormatASTC_8x5_HDR:
--            return angle::FormatID::ASTC_8x5_UNORM_BLOCK;
-         case MTLPixelFormatASTC_8x6_LDR:
-             return angle::FormatID::ASTC_8x6_UNORM_BLOCK;
--        case MTLPixelFormatASTC_8x6_HDR:
--            return angle::FormatID::ASTC_8x6_UNORM_BLOCK;
-         case MTLPixelFormatASTC_8x8_LDR:
-             return angle::FormatID::ASTC_8x8_UNORM_BLOCK;
-+#    if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX
-+        case MTLPixelFormatASTC_10x10_HDR:
-+            return angle::FormatID::ASTC_10x10_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_10x5_HDR:
-+            return angle::FormatID::ASTC_10x5_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_10x6_HDR:
-+            return angle::FormatID::ASTC_10x6_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_10x8_HDR:
-+            return angle::FormatID::ASTC_10x8_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_12x10_HDR:
-+            return angle::FormatID::ASTC_12x10_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_12x12_HDR:
-+            return angle::FormatID::ASTC_12x12_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_4x4_HDR:
-+            return angle::FormatID::ASTC_4x4_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_5x4_HDR:
-+            return angle::FormatID::ASTC_5x4_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_5x5_HDR:
-+            return angle::FormatID::ASTC_5x5_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_6x5_HDR:
-+            return angle::FormatID::ASTC_6x5_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_6x6_HDR:
-+            return angle::FormatID::ASTC_6x6_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_8x5_HDR:
-+            return angle::FormatID::ASTC_8x5_UNORM_BLOCK;
-+        case MTLPixelFormatASTC_8x6_HDR:
-+            return angle::FormatID::ASTC_8x6_UNORM_BLOCK;
-         case MTLPixelFormatASTC_8x8_HDR:
-             return angle::FormatID::ASTC_8x8_UNORM_BLOCK;
--#endif  // TARGET_OS_IOS || TARGET_OS_TV || mac 11.0+
-+#    endif  // TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX
-+#endif      // TARGET_OS_IPHONE || mac 11.0+
-         default:
-             return angle::FormatID::NONE;
-     }
-@@ -317,15 +317,6 @@
-             this->swizzled = false;
+@@ -1152,54 +1152,6 @@
+             this->actualFormatId = angle::FormatID::ETC2_R8G8B8_UNORM_BLOCK;
              break;
  
--        case angle::FormatID::B10G10R10A2_UNORM:
+-        case angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_BLOCK:
 -
--            this->metalFormat    = MTLPixelFormatBGR10A2Unorm;
--            this->actualFormatId = angle::FormatID::B10G10R10A2_UNORM;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
+-            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_2BPP;
+-            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_BLOCK;
 -            break;
 -
-         case angle::FormatID::B8G8R8A8_UNORM:
- 
-             this->metalFormat    = MTLPixelFormatBGRA8Unorm;
-@@ -1304,15 +1295,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
+-        case angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_SRGB_BLOCK:
 -
--            this->metalFormat    = MTLPixelFormatASTC_10x10_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_10x10_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
+-            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_2BPP_sRGB;
+-            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_SRGB_BLOCK;
 -            break;
 -
-         case angle::FormatID::ASTC_10x5_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_10x5_sRGB;
-@@ -1322,15 +1304,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_10x5_UNORM_BLOCK:
+-        case angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_BLOCK:
 -
--            this->metalFormat    = MTLPixelFormatASTC_10x5_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_10x5_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
+-            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_4BPP;
+-            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_BLOCK;
 -            break;
 -
-         case angle::FormatID::ASTC_10x6_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_10x6_sRGB;
-@@ -1340,15 +1313,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_10x6_UNORM_BLOCK:
+-        case angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_SRGB_BLOCK:
 -
--            this->metalFormat    = MTLPixelFormatASTC_10x6_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_10x6_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
+-            this->metalFormat    = MTLPixelFormatPVRTC_RGBA_4BPP_sRGB;
+-            this->actualFormatId = angle::FormatID::PVRTC1_RGBA_4BPP_UNORM_SRGB_BLOCK;
 -            break;
 -
-         case angle::FormatID::ASTC_10x8_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_10x8_sRGB;
-@@ -1358,15 +1322,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_10x8_UNORM_BLOCK:
+-        case angle::FormatID::PVRTC1_RGB_2BPP_UNORM_BLOCK:
 -
--            this->metalFormat    = MTLPixelFormatASTC_10x8_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_10x8_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
+-            this->metalFormat    = MTLPixelFormatPVRTC_RGB_2BPP;
+-            this->actualFormatId = angle::FormatID::PVRTC1_RGB_2BPP_UNORM_BLOCK;
 -            break;
 -
-         case angle::FormatID::ASTC_12x10_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_12x10_sRGB;
-@@ -1376,15 +1331,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_12x10_UNORM_BLOCK:
+-        case angle::FormatID::PVRTC1_RGB_2BPP_UNORM_SRGB_BLOCK:
 -
--            this->metalFormat    = MTLPixelFormatASTC_12x10_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_12x10_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
+-            this->metalFormat    = MTLPixelFormatPVRTC_RGB_2BPP_sRGB;
+-            this->actualFormatId = angle::FormatID::PVRTC1_RGB_2BPP_UNORM_SRGB_BLOCK;
 -            break;
 -
-         case angle::FormatID::ASTC_12x12_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_12x12_sRGB;
-@@ -1394,15 +1340,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_12x12_UNORM_BLOCK:
+-        case angle::FormatID::PVRTC1_RGB_4BPP_UNORM_BLOCK:
 -
--            this->metalFormat    = MTLPixelFormatASTC_12x12_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_12x12_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
+-            this->metalFormat    = MTLPixelFormatPVRTC_RGB_4BPP;
+-            this->actualFormatId = angle::FormatID::PVRTC1_RGB_4BPP_UNORM_BLOCK;
 -            break;
 -
-         case angle::FormatID::ASTC_4x4_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_4x4_sRGB;
-@@ -1412,15 +1349,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_4x4_UNORM_BLOCK:
+-        case angle::FormatID::PVRTC1_RGB_4BPP_UNORM_SRGB_BLOCK:
 -
--            this->metalFormat    = MTLPixelFormatASTC_4x4_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_4x4_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
+-            this->metalFormat    = MTLPixelFormatPVRTC_RGB_4BPP_sRGB;
+-            this->actualFormatId = angle::FormatID::PVRTC1_RGB_4BPP_UNORM_SRGB_BLOCK;
 -            break;
 -
-         case angle::FormatID::ASTC_5x4_SRGB_BLOCK:
+         case angle::FormatID::D16_UNORM:
  
-             this->metalFormat    = MTLPixelFormatASTC_5x4_sRGB;
-@@ -1430,15 +1358,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_5x4_UNORM_BLOCK:
--
--            this->metalFormat    = MTLPixelFormatASTC_5x4_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_5x4_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
--            break;
--
-         case angle::FormatID::ASTC_5x5_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_5x5_sRGB;
-@@ -1448,15 +1367,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_5x5_UNORM_BLOCK:
--
--            this->metalFormat    = MTLPixelFormatASTC_5x5_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_5x5_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
--            break;
--
-         case angle::FormatID::ASTC_6x5_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_6x5_sRGB;
-@@ -1466,15 +1376,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_6x5_UNORM_BLOCK:
--
--            this->metalFormat    = MTLPixelFormatASTC_6x5_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_6x5_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
--            break;
--
-         case angle::FormatID::ASTC_6x6_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_6x6_sRGB;
-@@ -1484,15 +1385,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_6x6_UNORM_BLOCK:
--
--            this->metalFormat    = MTLPixelFormatASTC_6x6_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_6x6_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
--            break;
--
-         case angle::FormatID::ASTC_8x5_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_8x5_sRGB;
-@@ -1502,15 +1394,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_8x5_UNORM_BLOCK:
--
--            this->metalFormat    = MTLPixelFormatASTC_8x5_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_8x5_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
--            break;
--
-         case angle::FormatID::ASTC_8x6_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_8x6_sRGB;
-@@ -1520,15 +1403,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_8x6_UNORM_BLOCK:
--
--            this->metalFormat    = MTLPixelFormatASTC_8x6_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_8x6_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
--            break;
--
-         case angle::FormatID::ASTC_8x8_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_8x8_sRGB;
-@@ -1538,15 +1412,6 @@
-             this->swizzled = false;
-             break;
- 
--        case angle::FormatID::ASTC_8x8_UNORM_BLOCK:
--
--            this->metalFormat    = MTLPixelFormatASTC_8x8_LDR;
--            this->actualFormatId = angle::FormatID::ASTC_8x8_UNORM_BLOCK;
--            this->initFunction   = nullptr;
--
--            this->swizzled = false;
--            break;
--
-         case angle::FormatID::EAC_R11G11_SNORM_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatEAC_RG11Snorm;
-@@ -1558,7 +1423,7 @@
- 
-         case angle::FormatID::EAC_R11G11_UNORM_BLOCK:
- 
--            this->metalFormat    = MTLPixelFormatEAC_R11Unorm;
-+            this->metalFormat    = MTLPixelFormatEAC_RG11Unorm;
-             this->actualFormatId = angle::FormatID::EAC_R11G11_UNORM_BLOCK;
-             this->initFunction   = nullptr;
- 
-@@ -1646,6 +1511,15 @@
-             this->swizzled = false;
-             break;
- 
-+        case angle::FormatID::D16_UNORM:
-+
-+            this->metalFormat    = MTLPixelFormatDepth32Float;
-+            this->actualFormatId = angle::FormatID::D32_FLOAT;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-         case angle::FormatID::D24_UNORM_S8_UINT:
- 
-             this->metalFormat    = MTLPixelFormatDepth32Float_Stencil8;
-@@ -1682,6 +1556,7 @@
-             this->swizzled = false;
-             break;
- 
-+#    if TARGET_OS_IOS || TARGET_OS_TV
-         case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
- 
-             if (display->supportsAppleGPUFamily(6))
-@@ -1911,30 +1786,158 @@
-                 this->metalFormat    = MTLPixelFormatASTC_8x6_LDR;
-                 this->actualFormatId = angle::FormatID::ASTC_8x6_UNORM_BLOCK;
-                 this->initFunction   = nullptr;
--            }
-+            }
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_8x8_UNORM_BLOCK:
-+
-+            if (display->supportsAppleGPUFamily(6))
-+            {
-+                this->metalFormat    = MTLPixelFormatASTC_8x8_HDR;
-+                this->actualFormatId = angle::FormatID::ASTC_8x8_UNORM_BLOCK;
-+                this->initFunction   = nullptr;
-+            }
-+            else
-+            {
-+                this->metalFormat    = MTLPixelFormatASTC_8x8_LDR;
-+                this->actualFormatId = angle::FormatID::ASTC_8x8_UNORM_BLOCK;
-+                this->initFunction   = nullptr;
-+            }
-+
-+            this->swizzled = false;
-+            break;
-+
-+#    elif TARGET_OS_WATCH
-+        case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_10x10_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_10x10_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_10x5_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_10x5_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_10x5_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_10x6_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_10x6_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_10x6_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_10x8_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_10x8_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_10x8_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_12x10_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_12x10_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_12x10_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_12x12_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_12x12_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_12x12_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_4x4_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_4x4_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_4x4_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_5x4_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_5x4_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_5x4_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_5x5_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_5x5_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_5x5_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_6x5_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_6x5_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_6x5_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_6x6_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_6x6_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_6x6_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_8x5_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_8x5_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_8x5_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_8x6_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_8x6_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_8x6_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
- 
-             this->swizzled = false;
-             break;
- 
-         case angle::FormatID::ASTC_8x8_UNORM_BLOCK:
- 
--            if (display->supportsAppleGPUFamily(6))
--            {
--                this->metalFormat    = MTLPixelFormatASTC_8x8_HDR;
--                this->actualFormatId = angle::FormatID::ASTC_8x8_UNORM_BLOCK;
--                this->initFunction   = nullptr;
--            }
--            else
--            {
-             this->metalFormat    = MTLPixelFormatASTC_8x8_LDR;
-             this->actualFormatId = angle::FormatID::ASTC_8x8_UNORM_BLOCK;
-             this->initFunction   = nullptr;
--            }
- 
-             this->swizzled = false;
-             break;
- 
--#elif TARGET_OS_IOS || TARGET_OS_TV
-+#    endif  // TARGET_OS_IOS || TARGET_OS_TV
-+#elif TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST
-         case angle::FormatID::ASTC_10x10_SRGB_BLOCK:
- 
-             this->metalFormat    = MTLPixelFormatASTC_10x10_sRGB;
-@@ -2295,6 +2298,7 @@
-             this->swizzled = false;
-             break;
- 
-+#    if TARGET_OS_IOS || TARGET_OS_TV
-         case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
- 
-             if (display->supportsAppleGPUFamily(6))
-@@ -2547,7 +2551,135 @@
-             this->swizzled = false;
-             break;
- 
--#endif
-+#    elif TARGET_OS_WATCH
-+        case angle::FormatID::ASTC_10x10_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_10x10_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_10x10_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_10x5_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_10x5_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_10x5_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_10x6_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_10x6_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_10x6_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_10x8_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_10x8_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_10x8_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_12x10_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_12x10_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_12x10_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_12x12_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_12x12_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_12x12_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_4x4_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_4x4_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_4x4_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_5x4_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_5x4_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_5x4_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_5x5_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_5x5_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_5x5_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_6x5_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_6x5_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_6x5_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_6x6_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_6x6_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_6x6_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_8x5_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_8x5_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_8x5_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_8x6_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_8x6_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_8x6_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+        case angle::FormatID::ASTC_8x8_UNORM_BLOCK:
-+
-+            this->metalFormat    = MTLPixelFormatASTC_8x8_LDR;
-+            this->actualFormatId = angle::FormatID::ASTC_8x8_UNORM_BLOCK;
-+            this->initFunction   = nullptr;
-+
-+            this->swizzled = false;
-+            break;
-+
-+#    endif  // TARGET_OS_IOS || TARGET_OS_TV
-+#endif      // TARGET_OS_IPHONE
- #if (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))
-         case angle::FormatID::ASTC_10x10_SRGB_BLOCK:
- 
-@@ -3269,7 +3401,7 @@
-             this->swizzled = false;
-             break;
- 
--#endif
-+#endif  // TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101600))
-         default:
-             this->metalFormat    = MTLPixelFormatInvalid;
-             this->actualFormatId = angle::FormatID::NONE;
-@@ -4411,13 +4543,13 @@
-                   /** depthRenderable*/ false);
- 
-     setFormatCaps(MTLPixelFormatDepth32Float,
--                  /** filterable*/ display->supportsEitherGPUFamily(1, 1), /** writable*/ false,
-+                  /** filterable*/ display->supports32BitFloatFiltering(), /** writable*/ false,
-                   /** blendable*/ false, /** multisample*/ true,
-                   /** resolve*/ supportDepthAutoResolve, /** colorRenderable*/ false,
-                   /** depthRenderable*/ true);
- 
-     setFormatCaps(MTLPixelFormatDepth32Float_Stencil8,
--                  /** filterable*/ display->supportsEitherGPUFamily(1, 1), /** writable*/ false,
-+                  /** filterable*/ display->supports32BitFloatFiltering(), /** writable*/ false,
-                   /** blendable*/ false, /** multisample*/ true,
-                   /** resolve*/ supportDepthStencilAutoResolve, /** colorRenderable*/ false,
-                   /** depthRenderable*/ true);
-@@ -4676,13 +4808,15 @@
-                   /** depthRenderable*/ true);
- 
-     setFormatCaps(MTLPixelFormatDepth24Unorm_Stencil8,
--                  /** filterable*/ display->supportsMacGPUFamily(1), /** writable*/ false,
--                  /** blendable*/ false, /** multisample*/ true,
-+                  /** filterable*/ display->supportsMacGPUFamily(1) &&
-+                      display->supportsDepth24Stencil8PixelFormat(),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ true,
-                   /** resolve*/ supportDepthStencilAutoResolve, /** colorRenderable*/ false,
--                  /** depthRenderable*/ display->supportsMacGPUFamily(1));
-+                  /** depthRenderable*/ display->supportsMacGPUFamily(1) &&
-+                      display->supportsDepth24Stencil8PixelFormat());
- 
- #endif  // TARGET_OS_OSX || TARGET_OS_MACCATALYST
--#if (TARGET_OS_IOS && !TARGET_OS_MACCATALYST) || TARGET_OS_TV || \
-+#if (TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST) || \
-     (TARGET_OS_OSX && (__MAC_OS_X_VERSION_MAX_ALLOWED >= 110000))
-     setFormatCaps(MTLPixelFormatA1BGR5Unorm, /** filterable*/ display->supportsAppleGPUFamily(1),
-                   /** writable*/ false, /** blendable*/ display->supportsAppleGPUFamily(1),
-@@ -4698,10 +4832,6 @@
-                   /** colorRenderable*/ display->supportsAppleGPUFamily(1),
-                   /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_10x10_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_10x10_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4711,10 +4841,6 @@
-                   /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
-                   /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_10x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_10x5_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4723,10 +4849,6 @@
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_10x6_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_10x6_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4735,10 +4857,6 @@
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_10x8_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_10x8_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4747,10 +4865,6 @@
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_12x10_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_12x10_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4760,10 +4874,6 @@
-                   /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
-                   /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_12x12_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_12x12_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4773,10 +4883,6 @@
-                   /** blendable*/ false, /** multisample*/ false, /** resolve*/ false,
-                   /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_4x4_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_4x4_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4785,10 +4891,6 @@
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_5x4_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_5x4_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4797,10 +4899,6 @@
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_5x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_5x5_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4809,10 +4907,6 @@
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_6x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_6x5_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4821,10 +4915,6 @@
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_6x6_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_6x6_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4833,10 +4923,6 @@
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_8x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_8x5_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4845,10 +4931,6 @@
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_8x6_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_8x6_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4857,10 +4939,6 @@
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
- 
--    setFormatCaps(MTLPixelFormatASTC_8x8_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
--                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
--                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
--
-     setFormatCaps(MTLPixelFormatASTC_8x8_LDR, /** filterable*/ display->supportsAppleGPUFamily(2),
-                   /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-                   /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-@@ -4978,7 +5056,65 @@
-                   /** colorRenderable*/ display->supportsAppleGPUFamily(1),
-                   /** depthRenderable*/ false);
- 
--#endif
-+#    if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_OSX
-+    setFormatCaps(MTLPixelFormatASTC_10x10_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_10x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_10x6_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_10x8_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_12x10_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_12x12_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_4x4_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_5x4_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_5x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_6x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_6x6_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_8x5_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_8x6_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+    setFormatCaps(MTLPixelFormatASTC_8x8_HDR, /** filterable*/ display->supportsAppleGPUFamily(6),
-+                  /** writable*/ false, /** blendable*/ false, /** multisample*/ false,
-+                  /** resolve*/ false, /** colorRenderable*/ false, /** depthRenderable*/ false);
-+
-+#    endif  // TARGET_OS_IOS || TARGET_OS_TV || mac 11.0+
-+#endif      // TARGET_OS_IPHONE && !TARGET_OS_MACCATALYST || mac 11.0+
- }
- 
- }  // namespace mtl
+             this->metalFormat    = MTLPixelFormatDepth32Float;
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 index 1613ee9..e075295 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
@@ -2272,11 +889,11 @@ index 3eaa9a6..2ecf7b4 100644
 +
 +#endif /* LIBANGLE_RENDERER_METAL_RESOURCE_SPI_H_ */
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.h b/src/libANGLE/renderer/metal/mtl_resources.h
-index b51294c..b51378a 100644
+index 8b8eb26..19a9740 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.h
 +++ b/src/libANGLE/renderer/metal/mtl_resources.h
-@@ -337,7 +337,9 @@ class Texture final : public Resource,
-     TextureRef mReadCopy;
+@@ -345,7 +345,9 @@ class Texture final : public Resource,
+     size_t mEstimatedByteSize = 0;
  };
  
 -class Buffer final : public Resource, public WrappedObject<id<MTLBuffer>>
@@ -2287,7 +904,7 @@ index b51294c..b51378a 100644
    public:
      static angle::Result MakeBuffer(ContextMtl *context,
 diff --git a/src/libANGLE/renderer/metal/mtl_resources.mm b/src/libANGLE/renderer/metal/mtl_resources.mm
-index 294853d..06a5cd0 100644
+index 8c05fc2..0f9b53b 100644
 --- a/src/libANGLE/renderer/metal/mtl_resources.mm
 +++ b/src/libANGLE/renderer/metal/mtl_resources.mm
 @@ -35,12 +35,14 @@ inline NSUInteger GetMipSize(NSUInteger baseSize, const MipmapNativeLevel level)
@@ -2316,7 +933,7 @@ index 294853d..06a5cd0 100644
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
      // Make sure GPU & CPU contents are synchronized.
-@@ -495,12 +497,12 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
+@@ -512,12 +514,12 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
  
  void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -2331,7 +948,7 @@ index 294853d..06a5cd0 100644
  }
  
  bool Texture::isCPUAccessible() const
-@@ -965,7 +967,7 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
+@@ -982,7 +984,7 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
  
  void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -2340,7 +957,7 @@ index 294853d..06a5cd0 100644
  }
  
  const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
-@@ -986,7 +988,7 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
+@@ -1003,7 +1005,7 @@ void EnsureCPUMemWillBeSynced(ContextMtl *context, T *resource)
      {
          CommandQueue &cmdQueue = context->cmdQueue();
  
@@ -2350,7 +967,7 @@ index 294853d..06a5cd0 100644
          if (this->isBeingUsedByGPU(context))
          {
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.h b/src/libANGLE/renderer/metal/mtl_utils.h
-index 6c7e140..a77588c 100644
+index d218c13..b236d92 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.h
 +++ b/src/libANGLE/renderer/metal/mtl_utils.h
 @@ -105,11 +105,9 @@ AutoObjCPtr<id<MTLLibrary>> CreateShaderLibrary(
@@ -2366,37 +983,6 @@ index 6c7e140..a77588c 100644
                                                            AutoObjCPtr<NSError *> *error);
  
  bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily);
-diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index ee547a8..8f91f43 100644
---- a/src/libANGLE/renderer/metal/mtl_utils.mm
-+++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -374,7 +374,13 @@ bool GetCompressedBufferSizeAndRowLengthForTextureWithFormat(const TextureRef &t
-     // Intiialize the content to black
-     GLint layer, startDepth;
-     GetSliceAndDepth(index, &layer, &startDepth);
--    if (texture->isCPUAccessible() && index.getType() != gl::TextureType::_2DMultisample &&
-+
-+    if (intendedInternalFormat.compressed)
-+    {
-+        return InitializeCompressedTextureContents(context, texture, textureObjFormat, index, layer,
-+                                                   startDepth);
-+    }
-+    else if (texture->isCPUAccessible() && index.getType() != gl::TextureType::_2DMultisample &&
-              index.getType() != gl::TextureType::_2DMultisampleArray && !forceGPUInitialization)
-     {
-         const angle::Format &dstFormat = angle::Format::Get(textureObjFormat.actualFormatId);
-@@ -418,11 +424,6 @@ bool GetCompressedBufferSizeAndRowLengthForTextureWithFormat(const TextureRef &t
-             }
-         }
-     }
--    else if (intendedInternalFormat.compressed)
--    {
--        return InitializeCompressedTextureContents(context, texture, textureObjFormat, index, layer,
--                                                   startDepth);
--    }
-     else
-     {
-         ANGLE_TRY(InitializeTextureContentsGPU(context, texture, textureObjFormat, index,
 diff --git a/src/tests/angle_unittests.gni b/src/tests/angle_unittests.gni
 index 61345f8..dd70b9f 100644
 --- a/src/tests/angle_unittests.gni

@@ -283,6 +283,7 @@ angle_deqp_data_gles31 = [
   "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/es32/uniform_block.test",
   "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/es32/uniform_location.test",
   "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/arrays_of_arrays.test",
+  "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/implicit_conversions.test",
   "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_geometry.test",
   "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_geometry_uniform_types.test",
   "$root_gen_dir/vk_gl_cts_data/data/gles31/shaders/gl45/linkage_geometry_varying_types.test",

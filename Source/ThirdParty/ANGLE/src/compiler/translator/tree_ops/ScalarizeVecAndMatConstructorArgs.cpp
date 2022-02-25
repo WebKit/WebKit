@@ -133,7 +133,7 @@ void ScalarizeArgsTraverser::scalarizeArgs(TIntermAggregate *aggregate,
         {
             if (scalarizeVector)
             {
-                int repeat = std::min(size, originalArg->getNominalSize());
+                int repeat = std::min<int>(size, originalArg->getNominalSize());
                 size -= repeat;
                 for (int index = 0; index < repeat; ++index)
                 {
@@ -154,7 +154,7 @@ void ScalarizeArgsTraverser::scalarizeArgs(TIntermAggregate *aggregate,
             if (scalarizeMatrix)
             {
                 int colIndex = 0, rowIndex = 0;
-                int repeat = std::min(size, originalArg->getCols() * originalArg->getRows());
+                int repeat = std::min<int>(size, originalArg->getCols() * originalArg->getRows());
                 size -= repeat;
                 while (repeat > 0)
                 {

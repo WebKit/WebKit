@@ -56,7 +56,8 @@ enum class CustomTask
 {
     Invalid = 0,
     // Process SecondaryCommandBuffer commands into the primary CommandBuffer.
-    ProcessCommands,
+    ProcessOutsideRenderPassCommands,
+    ProcessRenderPassCommands,
     // End the current command buffer and submit commands to the queue
     FlushAndQueueSubmit,
     // Submit custom command buffer, excludes some state management
@@ -85,9 +86,12 @@ class CommandProcessorTask
 
     void initTask(CustomTask command) { mTask = command; }
 
-    void initProcessCommands(bool hasProtectedContent,
-                             CommandBufferHelper *commandBuffer,
-                             const RenderPass *renderPass);
+    void initOutsideRenderPassProcessCommands(bool hasProtectedContent,
+                                              OutsideRenderPassCommandBufferHelper *commandBuffer);
+
+    void initRenderPassProcessCommands(bool hasProtectedContent,
+                                       RenderPassCommandBufferHelper *commandBuffer,
+                                       const RenderPass *renderPass);
 
     void initPresent(egl::ContextPriority priority, const VkPresentInfoKHR &presentInfo);
 
@@ -100,9 +104,9 @@ class CommandProcessorTask
                                  const Semaphore *semaphore,
                                  bool hasProtectedContent,
                                  egl::ContextPriority priority,
-                                 CommandPool *commandPool,
+                                 SecondaryCommandPools *commandPools,
                                  GarbageList &&currentGarbage,
-                                 std::vector<CommandBuffer> &&commandBuffersToReset,
+                                 SecondaryCommandBufferList &&commandBuffersToReset,
                                  Serial submitQueueSerial);
 
     void initOneOffQueueSubmit(VkCommandBuffer commandBufferHandle,
@@ -130,7 +134,10 @@ class CommandProcessorTask
     }
     const Semaphore *getSemaphore() { return mSemaphore; }
     GarbageList &getGarbage() { return mGarbage; }
-    std::vector<CommandBuffer> &getCommandBuffersToReset() { return mCommandBuffersToReset; }
+    SecondaryCommandBufferList &&getCommandBuffersToReset()
+    {
+        return std::move(mCommandBuffersToReset);
+    }
     egl::ContextPriority getPriority() const { return mPriority; }
     bool hasProtectedContent() const { return mHasProtectedContent; }
     VkCommandBuffer getOneOffCommandBufferVk() const { return mOneOffCommandBufferVk; }
@@ -139,8 +146,15 @@ class CommandProcessorTask
     const Fence *getOneOffFence() { return mOneOffFence; }
     const VkPresentInfoKHR &getPresentInfo() const { return mPresentInfo; }
     const RenderPass *getRenderPass() const { return mRenderPass; }
-    CommandBufferHelper *getCommandBuffer() const { return mCommandBuffer; }
-    CommandPool *getCommandPool() const { return mCommandPool; }
+    OutsideRenderPassCommandBufferHelper *getOutsideRenderPassCommandBuffer() const
+    {
+        return mOutsideRenderPassCommandBuffer;
+    }
+    RenderPassCommandBufferHelper *getRenderPassCommandBuffer() const
+    {
+        return mRenderPassCommandBuffer;
+    }
+    SecondaryCommandPools *getCommandPools() const { return mCommandPools; }
 
   private:
     void copyPresentInfo(const VkPresentInfoKHR &other);
@@ -148,16 +162,17 @@ class CommandProcessorTask
     CustomTask mTask;
 
     // ProcessCommands
+    OutsideRenderPassCommandBufferHelper *mOutsideRenderPassCommandBuffer;
+    RenderPassCommandBufferHelper *mRenderPassCommandBuffer;
     const RenderPass *mRenderPass;
-    CommandBufferHelper *mCommandBuffer;
 
     // Flush data
     std::vector<VkSemaphore> mWaitSemaphores;
     std::vector<VkPipelineStageFlags> mWaitSemaphoreStageMasks;
     const Semaphore *mSemaphore;
-    CommandPool *mCommandPool;
+    SecondaryCommandPools *mCommandPools;
     GarbageList mGarbage;
-    std::vector<CommandBuffer> mCommandBuffersToReset;
+    SecondaryCommandBufferList mCommandBuffersToReset;
 
     // FinishToSerial & Flush command data
     Serial mSerial;
@@ -194,9 +209,9 @@ struct CommandBatch final : angle::NonCopyable
     void resetSecondaryCommandBuffers(VkDevice device);
 
     PrimaryCommandBuffer primaryCommands;
-    // commandPool is for secondary CommandBuffer allocation
-    CommandPool *commandPool;
-    std::vector<CommandBuffer> commandBuffersToReset;
+    // commandPools is for secondary CommandBuffer allocation
+    SecondaryCommandPools *commandPools;
+    SecondaryCommandBufferList commandBuffersToReset;
     Shared<Fence> fence;
     Serial serial;
     bool hasProtectedContent;
@@ -290,8 +305,8 @@ class CommandQueueInterface : angle::NonCopyable
         const std::vector<VkPipelineStageFlags> &waitSemaphoreStageMasks,
         const Semaphore *signalSemaphore,
         GarbageList &&currentGarbage,
-        std::vector<CommandBuffer> &&commandBuffersToReset,
-        CommandPool *commandPool,
+        SecondaryCommandBufferList &&commandBuffersToReset,
+        SecondaryCommandPools *commandPools,
         Serial submitQueueSerial)                                      = 0;
     virtual angle::Result queueSubmitOneOff(Context *context,
                                             bool hasProtectedContent,
@@ -315,13 +330,15 @@ class CommandQueueInterface : angle::NonCopyable
     // result). It would be nice if we didn't have to expose this for QueryVk::getResult.
     virtual angle::Result checkCompletedCommands(Context *context) = 0;
 
-    virtual angle::Result flushOutsideRPCommands(Context *context,
-                                                 bool hasProtectedContent,
-                                                 CommandBufferHelper **outsideRPCommands)   = 0;
-    virtual angle::Result flushRenderPassCommands(Context *context,
-                                                  bool hasProtectedContent,
-                                                  const RenderPass &renderPass,
-                                                  CommandBufferHelper **renderPassCommands) = 0;
+    virtual angle::Result flushOutsideRPCommands(
+        Context *context,
+        bool hasProtectedContent,
+        OutsideRenderPassCommandBufferHelper **outsideRPCommands) = 0;
+    virtual angle::Result flushRenderPassCommands(
+        Context *context,
+        bool hasProtectedContent,
+        const RenderPass &renderPass,
+        RenderPassCommandBufferHelper **renderPassCommands) = 0;
 
     // For correct synchronization with external, in particular when asked to signal an external
     // semaphore, we need to ensure that there are no pending submissions.
@@ -355,8 +372,8 @@ class CommandQueue final : public CommandQueueInterface
                               const std::vector<VkPipelineStageFlags> &waitSemaphoreStageMasks,
                               const Semaphore *signalSemaphore,
                               GarbageList &&currentGarbage,
-                              std::vector<CommandBuffer> &&commandBuffersToReset,
-                              CommandPool *commandPool,
+                              SecondaryCommandBufferList &&commandBuffersToReset,
+                              SecondaryCommandPools *commandPools,
                               Serial submitQueueSerial) override;
 
     angle::Result queueSubmitOneOff(Context *context,
@@ -379,13 +396,15 @@ class CommandQueue final : public CommandQueueInterface
 
     angle::Result checkCompletedCommands(Context *context) override;
 
-    angle::Result flushOutsideRPCommands(Context *context,
-                                         bool hasProtectedContent,
-                                         CommandBufferHelper **outsideRPCommands) override;
-    angle::Result flushRenderPassCommands(Context *context,
-                                          bool hasProtectedContent,
-                                          const RenderPass &renderPass,
-                                          CommandBufferHelper **renderPassCommands) override;
+    angle::Result flushOutsideRPCommands(
+        Context *context,
+        bool hasProtectedContent,
+        OutsideRenderPassCommandBufferHelper **outsideRPCommands) override;
+    angle::Result flushRenderPassCommands(
+        Context *context,
+        bool hasProtectedContent,
+        const RenderPass &renderPass,
+        RenderPassCommandBufferHelper **renderPassCommands) override;
 
     angle::Result ensureNoPendingWork(Context *context) override { return angle::Result::Continue; }
 
@@ -409,7 +428,7 @@ class CommandQueue final : public CommandQueueInterface
   private:
     void releaseToCommandBatch(bool hasProtectedContent,
                                PrimaryCommandBuffer &&commandBuffer,
-                               CommandPool *commandPool,
+                               SecondaryCommandPools *commandPools,
                                CommandBatch *batch);
     angle::Result retireFinishedCommands(Context *context, size_t finishedCount);
     angle::Result ensurePrimaryCommandBufferValid(Context *context, bool hasProtectedContent);
@@ -504,8 +523,8 @@ class CommandProcessor : public Context, public CommandQueueInterface
                               const std::vector<VkPipelineStageFlags> &waitSemaphoreStageMasks,
                               const Semaphore *signalSemaphore,
                               GarbageList &&currentGarbage,
-                              std::vector<CommandBuffer> &&commandBuffersToReset,
-                              CommandPool *commandPool,
+                              SecondaryCommandBufferList &&commandBuffersToReset,
+                              SecondaryCommandPools *commandPools,
                               Serial submitQueueSerial) override;
 
     angle::Result queueSubmitOneOff(Context *context,
@@ -527,13 +546,15 @@ class CommandProcessor : public Context, public CommandQueueInterface
 
     angle::Result checkCompletedCommands(Context *context) override;
 
-    angle::Result flushOutsideRPCommands(Context *context,
-                                         bool hasProtectedContent,
-                                         CommandBufferHelper **outsideRPCommands) override;
-    angle::Result flushRenderPassCommands(Context *context,
-                                          bool hasProtectedContent,
-                                          const RenderPass &renderPass,
-                                          CommandBufferHelper **renderPassCommands) override;
+    angle::Result flushOutsideRPCommands(
+        Context *context,
+        bool hasProtectedContent,
+        OutsideRenderPassCommandBufferHelper **outsideRPCommands) override;
+    angle::Result flushRenderPassCommands(
+        Context *context,
+        bool hasProtectedContent,
+        const RenderPass &renderPass,
+        RenderPassCommandBufferHelper **renderPassCommands) override;
 
     angle::Result ensureNoPendingWork(Context *context) override;
 

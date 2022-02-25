@@ -1315,6 +1315,10 @@ angle::Result FramebufferGL::syncState(const gl::Context *context,
                 functions->framebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_LAYERS_EXT,
                                                  mState.getDefaultLayers());
                 break;
+            case Framebuffer::DIRTY_BIT_FLIP_Y:
+                functions->framebufferParameteri(GL_FRAMEBUFFER, GL_FRAMEBUFFER_FLIP_Y_MESA,
+                                                 gl::ConvertToGLBoolean(mState.getFlipY()));
+                break;
             default:
             {
                 static_assert(Framebuffer::DIRTY_BIT_COLOR_ATTACHMENT_0 == 0, "FB dirty bits");

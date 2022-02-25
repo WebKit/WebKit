@@ -25,6 +25,11 @@ egl::Error SurfaceImpl::unMakeCurrent(const gl::Context *context)
     return egl::NoError();
 }
 
+egl::Error SurfaceImpl::prepareSwap(const gl::Context *)
+{
+    return angle::ResultToEGL(angle::Result::Continue);
+}
+
 egl::Error SurfaceImpl::swapWithDamage(const gl::Context *context,
                                        const EGLint *rects,
                                        EGLint n_rects)

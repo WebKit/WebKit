@@ -66,6 +66,7 @@ struct GPUTestConfig
         kConditionNexus5X,
         kConditionPixel2OrXL,
         kConditionPixel4OrXL,
+        kConditionPixel6,
         kConditionNVIDIAQuadroP400,
         kConditionNVIDIAGTX1660,
         kConditionSwiftShader,

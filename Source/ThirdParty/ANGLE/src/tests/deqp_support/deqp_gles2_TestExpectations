@@ -362,7 +362,7 @@
 6297 MAC METAL : dEQP-GLES2.functional.attribute_location.bind_aliasing.cond* = FAIL
 
 // Test bug - fails in ASAN.
-6678 : dEQP-GLES2.functional.negative_api.texture.compressedtexsubimage2d* = SKIP
+6678 ASAN : dEQP-GLES2.functional.negative_api.texture.compressedtexsubimage2d* = SKIP
 
 // Vulkan
 4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.rebind_rbo_rgba4 = FAIL
@@ -691,6 +691,11 @@
 
 6528 PIXEL4ORXL GLES : dEQP-GLES2.functional.shaders.struct.uniform.sampler_in_array_function_arg_vertex = FAIL
 6528 PIXEL4ORXL GLES : dEQP-GLES2.functional.shaders.struct.uniform.sampler_in_function_arg_vertex = FAIL
+
+// Pixel 6 test expectations.
+6898 PIXEL6 VULKAN : dEQP-GLES2.functional.clipping.point.wide_point_* = FAIL
+6898 PIXEL6 VULKAN : dEQP-GLES2.functional.rasterization.primitives.points = FAIL
+6898 PIXEL6 VULKAN : dEQP-GLES2.functional.shaders.builtin_variable.pointcoord = FAIL
 
 6709 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.13 = FAIL
 6709 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.26 = FAIL

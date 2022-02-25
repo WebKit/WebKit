@@ -76,6 +76,7 @@ enum Token
     kConfigNexus5X,
     kConfigPixel2,
     kConfigPixel4,
+    kConfigPixel6,
     // GPU devices
     kConfigNVIDIAQuadroP400,
     kConfigNVIDIAGTX1660,
@@ -182,6 +183,7 @@ constexpr TokenInfo kTokenData[kNumberOfTokens] = {
     {"nexus5x", GPUTestConfig::kConditionNexus5X},
     {"pixel2orxl", GPUTestConfig::kConditionPixel2OrXL},
     {"pixel4orxl", GPUTestConfig::kConditionPixel4OrXL},
+    {"pixel6", GPUTestConfig::kConditionPixel6},
     {"quadrop400", GPUTestConfig::kConditionNVIDIAQuadroP400},
     {"gtx1660", GPUTestConfig::kConditionNVIDIAGTX1660},
     {"prerotation", GPUTestConfig::kConditionPreRotation},
@@ -385,14 +387,10 @@ bool GPUTestExpectationsParser::loadAllTestExpectationsFromFile(const std::strin
 int32_t GPUTestExpectationsParser::getTestExpectationImpl(const GPUTestConfig *config,
                                                           const std::string &testName)
 {
-    size_t maxExpectationLen            = 0;
-    GPUTestExpectationEntry *foundEntry = nullptr;
     for (GPUTestExpectationEntry &entry : mEntries)
     {
         if (NamesMatchWithWildcard(entry.testName.c_str(), testName.c_str()))
         {
-            size_t expectationLen = entry.testName.length();
-
             // Filter by condition first.
             bool satisfiesConditions = true;
             if (config)
@@ -407,18 +405,13 @@ int32_t GPUTestExpectationsParser::getTestExpectationImpl(const GPUTestConfig *c
                 }
             }
 
-            // The longest/most specific matching expectation overrides any others.
-            if (satisfiesConditions && expectationLen > maxExpectationLen)
+            // Use the first matching expectation in the file as the matching expression.
+            if (satisfiesConditions)
             {
-                maxExpectationLen = expectationLen;
-                foundEntry        = &entry;
+                entry.used = true;
+                return entry.testExpectation;
             }
         }
-    }
-    if (foundEntry != nullptr)
-    {
-        foundEntry->used = true;
-        return foundEntry->testExpectation;
     }
     return kGpuTestPass;
 }
@@ -510,6 +503,7 @@ bool GPUTestExpectationsParser::parseLine(const GPUTestConfig *config,
             case kConfigNexus5X:
             case kConfigPixel2:
             case kConfigPixel4:
+            case kConfigPixel6:
             case kConfigNVIDIAQuadroP400:
             case kConfigNVIDIAGTX1660:
             case kConfigPreRotation:

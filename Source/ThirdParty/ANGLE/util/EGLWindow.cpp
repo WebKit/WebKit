@@ -333,6 +333,11 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
         enabledFeatureOverrides.push_back("forceFallbackFormat");
     }
 
+    if (params.forceSubmitImmutableTextureUpdates == EGL_TRUE)
+    {
+        enabledFeatureOverrides.push_back("forceSubmitImmutableTextureUpdates");
+    }
+
     const bool hasFeatureControlANGLE =
         strstr(extensionString, "EGL_ANGLE_feature_control") != nullptr;
 

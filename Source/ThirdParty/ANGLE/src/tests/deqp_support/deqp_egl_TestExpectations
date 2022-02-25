@@ -124,7 +124,29 @@
 6277 ANDROID VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_android_native_rgb8_read_pixels = FAIL
 6277 ANDROID VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_android_native_rgb8_texture = FAIL
 
+// Pixel 4 Vulkan
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_clear_render_even_clear = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_clear_render_even_clear_render = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_clear_render_even_render = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_clear_render_even_render_render = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_clear = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_clear_render = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_render = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_clear_even_render_render = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_even_clear = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_even_none = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_render_even_none = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_render_even_render = FAIL
+6953 PIXEL4ORXL VULKAN : dEQP-EGL.functional.buffer_age.no_preserve.*.odd_render_render_even_render_render = FAIL
+
+// Pixel 6 Vulkan
+6900 PIXEL6 VULKAN : dEQP-EGL.functional.get_proc_address.extension.egl_ext_image_dma_buf_import_modifiers = FAIL
+6899 PIXEL6 VULKAN : dEQP-EGL.functional.query_context.*.rgb888_window = FAIL
+
 // Robustness failures on multiple platforms
+6707 NVIDIA : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds.reset_status.reads.uniform_block.compute = SKIP
+6707 NVIDIA : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds.reset_status.writes.uniform_block.compute = SKIP
+
 3711 : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds.reset_status.reads.* = FAIL
 3711 : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds.reset_status.writes.* = FAIL
 
@@ -269,10 +291,7 @@
 6528 PIXEL4ORXL GLES : dEQP-EGL.functional.thread_cleanup.multi_context_* = FAIL
 6528 PIXEL4ORXL GLES : dEQP-EGL.functional.thread_cleanup.single_context_* = FAIL
 
-6707 NVIDIA : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds.reset_status.reads.uniform_block.compute = SKIP
-6707 NVIDIA : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds.reset_status.writes.uniform_block.compute = SKIP
-
 6678 TSAN : dEQP-EGL.functional.multithread.* = SKIP
-6678 TSAN : dEQP-EGL.functional.sharing.gles2.multithread.random* = FLAKY
+6678 TSAN : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP
 
 6678 UBSAN : dEQP-EGL.functional.sharing.gles2.multithread.* = SKIP

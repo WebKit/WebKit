@@ -20,7 +20,7 @@ Status
 
 Version
 
-    Version 2, Dec 10, 2021
+    Version 3, Feb 4, 2022
 
 Number
 
@@ -76,7 +76,7 @@ Additions to Chapter 2 of the EGL 1.4 Specification (EGL Operation)
     must be EGL_NO_CONTEXT, <buffer> must be a pointer to a valid VkImage
     (cast into the type EGLClientBuffer), the VkImage must be created with the
     same VkDevice used by GL implementation and attributes other than
-    EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE or
+    EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE or
     EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE are ignored.
 
     EGL_VULKAN_IMAGE_CREATE_INFO_HI_ANGLE and
@@ -86,6 +86,17 @@ Additions to Chapter 2 of the EGL 1.4 Specification (EGL Operation)
     info of the VkImage from it. All supported structures in the pNext structure
     chain will be parsed, not supported structures will be ignored.
 
+    If EGL_TEXTURE_INTERNAL_FORMAT_ANGLE is specified, it is used to interpret
+    <buffer> according to the provided internal format. If it is specified, it
+    must be GL_RGBA (supported for all RGBA and BGRA formats),
+    GL_RGB (supported for all RGBA and BGRA formats except
+    VK_FORMAT_R10G10B10A2_UNORM), GL_BGRA_EXT (supported only for
+    VK_FORMAT_B8G8R8A8_UNORM and VK_FORMAT_B8G8R8A8_SRGB),
+    GL_RGB10_A2_EXT (supported for VK_FORMAT_A2R10G10B10_UNORM_PACK32),
+    GL_RED_EXT (supported for VK_FORMAT_R8_UNORM and VK_FORMAT_R16_UNORM),
+    GL_RG_EXT (supported for VK_FORMAT_R8G8_UNORM and VK_FORMAT_R16G16_UNORM),
+    GL_R16_EXT (supported for VK_FORMAT_R16_UNORM),
+    GL_RG16_EXT (supported for VK_FORMAT_R16G16_UNORM), or GL_NONE.
 
 Additions to the EGL 1.4 Specification:
 
@@ -111,3 +122,5 @@ Revision History
     Version 1, 2021/11/17 - first draft.
 
     Version 2, 2021/12/10 - add support for creating EGLImageKHR from VkImage.
+
+    Version 3, 2022/02/04 - add support for EGL_TEXTURE_INTERNAL_FORMAT_ANGLE.

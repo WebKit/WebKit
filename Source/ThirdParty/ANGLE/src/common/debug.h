@@ -37,7 +37,7 @@ namespace gl
 {
 class Context;
 
-// Pairs a D3D begin event with an end event.
+// Pairs a begin event with an end event.
 class ScopedPerfEventHelper : angle::NonCopyable
 {
   public:
@@ -141,69 +141,80 @@ extern std::ostream *gSwallowStream;
 // Used by ANGLE_LOG_IS_ON to lazy-evaluate stream arguments.
 bool ShouldCreatePlatformLogMessage(LogSeverity severity);
 
-template <int N, typename T>
-std::ostream &FmtHex(std::ostream &os, T value)
+// N is the width of the output to the stream. The output is padded with zeros
+// if value is less than N characters.
+// S is the stream type, either ostream for ANSI or wostream for wide character.
+// T is the type of the value to output to the stream.
+// C is the type of characters - either char for ANSI or wchar_t for wide char.
+template <int N, typename S, typename T, typename C>
+S &FmtHex(S &stream, T value, const C *zeroX, C zero)
 {
-    os << "0x";
+    stream << zeroX;
 
-    std::ios_base::fmtflags oldFlags = os.flags();
-    std::streamsize oldWidth         = os.width();
-    std::ostream::char_type oldFill  = os.fill();
+    std::ios_base::fmtflags oldFlags = stream.flags();
+    std::streamsize oldWidth         = stream.width();
+    typename S::char_type oldFill    = stream.fill();
 
-    os << std::hex << std::uppercase << std::setw(N) << std::setfill('0') << value;
+    stream << std::hex << std::uppercase << std::setw(N) << std::setfill(zero) << value;
 
-    os.flags(oldFlags);
-    os.width(oldWidth);
-    os.fill(oldFill);
+    stream.flags(oldFlags);
+    stream.width(oldWidth);
+    stream.fill(oldFill);
 
-    return os;
+    return stream;
 }
 
-template <typename T>
-std::ostream &FmtHexAutoSized(std::ostream &os, T value)
+template <typename S, typename T, typename C>
+S &FmtHexAutoSized(S &stream, T value, const C *prefix, const C *zeroX, C zero)
 {
+    if (prefix)
+    {
+        stream << prefix;
+    }
+
     constexpr int N = sizeof(T) * 2;
-    return priv::FmtHex<N>(os, value);
+    return priv::FmtHex<N>(stream, value, zeroX, zero);
 }
 
-template <typename T>
+template <typename T, typename C>
 class FmtHexHelper
 {
   public:
-    FmtHexHelper(const char *prefix, T value) : mPrefix(prefix), mValue(value) {}
+    FmtHexHelper(const C *prefix, T value) : mPrefix(prefix), mValue(value) {}
     explicit FmtHexHelper(T value) : mPrefix(nullptr), mValue(value) {}
 
   private:
-    const char *mPrefix;
+    const C *mPrefix;
     T mValue;
 
     friend std::ostream &operator<<(std::ostream &os, const FmtHexHelper &fmt)
     {
-        if (fmt.mPrefix)
-        {
-            os << fmt.mPrefix;
-        }
-        return FmtHexAutoSized(os, fmt.mValue);
+        return FmtHexAutoSized(os, fmt.mValue, fmt.mPrefix, "0x", '0');
+    }
+
+    friend std::wostream &operator<<(std::wostream &wos, const FmtHexHelper &fmt)
+    {
+        return FmtHexAutoSized(wos, fmt.mValue, fmt.mPrefix, L"0x", L'0');
     }
 };
 
 }  // namespace priv
 
-template <typename T>
-priv::FmtHexHelper<T> FmtHex(T value)
+template <typename T, typename C = char>
+priv::FmtHexHelper<T, C> FmtHex(T value)
 {
-    return priv::FmtHexHelper<T>(value);
+    return priv::FmtHexHelper<T, C>(value);
 }
 
 #if defined(ANGLE_PLATFORM_WINDOWS)
-priv::FmtHexHelper<HRESULT> FmtHR(HRESULT value);
-priv::FmtHexHelper<DWORD> FmtErr(DWORD value);
+priv::FmtHexHelper<HRESULT, char> FmtHR(HRESULT value);
+priv::FmtHexHelper<DWORD, char> FmtErr(DWORD value);
 #endif  // defined(ANGLE_PLATFORM_WINDOWS)
 
 template <typename T>
 std::ostream &FmtHex(std::ostream &os, T value)
 {
-    return priv::FmtHexAutoSized(os, value);
+    return priv::FmtHexAutoSized(os, value, "", "0x", '0');
 }
 
 // A few definitions of macros that don't generate much code. These are used

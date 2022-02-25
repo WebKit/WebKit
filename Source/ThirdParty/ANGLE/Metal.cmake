@@ -64,6 +64,7 @@ set(_metal_backend_sources
     "src/libANGLE/renderer/metal/mtl_common.mm"
     "src/libANGLE/renderer/metal/mtl_context_device.h"
     "src/libANGLE/renderer/metal/mtl_context_device.mm"
+    "src/libANGLE/renderer/metal/mtl_default_shaders_compiled.inc"
     "src/libANGLE/renderer/metal/mtl_format_table_autogen.mm"
     "src/libANGLE/renderer/metal/mtl_format_utils.h"
     "src/libANGLE/renderer/metal/mtl_format_utils.mm"

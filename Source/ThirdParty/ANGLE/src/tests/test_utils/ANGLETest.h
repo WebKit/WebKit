@@ -130,6 +130,7 @@ struct GLColor
 {
     constexpr GLColor() : R(0), G(0), B(0), A(0) {}
     constexpr GLColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a) : R(r), G(g), B(b), A(a) {}
+    GLColor(const angle::Vector3 &floatColor);
     GLColor(const angle::Vector4 &floatColor);
     GLColor(GLuint colorValue);
 

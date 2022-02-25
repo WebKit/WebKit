@@ -15,14 +15,7 @@
 
 namespace
 {
-void UpdateResourceMap(ResourceMap *resourceMap, GLuint id, GLsizei readBufferOffset)
-{
-    GLuint returnedID;
-    memcpy(&returnedID, &gReadBuffer[readBufferOffset], sizeof(GLuint));
-    (*resourceMap)[id] = returnedID;
-}
-
-void UpdateResourceMap2(GLuint *resourceMap, GLuint id, GLsizei readBufferOffset)
+void UpdateResourceMap(GLuint *resourceMap, GLuint id, GLsizei readBufferOffset)
 {
     GLuint returnedID;
     memcpy(&returnedID, &gReadBuffer[readBufferOffset], sizeof(GLuint));
@@ -79,26 +72,11 @@ ValidateSerializedStateCallback gValidateSerializedStateCallback;
 std::unordered_map<GLuint, std::vector<GLint>> gInternalUniformLocationsMap;
 }  // namespace
 
-LocationsMap gUniformLocations;
-GLint **gUniformLocations2;
+GLint **gUniformLocations;
 BlockIndexesMap gUniformBlockIndexes;
 GLuint gCurrentProgram = 0;
 
-// TODO (http://anglebug.com/6234): Remove three parameter UpdateUniformLocation on next retrace
-void UpdateUniformLocation(GLuint program, const char *name, GLint location)
-{
-    gUniformLocations[program][location] = glGetUniformLocation(program, name);
-}
-
 void UpdateUniformLocation(GLuint program, const char *name, GLint location, GLint count)
-{
-    for (GLint i = 0; i < count; i++)
-    {
-        gUniformLocations[program][location + i] = glGetUniformLocation(program, name) + i;
-    }
-}
-
-void UpdateUniformLocation2(GLuint program, const char *name, GLint location, GLint count)
 {
     std::vector<GLint> &programLocations = gInternalUniformLocationsMap[program];
     if (static_cast<GLint>(programLocations.size()) < location + count)
@@ -107,17 +85,14 @@ void UpdateUniformLocation2(GLuint program, const char *name, GLint location, GL
     }
     for (GLint arrayIndex = 0; arrayIndex < count; ++arrayIndex)
     {
-        programLocations[location + arrayIndex] = glGetUniformLocation(program, name) + arrayIndex;
+        GLuint mappedProgramID = gShaderProgramMap[program];
+        programLocations[location + arrayIndex] =
+            glGetUniformLocation(mappedProgramID, name) + arrayIndex;
     }
-    gUniformLocations2[program] = programLocations.data();
+    gUniformLocations[program] = programLocations.data();
 }
 
 void DeleteUniformLocations(GLuint program)
-{
-    gUniformLocations.erase(program);
-}
-
-void DeleteUniformLocations2(GLuint program)
 {
     // No-op. We leave uniform locations around so deleted current programs can still use them.
 }
@@ -134,35 +109,22 @@ void UpdateCurrentProgram(GLuint program)
 uint8_t *gBinaryData;
 uint8_t *gReadBuffer;
 uint8_t *gClientArrays[kMaxClientArrays];
-ResourceMap gBufferMap;
-ResourceMap gFenceNVMap;
-ResourceMap gFramebufferMap;
-ResourceMap gMemoryObjectMap;
-ResourceMap gProgramPipelineMap;
-ResourceMap gQueryMap;
-ResourceMap gRenderbufferMap;
-ResourceMap gSamplerMap;
-ResourceMap gSemaphoreMap;
-ResourceMap gShaderProgramMap;
-ResourceMap gTextureMap;
-ResourceMap gTransformFeedbackMap;
-ResourceMap gVertexArrayMap;
 SyncResourceMap gSyncMap;
 ContextMap gContextMap;
 
-GLuint *gBufferMap2;
-GLuint *gFenceNVMap2;
-GLuint *gFramebufferMap2;
-GLuint *gMemoryObjectMap2;
-GLuint *gProgramPipelineMap2;
-GLuint *gQueryMap2;
-GLuint *gRenderbufferMap2;
-GLuint *gSamplerMap2;
-GLuint *gSemaphoreMap2;
-GLuint *gShaderProgramMap2;
-GLuint *gTextureMap2;
-GLuint *gTransformFeedbackMap2;
-GLuint *gVertexArrayMap2;
+GLuint *gBufferMap;
+GLuint *gFenceNVMap;
+GLuint *gFramebufferMap;
+GLuint *gMemoryObjectMap;
+GLuint *gProgramPipelineMap;
+GLuint *gQueryMap;
+GLuint *gRenderbufferMap;
+GLuint *gSamplerMap;
+GLuint *gSemaphoreMap;
+GLuint *gShaderProgramMap;
+GLuint *gTextureMap;
+GLuint *gTransformFeedbackMap;
+GLuint *gVertexArrayMap;
 
 void SetBinaryDataDecompressCallback(DecompressCallback callback)
 {
@@ -174,9 +136,29 @@ void SetBinaryDataDir(const char *dataDir)
     gBinaryDataDir = dataDir;
 }
 
+GLuint *AllocateZeroedUints(size_t count)
+{
+    GLuint *mem = new GLuint[count + 1];
+    memset(mem, 0, sizeof(GLuint) * (count + 1));
+    return mem;
+}
+
 void InitializeReplay(const char *binaryDataFileName,
                       size_t maxClientArraySize,
-                      size_t readBufferSize)
+                      size_t readBufferSize,
+                      uint32_t maxBuffer,
+                      uint32_t maxFenceNV,
+                      uint32_t maxFramebuffer,
+                      uint32_t maxMemoryObject,
+                      uint32_t maxProgramPipeline,
+                      uint32_t maxQuery,
+                      uint32_t maxRenderbuffer,
+                      uint32_t maxSampler,
+                      uint32_t maxSemaphore,
+                      uint32_t maxShaderProgram,
+                      uint32_t maxTexture,
+                      uint32_t maxTransformFeedback,
+                      uint32_t maxVertexArray)
 {
     LoadBinaryData(binaryDataFileName);
 
@@ -186,50 +168,23 @@ void InitializeReplay(const char *binaryDataFileName,
     }
 
     gReadBuffer = new uint8_t[readBufferSize];
-}
 
-GLuint *AllocateZeroedUints(size_t count)
-{
-    GLuint *mem = new GLuint[count + 1];
-    memset(mem, 0, sizeof(GLuint) * (count + 1));
-    return mem;
-}
+    gBufferMap            = AllocateZeroedUints(maxBuffer);
+    gFenceNVMap           = AllocateZeroedUints(maxFenceNV);
+    gFramebufferMap       = AllocateZeroedUints(maxFramebuffer);
+    gMemoryObjectMap      = AllocateZeroedUints(maxMemoryObject);
+    gProgramPipelineMap   = AllocateZeroedUints(maxProgramPipeline);
+    gQueryMap             = AllocateZeroedUints(maxQuery);
+    gRenderbufferMap      = AllocateZeroedUints(maxRenderbuffer);
+    gSamplerMap           = AllocateZeroedUints(maxSampler);
+    gSemaphoreMap         = AllocateZeroedUints(maxSemaphore);
+    gShaderProgramMap     = AllocateZeroedUints(maxShaderProgram);
+    gTextureMap           = AllocateZeroedUints(maxTexture);
+    gTransformFeedbackMap = AllocateZeroedUints(maxTransformFeedback);
+    gVertexArrayMap       = AllocateZeroedUints(maxVertexArray);
 
-void InitializeReplay2(const char *binaryDataFileName,
-                       size_t maxClientArraySize,
-                       size_t readBufferSize,
-                       uint32_t maxBuffer,
-                       uint32_t maxFenceNV,
-                       uint32_t maxFramebuffer,
-                       uint32_t maxMemoryObject,
-                       uint32_t maxProgramPipeline,
-                       uint32_t maxQuery,
-                       uint32_t maxRenderbuffer,
-                       uint32_t maxSampler,
-                       uint32_t maxSemaphore,
-                       uint32_t maxShaderProgram,
-                       uint32_t maxTexture,
-                       uint32_t maxTransformFeedback,
-                       uint32_t maxVertexArray)
-{
-    InitializeReplay(binaryDataFileName, maxClientArraySize, readBufferSize);
-
-    gBufferMap2            = AllocateZeroedUints(maxBuffer);
-    gFenceNVMap2           = AllocateZeroedUints(maxFenceNV);
-    gFramebufferMap2       = AllocateZeroedUints(maxFramebuffer);
-    gMemoryObjectMap2      = AllocateZeroedUints(maxMemoryObject);
-    gProgramPipelineMap2   = AllocateZeroedUints(maxProgramPipeline);
-    gQueryMap2             = AllocateZeroedUints(maxQuery);
-    gRenderbufferMap2      = AllocateZeroedUints(maxRenderbuffer);
-    gSamplerMap2           = AllocateZeroedUints(maxSampler);
-    gSemaphoreMap2         = AllocateZeroedUints(maxSemaphore);
-    gShaderProgramMap2     = AllocateZeroedUints(maxShaderProgram);
-    gTextureMap2           = AllocateZeroedUints(maxTexture);
-    gTransformFeedbackMap2 = AllocateZeroedUints(maxTransformFeedback);
-    gVertexArrayMap2       = AllocateZeroedUints(maxVertexArray);
-
-    gUniformLocations2 = new GLint *[maxShaderProgram + 1];
-    memset(gUniformLocations2, 0, sizeof(GLint *) * (maxShaderProgram + 1));
+    gUniformLocations = new GLint *[maxShaderProgram + 1];
+    memset(gUniformLocations, 0, sizeof(GLint *) * (maxShaderProgram + 1));
 }
 
 void FinishReplay()
@@ -240,19 +195,19 @@ void FinishReplay()
     }
     delete[] gReadBuffer;
 
-    delete[] gBufferMap2;
-    delete[] gRenderbufferMap2;
-    delete[] gTextureMap2;
-    delete[] gFramebufferMap2;
-    delete[] gShaderProgramMap2;
-    delete[] gFenceNVMap2;
-    delete[] gMemoryObjectMap2;
-    delete[] gProgramPipelineMap2;
-    delete[] gQueryMap2;
-    delete[] gSamplerMap2;
-    delete[] gSemaphoreMap2;
-    delete[] gTransformFeedbackMap2;
-    delete[] gVertexArrayMap2;
+    delete[] gBufferMap;
+    delete[] gRenderbufferMap;
+    delete[] gTextureMap;
+    delete[] gFramebufferMap;
+    delete[] gShaderProgramMap;
+    delete[] gFenceNVMap;
+    delete[] gMemoryObjectMap;
+    delete[] gProgramPipelineMap;
+    delete[] gQueryMap;
+    delete[] gSamplerMap;
+    delete[] gSemaphoreMap;
+    delete[] gTransformFeedbackMap;
+    delete[] gVertexArrayMap;
 }
 
 void SetValidateSerializedStateCallback(ValidateSerializedStateCallback callback)
@@ -271,148 +226,78 @@ void UpdateClientBufferData(GLuint bufferID, const void *source, GLsizei size)
     memcpy(gMappedBufferData[gBufferMap[bufferID]], source, size);
 }
 
-void UpdateClientBufferData2(GLuint bufferID, const void *source, GLsizei size)
+void UpdateClientBufferDataWithOffset(GLuint bufferID,
+                                      const void *source,
+                                      GLsizei size,
+                                      GLsizei offset)
 {
-    memcpy(gMappedBufferData[gBufferMap2[bufferID]], source, size);
-}
-
-void UpdateClientBufferData2WithOffset(GLuint bufferID,
-                                       const void *source,
-                                       GLsizei size,
-                                       GLsizei offset)
-{
-    uintptr_t dest = reinterpret_cast<uintptr_t>(gMappedBufferData[gBufferMap2[bufferID]]) + offset;
+    uintptr_t dest = reinterpret_cast<uintptr_t>(gMappedBufferData[gBufferMap[bufferID]]) + offset;
     memcpy(reinterpret_cast<void *>(dest), source, size);
 }
 
 void UpdateBufferID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gBufferMap, id, readBufferOffset);
+    UpdateResourceMap(gBufferMap, id, readBufferOffset);
 }
 
 void UpdateFenceNVID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gFenceNVMap, id, readBufferOffset);
+    UpdateResourceMap(gFenceNVMap, id, readBufferOffset);
 }
 
 void UpdateFramebufferID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gFramebufferMap, id, readBufferOffset);
+    UpdateResourceMap(gFramebufferMap, id, readBufferOffset);
 }
 
 void UpdateMemoryObjectID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gMemoryObjectMap, id, readBufferOffset);
+    UpdateResourceMap(gMemoryObjectMap, id, readBufferOffset);
 }
 
 void UpdateProgramPipelineID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gProgramPipelineMap, id, readBufferOffset);
+    UpdateResourceMap(gProgramPipelineMap, id, readBufferOffset);
 }
 
 void UpdateQueryID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gQueryMap, id, readBufferOffset);
+    UpdateResourceMap(gQueryMap, id, readBufferOffset);
 }
 
 void UpdateRenderbufferID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gRenderbufferMap, id, readBufferOffset);
+    UpdateResourceMap(gRenderbufferMap, id, readBufferOffset);
 }
 
 void UpdateSamplerID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gSamplerMap, id, readBufferOffset);
+    UpdateResourceMap(gSamplerMap, id, readBufferOffset);
 }
 
 void UpdateSemaphoreID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gSemaphoreMap, id, readBufferOffset);
+    UpdateResourceMap(gSemaphoreMap, id, readBufferOffset);
 }
 
 void UpdateShaderProgramID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gShaderProgramMap, id, readBufferOffset);
+    UpdateResourceMap(gShaderProgramMap, id, readBufferOffset);
 }
 
 void UpdateTextureID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gTextureMap, id, readBufferOffset);
+    UpdateResourceMap(gTextureMap, id, readBufferOffset);
 }
 
 void UpdateTransformFeedbackID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gTransformFeedbackMap, id, readBufferOffset);
+    UpdateResourceMap(gTransformFeedbackMap, id, readBufferOffset);
 }
 
 void UpdateVertexArrayID(GLuint id, GLsizei readBufferOffset)
 {
-    UpdateResourceMap(&gVertexArrayMap, id, readBufferOffset);
-}
-
-void UpdateBufferID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gBufferMap2, id, readBufferOffset);
-}
-
-void UpdateFenceNVID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gFenceNVMap2, id, readBufferOffset);
-}
-
-void UpdateFramebufferID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gFramebufferMap2, id, readBufferOffset);
-}
-
-void UpdateMemoryObjectID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gMemoryObjectMap2, id, readBufferOffset);
-}
-
-void UpdateProgramPipelineID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gProgramPipelineMap2, id, readBufferOffset);
-}
-
-void UpdateQueryID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gQueryMap2, id, readBufferOffset);
-}
-
-void UpdateRenderbufferID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gRenderbufferMap2, id, readBufferOffset);
-}
-
-void UpdateSamplerID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gSamplerMap2, id, readBufferOffset);
-}
-
-void UpdateSemaphoreID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gSemaphoreMap2, id, readBufferOffset);
-}
-
-void UpdateShaderProgramID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gShaderProgramMap2, id, readBufferOffset);
-}
-
-void UpdateTextureID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gTextureMap2, id, readBufferOffset);
-}
-
-void UpdateTransformFeedbackID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gTransformFeedbackMap2, id, readBufferOffset);
-}
-
-void UpdateVertexArrayID2(GLuint id, GLsizei readBufferOffset)
-{
-    UpdateResourceMap2(gVertexArrayMap2, id, readBufferOffset);
+    UpdateResourceMap(gVertexArrayMap, id, readBufferOffset);
 }
 
 void SetResourceID(GLuint *map, GLuint id)
@@ -427,7 +312,7 @@ void SetResourceID(GLuint *map, GLuint id)
 
 void SetFramebufferID(GLuint id)
 {
-    SetResourceID(gFramebufferMap2, id);
+    SetResourceID(gFramebufferMap, id);
 }
 
 void ValidateSerializedState(const char *serializedState, const char *fileName, uint32_t line)

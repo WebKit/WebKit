@@ -439,6 +439,11 @@ inline bool IsPixel4XL()
     return IsAndroidDevice("Pixel 4 XL");
 }
 
+inline bool IsPixel6()
+{
+    return IsAndroidDevice("Pixel 6");
+}
+
 // Check whether the active GPU is a specific device based on the string device ID.
 inline bool IsDeviceIdGPU(const std::string &gpuDeviceId)
 {
@@ -554,6 +559,7 @@ GPUTestConfig::GPUTestConfig(bool isSwiftShader)
     mConditions[kConditionNexus5X]          = !isSwiftShader && IsNexus5X();
     mConditions[kConditionPixel2OrXL]       = !isSwiftShader && (IsPixel2() || IsPixel2XL());
     mConditions[kConditionPixel4OrXL]       = !isSwiftShader && (IsPixel4() || IsPixel4XL());
+    mConditions[kConditionPixel6]           = !isSwiftShader && (IsPixel6());
     mConditions[kConditionNVIDIAQuadroP400] = !isSwiftShader && IsNVIDIAQuadroP400();
     mConditions[kConditionNVIDIAGTX1660]    = !isSwiftShader && IsNVIDIAGTX1660();
 

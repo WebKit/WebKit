@@ -1288,7 +1288,7 @@ spirv::IdRef OutputSPIRVTraverser::createComplexConstant(const TType &type,
         const spirv::IdRef columnTypeId =
             mBuilder.getBasicTypeId(type.getBasicType(), type.getRows());
 
-        for (int columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
+        for (uint8_t columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
         {
             auto columnParametersStart = parameters.begin() + columnIndex * type.getRows();
             spirv::IdRefList columnParameters(columnParametersStart,
@@ -1504,7 +1504,7 @@ spirv::IdRef OutputSPIRVTraverser::createConstructorVectorFromMatrix(
 
     spirv::IdRef argumentTypeId = typeId;
     TType arg0TypeAsVector(arg0Type);
-    arg0TypeAsVector.setPrimarySize(static_cast<unsigned char>(node->getType().getNominalSize()));
+    arg0TypeAsVector.setPrimarySize(node->getType().getNominalSize());
     arg0TypeAsVector.setSecondarySize(1);
 
     if (arg0Type.getBasicType() != expectedType.getBasicType())
@@ -1553,11 +1553,11 @@ spirv::IdRef OutputSPIRVTraverser::createConstructorVectorFromMultiple(
         TType componentType(argumentType);
         componentType.toComponentType();
 
-        for (int columnIndex = 0;
+        for (uint8_t columnIndex = 0;
              columnIndex < argumentType.getCols() && componentIndex < extractedComponents.size();
              ++columnIndex)
         {
-            for (int rowIndex = 0;
+            for (uint8_t rowIndex = 0;
                  rowIndex < argumentType.getRows() && componentIndex < extractedComponents.size();
                  ++rowIndex, ++componentIndex)
             {
@@ -1619,7 +1619,7 @@ spirv::IdRef OutputSPIRVTraverser::createConstructorMatrixFromScalar(
 
     const spirv::IdRef columnTypeId = mBuilder.getBasicTypeId(type.getBasicType(), type.getRows());
 
-    for (int columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
+    for (uint8_t columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
     {
         columnIds.push_back(mBuilder.getNewId(decorations));
 
@@ -1668,7 +1668,7 @@ spirv::IdRef OutputSPIRVTraverser::createConstructorMatrixFromVectors(
     const spirv::IdRef columnTypeId = mBuilder.getBasicTypeId(type.getBasicType(), type.getRows());
 
     // Chunk up the extracted components by column and construct intermediary vectors.
-    for (int columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
+    for (uint8_t columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
     {
         columnIds.push_back(mBuilder.getNewId(decorations));
 
@@ -1734,7 +1734,7 @@ spirv::IdRef OutputSPIRVTraverser::createConstructorMatrixFromMatrix(
                                              spirv::LiteralInteger(2), spirv::LiteralInteger(3)};
         swizzle.resize(type.getRows());
 
-        for (int columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
+        for (uint8_t columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
         {
             // Extract the column.
             const spirv::IdRef parameterColumnId = mBuilder.getNewId(decorations);
@@ -1763,11 +1763,11 @@ spirv::IdRef OutputSPIRVTraverser::createConstructorMatrixFromMatrix(
         paramComponentType.toComponentType();
         const spirv::IdRef paramComponentTypeId = mBuilder.getTypeData(paramComponentType, {}).id;
 
-        for (int columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
+        for (uint8_t columnIndex = 0; columnIndex < type.getCols(); ++columnIndex)
         {
             spirv::IdRefList componentIds;
 
-            for (int componentIndex = 0; componentIndex < type.getRows(); ++componentIndex)
+            for (uint8_t componentIndex = 0; componentIndex < type.getRows(); ++componentIndex)
             {
                 // Take the component from the constructor parameter if possible.
                 spirv::IdRef componentId;
@@ -1890,8 +1890,8 @@ void OutputSPIRVTraverser::extractComponents(TIntermAggregate *node,
                     : castBasicType(parameterId, argumentType, expectedType, nullptr);
 
             // For vector parameters, take components out of the vector one by one.
-            for (int componentIndex = 0; componentIndex < argumentType.getNominalSize() &&
-                                         extractedComponentsOut->size() < componentCount;
+            for (uint8_t componentIndex = 0; componentIndex < argumentType.getNominalSize() &&
+                                             extractedComponentsOut->size() < componentCount;
                  ++componentIndex)
             {
                 const spirv::IdRef componentId = mBuilder.getNewId(decorations);
@@ -1913,12 +1913,12 @@ void OutputSPIRVTraverser::extractComponents(TIntermAggregate *node,
         // For matrix parameters, take components out of the matrix one by one in column-major
         // order.  No cast is done here; it would only be required for vector constructors with
         // matrix parameters, in which case the resulting vector is cast in the end.
-        for (int columnIndex = 0; columnIndex < argumentType.getCols() &&
-                                  extractedComponentsOut->size() < componentCount;
+        for (uint8_t columnIndex = 0; columnIndex < argumentType.getCols() &&
+                                      extractedComponentsOut->size() < componentCount;
              ++columnIndex)
         {
-            for (int componentIndex = 0; componentIndex < argumentType.getRows() &&
-                                         extractedComponentsOut->size() < componentCount;
+            for (uint8_t componentIndex = 0; componentIndex < argumentType.getRows() &&
+                                             extractedComponentsOut->size() < componentCount;
                  ++componentIndex)
             {
                 const spirv::IdRef componentId = mBuilder.getNewId(decorations);
@@ -2905,8 +2905,8 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
     {
         // ++ and -- are implemented with binary add and subtract, so add an implicit parameter with
         // size vecN(1).
-        const int vecSize = firstOperandType.isMatrix() ? firstOperandType.getRows()
-                                                        : firstOperandType.getNominalSize();
+        const uint8_t vecSize = firstOperandType.isMatrix() ? firstOperandType.getRows()
+                                                            : firstOperandType.getNominalSize();
         const spirv::IdRef one =
             isFloat ? mBuilder.getVecConstant(1, vecSize) : mBuilder.getIvecConstant(1, vecSize);
         parameters.push_back(one);
@@ -2960,7 +2960,7 @@ spirv::IdRef OutputSPIRVTraverser::visitOperator(TIntermOperator *node, spirv::I
         }
 
         // Extract and apply the operator to each column.
-        for (int columnIndex = 0; columnIndex < matrixType.getCols(); ++columnIndex)
+        for (uint8_t columnIndex = 0; columnIndex < matrixType.getCols(); ++columnIndex)
         {
             spirv::IdRef columnIdA = parameters[0];
             if (firstOperandType.isMatrix())
@@ -3763,7 +3763,7 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
     // Gather operands as necessary.
 
     // - Coordinates
-    int coordinatesChannelCount = 0;
+    uint8_t coordinatesChannelCount = 0;
     spirv::IdRef coordinatesId;
     const TType *coordinatesType = nullptr;
     if (coordinatesIndex > 0)
@@ -3785,7 +3785,7 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
     {
         // Get the component index
         ASSERT(coordinatesChannelCount > 0);
-        int drefComponent = isProj ? 2 : coordinatesChannelCount - 1;
+        uint8_t drefComponent = isProj ? 2 : coordinatesChannelCount - 1;
 
         // Get the component type
         SpirvType drefSpirvType       = mBuilder.getSpirvType(*coordinatesType, {});
@@ -3896,7 +3896,7 @@ spirv::IdRef OutputSPIRVTraverser::createImageTextureBuiltIn(TIntermOperator *no
     //
     if (isProj)
     {
-        int requiredChannelCount = coordinatesChannelCount;
+        uint8_t requiredChannelCount = coordinatesChannelCount;
         // texture*Proj* operate on the following parameters:
         //
         // - sampler1D, vec2 P
@@ -4558,7 +4558,7 @@ void OutputSPIRVTraverser::createCompareImpl(TOperator op,
         columnType.toMatrixColumnType();
 
         currentAccessChain->emplace_back();
-        for (int columnIndex = 0; columnIndex < operandType.getCols(); ++columnIndex)
+        for (uint8_t columnIndex = 0; columnIndex < operandType.getCols(); ++columnIndex)
         {
             // Select the current column.
             currentAccessChain->back() = spirv::LiteralInteger(columnIndex);
@@ -4665,10 +4665,8 @@ spirv::IdRef OutputSPIRVTraverser::makeBuiltInOutputStructType(TIntermOperator *
     if (iter == mBuiltInResultStructMap.end())
     {
         // Create a TStructure and TType for the required structure.
-        TType *lsbTypeCopy = new TType(lsbType.getBasicType(),
-                                       static_cast<unsigned char>(lsbType.getNominalSize()), 1);
-        TType *msbTypeCopy = new TType(msbType.getBasicType(),
-                                       static_cast<unsigned char>(msbType.getNominalSize()), 1);
+        TType *lsbTypeCopy = new TType(lsbType.getBasicType(), lsbType.getNominalSize(), 1);
+        TType *msbTypeCopy = new TType(msbType.getBasicType(), msbType.getNominalSize(), 1);
 
         TFieldList *fields = new TFieldList;
         fields->push_back(
@@ -5119,8 +5117,8 @@ bool OutputSPIRVTraverser::visitTernary(Visit visit, TIntermTernary *node)
             // So when selecting between vectors, we must replicate the condition scalar.
             if (type.isVector())
             {
-                const TType &boolVectorType = *StaticType::GetForVec<EbtBool, EbpUndefined>(
-                    EvqGlobal, static_cast<unsigned char>(type.getNominalSize()));
+                const TType &boolVectorType =
+                    *StaticType::GetForVec<EbtBool, EbpUndefined>(EvqGlobal, type.getNominalSize());
                 typeId =
                     mBuilder.getBasicTypeId(conditionType.getBasicType(), type.getNominalSize());
                 conditionValue = createConstructorVectorFromScalar(conditionType, boolVectorType,

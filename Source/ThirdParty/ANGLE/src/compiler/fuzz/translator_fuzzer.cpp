@@ -231,6 +231,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         resources.EXT_shadow_samplers             = 1;
         resources.EXT_clip_cull_distance          = 1;
         resources.EXT_primitive_bounding_box      = 1;
+        resources.OES_primitive_bounding_box      = 1;
 
         if (!translator->Init(resources))
         {

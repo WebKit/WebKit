@@ -147,6 +147,7 @@ class CollectVariablesTraverser : public TIntermTraverser
                             bool staticUse,
                             bool isShaderIOBlock,
                             bool isPatch,
+                            SymbolType symbolType,
                             ShaderVariable *variableOut) const;
     void setCommonVariableProperties(const TType &type,
                                      const TVariable &variable,
@@ -237,7 +238,7 @@ class CollectVariablesTraverser : public TIntermTraverser
     bool mPatchVerticesInAdded;
     bool mTessLevelOuterAdded;
     bool mTessLevelInnerAdded;
-    bool mBoundingBoxEXTAdded;
+    bool mBoundingBoxAdded;
     bool mTessCoordAdded;
     const int mTessControlShaderOutputVertices;
 
@@ -310,7 +311,7 @@ CollectVariablesTraverser::CollectVariablesTraverser(
       mPatchVerticesInAdded(false),
       mTessLevelOuterAdded(false),
       mTessLevelInnerAdded(false),
-      mBoundingBoxEXTAdded(false),
+      mBoundingBoxAdded(false),
       mTessCoordAdded(false),
       mTessControlShaderOutputVertices(tessControlShaderOutputVertices),
       mHashFunction(hashFunction),
@@ -336,7 +337,7 @@ void CollectVariablesTraverser::setBuiltInInfoFromSymbol(const TVariable &variab
         IsShaderIoBlock(type.getQualifier()) && type.getInterfaceBlock() != nullptr;
     bool isPatch = type.getQualifier() == EvqTessLevelInner ||
                    type.getQualifier() == EvqTessLevelOuter ||
-                   type.getQualifier() == EvqBoundingBoxEXT;
+                   type.getQualifier() == EvqBoundingBox;
 
     setFieldOrVariableProperties(type, true, isShaderIOBlock, isPatch, info);
 }
@@ -707,9 +708,8 @@ void CollectVariablesTraverser::visitSymbol(TIntermSymbol *symbol)
                                              mInputVaryings);
                 }
                 break;
-            case EvqBoundingBoxEXT:
-                recordBuiltInVaryingUsed(symbol->variable(), &mBoundingBoxEXTAdded,
-                                         mOutputVaryings);
+            case EvqBoundingBox:
+                recordBuiltInVaryingUsed(symbol->variable(), &mBoundingBoxAdded, mOutputVaryings);
                 break;
             default:
                 break;
@@ -752,25 +752,28 @@ void CollectVariablesTraverser::setFieldOrVariableProperties(const TType &type,
             // ShaderVariable objects.
             ShaderVariable fieldVariable;
             setFieldProperties(*field->type(), field->name(), staticUse, isShaderIOBlock, isPatch,
-                               &fieldVariable);
+                               field->symbolType(), &fieldVariable);
             variableOut->fields.push_back(fieldVariable);
         }
     }
     else if (interfaceBlock && isShaderIOBlock)
     {
-        variableOut->type = GL_NONE;
+        const bool isPerVertex = (interfaceBlock->name() == "gl_PerVertex");
+        variableOut->type      = GL_NONE;
         if (interfaceBlock->symbolType() != SymbolType::Empty)
         {
             variableOut->structOrBlockName = interfaceBlock->name().data();
             variableOut->mappedStructOrBlockName =
-                HashName(interfaceBlock->name(), mHashFunction, nullptr).data();
+                isPerVertex ? interfaceBlock->name().data()
+                            : HashName(interfaceBlock->name(), mHashFunction, nullptr).data();
         }
         const TFieldList &fields = interfaceBlock->fields();
         for (const TField *field : fields)
         {
             ShaderVariable fieldVariable;
+
             setFieldProperties(*field->type(), field->name(), staticUse, true, isPatch,
-                               &fieldVariable);
+                               field->symbolType(), &fieldVariable);
             fieldVariable.isShaderIOBlock = true;
             variableOut->fields.push_back(fieldVariable);
         }
@@ -814,12 +817,15 @@ void CollectVariablesTraverser::setFieldProperties(const TType &type,
                                                    bool staticUse,
                                                    bool isShaderIOBlock,
                                                    bool isPatch,
+                                                   SymbolType symbolType,
                                                    ShaderVariable *variableOut) const
 {
     ASSERT(variableOut);
     setFieldOrVariableProperties(type, staticUse, isShaderIOBlock, isPatch, variableOut);
     variableOut->name.assign(name.data(), name.length());
-    variableOut->mappedName = HashName(name, mHashFunction, nullptr).data();
+    variableOut->mappedName = (symbolType == SymbolType::BuiltIn)
+                                  ? name.data()
+                                  : HashName(name, mHashFunction, nullptr).data();
 }
 
 void CollectVariablesTraverser::setCommonVariableProperties(const TType &type,
@@ -1036,7 +1042,8 @@ void CollectVariablesTraverser::recordInterfaceBlock(const char *instanceName,
         }
 
         ShaderVariable fieldVariable;
-        setFieldProperties(fieldType, field->name(), staticUse, false, false, &fieldVariable);
+        setFieldProperties(fieldType, field->name(), staticUse, false, false, field->symbolType(),
+                           &fieldVariable);
         fieldVariable.isRowMajorLayout =
             (fieldType.getLayoutQualifier().matrixPacking == EmpRowMajor);
         interfaceBlock->fields.push_back(fieldVariable);

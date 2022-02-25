@@ -77,7 +77,7 @@ TEST_P(EGLPrintEGLinfoTest, PrintEGLInfo)
 {
     std::cout << "    EGL Information:" << std::endl;
     std::cout << "\tVendor: " << GetEGLString(mDisplay, EGL_VENDOR) << std::endl;
-    std::cout << "\tVersion: " << GetEGLString(mDisplay, EGL_VENDOR) << std::endl;
+    std::cout << "\tVersion: " << GetEGLString(mDisplay, EGL_VERSION) << std::endl;
     std::cout << "\tClient APIs: " << GetEGLString(mDisplay, EGL_CLIENT_APIS) << std::endl;
 
     std::cout << "\tEGL Client Extensions:" << std::endl;

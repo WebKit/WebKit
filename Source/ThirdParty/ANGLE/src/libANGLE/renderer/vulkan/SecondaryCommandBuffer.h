@@ -899,13 +899,14 @@ ANGLE_INLINE void SecondaryCommandBuffer::beginTransformFeedback(
     const VkDeviceSize *counterBufferOffsets)
 {
     ASSERT(firstCounterBuffer == 0);
-    ASSERT(counterBufferOffsets == nullptr);
     uint8_t *writePtr;
     size_t bufferSize                         = bufferCount * sizeof(VkBuffer);
+    size_t offsetSize                         = bufferCount * sizeof(VkDeviceSize);
     BeginTransformFeedbackParams *paramStruct = initCommand<BeginTransformFeedbackParams>(
-        CommandID::BeginTransformFeedback, bufferSize, &writePtr);
+        CommandID::BeginTransformFeedback, bufferSize + offsetSize, &writePtr);
     paramStruct->bufferCount = bufferCount;
-    storePointerParameter(writePtr, counterBuffers, bufferSize);
+    writePtr                 = storePointerParameter(writePtr, counterBuffers, bufferSize);
+    storePointerParameter(writePtr, counterBufferOffsets, offsetSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::bindComputePipeline(const Pipeline &pipeline)
@@ -1303,13 +1304,14 @@ ANGLE_INLINE void SecondaryCommandBuffer::endTransformFeedback(
     const VkDeviceSize *counterBufferOffsets)
 {
     ASSERT(firstCounterBuffer == 0);
-    ASSERT(counterBufferOffsets == nullptr);
     uint8_t *writePtr;
     size_t bufferSize                       = counterBufferCount * sizeof(VkBuffer);
+    size_t offsetSize                       = counterBufferCount * sizeof(VkDeviceSize);
     EndTransformFeedbackParams *paramStruct = initCommand<EndTransformFeedbackParams>(
-        CommandID::EndTransformFeedback, bufferSize, &writePtr);
+        CommandID::EndTransformFeedback, bufferSize + offsetSize, &writePtr);
     paramStruct->bufferCount = counterBufferCount;
-    storePointerParameter(writePtr, counterBuffers, bufferSize);
+    writePtr                 = storePointerParameter(writePtr, counterBuffers, bufferSize);
+    storePointerParameter(writePtr, counterBufferOffsets, offsetSize);
 }
 
 ANGLE_INLINE void SecondaryCommandBuffer::fillBuffer(const Buffer &dstBuffer,

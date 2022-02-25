@@ -468,6 +468,15 @@ struct AddressRange
     size_t size;
 };
 
+// Used to handle protection of buffers that overlap in pages.
+enum class PageSharingType
+{
+    NoneShared,
+    FirstShared,
+    LastShared,
+    FirstAndLastShared
+};
+
 class CoherentBuffer
 {
   public:
@@ -480,8 +489,8 @@ class CoherentBuffer
     // Sets a page dirty state and sets it's protection
     void setDirty(size_t relativePage, bool dirty);
 
-    // Removes protection completely
-    void removeProtection();
+    // Removes protection
+    void removeProtection(PageSharingType sharingType);
 
     bool contains(size_t page, size_t *relativePage);
     bool isDirty();
@@ -525,6 +534,9 @@ class CoherentBufferTracker final : angle::NonCopyable
     void onEndFrame();
 
   private:
+    // Detect overlapping pages when removing protection
+    PageSharingType doesBufferSharePage(gl::BufferID id);
+
     // Returns a map to found buffers and the corresponding pages for a given address.
     // For addresses that are in a page shared by 2 buffers, 2 results are returned.
     HashMap<std::shared_ptr<CoherentBuffer>, size_t> getBufferPagesForAddress(uintptr_t address);
@@ -763,6 +775,8 @@ class FrameCaptureShared final : angle::NonCopyable
 
     bool mCaptureActive;
     std::vector<uint32_t> mActiveFrameIndices;
+
+    bool mMidExecutionCaptureActive;
 
     // Cache most recently compiled and linked sources.
     ShaderSourceMap mCachedShaderSource;

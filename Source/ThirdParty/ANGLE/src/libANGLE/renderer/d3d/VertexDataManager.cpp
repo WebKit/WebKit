@@ -58,10 +58,10 @@ int ElementsInBuffer(const gl::VertexAttribute &attrib,
                      const gl::VertexBinding &binding,
                      unsigned int size)
 {
-    angle::CheckedNumeric<size_t> bufferSize(size);
-    angle::CheckedNumeric<size_t> stride      = ComputeVertexAttributeStride(attrib, binding);
-    angle::CheckedNumeric<size_t> offset      = ComputeVertexAttributeOffset(attrib, binding);
-    angle::CheckedNumeric<size_t> elementSize = ComputeVertexAttributeTypeSize(attrib);
+    angle::CheckedNumeric<int64_t> bufferSize(size);
+    angle::CheckedNumeric<int64_t> stride      = ComputeVertexAttributeStride(attrib, binding);
+    angle::CheckedNumeric<int64_t> offset      = ComputeVertexAttributeOffset(attrib, binding);
+    angle::CheckedNumeric<int64_t> elementSize = ComputeVertexAttributeTypeSize(attrib);
 
     auto elementsInBuffer    = (bufferSize - (offset % stride) + (stride - elementSize)) / stride;
     auto elementsInBufferInt = elementsInBuffer.Cast<int>();

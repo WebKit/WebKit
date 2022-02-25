@@ -37,22 +37,13 @@ class ProgramPipelineVk : public ProgramPipelineImpl
         return SafeGetImplAs<ProgramVk>(program);
     }
 
-    void fillProgramStateMap(gl::ShaderMap<const gl::ProgramState *> *programStatesOut);
-
     angle::Result link(const gl::Context *glContext,
                        const gl::ProgramMergedVaryings &mergedVaryings,
                        const gl::ProgramVaryingPacking &varyingPacking) override;
 
-    angle::Result updateUniforms(ContextVk *contextVk);
-
-    void setAllDefaultUniformsDirty();
-    bool hasDirtyUniforms() const;
-    void onProgramBind();
+    void onProgramUniformUpdate(gl::ShaderType shaderType) override;
 
   private:
-    size_t calcUniformUpdateRequiredSpace(ContextVk *contextVk,
-                                          gl::ShaderMap<VkDeviceSize> *uniformOffsets) const;
-
     ProgramExecutableVk mExecutable;
 };
 

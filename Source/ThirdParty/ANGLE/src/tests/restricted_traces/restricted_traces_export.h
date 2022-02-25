@@ -37,4 +37,12 @@
 #    endif
 #endif  // !defined(ANGLE_TRACE_LOADER_EXPORT)
 
+namespace trace_angle
+{
+using GenericProc = void (*)();
+using LoadProc    = GenericProc(KHRONOS_APIENTRY *)(const char *);
+ANGLE_TRACE_LOADER_EXPORT void LoadEGL(LoadProc loadProc);
+ANGLE_TRACE_LOADER_EXPORT void LoadGLES(LoadProc loadProc);
+}  // namespace trace_angle
+
 #endif  // ANGLE_RESTRICTED_TRACES_EXPORT_H_

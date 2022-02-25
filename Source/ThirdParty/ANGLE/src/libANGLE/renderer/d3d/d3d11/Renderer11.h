@@ -294,6 +294,7 @@ class Renderer11 : public RendererD3D
 
     // D3D11-renderer specific methods
     ID3D11Device *getDevice() { return mDevice; }
+    ID3D11Device1 *getDevice1() { return mDevice1; }
     void *getD3DDevice() override;
     ID3D11DeviceContext *getDeviceContext() { return mDeviceContext; }
     ID3D11DeviceContext1 *getDeviceContext1IfSupported() { return mDeviceContext1; }
@@ -490,7 +491,7 @@ class Renderer11 : public RendererD3D
 
     std::string getRendererDescription() const override;
     std::string getVendorString() const override;
-    std::string getVersionString() const override;
+    std::string getVersionString(bool includeFullVersion) const override;
 
   private:
     void generateCaps(gl::Caps *outCaps,
@@ -593,6 +594,7 @@ class Renderer11 : public RendererD3D
     angle::ComPtr<ID3D12CommandQueue> mCommandQueue;
 
     ID3D11Device *mDevice;
+    ID3D11Device1 *mDevice1;
     Renderer11DeviceCaps mRenderer11DeviceCaps;
     ID3D11DeviceContext *mDeviceContext;
     ID3D11DeviceContext1 *mDeviceContext1;

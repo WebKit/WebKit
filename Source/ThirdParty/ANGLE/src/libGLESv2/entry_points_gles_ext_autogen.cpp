@@ -36,6 +36,8 @@ using namespace gl;
 
 extern "C" {
 
+// GL_ANDROID_extension_pack_es31a
+
 // GL_ANGLE_base_vertex_base_instance
 void GL_APIENTRY GL_DrawArraysInstancedBaseInstanceANGLE(GLenum mode,
                                                          GLint first,
@@ -7697,6 +7699,8 @@ void GL_APIENTRY GL_ValidateProgramPipelineEXT(GLuint pipeline)
     }
 }
 
+// GL_EXT_shader_framebuffer_fetch
+
 // GL_EXT_shader_framebuffer_fetch_non_coherent
 void GL_APIENTRY GL_FramebufferFetchBarrierEXT()
 {
@@ -10280,6 +10284,42 @@ void GL_APIENTRY GL_PointSizePointerOES(GLenum type, GLsizei stride, const void 
 }
 
 // GL_OES_point_sprite
+
+// GL_OES_primitive_bounding_box
+void GL_APIENTRY GL_PrimitiveBoundingBoxOES(GLfloat minX,
+                                            GLfloat minY,
+                                            GLfloat minZ,
+                                            GLfloat minW,
+                                            GLfloat maxX,
+                                            GLfloat maxY,
+                                            GLfloat maxZ,
+                                            GLfloat maxW)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLPrimitiveBoundingBoxOES,
+          "context = %d, minX = %f, minY = %f, minZ = %f, minW = %f, maxX = %f, maxY = %f, maxZ = "
+          "%f, maxW = %f",
+          CID(context), minX, minY, minZ, minW, maxX, maxY, maxZ, maxW);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidatePrimitiveBoundingBoxOES(context, angle::EntryPoint::GLPrimitiveBoundingBoxOES,
+                                             minX, minY, minZ, minW, maxX, maxY, maxZ, maxW));
+        if (isCallValid)
+        {
+            context->primitiveBoundingBox(minX, minY, minZ, minW, maxX, maxY, maxZ, maxW);
+        }
+        ANGLE_CAPTURE(PrimitiveBoundingBoxOES, isCallValid, context, minX, minY, minZ, minW, maxX,
+                      maxY, maxZ, maxW);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
 
 // GL_OES_query_matrix
 GLbitfield GL_APIENTRY GL_QueryMatrixxOES(GLfixed *mantissa, GLint *exponent)

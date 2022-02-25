@@ -162,7 +162,7 @@ TEST_P(SixteenBppTextureTest, RGB565Validation)
     simpleValidationBase(tex.get());
 }
 
-// Simple validation test for GL_RGBA5551 textures.
+// Simple validation test for GL_RGB5_A1 textures.
 // Samples from the texture, renders to it, generates mipmaps etc.
 TEST_P(SixteenBppTextureTest, RGBA5551Validation)
 {
@@ -222,7 +222,7 @@ TEST_P(SixteenBppTextureTest, RGBA5551ClearAlpha)
     }
 }
 
-// Simple validation test for GL_RGBA4444 textures.
+// Simple validation test for GL_RGBA4 textures.
 // Samples from the texture, renders to it, generates mipmaps etc.
 TEST_P(SixteenBppTextureTest, RGBA4444Validation)
 {
@@ -476,9 +476,192 @@ TEST_P(SixteenBppTextureTestES3, RGB565FramebufferReadback)
     glDeleteProgram(program);
 }
 
+class SixteenBppTextureDitheringTestES3 : public SixteenBppTextureTestES3
+{
+  protected:
+    SixteenBppTextureDitheringTestES3()
+    {
+        setWindowWidth(512);
+        setWindowHeight(512);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+    }
+
+    enum class Gradient
+    {
+        RedGreen,
+        RedBlue,
+        GreenBlue,
+    };
+
+    std::string makeVS(Gradient gradient)
+    {
+        std::ostringstream vs;
+        vs << R"(#version 300 es
+out mediump vec4 color;
+void main()
+{
+    // gl_VertexID    x    y
+    //      0        -1   -1   Black
+    //      1         1   -1   Red
+    //      2        -1    1   Green
+    //      3         1    1   Yellow
+    int bit0 = gl_VertexID & 1;
+    int bit1 = gl_VertexID >> 1;
+    gl_Position = vec4(bit0 * 2 - 1, bit1 * 2 - 1, 0, 1);
+    color = )";
+        switch (gradient)
+        {
+            case Gradient::RedGreen:
+                vs << "vec4(bit0, bit1, 0, 1)";
+                break;
+            case Gradient::RedBlue:
+                vs << "vec4(bit1, 0, bit0, 1)";
+                break;
+            case Gradient::GreenBlue:
+                vs << "vec4(0, bit0, bit1, 1)";
+                break;
+        }
+        vs << R"(;
+})";
+
+        return vs.str();
+    }
+
+    const char *getFS()
+    {
+        return R"(#version 300 es
+precision mediump float;
+in vec4 color;
+out vec4 colorOut;
+void main()
+{
+    colorOut = color;
+})";
+    }
+
+    GLColor getRightColor(Gradient gradient)
+    {
+        switch (gradient)
+        {
+            case Gradient::RedGreen:
+                return GLColor::red;
+            case Gradient::RedBlue:
+                return GLColor::blue;
+            case Gradient::GreenBlue:
+                return GLColor::green;
+            default:
+                UNREACHABLE();
+                return GLColor::red;
+        }
+    }
+
+    GLColor getTopColor(Gradient gradient)
+    {
+        switch (gradient)
+        {
+            case Gradient::RedGreen:
+                return GLColor::green;
+            case Gradient::RedBlue:
+                return GLColor::red;
+            case Gradient::GreenBlue:
+                return GLColor::blue;
+            default:
+                UNREACHABLE();
+                return GLColor::red;
+        }
+    }
+
+    void bandingTest(GLenum format, Gradient gradient);
+};
+
+void SixteenBppTextureDitheringTestES3::bandingTest(GLenum format, Gradient gradient)
+{
+    int w = getWindowWidth();
+    int h = getWindowHeight();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo.get());
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexStorage2D(GL_TEXTURE_2D, 1, format, w, h);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+
+    ANGLE_GL_PROGRAM(program, makeVS(gradient).c_str(), getFS());
+    glUseProgram(program);
+
+    glViewport(0, 0, w, h);
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    ASSERT_GL_NO_ERROR();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Draw a quad using the texture
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glUseProgram(m2DProgram);
+    glUniform1i(mTexture2DUniformLocation, 0);
+    drawQuad(m2DProgram, "position", 0.5f);
+    ASSERT_GL_NO_ERROR();
+
+    // Verify results.  Note that no dithering algorithm is specified by the spec, so the test
+    // cannot actually verify that the output is dithered in any way.  These tests exist for visual
+    // verification and debugging only.
+    int maxError = 0;
+    switch (format)
+    {
+        case GL_RGBA4:
+            maxError = 256 / 16;
+            break;
+        case GL_RGB5_A1:
+        case GL_RGB565:
+            maxError = 256 / 32;
+            break;
+        default:
+            UNREACHABLE();
+    }
+
+    const GLColor rightColor    = getRightColor(gradient);
+    const GLColor topColor      = getTopColor(gradient);
+    const GLColor topRightColor = GLColor(rightColor.R + topColor.R, rightColor.G + topColor.G,
+                                          rightColor.B + topColor.B, 255);
+
+    EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor::black, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(w - 1, 0, rightColor, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(0, h - 1, topColor, maxError);
+    EXPECT_PIXEL_COLOR_NEAR(w - 1, h - 1, topRightColor, maxError);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test dithering applied to RGBA4.
+TEST_P(SixteenBppTextureDitheringTestES3, RGBA4)
+{
+    bandingTest(GL_RGBA4, Gradient::RedGreen);
+}
+
+// Test dithering applied to RGBA5551.
+TEST_P(SixteenBppTextureDitheringTestES3, RGBA5551)
+{
+    bandingTest(GL_RGB5_A1, Gradient::RedBlue);
+}
+
+// Test dithering applied to RGB565.
+TEST_P(SixteenBppTextureDitheringTestES3, RGB565)
+{
+    bandingTest(GL_RGB565, Gradient::GreenBlue);
+}
+
 ANGLE_INSTANTIATE_TEST_ES2(SixteenBppTextureTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SixteenBppTextureTestES3);
 ANGLE_INSTANTIATE_TEST_ES3(SixteenBppTextureTestES3);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(SixteenBppTextureDitheringTestES3);
+ANGLE_INSTANTIATE_TEST_ES3(SixteenBppTextureDitheringTestES3);
 
 }  // namespace

@@ -799,6 +799,11 @@ void ANGLERenderTest::SetUp()
 
     initializeBenchmark();
 
+    if (mSkipTest)
+    {
+        return;
+    }
+
     if (mTestParams.iterationsPerStep == 0)
     {
         mSkipTest = true;

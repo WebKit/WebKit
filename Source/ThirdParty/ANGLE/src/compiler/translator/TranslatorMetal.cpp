@@ -192,7 +192,7 @@ bool TranslatorMetal::transformDepthBeforeCorrection(TIntermBlock *root,
     TIntermSwizzle *positionZ   = new TIntermSwizzle(positionRef, swizzleOffsetZ);
 
     // Create a ref to "depthRange.reserved"
-    TIntermBinary *viewportZScale = driverUniforms->getDepthRangeReservedFieldRef();
+    TIntermTyped *viewportZScale = driverUniforms->getDepthRangeReservedFieldRef();
 
     // Create the expression "gl_Position.z * depthRange.reserved".
     TIntermBinary *zScale = new TIntermBinary(EOpMul, positionZ->deepCopy(), viewportZScale);
@@ -248,7 +248,7 @@ ANGLE_NO_DISCARD bool TranslatorMetal::insertSampleMaskWritingLogic(
     sampleMaskWriteFunc->addParameter(maskArg);
 
     // coverageMask
-    TIntermBinary *coverageMask = driverUniforms->getCoverageMaskFieldRef();
+    TIntermTyped *coverageMask = driverUniforms->getCoverageMaskFieldRef();
 
     // Insert this code to the end of main()
     // if (ANGLECoverageMaskEnabled)

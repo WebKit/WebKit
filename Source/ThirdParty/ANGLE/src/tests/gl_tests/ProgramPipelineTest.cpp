@@ -318,6 +318,85 @@ TEST_P(ProgramPipelineTest31, UseProgramStages)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
+// Test glUseProgramStages with different programs
+TEST_P(ProgramPipelineTest31, UseProgramStagesWithDifferentPrograms)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    const GLchar *vertString  = essl31_shaders::vs::Simple();
+    const GLchar *fragString1 = R"(#version 310 es
+precision highp float;
+uniform float redColorIn;
+uniform float greenColorIn;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(redColorIn, greenColorIn, 0.0, 1.0);
+})";
+    const GLchar *fragString2 = R"(#version 310 es
+precision highp float;
+uniform float greenColorIn;
+uniform float blueColorIn;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(0.0, greenColorIn, blueColorIn, 1.0);
+})";
+
+    bindProgramPipeline(vertString, fragString1);
+
+    // Set the output color to red
+    GLint location = glGetUniformLocation(mFragProg, "redColorIn");
+    glActiveShaderProgram(mPipeline, mFragProg);
+    glUniform1f(location, 1.0);
+    location = glGetUniformLocation(mFragProg, "greenColorIn");
+    glActiveShaderProgram(mPipeline, mFragProg);
+    glUniform1f(location, 0.0);
+
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    GLuint fragProg;
+    fragProg = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fragString2);
+    ASSERT_NE(fragProg, 0u);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgramStages(mPipeline, GL_FRAGMENT_SHADER_BIT, fragProg);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Set the output color to blue
+    location = glGetUniformLocation(fragProg, "greenColorIn");
+    glActiveShaderProgram(mPipeline, fragProg);
+    glUniform1f(location, 0.0);
+    location = glGetUniformLocation(fragProg, "blueColorIn");
+    glActiveShaderProgram(mPipeline, fragProg);
+    glUniform1f(location, 1.0);
+
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glUseProgramStages(mPipeline, GL_FRAGMENT_SHADER_BIT, mFragProg);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glDeleteProgram(mVertProg);
+    glDeleteProgram(mFragProg);
+    glDeleteProgram(fragProg);
+}
+
 // Test glUseProgramStages
 TEST_P(ProgramPipelineTest31, UseCreateShaderProgramv)
 {
@@ -763,6 +842,215 @@ void main()
 
     drawQuadWithPPO("position", 0.5f, 1.0f);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
+// Test that uniform updates are propagated with minimal state changes.
+TEST_P(ProgramPipelineTest31, UniformUpdate)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    const GLchar *vertString = essl31_shaders::vs::Simple();
+    const GLchar *fragString = R"(#version 310 es
+precision highp float;
+uniform float redColorIn;
+uniform float greenColorIn;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(redColorIn, greenColorIn, 0.0, 1.0);
+})";
+
+    bindProgramPipeline(vertString, fragString);
+
+    GLint redLoc = glGetUniformLocation(mFragProg, "redColorIn");
+    ASSERT_NE(-1, redLoc);
+    GLint greenLoc = glGetUniformLocation(mFragProg, "greenColorIn");
+    ASSERT_NE(-1, greenLoc);
+
+    glActiveShaderProgram(mPipeline, mFragProg);
+
+    std::array<Vector3, 6> verts = GetQuadVertices();
+
+    GLBuffer vbo;
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(verts[0]), verts.data(), GL_STATIC_DRAW);
+
+    GLint posLoc = glGetAttribLocation(mVertProg, "a_position");
+    glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posLoc);
+
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Set the output color to red, draw to left half of window.
+    glUniform1f(redLoc, 1.0);
+    glUniform1f(greenLoc, 0.0);
+    glViewport(0, 0, getWindowWidth() / 2, getWindowHeight());
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+
+    // Set the output color to green, draw to right half of window.
+    glUniform1f(redLoc, 0.0);
+    glUniform1f(greenLoc, 1.0);
+
+    glViewport(getWindowWidth() / 2, 0, getWindowWidth() / 2, getWindowHeight());
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2 + 1, 0, GLColor::green);
+}
+
+// Test that uniform updates propagate to two pipelines.
+TEST_P(ProgramPipelineTest31, UniformUpdateTwoPipelines)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    const GLchar *vertString = essl31_shaders::vs::Simple();
+    const GLchar *fragString = R"(#version 310 es
+precision highp float;
+uniform float redColorIn;
+uniform float greenColorIn;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(redColorIn, greenColorIn, 0.0, 1.0);
+})";
+
+    mVertProg = glCreateShaderProgramv(GL_VERTEX_SHADER, 1, &vertString);
+    ASSERT_NE(mVertProg, 0u);
+    mFragProg = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fragString);
+    ASSERT_NE(mFragProg, 0u);
+
+    GLint redLoc = glGetUniformLocation(mFragProg, "redColorIn");
+    ASSERT_NE(-1, redLoc);
+    GLint greenLoc = glGetUniformLocation(mFragProg, "greenColorIn");
+    ASSERT_NE(-1, greenLoc);
+
+    GLProgramPipeline ppo1;
+    glUseProgramStages(ppo1, GL_VERTEX_SHADER_BIT, mVertProg);
+    glUseProgramStages(ppo1, GL_FRAGMENT_SHADER_BIT, mFragProg);
+    glBindProgramPipeline(ppo1);
+    glActiveShaderProgram(ppo1, mFragProg);
+    ASSERT_GL_NO_ERROR();
+
+    GLProgramPipeline ppo2;
+    glUseProgramStages(ppo2, GL_VERTEX_SHADER_BIT, mVertProg);
+    glUseProgramStages(ppo2, GL_FRAGMENT_SHADER_BIT, mFragProg);
+    glBindProgramPipeline(ppo2);
+    glActiveShaderProgram(ppo2, mFragProg);
+    ASSERT_GL_NO_ERROR();
+
+    std::array<Vector3, 6> verts = GetQuadVertices();
+
+    GLBuffer vbo;
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(verts[0]), verts.data(), GL_STATIC_DRAW);
+
+    GLint posLoc = glGetAttribLocation(mVertProg, "a_position");
+    glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(posLoc);
+
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    const GLsizei w = getWindowWidth() / 2;
+    const GLsizei h = getWindowHeight() / 2;
+
+    // Set the output color to red, draw to UL quad of window with first PPO.
+    glUniform1f(redLoc, 1.0);
+    glUniform1f(greenLoc, 0.0);
+    glBindProgramPipeline(ppo1);
+    glViewport(0, 0, w, h);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw red to UR half of window with second PPO.
+    glBindProgramPipeline(ppo2);
+    glViewport(w, 0, w, h);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw green to LL corner of window with first PPO.
+    glUniform1f(redLoc, 0.0);
+    glUniform1f(greenLoc, 1.0);
+    glBindProgramPipeline(ppo1);
+    glViewport(0, h, w, h);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+
+    // Draw green to LR half of window with second PPO.
+    glBindProgramPipeline(ppo2);
+    glViewport(w, h, w, h);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(w + 1, 0, GLColor::red);
+    EXPECT_PIXEL_COLOR_EQ(0, h + 1, GLColor::green);
+    EXPECT_PIXEL_COLOR_EQ(w + 1, h + 1, GLColor::green);
+}
+
+// Tests that setting sampler bindings on a program before the pipeline works as expected.
+TEST_P(ProgramPipelineTest31, BindSamplerBeforeCreatingPipeline)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two textures - red and green.
+    GLTexture redTex;
+    glBindTexture(GL_TEXTURE_2D, redTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    GLTexture greenTex;
+    glBindTexture(GL_TEXTURE_2D, greenTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::green);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // Bind red to texture unit 0 and green to unit 1.
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, redTex);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, greenTex);
+
+    // Create the separable programs.
+    const char *vsSource = essl1_shaders::vs::Texture2D();
+    mVertProg            = glCreateShaderProgramv(GL_VERTEX_SHADER, 1, &vsSource);
+    ASSERT_NE(0u, mVertProg);
+
+    const char *fsSource = essl1_shaders::fs::Texture2D();
+    mFragProg            = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fsSource);
+    ASSERT_NE(0u, mFragProg);
+
+    // Set the program to sample from the green texture.
+    GLint texLoc = glGetUniformLocation(mFragProg, essl1_shaders::Texture2DUniform());
+    ASSERT_NE(-1, texLoc);
+
+    glUseProgram(mFragProg);
+    glUniform1i(texLoc, 1);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Create and draw with the pipeline.
+    GLProgramPipeline ppo;
+    glUseProgramStages(ppo, GL_VERTEX_SHADER_BIT, mVertProg);
+    glUseProgramStages(ppo, GL_FRAGMENT_SHADER_BIT, mFragProg);
+    glBindProgramPipeline(ppo);
+
+    ASSERT_GL_NO_ERROR();
+
+    drawQuadWithPPO(essl1_shaders::PositionAttrib(), 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+
+    // We should have sampled from the second texture bound to unit 1.
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
 // Test that a shader IO block varying with separable program links

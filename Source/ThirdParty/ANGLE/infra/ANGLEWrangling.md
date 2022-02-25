@@ -4,9 +4,6 @@ As an ANGLE Sheriff. Your job is to:
 
  1. Keep the [ANGLE Try Waterfall](https://ci.chromium.org/p/chromium/g/tryserver.chromium.angle/builders) in good
     working order.
- 1. Monitor the
-    [Chromium GPU FYI Waterfall](https://ci.chromium.org/p/chromium/g/chromium.gpu.fyi/console)
-    and respond to ANGLE bugs.
  1. Control and monitor the [ANGLE auto-rollers](#task-3_the-auto_rollers).
  1. Keep the [ANGLE Standalone Testers](README.md) in good working order.
  1. Keep the [SwANGLE Try Waterfall](https://luci-milo.appspot.com/p/chromium/g/tryserver.chromium.swangle/builders) in good
@@ -30,51 +27,56 @@ extension for inspecting bot builds. It'll save you a lot of time.
 
 ## Task 1: Monitor ANGLE CI and Try Testers
 
-Your first job is to keep the
-[ANGLE Try Waterfall](https://ci.chromium.org/p/chromium/g/tryserver.chromium.angle/builders)
-healthy.  These are also known as the CQ (commit queue) bots.  Some
-failures are expected on this waterfall. Developers might be testing expectedly buggy code. However,
-persistent flakiness and failures should be reported and appropriate CLs reverted.
+Your first job is to keep the ANGLE builders green and unblocked.
 
-For ANGLE issues that require CLs, please [file an ANGLE bug](http://anglebug.com/new) and set
-the Label `Hotlist-Wrangler` on the bug.
-[Click here to see those bugs.][WranglerBugs]
+There are two consoles for ANGLE continuous integration builders:
+
+ 1. Standalone ANGLE: https://ci.chromium.org/p/angle/g/ci/console
+ 1. Chromium + ANGLE integration: https://ci.chromium.org/p/chromium/g/chromium.angle/console
+
+We expect these waterfalls to be perfectly green at all times. As of writing
+several builders are red or flaky. Oart of your job as wrangler is to
+eliminate all sources of breaks and flakiness. We can fix flakiness by
+suppressing tests that are not worth fixing, reverting problematic CLs, or
+finding other solutions.
+
+When you encouter red builds or flakiness, please [file an ANGLE bug]
+(http://anglebug.com/new) and set the label: `Hotlist-Wrangler`.
+
+[Click here to see a ANGLE wrangler bug hot list.][WranglerBugs]
+
+In addition to the CI builders, we have a console for try jobs on the ANGLE CV (change verifier):
+
+ * https://ci.chromium.org/ui/p/angle/g/try/builders
+
+Some failures are expected on this waterfall as developers test WIP changes.
+Please watch for persistent sources of flakiness and failure and take action
+as appropriate by filing bugs, reverting CLs, or taking other action.
 
 [WranglerBugs]:https://bugs.chromium.org/p/angleproject/issues/list?q=Hotlist%3DWrangler&can=2
 
-When encountering an unexpected failure in a CL that looks ANGLE related, please
-[file an ANGLE bug](http://anglebug.com/new) and cc the current ANGLE wrangler. If the failure is
-unrelated to ANGLE [file a Chromium bug](http://crbug.com/new) and set the Label
-`Hotlist-PixelWrangler` on the bug (see [Filing Chromium Bug Reports](#filing-chromium-bug-reports) below).
-Refer to [build.chromium.org](https://ci.chromium.org/p/chromium/g/main/console) to find the current ANGLE
-wrangler and GPU Pixel Wrangler.
+If you find a point of failure that is unrelated to ANGLE, please [file a
+Chromium bug](http://crbug.com/new). Set the bug label
+`Hotlist-PixelWrangler`. Ensure you cc the current ANGLE and Chrome GPU
+wranglers, which you can find by consulting
+[build.chromium.org](https://ci.chromium.org/p/chromium/g/main/console).
+For more information see [Filing Chromium Bug Reports](#filing-chromium-bug-reports) below.
+
+Also follow [Chromium bugs in the `Internals>GPU>ANGLE` component][ChromiumANGLEBugs]
+to be alerted to reports of ANGLE-related breakage in Chrome.
+
+[ChromiumANGLEBugs]:https://bugs.chromium.org/p/chromium/issues/list?q=component%3AInternals%3EGPU%3EANGLE&can=2
 
 **NOTE: When all builds seem to be purple or otherwise broken:**
 
 This could be a major infrastructure outage. File a high-priority bug using
 [g.co/bugatrooper](http://g.co/bugatrooper).
 
-## Task 2: Monitor Chromium FYI Testers and Respond to Bugs
-
-ANGLE bugs sometimes make it past the commit queue testing and into the main branch. This can be
-because of flaky tests or because the failures are specific to system configurations for which we
-lack full pre-commit testing support.
-
-The [Chromium GPU FYI Waterfall][ChromiumFYI]
-waterfall includes a number of these one-off specialized configurations.  Monitor this console for
-persistent breakage that could be related to ANGLE.  Also follow [Chromium bugs in the `Internals>GPU>ANGLE` component][ChromiumANGLEBugs]
-to be alerted to reports of breakage on the GPU.FYI waterfall.
-
-[ChromiumFYI]:https://ci.chromium.org/p/chromium/g/chromium.gpu.fyi/console
-[ChromiumANGLEBugs]:https://bugs.chromium.org/p/chromium/issues/list?q=component%3AInternals%3EGPU%3EANGLE&can=2
-
-Googlers can use [sheriff-o-matic](https://sheriff-o-matic.appspot.com/chromium.gpu.fyi) to monitor
-the health of the GPU.FYI waterfall.
-
 ### Filing Chromium Bug Reports
 
-The GPU Pixel Wrangler is responsible for the *Chromium* bugs.  Please file issues with
-the Label `Hotlist-PixelWrangler` for bugs that aren't caused by ANGLE regressions.
+The GPU Pixel Wrangler is responsible for *Chromium* bugs. Please file
+Chromium issues with the Label `Hotlist-PixelWrangler` for bugs outside of
+the ANGLE project.
 
 *IMPORTANT* info to include in Chromium bug reports:
 
@@ -89,12 +91,12 @@ the Label `Hotlist-PixelWrangler` for bugs that aren't caused by ANGLE regressio
  * Cc relevant sheriffs or blame suspects, as well as yourself or the current ANGLE Wrangler.
  * Set the `Hotlist-PixelWrangler` Label.
 
-### How to determine the ANGLE regression range on the GPU.FYI bots:
+### How to determine the ANGLE regression range on Chromium bots:
 
  1. Open the first failing and last passing builds.
  1. For test failures: record `parent_got_angle_revision` in both builds.
  1. For compile failures record `got_angle_revision`.
- 1. Use this URL:
+ 1. Create a regression link with this URL template:
     `https://chromium.googlesource.com/angle/angle.git/+log/<last passing revision>..<first failing revision>`
 
 ## <a name="the-auto-rollers"></a>Task 3: The Auto-Rollers
@@ -141,11 +143,11 @@ See more detailed instructions on by following [this link](README.md).
 
 ## Task 5: Monitor SwANGLE CI and Try Testers
 
-Most important task here is to keep healthy the 2 SwANGLE bots on ANGLE CQ,
+The most important task here is to keep the 2 SwANGLE bots on the ANGLE CV healthy:
 [linux-swangle-try-tot-angle-x64](https://luci-milo.appspot.com/p/chromium/builders/try/linux-swangle-try-tot-angle-x64)
 and
 [win-swangle-try-tot-angle-x86](https://luci-milo.appspot.com/p/chromium/builders/try/win-swangle-try-tot-angle-x86).
-As well as the 2 SwANGLE bots used for ANGLE rolls on Chromium CQ,
+As well as the 2 SwANGLE bots used for ANGLE rolls on Chromium CV,
 [linux-swangle-try-x64](https://luci-milo.appspot.com/p/chromium/builders/try/linux-swangle-try-x64)
 and
 [win-swangle-try-x86](https://luci-milo.appspot.com/p/chromium/builders/try/win-swangle-try-x86).

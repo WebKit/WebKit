@@ -233,91 +233,6 @@ void CopyStringToBuffer(GLchar *buffer,
     }
 }
 
-std::string GetInterfaceBlockLimitName(ShaderType shaderType, sh::BlockType blockType)
-{
-    std::ostringstream stream;
-    stream << "GL_MAX_" << GetShaderTypeString(shaderType) << "_";
-
-    switch (blockType)
-    {
-        case sh::BlockType::BLOCK_UNIFORM:
-            stream << "UNIFORM_BUFFERS";
-            break;
-        case sh::BlockType::BLOCK_BUFFER:
-            stream << "SHADER_STORAGE_BLOCKS";
-            break;
-        default:
-            UNREACHABLE();
-            return "";
-    }
-
-    if (shaderType == ShaderType::Geometry)
-    {
-        stream << "_EXT";
-    }
-
-    return stream.str();
-}
-
-const char *GetInterfaceBlockTypeString(sh::BlockType blockType)
-{
-    switch (blockType)
-    {
-        case sh::BlockType::BLOCK_UNIFORM:
-            return "uniform block";
-        case sh::BlockType::BLOCK_BUFFER:
-            return "shader storage block";
-        default:
-            UNREACHABLE();
-            return "";
-    }
-}
-
-void LogInterfaceBlocksExceedLimit(InfoLog &infoLog,
-                                   ShaderType shaderType,
-                                   sh::BlockType blockType,
-                                   GLuint limit)
-{
-    infoLog << GetShaderTypeString(shaderType) << " shader "
-            << GetInterfaceBlockTypeString(blockType) << " count exceeds "
-            << GetInterfaceBlockLimitName(shaderType, blockType) << " (" << limit << ")";
-}
-
-bool ValidateInterfaceBlocksCount(GLuint maxInterfaceBlocks,
-                                  const std::vector<sh::InterfaceBlock> &interfaceBlocks,
-                                  ShaderType shaderType,
-                                  sh::BlockType blockType,
-                                  GLuint *combinedInterfaceBlocksCount,
-                                  InfoLog &infoLog)
-{
-    GLuint blockCount = 0;
-    for (const sh::InterfaceBlock &block : interfaceBlocks)
-    {
-        if (IsActiveInterfaceBlock(block))
-        {
-            blockCount += std::max(block.arraySize, 1u);
-            if (blockCount > maxInterfaceBlocks)
-            {
-                LogInterfaceBlocksExceedLimit(infoLog, shaderType, blockType, maxInterfaceBlocks);
-                return false;
-            }
-        }
-    }
-
-    // [OpenGL ES 3.1] Chapter 7.6.2 Page 105:
-    // If a uniform block is used by multiple shader stages, each such use counts separately
-    // against this combined limit.
-    // [OpenGL ES 3.1] Chapter 7.8 Page 111:
-    // If a shader storage block in a program is referenced by multiple shaders, each such
-    // reference counts separately against this combined limit.
-    if (combinedInterfaceBlocksCount)
-    {
-        *combinedInterfaceBlocksCount += blockCount;
-    }
-
-    return true;
-}
-
 GLuint GetInterfaceBlockIndex(const std::vector<InterfaceBlock> &list, const std::string &name)
 {
     std::vector<unsigned int> subscripts;
@@ -438,228 +353,6 @@ const char *GetLinkMismatchErrorString(LinkMismatchError linkError)
             UNREACHABLE();
             return "";
     }
-}
-
-LinkMismatchError LinkValidateInterfaceBlockFields(const sh::ShaderVariable &blockField1,
-                                                   const sh::ShaderVariable &blockField2,
-                                                   bool webglCompatibility,
-                                                   std::string *mismatchedBlockFieldName)
-{
-    if (blockField1.name != blockField2.name)
-    {
-        return LinkMismatchError::FIELD_NAME_MISMATCH;
-    }
-
-    // If webgl, validate precision of UBO fields, otherwise don't.  See Khronos bug 10287.
-    LinkMismatchError linkError = LinkValidateProgramVariables(
-        blockField1, blockField2, webglCompatibility, false, false, mismatchedBlockFieldName);
-    if (linkError != LinkMismatchError::NO_MISMATCH)
-    {
-        AddProgramVariableParentPrefix(blockField1.name, mismatchedBlockFieldName);
-        return linkError;
-    }
-
-    if (blockField1.isRowMajorLayout != blockField2.isRowMajorLayout)
-    {
-        AddProgramVariableParentPrefix(blockField1.name, mismatchedBlockFieldName);
-        return LinkMismatchError::MATRIX_PACKING_MISMATCH;
-    }
-
-    return LinkMismatchError::NO_MISMATCH;
-}
-
-LinkMismatchError AreMatchingInterfaceBlocks(const sh::InterfaceBlock &interfaceBlock1,
-                                             const sh::InterfaceBlock &interfaceBlock2,
-                                             bool webglCompatibility,
-                                             std::string *mismatchedBlockFieldName)
-{
-    // validate blocks for the same member types
-    if (interfaceBlock1.fields.size() != interfaceBlock2.fields.size())
-    {
-        return LinkMismatchError::FIELD_NUMBER_MISMATCH;
-    }
-    if (interfaceBlock1.arraySize != interfaceBlock2.arraySize)
-    {
-        return LinkMismatchError::ARRAY_SIZE_MISMATCH;
-    }
-    if (interfaceBlock1.layout != interfaceBlock2.layout ||
-        interfaceBlock1.binding != interfaceBlock2.binding)
-    {
-        return LinkMismatchError::LAYOUT_QUALIFIER_MISMATCH;
-    }
-    if (interfaceBlock1.instanceName.empty() != interfaceBlock2.instanceName.empty())
-    {
-        return LinkMismatchError::INSTANCE_NAME_MISMATCH;
-    }
-    const unsigned int numBlockMembers = static_cast<unsigned int>(interfaceBlock1.fields.size());
-    for (unsigned int blockMemberIndex = 0; blockMemberIndex < numBlockMembers; blockMemberIndex++)
-    {
-        const sh::ShaderVariable &member1 = interfaceBlock1.fields[blockMemberIndex];
-        const sh::ShaderVariable &member2 = interfaceBlock2.fields[blockMemberIndex];
-
-        LinkMismatchError linkError = LinkValidateInterfaceBlockFields(
-            member1, member2, webglCompatibility, mismatchedBlockFieldName);
-        if (linkError != LinkMismatchError::NO_MISMATCH)
-        {
-            return linkError;
-        }
-    }
-    return LinkMismatchError::NO_MISMATCH;
-}
-
-using ShaderInterfaceBlock = std::pair<ShaderType, const sh::InterfaceBlock *>;
-using InterfaceBlockMap    = std::map<std::string, ShaderInterfaceBlock>;
-
-void InitializeInterfaceBlockMap(const std::vector<sh::InterfaceBlock> &interfaceBlocks,
-                                 ShaderType shaderType,
-                                 InterfaceBlockMap *linkedInterfaceBlocks)
-{
-    ASSERT(linkedInterfaceBlocks);
-
-    for (const sh::InterfaceBlock &interfaceBlock : interfaceBlocks)
-    {
-        (*linkedInterfaceBlocks)[interfaceBlock.name] = std::make_pair(shaderType, &interfaceBlock);
-    }
-}
-
-bool ValidateGraphicsInterfaceBlocksPerShader(
-    const std::vector<sh::InterfaceBlock> &interfaceBlocksToLink,
-    ShaderType shaderType,
-    bool webglCompatibility,
-    InterfaceBlockMap *linkedBlocks,
-    InfoLog &infoLog)
-{
-    ASSERT(linkedBlocks);
-
-    for (const sh::InterfaceBlock &block : interfaceBlocksToLink)
-    {
-        const auto &entry = linkedBlocks->find(block.name);
-        if (entry != linkedBlocks->end())
-        {
-            const sh::InterfaceBlock &linkedBlock = *(entry->second.second);
-            std::string mismatchedStructFieldName;
-            LinkMismatchError linkError = AreMatchingInterfaceBlocks(
-                block, linkedBlock, webglCompatibility, &mismatchedStructFieldName);
-            if (linkError != LinkMismatchError::NO_MISMATCH)
-            {
-                LogLinkMismatch(infoLog, block.name, GetInterfaceBlockTypeString(block.blockType),
-                                linkError, mismatchedStructFieldName, entry->second.first,
-                                shaderType);
-                return false;
-            }
-        }
-        else
-        {
-            (*linkedBlocks)[block.name] = std::make_pair(shaderType, &block);
-        }
-    }
-
-    return true;
-}
-
-void LogAmbiguousFieldLinkMismatch(InfoLog &infoLog,
-                                   const std::string &blockName1,
-                                   const std::string &blockName2,
-                                   const std::string &fieldName,
-                                   ShaderType shaderType1,
-                                   ShaderType shaderType2)
-{
-    infoLog << "Ambiguous field '" << fieldName << "' in blocks '" << blockName1 << "' ("
-            << GetShaderTypeString(shaderType1) << " shader) and '" << blockName2 << "' ("
-            << GetShaderTypeString(shaderType2) << " shader) which don't have instance names.";
-}
-
-bool ValidateInstancelessGraphicsInterfaceBlocksPerShader(
-    const std::vector<sh::InterfaceBlock> &interfaceBlocks,
-    ShaderType shaderType,
-    InterfaceBlockMap *instancelessBlocksFields,
-    InfoLog &infoLog)
-{
-    ASSERT(instancelessBlocksFields);
-
-    for (const sh::InterfaceBlock &block : interfaceBlocks)
-    {
-        if (!block.instanceName.empty())
-        {
-            continue;
-        }
-
-        for (const sh::ShaderVariable &field : block.fields)
-        {
-            const auto &entry = instancelessBlocksFields->find(field.name);
-            if (entry != instancelessBlocksFields->end())
-            {
-                const sh::InterfaceBlock &linkedBlock = *(entry->second.second);
-                if (block.name != linkedBlock.name)
-                {
-                    LogAmbiguousFieldLinkMismatch(infoLog, block.name, linkedBlock.name, field.name,
-                                                  entry->second.first, shaderType);
-                    return false;
-                }
-            }
-            else
-            {
-                (*instancelessBlocksFields)[field.name] = std::make_pair(shaderType, &block);
-            }
-        }
-    }
-
-    return true;
-}
-
-bool ValidateInterfaceBlocksMatch(
-    GLuint numShadersHasInterfaceBlocks,
-    const ShaderMap<const std::vector<sh::InterfaceBlock> *> &shaderInterfaceBlocks,
-    InfoLog &infoLog,
-    bool webglCompatibility,
-    InterfaceBlockMap *instancelessInterfaceBlocksFields)
-{
-    for (ShaderType shaderType : kAllGraphicsShaderTypes)
-    {
-        // Validate that instanceless blocks of different names don't have fields of the same name.
-        if (shaderInterfaceBlocks[shaderType] &&
-            !ValidateInstancelessGraphicsInterfaceBlocksPerShader(
-                *shaderInterfaceBlocks[shaderType], shaderType, instancelessInterfaceBlocksFields,
-                infoLog))
-        {
-            return false;
-        }
-    }
-
-    if (numShadersHasInterfaceBlocks < 2u)
-    {
-        return true;
-    }
-
-    ASSERT(!shaderInterfaceBlocks[ShaderType::Compute]);
-
-    // Check that interface blocks defined in the graphics shaders are identical
-
-    InterfaceBlockMap linkedInterfaceBlocks;
-
-    bool interfaceBlockMapInitialized = false;
-    for (ShaderType shaderType : kAllGraphicsShaderTypes)
-    {
-        if (!shaderInterfaceBlocks[shaderType])
-        {
-            continue;
-        }
-
-        if (!interfaceBlockMapInitialized)
-        {
-            InitializeInterfaceBlockMap(*shaderInterfaceBlocks[shaderType], shaderType,
-                                        &linkedInterfaceBlocks);
-            interfaceBlockMapInitialized = true;
-        }
-        else if (!ValidateGraphicsInterfaceBlocksPerShader(*shaderInterfaceBlocks[shaderType],
-                                                           shaderType, webglCompatibility,
-                                                           &linkedInterfaceBlocks, infoLog))
-        {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 void UpdateInterfaceVariable(std::vector<sh::ShaderVariable> *block, const sh::ShaderVariable &var)
@@ -1221,7 +914,6 @@ ProgramState::ProgramState()
     : mLabel(),
       mAttachedShaders{},
       mLocationsUsedForXfbExtension(0),
-      mAtomicCounterUniformRange(0, 0),
       mBinaryRetrieveableHint(false),
       mSeparable(false),
       mNumViews(-1),
@@ -1291,8 +983,7 @@ GLuint ProgramState::getSamplerIndexFromUniformIndex(GLuint uniformIndex) const
 
 GLuint ProgramState::getUniformIndexFromSamplerIndex(GLuint samplerIndex) const
 {
-    ASSERT(samplerIndex < mExecutable->mSamplerUniformRange.length());
-    return samplerIndex + mExecutable->mSamplerUniformRange.low();
+    return mExecutable->getUniformIndexFromSamplerIndex(samplerIndex);
 }
 
 bool ProgramState::isImageUniformIndex(GLuint index) const
@@ -1562,19 +1253,24 @@ angle::Result Program::linkImpl(const Context *context)
                    &mState.mExecutable->mShaderStorageBlocks, &mState.mBufferVariables,
                    &mState.mExecutable->mAtomicCounterBuffers);
 
+    // TODO: Fix incomplete linking. http://anglebug.com/6358
+    updateLinkedShaderStages();
+
+    InitUniformBlockLinker(mState, &resources.uniformBlockLinker);
+    InitShaderStorageBlockLinker(mState, &resources.shaderStorageBlockLinker);
+
     if (mState.mAttachedShaders[ShaderType::Compute])
     {
-        GLuint combinedImageUniforms = 0u;
-        if (!linkUniforms(context->getCaps(), context->getClientVersion(), infoLog,
-                          mState.mUniformLocationBindings, &combinedImageUniforms,
-                          &resources.unusedUniforms))
+        GLuint combinedImageUniforms = 0;
+        if (!linkUniforms(context, &resources.unusedUniforms, &combinedImageUniforms, infoLog))
         {
             return angle::Result::Continue;
         }
 
         GLuint combinedShaderStorageBlocks = 0u;
-        if (!linkInterfaceBlocks(context->getCaps(), context->getClientVersion(),
-                                 context->isWebGL(), infoLog, &combinedShaderStorageBlocks))
+        if (!LinkValidateProgramInterfaceBlocks(context,
+                                                mState.mExecutable->getLinkedShaderStages(),
+                                                resources, infoLog, &combinedShaderStorageBlocks))
         {
             return angle::Result::Continue;
         }
@@ -1594,9 +1290,6 @@ angle::Result Program::linkImpl(const Context *context)
                 << context->getCaps().maxCombinedShaderOutputResources << ")";
             return angle::Result::Continue;
         }
-
-        InitUniformBlockLinker(mState, &resources.uniformBlockLinker);
-        InitShaderStorageBlockLinker(mState, &resources.shaderStorageBlockLinker);
     }
     else
     {
@@ -1610,17 +1303,16 @@ angle::Result Program::linkImpl(const Context *context)
             return angle::Result::Continue;
         }
 
-        GLuint combinedImageUniforms = 0u;
-        if (!linkUniforms(context->getCaps(), context->getClientVersion(), infoLog,
-                          mState.mUniformLocationBindings, &combinedImageUniforms,
-                          &resources.unusedUniforms))
+        GLuint combinedImageUniforms = 0;
+        if (!linkUniforms(context, &resources.unusedUniforms, &combinedImageUniforms, infoLog))
         {
             return angle::Result::Continue;
         }
 
         GLuint combinedShaderStorageBlocks = 0u;
-        if (!linkInterfaceBlocks(context->getCaps(), context->getClientVersion(),
-                                 context->isWebGL(), infoLog, &combinedShaderStorageBlocks))
+        if (!LinkValidateProgramInterfaceBlocks(context,
+                                                mState.mExecutable->getLinkedShaderStages(),
+                                                resources, infoLog, &combinedShaderStorageBlocks))
         {
             return angle::Result::Continue;
         }
@@ -1649,13 +1341,10 @@ angle::Result Program::linkImpl(const Context *context)
                 return angle::Result::Continue;
             }
 
-            mState.mEarlyFramentTestsOptimization =
+            mState.mExecutable->mUsesEarlyFragmentTestsOptimization =
                 fragmentShader->hasEarlyFragmentTestsOptimization();
             mState.mSpecConstUsageBits |= fragmentShader->getSpecConstUsageBits();
         }
-
-        InitUniformBlockLinker(mState, &resources.uniformBlockLinker);
-        InitShaderStorageBlockLinker(mState, &resources.shaderStorageBlockLinker);
 
         mergedVaryings = GetMergedVaryingsFromLinkingVariables(linkingVariables);
         if (!mState.mExecutable->linkMergedVaryings(
@@ -1665,8 +1354,6 @@ angle::Result Program::linkImpl(const Context *context)
             return angle::Result::Continue;
         }
     }
-
-    updateLinkedShaderStages();
 
     mLinkingState                    = std::move(linkingState);
     mLinkingState->linkingFromBinary = false;
@@ -2621,7 +2308,10 @@ bool Program::shouldIgnoreUniform(UniformLocation location) const
     return false;
 }
 
-void Program::setUniform1fv(UniformLocation location, GLsizei count, const GLfloat *v)
+template <typename UniformT,
+          GLint UniformSize,
+          void (rx::ProgramImpl::*SetUniformFunc)(GLint, GLsizei, const UniformT *)>
+void Program::setUniformGeneric(UniformLocation location, GLsizei count, const UniformT *v)
 {
     ASSERT(!mLinkingState);
     if (shouldIgnoreUniform(location))
@@ -2630,47 +2320,29 @@ void Program::setUniform1fv(UniformLocation location, GLsizei count, const GLflo
     }
 
     const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 1, v);
-    mProgram->setUniform1fv(location.value, clampedCount, v);
+    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, UniformSize, v);
+    (mProgram->*SetUniformFunc)(location.value, clampedCount, v);
+    onStateChange(angle::SubjectMessage::ProgramUniformUpdated);
+}
+
+void Program::setUniform1fv(UniformLocation location, GLsizei count, const GLfloat *v)
+{
+    setUniformGeneric<GLfloat, 1, &rx::ProgramImpl::setUniform1fv>(location, count, v);
 }
 
 void Program::setUniform2fv(UniformLocation location, GLsizei count, const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 2, v);
-    mProgram->setUniform2fv(location.value, clampedCount, v);
+    setUniformGeneric<GLfloat, 2, &rx::ProgramImpl::setUniform2fv>(location, count, v);
 }
 
 void Program::setUniform3fv(UniformLocation location, GLsizei count, const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 3, v);
-    mProgram->setUniform3fv(location.value, clampedCount, v);
+    setUniformGeneric<GLfloat, 3, &rx::ProgramImpl::setUniform3fv>(location, count, v);
 }
 
 void Program::setUniform4fv(UniformLocation location, GLsizei count, const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 4, v);
-    mProgram->setUniform4fv(location.value, clampedCount, v);
+    setUniformGeneric<GLfloat, 4, &rx::ProgramImpl::setUniform4fv>(location, count, v);
 }
 
 void Program::setUniform1iv(Context *context,
@@ -2693,87 +2365,56 @@ void Program::setUniform1iv(Context *context,
     {
         updateSamplerUniform(context, locationInfo, clampedCount, v);
     }
+    else
+    {
+        onStateChange(angle::SubjectMessage::ProgramUniformUpdated);
+    }
 }
 
 void Program::setUniform2iv(UniformLocation location, GLsizei count, const GLint *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 2, v);
-    mProgram->setUniform2iv(location.value, clampedCount, v);
+    setUniformGeneric<GLint, 2, &rx::ProgramImpl::setUniform2iv>(location, count, v);
 }
 
 void Program::setUniform3iv(UniformLocation location, GLsizei count, const GLint *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 3, v);
-    mProgram->setUniform3iv(location.value, clampedCount, v);
+    setUniformGeneric<GLint, 3, &rx::ProgramImpl::setUniform3iv>(location, count, v);
 }
 
 void Program::setUniform4iv(UniformLocation location, GLsizei count, const GLint *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 4, v);
-    mProgram->setUniform4iv(location.value, clampedCount, v);
+    setUniformGeneric<GLint, 4, &rx::ProgramImpl::setUniform4iv>(location, count, v);
 }
 
 void Program::setUniform1uiv(UniformLocation location, GLsizei count, const GLuint *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 1, v);
-    mProgram->setUniform1uiv(location.value, clampedCount, v);
+    setUniformGeneric<GLuint, 1, &rx::ProgramImpl::setUniform1uiv>(location, count, v);
 }
 
 void Program::setUniform2uiv(UniformLocation location, GLsizei count, const GLuint *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 2, v);
-    mProgram->setUniform2uiv(location.value, clampedCount, v);
+    setUniformGeneric<GLuint, 2, &rx::ProgramImpl::setUniform2uiv>(location, count, v);
 }
 
 void Program::setUniform3uiv(UniformLocation location, GLsizei count, const GLuint *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 3, v);
-    mProgram->setUniform3uiv(location.value, clampedCount, v);
+    setUniformGeneric<GLuint, 3, &rx::ProgramImpl::setUniform3uiv>(location, count, v);
 }
 
 void Program::setUniform4uiv(UniformLocation location, GLsizei count, const GLuint *v)
+{
+    setUniformGeneric<GLuint, 4, &rx::ProgramImpl::setUniform4uiv>(location, count, v);
+}
+
+template <
+    typename UniformT,
+    GLint MatrixC,
+    GLint MatrixR,
+    void (rx::ProgramImpl::*SetUniformMatrixFunc)(GLint, GLsizei, GLboolean, const UniformT *)>
+void Program::setUniformMatrixGeneric(UniformLocation location,
+                                      GLsizei count,
+                                      GLboolean transpose,
+                                      const UniformT *v)
 {
     ASSERT(!mLinkingState);
     if (shouldIgnoreUniform(location))
@@ -2781,9 +2422,9 @@ void Program::setUniform4uiv(UniformLocation location, GLsizei count, const GLui
         return;
     }
 
-    const VariableLocation &locationInfo = mState.mUniformLocations[location.value];
-    GLsizei clampedCount                 = clampUniformCount(locationInfo, count, 4, v);
-    mProgram->setUniform4uiv(location.value, clampedCount, v);
+    GLsizei clampedCount = clampMatrixUniformCount<MatrixC, MatrixR>(location, count, transpose, v);
+    (mProgram->*SetUniformMatrixFunc)(location.value, clampedCount, transpose, v);
+    onStateChange(angle::SubjectMessage::ProgramUniformUpdated);
 }
 
 void Program::setUniformMatrix2fv(UniformLocation location,
@@ -2791,14 +2432,8 @@ void Program::setUniformMatrix2fv(UniformLocation location,
                                   GLboolean transpose,
                                   const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    GLsizei clampedCount = clampMatrixUniformCount<2, 2>(location, count, transpose, v);
-    mProgram->setUniformMatrix2fv(location.value, clampedCount, transpose, v);
+    setUniformMatrixGeneric<GLfloat, 2, 2, &rx::ProgramImpl::setUniformMatrix2fv>(location, count,
+                                                                                  transpose, v);
 }
 
 void Program::setUniformMatrix3fv(UniformLocation location,
@@ -2806,14 +2441,8 @@ void Program::setUniformMatrix3fv(UniformLocation location,
                                   GLboolean transpose,
                                   const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    GLsizei clampedCount = clampMatrixUniformCount<3, 3>(location, count, transpose, v);
-    mProgram->setUniformMatrix3fv(location.value, clampedCount, transpose, v);
+    setUniformMatrixGeneric<GLfloat, 3, 3, &rx::ProgramImpl::setUniformMatrix3fv>(location, count,
+                                                                                  transpose, v);
 }
 
 void Program::setUniformMatrix4fv(UniformLocation location,
@@ -2821,14 +2450,8 @@ void Program::setUniformMatrix4fv(UniformLocation location,
                                   GLboolean transpose,
                                   const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    GLsizei clampedCount = clampMatrixUniformCount<4, 4>(location, count, transpose, v);
-    mProgram->setUniformMatrix4fv(location.value, clampedCount, transpose, v);
+    setUniformMatrixGeneric<GLfloat, 4, 4, &rx::ProgramImpl::setUniformMatrix4fv>(location, count,
+                                                                                  transpose, v);
 }
 
 void Program::setUniformMatrix2x3fv(UniformLocation location,
@@ -2836,14 +2459,8 @@ void Program::setUniformMatrix2x3fv(UniformLocation location,
                                     GLboolean transpose,
                                     const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    GLsizei clampedCount = clampMatrixUniformCount<2, 3>(location, count, transpose, v);
-    mProgram->setUniformMatrix2x3fv(location.value, clampedCount, transpose, v);
+    setUniformMatrixGeneric<GLfloat, 2, 3, &rx::ProgramImpl::setUniformMatrix2x3fv>(location, count,
+                                                                                    transpose, v);
 }
 
 void Program::setUniformMatrix2x4fv(UniformLocation location,
@@ -2851,14 +2468,8 @@ void Program::setUniformMatrix2x4fv(UniformLocation location,
                                     GLboolean transpose,
                                     const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    GLsizei clampedCount = clampMatrixUniformCount<2, 4>(location, count, transpose, v);
-    mProgram->setUniformMatrix2x4fv(location.value, clampedCount, transpose, v);
+    setUniformMatrixGeneric<GLfloat, 2, 4, &rx::ProgramImpl::setUniformMatrix2x4fv>(location, count,
+                                                                                    transpose, v);
 }
 
 void Program::setUniformMatrix3x2fv(UniformLocation location,
@@ -2866,14 +2477,8 @@ void Program::setUniformMatrix3x2fv(UniformLocation location,
                                     GLboolean transpose,
                                     const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    GLsizei clampedCount = clampMatrixUniformCount<3, 2>(location, count, transpose, v);
-    mProgram->setUniformMatrix3x2fv(location.value, clampedCount, transpose, v);
+    setUniformMatrixGeneric<GLfloat, 3, 2, &rx::ProgramImpl::setUniformMatrix3x2fv>(location, count,
+                                                                                    transpose, v);
 }
 
 void Program::setUniformMatrix3x4fv(UniformLocation location,
@@ -2881,14 +2486,8 @@ void Program::setUniformMatrix3x4fv(UniformLocation location,
                                     GLboolean transpose,
                                     const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    GLsizei clampedCount = clampMatrixUniformCount<3, 4>(location, count, transpose, v);
-    mProgram->setUniformMatrix3x4fv(location.value, clampedCount, transpose, v);
+    setUniformMatrixGeneric<GLfloat, 3, 4, &rx::ProgramImpl::setUniformMatrix3x4fv>(location, count,
+                                                                                    transpose, v);
 }
 
 void Program::setUniformMatrix4x2fv(UniformLocation location,
@@ -2896,14 +2495,8 @@ void Program::setUniformMatrix4x2fv(UniformLocation location,
                                     GLboolean transpose,
                                     const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    GLsizei clampedCount = clampMatrixUniformCount<4, 2>(location, count, transpose, v);
-    mProgram->setUniformMatrix4x2fv(location.value, clampedCount, transpose, v);
+    setUniformMatrixGeneric<GLfloat, 4, 2, &rx::ProgramImpl::setUniformMatrix4x2fv>(location, count,
+                                                                                    transpose, v);
 }
 
 void Program::setUniformMatrix4x3fv(UniformLocation location,
@@ -2911,14 +2504,8 @@ void Program::setUniformMatrix4x3fv(UniformLocation location,
                                     GLboolean transpose,
                                     const GLfloat *v)
 {
-    ASSERT(!mLinkingState);
-    if (shouldIgnoreUniform(location))
-    {
-        return;
-    }
-
-    GLsizei clampedCount = clampMatrixUniformCount<4, 3>(location, count, transpose, v);
-    mProgram->setUniformMatrix4x3fv(location.value, clampedCount, transpose, v);
+    setUniformMatrixGeneric<GLfloat, 4, 3, &rx::ProgramImpl::setUniformMatrix4x3fv>(location, count,
+                                                                                    transpose, v);
 }
 
 GLuint Program::getSamplerUniformBinding(const VariableLocation &uniformLocation) const
@@ -3546,180 +3133,38 @@ bool Program::linkVaryings(InfoLog &infoLog) const
     return true;
 }
 
-bool Program::linkUniforms(const Caps &caps,
-                           const Version &version,
-                           InfoLog &infoLog,
-                           const ProgramAliasedBindings &uniformLocationBindings,
-                           GLuint *combinedImageUniformsCount,
-                           std::vector<UnusedUniform> *unusedUniforms)
+bool Program::linkUniforms(const Context *context,
+                           std::vector<UnusedUniform> *unusedUniformsOutOrNull,
+                           GLuint *combinedImageUniformsOut,
+                           InfoLog &infoLog)
 {
-    UniformLinker linker(mState);
-    if (!linker.link(caps, infoLog, uniformLocationBindings))
+    // Initialize executable shader map.
+    ShaderMap<std::vector<sh::ShaderVariable>> shaderUniforms;
+    for (Shader *shader : mState.mAttachedShaders)
+    {
+        if (shader)
+        {
+            shaderUniforms[shader->getType()] = shader->getUniforms();
+        }
+    }
+
+    if (!mState.mExecutable->linkUniforms(context, shaderUniforms, infoLog,
+                                          mState.mUniformLocationBindings, combinedImageUniformsOut,
+                                          unusedUniformsOutOrNull, &mState.mUniformLocations))
     {
         return false;
     }
 
-    linker.getResults(&mState.mExecutable->mUniforms, unusedUniforms, &mState.mUniformLocations);
-
-    linkSamplerAndImageBindings(combinedImageUniformsCount);
-
-    if (!linkAtomicCounterBuffers())
-    {
-        return false;
-    }
-
-    if (version >= Version(3, 1))
+    if (context->getClientVersion() >= Version(3, 1))
     {
         GLint locationSize = static_cast<GLint>(mState.getUniformLocations().size());
 
-        if (locationSize > caps.maxUniformLocations)
+        if (locationSize > context->getCaps().maxUniformLocations)
         {
             infoLog << "Exceeded maximum uniform location size";
             return false;
         }
     }
-
-    return true;
-}
-
-void Program::linkSamplerAndImageBindings(GLuint *combinedImageUniforms)
-{
-    ASSERT(combinedImageUniforms);
-
-    // Iterate over mExecutable->mUniforms from the back, and find the range of subpass inputs,
-    // atomic counters, images and samplers in that order.
-    auto highIter = mState.mExecutable->getUniforms().rbegin();
-    auto lowIter  = highIter;
-
-    unsigned int high = static_cast<unsigned int>(mState.mExecutable->getUniforms().size());
-    unsigned int low  = high;
-
-    // Note that uniform block uniforms are not yet appended to this list.
-    ASSERT(mState.mExecutable->getUniforms().size() == 0 || highIter->isAtomicCounter() ||
-           highIter->isImage() || highIter->isSampler() || highIter->isInDefaultBlock() ||
-           highIter->isFragmentInOut);
-
-    for (; lowIter != mState.mExecutable->getUniforms().rend() && lowIter->isFragmentInOut;
-         ++lowIter)
-    {
-        --low;
-    }
-
-    mState.mExecutable->mFragmentInoutRange = RangeUI(low, high);
-
-    highIter = lowIter;
-    high     = low;
-
-    for (; lowIter != mState.mExecutable->getUniforms().rend() && lowIter->isAtomicCounter();
-         ++lowIter)
-    {
-        --low;
-    }
-
-    mState.mAtomicCounterUniformRange = RangeUI(low, high);
-
-    highIter = lowIter;
-    high     = low;
-
-    for (; lowIter != mState.mExecutable->getUniforms().rend() && lowIter->isImage(); ++lowIter)
-    {
-        --low;
-    }
-
-    mState.mExecutable->mImageUniformRange   = RangeUI(low, high);
-    *combinedImageUniforms                   = 0u;
-    std::vector<ImageBinding> &imageBindings = mState.mExecutable->mImageBindings;
-    // If uniform is a image type, insert it into the mImageBindings array.
-    for (unsigned int imageIndex : mState.mExecutable->getImageUniformRange())
-    {
-        // ES3.1 (section 7.6.1) and GLSL ES3.1 (section 4.4.5), Uniform*i{v} commands
-        // cannot load values into a uniform defined as an image. if declare without a
-        // binding qualifier, any uniform image variable (include all elements of
-        // unbound image array) should be bound to unit zero.
-        auto &imageUniform      = mState.mExecutable->getUniforms()[imageIndex];
-        TextureType textureType = ImageTypeToTextureType(imageUniform.type);
-        const GLuint arraySize  = imageUniform.isArray() ? imageUniform.arraySizes[0] : 1u;
-
-        if (imageUniform.binding == -1)
-        {
-            imageBindings.emplace_back(
-                ImageBinding(imageUniform.getBasicTypeElementCount(), textureType));
-        }
-        else
-        {
-            // The arrays of arrays are flattened to arrays, it needs to record the array offset for
-            // the correct binding image unit.
-            imageBindings.emplace_back(
-                ImageBinding(imageUniform.binding + imageUniform.parentArrayIndex() * arraySize,
-                             imageUniform.getBasicTypeElementCount(), textureType));
-        }
-
-        *combinedImageUniforms += imageUniform.activeShaderCount() * arraySize;
-    }
-
-    highIter = lowIter;
-    high     = low;
-
-    for (; lowIter != mState.mExecutable->getUniforms().rend() && lowIter->isSampler(); ++lowIter)
-    {
-        --low;
-    }
-
-    mState.mExecutable->mSamplerUniformRange = RangeUI(low, high);
-
-    // If uniform is a sampler type, insert it into the mSamplerBindings array.
-    for (unsigned int samplerIndex : mState.mExecutable->getSamplerUniformRange())
-    {
-        const auto &samplerUniform = mState.mExecutable->getUniforms()[samplerIndex];
-        TextureType textureType    = SamplerTypeToTextureType(samplerUniform.type);
-        GLenum samplerType         = samplerUniform.typeInfo->type;
-        unsigned int elementCount  = samplerUniform.getBasicTypeElementCount();
-        SamplerFormat format       = samplerUniform.typeInfo->samplerFormat;
-        mState.mExecutable->mSamplerBindings.emplace_back(textureType, samplerType, format,
-                                                          elementCount);
-    }
-
-    // Whatever is left constitutes the default uniforms.
-    mState.mExecutable->mDefaultUniformRange = RangeUI(0, low);
-}
-
-bool Program::linkAtomicCounterBuffers()
-{
-    for (unsigned int index : mState.mAtomicCounterUniformRange)
-    {
-        auto &uniform                      = mState.mExecutable->mUniforms[index];
-        uniform.blockInfo.offset           = uniform.offset;
-        uniform.blockInfo.arrayStride      = (uniform.isArray() ? 4 : 0);
-        uniform.blockInfo.matrixStride     = 0;
-        uniform.blockInfo.isRowMajorMatrix = false;
-
-        bool found = false;
-        for (unsigned int bufferIndex = 0;
-             bufferIndex < mState.mExecutable->getActiveAtomicCounterBufferCount(); ++bufferIndex)
-        {
-            auto &buffer = mState.mExecutable->mAtomicCounterBuffers[bufferIndex];
-            if (buffer.binding == uniform.binding)
-            {
-                buffer.memberIndexes.push_back(index);
-                uniform.bufferIndex = bufferIndex;
-                found               = true;
-                buffer.unionReferencesWith(uniform);
-                break;
-            }
-        }
-        if (!found)
-        {
-            AtomicCounterBuffer atomicCounterBuffer;
-            atomicCounterBuffer.binding = uniform.binding;
-            atomicCounterBuffer.memberIndexes.push_back(index);
-            atomicCounterBuffer.unionReferencesWith(uniform);
-            mState.mExecutable->mAtomicCounterBuffers.push_back(atomicCounterBuffer);
-            uniform.bufferIndex =
-                static_cast<int>(mState.mExecutable->getActiveAtomicCounterBufferCount() - 1);
-        }
-    }
-    // TODO(jie.a.chen@intel.com): Count each atomic counter buffer to validate against
-    // gl_Max[Vertex|Fragment|Compute|Geometry|Combined]AtomicCounterBuffers.
 
     return true;
 }
@@ -3879,105 +3324,6 @@ bool Program::linkAttributes(const Context *context, InfoLog &infoLog)
 
                 location++;
             }
-        }
-    }
-
-    return true;
-}
-
-bool Program::linkInterfaceBlocks(const Caps &caps,
-                                  const Version &version,
-                                  bool webglCompatibility,
-                                  InfoLog &infoLog,
-                                  GLuint *combinedShaderStorageBlocksCount)
-{
-    ASSERT(combinedShaderStorageBlocksCount);
-
-    GLuint combinedUniformBlocksCount                                         = 0u;
-    GLuint numShadersHasUniformBlocks                                         = 0u;
-    ShaderMap<const std::vector<sh::InterfaceBlock> *> allShaderUniformBlocks = {};
-    InterfaceBlockMap instancelessInterfaceBlocksFields;
-
-    for (ShaderType shaderType : AllShaderTypes())
-    {
-        Shader *shader = mState.mAttachedShaders[shaderType];
-        if (!shader)
-        {
-            continue;
-        }
-
-        const auto &uniformBlocks = shader->getUniformBlocks();
-        if (!uniformBlocks.empty())
-        {
-            if (!ValidateInterfaceBlocksCount(
-                    static_cast<GLuint>(caps.maxShaderUniformBlocks[shaderType]), uniformBlocks,
-                    shaderType, sh::BlockType::BLOCK_UNIFORM, &combinedUniformBlocksCount, infoLog))
-            {
-                return false;
-            }
-
-            allShaderUniformBlocks[shaderType] = &uniformBlocks;
-            ++numShadersHasUniformBlocks;
-        }
-    }
-
-    if (combinedUniformBlocksCount > static_cast<GLuint>(caps.maxCombinedUniformBlocks))
-    {
-        infoLog << "The sum of the number of active uniform blocks exceeds "
-                   "MAX_COMBINED_UNIFORM_BLOCKS ("
-                << caps.maxCombinedUniformBlocks << ").";
-        return false;
-    }
-
-    if (!ValidateInterfaceBlocksMatch(numShadersHasUniformBlocks, allShaderUniformBlocks, infoLog,
-                                      webglCompatibility, &instancelessInterfaceBlocksFields))
-    {
-        return false;
-    }
-
-    if (version >= Version(3, 1))
-    {
-        *combinedShaderStorageBlocksCount                                         = 0u;
-        GLuint numShadersHasShaderStorageBlocks                                   = 0u;
-        ShaderMap<const std::vector<sh::InterfaceBlock> *> allShaderStorageBlocks = {};
-        for (ShaderType shaderType : AllShaderTypes())
-        {
-            Shader *shader = mState.mAttachedShaders[shaderType];
-            if (!shader)
-            {
-                continue;
-            }
-
-            const auto &shaderStorageBlocks = shader->getShaderStorageBlocks();
-            if (!shaderStorageBlocks.empty())
-            {
-                if (!ValidateInterfaceBlocksCount(
-                        static_cast<GLuint>(caps.maxShaderStorageBlocks[shaderType]),
-                        shaderStorageBlocks, shaderType, sh::BlockType::BLOCK_BUFFER,
-                        combinedShaderStorageBlocksCount, infoLog))
-                {
-                    return false;
-                }
-
-                allShaderStorageBlocks[shaderType] = &shaderStorageBlocks;
-                ++numShadersHasShaderStorageBlocks;
-            }
-        }
-
-        if (*combinedShaderStorageBlocksCount >
-            static_cast<GLuint>(caps.maxCombinedShaderStorageBlocks))
-        {
-            infoLog << "The sum of the number of active shader storage blocks exceeds "
-                       "MAX_COMBINED_SHADER_STORAGE_BLOCKS ("
-                    << caps.maxCombinedShaderStorageBlocks << ").";
-            return false;
-        }
-
-        if (!ValidateInterfaceBlocksMatch(numShadersHasShaderStorageBlocks, allShaderStorageBlocks,
-                                          infoLog, webglCompatibility,
-                                          &instancelessInterfaceBlocksFields))
-        {
-            return false;
         }
     }
 
@@ -4294,9 +3640,6 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
                   "driver.";
     }
 
-    stream.writeInt(mState.getAtomicCounterUniformRange().low());
-    stream.writeInt(mState.getAtomicCounterUniformRange().high());
-
     if (context->getShareGroup()->getFrameCaptureShared()->enabled())
     {
         // Serialize the source for each stage for re-use during capture
@@ -4387,10 +3730,6 @@ angle::Result Program::deserialize(const Context *context,
         LoadBufferVariable(&stream, &bufferVariable);
         mState.mBufferVariables.push_back(bufferVariable);
     }
-
-    unsigned int atomicCounterRangeLow  = stream.readInt<unsigned int>();
-    unsigned int atomicCounterRangeHigh = stream.readInt<unsigned int>();
-    mState.mAtomicCounterUniformRange   = RangeUI(atomicCounterRangeLow, atomicCounterRangeHigh);
 
     static_assert(static_cast<unsigned long>(ShaderType::EnumCount) <= sizeof(unsigned long) * 8,
                   "Too many shader types");

@@ -21,7 +21,10 @@ EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
 TEST_SUITE = 'angle_end2end_tests'
-BUILDERS = ['angle/ci/android-arm64-rel', 'angle/ci/win-clang-x64-rel', 'angle/ci/linux-clang-rel']
+BUILDERS = [
+    'angle/ci/android-arm64-test', 'angle/ci/linux-test', 'angle/ci/win-test',
+    'angle/ci/win-x86-test'
+]
 SWARMING_SERVER = 'chromium-swarm.appspot.com'
 
 d = os.path.dirname
@@ -29,10 +32,15 @@ THIS_DIR = d(os.path.abspath(__file__))
 ANGLE_ROOT_DIR = d(THIS_DIR)
 
 # Host GPUs
-INTEL_630 = '8086:5912'
-NVIDIA_P400 = '10de:1cb3'
-GPUS = [INTEL_630, NVIDIA_P400]
-GPU_NAME_MAP = {INTEL_630: 'intel_630', NVIDIA_P400: 'nvidia_p400'}
+INTEL_HD630 = '8086:5912'
+NVIDIA_GTX1660 = '10de:2184'
+SWIFTSHADER = 'none'
+GPUS = [INTEL_HD630, NVIDIA_GTX1660, SWIFTSHADER]
+GPU_NAME_MAP = {
+    INTEL_HD630: 'intel_630',
+    NVIDIA_GTX1660: 'nvidia_1660',
+    SWIFTSHADER: 'swiftshader'
+}
 
 # OSes
 LINUX = 'Linux'
@@ -53,7 +61,7 @@ DEVICE_OS_NAME_MAP = {ANDROID_11: 'android_11'}
 # Result names
 INFO_FILES = [
     'GLinfo_ES3_2_Vulkan.json',
-    'GLinfo_ES3_1_Vulkan.json',
+    'GLinfo_ES3_1_Vulkan_SwiftShader.json',
 ]
 
 LOG_LEVELS = ['WARNING', 'INFO', 'DEBUG']
@@ -116,7 +124,11 @@ def get_props_string(gpu, bot_os, device_os, device_type):
     return ', '.join('%s %s' % (k, v) for (k, v) in d.items() if v)
 
 
-def collect_task_and_update_json(task_id, gpu, bot_os, device_os, device_type):
+def collect_task_and_update_json(task_id, found_dims):
+    gpu = found_dims.get('gpu', None)
+    bot_os = found_dims.get('os', None)
+    device_os = found_dims.get('device_os', None)
+    device_type = found_dims.get('device_type', None)
     logging.info('Found task with ID: %s, %s' %
                  (task_id, get_props_string(gpu, bot_os, device_os, device_type)))
     target_file_name = '%s_%s.json' % (name_device(gpu, device_type), name_os(bot_os, device_os))
@@ -176,26 +188,27 @@ def main():
 
         # Step 4: Download the extension data for each configuration we're monitoring.
         # 'swarming collect' downloads test artifacts to a temporary directory.
+        dim_map = {
+            'gpu': GPUS,
+            'os': BOT_OSES,
+            'device_os': DEVICE_OSES,
+            'device_type': DEVICES_TYPES,
+        }
+
         for task in task_json:
-            gpu = None
-            bot_os = None
-            device_os = None
-            device_type = None
+            found_dims = {}
             for bot_dim in task['bot_dimensions']:
-                if bot_dim['key'] == 'gpu':
-                    logging.debug(bot_dim['value'])
-                    gpu = get_intersect_or_none(GPUS, bot_dim['value'])
-                if bot_dim['key'] == 'os':
-                    logging.debug(bot_dim['value'])
-                    bot_os = get_intersect_or_none(BOT_OSES, bot_dim['value'])
-                if bot_dim['key'] == 'device_os':
-                    logging.debug(bot_dim['value'])
-                    device_os = get_intersect_or_none(DEVICE_OSES, bot_dim['value'])
-                if bot_dim['key'] == 'device_type':
-                    logging.debug(bot_dim['value'])
-                    device_type = get_intersect_or_none(DEVICES_TYPES, bot_dim['value'])
-            if (gpu or device_type) and (bot_os or device_os):
-                collect_task_and_update_json(task['task_id'], gpu, bot_os, device_os, device_type)
+                key, value = bot_dim['key'], bot_dim['value']
+                if key in dim_map:
+                    logging.debug('%s=%s' % (key, value))
+                    mapped_values = dim_map[key]
+                    found_dim = get_intersect_or_none(mapped_values, value)
+                    if found_dim:
+                        found_dims[key] = found_dim
+            found_gpu_or_device = ('gpu' in found_dims or 'device_type' in found_dims)
+            found_os = ('os' in found_dims or 'device_os' in found_dims)
+            if found_gpu_or_device and found_os:
+                collect_task_and_update_json(task['task_id'], found_dims)
 
     return EXIT_SUCCESS
 

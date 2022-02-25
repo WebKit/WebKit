@@ -40,7 +40,7 @@ if (angle_has_build) {
   }
 
   angle_use_x11 = ozone_platform_x11 && !is_ggp && is_linux && !is_chromecast
-  angle_use_vulkan_display = is_linux && !is_ggp
+  angle_use_vulkan_display = (is_linux || is_chromeos) && !is_ggp
 } else {
   declare_args() {
     is_ubsan = false
@@ -59,7 +59,7 @@ if (angle_has_build) {
   }
 
   declare_args() {
-    angle_use_vulkan_display = is_linux && !is_ggp
+    angle_use_vulkan_display = (is_linux || is_chromeos) && !is_ggp
   }
 }
 
@@ -137,8 +137,9 @@ declare_args() {
       angle_has_build &&
       !(is_android && build_with_chromium && is_official_build) &&
       ((is_win && !angle_is_winuwp) ||
-       (is_linux && (angle_use_x11 || angle_use_vulkan_display) &&
-        !is_chromeos) || is_android || is_fuchsia || is_ggp || is_mac)
+       ((is_linux || is_chromeos) &&
+        (angle_use_x11 || angle_use_vulkan_display)) || is_android ||
+       is_fuchsia || is_ggp || is_mac)
 
   # When set to true, ANGLE will not use VK_KHR_surface and VK_KHR_swapchain
   # extensions. Content can be rendered only off-screen.
@@ -198,9 +199,6 @@ declare_args() {
   angle_enable_d3d11_compositor_native_window =
       angle_enable_d3d11 && angle_standalone
 
-  # Disable overlay by default
-  angle_enable_overlay = false
-
   # Disable performance counter output by default
   angle_enable_perf_counter_output = false
 
@@ -218,8 +216,11 @@ declare_args() {
   angle_vulkan_validation_layers_dir =
       "$angle_root/third_party/vulkan-deps/vulkan-validation-layers/src"
 
-  angle_build_vulkan_system_info =
-      !is_chromeos && angle_has_build && !angle_is_winuwp
+  angle_build_vulkan_system_info = angle_has_build && !angle_is_winuwp
+
+  # Enable overlay by default when debug layers are enabled.  This is currently only implemented on
+  # Vulkan.
+  angle_enable_overlay = angle_enable_vulkan && angle_debug_layers_enabled
 }
 
 declare_args() {
@@ -315,6 +316,10 @@ template("angle_executable") {
 
     if (angle_has_build && is_win) {
       data_deps += [ "//build/win:runtime_libs" ]
+    }
+
+    if (is_ios) {
+      check_includes = false
     }
   }
 }
@@ -536,17 +541,12 @@ template("angle_trace_fixture") {
 }
 
 template("angle_trace") {
-  _trace_prefix = invoker.trace_prefix
   angle_shared_library(target_name) {
     testonly = true
 
     # Similar to capture replay sample, use the file index for sources
-    sources = [
-                "${_trace_prefix}.cpp",
-                "${_trace_prefix}.h",
-              ] + invoker.sources
+    sources = invoker.sources
 
-    # TODO(http://anglebug.com/5133): Revert back to non-autogen'ed data.
     data = invoker.data
     defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
     suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
@@ -577,8 +577,60 @@ template("angle_trace") {
       output_name = invoker.output_name
     }
   }
+}
 
-  angle_source_set(target_name + "_headers") {
-    sources = [ "${_trace_prefix}.h" ]
+set_defaults("angle_trace_library") {
+  # Uses a short name to work around file path limits on Windows.
+  short_names = false
+}
+
+template("angle_trace_library") {
+  _trace_json = read_file(invoker.json_path, "json")
+  _trace_targets = []
+
+  if (invoker.short_names) {
+    _trace_counter = 1
+  }
+
+  foreach(_trace_and_version, _trace_json.traces) {
+    _trace_and_version_arr = []
+    _trace_and_version_arr = string_split(_trace_and_version)
+    _trace = _trace_and_version_arr[0]
+    if (defined(invoker.trace_dir)) {
+      _trace_dir = invoker.trace_dir
+    } else {
+      _trace_dir = _trace
+    }
+    _trace_json_path = "$_trace_dir/$_trace.json"
+    _trace_data = []
+    _trace_data = read_file(_trace_json_path, "json")
+
+    if (invoker.short_names) {
+      _target = "cr_trace_${_trace_counter}"
+      _trace_counter += 1
+    } else {
+      _target = "${target_name}_$_trace"
+    }
+    angle_trace(_target) {
+      sources = rebase_path(_trace_data.TraceFiles, ".", _trace_dir)
+
+      data = [
+        "$_trace_dir/$_trace.json",
+        "$_trace_dir/$_trace.angledata.gz",
+      ]
+      fixture = invoker.trace_fixture
+
+      if (invoker.short_names) {
+        output_name = _trace
+      }
+    }
+
+    _trace_targets += [ ":$_target" ]
+  }
+
+  group(target_name) {
+    testonly = true
+    data = [ invoker.json_path ]
+    data_deps = _trace_targets
   }
 }

@@ -156,6 +156,12 @@ MTLColorWriteMask GetEmulatedColorWriteMask(const mtl::Format &mtlFormat,
                                             bool *emulatedChannelsOut);
 MTLColorWriteMask GetEmulatedColorWriteMask(const mtl::Format &mtlFormat);
 bool IsFormatEmulated(const mtl::Format &mtlFormat);
+size_t EstimateTextureSizeInBytes(const mtl::Format &mtlFormat,
+                                  size_t width,
+                                  size_t height,
+                                  size_t depth,
+                                  size_t sampleCount,
+                                  size_t numMips);
 
 NSUInteger GetMaxRenderTargetSizeForDeviceInBytes(const mtl::ContextDevice &device);
 NSUInteger GetMaxNumberOfRenderTargetsForDevice(const mtl::ContextDevice &device);

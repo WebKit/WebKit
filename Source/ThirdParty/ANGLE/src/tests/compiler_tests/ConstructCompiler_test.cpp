@@ -19,6 +19,7 @@ TEST(ConstructCompilerTest, DefaultParameters)
     ShHandle compiler = sh::ConstructCompiler(GL_FRAGMENT_SHADER, SH_WEBGL_SPEC,
                                               SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
     ASSERT_NE(nullptr, compiler);
+    sh::Destruct(compiler);
 }
 
 // Test invalid MaxDrawBuffers zero.

@@ -193,6 +193,8 @@ enum {
     AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420             = 0x23,
 
 #endif  // ANGLE_AHARDWARE_BUFFER_SUPPORT
+
+    AHARDWAREBUFFER_FORMAT_YV12                     = 0x32315659
 };
 // clang-format on
 
@@ -257,6 +259,7 @@ GLenum getPixelFormatInfo(int pixelFormat, bool *isYUV)
         case AHARDWAREBUFFER_FORMAT_S8_UINT:
             return GL_STENCIL_INDEX8;
         case AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420:
+        case AHARDWAREBUFFER_FORMAT_YV12:
             *isYUV = true;
             return GL_RGB8;
         default:

@@ -27,6 +27,8 @@ class ProgramPipelineImpl : public angle::NonCopyable
                                const gl::ProgramMergedVaryings &mergedVaryings,
                                const gl::ProgramVaryingPacking &varyingPacking);
 
+    virtual void onProgramUniformUpdate(gl::ShaderType shaderType) {}
+
     const gl::ProgramPipelineState &getState() const { return mState; }
 
   protected:

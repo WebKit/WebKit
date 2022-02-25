@@ -83,12 +83,7 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
     const bool isDepthStencilFormat    = textureFormat.hasDepthOrStencilBits();
     ASSERT(textureFormat.redBits > 0 || isDepthStencilFormat);
 
-    // TODO(syoussefi): Currently not supported for depth/stencil images if
-    // VK_KHR_depth_stencil_resolve is not supported.  Chromium only uses this for depth/stencil
-    // buffers and doesn't attempt to read from it.  http://anglebug.com/5065
-    const bool isRenderToTexture =
-        mode == gl::MultisamplingMode::MultisampledRenderToTexture &&
-        (!isDepthStencilFormat || renderer->getFeatures().supportsDepthStencilResolve.enabled);
+    const bool isRenderToTexture = mode == gl::MultisamplingMode::MultisampledRenderToTexture;
     const bool hasRenderToTextureEXT =
         renderer->getFeatures().supportsMultisampledRenderToSingleSampled.enabled;
 
@@ -179,8 +174,9 @@ angle::Result RenderbufferVk::setStorageEGLImageTarget(const gl::Context *contex
     uint32_t rendererQueueFamilyIndex = contextVk->getRenderer()->getQueueFamilyIndex();
     if (mImage->isQueueChangeNeccesary(rendererQueueFamilyIndex))
     {
-        vk::CommandBuffer *commandBuffer;
+        vk::OutsideRenderPassCommandBuffer *commandBuffer;
         ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer({}, &commandBuffer));
+        mImage->retain(&contextVk->getResourceUseList());
         mImage->changeLayoutAndQueue(contextVk, aspect, vk::ImageLayout::ColorAttachment,
                                      rendererQueueFamilyIndex, commandBuffer);
     }
@@ -283,7 +279,7 @@ void RenderbufferVk::releaseImage(ContextVk *contextVk)
     if (mImage && mOwnsImage)
     {
         mImage->releaseImageFromShareContexts(renderer, contextVk);
-        mImage->releaseStagingBuffer(renderer);
+        mImage->releaseStagedUpdates(renderer);
     }
     else
     {

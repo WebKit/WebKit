@@ -57,7 +57,7 @@ class Widget
     // Whether this item should be drawn.
     bool enabled = false;
 
-    // For text items, size of the font.  This is a value in [0, overlay::kFontCount) which
+    // For text items, size of the font.  This is a value in [0, overlay::kFontMipCount) which
     // determines the font size to use.
     int fontSize;
 

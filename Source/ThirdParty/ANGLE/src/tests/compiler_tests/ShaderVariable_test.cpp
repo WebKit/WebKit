@@ -448,4 +448,47 @@ TEST(ShaderVariableTest, IsSameVaryingWithDifferentName)
     EXPECT_TRUE(vx.isSameVaryingAtLinkTime(fx, 310));
 }
 
+// Test that using two consecutive underscores (__) can be used for declaring an identifier
+TEST(ShaderVariableTest, DoubleUnderscoresForIdentifier)
+{
+    ShBuiltInResources resources;
+    sh::InitBuiltInResources(&resources);
+
+    ShHandle compiler = sh::ConstructCompiler(GL_VERTEX_SHADER, SH_GLES3_SPEC,
+                                              SH_GLSL_COMPATIBILITY_OUTPUT, &resources);
+    EXPECT_NE(static_cast<ShHandle>(0), compiler);
+
+    const char *front_underscores[] = {
+        "#version 300 es\n"
+        "in vec4 __position;\n"
+        "out float v;\n"
+        "void main() {\n"
+        "  v = 1.0;\n"
+        "  gl_Position = __position;\n"
+        "}"};
+    EXPECT_TRUE(sh::Compile(compiler, front_underscores, 1, SH_OBJECT_CODE));
+
+    const char *middle_underscores[] = {
+        "#version 300 es\n"
+        "in vec4 position__in;\n"
+        "out float v;\n"
+        "void main() {\n"
+        "  v = 1.0;\n"
+        "  gl_Position = position__in;\n"
+        "}"};
+    EXPECT_TRUE(sh::Compile(compiler, middle_underscores, 1, SH_OBJECT_CODE));
+
+    const char *end_underscores[] = {
+        "#version 300 es\n"
+        "in vec4 position__;\n"
+        "out float v;\n"
+        "void main() {\n"
+        "  v = 1.0;\n"
+        "  gl_Position = position__;\n"
+        "}"};
+    EXPECT_TRUE(sh::Compile(compiler, end_underscores, 1, SH_OBJECT_CODE));
+
+    sh::Destruct(compiler);
+}
+
 }  // namespace sh

@@ -13,8 +13,10 @@
 #include "libANGLE/EGLSync.h"
 #include "libANGLE/Surface.h"
 #include "libANGLE/Thread.h"
+#include "libANGLE/entry_points_utils.h"
 #include "libANGLE/queryutils.h"
 #include "libANGLE/validationEGL.h"
+#include "libANGLE/validationEGL_autogen.h"
 #include "libGLESv2/global_state.h"
 
 namespace egl
@@ -587,6 +589,33 @@ EGLBoolean SwapBuffersWithDamageKHR(Thread *thread,
     return EGL_TRUE;
 }
 
+EGLBoolean PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface surface)
+
+{
+    ANGLE_SCOPED_GLOBAL_SURFACE_LOCK();
+
+    egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
+    Surface *surfacePacked  = PackParam<Surface *>(surface);
+    Thread *thread          = egl::GetCurrentThread();
+    {
+        ANGLE_SCOPED_GLOBAL_LOCK();
+
+        EGL_EVENT(PrepareSwapBuffersANGLE, "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
+                  (uintptr_t)dpy, (uintptr_t)surface);
+
+        ANGLE_EGL_VALIDATE(thread, PrepareSwapBuffersANGLE, GetDisplayIfValid(dpyPacked),
+                           EGLBoolean, dpyPacked, surfacePacked);
+
+        ANGLE_EGL_TRY_RETURN(thread, dpyPacked->prepareForCall(), "eglPrepareSwapBuffersANGLE",
+                             GetDisplayIfValid(dpyPacked), EGL_FALSE);
+    }
+    ANGLE_EGL_TRY_RETURN(thread, surfacePacked->prepareSwap(thread->getContext()), "prepareSwap",
+                         GetSurfaceIfValid(dpyPacked, surfacePacked), EGL_FALSE);
+
+    thread->setSuccess();
+    return EGL_TRUE;
+}
+
 EGLint WaitSyncKHR(Thread *thread, Display *display, Sync *syncObject, EGLint flags)
 {
     ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglWaitSync",
@@ -842,6 +871,19 @@ EGLBoolean ExportVkImageANGLE(Thread *thread,
                          GetDisplayIfValid(display), EGL_FALSE);
     ANGLE_EGL_TRY_RETURN(thread, image->exportVkImage(vk_image, vk_image_create_info),
                          "eglExportVkImageANGLE", GetImageIfValid(display, image), EGL_FALSE);
+
+    thread->setSuccess();
+    return EGL_TRUE;
+}
+
+EGLBoolean SetDamageRegionKHR(Thread *thread,
+                              egl::Display *display,
+                              egl::Surface *surface,
+                              EGLint *rects,
+                              EGLint n_rects)
+{
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglSetDamageRegionKHR",
+                         GetDisplayIfValid(display), EGL_FALSE);
 
     thread->setSuccess();
     return EGL_TRUE;

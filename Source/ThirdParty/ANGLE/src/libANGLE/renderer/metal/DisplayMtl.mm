@@ -218,7 +218,7 @@ std::string DisplayMtl::getVendorString()
     return GetVendorString(mMetalDeviceVendorId);
 }
 
-std::string DisplayMtl::getVersionString()
+std::string DisplayMtl::getVersionString(bool includeFullVersion)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
@@ -238,9 +238,26 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
 #if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
     auto deviceList = mtl::adoptObjCObj(MTLCopyAllDevices());
 
+    EGLAttrib high = attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0);
+    EGLAttrib low  = attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0);
+    uint64_t deviceId =
+        angle::GetSystemDeviceIdFromParts(static_cast<uint32_t>(high), static_cast<uint32_t>(low));
+    // Check EGL_ANGLE_platform_angle_device_id to see if a device was specified.
+    if (deviceId != 0)
+    {
+        for (id<MTLDevice> device in deviceList.get())
+        {
+            if ([device registryID] == deviceId)
+            {
+                return device;
+            }
+        }
+    }
+
     auto externalGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
     auto integratedGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
     auto discreteGPUs = mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+
     for (id<MTLDevice> device in deviceList.get())
     {
         if (device.removable)
@@ -941,6 +958,8 @@ void DisplayMtl::initializeExtensions() const
 
     mNativeExtensions.texture3DOES = true;
 
+    mNativeExtensions.shaderTextureLodEXT = true;
+
     mNativeExtensions.standardDerivativesOES = true;
 
     mNativeExtensions.elementIndexUintOES = true;
@@ -967,6 +986,9 @@ void DisplayMtl::initializeExtensions() const
         // GL_ARB_sync
         mNativeExtensions.syncARB = true;
     }
+
+    // GL_KHR_parallel_shader_compile
+    mNativeExtensions.parallelShaderCompileKHR = true;
 }
 
 void DisplayMtl::initializeTextureCaps() const
@@ -1007,7 +1029,6 @@ void DisplayMtl::initializeTextureCaps() const
     mNativeExtensions.readDepthNV         = false;
     mNativeExtensions.readStencilNV       = false;
     mNativeExtensions.depthBufferFloat2NV = false;
-    mNativeExtensions.textureCompressionAstcLdrKHR &= supportsAppleGPUFamily(2);
 }
 
 void DisplayMtl::initializeLimitations()
@@ -1227,6 +1248,11 @@ bool DisplayMtl::isIntel() const
 bool DisplayMtl::isNVIDIA() const
 {
     return angle::IsNVIDIA(mMetalDeviceVendorId);
+}
+
+bool DisplayMtl::isSimulator() const
+{
+    return TARGET_OS_SIMULATOR;
 }
 
 #if ANGLE_MTL_EVENT_AVAILABLE

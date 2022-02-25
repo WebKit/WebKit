@@ -50,11 +50,6 @@ constexpr angle::PackedEnumMap<WidgetInternalType, size_t> kWidgetInternalTypeMa
     {WidgetInternalType::Graph, kMaxRenderableGraphWidgets},
 };
 
-constexpr angle::PackedEnumMap<WidgetInternalType, size_t> kWidgetInternalTypeWidgetOffsets = {
-    {WidgetInternalType::Text, 0},
-    {WidgetInternalType::Graph, kMaxRenderableTextWidgets},
-};
-
 ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
 
 // Structure matching buffer in vulkan/shaders/src/OverlayCull.comp.
@@ -119,9 +114,9 @@ void GetWidgetColor(const float srcColor[4], float dstColor[4])
 void GetTextFontSize(int srcFontSize, uint32_t dstFontSize[3])
 {
     // .xy contains the font glyph width/height
-    dstFontSize[0] = overlay::kFontGlyphWidths[srcFontSize];
-    dstFontSize[1] = overlay::kFontGlyphHeights[srcFontSize];
-    // .z contains the layer
+    dstFontSize[0] = overlay::kFontGlyphWidth >> srcFontSize;
+    dstFontSize[1] = overlay::kFontGlyphHeight >> srcFontSize;
+    // .z contains the mip
     dstFontSize[2] = srcFontSize;
 }
 
@@ -140,7 +135,7 @@ void GetTextString(const std::string &src, uint8_t textOut[kMaxTextLength])
 {
     for (size_t i = 0; i < src.length() && i < kMaxTextLength; ++i)
     {
-        // The font image has 96 ASCII characters starting from ' '.
+        // The font image has 95 ASCII characters starting from ' '.
         textOut[i] = src[i] - ' ';
     }
 }
@@ -171,7 +166,7 @@ std::vector<size_t> CreateHistogram(const std::vector<size_t> values)
     return histogram;
 }
 
-using OverlayWidgetCounts  = angle::PackedEnumMap<WidgetInternalType, size_t>;
+using OverlayWidgetCounts  = angle::PackedEnumMap<WidgetInternalType, uint32_t>;
 using AppendWidgetDataFunc = void (*)(const overlay::Widget *widget,
                                       const gl::Extents &imageExtent,
                                       TextWidgetData *textWidget,
@@ -281,13 +276,19 @@ void AppendWidgetDataHelper::AppendRunningGraphCommon(
     const int32_t graphHeight = std::abs(widget->coords[3] - widget->coords[1]);
     const float graphScale    = static_cast<float>(graphHeight) / maxValue;
 
+    const size_t graphSize  = graph->runningValues.size();
+    const size_t currentIdx = graph->lastValueIndex - 1;
+
+    const size_t curValue = graph->runningValues[(graphSize + currentIdx) % graphSize];
+
     AppendGraphCommon(widget, imageExtent, graph->runningValues, graph->lastValueIndex + 1,
                       graphScale, graphWidget, widgetCounts);
 
     if ((*widgetCounts)[WidgetInternalType::Text] <
         kWidgetInternalTypeMaxWidgets[WidgetInternalType::Text])
     {
-        std::string text = formatFunc(maxValue);
+        // std::string text = formatFunc(maxValue);
+        std::string text = formatFunc(curValue);
         AppendTextCommon(&graph->description, imageExtent, text, textWidget, widgetCounts);
     }
 }
@@ -375,7 +376,7 @@ void AppendWidgetDataHelper::AppendVulkanRenderPassCount(const overlay::Widget *
 {
     auto format = [](size_t maxValue) {
         std::ostringstream text;
-        text << "RenderPass Count (Max: " << maxValue << ")";
+        text << "RenderPass Count: " << maxValue;
         return text.str();
     };
 
@@ -424,7 +425,7 @@ void AppendWidgetDataHelper::AppendVulkanWriteDescriptorSetCount(const overlay::
 {
     auto format = [](size_t maxValue) {
         std::ostringstream text;
-        text << "WriteDescriptorSet Count (Max: " << maxValue << ")";
+        text << "WriteDescriptorSet Count: " << maxValue;
         return text.str();
     };
 
@@ -439,7 +440,7 @@ void AppendWidgetDataHelper::AppendVulkanDescriptorSetAllocations(const overlay:
 {
     auto format = [](size_t maxValue) {
         std::ostringstream text;
-        text << "Descriptor Set Allocations (Max: " << maxValue << ")";
+        text << "Descriptor Set Allocations: " << maxValue;
         return text.str();
     };
 
@@ -470,6 +471,53 @@ void AppendWidgetDataHelper::AppendVulkanDynamicBufferAllocations(const overlay:
     auto format = [](size_t maxValue) {
         std::ostringstream text;
         text << "DynamicBuffer Allocations (Max: " << maxValue << ")";
+        return text.str();
+    };
+
+    AppendRunningGraphCommon(widget, imageExtent, textWidget, graphWidget, widgetCounts, format);
+}
+
+void AppendWidgetDataHelper::AppendVulkanTextureDescriptorCacheSize(
+    const overlay::Widget *widget,
+    const gl::Extents &imageExtent,
+    TextWidgetData *textWidget,
+    GraphWidgetData *graphWidget,
+    OverlayWidgetCounts *widgetCounts)
+{
+    auto format = [](size_t curVal) {
+        std::ostringstream text;
+        text << "Total Texture Descriptor Cache Size: " << curVal;
+        return text.str();
+    };
+
+    AppendRunningGraphCommon(widget, imageExtent, textWidget, graphWidget, widgetCounts, format);
+}
+
+void AppendWidgetDataHelper::AppendVulkanUniformDescriptorCacheSize(
+    const overlay::Widget *widget,
+    const gl::Extents &imageExtent,
+    TextWidgetData *textWidget,
+    GraphWidgetData *graphWidget,
+    OverlayWidgetCounts *widgetCounts)
+{
+    auto format = [](size_t curVal) {
+        std::ostringstream text;
+        text << "Total Uniform Descriptor Cache Size: " << curVal;
+        return text.str();
+    };
+
+    AppendRunningGraphCommon(widget, imageExtent, textWidget, graphWidget, widgetCounts, format);
+}
+
+void AppendWidgetDataHelper::AppendVulkanDescriptorCacheSize(const overlay::Widget *widget,
+                                                             const gl::Extents &imageExtent,
+                                                             TextWidgetData *textWidget,
+                                                             GraphWidgetData *graphWidget,
+                                                             OverlayWidgetCounts *widgetCounts)
+{
+    auto format = [](size_t curVal) {
+        std::ostringstream text;
+        text << "Total Descriptor Cache Size: " << curVal;
         return text.str();
     };
 
@@ -523,56 +571,11 @@ size_t OverlayState::getGraphWidgetsBufferSize() const
     return sizeof(GraphWidgets);
 }
 
-void OverlayState::fillEnabledWidgetCoordinates(const gl::Extents &imageExtents,
-                                                uint8_t *enabledWidgetsPtr) const
-{
-    WidgetCoordinates *enabledWidgets = reinterpret_cast<WidgetCoordinates *>(enabledWidgetsPtr);
-    memset(enabledWidgets, 0, sizeof(*enabledWidgets));
-
-    OverlayWidgetCounts widgetCounts = {};
-
-    for (const std::unique_ptr<overlay::Widget> &widget : mOverlayWidgets)
-    {
-        if (!widget->enabled)
-        {
-            continue;
-        }
-
-        WidgetInternalType internalType = kWidgetTypeToInternalMap[widget->type];
-        ASSERT(internalType != WidgetInternalType::InvalidEnum);
-
-        if (widgetCounts[internalType] >= kWidgetInternalTypeMaxWidgets[internalType])
-        {
-            continue;
-        }
-
-        size_t writeIndex =
-            kWidgetInternalTypeWidgetOffsets[internalType] + widgetCounts[internalType]++;
-
-        GetWidgetCoordinates(widget->coords, imageExtents, enabledWidgets->coordinates[writeIndex]);
-
-        // Graph widgets have a text widget attached as well.
-        if (internalType == WidgetInternalType::Graph)
-        {
-            WidgetInternalType textType = WidgetInternalType::Text;
-            if (widgetCounts[textType] >= kWidgetInternalTypeMaxWidgets[textType])
-            {
-                continue;
-            }
-
-            const overlay::RunningGraph *widgetAsGraph =
-                static_cast<const overlay::RunningGraph *>(widget.get());
-            writeIndex = kWidgetInternalTypeWidgetOffsets[textType] + widgetCounts[textType]++;
-
-            GetWidgetCoordinates(widgetAsGraph->description.coords, imageExtents,
-                                 enabledWidgets->coordinates[writeIndex]);
-        }
-    }
-}
-
 void OverlayState::fillWidgetData(const gl::Extents &imageExtents,
                                   uint8_t *textData,
-                                  uint8_t *graphData) const
+                                  uint8_t *graphData,
+                                  uint32_t *activeTextWidgetCountOut,
+                                  uint32_t *activeGraphWidgetCountOut) const
 {
     TextWidgets *textWidgets   = reinterpret_cast<TextWidgets *>(textData);
     GraphWidgets *graphWidgets = reinterpret_cast<GraphWidgets *>(graphData);
@@ -604,6 +607,9 @@ void OverlayState::fillWidgetData(const gl::Extents &imageExtents,
                    &textWidgets->widgets[widgetCounts[WidgetInternalType::Text]],
                    &graphWidgets->widgets[widgetCounts[WidgetInternalType::Graph]], &widgetCounts);
     }
+
+    *activeTextWidgetCountOut  = widgetCounts[WidgetInternalType::Text];
+    *activeGraphWidgetCountOut = widgetCounts[WidgetInternalType::Graph];
 }
 
 }  // namespace gl

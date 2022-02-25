@@ -160,9 +160,9 @@ class RendererD3D : public BufferFactoryD3D
 
     virtual ContextImpl *createContext(const gl::State &state, gl::ErrorSet *errorSet) = 0;
 
-    virtual std::string getRendererDescription() const = 0;
-    virtual std::string getVendorString() const        = 0;
-    virtual std::string getVersionString() const       = 0;
+    virtual std::string getRendererDescription() const                  = 0;
+    virtual std::string getVendorString() const                         = 0;
+    virtual std::string getVersionString(bool includeFullVersion) const = 0;
 
     virtual int getMinorShaderModel() const          = 0;
     virtual std::string getShaderModelSuffix() const = 0;

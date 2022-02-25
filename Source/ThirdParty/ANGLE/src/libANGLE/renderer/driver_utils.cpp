@@ -146,8 +146,6 @@ const char *GetVendorString(uint32_t vendorId)
             return "ARM";
         case VENDOR_ID_APPLE:
             return "Apple";
-        case VENDOR_ID_MICROSOFT:
-            return "Microsoft";
         case VENDOR_ID_BROADCOM:
             return "Broadcom";
         case VENDOR_ID_GOOGLE:
@@ -156,6 +154,8 @@ const char *GetVendorString(uint32_t vendorId)
             return "Intel";
         case VENDOR_ID_MESA:
             return "Mesa";
+        case VENDOR_ID_MICROSOFT:
+            return "Microsoft";
         case VENDOR_ID_NVIDIA:
             return "NVIDIA";
         case VENDOR_ID_POWERVR:
@@ -163,7 +163,7 @@ const char *GetVendorString(uint32_t vendorId)
         case VENDOR_ID_QUALCOMM:
             return "Qualcomm";
         case VENDOR_ID_SAMSUNG:
-            return "Samsung";
+            return "Samsung Electronics Co., Ltd.";
         case VENDOR_ID_VMWARE:
             return "VMware";
         case VENDOR_ID_VIVANTE:

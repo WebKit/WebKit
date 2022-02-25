@@ -524,8 +524,8 @@ SpirvType SPIRVBuilder::getSpirvType(const TType &type, const SpirvTypeSpec &typ
 {
     SpirvType spirvType;
     spirvType.type                = type.getBasicType();
-    spirvType.primarySize         = static_cast<uint8_t>(type.getNominalSize());
-    spirvType.secondarySize       = static_cast<uint8_t>(type.getSecondarySize());
+    spirvType.primarySize         = type.getNominalSize();
+    spirvType.secondarySize       = type.getSecondarySize();
     spirvType.arraySizes          = type.getArraySizes();
     spirvType.imageInternalFormat = type.getLayoutQualifier().imageInternalFormat;
 

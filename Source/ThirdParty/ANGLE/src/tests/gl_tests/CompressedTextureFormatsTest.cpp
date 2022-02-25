@@ -377,7 +377,7 @@ std::string PrintToStringParamName(
         }
     }
     std::stringstream nameStr;
-    nameStr << name << "__" << std::get<0>(info.param);
+    nameStr << std::get<0>(info.param) << "__" << name;
     return nameStr.str();
 }
 
