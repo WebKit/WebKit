@@ -1,3 +1,9 @@
+2022-02-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified build fix.
+
+        * WebProcess/glib/WebProcessGLib.cpp: Add missing WebPage.h inclusion.
+
 2022-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.90 release

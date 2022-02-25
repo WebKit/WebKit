@@ -29,6 +29,7 @@
 
 #include "WebKitExtensionManager.h"
 #include "WebKitWebExtensionPrivate.h"
+#include "WebPage.h"
 #include "WebProcessCreationParameters.h"
 
 #if USE(GSTREAMER)
