@@ -297,6 +297,15 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameI
     ASSERT(!m_provisionalLoadURL.isNull());
     m_provisionalLoadURL = { };
 
+    if (m_isProcessSwappingOnNavigationResponse) {
+        // If the provisional load fails and we were process-swapping on navigation response, then we simply destroy ourselves.
+        // In this case, the provisional load is still ongoing in the committed process and the ProvisionalPageProxy destructor
+        // will stop it and cause the committed process to send its own DidFailProvisionalLoadForFrame IPC.
+        ASSERT(m_page.provisionalPageProxy() == this);
+        m_page.destroyProvisionalPage();
+        return;
+    }
+
     // Make sure the Page's main frame's expectedURL gets cleared since we updated it in didStartProvisionalLoad.
     if (auto* pageMainFrame = m_page.mainFrame())
         pageMainFrame->didFailProvisionalLoad();

@@ -1,3 +1,16 @@
+2022-02-24  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r290371.
+
+        Caused assertion
+
+        Reverted changeset:
+
+        "Call WKNavigationDelegate.didFailProvisionalNavigation even
+        after a cross-origin navigation with COOP"
+        https://bugs.webkit.org/show_bug.cgi?id=237071
+        https://commits.webkit.org/r290371
+
 2022-02-24  Gavin Phillips  <gavin.p@apple.com>
 
         Port CaptivePortalMode preferences to AnyHost in order to support CFPrefs Direct Mode propagation
