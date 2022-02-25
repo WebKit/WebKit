@@ -170,15 +170,6 @@ SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, UIKit, _UIApplicationCatalystRequestViewServiceIdiomAndScaleFactor, void, (UIUserInterfaceIdiom idiom, CGFloat scaleFactor), (idiom, scaleFactor))
 #endif
 
-SOFT_LINK_FRAMEWORK(CoreServices)
-SOFT_LINK_CLASS(CoreServices, _LSDService)
-SOFT_LINK_CLASS(CoreServices, _LSDOpenService)
-
-#if HAVE(CMPHOTO_TILE_DECODER_AVAILABLE)
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(CMPhoto)
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, CMPhoto, CMPhotoIsTileDecoderAvailable, Boolean, (CMVideoCodecType decoder), (decoder))
-#endif
-
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define WEBPROCESS_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define WEBPROCESS_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
