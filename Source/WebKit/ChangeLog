@@ -1,3 +1,22 @@
+2022-02-25  Per Arne Vollan  <pvollan@apple.com>
+
+        Make sure there is a default Networking process to provide the Launch Services database
+        https://bugs.webkit.org/show_bug.cgi?id=236629
+
+        Reviewed by Brent Fulgham.
+
+        The WebContent processes relies on getting the Launch Services database from the Networking process.
+        It is possible to enter a state where there is no default Network process, but a Network process is
+        running because a Website data store is holding a reference to it. This patch addresses this issue
+        by removing Network process references in all remaining Website data stores when the last process
+        pool is being deleted.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::~WebProcessPool):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeNetworkProcessReference):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2022-02-25  Youenn Fablet  <youenn@apple.com>
 
         Better isolate RemoteVideoFrameObjectHeap clients from ThreadSafeObjectHeap implementation details

@@ -226,6 +226,11 @@ NetworkProcessProxy& WebsiteDataStore::networkProcess() const
     return const_cast<WebsiteDataStore&>(*this).networkProcess();
 }
 
+void WebsiteDataStore::removeNetworkProcessReference()
+{
+    m_networkProcess = nullptr;
+}
+
 void WebsiteDataStore::registerProcess(WebProcessProxy& process)
 {
     ASSERT(process.pageCount() || process.provisionalPageCount());
