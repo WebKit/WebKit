@@ -28,13 +28,12 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 #include "ObjectIdentifierReferenceTracker.h"
-#include <WebCore/ProcessQualified.h>
 #include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
 enum RemoteVideoFrameIdentifierType { };
-using RemoteVideoFrameIdentifier = WebCore::ProcessQualified<ObjectIdentifier<RemoteVideoFrameIdentifierType>>;
+using RemoteVideoFrameIdentifier = ObjectIdentifier<RemoteVideoFrameIdentifierType>;
 using RemoteVideoFrameReadReference = ObjectIdentifierReadReference<RemoteVideoFrameIdentifier>;
 using RemoteVideoFrameWriteReference = ObjectIdentifierWriteReference<RemoteVideoFrameIdentifier>;
 using RemoteVideoFrameReference = ObjectIdentifierReference<RemoteVideoFrameIdentifier>;

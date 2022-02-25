@@ -1,3 +1,15 @@
+2022-02-25  Youenn Fablet  <youenn@apple.com>
+
+        Make RemoteVideoFrameIdentifier a regular ObjectIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=237136
+
+        Reviewed by Kimmo Kinnunen.
+
+        Given all RemoteVideoFrames are created in GPUProcess, we no longer need to use a ProcessQualified identifier.
+        Covered by existing tests.
+
+        * WebProcess/GPU/media/RemoteVideoFrameIdentifier.h:
+
 2022-02-24  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r290371.
