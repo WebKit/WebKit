@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) 2009, Google Inc. All rights reserved.
 #
@@ -66,8 +66,8 @@ def print_list_if_non_empty(title, list_to_print):
 
 
 class CommitterListFromMailingList(object):
-    committers_list_url = "http://lists.webkit.org/mailman/roster/webkit-committers"
-    reviewers_list_url = "http://lists.webkit.org/mailman/roster/webkit-reviewers"
+    committers_list_url = "https://lists.webkit.org/mailman/roster/webkit-committers"
+    reviewers_list_url = "https://lists.webkit.org/mailman/roster/webkit-reviewers"
 
     def _fetch_emails_from_page(self, url):
         page = urlopen(url)
@@ -201,10 +201,10 @@ class CommitterListFromGit(object):
     def _fetch_authors_and_last_commit_time_from_git_log(self):
         last_commit_dates = {}
         git_log_args = ['git', 'log', '--reverse', '--pretty=format:%ae %at']
-        process = subprocess.Popen(git_log_args, stdout=subprocess.PIPE)
+        process = subprocess.Popen(git_log_args, stdout=subprocess.PIPE, encoding='utf-8')
 
         # eric@webkit.org@268f45cc-cd09-0410-ab3c-d52691b4dbfc 1257090899
-        line_regexp = re.compile("^(?P<author>.+)@\S+ (?P<timestamp>\d+)$")
+        line_regexp = re.compile(r"^(?P<author>.+@.+) (?P<timestamp>\d+)$")
         while True:
             output_line = process.stdout.readline()
             if output_line == '' and process.poll() != None:
@@ -212,9 +212,9 @@ class CommitterListFromGit(object):
 
             match_result = line_regexp.match(output_line)
             if not match_result:
-                _log.error("Failed to match line: %s" % output_line)
-                exit(1)
-            last_commit_dates[match_result.group('author')] = float(match_result.group('timestamp'))
+                continue
+            last_commit_dates['@'.join(match_result.group('author').split('@')[:2])] = float(match_result.group('timestamp'))
+        return last_commit_dates
 
     def _fill_in_emails_for_old_logins(self):
         authors_missing_email = [author for author in self._last_commit_time_by_author_cache if author.find('@') == -1]
@@ -246,7 +246,8 @@ class CommitterListFromGit(object):
         if not self._last_commit_time_by_author_cache:
             self._last_commit_time_by_author_cache = self._fetch_authors_and_last_commit_time_from_git_log()
             self._fill_in_emails_for_old_logins()
-            del self._last_commit_time_by_author_cache['(no author)'] # The initial svn import isn't very useful.
+            if '(no author)' in self._last_commit_time_by_author_cache:
+                del self._last_commit_time_by_author_cache['(no author)'] # The initial svn import isn't very useful.
         return self._last_commit_time_by_author_cache
 
     @staticmethod
@@ -255,7 +256,7 @@ class CommitterListFromGit(object):
 
     def possibly_expired_committers(self, committer_list):
         authors_and_last_commits = list(self._last_commit_by_author().items())
-        authors_and_last_commits.sort(lambda a,b: cmp(a[1], b[1]), reverse=True)
+        authors_and_last_commits = reversed(sorted(authors_and_last_commits, key=lambda pair: pair[1]))
         committer_cutof = date.today() - timedelta(days=365)
         retired_authors_and_last_commits = []
         for (author, last_commit) in authors_and_last_commits:
@@ -266,7 +267,7 @@ class CommitterListFromGit(object):
 
     def possibly_inactive_reviewers(self, committer_list):
         git_log_args = ['git', 'log', '--since=1.year']
-        process = subprocess.Popen(git_log_args, stdout=subprocess.PIPE)
+        process = subprocess.Popen(git_log_args, stdout=subprocess.PIPE, encoding='utf-8')
         git_output, err = process.communicate()
 
         comment_regex = re.compile(r'^Date: .+?\n+(.+?)(?:^commit |\Z)', re.MULTILINE | re.DOTALL)
@@ -277,7 +278,7 @@ class CommitterListFromGit(object):
         for comment in comment_regex.findall(git_output):
             reviewer_match = reviewed_by_regexp.search(comment)
             if reviewer_match:
-                reviewers_text = reviewer_match.group('reviewer').decode('utf-8', 'backslashreplace')
+                reviewers_text = reviewer_match.group('reviewer')
                 # reviewers might be something like "Darin Adler and Dave Hyatt".
                 # Rather than trying to fuzzy match names, find known reviewers and remove them from the list.
                 for reviewer in reviewers:
@@ -294,7 +295,9 @@ class CommitterListFromGit(object):
         print("Committers who have not committed within one year:")
         self._print_three_column_row(column_widths, ("Last Commit", "Committer Email", "Committer Record"))
         for (author, last_commit) in retired_authors_and_last_commits:
-            committer_record = committer_list.committer_by_email(author)
+            committer_record = committer_list.committer_by_email(author) or committer_list.committer_by_email(author.split('@')[0])
+            if not committer_record or not committer_record.can_commit:
+                continue
             last_commit_date = date.fromtimestamp(last_commit)
             self._print_three_column_row(column_widths, (str(last_commit_date), author, committer_record))
 
@@ -305,13 +308,13 @@ class CommitterListFromGit(object):
         print()
         print("Reviewers who have not reviewed within one year:")
         for contributor in inactive_reviewers:
-            print("\"{}\" {}".format(contributor.full_name.encode("utf-8"), contributor.bugzilla_email()))
+            print("\"{}\" {}".format(contributor.full_name, contributor.bugzilla_email()))
 
     def print_committers_missing_from_committer_list(self, committer_list):
         missing_from_contributors_json = []
         last_commit_time_by_author = self._last_commit_by_author()
         for author in last_commit_time_by_author:
-            if not committer_list.committer_by_email(author):
+            if not committer_list.contributor_by_email(author):
                 missing_from_contributors_json.append(author)
 
         never_committed = []

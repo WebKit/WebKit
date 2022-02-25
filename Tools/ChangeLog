@@ -1,3 +1,29 @@
+2022-02-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [Python 3] Invoke validate-committer-lists with Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=237171
+        <rdar://problem/89449485>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/validate-committer-lists:
+        (CommitterListFromMailingList): Use https urls.
+        (CommitterListFromMailingList._fetch_authors_and_last_commit_time_from_git_log):
+        Handle commits in the canonical repository.
+        (CommitterListFromGit.possibly_expired_committers): Use Python 3 sorting idioms.
+        (CommitterListFromGit.possibly_inactive_reviewers): Declare process encoding.
+        (CommitterListFromGit.print_possibly_expired_committers): Committers which are not in
+        contributors.json or are only contributors cannot have expired committer status.
+        (CommitterListFromGit.print_possibly_inactive_reviewers): String already utf-8.
+        (CommitterListFromGit.print_committers_missing_from_committer_list): Check contributors,
+        not committers.
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (BugzillaQueries.fetch_bugs_matching_quicksearch): Make urllib.quote invocations Python 3 compatible.
+        (BugzillaQueries.fetch_bugs_matching_search): Ditto.
+        (BugzillaQueries.fetch_bugs_from_review_queue): Ditto.
+        (BugzillaQueries.fetch_login_userid_pairs_matching_substring): Ditto.
+        (BugzillaQueries.is_invalid_bugzilla_email): Ditto.
+
 2022-02-25  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION(r289580): [ iOS macOS ] TestWebKitAPI.IPCTestingAPI.CanReceiveSharedMemory is a constant timeout
