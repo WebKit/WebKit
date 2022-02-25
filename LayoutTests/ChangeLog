@@ -1,3 +1,13 @@
+2022-02-25  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION(r289580): [ iOS macOS ] TestWebKitAPI.IPCTestingAPI.CanReceiveSharedMemory is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=236744
+
+        Reviewed by Antti Koivisto.
+
+        * ipc/stream-sync-reply-shared-memory-expected.txt: Added.
+        * ipc/stream-sync-reply-shared-memory.html: Added.
+
 2022-01-21  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Support in-process testing of IPC messages

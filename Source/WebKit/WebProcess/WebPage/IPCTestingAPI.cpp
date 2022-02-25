@@ -61,6 +61,12 @@ namespace WebKit {
 
 namespace IPCTestingAPI {
 
+static constexpr auto processTargetNameUI = "UI"_s;
+#if ENABLE(GPU_PROCESS)
+static constexpr auto processTargetNameGPU = "GPU"_s;
+#endif
+static constexpr auto processTargetNameNetworking = "Networking"_s;
+
 static std::optional<uint64_t> destinationIDFromArgument(JSC::JSGlobalObject*, JSValueRef, JSValueRef*);
 static std::optional<uint64_t> messageIDFromArgument(JSC::JSGlobalObject*, JSValueRef, JSValueRef*);
 static JSC::JSObject* jsResultFromReplyDecoder(JSC::JSGlobalObject*, IPC::MessageName, IPC::Decoder&);
@@ -270,6 +276,7 @@ private:
     static JSValueRef retrieveID(JSContextRef, JSObjectRef thisObject, JSValueRef* exception, const WTF::Function<uint64_t(JSIPC&)>&);
 
     static JSValueRef messages(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef processTargets(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
 
     WeakPtr<WebPage> m_webPage;
     WeakPtr<WebFrame> m_webFrame;
@@ -941,6 +948,7 @@ const JSStaticValue* JSIPC::staticValues()
         { "sessionID", sessionID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "webPageProxyID", webPageProxyID, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "messages", messages, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "processTargets", processTargets, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0, 0 }
     };
     return values;
@@ -953,13 +961,13 @@ static RefPtr<IPC::Connection> processTargetFromArgument(JSC::JSGlobalObject* gl
     if (scope.exception())
         return nullptr;
 
-    if (name == "UI")
+    if (name == processTargetNameUI)
         return WebProcess::singleton().parentProcessConnection();
 #if ENABLE(GPU_PROCESS)
-    if (name == "GPU")
+    if (name == processTargetNameGPU)
         return &WebProcess::singleton().ensureGPUProcessConnection().connection();
 #endif
-    if (name == "Networking")
+    if (name == processTargetNameNetworking)
         return &WebProcess::singleton().ensureNetworkProcessConnection().connection();
 
     *exception = toRef(JSC::createTypeError(globalObject, "Target process must be UI, GPU, or Networking"_s));
@@ -1854,6 +1862,32 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
     }
 
     return toRef(vm, messagesObject);
+}
+
+JSValueRef JSIPC::processTargets(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+
+    auto* impl = toWrapped(context, thisObject);
+    if (!impl) {
+        *exception = toRef(JSC::createTypeError(toJS(context), "Wrong type"_s));
+        return JSValueMakeUndefined(context);
+    }
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+    JSC::JSObject* processTargetsObject = JSC::constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+    int index = 0;
+    processTargetsObject->putDirectIndex(globalObject, index++, JSC::jsString(vm, processTargetNameUI));
+    RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+#if ENABLE(GPU_PROCESS)
+    processTargetsObject->putDirectIndex(globalObject, index++, JSC::jsString(vm, processTargetNameGPU));
+    RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+#endif
+    processTargetsObject->putDirectIndex(globalObject, index++, JSC::jsString(vm, processTargetNameNetworking));
+    RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+    return toRef(vm, processTargetsObject);
 }
 
 JSMessageListener::JSMessageListener(JSIPC& jsIPC, Type type, JSContextRef context, JSObjectRef callback)

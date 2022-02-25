@@ -1,0 +1,3 @@
+
+PASS Test that stream sync message can reply with shared memory
+

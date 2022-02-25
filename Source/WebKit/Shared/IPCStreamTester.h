@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,49 +27,41 @@
 
 #if ENABLE(IPC_TESTING_API)
 
-#if ENABLE(IPC_TESTING_API)
-
 #include "IPCStreamTesterIdentifier.h"
-#include "MessageReceiver.h"
 #include "ScopedActiveMessageReceiveQueue.h"
 #include "SharedMemory.h"
-#include "StreamConnectionBuffer.h"
-#include "StreamConnectionWorkQueue.h"
 #include "StreamMessageReceiver.h"
-#include "StreamServerConnection.h"
-#include <atomic>
 #include <wtf/HashMap.h>
-#include <wtf/WorkQueue.h>
 
-#endif
+namespace IPC {
+class Connection;
+class StreamServerConnection;
+class StreamConnectionBuffer;
+class StreamConnectionWorkQueue;
+}
 
 namespace WebKit {
 
-class IPCStreamTester;
-
-// Main test interface for initiating various IPC test activities.
-class IPCTester final : public IPC::MessageReceiver {
+// Interface to test various IPC stream related activities.
+class IPCStreamTester final : public IPC::StreamMessageReceiver {
 public:
-    IPCTester();
-    ~IPCTester();
+    static RefPtr<IPCStreamTester> create(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamConnectionBuffer&&);
+    void stopListeningForIPC(Ref<IPCStreamTester>&& refFromConnection);
 
-    // IPC::MessageReceiver overrides.
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
+    // IPC::StreamMessageReceiver overrides.
+    void didReceiveStreamMessage(IPC::StreamServerConnectionBase&, IPC::Decoder&) final;
 private:
+    IPCStreamTester(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamConnectionBuffer&&);
+    ~IPCStreamTester();
+    void initialize();
+    IPC::StreamConnectionWorkQueue& workQueue() const { return m_workQueue; }
+
     // Messages.
-    void startMessageTesting(IPC::Connection&, String&& driverName);
-    void stopMessageTesting(CompletionHandler<void()>);
-    void createStreamTester(IPC::Connection&, IPCStreamTesterIdentifier, IPC::StreamConnectionBuffer&&);
-    void releaseStreamTester(IPCStreamTesterIdentifier, CompletionHandler<void()>&&);
+    void syncMessageReturningSharedMemory1(uint32_t byteCount, CompletionHandler<void(SharedMemory::IPCHandle)>&&);
 
-    void stopIfNeeded();
-
-    RefPtr<WorkQueue> m_testQueue;
-    std::atomic<bool> m_shouldStop { false };
-
-    using StreamTesterMap = HashMap<IPCStreamTesterIdentifier, IPC::ScopedActiveMessageReceiveQueue<IPCStreamTester>>;
-    StreamTesterMap m_streamTesters;
+    const Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
+    const Ref<IPC::StreamServerConnection> m_streamConnection;
+    const IPCStreamTesterIdentifier m_identifier;
 };
 
 }
