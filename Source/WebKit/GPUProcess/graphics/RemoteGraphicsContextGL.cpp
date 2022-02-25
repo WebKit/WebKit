@@ -228,12 +228,8 @@ void RemoteGraphicsContextGL::paintCompositedResultsToMediaSample(CompletionHand
 {
     assertIsCurrent(workQueue());
     std::optional<WebKit::RemoteVideoFrameProxy::Properties> result;
-    if (auto videoFrame = m_context->paintCompositedResultsToMediaSample()) {
-        auto write = RemoteVideoFrameWriteReference::generateForAdd();
-        auto newFrameReference = write.retiredReference();
-        result = RemoteVideoFrameProxy::properties(WTFMove(newFrameReference), *videoFrame);
-        m_videoFrameObjectHeap->retire(WTFMove(write), WTFMove(videoFrame), std::nullopt);
-    }
+    if (auto videoFrame = m_context->paintCompositedResultsToMediaSample())
+        result = m_videoFrameObjectHeap->add(videoFrame.releaseNonNull());
     completionHandler(WTFMove(result));
 }
 #endif
@@ -277,7 +273,7 @@ void RemoteGraphicsContextGL::paintPixelBufferToImageBuffer(std::optional<WebCor
 void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::RemoteVideoFrameReadReference read, uint32_t, uint32_t, int32_t, uint32_t, uint32_t, uint32_t, bool, bool , CompletionHandler<void(bool)>&& completionHandler)
 {
     notImplemented();
-    m_videoFrameObjectHeap->retire(WTFMove(read), defaultTimeout);
+    m_videoFrameObjectHeap->get(WTFMove(read));
     completionHandler(false);
 }
 #endif

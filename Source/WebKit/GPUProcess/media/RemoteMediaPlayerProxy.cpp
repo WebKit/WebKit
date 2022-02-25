@@ -879,12 +879,8 @@ void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler
     if (m_videoFrameForCurrentTime != videoFrame) {
         m_videoFrameForCurrentTime = videoFrame;
         changed = true;
-        if (videoFrame) {
-            auto write = RemoteVideoFrameWriteReference::generateForAdd();
-            auto newFrameReference = write.retiredReference();
-            result = RemoteVideoFrameProxy::properties(WTFMove(newFrameReference), *videoFrame);
-            m_videoFrameObjectHeap->retire(WTFMove(write), WTFMove(videoFrame), std::nullopt);
-        }
+        if (videoFrame)
+            result = m_videoFrameObjectHeap->add(videoFrame.releaseNonNull());
     }
     completionHandler(WTFMove(result), changed);
 }

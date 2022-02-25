@@ -37,7 +37,6 @@
 #include <WebCore/RemoteVideoSample.h>
 
 namespace WebKit {
-static constexpr Seconds defaultTimeout { 1_s };
 
 using namespace WebCore;
 

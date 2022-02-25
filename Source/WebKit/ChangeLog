@@ -1,3 +1,27 @@
+2022-02-25  Youenn Fablet  <youenn@apple.com>
+
+        Better isolate RemoteVideoFrameObjectHeap clients from ThreadSafeObjectHeap implementation details
+        https://bugs.webkit.org/show_bug.cgi?id=237191
+
+        Reviewed by Kimmo Kinnunen.
+
+        Refactoring to make RemoteVideoFrameObjectHeap API independent of ThreadSafeObjectHeap.
+        This makes code more readable and simplifies client side usage as well,
+        for instance by not having to care about timers, or using more known names like add/get instead of retire.
+
+        No change of behavior.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp:
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        * Shared/ThreadSafeObjectHeap.h:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp:
+
 2022-02-25  Per Arne Vollan  <pvollan@apple.com>
 
         Remove unused soft linking declarations

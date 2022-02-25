@@ -91,7 +91,7 @@ static Function<void(CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_
         if (resourceOwner)
             sample->setOwnershipIdentity(resourceOwner);
         if (useRemoteFrames) {
-            auto properties = videoFrameObjectHeap->addVideoFrame(sample.releaseNonNull());
+            auto properties = videoFrameObjectHeap->add(sample.releaseNonNull());
             connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, WTFMove(properties) }, 0);
             return;
         }
@@ -231,7 +231,7 @@ void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore:
 {
     RetainPtr<CVPixelBufferRef> pixelBuffer;
     if (sampleReference) {
-        auto sample = m_videoFrameObjectHeap->retire(WTFMove(*sampleReference), 0_s);
+        auto sample = m_videoFrameObjectHeap->get(WTFMove(*sampleReference));
         if (!sample)
             return;
 

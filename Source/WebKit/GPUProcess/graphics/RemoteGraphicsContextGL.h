@@ -137,7 +137,6 @@ private:
 protected:
     WeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
     RefPtr<IPC::StreamServerConnection> m_streamConnection;
-    static constexpr Seconds defaultTimeout = 10_s;
 #if PLATFORM(COCOA)
     using GCGLContext = WebCore::GraphicsContextGLCocoa;
 #else

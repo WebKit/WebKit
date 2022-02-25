@@ -47,7 +47,7 @@ Ref<RemoteVideoFrameObjectHeap> RemoteVideoFrameObjectHeap::create(GPUConnection
 
 RemoteVideoFrameObjectHeap::RemoteVideoFrameObjectHeap(GPUConnectionToWebProcess& connectionToWebProcess)
     : m_gpuConnectionToWebProcess(&connectionToWebProcess)
-    , m_connection(m_gpuConnectionToWebProcess->connection())
+    , m_connection(connectionToWebProcess.connection())
 {
     m_gpuConnectionToWebProcess->messageReceiverMap().addMessageReceiver(Messages::RemoteVideoFrameObjectHeap::messageReceiverName(), *this);
 }
@@ -69,7 +69,7 @@ void RemoteVideoFrameObjectHeap::stopListeningForIPC(Ref<RemoteVideoFrameObjectH
         // Clients might hold on to the ref after this happens. They should also stop themselves, but if they do not,
         // avoid big memory leaks by clearing the frames. The clients should fail gracefully (do nothing) in case they fail to look up
         // frames.
-        clear();
+        m_heap.clear();
         // TODO: add can happen after stopping.
     }
 }
@@ -78,30 +78,30 @@ void RemoteVideoFrameObjectHeap::stopListeningForIPC(Ref<RemoteVideoFrameObjectH
 RemoteVideoFrameIdentifier RemoteVideoFrameObjectHeap::createRemoteVideoFrame(Ref<WebCore::MediaSample>&& frame)
 {
     auto identifier = RemoteVideoFrameIdentifier::generateThreadSafe();
-    add(identifier, WTFMove(frame));
+    m_heap.add(identifier, WTFMove(frame));
     return identifier;
 }
 
-RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::addVideoFrame(Ref<WebCore::MediaSample>&& frame)
+RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::MediaSample>&& frame)
 {
     auto write = RemoteVideoFrameWriteReference::generateForAdd();
     auto newFrameReference = write.retiredReference();
     auto properties = RemoteVideoFrameProxy::properties(WTFMove(newFrameReference), frame);
-    retire(WTFMove(write), WTFMove(frame), std::nullopt);
+    m_heap.retire(WTFMove(write), WTFMove(frame), std::nullopt);
     return properties;
 }
 
 void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReference&& write)
 {
     assertIsMainThread();
-    retireRemove(WTFMove(write));
+    m_heap.retireRemove(WTFMove(write));
 }
 
 #if PLATFORM(COCOA)
 void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read)
 {
     auto identifier = read.identifier();
-    auto videoFrame = retire(WTFMove(read), 0_s);
+    auto videoFrame = m_heap.retire(WTFMove(read), 0_s);
 
     if (!videoFrame) {
         m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::VideoFrameBufferNotFound { identifier }, 0);
@@ -129,23 +129,16 @@ void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReferen
 
 void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& read, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&& completionHandler)
 {
-    auto videoFrame = retire(WTFMove(read), defaultTimeout);
+    auto videoFrame = m_heap.retire(WTFMove(read), 0_s);
     if (!videoFrame) {
         ASSERT_IS_TESTING_IPC();
         completionHandler(nullptr);
         return;
     }
-    RetainPtr<CVPixelBufferRef> pixelBuffer;
-    if (is<VideoFrameCV>(videoFrame))
-        pixelBuffer = downcast<VideoFrameCV>(*videoFrame).pixelBuffer();
-    else if (is<MediaSampleAVFObjC>(*videoFrame))
-        pixelBuffer = downcast<MediaSampleAVFObjC>(*videoFrame).pixelBuffer();
-    else {
-        ASSERT_NOT_REACHED();
-        completionHandler(nullptr);
-        return;
-    }
-    completionHandler(pixelBuffer);
+
+    auto pixelBuffer = videoFrame->pixelBuffer();
+    ASSERT(pixelBuffer);
+    completionHandler(WTFMove(pixelBuffer));
 }
 
 #endif

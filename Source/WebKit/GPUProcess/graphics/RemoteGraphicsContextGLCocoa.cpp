@@ -50,7 +50,7 @@ void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::RemoteVideoFrame
     UNUSED_VARIABLE(premultiplyAlpha);
     ASSERT_UNUSED(target, target == WebCore::GraphicsContextGL::TEXTURE_2D);
 
-    auto videoFrame = m_videoFrameObjectHeap->retire(WTFMove(read), defaultTimeout);
+    auto videoFrame = m_videoFrameObjectHeap->get(WTFMove(read));
     if (!videoFrame) {
         ASSERT_IS_TESTING_IPC();
         completionHandler(false);

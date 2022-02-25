@@ -177,7 +177,7 @@ RefPtr<MediaSample> SharedVideoFrameReader::read(SharedVideoFrame&& sharedVideoF
         if (!m_objectHeap)
             return nullptr;
 
-        auto sample = m_objectHeap->retire(WTFMove(reference), 0_s);
+        auto sample = m_objectHeap->get(WTFMove(reference));
         if (!sample)
             return nullptr;
         ASSERT(sample->pixelBuffer());

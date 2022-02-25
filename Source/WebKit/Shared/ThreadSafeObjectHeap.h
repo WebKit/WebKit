@@ -31,7 +31,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadAssertions.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
 
@@ -45,7 +44,7 @@ namespace WebKit {
 // Currently implemented only for read-only (create-read-destroy) or copy-on-write types,
 // e.g. no two-phase get() operations are not implemented yet.
 template<typename Identifier, typename HeldType>
-class ThreadSafeObjectHeap : public ThreadSafeRefCounted<ThreadSafeObjectHeap<Identifier, HeldType>> {
+class ThreadSafeObjectHeap {
 public:
     using ReadReference = typename ObjectIdentifierReferenceTracker<Identifier>::ReadReference;
     using WriteReference = typename ObjectIdentifierReferenceTracker<Identifier>::WriteReference;
