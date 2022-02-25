@@ -1,3 +1,57 @@
+2022-02-24  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r290442. rdar://problem/89345853
+
+    [MacCatalyst] REGRESSION(r290091): sometimes can crash if `WKWebView` is deallocated before the next visible content rect update
+    https://bugs.webkit.org/show_bug.cgi?id=237126
+    <rdar://problem/89345853>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    Tests: WKWebViewResize.DoesNotAssertInDeallocAfterChangingFrame
+           WKWebViewResize.DoesNotAssertInDeallocAfterChangingBounds
+    
+    * UIProcess/API/ios/WKWebViewIOS.h:
+    * UIProcess/API/ios/WKWebViewIOS.mm:
+    (-[WKWebView _acquireResizeAssertionForReason:]):
+    (-[WKWebView _invalidateResizeAssertions]): Added.
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView dealloc]):
+    Make sure to `-invalidate` any remaining assertions in `-dealloc` as required by `_UIInvalidatable`.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewResize.mm: Added.
+    (TEST.WKWebViewResize.DoesNotAssertInDeallocAfterChangingFrame):
+    (TEST.WKWebViewResize.DoesNotAssertInDeallocAfterChangingBounds):
+    
+    * TestWebKitAPI/SourcesCocoa.txt:
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290442 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-24  Devin Rousso  <drousso@apple.com>
+
+            [MacCatalyst] REGRESSION(r290091): sometimes can crash if `WKWebView` is deallocated before the next visible content rect update
+            https://bugs.webkit.org/show_bug.cgi?id=237126
+            <rdar://problem/89345853>
+
+            Reviewed by Tim Horton.
+
+            Tests: WKWebViewResize.DoesNotAssertInDeallocAfterChangingFrame
+                   WKWebViewResize.DoesNotAssertInDeallocAfterChangingBounds
+
+            * UIProcess/API/ios/WKWebViewIOS.h:
+            * UIProcess/API/ios/WKWebViewIOS.mm:
+            (-[WKWebView _acquireResizeAssertionForReason:]):
+            (-[WKWebView _invalidateResizeAssertions]): Added.
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView dealloc]):
+            Make sure to `-invalidate` any remaining assertions in `-dealloc` as required by `_UIInvalidatable`.
+
 2022-02-22  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r290317. rdar://problem/89206950
