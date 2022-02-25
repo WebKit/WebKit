@@ -1,3 +1,9 @@
+2022-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.35.90 release
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2022-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] ANGLE: make USE_ANGLE_WEBGL build option public

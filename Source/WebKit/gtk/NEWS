@@ -1,3 +1,19 @@
+=================
+WebKitGTK 2.35.90
+=================
+
+What's new in WebKitGTK 2.35.90?
+
+  - Fix scrolling with the mouse wheel on sites using overscroll-behavior.
+  - Suspend web processes after some time in the process cache.
+  - Fix renderning of horizontal scrollbars with themes enabling steppers.
+  - Ensure EGL displays are terminated before web process exits.
+  - Deinitialize gstreamer before web process exits.
+  - Make fonts under XDG_DATA_DIRS available in web process sanbox.
+  - Canonicalize paths passed to bubblewrap launcher.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Hebrew.
+
 ================
 WebKitGTK 2.35.3
 ================
