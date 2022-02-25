@@ -691,7 +691,7 @@ class WebkitFlatpak:
         command = [os.path.join(gst_dir, 'gst-env.py'), '--builddir', gst_builddir, '--srcdir', gst_dir, "--only-environment"]
         gst_env = run_sanitized(command, gather_output=True)
         allowlist = ("LD_LIBRARY_PATH", "PATH", "PKG_CONFIG_PATH")
-        nopathlist = ("GST_DEBUG", "GST_VERSION", "GST_ENV")
+        nopathlist = ("GST_DEBUG", "GST_VERSION", "GST_ENV", "GST_TRACERS")
         env = {}
         for line in [line for line in gst_env.splitlines() if not line.startswith("export")]:
             tokens = line.split("=")

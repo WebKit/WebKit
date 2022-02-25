@@ -40,6 +40,10 @@
 #include <pal/crypto/gcrypt/Initialization.h>
 #endif
 
+#if USE(GSTREAMER)
+#include <gst/gst.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -98,6 +102,13 @@ public:
 #endif
 
         return true;
+    }
+
+    void platformFinalize() override
+    {
+#if USE(GSTREAMER)
+        gst_deinit();
+#endif
     }
 };
 
