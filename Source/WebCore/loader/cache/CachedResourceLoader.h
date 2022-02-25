@@ -200,8 +200,8 @@ private:
     bool canRequestAfterRedirection(CachedResource::Type, const URL&, const ResourceLoaderOptions&, const URL& preRedirectURL) const;
     bool canRequestInContentDispositionAttachmentSandbox(CachedResource::Type, const URL&) const;
 
-    HashSet<String> m_validatedURLs;
-    HashSet<String> m_cachedSVGImagesURLs;
+    HashSet<URL> m_validatedURLs;
+    HashSet<URL> m_cachedSVGImagesURLs;
     mutable DocumentResourceMap m_documentResources;
     WeakPtr<Document> m_document;
     DocumentLoader* m_documentLoader;

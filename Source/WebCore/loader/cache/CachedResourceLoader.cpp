@@ -1092,7 +1092,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     }
 
     if (document() && !document()->loadEventFinished() && !resource->resourceRequest().url().protocolIsData())
-        m_validatedURLs.add(resource->resourceRequest().url().string());
+        m_validatedURLs.add(resource->resourceRequest().url());
 
     ASSERT(resource->url() == url.string());
     m_documentResources.set(resource->url().string(), resource);
@@ -1300,7 +1300,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     }
 
     // During the initial load, avoid loading the same resource multiple times for a single document, even if the cache policies would tell us to.
-    if (document() && !document()->loadEventFinished() && m_validatedURLs.contains(existingResource->url().string()))
+    if (document() && !document()->loadEventFinished() && m_validatedURLs.contains(existingResource->url()))
         return Use;
 
     // CachePolicy::Reload always reloads
@@ -1509,7 +1509,7 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource& resource)
 void CachedResourceLoader::notifyFinished(const CachedResource& resource)
 {
     if (isSVGImageCachedResource(&resource))
-        m_cachedSVGImagesURLs.add(resource.url().string());
+        m_cachedSVGImagesURLs.add(resource.url());
 }
 
 Vector<Ref<SVGImage>> CachedResourceLoader::allCachedSVGImages() const
