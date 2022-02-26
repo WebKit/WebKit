@@ -1,3 +1,20 @@
+2022-02-25  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Fallback to attestation=none whenever attestation fails
+        https://bugs.webkit.org/show_bug.cgi?id=237223
+        rdar://88767812
+
+        Reviewed by Brent Fulgham.
+
+        Whenever attestation is requested by a RP and it fails to complete,
+        we previously errored out of the registration. The more correct platform
+        behavior in this case is to provide attestation=none.
+
+        Created API test for this behavior.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterAttested):
+
 2022-02-25  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Add access to required mach service in the Network process
