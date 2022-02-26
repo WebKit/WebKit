@@ -1,3 +1,24 @@
+2022-02-25  Brent Fulgham  <bfulgham@apple.com>
+
+        WebKit continues to render PDF images in Captive Portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=237120
+        <rdar://problem/89384234>
+
+        Reviewed by Chris Dumez.
+
+        WebKit should handle all PDF processing in PDF.JS when in Captive Portal mode. However, testing
+        revealed that PDF images are still rendered natively. As a first step we should bypass the
+        native PDF code path. A subsequent patch will handle in PDF.JS.
+
+        We need to thread the state of the Captive Portal setting through the image loading code so that
+        WebKit knows to bail out before consuming the PDF data in the native decoder.
+
+        Tested by TestWebKitAPI.
+
+        * page/RuntimeEnabledFeatures.h: Add new flag for PDF image decoding state.
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::create): Check whether PDF image decoding should be permitted.
+
 2022-02-25  Sihui Liu  <sihui_liu@apple.com>
 
         Regression(r242729): m_origin in IDBDatabaseIdentifier is incorrect

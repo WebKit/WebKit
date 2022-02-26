@@ -496,6 +496,8 @@
 		7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A0509401FB9F04400B33FB8 /* JSONValue.cpp */; };
 		7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */; };
 		7A32D74A1F02151500162C44 /* FileMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A32D7491F02151500162C44 /* FileMonitor.cpp */; };
+		7A33FF3027C82F8100D7E03E /* CaptivePortalPDF.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A33FF2F27C82F0B00D7E03E /* CaptivePortalPDF.html */; };
+		7A33FF3427C8317D00D7E03E /* webkit-logo.pdf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A33FF3227C8314D00D7E03E /* webkit-logo.pdf */; };
 		7A66BDB81EAF18D500CCC924 /* set-long-title.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A66BDB71EAF150100CCC924 /* set-long-title.html */; };
 		7A6A2C721DCCFB5200C0D085 /* LocalStorageQuirkEnabled.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7A6A2C711DCCFB0200C0D085 /* LocalStorageQuirkEnabled.html */; };
 		7A7B0E7F1EAFE4C3006AB8AE /* LimitTitleSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A7B0E7E1EAFE454006AB8AE /* LimitTitleSize.mm */; };
@@ -1274,6 +1276,7 @@
 				7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */,
 				26DF5A6315A2A27E003689C2 /* CancelLoadFromResourceLoadDelegate.html in Copy Resources */,
 				F4E7A66327222CA900E74D36 /* canvas-image-data.html in Copy Resources */,
+				7A33FF3027C82F8100D7E03E /* CaptivePortalPDF.html in Copy Resources */,
 				2EFF06C51D8867760004BB30 /* change-video-source-on-click.html in Copy Resources */,
 				2EFF06C71D886A580004BB30 /* change-video-source-on-end.html in Copy Resources */,
 				9BD4239C1E04C01C00200395 /* chinese-character-with-image.html in Copy Resources */,
@@ -1650,6 +1653,7 @@
 				46A44A5425A7830300F61E16 /* webaudio-createMediaElementSource.html in Copy Resources */,
 				1C2B81861C89259D00A5529F /* webfont.html in Copy Resources */,
 				31E9BDA3247F5729002E51A2 /* webgl.html in Copy Resources */,
+				7A33FF3427C8317D00D7E03E /* webkit-logo.pdf in Copy Resources */,
 				51714EB41CF8C78C004723C4 /* WebProcessKillIDBCleanup-1.html in Copy Resources */,
 				51714EB51CF8C78C004723C4 /* WebProcessKillIDBCleanup-2.html in Copy Resources */,
 				536770361CC81B6100D425B1 /* WebScriptObjectDescription.html in Copy Resources */,
@@ -2405,6 +2409,8 @@
 		7A0509401FB9F04400B33FB8 /* JSONValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSONValue.cpp; sourceTree = "<group>"; };
 		7A1458FB1AD5C03500E06772 /* mouse-button-listener.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mouse-button-listener.html"; sourceTree = "<group>"; };
 		7A32D7491F02151500162C44 /* FileMonitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileMonitor.cpp; sourceTree = "<group>"; };
+		7A33FF2F27C82F0B00D7E03E /* CaptivePortalPDF.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CaptivePortalPDF.html; sourceTree = "<group>"; };
+		7A33FF3227C8314D00D7E03E /* webkit-logo.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "webkit-logo.pdf"; sourceTree = "<group>"; };
 		7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashCountedSet.cpp; sourceTree = "<group>"; };
 		7A42ABD625CCD0F500980BCA /* WKWebViewLoadAPIs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewLoadAPIs.mm; sourceTree = "<group>"; };
 		7A5623101AD5AF3E0096B920 /* MenuTypesForMouseEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MenuTypesForMouseEvents.cpp; sourceTree = "<group>"; };
@@ -4082,6 +4088,7 @@
 				464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */,
 				2DE71AFF1D49C2F000904094 /* blinking-div.html */,
 				F4E7A66227222BB100E74D36 /* canvas-image-data.html */,
+				7A33FF2F27C82F0B00D7E03E /* CaptivePortalPDF.html */,
 				2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */,
 				2EFF06C61D886A560004BB30 /* change-video-source-on-end.html */,
 				839AA35E21A26ACD00980DD6 /* client-side-redirect.html */,
@@ -4320,6 +4327,7 @@
 				57EDFC5B245A18F500959521 /* web-authentication-make-credential-la-no-mock.html */,
 				5742178D2400D26C002B303D /* web-authentication-make-credential-la.html */,
 				46A44A5325A782DD00F61E16 /* webaudio-createMediaElementSource.html */,
+				7A33FF3227C8314D00D7E03E /* webkit-logo.pdf */,
 				51714EB21CF8C761004723C4 /* WebProcessKillIDBCleanup-1.html */,
 				51714EB31CF8C761004723C4 /* WebProcessKillIDBCleanup-2.html */,
 				5120C83B1E674E350025B250 /* WebsiteDataStoreCustomPaths.html */,

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2004, 2005, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #include "ImageObserver.h"
 #include "Length.h"
 #include "MIMETypeRegistry.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SVGImage.h"
 #include "SharedBuffer.h"
 #include <math.h>
@@ -75,6 +76,8 @@ RefPtr<Image> Image::create(ImageObserver& observer)
     auto url = observer.sourceUrl();
     if (isPDFResource(mimeType, url) || isPostScriptResource(mimeType, url)) {
 #if USE(CG) && !USE(WEBKIT_IMAGE_DECODERS)
+        if (!RuntimeEnabledFeatures::sharedFeatures().arePDFImagesEnabled())
+            return nullptr;
         return PDFDocumentImage::create(&observer);
 #else
         return nullptr;

@@ -561,6 +561,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     ScriptExecutionContext::setCrossOriginMode(parameters.crossOriginMode);
     m_isCaptivePortalModeEnabled = parameters.isCaptivePortalModeEnabled;
+    RuntimeEnabledFeatures::sharedFeatures().setArePDFImagesEnabled(!m_isCaptivePortalModeEnabled);
 
 #if ENABLE(SERVICE_CONTROLS)
     setEnabledServices(parameters.hasImageServices, parameters.hasSelectionServices, parameters.hasRichContentServices);

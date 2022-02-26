@@ -7836,12 +7836,28 @@ static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, Shoul
     EXPECT_EQ(runJSCheck(mathMLCheck), true); // MathML.
 }
 
+@interface CaptivePortalMessageHandler : NSObject <WKScriptMessageHandler, WKNavigationDelegate>
+@end
+
+@implementation CaptivePortalMessageHandler
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    receivedScriptMessage = true;
+    scriptMessages.append(message);
+}
+
+@end
+
 TEST(ProcessSwap, NavigatingToCaptivePortalMode)
 {
+    auto messageHandler = adoptNS([[CaptivePortalMessageHandler alloc] init]);
+
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences._captivePortalModeEnabled);
     [webViewConfiguration.get().preferences _setMediaDevicesEnabled:YES];
     webViewConfiguration.get().preferences._mediaCaptureRequiresSecureConnection = NO;
+    [webViewConfiguration.get().userContentController addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
@@ -7865,6 +7881,15 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
     EXPECT_TRUE(isJITEnabled(webView.get()));
     checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::Yes);
 
+    finishedNavigation = false;
+    receivedScriptMessage = false;
+    url = [[NSBundle mainBundle] URLForResource:@"CaptivePortalPDF" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+
+    EXPECT_FALSE(receivedScriptMessage);
+    EXPECT_TRUE(scriptMessages.isEmpty());
+
     delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
         EXPECT_FALSE(preferences._captivePortalModeEnabled);
         [preferences _setCaptivePortalModeEnabled:YES];
@@ -7880,6 +7905,15 @@ TEST(ProcessSwap, NavigatingToCaptivePortalMode)
     EXPECT_NE(pid1, [webView _webProcessIdentifier]);
     EXPECT_FALSE(isJITEnabled(webView.get()));
     checkSettingsControlledByCaptivePortalMode(webView.get(), ShouldBeEnabled::No);
+
+    finishedNavigation = false;
+    receivedScriptMessage = false;
+    url = [[NSBundle mainBundle] URLForResource:@"CaptivePortalPDF" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    TestWebKitAPI::Util::run(&finishedNavigation);
+
+    EXPECT_TRUE(receivedScriptMessage);
+    EXPECT_WK_STREQ("Error loading PDF", getNextMessage().body);
 }
 
 TEST(ProcessSwap, CaptivePortalModeSystemSettingChange)

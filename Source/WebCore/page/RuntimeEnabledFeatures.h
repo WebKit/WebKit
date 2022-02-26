@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -200,7 +200,10 @@ public:
     void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { m_accessibilityIsolatedTree = isEnabled; }
     bool isAccessibilityIsolatedTreeEnabled() const { return m_accessibilityIsolatedTree; }
 #endif
-    
+
+    void setArePDFImagesEnabled(bool isEnabled) { m_arePDFImagesEnabled = isEnabled; }
+    bool arePDFImagesEnabled() const { return m_arePDFImagesEnabled; }
+
 #if HAVE(INCREMENTAL_PDF_APIS)
     void setIncrementalPDFLoadingEnabled(bool isEnabled) { m_incrementalPDFLoadingEnabled = isEnabled; }
     bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
@@ -353,6 +356,8 @@ private:
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };
 #endif
+
+    bool m_arePDFImagesEnabled { true };
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     bool m_incrementalPDFLoadingEnabled { false };
