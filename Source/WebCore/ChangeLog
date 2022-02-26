@@ -1,3 +1,25 @@
+2022-02-25  Chris Dumez  <cdumez@apple.com>
+
+        Use the modern Hasher more in Content Extensions code
+        https://bugs.webkit.org/show_bug.cgi?id=237228
+
+        Reviewed by Darin Adler.
+
+        * contentextensions/CombinedFiltersAlphabet.cpp:
+        (WebCore::ContentExtensions::add):
+        (WebCore::ContentExtensions::TermCreatorTranslator::hash):
+        * contentextensions/CombinedFiltersAlphabet.h:
+        (WebCore::ContentExtensions::CombinedFiltersAlphabet::TermPointerHash::hash):
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::add):
+        (WebCore::ContentExtensions::TriggerHash::hash):
+        * contentextensions/Term.h:
+        (WebCore::ContentExtensions::Term::Group::operator== const):
+        (WebCore::ContentExtensions::add):
+        (WebCore::ContentExtensions::Term::CharacterSet::hash const): Deleted.
+        (WebCore::ContentExtensions::Term::Group::hash const): Deleted.
+        (WebCore::ContentExtensions::Term::hash const): Deleted.
+
 2022-02-25  Brandon Stewart  <brandonstewart@apple.com>
 
         Do not trigger didFail during FileReaderLoader Destruction

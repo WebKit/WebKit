@@ -80,10 +80,15 @@ struct Trigger {
     }
 };
 
+inline void add(Hasher& hasher, const Trigger& trigger)
+{
+    add(hasher, trigger.urlFilterIsCaseSensitive, trigger.urlFilter, trigger.flags, trigger.conditions);
+}
+
 struct TriggerHash {
     static unsigned hash(const Trigger& trigger)
     {
-        return computeHash(trigger.urlFilterIsCaseSensitive, trigger.urlFilter, trigger.flags, trigger.conditions);
+        return computeHash(trigger);
     }
     static bool equal(const Trigger& a, const Trigger& b)
     {
