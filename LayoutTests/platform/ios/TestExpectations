@@ -3500,9 +3500,6 @@ webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
 
 webkit.org/b/236794 editing/spelling/editing-word-with-marker-2.html [ Pass Crash ]
 
-webkit.org/b/237164 [ Debug ] webrtc/vp8-then-h264-gpu-process-crash.html [ Crash ]
-webkit.org/b/237164 [ Debug ] fast/mediastream/video-rotation-gpu-process-crash.html [ Crash ]
-
 webkit.org/b/237159 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-049.html [ Pass Crash ]
 
 webkit.org/b/237161 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https.html [ Pass Failure ]
