@@ -191,6 +191,12 @@ protected:
         return bitmap->createImage();
     }
 
+    void drawConsuming(WebCore::GraphicsContext& destContext, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, const WebCore::ImagePaintingOptions& options) final
+    {
+        ASSERT(&destContext != &context());
+        destContext.drawImageBuffer(*this, destRect, srcRect, options);
+    }
+
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final
     {
         return copyNativeImage();

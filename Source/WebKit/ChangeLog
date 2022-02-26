@@ -1,3 +1,39 @@
+2022-02-25  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Implement RemoteImageBufferProxy::drawConsuming()
+        https://bugs.webkit.org/show_bug.cgi?id=236685
+        rdar://89007426
+
+        Reviewed by Simon Fraser.
+
+        RemoteImageBufferProxy::drawConsuming() should call drawImageBuffer() of
+        the destination GraphicsContext. No recursion will happen and the expected
+        behavior will be achieved by this change. 
+
+        This is the sequence of calls when the Destination GraphicsContext is
+        local and when it is remote:
+
+        -- Destination GraphicsContext is local:
+           In this case, the backend of the RemoteImageBufferProxy can be mapped
+           in WebProcess; i.e. we do have access to its memory.
+           ConcreteImageBuffer::draw() will be called eventually. This function
+           will call its backend->draw() which will get a NativeImage by calling
+           backend->copyNativeImage(). There is no difference between draw() and
+           drawConsuming() in this case because the backend is still owned by
+           GPUProcess. So it will not be released immediately. We do not copy the
+           pixels since we have to pass DontCopyBackingStore to copyNativeImage().
+
+        -- Destination GraphicsContext is remote:
+           In this case, Recorder::drawImageBuffer() will be called which will
+           call RemoteDisplayListRecorderProxy::recordDrawImageBuffer(). This
+           will send a message to GPUProcess and hence all the drawing will 
+           happen in GPUProcess. Similar to the case of the local GraphicsContext,
+           no pixels will be copied from the RemoteImageBuffer backend to the
+           NativeImage in all cases. The assumption is the backend will be destroyed
+           automatically after calling drawConsuming().
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2022-02-25  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Fallback to attestation=none whenever attestation fails

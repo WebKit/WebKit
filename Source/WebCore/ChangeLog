@@ -1,3 +1,16 @@
+2022-02-25  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Implement RemoteImageBufferProxy::drawConsuming()
+        https://bugs.webkit.org/show_bug.cgi?id=236685
+        rdar://89007426
+
+        Reviewed by Simon Fraser.
+
+        Assert ImageBuffer::drawConsuming() does not draw into its backend before
+        it is destroyed.
+
+        * platform/graphics/ConcreteImageBuffer.h:
+
 2022-02-25  Alejandro G. Castro  <alex@igalia.com> and Fujii Hironori <Hironori.Fujii@sony.com>
 
         [GTK][WPE][WC] Move ANGLE context initialisation to GraphicsContextGLTextureMapper::initialize

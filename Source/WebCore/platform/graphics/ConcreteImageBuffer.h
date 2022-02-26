@@ -196,6 +196,7 @@ protected:
 
     void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options) override
     {
+        ASSERT(&destContext != &context());
         if (auto* backend = ensureBackendCreated()) {
             flushDrawingContext();
             backend->drawConsuming(destContext, destRect, srcRect, options);
