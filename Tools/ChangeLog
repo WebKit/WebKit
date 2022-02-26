@@ -1,3 +1,14 @@
+2022-02-25  Sihui Liu  <sihui_liu@apple.com>
+
+        [macOS] TestWebKitAPI.WebKit.MigrateLocalStorageDataToGeneralStorageDirectory is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=237065
+        <rdar://problem/89324250>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2022-02-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adjust -[WKContentView _requiresKeyboardWhenFirstResponder] to account for editable web views

@@ -850,6 +850,7 @@ TEST(WebKit, MigrateLocalStorageDataToGeneralStorageDirectory)
         TestWebKitAPI::Util::run(&receivedScriptMessage);
         EXPECT_WK_STREQ("testvalue", getNextMessage().body);
         EXPECT_TRUE([fileManager fileExistsAtPath:localStorageFile.path]);
+        EXPECT_FALSE([fileManager fileExistsAtPath:newLocalStorageFile.path]);
     }
 
     // Create a new WebsiteDataStore that performs migration.
@@ -862,7 +863,7 @@ TEST(WebKit, MigrateLocalStorageDataToGeneralStorageDirectory)
     [thirdWebView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ("testvalue", getNextMessage().body);
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:localStorageFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:localStorageFile.path]);
     EXPECT_TRUE([fileManager fileExistsAtPath:newLocalStorageFile.path]);
 }
 

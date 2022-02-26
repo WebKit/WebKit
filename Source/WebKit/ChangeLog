@@ -1,3 +1,21 @@
+2022-02-25  Sihui Liu  <sihui_liu@apple.com>
+
+        [macOS] TestWebKitAPI.WebKit.MigrateLocalStorageDataToGeneralStorageDirectory is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=237065
+        <rdar://problem/89324250>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Commit transactions of SQLiteStorageArea at exit of network process.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        * NetworkProcess/storage/SQLiteStorageArea.cpp:
+        (WebKit::commitTransactionsAtExit):
+        (WebKit::SQLiteStorageArea::SQLiteStorageArea):
+        (WebKit::SQLiteStorageArea::startTransactionIfNecessary):
+        (WebKit::SQLiteStorageArea::commitTransactionIfNecessary):
+
 2022-02-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Adjust -[WKContentView _requiresKeyboardWhenFirstResponder] to account for editable web views
