@@ -1,3 +1,13 @@
+2022-02-25  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Add access to required mach service in the Network process
+        https://bugs.webkit.org/show_bug.cgi?id=237216
+        <rdar://89176897>
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2022-02-25  Brent Fulgham  <bfulgham@apple.com>
 
         WebKit continues to render PDF images in Captive Portal mode

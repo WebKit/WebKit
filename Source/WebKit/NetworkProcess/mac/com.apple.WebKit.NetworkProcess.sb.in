@@ -450,6 +450,10 @@
 (allow mach-lookup
     (global-name "com.apple.tccd"))
 
+;; <rdar://89031731>
+(allow mach-lookup
+    (global-name "com.apple.networkserviceproxy.fetch-token"))
+
 (allow file-read* file-write*
     (home-subpath "/Library/HTTPStorages"))
 
