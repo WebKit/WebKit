@@ -1,3 +1,13 @@
+2022-02-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrollbars disappear when very long or wide
+        https://bugs.webkit.org/show_bug.cgi?id=237232
+
+        Reviewed by Tim Horton.
+
+        * fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar-expected-mismatch.html: Added.
+        * fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html: Added.
+
 2022-02-25  Chris Dumez  <cdumez@apple.com>
 
         SharedArrayBuffer posted to AudioWorkletProcessor is not actually shared with the main thread

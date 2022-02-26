@@ -1,3 +1,31 @@
+2022-02-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Scrollbars disappear when very long or wide
+        https://bugs.webkit.org/show_bug.cgi?id=237232
+        <rdar://17540446>
+
+        Reviewed by Tim Horton.
+
+        Our tiling logic does not play nicely with AppKit's NSScrollerImps, probably because we
+        inadvertently unparent its layers.
+
+        Fix by disallowing GraphicsLayers for scrollbars from going into tiled mode, for
+        both root and overflow scrollbars.
+
+        Test: fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setAllowsTiling):
+        (WebCore::GraphicsLayer::allowsTiling const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::requiresTiledLayer const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateOverflowControlsLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+
 2022-02-25  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Implement RemoteImageBufferProxy::drawConsuming()

@@ -4374,7 +4374,7 @@ void GraphicsLayerCA::setCustomAppearance(CustomAppearance customAppearance)
 
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 {
-    if (!m_drawsContent || isPageTiledBackingLayer())
+    if (!m_drawsContent || isPageTiledBackingLayer() || !allowsTiling())
         return false;
 
     // FIXME: catch zero-size height or width here (or earlier)?

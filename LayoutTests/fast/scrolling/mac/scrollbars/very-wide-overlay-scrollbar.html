@@ -1,0 +1,49 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ MockScrollbarsEnabled=false AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            height: 200px;
+            width: 2096px; /* Wider than the 2048 tiling threshold */
+            border: 1px solid black;
+            overflow-x: scroll;
+        }
+
+        .content {
+            width: 200%;
+        }
+    </style>
+    <script src="../../../../resources/ui-helper.js"></script>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        if (window.internals)
+            internals.setUsesOverlayScrollbars(true);
+
+        async function runTest()
+        {
+            let scroller = document.querySelector('.scroller');
+            await UIHelper.mouseWheelMayBeginAt(100, 100);
+            await UIHelper.waitForCondition(() => {
+                let state = internals.horizontalScrollbarState(scroller);
+                console.log(state);
+                return state.indexOf('visible_thumb') != -1;
+            });
+            
+            testRunner.notifyDone();
+        }
+        
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                runTest();
+            }, 20);
+        }, false);
+    </script>
+</head>
+<body>
+    <div class="scroller">
+        <div class="content">Scrolled content</div>
+    </div>
+</body>
+</html>

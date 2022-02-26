@@ -589,6 +589,9 @@ public:
     virtual void setAllowsBackingStoreDetaching(bool) { }
     virtual bool allowsBackingStoreDetaching() const { return true; }
 
+    virtual void setAllowsTiling(bool allowsTiling) { m_allowsTiling = allowsTiling; }
+    virtual bool allowsTiling() const { return m_allowsTiling; }
+
     virtual void deviceOrPageScaleFactorChanged() { }
     WEBCORE_EXPORT void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
@@ -743,6 +746,7 @@ protected:
     bool m_contentsRectClipsDescendants : 1;
     bool m_acceleratesDrawing : 1;
     bool m_usesDisplayListDrawing : 1;
+    bool m_allowsTiling : 1;
     bool m_appliesPageScale : 1; // Set for the layer which has the page scale applied to it.
     bool m_showDebugBorder : 1;
     bool m_showRepaintCounter : 1;

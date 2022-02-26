@@ -2125,9 +2125,10 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
 
         if (needLayer) {
             layer = createGraphicsLayer(layerName);
-            if (drawsContent)
+            if (drawsContent) {
                 layer->setAllowsBackingStoreDetaching(false);
-            else {
+                layer->setAllowsTiling(false);
+            } else {
                 layer->setPaintingPhase({ });
                 layer->setDrawsContent(false);
             }
