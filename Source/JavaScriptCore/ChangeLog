@@ -1,3 +1,12 @@
+2022-02-26  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Remove UNUSED warnings for non-Cocoa platform after r290449
+        https://bugs.webkit.org/show_bug.cgi?id=237233
+
+        Reviewed by Darin Adler.
+
+        * runtime/JSDateMath.cpp:
+
 2022-02-24  Mark Lam  <mark.lam@apple.com>
 
         Remove incorrect ASSERT.

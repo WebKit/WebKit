@@ -97,7 +97,9 @@
 
 namespace JSC {
 
+#if PLATFORM(COCOA)
 static std::atomic<uint64_t> lastTimeZoneID { 1 };
+#endif
 
 #if HAVE(ICU_C_TIMEZONE_API)
 class OpaqueICUTimeZone {
