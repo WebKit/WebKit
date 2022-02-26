@@ -695,7 +695,9 @@ set_source_files_properties(
     libpas/src/libpas/pas_fast_megapage_cache.c
     PROPERTIES LANGUAGE CXX)
 
-WEBKIT_ADD_TARGET_CXX_FLAGS(bmalloc -Wno-missing-field-initializers)
+WEBKIT_ADD_TARGET_CXX_FLAGS(bmalloc
+    -Wno-missing-field-initializers
+    -Wno-cast-align)
 
 # Only build mbmalloc on platforms that MallocBench supports
 if (DEVELOPER_MODE AND (APPLE OR HAVE_MALLOC_TRIM))

@@ -1,3 +1,16 @@
+2022-02-25  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [libpas] Suppress cast-align warnings
+        https://bugs.webkit.org/show_bug.cgi?id=237179
+        <rdar://problem/89479570>
+
+        Reviewed by Yusuke Suzuki.
+
+        Ignore cast-align warnings for libpas target.
+
+        * CMakeLists.txt:
+        * libpas/src/libpas/bmalloc_heap_inlines.h:
+
 2022-02-23  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [libpas] PlayStation uses 16k page size.
