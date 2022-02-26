@@ -193,6 +193,7 @@ public:
     bool isRubberBandInProgress() const final;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
     bool isScrollSnapInProgress() const final;
+    bool scrollAnimatorEnabled() const final;
     bool mockScrollbarsControllerEnabled() const final;
     void logMockScrollbarsControllerMessage(const String&) const final;
 

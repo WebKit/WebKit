@@ -1,3 +1,16 @@
+2022-02-26  Simon Fraser  <simon.fraser@apple.com>
+
+        No animation when scroll snap scroller is navigated with the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=236244
+
+        Reviewed by Tim Horton.
+
+        Turn off the scroll animator for these tests that assume that scrolling is instantaneous.
+
+        * css3/scroll-snap/scroll-padding-overflow-paging.html:
+        * fast/events/wheelevent-in-scrolling-div.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-overflow-rtl-with-keyboard.html:
+
 2022-02-26  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION(r290358): [ Debug EWS ] ASSERTION FAILED: sample && sample->pixelBuffer()

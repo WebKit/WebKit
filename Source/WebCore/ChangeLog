@@ -1,3 +1,19 @@
+2022-02-26  Simon Fraser  <simon.fraser@apple.com>
+
+        No animation when scroll snap scroller is navigated with the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=236244
+
+        Reviewed by Tim Horton.
+
+        Keyboard-driven scrolls in overflow didn't animate, simply because scrollAnimatorEnabled()
+        wasn't implemented for RenderLayerScrollableArea.
+
+        I could not figure out a reliable way to test that we animated the scroll.
+
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::scrollAnimatorEnabled const):
+        * rendering/RenderLayerScrollableArea.h:
+
 2022-02-25  Simon Fraser  <simon.fraser@apple.com>
 
         Scrollbars disappear when very long or wide
