@@ -318,6 +318,7 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 
 @interface UIResponder (Internal)
 - (void)_share:(id)sender;
+@property (nonatomic, readonly) BOOL _requiresKeyboardWhenFirstResponder;
 @end
 
 @interface UIWebGeolocationPolicyDecider : NSObject

@@ -1,3 +1,21 @@
+2022-02-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adjust -[WKContentView _requiresKeyboardWhenFirstResponder] to account for editable web views
+        https://bugs.webkit.org/show_bug.cgi?id=237226
+        rdar://89447095
+
+        Reviewed by Aditya Keerthi.
+
+        Add an API test to exercise the change. This new API test is comprised of 3 parts:
+        - Verify that `-_requiresKeyboardWhenFirstResponder` is NO after loading the page.
+        - Verify that `-_requiresKeyboardWhenFirstResponder` becomes YES after making the web view editable.
+        - Verify that `-_requiresKeyboardWhenFirstResponder` is NO again after focusing a readonly input inside the
+          now-editable web view.
+
+        * TestWebKitAPI/Tests/ios/KeyboardInputTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2022-02-25  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Fallback to attestation=none whenever attestation fails

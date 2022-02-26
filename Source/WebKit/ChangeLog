@@ -1,3 +1,25 @@
+2022-02-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Adjust -[WKContentView _requiresKeyboardWhenFirstResponder] to account for editable web views
+        https://bugs.webkit.org/show_bug.cgi?id=237226
+        rdar://89447095
+
+        Reviewed by Aditya Keerthi.
+
+        Adjust the implementation of `-[WKContentView _requiresKeyboardWhenFirstResponder]`, such that it returns YES
+        for editable web views, except for the scenario where an input field that does *not* require the automatic
+        keyboard is currently focused in the page inside the editable web view (e.g. a `readonly` text field).
+
+        UIKit consults this method to know whether or not a given responder would require the keyboard (either software
+        keyboard or the minimized UCB for hardware keyboard) if it were to become the first responder. For web views
+        that are made editable in the SPI sense, we know a-priori that this should return YES, unless a readonly element
+        underneath the web view has focus (in which case, `_disableAutomaticKeyboardUI` would be true).
+
+        Test: KeyboardInputTests.EditableWebViewRequiresKeyboardWhenFirstResponder
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+
 2022-02-25  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Implement RemoteImageBufferProxy::drawConsuming()

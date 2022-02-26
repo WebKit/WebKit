@@ -2343,6 +2343,8 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (BOOL)_requiresKeyboardWhenFirstResponder
 {
+    if ([_webView _isEditable] && !self._disableAutomaticKeyboardUI)
+        return YES;
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
     return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode] || _seenHardwareKeyDownInNonEditableElement;
 }

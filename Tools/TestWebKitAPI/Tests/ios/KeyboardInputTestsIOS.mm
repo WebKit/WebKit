@@ -871,6 +871,28 @@ TEST(KeyboardInputTests, DoNotCrashWhenFocusingSelectWithoutViewSnapshot)
     [webView waitForNextPresentationUpdate];
 }
 
+TEST(KeyboardInputTests, EditableWebViewRequiresKeyboardWhenFirstResponder)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto delegate = adoptNS([TestInputDelegate new]);
+    [webView _setInputDelegate:delegate.get()];
+    [delegate setFocusStartsInputSessionPolicyHandler:[](WKWebView *, id <_WKFocusedElementInfo>) {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    auto contentView = [webView textInputContentView];
+    [webView synchronouslyLoadHTMLString:@"<input value='foo' readonly>"];
+    EXPECT_FALSE([contentView _requiresKeyboardWhenFirstResponder]);
+
+    [webView _setEditable:YES];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE([contentView _requiresKeyboardWhenFirstResponder]);
+
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('input').focus()"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_FALSE([contentView _requiresKeyboardWhenFirstResponder]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(IOS_FAMILY)
