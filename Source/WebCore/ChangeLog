@@ -1,3 +1,17 @@
+2022-02-25  Brandon Stewart  <brandonstewart@apple.com>
+
+        Do not trigger didFail during FileReaderLoader Destruction
+        https://bugs.webkit.org/show_bug.cgi?id=237060
+
+        Reviewed by Darin Adler.
+
+        Setting cancel() instead of terminate() will prevent the didFail() method from being triggered.
+        This method has the unfortunate side effect of trying to allocate memory, which is not allowed when
+        under going a sweep event.
+
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::~FileReaderLoader):
+
 2022-02-25  Brent Fulgham  <bfulgham@apple.com>
 
         WebKit continues to render PDF images in Captive Portal mode
