@@ -1608,7 +1608,7 @@ TEST(WTF_WeakPtr, WeakHashMapIterators)
     }
 
     {
-        WeakHashMap<Base, Ref<ValueObject>> weakHashMap;
+        WeakHashMap<Base, RefPtr<ValueObject>> weakHashMap;
         {
             Vector<std::pair<std::unique_ptr<Base>, RefPtr<ValueObject>>> objects;
             for (unsigned i = 0; i < 50; ++i) {
@@ -1618,7 +1618,7 @@ TEST(WTF_WeakPtr, WeakHashMapIterators)
                     objects.append(std::pair { makeUnique<Base>(), ValueObject::create(i) });
                 objects.last().first->dummy = 0;
                 if (i < 25)
-                    weakHashMap.add(*objects.last().first, *objects.last().second);
+                    weakHashMap.add(*objects.last().first, objects.last().second);
             }
             weakHashMap.checkConsistency();
             EXPECT_EQ(s_baseWeakReferences, 25u);
@@ -1704,7 +1704,7 @@ TEST(WTF_WeakPtr, WeakHashMapIterators)
         }
         EXPECT_EQ(s_baseWeakReferences, 16u);
         EXPECT_TRUE(weakHashMap.hasNullReferences());
-        auto pairs = collectKeyValuePairsUsingIterators<Base*, Ref<ValueObject>>(weakHashMap);
+        auto pairs = collectKeyValuePairsUsingIterators<Base*, RefPtr<ValueObject>>(weakHashMap);
         EXPECT_EQ(pairs.size(), 0U);
         weakHashMap.removeNullReferences();
         EXPECT_FALSE(weakHashMap.hasNullReferences());

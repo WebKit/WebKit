@@ -759,6 +759,7 @@ public:
     template<typename MatchFunction> size_t findIf(const MatchFunction&) const;
     template<typename U> size_t reverseFind(const U&) const;
     template<typename MatchFunction> size_t reverseFindIf(const MatchFunction&) const;
+    template<typename MatchFunction> bool containsIf(const MatchFunction& matches) const { return findIf(matches) != notFound; }
 
     template<typename U> bool appendIfNotContains(const U&);
 

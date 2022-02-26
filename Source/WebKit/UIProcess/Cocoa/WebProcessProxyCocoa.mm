@@ -169,7 +169,7 @@ void WebProcessProxy::cacheMediaMIMETypes(const Vector<String>& types)
 
     mediaTypeCache() = types;
     for (auto& process : processPool().processes()) {
-        if (process != *this)
+        if (process.ptr() != this)
             cacheMediaMIMETypesInternal(types);
     }
 }

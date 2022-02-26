@@ -955,7 +955,7 @@ void WebProcessPool::disableProcessTermination()
 
 bool WebProcessPool::shouldTerminate(WebProcessProxy& process)
 {
-    ASSERT(m_processes.contains(process));
+    ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == &process; }));
 
     if (!m_processTerminationEnabled || m_configuration->alwaysKeepAndReuseSwappedProcesses())
         return false;
@@ -965,7 +965,7 @@ bool WebProcessPool::shouldTerminate(WebProcessProxy& process)
 
 void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
 {
-    ASSERT(m_processes.contains(process));
+    ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == &process; }));
 
     if (!m_visitedLinksPopulated) {
         populateVisitedLinks();
@@ -997,7 +997,7 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
 
 void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 {
-    ASSERT(m_processes.contains(process));
+    ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == &process; }));
 
     if (m_prewarmedProcess == &process) {
         ASSERT(m_prewarmedProcess->isPrewarmed());
@@ -1018,7 +1018,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 
     supplement<WebGeolocationManagerProxy>()->webProcessIsGoingAway(process);
 
-    m_processes.removeFirst(process);
+    m_processes.removeFirstMatching([&](auto& item) { return item.ptr() == &process; });
 
 #if ENABLE(GAMEPAD)
     if (m_processesUsingGamepads.contains(process))
@@ -1032,14 +1032,14 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
 {
     if (!registrableDomain.isEmpty()) {
         if (auto process = webProcessCache().takeProcess(registrableDomain, websiteDataStore, captivePortalMode)) {
-            ASSERT(m_processes.contains(*process));
+            ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
         }
 
         // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
         if (auto process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, registrableDomain, websiteDataStore, captivePortalMode)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processIdentifier());
-            ASSERT(m_processes.contains(*process));
+            ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
         }
     }
@@ -1048,7 +1048,7 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processIdentifier());
         if (!registrableDomain.isEmpty())
             tryPrewarmWithDomainInformation(*process, registrableDomain);
-        ASSERT(m_processes.contains(*process));
+        ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
         return process.releaseNonNull();
     }
 

@@ -191,7 +191,7 @@ std::optional<FilterEffectGeometry> SVGFilterBuilder::effectGeometry(FilterEffec
 bool SVGFilterBuilder::buildEffectExpression(FilterEffect& effect, FilterEffectVector& stack, unsigned level, SVGFilterExpression& expression) const
 {
     // A cycle is detected.
-    if (stack.contains(effect))
+    if (stack.containsIf([&](auto& item) { return item.ptr() == &effect; }))
         return false;
 
     stack.append(effect);
@@ -204,7 +204,7 @@ bool SVGFilterBuilder::buildEffectExpression(FilterEffect& effect, FilterEffectV
     }
 
     ASSERT(!stack.isEmpty());
-    ASSERT(stack.last() == effect);
+    ASSERT(stack.last().ptr() == &effect);
 
     stack.removeLast();
     return true;

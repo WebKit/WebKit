@@ -1,3 +1,20 @@
+2022-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Drop Ref<>'s operator==() as it is a bit ambiguous / confusing
+        https://bugs.webkit.org/show_bug.cgi?id=237231
+
+        Reviewed by Darin Adler.
+
+        Drop Ref<>'s operator==() as it is a bit ambiguous / confusing. Some people expect it to compare
+        pointers while other expect it to compare the values we hold references to.
+        It seems best to omit this operator and be explicit at call sites.
+
+        * wtf/Ref.h:
+        (WTF::operator==): Deleted.
+        (WTF::operator!=): Deleted.
+        * wtf/Vector.h:
+        (WTF::Vector::containsIf const):
+
 2022-02-25  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Add missing header build rule for Scripts/Preferences/*

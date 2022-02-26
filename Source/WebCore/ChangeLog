@@ -1,3 +1,21 @@
+2022-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Drop Ref<>'s operator==() as it is a bit ambiguous / confusing
+        https://bugs.webkit.org/show_bug.cgi?id=237231
+
+        Reviewed by Darin Adler.
+
+        Drop Ref<>'s operator==() as it is a bit ambiguous / confusing. Some people expect it to compare
+        pointers while other expect it to compare the values we hold references to.
+        It seems best to omit this operator and be explicit at call sites.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::startSource):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::removeElementToRebuild):
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::buildEffectExpression const):
+
 2022-02-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Update CSP handling of javascript URLs

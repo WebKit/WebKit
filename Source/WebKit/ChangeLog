@@ -1,3 +1,23 @@
+2022-02-26  Chris Dumez  <cdumez@apple.com>
+
+        Drop Ref<>'s operator==() as it is a bit ambiguous / confusing
+        https://bugs.webkit.org/show_bug.cgi?id=237231
+
+        Reviewed by Darin Adler.
+
+        Drop Ref<>'s operator==() as it is a bit ambiguous / confusing. Some people expect it to compare
+        pointers while other expect it to compare the values we hold references to.
+        It seems best to omit this operator and be explicit at call sites.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::cacheMediaMIMETypes):
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::removeAll):
+        (WebKit::VisitedLinkStore::sendStoreHandleToProcess):
+        (WebKit::VisitedLinkStore::didUpdateSharedStringHashes):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::shouldTerminate):
+
 2022-02-26  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Multiple concurrency violations in LibWebRTCCodecsProxy
