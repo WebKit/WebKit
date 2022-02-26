@@ -287,9 +287,6 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     m_sampleBufferDisplayLayerManager->close();
 #endif
-#if PLATFORM(COCOA) && USE(LIBWEBRTC)
-    m_libWebRTCCodecsProxy->close();
-#endif
 
     --gObjectCountForTesting;
 }
@@ -324,7 +321,9 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
         WCContentBufferManager::singleton().removeAllContentBuffersForProcess(webProcessIdentifier);
     });
 #endif
-
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+    m_libWebRTCCodecsProxy = nullptr;
+#endif
     gpuProcess().connectionToWebProcessClosed(connection);
     gpuProcess().removeGPUConnectionToWebProcess(*this); // May destroy |this|.
 }

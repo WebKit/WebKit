@@ -1,3 +1,56 @@
+2022-02-26  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Multiple concurrency violations in LibWebRTCCodecsProxy
+        https://bugs.webkit.org/show_bug.cgi?id=236767
+        <rdar://88904160>
+
+        Reviewed by Antti Koivisto.
+
+        - ThreadMessageReceivers should not add IPC listeners in constructors,
+        as the delivery starts right away and uses the unconstructed virtual pointer.
+        - The work queue functions should not use GPUConnectionToWebProcess, as that is
+        main thread object.
+        - Locked m_encoders, m_decoders are sometimes accessed without lock.
+
+        Instead:
+        - Add the IPC listeners in initialize function.
+        - Remove the IPC listeners when GPUConnectionToWebProcess disconnects.
+        - Store the thread-safe conection, video frame object heap, process identity
+        objects as member variables.
+        - Do not lock m_encoders, m_decoders. If they are work queue instances,
+        just access them in the work queue functions. Add thread requirements
+        to the variables so that the compiler checks the access.
+        - Use IPC testing assertions when skipping incorrect messages.
+        - Use separate atomic counter (bool) to check if allowsExitUnderMemoryPressure.
+
+        No new tests, tested with existing tests and ASAN.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::~GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::didClose):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::create):
+        (WebKit::LibWebRTCCodecsProxy::LibWebRTCCodecsProxy):
+        (WebKit::LibWebRTCCodecsProxy::stopListeningForIPC):
+        (WebKit::LibWebRTCCodecsProxy::initialize):
+        (WebKit::LibWebRTCCodecsProxy::dispatchToThread):
+        (WebKit::LibWebRTCCodecsProxy::createDecoderCallback):
+        (WebKit::LibWebRTCCodecsProxy::createH264Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createH265Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createVP9Decoder):
+        (WebKit::LibWebRTCCodecsProxy::releaseDecoder):
+        (WebKit::LibWebRTCCodecsProxy::createEncoder):
+        (WebKit::LibWebRTCCodecsProxy::releaseEncoder):
+        (WebKit::LibWebRTCCodecsProxy::initializeEncoder):
+        (WebKit::LibWebRTCCodecsProxy::findEncoder):
+        (WebKit::LibWebRTCCodecsProxy::encodeFrame):
+        (WebKit::LibWebRTCCodecsProxy::setEncodeRates):
+        (WebKit::LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore):
+        (WebKit::LibWebRTCCodecsProxy::setSharedVideoFrameMemory):
+        (WebKit::LibWebRTCCodecsProxy::allowsExitUnderMemoryPressure const):
+
 2022-02-25  Sihui Liu  <sihui_liu@apple.com>
 
         [macOS] TestWebKitAPI.WebKit.MigrateLocalStorageDataToGeneralStorageDirectory is a flaky failure
