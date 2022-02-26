@@ -1,3 +1,20 @@
+2022-02-26  Alan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Clean up descendant floats when a block container becomes float
+        https://bugs.webkit.org/show_bug.cgi?id=237238
+        <rdar://79960422>
+
+        Reviewed by Antti Koivisto.
+
+        When a block box becomes float, it forms a "lockdown" container for the descendant floats by establishing a BFC.
+        What it means is that such descendant floats can't intrude to sibling block containers anymore.
+        This patch ensures that we remove such floats from sibling (and their descendant) renderers.
+
+        Test: fast/block/float/float-merge-anon-parent-crash.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::normalizeTreeAfterStyleChange):
+
 2022-02-26  Simon Fraser  <simon.fraser@apple.com>
 
         No animation when scroll snap scroller is navigated with the keyboard

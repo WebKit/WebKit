@@ -1,0 +1,35 @@
+<style>
+  html {
+    -webkit-user-modify: read-write;
+  }
+  span {
+    padding: 1px;
+  }
+  div {
+    padding: 123456789px;
+  }
+  div:only-child, div:nth-child(2) {
+    float: left;
+  }
+</style>
+<body>
+<!-- PASS if no crash or assert. -->
+<span></span><div><div></body>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+    
+let firstDiv = document.createElement('div');
+document.body.appendChild(firstDiv);
+firstDiv.appendChild(document.createElement('div'));
+let middleDiv = document.createElement('div');
+document.body.appendChild(middleDiv);
+middleDiv.appendChild(document.createElement('span'));
+middleDiv.appendChild(document.createElement('div'));
+let lastDiv = document.createElement('div');
+middleDiv.appendChild(lastDiv);
+lastDiv.appendChild(document.createElement('div'));
+
+document.execCommand('SelectAll');
+document.execCommand('Delete');
+</script>

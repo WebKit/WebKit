@@ -641,10 +641,18 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
     if (noLongerAffectsParent) {
         childFlowStateChangesAndNoLongerAffectsParentBlock(renderer);
 
-        if (is<RenderBlockFlow>(renderer)) {
+        if (isFloating && is<RenderBlockFlow>(renderer)) {
+            auto clearDescendantFloats = [&] {
+                // These descendent floats can not intrude other, sibling block containers anymore.
+                for (auto& descendant : descendantsOfType<RenderBox>(renderer)) {
+                    if (descendant.isFloatingOrOutOfFlowPositioned())
+                        descendant.removeFloatingOrPositionedChildFromBlockLists();
+                }
+            };
+            clearDescendantFloats();
             // Fresh floats need to be reparented if they actually belong to the previous anonymous block.
             // It copies the logic of RenderBlock::addChildIgnoringContinuation
-            if (isFloating && renderer.previousSibling() && renderer.previousSibling()->isAnonymousBlock())
+            if (renderer.previousSibling() && renderer.previousSibling()->isAnonymousBlock())
                 move(downcast<RenderBoxModelObject>(parent), downcast<RenderBoxModelObject>(*renderer.previousSibling()), renderer, RenderTreeBuilder::NormalizeAfterInsertion::No);
         }
     }
