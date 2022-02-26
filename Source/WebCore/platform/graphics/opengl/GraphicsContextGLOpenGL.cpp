@@ -290,6 +290,11 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 #endif
 }
 
+bool GraphicsContextGLOpenGL::initialize()
+{
+    return platformInitialize();
+}
+
 bool GraphicsContextGLOpenGL::makeContextCurrent()
 {
 #if USE(NICOSIA)

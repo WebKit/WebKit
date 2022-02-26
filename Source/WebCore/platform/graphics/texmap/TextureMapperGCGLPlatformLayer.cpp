@@ -23,7 +23,6 @@
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
 
-#include "ANGLEContext.h"
 #include "ANGLEHeaders.h"
 #include "BitmapTextureGL.h"
 #include "GLContext.h"
@@ -36,77 +35,16 @@ namespace WebCore {
 TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGLANGLE& context)
     : m_context(context)
 {
-    auto sharingContext = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->platformContext();
-#if ENABLE(WEBGL2)
-    m_glContext = ANGLEContext::createContext(sharingContext, context.contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2);
-#else
-    m_glContext = ANGLEContext::createContext(sharingContext, false);
-#endif
-
-#if USE(COORDINATED_GRAPHICS)
-    m_platformLayerProxy = adoptRef(new TextureMapperPlatformLayerProxyGL);
-#endif
 }
 
 TextureMapperGCGLPlatformLayer::~TextureMapperGCGLPlatformLayer()
 {
-#if !USE(COORDINATED_GRAPHICS)
     if (client())
         client()->platformLayerWillBeDestroyed();
-#endif
 }
 
-bool TextureMapperGCGLPlatformLayer::makeContextCurrent()
-{
-    ASSERT(m_glContext);
-    return m_glContext->makeContextCurrent();
-}
-
-GCGLContext TextureMapperGCGLPlatformLayer::platformContext() const
-{
-    ASSERT(m_glContext);
-    return m_glContext->platformContext();
-}
-
-GCGLDisplay TextureMapperGCGLPlatformLayer::platformDisplay() const
-{
-    ASSERT(m_glContext);
-    return m_glContext->platformDisplay();
-}
-
-GCGLConfig TextureMapperGCGLPlatformLayer::platformConfig() const
-{
-    ASSERT(m_glContext);
-    return m_glContext->platformConfig();
-}
-
-#if USE(COORDINATED_GRAPHICS)
-RefPtr<TextureMapperPlatformLayerProxy> TextureMapperGCGLPlatformLayer::proxy() const
-{
-    return m_platformLayerProxy.copyRef();
-}
-
-void TextureMapperGCGLPlatformLayer::swapBuffersIfNeeded()
-{
-    if (m_context.layerComposited())
-        return;
-
-    m_context.prepareTexture();
-    IntSize textureSize(m_context.m_currentWidth, m_context.m_currentHeight);
-    TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (m_context.m_attrs.alpha ? TextureMapperGL::ShouldBlend : 0);
-
-    {
-        Locker locker { m_platformLayerProxy->lock() };
-        downcast<TextureMapperPlatformLayerProxyGL>(*m_platformLayerProxy).pushNextBuffer(makeUnique<TextureMapperPlatformLayerBuffer>(m_context.m_compositorTexture, textureSize, flags, m_context.m_internalColorFormat));
-    }
-
-    m_context.markLayerComposited();
-}
-#else
 void TextureMapperGCGLPlatformLayer::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
-    ASSERT(m_glContext);
-
     m_context.markLayerComposited();
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -129,7 +67,6 @@ void TextureMapperGCGLPlatformLayer::paintToTextureMapper(TextureMapper& texture
     texmapGL.drawTexture(m_context.m_texture, flags, textureSize, targetRect, matrix, opacity);
 #endif // USE(TEXTURE_MAPPER_GL)
 }
-#endif // USE(COORDINATED_GRAPHICS)
 
 } // namespace WebCore
 

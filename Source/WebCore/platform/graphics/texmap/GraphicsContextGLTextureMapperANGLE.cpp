@@ -32,7 +32,9 @@
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
 #include "GraphicsContextGLOpenGLManager.h"
+#include "Logging.h"
 #include "PixelBuffer.h"
+#include "PlatformLayerDisplayDelegate.h"
 
 #if USE(NICOSIA)
 #include "GBMDevice.h"
@@ -41,6 +43,8 @@
 #include <fcntl.h>
 #include <gbm.h>
 #else
+#include "GLContext.h"
+#include "PlatformDisplay.h"
 #include "TextureMapperGCGLPlatformLayer.h"
 #endif
 
@@ -49,11 +53,116 @@ namespace WebCore {
 GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attributes)
     : GraphicsContextGL(attributes)
 {
+}
+
+bool GraphicsContextGLTextureMapper::platformInitializeContext()
+{
+    GraphicsContextGLAttributes attributes = contextAttributes();
 #if ENABLE(WEBGL2)
     m_isForWebGL2 = attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 #endif
+
+    Vector<EGLint> displayAttributes {
+#if !OS(WINDOWS)
+        EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE,
+        EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_EGL_ANGLE,
+        EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE, EGL_PLATFORM_SURFACELESS_MESA,
+#endif
+        EGL_NONE,
+    };
+
+    m_displayObj = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes.data());
+    if (m_displayObj == EGL_NO_DISPLAY)
+        return false;
+
+    EGLint majorVersion, minorVersion;
+    if (EGL_Initialize(m_displayObj, &majorVersion, &minorVersion) == EGL_FALSE) {
+        LOG(WebGL, "EGLDisplay Initialization failed.");
+        return false;
+    }
+    LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
+
+    const char* displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
+    LOG(WebGL, "Extensions: %s", displayExtensions);
+
+    EGLint configAttributes[] = {
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+        EGL_RED_SIZE, 8,
+        EGL_GREEN_SIZE, 8,
+        EGL_BLUE_SIZE, 8,
+        EGL_ALPHA_SIZE, 8,
+        EGL_DEPTH_SIZE, 0,
+        EGL_STENCIL_SIZE, 0,
+        EGL_NONE
+    };
+    EGLint numberConfigsReturned = 0;
+    EGL_ChooseConfig(m_displayObj, configAttributes, &m_configObj, 1, &numberConfigsReturned);
+    if (numberConfigsReturned != 1) {
+        LOG(WebGL, "EGLConfig Initialization failed.");
+        return false;
+    }
+    LOG(WebGL, "Got EGLConfig");
+
+    EGL_BindAPI(EGL_OPENGL_ES_API);
+    if (EGL_GetError() != EGL_SUCCESS) {
+        LOG(WebGL, "Unable to bind to OPENGL_ES_API");
+        return false;
+    }
+
+    Vector<EGLint> eglContextAttributes;
+    if (m_isForWebGL2) {
+        eglContextAttributes.append(EGL_CONTEXT_CLIENT_VERSION);
+        eglContextAttributes.append(3);
+    } else {
+        eglContextAttributes.append(EGL_CONTEXT_CLIENT_VERSION);
+        eglContextAttributes.append(2);
+        // ANGLE will upgrade the context to ES3 automatically unless this is specified.
+        eglContextAttributes.append(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE);
+        eglContextAttributes.append(EGL_FALSE);
+    }
+    eglContextAttributes.append(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE);
+    eglContextAttributes.append(EGL_TRUE);
+    // WebGL requires that all resources are cleared at creation.
+    eglContextAttributes.append(EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE);
+    eglContextAttributes.append(EGL_TRUE);
+    // WebGL doesn't allow client arrays.
+    eglContextAttributes.append(EGL_CONTEXT_CLIENT_ARRAYS_ENABLED_ANGLE);
+    eglContextAttributes.append(EGL_FALSE);
+    // WebGL doesn't allow implicit creation of objects on bind.
+    eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
+    eglContextAttributes.append(EGL_FALSE);
+
+    if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {
+        eglContextAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
+        // EGL_LOW_POWER_ANGLE is the default. Change to
+        // EGL_HIGH_POWER_ANGLE if desired.
+        eglContextAttributes.append(EGL_LOW_POWER_ANGLE);
+    }
+    eglContextAttributes.append(EGL_NONE);
+
+#if USE(NICOSIA)
+    auto sharingContext = EGL_NO_CONTEXT;
+#else
+    auto sharingContext = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->platformContext();
+#endif
+    m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, sharingContext, eglContextAttributes.data());
+    if (m_contextObj == EGL_NO_CONTEXT) {
+        LOG(WebGL, "EGLContext Initialization failed.");
+        return false;
+    }
+    if (!makeContextCurrent()) {
+        LOG(WebGL, "ANGLE makeContextCurrent failed.");
+        return false;
+    }
+    LOG(WebGL, "Got EGLContext");
+    return true;
+}
+
+bool GraphicsContextGLTextureMapper::platformInitialize()
+{
 #if USE(NICOSIA)
     m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
+    m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(&m_nicosiaLayer->contentLayer());
 
     const auto& gbmDevice = GBMDevice::get();
     if (gbmDevice.device()) {
@@ -63,10 +172,9 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
     }
 #else
     m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
+    m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_texmapLayer.get());
 #endif
     bool success = makeContextCurrent();
-    ASSERT_UNUSED(success, success);
-    success = initialize();
     ASSERT_UNUSED(success, success);
 
     // We require this extension to render into the dmabuf-backed EGLImage.
@@ -74,7 +182,7 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
     GL_RequestExtensionANGLE("GL_OES_EGL_image");
 
     validateAttributes();
-    attributes = contextAttributes(); // They may have changed during validation.
+    auto attributes = contextAttributes(); // They may have changed during validation.
 
     GLenum textureTarget = drawingBufferTextureTarget();
     // Create a texture to render into.
@@ -126,6 +234,7 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
     }
 
     GL_ClearColor(0, 0, 0, 0);
+    return true;
 }
 
 #if USE(NICOSIA)
@@ -238,29 +347,19 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 
 GCGLDisplay GraphicsContextGLANGLE::platformDisplay() const
 {
-#if USE(NICOSIA)
-    return m_nicosiaLayer->platformDisplay();
-#else
-    return m_texmapLayer->platformDisplay();
-#endif
+    return m_displayObj;
 }
 
 GCGLConfig GraphicsContextGLANGLE::platformConfig() const
 {
-#if USE(NICOSIA)
-    return m_nicosiaLayer->platformConfig();
-#else
-    return m_texmapLayer->platformConfig();
-#endif
+    return m_configObj;
 }
 
 bool GraphicsContextGLANGLE::makeContextCurrent()
 {
-#if USE(NICOSIA)
-    return m_nicosiaLayer->makeContextCurrent();
-#else
-    return m_texmapLayer->makeContextCurrent();
-#endif
+    if (EGL_GetCurrentContext() == m_contextObj)
+        return true;
+    return EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
 }
 
 void GraphicsContextGLANGLE::checkGPUStatus()

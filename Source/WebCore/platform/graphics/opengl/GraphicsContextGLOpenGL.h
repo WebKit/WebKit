@@ -431,6 +431,10 @@ protected:
     // Called once by all the public entry points of ExtensionsGLOpenGL/ExtensionGLOpenGLES that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;
 
+    // Initializes the instance. Returns false if the instance should not be used.
+    bool initialize();
+    virtual bool platformInitialize() = 0;
+
     // Take into account the user's requested context creation attributes,
     // in particular stencil and antialias, and determine which could or
     // could not be honored based on the capabilities of the OpenGL

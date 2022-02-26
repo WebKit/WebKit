@@ -1,3 +1,72 @@
+2022-02-25  Alejandro G. Castro  <alex@igalia.com> and Fujii Hironori <Hironori.Fujii@sony.com>
+
+        [GTK][WPE][WC] Move ANGLE context initialisation to GraphicsContextGLTextureMapper::initialize
+        https://bugs.webkit.org/show_bug.cgi?id=236769
+
+        Reviewed by Chris Lord.
+
+        This is the first step for the long-term plan to share more code
+        in GraphicsContextGLANGLE between Cocoa and non-Cocoa, and
+        minimise the ifdefs in GraphicsContextGLANGLE.
+
+        We are moving the context initialisation and holding to
+        GraphicsContextGLTextureMapper, away from
+        GCGLANGLELayer::ANGLEContext and the layer classes in case of
+        COORDINATED_GRAPHICS. Later on, Cocoa and non-Cocoa can merge
+        their ::initialize.
+
+        No new tests, this is a refactoring patch.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/angle/GraphicsContextGLANGLE.h:
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.cpp:
+        (Nicosia::GCGLANGLELayer::GCGLANGLELayer):
+        (Nicosia::GCGLANGLELayer::ANGLEContext::errorString): Deleted.
+        (Nicosia::GCGLANGLELayer::ANGLEContext::lastErrorString): Deleted.
+        (Nicosia::GCGLANGLELayer::ANGLEContext::createContext): Deleted.
+        (Nicosia::GCGLANGLELayer::ANGLEContext::ANGLEContext): Deleted.
+        (Nicosia::GCGLANGLELayer::ANGLEContext::~ANGLEContext): Deleted.
+        (Nicosia::GCGLANGLELayer::ANGLEContext::makeContextCurrent): Deleted.
+        (Nicosia::GCGLANGLELayer::ANGLEContext::platformContext const): Deleted.
+        (Nicosia::GCGLANGLELayer::ANGLEContext::platformDisplay const): Deleted.
+        (Nicosia::GCGLANGLELayer::ANGLEContext::platformConfig const): Deleted.
+        (Nicosia::GCGLANGLELayer::makeContextCurrent): Deleted.
+        (Nicosia::GCGLANGLELayer::platformContext const): Deleted.
+        (Nicosia::GCGLANGLELayer::platformDisplay const): Deleted.
+        (Nicosia::GCGLANGLELayer::platformConfig const): Deleted.
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        (WebCore::GraphicsContextGLOpenGL::initialize):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/texmap/ANGLEContext.cpp: Removed.
+        * platform/graphics/texmap/ANGLEContext.h: Removed.
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp:
+        (WebCore::GraphicsContextGLTextureMapper::create):
+        (WebCore::GraphicsContextGLTextureMapper::GraphicsContextGLTextureMapper):
+        (WebCore::GraphicsContextGLTextureMapper::layerContentsDisplayDelegate):
+        (WebCore::GraphicsContextGLTextureMapper::platformInitialize):
+        (): Deleted.
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::GraphicsContextGLANGLE):
+        (WebCore::GraphicsContextGLTextureMapper::platformInitializeContext):
+        (WebCore::GraphicsContextGLTextureMapper::platformInitialize):
+        (WebCore::GraphicsContextGLANGLE::platformDisplay const):
+        (WebCore::GraphicsContextGLANGLE::platformConfig const):
+        (WebCore::GraphicsContextGLANGLE::makeContextCurrent):
+        * platform/graphics/texmap/PlatformLayerDisplayDelegate.h: Copied from Source/WebCore/platform/graphics/texmap/GraphicsContextGLTextureMapper.h.
+        * platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp:
+        (WebCore::TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer):
+        (WebCore::TextureMapperGCGLPlatformLayer::~TextureMapperGCGLPlatformLayer):
+        (WebCore::TextureMapperGCGLPlatformLayer::paintToTextureMapper):
+        (WebCore::TextureMapperGCGLPlatformLayer::makeContextCurrent): Deleted.
+        (WebCore::TextureMapperGCGLPlatformLayer::platformContext const): Deleted.
+        (WebCore::TextureMapperGCGLPlatformLayer::platformDisplay const): Deleted.
+        (WebCore::TextureMapperGCGLPlatformLayer::platformConfig const): Deleted.
+        (WebCore::TextureMapperGCGLPlatformLayer::proxy const): Deleted.
+        (WebCore::TextureMapperGCGLPlatformLayer::swapBuffersIfNeeded): Deleted.
+        * platform/graphics/texmap/TextureMapperGCGLPlatformLayer.h:
+
 2022-02-25  Chris Dumez  <cdumez@apple.com>
 
         Use the modern Hasher more in Content Extensions code

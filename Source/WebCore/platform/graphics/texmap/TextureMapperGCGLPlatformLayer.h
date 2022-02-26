@@ -28,7 +28,6 @@
 
 namespace WebCore {
 
-class ANGLEContext;
 class TextureMapperPlatformLayerProxy;
 
 class TextureMapperGCGLPlatformLayer : public PlatformLayer {
@@ -37,25 +36,10 @@ public:
     TextureMapperGCGLPlatformLayer(GraphicsContextGLANGLE&);
     virtual ~TextureMapperGCGLPlatformLayer();
 
-    bool makeContextCurrent();
-    GCGLContext platformContext() const;
-    GCGLDisplay platformDisplay() const;
-    GCGLConfig platformConfig() const;
-
-#if USE(COORDINATED_GRAPHICS)
-    RefPtr<TextureMapperPlatformLayerProxy> proxy() const override;
-    void swapBuffersIfNeeded() override;
-#else
     virtual void paintToTextureMapper(TextureMapper&, const FloatRect& target, const TransformationMatrix&, float opacity);
-#endif
 
 private:
     GraphicsContextGLANGLE& m_context;
-    std::unique_ptr<ANGLEContext> m_glContext;
-
-#if USE(COORDINATED_GRAPHICS)
-    RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
-#endif
 };
 
 } // namespace WebCore

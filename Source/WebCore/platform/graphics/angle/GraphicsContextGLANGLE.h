@@ -453,12 +453,13 @@ protected:
     ScopedGLFence m_frameCompletionFences[maxPendingFrames];
     GraphicsContextGLState m_state;
 
-#if PLATFORM(COCOA)
-    // FIXME: Move these to GraphicsContextGLCocoa.
-    GraphicsContextGLIOSurfaceSwapChain m_swapChain;
     GCGLDisplay m_displayObj { nullptr };
     GCGLContext m_contextObj { nullptr };
     GCGLConfig m_configObj { nullptr };
+
+#if PLATFORM(COCOA)
+    // FIXME: Move these to GraphicsContextGLCocoa.
+    GraphicsContextGLIOSurfaceSwapChain m_swapChain;
     // Backing store for the the buffer which is eventually used for display.
     // When preserveDrawingBuffer == false, this is the drawing buffer backing store.
     // When preserveDrawingBuffer == true, this is blitted to during display prepare.

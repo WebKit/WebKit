@@ -6,7 +6,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     platform/graphics/nicosia/NicosiaAnimation.cpp
 
-    platform/graphics/texmap/ANGLEContext.cpp
     platform/graphics/texmap/BitmapTexture.cpp
     platform/graphics/texmap/BitmapTexturePool.cpp
     platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp
@@ -22,7 +21,6 @@ list(APPEND WebCore_SOURCES
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/nicosia/NicosiaAnimation.h
 
-    platform/graphics/texmap/ANGLEContext.h
     platform/graphics/texmap/BitmapTexture.h
     platform/graphics/texmap/ClipStack.h
     platform/graphics/texmap/GraphicsContextGLTextureMapper.h
