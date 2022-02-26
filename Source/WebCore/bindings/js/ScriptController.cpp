@@ -794,7 +794,7 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
     if (requesterSecurityOrigin && !requesterSecurityOrigin->isSameOriginDomain(m_frame.document()->securityOrigin()))
         return;
 
-    if (!m_frame.page() || !m_frame.document()->contentSecurityPolicy()->allowJavaScriptURLs(m_frame.document()->url().string(), eventHandlerPosition().m_line, url.string()))
+    if (!m_frame.page() || !m_frame.document()->contentSecurityPolicy()->allowJavaScriptURLs(m_frame.document()->url().string(), eventHandlerPosition().m_line, url.string(), nullptr))
         return;
 
     // We need to hold onto the Frame here because executing script can

@@ -98,7 +98,7 @@ public:
     bool allowScriptWithNonce(const String& nonce, bool overrideContentSecurityPolicy = false) const;
     bool allowStyleWithNonce(const String& nonce, bool overrideContentSecurityPolicy = false) const;
 
-    bool allowJavaScriptURLs(const String& contextURL, const OrdinalNumber& contextLine, const String& code, bool overrideContentSecurityPolicy = false) const;
+    bool allowJavaScriptURLs(const String& contextURL, const OrdinalNumber& contextLine, const String& code, Element*) const;
     bool allowInlineEventHandlers(const String& contextURL, const OrdinalNumber& contextLine, const String& code, Element*, bool overrideContentSecurityPolicy = false) const;
     bool allowInlineScript(const String& contextURL, const OrdinalNumber& contextLine, StringView scriptContent, Element&, const String& nonce, bool overrideContentSecurityPolicy = false) const;
     bool allowNonParserInsertedScripts(const URL& sourceURL, const URL& contextURL, const OrdinalNumber&, const String& nonce, const StringView&, ParserInserted) const;

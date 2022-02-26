@@ -1,3 +1,16 @@
+2022-02-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        Update CSP handling of javascript URLs
+        https://bugs.webkit.org/show_bug.cgi?id=236351
+        <rdar://problem/88675827>
+
+        Reviewed by Brent Fulgham.
+
+        * TestExpectations:
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star-expected.txt:
+        * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+
 2022-02-26  Alan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Clean up descendant floats when a block container becomes float

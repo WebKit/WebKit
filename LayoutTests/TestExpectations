@@ -928,7 +928,6 @@ imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-he
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-header-allowed.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-blocked.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/prefetch-src/prefetch-allowed.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/navigation/to-javascript-url-script-src.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/navigate-to/spv-only-sent-to-initiator.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/navigate-to/meta-refresh-redirected-blocked.sub.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/navigate-to/meta-refresh-cross-origin-blocked.sub.html [ Skip ]

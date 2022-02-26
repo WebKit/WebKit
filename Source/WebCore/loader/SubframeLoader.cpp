@@ -85,6 +85,10 @@ bool FrameLoader::SubframeLoader::requestFrame(HTMLFrameOwnerElement& ownerEleme
     if (shouldConvertInvalidURLsToBlank() && !url.isValid())
         url = aboutBlankURL();
 
+    // Check the CSP of the embedder to determine if we allow execution of javascript: URLs via child frame navigation.
+    if (!scriptURL.isEmpty() && !ownerElement.document().contentSecurityPolicy()->allowJavaScriptURLs(aboutBlankURL().string(), { }, scriptURL.string(), &ownerElement))
+        scriptURL = URL();
+
     // If we will schedule a JavaScript URL load, we need to delay the firing of the load event at least until we've run the JavaScript in the URL.
     CompletionHandlerCallingScope stopDelayingLoadEvent;
     if (!scriptURL.isEmpty()) {

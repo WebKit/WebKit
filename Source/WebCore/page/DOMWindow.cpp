@@ -2419,6 +2419,10 @@ void DOMWindow::setLocation(DOMWindow& activeWindow, const URL& completedURL, Se
     if (isInsecureScriptAccess(activeWindow, completedURL.string()))
         return;
 
+    // Check the CSP of the embedder to determine if we allow execution of javascript: URLs via child frame navigation.
+    if (completedURL.protocolIsJavaScript() && frameElement() && !frameElement()->document().contentSecurityPolicy()->allowJavaScriptURLs(aboutBlankURL().string(), { }, completedURL.string(), frameElement()))
+        return;
+
     // We want a new history item if we are processing a user gesture.
     LockHistory lockHistory = (locking != LockHistoryBasedOnGestureState || !UserGestureIndicator::processingUserGesture()) ? LockHistory::Yes : LockHistory::No;
     LockBackForwardList lockBackForwardList = (locking != LockHistoryBasedOnGestureState) ? LockBackForwardList::Yes : LockBackForwardList::No;
