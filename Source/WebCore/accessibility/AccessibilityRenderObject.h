@@ -55,8 +55,6 @@ class AccessibilityRenderObject : public AccessibilityNodeObject, public CanMake
 public:
     static Ref<AccessibilityRenderObject> create(RenderObject*);
     virtual ~AccessibilityRenderObject();
-
-    void init() override;
     
     bool isAttachment() const override;
     bool isSelected() const override;

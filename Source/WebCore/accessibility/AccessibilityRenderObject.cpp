@@ -135,11 +135,6 @@ AccessibilityRenderObject::~AccessibilityRenderObject()
     ASSERT(isDetached());
 }
 
-void AccessibilityRenderObject::init()
-{
-    AccessibilityNodeObject::init();
-}
-
 Ref<AccessibilityRenderObject> AccessibilityRenderObject::create(RenderObject* renderer)
 {
     return adoptRef(*new AccessibilityRenderObject(renderer));
