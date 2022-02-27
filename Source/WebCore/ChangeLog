@@ -1,5 +1,17 @@
 2022-02-27  Tim Nguyen  <ntim@apple.com>
 
+        Use hasAttributeWithoutSynchronisation for checking inert attribute in Adjuster::adjust
+        https://bugs.webkit.org/show_bug.cgi?id=237248
+
+        Reviewed by Dean Jackson.
+
+        hasAttributeWithoutSynchronisation should be slightly faster than hasAttribute.
+
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjust const):
+
+2022-02-27  Tim Nguyen  <ntim@apple.com>
+
         Optimize StyleSharingResolver inert checks
         https://bugs.webkit.org/show_bug.cgi?id=237235
 
