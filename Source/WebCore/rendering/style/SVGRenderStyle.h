@@ -353,8 +353,9 @@ inline void SVGRenderStyle::setKerning(const SVGLengthValue& kerning)
 
 inline void SVGRenderStyle::setStopOpacity(float opacity)
 {
-    if (!(m_stopData->opacity == opacity))
-        m_stopData.access().opacity = opacity;
+    auto clampedOpacity = clampTo<float>(opacity, 0.f, 1.f);
+    if (!(m_stopData->opacity == clampedOpacity))
+        m_stopData.access().opacity = clampedOpacity;
 }
 
 inline void SVGRenderStyle::setStopColor(const Color& color)

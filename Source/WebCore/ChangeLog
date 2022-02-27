@@ -1,5 +1,15 @@
 2022-02-27  Antoine Quint  <graouts@webkit.org>
 
+        [svg] stop-opacity should be clamped to the [0,1] range
+        https://bugs.webkit.org/show_bug.cgi?id=237255
+
+        Reviewed by Dean Jackson.
+
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::setStopOpacity):
+
+2022-02-27  Antoine Quint  <graouts@webkit.org>
+
         [svg] fill-opacity should be clamped to the [0,1] range
         https://bugs.webkit.org/show_bug.cgi?id=237252
 

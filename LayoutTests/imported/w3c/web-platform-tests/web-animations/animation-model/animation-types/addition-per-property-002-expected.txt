@@ -122,7 +122,7 @@ PASS stop-color supports animating as color of rgba()
 PASS stop-color supports animating as color of hsla()
 PASS stop-opacity (type: opacity) has testAddition function
 PASS stop-opacity: [0, 1] number
-FAIL stop-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.1"
+PASS stop-opacity: [0, 1] number (clamped)
 PASS stroke-dasharray (type: dasharray) has testAddition function
 PASS stroke-dasharray: dasharray
 PASS stroke-dasharray (type: discrete) has testAddition function
