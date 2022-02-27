@@ -1834,6 +1834,12 @@ void WebPage::stopLoading()
     coreFrame->loader().completePageTransitionIfNeeded();
 }
 
+void WebPage::stopLoadingDueToProcessSwap()
+{
+    SetForScope<bool> isStoppingLoadingDueToProcessSwap(m_isStoppingLoadingDueToProcessSwap, true);
+    stopLoading();
+}
+
 bool WebPage::defersLoading() const
 {
     return m_page->defersLoading();

@@ -643,6 +643,7 @@ public:
 
     void stopLoading();
     void stopLoadingFrame(WebCore::FrameIdentifier);
+    void stopLoadingDueToProcessSwap();
     bool defersLoading() const;
     void setDefersLoading(bool deferLoading);
 
@@ -990,6 +991,8 @@ public:
 
     void performDictionaryLookupForSelection(WebCore::Frame&, const WebCore::VisibleSelection&, WebCore::TextIndicatorPresentationTransition);
 #endif
+
+    bool isStoppingLoadingDueToProcessSwap() const { return m_isStoppingLoadingDueToProcessSwap; }
 
     bool isSmartInsertDeleteEnabled();
     void setSmartInsertDeleteEnabled(bool);
@@ -2413,6 +2416,7 @@ private:
     bool m_canUseCredentialStorage { true };
 
     bool m_didUpdateRenderingAfterCommittingLoad { false };
+    bool m_isStoppingLoadingDueToProcessSwap { false };
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     bool m_useARKitForModel { false };

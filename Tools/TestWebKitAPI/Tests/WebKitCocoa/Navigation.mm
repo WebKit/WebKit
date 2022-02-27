@@ -38,6 +38,8 @@
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
@@ -1009,4 +1011,55 @@ TEST(WKNavigation, LoadRadarURLFromSandboxedFrameMissingUserGesture)
     Util::sleep(0.5);
 
     EXPECT_FALSE(didTryToLoadRadarURL);
+}
+
+TEST(WKNavigation, CrossOriginCOOPCancelResponseFailProvisionalNavigationCallback)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server({
+        { "/path1", { "hi" } },
+        { "/path2", { "hi" } },
+        { "/path3", { { { "Cross-Origin-Opener-Policy", "same-origin" } }, "hi" } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port())
+    }];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+
+    __block Vector<bool> finishedSuccessfullyCallbacks;
+    auto loadWithResponsePolicy = ^(WKWebView *webView, NSString *url, WKNavigationResponsePolicy responsePolicy) {
+        auto callbacksSizeBefore = finishedSuccessfullyCallbacks.size();
+
+        auto delegate = adoptNS([TestNavigationDelegate new]);
+        delegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *response, void (^decisionHandler)(WKNavigationResponsePolicy)) {
+            decisionHandler(responsePolicy);
+        };
+
+        delegate.get().didReceiveAuthenticationChallenge = ^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        };
+        delegate.get().didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *) {
+            finishedSuccessfullyCallbacks.append(false);
+        };
+        delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+            finishedSuccessfullyCallbacks.append(true);
+        };
+        [webView setNavigationDelegate:delegate.get()];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+        while (finishedSuccessfullyCallbacks.size() == callbacksSizeBefore)
+            TestWebKitAPI::Util::spinRunLoop(10);
+    };
+
+    loadWithResponsePolicy(webView.get(), @"https://webkit.org/path1", WKNavigationResponsePolicyAllow);
+    loadWithResponsePolicy(webView.get(), @"https://webkit.org/path2", WKNavigationResponsePolicyCancel);
+    loadWithResponsePolicy(webView.get(), @"https://example.com/path3", WKNavigationResponsePolicyCancel);
+
+    Vector<bool> expectedCallbacks { true, false, false };
+    EXPECT_EQ(finishedSuccessfullyCallbacks, expectedCallbacks);
 }

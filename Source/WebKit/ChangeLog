@@ -1,3 +1,67 @@
+2022-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Call WKNavigationDelegate.didFailProvisionalNavigation even after a cross-origin navigation with COOP
+        https://bugs.webkit.org/show_bug.cgi?id=237071
+        <rdar://problem/89354367>
+
+        Reviewed by Darin Adler.
+
+        When doing a process swap on navigation (PSON), we start a new provisional load in the new provisional
+        process and ask the committed process to stop all loads. Since we swap in decidePolicyForNavigationAction,
+        no provisional load has started in the committed process yet. If the provisional process sends us a
+        didFailProvisionalLoad though, we know the provisional load has failed and we take this into consideration
+        and notify the client app.
+
+        When doing a process swap on resource response (due to COOP), we were behaving differently and it was
+        causing some confusion. Since we swap on resource response, the provisional load has started in the
+        committed process by the time we process-swap (unlike PSON). We were also not asking for the committed
+        process to stop/cancel this provisional load. As a result, a provisional load would still be going on
+        in the committed process while another provisional load starts happening in the provisional page / process.
+        Then, if the provisional process would send us a didFailProvisional, we would not pass it along to the
+        client app. Instead we would destroy the ProvisionalPageProxy, which would tell the committed process to
+        stop loading and send its own didFailProvisionalLoad, and the client app would eventually get notified.
+
+        Even though the difference in behavior was confusing, it was working in most cases. There was however
+        an edge case where it didn't work and we would fail to tell the client app that the provisional load
+        had failed. In particular, we would run into trouble when navigating cross-site to a site that adopted
+        the COOP header. We would first do a process-swap on navigation, stop the provisional load in the committed
+        process A, then start a provisional load in process B. We would then get the COOP header and we would
+        start a new provisional load in process C. Process B would go away since we cannot have 2 provisional
+        pages / processes at the same time for the same WebPageProxy. Then if the provisional load fails in
+        process C, we would ignore the didFailProvisionalLoad from process C and destroy the provisional page.
+        We would tell the committed process A to stop loading, expecting it to send its own didFailProvisionalLoad
+        but it wouldn't happen since PSON had already stopped all loading in process A earlier when swapping to
+        process B.
+
+        To address the issue, we align COOP process swap with PSON process swap. We now has the committed process
+        to stop all loads when process swapping on resource response due to COOP. As a result, when the provisional
+        load fails in the provisional process, we can simply pass it along to the client, no matter if the process
+        swap occurred due to PSON or COOP.
+
+        Covered by new API test.
+
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::~ProvisionalPageProxy):
+        We no longer need to tell the committed process to stop loading when the provisional page gets destroyed
+        and this was a process swap on resource response. The reason is that when process-swapping on navigation
+        response, we now drop the provisional load in the committed process right away, like in the PSON case.
+
+        (WebKit::ProvisionalPageProxy::cancel):
+        When cancelling a provisional load due to PSON or COOP, we need to notify the client that the provisional
+        load failed. We used to only to it in the PSON case. We now do it for both PSON and COOP since they
+        behave the same.
+
+        (WebKit::ProvisionalPageProxy::didFailProvisionalLoadForFrame):
+        Similarly as above, now that PSON and COOP behave the same, we need to pass the didFailProvisionalLoad
+        from the provisional process to the client app for both PSON and COOP (Not just PSON).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation):
+        When triggering a process swap on resource response (due to COOP), we now stop the provisional load going
+        on in the committed process to be consistent with what we do in the PSON case. This way there is only a
+        single provisional load going on and it is happening in the provisional page / process.
+
+
 2022-02-27  Youenn Fablet  <youenn@apple.com>
 
         Exposing RemoteVideoFrameProxy::write is unneeded

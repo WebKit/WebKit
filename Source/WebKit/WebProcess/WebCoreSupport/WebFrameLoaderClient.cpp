@@ -587,6 +587,12 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
     if (!webPage)
         return;
 
+    // When stopping the provisional load due to a process swap on resource response (due to COOP), the provisional load
+    // will simply keep going in a new process. As a result, we don't want to tell the injected bundle or the UIProcess client
+    // that the provisional load failed.
+    if (webPage->isStoppingLoadingDueToProcessSwap())
+        return;
+
     WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDidFailProvisionalLoad:");
 
     RefPtr<API::Object> userData;

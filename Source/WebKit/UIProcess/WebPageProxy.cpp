@@ -5754,6 +5754,9 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(uint64_t navig
     else
         processForNavigation = m_process->processPool().processForRegistrableDomain(websiteDataStore(), responseDomain, m_process->captivePortalMode());
 
+    // Tell committed process to stop loading since we're going to do the provisional load in a provisional page now.
+    if (!m_provisionalPage)
+        send(Messages::WebPage::StopLoadingDueToProcessSwap());
     continueNavigationInNewProcess(*navigation, nullptr, processForNavigation.releaseNonNull(), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, nullptr, existingNetworkResourceLoadIdentifierToResume);
     completionHandler(true);
 }

@@ -118,12 +118,6 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
         m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
         send(Messages::WebPage::Close());
         m_process->removeVisitedLinkStoreUser(m_page.visitedLinkStore(), m_page.identifier());
-
-        // If we were process-swapping on navigation response then there is still a provisional load going on in the previous process
-        // and its layer tree is frozen. Since we didn't end up committing the provisional process, we need to stop the load in the
-        // previous process so that it cancels its navigation and unfreezes its layer tree.
-        if (isProcessSwappingOnNavigationResponse())
-            m_page.send(Messages::WebPage::StopLoading());
     }
 
     m_process->removeProvisionalPageProxy(*this);
@@ -143,7 +137,7 @@ std::unique_ptr<DrawingAreaProxy> ProvisionalPageProxy::takeDrawingArea()
 void ProvisionalPageProxy::cancel()
 {
     // If the provisional load started, then indicate that it failed due to cancellation by calling didFailProvisionalLoadForFrame().
-    if (m_provisionalLoadURL.isEmpty() || m_isProcessSwappingOnNavigationResponse)
+    if (m_provisionalLoadURL.isEmpty() || !m_mainFrame)
         return;
 
     ASSERT(m_process->state() == WebProcessProxy::State::Running);
@@ -296,15 +290,6 @@ void ProvisionalPageProxy::didFailProvisionalLoadForFrame(FrameIdentifier frameI
     PROVISIONALPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "didFailProvisionalLoadForFrame: frameID=%" PRIu64, frameID.toUInt64());
     ASSERT(!m_provisionalLoadURL.isNull());
     m_provisionalLoadURL = { };
-
-    if (m_isProcessSwappingOnNavigationResponse) {
-        // If the provisional load fails and we were process-swapping on navigation response, then we simply destroy ourselves.
-        // In this case, the provisional load is still ongoing in the committed process and the ProvisionalPageProxy destructor
-        // will stop it and cause the committed process to send its own DidFailProvisionalLoadForFrame IPC.
-        ASSERT(m_page.provisionalPageProxy() == this);
-        m_page.destroyProvisionalPage();
-        return;
-    }
 
     // Make sure the Page's main frame's expectedURL gets cleared since we updated it in didStartProvisionalLoad.
     if (auto* pageMainFrame = m_page.mainFrame())
