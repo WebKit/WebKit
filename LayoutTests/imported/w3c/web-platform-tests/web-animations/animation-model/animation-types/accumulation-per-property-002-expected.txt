@@ -132,7 +132,7 @@ PASS stroke-miterlimit (type: positiveNumber) has testAccumulation function
 PASS stroke-miterlimit: positive number
 PASS stroke-opacity (type: opacity) has testAccumulation function
 PASS stroke-opacity: [0, 1] number
-FAIL stroke-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.1"
+PASS stroke-opacity: [0, 1] number (clamped)
 PASS table-layout (type: discrete) has testAccumulation function
 PASS table-layout: "fixed" onto "auto"
 PASS table-layout: "auto" onto "fixed"

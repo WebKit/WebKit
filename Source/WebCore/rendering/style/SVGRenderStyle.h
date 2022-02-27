@@ -309,8 +309,9 @@ inline void SVGRenderStyle::setFillPaint(SVGPaintType type, const Color& color, 
 
 inline void SVGRenderStyle::setStrokeOpacity(float opacity)
 {
-    if (!(m_strokeData->opacity == opacity))
-        m_strokeData.access().opacity = opacity;
+    auto clampedOpacity = clampTo<float>(opacity, 0.f, 1.f);
+    if (!(m_strokeData->opacity == clampedOpacity))
+        m_strokeData.access().opacity = clampedOpacity;
 }
 
 inline void SVGRenderStyle::setStrokePaint(SVGPaintType type, const Color& color, const String& uri, bool applyToRegularStyle, bool applyToVisitedLinkStyle)
