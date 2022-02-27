@@ -1,3 +1,12 @@
+2022-02-27  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] media/video-src-blob-perf.html timing out likely since update to GStreamer 1.20
+        https://bugs.webkit.org/show_bug.cgi?id=237256
+
+        Unreviewed, gardening
+
+        * platform/glib/TestExpectations: Flag test as timing out.
+
 2022-02-27  Tim Nguyen  <ntim@apple.com>
 
         Optimize StyleSharingResolver inert checks
