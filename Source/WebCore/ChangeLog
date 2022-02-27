@@ -1,3 +1,23 @@
+2022-02-27  Youenn Fablet  <youenn@apple.com>
+
+        Simplify CVPixelBuffer data copies in SharedVideoFrameInfo
+        https://bugs.webkit.org/show_bug.cgi?id=237194
+
+        Reviewed by Eric Carlson.
+
+        Remove use of vImageUnpremultiplyData_BGRA8888 which might not be correct for canvas data.
+        Make use of CVPixelBufferGetPlaneCount to share more code between monoplanar and biplanar formats.
+
+        Covered by existing tests.
+
+        * platform/cocoa/CoreVideoSoftLink.cpp:
+        * platform/cocoa/CoreVideoSoftLink.h:
+        * platform/cocoa/SharedVideoFrameInfo.mm:
+        (WebCore::SharedVideoFrameInfo::isReadWriteSupported const):
+        (WebCore::copyToCVPixelBufferPlane):
+        (WebCore::SharedVideoFrameInfo::createPixelBufferFromMemory):
+        (WebCore::SharedVideoFrameInfo::writePixelBuffer):
+
 2022-02-26  Tim Nguyen  <ntim@apple.com>
 
         Remove Node::deprecatedIsInert
