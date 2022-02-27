@@ -171,7 +171,7 @@ PASS empty-cells: "hide" onto "show"
 PASS empty-cells: "show" onto "hide"
 PASS fill-opacity (type: opacity) has testAddition function
 PASS fill-opacity: [0, 1] number
-FAIL fill-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.1"
+PASS fill-opacity: [0, 1] number (clamped)
 PASS filter (type: filterList) has testAddition function
 FAIL filter: blur on blur assert_equals: The value should be blur(10px) blur(20px) at 0ms expected "blur(10px) blur(20px)" but got "blur(30px)"
 FAIL filter: different filter functions assert_equals: The value should be blur(10px) brightness(0.8) at 0ms expected "blur(10px) brightness(0.8)" but got "brightness(0.8)"

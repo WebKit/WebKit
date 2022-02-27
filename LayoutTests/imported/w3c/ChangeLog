@@ -1,3 +1,13 @@
+2022-02-27  Antoine Quint  <graouts@webkit.org>
+
+        [svg] fill-opacity should be clamped to the [0,1] range
+        https://bugs.webkit.org/show_bug.cgi?id=237252
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+
 2022-02-27  Tim Nguyen  <ntim@apple.com>
 
         Force -webkit-user-modify used style to readonly for inert nodes

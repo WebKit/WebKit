@@ -282,8 +282,9 @@ inline void SVGRenderStyle::setY(const Length& length)
 
 inline void SVGRenderStyle::setFillOpacity(float opacity)
 {
-    if (!(m_fillData->opacity == opacity))
-        m_fillData.access().opacity = opacity;
+    auto clampedOpacity = clampTo<float>(opacity, 0.f, 1.f);
+    if (!(m_fillData->opacity == clampedOpacity))
+        m_fillData.access().opacity = clampedOpacity;
 }
 
 inline void SVGRenderStyle::setFillPaint(SVGPaintType type, const Color& color, const String& uri, bool applyToRegularStyle, bool applyToVisitedLinkStyle)
