@@ -770,7 +770,7 @@ static Node::Editability computeEditabilityFromComputedStyle(const Node& startNo
         if (pageIsEditable == PageIsEditable::Yes)
             return Node::Editability::CanEditRichly;
 
-        switch (style->userModify()) {
+        switch (style->effectiveUserModify()) {
         case UserModify::ReadOnly:
             return Node::Editability::ReadOnly;
         case UserModify::ReadWrite:

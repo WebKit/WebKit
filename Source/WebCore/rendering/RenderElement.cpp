@@ -853,8 +853,8 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             if (m_style.eventListenerRegionTypes() != newStyle.eventListenerRegionTypes())
                 return true;
 #if ENABLE(EDITABLE_REGION)
-            bool wasEditable = m_style.userModify() != UserModify::ReadOnly;
-            bool isEditable = newStyle.userModify() != UserModify::ReadOnly;
+            bool wasEditable = m_style.effectiveUserModify() != UserModify::ReadOnly;
+            bool isEditable = newStyle.effectiveUserModify() != UserModify::ReadOnly;
             if (wasEditable != isEditable)
                 return page().shouldBuildEditableRegion();
 #endif

@@ -1,3 +1,35 @@
+2022-02-27  Tim Nguyen  <ntim@apple.com>
+
+        Force -webkit-user-modify used style to readonly for inert nodes
+        https://bugs.webkit.org/show_bug.cgi?id=237244
+
+        Reviewed by Darin Adler.
+
+        This disallows programmatic edition of contenteditable inert nodes. Edition via user-input is
+        already prevented by forcing pointer-events style to none.
+
+        We create a seperate effectiveUserModify, similar to effectiveUserSelect/effectivePointerEvents,
+        to avoid changing the computed style.
+
+        This behaviour also matches Blink & Gecko.
+
+        Test: imported/w3c/web-platform-tests/inert/inert-and-contenteditable.tentative.html
+
+        * dom/Node.cpp:
+        (WebCore::computeEditabilityFromComputedStyle):
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * rendering/EventRegion.cpp:
+        (WebCore::EventRegion::unite):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::effectiveUserModify const):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
 2022-02-27  Dean Jackson  <dino@apple.com>
 
         Loading a USDZ url as the main resource renders as garbage

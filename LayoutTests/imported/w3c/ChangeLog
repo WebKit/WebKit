@@ -1,3 +1,20 @@
+2022-02-27  Tim Nguyen  <ntim@apple.com>
+
+        Force -webkit-user-modify used style to readonly for inert nodes
+        https://bugs.webkit.org/show_bug.cgi?id=237244
+
+        Reviewed by Darin Adler.
+
+        This disallows programmatic edition of contenteditable inert nodes. Edition via user-input is
+        already prevented by forcing pointer-events style to none.
+
+        We create a seperate effectiveUserModify, similar to effectiveUserSelect/effectivePointerEvents,
+        to avoid changing the computed style.
+
+        This behaviour also matches Blink & Gecko.
+
+        * web-platform-tests/inert/inert-and-contenteditable.tentative-expected.txt:
+
 2022-02-27  Antoine Quint  <graouts@webkit.org>
 
         [css-animations] implicit keyframes should be inserted after explicit keyframes with the same offset

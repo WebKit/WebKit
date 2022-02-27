@@ -614,6 +614,7 @@ public:
     int marqueeLoopCount() const { return m_rareNonInheritedData->marquee->loops; }
     MarqueeBehavior marqueeBehavior() const { return static_cast<MarqueeBehavior>(m_rareNonInheritedData->marquee->behavior); }
     MarqueeDirection marqueeDirection() const { return static_cast<MarqueeDirection>(m_rareNonInheritedData->marquee->direction); }
+    UserModify effectiveUserModify() const { return effectiveInert() ? UserModify::ReadOnly : userModify(); }
     UserModify userModify() const { return static_cast<UserModify>(m_rareInheritedData->userModify); }
     UserDrag userDrag() const { return static_cast<UserDrag>(m_rareNonInheritedData->userDrag); }
     UserSelect effectiveUserSelect() const { return effectiveInert() ? UserSelect::None : userSelect(); }
