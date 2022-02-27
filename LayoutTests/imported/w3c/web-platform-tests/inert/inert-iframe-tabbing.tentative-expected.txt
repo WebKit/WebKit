@@ -1,7 +1,11 @@
-start
+before
 
-start
+after
 
-PASS Sequential navigation skips contents of inert iframe
-PASS Sequential navigation can pick contents of a no longer inert iframe
+PASS Sequential navigation can't enter an inert iframe
+PASS Sequential navigation can move within an inert iframe
+PASS Sequential navigation can leave an inert iframe
+PASS Sequential navigation can enter a no longer inert iframe
+PASS Sequential navigation can move within a no longer inert iframe
+PASS Sequential navigation can leave a no longer inert iframe
 

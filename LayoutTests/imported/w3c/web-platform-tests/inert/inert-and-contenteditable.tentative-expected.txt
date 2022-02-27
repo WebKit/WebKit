@@ -1,0 +1,16 @@
+
+FAIL execCommand should return the same value assert_equals: [false,true,false,false] at index 1 expected false but got true
+FAIL The resulting textContent should be the same value assert_equals: ["{target}","{}","{target}","{target}"] at index 1 expected "{target}" but got "{}"
+{
+target
+
+}
+{}
+{
+target
+
+}
+{
+target
+
+}
