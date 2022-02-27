@@ -735,17 +735,17 @@ Vector<String> Element::getAttributeNames() const
 
 bool Element::isFocusable() const
 {
-    if (!isConnected() || !supportsFocus() || deprecatedIsInert())
+    if (!isConnected() || !supportsFocus())
         return false;
 
     if (!renderer()) {
         // Elements in canvas fallback content are not rendered, but they are allowed to be
         // focusable as long as their canvas is displayed and visible.
         if (auto* canvas = ancestorsOfType<HTMLCanvasElement>(*this).first())
-            return canvas->isVisibleWithoutResolvingFullStyle();
+            return canvas->isFocusableWithoutResolvingFullStyle();
     }
 
-    return isVisibleWithoutResolvingFullStyle();
+    return isFocusableWithoutResolvingFullStyle();
 }
 
 bool Element::isUserActionElementInActiveChain() const
@@ -3555,11 +3555,10 @@ bool Element::hasValidStyle() const
     return true;
 }
 
-bool Element::isVisibleWithoutResolvingFullStyle() const
+bool Element::isFocusableWithoutResolvingFullStyle() const
 {
-
     if (renderStyle() || hasValidStyle())
-        return renderStyle() && renderStyle()->visibility() == Visibility::Visible;
+        return renderStyle() && renderStyle()->visibility() == Visibility::Visible && !renderStyle()->effectiveInert();
 
     auto computedStyleForElement = [](Element& element) -> const RenderStyle* {
         auto* style = element.hasNodeFlag(NodeFlag::IsComputedStyleInvalidFlag) ? nullptr : element.existingComputedStyle();
@@ -3574,7 +3573,7 @@ bool Element::isVisibleWithoutResolvingFullStyle() const
     if (style->display() == DisplayType::None || style->display() == DisplayType::Contents)
         return false;
 
-    if (style->visibility() != Visibility::Visible)
+    if (style->visibility() != Visibility::Visible || style->effectiveInert())
         return false;
 
     for (auto& element : composedTreeAncestors(const_cast<Element&>(*this))) {

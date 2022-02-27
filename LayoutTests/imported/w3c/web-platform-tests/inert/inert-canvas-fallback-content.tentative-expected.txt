@@ -20,22 +20,29 @@ FAIL
       `a` in `display: none`
      assert_not_equals: got disallowed value Element node <a href="#" data-focusable="false">
       `a` in `display...
-PASS
+FAIL
       inert `div`
-
-PASS
+     assert_not_equals: got disallowed value Element node <div tabindex="-1" data-focusable="false">
+      inert `d...
+FAIL
       inert `span`
-
-PASS
+     assert_not_equals: got disallowed value Element node <span tabindex="-1" data-focusable="false">
+      inert `...
+FAIL
       inert `a`
-
-PASS
+     assert_not_equals: got disallowed value Element node <a href="#" data-focusable="false">
+      inert `a`
+    </a>
+FAIL
       inert `div` in `display: none`
-
-PASS
+     assert_not_equals: got disallowed value Element node <div tabindex="-1" data-focusable="false">
+      inert `d...
+FAIL
       inert `span` in `display: none`
-
-PASS
+     assert_not_equals: got disallowed value Element node <span tabindex="-1" data-focusable="false">
+      inert `...
+FAIL
       inert `a` in `display: none`
-
+     assert_not_equals: got disallowed value Element node <a href="#" data-focusable="false">
+      inert `a` in `d...
 

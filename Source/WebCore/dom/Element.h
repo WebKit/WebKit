@@ -378,7 +378,7 @@ public:
     bool needsStyleInvalidation() const;
 
     bool hasValidStyle() const;
-    bool isVisibleWithoutResolvingFullStyle() const;
+    bool isFocusableWithoutResolvingFullStyle() const;
 
     // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
     bool styleAffectedByEmpty() const { return hasStyleFlag(NodeStyleFlag::StyleAffectedByEmpty); }

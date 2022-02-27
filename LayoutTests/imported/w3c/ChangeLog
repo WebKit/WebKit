@@ -1,3 +1,21 @@
+2022-02-26  Tim Nguyen  <ntim@apple.com>
+
+        Remove Node::deprecatedIsInert
+        https://bugs.webkit.org/show_bug.cgi?id=230845
+
+        Reviewed by Antti Koivisto.
+
+        This change unfortunately regresses focusability state when dynamically setting inert, due to a cached
+        computed style invalidation bug. This is minor in practice, since focusability usually gets queried in
+        user-initiated ways, when style already has fully been updated.
+
+        However, making this change will improve performance by avoiding a full DOM ancestor walk when there
+        is no inert attribute on the page, since we will only check a style bit after this patch.
+
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/remove-dialog-should-unblock-document-expected.txt:
+        * web-platform-tests/inert/inert-canvas-fallback-content.tentative-expected.txt:
+        * web-platform-tests/inert/inert-node-is-unfocusable.tentative-expected.txt:
+
 2022-02-26  Kate Cheney  <katherine_cheney@apple.com>
 
         Update CSP handling of javascript URLs

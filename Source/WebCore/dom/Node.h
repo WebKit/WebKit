@@ -528,9 +528,6 @@ public:
     static int32_t flagIsParsingChildrenFinished() { return static_cast<int32_t>(NodeFlag::IsParsingChildrenFinished); }
 #endif // ENABLE(JIT)
 
-    // Whether a node is inert, please use RenderStyle::effectiveInert instead!
-    bool deprecatedIsInert() const;
-
 protected:
     enum class NodeFlag : uint32_t {
         IsCharacterData = 1 << 0,

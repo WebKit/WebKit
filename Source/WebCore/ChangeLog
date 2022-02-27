@@ -1,3 +1,28 @@
+2022-02-26  Tim Nguyen  <ntim@apple.com>
+
+        Remove Node::deprecatedIsInert
+        https://bugs.webkit.org/show_bug.cgi?id=230845
+
+        Reviewed by Antti Koivisto.
+
+        This change unfortunately regresses focusability state when dynamically setting inert, due to a cached
+        computed style invalidation bug. This is minor in practice, since focusability usually gets queried in
+        user-initiated ways, when style already has fully been updated.
+
+        However, making this change will improve performance by avoiding a full DOM ancestor walk when there
+        is no inert attribute on the page, since we will only check a style bit after this patch.
+
+        * dom/Element.cpp:
+        (WebCore::Element::isFocusable const):
+        (WebCore::Element::isFocusableWithoutResolvingFullStyle const):
+        (WebCore::Element::isVisibleWithoutResolvingFullStyle const): Deleted.
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::deprecatedIsInert const): Deleted.
+        * dom/Node.h:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::isFocusable const):
+
 2022-02-26  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Remove unnecessary AccessibilityRenderObject::init() override

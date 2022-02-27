@@ -2615,28 +2615,6 @@ void* Node::opaqueRootSlow() const
     return const_cast<void*>(static_cast<const void*>(node));
 }
 
-// Please use RenderStyle::effectiveInert instead!
-bool Node::deprecatedIsInert() const
-{
-    if (!isConnected())
-        return true;
-
-    if (this != &document()) {
-        Node* activeModalDialog = document().activeModalDialog();
-        if (activeModalDialog && !activeModalDialog->containsIncludingShadowDOM(this))
-            return true;
-    }
-
-    if (document().settings().inertAttributeEnabled()) {
-        for (RefPtr element = this; element; element = element->parentElementInComposedTree()) {
-            if (is<HTMLElement>(*element) && downcast<HTMLElement>(*element).hasAttribute(HTMLNames::inertAttr))
-                return true;
-        }
-    }
-
-    return false;
-}
-
 template<> ContainerNode* parent<Tree>(const Node& node)
 {
     return node.parentNode();
