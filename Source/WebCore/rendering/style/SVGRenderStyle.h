@@ -367,8 +367,9 @@ inline void SVGRenderStyle::setStopColor(const Color& color)
 
 inline void SVGRenderStyle::setFloodOpacity(float opacity)
 {
-    if (!(m_miscData->floodOpacity == opacity))
-        m_miscData.access().floodOpacity = opacity;
+    auto clampedOpacity = clampTo<float>(opacity, 0.f, 1.f);
+    if (!(m_miscData->floodOpacity == clampedOpacity))
+        m_miscData.access().floodOpacity = clampedOpacity;
 }
 
 inline void SVGRenderStyle::setFloodColor(const Color& color)

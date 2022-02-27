@@ -209,7 +209,7 @@ PASS flood-color supports animating as color of rgba()
 PASS flood-color supports animating as color of hsla()
 PASS flood-opacity (type: opacity) has testAddition function
 PASS flood-opacity: [0, 1] number
-FAIL flood-opacity: [0, 1] number (clamped) assert_equals: The value should be 1 at 0ms expected "1" but got "1.1"
+PASS flood-opacity: [0, 1] number (clamped)
 PASS font-stretch (type: percentage) has testAddition function
 PASS font-stretch: percentage
 PASS font-style (type: discrete) has testAddition function
