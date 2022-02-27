@@ -1,3 +1,32 @@
+2022-02-27  Youenn Fablet  <youenn@apple.com>
+
+        Exposing RemoteVideoFrameProxy::write is unneeded
+        https://bugs.webkit.org/show_bug.cgi?id=237212
+
+        Reviewed by Eric Carlson.
+
+        Exposing RemoteVideoFrameProxy::write is unneeded as RemoteVideoFrameProxy is immutable.
+        It is best to remove it as calling write() inadvertently would break things.
+        Renaming read() to newReadReference() to make it clear that we are creating a new read reference
+        that needs to be sent to GPUProcess to prevent leaks.
+        No change of behavior.
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::copyTextureFromMedia):
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.cpp:
+        (WebKit::RemoteVideoFrameProxy::~RemoteVideoFrameProxy):
+        (WebKit::RemoteVideoFrameProxy::newReadReference const):
+        (WebKit::RemoteVideoFrameProxy::pixelBuffer const):
+        (WebKit::RemoteVideoFrameProxy::write const): Deleted.
+        (WebKit::RemoteVideoFrameProxy::read const): Deleted.
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::encodeFrame):
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp:
+        (WebKit::RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer):
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp:
+        (WebKit::SharedVideoFrameWriter::write):
+
 2022-02-26  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteCaptureSampleManager, UserMediaSampleCaptureManagerProxy create the RemoteVideoFrame in incorrectly

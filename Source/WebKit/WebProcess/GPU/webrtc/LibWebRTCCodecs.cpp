@@ -466,7 +466,7 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
     if (auto* provider = webrtc::videoFrameBufferProvider(frame)) {
         auto* videoFrame = static_cast<VideoFrame*>(provider);
         if (is<RemoteVideoFrameProxy>(videoFrame))
-            remoteVideoFrameReadReference = downcast<RemoteVideoFrameProxy>(videoFrame)->read();
+            remoteVideoFrameReadReference = downcast<RemoteVideoFrameProxy>(videoFrame)->newReadReference();
     }
 
     RetainPtr<CVPixelBufferRef> buffer;

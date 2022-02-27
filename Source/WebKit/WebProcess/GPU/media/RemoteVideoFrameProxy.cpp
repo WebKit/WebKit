@@ -81,7 +81,7 @@ RemoteVideoFrameProxy::RemoteVideoFrameProxy(IPC::Connection& connection, Remote
 
 RemoteVideoFrameProxy::~RemoteVideoFrameProxy()
 {
-    releaseRemoteVideoFrameProxy(m_connection, write());
+    releaseRemoteVideoFrameProxy(m_connection, m_referenceTracker.write());
 }
 
 RemoteVideoFrameIdentifier RemoteVideoFrameProxy::identifier() const
@@ -89,12 +89,7 @@ RemoteVideoFrameIdentifier RemoteVideoFrameProxy::identifier() const
     return m_referenceTracker.identifier();
 }
 
-RemoteVideoFrameWriteReference RemoteVideoFrameProxy::write() const
-{
-    return m_referenceTracker.write();
-}
-
-RemoteVideoFrameReadReference RemoteVideoFrameProxy::read() const
+RemoteVideoFrameReadReference RemoteVideoFrameProxy::newReadReference() const
 {
     return m_referenceTracker.read();
 }
@@ -122,7 +117,7 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
             semaphore.wait();
         } else {
             RetainPtr<CVPixelBufferRef> pixelBuffer;
-            auto result = m_connection->sendSync(Messages::RemoteVideoFrameObjectHeap::PixelBuffer(read()), Messages::RemoteVideoFrameObjectHeap::PixelBuffer::Reply(pixelBuffer), 0, defaultTimeout);
+            auto result = m_connection->sendSync(Messages::RemoteVideoFrameObjectHeap::PixelBuffer(newReadReference()), Messages::RemoteVideoFrameObjectHeap::PixelBuffer::Reply(pixelBuffer), 0, defaultTimeout);
             if (result)
                 m_pixelBuffer = WTFMove(pixelBuffer);
         }

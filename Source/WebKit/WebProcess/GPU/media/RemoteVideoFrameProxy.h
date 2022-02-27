@@ -78,8 +78,7 @@ public:
     ~RemoteVideoFrameProxy() final;
 
     RemoteVideoFrameIdentifier identifier() const;
-    RemoteVideoFrameWriteReference write() const;
-    RemoteVideoFrameReadReference read() const;
+    RemoteVideoFrameReadReference newReadReference() const;
 
     WebCore::IntSize size() const { return m_size; }
 

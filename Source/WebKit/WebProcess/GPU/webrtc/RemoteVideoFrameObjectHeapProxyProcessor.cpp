@@ -119,7 +119,7 @@ void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteV
         videoFrameBufferNotFound(frame.identifier());
         return;
     }
-    IPC::Connection::send(m_connectionID, Messages::RemoteVideoFrameObjectHeap::GetVideoFrameBuffer(frame.read()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    IPC::Connection::send(m_connectionID, Messages::RemoteVideoFrameObjectHeap::GetVideoFrameBuffer(frame.newReadReference()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 }

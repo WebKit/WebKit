@@ -92,7 +92,7 @@ std::optional<SharedVideoFrame> SharedVideoFrameWriter::write(MediaSample& frame
 {
     SharedVideoFrame sharedVideoFrame { frame.presentationTime(), frame.videoMirrored(), frame.videoRotation(), nullptr };
     if (is<RemoteVideoFrameProxy>(frame)) {
-        sharedVideoFrame.buffer = downcast<RemoteVideoFrameProxy>(frame).read();
+        sharedVideoFrame.buffer = downcast<RemoteVideoFrameProxy>(frame).newReadReference();
         return sharedVideoFrame;
     }
     if (is<MediaSampleAVFObjC>(frame)) {
