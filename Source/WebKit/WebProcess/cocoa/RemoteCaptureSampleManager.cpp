@@ -158,26 +158,30 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
     iterator->value->setStorage(ipcHandle.handle, description, numberOfFrames, WTFMove(semaphore), mediaTime, frameChunkSize);
 }
 
-void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoSample&& sample, std::optional<RemoteVideoFrameIdentifier> remoteIdentifier, VideoSampleMetadata metadata)
+void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoSampleMetadata metadata)
 {
     ASSERT(!WTF::isMainRunLoop());
-
-    RefPtr<MediaSample> videoFrame;
-    // We always create RemoteVideoFrameProxy so that we can release the corresponding GPUProcess IOSurface right away if there is no video source.
-    if (remoteIdentifier) {
-        RemoteVideoFrameProxy::Properties properties { { *remoteIdentifier, 0 }, sample.time(), sample.mirrored(), sample.rotation(), sample.size(), sample.videoFormat() };
+    // Create videoFrame before early outs so that the reference in `properties` is adopted.
+    Ref<RemoteVideoFrameProxy> videoFrame = [&] {
         // FIXME: We need to either get GPUProcess or UIProcess object heap proxy. For now we always go to GPUProcess.
         Locker lock(m_videoFrameObjectHeapProxyLock);
-        videoFrame = RemoteVideoFrameProxy::create(*m_connection, *m_videoFrameObjectHeapProxy, WTFMove(properties));
-    }
-
+        return RemoteVideoFrameProxy::create(*m_connection, *m_videoFrameObjectHeapProxy, WTFMove(properties));
+    }();
     auto iterator = m_videoSources.find(identifier);
     if (iterator == m_videoSources.end()) {
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for remoteVideoSampleAvailable", identifier.toUInt64());
         return;
     }
-    if (videoFrame) {
-        iterator->value->videoFrameAvailable(videoFrame.releaseNonNull(), sample.size(), metadata);
+    auto videoFrameSize = videoFrame->size();
+    iterator->value->videoFrameAvailable(WTFMove(videoFrame), videoFrameSize, metadata);
+}
+
+void RemoteCaptureSampleManager::videoSampleAvailableCV(RealtimeMediaSourceIdentifier identifier, RemoteVideoSample&& sample, VideoSampleMetadata metadata)
+{
+    ASSERT(!WTF::isMainRunLoop());
+    auto iterator = m_videoSources.find(identifier);
+    if (iterator == m_videoSources.end()) {
+        RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for remoteVideoSampleAvailable", identifier.toUInt64());
         return;
     }
     iterator->value->videoSampleAvailable(WTFMove(sample), metadata);

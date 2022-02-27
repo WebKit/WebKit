@@ -200,21 +200,17 @@ private:
         auto videoSample = rotateVideoFrameIfNeeded(sample);
         if (!videoSample)
             return;
-
+        if (m_resourceOwner)
+            videoSample->setOwnershipIdentity(m_resourceOwner);
+        if (m_videoFrameObjectHeap) {
+            auto properties = m_videoFrameObjectHeap->add(sample);
+            m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailable(m_id, properties, metadata), 0);
+            return;
+        }
         auto remoteSample = RemoteVideoSample::create(*videoSample);
         if (!remoteSample)
             return;
-
-        if (m_resourceOwner)
-            remoteSample->setOwnershipIdentity(m_resourceOwner);
-
-        std::optional<RemoteVideoFrameIdentifier> remoteIdentifier;
-        if (m_videoFrameObjectHeap) {
-            remoteIdentifier = m_videoFrameObjectHeap->createRemoteVideoFrame(sample);
-            remoteSample->clearIOSurface();
-        }
-
-        m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailable(m_id, WTFMove(*remoteSample), remoteIdentifier, metadata), 0);
+        m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailableCV(m_id, *remoteSample, metadata), 0);
     }
 
     RetainPtr<CVPixelBufferRef> rotatePixelBuffer(MediaSample& sample)

@@ -74,13 +74,6 @@ void RemoteVideoFrameObjectHeap::stopListeningForIPC(Ref<RemoteVideoFrameObjectH
     }
 }
 
-// FIXME: This will be removed once call sites use addVideoFrame().
-RemoteVideoFrameIdentifier RemoteVideoFrameObjectHeap::createRemoteVideoFrame(Ref<WebCore::MediaSample>&& frame)
-{
-    auto identifier = RemoteVideoFrameIdentifier::generateThreadSafe();
-    m_heap.add(identifier, WTFMove(frame));
-    return identifier;
-}
 
 RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::MediaSample>&& frame)
 {

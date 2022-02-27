@@ -34,6 +34,7 @@
 #include "RemoteRealtimeDisplaySource.h"
 #include "RemoteRealtimeVideoSource.h"
 #include "RemoteVideoFrameIdentifier.h"
+#include "RemoteVideoFrameProxy.h"
 #include "SharedMemory.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
@@ -74,7 +75,9 @@ private:
     // Messages
     void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&, const MediaTime&, size_t frameSampleSize);
     void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);
-    void videoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&, std::optional<RemoteVideoFrameIdentifier>, WebCore::VideoSampleMetadata);
+    void videoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, RemoteVideoFrameProxy::Properties&&, WebCore::VideoSampleMetadata);
+    // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
+    void videoSampleAvailableCV(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&, WebCore::VideoSampleMetadata);
 
     void setConnection(IPC::Connection*);
 

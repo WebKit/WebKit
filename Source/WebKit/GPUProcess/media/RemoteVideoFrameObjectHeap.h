@@ -44,7 +44,6 @@ public:
     static Ref<RemoteVideoFrameObjectHeap> create(GPUConnectionToWebProcess&);
     ~RemoteVideoFrameObjectHeap();
 
-    RemoteVideoFrameIdentifier createRemoteVideoFrame(Ref<WebCore::MediaSample>&&);
     RemoteVideoFrameProxy::Properties add(Ref<WebCore::MediaSample>&&);
     RefPtr<WebCore::MediaSample> get(RemoteVideoFrameReadReference&& read) { return m_heap.retire(WTFMove(read), 0_s); }
 
