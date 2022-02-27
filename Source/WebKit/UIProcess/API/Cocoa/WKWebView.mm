@@ -1128,7 +1128,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
             break;
         }
 
-        argumentsMap->set(key, serializedValue->internalRepresentation().toWireBytes());
+        argumentsMap->set(key, serializedValue->internalRepresentation().wireBytes());
     }
 
     if (errorMessage && handler) {

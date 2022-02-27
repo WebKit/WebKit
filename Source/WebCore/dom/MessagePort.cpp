@@ -284,7 +284,7 @@ void MessagePort::dispatchMessages()
                 return;
             auto ports = MessagePort::entanglePorts(*context, WTFMove(message.transferredPorts));
             // Per specification, each MessagePort object has a task source called the port message queue.
-            queueTaskToDispatchEvent(*this, TaskSource::PostedMessageQueue, MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
+            queueTaskToDispatchEvent(*this, TaskSource::PostedMessageQueue, MessageEvent::create(message.message.releaseNonNull(), { }, { }, { }, WTFMove(ports)));
         }
     };
 

@@ -90,12 +90,9 @@ ExceptionOr<Ref<AudioWorkletNode>> AudioWorkletNode::create(JSC::JSGlobalObject&
     {
         auto lock = JSC::JSLockHolder { &globalObject };
         auto* jsOptions = convertDictionaryToJS(globalObject, *JSC::jsCast<JSDOMGlobalObject*>(&globalObject), options);
-        Vector<RefPtr<MessagePort>> ports;
-        auto serializedValue = SerializedScriptValue::create(globalObject, jsOptions, { }, ports, SerializationContext::WorkerPostMessage);
-        if (serializedValue.hasException())
+        serializedOptions = SerializedScriptValue::create(globalObject, jsOptions, SerializationErrorMode::NonThrowing, SerializationContext::WorkerPostMessage);
+        if (!serializedOptions)
             serializedOptions = SerializedScriptValue::nullValue();
-        else
-            serializedOptions = serializedValue.releaseReturnValue();
     }
 
     auto parameterData = WTFMove(options.parameterData);

@@ -176,7 +176,7 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension(const In
                 return completionHandler({ returnedValue });
             }
 
-            completionHandler({ { API::SerializedScriptValue::adopt(Vector { dataReference.data(), dataReference.size() }).ptr() } });
+            completionHandler({ { API::SerializedScriptValue::createFromWireBytes(Vector { dataReference.data(), dataReference.size() }).ptr() } });
         });
     });
 }
@@ -233,7 +233,7 @@ void WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab(const 
                 return completionHandler({ returnedValue });
             }
 
-            completionHandler({ { API::SerializedScriptValue::adopt({ dataReference.data(), dataReference.size() }).ptr() } });
+            completionHandler({ { API::SerializedScriptValue::createFromWireBytes({ dataReference.data(), dataReference.size() }).ptr() } });
         });
     });
 }

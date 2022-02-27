@@ -65,13 +65,11 @@ void SharedWorkerGlobalScope::close()
 void SharedWorkerGlobalScope::postConnectEvent(TransferredMessagePort&& transferredPort, const String& sourceOrigin)
 {
     SCOPE_RELEASE_LOG("postConnectEvent:");
-    auto value = SerializedScriptValue::create(emptyString());
-    ASSERT(value);
     auto ports = MessagePort::entanglePorts(*this, { WTFMove(transferredPort) });
     ASSERT(ports.size() == 1);
     auto port = ports[0];
     ASSERT(port);
-    auto event = MessageEvent::create(WTFMove(ports), value.releaseNonNull(), sourceOrigin, { }, port);
+    auto event = MessageEvent::create(emptyString(), sourceOrigin, { }, port, WTFMove(ports));
     event->initEvent(eventNames().connectEvent, false, false);
 
     dispatchEvent(WTFMove(event));

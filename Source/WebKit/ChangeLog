@@ -1,5 +1,41 @@
 2022-02-27  Chris Dumez  <cdumez@apple.com>
 
+        Simplify SerializedScriptValue construction
+        https://bugs.webkit.org/show_bug.cgi?id=237241
+
+        Reviewed by Darin Adler.
+
+        Update code base to reflect SerializedScriptValue API changes.
+
+        * Shared/API/APISerializedScriptValue.h:
+        (API::SerializedScriptValue::createFromWireBytes):
+        (API::SerializedScriptValue::dataReference const):
+        (API::SerializedScriptValue::adopt): Deleted.
+        * Shared/SessionState.cpp:
+        (WebKit::PageState::encode const):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::decode):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _evaluateJavaScript:asAsyncFunction:withSourceURL:withArguments:forceUserGesture:inFrame:inWorld:completionHandler:]):
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension):
+        (WebKit::WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::didPostMessage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInFrameInScriptWorld):
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::evaluateScriptForExtension):
+        (WebKit::WebInspectorUIExtensionController::evaluateScriptInExtensionTab):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFrameState):
+        (WebKit::applyFrameState):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScript):
+
+2022-02-27  Chris Dumez  <cdumez@apple.com>
+
         Call WKNavigationDelegate.didFailProvisionalNavigation even after a cross-origin navigation with COOP
         https://bugs.webkit.org/show_bug.cgi?id=237071
         <rdar://problem/89354367>

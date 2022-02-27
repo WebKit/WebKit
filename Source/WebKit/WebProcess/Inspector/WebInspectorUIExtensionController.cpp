@@ -287,7 +287,7 @@ void WebInspectorUIExtensionController::evaluateScriptForExtension(const Inspect
             return;
         }
 
-        completionHandler(serializedResultValue->data(), std::nullopt, std::nullopt);
+        completionHandler(serializedResultValue->wireBytes(), std::nullopt, std::nullopt);
     });
 }
 
@@ -438,7 +438,7 @@ void WebInspectorUIExtensionController::evaluateScriptInExtensionTab(const Inspe
             return;
         }
 
-        completionHandler(serializedResultValue->data(), std::nullopt, std::nullopt);
+        completionHandler(serializedResultValue->wireBytes(), std::nullopt, std::nullopt);
     });
 }
 

@@ -1,3 +1,53 @@
+2022-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Simplify SerializedScriptValue construction
+        https://bugs.webkit.org/show_bug.cgi?id=237241
+
+        Reviewed by Darin Adler.
+
+        The 2 main factory functions for SerializedScriptValue now share the same code.
+        I also dropped some SerializedScriptValue API that was no longer useful.
+        Finally, I simplified factory functions for MessageEvent.
+
+        * Modules/indexeddb/IDBValue.cpp:
+        (WebCore::IDBValue::IDBValue):
+        * Modules/webaudio/AudioWorkletNode.cpp:
+        (WebCore::AudioWorkletNode::create):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::toString const):
+        (WebCore::SerializedScriptValue::toString): Deleted.
+        * bindings/js/SerializedScriptValue.h:
+        (WebCore::SerializedScriptValue::wireBytes const):
+        (WebCore::SerializedScriptValue::SerializedScriptValue):
+        (WebCore::SerializedScriptValue::adopt): Deleted.
+        (WebCore::SerializedScriptValue::data const): Deleted.
+        (WebCore::SerializedScriptValue::toWireBytes const): Deleted.
+        * dom/BroadcastChannel.cpp:
+        (WebCore::BroadcastChannel::dispatchMessage):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        (WebCore::MessageEvent::create):
+        * dom/MessageEvent.h:
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchMessages):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::dispatchMessageEvent):
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * testing/Internals.cpp:
+        (WebCore::Internals::serializeObject const):
+        (WebCore::Internals::deserializeBuffer const):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerGlobalScope):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::postMessage):
+        * workers/shared/SharedWorkerGlobalScope.cpp:
+        (WebCore::SharedWorkerGlobalScope::postConnectEvent):
+
 2022-02-27  Tim Nguyen  <ntim@apple.com>
 
         Force -webkit-user-modify used style to readonly for inert nodes

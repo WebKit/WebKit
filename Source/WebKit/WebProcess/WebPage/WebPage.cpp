@@ -3771,7 +3771,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 
         IPC::DataReference dataReference;
         if (serializedResultValue)
-            dataReference = serializedResultValue->data();
+            dataReference = serializedResultValue->wireBytes();
 
         std::optional<ExceptionDetails> details;
         if (!result)
