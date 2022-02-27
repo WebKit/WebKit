@@ -194,10 +194,7 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
         keyframeValue.setStyle(styleResolver.styleForKeyframe(element, underlyingStyle, { nullptr }, keyframeRule, keyframeValue));
         for (auto cssPropertyId : implicitProperties)
             keyframeValue.addProperty(cssPropertyId);
-        if (!key)
-            m_keyframes.insert(0, WTFMove(keyframeValue));
-        else
-            m_keyframes.append(WTFMove(keyframeValue));
+        insert(WTFMove(keyframeValue));
     };
 
     if (!zeroKeyframeImplicitProperties.isEmpty())

@@ -1,3 +1,35 @@
+2022-02-27  Antoine Quint  <graouts@webkit.org>
+
+        [css-animations] implicit keyframes should be inserted after explicit keyframes with the same offset
+        https://bugs.webkit.org/show_bug.cgi?id=237246
+
+        Reviewed by Dean Jackson.
+
+        The CSS Animations spec says the following about implicit keyframes generation:
+
+            Let initial keyframe be the keyframe in keyframes with offset 0, timing function default timing
+            function and composite default composite.
+
+            If there is no such keyframe, let initial keyframe be a new empty keyframe with offset 0, timing
+            function default timing function, composite |default composite, and add it to keyframes after the
+            last keyframe with offset 0.
+
+            Let final keyframe be the keyframe in keyframes with offset 1, timing function default timing
+            function and composite default composite.
+
+            If there is no such keyframe, let final keyframe be a new empty keyframe with offset 1, timing
+            function default timing function and composite default composite, and add it to keyframes after
+            the last keyframe with offset 1.        
+
+        Full details are at https://drafts.csswg.org/css-animations-2/#keyframes.
+
+        The KeyframeList::insert() method does the right thing already by adding a new keyframe after all
+        other keyframes with that same offset, so all we need to do is to use this method rather than
+        specifying explicit indexes.
+
+        * rendering/style/KeyframeList.cpp:
+        (WebCore::KeyframeList::fillImplicitKeyframes):
+
 2022-02-27  Tim Nguyen  <ntim@apple.com>
 
         Use hasAttributeWithoutSynchronisation for checking inert attribute in Adjuster::adjust
