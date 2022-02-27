@@ -1,3 +1,16 @@
+2022-02-27  Dean Jackson  <dino@apple.com>
+
+        Loading a USDZ url as the main resource renders as garbage
+        https://bugs.webkit.org/show_bug.cgi?id=237240
+        rdar://88767033
+
+        Reviewed by Antoine Quint.
+
+        We can't render a USD document if the ModelDocument feature is not enabled.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::canShowMIMEType):
+
 2022-02-27  Antoine Quint  <graouts@webkit.org>
 
         [css-animations] implicit keyframes should be inserted after explicit keyframes with the same offset
