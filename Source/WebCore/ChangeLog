@@ -1,3 +1,16 @@
+2022-02-27  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] web-animations/timing-model/animations/setting-the-timeline-of-an-animation.html is a unique failure
+        https://bugs.webkit.org/show_bug.cgi?id=237257
+
+        Reviewed by Dean Jackson.
+
+        The spec has changed since we initially implemented Animation.playState and we missed one condition for
+        an animation's play state to be "idle".
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::playState const):
+
 2022-02-27  Matt Woodrow  <mattwoodrow@apple.com>
 
         Handle reverse flow direction when converting iterator coords for a subgrid

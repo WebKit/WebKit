@@ -644,11 +644,11 @@ auto WebAnimation::playState() const -> PlayState
     // The play state of animation, animation, at a given moment is the state corresponding to the
     // first matching condition from the following:
 
-    // The current time of animation is unresolved, and animation does not have either a pending
-    // play task or a pending pause task,
+    // The current time of animation is unresolved, and the start time of animation is unresolved, and
+    // animation does not have either a pending play task or a pending pause task,
     // → idle
     auto animationCurrentTime = currentTime();
-    if (!animationCurrentTime && !pending())
+    if (!animationCurrentTime && !m_startTime && !pending())
         return PlayState::Idle;
 
     // Animation has a pending pause task, or both the start time of animation is unresolved and it does not
