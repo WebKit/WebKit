@@ -52,8 +52,8 @@ inline MessageEvent::MessageEvent(const AtomString& type, Init&& initializer, Is
 {
 }
 
-inline MessageEvent::MessageEvent(DataType&& data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
-    : Event(eventNames().messageEvent, CanBubble::No, IsCancelable::No)
+inline MessageEvent::MessageEvent(const AtomString& type, DataType&& data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
+    : Event(type, CanBubble::No, IsCancelable::No)
     , m_data(WTFMove(data))
     , m_origin(origin)
     , m_lastEventId(lastEventId)
@@ -62,37 +62,14 @@ inline MessageEvent::MessageEvent(DataType&& data, const String& origin, const S
 {
 }
 
-inline MessageEvent::MessageEvent(const AtomString& type, Ref<SerializedScriptValue>&& data, const String& origin, const String& lastEventId)
-    : Event(type, CanBubble::No, IsCancelable::No)
-    , m_data(WTFMove(data))
-    , m_origin(origin)
-    , m_lastEventId(lastEventId)
+Ref<MessageEvent> MessageEvent::create(const AtomString& type, DataType&& data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
 {
+    return adoptRef(*new MessageEvent(type, WTFMove(data), origin, lastEventId, WTFMove(source), WTFMove(ports)));
 }
 
-Ref<MessageEvent> MessageEvent::create(Vector<RefPtr<MessagePort>>&& ports, Ref<SerializedScriptValue>&& data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source)
+Ref<MessageEvent> MessageEvent::create(DataType&& data, const String& origin, const String& lastEventId, std::optional<MessageEventSource>&& source, Vector<RefPtr<MessagePort>>&& ports)
 {
-    return adoptRef(*new MessageEvent(WTFMove(data), origin, lastEventId, WTFMove(source), WTFMove(ports)));
-}
-
-Ref<MessageEvent> MessageEvent::create(const AtomString& type, Ref<SerializedScriptValue>&& data, const String& origin, const String& lastEventId)
-{
-    return adoptRef(*new MessageEvent(type, WTFMove(data), origin, lastEventId));
-}
-
-Ref<MessageEvent> MessageEvent::create(const String& data, const String& origin)
-{
-    return adoptRef(*new MessageEvent(data, origin));
-}
-
-Ref<MessageEvent> MessageEvent::create(Ref<Blob>&& data, const String& origin)
-{
-    return adoptRef(*new MessageEvent(WTFMove(data), origin));
-}
-
-Ref<MessageEvent> MessageEvent::create(Ref<ArrayBuffer>&& data, const String& origin)
-{
-    return adoptRef(*new MessageEvent(WTFMove(data), origin));
+    return create(eventNames().messageEvent, WTFMove(data), origin, lastEventId, WTFMove(source), WTFMove(ports));
 }
 
 Ref<MessageEvent> MessageEvent::createForBindings()

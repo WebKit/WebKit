@@ -278,7 +278,7 @@ private:
             completionHandler(value.ptr(), { });
         };
 
-        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, IPC::DataReference(value->data())), WTFMove(messageReplyHandler), m_controller->identifier());
+        WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebUserContentControllerProxy::DidPostMessage(webPage->webPageProxyIdentifier(), webFrame->info(), m_identifier, IPC::DataReference(value->wireBytes())), WTFMove(messageReplyHandler), m_controller->identifier());
     }
 
     RefPtr<WebUserContentController> m_controller;

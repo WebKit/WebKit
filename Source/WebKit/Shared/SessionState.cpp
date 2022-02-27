@@ -183,7 +183,7 @@ void PageState::encode(IPC::Encoder& encoder) const
     encoder << title << mainFrameState << !!sessionStateObject;
 
     if (sessionStateObject)
-        encoder << sessionStateObject->toWireBytes();
+        encoder << sessionStateObject->wireBytes();
 
     encoder << shouldOpenExternalURLsPolicy;
 }

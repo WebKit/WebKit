@@ -104,7 +104,7 @@ void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& m
             return;
 
         auto ports = MessagePort::entanglePorts(context, WTFMove(message.transferredPorts));
-        ActiveDOMObject::queueTaskToDispatchEvent(*workerObject, TaskSource::PostedMessageQueue, MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
+        ActiveDOMObject::queueTaskToDispatchEvent(*workerObject, TaskSource::PostedMessageQueue, MessageEvent::create(message.message.releaseNonNull(), { }, { }, std::nullopt, WTFMove(ports)));
     });
 }
 
@@ -124,7 +124,7 @@ void WorkerMessagingProxy::postMessageToWorkerGlobalScope(MessageWithMessagePort
         ASSERT_WITH_SECURITY_IMPLICATION(scriptContext.isWorkerGlobalScope());
         auto& context = static_cast<DedicatedWorkerGlobalScope&>(scriptContext);
         auto ports = MessagePort::entanglePorts(scriptContext, WTFMove(message.transferredPorts));
-        context.dispatchEvent(MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
+        context.dispatchEvent(MessageEvent::create(message.message.releaseNonNull(), { }, { }, std::nullopt, WTFMove(ports)));
         context.thread().workerObjectProxy().confirmMessageFromWorkerObject(context.hasPendingActivity());
     });
 }

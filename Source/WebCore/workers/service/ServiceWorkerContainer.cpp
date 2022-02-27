@@ -438,7 +438,7 @@ void ServiceWorkerContainer::postMessage(MessageWithMessagePorts&& message, Serv
     auto& context = *scriptExecutionContext();
     MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(context, WTFMove(sourceData)) };
 
-    auto messageEvent = MessageEvent::create(MessagePort::entanglePorts(context, WTFMove(message.transferredPorts)), message.message.releaseNonNull(), sourceOrigin, { }, WTFMove(source));
+    auto messageEvent = MessageEvent::create(message.message.releaseNonNull(), sourceOrigin, { }, WTFMove(source), MessagePort::entanglePorts(context, WTFMove(message.transferredPorts)));
     if (m_shouldDeferMessageEvents)
         m_deferredMessageEvents.append(WTFMove(messageEvent));
     else {

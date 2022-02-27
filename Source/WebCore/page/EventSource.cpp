@@ -431,14 +431,13 @@ void EventSource::dispatchMessageEvent()
 
     auto& name = m_eventName.isEmpty() ? eventNames().messageEvent : m_eventName;
 
-    // Omit the trailing "\n" character.
     ASSERT(!m_data.isEmpty());
-    unsigned size = m_data.size() - 1;
-    auto data = SerializedScriptValue::create({ m_data.data(), size });
-    RELEASE_ASSERT(data);
+
+    // Omit the trailing "\n" character.
+    String data(m_data.data(), m_data.size() - 1);
     m_data = { };
 
-    dispatchEvent(MessageEvent::create(name, data.releaseNonNull(), m_eventStreamOrigin, m_lastEventId));
+    dispatchEvent(MessageEvent::create(name, WTFMove(data), m_eventStreamOrigin, m_lastEventId));
 }
 
 } // namespace WebCore
