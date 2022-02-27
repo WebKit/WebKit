@@ -1,3 +1,20 @@
+2022-02-27  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Handle reverse flow direction when converting iterator coords for a subgrid
+        https://bugs.webkit.org/show_bug.cgi?id=236955
+
+        Reviewed by Dean Jackson.
+
+        When recursing into a subgrid via createForSubgrid, we convert the iterator's
+        position into coordinates relative to the subgrid. This handles the case where
+        the subgrid has a reverse flow direction (RTL vs LTR) and swaps the position
+        to be relative to the opposite edge.
+
+        Marks existing WPT grid-gap-007.html as passing
+
+        * rendering/Grid.cpp:
+        (WebCore::GridIterator::createForSubgrid):
+
 2022-02-27  Antoine Quint  <graouts@webkit.org>
 
         [svg] flood-opacity should be clamped to the [0,1] range

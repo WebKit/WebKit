@@ -280,6 +280,11 @@ GridIterator GridIterator::createForSubgrid(const RenderGrid& subgrid, const Gri
     GridTrackSizingDirection innerDirection = GridLayoutFunctions::flowAwareDirectionForChild(*downcast<RenderGrid>(subgrid.parent()), subgrid, outer.direction());
     ASSERT(subgrid.isSubgrid(innerDirection));
 
+    if (GridLayoutFunctions::isSubgridReversedDirection(*downcast<RenderGrid>(subgrid.parent()), outer.direction(), subgrid)) {
+        unsigned fixedMax = subgrid.currentGrid().numTracks(innerDirection);
+        fixedIndex = fixedMax - fixedIndex - 1;
+    }
+
     return GridIterator(subgrid.currentGrid(), innerDirection, fixedIndex);
 }
 

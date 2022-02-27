@@ -1,3 +1,15 @@
+2022-02-27  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Handle reverse flow direction when converting iterator coords for a subgrid
+        https://bugs.webkit.org/show_bug.cgi?id=236955
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+
+        Marked grid-gap-007.html as now passing, and added bug annotations to
+        remaining subgrid failures.
+
 2022-02-27  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] media/video-src-blob-perf.html timing out likely since update to GStreamer 1.20
