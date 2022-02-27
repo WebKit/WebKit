@@ -1,3 +1,20 @@
+2022-02-27  Tim Nguyen  <ntim@apple.com>
+
+        Optimize StyleSharingResolver inert checks
+        https://bugs.webkit.org/show_bug.cgi?id=237235
+
+        Reviewed by Youenn Fablet.
+
+        inert is an boolean attribute, the only thing that matters for the StyleAdjuster
+        inertness adjustment is the presence of the attribute, not its value. E.g.
+        `inert=false` is the same as `inert=inert` or `inert=true`.
+
+        This saves getting and comparing values for those attributes, and also allows
+        `inert=inert` and `inert=true` or `inert=false` to start sharing style.
+
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::canShareStyleWithElement const):
+
 2022-02-27  Youenn Fablet  <youenn@apple.com>
 
         Simplify CVPixelBuffer data copies in SharedVideoFrameInfo

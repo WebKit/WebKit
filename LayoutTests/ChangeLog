@@ -1,5 +1,17 @@
 2022-02-27  Tim Nguyen  <ntim@apple.com>
 
+        Optimize StyleSharingResolver inert checks
+        https://bugs.webkit.org/show_bug.cgi?id=237235
+
+        Reviewed by Youenn Fablet.
+
+        Add small test that style sharing is not wrongly applied.
+
+        * fast/css/inert-style-sharing-expected.html: Added.
+        * fast/css/inert-style-sharing.html: Added.
+
+2022-02-27  Tim Nguyen  <ntim@apple.com>
+
         Re-import inert and <dialog> WPT
         https://bugs.webkit.org/show_bug.cgi?id=237243
 
