@@ -239,7 +239,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     Checked<uint64_t> payloadSize = titleSize;
     payloadSize += urlSize;
-    payloadSize += data ? data->data().size() : 0;
+    payloadSize += data ? data->wireBytes().size() : 0;
 
     Checked<uint64_t> newTotalUsage = mainHistory.m_totalStateObjectUsage;
 

@@ -4386,7 +4386,7 @@ void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& p
         Vector<uint8_t> data;
         data.reserveInitialCapacity(dataReference.size());
         data.append(dataReference.data(), dataReference.size());
-        callbackFunction({ API::SerializedScriptValue::adopt(WTFMove(data)).ptr() });
+        callbackFunction({ API::SerializedScriptValue::createFromWireBytes(Vector(dataReference)).ptr() });
     });
 }
 

@@ -1,4 +1,80 @@
-2022-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+2022-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Simplify SerializedScriptValue construction
+        https://bugs.webkit.org/show_bug.cgi?id=237241
+
+        Reviewed by Darin Adler.
+
+        Update code base to reflect SerializedScriptValue API changes.
+
+        * Shared/API/APISerializedScriptValue.h:
+        (API::SerializedScriptValue::createFromWireBytes):
+        (API::SerializedScriptValue::dataReference const):
+        (API::SerializedScriptValue::adopt): Deleted.
+        * Shared/SessionState.cpp:
+        (WebKit::PageState::encode const):
+        * Shared/UserData.cpp:
+        (WebKit::UserData::decode):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _evaluateJavaScript:asAsyncFunction:withSourceURL:withArguments:forceUserGesture:inFrame:inWorld:completionHandler:]):
+        * UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.cpp:
+        (WebKit::WebInspectorUIExtensionControllerProxy::evaluateScriptForExtension):
+        (WebKit::WebInspectorUIExtensionControllerProxy::evaluateScriptInExtensionTab):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::didPostMessage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInFrameInScriptWorld):
+        * WebProcess/Inspector/WebInspectorUIExtensionController.cpp:
+        (WebKit::WebInspectorUIExtensionController::evaluateScriptForExtension):
+        (WebKit::WebInspectorUIExtensionController::evaluateScriptInExtensionTab):
+        * WebProcess/UserContent/WebUserContentController.cpp:
+        * WebProcess/WebCoreSupport/SessionStateConversion.cpp:
+        (WebKit::toFrameState):
+        (WebKit::applyFrameState):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScript):
+
+2022-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Call WKNavigationDelegate.didFailProvisionalNavigation even after a cross-origin navigation with COOP
+        https://bugs.webkit.org/show_bug.cgi?id=237071
+        <rdar://problem/89354367>
+
+        Reviewed by Darin Adler.
+
+        When doing a process swap on navigation (PSON), we start a new provisional load in the new provisional
+        process and ask the committed process to stop all loads. Since we swap in decidePolicyForNavigationAction,
+        no provisional load has started in the committed process yet. If the provisional process sends us a
+        didFailProvisionalLoad though, we know the provisional load has failed and we take this into consideration
+        and notify the client app.
+
+        When doing a process swap on resource response (due to COOP), we were behaving differently and it was
+        causing some confusion. Since we swap on resource response, the provisional load has started in the
+        committed process by the time we process-swap (unlike PSON). We were also not asking for the committed
+        process to stop/cancel this provisional load. As a result, a provisional load would still be going on
+        in the committed process while another provisional load starts happening in the provisional page / process.
+        Then, if the provisional process would send us a didFailProvisional, we would not pass it along to the
+        client app. Instead we would destroy the ProvisionalPageProxy, which would tell the committed process to
+        stop loading and send its own didFailProvisionalLoad, and the client app would eventually get notified.
+
+        Even though the difference in behavior was confusing, it was working in most cases. There was however
+        an edge case where it didn't work and we would fail to tell the client app that the provisional load
+        had failed. In particular, we would run into trouble when navigating cross-site to a site that adopted
+        the COOP header. We would first do a process-swap on navigation, stop the provisional load in the committed
+        process A, then start a provisional load in process B. We would then get the COOP header and we would
+        start a new provisional load in process C. Process B would go away since we cannot have 2 provisional
+        pages / processes at the same time for the same WebPageProxy. Then if the provisional load fails in
+        process C, we would ignore the didFailProvisionalLoad from process C and destroy the provisional page.
+        We would tell the committed process A to stop loading, expecting it to send its own didFailProvisionalLoad
+        but it wouldn't happen since PSON had already stopped all loading in process A earlier when swapping to
+        process B.
+
+        To address the issue, we align COOP process swap with PSON process swap. We now has the committed process
+        to stop all loads when process swapping on resource response due to COOP. As a result, when the provisional
+        load fails in the provisional process, we can simply pass it along to the client, no matter if the process
+        swap occurred due to PSON or COOP.
+
+        Covered by new API test.
 
         ASSERTION FAILED: !m_isInitializingSendSource crashes on the bots
         https://bugs.webkit.org/show_bug.cgi?id=239399

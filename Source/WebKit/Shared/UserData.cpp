@@ -430,7 +430,7 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         if (!decoder.decode(dataReference))
             return false;
 
-        result = API::SerializedScriptValue::adopt({ dataReference });
+        result = API::SerializedScriptValue::createFromWireBytes({ dataReference });
         break;
     }
 
