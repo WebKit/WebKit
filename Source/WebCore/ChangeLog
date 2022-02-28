@@ -1,3 +1,16 @@
+2022-02-28  Per Arne Vollan  <pvollan@apple.com>
+
+        Remove release assert when UI process is blocking IOSurface IOKit access
+        https://bugs.webkit.org/show_bug.cgi?id=237278
+
+        Reviewed by Darin Adler.
+
+        Remove release assert in IOSurface::bytesPerRowAlignment() when UI process is blocking IOSurface IOKit access.
+        Instead, log this event, and return an appropriate value.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::bytesPerRowAlignment):
+
 2022-02-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, address feedback from Darin regarding r290610.
