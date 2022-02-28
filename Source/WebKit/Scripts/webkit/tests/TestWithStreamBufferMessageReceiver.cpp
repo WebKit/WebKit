@@ -30,6 +30,10 @@
 #include "StreamConnectionBuffer.h"
 #include "TestWithStreamBufferMessages.h"
 
+#if ENABLE(IPC_TESTING_API)
+#include "JSIPCBinding.h"
+#endif
+
 namespace WebKit {
 
 void TestWithStreamBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -47,3 +51,17 @@ void TestWithStreamBuffer::didReceiveMessage(IPC::Connection& connection, IPC::D
 }
 
 } // namespace WebKit
+
+#if ENABLE(IPC_TESTING_API)
+
+namespace IPC {
+
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithStreamBuffer_SendStreamBuffer>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithStreamBuffer::SendStreamBuffer::Arguments>(globalObject, decoder);
+}
+
+}
+
+#endif
+

@@ -156,6 +156,19 @@ static std::optional<JSC::JSValue> jsValueForDecodedArguments(JSC::JSGlobalObjec
     return putJSValueForDecodeArgumentInArray<>(globalObject, decoder, array, 0, dummyArguments);
 }
 
+// The bindings implementation will call the function templates below to decode a message.
+// These function templates are specialized by each message in their own generated file.
+// Each implementation will just call the above `jsValueForDecodedArguments()` function.
+// This has the benefit that upon compilation, only the message receiver implementation files are
+// recompiled when the message argument types change.
+// The bindings implementation, e.g. the caller of jsValueForDecodedMessage<>, does not need
+// to know all the message argument types, and need to be recompiled only when the message itself
+// changes.
+template<MessageName>
+std::optional<JSC::JSValue> jsValueForDecodedMessage(JSC::JSGlobalObject*, IPC::Decoder&);
+template<MessageName>
+std::optional<JSC::JSValue> jsValueForDecodedMessageReply(JSC::JSGlobalObject*, IPC::Decoder&);
+
 }
 
 #endif
