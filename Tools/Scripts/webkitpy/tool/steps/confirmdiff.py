@@ -26,6 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import sys
 
 from webkitpy.tool.steps.abstractstep import AbstractStep
@@ -50,7 +51,7 @@ class ConfirmDiff(AbstractStep):
         ]
 
     def _show_pretty_diff(self, diff):
-        if not self._tool.user.can_open_url():
+        if os.environ.get('WEBKIT_PATCH_PREFER_PAGER') or not self._tool.user.can_open_url():
             return None
 
         try:
