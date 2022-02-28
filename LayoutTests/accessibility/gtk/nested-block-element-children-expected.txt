@@ -1,20 +1,20 @@
 AXRole: AXWebArea
     AXRole: AXSection AXValue: Test 1
-    AXRole: AXHeading AXValue: Test 1
+    AXRole: AXHeading AXValue: <obj>
         AXRole: AXLink AXValue: Test 1
     AXRole: AXHeading AXValue: Test 1
     AXRole: AXParagraph AXValue: Test 1
-    AXRole: AXHeading AXValue: Test 2
+    AXRole: AXHeading AXValue: <obj>
         AXRole: AXLink AXValue: Test 2
     AXRole: AXHeading AXValue: Test 2
     AXRole: AXParagraph AXValue: Test 2
     AXRole: AXSection AXValue: Test 3
-    AXRole: AXHeading AXValue: Test 3
+    AXRole: AXHeading AXValue: <obj>
         AXRole: AXLink AXValue: Test 3
     AXRole: AXHeading AXValue: Test 3
     AXRole: AXHeading AXValue: Test 3
     AXRole: AXParagraph AXValue: Test 3
-    AXRole: AXHeading AXValue: Test 4
+    AXRole: AXHeading AXValue: <obj>
         AXRole: AXLink AXValue: Test 4
     AXRole: AXHeading AXValue: Test 4
     AXRole: AXParagraph AXValue: Test 4
