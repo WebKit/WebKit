@@ -1542,11 +1542,6 @@ bool RenderLayerScrollableArea::isScrollSnapInProgress() const
     return false;
 }
 
-bool RenderLayerScrollableArea::scrollAnimatorEnabled() const
-{
-    return m_layer.page().settings().scrollAnimatorEnabled();
-}
-
 void RenderLayerScrollableArea::paintOverlayScrollbars(GraphicsContext& context, const LayoutRect& damageRect, OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRoot)
 {
     if (!m_containsDirtyOverlayScrollbars)

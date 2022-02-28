@@ -1,3 +1,13 @@
+2022-02-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert r290548
+        
+        It caused three tests to start failing.
+
+        * css3/scroll-snap/scroll-padding-overflow-paging.html:
+        * fast/events/wheelevent-in-scrolling-div.html:
+        * tiled-drawing/scrolling/scroll-snap/scroll-snap-proximity-overflow-rtl-with-keyboard.html:
+
 2022-02-28  Pascal Abresch  <nep@packageloss.eu>
 
         FTP EPLF does not handle directory
