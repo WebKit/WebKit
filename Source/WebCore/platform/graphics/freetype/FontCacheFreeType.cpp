@@ -225,8 +225,13 @@ struct FallbackFontDescriptionKey {
 
 };
 
+inline void add(Hasher& hasher, const FallbackFontDescriptionKey& key)
+{
+    add(hasher, key.descriptionKey, key.coloredFont);
+}
+
 struct FallbackFontDescriptionKeyHash {
-    static unsigned hash(const FallbackFontDescriptionKey& key) { return computeHash(key.descriptionKey, key.coloredFont); }
+    static unsigned hash(const FallbackFontDescriptionKey& key) { return computeHash(key); }
     static bool equal(const FallbackFontDescriptionKey& a, const FallbackFontDescriptionKey& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

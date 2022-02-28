@@ -257,6 +257,11 @@ struct FontCascadeCacheKey {
     unsigned fontSelectorVersion;
 };
 
+inline void add(Hasher& hasher, const FontCascadeCacheKey& key)
+{
+    add(hasher, key.fontDescriptionKey, key.families, key.fontSelectorId, key.fontSelectorVersion);
+}
+
 bool operator==(const FontCascadeCacheKey&, const FontCascadeCacheKey&);
 
 struct FontCascadeCacheEntry {
@@ -267,7 +272,7 @@ struct FontCascadeCacheEntry {
 };
 
 struct FontCascadeCacheKeyHash {
-    static unsigned hash(const FontCascadeCacheKey&);
+    static unsigned hash(const FontCascadeCacheKey& key) { return computeHash(key); }
     static bool equal(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };

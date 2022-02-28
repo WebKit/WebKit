@@ -31,7 +31,7 @@
 namespace WTF {
 
 struct ColorHash {
-    static unsigned hash(const WebCore::Color& key) { return key.hash(); }
+    static unsigned hash(const WebCore::Color& key) { return computeHash(key); }
     static bool equal(const WebCore::Color& a, const WebCore::Color& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

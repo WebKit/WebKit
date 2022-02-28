@@ -37,7 +37,6 @@ struct BackForwardItemIdentifier {
     enum ItemIdentifierType { };
     ObjectIdentifier<ItemIdentifierType> itemIdentifier;
 
-    unsigned hash() const;
     explicit operator bool() const { return processIdentifier && itemIdentifier; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -51,6 +50,11 @@ struct BackForwardItemIdentifier {
     const char* logString() const;
 #endif
 };
+
+inline void add(Hasher& hasher, const BackForwardItemIdentifier& identifier)
+{
+    add(hasher, identifier.processIdentifier, identifier.itemIdentifier);
+}
 
 #if !LOG_DISABLED
 
@@ -96,17 +100,12 @@ std::optional<BackForwardItemIdentifier> BackForwardItemIdentifier::decode(Decod
     return result;
 }
 
-inline unsigned BackForwardItemIdentifier::hash() const
-{
-    return computeHash(processIdentifier.toUInt64(), itemIdentifier.toUInt64());
-}
-
 } // namespace WebCore
 
 namespace WTF {
 
 struct BackForwardItemIdentifierHash {
-    static unsigned hash(const WebCore::BackForwardItemIdentifier& key) { return key.hash(); }
+    static unsigned hash(const WebCore::BackForwardItemIdentifier& key) { return computeHash(key); }
     static bool equal(const WebCore::BackForwardItemIdentifier& a, const WebCore::BackForwardItemIdentifier& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

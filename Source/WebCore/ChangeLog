@@ -1,3 +1,47 @@
+2022-02-28  Chris Dumez  <cdumez@apple.com>
+
+        Adopt the modern Hasher more widely
+        https://bugs.webkit.org/show_bug.cgi?id=237262
+
+        Reviewed by Sam Weinig.
+
+        * dom/MessagePortIdentifier.h:
+        (WebCore::add):
+        (WTF::MessagePortIdentifierHash::hash):
+        (WebCore::MessagePortIdentifier::hash const): Deleted.
+        * history/BackForwardItemIdentifier.h:
+        (WebCore::add):
+        (WTF::BackForwardItemIdentifierHash::hash):
+        (WebCore::BackForwardItemIdentifier::hash const): Deleted.
+        * loader/ResourceCryptographicDigest.h:
+        (WebCore::add):
+        (WTF::DefaultHash<WebCore::ResourceCryptographicDigest>::hash):
+        * platform/graphics/Color.h:
+        (WebCore::add):
+        (WebCore::Color::hash const): Deleted.
+        * platform/graphics/ColorHash.h:
+        (WTF::ColorHash::hash):
+        * platform/graphics/Font.cpp:
+        (WebCore::add):
+        (WebCore::CharacterFallbackMapKeyHash::hash):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::add):
+        (WebCore::FontPlatformDataCacheKeyHash::hash):
+        (WebCore::FontCascadeCacheKeyHash::hash): Deleted.
+        * platform/graphics/FontCache.h:
+        (WebCore::add):
+        (WebCore::FontCascadeCacheKeyHash::hash):
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+        (WebCore::add):
+        (WebCore::FontFamilySpecificationKeyHash::hash):
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.h:
+        (WebCore::add):
+        (WebCore::SystemFontDatabaseCoreText::CascadeListParameters::Hash::hash):
+        (WebCore::SystemFontDatabaseCoreText::CascadeListParameters::hash const): Deleted.
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::add):
+        (WebCore::FallbackFontDescriptionKeyHash::hash):
+
 2022-02-28  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Unable to upload ".pages" files to file inputs accepting ".pages" and ".jpeg" files

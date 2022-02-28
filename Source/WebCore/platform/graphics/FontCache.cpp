@@ -86,6 +86,11 @@ struct FontPlatformDataCacheKey {
     FontCreationContext fontCreationContext;
 };
 
+inline void add(Hasher& hasher, const FontPlatformDataCacheKey& key)
+{
+    add(hasher, key.descriptionKey, key.family, key.fontCreationContext);
+}
+
 static bool operator==(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b)
 {
     return a.descriptionKey == b.descriptionKey
@@ -94,7 +99,7 @@ static bool operator==(const FontPlatformDataCacheKey& a, const FontPlatformData
 }
 
 struct FontPlatformDataCacheKeyHash {
-    static unsigned hash(const FontPlatformDataCacheKey& key) { return computeHash(key.descriptionKey, key.family, key.fontCreationContext); }
+    static unsigned hash(const FontPlatformDataCacheKey& key) { return computeHash(key); }
     static bool equal(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
@@ -360,11 +365,6 @@ bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
         && a.fontSelectorId == b.fontSelectorId
         && a.fontSelectorVersion == b.fontSelectorVersion
         && a.families == b.families;
-}
-
-unsigned FontCascadeCacheKeyHash::hash(const FontCascadeCacheKey& key)
-{
-    return computeHash(key.fontDescriptionKey, key.fontSelectorId, key.fontSelectorVersion, key.families);
 }
 
 void FontCache::invalidateFontCascadeCache()

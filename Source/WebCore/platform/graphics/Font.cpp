@@ -559,13 +559,18 @@ struct CharacterFallbackMapKey {
     bool isForPlatformFont { false };
 };
 
+inline void add(Hasher& hasher, const CharacterFallbackMapKey& key)
+{
+    add(hasher, key.locale, key.character, key.isForPlatformFont);
+}
+
 inline bool operator==(const CharacterFallbackMapKey& a, const CharacterFallbackMapKey& b)
 {
     return a.locale == b.locale && a.character == b.character && a.isForPlatformFont == b.isForPlatformFont;
 }
 
 struct CharacterFallbackMapKeyHash {
-    static unsigned hash(const CharacterFallbackMapKey& key) { return computeHash(key.locale, key.character, key.isForPlatformFont); }
+    static unsigned hash(const CharacterFallbackMapKey& key) { return computeHash(key); }
     static bool equal(const CharacterFallbackMapKey& a, const CharacterFallbackMapKey& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

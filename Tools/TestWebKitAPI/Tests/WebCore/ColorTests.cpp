@@ -31,6 +31,7 @@
 #include <WebCore/ColorConversion.h>
 #include <WebCore/ColorSerialization.h>
 #include <WebCore/ColorTypes.h>
+#include <wtf/Hasher.h>
 #include <wtf/MathExtras.h>
 
 using namespace WebCore;
@@ -299,19 +300,19 @@ TEST(Color, Hash)
     {
         Color c1 { DisplayP3<float> { 1.0, 0.5, 0.25, 1.0 } };
         Color c2 { DisplayP3<float> { 1.0, 0.5, 0.25, 1.0 } };
-        EXPECT_EQ(c1.hash(), c2.hash());
+        EXPECT_EQ(computeHash(c1), computeHash(c2));
     }
 
     {
         Color c1 { DisplayP3<float> { 1.0, 0.5, 0.25, 1.0 } };
         Color c2 { SRGBA<float> { 1.0, 0.5, 0.25, 1.0 } };
-        EXPECT_NE(c1.hash(), c2.hash());
+        EXPECT_NE(computeHash(c1), computeHash(c2));
     }
 
     auto componentBytes = SRGBA<uint8_t> { 255, 128, 63, 127 };
     Color rgb1 { convertColor<SRGBA<float>>(componentBytes) };
     Color rgb2 { componentBytes };
-    EXPECT_NE(rgb1.hash(), rgb2.hash());
+    EXPECT_NE(computeHash(rgb1), computeHash(rgb2));
 }
 
 TEST(Color, MoveConstructor)

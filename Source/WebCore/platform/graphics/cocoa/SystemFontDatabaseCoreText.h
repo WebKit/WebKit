@@ -70,13 +70,8 @@ public:
                 && italic == other.italic;
         }
 
-        unsigned hash() const
-        {
-            return computeHash(fontName, locale, weight, width, size, allowUserInstalledFonts, italic);
-        }
-
         struct Hash {
-            static unsigned hash(const CascadeListParameters& parameters) { return parameters.hash(); }
+            static unsigned hash(const CascadeListParameters&);
             static bool equal(const CascadeListParameters& a, const CascadeListParameters& b) { return a == b; }
             static const bool safeToCompareToEmptyOrDeleted = true;
         };
@@ -125,4 +120,14 @@ private:
     HashMap<String, String> m_monospaceFamilies;
 };
 
+inline void add(Hasher& hasher, const SystemFontDatabaseCoreText::CascadeListParameters& parameters)
+{
+    add(hasher, parameters.fontName, parameters.locale, parameters.weight, parameters.width, parameters.size, parameters.allowUserInstalledFonts, parameters.italic);
 }
+
+inline unsigned SystemFontDatabaseCoreText::CascadeListParameters::Hash::hash(const CascadeListParameters& parameters)
+{
+    return computeHash(parameters);
+}
+
+} // namespace WebCore

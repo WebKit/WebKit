@@ -35,6 +35,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Hasher.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Seconds.h>
 #include <wtf/WeakHashSet.h>
@@ -53,13 +54,11 @@ struct GlobalFrameID {
     WebPageProxyIdentifier webPageProxyID;
     WebCore::PageIdentifier webPageID;
     WebCore::FrameIdentifier frameID;
-
-    unsigned hash() const;
 };
 
-inline unsigned GlobalFrameID::hash() const
+inline void add(Hasher& hasher, const GlobalFrameID& identifier)
 {
-    return computeHash(webPageID, frameID);
+    add(hasher, identifier.webPageID, identifier.frameID);
 }
 
 inline bool operator==(const GlobalFrameID& a, const GlobalFrameID& b)
@@ -75,7 +74,7 @@ inline bool operator==(const GlobalFrameID& a, const GlobalFrameID& b)
 namespace WTF {
 
 struct GlobalFrameIDHash {
-    static unsigned hash(const WebKit::NetworkCache::GlobalFrameID& key) { return key.hash(); }
+    static unsigned hash(const WebKit::NetworkCache::GlobalFrameID& key) { return computeHash(key); }
     static bool equal(const WebKit::NetworkCache::GlobalFrameID& a, const WebKit::NetworkCache::GlobalFrameID& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

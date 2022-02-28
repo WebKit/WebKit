@@ -64,8 +64,14 @@ struct FontFamilySpecificationKey {
     bool isHashTableDeletedValue() const { return fontDescriptionKey.isHashTableDeletedValue(); }
 };
 
+inline void add(Hasher& hasher, const FontFamilySpecificationKey& key)
+{
+    // FIXME: Ideally, we wouldn't be hashing a hash.
+    add(hasher, safeCFHash(key.fontDescriptor.get()), key.fontDescriptionKey);
+}
+
 struct FontFamilySpecificationKeyHash {
-    static unsigned hash(const FontFamilySpecificationKey& key) { return computeHash(safeCFHash(key.fontDescriptor.get()), key.fontDescriptionKey); }
+    static unsigned hash(const FontFamilySpecificationKey& key) { return computeHash(key); }
     static bool equal(const FontFamilySpecificationKey& a, const FontFamilySpecificationKey& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
