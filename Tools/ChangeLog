@@ -1,3 +1,12 @@
+2022-02-28  Christopher Reid  <chris.reid@sony.com>
+
+        [Win] vswhere should search for Visual Studio Build tools
+        https://bugs.webkit.org/show_bug.cgi?id=237229
+
+        Reviewed by Ross Kirsling.
+
+        * Scripts/webkitdirs.pm:
+
 2022-02-28  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [webkit-patch] Allow user to opt out of browser for viewing the diff

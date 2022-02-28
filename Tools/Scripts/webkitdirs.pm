@@ -774,7 +774,7 @@ sub visualStudioInstallDirVSWhere
 {
     my $vswhere = File::Spec->catdir(programFilesPathX86(), "Microsoft Visual Studio", "Installer", "vswhere.exe");
     return unless -e $vswhere;
-    open(my $handle, "-|", $vswhere, qw(-nologo -latest -requires Microsoft.Component.MSBuild -property installationPath)) || return;
+    open(my $handle, "-|", $vswhere, qw(-nologo -latest -requires Microsoft.Component.MSBuild -property installationPath -products *)) || return;
     my $vsWhereOut = <$handle>;
     $vsWhereOut =~ s/\r?\n//;
     return $vsWhereOut;
