@@ -31,6 +31,7 @@
 #include "MediaPlayerIdentifier.h"
 #include "NativeImage.h"
 #include "PlatformTimeRanges.h"
+#include "ProcessIdentity.h"
 #include "VideoFrame.h"
 #include <optional>
 #include <wtf/CompletionHandler.h>
@@ -324,6 +325,8 @@ public:
     virtual std::optional<VideoFrameMetadata> videoFrameMetadata() { return { }; }
     virtual void startVideoFrameMetadataGathering() { }
     virtual void stopVideoFrameMetadataGathering() { }
+
+    virtual void setResourceOwner(const ProcessIdentity&) { }
 };
 
 }

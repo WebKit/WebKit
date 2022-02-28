@@ -44,6 +44,7 @@
 #import "FloatConversion.h"
 #import "FourCC.h"
 #import "GraphicsContext.h"
+#import "IOSurface.h"
 #import "ImageRotationSessionVT.h"
 #import "InbandChapterTrackPrivateAVFObjC.h"
 #import "InbandMetadataTextTrackPrivateAVF.h"
@@ -2655,6 +2656,11 @@ bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()
 
     if (m_lastPixelBuffer && m_imageRotationSession)
         m_lastPixelBuffer = m_imageRotationSession->rotate(m_lastPixelBuffer.get());
+
+    if (m_resourceOwner && m_lastPixelBuffer) {
+        if (auto surface = CVPixelBufferGetIOSurface(m_lastPixelBuffer.get()))
+            IOSurface::setOwnershipIdentity(surface, m_resourceOwner);
+    }
 
     m_lastImage = nullptr;
     return true;

@@ -1,3 +1,23 @@
+2022-02-28  Youenn Fablet  <youenn@apple.com>
+
+        Ensure RemoteMediaPlayerProxy sets its resource owner to pixel buffers created by its player
+        https://bugs.webkit.org/show_bug.cgi?id=237200
+
+        Reviewed by Eric Carlson.
+
+        Add API to set the resource owner for a player private.
+        In case player private is running in GPUProcess, use resource owner to mark pixel buffers as owned by the resource owner.
+        Covered by existing tests.
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setResourceOwner):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer):
+
 2022-02-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATSPI] Always expose table cells (layout and CSS) that have rendered text content

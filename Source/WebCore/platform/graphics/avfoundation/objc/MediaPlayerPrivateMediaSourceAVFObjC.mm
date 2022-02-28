@@ -33,6 +33,7 @@
 #import "AVStreamDataParserMIMETypeCache.h"
 #import "CDMSessionAVStreamSession.h"
 #import "GraphicsContext.h"
+#import "IOSurface.h"
 #import "Logging.h"
 #import "MediaSessionManagerCocoa.h"
 #import "MediaSourcePrivateAVFObjC.h"
@@ -682,6 +683,12 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::updateLastPixelBuffer()
         return false;
 
     m_lastPixelBuffer = newPixelBuffer;
+
+    if (m_resourceOwner) {
+        if (auto surface = CVPixelBufferGetIOSurface(m_lastPixelBuffer.get()))
+            IOSurface::setOwnershipIdentity(surface, m_resourceOwner);
+    }
+
     return true;
 }
 
