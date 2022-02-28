@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import sys
 
 from webkitcorepy import Timeout
@@ -22,6 +23,8 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
         self._http_server_driver = HTTPServerDriverFactory.create(platform)
         self._http_server_driver.set_device_id(device_id)
         super(WebServerBenchmarkRunner, self).__init__(plan_file, local_copy, count_override, build_dir, output_file, platform, browser, browser_path, scale_unit, show_iteration_values, device_id, diagnose_dir)
+        if self._diagnose_dir:
+            self._http_server_driver.set_http_log(os.path.join(self._diagnose_dir, 'run-benchmark-http.log'))
 
     def _get_result(self, test_url):
         result = self._browser_driver.add_additional_results(test_url, self._http_server_driver.fetch_result())
