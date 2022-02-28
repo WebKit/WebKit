@@ -1,3 +1,16 @@
+2022-02-28  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, reverting r290583.
+
+        Breaks webkit-patch
+
+        Reverted changeset:
+
+        "'run-benchmark' script should log http requests during
+        benchmark run."
+        https://bugs.webkit.org/show_bug.cgi?id=237076
+        https://commits.webkit.org/r290583
+
 2022-02-28  Pascal Abresch  <nep@packageloss.eu>
 
         Enable python3 for lighttpd

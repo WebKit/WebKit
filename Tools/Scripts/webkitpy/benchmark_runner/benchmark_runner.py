@@ -38,8 +38,6 @@ class BenchmarkRunner(object):
                 self._browser_path = browser_path
                 self._build_dir = os.path.abspath(build_dir) if build_dir else None
                 self._diagnose_dir = os.path.abspath(diagnose_dir) if diagnose_dir else None
-                if self._diagnose_dir:
-                    os.makedirs(self._diagnose_dir, exist_ok=True)
                 self._output_file = output_file
                 self._scale_unit = scale_unit
                 self._show_iteration_values = show_iteration_values

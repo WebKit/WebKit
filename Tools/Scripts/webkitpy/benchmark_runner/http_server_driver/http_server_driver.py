@@ -24,6 +24,3 @@ class HTTPServerDriver(with_metaclass(ABCMeta, object)):
     @abstractmethod
     def set_device_id(self, device_id):
         pass
-
-    def set_http_log(self, log_path):
-        pass
