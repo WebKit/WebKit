@@ -71,7 +71,7 @@
          (ipc-posix-name "/com.apple.AppSSO.version")))
 
 (allow file-read* file-write*
-    (subpath "/var/mobile/Library/com.apple.webkit.addattributiond"))
+    (subpath "/var/mobile/Library/com.apple.webkit.adattributiond"))
 
 (allow file-read* file-map-executable
     (subpath "/System/Library/Frameworks")

@@ -1,3 +1,14 @@
+2022-02-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix typo in adattributiond sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=237279
+
+        Reviewed by Chris Dumez.
+
+        After this change, it matches the value in com.apple.webkit.adattributiond.plist
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb:
+
 2022-02-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r290588): Broke WinCairo and PlayStation debug builds
