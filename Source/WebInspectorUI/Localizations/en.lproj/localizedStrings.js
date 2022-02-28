@@ -1052,6 +1052,8 @@ localizedStrings["Option-click to show source"] = "Option-click to show source";
 /* Tooltip with instructions on how to show all hidden CSS variables */
 localizedStrings["Option-click to show unused CSS variables from all rules @ Styles Sidebar Panel Tooltip"] = "Option-click to show unused CSS variables from all rules";
 localizedStrings["Options"] = "Options";
+/* Label for option to toggle the order numbers setting for CSS flex overlays */
+localizedStrings["Order Numbers @ Layout Panel Overlay Options"] = "Order Numbers";
 /* Property value for `font-variant-numeric: ordinal`. */
 localizedStrings["Ordinal Letter Forms @ Font Details Sidebar Property Value"] = "Ordinal Letter Forms";
 localizedStrings["Original formatting"] = "Original formatting";
@@ -1075,8 +1077,10 @@ localizedStrings["PDF"] = "PDF";
 localizedStrings["PNG"] = "PNG";
 localizedStrings["Page"] = "Page";
 localizedStrings["Page Issue"] = "Page Issue";
+/* Heading for list of flex overlay options */
+localizedStrings["Page Overlay Options @ Layout Panel Flex Section Header"] = "Page Overlay Options";
 /* Heading for list of grid overlay options */
-localizedStrings["Page Overlay Options @ Layout Panel Section Header"] = "Page Overlay Options";
+localizedStrings["Page Overlay Options @ Layout Panel Grid Section Header"] = "Page Overlay Options";
 /* Heading for list of grid nodes */
 localizedStrings["Page Overlays @ Layout Sidebar Section Header"] = "Grid Overlays";
 /* Heading for list of flex container nodes */

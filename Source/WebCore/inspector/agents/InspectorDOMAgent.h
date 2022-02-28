@@ -150,7 +150,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> highlightFrame(const Inspector::Protocol::Network::FrameId&, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor);
     Inspector::Protocol::ErrorStringOr<void> showGridOverlay(Inspector::Protocol::DOM::NodeId, Ref<JSON::Object>&& gridColor, std::optional<bool>&& showLineNames, std::optional<bool>&& showLineNumbers, std::optional<bool>&& showExtendedGridLines, std::optional<bool>&& showTrackSizes, std::optional<bool>&& showAreaNames);
     Inspector::Protocol::ErrorStringOr<void> hideGridOverlay(std::optional<Inspector::Protocol::DOM::NodeId>&&);
-    Inspector::Protocol::ErrorStringOr<void> showFlexOverlay(Inspector::Protocol::DOM::NodeId, Ref<JSON::Object>&& flexColor);
+    Inspector::Protocol::ErrorStringOr<void> showFlexOverlay(Inspector::Protocol::DOM::NodeId, Ref<JSON::Object>&& flexColor, std::optional<bool>&& showOrderNumbers);
     Inspector::Protocol::ErrorStringOr<void> hideFlexOverlay(std::optional<Inspector::Protocol::DOM::NodeId>&&);
     Inspector::Protocol::ErrorStringOr<Inspector::Protocol::DOM::NodeId> moveTo(Inspector::Protocol::DOM::NodeId nodeId, Inspector::Protocol::DOM::NodeId targetNodeId, std::optional<Inspector::Protocol::DOM::NodeId>&& insertBeforeNodeId);
     Inspector::Protocol::ErrorStringOr<void> undo();

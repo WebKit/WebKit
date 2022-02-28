@@ -1560,7 +1560,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::hideGridOverlay(std:
     return { };
 }
 
-Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showFlexOverlay(Inspector::Protocol::DOM::NodeId nodeId, Ref<JSON::Object>&& flexColor)
+Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showFlexOverlay(Inspector::Protocol::DOM::NodeId nodeId, Ref<JSON::Object>&& flexColor, std::optional<bool>&& showOrderNumbers)
 {
     Protocol::ErrorString errorString;
     Node* node = assertNode(errorString, nodeId);
@@ -1573,6 +1573,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showFlexOverlay(Insp
 
     InspectorOverlay::Flex::Config config;
     config.flexColor = *parsedColor;
+    config.showOrderNumbers = showOrderNumbers.value_or(false);
 
     m_overlay->setFlexOverlayForNode(*node, config);
 

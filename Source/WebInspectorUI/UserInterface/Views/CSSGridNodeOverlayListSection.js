@@ -34,7 +34,7 @@ WI.CSSGridNodeOverlayListSection = class CSSGridNodeOverlayListSection extends W
 
     initialLayout()
     {
-        let settingsGroup = new WI.SettingsGroup(WI.UIString("Page Overlay Options", "Page Overlay Options @ Layout Panel Section Header", "Heading for list of grid overlay options"));
+        let settingsGroup = new WI.SettingsGroup(WI.UIString("Page Overlay Options", "Page Overlay Options @ Layout Panel Grid Section Header", "Heading for list of grid overlay options"));
         this.element.append(settingsGroup.element);
 
         settingsGroup.addSetting(WI.settings.gridOverlayShowTrackSizes, WI.UIString("Track Sizes", "Track sizes @ Layout Panel Overlay Options", "Label for option to toggle the track sizes setting for CSS grid overlays"));

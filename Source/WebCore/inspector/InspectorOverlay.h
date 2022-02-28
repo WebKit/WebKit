@@ -124,6 +124,7 @@ public:
             Vector<FloatQuad> mainAxisSpaceBetweenItemsAndGaps;
             Vector<FloatQuad> spaceBetweenItemsAndCrossAxisSpace;
             Vector<FloatQuad> crossAxisGaps;
+            Vector<InspectorOverlayLabel> labels;
 
 #if PLATFORM(IOS_FAMILY)
             template<class Encoder> void encode(Encoder&) const;
@@ -181,6 +182,7 @@ public:
             WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
             Color flexColor;
+            bool showOrderNumbers;
         };
 
         WeakPtr<Node> flexNode;
@@ -286,6 +288,7 @@ template<class Encoder> void InspectorOverlay::Highlight::FlexHighlightOverlay::
     encoder << mainAxisSpaceBetweenItemsAndGaps;
     encoder << spaceBetweenItemsAndCrossAxisSpace;
     encoder << crossAxisGaps;
+    encoder << labels;
 }
 
 template<class Decoder> std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverlay::Highlight::FlexHighlightOverlay::decode(Decoder& decoder)
@@ -304,6 +307,8 @@ template<class Decoder> std::optional<InspectorOverlay::Highlight::FlexHighlight
     if (!decoder.decode(flexHighlightOverlay.spaceBetweenItemsAndCrossAxisSpace))
         return { };
     if (!decoder.decode(flexHighlightOverlay.crossAxisGaps))
+        return { };
+    if (!decoder.decode(flexHighlightOverlay.labels))
         return { };
     return { flexHighlightOverlay };
 }

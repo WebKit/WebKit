@@ -31,4 +31,14 @@ WI.CSSFlexNodeOverlayListSection = class CSSFlexNodeOverlayListSection extends W
     {
         return WI.UIString("Flexbox Overlays", "Page Overlays for Flex containers @ Layout Sidebar Section Header", "Heading for list of flex container nodes");
     }
+
+    initialLayout()
+    {
+        let settingsGroup = new WI.SettingsGroup(WI.UIString("Page Overlay Options", "Page Overlay Options @ Layout Panel Flex Section Header", "Heading for list of flex overlay options"));
+        this.element.append(settingsGroup.element);
+
+        settingsGroup.addSetting(WI.settings.flexOverlayShowOrderNumbers, WI.UIString("Order Numbers", "Order Numbers @ Layout Panel Overlay Options", "Label for option to toggle the order numbers setting for CSS flex overlays"));
+
+        super.initialLayout();
+    }
 };

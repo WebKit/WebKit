@@ -531,7 +531,8 @@
             "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "The node for which a flex overlay should be shown." },
-                { "name": "flexColor", "$ref": "RGBAColor", "description": "The primary color to use for the flex overlay." }
+                { "name": "flexColor", "$ref": "RGBAColor", "description": "The primary color to use for the flex overlay." },
+                { "name": "showOrderNumbers", "type": "boolean", "optional": true, "description": "Show labels for flex order. If not specified, the default value is false." }
             ]
         },
         {

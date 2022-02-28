@@ -279,12 +279,16 @@ WI.DOMNode = class DOMNode extends WI.Object
         this.dispatchEventToListeners(WI.DOMNode.Event.LayoutOverlayHidden);
 
         switch (oldLayoutContextType) {
+        case WI.DOMNode.LayoutContextType.Flex:
+            WI.settings.flexOverlayShowOrderNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            break;
+
         case WI.DOMNode.LayoutContextType.Grid:
-            WI.settings.gridOverlayShowExtendedGridLines.removeEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowLineNames.removeEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowLineNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowTrackSizes.removeEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowAreaNames.removeEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowExtendedGridLines.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowLineNames.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowLineNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowTrackSizes.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowAreaNames.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
             break;
         }
     }
@@ -628,17 +632,21 @@ WI.DOMNode = class DOMNode extends WI.Object
             agentCommandFunction = target.DOMAgent.showGridOverlay;
 
             if (!this._layoutOverlayShowing) {
-                WI.settings.gridOverlayShowExtendedGridLines.addEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-                WI.settings.gridOverlayShowLineNames.addEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-                WI.settings.gridOverlayShowLineNumbers.addEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-                WI.settings.gridOverlayShowTrackSizes.addEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-                WI.settings.gridOverlayShowAreaNames.addEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
+                WI.settings.gridOverlayShowExtendedGridLines.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+                WI.settings.gridOverlayShowLineNames.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+                WI.settings.gridOverlayShowLineNumbers.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+                WI.settings.gridOverlayShowTrackSizes.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+                WI.settings.gridOverlayShowAreaNames.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
             }
             break;
 
         case WI.DOMNode.LayoutContextType.Flex:
             agentCommandArguments.flexColor = color.toProtocol();
+            agentCommandArguments.showOrderNumbers = WI.settings.flexOverlayShowOrderNumbers.value;
             agentCommandFunction = target.DOMAgent.showFlexOverlay;
+
+            if (!this._layoutOverlayShowing)
+                WI.settings.flexOverlayShowOrderNumbers.addEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
             break;
         }
 
@@ -664,16 +672,18 @@ WI.DOMNode = class DOMNode extends WI.Object
 
         switch (this._layoutContextType) {
         case WI.DOMNode.LayoutContextType.Grid:
-            WI.settings.gridOverlayShowExtendedGridLines.removeEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowLineNames.removeEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowLineNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowTrackSizes.removeEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
-            WI.settings.gridOverlayShowAreaNames.removeEventListener(WI.Setting.Event.Changed, this._handleGridLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowExtendedGridLines.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowLineNames.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowLineNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowTrackSizes.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+            WI.settings.gridOverlayShowAreaNames.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
 
             agentCommandFunction = target.DOMAgent.hideGridOverlay;
             break;
 
         case WI.DOMNode.LayoutContextType.Flex:
+            WI.settings.flexOverlayShowOrderNumbers.removeEventListener(WI.Setting.Event.Changed, this._handleLayoutOverlaySettingChanged, this);
+
             agentCommandFunction = target.DOMAgent.hideFlexOverlay;
             break;
         }
@@ -1259,7 +1269,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         this._layoutOverlayColorSetting = new WI.Setting(`overlay-color-${url.hash}-${this.path().hash}`, defaultConfiguration.colors[nextColorIndex]);
     }
 
-    _handleGridLayoutOverlaySettingChanged(event)
+    _handleLayoutOverlaySettingChanged(event)
     {
         if (this._layoutOverlayShowing)
             this.showLayoutOverlay();
