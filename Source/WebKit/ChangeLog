@@ -1,3 +1,13 @@
+2022-02-27  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Deleted unneeded constructors from DisplayList::Recorder classes
+        https://bugs.webkit.org/show_bug.cgi?id=237261
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+
 2022-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Invoking "Markup Image" should preserve the existing selection range

@@ -59,8 +59,6 @@ public:
     virtual void flushContext(GraphicsContextFlushIdentifier) = 0;
 
 protected:
-    WEBCORE_EXPORT Recorder(Recorder& parent, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform& initialCTM);
-
     virtual void recordSave() = 0;
     virtual void recordRestore() = 0;
     virtual void recordTranslate(float x, float y) = 0;

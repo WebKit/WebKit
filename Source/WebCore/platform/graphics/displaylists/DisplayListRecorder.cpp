@@ -48,12 +48,6 @@ Recorder::Recorder(const GraphicsContextState& state, const FloatRect& initialCl
     m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
 }
 
-Recorder::Recorder(Recorder& parent, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : m_drawGlyphsRecorder(*this, parent.m_drawGlyphsRecorder.deconstructDrawGlyphs())
-{
-    m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
-}
-
 Recorder::~Recorder()
 {
     ASSERT(m_stateStack.size() == 1); // If this fires, it indicates mismatched save/restore.

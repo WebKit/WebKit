@@ -52,14 +52,6 @@ RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(ImageBuffer& imag
 {
 }
 
-RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteDisplayListRecorderProxy& parent, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : DisplayList::Recorder(parent, { }, initialClip, initialCTM)
-    , m_destinationBufferIdentifier(parent.m_destinationBufferIdentifier)
-    , m_imageBuffer(parent.m_imageBuffer)
-    , m_renderingBackend(parent.m_renderingBackend)
-{
-}
-
 void RemoteDisplayListRecorderProxy::convertToLuminanceMask()
 {
     send(Messages::RemoteDisplayListRecorder::ConvertToLuminanceMask());

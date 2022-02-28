@@ -40,8 +40,6 @@ class RemoteRenderingBackendProxy;
 class RemoteDisplayListRecorderProxy : public WebCore::DisplayList::Recorder {
 public:
     RemoteDisplayListRecorderProxy(WebCore::ImageBuffer&, RemoteRenderingBackendProxy&, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform&, WebCore::DrawGlyphsRecorder::DeconstructDrawGlyphs = WebCore::DrawGlyphsRecorder::DeconstructDrawGlyphs::Yes);
-    RemoteDisplayListRecorderProxy(RemoteDisplayListRecorderProxy& parent, const WebCore::FloatRect& initialClip, const WebCore::AffineTransform& initialCTM);
-
     ~RemoteDisplayListRecorderProxy() = default;
 
     void resetNeedsFlush() { m_needsFlush = false; }
