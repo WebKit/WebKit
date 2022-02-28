@@ -1628,18 +1628,6 @@ bool RenderGrid::isSubgridInParentDirection(GridTrackSizingDirection parentDirec
     return isSubgrid(direction);
 }
 
-bool RenderGrid::isSubgridOf(GridTrackSizingDirection direction, const RenderGrid& ancestor)
-{
-    if (!isSubgrid(direction))
-        return false;
-    if (parent() == &ancestor)
-        return true;
-
-    auto& parentGrid = *downcast<RenderGrid>(parent());
-    GridTrackSizingDirection parentDirection = GridLayoutFunctions::flowAwareDirectionForParent(parentGrid, *this, direction);
-    return parentGrid.isSubgridOf(parentDirection, ancestor);
-}
-
 bool RenderGrid::mayBeSubgridExcludingAbsPos(GridTrackSizingDirection direction) const
 {
     // Should exclude cases where we establish an IFC, like contain layout.
