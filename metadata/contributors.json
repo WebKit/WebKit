@@ -1136,6 +1136,14 @@
    },
    {
       "emails" : [
+         "brandonstewart@apple.com"
+      ],
+      "github" : "stwrt",
+      "name" : "Brandon Stewart",
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "self@brendanlong.com",
          "b.long@cablelabs.com"
       ],

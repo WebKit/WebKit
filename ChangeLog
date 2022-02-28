@@ -1,3 +1,14 @@
+2022-02-28  Brandon Stewart  <brandonstewart@apple.com>
+
+        Add Brandon Stewart's name to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=237288
+
+        Reviewed by Saam Barati.
+
+        Add Brandon Stewart's name to contributors.json
+
+        * metadata/contributors.json:
+
 2022-02-28  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wodr warning spam caused by ENABLE(BINDING_INTEGRITY)
