@@ -1,3 +1,36 @@
+2022-02-27  Cameron McCormack  <heycam@apple.com>
+
+        Add a mechanism to request a UA shadow tree update before style
+        https://bugs.webkit.org/show_bug.cgi?id=237224
+
+        Reviewed by Antti Koivisto.
+
+        SVG <use> elements register themselves with the document when their
+        shadow tree contents need updating, and this updating is done in
+        Document::resolveStyle. For lazy HTML <input> element UA shadow trees
+        (in bug 236747) we need something similar.
+
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::addElementWithPendingUserAgentShadowTreeUpdate):
+        (WebCore::Document::removeElementWithPendingUserAgentShadowTreeUpdate):
+        * dom/Document.h:
+        * dom/Element.h:
+        (WebCore::Element::updateUserAgentShadowTree):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::~SVGDocumentExtensions): Deleted.
+        (WebCore::SVGDocumentExtensions::addUseElementWithPendingShadowTreeUpdate): Deleted.
+        (WebCore::SVGDocumentExtensions::removeUseElementWithPendingShadowTreeUpdate): Deleted.
+        * svg/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::useElementsWithPendingShadowTreeUpdate const): Deleted.
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedIntoAncestor):
+        (WebCore::SVGUseElement::removedFromAncestor):
+        (WebCore::SVGUseElement::updateUserAgentShadowTree):
+        (WebCore::SVGUseElement::invalidateShadowTree):
+        (WebCore::SVGUseElement::updateShadowTree): Deleted.
+        * svg/SVGUseElement.h:
+
 2022-02-27  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] web-animations/timing-model/animations/setting-the-timeline-of-an-animation.html is a unique failure

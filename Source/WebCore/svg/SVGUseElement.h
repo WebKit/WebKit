@@ -38,8 +38,7 @@ public:
     virtual ~SVGUseElement();
 
     void invalidateShadowTree();
-    bool shadowTreeNeedsUpdate() const { return m_shadowTreeNeedsUpdate; }
-    void updateShadowTree();
+    void updateUserAgentShadowTree() final;
 
     RenderElement* rendererClipChild() const;
 

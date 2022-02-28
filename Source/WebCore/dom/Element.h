@@ -664,6 +664,8 @@ public:
     bool hasDuplicateAttribute() const { return m_hasDuplicateAttribute; };
     void setHasDuplicateAttribute(bool hasDuplicateAttribute) { m_hasDuplicateAttribute = hasDuplicateAttribute; };
 
+    virtual void updateUserAgentShadowTree() { }
+
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);
 

@@ -2005,14 +2005,17 @@ void Document::resolveStyle(ResolveStyleType type)
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 
-    // FIXME: Do this update per tree scope.
-    if (auto* extensions = m_svgExtensions.get()) {
-        auto elements = copyToVectorOf<Ref<SVGUseElement>>(extensions->useElementsWithPendingShadowTreeUpdate());
-        // We can't clear m_svgUseElements here because updateShadowTree may end up executing arbitrary scripts
-        // which may insert new SVG use elements or remove existing ones inside sync IPC via ImageLoader::updateFromElement.
-        for (auto& element : elements)
-            element->updateShadowTree();
-    }
+    // FIXME: Do this user agent shadow tree update per tree scope.
+
+    // We can't clear m_elementsWithPendingUserAgentShadowTreeUpdates here
+    // because SVGUseElement::updateUserAgentShadowTree may end up executing
+    // arbitrary scripts which may insert new SVG use elements or remove
+    // existing ones inside sync IPC via ImageLoader::updateFromElement.
+    //
+    // Instead, it is the responsibility of updateUserAgentShadowTree to
+    // remove the element.
+    for (auto& element : copyToVectorOf<Ref<Element>>(m_elementsWithPendingUserAgentShadowTreeUpdates))
+        element->updateUserAgentShadowTree();
 
     // FIXME: We should update style on our ancestor chain before proceeding, however doing so at
     // the time this comment was originally written caused several tests to crash.
@@ -9084,6 +9087,20 @@ std::optional<PAL::SessionID> Document::sessionID() const
         return page->sessionID();
 
     return std::nullopt;
+}
+
+void Document::addElementWithPendingUserAgentShadowTreeUpdate(Element& element)
+{
+    ASSERT(&element.document() == this);
+    auto result = m_elementsWithPendingUserAgentShadowTreeUpdates.add(element);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result.isNewEntry);
+}
+
+void Document::removeElementWithPendingUserAgentShadowTreeUpdate(Element& element)
+{
+    ASSERT(&element.document() == this);
+    m_elementsWithPendingUserAgentShadowTreeUpdates.remove(element);
+    // FIXME: Assert that element was in m_elementsWithPendingUserAgentShadowTreeUpdates once re-entrancy to update style and layout have been removed.
 }
 
 } // namespace WebCore
