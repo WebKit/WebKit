@@ -20,7 +20,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: atomic:true, computed-role:alert, container-atomic:true, container-live-role:alert, container-live:assertive, container-relevant:additions text, live:assertive, relevant:additions text, tag:div, xml-roles:alert
+AXPlatformAttributes: atomic:true, computed-role:alert, container-atomic:true, container-live:assertive, container-live-role:alert, container-relevant:additions text, live:assertive, relevant:additions text, tag:div, xml-roles:alert
 ------------
 AXRole: AXAlert
 AXParent: AXWebArea
@@ -39,7 +39,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:alertdialog, container-live-role:alertdialog, container-live:assertive, container-relevant:additions text, live:assertive, relevant:additions text, tag:div, xml-roles:alertdialog
+AXPlatformAttributes: computed-role:alertdialog, container-live:assertive, container-live-role:alertdialog, container-relevant:additions text, live:assertive, relevant:additions text, tag:div, xml-roles:alertdialog
 ------------
 AXRole: AXEmbedded
 AXParent: AXWebArea
@@ -438,6 +438,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
+AXURL: (null)
 AXPlatformAttributes: computed-role:image, tag:div, xml-roles:img
 ------------
 AXRole: AXInsertion
@@ -496,7 +497,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:log, container-live-role:log, container-live:polite, container-relevant:additions text, live:polite, relevant:additions text, tag:div, xml-roles:log
+AXPlatformAttributes: computed-role:log, container-live:polite, container-live-role:log, container-relevant:additions text, live:polite, relevant:additions text, tag:div, xml-roles:log
 ------------
 AXRole: AXLandmarkMain
 AXParent: AXWebArea
@@ -534,7 +535,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:marquee, container-live-role:marquee, container-live:off, container-relevant:additions text, live:off, relevant:additions text, tag:div, xml-roles:marquee
+AXPlatformAttributes: computed-role:marquee, container-live:off, container-live-role:marquee, container-relevant:additions text, live:off, relevant:additions text, tag:div, xml-roles:marquee
 ------------
 AXRole: AXMath
 AXParent: AXWebArea
@@ -620,7 +621,7 @@ AXSize: { 0.00000, 0.00000 }
 AXTitle:
 AXDescription:
 AXValue:
-AXFocusable: 1
+AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
 AXSelected: 0
@@ -838,7 +839,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: atomic:true, computed-role:status, container-atomic:true, container-live-role:status, container-live:polite, container-relevant:additions text, live:polite, relevant:additions text, tag:div, xml-roles:status
+AXPlatformAttributes: atomic:true, computed-role:status, container-atomic:true, container-live:polite, container-live-role:status, container-relevant:additions text, live:polite, relevant:additions text, tag:div, xml-roles:status
 ------------
 AXRole: AXSubscript
 AXParent: AXWebArea
@@ -971,7 +972,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:timer, container-live-role:timer, container-live:off, container-relevant:additions text, live:off, relevant:additions text, tag:div, xml-roles:timer
+AXPlatformAttributes: computed-role:timer, container-live:off, container-live-role:timer, container-relevant:additions text, live:off, relevant:additions text, tag:div, xml-roles:timer
 ------------
 AXRole: AXToolbar
 AXParent: AXWebArea
@@ -1821,7 +1822,7 @@ AXSize: { 784.000, 52.0000 }
 AXTitle:
 AXDescription:
 AXValue: Verify exposure of ARIA role values via the 'xml-roles' object attribute.<\n><\n>On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".<\n><\n><\n>
-AXFocusable: 1
+AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0
 AXSelected: 0

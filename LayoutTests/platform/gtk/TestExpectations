@@ -139,7 +139,6 @@ webkit.org/b/235941 accessibility/gtk/nested-block-element-children.html [ Failu
 webkit.org/b/235941 accessibility/gtk/no-notification-for-unrendered-iframe-children.html [ Failure ]
 webkit.org/b/235941 accessibility/gtk/text-at-offset-embedded-objects.html [ Failure ]
 webkit.org/b/235941 accessibility/gtk/text-at-offset-special-chars.html [ Failure ]
-webkit.org/b/235941 accessibility/gtk/xml-roles-exposed.html [ Failure ]
 webkit.org/b/235941 accessibility/gtk/caret-offsets.html [ Timeout ]
 
 # canvas
