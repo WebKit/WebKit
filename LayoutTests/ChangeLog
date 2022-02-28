@@ -1,3 +1,23 @@
+2022-02-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Unable to upload ".pages" files to file inputs accepting ".pages" and ".jpeg" files
+        https://bugs.webkit.org/show_bug.cgi?id=237219
+        rdar://89482882
+
+        Reviewed by Tim Horton and Said Abou-Hallawa.
+
+        Add a layout test that contains a file input that accepts ".pages" and
+        ".jpeg" files, and attempts to upload a ".pages" file.
+
+        * TestExpectations:
+        * fast/forms/file/entries-api/pages-jpeg-open-panel-expected.txt: Added.
+        * fast/forms/file/entries-api/pages-jpeg-open-panel.html: Added.
+        * fast/forms/file/entries-api/pdf-jpeg-open-panel-expected.txt: Added.
+        * fast/forms/file/entries-api/pdf-jpeg-open-panel.html: Added.
+        * fast/forms/file/entries-api/resources/documents/document.pages: Added.
+        * fast/forms/file/entries-api/resources/documents/document.pdf: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2022-02-28  Simon Fraser  <simon.fraser@apple.com>
 
         Revert r290548

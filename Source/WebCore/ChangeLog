@@ -1,3 +1,60 @@
+2022-02-28  Aditya Keerthi  <akeerthi@apple.com>
+
+        [macOS] Unable to upload ".pages" files to file inputs accepting ".pages" and ".jpeg" files
+        https://bugs.webkit.org/show_bug.cgi?id=237219
+        rdar://89482882
+
+        Reviewed by Tim Horton and Said Abou-Hallawa.
+
+        In r264286, WebKit began transcoding images of an unsupported format
+        to a supported format, for file inputs that accepted image types. For
+        example, selecting a HEIF image in an input that accepts JPEG images
+        would transcode the selected image to a JPEG image.
+
+        In order to determine when attempt transcoding, the logic added in
+        r264286 obtains the MIME type corresponding to the selected file's
+        extension, and compares that to the list of accepted MIME types.
+        If there is a mismatch, transcoding is attempted.
+
+        The ".pages" extension does not have a well-defined MIME type in
+        NSURLFileTypeMappings. This is due to the fact that a the extension
+        maps to both a file and a package type. Consequently, the retrieved
+        MIME type for ".pages" files is an empty string. Following r227051,
+        when the file input also accepts an image type, WebKit attempts to
+        transcode these files, and any others that do not have a well-defined
+        MIME type.
+
+        While the aforementioned behavior can be considered strange, it is not
+        an issue in practice, since WebKit will attempt to transcode the
+        image, fail to do so, and upload the original file. The failure is
+        detected in CGImageDestinationFinalize, which returns false if an image
+        was not successfully written. However, a recent regression in the
+        ImageIO framework is causing CGImageDestinationFinalize to return true,
+        even if image transcoding fails. This results in WebKit uploading a
+        zero byte JPEG file, when a user attempts to upload ".pages" files to
+        file inputs accepting ".pages" and ".jpeg" files.
+
+        Ideally, the described issue would be resolved by a fix in ImageIO.
+        However, a more immediate solution exists in WebKit: only attempt to
+        transcode files to an accepted image type, if the file selected is
+        image. ".pages" files are not images, and WebKit should not attempt
+        to transcode them. See below for further explanation of the solution.
+
+        Test: fast/forms/file/entries-api/pages-jpeg-open-panel.html
+
+        * platform/graphics/cg/ImageUtilitiesCG.cpp:
+        (WebCore::transcodeImage):
+
+        Prior to using ImageIO to perform transcoding, WebKit obtains a Uniform
+        Type Identifier for the selected file using CGImageSourceCreateWithURL
+        and CGImageSourceGetType. If the file is not an image, a null string is
+        returned. WebKit can use this information to avoid the transcoding
+        attempt, and avoid calls to ImageIO methods further down this method.
+        Specifically, this solution works around the ImageIO bug by avoiding
+        the call to CGImageDestinationFinalize for non-images. The solution is
+        also an overall improvement, as WebKit now avoids unnecessary calls to
+        multiple ImageIO methods, in cases where we know transcoding will fail.
+
 2022-02-28  Simon Fraser  <simon.fraser@apple.com>
 
         Revert r290548
