@@ -1,5 +1,19 @@
 2022-02-28  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Weak link AVPictureInPictureController
+        https://bugs.webkit.org/show_bug.cgi?id=237227
+        <rdar://76011860>
+
+        Reviewed by Brent Fulgham.
+
+        Weak linking instead of soft linking should be a small performance improvement.
+
+        * Configurations/WebCore.xcconfig:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (WebCore::supportsPictureInPicture):
+
+2022-02-28  Per Arne Vollan  <pvollan@apple.com>
+
         Remove release assert when UI process is blocking IOSurface IOKit access
         https://bugs.webkit.org/show_bug.cgi?id=237278
 
