@@ -1,5 +1,16 @@
 2022-02-27  Matt Woodrow  <mattwoodrow@apple.com>
 
+        Convert grid direction to be relative to subgrid when accounting for extra margin.
+        https://bugs.webkit.org/show_bug.cgi?id=236954
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+
+        Marks existing test orthogonal-writing-mode-003.html as passing.
+
+2022-02-27  Matt Woodrow  <mattwoodrow@apple.com>
+
         Handle reverse flow direction when converting iterator coords for a subgrid
         https://bugs.webkit.org/show_bug.cgi?id=236955
 

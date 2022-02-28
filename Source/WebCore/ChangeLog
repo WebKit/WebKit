@@ -1,3 +1,19 @@
+2022-02-27  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Convert grid direction to be relative to subgrid when accounting for extra margin.
+        https://bugs.webkit.org/show_bug.cgi?id=236954
+
+        Reviewed by Dean Jackson.
+
+        |direction| is passed as a direction relative to |grid|, so we need to convert it
+        to be a direction relative to the subgrid item in order to account for margin on
+        the correct edge.
+
+        Marks existing test orthogonal-writing-mode-003.html as passing.
+
+        * rendering/GridLayoutFunctions.cpp:
+        (WebCore::GridLayoutFunctions::marginLogicalSizeForChild):
+
 2022-02-27  Chris Dumez  <cdumez@apple.com>
 
         Omit template parameter for SetForScope<> variables

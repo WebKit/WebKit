@@ -139,8 +139,10 @@ LayoutUnit marginLogicalSizeForChild(const RenderGrid& grid, GridTrackSizingDire
         margin = marginStart + marginEnd;
     }
 
-    if (&grid != child.parent())
-        margin += extraMarginForSubgridAncestors(direction, child);
+    if (&grid != child.parent()) {
+        GridTrackSizingDirection subgridDirection = flowAwareDirectionForChild(grid, *downcast<RenderGrid>(child.parent()), direction);
+        margin += extraMarginForSubgridAncestors(subgridDirection, child);
+    }
 
     return margin;
 }
