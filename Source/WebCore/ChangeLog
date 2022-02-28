@@ -1,3 +1,24 @@
+2022-02-28  Pascal Abresch  <nep@packageloss.eu>
+
+        FTP EPLF does not handle directory
+        https://bugs.webkit.org/show_bug.cgi?id=45113
+
+        Reviewed by Darin Adler.
+
+        The code used "!result.type" to check for an invalid type. However,
+        the first type in the FTPEntryType enum is FTPDirectoryEntry, so this
+        was actually returning true for directories, turning them into "junk"
+        entries which would not be listed.
+
+        Since the code for EPLF can only result in either files, directories,
+        or uninitialized/junk entries, the check can be removed, returning
+        result.type is the correct thing to do in all 3 cases.
+
+        Test: http/tests/misc/ftp-eplf-directory.py
+
+        * loader/FTPDirectoryParser.cpp:
+        (WebCore::parseOneFTPLine):
+
 2022-02-28  Youenn Fablet  <youenn@apple.com>
 
         Ensure RemoteMediaPlayerProxy sets its resource owner to pixel buffers created by its player

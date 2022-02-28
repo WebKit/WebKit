@@ -1881,3 +1881,6 @@ http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Fail
 http/tests/push-api/subscribe-default-permissions.html [ Failure ]
 http/tests/push-api/subscribe-deny-permissions.html [ Failure ]
 http/tests/push-api/subscribe-grant-permissions.html [ Failure ]
+
+# Ftp code is disabled in gtk port
+http/tests/misc/ftp-eplf-directory.py [ Skip ]
