@@ -1976,6 +1976,11 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String&)
 {
     return false;
 }
+
+bool WebsiteDataStore::defaultShouldUseCustomStoragePaths()
+{
+    return true;
+}
 #endif // !PLATFORM(COCOA)
 
 #if !USE(GLIB) && !PLATFORM(COCOA)

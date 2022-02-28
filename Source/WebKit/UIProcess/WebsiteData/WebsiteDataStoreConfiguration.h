@@ -207,7 +207,7 @@ public:
 private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
-    bool m_shouldUseCustomStoragePaths { true };
+    bool m_shouldUseCustomStoragePaths;
     String m_cacheStorageDirectory;
     String m_generalStorageDirectory;
     uint64_t m_perOriginStorageQuota;

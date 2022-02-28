@@ -353,6 +353,7 @@ public:
     static WTF::String defaultJavaScriptConfigurationDirectory();
     static bool http3Enabled();
     static constexpr uint64_t defaultPerOriginQuota() { return 1000 * MB; }
+    static bool defaultShouldUseCustomStoragePaths();
 
     void resetQuota(CompletionHandler<void()>&&);
     void clearStorage(CompletionHandler<void()>&&);

@@ -33,6 +33,7 @@ namespace WebKit {
 
 WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPersistent, WillCopyPathsFromExistingConfiguration willCopyPaths)
     : m_isPersistent(isPersistent)
+    , m_shouldUseCustomStoragePaths(WebsiteDataStore::defaultShouldUseCustomStoragePaths())
     , m_perOriginStorageQuota(WebsiteDataStore::defaultPerOriginQuota())
 {
     if (isPersistent == IsPersistent::Yes && willCopyPaths == WillCopyPathsFromExistingConfiguration::No) {

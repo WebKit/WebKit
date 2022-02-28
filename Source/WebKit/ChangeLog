@@ -1,3 +1,24 @@
+2022-02-27  Sihui Liu  <sihui_liu@apple.com>
+
+        Add a feature flag for using general storage directory
+        https://bugs.webkit.org/show_bug.cgi?id=237186
+        rdar://89521373
+
+        Reviewed by Chris Dumez.
+
+        * FeatureFlags/WebKit-appletvos.plist:
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-macos.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::defaultShouldUseCustomStoragePaths):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::defaultShouldUseCustomStoragePaths):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+
 2022-02-27  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Deleted unneeded constructors from DisplayList::Recorder classes

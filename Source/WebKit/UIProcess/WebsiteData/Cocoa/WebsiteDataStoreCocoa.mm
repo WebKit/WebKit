@@ -32,6 +32,7 @@
 #import "SandboxUtilities.h"
 #import "StorageManager.h"
 #import "WebFramePolicyListenerProxy.h"
+#import "WebPreferencesDefaultValues.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessProxy.h"
 #import "WebResourceLoadStatisticsStore.h"
@@ -614,6 +615,12 @@ void WebsiteDataStore::reinitializeAppBoundDomains()
 bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& entitlement)
 {
     return WTF::hasEntitlement(networkProcess().connection()->xpcConnection(), entitlement.utf8().data());
+}
+
+bool WebsiteDataStore::defaultShouldUseCustomStoragePaths()
+{
+    static const bool useGeneralStorageDirectory = isFeatureFlagEnabled("general_directory_for_storage"_s);
+    return !useGeneralStorageDirectory;
 }
 
 }
