@@ -1,3 +1,13 @@
+2022-02-28  Matteo Flores  <matteo_flores@apple.com>
+
+        REGRESSION(r288070): [ Monterey ] platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html is a constant text failure.
+        https://bugs.webkit.org/show_bug.cgi?id=236857
+
+        Unreviewed test gardening.
+
+        * platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Removed.
+        * platform/mac/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Previous file was in platform/mac/fast... instead of platform/mac/platform/mac/fast...
+
 2022-02-28  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Unable to upload ".pages" files to file inputs accepting ".pages" and ".jpeg" files
