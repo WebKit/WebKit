@@ -1348,27 +1348,39 @@ void WebAnimation::updateRelevance()
 
 bool WebAnimation::computeRelevance()
 {
-    // To be listed in getAnimations() an animation needs a target effect which is current or in effect.
+    // An animation is relevant if:
+    // - its associated effect is current or in effect, and
     if (!m_effect)
         return false;
 
+    // - its replace state is not removed.
     if (m_replaceState == ReplaceState::Removed)
         return false;
 
     auto timing = m_effect->getBasicTiming();
 
-    // An animation effect is in effect if its active time is not unresolved.
-    if (timing.activeTime)
-        return true;
-
-    // An animation effect is current if either of the following conditions is true:
-    // - the animation effect is in the before phase, or
-    // - the animation effect is in play.
-
     // An animation effect is in play if all of the following conditions are met:
     // - the animation effect is in the active phase, and
     // - the animation effect is associated with an animation that is not finished.
-    return timing.phase == AnimationEffectPhase::Before || (timing.phase == AnimationEffectPhase::Active && playState() != PlayState::Finished);
+    if (timing.phase == AnimationEffectPhase::Active && playState() != PlayState::Finished)
+        return true;
+
+    // An animation effect is current if any of the following conditions are true:
+    // - the animation effect is in play, or
+    // - the animation effect is associated with an animation with a playback rate > 0 and the animation effect is in the before phase, or
+    if (m_playbackRate > 0 && timing.phase == AnimationEffectPhase::Before)
+        return true;
+
+    // - the animation effect is associated with an animation with a playback rate < 0 and the animation effect is in the after phase.
+    if (m_playbackRate < 0 && timing.phase == AnimationEffectPhase::After)
+        return true;
+
+    // An animation effect is in effect if its active time, as calculated according to the procedure in
+    // § 4.8.3.1 Calculating the active time, is not unresolved.
+    if (timing.activeTime)
+        return true;
+
+    return false;
 }
 
 bool WebAnimation::isReplaceable() const
