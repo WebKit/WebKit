@@ -1,3 +1,13 @@
+2022-02-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION(r290588): Broke WinCairo and PlayStation debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=237277
+
+        Unreviewed build fix.
+
+        * Scripts/webkit/messages.py:
+        (conditions_for_header):
+
 2022-02-28  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION(r290588) Missing symbol jsValueForDecodedMessage<107> (IPCStreamTesterProxy_WasCreated)

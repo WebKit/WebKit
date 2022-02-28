@@ -377,7 +377,6 @@ def types_that_cannot_be_forward_declared():
 def conditions_for_header(header):
     conditions = {
         '"InputMethodState.h"': ["PLATFORM(GTK)", "PLATFORM(WPE)"],
-        '"LayerHostingContext.h"': ["PLATFORM(COCOA)", ],
         '"GestureTypes.h"': ["PLATFORM(IOS_FAMILY)"],
         '"WCContentBufferIdentifier.h"': ["USE(GRAPHICS_LAYER_WC)"],
         '"WCLayerTreeHostIdentifier.h"': ["USE(GRAPHICS_LAYER_WC)"],
