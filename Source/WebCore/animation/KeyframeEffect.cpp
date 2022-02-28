@@ -287,10 +287,17 @@ static inline ExceptionOr<void> processIterableKeyframes(JSGlobalObject& lexical
 
     // 1. Let iter be GetIterator(object, method).
     forEachInIterable(lexicalGlobalObject, keyframesInput.get(), method, [&parsedKeyframes, &document, &parserContext](VM& vm, JSGlobalObject& lexicalGlobalObject, JSValue nextValue) -> ExceptionOr<void> {
-        // Steps 2 through 6 are already implemented by forEachInIterable().
+        // Steps 2 through 5 are already implemented by forEachInIterable().
         auto scope = DECLARE_THROW_SCOPE(vm);
-        if (!nextValue || !nextValue.isObject()) {
+
+        // 6. If Type(nextItem) is not Undefined, Null or Object, then throw a TypeError and abort these steps.
+        if (!nextValue.isUndefinedOrNull() && !nextValue.isObject()) {
             throwException(&lexicalGlobalObject, scope, JSC::Exception::create(vm, createTypeError(&lexicalGlobalObject)));
+            return { };
+        }
+
+        if (!nextValue.isObject()) {
+            parsedKeyframes.append({ });
             return { };
         }
 

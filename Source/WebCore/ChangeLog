@@ -1,3 +1,16 @@
+2022-02-28  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html is a unique failure
+        https://bugs.webkit.org/show_bug.cgi?id=237259
+
+        Reviewed by Dean Jackson.
+
+        We incorrectly threw when processing a null or undefined value when an iterable was provided to setKeyframes().
+        We now correctly insert an empty keyframe if such a value is provided. 
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::processIterableKeyframes):
+
 2022-02-27  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Deleted unneeded constructors from DisplayList::Recorder classes

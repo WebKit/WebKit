@@ -63,8 +63,8 @@ PASS Reading from a custom iterator that returns a non-object keyframe should th
 PASS Reading from a custom iterator that returns a non-object keyframe and an invalid easing should throw
 PASS Reading from a custom iterator that returns a keyframe with a non finite floating-point offset value should throw
 PASS Reading from a custom iterator that returns a keyframe with a non finite floating-point offset value and an invalid easing should throw
-FAIL An undefined keyframe returned from a custom iterator should be treated as a default keyframe Type error
-FAIL A null keyframe returned from a custom iterator should be treated as a default keyframe Type error
+PASS An undefined keyframe returned from a custom iterator should be treated as a default keyframe
+PASS A null keyframe returned from a custom iterator should be treated as a default keyframe
 PASS A list of values returned from a custom iterator should be ignored
 PASS If a custom iterator throws from next(), the exception should be rethrown
 PASS Accessing a Symbol.iterator property that throws should rethrow
