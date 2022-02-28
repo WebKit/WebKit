@@ -6,7 +6,7 @@ def web_socket_do_extra_handshake(request):
     message += 'Upgrade: websocket\r\n'
     message += 'Connection: Upgrade\r\n'
     message += '\r\n'
-    request.connection.write(message)
+    request.connection.write(message.encode())
     raise handshake.AbortedByUserException('Abort the connection') # Prevents pywebsocket from sending its own handshake message.
 
 

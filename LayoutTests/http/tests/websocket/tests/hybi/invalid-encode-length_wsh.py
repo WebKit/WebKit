@@ -19,8 +19,8 @@ def web_socket_transfer_data(request):
 
     # pywebsocket refuses to create a frame with error encode length.
     # Thus, we need to build a frame manually.
-    header = chr(0x80 | common.OPCODE_TEXT) # 0x80 is for "fin" bit.
-    header += chr(payload_length) # No Mask and two bytes extended payload length.
+    header = (0x80 | common.OPCODE_TEXT).to_bytes(1, 'big')  # 0x80 is for "fin" bit.
+    header += payload_length.to_bytes(1, 'big')  # No Mask and two bytes extended payload length.
     if payload_length == 126:
         header += struct.pack('!H', extended_length)
     elif payload_length == 127:
@@ -29,4 +29,4 @@ def web_socket_transfer_data(request):
         msgutil.send_message(request, 'FAIL: Query value is incorrect or missing')
         return
     request.connection.write(header)
-    request.connection.write('X' * extended_length)
+    request.connection.write(b'X' * extended_length)

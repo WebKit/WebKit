@@ -15,14 +15,14 @@ def web_socket_transfer_data(request):
 
     # Send only first two bytes of the received frame. The remaining four bytes are
     # "masking key", which changes every time the test runs.
-    data = struct.pack('!H', 1000) + 'close_frame[:2]=%r' % close_frame[:2]
+    data = struct.pack('!H', 1000) + ('close_frame[:2]={}'.format(close_frame[:2]).replace("='", "=b'")).encode()
     request.connection.write(stream.create_close_frame(data))
 
     # If the following assertion fails, AssertionError will be raised,
     # which will prevent pywebsocket from sending a close frame.
     # In this case, the client will fail to finish closing handshake, thus
     # closeEvent.wasClean will become false.
-    assert close_frame[:2] == '\x88\x80'
+    assert close_frame[:2] == b'\x88\x80'
 
     # Pretend we have received a close frame from the client.
     # After this function exits, pywebsocket will send a close frame automatically.

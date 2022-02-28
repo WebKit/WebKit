@@ -12,13 +12,13 @@ def web_socket_transfer_data(request):
 
     # pywebsocket refuses to send a frame with too long payload.
     # Thus, we need to build a frame manually.
-    header = chr(0x80 | common.OPCODE_TEXT) # 0x80 is for "fin" bit.
-    header += chr(127)
+    header = (0x80 | common.OPCODE_TEXT).to_bytes(1, 'big')  # 0x80 is for "fin" bit.
+    header += (127).to_bytes(1, 'big')
     header += struct.pack('!Q', length)
     request.connection.write(header)
 
     # Send data indefinitely to simulate a real (broken) server sending a big frame.
     # A client should ignore these bytes and abort the connection.
     while True:
-        request.connection.write('X' * 4096)
+        request.connection.write(b'X' * 4096)
         time.sleep(1)

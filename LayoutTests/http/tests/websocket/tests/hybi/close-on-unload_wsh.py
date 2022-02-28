@@ -52,4 +52,4 @@ def web_socket_transfer_data(request):
         # request is closed. notify this socketName to other web sockets.
         del connections[request]
         for ws in connections.keys():
-            msgutil.send_message(ws, socketName + ': receive next message')
+            msgutil.send_message(ws, (socketName or '') + ': receive next message')

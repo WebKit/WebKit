@@ -14,5 +14,5 @@ def web_socket_transfer_data(request):
 
     for expected in (u'1', u'2', u'3'):
         message = msgutil.receive_message(request)
-        if type(message) != unicode or message != expected:
+        if type(message) != str or message != expected:
             raise handshake.AbortedByUserException('Abort the connection')

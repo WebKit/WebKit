@@ -22,7 +22,7 @@
 
 import time
 from mod_pywebsocket import stream
-from mod_pywebsocket.handshake.hybi import compute_accept
+from mod_pywebsocket.handshake.hybi import compute_accept_from_unicode
 
 
 def web_socket_do_extra_handshake(request):
@@ -32,18 +32,19 @@ def web_socket_do_extra_handshake(request):
     # to send more data - it should abort after reading a reasonable number of
     # bytes (set arbitrarily to 1024).
 
-    msg = 'HTTP/1.1 101 Switching \0Protocols\r\n'
-    msg += 'Upgrade: websocket\r\n'
-    msg += 'Connection: Upgrade\r\n'
-    msg += 'Sec-WebSocket-Accept: %s\r\n' % compute_accept(request.headers_in['Sec-WebSocket-Key'])[0]
-    msg += '\r\n'
+    msg = b'HTTP/1.1 101 Switching \0Protocols\r\n'
+    msg += b'Upgrade: websocket\r\n'
+    msg += b'Connection: Upgrade\r\n'
+    msg += b'Sec-WebSocket-Accept: '
+    msg += compute_accept_from_unicode(request.headers_in['Sec-WebSocket-Key'])
+    msg += b'\r\n\r\n'
     request.connection.write(msg)
     # continue writing data until the client disconnects
     while True:
         time.sleep(1)
-        numFrames = 1024 / len(frame) # write over 1024 bytes including the above handshake
+        numFrames = 1024 // len(msg)  # write over 1024 bytes including the above handshake
         for i in range(0, numFrames):
-            request.connection.write(frame)
+            request.connection.write(msg)
 
 
 def web_socket_transfer_data(request):

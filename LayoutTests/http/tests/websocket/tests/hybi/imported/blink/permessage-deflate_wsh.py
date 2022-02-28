@@ -26,10 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import urlparse
 from mod_pywebsocket.extensions import PerMessageDeflateExtensionProcessor
 from mod_pywebsocket.extensions import ExtensionProcessorInterface
 from mod_pywebsocket.common import ExtensionParameter
+from urllib import parse as urlparse
 
 _GOODBYE_MESSAGE = u'Goodbye'
 _ENABLE_MESSAGE = u'EnableCompression'
@@ -72,7 +72,7 @@ def web_socket_transfer_data(request):
         line = request.ws_stream.receive_message()
         if line is None:
             return
-        if isinstance(line, unicode):
+        if isinstance(line, str):
             if processor:
                 if line == _ENABLE_MESSAGE:
                     processor.enable_outgoing_compression()

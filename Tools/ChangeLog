@@ -1,3 +1,15 @@
+2022-02-27  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: WebSocket server doesn't support Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=230319
+        <rdar://problem/58814743>
+
+        Reviewed by Fujii Hironori.
+
+        * Scripts/new-run-webkit-websocketserver: Change shebang.
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        (PyWebSocket._prepare_config): Invoke WebSocket server with Python 3.
+
 2022-02-27  Chris Dumez  <cdumez@apple.com>
 
         Omit template parameter for SetForScope<> variables

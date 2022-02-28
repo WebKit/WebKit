@@ -114,13 +114,12 @@ class PyWebSocket(http_server.Lighttpd):
         output_log = self._filesystem.join(self._output_dir, log_file_name + "-out.txt")
         self._wsout = self._filesystem.open_text_file_for_writing(output_log)
 
-        # FIXME https://bugs.webkit.org/show_bug.cgi?id=206546: Should be using the same version of Python run-webkit-tests is
         python_interp = sys.executable
-        if sys.version_info > (3, 0):
-            python_interp = 'python2'
+        if sys.version_info < (3, 0):
+            python_interp = 'python3'
 
         wpt_tools_base = self._filesystem.join(self._layout_tests, "imported", "w3c", "web-platform-tests", "tools")
-        pywebsocket_base = self._filesystem.join(wpt_tools_base, "pywebsocket")
+        pywebsocket_base = self._filesystem.join(wpt_tools_base, "third_party", "pywebsocket3")
         pywebsocket_deps = [self._filesystem.join(wpt_tools_base, "third_party", "six")]
         pywebsocket_script = self._filesystem.join(pywebsocket_base, 'mod_pywebsocket', 'standalone.py')
         start_cmd = [

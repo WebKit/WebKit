@@ -5158,3 +5158,7 @@ userscripts/user-script-plugin-document.html [ Skip ]
 
 # This is marked as passing on WK2.
 fast/canvas/large-getImageData.html [ Skip ]
+
+webkit.org/b/237108 http/tests/websocket/tests/hybi/extensions.html [ Failure ]
+webkit.org/b/237108 http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ] # <rdar://problem/33850189>
+webkit.org/b/237108 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html [ Pass Failure ]

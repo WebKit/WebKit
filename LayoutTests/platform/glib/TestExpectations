@@ -151,7 +151,6 @@ fast/multicol/multicol-with-child-renderLayer-for-input.html [ Pass ]
 
 # permessage-deflate WebSocket extension.
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-comp-bit-onoff.html [ Pass ]
-http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter.html [ Pass ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-parameter.html [ Pass ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-set-bfinal.html [ Pass ]
 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-split-frames.html [ Pass ]
@@ -2730,6 +2729,11 @@ webkit.org/b/233047 inspector/page/setShowPaintRects.html [ Skip ]
 # setMockCameraOrientation seems to fail.
 webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-1.html [ Failure ]
 webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-2.html [ Failure ]
+
+# WebSocket tests failing after Python 3 transition
+webkit.org/b/237108 http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers.html [ Failure ]
+webkit.org/b/237108 http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter.html [ Failure ]
+webkit.org/b/237108 http/tests/websocket/tests/hybi/simple-wss.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 

@@ -21,18 +21,19 @@
 
 
 from mod_pywebsocket import handshake
-from mod_pywebsocket.handshake.hybi import compute_accept
+from mod_pywebsocket.handshake.hybi import compute_accept_from_unicode
 
 
 def web_socket_do_extra_handshake(request):
     # This will cause the handshake to fail because it pushes the length of the
     # status line past 1024 characters
-    msg = '.' * 1024
-    msg += 'HTTP/1.1 101 Switching Protocols\r\n'
-    msg += 'Upgrade: websocket\r\n'
-    msg += 'Connection: Upgrade\r\n'
-    msg += 'Sec-WebSocket-Accept: %s\r\n' % compute_accept(request.headers_in['Sec-WebSocket-Key'])[0]
-    msg += '\r\n'
+    msg = b'.' * 1024
+    msg += b'HTTP/1.1 101 Switching Protocols\r\n'
+    msg += b'Upgrade: websocket\r\n'
+    msg += b'Connection: Upgrade\r\n'
+    msg += b'Sec-WebSocket-Accept: '
+    msg += compute_accept_from_unicode(request.headers_in['Sec-WebSocket-Key'])
+    msg += b'\r\n\r\n'
     request.connection.write(msg)
     raise handshake.AbortedByUserException('abort the connection') # Prevents pywebsocket from sending its own handshake message.
 

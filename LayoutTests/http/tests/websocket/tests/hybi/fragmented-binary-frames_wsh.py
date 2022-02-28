@@ -7,10 +7,10 @@ def web_socket_do_extra_handshake(request):
 
 
 def web_socket_transfer_data(request):
-    messages_to_send = [['Hello, ', 'world!'],
-                        ['', 'Hello, ', '', 'world!', ''],
-                        ['', '', ''],
-                        [chr(i) for i in xrange(256)]]
+    messages_to_send = [[b'Hello, ', b'world!'],
+                        [b'', b'Hello, ', b'', b'world!', b''],
+                        [b'', b'', b''],
+                        [i.to_bytes(1, 'big') for i in range(256)]]
     for message_list in messages_to_send:
         for index, message in enumerate(message_list):
             # FIXME: Should use better API to send binary messages when pywebsocket supports it.

@@ -37,7 +37,7 @@ _UNICODE_HELLO = u"\u3053\u3093\u306b\u3061\u306f"
 _UNICODE_GOODBYE = u"\u3055\u3088\u3046\u306a\u3089"
 
 # Error message
-_ERROR_MESSAGE = "What did you say?"
+_ERROR_MESSAGE = b"What did you say?"
 
 
 def web_socket_do_extra_handshake(request):

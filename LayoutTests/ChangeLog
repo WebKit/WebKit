@@ -1,3 +1,146 @@
+2022-02-27  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: WebSocket server doesn't support Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=230319
+        <rdar://problem/58814743>
+
+        Reviewed by Fujii Hironori.
+
+        Make all tests Python 3 compatible, even at the cost of Python 2
+        compatibility, since WebSocket tests are always invoked with Python 3.
+
+        * TestExpectations:
+        * http/tests/websocket/tests/hybi/bad-handshake-crash_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/binary-frames_wsh.py:
+        (web_socket_transfer_data):
+        (all_distinct_bytes):
+        * http/tests/websocket/tests/hybi/broken-utf8_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/check-binary-messages_wsh.py:
+        (web_socket_transfer_data):
+        (all_distinct_bytes):
+        * http/tests/websocket/tests/hybi/client-close-2-expected.txt:
+        * http/tests/websocket/tests/hybi/client-close-2.html:
+        * http/tests/websocket/tests/hybi/client-close-2_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/client-close-expected.txt:
+        * http/tests/websocket/tests/hybi/client-close.html:
+        * http/tests/websocket/tests/hybi/client-close_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/close-code-and-reason_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/close-on-unload_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/compressed-control-frame_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/cookie_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/deflate-frame-invalid-parameter_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/deflate-frame_wsh.py:
+        (_get_deflate_frame_extension_processor):
+        (web_socket_do_extra_handshake):
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/echo-cookie_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/echo_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/fragmented-binary-frames_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-extensions-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-invalid-http-version_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-maxlength_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-mismatch-protocol-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-accept-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-extensions-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-more-protocol-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-accept-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-connection-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-cr_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-accept_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-extensions_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-header-value-sec-websocket-protocol_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-non-ascii-status-line_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-null-char-in-status_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-prepended-null_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-fail-by-wrong-accept-header_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-ok-with-http-version-beyond-1_1_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-sec-websocket-response-headers_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/handshake-ok-with-legacy-websocket-response-headers_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-invalid-parameter_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-manual_wsh.py:
+        * http/tests/websocket/tests/hybi/imported/blink/permessage-deflate-unsolicited-negotiation-response_wsh.py:
+        * http/tests/websocket/tests/hybi/imported/blink/permessage-deflate_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/inspector/binary_wsh.py:
+        (web_socket_transfer_data):
+        (all_distinct_bytes):
+        * http/tests/websocket/tests/hybi/invalid-continuation_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/invalid-encode-length_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/pong_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/protocol-test_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/reserved-bits_wsh.py:
+        (_get_deflate_frame_extension_processor):
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/reserved-opcodes_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/send-file-blob_wsh.py:
+        (web_socket_transfer_data):
+        (all_distinct_bytes):
+        * http/tests/websocket/tests/hybi/too-long-payload_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/unicode_wsh.py:
+        * http/tests/websocket/tests/hybi/unmasked-frames_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/workers/resources/binary-frames_wsh.py:
+        (web_socket_transfer_data):
+        (all_distinct_bytes):
+        * http/tests/websocket/tests/hybi/workers/resources/check-binary-messages_wsh.py:
+        (web_socket_transfer_data):
+        (all_distinct_bytes):
+        * http/tests/websocket/tests/hybi/workers/resources/no-onmessage-in-sync-op_wsh.py:
+        (web_socket_transfer_data):
+        * http/tests/websocket/tests/hybi/workers/resources/protocol-test_wsh.py:
+        (web_socket_do_extra_handshake):
+        * http/tests/websocket/tests/hybi/zero-length-text_wsh.py:
+        (web_socket_transfer_data):
+        * platform/glib/TestExpectations:
+        * platform/ios-wk2/http/tests/websocket/tests/hybi/handshake-fail-by-no-cr-expected.txt:
+        * platform/mac-wk2/http/tests/websocket/tests/hybi/client-close-2-expected.txt: Removed.
+        * platform/mac-wk2/http/tests/websocket/tests/hybi/client-close-expected.txt: Removed.
+        * platform/mac-wk2/http/tests/websocket/tests/hybi/handshake-fail-by-no-cr-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2022-02-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r290577.

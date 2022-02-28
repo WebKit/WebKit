@@ -1,13 +1,13 @@
 import re
 from mod_pywebsocket import common
 from mod_pywebsocket import stream
-from mod_pywebsocket.extensions import DeflateFrameExtensionProcessor
+from mod_pywebsocket.extensions import PerMessageDeflateExtensionProcessor
 
 bit = 0
 
 def _get_deflate_frame_extension_processor(request):
     for extension_processor in request.ws_extension_processors:
-        if isinstance(extension_processor, DeflateFrameExtensionProcessor):
+        if isinstance(extension_processor, PerMessageDeflateExtensionProcessor):
             return extension_processor
     return None
 
@@ -30,7 +30,7 @@ def web_socket_do_extra_handshake(request):
 
 
 def web_socket_transfer_data(request):
-    message = "This message should be ignored."
+    message = b"This message should be ignored."
     if bit == 1:
         frame = stream.create_header(common.OPCODE_TEXT, len(message), 1, 1, 0, 0, 0) + message
     elif bit == 2:

@@ -890,7 +890,6 @@ http/tests/webshare [ Skip ]
 
 http/tests/websocket/tests/hybi/contentextensions [ Skip ]
 
-http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
 http/tests/websocket/tests/hybi/frame-lengths.html [ Pass Timeout ]
 http/tests/websocket/tests/hybi/httponly-cookie.pl [ Pass Failure ]
 http/tests/websocket/tests/hybi/inspector [ Skip ]

@@ -1,15 +1,16 @@
 from mod_pywebsocket import handshake
-from mod_pywebsocket.handshake.hybi import compute_accept
+from mod_pywebsocket.handshake.hybi import compute_accept_from_unicode
 
 
 def web_socket_do_extra_handshake(request):
-    msg = 'HTTP/1.1 101 Switching Protocols\r\n'
-    msg += 'Upgrade: websocket\r\n'
-    msg += 'Connection: Upgrade\r\n'
-    msg += 'Sec-WebSocket-Accept: %s\r\n' % compute_accept(request.headers_in['Sec-WebSocket-Key'])[0]
-    msg += 'Sec-WebSocket-Extensions: x-webkit-deflate-frame\r\n'
-    msg += 'Sec-WebSocket-Extensions: foo\r\n'
-    msg += '\r\n'
+    msg = b'HTTP/1.1 101 Switching Protocols\r\n'
+    msg += b'Upgrade: websocket\r\n'
+    msg += b'Connection: Upgrade\r\n'
+    msg += b'Sec-WebSocket-Accept: '
+    msg += compute_accept_from_unicode(request.headers_in['Sec-WebSocket-Key'])
+    msg += b'\r\nSec-WebSocket-Extensions: x-webkit-deflate-frame\r\n'
+    msg += b'Sec-WebSocket-Extensions: foo\r\n'
+    msg += b'\r\n'
     request.connection.write(msg)
     raise handshake.AbortedByUserException('Abort the connection') # Prevents pywebsocket from sending its own handshake message.
 
