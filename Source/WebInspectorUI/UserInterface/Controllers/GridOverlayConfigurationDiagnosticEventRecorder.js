@@ -32,7 +32,7 @@ WI.GridOverlayConfigurationDiagnosticEventRecorder = class GridOverlayConfigurat
         this._inspectorHasFocus = true;
         this._lastUserInteractionTimestamp = undefined;
         this._eventSamplingTimerIdentifier = undefined;
-        this._nodesShowingGridLayoutOverlay = new Set;
+        this._nodesShowingGridLayoutOverlay = new IterableWeakSet;
     }
 
     // Static

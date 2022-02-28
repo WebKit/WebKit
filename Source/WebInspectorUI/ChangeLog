@@ -1,3 +1,43 @@
+2022-02-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add `IterableWeakSet`
+        https://bugs.webkit.org/show_bug.cgi?id=237141
+
+        Reviewed by Patrick Angle.
+
+        This allows clients to have a way to have an iterable collection that doesn't keep the
+        objects in the collection alive. We cannot just use `WeakSet` as it's not iterable (the
+        former) or `Array`/`Set` as it keeps the objects alive (the latter).
+
+        `IterableWeakSet` is a combination of:
+        - a `Set` of `WeakRef` for each object, which gives us iterability with order preserved
+        - a `WeakMap` of each object mapping to the wrapper `WeakRef` in the `Set` (see below)
+        - a `FinalizationRegistry` to remove the wrapper `WeakRef` when the object is destroyed
+
+        * UserInterface/Base/IterableWeakSet.js: Added.
+        (IterableWeakSet):
+        (IterableWeakSet.prototype.get size):
+        (IterableWeakSet.prototype.has):
+        (IterableWeakSet.prototype.add):
+        (IterableWeakSet.prototype.delete):
+        (IterableWeakSet.prototype.take):
+        (IterableWeakSet.prototype.clear):
+        (IterableWeakSet.prototype.keys):
+        (IterableWeakSet.prototype.values):
+        (IterableWeakSet.prototype.Symbol.iterator):
+        (IterableWeakSet.prototype.copy):
+        (IterableWeakSet.prototype.toJSON):
+        (IterableWeakSet.prototype.get _finalizationRegistry):
+        We could just have a `Set`/`Array` of `WeakRef`, but that would require iterating the entire
+        array to find the `WeakRef` that matches the given object, which is less efficient.
+
+        * UserInterface/Controllers/GridOverlayConfigurationDiagnosticEventRecorder.js:
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder):
+        Don't keep `WI.DOMNode` that are `layoutOverlayShowing` alive in order to record diagnostics.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+
 2022-02-24  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: merge WI.OverlayManager into WI.DOMNode
