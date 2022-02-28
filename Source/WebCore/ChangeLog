@@ -1,3 +1,10 @@
+2022-02-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address feedback from Darin regarding r290610.
+
+        * platform/graphics/Color.h:
+        (WebCore::add):
+
 2022-02-28  Rob Buis  <rbuis@igalia.com>
 
         Handle widow relayout differently

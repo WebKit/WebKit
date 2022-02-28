@@ -260,9 +260,9 @@ private:
 inline void add(Hasher& hasher, const Color& color)
 {
     if (color.isOutOfLine())
-        add(hasher, color.asOutOfLine().unresolvedComponents(), color.colorSpace(), color.flags().toRaw());
+        add(hasher, color.asOutOfLine().unresolvedComponents(), color.colorSpace(), color.flags());
     else
-        add(hasher, color.asPackedInline().value, color.flags().toRaw());
+        add(hasher, color.asPackedInline().value, color.flags());
 }
 
 bool operator==(const Color&, const Color&);
