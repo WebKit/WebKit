@@ -1,5 +1,32 @@
 2022-02-27  Matt Woodrow  <mattwoodrow@apple.com>
 
+        Compute correct containing block override size for items that are subgridden in one dimension only.
+        https://bugs.webkit.org/show_bug.cgi?id=236951
+
+        Reviewed by Dean Jackson.
+
+        Items that are subgridded in one dimension will be included in the track sizing algorithm of the
+        outer grid for that dimension. When measuring their size in the subgridded dimension, we need to
+        set their containing block size in the other (non-subgridded) dimension, which is only available
+        from the subgrid's track sizing, not the outer track sizes.
+
+        This recurses up to set the override size on the subgrid element instead, and forces a layout
+        there, which should copy down subgrid track sizes and compute the other dimension, making it
+        available on the inner item we need.
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/subgrid/auto-track-sizing-002.html
+
+        * rendering/GridLayoutFunctions.cpp:
+        (WebCore::GridLayoutFunctions::extraMarginForSubgridAncestors):
+        * rendering/GridLayoutFunctions.h:
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithmStrategy::updateOverridingContainingBlockContentSizeForChild const):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::isSubgridOf):
+        * rendering/RenderGrid.h:
+
+2022-02-27  Matt Woodrow  <mattwoodrow@apple.com>
+
         Convert grid direction to be relative to subgrid when accounting for extra margin.
         https://bugs.webkit.org/show_bug.cgi?id=236954
 

@@ -1394,7 +1394,6 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-order-001
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-002.html [ ImageOnlyFailure ]
 
-webkit.org/b/236951 imported/w3c/web-platform-tests/css/css-grid/subgrid/auto-track-sizing-001.html [ ImageOnlyFailure ]
 webkit.org/b/236959 imported/w3c/web-platform-tests/css/css-grid/subgrid/baseline-001.html [ ImageOnlyFailure ]
 webkit.org/b/236956 imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-003.html [ ImageOnlyFailure ]
 webkit.org/b/236957 imported/w3c/web-platform-tests/css/css-grid/subgrid/line-names-007.html [ ImageOnlyFailure ]

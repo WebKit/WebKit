@@ -1,3 +1,16 @@
+2022-02-27  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Compute correct containing block override size for items that are subgridden in one dimension only.
+        https://bugs.webkit.org/show_bug.cgi?id=236951
+
+        Reviewed by Dean Jackson.
+
+        Added new WPT similar to auto-track-sizing-001 which adds new variations
+        with nested subgrids and varying whether the other axis is subgridded.
+
+        * web-platform-tests/css/css-grid/subgrid/auto-track-sizing-002-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/auto-track-sizing-002.html: Added.
+
 2022-02-27  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] web-animations/timing-model/animations/setting-the-timeline-of-an-animation.html is a unique failure
