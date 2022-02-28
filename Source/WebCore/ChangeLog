@@ -1,3 +1,20 @@
+2022-02-28  Rob Buis  <rbuis@igalia.com>
+
+        Handle widow relayout differently
+        https://bugs.webkit.org/show_bug.cgi?id=235519
+
+        Reviewed by Alan Bujtas.
+
+        Handle widow relayout differently to prevent function call recursion.
+
+        Test: fast/multicol/widow-many-relayouts-crash.html
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::relayoutToAvoidWidows): Deleted.
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::didBreakAtLineToAvoidWidow const):
+
 2022-02-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: [Flexbox] Add options to show each area's CSS `order` and/or DOM index in the parent flex container
