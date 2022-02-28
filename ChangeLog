@@ -1,3 +1,16 @@
+2022-02-28  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wodr warning spam caused by ENABLE(BINDING_INTEGRITY)
+        https://bugs.webkit.org/show_bug.cgi?id=229867
+        <rdar://problem/82975115>
+
+        Reviewed by Carlos Garcia Campos.
+
+        Build WebKit with -Wno-odr. This warning is not salvagable, and it's impossible to suppress
+        locally.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
  2022-02-24  Matt Woodrow  <mattwoodrow@apple.com>
 
          Unreviewed, update my (Matt Woodrow) status to committer.
