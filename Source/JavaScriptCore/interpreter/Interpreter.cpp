@@ -501,25 +501,6 @@ private:
     mutable HandlerInfo* m_handler;
 };
 
-ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame)
-{
-    JSGlobalObject* globalObject = callFrame->lexicalGlobalObject(vm);
-    Debugger* debugger = globalObject->debugger();
-    if (LIKELY(!debugger))
-        return;
-
-    DeferTermination deferScope(vm);
-    auto catchScope = DECLARE_CATCH_SCOPE(vm);
-
-    SuspendExceptionScope scope(&vm);
-    if (callFrame->isAnyWasmCallee()
-        || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits<JSFunction>(vm)))
-        debugger->unwindEvent(callFrame);
-    else
-        debugger->didExecuteProgram(callFrame);
-    catchScope.assertNoException();
-}
-
 CatchInfo::CatchInfo(const HandlerInfo* handler, CodeBlock* codeBlock)
 {
     m_valid = !!handler;
@@ -659,6 +640,25 @@ private:
 #endif
     }
 
+    ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame)
+    {
+        JSGlobalObject* globalObject = callFrame->lexicalGlobalObject(vm);
+        Debugger* debugger = globalObject->debugger();
+        if (LIKELY(!debugger))
+            return;
+
+        DeferTermination deferScope(vm);
+        auto catchScope = DECLARE_CATCH_SCOPE(vm);
+
+        SuspendExceptionScope scope(&vm);
+        if (callFrame->isAnyWasmCallee()
+            || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits<JSFunction>(vm)))
+            debugger->unwindEvent(callFrame);
+        else
+            debugger->didExecuteProgram(callFrame);
+        catchScope.assertNoException();
+    }
+
     VM& m_vm;
     CallFrame*& m_callFrame;
     bool m_isTermination;
@@ -675,7 +675,7 @@ private:
 // Replace an exception which passes across a marshalling boundary with a TypeError for its handler's global object.
 static void sanitizeRemoteFunctionException(VM& vm, JSRemoteFunction* remoteFunction, Exception* exception)
 {
-    DeferTermination deferScope(vm);
+    ASSERT(vm.traps().isDeferringTermination());
     auto scope = DECLARE_THROW_SCOPE(vm);
     ASSERT(exception);
     ASSERT(!vm.isTerminationException(exception));
@@ -703,6 +703,28 @@ static void sanitizeRemoteFunctionException(VM& vm, JSRemoteFunction* remoteFunc
 
 NEVER_INLINE CatchInfo Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exception* exception)
 {
+    // If we're unwinding the stack due to a regular exception (not a TerminationException), then
+    // we want to use a DeferTerminationForAWhile scope. This is because we want to avoid a
+    // TerminationException being raised (due to a concurrent termination request) in the middle
+    // of unwinding. The unwinding code only checks if we're handling a TerminationException before
+    // it starts unwinding and is not expecting this status to change in the middle. Without the
+    // DeferTerminationForAWhile scope, control flow may end up in an exception handler, and effectively
+    // "catch" the newly raised TerminationException, which should not be catchable.
+    //
+    // On the other hand, if we're unwinding the stack due to a TerminationException, we do not need
+    // nor want the DeferTerminationForAWhile scope. This is because on exit, DeferTerminationForAWhile
+    // will set the VMTraps NeedTermination bit if termination is in progress. The system expects the
+    // NeedTermination bit to be have been cleared by VMTraps::handleTraps() once the TerminationException
+    // has been raised. Some legacy client apps relies on this and expects to be able to re-enter the
+    // VM after it exits due to termination. If the NeedTermination bit is set, upon re-entry, the
+    // VM will behave as if a termination request is pending and terminate almost immediately, thereby
+    // breaking the legacy client apps.
+    //
+    // FIXME: Revisit this once we can deprecate this legacy behavior of being able to re-enter the VM
+    // after termination.
+    std::optional<DeferTerminationForAWhile> deferScope;
+    if (!vm.isTerminationException(exception))
+        deferScope.emplace(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     ASSERT(reinterpret_cast<void*>(callFrame) != vm.topEntryFrame);
@@ -725,6 +747,7 @@ NEVER_INLINE CatchInfo Interpreter::unwind(VM& vm, CallFrame*& callFrame, Except
     StackVisitor::visit<StackVisitor::TerminateIfTopEntryFrameIsEmpty>(callFrame, vm, functor);
 
     if (seenRemoteFunction) {
+        ASSERT(!vm.isTerminationException(exception));
         sanitizeRemoteFunctionException(vm, seenRemoteFunction, exception);
         exception = scope.exception(); // clear m_needExceptionCheck
     }

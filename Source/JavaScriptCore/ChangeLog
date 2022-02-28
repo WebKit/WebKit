@@ -1,3 +1,33 @@
+2022-02-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use DeferTerminationForAWhile in Interpreter::unwind
+        https://bugs.webkit.org/show_bug.cgi?id=237176
+
+        Reviewed by Mark Lam.
+
+        If we're unwinding the stack due to a regular exception (not a TerminationException), then
+        we want to use a DeferTerminationForAWhile scope. This is because we want to avoid a
+        TerminationException being raised (due to a concurrent termination request) in the middle
+        of unwinding. The unwinding code only checks if we're handling a TerminationException before
+        it starts unwinding and is not expecting this status to change in the middle. Without the
+        DeferTerminationForAWhile scope, control flow may end up in an exception handler, and effectively
+        "catch" the newly raised TerminationException, which should not be catchable.
+
+        On the other hand, if we're unwinding the stack due to a TerminationException, we do not need
+        nor want the DeferTerminationForAWhile scope. This is because on exit, DeferTerminationForAWhile
+        will set the VMTraps NeedTermination bit if termination is in progress. The system expects the
+        NeedTermination bit to be have been cleared by VMTraps::handleTraps() once the TerminationException
+        has been raised. Some legacy client apps relies on this and expects to be able to re-enter the
+        VM after it exits due to termination. If the NeedTermination bit is set, upon re-entry, the
+        VM will behave as if a termination request is pending and terminate almost immediately, thereby
+        breaking the legacy client apps.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::notifyDebuggerOfUnwinding):
+        (JSC::sanitizeRemoteFunctionException):
+        (JSC::Interpreter::unwind):
+        (JSC::notifyDebuggerOfUnwinding): Deleted.
+
 2022-02-28  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Reuse known register values on ARMv7
