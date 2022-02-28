@@ -1,3 +1,38 @@
+2022-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Invoking "Markup Image" should preserve the existing selection range
+        https://bugs.webkit.org/show_bug.cgi?id=237242
+
+        Reviewed by Darin Adler.
+
+        Move the implementation of `replaceNodeFromPasteboard` out of the macOS-specific implementation file and into
+        EditorCocoa instead, so that we can use it on both iOS and macOS to handle the "Markup Image" action. See WebKit
+        ChangeLog for more details.
+
+        * editing/Editor.h:
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::maybeCopyNodeAttributesToFragment):
+        (WebCore::Editor::replaceNodeFromPasteboard):
+
+        Also make a few minor adjustments while we're moving this code:
+        -   Make this take a reference instead of a pointer (the method always expects a non-null Node pointer anyways).
+        -   Add a FIXME mentioning that we can just delete `setInsertionPasteboard` altogether once Mail compose on
+            macOS uses WebKit2.
+        -   Unconditionally pass `false` for whether or not we should enable smart paste when replacing the node. This
+            prevents us from inserting spaces around the replacement image element when triggering the "Markup Image"
+            item.
+        -   Use `makeRangeSelectingNode` instead of `makeRangeSelectingNodeContents` when selecting the node to replace.
+            This allows us to handle the case where the node to replace cannot contain children for editing (in
+            particular, image elements).
+
+        Note that this codepath (`replaceNodeFromPasteboard`) is currently only exercised by WebKitLegacy service
+        controls code that was originally intended for use by Mail compose, but never ended up being used.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::pasteWithPasteboard):
+        (WebCore::maybeCopyNodeAttributesToFragment): Deleted.
+        (WebCore::Editor::replaceNodeFromPasteboard): Deleted.
+
 2022-02-27  Matt Woodrow  <mattwoodrow@apple.com>
 
         Compute correct containing block override size for items that are subgridden in one dimension only.

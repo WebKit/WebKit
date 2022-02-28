@@ -1,3 +1,35 @@
+2022-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Invoking "Markup Image" should preserve the existing selection range
+        https://bugs.webkit.org/show_bug.cgi?id=237242
+
+        Reviewed by Darin Adler.
+
+        Make a few adjustments to `replaceWithPasteboardData`, such that it attempts to restore the previous selection
+        range after replacing the target element. If the previous selection is no longer valid (i.e., it was orphaned as
+        a result of the editing command used to replace the element), then we fall back to restoring the visible
+        character range of the previous selection, relative to the editable root (or the body if there is none).
+
+        API tests will be added in https://webkit.org/b/236519, once we're able to swizzle out the underlying VisionKit
+        methods in order to make these tests run reliably.
+
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::OverridePasteboardForSelectionReplacement::OverridePasteboardForSelectionReplacement):
+        (WebKit::OverridePasteboardForSelectionReplacement::~OverridePasteboardForSelectionReplacement):
+
+        Add a helper RAII object that encapsulates logic for setting and unsetting data on the override pasteboard. Use
+        this in the two methods below.
+
+        (WebKit::WebPage::replaceWithPasteboardData):
+
+        Switch to using the refactored `Editor::replaceNodeFromPasteboard` method instead of calling to the adjacent
+        `replaceSelectionWithPasteboardData` method below. Using this method allows us to avoid manually selecting the
+        target element here, and also avoids smart pasteboard replacement (which may insert spaces before or after the
+        image); the latter is important in order to correctly restore the previous selection's character range in the
+        case where the previous selection range was orphaned by the replacement.
+
+        (WebKit::WebPage::replaceSelectionWithPasteboardData):
+
 2022-02-27  Chris Dumez  <cdumez@apple.com>
 
         Omit template parameter for SetForScope<> variables

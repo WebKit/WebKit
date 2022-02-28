@@ -1,3 +1,17 @@
+2022-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Invoking "Markup Image" should preserve the existing selection range
+        https://bugs.webkit.org/show_bug.cgi?id=237242
+
+        Reviewed by Darin Adler.
+
+        See WebKit and WebCore ChangeLogs for more detail.
+
+        * Misc/WebSharingServicePickerController.mm:
+        (-[WebSharingServicePickerController didShareImageData:confirmDataIsValidTIFFData:]):
+
+        Adjust this call site to pass in a reference instead of a pointer. Also deploy RefPtr in some adjacent code.
+
 2022-02-27  Chris Dumez  <cdumez@apple.com>
 
         Omit template parameter for SetForScope<> variables

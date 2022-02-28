@@ -141,9 +141,9 @@ RetainPtr<NSImage> WebSharingServicePickerClient::imageForCurrentSharingServiceP
     [pasteboard declareTypes:@[ NSPasteboardTypeTIFF ] owner:nil];
     [pasteboard setData:data forType:NSPasteboardTypeTIFF];
 
-    if (auto* node = page->contextMenuController().context().hitTestResult().innerNode()) {
-        if (auto* frame = node->document().frame())
-            frame->editor().replaceNodeFromPasteboard(node, serviceControlsPasteboardName);
+    if (RefPtr node = page->contextMenuController().context().hitTestResult().innerNode()) {
+        if (RefPtr frame = node->document().frame())
+            frame->editor().replaceNodeFromPasteboard(*node, serviceControlsPasteboardName);
     }
 
     [self clear];

@@ -44,6 +44,7 @@
 #import <WebCore/FocusController.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsContextCG.h>
+#import <WebCore/HTMLBodyElement.h>
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLOListElement.h>
 #import <WebCore/HTMLUListElement.h>
@@ -457,6 +458,27 @@ static String& replaceSelectionPasteboardName()
     return string;
 }
 
+class OverridePasteboardForSelectionReplacement {
+    WTF_MAKE_NONCOPYABLE(OverridePasteboardForSelectionReplacement);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    OverridePasteboardForSelectionReplacement(const Vector<String>& types, const IPC::DataReference& data)
+        : m_types(types)
+    {
+        for (auto& type : types)
+            WebPasteboardOverrides::sharedPasteboardOverrides().addOverride(replaceSelectionPasteboardName(), type, { data });
+    }
+
+    ~OverridePasteboardForSelectionReplacement()
+    {
+        for (auto& type : m_types)
+            WebPasteboardOverrides::sharedPasteboardOverrides().removeOverride(replaceSelectionPasteboardName(), type);
+    }
+
+private:
+    Vector<String> m_types;
+};
+
 void WebPage::replaceWithPasteboardData(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
@@ -464,26 +486,58 @@ void WebPage::replaceWithPasteboardData(const ElementContext& elementContext, co
     if (!element || !element->isContentEditable())
         return;
 
-    if (frame->document() != &element->document())
+    Ref document = element->document();
+    if (frame->document() != document.ptr())
         return;
 
-    auto replacementRange = makeRangeSelectingNode(*element);
-    if (!replacementRange)
+    auto originalSelection = frame->selection().selection();
+    RefPtr selectionHost = originalSelection.rootEditableElement() ?: document->body();
+    if (!selectionHost)
         return;
 
-    frame->selection().setSelection(VisibleSelection { *replacementRange });
-    replaceSelectionWithPasteboardData(types, data);
+    constexpr OptionSet iteratorOptions = TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions;
+    std::optional<CharacterRange> rangeToRestore;
+    uint64_t numberOfCharactersInSelectionHost = 0;
+    if (auto range = originalSelection.range()) {
+        auto selectionHostRangeBeforeReplacement = makeRangeSelectingNodeContents(*selectionHost);
+        rangeToRestore = characterRange(selectionHostRangeBeforeReplacement, *range, iteratorOptions);
+        numberOfCharactersInSelectionHost = characterCount(selectionHostRangeBeforeReplacement, iteratorOptions);
+    }
+
+    {
+        OverridePasteboardForSelectionReplacement overridePasteboard { types, data };
+        IgnoreSelectionChangeForScope ignoreSelectionChanges { frame.get() };
+        frame->editor().replaceNodeFromPasteboard(*element, replaceSelectionPasteboardName());
+    }
+
+    constexpr auto restoreSelectionOptions = FrameSelection::defaultSetSelectionOptions(UserTriggered);
+    if (!originalSelection.isNoneOrOrphaned()) {
+        frame->selection().setSelection(originalSelection, restoreSelectionOptions);
+        return;
+    }
+
+    if (!rangeToRestore || !selectionHost->isConnected())
+        return;
+
+    auto selectionHostRange = makeRangeSelectingNodeContents(*selectionHost);
+    if (numberOfCharactersInSelectionHost != characterCount(selectionHostRange, iteratorOptions)) {
+        // FIXME: We don't attempt to restore the selection if the replaced element contains a different
+        // character count than the content that replaces it, since this codepath is currently only used
+        // to replace a single non-text element with another. If this is used to replace text content in
+        // the future, we should adjust the `rangeToRestore` to fit the newly inserted content.
+        return;
+    }
+
+    // The node replacement may have orphaned the original selection range; in this case, try to restore
+    // the original selected character range.
+    auto newSelectionRange = resolveCharacterRange(selectionHostRange, *rangeToRestore, iteratorOptions);
+    frame->selection().setSelection(newSelectionRange, restoreSelectionOptions);
 }
 
 void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
 {
-    for (auto& type : types)
-        WebPasteboardOverrides::sharedPasteboardOverrides().addOverride(replaceSelectionPasteboardName(), type, { data });
-
+    OverridePasteboardForSelectionReplacement overridePasteboard { types, data };
     readSelectionFromPasteboard(replaceSelectionPasteboardName(), [](bool) { });
-
-    for (auto& type : types)
-        WebPasteboardOverrides::sharedPasteboardOverrides().removeOverride(replaceSelectionPasteboardName(), type);
 }
 
 void WebPage::readSelectionFromPasteboard(const String& pasteboardName, CompletionHandler<void(bool&&)>&& completionHandler)

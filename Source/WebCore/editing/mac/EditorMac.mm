@@ -184,64 +184,6 @@ void Editor::platformPasteFont()
     client()->setInsertionPasteboard(String());
 }
 
-static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment& fragment)
-{
-    // This is only supported for single-Node fragments.
-    Node* firstChild = fragment.firstChild();
-    if (!firstChild || firstChild != fragment.lastChild())
-        return;
-
-    // And only supported for HTML elements.
-    if (!node.isHTMLElement() || !firstChild->isHTMLElement())
-        return;
-
-    // And only if the source Element and destination Element have the same HTML tag name.
-    const HTMLElement& oldElement = downcast<HTMLElement>(node);
-    HTMLElement& newElement = downcast<HTMLElement>(*firstChild);
-    if (oldElement.localName() != newElement.localName())
-        return;
-
-    for (const Attribute& attribute : oldElement.attributesIterator()) {
-        if (newElement.hasAttribute(attribute.name()))
-            continue;
-        newElement.setAttribute(attribute.name(), attribute.value());
-    }
-}
-
-void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
-{
-    ASSERT(node);
-
-    if (node->document() != m_document)
-        return;
-
-    Ref<Document> protector(m_document);
-
-    auto range = makeRangeSelectingNodeContents(*node);
-    m_document.selection().setSelection(VisibleSelection(range), FrameSelection::DoNotSetFocus);
-
-    Pasteboard pasteboard(PagePasteboardContext::create(m_document.pageID()), pasteboardName);
-
-    if (!m_document.selection().selection().isContentRichlyEditable()) {
-        pasteAsPlainTextWithPasteboard(pasteboard);
-        return;
-    }
-
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: How can this hard-coded pasteboard name be right, given that the passed-in pasteboard has a name?
-    client()->setInsertionPasteboard(NSGeneralPboard);
-    ALLOW_DEPRECATED_DECLARATIONS_END
-
-    bool chosePlainText;
-    if (auto fragment = webContentFromPasteboard(pasteboard, range, true, chosePlainText)) {
-        maybeCopyNodeAttributesToFragment(*node, *fragment);
-        if (shouldInsertFragment(*fragment, range, EditorInsertAction::Pasted))
-            pasteAsFragment(fragment.releaseNonNull(), canSmartReplaceWithPasteboard(pasteboard), false, MailBlockquoteHandling::IgnoreBlockquote);
-    }
-
-    client()->setInsertionPasteboard(String());
-}
-
 RefPtr<SharedBuffer> Editor::imageInWebArchiveFormat(Element& imageElement)
 {
     auto archive = LegacyWebArchive::create(imageElement);
