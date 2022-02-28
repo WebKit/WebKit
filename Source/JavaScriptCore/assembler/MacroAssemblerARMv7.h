@@ -63,6 +63,8 @@ public:
 
     MacroAssemblerARMv7()
         : m_makeJumpPatchable(false)
+        , m_cachedDataTempRegister(this, dataTempRegister)
+        , m_cachedAddressTempRegister(this, addressTempRegister)
     {
     }
 
@@ -193,8 +195,9 @@ public:
     {
         // Avoid unpredictable instruction if the destination is the stack pointer
         if (dest == ARMRegisters::sp && src != dest) {
-            add32(imm, src, addressTempRegister);
-            move(addressTempRegister, dest);
+            RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+            add32(imm, src, scratch);
+            move(scratch, dest);
             return;
         }
 
@@ -222,6 +225,7 @@ public:
 
     void add32(Address src, RegisterID dest)
     {
+        // load32 will invalidate the cachedDataTempRegister() for us
         load32(src, dataTempRegister);
         add32(dataTempRegister, dest);
     }
@@ -234,8 +238,9 @@ public:
 
     void getEffectiveAddress(BaseIndex address, RegisterID dest)
     {
-        m_assembler.lsl(addressTempRegister, address.index, static_cast<int>(address.scale));
-        m_assembler.add(dest, address.base, addressTempRegister);
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        m_assembler.lsl(scratch, address.index, static_cast<int>(address.scale));
+        m_assembler.add(dest, address.base, scratch);
         if (address.offset)
             add32(TrustedImm32(address.offset), dest);
     }
@@ -247,22 +252,23 @@ public:
     
     void add64(TrustedImm32 imm, AbsoluteAddress address)
     {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         move(TrustedImmPtr(address.m_ptr), addressTempRegister);
 
-        m_assembler.ldr(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt12(0));
+        m_assembler.ldr(scratch, addressTempRegister, ARMThumbImmediate::makeUInt12(0));
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         if (armImm.isValid())
-            m_assembler.add_S(dataTempRegister, dataTempRegister, armImm);
+            m_assembler.add_S(scratch, scratch, armImm);
         else {
             move(imm, addressTempRegister);
-            m_assembler.add_S(dataTempRegister, dataTempRegister, addressTempRegister);
+            m_assembler.add_S(scratch, scratch, addressTempRegister);
             move(TrustedImmPtr(address.m_ptr), addressTempRegister);
         }
-        m_assembler.str(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt12(0));
+        m_assembler.str(scratch, addressTempRegister, ARMThumbImmediate::makeUInt12(0));
 
-        m_assembler.ldr(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt12(4));
-        m_assembler.adc(dataTempRegister, dataTempRegister, ARMThumbImmediate::makeEncodedImm(imm.m_value >> 31));
-        m_assembler.str(dataTempRegister, addressTempRegister, ARMThumbImmediate::makeUInt12(4));
+        m_assembler.ldr(scratch, addressTempRegister, ARMThumbImmediate::makeUInt12(4));
+        m_assembler.adc(scratch, scratch, ARMThumbImmediate::makeEncodedImm(imm.m_value >> 31));
+        m_assembler.str(scratch, addressTempRegister, ARMThumbImmediate::makeUInt12(4));
     }
 
     void and16(Address src, RegisterID dest)
@@ -317,12 +323,13 @@ public:
 
     void lshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         // Clamp the shift to the range 0..31
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(0x1f);
         ASSERT(armImm.isValid());
-        m_assembler.ARM_and(dataTempRegister, shiftAmount, armImm);
+        m_assembler.ARM_and(scratch, shiftAmount, armImm);
 
-        m_assembler.lsl(dest, src, dataTempRegister);
+        m_assembler.lsl(dest, src, scratch);
     }
 
     void lshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
@@ -342,17 +349,20 @@ public:
 
     void mul32(RegisterID src, RegisterID dest)
     {
-        m_assembler.smull(dest, dataTempRegister, dest, src);
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        m_assembler.smull(dest, scratch, dest, src);
     }
 
     void mul32(RegisterID left, RegisterID right, RegisterID dest)
     {
-        m_assembler.smull(dest, dataTempRegister, left, right);
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        m_assembler.smull(dest, scratch, left, right);
     }
 
     void mul32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         move(imm, dataTempRegister);
+        cachedDataTempRegister().invalidate();
         m_assembler.smull(dest, dataTempRegister, src, dataTempRegister);
     }
 
@@ -477,12 +487,13 @@ public:
 
     void rshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         // Clamp the shift to the range 0..31
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(0x1f);
         ASSERT(armImm.isValid());
-        m_assembler.ARM_and(dataTempRegister, shiftAmount, armImm);
+        m_assembler.ARM_and(scratch, shiftAmount, armImm);
 
-        m_assembler.asr(dest, src, dataTempRegister);
+        m_assembler.asr(dest, src, scratch);
     }
 
     void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
@@ -505,12 +516,13 @@ public:
 
     void urshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         // Clamp the shift to the range 0..31
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(0x1f);
         ASSERT(armImm.isValid());
-        m_assembler.ARM_and(dataTempRegister, shiftAmount, armImm);
+        m_assembler.ARM_and(scratch, shiftAmount, armImm);
         
-        m_assembler.lsr(dest, src, dataTempRegister);
+        m_assembler.lsr(dest, src, scratch);
     }
     
     void urshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
@@ -658,6 +670,11 @@ public:
 private:
     void load32(ArmAddress address, RegisterID dest)
     {
+        if (dest == addressTempRegister)
+            cachedAddressTempRegister().invalidate();
+        else if (dest == dataTempRegister)
+            cachedDataTempRegister().invalidate();
+
         if (address.type == ArmAddress::HasIndex)
             m_assembler.ldr(dest, address.base, address.u.index, address.u.scale);
         else if (address.u.offset >= 0) {
@@ -672,6 +689,11 @@ private:
 
     void load16(ArmAddress address, RegisterID dest)
     {
+        if (dest == addressTempRegister)
+            cachedAddressTempRegister().invalidate();
+        else if (dest == dataTempRegister)
+            cachedDataTempRegister().invalidate();
+
         if (address.type == ArmAddress::HasIndex)
             m_assembler.ldrh(dest, address.base, address.u.index, address.u.scale);
         else if (address.u.offset >= 0) {
@@ -687,11 +709,21 @@ private:
     void load16SignedExtendTo32(ArmAddress address, RegisterID dest)
     {
         ASSERT(address.type == ArmAddress::HasIndex);
+        if (dest == addressTempRegister)
+            cachedAddressTempRegister().invalidate();
+        else if (dest == dataTempRegister)
+            cachedDataTempRegister().invalidate();
+
         m_assembler.ldrsh(dest, address.base, address.u.index, address.u.scale);
     }
 
     void load8(ArmAddress address, RegisterID dest)
     {
+        if (dest == addressTempRegister)
+            cachedAddressTempRegister().invalidate();
+        else if (dest == dataTempRegister)
+            cachedDataTempRegister().invalidate();
+
         if (address.type == ArmAddress::HasIndex)
             m_assembler.ldrb(dest, address.base, address.u.index, address.u.scale);
         else if (address.u.offset >= 0) {
@@ -707,6 +739,11 @@ private:
     void load8SignedExtendTo32(ArmAddress address, RegisterID dest)
     {
         ASSERT(address.type == ArmAddress::HasIndex);
+        if (dest == addressTempRegister)
+            cachedAddressTempRegister().invalidate();
+        else if (dest == dataTempRegister)
+            cachedDataTempRegister().invalidate();
+
         m_assembler.ldrsb(dest, address.base, address.u.index, address.u.scale);
     }
 
@@ -779,6 +816,7 @@ public:
     {
         move(TrustedImmPtr(address), addressTempRegister);
         m_assembler.ldr(dest, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
+        cachedAddressTempRegister().invalidate();
     }
     
     void abortWithReason(AbortReason reason)
@@ -875,9 +913,13 @@ public:
         int32_t absOffset = address.offset;
         if (absOffset < 0)
             absOffset = -absOffset;
-        if (!(absOffset & ~0x3fc))
+        if (!(absOffset & ~0x3fc)) {
+            if ((dest1 == addressTempRegister) || (dest2 == addressTempRegister))
+                cachedAddressTempRegister().invalidate();
+            if ((dest1 == dataTempRegister) || (dest2 == dataTempRegister))
+                cachedDataTempRegister().invalidate();
             m_assembler.ldrd(dest1, dest2, address.base, address.offset, /* index: */ true, /* wback: */ false);
-        else if (address.base == dest1) {
+        } else if (address.base == dest1) {
             load32(address.withOffset(4), dest2);
             load32(address, dest1);
         } else {
@@ -952,8 +994,9 @@ public:
     
     void store8(RegisterID src, const void *address)
     {
-        move(TrustedImmPtr(address), addressTempRegister);
-        store8(src, ArmAddress(addressTempRegister, 0));
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        move(TrustedImmPtr(address), scratch);
+        store8(src, ArmAddress(scratch, 0));
     }
     
     void store8(TrustedImm32 imm, const void *address)
@@ -1023,14 +1066,15 @@ public:
     void storePair32(RegisterID src1, RegisterID src2, BaseIndex address)
     {
         ASSERT(src1 != dataTempRegister && src2 != dataTempRegister);
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         // The 'addressTempRegister' might be used when the offset is wide, so use 'dataTempRegister'
         if (address.scale == TimesOne)
-            m_assembler.add(dataTempRegister, address.base, address.index);
+            m_assembler.add(scratch, address.base, address.index);
         else {
             ShiftTypeAndAmount shift { ARMShiftType::SRType_LSL, static_cast<unsigned>(address.scale) };
-            m_assembler.add(dataTempRegister, address.base, address.index, shift);
+            m_assembler.add(scratch, address.base, address.index, shift);
         }
-        storePair32(src1, src2, Address(dataTempRegister, address.offset));
+        storePair32(src1, src2, Address(scratch, address.offset));
     }
 
     void storePair32(RegisterID src1, RegisterID src2, const void* address)
@@ -1083,8 +1127,9 @@ public:
 
         // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
         if ((offset & 3) || (offset > (255 * 4)) || (offset < -(255 * 4))) {
-            add32(TrustedImm32(offset), base, addressTempRegister);
-            base = addressTempRegister;
+            RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+            add32(TrustedImm32(offset), base, scratch);
+            base = scratch;
             offset = 0;
         }
         
@@ -1098,8 +1143,9 @@ public:
 
         // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
         if ((offset & 3) || (offset > (255 * 4)) || (offset < -(255 * 4))) {
-            add32(TrustedImm32(offset), base, addressTempRegister);
-            base = addressTempRegister;
+            RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+            add32(TrustedImm32(offset), base, scratch);
+            base = scratch;
             offset = 0;
         }
         
@@ -1111,6 +1157,7 @@ public:
         move(address.index, addressTempRegister);
         lshift32(TrustedImm32(address.scale), addressTempRegister);
         add32(address.base, addressTempRegister);
+        cachedAddressTempRegister().invalidate();
         loadDouble(Address(addressTempRegister, address.offset), dest);
     }
     
@@ -1119,6 +1166,7 @@ public:
         move(address.index, addressTempRegister);
         lshift32(TrustedImm32(address.scale), addressTempRegister);
         add32(address.base, addressTempRegister);
+        cachedAddressTempRegister().invalidate();
         loadFloat(Address(addressTempRegister, address.offset), dest);
     }
 
@@ -1152,8 +1200,9 @@ public:
 
         // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
         if ((offset & 3) || (offset > (255 * 4)) || (offset < -(255 * 4))) {
-            add32(TrustedImm32(offset), base, addressTempRegister);
-            base = addressTempRegister;
+            RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+            add32(TrustedImm32(offset), base, scratch);
+            base = scratch;
             offset = 0;
         }
         
@@ -1167,8 +1216,9 @@ public:
 
         // Arm vfp addresses can be offset by a 9-bit ones-comp immediate, left shifted by 2.
         if ((offset & 3) || (offset > (255 * 4)) || (offset < -(255 * 4))) {
-            add32(TrustedImm32(offset), base, addressTempRegister);
-            base = addressTempRegister;
+            RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+            add32(TrustedImm32(offset), base, scratch);
+            base = scratch;
             offset = 0;
         }
         
@@ -1186,6 +1236,7 @@ public:
         move(address.index, addressTempRegister);
         lshift32(TrustedImm32(address.scale), addressTempRegister);
         add32(address.base, addressTempRegister);
+        cachedAddressTempRegister().invalidate();
         storeDouble(src, Address(addressTempRegister, address.offset));
     }
     
@@ -1194,6 +1245,7 @@ public:
         move(address.index, addressTempRegister);
         lshift32(TrustedImm32(address.scale), addressTempRegister);
         add32(address.base, addressTempRegister);
+        cachedAddressTempRegister().invalidate();
         storeFloat(src, Address(addressTempRegister, address.offset));
     }
     
@@ -1363,6 +1415,7 @@ public:
     enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
     Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
     {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
         // Convert into dest.
         m_assembler.vcvt_floatingPointToSigned(fpTempRegisterAsSingle(), src);
         m_assembler.vmov(dest, fpTempRegisterAsSingle());
@@ -1370,8 +1423,8 @@ public:
         // Calculate 2x dest.  If the value potentially underflowed, it will have
         // clamped to 0x80000000, so 2x dest is zero in this case. In the case of
         // overflow the result will be equal to -2.
-        Jump underflow = branchAdd32(Zero, dest, dest, dataTempRegister);
-        Jump noOverflow = branch32(NotEqual, dataTempRegister, TrustedImm32(-2));
+        Jump underflow = branchAdd32(Zero, dest, dest, scratch);
+        Jump noOverflow = branch32(NotEqual, scratch, TrustedImm32(-2));
 
         // For BranchIfTruncateSuccessful, we branch if 'noOverflow' jumps.
         underflow.link(this);
@@ -1414,8 +1467,9 @@ public:
         // Test for negative zero.
         if (negZeroCheck) {
             Jump valueIsNonZero = branchTest32(NonZero, dest);
-            m_assembler.vmov(dataTempRegister, ARMRegisters::asSingleUpper(src));
-            failureCases.append(branch32(LessThan, dataTempRegister, TrustedImm32(0)));
+            RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+            m_assembler.vmov(scratch, ARMRegisters::asSingleUpper(src));
+            failureCases.append(branch32(LessThan, scratch, TrustedImm32(0)));
             valueIsNonZero.link(this);
         }
     }
@@ -1482,7 +1536,39 @@ public:
     {
         m_assembler.push(1 << src1 | 1 << src2);
     }
-    
+
+    ALWAYS_INLINE void long_move(TrustedImm32 imm, RegisterID dest)
+    {
+        uint32_t value = imm.m_value;
+        m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(value));
+        if (value & 0xffff0000)
+            m_assembler.movt(dest, ARMThumbImmediate::makeUInt16(value >> 16));
+    }
+
+    bool short_move(RegisterID dest, CachedTempRegister& cachedRegister, intptr_t valueAsInt)
+    {
+        intptr_t currentRegisterContents;
+        if (cachedRegister.value(currentRegisterContents)) {
+            intptr_t valueDelta = valueAsInt - currentRegisterContents;
+            intptr_t valueDeltaSave = valueDelta;
+            if (valueDelta < 0) {
+                valueDelta = -valueDelta;
+            } else if (!valueDelta) {
+                // If valueDelta is 0, no need to emit or update anything.
+                return true;
+            }
+            ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(valueDelta);
+            if (armImm.isValid()) {
+                if (valueDeltaSave > 0)
+                    m_assembler.add(dest, dest, armImm);
+                else if (valueDeltaSave < 0)
+                    m_assembler.sub(dest, dest, armImm);
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Register move operations:
     //
     // Move values in registers.
@@ -1492,22 +1578,37 @@ public:
         uint32_t value = imm.m_value;
 
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(value);
+        intptr_t valueAsInt = reinterpret_cast<intptr_t>(reinterpret_cast<void *>(value));
 
         if (armImm.isValid())
             m_assembler.mov(dest, armImm);
         else if ((armImm = ARMThumbImmediate::makeEncodedImm(~value)).isValid())
             m_assembler.mvn(dest, armImm);
-        else {
-            m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(value));
-            if (value & 0xffff0000)
-                m_assembler.movt(dest, ARMThumbImmediate::makeUInt16(value >> 16));
+        else if (dest == addressTempRegister) {
+            if (!short_move(dest, cachedAddressTempRegister(), valueAsInt))
+                long_move(imm, dest);
+        } else if (dest == dataTempRegister) {
+            if (!short_move(dest, cachedDataTempRegister(), valueAsInt))
+                long_move(imm, dest);
+        } else {
+            long_move(imm, dest);
         }
+
+        if (dest == addressTempRegister)
+            cachedAddressTempRegister().setValue(valueAsInt);
+        else if (dest == dataTempRegister)
+            cachedDataTempRegister().setValue(valueAsInt);
+
     }
 
     void move(RegisterID src, RegisterID dest)
     {
         if (src != dest)
             m_assembler.mov(dest, src);
+        if (dest == dataTempRegister)
+            cachedDataTempRegister().invalidate();
+        else if (dest == addressTempRegister)
+            cachedAddressTempRegister().invalidate();
     }
 
     void move(TrustedImmPtr imm, RegisterID dest)
@@ -1609,7 +1710,8 @@ private:
         if (armImm.isValid()) {
             if (!(left & 8) && armImm.isUInt3() && (left != addressTempRegister)) {
                 // This is common enough to warrant a special case to save 2 bytes
-                m_assembler.add_S(addressTempRegister, left, armImm);
+                RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+                m_assembler.add_S(scratch, left, armImm);
                 return;
             }
             m_assembler.cmn(left, armImm);
@@ -1779,17 +1881,19 @@ public:
     Jump branch8(RelationalCondition cond, Address left, TrustedImm32 right)
     {
         // use addressTempRegister incase the branch8 we call uses dataTempRegister. :-/
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
         TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, addressTempRegister);
-        return branch8(cond, addressTempRegister, right8);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, scratch);
+        return branch8(cond, scratch, right8);
     }
 
     Jump branch8(RelationalCondition cond, BaseIndex left, TrustedImm32 right)
     {
         // use addressTempRegister incase the branch32 we call uses dataTempRegister. :-/
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
         TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, addressTempRegister);
-        return branch32(cond, addressTempRegister, right8);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, scratch);
+        return branch32(cond, scratch, right8);
     }
     
     Jump branch8(RelationalCondition cond, AbsoluteAddress address, TrustedImm32 right)
@@ -1840,17 +1944,19 @@ public:
     Jump branchTest8(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
         // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, addressTempRegister);
-        return branchTest32(cond, addressTempRegister, mask8);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, scratch);
+        return branchTest32(cond, scratch, mask8);
     }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, addressTempRegister);
-        return branchTest32(cond, addressTempRegister, mask8);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, scratch);
+        return branchTest32(cond, scratch, mask8);
     }
 
     Jump branchTest8(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
@@ -1865,17 +1971,19 @@ public:
     Jump branchTest16(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
         // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
         TrustedImm32 mask16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, mask);
-        MacroAssemblerHelpers::load16OnCondition(*this, cond, address, addressTempRegister);
-        return branchTest32(cond, addressTempRegister, mask16);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, address, scratch);
+        return branchTest32(cond, scratch, mask16);
     }
 
     Jump branchTest16(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
         TrustedImm32 mask16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, mask);
-        MacroAssemblerHelpers::load16OnCondition(*this, cond, address, addressTempRegister);
-        return branchTest32(cond, addressTempRegister, mask16);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, address, scratch);
+        return branchTest32(cond, scratch, mask16);
     }
 
     Jump branchTest16(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
@@ -1889,12 +1997,16 @@ public:
 
     void farJump(RegisterID target, PtrTag)
     {
+        cachedDataTempRegister().invalidate();
+        cachedAddressTempRegister().invalidate();
         m_assembler.bx(target);
     }
 
     void farJump(TrustedImmPtr target, PtrTag)
     {
         move(target, addressTempRegister);
+        cachedDataTempRegister().invalidate();
+        cachedAddressTempRegister().invalidate();
         m_assembler.bx(addressTempRegister);
     }
 
@@ -1902,6 +2014,7 @@ public:
     void farJump(Address address, PtrTag)
     {
         load32(address, addressTempRegister);
+        cachedDataTempRegister().invalidate(); // addressTempRegister already invalidated by the load
         m_assembler.bx(addressTempRegister);
     }
     
@@ -1909,6 +2022,7 @@ public:
     {
         move(TrustedImmPtr(address.m_ptr), addressTempRegister);
         load32(Address(addressTempRegister), addressTempRegister);
+        cachedDataTempRegister().invalidate();
         m_assembler.bx(addressTempRegister);
     }
 
@@ -1977,10 +2091,11 @@ public:
     Jump branchMul32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
         m_assembler.smull(dest, dataTempRegister, src1, src2);
-
+        // The invalidation of cachedDataTempRegister is handled by the branch.
         if (cond == Overflow) {
-            m_assembler.asr(addressTempRegister, dest, 31);
-            return branch32(NotEqual, addressTempRegister, dataTempRegister);
+            RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+            m_assembler.asr(scratch, dest, 31);
+            return branch32(NotEqual, scratch, dataTempRegister);
         }
 
         return branchTest32(cond, dest);
@@ -2063,29 +2178,34 @@ public:
     ALWAYS_INLINE Call nearCall()
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
+        invalidateAllTempRegisters();
         return Call(m_assembler.blx(dataTempRegister), Call::LinkableNear);
     }
 
     ALWAYS_INLINE Call nearTailCall()
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
+        invalidateAllTempRegisters();
         return Call(m_assembler.bx(dataTempRegister), Call::LinkableNearTail);
     }
 
     ALWAYS_INLINE Call call(PtrTag)
     {
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
+        invalidateAllTempRegisters();
         return Call(m_assembler.blx(dataTempRegister), Call::Linkable);
     }
 
     ALWAYS_INLINE Call call(RegisterID target, PtrTag)
     {
+        invalidateAllTempRegisters();
         return Call(m_assembler.blx(target), Call::None);
     }
 
     ALWAYS_INLINE Call call(Address address, PtrTag)
     {
         load32(address, addressTempRegister);
+        cachedDataTempRegister().invalidate();
         return Call(m_assembler.blx(addressTempRegister), Call::None);
     }
 
@@ -2115,8 +2235,9 @@ public:
     void compare8(RelationalCondition cond, Address left, TrustedImm32 right, RegisterID dest)
     {
         TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, addressTempRegister);
-        compare32(cond, addressTempRegister, right8, dest);
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, left, scratch);
+        compare32(cond, scratch, right8, dest);
     }
 
     void compare32(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
@@ -2143,8 +2264,9 @@ public:
     void test8(ResultCondition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, addressTempRegister);
-        test32(addressTempRegister, mask8);
+        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, address, scratch);
+        test32(scratch, mask8);
         m_assembler.it(armV7Condition(cond), false);
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(1));
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
@@ -2327,6 +2449,7 @@ protected:
     {
         m_assembler.label(); // Force nop-padding if we're in the middle of a watchpoint.
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
+        cachedDataTempRegister().invalidate();
         return Jump(m_assembler.bx(dataTempRegister), m_makeJumpPatchable ? ARMv7Assembler::JumpNoConditionFixedSize : ARMv7Assembler::JumpNoCondition);
     }
 
@@ -2335,6 +2458,7 @@ protected:
         m_assembler.label(); // Force nop-padding if we're in the middle of a watchpoint.
         m_assembler.it(cond, true, true);
         moveFixedWidthEncoding(TrustedImm32(0), dataTempRegister);
+        cachedDataTempRegister().invalidate();
         return Jump(m_assembler.bx(dataTempRegister), m_makeJumpPatchable ? ARMv7Assembler::JumpConditionFixedSize : ARMv7Assembler::JumpCondition, cond);
     }
     ALWAYS_INLINE Jump makeBranch(RelationalCondition cond) { return makeBranch(armV7Condition(cond)); }
@@ -2345,10 +2469,12 @@ protected:
     {
         if (address.offset) {
             ARMThumbImmediate imm = ARMThumbImmediate::makeUInt12OrEncodedImm(address.offset);
-            if (imm.isValid())
-                m_assembler.add(addressTempRegister, address.base, imm);
-            else {
+            if (imm.isValid()) {
+                RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
+                m_assembler.add(scratch, address.base, imm);
+            } else {
                 move(TrustedImm32(address.offset), addressTempRegister);
+                cachedAddressTempRegister().invalidate();
                 m_assembler.add(addressTempRegister, addressTempRegister, address.base);
             }
 
@@ -2379,12 +2505,18 @@ protected:
             m_assembler.add(addressTempRegister, addressTempRegister, address.base);
         }
 
+        cachedAddressTempRegister().invalidate();
         return addressTempRegister;
     }
 
     void moveFixedWidthEncoding(TrustedImm32 imm, RegisterID dst)
     {
         uint32_t value = imm.m_value;
+        intptr_t valueAsInt = reinterpret_cast<intptr_t>(reinterpret_cast<void *>(value));
+        if (dst == dataTempRegister)
+            cachedDataTempRegister().setValue(valueAsInt);
+        else if (dst == addressTempRegister)
+            cachedAddressTempRegister().setValue(valueAsInt);
         m_assembler.movT3(dst, ARMThumbImmediate::makeUInt16(value & 0xffff));
         m_assembler.movt(dst, ARMThumbImmediate::makeUInt16(value >> 16));
     }
@@ -2404,6 +2536,26 @@ protected:
         return static_cast<ARMv7Assembler::Condition>(cond);
     }
 
+    ALWAYS_INLINE CachedTempRegister& cachedDataTempRegister()
+    {
+        return m_cachedDataTempRegister;
+    }
+
+    ALWAYS_INLINE CachedTempRegister& cachedAddressTempRegister()
+    {
+        RELEASE_ASSERT(m_allowScratchRegister);
+        return m_cachedAddressTempRegister;
+    }
+
+    ALWAYS_INLINE RegisterID getCachedDataTempRegisterIDAndInvalidate()
+    {
+        return cachedDataTempRegister().registerIDInvalidate();
+    }
+
+    ALWAYS_INLINE RegisterID getCachedAddressTempRegisterIDAndInvalidate()
+    {
+        return cachedAddressTempRegister().registerIDInvalidate();
+    }
 private:
     friend class LinkBuffer;
 
@@ -2417,6 +2569,8 @@ private:
     }
 
     bool m_makeJumpPatchable;
+    CachedTempRegister m_cachedDataTempRegister;
+    CachedTempRegister m_cachedAddressTempRegister;
 };
 
 } // namespace JSC

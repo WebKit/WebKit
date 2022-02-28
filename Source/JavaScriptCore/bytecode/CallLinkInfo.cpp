@@ -354,8 +354,8 @@ MacroAssembler::JumpList CallLinkInfo::emitFastPathImpl(CallLinkInfo* callLinkIn
             slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, calleeAddress, calleeGPR));
         } else {
             GPRReg scratchGPR = jit.scratchRegister();
-            DisallowMacroScratchRegisterUsage disallowScratch(jit);
             jit.loadPtr(CCallHelpers::Address(callLinkInfoGPR, offsetOfCallee()), scratchGPR);
+            DisallowMacroScratchRegisterUsage disallowScratch(jit);
             goPolymorphic = jit.branchTestPtr(CCallHelpers::NonZero, scratchGPR, CCallHelpers::TrustedImm32(polymorphicCalleeMask));
             slowPath.append(jit.branchPtr(CCallHelpers::NotEqual, scratchGPR, calleeGPR));
         }

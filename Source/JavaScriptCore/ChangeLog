@@ -1,3 +1,70 @@
+2022-02-28  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Reuse known register values on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=237207
+
+        Reviewed by Žan Doberšek.
+
+        Set up a CachedTempRegister for each of addressTempRegister,
+        dataTempRegister on ARMv7 and use them to generate shorter instruction
+        sequences when possible.
+
+        Saves 1.5-2% of code size on JS2 with no measurable difference in
+        performance.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::CachedTempRegister::value):
+        * assembler/MacroAssemblerARMv7.cpp:
+        (JSC::MacroAssembler::probe):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::add32):
+        (JSC::MacroAssemblerARMv7::getEffectiveAddress):
+        (JSC::MacroAssemblerARMv7::add64):
+        (JSC::MacroAssemblerARMv7::lshift32):
+        (JSC::MacroAssemblerARMv7::mul32):
+        (JSC::MacroAssemblerARMv7::rshift32):
+        (JSC::MacroAssemblerARMv7::urshift32):
+        (JSC::MacroAssemblerARMv7::load32):
+        (JSC::MacroAssemblerARMv7::load16):
+        (JSC::MacroAssemblerARMv7::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARMv7::load8):
+        (JSC::MacroAssemblerARMv7::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARMv7::loadPair32):
+        (JSC::MacroAssemblerARMv7::store8):
+        (JSC::MacroAssemblerARMv7::storePair32):
+        (JSC::MacroAssemblerARMv7::loadDouble):
+        (JSC::MacroAssemblerARMv7::loadFloat):
+        (JSC::MacroAssemblerARMv7::storeDouble):
+        (JSC::MacroAssemblerARMv7::storeFloat):
+        (JSC::MacroAssemblerARMv7::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerARMv7::branchConvertDoubleToInt32):
+        (JSC::MacroAssemblerARMv7::long_move):
+        (JSC::MacroAssemblerARMv7::short_move):
+        (JSC::MacroAssemblerARMv7::move):
+        (JSC::MacroAssemblerARMv7::compare32AndSetFlags):
+        (JSC::MacroAssemblerARMv7::branch8):
+        (JSC::MacroAssemblerARMv7::branchTest8):
+        (JSC::MacroAssemblerARMv7::branchTest16):
+        (JSC::MacroAssemblerARMv7::farJump):
+        (JSC::MacroAssemblerARMv7::branchMul32):
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::nearTailCall):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::compare8):
+        (JSC::MacroAssemblerARMv7::test8):
+        (JSC::MacroAssemblerARMv7::jump):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+        (JSC::MacroAssemblerARMv7::setupArmAddress):
+        (JSC::MacroAssemblerARMv7::makeBaseIndexBase):
+        (JSC::MacroAssemblerARMv7::moveFixedWidthEncoding):
+        (JSC::MacroAssemblerARMv7::cachedDataTempRegister):
+        (JSC::MacroAssemblerARMv7::cachedAddressTempRegister):
+        (JSC::MacroAssemblerARMv7::getCachedDataTempRegisterIDAndInvalidate):
+        (JSC::MacroAssemblerARMv7::getCachedAddressTempRegisterIDAndInvalidate):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::emitFastPathImpl):
+
 2022-02-27  Chris Dumez  <cdumez@apple.com>
 
         Omit template parameter for SetForScope<> variables
