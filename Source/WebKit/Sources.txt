@@ -870,6 +870,7 @@ WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
 WebProcess/XR/PlatformXRSystemProxy.cpp
 
 IPCStreamTesterMessageReceiver.cpp
+IPCStreamTesterProxyMessageReceiver.cpp
 IPCTesterMessageReceiver.cpp
 NetworkBroadcastChannelRegistryMessageReceiver.cpp
 RTCDataChannelRemoteManagerMessageReceiver.cpp

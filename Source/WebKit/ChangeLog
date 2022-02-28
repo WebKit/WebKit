@@ -1,3 +1,21 @@
+2022-02-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION(r290588) Missing symbol jsValueForDecodedMessage<107> (IPCStreamTesterProxy_WasCreated)
+        https://bugs.webkit.org/show_bug.cgi?id=237268
+
+        Reviewed by Antti Koivisto.
+
+        Add the class IPCStreamTesterProxy now that *MessageReceiver.cpp
+        are needed. After commit
+        "IPC_TESTING_API MessageArgumentDescriptions.cpp is slow to compile"
+        MessageReceiver.cpp files contain also message-specific functions that
+        need to be compiled, even though IPCStreamTesterProxy itself is not
+        used.
+
+        * Shared/IPCStreamTesterProxy.h: Added.
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-02-28  Youenn Fablet  <youenn@apple.com>
 
         RemoteVideoFrameObjectHeap should process its IPC messages in a background thread
