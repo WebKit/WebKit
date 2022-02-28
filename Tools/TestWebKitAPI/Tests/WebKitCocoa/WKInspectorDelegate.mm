@@ -207,7 +207,7 @@ TEST(WKInspectorDelegate, InspectorCloseCalledReentrantly)
     TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
 
     {
-        SetForScope<bool> closeReentrantlyFromDelegate(shouldCallInspectorCloseReentrantly, true);
+        SetForScope closeReentrantlyFromDelegate(shouldCallInspectorCloseReentrantly, true);
         [[webView _inspector] close];
         TestWebKitAPI::Util::run(&willCloseLocalInspectorCalled);
     }

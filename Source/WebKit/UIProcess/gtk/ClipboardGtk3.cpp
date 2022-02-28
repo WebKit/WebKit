@@ -161,7 +161,7 @@ enum ClipboardTargetType { Markup, Text, Image, URIList, SmartPaste, Custom };
 
 void Clipboard::write(WebCore::SelectionData&& selectionData)
 {
-    SetForScope<WebFrameProxy*> frameWritingToClipboard(m_frameWritingToClipboard, WebPasteboardProxy::singleton().primarySelectionOwner());
+    SetForScope frameWritingToClipboard(m_frameWritingToClipboard, WebPasteboardProxy::singleton().primarySelectionOwner());
 
     GRefPtr<GtkTargetList> list = adoptGRef(gtk_target_list_new(nullptr, 0));
     if (selectionData.hasURIList())

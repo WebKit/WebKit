@@ -291,7 +291,7 @@ bool EventSource::virtualHasPendingActivity() const
 void EventSource::doExplicitLoadCancellation()
 {
     ASSERT(m_requestInFlight);
-    SetForScope<bool> explicitLoadCancellation(m_isDoingExplicitCancellation, true);
+    SetForScope explicitLoadCancellation(m_isDoingExplicitCancellation, true);
     m_loader->cancel();
 }
 

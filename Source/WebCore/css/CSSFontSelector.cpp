@@ -197,7 +197,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (!srcList.length())
         return;
 
-    SetForScope<bool> creatingFont(m_creatingFont, true);
+    SetForScope creatingFont(m_creatingFont, true);
     auto fontFace = CSSFontFace::create(*this, &fontFaceRule);
 
     if (!fontFace->setFamilies(*fontFamily))

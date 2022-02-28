@@ -317,7 +317,7 @@ bool BackForwardCache::canCache(Page& page) const
 
 void BackForwardCache::pruneToSizeNow(unsigned size, PruningReason pruningReason)
 {
-    SetForScope<unsigned> change(m_maxSize, size);
+    SetForScope change(m_maxSize, size);
     prune(pruningReason);
 }
 
@@ -520,7 +520,7 @@ void BackForwardCache::removeAllItemsForPage(Page& page)
 {
 #if ASSERT_ENABLED
     ASSERT_WITH_MESSAGE(!m_isInRemoveAllItemsForPage, "We should not reenter this method");
-    SetForScope<bool> inRemoveAllItemsForPageScope { m_isInRemoveAllItemsForPage, true };
+    SetForScope inRemoveAllItemsForPageScope { m_isInRemoveAllItemsForPage, true };
 #endif
 
     for (auto it = m_items.begin(); it != m_items.end();) {

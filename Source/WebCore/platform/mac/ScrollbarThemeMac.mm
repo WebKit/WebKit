@@ -552,7 +552,7 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
     if (scrollbar.supportsUpdateOnSecondaryThread())
         return true;
 
-    SetForScope<bool> isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context.isCALayerContext());
+    SetForScope isCurrentlyDrawingIntoLayer(g_isCurrentlyDrawingIntoLayer, context.isCALayerContext());
 
     GraphicsContextStateSaver stateSaver(context);
     context.clip(damageRect);

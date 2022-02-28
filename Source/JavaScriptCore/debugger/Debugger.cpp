@@ -272,7 +272,7 @@ void Debugger::dispatchFunctionToObservers(Function<void(Observer&)> func)
     if (!canDispatchFunctionToObservers())
         return;
 
-    SetForScope<bool> change(m_dispatchingFunctionToObservers, true);
+    SetForScope change(m_dispatchingFunctionToObservers, true);
 
     for (auto* observer : copyToVector(m_observers))
         func(*observer);

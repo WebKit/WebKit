@@ -48,7 +48,7 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
     if (m_performingMicrotaskCheckpoint)
         return;
 
-    SetForScope<bool> change(m_performingMicrotaskCheckpoint, true);
+    SetForScope change(m_performingMicrotaskCheckpoint, true);
     JSC::JSLockHolder locker(vm());
 
     Vector<std::unique_ptr<EventLoopTask>> toKeep;

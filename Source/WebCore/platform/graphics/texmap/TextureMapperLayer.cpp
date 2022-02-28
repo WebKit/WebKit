@@ -308,7 +308,7 @@ bool TextureMapperLayer::isVisible() const
 void TextureMapperLayer::paintSelfAndChildrenWithReplica(TextureMapperPaintOptions& options)
 {
     if (m_state.replicaLayer) {
-        SetForScope<TransformationMatrix> scopedTransform(options.transform, options.transform);
+        SetForScope scopedTransform(options.transform, options.transform);
         options.transform.multiply(replicaTransform());
         paintSelfAndChildren(options);
     }
@@ -448,8 +448,8 @@ void TextureMapperLayer::paintIntoSurface(TextureMapperPaintOptions& options)
 {
     options.textureMapper.bindSurface(options.surface.get());
     if (m_isBackdrop) {
-        SetForScope<TransformationMatrix> scopedTransform(options.transform, TransformationMatrix());
-        SetForScope<TextureMapperLayer*> scopedBackdropLayer(options.backdropLayer, this);
+        SetForScope scopedTransform(options.transform, TransformationMatrix());
+        SetForScope scopedBackdropLayer(options.backdropLayer, this);
         rootLayer().paintSelfAndChildren(options);
     } else
         paintSelfAndChildren(options);
@@ -471,12 +471,12 @@ void TextureMapperLayer::paintWithIntermediateSurface(TextureMapperPaintOptions&
 {
     auto surface = options.textureMapper.acquireTextureFromPool(rect.size(), BitmapTexture::SupportsAlpha);
     {
-        SetForScope<RefPtr<BitmapTexture>> scopedSurface(options.surface, surface);
-        SetForScope<IntSize> scopedOffset(options.offset, -toIntSize(rect.location()));
-        SetForScope<float> scopedOpacity(options.opacity, 1);
+        SetForScope scopedSurface(options.surface, surface);
+        SetForScope scopedOffset(options.offset, -toIntSize(rect.location()));
+        SetForScope scopedOpacity(options.opacity, 1);
         if (m_state.replicaLayer) {
             {
-                SetForScope<TransformationMatrix> scopedTransform(options.transform, options.transform);
+                SetForScope scopedTransform(options.transform, options.transform);
                 options.transform.multiply(replicaTransform());
                 paintIntoSurface(options);
             }
@@ -496,7 +496,7 @@ void TextureMapperLayer::paintRecursive(TextureMapperPaintOptions& options)
     if (!isVisible())
         return;
 
-    SetForScope<float> scopedOpacity(options.opacity, options.opacity * m_currentOpacity);
+    SetForScope scopedOpacity(options.opacity, options.opacity * m_currentOpacity);
 
     if (!shouldBlend()) {
         paintSelfAndChildrenWithReplica(options);

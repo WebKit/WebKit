@@ -101,7 +101,7 @@ InputMethodFilter::FilterResult InputMethodFilter::filterKeyEvent(PlatformEventK
     if (!isEnabled() || !m_context)
         return { };
 
-    SetForScope<bool> filteringContextIsAcive(m_filteringContext.isActive, true);
+    SetForScope filteringContextIsAcive(m_filteringContext.isActive, true);
     m_filteringContext.preeditChanged = false;
     m_compositionResult = { };
 

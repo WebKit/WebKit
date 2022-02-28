@@ -113,7 +113,7 @@ void BackendDispatcher::dispatch(const String& message)
     {
         // In case this is a re-entrant call from a nested run loop, we don't want to lose
         // the outer request's id just because the inner request is bogus.
-        SetForScope<std::optional<long>> scopedRequestId(m_currentRequestId, std::nullopt);
+        SetForScope scopedRequestId(m_currentRequestId, std::nullopt);
 
         auto parsedMessage = JSON::Value::parseJSON(message);
         if (!parsedMessage) {
@@ -148,7 +148,7 @@ void BackendDispatcher::dispatch(const String& message)
 
     {
         // We could be called re-entrantly from a nested run loop, so restore the previous id.
-        SetForScope<std::optional<long>> scopedRequestId(m_currentRequestId, requestId);
+        SetForScope scopedRequestId(m_currentRequestId, requestId);
 
         auto methodValue = messageObject->getValue("method"_s);
         if (!methodValue) {

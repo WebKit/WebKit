@@ -556,7 +556,7 @@ void DOMWindow::resetUnlessSuspendedForDocumentSuspension()
 
 void DOMWindow::suspendForBackForwardCache()
 {
-    SetForScope<bool> isSuspendingObservers(m_isSuspendingObservers, true);
+    SetForScope isSuspendingObservers(m_isSuspendingObservers, true);
     RELEASE_ASSERT(frame());
 
     for (auto* observer : copyToVector(m_observers)) {

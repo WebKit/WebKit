@@ -165,7 +165,7 @@ void WebDateTimePickerGtk::showDateTimePicker(WebCore::DateTimeChooserParameters
 
 void WebDateTimePickerGtk::update(WebCore::DateTimeChooserParameters&& params)
 {
-    SetForScope<bool> inUpdate(m_inUpdate, true);
+    SetForScope inUpdate(m_inUpdate, true);
     if (params.type == "date")
         m_currentDate = WebCore::DateComponents::fromParsingDate(params.currentValue);
     else if (params.type == "datetime-local")

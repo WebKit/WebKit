@@ -202,7 +202,7 @@ void FrameViewLayoutContext::layout()
         return;
 
     {
-        SetForScope<LayoutPhase> layoutPhase(m_layoutPhase, LayoutPhase::InPreLayout);
+        SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InPreLayout);
 
         if (!frame().document()->isResolvingContainerQueries()) {
             // If this is a new top-level layout and there are any remaining tasks from the previous layout, finish them now.
@@ -225,7 +225,7 @@ void FrameViewLayoutContext::layout()
         m_firstLayout = false;
     }
     {
-        SetForScope<LayoutPhase> layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
+        SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(subtreeLayoutRoot());
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
@@ -243,10 +243,10 @@ void FrameViewLayoutContext::layout()
         clearSubtreeLayoutRoot();
     }
     {
-        SetForScope<LayoutPhase> layoutPhase(m_layoutPhase, LayoutPhase::InViewSizeAdjust);
+        SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InViewSizeAdjust);
         if (is<RenderView>(layoutRoot) && !renderView()->printing()) {
             // This is to protect m_needsFullRepaint's value when layout() is getting re-entered through adjustViewSize().
-            SetForScope<bool> needsFullRepaint(m_needsFullRepaint);
+            SetForScope needsFullRepaint(m_needsFullRepaint);
             view().adjustViewSize();
             // FIXME: Firing media query callbacks synchronously on nested frames could produced a detached FrameView here by
             // navigating away from the current document (see webkit.org/b/173329).
@@ -255,7 +255,7 @@ void FrameViewLayoutContext::layout()
         }
     }
     {
-        SetForScope<LayoutPhase> layoutPhase(m_layoutPhase, LayoutPhase::InPostLayout);
+        SetForScope layoutPhase(m_layoutPhase, LayoutPhase::InPostLayout);
         if (m_needsFullRepaint)
             renderView()->repaintRootContents();
         ASSERT(!layoutRoot->needsLayout());
@@ -306,7 +306,7 @@ void FrameViewLayoutContext::runAsynchronousTasks()
     m_asynchronousTasksTimer.stop();
     if (m_inAsynchronousTasks)
         return;
-    SetForScope<bool> inAsynchronousTasks(m_inAsynchronousTasks, true);
+    SetForScope inAsynchronousTasks(m_inAsynchronousTasks, true);
     view().performPostLayoutTasks();
 }
 

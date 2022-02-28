@@ -174,7 +174,7 @@ void HTMLTrackElement::scheduleLoad()
     m_loadPending = true;
     scheduleTask([this]() mutable {
 
-        SetForScope<bool> loadPending { m_loadPending, true, false };
+        SetForScope loadPending { m_loadPending, true, false };
 
         if (!hasAttributeWithoutSynchronization(srcAttr)) {
             track().removeAllCues();

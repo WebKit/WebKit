@@ -468,7 +468,7 @@ namespace JSC {
 
         void emitNode(RegisterID* dst, StatementNode* n)
         {
-            SetForScope<bool> tailPositionPoisoner(m_inTailPosition, false);
+            SetForScope tailPositionPoisoner(m_inTailPosition, false);
             return emitNodeInTailPosition(dst, n);
         }
 
@@ -502,7 +502,7 @@ namespace JSC {
 
         RegisterID* emitNode(RegisterID* dst, ExpressionNode* n)
         {
-            SetForScope<bool> tailPositionPoisoner(m_inTailPosition, false);
+            SetForScope tailPositionPoisoner(m_inTailPosition, false);
             return emitNodeInTailPosition(dst, n);
         }
 

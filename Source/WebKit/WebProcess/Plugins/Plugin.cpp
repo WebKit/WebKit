@@ -94,7 +94,7 @@ bool Plugin::initialize(PluginController& pluginController, const Parameters& pa
 void Plugin::destroyPlugin()
 {
     ASSERT(!m_isBeingDestroyed);
-    SetForScope<bool> scope { m_isBeingDestroyed, true };
+    SetForScope scope { m_isBeingDestroyed, true };
 
     destroy();
 

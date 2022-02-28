@@ -1,3 +1,162 @@
+2022-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Omit template parameter for SetForScope<> variables
+        https://bugs.webkit.org/show_bug.cgi?id=237258
+
+        Reviewed by Darin Adler.
+
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::abort):
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::JSCustomElementRegistry::define):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        (WebCore::ScriptController::evaluateModule):
+        (WebCore::ScriptController::callInWorld):
+        (WebCore::ScriptController::executeJavaScriptURL):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumeCompoundSelector):
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementQueue::invokeAll):
+        * dom/Document.cpp:
+        (WebCore::Document::updateRenderTree):
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        (WebCore::Document::destroyRenderTree):
+        (WebCore::Document::hitTest):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * dom/Microtasks.cpp:
+        (WebCore::MicrotaskQueue::performMicrotaskCheckpoint):
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::forEachActiveDOMObject const):
+        * dom/Traversal.cpp:
+        (WebCore::NodeIteratorBase::acceptNode):
+        * editing/Editor.cpp:
+        (WebCore::Editor::cut):
+        (WebCore::Editor::copy):
+        (WebCore::Editor::copyFont):
+        (WebCore::Editor::paste):
+        (WebCore::Editor::pasteAsPlainText):
+        (WebCore::Editor::pasteAsQuotation):
+        (WebCore::Editor::pasteFont):
+        * history/BackForwardCache.cpp:
+        (WebCore::BackForwardCache::pruneToSizeNow):
+        (WebCore::BackForwardCache::removeAllItemsForPage):
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::updateAssociatedAttributeFromTokens):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::focusAndShowValidationMessage):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::reset):
+        (WebCore::HTMLFormElement::constructEntryList):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::scheduleLoad):
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::scan):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::resolveCustomStyle):
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::scheduleLoad):
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::handleProvisionalLoadFailure):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::clearProvisionalLoadForPolicyCheck):
+        (WebCore::FrameLoader::dispatchBeforeUnloadEvent):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::updateBuffer):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResourcesToSize):
+        (WebCore::MemoryCache::pruneDeadResourcesToSize):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runModal const):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::handleContextMenuEvent):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::suspendForBackForwardCache):
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation):
+        * page/EventSource.cpp:
+        (WebCore::EventSource::doExplicitLoadCancellation):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::applyRecursivelyWithVisibleRect):
+        (WebCore::FrameView::updateEmbeddedObjects):
+        (WebCore::FrameView::autoSizeIfEnabled):
+        * page/FrameViewLayoutContext.cpp:
+        (WebCore::FrameViewLayoutContext::layout):
+        (WebCore::FrameViewLayoutContext::runAsynchronousTasks):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didReceiveHeaders):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::tryToBeginDragAtPoint):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitTreeState):
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::handleWheelEventAfterMainThread):
+        * platform/PreviewConverter.cpp:
+        (WebCore::PreviewConverter::iterateClients):
+        (WebCore::PreviewConverter::replayToClient):
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::clientWillBeginPlayback):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::commitLayerChangesAfterSublayers):
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebSimpleLayer renderInContext:]):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawTexture):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelfAndChildrenWithReplica):
+        (WebCore::TextureMapperLayer::paintIntoSurface):
+        (WebCore::TextureMapperLayer::paintWithIntermediateSurface):
+        (WebCore::TextureMapperLayer::paintRecursive):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::purgeBackingStores):
+        * platform/ios/LegacyTileLayer.mm:
+        (-[LegacyTileLayer renderInContext:]):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild):
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::computeVisibleRectInContainer const):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges):
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::updateScrollbarsAfterLayout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/svg/LegacyRenderSVGRoot.cpp:
+        (WebCore::LegacyRenderSVGRoot::layout):
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::markAllClientsForInvalidation):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::setItemIgnoringQuota):
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::applyCustomProperty):
+        (WebCore::Style::Builder::applyCascadeProperty):
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::invalidateWithMatchElementRuleSets):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::createDocumentResolver):
+        (WebCore::Style::Scope::createOrFindSharedShadowTreeResolver):
+        (WebCore::Style::Scope::updateResolver):
+        * svg/SVGPathBlender.cpp:
+        (WebCore::SVGPathBlender::addAnimatedPath):
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::evaluateScriptIfNecessary):
+
 2022-02-27  Cameron McCormack  <heycam@apple.com>
 
         Add a mechanism to request a UA shadow tree update before style

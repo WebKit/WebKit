@@ -333,7 +333,7 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     if (_isDismissingDatePicker)
         return;
 
-    SetForScope<BOOL> isDismissingDatePicker { _isDismissingDatePicker, YES };
+    SetForScope isDismissingDatePicker { _isDismissingDatePicker, YES };
     [_view accessoryDone];
 }
 
@@ -341,7 +341,7 @@ static const CGFloat kDateTimePickerControlMargin = 6;
 {
     if (_datePickerPresentation) {
         if (!_isDismissingDatePicker) {
-            SetForScope<BOOL> isDismissingDatePicker { _isDismissingDatePicker, YES };
+            SetForScope isDismissingDatePicker { _isDismissingDatePicker, YES };
             [_datePickerPresentation dismissPresentationAnimated:NO];
         }
 

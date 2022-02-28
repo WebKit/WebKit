@@ -475,7 +475,7 @@ void HTMLFormElement::reset()
 
     Ref<HTMLFormElement> protectedThis(*this);
 
-    SetForScope<bool> isInResetFunctionRestorer(m_isInResetFunction, true);
+    SetForScope isInResetFunctionRestorer(m_isInResetFunction, true);
 
     auto event = Event::create(eventNames().resetEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes);
     dispatchEvent(event);
@@ -1023,7 +1023,7 @@ RefPtr<DOMFormData> HTMLFormElement::constructEntryList(Ref<DOMFormData>&& domFo
     if (m_isConstructingEntryList)
         return nullptr;
     
-    SetForScope<bool> isConstructingEntryListScope(m_isConstructingEntryList, true);
+    SetForScope isConstructingEntryListScope(m_isConstructingEntryList, true);
     
     for (auto& control : this->copyAssociatedElementsVector()) {
         auto& element = control->asHTMLElement();

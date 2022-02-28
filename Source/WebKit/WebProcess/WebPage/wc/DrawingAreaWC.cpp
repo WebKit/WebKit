@@ -216,7 +216,7 @@ void DrawingAreaWC::updateRendering()
     // This function is not reentrant, e.g. a rAF callback may force repaint.
     if (m_inUpdateRendering)
         return;
-    SetForScope<bool> change(m_inUpdateRendering, true);
+    SetForScope change(m_inUpdateRendering, true);
 
     ASSERT(!m_waitDidUpdate);
     m_waitDidUpdate = true;

@@ -154,7 +154,7 @@ LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalHeight(std::optional<Layou
 
 void LegacyRenderSVGRoot::layout()
 {
-    SetForScope<bool> change(m_inLayout, true);
+    SetForScope change(m_inLayout, true);
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 

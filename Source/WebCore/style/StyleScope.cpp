@@ -98,7 +98,7 @@ void Scope::createDocumentResolver()
     ASSERT(!m_resolver);
     ASSERT(!m_shadowRoot);
 
-    SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+    SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
 
     m_resolver = Resolver::create(m_document);
 
@@ -119,7 +119,7 @@ void Scope::createOrFindSharedShadowTreeResolver()
     auto key = makeResolverSharingKey();
 
     auto result = documentScope().m_sharedShadowTreeResolvers.ensure(WTFMove(key), [&] {
-        SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+        SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
 
         m_resolver = Resolver::create(m_document);
 
@@ -543,7 +543,7 @@ void Scope::updateResolver(Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets, Res
     if (m_shadowRoot)
         unshareShadowTreeResolverBeforeMutation();
 
-    SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+    SetForScope isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
 
     if (updateType == ResolverUpdateType::Reset) {
         m_resolver->ruleSets().resetAuthorStyle();

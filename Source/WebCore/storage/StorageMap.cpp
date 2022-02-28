@@ -117,7 +117,7 @@ void StorageMap::setItem(const String& key, const String& value, String& oldValu
 
 void StorageMap::setItemIgnoringQuota(const String& key, const String& value)
 {
-    SetForScope<unsigned> quotaSizeChange(m_quotaSize, noQuota);
+    SetForScope quotaSizeChange(m_quotaSize, noQuota);
 
     String oldValue;
     bool quotaException;

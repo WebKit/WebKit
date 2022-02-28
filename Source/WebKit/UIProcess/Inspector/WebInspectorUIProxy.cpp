@@ -500,7 +500,7 @@ void WebInspectorUIProxy::open()
     if (!m_inspectorPage)
         return;
 
-    SetForScope<bool> isOpening(m_isOpening, true);
+    SetForScope isOpening(m_isOpening, true);
 
     m_isVisible = true;
     m_inspectorPage->send(Messages::WebInspectorUI::SetIsVisible(m_isVisible));
@@ -527,7 +527,7 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
     if (m_closing)
         return;
     
-    SetForScope<bool> reentrancyProtector(m_closing, true);
+    SetForScope reentrancyProtector(m_closing, true);
     
     // Notify WebKit client when a local inspector closes so it can clear _WKInspectorDelegate and perform other cleanup.
     if (m_inspectedPage)

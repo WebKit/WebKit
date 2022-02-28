@@ -1,3 +1,15 @@
+2022-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Omit template parameter for SetForScope<> variables
+        https://bugs.webkit.org/show_bug.cgi?id=237258
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebView.mm:
+        (-[WebView updateTextTouchBar]):
+        * WebView/WebViewData.mm:
+        (WebViewLayerFlushScheduler::layerFlushCallback):
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         Drop StringHasher::hashMemory() and use the modern Hasher instead

@@ -143,8 +143,8 @@ ValueOrException ScriptController::evaluateInWorld(const ScriptSourceCode& sourc
     auto& proxy = jsWindowProxy(world);
     auto& globalObject = *proxy.window();
 
-    Ref<Frame> protector(m_frame);
-    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
+    Ref protector { m_frame };
+    SetForScope sourceURLScope(m_sourceURL, &sourceURL);
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
@@ -240,8 +240,8 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModu
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
-    Ref<Frame> protector(m_frame);
-    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
+    Ref protector { m_frame };
+    SetForScope sourceURLScope(m_sourceURL, &sourceURL);
 
 #if ENABLE(WEBASSEMBLY)
     const bool isWasmModule = moduleRecord.inherits<WebAssemblyModuleRecord>(vm);
@@ -654,8 +654,8 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
 
     const URL& sourceURL = jsSourceCode.provider()->sourceOrigin().url();
 
-    Ref<Frame> protector(m_frame);
-    SetForScope<const URL*> sourceURLScope(m_sourceURL, &sourceURL);
+    Ref protector { m_frame };
+    SetForScope sourceURLScope(m_sourceURL, &sourceURL);
 
     InspectorInstrumentation::willEvaluateScript(m_frame, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
 
@@ -838,7 +838,7 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=200523
         // The only reason we do a nestable save/restore of this flag here is because we sometimes nest javascript: url loads as
         // some will load synchronously. We'd like to remove those synchronous loads and then change this.
-        SetForScope<bool> willBeReplaced(m_willReplaceWithResultOfExecutingJavascriptURL, true);
+        SetForScope willBeReplaced(m_willReplaceWithResultOfExecutingJavascriptURL, true);
 
         // DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL can cause the DocumentLoader to get deref'ed and possible destroyed,
         // so protect it with a RefPtr.

@@ -488,7 +488,7 @@ bool HTMLFormControlElement::reportValidity()
 
 void HTMLFormControlElement::focusAndShowValidationMessage()
 {
-    SetForScope<bool> isFocusingWithValidationMessageScope(m_isFocusingWithValidationMessage, true);
+    SetForScope isFocusingWithValidationMessageScope(m_isFocusingWithValidationMessage, true);
 
     // Calling focus() will scroll the element into view.
     focus();

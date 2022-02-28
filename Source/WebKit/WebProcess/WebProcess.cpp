@@ -1540,7 +1540,7 @@ void WebProcess::pageActivityStateDidChange(PageIdentifier, OptionSet<WebCore::A
 void WebProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
     WEBPROCESS_RELEASE_LOG(ProcessSuspension, "prepareToSuspend: isSuspensionImminent=%d", isSuspensionImminent);
-    SetForScope<bool> suspensionScope(m_isSuspending, true);
+    SetForScope suspensionScope(m_isSuspending, true);
     m_processIsSuspended = true;
 
     flushResourceLoadStatistics();

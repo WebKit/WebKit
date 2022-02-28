@@ -135,7 +135,7 @@ FloatQuad RenderGeometryMap::mapToContainer(const FloatRect& rect, const RenderL
 void RenderGeometryMap::pushMappingsToAncestor(const RenderObject* renderer, const RenderLayerModelObject* ancestorRenderer)
 {
     // We need to push mappings in reverse order here, so do insertions rather than appends.
-    SetForScope<size_t> positionChange(m_insertionPosition, m_mapping.size());
+    SetForScope positionChange(m_insertionPosition, m_mapping.size());
     do {
         renderer = renderer->pushMappingToContainer(ancestorRenderer, *this);
     } while (renderer && renderer != ancestorRenderer);
@@ -172,7 +172,7 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
     if (!respectTransforms)
         newFlags.remove(UseTransforms);
 
-    SetForScope<OptionSet<MapCoordinatesMode>> flagsChange(m_mapCoordinatesFlags, newFlags);
+    SetForScope flagsChange(m_mapCoordinatesFlags, newFlags);
 
     const RenderLayerModelObject& renderer = layer->renderer();
 
@@ -189,7 +189,7 @@ void RenderGeometryMap::pushMappingsToAncestor(const RenderLayer* layer, const R
             pushMappingsToAncestor(&ancestorLayer->renderer(), nullptr);
         }
 
-        SetForScope<size_t> positionChange(m_insertionPosition, m_mapping.size());
+        SetForScope positionChange(m_insertionPosition, m_mapping.size());
         push(&renderer, layerOffset, /*accumulatingTransform*/ true, /*isNonUniform*/ false, /*isFixedPosition*/ false, /*hasTransform*/ false);
         return;
     }

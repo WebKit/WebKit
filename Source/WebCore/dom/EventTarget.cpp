@@ -289,7 +289,7 @@ void EventTarget::fireEventListeners(Event& event, EventInvokePhase phase)
     if (!data)
         return;
 
-    SetForScope<bool> firingEventListenersScope(data->isFiringEventListeners, true);
+    SetForScope firingEventListenersScope(data->isFiringEventListeners, true);
 
     if (auto* listenersVector = data->eventListenerMap.find(event.type())) {
         innerInvokeEventListeners(event, *listenersVector, phase);

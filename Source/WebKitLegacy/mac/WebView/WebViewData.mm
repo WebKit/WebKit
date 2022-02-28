@@ -132,7 +132,7 @@ void WebViewLayerFlushScheduler::layerFlushCallback()
     @autoreleasepool {
         RefPtr<LayerFlushController> protector = m_flushController;
 
-        SetForScope<bool> insideCallbackScope(m_insideCallback, true);
+        SetForScope insideCallbackScope(m_insideCallback, true);
         m_rescheduledInsideCallback = false;
 
         if (m_flushController->flushLayers() && !m_rescheduledInsideCallback)

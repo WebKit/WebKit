@@ -1,3 +1,35 @@
+2022-02-27  Chris Dumez  <cdumez@apple.com>
+
+        Omit template parameter for SetForScope<> variables
+        https://bugs.webkit.org/show_bug.cgi?id=237258
+
+        Reviewed by Darin Adler.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNode):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::dispatchFunctionToObservers):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setLocalOrTmp):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        * inspector/InspectorBackendDispatcher.cpp:
+        (Inspector::BackendDispatcher::dispatch):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseAsyncFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseAsyncGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::Parser<LexerType>::parseFunctionParameters):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        (JSC::Parser<LexerType>::parseFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseAsyncFunctionDeclaration):
+        (JSC::Parser<LexerType>::parseClass):
+        (JSC::Parser<LexerType>::parseProperty):
+        (JSC::Parser<LexerType>::parseGetterSetter):
+        (JSC::Parser<LexerType>::parseFunctionExpression):
+        (JSC::Parser<LexerType>::parseAsyncFunctionExpression):
+        (JSC::Parser<LexerType>::parseArrowFunctionExpression):
+
 2022-02-26  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Remove UNUSED warnings for non-Cocoa platform after r290449

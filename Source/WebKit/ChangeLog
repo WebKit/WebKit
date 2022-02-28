@@ -1,5 +1,76 @@
 2022-02-27  Chris Dumez  <cdumez@apple.com>
 
+        Omit template parameter for SetForScope<> variables
+        https://bugs.webkit.org/show_bug.cgi?id=237258
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/storage/QuotaManager.cpp:
+        (WebKit::QuotaManager::handleRequests):
+        * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+        (createEncodedObject):
+        (decodeObject):
+        * UIProcess/API/glib/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::filterKeyEvent):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (WebKitWebViewClient::frameDisplayed):
+        * UIProcess/API/gtk/InputMethodFilterGtk.cpp:
+        (WebKit::InputMethodFilter::filterKeyEvent):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _keyboardChangedWithInfo:adjustScrollView:]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::updateTextTouchBar):
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp:
+        (WebKit::WebInspectorUIProxy::open):
+        (WebKit::WebInspectorUIProxy::closeFrontendPageAndWindow):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren):
+        * UIProcess/_WKWebViewPrintFormatter.mm:
+        (-[_WKWebViewPrintFormatter _setSnapshotPaperRect:]):
+        * UIProcess/gtk/ClipboardGtk3.cpp:
+        (WebKit::Clipboard::write):
+        * UIProcess/gtk/WebDateTimePickerGtk.cpp:
+        (WebKit::WebDateTimePickerGtk::update):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView becomeFirstResponderForWebView]):
+        (-[WKContentView resignFirstResponderForWebView]):
+        (-[WKContentView unsuppressSoftwareKeyboardUsingLastAutocorrectionContextIfNeeded]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker handleDatePickerPresentationDismissal]):
+        (-[WKDateTimePicker removeDatePickerPresentation]):
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::destroyPlugin):
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        (WebKit::CompositingCoordinator::purgeBackingStores):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updateRendering):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::stopLoadingDueToProcessSwap):
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::keyEvent):
+        (WebKit::WebPage::restoreSessionInternal):
+        (WebKit::WebPage::dispatchTouchEvent):
+        (WebKit::WebPage::setInitialFocus):
+        (WebKit::WebPage::setActivityState):
+        (WebKit::WebPage::insertTextAsync):
+        (WebKit::WebPage::createAppHighlightInSelectedRange):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completeSyntheticClick):
+        (WebKit::WebPage::requestDragStart):
+        (WebKit::WebPage::requestAdditionalItemsForDragSession):
+        (WebKit::WebPage::selectPositionAtPoint):
+        (WebKit::WebPage::dynamicViewportSizeUpdate):
+        (WebKit::WebPage::focusTextInputContextAndPlaceCaret):
+        * WebProcess/WebPage/wc/DrawingAreaWC.cpp:
+        (WebKit::DrawingAreaWC::updateRendering):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::prepareToSuspend):
+
+2022-02-27  Chris Dumez  <cdumez@apple.com>
+
         Simplify SerializedScriptValue construction
         https://bugs.webkit.org/show_bug.cgi?id=237241
 

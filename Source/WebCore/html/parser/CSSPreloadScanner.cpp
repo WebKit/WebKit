@@ -51,7 +51,7 @@ void CSSPreloadScanner::reset()
 void CSSPreloadScanner::scan(const HTMLToken::DataVector& data, PreloadRequestStream& requests)
 {
     ASSERT(!m_requests);
-    SetForScope<PreloadRequestStream*> change(m_requests, &requests);
+    SetForScope change(m_requests, &requests);
 
     for (UChar c : data) {
         if (m_state == DoneParsingImportRules)

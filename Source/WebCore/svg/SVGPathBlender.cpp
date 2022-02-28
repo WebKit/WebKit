@@ -345,7 +345,7 @@ static inline bool isSegmentEqual(const SVGPathSegType& fromType, const SVGPathS
 
 bool SVGPathBlender::addAnimatedPath(unsigned repeatCount)
 {
-    SetForScope<unsigned> change(m_addTypesCount, repeatCount);
+    SetForScope change(m_addTypesCount, repeatCount);
     return blendAnimatedPath(0);
 }
 

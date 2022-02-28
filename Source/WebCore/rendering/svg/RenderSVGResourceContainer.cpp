@@ -104,7 +104,7 @@ void RenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode 
     if ((m_clients.isEmpty() && m_clientLayers.isEmpty()) || m_isInvalidating)
         return;
 
-    SetForScope<bool> isInvalidating(m_isInvalidating, true);
+    SetForScope isInvalidating(m_isInvalidating, true);
 
     bool needsLayout = mode == LayoutAndBoundariesInvalidation;
     bool markForInvalidation = mode != ParentOnlyInvalidation;

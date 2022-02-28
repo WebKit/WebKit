@@ -275,7 +275,7 @@ void DOMTokenList::updateAssociatedAttributeFromTokens()
     }
     AtomString serializedValue = builder.toAtomString();
 
-    SetForScope<bool> inAttributeUpdate(m_inUpdateAssociatedAttributeFromTokens, true);
+    SetForScope inAttributeUpdate(m_inUpdateAssociatedAttributeFromTokens, true);
     m_element.setAttribute(m_attributeName, serializedValue);
 }
 

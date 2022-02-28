@@ -209,7 +209,7 @@ void MemoryBackingStoreTransaction::abort()
 {
     LOG(IndexedDB, "MemoryBackingStoreTransaction::abort()");
 
-    SetForScope<bool> change(m_isAborting, true);
+    SetForScope change(m_isAborting, true);
 
     for (const auto& iterator : m_originalIndexNames)
         iterator.key->rename(iterator.value);

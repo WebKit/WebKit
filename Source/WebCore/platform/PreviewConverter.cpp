@@ -159,7 +159,7 @@ void PreviewConverter::setPasswordForTesting(const String& password)
 template<typename T>
 void PreviewConverter::iterateClients(T&& callback)
 {
-    SetForScope<bool> isInClientCallback { m_isInClientCallback, true };
+    SetForScope isInClientCallback { m_isInClientCallback, true };
     auto clientsCopy { m_clients };
     auto protectedThis { Ref { *this } };
 
@@ -201,7 +201,7 @@ void PreviewConverter::replayToClient(PreviewConverterClient& client)
     if (!hasClient(client))
         return;
 
-    SetForScope<bool> isInClientCallback { m_isInClientCallback, true };
+    SetForScope isInClientCallback { m_isInClientCallback, true };
     auto protectedThis { Ref { *this } };
 
     client.previewConverterDidStartUpdating(*this);

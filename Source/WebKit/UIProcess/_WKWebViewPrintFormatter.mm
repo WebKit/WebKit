@@ -72,7 +72,7 @@
 
 - (void)_setSnapshotPaperRect:(CGRect)paperRect
 {
-    SetForScope<BOOL> suppressPageCountRecalc(_suppressPageCountRecalc, YES);
+    SetForScope suppressPageCountRecalc(_suppressPageCountRecalc, YES);
     UIPrintPageRenderer *printPageRenderer = self.printPageRenderer;
     printPageRenderer.paperRect = paperRect;
     printPageRenderer.printableRect = paperRect;

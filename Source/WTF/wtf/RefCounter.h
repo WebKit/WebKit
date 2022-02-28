@@ -99,7 +99,7 @@ inline void RefCounter<T>::Count::deref()
     --m_value;
 
     if (m_refCounter && m_refCounter->m_valueDidChange) {
-        SetForScope<bool> inCallback(m_inValueDidChange, true);
+        SetForScope inCallback(m_inValueDidChange, true);
         m_refCounter->m_valueDidChange(RefCounterEvent::Decrement);
     }
 

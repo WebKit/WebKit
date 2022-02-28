@@ -252,7 +252,7 @@ inline void CustomElementQueue::add(Element& element)
 inline void CustomElementQueue::invokeAll()
 {
     RELEASE_ASSERT(!m_invoking);
-    SetForScope<bool> invoking(m_invoking, true);
+    SetForScope invoking(m_invoking, true);
     unsigned originalSize = m_elements.size();
     // It's possible for more elements to be enqueued if some IDL attributes were missing CEReactions.
     // Invoke callbacks slightly later here instead of crashing / ignoring those cases.

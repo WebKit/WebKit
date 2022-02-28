@@ -33,10 +33,10 @@ TEST(WTF, SetForScopeNested)
 {
     bool originallyFalse = false;
     {
-        SetForScope<bool> change1OriginallyFalse(originallyFalse, true);
+        SetForScope change1OriginallyFalse(originallyFalse, true);
         EXPECT_TRUE(originallyFalse);
         {
-            SetForScope<bool> change2OriginallyFalse(originallyFalse, false);
+            SetForScope change2OriginallyFalse(originallyFalse, false);
             EXPECT_FALSE(originallyFalse);
         }
         EXPECT_TRUE(originallyFalse);

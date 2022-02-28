@@ -79,7 +79,7 @@ void LoadableTextTrack::scheduleLoad(const URL& url)
     // 3. Asynchronously run the remaining steps, while continuing with whatever task
     // was responsible for creating the text track or changing the text track mode.
     m_trackElement->scheduleTask([this]() mutable {
-        SetForScope<bool> loadPending { m_loadPending, true, false };
+        SetForScope loadPending { m_loadPending, true, false };
 
         if (m_loader)
             m_loader->cancelLoad();

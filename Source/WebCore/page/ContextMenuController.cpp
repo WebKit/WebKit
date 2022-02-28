@@ -106,7 +106,7 @@ void ContextMenuController::handleContextMenuEvent(Event& event)
     if (m_isHandlingContextMenuEvent)
         return;
 
-    SetForScope<bool> isHandlingContextMenuEventForScope(m_isHandlingContextMenuEvent, true);
+    SetForScope isHandlingContextMenuEventForScope(m_isHandlingContextMenuEvent, true);
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
     m_contextMenu = maybeCreateContextMenu(event, hitType, ContextMenuContext::Type::ContextMenu);

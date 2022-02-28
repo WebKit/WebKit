@@ -957,7 +957,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
 
 bool TestController::resetStateToConsistentValues(const TestOptions& options, ResetStage resetStage)
 {
-    SetForScope<State> changeState(m_state, Resetting);
+    SetForScope changeState(m_state, Resetting);
     m_beforeUnloadReturnValue = true;
 
     for (auto& auxiliaryWebView : std::exchange(m_auxiliaryWebViews, { }))
@@ -1238,7 +1238,7 @@ void TestController::terminateWebContentProcess()
 void TestController::reattachPageToWebProcess()
 {
     // Loading a web page is the only way to reattach an existing page to a process.
-    SetForScope<State> changeState(m_state, Resetting);
+    SetForScope changeState(m_state, Resetting);
     m_doneResetting = false;
     WKPageLoadURL(m_mainWebView->page(), blankURL());
     runUntil(m_doneResetting, noTimeout);

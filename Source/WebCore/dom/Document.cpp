@@ -1977,7 +1977,7 @@ void Document::updateRenderTree(std::unique_ptr<const Style::Update> styleUpdate
 
     Style::PostResolutionCallbackDisabler callbackDisabler(*this);
     {
-        SetForScope<bool> inRenderTreeUpdate(m_inRenderTreeUpdate, true);
+        SetForScope inRenderTreeUpdate(m_inRenderTreeUpdate, true);
         {
             RenderTreeUpdater updater(*this, callbackDisabler);
             updater.commit(WTFMove(styleUpdate));
@@ -2248,7 +2248,7 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     ASSERT(pseudoElementSpecifier == PseudoId::None || parentStyle);
     ASSERT(Style::postResolutionCallbacksAreSuspended());
 
-    SetForScope<bool> change(m_ignorePendingStylesheets, true);
+    SetForScope change(m_ignorePendingStylesheets, true);
     auto& resolver = element.styleResolver();
 
     if (pseudoElementSpecifier != PseudoId::None)
@@ -2549,7 +2549,7 @@ void Document::destroyRenderTree()
     // Prevent Widget tree changes from committing until the RenderView is dead and gone.
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-    SetForScope<bool> change(m_renderTreeBeingDestroyed, true);
+    SetForScope change(m_renderTreeBeingDestroyed, true);
 
     if (this == &topDocument())
         clearAXObjectCache();
@@ -8792,7 +8792,7 @@ bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& loc
         return false;
 
 #if ASSERT_ENABLED
-    SetForScope<bool> hitTestRestorer { m_inHitTesting, true };
+    SetForScope hitTestRestorer { m_inHitTesting, true };
 #endif
 
     auto& frameView = renderView()->frameView();

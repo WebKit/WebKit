@@ -55,7 +55,7 @@ void QuotaManager::handleRequests()
     if (m_currentRequest)
         return;
 
-    SetForScope<bool> isHandlingRequests(m_isHandlingRequests, true);
+    SetForScope isHandlingRequests(m_isHandlingRequests, true);
 
     while (!m_currentRequest && !m_requests.isEmpty()) {
         m_currentRequest = m_requests.takeFirst();
