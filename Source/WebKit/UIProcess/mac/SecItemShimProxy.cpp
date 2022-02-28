@@ -58,7 +58,7 @@ SecItemShimProxy::~SecItemShimProxy()
 
 void SecItemShimProxy::initializeConnection(IPC::Connection& connection)
 {
-    connection.addWorkQueueMessageReceiver(Messages::SecItemShimProxy::messageReceiverName(), m_queue.get(), this);
+    connection.addWorkQueueMessageReceiver(Messages::SecItemShimProxy::messageReceiverName(), m_queue.get(), *this);
 }
 
 void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&& response)

@@ -1,5 +1,59 @@
 2022-02-28  Youenn Fablet  <youenn@apple.com>
 
+        RemoteVideoFrameObjectHeap should process its IPC messages in a background thread
+        https://bugs.webkit.org/show_bug.cgi?id=237198
+
+        Reviewed by Darin Adler.
+
+        Minor refactoring to have addWorkQueueMessageReceiver take a reference instead of a pointer.
+        Make RemoteVideoFrameObjectHeap become a WorkQueueMessageReceiver.
+        This ensures that a main thread hang in GPUProcess will not block big memory releases or WebProcess access to pixel buffers.
+
+        No observable change of behavior.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didClose):
+        (WebKit::GPUConnectionToWebProcess::videoFrameObjectHeap const):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.cpp:
+        (WebKit::remoteVideoFrameObjectHeapQueue):
+        (WebKit::RemoteVideoFrameObjectHeap::create):
+        (WebKit::RemoteVideoFrameObjectHeap::RemoteVideoFrameObjectHeap):
+        (WebKit::RemoteVideoFrameObjectHeap::~RemoteVideoFrameObjectHeap):
+        (WebKit::RemoteVideoFrameObjectHeap::close):
+        (WebKit::RemoteVideoFrameObjectHeap::releaseVideoFrame):
+        (WebKit::RemoteVideoFrameObjectHeap::getVideoFrameBuffer):
+        (WebKit::RemoteVideoFrameObjectHeap::pixelBuffer):
+        (WebKit::RemoteVideoFrameObjectHeap::stopListeningForIPC): Deleted.
+        * GPUProcess/media/RemoteVideoFrameObjectHeap.h:
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::addConnection):
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::addConnection):
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::startReceivingMessageFromConnection):
+        * NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp:
+        (WebKit::RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        * Platform/IPC/Connection.h:
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::initializeConnection):
+        * WebProcess/GPU/media/RemoteAudioSourceProviderManager.cpp:
+        (WebKit::RemoteAudioSourceProviderManager::setConnection):
+        * WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp:
+        (WebKit::RemoteVideoFrameObjectHeapProxyProcessor::RemoteVideoFrameObjectHeapProxyProcessor):
+        * WebProcess/Inspector/WebInspectorInterruptDispatcher.cpp:
+        (WebKit::WebInspectorInterruptDispatcher::initializeConnection):
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp:
+        (WebKit::RTCDataChannelRemoteManager::setConnection):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::initializeConnection):
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::initializeConnection):
+
+2022-02-28  Youenn Fablet  <youenn@apple.com>
+
         Ensure RemoteMediaPlayerProxy sets its resource owner to pixel buffers created by its player
         https://bugs.webkit.org/show_bug.cgi?id=237200
 

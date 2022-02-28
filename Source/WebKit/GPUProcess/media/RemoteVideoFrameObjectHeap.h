@@ -26,31 +26,31 @@
 #pragma once
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+#include "Connection.h"
 #include "RemoteVideoFrameProxy.h"
 #include "ThreadSafeObjectHeap.h"
 #include <WebCore/MediaSample.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 #if PLATFORM(COCOA)
 #include "SharedVideoFrame.h"
 #endif
 
 namespace WebKit {
-class GPUConnectionToWebProcess;
 
 // Holds references to all VideoFrame instances that are mapped from GPU process to Web process.
-class RemoteVideoFrameObjectHeap final : public ThreadSafeRefCounted<RemoteVideoFrameObjectHeap>, private IPC::MessageReceiver {
+class RemoteVideoFrameObjectHeap final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static Ref<RemoteVideoFrameObjectHeap> create(GPUConnectionToWebProcess&);
+    static Ref<RemoteVideoFrameObjectHeap> create(Ref<IPC::Connection>&&);
     ~RemoteVideoFrameObjectHeap();
 
+    void close();
     RemoteVideoFrameProxy::Properties add(Ref<WebCore::MediaSample>&&);
     RefPtr<WebCore::MediaSample> get(RemoteVideoFrameReadReference&& read) { return m_heap.retire(WTFMove(read), 0_s); }
 
-    void stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&& refFromConnection);
+    void stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&&) { close(); }
 
 private:
-    explicit RemoteVideoFrameObjectHeap(GPUConnectionToWebProcess&);
+    explicit RemoteVideoFrameObjectHeap(Ref<IPC::Connection>&&);
 
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -63,15 +63,13 @@ private:
     void pixelBuffer(RemoteVideoFrameReadReference&&, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&&);
 #endif
 
-    GPUConnectionToWebProcess* m_gpuConnectionToWebProcess WTF_GUARDED_BY_CAPABILITY(mainThread);
     const Ref<IPC::Connection> m_connection;
     ThreadSafeObjectHeap<RemoteVideoFrameIdentifier, RefPtr<WebCore::MediaSample>> m_heap;
 #if PLATFORM(COCOA)
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif
+    bool m_isClosed { false };
 };
-
-
 
 }
 #endif

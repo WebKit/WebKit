@@ -61,7 +61,7 @@ void RTCDataChannelRemoteManager::setConnection(IPC::Connection* connection)
     m_connection = connection;
 
     if (m_connection)
-        m_connection->addWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManager::messageReceiverName(), m_queue, this);
+        m_connection->addWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManager::messageReceiverName(), m_queue, *this);
 }
 
 bool RTCDataChannelRemoteManager::connectToRemoteSource(WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier)
