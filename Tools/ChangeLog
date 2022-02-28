@@ -1,3 +1,17 @@
+2022-02-28  Pascal Abresch  <nep@packageloss.eu>
+
+        Enable python3 for lighttpd
+        https://bugs.webkit.org/show_bug.cgi?id=236938
+
+        Reviewed by Darin Adler.
+
+        This is needed for the Haiku port to use the python3 tests.
+        This patch also removes the PHP support since all PHP tests have been removed and there are
+        currently no plans to include new ones in the future.
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        (Lighttpd._prepare_config):
+        * Scripts/webkitpy/layout_tests/servers/lighttpd.conf:
+
 2022-02-22  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Use Python 3 (Part 3)

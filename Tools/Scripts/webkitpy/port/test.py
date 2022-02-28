@@ -489,9 +489,6 @@ class TestPort(Port):
     def _path_to_lighttpd_modules(self):
         return "/usr/lib/lighttpd"
 
-    def _path_to_lighttpd_php(self):
-        return "/usr/bin/php-cgi"
-
     def _path_to_apache(self):
         return "/usr/sbin/httpd"
 

@@ -1277,12 +1277,6 @@ class Port(object):
         This is needed only by ports that use the http_server.py module."""
         raise NotImplementedError('Port._path_to_lighttpd_modules')
 
-    def _path_to_lighttpd_php(self):
-        """Returns the path to the LigHTTPd PHP executable.
-
-        This is needed only by ports that use the http_server.py module."""
-        raise NotImplementedError('Port._path_to_lighttpd_php')
-
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a
         given platform."""

@@ -198,9 +198,6 @@ class WinPort(ApplePort):
     def _path_to_lighttpd_modules(self):
         return "/usr/lib/lighttpd"
 
-    def _path_to_lighttpd_php(self):
-        return "/usr/bin/php-cgi"
-
     def _path_to_default_image_diff(self):
         return self._build_path('ImageDiff.exe')
 
