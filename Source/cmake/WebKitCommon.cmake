@@ -13,11 +13,16 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         message(STATUS "The CMake build type is: ${CMAKE_BUILD_TYPE}")
     endif ()
 
-    set(ENABLE_JAVASCRIPTCORE ON)
-    set(ENABLE_WEBCORE ON)
+    option(ENABLE_JAVASCRIPTCORE "Enable building JavaScriptCore" ON)
+    option(ENABLE_WEBCORE "Enable building JavaScriptCore" ON)
+    option(ENABLE_WEBKIT "Enable building WebKit" ON)
 
-    if (NOT DEFINED ENABLE_WEBKIT)
-        set(ENABLE_WEBKIT ON)
+    if (NOT ENABLE_JAVASCRIPTCORE)
+        set(ENABLE_WEBCORE OFF)
+    endif ()
+
+    if (NOT ENABLE_WEBCORE)
+        set(ENABLE_WEBKIT OFF)
     endif ()
 
     if (NOT DEFINED ENABLE_TOOLS AND EXISTS "${CMAKE_SOURCE_DIR}/Tools")
