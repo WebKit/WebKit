@@ -1,30 +1,71 @@
 2022-03-01  Russell Epstein  <repstein@apple.com>
 
-        Cherry-pick r290512. rdar://problem/86582214
+        Cherry-pick r290087. rdar://problem/88713302
 
-    [Tables] Incorrect table sizing when colgroup comes after tbody
-    https://bugs.webkit.org/show_bug.cgi?id=237205
-    <rdar://86582214>
+    Source/ThirdParty/ANGLE:
+    Metal ANGLE: vertex array does not correctly observe contents of data buffers
+    https://bugs.webkit.org/show_bug.cgi?id=236733
+    <rdar://problem/88713302>
+    <rdar://problem/88499073>
     
-    Reviewed by Antti Koivisto.
+    Patch by Kyle Piddington <kpiddington@apple.com> on 2022-02-17
+    Reviewed by Dean Jackson.
     
-    Source/WebCore:
+    Similar to previous bug (236427), we were not correctly observing changes to the
+    vertex buffer data. This caused us to miss rebinding vertex buffers
+    when data was updated without causing conversion
     
-    Let's use the colgroup for table sizing even when it comes after any thead, tbody, tfoot, and tr elements.
-    This makes WebKit match other rendering engines (see https://src.chromium.org/viewvc/blink?revision=159442&view=revision)
+    * src/libANGLE/renderer/metal/VertexArrayMtl.h:
+    * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+    (rx::VertexArrayMtl::syncState):
+    (rx::VertexArrayMtl::setupDraw):
+    (rx::VertexArrayMtl::syncDirtyAttrib):
     
-    Test: fast/table/table-sizing-fails-when-colgroup-comes-after-content.html
-    
-    * rendering/RenderTable.cpp:
-    (WebCore::RenderTable::firstColumn const):
-    * rendering/RenderTableCol.cpp:
-    (WebCore::RenderTableCol::nextColumn const):
-    
-    LayoutTests:
-    
-    * fast/table/table-sizing-fails-when-colgroup-comes-after-content-expected.html: Added.
-    * fast/table/table-sizing-fails-when-colgroup-comes-after-content.html: Added.
-    * platform/mac/tables/mozilla_expected_failures/dom/appendCol1-expected.txt: Progression.
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290087 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-01  Russell Epstein  <repstein@apple.com>
+
+            Cherry-pick r290512. rdar://problem/86582214
+
+        [Tables] Incorrect table sizing when colgroup comes after tbody
+        https://bugs.webkit.org/show_bug.cgi?id=237205
+        <rdar://86582214>
+
+        Reviewed by Antti Koivisto.
+
+        Source/WebCore:
+
+        Let's use the colgroup for table sizing even when it comes after any thead, tbody, tfoot, and tr elements.
+        This makes WebKit match other rendering engines (see https://src.chromium.org/viewvc/blink?revision=159442&view=revision)
+
+        Test: fast/table/table-sizing-fails-when-colgroup-comes-after-content.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::firstColumn const):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::nextColumn const):
+
+        LayoutTests:
+
+        * fast/table/table-sizing-fails-when-colgroup-comes-after-content-expected.html: Added.
+        * fast/table/table-sizing-fails-when-colgroup-comes-after-content.html: Added.
+        * platform/mac/tables/mozilla_expected_failures/dom/appendCol1-expected.txt: Progression.
+2022-02-17  Kyle Piddington  <kpiddington@apple.com>
+
+        Metal ANGLE: vertex array does not correctly observe contents of data buffers
+        https://bugs.webkit.org/show_bug.cgi?id=236733
+        <rdar://problem/88713302>
+        <rdar://problem/88499073>
+
+        Reviewed by Dean Jackson.
+
+        Similar to previous bug (236427), we were not correctly observing changes to the
+        vertex buffer data. This caused us to miss rebinding vertex buffers
+        when data was updated without causing conversion
+
+        * fast/canvas/webgl/buffer-data-subdata-dynamic-buffer.html: Added.
+        * fast/canvas/webgl/buffer-data-subdata-dynamic-buffer-expected.txt: Added.
+
     * platform/mac/tables/mozilla_expected_failures/dom/appendColGroup1-expected.txt: Progression.
     
     

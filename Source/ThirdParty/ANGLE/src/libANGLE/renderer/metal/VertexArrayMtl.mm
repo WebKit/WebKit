@@ -273,7 +273,7 @@ angle::Result VertexArrayMtl::syncState(const gl::Context *context,
             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:
             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER_DATA:
             {
-                mElementArrayDirty = true;
+                mVertexDataDirty = true;
                 break;
             }
 
@@ -301,7 +301,7 @@ angle::Result VertexArrayMtl::syncState(const gl::Context *context,
     case gl::VertexArray::DIRTY_BIT_BUFFER_DATA_0 + INDEX:                                        \
         ANGLE_TRY(syncDirtyAttrib(context, attribs[INDEX], bindings[attribs[INDEX].bindingIndex], \
                                   INDEX));                                                        \
-        mVertexArrayDirty = true;                                                                 \
+        mVertexDataDirty = true;                                                                 \
         break;
 
                 ANGLE_VERTEX_INDEX_CASES(ANGLE_VERTEX_DIRTY_BUFFER_DATA_FUNC)
@@ -480,9 +480,9 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
         }  // for (v)
     }
 
-    if(dirty || mElementArrayDirty)
+    if(dirty || mVertexDataDirty)
     {
-        mElementArrayDirty = false;
+        mVertexDataDirty = false;
         const gl::ProgramExecutable *executable = glContext->getState().getProgramExecutable();
         const gl::AttributesMask &programActiveAttribsMask =
                 executable->getActiveAttribLocationsMask();
@@ -652,6 +652,7 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
         if (bufferGL)
         {
             BufferMtl *bufferMtl = mtl::GetImpl(bufferGL);
+            mContentsObservers->enableForBuffer(bufferGL, static_cast<uint32_t>(attribIndex));
             bool needConversion =
                 format.actualFormatId != format.intendedFormatId ||
                 (binding.getOffset() % format.actualAngleFormat().pixelBytes) != 0 ||
@@ -661,12 +662,10 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
 
             if (needConversion)
             {
-                mContentsObservers->enableForBuffer(bufferGL, static_cast<uint32_t>(attribIndex));
                 ANGLE_TRY(convertVertexBuffer(glContext, bufferMtl, binding, attribIndex, format));
             }
             else
             {
-                mContentsObservers->disableForBuffer(bufferGL, static_cast<uint32_t>(attribIndex));
                 mCurrentArrayBuffers[attribIndex]       = bufferMtl;
                 mCurrentArrayBufferOffsets[attribIndex] = binding.getOffset();
                 mCurrentArrayBufferStrides[attribIndex] = binding.getStride();
