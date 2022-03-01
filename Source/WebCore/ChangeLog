@@ -1,3 +1,18 @@
+2022-03-01  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] web-animations/interfaces/Animatable/getAnimations-iframe.html is a unique failure
+        https://bugs.webkit.org/show_bug.cgi?id=237314
+
+        Reviewed by Antti Koivisto.
+
+        We need to update the layout of a potential owner document in case some layout-dependent media queries
+        trigger declarative animations.
+
+        * dom/Document.cpp:
+        (WebCore::Document::matchingAnimations):
+        * dom/Element.cpp:
+        (WebCore::Element::getAnimations):
+
 2022-03-01  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL GPUP OpenGL context is not used even if WebGL via Metal is deselected

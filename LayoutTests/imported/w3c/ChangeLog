@@ -1,3 +1,16 @@
+2022-03-01  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] web-animations/interfaces/Animatable/getAnimations-iframe.html is a unique failure
+        https://bugs.webkit.org/show_bug.cgi?id=237314
+
+        Reviewed by Antti Koivisto.
+
+        Add a new test to check that both Document.getAnimations() and Element.getAnimations() correctly
+        update layout on the owner document.
+
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-iframe-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-iframe.html:
+
 2022-03-01  Ziran Sun  <zsun@igalia.com>
 
         [Selection] Selection Range should be clamped by the current value length

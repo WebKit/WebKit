@@ -1,4 +1,4 @@
 
-
-FAIL Calling getAnimations updates layout of parent frame if needed assert_equals: expected 1 but got 0
+PASS Calling Element.getAnimations updates layout of parent frame if needed
+PASS Calling Document.getAnimations updates layout of parent frame if needed
 

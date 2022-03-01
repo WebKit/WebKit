@@ -8527,7 +8527,10 @@ Vector<RefPtr<WebAnimation>> Document::getAnimations()
 Vector<RefPtr<WebAnimation>> Document::matchingAnimations(const Function<bool(Element&)>& function)
 {
     // For the list of animations to be current, we need to account for any pending CSS changes,
-    // such as updates to CSS Animations and CSS Transitions.
+    // such as updates to CSS Animations and CSS Transitions. This requires updating layout as
+    // well since resolving layout-dependent media queries could yield animations.
+    if (RefPtr owner = ownerElement())
+        owner->document().updateLayout();
     updateStyleIfNeeded();
 
     Vector<RefPtr<WebAnimation>> animations;
