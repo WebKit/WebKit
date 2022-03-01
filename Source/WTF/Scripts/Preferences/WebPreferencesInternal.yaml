@@ -1046,6 +1046,7 @@ WebRTCRemoteVideoFrameEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
       default: false
