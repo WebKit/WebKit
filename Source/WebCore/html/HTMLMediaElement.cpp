@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,12 +210,6 @@ static const Seconds ScanRepeatDelay { 1.5_s };
 static const double ScanMaximumRate = 8;
 static const double AutoplayInterferenceTimeThreshold = 10;
 static const Seconds hideMediaControlsAfterEndedDelay { 6_s };
-
-#ifndef LOG_CACHED_TIME_WARNINGS
-// Default to not logging warnings about excessive drift in the cached media time because it adds a
-// fair amount of overhead and logging.
-#define LOG_CACHED_TIME_WARNINGS 0
-#endif
 
 #if ENABLE(MEDIA_SOURCE)
 // URL protocol used to signal that the media source API is being used.
@@ -1732,15 +1726,16 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     if (nextCue)
         nextInterestingTime = std::min(nextInterestingTime, nextCue->low());
 
-    INFO_LOG(LOGIDENTIFIER, "nextInterestingTime:", nextInterestingTime);
+    auto identifier = LOGIDENTIFIER;
+    INFO_LOG(identifier, "nextInterestingTime:", nextInterestingTime);
 
     if (nextInterestingTime.isValid() && m_player) {
-        m_player->performTaskAtMediaTime([this, weakThis = WeakPtr { *this }] {
+        m_player->performTaskAtMediaTime([this, weakThis = WeakPtr { *this }, identifier] {
             if (!weakThis)
                 return;
 
             auto currentMediaTime = this->currentMediaTime();
-            INFO_LOG(LOGIDENTIFIER, " lambda, currentMediaTime: ", currentMediaTime);
+            INFO_LOG(identifier, "lambda(), currentMediaTime: ", currentMediaTime);
             this->updateActiveTextTrackCues(currentMediaTime);
         }, nextInterestingTime);
     }
@@ -3354,9 +3349,7 @@ double HTMLMediaElement::currentTime() const
 
 MediaTime HTMLMediaElement::currentMediaTime() const
 {
-#if LOG_CACHED_TIME_WARNINGS
-    static const MediaTime minCachedDeltaForWarning = MediaTime::create(1, 100);
-#endif
+    static const MediaTime minCachedDeltaForWarning = MediaTime::createWithDouble(1);
 
     if (!m_player)
         return MediaTime::zeroTime();
@@ -3369,12 +3362,14 @@ MediaTime HTMLMediaElement::currentMediaTime() const
         return m_lastSeekTime;
     }
 
+    bool shouldCheckDrift = willLog(WTFLogLevel::Debug);
     if (m_cachedTime.isValid() && m_paused) {
-#if LOG_CACHED_TIME_WARNINGS
-        MediaTime delta = m_cachedTime - m_player->currentTime();
-        if (delta > minCachedDeltaForWarning)
-            WARNING_LOG(LOGIDENTIFIER, "cached time is ", delta, " seconds off of media time when paused");
-#endif
+        if (shouldCheckDrift) {
+            MediaTime delta = m_cachedTime - m_player->currentTime();
+            if (delta > minCachedDeltaForWarning)
+                WARNING_LOG(LOGIDENTIFIER, "cached time is ", delta, " seconds off of media time when paused");
+        }
+
         return m_cachedTime;
     }
 
@@ -3389,22 +3384,22 @@ MediaTime HTMLMediaElement::currentMediaTime() const
         if (clockDelta.seconds() < maximumDurationToCacheMediaTime) {
             MediaTime adjustedCacheTime = m_cachedTime + MediaTime::createWithDouble(effectivePlaybackRate() * clockDelta.seconds());
 
-#if LOG_CACHED_TIME_WARNINGS
-            MediaTime delta = adjustedCacheTime - m_player->currentTime();
-            if (delta > minCachedDeltaForWarning)
-                WARNING_LOG(LOGIDENTIFIER, "cached time is ", delta, " seconds off of media time when playing");
-#endif
+            if (shouldCheckDrift) {
+                auto delta = adjustedCacheTime - m_player->currentTime();
+                if (delta > minCachedDeltaForWarning)
+                    WARNING_LOG(LOGIDENTIFIER, "cached time is ", delta, " seconds off of media time when playing");
+            }
+
             return adjustedCacheTime;
         }
     }
 
-#if LOG_CACHED_TIME_WARNINGS
-    if (maximumDurationToCacheMediaTime && now > m_minimumClockTimeToUpdateCachedTime && m_cachedTime != MediaPlayer::invalidTime()) {
+    if (shouldCheckDrift && m_cachedTime.isValid() && maximumDurationToCacheMediaTime && now > m_minimumClockTimeToUpdateCachedTime) {
         Seconds clockDelta = now - m_clockTimeAtLastCachedTimeUpdate;
-        MediaTime delta = m_cachedTime + MediaTime::createWithDouble(effectivePlaybackRate() * clockDelta.seconds()) - m_player->currentTime();
-        WARNING_LOG(LOGIDENTIFIER, "cached time was ", delta, " seconds off of media time when it expired");
+        auto delta = m_cachedTime + MediaTime::createWithDouble(effectivePlaybackRate() * clockDelta.seconds()) - m_player->currentTime();
+        if (delta > minCachedDeltaForWarning)
+            WARNING_LOG(LOGIDENTIFIER, "cached time was ", delta, " seconds off of media time when it expired");
     }
-#endif
 
     refreshCachedTime();
 

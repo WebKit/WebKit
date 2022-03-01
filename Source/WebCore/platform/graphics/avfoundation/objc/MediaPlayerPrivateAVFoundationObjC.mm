@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1126,10 +1126,23 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 #endif
 
     ASSERT(!m_currentTimeObserver);
-    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }] (CMTime time) {
-        ensureOnMainThread([weakThis, time] {
-            if (weakThis)
-                weakThis->currentMediaTimeDidChange(PAL::toMediaTime(time));
+    m_currentTimeObserver = [m_avPlayer addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 10) queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }, identifier = LOGIDENTIFIER, this] (CMTime cmTime) {
+        ensureOnMainThread([weakThis, cmTime, this, identifier] {
+            if (!weakThis)
+                return;
+
+            auto time = PAL::toMediaTime(cmTime);
+            if (time == MediaTime::zeroTime() && m_lastPeriodicObserverMediaTime > MediaTime::zeroTime() && !seeking())
+                ALWAYS_LOG(identifier, "PeriodicTimeObserver called with zero");
+            if (time < MediaTime::zeroTime())
+                ALWAYS_LOG(identifier, "PeriodicTimeObserver called with negative time ", time);
+            if (time < m_lastPeriodicObserverMediaTime)
+                ALWAYS_LOG(identifier, "PeriodicTimeObserver went backwards, was ", m_lastPeriodicObserverMediaTime, ", is now ", time);
+            if (!time.isFinite())
+                ALWAYS_LOG(identifier, "PeriodicTimeObserver called with called with infinite time");
+            m_lastPeriodicObserverMediaTime = time;
+
+            weakThis->currentMediaTimeDidChange(WTFMove(time));
         });
     }];
 
@@ -1166,9 +1179,13 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(didEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:m_avPlayerItem.get()];
 
-    NSKeyValueObservingOptions options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionPrior;
-    for (NSString *keyName in itemKVOProperties())
+    for (NSString *keyName in itemKVOProperties()) {
+        NSKeyValueObservingOptions options = NSKeyValueObservingOptionNew | NSKeyValueObservingOptionPrior;
+        if ([keyName isEqualToString:@"duration"])
+            options |= NSKeyValueObservingOptionInitial;
+
         [m_avPlayerItem addObserver:m_objcObserver.get() forKeyPath:keyName options:options context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
+    }
 
     [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_requestedRate)];
 
@@ -1556,7 +1573,7 @@ void MediaPlayerPrivateAVFoundationObjC::currentMediaTimeDidChange(MediaTime&& t
     m_requestedRateAtCachedCurrentTime = m_requestedRate;
 
     if (m_currentTimeDidChangeCallback)
-        m_currentTimeDidChangeCallback(time.isFinite() ? m_cachedCurrentMediaTime : MediaTime::zeroTime());
+        m_currentTimeDidChangeCallback(m_cachedCurrentMediaTime.isFinite() ? m_cachedCurrentMediaTime : MediaTime::zeroTime());
 }
 
 void MediaPlayerPrivateAVFoundationObjC::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)

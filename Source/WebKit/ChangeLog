@@ -1,3 +1,15 @@
+2022-03-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] HLS stream currentTime sometimes jumps backwards
+        https://bugs.webkit.org/show_bug.cgi?id=235087
+        rdar://83831093
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::currentTimeChanged): Always notify player when
+        time jumps backwards.
+
 2022-03-01  Sihui Liu  <sihui_liu@apple.com>
 
         Move StorageBucket function definitions outside the class definition

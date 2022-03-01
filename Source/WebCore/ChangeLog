@@ -1,3 +1,30 @@
+2022-03-01  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] HLS stream currentTime sometimes jumps backwards
+        https://bugs.webkit.org/show_bug.cgi?id=235087
+        rdar://83831093
+
+        Reviewed by Dean Jackson.
+
+        Test: http/tests/media/hls/hls-non-zero-start-time.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues): Drive-by: pass log identifier
+        to lambda so the method name will be logged correctly.
+        (WebCore::HTMLMediaElement::currentMediaTime const): Remove LOG_CACHED_TIME_WARNINGS
+        build flag, always log time drift warnings when log level is DEBUG.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Log when periodic
+        time observer is passed unexpected values.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Use
+        NSKeyValueObservingOptionInitial KVO option for "@duration" property because we 
+        sometimes don't get a duration changed event for HLS streams, so m_cachedDuration
+        remains invalid.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::currentMediaTimeDidChange const): 
+        Drive-by: fix use-after-move.
+
 2022-03-01  Per Arne Vollan  <pvollan@apple.com>
 
         Remove release assert when UI process is blocking IOSurface IOKit access
