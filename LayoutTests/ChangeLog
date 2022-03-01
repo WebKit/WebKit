@@ -1,3 +1,12 @@
+2022-02-28  Matteo Flores  <matteo_flores@apple.com>
+
+        [ iOS ] fast/mediastream/video-rotation-gpu-process-crash.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=237295
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2022-02-28  Robert Jenner  <Jenner@apple.com>
 
         REBASELINE [ iOS15 ] fast/text/khmer-lao-font.html is a constant text failure
