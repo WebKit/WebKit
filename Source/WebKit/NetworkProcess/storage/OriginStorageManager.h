@@ -59,7 +59,7 @@ public:
     bool isEmpty();
     OptionSet<WebsiteDataType> fetchDataTypesInList(OptionSet<WebsiteDataType>);
     void deleteData(OptionSet<WebsiteDataType>, WallTime);
-    void moveData(const String& newPath, const String& localStoragePath);
+    void moveData(OptionSet<WebsiteDataType>, const String& newPath, const String& localStoragePath);
 
 private:
     enum class StorageBucketMode : bool;
