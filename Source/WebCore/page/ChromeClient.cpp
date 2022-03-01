@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ChromeClient.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-
+#if ENABLE(WEBGL)
 #include "GraphicsContextGL.h"
-
-#include <wtf/HashSet.h>
-#include <wtf/text/StringHash.h>
+#endif
 
 namespace WebCore {
 
-// A base class for RemoteGraphicsContextGL proxy side implementation
-// This implements the parts that are using WebCore internal functionality:
-// - Drawing buffer tracking management.
-// - Compositing support.
-class WEBCORE_EXPORT RemoteGraphicsContextGLProxyBase : public GraphicsContextGL {
-public:
-    RemoteGraphicsContextGLProxyBase(const GraphicsContextGLAttributes&);
-    ~RemoteGraphicsContextGLProxyBase() override;
+ChromeClient::ChromeClient() = default;
 
+ChromeClient::~ChromeClient() = default;
 
-};
-
+#if ENABLE(WEBGL)
+RefPtr<GraphicsContextGL> ChromeClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes, WebCore::PlatformDisplayID) const
+{
+    return createWebProcessGraphicsContextGL(attributes);
 }
 #endif
+
+}

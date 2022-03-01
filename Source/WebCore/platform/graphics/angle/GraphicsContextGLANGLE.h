@@ -54,13 +54,6 @@ typedef void *EGLImage;
 
 namespace WebCore {
 
-class ExtensionsGL;
-class GLContext;
-class HostWindow;
-class ImageBuffer;
-class MediaPlayer;
-class PixelBuffer;
-
 #if USE(TEXTURE_MAPPER)
 class TextureMapperGCGLPlatformLayer;
 #endif
@@ -375,7 +368,6 @@ protected:
     GraphicsContextGLANGLE(GraphicsContextGLAttributes);
 
     // Called once by all the public entry points that eventually call OpenGL.
-    // Called once by all the public entry points of ExtensionsGL that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;
 
     // Initializes the instance. Returns false if the instance should not be used.

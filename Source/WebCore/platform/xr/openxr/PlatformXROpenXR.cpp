@@ -22,6 +22,7 @@
 
 #if ENABLE(WEBXR) && USE(OPENXR)
 
+#include "GraphicsContextGL.h"
 #include "OpenXRExtensions.h"
 #include "OpenXRInput.h"
 #include "OpenXRInputSource.h"
@@ -51,6 +52,8 @@ OpenXRDevice::OpenXRDevice(XrInstance instance, XrSystemId system, Ref<WorkQueue
     , m_extensions(extensions)
 {
 }
+
+OpenXRDevice::~OpenXRDevice() = default;
 
 void OpenXRDevice::initialize(CompletionHandler<void()>&& callback)
 {

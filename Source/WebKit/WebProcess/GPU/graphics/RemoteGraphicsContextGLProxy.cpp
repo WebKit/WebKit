@@ -38,6 +38,7 @@
 #if ENABLE(VIDEO)
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "RemoteVideoFrameProxy.h"
+#include <WebCore/MediaPlayer.h>
 #endif
 
 namespace WebKit {

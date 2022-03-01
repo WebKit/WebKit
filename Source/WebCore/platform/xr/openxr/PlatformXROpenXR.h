@@ -22,7 +22,6 @@
 #if ENABLE(WEBXR) && USE(OPENXR)
 
 #include "GLContextEGL.h"
-#include "GraphicsContextGL.h"
 #include "OpenXRLayer.h"
 #include "OpenXRUtils.h"
 #include "PlatformXR.h"
@@ -30,6 +29,9 @@
 #include <wtf/HashMap.h>
 #include <wtf/WorkQueue.h>
 
+namespace WebCore {
+class GraphicsContextGL;
+}
 namespace PlatformXR {
 
 class OpenXRExtensions;
@@ -50,6 +52,7 @@ class OpenXRInput;
 class OpenXRDevice final : public Device {
 public:
     static Ref<OpenXRDevice> create(XrInstance, XrSystemId, Ref<WorkQueue>&&, const OpenXRExtensions&, CompletionHandler<void()>&&);
+    ~OpenXRDevice();
 
 private:
     OpenXRDevice(XrInstance, XrSystemId, Ref<WorkQueue>&&, const OpenXRExtensions&);

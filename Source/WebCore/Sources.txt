@@ -1717,6 +1717,7 @@ page/BarProp.cpp
 page/Base64Utilities.cpp
 page/CaptionUserPreferences.cpp
 page/Chrome.cpp
+page/ChromeClient.cpp
 page/ContextMenuContext.cpp
 page/ContextMenuController.cpp
 page/Crypto.cpp

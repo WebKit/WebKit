@@ -1,3 +1,47 @@
+2022-03-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GraphicsContextGL related includes are inconsistent, slowing the build
+        https://bugs.webkit.org/show_bug.cgi?id=237270
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove include "GraphicsContextGL.h" from files not needing that.
+        Most notably, add ChromeClient.cpp and move the non-trivial
+        ChromeClient::createGraphicsContextGL() function to .cpp file, so
+        that ChromeClient.h does not need to include GraphicsContextGL.h.
+
+        This makes incremental compiles better, as not all changes to
+        GraphicsContextGL.h and its dependencies force big rebuilds.
+
+        GraphicsContextGL.h and dependents maintainance:
+
+        Remove unneeded forward declarations. Types referenced by overridden virtual
+        functions must already be declared. Remove forward declarartion ExtensionsGL,
+        the class was removed
+
+        Use forward declares instead of includes (MediaPlayer).
+
+        Remove RemoteGraphicsContextGLProxyBase.cpp/h, the use was removed.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/WebGLActiveInfo.h:
+        * html/canvas/WebGLShaderPrecisionFormat.h:
+        * inspector/InspectorShaderProgram.cpp:
+        * page/ChromeClient.cpp: Renamed from Source/WebCore/platform/graphics/RemoteGraphicsContextGLProxyBase.cpp.
+        (WebCore::ChromeClient::createGraphicsContextGL const):
+        * page/ChromeClient.h:
+        * platform/HostWindow.h:
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/GraphicsContextGLState.h:
+        * platform/graphics/RemoteGraphicsContextGLProxyBase.h: Removed.
+        * platform/graphics/angle/GraphicsContextGLANGLE.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        * platform/graphics/opengl/ExtensionsGLOpenGL.h:
+        * platform/xr/openxr/OpenXRSwapchain.h:
+        * platform/xr/openxr/PlatformXROpenXR.cpp:
+        * platform/xr/openxr/PlatformXROpenXR.h:
+
 2022-03-01  Tim Nguyen  <ntim@apple.com>
 
         Explicitly disable style sharing for form controls

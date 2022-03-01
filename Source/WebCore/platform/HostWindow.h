@@ -25,18 +25,20 @@
 
 #pragma once
 
-#include "GraphicsContextGL.h"
 #include "Widget.h"
 
 namespace WebCore {
 
 class Cursor;
 class DestinationColorSpace;
+class GraphicsContextGL;
 class ImageBuffer;
 
 enum class PixelFormat : uint8_t;
 enum class RenderingMode : bool;
 enum class RenderingPurpose : uint8_t;
+
+struct GraphicsContextGLAttributes;
 
 using FramesPerSecond = unsigned;
 

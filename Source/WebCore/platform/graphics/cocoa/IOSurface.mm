@@ -28,7 +28,6 @@
 
 #import "DestinationColorSpace.h"
 #import "GraphicsContextCG.h"
-#import "GraphicsContextGL.h"
 #import "HostWindow.h"
 #import "IOSurfacePool.h"
 #import "ImageBuffer.h"

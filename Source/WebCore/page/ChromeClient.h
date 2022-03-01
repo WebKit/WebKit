@@ -87,10 +87,6 @@ class HTMLModelElement;
 #include "PlatformXR.h"
 #endif
 
-#if ENABLE(WEBGL)
-#include "GraphicsContextGL.h"
-#endif
-
 OBJC_CLASS NSResponder;
 
 namespace WebCore {
@@ -126,6 +122,11 @@ class Widget;
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 class MediaPlayerRequestInstallMissingPluginsCallback;
+#endif
+
+#if ENABLE(WEBGL)
+class GraphicsContextGL;
+struct GraphicsContextGLAttributes;
 #endif
 
 struct AppHighlight;
@@ -362,7 +363,7 @@ public:
     virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float, const DestinationColorSpace&, PixelFormat) const { return nullptr; }
 
 #if ENABLE(WEBGL)
-    virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes& attributes, WebCore::PlatformDisplayID) const { return createWebProcessGraphicsContextGL(attributes); }
+    WEBCORE_EXPORT virtual RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&, WebCore::PlatformDisplayID) const;
 #endif
 
     virtual RefPtr<PAL::WebGPU::GPU> createGPUForWebGPU() const { return nullptr; }
@@ -631,7 +632,8 @@ public:
     virtual void decidePolicyForModalContainer(OptionSet<ModalContainerControlType>, CompletionHandler<void(ModalContainerDecision)>&&) = 0;
 
 protected:
-    virtual ~ChromeClient() = default;
+    WEBCORE_EXPORT ChromeClient();
+    WEBCORE_EXPORT virtual ~ChromeClient();
 };
 
 } // namespace WebCore

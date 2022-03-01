@@ -33,7 +33,6 @@
 #include "Image.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "MediaPlayer.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -46,13 +45,14 @@
 #endif
 
 namespace WebCore {
-class ExtensionsGL;
-class HostWindow;
 class ImageBuffer;
 class PixelBuffer;
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 class GraphicsContextGLCV;
+#endif
+#if ENABLE(VIDEO)
+class MediaPlayer;
 #endif
 #if ENABLE(MEDIA_STREAM)
 class MediaSample;

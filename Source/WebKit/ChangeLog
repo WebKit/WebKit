@@ -1,3 +1,12 @@
+2022-03-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GraphicsContextGL related includes are inconsistent, slowing the build
+        https://bugs.webkit.org/show_bug.cgi?id=237270
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+
 2022-03-01  Sihui Liu  <sihui_liu@apple.com>
 
         Migrate third-party IndexedDB data to GeneralStorageDirectory
