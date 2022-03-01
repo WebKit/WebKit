@@ -1,3 +1,41 @@
+2022-03-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Move StorageBucket function definitions outside the class definition
+        https://bugs.webkit.org/show_bug.cgi?id=237300
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::mode const):
+        (WebKit::OriginStorageManager::StorageBucket::setMode):
+        (WebKit::OriginStorageManager::StorageBucket::StorageBucket):
+        (WebKit::OriginStorageManager::StorageBucket::connectionClosed):
+        (WebKit::OriginStorageManager::StorageBucket::toStorageIdentifier const):
+        (WebKit::OriginStorageManager::StorageBucket::typeStoragePath const):
+        (WebKit::OriginStorageManager::StorageBucket::fileSystemStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::localStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::existingLocalStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::sessionStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::existingSessionStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::idbStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::existingIDBStorageManager):
+        (WebKit::OriginStorageManager::StorageBucket::isActive const):
+        (WebKit::OriginStorageManager::StorageBucket::isEmpty):
+        (WebKit::OriginStorageManager::StorageBucket::fetchDataTypesInList):
+        (WebKit::OriginStorageManager::StorageBucket::fetchDataTypesInListFromMemory):
+        (WebKit::OriginStorageManager::StorageBucket::fetchDataTypesInListFromDisk):
+        (WebKit::OriginStorageManager::StorageBucket::deleteData):
+        (WebKit::OriginStorageManager::StorageBucket::deleteFileSystemStorageData):
+        (WebKit::OriginStorageManager::StorageBucket::deleteLocalStorageData):
+        (WebKit::OriginStorageManager::StorageBucket::deleteSessionStorageData):
+        (WebKit::OriginStorageManager::StorageBucket::deleteIDBStorageData):
+        (WebKit::OriginStorageManager::StorageBucket::moveData):
+        (WebKit::OriginStorageManager::StorageBucket::resolvedLocalStoragePath):
+        (WebKit::OriginStorageManager::StorageBucket::resolvedIDBStoragePath):
+        (WebKit::OriginStorageManager::StorageBucket::toWebsiteDataType): Deleted.
+        (WebKit::OriginStorageManager::StorageBucket::toStorageIdentifier): Deleted.
+
 2022-03-01  Alex Christensen  <achristensen@webkit.org>
 
         If the main resource was loaded over private relay, load all sub resources over private relay

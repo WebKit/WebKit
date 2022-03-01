@@ -40,7 +40,6 @@
 #include <WebCore/IndexedDB.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
-#include <wtf/WeakHashSet.h>
 
 namespace IPC {
 class SharedFileHandle;
