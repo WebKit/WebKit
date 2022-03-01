@@ -1,3 +1,12 @@
+2022-03-01  Robert Jenner  <Jenner@apple.com>
+
+        WindowServer returned not alive with context:,unresponsive work processor(s)
+        <rdar://86037417>
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2022-03-01  Youenn Fablet  <youenn@apple.com>
 
         fast/mediastream/getUserMedia-to-canvas-1.html and fast/mediastream/getUserMedia-to-canvas-2.html are failing on MacOS when remote video frame flag is enabled
