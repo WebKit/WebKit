@@ -38,7 +38,6 @@
 #import "VideoFullscreenModel.h"
 #import "WebAVPlayerController.h"
 #import <AVFoundation/AVTime.h>
-#import <AVKit/AVPictureInPictureController.h>
 #import <UIKit/UIKit.h>
 #import <UIKit/UIWindow.h>
 #import <objc/message.h>
@@ -61,6 +60,7 @@ SOFTLINK_AVKIT_FRAMEWORK()
 #if HAVE(AVOBSERVATIONCONTROLLER)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVObservationController)
 #endif
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerViewController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
 
@@ -1643,7 +1643,7 @@ bool WebCore::supportsPictureInPicture()
 #if ENABLE(VIDEO_PRESENTATION_MODE) && !PLATFORM(WATCHOS)
     if (isPictureInPictureSupported.has_value())
         return *isPictureInPictureSupported;
-    return [AVPictureInPictureController isPictureInPictureSupported];
+    return [getAVPictureInPictureControllerClass() isPictureInPictureSupported];
 #else
     return false;
 #endif
