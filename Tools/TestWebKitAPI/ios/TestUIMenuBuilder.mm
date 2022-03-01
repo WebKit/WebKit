@@ -67,9 +67,9 @@
     return nil;
 }
 
-- (BOOL)containsActionWithTitle:(NSString *)title
+- (UIAction *)actionWithTitle:(NSString *)title
 {
-    return [self findMatching:^BOOL(UIMenuElement *element) {
+    return (UIAction *)[self findMatching:^BOOL(UIMenuElement *element) {
         return [dynamic_objc_cast<UIAction>(element).title isEqual:title];
     }];
 }

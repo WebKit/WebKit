@@ -31,7 +31,7 @@
 
 @interface TestUIMenuBuilder : NSObject<UIMenuBuilder>
 
-- (BOOL)containsActionWithTitle:(NSString *)title;
+- (UIAction *)actionWithTitle:(NSString *)title;
 - (void)reset;
 
 @end

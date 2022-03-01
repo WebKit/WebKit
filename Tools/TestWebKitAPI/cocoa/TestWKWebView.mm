@@ -183,6 +183,11 @@ static NSString *overrideBundleIdentifier(id, SEL)
     return [self objectByEvaluatingJavaScript:@"Array.from(document.body.getElementsByTagName('*')).map(e => e.tagName)"];
 }
 
+- (NSString *)selectedText
+{
+    return [self stringByEvaluatingJavaScript:@"getSelection().toString()"];
+}
+
 - (void)expectElementTagsInOrder:(NSArray<NSString *> *)tagNames
 {
     auto remainingTags = adoptNS([tagNames mutableCopy]);

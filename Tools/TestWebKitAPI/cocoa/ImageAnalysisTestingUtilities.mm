@@ -28,7 +28,8 @@
 
 #if HAVE(VK_IMAGE_ANALYSIS)
 
-#import <pal/spi/cocoa/VisionKitCoreSPI.h>
+#import <wtf/BlockPtr.h>
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 
 @interface TestVKQuad : NSObject
 - (instancetype)initWithTopLeft:(CGPoint)topLeft topRight:(CGPoint)topRight bottomLeft:(CGPoint)bottomLeft bottomRight:(CGPoint)bottomRight;
@@ -232,5 +233,9 @@ RetainPtr<VKImageAnalyzerRequest> createRequest(CGImageRef image, VKImageOrienta
 }
 
 } // namespace TestWebKitAPI
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/ImageAnalysisTestingUtilitiesAdditions.mm>
+#endif
 
 #endif // HAVE(VK_IMAGE_ANALYSIS)

@@ -30,6 +30,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <UIKit/NSTextAlternatives.h>
+#import <UIKit/UIAction_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItemGroup_Private.h>
 #import <UIKit/UICalloutBar.h>
@@ -201,6 +202,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 
 @protocol UIWKInteractionViewProtocol
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
+- (void)requestRectsToEvadeForSelectionCommandsWithCompletionHandler:(void(^)(NSArray<NSValue *> *rects))completionHandler;
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
 - (void)requestAutocorrectionContextWithCompletionHandler:(void (^)(UIWKAutocorrectionContext *autocorrectionContext))completionHandler;
 - (void)selectWordBackward;
@@ -267,6 +269,10 @@ IGNORE_WARNINGS_END
 
 @interface UIWKTextInteractionAssistant : UITextInteractionAssistant
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
+@end
+
+@interface UIAction ()
+- (void)_performActionWithSender:(id)sender;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)

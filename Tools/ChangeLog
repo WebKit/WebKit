@@ -1,3 +1,42 @@
+2022-02-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add API testing infrastructure for "Markup Image" and "Copy Cropped Image"
+        https://bugs.webkit.org/show_bug.cgi?id=236519
+        rdar://89154213
+
+        Reviewed by Tim Horton.
+
+        Add API testing support (as well as a new API test) for the "Markup Image" flow.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ImageAnalysisTests.mm:
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::invokeImageMarkupAction):
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+
+        Add an API test that triggers the "Markup Image" action, and verifies the following:
+        - The first image is replaced with the canned image result (a 215-px-wide image of the WebKit logo).
+        - The selection range is effectively unchanged.
+
+        * TestWebKitAPI/cocoa/ImageAnalysisTestingUtilities.h:
+        * TestWebKitAPI/cocoa/ImageAnalysisTestingUtilities.mm:
+
+        Add a declaration for ImageAnalysisMarkupSwizzler, a helper class that is used in the new API test to make
+        VisionKit return a canned image and cropped rect when invoking the SPI that corresponds to "Markup Image"; see
+        WebKitAdditions change for more information.
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView selectedText]):
+        * TestWebKitAPI/ios/TestUIMenuBuilder.h:
+        * TestWebKitAPI/ios/TestUIMenuBuilder.mm:
+        (-[TestUIMenuBuilder actionWithTitle:]):
+
+        Refactor and rename this to return the found UIAction instead of just a BOOL indicating whether or not it could
+        be found, and change existing call sites above to use `EXPECT_NULL` and `EXPECT_NOT_NULL`.
+
+        (-[TestUIMenuBuilder containsActionWithTitle:]): Deleted.
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2022-02-28  Christopher Reid  <chris.reid@sony.com>
 
         [Win] vswhere should search for Visual Studio Build tools
