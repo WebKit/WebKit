@@ -192,6 +192,10 @@ private:
     void setUseScreenCaptureKit(bool);
 #endif
 
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    void setSampleBufferContentKeySessionSupportEnabled(bool);
+#endif
+
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
     void dispatchSimulatedNotificationsForPreferenceChange(const String& key) final;
@@ -257,6 +261,10 @@ private:
 #if HAVE(SCREEN_CAPTURE_KIT)
     bool m_useScreenCaptureKit { false };
 #endif
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    bool m_sampleBufferContentKeySessionSupportEnabled { false };
+#endif
+
 };
 
 } // namespace WebKit

@@ -41,6 +41,7 @@
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "MediaSample.h"
 #import "MediaSampleAVFObjC.h"
+#import "MediaSessionManagerCocoa.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "SharedBuffer.h"
 #import "SourceBufferParserAVFObjC.h"
@@ -284,6 +285,15 @@ static uint64_t nextMapID()
 static bool sampleBufferRenderersSupportKeySession()
 {
     static bool supports = false;
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        supports =
+        [PAL::getAVSampleBufferAudioRendererClass() conformsToProtocol:@protocol(AVContentKeyRecipient)]
+            && [PAL::getAVSampleBufferDisplayLayerClass() conformsToProtocol:@protocol(AVContentKeyRecipient)]
+            && MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled();
+    });
+#endif
     return supports;
 }
 

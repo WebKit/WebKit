@@ -244,6 +244,11 @@ public:
     bool mediaSourceInlinePaintingEnabled() const { return m_mediaSourceInlinePaintingEnabled; }
 #endif
 
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    WEBCORE_EXPORT void setSampleBufferContentKeySessionSupportEnabled(bool);
+    bool sampleBufferContentKeySessionSupportEnabled() const { return m_sampleBufferContentKeySessionSupportEnabled; }
+#endif
+
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     void setBuiltInNotificationsEnabled(bool isEnabled) { m_builtInNotificationsEnabled = isEnabled; }
     bool builtInNotificationsEnabled() const { return m_builtInNotificationsEnabled; }
@@ -389,6 +394,10 @@ private:
 
 #if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
     bool m_mediaSourceInlinePaintingEnabled { false };
+#endif
+
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    bool m_sampleBufferContentKeySessionSupportEnabled { false };
 #endif
 
 #if ENABLE(BUILT_IN_NOTIFICATIONS)

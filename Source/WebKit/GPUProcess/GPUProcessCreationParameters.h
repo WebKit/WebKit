@@ -48,6 +48,9 @@ struct GPUProcessCreationParameters {
     SandboxExtension::Handle microphoneSandboxExtensionHandle;
 #endif
 #endif
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    bool sampleBufferContentKeySessionSupportEnabled { false };
+#endif
     ProcessID parentPID;
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)

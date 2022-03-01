@@ -140,16 +140,21 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _parent->didProvideContentKeyRequestInitializationDataForTrackID(initData, trackID);
 }
 
+@end
+
 #if HAVE(AVCONTENTKEYSPECIFIER)
+@interface WebAVStreamDataParserWithKeySpecifierListener : WebAVStreamDataParserListener
+@end
+
+@implementation WebAVStreamDataParserWithKeySpecifierListener
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideContentKeySpecifier:(AVContentKeySpecifier *)keySpecifier forTrackID:(CMPersistentTrackID)trackID
 {
     ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
     if ([keySpecifier respondsToSelector:@selector(initializationData)])
         _parent->didProvideContentKeyRequestSpecifierForTrackID(keySpecifier.initializationData, trackID);
 }
-#endif
-
 @end
+#endif
 
 namespace WebCore {
 
@@ -216,8 +221,13 @@ MediaPlayerEnums::SupportsType SourceBufferParserAVFObjC::isContentTypeSupported
 
 SourceBufferParserAVFObjC::SourceBufferParserAVFObjC()
     : m_parser(adoptNS([PAL::allocAVStreamDataParserInstance() init]))
-    , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:this]))
 {
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    if (MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled())
+        m_delegate = adoptNS([[WebAVStreamDataParserWithKeySpecifierListener alloc] initWithParser:m_parser.get() parent:this]);
+    else
+#endif
+        m_delegate = adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:this]);
 }
 
 SourceBufferParserAVFObjC::~SourceBufferParserAVFObjC()

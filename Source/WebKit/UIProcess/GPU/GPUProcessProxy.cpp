@@ -679,6 +679,12 @@ void GPUProcessProxy::updatePreferences(WebProcessProxy& webProcess)
         }
 #endif
 
+#if HAVE(AVCONTENTKEYSPECIFIER)
+        if (!m_hasEnabledSampleBufferContentKeySessionSupport && preferences.sampleBufferContentKeySessionSupportEnabled()) {
+            m_hasEnabledSampleBufferContentKeySessionSupport = true;
+            send(Messages::GPUProcess::SetSampleBufferContentKeySessionSupportEnabled(m_hasEnabledSampleBufferContentKeySessionSupport), 0);
+        }
+#endif
     }
 }
 

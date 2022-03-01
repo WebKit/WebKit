@@ -531,6 +531,16 @@ void GPUProcess::setUseScreenCaptureKit(bool use)
 }
 #endif
 
+#if HAVE(AVCONTENTKEYSPECIFIER)
+void GPUProcess::setSampleBufferContentKeySessionSupportEnabled(bool enabled)
+{
+    if (m_sampleBufferContentKeySessionSupportEnabled == enabled)
+        return;
+    m_sampleBufferContentKeySessionSupportEnabled = enabled;
+    MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(enabled);
+}
+#endif
+
 void GPUProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {
     completionHandler(GPUConnectionToWebProcess::objectCountForTesting());

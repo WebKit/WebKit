@@ -81,6 +81,10 @@ messages -> GPUProcess LegacyReceiver {
     SetUseScreenCaptureKit(bool use);
 #endif
 
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    SetSampleBufferContentKeySessionSupportEnabled(bool enabled);
+#endif
+
     RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmap::Handle handle) Async
 
 #if ENABLE(CFPREFS_DIRECT_MODE)

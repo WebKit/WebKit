@@ -1,3 +1,38 @@
+2022-02-28  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt -streamDataParser:didProvideContentKeySpecifier:forTrackID: delegate callback
+        https://bugs.webkit.org/show_bug.cgi?id=236109
+        <rdar://problem/88785844>
+
+        Reviewed by Eric Carlson.
+
+        Re-land support after a rollout in r290311, this time with an off-by-default Experimental Feature
+        flag.
+
+        In addition to checking whether the renderer classes support AVContentKeySession, also check whether
+        the RuntimeSetting has been enabled. This requires passing that setting through to the 
+        MediaSessionManagerCocoa singleton, so it can be accessed from platform/.
+
+        If the renderer support check succeeds and the setting is enabled, only then should the delegate for
+        AVStreamDataParser include support for the new -didProvideContentKeySpecifier callback. Subclass the
+        WebAVStreamDataParserListener into a new WebAVStreamDataParserWithKeySpecifierListener object, and
+        instantiate one or the other according to the support checks above.
+
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::setSampleBufferContentKeySessionSupportEnabled):
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::sampleBufferContentKeySessionSupportEnabled const):
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled):
+        (WebCore::MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled):
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+        (-[WebAVStreamDataParserWithKeySpecifierListener streamDataParser:didProvideContentKeySpecifier:forTrackID:]):
+        (WebCore::SourceBufferParserAVFObjC::SourceBufferParserAVFObjC):
+        (-[WebAVStreamDataParserListener streamDataParser:didProvideContentKeySpecifier:forTrackID:]): Deleted.
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::sampleBufferRenderersSupportKeySession):
+
 2022-02-28  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Weak link AVPictureInPictureController

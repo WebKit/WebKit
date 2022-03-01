@@ -1,3 +1,25 @@
+2022-02-28  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt -streamDataParser:didProvideContentKeySpecifier:forTrackID: delegate callback
+        https://bugs.webkit.org/show_bug.cgi?id=236109
+        <rdar://problem/88785844>
+
+        Reviewed by Eric Carlson.
+
+        Pass the new RuntimeEnabledFeature through to the GPU process.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::setSampleBufferContentKeySessionSupportEnabled):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::encode const):
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::updatePreferences):
+        * UIProcess/GPU/GPUProcessProxy.h:
+
 2022-02-28  Chris Dumez  <cdumez@apple.com>
 
         Adopt the modern Hasher more widely

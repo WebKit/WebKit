@@ -71,6 +71,11 @@ public:
     static WEBCORE_EXPORT bool mediaSourceInlinePaintingEnabled();
 #endif
 
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    static WEBCORE_EXPORT void setSampleBufferContentKeySessionSupportEnabled(bool);
+    static WEBCORE_EXPORT bool sampleBufferContentKeySessionSupportEnabled();
+#endif
+
 protected:
     void scheduleSessionStatusUpdate() final;
     void updateNowPlayingInfo();

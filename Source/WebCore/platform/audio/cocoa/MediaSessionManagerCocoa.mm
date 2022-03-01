@@ -92,6 +92,20 @@ bool MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled()
 }
 #endif
 
+#if HAVE(AVCONTENTKEYSPECIFIER)
+static bool s_sampleBufferContentKeySessionSupportEnabled = false;
+void MediaSessionManagerCocoa::setSampleBufferContentKeySessionSupportEnabled(bool enabled)
+{
+    s_sampleBufferContentKeySessionSupportEnabled = enabled;
+}
+
+bool MediaSessionManagerCocoa::sampleBufferContentKeySessionSupportEnabled()
+{
+    return s_sampleBufferContentKeySessionSupportEnabled;
+}
+#endif
+
+
 void MediaSessionManagerCocoa::updateSessionState()
 {
     constexpr auto delayBeforeSettingCategoryNone = 2_s;

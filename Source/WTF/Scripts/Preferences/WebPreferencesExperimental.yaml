@@ -1233,6 +1233,19 @@ ResolutionMediaFeatureEnabled:
     WebCore:
       default: true
 
+SampleBufferContentKeySessionSupportEnabled:
+  type: bool
+  humanReadableName: "ContentKeySession support for SampleBuffer Renderers"
+  humanReadableDescription: "ContentKeySession support for SampleBuffer Renderers Enabled"
+  condition: HAVE(AVCONTENTKEYSPECIFIER)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 # FIXME: This should have it's own ENABLE.
 ScreenCaptureEnabled:

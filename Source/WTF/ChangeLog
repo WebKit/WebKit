@@ -1,3 +1,13 @@
+2022-02-28  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt -streamDataParser:didProvideContentKeySpecifier:forTrackID: delegate callback
+        https://bugs.webkit.org/show_bug.cgi?id=236109
+        <rdar://problem/88785844>
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-02-28  Tim Nguyen  <ntim@apple.com>
 
         Enable inert attribute feature flag

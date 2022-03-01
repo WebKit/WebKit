@@ -183,6 +183,10 @@ private:
     bool m_hasEnabledMediaSourceInlinePainting { false };
 #endif
 
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    bool m_hasEnabledSampleBufferContentKeySessionSupport { false };
+#endif
+
 #if HAVE(SCREEN_CAPTURE_KIT)
     bool m_hasEnabledScreenCaptureKit { false };
 #endif

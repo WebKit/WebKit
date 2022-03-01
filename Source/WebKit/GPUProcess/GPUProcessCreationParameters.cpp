@@ -48,6 +48,9 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << microphoneSandboxExtensionHandle;
 #endif
 #endif
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    encoder << sampleBufferContentKeySessionSupportEnabled;
+#endif
     encoder << parentPID;
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
@@ -75,6 +78,11 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
         return false;
 #endif
 #endif
+#if HAVE(AVCONTENTKEYSPECIFIER)
+    if (!decoder.decode(result.sampleBufferContentKeySessionSupportEnabled))
+        return false;
+#endif
+
     if (!decoder.decode(result.parentPID))
         return false;
 
