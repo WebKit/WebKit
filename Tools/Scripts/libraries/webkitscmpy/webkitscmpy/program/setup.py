@@ -301,12 +301,26 @@ class Setup(Command):
 
     @classmethod
     def main(cls, args, repository, **kwargs):
-        print('For detailed information about options this script is configuring see:')
-        print('https://github.com/WebKit/WebKit/wiki/Git-Config#Configuration-Options')
-
         if isinstance(repository, local.Git):
+            if 'true' != repository.config().get('webkitscmpy.setup', ''):
+                info_url = 'https://github.com/WebKit/WebKit/wiki/Git-Config#Configuration-Options'
+                print('For detailed information about the options configured by this script, please see:\n{}'.format(info_url))
+                if not args.defaults and Terminal.choose("Would you like to open this URL in your browser?", default='Yes') == 'Yes':
+                    run(['open', info_url])
+                print('\n')
+
             result = cls.git(args, repository, **kwargs)
-            print('Setup failed' if result else 'Setup succeeded!')
+
+            if result:
+                print('Setup failed')
+            else:
+                print('Setup succeeded!')
+                run(
+                    [local.Git.executable(), 'config', 'webkitscmpy.setup', 'true'],
+                    capture_output=True,
+                    cwd=repository.root_path,
+                )
+
             return result
 
         if isinstance(repository, remote.GitHub):

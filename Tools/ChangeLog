@@ -1,3 +1,18 @@
+2022-03-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Gate information URL on initial setup
+        https://bugs.webkit.org/show_bug.cgi?id=237325
+        <rdar://problem/89620175>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.main): Offer to open documentation URL if repository has not been setup.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+        (TestSetup.test_github):
+
 2022-03-01  J Pascoe  <j_pascoe@apple.com>
 
         REGRESSION(r290539-r290538): [ iOS ] 3 TestWebKitAPI.WebAuthenticationPanel.* tests are constantly failing/crashing. 
