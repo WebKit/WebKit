@@ -10,7 +10,7 @@ async function createSourceVideo() {
     const video = document.createElement("video");
     video.srcObject = await navigator.mediaDevices.getUserMedia({ video: { width: { exact: width } } });
     await video.play();
-    assert_equals(video.videoWidth, width);
+    assert_true(video.videoWidth === width || video.videoHeight === width);
     return video;
 }
 
@@ -127,29 +127,15 @@ function testDescription(subcase) {
 
 async function testUserMediaToCanvas(t, subcase) {
     const desc = testDescription(subcase);
+    const [angle] = setMockCameraImageOrientation(subcase.angle);
     const video = await createSourceVideo();
     const debuge = document.getElementById("debuge");
     debuge.append(video);
-    const realVideoSize = [video.videoWidth, video.videoHeight];
+    const videoSize = [video.videoWidth, video.videoHeight];
     t.add_cleanup(async () => {
-        // Reset orientation for the next test by going to 0.
-        if (subcase.angle == 180) {
-            // 180 -> 0 cannot detect rotation via video size change. Go via 90.
-            const [angle, videoSize] = setMockCameraImageOrientation(90, realVideoSize);
-            await waitForVideoSize(video, videoSize[0], videoSize[1]);
-        }
         setMockCameraImageOrientation(0);
-        await waitForVideoSize(video, realVideoSize[0], realVideoSize[1]);
         debuge.removeChild(video);
     });
-
-    if (subcase.angle == 180) {
-        // 0 -> 180 cannot detect rotation via video size change. Go via 90.
-        const [angle, videoSize] = setMockCameraImageOrientation(90, realVideoSize);
-        await waitForVideoSize(video, videoSize[0], videoSize[1]);
-    }
-    const [angle, videoSize] = setMockCameraImageOrientation(subcase.angle, realVideoSize);
-    await waitForVideoSize(video, videoSize[0], videoSize[1]);
 
     const canvas = createVerifyCanvas(video);
     debuge.appendChild(canvas);

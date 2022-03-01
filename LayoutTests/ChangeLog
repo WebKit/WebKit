@@ -1,3 +1,25 @@
+2022-03-01  Youenn Fablet  <youenn@apple.com>
+
+        fast/mediastream/getUserMedia-to-canvas-1.html and fast/mediastream/getUserMedia-to-canvas-2.html are failing on MacOS when remote video frame flag is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=237042
+        <rdar://problem/89298601>
+
+        Reviewed by Eric Carlson.
+
+        Video element videoWidth/videoHeight are updated when track settings are changed,
+        and not when video frames being received.
+
+        This does not guarantee that videoWidth/videoHeight (main thread) are fully in sync
+        with the actual video frames (background thread) when there is a change of size.
+
+        We might be able to tighten this in MediaPlayerPrivateMediaStreamAVFObjC by only resorting on video frames.
+        In the meantime, we update the test to set the orientation before creating the source.
+        This makes sure the video frames have the expected size and rotation.
+
+        * fast/mediastream/getUserMedia-to-canvas-1.html:
+        * fast/mediastream/getUserMedia-to-canvas-2.html:
+        * fast/mediastream/resources/getUserMedia-to-canvas.js:
+
 2022-03-01  Chris Dumez  <cdumez@apple.com>
 
         [Debug] imported/w3c/web-platform-tests/url/toascii.window.html is crashing
