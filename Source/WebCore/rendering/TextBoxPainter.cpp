@@ -572,17 +572,7 @@ FloatRect TextBoxPainter::computePaintRect(const LayoutPoint& paintOffset)
 
     localPaintOffset.move(0, m_style.isHorizontalWritingMode() ? 0 : -textBox().logicalHeight());
 
-    auto locationIncludingFlipping = [&]() -> FloatPoint {
-        auto rect = textBox().visualRectIgnoringBlockDirection();
-        if (!m_style.isFlippedBlocksWritingMode())
-            return rect.location();
-        auto& block = textBox().line()->containingBlock();
-        if (block.style().isHorizontalWritingMode())
-            return { rect.x(), block.height() - rect.height() - rect.y() };
-        return { block.width() - rect.width() - rect.x(), rect.y() };
-    };
-
-    FloatPoint boxOrigin = locationIncludingFlipping();
+    auto boxOrigin = textBox().visualRect(textBox().line()->containingBlock().logicalHeight()).location();
     boxOrigin.moveBy(localPaintOffset);
     return { boxOrigin, FloatSize(textBox().logicalWidth(), textBox().logicalHeight()) };
 }

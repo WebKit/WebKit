@@ -1,3 +1,20 @@
+2022-03-01  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Add InlineIterator::Box::visualRect
+        https://bugs.webkit.org/show_bug.cgi?id=237309
+
+        Reviewed by Antti Koivisto.
+
+        This is the final, flipped version of the box rect.
+
+        * layout/integration/InlineIteratorBox.h:
+        (WebCore::InlineIterator::Box::visualRect const):
+        * rendering/InlineBoxPainter.cpp:
+        (WebCore::InlineBoxPainter::paintMask):
+        (WebCore::InlineBoxPainter::paintDecorations):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::computePaintRect):
+
 2022-03-01  Patrick Angle  <pangle@apple.com>
 
         Web app fails only when dev tools is open

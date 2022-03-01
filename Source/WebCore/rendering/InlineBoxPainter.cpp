@@ -141,8 +141,7 @@ void InlineBoxPainter::paintMask()
         return;
 
     // Move x/y to our coordinates.
-    LayoutRect localRect(m_inlineBox.visualRectIgnoringBlockDirection());
-    m_inlineBox.line()->containingBlock().flipForWritingMode(localRect);
+    auto localRect = LayoutRect { m_inlineBox.visualRect(m_inlineBox.line()->containingBlock().logicalHeight()) };
     LayoutPoint adjustedPaintOffset = m_paintOffset + localRect.location();
 
     const NinePieceImage& maskNinePieceImage = renderer().style().maskBoxImage();
@@ -218,9 +217,7 @@ void InlineBoxPainter::paintDecorations()
         return;
 
     // Move x/y to our coordinates.
-    LayoutRect localRect(m_inlineBox.visualRectIgnoringBlockDirection());
-    m_inlineBox.line()->containingBlock().flipForWritingMode(localRect);
-
+    auto localRect = LayoutRect { m_inlineBox.visualRect(m_inlineBox.line()->containingBlock().logicalHeight()) };
     LayoutPoint adjustedPaintoffset = m_paintOffset + localRect.location();
     GraphicsContext& context = m_paintInfo.context();
     LayoutRect paintRect = LayoutRect(adjustedPaintoffset, localRect.size());

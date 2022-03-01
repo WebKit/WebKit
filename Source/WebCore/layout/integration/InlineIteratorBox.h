@@ -60,6 +60,7 @@ public:
     bool isInlineBox() const;
     bool isRootInlineBox() const;
 
+    FloatRect visualRect(float formattingRootSizeInBlockDirection) const;
     FloatRect visualRectIgnoringBlockDirection() const;
 
     float logicalTop() const { return isHorizontal() ? visualRectIgnoringBlockDirection().y() : visualRectIgnoringBlockDirection().x(); }
@@ -181,6 +182,19 @@ inline bool Box::isRootInlineBox() const
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.isRootInlineBox();
     });
+}
+
+inline FloatRect Box::visualRect(float formattingRootSizeInBlockDirection) const
+{
+    auto visualRect = visualRectIgnoringBlockDirection();
+    if (!style().isFlippedBlocksWritingMode())
+        return visualRect;
+
+    if (style().isHorizontalWritingMode())
+        visualRect.setY(formattingRootSizeInBlockDirection - visualRect.maxY());
+    else
+        visualRect.setX(formattingRootSizeInBlockDirection - visualRect.maxX());
+    return visualRect;
 }
 
 inline FloatRect Box::visualRectIgnoringBlockDirection() const
