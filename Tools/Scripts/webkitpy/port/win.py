@@ -137,6 +137,7 @@ class WinPort(ApplePort):
 
     def setup_environ_for_server(self, server_name=None):
         env = super(WinPort, self).setup_environ_for_server(server_name)
+        env['PYTHONUTF8'] = '1'
         env['XML_CATALOG_FILES'] = ''  # work around missing /etc/catalog <rdar://problem/4292995>
         return env
 

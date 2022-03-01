@@ -1,3 +1,16 @@
+2022-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][pywebsocket3] UnicodeDecodeError: 'charmap' codec can't decode byte 0x9d in position 640: character maps to <undefined>
+        https://bugs.webkit.org/show_bug.cgi?id=237339
+
+        Reviewed by Jonathan Bedard.
+
+        After r290580 started to use pywebsocket3 and Python 3, Windows
+        Python couldn't start WebSocket server due to UnicodeDecodeError.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.setup_environ_for_server): Added PYTHONUTF8 environment variable.
+
 2022-03-01  Andres Gonzalez  <andresg_22@apple.com>
 
         Make accessibility/aria-hidden-false-works-in-subtrees.html async to pass in isolated tree mode.
