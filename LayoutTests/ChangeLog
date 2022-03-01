@@ -1,5 +1,55 @@
 2022-03-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289995. rdar://problem/87462825
+
+    REGRESSION(r285885) Unable to exit Trip Details in Amtrak app
+    https://bugs.webkit.org/show_bug.cgi?id=236732
+    <rdar://87462825>
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Starting from r285885 an (effective)”overflow: clip” value is set on any block box with “contain: paint”.
+    It is supposed to ensure we don’t paint outside of the box’s border box (note that "contain: paint", as the name implies, should only affect painting).
+    
+    However this effective value trickles in to layout affecting certain layout constraints.
+    In case of flex, it makes the flex layout think that the box is really a clipped box and it starts flexing it accordingly producing incorrect size.
+    What it means is that the minimum preferred size ends up being 0px because now with "let's clip all the overflow content"
+    0px is indeed the smallest size a box could take that does not produce overflow (while with the initial, “overflow: visible” value,
+    its minimum width would likely be > 0px -provided it has some content. Also note that setting “overflow: clip” on the box in the markup
+    (so it becomes an explicit clip value and not just an “effective” implicit clip through “contain: paint”) produces
+    the exact same rendering meaning that this effective property value does affect layout).
+    
+    This is a partial revert of r285885 (focusing on where the flex algorithm consults with the flex items' overflow values).
+    
+    Test: fast/flexbox/incorrect-min-size-with-paint-contain.html
+    
+    * rendering/RenderFlexibleBox.cpp:
+    (WebCore::RenderFlexibleBox::mainAxisOverflowForChild const):
+    (WebCore::RenderFlexibleBox::crossAxisOverflowForChild const):
+    
+    LayoutTests:
+    
+    * fast/flexbox/incorrect-min-size-with-paint-contain-expected.html: Added.
+    * fast/flexbox/incorrect-min-size-with-paint-contain.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289995 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-16  Alan Bujtas  <zalan@apple.com>
+
+            REGRESSION(r285885) Unable to exit Trip Details in Amtrak app
+            https://bugs.webkit.org/show_bug.cgi?id=236732
+            <rdar://87462825>
+
+            Reviewed by Simon Fraser.
+
+            * fast/flexbox/incorrect-min-size-with-paint-contain-expected.html: Added.
+            * fast/flexbox/incorrect-min-size-with-paint-contain.html: Added.
+
+2022-03-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289693. rdar://problem/88264857
 
     Suppress style invalidation when matching :checked
