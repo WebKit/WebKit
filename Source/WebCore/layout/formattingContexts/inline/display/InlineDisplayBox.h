@@ -98,25 +98,25 @@ struct Box {
 
     bool hasContent() const { return m_hasContent; }
 
-    const FloatRect& rect() const { return m_physicalRect; }
+    const FloatRect& visualRectIgnoringBlockDirection() const { return m_unflippedVisualRect; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
 
-    float top() const { return rect().y(); }
-    float bottom() const { return rect().maxY(); }
-    float left() const { return rect().x(); }
-    float right() const { return rect().maxX(); }
+    float top() const { return visualRectIgnoringBlockDirection().y(); }
+    float bottom() const { return visualRectIgnoringBlockDirection().maxY(); }
+    float left() const { return visualRectIgnoringBlockDirection().x(); }
+    float right() const { return visualRectIgnoringBlockDirection().maxX(); }
 
-    float width() const { return rect().width(); }
-    float height() const { return rect().height(); }
+    float width() const { return visualRectIgnoringBlockDirection().width(); }
+    float height() const { return visualRectIgnoringBlockDirection().height(); }
 
     void moveVertically(float offset)
     {
-        m_physicalRect.move({ { }, offset });
+        m_unflippedVisualRect.move({ { }, offset });
         m_inkOverflow.move({ { }, offset });
     }
     void moveHorizontally(float offset)
     {
-        m_physicalRect.move({ offset, { } });
+        m_unflippedVisualRect.move({ offset, { } });
         m_inkOverflow.move({ offset, { } });
     }
     void adjustInkOverflow(const FloatRect& childBorderBox) { return m_inkOverflow.uniteEvenIfEmpty(childBorderBox); }
@@ -124,30 +124,30 @@ struct Box {
     void setLeft(float pysicalLeft)
     {
         auto offset = pysicalLeft - left();
-        m_physicalRect.setX(pysicalLeft);
+        m_unflippedVisualRect.setX(pysicalLeft);
         m_inkOverflow.setX(m_inkOverflow.x() + offset);
     }
     void setRight(float physicalRight)
     {
         auto offset = physicalRight - right();
-        m_physicalRect.shiftMaxXEdgeTo(physicalRight);
+        m_unflippedVisualRect.shiftMaxXEdgeTo(physicalRight);
         m_inkOverflow.shiftMaxXEdgeTo(m_inkOverflow.maxX() + offset);
     }
     void setTop(float physicalTop)
     {
         auto offset = physicalTop - top();
-        m_physicalRect.setY(physicalTop);
+        m_unflippedVisualRect.setY(physicalTop);
         m_inkOverflow.shiftMaxYEdgeTo(m_inkOverflow.y() + offset);
     }
     void setBottom(float physicalBottom)
     {
         auto offset = physicalBottom - bottom();
-        m_physicalRect.shiftMaxYEdgeTo(physicalBottom);
+        m_unflippedVisualRect.shiftMaxYEdgeTo(physicalBottom);
         m_inkOverflow.shiftMaxYEdgeTo(m_inkOverflow.maxY() + offset);
     }
     void setRect(const FloatRect& rect, const FloatRect& inkOverflow)
     {
-        m_physicalRect = rect;
+        m_unflippedVisualRect = rect;
         m_inkOverflow = inkOverflow;
     }
     void setHasContent() { m_hasContent = true; }
@@ -178,7 +178,7 @@ private:
     const Type m_type { Type::GenericInlineLevelBox };
     CheckedRef<const Layout::Box> m_layoutBox;
     UBiDiLevel m_bidiLevel { UBIDI_DEFAULT_LTR };
-    FloatRect m_physicalRect;
+    FloatRect m_unflippedVisualRect;
     FloatRect m_inkOverflow;
     bool m_hasContent : 1;
     bool m_isFirstForLayoutBox : 1;
@@ -192,7 +192,7 @@ inline Box::Box(size_t lineIndex, Type type, const Layout::Box& layoutBox, UBiDi
     , m_type(type)
     , m_layoutBox(layoutBox)
     , m_bidiLevel(bidiLevel)
-    , m_physicalRect(physicalRect)
+    , m_unflippedVisualRect(physicalRect)
     , m_inkOverflow(inkOverflow)
     , m_hasContent(hasContent)
     , m_isFirstForLayoutBox(positionWithinInlineLevelBox.contains(PositionWithinInlineLevelBox::First))
@@ -213,8 +213,8 @@ inline Box::Text::Text(size_t start, size_t length, const String& originalConten
 
 inline void Box::truncate(float truncatedwidth)
 {
-    m_physicalRect.setWidth(truncatedwidth);
-    m_inkOverflow.shiftMaxXEdgeTo(m_physicalRect.maxY());
+    m_unflippedVisualRect.setWidth(truncatedwidth);
+    m_inkOverflow.shiftMaxXEdgeTo(m_unflippedVisualRect.maxY());
 }
 
 }

@@ -3456,9 +3456,13 @@ void RenderBlockFlow::addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rec
     for (auto box = InlineIterator::firstRootInlineBoxFor(*this); box; box.traverseNextInlineBox()) {
         auto line = box->line();
         // FIXME: This is mixing physical and logical coordinates.
-        LayoutUnit top = std::max(line->top(), LayoutUnit(box->rect().y()));
-        LayoutUnit bottom = std::min(line->bottom(), LayoutUnit(box->rect().maxY()));
-        LayoutRect rect { LayoutUnit(additionalOffset.x() + box->rect().x()), additionalOffset.y() + top, LayoutUnit(box->rect().width()), bottom - top };
+        auto unflippedVisualRect = box->visualRectIgnoringBlockDirection();
+        auto top = std::max(line->top(), LayoutUnit { unflippedVisualRect.y() });
+        auto bottom = std::min(line->bottom(), LayoutUnit { unflippedVisualRect.maxY() });
+        auto rect = LayoutRect { LayoutUnit { additionalOffset.x() + unflippedVisualRect.x() }
+            , additionalOffset.y() + top
+            , LayoutUnit { unflippedVisualRect.width() }
+            , bottom - top };
         if (!rect.isEmpty())
             rects.append(rect);
     }

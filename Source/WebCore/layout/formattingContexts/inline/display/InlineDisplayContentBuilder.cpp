@@ -526,13 +526,13 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
     afterInlineBoxContent();
 
     auto computeInkOverflow = [&] {
-        auto inkOverflow = FloatRect { displayBox.rect() };
+        auto inkOverflow = FloatRect { displayBox.visualRectIgnoringBlockDirection() };
         m_contentHasInkOverflow = computeBoxShadowInkOverflow(!m_lineIndex ? layoutBox.firstLineStyle() : layoutBox.style(), inkOverflow) || m_contentHasInkOverflow;
         displayBox.adjustInkOverflow(inkOverflow);
     };
     computeInkOverflow();
 
-    setInlineBoxGeometry(layoutBox, displayBox.rect(), isFirstBox);
+    setInlineBoxGeometry(layoutBox, displayBox.visualRectIgnoringBlockDirection(), isFirstBox);
     if (lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent())
         displayBox.setHasContent();
 }

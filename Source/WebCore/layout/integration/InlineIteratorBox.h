@@ -60,14 +60,14 @@ public:
     bool isInlineBox() const;
     bool isRootInlineBox() const;
 
-    FloatRect rect() const;
+    FloatRect visualRectIgnoringBlockDirection() const;
 
-    float logicalTop() const { return isHorizontal() ? rect().y() : rect().x(); }
-    float logicalBottom() const { return isHorizontal() ? rect().maxY() : rect().maxX(); }
-    float logicalLeft() const { return isHorizontal() ? rect().x() : rect().y(); }
-    float logicalRight() const { return isHorizontal() ? rect().maxX() : rect().maxY(); }
-    float logicalWidth() const { return isHorizontal() ? rect().width() : rect().height(); }
-    float logicalHeight() const { return isHorizontal() ? rect().height() : rect().width(); }
+    float logicalTop() const { return isHorizontal() ? visualRectIgnoringBlockDirection().y() : visualRectIgnoringBlockDirection().x(); }
+    float logicalBottom() const { return isHorizontal() ? visualRectIgnoringBlockDirection().maxY() : visualRectIgnoringBlockDirection().maxX(); }
+    float logicalLeft() const { return isHorizontal() ? visualRectIgnoringBlockDirection().x() : visualRectIgnoringBlockDirection().y(); }
+    float logicalRight() const { return isHorizontal() ? visualRectIgnoringBlockDirection().maxX() : visualRectIgnoringBlockDirection().maxY(); }
+    float logicalWidth() const { return isHorizontal() ? visualRectIgnoringBlockDirection().width() : visualRectIgnoringBlockDirection().height(); }
+    float logicalHeight() const { return isHorizontal() ? visualRectIgnoringBlockDirection().height() : visualRectIgnoringBlockDirection().width(); }
 
     bool isHorizontal() const;
     bool isLineBreak() const;
@@ -183,10 +183,10 @@ inline bool Box::isRootInlineBox() const
     });
 }
 
-inline FloatRect Box::rect() const
+inline FloatRect Box::visualRectIgnoringBlockDirection() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
-        return path.rect();
+        return path.visualRectIgnoringBlockDirection();
     });
 }
 

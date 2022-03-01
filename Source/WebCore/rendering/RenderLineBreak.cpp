@@ -149,7 +149,7 @@ IntRect RenderLineBreak::linesBoundingBox() const
     if (!run)
         return { };
 
-    return enclosingIntRect(run->rect());
+    return enclosingIntRect(run->visualRectIgnoringBlockDirection());
 }
 
 void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& accumulatedOffset) const
@@ -158,7 +158,7 @@ void RenderLineBreak::absoluteRects(Vector<IntRect>& rects, const LayoutPoint& a
     if (!box)
         return;
 
-    auto rect = box->rect();
+    auto rect = box->visualRectIgnoringBlockDirection();
     rects.append(enclosingIntRect(FloatRect(accumulatedOffset + rect.location(), rect.size())));
 }
 
@@ -168,7 +168,7 @@ void RenderLineBreak::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
     if (!box)
         return;
 
-    auto rect = box->rect();
+    auto rect = box->visualRectIgnoringBlockDirection();
     quads.append(localToAbsoluteQuad(FloatRect(rect.location(), rect.size()), UseTransforms, wasFixed));
 }
 

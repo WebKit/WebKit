@@ -141,7 +141,7 @@ void InlineBoxPainter::paintMask()
         return;
 
     // Move x/y to our coordinates.
-    LayoutRect localRect(m_inlineBox.rect());
+    LayoutRect localRect(m_inlineBox.visualRectIgnoringBlockDirection());
     m_inlineBox.line()->containingBlock().flipForWritingMode(localRect);
     LayoutPoint adjustedPaintOffset = m_paintOffset + localRect.location();
 
@@ -218,7 +218,7 @@ void InlineBoxPainter::paintDecorations()
         return;
 
     // Move x/y to our coordinates.
-    LayoutRect localRect(m_inlineBox.rect());
+    LayoutRect localRect(m_inlineBox.visualRectIgnoringBlockDirection());
     m_inlineBox.line()->containingBlock().flipForWritingMode(localRect);
 
     LayoutPoint adjustedPaintoffset = m_paintOffset + localRect.location();
@@ -305,7 +305,7 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
     if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone) {
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
-        m_paintInfo.context().clip({ rect.x(), rect.y(), LayoutUnit(m_inlineBox.rect().width()), LayoutUnit(m_inlineBox.rect().height()) });
+        m_paintInfo.context().clip({ rect.location(), m_inlineBox.visualRectIgnoringBlockDirection().size() });
         renderer().paintFillLayerExtended(m_paintInfo, color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, { }, op);
         return;
     }
@@ -335,8 +335,8 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
     LayoutRect backgroundImageStrip {
         rect.x() - (isHorizontal() ? logicalOffsetOnLine : 0_lu),
         rect.y() - (isHorizontal() ? 0_lu : logicalOffsetOnLine),
-        isHorizontal() ? totalLogicalWidth : LayoutUnit(m_inlineBox.rect().width()),
-        isHorizontal() ? LayoutUnit(m_inlineBox.rect().height()) : totalLogicalWidth
+        isHorizontal() ? totalLogicalWidth : LayoutUnit(m_inlineBox.visualRectIgnoringBlockDirection().width()),
+        isHorizontal() ? LayoutUnit(m_inlineBox.visualRectIgnoringBlockDirection().height()) : totalLogicalWidth
     };
 
     GraphicsContextStateSaver stateSaver(m_paintInfo.context());

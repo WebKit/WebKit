@@ -542,7 +542,7 @@ void write(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> be
 {
     auto writeTextRun = [&](auto& textRenderer, auto& textRun)
     {
-        auto rect = textRun.rect();
+        auto rect = textRun.visualRectIgnoringBlockDirection();
         int x = rect.x();
         int y = rect.y();
         // FIXME: Use non-logical width. webkit.org/b/206809.

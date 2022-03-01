@@ -614,7 +614,7 @@ LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) cons
 
     // FIXME: We should be able to flip the display boxes soon after the root block
     // is finished sizing in one go.
-    auto firstBoxRect = Layout::toLayoutRect(firstBox->rect());
+    auto firstBoxRect = Layout::toLayoutRect(firstBox->visualRectIgnoringBlockDirection());
     switch (rootLayoutBox().style().writingMode()) {
     case WritingMode::TopToBottom:
     case WritingMode::LeftToRight:
@@ -664,7 +664,7 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
 
     Vector<FloatRect> result;
     m_inlineContent->traverseNonRootInlineBoxes(layoutBox, [&](auto& inlineBox) {
-        result.append(inlineBox.rect());
+        result.append(inlineBox.visualRectIgnoringBlockDirection());
     });
 
     return result;
@@ -811,7 +811,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
             continue;
         }
 
-        auto boxRect = flippedRectForWritingMode(flow(), box.rect());
+        auto boxRect = flippedRectForWritingMode(flow(), box.visualRectIgnoringBlockDirection());
         boxRect.moveBy(accumulatedOffset);
 
         if (!locationInContainer.intersects(boxRect))

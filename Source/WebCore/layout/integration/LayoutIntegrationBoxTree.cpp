@@ -276,7 +276,7 @@ void showInlineContent(TextStream& stream, const InlineContent& inlineContent, s
         auto outputInlineLevelBox = [&](const auto& inlineLevelBox) {
             addSpacing();
             stream << "    ";
-            auto rect = inlineLevelBox.rect();
+            auto rect = inlineLevelBox.visualRectIgnoringBlockDirection();
             auto& layoutBox = inlineLevelBox.layoutBox();
             if (layoutBox.isAtomicInlineLevelBox())
                 stream << "Atomic inline level box";

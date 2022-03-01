@@ -1,3 +1,86 @@
+2022-03-01  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] InlineIterator::Box::rect() returns the unflipped visual rect
+        https://bugs.webkit.org/show_bug.cgi?id=237304
+
+        Reviewed by Antti Koivisto.
+
+        Rename InlineIterator::Box::rect() to visualRectIgnoringBlockDirection().
+        This is the unflipped version of the visual rect. It's no longer logical but
+        when the writing mode sets right-to-left/bottom-to-top block direction, it's not yet visual either.
+        It'll help to indentify callsites where we actually need the flipped version of this visual rect.
+
+        * layout/formattingContexts/inline/display/InlineDisplayBox.h:
+        (WebCore::InlineDisplay::Box::unflippedVisualRect const):
+        (WebCore::InlineDisplay::Box::top const):
+        (WebCore::InlineDisplay::Box::bottom const):
+        (WebCore::InlineDisplay::Box::left const):
+        (WebCore::InlineDisplay::Box::right const):
+        (WebCore::InlineDisplay::Box::width const):
+        (WebCore::InlineDisplay::Box::height const):
+        (WebCore::InlineDisplay::Box::moveVertically):
+        (WebCore::InlineDisplay::Box::moveHorizontally):
+        (WebCore::InlineDisplay::Box::setLeft):
+        (WebCore::InlineDisplay::Box::setRight):
+        (WebCore::InlineDisplay::Box::setTop):
+        (WebCore::InlineDisplay::Box::setBottom):
+        (WebCore::InlineDisplay::Box::setRect):
+        (WebCore::InlineDisplay::Box::Box):
+        (WebCore::InlineDisplay::Box::truncate):
+        (WebCore::InlineDisplay::Box::rect const): Deleted.
+        * layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox):
+        * layout/integration/InlineIteratorBox.h:
+        (WebCore::InlineIterator::Box::logicalTop const):
+        (WebCore::InlineIterator::Box::logicalBottom const):
+        (WebCore::InlineIterator::Box::logicalLeft const):
+        (WebCore::InlineIterator::Box::logicalRight const):
+        (WebCore::InlineIterator::Box::logicalWidth const):
+        (WebCore::InlineIterator::Box::logicalHeight const):
+        (WebCore::InlineIterator::Box::unflippedVisualRect const):
+        (WebCore::InlineIterator::Box::rect const): Deleted.
+        * layout/integration/InlineIteratorBoxLegacyPath.h:
+        (WebCore::InlineIterator::BoxLegacyPath::unflippedVisualRect const):
+        (WebCore::InlineIterator::BoxLegacyPath::rect const): Deleted.
+        * layout/integration/InlineIteratorBoxModernPath.h:
+        (WebCore::InlineIterator::BoxModernPath::unflippedVisualRect const):
+        (WebCore::InlineIterator::BoxModernPath::createTextRun const):
+        (WebCore::InlineIterator::BoxModernPath::rect const): Deleted.
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::showInlineContent):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::firstInlineBoxRect const):
+        (WebCore::LayoutIntegration::LineLayout::collectInlineBoxRects const):
+        (WebCore::LayoutIntegration::LineLayout::hitTest):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::showInlineTreeAndRuns):
+        * rendering/InlineBoxPainter.cpp:
+        (WebCore::InlineBoxPainter::paintMask):
+        (WebCore::InlineBoxPainter::paintDecorations):
+        (WebCore::InlineBoxPainter::paintFillLayer):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::addFocusRingRectsForInlineChildren):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry const):
+        (WebCore::pixelSnapBackgroundImageGeometryForPainting): Deleted.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::linesBoundingBox const):
+        (WebCore::RenderLineBreak::absoluteRects const):
+        (WebCore::RenderLineBreak::absoluteQuads const):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects const):
+        (WebCore::boundariesForTextRun):
+        (WebCore::localQuadForTextRun):
+        (WebCore::RenderText::firstRunLocation const):
+        (WebCore::RenderText::linesBoundingBox const):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::computePaintRect):
+
 2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         focus({preventScroll: true}) does not prevent scrolling on iOS

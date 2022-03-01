@@ -52,7 +52,7 @@ public:
     bool isInlineBox() const { return box().isInlineBox(); }
     bool isRootInlineBox() const { return box().isRootInlineBox(); }
 
-    FloatRect rect() const { return box().rect(); }
+    FloatRect visualRectIgnoringBlockDirection() const { return box().visualRectIgnoringBlockDirection(); }
 
     bool isHorizontal() const { return box().isHorizontal(); }
     bool isLineBreak() const { return box().isLineBreak(); }
@@ -82,7 +82,7 @@ public:
     {
         auto& style = box().style();
         auto expansion = box().expansion();
-        auto rect = this->rect();
+        auto rect = this->visualRectIgnoringBlockDirection();
         auto xPos = rect.x() - (line().lineBoxLeft() + line().contentLogicalOffset());
 
         auto textForRun = [&] {

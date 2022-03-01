@@ -977,7 +977,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
         LayoutUnit top = std::max(line->top(), LayoutUnit(box->logicalTop()));
         LayoutUnit bottom = std::min(line->bottom(), LayoutUnit(box->logicalBottom()));
         // FIXME: This is mixing physical and logical coordinates.
-        rects.append({ LayoutUnit(box->rect().x()), top, LayoutUnit(box->logicalWidth()), bottom - top });
+        rects.append({ LayoutUnit(box->visualRectIgnoringBlockDirection().x()), top, LayoutUnit(box->logicalWidth()), bottom - top });
     }
     rects.append(LayoutRect());
 

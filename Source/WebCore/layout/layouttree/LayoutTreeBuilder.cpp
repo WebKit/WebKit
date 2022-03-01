@@ -386,7 +386,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
         auto outputInlineLevelBox = [&](const auto& inlineLevelBox) {
             addSpacing();
             stream << "    ";
-            auto rect = inlineLevelBox.rect();
+            auto rect = inlineLevelBox.visualRectIgnoringBlockDirection();
             auto& layoutBox = inlineLevelBox.layoutBox();
             if (layoutBox.isAtomicInlineLevelBox())
                 stream << "Atomic inline level box";

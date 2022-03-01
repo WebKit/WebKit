@@ -46,7 +46,7 @@ public:
     bool isInlineBox() const { return m_inlineBox->isInlineFlowBox(); }
     bool isRootInlineBox() const { return m_inlineBox->isRootInlineBox(); }
 
-    FloatRect rect() const { return m_inlineBox->frameRect(); }
+    FloatRect visualRectIgnoringBlockDirection() const { return m_inlineBox->frameRect(); }
 
     bool isHorizontal() const { return m_inlineBox->isHorizontal(); }
     bool isLineBreak() const { return m_inlineBox->isLineBreak(); }
