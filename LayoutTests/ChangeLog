@@ -3,7 +3,17 @@
         [ Win ] 4X imported/mozilla/svg/blend(layout-tests) are constant Image Only Failures
         https://bugs.webkit.org/show_bug.cgi?id=237344
 
+        Unreviewed test gardening. Skipping, for Windows instead of adding an expectation.
+
+        * platform/win/TestExpectations:
+
+2022-03-01  Robert Jenner  <Jenner@apple.com>
+
+        [ Win ] 4X imported/mozilla/svg/blend(layout-tests) are constant Image Only Failures
+        https://bugs.webkit.org/show_bug.cgi?id=237344
+
         Unreviewed test gardening.
+
         * platform/win/TestExpectations:
 
 2022-03-01  Eric Carlson  <eric.carlson@apple.com>

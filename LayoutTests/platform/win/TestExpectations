@@ -5009,7 +5009,7 @@ http/tests/push-api/subscribe-deny-permissions.html [ Failure ]
 http/tests/push-api/subscribe-grant-permissions.html [ Failure ]
 
 # webkit.org/b/237344 [ Win ] 4X imported/mozilla/svg/blend(layout-tests) are constant Image Only Failures
-imported/mozilla/svg/blend-color.svg [ ImageOnlyFailure ]
-imported/mozilla/svg/blend-hard-light.svg [ ImageOnlyFailure ]
-imported/mozilla/svg/blend-hue.svg [ ImageOnlyFailure ]
-imported/mozilla/svg/blend-luminosity.svg [ ImageOnlyFailure ]
+imported/mozilla/svg/blend-color.svg [ Skip ]
+imported/mozilla/svg/blend-hard-light.svg [ Skip ]
+imported/mozilla/svg/blend-hue.svg [ Skip ]
+imported/mozilla/svg/blend-luminosity.svg [ Skip ]
