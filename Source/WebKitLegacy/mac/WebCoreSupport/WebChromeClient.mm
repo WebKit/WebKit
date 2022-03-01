@@ -849,7 +849,7 @@ void WebChromeClient::disableSuddenTermination()
 }
 
 #if !PLATFORM(IOS_FAMILY)
-void WebChromeClient::elementDidFocus(WebCore::Element& element)
+void WebChromeClient::elementDidFocus(WebCore::Element& element, const WebCore::FocusOptions&)
 {
     CallUIDelegate(m_webView, @selector(webView:formDidFocusNode:), kit(&element));
 }

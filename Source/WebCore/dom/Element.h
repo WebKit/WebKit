@@ -574,7 +574,7 @@ public:
     // FIXME: Consider changing signature to accept Element* because all callers perform copyRef().
     void dispatchFocusInEventIfNeeded(RefPtr<Element>&& oldFocusedElement);
     void dispatchFocusOutEventIfNeeded(RefPtr<Element>&& newFocusedElement);
-    virtual void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection);
+    virtual void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions&);
     virtual void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement);
     void dispatchWebKitImageReadyEventForTesting();
 

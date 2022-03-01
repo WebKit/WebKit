@@ -157,7 +157,7 @@ class EmptyChromeClient : public ChromeClient {
     void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&) final;
     void loadIconForFiles(const Vector<String>&, FileIconLoader&) final { }
 
-    void elementDidFocus(Element&) final { }
+    void elementDidFocus(Element&, const FocusOptions&) final { }
     void elementDidBlur(Element&) final { }
 
     void setCursor(const Cursor&) final { }

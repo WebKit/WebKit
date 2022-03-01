@@ -734,8 +734,8 @@ public:
     MediaKeySystemPermissionRequestManager& mediaKeySystemPermissionRequestManager() { return m_mediaKeySystemPermissionRequestManager; }
 #endif
 
-    void elementDidFocus(WebCore::Element&);
-    void elementDidRefocus(WebCore::Element&);
+    void elementDidFocus(WebCore::Element&, const WebCore::FocusOptions&);
+    void elementDidRefocus(WebCore::Element&, const WebCore::FocusOptions&);
     void elementDidBlur(WebCore::Element&);
     void focusedElementDidChangeInputMode(WebCore::Element&, WebCore::InputMode);
     void resetFocusedElementForFrame(WebFrame*);

@@ -1,3 +1,34 @@
+2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        focus({preventScroll: true}) does not prevent scrolling on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236584
+        rdar://88911184
+
+        Reviewed by Simon Fraser.
+
+        Plumb `FocusOptions` through `Element::dispatchFocusEvent()` as well as the chrome client hooks for
+        `elementDidRefocus` and `elementDidFocus`, instead of just a `FocusDirection` flag.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement):
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        (WebCore::Element::dispatchFocusEvent):
+        * dom/Element.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::dispatchFocusEvent):
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::dispatchFocusEvent):
+        * html/HTMLTextFormControlElement.h:
+        * loader/EmptyClients.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::elementDidFocus):
+        (WebCore::ChromeClient::elementDidRefocus):
+        * page/FocusController.cpp:
+        (WebCore::dispatchEventsOnWindowAndFocusedElement):
+        (WebCore::FocusController::setFocusedElement):
+
 2022-03-01  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r273129): Text contents in <span> with opacity not repainting/updating when sibling element has "will-change: transform"

@@ -135,6 +135,7 @@ struct ContactsRequestData;
 struct ContentRuleListResults;
 struct DataDetectorElementInfo;
 struct DateTimeChooserParameters;
+struct FocusOptions;
 struct GraphicsDeviceAdapter;
 struct MockWebAuthenticationConfiguration;
 struct SecurityOriginData;
@@ -346,9 +347,9 @@ public:
     // Asynchronous request to load an icon for specified filenames.
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader&) = 0;
         
-    virtual void elementDidFocus(Element&) { }
+    virtual void elementDidFocus(Element&, const FocusOptions&) { }
     virtual void elementDidBlur(Element&) { }
-    virtual void elementDidRefocus(Element&) { }
+    virtual void elementDidRefocus(Element&, const FocusOptions&) { }
 
     virtual void focusedElementDidChangeInputMode(Element&, InputMode) { }
 

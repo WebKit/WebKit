@@ -1,3 +1,17 @@
+2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        focus({preventScroll: true}) does not prevent scrolling on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236584
+        rdar://88911184
+
+        Reviewed by Simon Fraser.
+
+        Adjust the method signature of elementDidFocus. See WebCore ChangeLog for more information.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::elementDidFocus):
+
 2022-02-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Invoking "Markup Image" should preserve the existing selection range

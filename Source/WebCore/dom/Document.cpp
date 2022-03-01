@@ -4713,7 +4713,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         }
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
-        m_focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), options.direction);
+        m_focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), options);
 
         if (m_focusedElement != newFocusedElement) {
             // handler shifted focus

@@ -591,6 +591,9 @@ window.UIHelper = class UIHelper {
 
     static waitForInputSessionToDismiss()
     {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
         return new Promise(resolve => {
             testRunner.runUIScript(`
                 (function() {

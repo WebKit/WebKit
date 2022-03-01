@@ -119,7 +119,7 @@ private:
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isMouseFocusable() const final;
 
-    void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection) final;
+    void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions&) final;
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) final;
     
     bool canStartSelection() const final { return false; }

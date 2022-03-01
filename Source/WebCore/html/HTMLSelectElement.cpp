@@ -949,13 +949,13 @@ int HTMLSelectElement::listToOptionIndex(int listIndex) const
     return optionIndex;
 }
 
-void HTMLSelectElement::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection direction)
+void HTMLSelectElement::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions& options)
 {
     // Save the selection so it can be compared to the new selection when
     // dispatching change events during blur event dispatch.
     if (usesMenuList())
         saveLastSelection();
-    HTMLFormControlElementWithState::dispatchFocusEvent(WTFMove(oldFocusedElement), direction);
+    HTMLFormControlElementWithState::dispatchFocusEvent(WTFMove(oldFocusedElement), options);
 }
 
 void HTMLSelectElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)

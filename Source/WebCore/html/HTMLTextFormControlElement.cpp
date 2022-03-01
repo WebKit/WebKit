@@ -125,12 +125,12 @@ void HTMLTextFormControlElement::setHovered(bool over, Style::InvalidationScope 
     updatePlaceholderVisibility();
 }
 
-void HTMLTextFormControlElement::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection direction)
+void HTMLTextFormControlElement::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions& options)
 {
     if (supportsPlaceholder())
         updatePlaceholderVisibility();
-    handleFocusEvent(oldFocusedElement.get(), direction);
-    HTMLFormControlElementWithState::dispatchFocusEvent(WTFMove(oldFocusedElement), direction);
+    handleFocusEvent(oldFocusedElement.get(), options.direction);
+    HTMLFormControlElementWithState::dispatchFocusEvent(WTFMove(oldFocusedElement), options);
 }
 
 void HTMLTextFormControlElement::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)

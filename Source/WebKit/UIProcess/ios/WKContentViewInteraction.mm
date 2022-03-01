@@ -2389,6 +2389,9 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_zoomToRevealFocusedElement
 {
+    if (_focusedElementInformation.preventScroll)
+        return;
+
     if (_suppressSelectionAssistantReasons || _activeTextInteractionCount)
         return;
 
@@ -6827,6 +6830,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     _focusedElementInformation.shouldAvoidScrollingWhenFocusedContentIsVisible = false;
     _focusedElementInformation.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation = false;
     _focusedElementInformation.isFocusingWithValidationMessage = false;
+    _focusedElementInformation.preventScroll = false;
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
     _autocorrectionContextNeedsUpdate = YES;

@@ -6151,9 +6151,9 @@ void WebPage::resetFocusedElementForFrame(WebFrame* frame)
     }
 }
 
-void WebPage::elementDidRefocus(WebCore::Element& element)
+void WebPage::elementDidRefocus(Element& element, const FocusOptions& options)
 {
-    elementDidFocus(element);
+    elementDidFocus(element, options);
 
     if (m_userIsInteracting)
         scheduleFullEditorStateUpdate();
@@ -6176,7 +6176,7 @@ static bool isTextFormControlOrEditableContent(const WebCore::Element& element)
     return is<HTMLTextFormControlElement>(element) || element.hasEditableStyle();
 }
 
-void WebPage::elementDidFocus(WebCore::Element& element)
+void WebPage::elementDidFocus(Element& element, const FocusOptions& options)
 {
     if (!shouldDispatchUpdateAfterFocusingElement(element)) {
         updateInputContextAfterBlurringAndRefocusingElementIfNeeded(element);
@@ -6204,6 +6204,7 @@ void WebPage::elementDidFocus(WebCore::Element& element)
 
         m_formClient->willBeginInputSession(this, &element, WebFrame::fromCoreFrame(*element.document().frame()), m_userIsInteracting, userData);
 
+        information->preventScroll = options.preventScroll;
         send(Messages::WebPageProxy::ElementDidFocus(information.value(), m_userIsInteracting, m_recentlyBlurredElement, m_lastActivityStateChanges, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 #elif PLATFORM(MAC)
         // FIXME: This can be unified with the iOS code above by bringing ElementDidFocus to macOS.

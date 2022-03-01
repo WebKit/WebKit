@@ -145,7 +145,7 @@ private:
     int computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
 
-    void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection) final;
+    void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions&) final;
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) final;
     bool childShouldCreateRenderer(const Node&) const override;
     

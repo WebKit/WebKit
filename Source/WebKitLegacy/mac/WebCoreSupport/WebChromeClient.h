@@ -176,7 +176,7 @@ private:
     void disableSuddenTermination() final;
 
 #if !PLATFORM(IOS_FAMILY)
-    void elementDidFocus(WebCore::Element&) override;
+    void elementDidFocus(WebCore::Element&, const WebCore::FocusOptions&) override;
     void elementDidBlur(WebCore::Element&) override;
 #endif
 

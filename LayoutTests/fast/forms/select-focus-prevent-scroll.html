@@ -1,0 +1,53 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<style>
+button {
+    margin-bottom: 8000px;
+}
+</style>
+</head>
+<body>
+    <div><button id="focus">Focus <code>select</code></button></div>
+    <select name="select">
+        <option value="1">First</option>
+        <option value="2">Second</option>
+    </select>
+</body>
+<script>
+jsTestIsAsync = true;
+description("Verifies that programmatically focusing a select element with <code>preventScroll: true</code> does not cause the page to scroll. To run the test manually, tap or click the button and check that the page does not scroll to the bottom.");
+
+let focusButton = document.getElementById("focus");
+select = document.querySelector("select");
+
+focusButton.addEventListener("click", event => {
+    event.preventDefault();
+    select.focus({ preventScroll: true });
+    if (!window.testRunner) {
+        checkScrollOffsetAndFocusedElement();
+        finishJSTest();
+    }
+});
+
+function checkScrollOffsetAndFocusedElement() {
+    shouldBe("document.activeElement", "select");
+    shouldBe("pageYOffset", "0");
+}
+
+addEventListener("load", async () => {
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.activateElementAndWaitForInputSession(focusButton);
+    shouldBe("document.activeElement", "select");
+    shouldBe("pageYOffset", "0");
+    document.activeElement.blur();
+    await UIHelper.waitForInputSessionToDismiss();
+    finishJSTest();
+});
+</script>
+</html>
