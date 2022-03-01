@@ -273,6 +273,7 @@ angle::Result VertexArrayMtl::syncState(const gl::Context *context,
             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:
             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER_DATA:
             {
+                mElementArrayDirty = true;
                 break;
             }
 
@@ -475,22 +476,37 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
                 }
 
                 desc.layouts[bufferIdx].stride = mCurrentArrayBufferStrides[v];
-
-                if (mCurrentArrayBuffers[v])
-                {
-                    cmdEncoder->setVertexBuffer(mCurrentArrayBuffers[v]->getCurrentBuffer(),
-                                                bufferOffset, bufferIdx);
-                }
-                else
-                {
-                    // No buffer specified, use the client memory directly as inline constant data
-                    ASSERT(mCurrentArrayInlineDataSizes[v] <= mInlineDataMaxSize);
-                    cmdEncoder->setVertexBytes(mCurrentArrayInlineDataPointers[v],
-                                               mCurrentArrayInlineDataSizes[v], bufferIdx);
-                }
             }
         }  // for (v)
     }
+
+    if(dirty || mElementArrayDirty)
+    {
+        mElementArrayDirty = false;
+        const gl::ProgramExecutable *executable = glContext->getState().getProgramExecutable();
+        const gl::AttributesMask &programActiveAttribsMask =
+                executable->getActiveAttribLocationsMask();
+
+        for (uint32_t v = 0; v < mtl::kMaxVertexAttribs; ++v)
+        {
+            uint32_t bufferIdx    = mtl::kVboBindingIndexStart + v;
+            uint32_t bufferOffset = static_cast<uint32_t>(mCurrentArrayBufferOffsets[v]);
+            if (mCurrentArrayBuffers[v])
+            {
+                cmdEncoder->setVertexBuffer(mCurrentArrayBuffers[v]->getCurrentBuffer(),
+                                            bufferOffset, bufferIdx);
+            }
+            else
+            {
+                // No buffer specified, use the client memory directly as inline constant data
+                ASSERT(mCurrentArrayInlineDataSizes[v] <= mInlineDataMaxSize);
+                cmdEncoder->setVertexBytes(mCurrentArrayInlineDataPointers[v],
+                                           mCurrentArrayInlineDataSizes[v], bufferIdx);
+            }
+
+        }
+    }
+
 
     *vertexDescChanged = dirty;
 
