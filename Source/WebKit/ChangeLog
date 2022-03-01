@@ -1,3 +1,25 @@
+2022-02-28  Chris Dumez  <cdumez@apple.com>
+
+        [IPC] Do more hardening in WebSWServerConnection's client registration / unregistration
+        https://bugs.webkit.org/show_bug.cgi?id=237290
+        <rdar://88903506>
+
+        Reviewed by Alex Christensen.
+
+        Validate client identifiers sent by the WebContent process via IPC to make sure that the
+        process identifier of the client actually matches the process identifier of the process
+        we're connected to.
+
+        Also validate the SecurityOriginData to make sure it is not empty. We support sending
+        empty SecurityOriginData objects over IPC. However, they cannot be used as keys in
+        HashMaps.
+
+        If validation fails, we assume the WebContent process is compromised and we terminate it.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::registerServiceWorkerClient):
+        (WebKit::WebSWServerConnection::unregisterServiceWorkerClient):
+
 2022-02-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix use-after-move bug in NetworkResourceLoader
