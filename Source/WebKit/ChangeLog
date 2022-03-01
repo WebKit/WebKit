@@ -1,5 +1,38 @@
 2022-03-01  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290066. rdar://problem/89072361
+
+    [macOS][WP] Add required syscall to sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=236781
+    <rdar://89072361>
+    
+    Reviewed by Chris Dumez.
+    
+    Add required syscall to the WebContent process' sandbox on macOS. This patch also adds back a set of
+    syscalls that were removed in https://commits.webkit.org/r286778 for current and previous versions
+    of macOS. These syscalls will be denied going forward.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290066 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-17  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS][WP] Add required syscall to sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=236781
+            <rdar://89072361>
+
+            Reviewed by Chris Dumez.
+
+            Add required syscall to the WebContent process' sandbox on macOS. This patch also adds back a set of
+            syscalls that were removed in https://commits.webkit.org/r286778 for current and previous versions
+            of macOS. These syscalls will be denied going forward.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2022-03-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290005. rdar://problem/87596724
 
     CrashTracer: com.apple.WebKit.WebContent at JavaScriptCore: bmalloc_allocate_impl_impl_slow
