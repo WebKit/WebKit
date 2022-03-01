@@ -1,3 +1,40 @@
+2022-02-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r289443. rdar://problem/88593617
+
+    REGRESSION (15.4): Angular virtual scrollers no longer work (because of contain:strict)
+    https://bugs.webkit.org/show_bug.cgi?id=236260
+    
+    Patch by Rob Buis <rbuis@igalia.com> on 2022-02-08
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-contain/contain-paint-049-expected.txt: Added.
+    * web-platform-tests/css/css-contain/contain-paint-049.html: Added.
+    
+    Source/WebCore:
+    
+    Paint containment did not allow collecting scrollable overflow, breaking scrolling
+    of the container contents, this patch fixes that.
+    
+    Test: imported/w3c/web-platform-tests/css/css-contain/contain-paint-049.html
+    
+    * rendering/RenderBox.cpp:
+    (WebCore::RenderBox::addOverflowFromChild):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289443 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-08  Rob Buis  <rbuis@igalia.com>
+
+            REGRESSION (15.4): Angular virtual scrollers no longer work (because of contain:strict)
+            https://bugs.webkit.org/show_bug.cgi?id=236260
+
+            Reviewed by Simon Fraser.
+
+            * web-platform-tests/css/css-contain/contain-paint-049-expected.txt: Added.
+            * web-platform-tests/css/css-contain/contain-paint-049.html: Added.
+
 2022-02-14  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289682. rdar://problem/88843567
