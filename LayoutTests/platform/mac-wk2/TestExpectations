@@ -1491,9 +1491,6 @@ webkit.org/b/227639 [ BigSur Release ] fast/history/visited-href-mutation.html [
 # rdar://80342948 ([ Monterey wk2 ] http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html is a Flaky failure)
 [ Monterey ] http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html [ Pass Failure ]
 
-# rdar://80340405 ([ Monterey wk2 Release ] http/tests/media/video-webm-stall.html is a constant timeout)
-[ Monterey ] http/tests/media/video-webm-stall.html [ Timeout ]
-
 # rdar://80335706 (REGRESSION: [ Monterey wk2 ] fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ])
 [ Monterey ] fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
 
@@ -1675,6 +1672,8 @@ platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Skip ]
 webkit.org/b/232492 [ BigSur Debug ] webrtc/video-receivers.html [ Pass Crash ]
 
 webkit.org/b/236328 [ Monterey ] webaudio/decode-audio-data-webm-vorbis.html [ Failure ]
+
+webkit.org/b/236788 [ Monterey ] http/tests/media/video-webm-stall.html [ Failure ]
 
 webkit.org/b/232497 [ BigSur Debug ] media/media-source/media-source-istypesupported-case-sensitive.html [ Pass Crash ]
 

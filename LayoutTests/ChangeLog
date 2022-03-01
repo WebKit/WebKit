@@ -1,5 +1,14 @@
 2022-03-01  Matteo Flores  <matteo_flores@apple.com>
 
+        [ Monterey wk2 ] http/tests/media/video-webm-stall.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=236788
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2022-03-01  Matteo Flores  <matteo_flores@apple.com>
+
         [ Monterey ] webaudio/decode-audio-data-webm-vorbis.html is constantly failing
         https://bugs.webkit.org/show_bug.cgi?id=236328
 
