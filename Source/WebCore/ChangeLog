@@ -1,3 +1,19 @@
+2022-03-01  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r285232) https://alvaromontoro.github.io/almond.css/demo/ looks wrong in Safari, ok in Chrome and Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=237276
+        <rdar://problem/89566459>
+
+        Reviewed by Simon Fraser.
+
+        r285232 introduced the isFixed() check as a resolvable preferred width type, but percent values are also resolvable as
+        block layout gets the horizontal constraint from the containing block chain (unlike the height percent values) -i.e. 'width: 50%' can be resolved during preferred width computation.
+
+        Test: fast/css-grid-layout/ascpect-ratio-with-percent-width.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::availableLogicalHeightForPercentageComputation const):
+
 2022-03-01  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Misc compiler warnings, late Feb 2022 edition
