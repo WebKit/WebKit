@@ -1,3 +1,57 @@
+2022-02-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r289377. rdar://problem/88178304
+
+    Return 'none' for the computed style of mask when there are no mask images
+    https://bugs.webkit.org/show_bug.cgi?id=236265
+    <rdar://88178304>
+    
+    Patch by Matt Woodrow <mattwoodrow@apple.com> on 2022-02-08
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    Rather than returning all the longhand properties, return 'none' if there are no
+    mask images. This no longer matches the behaviour of the 'background' property, but
+    better matches what other UAs do.
+    
+    Ideally we'd return the smallest possible canonical representation of the non-initial
+    property values, but this is a much simpler change to fix a compat regression.
+    
+    Test: fast/masking/parsing-mask.html
+    Updates expected results to match new behavior.
+    
+    * css/CSSComputedStyleDeclaration.cpp:
+    (WebCore::ComputedStyleExtractor::getLayerCount):
+    (WebCore::ComputedStyleExtractor::getFillLayerPropertyShorthandValue):
+    (WebCore::ComputedStyleExtractor::getBackgroundShorthandValue):
+    (WebCore::ComputedStyleExtractor::getMaskShorthandValue):
+    * css/CSSComputedStyleDeclaration.h:
+    
+    LayoutTests:
+    
+    * fast/masking/parsing-mask-expected.txt:
+    * fast/masking/parsing-mask.html:
+    
+    Updated expected results to expect 'none' for all cases where there isn't an actual mask
+    image.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289377 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-08  Matt Woodrow  <mattwoodrow@apple.com>
+
+            Return 'none' for the computed style of mask when there are no mask images
+            https://bugs.webkit.org/show_bug.cgi?id=236265
+            <rdar://88178304>
+
+            Reviewed by Dean Jackson.
+
+            * fast/masking/parsing-mask-expected.txt:
+            * fast/masking/parsing-mask.html:
+
+            Updated expected results to expect 'none' for all cases where there isn't an actual mask
+            image.
+
 2022-02-15  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289776. rdar://problem/88656665
