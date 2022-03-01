@@ -1,3 +1,51 @@
+2022-03-01  Youenn Fablet  <youenn@apple.com>
+
+        Annotate LibWebRTC with thread safety macros
+        https://bugs.webkit.org/show_bug.cgi?id=237321
+
+        Reviewed by Eric Carlson.
+
+        LibWebRTCCodecs works with 3 threads and we add macros to make it clear where each thread is used:
+        - the main thread to get its GPU process connection (isMainRunLoop()).
+        - the libwebrtc thread where it gets orders to decode/encode frames (!isMainRunLoop())
+        - the work queue thread where it is receiving encode/decode results (assertIsCurrent(workQueue())).
+
+        Rename m_encodersLock to m_encodersConnectionLock to make it clear this is about locking the encoder connection and not the encoder map.
+        Both decoder and encoder maps should only be touched on the workQueue thread.
+
+        Introduce encoderConnection/setEncoderConnection and decoderConnection/setDecoderConnection routines.
+        These methods are guarded by corresponding locks.
+        This requires adding some additional locks when accessing connections in workQueue thread.
+        Fix a potential issue when creating the encoder: we lock the encoderConnection lock earlier when setting the connection.
+
+        Covered by existing tests.
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::gpuProcessConnectionMayNoLongerBeNeeded):
+        (WebKit::LibWebRTCCodecs::createDecoder):
+        (WebKit::LibWebRTCCodecs::releaseDecoder):
+        (WebKit::LibWebRTCCodecs::decodeFrame):
+        (WebKit::LibWebRTCCodecs::registerDecodeFrameCallback):
+        (WebKit::LibWebRTCCodecs::failedDecoding):
+        (WebKit::LibWebRTCCodecs::completedDecoding):
+        (WebKit::LibWebRTCCodecs::completedDecodingCV):
+        (WebKit::LibWebRTCCodecs::createEncoder):
+        (WebKit::LibWebRTCCodecs::releaseEncoder):
+        (WebKit::LibWebRTCCodecs::initializeEncoder):
+        (WebKit::LibWebRTCCodecs::copySharedVideoFrame):
+        (WebKit::LibWebRTCCodecs::encodeFrame):
+        (WebKit::LibWebRTCCodecs::registerEncodeFrameCallback):
+        (WebKit::LibWebRTCCodecs::setEncodeRates):
+        (WebKit::LibWebRTCCodecs::completedEncoding):
+        (WebKit::LibWebRTCCodecs::gpuProcessConnectionDidClose):
+        (WebKit::LibWebRTCCodecs::encoderConnection):
+        (WebKit::LibWebRTCCodecs::setEncoderConnection):
+        (WebKit::LibWebRTCCodecs::decoderConnection):
+        (WebKit::LibWebRTCCodecs::setDecoderConnection):
+        (WebKit::copySharedVideoFrame): Deleted.
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        (WebKit::LibWebRTCCodecs::workQueue const):
+
 2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         focus({preventScroll: true}) does not prevent scrolling on iOS
