@@ -1,4 +1,4 @@
-# Speedometer 2.0: Vue.js TodoMVC example
+# Speedometer 2.1: Vue.js TodoMVC example
 
 ## Test locally
 

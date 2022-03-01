@@ -49,8 +49,12 @@ BenchmarkRunner.prototype.waitForElement = function (selector) {
 
     function resolveIfReady() {
         var element = contentDocument.querySelector(selector);
-        if (element)
-            return promise.resolve(element);
+        if (element) {
+            window.requestAnimationFrame(function () {
+                return promise.resolve(element);
+            });
+            return;
+        }
         setTimeout(resolveIfReady, 50);
     }
 
@@ -142,7 +146,9 @@ BenchmarkRunner.prototype._runTest = function(suite, test, prepareReturnValue, c
         var endTime = now();
         self._frame.contentWindow._unusedHeightValue = height; // Prevent dead code elimination.
         self._writeMark(suite.name + '.' + test.name + '-async-end');
-        callback(syncTime, endTime - startTime, height);
+        window.requestAnimationFrame(function () {
+            callback(syncTime, endTime - startTime, height);
+        });
     }, 0);
 }
 

@@ -1,3 +1,40 @@
+2022-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Fix Speedometer's setTimeout throttling issue
+        https://bugs.webkit.org/show_bug.cgi?id=237303
+        rdar://89444976
+
+        Reviewed by Geoffrey Garen.
+
+        Speedometer is driving each test via setTimeout. Because we are using setTimeout to
+        measure async time in each subtest of Speedometer, our measurement included 4ms
+        throttle introduced due to nested setTimeout. This is happening in the test
+        harness (not test itself), and the intention of this test harness is not measuring
+        the throttle time. In this patch, we fix this nesting level propagation by inserting
+        window.requestAnimationFrame for each test run and BenchmarkRunner.prototype.waitForElement
+        so that we can reset nesting level count of setTimeout, which prevents the rendering
+        engine to insert 4ms throttle.
+
+        Since this affects on the score of async measurement, we bump the version number from 2.0 to 2.1
+
+        * Speedometer/InteractiveRunner.html:
+        * Speedometer/index.html:
+        * Speedometer/resources/benchmark-runner.js:
+        (resolveIfReady):
+        (BenchmarkRunner.prototype.waitForElement):
+        (BenchmarkRunner.prototype._runTest):
+        * Speedometer/resources/todomvc/architecture-examples/angular/README.md:
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/readme.md:
+        * Speedometer/resources/todomvc/architecture-examples/backbone/readme.md:
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/README.md:
+        * Speedometer/resources/todomvc/architecture-examples/preact/README.md:
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/README.md:
+        * Speedometer/resources/todomvc/architecture-examples/react/README.md:
+        * Speedometer/resources/todomvc/architecture-examples/vuejs-cli/README.md:
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/README.md:
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/README.md:
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/readme.md:
+
 2022-02-18  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r290149.

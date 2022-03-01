@@ -1,4 +1,4 @@
-# Speedometer 2.0: Backbone.js TodoMVC example
+# Speedometer 2.1: Backbone.js TodoMVC example
 
 ## Test locally
 

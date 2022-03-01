@@ -1,4 +1,4 @@
-# Speedometer 2.0: React TodoMVC example
+# Speedometer 2.1: React TodoMVC example
 
 ## Test locally
 

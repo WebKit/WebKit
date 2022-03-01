@@ -1,4 +1,4 @@
-# Speedometer 2.0: Ember.js TodoMVC example
+# Speedometer 2.1: Ember.js TodoMVC example
 
 ## Test locally
 

@@ -1,4 +1,4 @@
-# Speedometer 2.0: ES2015 + Babel + Webpack TodoMVC example
+# Speedometer 2.1: ES2015 + Babel + Webpack TodoMVC example
 
 ## Test locally
 

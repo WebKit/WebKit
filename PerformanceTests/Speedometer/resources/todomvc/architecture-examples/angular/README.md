@@ -1,4 +1,4 @@
-# Speedometer 2.0: Angular 4 TodoMVC example
+# Speedometer 2.1: Angular 4 TodoMVC example
 
 ## Test locally
 

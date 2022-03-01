@@ -1,4 +1,4 @@
-# Speedometer 2.0: Preact TodoMVC example
+# Speedometer 2.1: Preact TodoMVC example
 
 ## Test locally
 
