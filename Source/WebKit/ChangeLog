@@ -1,3 +1,13 @@
+2022-02-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION(r290470): CDMInstanceSession::setLogIdentifier must be guarded with !RELEASE_LOG_DISABLED
+        https://bugs.webkit.org/show_bug.cgi?id=237302
+
+        Unreviewed build fix.
+
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.cpp:
+        (WebKit::RemoteCDMInstanceSessionProxy::setLogIdentifier):
+
 2022-02-28  Sihui Liu  <sihui_liu@apple.com>
 
         [macOS] TestWebKitAPI.WebKit.MigrateLocalStorageDataToGeneralStorageDirectory is a flaky failure

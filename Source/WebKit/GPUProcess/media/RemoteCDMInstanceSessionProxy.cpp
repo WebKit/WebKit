@@ -59,7 +59,11 @@ RemoteCDMInstanceSessionProxy::~RemoteCDMInstanceSessionProxy()
 
 void RemoteCDMInstanceSessionProxy::setLogIdentifier(uint64_t logIdentifier)
 {
+#if !RELEASE_LOG_DISABLED
     m_session->setLogIdentifier(reinterpret_cast<const void*>(logIdentifier));
+#else
+    UNUSED_PARAM(logIdentifier);
+#endif
 }
 
 void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, AtomString initDataType, IPC::SharedBufferCopy&& initData, LicenseCallback&& completion)
