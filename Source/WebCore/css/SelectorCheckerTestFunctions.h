@@ -115,7 +115,7 @@ ALWAYS_INLINE bool isChecked(const Element& element)
         return inputElement.shouldAppearChecked() && !inputElement.shouldAppearIndeterminate();
     }
     if (is<HTMLOptionElement>(element))
-        return const_cast<HTMLOptionElement&>(downcast<HTMLOptionElement>(element)).selected();
+        return const_cast<HTMLOptionElement&>(downcast<HTMLOptionElement>(element)).selected(AllowStyleInvalidation::No);
 
     return false;
 }

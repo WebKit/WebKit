@@ -1,3 +1,47 @@
+2022-03-01  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r289693. rdar://problem/88264857
+
+    Suppress style invalidation when matching :checked
+    https://bugs.webkit.org/show_bug.cgi?id=235910
+    
+    Patch by Rob Buis <rbuis@igalia.com> on 2022-02-12
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    Suppress style invalidation when matching :checked for option elements.
+    
+    Test: fast/selectors/has-select-option-crash.html
+    
+    * css/SelectorCheckerTestFunctions.h:
+    (WebCore::isChecked):
+    * html/HTMLOptionElement.cpp:
+    (WebCore::HTMLOptionElement::selected const):
+    (WebCore::HTMLOptionElement::setSelectedState):
+    * html/HTMLOptionElement.h:
+    * html/HTMLSelectElement.cpp:
+    (WebCore::HTMLSelectElement::updateListItemSelectedStates):
+    (WebCore::HTMLSelectElement::recalcListItems const):
+    * html/HTMLSelectElement.h:
+    
+    LayoutTests:
+    
+    * fast/selectors/has-select-option-crash-expected.txt: Added.
+    * fast/selectors/has-select-option-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289693 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-12  Rob Buis  <rbuis@igalia.com>
+
+            Suppress style invalidation when matching :checked
+            https://bugs.webkit.org/show_bug.cgi?id=235910
+
+            Reviewed by Antti Koivisto.
+
+            * fast/selectors/has-select-option-crash-expected.txt: Added.
+            * fast/selectors/has-select-option-crash.html: Added.
+
 2022-02-28  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289526. rdar://problem/87061239
