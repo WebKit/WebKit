@@ -1,3 +1,12 @@
+2022-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        [AppleWin] Start using Visual Studio 2022
+        https://bugs.webkit.org/show_bug.cgi?id=234933
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebCore.vcxproj/WebCore.proj:
+
 2022-03-01  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] add support for passing an optional timeline to Element.animate()

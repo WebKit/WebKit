@@ -1,3 +1,12 @@
+2022-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        [AppleWin] Start using Visual Studio 2022
+        https://bugs.webkit.org/show_bug.cgi?id=234933
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebKitLegacy.vcxproj/WebKitLegacy.proj:
+
 2022-02-22  Chris Dumez  <cdumez@apple.com>
 
         Avoid having to iterate the whole frame tree(s) every time we need to dispatch storage events
