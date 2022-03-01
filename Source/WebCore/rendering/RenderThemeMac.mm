@@ -1095,27 +1095,52 @@ void RenderThemeMac::adjustImageControlsButtonStyle(RenderStyle& style, const El
 }
 #endif
 
+bool RenderThemeMac::shouldPaintCustomTextField(const RenderObject& renderer) const
+{
+    // <rdar://problem/88948646> Prevent AppKit from painting text fields in the light appearance
+    // with increased contrast, as the border is not painted, rendering the control invisible.
+#if HAVE(LARGE_CONTROL_SIZE)
+    return Theme::singleton().userPrefersContrast() && !renderer.useDarkAppearance();
+#else
+    UNUSED_PARAM(renderer);
+    return false;
+#endif
+}
+
 bool RenderThemeMac::paintTextField(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& r)
 {
-    LocalCurrentGraphicsContext localContext(paintInfo.context());
+    FloatRect paintRect(r);
+    auto& context = paintInfo.context();
 
-    // <rdar://problem/22896977> We adjust the paint rect here to account for how AppKit draws the text
-    // field cell slightly smaller than the rect we pass to drawWithFrame.
-    FloatRect adjustedPaintRect(r);
-    AffineTransform transform = paintInfo.context().getCTM();
-    if (transform.xScale() > 1 || transform.yScale() > 1) {
-        adjustedPaintRect.inflateX(1 / transform.xScale());
-        adjustedPaintRect.inflateY(2 / transform.yScale());
-        adjustedPaintRect.move(0, -1 / transform.yScale());
+    LocalCurrentGraphicsContext localContext(context);
+    GraphicsContextStateSaver stateSaver(context);
+
+    auto enabled = isEnabled(o) && !isReadOnlyControl(o);
+
+    if (shouldPaintCustomTextField(o)) {
+        constexpr int strokeThickness = 1;
+
+        FloatRect strokeRect(paintRect);
+        strokeRect.inflate(-strokeThickness / 2.0f);
+
+        context.setStrokeColor(enabled ? Color::black : Color::darkGray);
+        context.setStrokeStyle(SolidStroke);
+        context.strokeRect(strokeRect, strokeThickness);
+    } else {
+        // <rdar://problem/22896977> We adjust the paint rect here to account for how AppKit draws the text
+        // field cell slightly smaller than the rect we pass to drawWithFrame.
+        AffineTransform transform = context.getCTM();
+        if (transform.xScale() > 1 || transform.yScale() > 1) {
+            paintRect.inflateX(1 / transform.xScale());
+            paintRect.inflateY(2 / transform.yScale());
+            paintRect.move(0, -1 / transform.yScale());
+        }
+
+        NSTextFieldCell *textField = this->textField();
+        [textField setEnabled:enabled];
+        [textField drawWithFrame:NSRect(paintRect) inView:documentViewFor(o)];
+        [textField setControlView:nil];
     }
-    NSTextFieldCell *textField = this->textField();
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-    [textField setEnabled:(isEnabled(o) && !isReadOnlyControl(o))];
-    [textField drawWithFrame:NSRect(adjustedPaintRect) inView:documentViewFor(o)];
-
-    [textField setControlView:nil];
 
 #if ENABLE(DATALIST_ELEMENT)
     if (!is<HTMLInputElement>(o.generatingNode()))
@@ -1123,7 +1148,7 @@ bool RenderThemeMac::paintTextField(const RenderObject& o, const PaintInfo& pain
 
     const auto& input = downcast<HTMLInputElement>(*(o.generatingNode()));
     if (input.list())
-        paintListButtonForInput(o, paintInfo.context(), adjustedPaintRect);
+        paintListButtonForInput(o, context, paintRect);
 #endif
 
     return false;
