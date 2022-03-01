@@ -87,7 +87,11 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader& loader)
 
 bool CachedFont::ensureCustomFontData(const AtomString&)
 {
-    return ensureCustomFontData(m_data.get());
+    if (!m_data)
+        return ensureCustomFontData(nullptr);
+    if (!m_data->isContiguous())
+        m_data = m_data->makeContiguous();
+    return ensureCustomFontData(downcast<SharedBuffer>(m_data.get()));
 }
 
 String CachedFont::calculateItemInCollection() const

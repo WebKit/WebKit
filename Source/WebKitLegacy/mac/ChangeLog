@@ -1,3 +1,79 @@
+2022-03-01  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r290005. rdar://problem/87596724
+
+    CrashTracer: com.apple.WebKit.WebContent at JavaScriptCore: bmalloc_allocate_impl_impl_slow
+    https://bugs.webkit.org/show_bug.cgi?id=236695
+    rdar://87596724
+    
+    Reviewed by Jer Noble.
+    
+    Source/WebCore:
+    
+    When a new FragmentedSharedBuffer is received from the network process, it is proactively coalesced
+    into a SharedBuffer during each call to CachedResource::updateBuffer(). This causes a large number
+    of re-allocations and copies; essentially re-allocating each time the resource's buffer receives
+    one more chunk of data.
+    Instead we only flatten the data buffer once all data have been received.
+    
+    Running speedtest.net with a gigabit link, we see a reduction of peak
+    memory use in the content process by about 40% (from 740MB to under 440MB of
+    physical memory, 1.7GB of memory allocation vs 535MB)
+    
+    Covered by existing tests.
+    
+    * editing/ios/EditorIOS.mm:
+    (WebCore::Editor::writeImageToPasteboard):
+    * editing/mac/EditorMac.mm:
+    (WebCore::Editor::writeImageToPasteboard):
+    * loader/DocumentThreadableLoader.cpp:
+    (WebCore::DocumentThreadableLoader::didFinishLoading):
+    * loader/cache/CachedApplicationManifest.cpp:
+    (WebCore::CachedApplicationManifest::finishLoading):
+    * loader/cache/CachedCSSStyleSheet.cpp:
+    (WebCore::CachedCSSStyleSheet::finishLoading):
+    * loader/cache/CachedFont.cpp:
+    (WebCore::CachedFont::ensureCustomFontData):
+    * loader/cache/CachedImage.cpp:
+    (WebCore::CachedImage::updateImageData):
+    * loader/cache/CachedRawResource.cpp:
+    (WebCore::CachedRawResource::calculateIncrementalDataChunk const):
+    (WebCore::CachedRawResource::updateBuffer):
+    (WebCore::CachedRawResource::finishLoading):
+    * loader/cache/CachedRawResource.h:
+    * loader/cache/CachedResource.h:
+    (WebCore::CachedResource::resourceBuffer const):
+    * loader/cache/CachedScript.cpp:
+    (WebCore::CachedScript::script):
+    * loader/cache/CachedXSLStyleSheet.cpp:
+    (WebCore::CachedXSLStyleSheet::finishLoading):
+    
+    Source/WebKit:
+    
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebKit::WebFrameLoaderClient::finishedLoading): Fly-by fix, the
+    IPC::DataReference would reference a SharedBuffer going
+    out of scope before it was sent over IPC.
+    
+    Source/WebKitLegacy/mac:
+    
+    * WebView/WebHTMLView.mm:
+    (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290005 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-17  Jean-Yves Avenard  <jya@apple.com>
+
+            CrashTracer: com.apple.WebKit.WebContent at JavaScriptCore: bmalloc_allocate_impl_impl_slow
+            https://bugs.webkit.org/show_bug.cgi?id=236695
+            rdar://87596724
+
+            Reviewed by Jer Noble.
+
+            * WebView/WebHTMLView.mm:
+            (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r287951. rdar://problem/83501315

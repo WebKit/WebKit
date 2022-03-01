@@ -43,9 +43,10 @@ CachedApplicationManifest::CachedApplicationManifest(CachedResourceRequest&& req
 void CachedApplicationManifest::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)
 {
     if (data) {
-        m_data = data->makeContiguous();
+        auto contiguousData = data->makeContiguous();
         setEncodedSize(data->size());
-        m_text = m_decoder->decodeAndFlush(m_data->data(), data->size());
+        m_text = m_decoder->decodeAndFlush(contiguousData->data(), data->size());
+        m_data = WTFMove(contiguousData);
     } else {
         m_data = nullptr;
         setEncodedSize(0);

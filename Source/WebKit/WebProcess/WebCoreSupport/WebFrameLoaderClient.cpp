@@ -1187,8 +1187,11 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
             if (!webPage)
                 return;
 
-            RefPtr<FragmentedSharedBuffer> mainResourceData = loader->mainResourceData();
-            IPC::DataReference dataReference(mainResourceData ? mainResourceData->makeContiguous()->data() : nullptr, mainResourceData ? mainResourceData->size() : 0);
+            RefPtr<const SharedBuffer> contiguousData;
+            RefPtr<const FragmentedSharedBuffer> mainResourceData = loader->mainResourceData();
+            if (mainResourceData)
+                contiguousData = mainResourceData->makeContiguous();
+            IPC::DataReference dataReference(contiguousData ? contiguousData->data() : nullptr, contiguousData ? contiguousData->size() : 0);
             webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomContentProvider(loader->response().suggestedFilename(), dataReference));
         }
 

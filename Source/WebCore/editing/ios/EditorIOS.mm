@@ -204,7 +204,8 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.suggestedName = imageSourceURL.lastPathComponent().toString();
     pasteboardImage.imageSize = image->size();
     pasteboardImage.resourceMIMEType = pasteboard.resourceMIMEType(cachedImage->response().mimeType());
-    pasteboardImage.resourceData = cachedImage->resourceBuffer();
+    if (auto* buffer = cachedImage->resourceBuffer())
+        pasteboardImage.resourceData = buffer->makeContiguous();
 
     if (!pasteboard.isStatic())
         client()->getClientPasteboardData(makeRangeSelectingNode(imageElement), pasteboardImage.clientTypes, pasteboardImage.clientData);

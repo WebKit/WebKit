@@ -67,7 +67,7 @@ private:
     void switchClientsToRevalidatedResource() override;
     bool mayTryReplaceEncodedData() const override { return m_allowEncodedDataReplacement; }
 
-    std::optional<SharedBufferDataView> calculateIncrementalDataChunk(const SharedBuffer&) const;
+    std::optional<SharedBufferDataView> calculateIncrementalDataChunk(const FragmentedSharedBuffer&) const;
     void notifyClientsDataWasReceived(const SharedBuffer&);
     
 #if USE(QUICK_LOOK)
