@@ -1,3 +1,17 @@
+2022-03-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL GPUP OpenGL context is not used even if WebGL via Metal is deselected
+        https://bugs.webkit.org/show_bug.cgi?id=236505
+
+        Reviewed by Myles C. Maxfield.
+
+        * webgl/resources/test-shader-implementation-language.js: Added.
+        (runTest):
+        * webgl/webgl-via-metal-flag-off-expected.txt: Added.
+        * webgl/webgl-via-metal-flag-off.html: Added.
+        * webgl/webgl-via-metal-flag-on-expected.txt: Added.
+        * webgl/webgl-via-metal-flag-on.html: Added.
+
 2022-03-01  Cameron McCormack  <heycam@apple.com>
 
         Make input element UA shadow tree creation lazy

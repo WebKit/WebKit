@@ -1421,6 +1421,9 @@ webkit.org/b/169917 webgl/1.0.3/conformance/renderbuffers/framebuffer-object-att
 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/point-no-attributes.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/texture-copying-feedback-loops.html [ Failure ]
 
+# Not applicable.
+webgl/webgl-via-metal-flag-on.html [ Skip ]
+webgl/webgl-via-metal-flag-off.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs

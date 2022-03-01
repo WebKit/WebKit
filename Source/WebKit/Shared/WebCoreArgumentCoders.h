@@ -87,7 +87,6 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 #include "ArrayReference.h"
 #include <WebCore/GraphicsContextGL.h>
-#include <WebCore/GraphicsContextGLAttributes.h>
 #include <WebCore/GraphicsTypesGL.h>
 #endif
 
@@ -216,10 +215,6 @@ struct MediaConstraints;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 struct SerializedAttachmentData;
-#endif
-
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-struct GraphicsContextGLAttributes;
 #endif
 
 namespace DOMCacheEngine {
@@ -802,11 +797,6 @@ template<> struct ArgumentCoder<WebCore::PaymentInstallmentConfiguration> {
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
-template<> struct ArgumentCoder<WebCore::GraphicsContextGLAttributes> {
-    static void encode(Encoder&, const WebCore::GraphicsContextGLAttributes&);
-    static std::optional<WebCore::GraphicsContextGLAttributes> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::GraphicsContextGL::ActiveInfo&);
@@ -991,25 +981,6 @@ template <> struct EnumTraits<WebCore::CDMInstance::HDCPStatus> {
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-
-template <> struct EnumTraits<WebCore::GraphicsContextGLPowerPreference> {
-    using values = EnumValues <
-    WebCore::GraphicsContextGLPowerPreference,
-    WebCore::GraphicsContextGLPowerPreference::Default,
-    WebCore::GraphicsContextGLPowerPreference::LowPower,
-    WebCore::GraphicsContextGLPowerPreference::HighPerformance
-    >;
-};
-
-template <> struct EnumTraits<WebCore::GraphicsContextGLWebGLVersion> {
-    using values = EnumValues <
-    WebCore::GraphicsContextGLWebGLVersion,
-    WebCore::GraphicsContextGLWebGLVersion::WebGL1
-#if ENABLE(WEBGL2)
-    , WebCore::GraphicsContextGLWebGLVersion::WebGL2
-#endif
-    >;
-};
 
 template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesting> {
     using values = EnumValues<

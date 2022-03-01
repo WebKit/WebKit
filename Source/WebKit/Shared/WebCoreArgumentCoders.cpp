@@ -3199,61 +3199,6 @@ std::optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMI
 #endif // ENABLE(ENCRYPTED_MEDIA)
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-void ArgumentCoder<WebCore::GraphicsContextGLAttributes>::encode(Encoder& encoder, const WebCore::GraphicsContextGLAttributes& attributes)
-{
-    encoder << attributes.alpha;
-    encoder << attributes.depth;
-    encoder << attributes.stencil;
-    encoder << attributes.antialias;
-    encoder << attributes.premultipliedAlpha;
-    encoder << attributes.preserveDrawingBuffer;
-    encoder << attributes.failIfMajorPerformanceCaveat;
-    encoder << attributes.powerPreference;
-    encoder << attributes.shareResources;
-    encoder << attributes.webGLVersion;
-    encoder << attributes.noExtensions;
-    encoder << attributes.devicePixelRatio;
-    encoder << attributes.initialPowerPreference;
-#if ENABLE(WEBXR)
-    encoder << attributes.xrCompatible;
-#endif
-}
-
-std::optional<WebCore::GraphicsContextGLAttributes> ArgumentCoder<WebCore::GraphicsContextGLAttributes>::decode(Decoder& decoder)
-{
-    GraphicsContextGLAttributes attributes;
-    if (!decoder.decode(attributes.alpha))
-        return std::nullopt;
-    if (!decoder.decode(attributes.depth))
-        return std::nullopt;
-    if (!decoder.decode(attributes.stencil))
-        return std::nullopt;
-    if (!decoder.decode(attributes.antialias))
-        return std::nullopt;
-    if (!decoder.decode(attributes.premultipliedAlpha))
-        return std::nullopt;
-    if (!decoder.decode(attributes.preserveDrawingBuffer))
-        return std::nullopt;
-    if (!decoder.decode(attributes.failIfMajorPerformanceCaveat))
-        return std::nullopt;
-    if (!decoder.decode(attributes.powerPreference))
-        return std::nullopt;
-    if (!decoder.decode(attributes.shareResources))
-        return std::nullopt;
-    if (!decoder.decode(attributes.webGLVersion))
-        return std::nullopt;
-    if (!decoder.decode(attributes.noExtensions))
-        return std::nullopt;
-    if (!decoder.decode(attributes.devicePixelRatio))
-        return std::nullopt;
-    if (!decoder.decode(attributes.initialPowerPreference))
-        return std::nullopt;
-#if ENABLE(WEBXR)
-    if (!decoder.decode(attributes.xrCompatible))
-        return std::nullopt;
-#endif
-    return attributes;
-}
 
 template<typename Encoder>
 void ArgumentCoder<WebCore::GraphicsContextGL::ActiveInfo>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::ActiveInfo& activeInfo)

@@ -1,5 +1,21 @@
 2022-03-01  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        WebGL GPUP OpenGL context is not used even if WebGL via Metal is deselected
+        https://bugs.webkit.org/show_bug.cgi?id=236505
+
+        Reviewed by Myles C. Maxfield.
+
+        Encode, decode also `useMetal` property.
+
+        Tests: webgl/webgl-via-metal-flag-off.html
+               webgl/webgl-via-metal-flag-on.html
+
+        * platform/graphics/GraphicsContextGLAttributes.h:
+        (WebCore::GraphicsContextGLAttributes::encode const):
+        (WebCore::GraphicsContextGLAttributes::decode):
+
+2022-03-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         GraphicsContextGL related includes are inconsistent, slowing the build
         https://bugs.webkit.org/show_bug.cgi?id=237270
 

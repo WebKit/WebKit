@@ -2109,3 +2109,7 @@ fast/text/word-spacing-rtl.html [ ImageOnlyFailure ]
 fast/text/kerning-with-TextLayout.html [ ImageOnlyFailure ]
 http/tests/lists/list-new-parent-no-sibling-append.html [ Failure ]
 fast/js-promise/js-promise-invalid-context-access.html [ Failure ]
+
+# Not applicable.
+webgl/webgl-via-metal-flag-on.html [ Skip ]
+webgl/webgl-via-metal-flag-off.html [ Skip ]
