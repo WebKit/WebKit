@@ -280,11 +280,7 @@ public:
             m_resolvedIDBStoragePath = m_customIDBStoragePath;
         } else {
             auto idbStoragePath = typeStoragePath(StorageType::IndexedDB);
-            if (!m_customIDBStoragePath.isEmpty() && !FileSystem::fileExists(idbStoragePath) && FileSystem::fileExists(m_customIDBStoragePath)) {
-                FileSystem::makeAllDirectories(idbStoragePath);
-                FileSystem::moveFile(m_customIDBStoragePath, idbStoragePath);
-            }
-
+            IDBStorageManager::migrateOriginData(m_customIDBStoragePath, idbStoragePath);
             m_resolvedIDBStoragePath = idbStoragePath;
         }
         

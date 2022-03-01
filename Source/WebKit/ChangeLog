@@ -1,3 +1,34 @@
+2022-03-01  Sihui Liu  <sihui_liu@apple.com>
+
+        Migrate third-party IndexedDB data to GeneralStorageDirectory
+        https://bugs.webkit.org/show_bug.cgi?id=237283
+
+        Reviewed by Chris Dumez.
+
+        In current storage layout, third-party IndexedDB data is stored in a subdirectory of top origin directory, e.g.
+        [IndexedDBDirectory]/[TopOrigin]/[ThirdPartyOrigin]/[Database]. First-party data is stored in the top origin
+        directory, e.g. [IndexedDBDirectory]/[TopOrigin]/[Database]. Our current migration code directly renames the 
+        origin directory without checking whether it has subdirectory that is a third-party directory. That means, 
+        [IndexedDBDirectory]/[TopOrigin]/ is moved to [GeneralStorageDirectory]/[TopOrigin]/[TopOrigin]/[IndexedDB]/, 
+        and [IndexedDBDirectory]/[TopOrigin]/[ThirdPartyOrigin]/ is moved to 
+        [GeneralStorageDirectory]/[TopOrigin]/[TopOrigin]/[IndexedDB]/[ThirdPartyOrigin] ([ThirdPartyOrigin]/ here is
+        treated as a database directory). This is wrong: the new third-party directory should actually be 
+        [GeneralStorageDirectory]/[TopOrigin]/[ThirdPartyOrigin]/[IndexedDB]/.
+
+        To fix this, we now make sure only first-party data is migrated when first-party IndexedDB database is visited,
+        by moving only database directories under origin directory.
+
+        Test: IndexedDB.MigrateThirdPartyDataToGeneralStorageDirectory
+
+        * NetworkProcess/storage/IDBStorageManager.cpp:
+        (WebKit::migrateOriginDataImpl):
+        (WebKit::IDBStorageManager::idbStorageOriginDirectory):
+        (WebKit::IDBStorageManager::migrateOriginData):
+        (WebKit::migrateOriginData): Deleted.
+        * NetworkProcess/storage/IDBStorageManager.h:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::resolvedIDBStoragePath):
+
 2022-02-28  Chris Dumez  <cdumez@apple.com>
 
         [IPC] Do more hardening in WebSWServerConnection's client registration / unregistration

@@ -29,7 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestURLSchemeHandler.h"
-#import <WebKit/WKPreferencesRef.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
@@ -237,7 +237,7 @@ try {
 </script>
 )TESTRESOURCE";
 
-static void loadTestPageInWebView(WKWebView *webView, NSString *expectedResult)
+static void loadThirdPartyPageInWebView(WKWebView *webView, NSString *expectedResult)
 {
     [webView loadHTMLString:mainFrameStringPersistence baseURL:[NSURL URLWithString:@"http://webkit.org"]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
@@ -260,10 +260,10 @@ TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    loadTestPageInWebView(webView.get(), @"database is created - put item success");
+    loadThirdPartyPageInWebView(webView.get(), @"database is created - put item success");
 
     auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    loadTestPageInWebView(secondWebView.get(), @"database exists - get item success: TestValue");
+    loadThirdPartyPageInWebView(secondWebView.get(), @"database exists - get item success: TestValue");
 
     webView = nil;
     secondWebView = nil;
@@ -271,7 +271,7 @@ TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
 
     // Third-party IDB storage is stored in the memory of network process.
     auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    loadTestPageInWebView(thirdWebView.get(), @"database is created - put item success");
+    loadThirdPartyPageInWebView(thirdWebView.get(), @"database is created - put item success");
 }
 
 TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
@@ -298,7 +298,7 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    loadTestPageInWebView(webView.get(), @"database is created - put item success");
+    loadThirdPartyPageInWebView(webView.get(), @"database is created - put item success");
 
     auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [secondWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"iframe://"]]];
@@ -321,7 +321,7 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
     TestWebKitAPI::Util::run(&readyToContinue);
 
     auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    loadTestPageInWebView(thirdWebView.get(), @"database is created - put item success");
+    loadThirdPartyPageInWebView(thirdWebView.get(), @"database is created - put item success");
 }
 
 TEST(IndexedDB, IndexedDBThirdPartyStorageLayout)
@@ -356,15 +356,83 @@ TEST(IndexedDB, IndexedDBThirdPartyStorageLayout)
     }];
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];
     // Allowing third-party frame to store data on disk.
-    auto preferences = (__bridge WKPreferencesRef)[configuration preferences];
-    WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage);
+    [[configuration preferences] _setStorageBlockingPolicy:_WKStorageBlockingPolicyAllowAll];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    loadTestPageInWebView(webView.get(), @"database is created - put item success");
-
+    loadThirdPartyPageInWebView(webView.get(), @"database is created - put item success");
     EXPECT_TRUE([fileManager fileExistsAtPath:webkitOriginFile.path]);
     EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeOriginFile.path]);
     EXPECT_FALSE([fileManager fileExistsAtPath:iframeWebKitOriginFile.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeDatabaseFile.path]);
+}
+
+TEST(IndexedDB, MigrateThirdPartyDataToGeneralStorageDirectory)
+{
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceDatabase = [[NSBundle mainBundle] URLForResource:@"indexeddb-persistence-third-party" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *webkitOriginDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg"];
+    NSURL *webkitOriginFile = [webkitOriginDirectory URLByAppendingPathComponent:@"origin"];
+    NSURL *wrongWebkitIframeDatabaseDirectory = [webkitOriginDirectory URLByAppendingPathComponent:@"IndexedDB/iframe__0"];
+    NSURL *webkitIframeOriginDirectory = [generalStorageDirectory URLByAppendingPathComponent:@"EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/vudvbMlKXj1m6RibnVvc8PdAdcXZsNE6ON_Al7yqOsg"];
+    NSURL *webkitIframeOriginFile = [webkitIframeOriginDirectory URLByAppendingPathComponent:@"origin"];
+    NSString *hashedDatabaseName = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBThirdPartyFrameHasAccess");
+    NSURL *webkitIframeDatabaseFile= [NSURL fileURLWithPath:[NSString pathWithComponents:@[webkitIframeOriginDirectory.path, @"IndexedDB", hashedDatabaseName, @"IndexedDB.sqlite3"]]];
+    NSURL *idbDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *oldWebkitIframeDatabaseDirectory = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbDirectory.path, @"v1/http_webkit.org_0/iframe__0", hashedDatabaseName]]];
+    NSURL *oldWebkitIframeDatabaseFile = [oldWebkitIframeDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:generalStorageDirectory error:nil];
+    [fileManager createDirectoryAtURL:generalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
+    // Create third-party database file on disk.
+    [fileManager removeItemAtURL:idbDirectory error:nil];
+    [fileManager createDirectoryAtURL:oldWebkitIframeDatabaseDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceDatabase toURL:oldWebkitIframeDatabaseFile error:nil];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[NSData dataWithBytes:iframeBytesPersistence length:strlen(iframeBytesPersistence)]];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];
+    [[configuration preferences] _setStorageBlockingPolicy:_WKStorageBlockingPolicyAllowAll];
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbDirectory;
+    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = false;
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    [configuration setWebsiteDataStore:websiteDataStore.get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    // Ensure opening first-party database does not migrate third-party data.
+    NSString *firstPartyHTMLString = @"<script> \
+        var request = window.indexedDB.open('TestDatabase'); \
+        request.onsuccess = function() { \
+            window.webkit.messageHandlers.testHandler.postMessage('database is created'); \
+        }; \
+        request.onerror = function() { \
+            window.webkit.messageHandlers.testHandler.postMessage('database error'); \
+        }; \
+        </script>";
+    [webView loadHTMLString:firstPartyHTMLString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"database is created", (NSString *)[getNextMessage() body]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:webkitOriginFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:wrongWebkitIframeDatabaseDirectory.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:webkitIframeOriginFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:webkitIframeDatabaseFile.path]);
+
+    // Ensure opening third-party database migrates third-party data, and data can be correctly read.
+    loadThirdPartyPageInWebView(webView.get(), @"database exists - get item success: TestValue");
+    EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeOriginFile.path]);
     EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeDatabaseFile.path]);
 }
 
@@ -425,17 +493,17 @@ TEST(IndexedDB, IndexedDBThirdPartyWorkerHasAccess)
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"iframe"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    loadTestPageInWebView(webView.get(), @"database is created");
+    loadThirdPartyPageInWebView(webView.get(), @"database is created");
 
     auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    loadTestPageInWebView(webView.get(), @"database exists");
+    loadThirdPartyPageInWebView(webView.get(), @"database exists");
 
     webView = nil;
     secondWebView = nil;
     [configuration.get().websiteDataStore _terminateNetworkProcess];
 
     auto thirdWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    loadTestPageInWebView(thirdWebView.get(), @"database is created");
+    loadThirdPartyPageInWebView(thirdWebView.get(), @"database is created");
 }
 
 static NSString *getDatabasesString = @"<script> \

@@ -738,6 +738,7 @@
 		932AE53D1D371047005DFFAF /* focus-inputs.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 93575C551D30366E000D604D /* focus-inputs.html */; };
 		9332EF942649BB68009F5D6D /* StringToIntegerConversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9332EF932649BB68009F5D6D /* StringToIntegerConversion.cpp */; };
 		933D631D1FCB76200032ECD6 /* Hasher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 933D631B1FCB76180032ECD6 /* Hasher.cpp */; };
+		9341C95727CD507A0023C0F4 /* indexeddb-persistence-third-party.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9341C95627CD50680023C0F4 /* indexeddb-persistence-third-party.sqlite3 */; };
 		9342589E255B6A120059EEDD /* speechrecognition-user-permission-persistence.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9342589D255B66A00059EEDD /* speechrecognition-user-permission-persistence.html */; };
 		935786CC20F6A2700000CDFC /* IndexedDB.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 934FA5C520F69FED0040DC1B /* IndexedDB.sqlite3-wal */; };
 		935786CD20F6A2910000CDFC /* IndexedDB.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 934FA5C720F69FEE0040DC1B /* IndexedDB.sqlite3 */; };
@@ -1406,6 +1407,7 @@
 				71E88C4524B534B700665160 /* img-with-base64-url.html in Copy Resources */,
 				49897D6C241FE9E400ECF153 /* in-app-browser-privacy-local-file.html in Copy Resources */,
 				4971B1182451F29A0096994D /* incorrectCreateTableSchema.db in Copy Resources */,
+				9341C95727CD507A0023C0F4 /* indexeddb-persistence-third-party.sqlite3 in Copy Resources */,
 				935786CD20F6A2910000CDFC /* IndexedDB.sqlite3 in Copy Resources */,
 				935786CE20F6A2A10000CDFC /* IndexedDB.sqlite3-shm in Copy Resources */,
 				935786CC20F6A2700000CDFC /* IndexedDB.sqlite3-wal in Copy Resources */,
@@ -2522,6 +2524,7 @@
 		9331407B17B4419000F083B1 /* DidNotHandleKeyDown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DidNotHandleKeyDown.cpp; sourceTree = "<group>"; };
 		9332EF932649BB68009F5D6D /* StringToIntegerConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringToIntegerConversion.cpp; sourceTree = "<group>"; };
 		933D631B1FCB76180032ECD6 /* Hasher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Hasher.cpp; sourceTree = "<group>"; };
+		9341C95627CD50680023C0F4 /* indexeddb-persistence-third-party.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "indexeddb-persistence-third-party.sqlite3"; sourceTree = "<group>"; };
 		9342589B255B609A0059EEDD /* SpeechRecognition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SpeechRecognition.mm; sourceTree = "<group>"; };
 		9342589D255B66A00059EEDD /* speechrecognition-user-permission-persistence.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "speechrecognition-user-permission-persistence.html"; sourceTree = "<group>"; };
 		93468E6E2714B4F1009983E3 /* FileSystemAccess.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSystemAccess.mm; sourceTree = "<group>"; };
@@ -4171,6 +4174,7 @@
 				3128A814237640FD00D90D40 /* image.html */,
 				49D7FBA7241FDDDA00AB67FA /* in-app-browser-privacy-local-file.html */,
 				4971B1172451F2780096994D /* incorrectCreateTableSchema.db */,
+				9341C95627CD50680023C0F4 /* indexeddb-persistence-third-party.sqlite3 */,
 				934FA5C720F69FEE0040DC1B /* IndexedDB.sqlite3 */,
 				934FA5C620F69FED0040DC1B /* IndexedDB.sqlite3-shm */,
 				934FA5C520F69FED0040DC1B /* IndexedDB.sqlite3-wal */,

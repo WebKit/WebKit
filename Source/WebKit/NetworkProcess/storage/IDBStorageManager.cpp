@@ -35,24 +35,30 @@
 
 namespace WebKit {
 
-static void migrateOriginData(const String& oldOriginDirectory, const String& newOriginDirectory)
+static void migrateOriginDataImpl(const String& oldOriginDirectory, const String& newOriginDirectory, Function<String(const String&)>&& createFileNameFunction)
 {
-    if (!FileSystem::fileExists(oldOriginDirectory))
+    if (oldOriginDirectory.isEmpty() || !FileSystem::fileExists(oldOriginDirectory))
         return;
 
     auto fileNames = FileSystem::listDirectory(oldOriginDirectory);
-    if (!fileNames.isEmpty())
-        FileSystem::makeAllDirectories(newOriginDirectory);
+    if (fileNames.isEmpty()) {
+        FileSystem::deleteEmptyDirectory(oldOriginDirectory);
+        return;
+    }
 
+    FileSystem::makeAllDirectories(newOriginDirectory);
     for (auto& name : fileNames) {
         // This is an origin directory for third-party data.
         if (auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(name))
             continue;
 
-        String childPath = FileSystem::realPath(FileSystem::pathByAppendingComponent(oldOriginDirectory, name));
-        String newName = WebCore::SQLiteFileSystem::computeHashForFileName(WebCore::IDBServer::SQLiteIDBBackingStore::decodeDatabaseName(name));
-        auto newChildPath = FileSystem::pathByAppendingComponent(newOriginDirectory, newName);
-        FileSystem::moveFile(childPath, newChildPath);
+        // Do not overwrite existing files.
+        auto newPath = FileSystem::pathByAppendingComponent(newOriginDirectory, createFileNameFunction(name));
+        if (FileSystem::fileExists(newPath))
+            continue;
+
+        auto oldPath = FileSystem::pathByAppendingComponent(oldOriginDirectory, name);
+        FileSystem::moveFile(oldPath, newPath);
     }
 
     FileSystem::deleteEmptyDirectory(oldOriginDirectory);
@@ -65,7 +71,9 @@ String IDBStorageManager::idbStorageOriginDirectory(const String& rootDirectory,
 
     auto originDirectory = WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin, rootDirectory, "v1");
     auto oldOriginDirectory = WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin, rootDirectory, "v0");
-    migrateOriginData(oldOriginDirectory, originDirectory);
+    migrateOriginDataImpl(oldOriginDirectory, originDirectory, [](const String& name) {
+        return WebCore::SQLiteFileSystem::computeHashForFileName(WebCore::IDBServer::SQLiteIDBBackingStore::decodeDatabaseName(name));
+    });
 
     return originDirectory;
 }
@@ -116,6 +124,13 @@ HashSet<WebCore::ClientOrigin> IDBStorageManager::originsOfIDBStorageData(const 
     getOriginsForVersion(FileSystem::pathByAppendingComponent(rootDirectory, "v1"), origins);
 
     return origins;
+}
+
+void IDBStorageManager::migrateOriginData(const String& oldOriginDirectory, const String& newOriginDirectory)
+{
+    migrateOriginDataImpl(oldOriginDirectory, newOriginDirectory, [](const String& name) {
+        return name;
+    });
 }
 
 IDBStorageManager::IDBStorageManager(const String& path, IDBStorageRegistry& registry, QuotaCheckFunction&& quotaCheckFunction)
