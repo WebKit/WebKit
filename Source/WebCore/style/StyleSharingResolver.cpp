@@ -179,33 +179,6 @@ Node* SharingResolver::locateCousinList(const Element* parent) const
     return nullptr;
 }
 
-static bool canShareStyleWithControl(const HTMLFormControlElement& element, const HTMLFormControlElement& formElement)
-{
-    if (!is<HTMLInputElement>(formElement) || !is<HTMLInputElement>(element))
-        return false;
-
-    auto& thisInputElement = downcast<HTMLInputElement>(formElement);
-    auto& otherInputElement = downcast<HTMLInputElement>(element);
-
-    if (thisInputElement.isAutoFilled() != otherInputElement.isAutoFilled())
-        return false;
-    if (thisInputElement.shouldAppearChecked() != otherInputElement.shouldAppearChecked())
-        return false;
-    if (thisInputElement.isRequired() != otherInputElement.isRequired())
-        return false;
-
-    if (formElement.isDisabledFormControl() != element.isDisabledFormControl())
-        return false;
-
-    if (formElement.isInRange() != element.isInRange())
-        return false;
-
-    if (formElement.isOutOfRange() != element.isOutOfRange())
-        return false;
-
-    return true;
-}
-
 bool SharingResolver::canShareStyleWithElement(const Context& context, const StyledElement& candidateElement) const
 {
     auto& element = context.element;
@@ -255,12 +228,19 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (!candidateElementId.isNull() && m_ruleSets.features().idsInRules.contains(candidateElementId))
         return false;
 
-    bool isControl = is<HTMLFormControlElement>(candidateElement);
-
-    if (isControl != is<HTMLFormControlElement>(element))
+    if (is<HTMLFormControlElement>(candidateElement) || is<HTMLFormControlElement>(element))
         return false;
 
-    if (isControl && !canShareStyleWithControl(downcast<HTMLFormControlElement>(element), downcast<HTMLFormControlElement>(candidateElement)))
+    // HTMLFormElement can get the :valid/invalid pseudo classes
+    if (candidateElement.matchesValidPseudoClass() != element.matchesValidPseudoClass())
+        return false;
+
+    // HTMLProgressElement is not a HTMLFormControlElement
+    if (candidateElement.matchesIndeterminatePseudoClass() != element.matchesIndeterminatePseudoClass())
+        return false;
+
+    // HTMLOptionElement is not a HTMLFormControlElement
+    if (candidateElement.matchesDefaultPseudoClass() != element.matchesDefaultPseudoClass())
         return false;
 
     if (candidateElement.hasKeyframeEffects(PseudoId::None))
@@ -296,18 +276,6 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         if (m_document.settings().inertAttributeEnabled() && candidateElement.hasAttributeWithoutSynchronization(HTMLNames::inertAttr) != element.hasAttributeWithoutSynchronization(HTMLNames::inertAttr))
             return false;
     }
-
-    if (candidateElement.matchesValidPseudoClass() != element.matchesValidPseudoClass())
-        return false;
-
-    if (element.matchesInvalidPseudoClass() != element.matchesValidPseudoClass())
-        return false;
-
-    if (candidateElement.matchesIndeterminatePseudoClass() != element.matchesIndeterminatePseudoClass())
-        return false;
-
-    if (candidateElement.matchesDefaultPseudoClass() != element.matchesDefaultPseudoClass())
-        return false;
 
     if (candidateElement.shadowRoot() && !candidateElement.shadowRoot()->styleScope().resolver().ruleSets().authorStyle().hostPseudoClassRules().isEmpty())
         return false;

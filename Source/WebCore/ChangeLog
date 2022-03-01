@@ -1,3 +1,17 @@
+2022-03-01  Tim Nguyen  <ntim@apple.com>
+
+        Explicitly disable style sharing for form controls
+        https://bugs.webkit.org/show_bug.cgi?id=237236
+
+        Reviewed by Antti Koivisto.
+
+        There was a typo introduced in bug 153768 and bug 138769, which essentially disables
+        style sharing completely for form controls. Let's make that explicit.
+
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::canShareStyleWithControl): Removed.
+        (WebCore::Style::SharingResolver::canShareStyleWithElement const):
+
 2022-03-01  Cameron McCormack  <heycam@apple.com>
 
         Make input element UA shadow tree creation lazy
