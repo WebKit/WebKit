@@ -1,3 +1,41 @@
+2022-02-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r289502. rdar://problem/88528286
+
+    WKWebView: WKURLSchemeHandler “request to the end of the resource” produces an invalid header
+    https://bugs.webkit.org/show_bug.cgi?id=236401
+    rdar://88528286
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    
+    https://webkit.org/b/203302 added support for Range requests to AVAssetResourceLoadingDataRequest,
+    but it incorrectly used '*' instead of '' for "last-byte-pos:" for a request to the end of the resource.
+    
+    API test URLSchemeHandler.Ranges was updated.
+    
+    * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+    (WebCore::WebCoreAVFResourceLoader::startLoading):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289502 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-09  Eric Carlson  <eric.carlson@apple.com>
+
+            WKWebView: WKURLSchemeHandler “request to the end of the resource” produces an invalid header
+            https://bugs.webkit.org/show_bug.cgi?id=236401
+            rdar://88528286
+
+            Reviewed by Brent Fulgham.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r288605. rdar://problem/87948317
