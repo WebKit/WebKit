@@ -156,6 +156,7 @@ auto ContainerQueryEvaluator::evaluateCondition(const ConditionType& condition, 
         return result;
     }
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static std::optional<LayoutUnit> computeSize(const CSSValue* value, const CSSToLengthConversionData& conversionData)
@@ -197,6 +198,7 @@ auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFea
         case CQ::ComparisonOperator::Equal:
             return left == right;
         }
+        RELEASE_ASSERT_NOT_REACHED();
     };
 
     enum class Side : uint8_t { Left, Right };
@@ -259,9 +261,9 @@ auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFea
                 return !renderer.isHorizontalWritingMode();
             return axis == Axis::Inline;
         case ContainerType::None:
-            ASSERT_NOT_REACHED();
-            return false;
+            RELEASE_ASSERT_NOT_REACHED();
         }
+        RELEASE_ASSERT_NOT_REACHED();
     };
 
     if (sizeFeature.name == CQ::FeatureNames::width()) {

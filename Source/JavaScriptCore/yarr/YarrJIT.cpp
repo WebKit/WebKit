@@ -3585,7 +3585,6 @@ class YarrGenerator final : public YarrJITInfo {
         m_ops.last().m_term = term;
         PatternDisjunction* disjunction = term->parentheses.disjunction;
         auto& alternatives = disjunction->m_alternatives;
-        auto originalCheckedOffset = checkedOffset;
         for (unsigned i = 0; i < alternatives.size(); ++i) {
             size_t lastOpIndex = m_ops.size() - 1;
 

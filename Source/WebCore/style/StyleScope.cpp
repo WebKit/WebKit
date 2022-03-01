@@ -807,9 +807,9 @@ bool Scope::updateQueryContainerState(QueryContainerUpdateContext& context)
             case ContainerType::Size:
                 return size != oldSize;
             case ContainerType::None:
-                ASSERT_NOT_REACHED();
-                return false;
+                RELEASE_ASSERT_NOT_REACHED();
             }
+            RELEASE_ASSERT_NOT_REACHED();
         };
 
         auto it = previousStates.find(*containerElement);

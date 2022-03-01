@@ -83,8 +83,10 @@ Ref<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
     const StackmapGenerationParams& params, uint32_t dfgNodeIndex, unsigned offset)
 {
     FixedVector<B3::ValueRep> valueReps(params.size() - offset);
+IGNORE_GCC_WARNINGS_BEGIN("stringop-overflow")
     for (unsigned i = offset, indexInValueReps = 0; i < params.size(); ++i, ++indexInValueReps)
         valueReps[indexInValueReps] = params[i];
+IGNORE_GCC_WARNINGS_END
     unsigned index = state.jitCode->m_osrExit.size();
     state.jitCode->m_osrExit.append(OSRExit(this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic, nodeOrigin.wasHoisted, dfgNodeIndex, WTFMove(valueReps)));
     return adoptRef(*new OSRExitHandle(index, state.jitCode.get()));

@@ -1,3 +1,21 @@
+2022-03-01  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Misc compiler warnings, late Feb 2022 edition
+        https://bugs.webkit.org/show_bug.cgi?id=237275
+
+        Reviewed by Adrian Perez de Castro.
+
+        Suppress suspected false-positive -Wstringop-overflow and -Wformat-overflow warnings. Also,
+        remove an unused variable.
+
+        * API/tests/MultithreadedMultiVMExecutionTest.cpp:
+        (startMultithreadedMultiVMExecutionTest):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        * yarr/YarrJIT.cpp:
+
 2022-03-01  Alex Christensen  <achristensen@webkit.org>
 
         [AppleWin] Start using Visual Studio 2022

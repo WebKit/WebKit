@@ -1,3 +1,23 @@
+2022-03-01  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Misc compiler warnings, late Feb 2022 edition
+        https://bugs.webkit.org/show_bug.cgi?id=237275
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove a redundant move. Sprinkle RELEASE_ASSERT_NOT_REACHED() as required to avoid
+        -Wreturn-type warnings.
+
+        * Modules/push-api/PushDatabase.cpp:
+        (WebCore::openAndMigrateDatabaseImpl):
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::evaluateCondition const):
+        (WebCore::Style::ContainerQueryEvaluator::evaluateSizeFeature const):
+        * style/ContainerQueryEvaluator.h:
+        (WebCore::Style::operator!):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::updateQueryContainerState):
+
 2022-03-01  Said Abou-Hallawa  <said@apple.com>
 
         [macOS][REGRESSION] (r289518): Form controls are scaled twice on Retina display

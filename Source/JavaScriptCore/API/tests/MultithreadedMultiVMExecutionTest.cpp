@@ -85,7 +85,9 @@ void startMultithreadedMultiVMExecutionTest()
                     std::vector<char> buffer;
                     buffer.resize(JSStringGetMaximumUTF8CStringSize(string));
                     JSStringGetUTF8CString(string, buffer.data(), buffer.size());
+IGNORE_GCC_WARNINGS_BEGIN("format-overflow")
                     printf("FAIL: MultithreadedMultiVMExecutionTest: %d %d %s\n", threadNumber, i, buffer.data());
+IGNORE_GCC_WARNINGS_END
                     JSStringRelease(string);
                 } else
                     printf("FAIL: MultithreadedMultiVMExecutionTest: %d %d stringifying exception failed\n", threadNumber, i);
