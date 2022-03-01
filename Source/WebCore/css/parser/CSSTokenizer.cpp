@@ -43,19 +43,23 @@
 namespace WebCore {
 
 // https://drafts.csswg.org/css-syntax/#input-preprocessing
-static String preprocessString(String string)
+String CSSTokenizer::preprocessString(String string)
 {
     // We don't replace '\r' and '\f' with '\n' as the specification suggests, instead
     // we treat them all the same in the isNewLine function below.
+    StringImpl* oldImpl = string.impl();
     string.replace('\0', replacementCharacter);
-    return replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(string));
+    String replaced = replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(string));
+    if (replaced.impl() != oldImpl)
+        registerString(replaced);
+    return replaced;
 }
 
 std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(const String& string)
 {
     bool success = true;
     // We can't use makeUnique here because it does not have access to this private constructor.
-    auto tokenizer = std::unique_ptr<CSSTokenizer>(new CSSTokenizer(preprocessString(string), nullptr, &success));
+    auto tokenizer = std::unique_ptr<CSSTokenizer>(new CSSTokenizer(string, nullptr, &success));
     if (UNLIKELY(!success))
         return nullptr;
     return tokenizer;
@@ -65,24 +69,24 @@ std::unique_ptr<CSSTokenizer> CSSTokenizer::tryCreate(const String& string, CSSP
 {
     bool success = true;
     // We can't use makeUnique here because it does not have access to this private constructor.
-    auto tokenizer = std::unique_ptr<CSSTokenizer>(new CSSTokenizer(preprocessString(string), &wrapper, &success));
+    auto tokenizer = std::unique_ptr<CSSTokenizer>(new CSSTokenizer(string, &wrapper, &success));
     if (UNLIKELY(!success))
         return nullptr;
     return tokenizer;
 }
 
 CSSTokenizer::CSSTokenizer(const String& string)
-    : CSSTokenizer(preprocessString(string), nullptr, nullptr)
+    : CSSTokenizer(string, nullptr, nullptr)
 {
 }
 
 CSSTokenizer::CSSTokenizer(const String& string, CSSParserObserverWrapper& wrapper)
-    : CSSTokenizer(preprocessString(string), &wrapper, nullptr)
+    : CSSTokenizer(string, &wrapper, nullptr)
 {
 }
 
-CSSTokenizer::CSSTokenizer(String&& string, CSSParserObserverWrapper* wrapper, bool* constructionSuccessPtr)
-    : m_input(string)
+CSSTokenizer::CSSTokenizer(const String& string, CSSParserObserverWrapper* wrapper, bool* constructionSuccessPtr)
+    : m_input(preprocessString(string))
 {
     if (constructionSuccessPtr)
         *constructionSuccessPtr = true;
