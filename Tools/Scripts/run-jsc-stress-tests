@@ -171,6 +171,7 @@ $ldd = nil
 $artifact_exec_wrapper = nil
 $numChildProcessesSetByUser = false
 $runUniqueId = Random.new.bytes(16).unpack("H*")[0]
+$gnuParallelChunkSize = 1
 $testsDebugStream = nil # set to $stderr for debugging
 
 def putd(s)
@@ -245,6 +246,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--make-runner', GetoptLong::NO_ARGUMENT],
                ['--ruby-runner', GetoptLong::NO_ARGUMENT],
                ['--gnu-parallel-runner', GetoptLong::NO_ARGUMENT],
+               ['--gnu-parallel-chunk-size', GetoptLong::REQUIRED_ARGUMENT],
                ['--test-writer', GetoptLong::REQUIRED_ARGUMENT],
                ['--treat-failing-as-flaky', GetoptLong::REQUIRED_ARGUMENT],
                ['--remote', GetoptLong::REQUIRED_ARGUMENT],
@@ -293,6 +295,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $testRunnerType = :ruby
     when '--gnu-parallel-runner'
         $testRunnerType = :gnuparallel
+    when '--gnu-parallel-chunk-size'
+        $gnuParallelChunkSize = arg.to_i
     when '--test-writer'
         $testWriter = arg
     when '--treat-failing-as-flaky'
@@ -2982,6 +2986,20 @@ def forEachRemote(remoteHosts, options={}, &blk)
     liveRemotes
 end
 
+def each_chunk(e, chunkSize)
+    accumulator = []
+    e.each { |element|
+        accumulator << element
+        if accumulator.size == chunkSize
+            yield accumulator
+            accumulator = []
+        end
+    }
+    if accumulator.size > 0
+        yield accumulator
+    end
+end
+
 class TestRunnerGnuParallel < TestRunner
     def prepareGnuParallelRunnerJobs(name, runlist, completedPlans)
         path = @runnerDir + name
@@ -2989,12 +3007,14 @@ class TestRunnerGnuParallel < TestRunner
 
         File.open(path, "w") {
             | outp |
-            runlist.each {
-                | plan |
-                if completedPlans.include?(plan)
-                    next
-                end
-                outp.puts("./test_script_#{plan.index}")
+            runlist = runlist.select { |plan|
+                not completedPlans.include?(plan)
+            }
+            each_chunk(runlist, $gnuParallelChunkSize) { |plans|
+                job = plans.collect { |plan|
+                    "sh ./test_script_#{plan.index}"
+                }.join("; ")
+                outp.puts(job)
             }
         }
     end
@@ -3098,7 +3118,7 @@ def runGnuParallelRunner(remoteHosts, inputs, options={})
             "if test -e #{$outputDir.basename}/.runner; then cd #{$outputDir.basename}/.runner; else echo #{PARALLEL_REMOTE_STATE_LOST_MARKER}; false; fi && " +
             exportBaseEnvironmentVariables(false) +
             $envVars.collect { |var | "export #{var} &&"}.join("") +
-            "sh "
+            "sh -c "
         ]
         runAndMonitorCommandOutput(cmd) {
             | pid, line |

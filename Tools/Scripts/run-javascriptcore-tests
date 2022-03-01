@@ -61,6 +61,7 @@ my $shellRunner;
 my $makeRunner;
 my $rubyRunner;
 my $gnuParallelRunner;
+my $gnuParallelChunkSize;
 my $testWriter;
 my $memoryLimited;
 my $reportExecutionTime;
@@ -355,6 +356,7 @@ GetOptions(
     'make-runner' => \$makeRunner,
     'ruby-runner' => \$rubyRunner,
     'gnu-parallel-runner' => \$gnuParallelRunner,
+    'gnu-parallel-chunk-size=s' => \$gnuParallelChunkSize,
     'test-writer=s' => \$testWriter,
     'memory-limited' => \$memoryLimited,
     'report-execution-time' => \$reportExecutionTime,
@@ -885,6 +887,11 @@ sub runJSCStressTests
 
     if ($gnuParallelRunner) {
         push(@jscStressDriverCmd, "--gnu-parallel-runner");
+    }
+
+    if ($gnuParallelChunkSize) {
+        push(@jscStressDriverCmd, "--gnu-parallel-chunk-size");
+        push(@jscStressDriverCmd, $gnuParallelChunkSize);
     }
 
     if ($testWriter) {
