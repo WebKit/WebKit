@@ -1900,7 +1900,7 @@ void RenderGrid::setLogicalPositionForChild(RenderBox& child) const
 
 void RenderGrid::setLogicalOffsetForChild(RenderBox& child, GridTrackSizingDirection direction) const
 {
-    if (!child.isGridItem() && hasStaticPositionForChild(child, direction))
+    if (child.parent() != this && hasStaticPositionForChild(child, direction))
         return;
     // 'setLogicalLeft' and 'setLogicalTop' only take into account the child's writing-mode, that's why 'flowAwareDirectionForChild' is needed.
     if (GridLayoutFunctions::flowAwareDirectionForChild(*this, child, direction) == ForColumns)

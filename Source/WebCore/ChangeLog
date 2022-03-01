@@ -1,3 +1,19 @@
+2022-03-01  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Use static position relative to parent for abs-pos items within nested grids.
+        https://bugs.webkit.org/show_bug.cgi?id=236957
+
+        Reviewed by Dean Jackson.
+
+        In the case where an absolutely positioned element's parent and containing block
+        are both grid container, but they are not the same grid container, then the static position
+        of the abs-pos item should be relative to the parent, not the CB.
+
+        Existing subgrid tests marked as passing.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::setLogicalOffsetForChild const):
+
 2022-03-01  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Add InlineIterator::Box::visualRect
