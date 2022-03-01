@@ -62,8 +62,8 @@ void Subspace::forEachNotEmptyMarkedBlock(const Func& func)
 template<typename Func>
 void Subspace::forEachPreciseAllocation(const Func& func)
 {
-    for (PreciseAllocation* allocation = m_preciseAllocations.begin(); allocation != m_preciseAllocations.end(); allocation = allocation->next())
-        func(allocation);
+    for (PreciseAllocation& allocation : m_preciseAllocations)
+        func(&allocation);
 }
 
 template<typename Func>

@@ -1,3 +1,41 @@
+2022-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        WTF::SentinelLinkedList::iterator should have operator++ for range-for loop
+        https://bugs.webkit.org/show_bug.cgi?id=237265
+
+        Reviewed by Yusuke Suzuki.
+
+        SentinelLinkedList had three problems.
+        1. Even though it has begin() and end(), using SentinelLinkedList
+           with range-for loop resulted in a broken node because
+           iterator::operator++ didn't work as expected.
+        2. If I used a SentinelLinkedList in a movable type, the sentinel
+           pointer gets stale after moving the object. move-ctor should be deleted.
+        3. It didn't have const_iterator.
+
+        * wtf/OrderMaker.h:
+        (WTF::OrderMaker::iterator::iterator):
+        (WTF::OrderMaker::iterator::operator*):
+        (WTF::OrderMaker::iterator::operator++):
+        (WTF::OrderMaker::iterator::operator== const):
+        * wtf/SentinelLinkedList.h:
+        (WTF::BasicRawSentinelNode::prev const):
+        (WTF::BasicRawSentinelNode::next const):
+        (WTF::SentinelLinkedList::BaseIterator::BaseIterator):
+        (WTF::SentinelLinkedList::BaseIterator::operator* const):
+        (WTF::SentinelLinkedList::BaseIterator::operator-> const):
+        (WTF::SentinelLinkedList::BaseIterator::operator++):
+        (WTF::SentinelLinkedList::BaseIterator::operator--):
+        (WTF::SentinelLinkedList::BaseIterator::operator== const):
+        (WTF::SentinelLinkedList::BaseIterator::operator!= const):
+        (WTF::SentinelLinkedList::forEach):
+        (WTF::RawNode>::begin):
+        (WTF::RawNode>::end):
+        (WTF::RawNode>::begin const):
+        (WTF::RawNode>::end const):
+        (WTF::BasicRawSentinelNode::prev): Deleted.
+        (WTF::BasicRawSentinelNode::next): Deleted.
+
 2022-03-01  Youenn Fablet  <youenn@apple.com>
 
         Enable WebRTCRemoteVideoFrameEnabled by default on Cocoa ports

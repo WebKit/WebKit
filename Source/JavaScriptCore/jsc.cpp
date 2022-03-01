@@ -1984,9 +1984,9 @@ template<typename Func>
 void Workers::broadcast(const Func& func)
 {
     Locker locker { m_lock };
-    for (Worker* worker = m_workers.begin(); worker != m_workers.end(); worker = worker->next()) {
-        if (worker != &Worker::current())
-            func(locker, *worker);
+    for (Worker& worker : m_workers) {
+        if (&worker != &Worker::current())
+            func(locker, worker);
     }
     m_condition.notifyAll();
 }

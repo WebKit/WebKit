@@ -30,12 +30,15 @@
 //    Requires: Node is a concrete class with:
 //        Node(SentinelTag);
 //        void setPrev(Node*);
-//        Node* prev();
+//        Node* prev() const;
 //        void setNext(Node*);
-//        Node* next();
+//        Node* next() const;
 
 #pragma once
 
+#include <iterator>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/Packed.h>
 
 namespace WTF {
@@ -57,8 +60,8 @@ public:
     void setPrev(BasicRawSentinelNode* prev) { m_prev = prev; }
     void setNext(BasicRawSentinelNode* next) { m_next = next; }
     
-    T* prev() { return static_cast<T*>(PtrTraits::unwrap(m_prev)); }
-    T* next() { return static_cast<T*>(PtrTraits::unwrap(m_next)); }
+    T* prev() const { return static_cast<T*>(PtrTraits::unwrap(m_prev)); }
+    T* next() const { return static_cast<T*>(PtrTraits::unwrap(m_next)); }
     
     bool isOnList() const
     {
@@ -77,8 +80,49 @@ private:
 };
 
 template <typename T, typename RawNode = T> class SentinelLinkedList {
+    WTF_MAKE_NONCOPYABLE(SentinelLinkedList);
+    WTF_MAKE_NONMOVABLE(SentinelLinkedList);
 public:
-    typedef T* iterator;
+    template<typename RawNodeType, typename NodeType> class BaseIterator {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        explicit BaseIterator(RawNodeType* node)
+            : m_node(node)
+        {
+        }
+        
+        auto& operator*() const { return static_cast<NodeType&>(*m_node); }
+
+        auto* operator->() const { return static_cast<NodeType*>(m_node); }
+
+        BaseIterator& operator++()
+        {
+            m_node = m_node->next();
+            return *this;
+        }
+        
+        BaseIterator& operator--()
+        {
+            m_node = m_node->prev();
+            return *this;
+        }
+        
+        bool operator==(const BaseIterator& other) const
+        {
+            return m_node == other.m_node;
+        }
+
+        bool operator!=(const BaseIterator& other) const
+        {
+            return !(*this == other);
+        }
+
+    private:
+        RawNodeType* m_node;
+    };
+
+    using iterator = BaseIterator<RawNode, T>;
+    using const_iterator = BaseIterator<const RawNode, const T>;
 
     SentinelLinkedList()
         : m_sentinel(Sentinel)
@@ -101,6 +145,8 @@ public:
 
     iterator begin();
     iterator end();
+    const_iterator begin() const;
+    const_iterator end() const;
     
     bool isEmpty() { return begin() == end(); }
     
@@ -108,8 +154,9 @@ public:
     void forEach(const Func& func)
     {
         for (iterator iter = begin(); iter != end();) {
-            iterator next = iter->next();
-            func(iter);
+            iterator next = iter;
+            ++next;
+            func(&*iter);
             iter = next;
         }
     }
@@ -139,12 +186,22 @@ template <typename T, typename PtrTraits> void BasicRawSentinelNode<T, PtrTraits
 
 template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::iterator SentinelLinkedList<T, RawNode>::begin()
 {
-    return static_cast<T*>(m_sentinel.next());
+    return iterator { m_sentinel.next() };
 }
 
 template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::iterator SentinelLinkedList<T, RawNode>::end()
 {
-    return static_cast<T*>(&m_sentinel);
+    return iterator { &m_sentinel };
+}
+
+template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::const_iterator SentinelLinkedList<T, RawNode>::begin() const
+{
+    return const_iterator { m_sentinel.next() };
+}
+
+template <typename T, typename RawNode> inline typename SentinelLinkedList<T, RawNode>::const_iterator SentinelLinkedList<T, RawNode>::end() const
+{
+    return const_iterator { &m_sentinel };
 }
 
 template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNode>::push(T* node)

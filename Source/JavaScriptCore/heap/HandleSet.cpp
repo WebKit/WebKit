@@ -59,12 +59,11 @@ void HandleSet::grow()
 template<typename Visitor>
 void HandleSet::visitStrongHandles(Visitor& visitor)
 {
-    Node* end = m_strongList.end();
-    for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
+    for (Node& node : m_strongList) {
 #if ENABLE(GC_VALIDATION)
-        RELEASE_ASSERT(isLiveNode(node));
+        RELEASE_ASSERT(isLiveNode(&node));
 #endif
-        visitor.appendUnbarriered(*node->slot());
+        visitor.appendUnbarriered(*node.slot());
     }
 }
 
@@ -95,9 +94,8 @@ void HandleSet::writeBarrier(HandleSlot slot, const JSValue& value)
 unsigned HandleSet::protectedGlobalObjectCount()
 {
     unsigned count = 0;
-    Node* end = m_strongList.end();
-    for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
-        JSValue value = *node->slot();
+    for (Node& node : m_strongList) {
+        JSValue value = *node.slot();
         if (value.isObject() && asObject(value.asCell())->isGlobalObject())
             count++;
     }

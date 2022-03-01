@@ -51,30 +51,30 @@ TEST(WTF_SentinelLinkedList, Basic)
 
     auto* first = bag.add(0);
     list.push(first);
-    EXPECT_EQ(first, list.begin());
+    EXPECT_EQ(first, &*list.begin());
     EXPECT_EQ(0, list.begin()->value());
 
     auto* second = bag.add(1);
     list.push(second);
-    EXPECT_EQ(second, list.begin());
+    EXPECT_EQ(second, &*list.begin());
     EXPECT_EQ(1, list.begin()->value());
     EXPECT_EQ(first, list.begin()->next());
     EXPECT_EQ(0, list.begin()->next()->value());
-    EXPECT_EQ(list.end(), list.begin()->next()->next());
+    EXPECT_EQ(&*list.end(), list.begin()->next()->next());
 
     auto* third = bag.add(2);
     first->prepend(third);
-    EXPECT_EQ(second, list.begin());
+    EXPECT_EQ(second, &*list.begin());
     EXPECT_EQ(1, list.begin()->value());
     EXPECT_EQ(third, list.begin()->next());
     EXPECT_EQ(2, list.begin()->next()->value());
     EXPECT_EQ(first, list.begin()->next()->next());
     EXPECT_EQ(0, list.begin()->next()->next()->value());
-    EXPECT_EQ(list.end(), list.begin()->next()->next()->next());
+    EXPECT_EQ(&*list.end(), list.begin()->next()->next()->next());
 
     auto* fourth = bag.add(3);
     first->append(fourth);
-    EXPECT_EQ(second, list.begin());
+    EXPECT_EQ(second, &*list.begin());
     EXPECT_EQ(1, list.begin()->value());
     EXPECT_EQ(third, list.begin()->next());
     EXPECT_EQ(2, list.begin()->next()->value());
@@ -82,7 +82,7 @@ TEST(WTF_SentinelLinkedList, Basic)
     EXPECT_EQ(0, list.begin()->next()->next()->value());
     EXPECT_EQ(fourth, list.begin()->next()->next()->next());
     EXPECT_EQ(3, list.begin()->next()->next()->next()->value());
-    EXPECT_EQ(list.end(), list.begin()->next()->next()->next()->next());
+    EXPECT_EQ(&*list.end(), list.begin()->next()->next()->next()->next());
 
     EXPECT_TRUE(first->isOnList());
     EXPECT_TRUE(second->isOnList());
@@ -113,9 +113,9 @@ TEST(WTF_SentinelLinkedList, Remove)
 
     int i = 0;
     while (!list.isEmpty()) {
-        auto* node = list.begin();
-        EXPECT_EQ(i++, node->value());
-        node->remove();
+        auto& node = *list.begin();
+        EXPECT_EQ(i++, node.value());
+        node.remove();
     }
     EXPECT_EQ(10, i);
 }
@@ -147,7 +147,7 @@ TEST(WTF_SentinelLinkedList, TakeFrom)
     EXPECT_EQ(0, list.begin()->value());
     EXPECT_EQ(1, list.begin()->next()->value());
     EXPECT_EQ(2, list.begin()->next()->next()->value());
-    EXPECT_EQ(list.end(), list.begin()->next()->next()->next());
+    EXPECT_EQ(&*list.end(), list.begin()->next()->next()->next());
 }
 
 TEST(WTF_SentinelLinkedList, ForEach)
@@ -169,6 +169,20 @@ TEST(WTF_SentinelLinkedList, ForEach)
     list.forEach([&](auto* node) {
         EXPECT_EQ(i++, node->value());
     });
+    EXPECT_EQ(10, i);
+}
+
+TEST(WTF_SentinelLinkedList, Const)
+{
+    Bag<TestNode> bag;
+    SentinelLinkedList<TestNode> nonConstList;
+    for (int i = 0; i < 10; ++i)
+        nonConstList.append(bag.add(i));
+
+    const SentinelLinkedList<TestNode>& constList = nonConstList;
+    int i = 0;
+    for (auto& node : constList)
+        EXPECT_EQ(i++, node.value());
     EXPECT_EQ(10, i);
 }
 

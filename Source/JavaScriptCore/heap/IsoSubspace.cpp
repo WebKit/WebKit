@@ -93,7 +93,7 @@ void* IsoSubspace::tryAllocateFromLowerTier()
     };
 
     if (!m_lowerTierFreeList.isEmpty()) {
-        PreciseAllocation* allocation = m_lowerTierFreeList.begin();
+        PreciseAllocation* allocation = &*m_lowerTierFreeList.begin();
         allocation->remove();
         return revive(allocation);
     }

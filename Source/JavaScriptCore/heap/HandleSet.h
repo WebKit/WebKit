@@ -181,9 +181,8 @@ inline HandleNode* HandleNode::next()
 
 template<typename Functor> void HandleSet::forEachStrongHandle(const Functor& functor, const HashCountedSet<JSCell*>& skipSet)
 {
-    HandleSet::Node* end = m_strongList.end();
-    for (HandleSet::Node* node = m_strongList.begin(); node != end; node = node->next()) {
-        JSValue value = *node->slot();
+    for (Node& node : m_strongList) {
+        JSValue value = *node.slot();
         if (!value || !value.isCell())
             continue;
         if (skipSet.contains(value.asCell()))
