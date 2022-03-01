@@ -9103,6 +9103,11 @@ void Document::removeElementWithPendingUserAgentShadowTreeUpdate(Element& elemen
     // FIXME: Assert that element was in m_elementsWithPendingUserAgentShadowTreeUpdates once re-entrancy to update style and layout have been removed.
 }
 
+bool Document::hasElementWithPendingUserAgentShadowTreeUpdate(Element& element) const
+{
+    return m_elementsWithPendingUserAgentShadowTreeUpdates.contains(element);
+}
+
 } // namespace WebCore
 
 #undef DOCUMENT_RELEASE_LOG

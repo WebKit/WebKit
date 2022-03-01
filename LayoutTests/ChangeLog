@@ -1,3 +1,21 @@
+2022-03-01  Cameron McCormack  <heycam@apple.com>
+
+        Make input element UA shadow tree creation lazy
+        https://bugs.webkit.org/show_bug.cgi?id=236747
+
+        Reviewed by Aditya Keerthi.
+
+        * fast/forms/lazy-shadow-tree-creation-expected.html: Added.
+        * fast/forms/lazy-shadow-tree-creation.html: Added.
+        * fast/forms/lazy-shadow-tree-creation.js: Added.
+        (supportsType):
+        (makeAndAppendInput):
+        * LayoutTests/fast/forms/lazy-shadow-tree-creation-crash.html:
+        * LayoutTests/fast/forms/lazy-shadow-tree-creation-crash-expected.html:
+        Crashtest.
+        * fast/shadow-dom/style-resolver-sharing-expected.txt:
+        Update to account for the lazy shadow tree being created later.
+
 2022-03-01  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations and baselines. Unreviewed test gardening.
