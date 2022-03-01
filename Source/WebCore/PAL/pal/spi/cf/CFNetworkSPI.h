@@ -506,4 +506,8 @@ WTF_EXTERN_C_END
 - (void)_sendCloseCode:(NSURLSessionWebSocketCloseCode)closeCode reason:(NSData *)reason;
 @end
 
+@interface NSMutableURLRequest (Staging_88972294)
+@property (setter=_setPrivacyProxyFailClosedForUnreachableNonMainHosts:) BOOL _privacyProxyFailClosedForUnreachableNonMainHosts;
+@end
+
 #endif // defined(__OBJC__)
