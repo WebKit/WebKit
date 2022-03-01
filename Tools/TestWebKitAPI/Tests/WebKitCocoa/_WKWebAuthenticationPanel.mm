@@ -1384,6 +1384,9 @@ TEST(WebAuthenticationPanel, LADuplicateCredentialWithConsent)
 TEST(WebAuthenticationPanel, LANoCredential)
 {
     reset();
+    // In case this wasn't cleaned up by another test.
+    cleanUpKeychain("");
+
     RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-get-assertion-la" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
@@ -1469,33 +1472,6 @@ TEST(WebAuthenticationPanel, LAMakeCredentialNoMockNoUserGesture)
 
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     [webView waitForMessage:@"This request has been cancelled by the user."];
-}
-
-TEST(WebAuthenticationPanel, LAMakeCredentialRollBackCredential)
-{
-    reset();
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-no-attestation" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-
-    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-    [[configuration preferences] _setEnabled:NO forExperimentalFeature:webAuthenticationModernExperimentalFeature()];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
-    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
-    [webView setUIDelegate:delegate.get()];
-    [webView focus];
-
-    localAuthenticatorPolicy = _WKLocalAuthenticatorPolicyAllow;
-    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"Couldn't attest: The operation couldn't complete."];
-
-    NSDictionary *query = @{
-        (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
-        (id)kSecAttrLabel: @"",
-        (id)kSecUseDataProtectionKeychain: @YES
-    };
-    OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, nullptr);
-    EXPECT_EQ(status, errSecItemNotFound);
 }
 
 #if PLATFORM(MAC)
