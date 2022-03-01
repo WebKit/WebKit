@@ -1,3 +1,12 @@
+2022-03-01  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] add support for passing an optional timeline to Element.animate()
+        https://bugs.webkit.org/show_bug.cgi?id=237312
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+
 2022-02-28  Jonathan Bedard  <jbedard@apple.com>
 
         [Python 3] Delete old pywebsocket

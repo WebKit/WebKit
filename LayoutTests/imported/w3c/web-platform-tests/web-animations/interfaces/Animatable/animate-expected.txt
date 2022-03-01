@@ -133,7 +133,7 @@ PASS Element.animate() correctly sets the Animation's timeline
 PASS Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document
 PASS Element.animate() correctly sets the Animation's timeline with no timeline parameter in KeyframeAnimationOptions.
 PASS Element.animate() correctly sets the Animation's timeline with undefined timeline in KeyframeAnimationOptions.
-FAIL Element.animate() correctly sets the Animation's timeline with null timeline in KeyframeAnimationOptions. assert_equals: Animation timeline should be null expected null but got object "[object DocumentTimeline]"
+PASS Element.animate() correctly sets the Animation's timeline with null timeline in KeyframeAnimationOptions.
 PASS Element.animate() correctly sets the Animation's timeline with DocumentTimeline in KeyframeAnimationOptions.
 PASS Element.animate() calls play on the Animation
 PASS Element.animate() does NOT trigger a style change event

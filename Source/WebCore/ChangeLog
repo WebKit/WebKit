@@ -1,3 +1,15 @@
+2022-03-01  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] add support for passing an optional timeline to Element.animate()
+        https://bugs.webkit.org/show_bug.cgi?id=237312
+
+        Reviewed by Dean Jackson.
+
+        * animation/KeyframeAnimationOptions.h:
+        * animation/KeyframeAnimationOptions.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::animate):
+
 2022-03-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r290325.

@@ -27,12 +27,14 @@
 
 #include "AnimationFrameRate.h"
 #include "AnimationFrameRatePreset.h"
+#include "AnimationTimeline.h"
 #include "KeyframeEffectOptions.h"
 
 namespace WebCore {
 
 struct KeyframeAnimationOptions : KeyframeEffectOptions {
     String id;
+    std::optional<RefPtr<AnimationTimeline>> timeline;
     std::variant<FramesPerSecond, AnimationFrameRatePreset> frameRate;
 };
 

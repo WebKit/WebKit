@@ -4685,6 +4685,7 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
 ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlobalObject, JSC::Strong<JSC::JSObject>&& keyframes, std::optional<std::variant<double, KeyframeAnimationOptions>>&& options)
 {
     String id = "";
+    std::optional<RefPtr<AnimationTimeline>> timeline;
     std::variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;
     std::optional<std::variant<double, KeyframeEffectOptions>> keyframeEffectOptions;
     if (options) {
@@ -4696,6 +4697,7 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
             auto keyframeEffectOptions = std::get<KeyframeAnimationOptions>(optionsValue);
             id = keyframeEffectOptions.id;
             frameRate = keyframeEffectOptions.frameRate;
+            timeline = keyframeEffectOptions.timeline;
             keyframeEffectOptionsVariant = WTFMove(keyframeEffectOptions);
         }
         keyframeEffectOptions = keyframeEffectOptionsVariant;
@@ -4707,6 +4709,8 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
 
     auto animation = WebAnimation::create(document(), &keyframeEffectResult.returnValue().get());
     animation->setId(id);
+    if (timeline)
+        animation->setTimeline(timeline->get());
     animation->setBindingsFrameRate(WTFMove(frameRate));
 
     auto animationPlayResult = animation->play();
