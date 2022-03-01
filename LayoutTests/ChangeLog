@@ -1,3 +1,20 @@
+2022-03-01  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Update test expectations and baselines. Unreviewed test gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=237310
+
+        * platform/glib/css3/flexbox/line-wrapping-expected.txt:
+        * platform/glib/fast/block/positioning/auto/vertical-lr/007-expected.txt:
+        * platform/glib/fast/dom/scroll-reveal-top-overflow-expected.txt: Added.
+        * platform/glib/tables/mozilla_expected_failures/dom/appendColGroup1-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/repaint/vertical-text-repaint-expected.txt: Added.
+        * platform/gtk/fast/writing-mode/japanese-lr-selection-expected.txt:
+        * platform/gtk/tables/mozilla_expected_failures/dom/appendCol1-expected.txt:
+        * platform/wpe/fast/repaint/vertical-text-repaint-expected.txt: Added.
+        * platform/wpe/fast/writing-mode/japanese-lr-selection-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/dom/appendCol1-expected.txt:
+
 2022-03-01  Matt Woodrow  <mattwoodrow@apple.com>
 
         Handle perpendicular containing blocks when computing available logical height.
