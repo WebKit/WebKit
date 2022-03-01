@@ -1,3 +1,13 @@
+2022-03-01  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Build failure with libstdc++ (>= 6) when cross-compiling (fatal error: stdlib.h: No such file or directory)
+        https://bugs.webkit.org/show_bug.cgi?id=161697
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/WebKitCompilerFlags.cmake: Set LANG=C in compiler invocation to ensure its
+        output is consistent and the checks are independent from the system locale configuration.
+
 2022-03-01  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [CMake] Disabling ENABLE_WEBCORE is ignored when cmake configuration runs again.
