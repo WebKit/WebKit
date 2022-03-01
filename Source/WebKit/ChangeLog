@@ -1,3 +1,38 @@
+2022-02-28  Sihui Liu  <sihui_liu@apple.com>
+
+        [macOS] TestWebKitAPI.WebKit.MigrateLocalStorageDataToGeneralStorageDirectory is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=237065
+        <rdar://problem/89324250>
+
+        Reviewed by Darin Adler.
+
+        Revert r290544 as it does not fully fix the flaky test. The flakiness is caused by network process exiting
+        before transactions of SQLiteStorageArea are committed. In NetworkProcess::destroySession, we schedule a 
+        background task to commit transactions in the session, and remove session. In NetworkProcess::didClose, for 
+        existing sessions, we schedule tasks to commit transaction and wait until the tasks are finished before exiting 
+        network process. That means for a session, when NetworkProcess::destroySession is called before 
+        NetworkProcess::didClose, process may exit before commit task (scheduled by NetworkProcess::destroySession) is
+        finished (NetworkProcess::didClose does not wait because session is already removed). 
+
+        To solve this issue, let NetworkProcess::didClose check existing NetworkStorageManagers, instead of 
+        NetworkSessions. NetworkStorageManager can outlive NetworkSession when it's finishing cleanup task
+        (including committing transactions) on its background thread; we want to ensure process exits after the cleanup
+        task is done.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::allNetworkStorageManagers):
+        (WebKit::NetworkStorageManager::forEach):
+        (WebKit::NetworkStorageManager::NetworkStorageManager):
+        (WebKit::NetworkStorageManager::~NetworkStorageManager):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/SQLiteStorageArea.cpp:
+        (WebKit::SQLiteStorageArea::SQLiteStorageArea):
+        (WebKit::SQLiteStorageArea::startTransactionIfNecessary):
+        (WebKit::SQLiteStorageArea::commitTransactionIfNecessary):
+        (WebKit::commitTransactionsAtExit): Deleted.
+
 2022-02-28  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt -streamDataParser:didProvideContentKeySpecifier:forTrackID: delegate callback

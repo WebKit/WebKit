@@ -261,10 +261,12 @@ void NetworkProcess::didClose(IPC::Connection&)
         stopRunLoop();
     });
 
-    forEachNetworkSession([&] (auto& session) {
+    forEachNetworkSession([&](auto& session) {
         platformFlushCookies(session.sessionID(), [callbackAggregator] { });
-        if (auto* storageManager = session.storageManager())
-            storageManager->syncLocalStorage([callbackAggregator] { });
+    });
+
+    NetworkStorageManager::forEach([&](auto& manager) {
+        manager.syncLocalStorage([callbackAggregator] { });
     });
 }
 

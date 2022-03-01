@@ -108,6 +108,18 @@ static void deleteOriginFileIfNecessary(const String& filePath)
         FileSystem::deleteFile(filePath);
 }
 
+static WeakHashSet<NetworkStorageManager>& allNetworkStorageManagers()
+{
+    static MainThreadNeverDestroyed<WeakHashSet<NetworkStorageManager>> managers;
+    return managers;
+}
+
+void NetworkStorageManager::forEach(const Function<void(NetworkStorageManager&)>& apply)
+{
+    for (auto& manager : allNetworkStorageManagers())
+        apply(manager);
+}
+
 Ref<NetworkStorageManager> NetworkStorageManager::create(PAL::SessionID sessionID, IPC::Connection::UniqueID connection, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths)
 {
     return adoptRef(*new NetworkStorageManager(sessionID, connection, path, customLocalStoragePath, customIDBStoragePath, customCacheStoragePath, defaultOriginQuota, defaultThirdPartyOriginQuota, shouldUseCustomPaths));
@@ -122,6 +134,7 @@ NetworkStorageManager::NetworkStorageManager(PAL::SessionID sessionID, IPC::Conn
 {
     ASSERT(RunLoop::isMain());
 
+    allNetworkStorageManagers().add(*this);
     m_queue->dispatch([this, protectedThis = Ref { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), shouldUseCustomPaths]() mutable {
         m_fileSystemStorageHandleRegistry = makeUnique<FileSystemStorageHandleRegistry>();
         m_storageAreaRegistry = makeUnique<StorageAreaRegistry>();
@@ -142,6 +155,8 @@ NetworkStorageManager::~NetworkStorageManager()
 {
     ASSERT(RunLoop::isMain());
     ASSERT(m_closed);
+
+    allNetworkStorageManagers().remove(*this);
 }
 
 bool NetworkStorageManager::canHandleTypes(OptionSet<WebsiteDataType> types)

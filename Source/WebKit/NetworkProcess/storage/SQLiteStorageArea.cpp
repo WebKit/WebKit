@@ -62,20 +62,6 @@ ASCIILiteral SQLiteStorageArea::statementString(StatementType type) const
     return ""_s;
 }
 
-static Lock allTransactionsLock;
-static HashSet<WebCore::SQLiteTransaction*>& allTransactions() WTF_REQUIRES_LOCK(allTransactionsLock)
-{
-    static NeverDestroyed<HashSet<WebCore::SQLiteTransaction*>> transactions;
-    return transactions;
-}
-
-static void commitTransactionsAtExit()
-{
-    Locker lock { allTransactionsLock };
-    for (auto* transaction : allTransactions())
-        transaction->commit();
-}
-
 SQLiteStorageArea::SQLiteStorageArea(unsigned quota, const WebCore::ClientOrigin& origin, const String& path, Ref<WorkQueue>&& workQueue)
     : StorageAreaBase(quota, origin)
     , m_path(path)
@@ -83,11 +69,6 @@ SQLiteStorageArea::SQLiteStorageArea(unsigned quota, const WebCore::ClientOrigin
     , m_cachedStatements(static_cast<size_t>(StatementType::Invalid))
 {
     ASSERT(!isMainRunLoop());
-
-    static std::once_flag once;
-    std::call_once(once, [] {
-        std::atexit(commitTransactionsAtExit);
-    });
 }
 
 void SQLiteStorageArea::close()
@@ -205,14 +186,9 @@ void SQLiteStorageArea::startTransactionIfNecessary()
     if (!m_transaction)
         m_transaction = makeUnique<WebCore::SQLiteTransaction>(*m_database);
 
-    {
-        Locker lock { allTransactionsLock };
-        if (m_transaction->inProgress())
-            return;
-
-        m_transaction->begin();
-        allTransactions().add(m_transaction.get());
-    }
+    if (m_transaction->inProgress())
+        return;
+    m_transaction->begin();
 
     m_queue->dispatchAfter(transactionDuration, [weakThis = WeakPtr { *this }] {
         if (weakThis)
@@ -419,13 +395,8 @@ Expected<void, StorageError> SQLiteStorageArea::clear(IPC::Connection::UniqueID 
 
 void SQLiteStorageArea::commitTransactionIfNecessary()
 {
-    auto transaction = std::exchange(m_transaction, nullptr);
-    if (!transaction)
-        return;
-
-    Locker lock { allTransactionsLock };
-    transaction->commit();
-    allTransactions().remove(transaction.get());
+    if (auto transaction = std::exchange(m_transaction, nullptr))
+        transaction->commit();
 }
 
 void SQLiteStorageArea::handleLowMemoryWarning()

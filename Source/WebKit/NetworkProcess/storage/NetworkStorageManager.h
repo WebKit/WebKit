@@ -40,6 +40,7 @@
 #include <WebCore/IndexedDB.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
+#include <wtf/WeakHashSet.h>
 
 namespace IPC {
 class SharedFileHandle;
@@ -70,6 +71,7 @@ class StorageAreaRegistry;
 
 class NetworkStorageManager final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
+    static void forEach(const Function<void(NetworkStorageManager&)>&);
     static Ref<NetworkStorageManager> create(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths);
     static bool canHandleTypes(OptionSet<WebsiteDataType>);
 
