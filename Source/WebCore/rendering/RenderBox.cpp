@@ -3600,6 +3600,12 @@ LayoutUnit RenderBox::availableLogicalHeight(AvailableLogicalHeightType heightTy
     return constrainContentBoxLogicalHeightByMinMax(availableLogicalHeightUsing(style().logicalHeight(), heightType), std::nullopt);
 }
 
+// FIXME: evaluate whether this should be a method of RenderObject instead.
+static inline bool isOrthogonal(const RenderObject& renderer, const RenderObject& ancestor)
+{
+    return renderer.isHorizontalWritingMode() != ancestor.isHorizontalWritingMode();
+}
+
 LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogicalHeightType heightType) const
 {
     // We need to stop here, since we don't want to increase the height of the table
@@ -3634,8 +3640,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
         return computedValues.m_extent - block.borderAndPaddingLogicalHeight() - block.scrollbarLogicalHeight();
     }
 
-    // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.
-    LayoutUnit availableHeight = containingBlockLogicalHeightForContent(heightType);
+    LayoutUnit availableHeight = isOrthogonal(*this, *containingBlock()) ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(heightType);
     if (heightType == ExcludeMarginBorderPadding) {
         // FIXME: Margin collapsing hasn't happened yet, so this incorrectly removes collapsed margins.
         availableHeight -= marginBefore() + marginAfter() + borderAndPaddingLogicalHeight();
@@ -3777,12 +3782,6 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
         heightResult = boundingBox.width();
     heightResult -= (containingBlock.borderBefore() + containingBlock.borderAfter());
     return heightResult;
-}
-
-// FIXME: evaluate whether this should be a method of RenderObject instead.
-static inline bool isOrthogonal(const RenderObject& renderer, const RenderObject& ancestor)
-{
-    return renderer.isHorizontalWritingMode() != ancestor.isHorizontalWritingMode();
 }
 
 static void computeInlineStaticDistance(Length& logicalLeft, Length& logicalRight, const RenderBox* child, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalWidth, RenderFragmentContainer* fragment)

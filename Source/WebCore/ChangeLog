@@ -1,3 +1,21 @@
+2022-03-01  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Handle perpendicular containing blocks when computing available logical height.
+        https://bugs.webkit.org/show_bug.cgi?id=236953
+
+        Reviewed by Dean Jackson.
+
+        Handles the case where the containing block uses a perpendicular writing mode
+        to the current box, and we need to check the containing block's width in order
+        to determine height.
+
+        Existing subgrid tests marked as passing.
+        These subgrid reftests were failing because the -expected files were rendering incorrectly
+        (which don't use subgrid).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::availableLogicalHeightUsing const):
+
 2022-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATSPI] Remove layout tests checking children added/removed notifications
