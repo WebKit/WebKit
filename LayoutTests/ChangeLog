@@ -1,3 +1,13 @@
+2022-03-01  Chris Dumez  <cdumez@apple.com>
+
+        [Debug] imported/w3c/web-platform-tests/url/toascii.window.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=236442
+        <rdar://problem/89085190>
+
+        Unreviewed, unskip test as it no longer appears to crash in Debug.
+
+        * TestExpectations:
+
 2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         focus({preventScroll: true}) does not prevent scrolling on iOS
