@@ -53,6 +53,7 @@ void InjectedBundle::platformInitialize(WKTypeRef initializationUserData)
         @"AppleHighlightColor": @"0.709800 0.835300 1.000000",
         @"AppleOtherHighlightColor": @"0.500000 0.500000 0.500000",
         @"NSOverlayScrollersEnabled": @NO,
+        @"NSScrollAnimationEnabled" : @NO,
         @"AppleShowScrollBars": @"Always",
         @"NSButtonAnimationsEnabled": @NO, // Ideally, we should find a way to test animations, but for now, make sure that the dumped snapshot matches actual state.
         // FIXME (<rdar://problem/13396515>): It is too late to set AppleLanguages here, as loaded frameworks localizations cannot be changed.

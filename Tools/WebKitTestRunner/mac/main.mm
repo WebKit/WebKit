@@ -43,6 +43,7 @@ static void setDefaultsToConsistentValuesForTesting()
         @"com.apple.swipescrolldirection": @1,
         @"com.apple.trackpad.forceClick": @1,
         @"NSOverlayScrollersEnabled": @NO,
+        @"NSScrollAnimationEnabled" : @NO,
         @"AppleShowScrollBars": @"Always",
         @"WebKit2UseRemoteLayerTreeDrawingArea": @NO,
     };
