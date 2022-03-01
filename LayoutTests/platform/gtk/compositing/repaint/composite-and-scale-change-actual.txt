@@ -1,0 +1,29 @@
+(repaint rects
+  (rect 30 20 440 440)
+  (rect 0 0 800 600)
+  (rect 0 0 800 13)
+)
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 1
+        (GraphicsLayer
+          (position 30.00 20.00)
+          (anchor 0.00 0.00)
+          (bounds 440.00 440.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+          (transform [0.50 0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
+          (repaint rects
+            (rect 0.00 0.00 440.00 440.00)
+          )
+        )
+      )
+    )
+  )
+)
+
