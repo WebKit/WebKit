@@ -169,9 +169,7 @@ static inline TransformOperations blendFunc(const TransformOperations& from, con
         return resultOperations;
     }
     auto boxSize = is<RenderBox>(context.client->renderer()) ? downcast<RenderBox>(*context.client->renderer()).borderBoxRect().size() : LayoutSize();
-    if (context.client->transformFunctionListsMatch())
-        return to.blendByMatchingOperations(from, context, boxSize);
-    return to.blendByUsingMatrixInterpolation(from, context, boxSize);
+    return to.blend(from, context, boxSize, context.client->transformFunctionListPrefix());
 }
 
 static RefPtr<ScaleTransformOperation> blendFunc(ScaleTransformOperation* from, ScaleTransformOperation* to, const CSSPropertyBlendingContext& context)

@@ -109,7 +109,7 @@ static float applyOpacityAnimation(float fromOpacity, float toOpacity, double pr
     return fromOpacity + progress * (toOpacity - fromOpacity);
 }
 
-static TransformationMatrix applyTransformAnimation(const TransformOperations& from, const TransformOperations& to, double progress, const FloatSize& boxSize, bool listsMatch)
+static TransformationMatrix applyTransformAnimation(const TransformOperations& from, const TransformOperations& to, double progress, const FloatSize& boxSize)
 {
     TransformationMatrix matrix;
 
@@ -125,35 +125,7 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
         return matrix;
     }
 
-    // If we have incompatible operation lists, we blend the resulting matrices.
-    if (!listsMatch) {
-        TransformationMatrix fromMatrix;
-        to.apply(boxSize, matrix);
-        from.apply(boxSize, fromMatrix);
-        matrix.blend(fromMatrix, progress);
-        return matrix;
-    }
-
-    // Animation to "-webkit-transform: none".
-    if (!to.size()) {
-        TransformOperations blended(from);
-        for (auto& operation : blended.operations())
-            operation->blend(nullptr, progress, true)->apply(matrix, boxSize);
-        return matrix;
-    }
-
-    // Animation from "-webkit-transform: none".
-    if (!from.size()) {
-        TransformOperations blended(to);
-        for (auto& operation : blended.operations())
-            operation->blend(nullptr, 1 - progress, true)->apply(matrix, boxSize);
-        return matrix;
-    }
-
-    // Normal animation with a matching operation list.
-    TransformOperations blended(to);
-    for (size_t i = 0; i < blended.operations().size(); ++i)
-        blended.operations()[i]->blend(from.at(i), progress, !from.at(i))->apply(matrix, boxSize);
+    to.blend(from, progress, LayoutSize { boxSize }).apply(boxSize, matrix);
     return matrix;
 }
 
@@ -166,7 +138,7 @@ static const TimingFunction& timingFunctionForAnimationValue(const AnimationValu
     return CubicBezierTimingFunction::defaultTimingFunction();
 }
 
-Animation::Animation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const WebCore::Animation& animation, bool listsMatch, MonotonicTime startTime, Seconds pauseTime, AnimationState state)
+Animation::Animation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const WebCore::Animation& animation, MonotonicTime startTime, Seconds pauseTime, AnimationState state)
     : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
     , m_keyframes(keyframes)
     , m_boxSize(boxSize)
@@ -175,7 +147,6 @@ Animation::Animation(const String& name, const KeyframeValueList& keyframes, con
     , m_duration(animation.duration())
     , m_direction(animation.direction())
     , m_fillsForwards(animation.fillsForwards())
-    , m_listsMatch(listsMatch)
     , m_startTime(startTime)
     , m_pauseTime(pauseTime)
     , m_totalRunningTime(0_s)
@@ -193,7 +164,6 @@ Animation::Animation(const Animation& other)
     , m_duration(other.m_duration)
     , m_direction(other.m_direction)
     , m_fillsForwards(other.m_fillsForwards)
-    , m_listsMatch(other.m_listsMatch)
     , m_startTime(other.m_startTime)
     , m_pauseTime(other.m_pauseTime)
     , m_totalRunningTime(other.m_totalRunningTime)
@@ -212,7 +182,6 @@ Animation& Animation::operator=(const Animation& other)
     m_duration = other.m_duration;
     m_direction = other.m_direction;
     m_fillsForwards = other.m_fillsForwards;
-    m_listsMatch = other.m_listsMatch;
     m_startTime = other.m_startTime;
     m_pauseTime = other.m_pauseTime;
     m_totalRunningTime = other.m_totalRunningTime;
@@ -311,7 +280,7 @@ void Animation::applyInternal(ApplicationResult& applicationResults, const Anima
 {
     switch (m_keyframes.property()) {
     case AnimatedPropertyTransform:
-        applicationResults.transform = applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize, m_listsMatch);
+        applicationResults.transform = applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize);
         return;
     case AnimatedPropertyOpacity:
         applicationResults.opacity = applyOpacityAnimation((static_cast<const FloatAnimationValue&>(from).value()), (static_cast<const FloatAnimationValue&>(to).value()), progress);

@@ -711,37 +711,6 @@ int GraphicsLayer::validateFilterOperations(const KeyframeValueList& valueList)
     return firstIndex;
 }
 
-static inline const TransformOperations& operationsAt(const KeyframeValueList& valueList, size_t index)
-{
-    return static_cast<const TransformAnimationValue&>(valueList.at(index)).value();
-}
-
-// A sequence of keyframes with a list of transforms can be represented without matrix interpolation
-// if each transform is compatible with all other transforms at the same index in other keyframes.
-// Two transforms are compatible if they share a primitive defined by the CSS Transforms Level 2
-// specification. For instance, the shared primitive of a translateX and translate3D operation is
-// TransformOperation::TRANSLATE_3D. This function returns true if the TransformOperations in each
-// keyframe share a primitive operation type and stores the compatible OperationTypes in
-// sharedPrimitives. If the keyframes do not share a list of compatible primitives, false is
-// returned.
-bool GraphicsLayer::getSharedPrimitivesForTransformKeyframes(const KeyframeValueList& valueList, Vector<TransformOperation::OperationType>& sharedPrimitives)
-{
-    ASSERT(animatedPropertyIsTransformOrRelated(valueList.property()));
-
-    if (valueList.size() < 2)
-        return false;
-
-    sharedPrimitives.clear();
-    sharedPrimitives.reserveInitialCapacity(operationsAt(valueList, 0).size());
-
-    for (size_t i = 0; i < valueList.size(); ++i) {
-        if (!operationsAt(valueList, i).updateSharedPrimitives(sharedPrimitives))
-            return false;
-    }
-
-    return true;
-}
-
 double GraphicsLayer::backingStoreMemoryEstimate() const
 {
     if (!drawsContent())

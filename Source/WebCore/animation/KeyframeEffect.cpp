@@ -913,20 +913,16 @@ void KeyframeEffect::setBlendingKeyframes(KeyframeList& blendingKeyframes)
 
 void KeyframeEffect::checkForMatchingTransformFunctionLists()
 {
-    m_transformFunctionListsMatch = false;
-
-    if (m_blendingKeyframes.size() < 2 || !m_blendingKeyframes.containsProperty(CSSPropertyTransform))
+    if (m_blendingKeyframes.size() < 2 || !m_blendingKeyframes.containsProperty(CSSPropertyTransform)) {
+        m_transformFunctionListsMatchPrefix = 0;
         return;
-
-    Vector<TransformOperation::OperationType> sharedPrimitives;
-    sharedPrimitives.reserveInitialCapacity(m_blendingKeyframes[0].style()->transform().operations().size());
-
-    for (const auto& keyframe : m_blendingKeyframes) {
-        if (!keyframe.style()->transform().updateSharedPrimitives(sharedPrimitives))
-            return;
     }
 
-    m_transformFunctionListsMatch = true;
+    SharedPrimitivesPrefix prefix;
+    for (const auto& keyframe : m_blendingKeyframes)
+        prefix.update(keyframe.style()->transform());
+
+    m_transformFunctionListsMatchPrefix = prefix.primitives().size();
 }
 
 bool KeyframeEffect::checkForMatchingFilterFunctionLists(CSSPropertyID propertyID, const std::function<const FilterOperations& (const RenderStyle&)>& filtersGetter) const
@@ -1941,7 +1937,7 @@ bool KeyframeEffect::computeExtentOfTransformAnimation(LayoutRect& bounds) const
         auto keyframeBounds = bounds;
 
         bool canCompute;
-        if (transformFunctionListsMatch())
+        if (transformFunctionListPrefix() > 0)
             canCompute = computeTransformedExtentViaTransformList(rendererBox, *style, keyframeBounds);
         else
             canCompute = computeTransformedExtentViaMatrix(rendererBox, *style, keyframeBounds);

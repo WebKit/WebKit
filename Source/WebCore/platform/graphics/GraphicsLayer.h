@@ -667,11 +667,6 @@ protected:
     // Given a KeyframeValueList containing filterOperations, return true if the operations are valid.
     static int validateFilterOperations(const KeyframeValueList&);
 
-    // Given a list of TransformAnimationValues keyframes, place a list of primitive operations which can
-    // represent the transform functions of every keyframe in the sharedPrimitives out parameter and return
-    // true. If the keyframes do not share compatible functions, return false.
-    static bool getSharedPrimitivesForTransformKeyframes(const KeyframeValueList&, Vector<TransformOperation::OperationType>& sharedPrimitives);
-
     virtual bool shouldRepaintOnSizeChange() const { return drawsContent(); }
 
     void removeFromParentInternal();

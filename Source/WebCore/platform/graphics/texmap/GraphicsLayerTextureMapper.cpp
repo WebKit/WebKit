@@ -611,14 +611,8 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
             return false;
     }
 
-    bool listsMatch = false;
-    if (valueList.property() == AnimatedPropertyTransform) {
-        Vector<TransformOperation::OperationType> unusedOperations;
-        listsMatch = !!getSharedPrimitivesForTransformKeyframes(valueList, unusedOperations);
-    }
-
     const MonotonicTime currentTime = MonotonicTime::now();
-    m_animations.add(Nicosia::Animation(keyframesName, valueList, boxSize, *anim, listsMatch, currentTime - Seconds(timeOffset), 0_s, Nicosia::Animation::AnimationState::Playing));
+    m_animations.add(Nicosia::Animation(keyframesName, valueList, boxSize, *anim, currentTime - Seconds(timeOffset), 0_s, Nicosia::Animation::AnimationState::Playing));
     // m_animationStartTime is the time of the first real frame of animation, now or delayed by a negative offset.
     if (Seconds(timeOffset) > 0_s)
         m_animationStartTime = currentTime;

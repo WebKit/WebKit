@@ -140,7 +140,14 @@ public:
     bool isAboutToRunAccelerated() const { return m_acceleratedPropertiesState != AcceleratedProperties::None && m_lastRecordedAcceleratedAction != AcceleratedAction::Stop; }
 
     bool filterFunctionListsMatch() const override { return m_filterFunctionListsMatch; }
-    bool transformFunctionListsMatch() const override { return m_transformFunctionListsMatch; }
+
+    // The CoreAnimation animation code can only use direct function interpolation when all keyframes share the same
+    // prefix of shared transform function primitives, whereas software animations simply calls blend(...) which can do
+    // direct interpolation based on the function list of any two particular keyframes. The prefix serves as a way to
+    // make sure that the results of blend(...) can be made to return the same results as rendered by the hardware
+    // animation code.
+    std::optional<unsigned> transformFunctionListPrefix() const override { return (!preventsAcceleration()) ? std::optional<unsigned>(m_transformFunctionListsMatchPrefix) : std::nullopt; }
+
 #if ENABLE(FILTERS_LEVEL_2)
     bool backdropFilterFunctionListsMatch() const override { return m_backdropFilterFunctionListsMatch; }
 #endif
@@ -241,7 +248,7 @@ private:
     RunningAccelerated m_runningAccelerated;
     bool m_needsForcedLayout { false };
     bool m_triggersStackingContext { false };
-    bool m_transformFunctionListsMatch { false };
+    size_t m_transformFunctionListsMatchPrefix { 0 };
     bool m_filterFunctionListsMatch { false };
 #if ENABLE(FILTERS_LEVEL_2)
     bool m_backdropFilterFunctionListsMatch { false };

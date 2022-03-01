@@ -3458,22 +3458,19 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     return true;
 }
 
-bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const Vector<TransformOperation::OperationType>& operations, const Animation* animation, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, TransformOperation::OperationType operationType, const Animation* animation, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    // If function lists don't match we do a matrix animation, otherwise we do a component hardware animation.
-    auto transformOp = isMatrixAnimation ? TransformOperation::MATRIX_3D : operations[animationIndex];
-
     RefPtr<PlatformCAAnimation> caAnimation;
     bool validMatrices = true;
     if (isKeyframe(valueList)) {
         caAnimation = createKeyframeAnimation(animation, propertyIdToString(valueList.property()), false, keyframesShouldUseAnimationWideTimingFunction);
-        validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize, keyframesShouldUseAnimationWideTimingFunction);
+        validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, operationType, isMatrixAnimation, boxSize, keyframesShouldUseAnimationWideTimingFunction);
     } else {
         if (animation->timingFunction()->isSpringTimingFunction())
             caAnimation = createSpringAnimation(animation, propertyIdToString(valueList.property()), false, keyframesShouldUseAnimationWideTimingFunction);
         else
             caAnimation = createBasicAnimation(animation, propertyIdToString(valueList.property()), false, keyframesShouldUseAnimationWideTimingFunction);
-        validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, transformOp, isMatrixAnimation, boxSize);
+        validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, operationType, isMatrixAnimation, boxSize);
     }
     
     if (!validMatrices)
@@ -3487,19 +3484,33 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
 {
     ASSERT(animatedPropertyIsTransformOrRelated(valueList.property()));
 
-    Vector<TransformOperation::OperationType> sharedPrimitives;
-    bool isMatrixAnimation = !getSharedPrimitivesForTransformKeyframes(valueList, sharedPrimitives);
-    unsigned numOperations = !isMatrixAnimation ? sharedPrimitives.size() : 1;
+    // https://www.w3.org/TR/css-transforms-1/#interpolation-of-transforms
+    // In the CSS Transform Level 1 and 2 Specification some transform functions can share a compatible transform
+    // function primitive. For instance, the shared primitive of a translateX and translate3D operation is
+    // TransformOperation::TRANSLATE_3D. When the transform function list of every keyframe in an animation
+    // shares the same transform function primitive, we should interpolate between them without resorting
+    // to matrix decomposition. The remaining parts of the transform function list should be interpolated
+    // using matrix decomposition. The code below finds the shared primitives in this prefix.
+    // FIXME: Currently, this only supports situations where every keyframe shares the same prefix of shared
+    // transformation primitives, but the specification says direct interpolation should be determined by
+    // the primitives shared between any two adjacent keyframes.
+    SharedPrimitivesPrefix prefix;
+    for (size_t i = 0; i < valueList.size(); ++i)
+        prefix.update(static_cast<const TransformAnimationValue&>(valueList.at(i)).value());
 
-    bool validMatrices = true;
-    for (unsigned animationIndex = 0; animationIndex < numOperations; ++animationIndex) {
-        if (!appendToUncommittedAnimations(valueList, sharedPrimitives, animation, animationName, boxSize, animationIndex, timeOffset, isMatrixAnimation, keyframesShouldUseAnimationWideTimingFunction)) {
-            validMatrices = false;
-            break;
-        }
+    const auto& primitives = prefix.primitives();
+    unsigned numberOfSharedPrimitives = valueList.size() > 1 ? primitives.size() : 0;
+    for (unsigned animationIndex = 0; animationIndex < numberOfSharedPrimitives; ++animationIndex) {
+        if (!appendToUncommittedAnimations(valueList, primitives[animationIndex], animation, animationName, boxSize, animationIndex, timeOffset, false /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction))
+            return false;
     }
 
-    return validMatrices;
+    if (!prefix.hadIncompatibleTransformFunctions())
+        return true;
+
+    // If there were any incompatible transform functions, they will be appended to the animation list
+    // as a single combined transformation matrix animation.
+    return appendToUncommittedAnimations(valueList, TransformOperation::MATRIX_3D, animation, animationName, boxSize, primitives.size(), timeOffset, true /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction);
 }
 
 bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation* operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
@@ -3778,10 +3789,9 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
         const TransformAnimationValue& curValue = static_cast<const TransformAnimationValue&>(valueList.at(index));
         keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
 
-        TransformationMatrix transform;
-
         if (isMatrixAnimation) {
-            curValue.value().apply(boxSize, transform);
+            TransformationMatrix transform;
+            curValue.value().apply(functionIndex, boxSize, transform);
 
             // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
             if (!transform.isInvertible())
@@ -3803,8 +3813,6 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
                 getTransformFunctionValue(transformOp, transformOpType, boxSize, value);
                 transformationMatrixValues.append(value);
             }
-
-            curValue.value().apply(boxSize, transform);
         }
 
         if (i < (valueList.size() - 1))

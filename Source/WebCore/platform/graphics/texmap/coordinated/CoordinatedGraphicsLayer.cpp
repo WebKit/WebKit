@@ -1399,7 +1399,6 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
     if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
         return false;
 
-    bool listsMatch = false;
     switch (valueList.property()) {
 #if ENABLE(FILTERS_LEVEL_2)
     case AnimatedPropertyWebkitBackdropFilter:
@@ -1414,19 +1413,15 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
             return false;
         break;
     }
-    case AnimatedPropertyTransform: {
-        Vector<TransformOperation::OperationType> unusedOperations;
-        listsMatch = !!getSharedPrimitivesForTransformKeyframes(valueList, unusedOperations);
-        break;
-    }
     case AnimatedPropertyOpacity:
+    case AnimatedPropertyTransform:
         break;
     default:
         return false;
     }
 
     m_lastAnimationStartTime = MonotonicTime::now() - Seconds(delayAsNegativeTimeOffset);
-    m_animations.add(Nicosia::Animation(keyframesName, valueList, boxSize, *anim, listsMatch, m_lastAnimationStartTime, 0_s, Nicosia::Animation::AnimationState::Playing));
+    m_animations.add(Nicosia::Animation(keyframesName, valueList, boxSize, *anim, m_lastAnimationStartTime, 0_s, Nicosia::Animation::AnimationState::Playing));
     m_animationStartedTimer.startOneShot(0_s);
     didChangeAnimations();
     return true;

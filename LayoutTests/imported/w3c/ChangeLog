@@ -1,3 +1,15 @@
+2022-03-01  Martin Robinson  <mrobinson@webkit.org>
+
+        When interpolating between transform lists partial prefix matches should not use matrix interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=235757
+        <rdar://problem/88477922>
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-transforms/animation/list-interpolation-expected.txt: Mark subtests as passing.
+        * web-platform-tests/css/css-transforms/animation/transform-composition-expected.txt: Ditto.
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-004-expected.txt: Ditto.
+
 2022-03-01  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] ::placeholder should not be a valid pseudo-element for a KeyframeEffect target

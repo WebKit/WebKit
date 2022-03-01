@@ -1,3 +1,76 @@
+2022-03-01  Martin Robinson  <mrobinson@webkit.org>
+
+        When interpolating between transform lists partial prefix matches should not use matrix interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=235757
+        <rdar://problem/88477922>
+
+        Reviewed by Dean Jackson.
+
+        No new tests. This is covered by existing WPT tests.
+
+        When interpolation between keyframes in transform animations, interpolate prefixes of
+        compatible transform functions directly. For instance if there are three keyframes:
+
+        1. transform: rotateX(...) translateY(...) skew(...)
+        2. transform: rotateY(...) translateY(...)
+        3. transform: rotateZ(...) translateZ(...) matrix3d(...)
+
+        There will be a directly interpolated rotation animation, a directly interpolated
+        translation animation, and finally a matrix animation for the remaining functions.
+        This is important for preserving transforms (such as full rotations) that are lost
+        during matrix decompose and recompose operations.
+
+        This change adds a new helper class SharedPrimitivesPrefix which is used to calculate
+        the prefix of shared primitives that are shared between keyframes.
+
+        Currently, the Core Animation backend only supports animation transformation primitives
+        across the entire animation, so shared primitive prefixes must span the entire animation
+        if an animation is accelerated. In the case that an animation is rendered in software,
+        this prefix can simply be between the current next and previous keyframes.
+
+        TransformOperations::blend is extended to blend any two TransformationOperations, which
+        makes it the only blend function necessary for software animations, computed CSS values,
+        and for the Nicosia backend, simplifying the interpolation code path.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        * animation/CSSPropertyBlendingClient.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::checkForMatchingTransformFunctionLists):
+        (WebCore::KeyframeEffect::computeExtentOfTransformAnimation const):
+        * animation/KeyframeEffect.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::operationsAt): Deleted.
+        (WebCore::GraphicsLayer::getSharedPrimitivesForTransformKeyframes): Deleted.
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerCA::setTransformAnimationKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/nicosia/NicosiaAnimation.cpp:
+        (Nicosia::applyTransformAnimation):
+        (Nicosia::Animation::Animation):
+        (Nicosia::Animation::operator=):
+        (Nicosia::Animation::applyInternal):
+        * platform/graphics/nicosia/NicosiaAnimation.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::addAnimation):
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::addAnimation):
+        * platform/graphics/transforms/TransformOperations.cpp:
+        (WebCore::SharedPrimitivesPrefix::update):
+        (WebCore::TransformOperations::blend const):
+        (WebCore::TransformOperations::createBlendedMatrixOperationFromOperationsSuffix const):
+        (WebCore::TransformOperations::operationsMatch const): Deleted.
+        (WebCore::TransformOperations::updateSharedPrimitives const): Deleted.
+        (WebCore::TransformOperations::blendByMatchingOperations const): Deleted.
+        (WebCore::TransformOperations::blendByUsingMatrixInterpolation const): Deleted.
+        * platform/graphics/transforms/TransformOperations.h:
+        (WebCore::TransformOperations::apply const):
+        (WebCore::SharedPrimitivesPrefix::hadIncompatibleTransformFunctions):
+        (WebCore::SharedPrimitivesPrefix::primitives):
+
 2022-03-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r290619.
