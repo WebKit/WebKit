@@ -1,12 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
-<body id="body">
+<body>
 
-<div id="content">
+<div id="content" role="group">
 
 <div hidden aria-hidden="false" aria-label="group0">
    <div aria-hidden="true" aria-label="group1">
@@ -59,24 +59,24 @@ text3
 
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
     description("This tests that a sub-tree within a node marked with aria-hidden=false will be exposed in the AX tree.");
 
-    var iframeChild;
     function testiFrameContent() {
-        // Test that aria-hidden=false does NOT expose iframe fallback text.
-        var iframe = accessibilityController.accessibleElementById("iframe").childAtIndex(0).childAtIndex(0);
+        setTimeout(async () => {
+            // Test that aria-hidden=false does NOT expose iframe fallback text.
+            let iframe = accessibilityController.accessibleElementById("iframe").childAtIndex(0).childAtIndex(0);
 
-        debug("Non-rendered iframe content should not be visible when aria-hidden=true. The first child should be a group and NOT static text.");
-        iframeChild = iframe.childAtIndex(0);
-        debug("iFrame child role: " + iframeChild.role);
+            debug("Non-rendered iframe content should not be visible when aria-hidden=true. The first child should be a group and NOT static text.");
+            let iframeChild = null;
+            await waitFor(() => {
+                return iframeChild = iframe.childAtIndex(0);
+            });
+            debug("iFrame child role: " + iframeChild.role);
 
-        document.getElementById("content").style.visibility = "hidden";
-
-        finishJSTest();
+            document.getElementById("content").style.visibility = "hidden";
+            finishJSTest();
+        }, 0);
     }
 
     function dumpAccessibilityChildren(element, level) {
@@ -91,63 +91,62 @@ text3
             dumpAccessibilityChildren(element.childAtIndex(k), level+1);
         }
     }
- 
+
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
-        var root = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0); 
-        dumpAccessibilityChildren(root, 0);
+        setTimeout(async () => {
+            let root = accessibilityController.accessibleElementById("content").childAtIndex(0);
+            dumpAccessibilityChildren(root, 0);
 
-        // Text inside aria-hidden=false inherits from parent.
-        var object;
-        if (accessibilityController.platformName == "atspi") {
-            object = accessibilityController.accessibleElementById("group3");
-            shouldBe("object.role", "'AXRole: AXSection'");
-        } else {
-            object = accessibilityController.accessibleElementById("group3").childAtIndex(0);
-            shouldBe("object.role", "'AXRole: AXStaticText'");
-        }
-        var stringValue = object.stringValue.replace(/\n/g, '');
-        shouldBe("stringValue", "'AXValue: text3'");
+            // Text inside aria-hidden=false inherits from parent.
+            window.object = null;
+            if (accessibilityController.platformName == "atspi") {
+                object = accessibilityController.accessibleElementById("group3");
+                shouldBe("object.role", "'AXRole: AXSection'");
+            } else {
+                object = accessibilityController.accessibleElementById("group3").childAtIndex(0);
+                shouldBe("object.role", "'AXRole: AXStaticText'");
+            }
+            window.stringValue = object.stringValue.replace(/\n/g, '');
+            shouldBe("stringValue", "'AXValue: text3'");
 
-        // Text inside nested aria-hidden=false inherits from parent.
-        if (accessibilityController.platformName == "atspi") {
-            object = accessibilityController.accessibleElementById("group4").childAtIndex(0);
-            shouldBe("object.role", "'AXRole: AXGroup'");
-        } else {
-            object = accessibilityController.accessibleElementById("group4").childAtIndex(0).childAtIndex(0);
-            shouldBe("object.role", "'AXRole: AXStaticText'");
-        }
-        stringValue = object.stringValue.replace(/\n/g, '');
-        if (accessibilityController.platformName == "atspi")
-            shouldBe("stringValue", "'AXValue: text4'");
-        else
-            shouldBe("stringValue", "'AXValue:     text4  '");
+            // Text inside nested aria-hidden=false inherits from parent.
+            if (accessibilityController.platformName == "atspi") {
+                object = accessibilityController.accessibleElementById("group4").childAtIndex(0);
+                shouldBe("object.role", "'AXRole: AXGroup'");
+            } else {
+                object = accessibilityController.accessibleElementById("group4").childAtIndex(0).childAtIndex(0);
+                shouldBe("object.role", "'AXRole: AXStaticText'");
+            }
+            stringValue = object.stringValue.replace(/\n/g, '');
+            if (accessibilityController.platformName == "atspi")
+                shouldBe("stringValue", "'AXValue: text4'");
+            else
+                shouldBe("stringValue", "'AXValue:     text4  '");
 
-        // When not all the parents have aria-hidden=false, element should not be visible.
-        object = accessibilityController.accessibleElementById("group5").childAtIndex(0);
-        shouldBeTrue("!object || !object.isValid");
+            // When not all the parents have aria-hidden=false, element should not be visible.
+            object = accessibilityController.accessibleElementById("group5").childAtIndex(0);
+            shouldBeTrue("!object || !object.isValid");
 
-        // Objects that don't have aria-hidden=false are not visible when the parents have that attribute.
-        object = accessibilityController.accessibleElementById("group6").childAtIndex(0);
-        if (accessibilityController.platformName == "atspi")
-            shouldBe("object.role", "'AXRole: AXSection'");
-        else
-            shouldBe("object.role", "'AXRole: AXGroup'");
-        shouldBe("object.childrenCount", "0");
+            // Objects that don't have aria-hidden=false are not visible when the parents have that attribute.
+            object = accessibilityController.accessibleElementById("group6").childAtIndex(0);
+            if (accessibilityController.platformName == "atspi")
+                shouldBe("object.role", "'AXRole: AXSection'");
+            else
+                shouldBe("object.role", "'AXRole: AXGroup'");
+            shouldBe("object.childrenCount", "0");
 
-        // When all objects have aria-hidden=false, then the elements are visible.
-        object = accessibilityController.accessibleElementById("group7").childAtIndex(0);
-        if (accessibilityController.platformName == "atspi")
-            shouldBe("object.role", "'AXRole: AXSection'");
-        else
-            shouldBe("object.role", "'AXRole: AXGroup'");
-        shouldBe("object.childrenCount", "1");
-        shouldBe("object.childAtIndex(0).role", "'AXRole: AXButton'");
+            // When all objects have aria-hidden=false, then the elements are visible.
+            object = accessibilityController.accessibleElementById("group7").childAtIndex(0);
+            if (accessibilityController.platformName == "atspi")
+                shouldBe("object.role", "'AXRole: AXSection'");
+            else
+                shouldBe("object.role", "'AXRole: AXGroup'");
+            shouldBe("object.childrenCount", "1");
+            shouldBe("object.childAtIndex(0).role", "'AXRole: AXButton'");
+        }, 0);
     }
-
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>

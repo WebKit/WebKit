@@ -114,9 +114,10 @@ RefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JS
     auto page = InjectedBundle::singleton().page()->page();
     PlatformUIElement root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(page));
 
+    NSString *attributeName = [NSString stringWithJSStringRef:idAttribute];
     RetainPtr<id> result;
-    executeOnAXThreadAndWait([&root, &idAttribute, &result] {
-        result = findAccessibleObjectById(root, [NSString stringWithJSStringRef:idAttribute]);
+    executeOnAXThreadAndWait([&root, &attributeName, &result] {
+        result = findAccessibleObjectById(root, attributeName);
     });
 
     if (result)
