@@ -1,3 +1,16 @@
+2022-02-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix use-after-move bug in NetworkResourceLoader
+        https://bugs.webkit.org/show_bug.cgi?id=237294
+
+        Reviewed by Chris Dumez.
+
+        Luckily, they were just two booleans, and after you call std::move on a bool you get
+        technically undefined behavior.  Luckily, in practice the bool value is unchanged.
+        We don't need to rely on that, though.  Let's read from the location with defined behavior.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+
 2022-02-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r290470): CDMInstanceSession::setLogIdentifier must be guarded with !RELEASE_LOG_DISABLED
