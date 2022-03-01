@@ -389,8 +389,8 @@ private:
     static void willRemoveEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static bool isEventListenerDisabledImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static void willDispatchEventImpl(InstrumentingAgents&, Document&, const Event&);
-    static void willHandleEventImpl(InstrumentingAgents&, Event&, const RegisteredEventListener&);
-    static void didHandleEventImpl(InstrumentingAgents&, Event&, const RegisteredEventListener&);
+    static void willHandleEventImpl(InstrumentingAgents&, ScriptExecutionContext&, Event&, const RegisteredEventListener&);
+    static void didHandleEventImpl(InstrumentingAgents&, ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     static void didDispatchEventImpl(InstrumentingAgents&, const Event&);
     static void willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, DOMWindow&);
     static void didDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&);
@@ -892,14 +892,14 @@ inline void InspectorInstrumentation::willHandleEvent(ScriptExecutionContext& co
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))
-        return willHandleEventImpl(*agents, event, listener);
+        return willHandleEventImpl(*agents, context, event, listener);
 }
 
 inline void InspectorInstrumentation::didHandleEvent(ScriptExecutionContext& context, Event& event, const RegisteredEventListener& listener)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))
-        return didHandleEventImpl(*agents, event, listener);
+        return didHandleEventImpl(*agents, context, event, listener);
 }
 
 inline void InspectorInstrumentation::willDispatchEventOnWindow(Frame* frame, const Event& event, DOMWindow& window)

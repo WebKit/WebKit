@@ -1,3 +1,33 @@
+2022-03-01  Patrick Angle  <pangle@apple.com>
+
+        Web app fails only when dev tools is open
+        https://bugs.webkit.org/show_bug.cgi?id=235017
+
+        Reviewed by Devin Rousso.
+
+        Using the `ScriptExecutionContext` from `event.target()->scriptExecutionContext()` can result the either having a
+        different script context from the one used when calling `willHandleEvent`, or the event target's context could be
+        `nullptr`. This can occur when handling the event in `EventTarget::innerInvokeEventListeners` results in a
+        context change for the event's target, like a MessagePort that has been `disentangle`d, which sets the script
+        execution context to `nullptr`. Because we only need the script execution context to get the correct injected
+        script, and the correct injected script for the action below will always be the same injected script used in
+        `willHandleEvent`, we ignore the current script execution context of the event's target and use the context the
+        event's target had when it began invoking event listeners.
+
+        This change protects us both from the reported crash, as well as leaving an injected script in a bad state
+        because we did not call `setEventValue` and `clearEventValue` on matching injected scripts for a single event.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willHandleEventImpl):
+        (WebCore::InspectorInstrumentation::didHandleEventImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willHandleEvent):
+        (WebCore::InspectorInstrumentation::didHandleEvent):
+        * inspector/agents/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::willHandleEvent):
+        (WebCore::InspectorDOMDebuggerAgent::didHandleEvent):
+        * inspector/agents/InspectorDOMDebuggerAgent.h:
+
 2022-03-01  Martin Robinson  <mrobinson@webkit.org>
 
         When interpolating between transform lists partial prefix matches should not use matrix interpolation

@@ -419,22 +419,22 @@ void InspectorInstrumentation::willDispatchEventImpl(InstrumentingAgents& instru
         timelineAgent->willDispatchEvent(event, document.frame());
 }
 
-void InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents& instrumentingAgents, Event& event, const RegisteredEventListener& listener)
+void InspectorInstrumentation::willHandleEventImpl(InstrumentingAgents& instrumentingAgents, ScriptExecutionContext& context, Event& event, const RegisteredEventListener& listener)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
         webDebuggerAgent->willHandleEvent(listener);
 
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->willHandleEvent(event, listener);
+        domDebuggerAgent->willHandleEvent(context, event, listener);
 }
 
-void InspectorInstrumentation::didHandleEventImpl(InstrumentingAgents& instrumentingAgents, Event& event, const RegisteredEventListener& listener)
+void InspectorInstrumentation::didHandleEventImpl(InstrumentingAgents& instrumentingAgents, ScriptExecutionContext& context, Event& event, const RegisteredEventListener& listener)
 {
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent())
         webDebuggerAgent->didDispatchAsyncCall();
 
     if (auto* domDebuggerAgent = instrumentingAgents.enabledDOMDebuggerAgent())
-        domDebuggerAgent->didHandleEvent(event, listener);
+        domDebuggerAgent->didHandleEvent(context, event, listener);
 }
 
 void InspectorInstrumentation::didDispatchEventImpl(InstrumentingAgents& instrumentingAgents, const Event& event)
