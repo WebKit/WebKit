@@ -16,7 +16,6 @@ Changing selected item in non-focused combobox.
 AXSelectedChildrenChanged: AXRole: AXComboBox
 Focused element is: AXRole: AXButton
 
-AXChildrenAdded: AXRole: AXWebArea
 AXLoadComplete: AXRole: AXWebArea
 AXElementBusyChanged: AXRole: AXWebArea
 PASS successfullyParsed is true

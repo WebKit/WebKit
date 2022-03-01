@@ -1,3 +1,17 @@
+2022-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATSPI] Remove layout tests checking children added/removed notifications
+        https://bugs.webkit.org/show_bug.cgi?id=237272
+
+        Reviewed by Adrian Perez de Castro.
+
+        Do not send children-changed notifications to WTR observers.
+
+        * accessibility/atspi/AccessibilityAtspi.cpp:
+        (WebCore::AccessibilityAtspi::childrenChanged):
+        (WebCore::AccessibilityAtspi::notifyChildrenChanged const): Deleted.
+        * accessibility/atspi/AccessibilityAtspi.h:
+
 2022-02-28  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed, non-unified build fix after 247791@main

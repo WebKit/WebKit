@@ -1,3 +1,25 @@
+2022-03-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATSPI] Remove layout tests checking children added/removed notifications
+        https://bugs.webkit.org/show_bug.cgi?id=237272
+
+        Reviewed by Adrian Perez de Castro.
+
+        Children changed notifications are not expected by any other tests because other ports don't support them. We
+        already have unit tests to ensure they work as expected so we can just remove the layout tests and ensure we
+        don't emit those notifications either.
+
+        * accessibility/children-changed-sends-notification-expected.txt: Removed.
+        * accessibility/children-changed-sends-notification.html: Removed.
+        * accessibility/gtk/menu-list-unfocused-notifications-expected.txt:
+        * accessibility/gtk/no-notification-for-unrendered-iframe-children-expected.txt: Removed.
+        * accessibility/gtk/no-notification-for-unrendered-iframe-children.html: Removed.
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo-wk1/TestExpectations:
+
 2022-02-28  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: WebKit should ignore empty modals rather than trapping focus inside them

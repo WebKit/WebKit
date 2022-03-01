@@ -1551,7 +1551,6 @@ webkit.org/b/149177 accessibility/ax-value-with-search.html [ Skip ]
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X (or Windows)
 accessibility/aria-checkbox-sends-notification.html [ Skip ]
 accessibility/combo-box-collapsed-selection-changed.html [ Skip ]
-accessibility/children-changed-sends-notification.html [ Skip ]
 accessibility/menu-list-sends-change-notification.html [ Skip ]
 accessibility/multiselect-list-reports-active-option.html [ Skip ]
 

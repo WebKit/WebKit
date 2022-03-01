@@ -426,17 +426,12 @@ void AccessibilityAtspi::parentChanged(AccessibilityRootAtspi& rootObject)
 
 void AccessibilityAtspi::childrenChanged(AccessibilityObjectAtspi& atspiObject, AccessibilityObjectAtspi& child, ChildrenChanged change)
 {
-#if ENABLE(DEVELOPER_MODE)
-    notifyChildrenChanged(atspiObject, child, change);
-#endif
-
     if (!m_connection)
         return;
 
     // Always emit ChildrenChanged when there are clients because the atspi cache always consumes it.
     if (m_clients.isEmpty())
         return;
-
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, atspiObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
         g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", child.indexInParentForChildrenChanged(change),
@@ -451,7 +446,6 @@ void AccessibilityAtspi::childrenChanged(AccessibilityRootAtspi& rootObject, Acc
     // Always emit ChildrenChanged when there are clients because the atspi cache always consumes it.
     if (m_clients.isEmpty())
         return;
-
 
     g_dbus_connection_emit_signal(m_connection.get(), nullptr, rootObject.path().utf8().data(), "org.a11y.atspi.Event.Object", "ChildrenChanged",
         g_variant_new("(siiv(so))", change == ChildrenChanged::Added ? "add" : "remove", 0,
@@ -902,13 +896,6 @@ void AccessibilityAtspi::notifyTextCaretMoved(AccessibilityObjectAtspi& atspiObj
 {
     for (const auto& observer : m_notificationObservers.values())
         observer(atspiObject, "AXTextCaretMoved", caretOffset);
-}
-
-void AccessibilityAtspi::notifyChildrenChanged(AccessibilityObjectAtspi& atspiObject, AccessibilityObjectAtspi& child, ChildrenChanged change) const
-{
-    const char* notification = change == ChildrenChanged::Added ? "AXChildrenAdded" : "AXChildrenRemoved";
-    for (const auto& observer : m_notificationObservers.values())
-        observer(atspiObject, notification, child);
 }
 
 void AccessibilityAtspi::notifyValueChanged(AccessibilityObjectAtspi& atspiObject) const

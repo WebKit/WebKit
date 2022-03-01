@@ -116,7 +116,6 @@ private:
     void notifyMenuSelectionChanged(AccessibilityObjectAtspi&) const;
     void notifyTextChanged(AccessibilityObjectAtspi&) const;
     void notifyTextCaretMoved(AccessibilityObjectAtspi&, unsigned) const;
-    void notifyChildrenChanged(AccessibilityObjectAtspi&, AccessibilityObjectAtspi&, ChildrenChanged) const;
     void notifyValueChanged(AccessibilityObjectAtspi&) const;
     void notifyLoadEvent(AccessibilityObjectAtspi&, const CString&) const;
 #endif
