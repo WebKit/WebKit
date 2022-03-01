@@ -1,3 +1,14 @@
+2022-03-01  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r273129): Text contents in <span> with opacity not repainting/updating when sibling element has "will-change: transform"
+        https://bugs.webkit.org/show_bug.cgi?id=236876
+        <rdar://problem/89180092>
+
+        Reviewed by Simon Fraser.
+
+        * fast/repaint/inline-box-with-self-paint-layer-expected.html: Added.
+        * fast/repaint/inline-box-with-self-paint-layer.html: Added.
+
 2022-03-01  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL GPUP OpenGL context is not used even if WebGL via Metal is deselected

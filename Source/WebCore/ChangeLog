@@ -1,3 +1,28 @@
+2022-03-01  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r273129): Text contents in <span> with opacity not repainting/updating when sibling element has "will-change: transform"
+        https://bugs.webkit.org/show_bug.cgi?id=236876
+        <rdar://problem/89180092>
+
+        Reviewed by Simon Fraser.
+
+        This patch implements a slightly naive repaint for inline boxes with self painting layers.
+        1. Mark the line when it gains an inline box (RenderInline) with self painting layer (e.g. <span style="position: relative">this has dedicated layer</span>)
+        2. Issue repaint at the end of the line layout on such renderers.
+
+        Test: fast/repaint/inline-box-with-self-paint-layer.html
+
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::addToLine):
+        * rendering/LegacyInlineFlowBox.h:
+        (WebCore::LegacyInlineFlowBox::LegacyInlineFlowBox):
+        (WebCore::LegacyInlineFlowBox::hasSelfPaintInlineBox const):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::repaintSelfPaintInlineBoxes):
+        (WebCore::LegacyLineLayout::layoutRunsAndFloats):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRect const): expand the ASSERT to enclsing inline boxes too.
+
 2022-03-01  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] web-animations/interfaces/Animatable/getAnimations-iframe.html is a unique failure
