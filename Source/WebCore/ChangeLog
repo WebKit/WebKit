@@ -1,3 +1,9 @@
+2022-02-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed, non-unified build fix after 247791@main
+
+        * platform/graphics/gbm/GBMDevice.h:
+
 2022-02-28  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: WebKit should ignore empty modals rather than trapping focus inside them

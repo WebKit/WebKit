@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include <wtf/Noncopyable.h>
+
 struct gbm_device;
 
 namespace WebCore {
