@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description("Test should not crash");
+window.jsTestIsAsync = true;
+(async () => {
+    try {
+        let abortController = new AbortController();
+        abortController.abort();
+        GCController.collect();
+        let x = abortController.signal.reason;
+        try { x.foo; } catch { }
+        finishJSTest();
+    } catch(e) {
+        console.log("saw exception!!!");
+        finishJSTest();
+    }
+})();
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

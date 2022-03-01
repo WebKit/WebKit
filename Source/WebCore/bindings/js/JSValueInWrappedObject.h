@@ -44,13 +44,13 @@ public:
     JSValueInWrappedObject(JSValueInWrappedObject&&) = default;
     JSValueInWrappedObject& operator=(JSValueInWrappedObject&&) = default;
 
-    operator JSC::JSValue() const;
     explicit operator bool() const;
     template<typename Visitor> void visit(Visitor&) const;
     void clear();
 
     void set(JSC::VM&, const JSC::JSCell* owner, JSC::JSValue);
     void setWeakly(JSC::JSValue);
+    JSC::JSValue getValue(JSC::JSValue nullValue = JSC::jsUndefined()) const;
 
     // FIXME: Remove this once IDBRequest semantic bug is fixed.
     // https://bugs.webkit.org/show_bug.cgi?id=236278
@@ -69,16 +69,16 @@ inline JSValueInWrappedObject::JSValueInWrappedObject(JSC::JSValue value)
     setWeakly(value);
 }
 
-inline JSValueInWrappedObject::operator JSC::JSValue() const
+inline JSC::JSValue JSValueInWrappedObject::getValue(JSC::JSValue nullValue) const
 {
     if (m_nonCell)
         return m_nonCell;
-    return m_cell.get();
+    return m_cell ? m_cell.get() : nullValue;
 }
 
 inline JSValueInWrappedObject::operator bool() const
 {
-    return JSC::JSValue { *this }.operator bool();
+    return m_nonCell || m_cell;
 }
 
 template<typename Visitor>
@@ -125,12 +125,12 @@ inline void JSValueInWrappedObject::setWithoutBarrier(JSValueInWrappedObject& ot
 
 inline JSC::JSValue cachedPropertyValue(JSC::JSGlobalObject& lexicalGlobalObject, const JSDOMObject& owner, JSValueInWrappedObject& cachedValue, const Function<JSC::JSValue()>& function)
 {
-    if (cachedValue && isWorldCompatible(lexicalGlobalObject, cachedValue))
-        return cachedValue;
+    if (cachedValue && isWorldCompatible(lexicalGlobalObject, cachedValue.getValue()))
+        return cachedValue.getValue();
     auto value = function();
     cachedValue.set(lexicalGlobalObject.vm(), &owner, cloneAcrossWorlds(lexicalGlobalObject, owner, value));
-    ASSERT(isWorldCompatible(lexicalGlobalObject, cachedValue));
-    return cachedValue;
+    ASSERT(isWorldCompatible(lexicalGlobalObject, cachedValue.getValue()));
+    return cachedValue.getValue();
 }
 
 } // namespace WebCore

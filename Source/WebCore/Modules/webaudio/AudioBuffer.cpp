@@ -160,7 +160,7 @@ ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalO
     if (globalObject.worldIsNormal()) {
         if (!m_channelWrappers[channelIndex])
             m_channelWrappers[channelIndex].setWeakly(constructJSArray());
-        return static_cast<JSC::JSValue>(m_channelWrappers[channelIndex]);
+        return m_channelWrappers[channelIndex].getValue();
     }
     return constructJSArray();
 }

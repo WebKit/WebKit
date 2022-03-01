@@ -1,5 +1,79 @@
 2022-02-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289462. rdar://problem/88580935
+
+    Don't return an empty value from AbortController.signal.reason and make it harder to return empty values from JSValueInWrappedObject
+    https://bugs.webkit.org/show_bug.cgi?id=236318
+    <rdar://88580935>
+    
+    Reviewed by Mark Lam.
+    
+    Source/WebCore:
+    
+    This patch makes it so we might not accidentally return the empty value to
+    JavaScript code from JSValueInWrappedObject. Previously, JSValueInWrappedObject
+    had an "operator JSValue()" method. This patch removes that, adds a new
+    conversion method for converting between JSValueInWrappedObject and JSValue,
+    and makes JSValueInWrappedObject return undefined inside this method
+    when it used to return the empty value. This fixes a crash where we'd return
+    the empty value to JS JIT code, and crash dereferencing a nullptr. It's never
+    valid for a JS function call (or getter, etc) to return the empty value.
+    
+    Test: fast/dom/AbortSignal-reason-crash-2.html
+    
+    * Modules/webaudio/AudioBuffer.cpp:
+    (WebCore::AudioBuffer::getChannelData):
+    * Modules/webaudio/AudioWorkletProcessor.cpp:
+    (WebCore::toJSArray):
+    (WebCore::toJSObject):
+    (WebCore::AudioWorkletProcessor::buildJSArguments):
+    * bindings/js/JSCustomEventCustom.cpp:
+    (WebCore::JSCustomEvent::detail const):
+    * bindings/js/JSDOMConvertAny.h:
+    (WebCore::JSConverter<IDLAny>::convert):
+    * bindings/js/JSMessageEventCustom.cpp:
+    (WebCore::JSMessageEvent::data const):
+    * bindings/js/JSPaymentMethodChangeEventCustom.cpp:
+    (WebCore::JSPaymentMethodChangeEvent::methodDetails const):
+    * bindings/js/JSPopStateEventCustom.cpp:
+    (WebCore::JSPopStateEvent::state const):
+    * bindings/js/JSValueInWrappedObject.h:
+    (WebCore::JSValueInWrappedObject::getValue const):
+    (WebCore::JSValueInWrappedObject::operator bool const):
+    (WebCore::cachedPropertyValue):
+    (WebCore::JSValueInWrappedObject::operator JSC::JSValue const): Deleted.
+    * dom/AbortSignal.cpp:
+    (WebCore::AbortSignal::signalFollow):
+    (WebCore::AbortSignal::throwIfAborted):
+    * dom/ErrorEvent.cpp:
+    (WebCore::ErrorEvent::error):
+    (WebCore::ErrorEvent::trySerializeError):
+    * dom/PopStateEvent.cpp:
+    (WebCore::PopStateEvent::trySerializeState):
+    * page/History.cpp:
+    (WebCore::History::cachedState):
+    
+    LayoutTests:
+    
+    * fast/dom/AbortSignal-reason-crash-2-expected.txt: Added.
+    * fast/dom/AbortSignal-reason-crash-2.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289462 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-09  Saam Barati  <sbarati@apple.com>
+
+            Don't return an empty value from AbortController.signal.reason and make it harder to return empty values from JSValueInWrappedObject
+            https://bugs.webkit.org/show_bug.cgi?id=236318
+            <rdar://88580935>
+
+            Reviewed by Mark Lam.
+
+            * fast/dom/AbortSignal-reason-crash-2-expected.txt: Added.
+            * fast/dom/AbortSignal-reason-crash-2.html: Added.
+
+2022-02-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289377. rdar://problem/88178304
 
     Return 'none' for the computed style of mask when there are no mask images
