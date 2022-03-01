@@ -3616,7 +3616,7 @@ AccessibilityObjectInclusion AccessibilityObject::defaultObjectInclusion() const
     if (useParentData ? m_isIgnoredFromParentData.isAXHidden : isAXHidden())
         return AccessibilityObjectInclusion::IgnoreObject;
 
-    if ((renderer() && renderer()->style().effectiveInert()) || ignoredFromModalPresence())
+    if (renderer() && renderer()->style().effectiveInert())
         return AccessibilityObjectInclusion::IgnoreObject;
 
     if (useParentData ? m_isIgnoredFromParentData.isPresentationalChildOfAriaRole : isPresentationalChildOfAriaRole())
@@ -3648,13 +3648,15 @@ bool AccessibilityObject::accessibilityIsIgnored() const
         }
     }
 
-    bool result = computeAccessibilityIsIgnored();
+    bool ignored = ignoredFromModalPresence();
+    if (!ignored)
+        ignored = computeAccessibilityIsIgnored();
 
     // In case computing axIsIgnored disables attribute caching, we should refetch the object to see if it exists.
     if (cache && (attributeCache = cache->computedObjectAttributeCache()))
-        attributeCache->setIgnored(objectID(), result ? AccessibilityObjectInclusion::IgnoreObject : AccessibilityObjectInclusion::IncludeObject);
+        attributeCache->setIgnored(objectID(), ignored ? AccessibilityObjectInclusion::IgnoreObject : AccessibilityObjectInclusion::IncludeObject);
 
-    return result;
+    return ignored;
 }
 
 void AccessibilityObject::elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& attribute) const

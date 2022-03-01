@@ -1,3 +1,47 @@
+2022-02-28  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: WebKit should ignore empty modals rather than trapping focus inside them
+        https://bugs.webkit.org/show_bug.cgi?id=237163
+
+        Reviewed by Chris Fleizach and Andres Gonzalez.
+
+        Given this markup:
+
+        <div role="dialog" aria-modal="true">
+            <div aria-hidden="true">
+                <button>Close modal (inside modal)</button>
+            </div>
+        </div>
+
+        There is no accessible content inside this modal, but WebKit traps user focus inside,
+        making the rest of the page completely inaccessible.
+
+        With this patch we ignore modals that don't have accessible content.
+        We do this by walking the DOM to find any non-AX-ignored objects.
+
+        Because determining whether or not an element is ignored is dependent
+        on modals present on the page, this patch moves the call to `ignoredFromModalPresence`
+        out of `AccessibilityObject::defaultObjectInclusion`, as this function is
+        downstream of `computeAccessibilityIsIgnored`, and we need to call
+        that on objects inside modal candidates. Without this move, we would
+        recurse infinitely in `AXObjectCache::modalElementHasAccessibleContent`.
+
+        We now check whether an object is ignored due to modal presence in
+        `AccessibilityObject::accessibilityIsIgnored()`, so that function should
+        be used as the final say in determining whether an object is ignored.
+
+        Test: accessibility/ignore-modals-without-any-content.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::modalElementHasAccessibleContent):
+        (WebCore::AXObjectCache::currentModalNode):
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::defaultObjectInclusion const):
+        (WebCore::AccessibilityObject::accessibilityIsIgnored const):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::computeAccessibilityIsIgnored const):
+
 2022-02-28  Simon Fraser  <simon.fraser@apple.com>
 
         Compositing/paint invalidation with transforms
