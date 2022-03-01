@@ -1,3 +1,14 @@
+2022-02-28  Robert Jenner  <Jenner@apple.com>
+
+        REBASELINE [ iOS15 ] fast/text/khmer-lao-font.html is a constant text failure
+        <rdar://88841324>
+
+        Unreviewed test gardening. Rebaseline for iOS15.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios-wk2/fast/text/khmer-lao-font-expected.txt:
+        * platform/ios/fast/text/khmer-lao-font-expected.txt:
+
 2022-02-28  Rob Buis  <rbuis@igalia.com>
 
         Handle widow relayout differently
