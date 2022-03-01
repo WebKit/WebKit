@@ -30,6 +30,7 @@
 #import "WKURLSchemeHandler.h"
 #import "WKURLSchemeTaskInternal.h"
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import "WebURLSchemeTask.h"
 #import <wtf/RunLoop.h>
 

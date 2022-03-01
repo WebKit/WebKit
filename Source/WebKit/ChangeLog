@@ -1,3 +1,16 @@
+2022-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        Prepare to add more files to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=237343
+
+        Reviewed by Chris Dumez.
+
+        This fixes the build after bug 237234, and it's unrelated so I pulled it into a different patch.
+
+        * Scripts/generate-unified-sources.sh:
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-01  Said Abou-Hallawa  <said@apple.com>
 
         [macOS][REGRESSION] (rr289518): Form controls are scaled twice on Retina display
