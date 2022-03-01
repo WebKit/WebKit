@@ -306,8 +306,9 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
     if (!isTextField())
         return;
 
-    end = std::max(end, 0);
-    start = std::min(std::max(start, 0), end);
+    // Clamps to the current value length.
+    end = std::clamp(end, 0, clampTo<int>(innerTextValue().length()));
+    start = std::clamp(start, 0, end);
 
     auto innerText = innerTextElement();
     bool hasFocus = document().focusedElement() == this;

@@ -1,3 +1,13 @@
+2022-03-01  Ziran Sun  <zsun@igalia.com>
+
+        [Selection] Selection Range should be clamped by the current value length
+        https://bugs.webkit.org/show_bug.cgi?id=237210
+
+        Reviewed by  Darin Adler.
+
+        Update the test expectations as some sub-tests are now passing.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-start-end-expected.txt:
+
 2022-02-28  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] web-animations/interfaces/Animatable/getAnimations.html is a unique failure

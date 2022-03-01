@@ -1,3 +1,19 @@
+2022-03-01  Ziran Sun  <zsun@igalia.com>
+
+        [Selection] Selection Range should be clamped by the current value length
+        https://bugs.webkit.org/show_bug.cgi?id=237210
+
+        Reviewed by  Darin Adler.
+
+        As per https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#set-the-selection-range,
+        if start or end "is greater than the length of the relevant value of the text control, then set it to
+        the length of the relevant value of the text control".
+
+        This CL makes selection range clamp to the current value length.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setSelectionRange):
+
 2022-03-01  Matt Woodrow  <mattwoodrow@apple.com>
 
         Handle perpendicular containing blocks when computing available logical height.
