@@ -1,3 +1,32 @@
+2022-02-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r289380. rdar://problem/86904276
+
+    Reduce allocations and increase thread safety of constructedPath
+    https://bugs.webkit.org/show_bug.cgi?id=236286
+    <rdar://86904276>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2022-02-08
+    Reviewed by Chris Dumez.
+    
+    * UIProcess/API/APIContentRuleListStore.cpp:
+    (API::constructedPathPrefix):
+    (API::ContentRuleListStore::getAvailableContentRuleListIdentifiers):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289380 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-08  Alex Christensen  <achristensen@webkit.org>
+
+            Reduce allocations and increase thread safety of constructedPath
+            https://bugs.webkit.org/show_bug.cgi?id=236286
+            <rdar://86904276>
+
+            Reviewed by Chris Dumez.
+
+            * UIProcess/API/APIContentRuleListStore.cpp:
+            (API::constructedPathPrefix):
+            (API::ContentRuleListStore::getAvailableContentRuleListIdentifiers):
+
 2022-02-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289875. rdar://problem/88358696

@@ -80,10 +80,10 @@ ContentRuleListStore::ContentRuleListStore(const WTF::String& storePath)
 ContentRuleListStore::~ContentRuleListStore() = default;
 
 // FIXME: Remove legacyFilename in 2022 or 2023 after users have had a chance to run the updating logic.
-static const WTF::String& constructedPathPrefix(bool legacyFilename)
+static const char* constructedPathPrefix(bool legacyFilename)
 {
-    static NeverDestroyed<WTF::String> prefix("ContentRuleList-");
-    static NeverDestroyed<WTF::String> legacyPrefix("ContentExtension-");
+    static auto* prefix("ContentRuleList-");
+    static auto* legacyPrefix("ContentExtension-");
     if (legacyFilename)
         return legacyPrefix;
     return prefix;
@@ -521,9 +521,9 @@ void ContentRuleListStore::getAvailableContentRuleListIdentifiers(CompletionHand
     ASSERT(RunLoop::isMain());
     m_readQueue->dispatch([protectedThis = Ref { *this }, storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         auto prefix = constructedPathPrefix(false /*legacy*/);
-        auto prefixLength = prefix.length();
+        auto prefixLength = strlen(prefix);
         auto legacyPrefix = constructedPathPrefix(true /*legacy*/);
-        auto legacyPrefixLength = legacyPrefix.length();
+        auto legacyPrefixLength = strlen(legacyPrefix);
 
         Vector<WTF::String> identifiers;
         for (auto& fileName : listDirectory(storePath)) {
