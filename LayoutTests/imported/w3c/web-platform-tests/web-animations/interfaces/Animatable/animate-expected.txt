@@ -149,7 +149,5 @@ PASS animate() with a non-null invalid pseudoElement '' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement 'before' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement ':abc' throws a SyntaxError
 PASS animate() with a non-null invalid pseudoElement '::abc' throws a SyntaxError
-FAIL animate() with a non-null invalid pseudoElement '::placeholder' throws a SyntaxError assert_throws_dom: function "() => {
-      div.animate(null, {pseudoElement: pseudo});
-    }" did not throw
+PASS animate() with a non-null invalid pseudoElement '::placeholder' throws a SyntaxError
 

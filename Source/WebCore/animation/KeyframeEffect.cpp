@@ -1183,7 +1183,7 @@ ExceptionOr<void> KeyframeEffect::setPseudoElement(const String& pseudoElement)
         if (!isLegacy && !pseudoElement.startsWith("::"))
             return Exception { SyntaxError };
         auto pseudoType = CSSSelector::parsePseudoElementType(pseudoElement.substring(isLegacy ? 1 : 2));
-        if (pseudoType == CSSSelector::PseudoElementUnknown)
+        if (pseudoType == CSSSelector::PseudoElementUnknown || pseudoType == CSSSelector::PseudoElementWebKitCustom)
             return Exception { SyntaxError };
         pseudoId = CSSSelector::pseudoId(pseudoType);
     }

@@ -1,3 +1,13 @@
+2022-03-01  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] ::placeholder should not be a valid pseudo-element for a KeyframeEffect target
+        https://bugs.webkit.org/show_bug.cgi?id=237334
+
+        Reviewed by Dean Jackson.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::setPseudoElement):
+
 2022-03-01  Alex Christensen  <achristensen@webkit.org>
 
         [AppleWin] Start using Visual Studio 2022
