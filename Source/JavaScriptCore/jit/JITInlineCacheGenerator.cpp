@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "BaselineJITRegisters.h"
 #include "CCallHelpers.h"
 #include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
@@ -149,9 +150,9 @@ void JITGetByIdGenerator::generateBaselineDataICFastPath(JIT& jit, unsigned stub
 
     m_start = jit.label();
 
-    using BaselineGetByIdRegisters::baseJSR;
-    using BaselineGetByIdRegisters::resultJSR;
-    using BaselineGetByIdRegisters::scratchGPR;
+    using BaselineJITRegisters::GetById::baseJSR;
+    using BaselineJITRegisters::GetById::resultJSR;
+    using BaselineJITRegisters::GetById::FastPath::scratchGPR;
 
     jit.loadConstant(stubInfo, stubInfoGPR);
     generateGetByIdInlineAccess(jit, stubInfoGPR, baseJSR, scratchGPR, resultJSR);
@@ -185,9 +186,9 @@ void JITGetByIdWithThisGenerator::generateBaselineDataICFastPath(JIT& jit, unsig
 
     m_start = jit.label();
 
-    using BaselineGetByIdWithThisRegisters::baseJSR;
-    using BaselineGetByIdWithThisRegisters::resultJSR;
-    using BaselineGetByIdWithThisRegisters::scratchGPR;
+    using BaselineJITRegisters::GetByIdWithThis::baseJSR;
+    using BaselineJITRegisters::GetByIdWithThis::resultJSR;
+    using BaselineJITRegisters::GetByIdWithThis::FastPath::scratchGPR;
 
     jit.loadConstant(stubInfo, stubInfoGPR);
     generateGetByIdInlineAccess(jit, stubInfoGPR, baseJSR, scratchGPR, resultJSR);
@@ -215,10 +216,10 @@ void JITPutByIdGenerator::generateBaselineDataICFastPath(JIT& jit, unsigned stub
 
     jit.loadConstant(stubInfo, stubInfoGPR);
 
-    using BaselinePutByIdRegisters::baseJSR;
-    using BaselinePutByIdRegisters::valueJSR;
-    using BaselinePutByIdRegisters::scratchGPR;
-    using BaselinePutByIdRegisters::scratch2GPR;
+    using BaselineJITRegisters::PutById::baseJSR;
+    using BaselineJITRegisters::PutById::valueJSR;
+    using BaselineJITRegisters::PutById::FastPath::scratchGPR;
+    using BaselineJITRegisters::PutById::FastPath::scratch2GPR;
 
     jit.load32(CCallHelpers::Address(baseJSR.payloadGPR(), JSCell::structureIDOffset()), scratchGPR);
     auto doInlineAccess = jit.branch32(CCallHelpers::Equal, scratchGPR, CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfInlineAccessBaseStructureID()));
@@ -405,9 +406,9 @@ void JITInByIdGenerator::generateBaselineDataICFastPath(JIT& jit, unsigned stubI
 
     jit.loadConstant(stubInfo, stubInfoGPR);
 
-    using BaselineInByIdRegisters::baseJSR;
-    using BaselineInByIdRegisters::resultJSR;
-    using BaselineInByIdRegisters::scratchGPR;
+    using BaselineJITRegisters::InById::baseJSR;
+    using BaselineJITRegisters::InById::resultJSR;
+    using BaselineJITRegisters::InById::scratchGPR;
 
     CCallHelpers::JumpList done;
 

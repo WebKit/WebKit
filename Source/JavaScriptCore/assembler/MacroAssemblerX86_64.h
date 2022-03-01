@@ -804,7 +804,13 @@ public:
         else
             m_assembler.subq_ir(imm.m_value, dest);
     }
-    
+
+    void sub64(RegisterID a, TrustedImm32 imm, RegisterID dest)
+    {
+        move(a, dest);
+        sub64(imm, dest);
+    }
+
     void sub64(TrustedImm64 imm, RegisterID dest)
     {
         if (imm.m_value == 1)

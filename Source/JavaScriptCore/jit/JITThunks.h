@@ -63,9 +63,7 @@ public:
     MacroAssemblerCodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&);
 
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
-#if ENABLE(EXTRA_CTI_THUNKS)
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiSlowPathFunctionStub(VM&, SlowPathFunction);
-#endif
 
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, const String& name);
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, Intrinsic, const DOMJIT::Signature*, const String& name);

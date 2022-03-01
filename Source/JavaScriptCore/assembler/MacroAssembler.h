@@ -674,12 +674,22 @@ public:
     {
         sub32(src, dest);
     }
-    
+
+    void subPtr(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        sub32(left, right, dest);
+    }
+
     void subPtr(TrustedImm32 imm, RegisterID dest)
     {
         sub32(imm, dest);
     }
-    
+
+    void subPtr(RegisterID left, TrustedImm32 right, RegisterID dest)
+    {
+        sub32(left, right, dest);
+    }
+
     void subPtr(TrustedImmPtr imm, RegisterID dest)
     {
         sub32(TrustedImm32(imm), dest);
@@ -1007,12 +1017,22 @@ public:
     {
         sub64(src, dest);
     }
-    
+
+    void subPtr(RegisterID left, RegisterID right, RegisterID dest)
+    {
+        sub64(left, right, dest);
+    }
+
     void subPtr(TrustedImm32 imm, RegisterID dest)
     {
         sub64(imm, dest);
     }
-    
+
+    void subPtr(RegisterID left, TrustedImm32 right, RegisterID dest)
+    {
+        sub64(left, right, dest);
+    }
+
     void subPtr(TrustedImmPtr imm, RegisterID dest)
     {
         sub64(TrustedImm64(imm), dest);

@@ -451,19 +451,19 @@ void JIT::emit_op_mod(const Instruction* currentInstruction)
     emitPutVirtualRegister(result, jsRegT10);
 }
 
-void JIT::emitSlow_op_mod(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_mod(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
+    JITSlowPathCall slowPathCall(this, slow_path_mod);
     slowPathCall.call();
 }
 
 #else // CPU(X86_64)
 
-void JIT::emit_op_mod(const Instruction* currentInstruction)
+void JIT::emit_op_mod(const Instruction*)
 {
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_mod);
+    JITSlowPathCall slowPathCall(this, slow_path_mod);
     slowPathCall.call();
 }
 
@@ -522,11 +522,11 @@ void JIT::emit_op_pow(const Instruction* currentInstruction)
     emitPutVirtualRegister(result, resultRegs);
 }
 
-void JIT::emitSlow_op_pow(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_pow(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
-    JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_pow);
+    JITSlowPathCall slowPathCall(this, slow_path_pow);
     slowPathCall.call();
 }
 
@@ -978,7 +978,7 @@ void JIT::emit_op_div(const Instruction* currentInstruction)
     } else {
         ASSERT(gen.endJumpList().empty());
         ASSERT(gen.slowPathJumpList().empty());
-        JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_div);
+        JITSlowPathCall slowPathCall(this, slow_path_div);
         slowPathCall.call();
     }
 }

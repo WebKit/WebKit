@@ -133,16 +133,6 @@ ALWAYS_INLINE void JIT::appendCallWithExceptionCheck(Address function)
     exceptionCheck();
 }
 
-#if OS(WINDOWS) && CPU(X86_64)
-ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr<CFunctionPtrTag> function)
-{
-    updateTopCallFrame();
-    MacroAssembler::Call call = appendCallWithSlowPathReturnType(function);
-    exceptionCheck();
-    return call;
-}
-#endif
-
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithCallFrameRollbackOnException(const FunctionPtr<CFunctionPtrTag> function)
 {
     updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller

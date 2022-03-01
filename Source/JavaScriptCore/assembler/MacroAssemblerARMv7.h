@@ -59,7 +59,7 @@ public:
     static constexpr unsigned numGPRs = std::initializer_list<int>({ FOR_EACH_GP_REGISTER(DUMMY_REGISTER_VALUE) }).size();
     static constexpr unsigned numFPRs = std::initializer_list<int>({ FOR_EACH_FP_REGISTER(DUMMY_REGISTER_VALUE) }).size();
 #undef DUMMY_REGISTER_VALUE
-    RegisterID scratchRegister() { return addressTempRegister; }
+    static constexpr RegisterID scratchRegister() { return addressTempRegister; }
 
     MacroAssemblerARMv7()
         : m_makeJumpPatchable(false)

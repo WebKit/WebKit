@@ -233,23 +233,12 @@ void AccessGenerationState::emitExplicitExceptionHandler()
                 linkBuffer.link(jumpToOSRExitExceptionHandler, originalHandler.nativeCode);
             });
     } else {
-#if ENABLE(EXTRA_CTI_THUNKS)
         CCallHelpers::Jump jumpToExceptionHandler = jit->jump();
         VM* vm = &m_vm;
         jit->addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
                 linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel(vm->getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
             });
-#else
-        jit->setupArguments<decltype(operationLookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&m_vm));
-        jit->prepareCallOperation(m_vm);
-        CCallHelpers::Call lookupExceptionHandlerCall = jit->call(OperationPtrTag);
-        jit->addLinkTask(
-            [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(lookupExceptionHandlerCall, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
-            });
-        jit->jumpToExceptionHandler(m_vm);
-#endif
     }
 }
 

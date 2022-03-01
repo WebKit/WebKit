@@ -843,6 +843,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/AssemblyHelpers.h
     jit/AssemblyHelpersSpoolers.h
     jit/BaselineJITCode.h
+    jit/BaselineJITRegisters.h
     jit/CallFrameShuffleData.h
     jit/CCallHelpers.h
     jit/ExecutableAllocator.h

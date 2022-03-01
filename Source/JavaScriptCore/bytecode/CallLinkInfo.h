@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BaselineJITRegisters.h"
 #include "CallFrameShuffleData.h"
 #include "CallMode.h"
 #include "CodeLocation.h"
@@ -46,14 +47,6 @@ enum OpcodeID : unsigned;
 
 struct CallFrameShuffleData;
 struct UnlinkedCallLinkInfo;
-
-#if ENABLE(JIT)
-namespace BaselineCallRegisters {
-constexpr JSValueRegs calleeJSR { JSRInfo::jsRegT10 };
-constexpr GPRReg calleeGPR { GPRInfo::regT0 };
-constexpr GPRReg callLinkInfoGPR { GPRInfo::regT2 };
-}
-#endif
 
 class CallLinkInfo : public PackedRawSentinelNode<CallLinkInfo> {
 public:
@@ -462,9 +455,9 @@ public:
     }
 
 #if ENABLE(JIT)
-    static constexpr GPRReg calleeGPR() { return BaselineCallRegisters::calleeGPR; }
-    static constexpr GPRReg callLinkInfoGPR() { return BaselineCallRegisters::callLinkInfoGPR; }
-    void setCallLinkInfoGPR(GPRReg callLinkInfoGPR) { RELEASE_ASSERT(callLinkInfoGPR == BaselineCallRegisters::callLinkInfoGPR); }
+    static constexpr GPRReg calleeGPR() { return BaselineJITRegisters::Call::calleeGPR; }
+    static constexpr GPRReg callLinkInfoGPR() { return BaselineJITRegisters::Call::callLinkInfoGPR; }
+    void setCallLinkInfoGPR(GPRReg callLinkInfoGPR) { RELEASE_ASSERT(callLinkInfoGPR == BaselineJITRegisters::Call::callLinkInfoGPR); }
 #endif
 };
 

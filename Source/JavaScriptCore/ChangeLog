@@ -1,3 +1,149 @@
+2022-03-01  Geza Lore  <glore@igalia.com>
+
+        [JSC] Port EXTRA_CTI_THUNKS to all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=233822
+
+        Reviewed by Saam Barati.
+
+        Port and enable all code paths under #ifdef ENABLE(EXTRA_CTI_THUNKS)
+        on all platforms, and remove the now unused code paths.
+
+        To port the extra thunks to all platforms, it was necessary to enable
+        them to do function calls to C++ slow path operations, which on some
+        platforms require passing arguments on the stack. To enable this,
+        CCallHelpers::emitCTIThunkPrologue and
+        CCallHelpers::emitCTIThunkEpilogue are introduced that allocate some
+        additional stack space on platforms where this is necessary.
+
+        Additionally, the thunks that require subsequent exception checking
+        now tail call directly to the exception check thunk, rather than
+        returning to the baseline code and do a separate call to the exception
+        check thunk. This saves an extra call site in the generated baseline
+        ops and reduces code size on all platforms (~1.5% reduction on x86_64).
+
+        Also factored out the statically allocated register definitions for
+        baseline ops into BaselineJITRegisters.h, as there are now quite a lot
+        of them and some are somewhat elaborate. This necessitates moving the
+        noOverlap and preferredArgumentGPR/preferredArgumentJSR constexpr
+        functions out from their previous place, so these now live in
+        GPRInfo.h
+
+        Enabling the extra CTI thunks on ARMv7/Thumb-2 saves about 25%
+        baseline code size, according to --dumpLinkBufferStats.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::subPtr):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::scratchRegister):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::sub64):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::emitExplicitExceptionHandler):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initializeFromUnlinkedStructureStubInfo):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGJITCompiler.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::emitCTIThunkPrologue):
+        (JSC::CCallHelpers::emitCTIThunkEpilogue):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitSlowCaseCall):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitSlow_op_mod):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emit_op_div):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        (JSC::JIT::emitSlow_op_iterator_next):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITGetByIdGenerator::generateBaselineDataICFastPath):
+        (JSC::JITGetByIdWithThisGenerator::generateBaselineDataICFastPath):
+        (JSC::JITPutByIdGenerator::generateBaselineDataICFastPath):
+        * jit/JITInlineCacheGenerator.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::valueIsFalseyGenerator):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::valueIsTruthyGenerator):
+        (JSC::JIT::emit_op_throw):
+        (JSC::JIT::op_throw_handlerGenerator):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::op_enter_handlerGenerator):
+        (JSC::JIT::emitSlow_op_check_traps):
+        (JSC::JIT::op_check_traps_handlerGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::generateGetByValSlowCase):
+        (JSC::JIT::slow_op_get_by_val_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::emit_op_get_private_name):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        (JSC::JIT::slow_op_get_private_name_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::emit_op_set_private_brand):
+        (JSC::JIT::emitSlow_op_set_private_brand):
+        (JSC::JIT::emit_op_check_private_brand):
+        (JSC::JIT::emitSlow_op_check_private_brand):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::slow_op_put_by_val_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::emit_op_put_private_name):
+        (JSC::JIT::emitSlow_op_put_private_name):
+        (JSC::JIT::slow_op_put_private_name_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        (JSC::JIT::slow_op_del_by_id_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        (JSC::JIT::slow_op_del_by_val_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::slow_op_get_by_id_with_this_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::slow_op_put_by_id_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_val):
+        (JSC::JIT::emitHasPrivateSlow):
+        (JSC::JIT::emitSlow_op_has_private_name):
+        (JSC::JIT::emitSlow_op_has_private_brand):
+        (JSC::JIT::emitSlow_op_put_to_scope):
+        (JSC::JIT::slow_op_put_to_scopeGenerator):
+        (JSC::JIT::emit_op_get_property_enumerator):
+        (JSC::JIT::emit_op_enumerator_next):
+        (JSC::JIT::emit_enumerator_has_propertyImpl):
+        (JSC::JIT::emit_op_enumerator_get_by_val):
+        (JSC::JIT::emit_op_enumerator_in_by_val):
+        (JSC::JIT::emit_op_enumerator_has_own_property):
+        * jit/JITThunks.cpp:
+        * jit/JITThunks.h:
+        * jit/SlowPathCall.cpp:
+        (JSC::JITSlowPathCall::call):
+        (JSC::JITSlowPathCall::generateThunk):
+        * jit/SlowPathCall.h:
+        (JSC::JITSlowPathCall::JITSlowPathCall):
+        * jit/ThunkGenerators.cpp:
+        (JSC::handleExceptionGenerator):
+        (JSC::checkExceptionGenerator):
+        * jit/ThunkGenerators.h:
+
 2022-02-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: [Flexbox] Add options to show each area's CSS `order` and/or DOM index in the parent flex container

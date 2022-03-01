@@ -1203,6 +1203,7 @@
 		72131BFA26587EF2007114CF /* JITPlanStage.h in Headers */ = {isa = PBXBuildFile; fileRef = 72131BF626587EF2007114CF /* JITPlanStage.h */; };
 		72131BFC26587EFA007114CF /* JITWorklistInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 72131BFB26587EFA007114CF /* JITWorklistInlines.h */; };
 		723998F7265DBCDB0057867F /* BaselineJITPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 723998F5265DBCDB0057867F /* BaselineJITPlan.h */; };
+		724000F7282DBCDB1057867F /* BaselineJITRegisters.h in Headers */ = {isa = PBXBuildFile; fileRef = 724009F5278DBCDB0057867F /* BaselineJITRegisters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726B91B026581653008E6F82 /* JITWorklistThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 726B91A826581652008E6F82 /* JITWorklistThread.h */; };
 		726B91B326581653008E6F82 /* JITCompilationMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 726B91AB26581653008E6F82 /* JITCompilationMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726B91B726581653008E6F82 /* JITPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = 726B91AF26581653008E6F82 /* JITPlan.h */; };
@@ -4244,6 +4245,7 @@
 		72131BFB26587EFA007114CF /* JITWorklistInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITWorklistInlines.h; sourceTree = "<group>"; };
 		723998F5265DBCDB0057867F /* BaselineJITPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaselineJITPlan.h; sourceTree = "<group>"; };
 		723998F6265DBCDB0057867F /* BaselineJITPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaselineJITPlan.cpp; sourceTree = "<group>"; };
+		724009F5278DBCDB0057867F /* BaselineJITRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaselineJITRegisters.h; sourceTree = "<group>"; };
 		726B91A826581652008E6F82 /* JITWorklistThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITWorklistThread.h; sourceTree = "<group>"; };
 		726B91AA26581653008E6F82 /* JITPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITPlan.cpp; sourceTree = "<group>"; };
 		726B91AB26581653008E6F82 /* JITCompilationMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITCompilationMode.h; sourceTree = "<group>"; };
@@ -6493,6 +6495,7 @@
 				52DD000626E039B30054E408 /* BaselineJITCode.h */,
 				723998F6265DBCDB0057867F /* BaselineJITPlan.cpp */,
 				723998F5265DBCDB0057867F /* BaselineJITPlan.h */,
+				724009F5278DBCDB0057867F /* BaselineJITRegisters.h */,
 				0F64B26F1A784BAF006E4E66 /* BinarySwitch.cpp */,
 				0F64B2701A784BAF006E4E66 /* BinarySwitch.h */,
 				65B8392D1BACA9D30044E824 /* CachedRecovery.cpp */,
@@ -9841,6 +9844,7 @@
 				0F2C63B21E60AE4700C13839 /* B3Width.h in Headers */,
 				52DD000826E039B90054E408 /* BaselineJITCode.h in Headers */,
 				723998F7265DBCDB0057867F /* BaselineJITPlan.h in Headers */,
+				724000F7282DBCDB1057867F /* BaselineJITRegisters.h in Headers */,
 				52678F8F1A031009006A306D /* BasicBlockLocation.h in Headers */,
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
 				E35E89FD25C50F870071EE1E /* BigInt64Array.h in Headers */,

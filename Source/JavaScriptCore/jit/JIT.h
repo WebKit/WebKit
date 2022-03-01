@@ -276,8 +276,6 @@ namespace JSC {
             m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck(vm()));
         }
 
-        void privateCompileExceptionHandlers();
-
         void advanceToNextCheckpoint();
         void emitJumpSlowToHotForCheckpoint(Jump);
         void setFastPathResumePoint();
@@ -553,7 +551,7 @@ namespace JSC {
         void emitSlow_op_enumerator_get_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
 
         template<typename OpcodeType, typename SlowPathFunctionType>
-        void emit_enumerator_has_propertyImpl(const Instruction*, const OpcodeType&, SlowPathFunctionType);
+        void emit_enumerator_has_propertyImpl(const OpcodeType&, SlowPathFunctionType);
         void emit_op_enumerator_in_by_val(const Instruction*);
         void emit_op_enumerator_has_own_property(const Instruction*);
 
@@ -614,7 +612,7 @@ namespace JSC {
         void emit_op_put_to_arguments(const Instruction*);
         void emitSlow_op_put_to_scope(const Instruction*, Vector<SlowCaseEntry>::iterator&);
 
-        void emitSlowCaseCall(const Instruction*, Vector<SlowCaseEntry>::iterator&, SlowPathFunction);
+        void emitSlowCaseCall(Vector<SlowCaseEntry>::iterator&, SlowPathFunction);
 
         void emit_op_iterator_open(const Instruction*);
         void emitSlow_op_iterator_open(const Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -622,7 +620,7 @@ namespace JSC {
         void emitSlow_op_iterator_next(const Instruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType);
-        void emitHasPrivateSlow(VirtualRegister base, VirtualRegister property, AccessType);
+        void emitHasPrivateSlow(AccessType);
 
         template<typename Op>
         void emitNewFuncCommon(const Instruction*);
@@ -658,39 +656,29 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&);
 
     private:
-#if ENABLE(EXTRA_CTI_THUNKS)
-        // Thunk generators.
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_id_prepareCallGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_val_prepareCallGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_prepareCallGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_with_this_prepareCallGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_val_prepareCallGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_private_name_prepareCallGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_id_prepareCallGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_val_prepareCallGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_private_name_prepareCallGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_with_this_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_id_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_val_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_val_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_private_name_callSlowOperationThenCheckExceptionGenerator(VM&);
+
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_to_scopeGenerator(VM&);
-
-        static MacroAssemblerCodeRef<JITThunkPtrTag> op_check_traps_handlerGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_throw_handlerGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_check_traps_handlerGenerator(VM&);
 
-        static constexpr bool thunkIsUsedForOpGetFromScope(ResolveType resolveType)
-        {
-            // GlobalVar because it is more efficient to emit inline than use a thunk.
-            // ResolvedClosureVar and ModuleVar because we don't use these types with op_get_from_scope.
-            return !(resolveType == GlobalVar || resolveType == ResolvedClosureVar || resolveType == ModuleVar);
-        }
-
-        static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsFalseyGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsTruthyGenerator(VM&);
-#endif // ENABLE(EXTRA_CTI_THUNKS)
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_put_by_id_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_val_callSlowOperationThenCheckExceptionGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_private_name_callSlowOperationThenCheckExceptionGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_from_scopeGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpGetFromScopeThunk(VM&);
         template <ResolveType>
         static MacroAssemblerCodeRef<JITThunkPtrTag> generateOpResolveScopeThunk(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_handlerGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsTruthyGenerator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> valueIsFalseyGenerator(VM&);
 
         Jump getSlowCase(Vector<SlowCaseEntry>::iterator& iter)
         {
@@ -718,9 +706,6 @@ namespace JSC {
 
         MacroAssembler::Call appendCallWithExceptionCheck(const FunctionPtr<CFunctionPtrTag>);
         void appendCallWithExceptionCheck(Address);
-#if OS(WINDOWS) && CPU(X86_64)
-        MacroAssembler::Call appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr<CFunctionPtrTag>);
-#endif
         MacroAssembler::Call appendCallWithCallFrameRollbackOnException(const FunctionPtr<CFunctionPtrTag>);
         MacroAssembler::Call appendCallWithExceptionCheckSetJSValueResult(const FunctionPtr<CFunctionPtrTag>, VirtualRegister result);
         void appendCallWithExceptionCheckSetJSValueResult(Address, VirtualRegister result);
@@ -763,7 +748,10 @@ namespace JSC {
             // x64 Windows cannot use standard call when the return type is larger than 64 bits.
             if constexpr (is64BitType<typename FunctionTraits<OperationType>::ResultType>::value)
                 return appendCallWithExceptionCheck(operation);
-            return appendCallWithExceptionCheckAndSlowPathReturnType(operation);
+            updateTopCallFrame();
+            MacroAssembler::Call call = appendCallWithSlowPathReturnType(operation);
+            exceptionCheck();
+            return call;
         }
 #else // OS(WINDOWS) && CPU(X86_64)
         template<typename OperationType, typename... Args>

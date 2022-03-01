@@ -128,24 +128,12 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     // Emit the exception handler.
     *state.exceptionHandler = jit.label();
-#if ENABLE(EXTRA_CTI_THUNKS)
     CCallHelpers::Jump handler = jit.jump();
     VM* vmPtr = &vm;
     jit.addLinkTask(
         [=] (LinkBuffer& linkBuffer) {
             linkBuffer.link(handler, CodeLocationLabel(vmPtr->getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
         });
-#else
-    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame);
-    jit.move(MacroAssembler::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
-    jit.prepareCallOperation(vm);
-    CCallHelpers::Call call = jit.call(OperationPtrTag);
-    jit.jumpToExceptionHandler(vm);
-    jit.addLinkTask(
-        [=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(call, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
-        });
-#endif // ENABLE(EXTRA_CTI_THUNKS)
 
     state.finalizer->b3CodeLinkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
 

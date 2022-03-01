@@ -323,7 +323,6 @@ private:
     void link(LinkBuffer&);
     
     void exitSpeculativeWithOSR(const OSRExit&, SpeculationRecovery*);
-    void compileExceptionHandlers();
     void linkOSRExits();
     void disassemble(LinkBuffer&);
 

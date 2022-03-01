@@ -1,3 +1,13 @@
+2022-03-01  Geza Lore  <glore@igalia.com>
+
+        [JSC] Port EXTRA_CTI_THUNKS to all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=233822
+
+        Reviewed by Saam Barati.
+
+        * wtf/PlatformEnable.h:
+        Remove EXTRA_CTI_THUNKS define (now always on on all platforms)
+
 2022-02-28  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt -streamDataParser:didProvideContentKeySpecifier:forTrackID: delegate callback

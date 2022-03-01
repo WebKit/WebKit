@@ -50,17 +50,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm)
 
     jit.move(CCallHelpers::TrustedImmPtr(&vm), GPRInfo::argumentGPR0);
     jit.prepareCallOperation(vm);
-
     CCallHelpers::Call operation = jit.call(OperationPtrTag);
-
     jit.jumpToExceptionHandler(vm);
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
     patchBuffer.link(operation, FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "handleException");
 }
-
-#if ENABLE(EXTRA_CTI_THUNKS)
 
 MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenerator(VM& vm)
 {
@@ -78,20 +74,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenera
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "handleExceptionWithCallFrameRollback");
 }
 
-#endif
-
 MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM& vm)
 {
     CCallHelpers jit;
 
-#if CPU(X86_64)
-    jit.addPtr(CCallHelpers::TrustedImm32(2 * sizeof(CPURegister)), X86Registers::esp);
-#elif CPU(ARM64) || CPU(ARM_THUMB2) || CPU(RISCV64)
-    jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
-#elif CPU(MIPS)
-    jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::returnAddressRegister);
-#else
-#   error "Not implemented on platform"
+    jit.emitCTIThunkEpilogue();
+#if CPU(X86_64) // On the x86, emitCTIThunkEpilogue leaves the return PC on the stack. Drop it.
+    jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CPURegister)), X86Registers::esp);
 #endif
 
     CCallHelpers::Jump continuation = jit.jump();
@@ -102,32 +91,20 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "popThunkStackPreservesAndHandleException");
 }
 
-#if ENABLE(EXTRA_CTI_THUNKS)
-
 MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
 {
     CCallHelpers jit;
 
-    jit.tagReturnAddress();
+    // This thunk is tail called from other thunks, and the return address is always already tagged
 
-    if (UNLIKELY(Options::useExceptionFuzz())) {
-        // Exception fuzzing can call a runtime function. So, we need to preserve the return address here.
-#if CPU(X86_64)
-        jit.push(X86Registers::ebp);
-#elif CPU(ARM64)
-        jit.pushPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
-#endif
-    }
+    // Exception fuzzing can call a runtime function. So, we need to preserve the return address here.
+    if (UNLIKELY(Options::useExceptionFuzz()))
+        jit.emitCTIThunkPrologue(/* returnAddressAlreadyTagged: */ true);
 
     CCallHelpers::Jump handleException = jit.emitNonPatchableExceptionCheck(vm);
 
-    if (UNLIKELY(Options::useExceptionFuzz())) {
-#if CPU(X86_64)
-        jit.pop(X86Registers::ebp);
-#elif CPU(ARM64)
-        jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
-#endif
-    }
+    if (UNLIKELY(Options::useExceptionFuzz()))
+        jit.emitCTIThunkEpilogue();
     jit.ret();
 
     auto handlerGenerator = Options::useExceptionFuzz() ? popThunkStackPreservesAndHandleExceptionGenerator : handleExceptionGenerator;
@@ -143,8 +120,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
     patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handlerGenerator).retaggedCode<NoPtrTag>()));
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "CheckException");
 }
-
-#endif // ENABLE(EXTRA_CTI_THUNKS)
 
 template<typename TagType>
 inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType tag)

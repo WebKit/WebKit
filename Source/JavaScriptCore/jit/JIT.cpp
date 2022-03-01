@@ -168,7 +168,7 @@ void JIT::resetSP()
 #define DEFINE_SLOW_OP(name) \
     case op_##name: { \
         if (m_bytecodeIndex >= startBytecodeIndex) { \
-            JITSlowPathCall slowPathCall(this, currentInstruction, slow_path_##name); \
+            JITSlowPathCall slowPathCall(this, slow_path_##name); \
             slowPathCall.call(); \
         } \
         NEXT_OPCODE_IN_MAIN(op_##name); \
@@ -190,15 +190,15 @@ void JIT::resetSP()
 
 #define DEFINE_SLOWCASE_SLOW_OP(name) \
     case op_##name: { \
-        emitSlowCaseCall(currentInstruction, iter, slow_path_##name); \
+        emitSlowCaseCall(iter, slow_path_##name); \
         break; \
     }
 
-void JIT::emitSlowCaseCall(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter, SlowPathFunction stub)
+void JIT::emitSlowCaseCall(Vector<SlowCaseEntry>::iterator& iter, SlowPathFunction stub)
 {
     linkAllSlowCases(iter);
 
-    JITSlowPathCall slowPathCall(this, currentInstruction, stub);
+    JITSlowPathCall slowPathCall(this, stub);
     slowPathCall.call();
 }
 
@@ -657,9 +657,6 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_SLOW_OP(stricteq)
         DEFINE_SLOWCASE_SLOW_OP(nstricteq)
         DEFINE_SLOWCASE_SLOW_OP(get_prototype_of)
-#if !ENABLE(EXTRA_CTI_THUNKS)
-        DEFINE_SLOWCASE_SLOW_OP(resolve_scope)
-#endif
         DEFINE_SLOWCASE_SLOW_OP(check_tdz)
         DEFINE_SLOWCASE_SLOW_OP(to_property_key)
         default:
@@ -860,9 +857,7 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
         m_arityCheck = entryLabel; // Never require arity fixup.
 
     ASSERT(m_jmpTable.isEmpty());
-    
-    privateCompileExceptionHandlers();
-    
+
     if (m_disassembler)
         m_disassembler->setEndOfCode(label());
     m_pcToCodeOriginMapBuilder.appendItem(label(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
@@ -914,12 +909,10 @@ void JIT::link()
         }
     }
 
-#if ENABLE(EXTRA_CTI_THUNKS)
     if (!m_exceptionChecks.empty())
         patchBuffer.link(m_exceptionChecks, CodeLocationLabel(vm().getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
     if (!m_exceptionChecksWithCallFrameRollback.empty())
         patchBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
-#endif
 
     for (auto& record : m_nearJumps) {
         if (record.target)
@@ -1038,35 +1031,6 @@ CompilationResult JIT::privateCompile(CodeBlock* codeBlock, JITCompilationEffort
     doMainThreadPreparationBeforeCompile();
     compileAndLinkWithoutFinalizing(effort);
     return finalizeOnMainThread(codeBlock);
-}
-
-void JIT::privateCompileExceptionHandlers()
-{
-#if !ENABLE(EXTRA_CTI_THUNKS)
-    if (!m_exceptionChecksWithCallFrameRollback.empty()) {
-        m_exceptionChecksWithCallFrameRollback.link(this);
-
-        copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
-
-        // operationLookupExceptionHandlerFromCallerFrame is passed one argument, the VM*.
-        move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
-        prepareCallOperation(vm());
-        m_farCalls.append(FarCallRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandlerFromCallerFrame)));
-        jumpToExceptionHandler(vm());
-    }
-
-    if (!m_exceptionChecks.empty()) {
-        m_exceptionChecks.link(this);
-
-        copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
-
-        // operationLookupExceptionHandler is passed one argument, the VM*.
-        move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
-        prepareCallOperation(vm());
-        m_farCalls.append(FarCallRecord(call(OperationPtrTag), FunctionPtr<OperationPtrTag>(operationLookupExceptionHandler)));
-        jumpToExceptionHandler(vm());
-    }
-#endif // ENABLE(EXTRA_CTI_THUNKS)
 }
 
 void JIT::doMainThreadPreparationBeforeCompile()

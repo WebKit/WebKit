@@ -136,40 +136,6 @@ void JITCompiler::compileBody()
     ASSERT_UNUSED(compiledSpeculative, compiledSpeculative);
 }
 
-void JITCompiler::compileExceptionHandlers()
-{
-#if !ENABLE(EXTRA_CTI_THUNKS)
-    if (!m_exceptionChecksWithCallFrameRollback.empty()) {
-        m_exceptionChecksWithCallFrameRollback.link(this);
-
-        copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
-
-        // operationLookupExceptionHandlerFromCallerFrame is passed one argument, the VM*.
-        move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
-        prepareCallOperation(vm());
-        addPtr(TrustedImm32(m_graph.stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, stackPointerRegister);
-
-        appendCall(operationLookupExceptionHandlerFromCallerFrame);
-
-        jumpToExceptionHandler(vm());
-    }
-
-    if (!m_exceptionChecks.empty()) {
-        m_exceptionChecks.link(this);
-
-        copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
-
-        // operationLookupExceptionHandler is passed one argument, the VM*.
-        move(TrustedImmPtr(&vm()), GPRInfo::argumentGPR0);
-        prepareCallOperation(vm());
-
-        appendCall(operationLookupExceptionHandler);
-
-        jumpToExceptionHandler(vm());
-    }
-#endif // ENABLE(EXTRA_CTI_THUNKS)
-}
-
 void JITCompiler::link(LinkBuffer& linkBuffer)
 {
     // Link the code, populate data in CodeBlock data structures.
@@ -273,12 +239,10 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             CodeLocationLabel<JSInternalPtrTag>());
     }
 
-#if ENABLE(EXTRA_CTI_THUNKS)
     if (!m_exceptionChecks.empty())
         linkBuffer.link(m_exceptionChecks, CodeLocationLabel(vm().getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
     if (!m_exceptionChecksWithCallFrameRollback.empty())
         linkBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
-#endif // ENABLE(EXTRA_CTI_THUNKS)
 
     MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunk = vm().getCTIStub(osrExitGenerationThunkGenerator);
     auto target = CodeLocationLabel<JITThunkPtrTag>(osrExitThunk.code());
@@ -382,7 +346,6 @@ void JITCompiler::compile()
     m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
     m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
     
-    compileExceptionHandlers();
     linkOSRExits();
     
     // Create OSR entry trampolines if necessary.
@@ -484,7 +447,6 @@ void JITCompiler::compileFunction()
     m_speculative->runSlowPathGenerators(m_pcToCodeOriginMapBuilder);
     m_pcToCodeOriginMapBuilder.appendItem(labelIgnoringWatchpoints(), PCToCodeOriginMapBuilder::defaultCodeOrigin());
     
-    compileExceptionHandlers();
     linkOSRExits();
     
     // Create OSR entry trampolines if necessary.

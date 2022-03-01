@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "BaselineJITRegisters.h"
 #include "BytecodeStructs.h"
 #include "CodeBlock.h"
 #include "RegisterAtOffsetList.h"
@@ -95,9 +96,9 @@ CallFrameShuffleData CallFrameShuffleData::createForBaselineOrLLIntTailCall(cons
                 DataFormatJS);
     }
 #if USE(JSVALUE64)
-    shuffleData.callee = ValueRecovery::inGPR(BaselineCallRegisters::calleeJSR.payloadGPR(), DataFormatJS);
+    shuffleData.callee = ValueRecovery::inGPR(BaselineJITRegisters::Call::calleeJSR.payloadGPR(), DataFormatJS);
 #elif USE(JSVALUE32_64)
-    shuffleData.callee = ValueRecovery::inPair(BaselineCallRegisters::calleeJSR.tagGPR(), BaselineCallRegisters::calleeJSR.payloadGPR());
+    shuffleData.callee = ValueRecovery::inPair(BaselineJITRegisters::Call::calleeJSR.tagGPR(), BaselineJITRegisters::Call::calleeJSR.payloadGPR());
 #endif
     shuffleData.setupCalleeSaveRegisters(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
     shuffleData.shrinkToFit();

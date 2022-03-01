@@ -171,8 +171,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(VM& vm, ThunkGenerator 
     });
 }
 
-#if ENABLE(EXTRA_CTI_THUNKS)
-
 MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiSlowPathFunctionStub(VM& vm, SlowPathFunction slowPathFunction)
 {
     auto key = bitwise_cast<ThunkGenerator>(slowPathFunction);
@@ -180,8 +178,6 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiSlowPathFunctionStub(VM& vm,
         return JITSlowPathCall::generateThunk(vm, slowPathFunction);
     });
 }
-
-#endif // ENABLE(EXTRA_CTI_THUNKS)
 
 struct JITThunks::HostKeySearcher {
     static unsigned hash(const HostFunctionKey& key) { return WeakNativeExecutableHash::hash(key); }
