@@ -427,6 +427,7 @@ UIProcess/SystemPreviewController.cpp
 UIProcess/SpeechRecognitionPermissionManager.cpp
 UIProcess/TextChecker.cpp
 UIProcess/TextCheckerCompletion.cpp
+UIProcess/UIProcessLogInitialization.cpp
 UIProcess/UserMediaPermissionCheckProxy.cpp
 UIProcess/UserMediaPermissionRequestManagerProxy.cpp
 UIProcess/UserMediaPermissionRequestProxy.cpp

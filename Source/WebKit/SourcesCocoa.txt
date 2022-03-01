@@ -423,6 +423,7 @@ UIProcess/Cocoa/SessionStateCoding.mm
 UIProcess/Cocoa/SystemPreviewControllerCocoa.mm
 UIProcess/Cocoa/TextCheckingController.mm
 UIProcess/Cocoa/UIDelegate.mm
+UIProcess/Cocoa/UIProcessLogInitializationCocoa.mm
 UIProcess/Cocoa/UIRemoteObjectRegistry.cpp
 UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp
 UIProcess/Cocoa/UserMediaPermissionRequestManagerProxy.mm

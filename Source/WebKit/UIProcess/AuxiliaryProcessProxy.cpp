@@ -27,12 +27,10 @@
 #include "AuxiliaryProcessProxy.h"
 
 #include "AuxiliaryProcessMessages.h"
-#include "LogInitialization.h"
 #include "Logging.h"
+#include "UIProcessLogInitialization.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include <WebCore/LogInitialization.h>
-#include <wtf/LogInitialization.h>
 #include <wtf/RunLoop.h>
 
 #if PLATFORM(COCOA)
@@ -408,9 +406,9 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
 {
     AuxiliaryProcessCreationParameters parameters;
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
-    parameters.wtfLoggingChannels = WTF::logLevelString();
-    parameters.webCoreLoggingChannels = WebCore::logLevelString();
-    parameters.webKitLoggingChannels = WebKit::logLevelString();
+    parameters.wtfLoggingChannels = UIProcess::wtfLogLevelString();
+    parameters.webCoreLoggingChannels = UIProcess::webCoreLogLevelString();
+    parameters.webKitLoggingChannels = UIProcess::webKitLogLevelString();
 #endif
     return parameters;
 }

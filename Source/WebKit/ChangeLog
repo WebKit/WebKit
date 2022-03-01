@@ -1,3 +1,36 @@
+2022-03-01  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Allow logging to be configured by NSDefaults (without regressing launch time)
+        https://bugs.webkit.org/show_bug.cgi?id=237183
+
+        Reviewed by Darin Adler.
+
+        In r220780, code was added to WebProcessPoolCocoa to explicitly pass the results of a NSUserDefaults
+        to newly created WebContent processes to determine log channel levels. Later, in r232158, NSUserDefaults
+        were removed from the default logLevelString() implementations in WTF, WebCore, and WebKit to improve
+        process launch time performance. In r279796, the same technique sued in WebProcessPoolCocoa was added
+        to GPUProcessProxyCocoa to pass those log level strings to the GPUProcess. And then in r286484, all the
+        uses of NSUserDefaults were removed from WebProcessPoolCocoa and GPUProcessProxyCocoa were removed,
+        removing the ability to increase the log channel levels at runtime through NSUserDefualts.
+
+        Add back in the ability to define log levels for the UIProcess and all AuxiliaryProcesses without
+        regressing launch time by only checking the NSUserDefault once, only in the UIProcess, storing the result
+        in a static variable, and passing the results of that check to all AuxiliaryProcesses at creation time.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::auxiliaryProcessParameters):
+        * UIProcess/Cocoa/UIProcessLogInitializationCocoa.mm: Added.
+        (WebKit::UIProcess::wtfLogLevelString):
+        (WebKit::UIProcess::webCoreLogLevelString):
+        (WebKit::UIProcess::webKitLogLevelString):
+        * UIProcess/UIProcessLogInitialization.cpp: Added.
+        (WebKit::UIProcess::initializeLoggingIfNecessary):
+        (WebKit::UIProcess::wtfLogLevelString):
+        (WebKit::UIProcess::webCoreLogLevelString):
+        (WebKit::UIProcess::webKitLogLevelString):
+        * UIProcess/UIProcessLogInitialization.h: Added.
+        * UIProcess/WebProcessPool.cpp:
+
 2022-03-01  Youenn Fablet  <youenn@apple.com>
 
         Annotate LibWebRTC with thread safety macros

@@ -6265,6 +6265,9 @@
 		CD8252E025D4918400862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRemoteCommandListenerMessageReceiver.cpp; sourceTree = "<group>"; };
 		CD8252E125D4918500862FD8 /* RemoteRemoteCommandListenerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRemoteCommandListenerMessages.h; sourceTree = "<group>"; };
 		CD95493526159004008372D9 /* libWebKitSwift.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libWebKitSwift.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD9A649F27C8972C003827C0 /* UIProcessLogInitialization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIProcessLogInitialization.h; sourceTree = "<group>"; };
+		CD9A64A027C8972C003827C0 /* UIProcessLogInitialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIProcessLogInitialization.cpp; sourceTree = "<group>"; };
+		CD9A64A127C89742003827C0 /* UIProcessLogInitializationCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIProcessLogInitializationCocoa.mm; sourceTree = "<group>"; };
 		CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackBoardServicesSPI.h; sourceTree = "<group>"; };
 		CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionManager.mm; sourceTree = "<group>"; };
 		CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionManager.h; sourceTree = "<group>"; };
@@ -7631,6 +7634,7 @@
 				2D0CF64B21F2A80300787566 /* TextCheckingController.mm */,
 				1AFE436418B6C081009C7A48 /* UIDelegate.h */,
 				1AFE436318B6C081009C7A48 /* UIDelegate.mm */,
+				CD9A64A127C89742003827C0 /* UIProcessLogInitializationCocoa.mm */,
 				463236862314833F00A48FA7 /* UIRemoteObjectRegistry.cpp */,
 				463236852314833F00A48FA7 /* UIRemoteObjectRegistry.h */,
 				070259BE2522841C00153405 /* UserMediaPermissionRequestManagerProxy.mm */,
@@ -11156,6 +11160,8 @@
 				1AA417C912C00CCA002BE67B /* TextChecker.h */,
 				53CFBBC62224D1B000266546 /* TextCheckerCompletion.cpp */,
 				53CFBBC72224D1B000266546 /* TextCheckerCompletion.h */,
+				CD9A64A027C8972C003827C0 /* UIProcessLogInitialization.cpp */,
+				CD9A649F27C8972C003827C0 /* UIProcessLogInitialization.h */,
 				07297F9C1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.cpp */,
 				07297F9D1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h */,
 				4A410F3919AF7B04002EBAB5 /* UserMediaPermissionRequestManagerProxy.cpp */,
