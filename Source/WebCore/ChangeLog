@@ -1,3 +1,16 @@
+2022-03-01  Per Arne Vollan  <pvollan@apple.com>
+
+        Remove release assert when UI process is blocking IOSurface IOKit access
+        https://bugs.webkit.org/show_bug.cgi?id=237278
+        <rdar://problem/89585043>
+
+        Unreviewed, address review comments.
+
+        Log error instead of creating CrashTracer reports.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::bytesPerRowAlignment):
+
 2022-03-01  Matt Woodrow  <mattwoodrow@apple.com>
 
         Use static position relative to parent for abs-pos items within nested grids.

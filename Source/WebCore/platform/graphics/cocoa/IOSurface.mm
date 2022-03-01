@@ -293,7 +293,7 @@ size_t IOSurface::bytesPerRowAlignment()
         // This likely means that the sandbox is blocking access to the IOSurface IOKit class,
         // and that IOSurface::bytesPerRowAlignment() has been called before IOSurface::setBytesPerRowAlignment.
         if (alignment <= 1) {
-            RELEASE_LOG_FAULT(Layers, "Sandbox does not allow IOSurface IOKit access.");
+            RELEASE_LOG_ERROR(Layers, "Sandbox does not allow IOSurface IOKit access.");
             // 64 bytes is currently the alignment on all platforms.
             alignment = 64;
         }
