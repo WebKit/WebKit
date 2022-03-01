@@ -243,7 +243,7 @@ RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(GraphicsContext& c
     auto tileSize = roundedUnscaledImageBufferSize(size, scale);
 
     // FIXME: Use createImageBuffer(rect, scale), delete the above calculations and fix 'tileImageTransform'
-    auto tileImage = context.createImageBuffer(tileSize, scale);
+    auto tileImage = context.createScaledImageBuffer(tileSize, scale);
     if (!tileImage)
         return nullptr;
 

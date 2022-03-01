@@ -3324,7 +3324,7 @@ static RefPtr<Pattern> patternForDescription(PatternDescription description, Flo
 {
     const FloatSize tileSize { 32, 18 };
 
-    auto imageBuffer = destContext.createCompatibleImageBuffer(tileSize);
+    auto imageBuffer = destContext.createAlignedImageBuffer(tileSize);
     if (!imageBuffer)
         return nullptr;
 

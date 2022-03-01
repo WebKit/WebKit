@@ -434,29 +434,29 @@ void RemoteDisplayListRecorderProxy::flushContext(GraphicsContextFlushIdentifier
     send(Messages::RemoteDisplayListRecorder::FlushContext(identifier));
 }
 
-RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, RenderingMethod renderingMethod) const
+RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const
 {
     if (UNLIKELY(!m_renderingBackend)) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    if (renderingMethod != RenderingMethod::Default)
-        return Recorder::createImageBuffer(size, colorSpace, renderingMode, renderingMethod);
+    if (renderingMethod)
+        return Recorder::createImageBuffer(size, resolutionScale, colorSpace, renderingMode, renderingMethod);
 
-    return m_renderingBackend->createImageBuffer(size, renderingMode, 1, colorSpace, PixelFormat::BGRA8);
+    return m_renderingBackend->createImageBuffer(size, renderingMode.value_or(this->renderingMode()), resolutionScale, colorSpace, PixelFormat::BGRA8);
 }
 
-RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createCompatibleImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMethod renderingMethod) const
+RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createAlignedImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
 {
-    auto renderingMode = renderingMethod == RenderingMethod::Default ? this->renderingMode() : RenderingMode::Unaccelerated;
-    return GraphicsContext::createImageBuffer(size, scaleFactor(), colorSpace, renderingMode, renderingMethod);
+    auto renderingMode = !renderingMethod ? this->renderingMode() : RenderingMode::Unaccelerated;
+    return GraphicsContext::createScaledImageBuffer(size, scaleFactor(), colorSpace, renderingMode, renderingMethod);
 }
 
-RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createCompatibleImageBuffer(const FloatRect& rect, const DestinationColorSpace& colorSpace, RenderingMethod renderingMethod) const
+RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createAlignedImageBuffer(const FloatRect& rect, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
 {
-    auto renderingMode = renderingMethod == RenderingMethod::Default ? this->renderingMode() : RenderingMode::Unaccelerated;
-    return GraphicsContext::createImageBuffer(rect, scaleFactor(), colorSpace, renderingMode, renderingMethod);
+    auto renderingMode = !renderingMethod ? this->renderingMode() : RenderingMode::Unaccelerated;
+    return GraphicsContext::createScaledImageBuffer(rect, scaleFactor(), colorSpace, renderingMode, renderingMethod);
 }
 
 } // namespace WebCore

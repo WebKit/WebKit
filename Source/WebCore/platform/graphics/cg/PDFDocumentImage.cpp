@@ -240,7 +240,7 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     }
 
     // Create a local ImageBuffer because decoding the PDF images has to happen in WebProcess.
-    m_cachedImageBuffer = context.createCompatibleImageBuffer(cachedImageSize, DestinationColorSpace::SRGB(), RenderingMethod::Local);
+    m_cachedImageBuffer = context.createAlignedImageBuffer(cachedImageSize, DestinationColorSpace::SRGB(), RenderingMethod::Local);
     if (!m_cachedImageBuffer) {
         destroyDecodedData();
         return;
@@ -293,7 +293,7 @@ ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect
             // scalar = sqrt(max number of pixels / (width * height))
             auto scalar = std::min(1.f, std::sqrt(static_cast<float>(s_maxCachedImageArea) / (dstRect.width() * dstRect.height())));
             FloatRect localDestinationRect(FloatPoint(), dstRect.size() * scalar);
-            if (auto imageBuffer = context.createCompatibleImageBuffer(localDestinationRect.size(), DestinationColorSpace::SRGB(), RenderingMethod::Local)) {
+            if (auto imageBuffer = context.createAlignedImageBuffer(localDestinationRect.size(), DestinationColorSpace::SRGB(), RenderingMethod::Local)) {
                 auto& bufferContext = imageBuffer->context();
                 transformContextForPainting(bufferContext, localDestinationRect, srcRect);
                 drawPDFPage(bufferContext);

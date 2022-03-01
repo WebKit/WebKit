@@ -74,7 +74,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode ren
 
 RefPtr<ImageBuffer> ImageBuffer::clone() const
 {
-    auto clone = context().createCompatibleImageBuffer(logicalSize(), colorSpace());
+    auto clone = context().createAlignedImageBuffer(logicalSize(), colorSpace());
     if (!clone)
         return nullptr;
 

@@ -135,7 +135,7 @@ void RenderLayerFilters::allocateBackingStoreIfNeeded(GraphicsContext& context)
     auto logicalSize = filter.scaledByFilterScale(m_filterRegion.size());
 
     if (!m_sourceImage || m_sourceImage->logicalSize() != logicalSize)
-        m_sourceImage = context.createImageBuffer(m_filterRegion.size(), filter.filterScale(), DestinationColorSpace::SRGB(), filter.renderingMode());
+        m_sourceImage = context.createScaledImageBuffer(m_filterRegion.size(), filter.filterScale(), DestinationColorSpace::SRGB(), filter.renderingMode());
 }
 
 GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, GraphicsContext& context, const LayoutRect& filterBoxRect, const LayoutRect& dirtyRect, const LayoutRect& layerRepaintRect)

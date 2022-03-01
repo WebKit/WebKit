@@ -111,7 +111,7 @@ static CGPDFPageRef applePayButtonLogoWhite()
 static void drawApplePayButton(GraphicsContext& context, CGPDFPageRef page, const FloatSize& size)
 {
     // Create a local ImageBuffer because decoding the PDF images has to happen in WebProcess.
-    auto imageBuffer = context.createCompatibleImageBuffer(size, DestinationColorSpace::SRGB(), RenderingMethod::Local);
+    auto imageBuffer = context.createAlignedImageBuffer(size, DestinationColorSpace::SRGB(), RenderingMethod::Local);
     if (!imageBuffer)
         return;
 

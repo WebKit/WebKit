@@ -282,7 +282,7 @@ bool SVGRenderingContext::bufferForeground(RefPtr<ImageBuffer>& imageBuffer)
 
     // Create a new buffer and paint the foreground into it.
     if (!imageBuffer) {
-        imageBuffer = m_paintInfo->context().createCompatibleImageBuffer(expandedIntSize(boundingBox.size()));
+        imageBuffer = m_paintInfo->context().createAlignedImageBuffer(expandedIntSize(boundingBox.size()));
         if (!imageBuffer)
             return false;
     }

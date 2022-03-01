@@ -994,7 +994,7 @@ void RenderThemeMac::paintListButtonForInput(const RenderObject& o, GraphicsCont
 
     float deviceScaleFactor = o.document().deviceScaleFactor();
 
-    auto comboBoxImageBuffer = context.createImageBuffer(comboBoxSize, { deviceScaleFactor, deviceScaleFactor });
+    auto comboBoxImageBuffer = context.createImageBuffer(comboBoxSize, deviceScaleFactor);
     if (!comboBoxImageBuffer)
         return;
 
@@ -1018,7 +1018,7 @@ void RenderThemeMac::paintListButtonForInput(const RenderObject& o, GraphicsCont
         (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey : (__bridge NSString *)kCUIUserInterfaceLayoutDirectionLeftToRight,
     }];
 
-    auto comboBoxButtonImageBuffer = context.createImageBuffer(desiredComboBoxButtonSize, { deviceScaleFactor, deviceScaleFactor });
+    auto comboBoxButtonImageBuffer = context.createImageBuffer(desiredComboBoxButtonSize, deviceScaleFactor);
     if (!comboBoxButtonImageBuffer)
         return;
 
@@ -1402,7 +1402,7 @@ bool RenderThemeMac::paintProgressBar(const RenderObject& renderObject, const Pa
     const auto& renderProgress = downcast<RenderProgress>(renderObject);
     float deviceScaleFactor = renderObject.document().deviceScaleFactor();
     bool isIndeterminate = renderProgress.position() < 0;
-    auto imageBuffer = paintInfo.context().createImageBuffer(inflatedRect.size(), { deviceScaleFactor, deviceScaleFactor });
+    auto imageBuffer = paintInfo.context().createImageBuffer(inflatedRect.size(), deviceScaleFactor);
     if (!imageBuffer)
         return true;
 

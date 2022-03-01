@@ -136,9 +136,9 @@ private:
     bool recordResourceUse(const WebCore::SourceImage&) final;
     bool recordResourceUse(WebCore::Font&) final;
 
-    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, WebCore::RenderingMode, WebCore::RenderingMethod) const final;
-    RefPtr<WebCore::ImageBuffer> createCompatibleImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace& = WebCore::DestinationColorSpace::SRGB(), WebCore::RenderingMethod = WebCore::RenderingMethod::Default) const final;
-    RefPtr<WebCore::ImageBuffer> createCompatibleImageBuffer(const WebCore::FloatRect&, const WebCore::DestinationColorSpace& = WebCore::DestinationColorSpace::SRGB(), WebCore::RenderingMethod = WebCore::RenderingMethod::Default) const final;
+    RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, float resolutionScale, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMode>, std::optional<WebCore::RenderingMethod>) const final;
+    RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
+    RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatRect&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
 
     WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
     WeakPtr<WebCore::ImageBuffer> m_imageBuffer;

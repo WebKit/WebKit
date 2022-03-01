@@ -67,7 +67,7 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
     // Determine scale factor for the clipper. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
     ImageBuffer::sizeNeedsClamping(repaintRect.size(), scale);
 
-    auto maskImage = context->createImageBuffer(repaintRect, scale);
+    auto maskImage = context->createScaledImageBuffer(repaintRect, scale);
     if (!maskImage)
         return false;
 

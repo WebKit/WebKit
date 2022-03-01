@@ -1,3 +1,14 @@
+2022-03-01  Said Abou-Hallawa  <said@apple.com>
+
+        [macOS][REGRESSION] (rr289518): Form controls are scaled twice on Retina display
+        https://bugs.webkit.org/show_bug.cgi?id=237128
+        rdar://89064642
+
+        Reviewed by Darin Adler.
+
+        * fast/hidpi/hidpi-form-controls-drawing-size-expected.html: Added.
+        * fast/hidpi/hidpi-form-controls-drawing-size.html: Added.
+
 2022-03-01  Robert Jenner  <Jenner@apple.com>
 
         [ Win ] 4X imported/mozilla/svg/blend(layout-tests) are constant Image Only Failures

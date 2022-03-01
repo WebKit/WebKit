@@ -162,7 +162,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, 
 
     if (!clipperData.isValidForGeometry(objectBoundingBox, clippedContentBounds, absoluteTransform)) {
         // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
-        auto maskImage = context.createImageBuffer(clippedContentBounds, scale, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated);
+        auto maskImage = context.createScaledImageBuffer(clippedContentBounds, scale, DestinationColorSpace::SRGB(), RenderingMode::Unaccelerated);
         if (!maskImage)
             return false;
 

@@ -1,3 +1,17 @@
+2022-03-01  Said Abou-Hallawa  <said@apple.com>
+
+        [macOS][REGRESSION] (rr289518): Form controls are scaled twice on Retina display
+        https://bugs.webkit.org/show_bug.cgi?id=237128
+        rdar://89064642
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.cpp:
+        (WebKit::RemoteDisplayListRecorderProxy::createImageBuffer const):
+        (WebKit::RemoteDisplayListRecorderProxy::createAlignedImageBuffer const):
+        (WebKit::RemoteDisplayListRecorderProxy::createCompatibleImageBuffer const): Deleted.
+        * WebProcess/GPU/graphics/RemoteDisplayListRecorderProxy.h:
+
 2022-03-01  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] HLS stream currentTime sometimes jumps backwards

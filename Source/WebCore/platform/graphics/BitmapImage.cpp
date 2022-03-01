@@ -348,7 +348,7 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, 
     }
 
     if (!m_cachedImage) {
-        auto buffer = ctxt.createCompatibleImageBuffer(expandedIntSize(tileRect.size()));
+        auto buffer = ctxt.createAlignedImageBuffer(expandedIntSize(tileRect.size()));
         if (!buffer)
             return;
 

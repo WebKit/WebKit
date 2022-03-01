@@ -65,7 +65,7 @@ ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, const F
 void NamedImageGeneratedImage::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
 #if USE(NEW_THEME)
-    auto imageBuffer = context.createCompatibleImageBuffer(size());
+    auto imageBuffer = context.createAlignedImageBuffer(size());
     if (!imageBuffer)
         return;
 

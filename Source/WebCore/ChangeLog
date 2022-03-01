@@ -1,3 +1,122 @@
+2022-03-01  Said Abou-Hallawa  <said@apple.com>
+
+        [macOS][REGRESSION] (r289518): Form controls are scaled twice on Retina display
+        https://bugs.webkit.org/show_bug.cgi?id=237128
+        rdar://89064642
+
+        Reviewed by Darin Adler.
+
+        Using the name GraphicsContext::createImageBuffer() for different behaviors
+        was a mistake in r289518. To clean this up, the createImageBuffer() version
+        which scales the GraphicsContext of the ImageBuffer will be renamed
+        createScaledImageBuffer(). and the existing createCompatibleImageBuffer()
+        will be renamed createAlignedImageBuffer(). So we will have these three
+        methods in GraphicsContext:
+
+        1) createImageBuffer(): The default behavior of this method is to create
+           an ImageBuffer similar to the underlying ImageBuffer of GraphicsContext.
+           But it gives ability to change the renderingMode and the renderingMethod.
+           It can be forced to create a non-accelerated local ImageBuffer for example.
+           
+           The caller of this method usually uses a framework to draw some custom
+           drawing and it just needs a scratch buffer to be drawn in the place of
+           a render object. The caller does not require any transformation to be
+           applied to the GraphicsContext of the ImageBuffer before starting its
+           custom drawing. Drawing the form controls using AppKit is an example
+           of such case.
+
+        2) createScaledImageBuffer(): This is similar to createImageBuffer() but
+           it always creates the ImageBuffer with resolutionScale = 1 so it has
+           to scale the size by the scaleFactor before calling createImageBuffer().
+           It also scales the GraphicsContext of the created ImageBuffer with the
+           scaleFactor and it translates its coordinates origin for the FloatRect
+           version. It also handles the clamping if needed. 
+
+           This method is suitable for cases when the overall scaleFatcor
+           (device ScaleFactor + clamping ScaleFactor) has be known to the caller
+           in advance. No clamping will be required in this case. SVG filter,
+           masker, clipper and gradient are the callers to this function.
+
+        3) createAlignedImageBuffer(): This is similar to createScaledImageBuffer()
+           but it does not take a scaling factor argument. It inherits it from
+           the GraphicsContext.
+
+           Usually the purpose of this method is to transfer the drawing from a
+           layer to a scratch ImageBuffer temporarily then draw the scratch
+           ImageBuffer in the place of the original drawing. Drawing a PDFDocument
+           image, for example, requires using this method.
+
+        To fix this bug:
+
+        Form controls have to use the first version of createImageBuffer() which
+        still has the same name instead of using the second version which will
+        be renamed createScaledImageBuffer().
+
+        Another cleaning is to pass RenderingMethod as an std::optional argument
+        the three methods. This means we do not need the value "Default" since
+        passing std::nullopt will have the same meaning.
+
+        Test: fast/hidpi/hidpi-form-controls-drawing-size.html
+
+        * html/CustomPaintCanvas.cpp:
+        (WebCore::CustomPaintCanvas::replayDisplayList const):
+        * html/CustomPaintImage.cpp:
+        (WebCore::CustomPaintImage::drawPattern):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        (WebCore::CanvasRenderingContext2DBase::drawTextUnchecked):
+        * platform/cocoa/ThemeCocoa.mm:
+        (WebCore::drawApplePayButton):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::drawPattern):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::createImageBuffer const):
+        (WebCore::GraphicsContext::createScaledImageBuffer const):
+        (WebCore::GraphicsContext::createAlignedImageBuffer const):
+        (WebCore::GraphicsContext::createCompatibleImageBuffer const): Deleted.
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::createScaledImageBuffer):
+        (WebCore::GraphicsContext::createImageBuffer): Deleted.
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::clone const):
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::drawPattern):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::updateCachedImageIfNeeded):
+        (WebCore::PDFDocumentImage::draw):
+        * platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DrawGlyphsRecorder::drawOTSVGRun):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::createImageBuffer const):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/mac/ThemeMac.mm:
+        (WebCore::ThemeMac::drawCellOrFocusRingWithViewIntoContext):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::patternForDescription):
+        * rendering/RenderLayerFilters.cpp:
+        (WebCore::RenderLayerFilters::allocateBackingStoreIfNeeded):
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::paintApplePayButton):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintListButtonForInput):
+        (WebCore::RenderThemeMac::paintProgressBar):
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::applyClippingToContext):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::applyResource):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::createTileImage const):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::bufferForeground):
+
 2022-03-01  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] HLS stream currentTime sometimes jumps backwards

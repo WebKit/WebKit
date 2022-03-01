@@ -492,12 +492,9 @@ void Recorder::clipToImageBuffer(ImageBuffer& imageBuffer, const FloatRect& dest
     recordClipToImageBuffer(imageBuffer, destRect);
 }
 
-RefPtr<ImageBuffer> Recorder::createImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, RenderingMethod renderingMethod) const
+RefPtr<ImageBuffer> Recorder::createImageBuffer(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, std::optional<RenderingMode> renderingMode, std::optional<RenderingMethod> renderingMethod) const
 {
-    if (renderingMethod == RenderingMethod::Default)
-        renderingMethod = RenderingMethod::DisplayList;
-
-    return GraphicsContext::createImageBuffer(size, colorSpace, renderingMode, renderingMethod);
+    return GraphicsContext::createImageBuffer(size, resolutionScale, colorSpace, renderingMode, renderingMethod.value_or(RenderingMethod::DisplayList));
 }
 
 #if ENABLE(VIDEO)

@@ -172,7 +172,7 @@ protected:
     const ContextState& currentState() const;
     ContextState& currentState();
 
-    WEBCORE_EXPORT RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, const DestinationColorSpace&, RenderingMode, RenderingMethod) const override;
+    WEBCORE_EXPORT RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, float resolutionScale, const DestinationColorSpace&, std::optional<RenderingMode>, std::optional<RenderingMethod>) const override;
 
 private:
     bool hasPlatformContext() const final { return false; }
