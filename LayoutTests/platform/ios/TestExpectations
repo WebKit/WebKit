@@ -3237,8 +3237,9 @@ http/wpt/mediarecorder/pause-recording.html [ Pass Crash ]
 # rdar://80383672 ([ iOS15 ] accessibility/misspelling-range.html is failing)
 webkit.org/b/231261 accessibility/misspelling-range.html  [ Failure ]
 
-# rdar://80392337 ([ iOS15 ] fast/text/international/system-language/navigator-language/navigator-language-ru.html is a constant failure)
+# Behavior of navigator-language-ru changed in iOS 15.
 fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
+fast/text/international/system-language/navigator-language/navigator-language-ru-2.html [ Pass ]
 
 # Canvas tests that pass with some fuzz
 imported/w3c/web-platform-tests/html/canvas/element/manual/compositing/canvas_compositing_globalcompositeoperation_001.htm [ ImageOnlyFailure ]

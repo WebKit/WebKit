@@ -47,8 +47,9 @@ fast/text/simple-line-wordspacing.html [ Pass ]
 
 fast/events/touch/ios/long-press-on-link.html [ Pass ]
 
-# rdar://80392337 ([ iOS15 ] fast/text/international/system-language/navigator-language/navigator-language-ru.html is a constant failure)
+# Behavior of navigator-language-ru changed in iOS 15.
 fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Pass ]
+fast/text/international/system-language/navigator-language/navigator-language-ru-2.html [ Failure ]
 
 # rdar://80386075 ([ iOS15 ] fast/css/ios/system-color-for-css-value.html)
 fast/css/ios/system-color-for-css-value.html [ Pass ]

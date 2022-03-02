@@ -1491,8 +1491,9 @@ webkit.org/b/227639 [ BigSur Release ] fast/history/visited-href-mutation.html [
 # rdar://80342948 ([ Monterey wk2 ] http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html is a Flaky failure)
 [ Monterey ] http/tests/websocket/tests/hybi/bufferedAmount-after-close-in-busy.html [ Pass Failure ]
 
-# rdar://80335706 (REGRESSION: [ Monterey wk2 ] fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ])
-[ Monterey ] fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
+# Behavior of navigator-language-ru changed in Monterey
+[ Monterey+ ] fast/text/international/system-language/navigator-language/navigator-language-ru.html [ Failure ]
+[ BigSur Catalina Mojave ] fast/text/international/system-language/navigator-language/navigator-language-ru-2.html [ Failure ]
 
 webkit.org/b/227776 [ BigSur Release arm64 ] scrollbars/corner-resizer-window-inactive.html [ Pass ImageOnlyFailure ]
 
