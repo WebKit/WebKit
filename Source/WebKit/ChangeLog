@@ -1,5 +1,16 @@
 2022-03-02  Per Arne Vollan  <pvollan@apple.com>
 
+        [iOS] Seatbelt sandbox profile entitlement is deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=237374
+
+        Reviewed by Brent Fulgham.
+
+        Replace with new entitlement.
+
+        * Scripts/process-entitlements.sh:
+
+2022-03-02  Per Arne Vollan  <pvollan@apple.com>
+
         [iOS] Hard link AVPictureInPictureController
         https://bugs.webkit.org/show_bug.cgi?id=237227
 
