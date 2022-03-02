@@ -29,7 +29,7 @@ def readme():
 
 setup(
     name='webkitscmpy',
-    version='4.3.4',
+    version='4.3.5',
     description='Library designed to interact with git and svn repositories.',
     long_description=readme(),
     classifiers=[

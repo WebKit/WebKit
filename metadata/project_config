@@ -3,3 +3,4 @@
 [webkitscmpy]
         pull-request = append
         history = disabled
+        update-fork = true

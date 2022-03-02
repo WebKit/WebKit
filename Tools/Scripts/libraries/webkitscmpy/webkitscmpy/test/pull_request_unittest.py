@@ -348,6 +348,7 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -380,6 +381,7 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -415,6 +417,7 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -451,6 +454,7 @@ Rebased 'eng/pr-branch' on 'main!'
                 '    Found 1 commit...',
                 '    Found 2 commits...',
                 "Pushing 'eng/pr-branch' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -493,6 +497,7 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
                 "Updating pull-request for 'eng/pr-branch'...",
             ],
         )
@@ -543,6 +548,7 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',
@@ -596,6 +602,7 @@ Rebased 'eng/pr-branch' on 'main!'
                 "Rebased 'eng/pr-branch' on 'main!'",
                 "    Found 1 commit...",
                 "Pushing 'eng/pr-branch' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
                 "Creating pull-request for 'eng/pr-branch'...",
                 'Checking issue assignee...',
                 'Checking for pull request link in associated issue...',

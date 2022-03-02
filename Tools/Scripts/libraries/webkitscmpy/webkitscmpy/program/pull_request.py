@@ -158,7 +158,8 @@ class PullRequest(Command):
         if result:
             return result
 
-        if args.rebase or (args.rebase is None and repository.config().get('pull.rebase')):
+        rebasing = args.rebase or (args.rebase is None and repository.config().get('pull.rebase'))
+        if rebasing:
             log.info("Rebasing '{}' on '{}'...".format(repository.branch, branch_point.branch))
             if repository.pull(rebase=True, branch=branch_point.branch):
                 sys.stderr.write("Failed to rebase '{}' on '{},' please resolve conflicts\n".format(repository.branch, branch_point.branch))
@@ -179,6 +180,11 @@ class PullRequest(Command):
             sys.stderr.write("Your checkout may be mis-configured, try re-running 'git-webkit setup' or\n")
             sys.stderr.write("your checkout may not have permission to push to '{}'\n".format(repository.url(name=target)))
             return 1
+
+        if rebasing and target == 'fork' and repository.config().get('webkitscmpy.update-fork', 'false') == 'true':
+            log.info("Syncing '{}' to remote '{}'".format(branch_point.branch, target))
+            if run([repository.executable(), 'push', target, '{branch}:{branch}'.format(branch=branch_point.branch)], cwd=repository.root_path).returncode:
+                sys.stderr.write("Failed to sync '{}' to '{}.' Error is non fatal, continuing...\n".format(branch_point.branch, target))
 
         if args.history or (target != source_remote and args.history is None and args.technique == 'overwrite'):
             regex = re.compile(r'^{}-(?P<count>\d+)$'.format(repository.branch))

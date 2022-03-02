@@ -1,3 +1,13 @@
+2022-03-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Sync personal fork by default
+        https://bugs.webkit.org/show_bug.cgi?id=237324
+        <rdar://problem/89618617>
+
+        Reviewed by Dewei Zhu.
+
+        * metadata/project_config: Add webkitscmpy.update-fork option.
+
 2022-03-02  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Build failure with libstdc++ (>= 6) when cross-compiling (fatal error: stdlib.h: No such file or directory)

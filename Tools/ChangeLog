@@ -1,3 +1,21 @@
+2022-03-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Sync personal fork by default
+        https://bugs.webkit.org/show_bug.cgi?id=237324
+        <rdar://problem/89618617>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git): Add new webkitscmpy.update-fork option.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull_request.py:
+        (PullRequest.main): If we are rebasing the source branch, we should push that synced branch
+        to a user's personal fork, if such a fork exists.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+
 2022-03-02  Chris Dumez  <cdumez@apple.com>
 
         Mousemove events double-firing in Safari

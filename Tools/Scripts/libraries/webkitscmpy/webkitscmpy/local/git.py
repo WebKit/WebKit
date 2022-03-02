@@ -307,6 +307,7 @@ class Git(Scm):
         'pull.rebase': ['true', 'false'],
         'webkitscmpy.pull-request': ['overwrite', 'append'],
         'webkitscmpy.history': ['when-user-owned', 'disabled', 'always', 'never'],
+        'webkitscmpy.update-fork': ['true', 'false'],
     }
     CONFIG_LOCATIONS = ['global', 'repository', 'project']
 

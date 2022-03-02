@@ -466,7 +466,7 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.add(args[2]),
             ), mocks.Subprocess.Route(
-                self.executable, 'push', '-f',
+                self.executable, 'push', '-f', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(returncode=0),
             ), mocks.Subprocess.Route(
@@ -482,9 +482,9 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.move_branch(args[3], args[4]),
             ), mocks.Subprocess.Route(
-                self.executable, 'push', 'origin', re.compile(r'.+'),
+                self.executable, 'push', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.push(args[2], args[3]),
+                generator=lambda *args, **kwargs: self.push(args[2], args[3].split(':')[0]),
             ), mocks.Subprocess.Route(
                 self.executable, 'diff', re.compile(r'.+'),
                 cwd=self.path,
