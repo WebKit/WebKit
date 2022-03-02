@@ -1,3 +1,20 @@
+2022-03-02  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Remove obsolete failed attestation tests
+        https://bugs.webkit.org/show_bug.cgi?id=237346
+        rdar://problem/89647260
+
+        Reviewed by Brent Fulgham.
+
+        The removed items tested that creation fails whenever attestation fails, however
+        we've changed behavior such that creation succeeds with 'none' attestation in this
+        case, making these failure tests obsolete.
+
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https.html:
+
 2022-03-02  Matteo Flores  <matteo_flores@apple.com>
 
         [ iOS Debug ] editing/async-clipboard/* 20 tests are flaky timeouts on iOS.
