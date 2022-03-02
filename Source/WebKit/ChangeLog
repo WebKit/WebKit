@@ -1,3 +1,16 @@
+2022-03-02  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Ensure presenter gets dismissed on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=237336
+        rdar://81609371
+
+        Reviewed by Brent Fulgham.
+
+        Always call [m_presenter dismissWithError] to ensure presenter gets dismissed.
+
+        * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+        (WebKit::AuthenticatorPresenterCoordinator::dimissPresenter):
+
 2022-03-02  Chris Dumez  <cdumez@apple.com>
 
         Mousemove events double-firing in Safari
