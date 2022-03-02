@@ -1070,10 +1070,6 @@ def generate_message_handler(receiver):
     result += generate_header_includes_from_conditions(header_conditions)
     result.append('\n')
 
-    result.append('#if ENABLE(IPC_TESTING_API)\n')
-    result.append('#include "JSIPCBinding.h"\n')
-    result.append("#endif\n\n")
-
     delayed_or_async_messages = []
     for message in receiver.messages:
         if message.reply_parameters != None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)):
@@ -1195,33 +1191,6 @@ def generate_message_handler(receiver):
 
     result.append('\n} // namespace WebKit\n')
 
-    result.append('\n')
-    result.append('#if ENABLE(IPC_TESTING_API)\n\n')
-    result.append('namespace IPC {\n\n')
-    previous_message_condition = None
-    for message in receiver.messages:
-        if previous_message_condition != message.condition:
-            if previous_message_condition:
-                result.append('#endif\n')
-            if message.condition:
-                result.append('#if %s\n' % message.condition)
-            previous_message_condition = message.condition
-        result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::%s_%s>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n' % (receiver.name, message.name))
-        result.append('{\n')
-        result.append('    return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, 'Arguments'))
-        result.append('}\n')
-        has_reply = message.reply_parameters is not None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE))
-        if not has_reply:
-            continue
-        result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::%s_%s>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n' % (receiver.name, message.name))
-        result.append('{\n')
-        result.append('    return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, 'ReplyArguments'))
-        result.append('}\n')
-    if previous_message_condition:
-        result.append('#endif\n')
-    result.append('\n}\n\n')
-    result.append('#endif\n\n')
-
     if receiver.condition:
         result.append('\n#endif // %s\n' % receiver.condition)
 
@@ -1339,7 +1308,7 @@ def generate_message_names_implementation(receivers):
     return ''.join(result)
 
 
-def generate_js_value_conversion_function(result, receivers, function_name, decoder_function_name, argument_type, predicate=lambda message: True):
+def generate_js_value_conversion_function(result, receivers, function_name, argument_type, predicate=lambda message: True):
     result.append('std::optional<JSC::JSValue> %s(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)\n' % function_name)
     result.append('{\n')
     result.append('    switch (name) {\n')
@@ -1359,7 +1328,7 @@ def generate_js_value_conversion_function(result, receivers, function_name, deco
                     result.append('#if %s\n' % message.condition)
             previous_message_condition = message.condition
             result.append('    case MessageName::%s_%s:\n' % (receiver.name, message.name))
-            result.append('        return %s<MessageName::%s_%s>(globalObject, decoder);\n' % (decoder_function_name, receiver.name, message.name))
+            result.append('        return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, argument_type))
         if previous_message_condition:
             result.append('#endif\n')
         if receiver.condition:
@@ -1443,6 +1412,7 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
         header_conditions = {
             '"%s"' % messages_header_filename(receiver): [None]
         }
+        collect_header_conditions_for_receiver(receiver, header_conditions)
         result += generate_header_includes_from_conditions(header_conditions)
         if receiver.condition:
             result.append('#endif\n')
@@ -1454,11 +1424,11 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
     result.append('#if ENABLE(IPC_TESTING_API)\n')
     result.append('\n')
 
-    generate_js_value_conversion_function(result, receivers, 'jsValueForArguments', 'jsValueForDecodedMessage', 'Arguments')
+    generate_js_value_conversion_function(result, receivers, 'jsValueForArguments', 'Arguments')
 
     result.append('\n')
 
-    generate_js_value_conversion_function(result, receivers, 'jsValueForReplyArguments', 'jsValueForDecodedMessageReply', 'ReplyArguments', lambda message: message.reply_parameters is not None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)))
+    generate_js_value_conversion_function(result, receivers, 'jsValueForReplyArguments', 'ReplyArguments', lambda message: message.reply_parameters is not None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)))
 
     result.append('\n')
     result.append('#endif // ENABLE(IPC_TESTING_API)\n')

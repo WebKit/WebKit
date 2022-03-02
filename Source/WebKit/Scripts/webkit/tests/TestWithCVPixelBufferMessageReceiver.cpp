@@ -38,10 +38,6 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if ENABLE(IPC_TESTING_API)
-#include "JSIPCBinding.h"
-#endif
-
 namespace WebKit {
 
 void TestWithCVPixelBuffer::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -79,23 +75,3 @@ bool TestWithCVPixelBuffer::didReceiveSyncMessage(IPC::Connection& connection, I
 }
 
 } // namespace WebKit
-
-#if ENABLE(IPC_TESTING_API)
-
-namespace IPC {
-
-#if USE(AVFOUNDATION)
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::Arguments>(globalObject, decoder);
-}
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::Arguments>(globalObject, decoder);
-}
-#endif
-
-}
-
-#endif
-

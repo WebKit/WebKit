@@ -1,3 +1,16 @@
+2022-03-01  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r290588.
+
+        Patch r290588 caused ASAN build to fail on macOS
+
+        Reverted changeset:
+
+        "IPC_TESTING_API MessageArgumentDescriptions.cpp is slow to
+        compile"
+        https://bugs.webkit.org/show_bug.cgi?id=237195
+        https://commits.webkit.org/r290588
+
 2022-03-01  Alex Christensen  <achristensen@webkit.org>
 
         Fix clean build

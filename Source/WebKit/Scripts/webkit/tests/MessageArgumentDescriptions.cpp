@@ -28,19 +28,110 @@
 #if ENABLE(IPC_TESTING_API) || !LOG_DISABLED
 
 #include "JSIPCBinding.h"
+#include "ArgumentCoders.h"
+#include "TestClassName.h"
+#if ENABLE(TEST_FEATURE)
+#include "TestTwoStateEnum.h"
+#endif
 #include "TestWithSuperclassMessages.h"
+#include <optional>
+#include <wtf/text/WTFString.h>
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
+#include "ArgumentCoders.h"
+#include "Connection.h"
+#if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)
+#include "DummyType.h"
+#endif
+#if PLATFORM(MAC)
+#include "GestureTypes.h"
+#endif
+#if PLATFORM(MAC)
+#include "MachPort.h"
+#endif
+#include "Plugin.h"
 #include "TestWithLegacyReceiverMessages.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebPreferencesStore.h"
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION)) || (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+#include "WebTouchEvent.h"
+#endif
+#include <WebCore/GraphicsLayer.h>
+#if PLATFORM(MAC)
+#include <WebCore/KeyboardEvent.h>
+#endif
+#include <WebCore/PluginData.h>
+#include <utility>
+#include <wtf/HashMap.h>
+#if PLATFORM(MAC)
+#include <wtf/OptionSet.h>
+#endif
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 #endif
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
+#include "ArgumentCoders.h"
+#include "Connection.h"
+#if ENABLE(DEPRECATED_FEATURE) || ENABLE(FEATURE_FOR_TESTING)
+#include "DummyType.h"
+#endif
+#if PLATFORM(MAC)
+#include "GestureTypes.h"
+#endif
+#if PLATFORM(MAC)
+#include "MachPort.h"
+#endif
+#include "Plugin.h"
 #include "TestWithoutAttributesMessages.h"
+#include "WebCoreArgumentCoders.h"
+#include "WebPreferencesStore.h"
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION)) || (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+#include "WebTouchEvent.h"
+#endif
+#include <WebCore/GraphicsLayer.h>
+#if PLATFORM(MAC)
+#include <WebCore/KeyboardEvent.h>
+#endif
+#include <WebCore/PluginData.h>
+#include <utility>
+#include <wtf/HashMap.h>
+#if PLATFORM(MAC)
+#include <wtf/OptionSet.h>
+#endif
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+#endif
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+#include "ArgumentCoders.h"
 #endif
 #include "TestWithIfMessageMessages.h"
+#if PLATFORM(COCOA) || PLATFORM(GTK)
+#include <wtf/text/WTFString.h>
+#endif
+#include "IPCSemaphore.h"
 #include "TestWithSemaphoreMessages.h"
+#include "ArgumentCoders.h"
 #include "TestWithImageDataMessages.h"
+#include "WebCoreArgumentCoders.h"
+#include <WebCore/ImageData.h>
+#include <wtf/RefCounted.h>
+#include "ArgumentCoders.h"
 #include "TestWithStreamMessages.h"
+#if PLATFORM(COCOA)
+#include <wtf/MachSendRight.h>
+#endif
+#include <wtf/text/WTFString.h>
+#include "StreamConnectionBuffer.h"
 #include "TestWithStreamBufferMessages.h"
+#if USE(AVFOUNDATION)
+#include "ArgumentCodersCF.h"
+#endif
 #include "TestWithCVPixelBufferMessages.h"
+#if USE(AVFOUNDATION)
+#include <WebCore/CVUtilities.h>
+#endif
+#if USE(AVFOUNDATION)
+#include <wtf/RetainPtr.h>
+#endif
 
 namespace IPC {
 
@@ -50,176 +141,176 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
 {
     switch (name) {
     case MessageName::TestWithSuperclass_LoadURL:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_LoadURL>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::LoadURL::Arguments>(globalObject, decoder);
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessage:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessage>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestAsyncMessage::Arguments>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::Arguments>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::Arguments>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithConnection>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestAsyncMessageWithConnection::Arguments>(globalObject, decoder);
 #endif
     case MessageName::TestWithSuperclass_TestSyncMessage:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestSyncMessage>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestSyncMessage::Arguments>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
-        return jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestSynchronousMessage>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestSynchronousMessage::Arguments>(globalObject, decoder);
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithLegacyReceiver_LoadURL:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadURL>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::LoadURL::Arguments>(globalObject, decoder);
 #if ENABLE(TOUCH_EVENTS)
     case MessageName::TestWithLegacyReceiver_LoadSomething:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadSomething>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::LoadSomething::Arguments>(globalObject, decoder);
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
     case MessageName::TestWithLegacyReceiver_TouchEvent:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TouchEvent>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TouchEvent::Arguments>(globalObject, decoder);
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     case MessageName::TestWithLegacyReceiver_AddEvent:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_AddEvent>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::AddEvent::Arguments>(globalObject, decoder);
 #endif
 #if ENABLE(TOUCH_EVENTS)
     case MessageName::TestWithLegacyReceiver_LoadSomethingElse:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadSomethingElse>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::LoadSomethingElse::Arguments>(globalObject, decoder);
 #endif
     case MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::DidReceivePolicyDecision::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_Close:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_Close>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::Close::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_PreferencesDidChange:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_PreferencesDidChange>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::PreferencesDidChange::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_SendDoubleAndFloat:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SendDoubleAndFloat>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::SendDoubleAndFloat::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_SendInts:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SendInts>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::SendInts::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_CreatePlugin:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_CreatePlugin>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::CreatePlugin::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_RunJavaScriptAlert:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_RunJavaScriptAlert>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::RunJavaScriptAlert::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_GetPlugins:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPlugins>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPlugins::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPluginProcessConnection>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPluginProcessConnection::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TestMultipleAttributes>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TestMultipleAttributes::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_TestParameterAttributes:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TestParameterAttributes>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TestParameterAttributes::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_TemplateTest:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TemplateTest>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TemplateTest::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_SetVideoLayerID:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SetVideoLayerID>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::SetVideoLayerID::Arguments>(globalObject, decoder);
 #if PLATFORM(MAC)
     case MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::Arguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_InterpretKeyEvent:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_InterpretKeyEvent>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::InterpretKeyEvent::Arguments>(globalObject, decoder);
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
     case MessageName::TestWithLegacyReceiver_DeprecatedOperation:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DeprecatedOperation>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::DeprecatedOperation::Arguments>(globalObject, decoder);
 #endif
 #if ENABLE(FEATURE_FOR_TESTING)
     case MessageName::TestWithLegacyReceiver_ExperimentalOperation:
-        return jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_ExperimentalOperation>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::ExperimentalOperation::Arguments>(globalObject, decoder);
 #endif
 #endif
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithoutAttributes_LoadURL:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_LoadURL>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::LoadURL::Arguments>(globalObject, decoder);
 #if ENABLE(TOUCH_EVENTS)
     case MessageName::TestWithoutAttributes_LoadSomething:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_LoadSomething>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::LoadSomething::Arguments>(globalObject, decoder);
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
     case MessageName::TestWithoutAttributes_TouchEvent:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TouchEvent>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::TouchEvent::Arguments>(globalObject, decoder);
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     case MessageName::TestWithoutAttributes_AddEvent:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_AddEvent>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::AddEvent::Arguments>(globalObject, decoder);
 #endif
 #if ENABLE(TOUCH_EVENTS)
     case MessageName::TestWithoutAttributes_LoadSomethingElse:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_LoadSomethingElse>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::LoadSomethingElse::Arguments>(globalObject, decoder);
 #endif
     case MessageName::TestWithoutAttributes_DidReceivePolicyDecision:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_DidReceivePolicyDecision>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::DidReceivePolicyDecision::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_Close:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_Close>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::Close::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_PreferencesDidChange:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_PreferencesDidChange>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::PreferencesDidChange::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_SendDoubleAndFloat:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_SendDoubleAndFloat>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::SendDoubleAndFloat::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_SendInts:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_SendInts>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::SendInts::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_CreatePlugin:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_CreatePlugin>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::CreatePlugin::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_RunJavaScriptAlert:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_RunJavaScriptAlert>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::RunJavaScriptAlert::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_GetPlugins:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_GetPlugins>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::GetPlugins::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_GetPluginProcessConnection>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::GetPluginProcessConnection::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_TestMultipleAttributes:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TestMultipleAttributes>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::TestMultipleAttributes::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_TestParameterAttributes:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TestParameterAttributes>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::TestParameterAttributes::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_TemplateTest:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TemplateTest>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::TemplateTest::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_SetVideoLayerID:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_SetVideoLayerID>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::SetVideoLayerID::Arguments>(globalObject, decoder);
 #if PLATFORM(MAC)
     case MessageName::TestWithoutAttributes_DidCreateWebProcessConnection:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_DidCreateWebProcessConnection>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::DidCreateWebProcessConnection::Arguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_InterpretKeyEvent:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_InterpretKeyEvent>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::InterpretKeyEvent::Arguments>(globalObject, decoder);
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
     case MessageName::TestWithoutAttributes_DeprecatedOperation:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_DeprecatedOperation>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::DeprecatedOperation::Arguments>(globalObject, decoder);
 #endif
 #if ENABLE(FEATURE_FOR_TESTING)
     case MessageName::TestWithoutAttributes_ExperimentalOperation:
-        return jsValueForDecodedMessage<MessageName::TestWithoutAttributes_ExperimentalOperation>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::ExperimentalOperation::Arguments>(globalObject, decoder);
 #endif
 #endif
 #if PLATFORM(COCOA)
     case MessageName::TestWithIfMessage_LoadURL:
-        return jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
 #endif
 #if PLATFORM(GTK)
     case MessageName::TestWithIfMessage_LoadURL:
-        return jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithIfMessage::LoadURL::Arguments>(globalObject, decoder);
 #endif
     case MessageName::TestWithSemaphore_SendSemaphore:
-        return jsValueForDecodedMessage<MessageName::TestWithSemaphore_SendSemaphore>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSemaphore::SendSemaphore::Arguments>(globalObject, decoder);
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
-        return jsValueForDecodedMessage<MessageName::TestWithSemaphore_ReceiveSemaphore>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSemaphore::ReceiveSemaphore::Arguments>(globalObject, decoder);
     case MessageName::TestWithImageData_SendImageData:
-        return jsValueForDecodedMessage<MessageName::TestWithImageData_SendImageData>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithImageData::SendImageData::Arguments>(globalObject, decoder);
     case MessageName::TestWithImageData_ReceiveImageData:
-        return jsValueForDecodedMessage<MessageName::TestWithImageData_ReceiveImageData>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithImageData::ReceiveImageData::Arguments>(globalObject, decoder);
     case MessageName::TestWithStream_SendString:
-        return jsValueForDecodedMessage<MessageName::TestWithStream_SendString>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithStream::SendString::Arguments>(globalObject, decoder);
     case MessageName::TestWithStream_SendStringSynchronized:
-        return jsValueForDecodedMessage<MessageName::TestWithStream_SendStringSynchronized>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithStream::SendStringSynchronized::Arguments>(globalObject, decoder);
 #if PLATFORM(COCOA)
     case MessageName::TestWithStream_SendMachSendRight:
-        return jsValueForDecodedMessage<MessageName::TestWithStream_SendMachSendRight>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithStream::SendMachSendRight::Arguments>(globalObject, decoder);
     case MessageName::TestWithStream_ReceiveMachSendRight:
-        return jsValueForDecodedMessage<MessageName::TestWithStream_ReceiveMachSendRight>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithStream::ReceiveMachSendRight::Arguments>(globalObject, decoder);
     case MessageName::TestWithStream_SendAndReceiveMachSendRight:
-        return jsValueForDecodedMessage<MessageName::TestWithStream_SendAndReceiveMachSendRight>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithStream::SendAndReceiveMachSendRight::Arguments>(globalObject, decoder);
 #endif
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
-        return jsValueForDecodedMessage<MessageName::TestWithStreamBuffer_SendStreamBuffer>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithStreamBuffer::SendStreamBuffer::Arguments>(globalObject, decoder);
 #if USE(AVFOUNDATION)
     case MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer:
-        return jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::SendCVPixelBuffer::Arguments>(globalObject, decoder);
     case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
-        return jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithCVPixelBuffer::ReceiveCVPixelBuffer::Arguments>(globalObject, decoder);
 #endif
     default:
         break;
@@ -232,29 +323,29 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
     switch (name) {
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessage:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessage>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestAsyncMessage::ReplyArguments>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestAsyncMessageWithNoArguments::ReplyArguments>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestAsyncMessageWithMultipleArguments::ReplyArguments>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithConnection>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestAsyncMessageWithConnection::ReplyArguments>(globalObject, decoder);
 #endif
     case MessageName::TestWithSuperclass_TestSyncMessage:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestSyncMessage>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestSyncMessage::ReplyArguments>(globalObject, decoder);
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
-        return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestSynchronousMessage>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithSuperclass::TestSynchronousMessage::ReplyArguments>(globalObject, decoder);
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
-        return jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_GetPluginProcessConnection>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPluginProcessConnection::ReplyArguments>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
-        return jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_TestMultipleAttributes>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::TestMultipleAttributes::ReplyArguments>(globalObject, decoder);
 #endif
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
-        return jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_GetPluginProcessConnection>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::GetPluginProcessConnection::ReplyArguments>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_TestMultipleAttributes:
-        return jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_TestMultipleAttributes>(globalObject, decoder);
+        return jsValueForDecodedArguments<Messages::TestWithoutAttributes::TestMultipleAttributes::ReplyArguments>(globalObject, decoder);
 #endif
     default:
         break;

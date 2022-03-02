@@ -33,10 +33,6 @@
 #include <WebCore/ImageData.h>
 #include <wtf/RefCounted.h>
 
-#if ENABLE(IPC_TESTING_API)
-#include "JSIPCBinding.h"
-#endif
-
 namespace WebKit {
 
 void TestWithImageData::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -70,21 +66,3 @@ bool TestWithImageData::didReceiveSyncMessage(IPC::Connection& connection, IPC::
 }
 
 } // namespace WebKit
-
-#if ENABLE(IPC_TESTING_API)
-
-namespace IPC {
-
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithImageData_SendImageData>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithImageData::SendImageData::Arguments>(globalObject, decoder);
-}
-template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithImageData_ReceiveImageData>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
-{
-    return jsValueForDecodedArguments<Messages::TestWithImageData::ReceiveImageData::Arguments>(globalObject, decoder);
-}
-
-}
-
-#endif
-
