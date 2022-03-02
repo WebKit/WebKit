@@ -1,3 +1,41 @@
+2022-03-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add a switch to control whether breakpoint evaluations (condition, ignore count, actions) are also affected by script blackboxing
+        https://bugs.webkit.org/show_bug.cgi?id=235274
+
+        Reviewed by Patrick Angle.
+
+        Being able to defer breakpoint evaluations until the next actual pause can sometimes be far
+        more useful than doing the breakpoint evaluations at the breakpoint's original location.
+
+        As an example, configuring the All Events breakpoint with a `console.trace()` action and
+        auto-continue enabled would not provide much useful information without also blackboxing
+        breakpoint evaluations as the original pause location of the All Events breakpoint is on the
+        first line of the event handler, meaning that if the script containing the event handler is
+        blackboxed then the `console.trace()` would still only show that location even though the
+        Sources Tab would show the first line of code outside of that script (due to the blackbox).
+        Being able to also blackbox breakpoint evaluations would instead cause the `console.trace()`
+        action to have the same output as the Sources Tab, since it's evaluation would be deferred
+        until execution actually paused, which is further inside the event handler
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.supportsBlackboxingBreakpointEvaluations): Added.
+        (WI.DebuggerManager.prototype.async initializeTarget):
+        (WI.DebuggerManager.prototype._setBlackboxBreakpointEvaluations): Added.
+        (WI.DebuggerManager.prototype._handleBlackboxBreakpointEvaluationsChange): Added.
+        Create a global `WI.Setting` for this feature and handle changes from the code below.
+
+        * UserInterface/Views/BlackboxSettingsView.js:
+        (WI.BlackboxSettingsView.prototype.initialLayout):
+        * UserInterface/Views/BlackboxSettingsView.css:
+        (.settings-view.blackbox > p > label): Added.
+        (.settings-view.blackbox > p > label > input): Added.
+        (.settings-view.blackbox > p > label > span): Added.
+        Add a checkbox and explanation of this new feature in the Blackbox pane of the Settings Tab.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
 2022-02-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: [Flexbox] Add options to show each area's CSS `order` and/or DOM index in the parent flex container

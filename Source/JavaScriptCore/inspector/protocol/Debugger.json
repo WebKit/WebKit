@@ -322,6 +322,13 @@
                 { "name": "caseSensitive", "type": "boolean", "optional": true, "description": "If true, <code>url</code> is case sensitive." },
                 { "name": "isRegex", "type": "boolean", "optional": true, "description": "If true, treat <code>url</code> as regular expression." }
             ]
+        },
+        {
+            "name": "setBlackboxBreakpointEvaluations",
+            "description": "Sets whether evaluation of breakpoint conditions, ignore counts, and actions happen at the location of the breakpoint or are deferred due to blackboxing.",
+            "parameters": [
+                { "name": "blackboxBreakpointEvaluations", "type": "boolean" }
+            ]
         }
     ],
     "events": [

@@ -1,3 +1,53 @@
+2022-03-01  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add a switch to control whether breakpoint evaluations (condition, ignore count, actions) are also affected by script blackboxing
+        https://bugs.webkit.org/show_bug.cgi?id=235274
+
+        Reviewed by Patrick Angle.
+
+        Being able to defer breakpoint evaluations until the next actual pause can sometimes be far
+        more useful than doing the breakpoint evaluations at the breakpoint's original location.
+
+        As an example, configuring the All Events breakpoint with a `console.trace()` action and
+        auto-continue enabled would not provide much useful information without also blackboxing
+        breakpoint evaluations as the original pause location of the All Events breakpoint is on the
+        first line of the event handler, meaning that if the script containing the event handler is
+        blackboxed then the `console.trace()` would still only show that location even though the
+        Sources Tab would show the first line of code outside of that script (due to the blackbox).
+        Being able to also blackbox breakpoint evaluations would instead cause the `console.trace()`
+        action to have the same output as the Sources Tab, since it's evaluation would be deferred
+        until execution actually paused, which is further inside the event handler.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::Debugger):
+        (JSC::Debugger::didHitBreakpoint):
+        (JSC::Debugger::evaluateBreakpointCondition):
+        (JSC::Debugger::continueProgram):
+        (JSC::Debugger::pauseIfNeeded):
+        (JSC::Debugger::didExecuteProgram):
+        (JSC::Debugger::setBlackboxBreakpointEvaluations): Added.
+        Keep track of every `Breakpoint` wants to pause but is deferred due to blackboxing.
+        Depending on whether breakpoint evaluations are also blackboxed (based on the flag set via
+        the piping code/logic below), check if the script attempting to be paused in is blackboxed
+        before or after handling breakpoint evaluations.
+        Side effects of this change are:
+        - breakpoint conditions are now evaluated right before that breakpoint's actions, instead of
+          evaluating all breakpoint conditions before all breakpoint actions
+        - if breakpoint evaluations are blackboxed, more than two breakpoints can now be evaluated
+        during a single pause attempt depending on how may deferrals (with breakpoints) happened
+
+        * debugger/Debugger.h:
+        (JSC::Debugger::Observer::didDeferBreakpointPause): Added.
+        Add a way to notify `InspectorDebuggerAgent` of deferred breakpoint pauses so that the
+        correct `originalReason` will be used after a deferred pause.
+
+        * inspector/protocol/Debugger.json:
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::setBlackboxBreakpointEvaluations): Added.
+        (Inspector::InspectorDebuggerAgent::didDeferBreakpointPause): Added.
+        Add a `setBlackboxBreakpointEvaluations` command that passes directly to `Debugger`.
+
 2022-03-01  Saam Barati  <sbarati@apple.com>
 
         Add a DeferTraps scope

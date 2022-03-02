@@ -48,6 +48,19 @@
     vertical-align: middle;
 }
 
+.settings-view.blackbox > p > label {
+    display: flex;
+}
+
+.settings-view.blackbox > p > label > input {
+    flex-shrink: 0;
+    margin-inline: 0.5px 4px;
+}
+
+.settings-view.blackbox > p > label > span {
+    margin-top: 1.5px;
+}
+
 .settings-view.blackbox > table {
     border-collapse: collapse;
 }

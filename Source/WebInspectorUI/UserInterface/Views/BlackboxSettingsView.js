@@ -106,6 +106,20 @@ WI.BlackboxSettingsView = class BlackboxSettingsView extends WI.SettingsView
             a.append(b);
             return a;
         });
+
+        if (WI.DebuggerManager.supportsBlackboxingBreakpointEvaluations()) {
+            let blackboxBreakpointEvaluationsExplanationElement = this.element.insertBefore(document.createElement("p"), this.element.lastChild);
+            let blackboxBreakpointEvaluationsExplanationLabel = blackboxBreakpointEvaluationsExplanationElement.appendChild(document.createElement("label"));
+
+            let blackboxBreakpointEvaluationsExplanationCheckbox = blackboxBreakpointEvaluationsExplanationLabel.appendChild(document.createElement("input"));
+            blackboxBreakpointEvaluationsExplanationCheckbox.type = "checkbox";
+            blackboxBreakpointEvaluationsExplanationCheckbox.checked = WI.settings.blackboxBreakpointEvaluations.value;
+            blackboxBreakpointEvaluationsExplanationCheckbox.addEventListener("change", (event) => {
+                WI.settings.blackboxBreakpointEvaluations.value = blackboxBreakpointEvaluationsExplanationCheckbox.checked;
+            });
+
+            blackboxBreakpointEvaluationsExplanationLabel.append(WI.UIString("Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint's location."));
+        }
     }
 
     // Private

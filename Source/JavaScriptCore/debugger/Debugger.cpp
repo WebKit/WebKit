@@ -113,6 +113,7 @@ Debugger::ProfilingClient::~ProfilingClient()
 
 Debugger::Debugger(VM& vm)
     : m_vm(vm)
+    , m_blackboxBreakpointEvaluations(false)
     , m_pauseAtNextOpportunity(false)
     , m_pastFirstExpressionInStatement(false)
     , m_isPaused(false)
@@ -543,7 +544,7 @@ bool Debugger::removeBreakpoint(Breakpoint& breakpoint)
     return removed;
 }
 
-RefPtr<Breakpoint> Debugger::didHitBreakpoint(JSGlobalObject* globalObject, SourceID sourceID, const TextPosition& position)
+RefPtr<Breakpoint> Debugger::didHitBreakpoint(SourceID sourceID, const TextPosition& position)
 {
     if (!m_breakpointsActivated)
         return nullptr;
@@ -565,11 +566,8 @@ RefPtr<Breakpoint> Debugger::didHitBreakpoint(JSGlobalObject* globalObject, Sour
 
         // Since frontend truncates the indent, the first statement in a line must match the breakpoint (line,0).
         ASSERT(this == m_currentCallFrame->codeBlock()->globalObject()->debugger());
-        if ((line != m_lastExecutedLine && line == breakLine && !breakColumn) || (line == breakLine && column == breakColumn)) {
-            if (breakpoint->shouldPause(*this, globalObject))
-                return breakpoint.copyRef();
-            break;
-        }
+        if ((line != m_lastExecutedLine && line == breakLine && !breakColumn) || (line == breakLine && column == breakColumn))
+            return breakpoint.copyRef();
     }
 
     return nullptr;
@@ -606,13 +604,12 @@ void Debugger::clearBreakpoints()
 
 bool Debugger::evaluateBreakpointCondition(Breakpoint& breakpoint, JSGlobalObject* globalObject)
 {
+    ASSERT(m_isPaused);
+    ASSERT(isAttached(globalObject));
+
     const String& condition = breakpoint.condition();
     if (condition.isEmpty())
         return true;
-
-    // We cannot stop in the debugger while executing condition code,
-    // so make it looks like the debugger is already paused.
-    TemporaryPausedState pausedState(*this);
 
     NakedPtr<Exception> exception;
     DebuggerCallFrame& debuggerCallFrame = currentDebuggerCallFrame();
@@ -781,6 +778,7 @@ void Debugger::breakProgram(RefPtr<Breakpoint>&& specialBreakpoint)
 void Debugger::continueProgram()
 {
     clearNextPauseState();
+    m_deferredBreakpoints.clear();
 
     if (!m_isPaused)
         return;
@@ -883,80 +881,112 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
 
     DebuggerPausedScope debuggerPausedScope(*this);
 
-    bool pauseNow = m_pauseAtNextOpportunity;
-    pauseNow |= (m_pauseOnCallFrame == m_currentCallFrame);
-
-    bool didPauseForStep = pauseNow;
+    bool afterBlackboxedScript = m_afterBlackboxedScript;
+    bool pauseNow = false;
+    bool didPauseForStep = false;
+    if (m_pauseAtNextOpportunity) {
+        pauseNow = true;
+        didPauseForStep = !afterBlackboxedScript;
+    } else if (m_pauseOnStepNext || m_pauseOnStepOut || (m_pauseOnCallFrame == m_currentCallFrame)) {
+        pauseNow = true;
+        didPauseForStep = true;
+    }
 
     TextPosition position = DebuggerCallFrame::positionForCallFrame(vm, m_currentCallFrame);
 
-    auto breakpoint = didHitBreakpoint(globalObject, sourceID, position);
-    if (breakpoint)
+    if (auto breakpoint = didHitBreakpoint(sourceID, position)) {
         pauseNow = true;
+        m_deferredBreakpoints.add(breakpoint.releaseNonNull());
+    }
 
     // Special breakpoints are only given one opportunity to pause.
-    auto specialBreakpoint = WTFMove(m_specialBreakpoint);
-    if (specialBreakpoint && specialBreakpoint->shouldPause(*this, globalObject))
+    if (m_specialBreakpoint) {
         pauseNow = true;
+        m_deferredBreakpoints.add(m_specialBreakpoint.releaseNonNull());
+    }
 
     m_lastExecutedLine = position.m_line.zeroBasedInt();
     if (!pauseNow)
         return;
 
-    bool afterBlackboxedScript = m_afterBlackboxedScript;
     clearNextPauseState();
 
     // Make sure we are not going to pause again on breakpoint actions by
     // reseting the pause state before executing any breakpoint actions.
     TemporaryPausedState pausedState(*this);
 
-    if (breakpoint || specialBreakpoint) {
-        // Note that the actions can potentially stop the debugger, so we need to check that
-        // we still have a current call frame when we get back.
+    auto shouldDeferPause = [&] () {
+        if (blackboxTypeIterator == m_blackboxedScripts.end())
+            return false;
 
-        bool autoContinue = false;
+        if (blackboxTypeIterator->value != BlackboxType::Deferred)
+            return false;
 
-        if (breakpoint) {
-            evaluateBreakpointActions(*breakpoint, globalObject);
+        m_afterBlackboxedScript = true;
 
+        if (m_pausingBreakpointID != noBreakpointID) {
+            dispatchFunctionToObservers([&] (Observer& observer) {
+                observer.didDeferBreakpointPause(m_pausingBreakpointID);
+            });
+
+            m_pausingBreakpointID = noBreakpointID;
+        }
+
+        schedulePauseAtNextOpportunity();
+        return true;
+    };
+
+    if (m_blackboxBreakpointEvaluations && shouldDeferPause())
+        return;
+
+    if (!m_deferredBreakpoints.isEmpty()) {
+        std::optional<BreakpointID> pausingBreakpointID;
+        bool hasEvaluatedSpecialBreakpoint = false;
+        bool shouldContinue = true;
+
+        for (auto&& deferredBreakpoint : std::exchange(m_deferredBreakpoints, { })) {
+            // Note that breakpoint evaluations can potentially stop the debugger, so we need to
+            // check that we still have a current call frame after evaluating them.
+
+            bool shouldPause = deferredBreakpoint->shouldPause(*this, globalObject);
+            if (!m_currentCallFrame)
+                return;
+            if (!shouldPause)
+                continue;
+
+            evaluateBreakpointActions(deferredBreakpoint, globalObject);
             if (!m_currentCallFrame)
                 return;
 
-            if (breakpoint->isAutoContinue())
-                autoContinue = true;
+            if (deferredBreakpoint->isAutoContinue())
+                continue;
+
+            shouldContinue = false;
+
+            // Only propagate `PausedForBreakpoint` to the `InspectorDebuggerAgent` if the first
+            // line:column breakpoint hit was before the first special breakpoint, as the latter
+            // would already have set a unique reason before attempting to pause.
+            if (!deferredBreakpoint->isLinked())
+                hasEvaluatedSpecialBreakpoint = true;
+            else if (!hasEvaluatedSpecialBreakpoint && !pausingBreakpointID)
+                pausingBreakpointID = deferredBreakpoint->id();
         }
 
-        if (specialBreakpoint) {
-            evaluateBreakpointActions(*specialBreakpoint, globalObject);
-
-            if (!m_currentCallFrame)
-                return;
-
-            if (specialBreakpoint->isAutoContinue())
-                autoContinue = true;
-        }
-
-        if (autoContinue) {
+        if (shouldContinue) {
             if (!didPauseForStep)
                 return;
-
-            breakpoint = nullptr;
-            specialBreakpoint = nullptr;
-        } else if (breakpoint)
-            m_pausingBreakpointID = breakpoint->id();
+        } else if (pausingBreakpointID)
+            m_pausingBreakpointID = *pausingBreakpointID;
     }
 
-    if (blackboxTypeIterator != m_blackboxedScripts.end() && blackboxTypeIterator->value == BlackboxType::Deferred) {
-        m_afterBlackboxedScript = true;
-        schedulePauseAtNextOpportunity();
+    if (!m_blackboxBreakpointEvaluations && shouldDeferPause())
         return;
-    }
 
     {
         auto reason = m_reasonForPause;
         if (afterBlackboxedScript)
             reason = PausedAfterBlackboxedScript;
-        else if (breakpoint)
+        else if (m_pausingBreakpointID)
             reason = PausedForBreakpoint;
         PauseReasonDeclaration rauseReasonDeclaration(*this, reason);
 
@@ -1154,8 +1184,10 @@ void Debugger::didExecuteProgram(CallFrame* callFrame)
     updateCallFrame(lexicalGlobalObjectForCallFrame(m_vm, callerFrame), callerFrame, NoPause);
 
     // Do not continue stepping into an unknown future program.
-    if (!m_currentCallFrame)
+    if (!m_currentCallFrame) {
         clearNextPauseState();
+        m_deferredBreakpoints.clear();
+    }
 }
 
 void Debugger::clearNextPauseState()
@@ -1209,6 +1241,11 @@ void Debugger::setBlackboxType(SourceID sourceID, std::optional<BlackboxType> ty
         m_blackboxedScripts.set(sourceID, type.value());
     else
         m_blackboxedScripts.remove(sourceID);
+}
+
+void Debugger::setBlackboxBreakpointEvaluations(bool blackboxBreakpointEvaluations)
+{
+    m_blackboxBreakpointEvaluations = blackboxBreakpointEvaluations;
 }
 
 void Debugger::clearBlackbox()

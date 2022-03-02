@@ -184,6 +184,7 @@ WI.DebugSetting = class DebugSetting extends WI.Setting
 };
 
 WI.settings = {
+    blackboxBreakpointEvaluations: new WI.Setting("blackbox-breakpoint-evaluations", false),
     canvasRecordingAutoCaptureEnabled: new WI.Setting("canvas-recording-auto-capture-enabled", false),
     canvasRecordingAutoCaptureFrameCount: new WI.Setting("canvas-recording-auto-capture-frame-count", 1),
     consoleAutoExpandTrace: new WI.Setting("console-auto-expand-trace", true),

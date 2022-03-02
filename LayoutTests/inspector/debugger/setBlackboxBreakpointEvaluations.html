@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script>
+function createScripts(id) {
+    eval(
+`
+window.${id}_Inner = function ${id}_Inner(x) {
+    return x * x;
+};
+//# sourceURL=${id}_Inner.js
+`
+    );
+
+    eval(
+`
+window.${id}_Outer = function ${id}_Outer(x) {
+    let innerResult = ${id}_Inner(x);
+    return innerResult * x;
+};
+//# sourceURL=${id}_Outer.js
+`
+    );
+}
+
+function test()
+{
+    ProtocolTest.debug();
+    let suite = ProtocolTest.createAsyncSuite("Debugger.setBlackboxBreakpointEvaluations");
+
+    let sourceURLRegExpQueries = new Map;
+    let pausedFunctionNames = [];
+
+    InspectorProtocol.sendCommand("Debugger.enable", {});
+    InspectorProtocol.sendCommand("Debugger.setBreakpointsActive", {active: true});
+
+    InspectorProtocol.eventHandler["Debugger.scriptParsed"] = function(message) {
+        let sourceURL = message.params.sourceURL;
+        for (let [regExp, callback] of sourceURLRegExpQueries) {
+            if (regExp.test(sourceURL)) {
+                sourceURLRegExpQueries.delete(regExp);
+                callback(sourceURL);
+            }
+        };
+    };
+
+    InspectorProtocol.eventHandler["Debugger.paused"] = function(message) {
+        ProtocolTest.newline();
+
+        let topCallFrame = message.params.callFrames[0];
+        let functionName = topCallFrame.functionName;
+        if (functionName !== "global code") {
+            ProtocolTest.log(`PAUSED: '${message.params.reason}' at '${functionName}:${topCallFrame.location.lineNumber}:${topCallFrame.location.columnNumber}'.`);
+            if (message.params.data)
+                ProtocolTest.json(message.params.data);
+            pausedFunctionNames.push(functionName);
+        }
+
+        ProtocolTest.log("Resuming...");
+        InspectorProtocol.sendCommand(`Debugger.resume`, {}, InspectorProtocol.checkForError);
+    };
+
+    InspectorProtocol.eventHandler["Debugger.resumed"] = function(message) {
+        ProtocolTest.pass("Resumed.");
+    };
+
+    async function setBlackbox(url, options = {}) {
+        if (!options.caseSensitive)
+            url = url.toLowerCase();
+
+        ProtocolTest.log(`Blackboxing ${options.caseSensitive ? "(case sensitive) " : ""}${options.isRegex ? "(regex) " : ""}'${url}'...`);
+        await InspectorProtocol.awaitCommand({
+            method: "Debugger.setShouldBlackboxURL",
+            params: {url, shouldBlackbox: true, ...options},
+        });
+    }
+
+    async function setBreakpoint(url, lineNumber, options) {
+        ProtocolTest.log(`Setting breakpoint in '${url}'...`);
+        await InspectorProtocol.awaitCommand({
+            method: "Debugger.setBreakpointByUrl",
+            params: {url, lineNumber, options},
+        });
+    }
+
+    async function setBlackboxBreakpointEvaluations(blackboxBreakpointEvaluations) {
+        ProtocolTest.log(`${blackboxBreakpointEvaluations ? "Blackboxing" : "Unblackboxing"} preakpoing evaluations...`);
+        return InspectorProtocol.awaitCommand({
+            method: "Debugger.setBlackboxBreakpointEvaluations",
+            params: {blackboxBreakpointEvaluations},
+        });
+    }
+
+    async function listenForSourceParsed(sourceURLRegExp) {
+        return new Promise((resolve, reject) => {
+            sourceURLRegExpQueries.set(sourceURLRegExp, resolve);
+        });
+    }
+
+    async function evaluate(expression) {
+        ProtocolTest.log(`Evaluating '${expression}'...`);
+        return InspectorProtocol.awaitCommand({
+            method: "Runtime.evaluate",
+            params: {expression},
+        });
+    }
+
+    suite.addTestCase({
+        name: "Debugger.setBlackboxBreakpointEvaluations.UnblackboxBreakpointEvaluations.BreakpointCondition.False",
+        async test() {
+            let [innerSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/UnblackboxBreakpointEvaluations_BreakpointCondition_False_Inner\.js$/),
+                listenForSourceParsed(/UnblackboxBreakpointEvaluations_BreakpointCondition_False_Outer\.js$/),
+                evaluate(`createScripts("UnblackboxBreakpointEvaluations_BreakpointCondition_False")`),
+            ]);
+
+            await setBlackbox(innerSourceURL);
+            await setBreakpoint(innerSourceURL, 2, {
+                condition: "!(x = 3)",
+            });
+            await setBlackboxBreakpointEvaluations(false);
+
+            let result = await evaluate(`UnblackboxBreakpointEvaluations_BreakpointCondition_False_Outer(2)`);
+            InspectorProtocol.checkForError(result);
+            ProtocolTest.expectEqual(result.result.value, (3 * 3) * 2, "Should change value of 'x' inside 'UnblackboxBreakpointEvaluations_BreakpointCondition_False_Inner.js'");
+
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("UnblackboxBreakpointEvaluations_BreakpointCondition_False_Inner"), "Should not pause in 'UnblackboxBreakpointEvaluations_BreakpointCondition_False_Inner'.");
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("UnblackboxBreakpointEvaluations_BreakpointCondition_False_Outer"), "Should not pause in 'UnblackboxBreakpointEvaluations_BreakpointCondition_False_Outer'.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setBlackboxBreakpointEvaluations.UnblackboxBreakpointEvaluations.BreakpointCondition.True",
+        async test() {
+            let [innerSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/UnblackboxBreakpointEvaluations_BreakpointCondition_True_Inner\.js$/),
+                listenForSourceParsed(/UnblackboxBreakpointEvaluations_BreakpointCondition_True_Outer\.js$/),
+                evaluate(`createScripts("UnblackboxBreakpointEvaluations_BreakpointCondition_True")`),
+            ]);
+
+            await setBlackbox(innerSourceURL);
+            await setBreakpoint(innerSourceURL, 2, {
+                condition: "(x = 3)",
+            });
+            await setBlackboxBreakpointEvaluations(false);
+
+            let result = await evaluate(`UnblackboxBreakpointEvaluations_BreakpointCondition_True_Outer(2)`);
+            InspectorProtocol.checkForError(result);
+            ProtocolTest.expectEqual(result.result.value, (3 * 3) * 2, "Should change value of 'x' inside 'UnblackboxBreakpointEvaluations_BreakpointCondition_True_Inner.js'");
+
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("UnblackboxBreakpointEvaluations_BreakpointCondition_True_Inner"), "Should not pause in 'UnblackboxBreakpointEvaluations_BreakpointCondition_True_Inner'.");
+            ProtocolTest.expectTrue(pausedFunctionNames.includes("UnblackboxBreakpointEvaluations_BreakpointCondition_True_Outer"), "Should pause in 'UnblackboxBreakpointEvaluations_BreakpointCondition_True_Outer'.");
+
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setBlackboxBreakpointEvaluations.UnblackboxBreakpointEvaluations.BreakpointAction.Pause",
+        async test() {
+            let [innerSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/UnblackboxBreakpointEvaluations_BreakpointAction_Pause_Inner\.js$/),
+                listenForSourceParsed(/UnblackboxBreakpointEvaluations_BreakpointAction_Pause_Outer\.js$/),
+                evaluate(`createScripts("UnblackboxBreakpointEvaluations_BreakpointAction_Pause")`),
+            ]);
+
+            await setBlackbox(innerSourceURL);
+            await setBreakpoint(innerSourceURL, 2, {
+                actions: [
+                    {type: "evaluate", data: "x = 3"},
+                ],
+            });
+            await setBlackboxBreakpointEvaluations(false);
+
+            let result = await evaluate(`UnblackboxBreakpointEvaluations_BreakpointAction_Pause_Outer(2)`);
+            InspectorProtocol.checkForError(result);
+            ProtocolTest.expectEqual(result.result.value, (3 * 3) * 2, "Should change value of 'x' inside 'UnblackboxBreakpointEvaluations_BreakpointAction_Pause_Inner.js'");
+
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("UnblackboxBreakpointEvaluations_BreakpointAction_Pause_Inner"), "Should not pause in 'UnblackboxBreakpointEvaluations_BreakpointAction_Pause_Inner'.");
+            ProtocolTest.expectTrue(pausedFunctionNames.includes("UnblackboxBreakpointEvaluations_BreakpointAction_Pause_Outer"), "Should not pause in 'UnblackboxBreakpointEvaluations_BreakpointAction_Pause_Outer'.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setBlackboxBreakpointEvaluations.UnblackboxBreakpointEvaluations.BreakpointAction.AutoContinue",
+        async test() {
+            let [innerSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/UnblackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Inner\.js$/),
+                listenForSourceParsed(/UnblackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Outer\.js$/),
+                evaluate(`createScripts("UnblackboxBreakpointEvaluations_BreakpointAction_AutoContinue")`),
+            ]);
+
+            await setBlackbox(innerSourceURL);
+            await setBreakpoint(innerSourceURL, 2, {
+                actions: [
+                    {type: "evaluate", data: "x = 3"},
+                ],
+                autoContinue: true,
+            });
+            await setBlackboxBreakpointEvaluations(false);
+
+            let result = await evaluate(`UnblackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Outer(2)`);
+            InspectorProtocol.checkForError(result);
+            ProtocolTest.expectEqual(result.result.value, (3 * 3) * 2, "Should change value of 'x' inside 'UnblackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Inner.js'");
+
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("UnblackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Inner"), "Should not pause in 'UnblackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Inner'.");
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("UnblackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Outer"), "Should not pause in 'UnblackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Outer'.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setBlackboxBreakpointEvaluations.BlackboxBreakpointEvaluations.BreakpointCondition.False",
+        async test() {
+            let [innerSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/BlackboxBreakpointEvaluations_BreakpointCondition_False_Inner\.js$/),
+                listenForSourceParsed(/BlackboxBreakpointEvaluations_BreakpointCondition_False_Outer\.js$/),
+                evaluate(`createScripts("BlackboxBreakpointEvaluations_BreakpointCondition_False")`),
+            ]);
+
+            await setBlackbox(innerSourceURL);
+            await setBreakpoint(innerSourceURL, 2, {
+                condition: "!(x = 3)",
+            });
+            await setBlackboxBreakpointEvaluations(true);
+
+            let result = await evaluate(`BlackboxBreakpointEvaluations_BreakpointCondition_False_Outer(2)`);
+            InspectorProtocol.checkForError(result);
+            ProtocolTest.expectEqual(result.result.value, (2 * 2) * 3, "Should change value of 'x' inside 'BlackboxBreakpointEvaluations_BreakpointCondition_False_Outer.js'");
+
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("BlackboxBreakpointEvaluations_BreakpointCondition_False_Inner"), "Should not pause in 'BlackboxBreakpointEvaluations_BreakpointCondition_False_Inner'.");
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("BlackboxBreakpointEvaluations_BreakpointCondition_False_Outer"), "Should not pause in 'BlackboxBreakpointEvaluations_BreakpointCondition_False_Outer'.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setBlackboxBreakpointEvaluations.BlackboxBreakpointEvaluations.BreakpointCondition.True",
+        async test() {
+            let [innerSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/BlackboxBreakpointEvaluations_BreakpointCondition_True_Inner\.js$/),
+                listenForSourceParsed(/BlackboxBreakpointEvaluations_BreakpointCondition_True_Outer\.js$/),
+                evaluate(`createScripts("BlackboxBreakpointEvaluations_BreakpointCondition_True")`),
+            ]);
+
+            await setBlackbox(innerSourceURL);
+            await setBreakpoint(innerSourceURL, 2, {
+                condition: "(x = 3)",
+            });
+            await setBlackboxBreakpointEvaluations(true);
+
+            let result = await evaluate(`BlackboxBreakpointEvaluations_BreakpointCondition_True_Outer(2)`);
+            InspectorProtocol.checkForError(result);
+            ProtocolTest.expectEqual(result.result.value, (2 * 2) * 3, "Should change value of 'x' inside 'BlackboxBreakpointEvaluations_BreakpointCondition_True_Outer.js'");
+
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("BlackboxBreakpointEvaluations_BreakpointCondition_True_Inner"), "Should not pause in 'BlackboxBreakpointEvaluations_BreakpointCondition_True_Inner'.");
+            ProtocolTest.expectTrue(pausedFunctionNames.includes("BlackboxBreakpointEvaluations_BreakpointCondition_True_Outer"), "Should pause in 'BlackboxBreakpointEvaluations_BreakpointCondition_True_Outer'.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setBlackboxBreakpointEvaluations.BlackboxBreakpointEvaluations.BreakpointAction.Pause",
+        async test() {
+            let [innerSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/BlackboxBreakpointEvaluations_BreakpointAction_Pause_Inner\.js$/),
+                listenForSourceParsed(/BlackboxBreakpointEvaluations_BreakpointAction_Pause_Outer\.js$/),
+                evaluate(`createScripts("BlackboxBreakpointEvaluations_BreakpointAction_Pause")`),
+            ]);
+
+            await setBlackbox(innerSourceURL);
+            await setBreakpoint(innerSourceURL, 2, {
+                actions: [
+                    {type: "evaluate", data: "x = 3"},
+                ],
+            });
+            await setBlackboxBreakpointEvaluations(true);
+
+            let result = await evaluate(`BlackboxBreakpointEvaluations_BreakpointAction_Pause_Outer(2)`);
+            InspectorProtocol.checkForError(result);
+            ProtocolTest.expectEqual(result.result.value, (2 * 2) * 3, "Should change value of 'x' inside 'BlackboxBreakpointEvaluations_BreakpointAction_Pause_Outer.js'");
+
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("BlackboxBreakpointEvaluations_BreakpointAction_Pause_Inner"), "Should not pause in 'BlackboxBreakpointEvaluations_BreakpointAction_Pause_Inner'.");
+            ProtocolTest.expectTrue(pausedFunctionNames.includes("BlackboxBreakpointEvaluations_BreakpointAction_Pause_Outer"), "Should not pause in 'BlackboxBreakpointEvaluations_BreakpointAction_Pause_Outer'.");
+        },
+    });
+
+    suite.addTestCase({
+        name: "Debugger.setBlackboxBreakpointEvaluations.BlackboxBreakpointEvaluations.BreakpointAction.AutoContinue",
+        async test() {
+            let [innerSourceURL, outerSourceURL] = await Promise.all([
+                listenForSourceParsed(/BlackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Inner\.js$/),
+                listenForSourceParsed(/BlackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Outer\.js$/),
+                evaluate(`createScripts("BlackboxBreakpointEvaluations_BreakpointAction_AutoContinue")`),
+            ]);
+
+            await setBlackbox(innerSourceURL);
+            await setBreakpoint(innerSourceURL, 2, {
+                actions: [
+                    {type: "evaluate", data: "x = 3"},
+                ],
+                autoContinue: true,
+            });
+            await setBlackboxBreakpointEvaluations(true);
+
+            let result = await evaluate(`BlackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Outer(2)`);
+            InspectorProtocol.checkForError(result);
+            ProtocolTest.expectEqual(result.result.value, (2 * 2) * 3, "Should change value of 'x' inside 'BlackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Outer.js'");
+
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("BlackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Inner"), "Should not pause in 'BlackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Inner'.");
+            ProtocolTest.expectFalse(pausedFunctionNames.includes("BlackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Outer"), "Should not pause in 'BlackboxBreakpointEvaluations_BreakpointAction_AutoContinue_Outer'.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests Debugger.setBlackboxBreakpointEvaluations.</p>
+</body>
+</html>

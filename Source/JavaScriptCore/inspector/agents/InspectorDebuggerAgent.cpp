@@ -1069,6 +1069,13 @@ bool InspectorDebuggerAgent::shouldBlackboxURL(const String& url) const
     return false;
 }
 
+Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setBlackboxBreakpointEvaluations(bool blackboxBreakpointEvaluations)
+{
+    m_debugger.setBlackboxBreakpointEvaluations(blackboxBreakpointEvaluations);
+
+    return { };
+}
+
 void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directiveText)
 {
     if (m_debugger.needsExceptionCallbacks())
@@ -1319,6 +1326,11 @@ void InspectorDebuggerAgent::didContinue()
 
     if (m_conditionToDispatchResumed == ShouldDispatchResumed::WhenContinued)
         m_frontendDispatcher->resumed();
+}
+
+void InspectorDebuggerAgent::didDeferBreakpointPause(JSC::BreakpointID breakpointId)
+{
+    updatePauseReasonAndData(DebuggerFrontendDispatcher::Reason::Breakpoint, buildBreakpointPauseReason(breakpointId));
 }
 
 void InspectorDebuggerAgent::breakProgram(DebuggerFrontendDispatcher::Reason reason, RefPtr<JSON::Object>&& data, RefPtr<JSC::Breakpoint>&& specialBreakpoint)
