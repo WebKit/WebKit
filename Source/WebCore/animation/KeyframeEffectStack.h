@@ -54,7 +54,7 @@ public:
     void setCSSAnimationList(RefPtr<const AnimationList>&&);
     bool isCurrentlyAffectingProperty(CSSPropertyID) const;
     bool requiresPseudoElement() const;
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
+    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
     bool hasEffectWithImplicitKeyframes() const;
 
     bool containsEffectThatPreventsAccelerationOfEffect(const KeyframeEffect&);

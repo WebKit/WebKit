@@ -1,3 +1,30 @@
+2022-03-02  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] changes to font-size should recompute keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=237357
+
+        Reviewed by Antti Koivisto.
+
+        When we compute keyframes, it's possible that some values are specified using "em" units
+        and thus dependent on the current value for font-size. If the font-size changes over time,
+        we must recompute keyframes to ensure that any such value is updated.
+
+        To ensure that we correctly determine when the font-size changed, we pass a pointer to the
+        style seen when we last udpated animations so that we only consider a change in font-size
+        provided we've ever resolved animations.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::propertyAffectingKeyframeResolutionDidChange):
+        (WebCore::KeyframeEffect::propertyAffectingLogicalPropertiesDidChange): Deleted.
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffectStack.cpp:
+        (WebCore::KeyframeEffectStack::applyKeyframeEffects):
+        * animation/KeyframeEffectStack.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        * style/Styleable.h:
+        (WebCore::Styleable::applyKeyframeEffects const):
+
 2022-03-02  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Support 'revert-layer' in @keyframes

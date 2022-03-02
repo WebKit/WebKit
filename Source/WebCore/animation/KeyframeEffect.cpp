@@ -1682,7 +1682,7 @@ void KeyframeEffect::transformRelatedPropertyDidChange()
     addPendingAcceleratedAction(AcceleratedAction::TransformChange);
 }
 
-void KeyframeEffect::propertyAffectingLogicalPropertiesDidChange(RenderStyle& unanimatedStyle, const Style::ResolutionContext& resolutionContext)
+void KeyframeEffect::propertyAffectingKeyframeResolutionDidChange(RenderStyle& unanimatedStyle, const Style::ResolutionContext& resolutionContext)
 {
     switch (m_blendingKeyframesSource) {
     case BlendingKeyframesSource::CSSTransition:

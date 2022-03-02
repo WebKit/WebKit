@@ -1,5 +1,5 @@
 
-FAIL Lengths responsive to style changes assert_equals: expected "calc(40% + 150px)" but got "calc(40% + 100px)"
+PASS Lengths responsive to style changes
 PASS Percentages responsive to width style changes
 PASS Numbers responsive to style changes
 

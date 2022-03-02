@@ -1,5 +1,5 @@
 
-FAIL Filling effect values reflect changes to font-size on element assert_equals: Effect value after updating font-size expected "400px" but got "200px"
+PASS Filling effect values reflect changes to font-size on element
 FAIL Filling effect values reflect changes to font-size on parent element assert_equals: Effect value after updating font-size on parent element expected "400px" but got "200px"
 FAIL Filling effect values reflect changes to variables on element assert_equals: Effect value after updating variable expected "200px" but got "100px"
 FAIL Filling effect values reflect changes to variables on parent element assert_equals: Effect value after updating variable expected "400px" but got "200px"

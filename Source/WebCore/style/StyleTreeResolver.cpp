@@ -366,12 +366,12 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     // Now we can update all Web animations, which will include CSS Animations as well
     // as animations created via the JS API.
     if (styleable.hasKeyframeEffects()) {
-        auto previousLastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle() ? RenderStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) : RenderStyle::createPtr();
+        auto previousLastStyleChangeEventStyle = styleable.lastStyleChangeEventStyle() ? RenderStyle::clonePtr(*styleable.lastStyleChangeEventStyle()) : nullptr;
         // Record the style prior to applying animations for this style change event.
         styleable.setLastStyleChangeEventStyle(RenderStyle::clonePtr(*newStyle));
         // Apply all keyframe effects to the new style.
         auto animatedStyle = RenderStyle::clonePtr(*newStyle);
-        animationImpact = styleable.applyKeyframeEffects(*animatedStyle, *previousLastStyleChangeEventStyle, resolutionContext);
+        animationImpact = styleable.applyKeyframeEffects(*animatedStyle, previousLastStyleChangeEventStyle.get(), resolutionContext);
         newStyle = WTFMove(animatedStyle);
 
         Adjuster adjuster(document, *resolutionContext.parentStyle, resolutionContext.parentBoxStyle, styleable.pseudoId == PseudoId::None ? &element : nullptr);

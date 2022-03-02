@@ -122,27 +122,29 @@ void KeyframeEffectStack::setCSSAnimationList(RefPtr<const AnimationList>&& cssA
     m_isSorted = false;
 }
 
-OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle& previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
+OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
 {
     OptionSet<AnimationImpact> impact;
 
+    auto& previousStyle = previousLastStyleChangeEventStyle ? *previousLastStyleChangeEventStyle : RenderStyle::defaultStyle();
+
     auto transformRelatedPropertyChanged = [&]() -> bool {
-        return !arePointingToEqualData(targetStyle.translate(), previousLastStyleChangeEventStyle.translate())
-            || !arePointingToEqualData(targetStyle.scale(), previousLastStyleChangeEventStyle.scale())
-            || !arePointingToEqualData(targetStyle.rotate(), previousLastStyleChangeEventStyle.rotate())
-            || targetStyle.transform() != previousLastStyleChangeEventStyle.transform();
+        return !arePointingToEqualData(targetStyle.translate(), previousStyle.translate())
+            || !arePointingToEqualData(targetStyle.scale(), previousStyle.scale())
+            || !arePointingToEqualData(targetStyle.rotate(), previousStyle.rotate())
+            || targetStyle.transform() != previousStyle.transform();
     }();
 
-    auto propertyAffectingLogicalPropertiesChanged = previousLastStyleChangeEventStyle.direction() != targetStyle.direction()
-        || previousLastStyleChangeEventStyle.writingMode() != targetStyle.writingMode();
+    auto fontSizeChanged = previousLastStyleChangeEventStyle && previousLastStyleChangeEventStyle->computedFontSize() != targetStyle.computedFontSize();
+    auto propertyAffectingLogicalPropertiesChanged = previousLastStyleChangeEventStyle && (previousLastStyleChangeEventStyle->direction() != targetStyle.direction() || previousLastStyleChangeEventStyle->writingMode() != targetStyle.writingMode());
 
     auto unanimatedStyle = RenderStyle::clone(targetStyle);
 
     for (const auto& effect : sortedEffects()) {
         ASSERT(effect->animation());
 
-        if (propertyAffectingLogicalPropertiesChanged)
-            effect->propertyAffectingLogicalPropertiesDidChange(unanimatedStyle, resolutionContext);
+        if (propertyAffectingLogicalPropertiesChanged || fontSizeChanged)
+            effect->propertyAffectingKeyframeResolutionDidChange(unanimatedStyle, resolutionContext);
 
         effect->animation()->resolve(targetStyle, resolutionContext);
 

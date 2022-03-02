@@ -1,3 +1,18 @@
+2022-03-02  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] changes to font-size should recompute keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=237357
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-animations/responsive/column-width-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context-filling-expected.txt:
+        * web-platform-tests/web-animations/responsive/fontSize-expected.txt:
+        * web-platform-tests/web-animations/responsive/perspective-expected.txt:
+        * web-platform-tests/web-animations/responsive/textIndent-expected.txt:
+        * web-platform-tests/web-animations/responsive/to-style-change-expected.txt:
+
 2022-03-01  Martin Robinson  <mrobinson@webkit.org>
 
         When interpolating between transform lists partial prefix matches should not use matrix interpolation

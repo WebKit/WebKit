@@ -1,4 +1,4 @@
 
-FAIL textIndent responsive to style changes assert_not_equals: got disallowed value "100px hanging"
+PASS textIndent responsive to style changes
 FAIL textIndent responsive to inherited textIndent changes assert_equals: expected "200px hanging each-line" but got "150px hanging each-line"
 

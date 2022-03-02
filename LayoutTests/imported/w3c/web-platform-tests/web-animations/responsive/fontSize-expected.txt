@@ -1,6 +1,6 @@
 
-FAIL Relative font size larger responsive to style changes assert_not_equals: got disallowed value "15.6px"
-FAIL Relative font size smaller responsive to style changes assert_not_equals: got disallowed value "14.999999px"
-FAIL Font size medium responsive to style changes assert_not_equals: got disallowed value "16px"
-FAIL Font size initial responsive to style changes assert_not_equals: got disallowed value "13px"
+PASS Relative font size larger responsive to style changes
+PASS Relative font size smaller responsive to style changes
+PASS Font size medium responsive to style changes
+PASS Font size initial responsive to style changes
 
