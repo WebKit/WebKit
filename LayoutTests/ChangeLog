@@ -1,3 +1,44 @@
+2022-03-02  Oriol Brufau  <obrufau@igalia.com>
+
+        [css] Implement 'text-decoration' as a shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=237175
+
+        Reviewed by Darin Adler.
+
+        Update tests to take into account that 'text-decoration' is a shorthand.
+
+        * editing/pasteboard/data-transfer-get-data-on-drop-rich-text-expected.txt:
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-text-decoration-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-text-decoration.html:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * fast/css/style-enumerate-properties-expected.txt:
+        * fast/css/style-enumerate-properties.html:
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand-expected.txt:
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand.html:
+        * fast/css3-text/css3-text-decoration/text-decoration-dashed-expected-mismatch.html:
+        * fast/css3-text/css3-text-decoration/text-decoration-dashed.html:
+        * fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed-expected-mismatch.html:
+        * fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html:
+        * fast/css3-text/css3-text-decoration/text-decoration-dotted-expected-mismatch.html:
+        * fast/css3-text/css3-text-decoration/text-decoration-dotted.html:
+        * fast/events/input-events-paste-rich-datatransfer-expected.txt:
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/glib/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/gtk/fast/events/input-events-paste-rich-datatransfer-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/ios/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2022-03-02  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Remove obsolete failed attestation tests

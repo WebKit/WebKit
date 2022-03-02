@@ -8,9 +8,17 @@
         if (window.testRunner)
             testRunner.dumpAsText();
 
-        shouldBe("document.body.style.length", "2");
+        shouldBe("document.body.style.length", "5");
         shouldBeTrue("'0' in document.body.style");
         shouldBeTrue("'1' in document.body.style");
+        shouldBeTrue("'2' in document.body.style");
+        shouldBeTrue("'3' in document.body.style");
+        shouldBeTrue("'4' in document.body.style");
+        shouldBe("document.body.style[0]", "'text-decoration-line'");
+        shouldBe("document.body.style[1]", "'text-decoration-thickness'");
+        shouldBe("document.body.style[2]", "'text-decoration-style'");
+        shouldBe("document.body.style[3]", "'text-decoration-color'");
+        shouldBe("document.body.style[4]", "'border-top-color'");
         shouldBeTrue("'textDecoration' in document.body.style");
         shouldBeTrue("'borderTopColor' in document.body.style");
         shouldBeTrue("'border' in document.body.style");
@@ -60,7 +68,7 @@
         let group6 = properties.slice(initialIndexOfGroup6);
 
         // Group 1
-        shouldBe(`group1`, `["0", "1", "cssText", "length", "parentRule", "cssFloat"]`);
+        shouldBe(`group1`, `["0", "1", "2", "3", "4", "cssText", "length", "parentRule", "cssFloat"]`);
 
         // Group 2 - Camel Case
         let group2Clone = [...group2];

@@ -3520,6 +3520,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTextAlign:
             return cssValuePool.createValue(style.textAlign());
         case CSSPropertyTextDecoration:
+            if (style.textDecorationThickness() != RenderStyle::initialTextDecorationThickness())
+                return nullptr;
+            if (style.textDecorationStyle() != RenderStyle::initialTextDecorationStyle())
+                return nullptr;
+            if (style.textDecorationColor() != RenderStyle::currentColor())
+                return nullptr;
             return renderTextDecorationLineFlagsToCSSValue(style.textDecoration());
 #if ENABLE(CSS3_TEXT)
         case CSSPropertyWebkitTextAlignLast:

@@ -1,3 +1,81 @@
+2022-03-02  Oriol Brufau  <obrufau@igalia.com>
+
+        [css] Implement 'text-decoration' as a shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=237175
+
+        Reviewed by Darin Adler.
+
+        The 'text-decoration' property was considered to be a longhand, sharing
+        a computed value with 'text-decoration-line'.
+
+        This patch switches 'text-decoration' into a shorthand of the following
+        longhands: 'text-decoration-line', 'text-decoration-thickness',
+        'text-decoration-style' and 'text-decoration-color'. This is according
+        to https://www.w3.org/TR/css-text-decor-4/#text-decoration-property
+
+        For now I'm keeping the grammar as-is, so 'text-decoration' will only
+        accept values that are valid in 'text-decoration-line', but will set
+        the other longhands to the initial value. This should probably change
+        in a follow-up.
+
+        I'm also keeping '-webkit-text-decoration' as-is, as a shorthand of
+        'text-decoration-{line,style,color}', not including thickness for some
+        obscure reason. '-webkit-text-decoration' should probably be removed
+        anyways.
+
+        There is a bunch of editing code that was getting/setting/removing
+        'text-decoration' as a longhand, so I'm switching that to:
+         - Use 'text-decoration-line' when getting values.
+         - Use 'text-decoration' when setting values, and use a string for the
+           value, this parses it and sets each longhand to the correct value.
+         - Use 'text-decoration' get removing declarations, effectively removing
+           all longhands.
+        This preserves the previous behavior as much as possible.
+
+        Tests: fast/css/getComputedStyle/computed-style.html
+               fast/css/getComputedStyle/computed-style-without-renderer.html
+               fast/css/getComputedStyle/getComputedStyle-text-decoration.html
+               fast/css/style-enumerate-properties.html
+               fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand.html
+               fast/css3-text/css3-text-decoration/text-decoration-dashed.html
+               fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html
+               fast/css3-text/css3-text-decoration/text-decoration-dotted.html
+               imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html
+               imported/w3c/web-platform-tests/css/css-variables/variable-presentation-attribute.html
+               imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html
+               svg/css/getComputedStyle-basic.xhtml
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        (WebCore::StyleProperties::asText const):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::styleWithResolvedTextDecorations const):
+        (WebCore::EditingStyle::collapseTextDecorationProperties):
+        (WebCore::textDecorationValueList):
+        (WebCore::EditingStyle::conflictsWithInlineStyleOfElement const):
+        (WebCore::EditingStyle::styleIsPresentInComputedStyleOfNode const):
+        (WebCore::EditingStyle::mergeStyle):
+        (WebCore::EditingStyle::removeEquivalentProperties):
+        (WebCore::reconcileTextDecorationProperties):
+        (WebCore::StyleChange::StyleChange):
+        (WebCore::setTextDecorationProperty):
+        (WebCore::StyleChange::extractTextStyles):
+        (WebCore::diffTextDecorations):
+        (WebCore::extractPropertiesNotIn):
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverterCaches::propertyValueForNode):
+        (HTMLConverter::computedAttributesForElement):
+        * editing/markup.cpp:
+        (WebCore::serializePreservingVisualAppearanceInternal):
+        * style/PropertyAllowlist.cpp:
+        (WebCore::Style::isValidCueStyleProperty):
+
 2022-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Copy context menu action should be titled "Copy Link" when long pressing a non-image link

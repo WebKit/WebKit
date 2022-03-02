@@ -1,3 +1,16 @@
+2022-03-02  Oriol Brufau  <obrufau@igalia.com>
+
+        [css] Implement 'text-decoration' as a shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=237175
+
+        Reviewed by Darin Adler.
+
+        Update tests to take into account that 'text-decoration' is a shorthand.
+
+        * web-platform-tests/css/css-cascade/all-prop-initial-xml-expected.txt:
+        * web-platform-tests/css/css-variables/variable-presentation-attribute-expected.txt:
+        * web-platform-tests/css/cssom/getComputedStyle-detached-subtree-expected.txt:
+
 2022-03-02  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] setting the composite property on a keyframe effect should invalidate the target style

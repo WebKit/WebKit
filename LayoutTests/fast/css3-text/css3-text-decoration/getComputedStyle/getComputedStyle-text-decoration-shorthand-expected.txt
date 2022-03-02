@@ -5,28 +5,80 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Initial values:
 PASS e.style.getPropertyCSSValue('-webkit-text-decoration') is null
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration').cssText is 'none solid rgb(0, 0, 0)'
-PASS checkComputedStyleValue() is true
+PASS computedStyle.getPropertyValue('-webkit-text-decoration') is 'none solid rgb(0, 0, 0)'
+PASS checkComputedStyleValue('webkitTextDecoration', '-webkit-text-decoration') is true
 
 CSS2.1 backwards compatibility ("-webkit-text-decoration: underline overline line-through blink;"):
-PASS e.style.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through blink'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration').cssText is 'underline overline line-through solid rgb(0, 0, 0)'
-PASS checkComputedStyleValue() is true
+PASS e.style.getPropertyValue('-webkit-text-decoration-line') is 'underline overline line-through blink'
+PASS computedStyle.getPropertyValue('-webkit-text-decoration-line') is 'underline overline line-through'
+PASS computedStyle.getPropertyValue('-webkit-text-decoration') is 'underline overline line-through solid rgb(0, 0, 0)'
+PASS checkComputedStyleValue('webkitTextDecoration', '-webkit-text-decoration') is true
 
 CSS3 Shorthand ("-webkit-text-decoration: underline overline line-through blink dashed red;"):
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration').cssText is 'underline overline line-through dashed rgb(255, 0, 0)'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'underline overline line-through'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dashed'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(255, 0, 0)'
-PASS checkComputedStyleValue() is true
+PASS computedStyle.getPropertyValue('-webkit-text-decoration') is 'underline overline line-through dashed rgb(255, 0, 0)'
+PASS computedStyle.getPropertyValue('-webkit-text-decoration-line') is 'underline overline line-through'
+PASS computedStyle.getPropertyValue('-webkit-text-decoration-style') is 'dashed'
+PASS computedStyle.getPropertyValue('-webkit-text-decoration-color') is 'rgb(255, 0, 0)'
+PASS checkComputedStyleValue('webkitTextDecoration', '-webkit-text-decoration') is true
 
 Omitting text decoration line resets to its initial value "none" ("-webkit-text-decoration: navy dotted;"):
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration').cssText is 'none dotted rgb(0, 0, 128)'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-line').cssText is 'none'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-style').cssText is 'dotted'
-PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 0, 128)'
-PASS checkComputedStyleValue() is true
+PASS computedStyle.getPropertyValue('-webkit-text-decoration') is 'none dotted rgb(0, 0, 128)'
+PASS computedStyle.getPropertyValue('-webkit-text-decoration-line') is 'none'
+PASS computedStyle.getPropertyValue('-webkit-text-decoration-style') is 'dotted'
+PASS computedStyle.getPropertyValue('-webkit-text-decoration-color') is 'rgb(0, 0, 128)'
+PASS checkComputedStyleValue('webkitTextDecoration', '-webkit-text-decoration') is true
+
+CSS2.1 backwards compatibility of non-prefixed shorthand ("text-decoration: underline overline line-through blink;"):
+PASS e.style.getPropertyValue('text-decoration') is 'underline overline line-through blink'
+PASS e.style.getPropertyValue('text-decoration-line') is 'underline overline line-through blink'
+PASS e.style.getPropertyValue('text-decoration-thickness') is 'auto'
+PASS e.style.getPropertyValue('text-decoration-style') is 'solid'
+PASS e.style.getPropertyValue('text-decoration-color') is 'currentcolor'
+PASS computedStyle.getPropertyValue('text-decoration') is 'underline overline line-through'
+PASS computedStyle.getPropertyValue('text-decoration-line') is 'underline overline line-through'
+PASS computedStyle.getPropertyValue('text-decoration-thickness') is 'auto'
+PASS computedStyle.getPropertyValue('text-decoration-style') is 'solid'
+PASS computedStyle.getPropertyValue('text-decoration-color') is 'rgb(0, 0, 0)'
+PASS checkComputedStyleValue('textDecoration', 'text-decoration') is true
+
+Setting CSS3 longhands to initial values ("text-decoration-line: none; text-decoration-thickness: auto; text-decoration-style: solid; text-decoration-color: currentcolor;"):
+PASS e.style.getPropertyValue('text-decoration') is 'none'
+PASS e.style.getPropertyValue('text-decoration-line') is 'none'
+PASS e.style.getPropertyValue('text-decoration-thickness') is 'auto'
+PASS e.style.getPropertyValue('text-decoration-style') is 'solid'
+PASS e.style.getPropertyValue('text-decoration-color') is 'currentcolor'
+PASS computedStyle.getPropertyValue('text-decoration') is 'none'
+PASS computedStyle.getPropertyValue('text-decoration-line') is 'none'
+PASS computedStyle.getPropertyValue('text-decoration-thickness') is 'auto'
+PASS computedStyle.getPropertyValue('text-decoration-style') is 'solid'
+PASS computedStyle.getPropertyValue('text-decoration-color') is 'rgb(0, 0, 0)'
+PASS checkComputedStyleValue('textDecoration', 'text-decoration') is true
+
+Setting CSS3 longhands to values backwards compatibile with CSS2.1 ("text-decoration-line: underline overline line-through blink; text-decoration-thickness: auto; text-decoration-style: solid; text-decoration-color: currentcolor;"):
+PASS e.style.getPropertyValue('text-decoration') is 'underline overline line-through blink'
+PASS e.style.getPropertyValue('text-decoration-line') is 'underline overline line-through blink'
+PASS e.style.getPropertyValue('text-decoration-thickness') is 'auto'
+PASS e.style.getPropertyValue('text-decoration-style') is 'solid'
+PASS e.style.getPropertyValue('text-decoration-color') is 'currentcolor'
+PASS computedStyle.getPropertyValue('text-decoration') is 'underline overline line-through'
+PASS computedStyle.getPropertyValue('text-decoration-line') is 'underline overline line-through'
+PASS computedStyle.getPropertyValue('text-decoration-thickness') is 'auto'
+PASS computedStyle.getPropertyValue('text-decoration-style') is 'solid'
+PASS computedStyle.getPropertyValue('text-decoration-color') is 'rgb(0, 0, 0)'
+PASS checkComputedStyleValue('textDecoration', 'text-decoration') is true
+
+Setting CSS3 longhands to values not backwards compatibile with CSS2.1 ("text-decoration-line: underline overline line-through blink; text-decoration-thickness: 16px; text-decoration-style: dotted; text-decoration-color: blue;"):
+PASS e.style.getPropertyValue('text-decoration') is ''
+PASS e.style.getPropertyValue('text-decoration-line') is 'underline overline line-through blink'
+PASS e.style.getPropertyValue('text-decoration-thickness') is '16px'
+PASS e.style.getPropertyValue('text-decoration-style') is 'dotted'
+PASS e.style.getPropertyValue('text-decoration-color') is 'blue'
+PASS computedStyle.getPropertyValue('text-decoration') is ''
+PASS computedStyle.getPropertyValue('text-decoration-line') is 'underline overline line-through'
+PASS computedStyle.getPropertyValue('text-decoration-thickness') is '16px'
+PASS computedStyle.getPropertyValue('text-decoration-style') is 'dotted'
+PASS computedStyle.getPropertyValue('text-decoration-color') is 'rgb(0, 0, 255)'
+PASS checkComputedStyleValue('textDecoration', 'text-decoration') is false
 
 PASS successfullyParsed is true
 
