@@ -194,6 +194,53 @@ TEST(FileSystemAccess, NetworkProcessCrashDuringWrite)
     EXPECT_WK_STREQ(@"success: write 10 bytes", [lastScriptMessage body]);
 }
 
+TEST(FileSystemAccess, DeleteDataDuringWrite)
+{
+    auto handler = adoptNS([[FileSystemAccessMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    auto preferences = [configuration preferences];
+    preferences._fileSystemAccessEnabled = YES;
+    preferences._accessHandleEnabled = YES;
+    preferences._storageAPIEnabled = YES;
+    auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSURL *requestURL = task.request.URL;
+        EXPECT_WK_STREQ("webkit://webkit.org/worker.js", requestURL.absoluteString);
+        auto response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/javascript" expectedContentLength:0 textEncodingName:nil]);
+        RetainPtr<NSData> data = [NSData dataWithBytes:workerBytes length:strlen(workerBytes)];
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:data.get()];
+        [task didFinish];
+    }];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"webkit"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadHTMLString:workerFrameString baseURL:[NSURL URLWithString:@"webkit://webkit.org"]];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"page is loaded", [lastScriptMessage body]);
+
+    [webView evaluateJavaScript:@"start()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"success: write 10 bytes", [lastScriptMessage body]);
+
+    done = false;
+    auto types = [NSSet setWithObject:_WKWebsiteDataTypeFileSystem];
+    [[configuration websiteDataStore] removeDataOfTypes:types modifiedSince:[NSDate distantPast] completionHandler:^ {
+        [[configuration websiteDataStore] fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+            EXPECT_EQ(records.count, 0u);
+            done = true;
+        }];
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // Open access handle should be when website data is removed.
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"error: InvalidStateError - AccessHandle is closing or closed", [lastScriptMessage body]);
+}
+
 static NSString *basicString = @"<script> \
     async function open() \
     { \

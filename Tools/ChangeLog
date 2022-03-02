@@ -1,3 +1,14 @@
+2022-03-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Add test coverage for deleting FileSystem data when file is being written
+        https://bugs.webkit.org/show_bug.cgi?id=237353
+
+        Reviewed by Chris Dumez.
+
+        Verify that file can be removed from disk, and active FileSystemSyncAccessHandle is invalidated in this case.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FileSystemAccess.mm:
+
 2022-03-02  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI _WKDataTask
