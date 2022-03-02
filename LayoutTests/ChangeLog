@@ -2,6 +2,12 @@
 
         Unreviewed gardening.
 
+        * gpu-process/TestExpectations: r290542 fixed a number of crashing tests.
+
+2022-03-01  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
         * gpu-process/TestExpectations:
         * platform/ios/TestExpectations: r290438 fixed a test failure.
 
