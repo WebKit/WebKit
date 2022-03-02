@@ -1,3 +1,17 @@
+2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Clipboard Paste dialog doesn't show on external monitors
+        https://bugs.webkit.org/show_bug.cgi?id=236395
+        rdar://88943577
+
+        Reviewed by Tim Horton.
+
+        Adjust the swizzled implementation of `-popUpContextMenu:withEvent:forView:` to additionally verify that the
+        NSEvent we're presenting the menu with isn't `nil`.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::swizzledPopUpContextMenu):
+
 2022-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         WTF::SentinelLinkedList::iterator should have operator++ for range-for loop

@@ -1,3 +1,44 @@
+2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Clipboard Paste dialog doesn't show on external monitors
+        https://bugs.webkit.org/show_bug.cgi?id=236395
+        rdar://88943577
+
+        Reviewed by Tim Horton.
+
+        Fix the bug by aligning the way we generate synthetic mouse click NSEvents in WebKit2 macOS, when:
+
+        1. Showing the standard web content context menu
+        2. Showing the DOM paste menu
+        3. Showing the context menu for PDFs
+
+        Critically, this makes AppKit choose the correct NSScreen when presenting the popup menu when showing the DOM
+        paste menu, if the last mouse down event is `nil` upon presenting the menu.
+
+        Covered by adding a debug assertion to verify that we aren't trying to present popup menus from a `nil` event
+        during DOM paste.
+
+        * UIProcess/API/mac/WKWebViewTestingMac.mm:
+        (-[WKWebView _activeMenu]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::requestDOMPasteAccess):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenuWithItems):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::showPDFContextMenu):
+        (WebKit::WebPageProxy::activeContextMenu const):
+
+        Renamed from `platformActiveContextMenu`. The "platform" prefix in front of this method was unnecessary, since
+        this is only invoked from macOS-only code that expects an NSMenu anyways.
+
+        (WebKit::WebPageProxy::createSyntheticEventForContextMenu const):
+
+        Add a helper method to create a synthetic NSEvent at the given location that's suitable for presenting a context
+        menu; use this new helper in the three places described above.
+
+        (WebKit::WebPageProxy::platformActiveContextMenu const): Deleted.
+
 2022-03-01  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Misc compiler warnings, late Feb 2022 edition

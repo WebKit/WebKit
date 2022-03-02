@@ -114,7 +114,7 @@
 
 - (NSMenu *)_activeMenu
 {
-    if (NSMenu *contextMenu = _page->platformActiveContextMenu())
+    if (NSMenu *contextMenu = _page->activeContextMenu())
         return contextMenu;
     if (NSMenu *domPasteMenu = _impl->domPasteMenu())
         return domPasteMenu;

@@ -1932,7 +1932,8 @@ public:
 #endif
 
 #if PLATFORM(MAC)
-    NSMenu *platformActiveContextMenu() const;
+    NSMenu *activeContextMenu() const;
+    RetainPtr<NSEvent> createSyntheticEventForContextMenu(WebCore::FloatPoint) const;
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

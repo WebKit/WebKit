@@ -86,8 +86,9 @@ static void setSwizzledPopUpMenu(NSMenu *menu)
     });
 }
 
-static void swizzledPopUpContextMenu(Class, SEL, NSMenu *menu, NSEvent *, NSView *)
+static void swizzledPopUpContextMenu(Class, SEL, NSMenu *menu, NSEvent *event, NSView *)
 {
+    ASSERT(event);
     setSwizzledPopUpMenu(menu);
 }
 
