@@ -1,3 +1,19 @@
+2022-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Fix deprecations for ERB.new in GenerateSettings.rb
+        https://bugs.webkit.org/show_bug.cgi?id=237237
+
+        Reviewed by Don Olmstead.
+
+        Ruby 3.1.0 reported the following warning:
+        > GenerateSettings.rb:283: warning: Passing safe_level with the 2nd argument of ERB.new is deprecated. Do not use it, and specify other arguments as keyword arguments.
+        > GenerateSettings.rb:283: warning: Passing trim_mode with the 3rd argument of ERB.new is deprecated. Use keyword argument like ERB.new(str, trim_mode: ...) instead.
+
+        r290104 and r290331 fixed the same problem for
+        GeneratePreferences.rb, but forgot GenerateSettings.rb.
+
+        * Scripts/GenerateSettings.rb: Use the keyword argument for ERB.new for Ruby 2.6+.
+
 2022-03-01  Andres Gonzalez  <andresg_22@apple.com>
 
         Unnecessary copy of Vector of children IDs in AXIsolatedTree::updateChildren.
