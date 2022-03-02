@@ -1,5 +1,26 @@
 2022-03-02  Brent Fulgham  <bfulgham@apple.com>
 
+        [AppSSO] Correct logging messages to avoid confusing screeners that an error has occurred
+        https://bugs.webkit.org/show_bug.cgi?id=237390
+        <rdar://problem/89710486>
+
+        Reviewed by Simon Fraser.
+
+        The phrasing of the message in 'SOAuthorizationCoordinator::tryAuthorize' when a URL is not relevant for
+        AppSSO flows is:
+
+                AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize: Cannot authorize the requested URL.");
+
+        This leads people spelunking logs to believe that the URL can't be authorized (perhaps due to an error).
+
+        Instead, we should more accurately report that the URL is not one that is mediated through an AppSSO flow,
+        and so no AppSSO processing is needed.
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationCoordinator.mm:
+        (WebKit::SOAuthorizationCoordinator::tryAuthorize):
+
+2022-03-02  Brent Fulgham  <bfulgham@apple.com>
+
         [WebAuthn] Completion handler is not called when WebAuthn invoked without proper entitlements
         https://bugs.webkit.org/show_bug.cgi?id=237380
         <rdar://problem/89700242>

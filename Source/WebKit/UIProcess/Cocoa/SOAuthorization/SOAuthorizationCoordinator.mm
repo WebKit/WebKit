@@ -42,6 +42,7 @@
 #import <wtf/Function.h>
 
 #define AUTHORIZATIONCOORDINATOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - SOAuthorizationCoordinator::" fmt, this, ##__VA_ARGS__)
+#define AUTHORIZATIONCOORDINATOR_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(AppSSO, "%p - SOAuthorizationCoordinator::" fmt, this, ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -67,7 +68,7 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
 {
     AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize");
     if (!canAuthorize(navigationAction->request().url())) {
-        AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize: Cannot authorize the requested URL.");
+        AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize: The requested URL is not registered for AppSSO handling. No further action needed.");
         completionHandler(false);
         return;
     }
@@ -76,7 +77,7 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
     auto* targetFrame = navigationAction->targetFrame();
     bool subframeNavigation = targetFrame && !targetFrame->isMainFrame();
     if (subframeNavigation && (!page.mainFrame() || ![AKAuthorizationController isURLFromAppleOwnedDomain:page.mainFrame()->url()])) {
-        AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize: Attempting to perform subframe navigation for non-Apple authorization URL.");
+        AUTHORIZATIONCOORDINATOR_RELEASE_LOG_ERROR("tryAuthorize: Attempting to perform subframe navigation for non-Apple authorization URL.");
         completionHandler(false);
         return;
     }
@@ -88,9 +89,21 @@ void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navig
 void SOAuthorizationCoordinator::tryAuthorize(Ref<API::NavigationAction>&& navigationAction, WebPageProxy& page, NewPageCallback&& newPageCallback, UIClientCallback&& uiClientCallback)
 {
     AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize (2)");
+    if (!canAuthorize(navigationAction->request().url())) {
+        AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize (2): The requested URL is not registered for AppSSO handling. No further action needed.");
+        uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
+        return;
+    }
+
     bool subframeNavigation = navigationAction->sourceFrame() && !navigationAction->sourceFrame()->isMainFrame();
-    if (subframeNavigation || !navigationAction->isProcessingUserGesture() || !canAuthorize(navigationAction->request().url())) {
-        AUTHORIZATIONCOORDINATOR_RELEASE_LOG("tryAuthorize (2): Attempting to perform invalid auth.");
+    if (subframeNavigation) {
+        AUTHORIZATIONCOORDINATOR_RELEASE_LOG_ERROR("tryAuthorize (2): Attempting to perform subframe navigation.");
+        uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
+        return;
+    }
+
+    if (!navigationAction->isProcessingUserGesture()) {
+        AUTHORIZATIONCOORDINATOR_RELEASE_LOG_ERROR("tryAuthorize (2): Attempting to perform auth without a user gesture.");
         uiClientCallback(WTFMove(navigationAction), WTFMove(newPageCallback));
         return;
     }
