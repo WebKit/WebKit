@@ -1,3 +1,23 @@
+2022-03-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Add Terminal.open_url
+        https://bugs.webkit.org/show_bug.cgi?id=237386
+        <rdar://problem/89703756>
+
+        Reviewed by Don Olmstead.
+
+        Different platforms have different commands to open URLs.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/terminal.py:
+        (Terminal): Add list of valid URL prefixes.
+        (Terminal.open_url): If terminal is interactive, open the provided URL.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.main): Invoke Terminal.open_url.
+
 2022-03-02  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, address post-landing feedback from Darin on r290743

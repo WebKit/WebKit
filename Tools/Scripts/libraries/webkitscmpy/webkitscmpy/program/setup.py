@@ -306,7 +306,8 @@ class Setup(Command):
                 info_url = 'https://github.com/WebKit/WebKit/wiki/Git-Config#Configuration-Options'
                 print('For detailed information about the options configured by this script, please see:\n{}'.format(info_url))
                 if not args.defaults and Terminal.choose("Would you like to open this URL in your browser?", default='Yes') == 'Yes':
-                    run(['open', info_url])
+                    if not Terminal.open_url(info_url):
+                        sys.stderr.write("Failed to open '{}' in the browser, continuing\n".format(info_url))
                 print('\n')
 
             result = cls.git(args, repository, **kwargs)

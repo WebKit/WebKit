@@ -24,7 +24,7 @@ import contextlib
 import io
 import sys
 
-from webkitcorepy import StringIO
+from webkitcorepy import StringIO, run
 
 if sys.version_info > (3, 0):
     file = io.IOBase
@@ -33,6 +33,7 @@ if sys.version_info > (3, 0):
 class Terminal(object):
     _atty_overrides = {}
     colors = True
+    URL_PREFIXES = ('file://', 'http://', 'https://', 'radar://', 'rdar://')
 
     @classmethod
     def input(cls, *args, **kwargs):
@@ -118,6 +119,20 @@ class Terminal(object):
                 del cls._atty_overrides[key]
             else:
                 cls._atty_overrides[key] = previous
+
+    @classmethod
+    def open_url(cls, url):
+        if all(not url.startswith(prefix) for prefix in cls.URL_PREFIXES):
+            sys.stderr.write("'{}' is not a valid URL\n")
+            return False
+        if not cls.isatty(sys.stdout):
+            return False
+
+        if sys.platform.startswith('win'):
+            process = run(['explorer', url])
+        else:
+            process = run(['open', url])
+        return True if process.returncode == 0 else False
 
     class Text(object):
         value = lambda value: '\033[{}m'.format(value)
