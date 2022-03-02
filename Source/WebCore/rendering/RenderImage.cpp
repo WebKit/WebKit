@@ -497,8 +497,8 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         if (contentSize.width() > 2 && contentSize.height() > 2) {
             LayoutUnit leftBorder = borderLeft();
             LayoutUnit topBorder = borderTop();
-            LayoutUnit leftPad = paddingLeft();
-            LayoutUnit topPad = paddingTop();
+            LayoutUnit leftPadding = paddingLeft();
+            LayoutUnit topPadding = paddingTop();
 
             bool errorPictureDrawn = false;
             LayoutSize imageOffset;
@@ -522,30 +522,36 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                 LayoutUnit centerY { (usableSize.height() - imageSize.height()) / 2 };
                 if (centerY < 0)
                     centerY = 0;
-                imageOffset = LayoutSize(leftBorder + leftPad + centerX + missingImageBorderWidth, topBorder + topPad + centerY + missingImageBorderWidth);
+                imageOffset = LayoutSize(leftBorder + leftPadding + centerX + missingImageBorderWidth, topBorder + topPadding + centerY + missingImageBorderWidth);
 
                 context.drawImage(*image, snapRectToDevicePixels(LayoutRect(paintOffset + imageOffset, imageSize), deviceScaleFactor), { imageOrientation() });
                 errorPictureDrawn = true;
             }
 
             if (!m_altText.isEmpty()) {
-                String text = document().displayStringModifiedByEncoding(m_altText);
-                context.setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
-                const FontCascade& font = style().fontCascade();
-                const FontMetrics& fontMetrics = font.metricsOfPrimaryFont();
-                LayoutUnit ascent = fontMetrics.ascent();
-                LayoutPoint altTextOffset = paintOffset;
-                altTextOffset.move(leftBorder + leftPad + (paddingWidth / 2) - missingImageBorderWidth, topBorder + topPad + ascent + (paddingHeight / 2) - missingImageBorderWidth);
+                auto& font = style().fontCascade();
+                auto& fontMetrics = font.metricsOfPrimaryFont();
+                auto textRun = RenderBlock::constructTextRun(document().displayStringModifiedByEncoding(m_altText), style());
+                auto textWidth = LayoutUnit { font.width(textRun) };
 
-                // Only draw the alt text if it'll fit within the content box,
-                // and only if it fits above the error image.
-                TextRun textRun = RenderBlock::constructTextRun(text, style());
-                LayoutUnit textWidth { font.width(textRun) };
-                if (errorPictureDrawn) {
-                    if (usableSize.width() >= textWidth && fontMetrics.height() <= imageOffset.height())
-                        context.drawBidiText(font, textRun, altTextOffset);
-                } else if (usableSize.width() >= textWidth && usableSize.height() >= fontMetrics.height())
-                    context.drawBidiText(font, textRun, altTextOffset);
+                auto hasRoomForAltText = [&] {
+                    // Only draw the alt text if it'll fit within the content box,
+                    // and only if it fits above the error image.
+                    if (usableSize.width() < textWidth)
+                        return false;
+                    return errorPictureDrawn ? fontMetrics.height() <= imageOffset.height() : usableSize.height() >= fontMetrics.height();
+                };
+                if (hasRoomForAltText()) {
+                    auto altTextLocation = [&]() -> LayoutPoint {
+                        auto contentHorizontalOffset = LayoutUnit { leftBorder + leftPadding + (paddingWidth / 2) - missingImageBorderWidth };
+                        auto contentVerticalOffset = LayoutUnit { topBorder + topPadding + fontMetrics.ascent() + (paddingHeight / 2) - missingImageBorderWidth };
+                        if (!style().isLeftToRightDirection())
+                            contentHorizontalOffset += contentSize.width() - textWidth;
+                        return paintOffset + LayoutPoint { contentHorizontalOffset, contentVerticalOffset };
+                    };
+                    context.setFillColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor));
+                    context.drawBidiText(font, textRun, altTextLocation());
+                }
             }
         }
         return;

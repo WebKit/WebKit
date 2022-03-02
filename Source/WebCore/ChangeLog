@@ -1,3 +1,16 @@
+2022-03-02  Alan Bujtas  <zalan@apple.com>
+
+        [RTL] Incorrect alt text position in right to left context
+        https://bugs.webkit.org/show_bug.cgi?id=237352
+        <rdar://problem/89657704>
+
+        Reviewed by Simon Fraser.
+
+        Take the inline direction into account when computing the alt text location.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced): This is mostly moving things around/modernizing it.
+
 2022-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r216096): [GTK] Test accessibility/gtk/menu-list-unfocused-notifications.html is failing since r216096

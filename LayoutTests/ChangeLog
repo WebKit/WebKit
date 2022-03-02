@@ -1,3 +1,14 @@
+2022-03-02  Alan Bujtas  <zalan@apple.com>
+
+        [RTL] Incorrect alt text position in right to left context
+        https://bugs.webkit.org/show_bug.cgi?id=237352
+        <rdar://problem/89657704>
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/alt-text-with-right-to-left-inline-direction-expected-mismatch.html: Added.
+        * fast/images/alt-text-with-right-to-left-inline-direction.html: Added.
+
 2022-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r216096): [GTK] Test accessibility/gtk/menu-list-unfocused-notifications.html is failing since r216096
