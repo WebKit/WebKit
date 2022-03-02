@@ -1,3 +1,14 @@
+2022-03-02  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [CMake] Build failure with libstdc++ (>= 6) when cross-compiling (fatal error: stdlib.h: No such file or directory)
+        https://bugs.webkit.org/show_bug.cgi?id=161697
+        <rdar://problem/89613152>
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/WebKitCompilerFlags.cmake: Go through CMake instead of the plain "env"
+        program for the sake of portability.
+
 2022-03-01  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Build failure with libstdc++ (>= 6) when cross-compiling (fatal error: stdlib.h: No such file or directory)
