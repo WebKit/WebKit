@@ -1,3 +1,16 @@
+2022-03-01  Andres Gonzalez  <andresg_22@apple.com>
+
+        Unnecessary copy of Vector of children IDs in AXIsolatedTree::updateChildren.
+        https://bugs.webkit.org/show_bug.cgi?id=237338
+        <rdar://problem/89633856>
+
+        Reviewed by Chris Fleizach.
+
+        Changed the copy of this Vector to a move.
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateChildren):
+
 2022-03-01  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION(r285232) https://alvaromontoro.github.io/almond.css/demo/ looks wrong in Safari, ok in Chrome and Firefox
