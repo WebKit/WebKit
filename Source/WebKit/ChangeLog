@@ -1,3 +1,9 @@
+2022-03-01  Alex Christensen  <achristensen@webkit.org>
+
+        Fix clean build
+
+        * UnifiedSources-output.xcfilelist:
+
 2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Clipboard Paste dialog doesn't show on external monitors
