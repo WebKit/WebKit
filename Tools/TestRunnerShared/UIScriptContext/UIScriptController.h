@@ -97,8 +97,6 @@ public:
     virtual void setMinimumEffectiveWidth(double) { notImplemented(); }
     virtual void setAllowsViewportShrinkToFit(bool) { notImplemented(); }
 
-    virtual void setScrollViewKeyboardAvoidanceEnabled(bool) { notImplemented(); }
-
     virtual std::optional<bool> stableStateOverride() const { notImplemented(); return std::nullopt; }
     virtual void setStableStateOverride(std::optional<bool>) { notImplemented(); }
 

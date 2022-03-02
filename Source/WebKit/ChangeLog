@@ -1,5 +1,9 @@
 2022-03-01  Russell Epstein  <repstein@apple.com>
 
+        Revert r289282. rdar://problem/88876661
+
+2022-03-01  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290066. rdar://problem/89072361
 
     [macOS][WP] Add required syscall to sandbox

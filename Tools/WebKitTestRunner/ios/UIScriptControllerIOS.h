@@ -146,7 +146,6 @@ private:
     void copyText(JSStringRef) override;
     void installTapGestureOnWindow(JSValueRef) override;
     void setSpellCheckerResults(JSValueRef) override { }
-    void setScrollViewKeyboardAvoidanceEnabled(bool) override;
 
     bool mayContainEditableElementsInRect(unsigned x, unsigned y, unsigned width, unsigned height) override;
 
