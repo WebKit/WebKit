@@ -1,5 +1,27 @@
 2022-03-02  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Derive branch name from bug title
+        https://bugs.webkit.org/show_bug.cgi?id=237284
+        <rdar://problem/89578241 >
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/branch.py:
+        (Branch.to_branch_name): Convert string (particularly a bug title) to potential branch name.
+        (Branch.main): If provided branch name is actually a bug number or URL, use the title
+        of that bug as the branch name.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/branch_unittest.py:
+        (TestBranch):
+        (TestBranch.test_prompt_git):
+        (TestBranch.test_prompt_number):
+        (TestBranch.test_prompt_url):
+        (TestBranch.test_invalid_branch):
+        (TestBranch.test_to_branch_name):
+
+2022-03-02  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Sync personal fork by default
         https://bugs.webkit.org/show_bug.cgi?id=237324
         <rdar://problem/89618617>

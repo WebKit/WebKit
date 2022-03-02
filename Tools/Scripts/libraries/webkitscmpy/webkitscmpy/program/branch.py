@@ -25,6 +25,7 @@ import sys
 
 from .command import Command
 
+from webkitbugspy import Tracker
 from webkitcorepy import run, string_utils, Terminal
 from webkitscmpy import local, log
 
@@ -70,13 +71,33 @@ class Branch(Command):
         return commit
 
     @classmethod
+    def to_branch_name(cls, value):
+        result = ''
+        for c in string_utils.decode(value):
+            if c in [u'-', u' ', u'\n', u'\t', u'.']:
+                result += u'-'
+            elif c.isalnum() or c == u'_':
+                result += c
+        return string_utils.encode(result, target_type=str)
+
+    @classmethod
     def main(cls, args, repository, why=None, **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only 'branch' on a native Git repository\n")
             return 1
 
         if not args.issue:
-            args.issue = Terminal.input('{}nter name of new branch: '.format('{}, e'.format(why) if why else 'E'))
+            args.issue = Terminal.input('{}nter name of new branch (or bug URL): '.format('{}, e'.format(why) if why else 'E'))
+
+        if string_utils.decode(args.issue).isnumeric() and Tracker.instance():
+            issue = Tracker.instance().issue(int(args.issue))
+            if issue and issue.title:
+                args.issue = cls.to_branch_name(issue.title)
+        else:
+            issue = Tracker.from_string(args.issue)
+            if issue and issue.title:
+                args.issue = cls.to_branch_name(issue.title)
+
         args.issue = cls.normalize_branch_name(args.issue)
 
         if run([repository.executable(), 'check-ref-format', args.issue], capture_output=True).returncode:

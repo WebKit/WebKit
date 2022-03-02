@@ -20,20 +20,19 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import json
 import logging
 import os
-import shutil
-import tempfile
 
-from datetime import datetime
+from mock import patch
+from webkitbugspy import bugzilla, mocks as bmocks, radar
 from webkitcorepy import OutputCapture, testing
-from webkitcorepy.mocks import Time as MockTime, Terminal as MockTerminal
+from webkitcorepy.mocks import Time as MockTime, Terminal as MockTerminal, Environment
 from webkitscmpy import local, program, mocks
 
 
 class TestBranch(testing.PathTestCase):
     basepath = 'mock/repository'
+    BUGZILLA = 'https://bugs.example.com'
 
     def setUp(self):
         super(TestBranch, self).setUp()
@@ -63,7 +62,30 @@ class TestBranch(testing.PathTestCase):
             self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
             self.assertEqual(local.Git(self.path).branch, 'eng/example')
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/example'...\n")
-        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch: \nCreated the local development branch 'eng/example'\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or bug URL): \nCreated the local development branch 'eng/example'\n")
+
+    def test_prompt_number(self):
+        with MockTerminal.input('2'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]), mocks.local.Svn(), MockTime:
+            self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
+            self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
+        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/Example-feature-1'...\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or bug URL): \nCreated the local development branch 'eng/Example-feature-1'\n")
+
+    def test_prompt_url(self):
+        with MockTerminal.input('<rdar://2>'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), \
+            bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [radar.Tracker()]), mocks.local.Svn(), MockTime:
+
+            self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
+            self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
+        self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/Example-feature-1'...\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or bug URL): \nCreated the local development branch 'eng/Example-feature-1'\n")
 
     def test_invalid_branch(self):
         with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
@@ -72,3 +94,9 @@ class TestBranch(testing.PathTestCase):
                 path=self.path,
             ))
         self.assertEqual(captured.stderr.getvalue(), "'eng/reject_underscores' is an invalid branch name, cannot create it\n")
+
+    def test_to_branch_name(self):
+        self.assertEqual(program.Branch.to_branch_name('something with spaces'), 'something-with-spaces')
+        self.assertEqual(program.Branch.to_branch_name('[EWS] bug description'), 'EWS-bug-description')
+        self.assertEqual(program.Branch.to_branch_name('[git-webkit] change'), 'git-webkit-change')
+        self.assertEqual(program.Branch.to_branch_name('Add Terminal.open_url'), 'Add-Terminal-open_url')
