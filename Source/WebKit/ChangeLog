@@ -1,3 +1,16 @@
+2022-03-02  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Hard link AVPictureInPictureController
+        https://bugs.webkit.org/show_bug.cgi?id=237227
+
+        Reviewed by Brent Fulgham.
+
+        Hard linking instead of soft linking should be a small performance improvement.
+
+        * Configurations/WebKit.xcconfig:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+
 2022-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Copy context menu action should be titled "Copy Link" when long pressing a non-image link
