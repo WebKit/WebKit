@@ -37,6 +37,7 @@
 #import "NetworkProcess.h"
 #import "NetworkSessionCreationParameters.h"
 #import "PrivateRelayed.h"
+#import "WKURLSessionTaskDelegate.h"
 #import "WebPageNetworkParameters.h"
 #import "WebSocketTask.h"
 #import <Foundation/NSURLSession.h>
@@ -1771,14 +1772,30 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
     m_attributedBundleIdentifierFromPageIdentifiers.add(pageID, parameters.attributedBundleIdentifier());
 }
 
-void NetworkSessionCocoa::requestResource(WebPageProxyIdentifier pageID, WebCore::ResourceRequest&& request, CompletionHandler<void(const IPC::DataReference&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&& completionHandler)
+void NetworkSessionCocoa::dataTaskWithRequest(WebPageProxyIdentifier pageID, WebCore::ResourceRequest&& request, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)
 {
-    auto session = sessionWrapperForTask(pageID, request, WebCore::StoredCredentialsPolicy::Use, std::nullopt).session;
+    auto identifier = DataTaskIdentifier::generate();
     auto nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
-    auto completionBlock = makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSData *data, NSURLResponse *response, NSError *error) mutable {
-        completionHandler(IPC::DataReference { static_cast<const uint8_t*>(data.bytes), data.length }, WebCore::ResourceResponse { response }, WebCore::ResourceError { error });
-    });
-    [[session dataTaskWithRequest:nsRequest completionHandler:completionBlock.get()] resume];
+    auto session = sessionWrapperForTask(pageID, request, WebCore::StoredCredentialsPolicy::Use, std::nullopt).session;
+    auto task = [session dataTaskWithRequest:nsRequest];
+    auto delegate = adoptNS([[WKURLSessionTaskDelegate alloc] initWithIdentifier:identifier session:*this]);
+#if HAVE(NSURLSESSION_TASK_DELEGATE)
+    task.delegate = delegate.get();
+#endif
+    auto addResult = m_dataTasksForAPI.add(identifier, task);
+    RELEASE_ASSERT(addResult.isNewEntry);
+    [task resume];
+    completionHandler(identifier);
+}
+
+void NetworkSessionCocoa::cancelDataTask(DataTaskIdentifier identifier)
+{
+    [m_dataTasksForAPI.take(identifier) cancel];
+}
+
+void NetworkSessionCocoa::removeDataTask(DataTaskIdentifier identifier)
+{
+    m_dataTasksForAPI.remove(identifier);
 }
 
 void NetworkSessionCocoa::removeWebPageNetworkParameters(WebPageProxyIdentifier pageID)

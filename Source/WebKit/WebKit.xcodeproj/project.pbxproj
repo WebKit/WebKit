@@ -1228,6 +1228,8 @@
 		5C20F679276A6DB6006CAC22 /* ArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */; };
 		5C26958520043212005C439B /* WKOpenPanelParametersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C298D9E1C3DEF2900470AFE /* PendingDownload.h */; };
+		5C2C6FA927C9E5E200CCDA9E /* _WKDataTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C2C6FA427C9529900CCDA9E /* _WKDataTask.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5C2C6FAA27C9E5EB00CCDA9E /* _WKDataTaskDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C2C6FA327C9529900CCDA9E /* _WKDataTaskDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C2D5748257FFA4B00679A72 /* WKContextDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C2D5747257FFA1200679A72 /* WKContextDownloadClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C2EBDFA2564380B00D55B05 /* WKDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C2EBDF92564352000D55B05 /* WKDownloadClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C359C0D2154739F009E7948 /* WKDeprecated.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C359C0C21547321009E7948 /* WKDeprecated.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4921,6 +4923,16 @@
 		5C2B1AF3223AB72800B91CF7 /* DownloadMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadMonitor.cpp; sourceTree = "<group>"; };
 		5C2B1AF4223AB72800B91CF7 /* DownloadMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadMonitor.h; sourceTree = "<group>"; };
 		5C2B1AF5223C1FD200B91CF7 /* DownloadProxyMapCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadProxyMapCocoa.mm; sourceTree = "<group>"; };
+		5C2C6F9E27C9523500CCDA9E /* APIDataTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIDataTask.h; sourceTree = "<group>"; };
+		5C2C6F9F27C9523500CCDA9E /* APIDataTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIDataTask.cpp; sourceTree = "<group>"; };
+		5C2C6FA027C9523500CCDA9E /* APIDataTaskClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIDataTaskClient.h; sourceTree = "<group>"; };
+		5C2C6FA227C9529900CCDA9E /* _WKDataTask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKDataTask.mm; sourceTree = "<group>"; };
+		5C2C6FA327C9529900CCDA9E /* _WKDataTaskDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDataTaskDelegate.h; sourceTree = "<group>"; };
+		5C2C6FA427C9529900CCDA9E /* _WKDataTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDataTask.h; sourceTree = "<group>"; };
+		5C2C6FA527C9529900CCDA9E /* _WKDataTaskInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDataTaskInternal.h; sourceTree = "<group>"; };
+		5C2C6FA627C958FC00CCDA9E /* DataTaskIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataTaskIdentifier.h; sourceTree = "<group>"; };
+		5C2C6FA727C96FF900CCDA9E /* WKURLSessionTaskDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKURLSessionTaskDelegate.mm; sourceTree = "<group>"; };
+		5C2C6FA827C96FF900CCDA9E /* WKURLSessionTaskDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKURLSessionTaskDelegate.h; sourceTree = "<group>"; };
 		5C2D5747257FFA1200679A72 /* WKContextDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextDownloadClient.h; sourceTree = "<group>"; };
 		5C2EBDF92564352000D55B05 /* WKDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDownloadClient.h; sourceTree = "<group>"; };
 		5C359C0C21547321009E7948 /* WKDeprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDeprecated.h; sourceTree = "<group>"; };
@@ -7305,6 +7317,7 @@
 				5106D7BF18BDBE73000AB166 /* ContextMenuContextData.cpp */,
 				5106D7C018BDBE73000AB166 /* ContextMenuContextData.h */,
 				99F642D21FABE378009621E9 /* CoordinateSystem.h */,
+				5C2C6FA627C958FC00CCDA9E /* DataTaskIdentifier.h */,
 				99036AE823A970870000B06A /* DebuggableInfoData.cpp */,
 				99036AE723A970870000B06A /* DebuggableInfoData.h */,
 				0F189CAB24749F2F00E58D81 /* DisplayLinkObserverID.h */,
@@ -8880,6 +8893,10 @@
 				5C5D2389227A1892000B9BDA /* _WKCustomHeaderFields.h */,
 				5C5D2388227A1892000B9BDA /* _WKCustomHeaderFields.mm */,
 				5C5D2387227A1891000B9BDA /* _WKCustomHeaderFieldsInternal.h */,
+				5C2C6FA427C9529900CCDA9E /* _WKDataTask.h */,
+				5C2C6FA227C9529900CCDA9E /* _WKDataTask.mm */,
+				5C2C6FA327C9529900CCDA9E /* _WKDataTaskDelegate.h */,
+				5C2C6FA527C9529900CCDA9E /* _WKDataTaskInternal.h */,
 				83891B681A68BEBC0030F386 /* _WKDiagnosticLoggingDelegate.h */,
 				A1A4FE5718DCE9FA00B5EA8A /* _WKDownload.h */,
 				A1A4FE5818DCE9FA00B5EA8A /* _WKDownload.mm */,
@@ -10485,6 +10502,8 @@
 				5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */,
 				41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */,
 				41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */,
+				5C2C6FA827C96FF900CCDA9E /* WKURLSessionTaskDelegate.h */,
+				5C2C6FA727C96FF900CCDA9E /* WKURLSessionTaskDelegate.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -11327,6 +11346,9 @@
 				5CE0C367229F2D3E003695F0 /* APIContextMenuElementInfo.h */,
 				5C5D238A227A1D9B000B9BDA /* APICustomHeaderFields.h */,
 				7A821F4F1E2F7A5C00604577 /* APICustomProtocolManagerClient.h */,
+				5C2C6F9F27C9523500CCDA9E /* APIDataTask.cpp */,
+				5C2C6F9E27C9523500CCDA9E /* APIDataTask.h */,
+				5C2C6FA027C9523500CCDA9E /* APIDataTaskClient.h */,
 				99036AE423A958740000B06A /* APIDebuggableInfo.cpp */,
 				99036AE323A958740000B06A /* APIDebuggableInfo.h */,
 				83891B621A68B3420030F386 /* APIDiagnosticLoggingClient.h */,
@@ -12928,6 +12950,8 @@
 				5C4609E8224317BB009943C2 /* _WKContentRuleListActionInternal.h in Headers */,
 				1A5704F81BE01FF400874AF1 /* _WKContextMenuElementInfo.h in Headers */,
 				5C5D238C227A2CDA000B9BDA /* _WKCustomHeaderFields.h in Headers */,
+				5C2C6FA927C9E5E200CCDA9E /* _WKDataTask.h in Headers */,
+				5C2C6FAA27C9E5EB00CCDA9E /* _WKDataTaskDelegate.h in Headers */,
 				83891B691A68BEBC0030F386 /* _WKDiagnosticLoggingDelegate.h in Headers */,
 				A1A4FE5A18DCE9FA00B5EA8A /* _WKDownload.h in Headers */,
 				A1A4FE6118DD54A400B5EA8A /* _WKDownloadDelegate.h in Headers */,

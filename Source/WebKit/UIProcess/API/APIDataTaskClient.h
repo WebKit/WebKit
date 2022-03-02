@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,21 +25,32 @@
 
 #pragma once
 
-#include "InspectorExtensionTypes.h"
-#include <WebCore/FrameIdentifier.h>
-#include <wtf/Forward.h>
+#include "AuthenticationChallengeDisposition.h"
+#include "AuthenticationChallengeProxy.h"
+#include <wtf/CompletionHandler.h>
+
+namespace WebCore {
+class Credential;
+class ResourceError;
+class ResourceRequest;
+class ResourceResponse;
+}
 
 namespace API {
 
-class InspectorExtensionClient {
+class Data;
+
+class DataTaskClient : public RefCounted<DataTaskClient> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~InspectorExtensionClient() = default;
+    static Ref<DataTaskClient> create() { return adoptRef(*new DataTaskClient); }
+    virtual ~DataTaskClient() { }
 
-    virtual void didShowExtensionTab(const Inspector::ExtensionTabID&, WebCore::FrameIdentifier) { }
-    virtual void didHideExtensionTab(const Inspector::ExtensionTabID&) { }
-    virtual void didNavigateExtensionTab(const Inspector::ExtensionTabID&, const WTF::URL&) { }
-    virtual void inspectedPageDidNavigate(const WTF::URL&) { }
+    virtual void didReceiveChallenge(DataTask&, WebCore::AuthenticationChallenge&&, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, WebCore::Credential&&)>&& completionHandler) const { completionHandler(WebKit::AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue, { }); }
+    virtual void willPerformHTTPRedirection(DataTask&, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(bool)>&& completionHandler) const { completionHandler(true); }
+    virtual void didReceiveResponse(DataTask&, WebCore::ResourceResponse&&, CompletionHandler<void(bool)>&& completionHandler) const { completionHandler(true); }
+    virtual void didReceiveData(DataTask&, const IPC::DataReference&) const { }
+    virtual void didCompleteWithError(DataTask&, WebCore::ResourceError&&) const { }
 };
 
 } // namespace API

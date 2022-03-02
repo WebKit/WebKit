@@ -1,5 +1,5 @@
-  /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,46 @@
 
 #pragma once
 
-#import "AuthenticationChallengeDisposition.h"
-#import <Foundation/NSURLSession.h>
+#include "APIObject.h"
+#include "DataTaskIdentifier.h"
+#include <pal/SessionID.h>
+#include <wtf/URL.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
+class NetworkProcessProxy;
+class WebPageProxy;
+}
 
-AuthenticationChallengeDisposition toAuthenticationChallengeDisposition(NSURLSessionAuthChallengeDisposition);
-NSURLSessionAuthChallengeDisposition fromAuthenticationChallengeDisposition(AuthenticationChallengeDisposition);
+namespace API {
 
-} // namespace WebKit
+class DataTaskClient;
+
+class DataTask : public API::ObjectImpl<API::Object::Type::DataTask> {
+public:
+
+    template<typename... Args> static Ref<DataTask> create(Args&&... args)
+    {
+        return adoptRef(*new DataTask(std::forward<Args>(args)...));
+    }
+    ~DataTask();
+
+    void cancel();
+
+    WebKit::WebPageProxy* page() { return m_page.get(); }
+    const WTF::URL& originalURL() const { return m_originalURL; }
+    const DataTaskClient& client() const { return m_client.get(); }
+    void setClient(Ref<DataTaskClient>&&);
+
+private:
+    DataTask(WebKit::DataTaskIdentifier, WeakPtr<WebKit::WebPageProxy>&&, WTF::URL&&);
+
+    WebKit::DataTaskIdentifier m_identifier;
+    WeakPtr<WebKit::WebPageProxy> m_page;
+    WTF::URL m_originalURL;
+    WeakPtr<WebKit::NetworkProcessProxy> m_networkProcess;
+    PAL::SessionID m_sessionID;
+    Ref<DataTaskClient> m_client;
+};
+
+} // namespace API

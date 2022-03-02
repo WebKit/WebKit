@@ -1,5 +1,5 @@
-  /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <WebKit/WKFoundation.h>
 
-#import "AuthenticationChallengeDisposition.h"
-#import <Foundation/NSURLSession.h>
+@protocol _WKDataTaskDelegate;
 
-namespace WebKit {
+NS_ASSUME_NONNULL_BEGIN
 
-AuthenticationChallengeDisposition toAuthenticationChallengeDisposition(NSURLSessionAuthChallengeDisposition);
-NSURLSessionAuthChallengeDisposition fromAuthenticationChallengeDisposition(AuthenticationChallengeDisposition);
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+@interface _WKDataTask : NSObject
 
-} // namespace WebKit
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
+// Delegate is strongly referenced until the task completes, after which it is
+// reset to `nil`.
+@property (nonatomic, strong) id <_WKDataTaskDelegate> delegate;
+@property (nonatomic, readonly, weak) WKWebView *webView;
+- (void)cancel;
+
+@end
+
+NS_ASSUME_NONNULL_END

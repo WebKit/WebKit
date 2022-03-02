@@ -1,3 +1,98 @@
+2022-03-02  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI _WKDataTask
+        https://bugs.webkit.org/show_bug.cgi?id=237234
+
+        Reviewed by Tim Horton.
+
+        When I added WKWebView._requestResource:completionHandler: I overlooked a few things.
+        First, it is unable to support HTTPS because I didn't hook up authentication challenge handling to it.
+        Second, it is unable to have a maximum accepted response length, which is a requirement for an adopter.
+        To make these possible, I made _WKDataTask which is related to WKDownload and NSURLSessionDataTask.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::dataTaskWithRequest):
+        (WebKit::NetworkProcess::cancelDataTask):
+        (WebKit::NetworkProcess::requestResource): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::dataTaskWithRequest):
+        (WebKit::NetworkSession::cancelDataTask):
+        (WebKit::NetworkSession::requestResource): Deleted.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::dataTaskWithRequest):
+        (WebKit::NetworkSessionCocoa::cancelDataTask):
+        (WebKit::NetworkSessionCocoa::removeDataTask):
+        (WebKit::NetworkSessionCocoa::requestResource): Deleted.
+        * NetworkProcess/cocoa/WKURLSessionTaskDelegate.h: Copied from Source/WebKit/Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.h.
+        * NetworkProcess/cocoa/WKURLSessionTaskDelegate.mm: Added.
+        (-[WKURLSessionTaskDelegate initWithIdentifier:session:]):
+        (-[WKURLSessionTaskDelegate connection]):
+        (-[WKURLSessionTaskDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        (-[WKURLSessionTaskDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKURLSessionTaskDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (-[WKURLSessionTaskDelegate URLSession:dataTask:didReceiveData:]):
+        (-[WKURLSessionTaskDelegate URLSession:task:didCompleteWithError:]):
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        * Shared/API/APIObject.h:
+        * Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.h:
+        * Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.mm:
+        (WebKit::fromAuthenticationChallengeDisposition):
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+        * Shared/DataTaskIdentifier.h: Copied from Source/WebKit/Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.h.
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * UIProcess/API/APIDataTask.cpp: Copied from Source/WebKit/UIProcess/API/APIInspectorExtensionClient.h.
+        (API::DataTask::setClient):
+        (API::DataTask::cancel):
+        (API::DataTask::DataTask):
+        * UIProcess/API/APIDataTask.h: Copied from Source/WebKit/UIProcess/API/APIInspectorExtensionClient.h.
+        (API::DataTask::create):
+        (API::DataTask::page):
+        (API::DataTask::client const):
+        * UIProcess/API/APIDataTaskClient.h: Copied from Source/WebKit/UIProcess/API/APIInspectorExtensionClient.h.
+        (API::DataTaskClient::create):
+        (API::DataTaskClient::~DataTaskClient):
+        (API::DataTaskClient::didReceiveChallenge const):
+        (API::DataTaskClient::willPerformHTTPRedirection const):
+        (API::DataTaskClient::didReceiveResponse const):
+        (API::DataTaskClient::didReceiveData const):
+        (API::DataTaskClient::didCompleteWithError const):
+        * UIProcess/API/APIInspectorExtensionClient.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _dataTaskWithRequest:completionHandler:]):
+        (-[WKWebView _requestResource:completionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKDataTask.h: Copied from Source/WebKit/UIProcess/API/APIInspectorExtensionClient.h.
+        * UIProcess/API/Cocoa/_WKDataTask.mm: Added.
+        (-[_WKDataTask cancel]):
+        (-[_WKDataTask webView]):
+        (-[_WKDataTask delegate]):
+        (-[_WKDataTask setDelegate:]):
+        (-[_WKDataTask dealloc]):
+        (-[_WKDataTask _apiObject]):
+        * UIProcess/API/Cocoa/_WKDataTaskDelegate.h: Added.
+        * UIProcess/API/Cocoa/_WKDataTaskInternal.h: Copied from Source/WebKit/Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.h.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::dataTaskWithRequest):
+        (WebKit::NetworkProcessProxy::dataTaskReceivedChallenge):
+        (WebKit::NetworkProcessProxy::dataTaskWillPerformHTTPRedirection):
+        (WebKit::NetworkProcessProxy::dataTaskDidReceiveResponse):
+        (WebKit::NetworkProcessProxy::dataTaskDidReceiveData):
+        (WebKit::NetworkProcessProxy::dataTaskDidCompleteWithError):
+        (WebKit::NetworkProcessProxy::requestResource): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dataTaskWithRequest):
+        (WebKit::WebPageProxy::requestResource): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-01  Youenn Fablet  <youenn@apple.com>
 
         Remove RemoteVideoSample support from ImageTransferSessionVT

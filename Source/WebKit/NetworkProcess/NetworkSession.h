@@ -27,6 +27,7 @@
 
 #include "AppPrivacyReport.h"
 #include "DataReference.h"
+#include "DataTaskIdentifier.h"
 #include "NavigatingToAppBoundDomain.h"
 #include "NetworkNotificationManager.h"
 #include "NetworkResourceLoadIdentifier.h"
@@ -232,7 +233,8 @@ public:
 
     virtual void removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 
-    virtual void requestResource(WebPageProxyIdentifier, WebCore::ResourceRequest&&, CompletionHandler<void(const IPC::DataReference&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&&) { }
+    virtual void dataTaskWithRequest(WebPageProxyIdentifier, WebCore::ResourceRequest&&, CompletionHandler<void(DataTaskIdentifier)>&&) { }
+    virtual void cancelDataTask(DataTaskIdentifier) { }
     virtual void addWebPageNetworkParameters(WebPageProxyIdentifier, WebPageNetworkParameters&&) { }
     virtual void removeWebPageNetworkParameters(WebPageProxyIdentifier) { }
     virtual size_t countNonDefaultSessionSets() const { return 0; }

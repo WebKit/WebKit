@@ -89,4 +89,12 @@ messages -> NetworkProcessProxy LegacyReceiver {
 #if ENABLE(APPLE_PAY_REMOTE_UI_USES_SCENE)
     GetWindowSceneIdentifierForPaymentPresentation(WebKit::WebPageProxyIdentifier webPageProxyIdentifier) -> (String sceneID) Async
 #endif
+
+    DataTaskReceivedChallenge(WebKit::DataTaskIdentifier identifier, WebCore::AuthenticationChallenge challenge) -> (enum:uint8_t WebKit::AuthenticationChallengeDisposition disposition, WebCore::Credential credential) Async
+    DataTaskWillPerformHTTPRedirection(WebKit::DataTaskIdentifier identifier, WebCore::ResourceResponse response, WebCore::ResourceRequest request) -> (bool allowed) Async
+    DataTaskDidReceiveResponse(WebKit::DataTaskIdentifier identifier, WebCore::ResourceResponse response) -> (bool allowed) Async
+    DataTaskDidReceiveData(WebKit::DataTaskIdentifier identifier, IPC::DataReference data)
+    DataTaskDidCompleteWithError(WebKit::DataTaskIdentifier identifier, WebCore::ResourceError error)
+}
+
 }

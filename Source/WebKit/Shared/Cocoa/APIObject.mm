@@ -74,6 +74,7 @@
 #import "_WKAutomationSessionInternal.h"
 #import "_WKContentRuleListActionInternal.h"
 #import "_WKCustomHeaderFieldsInternal.h"
+#import "_WKDataTaskInternal.h"
 #import "_WKExperimentalFeatureInternal.h"
 #import "_WKFrameHandleInternal.h"
 #import "_WKFrameTreeNodeInternal.h"
@@ -217,6 +218,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::Data:
         wrapper = [WKNSData alloc];
+        break;
+
+    case Type::DataTask:
+        wrapper = [_WKDataTask alloc];
         break;
 
     case Type::InternalDebugFeature:

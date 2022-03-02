@@ -1,3 +1,12 @@
+2022-03-02  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI _WKDataTask
+        https://bugs.webkit.org/show_bug.cgi?id=237234
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h:
+
 2022-03-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         WTF::SentinelLinkedList::iterator should have operator++ for range-for loop

@@ -1999,13 +1999,16 @@ void NetworkProcess::findPendingDownloadLocation(NetworkDataTask& networkDataTas
     }, destinationID);
 }
 
-void NetworkProcess::requestResource(WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, IPC::FormDataReference&& httpBody, CompletionHandler<void(IPC::DataReference, WebCore::ResourceResponse, WebCore::ResourceError)>&& completionHandler)
+void NetworkProcess::dataTaskWithRequest(WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, IPC::FormDataReference&& httpBody, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)
 {
     request.setHTTPBody(httpBody.takeData());
+    networkSession(sessionID)->dataTaskWithRequest(pageID, WTFMove(request), WTFMove(completionHandler));
+}
+
+void NetworkProcess::cancelDataTask(DataTaskIdentifier identifier, PAL::SessionID sessionID)
+{
     if (auto* session = networkSession(sessionID))
-        session->requestResource(pageID, WTFMove(request), WTFMove(completionHandler));
-    else
-        completionHandler({ }, { }, { });
+        session->cancelDataTask(identifier);
 }
 
 void NetworkProcess::setCacheModelSynchronouslyForTesting(CacheModel cacheModel, CompletionHandler<void()>&& completionHandler)

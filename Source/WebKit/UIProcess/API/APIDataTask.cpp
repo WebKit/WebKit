@@ -1,5 +1,5 @@
-  /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,34 @@
 
 #pragma once
 
-#import "AuthenticationChallengeDisposition.h"
-#import <Foundation/NSURLSession.h>
+#include "config.h"
+#include "APIDataTask.h"
 
-namespace WebKit {
+#include "APIDataTaskClient.h"
+#include "NetworkProcessProxy.h"
+#include "WebPageProxy.h"
 
-AuthenticationChallengeDisposition toAuthenticationChallengeDisposition(NSURLSessionAuthChallengeDisposition);
-NSURLSessionAuthChallengeDisposition fromAuthenticationChallengeDisposition(AuthenticationChallengeDisposition);
+namespace API {
 
-} // namespace WebKit
+DataTask::~DataTask() = default;
+
+void DataTask::setClient(Ref<DataTaskClient>&& client)
+{
+    m_client = WTFMove(client);
+}
+
+void DataTask::cancel()
+{
+    if (m_networkProcess)
+        m_networkProcess->cancelDataTask(m_identifier, m_sessionID);
+}
+
+DataTask::DataTask(WebKit::DataTaskIdentifier identifier, WeakPtr<WebKit::WebPageProxy>&& page, WTF::URL&& originalURL)
+    : m_identifier(identifier)
+    , m_page(WTFMove(page))
+    , m_originalURL(WTFMove(originalURL))
+    , m_networkProcess(m_page->websiteDataStore().networkProcess())
+    , m_sessionID(m_page->sessionID())
+    , m_client(DataTaskClient::create()) { }
+
+} // namespace API

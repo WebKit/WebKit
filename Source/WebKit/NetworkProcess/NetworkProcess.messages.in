@@ -53,7 +53,8 @@ messages -> NetworkProcess LegacyReceiver {
 #if PLATFORM(COCOA)
     PublishDownloadProgress(WebKit::DownloadID downloadID, URL url, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
 #endif
-    RequestResource(WebKit::WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest request, IPC::FormDataReference requestBody) -> (IPC::DataReference data, WebCore::ResourceResponse response, WebCore::ResourceError error) Async
+    DataTaskWithRequest(WebKit::WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest request, IPC::FormDataReference requestBody) -> (WebKit::DataTaskIdentifier taskIdentifier) Async
+    CancelDataTask(WebKit::DataTaskIdentifier taskIdentifier, PAL::SessionID sessionID)
     ApplicationDidEnterBackground()
     ApplicationWillEnterForeground()
 

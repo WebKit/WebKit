@@ -28,6 +28,8 @@
 
 #include "APIContentRuleList.h"
 #include "APICustomProtocolManagerClient.h"
+#include "APIDataTask.h"
+#include "APIDataTaskClient.h"
 #include "APINavigation.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationManager.h"
@@ -61,6 +63,7 @@
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceError.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
 
@@ -337,12 +340,59 @@ DownloadProxy& NetworkProcessProxy::createDownloadProxy(WebsiteDataStore& dataSt
     return m_downloadProxyMap->createDownloadProxy(dataStore, processPool, resourceRequest, frameInfo, originatingPage);
 }
 
-void NetworkProcessProxy::requestResource(WebPageProxyIdentifier pageID, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&& completionHandler)
+void NetworkProcessProxy::dataTaskWithRequest(WebPageProxy& page, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, CompletionHandler<void(API::DataTask&)>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::NetworkProcess::RequestResource(pageID, sessionID, request, IPC::FormDataReference(request.httpBody())), [completionHandler = WTFMove(completionHandler)] (IPC::DataReference&& data, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) mutable {
-        auto buffer = SharedBuffer::create(data.data(), data.size());
-        completionHandler(WTFMove(buffer), WTFMove(response), WTFMove(error));
+    sendWithAsyncReply(Messages::NetworkProcess::DataTaskWithRequest(page.identifier(), sessionID, request, IPC::FormDataReference(request.httpBody())), [this, protectedThis = Ref { *this }, weakPage = WeakPtr { page }, completionHandler = WTFMove(completionHandler), originalURL = request.url()] (DataTaskIdentifier identifier) mutable {
+        MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
+        auto dataTask = API::DataTask::create(identifier, WTFMove(weakPage), WTFMove(originalURL));
+        completionHandler(dataTask);
+        m_dataTasks.add(identifier, WTFMove(dataTask));
     });
+}
+
+void NetworkProcessProxy::dataTaskReceivedChallenge(DataTaskIdentifier identifier, WebCore::AuthenticationChallenge&& challenge, CompletionHandler<void(AuthenticationChallengeDisposition, WebCore::Credential&&)>&& completionHandler)
+{
+    MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
+    if (auto task = m_dataTasks.get(identifier))
+        task->client().didReceiveChallenge(*task, WTFMove(challenge), WTFMove(completionHandler));
+    else
+        completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpaceAndContinue, { });
+}
+
+void NetworkProcessProxy::dataTaskWillPerformHTTPRedirection(DataTaskIdentifier identifier, WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request, CompletionHandler<void(bool)>&& completionHandler)
+{
+    MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
+    if (auto task = m_dataTasks.get(identifier))
+        task->client().willPerformHTTPRedirection(*task, WTFMove(response), WTFMove(request), WTFMove(completionHandler));
+}
+
+void NetworkProcessProxy::dataTaskDidReceiveResponse(DataTaskIdentifier identifier, WebCore::ResourceResponse&& response, CompletionHandler<void(bool)>&& completionHandler)
+{
+    MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
+    if (auto task = m_dataTasks.get(identifier))
+        task->client().didReceiveResponse(*task, WTFMove(response), WTFMove(completionHandler));
+    else
+        completionHandler(false);
+}
+
+void NetworkProcessProxy::dataTaskDidReceiveData(DataTaskIdentifier identifier, const IPC::DataReference& data)
+{
+    MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
+    if (auto task = m_dataTasks.get(identifier))
+        task->client().didReceiveData(*task, data);
+}
+
+void NetworkProcessProxy::dataTaskDidCompleteWithError(DataTaskIdentifier identifier, WebCore::ResourceError&& error)
+{
+    MESSAGE_CHECK(decltype(m_dataTasks)::isValidKey(identifier));
+    if (auto task = m_dataTasks.take(identifier))
+        task->client().didCompleteWithError(*task, WTFMove(error));
+}
+
+void NetworkProcessProxy::cancelDataTask(DataTaskIdentifier identifier, PAL::SessionID sessionID)
+{
+    m_dataTasks.remove(identifier);
+    send(Messages::NetworkProcess::CancelDataTask(identifier, sessionID), 0);
 }
 
 void NetworkProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, CompletionHandler<void(WebsiteData)>&& completionHandler)
@@ -384,6 +434,9 @@ void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
         processPool->networkProcessDidTerminate(*this, reason);
     for (auto& websiteDataStore : copyToVectorOf<Ref<WebsiteDataStore>>(m_websiteDataStores))
         websiteDataStore->networkProcessDidTerminate(*this);
+    for (auto& task : m_dataTasks.values())
+        task->client().didCompleteWithError(task, WebCore::internalError(task->originalURL()));
+    m_dataTasks.clear();
 }
 
 void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

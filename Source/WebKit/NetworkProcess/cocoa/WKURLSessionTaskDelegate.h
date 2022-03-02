@@ -1,5 +1,5 @@
-  /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,12 +25,18 @@
 
 #pragma once
 
-#import "AuthenticationChallengeDisposition.h"
-#import <Foundation/NSURLSession.h>
+#import "DataTaskIdentifier.h"
 
 namespace WebKit {
+class NetworkSessionCocoa;
+}
 
-AuthenticationChallengeDisposition toAuthenticationChallengeDisposition(NSURLSessionAuthChallengeDisposition);
-NSURLSessionAuthChallengeDisposition fromAuthenticationChallengeDisposition(AuthenticationChallengeDisposition);
+@protocol NSURLSessionTaskDelegate;
 
-} // namespace WebKit
+NS_ASSUME_NONNULL_BEGIN
+
+@interface WKURLSessionTaskDelegate : NSObject<NSURLSessionTaskDelegate>
+- (instancetype)initWithIdentifier:(WebKit::DataTaskIdentifier)identifier session:(WebKit::NetworkSessionCocoa&)session;
+@end
+
+NS_ASSUME_NONNULL_END

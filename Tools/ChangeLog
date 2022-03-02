@@ -1,3 +1,17 @@
+2022-03-02  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI _WKDataTask
+        https://bugs.webkit.org/show_bug.cgi?id=237234
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (-[TestDataTaskDelegate dataTask:didReceiveAuthenticationChallenge:completionHandler:]):
+        (-[TestDataTaskDelegate dataTask:didReceiveResponse:decisionHandler:]):
+        (-[TestDataTaskDelegate dataTask:didReceiveData:]):
+        (-[TestDataTaskDelegate dataTask:didCompleteWithError:]):
+        (TEST):
+
 2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Clipboard Paste dialog doesn't show on external monitors

@@ -27,6 +27,16 @@
 
 #import "NativeWebMouseEvent.h"
 
+namespace WebCore {
+class FloatRect;
+}
+
+namespace WebKit {
+struct InteractionInformationAtPosition;
+struct InteractionInformationRequest;
+}
+
+@class UIView;
 @class WKHoverPlatter;
 
 @protocol WKHoverPlatterDelegate

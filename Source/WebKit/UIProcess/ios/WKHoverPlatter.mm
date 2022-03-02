@@ -29,9 +29,11 @@
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 #import "WKHoverPlatterParameters.h"
+#import <UIKit/UIKit.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/BlockPtr.h>
 
 static RetainPtr<CABasicAnimation> createBaseAnimation()
 {

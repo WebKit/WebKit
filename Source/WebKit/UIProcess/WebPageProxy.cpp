@@ -6470,9 +6470,9 @@ void WebPageProxy::downloadRequest(WebCore::ResourceRequest&& request, Completio
     download.setDidStartCallback(WTFMove(completionHandler));
 }
 
-void WebPageProxy::requestResource(WebCore::ResourceRequest&& request, CompletionHandler<void(Ref<WebCore::SharedBuffer>&&, WebCore::ResourceResponse&&, WebCore::ResourceError&&)>&& completionHandler)
+void WebPageProxy::dataTaskWithRequest(WebCore::ResourceRequest&& request, CompletionHandler<void(API::DataTask&)>&& completionHandler)
 {
-    websiteDataStore().networkProcess().requestResource(identifier(), sessionID(), WTFMove(request), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().dataTaskWithRequest(*this, sessionID(), WTFMove(request), WTFMove(completionHandler));
 }
 
 void WebPageProxy::didChangeContentSize(const IntSize& size)

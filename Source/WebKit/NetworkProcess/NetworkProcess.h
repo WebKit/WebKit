@@ -28,6 +28,7 @@
 #include "AppPrivacyReport.h"
 #include "AuxiliaryProcess.h"
 #include "CacheModel.h"
+#include "DataTaskIdentifier.h"
 #include "DownloadID.h"
 #include "DownloadManager.h"
 #include "LocalStorageDatabaseTracker.h"
@@ -432,7 +433,8 @@ private:
     void publishDownloadProgress(DownloadID, const URL&, SandboxExtension::Handle&&);
 #endif
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
-    void requestResource(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, IPC::FormDataReference&&, CompletionHandler<void(IPC::DataReference, WebCore::ResourceResponse, WebCore::ResourceError)>&&);
+    void dataTaskWithRequest(WebPageProxyIdentifier, PAL::SessionID, WebCore::ResourceRequest&&, IPC::FormDataReference&&, CompletionHandler<void(DataTaskIdentifier)>&&);
+    void cancelDataTask(DataTaskIdentifier, PAL::SessionID);
     void applicationDidEnterBackground();
     void applicationWillEnterForeground();
 

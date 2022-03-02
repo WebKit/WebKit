@@ -1,5 +1,5 @@
-  /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+/*
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#import "AuthenticationChallengeDisposition.h"
-#import <Foundation/NSURLSession.h>
+#import "APIDataTask.h"
+#import "WKObject.h"
+#import "_WKDataTask.h"
+#import <wtf/WeakObjCPtr.h>
 
 namespace WebKit {
 
-AuthenticationChallengeDisposition toAuthenticationChallengeDisposition(NSURLSessionAuthChallengeDisposition);
-NSURLSessionAuthChallengeDisposition fromAuthenticationChallengeDisposition(AuthenticationChallengeDisposition);
+template<> struct WrapperTraits<API::DataTask> {
+    using WrapperClass = _WKDataTask;
+};
 
-} // namespace WebKit
+}
+
+@interface _WKDataTask () <WKObject> {
+@package
+    API::ObjectStorage<API::DataTask> _dataTask;
+    RetainPtr<id <_WKDataTaskDelegate> > _delegate;
+}
+@end

@@ -33,6 +33,8 @@
 #import <WebKit/WKScriptMessageHandler.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKDataTask.h>
+#import <WebKit/_WKDataTaskDelegate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -352,7 +354,59 @@ TEST(NetworkProcess, BroadcastChannelCrashRecovery)
     EXPECT_EQ(webPID2, [webView2 _webProcessIdentifier]);
 }
 
-TEST(NetworkProcess, LoadResource)
+#if HAVE(NSURLSESSION_TASK_DELEGATE)
+
+@interface TestDataTaskDelegate : NSObject<_WKDataTaskDelegate>
+
+@property (nonatomic, copy) void(^didReceiveAuthenticationChallenge)(_WKDataTask *, NSURLAuthenticationChallenge *, void(^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *));
+@property (nonatomic, copy) void(^willPerformHTTPRedirection)(_WKDataTask *, NSHTTPURLResponse *, NSURLRequest *, void(^)(_WKDataTaskRedirectPolicy));
+@property (nonatomic, copy) void (^didReceiveResponse)(_WKDataTask *, NSURLResponse *, void (^)(_WKDataTaskResponsePolicy));
+@property (nonatomic, copy) void (^didReceiveData)(_WKDataTask *, NSData *);
+@property (nonatomic, copy) void (^didCompleteWithError)(_WKDataTask *, NSError *);
+
+@end
+
+@implementation TestDataTaskDelegate
+
+- (void)dataTask:(_WKDataTask *)dataTask didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *))completionHandler
+{
+    if (_didReceiveAuthenticationChallenge)
+        _didReceiveAuthenticationChallenge(dataTask, challenge, completionHandler);
+    else
+        completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
+}
+
+- (void)dataTask:(_WKDataTask *)dataTask willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request decisionHandler:(void (^)(_WKDataTaskRedirectPolicy))decisionHandler
+{
+    if (_willPerformHTTPRedirection)
+        _willPerformHTTPRedirection(dataTask, response, request, decisionHandler);
+    else
+        decisionHandler(_WKDataTaskRedirectPolicyAllow);
+}
+
+- (void)dataTask:(_WKDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response decisionHandler:(void (^)(_WKDataTaskResponsePolicy))decisionHandler
+{
+    if (_didReceiveResponse)
+        _didReceiveResponse(dataTask, response, decisionHandler);
+    else
+        decisionHandler(_WKDataTaskResponsePolicyAllow);
+}
+
+- (void)dataTask:(_WKDataTask *)dataTask didReceiveData:(NSData *)data
+{
+    if (_didReceiveData)
+        _didReceiveData(dataTask, data);
+}
+
+- (void)dataTask:(_WKDataTask *)dataTask didCompleteWithError:(NSError *)error
+{
+    if (_didCompleteWithError)
+        _didCompleteWithError(dataTask, error);
+}
+
+@end
+
+TEST(_WKDataTask, Basic)
 {
     using namespace TestWebKitAPI;
     auto html = "<script>document.cookie='testkey=value'</script>";
@@ -377,24 +431,230 @@ TEST(NetworkProcess, LoadResource)
     [postRequest setHTTPMethod:@"POST"];
     auto requestBody = "request body";
     [postRequest setHTTPBody:[NSData dataWithBytes:requestBody length:strlen(requestBody)]];
-    [webView _requestResource:postRequest.get() completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        EXPECT_NULL(error);
-        EXPECT_WK_STREQ(response.URL.absoluteString, postRequest.get().URL.absoluteString);
-        EXPECT_EQ(data.length, strlen(secondResponse));
-        EXPECT_TRUE(!memcmp(data.bytes, secondResponse, data.length));
-        done = true;
+    [webView _dataTaskWithRequest:postRequest.get() completionHandler:^(_WKDataTask *task) {
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        __block bool receivedResponse = false;
+        delegate.get().didReceiveResponse = ^(_WKDataTask *, NSURLResponse *response, void (^decisionHandler)(_WKDataTaskResponsePolicy)) {
+            EXPECT_WK_STREQ(response.URL.absoluteString, postRequest.get().URL.absoluteString);
+            receivedResponse = true;
+            decisionHandler(_WKDataTaskResponsePolicyAllow);
+        };
+        __block bool receivedData = false;
+        delegate.get().didReceiveData = ^(_WKDataTask *, NSData *data) {
+            EXPECT_TRUE(receivedResponse);
+            EXPECT_EQ(data.length, strlen(secondResponse));
+            EXPECT_TRUE(!memcmp(data.bytes, secondResponse, data.length));
+            receivedData = true;
+        };
+        delegate.get().didCompleteWithError = ^(_WKDataTask *, NSError *error) {
+            EXPECT_TRUE(receivedData);
+            EXPECT_NULL(error);
+            done = true;
+        };
     }];
     Util::run(&done);
     EXPECT_TRUE(strnstr(secondRequest.data(), "Cookie: testkey=value\r\n", secondRequest.size()));
     EXPECT_WK_STREQ(HTTPServer::parseBody(secondRequest), requestBody);
 
     done = false;
-    [webView _requestResource:[NSURLRequest requestWithURL:[NSURL URLWithString:@"blob:blank"]] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
-        EXPECT_EQ(error.code, NSURLErrorUnsupportedURL);
-        EXPECT_NULL(data);
-        EXPECT_NULL(response);
-        done = true;
+    __block RetainPtr<_WKDataTask> retainedTask;
+    [webView _dataTaskWithRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"blob:blank"]] completionHandler:^(_WKDataTask *task) {
+        retainedTask = task;
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        __block bool receivedResponse = false;
+        delegate.get().didReceiveResponse = ^(_WKDataTask *, NSURLResponse *response, void (^decisionHandler)(_WKDataTaskResponsePolicy)) {
+            receivedResponse = true;
+        };
+        __block bool receivedData = false;
+        delegate.get().didReceiveData = ^(_WKDataTask *, NSData *data) {
+            receivedData = true;
+        };
+        delegate.get().didCompleteWithError = ^(_WKDataTask *task, NSError *error) {
+            EXPECT_FALSE(receivedResponse);
+            EXPECT_FALSE(receivedData);
+            EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+            EXPECT_EQ(error.code, NSURLErrorUnsupportedURL);
+            EXPECT_NOT_NULL(task.delegate);
+            done = true;
+        };
+    }];
+    Util::run(&done);
+    EXPECT_NOT_NULL(retainedTask.get());
+    EXPECT_NULL(retainedTask.get().delegate);
+}
+
+TEST(_WKDataTask, Challenge)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server(HTTPServer::respondWithChallengeThenOK, HTTPServer::Protocol::Https);
+    auto webView = adoptNS([TestWKWebView new]);
+
+    __block bool done = false;
+    [webView _dataTaskWithRequest:server.request() completionHandler:^(_WKDataTask *task) {
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        __block bool receivedServerTrustChallenge = false;
+        __block bool receivedBasicAuthChallenge = false;
+        delegate.get().didReceiveAuthenticationChallenge = ^(_WKDataTask *, NSURLAuthenticationChallenge *challenge, void (^completionHandler)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+            if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+                EXPECT_FALSE(receivedBasicAuthChallenge);
+                EXPECT_FALSE(receivedServerTrustChallenge);
+                receivedServerTrustChallenge = true;
+                completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+                return;
+            }
+            EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodHTTPBasic);
+            EXPECT_FALSE(receivedBasicAuthChallenge);
+            EXPECT_TRUE(receivedServerTrustChallenge);
+            receivedBasicAuthChallenge = true;
+            completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
+        };
+        __block bool receivedData = false;
+        delegate.get().didReceiveData = ^(_WKDataTask *, NSData *data) {
+            const char* expectedResponse = "<script>alert('success!')</script>";
+            EXPECT_EQ(data.length, strlen(expectedResponse));
+            EXPECT_TRUE(!memcmp(data.bytes, expectedResponse, data.length));
+            receivedData = true;
+        };
+        delegate.get().didCompleteWithError = ^(_WKDataTask *, NSError *error) {
+            EXPECT_TRUE(receivedData);
+            EXPECT_TRUE(receivedBasicAuthChallenge);
+            EXPECT_TRUE(receivedServerTrustChallenge);
+            EXPECT_NULL(error);
+            done = true;
+        };
     }];
     Util::run(&done);
 }
+
+void sendLoop(TestWebKitAPI::Connection connection, bool& sentWithError)
+{
+    Vector<uint8_t> bytes(1000, 0);
+    connection.sendAndReportError(WTFMove(bytes), [&, connection] (bool sawError) {
+        if (sawError)
+            sentWithError = true;
+        else
+            sendLoop(connection, sentWithError);
+    });
+}
+
+TEST(_WKDataTask, Cancel)
+{
+    using namespace TestWebKitAPI;
+    bool sentWithError { false };
+    HTTPServer server([&] (Connection connection) {
+        connection.receiveHTTPRequest([&, connection] (Vector<char>&&) {
+            auto* header = "HTTP/1.1 200 OK\r\n\r\n";
+            connection.send(header, [&, connection] {
+                sendLoop(connection, sentWithError);
+            });
+        });
+    });
+
+    auto webView = adoptNS([WKWebView new]);
+    [webView _dataTaskWithRequest:server.request() completionHandler:^(_WKDataTask *task) {
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        delegate.get().didReceiveResponse = ^(_WKDataTask *task, NSURLResponse *response, void (^decisionHandler)(_WKDataTaskResponsePolicy)) {
+            decisionHandler(_WKDataTaskResponsePolicyAllow);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                EXPECT_NOT_NULL(task.delegate);
+                [task cancel];
+                EXPECT_NULL(task.delegate);
+            });
+        };
+    }];
+    Util::run(&sentWithError);
+
+    __block bool completed { false };
+    [webView _dataTaskWithRequest:server.request() completionHandler:^(_WKDataTask *task) {
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        delegate.get().didReceiveResponse = ^(_WKDataTask *task, NSURLResponse *response, void (^decisionHandler)(_WKDataTaskResponsePolicy)) {
+            decisionHandler(_WKDataTaskResponsePolicyCancel);
+        };
+        delegate.get().didCompleteWithError = ^(_WKDataTask *, NSError *error) {
+            EXPECT_WK_STREQ(error.domain, NSURLErrorDomain);
+            EXPECT_EQ(error.code, NSURLErrorCancelled);
+            completed = true;
+        };
+    }];
+    Util::run(&completed);
+}
+
+TEST(_WKDataTask, Redirect)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server { {
+        { "/", { 301, { { "Location", "/redirectTarget" }, { "Custom-Name", "Custom-Value" } } } },
+        { "/redirectTarget", { "hi" } },
+    } };
+    auto webView = adoptNS([WKWebView new]);
+    RetainPtr<NSURLRequest> serverRequest = server.request();
+    __block bool receivedData { false };
+    [webView _dataTaskWithRequest:serverRequest.get() completionHandler:^(_WKDataTask *task) {
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        delegate.get().willPerformHTTPRedirection = ^(_WKDataTask *task, NSHTTPURLResponse *response, NSURLRequest *request, void(^decisionHandler)(_WKDataTaskRedirectPolicy)) {
+            EXPECT_WK_STREQ(serverRequest.get().URL.absoluteString, response.URL.absoluteString);
+            EXPECT_WK_STREQ([serverRequest.get().URL.absoluteString stringByAppendingString:@"redirectTarget"], request.URL.absoluteString);
+            EXPECT_WK_STREQ([response valueForHTTPHeaderField:@"Custom-Name"], "Custom-Value");
+            decisionHandler(_WKDataTaskRedirectPolicyAllow);
+        };
+        delegate.get().didReceiveData = ^(_WKDataTask *, NSData *data) {
+            EXPECT_EQ(data.length, strlen("hi"));
+            EXPECT_TRUE(!memcmp(data.bytes, "hi", data.length));
+            receivedData = true;
+        };
+    }];
+    Util::run(&receivedData);
+    
+    __block bool completed { false };
+    __block bool receivedResponse { false };
+    [webView _dataTaskWithRequest:serverRequest.get() completionHandler:^(_WKDataTask *task) {
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        delegate.get().willPerformHTTPRedirection = ^(_WKDataTask *task, NSHTTPURLResponse *response, NSURLRequest *request, void(^decisionHandler)(_WKDataTaskRedirectPolicy)) {
+            decisionHandler(_WKDataTaskRedirectPolicyCancel);
+        };
+        delegate.get().didReceiveResponse = ^(_WKDataTask *task, NSURLResponse *response, void (^decisionHandler)(_WKDataTaskResponsePolicy)) {
+            EXPECT_WK_STREQ(response.URL.absoluteString, serverRequest.get().URL.absoluteString);
+            EXPECT_EQ(((NSHTTPURLResponse *)response).statusCode, 301);
+            receivedResponse = true;
+            decisionHandler(_WKDataTaskResponsePolicyAllow);
+        };
+        delegate.get().didCompleteWithError = ^(_WKDataTask *, NSError *error) {
+            EXPECT_TRUE(receivedResponse);
+            EXPECT_NULL(error);
+            completed = true;
+        };
+    }];
+    Util::run(&completed);
+}
+
+TEST(_WKDataTask, Crash)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server(HTTPServer::respondWithOK);
+    auto webView = adoptNS([WKWebView new]);
+
+    __block bool done = false;
+    [webView _dataTaskWithRequest:server.request() completionHandler:^(_WKDataTask *task) {
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        delegate.get().didReceiveResponse = ^(_WKDataTask *task, NSURLResponse *response, void (^decisionHandler)(_WKDataTaskResponsePolicy)) {
+            kill(webView.get().configuration.websiteDataStore._networkProcessIdentifier, SIGKILL);
+            decisionHandler(_WKDataTaskResponsePolicyAllow);
+        };
+        delegate.get().didCompleteWithError = ^(_WKDataTask *, NSError *error) {
+            EXPECT_WK_STREQ(error.domain, WebKitErrorDomain);
+            EXPECT_EQ(error.code, 300);
+            done = true;
+        };
+    }];
+    Util::run(&done);
+}
+
+#endif // HAVE(NSURLSESSION_TASK_DELEGATE)

@@ -319,6 +319,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier',
         'WebKit::AuthenticationChallengeIdentifier',
         'WebKit::ContentWorldIdentifier',
+        'WebKit::DataTaskIdentifier',
         'WebKit::DisplayLinkObserverID',
         'WebKit::DownloadID',
         'WebKit::FileSystemStorageError',

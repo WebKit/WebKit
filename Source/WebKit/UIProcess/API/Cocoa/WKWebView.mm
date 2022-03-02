@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKWebViewInternal.h"
 
+#import "APIDataTask.h"
 #import "APIFormClient.h"
 #import "APIFrameTreeNode.h"
 #import "APIPageConfiguration.h"
@@ -99,6 +100,7 @@
 #import "_WKActivatedElementInfoInternal.h"
 #import "_WKAppHighlightDelegate.h"
 #import "_WKAppHighlightInternal.h"
+#import "_WKDataTaskInternal.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
@@ -2224,12 +2226,10 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 #endif
 }
 
-- (void)_requestResource:(NSURLRequest *)request completionHandler:(void(^)(NSData *, NSURLResponse *, NSError *))completionHandler
+- (void)_dataTaskWithRequest:(NSURLRequest *)request completionHandler:(void(^)(_WKDataTask *))completionHandler
 {
-    _page->requestResource(request, [completionHandler = makeBlockPtr(completionHandler)] (Ref<WebCore::SharedBuffer>&& buffer, WebCore::ResourceResponse&& response, WebCore::ResourceError&& error) {
-        if (error.isNull())
-            return completionHandler(buffer->createNSData().get(), response.nsURLResponse(), nil);
-        completionHandler(nil, nil, error.nsError());
+    _page->dataTaskWithRequest(request, [completionHandler = makeBlockPtr(completionHandler)] (Ref<API::DataTask>&& task) {
+        completionHandler(wrapper(task));
     });
 }
 
