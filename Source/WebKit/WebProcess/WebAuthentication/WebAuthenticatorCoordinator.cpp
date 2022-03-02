@@ -47,6 +47,12 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserGestureIndicator.h>
 
+#undef WEBAUTHN_RELEASE_LOG
+#define PAGE_ID (m_webPage.identifier().toUInt64())
+#define FRAME_ID (webFrame->frameID().toUInt64())
+#define WEBAUTHN_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(WebAuthn, "%p - [webPageID=%" PRIu64 ", webFrameID=%" PRIu64 "] WebAuthenticatorCoordinator::" fmt, this, PAGE_ID, FRAME_ID, ##__VA_ARGS__)
+#define WEBAUTHN_RELEASE_LOG_ERROR_NO_FRAME(fmt, ...) RELEASE_LOG_ERROR(WebAuthn, "%p - [webPageID=%" PRIu64 "] WebAuthenticatorCoordinator::" fmt, this, PAGE_ID, ##__VA_ARGS__)
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -79,8 +85,11 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
         return;
     }
 
-    if (!isWebBrowser())
+    if (!isWebBrowser()) {
+        WEBAUTHN_RELEASE_LOG_ERROR("makeCredential: The 'navigator.credentials.create' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement.");
+        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { NotAllowedError, "The 'navigator.credentials.create' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement." });
         return;
+    }
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::MakeCredential(hash, options, isProcessingUserGesture), WTFMove(handler));
 }
 
@@ -101,8 +110,11 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
         return;
     }
 
-    if (!isWebBrowser())
+    if (!isWebBrowser()) {
+        WEBAUTHN_RELEASE_LOG_ERROR("getAssertion: The 'navigator.credentials.get' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement.");
+        handler({ }, static_cast<AuthenticatorAttachment>(0), ExceptionData { NotAllowedError, "The 'navigator.credentials.get' API is only permitted in applications with the 'com.apple.developer.web-browser' entitlement." });
         return;
+    }
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::GetAssertion(hash, options, isProcessingUserGesture), WTFMove(handler));
 }
 
@@ -123,8 +135,11 @@ void WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable(
         return;
     }
 
-    if (!isWebBrowser())
+    if (!isWebBrowser()) {
+        WEBAUTHN_RELEASE_LOG_ERROR_NO_FRAME("isUserVerifyingPlatformAuthenticatorAvailable: WebAuthn is only permitted in applications with the 'com.apple.developer.web-browser' entitlement.");
+        handler(false);
         return;
+    }
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::IsUserVerifyingPlatformAuthenticatorAvailable(), WTFMove(handler));
 }
 
@@ -143,5 +158,10 @@ bool WebAuthenticatorCoordinator::processingUserGesture(const Frame& frame, cons
 }
 
 } // namespace WebKit
+
+#undef WEBAUTHN_RELEASE_LOG_ERROR_NO_FRAME
+#undef WEBAUTHN_RELEASE_LOG_ERROR
+#undef FRAME_ID
+#undef PAGE_ID
 
 #endif // ENABLE(WEB_AUTHN)
