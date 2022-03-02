@@ -108,6 +108,8 @@ public:
 
     void moveDragState(Ref<DataTransfer>&&);
     bool hasDragImage() const;
+
+    IntPoint dragLocation() const { return m_dragLocation; }
 #endif
 
     void didAddFileToItemList();

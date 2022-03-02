@@ -289,7 +289,7 @@ public:
     
 #if ENABLE(DRAG_SUPPORT)
 #if PLATFORM(GTK)
-    virtual void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<ShareableBitmap>&& dragImage) = 0;
+    virtual void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<ShareableBitmap>&& dragImage, WebCore::IntPoint&& dragImageHotspot) = 0;
 #else
     virtual void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle&) { }
 #endif

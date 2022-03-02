@@ -1,3 +1,16 @@
+2022-03-02  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] setDragImage ignores offset
+        https://bugs.webkit.org/show_bug.cgi?id=237292
+
+        Reviewed by Carlos Garcia Campos.
+
+        To fix this, I need DataTransfer to expose its dragLocation, which is the offset passed to
+        setDragImage.
+
+        * dom/DataTransfer.h:
+        (WebCore::DataTransfer::dragLocation const):
+
 2022-03-02  Alan Bujtas  <zalan@apple.com>
 
         [RTL] Incorrect alt text position in right to left context

@@ -45,7 +45,7 @@ DragSource::~DragSource()
 {
 }
 
-void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> operationMask, RefPtr<ShareableBitmap>&& image)
+void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> operationMask, RefPtr<ShareableBitmap>&& image, IntPoint&& imageHotspot)
 {
     if (m_drag) {
         gdk_drag_drop_done(m_drag.get(), FALSE);
@@ -129,7 +129,7 @@ void DragSource::begin(SelectionData&& selectionData, OptionSet<DragOperation> o
     RefPtr<Image> iconImage = image ? image->createImage() : nullptr;
     if (iconImage) {
         if (GRefPtr<GdkTexture> texture = adoptGRef(iconImage->gdkTexture())) {
-            gdk_drag_set_hotspot(m_drag.get(), -gdk_texture_get_width(texture.get()) / 2, -gdk_texture_get_height(texture.get()) / 2);
+            gdk_drag_set_hotspot(m_drag.get(), -imageHotspot.x(), -imageHotspot.y());
             auto* picture = gtk_picture_new_for_paintable(GDK_PAINTABLE(texture.get()));
             gtk_drag_icon_set_child(GTK_DRAG_ICON(dragIcon), picture);
             return;

@@ -85,7 +85,7 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase*);
 void webkitWebViewBasePageClosed(WebKitWebViewBase*);
 
 #if ENABLE(DRAG_SUPPORT)
-void webkitWebViewBaseStartDrag(WebKitWebViewBase*, WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<WebKit::ShareableBitmap>&&);
+void webkitWebViewBaseStartDrag(WebKitWebViewBase*, WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, RefPtr<WebKit::ShareableBitmap>&&, WebCore::IntPoint&& dragImageHotspot);
 void webkitWebViewBaseDidPerformDragControllerAction(WebKitWebViewBase*);
 #endif
 

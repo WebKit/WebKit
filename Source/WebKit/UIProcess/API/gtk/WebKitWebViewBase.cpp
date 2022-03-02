@@ -2308,13 +2308,13 @@ void webkitWebViewBaseSetMouseIsOverScrollbar(WebKitWebViewBase* webViewBase, We
 }
 
 #if ENABLE(DRAG_SUPPORT)
-void webkitWebViewBaseStartDrag(WebKitWebViewBase* webViewBase, SelectionData&& selectionData, OptionSet<DragOperation> dragOperationMask, RefPtr<ShareableBitmap>&& image)
+void webkitWebViewBaseStartDrag(WebKitWebViewBase* webViewBase, SelectionData&& selectionData, OptionSet<DragOperation> dragOperationMask, RefPtr<ShareableBitmap>&& image, IntPoint&& dragImageHotspot)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->dragSource)
         priv->dragSource = makeUnique<DragSource>(GTK_WIDGET(webViewBase));
 
-    priv->dragSource->begin(WTFMove(selectionData), dragOperationMask, WTFMove(image));
+    priv->dragSource->begin(WTFMove(selectionData), dragOperationMask, WTFMove(image), WTFMove(dragImageHotspot));
 
 #if !USE(GTK4)
     // A drag starting should prevent a double-click from happening. This might

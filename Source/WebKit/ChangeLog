@@ -1,3 +1,33 @@
+2022-03-02  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] setDragImage ignores offset
+        https://bugs.webkit.org/show_bug.cgi?id=237292
+
+        Reviewed by Carlos Garcia Campos.
+
+        Plumb the offset from the last place we have access to a DataTransfer object down to
+        DragSource, where it's ultimately used. This allows web content to properly position the
+        drag image under the mouse cursor.
+
+        * UIProcess/API/gtk/DragSource.h:
+        * UIProcess/API/gtk/DragSourceGtk3.cpp:
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/DragSourceGtk4.cpp:
+        (WebKit::DragSource::begin):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::startDrag):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseStartDrag):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startDrag):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::WebDragClient::startDrag):
+
 2022-03-02  Youenn Fablet  <youenn@apple.com>
 
         Annotate LibWebRTC with thread safety macros
