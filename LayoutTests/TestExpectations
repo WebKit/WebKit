@@ -2122,8 +2122,7 @@ webkit.org/b/148650 fast/repaint/add-table-overpaint.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/css/css-cascade/important-prop.html [ ImageOnlyFailure ]
 webkit.org/b/187093 [ Debug ] imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Skip ]
-webkit.org/b/233937 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-010.html [ ImageOnlyFailure ]
-webkit.org/b/233937 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-011.html [ ImageOnlyFailure ]
+webkit.org/b/192334 imported/w3c/web-platform-tests/css/css-cascade/revert-layer-011.html [ ImageOnlyFailure ]
 
 # Initial failures on the import of css-content
 

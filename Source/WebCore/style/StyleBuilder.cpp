@@ -300,6 +300,11 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     bool isRevertLayer = valueToApply->isRevertLayerValue() || customPropertyValueID == CSSValueRevertLayer;
 
     if (isRevert || isRevertLayer) {
+        // In @keyframes, 'revert-layer' rolls back the cascaded value to the author level.
+        // We can just not apply the property in order to keep the value from the base style.
+        if (isRevertLayer && m_state.m_isBuildingKeyframeStyle)
+            return;
+
         auto* rollbackCascade = isRevert ? ensureRollbackCascadeForRevert() : ensureRollbackCascadeForRevertLayer();
 
         if (rollbackCascade) {

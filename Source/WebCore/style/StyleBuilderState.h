@@ -107,6 +107,8 @@ public:
     const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
     CSSToStyleMap& styleMap() { return m_styleMap; }
 
+    void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
+
 private:
     // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
     friend void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);
@@ -141,6 +143,8 @@ private:
 
     bool m_fontDirty { false };
     Vector<AtomString> m_registeredContentAttributes;
+
+    bool m_isBuildingKeyframeStyle { false };
 };
 
 }

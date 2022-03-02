@@ -1,3 +1,14 @@
+2022-03-02  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Support 'revert-layer' in @keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=237152
+
+        Reviewed by Antti Koivisto.
+
+        Expect test to pass.
+
+        * TestExpectations:
+
 2022-03-02  Alan Bujtas  <zalan@apple.com>
 
         [RTL] Incorrect alt text position in right to left context

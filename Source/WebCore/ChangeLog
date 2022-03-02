@@ -1,3 +1,24 @@
+2022-03-02  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Support 'revert-layer' in @keyframes
+        https://bugs.webkit.org/show_bug.cgi?id=237152
+
+        Reviewed by Antti Koivisto.
+
+        In @keyframes, 'revert-layer' should roll back the cascaded value to
+        author origin. Resolver::styleForKeyframe already has the base style of
+        the element, so we only need to avoid applying properties with the
+        'revert-layer' value.
+
+        Test: imported/w3c/web-platform-tests/css/css-cascade/revert-layer-010.html.html
+
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::applyProperty):
+        * style/StyleBuilderState.h:
+        (WebCore::Style::BuilderState::setIsBuildingKeyframeStyle):
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::styleForKeyframe):
+
 2022-03-02  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] setDragImage ignores offset
