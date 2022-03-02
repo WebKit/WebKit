@@ -2125,6 +2125,15 @@ Seconds KeyframeEffect::timeToNextTick(BasicEffectTiming timing) const
     return AnimationEffect::timeToNextTick(timing);
 }
 
+void KeyframeEffect::setComposite(CompositeOperation compositeOperation)
+{
+    if (m_compositeOperation == compositeOperation)
+        return;
+
+    m_compositeOperation = compositeOperation;
+    invalidate();
+}
+
 CompositeOperation KeyframeEffect::bindingsComposite() const
 {
     if (is<DeclarativeAnimation>(animation()))

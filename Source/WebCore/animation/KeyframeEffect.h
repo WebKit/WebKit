@@ -116,7 +116,7 @@ public:
     IterationCompositeOperation iterationComposite() const { return m_iterationCompositeOperation; }
     void setIterationComposite(IterationCompositeOperation iterationCompositeOperation) { m_iterationCompositeOperation = iterationCompositeOperation; }
     CompositeOperation composite() const { return m_compositeOperation; }
-    void setComposite(CompositeOperation compositeOperation) { m_compositeOperation = compositeOperation; }
+    void setComposite(CompositeOperation);
     CompositeOperation bindingsComposite() const;
     void setBindingsComposite(CompositeOperation);
 

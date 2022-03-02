@@ -1,5 +1,14 @@
 2022-03-02  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] setting the composite property on a keyframe effect should invalidate the target style
+        https://bugs.webkit.org/show_bug.cgi?id=237356
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context-filling-expected.txt:
+
+2022-03-02  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] changes to font-size should recompute keyframes
         https://bugs.webkit.org/show_bug.cgi?id=237357
 
