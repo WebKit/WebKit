@@ -1028,7 +1028,7 @@
     (home-subpath "/Library/Preferences/")
     (with no-log))
 
-(deny mach-lookup (with telemetry)
+(deny mach-lookup (with no-log) (with telemetry)
     (global-name "com.apple.containermanagerd")
 )
 
@@ -1631,7 +1631,7 @@
     )
 )
 
-(deny darwin-notification-post (with telemetry))
+(deny darwin-notification-post (with no-log) (with telemetry))
 (allow darwin-notification-post
     (notification-name
         "_AXNotification_AXSClassicInvertColorsPreference"
