@@ -1,3 +1,9 @@
+2022-03-01  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        * gpu-process/TestExpectations: r290542 fixed a number of crashing tests.
+
 2022-03-01  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION(r285232) https://alvaromontoro.github.io/almond.css/demo/ looks wrong in Safari, ok in Chrome and Firefox

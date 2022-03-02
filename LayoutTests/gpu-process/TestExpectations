@@ -292,7 +292,6 @@ webkit.org/b/236924 svg/transforms/transformed-text-fill-gradient.html [ ImageOn
 webkit.org/b/236924 svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
 
 # Apple Pay button
-webkit.org/b/236925 fast/css/appearance-apple-pay-button-border-radius.html [ Crash ]
 webkit.org/b/236925 fast/css/appearance-apple-pay-button-default-corners.html [ Crash ]
 webkit.org/b/236925 fast/css/appearance-apple-pay-button.html [ Crash ]
 # x64_64 only
@@ -315,16 +314,7 @@ webkit.org/b/236927 fast/forms/autofocus-readonly-attribute.html [ Failure Pass 
 webkit.org/b/236927 fast/forms/input-text-autofocus.html [ Pass Failure ]
 
 # Crashes
-webkit.org/b/236929 compositing/background-color/background-color-text-clip.html [ Crash ]
 webkit.org/b/236929 fast/canvas/canvas-composite-canvas.html [ Crash ]
-webkit.org/b/236929 fast/clip/hidpi-background-clip-with-text-fill-color.html [ Crash ]
-webkit.org/b/236929 fast/css/cascade/background-clip-and-webkit-background-clip-cascade-order.html [ Crash ]
-webkit.org/b/236929 fast/inline/inline-background-clip-text-multiline.html [ Crash ]
-webkit.org/b/236929 fast/inline/inline-background-clip-text.html [ Crash ]
-webkit.org/b/236929 fast/text/text-decoration-currentcolor-fill-color.html [ Crash ]
-# arm64 only
-webkit.org/b/236929 fast/css/getComputedStyle/computed-style-border-image.html [ Crash Pass ]
-webkit.org/b/236929 fast/hidpi/device-scale-factor-paint.html [ Crash Pass ]
 
 # Flaky timeout
 webkit.org/b/236931 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Timeout Pass ]
