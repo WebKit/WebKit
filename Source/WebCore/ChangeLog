@@ -1,3 +1,16 @@
+2022-03-02  Alan Bujtas  <zalan@apple.com>
+
+        [RTL] Image alt text has incorrect bidi reordering
+        https://bugs.webkit.org/show_bug.cgi?id=237366
+        <rdar://problem/89687229>
+
+        Reviewed by Antti Koivisto.
+
+        Test: fast/images/alt-text-with-right-to-left-inline-direction-reordering.html
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced): Enable bidi reordering.
+
 2022-03-02  Youenn Fablet  <youenn@apple.com>
 
         Rename MediaSampleAVFObjC::createImageSample to MediaSampleAVFObjC::createFromPixelBuffer

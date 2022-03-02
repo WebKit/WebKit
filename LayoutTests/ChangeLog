@@ -1,3 +1,14 @@
+2022-03-02  Alan Bujtas  <zalan@apple.com>
+
+        [RTL] Image alt text has incorrect bidi reordering
+        https://bugs.webkit.org/show_bug.cgi?id=237366
+        <rdar://problem/89687229>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/images/alt-text-with-right-to-left-inline-direction-reordering-expected-mismatch.html: Added.
+        * fast/images/alt-text-with-right-to-left-inline-direction-reordering.html: Added.
+
 2022-03-02  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Support 'revert-layer' in @keyframes

@@ -531,7 +531,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
             if (!m_altText.isEmpty()) {
                 auto& font = style().fontCascade();
                 auto& fontMetrics = font.metricsOfPrimaryFont();
-                auto textRun = RenderBlock::constructTextRun(document().displayStringModifiedByEncoding(m_altText), style());
+                auto textRun = RenderBlock::constructTextRun(document().displayStringModifiedByEncoding(m_altText), style(), DefaultExpansion, RespectDirection | RespectDirectionOverride);
                 auto textWidth = LayoutUnit { font.width(textRun) };
 
                 auto hasRoomForAltText = [&] {
