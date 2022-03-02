@@ -62,6 +62,7 @@ OBJC_CLASS WKDOMPasteMenuDelegate;
 OBJC_CLASS WKEditorUndoTarget;
 OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImmediateActionController;
+OBJC_CLASS WKMouseTrackingObserver;
 OBJC_CLASS WKRevealItemPresenter;
 OBJC_CLASS WKSafeBrowsingWarning;
 OBJC_CLASS WKShareSheet;
@@ -446,7 +447,7 @@ public:
     id accessibilityAttributeValue(NSString *, id parameter = nil);
 
     NSTrackingArea *primaryTrackingArea() const { return m_primaryTrackingArea.get(); }
-    void setPrimaryTrackingArea(NSTrackingArea *);
+    void updatePrimaryTrackingAreaOptions(NSTrackingAreaOptions);
 
     NSTrackingRectTag addTrackingRect(CGRect, id owner, void* userData, bool assumeInside);
     NSTrackingRectTag addTrackingRectWithTrackingNum(CGRect, id owner, void* userData, bool assumeInside, int tag);
@@ -815,6 +816,7 @@ private:
 
     bool m_allowsLinkPreview { true };
 
+    RetainPtr<WKMouseTrackingObserver> m_mouseTrackingObserver;
     RetainPtr<NSTrackingArea> m_primaryTrackingArea;
 
     NSToolTipTag m_lastToolTipTag { 0 };

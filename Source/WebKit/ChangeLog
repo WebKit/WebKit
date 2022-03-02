@@ -1,3 +1,53 @@
+2022-03-02  Chris Dumez  <cdumez@apple.com>
+
+        Mousemove events double-firing in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=237342
+        <rdar://88025610>
+
+        Reviewed by Wenson Hsieh.
+
+        When we constructed a WebViewImpl, we would add a mouse tracking area to the view,
+        so that mouseMoved/mouseEntered/mouseExited would get called and we would be able
+        to forward these mouse events to the WebContent process. However, when the view
+        becomes first responder, an implicit mouse tracking area also gets added. As a
+        result, we would get duplicate calls to mouseMoved/mouseEntered/mouseExited.
+
+        We consulted with the AppKit team and their recommendation was to use a different
+        owner object for our mouse tracking area and have that object forward the
+        mouseMoved/mouseEntered/mouseExited calls to our WebViewImpl. In doing so, we
+        can stop forwarding mouseMoved/mouseEntered/mouseExited calls from WKWebView &
+        WKView, which are NOT for our mouse tracking area.
+
+        No new tests, I tried but wasn't able to write an API test for this.
+        I had trouble making the test window key so that the view would receive
+        the (duplicate) mousemove events. I validated via logging that we are no longer
+        getting duplicate mousemove events. I also checked on
+        https://www.vsynctester.com/testing/mouse.html that the output now looks correct.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _simulateMouseMove:]):
+        (-[WKView mouseMoved:]): Deleted.
+        (-[WKView mouseEntered:]): Deleted.
+        (-[WKView mouseExited:]): Deleted.
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView _simulateMouseMove:]):
+        (-[WKWebView mouseMoved:]): Deleted.
+        (-[WKWebView mouseEntered:]): Deleted.
+        (-[WKWebView mouseExited:]): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKMouseTrackingObserver initWithViewImpl:]):
+        (-[WKMouseTrackingObserver mouseMoved:]):
+        (-[WKMouseTrackingObserver mouseEntered:]):
+        (-[WKMouseTrackingObserver mouseExited:]):
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::updatePrimaryTrackingAreaOptions):
+        (WebKit::WebViewImpl::setPrimaryTrackingArea): Deleted.
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::recommendedScrollbarStyleDidChange):
+
 2022-03-02  Sihui Liu  <sihui_liu@apple.com>
 
         Add assertion that no two sessions share the same general storage directory

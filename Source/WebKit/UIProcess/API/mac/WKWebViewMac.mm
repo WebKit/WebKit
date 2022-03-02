@@ -474,11 +474,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
     _impl->swipeWithEvent(event);
 }
 
-- (void)mouseMoved:(NSEvent *)event
-{
-    _impl->mouseMoved(event);
-}
-
 - (void)mouseDown:(NSEvent *)event
 {
     _impl->mouseDown(event);
@@ -492,16 +487,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)mouseDragged:(NSEvent *)event
 {
     _impl->mouseDragged(event);
-}
-
-- (void)mouseEntered:(NSEvent *)event
-{
-    _impl->mouseEntered(event);
-}
-
-- (void)mouseExited:(NSEvent *)event
-{
-    _impl->mouseExited(event);
 }
 
 - (void)otherMouseDown:(NSEvent *)event

@@ -516,11 +516,6 @@ Some other editing-related methods still unimplemented:
     _data->_impl->swipeWithEvent(event);
 }
 
-- (void)mouseMoved:(NSEvent *)event
-{
-    _data->_impl->mouseMoved(event);
-}
-
 - (void)mouseDown:(NSEvent *)event
 {
     _data->_impl->mouseDown(event);
@@ -534,16 +529,6 @@ Some other editing-related methods still unimplemented:
 - (void)mouseDragged:(NSEvent *)event
 {
     _data->_impl->mouseDragged(event);
-}
-
-- (void)mouseEntered:(NSEvent *)event
-{
-    _data->_impl->mouseEntered(event);
-}
-
-- (void)mouseExited:(NSEvent *)event
-{
-    _data->_impl->mouseExited(event);
 }
 
 - (void)otherMouseDown:(NSEvent *)event
@@ -1544,6 +1529,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event
 {
     _data->_impl->gestureEventWasNotHandledByWebCoreFromViewOnly(event);
+}
+
+- (void)_simulateMouseMove:(NSEvent *)event
+{
+    _data->_impl->mouseMoved(event);
 }
 
 - (void)smartMagnifyWithEvent:(NSEvent *)event

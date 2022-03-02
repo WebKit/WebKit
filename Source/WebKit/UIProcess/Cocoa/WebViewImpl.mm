@@ -181,6 +181,43 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 @end
 #endif
 
+// We use a WKMouseTrackingObserver as tracking area owner instead of the WKWebView. This is because WKWebView
+// gets an implicit tracking area when it is first responder and we only want to process mouse events from our
+// tracking area. Otherwise, it would lead to duplicate mouse events (rdar://88025610).
+@interface WKMouseTrackingObserver : NSObject
+@end
+
+@implementation WKMouseTrackingObserver {
+    WeakPtr<WebKit::WebViewImpl> _impl;
+}
+
+- (instancetype)initWithViewImpl:(WebKit::WebViewImpl&)impl
+{
+    if ((self = [super init]))
+        _impl = impl;
+    return self;
+}
+
+- (void)mouseMoved:(NSEvent *)event
+{
+    if (_impl)
+        _impl->mouseMoved(event);
+}
+
+- (void)mouseEntered:(NSEvent *)event
+{
+    if (_impl)
+        _impl->mouseEntered(event);
+}
+
+- (void)mouseExited:(NSEvent *)event
+{
+    if (_impl)
+        _impl->mouseExited(event);
+}
+
+@end
+
 #if ENABLE(IMAGE_ANALYSIS)
 
 namespace WebKit {
@@ -1487,7 +1524,8 @@ WebViewImpl::WebViewImpl(NSView <WebViewImplDelegate> *view, WKWebView *outerWeb
     , m_undoTarget(adoptNS([[WKEditorUndoTarget alloc] init]))
     , m_windowVisibilityObserver(adoptNS([[WKWindowVisibilityObserver alloc] initWithView:view impl:*this]))
     , m_accessibilitySettingsObserver(adoptNS([[WKAccessibilitySettingsObserver alloc] initWithImpl:*this]))
-    , m_primaryTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:view.frame options:trackingAreaOptions() owner:view userInfo:nil]))
+    , m_mouseTrackingObserver(adoptNS([[WKMouseTrackingObserver alloc] initWithViewImpl:*this]))
+    , m_primaryTrackingArea(adoptNS([[NSTrackingArea alloc] initWithRect:view.frame options:trackingAreaOptions() owner:m_mouseTrackingObserver.get() userInfo:nil]))
 {
     static_cast<PageClientImpl&>(*m_pageClient).setImpl(*this);
 
@@ -3831,11 +3869,13 @@ id WebViewImpl::accessibilityAttributeValue(NSString *attribute, id parameter)
     return [m_view _web_superAccessibilityAttributeValue:attribute];
 }
 
-void WebViewImpl::setPrimaryTrackingArea(NSTrackingArea *trackingArea)
+void WebViewImpl::updatePrimaryTrackingAreaOptions(NSTrackingAreaOptions options)
 {
+    auto trackingArea = adoptNS([[NSTrackingArea alloc] initWithRect:[m_view frame] options:options owner:m_mouseTrackingObserver.get() userInfo:nil]);
     [m_view removeTrackingArea:m_primaryTrackingArea.get()];
     m_primaryTrackingArea = trackingArea;
-    [m_view addTrackingArea:trackingArea];
+    [m_view addTrackingArea:trackingArea.get()];
+
 }
 
 // Any non-zero value will do, but using something recognizable might help us debug some day.

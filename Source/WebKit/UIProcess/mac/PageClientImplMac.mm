@@ -719,8 +719,7 @@ void PageClientImpl::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
     else
         options |= NSTrackingActiveInKeyWindow;
 
-    RetainPtr<NSTrackingArea> trackingArea = adoptNS([[NSTrackingArea alloc] initWithRect:[m_view frame] options:options owner:m_view userInfo:nil]);
-    m_impl->setPrimaryTrackingArea(trackingArea.get());
+    m_impl->updatePrimaryTrackingAreaOptions(options);
 }
 
 void PageClientImpl::intrinsicContentSizeDidChange(const IntSize& intrinsicContentSize)

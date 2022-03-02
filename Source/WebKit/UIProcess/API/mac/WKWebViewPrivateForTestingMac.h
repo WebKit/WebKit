@@ -52,6 +52,8 @@
 - (void)_setFooterBannerHeight:(int)height;
 - (NSSet<NSView *> *)_pdfHUDs;
 
+- (void)_simulateMouseMove:(NSEvent *)event;
+
 @end
 
 #endif // !TARGET_OS_IPHONE

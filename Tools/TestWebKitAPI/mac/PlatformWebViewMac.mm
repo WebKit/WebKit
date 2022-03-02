@@ -195,7 +195,7 @@ static NSEventModifierFlags modifierFlagsForWKModifiers(WKEventModifiers modifie
 void PlatformWebView::simulateMouseMove(unsigned x, unsigned y, WKEventModifiers modifiers)
 {
     NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeMouseMoved location:NSMakePoint(x, y) modifierFlags:modifierFlagsForWKModifiers(modifiers) timestamp:GetCurrentEventTime() windowNumber:[m_window windowNumber] context:[NSGraphicsContext currentContext] eventNumber:0 clickCount:0 pressure:0];
-    [m_view mouseMoved:event];
+    [m_view _simulateMouseMove:event];
 }
 
 void PlatformWebView::simulateButtonClick(WKEventMouseButton button, unsigned x, unsigned y, WKEventModifiers modifiers)

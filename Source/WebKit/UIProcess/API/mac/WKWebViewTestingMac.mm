@@ -121,6 +121,11 @@
     return nil;
 }
 
+- (void)_simulateMouseMove:(NSEvent *)event
+{
+    return _impl->mouseMoved(event);
+}
+
 @end
 
 #endif // PLATFORM(MAC)
