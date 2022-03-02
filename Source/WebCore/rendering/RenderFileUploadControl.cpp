@@ -257,7 +257,8 @@ String RenderFileUploadControl::buttonValue()
 String RenderFileUploadControl::fileTextValue() const
 {
     auto& input = inputElement();
-    ASSERT(inputElement().files());
+    if (!input.files())
+        return { };
     if (input.files()->length() && !input.displayString().isEmpty())
         return StringTruncator::rightTruncate(input.displayString(), maxFilenameWidth(), style().fontCascade());
     return theme().fileListNameForWidth(input.files(), style().fontCascade(), maxFilenameWidth(), input.multiple());

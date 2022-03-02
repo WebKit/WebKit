@@ -1,3 +1,21 @@
+2022-03-02  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Handle null FileList in RenderFileUploadControl::fileTextValue()
+        https://bugs.webkit.org/show_bug.cgi?id=237349
+
+        Reviewed by Chris Fleizach.
+
+        In rare circumstances, it's possible for the FileList associated
+        with RenderFileUploadControl::inputElement (HTMLInputElement::files())
+        to be null. This causes a crash in RenderFileUploadControl::fileTextValue().
+
+        In this patch, we avoid this crash by handling a null `FileList`
+        and returning a null `String`.
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::fileTextValue const):
+        Handle null `input.files()` and return a null `String` rather than `ASSERT`ing.
+
 2022-03-02  Antoine Quint  <graouts@webkit.org>
 
         Outline-width with transition don't animate correctly
