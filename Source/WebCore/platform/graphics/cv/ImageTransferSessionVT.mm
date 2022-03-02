@@ -30,7 +30,6 @@
 #import "GraphicsContextCG.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
-#import "RemoteVideoSample.h"
 #import <CoreMedia/CMFormatDescription.h>
 #import <CoreMedia/CMSampleBuffer.h>
 
@@ -270,13 +269,6 @@ RefPtr<MediaSample> ImageTransferSessionVT::convertMediaSample(MediaSample& samp
 }
 
 #if !PLATFORM(MACCATALYST)
-#if ENABLE(MEDIA_STREAM)
-RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(const RemoteVideoSample& remoteSample)
-{
-    return createMediaSample(remoteSample.surface(), remoteSample.time(), remoteSample.size(), remoteSample.rotation(), remoteSample.mirrored());
-}
-#endif
-
 RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(IOSurfaceRef surface, const MediaTime& sampleTime, const IntSize& size, MediaSample::VideoRotation rotation, bool mirrored)
 {
     auto sampleBuffer = createCMSampleBuffer(surface, sampleTime, size);

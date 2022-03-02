@@ -117,7 +117,6 @@ private:
 
     private:
         Source m_source;
-        std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
     };
 
     bool m_isRegisteredToParentProcessConnection { false };

@@ -38,7 +38,6 @@
 #include "SampleBufferDisplayLayerManager.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
-#include <WebCore/RemoteVideoSample.h>
 
 namespace WebKit {
 using namespace WebCore;

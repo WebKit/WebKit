@@ -34,7 +34,6 @@
 #include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/LocalSampleBufferDisplayLayer.h>
 #include <WebCore/MediaSampleAVFObjC.h>
-#include <WebCore/RemoteVideoSample.h>
 
 namespace WebKit {
 

@@ -38,7 +38,6 @@
 
 namespace WebCore {
 class CAAudioStreamDescription;
-class RemoteVideoSample;
 }
 
 namespace WebKit {

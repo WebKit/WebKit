@@ -41,7 +41,6 @@ namespace WebCore {
 class CAAudioStreamDescription;
 class ImageTransferSessionVT;
 struct MediaConstraints;
-class RemoteVideoSample;
 }
 
 namespace WebKit {

@@ -34,7 +34,6 @@
 #include "SharedRingBufferStorage.h"
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/MediaSampleAVFObjC.h>
-#include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/CompletionHandler.h>
 

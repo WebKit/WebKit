@@ -44,7 +44,6 @@ class Decoder;
 
 namespace WebCore {
 class CARingBuffer;
-class RemoteVideoSample;
 class WebAudioBufferList;
 struct MediaRecorderPrivateOptions;
 }

@@ -32,7 +32,8 @@
 #include "RemoteVideoFrameProxy.h"
 #include "SharedRingBufferStorage.h"
 #include "WebProcess.h"
-#include <WebCore/ImageTransferSessionVT.h>
+#include <WebCore/CVUtilities.h>
+#include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
 
@@ -259,20 +260,19 @@ RemoteCaptureSampleManager::RemoteVideo::RemoteVideo(Source&& source)
 
 void RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable(RemoteVideoSample&& remoteSample, VideoSampleMetadata metadata)
 {
-    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != remoteSample.videoFormat())
-        m_imageTransferSession = ImageTransferSessionVT::create(remoteSample.videoFormat());
-
-    if (!m_imageTransferSession) {
+    auto pixelBuffer = createCVPixelBuffer(remoteSample.surface()).value_or(nullptr);
+    if (!pixelBuffer) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    auto sampleRef = m_imageTransferSession->createMediaSample(remoteSample);
-    if (!sampleRef) {
+    auto videoFrame = MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), remoteSample.rotation(), remoteSample.mirrored(), remoteSample.time());
+    if (!videoFrame) {
         ASSERT_NOT_REACHED();
         return;
     }
-    videoFrameAvailable(sampleRef.releaseNonNull(), remoteSample.size(), metadata);
+
+    videoFrameAvailable(videoFrame.releaseNonNull(), remoteSample.size(), metadata);
 }
 
 void RemoteCaptureSampleManager::RemoteVideo::videoFrameAvailable(Ref<MediaSample>&& sample, IntSize size, VideoSampleMetadata metadata)

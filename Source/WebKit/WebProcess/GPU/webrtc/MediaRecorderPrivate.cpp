@@ -39,7 +39,6 @@
 #include <WebCore/MediaStreamPrivate.h>
 #include <WebCore/MediaStreamTrackPrivate.h>
 #include <WebCore/RealtimeIncomingVideoSourceCocoa.h>
-#include <WebCore/RemoteVideoSample.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
 

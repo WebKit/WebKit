@@ -31,7 +31,6 @@
 #include "Logging.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceSettings.h"
-#include "RemoteVideoSample.h"
 #include <wtf/JSONValues.h>
 
 namespace WebCore {

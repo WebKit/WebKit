@@ -1,3 +1,27 @@
+2022-03-01  Youenn Fablet  <youenn@apple.com>
+
+        Remove RemoteVideoSample support from ImageTransferSessionVT
+        https://bugs.webkit.org/show_bug.cgi?id=237318
+
+        Reviewed by Eric Carlson.
+
+        Remove no longer needed forward declaration or include of RemoteVideoSample.
+        Remove ImageTransferSessionVT::createMediaSample(RemoteVideoSample&&) and replace it with direct use of MediaSampleAVFObjC.
+
+        No change of behavior.
+
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        * GPUProcess/webrtc/RemoteMediaRecorder.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.h:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.h:
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+
 2022-03-01  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r290588.

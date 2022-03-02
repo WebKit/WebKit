@@ -64,7 +64,6 @@ class MediaStreamPrivate;
 class OrientationNotifier;
 class PlatformAudioData;
 class RealtimeMediaSourceSettings;
-class RemoteVideoSample;
 
 struct CaptureSourceOrError;
 

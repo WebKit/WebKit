@@ -40,7 +40,6 @@
 namespace WebCore {
 class ImageTransferSessionVT;
 class LocalSampleBufferDisplayLayer;
-class RemoteVideoSample;
 };
 
 namespace WebKit {
