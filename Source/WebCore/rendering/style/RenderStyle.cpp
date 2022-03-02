@@ -640,8 +640,12 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
         return visualOverflowForDecorations(*this, { }) != visualOverflowForDecorations(other, { });
     }
 
-    if (hasOutlineInVisualOverflow() != other.hasOutlineInVisualOverflow())
+    auto hasOutlineInVisualOverflow = this->hasOutlineInVisualOverflow();
+    auto otherHasOutlineInVisualOverflow = other.hasOutlineInVisualOverflow();
+    if (hasOutlineInVisualOverflow != otherHasOutlineInVisualOverflow
+        || (hasOutlineInVisualOverflow && otherHasOutlineInVisualOverflow && outlineSize() != other.outlineSize()))
         return true;
+
     return false;
 }
 

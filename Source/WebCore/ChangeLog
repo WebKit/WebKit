@@ -1,3 +1,19 @@
+2022-03-02  Antoine Quint  <graouts@webkit.org>
+
+        Outline-width with transition don't animate correctly
+        https://bugs.webkit.org/show_bug.cgi?id=173708
+
+        Reviewed by Antti Koivisto.
+
+        Account for a change in outline size when checking whether a style change affects
+        visual overflow.
+
+        No new test for this, I'm not sure how to write one since the issue is failing to
+        repaint during an animation but WKTR seems to force a repaint for reftests.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeAffectsVisualOverflow const):
+
 2022-03-02  Alan Bujtas  <zalan@apple.com>
 
         [RTL] Image alt text has incorrect bidi reordering

@@ -1,3 +1,15 @@
+2022-03-02  Antoine Quint  <graouts@webkit.org>
+
+        Outline-width with transition don't animate correctly
+        https://bugs.webkit.org/show_bug.cgi?id=173708
+
+        Reviewed by Antti Koivisto.
+
+        Add a repaint test that checks that the outline is accounted for during the transition.
+
+        * fast/repaint/outline-transition-expected.txt: Added.
+        * fast/repaint/outline-transition.html: Added.
+
 2022-03-02  Alan Bujtas  <zalan@apple.com>
 
         [RTL] Image alt text has incorrect bidi reordering
