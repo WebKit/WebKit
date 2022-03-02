@@ -202,7 +202,7 @@ RefPtr<MediaSample> SharedVideoFrameReader::read(SharedVideoFrame&& sharedVideoF
     if (!pixelBuffer)
         return nullptr;
 
-    return MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), sharedVideoFrame.rotation, sharedVideoFrame.mirrored, sharedVideoFrame.time);
+    return MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(pixelBuffer), sharedVideoFrame.rotation, sharedVideoFrame.mirrored, sharedVideoFrame.time);
 }
 
 CVPixelBufferPoolRef SharedVideoFrameReader::pixelBufferPool(const SharedVideoFrameInfo& info)

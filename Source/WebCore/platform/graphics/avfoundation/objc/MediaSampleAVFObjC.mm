@@ -75,7 +75,7 @@ MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, VideoRotation r
 
 MediaSampleAVFObjC::~MediaSampleAVFObjC() = default;
 
-RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(PixelBuffer&& pixelBuffer)
+RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createFromPixelBuffer(PixelBuffer&& pixelBuffer)
 {
     auto size = pixelBuffer.size();
     auto width = size.width();
@@ -98,10 +98,10 @@ RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(PixelBuffer&& p
         return nullptr;
     }
     ASSERT_UNUSED(status, !status);
-    return createImageSample(WTFMove(cvPixelBuffer), VideoRotation::None, false);
+    return createFromPixelBuffer(WTFMove(cvPixelBuffer), VideoRotation::None, false);
 }
 
-RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(RetainPtr<CVPixelBufferRef>&& pixelBuffer, VideoRotation rotation, bool mirrored, MediaTime presentationTime, MediaTime decodingTime)
+RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createFromPixelBuffer(RetainPtr<CVPixelBufferRef>&& pixelBuffer, VideoRotation rotation, bool mirrored, MediaTime presentationTime, MediaTime decodingTime)
 {
     CMVideoFormatDescriptionRef formatDescriptionRaw = nullptr;
     auto status = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer.get(), &formatDescriptionRaw);

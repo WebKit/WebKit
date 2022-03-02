@@ -172,7 +172,7 @@ RefPtr<MediaSample> RealtimeVideoSource::adaptVideoSample(MediaSample& sample)
 {
     if (sample.platformSample().type != PlatformSample::CMSampleBufferType) {
         // FIXME: Support more efficiently downsampling of remote video frames by downsampling in GPUProcess.
-        auto newSample = MediaSampleAVFObjC::createImageSample(sample.pixelBuffer(), sample.videoRotation(), sample.videoMirrored(), sample.presentationTime(), { });
+        auto newSample = MediaSampleAVFObjC::createFromPixelBuffer(sample.pixelBuffer(), sample.videoRotation(), sample.videoMirrored(), sample.presentationTime(), { });
         if (!newSample)
             return nullptr;
         return adaptVideoSample(*newSample);

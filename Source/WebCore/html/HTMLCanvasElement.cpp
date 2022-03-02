@@ -798,7 +798,7 @@ RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
         return nullptr;
 
 #if PLATFORM(COCOA)
-    return MediaSampleAVFObjC::createImageSample(WTFMove(*pixelBuffer));
+    return MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(*pixelBuffer));
 #elif USE(GSTREAMER)
     return MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer));
 #endif

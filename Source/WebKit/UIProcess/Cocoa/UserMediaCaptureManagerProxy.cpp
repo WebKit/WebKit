@@ -190,7 +190,7 @@ private:
     {
         if (m_shouldApplyRotation && sample.videoRotation() != MediaSample::VideoRotation::None) {
             auto pixelBuffer = rotatePixelBuffer(sample);
-            return MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), MediaSample::VideoRotation::None, sample.videoMirrored(), sample.presentationTime(), sample.decodeTime());
+            return MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(pixelBuffer), MediaSample::VideoRotation::None, sample.videoMirrored(), sample.presentationTime(), sample.decodeTime());
         }
         return &sample;
     }

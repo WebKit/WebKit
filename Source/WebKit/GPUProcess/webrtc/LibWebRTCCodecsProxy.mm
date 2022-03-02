@@ -98,7 +98,7 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(RTCDecoderIdentifier identifier
     if (useRemoteFrames)
         videoFrameObjectHeap = m_videoFrameObjectHeap.ptr();
     return [identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap)] (CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) mutable {
-        auto sample = WebCore::MediaSampleAVFObjC::createImageSample(pixelBuffer, WebCore::MediaSample::VideoRotation::None, false, MediaTime(timeStampNs, 1), { });
+        auto sample = WebCore::MediaSampleAVFObjC::createFromPixelBuffer(pixelBuffer, WebCore::MediaSample::VideoRotation::None, false, MediaTime(timeStampNs, 1), { });
         if (!sample)
             return;
         if (resourceOwner)

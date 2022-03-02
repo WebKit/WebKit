@@ -768,7 +768,7 @@ RefPtr<MediaSample> GraphicsContextGLCocoa::paintCompositedResultsToMediaSample(
         return nullptr;
     if (m_resourceOwner)
         setOwnershipIdentityForCVPixelBuffer(mediaSamplePixelBuffer.get(), m_resourceOwner);
-    return MediaSampleAVFObjC::createImageSample(WTFMove(mediaSamplePixelBuffer), MediaSampleAVFObjC::VideoRotation::None, false);
+    return MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(mediaSamplePixelBuffer), MediaSampleAVFObjC::VideoRotation::None, false);
 }
 #endif
 

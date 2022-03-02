@@ -266,7 +266,7 @@ void RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable(RemoteVideoSa
         return;
     }
 
-    auto videoFrame = MediaSampleAVFObjC::createImageSample(WTFMove(pixelBuffer), remoteSample.rotation(), remoteSample.mirrored(), remoteSample.time());
+    auto videoFrame = MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(pixelBuffer), remoteSample.rotation(), remoteSample.mirrored(), remoteSample.time());
     if (!videoFrame) {
         ASSERT_NOT_REACHED();
         return;
