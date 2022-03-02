@@ -1600,8 +1600,6 @@ webkit.org/b/168427 fast/scrolling/rtl-scrollbars-overflow-contents.html [ Image
 
 webkit.org/b/168552 fast/text/hyphenate-locale.html [ Failure ]
 
-webkit.org/b/171598 accessibility/gtk/menu-list-unfocused-notifications.html [ Failure ]
-
 webkit.org/b/172270 fast/text/font-interstitial-invisible-width-while-loading.html [ Failure ]
 
 webkit.org/b/172271 fast/text/softbank-emoji.html [ Failure ]

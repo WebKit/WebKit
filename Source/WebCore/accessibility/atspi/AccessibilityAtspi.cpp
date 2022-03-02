@@ -826,6 +826,7 @@ PlatformRoleMap createPlatformRoleMap()
 #if ENABLE(DEVELOPER_MODE)
 void AccessibilityAtspi::addNotificationObserver(void* context, NotificationObserver&& observer)
 {
+    AXObjectCache::enableAccessibility();
     m_notificationObservers.add(context, WTFMove(observer));
 }
 
