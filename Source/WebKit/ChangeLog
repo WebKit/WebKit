@@ -1,3 +1,14 @@
+2022-03-02  Youenn Fablet  <youenn@apple.com>
+
+        Annotate LibWebRTC with thread safety macros
+        https://bugs.webkit.org/show_bug.cgi?id=237321
+        <rdar://problem/89625577>
+
+        Unreviewed, addressing post commit style change.
+        No change of behavior.
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+
 2022-03-02  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI _WKDataTask
