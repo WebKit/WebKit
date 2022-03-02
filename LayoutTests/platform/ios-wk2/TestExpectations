@@ -2214,3 +2214,7 @@ webkit.org/b/234536 webgl/max-active-contexts-oldest-context-lost.html
 webkit.org/b/234536 webxr/high-performance.html
 webkit.org/b/234536 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Timeout ]
 webkit.org/b/234536 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout ]
+
+# webkit.org/b/237346 REGRESSION(r290539): [ iOS ] 2X http/wpt/webauthn/public-key-credential-create-failure-local (layout-tests) are constant text failures
+http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Pass Failure ]
+http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html [ Pass Failure ]

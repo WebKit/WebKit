@@ -1,3 +1,12 @@
+2022-03-02  Robert Jenner  <Jenner@apple.com>
+
+        REGRESSION(r290539): [ iOS ] 2X http/wpt/webauthn/public-key-credential-create-failure-local (layout-tests) are constant text failures
+        https://bugs.webkit.org/show_bug.cgi?id=237346
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Copy context menu action should be titled "Copy Link" when long pressing a non-image link
