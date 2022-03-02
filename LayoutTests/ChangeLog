@@ -1,3 +1,12 @@
+2022-03-02  Matteo Flores  <matteo_flores@apple.com>
+
+        [ iOS Debug ] editing/async-clipboard/* 20 tests are flaky timeouts on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=237372
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-03-02  Robert Jenner  <Jenner@apple.com>
 
         REGRESSION(r290539): [ iOS ] 2X http/wpt/webauthn/public-key-credential-create-failure-local (layout-tests) are constant text failures
