@@ -30,6 +30,10 @@
 #include "IPCSemaphore.h"
 #include "TestWithSemaphoreMessages.h"
 
+#if ENABLE(IPC_TESTING_API)
+#include "JSIPCBinding.h"
+#endif
+
 namespace WebKit {
 
 void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -63,3 +67,21 @@ bool TestWithSemaphore::didReceiveSyncMessage(IPC::Connection& connection, IPC::
 }
 
 } // namespace WebKit
+
+#if ENABLE(IPC_TESTING_API)
+
+namespace IPC {
+
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithSemaphore_SendSemaphore>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithSemaphore::SendSemaphore::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithSemaphore_ReceiveSemaphore>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithSemaphore::ReceiveSemaphore::Arguments>(globalObject, decoder);
+}
+
+}
+
+#endif
+

@@ -1,3 +1,149 @@
+2022-03-02  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IPC_TESTING_API MessageArgumentDescriptions.cpp is slow to compile
+        https://bugs.webkit.org/show_bug.cgi?id=237195
+
+        Reviewed by Antti Koivisto.
+        Reland after revert:
+        Add missing includes to JSC inlines, needed for ASAN build. Compile
+        failure was hidden my unified build.
+
+        IPC testing API needs convert message data buffer, IPC::Decoder, to
+        JSValue. This is a run-time operation.
+        IPC message decoding is based on templates, a compile time operation.
+        IPC generator generates MessageArgumentDescriptions.cpp with
+        a big switch. The switch has a case for each message name. The case would
+        call templated jsValueForDecodedArguments<Arguments>, where the Arguments
+        is the type tuple for the message arguments.
+
+        The above would mean that MessageArgumentDescriptions would need to
+        include all the headers for all the messages in WebKit in order
+        to populate the Arguments tuple for particular message.
+        This would cause MessageArgumentDescriptions to be slow to compile because
+        it would need all the headers in Source/WebKit related to message parameter types.
+
+        This would show up as slow compiles that would consume much memory (5-6gb) and do a
+        lot of work.
+
+        It would also have to compile the MessageArgumentDescriptions each time
+        any of the headers were touched.
+
+        Change this so that the big switch calls a declared but not defined
+        template jsValueForDecodedMessage<MessageName> for each MessageName case in the
+        switch.
+
+        Instantiate the template for each message in the *MessageReceiver.cpp file
+        that each message receiver has. This file already has to include all the
+        headers used for that particular message receiver. These files are small and compile
+        fast.
+
+        After this change MessageArgumentDescriptions.cpp only includes the message
+        definition headers, does not use much more than the standard 1gb+ of memory
+        while compiling and is relatively fast to compile. Also if any of the dependent
+        headers are touched, only the corresponding small *MessageReceiver.cpp files are compiled.
+
+        This change is needed for further improve the JS testing API implementation.
+        Adding new operations that employ the same strategy, eg. switch and a complex
+        template instantiation, would possibly just make the matter worse. New operations
+        that are needed are message sends, which use templates similarly to the message
+        decode case that is implement here.
+
+        This change regenerates the checked-in test content that can be used to review
+        what kind of changes the real MessageArgumentDescriptions.cpp and MessageReceiver.cpps
+        get.
+
+        * Platform/IPC/JSIPCBinding.h:
+        * Scripts/webkit/messages.py:
+        (generate_message_handler):
+        (generate_js_value_conversion_function):
+        (generate_message_argument_description_implementation):
+        * Scripts/webkit/tests/MessageArgumentDescriptions.cpp:
+        (IPC::jsValueForArguments):
+        (IPC::jsValueForReplyArguments):
+        * Scripts/webkit/tests/TestWithCVPixelBufferMessageReceiver.cpp:
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>):
+        * Scripts/webkit/tests/TestWithIfMessageMessageReceiver.cpp:
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithIfMessage_LoadURL>):
+        * Scripts/webkit/tests/TestWithImageDataMessageReceiver.cpp:
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithImageData_SendImageData>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithImageData_ReceiveImageData>):
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessageReceiver.cpp:
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadURL>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadSomething>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TouchEvent>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_AddEvent>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_LoadSomethingElse>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_Close>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_PreferencesDidChange>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SendDoubleAndFloat>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SendInts>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_CreatePlugin>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_RunJavaScriptAlert>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPlugins>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPluginProcessConnection>):
+        (IPC::jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_GetPluginProcessConnection>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TestMultipleAttributes>):
+        (IPC::jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_TestMultipleAttributes>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TestParameterAttributes>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_TemplateTest>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_SetVideoLayerID>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_InterpretKeyEvent>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_DeprecatedOperation>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_ExperimentalOperation>):
+        * Scripts/webkit/tests/TestWithSemaphoreMessageReceiver.cpp:
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithSemaphore_SendSemaphore>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithSemaphore_ReceiveSemaphore>):
+        * Scripts/webkit/tests/TestWithStreamBufferMessageReceiver.cpp:
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithStreamBuffer_SendStreamBuffer>):
+        * Scripts/webkit/tests/TestWithStreamMessageReceiver.cpp:
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithStream_SendString>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithStream_SendStringSynchronized>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithStream_SendMachSendRight>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithStream_ReceiveMachSendRight>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithStream_SendAndReceiveMachSendRight>):
+        * Scripts/webkit/tests/TestWithSuperclassMessageReceiver.cpp:
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithSuperclass_LoadURL>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessage>):
+        (IPC::jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessage>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments>):
+        (IPC::jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments>):
+        (IPC::jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestAsyncMessageWithConnection>):
+        (IPC::jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestAsyncMessageWithConnection>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestSyncMessage>):
+        (IPC::jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestSyncMessage>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithSuperclass_TestSynchronousMessage>):
+        (IPC::jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestSynchronousMessage>):
+        * Scripts/webkit/tests/TestWithoutAttributesMessageReceiver.cpp:
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_LoadURL>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_LoadSomething>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TouchEvent>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_AddEvent>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_LoadSomethingElse>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_DidReceivePolicyDecision>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_Close>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_PreferencesDidChange>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_SendDoubleAndFloat>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_SendInts>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_CreatePlugin>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_RunJavaScriptAlert>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_GetPlugins>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_GetPluginProcessConnection>):
+        (IPC::jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_GetPluginProcessConnection>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TestMultipleAttributes>):
+        (IPC::jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_TestMultipleAttributes>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TestParameterAttributes>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TemplateTest>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_SetVideoLayerID>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_DidCreateWebProcessConnection>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_InterpretKeyEvent>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_DeprecatedOperation>):
+        (IPC::jsValueForDecodedMessage<MessageName::TestWithoutAttributes_ExperimentalOperation>):
+
 2022-03-02  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS][WP] Stop generating certain sandbox violation reports

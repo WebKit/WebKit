@@ -59,6 +59,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(IPC_TESTING_API)
+#include "JSIPCBinding.h"
+#endif
+
 namespace Messages {
 
 namespace TestWithoutAttributes {
@@ -167,5 +171,125 @@ bool TestWithoutAttributes::didReceiveSyncMessage(IPC::Connection& connection, I
 }
 
 } // namespace WebKit
+
+#if ENABLE(IPC_TESTING_API)
+
+namespace IPC {
+
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_LoadURL>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::LoadURL::Arguments>(globalObject, decoder);
+}
+#if ENABLE(TOUCH_EVENTS)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_LoadSomething>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::LoadSomething::Arguments>(globalObject, decoder);
+}
+#endif
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TouchEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::TouchEvent::Arguments>(globalObject, decoder);
+}
+#endif
+#if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_AddEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::AddEvent::Arguments>(globalObject, decoder);
+}
+#endif
+#if ENABLE(TOUCH_EVENTS)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_LoadSomethingElse>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::LoadSomethingElse::Arguments>(globalObject, decoder);
+}
+#endif
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_DidReceivePolicyDecision>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::DidReceivePolicyDecision::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_Close>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::Close::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_PreferencesDidChange>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::PreferencesDidChange::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_SendDoubleAndFloat>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::SendDoubleAndFloat::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_SendInts>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::SendInts::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_CreatePlugin>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::CreatePlugin::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_RunJavaScriptAlert>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::RunJavaScriptAlert::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_GetPlugins>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::GetPlugins::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_GetPluginProcessConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::GetPluginProcessConnection::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_GetPluginProcessConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::GetPluginProcessConnection::ReplyArguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TestMultipleAttributes>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::TestMultipleAttributes::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_TestMultipleAttributes>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::TestMultipleAttributes::ReplyArguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TestParameterAttributes>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::TestParameterAttributes::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_TemplateTest>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::TemplateTest::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_SetVideoLayerID>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::SetVideoLayerID::Arguments>(globalObject, decoder);
+}
+#if PLATFORM(MAC)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_DidCreateWebProcessConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::DidCreateWebProcessConnection::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_InterpretKeyEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::InterpretKeyEvent::Arguments>(globalObject, decoder);
+}
+#endif
+#if ENABLE(DEPRECATED_FEATURE)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_DeprecatedOperation>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::DeprecatedOperation::Arguments>(globalObject, decoder);
+}
+#endif
+#if ENABLE(FEATURE_FOR_TESTING)
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_ExperimentalOperation>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::ExperimentalOperation::Arguments>(globalObject, decoder);
+}
+#endif
+
+}
+
+#endif
+
 
 #endif // (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
