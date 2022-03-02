@@ -346,6 +346,9 @@
 /* Copy Link context menu item */
 "Copy Link" = "Copy Link";
 
+/* Title for Copy Link button */
+"Copy Link (ActionSheet)" = "Copy Link";
+
 /* Copy Video Address Location context menu item */
 "Copy Video Address" = "Copy Video Address";
 

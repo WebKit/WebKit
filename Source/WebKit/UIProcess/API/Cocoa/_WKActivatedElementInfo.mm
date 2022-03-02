@@ -49,6 +49,7 @@
     RetainPtr<NSDictionary> _userInfo;
 #endif
     BOOL _animatedImage;
+    BOOL _isImage;
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -81,7 +82,7 @@
     _image = information.image;
     _ID = information.idAttribute;
     _animatedImage = information.isAnimatedImage;
-
+    _isImage = information.isImage;
     _userInfo = userInfo;
     
     return self;
@@ -155,6 +156,11 @@
     return _userInfo.get();
 }
 #endif
+
+- (BOOL)_isImage
+{
+    return _isImage;
+}
 
 - (CocoaImage *)image
 {

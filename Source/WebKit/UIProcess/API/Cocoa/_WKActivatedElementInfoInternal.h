@@ -45,5 +45,6 @@ namespace WebKit {
 
 @property (nonatomic, readonly) NSString *imageMIMEType;
 @property (nonatomic, readonly) WebCore::IntPoint _interactionLocation;
+@property (nonatomic, readonly) BOOL _isImage;
 
 @end

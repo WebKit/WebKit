@@ -1,3 +1,70 @@
+2022-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Copy context menu action should be titled "Copy Link" when long pressing a non-image link
+        https://bugs.webkit.org/show_bug.cgi?id=237367
+        rdar://77397886
+
+        Reviewed by Devin Rousso.
+
+        Change the current title of the "Copy" context menu action to "Copy Link", when showing the context menu for a
+        non-image link. See below for more details.
+
+        Tests:  fast/events/touch/ios/long-press-on-link.html
+                fast/events/touch/ios/long-press-on-image.html
+
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        (-[_WKActivatedElementInfo _initWithInteractionInformationAtPosition:userInfo:]):
+        (-[_WKActivatedElementInfo _isImage]):
+
+        Add a helper method to return whether or not the activated element represents an image. Crucially, this will
+        return YES in the case of image links, even though the activated element type is _WKActivatedElementTypeLink.
+        We consult this below to still show "Copy" in the case of image links, instead of "Copy Link".
+
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h:
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction _elementActionWithType:customTitle:assistant:]):
+        (+[_WKElementAction _elementActionWithType:info:assistant:]):
+
+        Add a `_WKActivatedElementInfo` argument to `-_elementActionWithType:assistant:`, and use this to set a custom
+        title for the menu action in the case of the Copy action for non-image links.
+
+        (+[_WKElementAction _elementActionWithType:assistant:]): Deleted.
+        * UIProcess/API/Cocoa/_WKElementActionInternal.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant _appendOpenActionsForURL:actions:elementInfo:]):
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+
+        Additionally use `-_isImage` instead of `-image` here when supplying several default Visual Look Up-related
+        items; `-image` is misleading here, since it returns a non-null result even in the case of non-image elements,
+        if a node snapshot was requested by the client. It's also a bit wasteful, since it means we currently create an
+        image from the bitmap data while performing this check, when we really only need to know whether the hit-tested
+        element was an image element.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _simulateElementAction:atLocation:]):
+        (-[WKContentView _contentsOfUserInterfaceItem:]):
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+
+        Include the titles of all visible menu items as an additional argument in the "contents of user interface item"
+        dictionary, in the case of context menus. To do this, we take advantage of the `-updateVisibleMenuWithBlock:`
+        API, which passes the currently visible `UIMenu`, to collect the titles of each visible menu item, and then
+        simply return the visible menu as-is.
+
+        See adjusted layout tests for more information.
+
+        (-[WKContentView contextMenuInteraction:willDisplayMenuForConfiguration:animator:]):
+
+        Move the call to `-_didShowContextMenu` to the animation completion block, such that we invoke the testing
+        completion handler for `didShowContextMenuCallback` after the menu is actually visible. Importantly, this allows
+        us to query the list of visible menu item titles above, by calling `-updateVisibleMenuWithBlock:`.
+
+        * UIProcess/mac/DisplayCaptureSessionManager.mm:
+        (WebKit::alertForWindowSelection):
+
+        Drive-by fix: add quotes around the description argument to the UI string macro to fix an error when running
+        the `update-webkit-localizable-strings` script.
+
 2022-03-02  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Ensure presenter gets dismissed on iOS

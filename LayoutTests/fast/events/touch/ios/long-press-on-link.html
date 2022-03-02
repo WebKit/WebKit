@@ -25,11 +25,13 @@
         const targetRect = document.getElementById("targetRect").getBoundingClientRect();
         const pressPointX = targetRect.x + targetRect.width / 2;
         const pressPointY = targetRect.y + targetRect.height / 2;
-        const results = (await UIHelper.longPressAndGetContextMenuContentAt(pressPointX, pressPointY)).contextMenu;
+        results = (await UIHelper.longPressAndGetContextMenuContentAt(pressPointX, pressPointY)).contextMenu;
         if (results.url == "http://localhost:54321/" && results.isLink)
             testPassed("correct page loaded in preview");
         else
             testFailed("did not load correct page");
+
+        shouldBeTrue("results.items.includes('Copy Link')");
 
         await liftUpAtPoint(pressPointX, pressPointY);
         await UIHelper.activateAt(0, 0);

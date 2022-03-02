@@ -25,11 +25,13 @@
         const targetRect = document.getElementById("target").getBoundingClientRect();
         const pressPointX = targetRect.x + targetRect.width / 2;
         const pressPointY = targetRect.y + targetRect.height / 2;
-        const results = (await UIHelper.longPressAndGetContextMenuContentAt(pressPointX, pressPointY)).contextMenu;
+        results = (await UIHelper.longPressAndGetContextMenuContentAt(pressPointX, pressPointY)).contextMenu;
         if (results.imageURL.includes("dice.png") && results.isImage && !results.isLink)
             testPassed("context menu triggered on image");
         else
             testFailed("context menu was not triggered on image");
+
+        shouldBeTrue("results.items.includes('Copy')");
 
         await liftUpAtPoint(pressPointX, pressPointY);
         await UIHelper.activateAt(0, 0);

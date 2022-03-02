@@ -74,7 +74,7 @@ static void alertForWindowSelection(WebPageProxy& page, const WebCore::SecurityO
     });
 
     auto alert = adoptNS([[NSAlert alloc] init]);
-    [alert setMessageText:WEB_UI_NSSTRING(@"Choose a window to share", Message for window sharing prompt)];
+    [alert setMessageText:WEB_UI_NSSTRING(@"Choose a window to share", "Message for window sharing prompt")];
 
     auto popupButton = adoptNS([[NSPopUpButton alloc] initWithFrame:NSMakeRect(10, 0, 290, 36) pullsDown:NO]);
     auto menu = [popupButton menu];

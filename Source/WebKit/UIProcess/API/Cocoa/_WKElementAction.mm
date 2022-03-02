@@ -128,7 +128,7 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     WKElementActionHandlerInternal handler = nil;
     switch (type) {
     case _WKElementActionTypeCopy:
-        title = WEB_UI_STRING_KEY("Copy", "Copy (ActionSheet)", "Title for Copy Link or Image action button");
+        title = WEB_UI_STRING_KEY("Copy", "Copy (ActionSheet)", "Title for Copy Link and Image or Copy Image action button");
         handler = ^(WKActionSheetAssistant *assistant, _WKActivatedElementInfo *actionInfo) {
             [assistant handleElementActionWithType:type element:actionInfo needsInteraction:YES];
         };
@@ -194,9 +194,12 @@ static void addToReadingList(NSURL *targetURL, NSString *title)
     return adoptNS([[self alloc] _initWithTitle:(customTitle ? customTitle : title) actionHandler:handler type:type assistant:assistant]).autorelease();
 }
 
-+ (instancetype)_elementActionWithType:(_WKElementActionType)type assistant:(WKActionSheetAssistant *)assistant
++ (instancetype)_elementActionWithType:(_WKElementActionType)type info:(_WKActivatedElementInfo *)info assistant:(WKActionSheetAssistant *)assistant
 {
-    return [self _elementActionWithType:type customTitle:nil assistant:assistant];
+    NSString *customTitle = nil;
+    if (type == _WKElementActionTypeCopy && info.type == _WKActivatedElementTypeLink && !info._isImage)
+        customTitle = WEB_UI_STRING_KEY("Copy Link", "Copy Link (ActionSheet)", "Title for Copy Link button");
+    return [self _elementActionWithType:type customTitle:customTitle assistant:assistant];
 }
 
 + (instancetype)elementActionWithType:(_WKElementActionType)type customTitle:(NSString *)customTitle

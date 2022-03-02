@@ -1,3 +1,19 @@
+2022-03-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Copy context menu action should be titled "Copy Link" when long pressing a non-image link
+        https://bugs.webkit.org/show_bug.cgi?id=237367
+        rdar://77397886
+
+        Reviewed by Devin Rousso.
+
+        Adjust a couple of layout tests to check for items labeled "Copy" (in the case of an image) and "Copy Link" (in
+        the case of a link).
+
+        * fast/events/touch/ios/long-press-on-image-expected.txt:
+        * fast/events/touch/ios/long-press-on-image.html:
+        * fast/events/touch/ios/long-press-on-link-expected.txt:
+        * fast/events/touch/ios/long-press-on-link.html:
+
 2022-03-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] The behavior of navigator-language-ru changed in Monterey / iOS 15

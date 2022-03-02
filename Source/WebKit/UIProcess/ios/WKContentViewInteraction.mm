@@ -11004,8 +11004,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     _layerTreeTransactionIdAtLastInteractionStart = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).lastCommittedLayerTreeTransactionID();
     [self doAfterPositionInformationUpdate:[actionType, self, protectedSelf = retainPtr(self)] (WebKit::InteractionInformationAtPosition info) {
-        _WKElementAction *action = [_WKElementAction _elementActionWithType:actionType assistant:_actionSheetAssistant.get()];
         _WKActivatedElementInfo *elementInfo = [_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:info userInfo:nil];
+        _WKElementAction *action = [_WKElementAction _elementActionWithType:actionType info:elementInfo assistant:_actionSheetAssistant.get()];
         [action runActionWithElementInfo:elementInfo];
     } forRequest:WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(location))];
 }
@@ -11111,12 +11111,19 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 #if HAVE(LINK_PREVIEW)
     if ([userInterfaceItem isEqualToString:@"contextMenu"]) {
+        auto itemTitles = adoptNS([NSMutableArray<NSString *> new]);
+        [_contextMenuInteraction updateVisibleMenuWithBlock:[&itemTitles](UIMenu *menu) -> UIMenu * {
+            for (UIMenuElement *child in menu.children)
+                [itemTitles addObject:child.title];
+            return menu;
+        }];
         if (self._shouldUseContextMenus) {
             return @{ userInterfaceItem: @{
                 @"url": _positionInformation.url.isValid() ? WTF::userVisibleString(_positionInformation.url) : @"",
                 @"isLink": [NSNumber numberWithBool:_positionInformation.isLink],
                 @"isImage": [NSNumber numberWithBool:_positionInformation.isImage],
-                @"imageURL": _positionInformation.imageURL.isValid() ? WTF::userVisibleString(_positionInformation.imageURL) : @""
+                @"imageURL": _positionInformation.imageURL.isValid() ? WTF::userVisibleString(_positionInformation.imageURL) : @"",
+                @"items": itemTitles.get()
             } };
         }
         NSString *url = [_previewItemController previewData][UIPreviewDataLink];
@@ -11124,7 +11131,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             @"url": url,
             @"isLink": [NSNumber numberWithBool:_positionInformation.isLink],
             @"isImage": [NSNumber numberWithBool:_positionInformation.isImage],
-            @"imageURL": _positionInformation.imageURL.isValid() ? WTF::userVisibleString(_positionInformation.imageURL) : @""
+            @"imageURL": _positionInformation.imageURL.isValid() ? WTF::userVisibleString(_positionInformation.imageURL) : @"",
+            @"items": itemTitles.get()
         } };
     }
 #endif
@@ -11452,8 +11460,6 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             return;
         }
 
-        [strongSelf->_webView _didShowContextMenu];
-
         strongSelf->_showLinkPreviews = true;
         if (NSNumber *value = [[NSUserDefaults standardUserDefaults] objectForKey:webkitShowLinkPreviewsPreferenceKey])
             strongSelf->_showLinkPreviews = value.boolValue;
@@ -11723,6 +11729,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         if (auto strongSelf = weakSelf.get()) {
             ASSERT_IMPLIES(strongSelf->_isDisplayingContextMenuWithAnimation, [strongSelf->_contextMenuHintContainerView window]);
             strongSelf->_isDisplayingContextMenuWithAnimation = NO;
+            [strongSelf->_webView _didShowContextMenu];
         }
     }];
 
