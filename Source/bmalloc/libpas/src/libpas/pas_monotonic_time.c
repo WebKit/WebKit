@@ -80,6 +80,15 @@ uint64_t pas_get_current_monotonic_time_nanoseconds(void)
     return ts.tv_sec * 1.0e9 + ts.tv_nsec;
 }
 
+#elif PAS_PLATFORM(PLAYSTATION)
+
+uint64_t pas_get_current_monotonic_time_nanoseconds(void)
+{
+    struct timespec ts;
+    clock_gettime_np(CLOCK_MONOTONIC_FAST, &ts);
+    return ts.tv_sec * 1000u * 1000u * 1000u + ts.tv_nsec;
+}
+
 #endif
 
 #endif /* LIBPAS_ENABLED */

@@ -1,3 +1,13 @@
+2022-03-01  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [libpas] Add missing PlayStation implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=237341
+
+        Reviewed by Yusuke Suzuki.
+
+        * libpas/src/libpas/pas_monotonic_time.c:
+        (pas_get_current_monotonic_time_nanoseconds):
+
 2022-02-25  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [libpas] Suppress cast-align warnings
