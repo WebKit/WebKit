@@ -107,7 +107,7 @@ self.addEventListener("push", (event) => {
 static void clearWebsiteDataStore(WKWebsiteDataStore *store)
 {
     __block bool clearedStore = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [store removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         clearedStore = true;
     }];
     TestWebKitAPI::Util::run(&clearedStore);
@@ -323,13 +323,12 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
 
     expectedMessage = "Ready";
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView loadRequest:server.request()];
 
-    TestWebKitAPI::Util::run(&done);
-
-    [webView _close];
-    webView = nullptr;
+    @autoreleasepool {
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+        [webView loadRequest:server.request()];
+        TestWebKitAPI::Util::run(&done);
+    }
 
     [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
     dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);

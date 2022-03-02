@@ -292,7 +292,8 @@ static void pollUntilPCMIsMigrated(WKWebView *webView, MigratingFromResourceLoad
 static NSString *emptyObservationsDBPath()
 {
     NSFileManager *defaultFileManager = NSFileManager.defaultManager;
-    NSURL *itpRootURL = WKWebsiteDataStore.defaultDataStore._configuration._resourceLoadStatisticsDirectory;
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    NSURL *itpRootURL = dataStoreConfiguration.get()._resourceLoadStatisticsDirectory;
     NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"observations.db"];
     [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
@@ -303,7 +304,8 @@ static NSString *emptyObservationsDBPath()
 static NSString *emptyPcmDBPath()
 {
     NSFileManager *defaultFileManager = NSFileManager.defaultManager;
-    NSURL *itpRootURL = WKWebsiteDataStore.defaultDataStore._configuration._resourceLoadStatisticsDirectory;
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    NSURL *itpRootURL = dataStoreConfiguration.get()._resourceLoadStatisticsDirectory;
     NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"pcm.db"];
     [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
@@ -316,7 +318,8 @@ static void cleanUp(RetainPtr<WKWebView> webView)
     static bool isDone = false;
     [[webView.get() configuration].websiteDataStore _closeDatabases:^{
         NSFileManager *defaultFileManager = NSFileManager.defaultManager;
-        NSString *itpRoot = WKWebsiteDataStore.defaultDataStore._configuration._resourceLoadStatisticsDirectory.path;
+        auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+        NSString *itpRoot = dataStoreConfiguration.get()._resourceLoadStatisticsDirectory.path;
         [defaultFileManager removeItemAtPath:itpRoot error:nil];
         while ([defaultFileManager fileExistsAtPath:itpRoot])
             usleep(10000);

@@ -390,7 +390,7 @@ TEST(WebPushD, PermissionManagement)
 static void clearWebsiteDataStore(WKWebsiteDataStore *store)
 {
     __block bool clearedStore = false;
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [store removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
         clearedStore = true;
     }];
     TestWebKitAPI::Util::run(&clearedStore);

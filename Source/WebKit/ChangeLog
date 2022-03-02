@@ -1,3 +1,26 @@
+2022-03-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Add assertion that no two sessions share the same general storage directory
+        https://bugs.webkit.org/show_bug.cgi?id=236844
+        <rdar://problem/89178566>
+
+        Reviewed by Chris Dumez.
+
+        rdar://89190571 shows that there can be two WebsiteDataStores using the same general storage directory, when
+        initializing network process. This can lead to corruption because storage code of each session runs on its own
+        WorkQueue (or thread) in network process. If two sessions (WebsiteDataStores) use the same directory, the 
+        directory and its files may be accessed concurrently. The correct usage is creating different persistent 
+        sessions with different paths. Let's add an assertion to help find problematic use case.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::cacheStorageDirectory const):
+        (WebKit::WebsiteDataStore::resolvedGeneralStorageDirectory const):
+        (WebKit::WebsiteDataStore::generalStorageDirectory const): Deleted.
+
 2022-03-02  Youenn Fablet  <youenn@apple.com>
 
         Rename MediaSampleAVFObjC::createImageSample to MediaSampleAVFObjC::createFromPixelBuffer

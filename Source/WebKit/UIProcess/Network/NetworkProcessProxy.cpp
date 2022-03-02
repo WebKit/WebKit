@@ -211,7 +211,16 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE) // GTK and WPE don't use defaultNetworkProcess
     parameters.websiteDataStoreParameters = WebsiteDataStore::parametersFromEachWebsiteDataStore();
-    WebsiteDataStore::forEachWebsiteDataStore([this](auto& websiteDataStore) {
+    HashMap<String, PAL::SessionID> sessionForDirectory;
+    WebsiteDataStore::forEachWebsiteDataStore([&](auto& websiteDataStore) {
+        if (websiteDataStore.isPersistent()) {
+            if (auto directory = websiteDataStore.resolvedGeneralStorageDirectory(); !directory.isEmpty()) {
+                auto sessionID = websiteDataStore.sessionID();
+                // Persistent sessions sharing same storage directory may cause corruption.
+                // If the assertion is hit, check if you have multiple WebsiteDataStores with the same generalStorageDirectory.
+                RELEASE_ASSERT_WITH_MESSAGE(sessionForDirectory.add(directory, sessionID).isNewEntry, "GeneralStorageDirectory for session %" PRIu64 " is already in use by session %" PRIu64, sessionForDirectory.get(directory).toUInt64(), sessionID.toUInt64());
+            }
+        }
         addSession(websiteDataStore, SendParametersToNetworkProcess::No);
     });
 #endif

@@ -1,5 +1,26 @@
 2022-03-02  Sihui Liu  <sihui_liu@apple.com>
 
+        Add assertion that no two sessions share the same general storage directory
+        https://bugs.webkit.org/show_bug.cgi?id=236844
+        <rdar://problem/89178566>
+
+        Reviewed by Chris Dumez.
+
+        Update the tests where two WebsiteDataStores are created with the same general storage directory.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PrivateClickMeasurement.mm:
+        (emptyObservationsDBPath):
+        (emptyPcmDBPath):
+        (cleanUp):
+        * TestWebKitAPI/Tests/WebKitCocoa/PushAPI.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (runWebsiteDataStoreCustomPaths):
+
+2022-03-02  Sihui Liu  <sihui_liu@apple.com>
+
         Add test coverage for deleting FileSystem data when file is being written
         https://bugs.webkit.org/show_bug.cgi?id=237353
 

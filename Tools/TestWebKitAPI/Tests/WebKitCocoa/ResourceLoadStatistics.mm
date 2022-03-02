@@ -1086,15 +1086,18 @@ TEST(ResourceLoadStatistics, CanAccessDataSummaryWithNoProcessPool)
 TEST(ResourceLoadStatistics, StoreSuspension)
 {
     auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
-    auto *dataStore1 = [WKWebsiteDataStore defaultDataStore];
-    auto dataStore2 = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    auto customGeneralStorageDirectory = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@%@", dataStoreConfiguration.get().generalStorageDirectory.path, @"_Custom"]];
+    auto dataStore1 = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    dataStoreConfiguration.get().generalStorageDirectory = customGeneralStorageDirectory;
+    auto dataStore2 = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
 
     [dataStore1 _setResourceLoadStatisticsEnabled:YES];
     [dataStore2 _setResourceLoadStatisticsEnabled:YES];
 
     auto configuration1 = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration1 setProcessPool: sharedProcessPool];
-    configuration1.get().websiteDataStore = dataStore1;
+    configuration1.get().websiteDataStore = dataStore1.get();
 
     auto configuration2 = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration2 setProcessPool: sharedProcessPool];

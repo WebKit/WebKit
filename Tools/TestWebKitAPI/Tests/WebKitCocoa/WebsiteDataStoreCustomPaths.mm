@@ -187,83 +187,67 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     RetainPtr<NSURL> fileIDBPath = [[idbPath URLByAppendingPathComponent:@"v1"] URLByAppendingPathComponent:@"file__0"];
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:fileIDBPath.get().path]);
 
-    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-    RetainPtr<NSSet> types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
+    @autoreleasepool {
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+        RetainPtr<NSSet> types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
 
-    // Subframe of different origins may also create IndexedDB files.
-    RetainPtr<NSURL> url1 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
-    RetainPtr<NSURL> url2 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3-shm" subdirectory:@"TestWebKitAPI.resources"];
-    RetainPtr<NSURL> url3 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3-wal" subdirectory:@"TestWebKitAPI.resources"];
+        // Subframe of different origins may also create IndexedDB files.
+        RetainPtr<NSURL> url1 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
+        RetainPtr<NSURL> url2 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3-shm" subdirectory:@"TestWebKitAPI.resources"];
+        RetainPtr<NSURL> url3 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3-wal" subdirectory:@"TestWebKitAPI.resources"];
 
-    RetainPtr<NSURL> frameIDBPath = [[fileIDBPath URLByAppendingPathComponent:@"https_apple.com_0"] URLByAppendingPathComponent:@"WebsiteDataStoreCustomPaths"];
-    [[NSFileManager defaultManager] createDirectoryAtURL:frameIDBPath.get() withIntermediateDirectories:YES attributes:nil error:nil];
+        RetainPtr<NSURL> frameIDBPath = [[fileIDBPath URLByAppendingPathComponent:@"https_apple.com_0"] URLByAppendingPathComponent:@"WebsiteDataStoreCustomPaths"];
+        [[NSFileManager defaultManager] createDirectoryAtURL:frameIDBPath.get() withIntermediateDirectories:YES attributes:nil error:nil];
 
-    [[NSFileManager defaultManager] copyItemAtURL:url1.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:url2.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-shm"] error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:url3.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"] error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url1.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url2.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-shm"] error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url3.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"] error:nil];
 
-    RetainPtr<NSURL> frameIDBPath2 = [[fileIDBPath URLByAppendingPathComponent:@"https_webkit.org_0"] URLByAppendingPathComponent:@"WebsiteDataStoreCustomPaths"];
-    [[NSFileManager defaultManager] createDirectoryAtURL:frameIDBPath2.get() withIntermediateDirectories:YES attributes:nil error:nil];
+        RetainPtr<NSURL> frameIDBPath2 = [[fileIDBPath URLByAppendingPathComponent:@"https_webkit.org_0"] URLByAppendingPathComponent:@"WebsiteDataStoreCustomPaths"];
+        [[NSFileManager defaultManager] createDirectoryAtURL:frameIDBPath2.get() withIntermediateDirectories:YES attributes:nil error:nil];
 
-    [[NSFileManager defaultManager] copyItemAtURL:url1.get() toURL:[frameIDBPath2.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:url2.get() toURL:[frameIDBPath2.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-shm"] error:nil];
-    [[NSFileManager defaultManager] copyItemAtURL:url3.get() toURL:[frameIDBPath2.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"] error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url1.get() toURL:[frameIDBPath2.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url2.get() toURL:[frameIDBPath2.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-shm"] error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url3.get() toURL:[frameIDBPath2.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"] error:nil];
 
-    [dataStore fetchDataRecordsOfTypes:types.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
-        EXPECT_EQ([records count], (unsigned long)3);
-        for (id record in records) {
-            if ([[record displayName] isEqual: @"apple.com"]) {
-                [dataStore removeDataOfTypes:types.get() forDataRecords:@[record] completionHandler:^() {
-                    receivedScriptMessage = true;
-                    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:frameIDBPath.get().path]);
-                }];
+        [dataStore fetchDataRecordsOfTypes:types.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+            EXPECT_EQ([records count], (unsigned long)3);
+            for (id record in records) {
+                if ([[record displayName] isEqual: @"apple.com"]) {
+                    [dataStore removeDataOfTypes:types.get() forDataRecords:@[record] completionHandler:^() {
+                        receivedScriptMessage = true;
+                        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:frameIDBPath.get().path]);
+                    }];
+                }
             }
-        }
-    }];
-    receivedScriptMessage = false;
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
+        }];
+        receivedScriptMessage = false;
+        TestWebKitAPI::Util::run(&receivedScriptMessage);
 
-    [dataStore removeDataOfTypes:types.get() modifiedSince:[NSDate distantPast] completionHandler:[]() {
-        receivedScriptMessage = true;
-    }];
-    receivedScriptMessage = false;
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
+        [dataStore removeDataOfTypes:types.get() modifiedSince:[NSDate distantPast] completionHandler:[]() {
+            receivedScriptMessage = true;
+        }];
+        receivedScriptMessage = false;
+        TestWebKitAPI::Util::run(&receivedScriptMessage);
 
-    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fileIDBPath.get().path]);
+        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fileIDBPath.get().path]);
 
-    // Now, with brand new WKWebsiteDataStores pointing at the same custom cookie storage location,
-    // in newly fired up NetworkProcesses, verify that the fetch and delete APIs work as expected.
+        // Now, with brand new WKWebsiteDataStores pointing at the same custom cookie storage location,
+        // in newly fired up NetworkProcesses, verify that the fetch and delete APIs work as expected.
+        [dataStore _terminateNetworkProcess];
+    }
 
-    [dataStore _terminateNetworkProcess];
     auto newCustomDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-
     [newCustomDataStore fetchDataRecordsOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeCookies, nil] completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
         EXPECT_GT([records count], (unsigned long)0);
         receivedScriptMessage = true;
     }];
-
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);
-
-    [dataStore _terminateNetworkProcess];
-    newCustomDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
 
     [newCustomDataStore removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeCookies, nil] modifiedSince:[NSDate distantPast] completionHandler:^ {
         receivedScriptMessage = true;
     }];
-
-    receivedScriptMessage = false;
-    TestWebKitAPI::Util::run(&receivedScriptMessage);
-
-    // This time, reuse the same network process but still do a new websitedatastore, to make sure even an existing network process
-    // gets the new datastore.
-    newCustomDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-
-    [newCustomDataStore fetchDataRecordsOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeCookies, nil] completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
-        EXPECT_EQ([records count], (unsigned long)0);
-        receivedScriptMessage = true;
-    }];
-
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 

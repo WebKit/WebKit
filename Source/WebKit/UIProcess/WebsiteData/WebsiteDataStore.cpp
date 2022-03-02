@@ -1882,7 +1882,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
             parameters.cacheStorageDirectoryExtensionHandle = WTFMove(*handle);
     }
 
-    if (auto directory = generalStorageDirectory(); !directory.isEmpty()) {
+    if (auto directory = resolvedGeneralStorageDirectory(); !directory.isEmpty()) {
         parameters.generalStorageDirectory = directory;
         if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(directory))
             parameters.generalStorageDirectoryHandle = WTFMove(*handle);
