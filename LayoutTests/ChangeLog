@@ -1,3 +1,12 @@
+2022-03-01  Matteo Flores  <matteo_flores@apple.com>
+
+        [ iOS ] pointerevents/mouse/* 10 pointer event tests are constant timeouts or failures on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=237348
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-03-01  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
