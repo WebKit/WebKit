@@ -1,3 +1,10 @@
+2022-03-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, address post-landing feedback from Darin on r290743
+
+        * WebKitTestRunner/mac/EventSenderProxy.mm:
+        (WTR::EventSenderProxy::mouseMoveTo):
+
 2022-03-02  Jonathan Bedard  <jbedard@apple.com>
 
         [Python-3] Invoke webkit-patch with Python 3 by default

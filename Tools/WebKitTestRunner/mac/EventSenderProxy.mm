@@ -41,6 +41,7 @@
 #import <WebKit/WKWebViewPrivateForTestingMac.h>
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface NSApplication (Details)
 - (void)_setCurrentEvent:(NSEvent *)event;
@@ -614,7 +615,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
         if (isDrag)
             [targetView mouseDragged:event];
         else
-            [static_cast<WKWebView*>(targetView) _simulateMouseMove:event];
+            [checked_objc_cast<WKWebView>(targetView) _simulateMouseMove:event];
         [NSApp _setCurrentEvent:nil];
     } else
         WTFLogAlways("mouseMoveTo failed to find a target view at %f,%f\n", windowLocation.x, windowLocation.y);
