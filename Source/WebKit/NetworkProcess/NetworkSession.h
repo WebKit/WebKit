@@ -208,16 +208,12 @@ public:
     void unregisterSWServerConnection(WebSWServerConnection&);
 
     bool hasServiceWorkerDatabasePath() const;
-
-    void addServiceWorkerSession(bool processTerminationDelayEnabled, String&& serviceWorkerRegistrationDirectory, const SandboxExtension::Handle&);
 #endif
 
     WebSharedWorkerServer* sharedWorkerServer() { return m_sharedWorkerServer.get(); }
     WebSharedWorkerServer& ensureSharedWorkerServer();
 
-    NetworkStorageManager* storageManager() { return m_storageManager.get(); }
-    void addStorageManagerSession(const String& generalStoragePath, SandboxExtension::Handle& generalStoragePathHandle, const String& localStoragePath, SandboxExtension::Handle& localStoragePathHandle, const String& idbStoragePath, SandboxExtension::Handle& idbStoragePathHandle, const String& cacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyQuota, bool shouldUseCustomStoragePaths);
-
+    NetworkStorageManager& storageManager() { return m_storageManager.get(); }
     CacheStorage::Engine* cacheEngine() { return m_cacheEngine.get(); }
     void ensureCacheEngine(Function<void(CacheStorage::Engine&)>&&);
     void clearCacheEngine();
@@ -320,7 +316,7 @@ protected:
 #endif
     std::unique_ptr<WebSharedWorkerServer> m_sharedWorkerServer;
 
-    RefPtr<NetworkStorageManager> m_storageManager;
+    Ref<NetworkStorageManager> m_storageManager;
     RefPtr<CacheStorage::Engine> m_cacheEngine;
     Vector<Function<void(CacheStorage::Engine&)>> m_cacheStorageParametersCallbacks;
 

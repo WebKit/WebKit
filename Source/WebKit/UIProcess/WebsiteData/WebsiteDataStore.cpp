@@ -1843,55 +1843,52 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 #if !HAVE(NSURLSESSION_WEBSOCKET)
     networkSessionParameters.shouldAcceptInsecureCertificatesForWebSockets = m_configuration->shouldAcceptInsecureCertificatesForWebSockets();
 #endif
+    networkSessionParameters.shouldUseCustomStoragePaths = m_configuration->shouldUseCustomStoragePaths();
+    networkSessionParameters.perOriginStorageQuota = perOriginStorageQuota();
+    networkSessionParameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();
 
-    parameters.networkSessionParameters = WTFMove(networkSessionParameters);
-
-    parameters.indexedDatabaseDirectory = resolvedIndexedDatabaseDirectory();
-    if (!parameters.indexedDatabaseDirectory.isEmpty()) {
+    if (auto directory = resolvedLocalStorageDirectory(); !directory.isEmpty()) {
+        networkSessionParameters.localStorageDirectory = directory;
         // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
-        if (auto handle =  SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory))
-            parameters.indexedDatabaseDirectoryExtensionHandle = WTFMove(*handle);
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(directory))
+            networkSessionParameters.localStorageDirectoryExtensionHandle = WTFMove(*handle);
+#if PLATFORM(IOS_FAMILY)
+        // FIXME: we should move file system operations to background thread.
+        FileSystem::makeAllDirectories(directory);
+        FileSystem::excludeFromBackup(directory);
+#endif
+    }
+
+    if (auto directory = resolvedIndexedDBDatabaseDirectory(); !directory.isEmpty()) {
+        networkSessionParameters.indexedDBDirectory = directory;
+        // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
+        if (auto handle =  SandboxExtension::createHandleForReadWriteDirectory(directory))
+            networkSessionParameters.indexedDBDirectoryExtensionHandle = WTFMove(*handle);
     }
 
 #if ENABLE(SERVICE_WORKER)
-    parameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();
-    if (!parameters.serviceWorkerRegistrationDirectory.isEmpty()) {
+    if (auto directory = resolvedServiceWorkerRegistrationDirectory(); !directory.isEmpty()) {
+        networkSessionParameters.serviceWorkerRegistrationDirectory = directory;
         // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
-        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory))
-            parameters.serviceWorkerRegistrationDirectoryExtensionHandle = WTFMove(*handle);
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(directory))
+            networkSessionParameters.serviceWorkerRegistrationDirectoryExtensionHandle = WTFMove(*handle);
     }
-    parameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
+    networkSessionParameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
 #endif
-
-    auto localStorageDirectory = resolvedLocalStorageDirectory();
-    if (!localStorageDirectory.isEmpty()) {
-        parameters.localStorageDirectory = localStorageDirectory;
-        // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
-        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(localStorageDirectory))
-            parameters.localStorageDirectoryExtensionHandle = WTFMove(*handle);
-#if PLATFORM(IOS_FAMILY)
-        FileSystem::makeAllDirectories(localStorageDirectory);
-        FileSystem::excludeFromBackup(localStorageDirectory);
-#endif
-    }
-
-    auto cacheStorageDirectory = this->cacheStorageDirectory();
-    if (!cacheStorageDirectory.isEmpty()) {
-        parameters.cacheStorageDirectory = cacheStorageDirectory;
-        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(cacheStorageDirectory))
-            parameters.cacheStorageDirectoryExtensionHandle = WTFMove(*handle);
-    }
 
     if (auto directory = resolvedGeneralStorageDirectory(); !directory.isEmpty()) {
-        parameters.generalStorageDirectory = directory;
+        networkSessionParameters.generalStorageDirectory = directory;
         if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(directory))
-            parameters.generalStorageDirectoryHandle = WTFMove(*handle);
+            networkSessionParameters.generalStorageDirectoryHandle = WTFMove(*handle);
     }
-    parameters.shouldUseCustomStoragePaths = configuration().shouldUseCustomStoragePaths();
 
-    parameters.perOriginStorageQuota = perOriginStorageQuota();
-    parameters.perThirdPartyOriginStorageQuota = perThirdPartyOriginStorageQuota();
+    if (auto directory = cacheStorageDirectory(); !directory.isEmpty()) {
+        networkSessionParameters.cacheStorageDirectory = directory;
+        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(directory))
+            networkSessionParameters.cacheStorageDirectoryExtensionHandle = WTFMove(*handle);
+    }
 
+    parameters.networkSessionParameters = WTFMove(networkSessionParameters);
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     parameters.networkSessionParameters.resourceLoadStatisticsParameters.enabled = m_resourceLoadStatisticsEnabled;
 #endif
@@ -1900,7 +1897,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     parameters.networkSessionParameters.appHasRequestedCrossWebsiteTrackingPermission = hasRequestedCrossWebsiteTrackingPermission();
     parameters.networkSessionParameters.useNetworkLoader = useNetworkLoader();
 #endif
-    
+
     return parameters;
 }
 

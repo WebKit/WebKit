@@ -48,7 +48,6 @@ list(APPEND WebKit_SOURCES
     NetworkProcess/curl/NetworkProcessCurl.cpp
     NetworkProcess/curl/NetworkProcessMainCurl.cpp
     NetworkProcess/curl/NetworkSessionCurl.cpp
-    NetworkProcess/curl/RemoteNetworkingContextCurl.cpp
 
     Platform/IPC/unix/AttachmentUnix.cpp
     Platform/IPC/unix/ConnectionUnix.cpp

@@ -95,6 +95,16 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
 #if !HAVE(NSURLSESSION_WEBSOCKET)
     encoder << shouldAcceptInsecureCertificatesForWebSockets;
 #endif
+
+    encoder << shouldUseCustomStoragePaths;
+    encoder << perOriginStorageQuota << perThirdPartyOriginStorageQuota;
+    encoder << localStorageDirectory << localStorageDirectoryExtensionHandle;
+    encoder << indexedDBDirectory << indexedDBDirectoryExtensionHandle;
+    encoder << cacheStorageDirectory << cacheStorageDirectoryExtensionHandle;
+    encoder << generalStorageDirectory << generalStorageDirectoryHandle;
+#if ENABLE(SERVICE_WORKER)
+    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << serviceWorkerProcessTerminationDelayEnabled;
+#endif
     encoder << resourceLoadStatisticsParameters;
 }
 
@@ -334,6 +344,78 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         return std::nullopt;
 #endif
 
+    std::optional<bool> shouldUseCustomStoragePaths;
+    decoder >> shouldUseCustomStoragePaths;
+    if (!shouldUseCustomStoragePaths)
+        return std::nullopt;
+
+    std::optional<uint64_t> perOriginStorageQuota;
+    decoder >> perOriginStorageQuota;
+    if (!perOriginStorageQuota)
+        return std::nullopt;
+
+    std::optional<uint64_t> perThirdPartyOriginStorageQuota;
+    decoder >> perThirdPartyOriginStorageQuota;
+    if (!perThirdPartyOriginStorageQuota)
+        return std::nullopt;
+
+    std::optional<String> localStorageDirectory;
+    decoder >> localStorageDirectory;
+    if (!localStorageDirectory)
+        return std::nullopt;
+
+    std::optional<SandboxExtension::Handle> localStorageDirectoryExtensionHandle;
+    decoder >> localStorageDirectoryExtensionHandle;
+    if (!localStorageDirectoryExtensionHandle)
+        return std::nullopt;
+
+    std::optional<String> indexedDBDirectory;
+    decoder >> indexedDBDirectory;
+    if (!indexedDBDirectory)
+        return std::nullopt;
+    
+    std::optional<SandboxExtension::Handle> indexedDBDirectoryExtensionHandle;
+    decoder >> indexedDBDirectoryExtensionHandle;
+    if (!indexedDBDirectoryExtensionHandle)
+        return std::nullopt;
+
+    std::optional<String> cacheStorageDirectory;
+    decoder >> cacheStorageDirectory;
+    if (!cacheStorageDirectory)
+        return std::nullopt;
+
+    std::optional<SandboxExtension::Handle> cacheStorageDirectoryExtensionHandle;
+    decoder >> cacheStorageDirectoryExtensionHandle;
+    if (!cacheStorageDirectoryExtensionHandle)
+        return std::nullopt;
+
+    std::optional<String> generalStorageDirectory;
+    decoder >> generalStorageDirectory;
+    if (!generalStorageDirectory)
+        return std::nullopt;
+
+    std::optional<SandboxExtension::Handle> generalStorageDirectoryHandle;
+    decoder >> generalStorageDirectoryHandle;
+    if (!generalStorageDirectoryHandle)
+        return std::nullopt;
+
+#if ENABLE(SERVICE_WORKER)
+    std::optional<String> serviceWorkerRegistrationDirectory;
+    decoder >> serviceWorkerRegistrationDirectory;
+    if (!serviceWorkerRegistrationDirectory)
+        return std::nullopt;
+    
+    std::optional<SandboxExtension::Handle> serviceWorkerRegistrationDirectoryExtensionHandle;
+    decoder >> serviceWorkerRegistrationDirectoryExtensionHandle;
+    if (!serviceWorkerRegistrationDirectoryExtensionHandle)
+        return std::nullopt;
+    
+    std::optional<bool> serviceWorkerProcessTerminationDelayEnabled;
+    decoder >> serviceWorkerProcessTerminationDelayEnabled;
+    if (!serviceWorkerProcessTerminationDelayEnabled)
+        return std::nullopt;
+#endif
+
     std::optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
     decoder >> resourceLoadStatisticsParameters;
     if (!resourceLoadStatisticsParameters)
@@ -394,6 +476,22 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(*enablePrivateClickMeasurementDebugMode)
 #if !HAVE(NSURLSESSION_WEBSOCKET)
         , WTFMove(*shouldAcceptInsecureCertificatesForWebSockets)
+#endif
+        , *shouldUseCustomStoragePaths
+        , WTFMove(*perOriginStorageQuota)
+        , WTFMove(*perThirdPartyOriginStorageQuota)
+        , WTFMove(*localStorageDirectory)
+        , WTFMove(*localStorageDirectoryExtensionHandle)
+        , WTFMove(*indexedDBDirectory)
+        , WTFMove(*indexedDBDirectoryExtensionHandle)
+        , WTFMove(*cacheStorageDirectory)
+        , WTFMove(*cacheStorageDirectoryExtensionHandle)
+        , WTFMove(*generalStorageDirectory)
+        , WTFMove(*generalStorageDirectoryHandle)
+#if ENABLE(SERVICE_WORKER)
+        , WTFMove(*serviceWorkerRegistrationDirectory)
+        , WTFMove(*serviceWorkerRegistrationDirectoryExtensionHandle)
+        , *serviceWorkerProcessTerminationDelayEnabled
 #endif
         , WTFMove(*resourceLoadStatisticsParameters)
     }};

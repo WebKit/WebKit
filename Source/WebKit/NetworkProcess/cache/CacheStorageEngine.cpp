@@ -245,11 +245,7 @@ void Engine::requestSpace(const WebCore::ClientOrigin& origin, uint64_t spaceReq
     if (!session)
         callback(false);
 
-    auto* storageManager = session->storageManager();
-    if (!storageManager)
-        callback(false);
-
-    storageManager->requestSpace(origin, spaceRequested, WTFMove(callback));
+    session->storageManager().requestSpace(origin, spaceRequested, WTFMove(callback));
 }
 
 Engine::Engine(NetworkSession& networkSession, String&& rootPath)

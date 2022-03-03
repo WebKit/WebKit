@@ -176,7 +176,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         NetworkProcess/curl/NetworkDataTaskCurl.cpp
         NetworkProcess/curl/NetworkProcessCurl.cpp
         NetworkProcess/curl/NetworkSessionCurl.cpp
-        NetworkProcess/curl/RemoteNetworkingContextCurl.cpp
 
         Shared/API/c/cairo/WKImageCairo.cpp
 

@@ -1420,7 +1420,7 @@ void NetworkProcessProxy::addSession(WebsiteDataStore& store, SendParametersToNe
         send(Messages::NetworkProcess::AddWebsiteDataStore { store.parameters() }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
     auto sessionID = store.sessionID();
     if (!sessionID.isEphemeral())
-        createSymLinkForFileUpgrade(store.resolvedIndexedDatabaseDirectory());
+        createSymLinkForFileUpgrade(store.resolvedIndexedDBDatabaseDirectory());
 }
 
 void NetworkProcessProxy::removeSession(WebsiteDataStore& websiteDataStore)

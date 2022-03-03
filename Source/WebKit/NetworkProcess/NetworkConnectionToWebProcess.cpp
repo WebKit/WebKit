@@ -409,12 +409,8 @@ bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
 
 void NetworkConnectionToWebProcess::updateQuotaBasedOnSpaceUsageForTesting(const ClientOrigin& origin)
 {
-    auto* session = m_networkProcess->networkSession(sessionID());
-    if (!session)
-        return;
-
-    if (auto* storageManager = session->storageManager())
-        storageManager->resetQuotaUpdatedBasedOnUsageForTesting(origin);
+    if (auto* session = m_networkProcess->networkSession(sessionID()))
+        session->storageManager().resetQuotaUpdatedBasedOnUsageForTesting(origin);
 }
 
 void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
@@ -1003,10 +999,9 @@ void NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB(const
         for (auto& file : fileReferences)
             file->revokeFileAccess();
 
-        if (auto* session = networkSession()) {
-            if (auto* storageManager = session->storageManager())
-                storageManager->registerTemporaryBlobFilePaths(m_connection, filePaths);
-        }
+        if (auto* session = networkSession())
+            session->storageManager().registerTemporaryBlobFilePaths(m_connection, filePaths);
+
         completionHandler(WTFMove(filePaths));
     });
 }

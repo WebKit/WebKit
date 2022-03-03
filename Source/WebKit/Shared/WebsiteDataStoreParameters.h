@@ -52,29 +52,6 @@ struct WebsiteDataStoreParameters {
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
     SandboxExtension::Handle cookieStoragePathExtensionHandle;
     NetworkSessionCreationParameters networkSessionParameters;
-
-    String indexedDatabaseDirectory;
-    SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
-
-#if ENABLE(SERVICE_WORKER)
-    String serviceWorkerRegistrationDirectory;
-    SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
-    bool serviceWorkerProcessTerminationDelayEnabled { true };
-#endif
-
-    String localStorageDirectory;
-    SandboxExtension::Handle localStorageDirectoryExtensionHandle;
-
-    String cacheStorageDirectory;
-    SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
-
-    String generalStorageDirectory;
-    SandboxExtension::Handle generalStorageDirectoryHandle;
-
-    uint64_t perOriginStorageQuota;
-    uint64_t perThirdPartyOriginStorageQuota;
-
-    bool shouldUseCustomStoragePaths { false };
 };
 
 } // namespace WebKit

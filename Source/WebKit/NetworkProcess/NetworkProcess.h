@@ -169,11 +169,7 @@ public:
     void forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>&);
     WebCore::NetworkStorageSession* storageSession(PAL::SessionID) const;
     std::unique_ptr<WebCore::NetworkStorageSession> newTestingSession(PAL::SessionID);
-#if PLATFORM(COCOA)
-    void ensureSession(PAL::SessionID, bool shouldUseTestingNetworkSession, const String& identifier, RetainPtr<CFHTTPCookieStorageRef>&&);
-#else
-    void ensureSession(PAL::SessionID, bool shouldUseTestingNetworkSession, const String& identifier);
-#endif
+    void addStorageSession(PAL::SessionID, bool shouldUseTestingNetworkSession, const Vector<uint8_t>& uiProcessCookieStorageIdentifier, const SandboxExtension::Handle&);
 
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
     void prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&&);
@@ -305,7 +301,7 @@ public:
     bool parentProcessHasServiceWorkerEntitlement() const { return true; }
 #endif
 
-    const String& uiProcessBundleIdentifier() const { return m_uiProcessBundleIdentifier; }
+    const String& uiProcessBundleIdentifier() const;
 
     void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
     void deref() const override { ThreadSafeRefCounted<NetworkProcess>::deref(); }
@@ -483,7 +479,7 @@ private:
     bool m_hasSetCacheModel { false };
     CacheModel m_cacheModel { CacheModel::DocumentViewer };
     bool m_suppressMemoryPressureHandler { false };
-    String m_uiProcessBundleIdentifier;
+    mutable String m_uiProcessBundleIdentifier;
     DownloadManager m_downloadManager;
 
     typedef HashMap<const char*, std::unique_ptr<NetworkProcessSupplement>, PtrHash<const char*>> NetworkProcessSupplementMap;
@@ -527,5 +523,12 @@ private:
     bool m_privateClickMeasurementEnabled { true };
     bool m_ftpEnabled { false };
 };
+
+#if !PLATFORM(COCOA)
+inline const String& NetworkProcess::uiProcessBundleIdentifier() const
+{
+    return m_uiProcessBundleIdentifier;
+}
+#endif
 
 } // namespace WebKit

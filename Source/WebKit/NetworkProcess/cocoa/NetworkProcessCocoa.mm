@@ -255,4 +255,12 @@ void NetworkProcess::notifyPreferencesChanged(const String& domain, const String
 }
 #endif
 
+const String& NetworkProcess::uiProcessBundleIdentifier() const
+{
+    if (m_uiProcessBundleIdentifier.isNull())
+        m_uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+
+    return m_uiProcessBundleIdentifier;
+}
+
 } // namespace WebKit
