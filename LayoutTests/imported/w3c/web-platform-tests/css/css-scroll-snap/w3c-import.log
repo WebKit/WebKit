@@ -15,8 +15,10 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/capturing-snap-positions.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/nested-scrollIntoView-snaps.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/no-red-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/no-snap-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/overflowing-snap-areas.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-margin-visibility-check.html
@@ -24,8 +26,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-padding-and-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-padding.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-003.html
@@ -34,6 +38,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-type-change.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-type-on-root-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-type.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-002-expected.html
@@ -48,6 +53,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-002-expected.html
@@ -61,6 +68,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-snap-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/scrollTo-scrollBy-snaps.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/selection-target.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-area-capturing-add-scroll-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-area-capturing-remove-scroll-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-at-user-scroll-end.html

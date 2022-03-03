@@ -17,9 +17,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/direction-rtl-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/direction-rtl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-initial-layout-000-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-initial-layout-000-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-initial-layout-000.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/scroll-snap-writing-mode-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/snap-after-initial-layout-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-horizontal-tb-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-horizontal-tb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-lr-expected.html
