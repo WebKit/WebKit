@@ -1,3 +1,40 @@
+2022-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Rendering issues with many dynamically-added sticky elements inside overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=237378
+        <rdar://83745510>
+
+        Reviewed by Cameron McCormack.
+
+        A bug was filed describing a symptom where position:sticky elements would eventually
+        fail to render when many of them were dynamically added inside a non-stacking context
+        overflow scroll.
+
+        Debugging showed that CALayers were accumulating, causing us to hit per-process IOSurface
+        limits, at which point content fails to render (this is being fixed via rdar://89640915).
+        Further debugging showed that these layers were unparented, and being entrained by
+        ScrollingStateStickyNodes, which were accumulating in ScrollingStateTree's m_unparentedNodes.
+        
+        This happened because with this scrolling configuration, each ScrollingStateStickyNode
+        is parented via a ScrollingStateOverflowScrollProxyNode which is referenced by entries
+        in RenderLayerBacking's m_ancestorClippingStack. On cleanup, the ScrollingStateOverflowScrollProxyNode
+        was unparented first, leaving the ScrollingStateStickyNode in m_unparentedNodes.
+        
+        The fix is to have ScrollingStateTree::unparentChildrenAndDestroyNode() remove nodes
+        from m_unparentedNodes.
+
+        To test, add a m_unparentedNodes count to scrollingStateTreeAsText output, which means
+        having scrollingStateTreeAsText() as a member function on ScrollingStateTree.
+
+        Test: scrollingcoordinator/scrolling-tree/accumulated-unparented-sticky-nodes.html
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scrollingStateTreeAsText const):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::unparentChildrenAndDestroyNode):
+        (WebCore::ScrollingStateTree::scrollingStateTreeAsText const):
+        * page/scrolling/ScrollingStateTree.h:
+
 2022-03-02  Oriol Brufau  <obrufau@igalia.com>
 
         [css] Implement 'text-decoration' as a shorthand.

@@ -946,7 +946,7 @@ String AsyncScrollingCoordinator::scrollingStateTreeAsText(OptionSet<ScrollingSt
     if (m_scrollingStateTree->rootStateNode()) {
         if (m_eventTrackingRegionsDirty)
             m_scrollingStateTree->rootStateNode()->setEventTrackingRegions(absoluteEventTrackingRegions());
-        return m_scrollingStateTree->rootStateNode()->scrollingStateTreeAsText(behavior);
+        return m_scrollingStateTree->scrollingStateTreeAsText(behavior);
     }
 
     return emptyString();

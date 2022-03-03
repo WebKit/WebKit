@@ -1,3 +1,14 @@
+2022-03-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Rendering issues with many dynamically-added sticky elements inside overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=237378
+        <rdar://83745510>
+
+        Reviewed by Cameron McCormack.
+
+        * scrollingcoordinator/scrolling-tree/accumulated-unparented-sticky-nodes-expected.txt: Added.
+        * scrollingcoordinator/scrolling-tree/accumulated-unparented-sticky-nodes.html: Added.
+
 2022-03-02  Oriol Brufau  <obrufau@igalia.com>
 
         [css] Implement 'text-decoration' as a shorthand.
