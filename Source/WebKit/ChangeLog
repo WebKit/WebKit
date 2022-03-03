@@ -1,3 +1,21 @@
+2022-03-03  Tim Horton  <timothy_horton@apple.com>
+
+        WKContentView should explicitly request the system pointer in the fallback case
+        https://bugs.webkit.org/show_bug.cgi?id=237410
+        <rdar://79198381>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView pointerRegionForPositionInformation:point:]):
+        (-[WKContentView pointerInteraction:styleForRegion:]):
+        Instead of assuming a nil region and nil style will provide the system
+        pointer, provide a region the size of the WKContentView and explicitly
+        request the system pointer shape.
+
+        Also, drive-by adopt the API `systemPointerStyle` instead of the
+        deprecated SPI version.
+
 2022-03-03  Chris Dumez  <cdumez@apple.com>
 
         [macOS] WebContent processes crash with XPC_EXIT_REASON_SIGTERM_TIMEOUT when logging out

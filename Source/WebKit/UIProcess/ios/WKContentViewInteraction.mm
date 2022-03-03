@@ -10014,7 +10014,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         return [UIPointerRegion regionWithRect:self.bounds identifier:editablePointerRegionIdentifier];
     }
 
-    return nil;
+    return [UIPointerRegion regionWithRect:self.bounds identifier:pointerRegionIdentifier];
 }
 
 - (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction styleForRegion:(UIPointerRegion *)region
@@ -10039,24 +10039,21 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
 
     if (self.webView._editable) {
         if (_positionInformation.shouldNotUseIBeamInEditableContent)
-            return nil;
+            return [UIPointerStyle systemPointerStyle];
         return iBeamCursor();
     }
 
     if (_positionInformation.cursor && [region.identifier isEqual:pointerRegionIdentifier]) {
         WebCore::Cursor::Type cursorType = _positionInformation.cursor->type();
 
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (cursorType == WebCore::Cursor::Hand)
-            return [UIPointerStyle _systemPointerStyle];
-        ALLOW_DEPRECATED_DECLARATIONS_END
+            return [UIPointerStyle systemPointerStyle];
 
         if (cursorType == WebCore::Cursor::IBeam && _positionInformation.lineCaretExtent.contains(_positionInformation.request.point))
             return iBeamCursor();
     }
 
-    ASSERT_NOT_REACHED();
-    return nil;
+    return [UIPointerStyle systemPointerStyle];
 }
 
 #endif // HAVE(UI_POINTER_INTERACTION)
