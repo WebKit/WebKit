@@ -82,7 +82,7 @@ void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& param
 }
 
 #if PLATFORM(MAC)
-OSObjectPtr<os_transaction_t>& osTransaction();
+void setOSTransaction(OSObjectPtr<os_transaction_t>&&);
 #endif
 
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
@@ -113,7 +113,7 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     // so ensure that we have an outstanding transaction here. This is not needed on iOS because
     // the UIProcess takes process assertions on behalf of its child processes.
 #if PLATFORM(MAC)
-    osTransaction() = adoptOSObject(os_transaction_create("WebKit XPC Service"));
+    setOSTransaction(adoptOSObject(os_transaction_create("WebKit XPC Service")));
 #endif
 
     InitializeWebKit2();
