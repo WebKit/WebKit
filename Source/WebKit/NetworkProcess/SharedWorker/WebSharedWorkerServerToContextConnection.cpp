@@ -148,7 +148,7 @@ void WebSharedWorkerServerToContextConnection::removeSharedWorkerObject(WebCore:
     if (m_sharedWorkerObjects.isEmpty()) {
         CONTEXT_CONNECTION_RELEASE_LOG("removeSharedWorkerObject: connection is now idle, starting a timer to terminate it");
         ASSERT(!m_idleTerminationTimer.isActive());
-        m_idleTerminationTimer.startOneShot(MemoryPressureHandler::singleton().isUnderMemoryPressure() ? 0_s : idleTerminationDelay);
+        m_idleTerminationTimer.startOneShot(MemoryPressureHandler::singleton().isUnderMemoryPressure() || m_shouldTerminateWhenPossible ? 0_s : idleTerminationDelay);
     }
 }
 

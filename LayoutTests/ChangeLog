@@ -1,3 +1,15 @@
+2022-03-03  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r290356-r290351?): [ iOS EWS ] 3 imported/w3c/web-platform-tests/service-workers/service-worker/* tests are constant text failures.
+        https://bugs.webkit.org/show_bug.cgi?id=237160
+        <rdar://problem/89440067>
+
+        Reviewed by Youenn Fablet.
+
+        Unskip tests that are no longer failing.
+
+        * platform/ios/TestExpectations:
+
 2022-03-03  Martin Robinson  <mrobinson@webkit.org>
 
         Update WPT css-scroll-snap tests

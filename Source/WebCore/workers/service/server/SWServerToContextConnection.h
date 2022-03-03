@@ -49,7 +49,12 @@ class SWServerToContextConnection {
 public:
     WEBCORE_EXPORT virtual ~SWServerToContextConnection();
 
+    WEBCORE_EXPORT SWServer* server() const;
     SWServerToContextConnectionIdentifier identifier() const { return m_identifier; }
+
+    // This flag gets set when the service worker process is no longer clean (because it has loaded several eTLD+1s).
+    bool shouldTerminateWhenPossible() const { return m_shouldTerminateWhenPossible; }
+    void terminateWhenPossible();
 
     // Messages to the SW host process
     virtual void installServiceWorkerContext(const ServiceWorkerContextData&, const ServiceWorkerData&, const String& userAgent, WorkerThreadMode) = 0;
@@ -60,6 +65,7 @@ public:
     virtual void didSaveScriptsToDisk(ServiceWorkerIdentifier, const ScriptBuffer&, const HashMap<URL, ScriptBuffer>& importedScripts) = 0;
     virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>&) = 0;
     virtual void firePushEvent(ServiceWorkerIdentifier, const std::optional<Vector<uint8_t>>&, CompletionHandler<void(bool)>&& callback) = 0;
+    virtual ProcessIdentifier webProcessIdentifier() const = 0;
 
     // Messages back from the SW host process
     WEBCORE_EXPORT void scriptContextFailedToStart(const std::optional<ServiceWorkerJobDataIdentifier>&, ServiceWorkerIdentifier, const String& message);
@@ -82,12 +88,16 @@ public:
     virtual void terminateDueToUnresponsiveness() = 0;
 
 protected:
-    WEBCORE_EXPORT SWServerToContextConnection(RegistrableDomain&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
+    WEBCORE_EXPORT SWServerToContextConnection(SWServer&, RegistrableDomain&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
+
+    virtual void close() = 0;
 
 private:
+    WeakPtr<WebCore::SWServer> m_server;
     SWServerToContextConnectionIdentifier m_identifier;
     RegistrableDomain m_registrableDomain;
     std::optional<ScriptExecutionContextIdentifier> m_serviceWorkerPageIdentifier;
+    bool m_shouldTerminateWhenPossible { false };
 };
 
 } // namespace WebCore

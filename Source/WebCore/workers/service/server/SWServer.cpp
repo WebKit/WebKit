@@ -736,6 +736,23 @@ void SWServer::contextConnectionCreated(SWServerToContextConnection& contextConn
     }
 }
 
+void SWServer::forEachServiceWorker(const Function<bool(const SWServerWorker&)>& apply) const
+{
+    for (auto& worker : m_runningOrTerminatingWorkers.values()) {
+        if (!apply(worker))
+            break;
+    }
+}
+
+void SWServer::terminateContextConnectionWhenPossible(const RegistrableDomain& registrableDomain, ProcessIdentifier processIdentifier)
+{
+    auto* contextConnection = contextConnectionForRegistrableDomain(registrableDomain);
+    if (!contextConnection || contextConnection->webProcessIdentifier() != processIdentifier)
+        return;
+
+    contextConnection->terminateWhenPossible();
+}
+
 void SWServer::installContextData(const ServiceWorkerContextData& data)
 {
     ASSERT_WITH_MESSAGE(!data.loadedFromDisk, "Workers we just read from disk should only be launched as needed");
@@ -1036,7 +1053,9 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
 
             m_clientIdentifiersPerOrigin.remove(clientOrigin);
         });
-        iterator->value.terminateServiceWorkersTimer->startOneShot(m_isProcessTerminationDelayEnabled && !MemoryPressureHandler::singleton().isUnderMemoryPressure() && !didUnregister ? defaultTerminationDelay : 0_s);
+        auto* contextConnection = contextConnectionForRegistrableDomain(clientRegistrableDomain);
+        bool shouldContextConnectionBeTerminatedWhenPossible = contextConnection && contextConnection->shouldTerminateWhenPossible();
+        iterator->value.terminateServiceWorkersTimer->startOneShot(m_isProcessTerminationDelayEnabled && !MemoryPressureHandler::singleton().isUnderMemoryPressure() && !shouldContextConnectionBeTerminatedWhenPossible && !didUnregister ? defaultTerminationDelay : 0_s);
     }
 
     // If the app-bound value changed after this client was removed, we know it was the only app-bound

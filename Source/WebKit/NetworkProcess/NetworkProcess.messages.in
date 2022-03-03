@@ -207,6 +207,8 @@ messages -> NetworkProcess LegacyReceiver {
     NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
 #endif
 
+    TerminateRemoteWorkerContextConnectionWhenPossible(enum:bool WebKit::RemoteWorkerType workerType, PAL::SessionID sessionID,  WebCore::RegistrableDomain registrableDomain, WebCore::ProcessIdentifier processIdentifier);
+
 #if ENABLE(SERVICE_WORKER)
     GetPendingPushMessages(PAL::SessionID sessionID) -> (Vector<WebKit::WebPushMessage> messages) Async
     ProcessPushMessage(PAL::SessionID sessionID, struct WebKit::WebPushMessage pushMessage) -> (bool didSucceed) Async

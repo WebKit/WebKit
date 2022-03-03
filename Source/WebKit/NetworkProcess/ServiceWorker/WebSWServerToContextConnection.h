@@ -55,7 +55,7 @@ namespace WebKit {
 class NetworkConnectionToWebProcess;
 class WebSWServerConnection;
 
-class WebSWServerToContextConnection: public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
+class WebSWServerToContextConnection final: public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
 public:
     WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::SWServer&);
     ~WebSWServerToContextConnection();
@@ -78,7 +78,7 @@ public:
     void registerDownload(ServiceWorkerDownloadTask&);
     void unregisterDownload(ServiceWorkerDownloadTask&);
 
-    WebCore::ProcessIdentifier webProcessIdentifier() const;
+    WebCore::ProcessIdentifier webProcessIdentifier() const final;
     NetworkProcess& networkProcess() { return m_connection.networkProcess(); }
 
 private:
@@ -97,6 +97,7 @@ private:
     void didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier, const WebCore::ScriptBuffer&, const HashMap<URL, WebCore::ScriptBuffer>& importedScripts) final;
     void matchAllCompleted(uint64_t requestIdentifier, const Vector<WebCore::ServiceWorkerClientData>&) final;
     void firePushEvent(WebCore::ServiceWorkerIdentifier, const std::optional<Vector<uint8_t>>&, CompletionHandler<void(bool)>&&) final;
+    void close() final;
 
     void connectionIsNoLongerNeeded() final;
     void terminateDueToUnresponsiveness() final;
@@ -104,7 +105,6 @@ private:
     void connectionClosed();
 
     NetworkConnectionToWebProcess& m_connection;
-    WeakPtr<WebCore::SWServer> m_server;
     HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_ongoingFetches;
     HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerDownloadTask>> m_ongoingDownloads;
     bool m_isThrottleable { true };

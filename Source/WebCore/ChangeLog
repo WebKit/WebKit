@@ -1,3 +1,58 @@
+2022-03-03  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r290356-r290351?): [ iOS EWS ] 3 imported/w3c/web-platform-tests/service-workers/service-worker/* tests are constant text failures.
+        https://bugs.webkit.org/show_bug.cgi?id=237160
+        <rdar://problem/89440067>
+
+        Reviewed by Youenn Fablet.
+
+        In r290352, I made a change so that the service worker is more likely to launch in the WebContent
+        process that caused it to launch. This is beneficial for performance and memory usage.
+
+        The partitioned-service-worker*.html service worker tests are relying on an ID variable that is
+        randomly generated inside the service worker and they expect this ID to not change during the
+        duration of the test. This means that if the service worker exits / relaunches, those tests start
+        failing because the ID changes.
+
+        The issue is that we have logic in WebProcessProxy::didStartProvisionalLoadForMainFrame() that
+        terminates the service workers running inside the WebProcess if a new eTLD+1 page is loaded inside
+        the process. We do so to try and achieve better process isolation between different sites. The
+        issue is that those tests launch a service worker and then open a new cross-site popup. When the
+        cross-site popup loads inside the same process, we'd make the decision to terminate the service
+        workers in this process and relaunch them in a new clean one, causing the tests to fail.
+
+        While it is true per the specification that service workers can be terminated / relaunched at
+        almost any point, there are exceptions. In particular, we should keep a service worker running
+        if it still has pending extendable events. For this reason, the tests rely on FetchEvent.waitUntil()
+        to keep the service worker running. Sadly, we would not obey that in this case.
+
+        To address the issue, we no longer unconditionally close the service worker context connection
+        when a WebProcess loads a new eTLD+1. Instead, we tell the network process to close that connection
+        as soon as possible. When the network process receives this IPC, it terminates the context
+        connection ONLY if the service workers using the connection have no pending events. If we cannot
+        close the context connection right away, we set a flag on the context connection to indicate that
+        we should close it as soon as possible. Currently, this flag is only used to close the connection
+        right away (no 10 second delay) once the connection no longer has any clients. I think that, ideally,
+        we'd close the connection as soon as the service workers no longer have pending events. However,
+        this adds complexity and is error-prone so I didn't implement it in this patch and merely added a
+        FIXME comment. As it stands, my patch STILL relaunches service workers in origin-clean processes
+        in the common case. It only fails to do so in the case where there are pending service worker
+        events which is a case where we had the correctness bug anyway.
+
+        No new tests, unskipped existing tests.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::forEachServiceWorker const):
+        (WebCore::SWServer::terminateContextConnectionWhenPossible):
+        (WebCore::SWServer::unregisterServiceWorkerClient):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerToContextConnection.cpp:
+        (WebCore::SWServerToContextConnection::SWServerToContextConnection):
+        (WebCore::SWServerToContextConnection::server const):
+        (WebCore::SWServerToContextConnection::terminateWhenPossible):
+        * workers/service/server/SWServerToContextConnection.h:
+        (WebCore::SWServerToContextConnection::shouldTerminateWhenPossible const):
+
 2022-03-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early March 2022 edition

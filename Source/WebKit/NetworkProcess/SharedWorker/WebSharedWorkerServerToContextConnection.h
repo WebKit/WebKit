@@ -58,6 +58,8 @@ public:
     const WebCore::RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
     IPC::Connection& ipcConnection() const;
 
+    void terminateWhenPossible() { m_shouldTerminateWhenPossible = true; }
+
     void launchSharedWorker(WebSharedWorker&);
     void postConnectEvent(const WebSharedWorker&, const WebCore::TransferredMessagePort&);
     void terminateSharedWorker(const WebSharedWorker&);
@@ -85,6 +87,7 @@ private:
     WebCore::RegistrableDomain m_registrableDomain;
     HashMap<WebCore::ProcessIdentifier, HashSet<WebCore::SharedWorkerObjectIdentifier>> m_sharedWorkerObjects;
     WebCore::Timer m_idleTerminationTimer;
+    bool m_shouldTerminateWhenPossible { false };
 };
 
 } // namespace WebKit

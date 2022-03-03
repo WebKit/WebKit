@@ -2188,8 +2188,6 @@ webkit.org/b/152442 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
 
 webkit.org/b/152282 css3/filters/composited-during-transition-layertree.html [ Failure ]
 
-webkit.org/b/237160 imported/w3c/web-platform-tests/service-workers/service-worker/partitioned-service-worker.tentative.https.html [ Failure ]
-
 webkit.org/b/152935 fast/scrolling/scroll-position-on-reload-rtl.html [ Failure ]
 
 webkit.org/b/153371 imported/w3c/web-platform-tests/xhr/getresponseheader-chunked-trailer.htm [ Pass Failure ]
@@ -3504,7 +3502,3 @@ webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Pas
 webkit.org/b/236794 editing/spelling/editing-word-with-marker-2.html [ Pass Crash ]
 
 webkit.org/b/237159 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-049.html [ Pass Crash ]
-
-webkit.org/b/237161 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https.html [ Pass Failure ]
-
-webkit.org/b/237162 imported/w3c/web-platform-tests/service-workers/service-worker/partitioned-service-worker-getRegistrations.tentative.https.html [ Pass Failure ]

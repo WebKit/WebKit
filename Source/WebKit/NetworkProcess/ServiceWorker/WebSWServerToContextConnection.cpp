@@ -46,9 +46,8 @@ namespace WebKit {
 using namespace WebCore;
 
 WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, SWServer& server)
-    : SWServerToContextConnection(WTFMove(registrableDomain), serviceWorkerPageIdentifier)
+    : SWServerToContextConnection(server, WTFMove(registrableDomain), serviceWorkerPageIdentifier)
     , m_connection(connection)
-    , m_server(server)
     , m_webPageProxyID(webPageProxyID)
 {
     server.addContextConnection(*this);
@@ -64,8 +63,8 @@ WebSWServerToContextConnection::~WebSWServerToContextConnection()
     for (auto& download : downloads.values())
         download->contextClosed();
 
-    if (m_server && m_server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
-        m_server->removeContextConnection(*this);
+    if (auto* server = this->server(); server && server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
+        server->removeContextConnection(*this);
 }
 
 IPC::Connection& WebSWServerToContextConnection::ipcConnection() const
@@ -85,11 +84,14 @@ uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
 
 void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
-    if (!m_server)
-        return;
-
-    if (auto* connection = m_server->connection(destinationIdentifier.processIdentifier()))
+    auto* server = this->server();
+    if (auto* connection = server ? server->connection(destinationIdentifier.processIdentifier()) : nullptr)
         connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
+}
+
+void WebSWServerToContextConnection::close()
+{
+    send(Messages::WebSWContextManagerConnection::Close { });
 }
 
 void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& contextData, const ServiceWorkerData& workerData, const String& userAgent, WorkerThreadMode workerThreadMode)

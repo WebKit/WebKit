@@ -51,6 +51,7 @@
 #include "NetworkStorageManager.h"
 #include "PreconnectTask.h"
 #include "PrivateClickMeasurementStore.h"
+#include "RemoteWorkerType.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "StorageAccessStatus.h"
 #include "StorageManagerSet.h"
@@ -60,6 +61,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebPushMessage.h"
 #include "WebResourceLoadStatisticsStore.h"
+#include "WebSharedWorkerServer.h"
 #include "WebsiteDataFetchOption.h"
 #include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
@@ -2075,6 +2077,24 @@ void NetworkProcess::terminate()
 void NetworkProcess::processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&& completionHandler)
 {
     prepareToSuspend(true, WTFMove(completionHandler));
+}
+
+void NetworkProcess::terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType workerType, PAL::SessionID sessionID, const WebCore::RegistrableDomain& registrableDomain, WebCore::ProcessIdentifier processIdentifier)
+{
+    auto* session = networkSession(sessionID);
+    if (!session)
+        return;
+
+    switch (workerType) {
+    case RemoteWorkerType::ServiceWorker:
+        if (auto* swServer = session->swServer())
+            swServer->terminateContextConnectionWhenPossible(registrableDomain, processIdentifier);
+        break;
+    case RemoteWorkerType::SharedWorker:
+        if (auto* sharedWorkerServer = session->sharedWorkerServer())
+            sharedWorkerServer->terminateContextConnectionWhenPossible(registrableDomain, processIdentifier);
+        break;
+    }
 }
 
 void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
