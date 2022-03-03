@@ -1,5 +1,14 @@
 2022-03-02  Robert Jenner  <Jenner@apple.com>
 
+        WindowServer returned not alive with context:,unresponsive work processor(s)
+        <rdar://86037417>
+
+        Unreviewed test gardening. Skipping tests on iOS due to tests causing WindowServer to crash.
+
+        * platform/ios-wk2/TestExpectations:
+
+2022-03-02  Robert Jenner  <Jenner@apple.com>
+
         Unreviewed, reverting r290658.
 
         r290658 broke two tests for iOS, slowing down EWS.
