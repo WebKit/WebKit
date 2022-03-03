@@ -1,3 +1,72 @@
+2022-03-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Further reduce hangs underneath -[WKContentView requestAutocorrectionContextWithCompletionHandler:]
+        https://bugs.webkit.org/show_bug.cgi?id=237387
+        rdar://89654600
+
+        Reviewed by Tim Horton.
+
+        Tweak the mitigations landed in r288925 to be even more aggressive. Currently, we preemptively send an
+        autocorrection context from the web process to the UI process after receiving an IPC message from the UI process
+        indicating that an input view has been shown. However, this message might arrive too late in cases where the web
+        process hangs immediately after we're done setting element focus, within the very same runloop; in such a
+        scenario, we'll still end up hanging underneath the sync autocorrection request underneath `-_elementDidFocus:`
+        in the UI process.
+
+        We can instead make this mitigation even more aggressive, by setting a flag on WebPage when we're about to
+        propagate an `ElementDidFocus` message to the UI process that (in lieu of the WebKit client) would normally
+        cause the keyboard to appear. During the next DOM selection change, we then consult this flag and preemptively
+        send an autocorrection context to the UI process.
+
+        Additionally, remove another safeguard in the original change in r288925 which effectively invalidated the
+        cached autocorrection context after the end of the runloop by setting `_autocorrectionContextNeedsUpdate`. This
+        was only done to narrow the scope of the fix to just the scenario where UIKit requests autocorrection contexts
+        multiple times in the same runloop iteration. However, this appears to be insufficient to tackle more scenarios
+        where UIKit frequently requests autocorrection contexts even though the selection has not changed; hopefully, by
+        leaving `_autocorrectionContextNeedsUpdate := NO`, we can mitigate some of these other cases.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::notifySelectionChanged):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        * WebProcess/WebCoreSupport/ios/WebChromeClientIOS.mm:
+        (WebKit::WebChromeClient::notifyRevealedSelectionByScrollingFrame):
+        (WebKit::WebChromeClient::didLayout):
+        * WebProcess/WebCoreSupport/ios/WebEditorClientIOS.mm:
+        (WebKit::WebEditorClient::overflowScrollPositionChanged):
+        (WebKit::WebEditorClient::subFrameScrollPositionChanged):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didScrollSelection):
+        (WebKit::WebPage::didChangeSelection):
+
+        Split `didChangeSelection` into two methods: `didScrollSelection`, which is invoked from codepaths where we're
+        scheduling an editor state after overflow or mainframe scrolling, and `didChangeSelection`, which now takes a
+        `Frame` indicating the frame that contains the changed selection. On iOS, we handle this by both scheduling an
+        editor state update, but also preemptively sending the autocorrection context to the UI process if we've just
+        focused an element that will probably cause the keyboard to appear (unless the client explicitly prevents it).
+
+        Note that we must check the `frame` containing the changed selection and bail if the render tree is in the
+        middle of being destroyed, so that we don't end up triggering layout (and release asserting) in the case where
+        we're clearing the selection during document teardown.
+
+        (WebKit::WebPage::resetFocusedElementForFrame):
+        (WebKit::WebPage::elementDidFocus):
+        (WebKit::WebPage::elementDidBlur):
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::didChangeOverflowScrollPosition): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::setIsShowingInputViewForFocusedElement):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::updateSelectionAppearance):
+
+        Pass in `frame` to `didChangeSelection`.
+
+        (WebKit::WebPage::setIsShowingInputViewForFocusedElement): Deleted.
+
+        Move this back into the header, now that it's a straightforward setter again.
+
 2022-03-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r290776): NetworkSession::swServer depends on ENABLE(SERVICE_WORKER)

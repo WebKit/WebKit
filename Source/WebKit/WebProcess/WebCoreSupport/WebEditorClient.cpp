@@ -217,7 +217,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
     if (!frame)
         return;
 
-    m_page->didChangeSelection();
+    m_page->didChangeSelection(*frame);
 
 #if PLATFORM(GTK)
     updateGlobalSelection(frame);

@@ -688,7 +688,7 @@ void WebPage::updateSelectionAppearance()
     if (!editor.hasComposition() && frame->selection().selection().isNone())
         return;
 
-    didChangeSelection();
+    didChangeSelection(frame.get());
 }
 
 static void dispatchSyntheticMouseMove(Frame& mainFrame, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, WebCore::PointerID pointerId = WebCore::mousePointerID)
@@ -1260,17 +1260,6 @@ void WebPage::blurFocusedElement()
         return;
 
     m_focusedElement->blur();
-}
-
-void WebPage::setIsShowingInputViewForFocusedElement(bool showingInputView)
-{
-    if (m_isShowingInputViewForFocusedElement == showingInputView)
-        return;
-
-    m_isShowingInputViewForFocusedElement = showingInputView;
-
-    if (showingInputView)
-        preemptivelySendAutocorrectionContext();
 }
 
 void WebPage::setFocusedElementValue(const WebCore::ElementContext& context, const String& value)

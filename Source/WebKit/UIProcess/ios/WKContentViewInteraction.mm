@@ -4980,11 +4980,6 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     if (!useSyncRequest)
         return;
 
-    callOnMainRunLoop([weakSelf = WeakObjCPtr<WKContentView>(self)]() {
-        if (auto strongSelf = weakSelf.get())
-            strongSelf->_autocorrectionContextNeedsUpdate = YES;
-    });
-
     if (!_page->process().connection()->waitForAndDispatchImmediately<Messages::WebPageProxy::HandleAutocorrectionContext>(_page->webPageID(), 1_s, IPC::WaitForOption::DispatchIncomingSyncMessagesWhileWaiting))
         RELEASE_LOG(TextInput, "Timed out while waiting for autocorrection context.");
 

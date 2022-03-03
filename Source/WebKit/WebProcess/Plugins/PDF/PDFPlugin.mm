@@ -2786,7 +2786,7 @@ void PDFPlugin::notifySelectionChanged(PDFSelection *)
 {
     if (!m_frame || !m_frame->page())
         return;
-    m_frame->page()->didChangeSelection();
+    m_frame->page()->didChangeSelection(*m_frame->coreFrame());
 }
 
 static const WebCore::Cursor& coreCursor(PDFLayerControllerCursorType type)

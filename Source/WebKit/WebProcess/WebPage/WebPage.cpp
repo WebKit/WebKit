@@ -6079,14 +6079,25 @@ void WebPage::didChangeContents()
     sendEditorStateUpdate();
 }
 
-void WebPage::didChangeOverflowScrollPosition()
+void WebPage::didScrollSelection()
 {
     didChangeSelectionOrOverflowScrollPosition();
 }
 
-void WebPage::didChangeSelection()
+void WebPage::didChangeSelection(Frame& frame)
 {
     didChangeSelectionOrOverflowScrollPosition();
+
+#if PLATFORM(IOS_FAMILY)
+    if (!m_sendAutocorrectionContextAfterFocusingElement)
+        return;
+
+    if (UNLIKELY(!frame.document() || !frame.document()->hasLivingRenderTree() || frame.selection().isNone()))
+        return;
+
+    m_sendAutocorrectionContextAfterFocusingElement = false;
+    preemptivelySendAutocorrectionContext();
+#endif // PLATFORM(IOS_FAMILY)
 }
 
 void WebPage::didChangeSelectionOrOverflowScrollPosition()
@@ -6143,6 +6154,7 @@ void WebPage::resetFocusedElementForFrame(WebFrame* frame)
 
     if (frame->isMainFrame() || m_focusedElement->document().frame() == frame->coreFrame()) {
 #if PLATFORM(IOS_FAMILY)
+        m_sendAutocorrectionContextAfterFocusingElement = false;
         send(Messages::WebPageProxy::ElementDidBlur());
 #elif PLATFORM(MAC)
         send(Messages::WebPageProxy::SetEditableElementIsFocused(false));
@@ -6195,6 +6207,8 @@ void WebPage::elementDidFocus(Element& element, const FocusOptions& options)
         if (element.document().fullscreenManager().isFullscreen())
             element.document().fullscreenManager().cancelFullscreen();
 #endif
+        if (m_userIsInteracting || m_keyboardIsAttached)
+            m_sendAutocorrectionContextAfterFocusingElement = true;
 
         auto information = focusedElementInformation();
         if (!information)
@@ -6230,6 +6244,9 @@ void WebPage::elementDidBlur(WebCore::Element& element)
             protectedThis->m_recentlyBlurredElement = nullptr;
         });
         m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = false;
+#if PLATFORM(IOS_FAMILY)
+        m_sendAutocorrectionContextAfterFocusingElement = false;
+#endif
     }
 }
 
@@ -6544,6 +6561,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_didUpdateRenderingAfterCommittingLoad = false;
 
 #if PLATFORM(IOS_FAMILY)
+    m_sendAutocorrectionContextAfterFocusingElement = false;
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
     m_hasRestoredExposedContentRectAfterDidCommitLoad = false;
     m_lastTransactionIDWithScaleChange = firstTransactionIDAfterDidCommitLoad;

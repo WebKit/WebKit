@@ -824,7 +824,7 @@ public:
     void autofillLoginCredentials(const String&, const String&);
     void setFocusedElementValue(const WebCore::ElementContext&, const String&);
     void setFocusedElementSelectedIndex(const WebCore::ElementContext&, uint32_t index, bool allowMultipleSelection);
-    void setIsShowingInputViewForFocusedElement(bool);
+    void setIsShowingInputViewForFocusedElement(bool showingInputView) { m_isShowingInputViewForFocusedElement = showingInputView; }
     bool isShowingInputViewForFocusedElement() const { return m_isShowingInputViewForFocusedElement; }
     void updateSelectionAppearance();
     void getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
@@ -934,7 +934,8 @@ public:
 #endif
 
     void didApplyStyle();
-    void didChangeSelection();
+    void didScrollSelection();
+    void didChangeSelection(WebCore::Frame&);
     void didChangeOverflowScrollPosition();
     void didChangeContents();
     void discardedComposition();
@@ -2315,7 +2316,8 @@ private:
 
     CompletionHandler<void(InteractionInformationAtPosition&&)> m_pendingSynchronousPositionInformationReply;
     std::optional<std::pair<TransactionID, double>> m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
-#endif
+    bool m_sendAutocorrectionContextAfterFocusingElement { false };
+#endif // PLATFORM(IOS_FAMILY)
 
     WebCore::Timer m_layerVolatilityTimer;
     Seconds m_layerVolatilityTimerInterval;

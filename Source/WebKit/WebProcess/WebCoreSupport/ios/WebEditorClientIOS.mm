@@ -94,12 +94,12 @@ void WebEditorClient::updateStringForFind(const String& findString)
 
 void WebEditorClient::overflowScrollPositionChanged()
 {
-    m_page->didChangeOverflowScrollPosition();
+    m_page->didScrollSelection();
 }
 
 void WebEditorClient::subFrameScrollPositionChanged()
 {
-    m_page->didChangeOverflowScrollPosition();
+    m_page->didScrollSelection();
 }
 
 bool WebEditorClient::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection) const

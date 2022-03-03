@@ -76,7 +76,7 @@ void WebChromeClient::didFinishContentChangeObserving(WebCore::Frame&, WKContent
 
 void WebChromeClient::notifyRevealedSelectionByScrollingFrame(WebCore::Frame&)
 {
-    m_page.didChangeSelection();
+    m_page.didScrollSelection();
 }
 
 bool WebChromeClient::isStopping()
@@ -88,7 +88,7 @@ bool WebChromeClient::isStopping()
 void WebChromeClient::didLayout(LayoutType type)
 {
     if (type == Scroll)
-        m_page.didChangeSelection();
+        m_page.didScrollSelection();
 }
 
 void WebChromeClient::didStartOverflowScroll()
