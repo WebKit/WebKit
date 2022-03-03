@@ -50,10 +50,10 @@ std::unique_ptr<FullBytecodeLiveness> BytecodeLivenessAnalysis::computeFullLiven
     size_t size = codeBlock->instructions().size();
     auto result = makeUnique<FullBytecodeLiveness>(size);
 
-    for (BytecodeBasicBlock& block : m_graph.basicBlocksInReverseOrder()) {
+    for (auto& block : m_graph.basicBlocksInReverseOrder()) {
         if (block.isEntryBlock() || block.isExitBlock())
             continue;
-        
+
         out = block.out();
 
         auto use = [&] (unsigned bitIndex) {
@@ -96,9 +96,9 @@ void BytecodeLivenessAnalysis::dumpResults(CodeBlock* codeBlock)
 
     unsigned numberOfBlocks = m_graph.size();
     Vector<FastBitVector> predecessors(numberOfBlocks);
-    for (BytecodeBasicBlock& block : m_graph)
+    for (auto& block : m_graph)
         predecessors[block.index()].resize(numberOfBlocks);
-    for (BytecodeBasicBlock& block : m_graph) {
+    for (auto& block : m_graph) {
         for (unsigned successorIndex : block.successors()) {
             unsigned blockIndex = block.index();
             predecessors[successorIndex][blockIndex] = true;
@@ -112,7 +112,7 @@ void BytecodeLivenessAnalysis::dumpResults(CodeBlock* codeBlock)
         }
     };
 
-    for (BytecodeBasicBlock& block : m_graph) {
+    for (auto& block : m_graph) {
         dataLogF("\nBytecode basic block %u: %p (offset: %u, length: %u)\n", i++, &block, block.leaderOffset(), block.totalLength());
 
         dataLogF("Predecessors:");

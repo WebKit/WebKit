@@ -75,8 +75,8 @@ SpeculatedType FileBasedFuzzerAgentBase::getPrediction(CodeBlock* codeBlock, con
     Vector<String> urlParts = sourceURL.split('/');
     predictionTarget.sourceFilename = urlParts.isEmpty() ? sourceURL : urlParts.last();
 
-    const InstructionStream& instructions = codeBlock->instructions();
-    const Instruction* anInstruction = instructions.at(bytecodeIndex).ptr();
+    const auto& instructions = codeBlock->instructions();
+    const auto* anInstruction = instructions.at(bytecodeIndex).ptr();
     predictionTarget.opcodeId = anInstruction->opcodeID();
 
     int startLocation = predictionTarget.divot - predictionTarget.startOffset;

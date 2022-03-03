@@ -32,7 +32,7 @@
 namespace JSC {
 
 template <size_t vectorSize, typename Block>
-static void getJumpTargetsForInstruction(Block* codeBlock, const InstructionStream::Ref& instruction, Vector<InstructionStream::Offset, vectorSize>& out)
+static void getJumpTargetsForInstruction(Block* codeBlock, const JSInstructionStream::Ref& instruction, Vector<JSInstructionStream::Offset, vectorSize>& out)
 {
     extractStoredJumpTargetsForInstruction(codeBlock, instruction, [&](int32_t relativeOffset) {
         out.append(instruction.offset() + relativeOffset);
@@ -54,7 +54,7 @@ enum class ComputePreciseJumpTargetsMode {
 };
 
 template<ComputePreciseJumpTargetsMode Mode, typename Block, size_t vectorSize>
-void computePreciseJumpTargetsInternal(Block* codeBlock, const InstructionStream& instructions, Vector<InstructionStream::Offset, vectorSize>& out)
+void computePreciseJumpTargetsInternal(Block* codeBlock, const JSInstructionStream& instructions, Vector<JSInstructionStream::Offset, vectorSize>& out)
 {
     ASSERT(out.isEmpty());
 
@@ -88,32 +88,32 @@ void computePreciseJumpTargetsInternal(Block* codeBlock, const InstructionStream
     out.shrinkCapacity(toIndex);
 }
 
-void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<InstructionStream::Offset, 32>& out)
+void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<JSInstructionStream::Offset, 32>& out)
 {
     computePreciseJumpTargetsInternal<ComputePreciseJumpTargetsMode::FollowCodeBlockClaim>(codeBlock, codeBlock->instructions(), out);
 }
 
-void computePreciseJumpTargets(CodeBlock* codeBlock, const InstructionStream& instructions, Vector<InstructionStream::Offset, 32>& out)
+void computePreciseJumpTargets(CodeBlock* codeBlock, const JSInstructionStream& instructions, Vector<JSInstructionStream::Offset, 32>& out)
 {
     computePreciseJumpTargetsInternal<ComputePreciseJumpTargetsMode::FollowCodeBlockClaim>(codeBlock, instructions, out);
 }
 
-void computePreciseJumpTargets(UnlinkedCodeBlockGenerator* codeBlock, const InstructionStream& instructions, Vector<InstructionStream::Offset, 32>& out)
+void computePreciseJumpTargets(UnlinkedCodeBlockGenerator* codeBlock, const JSInstructionStream& instructions, Vector<JSInstructionStream::Offset, 32>& out)
 {
     computePreciseJumpTargetsInternal<ComputePreciseJumpTargetsMode::FollowCodeBlockClaim>(codeBlock, instructions, out);
 }
 
-void recomputePreciseJumpTargets(UnlinkedCodeBlockGenerator* codeBlock, const InstructionStream& instructions, Vector<InstructionStream::Offset>& out)
+void recomputePreciseJumpTargets(UnlinkedCodeBlockGenerator* codeBlock, const JSInstructionStream& instructions, Vector<JSInstructionStream::Offset>& out)
 {
     computePreciseJumpTargetsInternal<ComputePreciseJumpTargetsMode::ForceCompute>(codeBlock, instructions, out);
 }
 
-void findJumpTargetsForInstruction(CodeBlock* codeBlock, const InstructionStream::Ref& instruction, Vector<InstructionStream::Offset, 1>& out)
+void findJumpTargetsForInstruction(CodeBlock* codeBlock, const JSInstructionStream::Ref& instruction, Vector<JSInstructionStream::Offset, 1>& out)
 {
     getJumpTargetsForInstruction(codeBlock, instruction, out);
 }
 
-void findJumpTargetsForInstruction(UnlinkedCodeBlockGenerator* codeBlock, const InstructionStream::Ref& instruction, Vector<InstructionStream::Offset, 1>& out)
+void findJumpTargetsForInstruction(UnlinkedCodeBlockGenerator* codeBlock, const JSInstructionStream::Ref& instruction, Vector<JSInstructionStream::Offset, 1>& out)
 {
     getJumpTargetsForInstruction(codeBlock, instruction, out);
 }

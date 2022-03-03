@@ -34,31 +34,31 @@
 
 namespace JSC {
 
-class BytecodeBasicBlock;
-
 class BytecodeGraph {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(BytecodeGraph);
 public:
-    using BasicBlocksVector = BytecodeBasicBlock::BasicBlockVector;
+    using BasicBlockType = JSBytecodeBasicBlock;
+    using BasicBlocksVector = typename BasicBlockType::BasicBlockVector;
+    using InstructionStreamType = typename BasicBlockType::InstructionStreamType;
 
     typedef WTF::IndexedContainerIterator<BytecodeGraph> iterator;
 
     template <typename CodeBlockType>
-    inline BytecodeGraph(CodeBlockType*, const InstructionStream&);
+    inline BytecodeGraph(CodeBlockType*, const InstructionStreamType&);
 
     WTF::IteratorRange<BasicBlocksVector::reverse_iterator> basicBlocksInReverseOrder()
     {
         return WTF::makeIteratorRange(m_basicBlocks.rbegin(), m_basicBlocks.rend());
     }
 
-    static bool blockContainsBytecodeOffset(const BytecodeBasicBlock& block, InstructionStream::Offset bytecodeOffset)
+    static bool blockContainsBytecodeOffset(const BasicBlockType& block, typename InstructionStreamType::Offset bytecodeOffset)
     {
         unsigned leaderOffset = block.leaderOffset();
         return bytecodeOffset >= leaderOffset && bytecodeOffset < leaderOffset + block.totalLength();
     }
 
-    BytecodeBasicBlock* findBasicBlockForBytecodeOffset(InstructionStream::Offset bytecodeOffset)
+    BasicBlockType* findBasicBlockForBytecodeOffset(typename InstructionStreamType::Offset bytecodeOffset)
     {
         /*
             for (unsigned i = 0; i < m_basicBlocks.size(); i++) {
@@ -68,7 +68,7 @@ public:
             return 0;
         */
 
-        BytecodeBasicBlock* basicBlock = approximateBinarySearch<BytecodeBasicBlock, unsigned>(m_basicBlocks, m_basicBlocks.size(), bytecodeOffset, [] (BytecodeBasicBlock* basicBlock) { return basicBlock->leaderOffset(); });
+        BasicBlockType* basicBlock = approximateBinarySearch<BasicBlockType, unsigned>(m_basicBlocks, m_basicBlocks.size(), bytecodeOffset, [] (BasicBlockType* basicBlock) { return basicBlock->leaderOffset(); });
         // We found the block we were looking for.
         if (blockContainsBytecodeOffset(*basicBlock, bytecodeOffset))
             return basicBlock;
@@ -86,23 +86,23 @@ public:
         return &basicBlock[1];
     }
 
-    BytecodeBasicBlock* findBasicBlockWithLeaderOffset(InstructionStream::Offset leaderOffset)
+    BasicBlockType* findBasicBlockWithLeaderOffset(typename InstructionStreamType::Offset leaderOffset)
     {
-        return tryBinarySearch<BytecodeBasicBlock, unsigned>(m_basicBlocks, m_basicBlocks.size(), leaderOffset, [] (BytecodeBasicBlock* basicBlock) { return basicBlock->leaderOffset(); });
+        return tryBinarySearch<BasicBlockType, unsigned>(m_basicBlocks, m_basicBlocks.size(), leaderOffset, [] (BasicBlockType* basicBlock) { return basicBlock->leaderOffset(); });
     }
 
     unsigned size() const { return m_basicBlocks.size(); }
-    BytecodeBasicBlock& at(unsigned index) const { return const_cast<BytecodeGraph*>(this)->m_basicBlocks[index]; }
-    BytecodeBasicBlock& operator[](unsigned index) const { return at(index); }
+    BasicBlockType& at(unsigned index) const { return const_cast<BytecodeGraph*>(this)->m_basicBlocks[index]; }
+    BasicBlockType& operator[](unsigned index) const { return at(index); }
 
     iterator begin() { return iterator(*this, 0); }
     iterator end() { return iterator(*this, size()); }
-    BytecodeBasicBlock& first() { return at(0); }
-    BytecodeBasicBlock& last() { return at(size() - 1); }
+    BasicBlockType& first() { return at(0); }
+    BasicBlockType& last() { return at(size() - 1); }
 
 
     template <typename CodeBlockType>
-    void dump(CodeBlockType* codeBlock, const InstructionStream& instructions, std::optional<Vector<Operands<SpeculatedType>>> speculationAtHead, PrintStream& printer = WTF::dataFile())
+    void dump(CodeBlockType* codeBlock, const InstructionStreamType& instructions, std::optional<Vector<Operands<SpeculatedType>>> speculationAtHead, PrintStream& printer = WTF::dataFile())
     {
         CodeBlockBytecodeDumper<CodeBlockType>::dumpGraph(codeBlock, instructions, *this, speculationAtHead, printer);
     }
@@ -113,8 +113,8 @@ private:
 
 
 template<typename CodeBlockType>
-BytecodeGraph::BytecodeGraph(CodeBlockType* codeBlock, const InstructionStream& instructions)
-    : m_basicBlocks(BytecodeBasicBlock::compute(codeBlock, instructions))
+BytecodeGraph::BytecodeGraph(CodeBlockType* codeBlock, const InstructionStreamType& instructions)
+    : m_basicBlocks(BasicBlockType::compute(codeBlock, instructions))
 {
     ASSERT(m_basicBlocks.size());
 }

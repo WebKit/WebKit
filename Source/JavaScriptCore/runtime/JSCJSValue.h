@@ -73,7 +73,6 @@ class CLoop;
 
 struct ClassInfo;
 struct DumpContext;
-struct Instruction;
 struct MethodTable;
 enum class Unknown { };
 

@@ -100,7 +100,7 @@ inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, CapabilityLevel r
         dataLog("DFG rejecting opcode in ", *codeBlock, " because of opcode ", opcodeNames[opcodeID], "\n");
 }
 
-CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const Instruction* pc)
+CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, const JSInstruction* pc)
 {
     UNUSED_PARAM(codeBlock); // This function does some bytecode parsing. Ordinarily bytecode parsing requires the owning CodeBlock. It's sort of strange that we don't use it here right now.
     UNUSED_PARAM(pc);

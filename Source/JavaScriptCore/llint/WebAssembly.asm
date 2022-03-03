@@ -460,7 +460,7 @@ end
 # Wasm wrapper of get/getu that operate on ctx
 macro wgets(ctx, field, dst)
     ctx(macro(opcodeName, opcodeStruct, size)
-        size(getOperandNarrow, getOperandWide16, getOperandWide32, macro (get)
+        size(getOperandNarrow, getOperandWide16Wasm, getOperandWide32Wasm, macro (get)
             get(opcodeStruct, field, dst)
         end)
     end)
@@ -468,7 +468,7 @@ end
 
 macro wgetu(ctx, field, dst)
     ctx(macro(opcodeName, opcodeStruct, size)
-        size(getuOperandNarrow, getuOperandWide16, getuOperandWide32, macro (getu)
+        size(getuOperandNarrow, getuOperandWide16Wasm, getuOperandWide32Wasm, macro (getu)
             getu(opcodeStruct, field, dst)
         end)
     end)
@@ -478,7 +478,7 @@ end
 
 macro dispatch(ctx)
     ctx(macro(opcodeName, opcodeStruct, size)
-        genericDispatchOp(wasmDispatch, size, opcodeName)
+        genericDispatchOpWasm(wasmDispatch, size, opcodeName)
     end)
 end
 

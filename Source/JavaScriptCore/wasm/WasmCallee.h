@@ -236,7 +236,7 @@ public:
     uint32_t numArguments() const { return m_numArguments; }
     const FixedVector<Type>& constantTypes() const { return m_constantTypes; }
     const FixedVector<uint64_t>& constants() const { return m_constants; }
-    const InstructionStream& instructions() const { return *m_instructions; }
+    const WasmInstructionStream& instructions() const { return *m_instructions; }
 
     ALWAYS_INLINE uint64_t getConstant(VirtualRegister reg) const { return m_constants[reg.toConstantIndex()]; }
     ALWAYS_INLINE Type getConstantType(VirtualRegister reg) const
@@ -245,20 +245,20 @@ public:
         return m_constantTypes[reg.toConstantIndex()];
     }
 
-    InstructionStream::Offset numberOfJumpTargets() { return m_jumpTargets.size(); }
-    InstructionStream::Offset lastJumpTarget() { return m_jumpTargets.last(); }
+    WasmInstructionStream::Offset numberOfJumpTargets() { return m_jumpTargets.size(); }
+    WasmInstructionStream::Offset lastJumpTarget() { return m_jumpTargets.last(); }
 
-    const Instruction* outOfLineJumpTarget(const Instruction*);
-    InstructionStream::Offset outOfLineJumpOffset(InstructionStream::Offset);
-    InstructionStream::Offset outOfLineJumpOffset(const InstructionStream::Ref& instruction)
+    const WasmInstruction* outOfLineJumpTarget(const WasmInstruction*);
+    WasmInstructionStream::Offset outOfLineJumpOffset(WasmInstructionStream::Offset);
+    WasmInstructionStream::Offset outOfLineJumpOffset(const WasmInstructionStream::Ref& instruction)
     {
         return outOfLineJumpOffset(instruction.offset());
     }
 
-    inline InstructionStream::Offset bytecodeOffset(const Instruction* returnAddress)
+    inline WasmInstructionStream::Offset bytecodeOffset(const WasmInstruction* returnAddress)
     {
         const auto* instructionsBegin = m_instructions->at(0).ptr();
-        const auto* instructionsEnd = reinterpret_cast<const Instruction*>(reinterpret_cast<uintptr_t>(instructionsBegin) + m_instructions->size());
+        const auto* instructionsEnd = reinterpret_cast<const WasmInstruction*>(reinterpret_cast<uintptr_t>(instructionsBegin) + m_instructions->size());
         RELEASE_ASSERT(returnAddress >= instructionsBegin && returnAddress < instructionsEnd);
         return returnAddress - instructionsBegin;
     }
@@ -287,7 +287,7 @@ public:
     }
 #endif
 
-    using OutOfLineJumpTargets = HashMap<InstructionStream::Offset, int>;
+    using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
 
 private:
     LLIntCallee(FunctionCodeBlockGenerator&, size_t index, std::pair<const Name*, RefPtr<NameSection>>&&);
@@ -301,9 +301,9 @@ private:
     uint32_t m_numArguments { 0 };
     FixedVector<Type> m_constantTypes;
     FixedVector<uint64_t> m_constants;
-    std::unique_ptr<InstructionStream> m_instructions;
+    std::unique_ptr<WasmInstructionStream> m_instructions;
     const void* m_instructionsRawPointer { nullptr };
-    FixedVector<InstructionStream::Offset> m_jumpTargets;
+    FixedVector<WasmInstructionStream::Offset> m_jumpTargets;
     FixedVector<const Signature*> m_signatures;
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     LLIntTierUpCounter m_tierUpCounter;

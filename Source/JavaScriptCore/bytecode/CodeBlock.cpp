@@ -236,7 +236,7 @@ void CodeBlock::dumpBytecode(PrintStream& out)
     CodeBlockBytecodeDumper<CodeBlock>::dumpGraph(this, instructions(), graph, out, statusMap);
 }
 
-void CodeBlock::dumpBytecode(PrintStream& out, const InstructionStream::Ref& it, const ICStatusMap& statusMap)
+void CodeBlock::dumpBytecode(PrintStream& out, const JSInstructionStream::Ref& it, const ICStatusMap& statusMap)
 {
     BytecodeDumper<CodeBlock>::dumpBytecode(this, out, it, statusMap);
 }
@@ -476,10 +476,11 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         break; \
     }
 
-    const InstructionStream& instructionStream = instructions();
+    const auto& instructionStream = instructions();
     for (const auto& instruction : instructionStream) {
         OpcodeID opcodeID = instruction->opcodeID();
-        m_bytecodeCost += opcodeLengths[opcodeID];
+        static_assert(OpcodeIDWidthBySize<JSOpcodeTraits, OpcodeSize::Wide32>::opcodeIDSize == 1);
+        m_bytecodeCost += opcodeLengths[opcodeID] + 1;
         switch (opcodeID) {
         LINK(OpGetByVal, profile)
         LINK(OpGetPrivateName, profile)
@@ -2082,7 +2083,7 @@ void CodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIndex, int
 
 bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned> column)
 {
-    const InstructionStream& instructionStream = instructions();
+    const auto& instructionStream = instructions();
     for (const auto& it : instructionStream) {
         if (it->is<OpDebug>()) {
             int unused;
@@ -3078,7 +3079,7 @@ void CodeBlock::notifyLexicalBindingUpdate()
         return symbolTable->contains(locker, uid);
     };
 
-    const InstructionStream& instructionStream = instructions();
+    const auto& instructionStream = instructions();
     for (const auto& instruction : instructionStream) {
         OpcodeID opcodeID = instruction->opcodeID();
         switch (opcodeID) {
@@ -3268,8 +3269,8 @@ void CodeBlock::validate()
             endValidationDidFail();
         }
     }
-     
-    const InstructionStream& instructionStream = instructions();
+
+    const auto& instructionStream = instructions();
     for (const auto& instruction : instructionStream) {
         OpcodeID opcode = instruction->opcodeID();
         if (!!baselineAlternative()->handlerForBytecodeIndex(BytecodeIndex(instruction.offset()))) {
@@ -3317,13 +3318,13 @@ void CodeBlock::setSteppingMode(CodeBlock::SteppingMode mode)
         jettison(Profiler::JettisonDueToDebuggerStepping);
 }
 
-int CodeBlock::outOfLineJumpOffset(const Instruction* pc)
+int CodeBlock::outOfLineJumpOffset(const JSInstruction* pc)
 {
     int offset = bytecodeOffset(pc);
     return m_unlinkedCode->outOfLineJumpOffset(offset);
 }
 
-const Instruction* CodeBlock::outOfLineJumpTarget(const Instruction* pc)
+const JSInstruction* CodeBlock::outOfLineJumpTarget(const JSInstruction* pc)
 {
     int offset = bytecodeOffset(pc);
     int target = m_unlinkedCode->outOfLineJumpOffset(offset);
@@ -3340,7 +3341,7 @@ UnaryArithProfile* CodeBlock::unaryArithProfileForBytecodeIndex(BytecodeIndex by
     return unaryArithProfileForPC(instructions().at(bytecodeIndex.offset()).ptr());
 }
 
-BinaryArithProfile* CodeBlock::binaryArithProfileForPC(const Instruction* pc)
+BinaryArithProfile* CodeBlock::binaryArithProfileForPC(const JSInstruction* pc)
 {
     switch (pc->opcodeID()) {
     case op_add:
@@ -3358,7 +3359,7 @@ BinaryArithProfile* CodeBlock::binaryArithProfileForPC(const Instruction* pc)
     return nullptr;
 }
 
-UnaryArithProfile* CodeBlock::unaryArithProfileForPC(const Instruction* pc)
+UnaryArithProfile* CodeBlock::unaryArithProfileForPC(const JSInstruction* pc)
 {
     switch (pc->opcodeID()) {
     case op_negate:
@@ -3397,9 +3398,9 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler()
 {
     if (!unlinkedCodeBlock()->hasOpProfileControlFlowBytecodeOffsets())
         return;
-    const FixedVector<InstructionStream::Offset>& bytecodeOffsets = unlinkedCodeBlock()->opProfileControlFlowBytecodeOffsets();
+    const FixedVector<JSInstructionStream::Offset>& bytecodeOffsets = unlinkedCodeBlock()->opProfileControlFlowBytecodeOffsets();
     for (size_t i = 0, offsetsLength = bytecodeOffsets.size(); i < offsetsLength; i++) {
-        // Because op_profile_control_flow is emitted at the beginning of every basic block, finding 
+        // Because op_profile_control_flow is emitted at the beginning of every basic block, finding
         // the next op_profile_control_flow will give us the text range of a single basic block.
         size_t startIdx = bytecodeOffsets[i];
         auto instruction = instructions().at(startIdx);

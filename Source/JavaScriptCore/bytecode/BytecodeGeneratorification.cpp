@@ -42,7 +42,7 @@
 namespace JSC {
 
 struct YieldData {
-    InstructionStream::Offset point { 0 };
+    JSInstructionStream::Offset point { 0 };
     VirtualRegister argument { 0 };
     FastBitVector liveness;
 };
@@ -52,14 +52,14 @@ public:
     typedef Vector<YieldData> Yields;
 
     struct GeneratorFrameData {
-        InstructionStream::Offset m_point;
+        JSInstructionStream::Offset m_point;
         VirtualRegister m_dst;
         VirtualRegister m_scope;
         VirtualRegister m_symbolTable;
         VirtualRegister m_initialValue;
     };
 
-    BytecodeGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlockGenerator* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
+    BytecodeGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlockGenerator* codeBlock, JSInstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
         : m_bytecodeGenerator(bytecodeGenerator)
         , m_codeBlock(codeBlock)
         , m_instructions(instructions)
@@ -123,7 +123,7 @@ public:
         return m_yields;
     }
 
-    InstructionStream::Ref enterPoint() const
+    JSInstructionStream::Ref enterPoint() const
     {
         return m_instructions.at(m_enterPoint);
     }
@@ -133,7 +133,7 @@ public:
         return m_generatorFrameData;
     }
 
-    const InstructionStream& instructions() const
+    const JSInstructionStream& instructions() const
     {
         return m_instructions;
     }
@@ -167,10 +167,10 @@ private:
     }
 
     BytecodeGenerator& m_bytecodeGenerator;
-    InstructionStream::Offset m_enterPoint;
+    JSInstructionStream::Offset m_enterPoint;
     std::optional<GeneratorFrameData> m_generatorFrameData;
     UnlinkedCodeBlockGenerator* m_codeBlock;
-    InstructionStreamWriter& m_instructions;
+    JSInstructionStreamWriter& m_instructions;
     BytecodeGraph m_graph;
     Vector<std::optional<Storage>> m_storages;
     Yields m_yields;
@@ -185,7 +185,7 @@ public:
     {
     }
 
-    void run(UnlinkedCodeBlockGenerator* codeBlock, InstructionStreamWriter& instructions)
+    void run(UnlinkedCodeBlockGenerator* codeBlock, JSInstructionStreamWriter& instructions)
     {
         // Perform modified liveness analysis to determine which locals are live at the merge points.
         // This produces the conservative results for the question, "which variables should be saved and resumed?".
@@ -286,7 +286,7 @@ void BytecodeGeneratorification::run()
     rewriter.execute();
 }
 
-void performGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlockGenerator* codeBlock, InstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
+void performGeneratorification(BytecodeGenerator& bytecodeGenerator, UnlinkedCodeBlockGenerator* codeBlock, JSInstructionStreamWriter& instructions, SymbolTable* generatorFrameSymbolTable, int generatorFrameSymbolTableIndex)
 {
     if (UNLIKELY(Options::dumpBytecodesBeforeGeneratorification())) {
         dataLogLn("Bytecodes before generatorification");

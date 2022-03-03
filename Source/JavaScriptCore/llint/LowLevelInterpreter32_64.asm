@@ -34,20 +34,20 @@ macro getOperandNarrow(opcodeStruct, fieldName, dst)
     loadbsi constexpr %opcodeStruct%_%fieldName%_index + OpcodeIDNarrowSize[PB, PC, 1], dst
 end
 
-macro getuOperandWide16(opcodeStruct, fieldName, dst)
-    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PB, PC, 1], dst
+macro getuOperandWide16JS(opcodeStruct, fieldName, dst)
+    loadh constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16SizeJS[PB, PC, 1], dst
 end
 
-macro getOperandWide16(opcodeStruct, fieldName, dst)
-    loadhsi constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16Size[PB, PC, 1], dst
+macro getOperandWide16JS(opcodeStruct, fieldName, dst)
+    loadhsi constexpr %opcodeStruct%_%fieldName%_index * 2 + OpcodeIDWide16SizeJS[PB, PC, 1], dst
 end
 
-macro getuOperandWide32(opcodeStruct, fieldName, dst)
-    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PB, PC, 1], dst
+macro getuOperandWide32JS(opcodeStruct, fieldName, dst)
+    loadi constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32SizeJS[PB, PC, 1], dst
 end
 
-macro getOperandWide32(opcodeStruct, fieldName, dst)
-    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32Size[PB, PC, 1], dst
+macro getOperandWide32JS(opcodeStruct, fieldName, dst)
+    loadis constexpr %opcodeStruct%_%fieldName%_index * 4 + OpcodeIDWide32SizeJS[PB, PC, 1], dst
 end
 
 macro makeReturn(get, dispatch, fn)

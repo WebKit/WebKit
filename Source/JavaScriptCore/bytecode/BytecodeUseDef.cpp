@@ -42,7 +42,7 @@ namespace JSC {
 #define USES USES_OR_DEFS
 #define DEFS USES_OR_DEFS
 
-void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instruction* instruction, Checkpoint checkpoint, const ScopedLambda<void(VirtualRegister)>& functor)
+void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const JSInstruction* instruction, Checkpoint checkpoint, const ScopedLambda<void(VirtualRegister)>& functor)
 {
     OpcodeID opcodeID = instruction->opcodeID();
 
@@ -339,7 +339,7 @@ void computeUsesForBytecodeIndexImpl(VirtualRegister scopeRegister, const Instru
     }
 }
 
-void computeDefsForBytecodeIndexImpl(unsigned numVars, const Instruction* instruction, Checkpoint checkpoint, const ScopedLambda<void(VirtualRegister)>& functor)
+void computeDefsForBytecodeIndexImpl(unsigned numVars, const JSInstruction* instruction, Checkpoint checkpoint, const ScopedLambda<void(VirtualRegister)>& functor)
 {
 
     auto defAt = [&] (Checkpoint target, VirtualRegister operand) {

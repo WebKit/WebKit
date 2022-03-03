@@ -68,7 +68,10 @@ class WatchpointSet;
 
 struct ECMAMode;
 struct InlineCallFrame;
-struct Instruction;
+
+template<typename> struct BaseInstruction;
+struct JSOpcodeTraits;
+using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
 typedef char* UnusedPtr;
 
@@ -294,9 +297,9 @@ JSC_DECLARE_JIT_OPERATION(operationGetPrivateNameByIdGeneric, EncodedJSValue, (J
 JSC_DECLARE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobalObject*, EncodedJSValue key, size_t tableIndex, int32_t min));
 JSC_DECLARE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM*, EncodedJSValue key, size_t tableIndex, int32_t min));
 JSC_DECLARE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlobalObject*, EncodedJSValue key, size_t tableIndex));
-JSC_DECLARE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject*, const Instruction* bytecodePC));
-JSC_DECLARE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*, const Instruction* bytecodePC));
-JSC_DECLARE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject*, const Instruction* bytecodePC));
+JSC_DECLARE_JIT_OPERATION(operationResolveScopeForBaseline, EncodedJSValue, (JSGlobalObject*, const JSInstruction* bytecodePC));
+JSC_DECLARE_JIT_OPERATION(operationGetFromScope, EncodedJSValue, (JSGlobalObject*, const JSInstruction* bytecodePC));
+JSC_DECLARE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject*, const JSInstruction* bytecodePC));
 
 JSC_DECLARE_JIT_OPERATION(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity, char*, (VM*, JSObject*));
 JSC_DECLARE_JIT_OPERATION(operationReallocateButterflyToGrowPropertyStorage, char*, (VM*, JSObject*, size_t newSize));

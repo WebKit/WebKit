@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <type_traits>
+
 namespace JSC {
 
 enum OpcodeSize {
@@ -70,6 +72,27 @@ struct PaddingBySize<OpcodeSize::Wide16> {
 template<>
 struct PaddingBySize<OpcodeSize::Wide32> {
     static constexpr uint8_t value = 1;
+};
+
+template<typename Traits, OpcodeSize>
+struct OpcodeIDWidthBySize;
+
+template<typename Traits>
+struct OpcodeIDWidthBySize<Traits, OpcodeSize::Narrow> {
+    using opcodeType = uint8_t;
+    static constexpr OpcodeSize opcodeIDSize = OpcodeSize::Narrow;
+};
+
+template<typename Traits>
+struct OpcodeIDWidthBySize<Traits, OpcodeSize::Wide16> {
+    using opcodeType = typename std::conditional<Traits::maxOpcodeIDWidth == OpcodeSize::Narrow, uint8_t, uint16_t>::type;
+    static constexpr OpcodeSize opcodeIDSize = static_cast<OpcodeSize>(sizeof(opcodeType));
+};
+
+template<typename Traits>
+struct OpcodeIDWidthBySize<Traits, OpcodeSize::Wide32> {
+    using opcodeType = typename std::conditional<Traits::maxOpcodeIDWidth == OpcodeSize::Narrow, uint8_t, uint16_t>::type;
+    static constexpr OpcodeSize opcodeIDSize = static_cast<OpcodeSize>(sizeof(opcodeType));
 };
 
 } // namespace JSC

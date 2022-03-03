@@ -983,7 +983,7 @@ private:
     CachedVector<CachedStringJumpTable> m_unlinkedStringSwitchJumpTables;
     CachedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     CachedHashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
-    CachedVector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
+    CachedVector<JSInstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     CachedVector<CachedBitVector> m_bitVectors;
     CachedVector<CachedHashSet<CachedRefPtr<CachedUniquedStringImpl>, IdentifierRepHash>> m_constantIdentifierSets;
     unsigned m_needsClassFieldInitializer : 1;
@@ -1439,18 +1439,18 @@ private:
     EncodedType m_type;
 };
 
-class CachedInstructionStream : public CachedObject<InstructionStream> {
+class CachedInstructionStream : public CachedObject<JSInstructionStream> {
 public:
-    void encode(Encoder& encoder, const InstructionStream& stream)
+    void encode(Encoder& encoder, const JSInstructionStream& stream)
     {
         m_instructions.encode(encoder, stream.m_instructions);
     }
 
-    InstructionStream* decode(Decoder& decoder) const
+    JSInstructionStream* decode(Decoder& decoder) const
     {
         Vector<uint8_t, 0, UnsafeVectorOverflow, 16, InstructionStreamMalloc> instructionsVector;
         m_instructions.decode(decoder, instructionsVector);
-        return new InstructionStream(WTFMove(instructionsVector));
+        return new JSInstructionStream(WTFMove(instructionsVector));
     }
 
 private:
@@ -1879,7 +1879,7 @@ public:
     void encode(Encoder&, const UnlinkedCodeBlock&);
     void decode(Decoder&, UnlinkedCodeBlock&) const;
 
-    InstructionStream* instructions(Decoder& decoder) const { return m_instructions.decode(decoder); }
+    JSInstructionStream* instructions(Decoder& decoder) const { return m_instructions.decode(decoder); }
 
     VirtualRegister thisRegister() const { return m_thisRegister; }
     VirtualRegister scopeRegister() const { return m_scopeRegister; }
@@ -1966,11 +1966,11 @@ private:
     CachedRefPtr<CachedStringImpl> m_sourceMappingURLDirective;
 
     CachedPtr<CachedInstructionStream> m_instructions;
-    CachedVector<InstructionStream::Offset> m_jumpTargets;
+    CachedVector<JSInstructionStream::Offset> m_jumpTargets;
     CachedVector<CachedJSValue> m_constantRegisters;
     CachedVector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
     CachedVector<ExpressionRangeInfo> m_expressionInfo;
-    CachedHashMap<InstructionStream::Offset, int> m_outOfLineJumpTargets;
+    CachedHashMap<JSInstructionStream::Offset, int> m_outOfLineJumpTargets;
 
     CachedVector<CachedIdentifier> m_identifiers;
     CachedVector<CachedWriteBarrier<CachedFunctionExecutable>> m_functionDecls;

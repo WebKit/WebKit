@@ -127,7 +127,7 @@ inline JSValue getOperand(CallFrame* callFrame, VirtualRegister operand) { retur
     ((targetOffset) ? (targetOffset) : codeBlock->outOfLineJumpOffset(pc))
 
 #define JUMP_TO(target) do { \
-        pc = reinterpret_cast<const Instruction*>(reinterpret_cast<const uint8_t*>(pc) + (target)); \
+        pc = reinterpret_cast<const JSInstruction*>(reinterpret_cast<const uint8_t*>(pc) + (target)); \
     } while (false)
 
 #define LLINT_BRANCH(condition) do {                  \
@@ -221,7 +221,7 @@ template<typename... Types> void slowPathLogF(const char*, const Types&...) { }
 
 #endif // LLINT_TRACING
 
-extern "C" SlowPathReturnType llint_trace_operand(CallFrame* callFrame, const Instruction* pc, int fromWhere, int operand)
+extern "C" SlowPathReturnType llint_trace_operand(CallFrame* callFrame, const JSInstruction* pc, int fromWhere, int operand)
 {
     if (!Options::traceLLIntExecution())
         LLINT_END_IMPL();
@@ -239,7 +239,7 @@ extern "C" SlowPathReturnType llint_trace_operand(CallFrame* callFrame, const In
     LLINT_END();
 }
 
-extern "C" SlowPathReturnType llint_trace_value(CallFrame* callFrame, const Instruction* pc, int fromWhere, VirtualRegister operand)
+extern "C" SlowPathReturnType llint_trace_value(CallFrame* callFrame, const JSInstruction* pc, int fromWhere, VirtualRegister operand)
 {
     if (!Options::traceLLIntExecution())
         LLINT_END_IMPL();
@@ -747,7 +747,7 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_with_this)
     LLINT_RETURN_PROFILED(result);
 }
 
-static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, CodeBlock* codeBlock, const Instruction* pc, GetByIdModeMetadata& metadata, JSCell* baseCell, PropertySlot& slot, const Identifier& ident)
+static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, CodeBlock* codeBlock, const JSInstruction* pc, GetByIdModeMetadata& metadata, JSCell* baseCell, PropertySlot& slot, const Identifier& ident)
 {
     Structure* structure = baseCell->structure(vm);
 
@@ -805,7 +805,7 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
     vm.writeBarrier(codeBlock);
 }
 
-static JSValue performLLIntGetByID(const Instruction* pc, CodeBlock* codeBlock, JSGlobalObject* globalObject, JSValue baseValue, const Identifier& ident, GetByIdModeMetadata& metadata)
+static JSValue performLLIntGetByID(const JSInstruction* pc, CodeBlock* codeBlock, JSGlobalObject* globalObject, JSValue baseValue, const Identifier& ident, GetByIdModeMetadata& metadata)
 {
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -2008,7 +2008,7 @@ enum class SetArgumentsWith {
 };
 
 template<typename Op, SetArgumentsWith set>
-inline SlowPathReturnType varargsSetup(CallFrame* callFrame, const Instruction* pc, CodeSpecializationKind)
+inline SlowPathReturnType varargsSetup(CallFrame* callFrame, const JSInstruction* pc, CodeSpecializationKind)
 {
     LLINT_BEGIN_NO_SET_PC();
 
@@ -2058,7 +2058,7 @@ LLINT_SLOW_PATH_DECL(slow_path_construct_varargs)
     return varargsSetup<OpConstructVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeForConstruct);
 }
 
-inline SlowPathReturnType commonCallEval(CallFrame* callFrame, const Instruction* pc, MacroAssemblerCodeRef<JSEntryPtrTag> returnPoint)
+inline SlowPathReturnType commonCallEval(CallFrame* callFrame, const JSInstruction* pc, MacroAssemblerCodeRef<JSEntryPtrTag> returnPoint)
 {
     LLINT_BEGIN_NO_SET_PC();
     auto bytecode = pc->as<OpCallEval>();
@@ -2378,13 +2378,13 @@ static void handleIteratorNextCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalO
         valueRegister = iteratorResultObject.get(globalObject, vm.propertyNames->value);
 }
 
-inline SlowPathReturnType dispatchToNextInstructionDuringExit(ThrowScope& scope, CodeBlock* codeBlock, InstructionStream::Ref pc)
+inline SlowPathReturnType dispatchToNextInstructionDuringExit(ThrowScope& scope, CodeBlock* codeBlock, JSInstructionStream::Ref pc)
 {
     if (scope.exception())
         return encodeResult(returnToThrow(scope.vm()), nullptr);
 
     if (Options::forceOSRExitToLLInt() || codeBlock->jitType() == JITType::InterpreterThunk) {
-        const Instruction* nextPC = pc.next().ptr();
+        const JSInstruction* nextPC = pc.next().ptr();
 #if ENABLE(JIT)
         return encodeResult(nextPC, LLInt::normalOSRExitTrampolineThunk().code().executableAddress());
 #else

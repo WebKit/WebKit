@@ -517,9 +517,9 @@ CatchInfo::CatchInfo(const HandlerInfo* handler, CodeBlock* codeBlock)
         // and can cause an overflow. OSR exit properly exits to handler->target
         // in the proper frame.
         if (!JITCode::isOptimizingJIT(codeBlock->jitType()))
-            m_catchPCForInterpreter = codeBlock->instructions().at(handler->target).ptr();
+            m_catchPCForInterpreter = { codeBlock->instructions().at(handler->target).ptr() };
         else
-            m_catchPCForInterpreter = nullptr;
+            m_catchPCForInterpreter = { static_cast<JSInstruction*>(nullptr) };
     }
 }
 
@@ -531,9 +531,9 @@ CatchInfo::CatchInfo(const Wasm::HandlerInfo* handler, const Wasm::Callee* calle
         m_type = HandlerType::Catch;
         m_nativeCode = handler->m_nativeCode;
         if (callee->compilationMode() == Wasm::CompilationMode::LLIntMode)
-            m_catchPCForInterpreter = static_cast<const Wasm::LLIntCallee*>(callee)->instructions().at(handler->m_target).ptr();
+            m_catchPCForInterpreter = { static_cast<const Wasm::LLIntCallee*>(callee)->instructions().at(handler->m_target).ptr() };
         else
-            m_catchPCForInterpreter = nullptr;
+            m_catchPCForInterpreter = { static_cast<WasmInstruction*>(nullptr) };
     }
 }
 #endif

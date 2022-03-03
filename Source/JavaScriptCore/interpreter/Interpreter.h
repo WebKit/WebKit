@@ -34,6 +34,7 @@
 #include "JSObject.h"
 #include "Opcode.h"
 #include "StackAlignment.h"
+#include <variant>
 #include <wtf/HashMap.h>
 
 #if ENABLE(C_LOOP)
@@ -68,7 +69,6 @@ struct HandlerInfo;
     enum class HandlerType : uint8_t;
     struct CallFrameClosure;
     struct HandlerInfo;
-    struct Instruction;
     struct ProtoCallFrame;
 
     enum DebugHookType {
@@ -102,7 +102,8 @@ struct HandlerInfo;
 #if ENABLE(JIT)
         MacroAssemblerCodePtr<ExceptionHandlerPtrTag> m_nativeCode;
 #endif
-        const Instruction* m_catchPCForInterpreter;
+
+        std::variant<const JSInstruction*, const WasmInstruction*> m_catchPCForInterpreter;
     };
 
     class Interpreter {

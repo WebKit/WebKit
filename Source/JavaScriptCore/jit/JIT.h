@@ -66,7 +66,10 @@ namespace JSC {
     class StructureChain;
     class StructureStubInfo;
 
-    struct Instruction;
+    template<typename> struct BaseInstruction;
+    struct JSOpcodeTraits;
+    using JSInstruction = BaseInstruction<JSOpcodeTraits>;
+
     struct OperandTypes;
     struct SimpleJumpTable;
     struct StringJumpTable;
@@ -289,9 +292,9 @@ namespace JSC {
         void emitJumpSlowToHot(Jump, int);
 
         template<typename Op>
-        void compileOpCall(const Instruction*, unsigned callLinkInfoIndex);
+        void compileOpCall(const JSInstruction*, unsigned callLinkInfoIndex);
         template<typename Op>
-        void compileOpCallSlowCase(const Instruction*, Vector<SlowCaseEntry>::iterator&, unsigned callLinkInfoIndex);
+        void compileOpCallSlowCase(const JSInstruction*, Vector<SlowCaseEntry>::iterator&, unsigned callLinkInfoIndex);
 
         template<typename Op>
         std::enable_if_t<
@@ -309,13 +312,13 @@ namespace JSC {
         bool compileTailCall(const Op&, UnlinkedCallLinkInfo*, unsigned callLinkInfoIndex);
         template<typename Op>
         bool compileCallEval(const Op&);
-        void compileCallEvalSlowCase(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void compileCallEvalSlowCase(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         template<typename Op>
         void emitPutCallResult(const Op&);
 
 #if USE(JSVALUE64)
-        template<typename Op> void compileOpStrictEq(const Instruction*);
-        template<typename Op> void compileOpStrictEqJump(const Instruction*);
+        template<typename Op> void compileOpStrictEq(const JSInstruction*);
+        template<typename Op> void compileOpStrictEqJump(const JSInstruction*);
 #elif USE(JSVALUE32_64)
         void compileOpEqCommon(VirtualRegister src1, VirtualRegister src2);
         void compileOpEqSlowCommon(Vector<SlowCaseEntry>::iterator&);
@@ -375,257 +378,257 @@ namespace JSC {
         void emitJumpSlowCaseIfNotJSCell(JSValueRegs, VirtualRegister);
 
         template<typename Op>
-        void emit_compareAndJump(const Instruction*, RelationalCondition);
+        void emit_compareAndJump(const JSInstruction*, RelationalCondition);
         void emit_compareAndJumpImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, RelationalCondition);
         template<typename Op>
-        void emit_compareUnsigned(const Instruction*, RelationalCondition);
+        void emit_compareUnsigned(const JSInstruction*, RelationalCondition);
         void emit_compareUnsignedImpl(VirtualRegister dst, VirtualRegister op1, VirtualRegister op2, RelationalCondition);
         template<typename Op>
-        void emit_compareUnsignedAndJump(const Instruction*, RelationalCondition);
+        void emit_compareUnsignedAndJump(const JSInstruction*, RelationalCondition);
         void emit_compareUnsignedAndJumpImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, RelationalCondition);
         template<typename Op, typename SlowOperation>
-        void emit_compareAndJumpSlow(const Instruction*, DoubleCondition, SlowOperation, bool invert, Vector<SlowCaseEntry>::iterator&);
+        void emit_compareAndJumpSlow(const JSInstruction*, DoubleCondition, SlowOperation, bool invert, Vector<SlowCaseEntry>::iterator&);
         template<typename SlowOperation>
         void emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, size_t instructionSize, DoubleCondition, SlowOperation, bool invert, Vector<SlowCaseEntry>::iterator&);
-        
+
         void assertStackPointerOffset();
 
-        void emit_op_add(const Instruction*);
-        void emit_op_bitand(const Instruction*);
-        void emit_op_bitor(const Instruction*);
-        void emit_op_bitxor(const Instruction*);
-        void emit_op_bitnot(const Instruction*);
-        void emit_op_call(const Instruction*);
-        void emit_op_tail_call(const Instruction*);
-        void emit_op_call_eval(const Instruction*);
-        void emit_op_call_varargs(const Instruction*);
-        void emit_op_tail_call_varargs(const Instruction*);
-        void emit_op_tail_call_forward_arguments(const Instruction*);
-        void emit_op_construct_varargs(const Instruction*);
-        void emit_op_catch(const Instruction*);
-        void emit_op_construct(const Instruction*);
-        void emit_op_create_this(const Instruction*);
-        void emit_op_to_this(const Instruction*);
-        void emit_op_get_argument(const Instruction*);
-        void emit_op_argument_count(const Instruction*);
-        void emit_op_get_rest_length(const Instruction*);
-        void emit_op_check_tdz(const Instruction*);
-        void emit_op_identity_with_profile(const Instruction*);
-        void emit_op_debug(const Instruction*);
-        void emit_op_del_by_id(const Instruction*);
-        void emitSlow_op_del_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emit_op_del_by_val(const Instruction*);
-        void emitSlow_op_del_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emit_op_div(const Instruction*);
-        void emit_op_end(const Instruction*);
-        void emit_op_enter(const Instruction*);
-        void emit_op_get_scope(const Instruction*);
-        void emit_op_eq(const Instruction*);
-        void emit_op_eq_null(const Instruction*);
-        void emit_op_below(const Instruction*);
-        void emit_op_beloweq(const Instruction*);
-        void emit_op_try_get_by_id(const Instruction*);
-        void emit_op_get_by_id(const Instruction*);
-        void emit_op_get_by_id_with_this(const Instruction*);
-        void emit_op_get_by_id_direct(const Instruction*);
-        void emit_op_get_by_val(const Instruction*);
-        void emit_op_get_private_name(const Instruction*);
-        void emit_op_set_private_brand(const Instruction*);
-        void emit_op_check_private_brand(const Instruction*);
-        void emit_op_get_argument_by_val(const Instruction*);
-        void emit_op_get_prototype_of(const Instruction*);
-        void emit_op_in_by_id(const Instruction*);
-        void emit_op_in_by_val(const Instruction*);
-        void emit_op_has_private_name(const Instruction*);
-        void emit_op_has_private_brand(const Instruction*);
-        void emit_op_init_lazy_reg(const Instruction*);
-        void emit_op_overrides_has_instance(const Instruction*);
-        void emit_op_instanceof(const Instruction*);
-        void emit_op_is_empty(const Instruction*);
-        void emit_op_typeof_is_undefined(const Instruction*);
-        void emit_op_is_undefined_or_null(const Instruction*);
-        void emit_op_is_boolean(const Instruction*);
-        void emit_op_is_number(const Instruction*);
+        void emit_op_add(const JSInstruction*);
+        void emit_op_bitand(const JSInstruction*);
+        void emit_op_bitor(const JSInstruction*);
+        void emit_op_bitxor(const JSInstruction*);
+        void emit_op_bitnot(const JSInstruction*);
+        void emit_op_call(const JSInstruction*);
+        void emit_op_tail_call(const JSInstruction*);
+        void emit_op_call_eval(const JSInstruction*);
+        void emit_op_call_varargs(const JSInstruction*);
+        void emit_op_tail_call_varargs(const JSInstruction*);
+        void emit_op_tail_call_forward_arguments(const JSInstruction*);
+        void emit_op_construct_varargs(const JSInstruction*);
+        void emit_op_catch(const JSInstruction*);
+        void emit_op_construct(const JSInstruction*);
+        void emit_op_create_this(const JSInstruction*);
+        void emit_op_to_this(const JSInstruction*);
+        void emit_op_get_argument(const JSInstruction*);
+        void emit_op_argument_count(const JSInstruction*);
+        void emit_op_get_rest_length(const JSInstruction*);
+        void emit_op_check_tdz(const JSInstruction*);
+        void emit_op_identity_with_profile(const JSInstruction*);
+        void emit_op_debug(const JSInstruction*);
+        void emit_op_del_by_id(const JSInstruction*);
+        void emitSlow_op_del_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_del_by_val(const JSInstruction*);
+        void emitSlow_op_del_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_div(const JSInstruction*);
+        void emit_op_end(const JSInstruction*);
+        void emit_op_enter(const JSInstruction*);
+        void emit_op_get_scope(const JSInstruction*);
+        void emit_op_eq(const JSInstruction*);
+        void emit_op_eq_null(const JSInstruction*);
+        void emit_op_below(const JSInstruction*);
+        void emit_op_beloweq(const JSInstruction*);
+        void emit_op_try_get_by_id(const JSInstruction*);
+        void emit_op_get_by_id(const JSInstruction*);
+        void emit_op_get_by_id_with_this(const JSInstruction*);
+        void emit_op_get_by_id_direct(const JSInstruction*);
+        void emit_op_get_by_val(const JSInstruction*);
+        void emit_op_get_private_name(const JSInstruction*);
+        void emit_op_set_private_brand(const JSInstruction*);
+        void emit_op_check_private_brand(const JSInstruction*);
+        void emit_op_get_argument_by_val(const JSInstruction*);
+        void emit_op_get_prototype_of(const JSInstruction*);
+        void emit_op_in_by_id(const JSInstruction*);
+        void emit_op_in_by_val(const JSInstruction*);
+        void emit_op_has_private_name(const JSInstruction*);
+        void emit_op_has_private_brand(const JSInstruction*);
+        void emit_op_init_lazy_reg(const JSInstruction*);
+        void emit_op_overrides_has_instance(const JSInstruction*);
+        void emit_op_instanceof(const JSInstruction*);
+        void emit_op_is_empty(const JSInstruction*);
+        void emit_op_typeof_is_undefined(const JSInstruction*);
+        void emit_op_is_undefined_or_null(const JSInstruction*);
+        void emit_op_is_boolean(const JSInstruction*);
+        void emit_op_is_number(const JSInstruction*);
 #if USE(BIGINT32)
-        void emit_op_is_big_int(const Instruction*);
+        void emit_op_is_big_int(const JSInstruction*);
 #else
-        NO_RETURN void emit_op_is_big_int(const Instruction*);
+        NO_RETURN void emit_op_is_big_int(const JSInstruction*);
 #endif
-        void emit_op_is_object(const Instruction*);
-        void emit_op_is_cell_with_type(const Instruction*);
-        void emit_op_jeq_null(const Instruction*);
-        void emit_op_jfalse(const Instruction*);
-        void emit_op_jmp(const Instruction*);
-        void emit_op_jneq_null(const Instruction*);
-        void emit_op_jundefined_or_null(const Instruction*);
-        void emit_op_jnundefined_or_null(const Instruction*);
-        void emit_op_jeq_ptr(const Instruction*);
-        void emit_op_jneq_ptr(const Instruction*);
-        void emit_op_jless(const Instruction*);
-        void emit_op_jlesseq(const Instruction*);
-        void emit_op_jgreater(const Instruction*);
-        void emit_op_jgreatereq(const Instruction*);
-        void emit_op_jnless(const Instruction*);
-        void emit_op_jnlesseq(const Instruction*);
-        void emit_op_jngreater(const Instruction*);
-        void emit_op_jngreatereq(const Instruction*);
-        void emit_op_jeq(const Instruction*);
-        void emit_op_jneq(const Instruction*);
-        void emit_op_jstricteq(const Instruction*);
-        void emit_op_jnstricteq(const Instruction*);
-        void emit_op_jbelow(const Instruction*);
-        void emit_op_jbeloweq(const Instruction*);
-        void emit_op_jtrue(const Instruction*);
-        void emit_op_loop_hint(const Instruction*);
-        void emit_op_check_traps(const Instruction*);
-        void emit_op_nop(const Instruction*);
-        void emit_op_super_sampler_begin(const Instruction*);
-        void emit_op_super_sampler_end(const Instruction*);
-        void emit_op_lshift(const Instruction*);
-        void emit_op_mod(const Instruction*);
-        void emit_op_pow(const Instruction*);
-        void emit_op_mov(const Instruction*);
-        void emit_op_mul(const Instruction*);
-        void emit_op_negate(const Instruction*);
-        void emit_op_neq(const Instruction*);
-        void emit_op_neq_null(const Instruction*);
-        void emit_op_new_array(const Instruction*);
-        void emit_op_new_array_with_size(const Instruction*);
-        void emit_op_new_func(const Instruction*);
-        void emit_op_new_func_exp(const Instruction*);
-        void emit_op_new_generator_func(const Instruction*);
-        void emit_op_new_generator_func_exp(const Instruction*);
-        void emit_op_new_async_func(const Instruction*);
-        void emit_op_new_async_func_exp(const Instruction*);
-        void emit_op_new_async_generator_func(const Instruction*);
-        void emit_op_new_async_generator_func_exp(const Instruction*);
-        void emit_op_new_object(const Instruction*);
-        void emit_op_new_regexp(const Instruction*);
-        void emit_op_not(const Instruction*);
-        void emit_op_nstricteq(const Instruction*);
-        void emit_op_dec(const Instruction*);
-        void emit_op_inc(const Instruction*);
-        void emit_op_profile_type(const Instruction*);
-        void emit_op_profile_control_flow(const Instruction*);
-        void emit_op_get_parent_scope(const Instruction*);
-        void emit_op_put_by_id(const Instruction*);
+        void emit_op_is_object(const JSInstruction*);
+        void emit_op_is_cell_with_type(const JSInstruction*);
+        void emit_op_jeq_null(const JSInstruction*);
+        void emit_op_jfalse(const JSInstruction*);
+        void emit_op_jmp(const JSInstruction*);
+        void emit_op_jneq_null(const JSInstruction*);
+        void emit_op_jundefined_or_null(const JSInstruction*);
+        void emit_op_jnundefined_or_null(const JSInstruction*);
+        void emit_op_jeq_ptr(const JSInstruction*);
+        void emit_op_jneq_ptr(const JSInstruction*);
+        void emit_op_jless(const JSInstruction*);
+        void emit_op_jlesseq(const JSInstruction*);
+        void emit_op_jgreater(const JSInstruction*);
+        void emit_op_jgreatereq(const JSInstruction*);
+        void emit_op_jnless(const JSInstruction*);
+        void emit_op_jnlesseq(const JSInstruction*);
+        void emit_op_jngreater(const JSInstruction*);
+        void emit_op_jngreatereq(const JSInstruction*);
+        void emit_op_jeq(const JSInstruction*);
+        void emit_op_jneq(const JSInstruction*);
+        void emit_op_jstricteq(const JSInstruction*);
+        void emit_op_jnstricteq(const JSInstruction*);
+        void emit_op_jbelow(const JSInstruction*);
+        void emit_op_jbeloweq(const JSInstruction*);
+        void emit_op_jtrue(const JSInstruction*);
+        void emit_op_loop_hint(const JSInstruction*);
+        void emit_op_check_traps(const JSInstruction*);
+        void emit_op_nop(const JSInstruction*);
+        void emit_op_super_sampler_begin(const JSInstruction*);
+        void emit_op_super_sampler_end(const JSInstruction*);
+        void emit_op_lshift(const JSInstruction*);
+        void emit_op_mod(const JSInstruction*);
+        void emit_op_pow(const JSInstruction*);
+        void emit_op_mov(const JSInstruction*);
+        void emit_op_mul(const JSInstruction*);
+        void emit_op_negate(const JSInstruction*);
+        void emit_op_neq(const JSInstruction*);
+        void emit_op_neq_null(const JSInstruction*);
+        void emit_op_new_array(const JSInstruction*);
+        void emit_op_new_array_with_size(const JSInstruction*);
+        void emit_op_new_func(const JSInstruction*);
+        void emit_op_new_func_exp(const JSInstruction*);
+        void emit_op_new_generator_func(const JSInstruction*);
+        void emit_op_new_generator_func_exp(const JSInstruction*);
+        void emit_op_new_async_func(const JSInstruction*);
+        void emit_op_new_async_func_exp(const JSInstruction*);
+        void emit_op_new_async_generator_func(const JSInstruction*);
+        void emit_op_new_async_generator_func_exp(const JSInstruction*);
+        void emit_op_new_object(const JSInstruction*);
+        void emit_op_new_regexp(const JSInstruction*);
+        void emit_op_not(const JSInstruction*);
+        void emit_op_nstricteq(const JSInstruction*);
+        void emit_op_dec(const JSInstruction*);
+        void emit_op_inc(const JSInstruction*);
+        void emit_op_profile_type(const JSInstruction*);
+        void emit_op_profile_control_flow(const JSInstruction*);
+        void emit_op_get_parent_scope(const JSInstruction*);
+        void emit_op_put_by_id(const JSInstruction*);
         template<typename Op = OpPutByVal>
-        void emit_op_put_by_val(const Instruction*);
-        void emit_op_put_by_val_direct(const Instruction*);
-        void emit_op_put_private_name(const Instruction*);
-        void emit_op_put_getter_by_id(const Instruction*);
-        void emit_op_put_setter_by_id(const Instruction*);
-        void emit_op_put_getter_setter_by_id(const Instruction*);
-        void emit_op_put_getter_by_val(const Instruction*);
-        void emit_op_put_setter_by_val(const Instruction*);
-        void emit_op_ret(const Instruction*);
-        void emit_op_rshift(const Instruction*);
-        void emit_op_set_function_name(const Instruction*);
-        void emit_op_stricteq(const Instruction*);
-        void emit_op_sub(const Instruction*);
-        void emit_op_switch_char(const Instruction*);
-        void emit_op_switch_imm(const Instruction*);
-        void emit_op_switch_string(const Instruction*);
-        void emit_op_tear_off_arguments(const Instruction*);
-        void emit_op_throw(const Instruction*);
-        void emit_op_to_number(const Instruction*);
-        void emit_op_to_numeric(const Instruction*);
-        void emit_op_to_string(const Instruction*);
-        void emit_op_to_object(const Instruction*);
-        void emit_op_to_primitive(const Instruction*);
-        void emit_op_unexpected_load(const Instruction*);
-        void emit_op_unsigned(const Instruction*);
-        void emit_op_urshift(const Instruction*);
-        void emit_op_get_internal_field(const Instruction*);
-        void emit_op_put_internal_field(const Instruction*);
-        void emit_op_log_shadow_chicken_prologue(const Instruction*);
-        void emit_op_log_shadow_chicken_tail(const Instruction*);
-        void emit_op_to_property_key(const Instruction*);
+        void emit_op_put_by_val(const JSInstruction*);
+        void emit_op_put_by_val_direct(const JSInstruction*);
+        void emit_op_put_private_name(const JSInstruction*);
+        void emit_op_put_getter_by_id(const JSInstruction*);
+        void emit_op_put_setter_by_id(const JSInstruction*);
+        void emit_op_put_getter_setter_by_id(const JSInstruction*);
+        void emit_op_put_getter_by_val(const JSInstruction*);
+        void emit_op_put_setter_by_val(const JSInstruction*);
+        void emit_op_ret(const JSInstruction*);
+        void emit_op_rshift(const JSInstruction*);
+        void emit_op_set_function_name(const JSInstruction*);
+        void emit_op_stricteq(const JSInstruction*);
+        void emit_op_sub(const JSInstruction*);
+        void emit_op_switch_char(const JSInstruction*);
+        void emit_op_switch_imm(const JSInstruction*);
+        void emit_op_switch_string(const JSInstruction*);
+        void emit_op_tear_off_arguments(const JSInstruction*);
+        void emit_op_throw(const JSInstruction*);
+        void emit_op_to_number(const JSInstruction*);
+        void emit_op_to_numeric(const JSInstruction*);
+        void emit_op_to_string(const JSInstruction*);
+        void emit_op_to_object(const JSInstruction*);
+        void emit_op_to_primitive(const JSInstruction*);
+        void emit_op_unexpected_load(const JSInstruction*);
+        void emit_op_unsigned(const JSInstruction*);
+        void emit_op_urshift(const JSInstruction*);
+        void emit_op_get_internal_field(const JSInstruction*);
+        void emit_op_put_internal_field(const JSInstruction*);
+        void emit_op_log_shadow_chicken_prologue(const JSInstruction*);
+        void emit_op_log_shadow_chicken_tail(const JSInstruction*);
+        void emit_op_to_property_key(const JSInstruction*);
 
         template<typename OpcodeType>
         void generateGetByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::iterator&);
 
-        void emit_op_get_property_enumerator(const Instruction*);
-        void emit_op_enumerator_next(const Instruction*);
-        void emit_op_enumerator_get_by_val(const Instruction*);
-        void emitSlow_op_enumerator_get_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_get_property_enumerator(const JSInstruction*);
+        void emit_op_enumerator_next(const JSInstruction*);
+        void emit_op_enumerator_get_by_val(const JSInstruction*);
+        void emitSlow_op_enumerator_get_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         template<typename OpcodeType, typename SlowPathFunctionType>
         void emit_enumerator_has_propertyImpl(const OpcodeType&, SlowPathFunctionType);
-        void emit_op_enumerator_in_by_val(const Instruction*);
-        void emit_op_enumerator_has_own_property(const Instruction*);
+        void emit_op_enumerator_in_by_val(const JSInstruction*);
+        void emit_op_enumerator_has_own_property(const JSInstruction*);
 
-        void emitSlow_op_add(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_call(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_tail_call(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_call_eval(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_call_varargs(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_tail_call_varargs(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_tail_call_forward_arguments(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_construct_varargs(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_construct(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_eq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_get_callee(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_try_get_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_get_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_get_by_id_with_this(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_get_by_id_direct(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_get_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_get_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_set_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_check_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_get_argument_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_in_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_in_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_has_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_has_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_instanceof(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jless(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jlesseq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jgreater(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jgreatereq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jnless(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jnlesseq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jngreater(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jngreatereq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jeq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jneq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jstricteq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jnstricteq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_loop_hint(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_check_traps(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_mod(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_pow(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_mul(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_negate(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_neq(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_new_object(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_put_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_put_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_put_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_sub(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_add(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_call(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_tail_call(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_call_eval(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_call_varargs(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_tail_call_varargs(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_tail_call_forward_arguments(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_construct_varargs(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_construct(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_eq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_callee(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_try_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_id_with_this(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_id_direct(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_set_private_brand(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_check_private_brand(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_get_argument_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_in_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_in_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_has_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_has_private_brand(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_instanceof(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jless(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jlesseq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jgreater(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jgreatereq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jnless(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jnlesseq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jngreater(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jngreatereq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jeq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jneq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jstricteq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jnstricteq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_loop_hint(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_check_traps(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_mod(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_pow(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_mul(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_negate(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_neq(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_new_object(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_put_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_sub(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
-        void emit_op_resolve_scope(const Instruction*);
-        void emit_op_get_from_scope(const Instruction*);
-        void emit_op_put_to_scope(const Instruction*);
-        void emit_op_get_from_arguments(const Instruction*);
-        void emit_op_put_to_arguments(const Instruction*);
-        void emitSlow_op_put_to_scope(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_resolve_scope(const JSInstruction*);
+        void emit_op_get_from_scope(const JSInstruction*);
+        void emit_op_put_to_scope(const JSInstruction*);
+        void emit_op_get_from_arguments(const JSInstruction*);
+        void emit_op_put_to_arguments(const JSInstruction*);
+        void emitSlow_op_put_to_scope(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emitSlowCaseCall(Vector<SlowCaseEntry>::iterator&, SlowPathFunction);
 
-        void emit_op_iterator_open(const Instruction*);
-        void emitSlow_op_iterator_open(const Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emit_op_iterator_next(const Instruction*);
-        void emitSlow_op_iterator_next(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_iterator_open(const JSInstruction*);
+        void emitSlow_op_iterator_open(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emit_op_iterator_next(const JSInstruction*);
+        void emitSlow_op_iterator_next(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
 
         void emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType);
         void emitHasPrivateSlow(AccessType);
 
         template<typename Op>
-        void emitNewFuncCommon(const Instruction*);
+        void emitNewFuncCommon(const JSInstruction*);
         template<typename Op>
-        void emitNewFuncExprCommon(const Instruction*);
+        void emitNewFuncExprCommon(const JSInstruction*);
         void emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg);
         void emitVarReadOnlyCheck(ResolveType, GPRReg scratchGPR);
         void emitNotifyWriteWatchpoint(GPRReg pointerToSet);
@@ -643,14 +646,14 @@ namespace JSC {
         bool isOperandConstantChar(VirtualRegister);
 
         template <typename Op, typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
-        void emitMathICFast(JITUnaryMathIC<Generator>*, const Instruction*, ProfiledFunction, NonProfiledFunction);
+        void emitMathICFast(JITUnaryMathIC<Generator>*, const JSInstruction*, ProfiledFunction, NonProfiledFunction);
         template <typename Op, typename Generator, typename ProfiledFunction, typename NonProfiledFunction>
-        void emitMathICFast(JITBinaryMathIC<Generator>*, const Instruction*, ProfiledFunction, NonProfiledFunction);
+        void emitMathICFast(JITBinaryMathIC<Generator>*, const JSInstruction*, ProfiledFunction, NonProfiledFunction);
 
         template <typename Op, typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
-        void emitMathICSlow(JITBinaryMathIC<Generator>*, const Instruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction);
+        void emitMathICSlow(JITBinaryMathIC<Generator>*, const JSInstruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction);
         template <typename Op, typename Generator, typename ProfiledRepatchFunction, typename ProfiledFunction, typename RepatchFunction>
-        void emitMathICSlow(JITUnaryMathIC<Generator>*, const Instruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction);
+        void emitMathICSlow(JITUnaryMathIC<Generator>*, const JSInstruction*, ProfiledRepatchFunction, ProfiledFunction, RepatchFunction);
 
     public:
         static MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&);
@@ -832,12 +835,12 @@ namespace JSC {
         };
 
         template<typename Op, typename SnippetGenerator>
-        void emitBitBinaryOpFastPath(const Instruction* currentInstruction, ProfilingPolicy shouldEmitProfiling = ProfilingPolicy::NoProfiling);
+        void emitBitBinaryOpFastPath(const JSInstruction* currentInstruction, ProfilingPolicy shouldEmitProfiling = ProfilingPolicy::NoProfiling);
 
-        void emitRightShiftFastPath(const Instruction* currentInstruction, OpcodeID);
+        void emitRightShiftFastPath(const JSInstruction* currentInstruction, OpcodeID);
 
         template<typename Op>
-        void emitRightShiftFastPath(const Instruction* currentInstruction, JITRightShiftGenerator::ShiftType);
+        void emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRightShiftGenerator::ShiftType);
 
         void updateTopCallFrame();
 
@@ -848,8 +851,8 @@ namespace JSC {
         // Loads the character value of a single character string into dst.
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
 
-        int jumpTarget(const Instruction*, int target);
-        
+        int jumpTarget(const JSInstruction*, int target);
+
 #if ENABLE(DFG_JIT)
         void emitEnterOptimizationCheck();
 #else
@@ -945,8 +948,8 @@ namespace JSC {
         PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
         std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
 
-        HashMap<const Instruction*, void*> m_instructionToMathIC;
-        HashMap<const Instruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
+        HashMap<const JSInstruction*, void*> m_instructionToMathIC;
+        HashMap<const JSInstruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
 
         bool m_canBeOptimized;
         bool m_shouldEmitProfiling;

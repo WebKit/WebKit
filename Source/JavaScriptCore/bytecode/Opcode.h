@@ -31,6 +31,7 @@
 
 #include "Bytecodes.h"
 #include "LLIntOpcode.h"
+#include "OpcodeSize.h"
 
 #include <algorithm>
 #include <string.h>
@@ -88,10 +89,14 @@ extern const unsigned wasmOpcodeLengths[];
     FOR_EACH_WASM_ID(OPCODE_ID_LENGTHS);
 #undef OPCODE_ID_LENGTHS
 
-static constexpr unsigned maxJSOpcodeLength = /* Opcode */ 1 + /* Wide32 Opcode */ 1 + /* Operands */ (MAX_LENGTH_OF_BYTECODE_IDS - 1) * 4;
-static constexpr unsigned maxWasmOpcodeLength = /* Opcode */ 1 + /* Wide32 Opcode */ 1 + /* Operands */ (MAX_LENGTH_OF_WASM_IDS - 1) * 4;
-static constexpr unsigned maxOpcodeLength = std::max(maxJSOpcodeLength, maxWasmOpcodeLength);
-static constexpr unsigned bitWidthForMaxOpcodeLength = WTF::getMSBSetConstexpr(maxOpcodeLength) + 1;
+static_assert(NUMBER_OF_BYTECODE_IDS < 255);
+static constexpr OpcodeSize maxJSOpcodeIDWidth = OpcodeSize::Narrow;
+static_assert(NUMBER_OF_WASM_IDS < 255);
+static constexpr OpcodeSize maxWasmOpcodeIDWidth = OpcodeSize::Narrow;
+static constexpr unsigned maxJSBytecodeStructLength = /* Opcode */ maxJSOpcodeIDWidth + /* Wide32 Opcode */ 1 + /* Operands */ MAX_LENGTH_OF_BYTECODE_IDS * 4;
+static constexpr unsigned maxWasmBytecodeStructLength = /* Opcode */ maxWasmOpcodeIDWidth + /* Wide32 Opcode */ 1 + /* Operands */ MAX_LENGTH_OF_WASM_IDS * 4;
+static constexpr unsigned maxBytecodeStructLength = std::max(maxJSBytecodeStructLength, maxWasmBytecodeStructLength);
+static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetConstexpr(maxBytecodeStructLength) + 1;
 
 #define FOR_EACH_OPCODE_WITH_VALUE_PROFILE(macro) \
     macro(OpCallVarargs) \

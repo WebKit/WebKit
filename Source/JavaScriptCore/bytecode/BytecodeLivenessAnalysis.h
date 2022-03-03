@@ -51,23 +51,23 @@ enum class LivenessCalculationPoint : uint8_t {
 class BytecodeLivenessPropagation {
 public:
     template<typename CodeBlockType, typename UseFunctor>
-    static void stepOverBytecodeIndexUse(CodeBlockType*, const InstructionStream&, BytecodeGraph&, BytecodeIndex, const UseFunctor&);
+    static void stepOverBytecodeIndexUse(CodeBlockType*, const JSInstructionStream&, BytecodeGraph&, BytecodeIndex, const UseFunctor&);
     template<typename CodeBlockType, typename UseFunctor>
-    static void stepOverBytecodeIndexUseInExceptionHandler(CodeBlockType*, const InstructionStream&, BytecodeGraph&, BytecodeIndex, const UseFunctor&);
+    static void stepOverBytecodeIndexUseInExceptionHandler(CodeBlockType*, const JSInstructionStream&, BytecodeGraph&, BytecodeIndex, const UseFunctor&);
     template<typename CodeBlockType, typename DefFunctor>
-    static void stepOverBytecodeIndexDef(CodeBlockType*, const InstructionStream&, BytecodeGraph&, BytecodeIndex, const DefFunctor&);
+    static void stepOverBytecodeIndexDef(CodeBlockType*, const JSInstructionStream&, BytecodeGraph&, BytecodeIndex, const DefFunctor&);
 
     template<typename CodeBlockType, typename UseFunctor, typename DefFunctor>
-    static void stepOverBytecodeIndex(CodeBlockType*, const InstructionStream&, BytecodeGraph&, BytecodeIndex, const UseFunctor&, const DefFunctor&);
+    static void stepOverBytecodeIndex(CodeBlockType*, const JSInstructionStream&, BytecodeGraph&, BytecodeIndex, const UseFunctor&, const DefFunctor&);
 
     template<typename CodeBlockType>
-    static void stepOverInstruction(CodeBlockType*, const InstructionStream&, BytecodeGraph&, BytecodeIndex, FastBitVector& out);
+    static void stepOverInstruction(CodeBlockType*, const JSInstructionStream&, BytecodeGraph&, BytecodeIndex, FastBitVector& out);
 
     template<typename CodeBlockType, typename Instructions>
-    static bool computeLocalLivenessForInstruction(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeBasicBlock&, BytecodeIndex, FastBitVector& result);
+    static bool computeLocalLivenessForInstruction(CodeBlockType*, const Instructions&, BytecodeGraph&, JSBytecodeBasicBlock&, BytecodeIndex, FastBitVector& result);
 
     template<typename CodeBlockType, typename Instructions>
-    static bool computeLocalLivenessForBlock(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeBasicBlock&);
+    static bool computeLocalLivenessForBlock(CodeBlockType*, const Instructions&, BytecodeGraph&, JSBytecodeBasicBlock&);
 
     template<typename CodeBlockType, typename Instructions>
     static FastBitVector getLivenessInfoAtInstruction(CodeBlockType*, const Instructions&, BytecodeGraph&, BytecodeIndex);

@@ -75,7 +75,7 @@ void JIT::compileOpEqSlowCommon(Vector<SlowCaseEntry>::iterator& iter)
     done.link(this);
 }
 
-void JIT::emit_op_eq(const Instruction* currentInstruction)
+void JIT::emit_op_eq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEq>();
 
@@ -86,7 +86,7 @@ void JIT::emit_op_eq(const Instruction* currentInstruction)
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
 }
 
-void JIT::emit_op_neq(const Instruction* currentInstruction)
+void JIT::emit_op_neq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpNeq>();
 
@@ -97,7 +97,7 @@ void JIT::emit_op_neq(const Instruction* currentInstruction)
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
 }
 
-void JIT::emit_op_jeq(const Instruction* currentInstruction)
+void JIT::emit_op_jeq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJeq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -107,7 +107,7 @@ void JIT::emit_op_jeq(const Instruction* currentInstruction)
     addJump(branch32(Equal, jsRegT10.payloadGPR(), jsRegT32.payloadGPR()), target);
 }
 
-void JIT::emit_op_jneq(const Instruction* currentInstruction)
+void JIT::emit_op_jneq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJneq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -117,7 +117,7 @@ void JIT::emit_op_jneq(const Instruction* currentInstruction)
     addJump(branch32(NotEqual, jsRegT10.payloadGPR(), jsRegT32.payloadGPR()), target);
 }
 
-void JIT::emitSlow_op_eq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_eq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = currentInstruction->as<OpEq>();
 
@@ -127,7 +127,7 @@ void JIT::emitSlow_op_eq(const Instruction* currentInstruction, Vector<SlowCaseE
     emitPutVirtualRegister(bytecode.m_dst, returnValueJSR);
 }
 
-void JIT::emitSlow_op_neq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_neq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = currentInstruction->as<OpNeq>();
 
@@ -138,7 +138,7 @@ void JIT::emitSlow_op_neq(const Instruction* currentInstruction, Vector<SlowCase
     emitPutVirtualRegister(bytecode.m_dst, returnValueJSR);
 }
 
-void JIT::emitSlow_op_jeq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_jeq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = currentInstruction->as<OpJeq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -148,7 +148,7 @@ void JIT::emitSlow_op_jeq(const Instruction* currentInstruction, Vector<SlowCase
     emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
 }
 
-void JIT::emitSlow_op_jneq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_jneq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = currentInstruction->as<OpJneq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -175,7 +175,7 @@ void JIT::compileOpStrictEqCommon(VirtualRegister src1,  VirtualRegister src2)
     firstIsObject.link(this);
 }
 
-void JIT::emit_op_stricteq(const Instruction* currentInstruction)
+void JIT::emit_op_stricteq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpStricteq>();
     compileOpStrictEqCommon(bytecode.m_lhs, bytecode.m_rhs);
@@ -186,7 +186,7 @@ void JIT::emit_op_stricteq(const Instruction* currentInstruction)
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
 }
 
-void JIT::emit_op_nstricteq(const Instruction* currentInstruction)
+void JIT::emit_op_nstricteq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpNstricteq>();
     compileOpStrictEqCommon(bytecode.m_lhs, bytecode.m_rhs);
@@ -197,7 +197,7 @@ void JIT::emit_op_nstricteq(const Instruction* currentInstruction)
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
 }
 
-void JIT::emit_op_jstricteq(const Instruction* currentInstruction)
+void JIT::emit_op_jstricteq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJstricteq>();
     int target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -207,7 +207,7 @@ void JIT::emit_op_jstricteq(const Instruction* currentInstruction)
     addJump(branch32(Equal, jsRegT10.payloadGPR(), jsRegT32.payloadGPR()), target);
 }
 
-void JIT::emit_op_jnstricteq(const Instruction* currentInstruction)
+void JIT::emit_op_jnstricteq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJnstricteq>();
     int target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -217,7 +217,7 @@ void JIT::emit_op_jnstricteq(const Instruction* currentInstruction)
     addJump(branch32(NotEqual, jsRegT10.payloadGPR(), jsRegT32.payloadGPR()), target);
 }
 
-void JIT::emitSlow_op_jstricteq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_jstricteq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -228,7 +228,7 @@ void JIT::emitSlow_op_jstricteq(const Instruction* currentInstruction, Vector<Sl
     emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
 }
 
-void JIT::emitSlow_op_jnstricteq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_jnstricteq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 

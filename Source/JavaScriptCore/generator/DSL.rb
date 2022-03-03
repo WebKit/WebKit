@@ -149,10 +149,10 @@ namespace JSC {
 
 class BasicBlockLocation;
 
-void dumpBytecode(BytecodeDumperBase* dumper, InstructionStream::Offset, const Instruction*);
+void dumpBytecode(BytecodeDumperBase<JSInstructionStream>* dumper, JSInstructionStream::Offset, const JSInstruction*);
 
 #if ENABLE(WEBASSEMBLY)
-void dumpWasm(BytecodeDumperBase* dumper, InstructionStream::Offset, const Instruction*);
+void dumpWasm(BytecodeDumperBase<WasmInstructionStream>* dumper, WasmInstructionStream::Offset, const WasmInstruction*);
 #endif // ENABLE(WEBASSEMBLY)
 
 EOF

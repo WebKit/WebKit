@@ -54,7 +54,7 @@ inline bool isOpcodeShape(OpcodeID opcodeID)
 }
 
 template<OpcodeShape shape, typename = std::enable_if_t<shape != AnyOpcodeShape>>
-inline bool isOpcodeShape(const Instruction* instruction)
+inline bool isOpcodeShape(const JSInstruction* instruction)
 {
     return isOpcodeShape<shape>(instruction->opcodeID());
 }

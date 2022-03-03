@@ -33,9 +33,9 @@ namespace JSC {
 // Reference count indicates number of live registers that alias this object.
 class StaticPropertyAnalysis : public RefCounted<StaticPropertyAnalysis> {
 public:
-    static Ref<StaticPropertyAnalysis> create(InstructionStream::MutableRef&& instructionRef)
+    static Ref<StaticPropertyAnalysis> create(JSInstructionStream::MutableRef&& instructionRef)
     {
-        return adoptRef(*new StaticPropertyAnalysis(WTFMove(instructionRef))); 
+        return adoptRef(*new StaticPropertyAnalysis(WTFMove(instructionRef)));
     }
 
     void addPropertyIndex(unsigned propertyIndex) { m_propertyIndexes.add(propertyIndex); }
@@ -45,12 +45,12 @@ public:
     int propertyIndexCount() { return m_propertyIndexes.size(); }
 
 private:
-    StaticPropertyAnalysis(InstructionStream::MutableRef&& instructionRef)
+    StaticPropertyAnalysis(JSInstructionStream::MutableRef&& instructionRef)
         : m_instructionRef(WTFMove(instructionRef))
     {
     }
 
-    InstructionStream::MutableRef m_instructionRef;
+    JSInstructionStream::MutableRef m_instructionRef;
     typedef HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> PropertyIndexSet;
     PropertyIndexSet m_propertyIndexes;
 };

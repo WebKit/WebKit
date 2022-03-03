@@ -83,7 +83,7 @@ void initialize()
 
     static_assert(llint_throw_from_slow_path_trampoline < UINT8_MAX);
     static_assert(wasm_throw_from_slow_path_trampoline < UINT8_MAX);
-    for (unsigned i = 0; i < maxOpcodeLength + 1; ++i) {
+    for (unsigned i = 0; i < maxBytecodeStructLength + 1; ++i) {
         g_jscConfig.llint.exceptionInstructions[i] = llint_throw_from_slow_path_trampoline;
         g_jscConfig.llint.wasmExceptionInstructions[i] = wasm_throw_from_slow_path_trampoline;
     }

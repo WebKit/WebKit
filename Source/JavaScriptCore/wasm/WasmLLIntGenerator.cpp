@@ -474,7 +474,7 @@ private:
     void finalizePreviousBlockForCatch(ControlType&, Stack&);
 
     struct SwitchEntry {
-        InstructionStream::Offset offset;
+        WasmInstructionStream::Offset offset;
         int* jumpTarget;
     };
 
@@ -510,7 +510,7 @@ Expected<std::unique_ptr<FunctionCodeBlockGenerator>, String> parseAndCompileByt
 }
 
 
-using Buffer = InstructionStream::InstructionBuffer;
+using Buffer = WasmInstructionStream::InstructionBuffer;
 static ThreadSpecific<Buffer>* threadSpecificBufferPtr;
 
 static ThreadSpecific<Buffer>& threadSpecificBuffer()
@@ -1228,7 +1228,7 @@ auto LLIntGenerator::addSwitch(ExpressionType condition, const Vector<ControlTyp
     WasmSwitch::emit(this, condition, tableIndex);
 
     unsigned index = 0;
-    InstructionStream::Offset offset = m_lastInstruction.offset();
+    WasmInstructionStream::Offset offset = m_lastInstruction.offset();
 
     auto addTarget = [&](ControlType& target) {
         RefPtr<Label> targetLabel = target.targetLabelForBranch();
@@ -1850,13 +1850,13 @@ void GenericLabel<Wasm::GeneratorTraits>::setLocation(BytecodeGeneratorBase<Wasm
 
 #define CASE(__op) \
     case __op::opcodeID:  \
-        instruction->cast<__op, WasmOpcodeTraits>()->setTargetLabel(BoundLabel(target), [&]() { \
+        instruction->cast<__op>()->setTargetLabel(BoundLabel(target), [&]() { \
             generator.m_codeBlock->addOutOfLineJumpTarget(instruction.offset(), target); \
             return BoundLabel(); \
         }); \
         break;
 
-        switch (instruction->opcodeID<WasmOpcodeTraits>()) {
+        switch (instruction->opcodeID()) {
         CASE(WasmJmp)
         CASE(WasmJtrue)
         CASE(WasmJfalse)

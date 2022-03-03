@@ -43,7 +43,7 @@
 
 namespace JSC {
 
-void JIT::emit_op_ret(const Instruction* currentInstruction)
+void JIT::emit_op_ret(const JSInstruction* currentInstruction)
 {
     static_assert(noOverlap(returnValueJSR, callFrameRegister));
 
@@ -188,7 +188,7 @@ bool JIT::compileCallEval(const OpCallEval& bytecode)
     return true;
 }
 
-void JIT::compileCallEvalSlowCase(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::compileCallEvalSlowCase(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -230,7 +230,7 @@ bool JIT::compileTailCall(const OpTailCall& bytecode, UnlinkedCallLinkInfo*, uns
 }
 
 template<typename Op>
-void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoIndex)
+void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoIndex)
 {
     OpcodeID opcodeID = Op::opcodeID;
     auto bytecode = instruction->as<Op>();
@@ -303,7 +303,7 @@ void JIT::compileOpCall(const Instruction* instruction, unsigned callLinkInfoInd
 }
 
 template<typename Op>
-void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned)
+void JIT::compileOpCallSlowCase(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned)
 {
     OpcodeID opcodeID = Op::opcodeID;
     auto bytecode = instruction->as<Op>();
@@ -325,87 +325,87 @@ void JIT::compileOpCallSlowCase(const Instruction* instruction, Vector<SlowCaseE
     }
 }
 
-void JIT::emit_op_call(const Instruction* currentInstruction)
+void JIT::emit_op_call(const JSInstruction* currentInstruction)
 {
     compileOpCall<OpCall>(currentInstruction, m_callLinkInfoIndex++);
 }
 
-void JIT::emit_op_tail_call(const Instruction* currentInstruction)
+void JIT::emit_op_tail_call(const JSInstruction* currentInstruction)
 {
     compileOpCall<OpTailCall>(currentInstruction, m_callLinkInfoIndex++);
 }
 
-void JIT::emit_op_call_eval(const Instruction* currentInstruction)
+void JIT::emit_op_call_eval(const JSInstruction* currentInstruction)
 {
     compileOpCall<OpCallEval>(currentInstruction, m_callLinkInfoIndex);
 }
 
-void JIT::emit_op_call_varargs(const Instruction* currentInstruction)
+void JIT::emit_op_call_varargs(const JSInstruction* currentInstruction)
 {
     compileOpCall<OpCallVarargs>(currentInstruction, m_callLinkInfoIndex++);
 }
 
-void JIT::emit_op_tail_call_varargs(const Instruction* currentInstruction)
+void JIT::emit_op_tail_call_varargs(const JSInstruction* currentInstruction)
 {
     compileOpCall<OpTailCallVarargs>(currentInstruction, m_callLinkInfoIndex++);
 }
 
-void JIT::emit_op_tail_call_forward_arguments(const Instruction* currentInstruction)
+void JIT::emit_op_tail_call_forward_arguments(const JSInstruction* currentInstruction)
 {
     compileOpCall<OpTailCallForwardArguments>(currentInstruction, m_callLinkInfoIndex++);
 }
 
-void JIT::emit_op_construct_varargs(const Instruction* currentInstruction)
+void JIT::emit_op_construct_varargs(const JSInstruction* currentInstruction)
 {
     compileOpCall<OpConstructVarargs>(currentInstruction, m_callLinkInfoIndex++);
 }
 
-void JIT::emit_op_construct(const Instruction* currentInstruction)
+void JIT::emit_op_construct(const JSInstruction* currentInstruction)
 {
     compileOpCall<OpConstruct>(currentInstruction, m_callLinkInfoIndex++);
 }
 
-void JIT::emitSlow_op_call(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_call(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileOpCallSlowCase<OpCall>(currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
-void JIT::emitSlow_op_tail_call(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_tail_call(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileOpCallSlowCase<OpTailCall>(currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
-void JIT::emitSlow_op_call_eval(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_call_eval(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileCallEvalSlowCase(currentInstruction, iter);
 }
 
-void JIT::emitSlow_op_call_varargs(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_call_varargs(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileOpCallSlowCase<OpCallVarargs>(currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
-void JIT::emitSlow_op_tail_call_varargs(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_tail_call_varargs(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileOpCallSlowCase<OpTailCallVarargs>(currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
-void JIT::emitSlow_op_tail_call_forward_arguments(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_tail_call_forward_arguments(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileOpCallSlowCase<OpTailCallForwardArguments>(currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
-void JIT::emitSlow_op_construct_varargs(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_construct_varargs(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileOpCallSlowCase<OpConstructVarargs>(currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
-void JIT::emitSlow_op_construct(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_construct(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     compileOpCallSlowCase<OpConstruct>(currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
-void JIT::emit_op_iterator_open(const Instruction* instruction)
+void JIT::emit_op_iterator_open(const JSInstruction* instruction)
 {
     auto bytecode = instruction->as<OpIteratorOpen>();
     auto* tryFastFunction = ([&] () {
@@ -459,7 +459,7 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
     fastCase.link(this);
 }
 
-void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_iterator_open(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = instruction->as<OpIteratorOpen>();
 
@@ -507,7 +507,7 @@ void JIT::emitSlow_op_iterator_open(const Instruction* instruction, Vector<SlowC
     done.link(this);
 }
 
-void JIT::emit_op_iterator_next(const Instruction* instruction)
+void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 {
     auto bytecode = instruction->as<OpIteratorNext>();
     auto* tryFastFunction = ([&] () {
@@ -607,7 +607,7 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
     fastCase.link(this);
 }
 
-void JIT::emitSlow_op_iterator_next(const Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_iterator_next(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = instruction->as<OpIteratorNext>();
 

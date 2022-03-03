@@ -1444,7 +1444,7 @@ void VM::setCrashOnVMCreation(bool shouldCrash)
     vmCreationShouldCrash = shouldCrash;
 }
 
-void VM::addLoopHintExecutionCounter(const Instruction* instruction)
+void VM::addLoopHintExecutionCounter(const JSInstruction* instruction)
 {
     Locker locker { m_loopHintExecutionCountLock };
     auto addResult = m_loopHintExecutionCounts.add(instruction, std::pair<unsigned, std::unique_ptr<uintptr_t>>(0, nullptr));
@@ -1456,14 +1456,14 @@ void VM::addLoopHintExecutionCounter(const Instruction* instruction)
     ++addResult.iterator->value.first;
 }
 
-uintptr_t* VM::getLoopHintExecutionCounter(const Instruction* instruction)
+uintptr_t* VM::getLoopHintExecutionCounter(const JSInstruction* instruction)
 {
     Locker locker { m_loopHintExecutionCountLock };
     auto iter = m_loopHintExecutionCounts.find(instruction);
     return iter->value.second.get();
 }
 
-void VM::removeLoopHintExecutionCounter(const Instruction* instruction)
+void VM::removeLoopHintExecutionCounter(const JSInstruction* instruction)
 {
     Locker locker { m_loopHintExecutionCountLock };
     auto iter = m_loopHintExecutionCounts.find(instruction);

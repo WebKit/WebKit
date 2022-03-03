@@ -320,8 +320,10 @@ end
 
 # Opcode offsets
 const OpcodeIDNarrowSize = 1 # OpcodeID
-const OpcodeIDWide16Size = 2 # Wide16 Prefix + OpcodeID
-const OpcodeIDWide32Size = 2 # Wide32 Prefix + OpcodeID
+const OpcodeIDWide16SizeJS = 2 # Wide16 Prefix + OpcodeID
+const OpcodeIDWide32SizeJS = 2 # Wide32 Prefix + OpcodeID
+const OpcodeIDWide16SizeWasm = 2 # Wide16 Prefix + OpcodeID(1 byte)
+const OpcodeIDWide32SizeWasm = 2 # Wide32 Prefix + OpcodeID(1 byte)
 
 if X86_64_WIN or C_LOOP_WIN
     const GigacageConfig = _g_gigacageConfig
@@ -358,35 +360,51 @@ macro dispatchIndirect(offsetReg)
     dispatch(offsetReg)
 end
 
-macro genericDispatchOp(dispatch, size, opcodeName)
+macro genericDispatchOpJS(dispatch, size, opcodeName)
     macro dispatchNarrow()
-        dispatch((constexpr %opcodeName%_length - 1) * 1 + OpcodeIDNarrowSize)
+        dispatch((constexpr %opcodeName%_length) * 1 + OpcodeIDNarrowSize)
     end
 
     macro dispatchWide16()
-        dispatch((constexpr %opcodeName%_length - 1) * 2 + OpcodeIDWide16Size)
+        dispatch((constexpr %opcodeName%_length) * 2 + OpcodeIDWide16SizeJS)
     end
 
     macro dispatchWide32()
-        dispatch((constexpr %opcodeName%_length - 1) * 4 + OpcodeIDWide32Size)
+        dispatch((constexpr %opcodeName%_length) * 4 + OpcodeIDWide32SizeJS)
+    end
+
+    size(dispatchNarrow, dispatchWide16, dispatchWide32, macro (dispatch) dispatch() end)
+end
+
+macro genericDispatchOpWasm(dispatch, size, opcodeName)
+    macro dispatchNarrow()
+        dispatch((constexpr %opcodeName%_length) * 1 + OpcodeIDNarrowSize)
+    end
+
+    macro dispatchWide16()
+        dispatch((constexpr %opcodeName%_length) * 2 + OpcodeIDWide16SizeWasm)
+    end
+
+    macro dispatchWide32()
+        dispatch((constexpr %opcodeName%_length) * 4 + OpcodeIDWide32SizeWasm)
     end
 
     size(dispatchNarrow, dispatchWide16, dispatchWide32, macro (dispatch) dispatch() end)
 end
 
 macro dispatchOp(size, opcodeName)
-    genericDispatchOp(dispatch, size, opcodeName)
+    genericDispatchOpJS(dispatch, size, opcodeName)
 end
 
 
 macro getu(size, opcodeStruct, fieldName, dst)
-    size(getuOperandNarrow, getuOperandWide16, getuOperandWide32, macro (getu)
+    size(getuOperandNarrow, getuOperandWide16JS, getuOperandWide32JS, macro (getu)
         getu(opcodeStruct, fieldName, dst)
     end)
 end
 
 macro get(size, opcodeStruct, fieldName, dst)
-    size(getOperandNarrow, getOperandWide16, getOperandWide32, macro (get)
+    size(getOperandNarrow, getOperandWide16JS, getOperandWide32JS, macro (get)
         get(opcodeStruct, fieldName, dst)
     end)
 end

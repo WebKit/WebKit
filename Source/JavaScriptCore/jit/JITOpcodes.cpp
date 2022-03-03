@@ -46,7 +46,7 @@
 
 namespace JSC {
 
-void JIT::emit_op_mov(const Instruction* currentInstruction)
+void JIT::emit_op_mov(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpMov>();
     VirtualRegister dst = bytecode.m_dst;
@@ -66,7 +66,7 @@ void JIT::emit_op_mov(const Instruction* currentInstruction)
     storeValue(jsRegT10, addressFor(dst));
 }
 
-void JIT::emit_op_end(const Instruction* currentInstruction)
+void JIT::emit_op_end(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEnd>();
     static_assert(noOverlap(returnValueJSR, callFrameRegister));
@@ -76,7 +76,7 @@ void JIT::emit_op_end(const Instruction* currentInstruction)
     ret();
 }
 
-void JIT::emit_op_jmp(const Instruction* currentInstruction)
+void JIT::emit_op_jmp(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJmp>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -84,7 +84,7 @@ void JIT::emit_op_jmp(const Instruction* currentInstruction)
 }
 
 
-void JIT::emit_op_new_object(const Instruction* currentInstruction)
+void JIT::emit_op_new_object(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpNewObject>();
 
@@ -108,7 +108,7 @@ void JIT::emit_op_new_object(const Instruction* currentInstruction)
     addSlowCase(slowCases);
 }
 
-void JIT::emitSlow_op_new_object(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_new_object(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -122,7 +122,7 @@ void JIT::emitSlow_op_new_object(const Instruction* currentInstruction, Vector<S
 }
 
 
-void JIT::emit_op_overrides_has_instance(const Instruction* currentInstruction)
+void JIT::emit_op_overrides_has_instance(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpOverridesHasInstance>();
     VirtualRegister dst = bytecode.m_dst;
@@ -146,7 +146,7 @@ void JIT::emit_op_overrides_has_instance(const Instruction* currentInstruction)
 }
 
 
-void JIT::emit_op_instanceof(const Instruction* currentInstruction)
+void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpInstanceof>();
     VirtualRegister dst = bytecode.m_dst;
@@ -192,10 +192,10 @@ void JIT::emit_op_instanceof(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, resultJSR);
 }
 
-void JIT::emitSlow_op_instanceof(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_instanceof(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
-    
+
     auto bytecode = currentInstruction->as<OpInstanceof>();
     VirtualRegister resultVReg = bytecode.m_dst;
     
@@ -222,7 +222,7 @@ void JIT::emitSlow_op_instanceof(const Instruction* currentInstruction, Vector<S
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
 
-void JIT::emit_op_is_empty(const Instruction* currentInstruction)
+void JIT::emit_op_is_empty(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsEmpty>();
     VirtualRegister dst = bytecode.m_dst;
@@ -239,7 +239,7 @@ void JIT::emit_op_is_empty(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_typeof_is_undefined(const Instruction* currentInstruction)
+void JIT::emit_op_typeof_is_undefined(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpTypeofIsUndefined>();
     VirtualRegister dst = bytecode.m_dst;
@@ -268,7 +268,7 @@ void JIT::emit_op_typeof_is_undefined(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_is_undefined_or_null(const Instruction* currentInstruction)
+void JIT::emit_op_is_undefined_or_null(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsUndefinedOrNull>();
     VirtualRegister dst = bytecode.m_dst;
@@ -284,7 +284,7 @@ void JIT::emit_op_is_undefined_or_null(const Instruction* currentInstruction)
 }
 
 
-void JIT::emit_op_is_boolean(const Instruction* currentInstruction)
+void JIT::emit_op_is_boolean(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsBoolean>();
     VirtualRegister dst = bytecode.m_dst;
@@ -303,7 +303,7 @@ void JIT::emit_op_is_boolean(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_is_number(const Instruction* currentInstruction)
+void JIT::emit_op_is_number(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsNumber>();
     VirtualRegister dst = bytecode.m_dst;
@@ -323,7 +323,7 @@ void JIT::emit_op_is_number(const Instruction* currentInstruction)
 }
 
 #if USE(BIGINT32)
-void JIT::emit_op_is_big_int(const Instruction* currentInstruction)
+void JIT::emit_op_is_big_int(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsBigInt>();
     VirtualRegister dst = bytecode.m_dst;
@@ -346,14 +346,14 @@ void JIT::emit_op_is_big_int(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 #else // if !USE(BIGINT32)
-NO_RETURN void JIT::emit_op_is_big_int(const Instruction*)
+NO_RETURN void JIT::emit_op_is_big_int(const JSInstruction*)
 {
     // If we only have HeapBigInts, then we emit isCellWithType instead of isBigInt.
     RELEASE_ASSERT_NOT_REACHED();
 }
 #endif
 
-void JIT::emit_op_is_cell_with_type(const Instruction* currentInstruction)
+void JIT::emit_op_is_cell_with_type(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsCellWithType>();
     VirtualRegister dst = bytecode.m_dst;
@@ -371,7 +371,7 @@ void JIT::emit_op_is_cell_with_type(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_is_object(const Instruction* currentInstruction)
+void JIT::emit_op_is_object(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpIsObject>();
     VirtualRegister dst = bytecode.m_dst;
@@ -388,7 +388,7 @@ void JIT::emit_op_is_object(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_to_primitive(const Instruction* currentInstruction)
+void JIT::emit_op_to_primitive(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToPrimitive>();
     VirtualRegister dst = bytecode.m_dst;
@@ -404,7 +404,7 @@ void JIT::emit_op_to_primitive(const Instruction* currentInstruction)
         emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_to_property_key(const Instruction* currentInstruction)
+void JIT::emit_op_to_property_key(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToPropertyKey>();
     VirtualRegister dst = bytecode.m_dst;
@@ -421,7 +421,7 @@ void JIT::emit_op_to_property_key(const Instruction* currentInstruction)
         emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_set_function_name(const Instruction* currentInstruction)
+void JIT::emit_op_set_function_name(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpSetFunctionName>();
 
@@ -436,7 +436,7 @@ void JIT::emit_op_set_function_name(const Instruction* currentInstruction)
     callOperation(operationSetFunctionName, globalObjectGPR, functionGPR, nameJSR);
 }
 
-void JIT::emit_op_not(const Instruction* currentInstruction)
+void JIT::emit_op_not(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpNot>();
     emitGetVirtualRegister(bytecode.m_operand, jsRegT10);
@@ -447,7 +447,7 @@ void JIT::emit_op_not(const Instruction* currentInstruction)
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
 }
 
-void JIT::emit_op_jfalse(const Instruction* currentInstruction)
+void JIT::emit_op_jfalse(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJfalse>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -489,7 +489,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsFalseyGenerator(VM& vm)
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: valueIsFalsey");
 }
 
-void JIT::emit_op_jeq_null(const Instruction* currentInstruction)
+void JIT::emit_op_jeq_null(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJeqNull>();
     VirtualRegister src = bytecode.m_value;
@@ -514,7 +514,7 @@ void JIT::emit_op_jeq_null(const Instruction* currentInstruction)
     masqueradesGlobalObjectIsForeign.link(this);
 }
 
-void JIT::emit_op_jneq_null(const Instruction* currentInstruction)
+void JIT::emit_op_jneq_null(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJneqNull>();
     VirtualRegister src = bytecode.m_value;
@@ -538,7 +538,7 @@ void JIT::emit_op_jneq_null(const Instruction* currentInstruction)
     wasNotImmediate.link(this);
 }
 
-void JIT::emit_op_jundefined_or_null(const Instruction* currentInstruction)
+void JIT::emit_op_jundefined_or_null(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJundefinedOrNull>();
     VirtualRegister value = bytecode.m_value;
@@ -554,7 +554,7 @@ void JIT::emit_op_jundefined_or_null(const Instruction* currentInstruction)
     addJump(branchIfNull(jsRegT10), target);
 }
 
-void JIT::emit_op_jnundefined_or_null(const Instruction* currentInstruction)
+void JIT::emit_op_jnundefined_or_null(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJnundefinedOrNull>();
     VirtualRegister value = bytecode.m_value;
@@ -570,7 +570,7 @@ void JIT::emit_op_jnundefined_or_null(const Instruction* currentInstruction)
     addJump(branchIfNotNull(jsRegT10), target);
 }
 
-void JIT::emit_op_jeq_ptr(const Instruction* currentInstruction)
+void JIT::emit_op_jeq_ptr(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJeqPtr>();
     VirtualRegister src = bytecode.m_value;
@@ -588,7 +588,7 @@ void JIT::emit_op_jeq_ptr(const Instruction* currentInstruction)
 #endif
 }
 
-void JIT::emit_op_jneq_ptr(const Instruction* currentInstruction)
+void JIT::emit_op_jneq_ptr(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJneqPtr>();
     VirtualRegister src = bytecode.m_value;
@@ -611,7 +611,7 @@ void JIT::emit_op_jneq_ptr(const Instruction* currentInstruction)
 
 #if USE(JSVALUE64)
 
-void JIT::emit_op_eq(const Instruction* currentInstruction)
+void JIT::emit_op_eq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEq>();
     emitGetVirtualRegister(bytecode.m_lhs, regT0);
@@ -622,7 +622,7 @@ void JIT::emit_op_eq(const Instruction* currentInstruction)
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
 }
 
-void JIT::emit_op_jeq(const Instruction* currentInstruction)
+void JIT::emit_op_jeq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJeq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -634,7 +634,7 @@ void JIT::emit_op_jeq(const Instruction* currentInstruction)
 
 #endif
 
-void JIT::emit_op_jtrue(const Instruction* currentInstruction)
+void JIT::emit_op_jtrue(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJtrue>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -678,7 +678,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsTruthyGenerator(VM& vm)
 
 #if USE(JSVALUE64)
 
-void JIT::emit_op_neq(const Instruction* currentInstruction)
+void JIT::emit_op_neq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpNeq>();
     emitGetVirtualRegister(bytecode.m_lhs, regT0);
@@ -690,7 +690,7 @@ void JIT::emit_op_neq(const Instruction* currentInstruction)
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
 }
 
-void JIT::emit_op_jneq(const Instruction* currentInstruction)
+void JIT::emit_op_jneq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpJneq>();
     unsigned target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -702,7 +702,7 @@ void JIT::emit_op_jneq(const Instruction* currentInstruction)
 
 #endif
 
-void JIT::emit_op_throw(const Instruction* currentInstruction)
+void JIT::emit_op_throw(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpThrow>();
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
@@ -750,7 +750,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_throw_handlerGenerator(VM& vm)
 #if USE(JSVALUE64)
 
 template<typename Op>
-void JIT::compileOpStrictEq(const Instruction* currentInstruction)
+void JIT::compileOpStrictEq(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     VirtualRegister dst = bytecode.m_dst;
@@ -825,18 +825,18 @@ void JIT::compileOpStrictEq(const Instruction* currentInstruction)
 #endif
 }
 
-void JIT::emit_op_stricteq(const Instruction* currentInstruction)
+void JIT::emit_op_stricteq(const JSInstruction* currentInstruction)
 {
     compileOpStrictEq<OpStricteq>(currentInstruction);
 }
 
-void JIT::emit_op_nstricteq(const Instruction* currentInstruction)
+void JIT::emit_op_nstricteq(const JSInstruction* currentInstruction)
 {
     compileOpStrictEq<OpNstricteq>(currentInstruction);
 }
 
 template<typename Op>
-void JIT::compileOpStrictEqJump(const Instruction* currentInstruction)
+void JIT::compileOpStrictEqJump(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     int target = jumpTarget(currentInstruction, bytecode.m_targetLabel);
@@ -905,17 +905,17 @@ void JIT::compileOpStrictEqJump(const Instruction* currentInstruction)
 #endif
 }
 
-void JIT::emit_op_jstricteq(const Instruction* currentInstruction)
+void JIT::emit_op_jstricteq(const JSInstruction* currentInstruction)
 {
     compileOpStrictEqJump<OpJstricteq>(currentInstruction);
 }
 
-void JIT::emit_op_jnstricteq(const Instruction* currentInstruction)
+void JIT::emit_op_jnstricteq(const JSInstruction* currentInstruction)
 {
     compileOpStrictEqJump<OpJnstricteq>(currentInstruction);
 }
 
-void JIT::emitSlow_op_jstricteq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_jstricteq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -926,7 +926,7 @@ void JIT::emitSlow_op_jstricteq(const Instruction* currentInstruction, Vector<Sl
     emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
 }
 
-void JIT::emitSlow_op_jnstricteq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_jnstricteq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -939,7 +939,7 @@ void JIT::emitSlow_op_jnstricteq(const Instruction* currentInstruction, Vector<S
 
 #endif
 
-void JIT::emit_op_to_number(const Instruction* currentInstruction)
+void JIT::emit_op_to_number(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToNumber>();
     VirtualRegister dstVReg = bytecode.m_dst;
@@ -954,7 +954,7 @@ void JIT::emit_op_to_number(const Instruction* currentInstruction)
         emitPutVirtualRegister(dstVReg, jsRegT10);
 }
 
-void JIT::emit_op_to_numeric(const Instruction* currentInstruction)
+void JIT::emit_op_to_numeric(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToNumeric>();
     VirtualRegister dstVReg = bytecode.m_dst;
@@ -975,7 +975,7 @@ void JIT::emit_op_to_numeric(const Instruction* currentInstruction)
         emitPutVirtualRegister(dstVReg, jsRegT10);
 }
 
-void JIT::emit_op_to_string(const Instruction* currentInstruction)
+void JIT::emit_op_to_string(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToString>();
     VirtualRegister dstVReg = bytecode.m_dst;
@@ -990,7 +990,7 @@ void JIT::emit_op_to_string(const Instruction* currentInstruction)
         emitPutVirtualRegister(dstVReg, jsRegT10);
 }
 
-void JIT::emit_op_to_object(const Instruction* currentInstruction)
+void JIT::emit_op_to_object(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToObject>();
     VirtualRegister dstVReg = bytecode.m_dst;
@@ -1006,7 +1006,7 @@ void JIT::emit_op_to_object(const Instruction* currentInstruction)
         emitPutVirtualRegister(dstVReg, jsRegT10);
 }
 
-void JIT::emit_op_catch(const Instruction* currentInstruction)
+void JIT::emit_op_catch(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpCatch>();
 
@@ -1052,12 +1052,12 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
 #endif // ENABLE(DFG_JIT)
 }
 
-void JIT::emit_op_identity_with_profile(const Instruction*)
+void JIT::emit_op_identity_with_profile(const JSInstruction*)
 {
     // We don't need to do anything here...
 }
 
-void JIT::emit_op_get_parent_scope(const Instruction* currentInstruction)
+void JIT::emit_op_get_parent_scope(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetParentScope>();
     VirtualRegister currentScope = bytecode.m_scope;
@@ -1067,7 +1067,7 @@ void JIT::emit_op_get_parent_scope(const Instruction* currentInstruction)
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
 }
 
-void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
+void JIT::emit_op_switch_imm(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpSwitchImm>();
     size_t tableIndex = bytecode.m_tableIndex;
@@ -1094,7 +1094,7 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
-void JIT::emit_op_switch_char(const Instruction* currentInstruction)
+void JIT::emit_op_switch_char(const JSInstruction* currentInstruction)
 {
     // FIXME: We should have a fast path.
     // https://bugs.webkit.org/show_bug.cgi?id=224521
@@ -1119,7 +1119,7 @@ void JIT::emit_op_switch_char(const Instruction* currentInstruction)
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
-void JIT::emit_op_switch_string(const Instruction* currentInstruction)
+void JIT::emit_op_switch_string(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpSwitchString>();
     size_t tableIndex = bytecode.m_tableIndex;
@@ -1142,7 +1142,7 @@ void JIT::emit_op_switch_string(const Instruction* currentInstruction)
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
-void JIT::emit_op_eq_null(const Instruction* currentInstruction)
+void JIT::emit_op_eq_null(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEqNull>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1174,7 +1174,7 @@ void JIT::emit_op_eq_null(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_neq_null(const Instruction* currentInstruction)
+void JIT::emit_op_neq_null(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpNeqNull>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1206,7 +1206,7 @@ void JIT::emit_op_neq_null(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_enter(const Instruction*)
+void JIT::emit_op_enter(const JSInstruction*)
 {
     // Even though CTI doesn't use them, we initialize our constant
     // registers to zap stale pointers, to avoid unnecessarily prolonging
@@ -1335,7 +1335,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_enter_handlerGenerator(VM& vm)
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_enter_handler");
 }
 
-void JIT::emit_op_get_scope(const Instruction* currentInstruction)
+void JIT::emit_op_get_scope(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetScope>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1345,7 +1345,7 @@ void JIT::emit_op_get_scope(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_to_this(const Instruction* currentInstruction)
+void JIT::emit_op_to_this(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpToThis>();
     VirtualRegister srcDst = bytecode.m_srcDst;
@@ -1359,7 +1359,7 @@ void JIT::emit_op_to_this(const Instruction* currentInstruction)
     addSlowCase(branch32(NotEqual, Address(jsRegT10.payloadGPR(), JSCell::structureIDOffset()), regT2));
 }
 
-void JIT::emit_op_create_this(const Instruction* currentInstruction)
+void JIT::emit_op_create_this(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpCreateThis>();
     VirtualRegister callee = bytecode.m_callee;
@@ -1394,7 +1394,7 @@ void JIT::emit_op_create_this(const Instruction* currentInstruction)
     emitPutVirtualRegister(bytecode.m_dst, jsRegT10);
 }
 
-void JIT::emit_op_check_tdz(const Instruction* currentInstruction)
+void JIT::emit_op_check_tdz(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpCheckTdz>();
 #if USE(JSVALUE64)
@@ -1409,7 +1409,7 @@ void JIT::emit_op_check_tdz(const Instruction* currentInstruction)
 
 // Slow cases
 
-void JIT::emitSlow_op_eq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_eq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -1420,7 +1420,7 @@ void JIT::emitSlow_op_eq(const Instruction* currentInstruction, Vector<SlowCaseE
     emitPutVirtualRegister(bytecode.m_dst, returnValueGPR);
 }
 
-void JIT::emitSlow_op_neq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_neq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -1432,7 +1432,7 @@ void JIT::emitSlow_op_neq(const Instruction* currentInstruction, Vector<SlowCase
     emitPutVirtualRegister(bytecode.m_dst, returnValueGPR);
 }
 
-void JIT::emitSlow_op_jeq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_jeq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -1443,7 +1443,7 @@ void JIT::emitSlow_op_jeq(const Instruction* currentInstruction, Vector<SlowCase
     emitJumpSlowToHot(branchTest32(NonZero, returnValueGPR), target);
 }
 
-void JIT::emitSlow_op_jneq(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_jneq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -1456,7 +1456,7 @@ void JIT::emitSlow_op_jneq(const Instruction* currentInstruction, Vector<SlowCas
 
 #endif // USE(JSVALUE64)
 
-void JIT::emit_op_debug(const Instruction* currentInstruction)
+void JIT::emit_op_debug(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDebug>();
     loadPtr(addressFor(CallFrameSlot::codeBlock), regT0);
@@ -1466,7 +1466,7 @@ void JIT::emit_op_debug(const Instruction* currentInstruction)
     noDebuggerRequests.link(this);
 }
 
-void JIT::emit_op_loop_hint(const Instruction* instruction)
+void JIT::emit_op_loop_hint(const JSInstruction* instruction)
 {
     if (UNLIKELY(Options::returnEarlyFromInfiniteLoopsForFuzzing() && m_unlinkedCodeBlock->loopHintsAreEligibleForFuzzingEarlyReturn())) {
         uintptr_t* ptr = vm().getLoopHintExecutionCounter(instruction);
@@ -1494,7 +1494,7 @@ void JIT::emit_op_loop_hint(const Instruction* instruction)
     }
 }
 
-void JIT::emitSlow_op_loop_hint(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_loop_hint(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
 #if ENABLE(DFG_JIT)
     // Emit the slow path for the JIT optimization check:
@@ -1521,26 +1521,26 @@ void JIT::emitSlow_op_loop_hint(const Instruction* currentInstruction, Vector<Sl
 #endif
 }
 
-void JIT::emit_op_check_traps(const Instruction*)
+void JIT::emit_op_check_traps(const JSInstruction*)
 {
     addSlowCase(branchTest32(NonZero, AbsoluteAddress(m_vm->traps().trapBitsAddress()), TrustedImm32(VMTraps::AsyncEvents)));
 }
 
-void JIT::emit_op_nop(const Instruction*)
+void JIT::emit_op_nop(const JSInstruction*)
 {
 }
 
-void JIT::emit_op_super_sampler_begin(const Instruction*)
+void JIT::emit_op_super_sampler_begin(const JSInstruction*)
 {
     add32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
 }
 
-void JIT::emit_op_super_sampler_end(const Instruction*)
+void JIT::emit_op_super_sampler_end(const JSInstruction*)
 {
     sub32(TrustedImm32(1), AbsoluteAddress(bitwise_cast<void*>(&g_superSamplerCount)));
 }
 
-void JIT::emitSlow_op_check_traps(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_check_traps(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -1581,7 +1581,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_check_traps_handlerGenerator(VM& v
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: op_check_traps_handler");
 }
 
-void JIT::emit_op_new_regexp(const Instruction* currentInstruction)
+void JIT::emit_op_new_regexp(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpNewRegexp>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1594,7 +1594,7 @@ void JIT::emit_op_new_regexp(const Instruction* currentInstruction)
 }
 
 template<typename Op>
-void JIT::emitNewFuncCommon(const Instruction* currentInstruction)
+void JIT::emitNewFuncCommon(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1616,28 +1616,28 @@ void JIT::emitNewFuncCommon(const Instruction* currentInstruction)
     }
 }
 
-void JIT::emit_op_new_func(const Instruction* currentInstruction)
+void JIT::emit_op_new_func(const JSInstruction* currentInstruction)
 {
     emitNewFuncCommon<OpNewFunc>(currentInstruction);
 }
 
-void JIT::emit_op_new_generator_func(const Instruction* currentInstruction)
+void JIT::emit_op_new_generator_func(const JSInstruction* currentInstruction)
 {
     emitNewFuncCommon<OpNewGeneratorFunc>(currentInstruction);
 }
 
-void JIT::emit_op_new_async_generator_func(const Instruction* currentInstruction)
+void JIT::emit_op_new_async_generator_func(const JSInstruction* currentInstruction)
 {
     emitNewFuncCommon<OpNewAsyncGeneratorFunc>(currentInstruction);
 }
 
-void JIT::emit_op_new_async_func(const Instruction* currentInstruction)
+void JIT::emit_op_new_async_func(const JSInstruction* currentInstruction)
 {
     emitNewFuncCommon<OpNewAsyncFunc>(currentInstruction);
 }
-    
+
 template<typename Op>
-void JIT::emitNewFuncExprCommon(const Instruction* currentInstruction)
+void JIT::emitNewFuncExprCommon(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1659,27 +1659,27 @@ void JIT::emitNewFuncExprCommon(const Instruction* currentInstruction)
     }
 }
 
-void JIT::emit_op_new_func_exp(const Instruction* currentInstruction)
+void JIT::emit_op_new_func_exp(const JSInstruction* currentInstruction)
 {
     emitNewFuncExprCommon<OpNewFuncExp>(currentInstruction);
 }
 
-void JIT::emit_op_new_generator_func_exp(const Instruction* currentInstruction)
+void JIT::emit_op_new_generator_func_exp(const JSInstruction* currentInstruction)
 {
     emitNewFuncExprCommon<OpNewGeneratorFuncExp>(currentInstruction);
 }
 
-void JIT::emit_op_new_async_func_exp(const Instruction* currentInstruction)
+void JIT::emit_op_new_async_func_exp(const JSInstruction* currentInstruction)
 {
     emitNewFuncExprCommon<OpNewAsyncFuncExp>(currentInstruction);
 }
-    
-void JIT::emit_op_new_async_generator_func_exp(const Instruction* currentInstruction)
+
+void JIT::emit_op_new_async_generator_func_exp(const JSInstruction* currentInstruction)
 {
     emitNewFuncExprCommon<OpNewAsyncGeneratorFuncExp>(currentInstruction);
 }
-    
-void JIT::emit_op_new_array(const Instruction* currentInstruction)
+
+void JIT::emit_op_new_array(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpNewArray>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1691,7 +1691,7 @@ void JIT::emit_op_new_array(const Instruction* currentInstruction)
     callOperation(operationNewArrayWithProfile, dst, argumentGPR0, argumentGPR1, argumentGPR2, size);
 }
 
-void JIT::emit_op_new_array_with_size(const Instruction* currentInstruction)
+void JIT::emit_op_new_array_with_size(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpNewArrayWithSize>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1708,7 +1708,7 @@ void JIT::emit_op_new_array_with_size(const Instruction* currentInstruction)
     callOperation(operationNewArrayWithSizeAndProfile, dst, globalObjectGPR, profileGPR, sizeJSR);
 }
 
-void JIT::emit_op_profile_type(const Instruction* currentInstruction)
+void JIT::emit_op_profile_type(const JSInstruction* currentInstruction)
 {
     m_isShareable = false;
 
@@ -1774,7 +1774,7 @@ void JIT::emit_op_profile_type(const Instruction* currentInstruction)
     jumpToEnd.link(this);
 }
 
-void JIT::emit_op_log_shadow_chicken_prologue(const Instruction* currentInstruction)
+void JIT::emit_op_log_shadow_chicken_prologue(const JSInstruction* currentInstruction)
 {
     RELEASE_ASSERT(vm().shadowChicken());
     updateTopCallFrame();
@@ -1788,7 +1788,7 @@ void JIT::emit_op_log_shadow_chicken_prologue(const Instruction* currentInstruct
     logShadowChickenProloguePacket(shadowPacketReg, scratch1Reg, regT3);
 }
 
-void JIT::emit_op_log_shadow_chicken_tail(const Instruction* currentInstruction)
+void JIT::emit_op_log_shadow_chicken_tail(const JSInstruction* currentInstruction)
 {
     RELEASE_ASSERT(vm().shadowChicken());
     updateTopCallFrame();
@@ -1807,7 +1807,7 @@ void JIT::emit_op_log_shadow_chicken_tail(const Instruction* currentInstruction)
     logShadowChickenTailPacket(shadowPacketReg, jsRegT32, regT4, regT1, CallSiteIndex(m_bytecodeIndex));
 }
 
-void JIT::emit_op_profile_control_flow(const Instruction* currentInstruction)
+void JIT::emit_op_profile_control_flow(const JSInstruction* currentInstruction)
 {
     m_isShareable = false;
 
@@ -1821,7 +1821,7 @@ void JIT::emit_op_profile_control_flow(const Instruction* currentInstruction)
 #endif
 }
 
-void JIT::emit_op_argument_count(const Instruction* currentInstruction)
+void JIT::emit_op_argument_count(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpArgumentCount>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1832,7 +1832,7 @@ void JIT::emit_op_argument_count(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, result);
 }
 
-void JIT::emit_op_get_rest_length(const Instruction* currentInstruction)
+void JIT::emit_op_get_rest_length(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetRestLength>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1852,7 +1852,7 @@ void JIT::emit_op_get_rest_length(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_get_argument(const Instruction* currentInstruction)
+void JIT::emit_op_get_argument(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetArgument>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1871,7 +1871,7 @@ void JIT::emit_op_get_argument(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_get_prototype_of(const Instruction* currentInstruction)
+void JIT::emit_op_get_prototype_of(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetPrototypeOf>();
 

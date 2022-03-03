@@ -93,7 +93,7 @@ void BytecodeGeneratorBase<Traits>::emitLabel(GenericLabel<Traits>& label)
 template<typename Traits>
 void BytecodeGeneratorBase<Traits>::recordOpcode(typename Traits::OpcodeID opcodeID)
 {
-    ASSERT(m_lastOpcodeID == Traits::opcodeForDisablingOptimizations || (m_lastOpcodeID == m_lastInstruction->opcodeID<typename Traits::OpcodeTraits>() && m_writer.position() == m_lastInstruction.offset() + m_lastInstruction->size<typename Traits::OpcodeTraits>()));
+    ASSERT(m_lastOpcodeID == Traits::opcodeForDisablingOptimizations || (m_lastOpcodeID == m_lastInstruction->opcodeID() && m_writer.position() == m_lastInstruction.offset() + m_lastInstruction->size()));
     m_lastInstruction = m_writer.ref();
     m_lastOpcodeID = opcodeID;
 }
@@ -102,6 +102,7 @@ template<typename Traits>
 void BytecodeGeneratorBase<Traits>::alignWideOpcode16()
 {
 #if CPU(NEEDS_ALIGNED_ACCESS)
+    static_assert(Traits::OpcodeTraits::maxOpcodeIDWidth == OpcodeSize::Narrow);
     size_t opcodeSize = 1;
     size_t prefixAndOpcodeSize = opcodeSize + PaddingBySize<OpcodeSize::Wide16>::value;
     while ((m_writer.position() + prefixAndOpcodeSize) % OpcodeSize::Wide16)
@@ -113,6 +114,7 @@ template<typename Traits>
 void BytecodeGeneratorBase<Traits>::alignWideOpcode32()
 {
 #if CPU(NEEDS_ALIGNED_ACCESS)
+    static_assert(Traits::OpcodeTraits::maxOpcodeIDWidth == OpcodeSize::Narrow);
     size_t opcodeSize = 1;
     size_t prefixAndOpcodeSize = opcodeSize + PaddingBySize<OpcodeSize::Wide32>::value;
     while ((m_writer.position() + prefixAndOpcodeSize) % OpcodeSize::Wide32)

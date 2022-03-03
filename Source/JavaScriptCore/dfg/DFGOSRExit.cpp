@@ -333,7 +333,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
             CodeOrigin codeOrigin = exit.m_codeOriginForExitProfile;
             CodeBlock* codeBlock = jit.baselineCodeBlockFor(codeOrigin);
             if (ArrayProfile* arrayProfile = codeBlock->getArrayProfile(codeOrigin.bytecodeIndex())) {
-                const Instruction* instruction = codeBlock->instructions().at(codeOrigin.bytecodeIndex()).ptr();
+                const auto* instruction = codeBlock->instructions().at(codeOrigin.bytecodeIndex()).ptr();
                 CCallHelpers::Jump skipProfile;
                 if (instruction->is<OpGetById>()) {
                     auto& metadata = instruction->as<OpGetById>().metadata(codeBlock);

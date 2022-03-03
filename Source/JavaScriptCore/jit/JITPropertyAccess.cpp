@@ -46,7 +46,7 @@
 
 namespace JSC {
 
-void JIT::emit_op_get_by_val(const Instruction* currentInstruction)
+void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetByVal>();
     VirtualRegister dst = bytecode.m_dst;
@@ -122,7 +122,7 @@ void JIT::generateGetByValSlowCase(const OpcodeType& bytecode, Vector<SlowCaseEn
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
 
-void JIT::emitSlow_op_get_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_get_by_val(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     generateGetByValSlowCase(currentInstruction->as<OpGetByVal>(), iter);
 }
@@ -165,7 +165,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_val_callSlowOperationT
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_val_callSlowOperationThenCheckException");
 }
 
-void JIT::emit_op_get_private_name(const Instruction* currentInstruction)
+void JIT::emit_op_get_private_name(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetPrivateName>();
     VirtualRegister dst = bytecode.m_dst;
@@ -201,7 +201,7 @@ void JIT::emit_op_get_private_name(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, resultJSR);
 }
 
-void JIT::emitSlow_op_get_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_get_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     ASSERT(hasAnySlowCases(iter));
 
@@ -260,7 +260,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_private_name_callSlowOper
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_private_name_callSlowOperationThenCheckException");
 }
 
-void JIT::emit_op_set_private_brand(const Instruction* currentInstruction)
+void JIT::emit_op_set_private_brand(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpSetPrivateBrand>();
     VirtualRegister base = bytecode.m_base;
@@ -295,7 +295,7 @@ void JIT::emit_op_set_private_brand(const Instruction* currentInstruction)
     emitWriteBarrier(base, ShouldFilterBase);
 }
 
-void JIT::emitSlow_op_set_private_brand(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_set_private_brand(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     UNUSED_PARAM(currentInstruction);
 
@@ -318,7 +318,7 @@ void JIT::emitSlow_op_set_private_brand(const Instruction* currentInstruction, V
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
 
-void JIT::emit_op_check_private_brand(const Instruction* currentInstruction)
+void JIT::emit_op_check_private_brand(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpCheckPrivateBrand>();
     VirtualRegister base = bytecode.m_base;
@@ -348,7 +348,7 @@ void JIT::emit_op_check_private_brand(const Instruction* currentInstruction)
     m_privateBrandAccesses.append(gen);
 }
 
-void JIT::emitSlow_op_check_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_check_private_brand(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -370,7 +370,7 @@ void JIT::emitSlow_op_check_private_brand(const Instruction*, Vector<SlowCaseEnt
 }
 
 template<typename Op>
-void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
+void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     VirtualRegister base = bytecode.m_base;
@@ -417,14 +417,14 @@ void JIT::emit_op_put_by_val(const Instruction* currentInstruction)
     emitWriteBarrier(base, ShouldFilterBase);
 }
 
-template void JIT::emit_op_put_by_val<OpPutByVal>(const Instruction*);
+template void JIT::emit_op_put_by_val<OpPutByVal>(const JSInstruction*);
 
-void JIT::emit_op_put_by_val_direct(const Instruction* currentInstruction)
+void JIT::emit_op_put_by_val_direct(const JSInstruction* currentInstruction)
 {
     emit_op_put_by_val<OpPutByValDirect>(currentInstruction);
 }
 
-void JIT::emitSlow_op_put_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -483,7 +483,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_by_val_callSlowOperationT
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_by_val_callSlowOperationThenCheckException");
 }
 
-void JIT::emit_op_put_private_name(const Instruction* currentInstruction)
+void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutPrivateName>();
     VirtualRegister base = bytecode.m_base;
@@ -522,7 +522,7 @@ void JIT::emit_op_put_private_name(const Instruction* currentInstruction)
     emitWriteBarrier(base, ShouldFilterBase);
 }
 
-void JIT::emitSlow_op_put_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_put_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -584,7 +584,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_private_name_callSlowOper
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_private_name_callSlowOperationThenCheckException");
 }
 
-void JIT::emit_op_put_getter_by_id(const Instruction* currentInstruction)
+void JIT::emit_op_put_getter_by_id(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutGetterById>();
     emitGetVirtualRegisterPayload(bytecode.m_base, regT0);
@@ -594,7 +594,7 @@ void JIT::emit_op_put_getter_by_id(const Instruction* currentInstruction)
     callOperation(operationPutGetterById, regT2, regT0, m_unlinkedCodeBlock->identifier(bytecode.m_property).impl(), options, regT1);
 }
 
-void JIT::emit_op_put_setter_by_id(const Instruction* currentInstruction)
+void JIT::emit_op_put_setter_by_id(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutSetterById>();
     emitGetVirtualRegisterPayload(bytecode.m_base, regT0);
@@ -604,7 +604,7 @@ void JIT::emit_op_put_setter_by_id(const Instruction* currentInstruction)
     callOperation(operationPutSetterById, regT2, regT0, m_unlinkedCodeBlock->identifier(bytecode.m_property).impl(), options, regT1);
 }
 
-void JIT::emit_op_put_getter_setter_by_id(const Instruction* currentInstruction)
+void JIT::emit_op_put_getter_setter_by_id(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutGetterSetterById>();
     emitGetVirtualRegisterPayload(bytecode.m_base, regT0);
@@ -615,7 +615,7 @@ void JIT::emit_op_put_getter_setter_by_id(const Instruction* currentInstruction)
     callOperation(operationPutGetterSetter, regT3, regT0, m_unlinkedCodeBlock->identifier(bytecode.m_property).impl(), attribute, regT1, regT2);
 }
 
-void JIT::emit_op_put_getter_by_val(const Instruction* currentInstruction)
+void JIT::emit_op_put_getter_by_val(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutGetterByVal>();
 
@@ -634,7 +634,7 @@ void JIT::emit_op_put_getter_by_val(const Instruction* currentInstruction)
     callOperation(operationPutGetterByVal, globalObjectGRP, baseGPR, propertyJSR, attributes, setterGPR);
 }
 
-void JIT::emit_op_put_setter_by_val(const Instruction* currentInstruction)
+void JIT::emit_op_put_setter_by_val(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutSetterByVal>();
 
@@ -653,7 +653,7 @@ void JIT::emit_op_put_setter_by_val(const Instruction* currentInstruction)
     callOperation(operationPutSetterByVal, globalObjectGRP, baseGPR, propertyJSR, attributes, setterGPR);
 }
 
-void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
+void JIT::emit_op_del_by_id(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDelById>();
     VirtualRegister dst = bytecode.m_dst;
@@ -692,7 +692,7 @@ void JIT::emit_op_del_by_id(const Instruction* currentInstruction)
     emitWriteBarrier(base, ShouldFilterBase);
 }
 
-void JIT::emitSlow_op_del_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_del_by_id(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -762,7 +762,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_del_by_id_callSlowOperationTh
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_del_by_id_callSlowOperationThenCheckException");
 }
 
-void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
+void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpDelByVal>();
     VirtualRegister dst = bytecode.m_dst;
@@ -804,7 +804,7 @@ void JIT::emit_op_del_by_val(const Instruction* currentInstruction)
     emitWriteBarrier(base, ShouldFilterBase);
 }
 
-void JIT::emitSlow_op_del_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_del_by_val(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -874,7 +874,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_del_by_val_callSlowOperationT
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_del_by_val_prepareCall");
 }
 
-void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)
+void JIT::emit_op_try_get_by_id(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpTryGetById>();
     VirtualRegister resultVReg = bytecode.m_dst;
@@ -908,7 +908,7 @@ void JIT::emit_op_try_get_by_id(const Instruction* currentInstruction)
     emitPutVirtualRegister(resultVReg, resultJSR);
 }
 
-void JIT::emitSlow_op_try_get_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_try_get_by_id(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -934,7 +934,7 @@ void JIT::emitSlow_op_try_get_by_id(const Instruction* currentInstruction, Vecto
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
 
-void JIT::emit_op_get_by_id_direct(const Instruction* currentInstruction)
+void JIT::emit_op_get_by_id_direct(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetByIdDirect>();
     VirtualRegister resultVReg = bytecode.m_dst;
@@ -967,7 +967,7 @@ void JIT::emit_op_get_by_id_direct(const Instruction* currentInstruction)
     emitPutVirtualRegister(resultVReg, resultJSR);
 }
 
-void JIT::emitSlow_op_get_by_id_direct(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_get_by_id_direct(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -993,7 +993,7 @@ void JIT::emitSlow_op_get_by_id_direct(const Instruction* currentInstruction, Ve
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
 
-void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
+void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetById>();
     VirtualRegister resultVReg = bytecode.m_dst;
@@ -1038,7 +1038,7 @@ void JIT::emit_op_get_by_id(const Instruction* currentInstruction)
     emitPutVirtualRegister(resultVReg, resultJSR);
 }
 
-void JIT::emitSlow_op_get_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_get_by_id(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -1100,7 +1100,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_id_callSlowOperationTh
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_id_callSlowOperationThenCheckException");
 }
 
-void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
+void JIT::emit_op_get_by_id_with_this(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetByIdWithThis>();
     VirtualRegister resultVReg = bytecode.m_dst;
@@ -1138,7 +1138,7 @@ void JIT::emit_op_get_by_id_with_this(const Instruction* currentInstruction)
     emitPutVirtualRegister(resultVReg, resultJSR);
 }
 
-void JIT::emitSlow_op_get_by_id_with_this(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_get_by_id_with_this(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -1201,7 +1201,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_id_with_this_callSlowO
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_by_id_with_this_callSlowOperationThenCheckException");
 }
 
-void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
+void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutById>();
     VirtualRegister baseVReg = bytecode.m_base;
@@ -1247,7 +1247,7 @@ void JIT::emit_op_put_by_id(const Instruction* currentInstruction)
     emitWriteBarrier(baseVReg, ShouldFilterBase);
 }
 
-void JIT::emitSlow_op_put_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_put_by_id(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -1310,7 +1310,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_by_id_callSlowOperationTh
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_by_id_callSlowOperationThenCheckException");
 }
 
-void JIT::emit_op_in_by_id(const Instruction* currentInstruction)
+void JIT::emit_op_in_by_id(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpInById>();
     VirtualRegister resultVReg = bytecode.m_dst;
@@ -1342,7 +1342,7 @@ void JIT::emit_op_in_by_id(const Instruction* currentInstruction)
     emitPutVirtualRegister(resultVReg, resultJSR);
 }
 
-void JIT::emitSlow_op_in_by_id(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_in_by_id(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -1370,7 +1370,7 @@ void JIT::emitSlow_op_in_by_id(const Instruction* currentInstruction, Vector<Slo
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
 
-void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
+void JIT::emit_op_in_by_val(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpInByVal>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1406,7 +1406,7 @@ void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, resultJSR);
 }
 
-void JIT::emitSlow_op_in_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_in_by_val(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     uint32_t bytecodeOffset = m_bytecodeIndex.offset();
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
@@ -1486,31 +1486,31 @@ void JIT::emitHasPrivateSlow(AccessType type)
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
 
-void JIT::emit_op_has_private_name(const Instruction* currentInstruction)
+void JIT::emit_op_has_private_name(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpHasPrivateName>();
     emitHasPrivate(bytecode.m_dst, bytecode.m_base, bytecode.m_property, AccessType::HasPrivateName);
 }
 
-void JIT::emitSlow_op_has_private_name(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_has_private_name(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
     emitHasPrivateSlow(AccessType::HasPrivateName);
 }
 
-void JIT::emit_op_has_private_brand(const Instruction* currentInstruction)
+void JIT::emit_op_has_private_brand(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpHasPrivateBrand>();
     emitHasPrivate(bytecode.m_dst, bytecode.m_base, bytecode.m_brand, AccessType::HasPrivateBrand);
 }
 
-void JIT::emitSlow_op_has_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_has_private_brand(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
     emitHasPrivateSlow(AccessType::HasPrivateBrand);
 }
 
-void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
+void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpResolveScope>();
     ResolveType profiledResolveType = bytecode.metadata(m_profiledCodeBlock).m_resolveType;
@@ -1741,7 +1741,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_resolve_scope");
 }
 
-void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
+void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetFromScope>();
     VirtualRegister dst = bytecode.m_dst;
@@ -1974,7 +1974,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_from_scope");
 }
 
-void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
+void JIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutToScope>();
     VirtualRegister scope = bytecode.m_scope;
@@ -2113,7 +2113,7 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
     }
 }
 
-void JIT::emitSlow_op_put_to_scope(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_put_to_scope(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
@@ -2173,7 +2173,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_to_scopeGenerator(VM& vm)
     return FINALIZE_CODE(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_to_scope");
 }
 
-void JIT::emit_op_get_from_arguments(const Instruction* currentInstruction)
+void JIT::emit_op_get_from_arguments(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetFromArguments>();
     VirtualRegister dst = bytecode.m_dst;
@@ -2186,7 +2186,7 @@ void JIT::emit_op_get_from_arguments(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_put_to_arguments(const Instruction* currentInstruction)
+void JIT::emit_op_put_to_arguments(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutToArguments>();
     VirtualRegister arguments = bytecode.m_arguments;
@@ -2201,7 +2201,7 @@ void JIT::emit_op_put_to_arguments(const Instruction* currentInstruction)
     emitWriteBarrier(arguments, value, ShouldFilterValue);
 }
 
-void JIT::emit_op_get_internal_field(const Instruction* currentInstruction)
+void JIT::emit_op_get_internal_field(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetInternalField>();
     VirtualRegister dst = bytecode.m_dst;
@@ -2215,7 +2215,7 @@ void JIT::emit_op_get_internal_field(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, jsRegT10);
 }
 
-void JIT::emit_op_put_internal_field(const Instruction* currentInstruction)
+void JIT::emit_op_put_internal_field(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpPutInternalField>();
     VirtualRegister base = bytecode.m_base;
@@ -2231,7 +2231,7 @@ void JIT::emit_op_put_internal_field(const Instruction* currentInstruction)
 
 #if USE(JSVALUE64)
 
-void JIT::emit_op_get_property_enumerator(const Instruction* currentInstruction)
+void JIT::emit_op_get_property_enumerator(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpGetPropertyEnumerator>();
 
@@ -2265,7 +2265,7 @@ void JIT::emit_op_get_property_enumerator(const Instruction* currentInstruction)
     doneCases.link(this);
 }
 
-void JIT::emit_op_enumerator_next(const Instruction* currentInstruction)
+void JIT::emit_op_enumerator_next(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEnumeratorNext>();
 
@@ -2328,7 +2328,7 @@ void JIT::emit_op_enumerator_next(const Instruction* currentInstruction)
     done.link(this);
 }
 
-void JIT::emit_op_enumerator_get_by_val(const Instruction* currentInstruction)
+void JIT::emit_op_enumerator_get_by_val(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<OpEnumeratorGetByVal>();
     VirtualRegister dst = bytecode.m_dst;
@@ -2416,7 +2416,7 @@ void JIT::emit_op_enumerator_get_by_val(const Instruction* currentInstruction)
     emitPutVirtualRegister(dst, returnValueJSR);
 }
 
-void JIT::emitSlow_op_enumerator_get_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_enumerator_get_by_val(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     generateGetByValSlowCase(currentInstruction->as<OpEnumeratorGetByVal>(), iter);
 }
@@ -2458,48 +2458,48 @@ void JIT::emit_enumerator_has_propertyImpl(const Bytecode& bytecode, SlowPathFun
     done.link(this);
 }
 
-void JIT::emit_op_enumerator_in_by_val(const Instruction* currentInstruction)
+void JIT::emit_op_enumerator_in_by_val(const JSInstruction* currentInstruction)
 {
     emit_enumerator_has_propertyImpl(currentInstruction->as<OpEnumeratorInByVal>(), slow_path_enumerator_in_by_val);
 }
 
-void JIT::emit_op_enumerator_has_own_property(const Instruction* currentInstruction)
+void JIT::emit_op_enumerator_has_own_property(const JSInstruction* currentInstruction)
 {
     emit_enumerator_has_propertyImpl(currentInstruction->as<OpEnumeratorHasOwnProperty>(), slow_path_enumerator_has_own_property);
 }
 
 #elif USE(JSVALUE32_64)
 
-void JIT::emit_op_get_property_enumerator(const Instruction*)
+void JIT::emit_op_get_property_enumerator(const JSInstruction*)
 {
     JITSlowPathCall slowPathCall(this, slow_path_get_property_enumerator);
     slowPathCall.call();
 }
 
-void JIT::emit_op_enumerator_next(const Instruction*)
+void JIT::emit_op_enumerator_next(const JSInstruction*)
 {
     JITSlowPathCall slowPathCall(this, slow_path_enumerator_next);
     slowPathCall.call();
 }
 
-void JIT::emit_op_enumerator_get_by_val(const Instruction*)
+void JIT::emit_op_enumerator_get_by_val(const JSInstruction*)
 {
     JITSlowPathCall slowPathCall(this, slow_path_enumerator_get_by_val);
     slowPathCall.call();
 }
 
-void JIT::emitSlow_op_enumerator_get_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&)
+void JIT::emitSlow_op_enumerator_get_by_val(const JSInstruction*, Vector<SlowCaseEntry>::iterator&)
 {
     UNREACHABLE_FOR_PLATFORM();
 }
 
-void JIT::emit_op_enumerator_in_by_val(const Instruction*)
+void JIT::emit_op_enumerator_in_by_val(const JSInstruction*)
 {
     JITSlowPathCall slowPathCall(this, slow_path_enumerator_in_by_val);
     slowPathCall.call();
 }
 
-void JIT::emit_op_enumerator_has_own_property(const Instruction*)
+void JIT::emit_op_enumerator_has_own_property(const JSInstruction*)
 {
     JITSlowPathCall slowPathCall(this, slow_path_enumerator_has_own_property);
     slowPathCall.call();

@@ -49,7 +49,7 @@ public:
         Vector<VirtualRegister> values;
     };
 
-    LLIntTierUpCounter(HashMap<InstructionStream::Offset, OSREntryData>&& osrEntryData)
+    LLIntTierUpCounter(HashMap<WasmInstructionStream::Offset, OSREntryData>&& osrEntryData)
         : m_osrEntryData(WTFMove(osrEntryData))
     {
         optimizeAfterWarmUp();
@@ -76,14 +76,14 @@ public:
             setNewThreshold(Options::thresholdForOMGOptimizeSoon());
     }
 
-    void addOSREntryDataForLoop(InstructionStream::Offset, OSREntryData&&);
+    void addOSREntryDataForLoop(WasmInstructionStream::Offset, OSREntryData&&);
 
-    const OSREntryData& osrEntryDataForLoop(InstructionStream::Offset) const;
+    const OSREntryData& osrEntryDataForLoop(WasmInstructionStream::Offset) const;
 
     Lock m_lock;
     CompilationStatus m_compilationStatus { CompilationStatus::NotCompiled };
     CompilationStatus m_loopCompilationStatus { CompilationStatus::NotCompiled };
-    HashMap<InstructionStream::Offset, OSREntryData> m_osrEntryData;
+    HashMap<WasmInstructionStream::Offset, OSREntryData> m_osrEntryData;
 };
 
 } } // namespace JSC::Wasm

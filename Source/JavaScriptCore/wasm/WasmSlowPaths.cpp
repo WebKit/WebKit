@@ -289,13 +289,13 @@ WASM_SLOW_PATH_DECL(trace)
     if (!Options::traceLLIntExecution())
         WASM_END_IMPL();
 
-    WasmOpcodeID opcodeID = pc->opcodeID<WasmOpcodeTraits>();
+    WasmOpcodeID opcodeID = pc->opcodeID();
     dataLogF("<%p> %p / %p: executing bc#%zu, %s, pc = %p\n",
         &Thread::current(),
         CALLEE(),
         callFrame,
         static_cast<intptr_t>(CALLEE()->bytecodeOffset(pc)),
-        pc->name<WasmOpcodeTraits>(),
+        pc->name(),
         pc);
     if (opcodeID == wasm_enter) {
         dataLogF("Frame will eventually return to %p\n", callFrame->returnPC().value());
@@ -318,13 +318,13 @@ WASM_SLOW_PATH_DECL(out_of_line_jump_target)
 
 WASM_SLOW_PATH_DECL(ref_func)
 {
-    auto instruction = pc->as<WasmRefFunc, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmRefFunc>();
     WASM_RETURN(Wasm::operationWasmRefFunc(instance, instruction.m_functionIndex));
 }
 
 WASM_SLOW_PATH_DECL(table_get)
 {
-    auto instruction = pc->as<WasmTableGet, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmTableGet>();
     int32_t index = READ(instruction.m_index).unboxedInt32();
     EncodedJSValue result = Wasm::operationGetWasmTableElement(instance, instruction.m_tableIndex, index);
     if (!result)
@@ -334,7 +334,7 @@ WASM_SLOW_PATH_DECL(table_get)
 
 WASM_SLOW_PATH_DECL(table_set)
 {
-    auto instruction = pc->as<WasmTableSet, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmTableSet>();
     uint32_t index = READ(instruction.m_index).unboxedUInt32();
     EncodedJSValue value = READ(instruction.m_value).encodedJSValue();
     if (!Wasm::operationSetWasmTableElement(instance, instruction.m_tableIndex, index, value))
@@ -344,7 +344,7 @@ WASM_SLOW_PATH_DECL(table_set)
 
 WASM_SLOW_PATH_DECL(table_init)
 {
-    auto instruction = pc->as<WasmTableInit, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmTableInit>();
     uint32_t dstOffset = READ(instruction.m_dstOffset).unboxedUInt32();
     uint32_t srcOffset = READ(instruction.m_srcOffset).unboxedUInt32();
     uint32_t length = READ(instruction.m_length).unboxedUInt32();
@@ -357,20 +357,20 @@ WASM_SLOW_PATH_DECL(elem_drop)
 {
     UNUSED_PARAM(callFrame);
 
-    auto instruction = pc->as<WasmElemDrop, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmElemDrop>();
     Wasm::operationWasmElemDrop(instance, instruction.m_elementIndex);
     WASM_END();
 }
 
 WASM_SLOW_PATH_DECL(table_size)
 {
-    auto instruction = pc->as<WasmTableSize, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmTableSize>();
     WASM_RETURN(Wasm::operationGetWasmTableSize(instance, instruction.m_tableIndex));
 }
 
 WASM_SLOW_PATH_DECL(table_fill)
 {
-    auto instruction = pc->as<WasmTableFill, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmTableFill>();
     uint32_t offset = READ(instruction.m_offset).unboxedUInt32();
     EncodedJSValue fill = READ(instruction.m_fill).encodedJSValue();
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
@@ -381,7 +381,7 @@ WASM_SLOW_PATH_DECL(table_fill)
 
 WASM_SLOW_PATH_DECL(table_copy)
 {
-    auto instruction = pc->as<WasmTableCopy, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmTableCopy>();
     int32_t dstOffset = READ(instruction.m_dstOffset).unboxedInt32();
     int32_t srcOffset = READ(instruction.m_srcOffset).unboxedInt32();
     int32_t length = READ(instruction.m_length).unboxedInt32();
@@ -392,7 +392,7 @@ WASM_SLOW_PATH_DECL(table_copy)
 
 WASM_SLOW_PATH_DECL(table_grow)
 {
-    auto instruction = pc->as<WasmTableGrow, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmTableGrow>();
     EncodedJSValue fill = READ(instruction.m_fill).encodedJSValue();
     uint32_t size = READ(instruction.m_size).unboxedUInt32();
     WASM_RETURN(Wasm::operationWasmTableGrow(instance, instruction.m_tableIndex, fill, size));
@@ -400,14 +400,14 @@ WASM_SLOW_PATH_DECL(table_grow)
 
 WASM_SLOW_PATH_DECL(grow_memory)
 {
-    auto instruction = pc->as<WasmGrowMemory, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmGrowMemory>();
     int32_t delta = READ(instruction.m_delta).unboxedInt32();
     WASM_RETURN(Wasm::operationGrowMemory(callFrame, instance, delta));
 }
 
 WASM_SLOW_PATH_DECL(memory_fill)
 {
-    auto instruction = pc->as<WasmMemoryFill, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmMemoryFill>();
     uint32_t dstAddress = READ(instruction.m_dstAddress).unboxedUInt32();
     uint32_t targetValue = READ(instruction.m_targetValue).unboxedUInt32();
     uint32_t count = READ(instruction.m_count).unboxedUInt32();
@@ -418,7 +418,7 @@ WASM_SLOW_PATH_DECL(memory_fill)
 
 WASM_SLOW_PATH_DECL(memory_copy)
 {
-    auto instruction = pc->as<WasmMemoryCopy, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmMemoryCopy>();
     uint32_t dstAddress = READ(instruction.m_dstAddress).unboxedUInt32();
     uint32_t srcAddress = READ(instruction.m_srcAddress).unboxedUInt32();
     uint32_t count = READ(instruction.m_count).unboxedUInt32();
@@ -429,7 +429,7 @@ WASM_SLOW_PATH_DECL(memory_copy)
 
 WASM_SLOW_PATH_DECL(memory_init)
 {
-    auto instruction = pc->as<WasmMemoryInit, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmMemoryInit>();
     uint32_t dstAddress = READ(instruction.m_dstAddress).unboxedUInt32();
     uint32_t srcAddress = READ(instruction.m_srcAddress).unboxedUInt32();
     uint32_t length = READ(instruction.m_length).unboxedUInt32();
@@ -442,7 +442,7 @@ WASM_SLOW_PATH_DECL(data_drop)
 {
     UNUSED_PARAM(callFrame);
 
-    auto instruction = pc->as<WasmDataDrop, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmDataDrop>();
     Wasm::operationWasmDataDrop(instance, instruction.m_dataSegmentIndex);
     WASM_END();
 }
@@ -474,7 +474,7 @@ WASM_SLOW_PATH_DECL(call)
 {
     UNUSED_PARAM(callFrame);
 
-    auto instruction = pc->as<WasmCall, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmCall>();
     return doWasmCall(instance, instruction.m_functionIndex);
 }
 
@@ -482,7 +482,7 @@ WASM_SLOW_PATH_DECL(call_no_tls)
 {
     UNUSED_PARAM(callFrame);
 
-    auto instruction = pc->as<WasmCallNoTls, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmCallNoTls>();
     return doWasmCall(instance, instruction.m_functionIndex);
 }
 
@@ -511,14 +511,14 @@ inline SlowPathReturnType doWasmCallIndirect(CallFrame* callFrame, Wasm::Instanc
 
 WASM_SLOW_PATH_DECL(call_indirect)
 {
-    auto instruction = pc->as<WasmCallIndirect, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmCallIndirect>();
     unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
     return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
 }
 
 WASM_SLOW_PATH_DECL(call_indirect_no_tls)
 {
-    auto instruction = pc->as<WasmCallIndirectNoTls, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmCallIndirectNoTls>();
     unsigned functionIndex = READ(instruction.m_functionIndex).unboxedInt32();
     return doWasmCallIndirect(callFrame, instance, functionIndex, instruction.m_tableIndex, instruction.m_signatureIndex);
 }
@@ -548,35 +548,35 @@ inline SlowPathReturnType doWasmCallRef(CallFrame* callFrame, Wasm::Instance* ca
 
 WASM_SLOW_PATH_DECL(call_ref)
 {
-    auto instruction = pc->as<WasmCallRef, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmCallRef>();
     JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
     return doWasmCallRef(callFrame, instance, reference, instruction.m_signatureIndex);
 }
 
 WASM_SLOW_PATH_DECL(call_ref_no_tls)
 {
-    auto instruction = pc->as<WasmCallRefNoTls, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmCallRefNoTls>();
     JSValue reference = JSValue::decode(READ(instruction.m_functionReference).encodedJSValue());
     return doWasmCallRef(callFrame, instance, reference, instruction.m_signatureIndex);
 }
 
 WASM_SLOW_PATH_DECL(set_global_ref)
 {
-    auto instruction = pc->as<WasmSetGlobalRef, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmSetGlobalRef>();
     instance->setGlobal(instruction.m_globalIndex, READ(instruction.m_value).jsValue());
     WASM_END_IMPL();
 }
 
 WASM_SLOW_PATH_DECL(set_global_ref_portable_binding)
 {
-    auto instruction = pc->as<WasmSetGlobalRefPortableBinding, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmSetGlobalRefPortableBinding>();
     instance->setGlobal(instruction.m_globalIndex, READ(instruction.m_value).jsValue());
     WASM_END_IMPL();
 }
 
 WASM_SLOW_PATH_DECL(memory_atomic_wait32)
 {
-    auto instruction = pc->as<WasmMemoryAtomicWait32, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmMemoryAtomicWait32>();
     unsigned base = READ(instruction.m_pointer).unboxedInt32();
     unsigned offset = instruction.m_offset;
     uint32_t value = READ(instruction.m_value).unboxedInt32();
@@ -589,7 +589,7 @@ WASM_SLOW_PATH_DECL(memory_atomic_wait32)
 
 WASM_SLOW_PATH_DECL(memory_atomic_wait64)
 {
-    auto instruction = pc->as<WasmMemoryAtomicWait64, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmMemoryAtomicWait64>();
     unsigned base = READ(instruction.m_pointer).unboxedInt32();
     unsigned offset = instruction.m_offset;
     uint64_t value = READ(instruction.m_value).unboxedInt64();
@@ -602,7 +602,7 @@ WASM_SLOW_PATH_DECL(memory_atomic_wait64)
 
 WASM_SLOW_PATH_DECL(memory_atomic_notify)
 {
-    auto instruction = pc->as<WasmMemoryAtomicNotify, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmMemoryAtomicNotify>();
     unsigned base = READ(instruction.m_pointer).unboxedInt32();
     unsigned offset = instruction.m_offset;
     int32_t count = READ(instruction.m_count).unboxedInt32();
@@ -621,7 +621,7 @@ WASM_SLOW_PATH_DECL(throw)
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto instruction = pc->as<WasmThrow, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmThrow>();
     const Wasm::Tag& tag = instance->tag(instruction.m_exceptionIndex);
 
     FixedVector<uint64_t> values(tag.parameterCount());
@@ -655,7 +655,7 @@ WASM_SLOW_PATH_DECL(rethrow)
     VM& vm = globalObject->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    auto instruction = pc->as<WasmRethrow, WasmOpcodeTraits>();
+    auto instruction = pc->as<WasmRethrow>();
     JSValue exception = READ(instruction.m_exception).jsValue();
     throwException(globalObject, throwScope, exception);
 
@@ -699,14 +699,14 @@ WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
         callFrame->uncheckedR(instruction.m_exception) = thrownValue;
     };
 
-    if (pc->is<WasmCatch, WasmOpcodeTraits>())
-        handleCatch(pc->as<WasmCatch, WasmOpcodeTraits>());
-    else if (pc->is<WasmCatchAll, WasmOpcodeTraits>())
-        handleCatchAll(pc->as<WasmCatchAll, WasmOpcodeTraits>());
-    else if (pc->is<WasmCatchNoTls, WasmOpcodeTraits>())
-        handleCatch(pc->as<WasmCatchNoTls, WasmOpcodeTraits>());
-    else if (pc->is<WasmCatchAllNoTls, WasmOpcodeTraits>())
-        handleCatchAll(pc->as<WasmCatchAllNoTls, WasmOpcodeTraits>());
+    if (pc->is<WasmCatch>())
+        handleCatch(pc->as<WasmCatch>());
+    else if (pc->is<WasmCatchAll>())
+        handleCatchAll(pc->as<WasmCatchAll>());
+    else if (pc->is<WasmCatchNoTls>())
+        handleCatch(pc->as<WasmCatchNoTls>());
+    else if (pc->is<WasmCatchAllNoTls>())
+        handleCatchAll(pc->as<WasmCatchAllNoTls>());
     else
         RELEASE_ASSERT_NOT_REACHED();
 
@@ -717,19 +717,19 @@ WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
     WASM_RETURN_TWO(pc, payload);
 }
 
-extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame* callFrame, const Instruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
+extern "C" SlowPathReturnType slow_path_wasm_throw_exception(CallFrame* callFrame, const WasmInstruction* pc, Wasm::Instance* instance, Wasm::ExceptionType exceptionType)
 {
     UNUSED_PARAM(pc);
     WASM_RETURN_TWO(operationWasmToJSException(callFrame, exceptionType, instance), nullptr);
 }
 
-extern "C" SlowPathReturnType slow_path_wasm_popcount(const Instruction* pc, uint32_t x)
+extern "C" SlowPathReturnType slow_path_wasm_popcount(const WasmInstruction* pc, uint32_t x)
 {
     void* result = bitwise_cast<void*>(static_cast<uint64_t>(__builtin_popcount(x)));
     WASM_RETURN_TWO(pc, result);
 }
 
-extern "C" SlowPathReturnType slow_path_wasm_popcountll(const Instruction* pc, uint64_t x)
+extern "C" SlowPathReturnType slow_path_wasm_popcountll(const WasmInstruction* pc, uint64_t x)
 {
     void* result = bitwise_cast<void*>(static_cast<uint64_t>(__builtin_popcountll(x)));
     WASM_RETURN_TWO(pc, result);

@@ -53,6 +53,7 @@
 #include "ThunkGenerator.h"
 #include "VMTraps.h"
 #include "WasmContext.h"
+#include <variant>
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Deque.h>
@@ -161,7 +162,14 @@ class Signature;
 }
 
 struct EntryFrame;
-struct Instruction;
+
+template<typename> struct BaseInstruction;
+struct JSOpcodeTraits;
+struct WasmOpcodeTraits;
+using JSInstruction = BaseInstruction<JSOpcodeTraits>;
+using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
+
+using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruction*>;
 
 class QueuedTask {
     WTF_MAKE_NONCOPYABLE(QueuedTask);
@@ -669,7 +677,7 @@ public:
     CallFrame* callFrameForCatch;
     CalleeBits calleeForWasmCatch;
     void* targetMachinePCForThrow;
-    const Instruction* targetInterpreterPCForThrow;
+    JSOrWasmInstruction targetInterpreterPCForThrow;
     uint32_t osrExitIndex;
     void* osrExitJumpDestination;
     RegExp* m_executingRegExp { nullptr };
@@ -855,9 +863,9 @@ public:
         SetForScope<Exception*> m_savedLastException;
     };
 
-    void addLoopHintExecutionCounter(const Instruction*);
-    uintptr_t* getLoopHintExecutionCounter(const Instruction*);
-    void removeLoopHintExecutionCounter(const Instruction*);
+    void addLoopHintExecutionCounter(const JSInstruction*);
+    uintptr_t* getLoopHintExecutionCounter(const JSInstruction*);
+    void removeLoopHintExecutionCounter(const JSInstruction*);
 
     ALWAYS_INLINE void writeBarrier(const JSCell* from) { heap.writeBarrier(from); }
     ALWAYS_INLINE void writeBarrier(const JSCell* from, JSValue to) { heap.writeBarrier(from, to); }
@@ -1000,7 +1008,7 @@ private:
     bool m_executionForbiddenOnTermination { false };
 
     Lock m_loopHintExecutionCountLock;
-    HashMap<const Instruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
+    HashMap<const JSInstruction*, std::pair<unsigned, std::unique_ptr<uintptr_t>>> m_loopHintExecutionCounts;
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;

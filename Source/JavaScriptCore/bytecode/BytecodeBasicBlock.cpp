@@ -34,7 +34,8 @@ namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BytecodeBasicBlock);
 
-BytecodeBasicBlock::BytecodeBasicBlock(const InstructionStream::Ref& instruction, unsigned blockIndex)
+template<typename OpcodeTraits>
+BytecodeBasicBlock<OpcodeTraits>::BytecodeBasicBlock(const typename InstructionStreamType::Ref& instruction, unsigned blockIndex)
     : m_leaderOffset(instruction.offset())
     , m_totalLength(0)
     , m_index(blockIndex)
@@ -42,26 +43,30 @@ BytecodeBasicBlock::BytecodeBasicBlock(const InstructionStream::Ref& instruction
     addLength(instruction->size());
 }
 
-BytecodeBasicBlock::BytecodeBasicBlock(BytecodeBasicBlock::SpecialBlockType blockType, unsigned blockIndex)
-    : m_leaderOffset(blockType == BytecodeBasicBlock::EntryBlock ? 0 : UINT_MAX)
-    , m_totalLength(blockType == BytecodeBasicBlock::EntryBlock ? 0 : UINT_MAX)
+template<typename OpcodeTraits>
+BytecodeBasicBlock<OpcodeTraits>::BytecodeBasicBlock(typename BytecodeBasicBlock<OpcodeTraits>::SpecialBlockType blockType, unsigned blockIndex)
+    : m_leaderOffset(blockType == BytecodeBasicBlock<OpcodeTraits>::EntryBlock ? 0 : UINT_MAX)
+    , m_totalLength(blockType == BytecodeBasicBlock<OpcodeTraits>::EntryBlock ? 0 : UINT_MAX)
     , m_index(blockIndex)
 {
 }
 
-void BytecodeBasicBlock::addLength(unsigned bytecodeLength)
+template<typename OpcodeTraits>
+void BytecodeBasicBlock<OpcodeTraits>::addLength(unsigned bytecodeLength)
 {
     m_delta.append(bytecodeLength);
     m_totalLength += bytecodeLength;
 }
 
-void BytecodeBasicBlock::shrinkToFit()
+template<typename OpcodeTraits>
+void BytecodeBasicBlock<OpcodeTraits>::shrinkToFit()
 {
     m_delta.shrinkToFit();
     m_successors.shrinkToFit();
 }
 
-static bool isJumpTarget(OpcodeID opcodeID, const Vector<InstructionStream::Offset, 32>& jumpTargets, unsigned bytecodeOffset)
+template<typename OpcodeTraits>
+static bool isJumpTarget(typename OpcodeTraits::OpcodeID opcodeID, const Vector<typename BytecodeBasicBlock<OpcodeTraits>::InstructionStreamType::Offset, 32>& jumpTargets, unsigned bytecodeOffset)
 {
     if (opcodeID == op_catch)
         return true;
@@ -69,14 +74,15 @@ static bool isJumpTarget(OpcodeID opcodeID, const Vector<InstructionStream::Offs
     return std::binary_search(jumpTargets.begin(), jumpTargets.end(), bytecodeOffset);
 }
 
+template<typename OpcodeTraits>
 template<typename Block>
-auto BytecodeBasicBlock::computeImpl(Block* codeBlock, const InstructionStream& instructions) -> BasicBlockVector
+auto BytecodeBasicBlock<OpcodeTraits>::computeImpl(Block* codeBlock, const InstructionStreamType& instructions) -> BasicBlockVector
 {
     BasicBlockVector basicBlocks;
-    Vector<InstructionStream::Offset, 32> jumpTargets;
+    Vector<typename InstructionStreamType::Offset, 32> jumpTargets;
     computePreciseJumpTargets(codeBlock, instructions, jumpTargets);
 
-    auto linkBlocks = [&] (BytecodeBasicBlock& from, BytecodeBasicBlock& to) {
+    auto linkBlocks = [&] (BytecodeBasicBlock<OpcodeTraits>& from, BytecodeBasicBlock<OpcodeTraits>& to) {
         from.addSuccessor(to);
     };
 
@@ -85,25 +91,25 @@ auto BytecodeBasicBlock::computeImpl(Block* codeBlock, const InstructionStream& 
         basicBlocks.reserveCapacity(jumpTargets.size() + 2);
         {
             // Entry block.
-            basicBlocks.constructAndAppend(BytecodeBasicBlock::EntryBlock, basicBlocks.size());
+            basicBlocks.constructAndAppend(BytecodeBasicBlock<OpcodeTraits>::EntryBlock, basicBlocks.size());
             // First block.
-            basicBlocks.constructAndAppend(BytecodeBasicBlock::EntryBlock, basicBlocks.size());
+            basicBlocks.constructAndAppend(BytecodeBasicBlock<OpcodeTraits>::EntryBlock, basicBlocks.size());
             linkBlocks(basicBlocks[0], basicBlocks[1]);
         }
 
-        BytecodeBasicBlock* current = &basicBlocks.last();
-        auto appendBlock = [&] (const InstructionStream::Ref& instruction) -> BytecodeBasicBlock* {
+        auto* current = &basicBlocks.last();
+        auto appendBlock = [&] (const typename InstructionStreamType::Ref& instruction) -> BytecodeBasicBlock<OpcodeTraits>* {
             basicBlocks.constructAndAppend(instruction, basicBlocks.size());
             return &basicBlocks.last();
         };
         bool nextInstructionIsLeader = false;
         for (const auto& instruction : instructions) {
             auto bytecodeOffset = instruction.offset();
-            OpcodeID opcodeID = instruction->opcodeID();
+            auto opcodeID = instruction->opcodeID();
 
             bool createdBlock = false;
             // If the current bytecode is a jump target, then it's the leader of its own basic block.
-            if (nextInstructionIsLeader || isJumpTarget(opcodeID, jumpTargets, bytecodeOffset)) {
+            if (nextInstructionIsLeader || isJumpTarget<OpcodeTraits>(opcodeID, jumpTargets, bytecodeOffset)) {
                 current = appendBlock(instruction);
                 createdBlock = true;
                 nextInstructionIsLeader = false;
@@ -120,7 +126,7 @@ auto BytecodeBasicBlock::computeImpl(Block* codeBlock, const InstructionStream& 
             current->addLength(instruction->size());
         }
         // Exit block.
-        basicBlocks.constructAndAppend(BytecodeBasicBlock::ExitBlock, basicBlocks.size());
+        basicBlocks.constructAndAppend(BytecodeBasicBlock<OpcodeTraits>::ExitBlock, basicBlocks.size());
         basicBlocks.shrinkToFit();
         ASSERT(basicBlocks.last().isExitBlock());
     }
@@ -128,15 +134,15 @@ auto BytecodeBasicBlock::computeImpl(Block* codeBlock, const InstructionStream& 
 
     // Link basic blocks together.
     for (unsigned i = 0; i < basicBlocks.size(); i++) {
-        BytecodeBasicBlock& block = basicBlocks[i];
+        auto& block = basicBlocks[i];
 
         if (block.isEntryBlock() || block.isExitBlock())
             continue;
 
         bool fallsThrough = true;
         for (unsigned visitedLength = 0; visitedLength < block.totalLength();) {
-            InstructionStream::Ref instruction = instructions.at(block.leaderOffset() + visitedLength);
-            OpcodeID opcodeID = instruction->opcodeID();
+            auto instruction = instructions.at(block.leaderOffset() + visitedLength);
+            auto opcodeID = instruction->opcodeID();
 
             visitedLength += instruction->size();
 
@@ -171,7 +177,7 @@ auto BytecodeBasicBlock::computeImpl(Block* codeBlock, const InstructionStream& 
             // If we found a branch, link to the block(s) that we jump to.
             if (isBranch(opcodeID)) {
                 ASSERT(instruction.offset() + instruction->size() == block.leaderOffset() + block.totalLength());
-                Vector<InstructionStream::Offset, 1> bytecodeOffsetsJumpedTo;
+                Vector<typename InstructionStreamType::Offset, 1> bytecodeOffsetsJumpedTo;
                 findJumpTargetsForInstruction(codeBlock, instruction, bytecodeOffsetsJumpedTo);
 
                 size_t numberOfJumpTargets = bytecodeOffsetsJumpedTo.size();
@@ -200,7 +206,7 @@ auto BytecodeBasicBlock::computeImpl(Block* codeBlock, const InstructionStream& 
         // If we fall through then link to the next block in program order.
         if (fallsThrough) {
             ASSERT(i + 1 < basicBlocks.size());
-            BytecodeBasicBlock& nextBlock = basicBlocks[i + 1];
+            auto& nextBlock = basicBlocks[i + 1];
             linkBlocks(block, nextBlock);
         }
     }
@@ -214,12 +220,14 @@ auto BytecodeBasicBlock::computeImpl(Block* codeBlock, const InstructionStream& 
     return basicBlocks;
 }
 
-auto BytecodeBasicBlock::compute(CodeBlock* codeBlock, const InstructionStream& instructions) -> BasicBlockVector
+template<>
+auto BytecodeBasicBlock<JSOpcodeTraits>::compute(CodeBlock* codeBlock, const JSInstructionStream& instructions) -> BasicBlockVector
 {
     return computeImpl(codeBlock, instructions);
 }
 
-auto BytecodeBasicBlock::compute(UnlinkedCodeBlockGenerator* codeBlock, const InstructionStream& instructions) -> BasicBlockVector
+template<>
+auto BytecodeBasicBlock<JSOpcodeTraits>::compute(UnlinkedCodeBlockGenerator* codeBlock, const JSInstructionStream& instructions) -> BasicBlockVector
 {
     return computeImpl(codeBlock, instructions);
 }

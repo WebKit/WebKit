@@ -101,8 +101,8 @@ struct Config {
     void (*shellTimeoutCheckCallback)(VM&);
 
     struct {
-        uint8_t exceptionInstructions[maxOpcodeLength + 1];
-        uint8_t wasmExceptionInstructions[maxOpcodeLength + 1];
+        uint8_t exceptionInstructions[maxBytecodeStructLength + 1];
+        uint8_t wasmExceptionInstructions[maxBytecodeStructLength + 1];
         const void* gateMap[numberOfGates];
     } llint;
 

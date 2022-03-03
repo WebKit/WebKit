@@ -30,13 +30,13 @@
 
 namespace JSC { namespace Wasm {
 
-void LLIntTierUpCounter::addOSREntryDataForLoop(InstructionStream::Offset offset, OSREntryData&& data)
+void LLIntTierUpCounter::addOSREntryDataForLoop(WasmInstructionStream::Offset offset, OSREntryData&& data)
 {
     auto addResult = m_osrEntryData.add(offset, WTFMove(data));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
-auto LLIntTierUpCounter::osrEntryDataForLoop(InstructionStream::Offset offset) const -> const OSREntryData&
+auto LLIntTierUpCounter::osrEntryDataForLoop(WasmInstructionStream::Offset offset) const -> const OSREntryData&
 {
     auto entry = m_osrEntryData.find(offset);
     RELEASE_ASSERT(entry != m_osrEntryData.end());

@@ -55,8 +55,8 @@ public:
 private:
     friend void initialize();
 
-    friend Instruction* exceptionInstructions();
-    friend Instruction* wasmExceptionInstructions();
+    friend JSInstruction* exceptionInstructions();
+    friend WasmInstruction* wasmExceptionInstructions();
     friend Opcode* opcodeMap();
     friend Opcode* opcodeMapWide16();
     friend Opcode* opcodeMapWide32();
@@ -74,14 +74,14 @@ private:
 
 void initialize();
 
-inline Instruction* exceptionInstructions()
+inline JSInstruction* exceptionInstructions()
 {
-    return reinterpret_cast<Instruction*>(g_jscConfig.llint.exceptionInstructions);
+    return reinterpret_cast<JSInstruction*>(g_jscConfig.llint.exceptionInstructions);
 }
-    
-inline Instruction* wasmExceptionInstructions()
+
+inline WasmInstruction* wasmExceptionInstructions()
 {
-    return bitwise_cast<Instruction*>(g_jscConfig.llint.wasmExceptionInstructions);
+    return bitwise_cast<WasmInstruction*>(g_jscConfig.llint.wasmExceptionInstructions);
 }
 
 inline Opcode* opcodeMap()

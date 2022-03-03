@@ -45,7 +45,7 @@ bool mightInlineFunctionForClosureCall(CodeBlock*);
 bool mightInlineFunctionForConstruct(CodeBlock*);
 bool canUseOSRExitFuzzing(CodeBlock*);
 
-inline CapabilityLevel capabilityLevel(OpcodeID, CodeBlock*, const Instruction* pc);
+inline CapabilityLevel capabilityLevel(OpcodeID, CodeBlock*, const JSInstruction* pc);
 
 CapabilityLevel capabilityLevel(CodeBlock*);
 #else // ENABLE(DFG_JIT)
@@ -58,7 +58,7 @@ inline bool mightInlineFunctionForClosureCall(CodeBlock*) { return false; }
 inline bool mightInlineFunctionForConstruct(CodeBlock*) { return false; }
 inline bool canUseOSRExitFuzzing(CodeBlock*) { return false; }
 
-inline CapabilityLevel capabilityLevel(OpcodeID, CodeBlock*, const Instruction*) { return CannotCompile; }
+inline CapabilityLevel capabilityLevel(OpcodeID, CodeBlock*, const JSInstruction*) { return CannotCompile; }
 inline CapabilityLevel capabilityLevel(CodeBlock*) { return CannotCompile; }
 #endif // ENABLE(DFG_JIT)
 

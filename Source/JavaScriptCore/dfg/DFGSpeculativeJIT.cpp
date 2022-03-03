@@ -2100,7 +2100,7 @@ void SpeculativeJIT::compileLoopHint(Node* node)
         if (emitEarlyReturn) {
             CodeBlock* baselineCodeBlock = m_jit.graph().baselineCodeBlockFor(node->origin.semantic);
             BytecodeIndex bytecodeIndex = node->origin.semantic.bytecodeIndex();
-            const Instruction* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
+            const auto* instruction = baselineCodeBlock->instructions().at(bytecodeIndex.offset()).ptr();
 
             uintptr_t* ptr = vm().getLoopHintExecutionCounter(instruction);
             m_jit.pushToSave(GPRInfo::regT0);

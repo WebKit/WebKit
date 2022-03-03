@@ -575,7 +575,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
         // For now, we use array allocation profile in the actual CodeBlock. It is OK since current NewArrayBuffer
         // and PhantomNewArrayBuffer are always bound to a specific op_new_array_buffer.
         CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), callFrame->codeBlock()->baselineAlternative());
-        const Instruction* currentInstruction = codeBlock->instructions().at(materialization->origin().bytecodeIndex()).ptr();
+        const auto* currentInstruction = codeBlock->instructions().at(materialization->origin().bytecodeIndex()).ptr();
         if (!currentInstruction->is<OpNewArrayBuffer>()) {
             // This case can happen if Object.keys, an OpCall is first converted into a NewArrayBuffer which is then converted into a PhantomNewArrayBuffer.
             // There is no need to update the array allocation profile in that case.

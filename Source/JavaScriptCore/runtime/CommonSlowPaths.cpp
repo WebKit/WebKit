@@ -112,10 +112,10 @@ namespace JSC {
         CHECK_EXCEPTION();                                  \
         if (bCondition)                                        \
             pc = bytecode.m_targetLabel \
-                ? reinterpret_cast<const Instruction*>(reinterpret_cast<const uint8_t*>(pc) + bytecode.m_targetLabel) \
+                ? reinterpret_cast<const JSInstruction*>(reinterpret_cast<const uint8_t*>(pc) + bytecode.m_targetLabel) \
                 : codeBlock->outOfLineJumpTarget(pc);                              \
         else                                                      \
-            pc = reinterpret_cast<const Instruction*>(reinterpret_cast<const uint8_t*>(pc) + pc->size()); \
+            pc = reinterpret_cast<const JSInstruction*>(reinterpret_cast<const uint8_t*>(pc) + pc->size()); \
         END_IMPL();                                         \
     } while (false)
 
@@ -552,7 +552,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_negate)
 }
 
 #if ENABLE(DFG_JIT)
-static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeBlock, const Instruction* pc, JSValue result, JSValue left, JSValue right)
+static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeBlock, const JSInstruction* pc, JSValue result, JSValue left, JSValue right)
 {
     BinaryArithProfile& profile = *codeBlock->binaryArithProfileForPC(pc);
 
@@ -586,7 +586,7 @@ static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock* codeB
         profile.setObservedNonNumeric();
 }
 #else
-static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock*, const Instruction*, JSValue, JSValue, JSValue) { }
+static void updateArithProfileForBinaryArithOp(JSGlobalObject*, CodeBlock*, const JSInstruction*, JSValue, JSValue, JSValue) { }
 #endif
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_to_number)
@@ -846,7 +846,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_is_constructor)
 }
 
 template<OpcodeSize width>
-ALWAYS_INLINE SlowPathReturnType iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, CallFrame* callFrame, const Instruction* pc)
+ALWAYS_INLINE SlowPathReturnType iteratorOpenTryFastImpl(VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, CallFrame* callFrame, const JSInstruction* pc)
 {
     auto bytecode = pc->asKnownWidth<OpIteratorOpen, width>();
     auto& metadata = bytecode.metadata(codeBlock);
@@ -892,7 +892,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(iterator_open_try_fast_wide32)
 }
 
 template<OpcodeSize width>
-ALWAYS_INLINE SlowPathReturnType iteratorNextTryFastImpl(VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, CallFrame* callFrame, ThrowScope& throwScope, const Instruction* pc)
+ALWAYS_INLINE SlowPathReturnType iteratorNextTryFastImpl(VM& vm, JSGlobalObject* globalObject, CodeBlock* codeBlock, CallFrame* callFrame, ThrowScope& throwScope, const JSInstruction* pc)
 {
     auto bytecode = pc->asKnownWidth<OpIteratorNext, width>();
     auto& metadata = bytecode.metadata(codeBlock);

@@ -182,9 +182,9 @@ private:
         Node* callTarget, int argumentCountIncludingThis, int registerOffset, CallLinkStatus,
         SpeculatedType prediction, ECMAMode = ECMAMode::strict());
     template<typename CallOp>
-    Terminality handleCall(const Instruction* pc, NodeType op, CallMode, BytecodeIndex osrExitIndex);
+    Terminality handleCall(const JSInstruction* pc, NodeType op, CallMode, BytecodeIndex osrExitIndex);
     template<typename CallOp>
-    Terminality handleVarargsCall(const Instruction* pc, NodeType op, CallMode);
+    Terminality handleVarargsCall(const JSInstruction* pc, NodeType op, CallMode);
     void emitFunctionChecks(CallVariant, Node* callTarget, VirtualRegister thisArgumnt);
     void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis);
     Node* getArgumentCount();
@@ -246,7 +246,7 @@ private:
     Node* store(Node* base, unsigned identifier, const PutByVariant&, Node* value);
 
     template<typename Op>
-    void parseGetById(const Instruction*);
+    void parseGetById(const JSInstruction*);
     void simplifyGetByStatus(Node* base, GetByStatus&);
     void handleGetById(
         VirtualRegister destination, SpeculatedType, Node* base, CacheableIdentifier, unsigned identifierNumber, GetByStatus, AccessType, BytecodeIndex osrExitIndex);
@@ -1254,10 +1254,10 @@ private:
         Node* m_value { nullptr };
         SetMode m_setMode;
     };
-    
+
     Vector<DelayedSetLocal, 2> m_setLocalQueue;
 
-    const Instruction* m_currentInstruction;
+    const JSInstruction* m_currentInstruction;
     bool m_hasDebuggerEnabled;
     bool m_hasAnyForceOSRExits { false };
 };
@@ -1310,7 +1310,7 @@ void ByteCodeParser::addJumpTo(unsigned bytecodeIndex)
 }
 
 template<typename CallOp>
-ByteCodeParser::Terminality ByteCodeParser::handleCall(const Instruction* pc, NodeType op, CallMode callMode, BytecodeIndex osrExitIndex)
+ByteCodeParser::Terminality ByteCodeParser::handleCall(const JSInstruction* pc, NodeType op, CallMode callMode, BytecodeIndex osrExitIndex)
 {
     auto bytecode = pc->as<CallOp>();
     Node* callTarget = get(calleeFor(bytecode, m_currentIndex.checkpoint()));
@@ -1369,7 +1369,7 @@ ByteCodeParser::Terminality ByteCodeParser::handleCall(
 }
 
 template<typename CallOp>
-ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(const Instruction* pc, NodeType op, CallMode callMode)
+ByteCodeParser::Terminality ByteCodeParser::handleVarargsCall(const JSInstruction* pc, NodeType op, CallMode callMode)
 {
     auto bytecode = pc->as<CallOp>();
     int firstFreeReg = bytecode.m_firstFree.offset();
@@ -1535,14 +1535,15 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         BytecodeIndex oldIndex = m_currentIndex;
         auto oldStackTop = m_inlineStackTop;
         m_inlineStackTop = stackEntry;
-        m_currentIndex = BytecodeIndex(opcodeLengths[op_enter]);
+        static_assert(OpcodeIDWidthBySize<JSOpcodeTraits, OpcodeSize::Wide32>::opcodeIDSize == 1);
+        m_currentIndex = BytecodeIndex(opcodeLengths[op_enter] + 1);
         m_exitOK = true;
         processSetLocalQueue();
         m_currentIndex = oldIndex;
         m_inlineStackTop = oldStackTop;
         m_exitOK = false;
 
-        BasicBlock** entryBlockPtr = tryBinarySearch<BasicBlock*, BytecodeIndex>(stackEntry->m_blockLinkingTargets, stackEntry->m_blockLinkingTargets.size(), BytecodeIndex(opcodeLengths[op_enter]), getBytecodeBeginForBlock);
+        BasicBlock** entryBlockPtr = tryBinarySearch<BasicBlock*, BytecodeIndex>(stackEntry->m_blockLinkingTargets, stackEntry->m_blockLinkingTargets.size(), BytecodeIndex(opcodeLengths[op_enter] + 1), getBytecodeBeginForBlock);
         RELEASE_ASSERT(entryBlockPtr);
         addJumpTo(*entryBlockPtr);
         return true;
@@ -1654,7 +1655,7 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
 template<typename ChecksFunctor>
 void ByteCodeParser::inlineCall(Node* callTargetNode, Operand result, CallVariant callee, int registerOffset, int argumentCountIncludingThis, InlineCallFrame::Kind kind, BasicBlock* continuationBlock, const ChecksFunctor& insertChecks)
 {
-    const Instruction* savedCurrentInstruction = m_currentInstruction;
+    const JSInstruction* savedCurrentInstruction = m_currentInstruction;
     CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
 
     CodeBlock* codeBlock = callee.functionExecutable()->baselineCodeBlockFor(specializationKind);
@@ -5345,7 +5346,7 @@ void ByteCodeParser::clearCaches()
 }
 
 template<typename Op>
-void ByteCodeParser::parseGetById(const Instruction* currentInstruction)
+void ByteCodeParser::parseGetById(const JSInstruction* currentInstruction)
 {
     auto bytecode = currentInstruction->as<Op>();
     SpeculatedType prediction = getPrediction();
@@ -5471,12 +5472,12 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 addJumpTo(m_currentIndex.offset());
             return;
         }
-        
+
         // Switch on the current bytecode opcode.
-        const Instruction* currentInstruction = instructions.at(m_currentIndex).ptr();
+        const JSInstruction* currentInstruction = instructions.at(m_currentIndex).ptr();
         m_currentInstruction = currentInstruction; // Some methods want to use this, and we'd rather not thread it through calls.
         OpcodeID opcodeID = currentInstruction->opcodeID();
-        
+
         VERBOSE_LOG("    parsing ", currentCodeOrigin(), ": ", opcodeID, "\n");
         
         if (UNLIKELY(m_graph.compilation())) {
@@ -8800,8 +8801,8 @@ void ByteCodeParser::parseCodeBlock()
         dataLogLn();
         codeBlock->baselineVersion()->dumpBytecode();
     }
-    
-    Vector<InstructionStream::Offset, 32> jumpTargets;
+
+    Vector<JSInstructionStream::Offset, 32> jumpTargets;
     computePreciseJumpTargets(codeBlock, jumpTargets);
     if (UNLIKELY(Options::dumpBytecodeAtDFGTime())) {
         dataLog("Jump targets: ");

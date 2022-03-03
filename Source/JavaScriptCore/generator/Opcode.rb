@@ -108,6 +108,10 @@ class Opcode
       @section.is_wasm? ? "WasmOpcodeTraits" : "JSOpcodeTraits"
     end
 
+    def type_prefix
+      @section.is_wasm? ? "Wasm" : "JS"
+    end
+
     def map_fields_with_size(prefix, size, &block)
         args = [Argument.new("opcodeID", opcodeIDType, 0)]
         args += @args.dup if @args
@@ -128,7 +132,7 @@ class Opcode
 
     def struct
         <<-EOF
-struct #{capitalized_name} : public Instruction {
+struct #{capitalized_name} : public #{type_prefix}Instruction {
     #{opcodeID}
     #{lengthValue}
     #{temps}
@@ -162,7 +166,7 @@ EOF
     def checkpointSizeAssert
         return if @checkpoints.nil?
 
-        "static_assert(#{capitalized_name}::length > #{capitalized_name}::numberOfCheckpoints, \"FullBytecodeLivess relies on the length of #{capitalized_name} being greater than the number of checkpoints\");"
+        "static_assert(#{capitalized_name}::length + 1 > #{capitalized_name}::numberOfCheckpoints, \"FullBytecodeLivess relies on the length of #{capitalized_name} being greater than the number of checkpoints\");"
     end
 
     def temps
@@ -232,6 +236,7 @@ private:
             return false;
 #endif
         return #{map_fields_with_size("", "__size", &:fits_check).join "\n            && "}
+            && (__size == OpcodeSize::Narrow ? #{Argument.new("opcodeID", opcodeIDType, 0).fits_check(Size::Narrow)} : #{Argument.new("opcodeID", opcodeIDType, 0).fits_check(Size::Wide16)})
             && (__size == OpcodeSize::Wide16 ? #{op_wide16.fits_check(Size::Narrow)} : true)
             && (__size == OpcodeSize::Wide32 ? #{op_wide32.fits_check(Size::Narrow)} : true);
     }
@@ -251,7 +256,7 @@ private:
                 #{op_wide16.fits_write Size::Narrow}
             else if (__size == OpcodeSize::Wide32)
                 #{op_wide32.fits_write Size::Narrow}
-            #{Argument.new("opcodeID", opcodeIDType, 0).fits_write Size::Narrow}
+            #{Argument.new("opcodeID", opcodeIDType, 0).fits_write "OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, __size>::opcodeIDSize"}
 #{map_operands_with_size("            ", "__size", &:fits_write).join "\n"}
             return true;
         }
@@ -264,7 +269,7 @@ EOF
 
     def dumper
         <<-EOF
-    void dump(BytecodeDumperBase* dumper, InstructionStream::Offset __location, int __sizeShiftAmount)
+    void dump(BytecodeDumperBase<#{type_prefix}InstructionStream>* dumper, #{type_prefix}InstructionStream::Offset __location, int __sizeShiftAmount)
     {
         dumper->printLocationAndOp(__location, &"**#{@name}"[2 - __sizeShiftAmount]);
 #{print_args { |arg|
@@ -284,30 +289,30 @@ EOF
     #{capitalized_name}(const uint8_t* stream)
         #{init.call("OpcodeSize::Narrow")}
     {
-        ASSERT_UNUSED(stream, bitwise_cast<const uint8_t*>(stream)[-1] == opcodeID);
+        ASSERT_UNUSED(stream, static_cast<#{opcodeIDType}>(bitwise_cast<const typename OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Narrow>::opcodeType*>(stream)[-1]) == opcodeID);
     }
 
     #{capitalized_name}(const uint16_t* stream)
         #{init.call("OpcodeSize::Wide16")}
     {
-        ASSERT_UNUSED(stream, bitwise_cast<const uint8_t*>(stream)[-1] == opcodeID);
+        ASSERT_UNUSED(stream, static_cast<#{opcodeIDType}>(bitwise_cast<const typename OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide16>::opcodeType*>(stream)[-1]) == opcodeID);
     }
 
 
     #{capitalized_name}(const uint32_t* stream)
         #{init.call("OpcodeSize::Wide32")}
     {
-        ASSERT_UNUSED(stream, bitwise_cast<const uint8_t*>(stream)[-1] == opcodeID);
+        ASSERT_UNUSED(stream, static_cast<#{opcodeIDType}>(bitwise_cast<const typename OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide32>::opcodeType*>(stream)[-1]) == opcodeID);
     }
 
     static #{capitalized_name} decode(const uint8_t* stream)
     {
         // A pointer is pointing to the first operand (opcode and prefix are not included).
         if (*stream == #{wide32})
-            return { bitwise_cast<const uint32_t*>(stream + 2) };
+            return { bitwise_cast<const uint32_t*>(stream + /* prefix */ 1 + OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide32>::opcodeIDSize) };
         if (*stream == #{wide16})
-            return { bitwise_cast<const uint16_t*>(stream + 2) };
-        return { stream + 1 };
+            return { bitwise_cast<const uint16_t*>(stream + /* prefix */ 1 + OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Wide16>::opcodeIDSize) };
+        return { stream + OpcodeIDWidthBySize<#{type_prefix}OpcodeTraits, OpcodeSize::Narrow>::opcodeIDSize };
     }
 EOF
     end
@@ -362,18 +367,19 @@ EOF
     end
 
     def length
-        1 + (@args.nil? ? 0 : @args.length) + (@metadata.empty? ? 0 : 1)
+        (@args.nil? ? 0 : @args.length) + (@metadata.empty? ? 0 : 1)
     end
 
     def self.dump_bytecode(name, opcode_traits, opcodes)
+        type_prefix = (opcode_traits == :JSOpcodeTraits ? "JS" : (opcode_traits == :WasmOpcodeTraits ? "Wasm" : "Error#{opcode_traits}"))
         <<-EOF.chomp
-void dump#{name}(BytecodeDumperBase* dumper, InstructionStream::Offset __location, const Instruction* __instruction)
+void dump#{name}(BytecodeDumperBase<#{type_prefix}InstructionStream>* dumper, #{type_prefix}InstructionStream::Offset __location, const #{type_prefix}Instruction* __instruction)
 {
-    switch (__instruction->opcodeID<#{opcode_traits}>()) {
+    switch (__instruction->opcodeID()) {
 #{opcodes.map { |op|
         <<-EOF.chomp
     case #{op.name}:
-        __instruction->as<#{op.capitalized_name}, #{opcode_traits}>().dump(dumper, __location, __instruction->sizeShiftAmount<#{opcode_traits}>());
+        __instruction->as<#{op.capitalized_name}>().dump(dumper, __location, __instruction->sizeShiftAmount());
         break;
 EOF
     }.join "\n"}

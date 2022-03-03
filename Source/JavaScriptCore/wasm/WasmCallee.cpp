@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WasmCallee.h"
+#include "runtime/VM.h"
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -100,9 +101,9 @@ LLIntCallee::LLIntCallee(FunctionCodeBlockGenerator& generator, size_t index, st
             auto& instruction = *m_instructions->at(unlinkedHandler.m_target).ptr();
             CodeLocationLabel<ExceptionHandlerPtrTag> target;
             if (unlinkedHandler.m_type == HandlerType::Catch)
-                target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmCatch(instruction.width<WasmOpcodeTraits>()).code());
+                target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmCatch(instruction.width()).code());
             else
-                target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmCatchAll(instruction.width<WasmOpcodeTraits>()).code());
+                target = CodeLocationLabel<ExceptionHandlerPtrTag>(LLInt::handleWasmCatchAll(instruction.width()).code());
 
             handler.initialize(unlinkedHandler, target);
         }
@@ -144,13 +145,13 @@ std::tuple<void*, void*> LLIntCallee::range() const
     return { nullptr, nullptr };
 }
 
-InstructionStream::Offset LLIntCallee::outOfLineJumpOffset(InstructionStream::Offset bytecodeOffset)
+WasmInstructionStream::Offset LLIntCallee::outOfLineJumpOffset(WasmInstructionStream::Offset bytecodeOffset)
 {
     ASSERT(m_outOfLineJumpTargets.contains(bytecodeOffset));
     return m_outOfLineJumpTargets.get(bytecodeOffset);
 }
 
-const Instruction* LLIntCallee::outOfLineJumpTarget(const Instruction* pc)
+const WasmInstruction* LLIntCallee::outOfLineJumpTarget(const WasmInstruction* pc)
 {
     int offset = bytecodeOffset(pc);
     int target = outOfLineJumpOffset(offset);

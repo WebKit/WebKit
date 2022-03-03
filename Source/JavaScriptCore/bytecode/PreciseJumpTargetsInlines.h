@@ -90,7 +90,7 @@ namespace JSC {
 
 
 template<typename Block>
-inline int jumpTargetForInstruction(Block* codeBlock, const InstructionStream::Ref& instruction, unsigned target)
+inline int jumpTargetForInstruction(Block* codeBlock, const JSInstructionStream::Ref& instruction, unsigned target)
 {
     if (target)
         return target;
@@ -98,7 +98,7 @@ inline int jumpTargetForInstruction(Block* codeBlock, const InstructionStream::R
 }
 
 template<typename HashMap>
-inline int jumpTargetForInstruction(HashMap& outOfLineJumpTargets, const InstructionStream::Ref& instruction, unsigned target)
+inline int jumpTargetForInstruction(HashMap& outOfLineJumpTargets, const JSInstructionStream::Ref& instruction, unsigned target)
 {
     if (target)
         return target;
@@ -107,14 +107,14 @@ inline int jumpTargetForInstruction(HashMap& outOfLineJumpTargets, const Instruc
 }
 
 template<typename Op, typename Block>
-inline int jumpTargetForInstruction(Block&& codeBlock, const InstructionStream::Ref& instruction)
+inline int jumpTargetForInstruction(Block&& codeBlock, const JSInstructionStream::Ref& instruction)
 {
     auto bytecode = instruction->as<Op>();
     return jumpTargetForInstruction(codeBlock, instruction, bytecode.m_targetLabel);
 }
 
 template<typename Block, typename Function>
-inline void extractStoredJumpTargetsForInstruction(Block&& codeBlock, const InstructionStream::Ref& instruction, const Function& function)
+inline void extractStoredJumpTargetsForInstruction(Block&& codeBlock, const JSInstructionStream::Ref& instruction, const Function& function)
 {
 #define CASE_OP(__op) \
     case __op::opcodeID: \
@@ -135,7 +135,7 @@ SWITCH_JMP(CASE_OP, SWITCH_CASE, SWITCH_DEFAULT_OFFSET)
 }
 
 template<typename Block, typename Function, typename CodeBlockOrHashMap>
-inline void updateStoredJumpTargetsForInstruction(Block&& codeBlock, unsigned finalOffset, InstructionStream::MutableRef instruction, const Function& function, CodeBlockOrHashMap& codeBlockOrHashMap)
+inline void updateStoredJumpTargetsForInstruction(Block&& codeBlock, unsigned finalOffset, JSInstructionStream::MutableRef instruction, const Function& function, CodeBlockOrHashMap& codeBlockOrHashMap)
 {
 #define CASE_OP(__op) \
     case __op::opcodeID: { \
@@ -171,7 +171,7 @@ SWITCH_JMP(CASE_OP, SWITCH_CASE, SWITCH_DEFAULT_OFFSET)
 }
 
 template<typename Block, typename Function>
-inline void updateStoredJumpTargetsForInstruction(Block* codeBlock, unsigned finalOffset, InstructionStream::MutableRef instruction, Function function)
+inline void updateStoredJumpTargetsForInstruction(Block* codeBlock, unsigned finalOffset, JSInstructionStream::MutableRef instruction, Function function)
 {
     updateStoredJumpTargetsForInstruction(codeBlock, finalOffset, instruction, function, codeBlock);
 }

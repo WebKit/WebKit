@@ -72,7 +72,7 @@ void BytecodeRewriter::adjustJumpTargetsInFragment(unsigned finalOffset, Inserti
     }
 }
 
-void BytecodeRewriter::insertImpl(InsertionPoint insertionPoint, IncludeBranch includeBranch, InstructionStreamWriter&& writer)
+void BytecodeRewriter::insertImpl(InsertionPoint insertionPoint, IncludeBranch includeBranch, JSInstructionStreamWriter&& writer)
 {
     ASSERT(insertionPoint.position == Position::Before || insertionPoint.position == Position::After);
     m_insertions.append(Insertion {
@@ -114,11 +114,11 @@ void BytecodeRewriter::adjustJumpTargets()
     auto outOfLineJumpTargets = m_codeBlock->replaceOutOfLineJumpTargets();
 
     int offset = 0;
-    for (InstructionStream::Offset i = 0; i < m_writer.size();) {
+    for (JSInstructionStream::Offset i = 0; i < m_writer.size();) {
         int before = 0;
         int after = 0;
         int remove = 0;
-        while (currentInsertion != m_insertions.end() && static_cast<InstructionStream::Offset>(currentInsertion->index.bytecodeOffset) == i) {
+        while (currentInsertion != m_insertions.end() && static_cast<JSInstructionStream::Offset>(currentInsertion->index.bytecodeOffset) == i) {
             auto size = currentInsertion->length();
             if (currentInsertion->type == Insertion::Type::Remove)
                 remove += size;

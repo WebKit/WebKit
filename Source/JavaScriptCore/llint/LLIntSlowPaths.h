@@ -26,24 +26,24 @@
 #pragma once
 
 #include "CommonSlowPaths.h"
+#include "Instruction.h"
 #include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
 class CallFrame;
-struct Instruction;
 struct ProtoCallFrame;
 
 namespace LLInt {
 
-extern "C" SlowPathReturnType llint_trace_operand(CallFrame*, const Instruction*, int fromWhere, int operand) REFERENCED_FROM_ASM;
-extern "C" SlowPathReturnType llint_trace_value(CallFrame*, const Instruction*, int fromWhere, VirtualRegister operand) REFERENCED_FROM_ASM;
+extern "C" SlowPathReturnType llint_trace_operand(CallFrame*, const JSInstruction*, int fromWhere, int operand) REFERENCED_FROM_ASM;
+extern "C" SlowPathReturnType llint_trace_value(CallFrame*, const JSInstruction*, int fromWhere, VirtualRegister operand) REFERENCED_FROM_ASM;
 extern "C" SlowPathReturnType llint_link_call(CallFrame*, JSCell*, CallLinkInfo*) REFERENCED_FROM_ASM;
 extern "C" SlowPathReturnType llint_virtual_call(CallFrame*, JSCell*, CallLinkInfo*) REFERENCED_FROM_ASM;
 extern "C" void llint_write_barrier_slow(CallFrame*, JSCell*) REFERENCED_FROM_ASM WTF_INTERNAL;
 
 #define LLINT_SLOW_PATH_DECL(name) \
-    extern "C" SlowPathReturnType llint_##name(CallFrame* callFrame, const Instruction* pc)
+    extern "C" SlowPathReturnType llint_##name(CallFrame* callFrame, const JSInstruction* pc)
 
 #define LLINT_SLOW_PATH_HIDDEN_DECL(name) \
     LLINT_SLOW_PATH_DECL(name) REFERENCED_FROM_ASM WTF_INTERNAL

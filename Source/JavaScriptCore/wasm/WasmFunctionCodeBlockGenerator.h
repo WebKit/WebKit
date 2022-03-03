@@ -81,7 +81,8 @@ public:
     uint32_t numArguments() const { return m_numArguments; }
     const Vector<Type>& constantTypes() const { return m_constantTypes; }
     const Vector<uint64_t>& constants() const { return m_constants; }
-    const InstructionStream& instructions() const { return *m_instructions; }
+    const Vector<uint64_t>& constantRegisters() const { return m_constants; }
+    const WasmInstructionStream& instructions() const { return *m_instructions; }
 
     void setNumVars(unsigned numVars) { m_numVars = numVars; }
     void setNumCalleeLocals(unsigned numCalleeLocals) { m_numCalleeLocals = numCalleeLocals; }
@@ -93,27 +94,27 @@ public:
         return m_constantTypes[reg.toConstantIndex()];
     }
 
-    void setInstructions(std::unique_ptr<InstructionStream>);
-    void addJumpTarget(InstructionStream::Offset jumpTarget) { m_jumpTargets.append(jumpTarget); }
-    InstructionStream::Offset numberOfJumpTargets() { return m_jumpTargets.size(); }
-    InstructionStream::Offset lastJumpTarget() { return m_jumpTargets.last(); }
+    void setInstructions(std::unique_ptr<WasmInstructionStream>);
+    void addJumpTarget(WasmInstructionStream::Offset jumpTarget) { m_jumpTargets.append(jumpTarget); }
+    WasmInstructionStream::Offset numberOfJumpTargets() { return m_jumpTargets.size(); }
+    WasmInstructionStream::Offset lastJumpTarget() { return m_jumpTargets.last(); }
 
-    void addOutOfLineJumpTarget(InstructionStream::Offset, int target);
-    InstructionStream::Offset outOfLineJumpOffset(InstructionStream::Offset);
-    InstructionStream::Offset outOfLineJumpOffset(const InstructionStream::Ref& instruction)
+    void addOutOfLineJumpTarget(WasmInstructionStream::Offset, int target);
+    WasmInstructionStream::Offset outOfLineJumpOffset(WasmInstructionStream::Offset);
+    WasmInstructionStream::Offset outOfLineJumpOffset(const WasmInstructionStream::Ref& instruction)
     {
         return outOfLineJumpOffset(instruction.offset());
     }
 
-    inline InstructionStream::Offset bytecodeOffset(const Instruction* returnAddress)
+    inline WasmInstructionStream::Offset bytecodeOffset(const WasmInstruction* returnAddress)
     {
         const auto* instructionsBegin = m_instructions->at(0).ptr();
-        const auto* instructionsEnd = reinterpret_cast<const Instruction*>(reinterpret_cast<uintptr_t>(instructionsBegin) + m_instructions->size());
+        const auto* instructionsEnd = reinterpret_cast<const WasmInstruction*>(reinterpret_cast<uintptr_t>(instructionsBegin) + m_instructions->size());
         RELEASE_ASSERT(returnAddress >= instructionsBegin && returnAddress < instructionsEnd);
         return returnAddress - instructionsBegin;
     }
 
-    HashMap<InstructionStream::Offset, LLIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
+    HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData>& tierUpCounter() { return m_tierUpCounter; }
 
     unsigned addSignature(const Signature&);
 
@@ -125,7 +126,7 @@ public:
     void addExceptionHandler(const UnlinkedHandlerInfo& handler) { m_exceptionHandlers.append(handler); }
 
 private:
-    using OutOfLineJumpTargets = HashMap<InstructionStream::Offset, int>;
+    using OutOfLineJumpTargets = HashMap<WasmInstructionStream::Offset, int>;
 
     uint32_t m_functionIndex;
 
@@ -136,12 +137,12 @@ private:
     uint32_t m_numArguments { 0 };
     Vector<Type> m_constantTypes;
     Vector<uint64_t> m_constants;
-    std::unique_ptr<InstructionStream> m_instructions;
+    std::unique_ptr<WasmInstructionStream> m_instructions;
     const void* m_instructionsRawPointer { nullptr };
-    Vector<InstructionStream::Offset> m_jumpTargets;
+    Vector<WasmInstructionStream::Offset> m_jumpTargets;
     Vector<const Signature*> m_signatures;
     OutOfLineJumpTargets m_outOfLineJumpTargets;
-    HashMap<InstructionStream::Offset, LLIntTierUpCounter::OSREntryData> m_tierUpCounter;
+    HashMap<WasmInstructionStream::Offset, LLIntTierUpCounter::OSREntryData> m_tierUpCounter;
     Vector<JumpTable> m_jumpTables;
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
 };

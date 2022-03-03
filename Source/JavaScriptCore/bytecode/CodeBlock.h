@@ -215,12 +215,12 @@ public:
 
     void dumpBytecode();
     void dumpBytecode(PrintStream&);
-    void dumpBytecode(PrintStream& out, const InstructionStream::Ref& it, const ICStatusMap& = ICStatusMap());
+    void dumpBytecode(PrintStream& out, const JSInstructionStream::Ref& it, const ICStatusMap& = ICStatusMap());
     void dumpBytecode(PrintStream& out, unsigned bytecodeOffset, const ICStatusMap& = ICStatusMap());
 
     void dumpExceptionHandlers(PrintStream&);
-    void printStructures(PrintStream&, const Instruction*);
-    void printStructure(PrintStream&, const char* name, const Instruction*, int operand);
+    void printStructures(PrintStream&, const JSInstruction*);
+    void printStructure(PrintStream&, const char* name, const JSInstruction*, int operand);
 
     void dumpMathICStats();
 
@@ -288,32 +288,32 @@ public:
     void linkIncomingPolymorphicCall(CallFrame* callerFrame, PolymorphicCallNode*);
 #endif // ENABLE(JIT)
 
-    const Instruction* outOfLineJumpTarget(const Instruction* pc);
-    int outOfLineJumpOffset(InstructionStream::Offset offset)
+    const JSInstruction* outOfLineJumpTarget(const JSInstruction* pc);
+    int outOfLineJumpOffset(JSInstructionStream::Offset offset)
     {
         return m_unlinkedCode->outOfLineJumpOffset(offset);
     }
-    int outOfLineJumpOffset(const Instruction* pc);
-    int outOfLineJumpOffset(const InstructionStream::Ref& instruction)
+    int outOfLineJumpOffset(const JSInstruction* pc);
+    int outOfLineJumpOffset(const JSInstructionStream::Ref& instruction)
     {
         return outOfLineJumpOffset(instruction.ptr());
     }
 
-    inline unsigned bytecodeOffset(const Instruction* returnAddress)
+    inline unsigned bytecodeOffset(const JSInstruction* returnAddress)
     {
         const auto* instructionsBegin = instructions().at(0).ptr();
-        const auto* instructionsEnd = reinterpret_cast<const Instruction*>(reinterpret_cast<uintptr_t>(instructionsBegin) + instructions().size());
+        const auto* instructionsEnd = reinterpret_cast<const JSInstruction*>(reinterpret_cast<uintptr_t>(instructionsBegin) + instructions().size());
         RELEASE_ASSERT(returnAddress >= instructionsBegin && returnAddress < instructionsEnd);
         return returnAddress - instructionsBegin;
     }
 
-    inline BytecodeIndex bytecodeIndex(const Instruction* returnAddress)
+    inline BytecodeIndex bytecodeIndex(const JSInstruction* returnAddress)
     {
         return BytecodeIndex(bytecodeOffset(returnAddress));
     }
 
-    const InstructionStream& instructions() const { return m_unlinkedCode->instructions(); }
-    const Instruction* instructionAt(BytecodeIndex index) const { return instructions().at(index).ptr(); }
+    const JSInstructionStream& instructions() const { return m_unlinkedCode->instructions(); }
+    const JSInstruction* instructionAt(BytecodeIndex index) const { return instructions().at(index).ptr(); }
 
     size_t predictedMachineCodeSize();
 
@@ -428,8 +428,8 @@ public:
 
     BinaryArithProfile* binaryArithProfileForBytecodeIndex(BytecodeIndex);
     UnaryArithProfile* unaryArithProfileForBytecodeIndex(BytecodeIndex);
-    BinaryArithProfile* binaryArithProfileForPC(const Instruction*);
-    UnaryArithProfile* unaryArithProfileForPC(const Instruction*);
+    BinaryArithProfile* binaryArithProfileForPC(const JSInstruction*);
+    UnaryArithProfile* unaryArithProfileForPC(const JSInstruction*);
 
     bool couldTakeSpecialArithFastCase(BytecodeIndex bytecodeOffset);
 

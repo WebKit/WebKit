@@ -40,8 +40,6 @@ namespace JSC  {
     class SourceOrigin;
     class VirtualRegister;
 
-    struct Instruction;
-
     class CallSiteIndex {
     public:
         CallSiteIndex() = default;
@@ -199,9 +197,9 @@ namespace JSC  {
         JS_EXPORT_PRIVATE CodeOrigin codeOrigin() const;
 
         inline Register* topOfFrame();
-    
-        const Instruction* currentVPC() const; // This only makes sense in the LLInt and baseline.
-        void setCurrentVPC(const Instruction*);
+
+        const JSInstruction* currentVPC() const; // This only makes sense in the LLInt and baseline.
+        void setCurrentVPC(const JSInstruction*);
 
         void setCallerFrame(CallFrame* frame) { callerFrameAndPC().callerFrame = frame; }
         inline void setScope(int scopeRegisterOffset, JSScope*);

@@ -108,13 +108,13 @@ SUPPRESS_ASAN CallSiteIndex CallFrame::unsafeCallSiteIndex() const
     return CallSiteIndex::fromBits(unsafeCallSiteAsRawBits());
 }
 
-const Instruction* CallFrame::currentVPC() const
+const JSInstruction* CallFrame::currentVPC() const
 {
     ASSERT(callSiteBitsAreBytecodeOffset());
     return codeBlock()->instructions().at(callSiteBitsAsBytecodeOffset()).ptr();
 }
 
-void CallFrame::setCurrentVPC(const Instruction* vpc)
+void CallFrame::setCurrentVPC(const JSInstruction* vpc)
 {
     CallSiteIndex callSite(codeBlock()->bytecodeIndex(vpc));
     this[static_cast<int>(CallFrameSlot::argumentCountIncludingThis)].tag() = callSite.bits();

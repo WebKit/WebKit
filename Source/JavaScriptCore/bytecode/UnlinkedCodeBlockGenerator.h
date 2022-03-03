@@ -80,7 +80,7 @@ public:
     UnlinkedMetadataTable& metadata() { return m_codeBlock->metadata(); }
     void addExpressionInfo(unsigned instructionOffset, int divot, int startOffset, int endOffset, unsigned line, unsigned column);
     void addTypeProfilerExpressionInfo(unsigned instructionOffset, unsigned startDivot, unsigned endDivot);
-    void addOpProfileControlFlowBytecodeOffset(InstructionStream::Offset offset)
+    void addOpProfileControlFlowBytecodeOffset(JSInstructionStream::Offset offset)
     {
         m_opProfileControlFlowBytecodeOffsets.append(offset);
     }
@@ -176,10 +176,10 @@ public:
     const Identifier& identifier(int index) const { return m_identifiers[index]; }
     void addIdentifier(const Identifier& i) { return m_identifiers.append(i); }
 
-    using OutOfLineJumpTargets = HashMap<InstructionStream::Offset, int>;
-    void addOutOfLineJumpTarget(InstructionStream::Offset, int target);
-    int outOfLineJumpOffset(InstructionStream::Offset);
-    int outOfLineJumpOffset(const InstructionStream::Ref& instruction)
+    using OutOfLineJumpTargets = HashMap<JSInstructionStream::Offset, int>;
+    void addOutOfLineJumpTarget(JSInstructionStream::Offset, int target);
+    int outOfLineJumpOffset(JSInstructionStream::Offset);
+    int outOfLineJumpOffset(const JSInstructionStream::Ref& instruction)
     {
         return outOfLineJumpOffset(instruction.offset());
     }
@@ -194,9 +194,9 @@ public:
 
     void getLineAndColumn(const ExpressionRangeInfo&, unsigned& line, unsigned& column) const;
 
-    void applyModification(BytecodeRewriter&, InstructionStreamWriter&);
+    void applyModification(BytecodeRewriter&, JSInstructionStreamWriter&);
 
-    void finalize(std::unique_ptr<InstructionStream>);
+    void finalize(std::unique_ptr<JSInstructionStream>);
 
     void dump(PrintStream&) const;
 
@@ -207,7 +207,7 @@ private:
     VM& m_vm;
     Strong<UnlinkedCodeBlock> m_codeBlock;
     // In non-RareData.
-    Vector<InstructionStream::Offset> m_jumpTargets;
+    Vector<JSInstructionStream::Offset> m_jumpTargets;
     Vector<Identifier> m_identifiers;
     Vector<WriteBarrier<Unknown>> m_constantRegisters;
     Vector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
@@ -221,7 +221,7 @@ private:
     Vector<UnlinkedStringJumpTable> m_unlinkedStringSwitchJumpTables;
     Vector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     HashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
-    Vector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
+    Vector<JSInstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
     Vector<BitVector> m_bitVectors;
     Vector<IdentifierSet> m_constantIdentifierSets;
     unsigned m_numBinaryArithProfiles { 0 };

@@ -148,7 +148,7 @@ static MacroAssemblerCodePtr<JSEntryPtrTag> callerReturnPC(CodeBlock* baselineCo
 
     MacroAssemblerCodePtr<JSEntryPtrTag> jumpTarget;
 
-    const Instruction& callInstruction = *baselineCodeBlockForCaller->instructions().at(callBytecodeIndex).ptr();
+    const auto& callInstruction = *baselineCodeBlockForCaller->instructions().at(callBytecodeIndex).ptr();
     if (callerIsLLInt) {
 #define LLINT_RETURN_LOCATION(name) LLInt::returnLocationThunk(name##_return_location, callInstruction.width()).code()
 
@@ -389,7 +389,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
     bool exitToLLInt = Options::forceOSRExitToLLInt() || codeBlockForExit->jitType() == JITType::InterpreterThunk;
     if (exitToLLInt) {
         auto bytecodeIndex = exit.m_codeOrigin.bytecodeIndex();
-        const Instruction& currentInstruction = *codeBlockForExit->instructions().at(bytecodeIndex).ptr();
+        const auto& currentInstruction = *codeBlockForExit->instructions().at(bytecodeIndex).ptr();
         MacroAssemblerCodePtr<JSEntryPtrTag> destination;
         if (bytecodeIndex.checkpoint())
             destination = LLInt::checkpointOSRExitTrampolineThunk().code();
@@ -398,7 +398,7 @@ void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
 
         if (exit.isExceptionHandler()) {
             jit.move(CCallHelpers::TrustedImmPtr(&currentInstruction), GPRInfo::regT2);
-            jit.storePtr(GPRInfo::regT2, &vm.targetInterpreterPCForThrow);
+            jit.storePtr(GPRInfo::regT2, &std::get<const JSInstruction*>(vm.targetInterpreterPCForThrow));
         }
 
         jit.move(CCallHelpers::TrustedImmPtr(codeBlockForExit->metadataTable()), LLInt::Registers::metadataTableGPR);

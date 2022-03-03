@@ -113,7 +113,7 @@ void UnlinkedCodeBlockGenerator::addTypeProfilerExpressionInfo(unsigned instruct
     m_typeProfilerInfoMap.set(instructionOffset, range);
 }
 
-void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<InstructionStream> instructions)
+void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<JSInstructionStream> instructions)
 {
     ASSERT(instructions);
     {
@@ -170,7 +170,7 @@ UnlinkedHandlerInfo* UnlinkedCodeBlockGenerator::handlerForIndex(unsigned index,
     return UnlinkedHandlerInfo::handlerForIndex<UnlinkedHandlerInfo>(m_exceptionHandlers, index, requiredHandler);
 }
 
-void UnlinkedCodeBlockGenerator::applyModification(BytecodeRewriter& rewriter, InstructionStreamWriter& instructions)
+void UnlinkedCodeBlockGenerator::applyModification(BytecodeRewriter& rewriter, JSInstructionStreamWriter& instructions)
 {
     // Before applying the changes, we adjust the jumps based on the original bytecode offset, the offset to the jump target, and
     // the insertion information.
@@ -205,13 +205,13 @@ void UnlinkedCodeBlockGenerator::applyModification(BytecodeRewriter& rewriter, I
     recomputePreciseJumpTargets(this, instructions, m_jumpTargets);
 }
 
-void UnlinkedCodeBlockGenerator::addOutOfLineJumpTarget(InstructionStream::Offset bytecodeOffset, int target)
+void UnlinkedCodeBlockGenerator::addOutOfLineJumpTarget(JSInstructionStream::Offset bytecodeOffset, int target)
 {
     RELEASE_ASSERT(target);
     m_outOfLineJumpTargets.set(bytecodeOffset, target);
 }
 
-int UnlinkedCodeBlockGenerator::outOfLineJumpOffset(InstructionStream::Offset bytecodeOffset)
+int UnlinkedCodeBlockGenerator::outOfLineJumpOffset(JSInstructionStream::Offset bytecodeOffset)
 {
     ASSERT(m_outOfLineJumpTargets.contains(bytecodeOffset));
     return m_outOfLineJumpTargets.get(bytecodeOffset);

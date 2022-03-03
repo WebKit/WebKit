@@ -252,7 +252,7 @@ void JIT::privateCompileMainPass()
 
         if (m_disassembler)
             m_disassembler->setForBytecodeMainPath(m_bytecodeIndex.offset(), label());
-        const Instruction* currentInstruction = instructions.at(m_bytecodeIndex).ptr();
+        const auto* currentInstruction = instructions.at(m_bytecodeIndex).ptr();
         ASSERT(currentInstruction->size());
 
         m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(m_bytecodeIndex));
@@ -551,8 +551,8 @@ void JIT::privateCompileSlowCases()
 
         BytecodeIndex firstTo = m_bytecodeIndex;
 
-        const Instruction* currentInstruction = m_unlinkedCodeBlock->instructions().at(m_bytecodeIndex).ptr();
-        
+        const auto* currentInstruction = m_unlinkedCodeBlock->instructions().at(m_bytecodeIndex).ptr();
+
         if (JITInternal::verbose)
             dataLogLn("Baseline JIT emitting slow code for ", m_bytecodeIndex, " at offset ", (long)debugOffset());
 
