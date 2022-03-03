@@ -1,3 +1,22 @@
+2022-03-03  Lauro Moura  <lmoura@igalia.com>
+
+        [build.webkit.org] Add GTK queue using clang
+        https://bugs.webkit.org/show_bug.cgi?id=229637
+
+        Reviewed by Michael Catanzaro.
+
+        This commit adds a specific queue to build with clang in place of GCC.
+        It will help cover both toolchains and catch bugs and warnings
+        that happen to be raised by/to affect only clang.
+
+        Initially, it'll be a build-only queue, moving to a complete build and
+        tester in the future. It'll use clang-12, the version available in the
+        current SDK used by GTK and WPE.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/build-webkit-org/factories_unittest.py:
+        (TestExpectedBuildSteps):
+
 2022-03-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Style] Forbid spaces between type names and protocol names in Objective-C

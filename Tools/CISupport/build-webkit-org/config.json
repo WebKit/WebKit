@@ -113,6 +113,7 @@
                     { "name": "gtk-linux-bot-17", "platform": "gtk" },
                     { "name": "gtk-linux-bot-18", "platform": "gtk" },
                     { "name": "gtk-linux-bot-19", "platform": "gtk" },
+                    { "name": "gtk-linux-bot-20", "platform": "gtk" },
 
                     { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
                     { "name": "jsconly-linux-igalia-bot-2", "platform": "jsc-only" },
@@ -484,6 +485,11 @@
                       "workernames": ["gtk-linux-bot-19"]
                     },
                     {
+                      "name": "GTK-Linux-64-bit-Release-Clang", "factory": "BuildFactory", "builddir": "gtk-linux-64-release-clang",
+                      "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                      "workernames": ["gtk-linux-bot-20"]
+                    },
+                    {
                       "name": "WinCairo-64-bit-WKL-Release-Build", "factory": "BuildFactory", "builddir": "wincairo-wkl-release",
                       "platform": "wincairo", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["wincairo-wkl-release-tests", "wincairo-jsc-release-tests"],
@@ -605,6 +611,7 @@
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK-Linux-64-bit-Release-Build", "GTK-Linux-64-bit-Debug-Build",
+                                       "GTK-Linux-64-bit-Release-Clang",
                                        "GTK-Linux-64-bit-Release-Debian-Stable-Build",
                                        "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
                                        "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build",

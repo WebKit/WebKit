@@ -978,6 +978,17 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'transfer-to-s3',
             'trigger'
         ],
+        'GTK-Linux-64-bit-Release-Clang': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'compile-webkit'
+        ],
         'GTK-Linux-64-bit-Release-Tests': [
             'configure-build',
             'configuration',
