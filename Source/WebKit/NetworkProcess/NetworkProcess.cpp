@@ -2087,8 +2087,10 @@ void NetworkProcess::terminateRemoteWorkerContextConnectionWhenPossible(RemoteWo
 
     switch (workerType) {
     case RemoteWorkerType::ServiceWorker:
+#if ENABLE(SERVICE_WORKER)
         if (auto* swServer = session->swServer())
             swServer->terminateContextConnectionWhenPossible(registrableDomain, processIdentifier);
+#endif
         break;
     case RemoteWorkerType::SharedWorker:
         if (auto* sharedWorkerServer = session->sharedWorkerServer())

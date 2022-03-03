@@ -1,3 +1,13 @@
+2022-03-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION(r290776): NetworkSession::swServer depends on ENABLE(SERVICE_WORKER)
+        https://bugs.webkit.org/show_bug.cgi?id=237432
+
+        Unreviewed build fix.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::terminateRemoteWorkerContextConnectionWhenPossible):
+
 2022-03-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r290356-r290351?): [ iOS EWS ] 3 imported/w3c/web-platform-tests/service-workers/service-worker/* tests are constant text failures.
