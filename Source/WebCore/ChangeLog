@@ -1,3 +1,22 @@
+2022-03-03  Alan Bujtas  <zalan@apple.com>
+
+        A text node longer than 65,535 characters following another text node is invisible in a scrolling context
+        https://bugs.webkit.org/show_bug.cgi?id=237330
+        <rdar://problem/89645522>
+
+        Reviewed by Antti Koivisto.
+
+        1. We split text content at 65536 characters (see Text::createWithLengthLimit)
+        2. InlineTextBox can only hold up to 65534 (max short unsigned) characters (unsigned short m_len { 0 };)
+
+        Arithmetic overflow produces 0 length inline text boxes and they get removed at
+        LegacyLineLayout::computeBlockDirectionPositionsForLine as redundant boxes.
+
+        Test: fast/text/text-overflow-over-64k.html
+
+        * rendering/LegacyInlineTextBox.h: Let's just use unsigned. At this point we don't have that many
+        legacy inline text boxes anyway.
+
 2022-03-03  Dan Glastonbury  <djg@apple.com>
 
         Update IDLParser to support trailing commas in enums.

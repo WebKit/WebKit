@@ -1,3 +1,14 @@
+2022-03-03  Alan Bujtas  <zalan@apple.com>
+
+        A text node longer than 65,535 characters following another text node is invisible in a scrolling context
+        https://bugs.webkit.org/show_bug.cgi?id=237330
+        <rdar://problem/89645522>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/text/text-overflow-over-64k-expected.html: Added.
+        * fast/text/text-overflow-over-64k.html: Added.
+
 2022-03-03  Youenn Fablet  <youenn@apple.com>
 
         macOS Safari 15.2 Audio Echo Issue after camera pause/unpause
