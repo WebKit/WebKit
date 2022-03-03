@@ -102,13 +102,21 @@ class Tracker(GenericTracker):
             return False
 
         hostname = self.url.split('/')[2]
+        token_url = 'https://{}/settings/tokens/new'.format(hostname)
+
+        def prompt():
+            result = "GitHub's API\nProvide {} username and access token to create and update pull requests".format(hostname)
+            if webkitcorepy.Terminal.open_url('{}?scopes=repo,workflow&description={}%20Local%20Automation'.format(token_url, self.name)):
+                return result
+            return '''{}
+Please go to {token_url} and generate a new 'Personal access token' via 'Developer settings'
+with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} user'''.format(result, token_url=token_url, host=hostname)
+
         return webkitcorepy.credentials(
             url=self.api_url,
             required=required,
             name=self.url.split('/')[2].replace('.', '_').upper(),
-            prompt='''GitHub's API
-Please go to https://{host}/settings/tokens/new and generate a new 'Personal access token' via 'Developer settings'
-with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} user'''.format(host=hostname),
+            prompt=prompt,
             key_name='token',
             validater=validater if validate else None,
         )
