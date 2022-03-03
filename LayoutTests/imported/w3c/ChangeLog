@@ -1,3 +1,12 @@
+2022-03-02  Rob Buis  <rbuis@igalia.com>
+
+        Treat empty intersection correctly in RenderLayer::getRectToExpose
+        https://bugs.webkit.org/show_bug.cgi?id=237189
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-050-expected.txt:
+
 2022-03-02  Sihui Liu  <sihui_liu@apple.com>
 
         Throw proper exception on failed removeEntry() calls

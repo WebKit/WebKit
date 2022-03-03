@@ -1,3 +1,3 @@
 
-FAIL Using tabindex to focus an newly constructed element in an auto subtree focuses element assert_greater_than: expected a number greater than 500 but got 0
+PASS Using tabindex to focus an newly constructed element in an auto subtree focuses element
 

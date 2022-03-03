@@ -1,3 +1,18 @@
+2022-03-02  Rob Buis  <rbuis@igalia.com>
+
+        Treat empty intersection correctly in RenderLayer::getRectToExpose
+        https://bugs.webkit.org/show_bug.cgi?id=237189
+
+        Reviewed by Simon Fraser.
+
+        The case where the target rect to reveal had zero height and was outside of the visible rect, the
+        classification was wrongly that the target was visible, fix this to classify as hidden instead.
+
+        Test: imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::getRectToExpose const):
+
 2022-03-02  Andres Gonzalez  <andresg_22@apple.com>
 
         ITM: Checkbox state change is not updated in isolated tree
