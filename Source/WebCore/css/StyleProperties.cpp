@@ -275,31 +275,6 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return fontValue();
     case CSSPropertyFontVariant:
         return fontVariantValue();
-    case CSSPropertyTextDecoration: {
-        auto line = getPropertyCSSValue(CSSPropertyTextDecorationLine);
-        if (!line)
-            return String();
-        if (line->isCSSWideKeyword()) {
-            for (CSSPropertyID longhand : textDecorationShorthand()) {
-                auto value = getPropertyCSSValue(longhand);
-                if (!value || (value != line && *value != *line))
-                    return String();
-            }
-        } else {
-            auto thickness = getPropertyCSSValue(CSSPropertyTextDecorationThickness);
-            if (!thickness || !is<CSSPrimitiveValue>(*thickness) || downcast<CSSPrimitiveValue>(*thickness).valueID() != CSSValueAuto)
-                return String();
-            auto style = getPropertyCSSValue(CSSPropertyTextDecorationStyle);
-            if (!style || !is<CSSPrimitiveValue>(*style) || downcast<CSSPrimitiveValue>(*style).valueID() != CSSValueSolid)
-                return String();
-            auto color = getPropertyCSSValue(CSSPropertyTextDecorationColor);
-            if (!color || !is<CSSPrimitiveValue>(*color) || downcast<CSSPrimitiveValue>(*color).valueID() != CSSValueCurrentcolor)
-                return String();
-        }
-        return line->cssText();
-    }
-    case CSSPropertyWebkitTextDecoration:
-        return getShorthandValue(webkitTextDecorationShorthand());
     case CSSPropertyTextDecorationSkip:
         return textDecorationSkipValue();
     case CSSPropertyInset:
@@ -1457,12 +1432,6 @@ String StyleProperties::asText() const
             case CSSPropertyScrollPaddingInlineStart:
             case CSSPropertyScrollPaddingInlineEnd:
                 shorthandPropertyID = CSSPropertyScrollPaddingInline;
-                break;
-            case CSSPropertyTextDecorationColor:
-            case CSSPropertyTextDecorationLine:
-            case CSSPropertyTextDecorationStyle:
-            case CSSPropertyTextDecorationThickness:
-                shorthandPropertyID = CSSPropertyTextDecoration;
                 break;
             case CSSPropertyTransitionProperty:
             case CSSPropertyTransitionDuration:

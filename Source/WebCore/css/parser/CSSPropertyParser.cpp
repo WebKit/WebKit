@@ -4473,6 +4473,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (!m_context.colorFilterEnabled)
             return nullptr;
         return consumeFilter(m_range, m_context, AllowedFilterFunctions::ColorFilters);
+    case CSSPropertyTextDecoration:
     case CSSPropertyWebkitTextDecorationsInEffect:
     case CSSPropertyTextDecorationLine:
         return consumeTextDecorationLine(m_range);
@@ -6284,17 +6285,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeAnimationShorthand(animationShorthandForParsing(), important);
     case CSSPropertyTransition:
         return consumeAnimationShorthand(transitionShorthandForParsing(), important);
-    case CSSPropertyTextDecoration: {
-        auto line = consumeTextDecorationLine(m_range);
-        if (!line || !m_range.atEnd())
-            return false;
-        auto& valuePool = CSSValuePool::singleton();
-        addProperty(CSSPropertyTextDecorationLine, property, line.releaseNonNull(), important);
-        addProperty(CSSPropertyTextDecorationThickness, property, valuePool.createIdentifierValue(CSSValueAuto), important);
-        addProperty(CSSPropertyTextDecorationStyle, property, valuePool.createIdentifierValue(CSSValueSolid), important);
-        addProperty(CSSPropertyTextDecorationColor, property, valuePool.createIdentifierValue(CSSValueCurrentcolor), important);
-        return true;
-    }
+    case CSSPropertyTextDecoration:
     case CSSPropertyWebkitTextDecoration:
         // FIXME-NEWPARSER: We need to unprefix -line/-style/-color ASAP and get rid
         // of -webkit-text-decoration completely.

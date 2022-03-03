@@ -5,7 +5,7 @@ Rich text
         "text/plain": ""
     },
     "drop": {
-        "text/html": "<!DOCTYPE html><strong style=\"font-family: -apple-system; font-size: 150px; font-style: normal; font-variant-caps: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: nowrap; widows: auto; word-spacing: 0px; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; color: purple;\">Rich text</strong>",
+        "text/html": "<!DOCTYPE html><strong style=\"font-family: -apple-system; font-size: 150px; font-style: normal; font-variant-caps: normal; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: nowrap; widows: auto; word-spacing: 0px; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; text-decoration: none; color: purple;\">Rich text</strong>",
         "text/plain": "Rich text"
     }
 }

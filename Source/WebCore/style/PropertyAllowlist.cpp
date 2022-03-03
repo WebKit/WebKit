@@ -132,7 +132,7 @@ bool isValidCueStyleProperty(CSSPropertyID id)
     case CSSPropertyOutlineWidth:
     case CSSPropertyVisibility:
     case CSSPropertyWhiteSpace:
-    case CSSPropertyTextDecorationLine:
+    case CSSPropertyTextDecoration:
     case CSSPropertyTextShadow:
     case CSSPropertyBorderStyle:
     case CSSPropertyPaintOrder:
