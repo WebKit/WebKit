@@ -99,22 +99,19 @@ void JITCode::shrinkToFit(const ConcurrentJSLocker&)
 
 const RegisterAtOffsetList* JITCode::calleeSaveRegisters() const
 {
-    switch (jitType()) {
 #if ENABLE(FTL_JIT)
-    case JITType::FTLJIT:
+    if (m_jitType == JITType::FTLJIT)
         return static_cast<const FTL::JITCode*>(this)->calleeSaveRegisters();
 #endif
 #if ENABLE(DFG_JIT)
-    case JITType::DFGJIT:
+    if (m_jitType == JITType::DFGJIT)
         return &RegisterAtOffsetList::dfgCalleeSaveRegisters();
 #endif
-    default:
 #if !ENABLE(C_LOOP)
-        return &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
+    return &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
 #else
-        return nullptr;
+    return nullptr;
 #endif
-    }
 }
 
 JITCodeWithCodeRef::JITCodeWithCodeRef(JITType jitType)

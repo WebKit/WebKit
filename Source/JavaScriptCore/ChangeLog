@@ -1,3 +1,39 @@
+2022-03-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288363. rdar://problem/88995092
+
+    Fix build when using Visual Studio 2022
+    https://bugs.webkit.org/show_bug.cgi?id=235440
+    
+    Reviewed by Antti Koivisto.
+    
+    It doesn't like having a switch with a default but no cases.
+    This is cleaner with if statements anyways.
+    Also make members const because I can.
+    
+    * jit/JITCode.cpp:
+    (JSC::JITCode::calleeSaveRegisters const):
+    * jit/JITCode.h:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288363 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-21  Alex Christensen  <achristensen@webkit.org>
+
+            Fix build when using Visual Studio 2022
+            https://bugs.webkit.org/show_bug.cgi?id=235440
+
+            Reviewed by Antti Koivisto.
+
+            It doesn't like having a switch with a default but no cases.
+            This is cleaner with if statements anyways.
+            Also make members const because I can.
+
+            * jit/JITCode.cpp:
+            (JSC::JITCode::calleeSaveRegisters const):
+            * jit/JITCode.h:
+
 2022-02-09  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r289450. rdar://problem/88483574
