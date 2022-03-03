@@ -322,7 +322,7 @@ class AbstractRevertPrepCommand(AbstractSequencedCommand):
         state = {
             "revision": earliest_revision,
             "revision_list": revision_list,
-            "reason": args[1],
+            "reason": ' '.join(args[1:]),
             "bug_id": None,
             "bug_id_list": bug_id_list,
             "description_list": description_list,
