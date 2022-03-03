@@ -1,3 +1,17 @@
+2022-03-02  Lauro Moura  <lmoura@igalia.com>
+
+        [Tools] Fix linux_get_crash_log.py error logging with python3
+        https://bugs.webkit.org/show_bug.cgi?id=237404
+
+        Reviewed by Fujii Hironori.
+
+        Avoid issues generating error logs after 247736@main defaulted to
+        python3.
+
+        * Scripts/webkitpy/port/linux_get_crash_log.py:
+        (GDBCrashLogGenerator._get_gdb_output): Encode returncode before
+        appending to bytes.
+
 2022-03-02  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Add Terminal.open_url
