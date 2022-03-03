@@ -73,6 +73,37 @@
 (allow file-read* file-write*
     (subpath "/var/mobile/Library/com.apple.webkit.addattributiond"))
 
+(allow file-read* file-map-executable
+    (subpath "/System/Library/Frameworks")
+    (subpath "/System/Library/PrivateFrameworks"))
+
+(with-filter (system-attribute apple-internal)
+    (allow mach-lookup
+        (global-name "com.apple.analyticsd")
+        (global-name "com.apple.diagnosticd")))
+
+(deny sysctl* (with telemetry))
+(allow sysctl-read
+    (sysctl-name
+        "hw.activecpu"
+        "hw.machine"
+        "hw.memsize"
+        "hw.ncpu"
+        "hw.pagesize_compat"
+        "kern.bootargs"
+        "kern.hostname"
+        "kern.maxfilesperproc"
+        "kern.osproductversion"
+        "kern.osrelease"
+        "kern.ostype"
+        "kern.osvariant_status"
+        "kern.osversion"
+        "kern.secure_kernel"
+        "kern.version"
+        "vm.footprint_suspend")
+    (sysctl-name-prefix "kern.proc.pid.")
+)
+
 (allow-read-write-directory-contents (param "DARWIN_USER_CACHE_DIR"))
 (allow-read-write-directory-contents (param "DARWIN_USER_TEMP_DIR"))
 
