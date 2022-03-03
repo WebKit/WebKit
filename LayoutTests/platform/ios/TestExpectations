@@ -3502,3 +3502,8 @@ webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Pas
 webkit.org/b/236794 editing/spelling/editing-word-with-marker-2.html [ Pass Crash ]
 
 webkit.org/b/237159 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-049.html [ Pass Crash ]
+
+webkit.org/b/237108 http/tests/websocket/tests/hybi/extensions.html [ Pass ]
+
+webkit.org/b/237433 editing/pasteboard/4076267-3.html [ Timeout Pass Failure ]
+webkit.org/b/237433 editing/pasteboard/paste-and-sanitize.html [ Timeout Pass Failure ]

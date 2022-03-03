@@ -2,6 +2,9 @@
 
 # Incorrect size
 webkit.org/b/236906 imported/w3c/web-platform-tests/css/css-contain/contain-size-breaks-001.html [ ImageOnlyFailure ]
+webkit.org/b/236906 imported/w3c/web-platform-tests/css/css-text/line-break/line-break-anywhere-and-white-space-003.html [ ImageOnlyFailure Pass ]
+webkit.org/b/236906 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-006.html [ ImageOnlyFailure Pass ]
+webkit.org/b/236906 imported/w3c/web-platform-tests/css/css-text/white-space/break-spaces-with-overflow-wrap-004.html [ ImageOnlyFailure Pass ]
 
 # There is text in/near the box
 webkit.org/b/236907 fast/shadow-dom/nth-node-on-shadow-child-invalidation.html [ ImageOnlyFailure ]
@@ -208,7 +211,7 @@ webkit.org/b/236919 imported/w3c/web-platform-tests/css/css-multicol/multicol-co
 webkit.org/b/236919 imported/w3c/web-platform-tests/css/css-multicol/multicol-count-non-integer-001.xht [ ImageOnlyFailure ]
 webkit.org/b/236919 imported/w3c/web-platform-tests/css/css-multicol/multicol-count-non-integer-002.xht [ ImageOnlyFailure ]
 webkit.org/b/236919 imported/w3c/web-platform-tests/css/css-multicol/multicol-count-non-integer-003.xht [ ImageOnlyFailure ]
-webkit.org/b/236919 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-002.xht [ ImageOnlyFailure ]
+webkit.org/b/236919 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-002.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/236919 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-003.xht [ ImageOnlyFailure ]
 webkit.org/b/236919 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-auto-block-children-001.xht [ ImageOnlyFailure ]
 webkit.org/b/236919 imported/w3c/web-platform-tests/css/css-multicol/multicol-fill-balance-001.xht [ ImageOnlyFailure ]
@@ -253,11 +256,20 @@ webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-017.html
 
 # Writing mode failures
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-007.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-015.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-005.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-006.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-011.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vrl-024.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-002.xht [ ImageOnlyFailure ]
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-004.xht [ ImageOnlyFailure ]
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vlr-005.xht [ ImageOnlyFailure ]
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vrl-004.xht [ ImageOnlyFailure ]
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-table-alignment-004.xht [ ImageOnlyFailure ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/row-progression-vrl-004.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/row-progression-vrl-006.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/table-column-order-005.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-vlr-005.xht [ ImageOnlyFailure ]
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-vrl-004.xht [ ImageOnlyFailure ]
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001.html [ ImageOnlyFailure ]
@@ -292,15 +304,14 @@ webkit.org/b/236924 svg/transforms/transformed-text-fill-gradient.html [ ImageOn
 webkit.org/b/236924 svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
 
 # Apple Pay button
-webkit.org/b/236925 fast/css/appearance-apple-pay-button-default-corners.html [ Crash ]
-webkit.org/b/236925 fast/css/appearance-apple-pay-button.html [ Crash ]
-# x64_64 only
-webkit.org/b/236925 fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Crash Pass ]
+webkit.org/b/236925 fast/css/appearance-apple-pay-button-default-corners.html [ ImageOnlyFailure ]
+webkit.org/b/236925 fast/css/appearance-apple-pay-button.html [ ImageOnlyFailure ]
 
 # Media failures
 webkit.org/b/236926 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html [ Pass Failure ]
 webkit.org/b/236926 media/video-src-blob-using-open-panel.html [ Timeout Pass ]
 webkit.org/b/236926 webrtc/canvas-to-peer-connection.html [ Failure ]
+webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass ]
 # arm64 only
 webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Crash Pass ]
 webkit.org/b/236926 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
@@ -317,38 +328,30 @@ webkit.org/b/236927 fast/forms/input-text-autofocus.html [ Pass Failure ]
 webkit.org/b/236929 fast/canvas/canvas-composite-canvas.html [ Crash ]
 
 # Flaky timeout
-webkit.org/b/236931 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Timeout Pass ]
-webkit.org/b/236931 compositing/hidpi-non-simple-compositing-layer-with-fractional-size-and-background.html [ Timeout Pass ]
+webkit.org/b/236931 editing/pasteboard/dom-paste/dom-paste-same-origin.html [ Timeout Pass ]
 
 # Flaky failure
 webkit.org/b/236932 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ImageOnlyFailure ]
+webkit.org/b/236932 css3/masking/mask-repeat-one-copy.html [ Pass ImageOnlyFailure ]
 webkit.org/b/236932 editing/pasteboard/paste-dark-mode-color-filtered.html [ Pass Failure ]
-webkit.org/b/236932 fast/events/ios/rotation/zz-no-rotation.html [ Pass Failure ]
 webkit.org/b/236932 fast/speechrecognition/start-recognition-then-stop.html [ Pass Failure ]
 webkit.org/b/236932 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-content-use-007.svg [ Pass Failure ]
-webkit.org/b/236932 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/coep-navigate-popup-unsafe-inherit.https.html [ Pass Failure ]
+webkit.org/b/236932 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image.html [ Pass ImageOnlyFailure ]
 webkit.org/b/236932 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ Pass ImageOnlyFailure ]
 # Also happening on Mac...
 webkit.org/b/236932 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Pass Failure ]
 webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html [ Pass Failure ]
-webkit.org/b/236932 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-unsafe-none.https.html [ Pass Failure ]
 webkit.org/b/236932 imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
 webkit.org/b/236932 js/dom/Promise-reject-large-string.html [ Pass Failure ]
 webkit.org/b/236932 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
-webkit.org/b/68278 http/tests/history/back-with-fragment-change.py
+webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Pass Failure ]
 
 # Flaky crash
 webkit.org/b/236930 accessibility/ios-simulator/aria-details.html [ Crash Pass ]
 webkit.org/b/236930 ddcss3/images/cross-fade-simple.html [ Crash Pass ]
 webkit.org/b/236794 editing/spelling/editing-word-with-marker-2.html [ Crash Pass ]
-webkit.org/b/236930 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Crash Pass ]
-webkit.org/b/236930 imported/blink/fast/backgrounds/bug420029.html [ Crash Pass ]
-webkit.org/b/236930 imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-popup-behavior.html [ Crash Pass ]
-webkit.org/b/236930 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/historical/popup-same-origin-unsafe-allow-outgoing-with-cross-origin.https.html [ Crash Pass ]
-webkit.org/b/236930 imported/w3c/web-platform-tests/html/dom/historical.html [ Crash Pass ]
 webkit.org/b/236930 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html [ Crash Pass ]
 webkit.org/b/236930 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html [ Crash Pass ]
-webkit.org/b/236930 imported/w3c/web-platform-tests/shadow-dom/Element-interface-attachShadow.html [ Crash Pass ]
 webkit.org/b/236930 imported/w3c/web-platform-tests/webstorage/storage_session_window_open.window.html [ Crash Pass ]
 
 # arm64 only
