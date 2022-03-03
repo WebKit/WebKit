@@ -65,6 +65,8 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
             if not username and required:
                 if not sys.stderr.isatty() or not sys.stdin.isatty():
                     raise OSError('No tty to prompt user for username')
+                if prompt and callable(prompt):
+                    prompt = prompt()
                 sys.stderr.write("Authentication required to use {}\n".format(prompt or name))
                 sys.stderr.write('Username: ')
                 username = Terminal.input()

@@ -1,3 +1,24 @@
+2022-03-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Open pre-populated GitHub page for new tokens
+        https://bugs.webkit.org/show_bug.cgi?id=237436
+        <rdar://problem/89763053>
+
+        Reviewed by Ryan Haddad.
+
+        GitHub gives us a way to pre-populate its token generation web page. We should
+        open this page with appropriate arguments during setup.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py:
+        (Tracker.credentials): Make 'prompt' into a function, allowing us to open a url
+        and change the prompt based on the success of opening the url.
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/credentials.py:
+        (credentials): Allow 'prompt' to be callable.
+
 2022-03-03  Lauro Moura  <lmoura@igalia.com>
 
         [build.webkit.org] Add GTK queue using clang

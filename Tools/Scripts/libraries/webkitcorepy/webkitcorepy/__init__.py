@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ from webkitcorepy.call_by_need import CallByNeed
 from webkitcorepy.editor import Editor
 from webkitcorepy.file_lock import FileLock
 
-version = Version(0, 13, 2)
+version = Version(0, 13, 3)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):
