@@ -93,7 +93,7 @@ void RenderTableCol::updateFromElement()
         HTMLTableColElement& tc = static_cast<HTMLTableColElement&>(*element());
         m_span = tc.span();
     } else
-        m_span = !(hasInitializedStyle() && style().display() == DisplayType::TableColumnGroup);
+        m_span = 1;
     if (m_span != oldSpan && hasInitializedStyle() && parent())
         setNeedsLayoutAndPrefWidthsRecalc();
 }

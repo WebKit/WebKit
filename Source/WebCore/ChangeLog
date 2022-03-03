@@ -1,3 +1,17 @@
+2022-03-03  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r290512): imported/blink/fast/table/crash-output-element-as-column-group.html asserts sometimes
+        https://bugs.webkit.org/show_bug.cgi?id=237393
+
+        Reviewed by Simon Fraser.
+
+        Merging https://chromium.googlesource.com/chromium/src/+/1cfc9b9c37f43567529b09a9824d6d3a7bd9abb6%5E%21/#F2
+        The reason why crash-output-element-as-column-group.html crashes after r290512 is because
+        now we allow colgroup after the table content (thead, tbody) -prior to r290512, this test was pretty much a no-op.
+
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::updateFromElement):
+
 2022-03-03  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r290756.
