@@ -1,3 +1,17 @@
+2022-03-03  Philippe Normand  <pnormand@igalia.com>
+
+        [Python3] Switch a couple glib/flatpak scripts to Python3
+        https://bugs.webkit.org/show_bug.cgi?id=237377
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/update-webkit-flatpak: Update shebang to Python3.
+        * Scripts/webkit-flatpak: Ditto.
+        * glib/api_test_runner.py: Ditto.
+        * glib/common.py: Remove useless shebang.
+        * glib/generate-inspector-gresource-manifest.py: Update shebang to Python3.
+        * glib/svn-revision: Ditto.
+
 2022-03-02  Lauro Moura  <lmoura@igalia.com>
 
         [Tools] Fix linux_get_crash_log.py error logging with python3

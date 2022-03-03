@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2011 Igalia S.L.
 #
 # This library is free software; you can redistribute it and/or
