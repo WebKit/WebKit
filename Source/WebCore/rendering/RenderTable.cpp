@@ -926,12 +926,7 @@ RenderTableCol* RenderTable::firstColumn() const
     for (auto& child : childrenOfType<RenderObject>(*this)) {
         if (is<RenderTableCol>(child))
             return &const_cast<RenderTableCol&>(downcast<RenderTableCol>(child));
-
-        // We allow only table-captions before columns or column-groups.
-        if (!is<RenderTableCaption>(child))
-            return nullptr;
     }
-
     return nullptr;
 }
 
