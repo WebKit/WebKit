@@ -121,6 +121,12 @@ template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::
 template<> std::optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(JSC::JSGlobalObject&, JSC::JSValue);
 template<> const char* expectedEnumerationValues<TestObj::EnumType>();
 
+String convertEnumerationToString(TestObj::EnumTrailingComma);
+template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::EnumTrailingComma);
+
+template<> std::optional<TestObj::EnumTrailingComma> parseEnumeration<TestObj::EnumTrailingComma>(JSC::JSGlobalObject&, JSC::JSValue);
+template<> const char* expectedEnumerationValues<TestObj::EnumTrailingComma>();
+
 String convertEnumerationToString(TestObj::Optional);
 template<> JSC::JSString* convertEnumerationToJS(JSC::JSGlobalObject&, TestObj::Optional);
 

@@ -31,6 +31,7 @@
 // changes in its output.
 
 enum TestEnumType { "", "enumValue1", "EnumValue2", "EnumValue3" };
+enum TestEnumTrailingComma { "enumValue1", "enumValue2", };
 
 // Leading underscore on an enum should be removed.
 enum _optional { "", "OptionalValue1", "OptionalValue2", "OptionalValue3" };

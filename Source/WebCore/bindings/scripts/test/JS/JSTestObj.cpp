@@ -165,6 +165,38 @@ template<> const char* expectedEnumerationValues<TestObj::EnumType>()
     return "\"\", \"enumValue1\", \"EnumValue2\", \"EnumValue3\"";
 }
 
+String convertEnumerationToString(TestObj::EnumTrailingComma enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("enumValue1"),
+        MAKE_STATIC_STRING_IMPL("enumValue2"),
+    };
+    static_assert(static_cast<size_t>(TestObj::EnumTrailingComma::EnumValue1) == 0, "TestObj::EnumTrailingComma::EnumValue1 is not 0 as expected");
+    static_assert(static_cast<size_t>(TestObj::EnumTrailingComma::EnumValue2) == 1, "TestObj::EnumTrailingComma::EnumValue2 is not 1 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
+
+template<> JSString* convertEnumerationToJS(JSGlobalObject& lexicalGlobalObject, TestObj::EnumTrailingComma enumerationValue)
+{
+    return jsStringWithCache(lexicalGlobalObject.vm(), convertEnumerationToString(enumerationValue));
+}
+
+template<> std::optional<TestObj::EnumTrailingComma> parseEnumeration<TestObj::EnumTrailingComma>(JSGlobalObject& lexicalGlobalObject, JSValue value)
+{
+    auto stringValue = value.toWTFString(&lexicalGlobalObject);
+    if (stringValue == "enumValue1")
+        return TestObj::EnumTrailingComma::EnumValue1;
+    if (stringValue == "enumValue2")
+        return TestObj::EnumTrailingComma::EnumValue2;
+    return std::nullopt;
+}
+
+template<> const char* expectedEnumerationValues<TestObj::EnumTrailingComma>()
+{
+    return "\"enumValue1\", \"enumValue2\"";
+}
+
 String convertEnumerationToString(TestObj::Optional enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {

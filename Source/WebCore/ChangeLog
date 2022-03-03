@@ -1,3 +1,25 @@
+2022-03-03  Dan Glastonbury  <djg@apple.com>
+
+        Update IDLParser to support trailing commas in enums.
+        https://bugs.webkit.org/show_bug.cgi?id=232607
+        <rdar://problem/85189036>
+
+        Reviewed by Sam Weinig.
+
+        Now compatible with the grammar specified by [1].
+
+        [1] https://webidl.spec.whatwg.org/#prod-EnumValueListComma
+
+        * bindings/scripts/IDLParser.pm:
+        (parseEnumValues):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertEnumerationToString):
+        (WebCore::convertEnumerationToJS):
+        (WebCore::parseEnumeration<TestObj::EnumTrailingComma>):
+        (WebCore::expectedEnumerationValues<TestObj::EnumTrailingComma>):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/TestObj.idl:
+
 2022-03-03  Antti Koivisto  <antti@apple.com>
 
         Simplify pseudo element resolution

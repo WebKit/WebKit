@@ -1507,6 +1507,9 @@ sub parseEnumValues
     my $next = $self->nextToken();
     if ($next->value() eq ",") {
         $self->assertTokenValue($self->getToken(), ",", __LINE__);
+    }
+    $next = $self->nextToken();
+    if ($next->type() == StringToken) {
         my $enumValueToken = $self->getToken();
         $self->assertTokenType($enumValueToken, StringToken);
         my $enumValue = $self->unquoteString($enumValueToken->value());
