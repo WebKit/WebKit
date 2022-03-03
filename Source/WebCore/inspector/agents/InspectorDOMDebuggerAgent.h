@@ -49,6 +49,7 @@ namespace WebCore {
 
 class Event;
 class RegisteredEventListener;
+class ScriptExecutionContext;
 
 class InspectorDOMDebuggerAgent : public InspectorAgentBase, public Inspector::DOMDebuggerBackendDispatcherHandler, public Inspector::InspectorDebuggerAgent::Listener {
     WTF_MAKE_NONCOPYABLE(InspectorDOMDebuggerAgent);

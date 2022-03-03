@@ -1,3 +1,12 @@
+2022-03-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early March 2022 edition
+        https://bugs.webkit.org/show_bug.cgi?id=237420
+
+        Unreviewed non-unified build fixes.
+
+        * inspector/agents/InspectorDOMDebuggerAgent.h: Add forward declaration for ScriptExecutionContext.
+
 2022-03-03  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r290512): imported/blink/fast/table/crash-output-element-as-column-group.html asserts sometimes

@@ -23,12 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #include "config.h"
 #include "APIDataTask.h"
 
 #include "APIDataTaskClient.h"
+#include "DataReference.h"
 #include "NetworkProcessProxy.h"
 #include "WebPageProxy.h"
 

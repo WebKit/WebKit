@@ -27,6 +27,7 @@
 
 #include "AuthenticationChallengeDisposition.h"
 #include "AuthenticationChallengeProxy.h"
+#include "DataReference.h"
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {

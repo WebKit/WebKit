@@ -37,7 +37,10 @@ template<PtrTag> class MacroAssemblerCodeRef;
 
 template<typename> struct BaseInstruction;
 struct JSOpcodeTraits;
+struct WasmOpcodeTraits;
+
 using JSInstruction = BaseInstruction<JSOpcodeTraits>;
+using WasmInstruction = BaseInstruction<WasmOpcodeTraits>;
 
 namespace LLInt {
 

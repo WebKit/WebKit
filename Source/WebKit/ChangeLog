@@ -1,3 +1,14 @@
+2022-03-03  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early March 2022 edition
+        https://bugs.webkit.org/show_bug.cgi?id=237420
+
+        Unreviewed non-unified build fixes.
+
+        * UIProcess/API/APIDataTask.cpp: Add missing inclusion of DataReference.h, remove
+        "#pragma once" from non-header file.
+        * UIProcess/API/APIDataTaskClient.h: Add missing inclusion of DataReference.h.
+
 2022-03-02  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (r289474): cacheStoragePath is empty in NetworkStorageManager::localOriginStorageManager
