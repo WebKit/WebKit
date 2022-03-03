@@ -1,3 +1,19 @@
+2022-03-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Style] Forbid spaces between type names and protocol names in Objective-C
+        https://bugs.webkit.org/show_bug.cgi?id=237406
+
+        Reviewed by Darin Adler.
+
+        According to https://lists.webkit.org/pipermail/webkit-dev/2022-February/032130.html.
+
+        Because the style checker uses regexes, we don't know what's a type name and what's
+        a protocol name, so the checker simplifies the problem and just checks for "id <".
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_objc_protocol):
+        (check_style):
+
 2022-03-03  Jonathan Bedard  <jbedard@apple.com>
 
         [Python-3] Invoke webkit-patch with Python 3 by default (Follow-up fix)

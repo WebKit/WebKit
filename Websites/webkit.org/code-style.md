@@ -320,6 +320,20 @@ block = ^ (int, int){
 
 ```
 
+[](#spacing-objc-protocol) In Objective-C, do not place a space between the type name and the protocol name.
+
+###### Right:
+
+```cpp
+id<MTLDevice> device = ...;
+```
+
+###### Wrong:
+
+```cpp
+id <MTLDevice> device = ...;
+```
+
 ### Line breaking
 
 [](#linebreaking-multiple-statements) Each statement should get its own line.

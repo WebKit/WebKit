@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009, 2010, 2012 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2009-2022 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -3399,6 +3399,31 @@ def check_arguments_for_wk_api_available(clean_lines, line_number, error):
         check_version_string(wk_api_available.group(1), "ios")
 
 
+def check_objc_protocol(clean_lines, line_number, file_extension, error):
+    """Looks for spaces between type names and protocol names.
+
+    Because the style checker uses regexes, we don't know what's a type and what's a protocol.
+    So, this check is a simplification and just checks for "id <"
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      file_extension: The extension (without the dot) of the filename.
+      error: The function to call with any errors found.
+    """
+
+    if file_extension != "m" and file_extension != "mm":
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    using_space_with_protocol = search(r'\bid <', line)
+    if not using_space_with_protocol:
+        return
+
+    error(line_number, 'spacing/objc-protocol', 2, "Protocol names shouldn't have a space before them.")
+
+
 def check_style(clean_lines, line_number, file_extension, class_state, file_state, enum_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
 
@@ -3480,6 +3505,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_enum_casing(clean_lines, line_number, enum_state, error)
     check_once_flag(clean_lines, line_number, file_state, error)
     check_arguments_for_wk_api_available(clean_lines, line_number, error)
+    check_objc_protocol(clean_lines, line_number, file_extension, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#(?:include|import) +"[^/]+\.h"')
