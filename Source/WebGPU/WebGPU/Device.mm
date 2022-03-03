@@ -45,9 +45,9 @@
 
 namespace WebGPU {
 
-RefPtr<Device> Device::create(id <MTLDevice> device)
+RefPtr<Device> Device::create(id<MTLDevice> device)
 {
-    id <MTLCommandQueue> commandQueue = [device newCommandQueue];
+    id<MTLCommandQueue> commandQueue = [device newCommandQueue];
     if (!commandQueue)
         return nullptr;
     auto queue = Queue::create(commandQueue);
@@ -55,7 +55,7 @@ RefPtr<Device> Device::create(id <MTLDevice> device)
     return adoptRef(*new Device(device, WTFMove(queue)));
 }
 
-Device::Device(id <MTLDevice> device, Ref<Queue>&& queue)
+Device::Device(id<MTLDevice> device, Ref<Queue>&& queue)
     : m_device(device)
     , m_defaultQueue(WTFMove(queue))
 {

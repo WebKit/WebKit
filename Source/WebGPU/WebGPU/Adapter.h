@@ -38,7 +38,7 @@ class Device;
 class Adapter : public RefCounted<Adapter> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Adapter> create(id <MTLDevice> device)
+    static Ref<Adapter> create(id<MTLDevice> device)
     {
         return adoptRef(*new Adapter(device));
     }
@@ -52,9 +52,9 @@ public:
     void requestDevice(const WGPUDeviceDescriptor*, WTF::Function<void(WGPURequestDeviceStatus, RefPtr<Device>&&, const char*)>&& callback);
 
 private:
-    Adapter(id <MTLDevice>);
+    Adapter(id<MTLDevice>);
 
-    id <MTLDevice> m_device { nil };
+    id<MTLDevice> m_device { nil };
 };
 
 } // namespace WebGPU

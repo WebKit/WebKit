@@ -29,7 +29,7 @@
 
 namespace WebGPU {
 
-TextureView::TextureView(id <MTLTexture> texture)
+TextureView::TextureView(id<MTLTexture> texture)
     : m_texture(texture)
 {
 }

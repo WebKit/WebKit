@@ -36,7 +36,7 @@ RefPtr<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor* descriptor
     return QuerySet::create(nil);
 }
 
-QuerySet::QuerySet(id <MTLCounterSampleBuffer> counterSampleBuffer)
+QuerySet::QuerySet(id<MTLCounterSampleBuffer> counterSampleBuffer)
     : m_counterSampleBuffer(counterSampleBuffer)
 {
 }

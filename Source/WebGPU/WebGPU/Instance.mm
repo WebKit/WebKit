@@ -74,14 +74,14 @@ void Instance::processEvents()
     } while (result);
 }
 
-static NSArray<id <MTLDevice>> *sortedDevices(NSArray<id <MTLDevice>> *devices, WGPUPowerPreference powerPreference)
+static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WGPUPowerPreference powerPreference)
 {
     switch (powerPreference) {
     case WGPUPowerPreference_Undefined:
         return devices;
     case WGPUPowerPreference_LowPower:
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-        return [devices sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult (id <MTLDevice> obj1, id <MTLDevice> obj2)
+        return [devices sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult (id<MTLDevice> obj1, id<MTLDevice> obj2)
         {
             if (obj1.lowPower == obj2.lowPower)
                 return NSOrderedSame;
@@ -94,7 +94,7 @@ static NSArray<id <MTLDevice>> *sortedDevices(NSArray<id <MTLDevice>> *devices, 
 #endif
     case WGPUPowerPreference_HighPerformance:
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-        return [devices sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult (id <MTLDevice> obj1, id <MTLDevice> obj2)
+        return [devices sortedArrayWithOptions:NSSortStable usingComparator:^NSComparisonResult (id<MTLDevice> obj1, id<MTLDevice> obj2)
         {
             if (obj1.lowPower == obj2.lowPower)
                 return NSOrderedSame;
@@ -113,10 +113,10 @@ static NSArray<id <MTLDevice>> *sortedDevices(NSArray<id <MTLDevice>> *devices, 
 void Instance::requestAdapter(const WGPURequestAdapterOptions* options, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback)
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    NSArray<id <MTLDevice>> *devices = MTLCopyAllDevices();
+    NSArray<id<MTLDevice>> *devices = MTLCopyAllDevices();
 #else
-    NSMutableArray<id <MTLDevice>> *devices = [NSMutableArray array];
-    if (id <MTLDevice> device = MTLCreateSystemDefaultDevice())
+    NSMutableArray<id<MTLDevice>> *devices = [NSMutableArray array];
+    if (id<MTLDevice> device = MTLCreateSystemDefaultDevice())
         [devices addObject:device];
 #endif
 

@@ -58,9 +58,9 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descrip
 
     // FIXME: Don't allocate 3 new buffers for every bind group.
     // In fact, don't even allocate a single new buffer for every bind group.
-    id <MTLBuffer> vertexArgumentBuffer = [m_device newBufferWithLength:bindGroupLayout.encodedLength() options:MTLResourceStorageModeShared];
-    id <MTLBuffer> fragmentArgumentBuffer = [m_device newBufferWithLength:bindGroupLayout.encodedLength() options:MTLResourceStorageModeShared];
-    id <MTLBuffer> computeArgumentBuffer = [m_device newBufferWithLength:bindGroupLayout.encodedLength() options:MTLResourceStorageModeShared];
+    id<MTLBuffer> vertexArgumentBuffer = [m_device newBufferWithLength:bindGroupLayout.encodedLength() options:MTLResourceStorageModeShared];
+    id<MTLBuffer> fragmentArgumentBuffer = [m_device newBufferWithLength:bindGroupLayout.encodedLength() options:MTLResourceStorageModeShared];
+    id<MTLBuffer> computeArgumentBuffer = [m_device newBufferWithLength:bindGroupLayout.encodedLength() options:MTLResourceStorageModeShared];
     if (!vertexArgumentBuffer || !fragmentArgumentBuffer || !computeArgumentBuffer)
         return nullptr;
 
@@ -69,9 +69,9 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descrip
     fragmentArgumentBuffer.label = label;
     computeArgumentBuffer.label = label;
 
-    id <MTLArgumentEncoder> vertexArgumentEncoder = bindGroupLayout.vertexArgumentEncoder();
-    id <MTLArgumentEncoder> fragmentArgumentEncoder = bindGroupLayout.fragmentArgumentEncoder();
-    id <MTLArgumentEncoder> computeArgumentEncoder = bindGroupLayout.computeArgumentEncoder();
+    id<MTLArgumentEncoder> vertexArgumentEncoder = bindGroupLayout.vertexArgumentEncoder();
+    id<MTLArgumentEncoder> fragmentArgumentEncoder = bindGroupLayout.fragmentArgumentEncoder();
+    id<MTLArgumentEncoder> computeArgumentEncoder = bindGroupLayout.computeArgumentEncoder();
     [vertexArgumentEncoder setArgumentBuffer:vertexArgumentBuffer offset:0];
     [fragmentArgumentEncoder setArgumentBuffer:fragmentArgumentBuffer offset:0];
     [computeArgumentEncoder setArgumentBuffer:computeArgumentBuffer offset:0];
@@ -89,18 +89,18 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descrip
             return nullptr;
 
         if (bufferIsPresent) {
-            id <MTLBuffer> buffer = entry.buffer->buffer->buffer();
+            id<MTLBuffer> buffer = entry.buffer->buffer->buffer();
             // FIXME: Use checked casts.
             [vertexArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
             [fragmentArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
             [computeArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
         } else if (samplerIsPresent) {
-            id <MTLSamplerState> sampler = entry.sampler->sampler->samplerState();
+            id<MTLSamplerState> sampler = entry.sampler->sampler->samplerState();
             [vertexArgumentEncoder setSamplerState:sampler atIndex:entry.binding];
             [fragmentArgumentEncoder setSamplerState:sampler atIndex:entry.binding];
             [computeArgumentEncoder setSamplerState:sampler atIndex:entry.binding];
         } else if (textureViewIsPresent) {
-            id <MTLTexture> texture = entry.textureView->textureView->texture();
+            id<MTLTexture> texture = entry.textureView->textureView->texture();
             [vertexArgumentEncoder setTexture:texture atIndex:entry.binding];
             [fragmentArgumentEncoder setTexture:texture atIndex:entry.binding];
             [computeArgumentEncoder setTexture:texture atIndex:entry.binding];
@@ -113,7 +113,7 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descrip
     return BindGroup::create(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer);
 }
 
-BindGroup::BindGroup(id <MTLBuffer> vertexArgumentBuffer, id <MTLBuffer> fragmentArgumentBuffer, id <MTLBuffer> computeArgumentBuffer)
+BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer)
     : m_vertexArgumentBuffer(vertexArgumentBuffer)
     , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
     , m_computeArgumentBuffer(computeArgumentBuffer)

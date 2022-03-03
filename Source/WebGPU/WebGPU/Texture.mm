@@ -37,7 +37,7 @@ RefPtr<Texture> Device::createTexture(const WGPUTextureDescriptor* descriptor)
     return Texture::create(nil);
 }
 
-Texture::Texture(id <MTLTexture> texture)
+Texture::Texture(id<MTLTexture> texture)
     : m_texture(texture)
 {
 }

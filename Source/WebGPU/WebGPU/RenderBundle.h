@@ -34,7 +34,7 @@ namespace WebGPU {
 class RenderBundle : public RefCounted<RenderBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundle> create(id <MTLIndirectCommandBuffer> indirectCommandBuffer)
+    static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer)
     {
         return adoptRef(*new RenderBundle(indirectCommandBuffer));
     }
@@ -43,12 +43,12 @@ public:
 
     void setLabel(const char*);
 
-    id <MTLIndirectCommandBuffer> indirectCommandBuffer() const { return m_indirectCommandBuffer; }
+    id<MTLIndirectCommandBuffer> indirectCommandBuffer() const { return m_indirectCommandBuffer; }
 
 private:
-    RenderBundle(id <MTLIndirectCommandBuffer>);
+    RenderBundle(id<MTLIndirectCommandBuffer>);
 
-    id <MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
+    id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 };
 
 } // namespace WebGPU

@@ -31,7 +31,7 @@
 
 namespace WebGPU {
 
-Adapter::Adapter(id <MTLDevice> device)
+Adapter::Adapter(id<MTLDevice> device)
     : m_device(device)
 {
 }
@@ -71,7 +71,7 @@ bool Adapter::hasFeature(WGPUFeatureName)
     return false;
 }
 
-static bool deviceMeetsRequiredLimits(id <MTLDevice>, const WGPURequiredLimits& requiredLimits)
+static bool deviceMeetsRequiredLimits(id<MTLDevice>, const WGPURequiredLimits& requiredLimits)
 {
     // FIXME: Implement this.
     return !requiredLimits.nextInChain

@@ -1,3 +1,116 @@
+2022-03-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Abide by the WebKit Style Guide
+        https://bugs.webkit.org/show_bug.cgi?id=237437
+
+        Reviewed by Darin Adler.
+
+        The style guide says "Do not place a space between the type name and the protocol name."
+
+        * WebGPU/Adapter.h:
+        (WebGPU::Adapter::create):
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::Adapter):
+        (WebGPU::deviceMeetsRequiredLimits):
+        * WebGPU/BindGroup.h:
+        (WebGPU::BindGroup::create):
+        (WebGPU::BindGroup::vertexArgumentBuffer const):
+        (WebGPU::BindGroup::fragmentArgumentBuffer const):
+        (WebGPU::BindGroup::computeArgumentBuffer const):
+        * WebGPU/BindGroup.mm:
+        (WebGPU::Device::createBindGroup):
+        (WebGPU::BindGroup::BindGroup):
+        * WebGPU/BindGroupLayout.h:
+        (WebGPU::BindGroupLayout::create):
+        (WebGPU::BindGroupLayout::vertexArgumentEncoder const):
+        (WebGPU::BindGroupLayout::fragmentArgumentEncoder const):
+        (WebGPU::BindGroupLayout::computeArgumentEncoder const):
+        * WebGPU/BindGroupLayout.mm:
+        (WebGPU::Device::createBindGroupLayout):
+        (WebGPU::BindGroupLayout::BindGroupLayout):
+        * WebGPU/Buffer.h:
+        (WebGPU::Buffer::create):
+        (WebGPU::Buffer::buffer const):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Buffer::Buffer):
+        * WebGPU/CommandBuffer.h:
+        (WebGPU::CommandBuffer::create):
+        (WebGPU::CommandBuffer::commandBuffer const):
+        * WebGPU/CommandBuffer.mm:
+        (WebGPU::CommandBuffer::CommandBuffer):
+        * WebGPU/CommandEncoder.h:
+        (WebGPU::CommandEncoder::create):
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::CommandEncoder):
+        * WebGPU/ComputePassEncoder.h:
+        (WebGPU::ComputePassEncoder::create):
+        * WebGPU/ComputePassEncoder.mm:
+        (WebGPU::ComputePassEncoder::ComputePassEncoder):
+        * WebGPU/ComputePipeline.h:
+        (WebGPU::ComputePipeline::create):
+        (WebGPU::ComputePipeline::computePipelineState const):
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::createLibrary):
+        (WebGPU::createFunction):
+        (WebGPU::createComputePipelineState):
+        (WebGPU::ComputePipeline::ComputePipeline):
+        * WebGPU/Device.h:
+        * WebGPU/Device.mm:
+        (WebGPU::Device::create):
+        (WebGPU::Device::Device):
+        * WebGPU/Instance.mm:
+        (WebGPU::sortedDevices):
+        (WebGPU::Instance::requestAdapter):
+        * WebGPU/QuerySet.h:
+        (WebGPU::QuerySet::create):
+        (WebGPU::QuerySet::counterSampleBuffer const):
+        * WebGPU/QuerySet.mm:
+        (WebGPU::QuerySet::QuerySet):
+        * WebGPU/Queue.h:
+        (WebGPU::Queue::create):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::Queue):
+        * WebGPU/RenderBundle.h:
+        (WebGPU::RenderBundle::create):
+        (WebGPU::RenderBundle::indirectCommandBuffer const):
+        * WebGPU/RenderBundle.mm:
+        (WebGPU::RenderBundle::RenderBundle):
+        * WebGPU/RenderBundleEncoder.h:
+        (WebGPU::RenderBundleEncoder::create):
+        * WebGPU/RenderBundleEncoder.mm:
+        (WebGPU::RenderBundleEncoder::RenderBundleEncoder):
+        * WebGPU/RenderPassEncoder.h:
+        (WebGPU::RenderPassEncoder::create):
+        * WebGPU/RenderPassEncoder.mm:
+        (WebGPU::RenderPassEncoder::RenderPassEncoder):
+        * WebGPU/RenderPipeline.h:
+        (WebGPU::RenderPipeline::create):
+        (WebGPU::RenderPipeline::renderPipelineState const):
+        * WebGPU/RenderPipeline.mm:
+        (WebGPU::RenderPipeline::RenderPipeline):
+        * WebGPU/Sampler.h:
+        (WebGPU::Sampler::create):
+        (WebGPU::Sampler::samplerState const):
+        * WebGPU/Sampler.mm:
+        (WebGPU::Sampler::Sampler):
+        * WebGPU/ShaderModule.h:
+        (WebGPU::ShaderModule::create):
+        (WebGPU::ShaderModule::library const):
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::ShaderModule::createLibrary):
+        (WebGPU::earlyCompileShaderModule):
+        (WebGPU::ShaderModule::ShaderModule):
+        * WebGPU/Texture.h:
+        (WebGPU::Texture::create):
+        (WebGPU::Texture::texture const):
+        * WebGPU/Texture.mm:
+        (WebGPU::Texture::Texture):
+        * WebGPU/TextureView.h:
+        (WebGPU::TextureView::create):
+        (WebGPU::TextureView::texture const):
+        * WebGPU/TextureView.mm:
+        (WebGPU::TextureView::TextureView):
+
 2022-02-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Fix watchOS build

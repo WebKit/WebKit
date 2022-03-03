@@ -40,7 +40,7 @@ class RenderPipeline;
 class RenderBundleEncoder : public RefCounted<RenderBundleEncoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundleEncoder> create(id <MTLIndirectCommandBuffer> indirectCommandBuffer)
+    static Ref<RenderBundleEncoder> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer)
     {
         return adoptRef(*new RenderBundleEncoder(indirectCommandBuffer));
     }
@@ -62,9 +62,9 @@ public:
     void setLabel(const char*);
 
 private:
-    RenderBundleEncoder(id <MTLIndirectCommandBuffer>);
+    RenderBundleEncoder(id<MTLIndirectCommandBuffer>);
 
-    id <MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
+    id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 };
 
 } // namespace WebGPU

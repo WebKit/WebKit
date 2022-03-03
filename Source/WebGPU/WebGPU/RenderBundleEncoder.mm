@@ -40,7 +40,7 @@ RefPtr<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBu
     return RenderBundleEncoder::create(nil);
 }
 
-RenderBundleEncoder::RenderBundleEncoder(id <MTLIndirectCommandBuffer> indirectCommandBuffer)
+RenderBundleEncoder::RenderBundleEncoder(id<MTLIndirectCommandBuffer> indirectCommandBuffer)
     : m_indirectCommandBuffer(indirectCommandBuffer)
 {
 }

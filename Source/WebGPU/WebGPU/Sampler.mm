@@ -36,7 +36,7 @@ RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor* descriptor)
     return Sampler::create(nil);
 }
 
-Sampler::Sampler(id <MTLSamplerState> samplerState)
+Sampler::Sampler(id<MTLSamplerState> samplerState)
     : m_samplerState(samplerState)
 {
 }

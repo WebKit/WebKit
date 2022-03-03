@@ -34,7 +34,7 @@
 
 namespace WebGPU {
 
-RenderPassEncoder::RenderPassEncoder(id <MTLRenderCommandEncoder> renderCommandEncoder)
+RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder)
     : m_renderCommandEncoder(renderCommandEncoder)
 {
 }

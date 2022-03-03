@@ -41,7 +41,7 @@ class RenderPassEncoder;
 class CommandEncoder : public RefCounted<CommandEncoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CommandEncoder> create(id <MTLCommandBuffer> commandBuffer)
+    static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer)
     {
         return adoptRef(*new CommandEncoder(commandBuffer));
     }
@@ -64,9 +64,9 @@ public:
     void setLabel(const char*);
 
 private:
-    CommandEncoder(id <MTLCommandBuffer>);
+    CommandEncoder(id<MTLCommandBuffer>);
 
-    id <MTLCommandBuffer> m_commandBuffer { nil };
+    id<MTLCommandBuffer> m_commandBuffer { nil };
 };
 
 } // namespace WebGPU

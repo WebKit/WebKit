@@ -199,9 +199,9 @@ RefPtr<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutD
         [computeArguments addObject:computeDescriptor];
     }
 
-    id <MTLArgumentEncoder> vertexArgumentEncoder = [m_device newArgumentEncoderWithArguments:vertexArguments];
-    id <MTLArgumentEncoder> fragmentArgumentEncoder = [m_device newArgumentEncoderWithArguments:fragmentArguments];
-    id <MTLArgumentEncoder> computeArgumentEncoder = [m_device newArgumentEncoderWithArguments:computeArguments];
+    id<MTLArgumentEncoder> vertexArgumentEncoder = [m_device newArgumentEncoderWithArguments:vertexArguments];
+    id<MTLArgumentEncoder> fragmentArgumentEncoder = [m_device newArgumentEncoderWithArguments:fragmentArguments];
+    id<MTLArgumentEncoder> computeArgumentEncoder = [m_device newArgumentEncoderWithArguments:computeArguments];
     if (!vertexArgumentEncoder || !fragmentArgumentEncoder || !computeArgumentEncoder)
         return nullptr;
 
@@ -213,7 +213,7 @@ RefPtr<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutD
     return BindGroupLayout::create(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder);
 }
 
-BindGroupLayout::BindGroupLayout(id <MTLArgumentEncoder> vertexArgumentEncoder, id <MTLArgumentEncoder> fragmentArgumentEncoder, id <MTLArgumentEncoder> computeArgumentEncoder)
+BindGroupLayout::BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder)
     : m_vertexArgumentEncoder(vertexArgumentEncoder)
     , m_fragmentArgumentEncoder(fragmentArgumentEncoder)
     , m_computeArgumentEncoder(computeArgumentEncoder)

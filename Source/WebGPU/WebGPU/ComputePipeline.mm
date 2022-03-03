@@ -35,11 +35,11 @@
 namespace WebGPU {
 
 struct LibraryCreationResult {
-    id <MTLLibrary> library;
+    id<MTLLibrary> library;
     WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME: This is big. Don't copy this around.
 };
 
-static std::optional<LibraryCreationResult> createLibrary(id <MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout& pipelineLayout, const String& entryPoint, NSString *label)
+static std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout& pipelineLayout, const String& entryPoint, NSString *label)
 {
     if (shaderModule.library()) {
         if (const auto* pipelineLayoutHint = shaderModule.pipelineLayoutHint(entryPoint)) {
@@ -107,7 +107,7 @@ static MTLFunctionConstantValues *createConstantValues(uint32_t constantCount, c
     return constantValues;
 }
 
-static id <MTLFunction> createFunction(id <MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, const WGPUProgrammableStageDescriptor& compute, NSString *label)
+static id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::EntryPointInformation& entryPointInformation, const WGPUProgrammableStageDescriptor& compute, NSString *label)
 {
     auto functionDescriptor = [MTLFunctionDescriptor new];
     functionDescriptor.name = entryPointInformation.mangledName;
@@ -118,14 +118,14 @@ static id <MTLFunction> createFunction(id <MTLLibrary> library, const WGSL::Refl
         functionDescriptor.constantValues = constantValues;
     }
     NSError *error = nil;
-    id <MTLFunction> function = [library newFunctionWithDescriptor:functionDescriptor error:&error];
+    id<MTLFunction> function = [library newFunctionWithDescriptor:functionDescriptor error:&error];
     if (error)
         WTFLogAlways("Function creation error: %@", error);
     function.label = label;
     return function;
 }
 
-static id <MTLComputePipelineState> createComputePipelineState(id <MTLDevice> device, id <MTLFunction> function, const PipelineLayout& pipelineLayout, const WGSL::Reflection::Compute& computeInformation, NSString *label)
+static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const WGSL::Reflection::Compute& computeInformation, NSString *label)
 {
     auto computePipelineDescriptor = [MTLComputePipelineDescriptor new];
     computePipelineDescriptor.computeFunction = function;
@@ -137,7 +137,7 @@ static id <MTLComputePipelineState> createComputePipelineState(id <MTLDevice> de
     computePipelineDescriptor.label = label;
     NSError *error = nil;
     // FIXME: Run the asynchronous version of this
-    id <MTLComputePipelineState> computePipelineState = [device newComputePipelineStateWithDescriptor:computePipelineDescriptor options:MTLPipelineOptionNone reflection:nil error:&error];
+    id<MTLComputePipelineState> computePipelineState = [device newComputePipelineStateWithDescriptor:computePipelineDescriptor options:MTLPipelineOptionNone reflection:nil error:&error];
     if (error)
         WTFLogAlways("Pipeline state creation error: %@", error);
     return computePipelineState;
@@ -177,7 +177,7 @@ void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor* des
     UNUSED_PARAM(callback);
 }
 
-ComputePipeline::ComputePipeline(id <MTLComputePipelineState> computePipelineState)
+ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState)
     : m_computePipelineState(computePipelineState)
 {
 }

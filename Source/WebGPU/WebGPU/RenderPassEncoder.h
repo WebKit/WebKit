@@ -42,7 +42,7 @@ class RenderPipeline;
 class RenderPassEncoder : public RefCounted<RenderPassEncoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPassEncoder> create(id <MTLRenderCommandEncoder> renderCommandEncoder)
+    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder)
     {
         return adoptRef(*new RenderPassEncoder(renderCommandEncoder));
     }
@@ -73,9 +73,9 @@ public:
     void setLabel(const char*);
 
 private:
-    RenderPassEncoder(id <MTLRenderCommandEncoder>);
+    RenderPassEncoder(id<MTLRenderCommandEncoder>);
 
-    id <MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
+    id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 };
 
 } // namespace WebGPU

@@ -39,7 +39,7 @@ class CommandBuffer;
 class Queue : public RefCounted<Queue> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Queue> create(id <MTLCommandQueue> commandQueue)
+    static Ref<Queue> create(id<MTLCommandQueue> commandQueue)
     {
         return adoptRef(*new Queue(commandQueue));
     }
@@ -53,9 +53,9 @@ public:
     void setLabel(const char*);
 
 private:
-    Queue(id <MTLCommandQueue>);
+    Queue(id<MTLCommandQueue>);
 
-    id <MTLCommandQueue> m_commandQueue { nil };
+    id<MTLCommandQueue> m_commandQueue { nil };
 };
 
 } // namespace WebGPU

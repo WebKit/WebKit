@@ -34,7 +34,7 @@ namespace WebGPU {
 class QuerySet : public RefCounted<QuerySet> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<QuerySet> create(id <MTLCounterSampleBuffer> counterSampleBuffer)
+    static Ref<QuerySet> create(id<MTLCounterSampleBuffer> counterSampleBuffer)
     {
         return adoptRef(*new QuerySet(counterSampleBuffer));
     }
@@ -44,12 +44,12 @@ public:
     void destroy();
     void setLabel(const char*);
 
-    id <MTLCounterSampleBuffer> counterSampleBuffer() const { return m_counterSampleBuffer; }
+    id<MTLCounterSampleBuffer> counterSampleBuffer() const { return m_counterSampleBuffer; }
 
 private:
-    QuerySet(id <MTLCounterSampleBuffer>);
+    QuerySet(id<MTLCounterSampleBuffer>);
 
-    id <MTLCounterSampleBuffer> m_counterSampleBuffer { nil };
+    id<MTLCounterSampleBuffer> m_counterSampleBuffer { nil };
 };
 
 } // namespace WebGPU

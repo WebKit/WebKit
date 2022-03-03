@@ -34,7 +34,7 @@ namespace WebGPU {
 class Sampler : public RefCounted<Sampler> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Sampler> create(id <MTLSamplerState> samplerState)
+    static Ref<Sampler> create(id<MTLSamplerState> samplerState)
     {
         return adoptRef(*new Sampler(samplerState));
     }
@@ -43,12 +43,12 @@ public:
 
     void setLabel(const char*);
 
-    id <MTLSamplerState> samplerState() const { return m_samplerState; }
+    id<MTLSamplerState> samplerState() const { return m_samplerState; }
 
 private:
-    Sampler(id <MTLSamplerState>);
+    Sampler(id<MTLSamplerState>);
 
-    id <MTLSamplerState> m_samplerState { nil };
+    id<MTLSamplerState> m_samplerState { nil };
 };
 
 } // namespace WebGPU

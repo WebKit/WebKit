@@ -34,7 +34,7 @@ namespace WebGPU {
 class BindGroupLayout : public RefCounted<BindGroupLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroupLayout> create(id <MTLArgumentEncoder> vertexArgumentEncoder, id <MTLArgumentEncoder> fragmentArgumentEncoder, id <MTLArgumentEncoder> computeArgumentEncoder)
+    static Ref<BindGroupLayout> create(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder)
     {
         return adoptRef(*new BindGroupLayout(vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder));
     }
@@ -45,16 +45,16 @@ public:
 
     NSUInteger encodedLength() const;
 
-    id <MTLArgumentEncoder> vertexArgumentEncoder() const { return m_vertexArgumentEncoder; }
-    id <MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
-    id <MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
+    id<MTLArgumentEncoder> vertexArgumentEncoder() const { return m_vertexArgumentEncoder; }
+    id<MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
+    id<MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
 
 private:
-    BindGroupLayout(id <MTLArgumentEncoder> vertexArgumentEncoder, id <MTLArgumentEncoder> fragmentArgumentEncoder, id <MTLArgumentEncoder> computeArgumentEncoder);
+    BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder);
 
-    id <MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
-    id <MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
-    id <MTLArgumentEncoder> m_computeArgumentEncoder { nil };
+    id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
+    id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
+    id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
 };
 
 } // namespace WebGPU

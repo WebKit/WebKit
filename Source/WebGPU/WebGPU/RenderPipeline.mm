@@ -43,7 +43,7 @@ void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor* descr
     UNUSED_PARAM(callback);
 }
 
-RenderPipeline::RenderPipeline(id <MTLRenderPipelineState> renderPipelineState)
+RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState)
     : m_renderPipelineState(renderPipelineState)
 {
 }

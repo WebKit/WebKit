@@ -31,7 +31,7 @@
 
 namespace WebGPU {
 
-Queue::Queue(id <MTLCommandQueue> commandQueue)
+Queue::Queue(id<MTLCommandQueue> commandQueue)
     : m_commandQueue(commandQueue)
 {
 }

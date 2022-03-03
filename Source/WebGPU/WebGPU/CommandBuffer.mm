@@ -29,7 +29,7 @@
 
 namespace WebGPU {
 
-CommandBuffer::CommandBuffer(id <MTLCommandBuffer> commandBuffer)
+CommandBuffer::CommandBuffer(id<MTLCommandBuffer> commandBuffer)
     : m_commandBuffer(commandBuffer)
 {
 }

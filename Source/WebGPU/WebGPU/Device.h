@@ -52,7 +52,7 @@ class Queue;
 class Device : public RefCounted<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<Device> create(id <MTLDevice>);
+    static RefPtr<Device> create(id<MTLDevice>);
 
     ~Device();
 
@@ -83,9 +83,9 @@ public:
     void setLabel(const char*);
 
 private:
-    Device(id <MTLDevice>, Ref<Queue>&&);
+    Device(id<MTLDevice>, Ref<Queue>&&);
 
-    id <MTLDevice> m_device { nil };
+    id<MTLDevice> m_device { nil };
     Ref<Queue> m_defaultQueue;
 };
 

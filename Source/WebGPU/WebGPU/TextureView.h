@@ -34,7 +34,7 @@ namespace WebGPU {
 class TextureView : public RefCounted<TextureView> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<TextureView> create(id <MTLTexture> texture)
+    static Ref<TextureView> create(id<MTLTexture> texture)
     {
         return adoptRef(*new TextureView(texture));
     }
@@ -43,12 +43,12 @@ public:
 
     void setLabel(const char*);
 
-    id <MTLTexture> texture() const { return m_texture; }
+    id<MTLTexture> texture() const { return m_texture; }
 
 private:
-    TextureView(id <MTLTexture>);
+    TextureView(id<MTLTexture>);
 
-    id <MTLTexture> m_texture { nil };
+    id<MTLTexture> m_texture { nil };
 };
 
 } // namespace WebGPU

@@ -29,7 +29,7 @@
 
 namespace WebGPU {
 
-RenderBundle::RenderBundle(id <MTLIndirectCommandBuffer> indirectCommandBuffer)
+RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer)
     : m_indirectCommandBuffer(indirectCommandBuffer)
 {
 }

@@ -35,7 +35,7 @@ namespace WebGPU {
 class Buffer : public RefCounted<Buffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Buffer> create(id <MTLBuffer> buffer)
+    static Ref<Buffer> create(id<MTLBuffer> buffer)
     {
         return adoptRef(*new Buffer(buffer));
     }
@@ -49,12 +49,12 @@ public:
     void unmap();
     void setLabel(const char*);
 
-    id <MTLBuffer> buffer() const { return m_buffer; }
+    id<MTLBuffer> buffer() const { return m_buffer; }
 
 private:
-    Buffer(id <MTLBuffer>);
+    Buffer(id<MTLBuffer>);
 
-    id <MTLBuffer> m_buffer { nil };
+    id<MTLBuffer> m_buffer { nil };
 };
 
 } // namespace WebGPU

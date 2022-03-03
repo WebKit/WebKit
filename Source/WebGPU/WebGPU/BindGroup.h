@@ -34,7 +34,7 @@ namespace WebGPU {
 class BindGroup : public RefCounted<BindGroup> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroup> create(id <MTLBuffer> vertexArgumentBuffer, id <MTLBuffer> fragmentArgumentBuffer, id <MTLBuffer> computeArgumentBuffer)
+    static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer)
     {
         return adoptRef(*new BindGroup(vertexArgumentBuffer, fragmentArgumentBuffer, computeArgumentBuffer));
     }
@@ -43,16 +43,16 @@ public:
 
     void setLabel(const char*);
 
-    id <MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer; }
-    id <MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
-    id <MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
+    id<MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer; }
+    id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }
+    id<MTLBuffer> computeArgumentBuffer() const { return m_computeArgumentBuffer; }
 
 private:
-    BindGroup(id <MTLBuffer> vertexArgumentBuffer, id <MTLBuffer> fragmentArgumentBuffer, id <MTLBuffer> computeArgumentBuffer);
+    BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer);
 
-    id <MTLBuffer> m_vertexArgumentBuffer { nil };
-    id <MTLBuffer> m_fragmentArgumentBuffer { nil };
-    id <MTLBuffer> m_computeArgumentBuffer { nil };
+    id<MTLBuffer> m_vertexArgumentBuffer { nil };
+    id<MTLBuffer> m_fragmentArgumentBuffer { nil };
+    id<MTLBuffer> m_computeArgumentBuffer { nil };
 };
 
 } // namespace WebGPU

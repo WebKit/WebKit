@@ -66,20 +66,20 @@ static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WG
     return { { *wgsl, hints } };
 }
 
-id <MTLLibrary> ShaderModule::createLibrary(id <MTLDevice> device, const String& msl, NSString *label)
+id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, NSString *label)
 {
     auto options = [MTLCompileOptions new];
     options.fastMathEnabled = YES;
     NSError *error = nil;
     // FIXME: Run the asynchronous version of this
-    id <MTLLibrary> library = [device newLibraryWithSource:msl options:options error:&error];
+    id<MTLLibrary> library = [device newLibraryWithSource:msl options:options error:&error];
     if (error)
         WTFLogAlways("MSL compilation error: %@", error);
     library.label = label;
     return library;
 }
 
-static RefPtr<ShaderModule> earlyCompileShaderModule(id <MTLDevice> device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptorHints& suppliedHints, NSString *label)
+static RefPtr<ShaderModule> earlyCompileShaderModule(id<MTLDevice> device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptorHints& suppliedHints, NSString *label)
 {
     HashMap<String, Ref<PipelineLayout>> hints;
     HashMap<String, WGSL::PipelineLayout> wgslHints;
@@ -117,7 +117,7 @@ RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor
     return ShaderModule::create(WTFMove(checkResult), { }, { }, nil);
 }
 
-ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id <MTLLibrary> library)
+ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library)
     : m_checkResult(WTFMove(checkResult))
     , m_pipelineLayoutHints(WTFMove(pipelineLayoutHints))
     , m_entryPointInformation(WTFMove(entryPointInformation))

@@ -33,7 +33,7 @@
 
 namespace WebGPU {
 
-ComputePassEncoder::ComputePassEncoder(id <MTLComputeCommandEncoder> computeCommandEncoder)
+ComputePassEncoder::ComputePassEncoder(id<MTLComputeCommandEncoder> computeCommandEncoder)
     : m_computeCommandEncoder(computeCommandEncoder)
 {
 }

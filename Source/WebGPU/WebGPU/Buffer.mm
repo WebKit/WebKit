@@ -36,7 +36,7 @@ RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor* descriptor)
     return Buffer::create(nil);
 }
 
-Buffer::Buffer(id <MTLBuffer> buffer)
+Buffer::Buffer(id<MTLBuffer> buffer)
     : m_buffer(buffer)
 {
 }

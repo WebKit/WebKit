@@ -39,7 +39,7 @@ class QuerySet;
 class ComputePassEncoder : public RefCounted<ComputePassEncoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ComputePassEncoder> create(id <MTLComputeCommandEncoder> computeCommandEncoder)
+    static Ref<ComputePassEncoder> create(id<MTLComputeCommandEncoder> computeCommandEncoder)
     {
         return adoptRef(*new ComputePassEncoder(computeCommandEncoder));
     }
@@ -59,9 +59,9 @@ public:
     void setLabel(const char*);
 
 private:
-    ComputePassEncoder(id <MTLComputeCommandEncoder>);
+    ComputePassEncoder(id<MTLComputeCommandEncoder>);
 
-    id <MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
+    id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
 };
 
 } // namespace WebGPU

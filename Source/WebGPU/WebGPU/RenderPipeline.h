@@ -36,7 +36,7 @@ class BindGroupLayout;
 class RenderPipeline : public RefCounted<RenderPipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPipeline> create(id <MTLRenderPipelineState> renderPipelineState)
+    static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState)
     {
         return adoptRef(*new RenderPipeline(renderPipelineState));
     }
@@ -46,12 +46,12 @@ public:
     Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
     void setLabel(const char*);
 
-    id <MTLRenderPipelineState> renderPipelineState() const { return m_renderPipelineState; }
+    id<MTLRenderPipelineState> renderPipelineState() const { return m_renderPipelineState; }
 
 private:
-    RenderPipeline(id <MTLRenderPipelineState>);
+    RenderPipeline(id<MTLRenderPipelineState>);
 
-    id <MTLRenderPipelineState> m_renderPipelineState { nil };
+    id<MTLRenderPipelineState> m_renderPipelineState { nil };
 };
 
 } // namespace WebGPU

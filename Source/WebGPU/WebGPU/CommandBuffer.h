@@ -34,7 +34,7 @@ namespace WebGPU {
 class CommandBuffer : public RefCounted<CommandBuffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CommandBuffer> create(id <MTLCommandBuffer> commandBuffer)
+    static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer)
     {
         return adoptRef(*new CommandBuffer(commandBuffer));
     }
@@ -43,12 +43,12 @@ public:
 
     void setLabel(const char*);
 
-    id <MTLCommandBuffer> commandBuffer() const { return m_commandBuffer; }
+    id<MTLCommandBuffer> commandBuffer() const { return m_commandBuffer; }
 
 private:
-    CommandBuffer(id <MTLCommandBuffer>);
+    CommandBuffer(id<MTLCommandBuffer>);
 
-    id <MTLCommandBuffer> m_commandBuffer { nil };
+    id<MTLCommandBuffer> m_commandBuffer { nil };
 };
 
 } // namespace WebGPU

@@ -41,7 +41,7 @@ RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDesc
     return CommandEncoder::create(nil);
 }
 
-CommandEncoder::CommandEncoder(id <MTLCommandBuffer> commandBuffer)
+CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer)
     : m_commandBuffer(commandBuffer)
 {
 }
