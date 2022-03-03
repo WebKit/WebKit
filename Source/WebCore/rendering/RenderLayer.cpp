@@ -3035,7 +3035,7 @@ static inline bool shouldDoSoftwarePaint(const RenderLayer* layer, bool painting
 {
     return paintingReflection && !layer->has3DTransform();
 }
-    
+
 static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
 {
     if (layer->renderer().style().isNotFinal() && !layer->isRenderViewLayer() && !layer->renderer().isDocumentElementRenderer())

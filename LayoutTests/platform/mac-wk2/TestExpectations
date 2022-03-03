@@ -43,6 +43,7 @@ fast/media/mq-prefers-contrast-live-update.html [ Pass ]
 fast/media/mq-prefers-contrast.html [ Pass ]
 
 fast/repaint/background-attachment-local-scroll.html [ Pass ]
+fast/repaint/background-attachment-fixed-in-composited-scroll.html [ Pass ]
 fast/scrolling/unfocusing-page-while-keyboard-scrolling.html [ Pass ]
 
 http/tests/ssl/applepay [ Pass ]

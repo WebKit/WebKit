@@ -1689,15 +1689,6 @@ bool RenderStyle::hasEntirelyFixedBackground() const
     return allLayersAreFixed(backgroundLayers());
 }
 
-bool RenderStyle::hasAnyLocalBackground() const
-{
-    for (auto* layer = &backgroundLayers(); layer; layer = layer->next()) {
-        if (layer->image() && layer->attachment() == FillAttachment::LocalBackground)
-            return true;
-    }
-    return false;
-}
-
 const CounterDirectiveMap* RenderStyle::counterDirectives() const
 {
     return m_rareNonInheritedData->counterDirectives.get();

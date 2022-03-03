@@ -1,3 +1,18 @@
+2022-03-03  Simon Fraser  <simon.fraser@apple.com>
+
+        nasa.gov page with fixed backgrounds paints incorrectly on scroll
+        https://bugs.webkit.org/show_bug.cgi?id=237405
+        <rdar://66568551>
+
+        Reviewed by Antti Koivisto.
+
+        Repaint test which is only valid for mac-wk2 (iOS does not support background-attachment:fixed).
+
+        * TestExpectations:
+        * fast/repaint/background-attachment-fixed-in-composited-scroll-expected.txt: Added.
+        * fast/repaint/background-attachment-fixed-in-composited-scroll.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2022-03-03  Jon Lee  <jonlee@apple.com>
 
         Unreviewed test gardening.

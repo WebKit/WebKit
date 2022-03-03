@@ -1,3 +1,43 @@
+2022-03-03  Simon Fraser  <simon.fraser@apple.com>
+
+        nasa.gov page with fixed backgrounds paints incorrectly on scroll
+        https://bugs.webkit.org/show_bug.cgi?id=237405
+        <rdar://66568551>
+
+        Reviewed by Antti Koivisto.
+        
+        https://www.nasa.gov/specials/artemis/ shows an issue where elements with background-attachment:fixed
+        don't repaint on scroll. This page has scrollable <html> and <body>, and the elements with fixed
+        backgrounds are composited, so this reveals that we fail to repaint composited children
+        of an overflow scroll in this case.
+
+        Fix by having RenderLayerScrollableArea::scrollTo() do repaints on slow repaint objects
+        which are scrolled by the current scroller.
+        
+        Do some unrelated cleanup in code that I was going to use in this patch but turned out
+        not to need: rename hasFixedBackgroundImage() to hasAnyFixedBackground() for clarity,
+        and share the implementation with hasAnyLocalBackground().
+
+        Test: fast/repaint/background-attachment-fixed-in-composited-scroll.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::willBeDestroyed):
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::scrollTo):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::hasImageWithAttachment const):
+        (WebCore::FillLayer::hasFixedImage const): Deleted.
+        * rendering/style/FillLayer.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::hasAnyLocalBackground const): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasBackgroundImage const):
+        (WebCore::RenderStyle::hasAnyFixedBackground const):
+        (WebCore::RenderStyle::hasAnyLocalBackground const):
+        (WebCore::RenderStyle::hasFixedBackgroundImage const): Deleted.
+
 2022-03-03  Alan Bujtas  <zalan@apple.com>
 
         A text node longer than 65,535 characters following another text node is invisible in a scrolling context

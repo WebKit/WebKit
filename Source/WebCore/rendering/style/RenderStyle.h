@@ -211,11 +211,11 @@ public:
     bool hasMarginBeforeQuirk() const { return marginBefore().hasQuirk(); }
     bool hasMarginAfterQuirk() const { return marginAfter().hasQuirk(); }
 
-    bool hasBackgroundImage() const { return m_backgroundData->background->hasImage(); }
-    bool hasFixedBackgroundImage() const { return m_backgroundData->background->hasFixedImage(); }
+    bool hasBackgroundImage() const { return backgroundLayers().hasImage(); }
+    bool hasAnyFixedBackground() const { return backgroundLayers().hasImageWithAttachment(FillAttachment::FixedBackground); }
 
     bool hasEntirelyFixedBackground() const;
-    bool hasAnyLocalBackground() const;
+    bool hasAnyLocalBackground() const { return backgroundLayers().hasImageWithAttachment(FillAttachment::LocalBackground); }
 
     bool hasAppearance() const { return appearance() != NoControlPart; }
     bool hasEffectiveAppearance() const { return effectiveAppearance() != NoControlPart; }

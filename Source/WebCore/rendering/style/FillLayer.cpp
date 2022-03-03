@@ -387,10 +387,10 @@ bool FillLayer::hasImageInAnyLayer() const
     return false;
 }
 
-bool FillLayer::hasFixedImage() const
+bool FillLayer::hasImageWithAttachment(FillAttachment attachment) const
 {
     for (auto* layer = this; layer; layer = layer->m_next.get()) {
-        if (layer->m_image && layer->attachment() == FillAttachment::FixedBackground)
+        if (layer->m_image && layer->attachment() == attachment)
             return true;
     }
     return false;

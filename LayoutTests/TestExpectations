@@ -92,6 +92,7 @@ compositing/shared-backing/overflow-scroll [ Skip ]
 compositing/scrolling/async-overflow-scrolling [ Skip ]
 compositing/layer-creation/clipping-scope [ Skip ]
 fast/repaint/background-attachment-local-scroll.html [ Skip ]
+fast/repaint/background-attachment-fixed-in-composited-scroll.html [ Skip ]
 
 # WebKit2 only.
 printing/printing-events.html [ Skip ]
