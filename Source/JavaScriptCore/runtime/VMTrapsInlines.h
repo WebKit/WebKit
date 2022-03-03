@@ -50,18 +50,4 @@ inline void VMTraps::undoDeferTermination(DeferAction deferAction)
         undoDeferTerminationSlow(deferAction);
 }
 
-ALWAYS_INLINE DeferTraps::DeferTraps(VM& vm)
-    : m_traps(vm.traps())
-    , m_isActive(!m_traps.hasTrapBit(VMTraps::DeferTrapHandling))
-{
-    if (m_isActive)
-        m_traps.setTrapBit(VMTraps::DeferTrapHandling);
-}
-
-ALWAYS_INLINE DeferTraps::~DeferTraps()
-{
-    if (m_isActive)
-        m_traps.clearTrapBit(VMTraps::DeferTrapHandling);
-}
-
 } // namespace JSC

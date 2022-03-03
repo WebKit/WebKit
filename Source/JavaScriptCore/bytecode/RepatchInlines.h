@@ -27,8 +27,6 @@
 
 #include "Repatch.h"
 
-#include "VMTrapsInlines.h"
-
 namespace JSC {
 
 inline SlowPathReturnType handleHostCall(JSGlobalObject* globalObject, CallFrame* calleeFrame, JSValue callee, CallLinkInfo* callLinkInfo)
@@ -126,9 +124,6 @@ ALWAYS_INLINE SlowPathReturnType linkFor(CallFrame* calleeFrame, JSGlobalObject*
 
     MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
     CodeBlock* codeBlock = nullptr;
-
-    DeferTraps deferTraps(vm); // We can't jettison any code until after we link the call.
-
     if (executable->isHostFunction()) {
         codePtr = jsToWasmICCodePtr(vm, kind, callee);
         if (!codePtr)
@@ -192,9 +187,6 @@ ALWAYS_INLINE SlowPathReturnType virtualForWithFunction(JSGlobalObject* globalOb
     JSFunction* function = jsCast<JSFunction*>(calleeAsFunctionCell);
     JSScope* scope = function->scopeUnchecked();
     ExecutableBase* executable = function->executable();
-
-    DeferTraps deferTraps(vm); // We can't jettison if we're going to call this CodeBlock.
-
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
 

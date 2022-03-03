@@ -1,3 +1,16 @@
+2022-03-02  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r290717.
+        https://bugs.webkit.org/show_bug.cgi?id=237409
+
+        Speedometer2
+
+        Reverted changeset:
+
+        "Add a DeferTraps scope"
+        https://bugs.webkit.org/show_bug.cgi?id=237306
+        https://commits.webkit.org/r290717
+
 2022-03-02  Justin Michaud  <justin_michaud@apple.com>
 
         Refactor OpcodeTraits to support the possibility of having 2-byte WASM opcode ids in bytecode streams
