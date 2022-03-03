@@ -111,6 +111,20 @@ RenderStyle RenderStyle::clone(const RenderStyle& style)
     return RenderStyle(style, Clone);
 }
 
+RenderStyle RenderStyle::cloneIncludingPseudoElements(const RenderStyle& style)
+{
+    auto newStyle = RenderStyle(style, Clone);
+
+    if (!style.m_cachedPseudoStyles)
+        return newStyle;
+
+    for (auto& pseudoElementStyle : *style.m_cachedPseudoStyles) {
+        auto clone = makeUnique<RenderStyle>(cloneIncludingPseudoElements(*pseudoElementStyle));
+        newStyle.addCachedPseudoStyle(WTFMove(clone));
+    }
+    return newStyle;
+}
+
 std::unique_ptr<RenderStyle> RenderStyle::clonePtr(const RenderStyle& style)
 {
     return makeUnique<RenderStyle>(style, Clone);

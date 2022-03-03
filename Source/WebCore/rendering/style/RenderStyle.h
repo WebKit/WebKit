@@ -151,6 +151,7 @@ public:
     static std::unique_ptr<RenderStyle> createPtr();
 
     static RenderStyle clone(const RenderStyle&);
+    static RenderStyle cloneIncludingPseudoElements(const RenderStyle&);
     static std::unique_ptr<RenderStyle> clonePtr(const RenderStyle&);
 
     static RenderStyle createAnonymousStyleWithDisplay(const RenderStyle& parentStyle, DisplayType);

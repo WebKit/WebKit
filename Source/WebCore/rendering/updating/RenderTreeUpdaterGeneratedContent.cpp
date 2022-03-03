@@ -107,21 +107,16 @@ static void updateStyleForContentRenderers(RenderElement& pseudoRenderer, const 
     }
 }
 
-void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, const Style::ElementUpdates& updates, PseudoId pseudoId)
+void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, const Style::ElementUpdate& elementUpdate, PseudoId pseudoId)
 {
     PseudoElement* pseudoElement = pseudoId == PseudoId::Before ? current.beforePseudoElement() : current.afterPseudoElement();
 
     if (auto* renderer = pseudoElement ? pseudoElement->renderer() : nullptr)
         m_updater.renderTreePosition().invalidateNextSibling(*renderer);
 
-    auto* update = [&]() -> const Style::ElementUpdate* {
-        auto iterator = updates.pseudoElementUpdates.find(pseudoId);
-        if (iterator != updates.pseudoElementUpdates.end())
-            return &iterator->value;
-        return nullptr;
-    }();
+    auto* updateStyle = elementUpdate.style ? elementUpdate.style->getCachedPseudoStyle(pseudoId) : nullptr;
 
-    if (!needsPseudoElement(update) && !elementIsTargetedByKeyframeEffectRequiringPseudoElement(&current, pseudoId)) {
+    if (!needsPseudoElement(updateStyle) && !elementIsTargetedByKeyframeEffectRequiringPseudoElement(&current, pseudoId)) {
         if (pseudoElement) {
             if (pseudoId == PseudoId::Before)
                 removeBeforePseudoElement(current, m_updater.m_builder);
@@ -131,28 +126,32 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         return;
     }
 
-    if (!update || update->change == Style::Change::None)
+    if (!updateStyle)
+        return;
+
+    auto* existingStyle = pseudoElement ? pseudoElement->renderOrDisplayContentsStyle() : nullptr;
+
+    auto styleChange = existingStyle ? Style::determineChange(*updateStyle, *existingStyle) : Style::Change::Renderer;
+    if (styleChange == Style::Change::None)
         return;
 
     pseudoElement = &current.ensurePseudoElement(pseudoId);
 
-    if (update->style->display() == DisplayType::Contents) {
+    if (updateStyle->display() == DisplayType::Contents) {
         // For display:contents we create an inline wrapper that inherits its
         // style from the display:contents style.
         auto contentsStyle = RenderStyle::createPtr();
         contentsStyle->setStyleType(pseudoId);
-        contentsStyle->inheritFrom(*update->style);
-        contentsStyle->copyContentFrom(*update->style);
+        contentsStyle->inheritFrom(*updateStyle);
+        contentsStyle->copyContentFrom(*updateStyle);
 
-        Style::ElementUpdate contentsUpdate { WTFMove(contentsStyle), update->change, update->recompositeLayer };
-        Style::ElementUpdates contentsUpdates { WTFMove(contentsUpdate), Style::DescendantsToResolve::None, { } };
-        m_updater.updateElementRenderer(*pseudoElement, WTFMove(contentsUpdates));
-        pseudoElement->storeDisplayContentsStyle(RenderStyle::clonePtr(*update->style));
+        Style::ElementUpdate contentsUpdate { WTFMove(contentsStyle), styleChange, elementUpdate.recompositeLayer };
+        m_updater.updateElementRenderer(*pseudoElement, WTFMove(contentsUpdate));
+        pseudoElement->storeDisplayContentsStyle(RenderStyle::clonePtr(*updateStyle));
     } else {
-        auto pseudoElementUpdateStyle = RenderStyle::clonePtr(*update->style);
-        Style::ElementUpdate pseudoElementUpdate { WTFMove(pseudoElementUpdateStyle), update->change, update->recompositeLayer };
-        Style::ElementUpdates pseudoElementUpdates { WTFMove(pseudoElementUpdate), Style::DescendantsToResolve::None, { } };
-        m_updater.updateElementRenderer(*pseudoElement, WTFMove(pseudoElementUpdates));
+        auto pseudoElementUpdateStyle = RenderStyle::clonePtr(*updateStyle);
+        Style::ElementUpdate pseudoElementUpdate { WTFMove(pseudoElementUpdateStyle), styleChange, elementUpdate.recompositeLayer };
+        m_updater.updateElementRenderer(*pseudoElement, WTFMove(pseudoElementUpdate));
         ASSERT(!pseudoElement->hasDisplayContents());
     }
 
@@ -160,10 +159,10 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
     if (!pseudoElementRenderer)
         return;
 
-    if (update->change == Style::Change::Renderer)
-        createContentRenderers(m_updater.m_builder, *pseudoElementRenderer, *update->style, pseudoId);
+    if (styleChange == Style::Change::Renderer)
+        createContentRenderers(m_updater.m_builder, *pseudoElementRenderer, *updateStyle, pseudoId);
     else
-        updateStyleForContentRenderers(*pseudoElementRenderer, *update->style);
+        updateStyleForContentRenderers(*pseudoElementRenderer, *updateStyle);
 
     if (m_updater.renderView().hasQuotesNeedingUpdate()) {
         for (auto& child : descendantsOfType<RenderQuote>(*pseudoElementRenderer))
@@ -195,13 +194,13 @@ void RenderTreeUpdater::GeneratedContent::updateBackdropRenderer(RenderElement& 
     }
 }
 
-bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const Style::ElementUpdate* update)
+bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const RenderStyle* style)
 {
-    if (!update)
+    if (!style)
         return false;
     if (!m_updater.renderTreePosition().parent().canHaveGeneratedChildren())
         return false;
-    if (!pseudoElementRendererIsNeeded(update->style.get()))
+    if (!pseudoElementRendererIsNeeded(style))
         return false;
     return true;
 }

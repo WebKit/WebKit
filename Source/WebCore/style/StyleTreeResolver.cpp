@@ -176,7 +176,7 @@ static bool affectsRenderedSubtree(Element& element, const RenderStyle& newStyle
     return false;
 }
 
-static DescendantsToResolve computeDescendantsToResolve(Change change, Validity validity, DescendantsToResolve parentDescendantsToResolve)
+auto TreeResolver::computeDescendantsToResolve(Change change, Validity validity, DescendantsToResolve parentDescendantsToResolve) -> DescendantsToResolve
 {
     if (parentDescendantsToResolve == DescendantsToResolve::All)
         return DescendantsToResolve::All;
@@ -196,7 +196,7 @@ static DescendantsToResolve computeDescendantsToResolve(Change change, Validity 
     return DescendantsToResolve::None;
 };
 
-ElementUpdates TreeResolver::resolveElement(Element& element)
+auto TreeResolver::resolveElement(Element& element) -> std::pair<ElementUpdate, DescendantsToResolve>
 {
     if (m_didSeePendingStylesheet && !element.renderer() && !m_document.isIgnoringPendingStylesheets()) {
         m_document.setHasNodesWithMissingStyle();
@@ -249,15 +249,21 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         }
     }
 
-    PseudoIdToElementUpdateMap pseudoUpdates;
-    if (auto markerElementUpdate = resolvePseudoStyle(element, update, PseudoId::Marker))
-        pseudoUpdates.set(PseudoId::Marker, WTFMove(*markerElementUpdate));
-    if (auto beforeElementUpdate = resolvePseudoStyle(element, update, PseudoId::Before))
-        pseudoUpdates.set(PseudoId::Before, WTFMove(*beforeElementUpdate));
-    if (auto afterElementUpdate = resolvePseudoStyle(element, update, PseudoId::After))
-        pseudoUpdates.set(PseudoId::After, WTFMove(*afterElementUpdate));
-    if (auto backdropElementUpdate = resolvePseudoStyle(element, update, PseudoId::Backdrop))
-        pseudoUpdates.set(PseudoId::Backdrop, WTFMove(*backdropElementUpdate));
+    auto resolveAndAddPseudoElementStyle = [&](PseudoId pseudoId) {
+        auto pseudoElementUpdate = resolvePseudoStyle(element, update, pseudoId);
+        if (!pseudoElementUpdate)
+            return;
+        if (pseudoElementUpdate->change != Change::None)
+            update.change = std::max(update.change, Change::NonInherited);
+        if (pseudoElementUpdate->recompositeLayer)
+            update.recompositeLayer = true;
+        update.style->addCachedPseudoStyle(WTFMove(pseudoElementUpdate->style));
+    };
+
+    resolveAndAddPseudoElementStyle(PseudoId::Marker);
+    resolveAndAddPseudoElementStyle(PseudoId::Before);
+    resolveAndAddPseudoElementStyle(PseudoId::After);
+    resolveAndAddPseudoElementStyle(PseudoId::Backdrop);
 
 #if ENABLE(TOUCH_ACTION_REGIONS)
     // FIXME: Track this exactly.
@@ -269,7 +275,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         m_document.setMayHaveEditableElements();
 #endif
 
-    return { WTFMove(update), descendantsToResolve, WTFMove(pseudoUpdates) };
+    return { WTFMove(update), descendantsToResolve };
 }
 
 std::optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
@@ -447,7 +453,7 @@ static bool shouldResolvePseudoElement(const PseudoElement* pseudoElement)
     return pseudoElement->needsStyleRecalc();
 }
 
-static bool shouldResolveElement(const Element& element, DescendantsToResolve parentDescendantsToResolve)
+bool TreeResolver::shouldResolveElement(const Element& element, DescendantsToResolve parentDescendantsToResolve)
 {
     if (element.styleValidity() != Validity::Valid)
         return true;
@@ -506,7 +512,7 @@ static std::unique_ptr<RenderStyle> createInheritedDisplayContentsStyleIfNeeded(
     return style;
 }
 
-static void resetDescendantStyleRelations(Element& element, DescendantsToResolve descendantsToResolve)
+void TreeResolver::resetDescendantStyleRelations(Element& element, DescendantsToResolve descendantsToResolve)
 {
     switch (descendantsToResolve) {
     case DescendantsToResolve::None:
@@ -576,17 +582,17 @@ void TreeResolver::resolveComposedTree()
             if (element.hasCustomStyleResolveCallbacks())
                 element.willRecalcStyle(parent.change);
 
-            auto elementUpdates = resolveElement(element);
+            auto [elementUpdate, elementDescendantsToResolve] = resolveElement(element);
 
             if (element.hasCustomStyleResolveCallbacks())
-                element.didRecalcStyle(elementUpdates.update.change);
+                element.didRecalcStyle(elementUpdate.change);
 
-            style = elementUpdates.update.style.get();
-            change = elementUpdates.update.change;
-            descendantsToResolve = elementUpdates.descendantsToResolve;
+            style = elementUpdate.style.get();
+            change = elementUpdate.change;
+            descendantsToResolve = elementDescendantsToResolve;
 
-            if (elementUpdates.update.style)
-                m_update->addElement(element, parent.element, WTFMove(elementUpdates));
+            if (elementUpdate.style)
+                m_update->addElement(element, parent.element, WTFMove(elementUpdate));
 
             clearNeedsStyleResolution(element);
         }

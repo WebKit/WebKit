@@ -65,7 +65,8 @@ private:
     enum class QueryContainerAction : uint8_t { None, Continue, Layout };
     QueryContainerAction updateQueryContainer(Element&, const RenderStyle&);
 
-    ElementUpdates resolveElement(Element&);
+    enum class DescendantsToResolve : uint8_t { None, ChildrenWithExplicitInherit, Children, All };
+    std::pair<ElementUpdate, DescendantsToResolve> resolveElement(Element&);
 
     static ElementUpdate createAnimatedElementUpdate(std::unique_ptr<RenderStyle>, const Styleable&, Change, const ResolutionContext&);
     std::optional<ElementUpdate> resolvePseudoStyle(Element&, const ElementUpdate&, PseudoId);
@@ -104,6 +105,10 @@ private:
     void pushParent(Element&, const RenderStyle&, Change, DescendantsToResolve);
     void popParent();
     void popParentsToDepth(unsigned depth);
+
+    static DescendantsToResolve computeDescendantsToResolve(Change, Validity, DescendantsToResolve);
+    static bool shouldResolveElement(const Element&, DescendantsToResolve);
+    static void resetDescendantStyleRelations(Element&, DescendantsToResolve);
 
     ResolutionContext makeResolutionContext();
     ResolutionContext makeResolutionContextForPseudoElement(const ElementUpdate&);

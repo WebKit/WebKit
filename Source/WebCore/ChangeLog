@@ -1,3 +1,48 @@
+2022-03-03  Antti Koivisto  <antti@apple.com>
+
+        Simplify pseudo element resolution
+        https://bugs.webkit.org/show_bug.cgi?id=237413
+
+        Reviewed by Antoine Quint.
+
+        Remove ElementUpdates struct with a map that contains pseudo element updates.
+        Instead use a single ElementUpdate struct and pass the pseudo element styles
+        as cached pseudo styles of the element RenderStyle. Previously RenderTreeUpdater
+        would move them there.
+
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::Parent::Parent):
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+        (WebCore::RenderTreeUpdater::pushParent):
+        (WebCore::RenderTreeUpdater::popParent):
+        (WebCore::RenderTreeUpdater::updateBeforeDescendants):
+        (WebCore::RenderTreeUpdater::updateAfterDescendants):
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        * rendering/updating/RenderTreeUpdater.h:
+        * rendering/updating/RenderTreeUpdaterGeneratedContent.cpp:
+        (WebCore::RenderTreeUpdater::GeneratedContent::updatePseudoElement):
+        (WebCore::RenderTreeUpdater::GeneratedContent::needsPseudoElement):
+        * rendering/updating/RenderTreeUpdaterGeneratedContent.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::computeDescendantsToResolve):
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::shouldResolveElement):
+        (WebCore::Style::TreeResolver::resetDescendantStyleRelations):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        (WebCore::Style::computeDescendantsToResolve): Deleted.
+        (WebCore::Style::shouldResolveElement): Deleted.
+        (WebCore::Style::resetDescendantStyleRelations): Deleted.
+        * style/StyleTreeResolver.h:
+        * style/StyleUpdate.cpp:
+        (WebCore::Style::Update::elementUpdate const):
+        (WebCore::Style::Update::elementUpdate):
+        (WebCore::Style::Update::elementStyle const):
+        (WebCore::Style::Update::elementStyle):
+        (WebCore::Style::Update::addElement):
+        (WebCore::Style::Update::elementUpdates const): Deleted.
+        (WebCore::Style::Update::elementUpdates): Deleted.
+        * style/StyleUpdate.h:
+
 2022-03-03  Youenn Fablet  <youenn@apple.com>
 
         macOS Safari 15.2 Audio Echo Issue after camera pause/unpause
