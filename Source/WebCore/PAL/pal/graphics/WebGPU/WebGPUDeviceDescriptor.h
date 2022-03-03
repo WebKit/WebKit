@@ -36,7 +36,7 @@ namespace PAL::WebGPU {
 
 struct DeviceDescriptor : public ObjectDescriptorBase {
     Vector<FeatureName> requiredFeatures;
-    // FIXME: Add support for requiredLimits.
+    Vector<KeyValuePair<String, uint64_t>> requiredLimits;
 };
 
 } // namespace PAL::WebGPU

@@ -25,10 +25,12 @@
 
 // https://gpuweb.github.io/gpuweb/#dictdef-gpudevicedescriptor
 
+typedef [EnforceRange] unsigned long long GPUSize64;
+
 [
     EnabledBySetting=WebGPU
 ]
 dictionary GPUDeviceDescriptor : GPUObjectDescriptorBase {
     sequence<GPUFeatureName> requiredFeatures = [];
-    // record<DOMString, GPUSize64> requiredLimits; // FIXME: https://bugs.webkit.org/show_bug.cgi?id=232741 Our bindings generator can't seem to understand this
+    record<DOMString, GPUSize64> requiredLimits;
 };

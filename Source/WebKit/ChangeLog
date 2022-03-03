@@ -1,3 +1,21 @@
+2022-03-02  Dan Glastonbury  <djg@apple.com>
+
+        [WebGPU] Implement GPUDeviceDescriptor.requiredLimits
+        https://bugs.webkit.org/show_bug.cgi?id=232741
+        rdar://problem/85325316
+
+        Reviewed by Myles C. Maxfield.
+
+        Implement IDL bindings for requiredLimits attribute of
+        GPUDeviceDescriptor.
+
+        * Shared/WebGPU/WebGPUDeviceDescriptor.cpp:
+        (WebKit::WebGPU::ConvertToBackingContext::convertToBacking):
+        (WebKit::WebGPU::ConvertFromBackingContext::convertFromBacking):
+        * Shared/WebGPU/WebGPUDeviceDescriptor.h:
+        (WebKit::WebGPU::DeviceDescriptor::encode const):
+        (WebKit::WebGPU::DeviceDescriptor::decode):
+
 2022-03-02  Brent Fulgham  <bfulgham@apple.com>
 
         [AppSSO] Correct logging messages to avoid confusing screeners that an error has occurred

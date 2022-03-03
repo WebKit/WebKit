@@ -1,3 +1,18 @@
+2022-03-02  Dan Glastonbury  <djg@apple.com>
+
+        [WebGPU] Implement GPUDeviceDescriptor.requiredLimits
+        https://bugs.webkit.org/show_bug.cgi?id=232741
+        <rdar://problem/85325316>
+
+        Reviewed by Myles C. Maxfield.
+
+        Implement IDL bindings for requiredLimits attribute of
+        GPUDeviceDescriptor.
+
+        * Modules/WebGPU/GPUDeviceDescriptor.h:
+        (WebCore::GPUDeviceDescriptor::convertToBacking const):
+        * Modules/WebGPU/GPUDeviceDescriptor.idl:
+
 2022-03-02  Simon Fraser  <simon.fraser@apple.com>
 
         Rendering issues with many dynamically-added sticky elements inside overflow scroll

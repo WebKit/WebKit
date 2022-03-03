@@ -1,3 +1,16 @@
+2022-03-02  Dan Glastonbury  <djg@apple.com>
+
+        [WebGPU] Implement GPUDeviceDescriptor.requiredLimits
+        https://bugs.webkit.org/show_bug.cgi?id=232741
+        <rdar://problem/85325316>
+
+        Reviewed by Myles C. Maxfield.
+
+        Implement IDL bindings for requiredLimits attribute of
+        GPUDeviceDescriptor.
+
+        * pal/graphics/WebGPU/WebGPUDeviceDescriptor.h:
+
 2022-03-01  Alex Christensen  <achristensen@webkit.org>
 
         If the main resource was loaded over private relay, load all sub resources over private relay

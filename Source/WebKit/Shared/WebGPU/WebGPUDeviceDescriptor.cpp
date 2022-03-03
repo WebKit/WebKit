@@ -40,7 +40,7 @@ std::optional<DeviceDescriptor> ConvertToBackingContext::convertToBacking(const 
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), deviceDescriptor.requiredFeatures } };
+    return { { WTFMove(*base), deviceDescriptor.requiredFeatures, deviceDescriptor.requiredLimits } };
 }
 
 std::optional<PAL::WebGPU::DeviceDescriptor> ConvertFromBackingContext::convertFromBacking(const DeviceDescriptor& deviceDescriptor)
@@ -49,7 +49,7 @@ std::optional<PAL::WebGPU::DeviceDescriptor> ConvertFromBackingContext::convertF
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), deviceDescriptor.requiredFeatures } };
+    return { { WTFMove(*base), deviceDescriptor.requiredFeatures, deviceDescriptor.requiredLimits } };
 }
 
 } // namespace WebKit
