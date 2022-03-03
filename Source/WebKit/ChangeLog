@@ -1,3 +1,16 @@
+2022-03-03  Robert Jenner  <Jenner@apple.com>
+
+        Unreviewed, reverting r290752.
+
+        r290752 broke mutliple tests, slowing down the iOS15 EWS
+        queue.
+
+        Reverted changeset:
+
+        "[iOS] Hard link AVPictureInPictureController"
+        https://bugs.webkit.org/show_bug.cgi?id=237227
+        https://commits.webkit.org/r290752
+
 2022-03-03  Tim Horton  <timothy_horton@apple.com>
 
         WKContentView should explicitly request the system pointer in the fallback case
