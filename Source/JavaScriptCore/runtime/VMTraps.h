@@ -149,14 +149,20 @@ public:
     v(NeedTermination) \
     v(NeedWatchdogCheck) \
     v(NeedDebuggerBreak) \
-    v(NeedExceptionHandling)
+    v(NeedExceptionHandling) \
+    v(DeferTrapHandling) // Must come last in the enum. This defers all events except NeedExceptionHandling.
 
 #define DECLARE_VMTRAPS_EVENT_BIT_SHIFT(event__)  event__##BitShift,
     enum EventBitShift {
         FOR_EACH_VMTRAPS_EVENTS(DECLARE_VMTRAPS_EVENT_BIT_SHIFT)
-        NumberOfEvents, // This entry must be last in this list.
     };
 #undef DECLARE_VMTRAPS_EVENT_BIT_SHIFT
+
+
+#define COUNT_EVENT(event) + 1
+    static constexpr BitField NumberOfEvents = FOR_EACH_VMTRAPS_EVENTS(COUNT_EVENT) - 1; // Don't count DeferTrapHandling.
+    static constexpr BitField NumberOfEventsIncludingDefer = FOR_EACH_VMTRAPS_EVENTS(COUNT_EVENT);
+#undef COUNT_EVENT
 
     using Event = BitField;
 
@@ -170,8 +176,9 @@ public:
 
     static constexpr Event NoEvent = 0;
 
-    static_assert(NumberOfEvents <= bitsInBitField);
+    static_assert(NumberOfEventsIncludingDefer <= bitsInBitField);
     static constexpr BitField AllEvents = (1ull << NumberOfEvents) - 1;
+    static constexpr BitField AllEventsIncludingDefer = (1ull << NumberOfEventsIncludingDefer) - 1;
     static constexpr BitField AsyncEvents = AllEvents & ~NeedExceptionHandling;
     static constexpr BitField NonDebuggerEvents = AllEvents & ~NeedDebuggerBreak;
     static constexpr BitField NonDebuggerAsyncEvents = AsyncEvents & ~NeedDebuggerBreak;
@@ -188,7 +195,15 @@ public:
 
     void willDestroyVM();
 
-    bool needHandling(BitField mask) const { return m_trapBits.loadRelaxed() & mask; }
+    ALWAYS_INLINE bool needHandling(BitField mask) const
+    {
+        auto maskedValue = m_trapBits.loadRelaxed() & (mask | DeferTrapHandling);
+        if (UNLIKELY(maskedValue))
+            return (maskedValue & NeedExceptionHandling) || !(maskedValue & DeferTrapHandling);
+        return false;
+    }
+    // Designed to be a fast check to rule out if we might need handling, and we need to ensure needHandling on the slow path.
+    ALWAYS_INLINE bool maybeNeedHandling(BitField mask) const { return m_trapBits.loadRelaxed() & mask; }
     void* trapBitsAddress() { return &m_trapBits; }
 
     enum class DeferAction {
@@ -206,6 +221,10 @@ public:
             invalidateCodeBlocksOnStack();
     }
 
+    bool hasTrapBit(Event event)
+    {
+        return m_trapBits.loadRelaxed() & event;
+    }
     bool hasTrapBit(Event event, BitField mask)
     {
         BitField maskedBits = event & mask;
@@ -214,7 +233,7 @@ public:
     void clearTrapBit(Event event) { m_trapBits.exchangeAnd(~event); }
     void setTrapBit(Event event)
     {
-        ASSERT((event & ~AllEvents) == 0);
+        ASSERT((event & ~AllEventsIncludingDefer) == 0);
         m_trapBits.exchangeOr(event);
     }
 
@@ -264,6 +283,15 @@ private:
 
     friend class LLIntOffsetsExtractor;
     friend class SignalSender;
+};
+
+class DeferTraps {
+public:
+    DeferTraps(VM&);
+    ~DeferTraps();
+private:
+    VMTraps& m_traps;
+    bool m_isActive;
 };
 
 } // namespace JSC

@@ -78,6 +78,7 @@
 #include "Symbol.h"
 #include "TypeProfilerLog.h"
 #include "VMInlines.h"
+#include "VMTrapsInlines.h"
 
 #if ENABLE(JIT)
 #if ENABLE(DFG_JIT)
@@ -3712,6 +3713,8 @@ JSC_DEFINE_JIT_OPERATION(operationLinkDirectCall, void, (OptimizingCallLinkInfo*
     // https://bugs.webkit.org/show_bug.cgi?id=220339
     MacroAssemblerCodePtr<JSEntryPtrTag> codePtr;
     CodeBlock* codeBlock = nullptr;
+    DeferTraps deferTraps(vm); // We can't jettison this code if we're about to link to it.
+
     if (executable->isHostFunction())
         codePtr = executable->entrypointFor(kind, MustCheckArity);
     else {

@@ -1,3 +1,46 @@
+2022-03-03  Saam Barati  <sbarati@apple.com>
+
+        Add a DeferTraps scope
+        https://bugs.webkit.org/show_bug.cgi?id=237306
+        <rdar://83494949>
+
+        Reviewed by Mark Lam.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::noticeIncomingCall):
+        * bytecode/CodeBlock.h:
+        * bytecode/RepatchInlines.h:
+        (JSC::linkFor):
+        (JSC::virtualForWithFunction):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::execute):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/ExceptionScope.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::handleTraps):
+        (JSC::VMTraps::takeTopPriorityTrap):
+        * runtime/VMTraps.h:
+        (JSC::VMTraps::needHandling const):
+        (JSC::VMTraps::maybeNeedHandling const):
+        (JSC::VMTraps::hasTrapBit):
+        (JSC::VMTraps::setTrapBit):
+        * runtime/VMTrapsInlines.h:
+        (JSC::DeferTraps::DeferTraps):
+        (JSC::DeferTraps::~DeferTraps):
+
 2022-03-03  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early March 2022 edition

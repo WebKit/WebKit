@@ -196,6 +196,8 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
     if (genericCodeBlock) {
         RELEASE_ASSERT(genericCodeBlock->ownerExecutable() == this);
         RELEASE_ASSERT(JITCode::isExecutableScript(genericCodeBlock->jitType()));
+
+        genericCodeBlock->m_isJettisoned = false;
         
         dataLogLnIf(Options::verboseOSR(), "Installing ", *genericCodeBlock);
         

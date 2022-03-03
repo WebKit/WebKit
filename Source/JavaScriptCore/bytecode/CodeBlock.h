@@ -774,6 +774,7 @@ public:
     bool m_didFailJITCompilation : 1;
     bool m_didFailFTLCompilation : 1;
     bool m_hasBeenCompiledWithFTL : 1;
+    bool m_isJettisoned : 1;
 
     bool m_visitChildrenSkippedDueToOldAge { false };
 

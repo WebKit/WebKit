@@ -36,6 +36,7 @@
 #include "LLIntData.h"
 #include "ProtoCallFrameInlines.h"
 #include "UnlinkedCodeBlock.h"
+#include "VMTrapsInlines.h"
 #include <wtf/UnalignedAccess.h>
 
 namespace JSC {
@@ -86,21 +87,25 @@ ALWAYS_INLINE JSValue Interpreter::execute(CallFrameClosure& closure)
             return throwScope.exception();
     }
 
-    // Reload CodeBlock since GC can replace CodeBlock owned by Executable.
-    CodeBlock* codeBlock;
-    closure.functionExecutable->prepareForExecution<FunctionExecutable>(vm, closure.function, closure.scope, CodeForCall, codeBlock);
-    RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
-
-    ASSERT(codeBlock);
-    codeBlock->m_shouldAlwaysBeInlined = false;
     {
-        DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
-        closure.protoCallFrame->setCodeBlock(codeBlock);
+        DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
+
+        // Reload CodeBlock since GC can replace CodeBlock owned by Executable.
+        CodeBlock* codeBlock;
+        closure.functionExecutable->prepareForExecution<FunctionExecutable>(vm, closure.function, closure.scope, CodeForCall, codeBlock);
+        RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
+
+        ASSERT(codeBlock);
+        codeBlock->m_shouldAlwaysBeInlined = false;
+        {
+            DisallowGC disallowGC; // Ensure no GC happens. GC can replace CodeBlock in Executable.
+            closure.protoCallFrame->setCodeBlock(codeBlock);
+        }
     }
+
     // Execute the code:
     throwScope.release();
     JSValue result = closure.functionExecutable->generatedJITCodeForCall()->execute(&vm, closure.protoCallFrame);
-
     return checkedReturn(result);
 }
 
