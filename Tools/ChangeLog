@@ -1,5 +1,30 @@
 2022-03-03  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitcorepy] Disable prompt when saving credentials
+        https://bugs.webkit.org/show_bug.cgi?id=237438
+        <rdar://problem/89764417>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py:
+        (Tracker.credentials): Pass 'save' to webkitcorepy.credentials.
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/credentials.py:
+        (credentials): Unless caller explicitly disables saving, assume that all credentials
+        should be saved to a system's keyring.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.github): Automatically save any prompted credentials.
+        (Setup.git): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.credentials): Pass 'save' to github.Tracker.credentials.
+
+2022-03-03  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Open pre-populated GitHub page for new tokens
         https://bugs.webkit.org/show_bug.cgi?id=237436
         <rdar://problem/89763053>

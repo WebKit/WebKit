@@ -37,7 +37,7 @@ class Setup(Command):
     @classmethod
     def github(cls, args, repository, additional_setup=None, **kwargs):
         log.info('Saving GitHub credentials in system credential store...')
-        username, access_token = repository.credentials(required=True)
+        username, access_token = repository.credentials(required=True, validate=True, save_in_keyring=True)
         log.info('GitHub credentials saved via Keyring!')
 
         # Any additional setup passed to main
@@ -251,7 +251,7 @@ class Setup(Command):
         if code:
             return result
 
-        username, _ = rmt.credentials(required=True, validate=True)
+        username, _ = rmt.credentials(required=True, validate=True, save_in_keyring=True)
         log.info("Adding forked remote as '{}' and 'fork'...".format(username))
         url = repository.url()
 

@@ -279,8 +279,8 @@ class GitHub(Scm):
                 users.create(contributor.name, contributor.github, contributor.emails)
         self.tracker = Tracker(url, users=users)
 
-    def credentials(self, required=True, validate=False):
-        return self.tracker.credentials(required=required, validate=validate)
+    def credentials(self, required=True, validate=False, save_in_keyring=None):
+        return self.tracker.credentials(required=required, validate=validate, save_in_keyring=save_in_keyring)
 
     @property
     def is_git(self):

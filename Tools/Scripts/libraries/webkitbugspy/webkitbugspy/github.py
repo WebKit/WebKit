@@ -86,7 +86,7 @@ class Tracker(GenericTracker):
                 return self.issue(int(match.group('id')))
         return None
 
-    def credentials(self, required=True, validate=False):
+    def credentials(self, required=True, validate=False, save_in_keyring=None):
         def validater(username, access_token):
             if '@' in username:
                 sys.stderr.write("Provided username contains an '@' symbol. Please make sure to enter your GitHub username, not an email associated with the account\n")
@@ -119,6 +119,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             prompt=prompt,
             key_name='token',
             validater=validater if validate else None,
+            save_in_keyring=save_in_keyring,
         )
 
     def request(self, path=None, params=None, headers=None, authenticated=None, paginate=True):
