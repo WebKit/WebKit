@@ -325,7 +325,9 @@ void AXIsolatedTree::updateNodeProperty(const AXCoreObject& axObject, AXProperty
         propertyMap.set(AXPropertyName::CurrentValue, axObject.currentValue().isolatedCopy());
         break;
     case AXPropertyName::IsChecked:
+        ASSERT(axObject.supportsCheckedState());
         propertyMap.set(AXPropertyName::IsChecked, axObject.isChecked());
+        propertyMap.set(AXPropertyName::ButtonState, axObject.checkboxOrRadioValue());
         break;
     case AXPropertyName::IsEnabled:
         propertyMap.set(AXPropertyName::IsEnabled, axObject.isEnabled());

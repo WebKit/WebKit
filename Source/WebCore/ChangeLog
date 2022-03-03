@@ -1,3 +1,28 @@
+2022-03-02  Andres Gonzalez  <andresg_22@apple.com>
+
+        ITM: Checkbox state change is not updated in isolated tree
+        https://bugs.webkit.org/show_bug.cgi?id=237381
+        rdar://89529486
+
+        Reviewed by Chris Fleizach.
+
+        Fixes the following test in isolated tree mode:
+        accessibility/mac/checked-status-tree-items.html
+        accessibility/aria-switch-checked.html
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        Properly initializes the properties SupportsCheckedState, IsChecked and
+        ButtonState.
+        (WebCore::AXIsolatedObject::getOrRetrievePropertyValue):
+        Uses the new template method propertyValue(PropertyName).
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        (WebCore::AXIsolatedObject::propertyValue const):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateNodeProperty):
+        Updates both IsChecked and ButtonState.
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+
 2022-03-02  Dan Glastonbury  <djg@apple.com>
 
         [WebGPU] Implement GPUDeviceDescriptor.requiredLimits

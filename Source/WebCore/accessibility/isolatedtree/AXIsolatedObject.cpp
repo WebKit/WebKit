@@ -86,7 +86,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     setProperty(AXPropertyName::IsAttachment, object.isAttachment());
     setProperty(AXPropertyName::IsBusy, object.isBusy());
     setProperty(AXPropertyName::IsButton, object.isButton());
-    setProperty(AXPropertyName::IsChecked, object.isChecked());
     setProperty(AXPropertyName::IsCollapsed, object.isCollapsed());
     setProperty(AXPropertyName::IsControl, object.isControl());
     setProperty(AXPropertyName::IsDescriptionList, object.isDescriptionList());
@@ -157,7 +156,6 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     setProperty(AXPropertyName::ValidationMessage, object.validationMessage().isolatedCopy());
     setProperty(AXPropertyName::BlockquoteLevel, object.blockquoteLevel());
     setProperty(AXPropertyName::HeadingLevel, object.headingLevel());
-    setProperty(AXPropertyName::AccessibilityButtonState, static_cast<int>(object.checkboxOrRadioValue()));
     setProperty(AXPropertyName::ValueDescription, object.valueDescription().isolatedCopy());
     setProperty(AXPropertyName::ValueForRange, object.valueForRange());
     setProperty(AXPropertyName::MaxValueForRange, object.maxValueForRange());
@@ -231,9 +229,14 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     setProperty(AXPropertyName::IsKeyboardFocusable, object.isKeyboardFocusable());
     setObjectProperty(AXPropertyName::NextSibling, object.nextSibling());
     setObjectProperty(AXPropertyName::PreviousSibling, object.previousSibling());
-    setProperty(AXPropertyName::SupportsCheckedState, object.supportsCheckedState());
     setProperty(AXPropertyName::BrailleRoleDescription, object.brailleRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::BrailleLabel, object.brailleLabel().isolatedCopy());
+
+    if (object.supportsCheckedState()) {
+        setProperty(AXPropertyName::SupportsCheckedState, true);
+        setProperty(AXPropertyName::IsChecked, object.isChecked());
+        setProperty(AXPropertyName::ButtonState, object.checkboxOrRadioValue());
+    }
 
     if (object.isTable()) {
         setProperty(AXPropertyName::IsTable, true);
@@ -966,16 +969,8 @@ int AXIsolatedObject::intAttributeValue(AXPropertyName propertyName) const
 template<typename T>
 T AXIsolatedObject::getOrRetrievePropertyValue(AXPropertyName propertyName)
 {
-    auto typedValue = [&propertyName, this] () {
-        auto value = m_propertyMap.get(propertyName);
-        return WTF::switchOn(value,
-            [] (T& typedValue) -> T { return typedValue; },
-            [] (auto&) { return T(); }
-        );
-    };
-
     if (m_propertyMap.contains(propertyName))
-        return typedValue();
+        return propertyValue<T>(propertyName);
 
     Accessibility::performFunctionOnMainThread([&propertyName, this] () {
         auto* axObject = associatedAXObject();
@@ -1014,7 +1009,7 @@ T AXIsolatedObject::getOrRetrievePropertyValue(AXPropertyName propertyName)
         setProperty(propertyName, WTFMove(value));
     });
 
-    return typedValue();
+    return propertyValue<T>(propertyName);
 }
 
 void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName, AccessibilityChildrenVector& children) const
