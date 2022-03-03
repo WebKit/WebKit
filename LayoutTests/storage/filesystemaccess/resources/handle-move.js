@@ -72,7 +72,7 @@ async function test()
             testError =  "Moved file to dirHandle1 with invalid name unexpectedly";
         }, (error) => {
             moveFileError = error;
-            shouldBeEqualToString("moveFileError.toString()", "UnknownError: Name is invalid");
+            shouldBeEqualToString("moveFileError.toString()", "TypeError: Name is invalid");
         });
 
         if (testError) {
@@ -83,7 +83,7 @@ async function test()
             testError =  "Moved file to dirHandle1 with invalid name unexpectedly";
         }, (error) => {
             moveFileError = error;
-            shouldBeEqualToString("moveFileError.toString()", "UnknownError: Name is invalid");
+            shouldBeEqualToString("moveFileError.toString()", "TypeError: Name is invalid");
         });
 
         if (testError) {

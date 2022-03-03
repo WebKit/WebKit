@@ -1,3 +1,16 @@
+2022-03-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Throw proper exception on failed removeEntry() calls
+        https://bugs.webkit.org/show_bug.cgi?id=237382
+        <rdar://89232969>
+
+        Reviewed by Chris Dumez.
+
+        * storage/filesystemaccess/handle-move-expected.txt:
+        * storage/filesystemaccess/handle-move-worker-expected.txt:
+        * storage/filesystemaccess/resources/handle-move.js:
+        (async test):
+
 2022-03-02  Robert Jenner  <Jenner@apple.com>
 
         WindowServer returned not alive with context:,unresponsive work processor(s)

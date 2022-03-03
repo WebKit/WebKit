@@ -118,7 +118,13 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::removeEntry(const
     if (m_type != Type::Directory)
         return FileSystemStorageError::TypeMismatch;
 
+    if (!isValidFileName(name))
+        return FileSystemStorageError::InvalidName;
+
     auto path = FileSystem::pathByAppendingComponent(m_path, name);
+    if (!FileSystem::fileExists(path))
+        return FileSystemStorageError::FileNotFound;
+
     auto type = FileSystem::fileType(path);
     if (!type)
         return FileSystemStorageError::TypeMismatch;

@@ -1,3 +1,18 @@
+2022-03-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Throw proper exception on failed removeEntry() calls
+        https://bugs.webkit.org/show_bug.cgi?id=237382
+        <rdar://89232969>
+
+        Reviewed by Chris Dumez.
+
+        Updated existing tests.
+
+        * NetworkProcess/storage/FileSystemStorageError.h:
+        (WebKit::convertToException):
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::removeEntry):
+
 2022-03-02  Dan Glastonbury  <djg@apple.com>
 
         [WebGPU] Implement GPUDeviceDescriptor.requiredLimits
