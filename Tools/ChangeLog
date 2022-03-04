@@ -1,3 +1,43 @@
+2022-03-03  Dewei Zhu  <dewei_zhu@apple.com>
+
+        'run-benchmark' script should log http requests during benchmark run.
+        https://bugs.webkit.org/show_bug.cgi?id=237076
+        <rdar://89270825>
+
+        Reviewed by Jonathan Bedard.
+
+        Relanding 290583 with fix.
+        Add support to log http requests during benchmark run for diagnostic purpose.
+        AutoInstall sets 'AUTOINSTALL_CA_CERT_PATH' to environment variables when certificate is specified,
+        and uses 'AUTOINSTALL_CA_CERT_PATH' when it's present in environment variables. This ensures scripts invoked
+        from subprocess can use autoinstalled correcctly.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (AutoInstall):
+        (AutoInstall.set_index):
+        * Scripts/webkitpy/__init__.py: Update 'attr' package version to 20.3.0 so match upgraded twisted version
+        * Scripts/webkitpy/autoinstalled/twisted.py: Upgrade twisted version to latest python2 & python3 compatibile
+        version with specified implicit dependencies.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py: Ensure benchmark diagnostic directory is created.
+        (BenchmarkRunner.__init__):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/twisted_http_server.py: Add '--log-path'
+        arugment to allow specify logging output and it defaults to '/tmp/run-benchmark-http.log'
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/http_server_driver.py:
+        (HTTPServerDriver.set_device_id):
+        (HTTPServerDriver):
+        (HTTPServerDriver.set_http_log):
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py: Pass http log path to
+        twisted http server if specified.
+        (SimpleHTTPServerDriver.__init__):
+        (SimpleHTTPServerDriver.serve):
+        (SimpleHTTPServerDriver.set_http_log):
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py: Fix a tiny bug that default_diagnose_dir() is involked twice in
+        argument parser help message.
+        (config_argument_parser):
+        * Scripts/webkitpy/benchmark_runner/webserver_benchmark_runner.py: Set http request log path if diagnostic directory
+        is specified.
+        (WebServerBenchmarkRunner.__init__):
+
 2022-03-03  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Handle new PR with old branch name
