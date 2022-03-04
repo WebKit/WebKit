@@ -1,3 +1,26 @@
+2022-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Books ASSERTs upon opening a book with a debug build of WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=237445
+        <rdar://problem/89776531>
+
+        Reviewed by Alex Christensen.
+
+        makeSafeToUseMemoryMapForPath() runs an ASSERT() that it was successful.
+        However, it's not always successful, so this ASSERT() was getting hit when
+        trying to open a book in Books. So, this patch makes the function return a
+        bool to indicate success, and updates callers to do something sensible if
+        it failed.
+
+        Test: FileSystemTest.makeSafeToUseMemoryMapForPath
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::makeSafeToUseMemoryMapForPath):
+        (WTF::FileSystemImpl::mapToFile):
+        * wtf/FileSystem.h:
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::makeSafeToUseMemoryMapForPath):
+
 2022-03-04  Chris Dumez  <cdumez@apple.com>
 
         URL's isolatedCopy() optimization when called on a r-value reference doesn't work

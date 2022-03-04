@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,12 +96,13 @@ BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)
 
     bool blobExists = FileSystem::fileExists(blobPath);
     if (blobExists) {
-        FileSystem::makeSafeToUseMemoryMapForPath(blobPath);
-        auto existingData = mapFile(blobPath);
-        if (bytesEqual(existingData, data)) {
-            if (!FileSystem::hardLink(blobPath, path))
-                WTFLogAlways("Failed to create hard link from %s to %s", blobPath.utf8().data(), path.utf8().data());
-            return { existingData, hash };
+        if (FileSystem::makeSafeToUseMemoryMapForPath(blobPath)) {
+            auto existingData = mapFile(blobPath);
+            if (bytesEqual(existingData, data)) {
+                if (!FileSystem::hardLink(blobPath, path))
+                    WTFLogAlways("Failed to create hard link from %s to %s", blobPath.utf8().data(), path.utf8().data());
+                return { existingData, hash };
+            }
         }
         FileSystem::deleteFile(blobPath);
     }

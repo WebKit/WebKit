@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora, Ltd. All rights reserved.
  * Copyright (C) 2015 Canon Inc. All rights reserved.
  *
@@ -214,7 +214,7 @@ WTF_EXPORT_PRIVATE bool deleteNonEmptyDirectory(const String&);
 WTF_EXPORT_PRIVATE String realPath(const String&);
 
 WTF_EXPORT_PRIVATE bool isSafeToUseMemoryMapForPath(const String&);
-WTF_EXPORT_PRIVATE void makeSafeToUseMemoryMapForPath(const String&);
+WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool makeSafeToUseMemoryMapForPath(const String&);
 
 class MappedFileData {
     WTF_MAKE_FAST_ALLOCATED;

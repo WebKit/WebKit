@@ -1,3 +1,14 @@
+2022-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Books ASSERTs upon opening a book with a debug build of WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=237445
+        <rdar://problem/89776531>
+
+        Reviewed by Alex Christensen.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+
 2022-03-04  Chris Dumez  <cdumez@apple.com>
 
         Home link on weather.gov is not working
