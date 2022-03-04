@@ -61,8 +61,7 @@ public:
     enum class OpenMode { ReadOnly, ReadWrite, ReadWriteCreate };
     WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate);
     bool isOpen() const { return m_db; }
-    enum class ShouldSetErrorState : bool { No, Yes };
-    WEBCORE_EXPORT void close(ShouldSetErrorState = ShouldSetErrorState::Yes);
+    WEBCORE_EXPORT void close();
 
     WEBCORE_EXPORT bool executeCommandSlow(const String&);
     WEBCORE_EXPORT bool executeCommand(ASCIILiteral);
@@ -170,7 +169,7 @@ private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
 
     void enableAuthorizer(bool enable) WTF_REQUIRES_LOCK(m_authorizerLock);
-    void useWALJournalMode();
+    bool useWALJournalMode();
 
     int pageSize();
 

@@ -1,3 +1,20 @@
+2022-03-04  Sihui Liu  <sihui_liu@apple.com>
+
+        SQLiteDatabase::open should return early if journal mode cannot be set
+        https://bugs.webkit.org/show_bug.cgi?id=237130
+        <rdar://83130954>
+
+        Reviewed by Darin Adler.
+
+        Add early return in SQLiteDatabase::open if key operation fails; also make sure error is properly set and 
+        database is closed in the case.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::open):
+        (WebCore::SQLiteDatabase::useWALJournalMode):
+        (WebCore::SQLiteDatabase::close):
+        * platform/sql/SQLiteDatabase.h:
+
 2022-03-04  Youenn Fablet  <youenn@apple.com>
 
         webrtc/canvas-to-peer-connection.html is flakily failing a test assertion
