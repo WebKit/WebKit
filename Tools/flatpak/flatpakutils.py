@@ -757,7 +757,7 @@ class WebkitFlatpak:
         sandbox_build_path = os.path.join(SANDBOX_SOURCE_ROOT, BUILD_ROOT_DIR_NAME, self.build_type)
         sandbox_environment = {
             "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": os.path.join(sandbox_build_path, "lib/libTestRunnerInjectedBundle.so"),
-            "PATH": "/usr/lib/sdk/llvm12/bin:/usr/bin:/usr/lib/sdk/rust/bin/",
+            "PATH": "/usr/lib/sdk/llvm13/bin:/usr/bin:/usr/lib/sdk/rust/bin/",
         }
 
         if not args:
@@ -1223,7 +1223,7 @@ class WebkitFlatpak:
         packages = [self.runtime, self.sdk]
         packages.append(FlatpakPackage('org.webkit.Sdk.Debug', SDK_BRANCH,
                                        self.sdk_repo, arch))
-        packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.llvm12", SDK_BRANCH,
+        packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.llvm13", SDK_BRANCH,
                                        self.flathub_repo, arch))
         packages.append(FlatpakPackage("org.freedesktop.Platform.GL.default", SDK_BRANCH,
                                        self.flathub_repo, arch))

@@ -1,3 +1,14 @@
+2022-03-04  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Upgrade from llvm12 to llvm13
+        https://bugs.webkit.org/show_bug.cgi?id=237430
+
+        Reviewed by Adrian Perez de Castro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak._get_dependency_packages):
+
 2022-03-03  Ben Nham  <nham@apple.com>
 
         Enforce silent push quota
