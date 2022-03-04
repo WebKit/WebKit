@@ -1,3 +1,22 @@
+2022-03-04  Youenn Fablet  <youenn@apple.com>
+
+        LibWebRTCCodecs::setEncodeRates should send LibWebRTCCodecsProxy::SetEncodeRates only when the encoder is live
+        https://bugs.webkit.org/show_bug.cgi?id=237421
+
+        Reviewed by Darin Adler.
+
+        We were previously not asserting in LibWebRTCCodecsProxy::setEncodeRates and we were missing some encode rate orders.
+        This is due to the fact that when creating an encoder, we are hopping to main thread, then to work queue to send the message to create an encoder.
+        In LibWebRTCCodecs::setEncodeRates, we were hopping to main thread if needed.
+        If the encoder connection is null, we are now hopping to main thread, then to work queue as done when creating an encoder.
+        Since there is a time where LibWebRTCCodecsProxy::setEncodeRates might have sent encode rates, we bail out early to not set based on old bitrates.
+
+        Covered by existing tests not crashing in LibWebRTCCodecsProxy::setEncodeRates.
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::setEncodeRates):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+
 2022-03-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][WPE] Documentation for webkit_web_context_set_spell_checking_languages() is incomplete

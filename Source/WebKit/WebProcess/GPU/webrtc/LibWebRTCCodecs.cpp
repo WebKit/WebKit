@@ -519,11 +519,20 @@ void LibWebRTCCodecs::setEncodeRates(Encoder& encoder, uint32_t bitRate, uint32_
 
     auto* connection = encoderConnection(encoder);
     if (!connection) {
-        callOnMainRunLoop([encoderIdentifier = encoder.identifier, bitRate, frameRate] {
-            WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::LibWebRTCCodecsProxy::SetEncodeRates { encoderIdentifier, bitRate, frameRate }, 0);
+        ensureGPUProcessConnectionAndDispatchToThread([this, hasSentInitialEncodeRates = &encoder.hasSentInitialEncodeRates, encoderIdentifier = encoder.identifier, bitRate, frameRate] {
+            assertIsCurrent(workQueue());
+            ASSERT(m_encoders.get(encoderIdentifier));
+
+            // hasSentInitialEncodeRates remains valid as encoder destruction goes through ensureGPUProcessConnectionAndDispatchToThread.
+            if (*hasSentInitialEncodeRates)
+                return;
+
+            Locker locker { m_connectionLock };
+            m_connection->send(Messages::LibWebRTCCodecsProxy::SetEncodeRates { encoderIdentifier, bitRate, frameRate }, 0);
         });
         return;
     }
+    encoder.hasSentInitialEncodeRates = true;
     connection->send(Messages::LibWebRTCCodecsProxy::SetEncodeRates { encoder.identifier, bitRate, frameRate }, 0);
 }
 

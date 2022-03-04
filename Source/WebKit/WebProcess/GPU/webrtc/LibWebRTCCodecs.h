@@ -108,6 +108,7 @@ public:
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
         SharedVideoFrameWriter sharedVideoFrameWriter;
+        bool hasSentInitialEncodeRates { false };
     };
 
     Encoder* createEncoder(Type, const std::map<std::string, std::string>&);
