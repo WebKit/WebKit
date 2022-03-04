@@ -2232,7 +2232,8 @@ void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const U
         session->storageManager().moveData(dataTypes, oldOrigin, newOrigin, [aggregator] { });
 }
 
-#if ENABLE(SERVICE_WORKER) && ENABLE(BUILT_IN_NOTIFICATIONS)
+#if ENABLE(SERVICE_WORKER)
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
 
 void NetworkProcess::getPendingPushMessages(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&& callback)
 {
@@ -2276,7 +2277,8 @@ void NetworkProcess::processPushMessage(PAL::SessionID, WebPushMessage&&, Comple
     callback(false);
 }
 
-#endif // ENABLE(SERVICE_WORKER) && ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(BUILT_IN_NOTIFICATIONS)
+#endif // ENABLE(SERVICE_WORKER)
 
 void NetworkProcess::deletePushAndNotificationRegistration(PAL::SessionID sessionID, const SecurityOriginData& origin, CompletionHandler<void(const String&)>&& callback)
 {

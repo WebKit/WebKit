@@ -1,3 +1,14 @@
+2022-03-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        REGRESSION(r290815): Fix even more incorrect #if ENABLE(SERVICE_WORKER) usage in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=237461
+
+        Unreviewed build fix.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        The existence of NetworkProcess::{getPendingPushMessages, processPushMessages} depend on ENABLE(SERVICE_WORKER);
+        it is only when they exist that their implementation depends on ENABLE(BUILT_IN_NOTIFICATIONS).
+
 2022-03-03  Ben Nham  <nham@apple.com>
 
         Enforce silent push quota
