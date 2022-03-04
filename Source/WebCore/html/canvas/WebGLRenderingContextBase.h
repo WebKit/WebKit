@@ -432,6 +432,8 @@ public:
     // prohibitively expensive.
     Lock& objectGraphLock() WTF_RETURNS_LOCK(m_objectGraphLock);
 
+    // Returns the ordinal number of when the context was last active (drew, read pixels).
+    uint64_t activeOrdinal() const { return m_activeOrdinal; }
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
     WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGL>&&, WebGLContextAttributes);
@@ -473,6 +475,7 @@ protected:
     void addContextObject(WebGLContextObject&);
     void detachAndRemoveAllObjects();
 
+    void setGraphicsContextGL(Ref<GraphicsContextGL>&&);
     void destroyGraphicsContextGL();
     void markContextChanged();
     void markContextChangedAndNotifyCanvasObserver();
@@ -542,6 +545,7 @@ protected:
     bool compositingResultsNeedUpdating() const final { return m_compositingResultsNeedUpdating; }
     bool needsPreparationForDisplay() const final { return true; }
     void prepareForDisplay() final;
+    void updateActiveOrdinal();
 
     RefPtr<GraphicsContextGL> m_context;
     RefPtr<WebGLContextGroup> m_contextGroup;
@@ -1142,6 +1146,8 @@ private:
 #if ENABLE(WEBXR)
     bool m_isXRCompatible { false };
 #endif
+    // The ordinal number of when the context was last active (drew, read pixels).
+    uint64_t m_activeOrdinal { 0 };
 };
 
 template <typename T>

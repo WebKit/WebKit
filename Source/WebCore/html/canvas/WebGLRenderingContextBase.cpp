@@ -124,8 +124,11 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
+#include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -151,9 +154,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderingContextBase);
 
-static const Seconds secondsBetweenRestoreAttempts { 1_s };
-const int maxGLErrorsAllowedToConsole = 256;
-static const Seconds checkContextLossHandlingDelay { 3_s };
+static constexpr Seconds secondsBetweenRestoreAttempts { 1_s };
+static constexpr int maxGLErrorsAllowedToConsole = 256;
+static constexpr Seconds checkContextLossHandlingDelay { 3_s };
+static constexpr size_t maxActiveContexts = 16;
+static constexpr size_t maxActiveWorkerContexts = 4;
 
 namespace {
     
@@ -784,6 +789,46 @@ static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
     return context->contextAttributes().powerPreference == WebGLPowerPreference::HighPerformance;
 }
 
+// Counter for determining which context has the earliest active ordinal number.
+static std::atomic<uint64_t> s_lastActiveOrdinal;
+
+using WebGLRenderingContextBaseSet = HashSet<WebGLRenderingContextBase*>;
+
+static WebGLRenderingContextBaseSet& activeContexts()
+{
+    static LazyNeverDestroyed<ThreadSpecific<WebGLRenderingContextBaseSet>> s_activeContexts;
+    static std::once_flag s_onceFlag;
+    std::call_once(s_onceFlag, [] {
+        s_activeContexts.construct();
+    });
+    return *s_activeContexts.get();
+}
+
+static void addActiveContext(WebGLRenderingContextBase& newContext)
+{
+    auto& contexts = activeContexts();
+    auto maxContextsSize = isMainThread() ? maxActiveContexts : maxActiveWorkerContexts;
+    if (contexts.size() >= maxContextsSize) {
+        auto it = contexts.begin();
+        auto* earliest = *it;
+        for (++it; it != contexts.end(); ++it) {
+            if (earliest->activeOrdinal() > (*it)->activeOrdinal())
+                earliest = *it;
+        }
+        earliest->recycleContext();
+        ASSERT(earliest != &newContext); // This assert is here so we can assert isNewEntry below instead of top-level `!contexts.contains(newContext);`.
+        ASSERT(contexts.size() < maxContextsSize);
+    }
+    auto result = contexts.add(&newContext);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+static void removeActiveContext(WebGLRenderingContextBase& context)
+{
+    bool didContain = activeContexts().remove(&context);
+    ASSERT_UNUSED(didContain, didContain);
+}
+
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)
 {
     auto scriptExecutionContext = canvas.scriptExecutionContext();
@@ -915,7 +960,6 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLCo
 
 WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<GraphicsContextGL>&& context, WebGLContextAttributes attributes)
     : GPUBasedCanvasRenderingContext(canvas)
-    , m_context(WTFMove(context))
     , m_restoreTimer(canvas.scriptExecutionContext(), *this, &WebGLRenderingContextBase::maybeRestoreContext)
     , m_generatedImageCache(4)
     , m_attributes(attributes)
@@ -925,6 +969,8 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<Gra
     , m_isXRCompatible(attributes.xrCompatible)
 #endif
 {
+    setGraphicsContextGL(WTFMove(context));
+
     m_restoreTimer.suspendIfNeeded();
 
     m_contextGroup = WebGLContextGroup::create();
@@ -1202,6 +1248,15 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
     }
 }
 
+void WebGLRenderingContextBase::setGraphicsContextGL(Ref<GraphicsContextGL>&& context)
+{
+    bool wasActive = m_context;
+    m_context = WTFMove(context);
+    updateActiveOrdinal();
+    if (!wasActive)
+        addActiveContext(*this);
+}
+
 void WebGLRenderingContextBase::destroyGraphicsContextGL()
 {
     if (m_isPendingPolicyResolution)
@@ -1212,6 +1267,7 @@ void WebGLRenderingContextBase::destroyGraphicsContextGL()
     if (m_context) {
         m_context->removeClient(*this);
         m_context = nullptr;
+        removeActiveContext(*this);
     }
 }
 
@@ -1262,6 +1318,9 @@ bool WebGLRenderingContextBase::clearIfComposited(WebGLRenderingContextBase::Cle
 {
     if (isContextLostOrPending())
         return false;
+
+    // `clearIfComposited()` is a function that prepares for updates. Mark the context as active.
+    updateActiveOrdinal();
 
     if (!m_context->layerComposited() || m_layerCleared || m_preventBufferClearForInspector)
         return false;
@@ -7762,7 +7821,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
         return;
     }
 
-    m_context = context;
+    setGraphicsContextGL(context.releaseNonNull());
     addActivityStateChangeObserverIfNecessary();
     m_contextLost = false;
     setupFlags();
@@ -8181,6 +8240,11 @@ void WebGLRenderingContextBase::prepareForDisplay()
         return;
 
     m_context->prepareForDisplay();
+}
+
+void WebGLRenderingContextBase::updateActiveOrdinal()
+{
+    m_activeOrdinal = s_lastActiveOrdinal++;
 }
 
 } // namespace WebCore

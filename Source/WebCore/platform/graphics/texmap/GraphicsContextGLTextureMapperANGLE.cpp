@@ -31,7 +31,6 @@
 
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
-#include "GraphicsContextGLOpenGLManager.h"
 #include "Logging.h"
 #include "PixelBuffer.h"
 #include "PlatformLayerDisplayDelegate.h"
@@ -318,7 +317,6 @@ bool GraphicsContextGLANGLE::EGLImageBacking::reset(int width, int height, bool 
 
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
-    GraphicsContextGLOpenGLManager::sharedManager().removeContext(this);
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);
     if (m_texture)

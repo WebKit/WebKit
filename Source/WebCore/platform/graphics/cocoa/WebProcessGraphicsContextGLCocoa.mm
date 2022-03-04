@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGL)
 #import "GraphicsContextGLCocoa.h" // NOLINT
-#import "GraphicsContextGLOpenGLManager.h"
 #import "PlatformCALayer.h"
 #import "ProcessIdentity.h"
 
@@ -146,14 +145,9 @@ void WebProcessGraphicsContextGLCocoa::displayWasReconfigured()
 
 RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes)
 {
-    // Make space for the incoming context if we're full.
-    GraphicsContextGLOpenGLManager::sharedManager().recycleContextIfNecessary();
-    if (GraphicsContextGLOpenGLManager::sharedManager().hasTooManyContexts())
-        return nullptr;
     auto context = adoptRef(new WebProcessGraphicsContextGLCocoa(GraphicsContextGLAttributes { attributes }));
     if (!context->initialize())
         return nullptr;
-    GraphicsContextGLOpenGLManager::sharedManager().addContext(context.get());
     return context;
 }
 

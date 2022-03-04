@@ -31,7 +31,6 @@
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
-#include "GraphicsContextGLOpenGLManager.h"
 #include "PixelBuffer.h"
 #include "TextureMapperGCGLPlatformLayer.h"
 #include <wtf/Deque.h>
@@ -106,11 +105,6 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
     if (!success)
         return nullptr;
 
-    // Make space for the incoming context if we're full.
-    GraphicsContextGLOpenGLManager::sharedManager().recycleContextIfNecessary();
-    if (GraphicsContextGLOpenGLManager::sharedManager().hasTooManyContexts())
-        return nullptr;
-
     // Create the GraphicsContextGLOpenGL object first in order to establist a current context on this thread.
     auto context = GraphicsContextGLTextureMapper::create(GraphicsContextGLAttributes { attributes });
     if (!context)
@@ -120,9 +114,6 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
     if (attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2 && !epoxy_is_desktop_gl() && epoxy_gl_version() < 30)
         return nullptr;
 #endif
-
-    GraphicsContextGLOpenGLManager::sharedManager().addContext(context.get());
-
     return context;
 }
 

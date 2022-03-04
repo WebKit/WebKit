@@ -1660,7 +1660,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/opengl/ExtensionsGLOpenGLCommon.h
     platform/graphics/opengl/ExtensionsGLOpenGLES.h
     platform/graphics/opengl/GraphicsContextGLOpenGL.h
-    platform/graphics/opengl/GraphicsContextGLOpenGLManager.h
     platform/graphics/opengl/TemporaryOpenGLSetting.h
 
     platform/graphics/opentype/OpenTypeMathData.h

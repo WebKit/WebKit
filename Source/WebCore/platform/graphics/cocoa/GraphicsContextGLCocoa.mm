@@ -33,7 +33,6 @@
 #import "ANGLEUtilitiesCocoa.h"
 #import "CVUtilities.h"
 #import "GraphicsContextGLIOSurfaceSwapChain.h"
-#import "GraphicsContextGLOpenGLManager.h"
 #import "Logging.h"
 #import "PixelBuffer.h"
 #import "ProcessIdentity.h"
@@ -428,7 +427,6 @@ bool GraphicsContextGLCocoa::platformInitialize()
 
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
 {
-    GraphicsContextGLOpenGLManager::sharedManager().removeContext(this);
     if (makeContextCurrent()) {
         if (m_texture)
             GL_DeleteTextures(1, &m_texture);

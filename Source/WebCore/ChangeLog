@@ -1,3 +1,60 @@
+2022-03-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL context count is not limited for GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=222411
+
+        Reviewed by Kenneth Russell.
+
+        Move the context limit from the GraphicsContextGL implementation
+        level to WebGLRenderingContext level. This way the limit
+        is applied to the GPUP implementation too.
+
+        Recycle the context with the earliest activity (draw, readpixels)
+        instead of the creation order.
+
+        Stores the WebGL contexts to per-thread set and limits the size of the set.
+        The set is per-thread to support WebGL contexts in DOM as well as
+        offscreen canvas use-cases. Offscreen canvas is not implemented for Cocoa
+        but other ports may enable it.
+
+        Tested by:
+        LayoutTests/webgl/lose-context-after-context-lost.html
+        LayoutTests/webgl/many-contexts-access-after-loss.html
+        LayoutTests/webgl/many-contexts.html
+        LayoutTests/webgl/max-active-contexts-console-warning.html
+        LayoutTests/webgl/max-active-contexts-gc.html
+        LayoutTests/webgl/max-active-contexts-oldest-context-lost.html
+        LayoutTests/webgl/max-active-contexts-webglcontextlost-prevent-default.html
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::activeContexts):
+        (WebCore::addActiveContext):
+        (WebCore::removeActiveContext):
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::setGraphicsContextGL):
+        (WebCore::WebGLRenderingContextBase::destroyGraphicsContextGL):
+        (WebCore::WebGLRenderingContextBase::clearIfComposited):
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+        (WebCore::WebGLRenderingContextBase::updateActiveOrdinal):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::activeOrdinal const):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+        (WebCore::GraphicsContextGLANGLE::~GraphicsContextGLANGLE):
+        * platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm:
+        (WebCore::createWebProcessGraphicsContextGL):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+        * platform/graphics/opengl/GraphicsContextGLOpenGLManager.cpp: Removed.
+        * platform/graphics/opengl/GraphicsContextGLOpenGLManager.h: Removed.
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp:
+        (WebCore::createWebProcessGraphicsContextGL):
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::~GraphicsContextGLANGLE):
+
 2022-03-03  Ben Nham  <nham@apple.com>
 
         Enforce silent push quota
