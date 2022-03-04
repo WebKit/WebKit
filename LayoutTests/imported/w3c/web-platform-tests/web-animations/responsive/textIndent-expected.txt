@@ -1,4 +1,4 @@
 
 PASS textIndent responsive to style changes
-FAIL textIndent responsive to inherited textIndent changes assert_equals: expected "300px hanging each-line" but got "200px hanging each-line"
+PASS textIndent responsive to inherited textIndent changes
 

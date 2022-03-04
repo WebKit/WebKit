@@ -1,3 +1,16 @@
+2022-03-04  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] "inherit" values should trigger keyframe recomputation if any previous effect has changed that property
+        https://bugs.webkit.org/show_bug.cgi?id=237471
+
+        Reviewed by Antti Koivisto.
+
+        When we fixed 237371 we only looked at the unanimated style, but we should account for any previous keyframe effect
+        modifying a property set to "inherit" for the current effect.
+
+        * animation/KeyframeEffectStack.cpp:
+        (WebCore::KeyframeEffectStack::applyKeyframeEffects):
+
 2022-03-04  Kate Cheney  <katherine_cheney@apple.com>
 
         CSP report does not get sent to the document in the case of a detached element
