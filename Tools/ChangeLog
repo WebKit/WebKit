@@ -1,3 +1,20 @@
+2022-03-03  Lauro Moura  <lmoura@igalia.com>
+
+        [Python3] Switch a few more glib scripts to Python3
+        https://bugs.webkit.org/show_bug.cgi?id=237442
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Scripts/check-for-global-bss-symbols-in-webkitgtk-libs: Update
+        shebang.
+        (bss_symbols): Decode Popen bytes output.
+        * gtk/jhbuildrc: Update shebang.
+        * gtk/ycm_extra_conf.py: Ditto.
+        * jhbuild/jhbuild-wrapper: Ditto.
+        (jhbuild_at_expected_revision): Decode Popen bytes output.
+        * jhbuild/jhbuildrc_common.py: Remove uneeded shebang.
+        * wpe/jhbuildrc: Update shebang.
+
 2022-03-03  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Disable prompt when saving credentials

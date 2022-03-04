@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2011 Igalia S.L.
 # Copyright (C) 2012 Intel Corporation
 #
