@@ -1,3 +1,47 @@
+2022-03-03  Ben Nham  <nham@apple.com>
+
+        Enforce silent push quota
+        https://bugs.webkit.org/show_bug.cgi?id=236863
+
+        Reviewed by Brady Eidson.
+
+        All PushSubscriptions are created with the userVisibleOnly flag set. This means that all
+        push events should result in a user-facing notification.
+
+        To enforce this, we use a quota system. A push subscription can process up to three silent
+        pushes. After three silent pushes, we remove the push subscription. To continue to receive
+        pushes, the user must navigate back to the website and the site must request permission to
+        send pushes again.
+
+        Originally we were going to use a more complicated quota system that moved subscriptions
+        from waking to non-waking before finally unsubscribing, but this seemed like it could lead
+        to subscriptions being in a partially-working state that would be hard to explain and reason
+        about. As a result, I've removed the wakeState column from PushDatabase and replaced it
+        a silentPushCount column.
+
+        To track whether or not a service worker has shown a notification while processing a push
+        event, we use a boolean flag on ServiceWorkerGlobalScope. This should be sufficient because
+        we currently only process one push event at a time.
+
+        Covered by existing and new API tests.
+
+        * Modules/push-api/PushDatabase.cpp:
+        (WebCore::PushRecord::isolatedCopy const):
+        (WebCore::PushRecord::isolatedCopy):
+        (WebCore::PushDatabase::insertRecord):
+        (WebCore::makePushRecordFromRow):
+        (WebCore::PushDatabase::getRecordByTopic):
+        (WebCore::PushDatabase::getRecordByBundleIdentifierAndScope):
+        (WebCore::PushDatabase::getTopics):
+        (WebCore::PushDatabase::incrementSilentPushCount):
+        (WebCore::PushDatabase::removeRecordsByBundleIdentifierAndSecurityOrigin):
+        * Modules/push-api/PushDatabase.h:
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::showNotification):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::queueTaskToFirePushEvent):
+
 2022-03-03  Devin Rousso  <drousso@apple.com>
 
         [GPU Process] dont load Apple Pay button/logo PDFs in the WebProcess

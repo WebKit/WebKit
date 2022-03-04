@@ -2232,29 +2232,51 @@ void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const U
         session->storageManager().moveData(dataTypes, oldOrigin, newOrigin, [aggregator] { });
 }
 
-#if ENABLE(SERVICE_WORKER)
+#if ENABLE(SERVICE_WORKER) && ENABLE(BUILT_IN_NOTIFICATIONS)
+
 void NetworkProcess::getPendingPushMessages(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&& callback)
 {
-#if ENABLE(BUILT_IN_NOTIFICATIONS)
     if (auto* session = networkSession(sessionID)) {
         LOG(Notifications, "NetworkProcess getting pending push messages for session ID %" PRIu64, sessionID.toUInt64());
         session->notificationManager().getPendingPushMessages(WTFMove(callback));
         return;
     } else
         LOG(Notifications, "NetworkProcess could not find session for ID %llu to get pending push messages", sessionID.toUInt64());
-#endif
-    callback({ });
 }
 
 void NetworkProcess::processPushMessage(PAL::SessionID sessionID, WebPushMessage&& pushMessage, CompletionHandler<void(bool)>&& callback)
 {
     if (auto* session = networkSession(sessionID)) {
         LOG(Push, "Networking process handling a push message from UI process in session %llu", sessionID.toUInt64());
-        session->ensureSWServer().processPushMessage(WTFMove(pushMessage.pushData), WTFMove(pushMessage.registrationURL), WTFMove(callback));
+        auto origin = SecurityOriginData::fromURL(pushMessage.registrationURL);
+        session->ensureSWServer().processPushMessage(WTFMove(pushMessage.pushData), WTFMove(pushMessage.registrationURL), [this, protectedThis = Ref { *this }, sessionID, origin = WTFMove(origin), callback = WTFMove(callback)](bool result) mutable {
+            NetworkSession* session;
+            if (!result && (session = networkSession(sessionID))) {
+                session->notificationManager().incrementSilentPushCount(WTFMove(origin), [callback = WTFMove(callback), result](unsigned) mutable {
+                    callback(result);
+                });
+                return;
+            }
+
+            callback(result);
+        });
     } else
         LOG(Push, "Networking process asked to handle a push message from UI process in session %llu, but that session doesn't exist", sessionID.toUInt64());
 }
-#endif // ENABLE(SERVICE_WORKER)
+
+#else
+
+void NetworkProcess::getPendingPushMessages(PAL::SessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&& callback)
+{
+    callback({ });
+}
+
+void NetworkProcess::processPushMessage(PAL::SessionID, WebPushMessage&&, CompletionHandler<void(bool)>&& callback)
+{
+    callback(false);
+}
+
+#endif // ENABLE(SERVICE_WORKER) && ENABLE(BUILT_IN_NOTIFICATIONS)
 
 void NetworkProcess::deletePushAndNotificationRegistration(PAL::SessionID sessionID, const SecurityOriginData& origin, CompletionHandler<void(const String&)>&& callback)
 {

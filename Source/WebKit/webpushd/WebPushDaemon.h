@@ -46,6 +46,10 @@ namespace JSC {
 enum class MessageLevel : uint8_t;
 }
 
+namespace WebCore {
+struct SecurityOriginData;
+}
+
 using WebKit::WebPushD::PushMessageForTesting;
 using WebKit::WebPushD::WebPushDaemonConnectionConfiguration;
 
@@ -80,6 +84,7 @@ public:
     void unsubscribeFromPushService(ClientConnection*, const URL& scopeURL, WebCore::PushSubscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender);
     void getPushSubscription(ClientConnection*, const URL& scopeURL, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&& replySender);
     void getPushPermissionState(ClientConnection*, const URL& scopeURL, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender);
+    void incrementSilentPushCount(ClientConnection*, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
 
     void broadcastDebugMessage(JSC::MessageLevel, const String&);
     void broadcastAllConnectionIdentities();

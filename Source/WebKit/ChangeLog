@@ -1,5 +1,36 @@
 2022-03-03  Ben Nham  <nham@apple.com>
 
+        Enforce silent push quota
+        https://bugs.webkit.org/show_bug.cgi?id=236863
+
+        Reviewed by Brady Eidson.
+
+         - If a push event doesn't result in a notification or if the associated promise rejects,
+           then we increment the silent push count associated with that origin.
+         - PushService now removes a subscription if the origin has reached its quota of silent
+           pushes.
+
+        Covered by existing and new API tests.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processPushMessage):
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::incrementSilentPushCount):
+        (WebKit::ReplyCaller<int>::callReply):
+        * Shared/WebPushDaemonConstants.h:
+        (WebKit::WebPushD::messageTypeSendsReply):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _notificationManagerForTesting]):
+        * webpushd/PushService.mm:
+        (WebPushD::updateTopicLists):
+        (WebPushD::PushService::incrementSilentPushCount):
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::MessageInfo::incrementSilentPushCount::encodeReply):
+        (WebPushD::Daemon::decodeAndHandleMessage):
+        (WebPushD::Daemon::incrementSilentPushCount):
+
+2022-03-03  Ben Nham  <nham@apple.com>
+
         Allow webpushd to launch browser in background
         https://bugs.webkit.org/show_bug.cgi?id=237114
 

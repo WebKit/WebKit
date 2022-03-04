@@ -1,3 +1,17 @@
+2022-03-03  Ben Nham  <nham@apple.com>
+
+        Enforce silent push quota
+        https://bugs.webkit.org/show_bug.cgi?id=236863
+
+        Reviewed by Brady Eidson.
+
+        Update PushEvent tests to check that notifications are displayed.
+
+        * http/wpt/push-api/pushEvent.any.js:
+        (promise_test.async const):
+        (promise_test.async if):
+        * http/wpt/push-api/pushEvent.any.serviceworker-expected.txt:
+
 2022-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Element with position: sticky after sticking, starts to move incorrectly when scrolling

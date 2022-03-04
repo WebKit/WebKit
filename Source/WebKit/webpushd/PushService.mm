@@ -29,6 +29,7 @@
 #import "ApplePushServiceConnection.h"
 #import "MockPushServiceConnection.h"
 #import "Logging.h"
+#import "WebPushDaemonConstants.h"
 #import <Foundation/Foundation.h>
 #import <WebCore/PushMessageCrypto.h>
 #import <WebCore/SecurityOrigin.h>
@@ -44,19 +45,9 @@ namespace WebPushD {
 
 static void updateTopicLists(PushServiceConnection& connection, PushDatabase& database, CompletionHandler<void()> completionHandler)
 {
-    database.getTopicsByWakeState([&connection, completionHandler = WTFMove(completionHandler)](auto&& topicMap) mutable {
+    database.getTopics([&connection, completionHandler = WTFMove(completionHandler)](auto&& topics) mutable {
         // FIXME: move topics to ignored list based on user preferences.
-        PushServiceConnection::TopicLists topicLists;
-
-        if (auto it = topicMap.find(PushWakeState::Waking); it != topicMap.end())
-            std::swap(topicLists.enabledTopics, it->value);
-        if (auto it = topicMap.find(PushWakeState::Opportunistic); it != topicMap.end())
-            std::swap(topicLists.opportunisticTopics, it->value);
-        if (auto it = topicMap.find(PushWakeState::NonWaking); it != topicMap.end())
-            std::swap(topicLists.nonWakingTopics, it->value);
-
-        connection.setTopicLists(WTFMove(topicLists));
-
+        connection.setEnabledTopics(WTFMove(topics));
         completionHandler();
     });
 }
@@ -480,6 +471,31 @@ void PushService::unsubscribe(const String& bundleIdentifier, const String& scop
 void PushService::didCompleteUnsubscribeRequest(UnsubscribeRequest& request)
 {
     finishedPushServiceRequest(m_unsubscribeRequests, request);
+}
+
+void PushService::incrementSilentPushCount(const String& bundleIdentifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&& handler)
+{
+    m_database->incrementSilentPushCount(bundleIdentifier, securityOrigin, [this, bundleIdentifier, securityOrigin, handler = WTFMove(handler)](unsigned silentPushCount) mutable {
+        if (silentPushCount < WebKit::WebPushD::maxSilentPushCount) {
+            handler(silentPushCount);
+            return;
+        }
+
+        RELEASE_LOG(Push, "Removing all subscriptions associated with %{public}s %{sensitive}s since it processed %u silent pushes", bundleIdentifier.utf8().data(), securityOrigin.utf8().data(), silentPushCount);
+
+        m_database->removeRecordsByBundleIdentifierAndSecurityOrigin(bundleIdentifier, securityOrigin, [this, bundleIdentifier, securityOrigin, silentPushCount, handler = WTFMove(handler)](auto&& removedRecords) mutable {
+            for (auto& record : removedRecords) {
+                m_connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
+                    if (!unsubscribed)
+                        RELEASE_LOG_ERROR(Push, "IncrementSilentPushRequest couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
+                });
+            }
+
+            updateTopicLists(m_connection, m_database, [silentPushCount, handler = WTFMove(handler)]() mutable {
+                handler(silentPushCount);
+            });
+        });
+    });
 }
 
 enum class ContentEncoding {

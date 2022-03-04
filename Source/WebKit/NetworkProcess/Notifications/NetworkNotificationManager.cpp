@@ -175,6 +175,16 @@ void NetworkNotificationManager::getPushPermissionState(URL&& scopeURL, Completi
     sendMessageWithReply<WebPushD::MessageType::GetPushPermissionState>(WTFMove(completionHandler), WTFMove(scopeURL));
 }
 
+void NetworkNotificationManager::incrementSilentPushCount(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& completionHandler)
+{
+    if (!m_connection) {
+        completionHandler(0);
+        return;
+    }
+
+    sendMessageWithReply<WebPushD::MessageType::IncrementSilentPushCount>(WTFMove(completionHandler), WTFMove(origin));
+}
+
 template<WebPushD::MessageType messageType, typename... Args>
 void NetworkNotificationManager::sendMessage(Args&&... args) const
 {
@@ -225,6 +235,17 @@ template<> struct ReplyCaller<bool> {
         if (!boolean)
             return completionHandler(false);
         completionHandler(*boolean);
+    }
+};
+
+template<> struct ReplyCaller<unsigned> {
+    static void callReply(Daemon::Decoder&& decoder, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        std::optional<int> value;
+        decoder >> value;
+        if (!value)
+            return completionHandler(0);
+        completionHandler(*value);
     }
 };
 

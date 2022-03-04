@@ -40,6 +40,7 @@
 #include "NotificationPermission.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerContainer.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerTypes.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
@@ -285,6 +286,9 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
         promise.reject(Exception { TypeError, "Registration does not have permission to show notifications"_s });
         return;
     }
+
+    if (context.isServiceWorkerGlobalScope())
+        downcast<ServiceWorkerGlobalScope>(context).setHasPendingSilentPushEvent(false);
 
     // The Notification is kept alive by virtue of being show()'n soon.
     // FIXME: When implementing getNotifications(), store this Notification in the registration's notification list.

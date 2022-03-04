@@ -33,6 +33,7 @@
 #import "Logging.h"
 #import "SandboxUtilities.h"
 #import "UIGamepadProvider.h"
+#import "WKAPICast.h"
 #import "WKDownloadInternal.h"
 #import "WKObject.h"
 #import "WKWebViewInternal.h"
@@ -41,6 +42,7 @@
 #import "WebBackForwardCache.h"
 #import "WebCertificateInfo.h"
 #import "WebCookieManagerProxy.h"
+#import "WebNotificationManagerProxy.h"
 #import "WebProcessCache.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
@@ -610,6 +612,11 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 - (void)_terminateAllWebContentProcesses
 {
     _processPool->terminateAllWebContentProcesses();
+}
+
+- (WKNotificationManagerRef)_notificationManagerForTesting
+{
+    return WebKit::toAPI(_processPool->supplement<WebKit::WebNotificationManagerProxy>());
 }
 
 @end

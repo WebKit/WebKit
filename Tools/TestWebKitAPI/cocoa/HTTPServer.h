@@ -50,6 +50,7 @@ public:
     HTTPServer(Function<void(Connection)>&&, Protocol = Protocol::Http);
     ~HTTPServer();
     uint16_t port() const;
+    String origin() const;
     NSURLRequest *request(const String& path = "/"_str) const;
     NSURLRequest *requestWithLocalhost(const String& path = "/"_str) const;
     size_t totalRequests() const;

@@ -35,6 +35,7 @@
 #import "MockAppBundleRegistry.h"
 
 #import <WebCore/PushPermissionState.h>
+#import <WebCore/SecurityOriginData.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/HexNumber.h>
@@ -118,6 +119,11 @@ ARGUMENTS(URL)
 REPLY(const Expected<uint8_t, WebCore::ExceptionData>&)
 END
 
+FUNCTION(incrementSilentPushCount)
+ARGUMENTS(WebCore::SecurityOriginData)
+REPLY(unsigned)
+END
+
 #undef FUNCTION
 #undef ARGUMENTS
 #undef REPLY
@@ -194,6 +200,13 @@ WebPushD::EncodedMessage getPushSubscription::encodeReply(const Expected<std::op
 }
 
 WebPushD::EncodedMessage getPushPermissionState::encodeReply(const Expected<uint8_t, WebCore::ExceptionData>& reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage incrementSilentPushCount::encodeReply(unsigned reply)
 {
     WebKit::Daemon::Encoder encoder;
     encoder << reply;
@@ -401,6 +414,9 @@ void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType mes
         break;
     case MessageType::GetPushPermissionState:
         handleWebPushDMessageWithReply<MessageInfo::getPushPermissionState>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
+    case MessageType::IncrementSilentPushCount:
+        handleWebPushDMessageWithReply<MessageInfo::incrementSilentPushCount>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
     }
 }
@@ -626,6 +642,18 @@ void Daemon::getPushPermissionState(ClientConnection* connection, const URL& sco
     // in WebProcess. However, we've left this stub in for now because there is a chance that we
     // will move the permission check into webpushd when supporting other platforms.
     replySender(static_cast<uint8_t>(WebCore::PushPermissionState::Denied));
+}
+
+void Daemon::incrementSilentPushCount(ClientConnection* connection, const WebCore::SecurityOriginData& securityOrigin, CompletionHandler<void(unsigned)>&& replySender)
+{
+    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), securityOrigin = securityOrigin.toString(), replySender = WTFMove(replySender)]() mutable {
+        if (!m_pushService) {
+            replySender(0);
+            return;
+        }
+
+        m_pushService->incrementSilentPushCount(bundleIdentifier, securityOrigin, WTFMove(replySender));
+    });
 }
 
 ClientConnection* Daemon::toClientConnection(xpc_connection_t connection)

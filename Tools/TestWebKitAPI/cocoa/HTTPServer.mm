@@ -376,6 +376,11 @@ const char* HTTPServer::scheme() const
     return scheme;
 }
 
+String HTTPServer::origin() const
+{
+    return [NSString stringWithFormat:@"%s://127.0.0.1:%d", scheme(), port()];
+}
+
 NSURLRequest *HTTPServer::request(const String& path) const
 {
     return [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%s://127.0.0.1:%d%@", scheme(), port(), path.createCFString().get()]]];

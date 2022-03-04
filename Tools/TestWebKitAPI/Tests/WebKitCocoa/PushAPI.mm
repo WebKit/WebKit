@@ -29,7 +29,10 @@
 #import "HTTPServer.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNotificationProvider.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKNotificationProvider.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
@@ -89,6 +92,7 @@ self.addEventListener("message", (event) => {
     port.postMessage("Ready");
 });
 self.addEventListener("push", (event) => {
+    self.registration.showNotification("notification");
     try {
         if (!event.data) {
             port.postMessage("Received: null data");
@@ -137,6 +141,9 @@ TEST(PushAPI, firePushEvent)
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
+    provider.setPermission(server.origin(), true);
 
     auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
@@ -188,6 +195,7 @@ self.addEventListener("message", (event) => {
     port.postMessage("Ready");
 });
 self.addEventListener("push", (event) => {
+    self.registration.showNotification("notification");
     if (!event.data)
         return;
     const value = event.data.text();
@@ -224,6 +232,9 @@ TEST(PushAPI, firePushEventWithNoPagesSuccessful)
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     clearWebsiteDataStore([configuration websiteDataStore]);
+
+    auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
+    provider.setPermission(server.origin(), true);
 
     auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
@@ -269,6 +280,9 @@ TEST(PushAPI, firePushEventWithNoPagesFail)
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     clearWebsiteDataStore([configuration websiteDataStore]);
+
+    auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
+    provider.setPermission(server.origin(), true);
 
     auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];

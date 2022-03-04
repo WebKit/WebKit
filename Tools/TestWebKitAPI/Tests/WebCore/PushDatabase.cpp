@@ -35,18 +35,26 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-static PushDatabase::PushWakeStateToTopicMap getTopicsByWakeStateSync(PushDatabase& database)
+static String makeTemporaryDatabasePath()
+{
+    FileSystem::PlatformFileHandle handle;
+    auto path = FileSystem::openTemporaryFile("PushDatabase", handle, ".db");
+    FileSystem::closeFile(handle);
+    return path;
+}
+
+static Vector<String> getTopicsSync(PushDatabase& database)
 {
     bool done = false;
-    PushDatabase::PushWakeStateToTopicMap getResult;
+    Vector<String> topics;
 
-    database.getTopicsByWakeState([&done, &getResult](PushDatabase::PushWakeStateToTopicMap&& result) {
-        getResult = WTFMove(result);
+    database.getTopics([&done, &topics](auto&& result) {
+        topics = WTFMove(result);
         done = true;
     });
     Util::run(&done);
 
-    return getResult;
+    return topics;
 }
 
 class PushDatabaseTest : public testing::Test {
@@ -55,31 +63,42 @@ public:
 
     PushRecord record1 {
         PushSubscriptionIdentifier(),
-        "com.apple.Safari"_s,
-        "https://www.apple.com"_s,
-        "https://www.apple.com/mac"_s,
-        "https://pushEndpoint1"_s,
-        "topic1"_s,
-        { 0, 1 },
-        { 1, 2 },
-        { 2, 3 },
-        { 4, 5 },
-        convertSecondsToEpochTimeStamp(1643350000),
-        PushWakeState::Opportunistic
-    };
-    PushRecord record2 {
-        PushSubscriptionIdentifier(),
         "com.apple.webapp"_s,
         "https://www.apple.com"_s,
         "https://www.apple.com/iphone"_s,
         "https://pushEndpoint2"_s,
-        "topic2"_s,
+        "topic1"_s,
         { 5, 6 },
         { 6, 7 },
         { 7, 8 },
         { 8, 9 }
     };
+    PushRecord record2 {
+        PushSubscriptionIdentifier(),
+        "com.apple.Safari"_s,
+        "https://www.webkit.org"_s,
+        "https://www.webkit.org/blog"_s,
+        "https://pushEndpoint4"_s,
+        "topic4"_s,
+        { 14, 15 },
+        { 16, 17 },
+        { 18, 19 },
+        { 20, 21 }
+    };
     PushRecord record3 {
+        PushSubscriptionIdentifier(),
+        "com.apple.Safari"_s,
+        "https://www.apple.com"_s,
+        "https://www.apple.com/mac"_s,
+        "https://pushEndpoint1"_s,
+        "topic2"_s,
+        { 0, 1 },
+        { 1, 2 },
+        { 2, 3 },
+        { 4, 5 },
+        convertSecondsToEpochTimeStamp(1643350000),
+    };
+    PushRecord record4 {
         PushSubscriptionIdentifier(),
         "com.apple.Safari"_s,
         "https://www.apple.com"_s,
@@ -95,6 +114,7 @@ public:
     std::optional<PushRecord> insertResult1;
     std::optional<PushRecord> insertResult2;
     std::optional<PushRecord> insertResult3;
+    std::optional<PushRecord> insertResult4;
 
     std::optional<PushRecord> insertRecord(const PushRecord& record)
     {
@@ -167,15 +187,57 @@ public:
         return rowIdentifiers;
     }
 
-    PushDatabase::PushWakeStateToTopicMap getTopicsByWakeState()
+    Vector<String> getTopics()
     {
-        return getTopicsByWakeStateSync(*db);
+        return getTopicsSync(*db);
+    }
+
+    Vector<RemovedPushRecord> removeRecordsByBundleIdentifier(const String& bundleID)
+    {
+        bool done = false;
+        Vector<RemovedPushRecord> removedRecords;
+
+        db->removeRecordsByBundleIdentifier(bundleID, [&done, &removedRecords](auto&& result) {
+            removedRecords = WTFMove(result);
+            done = true;
+        });
+        Util::run(&done);
+
+        return removedRecords;
+    }
+
+    Vector<RemovedPushRecord> removeRecordsByBundleIdentifierAndSecurityOrigin(const String& bundleID, const String& securityOrigin)
+    {
+        bool done = false;
+        Vector<RemovedPushRecord> removedRecords;
+
+        db->removeRecordsByBundleIdentifierAndSecurityOrigin(bundleID, securityOrigin, [&done, &removedRecords](auto&& result) {
+            removedRecords = WTFMove(result);
+            done = true;
+        });
+        Util::run(&done);
+
+        return removedRecords;
+    }
+
+    unsigned incrementSilentPushCount(const String& bundleID, const String& securityOrigin)
+    {
+        bool done = false;
+        unsigned count = 0;
+
+        db->incrementSilentPushCount(bundleID, securityOrigin, [&done, &count](int result) {
+            count = result;
+            done = true;
+        });
+        Util::run(&done);
+
+        return count;
     }
 
     void SetUp() final
     {
         bool done = false;
-        PushDatabase::create(SQLiteDatabase::inMemoryPath(), [this, &done](std::unique_ptr<PushDatabase>&& database) {
+        PushDatabase::create(makeTemporaryDatabasePath(), [this, &done](std::unique_ptr<PushDatabase>&& database) {
             db = WTFMove(database);
             done = true;
         });
@@ -185,6 +247,7 @@ public:
         ASSERT_TRUE(insertResult1 = insertRecord(record1));
         ASSERT_TRUE(insertResult2 = insertRecord(record2));
         ASSERT_TRUE(insertResult3 = insertRecord(record3));
+        ASSERT_TRUE(insertResult4 = insertRecord(record4));
     }
 };
 
@@ -200,8 +263,7 @@ static bool operator==(const PushRecord& a, const PushRecord& b)
         && a.clientPublicKey == b.clientPublicKey
         && a.clientPrivateKey == b.clientPrivateKey
         && a.sharedAuthSecret == b.sharedAuthSecret
-        && a.expirationTime == b.expirationTime
-        && a.wakeState == b.wakeState;
+        && a.expirationTime == b.expirationTime;
 }
 
 TEST_F(PushDatabaseTest, InsertRecord)
@@ -214,26 +276,79 @@ TEST_F(PushDatabaseTest, InsertRecord)
     expectedRecord2.identifier = makeObjectIdentifier<PushSubscriptionIdentifierType>(2);
     EXPECT_TRUE(expectedRecord2 == *insertResult2);
 
-    // Since record3 is in the same SubscriptionSet as record1, it should
-    // inherit record1's wake state.
     auto expectedRecord3 = record3;
     expectedRecord3.identifier = makeObjectIdentifier<PushSubscriptionIdentifierType>(3);
-    expectedRecord3.wakeState = expectedRecord1.wakeState;
     EXPECT_TRUE(expectedRecord3 == *insertResult3);
 
-    // Inserting a record with the same (bundleID, scope) as record 1 should fail.
-    PushRecord record4 = record1;
-    record4.endpoint = "https://www.webkit.org"_s;
-    EXPECT_FALSE(insertRecord(WTFMove(record4)));
+    auto expectedRecord4 = record4;
+    expectedRecord4.identifier = makeObjectIdentifier<PushSubscriptionIdentifierType>(4);
+    EXPECT_TRUE(expectedRecord4 == *insertResult4);
 
-    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 3 }));
+    // Inserting a record with the same (bundleID, scope) as record 1 should fail.
+    PushRecord record5 = record1;
+    record4.endpoint = "https://pushEndpoint5"_s;
+    EXPECT_FALSE(insertRecord(WTFMove(record5)));
+
+    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 3, 4 }));
 }
 
 TEST_F(PushDatabaseTest, RemoveRecord)
 {
     EXPECT_TRUE(removeRecordByRowIdentifier(1));
     EXPECT_FALSE(removeRecordByRowIdentifier(1));
-    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 2, 3 }));
+    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 2, 3, 4 }));
+}
+
+TEST_F(PushDatabaseTest, RemoveRecordsByBundleIdentifier)
+{
+    // record2, record3, and record4 have the same bundleID.
+    auto removedRecords = removeRecordsByBundleIdentifier(record2.bundleID);
+    bool containsRecord2 = removedRecords.findIf([topic = record2.topic](auto& record) {
+        return topic == record.topic;
+    }) != notFound;
+    bool containsRecord3 = removedRecords.findIf([topic = record3.topic](auto& record) {
+        return topic == record.topic;
+    }) != notFound;
+    bool containsRecord4 = removedRecords.findIf([topic = record4.topic](auto& record) {
+        return topic == record.topic;
+    }) != notFound;
+
+    EXPECT_TRUE(containsRecord2);
+    EXPECT_TRUE(containsRecord3);
+    EXPECT_TRUE(containsRecord4);
+    EXPECT_EQ(removedRecords.size(), 3u);
+    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1 }));
+
+    // Inserting a new record should produce a new identifier.
+    PushRecord record5 = record3;
+    auto insertResult = insertRecord(WTFMove(record5));
+    EXPECT_TRUE(insertResult);
+    EXPECT_EQ(insertResult->identifier, makeObjectIdentifier<PushSubscriptionIdentifierType>(5));
+    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 5 }));
+}
+
+TEST_F(PushDatabaseTest, RemoveRecordsByBundleIdentifierAndSecurityOrigin)
+{
+    // record3 and record4 have the same bundleID and securityOrigin.
+    auto removedRecords = removeRecordsByBundleIdentifierAndSecurityOrigin(record3.bundleID, record3.securityOrigin);
+    bool containsRecord3 = removedRecords.findIf([topic = record3.topic](auto& record) {
+        return topic == record.topic;
+    }) != notFound;
+    bool containsRecord4 = removedRecords.findIf([topic = record4.topic](auto& record) {
+        return topic == record.topic;
+    }) != notFound;
+
+    EXPECT_TRUE(containsRecord3);
+    EXPECT_TRUE(containsRecord4);
+    EXPECT_EQ(removedRecords.size(), 2u);
+    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2 }));
+
+    // Inserting a new record should produce a new identifier.
+    PushRecord record5 = record3;
+    auto insertResult = insertRecord(WTFMove(record5));
+    EXPECT_TRUE(insertResult);
+    EXPECT_EQ(insertResult->identifier, makeObjectIdentifier<PushSubscriptionIdentifierType>(5));
+    EXPECT_EQ(getRowIdentifiers(), (HashSet<uint64_t> { 1, 2, 5 }));
 }
 
 TEST_F(PushDatabaseTest, GetRecordByTopic)
@@ -259,29 +374,27 @@ TEST_F(PushDatabaseTest, GetRecordByBundleIdentifierAndScope)
     EXPECT_FALSE(result3);
 }
 
-TEST_F(PushDatabaseTest, GetTopicsByWakeState)
+TEST_F(PushDatabaseTest, GetTopics)
 {
-    HashMap<String, PushWakeState> expected {
-        { "topic1", PushWakeState::Opportunistic },
-        { "topic2", PushWakeState::Waking },
-        { "topic3", PushWakeState::Opportunistic }
-    };
-    HashMap<String, PushWakeState> actual;
-
-    for (const auto& [wakeState, topics] : getTopicsByWakeState()) {
-        for (const auto& topic : topics)
-            actual.add(topic, wakeState);
-    }
-
-    EXPECT_EQ(expected, actual);
+    Vector<String> expected { "topic1"_s, "topic2"_s, "topic3"_s, "topic4"_s };
+    EXPECT_EQ(getTopics(), expected);
 }
 
-static String makeTemporaryDatabasePath()
+TEST_F(PushDatabaseTest, IncrementSilentPushCount)
 {
-    FileSystem::PlatformFileHandle handle;
-    auto path = FileSystem::openTemporaryFile("PushDatabase", handle, ".db");
-    FileSystem::closeFile(handle);
-    return path;
+    auto count = incrementSilentPushCount(record1.bundleID, record1.securityOrigin);
+    EXPECT_EQ(count, 1u);
+
+    // record1 and record3 have different bundleID and securityOrigin.
+    count = incrementSilentPushCount(record3.bundleID, record3.securityOrigin);
+    EXPECT_EQ(count, 1u);
+
+    // record3 and record4 have the same bundleID and securityOrigin.
+    count = incrementSilentPushCount(record4.bundleID, record4.securityOrigin);
+    EXPECT_EQ(count, 2u);
+
+    count = incrementSilentPushCount("nonexistent"_s, "nonexistent"_s);
+    EXPECT_EQ(count, 0u);
 }
 
 TEST(PushDatabase, ManyInFlightOps)
@@ -314,7 +427,6 @@ TEST(PushDatabase, ManyInFlightOps)
             { 2, 3 },
             { 4, 5 },
             convertSecondsToEpochTimeStamp(1643350000),
-            PushWakeState::Waking
         };
 
         for (unsigned i = 0; i < recordCount; i++) {
@@ -339,8 +451,7 @@ TEST(PushDatabase, ManyInFlightOps)
         Util::run(&done);
         ASSERT_TRUE(createResult);
 
-        auto getResult = getTopicsByWakeStateSync(*createResult);
-        auto topics = getResult.take(PushWakeState::Waking);
+        auto topics = getTopicsSync(*createResult);
         EXPECT_EQ(topics.size(), recordCount);
     }
 }

@@ -32,6 +32,7 @@
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerRegistration.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/URLHash.h>
 
 namespace WebCore {
@@ -88,6 +89,9 @@ public:
     void postTaskToFireNotificationEvent(NotificationEventType, Notification&, const String& action);
 #endif
 
+    bool hasPendingSilentPushEvent() const { return m_hasPendingSilentPushEvent; }
+    void setHasPendingSilentPushEvent(bool value) { m_hasPendingSilentPushEvent = value; }
+
 private:
     ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID);
     void notifyServiceWorkerPageOfCreationIfNecessary();
@@ -96,6 +100,7 @@ private:
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 
     NotificationClient* notificationClient() final { return m_notificationClient.get(); }
+
     std::optional<PAL::SessionID> sessionID() const final { return m_sessionID; }
 
     ServiceWorkerContextData m_contextData;
@@ -109,6 +114,7 @@ private:
     HashMap<uint64_t, RefPtr<DeferredPromise>> m_pendingSkipWaitingPromises;
     PAL::SessionID m_sessionID;
     std::unique_ptr<NotificationClient> m_notificationClient;
+    bool m_hasPendingSilentPushEvent { false };
 };
 
 } // namespace WebCore
