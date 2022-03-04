@@ -1,3 +1,23 @@
+2022-03-04  Youenn Fablet  <youenn@apple.com>
+
+        AVVideoCaptureSource should reuse CaptureDevice label
+        https://bugs.webkit.org/show_bug.cgi?id=237363
+        <rdar://88301613>
+
+        Reviewed by Eric Carlson.
+
+        We are getting AV device name through AVCaptureDevice.localizedName, first in UIProcess, then in GPUProcess.
+        To make sure we always use the ones from UIProcess (which are the ones exposed through mediaDevices.enumerateDevices),
+        We make sure to use CaptureDevice.label when creating an AVVideoCaptureSource.
+
+        Manually tested.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::create):
+        (WebCore::AVVideoCaptureSource::AVVideoCaptureSource):
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+
 2022-03-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL context count is not limited for GPU process

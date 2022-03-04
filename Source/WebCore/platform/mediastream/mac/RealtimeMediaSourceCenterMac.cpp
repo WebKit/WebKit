@@ -48,7 +48,7 @@ public:
     CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints) final
     {
         ASSERT(device.type() == CaptureDevice::DeviceType::Camera);
-        return AVVideoCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
+        return AVVideoCaptureSource::create(device, WTFMove(hashSalt), constraints);
     }
 
 private:
