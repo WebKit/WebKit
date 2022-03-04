@@ -79,4 +79,18 @@ inline bool messageTypeSendsReply(MessageType messageType)
     return false;
 }
 
+enum class DaemonMessageType : uint8_t {
+    DebugMessage = 1,
+};
+
+inline bool daemonMessageTypeSendsReply(DaemonMessageType messageType)
+{
+    switch (messageType) {
+    case DaemonMessageType::DebugMessage:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 } // namespace WebKit::WebPushD

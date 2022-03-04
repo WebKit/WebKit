@@ -68,7 +68,7 @@ public:
     virtual void newConnectionWasInitialized() const = 0;
 #if PLATFORM(COCOA)
     virtual RetainPtr<xpc_object_t> dictionaryFromMessage(typename Traits::MessageType, EncodedMessage&&) const = 0;
-    virtual void connectionReceivedEvent(xpc_object_t) const = 0;
+    virtual void connectionReceivedEvent(xpc_object_t) = 0;
 #endif
 
     const CString& machServiceName() const { return m_machServiceName; }

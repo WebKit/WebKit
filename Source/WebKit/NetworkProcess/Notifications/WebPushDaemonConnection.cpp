@@ -46,6 +46,11 @@ NetworkSession& Connection::networkSession() const
     return m_notificationManager.networkSession();
 }
 
+void Connection::debugMessage(const String& message)
+{
+    networkSession().networkProcess().broadcastConsoleMessage(networkSession().sessionID(), MessageSource::Other, JSC::MessageLevel::Info, message);
+}
+
 } // namespace WebKit::WebPushD
 
 #endif // ENABLE(BUILT_IN_NOTIFICATIONS)

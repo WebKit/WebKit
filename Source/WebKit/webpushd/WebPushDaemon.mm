@@ -296,20 +296,17 @@ void Daemon::runAfterStartingPushService(Function<void()>&& function)
     function();
 }
 
-void Daemon::broadcastDebugMessage(JSC::MessageLevel messageLevel, const String& message)
+void Daemon::broadcastDebugMessage(const String& message)
 {
-    auto dictionary = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
-    xpc_dictionary_set_uint64(dictionary.get(), protocolDebugMessageLevelKey, static_cast<uint64_t>(messageLevel));
-    xpc_dictionary_set_string(dictionary.get(), protocolDebugMessageKey, message.utf8().data());
     for (auto& iterator : m_connectionMap) {
         if (iterator.value->debugModeIsEnabled())
-            xpc_connection_send_message(iterator.key, dictionary.get());
+            iterator.value->sendDebugMessage(message);
     }
 }
 
 void Daemon::broadcastAllConnectionIdentities()
 {
-    broadcastDebugMessage((JSC::MessageLevel)4, "===\nCurrent connections:");
+    broadcastDebugMessage("===\nCurrent connections:");
 
     auto connections = copyToVector(m_connectionMap.values());
     std::sort(connections.begin(), connections.end(), [] (const Ref<ClientConnection>& a, const Ref<ClientConnection>& b) {
@@ -318,7 +315,7 @@ void Daemon::broadcastAllConnectionIdentities()
 
     for (auto& iterator : connections)
         iterator->broadcastDebugMessage("");
-    broadcastDebugMessage((JSC::MessageLevel)4, "===");
+    broadcastDebugMessage("===");
 }
 
 void Daemon::connectionEventHandler(xpc_object_t request)
@@ -342,7 +339,7 @@ void Daemon::connectionEventHandler(xpc_object_t request)
 
 void Daemon::connectionAdded(xpc_connection_t connection)
 {
-    broadcastDebugMessage((JSC::MessageLevel)0, makeString("New connection: 0x", hex(reinterpret_cast<uint64_t>(connection), WTF::HexConversionMode::Lowercase)));
+    broadcastDebugMessage(makeString("New connection: 0x", hex(reinterpret_cast<uint64_t>(connection), WTF::HexConversionMode::Lowercase)));
 
     RELEASE_ASSERT(!m_connectionMap.contains(connection));
     m_connectionMap.set(connection, ClientConnection::create(connection));

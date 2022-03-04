@@ -28,8 +28,10 @@
 
 #if PLATFORM(COCOA) && ENABLE(BUILT_IN_NOTIFICATIONS)
 
+#import "DaemonDecoder.h"
 #import "DaemonEncoder.h"
 #import "DaemonUtilities.h"
+#import "HandleMessage.h"
 #import "WebPushDaemonConstants.h"
 #import <wtf/spi/darwin/XPCSPI.h>
 
@@ -53,15 +55,53 @@ void Connection::newConnectionWasInitialized() const
     // FIXME: Track connection state
 }
 
-void Connection::connectionReceivedEvent(xpc_object_t request) const
+namespace MessageInfo {
+
+#define FUNCTION(mf) struct mf { static constexpr auto MemberFunction = &WebKit::WebPushD::Connection::mf;
+#define ARGUMENTS(...) using ArgsTuple = std::tuple<__VA_ARGS__>;
+#define END };
+
+FUNCTION(debugMessage)
+ARGUMENTS(String)
+END
+
+} // namespace MessageInfo
+
+template<typename Info>
+void handleWebPushDaemonMessage(WebKit::WebPushD::Connection* connection, Span<const uint8_t> encodedMessage)
+{
+    WebKit::Daemon::Decoder decoder(encodedMessage);
+
+    std::optional<typename Info::ArgsTuple> arguments;
+    decoder >> arguments;
+    if (UNLIKELY(!arguments))
+        return;
+
+    IPC::callMemberFunction(WTFMove(*arguments), connection, Info::MemberFunction);
+}
+
+void Connection::connectionReceivedEvent(xpc_object_t request)
 {
     if (xpc_get_type(request) != XPC_TYPE_DICTIONARY)
         return;
-    const char* debugMessage = xpc_dictionary_get_string(request, protocolDebugMessageKey);
-    if (!debugMessage)
+
+    if (xpc_dictionary_get_uint64(request, protocolVersionKey) != protocolVersionValue) {
+        RELEASE_LOG(Push, "Received request that was not the current protocol version");
         return;
-    auto messageLevel = static_cast<JSC::MessageLevel>(xpc_dictionary_get_uint64(request, protocolDebugMessageLevelKey));
-    networkSession().networkProcess().broadcastConsoleMessage(networkSession().sessionID(), MessageSource::Other, messageLevel, String::fromUTF8(debugMessage));
+    }
+
+    auto messageType { static_cast<DaemonMessageType>(xpc_dictionary_get_uint64(request, protocolMessageTypeKey)) };
+    size_t dataSize { 0 };
+    const void* data = xpc_dictionary_get_data(request, protocolEncodedMessageKey, &dataSize);
+    Span<const uint8_t> encodedMessage { static_cast<const uint8_t*>(data), dataSize };
+
+    ASSERT(!daemonMessageTypeSendsReply(messageType));
+
+    switch (messageType) {
+    case DaemonMessageType::DebugMessage:
+        handleWebPushDaemonMessage<MessageInfo::debugMessage>(this, encodedMessage);
+        break;
+    };
 }
 
 RetainPtr<xpc_object_t> Connection::dictionaryFromMessage(MessageType messageType, EncodedMessage&& message) const

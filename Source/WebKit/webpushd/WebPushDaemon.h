@@ -86,7 +86,7 @@ public:
     void getPushPermissionState(ClientConnection*, const URL& scopeURL, CompletionHandler<void(const Expected<uint8_t, WebCore::ExceptionData>&)>&& replySender);
     void incrementSilentPushCount(ClientConnection*, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
 
-    void broadcastDebugMessage(JSC::MessageLevel, const String&);
+    void broadcastDebugMessage(const String&);
     void broadcastAllConnectionIdentities();
 
 private:

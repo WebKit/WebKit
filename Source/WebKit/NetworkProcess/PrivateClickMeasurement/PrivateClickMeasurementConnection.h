@@ -51,7 +51,7 @@ private:
     void newConnectionWasInitialized() const final;
 #if PLATFORM(COCOA)
     RetainPtr<xpc_object_t> dictionaryFromMessage(MessageType, Daemon::EncodedMessage&&) const final;
-    void connectionReceivedEvent(xpc_object_t) const final;
+    void connectionReceivedEvent(xpc_object_t) final;
 #endif
     void sendDebugModeIsEnabledMessageIfNecessary() const;
 

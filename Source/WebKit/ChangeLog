@@ -1,3 +1,49 @@
+2022-03-03  Brady Eidson  <beidson@apple.com>
+
+        Add a new "Daemon -> Client" message type to webpushd
+        https://bugs.webkit.org/show_bug.cgi?id=237391
+
+        Reviewed by Alex Christensen.
+
+        Future work will need more messages like this.
+        So let's add the mechanism in a small standalone patch that uses it for debug messages.
+        
+        No behavior change for now.
+
+        * NetworkProcess/Notifications/Cocoa/WebPushDaemonConnectionCocoa.mm:
+        (WebKit::WebPushD::handleWebPushDaemonMessage):
+        (WebKit::WebPushD::Connection::connectionReceivedEvent):
+        (WebKit::WebPushD::Connection::connectionReceivedEvent const): Deleted.
+
+        * NetworkProcess/Notifications/WebPushDaemonConnection.cpp:
+        (WebKit::WebPushD::Connection::debugMessage):
+        * NetworkProcess/Notifications/WebPushDaemonConnection.h:
+
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementConnection.h:
+        * NetworkProcess/PrivateClickMeasurement/cocoa/PrivateClickMeasurementConnectionCocoa.mm:
+        (WebKit::PCM::Connection::connectionReceivedEvent):
+        (WebKit::PCM::Connection::connectionReceivedEvent const): Deleted.
+
+        * Platform/IPC/DaemonConnection.h:
+
+        * Shared/WebPushDaemonConstants.h:
+        (WebKit::WebPushD::daemonMessageTypeSendsReply):
+
+        * webpushd/ICAppBundle.mm:
+        (WebPushD::broadcastDebugMessage):
+
+        * webpushd/PushClientConnection.h:
+        * webpushd/PushClientConnection.mm:
+        (WebPushD::ClientConnection::broadcastDebugMessage):
+        (WebPushD::ClientConnection::sendDebugMessage):
+        (WebPushD::ClientConnection::sendDaemonMessage const):
+
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::Daemon::broadcastDebugMessage):
+        (WebPushD::Daemon::broadcastAllConnectionIdentities):
+        (WebPushD::Daemon::connectionAdded):
+
 2022-03-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         REGRESSION(r290815): Fix even more incorrect #if ENABLE(SERVICE_WORKER) usage in NetworkProcess
