@@ -2239,3 +2239,5 @@ http/wpt/webauthn/public-key-credential-create-failure-local-silent.https.html [
 http/tests/model/model-document.html [ Skip ]
 http/tests/model/model-document-interactive.html [ Skip ]
 accessibility/model-element-attributes.html [ Skip ]
+
+webkit.org/b/237358 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-005.html [ Failure ]
