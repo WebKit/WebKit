@@ -1,3 +1,24 @@
+2022-03-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        CSP report does not get sent to the document in the case of a detached element
+        https://bugs.webkit.org/show_bug.cgi?id=237440
+        <rdar://problem/89081463>
+
+        Reviewed by Chris Dumez.
+
+        Test: http/tests/security/contentSecurityPolicy/report-violation-to-document-after-element-has-been-detached.html
+
+        Only send a violation report to the element if it is connected. Check
+        right before dispatching in case the element gets detached after the
+        security policy violation has been created. If the element is not
+        connected in this case, we send the report to the document.
+
+        * dom/Element.cpp:
+        (WebCore::Element::enqueueSecurityPolicyViolationEvent):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::reportViolation const):
+        Also sets the composed value on the violation event as per the spec.
+
 2022-03-04  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Iteration to search for least active WebGLRenderingContextBase could use min_element

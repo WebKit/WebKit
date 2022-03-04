@@ -1,3 +1,14 @@
+2022-03-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        CSP report does not get sent to the document in the case of a detached element
+        https://bugs.webkit.org/show_bug.cgi?id=237440
+        <rdar://problem/89081463>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/security/contentSecurityPolicy/report-violation-to-document-after-element-has-been-detached-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/report-violation-to-document-after-element-has-been-detached.html: Added.
+
 2022-03-04  Youenn Fablet  <youenn@apple.com>
 
         webrtc/canvas-to-peer-connection.html is flakily failing a test assertion

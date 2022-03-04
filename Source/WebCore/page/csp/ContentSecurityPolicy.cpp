@@ -816,6 +816,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     violationEventInit.columnNumber = info.columnNumber;
     violationEventInit.sample = info.sample;
     violationEventInit.bubbles = true;
+    violationEventInit.composed = true;
     if (m_client)
         m_client->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
     else {
