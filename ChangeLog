@@ -1,3 +1,12 @@
+2022-03-03  Dan Glastonbury  <djg@apple.com>
+
+        Add Dan Glastonbury's name to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=237453
+
+        Reviewed by Alan Bujtas.
+
+        * metadata/contributors.json:
+
 2022-03-03  Anjali Kumar  <anjalik_22@apple.com>
 
         Add myself (Anjali Kumar) to contributors.json
