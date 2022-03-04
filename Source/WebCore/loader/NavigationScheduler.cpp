@@ -92,6 +92,7 @@ public:
     virtual bool shouldStartTimer(Frame&) { return true; }
     virtual void didStartTimer(Frame&, Timer&) { }
     virtual void didStopTimer(Frame&, NewLoadInProgress) { }
+    virtual bool targetIsCurrentFrame() const { return true; }
 
     double delay() const { return m_delay; }
     LockHistory lockHistory() const { return m_lockHistory; }
@@ -290,7 +291,7 @@ private:
     int m_historySteps;
 };
 
-class ScheduledFormSubmission : public ScheduledNavigation {
+class ScheduledFormSubmission final : public ScheduledNavigation {
 public:
     ScheduledFormSubmission(Ref<FormSubmission>&& submission, LockBackForwardList lockBackForwardList, bool duringLoad)
         : ScheduledNavigation(0, submission->lockHistory(), lockBackForwardList, duringLoad, true, submission->state().sourceDocument().shouldOpenExternalURLsPolicyToPropagate())
@@ -298,7 +299,7 @@ public:
     {
     }
 
-    void fire(Frame& frame) override
+    void fire(Frame& frame) final
     {
         if (m_submission->wasCancelled())
             return;
@@ -323,7 +324,7 @@ public:
         frame.loader().loadFrameRequest(WTFMove(frameLoadRequest), m_submission->event(), m_submission->takeState());
     }
 
-    void didStartTimer(Frame& frame, Timer& timer) override
+    void didStartTimer(Frame& frame, Timer& timer) final
     {
         if (m_haveToldClient)
             return;
@@ -333,7 +334,7 @@ public:
         frame.loader().clientRedirected(m_submission->requestURL(), delay(), WallTime::now() + timer.nextFireInterval(), lockBackForwardList());
     }
 
-    void didStopTimer(Frame& frame, NewLoadInProgress newLoadInProgress) override
+    void didStopTimer(Frame& frame, NewLoadInProgress newLoadInProgress) final
     {
         if (!m_haveToldClient)
             return;
@@ -345,6 +346,14 @@ public:
         // gesture state will sometimes be set and sometimes not within
         // dispatchDidCancelClientRedirect().
         frame.loader().clientRedirectCancelledOrFinished(newLoadInProgress);
+    }
+
+    bool targetIsCurrentFrame() const final
+    {
+        // For form submissions, we normally resolve the target frame before scheduling the submission on the
+        // NavigationScheduler. However, if the target is _blank, we schedule the submission on the submitter's
+        // frame and only create the new frame when actually starting the navigation.
+        return !isBlankTargetFrameName(m_submission->target());
     }
 
 private:
@@ -395,7 +404,7 @@ bool NavigationScheduler::redirectScheduledDuringLoad()
 
 bool NavigationScheduler::locationChangePending()
 {
-    return m_redirect && m_redirect->isLocationChange();
+    return m_redirect && m_redirect->isLocationChange() && m_redirect->targetIsCurrentFrame();
 }
 
 void NavigationScheduler::clear()

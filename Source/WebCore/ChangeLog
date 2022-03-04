@@ -1,3 +1,35 @@
+2022-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Load event never firing after form is submitted
+        https://bugs.webkit.org/show_bug.cgi?id=235407
+        <rdar://problem/87831049>
+
+        Reviewed by Geoffrey Garen.
+
+        In Document::implicitClose(), we early return (and thus don't fire the load
+        event) if there is a location change pending. To determine if there is a
+        location change pending, we rely on NavigationScheduler::locationChangePending()
+        which checks if there is a schedule navigation or not. This usually works fine.
+
+        However, when a form gets submitted with a target that is "_blank",
+        FrameLoader::submitForm() is not able to find the target frame (since we'll need
+        to create one) and it ends up using the current frame's scheduler. The idea is
+        that once the navigation actually triggers, FrameLoader::loadFrameRequest() will
+        check the target and create the new Frame.
+
+        The issue is that as a result of this, NavigationScheduler::locationChangePending()
+        returns true for the submitter's frame while such form submission is scheduled,
+        even though the navigation will actually happen in another (new) frame. To address
+        the issue, I updated NavigationScheduler::locationChangePending() to check that
+        the pending navigation is actually for the current frame.
+
+        Test: http/tests/loading/form-submission-no-load-event.html
+
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledNavigation::targetIsCurrentFrame const):
+        (WebCore::NavigationScheduler::locationChangePending):
+        (WebCore::ScheduledFormSubmission::ScheduledFormSubmission): Deleted.
+
 2022-03-04  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Canvas compositing buffer should be created through its GraphicsContext

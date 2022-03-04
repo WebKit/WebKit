@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS <form rel=""> with <input formtarget>
 PASS <form rel="noopener"> with <input formtarget>
 PASS <form rel="noreferrer"> with <input formtarget>

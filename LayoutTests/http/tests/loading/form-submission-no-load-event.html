@@ -1,0 +1,25 @@
+<p>Tests that the load event fires if a form submission to a new window happens during the load.</p>
+<div id=log></div>
+<form action=about:blank target=_blank><input type=hidden name=input></form>
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  timeoutHandle = setTimeout(() => {
+    document.querySelector("#log").textContent = `FAIL: The load event did not fire`;
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }, 5000);
+
+  const submitter = document.querySelector("form");
+  submitter.submit();
+
+  window.onload = () => {
+    document.querySelector("#log").textContent = `PASS: The load event was fired`;
+    clearTimeout(timeoutHandle);
+    if (window.testRunner)
+      testRunner.notifyDone();
+  }
+</script>

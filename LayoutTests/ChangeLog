@@ -1,3 +1,16 @@
+2022-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Load event never firing after form is submitted
+        https://bugs.webkit.org/show_bug.cgi?id=235407
+        <rdar://problem/87831049>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage (Based on reduction from Sam Sneddon).
+
+        * http/tests/loading/form-submission-no-load-event-expected.txt: Added.
+        * http/tests/loading/form-submission-no-load-event.html: Added.
+
 2022-03-04  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Canvas compositing buffer should be created through its GraphicsContext
