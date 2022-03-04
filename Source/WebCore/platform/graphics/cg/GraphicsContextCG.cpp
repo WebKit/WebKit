@@ -1390,30 +1390,23 @@ void GraphicsContextCG::setURLForRect(const URL& link, const FloatRect& destRect
 void GraphicsContextCG::setIsCALayerContext(bool isLayerContext)
 {
     // Should be called for CA Context.
-    ASSERT(m_data);
-    if (isLayerContext)
-        m_data->m_contextFlags |= IsLayerCGContext;
-    else
-        m_data->m_contextFlags &= ~IsLayerCGContext;
+    m_data->m_contextFlags.set(GraphicsContextCGFlag::IsLayerCGContext, isLayerContext);
 }
 
 bool GraphicsContextCG::isCALayerContext() const
 {
-    return m_data && (m_data->m_contextFlags & IsLayerCGContext);
+    return m_data && m_data->m_contextFlags.contains(GraphicsContextCGFlag::IsLayerCGContext);
 }
 
 void GraphicsContextCG::setIsAcceleratedContext(bool isAccelerated)
 {
     // Should be called for CA Context.
-    if (isAccelerated)
-        m_data->m_contextFlags |= IsAcceleratedCGContext;
-    else
-        m_data->m_contextFlags &= ~IsAcceleratedCGContext;
+    m_data->m_contextFlags.set(GraphicsContextCGFlag::IsAcceleratedCGContext, isAccelerated);
 }
 
 RenderingMode GraphicsContextCG::renderingMode() const
 {
-    return m_data->m_contextFlags & IsAcceleratedCGContext ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
+    return m_data->m_contextFlags.contains(GraphicsContextCGFlag::IsAcceleratedCGContext) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
 }
 
 void GraphicsContextCG::applyDeviceScaleFactor(float deviceScaleFactor)

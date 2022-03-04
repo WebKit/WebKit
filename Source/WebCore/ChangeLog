@@ -1,3 +1,21 @@
+2022-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Use an OptionSet<> for GraphicsContextCGFlags
+        https://bugs.webkit.org/show_bug.cgi?id=237482
+
+        Reviewed by Wenson Hsieh.
+
+        Mechanical change to use an OptionSet<> for GraphicsContextCG::m_contextFlags.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContextCG::setIsCALayerContext):
+        (WebCore::GraphicsContextCG::isCALayerContext const):
+        (WebCore::GraphicsContextCG::setIsAcceleratedContext):
+        (WebCore::GraphicsContextCG::renderingMode const):
+        * platform/graphics/cg/GraphicsContextPlatformPrivateCG.h:
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (): Deleted.
+
 2022-03-04  Dan Glastonbury  <djg@apple.com>
 
         Support constants in IDL namespaces.
