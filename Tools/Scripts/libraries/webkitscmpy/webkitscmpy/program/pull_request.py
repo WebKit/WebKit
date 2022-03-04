@@ -213,7 +213,7 @@ class PullRequest(Command):
         for pr in rmt.pull_requests.find(opened=None, head=repository.branch):
             existing_pr = pr
             if existing_pr.opened:
-                continue
+                break
         if existing_pr and not existing_pr.opened and not args.defaults and (args.defaults is False or Terminal.choose(
             "'{}' is already associated with '{}', which is closed.\nWould you like to create a new pull-request?".format(
                 repository.branch, existing_pr,
