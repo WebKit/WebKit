@@ -567,4 +567,20 @@ TEST_F(WTF_URL, URLRemoveQueryParameters)
     EXPECT_EQ(url13.string(), url8.string());
 }
 
+TEST_F(WTF_URL, IsolatedCopy)
+{
+    URL url1 { "http://www.apple.com"_str };
+    auto* originalStringImpl = url1.string().impl();
+    URL url1Copy = url1.isolatedCopy();
+    EXPECT_EQ(url1Copy, url1);
+    EXPECT_NE(url1Copy.string().impl(), originalStringImpl); // Should have done a deep copy of the String.
+
+    // Tests optimization for URL::isolatedCopy() on a r-value reference.
+    URL url2 { "https://www.webkit.org"_str };
+    originalStringImpl = url2.string().impl();
+    URL url2Copy = WTFMove(url2).isolatedCopy();
+    EXPECT_EQ(url2Copy, URL { "https://www.webkit.org"_str });
+    EXPECT_EQ(url2Copy.string().impl(), originalStringImpl); // Should have adopted the StringImpl of url2.
+}
+
 } // namespace TestWebKitAPI

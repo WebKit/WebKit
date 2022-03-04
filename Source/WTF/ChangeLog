@@ -1,3 +1,26 @@
+2022-03-04  Chris Dumez  <cdumez@apple.com>
+
+        URL's isolatedCopy() optimization when called on a r-value reference doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=237481
+
+        Reviewed by Geoffrey Garen.
+
+        URL has an isolatedCopy() implementation that attempts to optimize the case where
+        it is called on a r-value reference. The idea is to rely on the String's
+        isolatedCopy() implementation which is optimized when called on a r-value reference.
+
+        Note that there are some specific conditions under which the String implementation
+        is able to avoid the copy (see String::isSafeToSendToAnotherThread()).
+        Namely, the StringImpl's refcount needs to be 1 and it cannot be backed by an
+        AtomStringImpl.
+
+        The issue was that URL::isolatedCopy() would first copy the URL, which would copy
+        its m_string and thus bump its refcount. As a result, m_string's refcount could
+        never be 1 and the optimization could never kick in.
+
+        * wtf/URL.cpp:
+        (WTF::URL::isolatedCopy):
+
 2022-03-02  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI _WKDataTask

@@ -87,7 +87,7 @@ URL URL::isolatedCopy() const &
 
 URL URL::isolatedCopy() &&
 {
-    URL result = *this;
+    URL result { WTFMove(*this) };
     result.m_string = WTFMove(result.m_string).isolatedCopy();
     return result;
 }
