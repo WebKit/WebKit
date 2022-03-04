@@ -79,7 +79,7 @@ void WebBackForwardListProxy::removeItem(const BackForwardItemIdentifier& itemID
     RefPtr<HistoryItem> item = idToHistoryItemMap().take(itemID);
     if (!item)
         return;
-        
+    
     BackForwardCache::singleton().remove(*item);
     WebCore::Page::clearPreviousItemFromAllPages(item.get());
 }
@@ -137,6 +137,11 @@ unsigned WebBackForwardListProxy::backListCount() const
 unsigned WebBackForwardListProxy::forwardListCount() const
 {
     return cacheListCountsIfNecessary().forwardCount;
+}
+
+bool WebBackForwardListProxy::containsItem(const WebCore::HistoryItem& item) const
+{
+    return idToHistoryItemMap().contains(item.identifier());
 }
 
 const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecessary() const

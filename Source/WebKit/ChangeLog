@@ -1,3 +1,16 @@
+2022-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Home link on weather.gov is not working
+        https://bugs.webkit.org/show_bug.cgi?id=237451
+        <rdar://60409277>
+
+        Reviewed by Geoff Garen.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::removeItem):
+        (WebKit::WebBackForwardListProxy::containsItem const):
+        * WebProcess/WebPage/WebBackForwardListProxy.h:
+
 2022-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Crash under ScrollingCoordinatorMac::hasNodeWithAnimatedScrollChanged()

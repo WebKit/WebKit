@@ -265,17 +265,21 @@ public:
 
 class ScheduledHistoryNavigation : public ScheduledNavigation {
 public:
-    explicit ScheduledHistoryNavigation(int historySteps)
+    explicit ScheduledHistoryNavigation(Ref<HistoryItem>&& historyItem)
         : ScheduledNavigation(0, LockHistory::No, LockBackForwardList::No, false, true)
-        , m_historySteps(historySteps)
+        , m_historyItem(WTFMove(historyItem))
     {
     }
 
     void fire(Frame& frame) override
     {
+        // If the destination HistoryItem is no longer in the back/forward list, then we don't proceed.
+        if (!frame.page()->backForward().containsItem(m_historyItem))
+            return;
+
         UserGestureIndicator gestureIndicator(userGestureToForward());
 
-        if (!m_historySteps) {
+        if (frame.page()->backForward().currentItem() == m_historyItem.ptr()) {
             // Special case for go(0) from a frame -> reload only the frame
             // To follow Firefox and IE's behavior, history reload can only navigate the self frame.
             frame.loader().changeLocation(frame.document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs());
@@ -284,11 +288,11 @@ public:
         
         // go(i!=0) from a frame navigates into the history of the frame only,
         // in both IE and NS (but not in Mozilla). We can't easily do that.
-        frame.page()->backForward().goBackOrForward(m_historySteps);
+        frame.page()->goToItem(m_historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
     }
 
 private:
-    int m_historySteps;
+    Ref<HistoryItem> m_historyItem;
 };
 
 class ScheduledFormSubmission final : public ScheduledNavigation {
@@ -555,8 +559,14 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
         return;
     }
 
+    auto historyItem = backForward.itemAtIndex(steps);
+    if (!historyItem) {
+        cancel();
+        return;
+    }
+
     // In all other cases, schedule the history traversal to occur asynchronously.
-    schedule(makeUnique<ScheduledHistoryNavigation>(steps));
+    schedule(makeUnique<ScheduledHistoryNavigation>(historyItem.releaseNonNull()));
 }
 
 void NavigationScheduler::schedulePageBlock(Document& originDocument)

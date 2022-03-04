@@ -119,6 +119,11 @@ void BackForwardController::setCurrentItem(HistoryItem& item)
     m_client->goToItem(item);
 }
 
+bool BackForwardController::containsItem(const HistoryItem& item) const
+{
+    return m_client->containsItem(item);
+}
+
 unsigned BackForwardController::count() const
 {
     return m_client->backListCount() + 1 + m_client->forwardListCount();

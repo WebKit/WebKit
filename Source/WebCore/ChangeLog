@@ -1,3 +1,45 @@
+2022-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Home link on weather.gov is not working
+        https://bugs.webkit.org/show_bug.cgi?id=237451
+        <rdar://60409277>
+
+        Reviewed by Geoff Garen.
+
+        According to the HTML specification [1], when history.back() is called, we are supposed to
+        resolve the history entry based on the delta (-1), then we're supposed to queue a task to
+        traverse the history to that particular entry.
+
+        However, WebKit was merely scheduling a task to navigate the history with a delta of -1.
+        We only resolve the target history entry once the scheduled task runs asynchronously.
+        As a result, we could end up navigating to a different history entry than we'd expect if
+        the history list changes between the call to history.back() and the actual execution of
+        the task to traverse the history list. In particular, fragment navigations can cause
+        synchronous navigations and thus add new history entries.
+
+        On weather.gov, the "HOME" anchor looks like so:
+        `<a href="#" onclick="history.back();">HOME</a>`
+
+        Per the DOM specification, when clicking the anchor, we'd first call `history.back()` and
+        then run the anchor activation behavior that would do a fragment navigation to "#".
+        The `history.back()` call would schedule to task to navigate back, then we'd navigate to
+        "#" synchronously, which would add a new history entry. Once the task to navigate back
+        would run asynchronously, we would navigate back to the same page (but without the fragment)
+        instead of going back to the home page.
+
+        [1] https://html.spec.whatwg.org/multipage/history.html#traverse-the-history-by-a-delta
+
+        Test: imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/anchor-fragment-history-back-on-click.html
+
+        * history/BackForwardClient.h:
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::containsItem const):
+        * history/BackForwardController.h:
+        * loader/EmptyClients.cpp:
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledHistoryNavigation::ScheduledHistoryNavigation):
+        (WebCore::NavigationScheduler::scheduleHistoryNavigation):
+
 2022-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Use an OptionSet<> for GraphicsContextCGFlags

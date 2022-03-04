@@ -47,6 +47,7 @@ public:
     virtual RefPtr<HistoryItem> itemAtIndex(int) = 0;
     virtual unsigned backListCount() const = 0;
     virtual unsigned forwardListCount() const = 0;
+    virtual bool containsItem(const HistoryItem&) const = 0;
 
     virtual void close() = 0;
 };

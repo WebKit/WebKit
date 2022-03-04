@@ -344,6 +344,9 @@ imported/w3c/web-platform-tests/referrer-policy/generic/subresource-test/worker-
 imported/w3c/web-platform-tests/referrer-policy/generic/subresource-test/xhr-messaging.html [ Skip ]
 imported/w3c/web-platform-tests/referrer-policy/generic/unsupported-csp-referrer-directive.html [ Skip ]
 
+# This test is timing out in both WebKit and Blink (one of the subtests is timing out in Gecko).
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/cross-document-traversal-same-document-nav.html [ Skip ]
+
 # This test times out. We should fix that.
 imported/w3c/web-platform-tests/selection/collapse-30.html [ Skip ]
 imported/w3c/web-platform-tests/selection/dir-manual.html [ Skip ]

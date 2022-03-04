@@ -273,7 +273,8 @@ HRESULT WebBackForwardList::containsItem(_In_opt_ IWebHistoryItem* item, _Out_ B
     if (!item || FAILED(item->QueryInterface(&webHistoryItem)))
         return E_FAIL;
 
-    *result = m_backForwardList->containsItem(webHistoryItem->historyItem());
+    auto historyItem = webHistoryItem->historyItem();
+    *result = historyItem ? m_backForwardList->containsItem(*historyItem) : false;
     return S_OK;
 }
 

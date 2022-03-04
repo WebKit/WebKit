@@ -1,5 +1,22 @@
 2022-03-04  Chris Dumez  <cdumez@apple.com>
 
+        Home link on weather.gov is not working
+        https://bugs.webkit.org/show_bug.cgi?id=237451
+        <rdar://60409277>
+
+        Reviewed by Geoff Garen.
+
+        * web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/anchor-fragment-history-back-on-click-expected.txt: Added.
+        * web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/anchor-fragment-history-back-on-click.html: Added.
+        Add layout test coverage (already upstreamed to WPT).
+
+        * web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/cross-document-traversal-same-document-nav-expected.txt:
+        * web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/same-document-traversal-same-document-nav-expected.txt:
+        Rebaseline a couple of WPT tests that are now failing. I have verified that these tests are fully failing (and in the same way) in Blink.
+        In Gecko, only the second subtest in each of these tests is failing.
+
+2022-03-04  Chris Dumez  <cdumez@apple.com>
+
         Load event never firing after form is submitted
         https://bugs.webkit.org/show_bug.cgi?id=235407
         <rdar://problem/87831049>

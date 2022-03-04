@@ -61,7 +61,7 @@ public:
     void setEnabled(bool);
     unsigned backListCount() const override;
     unsigned forwardListCount() const override;
-    bool containsItem(WebCore::HistoryItem&);
+    bool containsItem(const WebCore::HistoryItem&) const final;
 
     void close() override;
     bool closed();

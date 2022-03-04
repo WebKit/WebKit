@@ -109,6 +109,7 @@ class EmptyBackForwardClient final : public BackForwardClient {
     RefPtr<HistoryItem> itemAtIndex(int) final { return nullptr; }
     unsigned backListCount() const final { return 0; }
     unsigned forwardListCount() const final { return 0; }
+    bool containsItem(const HistoryItem&) const final { return false; }
     void close() final { }
 };
 
