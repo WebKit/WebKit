@@ -124,7 +124,7 @@ public:
 
     TextPosition eventHandlerPosition() const;
 
-    void enableEval();
+    void enableEval(bool, const String& errorMessage = String());
     void enableWebAssembly();
     void disableEval(const String& errorMessage);
     void disableWebAssembly(const String& errorMessage);

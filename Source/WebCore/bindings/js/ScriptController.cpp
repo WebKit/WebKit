@@ -406,12 +406,12 @@ TextPosition ScriptController::eventHandlerPosition() const
     return TextPosition();
 }
 
-void ScriptController::enableEval()
+void ScriptController::enableEval(bool enable, const String& errorMessage)
 {
     auto* jsWindowProxy = windowProxy().existingJSWindowProxy(mainThreadNormalWorld());
     if (!jsWindowProxy)
         return;
-    jsWindowProxy->window()->setEvalEnabled(true);
+    jsWindowProxy->window()->setEvalEnabled(enable, errorMessage);
 }
 
 void ScriptController::enableWebAssembly()

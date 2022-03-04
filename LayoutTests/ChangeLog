@@ -1,3 +1,18 @@
+2022-03-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        about:blank iframes do not always inherit parent CSP
+        https://bugs.webkit.org/show_bug.cgi?id=236347
+        <rdar://problem/88669147>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/security/contentSecurityPolicy/block-eval-onload-in-nested-about-blank-iframe-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/block-eval-onload-in-nested-about-blank-iframe.html: Added
+        We can't use modern js-test.js and related functions because
+        js-test.js uses eval() and loading it makes the test time out when the
+        eval is blocked by the document's CSP. We can't specify unsafe-eval
+        because the whole point of this test is to block eval.
+
 2022-03-04  Robert Jenner  <Jenner@apple.com>
 
         Update WPT css-scroll-snap tests

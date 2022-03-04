@@ -1,3 +1,31 @@
+2022-03-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        about:blank iframes do not always inherit parent CSP
+        https://bugs.webkit.org/show_bug.cgi?id=236347
+        <rdar://problem/88669147>
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/security/contentSecurityPolicy/block-eval-onload-in-nested-about-blank-iframe.html
+
+        Usually we initialize CSP for window when we create a jsWindowProxy
+        for that frame. In this case, we load an about:blank iframe that
+        attempts to run eval() in the onload function of its own nested
+        iframe. Since we never run script in frame, we don't initialize a
+        jsWindowProxy and thus never propogate its CSP.
+
+        This fix checks the document's CSP in FrameLoader::clear when we
+        initialize a new JSGlobalObject and sets the eval value in the window
+        accordingly to properly enforce CSP.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::enableEval):
+        * bindings/js/ScriptController.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        * page/csp/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::evalErrorMessage const):
+
 2022-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Books ASSERTs upon opening a book with a debug build of WebKit
