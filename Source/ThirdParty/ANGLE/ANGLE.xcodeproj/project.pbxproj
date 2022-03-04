@@ -3506,6 +3506,7 @@
 				31CD00CE2491974C00486F27 /* CopyFiles */,
 				31CD00CF2491976800486F27 /* CopyFiles */,
 				31CD00D2249197FD00486F27 /* Adjust ANGLE Paths */,
+				6517572227CEED7200D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
 			buildRules = (
 				31A9E9A0249AA04200C7E243 /* PBXBuildRule */,
@@ -3593,6 +3594,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${XCODE_VERSION_ACTUAL}\" -ge \"1140\" -a \"${WK_USE_NEW_BUILD_SYSTEM}\" = \"YES\" ]; then\n    # In this configuration, post-processing is performed at the same time as copying in the postprocess-header-rule script, so there's no need for this separate step.\n    exit 0\nfi\n\nexec \"$SRCROOT/adjust-angle-include-paths.py\"\n";
+		};
+		6517572227CEED7200D9FE40 /* Copy Frameworks to Secondary Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Frameworks to Secondary Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "export DYLIBS_TO_COPY_TO_SECONDARY_PATH=\"libANGLE-shared.dylib\"\n\"${SRCROOT}/scripts/copy-frameworks-to-secondary-path.sh\"\n";
 		};
 		FFDA50D5269F895400AE11E2 /* Bake Metal Library to NSData */ = {
 			isa = PBXShellScriptBuildPhase;

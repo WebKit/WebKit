@@ -120,6 +120,7 @@
 				1C60FF1214E6D9AF006CD77D /* Copy User Interface Resources */,
 				1C78EE1417611302002F6AA5 /* Sources */,
 				6577FFC9276ACA680011AEC8 /* Create Symlink to Alt Root Path */,
+				6517571727C9AD6B00D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
 			buildRules = (
 			);
@@ -178,6 +179,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/usr/bin/perl \"${SRCROOT}/Scripts/copy-user-interface-resources.pl\"\n";
+		};
+		6517571727C9AD6B00D9FE40 /* Copy Frameworks to Secondary Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Frameworks to Secondary Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "export FRAMEWORKS_TO_COPY_TO_SECONDARY_PATH=\"WebInspectorUI\"\n\"${SRCROOT}/Scripts/copy-frameworks-to-secondary-path.sh\"\n";
 		};
 		6577FFC9276ACA680011AEC8 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;

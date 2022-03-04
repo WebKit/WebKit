@@ -3081,6 +3081,7 @@
 				1A3193D5191856E500E1CF89 /* Symlink WebKitPluginHost */,
 				537CF83A22EFBFB100C6EBB3 /* Check .xcfilelists */,
 				650473452789431C00AF78A2 /* Create Symlink to Alt Root Path */,
+				6517572027CEE91400D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
 			buildRules = (
 				535E08C322545B4C00DF00CA /* PBXBuildRule */,
@@ -3345,6 +3346,24 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		6517572027CEE91400D9FE40 /* Copy Frameworks to Secondary Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Frameworks to Secondary Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "export FRAMEWORKS_TO_COPY_TO_SECONDARY_PATH=\"WebKitLegacy\"\n\"${SRCROOT}/scripts/copy-frameworks-to-secondary-path.sh\"\n";
 		};
 		7C02321B251B9A8A00BA7BB6 /* Generate Preferences */ = {
 			isa = PBXShellScriptBuildPhase;
