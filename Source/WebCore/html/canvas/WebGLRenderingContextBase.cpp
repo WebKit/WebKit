@@ -809,12 +809,9 @@ static void addActiveContext(WebGLRenderingContextBase& newContext)
     auto& contexts = activeContexts();
     auto maxContextsSize = isMainThread() ? maxActiveContexts : maxActiveWorkerContexts;
     if (contexts.size() >= maxContextsSize) {
-        auto it = contexts.begin();
-        auto* earliest = *it;
-        for (++it; it != contexts.end(); ++it) {
-            if (earliest->activeOrdinal() > (*it)->activeOrdinal())
-                earliest = *it;
-        }
+        auto* earliest = *std::min_element(contexts.begin(), contexts.end(), [] (auto& a, auto& b) {
+            return a->activeOrdinal() < b->activeOrdinal();
+        });
         earliest->recycleContext();
         ASSERT(earliest != &newContext); // This assert is here so we can assert isNewEntry below instead of top-level `!contexts.contains(newContext);`.
         ASSERT(contexts.size() < maxContextsSize);

@@ -1,3 +1,15 @@
+2022-03-04  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Iteration to search for least active WebGLRenderingContextBase could use min_element
+        https://bugs.webkit.org/show_bug.cgi?id=237464
+
+        Reviewed by Antti Koivisto.
+
+        Apply review comments after landing bug 222411 r290816.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::addActiveContext):
+
 2022-03-02  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] keyframe values set to "inherit" should recompute their values when the inherited value changes
