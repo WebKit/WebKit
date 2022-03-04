@@ -1,3 +1,58 @@
+2022-03-04  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Improve reuse of known register values on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=237424
+
+        Reviewed by Žan Doberšek.
+
+        Reduce the generated code size by introducing and pervasively using
+        setupArmAddress(AbsoluteAddress address, ...). This effectively
+        replaces sequences of e.g.
+
+            movw r6, cst1
+            movt r6, cst2
+            strd r0, r1, [r6]
+
+        with
+
+            strd r0, r1, [r6, offset]
+
+        when a close enough address is already available in r6.
+
+        While here, change short_move to only emit an add/sub if this results in an
+        actual reduction in code size. When the add/sub would be neutral,
+        prefer loading an immediate as that doesn't introduce a data dependency
+        between the instructions.
+
+        This results in a measurable but small (< 1%) reduction in the
+        generated code size on JS2.
+
+        Hat tip to Geza Lore for the suggestions.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::add32):
+        (JSC::MacroAssemblerARMv7::add64):
+        (JSC::MacroAssemblerARMv7::or8):
+        (JSC::MacroAssemblerARMv7::or16):
+        (JSC::MacroAssemblerARMv7::or32):
+        (JSC::MacroAssemblerARMv7::sub32):
+        (JSC::MacroAssemblerARMv7::load32):
+        (JSC::MacroAssemblerARMv7::load8):
+        (JSC::MacroAssemblerARMv7::load16):
+        (JSC::MacroAssemblerARMv7::store32):
+        (JSC::MacroAssemblerARMv7::store8):
+        (JSC::MacroAssemblerARMv7::store16):
+        (JSC::MacroAssemblerARMv7::storePair32):
+        (JSC::MacroAssemblerARMv7::short_move):
+        (JSC::MacroAssemblerARMv7::add32Impl):
+        (JSC::MacroAssemblerARMv7::branch8):
+        (JSC::MacroAssemblerARMv7::branchTest32):
+        (JSC::MacroAssemblerARMv7::branchTest8):
+        (JSC::MacroAssemblerARMv7::branchTest16):
+        (JSC::MacroAssemblerARMv7::farJump):
+        (JSC::MacroAssemblerARMv7::absoluteAddressWithinShortOffset):
+        (JSC::MacroAssemblerARMv7::setupArmAddress):
+
 2022-03-03  Michael Saboff  <msaboff@apple.com>
 
         Copy WebKit frameworks and XPC processes to Secondary Path

@@ -55,6 +55,11 @@ class MacroAssemblerARMv7 : public AbstractMacroAssembler<Assembler> {
     }
 
 public:
+    template<typename MacroAssemblerType, typename Condition, typename ...Args>
+        friend void JSC::MacroAssemblerHelpers::load8OnCondition(MacroAssemblerType&, Condition, Args...);
+    template<typename MacroAssemblerType, typename Condition, typename ...Args>
+        friend void JSC::MacroAssemblerHelpers::load16OnCondition(MacroAssemblerType&, Condition, Args...);
+
 #define DUMMY_REGISTER_VALUE(id, name, r, cs) 0,
     static constexpr unsigned numGPRs = std::initializer_list<int>({ FOR_EACH_GP_REGISTER(DUMMY_REGISTER_VALUE) }).size();
     static constexpr unsigned numFPRs = std::initializer_list<int>({ FOR_EACH_FP_REGISTER(DUMMY_REGISTER_VALUE) }).size();
@@ -187,7 +192,7 @@ public:
     
     void add32(AbsoluteAddress src, RegisterID dest)
     {
-        load32(src.m_ptr, dataTempRegister);
+        load32(setupArmAddress(src), dataTempRegister);
         add32(dataTempRegister, dest);
     }
 
@@ -253,9 +258,8 @@ public:
     void add64(TrustedImm32 imm, AbsoluteAddress address)
     {
         RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
-        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
 
-        m_assembler.ldr(scratch, addressTempRegister, ARMThumbImmediate::makeUInt12(0));
+        load32(setupArmAddress(address), scratch);
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         if (armImm.isValid())
             m_assembler.add_S(scratch, scratch, armImm);
@@ -379,14 +383,11 @@ public:
     void or8(TrustedImm32 imm, AbsoluteAddress address)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
+        load8(setupArmAddress(address), dataTempRegister);
         if (armImm.isValid()) {
-            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            load8(Address(addressTempRegister), dataTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
             store8(dataTempRegister, Address(addressTempRegister));
         } else {
-            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            load8(Address(addressTempRegister), dataTempRegister);
             move(imm, addressTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
             move(TrustedImmPtr(address.m_ptr), addressTempRegister);
@@ -397,14 +398,11 @@ public:
     void or16(TrustedImm32 imm, AbsoluteAddress dest)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
+        load16(setupArmAddress(dest), dataTempRegister);
         if (armImm.isValid()) {
-            move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
-            load16(Address(addressTempRegister), dataTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
             store16(dataTempRegister, Address(addressTempRegister));
         } else {
-            move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
-            load16(Address(addressTempRegister), dataTempRegister);
             move(imm, addressTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
             move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
@@ -419,8 +417,7 @@ public:
 
     void or32(RegisterID src, AbsoluteAddress dest)
     {
-        move(TrustedImmPtr(dest.m_ptr), addressTempRegister);
-        load32(Address(addressTempRegister), dataTempRegister);
+        load32(setupArmAddress(dest), dataTempRegister);
         or32(src, dataTempRegister);
         store32(dataTempRegister, Address(addressTempRegister));
     }
@@ -428,14 +425,11 @@ public:
     void or32(TrustedImm32 imm, AbsoluteAddress address)
     {
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
+        load32(setupArmAddress(address), dataTempRegister);
         if (armImm.isValid()) {
-            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            load32(Address(addressTempRegister), dataTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, armImm);
             store32(dataTempRegister, Address(addressTempRegister));
         } else {
-            move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-            load32(Address(addressTempRegister), dataTempRegister);
             move(imm, addressTempRegister);
             m_assembler.orr(dataTempRegister, dataTempRegister, addressTempRegister);
             move(TrustedImmPtr(address.m_ptr), addressTempRegister);
@@ -600,7 +594,7 @@ public:
 
     void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
-        load32(address.m_ptr, dataTempRegister);
+        load32(setupArmAddress(address), dataTempRegister);
 
         ARMThumbImmediate armImm = ARMThumbImmediate::makeUInt12OrEncodedImm(imm.m_value);
         if (armImm.isValid())
@@ -814,11 +808,9 @@ public:
 
     void load32(const void* address, RegisterID dest)
     {
-        move(TrustedImmPtr(address), addressTempRegister);
-        m_assembler.ldr(dest, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
-        cachedAddressTempRegister().invalidate();
+        load32(setupArmAddress(AbsoluteAddress(address)), dest);
     }
-    
+
     void abortWithReason(AbortReason reason)
     {
         move(TrustedImm32(reason), dataTempRegister);
@@ -861,14 +853,12 @@ public:
 
     void load8(const void* address, RegisterID dest)
     {
-        move(TrustedImmPtr(address), dest);
-        load8(Address(dest), dest);
+        load8(setupArmAddress(AbsoluteAddress(address), dest), dest);
     }
 
     void load16(const void* address, RegisterID dest)
     {
-        move(TrustedImmPtr(address), addressTempRegister);
-        m_assembler.ldrh(dest, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
+        load16(setupArmAddress(AbsoluteAddress(address), dest), dest);
     }
 
     void load16(BaseIndex address, RegisterID dest)
@@ -972,8 +962,7 @@ public:
 
     void store32(RegisterID src, const void* address)
     {
-        move(TrustedImmPtr(address), addressTempRegister);
-        m_assembler.str(src, addressTempRegister, ARMThumbImmediate::makeUInt16(0));
+        store32(src, setupArmAddress(AbsoluteAddress(address)));
     }
 
     void store32(TrustedImm32 imm, const void* address)
@@ -994,9 +983,7 @@ public:
     
     void store8(RegisterID src, const void *address)
     {
-        RegisterID scratch = getCachedAddressTempRegisterIDAndInvalidate();
-        move(TrustedImmPtr(address), scratch);
-        store8(src, ArmAddress(scratch, 0));
+        store8(src, setupArmAddress(AbsoluteAddress(address)));
     }
     
     void store8(TrustedImm32 imm, const void *address)
@@ -1030,8 +1017,7 @@ public:
 
     void store16(RegisterID src, const void* address)
     {
-        move(TrustedImmPtr(address), addressTempRegister);
-        m_assembler.strh(src, addressTempRegister, ARMThumbImmediate::makeUInt12(0));
+        store16(src, setupArmAddress(AbsoluteAddress(address)));
     }
 
     void store16(TrustedImm32 imm, const void* address)
@@ -1079,8 +1065,9 @@ public:
 
     void storePair32(RegisterID src1, RegisterID src2, const void* address)
     {
-        move(TrustedImmPtr(address), addressTempRegister);
-        storePair32(src1, src2, addressTempRegister);
+        ArmAddress armAddress = setupArmAddress(AbsoluteAddress(address));
+        ASSERT(armAddress.type == ArmAddress::HasOffset);
+        storePair32(src1, src2, Address(armAddress.base, armAddress.u.offset));
     }
 
     // Possibly clobbers src, but not on this architecture.
@@ -1558,7 +1545,9 @@ public:
                 return true;
             }
             ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(valueDelta);
-            if (armImm.isValid()) {
+            // Only use an add/sub if it results in a shorter instruction,
+            // otherwise we introduce a data dependency for no gain.
+            if (armImm.isValid() && armImm.isUInt8()) {
                 if (valueDeltaSave > 0)
                     m_assembler.add(dest, dest, armImm);
                 else if (valueDeltaSave < 0)
@@ -1748,7 +1737,7 @@ private:
 
     void add32Impl(TrustedImm32 imm, AbsoluteAddress address, bool updateFlags = false)
     {
-        load32(address.m_ptr, dataTempRegister);
+        load32(setupArmAddress(address), dataTempRegister);
 
         ARMThumbImmediate armImm = ARMThumbImmediate::makeEncodedImm(imm.m_value);
         if (armImm.isValid()) {
@@ -1900,8 +1889,8 @@ public:
     {
         // Use addressTempRegister instead of dataTempRegister, since branch32 uses dataTempRegister.
         TrustedImm32 right8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, right);
-        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, Address(addressTempRegister), addressTempRegister);
+        ArmAddress armAddress = setupArmAddress(address);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, armAddress, addressTempRegister);
         return branch32(cond, addressTempRegister, right8);
     }
     
@@ -1936,8 +1925,7 @@ public:
     Jump branchTest32(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
     {
         // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
-        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-        load32(Address(addressTempRegister), addressTempRegister);
+        load32(setupArmAddress(address), addressTempRegister);
         return branchTest32(cond, addressTempRegister, mask);
     }
 
@@ -1963,8 +1951,8 @@ public:
     {
         // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
         TrustedImm32 mask8 = MacroAssemblerHelpers::mask8OnCondition(*this, cond, mask);
-        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-        MacroAssemblerHelpers::load8OnCondition(*this, cond, Address(addressTempRegister), addressTempRegister);
+        ArmAddress armAddress = setupArmAddress(address);
+        MacroAssemblerHelpers::load8OnCondition(*this, cond, armAddress, addressTempRegister);
         return branchTest32(cond, addressTempRegister, mask8);
     }
 
@@ -1990,8 +1978,8 @@ public:
     {
         // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
         TrustedImm32 mask16 = MacroAssemblerHelpers::mask16OnCondition(*this, cond, mask);
-        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-        MacroAssemblerHelpers::load16OnCondition(*this, cond, Address(addressTempRegister), addressTempRegister);
+        ArmAddress armAddress = setupArmAddress(address);
+        MacroAssemblerHelpers::load16OnCondition(*this, cond, armAddress, addressTempRegister);
         return branchTest32(cond, addressTempRegister, mask16);
     }
 
@@ -2020,8 +2008,7 @@ public:
     
     void farJump(AbsoluteAddress address, PtrTag)
     {
-        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
-        load32(Address(addressTempRegister), addressTempRegister);
+        load32(setupArmAddress(address), addressTempRegister);
         cachedDataTempRegister().invalidate();
         m_assembler.bx(addressTempRegister);
     }
@@ -2490,6 +2477,28 @@ protected:
 
         move(TrustedImm32(address.offset), addressTempRegister);
         return ArmAddress(address.base, addressTempRegister);
+    }
+
+    std::optional<int32_t> absoluteAddressWithinShortOffset(AbsoluteAddress address, CachedTempRegister &cachedRegister)
+    {
+        intptr_t addressAsInt = reinterpret_cast<uintptr_t>(address.m_ptr);
+        intptr_t currentRegisterContents;
+        if (cachedRegister.value(currentRegisterContents)) {
+            intptr_t addressDelta = addressAsInt - currentRegisterContents;
+            if ((addressDelta >= -0xff) && (addressDelta <= 0xfff))
+                return reinterpret_cast<int32_t>(addressDelta);
+        }
+        return { };
+    }
+
+    ArmAddress setupArmAddress(AbsoluteAddress address, RegisterID scratch = addressTempRegister)
+    {
+        if (auto offset = absoluteAddressWithinShortOffset(address, cachedAddressTempRegister()))
+            return ArmAddress(addressTempRegister, *offset);
+        if (auto offset = absoluteAddressWithinShortOffset(address, cachedDataTempRegister()))
+            return ArmAddress(dataTempRegister, *offset);
+        move(TrustedImmPtr(address.m_ptr), scratch);
+        return ArmAddress(scratch);
     }
 
     RegisterID makeBaseIndexBase(BaseIndex address)
