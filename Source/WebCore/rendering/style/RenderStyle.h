@@ -25,6 +25,7 @@
 #pragma once
 
 #include "AnimationList.h"
+#include "ApplePayButtonSystemImage.h"
 #include "BorderValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSPrimitiveValue.h"

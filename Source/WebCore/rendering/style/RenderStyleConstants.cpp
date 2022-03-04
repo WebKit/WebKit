@@ -52,42 +52,6 @@ TextStream& operator<<(TextStream& ts, AnimationPlayState playState)
     return ts;
 }
 
-#if ENABLE(APPLE_PAY)
-TextStream& operator<<(TextStream& ts, ApplePayButtonStyle buttonStyle)
-{
-    switch (buttonStyle) {
-    case ApplePayButtonStyle::White: ts << "white"; break;
-    case ApplePayButtonStyle::WhiteOutline: ts << "white-outline"; break;
-    case ApplePayButtonStyle::Black: ts << "black"; break;
-    }
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, ApplePayButtonType playState)
-{
-    switch (playState) {
-    case ApplePayButtonType::Plain: ts << "plain"; break;
-    case ApplePayButtonType::Buy: ts << "buy"; break;
-    case ApplePayButtonType::SetUp: ts << "setup"; break;
-    case ApplePayButtonType::Donate: ts << "donate"; break;
-    case ApplePayButtonType::CheckOut: ts << "checkout"; break;
-    case ApplePayButtonType::Book: ts << "book"; break;
-    case ApplePayButtonType::Subscribe: ts << "subscribe"; break;
-#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
-    case ApplePayButtonType::Reload: ts << "reload"; break;
-    case ApplePayButtonType::AddMoney: ts << "add-money"; break;
-    case ApplePayButtonType::TopUp: ts << "top-up"; break;
-    case ApplePayButtonType::Order: ts << "order"; break;
-    case ApplePayButtonType::Rent: ts << "rent"; break;
-    case ApplePayButtonType::Support: ts << "support"; break;
-    case ApplePayButtonType::Contribute: ts << "contribute"; break;
-    case ApplePayButtonType::Tip: ts << "tip"; break;
-#endif
-    }
-    return ts;
-}
-#endif
-
 TextStream& operator<<(TextStream& ts, AspectRatioType aspectRatioType)
 {
     switch (aspectRatioType) {

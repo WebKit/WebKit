@@ -71,9 +71,11 @@ JSApplePayShippingMethodSelectedEvent.cpp
 JSApplePayShippingMethodUpdate.cpp
 JSApplePayValidateMerchantEvent.cpp
 Modules/airplay/WebMediaSessionManager.cpp
+Modules/applepay/ApplePayButtonSystemImage.mm
 Modules/applepay/ApplePayCouponCodeChangedEvent.cpp
 Modules/applepay/ApplePayCancelEvent.cpp
 Modules/applepay/ApplePayContactField.cpp
+Modules/applepay/ApplePayLogoSystemImage.mm
 Modules/applepay/ApplePayMerchantCapability.cpp
 Modules/applepay/ApplePayPaymentAuthorizationResult.cpp
 Modules/applepay/ApplePayPaymentAuthorizedEvent.cpp

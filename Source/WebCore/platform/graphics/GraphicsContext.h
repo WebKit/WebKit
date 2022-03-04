@@ -87,6 +87,7 @@ class MediaPlayer;
 class RoundedRect;
 class GraphicsContextGL;
 class Path;
+class SystemImage;
 class TextRun;
 class TransformationMatrix;
 
@@ -427,6 +428,8 @@ public:
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> createAlignedImageBuffer(const FloatRect&, const DestinationColorSpace& = DestinationColorSpace::SRGB(), std::optional<RenderingMethod> = std::nullopt) const;
 
     virtual void drawNativeImage(NativeImage&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& = { }) = 0;
+
+    virtual void drawSystemImage(SystemImage&, const FloatRect&);
 
     WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatPoint& destination, const ImagePaintingOptions& = { ImageOrientation::FromImage });
     WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatRect& destination, const ImagePaintingOptions& = { ImageOrientation::FromImage });

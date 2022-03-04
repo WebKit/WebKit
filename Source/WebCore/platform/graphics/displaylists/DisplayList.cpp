@@ -248,6 +248,8 @@ void DisplayList::append(ItemHandle item)
         return append<DrawImageBuffer>(item.get<DrawImageBuffer>());
     case ItemType::DrawNativeImage:
         return append<DrawNativeImage>(item.get<DrawNativeImage>());
+    case ItemType::DrawSystemImage:
+        return append<DrawSystemImage>(item.get<DrawSystemImage>());
     case ItemType::DrawPattern:
         return append<DrawPattern>(item.get<DrawPattern>());
     case ItemType::DrawRect:

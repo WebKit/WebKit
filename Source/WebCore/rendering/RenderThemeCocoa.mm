@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RenderThemeCocoa.h"
 
+#import "ApplePayLogoSystemImage.h"
 #import "GraphicsContextCG.h"
 #import "HTMLInputElement.h"
 #import "ImageBuffer.h"
@@ -100,64 +101,8 @@ void RenderThemeCocoa::adjustApplePayButtonStyle(RenderStyle& style, const Eleme
     }
 }
 
-static PKPaymentButtonStyle toPKPaymentButtonStyle(ApplePayButtonStyle style)
-{
-    switch (style) {
-    case ApplePayButtonStyle::White:
-        return PKPaymentButtonStyleWhite;
-    case ApplePayButtonStyle::WhiteOutline:
-        return PKPaymentButtonStyleWhiteOutline;
-    case ApplePayButtonStyle::Black:
-        return PKPaymentButtonStyleBlack;
-    }
-}
-
-static PKPaymentButtonType toPKPaymentButtonType(ApplePayButtonType type)
-{
-    switch (type) {
-    case ApplePayButtonType::Plain:
-        return PKPaymentButtonTypePlain;
-    case ApplePayButtonType::Buy:
-        return PKPaymentButtonTypeBuy;
-    case ApplePayButtonType::SetUp:
-        return PKPaymentButtonTypeSetUp;
-    case ApplePayButtonType::Donate:
-        return PKPaymentButtonTypeDonate;
-    case ApplePayButtonType::CheckOut:
-        return PKPaymentButtonTypeCheckout;
-    case ApplePayButtonType::Book:
-        return PKPaymentButtonTypeBook;
-    case ApplePayButtonType::Subscribe:
-        return PKPaymentButtonTypeSubscribe;
-#if HAVE(PASSKIT_NEW_BUTTON_TYPES)
-    case ApplePayButtonType::Reload:
-        return PKPaymentButtonTypeReload;
-    case ApplePayButtonType::AddMoney:
-        return PKPaymentButtonTypeAddMoney;
-    case ApplePayButtonType::TopUp:
-        return PKPaymentButtonTypeTopUp;
-    case ApplePayButtonType::Order:
-        return PKPaymentButtonTypeOrder;
-    case ApplePayButtonType::Rent:
-        return PKPaymentButtonTypeRent;
-    case ApplePayButtonType::Support:
-        return PKPaymentButtonTypeSupport;
-    case ApplePayButtonType::Contribute:
-        return PKPaymentButtonTypeContribute;
-    case ApplePayButtonType::Tip:
-        return PKPaymentButtonTypeTip;
-#endif
-    }
-}
-
 bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& paintRect)
 {
-    auto& destinationContext = paintInfo.context();
-
-    auto imageBuffer = destinationContext.createAlignedImageBuffer(paintRect.size());
-    if (!imageBuffer)
-        return false;
-
     auto& style = renderer.style();
     auto largestCornerRadius = std::max<CGFloat>({
         floatValueForLength(style.borderTopLeftRadius().height, paintRect.height()),
@@ -169,14 +114,7 @@ bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const P
         floatValueForLength(style.borderBottomRightRadius().height, paintRect.height()),
         floatValueForLength(style.borderBottomRightRadius().width, paintRect.width())
     });
-
-    auto& imageContext = imageBuffer->context();
-    imageContext.setShouldSmoothFonts(true);
-    imageContext.setShouldSubpixelQuantizeFonts(false);
-    imageContext.scale(FloatSize(1, -1));
-    PKDrawApplePayButtonWithCornerRadius(imageContext.platformContext(), CGRectMake(0, -paintRect.height(), paintRect.width(), paintRect.height()), 1.0, largestCornerRadius, toPKPaymentButtonType(style.applePayButtonType()), toPKPaymentButtonStyle(style.applePayButtonStyle()), style.computedLocale());
-
-    destinationContext.drawConsumingImageBuffer(WTFMove(imageBuffer), paintRect);
+    paintInfo.context().drawSystemImage(ApplePayButtonSystemImage::create(style.applePayButtonType(), style.applePayButtonStyle(), style.computedLocale(), largestCornerRadius), paintRect);
     return false;
 }
 

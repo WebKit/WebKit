@@ -196,6 +196,11 @@ void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, c
     recordDrawNativeImage(image.renderingResourceIdentifier(), imageSize, destRect, srcRect, options);
 }
 
+void Recorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
+{
+    recordDrawSystemImage(systemImage, destinationRect);
+}
+
 void Recorder::drawPattern(NativeImage& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     appendStateChangeItemIfNecessary();

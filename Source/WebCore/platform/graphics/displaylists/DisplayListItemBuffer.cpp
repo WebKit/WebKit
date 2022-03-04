@@ -121,6 +121,9 @@ void ItemHandle::apply(GraphicsContext& context)
     case ItemType::DrawNativeImage:
         get<DrawNativeImage>().apply(context);
         return;
+    case ItemType::DrawSystemImage:
+        get<DrawSystemImage>().apply(context);
+        return;
     case ItemType::DrawPattern:
         get<DrawPattern>().apply(context);
         return;
@@ -338,6 +341,9 @@ void ItemHandle::destroy()
     case ItemType::DrawNativeImage:
         static_assert(std::is_trivially_destructible<DrawNativeImage>::value);
         return;
+    case ItemType::DrawSystemImage:
+        get<DrawSystemImage>().~DrawSystemImage();
+        return;
     case ItemType::DrawPattern:
         static_assert(std::is_trivially_destructible<DrawPattern>::value);
         return;
@@ -489,6 +495,8 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<DrawLinesForText>(itemOffset, *this);
     case ItemType::DrawNativeImage:
         return copyInto<DrawNativeImage>(itemOffset, *this);
+    case ItemType::DrawSystemImage:
+        return copyInto<DrawSystemImage>(itemOffset, *this);
     case ItemType::DrawPattern:
         return copyInto<DrawPattern>(itemOffset, *this);
     case ItemType::DrawPath:

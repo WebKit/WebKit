@@ -398,6 +398,18 @@ static TextStream& operator<<(TextStream& ts, const DrawNativeImage& item)
     return ts;
 }
 
+void DrawSystemImage::apply(GraphicsContext& context) const
+{
+    context.drawSystemImage(m_systemImage, m_destinationRect);
+}
+
+static TextStream& operator<<(TextStream& ts, const DrawSystemImage& item)
+{
+    // FIXME: dump more stuff.
+    ts.dumpProperty("destination", item.destinationRect());
+    return ts;
+}
+
 DrawPattern::DrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
     : m_imageIdentifier(imageIdentifier)
     , m_destination(destRect)
@@ -1021,6 +1033,7 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::DrawGlyphs: ts << "draw-glyphs"; break;
     case ItemType::DrawImageBuffer: ts << "draw-image-buffer"; break;
     case ItemType::DrawNativeImage: ts << "draw-native-image"; break;
+    case ItemType::DrawSystemImage: ts << "draw-system-image"; break;
     case ItemType::DrawPattern: ts << "draw-pattern"; break;
     case ItemType::DrawRect: ts << "draw-rect"; break;
     case ItemType::DrawLine: ts << "draw-line"; break;
@@ -1140,6 +1153,9 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
         break;
     case ItemType::DrawNativeImage:
         ts << item.get<DrawNativeImage>();
+        break;
+    case ItemType::DrawSystemImage:
+        ts << item.get<DrawSystemImage>();
         break;
     case ItemType::DrawPattern:
         ts << item.get<DrawPattern>();

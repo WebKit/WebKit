@@ -144,6 +144,7 @@ class FragmentedSharedBuffer;
 class SpringTimingFunction;
 class StepsTimingFunction;
 class StickyPositionViewportConstraints;
+class SystemImage;
 class TextCheckingRequestData;
 class TransformationMatrix;
 class UserStyleSheet;
@@ -770,6 +771,12 @@ template<> struct ArgumentCoder<Ref<WebCore::SharedBuffer>> {
 template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
     static void encode(Encoder&, const WebCore::ScriptBuffer&);
     static std::optional<WebCore::ScriptBuffer> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<Ref<WebCore::SystemImage>> {
+    template<typename Encoder>
+    static void encode(Encoder&, const Ref<WebCore::SystemImage>&);
+    static std::optional<Ref<WebCore::SystemImage>> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

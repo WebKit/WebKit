@@ -283,6 +283,11 @@ void RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier(Qualified
     handleItem(DisplayList::DrawNativeImage(imageIdentifier.object(), imageSize, destRect, srcRect, options), *image);
 }
 
+void RemoteDisplayListRecorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
+{
+    handleItem(DisplayList::DrawSystemImage(systemImage, destinationRect));
+}
+
 void RemoteDisplayListRecorder::drawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,

@@ -263,6 +263,12 @@ void BifurcatedGraphicsContext::drawNativeImage(NativeImage& nativeImage, const 
     m_secondaryContext.drawNativeImage(nativeImage, selfSize, destRect, srcRect, options);
 }
 
+void BifurcatedGraphicsContext::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
+{
+    m_primaryContext.drawSystemImage(systemImage, destinationRect);
+    m_secondaryContext.drawSystemImage(systemImage, destinationRect);
+}
+
 void BifurcatedGraphicsContext::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     m_primaryContext.drawPattern(nativeImage, destRect, tileRect, patternTransform, phase, spacing, options);

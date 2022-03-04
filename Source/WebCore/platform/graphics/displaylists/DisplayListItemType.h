@@ -54,6 +54,7 @@ enum class ItemType : uint8_t {
     DrawGlyphs,
     DrawImageBuffer,
     DrawNativeImage,
+    DrawSystemImage,
     DrawPattern,
     DrawRect,
     DrawLine,

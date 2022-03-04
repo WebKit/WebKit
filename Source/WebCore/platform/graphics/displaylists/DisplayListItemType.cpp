@@ -84,6 +84,8 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(DrawImageBuffer);
     case ItemType::DrawNativeImage:
         return sizeof(DrawNativeImage);
+    case ItemType::DrawSystemImage:
+        return sizeof(DrawSystemImage);
     case ItemType::DrawPattern:
         return sizeof(DrawPattern);
     case ItemType::DrawRect:
@@ -215,6 +217,7 @@ bool isDrawingItem(ItemType type)
     case ItemType::DrawLine:
     case ItemType::DrawLinesForText:
     case ItemType::DrawNativeImage:
+    case ItemType::DrawSystemImage:
     case ItemType::DrawPattern:
     case ItemType::DrawPath:
     case ItemType::DrawRect:
@@ -294,6 +297,7 @@ bool isInlineItem(ItemType type)
     case ItemType::SetLineDash:
     case ItemType::SetState:
     case ItemType::StrokePath:
+    case ItemType::DrawSystemImage:
         return false;
     case ItemType::ApplyDeviceScaleFactor:
 #if USE(CG)

@@ -30,6 +30,7 @@
 #import "SceneKitModelLoaderUSD.h"
 
 #import "Model.h"
+#import "ResourceError.h"
 #import "SceneKitModel.h"
 #import "SceneKitModelLoader.h"
 #import "SceneKitModelLoaderClient.h"

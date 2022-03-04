@@ -26,107 +26,14 @@
 #import "config.h"
 #import "ThemeCocoa.h"
 
+#import "ApplePayLogoSystemImage.h"
 #import "FontCascade.h"
+#import "GeometryUtilities.h"
 #import "GraphicsContext.h"
 #import "ImageBuffer.h"
 #import <dlfcn.h>
 
 namespace WebCore {
-
-static void fitContextToBox(GraphicsContext& context, const FloatSize& srcImageSize, const FloatSize& dstSize)
-{
-    float srcRatio = srcImageSize.aspectRatio();
-    float dstRatio = dstSize.aspectRatio();
-
-    float scale;
-    float translationX = 0;
-    float translationY = 0;
-    if (srcRatio > dstRatio) {
-        scale = dstSize.width() / srcImageSize.width();
-        translationY = (dstSize.height() - scale * srcImageSize.height()) / 2;
-    } else {
-        scale = dstSize.height() / srcImageSize.height();
-        translationX = (dstSize.width() - scale * srcImageSize.width()) / 2;
-    }
-    context.translate(translationX, translationY);
-    context.scale(scale);
-}
-
-#if ENABLE(APPLE_PAY)
-
-static NSBundle *passKitBundle()
-{
-    static NSBundle *passKitBundle;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-#if PLATFORM(MAC)
-        passKitBundle = [NSBundle bundleWithURL:[NSURL fileURLWithPath:@"/System/Library/PrivateFrameworks/PassKit.framework" isDirectory:YES]];
-#else
-        dlopen("/System/Library/Frameworks/PassKit.framework/PassKit", RTLD_NOW);
-        passKitBundle = [NSBundle bundleForClass:NSClassFromString(@"PKPaymentAuthorizationViewController")];
-#endif
-    });
-
-    return passKitBundle;
-}
-
-static RetainPtr<CGPDFPageRef> loadPassKitPDFPage(NSString *imageName)
-{
-    NSURL *url = [passKitBundle() URLForResource:imageName withExtension:@"pdf"];
-    if (!url)
-        return nullptr;
-
-    auto document = adoptCF(CGPDFDocumentCreateWithURL((CFURLRef)url));
-    if (!document)
-        return nullptr;
-
-    if (!CGPDFDocumentGetNumberOfPages(document.get()))
-        return nullptr;
-
-    return CGPDFDocumentGetPage(document.get(), 1);
-};
-
-static CGPDFPageRef applePayButtonLogoBlack()
-{
-    static CGPDFPageRef logoPage;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        logoPage = loadPassKitPDFPage(@"PayButtonLogoBlack").leakRef();
-    });
-
-    return logoPage;
-};
-
-static CGPDFPageRef applePayButtonLogoWhite()
-{
-    static CGPDFPageRef logoPage;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        logoPage = loadPassKitPDFPage(@"PayButtonLogoWhite").leakRef();
-    });
-
-    return logoPage;
-};
-
-static void drawApplePayButton(GraphicsContext& context, CGPDFPageRef page, const FloatSize& size)
-{
-    // Create a local ImageBuffer because decoding the PDF images has to happen in WebProcess.
-    auto imageBuffer = context.createAlignedImageBuffer(size, DestinationColorSpace::SRGB(), RenderingMethod::Local);
-    if (!imageBuffer)
-        return;
-
-    CGSize pdfSize = CGPDFPageGetBoxRect(page, kCGPDFMediaBox).size;
-
-    auto& imageContext = imageBuffer->context();
-    fitContextToBox(imageContext, FloatSize(pdfSize), size);
-    imageContext.translate(0, pdfSize.height);
-    imageContext.scale(FloatSize(1, -1));
-    CGContextDrawPDFPage(imageContext.platformContext(), page);
-
-    context.drawConsumingImageBuffer(WTFMove(imageBuffer), FloatRect(FloatPoint::zero(), size));
-};
-
-#endif
 
 void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, const FloatSize& size) const
 {
@@ -135,7 +42,9 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, co
         context.setFillColor(Color::black);
 
         FloatSize wirelessPlaybackSrcSize(32, 24.016);
-        fitContextToBox(context, wirelessPlaybackSrcSize, size);
+        auto largestRect = largestRectWithAspectRatioInsideRect(wirelessPlaybackSrcSize.aspectRatio(), FloatRect(FloatPoint::zero(), size));
+        context.translate(largestRect.x(), largestRect.y());
+        context.scale(largestRect.width() / wirelessPlaybackSrcSize.width());
 
         Path outline;
         outline.moveTo(FloatPoint(24.066, 18));
@@ -164,17 +73,13 @@ void ThemeCocoa::drawNamedImage(const String& name, GraphicsContext& context, co
 
 #if ENABLE(APPLE_PAY)
     if (name == "apple-pay-logo-black") {
-        if (auto logo = applePayButtonLogoBlack()) {
-            drawApplePayButton(context, logo, size);
-            return;
-        }
+        context.drawSystemImage(ApplePayLogoSystemImage::create(ApplePayLogoStyle::Black), FloatRect(FloatPoint::zero(), size));
+        return;
     }
 
     if (name == "apple-pay-logo-white") {
-        if (auto logo = applePayButtonLogoWhite()) {
-            drawApplePayButton(context, logo, size);
-            return;
-        }
+        context.drawSystemImage(ApplePayLogoSystemImage::create(ApplePayLogoStyle::White), FloatRect(FloatPoint::zero(), size));
+        return;
     }
 #endif
 

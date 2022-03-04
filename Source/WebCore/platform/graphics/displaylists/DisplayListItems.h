@@ -40,6 +40,7 @@
 #include "PixelBuffer.h"
 #include "RenderingResourceIdentifier.h"
 #include "SharedBuffer.h"
+#include "SystemImage.h"
 #include <variant>
 #include <wtf/EnumTraits.h>
 #include <wtf/TypeCasts.h>
@@ -992,6 +993,61 @@ private:
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
 };
+
+class DrawSystemImage {
+public:
+    static constexpr ItemType itemType = ItemType::DrawSystemImage;
+    static constexpr bool isInlineItem = false;
+    static constexpr bool isDrawingItem = true;
+
+    DrawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
+        : m_systemImage(systemImage)
+        , m_destinationRect(destinationRect)
+    {
+    }
+
+    const Ref<SystemImage>& systemImage() const { return m_systemImage; }
+    const FloatRect& destinationRect() const { return m_destinationRect; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+
+    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
+    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destinationRect; }
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<DrawSystemImage> decode(Decoder&);
+
+private:
+    Ref<SystemImage> m_systemImage;
+    FloatRect m_destinationRect;
+};
+
+template<class Encoder>
+void DrawSystemImage::encode(Encoder& encoder) const
+{
+    encoder << m_systemImage;
+    encoder << m_destinationRect;
+}
+
+template<class Decoder>
+std::optional<DrawSystemImage> DrawSystemImage::decode(Decoder& decoder)
+{
+#define DECODE(name, type) \
+    std::optional<type> name; \
+    decoder >> name; \
+    if (!name) \
+        return std::nullopt; \
+
+    DECODE(systemImage, Ref<SystemImage>)
+    DECODE(destinationRect, FloatRect)
+
+#undef DECODE
+
+    return { {
+        WTFMove(*systemImage),
+        WTFMove(*destinationRect),
+    } };
+}
 
 class DrawPattern {
 public:
@@ -2220,6 +2276,7 @@ using DisplayListItem = std::variant
     , DrawPath
     , DrawPattern
     , DrawRect
+    , DrawSystemImage
     , EndTransparencyLayer
     , FillCompositedRect
     , FillEllipse
@@ -2306,6 +2363,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::DrawGlyphs,
     WebCore::DisplayList::ItemType::DrawImageBuffer,
     WebCore::DisplayList::ItemType::DrawNativeImage,
+    WebCore::DisplayList::ItemType::DrawSystemImage,
     WebCore::DisplayList::ItemType::DrawPattern,
     WebCore::DisplayList::ItemType::DrawRect,
     WebCore::DisplayList::ItemType::DrawLine,

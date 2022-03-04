@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "ApplePayButtonSystemImage.h"
 #include "CSSCalcValue.h"
 #include "CSSFontFamily.h"
 #include "CSSPrimitiveValue.h"

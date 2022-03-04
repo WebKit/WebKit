@@ -182,6 +182,11 @@ void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdenti
     append<DrawNativeImage>(imageIdentifier, imageSize, destRect, srcRect, options);
 }
 
+void RecorderImpl::recordDrawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
+{
+    append<DrawSystemImage>(systemImage, destinationRect);
+}
+
 void RecorderImpl::recordDrawPattern(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
 {
     append<DrawPattern>(imageIdentifier, destRect, tileRect, transform, phase, spacing, options);

@@ -1,3 +1,116 @@
+2022-03-03  Devin Rousso  <drousso@apple.com>
+
+        [GPU Process] dont load Apple Pay button/logo PDFs in the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=237177
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/SystemImage.h: Added.
+        (WebCore::SystemImage::draw const):
+        (WebCore::SystemImage::SystemImage):
+        Introduce a new extendable class `SystemImage` that represents a collection of arguments
+        and methodology (that uses those arguments) to draw something from the system.
+        This patch introduces two concrete uses:
+        - `ApplePayButtonSystemImage` uses PassKit SPI to draw an Apple Pay button.
+        - `ApplePayLogoSystemImage` loads a PDF file of the Apple Pay logo from inside PassKit.
+        This architecture was chosen so that `GraphicsContext` doesn't have to know about Apple Pay
+        specific things, instead only dealing with a very generic interface (whos subclasses know
+        more specifically what to do with the data they're given).
+
+        * Modules/applepay/ApplePayButtonSystemImage.h: Added.
+        (WebCore::ApplePayButtonSystemImage::create):
+        (WebCore::ApplePayButtonSystemImage::ApplePayButtonSystemImage):
+        (WebCore::ApplePayButtonSystemImage::encode const):
+        (WebCore::ApplePayButtonSystemImage::decode):
+        (isType):
+        * Modules/applepay/ApplePayButtonSystemImage.mm: Added.
+        (WebCore::toPKPaymentButtonType):
+        (WebCore::toPKPaymentButtonStyle):
+        (WebCore::ApplePayButtonSystemImage::draw const):
+        * css/CSSPrimitiveValueMappings.h:
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.cpp:
+        * rendering/style/RenderStyleConstants.h:
+        Drive-by: Move `ApplePayButtonStyle` and `ApplePayButtonType` to `ApplePayButtonSystemImage.h`
+        so they can be used elsewhere (e.g. GPUProcess) without having to include everything else.
+
+        * Modules/applepay/ApplePayLogoSystemImage.h: Added.
+        (WebCore::ApplePayLogoSystemImage::create):
+        (WebCore::ApplePayLogoSystemImage::ApplePayLogoSystemImage):
+        (WebCore::ApplePayLogoSystemImage::encode const):
+        (WebCore::ApplePayLogoSystemImage::decode):
+        (isType):
+        * Modules/applepay/ApplePayLogoSystemImage.mm: Added.
+        (WebCore::passKitBundle):
+        (WebCore::loadPassKitPDFPage):
+        (WebCore::applePayLogoWhite):
+        (WebCore::applePayLogoBlack):
+        (WebCore::applePayLogoForStyle):
+        (WebCore::ApplePayLogoSystemImage::draw const):
+        Add a new `ApplePayLogoStyle` so that the WebProcess isn't able to provide an arbitrary PDF
+        to load when rendering `-webkit-named-image(apple-pay-logo-[white,black])`.
+
+        * platform/cocoa/ThemeCocoa.mm:
+        (WebCore::ThemeCocoa::drawNamedImage const):
+        (WebCore::fitContextToBox): Deleted.
+        (WebCore::passKitBundle): Deleted.
+        (WebCore::loadPassKitPDFPage): Deleted.
+        (WebCore::applePayButtonLogoBlack): Deleted.
+        (WebCore::applePayButtonLogoWhite): Deleted.
+        (WebCore::drawApplePayButton): Deleted.
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::paintApplePayButton):
+        (WebCore::toPKPaymentButtonStyle): Deleted.
+        (WebCore::toPKPaymentButtonType): Deleted.
+        Move the logic that draws the Apple Pay button to a method on `GraphicsContext` so that it
+        can hook into the various GPUProcess flags/systems.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawSystemImage): Added.
+        * platform/graphics/BifurcatedGraphicsContext.h:
+        * platform/graphics/BifurcatedGraphicsContext.cpp:
+        (WebCore::BifurcatedGraphicsContext::drawSystemImage): Added.
+        * platform/graphics/NullGraphicsContext.h:
+        (WebCore::NullGraphicsContext::drawSystemImage): Added.
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::append):
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::ItemHandle::apply):
+        (WebCore::DisplayList::ItemHandle::destroy):
+        (WebCore::DisplayList::ItemHandle::safeCopy const):
+        * platform/graphics/displaylists/DisplayListItemType.h:
+        * platform/graphics/displaylists/DisplayListItemType.cpp:
+        (WebCore::DisplayList::sizeOfItemInBytes):
+        (WebCore::DisplayList::isDrawingItem):
+        (WebCore::DisplayList::isInlineItem):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawSystemImage::DrawSystemImage): Added.
+        (WebCore::DisplayList::DrawSystemImage::systemImage const): Added.
+        (WebCore::DisplayList::DrawSystemImage::destination const): Added.
+        (WebCore::DisplayList::DrawSystemImage::globalBounds const): Added.
+        (WebCore::DisplayList::DrawSystemImage::localBounds const): Added.
+        (WebCore::DisplayList::DrawSystemImage::encode const): Added.
+        (WebCore::DisplayList::DrawSystemImage::decode): Added.
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::DrawSystemImage::apply const): Added.
+        (WebCore::DisplayList::operator<<):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawSystemImage): Added.
+        * platform/graphics/displaylists/DisplayListRecorderImpl.h:
+        * platform/graphics/displaylists/DisplayListRecorderImpl.cpp:
+        (WebCore::DisplayList::RecorderImpl::recordDrawSystemImage): Added.
+        Add new `DrawSystemImage` display list item to handle GPUProcess drawing of `SystemImage`.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * Modules/model-element/scenekit/SceneKitModelLoaderUSD.mm:
+        Drive-by: Unified sources build fix.
+
 2022-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         Element with position: sticky after sticking, starts to move incorrectly when scrolling

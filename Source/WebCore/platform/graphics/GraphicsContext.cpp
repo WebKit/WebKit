@@ -38,6 +38,7 @@
 #include "MediaPlayerPrivate.h"
 #include "NullGraphicsContext.h"
 #include "RoundedRect.h"
+#include "SystemImage.h"
 #include "TextRun.h"
 #include <wtf/text/TextStream.h>
 
@@ -636,6 +637,11 @@ RefPtr<ImageBuffer> GraphicsContext::createAlignedImageBuffer(const FloatSize& s
 RefPtr<ImageBuffer> GraphicsContext::createAlignedImageBuffer(const FloatRect& rect, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const
 {
     return createScaledImageBuffer(rect, scaleFactor(), colorSpace, renderingMode(), renderingMethod);
+}
+
+void GraphicsContext::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
+{
+    systemImage.draw(*this, destinationRect);
 }
 
 ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatPoint& destination, const ImagePaintingOptions& imagePaintingOptions)

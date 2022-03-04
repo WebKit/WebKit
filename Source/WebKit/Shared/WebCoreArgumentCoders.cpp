@@ -31,6 +31,9 @@
 #include "StreamConnectionEncoder.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <WebCore/ApplePayButtonSystemImage.h>
+#include <WebCore/ApplePayLogoSystemImage.h>
+#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
 #include <WebCore/CacheQueryOptions.h>
@@ -84,6 +87,7 @@
 #include <WebCore/ServiceWorkerData.h>
 #include <WebCore/ShareData.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/SystemImage.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TimingFunction.h>
@@ -3173,6 +3177,52 @@ std::optional<WebCore::ScriptBuffer> ArgumentCoder<WebCore::ScriptBuffer>::decod
         return std::nullopt;
 
     return WebCore::ScriptBuffer { WTFMove(buffer) };
+}
+
+template<typename Encoder>
+void ArgumentCoder<Ref<SystemImage>>::encode(Encoder& encoder, const Ref<SystemImage>& systemImage)
+{
+    encoder << systemImage->systemImageType();
+
+    switch (systemImage->systemImageType()) {
+#if ENABLE(APPLE_PAY)
+    case SystemImageType::ApplePayButton:
+        downcast<ApplePayButtonSystemImage>(systemImage.get()).encode(encoder);
+        return;
+
+    case SystemImageType::ApplePayLogo:
+        downcast<ApplePayLogoSystemImage>(systemImage.get()).encode(encoder);
+        return;
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+template
+void ArgumentCoder<Ref<SystemImage>>::encode<Encoder>(Encoder&, const Ref<SystemImage>&);
+template
+void ArgumentCoder<Ref<SystemImage>>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Ref<SystemImage>&);
+
+std::optional<Ref<SystemImage>> ArgumentCoder<Ref<SystemImage>>::decode(Decoder& decoder)
+{
+    std::optional<SystemImageType> systemImageType;
+    decoder >> systemImageType;
+    if (!systemImageType)
+        return std::nullopt;
+
+    switch (*systemImageType) {
+#if ENABLE(APPLE_PAY)
+    case SystemImageType::ApplePayButton:
+        return ApplePayButtonSystemImage::decode(decoder);
+
+    case SystemImageType::ApplePayLogo:
+        return ApplePayLogoSystemImage::decode(decoder);
+#endif
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)

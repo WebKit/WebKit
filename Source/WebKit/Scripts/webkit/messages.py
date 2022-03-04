@@ -637,6 +637,7 @@ def class_template_headers(template_string):
         'std::optional': {'headers': ['<optional>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::pair': {'headers': ['<utility>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'IPC::ArrayReference': {'headers': ['"ArrayReference.h"'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'Ref': {'headers': ['<wtf/Ref.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': ['"ArgumentCodersCF.h"']},
     }

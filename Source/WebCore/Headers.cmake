@@ -131,6 +131,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/airplay/PlaybackTargetClientContextIdentifier.h
 
+    Modules/applepay/ApplePayButtonSystemImage.h
+    Modules/applepay/ApplePayLogoSystemImage.h
     Modules/applepay/ApplePaySessionPaymentRequest.h
     Modules/applepay/Payment.h
     Modules/applepay/PaymentContact.h
@@ -1572,6 +1574,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/SourceBufferPrivateClient.h
     platform/graphics/SourceImage.h
     platform/graphics/StringTruncator.h
+    platform/graphics/SystemImage.h
     platform/graphics/TabSize.h
     platform/graphics/TextRun.h
     platform/graphics/TextTrackRepresentation.h
