@@ -1,3 +1,39 @@
+2022-03-04  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX ITM: Updating m_pendingLoadingProgress can cause deadlock on AXIsolatedTree::m_changeLogLock
+        https://bugs.webkit.org/show_bug.cgi?id=237402
+
+        Reviewed by Chris Fleizach.
+
+        AXIsolatedTree::m_pendingLoadingProgress is currently guarded by
+        AXIsolatedTree::m_changeLogLock. Because loading can happen at any time,
+        deadlocks can happen in this sequence:
+
+          1. AXIsolatedTree::updateLoadingProgress is called on the main thread while
+             the secondary thread holds the lock
+          2. The secondary thread is holding the lock to service an AX request, and said
+             AX request does something to call into the main thread (e.g. AXLOGs an isolated object,
+             which causes a dispatch to the main thread as part of AXIsolatedObject::outerHTML).
+          3. Deadlock
+
+        This patch fixes this by making m_loadingProgress threadsafe
+        via std::atomic<double> and removing m_pendingLoadingProgress.
+
+        This patch also removes an unnecessary acquisition of m_changeLogLock
+        in AXIsolatedTree::focusedNode(). This function is only called on the
+        secondary-thread, and only accesses secondary-thread safe functions
+        and member variables (nodeForID, m_focusedNodeID), so we don't need the lock.
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::focusedNode):
+        Removed unnecessary m_changeLogLock acquisition.
+        (WebCore::AXIsolatedTree::updateLoadingProgress):
+        Update m_loadingProgress directly instead of the now deleted intermediary
+        m_pendingLoadingProgress.
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        Remove m_pendingLoadingProgress.
+
 2022-03-04  Rob Buis  <rbuis@igalia.com>
 
         Top layers should not be moved

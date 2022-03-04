@@ -419,8 +419,7 @@ private:
     Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_focusedNodeID;
-    double m_pendingLoadingProgress WTF_GUARDED_BY_LOCK(m_changeLogLock) { 0 };
-    double m_loadingProgress { 0 };
+    std::atomic<double> m_loadingProgress { 0 };
     Lock m_changeLogLock;
 };
 

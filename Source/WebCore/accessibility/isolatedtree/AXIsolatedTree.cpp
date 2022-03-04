@@ -423,9 +423,9 @@ void AXIsolatedTree::updateChildren(AXCoreObject& axObject)
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
 {
     AXTRACE("AXIsolatedTree::focusedNode");
+    RELEASE_ASSERT(!isMainThread());
     // Apply pending changes in case focus has changed and hasn't been updated.
     applyPendingChanges();
-    Locker locker { m_changeLogLock };
     AXLOG(makeString("focusedNodeID ", m_focusedNodeID.loggingString()));
     AXLOG("focused node:");
     AXLOG(nodeForID(m_focusedNodeID));
@@ -467,11 +467,10 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
 void AXIsolatedTree::updateLoadingProgress(double newProgressValue)
 {
     AXTRACE("AXIsolatedTree::updateLoadingProgress");
-    AXLOG(makeString("Queueing loading progress update to ", newProgressValue, " for treeID ", treeID()));
+    AXLOG(makeString("Updating loading progress to ", newProgressValue, " for treeID ", treeID()));
     ASSERT(isMainThread());
 
-    Locker locker { m_changeLogLock };
-    m_pendingLoadingProgress = newProgressValue;
+    m_loadingProgress = newProgressValue;
 }
 
 void AXIsolatedTree::removeNode(const AXCoreObject& axObject)
@@ -532,8 +531,6 @@ void AXIsolatedTree::applyPendingChanges()
         return;
 
     Locker locker { m_changeLogLock };
-
-    m_loadingProgress = m_pendingLoadingProgress;
 
     if (m_pendingFocusedNodeID != m_focusedNodeID) {
         AXLOG(makeString("focusedNodeID ", m_focusedNodeID.loggingString(), " pendingFocusedNodeID ", m_pendingFocusedNodeID.loggingString()));
