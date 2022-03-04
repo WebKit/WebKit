@@ -41,12 +41,18 @@ struct GPUCanvasConfiguration;
 
 class GPUCanvasContext : public RefCounted<GPUCanvasContext> {
 public:
+#if ENABLE(OFFSCREEN_CANVAS)
+    using CanvasType = std::variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
+#else
+    using CanvasType = std::variant<RefPtr<HTMLCanvasElement>>;
+#endif
+
     static Ref<GPUCanvasContext> create()
     {
         return adoptRef(*new GPUCanvasContext());
     }
 
-    RefPtr<HTMLCanvasElement> canvas();
+    CanvasType canvas();
 
     void configure(const GPUCanvasConfiguration&);
     void unconfigure();

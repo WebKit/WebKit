@@ -28,6 +28,7 @@
 #include "GPUOrigin2DDict.h"
 #include "HTMLCanvasElement.h"
 #include "ImageBitmap.h"
+#include "OffscreenCanvas.h"
 #include <optional>
 #include <pal/graphics/WebGPU/WebGPUImageCopyExternalImage.h>
 #include <variant>
@@ -36,6 +37,12 @@
 namespace WebCore {
 
 struct GPUImageCopyExternalImage {
+#if ENABLE(OFFSCREEN_CANVAS)
+    using SourceType = std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
+#else
+    using SourceType = std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>>;
+#endif
+
     PAL::WebGPU::ImageCopyExternalImage convertToBacking() const
     {
         return {
@@ -45,7 +52,7 @@ struct GPUImageCopyExternalImage {
         };
     }
 
-    std::variant<RefPtr<ImageBitmap>, RefPtr<HTMLCanvasElement>> source;
+    SourceType source;
     std::optional<GPUOrigin2D> origin;
     bool flipY { false };
 };

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-RefPtr<HTMLCanvasElement> GPUCanvasContext::canvas()
+GPUCanvasContext::CanvasType GPUCanvasContext::canvas()
 {
     return { };
 }

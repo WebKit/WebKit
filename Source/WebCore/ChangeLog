@@ -1,3 +1,24 @@
+2022-03-04  Dan Glastonbury  <djg@apple.com>
+
+        "OffscreenCanvas" in IDLs doesn't seem to be able to be compiled
+        https://bugs.webkit.org/show_bug.cgi?id=232733
+        <rdar://problem/85318653>
+
+        Reviewed by Sam Weinig.
+
+        OffscreenCanvas is controlled by ENABLE flags. Add conditional
+        compilation to handle OffscreenCanvas to the WebGPU IDL bindings
+        when the OffscreenCanvas feature is enabled.
+
+        * Modules/WebGPU/GPUCanvasContext.cpp:
+        (WebCore::GPUCanvasContext::canvas):
+        * Modules/WebGPU/GPUCanvasContext.h:
+        * Modules/WebGPU/GPUCanvasContext.idl:
+        Add OffscreenCanvas to canvas attribute when it is enabled.
+        * Modules/WebGPU/GPUImageCopyExternalImage.h:
+        * Modules/WebGPU/GPUImageCopyExternalImage.idl:
+        Add OffscreenCanvas to source attribute when it is enabled.
+
 2022-03-04  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Crash in MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL

@@ -33,7 +33,11 @@ typedef (sequence<GPUIntegerCoordinate> or GPUOrigin2DDict) GPUOrigin2D;
     EnabledBySetting=WebGPU
 ]
 dictionary GPUImageCopyExternalImage {
-    required (ImageBitmap or HTMLCanvasElement) source; // FIXME: OffscreenCanvas doesn't seem to work with our bindings here.
+    required (ImageBitmap or HTMLCanvasElement
+#if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
+        or OffscreenCanvas
+#endif
+    ) source;
     GPUOrigin2D origin;
     boolean flipY = false;
 };

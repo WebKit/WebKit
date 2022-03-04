@@ -31,7 +31,11 @@
     SecureContext
 ]
 interface GPUCanvasContext {
-    readonly attribute HTMLCanvasElement canvas; // FIXME: OffscreenCanvas doesn't seem to work with our bindings here.
+    readonly attribute (HTMLCanvasElement
+#if defined(ENABLE_OFFSCREEN_CANVAS) && ENABLE_OFFSCREEN_CANVAS
+        or OffscreenCanvas
+#endif
+    ) canvas;
 
     undefined configure(GPUCanvasConfiguration configuration);
     undefined unconfigure();
