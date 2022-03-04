@@ -1,0 +1,65 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<style>
+    .scroll {
+        width: 300px;
+        height: 500px;
+        overflow: auto;
+        border: 1px solid red;
+        background-color: red;
+    }
+    .spacer {
+        height: 400px;
+        border: 2px solid blue;
+        background-color: silver;
+        box-sizing: border-box;
+    }
+    .sticky {
+        position: sticky;
+        top: 0;
+        height: 200px;
+        background-color: yellow;
+        outline: 1px solid lightblue;
+        outline-offset: -1px;
+        font-size: 78px;
+    }
+</style>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+
+    function dumpTreeAndFinish()
+    {
+        if (window.internals)
+            document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+    
+    window.addEventListener('load', function() {
+        requestAnimationFrame(() => {
+            let scroller = document.querySelector('.scroll');
+            scroller.scrollTop = 400;
+            
+            requestAnimationFrame(() => {
+                scroller.scrollTop = 380;
+                dumpTreeAndFinish();
+            })
+        });
+    }, false);
+</script>
+</head>
+<body>
+    <div class="scroll">
+        <div class="spacer"></div>
+        <div class="sticky">Hello</div>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+    </div>
+    <pre id="scrollingTree"></pre>
+</body>
+</html>
