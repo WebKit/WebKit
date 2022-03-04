@@ -1,3 +1,19 @@
+2022-03-04  Sihui Liu  <sihui_liu@apple.com>
+
+        IDB serialization thread should pass isolated copy of IndexIDToIndexKeyMap to storage thread
+        https://bugs.webkit.org/show_bug.cgi?id=237455
+
+        Reviewed by Chris Dumez.
+
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::addRecord):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::generateIndexKeyMapForValueIsolatedCopy):
+        (WebCore::generateIndexKeyMapForValue): Deleted.
+        * bindings/js/IDBBindingUtilities.h:
+
 2022-03-04  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Unable to scroll to a found text range when there is an existing selection

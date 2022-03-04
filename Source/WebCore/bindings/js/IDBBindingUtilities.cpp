@@ -481,7 +481,7 @@ void generateIndexKeyForValue(JSGlobalObject& lexicalGlobalObject, const IDBInde
     outKey = IndexKey(WTFMove(keyDatas));
 }
 
-IndexIDToIndexKeyMap generateIndexKeyMapForValue(JSC::JSGlobalObject& lexicalGlobalObject, const IDBObjectStoreInfo& storeInfo, const IDBKeyData& key, const IDBValue& value)
+IndexIDToIndexKeyMap generateIndexKeyMapForValueIsolatedCopy(JSC::JSGlobalObject& lexicalGlobalObject, const IDBObjectStoreInfo& storeInfo, const IDBKeyData& key, const IDBValue& value)
 {
     auto& indexMap = storeInfo.indexMap();
     auto indexCount = indexMap.size();
@@ -503,7 +503,7 @@ IndexIDToIndexKeyMap generateIndexKeyMapForValue(JSC::JSGlobalObject& lexicalGlo
         if (indexKey.isNull())
             continue;
 
-        indexKeys.add(entry.key, WTFMove(indexKey));
+        indexKeys.add(entry.key, WTFMove(indexKey).isolatedCopy());
     }
 
     return indexKeys;

@@ -52,7 +52,7 @@ bool injectIDBKeyIntoScriptValue(JSC::JSGlobalObject&, const IDBKeyData&, JSC::J
 
 void generateIndexKeyForValue(JSC::JSGlobalObject&, const IDBIndexInfo&, JSC::JSValue, IndexKey& outKey, const std::optional<IDBKeyPath>&, const IDBKeyData&);
 
-IndexIDToIndexKeyMap generateIndexKeyMapForValue(JSC::JSGlobalObject&, const IDBObjectStoreInfo&, const IDBKeyData&, const IDBValue&);
+IndexIDToIndexKeyMap generateIndexKeyMapForValueIsolatedCopy(JSC::JSGlobalObject&, const IDBObjectStoreInfo&, const IDBKeyData&, const IDBValue&);
 
 Ref<IDBKey> scriptValueToIDBKey(JSC::JSGlobalObject&, JSC::JSValue);
 

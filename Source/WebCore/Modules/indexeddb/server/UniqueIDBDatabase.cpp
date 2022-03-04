@@ -888,7 +888,7 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
     // Generate index keys up front for more accurate quota check.
     IndexIDToIndexKeyMap indexKeys;
     callOnIDBSerializationThreadAndWait([objectStoreInfo = objectStoreInfo->isolatedCopy(), key = usedKey.isolatedCopy(), value = value.isolatedCopy(), &indexKeys](auto& globalObject) {
-        indexKeys = generateIndexKeyMapForValue(globalObject, objectStoreInfo, key, value);
+        indexKeys = generateIndexKeyMapForValueIsolatedCopy(globalObject, objectStoreInfo, key, value);
     });
 
     generatedKeyResetter.release();
