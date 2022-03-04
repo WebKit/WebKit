@@ -84,6 +84,7 @@
 #include "JSTestNamedSetterWithLegacyOverrideBuiltIns.h"
 #include "JSTestNamedSetterWithLegacyUnforgeableProperties.h"
 #include "JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h"
+#include "JSTestNamespaceConst.h"
 #include "JSTestNamespaceObject.h"
 #include "JSTestOverloadedConstructorsWithSequence.h"
 #include "JSTestPluginInterface.h"
@@ -218,6 +219,7 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithIndexedGe
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBuiltInsConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestNamespaceConstConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestInterfaceNameConstructor);
 #if ENABLE(ConditionDerived)
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestOperationConditionalConstructor);
@@ -260,7 +262,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 54, -1 },
+    { 55, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -268,7 +270,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 63, -1 },
+    { 64, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -288,11 +290,11 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 67, -1 },
+    { 68, -1 },
     { 13, 261 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
+    { 49, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -332,7 +334,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { 30, -1 },
-    { 56, -1 },
+    { 57, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -341,7 +343,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 9, 257 },
     { -1, -1 },
-    { 58, -1 },
+    { 59, -1 },
     { 19, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -387,7 +389,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 53, -1 },
+    { 54, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -405,9 +407,9 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 64, -1 },
-    { -1, -1 },
     { 65, -1 },
+    { -1, -1 },
+    { 66, -1 },
     { -1, -1 },
     { 27, -1 },
     { 32, -1 },
@@ -422,7 +424,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 15, 260 },
     { -1, -1 },
-    { 59, -1 },
+    { 60, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -435,7 +437,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 16, 256 },
     { -1, -1 },
-    { 62, -1 },
+    { 63, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -467,7 +469,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 57, -1 },
+    { 58, -1 },
     { -1, -1 },
     { 1, -1 },
     { -1, -1 },
@@ -476,10 +478,10 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 49, 264 },
+    { 50, 264 },
     { 7, 263 },
     { -1, -1 },
-    { 60, -1 },
+    { 61, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -496,9 +498,9 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { 3, -1 },
-    { 51, -1 },
-    { -1, -1 },
     { 52, -1 },
+    { -1, -1 },
+    { 53, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -511,10 +513,10 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 40, -1 },
     { 42, -1 },
     { 44, -1 },
-    { 50, -1 },
-    { 55, -1 },
-    { 61, -1 },
-    { 66, -1 },
+    { 51, -1 },
+    { 56, -1 },
+    { 62, -1 },
+    { 67, -1 },
 };
 
 
@@ -577,6 +579,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "TestNamedSetterWithLegacyOverrideBuiltIns", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBuiltInsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestNamedSetterWithLegacyUnforgeableProperties", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "TestNamespaceConst", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestNamespaceConstConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #if ENABLE(ConditionDerived)
     { "TestOperationConditional", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestOperationConditionalConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
@@ -606,7 +609,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "regularOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestGlobalObjectInstanceFunction_regularOperation), (intptr_t) (1) } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 68, 255, true, JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 69, 255, true, JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestGlobalObjectConstructorTableValues[] =
@@ -1378,6 +1381,17 @@ static inline JSValue jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePro
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
     return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
+}
+
+static inline JSValue jsTestGlobalObject_TestNamespaceConstConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestNamespaceConst::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamespaceConstConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestNamespaceConstConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsTestGlobalObject_TestInterfaceNameConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)

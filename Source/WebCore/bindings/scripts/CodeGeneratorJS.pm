@@ -7878,6 +7878,10 @@ sub GenerateConstructorHelperMethods
 
     my @runtimeEnabledProperties = GetRuntimeEnabledStaticProperties($interface);
 
+    if ($interface->isNamespaceObject && scalar(@runtimeEnabledProperties) == 0) {
+        push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
+    }
+
     foreach my $operationOrAttribute (@runtimeEnabledProperties) {
         my $conditionalString = $codeGenerator->GenerateConditionalString($operationOrAttribute);
         push(@$outputArray, "#if ${conditionalString}\n") if $conditionalString;

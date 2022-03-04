@@ -45,6 +45,7 @@ partial interface TestGlobalObject {
     attribute TestNamedSetterWithLegacyOverrideBuiltInsConstructor TestNamedSetterWithLegacyOverrideBuiltIns;
     attribute TestNamedSetterWithLegacyUnforgeablePropertiesConstructor TestNamedSetterWithLegacyUnforgeableProperties;
     attribute TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns;
+    attribute TestNamespaceConstConstructor TestNamespaceConst;
     [SecureContext] attribute TestNamespaceObjectConstructor TestInterfaceName;
     [Conditional=ConditionDerived] attribute TestOperationConditionalConstructor TestOperationConditional;
     attribute TestOverloadedConstructorsWithSequenceConstructor TestOverloadedConstructorsWithSequence;

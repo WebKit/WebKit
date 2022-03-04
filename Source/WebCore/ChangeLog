@@ -1,3 +1,28 @@
+2022-03-04  Dan Glastonbury  <djg@apple.com>
+
+        Support constants in IDL namespaces.
+        https://bugs.webkit.org/show_bug.cgi?id=232557
+        <radr://problem/85142162>
+
+        Reviewed by Sam Weinig.
+
+        Test: bindings/script/test/TestNamespaceConst.idl
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateConstructorHelperMethods):
+        If namespace contains only constants, globalObject is unused
+        produces a compile error. Add UNUSED_PARAM to quiet error.
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/IDLParser.pm:
+        (convertNamespaceToInterface): Copy namespace constants to new interface.
+        (applyTypedefs): Apply typedefs to namespace constants.
+        (parseNamespace): Added parsed constants to namespace's list of constants.
+        (parseNamespaceMember): Accept constants as namespace members.
+        * bindings/scripts/test/BindingTestGlobalConstructors.idl:
+        * bindings/scripts/test/JS/*: Updated.
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestNamespaceConst.idl: Added.
+
 2022-03-04  Chris Dumez  <cdumez@apple.com>
 
         Load event never firing after form is submitted

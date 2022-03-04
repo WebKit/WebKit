@@ -86,6 +86,7 @@ JSTestNamedSetterWithIndexedGetterAndSetter.h:
 JSTestNamedSetterWithLegacyOverrideBuiltIns.h: 
 JSTestNamedSetterWithLegacyUnforgeableProperties.h: 
 JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h: 
+JSTestNamespaceConst.h: 
 JSTestNamespaceObject.h: TestPartialNamespaceObject.idl
 TestPartialNamespaceObject.idl:
 JSTestNode.h: 
