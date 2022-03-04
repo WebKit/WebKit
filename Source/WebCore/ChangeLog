@@ -1,3 +1,22 @@
+2022-03-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Crash in MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL
+        https://bugs.webkit.org/show_bug.cgi?id=237456
+        rdar://80407863
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::enableInheritURIQueryComponent const): Create
+        and use a static, never destroyed, AtomString instead of creating one every time
+        a AVURLAsset is created. New method used by both AVF media players.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createAVAssetForURL): Call enableInheritURIQueryComponent.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Ditto.
+
 2022-03-04  Sihui Liu  <sihui_liu@apple.com>
 
         IDB serialization thread should pass isolated copy of IndexIDToIndexKeyMap to storage thread

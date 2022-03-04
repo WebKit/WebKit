@@ -890,8 +890,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     if ([headerFields count])
         [options setObject:headerFields.get() forKey:@"AVURLAssetHTTPHeaderFieldsKey"];
 
-    if (player()->doesHaveAttribute("x-itunes-inherit-uri-query-component"))
-        [options setObject:@YES forKey: AVURLAssetInheritURIQueryComponentFromReferencingURIKey];
+    if (shouldEnableInheritURIQueryComponent())
+        [options setObject:@YES forKey:AVURLAssetInheritURIQueryComponentFromReferencingURIKey];
 
     if (PAL::canLoad_AVFoundation_AVURLAssetUseClientURLLoadingExclusively())
         [options setObject:@YES forKey:AVURLAssetUseClientURLLoadingExclusively];

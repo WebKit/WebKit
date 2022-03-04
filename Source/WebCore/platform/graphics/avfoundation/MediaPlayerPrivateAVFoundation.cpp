@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1077,6 +1077,12 @@ bool MediaPlayerPrivateAVFoundation::isUnsupportedMIMEType(const String& type)
         return true;
 
     return false;
+}
+
+bool MediaPlayerPrivateAVFoundation::shouldEnableInheritURIQueryComponent() const
+{
+    static NeverDestroyed<const AtomString> iTunesInheritsURIQueryComponent(MAKE_STATIC_STRING_IMPL("x-itunes-inherit-uri-query-component"));
+    return player()->doesHaveAttribute(iTunesInheritsURIQueryComponent);
 }
 
 void MediaPlayerPrivateAVFoundation::queueTaskOnEventLoop(Function<void()>&& task)
