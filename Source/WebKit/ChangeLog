@@ -1,3 +1,18 @@
+2022-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash under ScrollingCoordinatorMac::hasNodeWithAnimatedScrollChanged()
+        https://bugs.webkit.org/show_bug.cgi?id=237478
+        <rdar://89072235>
+
+        Reviewed by Alan Bujtas.
+
+        Crash data show that r290109 failed to fix this crash; the actual cause of the crash is a
+        null m_page on TiledCoreAnimationScrollingCoordinator, diagnosed by noting that the crash
+        offset corresponds to the offset of m_renderingUpdateRemainingSteps in Page.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationScrollingCoordinator.mm:
+        (WebKit::TiledCoreAnimationScrollingCoordinator::hasNodeWithAnimatedScrollChanged):
+
 2022-03-04  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Don't use decidePolicyForLocalAuthenticator for Web Authentication Modern
