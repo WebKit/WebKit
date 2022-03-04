@@ -329,6 +329,30 @@ TEST(WebKit, FindTextInImageOverlay)
 
 #if HAVE(UIFINDINTERACTION)
 
+@interface TestScrollViewDelegate : NSObject<UIScrollViewDelegate>  {
+    @public bool _finishedScrolling;
+}
+@end
+
+@implementation TestScrollViewDelegate
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _finishedScrolling = false;
+
+    return self;
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    _finishedScrolling = true;
+}
+
+@end
+
 @interface TestTextSearchOptions : NSObject
 @property (nonatomic) _UITextSearchMatchMethod wordMatchMethod;
 @property (nonatomic) NSStringCompareOptions stringCompareOptions;
@@ -559,6 +583,22 @@ TEST(WebKit, RequestRectForFoundTextRange)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(WebKit, ScrollToFoundRangeWithExistingSelection)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><div contenteditable><p>Top</p><p style='margin-top: 800px'>Bottom</p></div>"];
+    [webView objectByEvaluatingJavaScript:@"let p = document.querySelector('p'); document.getSelection().setBaseAndExtent(p, 0, p, 1)"];
+
+    auto scrollViewDelegate = adoptNS([[TestScrollViewDelegate alloc] init]);
+    [webView scrollView].delegate = scrollViewDelegate.get();
+
+    auto ranges = textRangesForQueryString(webView.get(), @"Bottom");
+    [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
+
+    TestWebKitAPI::Util::run(&scrollViewDelegate->_finishedScrolling);
+    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 664)));
 }
 
 #endif // HAVE(UIFINDINTERACTION)

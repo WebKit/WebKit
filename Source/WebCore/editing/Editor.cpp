@@ -230,14 +230,14 @@ TemporarySelectionChange::TemporarySelectionChange(Document& document, std::opti
 
     if (temporarySelection) {
         m_selectionToRestore = document.selection().selection();
-        setSelection(temporarySelection.value());
+        setSelection(temporarySelection.value(), IsTemporarySelection::Yes);
     }
 }
 
 TemporarySelectionChange::~TemporarySelectionChange()
 {
     if (m_selectionToRestore)
-        setSelection(m_selectionToRestore.value());
+        setSelection(m_selectionToRestore.value(), IsTemporarySelection::No);
 
     if (m_options & TemporarySelectionOption::IgnoreSelectionChanges) {
         auto revealSelection = m_options & TemporarySelectionOption::RevealSelection ? Editor::RevealSelection::Yes : Editor::RevealSelection::No;
@@ -250,19 +250,23 @@ TemporarySelectionChange::~TemporarySelectionChange()
 #endif
 }
 
-void TemporarySelectionChange::setSelection(const VisibleSelection& selection)
+void TemporarySelectionChange::setSelection(const VisibleSelection& selection, IsTemporarySelection isTemporarySelection)
 {
     auto options = FrameSelection::defaultSetSelectionOptions();
     if (m_options & TemporarySelectionOption::DoNotSetFocus)
         options.add(FrameSelection::DoNotSetFocus);
-    if (m_options & TemporarySelectionOption::RevealSelection)
-        options.add(FrameSelection::RevealSelection);
-    if (m_options & TemporarySelectionOption::DelegateMainFrameScroll)
-        options.add(FrameSelection::DelegateMainFrameScroll);
-    if (m_options & TemporarySelectionOption::SmoothScroll)
-        options.add(FrameSelection::SmoothScroll);
-    if (m_options & TemporarySelectionOption::RevealSelectionBounds)
-        options.add(FrameSelection::RevealSelectionBounds);
+
+    if (isTemporarySelection == IsTemporarySelection::Yes) {
+        if (m_options & TemporarySelectionOption::RevealSelection)
+            options.add(FrameSelection::RevealSelection);
+        if (m_options & TemporarySelectionOption::DelegateMainFrameScroll)
+            options.add(FrameSelection::DelegateMainFrameScroll);
+        if (m_options & TemporarySelectionOption::SmoothScroll)
+            options.add(FrameSelection::SmoothScroll);
+        if (m_options & TemporarySelectionOption::RevealSelectionBounds)
+            options.add(FrameSelection::RevealSelectionBounds);
+    }
+
     m_document->selection().setSelection(selection, options);
 }
 

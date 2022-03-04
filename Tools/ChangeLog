@@ -1,3 +1,20 @@
+2022-03-04  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Unable to scroll to a found text range when there is an existing selection
+        https://bugs.webkit.org/show_bug.cgi?id=237407
+        rdar://89653213
+
+        Reviewed by Wenson Hsieh.
+
+        Add an API test that sets a selection in the document, finds some
+        text outside the viewport, and scrolls to make the found text
+        visible.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        (-[TestScrollViewDelegate init]):
+        (-[TestScrollViewDelegate scrollViewDidEndScrollingAnimation:]):
+        (TEST):
+
 2022-03-04  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Upgrade from llvm12 to llvm13

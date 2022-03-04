@@ -133,7 +133,9 @@ public:
     WEBCORE_EXPORT ~TemporarySelectionChange();
 
 private:
-    void setSelection(const VisibleSelection&);
+    enum class IsTemporarySelection { No, Yes };
+
+    void setSelection(const VisibleSelection&, IsTemporarySelection);
 
     RefPtr<Document> m_document;
     OptionSet<TemporarySelectionOption> m_options;
