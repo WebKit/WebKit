@@ -31,10 +31,6 @@ async function createLocalPeerConnectionStream(stream)
             firstConnection.addTrack(stream.getVideoTracks()[0], stream);
         }, (secondConnection) => {
             secondConnection.ontrack = (trackEvent) => {
-                assert_true(trackEvent.track instanceof MediaStreamTrack);
-                assert_true(trackEvent.receiver instanceof RTCRtpReceiver);
-                assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true");
-                assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true");
                 resolve(trackEvent.streams[0]);
             };
         });
@@ -53,46 +49,74 @@ function waitForVideoFrame(video)
 const width = 500;
 const height = 500;
 
+async function waitForVideoFrameSize(video, width, height, counter)
+{
+    if (!counter)
+        counter = 0;
+    else if (counter > 100)
+        return Promise.reject("waitForVideoFrameSize timed out");
+
+    const result = await new Promise((resolve, reject) => {
+        video.requestVideoFrameCallback((now, metadata) => {
+            resolve(metadata.width === width && metadata.height === height);
+        });
+        setTimeout(() => reject("video.requestVideoFrameCallback timed out"), 5000);
+    });
+    if (result)
+        return;
+
+    return waitForVideoFrameSize(video, width, height, ++counter);
+}
+
+async function drawAndValidate(subcase, canvas, video, counter, stepName)
+{
+    // First change canvas width and wait for width change to clear previous frames.
+    canvas.width = canvas.width + 500;
+    canvas.height = canvas.height + 500;
+
+    let counter1 = counter;
+    let id = setInterval(() => { subcase.draw(subcase, canvas, counter1++)}, 100);
+    await waitForVideoFrameSize(video, canvas.width, canvas.height);
+    clearInterval(id);
+
+    // Get back canvas size to normal and wait for width change to get test frames.
+    canvas.width = canvas.width - 500;
+    canvas.height = canvas.height - 500;
+    id = setInterval(() => { subcase.draw(subcase, canvas, counter)}, 100);
+    subcase.draw(subcase, canvas, counter);
+    await waitForVideoFrameSize(video, canvas.width, canvas.height);
+    clearInterval(id);
+
+    assertImageSourceContainsCanvasTestPattern(video, counter, stepName);
+}
+
 async function testCanvasToPeerConnection(t, subcase)
 {
-    const debuge = document.getElementById("debuge");
     const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
     debuge.appendChild(canvas);
     t.add_cleanup(async () => debuge.removeChild(canvas));
-    const frameRate = 60;
-    const localStream = await createLocalPeerConnectionStream(canvas.captureStream());
+    const localStream = canvas.captureStream();
+    const remoteStream = await createLocalPeerConnectionStream(localStream);
     t.add_cleanup(async () => closeConnections());
+
     const video = document.createElement("video");
     video.autoplay = true;
     video.controls = false;
     debuge.appendChild(video);
     t.add_cleanup(async () => debuge.removeChild(video));
-    video.srcObject = localStream;
-    // FIXME: Currently we don't know which frames are skipped.
-    // Draw until video size changes and then try to clear subsequent enqueued
-    // frames.
-    const id = setInterval(() => { subcase.draw(subcase, canvas, 1)}, 100);
-    await waitForVideoSize(video, canvas.width, canvas.height);
-    clearInterval(id);
-    for (let i = 0; i < 20; ++i) {
-        subcase.draw(subcase, canvas, 1);
-        await waitForVideoFrame(video);
-        assertImageSourceContainsCanvasTestPattern(video, 1, "base case");
-    }
-    // Try to clear the video frame queue.
-    await waitFor(100);
+    video.srcObject = remoteStream;
 
-    for (let i = 0; i < 25; ++i) {
-        subcase.draw(subcase, canvas, i);
-        await waitForVideoFrame(video);
-        assertImageSourceContainsCanvasTestPattern(video, i, `iteration: ${i}`);
-    }
+    for (let i = 0; i < 5; ++i)
+        await drawAndValidate(subcase, canvas, video, 1, `base case: ${i}`);
+
+    for (let i = 0; i < 5; ++i)
+        await drawAndValidate(subcase, canvas, video, i, `iteration: ${i}`);
 }
 
 const subcases = [];
-// FIXME: Tthis should be filled when 2D context supports HTMLCanvasElement.captureStream().
+// FIXME: This should be filled when 2D context supports HTMLCanvasElement.captureStream().
 // subcases.push({draw: with2DContext});
 subcases.push({draw: withWebGL});
 

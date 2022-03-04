@@ -1,3 +1,17 @@
+2022-03-04  Youenn Fablet  <youenn@apple.com>
+
+        webrtc/canvas-to-peer-connection.html is flakily failing a test assertion
+        https://bugs.webkit.org/show_bug.cgi?id=237423
+
+        Reviewed by Eric Carlson.
+
+        WebRTC pipeline is lossy so frames might disappear.
+        For that reason, we need to send multiple times the same frame to ensure we can read the expected frame.
+        To ensure we are not reading a previous test frame, what we do is changing the size of the canvas before doing the test.
+        This patch reduces the number of iterations to ensure the test is not too long to run.
+
+        * webrtc/canvas-to-peer-connection.html:
+
 2022-03-03  Youenn Fablet  <youenn@apple.com>
 
         fast/mediastream/getUserMedia-to-canvas-1.html and fast/mediastream/getUserMedia-to-canvas-2.html are failing on MacOS when remote video frame flag is enabled

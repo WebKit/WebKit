@@ -105,6 +105,7 @@ protected:
 #endif
 #if ENABLE(MEDIA_STREAM)
     std::unique_ptr<ImageRotationSessionVT> m_mediaSampleRotationSession;
+    IntSize m_mediaSampleRotationSessionSize;
 #endif
 
     friend class GraphicsContextGLCVCocoa;

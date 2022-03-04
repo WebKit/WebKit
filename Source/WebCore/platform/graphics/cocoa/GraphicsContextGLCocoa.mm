@@ -759,8 +759,9 @@ RefPtr<MediaSample> GraphicsContextGLCocoa::paintCompositedResultsToMediaSample(
     if (!pixelBuffer)
         return nullptr;
     // Mirror and rotate the pixel buffer explicitly, as WebRTC encoders cannot mirror.
-    if (!m_mediaSampleRotationSession)
-        m_mediaSampleRotationSession = makeUnique<ImageRotationSessionVT>(ImageRotationSessionVT::RotationProperties { true, false, 180 }, getInternalFramebufferSize(), ImageRotationSessionVT::IsCGImageCompatible::No);
+    auto size = getInternalFramebufferSize();
+    if (!m_mediaSampleRotationSession || m_mediaSampleRotationSessionSize != size)
+        m_mediaSampleRotationSession = makeUnique<ImageRotationSessionVT>(ImageRotationSessionVT::RotationProperties { true, false, 180 }, size, ImageRotationSessionVT::IsCGImageCompatible::No);
     auto mediaSamplePixelBuffer = m_mediaSampleRotationSession->rotate(pixelBuffer->get());
     if (!mediaSamplePixelBuffer)
         return nullptr;
