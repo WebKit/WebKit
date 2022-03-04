@@ -1,3 +1,15 @@
+2022-03-04  Rob Buis  <rbuis@igalia.com>
+
+        Top layers should not be moved
+        https://bugs.webkit.org/show_bug.cgi?id=237305
+
+        Reviewed by Tim Nguyen.
+
+        Top layers are always children of RenderView and should not be moved.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::moveLayers):
+
 2022-03-04  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] "inherit" values should trigger keyframe recomputation if any previous effect has changed that property

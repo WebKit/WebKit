@@ -720,6 +720,8 @@ void RenderElement::removeLayers(RenderLayer* parentLayer)
 void RenderElement::moveLayers(RenderLayer* oldParent, RenderLayer& newParent)
 {
     if (hasLayer()) {
+        if (isInTopLayerOrBackdrop(style(), element()))
+            return;
         RenderLayer* layer = downcast<RenderLayerModelObject>(*this).layer();
         ASSERT(oldParent == layer->parent());
         if (oldParent)
