@@ -1469,9 +1469,13 @@ void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, 
  * @languages: (allow-none) (array zero-terminated=1) (element-type utf8) (transfer none): a %NULL-terminated list of language identifiers
  *
  * Set the list of preferred languages, sorted from most desirable
- * to least desirable. The list will be used to build the "Accept-Language"
- * header that will be included in the network requests started by
- * the #WebKitWebContext.
+ * to least desirable. The list will be used in the following ways:
+ *
+ * - Determining how to build the `Accept-Language` HTTP header that will be
+ *   included in the network requests started by the #WebKitWebContext.
+ * - Setting the values of `navigator.language` and `navigator.languages`.
+ * - The first item in the list sets the default locale for JavaScript
+ *   `Intl` functions.
  */
 void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const gchar* const* languageList)
 {
