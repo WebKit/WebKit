@@ -249,7 +249,11 @@ void LocalAuthenticator::makeCredential()
                 else
                     weakThis->receiveException({ NotAllowedError, "This request has been cancelled by the user."_s });
             };
-            observer()->decidePolicyForLocalAuthenticator(WTFMove(callback));
+            // Similar to below, consent has already been given.
+            if (webAuthenticationModernEnabled())
+                callback(LocalAuthenticatorPolicy::Allow);
+            else
+                observer()->decidePolicyForLocalAuthenticator(WTFMove(callback));
             return;
         }
     }
