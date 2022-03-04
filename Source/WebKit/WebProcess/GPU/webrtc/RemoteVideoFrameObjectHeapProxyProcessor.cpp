@@ -94,20 +94,17 @@ RemoteVideoFrameObjectHeapProxyProcessor::Callback RemoteVideoFrameObjectHeapPro
     return m_callbacks.take(identifier);
 }
 
-void RemoteVideoFrameObjectHeapProxyProcessor::videoFrameBufferNotFound(RemoteVideoFrameIdentifier identifier)
+void RemoteVideoFrameObjectHeapProxyProcessor::newVideoFrameBuffer(RemoteVideoFrameIdentifier identifier, std::optional<SharedVideoFrame::Buffer>&& sharedVideoFrameBuffer)
 {
+    RetainPtr<CVPixelBufferRef> pixelBuffer;
+    if (sharedVideoFrameBuffer)
+        pixelBuffer = m_sharedVideoFrameReader.readBuffer(WTFMove(*sharedVideoFrameBuffer));
     if (auto callback = takeCallback(identifier))
-        callback(nullptr);
+        callback(WTFMove(pixelBuffer));
+
 }
 
-void RemoteVideoFrameObjectHeapProxyProcessor::newVideoFrameBuffer(RemoteVideoFrameIdentifier identifier)
-{
-    auto result = m_sharedVideoFrameReader.read();
-    if (auto callback = takeCallback(identifier))
-        callback(WTFMove(result));
-}
-
-void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteVideoFrameProxy& frame, Callback&& callback)
+void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteVideoFrameProxy& frame, bool canUseIOSurface, Callback&& callback)
 {
     {
         Locker lock(m_callbacksLock);
@@ -116,10 +113,10 @@ void RemoteVideoFrameObjectHeapProxyProcessor::getVideoFrameBuffer(const RemoteV
     }
     Locker lock(m_connectionLock);
     if (!m_connectionID) {
-        videoFrameBufferNotFound(frame.identifier());
+        takeCallback(frame.identifier())(nullptr);
         return;
     }
-    IPC::Connection::send(m_connectionID, Messages::RemoteVideoFrameObjectHeap::GetVideoFrameBuffer(frame.newReadReference()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    IPC::Connection::send(m_connectionID, Messages::RemoteVideoFrameObjectHeap::GetVideoFrameBuffer(frame.newReadReference(), canUseIOSurface), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 }

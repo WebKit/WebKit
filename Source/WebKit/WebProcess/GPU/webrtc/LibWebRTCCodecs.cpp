@@ -482,15 +482,6 @@ int32_t LibWebRTCCodecs::initializeEncoder(Encoder& encoder, uint16_t width, uin
     return 0;
 }
 
-template<typename Buffer>
-bool LibWebRTCCodecs::copySharedVideoFrame(LibWebRTCCodecs::Encoder& encoder, IPC::Connection& connection, Buffer&& frameBuffer)
-{
-    return encoder.sharedVideoFrameWriter.write(frameBuffer,
-        [&](auto& semaphore) { connection.send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameSemaphore { encoder.identifier, semaphore }, 0); },
-        [&](auto& handle) { connection.send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameMemory { encoder.identifier, handle }, 0); }
-    );
-}
-
 int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
 {
     ASSERT(!isMainRunLoop());
@@ -500,31 +491,14 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
     if (!connection)
         return WEBRTC_VIDEO_CODEC_ERROR;
 
-    std::optional<RemoteVideoFrameReadReference> remoteVideoFrameReadReference;
-    if (auto* provider = webrtc::videoFrameBufferProvider(frame)) {
-        auto* videoFrame = static_cast<VideoFrame*>(provider);
-        if (is<RemoteVideoFrameProxy>(videoFrame))
-            remoteVideoFrameReadReference = downcast<RemoteVideoFrameProxy>(videoFrame)->newReadReference();
-    }
+    auto buffer = encoder.sharedVideoFrameWriter.writeBuffer(frame,
+        [&](auto& semaphore) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameSemaphore { encoder.identifier, semaphore }, 0); },
+        [&](auto& handle) { encoder.connection->send(Messages::LibWebRTCCodecsProxy::SetSharedVideoFrameMemory { encoder.identifier, handle }, 0); });
+    if (!buffer)
+        return WEBRTC_VIDEO_CODEC_ERROR;
 
-    RetainPtr<CVPixelBufferRef> buffer;
-    if (!remoteVideoFrameReadReference) {
-        buffer = adoptCF(webrtc::pixelBufferFromFrame(frame));
-        if (!buffer) {
-            // buffer is not native, we need to copy to shared video frame.
-            if (!copySharedVideoFrame(encoder, *connection, frame))
-                return WEBRTC_VIDEO_CODEC_ERROR;
-        }
-    }
-
-    auto sample = RemoteVideoSample::create(buffer.get(), MediaTime(frame.timestamp_us() * 1000, 1000000), toMediaSampleVideoRotation(frame.rotation()), RemoteVideoSample::ShouldCheckForIOSurface::No);
-    if (buffer && !sample->surface()) {
-        // buffer is not IOSurface, we need to copy to shared video frame.
-        if (!copySharedVideoFrame(encoder, *connection, buffer.get()))
-            return WEBRTC_VIDEO_CODEC_ERROR;
-    }
-
-    connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, *sample, frame.timestamp(), shouldEncodeAsKeyFrame, remoteVideoFrameReadReference }, 0);
+    SharedVideoFrame sharedVideoFrame { MediaTime(frame.timestamp_us() * 1000, 1000000), false, toMediaSampleVideoRotation(frame.rotation()), WTFMove(*buffer) };
+    encoder.connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, sharedVideoFrame, frame.timestamp(), shouldEncodeAsKeyFrame }, 0);
     return WEBRTC_VIDEO_CODEC_OK;
 }
 

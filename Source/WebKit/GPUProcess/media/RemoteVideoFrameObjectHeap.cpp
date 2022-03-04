@@ -101,42 +101,29 @@ void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReferenc
 }
 
 #if PLATFORM(COCOA)
-void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read)
+void RemoteVideoFrameObjectHeap::getVideoFrameBuffer(RemoteVideoFrameReadReference&& read, bool canSendIOSurface)
 {
     assertIsCurrent(remoteVideoFrameObjectHeapQueue());
 
     auto identifier = read.identifier();
-    auto videoFrame = m_heap.retire(WTFMove(read), 0_s);
+    auto videoFrame = get(WTFMove(read));
 
-    if (!videoFrame) {
-        m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::VideoFrameBufferNotFound { identifier }, 0);
-        return;
+    std::optional<SharedVideoFrame::Buffer> buffer;
+    if (videoFrame) {
+        buffer = m_sharedVideoFrameWriter.writeBuffer(videoFrame->pixelBuffer(),
+            [&](auto& semaphore) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
+            [&](auto& handle) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { handle }, 0); },
+            canSendIOSurface);
+        // FIXME: We should ASSERT(result) once we support enough pixel buffer types.
     }
-
-    auto pixelBuffer = videoFrame->pixelBuffer();
-    if (!pixelBuffer) {
-        m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::VideoFrameBufferNotFound { identifier }, 0);
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    bool result = m_sharedVideoFrameWriter.write(pixelBuffer,
-        [&](auto& semaphore) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
-        [&](auto& handle) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { handle }, 0); }
-    );
-    if (!result) {
-        // FIXME: We should ASSERT_NOT_REACHED once we support enough pixel buffer types.
-        m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::VideoFrameBufferNotFound { identifier }, 0);
-        return;
-    }
-    m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewVideoFrameBuffer { identifier }, 0);
+    m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewVideoFrameBuffer { identifier, buffer }, 0);
 }
 
 void RemoteVideoFrameObjectHeap::pixelBuffer(RemoteVideoFrameReadReference&& read, CompletionHandler<void(RetainPtr<CVPixelBufferRef>)>&& completionHandler)
 {
     assertIsCurrent(remoteVideoFrameObjectHeapQueue());
 
-    auto videoFrame = m_heap.retire(WTFMove(read), 0_s);
+    auto videoFrame = get(WTFMove(read));
     if (!videoFrame) {
         ASSERT_IS_TESTING_IPC();
         completionHandler(nullptr);

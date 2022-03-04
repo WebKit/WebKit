@@ -55,7 +55,7 @@ public:
     ~RemoteVideoFrameObjectHeapProxyProcessor();
 
     using Callback = Function<void(RetainPtr<CVPixelBufferRef>&&)>;
-    void getVideoFrameBuffer(const RemoteVideoFrameProxy&, Callback&&);
+    void getVideoFrameBuffer(const RemoteVideoFrameProxy&, bool canUseIOSurfce, Callback&&);
 
 private:
     explicit RemoteVideoFrameObjectHeapProxyProcessor(GPUProcessConnection&);
@@ -65,8 +65,7 @@ private:
     // Messages
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
-    void videoFrameBufferNotFound(RemoteVideoFrameIdentifier);
-    void newVideoFrameBuffer(RemoteVideoFrameIdentifier);
+    void newVideoFrameBuffer(RemoteVideoFrameIdentifier, std::optional<SharedVideoFrame::Buffer>&&);
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&);

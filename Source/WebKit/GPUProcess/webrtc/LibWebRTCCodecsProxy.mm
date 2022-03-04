@@ -185,7 +185,7 @@ void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const 
         connection->send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, IPC::DataReference { buffer, size }, info }, 0);
     }).get());
     webrtc::setLocalEncoderLowLatency(encoder, useLowLatency);
-    auto result = m_encoders.add(identifier, Encoder { encoder, nullptr });
+    auto result = m_encoders.add(identifier, Encoder { encoder, makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner) });
     ASSERT_UNUSED(result, result.isNewEntry || isTestingIPC());
     m_hasEncodersOrDecoders = true;
 }
@@ -237,39 +237,24 @@ static inline webrtc::VideoRotation toWebRTCVideoRotation(WebCore::MediaSample::
     return webrtc::kVideoRotation_0;
 }
 
-void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, WebCore::RemoteVideoSample&& sample, uint32_t timeStamp, bool shouldEncodeAsKeyFrame, std::optional<RemoteVideoFrameReadReference> sampleReference)
+void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, SharedVideoFrame&& sharedVideoFrame, uint32_t timeStamp, bool shouldEncodeAsKeyFrame)
 {
     assertIsCurrent(workQueue());
-    RetainPtr<CVPixelBufferRef> pixelBuffer;
-    if (sampleReference) {
-        auto sample = m_videoFrameObjectHeap->get(WTFMove(*sampleReference));
-        if (!sample)
-            return;
-
-        auto platformSample = sample->platformSample();
-        ASSERT(platformSample.type == WebCore::PlatformSample::CMSampleBufferType);
-        pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(platformSample.sample.cmSampleBuffer));
-    }
-
     auto* encoder = findEncoder(identifier);
     if (!encoder) {
         ASSERT_IS_TESTING_IPC();
+        // Make sure to read RemoteVideoFrameReadReference to prevent memory leaks.
+        if (std::holds_alternative<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer))
+            m_videoFrameObjectHeap->get(WTFMove(std::get<RemoteVideoFrameReadReference>(sharedVideoFrame.buffer)));
         return;
     }
 
+    auto pixelBuffer = encoder->frameReader->readBuffer(WTFMove(sharedVideoFrame.buffer));
+    if (!pixelBuffer)
+        return;
+
 #if !PLATFORM(MACCATALYST)
-    if (!pixelBuffer) {
-        if (sample.surface()) {
-            if (auto buffer = WebCore::createCVPixelBuffer(sample.surface()))
-                pixelBuffer = WTFMove(*buffer);
-        } else if (encoder->frameReader)
-            pixelBuffer = encoder->frameReader->read();
-
-        if (!pixelBuffer)
-            return;
-    }
-
-    webrtc::encodeLocalEncoderFrame(encoder->webrtcEncoder, pixelBuffer.get(), sample.time().toTimeScale(1000000).timeValue(), timeStamp, toWebRTCVideoRotation(sample.rotation()), shouldEncodeAsKeyFrame);
+    webrtc::encodeLocalEncoderFrame(encoder->webrtcEncoder, pixelBuffer.get(), sharedVideoFrame.time.toTimeScale(1000000).timeValue(), timeStamp, toWebRTCVideoRotation(sharedVideoFrame.rotation), shouldEncodeAsKeyFrame);
 #endif
 }
 
@@ -294,8 +279,6 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore(RTCEncoderIdentifier ide
         return;
     }
 
-    if (!encoder->frameReader)
-        encoder->frameReader = makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner);
     encoder->frameReader->setSemaphore(WTFMove(semaphore));
 }
 
@@ -308,8 +291,6 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(RTCEncoderIdentifier identi
         return;
     }
 
-    if (!encoder->frameReader)
-        encoder->frameReader = makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner);
     encoder->frameReader->setSharedMemory(ipcHandle);
 }
 
