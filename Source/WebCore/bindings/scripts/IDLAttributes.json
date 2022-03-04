@@ -461,7 +461,7 @@
             "unsupported": true
         },
         "SecureContext": {
-            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant"],
+            "contextsAllowed": ["interface", "namespace", "dictionary", "enum", "attribute", "operation", "constant"],
             "standard": {
                 "url": "https://webidl.spec.whatwg.org/#SecureContext"
             }

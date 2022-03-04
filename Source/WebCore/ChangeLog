@@ -1,3 +1,17 @@
+2022-03-03  Dan Glastonbury  <djg@apple.com>
+
+        Allow [SecureContext] extended attribute on namespaces.
+        https://bugs.webkit.org/show_bug.cgi?id=237401
+
+        Reviewed by Alexey Shvayka.
+
+        * bindings/scripts/IDLAttributes.json:
+        Enable SecureContext as a valid extended attribute on namespace.
+        * bindings/scripts/test/BindingTestGlobalConstructors.idl:
+        * bindings/scripts/test/JS/*: Updated
+        * bindings/scripts/test/TestNamespaceObject.idl:
+        Added [SecureContext] to namespace
+
 2022-03-03  Simon Fraser  <simon.fraser@apple.com>
 
         nasa.gov page with fixed backgrounds paints incorrectly on scroll

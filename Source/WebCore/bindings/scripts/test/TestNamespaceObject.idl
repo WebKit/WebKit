@@ -28,6 +28,7 @@
 [
     InterfaceName=TestInterfaceName,
     Exposed=TestGlobalObject,
+    SecureContext
 ] namespace TestNamespaceObject {
     readonly attribute unsigned long namespaceAttribute;
     boolean overloadedNamespaceOperation(TestObj? objArg, DOMString strArg);
