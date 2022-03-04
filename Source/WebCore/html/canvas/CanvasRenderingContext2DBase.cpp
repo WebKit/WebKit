@@ -1782,11 +1782,6 @@ template<class T> IntRect CanvasRenderingContext2DBase::calculateCompositingBuff
     return bufferRect;
 }
 
-RefPtr<ImageBuffer> CanvasRenderingContext2DBase::createCompositingBuffer(const IntRect& bufferRect)
-{
-    return ImageBuffer::create(bufferRect.size(), isAccelerated() ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, 1, colorSpace(), pixelFormat());
-}
-
 void CanvasRenderingContext2DBase::compositeBuffer(ImageBuffer& buffer, const IntRect& bufferRect, CompositeOperator op)
 {
     IntRect canvasRect(0, 0, canvasBase().width(), canvasBase().height());
@@ -1829,12 +1824,12 @@ template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawIma
         return;
     }
 
-    auto buffer = createCompositingBuffer(bufferRect);
-    if (!buffer)
-        return;
-
     auto* c = drawingContext();
     if (!c)
+        return;
+
+    auto buffer = c->createImageBuffer(bufferRect.size());
+    if (!buffer)
         return;
 
     FloatRect adjustedDest = dest;

@@ -1,3 +1,13 @@
+2022-03-04  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Canvas compositing buffer should be created through its GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=237260
+        rdar://89196918
+
+        Reviewed by Simon Fraser.
+
+        * gpu-process/TestExpectations:
+
 2022-03-04  Kate Cheney  <katherine_cheney@apple.com>
 
         CSP report does not get sent to the document in the case of a detached element

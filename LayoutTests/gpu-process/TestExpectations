@@ -324,9 +324,6 @@ webkit.org/b/236927 fast/forms/ios/choose-select-option.html [ Timeout Pass ]
 webkit.org/b/236927 fast/forms/autofocus-readonly-attribute.html [ Failure Pass ]
 webkit.org/b/236927 fast/forms/input-text-autofocus.html [ Pass Failure ]
 
-# Crashes
-webkit.org/b/236929 fast/canvas/canvas-composite-canvas.html [ Crash ]
-
 # Flaky timeout
 webkit.org/b/236931 editing/pasteboard/dom-paste/dom-paste-same-origin.html [ Timeout Pass ]
 

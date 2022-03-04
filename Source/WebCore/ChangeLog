@@ -1,3 +1,23 @@
+2022-03-04  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Canvas compositing buffer should be created through its GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=237260
+        rdar://89196918
+
+        Reviewed by Simon Fraser.
+
+        If the backend of the underlying ImageBuffer of the canvas is remote the
+        compositing ImageBuffer will also be remote. This will transfer the whole
+        compositing operation to GPUProcess.
+
+        The layout test fast/canvas/canvas-composite-canvas.html crashes because
+        of this bug on the GPUP layout bots.
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage):
+        (WebCore::CanvasRenderingContext2DBase::createCompositingBuffer): Deleted.
+        * html/canvas/CanvasRenderingContext2DBase.h:
+
 2022-03-04  Dan Glastonbury  <djg@apple.com>
 
         "OffscreenCanvas" in IDLs doesn't seem to be able to be compiled
