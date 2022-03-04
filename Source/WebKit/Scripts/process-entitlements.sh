@@ -222,9 +222,8 @@ function mac_process_webcontent_or_plugin_entitlements()
 
 function mac_process_webpushd_entitlements()
 {
-    # FIXME: Add a sandbox profile for webpushd.
-    echo "webpushd sandbox has not been implemented yet"
     plistbuddy Add :com.apple.private.aps-connection-initiate bool YES
+    plistbuddy Add :com.apple.private.launchservices.allowopenwithanyhandler bool YES
 }
 
 # ========================================
@@ -513,6 +512,7 @@ function ios_family_process_webpushd_entitlements()
     # FIXME: Add a sandbox profile for webpushd and add it to the seatbelt-profiles array.
     echo "webpushd sandbox has not been implemented yet"
     plistbuddy Add :aps-connection-initiate bool YES
+    plistbuddy Add :com.apple.private.launchservices.allowopenwithanyhandler bool YES
 }
 
 function ios_family_process_network_entitlements()

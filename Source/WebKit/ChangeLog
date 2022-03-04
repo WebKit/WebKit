@@ -1,3 +1,22 @@
+2022-03-03  Ben Nham  <nham@apple.com>
+
+        Allow webpushd to launch browser in background
+        https://bugs.webkit.org/show_bug.cgi?id=237114
+
+        Reviewed by Brady Eidson.
+
+        Now that webpushd is sandboxed on Mac (r289566), the LaunchServices SPI call to launch
+        Safari is now failing, because LaunchServices goes down a different path when there is a
+        sandboxed caller. In particular, it fails to launch Safari because Safari doesn't register
+        for the webkit-app-launch scheme. Safari also doesn't want to list this scheme in its plist.
+
+        For now, to unblock our testing, we're giving ourselves an entitlement to restore the
+        pre-sandboxed behavior of being able to launch Safari even though it doesn't register for
+        the webkit-app-launch scheme. We are still in discussions with LaunchServices and Safari
+        about if there is a better and more restrictive way of granting ourselves this ability.
+
+        * Scripts/process-entitlements.sh:
+
 2022-03-03  Devin Rousso  <drousso@apple.com>
 
         [GPU Process] dont load Apple Pay button/logo PDFs in the WebProcess
