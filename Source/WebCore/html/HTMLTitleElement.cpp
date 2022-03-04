@@ -32,6 +32,7 @@
 #include "StyleInheritedData.h"
 #include "StyleResolver.h"
 #include "Text.h"
+#include "TextManipulationController.h"
 #include "TextNodeTraversal.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>

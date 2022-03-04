@@ -1,3 +1,37 @@
+2022-03-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation does not observe updated title element
+        https://bugs.webkit.org/show_bug.cgi?id=237435
+        rdar://87318842
+
+        Reviewed by Wenson Hsieh.
+
+        TextManipulationController now monitors two types of nodes (after first-time manipulation): 
+        (1) manipulated nodes with content update 
+        (2) non-manipulated nodes (newly displayed or newly added)
+        We should make sure title element gets added to set (1) if it's newly created, and gets added to set (2) if its
+        text content is updated.
+
+        New test: TextManipulation.CompleteTextManipulationForTitleElement
+
+        * dom/Document.cpp:
+        (WebCore::Document::setTitle):
+        * dom/Text.cpp:
+        (WebCore::Text::setDataAndUpdate):
+        * editing/TextManipulationController.cpp:
+        (WebCore::TextManipulationController::didUpdateContentForNode):
+        (WebCore::TextManipulationController::didAddOrCreateRendererForNode):
+        (WebCore::TextManipulationController::scheduleObservationUpdate):
+        (WebCore::TextManipulationController::replace):
+        (WebCore::TextManipulationController::didCreateRendererForElement): Deleted.
+        (WebCore::TextManipulationController::didUpdateContentForText): Deleted.
+        (WebCore::TextManipulationController::didCreateRendererForTextNode): Deleted.
+        * editing/TextManipulationController.h:
+        * html/HTMLTitleElement.cpp:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::createRenderer):
+        (WebCore::RenderTreeUpdater::createTextRenderer):
+
 2022-03-03  Michael Saboff  <msaboff@apple.com>
 
         Copy WebKit frameworks and XPC processes to Secondary Path

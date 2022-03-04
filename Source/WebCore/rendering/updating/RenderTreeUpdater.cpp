@@ -395,7 +395,7 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
 
     auto* textManipulationController = m_document.textManipulationControllerIfExists();
     if (UNLIKELY(textManipulationController))
-        textManipulationController->didCreateRendererForElement(element);
+        textManipulationController->didAddOrCreateRendererForNode(element);
 
     if (AXObjectCache* cache = m_document.axObjectCache())
         cache->updateCacheAfterNodeIsAttached(&element);
@@ -478,7 +478,7 @@ void RenderTreeUpdater::createTextRenderer(Text& textNode, const Style::TextUpda
 
     auto* textManipulationController = m_document.textManipulationControllerIfExists();
     if (UNLIKELY(textManipulationController))
-        textManipulationController->didCreateRendererForTextNode(textNode);
+        textManipulationController->didAddOrCreateRendererForNode(textNode);
 }
 
 void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate)

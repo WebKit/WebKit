@@ -3025,6 +3025,64 @@ TEST(TextManipulation, CompleteTextManipulationForManipulatedTextWithNewContent)
     EXPECT_WK_STREQ("<span>Hello World Again</span><p>Hello WebKit Again</p>", [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"]);
 }
 
+TEST(TextManipulation, CompleteTextManipulationForTitleElement)
+{
+    auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView _setTextManipulationDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><html></html>"];
+
+    done = false;
+    [webView _startTextManipulationsWithConfiguration:nil completion:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    auto *items = [delegate items];
+    EXPECT_EQ(items.count, 0UL);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"document.title = 'page title'"];
+    delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
+        if (items.count == 1)
+            done = true;
+    };
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_EQ(items[0].tokens.count, 1UL);
+    EXPECT_WK_STREQ("page title", items[0].tokens[0].content);
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[
+        createItem(items[0].identifier, {{ items[0].tokens[0].identifier, @"Page Title" }}).get()
+    ] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ("Page Title", [webView stringByEvaluatingJavaScript:@"document.title"]);
+    EXPECT_WK_STREQ("<head><title>Page Title</title></head><body></body>", [webView stringByEvaluatingJavaScript:@"document.documentElement.innerHTML"]);
+
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"document.title = 'new page title'"];
+    delegate.get().itemCallback = ^(_WKTextManipulationItem *item) {
+        if (items.count == 2)
+            done = true;
+    };
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_EQ(items[1].tokens.count, 1UL);
+    EXPECT_WK_STREQ("new page title", items[1].tokens[0].content);
+
+    done = false;
+    [webView _completeTextManipulationForItems:@[
+        createItem(items[1].identifier, {{ items[1].tokens[0].identifier, @"New Page Title" }}).get()
+    ] completion:^(NSArray<NSError *> *errors) {
+        EXPECT_EQ(errors, nil);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ("New Page Title", [webView stringByEvaluatingJavaScript:@"document.title"]);
+    EXPECT_WK_STREQ("<head><title>New Page Title</title></head><body></body>", [webView stringByEvaluatingJavaScript:@"document.documentElement.innerHTML"]);
+}
+
 TEST(TextManipulation, CompleteTextManipulationAvoidExtractingManipulatedTextAfterManipulation)
 {
     auto delegate = adoptNS([[TextManipulationDelegate alloc] init]);

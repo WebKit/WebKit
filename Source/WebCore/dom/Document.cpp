@@ -1726,16 +1726,28 @@ void Document::setTitle(const String& title)
         if (m_titleElement)
             m_titleElement->setTextContent(title);
     } else if (is<HTMLElement>(element)) {
+        std::optional<String> oldTitle;
         if (!m_titleElement) {
             RefPtr headElement = head();
             if (!headElement)
                 return;
             m_titleElement = HTMLTitleElement::create(HTMLNames::titleTag, *this);
             headElement->appendChild(*m_titleElement);
+        } else
+            oldTitle = m_titleElement->textContent();
+
+        // appendChild above may have run scripts which removed m_titleElement.
+        if (!m_titleElement)
+            return;
+    
+        m_titleElement->setTextContent(title);
+        auto* textManipulationController = textManipulationControllerIfExists();
+        if (UNLIKELY(textManipulationController)) {
+            if (!oldTitle)
+                textManipulationController->didAddOrCreateRendererForNode(*m_titleElement);
+            else if (*oldTitle != title)
+                textManipulationController->didUpdateContentForNode(*m_titleElement);
         }
-        // appendChild above may have ran scripts which removed m_titleElement.
-        if (m_titleElement)
-            m_titleElement->setTextContent(title);
     }
 }
 

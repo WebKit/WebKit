@@ -1,3 +1,14 @@
+2022-03-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Text manipulation does not observe updated title element
+        https://bugs.webkit.org/show_bug.cgi?id=237435
+        rdar://87318842
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TextManipulation.mm:
+        (TestWebKitAPI::TEST):
+
 2022-03-03  Lauro Moura  <lmoura@igalia.com>
 
         [Python3] Switch a few more glib scripts to Python3

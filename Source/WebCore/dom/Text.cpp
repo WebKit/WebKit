@@ -269,7 +269,7 @@ void Text::setDataAndUpdate(const String& newData, unsigned offsetOfReplacedData
     if (!offsetOfReplacedData) {
         auto* textManipulationController = document().textManipulationControllerIfExists();
         if (UNLIKELY(textManipulationController && oldData != newData))
-            textManipulationController->didUpdateContentForText(*this);
+            textManipulationController->didUpdateContentForNode(*this);
     }
 }
 
