@@ -1,3 +1,80 @@
+2022-03-03  Michael Saboff  <msaboff@apple.com>
+
+        Copy WebKit frameworks and XPC processes to Secondary Path
+        https://bugs.webkit.org/show_bug.cgi?id=237394
+
+        Reviewed by Saam Barati.
+
+        Added build configuration variables and scripts to copy the built Framework as well as the XPC services 
+        to the SYSTEM_SECONDARY_CONTENT_PATH when it is set.  When copying the XPC services, we update the XPC
+        binaries to reference the frameworks from the SYSTEM_SECONDARY_CONTENT_PATH by updating
+        DYLD_VERSIONED_FRAMEWORK_PATH.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WebKitSwift.xcconfig:
+        * Scripts/copy-frameworks-to-secondary-path.sh: Added.
+        * Scripts/copy-xpc-services-to-secondary-path.sh: Added.
+        * Scripts/update-dyld-environment-load-command: Added.
+        * Scripts/webkitpy: Added.
+        * Scripts/webkitpy/mach_o.py: Added.
+        (_utf8_bytes_to_str):
+        (_mach_o_int_field):
+        (_mach_o_int_field._get_mach_o_int_field):
+        (_mach_o_int_field._set_mach_o_int_field):
+        (_mach_o_int_field._set_mach_o_int_field.func):
+        (_mach_o_chararray_field):
+        (_mach_o_chararray_field._get_mach_o_chararray_field):
+        (_mach_o_chararray_field._set_mach_o_chararray_field):
+        (_mach_o_chararray_field._set_mach_o_chararray_field.func):
+        (_mach_o_varchar_field):
+        (_mach_o_varchar_field._get_mach_o_varchar_field):
+        (_mach_o_varchar_field._set_mach_o_varchar_field):
+        (_mach_o_varchar_field._set_mach_o_varchar_field.func):
+        (MachOCommand):
+        (MachOCommand.__init__):
+        (MachOSourceVersionCommand):
+        (MachOSourceVersionCommand.version_str):
+        (MachOSection):
+        (MachOSection.__init__):
+        (MachOSegmentCommand):
+        (MachOSection32):
+        (MachOSegment32Command):
+        (MachOSegment32Command.__init__):
+        (MachOSection64):
+        (MachOSegment64Command):
+        (MachOSegment64Command.__init__):
+        (MachOLoadDylibCommand):
+        (MachOLoadDylibCommand._version_str):
+        (MachOLoadDylibCommand.compatibility_version_str):
+        (MachOLoadDylibCommand.current_version_str):
+        (MachODyldEnvironmentCommand):
+        (MachODyldEnvironmentCommand.variable):
+        (MachODyldEnvironmentCommand.value):
+        (MachODyldEnvironmentCommand.build):
+        (MachOIDDylibCommand):
+        (MachOHeader):
+        (MachOHeader.__init__):
+        (MachOHeader.used_header_size):
+        (MachOHeader.total_header_size):
+        (MachOHeader.available_header_size):
+        (MachOHeader.architecture_name):
+        (MachOHeader.id_command):
+        (MachOHeader.dyld_env_commands):
+        (MachOHeader.dyld_versioned_framework_paths):
+        (MachOHeader.filter_commands):
+        (MachOHeader.update_file):
+        (MachOHeader.parse_command):
+        (MachOHeader32LE):
+        (MachOHeader32LE.__init__):
+        (MachOHeader64LE):
+        (MachOHeader64LE.__init__):
+        (MachOFile):
+        (MachOFile.__init__):
+        (is_macho_bytes):
+        (is_macho_file):
+        (enumerate_macho_files):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-03  Robert Jenner  <Jenner@apple.com>
 
         Unreviewed, reverting r290752.

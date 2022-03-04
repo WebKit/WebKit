@@ -17394,6 +17394,7 @@
 				312BDB0B15FECAB00097EBC7 /* CopyFiles */,
 				312BDB0D15FECACE0097EBC7 /* CopyFiles */,
 				659A86EA279796F800AC37B6 /* Create Symlink to Alt Root Path */,
+				6517572127CEECB000D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
 			buildRules = (
 			);
@@ -17512,6 +17513,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../../Tools/Scripts/check-for-weak-vtables-and-externals ]; then\n    ../../../Tools/Scripts/check-for-weak-vtables-and-externals || exit $?\nfi\n";
+		};
+		6517572127CEECB000D9FE40 /* Copy Frameworks to Secondary Path */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 8;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Frameworks to Secondary Path";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "export DYLIBS_TO_COPY_TO_SECONDARY_PATH=\"libwebrtc.dylib\"\n\"${SRCROOT}/Scripts/copy-frameworks-to-secondary-path.sh\"\n";
 		};
 		659A86EA279796F800AC37B6 /* Create Symlink to Alt Root Path */ = {
 			isa = PBXShellScriptBuildPhase;

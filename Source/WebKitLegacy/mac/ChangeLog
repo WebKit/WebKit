@@ -1,3 +1,15 @@
+2022-03-02  Michael Saboff  <msaboff@apple.com>
+
+        Copy WebKit frameworks and XPC processes to Secondary Path
+        https://bugs.webkit.org/show_bug.cgi?id=237394
+
+        Reviewed by Saam Barati.
+
+        Added build configuration variables and scripts to copy the built Framework to the SYSTEM_SECONDARY_CONTENT_PATH
+        when it is set.
+
+        * Configurations/Base.xcconfig:
+
 2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         focus({preventScroll: true}) does not prevent scrolling on iOS
