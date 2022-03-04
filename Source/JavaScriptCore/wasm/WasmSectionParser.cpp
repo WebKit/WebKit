@@ -898,7 +898,7 @@ auto SectionParser::parseCustom() -> PartialResult
         if (auto nameSection = nameSectionParser.parse())
             m_info->nameSection = WTFMove(*nameSection);
     } else if (Options::useWebAssemblyBranchHints()) {
-        Name branchHintsName = { 'c', 'o', 'd', 'e', '_', 'a', 'n', 'n', 'o', 't', 'a', 't', 'i', 'o', 'n', '.', 'b', 'r', 'a', 'n', 'c', 'h', '_', 'h', 'i', 'n', 't' };
+        Name branchHintsName = { 'm', 'e', 't', 'a', 'd', 'a', 't', 'a', '.', 'c', 'o', 'd', 'e', '.', 'b', 'r', 'a', 'n', 'c', 'h', '_', 'h', 'i', 'n', 't' };
         if (section.name == branchHintsName) {
             BranchHintsSectionParser branchHintsSectionParser(section.payload.begin(), section.payload.size(), m_info);
             branchHintsSectionParser.parse();

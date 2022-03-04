@@ -1,3 +1,15 @@
+2022-03-03  Tom Tartarin  <tom@leaningtech.com>
+
+        [JSC] Update wasm branch hinting
+        https://bugs.webkit.org/show_bug.cgi?id=237411
+
+        Reviewed by Yusuke Suzuki.
+
+        Simplify the module tested with the updated format.
+
+        * wasm/branch-hints/branchHintsModule.wasm:
+        * wasm/branch-hints/branchHintsSection.js:
+
 2022-02-25  Mark Lam  <mark.lam@apple.com>
 
         operationMaterializeObjectInOSR should DeferTerminationForAWhile instead of just DeferTermination.

@@ -61,9 +61,9 @@ auto BranchHintsSectionParser::parse() -> PartialResult
 
             previousBranchOffset = branchOffset;
 
-            uint8_t reservedByte;
-            WASM_PARSER_FAIL_IF(!parseVarUInt1(reservedByte), "can't get reserved byte for hint ", j);
-            WASM_PARSER_FAIL_IF(reservedByte != 0x1, "invalid reserved byte for hint ", j);
+            uint32_t payloadSize;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(payloadSize), "can't get payload size for hint ", j);
+            WASM_PARSER_FAIL_IF(payloadSize != 0x1, "invalid payload size for hint ", j);
 
             uint8_t parsedBranchHint;
             WASM_PARSER_FAIL_IF(!parseVarUInt1(parsedBranchHint), "can't get or invalid branch hint value for hint ", j);

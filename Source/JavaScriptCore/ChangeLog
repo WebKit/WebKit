@@ -1,3 +1,18 @@
+2022-03-03  Tom Tartarin  <tom@leaningtech.com>
+
+        [JSC] Update wasm branch hinting
+        https://bugs.webkit.org/show_bug.cgi?id=237411
+
+        Reviewed by Yusuke Suzuki.
+
+        Change the section's name.
+        Clarify semantics in the parser.
+
+        * wasm/WasmBranchHintsSectionParser.cpp:
+        (JSC::Wasm::BranchHintsSectionParser::parse):
+        * wasm/WasmSectionParser.cpp:
+        (JSC::Wasm::SectionParser::parseCustom):
+
 2022-03-03  Saam Barati  <sbarati@apple.com>
 
         Add a DeferTraps scope
