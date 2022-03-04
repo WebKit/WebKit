@@ -150,9 +150,16 @@ function waitFor(duration)
     return new Promise((resolve) => setTimeout(resolve, duration));
 }
 
-function waitForVideoSize(video, width, height, count)
+async function waitForVideoSize(video, width, height, count)
 {
-    if (video.videoWidth === width && video.videoHeight === height)
+    if (video.requestVideoFrameCallback) {
+        const frameMetadata = await new Promise(resolve => video.requestVideoFrameCallback((now, metadata) => {
+            resolve(metadata);
+        }));
+
+        if (frameMetadata.width === width && frameMetadata.height === height)
+            return Promise.resolve("video has expected size");
+    } else if (video.videoWidth === width && video.videoHeight === height)
         return Promise.resolve("video has expected size");
 
     if (count === undefined)
@@ -160,9 +167,8 @@ function waitForVideoSize(video, width, height, count)
     if (++count > 20)
         return Promise.reject("waitForVideoSize timed out, expected " + width + "x"+ height + " but got " + video.videoWidth + "x" + video.videoHeight);
 
-    return waitFor(100).then(() => {
-        return waitForVideoSize(video, width, height, count);
-    });
+    await waitFor(100);
+    return waitForVideoSize(video, width, height, count);
 }
 
 async function doHumAnalysis(stream, expected)
