@@ -1,3 +1,12 @@
+2022-03-03  Anjali Kumar  <anjalik_22@apple.com>
+
+        Add myself (Anjali Kumar) to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=237449
+
+        Reviewed by Patrick Angle.
+
+        * metadata/contributors.json: Added myself.
+
 2022-03-01  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Sync personal fork by default

@@ -751,6 +751,15 @@
    },
    {
       "emails" : [
+         "anjalik_22@apple.com"
+      ],
+      "name" : "Anjali Kumar",
+      "nicks" : [
+         "anjalik"
+      ]
+   },
+   {
+      "emails" : [
          "annacc@chromium.org"
       ],
       "name" : "Anna Cavender",
