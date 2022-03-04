@@ -27,6 +27,7 @@
 #include "KeyframeEffectStack.h"
 
 #include "CSSAnimation.h"
+#include "CSSPropertyAnimation.h"
 #include "CSSTransition.h"
 #include "KeyframeEffect.h"
 #include "WebAnimation.h"
@@ -143,7 +144,17 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
     for (const auto& effect : sortedEffects()) {
         ASSERT(effect->animation());
 
-        if (propertyAffectingLogicalPropertiesChanged || fontSizeChanged)
+        auto inheritedPropertyChanged = [&]() {
+            if (previousLastStyleChangeEventStyle) {
+                for (auto property : effect->inheritedProperties()) {
+                    if (!CSSPropertyAnimation::propertiesEqual(property, *previousLastStyleChangeEventStyle, unanimatedStyle))
+                        return true;
+                }
+            }
+            return false;
+        };
+
+        if (propertyAffectingLogicalPropertiesChanged || fontSizeChanged || inheritedPropertyChanged())
             effect->propertyAffectingKeyframeResolutionDidChange(unanimatedStyle, resolutionContext);
 
         effect->animation()->resolve(targetStyle, resolutionContext);

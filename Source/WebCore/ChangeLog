@@ -1,3 +1,20 @@
+2022-03-02  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] keyframe values set to "inherit" should recompute their values when the inherited value changes
+        https://bugs.webkit.org/show_bug.cgi?id=237371
+
+        Reviewed by Antti Koivisto.
+
+        We now keep track of properties set to "inherit" in keyframes such that we may determine when the
+        computed value may have changed when resolving animations.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::processKeyframes):
+        * animation/KeyframeEffect.h:
+        (WebCore::KeyframeEffect::inheritedProperties const):
+        * animation/KeyframeEffectStack.cpp:
+        (WebCore::KeyframeEffectStack::applyKeyframeEffects):
+
 2022-03-04  Sihui Liu  <sihui_liu@apple.com>
 
         SQLiteDatabase::open should return early if journal mode cannot be set

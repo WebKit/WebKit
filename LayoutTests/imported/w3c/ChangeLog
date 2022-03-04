@@ -1,3 +1,14 @@
+2022-03-02  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] keyframe values set to "inherit" should recompute their values when the inherited value changes
+        https://bugs.webkit.org/show_bug.cgi?id=237371
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/web-animations/responsive/lineHeight-expected.txt:
+        * web-platform-tests/web-animations/responsive/opacity-expected.txt:
+        * web-platform-tests/web-animations/responsive/textIndent-expected.txt:
+
 2022-03-03  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r290356-r290351?): [ iOS EWS ] 3 imported/w3c/web-platform-tests/service-workers/service-worker/* tests are constant text failures.

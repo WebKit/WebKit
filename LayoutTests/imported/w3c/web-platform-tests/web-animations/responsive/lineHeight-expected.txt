@@ -1,7 +1,7 @@
 
 PASS lineHeight responsive to style changes
 FAIL lineHeight clamped to 0px assert_equals: expected "0px" but got "20px"
-FAIL lineHeight responsive to inherited changes from keyword assert_equals: expected "80px" but got "normal"
-FAIL lineHeight responsive to inherited changes from number assert_equals: expected "80px" but got "40px"
-FAIL lineHeight responsive to inherited changes from length assert_equals: expected "97px" but got "50px"
+PASS lineHeight responsive to inherited changes from keyword
+PASS lineHeight responsive to inherited changes from number
+PASS lineHeight responsive to inherited changes from length
 

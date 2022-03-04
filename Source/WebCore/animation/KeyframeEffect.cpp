@@ -770,6 +770,8 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
     // since they can be computed up-front.
     computeMissingKeyframeOffsets(parsedKeyframes);
 
+    m_inheritedProperties.clear();
+
     // 8. For each frame in processed keyframes, perform the following steps:
     for (auto& keyframe : parsedKeyframes) {
         // Let the timing function of frame be the result of parsing the “easing” property on frame using the CSS syntax
@@ -779,6 +781,11 @@ ExceptionOr<void> KeyframeEffect::processKeyframes(JSGlobalObject& lexicalGlobal
         if (timingFunctionResult.hasException())
             return timingFunctionResult.releaseException();
         keyframe.timingFunction = timingFunctionResult.returnValue();
+
+        for (auto& [property, value] : keyframe.styleStrings) {
+            if (equalLettersIgnoringASCIICase(value, "inherit"))
+                m_inheritedProperties.add(property);
+        }
     }
 
     // 9. Parse each of the values in unused easings using the CSS syntax defined for easing property of the
