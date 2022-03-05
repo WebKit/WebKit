@@ -19,7 +19,7 @@ STYLES:
 :host {
     padding: 20px;
 }
-address, article, aside, div, footer, header, hgroup, layer, main, nav, section {
+address, article, aside, div, footer, header, hgroup, main, nav, section {
 }
 html {
 }
@@ -34,6 +34,6 @@ STYLES:
 div {
     color: blue;
 }
-address, article, aside, div, footer, header, hgroup, layer, main, nav, section {
+address, article, aside, div, footer, header, hgroup, main, nav, section {
 }
 

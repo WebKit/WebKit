@@ -50,7 +50,7 @@ p {
     margin-inline-end: 0;
 }
 
-address, article, aside, div, footer, header, hgroup, layer, main, nav, section {
+address, article, aside, div, footer, header, hgroup, main, nav, section {
     display: block;
 }
 

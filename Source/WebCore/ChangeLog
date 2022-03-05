@@ -1,3 +1,18 @@
+2022-03-05  Alan Bujtas  <zalan@apple.com>
+
+        Remove non-standard display:block UA stylesheet rule for <layer>
+        https://bugs.webkit.org/show_bug.cgi?id=236730
+        <rdar://problem/89372670>
+
+        Reviewed by Antti Koivisto.
+
+        This looks to be an old WebKit (khtml?) quirk.
+        See also https://bugs.chromium.org/p/chromium/issues/detail?id=1298197
+
+        * css/html.css:
+        (address, article, aside, div, footer, header, hgroup, main, nav, section):
+        (address, article, aside, div, footer, header, hgroup, layer, main, nav, section): Deleted.
+
 2022-03-05  Mark Lam  <mark.lam@apple.com>
 
         Fix broken SuspendExceptionScope and remove redundant VM::DeferExceptionScope.
