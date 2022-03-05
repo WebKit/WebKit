@@ -1,3 +1,84 @@
+2022-03-04  Patrick Angle  <pangle@apple.com>
+
+        REGRESSION (r284472): [ Monterey ] http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=237280
+
+        Reviewed by Devin Rousso.
+
+        Covered by existing http/tests/websocket/tests/hybi/inspector/* test cases.
+
+        On macOS Monterey we use NSURLSession-based WebSockets by default, unlike earlier versions of macOS. The channel
+        for these sockets is implemented in `WebKit::WebSocketChannel`. The non-NSURLSession WebSockets channel (at
+        least on Cocoa platforms) is implemented in `WebCore::WebSocketChannel`.
+
+        As of r284472 the logic to delay the dispatch of received WebSocket message on platforms using
+        NSURLSession-based WebSockets is handled by `WebCore::WebSocket`, not the `WebKit::WebSocketChannel`.
+        `WebKit::WebSocketChannel` now immediately does the work it needs to, and only the delegated work to `WebSocket`
+        is queued and taken care of when the socket has resumed. This resulted in some of the instrumentation in
+        `WebKit::WebSocketChannel` being able to be called while the socket was suspended leading to events being logged
+        in the frontend "in the future" (e.g. before the paused script would have been able to be aware of them). To
+        correct this the `WebKit::WebSocketChannel` now provides a hook into its helper `WebSocketChannelInspector`
+        object to allow the `WebCore::WebSocket` to notify Web Inspector of events at the same time it is being
+        logically handled by the page.
+
+        Other `ThreadableWebSocketChannel` implementations will instead provide `nullptr` in place of a pointer to a
+        `WebInspectorChannelInspector`. `WebCore::WebSocketChannel` was not affected by the changes in r284472 as it has
+        a different way to guarantee that the methods containing InspectorInstrumentation were not called while the
+        channel was suspended (and enforced with numerous `ASSERT(!m_suspended)` checks).
+
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        (WebCore::ThreadableWebSocketChannel::channelInspector const):
+
+        * Modules/websockets/WebSocketChannelClient.h:
+        - Add `reason` for error messages so they can be sent to Web Inspector.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveMessage):
+        (WebCore::WebSocket::didReceiveBinaryData):
+        (WebCore::WebSocket::didReceiveMessageError):
+        (WebCore::WebSocket::didClose):
+        * Modules/websockets/WebSocket.h:
+        - Move inspector instrumentation calls from `WebKit::WebSocketChannel` to here so that they are not called until
+        the socket is resumed.
+        - We also now wrap these instrumentation calls in an unlikely check for frontends to avoid allocating the 
+        simulated call frames when Web Inspector isn't even open.
+        
+        * Modules/websockets/WebSocketChannelInspector.cpp:
+        (WebCore::WebSocketChannelInspector::WebSocketChannelInspector):
+        (WebCore::WebSocketChannelInspector::didCreateWebSocket const):
+        (WebCore::WebSocketChannelInspector::willSendWebSocketHandshakeRequest const):
+        (WebCore::WebSocketChannelInspector::didReceiveWebSocketHandshakeResponse const):
+        (WebCore::WebSocketChannelInspector::didCloseWebSocket const):
+        (WebCore::WebSocketChannelInspector::didReceiveWebSocketFrame const):
+        (WebCore::WebSocketChannelInspector::didSendWebSocketFrame const):
+        (WebCore::WebSocketChannelInspector::didReceiveWebSocketFrameError const):
+        (WebCore::WebSocketChannelInspector::createFrame):
+        (WebCore::WebSocketChannelInspector::didCreateWebSocket): Deleted.
+        (WebCore::WebSocketChannelInspector::willSendWebSocketHandshakeRequest): Deleted.
+        (WebCore::WebSocketChannelInspector::didReceiveWebSocketHandshakeResponse): Deleted.
+        (WebCore::WebSocketChannelInspector::didCloseWebSocket): Deleted.
+        (WebCore::WebSocketChannelInspector::didReceiveWebSocketFrame): Deleted.
+        (WebCore::WebSocketChannelInspector::didSendWebSocketFrame): Deleted.
+        (WebCore::WebSocketChannelInspector::didReceiveWebSocketFrameError): Deleted.
+        * Modules/websockets/WebSocketChannelInspector.h:
+        - Update to keep a WeakRef to the `Document` to reduce the amount of plumbing necessary to call these methods
+        from `WebSocket`.
+        - Move static utility method `createFrame` here from `WebKit::WebSocketChannel` since it is only used for
+        inspector instrumentation.
+
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageError):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::fail):
+        (WebCore::WebSocketChannel::didFailSocketStream):
+        * Modules/websockets/WebSocketChannel.h:
+        - Update these classes to pass along a reason, if available, for errors.
+
 2022-03-04  Chris Dumez  <cdumez@apple.com>
 
         Modernize OriginLock

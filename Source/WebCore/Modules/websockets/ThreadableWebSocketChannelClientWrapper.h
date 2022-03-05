@@ -79,7 +79,7 @@ public:
     void didUpdateBufferedAmount(unsigned bufferedAmount);
     void didStartClosingHandshake();
     void didClose(unsigned unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
-    void didReceiveMessageError();
+    void didReceiveMessageError(const String& reason);
     void didUpgradeURL();
 
     void suspend();

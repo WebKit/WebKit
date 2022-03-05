@@ -1,5 +1,31 @@
 2022-03-04  Patrick Angle  <pangle@apple.com>
 
+        REGRESSION (r284472): [ Monterey ] http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=237280
+
+        Reviewed by Devin Rousso.
+
+        Move inspector instrumentation for things that should be delayed until the websocket has resumed (in general,
+        these are instrumentation points for receiving messages) into WebCore::WebSocket so that they are sent at the
+        expected time in the frontend, not "in the future" when script execution is suspended (e.g. while debugging).
+
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::notifySendFrame):
+        (WebKit::WebSocketChannel::connect):
+        (WebKit::WebSocketChannel::close):
+        (WebKit::WebSocketChannel::fail):
+        (WebKit::WebSocketChannel::disconnect):
+        (WebKit::WebSocketChannel::didReceiveText):
+        (WebKit::WebSocketChannel::didReceiveBinaryData):
+        (WebKit::WebSocketChannel::didClose):
+        (WebKit::WebSocketChannel::didReceiveMessageError):
+        (WebKit::WebSocketChannel::didSendHandshakeRequest):
+        (WebKit::WebSocketChannel::didReceiveHandshakeResponse):
+        (WebKit::createWebSocketFrameForWebInspector): Deleted.
+        * WebProcess/Network/WebSocketChannel.h:
+
+2022-03-04  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: [Cocoa] Continually opening and closing Web Inspector sometimes crashes
         https://bugs.webkit.org/show_bug.cgi?id=237484
 

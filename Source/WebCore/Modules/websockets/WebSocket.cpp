@@ -43,6 +43,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "MixedContentChecker.h"
@@ -565,6 +566,13 @@ void WebSocket::didReceiveMessage(const String& msg)
     queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, msg] {
         if (m_state != OPEN)
             return;
+
+        if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+            if (auto* inspector = m_channel->channelInspector()) {
+                auto utf8Message = msg.utf8();
+                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(utf8Message.dataAsUInt8Ptr(), utf8Message.length(), WebSocketFrame::OpCode::OpCodeText));
+            }
+        }
         ASSERT(scriptExecutionContext());
         dispatchEvent(MessageEvent::create(msg, SecurityOrigin::create(m_url)->toString()));
     });
@@ -576,6 +584,12 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
     queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, binaryData = WTFMove(binaryData)]() mutable {
         if (m_state != OPEN)
             return;
+
+        if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+            if (auto* inspector = m_channel->channelInspector())
+                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(binaryData.data(), binaryData.size(), WebSocketFrame::OpCode::OpCodeBinary));
+        }
+
         switch (m_binaryType) {
         case BinaryType::Blob:
             // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
@@ -588,14 +602,20 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
     });
 }
 
-void WebSocket::didReceiveMessageError()
+void WebSocket::didReceiveMessageError(const String& reason)
 {
     LOG(Network, "WebSocket %p didReceiveErrorMessage()", this);
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, reason] {
         if (m_state == CLOSED)
             return;
         m_state = CLOSED;
         ASSERT(scriptExecutionContext());
+
+        if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+            if (auto* inspector = m_channel->channelInspector())
+                inspector->didReceiveWebSocketFrameError(reason);
+        }
+
         // FIXME: As per https://html.spec.whatwg.org/multipage/web-sockets.html#feedback-from-the-protocol:concept-websocket-closed, we should synchronously fire a close event.
         dispatchErrorEventIfNeeded();
     });
@@ -625,6 +645,14 @@ void WebSocket::didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompl
     queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, unhandledBufferedAmount, closingHandshakeCompletion, code, reason] {
         if (!m_channel)
             return;
+
+        if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+            if (auto* inspector = m_channel->channelInspector()) {
+                WebSocketFrame closingFrame(WebSocketFrame::OpCodeClose, true, false, false);
+                inspector->didReceiveWebSocketFrame(closingFrame);
+                inspector->didCloseWebSocket();
+            }
+        }
 
         bool wasClean = m_state == CLOSING && !unhandledBufferedAmount && closingHandshakeCompletion == ClosingHandshakeComplete && code != WebSocketChannel::CloseEventCodeAbnormalClosure;
         m_state = CLOSED;

@@ -94,7 +94,7 @@ public:
         void didUpdateBufferedAmount(unsigned bufferedAmount) final;
         void didStartClosingHandshake() final;
         void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;
-        void didReceiveMessageError() final;
+        void didReceiveMessageError(const String& reason) final;
         void didUpgradeURL() final;
 
     private:

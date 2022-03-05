@@ -97,6 +97,7 @@ private:
     void decreaseBufferedAmount(size_t);
     template<typename T> void sendMessage(T&&, size_t byteLength);
 
+    const WebCore::WebSocketChannelInspector* channelInspector() const final { return &m_inspector; }
     WebCore::WebSocketChannelIdentifier progressIdentifier() const final { return m_inspector.progressIdentifier(); }
     bool hasCreatedHandshake() const final { return !m_url.isNull(); }
     bool isConnected() const final { return !m_handshakeResponse.isNull(); }

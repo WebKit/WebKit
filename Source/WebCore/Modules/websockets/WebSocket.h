@@ -115,7 +115,7 @@ private:
     void didConnect() final;
     void didReceiveMessage(const String& message) final;
     void didReceiveBinaryData(Vector<uint8_t>&&) final;
-    void didReceiveMessageError() final;
+    void didReceiveMessageError(const String& reason) final;
     void didUpdateBufferedAmount(unsigned bufferedAmount) final;
     void didStartClosingHandshake() final;
     void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;

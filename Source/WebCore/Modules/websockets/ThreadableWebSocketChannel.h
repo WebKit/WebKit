@@ -49,6 +49,7 @@ class ResourceResponse;
 class ScriptExecutionContext;
 class SocketProvider;
 class WebSocketChannel;
+class WebSocketChannelInspector;
 class WebSocketChannelClient;
 
 using WebSocketChannelIdentifier = ObjectIdentifier<WebSocketChannel>;
@@ -84,6 +85,7 @@ public:
     virtual void suspend() = 0;
     virtual void resume() = 0;
 
+    virtual const WebSocketChannelInspector* channelInspector() const { return nullptr; };
     virtual WebSocketChannelIdentifier progressIdentifier() const = 0;
     virtual bool hasCreatedHandshake() const = 0;
     virtual bool isConnected() const = 0;

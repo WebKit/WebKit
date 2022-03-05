@@ -217,11 +217,11 @@ void ThreadableWebSocketChannelClientWrapper::didClose(unsigned unhandledBuffere
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveMessageError()
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessageError(const String& reason)
 {
-    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }] (ScriptExecutionContext&) {
+    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, reason = reason.isolatedCopy()] (ScriptExecutionContext&) {
         if (m_client)
-            m_client->didReceiveMessageError();
+            m_client->didReceiveMessageError(reason);
     }));
 
     if (!m_suspended)
