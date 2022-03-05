@@ -270,6 +270,9 @@ bool deleteFile(const String& path)
 bool makeAllDirectories(const String& path)
 {
     auto fullPath = fileSystemRepresentation(path);
+    if (fullPath.isNull())
+        return false;
+
     if (!access(fullPath.data(), F_OK))
         return true;
 
