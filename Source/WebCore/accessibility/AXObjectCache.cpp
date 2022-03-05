@@ -952,6 +952,7 @@ void AXObjectCache::textChanged(AccessibilityObject* object)
 
     if (!object)
         return;
+    Ref<AccessibilityObject> protectedObject(*object);
 
     // If this element supports ARIA live regions, or is part of a region with an ARIA editable role,
     // then notify the AT of changes.
