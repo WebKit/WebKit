@@ -399,7 +399,7 @@ const PropertyCascade* Builder::ensureRollbackCascadeForRevertLayer()
     auto& property = *m_state.m_currentProperty;
     auto rollbackLayerPriority = property.cascadeLayerPriority;
     if (!rollbackLayerPriority)
-        return nullptr;
+        return ensureRollbackCascadeForRevert();
 
     ASSERT(property.fromStyleAttribute == FromStyleAttribute::No || property.cascadeLayerPriority == RuleSet::cascadeLayerPriorityForUnlayered);
 

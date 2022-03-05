@@ -1,3 +1,21 @@
+2022-03-05  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Let 'revert-layer' in lowest layer roll back to user styles
+        https://bugs.webkit.org/show_bug.cgi?id=237486
+
+        Reviewed by Antti Koivisto.
+
+        When 'revert-layer' was used in the lowest @layer, then it would behave
+        as 'unset'. This patch fixes ensureRollbackCascadeForRevertLayer() to
+        not return nullptr and instead return ensureRollbackCascadeForRevert()
+        in that case. This imples that 'revert-layer' will behave like 'revert'
+        and roll back to user (or UA) styles.
+
+        Test: imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer-noop.html
+
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::ensureRollbackCascadeForRevertLayer):
+
 2022-03-04  Simon Fraser  <simon.fraser@apple.com>
 
         Optimize the padding in StyleRareInheritedData
