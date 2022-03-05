@@ -95,7 +95,7 @@ void pas_root_construct(pas_root* root)
         &pas_large_heap_physical_page_sharing_cache_page_list;
     root->payload_reservation_page_list = &pas_payload_reservation_page_list;
     root->thread_local_cache_node_first = &pas_thread_local_cache_node_first;
-    root->thread_local_cache_layout_first_node = &pas_thread_local_cache_layout_first_node;
+    root->thread_local_cache_layout_first_segment = &pas_thread_local_cache_layout_first_segment;
     root->all_heaps_first_heap = &pas_all_heaps_first_heap;
     
     root->num_static_heaps = 0;

@@ -689,13 +689,17 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
 
         if (allocator_action != pas_allocator_scavenge_no_action) {
             bool did_suspend;
+            pas_thread_local_cache_layout_segment* segment;
             pas_thread_local_cache_layout_node layout_node;
+            uintptr_t node_index;
             
             did_suspend = false;
 
             PAS_UNUSED_PARAM(did_suspend);
 
-            for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node)) {
+            segment = pas_thread_local_cache_layout_first_segment;
+            node_index = 0;
+            for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR_WITH_SEGMENT_AND_INDEX(layout_node, segment, node_index)) {
                 pas_allocator_index allocator_index;
                 pas_local_allocator_scavenger_data* scavenger_data;
 

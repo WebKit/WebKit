@@ -36,7 +36,6 @@ struct pas_redundant_local_allocator_node;
 typedef struct pas_redundant_local_allocator_node pas_redundant_local_allocator_node;
 
 struct pas_redundant_local_allocator_node {
-    pas_compact_atomic_thread_local_cache_layout_node next;
     pas_compact_segregated_size_directory_ptr directory;
     pas_allocator_index allocator_index;
 };

@@ -63,11 +63,12 @@ static void set_up_range(initialize_data* data,
 
     PAS_ASSERT(designated_begin == data->next_index_to_set);
 
-    if (pas_thread_local_cache_layout_last_node) {
+    pas_heap_lock_assert_held();
+
+    if (pas_thread_local_cache_layout_get_last_node()) {
         PAS_ASSERT(
             size
-            > pas_thread_local_cache_layout_node_get_directory(
-                pas_thread_local_cache_layout_last_node)->object_size);
+            > pas_thread_local_cache_layout_node_get_directory(pas_thread_local_cache_layout_get_last_node())->object_size);
     } else
         PAS_ASSERT(!designated_begin);
 
@@ -107,23 +108,20 @@ static void set_up_range(initialize_data* data,
             
             pas_segregated_size_directory_create_tlc_allocator(directory);
 
-            PAS_ASSERT(
-                pas_segregated_size_directory_data_ptr_load(&directory->data)->allocator_index
-                == target_allocator_index);
+            PAS_ASSERT(directory->allocator_index == target_allocator_index);
         } else {
+            pas_thread_local_cache_layout_node last_node;
             pas_allocator_index resulting_index;
             
             PAS_ASSERT(directory);
             
             resulting_index = pas_thread_local_cache_layout_duplicate(directory);
             PAS_ASSERT(resulting_index == target_allocator_index);
-            PAS_ASSERT(pas_thread_local_cache_layout_node_get_directory(
-                           pas_thread_local_cache_layout_last_node) == directory);
-            PAS_ASSERT(pas_thread_local_cache_layout_node_get_allocator_index_for_allocator(
-                           pas_thread_local_cache_layout_last_node) == target_allocator_index);
-            PAS_ASSERT(
-                pas_segregated_size_directory_data_ptr_load(&directory->data)->allocator_index
-                == PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES + designated_begin * data->num_allocator_indices);
+
+            last_node = pas_thread_local_cache_layout_get_last_node();
+            PAS_ASSERT(pas_thread_local_cache_layout_node_get_directory(last_node) == directory);
+            PAS_ASSERT(pas_thread_local_cache_layout_node_get_allocator_index_for_allocator(last_node) == target_allocator_index);
+            PAS_ASSERT(directory->allocator_index == PAS_LOCAL_ALLOCATOR_UNSELECTED_NUM_INDICES + designated_begin * data->num_allocator_indices);
         }
     }
 
