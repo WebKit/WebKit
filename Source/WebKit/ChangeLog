@@ -1,3 +1,21 @@
+2022-03-04  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Cocoa] Continually opening and closing Web Inspector sometimes crashes
+        https://bugs.webkit.org/show_bug.cgi?id=237484
+
+        Reviewed by Darin Adler.
+
+        We need to handle operations on the main queue because `webView:stopURLSchemeTask:` will be called from the main
+        queue, and we must not be in middle the operation when we get the request to stop said operation, otherwise we
+        may attempt to call `[urlSchemeTask did*]`, which is not permitted after we have been asked to stop that task.
+        If we add the operation for the `WKURLSchemeTask` to a different queue it is possible we will have already
+        started the operation on a background queue while at the same time are receiving a request to stop that same
+        `WKURLSchemeTask`.
+
+        * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm:
+        (-[WKInspectorResourceURLSchemeHandler webView:startURLSchemeTask:]):
+        (-[WKInspectorResourceURLSchemeHandler webView:stopURLSchemeTask:]):
+
 2022-03-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Books ASSERTs upon opening a book with a debug build of WebKit
