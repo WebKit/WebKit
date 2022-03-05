@@ -2097,7 +2097,6 @@ webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeou
 [ arm64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Pass Failure ]
 #These two are failing on intel as well for ews
 webrtc/h264-baseline.html  [ Failure Timeout ]
-webrtc/video-stats.html [ Pass Failure ]
 
 webkit.org/b/223043 [ BigSur ] webrtc/multi-audio.html [ Pass Failure ]
 

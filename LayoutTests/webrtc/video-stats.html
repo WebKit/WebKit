@@ -130,7 +130,7 @@ function checkInboundFramesNumberIncreased(secondConnection, statsSecondConnecti
             assert_not_equals(Object.keys(stats).indexOf("trackId"), -1, "trackId");
             return;
         }
-        if (++count === 20)
+        if (++count === 50)
             return Promise.reject("checking inbound stats frame number increasing timed out");
         return waitFor(50).then(() => {
             return checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, count)
@@ -148,7 +148,7 @@ function checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnectio
             assert_not_equals(Object.keys(stats).indexOf("trackId"), -1, "trackId");
             return;
         }
-        if (++count === 20)
+        if (++count === 50)
             return Promise.reject("checking outbound stats frame number increasing timed out");
         return waitFor(50).then(() => {
             return checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, count)
@@ -220,6 +220,7 @@ promise_test(async (test) => {
 
     const remoteInboundStats = await getRemoteInboundRTPStats(firstConnection);
     assert_true(remoteInboundStats.kind === "audio"|| remoteInboundStats.kind === "video", "kind is present");
+    assert_not_equals(remoteInboundStats.packetsLost, undefined);
 }, "Basic video stats");
 
 promise_test(async (test) => {

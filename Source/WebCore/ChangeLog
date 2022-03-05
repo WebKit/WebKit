@@ -1,3 +1,18 @@
+2022-03-05  Youenn Fablet  <youenn@apple.com>
+
+        Implement remote-inbound-rtp packetsLost
+        https://bugs.webkit.org/show_bug.cgi?id=237443
+
+        Reviewed by Eric Carlson.
+
+        Take benefit of latest backend to expose RemoteInboundRtpStreamStats values inherited from ReceivedRtpStreamStats.
+        Covered by updated test.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCStatsCollector.cpp:
+        (WebCore::fillReceivedRtpStreamStats):
+        (WebCore::fillInboundRtpStreamStats):
+        (WebCore::fillRemoteInboundRtpStreamStats):
+
 2022-03-05  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Let 'revert-layer' in lowest layer roll back to user styles
