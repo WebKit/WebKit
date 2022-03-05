@@ -552,7 +552,7 @@ void Daemon::handleIncomingPush(const String& bundleIdentifier, WebKit::WebPushM
 void Daemon::notifyClientPushMessageIsAvailable(const String& clientCodeSigningIdentifier)
 {
 #if PLATFORM(MAC)
-    CFArrayRef urls = (__bridge CFArrayRef)@[ [NSURL URLWithString:@"webkit-app-launch://1"] ];
+    CFArrayRef urls = (__bridge CFArrayRef)@[ [NSURL URLWithString:@"x-webkit-app-launch://1"] ];
     CFStringRef identifier = (__bridge CFStringRef)((NSString *)clientCodeSigningIdentifier);
 
     CFDictionaryRef options = (__bridge CFDictionaryRef)@{
