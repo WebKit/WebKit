@@ -90,7 +90,7 @@ public:
     WEBCORE_EXPORT uint64_t usage(const SecurityOriginData&);
     WEBCORE_EXPORT uint64_t quota(const SecurityOriginData&);
     WEBCORE_EXPORT void setQuota(const SecurityOriginData&, uint64_t);
-    RefPtr<OriginLock> originLockFor(const SecurityOriginData&);
+    Ref<OriginLock> originLockFor(const SecurityOriginData&);
 
     WEBCORE_EXPORT void deleteAllDatabasesImmediately();
     WEBCORE_EXPORT void deleteDatabasesModifiedSince(WallTime);
@@ -169,7 +169,7 @@ private:
     Lock m_databaseGuard;
     SQLiteDatabase m_database WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
-    using OriginLockMap = HashMap<String, RefPtr<OriginLock>>;
+    using OriginLockMap = HashMap<String, Ref<OriginLock>>;
     OriginLockMap m_originLockMap WTF_GUARDED_BY_LOCK(m_databaseGuard);
 
     String m_databaseDirectoryPath;

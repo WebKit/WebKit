@@ -595,7 +595,7 @@ void DatabaseTracker::removeOpenDatabase(Database& database)
     delete nameMap;
 }
 
-RefPtr<OriginLock> DatabaseTracker::originLockFor(const SecurityOriginData& origin)
+Ref<OriginLock> DatabaseTracker::originLockFor(const SecurityOriginData& origin)
 {
     Locker lockDatabase { m_databaseGuard };
     String databaseIdentifier = origin.databaseIdentifier();
@@ -607,17 +607,9 @@ RefPtr<OriginLock> DatabaseTracker::originLockFor(const SecurityOriginData& orig
     // thread-safe, since our copy is guarded by the m_databaseGuard mutex.
     databaseIdentifier = databaseIdentifier.isolatedCopy();
 
-    OriginLockMap::AddResult addResult =
-        m_originLockMap.add(databaseIdentifier, RefPtr<OriginLock>());
-    if (!addResult.isNewEntry)
-        return addResult.iterator->value;
-
-    String path = originPath(origin);
-    RefPtr<OriginLock> lock = adoptRef(*new OriginLock(path));
-    ASSERT(lock);
-    addResult.iterator->value = lock;
-
-    return lock;
+    return m_originLockMap.ensure(databaseIdentifier, [&] {
+        return OriginLock::create(originPath(origin));
+    }).iterator->value;
 }
 
 void DatabaseTracker::deleteOriginLockFor(const SecurityOriginData& origin)

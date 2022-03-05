@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,16 +28,13 @@
 
 namespace WebCore {
 
-String OriginLock::lockFileNameForPath(String originPath)
+static String lockFileNameForPath(const String& originPath)
 {
     return FileSystem::pathByAppendingComponent(originPath, ".lock"_s);
 }
 
-OriginLock::OriginLock(String originPath)
+OriginLock::OriginLock(const String& originPath)
     : m_lockFileName(lockFileNameForPath(originPath).isolatedCopy())
-#if USE(FILE_LOCK)
-    , m_lockHandle(FileSystem::invalidPlatformFileHandle)
-#endif
 {
 }
 
@@ -76,12 +73,12 @@ void OriginLock::unlock() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     m_mutex.unlock();
 }
 
-void OriginLock::deleteLockFile(String originPath)
+void OriginLock::deleteLockFile(const String& originPath)
 {
-    UNUSED_PARAM(originPath);
 #if USE(FILE_LOCK)
-    String lockFileName = OriginLock::lockFileNameForPath(originPath);
-    FileSystem::deleteFile(lockFileName);
+    FileSystem::deleteFile(lockFileNameForPath(originPath));
+#else
+    UNUSED_PARAM(originPath);
 #endif
 }
 

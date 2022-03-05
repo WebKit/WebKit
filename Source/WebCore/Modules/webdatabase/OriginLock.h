@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,23 +33,25 @@
 namespace WebCore {
 
 class OriginLock : public ThreadSafeRefCounted<OriginLock> {
-    WTF_MAKE_NONCOPYABLE(OriginLock); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit OriginLock(String originPath);
+    static Ref<OriginLock> create(const String& originPath)
+    {
+        return adoptRef(*new OriginLock(originPath));
+    }
     WEBCORE_EXPORT ~OriginLock();
 
     void lock();
     void unlock();
 
-    static void deleteLockFile(String originPath);
+    static void deleteLockFile(const String& originPath);
 
 private:
-    static String lockFileNameForPath(String originPath);
+    explicit OriginLock(const String& originPath);
 
     String m_lockFileName;
     Lock m_mutex;
 #if USE(FILE_LOCK)
-    FileSystem::PlatformFileHandle m_lockHandle;
+    FileSystem::PlatformFileHandle m_lockHandle { FileSystem::invalidPlatformFileHandle };
 #endif
 };
 

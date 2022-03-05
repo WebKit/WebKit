@@ -1,3 +1,25 @@
+2022-03-04  Chris Dumez  <cdumez@apple.com>
+
+        Modernize OriginLock
+        https://bugs.webkit.org/show_bug.cgi?id=237485
+
+        Reviewed by Darin Adler.
+
+        OriginLock subclasses ThreadSafeRefCounted. As a result, it should have a create()
+        factory function instead of an error-prone public constructor. Its functions should
+        also take String parameters by const reference instead of by value.
+
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::originLockFor):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * Modules/webdatabase/OriginLock.cpp:
+        (WebCore::lockFileNameForPath):
+        (WebCore::OriginLock::OriginLock):
+        (WebCore::OriginLock::deleteLockFile):
+        (WebCore::OriginLock::lockFileNameForPath): Deleted.
+        * Modules/webdatabase/OriginLock.h:
+        (WebCore::OriginLock::create):
+
 2022-03-04  Kate Cheney  <katherine_cheney@apple.com>
 
         about:blank iframes do not always inherit parent CSP
