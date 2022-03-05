@@ -1,3 +1,19 @@
+2022-03-04  Sihui Liu  <sihui_liu@apple.com>
+
+        Stop setting NSURLIsExcludedFromBackupKey attribute for localSorageDirectory in UI process
+        https://bugs.webkit.org/show_bug.cgi?id=237447
+
+        Reviewed by Chris Dumez.
+
+        Let's do that on storage thread in network process when the directory is used.
+
+        Covered by existing test: WKWebView.LocalStorageDirectoryExcludedFromBackup.
+
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::resolvedLocalStoragePath):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::parameters):
+
 2022-03-04  Harrison Weinerman  <hweinerman@apple.com>
 
         Change app launch scheme

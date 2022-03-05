@@ -1852,11 +1852,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         // FIXME: SandboxExtension::createHandleForReadWriteDirectory resolves the directory, but that has already been done. Remove this duplicate work.
         if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(directory))
             networkSessionParameters.localStorageDirectoryExtensionHandle = WTFMove(*handle);
-#if PLATFORM(IOS_FAMILY)
-        // FIXME: we should move file system operations to background thread.
-        FileSystem::makeAllDirectories(directory);
-        FileSystem::excludeFromBackup(directory);
-#endif
     }
 
     if (auto directory = resolvedIndexedDBDatabaseDirectory(); !directory.isEmpty()) {
