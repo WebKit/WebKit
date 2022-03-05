@@ -1,5 +1,26 @@
 2022-03-05  Mark Lam  <mark.lam@apple.com>
 
+        Optimize VMTraps::maybeNeedHandling().
+        https://bugs.webkit.org/show_bug.cgi?id=237503
+
+        Reviewed by Saam Barati.
+
+        There's no need for VMTraps::maybeNeedHandling() to mask the VMTraps bits for
+        events.  Under normal circumstances, there are no traps firing and the traps bits
+        are 0 anyway.  We should optimize for this and do away with the masking.  Clients
+        who use VMTraps::maybeNeedHandling() should and current do call VMTraps::needHandling()
+        to get the real story on whether there are actually traps to handle or not.  Hence,
+        the masking in VMTraps::maybeNeedHandling() is also not needed for correctness.
+
+        We know from experience that changes in RETURN_IN_EXCEPTION can have an impact on
+        performance.  Perhaps this change can also help performance.
+
+        * runtime/ExceptionScope.h:
+        * runtime/VMTraps.h:
+        (JSC::VMTraps::maybeNeedHandling const):
+
+2022-03-05  Mark Lam  <mark.lam@apple.com>
+
         Fix broken SuspendExceptionScope and remove redundant VM::DeferExceptionScope.
         https://bugs.webkit.org/show_bug.cgi?id=237441
         <rdar://problem/89769627>

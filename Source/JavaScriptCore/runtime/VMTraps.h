@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -203,7 +203,7 @@ public:
         return false;
     }
     // Designed to be a fast check to rule out if we might need handling, and we need to ensure needHandling on the slow path.
-    ALWAYS_INLINE bool maybeNeedHandling(BitField mask) const { return m_trapBits.loadRelaxed() & mask; }
+    ALWAYS_INLINE bool maybeNeedHandling() const { return m_trapBits.loadRelaxed(); }
     void* trapBitsAddress() { return &m_trapBits; }
 
     enum class DeferAction {
