@@ -383,9 +383,6 @@ public:
     
     // Adjust from painting offsets to the local coords of this renderer
     void offsetForContents(LayoutPoint&) const;
-    // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
-    // children.
-    RenderBlock* firstLineBlock() const override;
 
     enum FieldsetFindLegendOption { FieldsetIgnoreFloatingOrOutOfFlow, FieldsetIncludeFloatingOrOutOfFlow };
     RenderBox* findFieldsetLegend(FieldsetFindLegendOption = FieldsetIgnoreFloatingOrOutOfFlow) const;

@@ -173,9 +173,6 @@ public:
 
     // Creates a scope where this object will assert on calls to setNeedsLayout().
     class SetLayoutNeededForbiddenScope;
-
-    // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline children.
-    virtual RenderBlock* firstLineBlock() const;
     
     // RenderObject tree manipulation
     //////////////////////////////////////////
@@ -946,7 +943,6 @@ private:
         ADD_BOOLEAN_BITFIELD(paintContainmentApplies, PaintContainmentApplies);
 
         // From RenderElement
-        std::unique_ptr<RenderStyle> cachedFirstLineStyle;
         std::unique_ptr<ReferencedSVGResources> referencedSVGResources;
         WeakPtr<RenderBlockFlow> backdropRenderer;
     };

@@ -117,7 +117,6 @@ inline RenderElement::RenderElement(ContainerNode& elementOrDocument, RenderStyl
     , m_hasContinuationChainNode(false)
     , m_isContinuation(false)
     , m_isFirstLetter(false)
-    , m_hasValidCachedFirstLineStyle(false)
     , m_renderBlockHasMarginBeforeQuirk(false)
     , m_renderBlockHasMarginAfterQuirk(false)
     , m_renderBlockShouldForceRelayoutChildren(false)
@@ -224,62 +223,21 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     return nullptr;
 }
 
-std::unique_ptr<RenderStyle> RenderElement::computeFirstLineStyle() const
-{
-    ASSERT(view().usesFirstLineRules());
-
-    RenderElement& rendererForFirstLineStyle = isBeforeOrAfterContent() ? *parent() : const_cast<RenderElement&>(*this);
-
-    if (rendererForFirstLineStyle.isRenderBlockFlow() || rendererForFirstLineStyle.isRenderButton()) {
-        RenderBlock* firstLineBlock = rendererForFirstLineStyle.firstLineBlock();
-        if (!firstLineBlock)
-            return nullptr;
-        auto* firstLineStyle = firstLineBlock->getCachedPseudoStyle(PseudoId::FirstLine, &style());
-        if (!firstLineStyle)
-            return nullptr;
-        return RenderStyle::clonePtr(*firstLineStyle);
-    }
-
-    if (!rendererForFirstLineStyle.isRenderInline())
-        return nullptr;
-
-    auto& parentStyle = rendererForFirstLineStyle.parent()->firstLineStyle();
-    if (&parentStyle == &rendererForFirstLineStyle.parent()->style())
-        return nullptr;
-
-    if (rendererForFirstLineStyle.isAnonymous()) {
-        auto* textRendererWithDisplayContentsParent = RenderText::findByDisplayContentsInlineWrapperCandidate(rendererForFirstLineStyle);
-        if (!textRendererWithDisplayContentsParent)
-            return nullptr;
-        auto* composedTreeParentElement = textRendererWithDisplayContentsParent->textNode()->parentElementInComposedTree();
-        if (!composedTreeParentElement)
-            return nullptr;
-
-        auto style = composedTreeParentElement->styleResolver().styleForElement(*composedTreeParentElement, { &parentStyle }).renderStyle;
-        ASSERT(style->display() == DisplayType::Contents);
-
-        // We act as if there was an unstyled <span> around the text node. Only styling happens via inheritance.
-        auto firstLineStyle = RenderStyle::createPtr();
-        firstLineStyle->inheritFrom(*style);
-        return firstLineStyle;
-    }
-
-    return rendererForFirstLineStyle.element()->styleResolver().styleForElement(*element(), { &parentStyle }).renderStyle;
-}
-
 const RenderStyle& RenderElement::firstLineStyle() const
 {
-    if (!view().usesFirstLineRules())
+    // FIXME: It would be better to just set anonymous block first-line styles correctly.
+    if (isAnonymousBlock()) {
+        if (!previousInFlowSibling()) {
+            if (auto* firstLineStyle = parent()->style().getCachedPseudoStyle(PseudoId::FirstLine))
+                return *firstLineStyle;
+        }
         return style();
-
-    if (!m_hasValidCachedFirstLineStyle) {
-        auto firstLineStyle = computeFirstLineStyle();
-        if (firstLineStyle || hasRareData())
-            const_cast<RenderElement&>(*this).ensureRareData().cachedFirstLineStyle = WTFMove(firstLineStyle);
-        m_hasValidCachedFirstLineStyle = true;
     }
 
-    return (hasRareData() && rareData().cachedFirstLineStyle) ? *rareData().cachedFirstLineStyle : style();
+    if (auto* firstLineStyle = style().getCachedPseudoStyle(PseudoId::FirstLine))
+        return *firstLineStyle;
+
+    return style();
 }
 
 StyleDifference RenderElement::adjustStyleDifference(StyleDifference diff, OptionSet<StyleDifferenceContextSensitiveProperty> contextSensitiveProperties) const
@@ -805,16 +763,6 @@ static inline bool rendererHasBackground(const RenderElement* renderer)
     return renderer && renderer->hasBackground();
 }
 
-void RenderElement::invalidateCachedFirstLineStyle()
-{
-    if (!m_hasValidCachedFirstLineStyle)
-        return;
-    m_hasValidCachedFirstLineStyle = false;
-    // Invalidate the subtree as descendant's first line style may depend on ancestor's.
-    for (auto& descendant : descendantsOfType<RenderElement>(*this))
-        descendant.m_hasValidCachedFirstLineStyle = false;
-}
-
 void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
     ASSERT(settings().shouldAllowUserInstalledFonts() || newStyle.fontDescription().shouldAllowUserInstalledFonts() == AllowUserInstalledFonts::No);
@@ -884,9 +832,6 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
             setFloating(false);
             clearPositionedState();
         }
-
-        if (newStyle.hasPseudoStyle(PseudoId::FirstLine) || oldStyle->hasPseudoStyle(PseudoId::FirstLine))
-            invalidateCachedFirstLineStyle();
 
         setHorizontalWritingMode(true);
         setHasVisibleBoxDecorations(false);

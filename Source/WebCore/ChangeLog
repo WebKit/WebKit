@@ -1,3 +1,58 @@
+2022-03-05  Antti Koivisto  <antti@apple.com>
+
+        Resolve ::first-line style eagerly
+        https://bugs.webkit.org/show_bug.cgi?id=237362
+
+        Reviewed by Alan Bujtas.
+
+        Compute ::first-line style during style resolution instead of lazily in render tree.
+        This fixes bugs and clarifies the architecture in ways that a helpful for features like
+        container queries.
+
+        As a side effect it also makes ::first-line style animatable.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::firstLineBlock const): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::firstLineStyle const):
+        (WebCore::RenderElement::styleWillChange):
+        (WebCore::RenderElement::computeFirstLineStyle const): Deleted.
+        (WebCore::RenderElement::invalidateCachedFirstLineStyle): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::firstLineBlock const): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::firstLineBlock const): Deleted.
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::firstLineBlock const): Deleted.
+        * rendering/RenderTable.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::findByDisplayContentsInlineWrapperCandidate): Deleted.
+        * rendering/RenderText.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getCachedPseudoStyle const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::generatesBox):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::firstLineBlock const): Deleted.
+        * rendering/svg/RenderSVGText.h:
+        * rendering/updating/RenderTreeUpdaterGeneratedContent.cpp:
+        (WebCore::RenderTreeUpdater::GeneratedContent::updatePseudoElement):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::resolvePseudoElement):
+        (WebCore::Style::TreeResolver::resolveInheritedFirstLinePseudoElement):
+        (WebCore::Style::TreeResolver::makeResolutionContextForInheritedFirstLine):
+        (WebCore::Style::TreeResolver::boxGeneratingParent const const):
+        (WebCore::Style::TreeResolver::parentBoxStyle const):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        (WebCore::Style::TreeResolver::resolvePseudoStyle): Deleted.
+        * style/StyleTreeResolver.h:
+
 2022-03-05  Alan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] RenderInline should use ADD_REASONS_AND_RETURN_IF_NEEDED

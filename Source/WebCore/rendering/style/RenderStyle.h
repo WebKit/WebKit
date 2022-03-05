@@ -2477,4 +2477,9 @@ inline bool pseudoElementRendererIsNeeded(const RenderStyle* style)
     return style && style->display() != DisplayType::None && style->contentData();
 }
 
+inline bool generatesBox(const RenderStyle& style)
+{
+    return style.display() != DisplayType::None && style.display() != DisplayType::Contents;
+}
+
 } // namespace WebCore

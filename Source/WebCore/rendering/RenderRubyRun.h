@@ -57,8 +57,6 @@ public:
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
 
-    RenderBlock* firstLineBlock() const override;
-
     void getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, float& startOverhang, float& endOverhang) const;
 
     static RenderPtr<RenderRubyRun> staticCreateRubyRun(const RenderObject* parentRuby);

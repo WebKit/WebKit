@@ -491,11 +491,6 @@ RenderBox* RenderObject::enclosingScrollableContainerForSnapping() const
     return document().documentElement() ? document().documentElement()->renderBox() : nullptr;
 }
 
-RenderBlock* RenderObject::firstLineBlock() const
-{
-    return nullptr;
-}
-
 static inline bool objectIsRelayoutBoundary(const RenderElement* object)
 {
     // FIXME: In future it may be possible to broaden these conditions in order to improve performance.

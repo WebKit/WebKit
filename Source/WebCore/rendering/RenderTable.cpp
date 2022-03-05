@@ -1486,11 +1486,6 @@ RenderTableCell* RenderTable::cellAfter(const RenderTableCell* cell) const
     return cell->section()->primaryCellAt(cell->rowIndex(), effCol);
 }
 
-RenderBlock* RenderTable::firstLineBlock() const
-{
-    return nullptr;
-}
-
 LayoutUnit RenderTable::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     return valueOrCompute(firstLineBaseline(), [&] {

@@ -81,8 +81,6 @@ private:
     const AffineTransform& localToParentTransform() const override { return m_localTransform; }
     AffineTransform localTransform() const override { return m_localTransform; }
 
-    RenderBlock* firstLineBlock() const override;
-
     bool shouldHandleSubtreeMutations() const;
 
     bool m_needsReordering : 1;

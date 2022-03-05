@@ -405,9 +405,6 @@ RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
     if (!m_cachedPseudoStyles || !m_cachedPseudoStyles->size())
         return nullptr;
 
-    if (styleType() != PseudoId::None) 
-        return nullptr;
-
     for (auto& pseudoStyle : *m_cachedPseudoStyles) {
         if (pseudoStyle->styleType() == pid)
             return pseudoStyle.get();

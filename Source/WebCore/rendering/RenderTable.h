@@ -307,8 +307,6 @@ private:
     void invalidateCachedColumns();
 
     void invalidateCachedColumnOffsets();
-
-    RenderBlock* firstLineBlock() const final;
     
     void updateLogicalWidth() final;
 

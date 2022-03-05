@@ -147,10 +147,11 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
 
         Style::ElementUpdate contentsUpdate { WTFMove(contentsStyle), styleChange, elementUpdate.recompositeLayer };
         m_updater.updateElementRenderer(*pseudoElement, WTFMove(contentsUpdate));
-        pseudoElement->storeDisplayContentsStyle(RenderStyle::clonePtr(*updateStyle));
+        auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
+        pseudoElement->storeDisplayContentsStyle(makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)));
     } else {
-        auto pseudoElementUpdateStyle = RenderStyle::clonePtr(*updateStyle);
-        Style::ElementUpdate pseudoElementUpdate { WTFMove(pseudoElementUpdateStyle), styleChange, elementUpdate.recompositeLayer };
+        auto pseudoElementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*updateStyle);
+        Style::ElementUpdate pseudoElementUpdate { makeUnique<RenderStyle>(WTFMove(pseudoElementUpdateStyle)), styleChange, elementUpdate.recompositeLayer };
         m_updater.updateElementRenderer(*pseudoElement, WTFMove(pseudoElementUpdate));
         ASSERT(!pseudoElement->hasDisplayContents());
     }

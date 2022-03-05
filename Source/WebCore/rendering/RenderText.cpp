@@ -1821,18 +1821,4 @@ void RenderText::setInlineWrapperForDisplayContents(RenderInline* wrapper)
     m_hasInlineWrapperForDisplayContents = true;
 }
 
-RenderText* RenderText::findByDisplayContentsInlineWrapperCandidate(RenderElement& renderer)
-{
-    auto* firstChild = renderer.firstChild();
-    if (!is<RenderText>(firstChild))
-        return nullptr;
-    auto& textRenderer = downcast<RenderText>(*firstChild);
-    if (textRenderer.inlineWrapperForDisplayContents() != &renderer)
-        return nullptr;
-    ASSERT(textRenderer.textNode());
-    ASSERT(renderer.firstChild() == renderer.lastChild());
-    return &textRenderer;
-
-}
-
 } // namespace WebCore

@@ -85,11 +85,6 @@ RenderRubyBase* RenderRubyRun::rubyBase() const
     return child && child->isRubyBase() ? static_cast<RenderRubyBase*>(child) : nullptr;
 }
 
-RenderBlock* RenderRubyRun::firstLineBlock() const
-{
-    return nullptr;
-}
-
 bool RenderRubyRun::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
     return child.isInline() || child.isRubyText();

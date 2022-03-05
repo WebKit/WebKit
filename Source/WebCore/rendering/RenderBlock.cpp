@@ -2571,27 +2571,6 @@ static inline bool isRenderBlockFlowOrRenderButton(RenderElement& renderElement)
     return renderElement.isRenderBlockFlow() || renderElement.isRenderButton();
 }
 
-RenderBlock* RenderBlock::firstLineBlock() const
-{
-    RenderBlock* firstLineBlock = const_cast<RenderBlock*>(this);
-    bool hasPseudo = false;
-    while (true) {
-        hasPseudo = firstLineBlock->style().hasPseudoStyle(PseudoId::FirstLine);
-        if (hasPseudo)
-            break;
-        RenderElement* parentBlock = firstLineBlock->parent();
-        if (firstLineBlock->isReplacedOrInlineBlock() || firstLineBlock->isFloating()
-            || !parentBlock || parentBlock->firstChild() != firstLineBlock || !isRenderBlockFlowOrRenderButton(*parentBlock))
-            break;
-        firstLineBlock = downcast<RenderBlock>(parentBlock);
-    } 
-    
-    if (!hasPseudo)
-        return nullptr;
-    
-    return firstLineBlock;
-}
-
 static inline RenderBlock* findFirstLetterBlock(RenderBlock* start)
 {
     RenderBlock* firstLetterBlock = start;
