@@ -1,3 +1,13 @@
+2022-03-05  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Do not bail out on IFC content with floats inside.
+        https://bugs.webkit.org/show_bug.cgi?id=237494
+
+        Reviewed by Antti Koivisto.
+
+        * platform/ios/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+        * platform/mac/css2.1/t0905-c5525-fltcont-00-d-g-expected.txt:
+
 2022-03-05  Antti Koivisto  <antti@apple.com>
 
         Resolve ::first-line style eagerly

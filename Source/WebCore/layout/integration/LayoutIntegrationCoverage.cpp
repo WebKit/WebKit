@@ -461,7 +461,7 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
     return reasons;
 }
 
-static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, const RenderObject& child, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
 
@@ -470,11 +470,6 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
             SET_REASON_AND_RETURN_IF_NEEDED(FlowTextIsRenderCounter, reasons, includeReasons);
 
         return reasons;
-    }
-
-    if (flow.containsFloats()) {
-        // Non-text content may stretch the line and we don't yet have support for dynamic float avoiding (as the line grows).
-        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
     }
 
     if (is<RenderLineBreak>(child))
@@ -590,7 +585,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     auto hasSeenInlineBox = false;
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
-        if (auto childReasons = canUseForChild(flow, *walker.current(), includeReasons))
+        if (auto childReasons = canUseForChild(*walker.current(), includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
         hasSeenInlineBox = hasSeenInlineBox || is<RenderInline>(*walker.current());
     }

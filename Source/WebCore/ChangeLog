@@ -1,3 +1,16 @@
+2022-03-05  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Do not bail out on IFC content with floats inside.
+        https://bugs.webkit.org/show_bug.cgi?id=237494
+
+        Reviewed by Antti Koivisto.
+
+        We have support for such content now.
+        (This gives a noticeable coverage boost on PLT5 content.) 
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForChild):
+
 2022-03-05  Antti Koivisto  <antti@apple.com>
 
         Resolve ::first-line style eagerly
