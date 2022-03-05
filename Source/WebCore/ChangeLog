@@ -1,3 +1,19 @@
+2022-03-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize the padding in StyleRareInheritedData
+        https://bugs.webkit.org/show_bug.cgi?id=237488
+
+        Reviewed by Cameron McCormack.
+
+        Shrink StyleRareInheritedData from 280 bytes to 264 bytes on macOS.
+        
+        Also fix a missing comparison of wordSpacing in operator==.
+
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+
 2022-03-04  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Protect incoming object with Ref in AXObjectCache::textChanged

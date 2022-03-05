@@ -37,9 +37,9 @@
 namespace WebCore {
 
 struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<GreaterThanOrSameSizeAsStyleRareInheritedData> {
+    float firstFloat;
     void* styleImage;
     Color firstColor;
-    float firstFloat;
     Color colors[10];
     void* ownPtrs[1];
     AtomString atomStrings[6];
@@ -76,13 +76,14 @@ COMPILE_ASSERT(sizeof(StyleRareInheritedData) <= sizeof(GreaterThanOrSameSizeAsS
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRareInheritedData);
 
 StyleRareInheritedData::StyleRareInheritedData()
-    : listStyleImage(RenderStyle::initialListStyleImage())
+    : textStrokeWidth(RenderStyle::initialTextStrokeWidth())
+    , listStyleImage(RenderStyle::initialListStyleImage())
     , listStyleStringValue(RenderStyle::initialListStyleStringValue())
-    , textStrokeWidth(RenderStyle::initialTextStrokeWidth())
     , indent(RenderStyle::initialTextIndent())
     , effectiveZoom(RenderStyle::initialZoom())
     , textUnderlineOffset(RenderStyle::initialTextUnderlineOffset())
     , textDecorationThickness(RenderStyle::initialTextDecorationThickness())
+    , miterLimit(RenderStyle::initialStrokeMiterLimit())
     , customProperties(StyleCustomPropertyData::create())
     , widows(RenderStyle::initialWidows())
     , orphans(RenderStyle::initialOrphans())
@@ -142,10 +143,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , effectiveTouchActions(RenderStyle::initialTouchActions())
     , strokeWidth(RenderStyle::initialStrokeWidth())
     , strokeColor(RenderStyle::initialStrokeColor())
-    , miterLimit(RenderStyle::initialStrokeMiterLimit())
-    , hyphenationLimitBefore(-1)
-    , hyphenationLimitAfter(-1)
-    , hyphenationLimitLines(-1)
+#if ENABLE(DARK_MODE_CSS)
+    , colorScheme(RenderStyle::initialColorScheme())
+#endif
     , appleColorFilter(StyleFilterData::create())
     , lineGrid(RenderStyle::initialLineGrid())
     , tabSize(RenderStyle::initialTabSize())
@@ -158,18 +158,15 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(RenderStyle::initialTapHighlightColor())
 #endif
-#if ENABLE(DARK_MODE_CSS)
-    , colorScheme(RenderStyle::initialColorScheme())
-#endif
 {
 }
 
 inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     : RefCounted<StyleRareInheritedData>()
+    , textStrokeWidth(o.textStrokeWidth)
     , listStyleImage(o.listStyleImage)
     , listStyleStringValue(o.listStyleStringValue)
     , textStrokeColor(o.textStrokeColor)
-    , textStrokeWidth(o.textStrokeWidth)
     , textFillColor(o.textFillColor)
     , textEmphasisColor(o.textEmphasisColor)
     , visitedLinkTextStrokeColor(o.visitedLinkTextStrokeColor)
@@ -184,6 +181,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , effectiveZoom(o.effectiveZoom)
     , textUnderlineOffset(o.textUnderlineOffset)
     , textDecorationThickness(o.textDecorationThickness)
+    , miterLimit(o.miterLimit)
     , customProperties(o.customProperties)
     , widows(o.widows)
     , orphans(o.orphans)
@@ -245,11 +243,13 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , strokeWidth(o.strokeWidth)
     , strokeColor(o.strokeColor)
     , visitedLinkStrokeColor(o.visitedLinkStrokeColor)
-    , miterLimit(o.miterLimit)
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
     , hyphenationLimitLines(o.hyphenationLimitLines)
+#if ENABLE(DARK_MODE_CSS)
+    , colorScheme(o.colorScheme)
+#endif
     , textEmphasisCustomMark(o.textEmphasisCustomMark)
     , appleColorFilter(o.appleColorFilter)
     , lineGrid(o.lineGrid)
@@ -262,9 +262,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(o.tapHighlightColor)
-#endif
-#if ENABLE(DARK_MODE_CSS)
-    , colorScheme(o.colorScheme)
 #endif
 {
 }
@@ -297,6 +294,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && effectiveZoom == o.effectiveZoom
         && textUnderlineOffset == o.textUnderlineOffset
         && textDecorationThickness == o.textDecorationThickness
+        && wordSpacing == o.wordSpacing
+        && miterLimit == o.miterLimit
         && widows == o.widows
         && orphans == o.orphans
         && hasAutoWidows == o.hasAutoWidows
@@ -313,15 +312,15 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 #if ENABLE(TEXT_AUTOSIZING)
         && textSizeAdjust == o.textSizeAdjust
 #endif
-#if ENABLE(DARK_MODE_CSS)
-        && colorScheme == o.colorScheme
-#endif
         && userSelect == o.userSelect
         && speakAs == o.speakAs
         && hyphens == o.hyphens
         && hyphenationLimitBefore == o.hyphenationLimitBefore
         && hyphenationLimitAfter == o.hyphenationLimitAfter
         && hyphenationLimitLines == o.hyphenationLimitLines
+#if ENABLE(DARK_MODE_CSS)
+        && colorScheme == o.colorScheme
+#endif
         && textCombine == o.textCombine
         && textEmphasisFill == o.textEmphasisFill
         && textEmphasisMark == o.textEmphasisMark
@@ -373,7 +372,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && strokeWidth == o.strokeWidth
         && strokeColor == o.strokeColor
         && visitedLinkStrokeColor == o.visitedLinkStrokeColor
-        && miterLimit == o.miterLimit
         && customProperties == o.customProperties
         && arePointingToEqualData(listStyleImage, o.listStyleImage)
         && listStyleStringValue == o.listStyleStringValue;

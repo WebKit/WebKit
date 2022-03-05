@@ -72,11 +72,12 @@ public:
 
     bool hasColorFilters() const;
 
+    float textStrokeWidth;
+
     RefPtr<StyleImage> listStyleImage;
     AtomString listStyleStringValue;
 
     Color textStrokeColor;
-    float textStrokeWidth;
     Color textFillColor;
     Color textEmphasisColor;
     
@@ -89,7 +90,7 @@ public:
 
     Color accentColor;
 
-    std::unique_ptr<ShadowData> textShadow; // Our text shadow information for shadowed text drawing.
+    std::unique_ptr<ShadowData> textShadow;
     
     RefPtr<CursorList> cursorData;
     Length indent;
@@ -99,6 +100,7 @@ public:
     TextDecorationThickness textDecorationThickness;
     
     Length wordSpacing;
+    float miterLimit;
 
     DataRef<StyleCustomPropertyData> customProperties;
 
@@ -176,12 +178,15 @@ public:
     Length strokeWidth;
     Color strokeColor;
     Color visitedLinkStrokeColor;
-    float miterLimit;
 
     AtomString hyphenationString;
-    short hyphenationLimitBefore;
-    short hyphenationLimitAfter;
-    short hyphenationLimitLines;
+    short hyphenationLimitBefore { -1 };
+    short hyphenationLimitAfter { -1 };
+    short hyphenationLimitLines { -1 };
+
+#if ENABLE(DARK_MODE_CSS)
+    StyleColorScheme colorScheme;
+#endif
 
     AtomString textEmphasisCustomMark;
     RefPtr<QuotesData> quotes;
@@ -200,10 +205,6 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
     Color tapHighlightColor;
-#endif
-
-#if ENABLE(DARK_MODE_CSS)
-    StyleColorScheme colorScheme;
 #endif
 
 private:
