@@ -1,5 +1,18 @@
 2022-03-04  Tyler Wilcock  <tyler_w@apple.com>
 
+        AX: Protect incoming object with Ref in AXObjectCache::textChanged
+        https://bugs.webkit.org/show_bug.cgi?id=237475
+
+        Reviewed by Chris Fleizach.
+
+        This is better practice as ascending the hierarchy could cause
+        the object to get deleted.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::textChanged):
+
+2022-03-04  Tyler Wilcock  <tyler_w@apple.com>
+
         AX: [WebAccessibilityObjectWrapperMac AXAttributeStringSetFont] crashes when given a font with a nil postscript name, font family, or display name
         https://bugs.webkit.org/show_bug.cgi?id=237373
 
