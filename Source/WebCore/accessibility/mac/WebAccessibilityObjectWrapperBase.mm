@@ -46,8 +46,6 @@
 #import "ColorMac.h"
 #import "ContextMenuController.h"
 #import "Editing.h"
-#import "Font.h"
-#import "FontCascade.h"
 #import "FrameSelection.h"
 #import "HTMLNames.h"
 #import "LayoutRect.h"
@@ -578,27 +576,59 @@ static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrStri
         [attrString removeAttribute:UIAccessibilityTokenHeadingLevel range:range];
 }
 
-static void AXAttributeStringSetFont(NSMutableAttributedString* attrString, CTFontRef font, NSRange range)
+// When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
+// To protect against such cases, the range should be validated before adding or removing attributes.
+bool AXAttributedStringRangeIsValid(NSAttributedString *attributedString, const NSRange& range)
 {
-    if (!font)
+    return NSMaxRange(range) <= [attributedString length];
+}
+
+void AXAttributedStringSetFont(NSMutableAttributedString *attributedString, CTFontRef font, const NSRange& range)
+{
+    if (!AXAttributedStringRangeIsValid(attributedString, range))
         return;
 
-    RetainPtr<CFStringRef> fullName = adoptCF(CTFontCopyFullName(font));
-    RetainPtr<CFStringRef> familyName = adoptCF(CTFontCopyFamilyName(font));
+    if (!font) {
+#if PLATFORM(MAC)
+        [attributedString removeAttribute:NSAccessibilityFontTextAttribute range:range];
+#endif
+        return;
+    }
 
-    NSNumber* size = [NSNumber numberWithFloat:CTFontGetSize(font)];
-    CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(font);
-    NSNumber* bold = [NSNumber numberWithBool:(traits & kCTFontTraitBold)];
+    auto fontAttributes = adoptNS([[NSMutableDictionary alloc] init]);
+    auto familyName = adoptCF(CTFontCopyFamilyName(font));
+    NSNumber *size = [NSNumber numberWithFloat:CTFontGetSize(font)];
+#if PLATFORM(IOS_FAMILY)
+    auto fullName = adoptCF(CTFontCopyFullName(font));
     if (fullName)
-        [attrString addAttribute:UIAccessibilityTokenFontName value:(NSString*)fullName.get() range:range];
+        [fontAttributes setValue:bridge_cast(fullName.get()) forKey:UIAccessibilityTokenFontName];
     if (familyName)
-        [attrString addAttribute:UIAccessibilityTokenFontFamily value:(NSString*)familyName.get() range:range];
+        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:UIAccessibilityTokenFontFamily];
     if ([size boolValue])
-        [attrString addAttribute:UIAccessibilityTokenFontSize value:size range:range];
-    if ([bold boolValue] || (traits & kCTFontTraitBold))
-        [attrString addAttribute:UIAccessibilityTokenBold value:@YES range:range];
+        [fontAttributes setValue:size forKey:UIAccessibilityTokenFontSize];
+    auto traits = CTFontGetSymbolicTraits(font);
+    if (traits & kCTFontTraitBold)
+        [fontAttributes setValue:@YES forKey:UIAccessibilityTokenBold];
     if (traits & kCTFontTraitItalic)
-        [attrString addAttribute:UIAccessibilityTokenItalic value:@YES range:range];
+        [fontAttributes setValue:@YES forKey:UIAccessibilityTokenItalic];
+
+    [attributedString addAttributes:fontAttributes.get() range:range];
+#endif
+
+#if PLATFORM(MAC)
+    [fontAttributes setValue:size forKey:NSAccessibilityFontSizeKey];
+
+    if (familyName)
+        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:NSAccessibilityFontFamilyKey];
+    auto postScriptName = adoptCF(CTFontCopyPostScriptName(font));
+    if (postScriptName)
+        [fontAttributes setValue:bridge_cast(postScriptName.get()) forKey:NSAccessibilityFontNameKey];
+    auto displayName = adoptCF(CTFontCopyDisplayName(font));
+    if (displayName)
+        [fontAttributes setValue:bridge_cast(displayName.get()) forKey:NSAccessibilityVisibleNameKey];
+
+    [attributedString addAttribute:NSAccessibilityFontTextAttribute value:fontAttributes.get() range:range];
+#endif
 }
 
 static void AXAttributeStringSetNumber(NSMutableAttributedString* attrString, NSString* attribute, NSNumber* number, NSRange range)
@@ -614,7 +644,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     auto& style = renderer->style();
 
     // set basic font info
-    AXAttributeStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);
+    AXAttributedStringSetFont(attrString, style.fontCascade().primaryFont().getCTFont(), range);
 
     auto decor = style.textDecorationsInEffect();
     if (decor & TextDecorationLine::Underline)

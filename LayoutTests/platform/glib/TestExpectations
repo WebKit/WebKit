@@ -331,6 +331,8 @@ fast/css/accent-color/text.html [ Pass ]
 # Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
+accessibility/svg-font-face.html [ Skip ]
+
 # Need to implement AccessibilityUIElement::hasDocumentRoleAncestor(), AccessibilityUIElement::hasWebApplicationAncestor(),
 # AccessibilityUIElement::isInDescriptionListDetail(), AccessibilityUIElement::isInDescriptionListTerm(), and
 # AccessibilityUIElement::isInCell().

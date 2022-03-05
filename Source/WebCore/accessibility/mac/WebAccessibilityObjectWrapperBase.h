@@ -27,6 +27,7 @@
  */
 
 #import "AccessibilityObjectInterface.h"
+#import "FontPlatformData.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <variant>
 #import <wtf/RefPtr.h>
@@ -56,6 +57,9 @@ static NSString * const UIAccessibilityTokenAttachment = @"UIAccessibilityTokenA
 
 static NSString * const UIAccessibilityTextAttributeContext = @"UIAccessibilityTextAttributeContext";
 static NSString * const UIAccessibilityTextualContextSourceCode = @"UIAccessibilityTextualContextSourceCode";
+
+bool AXAttributedStringRangeIsValid(NSAttributedString *, const NSRange&);
+void AXAttributedStringSetFont(NSMutableAttributedString *, CTFontRef, const NSRange&);
 
 @interface WebAccessibilityObjectWrapperBase : NSObject {
     WebCore::AXCoreObject* m_axObject;

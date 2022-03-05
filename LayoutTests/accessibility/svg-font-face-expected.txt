@@ -1,0 +1,8 @@
+This test ensures that we don't crash when applying a custom SVG font to attributed strings.
+Getting attributed string for range (0, 9)
+PASS: Didn't crash.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

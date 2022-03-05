@@ -1,3 +1,43 @@
+2022-03-04  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: [WebAccessibilityObjectWrapperMac AXAttributeStringSetFont] crashes when given a font with a nil postscript name, font family, or display name
+        https://bugs.webkit.org/show_bug.cgi?id=237373
+
+        Reviewed by Chris Fleizach and Andres Gonzalez.
+
+        [WebAccessibilityObjectWrapperMac AXAttributeStringSetFont] crashes when given a font with a
+        nil postscript name, font family, or display name. This can be
+        triggered with a custom SVG @font-face -- for example:
+
+        @font-face {
+            font-family: 'Litherum';
+            src: url("resources/Litherum.svg") format(svg);
+        }
+        * { font-family: 'Litherum'; }
+
+        We fix this by checking if these values are nil before trying to add
+        them to a dictionary.
+
+        This patch also centralizes application of fonts to attributed strings
+        by moving AXAttributeStringSetFont to the base wrapper. In doing so,
+        we fix a bug where if [WebAccessibilityObjectWrapperBase AXAttributeStringSetStyle] was
+        called from a Mac-context, it set iOS font properties (e.g.
+        UIAccessibilityTokenFontFamily instead of NSAccessibilityFontFamilyKey).
+
+        Test: accessibility/svg-font-face.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (AXAttributedStringRangeIsValid): Added.
+        (AXAttributedStringSetFont): Added.
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (AXAttributeStringSetStyle):
+        (AXAttributedStringAppendText):
+        (AXAttributedStringRangeIsValid):
+        Moved to base wrapper.
+        (AXAttributeStringSetFont):
+        Moved to base wrapper.
+
 2022-03-04  Patrick Angle  <pangle@apple.com>
 
         REGRESSION (r284472): [ Monterey ] http/tests/websocket/tests/hybi/inspector/send-and-recieve-debugger.html is failing

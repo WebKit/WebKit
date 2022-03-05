@@ -1,3 +1,21 @@
+2022-03-04  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: [WebAccessibilityObjectWrapperMac AXAttributeStringSetFont] crashes when given a font with a nil postscript name, font family, or display name
+        https://bugs.webkit.org/show_bug.cgi?id=237373
+
+        Reviewed by Chris Fleizach and Andres Gonzalez.
+
+        * accessibility/resources/Litherum.svg: Added.
+        * accessibility/svg-font-face-expected.txt: Added.
+        * accessibility/svg-font-face.html: Added.
+        * platform/glib/TestExpectations: Skip new test.
+        * platform/ios/TestExpectations: Enable new test.
+        * platform/win/TestExpectations: Skip new test.
+
+        * platform/mac/accessibility/element-line-rects-and-text-expected.txt:
+        Before this patch, [WebAccessibilityObjectWrapperBase AXAttributeStringSetStyle] called the iOS
+        version of AXAttributeStringSetFont. This patch fixes this. The expectation for this test is updated as a result.
+
 2022-03-04  Kate Cheney  <katherine_cheney@apple.com>
 
         about:blank iframes do not always inherit parent CSP
