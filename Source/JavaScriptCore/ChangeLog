@@ -1,3 +1,33 @@
+2022-03-05  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken SuspendExceptionScope and remove redundant VM::DeferExceptionScope.
+        https://bugs.webkit.org/show_bug.cgi?id=237441
+        <rdar://problem/89769627>
+
+        Reviewed by Yusuke Suzuki.
+
+        SuspendExceptionScope was meant to do exactly the same thing that VM::DeferExceptionScope
+        does, except that SuspendExceptionScope hasn't been updated to handle exception
+        handling via VMTraps bits.
+
+        This patch will fix SuspendExceptionScope to work like VM::DeferExceptionScope,
+        and remove the now redundant VM::DeferExceptionScope.  SuspendExceptionScope is
+        the better name here because the scope actually suspends any pending exception.
+        This is different from other Defer scopes where we prevent some new event from
+        arising and defer the event to a later time.
+
+        * interpreter/FrameTracers.h:
+        (JSC::SuspendExceptionScope::SuspendExceptionScope):
+        (JSC::SuspendExceptionScope::~SuspendExceptionScope):
+        * interpreter/Interpreter.cpp:
+        (JSC::UnwindFunctor::notifyDebuggerOfUnwinding):
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::processLogEntries):
+        * runtime/VM.h:
+        (JSC::VM::restorePreviousException): Deleted.
+        (JSC::VM::DeferExceptionScope::DeferExceptionScope): Deleted.
+        (JSC::VM::DeferExceptionScope::~DeferExceptionScope): Deleted.
+
 2022-03-04  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Improve reuse of known register values on ARMv7

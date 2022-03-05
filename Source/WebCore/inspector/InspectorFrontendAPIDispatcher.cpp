@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -259,7 +259,7 @@ ValueOrException InspectorFrontendAPIDispatcher::evaluateExpression(const String
     ASSERT(!m_suspended);
     ASSERT(m_queuedEvaluations.isEmpty());
 
-    JSC::SuspendExceptionScope scope(&m_frontendPage->inspectorController().vm());
+    JSC::SuspendExceptionScope scope(m_frontendPage->inspectorController().vm());
     return m_frontendPage->mainFrame().script().evaluateInWorld(ScriptSourceCode(expression), mainThreadNormalWorld());
 }
 

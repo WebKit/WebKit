@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,20 +35,25 @@ struct EntryFrame;
 
 class SuspendExceptionScope {
 public:
-    SuspendExceptionScope(VM* vm)
+    SuspendExceptionScope(VM& vm)
         : m_vm(vm)
+        , m_exceptionWasSet(vm.m_exception)
+        , m_savedException(vm.m_exception, nullptr)
+        , m_savedLastException(vm.m_lastException, nullptr)
     {
-        auto scope = DECLARE_CATCH_SCOPE(*vm);
-        oldException = scope.exception();
-        scope.clearException();
+        if (m_exceptionWasSet)
+            m_vm.traps().clearTrapBit(VMTraps::NeedExceptionHandling);
     }
     ~SuspendExceptionScope()
     {
-        m_vm->restorePreviousException(oldException);
+        if (m_exceptionWasSet)
+            m_vm.traps().setTrapBit(VMTraps::NeedExceptionHandling);
     }
 private:
-    Exception* oldException;
-    VM* m_vm;
+    VM& m_vm;
+    bool m_exceptionWasSet;
+    SetForScope<Exception*> m_savedException;
+    SetForScope<Exception*> m_savedLastException;
 };
 
 class TopCallFrameSetter {

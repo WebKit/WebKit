@@ -650,7 +650,7 @@ private:
         DeferTermination deferScope(vm);
         auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
-        SuspendExceptionScope scope(&vm);
+        SuspendExceptionScope scope(vm);
         if (callFrame->isAnyWasmCallee()
             || (callFrame->callee().isCell() && callFrame->callee().asCell()->inherits<JSFunction>(vm)))
             debugger->unwindEvent(callFrame);

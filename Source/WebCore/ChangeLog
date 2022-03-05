@@ -1,3 +1,16 @@
+2022-03-05  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken SuspendExceptionScope and remove redundant VM::DeferExceptionScope.
+        https://bugs.webkit.org/show_bug.cgi?id=237441
+        <rdar://problem/89769627>
+
+        Reviewed by Yusuke Suzuki.
+
+        * inspector/InspectorFrontendAPIDispatcher.cpp:
+        (WebCore::InspectorFrontendAPIDispatcher::evaluateExpression):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::evaluateScriptInExtensionTab):
+
 2022-03-05  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Do not bail out on IFC content with floats inside.
