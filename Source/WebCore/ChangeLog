@@ -1,3 +1,24 @@
+2022-03-05  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] RenderInline should use ADD_REASONS_AND_RETURN_IF_NEEDED
+        https://bugs.webkit.org/show_bug.cgi?id=237492
+
+        Reviewed by Antti Koivisto.
+
+        Content inside RenderInline should be accounted for when collecting coverage information.
+        (This patch also has a bit of a printModernLineLayoutCoverage&co refactoring.)
+
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printTextForSubtree):
+        (WebCore::LayoutIntegration::contentLengthForSubtreeStayWithinBlockFlow):
+        (WebCore::LayoutIntegration::contentLengthForBlockFlow):
+        (WebCore::LayoutIntegration::printModernLineLayoutBlockList):
+        (WebCore::LayoutIntegration::printModernLineLayoutCoverage):
+        (WebCore::LayoutIntegration::canUseForChild):
+        (WebCore::LayoutIntegration::textLengthForSubtree): Deleted.
+        (WebCore::LayoutIntegration::collectNonEmptyLeafRenderBlockFlows): Deleted.
+        (WebCore::LayoutIntegration::collectNonEmptyLeafRenderBlockFlowsForCurrentPage): Deleted.
+
 2022-03-05  Youenn Fablet  <youenn@apple.com>
 
         Implement remote-inbound-rtp packetsLost
