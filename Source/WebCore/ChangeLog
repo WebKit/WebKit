@@ -1,3 +1,43 @@
+2022-03-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Replace IntRectExtent with RectEdges<int>
+        https://bugs.webkit.org/show_bug.cgi?id=237495
+
+        Reviewed by Sam Weinig.
+
+        IntRectExtent was just like RectEdges<int>, so remove it.
+
+        Add operator+= for RectEdges<>, and helpers to convert from RectEdges<int> to RectEdges<LayoutUnit>.
+
+        Code that previously added a IntRectExtent to a rect now uses .expand().
+
+        For some reason initializing a RectEdges<T> with arguments std::max<T> fails to
+        compile, so use intermediate variables in two places.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/LengthBox.cpp:
+        (WebCore::operator<<):
+        * platform/LengthBox.h:
+        (WebCore::toLayoutBoxExtent):
+        * platform/RectEdges.h:
+        (WebCore::RectEdges::isZero const):
+        (WebCore::operator+=):
+        * platform/graphics/IntRectExtent.h: Removed.
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::outsets const):
+        * platform/graphics/filters/FilterFunction.h:
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::FilterOperations::outsets const):
+        * platform/graphics/filters/FilterOperations.h:
+        * rendering/CSSFilter.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setFilterBackendNeedsRepaintingInRect):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerFilters.cpp:
+        (WebCore::RenderLayerFilters::beginFilterEffect):
+
 2022-03-05  Alan Bujtas  <zalan@apple.com>
 
         Remove non-standard display:block UA stylesheet rule for <layer>

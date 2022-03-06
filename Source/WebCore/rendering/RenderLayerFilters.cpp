@@ -162,7 +162,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     // For CSSFilter, filterRegion = targetBoundingBox + filter->outsets()
     auto filterRegion = targetBoundingBox;
     if (filter.hasFilterThatMovesPixels())
-        filterRegion += filter.outsets();
+        filterRegion.expand(toLayoutBoxExtent(filter.outsets()));
 
     if (filterRegion.isEmpty())
         return nullptr;

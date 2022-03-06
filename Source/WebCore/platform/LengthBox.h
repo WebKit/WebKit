@@ -65,8 +65,17 @@ public:
 
 using LayoutBoxExtent = RectEdges<LayoutUnit>;
 using FloatBoxExtent = RectEdges<float>;
+using IntBoxExtent = RectEdges<int>;
+
+using IntOutsets = IntBoxExtent;
+
+inline LayoutBoxExtent toLayoutBoxExtent(const IntBoxExtent& extent)
+{
+    return { extent.top(), extent.right(), extent.bottom(), extent.left() };
+}
 
 WTF::TextStream& operator<<(WTF::TextStream&, const LengthBox&);
+WTF::TextStream& operator<<(WTF::TextStream&, const IntBoxExtent&);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatBoxExtent&);
 
 } // namespace WebCore

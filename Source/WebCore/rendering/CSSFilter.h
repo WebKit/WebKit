@@ -26,7 +26,7 @@
 #pragma once
 
 #include "Filter.h"
-#include "IntRectExtent.h"
+#include "LengthBox.h"
 
 namespace WebCore {
 

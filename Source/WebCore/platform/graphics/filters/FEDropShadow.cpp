@@ -64,12 +64,13 @@ FloatRect FEDropShadow::calculateImageRect(const Filter& filter, const FilterIma
 IntOutsets FEDropShadow::outsets(const Filter&) const
 {
     IntSize outsetSize = FEGaussianBlur::calculateOutsetSize({ m_stdX, m_stdY });
-    return {
-        std::max<int>(0, outsetSize.height() - m_dy),
-        std::max<int>(0, outsetSize.width() + m_dx),
-        std::max<int>(0, outsetSize.height() + m_dy),
-        std::max<int>(0, outsetSize.width() - m_dx)
-    };
+
+    int top = std::max<int>(0, outsetSize.height() - m_dy);
+    int right = std::max<int>(0, outsetSize.width() + m_dx);
+    int bottom = std::max<int>(0, outsetSize.height() + m_dy);
+    int left = std::max<int>(0, outsetSize.width() - m_dx);
+
+    return { top, right, bottom, left };
 }
 
 std::unique_ptr<FilterEffectApplier> FEDropShadow::createSoftwareApplier() const

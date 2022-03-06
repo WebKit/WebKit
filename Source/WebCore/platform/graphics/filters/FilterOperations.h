@@ -26,7 +26,7 @@
 #pragma once
 
 #include "FilterOperation.h"
-#include "IntRectExtent.h"
+#include "LengthBox.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

@@ -29,7 +29,7 @@
 #include "FilterImage.h"
 #include "FilterImageVector.h"
 #include "FloatRect.h"
-#include "IntRectExtent.h"
+#include "LengthBox.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/AtomString.h>
 

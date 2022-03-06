@@ -1518,7 +1518,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/IntPoint.h
     platform/graphics/IntPointHash.h
     platform/graphics/IntRect.h
-    platform/graphics/IntRectExtent.h
     platform/graphics/IntRectHash.h
     platform/graphics/IntSize.h
     platform/graphics/IntSizeHash.h

@@ -2053,7 +2053,7 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
         return;
     
     LayoutRect rectForRepaint = rect;
-    rectForRepaint += filterOutsets();
+    rectForRepaint.expand(toLayoutBoxExtent(filterOutsets()));
 
     m_filters->expandDirtySourceRect(rectForRepaint);
     
@@ -2211,7 +2211,7 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
         // paints unfragmented.
         LayoutRect clipRect = layer.boundingBox(&layer);
         expandClipRectForDescendantsAndReflection(clipRect, layer, &layer, transparencyBehavior, paintBehavior);
-        clipRect += layer.filterOutsets();
+        clipRect.expand(toLayoutBoxExtent(layer.filterOutsets()));
         LayoutRect result = transform.mapRect(clipRect);
         if (!paginationLayer)
             return result;
@@ -2227,7 +2227,7 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
     
     LayoutRect clipRect = layer.boundingBox(rootLayer, layer.offsetFromAncestor(rootLayer), transparencyBehavior == HitTestingTransparencyClipBox ? RenderLayer::UseFragmentBoxesIncludingCompositing : RenderLayer::UseFragmentBoxesExcludingCompositing);
     expandClipRectForDescendantsAndReflection(clipRect, layer, rootLayer, transparencyBehavior, paintBehavior);
-    clipRect += layer.filterOutsets();
+    clipRect.expand(toLayoutBoxExtent(layer.filterOutsets()));
 
     return clipRect;
 }
@@ -5105,7 +5105,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         computeLayersUnion(*childLayer);
 
     if (flags.contains(IncludeFilterOutsets) || (flags.contains(IncludePaintedFilterOutsets) && paintsWithFilters()))
-        unionBounds += filterOutsets();
+        unionBounds.expand(toLayoutBoxExtent(filterOutsets()));
 
     if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehavior::Normal)) {
         TransformationMatrix* affineTrans = transform();
