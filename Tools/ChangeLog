@@ -1,3 +1,26 @@
+2022-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Layer tree can get indefinitely frozen if WKWebView is unparented underneath -[UIWindow dealloc]
+        https://bugs.webkit.org/show_bug.cgi?id=237505
+        rdar://85563958
+
+        Reviewed by Tim Horton.
+
+        Add an API test to exercise the bug. This API test is comprised of the following series of steps:
+        1. Create the web view and add it under window #1.
+        2. Post a "did enter background" notification.
+        3. Deallocate window #1 (thereby unparenting the web view in the process).
+        4. Post a "will enter foreground" notification.
+        5. Add the web view under window #2.
+        6. Load some HTML content and wait for a presentation update.
+
+        Before the fix, this test times out because the layer tree is permanently frozen after step (3), due to the
+        `BackgroundApplication` reason, so the presentation update in step (6) never finishes.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/ApplicationStateTracking.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2022-03-04  Sihui Liu  <sihui_liu@apple.com>
 
         Add null check for path in makeAllDirectories

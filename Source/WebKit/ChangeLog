@@ -1,3 +1,49 @@
+2022-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Layer tree can get indefinitely frozen if WKWebView is unparented underneath -[UIWindow dealloc]
+        https://bugs.webkit.org/show_bug.cgi?id=237505
+        rdar://85563958
+
+        Reviewed by Tim Horton.
+
+        It's currently possible for the web page to get permanently stuck in frozen state, due to the
+        `BackgroundApplication` layer tree freeze reason; this occurs when the web view is unparented from the view
+        hierarchy underneath the scope of UIWindow's `-dealloc` method.
+
+        During `-[UIWindow dealloc]`, the backpointer underlying the implementation of `-[UIView window]` is set to `nil`
+        immediately before the subclassing method hook `-willMoveToWindow:` is invoked on the view hierarchy. This means
+        that when `-willMoveToWindow:` is invoked, `self.window` will return `nil`. This, in turn, puts
+        `WKApplicationStateTrackingView` in a bad state because we bail early before resetting `_applicationStateTracker`
+        in the early return below, since we (erroneously) believe that we've already been unparented from the view
+        hierarchy, so we don't need to do anything.
+
+        ```
+        if (!self._contentView.window || newWindow)
+            return;
+        ```
+
+        As a result, if the same web view is eventually moved back into another visible window, `-didMoveToWindow` bails
+        before setting up the `_applicationStateTracker` again, since it already exists from when the previous window
+        was still active. This means `-_applicationWillEnterForeground` is never called when the web view is
+        reintroduced to the view hierarchy, so `LayerTreeFreezeReason::BackgroundApplication` is never lifted.
+
+        To address this, we simply remove the debug assertion for `_applicationStateTracker`, and instead check whether
+        the application state tracker exists or not for the logic of the early return. Doing so also makes the early
+        return in `-willMoveToWindow:` consistent with the logic in one in `-didMoveToWindow`, which already consults
+        `_applicationStateTracker`:
+
+        ```
+        - (void)didMoveToWindow
+        {
+            if (!self._contentView.window || _applicationStateTracker)
+                return;
+        ```
+
+        Test: ApplicationStateTracking.WindowDeallocDoesNotPermanentlyFreezeLayerTree
+
+        * UIProcess/ios/WKApplicationStateTrackingView.mm:
+        (-[WKApplicationStateTrackingView willMoveToWindow:]): See above.
+
 2022-03-06  Eric Carlson  <eric.carlson@apple.com>
 
         Push HTMLMediaElement renderer's contentBox rect to GPU process
