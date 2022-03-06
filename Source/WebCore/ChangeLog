@@ -1,3 +1,23 @@
+2022-03-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Push HTMLMediaElement renderer's contentBox rect to GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=237444
+        rdar://84869202
+
+        Reviewed by Jer Noble.
+
+        No new tests. This is a speculative fix, with new logging, for an issue I haven't
+        been able to reproduce.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateRenderer): Push mediaPlayerContentBoxRect to the
+        media player.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::playerContentBoxRectChanged): Pass rect to platform player.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::playerContentBoxRectChanged):
+
 2022-03-05  Simon Fraser  <simon.fraser@apple.com>
 
         Replace IntRectExtent with RectEdges<int>

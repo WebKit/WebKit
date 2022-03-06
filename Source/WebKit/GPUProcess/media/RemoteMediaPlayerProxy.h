@@ -278,6 +278,7 @@ private:
     bool doesHaveAttribute(const AtomString&, AtomString* = nullptr) const final;
     bool mediaPlayerShouldUsePersistentCache() const final;
     const String& mediaPlayerMediaCacheDirectory() const final;
+    WebCore::LayoutRect mediaPlayerContentBoxRect() const final;
 
     void textTrackRepresentationBoundsChanged(const WebCore::IntRect&) final;
 
@@ -329,10 +330,13 @@ private:
     void mediaPlayerOnNewVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&);
 #endif
 
+    void playerContentBoxRectChanged(const WebCore::LayoutRect&);
+
     bool mediaPlayerPausedOrStalled() const;
     void currentTimeChanged(const MediaTime&);
 
 #if PLATFORM(COCOA)
+    void setVideoInlineSizeIfPossible(const WebCore::FloatSize&);
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
 #endif
@@ -375,6 +379,7 @@ private:
 
     WebCore::FloatSize m_videoInlineSize;
     float m_videoContentScale { 1.0 };
+    WebCore::LayoutRect m_playerContentBoxRect;
 
     bool m_bufferedChanged { true };
     bool m_renderingCanBeAccelerated { false };

@@ -91,6 +91,7 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
 {
     m_typesRequiringHardwareSupport = m_configuration.mediaContentTypesRequiringHardwareSupport;
     m_renderingCanBeAccelerated = m_configuration.renderingCanBeAccelerated;
+    m_playerContentBoxRect = m_configuration.playerContentBoxRect;
     m_player = MediaPlayer::create(*this, m_engineIdentifier);
     if (auto* playerPrivate = m_player->playerPrivate())
         playerPrivate->setResourceOwner(resourceOwner);
@@ -476,6 +477,11 @@ const String& RemoteMediaPlayerProxy::mediaPlayerMediaCacheDirectory() const
         return emptyString();
 
     return m_manager->gpuConnectionToWebProcess()->mediaCacheDirectory();
+}
+
+LayoutRect RemoteMediaPlayerProxy::mediaPlayerContentBoxRect() const
+{
+    return m_playerContentBoxRect;
 }
 
 const Vector<WebCore::ContentType>& RemoteMediaPlayerProxy::mediaContentTypesRequiringHardwareSupport() const
@@ -1127,6 +1133,11 @@ void RemoteMediaPlayerProxy::stopVideoFrameMetadataGathering()
 {
     if (m_player)
         m_player->startVideoFrameMetadataGathering();
+}
+
+void RemoteMediaPlayerProxy::playerContentBoxRectChanged(const WebCore::LayoutRect& contentRect)
+{
+    m_playerContentBoxRect = contentRect;
 }
 
 #if !RELEASE_LOG_DISABLED

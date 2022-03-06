@@ -894,6 +894,9 @@ inline void HTMLMediaElement::updateRenderer()
 
     if (m_mediaControlsHost)
         m_mediaControlsHost->updateCaptionDisplaySizes();
+
+    if (m_player)
+        m_player->playerContentBoxRectChanged(mediaPlayerContentBoxRect());
 }
 
 void HTMLMediaElement::didAttachRenderers()

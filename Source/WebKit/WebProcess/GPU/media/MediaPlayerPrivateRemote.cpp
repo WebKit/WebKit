@@ -1416,6 +1416,11 @@ void MediaPlayerPrivateRemote::stopVideoFrameMetadataGathering()
     connection().send(Messages::RemoteMediaPlayerProxy::StopVideoFrameMetadataGathering(), m_id);
 }
 
+void MediaPlayerPrivateRemote::playerContentBoxRectChanged(const LayoutRect& contentRect)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::PlayerContentBoxRectChanged(contentRect), m_id);
+}
+
 void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest&& request, WebCore::PlatformMediaResourceLoader::LoadOptions options, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!m_mediaResources.contains(remoteMediaResourceIdentifier));

@@ -1778,6 +1778,11 @@ void MediaPlayer::stopVideoFrameMetadataGathering()
     m_private->stopVideoFrameMetadataGathering();
 }
 
+void MediaPlayer::playerContentBoxRectChanged(const LayoutRect& rect)
+{
+    m_private->playerContentBoxRectChanged(rect);
+}
+
 #if PLATFORM(COCOA)
 void MediaPlayer::onNewVideoFrameMetadata(VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)
 {
