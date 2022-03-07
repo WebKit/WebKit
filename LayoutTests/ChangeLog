@@ -1,5 +1,47 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290356. rdar://problem/85765536
+
+    Crash when calling WEBGL_lose_context.loseContext() after the context has been lost
+    https://bugs.webkit.org/show_bug.cgi?id=236966
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-02-23
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    WebGLRenderingContextBase::forceLostContext() would
+    try to synthesize a GL error to the underlying
+    m_context. However, m_context is cleared when a real
+    context loss happens. This happens for example when we
+    simulate a GPU status failure or when we create too
+    many contexts. The m_context is not currently cleared
+    when the page simulates context lost via WEBGL_lose_contexts.loseContext().
+    
+    Test: webgl/lose-context-after-context-lost.html
+    
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::WebGLRenderingContextBase::synthesizeGLError):
+    
+    LayoutTests:
+    
+    * webgl/lose-context-after-context-lost-expected.txt: Added.
+    * webgl/lose-context-after-context-lost.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290356 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Crash when calling WEBGL_lose_context.loseContext() after the context has been lost
+            https://bugs.webkit.org/show_bug.cgi?id=236966
+
+            Reviewed by Dean Jackson.
+
+            * webgl/lose-context-after-context-lost-expected.txt: Added.
+            * webgl/lose-context-after-context-lost.html: Added.
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290306. rdar://problem/88352589
 
     Make pointer-events checks for SVG take in account inert subtrees
