@@ -56,6 +56,7 @@
 #define WIRUserInfoKey                          @"WIRUserInfoKey"
 #define WIRApplicationDictionaryKey             @"WIRApplicationDictionaryKey"
 #define WIRMessageDataKey                       @"WIRMessageDataKey"
+#define WIRMessageDataTypeKey                   @"WIRMessageDataTypeKey"
 #define WIRApplicationGetListingMessage         @"WIRApplicationGetListingMessage"
 #define WIRApplicationWakeUpDebuggablesMessage  @"WIRApplicationWakeUpDebuggablesMessage"
 #define WIRIndicateMessage                      @"WIRIndicateMessage"
@@ -82,6 +83,12 @@
 #define WIRTypeWeb                              @"WIRTypeWeb" // COMPATIBILITY (iOS 13): "Web" was split into "Page" (WebCore::Page) and "WebPage" (WebKit::WebPageProxy).
 #define WIRTypeWebPage                          @"WIRTypeWebPage"
 #define WIRAutomaticallyPause                   @"WIRAutomaticallyPause"
+#define WIRMessageDataTypeChunkSupportedKey     @"WIRMessageDataTypeChunkSupportedKey"
+
+// Allowed values for WIRMessageDataTypeKey.
+#define WIRMessageDataTypeFull                  @"WIRMessageDataTypeFull"
+#define WIRMessageDataTypeChunk                 @"WIRMessageDataTypeChunk"
+#define WIRMessageDataTypeFinalChunk            @"WIRMessageDataTypeFinalChunk"
 
 // Allowed values for WIRAutomationAvailabilityKey.
 #define WIRAutomationAvailabilityNotAvailable     @"WIRAutomationAvailabilityNotAvailable"
