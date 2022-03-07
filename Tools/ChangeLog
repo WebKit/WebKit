@@ -1,3 +1,36 @@
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r288310. rdar://problem/80352256
+
+    [ iOS15 ] TestWebKitAPI.WebKit.ServerTrust and TestWebKitAPI.WebKit.FastServerTrust tests timing out
+    https://bugs.webkit.org/show_bug.cgi?id=231320
+    <rdar://80352256>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2022-01-20
+    Reviewed by Chris Dumez.
+    
+    SecTrustCopyCertificateChain returns a CFArrayRef of SecCertificateRef, not CFData.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+    (verifyCertificateAndPublicKey):
+    (TestWebKitAPI::TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288310 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-20  Alex Christensen  <achristensen@webkit.org>
+
+            [ iOS15 ] TestWebKitAPI.WebKit.ServerTrust and TestWebKitAPI.WebKit.FastServerTrust tests timing out
+            https://bugs.webkit.org/show_bug.cgi?id=231320
+            <rdar://80352256>
+
+            Reviewed by Chris Dumez.
+
+            SecTrustCopyCertificateChain returns a CFArrayRef of SecCertificateRef, not CFData.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+            (verifyCertificateAndPublicKey):
+            (TestWebKitAPI::TEST):
+
 2022-03-01  Russell Epstein  <repstein@apple.com>
 
         Revert r289282. rdar://problem/88876661

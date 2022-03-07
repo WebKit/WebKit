@@ -452,7 +452,7 @@ static void verifyCertificateAndPublicKey(SecTrustRef trust)
     EXPECT_EQ(1, SecTrustGetCertificateCount(trust));
 
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
-    auto certificate = adoptCF((CFDataRef)CFArrayGetValueAtIndex(adoptCF(SecTrustCopyCertificateChain(trust)).get(), 0));
+    auto certificate = adoptCF(SecCertificateCopyData((SecCertificateRef)CFArrayGetValueAtIndex(adoptCF(SecTrustCopyCertificateChain(trust)).get(), 0)));
 #else
     auto certificate = adoptCF(SecCertificateCopyData(SecTrustGetCertificateAtIndex(trust, 0)));
 #endif
@@ -600,8 +600,6 @@ static void verifyCertificateAndPublicKey(SecTrustRef trust)
 
 namespace TestWebKitAPI {
 
-// FIXME: Re-enable these tests once webkit.org/b/231320 is resolved.
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000)
 TEST(WebKit, ServerTrust)
 {
     HTTPServer server(HTTPServer::respondWithOK, HTTPServer::Protocol::Https);
@@ -631,7 +629,6 @@ TEST(WebKit, FastServerTrust)
     [delegate waitForDidFinishNavigation];
     EXPECT_EQ([delegate authenticationChallengeCount], 1ull);
 }
-#endif // (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 150000)
 
 TEST(WebKit, ErrorSecureCoding)
 {
