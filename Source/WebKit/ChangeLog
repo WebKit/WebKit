@@ -1,5 +1,63 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290305. rdar://problem/89287719
+
+    Rename RenderStyle::userSelectIncludingInert to RenderStyle::effectiveUserSelect
+    https://bugs.webkit.org/show_bug.cgi?id=237033
+    
+    Reviewed by Antti Koivisto.
+    
+    This naming is consistent with other properties (effectiveDisplay/Appearance/PointerEvents/etc.).
+    
+    Source/WebCore:
+    
+    * dom/Node.cpp:
+    (WebCore::computeEditabilityFromComputedStyle):
+    (WebCore::Node::canStartSelection const):
+    * dom/Position.cpp:
+    (WebCore::Position::nodeIsUserSelectNone):
+    (WebCore::Position::nodeIsUserSelectAll):
+    * page/EventHandler.cpp:
+    (WebCore::EventHandler::canMouseDownStartSelect):
+    (WebCore::EventHandler::selectCursor):
+    * page/Frame.cpp:
+    (WebCore::Frame::rangeForPoint):
+    * rendering/RenderElement.cpp:
+    (WebCore::RenderElement::selectionBackgroundColor const):
+    (WebCore::RenderElement::selectionColor const):
+    * rendering/RenderLayer.cpp:
+    (WebCore::RenderLayer::calculateClipRects const):
+    * rendering/RenderObject.cpp:
+    (WebCore::RenderObject::collectSelectionGeometriesInternal):
+    * rendering/style/RenderStyle.h:
+    (WebCore::RenderStyle::effectiveUserSelect const):
+    (WebCore::RenderStyle::userSelectIncludingInert const): Deleted.
+    
+    Source/WebKit:
+    
+    * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+    (WebKit::InjectedBundleNodeHandle::isSelectableTextNode const):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::selectionPositionInformation):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290305 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-22  Tim Nguyen  <ntim@apple.com>
+
+            Rename RenderStyle::userSelectIncludingInert to RenderStyle::effectiveUserSelect
+            https://bugs.webkit.org/show_bug.cgi?id=237033
+
+            Reviewed by Antti Koivisto.
+
+            This naming is consistent with other properties (effectiveDisplay/Appearance/PointerEvents/etc.).
+
+            * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+            (WebKit::InjectedBundleNodeHandle::isSelectableTextNode const):
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::selectionPositionInformation):
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290246. rdar://problem/85811396
 
     Change IPC encoding of boolean type to use one bit
