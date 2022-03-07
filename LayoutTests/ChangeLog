@@ -1,5 +1,48 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290778. rdar://problem/88297045
+
+    macOS Safari 15.2 Audio Echo Issue after camera pause/unpause
+    https://bugs.webkit.org/show_bug.cgi?id=235544
+    <rdar://problem/88297045>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    After https://commits.webkit.org/r275600, the muted state of MediaPlayer would be set to the page muted state
+    without taking into consideration HTMLMediaElement.muted.
+    Update the call site to use effectiveMuted instead.
+    Add internals API to write a corresponding layout test.
+    
+    Test: fast/mediastream/mediastreamtrack-audiovideo-mutepage.html
+    
+    * html/HTMLMediaElement.cpp:
+    * testing/Internals.cpp:
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    LayoutTests:
+    
+    * fast/mediastream/mediastreamtrack-audiovideo-mutepage-expected.txt: Added.
+    * fast/mediastream/mediastreamtrack-audiovideo-mutepage.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290778 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-03  Youenn Fablet  <youenn@apple.com>
+
+            macOS Safari 15.2 Audio Echo Issue after camera pause/unpause
+            https://bugs.webkit.org/show_bug.cgi?id=235544
+            <rdar://problem/88297045>
+
+            Reviewed by Eric Carlson.
+
+            * fast/mediastream/mediastreamtrack-audiovideo-mutepage-expected.txt: Added.
+            * fast/mediastream/mediastreamtrack-audiovideo-mutepage.html: Added.
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290765. rdar://problem/89232969
 
     Throw proper exception on failed removeEntry() calls

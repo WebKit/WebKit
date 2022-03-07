@@ -1,0 +1,4 @@
+
+
+PASS Muting then unmuting a page should not change media element muted state if HTMLMediaElement.muted is true
+
