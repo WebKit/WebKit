@@ -303,10 +303,6 @@ webkit.org/b/236924 svg/gradients/stopAlpha.svg [ ImageOnlyFailure ]
 webkit.org/b/236924 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
 webkit.org/b/236924 svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
 
-# Apple Pay button
-webkit.org/b/236925 fast/css/appearance-apple-pay-button-default-corners.html [ ImageOnlyFailure ]
-webkit.org/b/236925 fast/css/appearance-apple-pay-button.html [ ImageOnlyFailure ]
-
 # Media failures
 webkit.org/b/236926 imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html [ Pass Failure ]
 webkit.org/b/236926 media/video-src-blob-using-open-panel.html [ Timeout Pass ]

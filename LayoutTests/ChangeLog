@@ -1,3 +1,9 @@
+2022-03-07  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        * gpu-process/TestExpectations: Remove tests that were resolved by r290813.
+
 2022-03-07  Oriol Brufau  <obrufau@igalia.com>
 
         Remove duplicated platform expectations for computed-style.html, computed-style-without-renderer.html, getComputedStyle-basic.xhtml
