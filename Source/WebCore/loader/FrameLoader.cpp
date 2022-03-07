@@ -667,7 +667,10 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
     if (clearScriptObjects)
         m_frame.script().clearScriptObjects();
 
-    m_frame.script().enableEval();
+    if (newDocument->contentSecurityPolicy() && !newDocument->contentSecurityPolicy()->evalErrorMessage().isNull())
+        m_frame.script().enableEval(false, newDocument->contentSecurityPolicy()->evalErrorMessage());
+    else
+        m_frame.script().enableEval(true);
 
     m_frame.navigationScheduler().clear();
 
