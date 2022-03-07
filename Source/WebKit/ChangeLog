@@ -1,3 +1,22 @@
+2022-03-07  Chris Dumez  <cdumez@apple.com>
+
+        allow-custom-protocols-navigation sandbox flag.
+        https://bugs.webkit.org/show_bug.cgi?id=237269
+        <rdar://problem/89899736>
+
+        Reviewed by Geoffrey Garen.
+
+        Add support for allow-custom-protocols-navigation iframe sandbox flag to allow sandboxed iframes
+        to navigate to custom protocols, as per:
+        - https://github.com/whatwg/html/pull/7654
+
+        We recently started preventing sandboxed iframes from navigating to custom protocols, which broke
+        Microsoft Teams. We added a quirk for Microsoft Teams which we should be able to drop once they
+        adopt this new sandbox flag.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::frameSandboxAllowsOpeningExternalCustomProtocols):
+
 2022-03-07  Elliott Williams  <emw@apple.com>
 
         DerivedSources.make: Regenerate message receiver sources on Makefile changes

@@ -84,7 +84,7 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask, SandboxFlagsSource 
 bool SecurityContext::isSupportedSandboxPolicy(StringView policy)
 {
     static const char* const supportedPolicies[] = {
-        "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups", "allow-popups-to-escape-sandbox", "allow-top-navigation-by-user-activation", "allow-modals", "allow-storage-access-by-user-activation"
+        "allow-custom-protocols-navigation", "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups", "allow-popups-to-escape-sandbox", "allow-top-navigation-by-user-activation", "allow-modals", "allow-storage-access-by-user-activation"
     };
 
     for (auto* supportedPolicy : supportedPolicies) {
@@ -133,6 +133,8 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& i
             flags &= ~SandboxPropagatesToAuxiliaryBrowsingContexts;
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation-by-user-activation"))
             flags &= ~SandboxTopNavigationByUserActivation;
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-custom-protocols-navigation"))
+            flags &= ~SandboxCustomProtocolsNavigation;
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-modals"))
             flags &= ~SandboxModals;
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-storage-access-by-user-activation"))
