@@ -1,3 +1,47 @@
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287986. rdar://problem/87489048
+
+    Fix a few Objective-C object leaks due to early returns in `init`
+    https://bugs.webkit.org/show_bug.cgi?id=235162
+    <rdar://problem/87489048>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/JavaScriptCore:
+    
+    * API/JSValue.mm:
+    (-[JSValue initWithValue:inContext:]):
+    
+    Source/WebCore:
+    
+    * platform/ios/WebAVPlayerController.mm:
+    (-[WebAVPlayerController init]):
+    
+    Source/WebKit:
+    
+    * UIProcess/ios/WKHoverPlatter.mm:
+    (-[WKHoverPlatter initWithView:delegate:]):
+    
+    Source/WebKitLegacy/mac:
+    
+    * Storage/WebDatabaseQuotaManager.mm:
+    (WebCore::if):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287986 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-13  Tim Horton  <timothy_horton@apple.com>
+
+            Fix a few Objective-C object leaks due to early returns in `init`
+            https://bugs.webkit.org/show_bug.cgi?id=235162
+            <rdar://problem/87489048>
+
+            Reviewed by Wenson Hsieh.
+
+            * Storage/WebDatabaseQuotaManager.mm:
+            (WebCore::if):
+
 2022-03-01  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r290005. rdar://problem/87596724

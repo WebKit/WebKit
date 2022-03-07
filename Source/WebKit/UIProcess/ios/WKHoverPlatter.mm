@@ -93,8 +93,10 @@ static void addAdditionalDismissalAnimations(CALayer *) { }
 - (instancetype)initWithView:(UIView *)view delegate:(id <WKHoverPlatterDelegate>)delegate
 {
     auto parameters = WKHoverPlatterDomain.rootSettings;
-    if (!parameters.platterEnabledForMouse && !parameters.platterEnabledForHover)
+    if (!parameters.platterEnabledForMouse && !parameters.platterEnabledForHover) {
+        [self release];
         return nil;
+    }
 
     self = [super init];
     if (!self)

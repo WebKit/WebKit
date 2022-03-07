@@ -1108,8 +1108,10 @@ JSValueRef valueInternalValue(JSValue * value)
 
 - (JSValue *)initWithValue:(JSValueRef)value inContext:(JSContext *)context
 {
-    if (!value || !context)
+    if (!value || !context) {
+        [self release];
         return nil;
+    }
 
     self = [super init];
     if (!self)

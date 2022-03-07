@@ -35,8 +35,10 @@ using namespace WebCore;
 
 - (id)initWithOrigin:(WebSecurityOrigin *)origin
 {
-    if (!origin)
+    if (!origin) {
+        [self release];
         return nil;
+    }
 
     self = [super init];
     if (!self)
