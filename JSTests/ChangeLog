@@ -1,3 +1,38 @@
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r290265. rdar://problem/88258776
+
+    [JSC] Add explicit exception check after appendWithoutSideEffects
+    https://bugs.webkit.org/show_bug.cgi?id=236986
+    rdar://88258776
+    
+    Reviewed by Saam Barati.
+    
+    JSTests:
+    
+    * stress/array-to-string-oom.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    Add exception check after JSStringJoiner::appendWithoutSideEffects call since JSString::value can throw OOM error.
+    
+    * runtime/ArrayPrototype.cpp:
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/JSStringJoiner.h:
+    (JSC::JSStringJoiner::append):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290265 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Add explicit exception check after appendWithoutSideEffects
+            https://bugs.webkit.org/show_bug.cgi?id=236986
+            rdar://88258776
+
+            Reviewed by Saam Barati.
+
+            * stress/array-to-string-oom.js: Added.
+
 2022-02-09  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r289450. rdar://problem/88483574
