@@ -1,3 +1,15 @@
+2022-03-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS] editing/async-clipboard/* 20 tests are flaky timeouts on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=237372
+        <rdar://problem/89689914>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/kill-old-processes: Kill "Simulator" process (since killing Simulator.app
+        won't do anything), shutdown simulators before killing processes. Check that simulators
+        are shut down before continuing.
+
 2022-03-07  Chris Dumez  <cdumez@apple.com>
 
         Optimize the passing of data across threads
