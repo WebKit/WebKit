@@ -1,5 +1,36 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r288237. rdar://problem/87275093
+
+    WebKit::AuthenticatorPresenterCoordinator() constructor falls through ASSERT_NOT_REACHED()
+    https://bugs.webkit.org/show_bug.cgi?id=234991
+    <rdar://problem/87275093>
+    
+    Reviewed by Darin Adler.
+    
+    Drop unnecessary default: case in the switch statement since it handles all enum values already.
+    
+    * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+    (WebKit::AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288237 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-19  Chris Dumez  <cdumez@apple.com>
+
+            WebKit::AuthenticatorPresenterCoordinator() constructor falls through ASSERT_NOT_REACHED()
+            https://bugs.webkit.org/show_bug.cgi?id=234991
+            <rdar://problem/87275093>
+
+            Reviewed by Darin Adler.
+
+            Drop unnecessary default: case in the switch statement since it handles all enum values already.
+
+            * UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm:
+            (WebKit::AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator):
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287986. rdar://problem/87489048
 
     Fix a few Objective-C object leaks due to early returns in `init`

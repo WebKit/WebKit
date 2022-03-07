@@ -60,8 +60,6 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
         if ((transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc)) && !transports.contains(AuthenticatorTransport::Internal))
             [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
         break;
-    default:
-        ASSERT_NOT_REACHED();
     }
 
     m_presenterDelegate = adoptNS([[WKASCAuthorizationPresenterDelegate alloc] initWithCoordinator:*this]);
