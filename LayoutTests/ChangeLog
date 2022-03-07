@@ -1,5 +1,31 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290385. rdar://problem/70464703
+
+    [Subpixel] imported/w3c/web-platform-tests/css/css-flexbox/auto-margins-001.html fails at certain font sizes
+    https://bugs.webkit.org/show_bug.cgi?id=217643
+    <rdar://problem/70464703>
+    
+    Unreviewed gardening.
+    
+    
+    * platform/ios-simulator-wk2/TestExpectations: It must have progressed at some point.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290385 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-23  Alan Bujtas  <zalan@apple.com>
+
+            [Subpixel] imported/w3c/web-platform-tests/css/css-flexbox/auto-margins-001.html fails at certain font sizes
+            https://bugs.webkit.org/show_bug.cgi?id=217643
+            <rdar://problem/70464703>
+
+            Unreviewed gardening.
+
+            * platform/ios-simulator-wk2/TestExpectations: It must have progressed at some point.
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290356. rdar://problem/85765536
 
     Crash when calling WEBGL_lose_context.loseContext() after the context has been lost
