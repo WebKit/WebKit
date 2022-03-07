@@ -1,5 +1,42 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290197. rdar://problem/88818132
+
+    Stop propagating inertness through iframes in Node::deprecatedIsInert()
+    https://bugs.webkit.org/show_bug.cgi?id=236512
+    
+    Reviewed by Chris Dumez.
+    
+    This is only a bug for Node::deprecatedIsInert(), so it only affects focus. Selection APIs, etc. weren't affected
+    before this bug.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames-expected.txt:
+    
+    Source/WebCore:
+    
+    Test: web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames.html
+    
+    * dom/Node.cpp:
+    (WebCore::Node::deprecatedIsInert const):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290197 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-18  Tim Nguyen  <ntim@apple.com>
+
+            Stop propagating inertness through iframes in Node::deprecatedIsInert()
+            https://bugs.webkit.org/show_bug.cgi?id=236512
+
+            Reviewed by Chris Dumez.
+
+            This is only a bug for Node::deprecatedIsInert(), so it only affects focus. Selection APIs, etc. weren't affected
+            before this bug.
+
+            * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames-expected.txt:
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290164. rdar://problem/89162532
 
     Re-import inert and <dialog> WPT
