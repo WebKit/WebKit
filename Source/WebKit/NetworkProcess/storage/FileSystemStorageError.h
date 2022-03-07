@@ -53,7 +53,7 @@ inline WebCore::Exception convertToException(FileSystemStorageError error)
     case FileSystemStorageError::InvalidModification:
         return WebCore::Exception { WebCore::InvalidModificationError };
     case FileSystemStorageError::InvalidName:
-        return WebCore::Exception { WebCore::UnknownError, "Name is invalid"_s };
+        return WebCore::Exception { WebCore::TypeError, "Name is invalid"_s };
     case FileSystemStorageError::InvalidState:
         return WebCore::Exception { WebCore::InvalidStateError };
     case FileSystemStorageError::TypeMismatch:

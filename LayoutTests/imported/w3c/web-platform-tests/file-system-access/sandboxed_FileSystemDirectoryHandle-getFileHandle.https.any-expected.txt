@@ -6,16 +6,8 @@ FAIL getFileHandle(create=true) returns existing files without erasing promise_t
 FAIL getFileHandle(create=false) when a directory already exists with the same name promise_rejects_dom: function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException TypeMismatchError: property "code" is equal to undefined, expected 17
 FAIL getFileHandle(create=true) when a directory already exists with the same name promise_rejects_dom: function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException TypeMismatchError: property "code" is equal to undefined, expected 17
 PASS getFileHandle() with empty name
-FAIL getFileHandle() with "." name promise_rejects_js: function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL getFileHandle() with ".." name promise_rejects_js: function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL getFileHandle(create=false) with a path separator when the file exists. promise_rejects_js: getFileHandle() must reject names containing "/" function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL getFileHandle(create=true) with a path separator promise_rejects_js: getFileHandle(create=true) must reject names containing "/" function "function () { throw e }" threw object "UnknownError: Name is invalid" ("UnknownError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS getFileHandle() with "." name
+PASS getFileHandle() with ".." name
+PASS getFileHandle(create=false) with a path separator when the file exists.
+PASS getFileHandle(create=true) with a path separator
 

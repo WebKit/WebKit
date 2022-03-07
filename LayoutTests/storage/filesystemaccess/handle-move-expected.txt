@@ -14,8 +14,8 @@ PASS moveFileError.toString() is "TypeMismatchError: The type of an object was i
 Test move to a destination with existing file:
 PASS moveFileError.toString() is "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)."
 Test move with an invalid name:
-PASS moveFileError.toString() is "UnknownError: Name is invalid"
-PASS moveFileError.toString() is "UnknownError: Name is invalid"
+PASS moveFileError.toString() is "TypeError: Name is invalid"
+PASS moveFileError.toString() is "TypeError: Name is invalid"
 PASS successfullyParsed is true
 
 TEST COMPLETE

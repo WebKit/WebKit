@@ -1,5 +1,58 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290765. rdar://problem/89232969
+
+    Throw proper exception on failed removeEntry() calls
+    https://bugs.webkit.org/show_bug.cgi?id=237382
+    <rdar://89232969>
+    
+    Reviewed by Chris Dumez.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any-expected.txt:
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.worker-expected.txt:
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any-expected.txt:
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.worker-expected.txt:
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any-expected.txt:
+    * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.worker-expected.txt:
+    
+    Source/WebKit:
+    
+    Updated existing tests.
+    
+    * NetworkProcess/storage/FileSystemStorageError.h:
+    (WebKit::convertToException):
+    * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+    (WebKit::FileSystemStorageHandle::removeEntry):
+    
+    LayoutTests:
+    
+    * storage/filesystemaccess/handle-move-expected.txt:
+    * storage/filesystemaccess/handle-move-worker-expected.txt:
+    * storage/filesystemaccess/resources/handle-move.js:
+    (async test):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290765 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-02  Sihui Liu  <sihui_liu@apple.com>
+
+            Throw proper exception on failed removeEntry() calls
+            https://bugs.webkit.org/show_bug.cgi?id=237382
+            <rdar://89232969>
+
+            Reviewed by Chris Dumez.
+
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any-expected.txt:
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.worker-expected.txt:
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any-expected.txt:
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getFileHandle.https.any.worker-expected.txt:
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any-expected.txt:
+            * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.worker-expected.txt:
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290554. rdar://problem/83757966
 
     Remove Node::deprecatedIsInert
