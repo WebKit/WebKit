@@ -1,5 +1,32 @@
 2022-03-07  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
+        Add hasTransformOrPerspective() helper to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=237469
+
+        Reviewed by Darin Adler.
+
+        Avoid duplicating the logic to test if a renderer is transformed in
+        multiple places. Currently RenderGeometryMap duplicates the logic to add
+        one extra condition, the presence of a 'perspective' property.
+
+        While I was at it: remove the redundant offsetPath() check in
+        RenderObject::hasTransform(), since RenderStyle::hasTransform()
+        already returns true if offsetPath() is non-null.
+
+        LBSE wants to extend hasTransform() by a new condition: hasSVGTransform().
+        Before this patch, the place in RenderGeometryMap was easy to miss, fix that,
+        by centralizing the logic in one place.
+
+        Covered by existing tests, no change in behaviour.
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::canMapBetweenRenderersViaLayers): Use RenderObject::hasTransformOrPespective().
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::hasTransform const): Remove redundant offsetPath() check.
+        (WebCore::RenderObject::hasTransformOrPespective const): Add new helper.
+
+2022-03-07  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
         [LBSE] Begin layer-aware RenderSVGTransformableContainer implementation
         https://bugs.webkit.org/show_bug.cgi?id=237024
 
