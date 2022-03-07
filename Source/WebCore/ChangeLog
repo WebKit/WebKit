@@ -1,3 +1,13 @@
+2022-03-07  Alberto Garcia  <berto@igalia.com>
+
+        makeprop.pl breaks reproducible builds
+        https://bugs.webkit.org/show_bug.cgi?id=237521
+
+        Reviewed by Carlos Garcia Campos.
+
+        * css/makeprop.pl: Sort hash elements so the output file is always
+        the same across different builds.
+
 2022-03-07  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Add hasTransformOrPerspective() helper to RenderObject
