@@ -1,3 +1,17 @@
+2022-03-07  Michael Saboff  <msaboff@apple.com>
+
+        Catalyst build failure in WebGPU when building with SYSTEM_CONTENT_PATH
+        https://bugs.webkit.org/show_bug.cgi?id=237542
+
+        Reviewed by Saam Barati.
+
+        Updated create-symlink-to-altroot.sh to create the directory containing the output if is doesn't
+        exist in lieu of specifying an output file in the build step.
+        This is the way that other projects are configured.
+
+        * Scripts/create-symlink-to-altroot.sh:
+        * WebGPU.xcodeproj/project.pbxproj:
+
 2022-03-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Use C++ references instead of pointers where applicable
