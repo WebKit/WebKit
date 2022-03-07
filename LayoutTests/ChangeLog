@@ -1,5 +1,51 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289121. rdar://problem/88492251
+
+    Fix App Privacy Report redirect attribution
+    https://bugs.webkit.org/show_bug.cgi?id=236111
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    Test: http/tests/app-privacy-report/user-attribution-redirect.html
+    Test: http/tests/app-privacy-report/app-attribution-redirect.html
+    
+    * platform/network/cf/ResourceRequestCFNet.cpp:
+    (WebCore::ResourceRequest::updateFromDelegatePreservingOldProperties):
+    
+    Source/WebKit:
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+    
+    LayoutTests:
+    
+    * http/tests/app-privacy-report/resources/redirect.js: Added.
+    * http/tests/app-privacy-report/app-attribution-redirect-expected.txt: Added.
+    * http/tests/app-privacy-report/app-attribution-redirect.html: Added.
+    * http/tests/app-privacy-report/user-attribution-redirect-expected.txt: Added.
+    * http/tests/app-privacy-report/user-attribution-redirect.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289121 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-04  Kate Cheney  <katherine_cheney@apple.com>
+
+            Fix App Privacy Report redirect attribution
+            https://bugs.webkit.org/show_bug.cgi?id=236111
+
+            Reviewed by Brent Fulgham.
+
+            * http/tests/app-privacy-report/resources/redirect.js: Added.
+            * http/tests/app-privacy-report/app-attribution-redirect-expected.txt: Added.
+            * http/tests/app-privacy-report/app-attribution-redirect.html: Added.
+            * http/tests/app-privacy-report/user-attribution-redirect-expected.txt: Added.
+            * http/tests/app-privacy-report/user-attribution-redirect.html: Added.
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289101. rdar://problem/87625596
 
     Two bopomofo tone marks are not moved to the correct place in vertical text with a particular bopomofo font
