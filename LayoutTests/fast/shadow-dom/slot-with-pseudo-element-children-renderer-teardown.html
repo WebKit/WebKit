@@ -1,0 +1,19 @@
+<body></body>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+  let div0 = document.createElement('div');
+  let slot0 = document.createElement('slot');
+  div0.append(slot0);
+  let slot1 = document.createElement('slot');
+  div0.append(slot1);
+  slot1.append(document.createElement('q'));
+  let div1 = document.createElement('div');
+  document.body.append(div1);
+  div1.append('');
+  div1.attachShadow({mode: 'open'}).append(div0);
+  document.body.offsetTop;
+  slot0.remove();
+  slot1.remove();
+  document.body.innerHTML = "This test passes if it does not crash.";
+</script>
