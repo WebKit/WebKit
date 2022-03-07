@@ -262,3 +262,30 @@ class TestGitHub(unittest.TestCase):
             self.assertTrue(issue.open(why='Need to revert, fix broke the build'))
             self.assertTrue(issue.opened)
             self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')
+
+    def test_labels(self):
+        with mocks.GitHub(self.URL.split('://')[1]) as mocked:
+            self.assertDictEqual(github.Tracker(self.URL).labels, mocked.DEFAULT_LABELS)
+
+    def test_projects(self):
+        with mocks.GitHub(self.URL.split('://')[1]):
+            self.assertDictEqual(github.Tracker(self.URL).projects, dict())
+
+    def test_create(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
+            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+            GITHUB_EXAMPLE_COM_TOKEN='token',
+        )):
+            created = github.Tracker(self.URL).create('New bug', 'Creating new bug')
+            self.assertEqual(created.id, 4)
+            self.assertEqual(created.title, 'New bug')
+            self.assertEqual(created.description, 'Creating new bug')
+            self.assertTrue(created.opened)
+            self.assertEqual(
+                User.Encoder().default(created.creator),
+                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
+            )
+            self.assertEqual(
+                User.Encoder().default(created.assignee),
+                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
+            )

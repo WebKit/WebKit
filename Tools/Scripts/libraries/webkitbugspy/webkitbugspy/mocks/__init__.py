@@ -21,6 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from .bugzilla import Bugzilla
-from .data import ISSUES, USERS
+from .data import ISSUES, USERS, PROJECTS
 from .github import GitHub
 from .radar import Radar, NoRadar

@@ -32,6 +32,17 @@ from webkitcorepy import mocks
 
 class GitHub(Base, mocks.Requests):
     top = None
+    DEFAULT_LABELS = {
+        'bug': dict(color='d73a4a', description="Something isn't working"),
+        'documentation': dict(color='0075ca', description='Improvements or additions to documentation'),
+        'duplicate': dict(color='cfd3d7', description='This issue or pull request already exists'),
+        'enhancement': dict(color='a2eeef', description='New feature or request'),
+        'good first issue': dict(color='7057ff', description='Good for newcomers'),
+        'help wanted': dict(color='008672', description='Extra attention is needed'),
+        'invalid': dict(color='e4e669', description="This doesn't seem right"),
+        'question': dict(color='d876e3', description='Further information is requested'),
+        'wontfix': dict(color='ffffff', description='This will not be worked on'),
+    }
 
     @classmethod
     def transform_user(cls, user):
@@ -46,7 +57,7 @@ class GitHub(Base, mocks.Requests):
         from datetime import datetime, timedelta
         return datetime.utcfromtimestamp(timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    def __init__(self, hostname='github.example.com/WebKit/WebKit', users=None, issues=None, environment=None):
+    def __init__(self, hostname='github.example.com/WebKit/WebKit', users=None, issues=None, environment=None, labels=None):
         hostname, repo = hostname.split('/', 1)
         self.api_remote = 'api.{hostname}/repos/{repo}'.format(hostname=hostname, repo=repo)
 
@@ -60,6 +71,9 @@ class GitHub(Base, mocks.Requests):
             '{}_USERNAME'.format(prefix): 'username',
             '{}_TOKEN'.format(prefix): 'token',
         })
+
+        if not labels:
+            self.labels = self.DEFAULT_LABELS
 
     def __enter__(self):
         self._environment.__enter__()
@@ -168,7 +182,52 @@ class GitHub(Base, mocks.Requests):
                 event='cross-referenced',
                 source=dict(issue=dict(number=reference)),
             ) for reference in issue.get('references', [])
-        ])
+        ], url=url)
+
+    def _labels(self, url):
+        return mocks.Response.fromJson([
+            dict(
+                name=name,
+                color=details['color'],
+                description=details['description'],
+            ) for name, details in self.labels.items()
+        ], url=url)
+
+    def _create(self, url, credentials, data):
+        user = self.users.get(credentials.username) if credentials else None
+        assignee = self.users.get(data['assignee']) if 'assignee' in data else None
+
+        if not user:
+            return mocks.Response.create404(url=url)
+        if not all((data.get('title'), data.get('body'))):
+            return mocks.Response(status_code=400, url=url)
+
+        id = 1
+        while id in self.issues.keys():
+            id += 1
+
+        issue = dict(
+            id=id,
+            title=data['title'],
+            timestamp=int(time.time()),
+            opened=True,
+            creator=user,
+            assignee=assignee,
+            description=data['body'],
+            comments=[], watchers=[user, assignee] if assignee else [user],
+        )
+        self.issues[id] = issue
+
+        return mocks.Response.fromJson(dict(
+            number=id,
+            title=issue['title'],
+            body=issue['description'],
+            user=dict(login=self.users[issue['creator'].name].username),
+            created_at=self.time_string(issue['timestamp']),
+            state='opened' if issue['opened'] else 'closed',
+            assignee=dict(login=self.users[issue['assignee'].name].username) if issue['assignee'] else None,
+            assignees=[dict(login=self.users[user.name].username) for user in issue.get('watchers', [])],
+        ), url=url)
 
     def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
@@ -193,5 +252,13 @@ class GitHub(Base, mocks.Requests):
         match = re.match(r'{}/issues/(?P<id>\d+)/timeline$'.format(self.api_remote), stripped_url)
         if match and method == 'GET':
             return self._timelines(url, int(match.group('id')))
+
+        match = re.match(r'{}/labels$'.format(self.api_remote), stripped_url)
+        if match and method == 'GET':
+            return self._labels(url)
+
+        match = re.match(r'{}/issues$'.format(self.api_remote), stripped_url)
+        if match and method == 'POST':
+            return self._create(url, auth, json)
 
         return mocks.Response.create404(url)

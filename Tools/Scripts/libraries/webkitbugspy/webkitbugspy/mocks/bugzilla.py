@@ -47,8 +47,8 @@ class Bugzilla(Base, mocks.Requests):
             emails=user.emails,
         )
 
-    def __init__(self, hostname='bugs.example.com', users=None, issues=None, environment=None):
-        Base.__init__(self, users=users, issues=issues)
+    def __init__(self, hostname='bugs.example.com', users=None, issues=None, environment=None, projects=None):
+        Base.__init__(self, users=users, issues=issues, projects=projects)
         mocks.Requests.__init__(self, hostname)
         self._comment_count = 1
 
@@ -245,6 +245,66 @@ class Bugzilla(Base, mocks.Requests):
             url=url,
         )
 
+    def _product_details(self, url, id):
+        for name, product in self.projects.items():
+            if product['id'] != id:
+                continue
+            return mocks.Response.fromJson(
+                dict(products=[dict(
+                    name=name,
+                    description=product['description'],
+                    is_active=True,
+                    components=[dict(
+                        name=component,
+                        description=details['description'],
+                        is_active=True,
+                    ) for component, details in product['components'].items()],
+                    versions=[dict(
+                        name=version,
+                        is_active=True,
+                    ) for version in product['versions']],
+                )]), url=url,
+            )
+
+        return mocks.Response.fromJson(
+            dict(products=[]),
+            url=url,
+        )
+
+    def _create(self, url, credentials, data):
+        user = self._user_for_credentials(credentials)
+        assignee = self.users.get(data['assigned_to']) if 'assigned_to' in data else None
+        if not user:
+            return mocks.Response(status_code=401, url=url)
+
+        if not all((data.get('summary'), data.get('description'), data.get('product'), data.get('component'), data.get('version'))):
+            return mocks.Response(
+                status_code=400,
+                text=json.dumps(dict(message='Failed to create bug')),
+                url=url,
+            )
+
+        id = 1
+        while id in self.issues.keys():
+            id += 1
+
+        self.issues[id] = dict(
+            id=id,
+            title=data['summary'],
+            timestamp=int(time.time()),
+            opened=True,
+            creator=user,
+            assignee=assignee,
+            description=data['description'],
+            comments=[], watchers=[user, assignee] if assignee else [user],
+        )
+
+        return mocks.Response(
+            status_code=200,
+            text=json.dumps(dict(id=id)),
+            url=url,
+        )
+
     def request(self, method, url, data=None, params=None, auth=None, json=None, **kwargs):
         if not url.startswith('http://') and not url.startswith('https://'):
             return mocks.Response.create404(url)
@@ -271,4 +331,17 @@ class Bugzilla(Base, mocks.Requests):
         if match and method == 'POST':
             return self._post_comment(url, int(match.group('id')), match.group('credentials'), json)
 
+        match = re.match(r'{}/rest/product_enterable(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
+        if match and method == 'GET':
+            return mocks.Response.fromJson(dict(
+                ids=[project['id'] for project in self.projects.values()],
+            ), url=url)
+
+        match = re.match(r'{}/rest/product/(?P<id>\d+)(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
+        if match and method == 'GET':
+            return self._product_details(url, int(match.group('id')))
+
+        match = re.match(r'{}/rest/bug(?P<credentials>\?login=\S+\&password=\S+)?$'.format(self.hosts[0]), stripped_url)
+        if match and method == 'POST':
+            return self._create(url, match.group('credentials'), json)
         return mocks.Response.create404(url)

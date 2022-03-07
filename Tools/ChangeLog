@@ -1,3 +1,69 @@
+2022-03-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitbugspy] Allow creation of new issues
+        https://bugs.webkit.org/show_bug.cgi?id=237123
+        <rdar://problem/89388181>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/bugzilla.py:
+        (Tracker.projects): Return a dictionary of projects, components and versions.
+        (Tracker.create): Create a new bug, prompting user for product, component and version
+        if needed.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py:
+        (Tracker.labels): Return a dictionary of all labels associated with the project.
+        (Tracker.projects): Return an empty dictionary.
+        (Tracker.create): Create a new issue.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/__init__.py: Export PROJECT data.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/base.py:
+        (Base.__init__): Mock trackers should define a project dictionary.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/bugzilla.py:
+        (Bugzilla.__init__):
+        (Bugzilla._product_details): Derive product details from project dictionary.
+        (Bugzilla._create): Create a new bug.
+        (Bugzilla.request): Handle requests for product details and bug creation.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/data.py:
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/github.py:
+        (GitHub.__init__):
+        (GitHub._labels): Return a list of project labels.
+        (GitHub._create): Create a new issue.
+        (GitHub.request): Handle requests for labels and issue creation.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/radar.py:
+        (RadarClient.find_components): Mock radarclient's component search API.
+        (RadarClient.create_radar): Mock radarclient's radar creation API.
+        (Radar.Component): Added.
+        (Radar.exceptions): Added.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/radar.py:
+        (Tracker):
+        (Tracker.Encoder.default): Pass 'projects' to radar instances.
+        (Tracker.__init__): Callers should define projects to limit component scope.
+        (Tracker.projects): Search radar components to provide a subset relevant to the declared projects.
+        (Tracker.create): Create a radar, prompting user for component and version if needed.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/bugzilla_unittest.py:
+        (TestBugzilla.test_state_why):
+        (TestBugzilla):
+        (TestBugzilla.test_projects):
+        (TestBugzilla.test_create):
+        (TestBugzilla.test_create_prompt):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/github_unittest.py:
+        (TestGitHub.test_state_why):
+        (TestGitHub):
+        (TestGitHub.test_labels):
+        (TestGitHub.test_projects):
+        (TestGitHub.test_create):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/radar_unittest.py:
+        (TestRadar.test_state_why):
+        (TestRadar):
+        (TestRadar.test_projects):
+        (TestRadar.test_create):
+        (TestRadar.test_create_prompt):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tracker.py:
+        (Tracker.from_json): Pass 'projects' to radar instances.
+        (Tracker.projects): Add base-class implementation.
+        (Tracker.create): Ditto.
+
 2022-03-06  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Fix key expired treatment with Python3

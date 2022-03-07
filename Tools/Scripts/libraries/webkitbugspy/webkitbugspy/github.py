@@ -137,11 +137,11 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         params['per_page'] = params.get('per_page', 100)
         params['page'] = params.get('page', 1)
 
-        url = '{api_url}/repos/{owner}/{name}/issues{path}'.format(
+        url = '{api_url}/repos/{owner}/{name}/{path}'.format(
             api_url=self.api_url,
             owner=self.owner,
             name=self.name,
-            path='/{}'.format(path) if path else '',
+            path='{}'.format(path) if path else '',
         )
         response = requests.get(url, params=params, headers=headers, auth=auth)
         if authenticated is None and not auth and response.status_code // 100 == 4:
@@ -199,7 +199,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         issue._link = '{}/issues/{}'.format(self.url, issue.id)
 
         if member in ('title', 'timestamp', 'creator', 'opened', 'assignee', 'description'):
-            response = self.request(path=issue.id)
+            response = self.request(path='issues/{}'.format(issue.id))
             if response:
                 issue._title = response['title']
                 issue._timestamp = int(calendar.timegm(datetime.strptime(response['created_at'], '%Y-%m-%dT%H:%M:%SZ').timetuple()))
@@ -213,7 +213,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         if member == 'watchers':
             issue._watchers = []
             refs = set()
-            response = self.request(path=issue.id)
+            response = self.request(path='issues/{}'.format(issue.id))
             if response:
                 for assignee in response['assignees']:
                     watcher = self.user(username=assignee['login'])
@@ -235,7 +235,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                     issue._watchers.append(user)
 
         if member == 'comments':
-            response = self.request(path='{}/comments'.format(issue.id))
+            response = self.request(path='issues/{}/comments'.format(issue.id))
             issue._comments = []
             for node in response or []:
                 username = node.get('user', {}).get('login')
@@ -270,7 +270,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                     issue._references.append(candidate)
                     refs.add(candidate.link)
 
-            response = self.request(path='{}/timeline'.format(issue.id))
+            response = self.request(path='issues/{}/timeline'.format(issue.id))
             if response:
                 for event in response:
                     if not event.get('event'):
@@ -357,3 +357,56 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         else:
             issue._comments.append(result)
         return result
+
+    @property
+    @webkitcorepy.decorators.Memoize()
+    def labels(self):
+        response = self.request('labels')
+        result = {}
+        for label in response:
+            if 'name' not in label:
+                continue
+            result[label['name']] = dict(
+                color=label.get('color'),
+                description=label.get('description'),
+            )
+        return result
+
+    @property
+    def projects(self):
+        # FIXME: Should be implemented via tags in GitHub, come up with a standard technique for parsing
+        return dict()
+
+    def create(self, title, description, labels=None, assign=True):
+        if not title:
+            raise ValueError('Must define title to create issue')
+        if not description:
+            raise ValueError('Must define description to create issue')
+
+        for label in labels or []:
+            if label not in self.labels:
+                raise ValueError("'{}' is not a recognized label in '{}'".format(label, self.url))
+
+        data = dict(
+            title=title,
+            body=description,
+        )
+        if labels:
+            data['labels'] = labels
+        if assign:
+            data['assignee'] = self.me().username
+
+        response = requests.post(
+            '{api_url}/repos/{owner}/{name}/issues'.format(
+                api_url=self.api_url,
+                owner=self.owner,
+                name=self.name,
+            ), auth=HTTPBasicAuth(*self.credentials(required=True)),
+            headers=dict(Accept='application/vnd.github.v3+json'),
+            json=data,
+        )
+        if response.status_code // 100 != 2:
+            sys.stderr.write("Failed to create issue: '{}'\n".format(response.json().get('message', '?')))
+            return None
+
+        return self.issue(response.json()['number'])

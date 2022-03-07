@@ -284,3 +284,87 @@ class Tracker(GenericTracker):
         issue._comments.append(result)
 
         return result
+
+    @property
+    @webkitcorepy.decorators.Memoize()
+    def projects(self):
+        response = requests.get('{}/rest/product_enterable{}'.format(self.url, self._login_arguments(required=False)))
+        if response.status_code // 100 != 2:
+            sys.stderr.write("Failed to retrieve project list'\n")
+            return dict()
+
+        result = dict()
+        for id in response.json().get('ids', []):
+            id_response = requests.get('{}/rest/product/{}{}'.format(self.url, id, self._login_arguments(required=False)))
+            if response.status_code // 100 != 2:
+                sys.stderr.write("Failed to query bugzilla about prod '{}'\n".format(id))
+                continue
+            for product in id_response.json()['products']:
+                if not product['is_active']:
+                    continue
+                result[product['name']] = dict(
+                    description=product['description'],
+                    versions=[version['name'] for version in product['versions']],
+                    components=dict(),
+                )
+                for component in product['components']:
+                    if not component['is_active']:
+                        continue
+                    result[product['name']]['components'][component['name']] = dict(description=component['description'])
+
+        return result
+
+    def create(
+        self, title, description,
+        project=None, component=None, version=None, assign=True,
+    ):
+        if not title:
+            raise ValueError('Must define title to create bug')
+        if not description:
+            raise ValueError('Must define description to create bug')
+
+        if not project and len(self.projects.keys()) == 1:
+            project = list(self.projects.keys())[0]
+        elif not project:
+            project = webkitcorepy.Terminal.choose(
+                'What project should the bug be associated with?',
+                options=sorted(self.projects.keys()), numbered=True,
+            )
+        if project not in self.projects:
+            raise ValueError("'{}' is not a recognized product on {}".format(project, self.url))
+
+        if not component and len(self.projects[project]['components'].keys()) == 1:
+            component = list(self.projects[project]['components'].keys())[0]
+        elif not component:
+            component = webkitcorepy.Terminal.choose(
+                "What component in '{}' should the bug be associated with?".format(project),
+                options=sorted(self.projects[project]['components'].keys()), numbered=True,
+            )
+        if component not in self.projects[project]['components']:
+            raise ValueError("'{}' is not a recognized component in '{}'".format(component, project))
+
+        if not version and len(self.projects[project]['versions']) == 1:
+            version = self.projects[project]['versions'][0]
+        elif not version:
+            version = webkitcorepy.Terminal.choose(
+                "What version of '{}' should the bug be associated with?".format(project),
+                options=self.projects[project]['versions'], numbered=True,
+            )
+        if version not in self.projects[project]['versions']:
+            raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
+
+        params = dict(
+            summary=title,
+            description=description,
+            product=project,
+            component=component,
+            version=version,
+        )
+        if assign:
+            params['assigned_to'] = self.me().username
+
+        response = requests.post('{}/rest/bug{}'.format(self.url, self._login_arguments(required=True)), json=params)
+        if response.status_code // 100 != 2:
+            sys.stderr.write("Failed to create bug: {}\n".format(response.json().get('message', '?')))
+            return None
+        return self.issue(response.json()['id'])

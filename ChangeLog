@@ -1,3 +1,13 @@
+2022-03-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitbugspy] Allow creation of new issues
+        https://bugs.webkit.org/show_bug.cgi?id=237123
+        <rdar://problem/89388181>
+
+        Reviewed by Dewei Zhu.
+
+        * metadata/trackers.json: Define project.
+
 2022-03-03  Dan Glastonbury  <djg@apple.com>
 
         Add Dan Glastonbury's name to contributors.json

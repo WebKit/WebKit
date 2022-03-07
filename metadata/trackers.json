@@ -7,5 +7,5 @@
 			"\\Ahttps?://webkit.org/b/(?P<id>\\d+)\\Z"
 		]
 	},
-	{ "type" : "radar" }
+	{ "type" : "radar", "projects" : [ "JavaScriptCore", "WebKit" ] }
 ]

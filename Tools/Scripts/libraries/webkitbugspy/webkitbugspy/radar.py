@@ -24,6 +24,7 @@ import calendar
 import re
 import sys
 import time
+import webkitcorepy
 
 from webkitcorepy import Environment, decorators
 from webkitbugspy import Issue, Tracker as GenericTracker, User, name as library_name, version as library_version
@@ -45,11 +46,44 @@ class Tracker(GenericTracker):
         re.compile(r'<?radar:\/\/(?P<id>\d+)>?'),
     ]
 
+    OTHER_BUG = 'Other Bug'
+    SECURITY = 'Security'
+    CRASH_HANG_DATA_LOSS = 'Crash/Hang/Data Loss'
+    POWER = 'Power'
+    PERFORMANCE = 'Performance'
+    UI_USABILITY = 'UI/Usability'
+    SERIOUS_BUG = 'Serious Bug'
+    FEATURE = 'Feature (New)'
+    ENHANCEMENT = 'Enhancement'
+    TASK = 'Task'
+
+    CLASSIFICATIONS = [
+        OTHER_BUG,
+        SECURITY,
+        CRASH_HANG_DATA_LOSS,
+        POWER,
+        PERFORMANCE,
+        UI_USABILITY,
+        SERIOUS_BUG,
+        FEATURE,
+        ENHANCEMENT,
+        TASK
+    ]
+
+    ALWAYS = 'Always'
+    SOMETIMES = 'Sometimes'
+    RARELY = 'Rarely'
+    UNABLE = 'Unable'
+    DIDNT_TRY = "I Didn't Try"
+    NOT_APPLICABLE = 'Not Applicable'
+
+    REPRODUCIBILITY = [NOT_APPLICABLE, ALWAYS, SOMETIMES, RARELY, UNABLE, DIDNT_TRY]
+
     class Encoder(GenericTracker.Encoder):
         @decorators.hybridmethod
         def default(context, obj):
             if isinstance(obj, Tracker):
-                return dict(type='radar')
+                return dict(type='radar', projects=obj._projects)
             if isinstance(context, type):
                 raise TypeError('Cannot invoke parent class when classmethod')
             return super(Tracker.Encoder, context).default(obj)
@@ -63,8 +97,9 @@ class Tracker(GenericTracker):
         except ImportError:
             return None
 
-    def __init__(self, users=None, authentication=None):
+    def __init__(self, users=None, authentication=None, project=None, projects=None):
         super(Tracker, self).__init__(users=users)
+        self._projects = [project] if project else (projects or [])
 
         self.library = self.radarclient()
         if self.library:
@@ -264,4 +299,104 @@ class Tracker(GenericTracker):
             self.populate(issue, 'comments')
         issue._comments.append(result)
 
+        return result
+
+    @property
+    @webkitcorepy.decorators.Memoize()
+    def projects(self):
+        result = dict()
+        for project in self._projects:
+            result[project] = dict(
+                components=dict(),
+                description=None,
+                versions=[],
+            )
+            for component in self.client.find_components(dict(name=dict(like=project + '%'), isClosed=False)):
+                name = component.name[(len(project)):].lstrip()
+                if not name:
+                    if 'All' not in result[project]['versions']:
+                        result[project]['description'] = component.description
+                    result[project]['versions'].append(component.version)
+                    continue
+
+                if name not in result[project]['components']:
+                    result[project]['components'][name] = dict(description=None, versions=[])
+                if 'All' not in result[project]['versions']:
+                    result[project]['components'][name]['description'] = component.description
+                result[project]['components'][name]['versions'].append(component.version)
+        return result
+
+    def create(
+        self, title, description,
+        project=None, component=None, version=None,
+        classification=None, reproducible=None,
+        assign=True,
+    ):
+        if not title:
+            raise ValueError('Must define title to create bug')
+        if not description:
+            raise ValueError('Must define description to create bug')
+
+        if not project and len(self.projects) == 1:
+            project = list(self.projects.keys())[0]
+        if not project:
+            project = webkitcorepy.Terminal.choose(
+                'What project should the bug be associated with?',
+                options=sorted(self.projects.keys()), numbered=True,
+            )
+
+        components = sorted(self.projects.get(project, {}).get('components', {}).keys())
+        if not component and len(components) == 1:
+            component = components[0]
+        elif not component and components:
+            if self.projects[project]['versions']:
+                components = ['*'] + components
+            component = webkitcorepy.Terminal.choose(
+                "What component in '{}' should the bug be associated with?".format(project),
+                options=components, numbered=True, default=('*' if components[0] == '*' else None),
+            )
+        if not component or component == '*':
+            component = ''
+
+        if component:
+            versions = self.projects.get(project, {}).get('components', {}).get(component, {}).get('versions', [])
+        else:
+            versions = self.projects.get(project, {}).get('versions', [])
+        if not version and len(versions) == 1:
+            version = versions[0]
+        elif not version and versions:
+            version = webkitcorepy.Terminal.choose(
+                "What version of '{}{}' should the bug be associated with?".format(project, (' ' + component) if component else ''),
+                options=versions, numbered=True, default=('All' if 'All' in versions else None),
+            )
+        if not version:
+            version = 'All'
+
+        # Don't perform any checks of project, component or version. Radar defines many more projects than this class
+        # is aware of, if the caller knows better, trust them.
+
+        classification = classification or self.CLASSIFICATIONS[0]
+        if classification not in self.CLASSIFICATIONS:
+            raise ValueError("'{}' is not a valid bug classification".format(classification))
+
+        reproducible = reproducible or self.REPRODUCIBILITY[0]
+        if reproducible not in self.REPRODUCIBILITY:
+            raise ValueError("'{}' is not a valid reproducibility argument".format(classification))
+
+        try:
+            response = self.client.create_radar(dict(
+                title=title,
+                description=description,
+                component=dict(name='{} {}'.format(project, component), version=version),
+                classification=classification,
+                reproducible=reproducible,
+            ))
+        except self.library.exceptions.UnsuccessfulResponseException as e:
+            sys.stderr.write('Failed to create radar:\n')
+            sys.stderr.write('{}\n'.format(e))
+            return None
+
+        result = self.issue(response.id)
+        if assign:
+            result.assign(self.me())
         return result

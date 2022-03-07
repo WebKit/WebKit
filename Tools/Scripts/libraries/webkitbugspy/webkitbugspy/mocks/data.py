@@ -87,3 +87,25 @@ ISSUES = [
         ], watchers=[USERS['Felix Filer'], USERS['Tim Contributor'], USERS['Wilma Watcher']], references=[2],
     ),
 ]
+
+PROJECTS = dict(
+    WebKit=dict(
+        id=1,
+        description='The WebKit browser engine',
+        versions=['Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
+        components=dict(
+            Scrolling=dict(description='Bugs related to main thread and off-main thread scrolling'),
+            SVG=dict(description='For bugs in the SVG implementation.'),
+            Tables=dict(description='For bugs specific to tables (both the DOM and rendering issues).'),
+            Text=dict(description='For bugs in text layout and rendering, including international text support.'),
+        ),
+    ), CFNetwork=dict(
+        id=2,
+        description='Darwin networking framework',
+        versions=['All'],
+        components=dict(
+            IPv4=dict(description='Bugs involving IPv4 networking'),
+            IPv6=dict(description='Bugs involving IPv6 networking'),
+        ),
+    ),
+)

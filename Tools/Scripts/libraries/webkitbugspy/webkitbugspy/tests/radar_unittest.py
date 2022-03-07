@@ -24,14 +24,14 @@ import json
 import unittest
 
 from webkitbugspy import Issue, Tracker, User, radar, mocks
-from webkitcorepy import mocks as wkmocks
+from webkitcorepy import mocks as wkmocks, OutputCapture
 
 
 class TestRadar(unittest.TestCase):
     def test_encoding(self):
         self.assertEqual(
-            radar.Tracker.Encoder().default(radar.Tracker()),
-            dict(type='radar'),
+            radar.Tracker.Encoder().default(radar.Tracker(project='WebKit')),
+            dict(type='radar', projects=['WebKit']),
         )
 
     def test_decoding(self):
@@ -224,3 +224,87 @@ class TestRadar(unittest.TestCase):
             self.assertTrue(issue.open(why='Need to revert, fix broke the build'))
             self.assertTrue(issue.opened)
             self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')
+
+    def test_projects(self):
+        with mocks.Radar(projects=mocks.PROJECTS):
+            self.assertDictEqual(
+                dict(
+                    WebKit=dict(
+                        description=None,
+                        versions=[],
+                        components=dict(
+                            Scrolling=dict(
+                                versions=['Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
+                                description='Bugs related to main thread and off-main thread scrolling',
+                            ), SVG=dict(
+                                versions=['Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
+                                description='For bugs in the SVG implementation.',
+                            ), Tables=dict(
+                                versions=['Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
+                                description='For bugs specific to tables (both the DOM and rendering issues).',
+                            ), Text=dict(
+                                versions=['Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
+                                description='For bugs in text layout and rendering, including international text support.',
+                            ),
+                        ),
+                    ),
+                ), radar.Tracker(project='WebKit').projects,
+            )
+
+    def test_create(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            created = radar.Tracker(projects=['CFNetwork', 'WebKit']).create(
+                'New bug', 'Creating new bug',
+                project='WebKit', component='Tables', version='Other',
+            )
+            self.assertEqual(created.id, 4)
+            self.assertEqual(created.title, 'New bug')
+            self.assertEqual(created.description, 'Creating new bug')
+            self.assertTrue(created.opened)
+            self.assertEqual(
+                User.Encoder().default(created.creator),
+                dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
+            )
+            self.assertEqual(
+                User.Encoder().default(created.assignee),
+                dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
+            )
+
+    def test_create_prompt(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS), \
+            wkmocks.Terminal.input('2', '4', '4'), OutputCapture() as captured:
+
+            created = radar.Tracker(projects=['CFNetwork', 'WebKit']).create('New bug', 'Creating new bug')
+            self.assertEqual(created.id, 4)
+            self.assertEqual(created.title, 'New bug')
+            self.assertEqual(created.description, 'Creating new bug')
+            self.assertTrue(created.opened)
+            self.assertEqual(
+                User.Encoder().default(created.creator),
+                dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
+            )
+            self.assertEqual(
+                User.Encoder().default(created.assignee),
+                dict(name='Tim Contributor', username=504, emails=['tcontributor@example.com']),
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '''What project should the bug be associated with?:
+    1) CFNetwork
+    2) WebKit
+: 
+What component in 'WebKit' should the bug be associated with?:
+    1) SVG
+    2) Scrolling
+    3) Tables
+    4) Text
+: 
+What version of 'WebKit Text' should the bug be associated with?:
+    1) Other
+    2) Safari 15
+    3) Safari Technology Preview
+    4) WebKit Local Build
+: 
+''',
+        )

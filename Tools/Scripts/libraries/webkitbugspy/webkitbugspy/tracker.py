@@ -59,7 +59,7 @@ class Tracker(object):
                 res=[re.compile(r) for r in data.get('res', [])],
             )
         if data.get('type') == 'radar':
-            return radar.Tracker()
+            return radar.Tracker(project=data.get('project', None), projects=data.get('projects', []))
         raise TypeError("'{}' is not a recognized tracker type".format(data.get('type')))
 
 
@@ -111,4 +111,11 @@ class Tracker(object):
         raise NotImplementedError()
 
     def add_comment(self, issue, text):
+        raise NotImplementedError()
+
+    @property
+    def projects(self):
+        raise NotImplementedError()
+
+    def create(self, title, description, **kwargs):
         raise NotImplementedError()

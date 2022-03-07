@@ -33,11 +33,12 @@ class Base(object):
             emails=user.emails,
         )
 
-    def __init__(self, users=None, issues=None):
+    def __init__(self, users=None, issues=None, projects=None):
         self.users = User.Mapping()
         for user in users or []:
             self.users.add(type(self).transform_user(user))
 
+        self.projects = projects or dict()
         self.issues = {}
         for issue in issues or []:
             self.add(issue)

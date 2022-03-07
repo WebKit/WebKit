@@ -26,7 +26,7 @@ import re
 import unittest
 
 from webkitbugspy import Issue, Tracker, User, bugzilla, mocks
-from webkitcorepy import mocks as wkmocks
+from webkitcorepy import OutputCapture, mocks as wkmocks
 
 
 class TestBugzilla(unittest.TestCase):
@@ -262,3 +262,89 @@ class TestBugzilla(unittest.TestCase):
             self.assertTrue(issue.open(why='Need to revert, fix broke the build'))
             self.assertTrue(issue.opened)
             self.assertEqual(issue.comments[-1].content, 'Need to revert, fix broke the build')
+
+    def test_projects(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], projects=mocks.PROJECTS):
+            self.assertDictEqual(
+                dict(
+                    CFNetwork=dict(
+                        description='Darwin networking framework',
+                        versions=['All'],
+                        components=dict(
+                            IPv4=dict(description='Bugs involving IPv4 networking'),
+                            IPv6=dict(description='Bugs involving IPv6 networking'),
+                        ),
+                    ), WebKit=dict(
+                        description='The WebKit browser engine',
+                        versions=['Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
+                        components=dict(
+                            Scrolling=dict(description='Bugs related to main thread and off-main thread scrolling'),
+                            SVG=dict(description='For bugs in the SVG implementation.'),
+                            Tables=dict(description='For bugs specific to tables (both the DOM and rendering issues).'),
+                            Text=dict(description='For bugs in text layout and rendering, including international text support.'),
+                        ),
+                    ),
+                ), bugzilla.Tracker(self.URL).projects,
+            )
+
+    def test_create(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS, issues=mocks.ISSUES):
+            created = bugzilla.Tracker(self.URL).create(
+                'New bug', 'Creating new bug',
+                project='WebKit', component='Tables', version='Other',
+            )
+            self.assertEqual(created.id, 4)
+            self.assertEqual(created.title, 'New bug')
+            self.assertEqual(created.description, 'Creating new bug')
+            self.assertTrue(created.opened)
+            self.assertEqual(
+                User.Encoder().default(created.creator),
+                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
+            )
+            self.assertEqual(
+                User.Encoder().default(created.assignee),
+                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
+            )
+
+    def test_create_prompt(self):
+        with mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), projects=mocks.PROJECTS, issues=mocks.ISSUES), wkmocks.Terminal.input('2', '1', '2'), OutputCapture() as captured:
+            created = bugzilla.Tracker(self.URL).create('New bug', 'Creating new bug')
+            self.assertEqual(created.id, 4)
+            self.assertEqual(created.title, 'New bug')
+            self.assertEqual(created.description, 'Creating new bug')
+            self.assertTrue(created.opened)
+            self.assertEqual(
+                User.Encoder().default(created.creator),
+                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
+            )
+            self.assertEqual(
+                User.Encoder().default(created.assignee),
+                dict(name='Tim Contributor', username='tcontributor@example.com', emails=['tcontributor@example.com']),
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '''What project should the bug be associated with?:
+    1) CFNetwork
+    2) WebKit
+: 
+What component in 'WebKit' should the bug be associated with?:
+    1) SVG
+    2) Scrolling
+    3) Tables
+    4) Text
+: 
+What version of 'WebKit' should the bug be associated with?:
+    1) Other
+    2) Safari 15
+    3) Safari Technology Preview
+    4) WebKit Local Build
+: 
+''',
+        )
