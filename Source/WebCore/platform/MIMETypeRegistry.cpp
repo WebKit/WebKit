@@ -28,6 +28,7 @@
 #include "MIMETypeRegistry.h"
 
 #include "MediaPlayer.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ThreadGlobalData.h"
 #include <wtf/FixedVector.h>
 #include <wtf/HashMap.h>
@@ -662,7 +663,7 @@ bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
 #endif
 
 #if ENABLE(MODEL_ELEMENT)
-    if (isSupportedModelMIMEType(mimeType))
+    if (isSupportedModelMIMEType(mimeType) && RuntimeEnabledFeatures::sharedFeatures().modelDocumentEnabled())
         return true;
 #endif
 
