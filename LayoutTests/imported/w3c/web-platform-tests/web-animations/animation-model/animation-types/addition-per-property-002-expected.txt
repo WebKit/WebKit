@@ -153,12 +153,12 @@ PASS text-decoration-style (type: discrete) has testAddition function
 PASS text-decoration-style: "dotted" onto "solid"
 PASS text-decoration-style: "solid" onto "dotted"
 PASS text-emphasis-color (type: color) has testAddition function
-FAIL text-emphasis-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
-FAIL text-emphasis-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
-FAIL text-emphasis-color supports animating as color of hsl() assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
-FAIL text-emphasis-color supports animating as color of #RGBa assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-FAIL text-emphasis-color supports animating as color of rgba() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
-FAIL text-emphasis-color supports animating as color of hsla() assert_equals: The value should be rgb(230, 128, 128) at 0ms expected "rgb(230, 128, 128)" but got "rgba(255, 0, 0, 0.4)"
+FAIL text-emphasis-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS text-emphasis-color supports animating as color of #RGB
+PASS text-emphasis-color supports animating as color of hsl()
+PASS text-emphasis-color supports animating as color of #RGBa
+PASS text-emphasis-color supports animating as color of rgba()
+PASS text-emphasis-color supports animating as color of hsla()
 PASS text-emphasis-position (type: discrete) has testAddition function
 PASS text-emphasis-position: "under left" onto "over"
 PASS text-emphasis-position: "over" onto "under left"
