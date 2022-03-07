@@ -1,5 +1,42 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289001. rdar://problem/88404556
+
+    [JSC] Crash on several pages after r287986
+    https://bugs.webkit.org/show_bug.cgi?id=236033
+    
+    Reviewed by Tim Horton.
+    
+    I noticed that Safari crashes when opening https://linux.die.net/man/3/localtime.
+    This is happening after r287986: we are calling [self release], but the [JSValue dealloc]
+    cannot work if _context is nil. We should add a guard.
+    
+    * API/JSValue.mm:
+    (-[JSValue dealloc]):
+    * API/tests/testapi.mm:
+    (testObjectiveCAPIMain):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289001 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            [JSC] Crash on several pages after r287986
+            https://bugs.webkit.org/show_bug.cgi?id=236033
+
+            Reviewed by Tim Horton.
+
+            I noticed that Safari crashes when opening https://linux.die.net/man/3/localtime.
+            This is happening after r287986: we are calling [self release], but the [JSValue dealloc]
+            cannot work if _context is nil. We should add a guard.
+
+            * API/JSValue.mm:
+            (-[JSValue dealloc]):
+            * API/tests/testapi.mm:
+            (testObjectiveCAPIMain):
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r287986. rdar://problem/87489048
 
     Fix a few Objective-C object leaks due to early returns in `init`
