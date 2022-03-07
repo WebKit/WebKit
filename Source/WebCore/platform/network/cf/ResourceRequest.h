@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2022 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,11 +69,7 @@ public:
     {
     }
 #else
-    ResourceRequest(NSURLRequest *nsRequest)
-        : ResourceRequestBase()
-        , m_nsRequest(nsRequest)
-    {
-    }
+    WEBCORE_EXPORT ResourceRequest(NSURLRequest *);
 #endif
 
     WEBCORE_EXPORT void updateFromDelegatePreservingOldProperties(const ResourceRequest&);

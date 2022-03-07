@@ -1,5 +1,54 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289255. rdar://problem/88490742
+
+    Always sync ResourceRequest isAppInitiated request with NSURLRequest attribution value
+    https://bugs.webkit.org/show_bug.cgi?id=236167
+    <rdar://88490742>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    We should always keep the state of our 'isAppInitiated' flag in sync with the underlying
+    NSURLRequest object. This also corrects a problem where the 'setIsAppInitiated' method
+    does not mark the platform URL request as dirty, so it does not update with the correct
+    state of the flag.
+    
+    Tests: New TestWebKitAPI Test (AppPrivacyReport.NSURLRequestConstructorAttribution)
+    
+    * platform/network/ResourceRequestBase.cpp:
+    (WebCore::ResourceRequestBase::setIsAppInitiated):
+    * platform/network/ResourceRequestBase.h:
+    * platform/network/cf/ResourceRequest.h:
+    * platform/network/cocoa/ResourceRequestCocoa.mm:
+    (WebCore::ResourceRequest::ResourceRequest):
+    (WebCore::ResourceRequest::doUpdatePlatformRequest):
+    (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+    (WebCore::copyRequestWithStorageSession):
+    * rendering/RenderThemeIOS.mm:
+    
+    Tools:
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/xcshareddata/xcschemes/TestWebKitAPI.xcscheme:
+    * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289255 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-07  Brent Fulgham  <bfulgham@apple.com>
+
+            Always sync ResourceRequest isAppInitiated request with NSURLRequest attribution value
+            https://bugs.webkit.org/show_bug.cgi?id=236167
+            <rdar://88490742>
+
+            Reviewed by Darin Adler.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/xcshareddata/xcschemes/TestWebKitAPI.xcscheme:
+            * TestWebKitAPI/Tests/WebKitCocoa/AppPrivacyReport.mm:
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r288700. rdar://problem/86602114
 
     Default to 32 bit refcount for CanMakeCheckedPtr

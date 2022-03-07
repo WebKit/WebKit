@@ -198,7 +198,7 @@ public:
     WEBCORE_EXPORT static bool equal(const ResourceRequest&, const ResourceRequest&);
 
     bool isAppInitiated() const { return m_isAppInitiated; }
-    void setIsAppInitiated(bool isAppInitiated) { m_isAppInitiated = isAppInitiated; };
+    WEBCORE_EXPORT void setIsAppInitiated(bool);
 
 protected:
     // Used when ResourceRequest is initialized from a platform representation of the request
