@@ -1,3 +1,15 @@
+2022-03-07  Elliott Williams  <emw@apple.com>
+
+        DerivedSources.make: Regenerate message receiver sources on Makefile changes
+        https://bugs.webkit.org/show_bug.cgi?id=237543
+
+        Reviewed by Alexey Proskuryakov.
+
+        This script depends on configuration and other sources in DerivedSources.make, so it should
+        regenerate when they change. Fixes one-time incremental build failures caused by r290896.
+
+        * DerivedSources.make:
+
 2022-03-07  Alex Christensen  <achristensen@webkit.org>
 
         Remove unnecessary Async attribute in .messages.in files

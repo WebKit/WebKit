@@ -18,6 +18,7 @@ $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/generator_templates.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/jsmin.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/models.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/xxd.pl
+$(PROJECT_DIR)/DerivedSources.make
 $(PROJECT_DIR)/GPUProcess/GPUConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/GPUProcess/GPUProcess.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteDisplayListRecorder.messages.in
