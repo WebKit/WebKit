@@ -1,5 +1,29 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290232. rdar://problem/88818132
+
+    Rebaseline inert-focus-in-frames.html after r290197.
+    
+    Unreviewed test gardening.
+    
+    For some reason, the rebaselining changes didn't make it in the patch.
+    
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290232 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-20  Tim Nguyen  <ntim@apple.com>
+
+            Rebaseline inert-focus-in-frames.html after r290197.
+
+            Unreviewed test gardening.
+
+            For some reason, the rebaselining changes didn't make it in the patch.
+
+            * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-focus-in-frames-expected.txt:
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290197. rdar://problem/88818132
 
     Stop propagating inertness through iframes in Node::deprecatedIsInert()
