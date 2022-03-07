@@ -27,7 +27,7 @@ PASS Animation of direction in ::marker
 PASS Animation of content in ::marker
 FAIL Animation of hyphens in ::marker assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
 PASS Animation of letter-spacing in ::marker
-FAIL Animation of line-break in ::marker assert_equals: expected "anywhere" but got "auto"
+PASS Animation of line-break in ::marker
 PASS Animation of overflow-wrap in ::marker
 PASS Animation of tab-size in ::marker
 PASS Animation of text-transform in ::marker

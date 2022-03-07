@@ -1,5 +1,14 @@
 2022-03-07  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] line-break should support discrete animations
+        https://bugs.webkit.org/show_bug.cgi?id=237520
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+
+2022-03-07  Antoine Quint  <graouts@webkit.org>
+
         Parsing of list-style shorthand is incorrect
         https://bugs.webkit.org/show_bug.cgi?id=237515
 
