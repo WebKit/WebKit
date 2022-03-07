@@ -1,5 +1,46 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290755. rdar://problem/89700242
+
+    [WebAuthn] Completion handler is not called when WebAuthn invoked without proper entitlements
+    https://bugs.webkit.org/show_bug.cgi?id=237380
+    <rdar://problem/89700242>
+    
+    Reviewed by Chris Dumez.
+    
+    WebAuthn is not permitted outside of Web Browser applications. When an application that lacks
+    the full web browser entitlement attempts to invoke WebAuthn flows, we do an early return. However,
+    the completion handler for this flow is bypassed, preventing applications from being informed of
+    this problem.
+    
+    * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+    (WebKit::WebAuthenticatorCoordinator::makeCredential):
+    (WebKit::WebAuthenticatorCoordinator::getAssertion):
+    (WebKit::WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290755 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-02  Brent Fulgham  <bfulgham@apple.com>
+
+            [WebAuthn] Completion handler is not called when WebAuthn invoked without proper entitlements
+            https://bugs.webkit.org/show_bug.cgi?id=237380
+            <rdar://problem/89700242>
+
+            Reviewed by Chris Dumez.
+
+            WebAuthn is not permitted outside of Web Browser applications. When an application that lacks
+            the full web browser entitlement attempts to invoke WebAuthn flows, we do an early return. However,
+            the completion handler for this flow is bypassed, preventing applications from being informed of
+            this problem.
+
+            * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+            (WebKit::WebAuthenticatorCoordinator::makeCredential):
+            (WebKit::WebAuthenticatorCoordinator::getAssertion):
+            (WebKit::WebAuthenticatorCoordinator::isUserVerifyingPlatformAuthenticatorAvailable):
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290629. rdar://problem/88903506
 
     [IPC] Do more hardening in WebSWServerConnection's client registration / unregistration
