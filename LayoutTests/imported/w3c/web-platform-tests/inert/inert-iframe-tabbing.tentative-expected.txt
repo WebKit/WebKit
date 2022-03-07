@@ -1,0 +1,7 @@
+start
+
+start
+
+PASS Sequential navigation skips contents of inert iframe
+PASS Sequential navigation can pick contents of a no longer inert iframe
+

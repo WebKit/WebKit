@@ -1,0 +1,10 @@
+start
+
+start
+
+FAIL Sequential navigation skips contents of inert iframe assert_equals: end got focus expected Element node <div id="end" tabindex="0">start
+
+<script>
+const tabKey =... but got Element node <div id="start" tabindex="0">start</div>
+FAIL Sequential navigation can pick contents of a no longer inert iframe assert_equals: iframe got focus expected Element node <iframe id="iframe" srcdoc="<div id="target" tabindex="0"... but got Element node <div id="start" tabindex="0">start</div>
+

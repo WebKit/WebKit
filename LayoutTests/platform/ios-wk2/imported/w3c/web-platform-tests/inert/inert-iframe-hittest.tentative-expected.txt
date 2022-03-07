@@ -1,0 +1,5 @@
+
+
+FAIL Hit-testing doesn't reach contents of an inert iframe assert_true: wrapper is hovered expected true got false
+FAIL Hit-testing can reach contents of a no longer inert iframe assert_true: target is focused expected true got false
+

@@ -3,8 +3,8 @@ PASS Initially, no node is inert
 PASS Modal dialog in the outer iframe marks outer nodes in that iframe as inert.
 PASS Modal dialog in the inner iframe marks outer nodes in that iframe as inert.
 PASS Modal dialogs in both iframes mark outer nodes in these iframes as inert.
-FAIL Modal dialog in the main document marks outer nodes as inert. All contents of the outer iframe are also marked as inert. assert_equals: expected "" but got "(outer iframe: outer text)(outer iframe: dialog)"
-FAIL Modal dialogs in the main document and inner iframe mark outer nodes as inert. All contents of the outer iframe are also marked as inert. assert_equals: expected "" but got "(outer iframe: outer text)(outer iframe: dialog)"
-FAIL Modal dialogs in the main document and outer iframe mark outer nodes as inert. All contents of the outer iframe are also marked as inert. assert_equals: expected "" but got "(outer iframe: dialog)"
-FAIL Modal dialogs in the main document and both iframes mark outer nodes as inert. All contents of the outer iframe are also marked as inert. assert_equals: expected "" but got "(outer iframe: dialog)"
+PASS Modal dialog in the main document marks outer nodes as inert. Contents of the outer iframe aren't marked as inert.
+PASS Modal dialogs in the main document and inner iframe mark outer nodes as inert. Contents of the outer iframe aren't marked as inert.
+PASS Modal dialogs in the main document and outer iframe mark outer nodes as inert. Contents of the outer iframe aren't marked as inert.
+PASS Modal dialogs in the main document and both iframes mark outer nodes as inert. Contents of the outer iframe aren't marked as inert.
 (main document: outer text)  (main document: dialog)
