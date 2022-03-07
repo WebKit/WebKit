@@ -1,3 +1,15 @@
+2022-03-07  Richard Houle  <rhoule@apple.com>
+
+        [macCatalyst] Compilation error: WebContentProcess.xib: error: macOS xibs do not support target device type "ipad".
+        https://bugs.webkit.org/show_bug.cgi?id=237549
+        rdar://89912760
+
+        Reviewed by Alexey Proskuryakov.
+
+        Xcode for macOS 12.5 complains that we bundle Mac XIBs inside our macCatalyst builds.
+
+        * Configurations/BaseXPCService.xcconfig:
+
 2022-03-07  Chris Dumez  <cdumez@apple.com>
 
         allow-custom-protocols-navigation sandbox flag.
