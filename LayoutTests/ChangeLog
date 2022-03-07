@@ -1,5 +1,48 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r289533. rdar://problem/88452971
+
+    Settling of a fetch promise should be delayed in case page is entering page cache
+    https://bugs.webkit.org/show_bug.cgi?id=236292
+    <rdar://88452971>
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    Make sure to enqueue a task before resolving fetch promise as otherwise, page might continue running JavaScript.
+    Do this for worker as well for good measure.
+    We move signal aborted checks to two clients to handle rejecting fetch promise synchronously.
+    
+    Test: http/tests/navigation/fetch-pagecache.html
+    
+    * Modules/cache/DOMCache.cpp:
+    * Modules/fetch/FetchResponse.cpp:
+    * Modules/fetch/FetchResponse.h:
+    * Modules/fetch/WindowOrWorkerGlobalScopeFetch.cpp:
+    * workers/service/FetchEvent.cpp:
+    
+    LayoutTests:
+    
+    * http/tests/navigation/fetch-pagecache-expected.txt: Added.
+    * http/tests/navigation/fetch-pagecache.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289533 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-10  Youenn Fablet  <youenn@apple.com>
+
+            Settling of a fetch promise should be delayed in case page is entering page cache
+            https://bugs.webkit.org/show_bug.cgi?id=236292
+            <rdar://88452971>
+
+            Reviewed by Chris Dumez.
+
+            * http/tests/navigation/fetch-pagecache-expected.txt: Added.
+            * http/tests/navigation/fetch-pagecache.html: Added.
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r289121. rdar://problem/88492251
 
     Fix App Privacy Report redirect attribution

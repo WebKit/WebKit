@@ -1,0 +1,52 @@
+<!doctype html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/resources/js-test-pre.js"></script>
+<script>
+description('Tests that a page with a loading XMLHttpRequest goes into the page cache.');
+window.jsTestIsAsync = true;
+
+var restoredFromPageCache = false;
+
+function doFetchTest()
+{
+    if (restoredFromPageCache) {
+        testPassed("fetch promise resolved after page was restored from the page cache");
+        finishJSTest();
+        return;
+    }
+    fetch("/resources/load-and-stall.cgi?name=load-and-stall.cgi&stallFor=3&stallAt=0&mimeType=text/plain").then(doFetchTest, doFetchTest);
+}
+
+window.addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (event.persisted) {
+        testPassed("Page did enter and was restored from the page cache");
+        restoredFromPageCache = true;
+    }
+}, false);
+
+window.addEventListener("pagehide", function(event) {
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (!event.persisted) {
+        testFailed("Page did not enter the page cache.");
+        finishJSTest();
+    }
+    doFetchTest();
+}, false);
+
+window.addEventListener('load', function() {
+    // This needs to happen in a setTimeout because a navigation inside the onload handler would
+    // not create a history entry.
+    setTimeout(function() {
+      // Force a back navigation back to this page.
+      window.location.href = "resources/page-cache-helper.html";
+    }, 0);
+}, false);
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

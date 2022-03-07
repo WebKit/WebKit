@@ -259,7 +259,11 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
 
     for (auto& request : requests) {
         auto& requestReference = request.get();
-        FetchResponse::fetch(*scriptExecutionContext(), requestReference, [this, request = WTFMove(request), taskHandler](ExceptionOr<FetchResponse&>&& result) mutable {
+        if (requestReference.signal().aborted()) {
+            taskHandler->error(Exception { AbortError, "Request signal is aborted"_s });
+            return;
+        }
+        FetchResponse::fetch(*scriptExecutionContext(), requestReference, [this, request = WTFMove(request), taskHandler](auto&& result) mutable {
 
             if (taskHandler->isDone())
                 return;
@@ -269,7 +273,8 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
                 return;
             }
 
-            auto& response = result.releaseReturnValue();
+            auto protectedResponse = result.releaseReturnValue();
+            auto& response = protectedResponse.get();
 
             if (!response.ok()) {
                 taskHandler->error(Exception { TypeError, "Response is not OK"_s });
@@ -295,7 +300,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
             }
             size_t recordPosition = taskHandler->addRecord(toConnectionRecord(request.get(), response, nullptr));
 
-            response.consumeBodyReceivedByChunk([taskHandler = WTFMove(taskHandler), recordPosition, data = SharedBufferBuilder(), response = Ref { response }] (auto&& result) mutable {
+            response.consumeBodyReceivedByChunk([taskHandler = WTFMove(taskHandler), recordPosition, data = SharedBufferBuilder(), response = WTFMove(protectedResponse)] (auto&& result) mutable {
                 if (taskHandler->isDone())
                     return;
 
