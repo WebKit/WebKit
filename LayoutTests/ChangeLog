@@ -1,3 +1,18 @@
+2022-03-07  Mark Lam  <mark.lam@apple.com>
+
+        Remove TestExpectations for imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.worker.html.
+        https://bugs.webkit.org/show_bug.cgi?id=229244
+
+        Not reviewed.
+
+        TestExpectaions says this test will either pass or crash.  However, the test history
+        at https://results.webkit.org/?suite=layout-tests&test=imported%2Fw3c%2Fweb-platform-tests%2FIndexedDB%2Fkey-generators%2Freading-autoincrement-indexes-cursors.any.worker.html
+        shows that this test hasn't crashed in a very long time.
+
+        Also local runs of the test on AppleSilicon with Debug WK1 pass with no crash.
+
+        * platform/mac/TestExpectations:
+
 2022-03-07  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.
