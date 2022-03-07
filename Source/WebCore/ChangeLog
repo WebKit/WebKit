@@ -1,3 +1,16 @@
+2022-03-07  Frédéric Wang  <fwang@igalia.com>
+
+        Release_Assert | WebCore::Document::addTopLayerElement()
+        https://bugs.webkit.org/show_bug.cgi?id=237307
+
+        Reviewed by Chris Dumez.
+
+        setBooleanAttribute() call in HTMLDialogElement::showModal() dispatches a DOMSubtreeModified
+        event. Postpone it so that listeners cannot disconnect the dialog element.
+
+        * html/HTMLDialogElement.cpp:
+        (WebCore::HTMLDialogElement::showModal): Add a queue to postpone event.
+
 2022-03-06  Eric Carlson  <eric.carlson@apple.com>
 
         Push HTMLMediaElement renderer's contentBox rect to GPU process

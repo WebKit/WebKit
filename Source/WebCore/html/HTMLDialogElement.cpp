@@ -33,6 +33,7 @@
 #include "GCReachableRef.h"
 #include "HTMLNames.h"
 #include "RenderElement.h"
+#include "ScopedEventQueue.h"
 #include "TypedElementDescendantIterator.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -70,6 +71,9 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     if (!isConnected())
         return Exception { InvalidStateError };
 
+    // setBooleanAttribute will dispatch a DOMSubtreeModified event.
+    // Postpone callback execution that can potentially make the dialog disconnected.
+    EventQueueScope scope;
     setBooleanAttribute(openAttr, true);
 
     m_isModal = true;
