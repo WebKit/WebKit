@@ -1,3 +1,13 @@
+2022-03-06  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Fix key expired treatment with Python3
+        https://bugs.webkit.org/show_bug.cgi?id=237509
+
+        Reviewed by Fujii Hironori.
+
+        * flatpak/flatpakutils.py:
+        (FlatpakObject.flatpak_update):
+
 2022-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Layer tree can get indefinitely frozen if WKWebView is unparented underneath -[UIWindow dealloc]

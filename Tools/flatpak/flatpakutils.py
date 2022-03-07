@@ -267,7 +267,7 @@ class FlatpakObject:
         try:
             self.flatpak("remote-ls", remote, gather_output=True)
         except subprocess.CalledProcessError as error:
-            if error.output.lower().find("key expired"):
+            if error.output.lower().find(b"key expired"):
                 Console.message("WebKit SDK GPG key expired, synchronizing with remote")
                 with tempfile.NamedTemporaryFile() as tmpfile:
                     fd = urlopen(WEBKIT_SDK_GPG_PUBKEY_URL)
