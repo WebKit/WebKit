@@ -1,3 +1,64 @@
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r287898. rdar://problem/86035420
+
+    Rewrite touch and drag tests to be more robust.
+    https://bugs.webkit.org/show_bug.cgi?id=235057
+    rdar://86035420
+    
+    Reviewed by Wenson Hsieh.
+    
+    Rewrite the touch-and-drag tests to check for selection changes, not specific text selections.
+    Specific selections and subject to small changes in font and layout, and all that is actually important is that
+    there have been selection changes based off of dragged touches.
+    The touch-event-radius test has been updated to use the screen size directly, since the radius is scaled by the screen size
+    internally. The output has been changed to not need to be updated when the test phone changes.
+    
+    * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-down-to-change-selected-text-expected.txt:
+    * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-down-to-change-selected-text.html:
+    * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-up-to-change-selected-text-expected.txt:
+    * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-up-to-change-selected-text.html:
+    * fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html:
+    * fast/events/touch/ios/long-press-then-drag-down-to-change-selected-text-expected.txt:
+    * fast/events/touch/ios/long-press-then-drag-down-to-change-selected-text.html:
+    * fast/events/touch/ios/long-press-then-drag-to-select-text-expected.txt:
+    * fast/events/touch/ios/long-press-then-drag-to-select-text.html:
+    * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text-expected.txt:
+    * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text.html:
+    * fast/events/touch/ios/touch-event-radius-expected.txt:
+    * fast/events/touch/ios/touch-event-radius.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@287898 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-11  Megan Gardner  <megan_gardner@apple.com>
+
+            Rewrite touch and drag tests to be more robust.
+            https://bugs.webkit.org/show_bug.cgi?id=235057
+            rdar://86035420
+
+            Reviewed by Wenson Hsieh.
+
+            Rewrite the touch-and-drag tests to check for selection changes, not specific text selections.
+            Specific selections and subject to small changes in font and layout, and all that is actually important is that
+            there have been selection changes based off of dragged touches.
+            The touch-event-radius test has been updated to use the screen size directly, since the radius is scaled by the screen size
+            internally. The output has been changed to not need to be updated when the test phone changes.
+
+            * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-down-to-change-selected-text-expected.txt:
+            * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-down-to-change-selected-text.html:
+            * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-up-to-change-selected-text-expected.txt:
+            * fast/events/touch/ios/double-tap-on-editable-content-for-selection-then-drag-up-to-change-selected-text.html:
+            * fast/events/touch/ios/long-press-on-editable-content-then-drag-up-to-change-selected-text.html:
+            * fast/events/touch/ios/long-press-then-drag-down-to-change-selected-text-expected.txt:
+            * fast/events/touch/ios/long-press-then-drag-down-to-change-selected-text.html:
+            * fast/events/touch/ios/long-press-then-drag-to-select-text-expected.txt:
+            * fast/events/touch/ios/long-press-then-drag-to-select-text.html:
+            * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text-expected.txt:
+            * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text.html:
+            * fast/events/touch/ios/touch-event-radius-expected.txt:
+            * fast/events/touch/ios/touch-event-radius.html:
+
 2022-03-01  Russell Epstein  <repstein@apple.com>
 
         Revert r289282. rdar://problem/88876661

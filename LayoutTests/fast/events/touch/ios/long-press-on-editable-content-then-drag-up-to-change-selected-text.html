@@ -37,27 +37,30 @@
                 output += 'FAIL: failed to select a word as a result of a long press.';
             output += '<br>';
 
+            lastSelectionChangeCount = selectionChangedCount;
             var grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
             await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y - (fontHeight * 2));
 
-            if (selectionChangedCount == 3)
+            if (selectionChangedCount > lastSelectionChangeCount)
                 output += 'PASS: Selection Changed </br>';
             else
                 output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
 
+            lastSelectionChangeCount = selectionChangedCount;
             grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
             await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y + (fontHeight * 3));
             await liftUpAtPoint(grabberMidpoint.x, grabberMidpoint.y - (fontHeight * 3));
 
-            if (selectionChangedCount == 5)
+            if (selectionChangedCount > lastSelectionChangeCount)
                 output += 'PASS: Selection Changed </br>';
             else
                 output += 'FAIL: Selection did not change <br>' + selectionChangedCount;
             
+            lastSelectionChangeCount = selectionChangedCount;
             grabberMidpoint = UIHelper.midPointOfRect(await UIHelper.getSelectionStartGrabberViewRect());
             await touchAndDragFromPointToPoint(grabberMidpoint.x, grabberMidpoint.y , grabberMidpoint.x, grabberMidpoint.y + (fontHeight * 2));
 
-            if (selectionChangedCount == 7)
+            if (selectionChangedCount > lastSelectionChangeCount)
                 output += 'PASS: Selection Changed </br>';
             else
                 output += 'FAIL: Selection changed <br>' + selectionChangedCount;
