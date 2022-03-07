@@ -84,6 +84,9 @@ PAS_BEGIN_EXTERN_C;
 
 #define PAS_ARM __PAS_ARM
 
+#define PAS_X86 __PAS_X86
+#define PAS_X86_64 __PAS_X86_64
+
 #define PAS_RISCV __PAS_RISCV
 
 #if PAS_ARM64 && !PAS_ARM64E && !PAS_OS(MAC) && !defined(__ARM_FEATURE_ATOMICS)
