@@ -1,3 +1,17 @@
+2022-03-07  Oriol Brufau  <obrufau@igalia.com>
+
+        Remove duplicated platform expectations for computed-style.html, computed-style-without-renderer.html, getComputedStyle-basic.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=237534
+
+        Unreviewed test gardening.
+
+        * platform/glib/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/glib/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/glib/svg/css/getComputedStyle-basic-expected.txt: Removed.
+        * platform/ios/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/ios/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/ios/svg/css/getComputedStyle-basic-expected.txt: Removed.
+
 2022-03-07  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         LayoutTests/webgl/max-active-contexts-gc.html is flaky
