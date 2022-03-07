@@ -149,7 +149,7 @@ public:
     bool containsImage(StyleImage&) const;
     bool imagesAreLoaded() const;
     bool hasImage() const { return m_next ? hasImageInAnyLayer() : m_image; }
-    bool hasFixedImage() const;
+    bool hasImageWithAttachment(FillAttachment) const;
     bool hasOpaqueImage(const RenderElement&) const;
     bool hasRepeatXY() const;
     bool clipOccludesNextLayers(bool firstLayer) const;

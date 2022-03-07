@@ -1,0 +1,95 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        #scroller {
+            width: 300px;
+            height: 300px;
+            overflow: scroll;
+            border: 1px solid black;
+        }
+        
+        .filler {
+            width: 30px;
+            height: 150px;
+            margin: 10px;
+            background-color: silver;
+        }
+
+        .fixed-background {
+            position: relative;
+            margin: 10px;
+            height: 200px;
+            background-image: linear-gradient(lightblue, palegreen);
+            background-attachment: fixed;
+            background-size: 1px 300px;
+            border: 1px solid blue;
+            box-sizing: border-box;
+        }
+
+        .fixed-child-background {
+            position: relative;
+            height: 200px;
+            padding: 10px;
+            background-size: 1px 300px;
+            border: 1px solid blue;
+            box-sizing: border-box;
+        }
+
+        .fixed-child-background > div {
+            height: 100%;
+            background-image: linear-gradient(lightblue, palegreen);
+            background-attachment: fixed;
+            background-size: 1px 300px;
+        }
+
+        .composited {
+            transform: translateZ(0);
+        }
+
+        /* Hide the scrollbars to remove scrollbar repaints. */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    <script src="../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+        description("Test that a scroll of an overflow scrolling element, with a composoited `background-attachment:fixed` child, repaints");
+
+        function startTrackingRepaints()
+        {
+            window.internals.startTrackingRepaints();
+            document.getElementById('scroller').scrollTop = 800;
+
+            logRepaints();
+        }
+
+        function logRepaints()
+        {
+            layerTreeAsText =  window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+            window.internals.stopTrackingRepaints();
+            shouldBeTrue("layerTreeAsText.indexOf('(rect 0.00 0.00 280.00 200.00)') > -1");
+            shouldBeTrue("layerTreeAsText.indexOf('(rect 11.00 11.00 278.00 178.00)') > -1");
+
+            finishJSTest();
+        }
+
+        window.addEventListener('load', () => {
+            if (!window.testRunner || !window.internals)
+                return;
+
+            setTimeout(startTrackingRepaints, 0);
+        }, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div class="composited filler"></div>
+        <div class="fixed-background"></div>
+        <div class="fixed-child-background"><div></div></div>
+        <div class="filler"></div>
+    </div>
+
+<script src="../../resources/js-test-post.js"></script>
+</html>

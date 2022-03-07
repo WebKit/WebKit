@@ -1,5 +1,75 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290785. rdar://problem/66568551
+
+    nasa.gov page with fixed backgrounds paints incorrectly on scroll
+    https://bugs.webkit.org/show_bug.cgi?id=237405
+    <rdar://66568551>
+    
+    Reviewed by Antti Koivisto.
+    Source/WebCore:
+    
+    https://www.nasa.gov/specials/artemis/ shows an issue where elements with background-attachment:fixed
+    don't repaint on scroll. This page has scrollable <html> and <body>, and the elements with fixed
+    backgrounds are composited, so this reveals that we fail to repaint composited children
+    of an overflow scroll in this case.
+    
+    Fix by having RenderLayerScrollableArea::scrollTo() do repaints on slow repaint objects
+    which are scrolled by the current scroller.
+    
+    Do some unrelated cleanup in code that I was going to use in this patch but turned out
+    not to need: rename hasFixedBackgroundImage() to hasAnyFixedBackground() for clarity,
+    and share the implementation with hasAnyLocalBackground().
+    
+    Test: fast/repaint/background-attachment-fixed-in-composited-scroll.html
+    
+    * rendering/RenderElement.cpp:
+    (WebCore::RenderElement::styleWillChange):
+    (WebCore::RenderElement::willBeDestroyed):
+    * rendering/RenderLayer.cpp:
+    * rendering/RenderLayerScrollableArea.cpp:
+    (WebCore::RenderLayerScrollableArea::scrollTo):
+    * rendering/style/FillLayer.cpp:
+    (WebCore::FillLayer::hasImageWithAttachment const):
+    (WebCore::FillLayer::hasFixedImage const): Deleted.
+    * rendering/style/FillLayer.h:
+    * rendering/style/RenderStyle.cpp:
+    (WebCore::RenderStyle::hasAnyLocalBackground const): Deleted.
+    * rendering/style/RenderStyle.h:
+    (WebCore::RenderStyle::hasBackgroundImage const):
+    (WebCore::RenderStyle::hasAnyFixedBackground const):
+    (WebCore::RenderStyle::hasAnyLocalBackground const):
+    (WebCore::RenderStyle::hasFixedBackgroundImage const): Deleted.
+    
+    LayoutTests:
+    
+    Repaint test which is only valid for mac-wk2 (iOS does not support background-attachment:fixed).
+    
+    * TestExpectations:
+    * fast/repaint/background-attachment-fixed-in-composited-scroll-expected.txt: Added.
+    * fast/repaint/background-attachment-fixed-in-composited-scroll.html: Added.
+    * platform/mac-wk2/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290785 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-03  Simon Fraser  <simon.fraser@apple.com>
+
+            nasa.gov page with fixed backgrounds paints incorrectly on scroll
+            https://bugs.webkit.org/show_bug.cgi?id=237405
+            <rdar://66568551>
+
+            Reviewed by Antti Koivisto.
+
+            Repaint test which is only valid for mac-wk2 (iOS does not support background-attachment:fixed).
+
+            * TestExpectations:
+            * fast/repaint/background-attachment-fixed-in-composited-scroll-expected.txt: Added.
+            * fast/repaint/background-attachment-fixed-in-composited-scroll.html: Added.
+            * platform/mac-wk2/TestExpectations:
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290778. rdar://problem/88297045
 
     macOS Safari 15.2 Audio Echo Issue after camera pause/unpause

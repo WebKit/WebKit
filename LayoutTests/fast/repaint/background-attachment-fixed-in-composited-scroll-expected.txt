@@ -1,0 +1,11 @@
+Test that a scroll of an overflow scrolling element, with a composoited `background-attachment:fixed` child, repaints
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS layerTreeAsText.indexOf('(rect 0.00 0.00 280.00 200.00)') > -1 is true
+PASS layerTreeAsText.indexOf('(rect 11.00 11.00 278.00 178.00)') > -1 is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
