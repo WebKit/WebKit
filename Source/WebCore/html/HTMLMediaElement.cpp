@@ -5622,9 +5622,8 @@ void HTMLMediaElement::updatePlayState()
 #endif
     }
 
+    schedulePlaybackControlsManagerUpdate();
     if (shouldBePlaying) {
-        schedulePlaybackControlsManagerUpdate();
-
         invalidateCachedTime();
 
         if (playerPaused) {
@@ -5649,8 +5648,6 @@ void HTMLMediaElement::updatePlayState()
         startPlaybackProgressTimer();
         setPlaying(true);
     } else {
-        schedulePlaybackControlsManagerUpdate();
-
         if (!playerPaused)
             pausePlayer();
         refreshCachedTime();

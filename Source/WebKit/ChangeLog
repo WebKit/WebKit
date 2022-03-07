@@ -1,3 +1,12 @@
+2022-03-07  Peng Liu  <peng.liu6@apple.com>
+
+        Small cleanups of media code
+        https://bugs.webkit.org/show_bug.cgi?id=237496
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * WebProcess/cocoa/PlaybackSessionManager.h: `protected` is not needed here.
+
 2022-03-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] generate-automation-atom.py breaks reproducible builds

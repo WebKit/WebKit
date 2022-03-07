@@ -110,7 +110,7 @@ public:
 
     WebCore::HTMLMediaElement* currentPlaybackControlsElement() const;
 
-protected:
+private:
     friend class PlaybackSessionInterfaceContext;
     friend class VideoFullscreenManager;
 

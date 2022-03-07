@@ -1,3 +1,16 @@
+2022-03-07  Peng Liu  <peng.liu6@apple.com>
+
+        Small cleanups of media code
+        https://bugs.webkit.org/show_bug.cgi?id=237496
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        No new tests. No behavior change.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlayState): `schedulePlaybackControlsManagerUpdate()` is
+        called in both branches.
+
 2022-03-07  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] text-emphasis-style should support discrete animations
