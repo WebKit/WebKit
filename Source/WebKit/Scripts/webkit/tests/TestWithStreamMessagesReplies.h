@@ -26,11 +26,21 @@
 
 #include "MessageNames.h"
 #include <wtf/Forward.h>
+#include <wtf/MachSendRight.h>
 
 
 namespace Messages {
 namespace TestWithStream {
 
+using SendStringSynchronizedAsyncReply = CompletionHandler<void(int64_t returnValue)>;
+
+#if PLATFORM(COCOA)
+using ReceiveMachSendRightAsyncReply = CompletionHandler<void(const MachSendRight& r1)>;
+#endif
+
+#if PLATFORM(COCOA)
+using SendAndReceiveMachSendRightAsyncReply = CompletionHandler<void(const MachSendRight& r1)>;
+#endif
 
 } // namespace TestWithStream
 } // namespace Messages

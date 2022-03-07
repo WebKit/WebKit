@@ -26,7 +26,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
 messages -> SourceBufferPrivateRemote NotRefCounted {
-    SourceBufferPrivateDidReceiveInitializationSegment(struct WebKit::InitializationSegmentInfo segmentConfiguration) -> () Async
+    SourceBufferPrivateDidReceiveInitializationSegment(struct WebKit::InitializationSegmentInfo segmentConfiguration) -> ()
     SourceBufferPrivateStreamEndedWithDecodeError()
     SourceBufferPrivateAppendError(bool decodeError)
     SourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult appendResult, WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes, MediaTime timeStampOffset)

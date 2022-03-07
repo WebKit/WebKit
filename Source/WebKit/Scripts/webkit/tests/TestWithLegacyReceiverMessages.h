@@ -281,9 +281,14 @@ public:
     using Arguments = std::tuple<uint64_t, const WebKit::Plugin::Parameters&>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_CreatePlugin; }
-    static constexpr bool isSync = true;
+    static constexpr bool isSync = false;
 
+    static void callReply(IPC::Decoder&, CompletionHandler<void(bool&&)>&&);
+    static void cancelReply(CompletionHandler<void(bool&&)>&&);
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithLegacyReceiver_CreatePluginReply; }
+    using AsyncReply = CreatePluginAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
+    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&, bool result);
     using Reply = std::tuple<bool&>;
     using ReplyArguments = std::tuple<bool>;
     CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
@@ -305,9 +310,14 @@ public:
     using Arguments = std::tuple<uint64_t, const String&>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlert; }
-    static constexpr bool isSync = true;
+    static constexpr bool isSync = false;
 
+    static void callReply(IPC::Decoder&, CompletionHandler<void()>&&);
+    static void cancelReply(CompletionHandler<void()>&&);
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlertReply; }
+    using AsyncReply = RunJavaScriptAlertAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
+    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&);
     using Reply = std::tuple<>;
     using ReplyArguments = std::tuple<>;
     RunJavaScriptAlert(uint64_t frameID, const String& message)
@@ -329,9 +339,14 @@ public:
     using Arguments = std::tuple<bool>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_GetPlugins; }
-    static constexpr bool isSync = true;
+    static constexpr bool isSync = false;
 
+    static void callReply(IPC::Decoder&, CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&&);
+    static void cancelReply(CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&&);
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithLegacyReceiver_GetPluginsReply; }
+    using AsyncReply = GetPluginsAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
+    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&, const Vector<WebCore::PluginInfo>& plugins);
     using Reply = std::tuple<Vector<WebCore::PluginInfo>&>;
     using ReplyArguments = std::tuple<Vector<WebCore::PluginInfo>>;
     explicit GetPlugins(bool refresh)
@@ -487,9 +502,14 @@ public:
     using Arguments = std::tuple<uint32_t>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEvent; }
-    static constexpr bool isSync = true;
+    static constexpr bool isSync = false;
 
+    static void callReply(IPC::Decoder&, CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&&);
+    static void cancelReply(CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&&);
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEventReply; }
+    using AsyncReply = InterpretKeyEventAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
+    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&, const Vector<WebCore::KeypressCommand>& commandName);
     using Reply = std::tuple<Vector<WebCore::KeypressCommand>&>;
     using ReplyArguments = std::tuple<Vector<WebCore::KeypressCommand>>;
     explicit InterpretKeyEvent(uint32_t type)

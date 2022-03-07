@@ -31,7 +31,7 @@ messages -> WebSWContextManagerConnection NotRefCounted {
     PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientData sourceData)
     FireInstallEvent(WebCore::ServiceWorkerIdentifier identifier)
     FireActivateEvent(WebCore::ServiceWorkerIdentifier identifier)
-    FirePushEvent(WebCore::ServiceWorkerIdentifier identifier, std::optional<IPC::DataReference> data) -> (bool result) Async
+    FirePushEvent(WebCore::ServiceWorkerIdentifier identifier, std::optional<IPC::DataReference> data) -> (bool result)
 
     TerminateWorker(WebCore::ServiceWorkerIdentifier identifier)
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)

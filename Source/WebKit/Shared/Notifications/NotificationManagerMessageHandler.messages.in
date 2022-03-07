@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> NotificationManagerMessageHandler NotRefCounted {
-    RequestSystemNotificationPermission(String originIdentifier) -> (bool allowed) Async
+    RequestSystemNotificationPermission(String originIdentifier) -> (bool allowed)
     ShowNotification(struct WebCore::NotificationData notificationData) WantsConnection
     CancelNotification(UUID notificationID)
     ClearNotifications(Vector<UUID> notificationIDs)

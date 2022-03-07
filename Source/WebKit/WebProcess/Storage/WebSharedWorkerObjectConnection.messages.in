@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebSharedWorkerObjectConnection {
-    FetchScriptInClient(URL url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, struct WebCore::WorkerOptions workerOptions) -> (struct WebCore::WorkerFetchResult fetchResult) Async
+    FetchScriptInClient(URL url, WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, struct WebCore::WorkerOptions workerOptions) -> (struct WebCore::WorkerFetchResult fetchResult)
     NotifyWorkerObjectOfLoadCompletion(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, WebCore::ResourceError error)
     PostExceptionToWorkerObject(WebCore::SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, String errorMessage, int lineNumber, int columnNumber, String sourceURL)
 }

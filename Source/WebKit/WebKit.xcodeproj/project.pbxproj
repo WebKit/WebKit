@@ -1107,8 +1107,6 @@
 		572EBBC42536AB84000552B3 /* com.apple.WebKit.WebAuthnProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = 572EBBC32536AB84000552B3 /* com.apple.WebKit.WebAuthnProcess.sb */; };
 		572EBBC92536AFD5000552B3 /* WebAuthnProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBC62536AFD5000552B3 /* WebAuthnProcessProxy.h */; };
 		572EBBCC2536B04F000552B3 /* WebAuthnProcessConnectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBCB2536B04F000552B3 /* WebAuthnProcessConnectionInfo.h */; };
-		572EBBCF2536BB11000552B3 /* WebAuthnProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 572EBBCD2536BB10000552B3 /* WebAuthnProcessProxyMessageReceiver.cpp */; };
-		572EBBD02536BB11000552B3 /* WebAuthnProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBCE2536BB10000552B3 /* WebAuthnProcessProxyMessages.h */; };
 		572EBBD52536C885000552B3 /* WebAuthnProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 572EBBD22536C885000552B3 /* WebAuthnProcessConnection.h */; };
 		572EBBD72537EBAE000552B3 /* ExtraPrivateSymbolsForTAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA680D31E6904B500731D20 /* ExtraPrivateSymbolsForTAPI.h */; };
 		572EBBDA2538F6B4000552B3 /* AppAttestInternalSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 572EBBD82538F6A1000552B3 /* AppAttestInternalSoftLink.mm */; };
@@ -4706,10 +4704,7 @@
 		572EBBC32536AB84000552B3 /* com.apple.WebKit.WebAuthnProcess.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebAuthnProcess.sb; sourceTree = "<group>"; };
 		572EBBC52536AFD5000552B3 /* WebAuthnProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthnProcessProxy.cpp; sourceTree = "<group>"; };
 		572EBBC62536AFD5000552B3 /* WebAuthnProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthnProcessProxy.h; sourceTree = "<group>"; };
-		572EBBC72536AFD5000552B3 /* WebAuthnProcessProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebAuthnProcessProxy.messages.in; sourceTree = "<group>"; };
 		572EBBCB2536B04F000552B3 /* WebAuthnProcessConnectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthnProcessConnectionInfo.h; sourceTree = "<group>"; };
-		572EBBCD2536BB10000552B3 /* WebAuthnProcessProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthnProcessProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		572EBBCE2536BB10000552B3 /* WebAuthnProcessProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthnProcessProxyMessages.h; sourceTree = "<group>"; };
 		572EBBD12536C885000552B3 /* WebAuthnProcessConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthnProcessConnection.cpp; sourceTree = "<group>"; };
 		572EBBD22536C885000552B3 /* WebAuthnProcessConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAuthnProcessConnection.h; sourceTree = "<group>"; };
 		572EBBD32536C885000552B3 /* WebAuthnProcessConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebAuthnProcessConnection.messages.in; sourceTree = "<group>"; };
@@ -10082,7 +10077,6 @@
 				57608299202BDAE200116678 /* WebAuthenticatorCoordinatorProxy.messages.in */,
 				572EBBC52536AFD5000552B3 /* WebAuthnProcessProxy.cpp */,
 				572EBBC62536AFD5000552B3 /* WebAuthnProcessProxy.h */,
-				572EBBC72536AFD5000552B3 /* WebAuthnProcessProxy.messages.in */,
 			);
 			path = WebAuthentication;
 			sourceTree = "<group>";
@@ -12458,8 +12452,6 @@
 				572EBBBC2536A60A000552B3 /* WebAuthnConnectionToWebProcessMessages.h */,
 				572EBBBD2536A60A000552B3 /* WebAuthnProcessMessageReceiver.cpp */,
 				572EBBBE2536A60A000552B3 /* WebAuthnProcessMessages.h */,
-				572EBBCD2536BB10000552B3 /* WebAuthnProcessProxyMessageReceiver.cpp */,
-				572EBBCE2536BB10000552B3 /* WebAuthnProcessProxyMessages.h */,
 				1C0A19551C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp */,
 				1C0A19561C90068F00FE0EBB /* WebAutomationSessionMessages.h */,
 				1C0A19511C8FFDFB00FE0EBB /* WebAutomationSessionProxyMessageReceiver.cpp */,
@@ -16166,7 +16158,6 @@
 				57DCED702142EE680016B847 /* WebAuthenticatorCoordinatorProxyMessageReceiver.cpp in Sources */,
 				572EBBBF2536A60A000552B3 /* WebAuthnConnectionToWebProcessMessageReceiver.cpp in Sources */,
 				572EBBC12536A60A000552B3 /* WebAuthnProcessMessageReceiver.cpp in Sources */,
-				572EBBCF2536BB11000552B3 /* WebAuthnProcessProxyMessageReceiver.cpp in Sources */,
 				575B1BBA23CE9C130020639A /* WebAutomationSession.cpp in Sources */,
 				1C0A19571C90068F00FE0EBB /* WebAutomationSessionMessageReceiver.cpp in Sources */,
 				575B1BB823CE9BFC0020639A /* WebAutomationSessionProxy.cpp in Sources */,

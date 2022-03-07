@@ -38,7 +38,7 @@ messages -> WebSWClientConnection {
     SetSWOriginTableSharedMemory(WebKit::SharedMemory::IPCHandle handle)
     PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, struct WebCore::MessageWithMessagePorts message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
 
-    SetDocumentIsControlled(WebCore::ScriptExecutionContextIdentifier temporaryDocumentIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess) Async
+    SetDocumentIsControlled(WebCore::ScriptExecutionContextIdentifier temporaryDocumentIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
 messages -> RemoteAudioMediaStreamTrackRendererInternalUnitManager NotRefCounted {
-    CreateUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier) -> (WebCore::CAAudioStreamDescription description, size_t frameChunkSize) Async
+    CreateUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier) -> (WebCore::CAAudioStreamDescription description, size_t frameChunkSize)
     DeleteUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
 
     StartUnit(WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier identifier, WebKit::SharedMemory::IPCHandle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames, IPC::Semaphore renderSemaphore)

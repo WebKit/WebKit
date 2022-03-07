@@ -23,7 +23,7 @@
 messages -> WebLockRegistryProxy NotRefCounted {
     RequestLock(struct WebCore::ClientOrigin clientOrigin, WebCore::WebLockIdentifier identifier, WebCore::ScriptExecutionContextIdentifier clientID, String name, enum:bool WebCore::WebLockMode mode, bool steal, bool ifAvailable)
     ReleaseLock(struct WebCore::ClientOrigin clientOrigin, WebCore::WebLockIdentifier identifier, WebCore::ScriptExecutionContextIdentifier clientID, String name)
-    AbortLockRequest(struct WebCore::ClientOrigin clientOrigin, WebCore::WebLockIdentifier identifier, WebCore::ScriptExecutionContextIdentifier clientID, String name) -> (bool wasAborted) Async
-    Snapshot(struct WebCore::ClientOrigin clientOrigin) -> (struct WebCore::WebLockManagerSnapshot snapshot) Async
+    AbortLockRequest(struct WebCore::ClientOrigin clientOrigin, WebCore::WebLockIdentifier identifier, WebCore::ScriptExecutionContextIdentifier clientID, String name) -> (bool wasAborted)
+    Snapshot(struct WebCore::ClientOrigin clientOrigin) -> (struct WebCore::WebLockManagerSnapshot snapshot)
     ClientIsGoingAway(struct WebCore::ClientOrigin clientOrigin, WebCore::ScriptExecutionContextIdentifier clientId)
 }

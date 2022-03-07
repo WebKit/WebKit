@@ -24,8 +24,8 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteMediaEngineConfigurationFactoryProxy NotRefCounted {
-    CreateDecodingConfiguration(struct WebCore::MediaDecodingConfiguration configuration) -> (struct WebCore::MediaCapabilitiesDecodingInfo decodingInfo) Async
-    CreateEncodingConfiguration(struct WebCore::MediaEncodingConfiguration configuration) -> (struct WebCore::MediaCapabilitiesEncodingInfo decodingInfo) Async
+    CreateDecodingConfiguration(struct WebCore::MediaDecodingConfiguration configuration) -> (struct WebCore::MediaCapabilitiesDecodingInfo decodingInfo)
+    CreateEncodingConfiguration(struct WebCore::MediaEncodingConfiguration configuration) -> (struct WebCore::MediaCapabilitiesEncodingInfo decodingInfo)
 }
 
 #endif

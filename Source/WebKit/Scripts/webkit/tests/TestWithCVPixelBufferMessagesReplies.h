@@ -25,12 +25,19 @@
 #pragma once
 
 #include "MessageNames.h"
+#if PLATFORM(COCOA)
+#include <WebCore/CVUtilities.h>
+#endif
 #include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
 
 
 namespace Messages {
 namespace TestWithCVPixelBuffer {
 
+#if USE(AVFOUNDATION)
+using ReceiveCVPixelBufferAsyncReply = CompletionHandler<void(const RetainPtr<CVPixelBufferRef>& r0)>;
+#endif
 
 } // namespace TestWithCVPixelBuffer
 } // namespace Messages

@@ -22,7 +22,7 @@
 
 #if ENABLE(ROUTING_ARBITRATION)
 messages -> AudioSessionRoutingArbitratorProxy NotRefCounted {
-    BeginRoutingArbitrationWithCategory(enum:uint8_t WebCore::AudioSession::CategoryType category) -> (enum:uint8_t WebKit::AudioSessionRoutingArbitratorProxy::RoutingArbitrationError error, enum:bool WebKit::AudioSessionRoutingArbitratorProxy::DefaultRouteChanged defaultRouteChanged) Async
+    BeginRoutingArbitrationWithCategory(enum:uint8_t WebCore::AudioSession::CategoryType category) -> (enum:uint8_t WebKit::AudioSessionRoutingArbitratorProxy::RoutingArbitrationError error, enum:bool WebKit::AudioSessionRoutingArbitratorProxy::DefaultRouteChanged defaultRouteChanged)
     EndRoutingArbitration();
 }
 #endif

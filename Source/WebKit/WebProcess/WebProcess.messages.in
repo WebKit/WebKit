@@ -74,9 +74,9 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetInjectedBundleParameters(IPC::DataReference parameters);
     HandleInjectedBundleMessage(String messageName, WebKit::UserData messageBody);
 
-    FetchWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData) Async
-    DeleteWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> () Async
-    DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> () Async
+    FetchWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes) -> (struct WebKit::WebsiteData websiteData)
+    DeleteWebsiteData(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince) -> ()
+    DeleteWebsiteDataForOrigins(OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins) -> ()
 
     SetHiddenPageDOMTimerThrottlingIncreaseLimit(int milliseconds)
 
@@ -89,7 +89,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     EnsureAutomationSessionProxy(String sessionIdentifier)
     DestroyAutomationSessionProxy()
 
-    PrepareToSuspend(bool isSuspensionImminent) -> () Async
+    PrepareToSuspend(bool isSuspensionImminent) -> ()
     ProcessDidResume()
 
     BackgroundResponsivenessPing()
@@ -100,12 +100,12 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     GamepadDisconnected(unsigned index)
 #endif
 
-    EstablishRemoteWorkerContextConnectionToNetworkProcess(enum:bool WebKit::RemoteWorkerType workerType, WebKit::PageGroupIdentifier pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, struct WebKit::RemoteWorkerInitializationData initializationData) -> () Async
+    EstablishRemoteWorkerContextConnectionToNetworkProcess(enum:bool WebKit::RemoteWorkerType workerType, WebKit::PageGroupIdentifier pageGroupID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, struct WebKit::WebPreferencesStore store, WebCore::RegistrableDomain domain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, struct WebKit::RemoteWorkerInitializationData initializationData) -> ()
 
     SetHasSuspendedPageProxy(bool hasSuspendedPageProxy);
     SetIsInProcessCache(bool isInProcessCache)
     MarkIsNoLongerPrewarmed()
-    GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins) Async
+    GetActivePagesOriginsForTesting() -> (Vector<String> activeOrigins)
 
 #if PLATFORM(COCOA)
     SetScreenProperties(struct WebCore::ScreenProperties screenProperties)
@@ -127,7 +127,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ColorPreferencesDidChange()
 #endif
 
-    IsJITEnabled() -> (bool enabled) Async
+    IsJITEnabled() -> (bool enabled)
 
 #if PLATFORM(COCOA)
     SetMediaMIMETypes(Vector<String> types)
@@ -151,18 +151,18 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ClearCurrentModifierStateForTesting()
 
     SetBackForwardCacheCapacity(unsigned capacity);
-    ClearCachedPage(struct WebCore::BackForwardItemIdentifier backForwardItemID) -> () Async
+    ClearCachedPage(struct WebCore::BackForwardItemIdentifier backForwardItemID) -> ()
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     SendMessageToWebExtension(struct WebKit::UserMessage userMessage)
 #endif
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
-    SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> () Async
-    SetThirdPartyCookieBlockingMode(enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> () Async
+    SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> ()
+    SetThirdPartyCookieBlockingMode(enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> ()
     SetDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> domains)
-    SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domains) -> () Async
-    SendResourceLoadStatisticsDataImmediately() -> () Async
+    SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domains) -> ()
+    SendResourceLoadStatisticsDataImmediately() -> ()
 #endif
 
     GrantAccessToAssetServices(WebKit::SandboxExtension::Handle mobileAssetV2Handle)

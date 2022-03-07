@@ -67,9 +67,14 @@ public:
     using Arguments = std::tuple<>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphore; }
-    static constexpr bool isSync = true;
+    static constexpr bool isSync = false;
 
+    static void callReply(IPC::Decoder&, CompletionHandler<void(IPC::Semaphore&&)>&&);
+    static void cancelReply(CompletionHandler<void(IPC::Semaphore&&)>&&);
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply; }
+    using AsyncReply = ReceiveSemaphoreAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
+    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&, const IPC::Semaphore& r0);
     using Reply = std::tuple<IPC::Semaphore&>;
     using ReplyArguments = std::tuple<IPC::Semaphore>;
     const Arguments& arguments() const

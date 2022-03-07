@@ -29,7 +29,7 @@ messages -> VideoFullscreenManagerProxy {
 #if !PLATFORM(IOS_FAMILY)
     EnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
 #endif
-    ExitFullscreen(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect finalRect) -> (bool success) Async
+    ExitFullscreen(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect finalRect) -> (bool success)
     SetInlineRect(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatRect inlineRect, bool visible)
     SetHasVideoContentLayer(WebKit::PlaybackSessionContextIdentifier contextId, bool value)
     CleanupFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)

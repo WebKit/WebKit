@@ -24,7 +24,7 @@ messages -> SecItemShimProxy {
 
 #if ENABLE(SEC_ITEM_SHIM)
     SecItemRequestSync(WebKit::SecItemRequestData request) -> (std::optional<WebKit::SecItemResponseData> response) Synchronous
-    SecItemRequest(WebKit::SecItemRequestData request) -> (std::optional<WebKit::SecItemResponseData> response) Async
+    SecItemRequest(WebKit::SecItemRequestData request) -> (std::optional<WebKit::SecItemResponseData> response)
 #endif
 
 }

@@ -158,6 +158,26 @@ const char* description(MessageName name)
         return "SyncMessageReply";
     case MessageName::Terminate:
         return "Terminate";
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply:
+        return "TestWithCVPixelBuffer_ReceiveCVPixelBufferReply";
+    case MessageName::TestWithImageData_ReceiveImageDataReply:
+        return "TestWithImageData_ReceiveImageDataReply";
+    case MessageName::TestWithLegacyReceiver_CreatePluginReply:
+        return "TestWithLegacyReceiver_CreatePluginReply";
+    case MessageName::TestWithLegacyReceiver_GetPluginsReply:
+        return "TestWithLegacyReceiver_GetPluginsReply";
+    case MessageName::TestWithLegacyReceiver_InterpretKeyEventReply:
+        return "TestWithLegacyReceiver_InterpretKeyEventReply";
+    case MessageName::TestWithLegacyReceiver_RunJavaScriptAlertReply:
+        return "TestWithLegacyReceiver_RunJavaScriptAlertReply";
+    case MessageName::TestWithSemaphore_ReceiveSemaphoreReply:
+        return "TestWithSemaphore_ReceiveSemaphoreReply";
+    case MessageName::TestWithStream_ReceiveMachSendRightReply:
+        return "TestWithStream_ReceiveMachSendRightReply";
+    case MessageName::TestWithStream_SendAndReceiveMachSendRightReply:
+        return "TestWithStream_SendAndReceiveMachSendRightReply";
+    case MessageName::TestWithStream_SendStringSynchronizedReply:
+        return "TestWithStream_SendStringSynchronizedReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
         return "TestWithSuperclass_TestAsyncMessageReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
@@ -166,6 +186,14 @@ const char* description(MessageName name)
         return "TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply";
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply:
         return "TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply";
+    case MessageName::TestWithoutAttributes_CreatePluginReply:
+        return "TestWithoutAttributes_CreatePluginReply";
+    case MessageName::TestWithoutAttributes_GetPluginsReply:
+        return "TestWithoutAttributes_GetPluginsReply";
+    case MessageName::TestWithoutAttributes_InterpretKeyEventReply:
+        return "TestWithoutAttributes_InterpretKeyEventReply";
+    case MessageName::TestWithoutAttributes_RunJavaScriptAlertReply:
+        return "TestWithoutAttributes_RunJavaScriptAlertReply";
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
         return "TestWithLegacyReceiver_GetPluginProcessConnection";
     case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
@@ -262,10 +290,24 @@ ReceiverName receiverName(MessageName messageName)
     case MessageName::SyncMessageReply:
     case MessageName::Terminate:
         return ReceiverName::IPC;
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply:
+    case MessageName::TestWithImageData_ReceiveImageDataReply:
+    case MessageName::TestWithLegacyReceiver_CreatePluginReply:
+    case MessageName::TestWithLegacyReceiver_GetPluginsReply:
+    case MessageName::TestWithLegacyReceiver_InterpretKeyEventReply:
+    case MessageName::TestWithLegacyReceiver_RunJavaScriptAlertReply:
+    case MessageName::TestWithSemaphore_ReceiveSemaphoreReply:
+    case MessageName::TestWithStream_ReceiveMachSendRightReply:
+    case MessageName::TestWithStream_SendAndReceiveMachSendRightReply:
+    case MessageName::TestWithStream_SendStringSynchronizedReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnectionReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply:
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply:
+    case MessageName::TestWithoutAttributes_CreatePluginReply:
+    case MessageName::TestWithoutAttributes_GetPluginsReply:
+    case MessageName::TestWithoutAttributes_InterpretKeyEventReply:
+    case MessageName::TestWithoutAttributes_RunJavaScriptAlertReply:
         return ReceiverName::AsyncReply;
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
     case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
@@ -471,6 +513,34 @@ bool isValidMessageName(MessageName messageName)
         return true;
     if (messageName == IPC::MessageName::Terminate)
         return true;
+#if USE(AVFOUNDATION)
+    if (messageName == IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBufferReply)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithImageData_ReceiveImageDataReply)
+        return true;
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_CreatePluginReply)
+        return true;
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_GetPluginsReply)
+        return true;
+#if PLATFORM(MAC)
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_InterpretKeyEventReply)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithLegacyReceiver_RunJavaScriptAlertReply)
+        return true;
+    if (messageName == IPC::MessageName::TestWithSemaphore_ReceiveSemaphoreReply)
+        return true;
+#if PLATFORM(COCOA)
+    if (messageName == IPC::MessageName::TestWithStream_ReceiveMachSendRightReply)
+        return true;
+#endif
+#if PLATFORM(COCOA)
+    if (messageName == IPC::MessageName::TestWithStream_SendAndReceiveMachSendRightReply)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithStream_SendStringSynchronizedReply)
+        return true;
 #if ENABLE(TEST_FEATURE)
     if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageReply)
         return true;
@@ -487,6 +557,16 @@ bool isValidMessageName(MessageName messageName)
     if (messageName == IPC::MessageName::TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply)
         return true;
 #endif
+    if (messageName == IPC::MessageName::TestWithoutAttributes_CreatePluginReply)
+        return true;
+    if (messageName == IPC::MessageName::TestWithoutAttributes_GetPluginsReply)
+        return true;
+#if PLATFORM(MAC)
+    if (messageName == IPC::MessageName::TestWithoutAttributes_InterpretKeyEventReply)
+        return true;
+#endif
+    if (messageName == IPC::MessageName::TestWithoutAttributes_RunJavaScriptAlertReply)
+        return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_GetPluginProcessConnection)
         return true;
     if (messageName == IPC::MessageName::TestWithLegacyReceiver_TestMultipleAttributes)

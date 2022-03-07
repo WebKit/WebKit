@@ -67,6 +67,67 @@ namespace Messages {
 
 namespace TestWithoutAttributes {
 
+void CreatePlugin::callReply(IPC::Decoder& decoder, CompletionHandler<void(bool&&)>&& completionHandler)
+{
+    std::optional<bool> result;
+    decoder >> result;
+    if (!result) {
+        ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
+        return;
+    }
+    completionHandler(WTFMove(*result));
+}
+
+void CreatePlugin::cancelReply(CompletionHandler<void(bool&&)>&& completionHandler)
+{
+    completionHandler(IPC::AsyncReplyError<bool>::create());
+}
+
+void CreatePlugin::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, bool result)
+{
+    encoder.get() << result;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+void RunJavaScriptAlert::callReply(IPC::Decoder& decoder, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
+void RunJavaScriptAlert::cancelReply(CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
+void RunJavaScriptAlert::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection)
+{
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+void GetPlugins::callReply(IPC::Decoder& decoder, CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&& completionHandler)
+{
+    std::optional<Vector<WebCore::PluginInfo>> plugins;
+    decoder >> plugins;
+    if (!plugins) {
+        ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
+        return;
+    }
+    completionHandler(WTFMove(*plugins));
+}
+
+void GetPlugins::cancelReply(CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&& completionHandler)
+{
+    completionHandler(IPC::AsyncReplyError<Vector<WebCore::PluginInfo>>::create());
+}
+
+void GetPlugins::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const Vector<WebCore::PluginInfo>& plugins)
+{
+    encoder.get() << plugins;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
 void GetPluginProcessConnection::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const IPC::Connection::Handle& connectionHandle)
 {
     encoder.get() << connectionHandle;
@@ -77,6 +138,33 @@ void TestMultipleAttributes::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connec
 {
     connection.sendSyncReply(WTFMove(encoder));
 }
+
+#if PLATFORM(MAC)
+
+void InterpretKeyEvent::callReply(IPC::Decoder& decoder, CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&& completionHandler)
+{
+    std::optional<Vector<WebCore::KeypressCommand>> commandName;
+    decoder >> commandName;
+    if (!commandName) {
+        ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
+        return;
+    }
+    completionHandler(WTFMove(*commandName));
+}
+
+void InterpretKeyEvent::cancelReply(CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&& completionHandler)
+{
+    completionHandler(IPC::AsyncReplyError<Vector<WebCore::KeypressCommand>>::create());
+}
+
+void InterpretKeyEvent::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const Vector<WebCore::KeypressCommand>& commandName)
+{
+    encoder.get() << commandName;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+#endif
 
 } // namespace TestWithoutAttributes
 
@@ -115,6 +203,12 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
         return IPC::handleMessage<Messages::TestWithoutAttributes::SendDoubleAndFloat>(connection, decoder, this, &TestWithoutAttributes::sendDoubleAndFloat);
     if (decoder.messageName() == Messages::TestWithoutAttributes::SendInts::name())
         return IPC::handleMessage<Messages::TestWithoutAttributes::SendInts>(connection, decoder, this, &TestWithoutAttributes::sendInts);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::CreatePlugin::name())
+        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::CreatePlugin>(connection, decoder, this, &TestWithoutAttributes::createPlugin);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::RunJavaScriptAlert::name())
+        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::RunJavaScriptAlert>(connection, decoder, this, &TestWithoutAttributes::runJavaScriptAlert);
+    if (decoder.messageName() == Messages::TestWithoutAttributes::GetPlugins::name())
+        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::GetPlugins>(connection, decoder, this, &TestWithoutAttributes::getPlugins);
     if (decoder.messageName() == Messages::TestWithoutAttributes::TestParameterAttributes::name())
         return IPC::handleMessage<Messages::TestWithoutAttributes::TestParameterAttributes>(connection, decoder, this, &TestWithoutAttributes::testParameterAttributes);
     if (decoder.messageName() == Messages::TestWithoutAttributes::TemplateTest::name())
@@ -124,6 +218,10 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
 #if PLATFORM(MAC)
     if (decoder.messageName() == Messages::TestWithoutAttributes::DidCreateWebProcessConnection::name())
         return IPC::handleMessage<Messages::TestWithoutAttributes::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithoutAttributes::didCreateWebProcessConnection);
+#endif
+#if PLATFORM(MAC)
+    if (decoder.messageName() == Messages::TestWithoutAttributes::InterpretKeyEvent::name())
+        return IPC::handleMessageAsync<Messages::TestWithoutAttributes::InterpretKeyEvent>(connection, decoder, this, &TestWithoutAttributes::interpretKeyEvent);
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
     if (decoder.messageName() == Messages::TestWithoutAttributes::DeprecatedOperation::name())
@@ -145,20 +243,10 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
 bool TestWithoutAttributes::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithoutAttributes::CreatePlugin::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::CreatePlugin>(connection, decoder, *replyEncoder, this, &TestWithoutAttributes::createPlugin);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::RunJavaScriptAlert::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::RunJavaScriptAlert>(connection, decoder, *replyEncoder, this, &TestWithoutAttributes::runJavaScriptAlert);
-    if (decoder.messageName() == Messages::TestWithoutAttributes::GetPlugins::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::GetPlugins>(connection, decoder, *replyEncoder, this, &TestWithoutAttributes::getPlugins);
     if (decoder.messageName() == Messages::TestWithoutAttributes::GetPluginProcessConnection::name())
         return IPC::handleMessageSynchronous<Messages::TestWithoutAttributes::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithoutAttributes::getPluginProcessConnection);
     if (decoder.messageName() == Messages::TestWithoutAttributes::TestMultipleAttributes::name())
         return IPC::handleMessageSynchronousWantsConnection<Messages::TestWithoutAttributes::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &TestWithoutAttributes::testMultipleAttributes);
-#if PLATFORM(MAC)
-    if (decoder.messageName() == Messages::TestWithoutAttributes::InterpretKeyEvent::name())
-        return IPC::handleMessage<Messages::TestWithoutAttributes::InterpretKeyEvent>(connection, decoder, *replyEncoder, this, &TestWithoutAttributes::interpretKeyEvent);
-#endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);
@@ -228,13 +316,25 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 {
     return jsValueForDecodedArguments<Messages::TestWithoutAttributes::CreatePlugin::Arguments>(globalObject, decoder);
 }
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_CreatePlugin>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::CreatePlugin::ReplyArguments>(globalObject, decoder);
+}
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_RunJavaScriptAlert>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithoutAttributes::RunJavaScriptAlert::Arguments>(globalObject, decoder);
 }
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_RunJavaScriptAlert>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::RunJavaScriptAlert::ReplyArguments>(globalObject, decoder);
+}
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_GetPlugins>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithoutAttributes::GetPlugins::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_GetPlugins>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::GetPlugins::ReplyArguments>(globalObject, decoder);
 }
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_GetPluginProcessConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
@@ -272,6 +372,10 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithoutAttributes_InterpretKeyEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithoutAttributes::InterpretKeyEvent::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_InterpretKeyEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithoutAttributes::InterpretKeyEvent::ReplyArguments>(globalObject, decoder);
 }
 #endif
 #if ENABLE(DEPRECATED_FEATURE)

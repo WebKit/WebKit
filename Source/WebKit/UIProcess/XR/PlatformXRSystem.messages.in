@@ -26,11 +26,11 @@
 #if ENABLE(WEBXR)
 
 messages -> PlatformXRSystem NotRefCounted {
-    EnumerateImmersiveXRDevices() -> (Vector<WebKit::XRDeviceInfo> devicesInfos) Async
-    RequestPermissionOnSessionFeatures(struct WebCore::SecurityOriginData origin, PlatformXR::SessionMode mode, Vector<PlatformXR::ReferenceSpaceType> granted, Vector<PlatformXR::ReferenceSpaceType> consentRequired, Vector<PlatformXR::ReferenceSpaceType> consentOptional) -> (std::optional<Vector<PlatformXR::ReferenceSpaceType>> userGranted) Async
+    EnumerateImmersiveXRDevices() -> (Vector<WebKit::XRDeviceInfo> devicesInfos)
+    RequestPermissionOnSessionFeatures(struct WebCore::SecurityOriginData origin, PlatformXR::SessionMode mode, Vector<PlatformXR::ReferenceSpaceType> granted, Vector<PlatformXR::ReferenceSpaceType> consentRequired, Vector<PlatformXR::ReferenceSpaceType> consentOptional) -> (std::optional<Vector<PlatformXR::ReferenceSpaceType>> userGranted)
     InitializeTrackingAndRendering()
     ShutDownTrackingAndRendering()
-    RequestFrame() -> (struct PlatformXR::Device::FrameData frameData) Async
+    RequestFrame() -> (struct PlatformXR::Device::FrameData frameData)
     SubmitFrame()
 }
 

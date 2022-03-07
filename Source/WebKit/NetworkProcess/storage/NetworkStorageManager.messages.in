@@ -24,29 +24,29 @@
  */
  
  messages -> NetworkStorageManager {
-    Persisted(struct WebCore::ClientOrigin origin) -> (bool persisted) Async
-    Persist(struct WebCore::ClientOrigin origin) -> (bool persisted) Async
-    FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) Async WantsConnection
+    Persisted(struct WebCore::ClientOrigin origin) -> (bool persisted)
+    Persist(struct WebCore::ClientOrigin origin) -> (bool persisted)
+    FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) WantsConnection
     CloseHandle(WebCore::FileSystemHandleIdentifier identifier)
-    IsSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (bool result) Async
-    GetFileHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) Async WantsConnection
-    GetDirectoryHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) Async WantsConnection
-    RemoveEntry(WebCore::FileSystemHandleIdentifier identifier, String name, bool deleteRecursively) -> (std::optional<WebKit::FileSystemStorageError> result) Async
-    Resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result) Async
-    Move(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, String newName) -> (std::optional<WebKit::FileSystemStorageError> result) Async
-    GetFile(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<String, WebKit::FileSystemStorageError> result) Async
-    CreateSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<std::pair<WebCore::FileSystemSyncAccessHandleIdentifier, IPC::SharedFileHandle>, WebKit::FileSystemStorageError> result) Async
-    CloseSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> (std::optional<WebKit::FileSystemStorageError> result) Async
-    GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result) Async
-    GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, WebKit::FileSystemStorageError> result) Async WantsConnection
+    IsSameEntry(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (bool result)
+    GetFileHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) WantsConnection
+    GetDirectoryHandle(WebCore::FileSystemHandleIdentifier identifier, String name, bool createIfNecessary) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) WantsConnection
+    RemoveEntry(WebCore::FileSystemHandleIdentifier identifier, String name, bool deleteRecursively) -> (std::optional<WebKit::FileSystemStorageError> result)
+    Resolve(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
+    Move(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier destinationIdentifier, String newName) -> (std::optional<WebKit::FileSystemStorageError> result)
+    GetFile(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<String, WebKit::FileSystemStorageError> result)
+    CreateSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<std::pair<WebCore::FileSystemSyncAccessHandleIdentifier, IPC::SharedFileHandle>, WebKit::FileSystemStorageError> result)
+    CloseSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> (std::optional<WebKit::FileSystemStorageError> result)
+    GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
+    GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::pair<WebCore::FileSystemHandleIdentifier, bool>, WebKit::FileSystemStorageError> result) WantsConnection
 
-    ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier) Async WantsConnection
+    ConnectToStorageArea(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier) WantsConnection
     ConnectToStorageAreaSync(WebCore::StorageType type, WebKit::StorageAreaMapIdentifier sourceIdentifier, WebKit::StorageNamespaceIdentifier namespaceIdentifier, struct WebCore::ClientOrigin origin) -> (WebKit::StorageAreaIdentifier identifier, HashMap<String, String> items, uint64_t messageIdentifier) Synchronous WantsConnection
     DisconnectFromStorageArea(WebKit::StorageAreaIdentifier identifier) WantsConnection
     CloneSessionStorageNamespace(WebKit::StorageNamespaceIdentifier fromStorageNamespaceID, WebKit::StorageNamespaceIdentifier toStorageNamespaceID) WantsConnection
-    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool quotaException) Async WantsConnection
-    RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> () Async WantsConnection
-    Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> () Async WantsConnection
+    SetItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String value, String urlString) -> (bool quotaException) WantsConnection
+    RemoveItem(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String key, String urlString) -> () WantsConnection
+    Clear(WebKit::StorageAreaIdentifier identifier, WebKit::StorageAreaImplIdentifier implIdentifier, String urlString) -> () WantsConnection
 
     OpenDatabase(WebCore::IDBRequestData requestData) WantsConnection
     OpenDBRequestCancelled(WebCore::IDBRequestData requestData)

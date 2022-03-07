@@ -68,9 +68,9 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
     UpdateGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
     RemoveGenericCue(WebKit::TrackPrivateRemoteIdentifier trackID, struct WebCore::GenericCueData cue)
 
-    RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options) -> () Async
+    RequestResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest request, enum:uint8_t WebCore::PlatformMediaResourceLoader::LoadOptions options) -> ()
     RemoveResource(WebKit::RemoteMediaResourceIdentifier remoteMediaResourceIdentifier)
-    SendH2Ping(URL url) -> (Expected<Seconds, WebCore::ResourceError> result) Async
+    SendH2Ping(URL url) -> (Expected<Seconds, WebCore::ResourceError> result)
     ResourceNotSupported()
 
     ActiveSourceBuffersChanged()
@@ -89,7 +89,7 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    GetRawCookies(URL url) -> (Vector<WebCore::Cookie> result) Async
+    GetRawCookies(URL url) -> (Vector<WebCore::Cookie> result)
 #endif
 
 #if PLATFORM(COCOA)

@@ -67,6 +67,67 @@ namespace Messages {
 
 namespace TestWithLegacyReceiver {
 
+void CreatePlugin::callReply(IPC::Decoder& decoder, CompletionHandler<void(bool&&)>&& completionHandler)
+{
+    std::optional<bool> result;
+    decoder >> result;
+    if (!result) {
+        ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
+        return;
+    }
+    completionHandler(WTFMove(*result));
+}
+
+void CreatePlugin::cancelReply(CompletionHandler<void(bool&&)>&& completionHandler)
+{
+    completionHandler(IPC::AsyncReplyError<bool>::create());
+}
+
+void CreatePlugin::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, bool result)
+{
+    encoder.get() << result;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+void RunJavaScriptAlert::callReply(IPC::Decoder& decoder, CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
+void RunJavaScriptAlert::cancelReply(CompletionHandler<void()>&& completionHandler)
+{
+    completionHandler();
+}
+
+void RunJavaScriptAlert::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection)
+{
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+void GetPlugins::callReply(IPC::Decoder& decoder, CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&& completionHandler)
+{
+    std::optional<Vector<WebCore::PluginInfo>> plugins;
+    decoder >> plugins;
+    if (!plugins) {
+        ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
+        return;
+    }
+    completionHandler(WTFMove(*plugins));
+}
+
+void GetPlugins::cancelReply(CompletionHandler<void(Vector<WebCore::PluginInfo>&&)>&& completionHandler)
+{
+    completionHandler(IPC::AsyncReplyError<Vector<WebCore::PluginInfo>>::create());
+}
+
+void GetPlugins::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const Vector<WebCore::PluginInfo>& plugins)
+{
+    encoder.get() << plugins;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
 void GetPluginProcessConnection::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const IPC::Connection::Handle& connectionHandle)
 {
     encoder.get() << connectionHandle;
@@ -77,6 +138,33 @@ void TestMultipleAttributes::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connec
 {
     connection.sendSyncReply(WTFMove(encoder));
 }
+
+#if PLATFORM(MAC)
+
+void InterpretKeyEvent::callReply(IPC::Decoder& decoder, CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&& completionHandler)
+{
+    std::optional<Vector<WebCore::KeypressCommand>> commandName;
+    decoder >> commandName;
+    if (!commandName) {
+        ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
+        return;
+    }
+    completionHandler(WTFMove(*commandName));
+}
+
+void InterpretKeyEvent::cancelReply(CompletionHandler<void(Vector<WebCore::KeypressCommand>&&)>&& completionHandler)
+{
+    completionHandler(IPC::AsyncReplyError<Vector<WebCore::KeypressCommand>>::create());
+}
+
+void InterpretKeyEvent::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const Vector<WebCore::KeypressCommand>& commandName)
+{
+    encoder.get() << commandName;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+#endif
 
 } // namespace TestWithLegacyReceiver
 
@@ -115,6 +203,12 @@ void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connec
         return IPC::handleMessage<Messages::TestWithLegacyReceiver::SendDoubleAndFloat>(connection, decoder, this, &TestWithLegacyReceiver::sendDoubleAndFloat);
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::SendInts::name())
         return IPC::handleMessage<Messages::TestWithLegacyReceiver::SendInts>(connection, decoder, this, &TestWithLegacyReceiver::sendInts);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::CreatePlugin::name())
+        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::CreatePlugin>(connection, decoder, this, &TestWithLegacyReceiver::createPlugin);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::RunJavaScriptAlert::name())
+        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::RunJavaScriptAlert>(connection, decoder, this, &TestWithLegacyReceiver::runJavaScriptAlert);
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPlugins::name())
+        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::GetPlugins>(connection, decoder, this, &TestWithLegacyReceiver::getPlugins);
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::TestParameterAttributes::name())
         return IPC::handleMessage<Messages::TestWithLegacyReceiver::TestParameterAttributes>(connection, decoder, this, &TestWithLegacyReceiver::testParameterAttributes);
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::TemplateTest::name())
@@ -124,6 +218,10 @@ void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connec
 #if PLATFORM(MAC)
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection::name())
         return IPC::handleMessage<Messages::TestWithLegacyReceiver::DidCreateWebProcessConnection>(connection, decoder, this, &TestWithLegacyReceiver::didCreateWebProcessConnection);
+#endif
+#if PLATFORM(MAC)
+    if (decoder.messageName() == Messages::TestWithLegacyReceiver::InterpretKeyEvent::name())
+        return IPC::handleMessageAsync<Messages::TestWithLegacyReceiver::InterpretKeyEvent>(connection, decoder, this, &TestWithLegacyReceiver::interpretKeyEvent);
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::DeprecatedOperation::name())
@@ -145,20 +243,10 @@ void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connec
 bool TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
 {
     Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::CreatePlugin::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::CreatePlugin>(connection, decoder, *replyEncoder, this, &TestWithLegacyReceiver::createPlugin);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::RunJavaScriptAlert::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::RunJavaScriptAlert>(connection, decoder, *replyEncoder, this, &TestWithLegacyReceiver::runJavaScriptAlert);
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPlugins::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::GetPlugins>(connection, decoder, *replyEncoder, this, &TestWithLegacyReceiver::getPlugins);
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::GetPluginProcessConnection::name())
         return IPC::handleMessageSynchronous<Messages::TestWithLegacyReceiver::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::getPluginProcessConnection);
     if (decoder.messageName() == Messages::TestWithLegacyReceiver::TestMultipleAttributes::name())
         return IPC::handleMessageSynchronousWantsConnection<Messages::TestWithLegacyReceiver::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &TestWithLegacyReceiver::testMultipleAttributes);
-#if PLATFORM(MAC)
-    if (decoder.messageName() == Messages::TestWithLegacyReceiver::InterpretKeyEvent::name())
-        return IPC::handleMessage<Messages::TestWithLegacyReceiver::InterpretKeyEvent>(connection, decoder, *replyEncoder, this, &TestWithLegacyReceiver::interpretKeyEvent);
-#endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);
@@ -228,13 +316,25 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 {
     return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::CreatePlugin::Arguments>(globalObject, decoder);
 }
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_CreatePlugin>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::CreatePlugin::ReplyArguments>(globalObject, decoder);
+}
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_RunJavaScriptAlert>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::RunJavaScriptAlert::Arguments>(globalObject, decoder);
 }
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_RunJavaScriptAlert>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::RunJavaScriptAlert::ReplyArguments>(globalObject, decoder);
+}
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPlugins>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPlugins::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_GetPlugins>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::GetPlugins::ReplyArguments>(globalObject, decoder);
 }
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_GetPluginProcessConnection>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
@@ -272,6 +372,10 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithLegacyReceiver_InterpretKeyEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::InterpretKeyEvent::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_InterpretKeyEvent>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithLegacyReceiver::InterpretKeyEvent::ReplyArguments>(globalObject, decoder);
 }
 #endif
 #if ENABLE(DEPRECATED_FEATURE)

@@ -27,10 +27,10 @@ messages -> RemoteMediaRecorder NotRefCounted {
     AudioSamplesStorageChanged(WebKit::SharedMemory::IPCHandle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
     AudioSamplesAvailable(MediaTime time, uint64_t numberOfFrames)
     VideoSampleAvailable(struct WebKit::SharedVideoFrame frame)
-    FetchData() -> (IPC::DataReference buffer, double timeCode) Async
-    StopRecording() -> () Async
-    Pause() -> () Async
-    Resume() -> () Async
+    FetchData() -> (IPC::DataReference buffer, double timeCode)
+    StopRecording() -> ()
+    Pause() -> ()
+    Resume() -> ()
     SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore)
     SetSharedVideoFrameMemory(WebKit::SharedMemory::IPCHandle storageHandle)
 }

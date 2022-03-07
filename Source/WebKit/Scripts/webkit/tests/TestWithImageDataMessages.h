@@ -68,9 +68,14 @@ public:
     using Arguments = std::tuple<>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithImageData_ReceiveImageData; }
-    static constexpr bool isSync = true;
+    static constexpr bool isSync = false;
 
+    static void callReply(IPC::Decoder&, CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>&&);
+    static void cancelReply(CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>&&);
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithImageData_ReceiveImageDataReply; }
+    using AsyncReply = ReceiveImageDataAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
+    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&, const RefPtr<WebCore::ImageData>& r0);
     using Reply = std::tuple<RefPtr<WebCore::ImageData>&>;
     using ReplyArguments = std::tuple<RefPtr<WebCore::ImageData>>;
     const Arguments& arguments() const

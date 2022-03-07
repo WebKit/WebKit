@@ -41,7 +41,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     ResetTrackBuffers()
     ClearTrackBuffers()
     SetAllTrackBuffersNeedRandomAccess()
-    RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime, bool isEnded) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes) Async
+    RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime, bool isEnded) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes)
     EvictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, MediaTime currentTime, MediaTime duration, bool isEnded) -> (uint64_t totalTrackBufferSizeInBytes) Synchronous
     ReenqueueMediaIfNeeded(MediaTime currentMediaTime)
     SetGroupStartTimestamp(MediaTime timestamp)
@@ -53,8 +53,8 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetAppendWindowEnd(MediaTime appendWindowEnd)
     SeekToTime(MediaTime mediaTime)
     UpdateTrackIds(Vector<std::pair<WebKit::TrackPrivateRemoteIdentifier, WebKit::TrackPrivateRemoteIdentifier>> identifierPairs)
-    BufferedSamplesForTrackId(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples) Async
-    EnqueuedSamplesForTrackID(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples) Async
+    BufferedSamplesForTrackId(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples)
+    EnqueuedSamplesForTrackID(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples)
 }
 
 #endif

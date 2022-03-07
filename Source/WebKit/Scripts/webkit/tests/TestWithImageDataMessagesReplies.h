@@ -25,12 +25,15 @@
 #pragma once
 
 #include "MessageNames.h"
+#include <WebCore/ImageData.h>
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 
 namespace Messages {
 namespace TestWithImageData {
 
+using ReceiveImageDataAsyncReply = CompletionHandler<void(const RefPtr<WebCore::ImageData>& r0)>;
 
 } // namespace TestWithImageData
 } // namespace Messages

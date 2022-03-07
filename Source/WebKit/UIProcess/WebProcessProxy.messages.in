@@ -72,7 +72,7 @@ messages -> WebProcessProxy LegacyReceiver {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     SendMessageToWebContext(struct WebKit::UserMessage userMessage)
-    SendMessageToWebContextWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage) Async
+    SendMessageToWebContextWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
 #endif
 
     DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)

@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "IPCSemaphore.h"
 #include "MessageNames.h"
 #include <wtf/Forward.h>
 
@@ -31,6 +32,7 @@
 namespace Messages {
 namespace TestWithSemaphore {
 
+using ReceiveSemaphoreAsyncReply = CompletionHandler<void(const IPC::Semaphore& r0)>;
 
 } // namespace TestWithSemaphore
 } // namespace Messages

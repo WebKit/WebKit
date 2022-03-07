@@ -66,8 +66,8 @@ messages -> WebPageProxy {
     PageDidScroll(WebCore::IntPoint scrollPosition)
     SetHasActiveAnimatedScrolls(bool hasActiveAnimatedScrolls)
     RunOpenPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, struct WebCore::FileChooserSettings parameters)
-    ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted) Async
-    ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (std::optional<Vector<WebCore::ContactInfo>> info) Async
+    ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted)
+    ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (std::optional<Vector<WebCore::ContactInfo>> info)
     PrintFrame(WebCore::FrameIdentifier frameID, String title, WebCore::FloatSize pdfFirstPageSize) -> () Synchronous
     RunModal()
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
@@ -216,7 +216,7 @@ messages -> WebPageProxy {
     SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
 
 #if ENABLE(IMAGE_ANALYSIS)
-    RequestTextRecognition(URL imageURL, WebKit::ShareableBitmap::Handle imageData, String identifier) -> (struct WebCore::TextRecognitionResult result) Async
+    RequestTextRecognition(URL imageURL, WebKit::ShareableBitmap::Handle imageData, String identifier) -> (struct WebCore::TextRecognitionResult result)
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
@@ -224,7 +224,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
-    ShowMediaControlsContextMenu(WebCore::FloatRect targetFrame, Vector<WebCore::MediaControlsContextMenuItem> items) -> (WebCore::MediaControlsContextMenuItem::ID selectedItemID) Async
+    ShowMediaControlsContextMenu(WebCore::FloatRect targetFrame, Vector<WebCore::MediaControlsContextMenuItem> items) -> (WebCore::MediaControlsContextMenuItem::ID selectedItemID)
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 #if HAVE(TOUCH_BAR)
@@ -268,7 +268,7 @@ messages -> WebPageProxy {
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam messages
     RequestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier userMediaID, WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
-    EnumerateMediaDevicesForFrame(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier) -> (Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt) Async
+    EnumerateMediaDevicesForFrame(WebCore::FrameIdentifier frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier) -> (Vector<WebCore::CaptureDevice> devices, String mediaDeviceIdentifierHashSalt)
     BeginMonitoringCaptureDevices()
 #endif
 
@@ -277,7 +277,7 @@ messages -> WebPageProxy {
 #endif
 
     # Notification messages
-    RequestNotificationPermission(String originIdentifier) -> (bool allowed) Async
+    RequestNotificationPermission(String originIdentifier) -> (bool allowed)
 
     # Spelling and grammar messages
 #if USE(UNIFIED_TEXT_CHECKING)
@@ -441,7 +441,7 @@ messages -> WebPageProxy {
 #if USE(QUICK_LOOK)
     DidStartLoadForQuickLookDocumentInMainFrame(String fileName, String uti)
     DidFinishLoadForQuickLookDocumentInMainFrame(WebKit::ShareableResource::Handle resource)
-    RequestPasswordForQuickLookDocumentInMainFrame(String fileName) -> (String password) Async
+    RequestPasswordForQuickLookDocumentInMainFrame(String fileName) -> (String password)
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
@@ -513,7 +513,7 @@ messages -> WebPageProxy {
     LoadSynchronousURLSchemeTask(struct WebKit::URLSchemeTaskParameters parameters) -> (WebCore::ResourceResponse response, WebCore::ResourceError error, Vector<uint8_t> data) Synchronous
 
 #if ENABLE(DEVICE_ORIENTATION)
-    ShouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, bool mayPrompt) -> (enum:uint8_t WebCore::DeviceOrientationOrMotionPermissionState permissionState) Async
+    ShouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, bool mayPrompt) -> (enum:uint8_t WebCore::DeviceOrientationOrMotionPermissionState permissionState)
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -537,11 +537,11 @@ messages -> WebPageProxy {
 
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeechSynthesisVoiceList() -> (Vector<WebKit::WebSpeechSynthesisVoice> voiceList) Synchronous
-    SpeechSynthesisSpeak(String text, String lang, float volume, float rate, float pitch, MonotonicTime startTime, String voiceURI, String voiceName, String voiceLang, bool localService, bool defaultVoice) -> () Async
-    SpeechSynthesisSetFinishedCallback() -> () Async
+    SpeechSynthesisSpeak(String text, String lang, float volume, float rate, float pitch, MonotonicTime startTime, String voiceURI, String voiceName, String voiceLang, bool localService, bool defaultVoice) -> ()
+    SpeechSynthesisSetFinishedCallback() -> ()
     SpeechSynthesisCancel()
-    SpeechSynthesisPause() -> () Async
-    SpeechSynthesisResume() -> () Async
+    SpeechSynthesisPause() -> ()
+    SpeechSynthesisResume() -> ()
     SpeechSynthesisResetState()
 #endif
 
@@ -554,7 +554,7 @@ messages -> WebPageProxy {
     ConfigureLoggingChannel(String channelName, enum:uint8_t WTFLogChannelState state, enum:uint8_t WTFLogLevel level)
 
 #if PLATFORM(GTK)
-    ShowEmojiPicker(WebCore::IntRect caretRect) -> (String result) Async
+    ShowEmojiPicker(WebCore::IntRect caretRect) -> (String result)
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -567,7 +567,7 @@ messages -> WebPageProxy {
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     SendMessageToWebView(struct WebKit::UserMessage userMessage)
-    SendMessageToWebViewWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage) Async
+    SendMessageToWebViewWithReply(struct WebKit::UserMessage userMessage) -> (struct WebKit::UserMessage replyMessage)
 #endif
 
     DidFindTextManipulationItems(Vector<WebCore::TextManipulationController::ManipulationItem> items)
@@ -589,35 +589,35 @@ messages -> WebPageProxy {
     ModelElementSetInteractionEnabled(struct WebKit::ModelIdentifier modelIdentifier, bool isInteractionEnabled)
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
-    ModelElementDidCreatePreview(URL url, String uuid, WebCore::FloatSize size) -> (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result) Async
-    ModelElementSizeDidChange(String uuid, WebCore::FloatSize size) -> (Expected<MachSendRight, WebCore::ResourceError> result) Async
+    ModelElementDidCreatePreview(URL url, String uuid, WebCore::FloatSize size) -> (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result)
+    ModelElementSizeDidChange(String uuid, WebCore::FloatSize size) -> (Expected<MachSendRight, WebCore::ResourceError> result)
     HandleMouseDownForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
     HandleMouseMoveForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
     HandleMouseUpForModelElement(String uuid, WebCore::LayoutPoint flippedLocationInElement, MonotonicTime timestamp)
 #endif
 #if ENABLE(ARKIT_INLINE_PREVIEW)
-    ModelElementGetCamera(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError> result) Async
-    ModelElementSetCamera(struct WebKit::ModelIdentifier modelIdentifier, struct WebCore::HTMLModelElementCamera camera) -> (bool success) Async
-    ModelElementIsPlayingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
-    ModelElementSetAnimationIsPlaying(struct WebKit::ModelIdentifier modelIdentifier, bool isPlaying) -> (bool success) Async
-    ModelElementIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
-    ModelElementSetIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier, bool isLooping) -> (bool success) Async
-    ModelElementAnimationDuration(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result) Async
-    ModelElementAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result) Async
-    ModelElementSetAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier, Seconds currentTime) -> (bool success) Async
-    ModelElementHasAudio(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
-    ModelElementIsMuted(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result) Async
-    ModelElementSetIsMuted(struct WebKit::ModelIdentifier modelIdentifier, bool isMuted) -> (bool success) Async
+    ModelElementGetCamera(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<WebCore::HTMLModelElementCamera, WebCore::ResourceError> result)
+    ModelElementSetCamera(struct WebKit::ModelIdentifier modelIdentifier, struct WebCore::HTMLModelElementCamera camera) -> (bool success)
+    ModelElementIsPlayingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    ModelElementSetAnimationIsPlaying(struct WebKit::ModelIdentifier modelIdentifier, bool isPlaying) -> (bool success)
+    ModelElementIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    ModelElementSetIsLoopingAnimation(struct WebKit::ModelIdentifier modelIdentifier, bool isLooping) -> (bool success)
+    ModelElementAnimationDuration(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result)
+    ModelElementAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<Seconds, WebCore::ResourceError> result)
+    ModelElementSetAnimationCurrentTime(struct WebKit::ModelIdentifier modelIdentifier, Seconds currentTime) -> (bool success)
+    ModelElementHasAudio(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    ModelElementIsMuted(struct WebKit::ModelIdentifier modelIdentifier) -> (Expected<bool, WebCore::ResourceError> result)
+    ModelElementSetIsMuted(struct WebKit::ModelIdentifier modelIdentifier, bool isMuted) -> (bool success)
 #endif
 
-    QueryPermission(struct WebCore::ClientOrigin origin, struct WebCore::PermissionDescriptor descriptor) -> (std::optional<WebCore::PermissionState> state, bool shouldCache) Async
+    QueryPermission(struct WebCore::ClientOrigin origin, struct WebCore::PermissionDescriptor descriptor) -> (std::optional<WebCore::PermissionState> state, bool shouldCache)
 
 #if ENABLE(APPLE_PAY_AMS_UI)
-    StartApplePayAMSUISession(URL originatingURL, struct WebCore::ApplePayAMSUIRequest request) -> (std::optional<bool> result) Async
+    StartApplePayAMSUISession(URL originatingURL, struct WebCore::ApplePayAMSUIRequest request) -> (std::optional<bool> result)
     AbortApplePayAMSUISession()
 #endif
 
-    RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result) Async
-    ClassifyModalContainerControls(Vector<String> texts) -> (Vector<WebCore::ModalContainerControlType> types) Async
-    DecidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType> types) -> (enum:uint8_t WebCore::ModalContainerDecision decision) Async
+    RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result)
+    ClassifyModalContainerControls(Vector<String> texts) -> (Vector<WebCore::ModalContainerControlType> types)
+    DecidePolicyForModalContainer(OptionSet<WebCore::ModalContainerControlType> types) -> (enum:uint8_t WebCore::ModalContainerDecision decision)
 }

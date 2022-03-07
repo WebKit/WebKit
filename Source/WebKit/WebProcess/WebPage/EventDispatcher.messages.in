@@ -23,7 +23,7 @@
 messages -> EventDispatcher {
     WheelEvent(WebCore::PageIdentifier pageID, WebKit::WebWheelEvent event, WebCore::RectEdges<bool> rubberBandableEdges)
 #if ENABLE(IOS_TOUCH_EVENTS)
-    TouchEvent(WebCore::PageIdentifier pageID, WebKit::WebTouchEvent event) -> (bool handled) Async MainThreadCallback
+    TouchEvent(WebCore::PageIdentifier pageID, WebKit::WebTouchEvent event) -> (bool handled) MainThreadCallback
     TouchEventWithoutCallback(WebCore::PageIdentifier pageID, WebKit::WebTouchEvent event)
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)

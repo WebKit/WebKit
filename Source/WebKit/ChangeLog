@@ -1,3 +1,89 @@
+2022-03-07  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unnecessary Async attribute in .messages.in files
+        https://bugs.webkit.org/show_bug.cgi?id=237491
+
+        Reviewed by Chris Dumez.
+
+        If there is a reply and no "Synchronous" then we can infer that it is asynchronous.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/media/RemoteAudioDestinationManager.messages.in:
+        * GPUProcess/media/RemoteCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteCDMInstanceProxy.messages.in:
+        * GPUProcess/media/RemoteCDMInstanceSessionProxy.messages.in:
+        * GPUProcess/media/RemoteCDMProxy.messages.in:
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteMediaEngineConfigurationFactoryProxy.messages.in:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/RemoteMediaResourceManager.messages.in:
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.messages.in:
+        * GPUProcess/webrtc/RemoteMediaRecorder.messages.in:
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.messages.in:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in:
+        * NetworkProcess/Cookies/WebCookieManager.messages.in:
+        * NetworkProcess/NetworkBroadcastChannelRegistry.messages.in:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSocketChannel.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * NetworkProcess/WebStorage/StorageManagerSet.messages.in:
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::startAsyncRevalidationIfNeeded):
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * Scripts/webkit/messages.py:
+        (message_to_reply_forward_declaration):
+        (message_to_struct_declaration):
+        (forward_declarations_and_headers_for_replies):
+        (async_message_statement):
+        (sync_message_statement):
+        (generate_message_handler):
+        (generate_message_argument_description_implementation):
+        * Scripts/webkit/model.py:
+        (generate_global_model):
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * Shared/AuxiliaryProcess.messages.in:
+        * Shared/Notifications/NotificationManagerMessageHandler.messages.in:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        * UIProcess/Media/AudioSessionRoutingArbitratorProxy.messages.in:
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/UserContent/WebUserContentControllerProxy.messages.in:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.messages.in:
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.messages.in: Removed.
+        * UIProcess/WebLockRegistryProxy.messages.in:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/XR/PlatformXRSystem.messages.in:
+        * UIProcess/mac/SecItemShimProxy.messages.in:
+        * WebAuthnProcess/WebAuthnConnectionToWebProcess.messages.in:
+        * WebAuthnProcess/WebAuthnProcess.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Automation/WebAutomationSessionProxy.messages.in:
+        * WebProcess/GPU/GPUProcessConnection.messages.in:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in:
+        * WebProcess/Inspector/WebInspectorUIExtensionController.messages.in:
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+        * WebProcess/Storage/WebSharedWorkerObjectConnection.messages.in:
+        * WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.messages.in:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/VideoFullscreenManager.messages.in:
+
 2022-03-07  Chris Dumez  <cdumez@apple.com>
 
         Optimize the passing of data across threads

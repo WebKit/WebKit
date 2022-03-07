@@ -34,6 +34,37 @@
 #include "JSIPCBinding.h"
 #endif
 
+namespace Messages {
+
+namespace TestWithSemaphore {
+
+void ReceiveSemaphore::callReply(IPC::Decoder& decoder, CompletionHandler<void(IPC::Semaphore&&)>&& completionHandler)
+{
+    std::optional<IPC::Semaphore> r0;
+    decoder >> r0;
+    if (!r0) {
+        ASSERT_NOT_REACHED();
+        cancelReply(WTFMove(completionHandler));
+        return;
+    }
+    completionHandler(WTFMove(*r0));
+}
+
+void ReceiveSemaphore::cancelReply(CompletionHandler<void(IPC::Semaphore&&)>&& completionHandler)
+{
+    completionHandler(IPC::AsyncReplyError<IPC::Semaphore>::create());
+}
+
+void ReceiveSemaphore::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const IPC::Semaphore& r0)
+{
+    encoder.get() << r0;
+    connection.sendSyncReply(WTFMove(encoder));
+}
+
+} // namespace TestWithSemaphore
+
+} // namespace Messages
+
 namespace WebKit {
 
 void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -41,6 +72,8 @@ void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Deco
     Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithSemaphore::SendSemaphore::name())
         return IPC::handleMessage<Messages::TestWithSemaphore::SendSemaphore>(connection, decoder, this, &TestWithSemaphore::sendSemaphore);
+    if (decoder.messageName() == Messages::TestWithSemaphore::ReceiveSemaphore::name())
+        return IPC::handleMessageAsync<Messages::TestWithSemaphore::ReceiveSemaphore>(connection, decoder, this, &TestWithSemaphore::receiveSemaphore);
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
 #if ENABLE(IPC_TESTING_API)
@@ -48,22 +81,6 @@ void TestWithSemaphore::didReceiveMessage(IPC::Connection& connection, IPC::Deco
         return;
 #endif // ENABLE(IPC_TESTING_API)
     ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());
-}
-
-bool TestWithSemaphore::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
-{
-    Ref protectedThis { *this };
-    if (decoder.messageName() == Messages::TestWithSemaphore::ReceiveSemaphore::name())
-        return IPC::handleMessage<Messages::TestWithSemaphore::ReceiveSemaphore>(connection, decoder, *replyEncoder, this, &TestWithSemaphore::receiveSemaphore);
-    UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
-    UNUSED_PARAM(replyEncoder);
-#if ENABLE(IPC_TESTING_API)
-    if (connection.ignoreInvalidMessageForTesting())
-        return false;
-#endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
-    return false;
 }
 
 } // namespace WebKit
@@ -79,6 +96,10 @@ template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::Tes
 template<> std::optional<JSC::JSValue> jsValueForDecodedMessage<MessageName::TestWithSemaphore_ReceiveSemaphore>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
 {
     return jsValueForDecodedArguments<Messages::TestWithSemaphore::ReceiveSemaphore::Arguments>(globalObject, decoder);
+}
+template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::TestWithSemaphore_ReceiveSemaphore>(JSC::JSGlobalObject* globalObject, Decoder& decoder)
+{
+    return jsValueForDecodedArguments<Messages::TestWithSemaphore::ReceiveSemaphore::ReplyArguments>(globalObject, decoder);
 }
 
 }

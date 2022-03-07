@@ -24,11 +24,11 @@
 #if ENABLE(GPU_PROCESS)
 
 messages -> RemoteMediaPlayerProxy NotRefCounted {
-    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, enum:uint8_t WebCore::DynamicRangeMode mode) -> (std::optional<WebKit::LayerHostingContextID> inlineLayerHostingContextId) Async
+    PrepareForPlayback(bool privateMode, enum:uint8_t WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, enum:uint8_t WebCore::DynamicRangeMode mode) -> (std::optional<WebKit::LayerHostingContextID> inlineLayerHostingContextId)
 
-    Load(URL url, std::optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
+    Load(URL url, std::optional<WebKit::SandboxExtension::Handle> sandboxExtension, WebCore::ContentType contentType, String keySystem) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
 #if ENABLE(MEDIA_SOURCE)
-    LoadMediaSource(URL url, WebCore::ContentType contentType, bool webMParserEnabled, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration) Async
+    LoadMediaSource(URL url, WebCore::ContentType contentType, bool webMParserEnabled, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
 #endif
     CancelLoad()
 
@@ -54,7 +54,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     AcceleratedRenderingStateChanged(bool canBeAccelerated)
     SetShouldDisableSleep(bool disable)
     SetRate(double rate)
-    DidLoadingProgress() -> (bool flag) Async
+    DidLoadingProgress() -> (bool flag)
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     UpdateVideoFullscreenInlineImage()
@@ -105,7 +105,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier identifier, bool selected)
     TextTrackSetMode(WebKit::TrackPrivateRemoteIdentifier identifier, enum:uint8_t WebCore::InbandTextTrackPrivate::Mode mode)
 
-    PerformTaskAtMediaTime(MediaTime mediaTime, MonotonicTime messageTime) -> (std::optional<MediaTime> mediaTime, std::optional<MonotonicTime> monotonicTime) Async
+    PerformTaskAtMediaTime(MediaTime mediaTime, MonotonicTime messageTime) -> (std::optional<MediaTime> mediaTime, std::optional<MonotonicTime> monotonicTime)
     WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (std::optional<bool> wouldTaint) Synchronous
 
     SetVideoPlaybackMetricsUpdateInterval(double interval)

@@ -25,7 +25,7 @@ import re
 import sys
 
 from webkit import parser
-from webkit.model import BUILTIN_ATTRIBUTE, ASYNC_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, WANTS_CONNECTION_ATTRIBUTE, MessageReceiver, Message
+from webkit.model import BUILTIN_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, MAINTHREADCALLBACK_ATTRIBUTE, STREAM_ATTRIBUTE, WANTS_CONNECTION_ATTRIBUTE, MessageReceiver, Message
 
 _license_header = """/*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
@@ -163,14 +163,14 @@ def reply_arguments_type(message):
 def message_to_reply_forward_declaration(message):
     result = []
 
-    if message.reply_parameters != None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)):
+    if message.reply_parameters is not None:
         send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
         completion_handler_parameters = '%s' % ', '.join([' '.join(x) for x in send_parameters])
 
-        if message.has_attribute(ASYNC_ATTRIBUTE):
-            result.append('using %sAsyncReply' % message.name)
-        else:
+        if message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             result.append('using %sDelayedReply' % message.name)
+        else:
+            result.append('using %sAsyncReply' % message.name)
         result.append(' = CompletionHandler<void(%s)>;\n' % completion_handler_parameters)
 
     if not result:
@@ -188,7 +188,7 @@ def message_to_struct_declaration(receiver, message):
     result.append('    using Arguments = %s;\n' % arguments_type(message))
     result.append('\n')
     result.append('    static IPC::MessageName name() { return IPC::MessageName::%s_%s; }\n' % (receiver.name, message.name))
-    result.append('    static constexpr bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters is not None and not message.has_attribute(ASYNC_ATTRIBUTE)])
+    result.append('    static constexpr bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters is not None and message.has_attribute(SYNCHRONOUS_ATTRIBUTE)])
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         result.append('    static constexpr bool isStreamEncodable = %s;\n' % ('true', 'false')[message.has_attribute(NOT_STREAM_ENCODABLE_ATTRIBUTE)])
         if message.reply_parameters is not None:
@@ -198,19 +198,19 @@ def message_to_struct_declaration(receiver, message):
     if message.reply_parameters != None:
         send_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.reply_parameters]
         completion_handler_parameters = '%s' % ', '.join([' '.join(x) for x in send_parameters])
-        if message.has_attribute(ASYNC_ATTRIBUTE):
+        if message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
+            result.append('    using DelayedReply = %sDelayedReply;\n' % message.name)
+        else:
             move_parameters = ', '.join([move_type(x.type) for x in message.reply_parameters])
             result.append('    static void callReply(IPC::Decoder&, CompletionHandler<void(%s)>&&);\n' % move_parameters)
             result.append('    static void cancelReply(CompletionHandler<void(%s)>&&);\n' % move_parameters)
             result.append('    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::%s_%sReply; }\n' % (receiver.name, message.name))
             result.append('    using AsyncReply = %sAsyncReply;\n' % message.name)
-        elif message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
-            result.append('    using DelayedReply = %sDelayedReply;\n' % message.name)
         if message.has_attribute(MAINTHREADCALLBACK_ATTRIBUTE):
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;\n')
         else:
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
-        if (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)) and not receiver.has_attribute(STREAM_ATTRIBUTE):
+        if not receiver.has_attribute(STREAM_ATTRIBUTE):
             result.append('    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&')
             if len(send_parameters):
                 result.append(', %s' % completion_handler_parameters)
@@ -467,7 +467,7 @@ def forward_declarations_and_headers_for_replies(receiver):
 
     no_forward_declaration_types = types_that_cannot_be_forward_declared()
     for message in receiver.messages:
-        if message.reply_parameters == None or not (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)):
+        if message.reply_parameters is None:
             continue
 
         for parameter in message.reply_parameters:
@@ -587,7 +587,7 @@ def async_message_statement(receiver, message):
     dispatch_function_args = ['decoder', 'this', '&%s' % handler_function(receiver, message)]
 
     dispatch_function = 'handleMessage'
-    if message.has_attribute(ASYNC_ATTRIBUTE):
+    if message.reply_parameters is not None and not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
         dispatch_function += 'Async'
 
     if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
@@ -607,7 +607,7 @@ def sync_message_statement(receiver, message):
     dispatch_function = 'handleMessage'
     if message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
         dispatch_function += 'Synchronous'
-    if message.has_attribute(ASYNC_ATTRIBUTE):
+    elif message.reply_parameters is not None:
         dispatch_function += 'Async'
     if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
         dispatch_function += 'WantsConnection'
@@ -615,7 +615,7 @@ def sync_message_statement(receiver, message):
     maybe_reply_encoder = ", *replyEncoder"
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         maybe_reply_encoder = ''
-    elif message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE):
+    elif message.reply_parameters is not None:
         maybe_reply_encoder = ', replyEncoder'
 
     result = []
@@ -1078,7 +1078,7 @@ def generate_message_handler(receiver):
 
     delayed_or_async_messages = []
     for message in receiver.messages:
-        if message.reply_parameters != None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)):
+        if message.reply_parameters is not None:
             delayed_or_async_messages.append(message)
 
     if delayed_or_async_messages and not receiver.has_attribute(STREAM_ATTRIBUTE):
@@ -1090,7 +1090,7 @@ def generate_message_handler(receiver):
             if message.condition:
                 result.append('#if %s\n\n' % message.condition)
 
-            if message.has_attribute(ASYNC_ATTRIBUTE):
+            if not message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
                 move_parameters = message.name, ', '.join([move_type(x.type) for x in message.reply_parameters])
                 result.append('void %s::callReply(IPC::Decoder& decoder, CompletionHandler<void(%s)>&& completionHandler)\n{\n' % move_parameters)
                 for x in message.reply_parameters:
@@ -1124,7 +1124,7 @@ def generate_message_handler(receiver):
     async_messages = []
     sync_messages = []
     for message in receiver.messages:
-        if message.reply_parameters is not None and not message.has_attribute(ASYNC_ATTRIBUTE):
+        if message.has_attribute(SYNCHRONOUS_ATTRIBUTE):
             sync_messages.append(message)
         else:
             async_messages.append(message)
@@ -1150,7 +1150,7 @@ def generate_message_handler(receiver):
             result.append('#endif // ENABLE(IPC_TESTING_API)\n')
             result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()), decoder.destinationID());\n')
         result.append('}\n')
-    elif async_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE) or receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE):
+    else:
         receive_variant = receiver.name if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE) else ''
         result.append('void %s::didReceive%sMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (receiver.name, receive_variant))
         result.append('{\n')
@@ -1212,7 +1212,7 @@ def generate_message_handler(receiver):
         result.append('{\n')
         result.append('    return jsValueForDecodedArguments<Messages::%s::%s::%s>(globalObject, decoder);\n' % (receiver.name, message.name, 'Arguments'))
         result.append('}\n')
-        has_reply = message.reply_parameters is not None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE))
+        has_reply = message.reply_parameters is not None
         if not has_reply:
             continue
         result.append('template<> std::optional<JSC::JSValue> jsValueForDecodedMessageReply<MessageName::%s_%s>(JSC::JSGlobalObject* globalObject, Decoder& decoder)\n' % (receiver.name, message.name))
@@ -1413,7 +1413,7 @@ def generate_js_argument_descriptions(receivers, function_name, arguments_from_m
                 if argument_type.startswith('std::optional<') and argument_type.endswith('>'):
                     argument_type = argument_type[14:-1]
                     is_optional = True
-                result.append('            {"%s", "%s", %s, %s},\n' % (argument.name, argument_type, enum_type or 'nullptr', 'true' if is_optional else 'false'))
+                result.append('            { "%s", "%s", %s, %s },\n' % (argument.name, argument_type, enum_type or 'nullptr', 'true' if is_optional else 'false'))
             result.append('        };\n')
         if previous_message_condition:
             result.append('#endif\n')
@@ -1460,7 +1460,7 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
 
     result.append('\n')
 
-    generate_js_value_conversion_function(result, receivers, 'jsValueForReplyArguments', 'jsValueForDecodedMessageReply', 'ReplyArguments', lambda message: message.reply_parameters is not None and (message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE)))
+    generate_js_value_conversion_function(result, receivers, 'jsValueForReplyArguments', 'jsValueForDecodedMessageReply', 'ReplyArguments', lambda message: message.reply_parameters is not None)
 
     result.append('\n')
     result.append('#endif // ENABLE(IPC_TESTING_API)\n')
@@ -1470,7 +1470,7 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
 
     result.append('\n')
 
-    result += generate_js_argument_descriptions(receivers, 'messageReplyArgumentDescriptions', lambda message: message.reply_parameters if message.has_attribute(SYNCHRONOUS_ATTRIBUTE) or message.has_attribute(ASYNC_ATTRIBUTE) else None)
+    result += generate_js_argument_descriptions(receivers, 'messageReplyArgumentDescriptions', lambda message: message.reply_parameters)
 
     result.append('\n')
 

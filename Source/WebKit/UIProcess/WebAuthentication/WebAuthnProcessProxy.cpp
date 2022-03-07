@@ -32,7 +32,6 @@
 #include "WebAuthnProcessConnectionInfo.h"
 #include "WebAuthnProcessCreationParameters.h"
 #include "WebAuthnProcessMessages.h"
-#include "WebAuthnProcessProxyMessages.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebProcessMessages.h"

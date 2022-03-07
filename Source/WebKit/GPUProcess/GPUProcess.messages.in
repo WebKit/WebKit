@@ -25,9 +25,9 @@
 messages -> GPUProcess LegacyReceiver {
     InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters)
 
-    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, struct WebKit::GPUProcessConnectionParameters parameters) -> (std::optional<IPC::Attachment> connectionIdentifier, struct WebKit::GPUProcessConnectionInitializationParameters parameters) Async
+    CreateGPUConnectionToWebProcess(WebCore::ProcessIdentifier processIdentifier, PAL::SessionID sessionID, struct WebKit::GPUProcessConnectionParameters parameters) -> (std::optional<IPC::Attachment> connectionIdentifier, struct WebKit::GPUProcessConnectionInitializationParameters parameters)
 
-    PrepareToSuspend(bool isSuspensionImminent) -> () Async
+    PrepareToSuspend(bool isSuspensionImminent) -> ()
     ProcessDidResume()
 
     AddSession(PAL::SessionID sessionID, struct WebKit::GPUProcessSessionParameters parameters)
@@ -37,7 +37,7 @@ messages -> GPUProcess LegacyReceiver {
     SetMockCaptureDevicesEnabled(bool isEnabled)
     SetOrientationForMediaCapture(uint64_t orientation);
     UpdateSandboxAccess(Vector<WebKit::SandboxExtension::Handle> extensions);
-    UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID) -> () Async
+    UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID) -> ()
     UpdateCaptureOrigin(struct WebCore::SecurityOriginData originData, WebCore::ProcessIdentifier processID)
     AddMockMediaDevice(struct WebCore::MockMediaDevice device);
     ClearMockMediaDevices();
@@ -53,8 +53,8 @@ messages -> GPUProcess LegacyReceiver {
 #endif
 
 #if HAVE(SC_CONTENT_SHARING_SESSION)
-    ShowWindowPicker() -> (std::optional<WebCore::CaptureDevice> device) Async
-    ShowScreenPicker() -> (std::optional<WebCore::CaptureDevice> device) Async
+    ShowWindowPicker() -> (std::optional<WebCore::CaptureDevice> device)
+    ShowScreenPicker() -> (std::optional<WebCore::CaptureDevice> device)
 #endif
 
 #if ENABLE(MEDIA_SOURCE)
@@ -85,13 +85,13 @@ messages -> GPUProcess LegacyReceiver {
     SetSampleBufferContentKeySessionSupportEnabled(bool enabled);
 #endif
 
-    RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmap::Handle handle) Async
+    RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmap::Handle handle)
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
     NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
 #endif
 
-    WebProcessConnectionCountForTesting() -> (uint64_t count) Async
+    WebProcessConnectionCountForTesting() -> (uint64_t count)
 }
 
 #endif // ENABLE(GPU_PROCESS)

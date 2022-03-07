@@ -25,7 +25,7 @@
 messages -> WebSWServerConnection NotRefCounted {
     # When possible, these messages can be implemented directly by WebCore::SWClientConnection
     ScheduleJobInServer(struct WebCore::ServiceWorkerJobData jobData)
-    ScheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier jobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier identifier, WebCore::ServiceWorkerOrClientIdentifier documentIdentifier) -> (Expected<bool, WebCore::ExceptionData> result) Async
+    ScheduleUnregisterJobInServer(WebCore::ServiceWorkerJobIdentifier jobIdentifier, WebCore::ServiceWorkerRegistrationIdentifier identifier, WebCore::ServiceWorkerOrClientIdentifier documentIdentifier) -> (Expected<bool, WebCore::ExceptionData> result)
 
     FinishFetchingScriptInServer(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, struct WebCore::WorkerFetchResult result)
     AddServiceWorkerRegistrationInServer(WebCore::ServiceWorkerRegistrationIdentifier identifier)
@@ -35,27 +35,27 @@ messages -> WebSWServerConnection NotRefCounted {
 
     DidResolveRegistrationPromise(WebCore::ServiceWorkerRegistrationKey key)
 
-    MatchRegistration(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration) Async
-    WhenRegistrationReady(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration) Async
-    GetRegistrations(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations) Async
+    MatchRegistration(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    WhenRegistrationReady(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (std::optional<WebCore::ServiceWorkerRegistrationData> registration)
+    GetRegistrations(struct WebCore::SecurityOriginData topOrigin, URL clientURL) -> (Vector<WebCore::ServiceWorkerRegistrationData> registrations)
     RegisterServiceWorkerClient(struct WebCore::SecurityOriginData topOrigin, struct WebCore::ServiceWorkerClientData data, std::optional<WebCore::ServiceWorkerRegistrationIdentifier> controllingServiceWorkerRegistrationIdentifier, String userAgent)
     UnregisterServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier identifier)
 
-    TerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () Async
-    WhenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier workerIdentifier) -> () Async
+    TerminateWorkerFromClient(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
+    WhenServiceWorkerIsTerminatedForTesting(WebCore::ServiceWorkerIdentifier workerIdentifier) -> ()
 
     SetThrottleState(bool isThrottleable)
-    StoreRegistrationsOnDisk() -> () Async
+    StoreRegistrationsOnDisk() -> ()
 
-    SubscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<uint8_t> applicationServerKey) -> (Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result) Async
-    UnsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, WebCore::PushSubscriptionIdentifier pushSubscriptionIdentifier) -> (Expected<bool, WebCore::ExceptionData> result) Async
-    GetPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result) Async
-    GetPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<uint8_t, WebCore::ExceptionData> result) Async 
+    SubscribeToPushService(WebCore::ServiceWorkerRegistrationIdentifier identifier, Vector<uint8_t> applicationServerKey) -> (Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData> result)
+    UnsubscribeFromPushService(WebCore::ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, WebCore::PushSubscriptionIdentifier pushSubscriptionIdentifier) -> (Expected<bool, WebCore::ExceptionData> result)
+    GetPushSubscription(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData> result)
+    GetPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<uint8_t, WebCore::ExceptionData> result) 
 
-    EnableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (std::optional<WebCore::ExceptionData> result) Async
-    DisableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (std::optional<WebCore::ExceptionData> result) Async
-    SetNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier identifier, String value) -> (std::optional<WebCore::ExceptionData> result) Async
-    GetNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<WebCore::NavigationPreloadState, WebCore::ExceptionData> result) Async
+    EnableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (std::optional<WebCore::ExceptionData> result)
+    DisableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (std::optional<WebCore::ExceptionData> result)
+    SetNavigationPreloadHeaderValue(WebCore::ServiceWorkerRegistrationIdentifier identifier, String value) -> (std::optional<WebCore::ExceptionData> result)
+    GetNavigationPreloadState(WebCore::ServiceWorkerRegistrationIdentifier identifier) -> (Expected<WebCore::NavigationPreloadState, WebCore::ExceptionData> result)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

@@ -28,15 +28,28 @@
 
 #include "Connection.h"
 #include "MessageNames.h"
+#include <WebCore/KeyboardEvent.h>
+#include <WebCore/PluginData.h>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 
 namespace Messages {
 namespace TestWithLegacyReceiver {
 
+using CreatePluginAsyncReply = CompletionHandler<void(bool result)>;
+
+using RunJavaScriptAlertAsyncReply = CompletionHandler<void()>;
+
+using GetPluginsAsyncReply = CompletionHandler<void(const Vector<WebCore::PluginInfo>& plugins)>;
+
 using GetPluginProcessConnectionDelayedReply = CompletionHandler<void(const IPC::Connection::Handle& connectionHandle)>;
 
 using TestMultipleAttributesDelayedReply = CompletionHandler<void()>;
+
+#if PLATFORM(MAC)
+using InterpretKeyEventAsyncReply = CompletionHandler<void(const Vector<WebCore::KeypressCommand>& commandName)>;
+#endif
 
 } // namespace TestWithLegacyReceiver
 } // namespace Messages

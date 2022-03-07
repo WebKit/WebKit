@@ -27,8 +27,8 @@
 messages -> WebPaymentCoordinatorProxy NotRefCounted {
 
     CanMakePayments() -> (bool result) Synchronous
-    CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName) -> (bool canMakePayments) Async
-    OpenPaymentSetup(String merchantIdentifier, String domainName) -> (bool result) Async
+    CanMakePaymentsWithActiveCard(String merchantIdentifier, String domainName) -> (bool canMakePayments)
+    OpenPaymentSetup(String merchantIdentifier, String domainName) -> (bool result)
 
     ShowPaymentUI(WebCore::PageIdentifier destinationID, WebKit::WebPageProxyIdentifier webPageProxyIdentifier, String originatingURLString, Vector<String> linkIconURLStrings, WebCore::ApplePaySessionPaymentRequest paymentRequest) -> (bool result) Synchronous
     CompleteMerchantValidation(WebCore::PaymentMerchantSession paymentMerchantSession)
@@ -42,8 +42,8 @@ messages -> WebPaymentCoordinatorProxy NotRefCounted {
     AbortPaymentSession()
     CancelPaymentSession()
 
-    GetSetupFeatures(WebKit::PaymentSetupConfiguration configuration) -> (WebKit::PaymentSetupFeatures features) Async
-    BeginApplePaySetup(WebKit::PaymentSetupConfiguration configuration, WebKit::PaymentSetupFeatures features) -> (bool result) Async
+    GetSetupFeatures(WebKit::PaymentSetupConfiguration configuration) -> (WebKit::PaymentSetupFeatures features)
+    BeginApplePaySetup(WebKit::PaymentSetupConfiguration configuration, WebKit::PaymentSetupFeatures features) -> (bool result)
     EndApplePaySetup()
 }
 

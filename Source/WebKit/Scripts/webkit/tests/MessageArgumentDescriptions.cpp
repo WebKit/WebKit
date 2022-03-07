@@ -245,16 +245,52 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
         return jsValueForDecodedMessageReply<MessageName::TestWithSuperclass_TestSynchronousMessage>(globalObject, decoder);
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
+    case MessageName::TestWithLegacyReceiver_CreatePlugin:
+        return jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_CreatePlugin>(globalObject, decoder);
+    case MessageName::TestWithLegacyReceiver_RunJavaScriptAlert:
+        return jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_RunJavaScriptAlert>(globalObject, decoder);
+    case MessageName::TestWithLegacyReceiver_GetPlugins:
+        return jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_GetPlugins>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
         return jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_GetPluginProcessConnection>(globalObject, decoder);
     case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
         return jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_TestMultipleAttributes>(globalObject, decoder);
+#if PLATFORM(MAC)
+    case MessageName::TestWithLegacyReceiver_InterpretKeyEvent:
+        return jsValueForDecodedMessageReply<MessageName::TestWithLegacyReceiver_InterpretKeyEvent>(globalObject, decoder);
+#endif
 #endif
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
+    case MessageName::TestWithoutAttributes_CreatePlugin:
+        return jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_CreatePlugin>(globalObject, decoder);
+    case MessageName::TestWithoutAttributes_RunJavaScriptAlert:
+        return jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_RunJavaScriptAlert>(globalObject, decoder);
+    case MessageName::TestWithoutAttributes_GetPlugins:
+        return jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_GetPlugins>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
         return jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_GetPluginProcessConnection>(globalObject, decoder);
     case MessageName::TestWithoutAttributes_TestMultipleAttributes:
         return jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_TestMultipleAttributes>(globalObject, decoder);
+#if PLATFORM(MAC)
+    case MessageName::TestWithoutAttributes_InterpretKeyEvent:
+        return jsValueForDecodedMessageReply<MessageName::TestWithoutAttributes_InterpretKeyEvent>(globalObject, decoder);
+#endif
+#endif
+    case MessageName::TestWithSemaphore_ReceiveSemaphore:
+        return jsValueForDecodedMessageReply<MessageName::TestWithSemaphore_ReceiveSemaphore>(globalObject, decoder);
+    case MessageName::TestWithImageData_ReceiveImageData:
+        return jsValueForDecodedMessageReply<MessageName::TestWithImageData_ReceiveImageData>(globalObject, decoder);
+    case MessageName::TestWithStream_SendStringSynchronized:
+        return jsValueForDecodedMessageReply<MessageName::TestWithStream_SendStringSynchronized>(globalObject, decoder);
+#if PLATFORM(COCOA)
+    case MessageName::TestWithStream_ReceiveMachSendRight:
+        return jsValueForDecodedMessageReply<MessageName::TestWithStream_ReceiveMachSendRight>(globalObject, decoder);
+    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
+        return jsValueForDecodedMessageReply<MessageName::TestWithStream_SendAndReceiveMachSendRight>(globalObject, decoder);
+#endif
+#if USE(AVFOUNDATION)
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
+        return jsValueForDecodedMessageReply<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(globalObject, decoder);
 #endif
     default:
         break;
@@ -269,12 +305,12 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
     switch (name) {
     case MessageName::TestWithSuperclass_LoadURL:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
+            { "url", "String", nullptr, false },
         };
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessage:
         return Vector<ArgumentDescription> {
-            {"twoStateEnum", "bool", "WebKit::TestTwoStateEnum", false},
+            { "twoStateEnum", "bool", "WebKit::TestTwoStateEnum", false },
         };
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
         return Vector<ArgumentDescription> { };
@@ -282,288 +318,288 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
         return Vector<ArgumentDescription> {
-            {"value", "int", nullptr, false},
+            { "value", "int", nullptr, false },
         };
 #endif
     case MessageName::TestWithSuperclass_TestSyncMessage:
         return Vector<ArgumentDescription> {
-            {"param", "uint32_t", nullptr, false},
+            { "param", "uint32_t", nullptr, false },
         };
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
         return Vector<ArgumentDescription> {
-            {"value", "bool", nullptr, false},
+            { "value", "bool", nullptr, false },
         };
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithLegacyReceiver_LoadURL:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
+            { "url", "String", nullptr, false },
         };
 #if ENABLE(TOUCH_EVENTS)
     case MessageName::TestWithLegacyReceiver_LoadSomething:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
+            { "url", "String", nullptr, false },
         };
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
     case MessageName::TestWithLegacyReceiver_TouchEvent:
         return Vector<ArgumentDescription> {
-            {"event", "WebKit::WebTouchEvent", nullptr, false},
+            { "event", "WebKit::WebTouchEvent", nullptr, false },
         };
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     case MessageName::TestWithLegacyReceiver_AddEvent:
         return Vector<ArgumentDescription> {
-            {"event", "WebKit::WebTouchEvent", nullptr, false},
+            { "event", "WebKit::WebTouchEvent", nullptr, false },
         };
 #endif
 #if ENABLE(TOUCH_EVENTS)
     case MessageName::TestWithLegacyReceiver_LoadSomethingElse:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
+            { "url", "String", nullptr, false },
         };
 #endif
     case MessageName::TestWithLegacyReceiver_DidReceivePolicyDecision:
         return Vector<ArgumentDescription> {
-            {"frameID", "uint64_t", nullptr, false},
-            {"listenerID", "uint64_t", nullptr, false},
-            {"policyAction", "uint32_t", nullptr, false},
+            { "frameID", "uint64_t", nullptr, false },
+            { "listenerID", "uint64_t", nullptr, false },
+            { "policyAction", "uint32_t", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_Close:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithLegacyReceiver_PreferencesDidChange:
         return Vector<ArgumentDescription> {
-            {"store", "WebKit::WebPreferencesStore", nullptr, false},
+            { "store", "WebKit::WebPreferencesStore", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_SendDoubleAndFloat:
         return Vector<ArgumentDescription> {
-            {"d", "double", nullptr, false},
-            {"f", "float", nullptr, false},
+            { "d", "double", nullptr, false },
+            { "f", "float", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_SendInts:
         return Vector<ArgumentDescription> {
-            {"ints", "Vector<uint64_t>", nullptr, false},
-            {"intVectors", "Vector<Vector<uint64_t>>", nullptr, false},
+            { "ints", "Vector<uint64_t>", nullptr, false },
+            { "intVectors", "Vector<Vector<uint64_t>>", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_CreatePlugin:
         return Vector<ArgumentDescription> {
-            {"pluginInstanceID", "uint64_t", nullptr, false},
-            {"parameters", "WebKit::Plugin::Parameters", nullptr, false},
+            { "pluginInstanceID", "uint64_t", nullptr, false },
+            { "parameters", "WebKit::Plugin::Parameters", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_RunJavaScriptAlert:
         return Vector<ArgumentDescription> {
-            {"frameID", "uint64_t", nullptr, false},
-            {"message", "String", nullptr, false},
+            { "frameID", "uint64_t", nullptr, false },
+            { "message", "String", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_GetPlugins:
         return Vector<ArgumentDescription> {
-            {"refresh", "bool", nullptr, false},
+            { "refresh", "bool", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
         return Vector<ArgumentDescription> {
-            {"pluginPath", "String", nullptr, false},
+            { "pluginPath", "String", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithLegacyReceiver_TestParameterAttributes:
         return Vector<ArgumentDescription> {
-            {"foo", "uint64_t", nullptr, false},
-            {"bar", "double", nullptr, false},
-            {"baz", "double", nullptr, false},
+            { "foo", "uint64_t", nullptr, false },
+            { "bar", "double", nullptr, false },
+            { "baz", "double", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_TemplateTest:
         return Vector<ArgumentDescription> {
-            {"a", "HashMap<String, std::pair<String, uint64_t>>", nullptr, false},
+            { "a", "HashMap<String, std::pair<String, uint64_t>>", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_SetVideoLayerID:
         return Vector<ArgumentDescription> {
-            {"videoLayerID", "WebCore::GraphicsLayer::PlatformLayerID", nullptr, false},
+            { "videoLayerID", "WebCore::GraphicsLayer::PlatformLayerID", nullptr, false },
         };
 #if PLATFORM(MAC)
     case MessageName::TestWithLegacyReceiver_DidCreateWebProcessConnection:
         return Vector<ArgumentDescription> {
-            {"connectionIdentifier", "IPC::MachPort", nullptr, false},
-            {"flags", "OptionSet<WebKit::SelectionFlags>", nullptr, false},
+            { "connectionIdentifier", "IPC::MachPort", nullptr, false },
+            { "flags", "OptionSet<WebKit::SelectionFlags>", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_InterpretKeyEvent:
         return Vector<ArgumentDescription> {
-            {"type", "uint32_t", nullptr, false},
+            { "type", "uint32_t", nullptr, false },
         };
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
     case MessageName::TestWithLegacyReceiver_DeprecatedOperation:
         return Vector<ArgumentDescription> {
-            {"dummy", "IPC::DummyType", nullptr, false},
+            { "dummy", "IPC::DummyType", nullptr, false },
         };
 #endif
 #if ENABLE(FEATURE_FOR_TESTING)
     case MessageName::TestWithLegacyReceiver_ExperimentalOperation:
         return Vector<ArgumentDescription> {
-            {"dummy", "IPC::DummyType", nullptr, false},
+            { "dummy", "IPC::DummyType", nullptr, false },
         };
 #endif
 #endif
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
     case MessageName::TestWithoutAttributes_LoadURL:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
+            { "url", "String", nullptr, false },
         };
 #if ENABLE(TOUCH_EVENTS)
     case MessageName::TestWithoutAttributes_LoadSomething:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
+            { "url", "String", nullptr, false },
         };
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
     case MessageName::TestWithoutAttributes_TouchEvent:
         return Vector<ArgumentDescription> {
-            {"event", "WebKit::WebTouchEvent", nullptr, false},
+            { "event", "WebKit::WebTouchEvent", nullptr, false },
         };
 #endif
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
     case MessageName::TestWithoutAttributes_AddEvent:
         return Vector<ArgumentDescription> {
-            {"event", "WebKit::WebTouchEvent", nullptr, false},
+            { "event", "WebKit::WebTouchEvent", nullptr, false },
         };
 #endif
 #if ENABLE(TOUCH_EVENTS)
     case MessageName::TestWithoutAttributes_LoadSomethingElse:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
+            { "url", "String", nullptr, false },
         };
 #endif
     case MessageName::TestWithoutAttributes_DidReceivePolicyDecision:
         return Vector<ArgumentDescription> {
-            {"frameID", "uint64_t", nullptr, false},
-            {"listenerID", "uint64_t", nullptr, false},
-            {"policyAction", "uint32_t", nullptr, false},
+            { "frameID", "uint64_t", nullptr, false },
+            { "listenerID", "uint64_t", nullptr, false },
+            { "policyAction", "uint32_t", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_Close:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithoutAttributes_PreferencesDidChange:
         return Vector<ArgumentDescription> {
-            {"store", "WebKit::WebPreferencesStore", nullptr, false},
+            { "store", "WebKit::WebPreferencesStore", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_SendDoubleAndFloat:
         return Vector<ArgumentDescription> {
-            {"d", "double", nullptr, false},
-            {"f", "float", nullptr, false},
+            { "d", "double", nullptr, false },
+            { "f", "float", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_SendInts:
         return Vector<ArgumentDescription> {
-            {"ints", "Vector<uint64_t>", nullptr, false},
-            {"intVectors", "Vector<Vector<uint64_t>>", nullptr, false},
+            { "ints", "Vector<uint64_t>", nullptr, false },
+            { "intVectors", "Vector<Vector<uint64_t>>", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_CreatePlugin:
         return Vector<ArgumentDescription> {
-            {"pluginInstanceID", "uint64_t", nullptr, false},
-            {"parameters", "WebKit::Plugin::Parameters", nullptr, false},
+            { "pluginInstanceID", "uint64_t", nullptr, false },
+            { "parameters", "WebKit::Plugin::Parameters", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_RunJavaScriptAlert:
         return Vector<ArgumentDescription> {
-            {"frameID", "uint64_t", nullptr, false},
-            {"message", "String", nullptr, false},
+            { "frameID", "uint64_t", nullptr, false },
+            { "message", "String", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_GetPlugins:
         return Vector<ArgumentDescription> {
-            {"refresh", "bool", nullptr, false},
+            { "refresh", "bool", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
         return Vector<ArgumentDescription> {
-            {"pluginPath", "String", nullptr, false},
+            { "pluginPath", "String", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_TestMultipleAttributes:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithoutAttributes_TestParameterAttributes:
         return Vector<ArgumentDescription> {
-            {"foo", "uint64_t", nullptr, false},
-            {"bar", "double", nullptr, false},
-            {"baz", "double", nullptr, false},
+            { "foo", "uint64_t", nullptr, false },
+            { "bar", "double", nullptr, false },
+            { "baz", "double", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_TemplateTest:
         return Vector<ArgumentDescription> {
-            {"a", "HashMap<String, std::pair<String, uint64_t>>", nullptr, false},
+            { "a", "HashMap<String, std::pair<String, uint64_t>>", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_SetVideoLayerID:
         return Vector<ArgumentDescription> {
-            {"videoLayerID", "WebCore::GraphicsLayer::PlatformLayerID", nullptr, false},
+            { "videoLayerID", "WebCore::GraphicsLayer::PlatformLayerID", nullptr, false },
         };
 #if PLATFORM(MAC)
     case MessageName::TestWithoutAttributes_DidCreateWebProcessConnection:
         return Vector<ArgumentDescription> {
-            {"connectionIdentifier", "IPC::MachPort", nullptr, false},
-            {"flags", "OptionSet<WebKit::SelectionFlags>", nullptr, false},
+            { "connectionIdentifier", "IPC::MachPort", nullptr, false },
+            { "flags", "OptionSet<WebKit::SelectionFlags>", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_InterpretKeyEvent:
         return Vector<ArgumentDescription> {
-            {"type", "uint32_t", nullptr, false},
+            { "type", "uint32_t", nullptr, false },
         };
 #endif
 #if ENABLE(DEPRECATED_FEATURE)
     case MessageName::TestWithoutAttributes_DeprecatedOperation:
         return Vector<ArgumentDescription> {
-            {"dummy", "IPC::DummyType", nullptr, false},
+            { "dummy", "IPC::DummyType", nullptr, false },
         };
 #endif
 #if ENABLE(FEATURE_FOR_TESTING)
     case MessageName::TestWithoutAttributes_ExperimentalOperation:
         return Vector<ArgumentDescription> {
-            {"dummy", "IPC::DummyType", nullptr, false},
+            { "dummy", "IPC::DummyType", nullptr, false },
         };
 #endif
 #endif
 #if PLATFORM(COCOA)
     case MessageName::TestWithIfMessage_LoadURL:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
+            { "url", "String", nullptr, false },
         };
 #endif
 #if PLATFORM(GTK)
     case MessageName::TestWithIfMessage_LoadURL:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
-            {"value", "int64_t", nullptr, false},
+            { "url", "String", nullptr, false },
+            { "value", "int64_t", nullptr, false },
         };
 #endif
     case MessageName::TestWithSemaphore_SendSemaphore:
         return Vector<ArgumentDescription> {
-            {"s0", "IPC::Semaphore", nullptr, false},
+            { "s0", "IPC::Semaphore", nullptr, false },
         };
     case MessageName::TestWithSemaphore_ReceiveSemaphore:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithImageData_SendImageData:
         return Vector<ArgumentDescription> {
-            {"s0", "RefPtr<WebCore::ImageData>", nullptr, false},
+            { "s0", "RefPtr<WebCore::ImageData>", nullptr, false },
         };
     case MessageName::TestWithImageData_ReceiveImageData:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithStream_SendString:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
+            { "url", "String", nullptr, false },
         };
     case MessageName::TestWithStream_SendStringSynchronized:
         return Vector<ArgumentDescription> {
-            {"url", "String", nullptr, false},
+            { "url", "String", nullptr, false },
         };
 #if PLATFORM(COCOA)
     case MessageName::TestWithStream_SendMachSendRight:
         return Vector<ArgumentDescription> {
-            {"a1", "MachSendRight", nullptr, false},
+            { "a1", "MachSendRight", nullptr, false },
         };
     case MessageName::TestWithStream_ReceiveMachSendRight:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithStream_SendAndReceiveMachSendRight:
         return Vector<ArgumentDescription> {
-            {"a1", "MachSendRight", nullptr, false},
+            { "a1", "MachSendRight", nullptr, false },
         };
 #endif
     case MessageName::TestWithStreamBuffer_SendStreamBuffer:
         return Vector<ArgumentDescription> {
-            {"stream", "IPC::StreamConnectionBuffer", nullptr, false},
+            { "stream", "IPC::StreamConnectionBuffer", nullptr, false },
         };
 #if USE(AVFOUNDATION)
     case MessageName::TestWithCVPixelBuffer_SendCVPixelBuffer:
         return Vector<ArgumentDescription> {
-            {"s0", "RetainPtr<CVPixelBufferRef>", nullptr, false},
+            { "s0", "RetainPtr<CVPixelBufferRef>", nullptr, false },
         };
     case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
         return Vector<ArgumentDescription> { };
@@ -580,43 +616,103 @@ std::optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(Mess
 #if ENABLE(TEST_FEATURE)
     case MessageName::TestWithSuperclass_TestAsyncMessage:
         return Vector<ArgumentDescription> {
-            {"result", "uint64_t", nullptr, false},
+            { "result", "uint64_t", nullptr, false },
         };
     case MessageName::TestWithSuperclass_TestAsyncMessageWithNoArguments:
         return Vector<ArgumentDescription> { };
     case MessageName::TestWithSuperclass_TestAsyncMessageWithMultipleArguments:
         return Vector<ArgumentDescription> {
-            {"flag", "bool", nullptr, false},
-            {"value", "uint64_t", nullptr, false},
+            { "flag", "bool", nullptr, false },
+            { "value", "uint64_t", nullptr, false },
         };
     case MessageName::TestWithSuperclass_TestAsyncMessageWithConnection:
         return Vector<ArgumentDescription> {
-            {"flag", "bool", nullptr, false},
+            { "flag", "bool", nullptr, false },
         };
 #endif
     case MessageName::TestWithSuperclass_TestSyncMessage:
         return Vector<ArgumentDescription> {
-            {"reply", "uint8_t", nullptr, false},
+            { "reply", "uint8_t", nullptr, false },
         };
     case MessageName::TestWithSuperclass_TestSynchronousMessage:
         return Vector<ArgumentDescription> {
-            {"optionalReply", "WebKit::TestClassName", nullptr, true},
+            { "optionalReply", "WebKit::TestClassName", nullptr, true },
         };
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
+    case MessageName::TestWithLegacyReceiver_CreatePlugin:
+        return Vector<ArgumentDescription> {
+            { "result", "bool", nullptr, false },
+        };
+    case MessageName::TestWithLegacyReceiver_RunJavaScriptAlert:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithLegacyReceiver_GetPlugins:
+        return Vector<ArgumentDescription> {
+            { "plugins", "Vector<WebCore::PluginInfo>", nullptr, false },
+        };
     case MessageName::TestWithLegacyReceiver_GetPluginProcessConnection:
         return Vector<ArgumentDescription> {
-            {"connectionHandle", "IPC::Connection::Handle", nullptr, false},
+            { "connectionHandle", "IPC::Connection::Handle", nullptr, false },
         };
     case MessageName::TestWithLegacyReceiver_TestMultipleAttributes:
         return Vector<ArgumentDescription> { };
+#if PLATFORM(MAC)
+    case MessageName::TestWithLegacyReceiver_InterpretKeyEvent:
+        return Vector<ArgumentDescription> {
+            { "commandName", "Vector<WebCore::KeypressCommand>", nullptr, false },
+        };
+#endif
 #endif
 #if (ENABLE(WEBKIT2) && (NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND))
+    case MessageName::TestWithoutAttributes_CreatePlugin:
+        return Vector<ArgumentDescription> {
+            { "result", "bool", nullptr, false },
+        };
+    case MessageName::TestWithoutAttributes_RunJavaScriptAlert:
+        return Vector<ArgumentDescription> { };
+    case MessageName::TestWithoutAttributes_GetPlugins:
+        return Vector<ArgumentDescription> {
+            { "plugins", "Vector<WebCore::PluginInfo>", nullptr, false },
+        };
     case MessageName::TestWithoutAttributes_GetPluginProcessConnection:
         return Vector<ArgumentDescription> {
-            {"connectionHandle", "IPC::Connection::Handle", nullptr, false},
+            { "connectionHandle", "IPC::Connection::Handle", nullptr, false },
         };
     case MessageName::TestWithoutAttributes_TestMultipleAttributes:
         return Vector<ArgumentDescription> { };
+#if PLATFORM(MAC)
+    case MessageName::TestWithoutAttributes_InterpretKeyEvent:
+        return Vector<ArgumentDescription> {
+            { "commandName", "Vector<WebCore::KeypressCommand>", nullptr, false },
+        };
+#endif
+#endif
+    case MessageName::TestWithSemaphore_ReceiveSemaphore:
+        return Vector<ArgumentDescription> {
+            { "r0", "IPC::Semaphore", nullptr, false },
+        };
+    case MessageName::TestWithImageData_ReceiveImageData:
+        return Vector<ArgumentDescription> {
+            { "r0", "RefPtr<WebCore::ImageData>", nullptr, false },
+        };
+    case MessageName::TestWithStream_SendStringSynchronized:
+        return Vector<ArgumentDescription> {
+            { "returnValue", "int64_t", nullptr, false },
+        };
+#if PLATFORM(COCOA)
+    case MessageName::TestWithStream_ReceiveMachSendRight:
+        return Vector<ArgumentDescription> {
+            { "r1", "MachSendRight", nullptr, false },
+        };
+    case MessageName::TestWithStream_SendAndReceiveMachSendRight:
+        return Vector<ArgumentDescription> {
+            { "r1", "MachSendRight", nullptr, false },
+        };
+#endif
+#if USE(AVFOUNDATION)
+    case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
+        return Vector<ArgumentDescription> {
+            { "r0", "RetainPtr<CVPixelBufferRef>", nullptr, false },
+        };
 #endif
     default:
         break;

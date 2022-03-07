@@ -108,10 +108,24 @@ enum class MessageName : uint16_t {
     , SetStreamDestinationID
     , SyncMessageReply
     , Terminate
+    , TestWithCVPixelBuffer_ReceiveCVPixelBufferReply
+    , TestWithImageData_ReceiveImageDataReply
+    , TestWithLegacyReceiver_CreatePluginReply
+    , TestWithLegacyReceiver_GetPluginsReply
+    , TestWithLegacyReceiver_InterpretKeyEventReply
+    , TestWithLegacyReceiver_RunJavaScriptAlertReply
+    , TestWithSemaphore_ReceiveSemaphoreReply
+    , TestWithStream_ReceiveMachSendRightReply
+    , TestWithStream_SendAndReceiveMachSendRightReply
+    , TestWithStream_SendStringSynchronizedReply
     , TestWithSuperclass_TestAsyncMessageReply
     , TestWithSuperclass_TestAsyncMessageWithConnectionReply
     , TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply
     , TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply
+    , TestWithoutAttributes_CreatePluginReply
+    , TestWithoutAttributes_GetPluginsReply
+    , TestWithoutAttributes_InterpretKeyEventReply
+    , TestWithoutAttributes_RunJavaScriptAlertReply
     , TestWithLegacyReceiver_GetPluginProcessConnection
     , TestWithLegacyReceiver_TestMultipleAttributes
     , TestWithSuperclass_TestSyncMessage

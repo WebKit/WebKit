@@ -69,10 +69,14 @@ public:
     using Arguments = std::tuple<const String&>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendStringSynchronized; }
-    static constexpr bool isSync = true;
+    static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = true;
 
+    static void callReply(IPC::Decoder&, CompletionHandler<void(int64_t&&)>&&);
+    static void cancelReply(CompletionHandler<void(int64_t&&)>&&);
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendStringSynchronizedReply; }
+    using AsyncReply = SendStringSynchronizedAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using Reply = std::tuple<int64_t&>;
     using ReplyArguments = std::tuple<int64_t>;
@@ -120,10 +124,14 @@ public:
     using Arguments = std::tuple<>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_ReceiveMachSendRight; }
-    static constexpr bool isSync = true;
+    static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isReplyStreamEncodable = false;
 
+    static void callReply(IPC::Decoder&, CompletionHandler<void(MachSendRight&&)>&&);
+    static void cancelReply(CompletionHandler<void(MachSendRight&&)>&&);
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_ReceiveMachSendRightReply; }
+    using AsyncReply = ReceiveMachSendRightAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using Reply = std::tuple<MachSendRight&>;
     using ReplyArguments = std::tuple<MachSendRight>;
@@ -143,10 +151,14 @@ public:
     using Arguments = std::tuple<const MachSendRight&>;
 
     static IPC::MessageName name() { return IPC::MessageName::TestWithStream_SendAndReceiveMachSendRight; }
-    static constexpr bool isSync = true;
+    static constexpr bool isSync = false;
     static constexpr bool isStreamEncodable = false;
     static constexpr bool isReplyStreamEncodable = false;
 
+    static void callReply(IPC::Decoder&, CompletionHandler<void(MachSendRight&&)>&&);
+    static void cancelReply(CompletionHandler<void(MachSendRight&&)>&&);
+    static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendAndReceiveMachSendRightReply; }
+    using AsyncReply = SendAndReceiveMachSendRightAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
     using Reply = std::tuple<MachSendRight&>;
     using ReplyArguments = std::tuple<MachSendRight>;

@@ -27,13 +27,13 @@
 
 messages -> RemoteMediaSessionCoordinator NotRefCounted {
 
-    SeekSessionToTime(double time) -> (bool result) Async
+    SeekSessionToTime(double time) -> (bool result)
 
-    PlaySession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime) -> (bool result) Async
+    PlaySession(std::optional<double> atTime, std::optional<MonotonicTime> hostTime) -> (bool result)
 
-    PauseSession() -> (bool result) Async
+    PauseSession() -> (bool result)
 
-    SetSessionTrack(String trackIdentifier) -> (bool result) Async
+    SetSessionTrack(String trackIdentifier) -> (bool result)
 
     CoordinatorStateChanged(enum:uint8_t WebCore::MediaSessionCoordinatorState state);
 }
