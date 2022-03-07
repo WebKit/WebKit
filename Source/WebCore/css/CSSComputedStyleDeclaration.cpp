@@ -1922,6 +1922,33 @@ static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(OptionSet<TextEmphasi
     return list;
 }
 
+static Ref<CSSValue> valueForTextEmphasisStyle(const RenderStyle& style)
+{
+    auto& cssValuePool = CSSValuePool::singleton();
+    switch (style.textEmphasisMark()) {
+    case TextEmphasisMark::None:
+        return cssValuePool.createIdentifierValue(CSSValueNone);
+    case TextEmphasisMark::Custom:
+        return cssValuePool.createValue(style.textEmphasisCustomMark(), CSSUnitType::CSS_STRING);
+    case TextEmphasisMark::Auto:
+        ASSERT_NOT_REACHED();
+#if !ASSERT_ENABLED
+        FALLTHROUGH;
+#endif
+    case TextEmphasisMark::Dot:
+    case TextEmphasisMark::Circle:
+    case TextEmphasisMark::DoubleCircle:
+    case TextEmphasisMark::Triangle:
+    case TextEmphasisMark::Sesame:
+        auto list = CSSValueList::createSpaceSeparated();
+        if (style.textEmphasisFill() != TextEmphasisFill::Filled)
+            list->append(cssValuePool.createValue(style.textEmphasisFill()));
+        list->append(cssValuePool.createValue(style.textEmphasisMark()));
+        return list;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 static Ref<CSSValue> speakAsToCSSValue(OptionSet<SpeakAs> speakAs)
 {
     auto& cssValuePool = CSSValuePool::singleton();
@@ -3554,28 +3581,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTextEmphasisPosition:
             return renderEmphasisPositionFlagsToCSSValue(style.textEmphasisPosition());
         case CSSPropertyTextEmphasisStyle:
-            switch (style.textEmphasisMark()) {
-            case TextEmphasisMark::None:
-                return cssValuePool.createIdentifierValue(CSSValueNone);
-            case TextEmphasisMark::Custom:
-                return cssValuePool.createValue(style.textEmphasisCustomMark(), CSSUnitType::CSS_STRING);
-            case TextEmphasisMark::Auto:
-                ASSERT_NOT_REACHED();
-#if !ASSERT_ENABLED
-                FALLTHROUGH;
-#endif
-            case TextEmphasisMark::Dot:
-            case TextEmphasisMark::Circle:
-            case TextEmphasisMark::DoubleCircle:
-            case TextEmphasisMark::Triangle:
-            case TextEmphasisMark::Sesame:
-                auto list = CSSValueList::createSpaceSeparated();
-                if (style.textEmphasisFill() != TextEmphasisFill::Filled)
-                    list->append(cssValuePool.createValue(style.textEmphasisFill()));
-                list->append(cssValuePool.createValue(style.textEmphasisMark()));
-                return list;
-            }
-            RELEASE_ASSERT_NOT_REACHED();
+            return valueForTextEmphasisStyle(style);
+        case CSSPropertyTextEmphasis: {
+            auto list = CSSValueList::createSpaceSeparated();
+            list->append(valueForTextEmphasisStyle(style));
+            list->append(currentColorOrValidColor(&style, style.textEmphasisColor()));
+            return list;
+        }
         case CSSPropertyTextIndent: {
             auto textIndent = zoomAdjustedPixelValueForLength(style.textIndent(), style);
             if (style.textIndentLine() == TextIndentLine::EachLine || style.textIndentType() == TextIndentType::Hanging) {
@@ -4179,7 +4191,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
         case CSSPropertyAll:
-        case CSSPropertyTextEmphasis:
             break;
 
         /* Directional properties are resolved by resolveDirectionAwareProperty() before the switch. */

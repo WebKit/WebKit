@@ -49,7 +49,7 @@ PASS Property text-transform value 'uppercase' in ::marker
 PASS Property word-break value 'break-word' in ::marker
 PASS Property word-spacing value '10px' in ::marker
 PASS Property text-decoration-skip-ink value 'none' in ::marker
-FAIL Property text-emphasis value 'dot rgb(0, 255, 0)' in ::marker assert_equals: expected "dot rgb(0, 255, 0)" but got ""
+PASS Property text-emphasis value 'dot rgb(0, 255, 0)' in ::marker
 PASS Property text-emphasis-color value 'rgb(0, 255, 0)' in ::marker
 PASS Property text-emphasis-position value 'under left' in ::marker
 PASS Property text-emphasis-style value 'dot' in ::marker
