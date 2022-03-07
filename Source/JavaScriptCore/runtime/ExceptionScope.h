@@ -110,7 +110,7 @@ protected:
 #define RETURN_IF_EXCEPTION(scope__, value__) do { \
         JSC::VM& vm = (scope__).vm(); \
         ASSERT(!!(scope__).exception() == vm.traps().needHandling(JSC::VMTraps::NeedExceptionHandling)); \
-        if (UNLIKELY(vm.traps().needHandling(JSC::VMTraps::NonDebuggerEvents))) { \
+        if (UNLIKELY(vm.traps().maybeNeedHandling(JSC::VMTraps::NonDebuggerEvents))) { \
             if (vm.hasExceptionsAfterHandlingTraps()) \
                 return value__; \
         } \

@@ -279,6 +279,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_didFailJITCompilation(false)
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
+    , m_isJettisoned(false)
     , m_numCalleeLocals(other.m_numCalleeLocals)
     , m_numVars(other.m_numVars)
     , m_numberOfArgumentsToSkip(other.m_numberOfArgumentsToSkip)
@@ -330,6 +331,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_didFailJITCompilation(false)
     , m_didFailFTLCompilation(false)
     , m_hasBeenCompiledWithFTL(false)
+    , m_isJettisoned(false)
     , m_numCalleeLocals(unlinkedCodeBlock->numCalleeLocals())
     , m_numVars(unlinkedCodeBlock->numVars())
     , m_hasDebuggerStatement(false)
@@ -2190,6 +2192,8 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 
     VM& vm = *m_vm;
 
+    m_isJettisoned = true;
+
     CodeBlock* codeBlock = this; // Placate GCC for use in CODEBLOCK_LOG_EVENT  (does not like this).
     CODEBLOCK_LOG_EVENT(codeBlock, "jettison", ("due to ", reason, ", counting = ", mode == CountReoptimization, ", detail = ", pointerDump(detail)));
 
@@ -2356,6 +2360,8 @@ private:
 
 void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
 {
+    RELEASE_ASSERT(!m_isJettisoned);
+
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
     
     dataLogLnIf(Options::verboseCallLink(), "Noticing call link from ", pointerDump(callerCodeBlock), " to ", *this);
