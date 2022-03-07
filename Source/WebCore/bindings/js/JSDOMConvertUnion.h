@@ -273,7 +273,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                 using ImplementationType = typename Type::ImplementationType;
                 using WrapperType = typename Converter<Type>::WrapperType;
 
-                auto castedValue = WrapperType::toWrapped(vm, value);
+                auto castedValue = (brigand::any<TypeList, IsIDLTypedArrayAllowShared<brigand::_1>>::value) ? WrapperType::toWrappedAllowShared(vm, value) : WrapperType::toWrapped(vm, value);
                 if (!castedValue)
                     return;
 
