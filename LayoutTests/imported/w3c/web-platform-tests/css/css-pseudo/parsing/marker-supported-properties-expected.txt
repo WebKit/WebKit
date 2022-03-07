@@ -57,7 +57,7 @@ PASS Property text-shadow value 'rgb(0, 255, 0) 1px 2px 3px' in ::marker
 PASS Property display value 'none' in ::marker
 PASS Property position value 'absolute' in ::marker
 PASS Property float value 'right' in ::marker
-FAIL Property list-style value 'inside url('foo') decimal' in ::marker assert_equals: expected "outside none disc" but got "disc outside none"
+PASS Property list-style value 'inside url('foo') decimal' in ::marker
 PASS Property list-style-image value 'url('foo')' in ::marker
 PASS Property list-style-position value 'inside' in ::marker
 PASS Property list-style-type value 'decimal' in ::marker

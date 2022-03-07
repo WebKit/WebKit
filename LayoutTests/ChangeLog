@@ -1,3 +1,21 @@
+2022-03-07  Antoine Quint  <graouts@webkit.org>
+
+        Parsing of list-style shorthand is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=237515
+
+        Reviewed by Antti Koivisto.
+
+        Some non-WPT tests had the wrong assumption on the shorthand order
+        for list-style, so we update those tests to match the spec.
+
+        Additionally, the WPT test css/css-lists/list-style-type-string-004.html now passes.
+
+        * fast/css/cssText-shorthand-expected.txt:
+        * fast/css/cssText-shorthand.html:
+        * fast/css/getComputedStyle/getComputedStyle-list-style-shorthand-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-list-style-shorthand.html:
+        * platform/mac/TestExpectations:
+
 2022-03-07  Matt Woodrow  <mattwoodrow@apple.com>
 
         Compute correct containing block override size for items that are subgridden in one dimension only.

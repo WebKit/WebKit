@@ -3012,9 +3012,9 @@
             "inherited": true,
             "codegen-properties": {
                 "longhands": [
-                    "list-style-type",
                     "list-style-position",
-                    "list-style-image"
+                    "list-style-image",
+                    "list-style-type"
                 ]
             },
             "specification": {

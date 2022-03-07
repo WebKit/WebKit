@@ -6389,6 +6389,13 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyColumnRule:
         return consumeShorthandGreedily(columnRuleShorthand(), important);
     case CSSPropertyListStyle:
+        if (m_range.peek().id() == CSSValueNone) {
+            auto& valuePool = CSSValuePool::singleton();
+            addProperty(CSSPropertyListStylePosition, CSSPropertyListStyle, valuePool.createImplicitInitialValue(), important);
+            addProperty(CSSPropertyListStyleImage, CSSPropertyListStyle, valuePool.createImplicitInitialValue(), important);
+            addProperty(CSSPropertyListStyleType, CSSPropertyListStyle, valuePool.createIdentifierValue(CSSValueNone), important);
+            return true;
+        }
         return consumeShorthandGreedily(listStyleShorthand(), important);
     case CSSPropertyBorderRadius:
     case CSSPropertyWebkitBorderRadius: {

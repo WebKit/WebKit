@@ -42,7 +42,7 @@ PASS Animation of text-shadow in ::marker
 PASS Animation of display in ::marker
 PASS Animation of position in ::marker
 PASS Animation of float in ::marker
-FAIL Animation of list-style in ::marker assert_equals: expected "outside none disc" but got "disc outside none"
+PASS Animation of list-style in ::marker
 PASS Animation of list-style-image in ::marker
 PASS Animation of list-style-position in ::marker
 PASS Animation of list-style-type in ::marker
@@ -89,7 +89,7 @@ PASS Transition of text-shadow in ::marker
 PASS Transition of display in ::marker
 PASS Transition of position in ::marker
 PASS Transition of float in ::marker
-FAIL Transition of list-style in ::marker assert_equals: expected "outside none disc" but got "disc outside none"
+PASS Transition of list-style in ::marker
 PASS Transition of list-style-image in ::marker
 PASS Transition of list-style-position in ::marker
 PASS Transition of list-style-type in ::marker
