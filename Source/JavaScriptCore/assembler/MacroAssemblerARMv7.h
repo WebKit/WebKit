@@ -934,6 +934,33 @@ public:
         loadPair32(Address(scratch, address.offset), dest1, dest2);
     }
 
+    void loadPair64(RegisterID src, TrustedImm32 offset, FPRegisterID dest1, FPRegisterID dest2)
+    {
+        ASSERT(dest1 != dest2);
+        if ((dest2 == (dest1 + 1)) && !offset.m_value) {
+            // Only emit a VLDMIA if the registers happen to be consecutive and
+            // in the proper order and the offset happens to be zero. Otherwise,
+            // the extra instructions to adjust things mean there are no space
+            // savings and the VLDM itself might be a performance loss.
+            m_assembler.vldmia(src, dest1, 2);
+        } else {
+            loadDouble(Address(src, offset.m_value), dest1);
+            loadDouble(Address(src, offset.m_value + 8), dest2);
+        }
+    }
+
+    void storePair64(FPRegisterID src1, FPRegisterID src2, RegisterID dest, TrustedImm32 offset)
+    {
+        if ((src2 == (src1 + 1)) && !offset.m_value) {
+            // Only emit a VSTMIA under a narrow set of conditions. See
+            // loadPair64 for the rationale.
+            m_assembler.vstmia(dest, src1, 2);
+        } else {
+            storeDouble(src1, Address(dest, offset.m_value));
+            storeDouble(src2, Address(dest, offset.m_value + 8));
+        }
+    }
+
     void store32(RegisterID src, Address address)
     {
         store32(src, setupArmAddress(address));

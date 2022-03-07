@@ -42,6 +42,15 @@ constexpr bool isARMv7IDIVSupported()
 #endif
 }
 
+constexpr bool isARM()
+{
+#if CPU(ARM)
+    return true;
+#else
+    return false;
+#endif
+}
+
 constexpr bool isARM64()
 {
 #if CPU(ARM64)

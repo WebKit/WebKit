@@ -1,3 +1,30 @@
+2022-03-07  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        AssemblyHelpersSpoolers: use load/store pair on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=235112
+
+        Reviewed by Žan Doberšek.
+
+        Save ~1% code size for baseline JIT on JS2 by emitting load/store pair
+        instructions on 32-bit ARM.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv6Assembler::vldmia):
+        (JSC::ARMv7Assembler::vstmia):
+        * assembler/CPU.h:
+        (JSC::isARM):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::loadPair64):
+        (JSC::MacroAssemblerARMv7::storePair64):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer):
+        * jit/AssemblyHelpersSpoolers.h:
+        (JSC::AssemblyHelpers::LoadRegSpooler::executePair):
+        (JSC::AssemblyHelpers::StoreRegSpooler::executePair):
+        (JSC::AssemblyHelpers::CopySpooler::CopySpooler):
+        (JSC::AssemblyHelpers::CopySpooler::loadPair):
+        (JSC::AssemblyHelpers::CopySpooler::storePair):
+
 2022-03-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [JSC] Add missing CPU(RISCV64) guards in CTI thunk prologue, epilogue generators

@@ -583,6 +583,8 @@ private:
         OP_CMP_reg_T2   = 0xEBB0,
         OP_VMOV_CtoD    = 0xEC00,
         OP_VMOV_DtoC    = 0xEC10,
+        OP_VSTMIA       = 0xEC80,
+        OP_VLDMIA       = 0xEC90,
         OP_FSTS         = 0xED00,
         OP_VSTR         = 0xED00,
         OP_FLDS         = 0xED10,
@@ -688,6 +690,8 @@ private:
         OP_VSQRT_T1b     = 0x0A40,
         OP_VCVTSD_T1b    = 0x0A40,
         OP_VCVTDS_T1b    = 0x0A40,
+        OP_VSTMIAb       = 0x0B00,
+        OP_VLDMIAb       = 0x0B00,
         OP_NOP_T2b       = 0x8000,
         OP_DMB_SY_T1b    = 0x8F5F,
         OP_DMB_ISHST_T1b = 0x8F5A,
@@ -1925,6 +1929,18 @@ public:
         m_formatter.twoWordOp12Reg4FourFours(OP_UDIV_T1, rn, FourFours(0xf, rd, 0xf, rm));
     }
 #endif
+
+    void vldmia(RegisterID rn, FPDoubleRegisterID rs, uint32_t count)
+    {
+        ASSERT(count < 16);
+        m_formatter.vfpMemOp(OP_VLDMIA, OP_VLDMIAb, true, rn, rs, count << 3);
+    }
+
+    void vstmia(RegisterID rn, FPDoubleRegisterID rs, uint32_t count)
+    {
+        ASSERT(count < 16);
+        m_formatter.vfpMemOp(OP_VSTMIA, OP_VSTMIAb, true, rn, rs, count << 3);
+    }
 
     void vand(FPDoubleRegisterID rd, FPDoubleRegisterID rn, FPDoubleRegisterID rm)
     {

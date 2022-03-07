@@ -1289,8 +1289,8 @@ void AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFram
     GPRReg destBufferGPR = usedRegisters.getFreeGPR(0);
     GPRReg temp1 = usedRegisters.getFreeGPR(1);
     FPRReg fpTemp1 = usedRegisters.getFreeFPR(0);
-    GPRReg temp2 = isARM64() ? usedRegisters.getFreeGPR(2) : InvalidGPRReg;
-    FPRReg fpTemp2 = isARM64() ? usedRegisters.getFreeFPR(1) : InvalidFPRReg;
+    GPRReg temp2 = usedRegisters.getFreeGPR(2);
+    FPRReg fpTemp2 = usedRegisters.getFreeFPR(1);
 
     loadPtr(&topEntryFrame, destBufferGPR);
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), destBufferGPR);
