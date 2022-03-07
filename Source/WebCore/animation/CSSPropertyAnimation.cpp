@@ -2121,9 +2121,9 @@ private:
                 return true;
 
             if (!fromColor.isValid())
-                fromColor = Color();
+                fromColor = a.color();
             if (!toColor.isValid())
-                toColor = Color();
+                toColor = b.color();
 
             return fromColor == toColor;
         }
@@ -2132,8 +2132,11 @@ private:
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        if ((from.*m_paintTypeGetter)() != SVGPaintType::RGBColor
-            || (to.*m_paintTypeGetter)() != SVGPaintType::RGBColor)
+        auto isValidPaintType = [](SVGPaintType paintType) {
+            return paintType == SVGPaintType::RGBColor || paintType == SVGPaintType::CurrentColor;
+        };
+
+        if (!isValidPaintType((from.*m_paintTypeGetter)()) || !isValidPaintType((to.*m_paintTypeGetter)()))
             return;
 
         Color fromColor = (from.*m_getter)();
@@ -2143,9 +2146,9 @@ private:
             return;
 
         if (!fromColor.isValid())
-            fromColor = Color();
+            fromColor = from.color();
         if (!toColor.isValid())
-            toColor = Color();
+            toColor = to.color();
         (destination.*m_setter)(blendFunc(fromColor, toColor, context));
     }
 

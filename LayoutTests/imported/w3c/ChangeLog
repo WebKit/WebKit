@@ -1,5 +1,14 @@
 2022-03-07  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] animating "fill" and "stroke" to or from "currentColor" should work
+        https://bugs.webkit.org/show_bug.cgi?id=237531
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/web-animations/responsive/to-color-change-expected.txt:
+
+2022-03-07  Antoine Quint  <graouts@webkit.org>
+
         Transition on text-decoration-color from currentColor jumps
         https://bugs.webkit.org/show_bug.cgi?id=236992
         <rdar://problem/89382835>
