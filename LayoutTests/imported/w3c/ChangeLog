@@ -1,5 +1,73 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290554. rdar://problem/83757966
+
+    Remove Node::deprecatedIsInert
+    https://bugs.webkit.org/show_bug.cgi?id=230845
+    
+    Reviewed by Antti Koivisto.
+    
+    LayoutTests/imported/w3c:
+    
+    This change unfortunately regresses focusability state when dynamically setting inert, due to a cached
+    computed style invalidation bug. This is minor in practice, since focusability usually gets queried in
+    user-initiated ways, when style already has fully been updated.
+    
+    However, making this change will improve performance by avoiding a full DOM ancestor walk when there
+    is no inert attribute on the page, since we will only check a style bit after this patch.
+    
+    * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/remove-dialog-should-unblock-document-expected.txt:
+    * web-platform-tests/inert/inert-canvas-fallback-content.tentative-expected.txt:
+    * web-platform-tests/inert/inert-node-is-unfocusable.tentative-expected.txt:
+    
+    Source/WebCore:
+    
+    This change unfortunately regresses focusability state when dynamically setting inert, due to a cached
+    computed style invalidation bug. This is minor in practice, since focusability usually gets queried in
+    user-initiated ways, when style already has fully been updated.
+    
+    However, making this change will improve performance by avoiding a full DOM ancestor walk when there
+    is no inert attribute on the page, since we will only check a style bit after this patch.
+    
+    * dom/Element.cpp:
+    (WebCore::Element::isFocusable const):
+    (WebCore::Element::isFocusableWithoutResolvingFullStyle const):
+    (WebCore::Element::isVisibleWithoutResolvingFullStyle const): Deleted.
+    * dom/Element.h:
+    * dom/Node.cpp:
+    (WebCore::Node::deprecatedIsInert const): Deleted.
+    * dom/Node.h:
+    * html/HTMLAreaElement.cpp:
+    (WebCore::HTMLAreaElement::isFocusable const):
+    
+    LayoutTests:
+    
+    * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-focusing-steps-inert-expected.txt: Added.
+    * platform/ios-wk2/imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-showModal-expected.txt: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290554 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-26  Tim Nguyen  <ntim@apple.com>
+
+            Remove Node::deprecatedIsInert
+            https://bugs.webkit.org/show_bug.cgi?id=230845
+
+            Reviewed by Antti Koivisto.
+
+            This change unfortunately regresses focusability state when dynamically setting inert, due to a cached
+            computed style invalidation bug. This is minor in practice, since focusability usually gets queried in
+            user-initiated ways, when style already has fully been updated.
+
+            However, making this change will improve performance by avoiding a full DOM ancestor walk when there
+            is no inert attribute on the page, since we will only check a style bit after this patch.
+
+            * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/remove-dialog-should-unblock-document-expected.txt:
+            * web-platform-tests/inert/inert-canvas-fallback-content.tentative-expected.txt:
+            * web-platform-tests/inert/inert-node-is-unfocusable.tentative-expected.txt:
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290306. rdar://problem/88352589
 
     Make pointer-events checks for SVG take in account inert subtrees
