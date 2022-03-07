@@ -218,9 +218,12 @@ Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeEventBreakpoint(P
     return makeUnexpected("Not supported");
 }
 
-void InspectorDOMDebuggerAgent::willHandleEvent(Event& event, const RegisteredEventListener& registeredEventListener)
+void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event, const RegisteredEventListener& registeredEventListener)
 {
-    auto state = event.target()->scriptExecutionContext()->globalObject();
+    // `event.target()->scriptExecutionContext()` can change between `willHandleEvent` and `didHandleEvent`. The passed
+    // `scriptExecutionContext` parameter will always match in companion calls to `willHandleEvent` and
+    // `didHandleEvent`, and will not be null.
+    auto state = scriptExecutionContext.globalObject();
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
     if (injectedScript.hasNoValue())
         return;
@@ -259,9 +262,12 @@ void InspectorDOMDebuggerAgent::willHandleEvent(Event& event, const RegisteredEv
     m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::Listener, WTFMove(eventData));
 }
 
-void InspectorDOMDebuggerAgent::didHandleEvent(Event& event, const RegisteredEventListener& registeredEventListener)
+void InspectorDOMDebuggerAgent::didHandleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event, const RegisteredEventListener& registeredEventListener)
 {
-    auto state = event.target()->scriptExecutionContext()->globalObject();
+    // `event.target()->scriptExecutionContext()` can change between `willHandleEvent` and `didHandleEvent`. Here it
+    // could also be nullptr. The passed `scriptExecutionContext` parameter here will always match in companion calls to
+    // `willHandleEvent` and `didHandleEvent`, and will not be null.
+    auto state = scriptExecutionContext.globalObject();
     auto injectedScript = m_injectedScriptManager.injectedScriptFor(state);
     if (injectedScript.hasNoValue())
         return;
