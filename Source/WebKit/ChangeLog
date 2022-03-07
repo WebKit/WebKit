@@ -1,5 +1,36 @@
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r290343. rdar://problem/85811396
+
+    Further restrict received IPC boolean values to 0 or 1
+    https://bugs.webkit.org/show_bug.cgi?id=236801
+    rdar://85811396
+    
+    Patch by Simon Lewis <simon.lewis@apple.com> on 2022-02-22
+    Reviewed by Chris Dumez.
+    
+    Return std::nullopt if a value larger than 1 is received.
+    
+    * Platform/IPC/ArgumentCoder.h:
+    (IPC::ArgumentCoder<bool>::decode):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290343 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-22  Simon Lewis  <simon.lewis@apple.com>
+
+            Further restrict received IPC boolean values to 0 or 1
+            https://bugs.webkit.org/show_bug.cgi?id=236801
+            rdar://85811396
+
+            Reviewed by Chris Dumez.
+
+            Return std::nullopt if a value larger than 1 is received.
+
+            * Platform/IPC/ArgumentCoder.h:
+            (IPC::ArgumentCoder<bool>::decode):
+
+2022-03-07  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r290305. rdar://problem/89287719
 
     Rename RenderStyle::userSelectIncludingInert to RenderStyle::effectiveUserSelect
