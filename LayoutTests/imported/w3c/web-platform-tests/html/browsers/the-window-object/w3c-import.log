@@ -38,6 +38,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noopener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-noreferrer.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-popup-behavior.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-windowfeatures-values.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-opener-unconfigurable.window.js
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-properties.https.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/the-window-object/window-prototype-chain.html

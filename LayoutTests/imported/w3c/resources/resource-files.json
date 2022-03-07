@@ -2238,6 +2238,7 @@
         "web-platform-tests/html/browsers/the-window-object/support/same-origin-iframe.html",
         "web-platform-tests/html/browsers/the-window-object/support/sizing-target.html",
         "web-platform-tests/html/browsers/the-window-object/support/window-open-popup-target.html",
+        "web-platform-tests/html/browsers/the-window-object/support/windowFeature-values-target.html",
         "web-platform-tests/html/browsers/windows/browsing-context-names/001-1.html",
         "web-platform-tests/html/browsers/windows/browsing-context-names/002-1.html",
         "web-platform-tests/html/browsers/windows/browsing-context-names/existing.html",

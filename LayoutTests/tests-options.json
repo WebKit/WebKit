@@ -2549,6 +2549,9 @@
     "imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-popup-behavior.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/browsers/the-window-object/window-open-windowfeatures-values.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-setter.html": [
         "slow"
     ],

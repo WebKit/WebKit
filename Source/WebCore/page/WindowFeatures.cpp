@@ -130,7 +130,7 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
 {
     // Listing a key with no value is shorthand for key=yes
     int numericValue;
-    if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "yes"))
+    if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "yes") || equalLettersIgnoringASCIICase(value, "true"))
         numericValue = 1;
     else
         numericValue = parseIntegerAllowingTrailingJunk<int>(value).value_or(0);
