@@ -281,9 +281,8 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
 
     if (candidateElement.elementData() != element.elementData()) {
+        // Attributes that are optimized as "common attribute selectors".
         if (candidateElement.attributeWithoutSynchronization(HTMLNames::readonlyAttr) != element.attributeWithoutSynchronization(HTMLNames::readonlyAttr))
-            return false;
-        if (m_document.settings().inertAttributeEnabled() && candidateElement.attributeWithoutSynchronization(HTMLNames::inertAttr) != element.attributeWithoutSynchronization(HTMLNames::inertAttr))
             return false;
         if (candidateElement.isSVGElement()) {
             if (candidateElement.getAttribute(HTMLNames::typeAttr) != element.getAttribute(HTMLNames::typeAttr))
@@ -292,6 +291,10 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
             if (candidateElement.attributeWithoutSynchronization(HTMLNames::typeAttr) != element.attributeWithoutSynchronization(HTMLNames::typeAttr))
                 return false;
         }
+
+        // Elements that may get StyleAdjuster's inert attribute adjustment.
+        if (m_document.settings().inertAttributeEnabled() && candidateElement.hasAttributeWithoutSynchronization(HTMLNames::inertAttr) != element.hasAttributeWithoutSynchronization(HTMLNames::inertAttr))
+            return false;
     }
 
     if (candidateElement.matchesValidPseudoClass() != element.matchesValidPseudoClass())
