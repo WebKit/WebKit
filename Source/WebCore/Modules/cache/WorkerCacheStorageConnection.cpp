@@ -180,7 +180,7 @@ void WorkerCacheStorageConnection::retrieveCaches(const ClientOrigin& origin, ui
             if (!result.has_value())
                 isolatedResult = WTFMove(result);
             else
-                isolatedResult = result.value().isolatedCopy();
+                isolatedResult = WTFMove(result).value().isolatedCopy();
 
             workerThread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(isolatedResult)] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).cacheStorageConnection().retrieveCachesCompleted(requestIdentifier, WTFMove(result));
@@ -220,7 +220,7 @@ void WorkerCacheStorageConnection::batchDeleteOperation(uint64_t cacheIdentifier
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_batchDeleteAndPutPendingRequests.add(requestIdentifier, WTFMove(callback));
 
-    callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, request = request.isolatedCopy(), options = options.isolatedCopy()]() mutable {
+    callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier, request = request.isolatedCopy(), options = WTFMove(options).isolatedCopy()]() mutable {
         mainThreadConnection->batchDeleteOperation(cacheIdentifier, request, WTFMove(options), [workerThread = WTFMove(workerThread), requestIdentifier](RecordIdentifiersOrError&& result) mutable {
             workerThread->runLoop().postTaskForMode([requestIdentifier, result = WTFMove(result)] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).cacheStorageConnection().deleteRecordsCompleted(requestIdentifier, WTFMove(result));

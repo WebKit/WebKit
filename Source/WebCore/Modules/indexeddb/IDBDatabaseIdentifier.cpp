@@ -42,14 +42,21 @@ IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, Securit
     ASSERT(!databaseName.isNull());
 }
 
-IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const
+IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() const &
 {
     IDBDatabaseIdentifier identifier;
-
     identifier.m_databaseName = m_databaseName.isolatedCopy();
     identifier.m_origin = m_origin.isolatedCopy();
     identifier.m_isTransient = m_isTransient;
+    return identifier;
+}
 
+IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() &&
+{
+    IDBDatabaseIdentifier identifier;
+    identifier.m_databaseName = WTFMove(m_databaseName).isolatedCopy();
+    identifier.m_origin = WTFMove(m_origin).isolatedCopy();
+    identifier.m_isTransient = m_isTransient;
     return identifier;
 }
 

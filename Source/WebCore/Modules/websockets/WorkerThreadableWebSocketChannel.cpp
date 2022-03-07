@@ -264,7 +264,7 @@ void WorkerThreadableWebSocketChannel::Peer::didConnect()
 
     String subprotocol = m_mainWebSocketChannel->subprotocol();
     String extensions = m_mainWebSocketChannel->extensions();
-    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([workerClientWrapper = m_workerClientWrapper, subprotocol = subprotocol.isolatedCopy(), extensions = extensions.isolatedCopy()](ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([workerClientWrapper = m_workerClientWrapper, subprotocol = WTFMove(subprotocol).isolatedCopy(), extensions = WTFMove(extensions).isolatedCopy()](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
         workerClientWrapper->setSubprotocol(subprotocol);
         workerClientWrapper->setExtensions(extensions);

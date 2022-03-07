@@ -1,3 +1,43 @@
+2022-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Optimize the passing of data across threads
+        https://bugs.webkit.org/show_bug.cgi?id=237502
+
+        Reviewed by Geoff Garen.
+
+        Add more isolatedCopy() overloads that work on r-value references when the implementation
+        can be optimized. Also call isolatedCopy() / crossThreadCopy() on a r-value reference
+        whenever possible to leverage these optimizations.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        (WebKit::RegistrableDomainsToBlockCookiesFor::isolatedCopy const):
+        (WebKit::RegistrableDomainsToBlockCookiesFor::isolatedCopy):
+        (WebKit::RegistrableDomainsToDeleteOrRestrictWebsiteDataFor::isolatedCopy const):
+        (WebKit::RegistrableDomainsToDeleteOrRestrictWebsiteDataFor::isolatedCopy):
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesForOrigins):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.cpp:
+        (WebKit::PCM::DebugInfo::isolatedCopy const):
+        (WebKit::PCM::DebugInfo::isolatedCopy):
+        (WebKit::PCM::DebugInfo::Message::isolatedCopy const):
+        (WebKit::PCM::DebugInfo::Message::isolatedCopy):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDebugInfo.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp:
+        (WebKit::PCM::Store::allAttributedPrivateClickMeasurement):
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::ContentRuleListStore::compileContentRuleList):
+        * UIProcess/Cocoa/ModalContainerControlClassifier.mm:
+        (WebKit::ModalContainerControlClassifier::classify):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::setMediaAccessibilityPreferences):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChooseFilesForOpenPanelWithImageTranscoding):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::prewarmWithDomainInformation):
+        * WebProcess/WebProcess.h:
+
 2022-03-07  Sihui Liu  <sihui_liu@apple.com>
 
         Delete WebIDBServer and WebIDBConnectionToClient

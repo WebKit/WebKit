@@ -1,3 +1,18 @@
+2022-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Optimize the passing of data across threads
+        https://bugs.webkit.org/show_bug.cgi?id=237502
+
+        Reviewed by Geoff Garen.
+
+        Expand test coverage for crossThreadCopy() and make sure the optimizations are working
+        when called on a r-value reference.
+
+        * TestWebKitAPI/Tests/WTF/CrossThreadCopier.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Vector.cpp:
+        (TestWebKitAPI::TEST):
+
 2022-03-07  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Derive branch name from bug title (Follow-up fix)

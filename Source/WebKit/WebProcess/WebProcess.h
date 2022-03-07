@@ -411,7 +411,7 @@ private:
     void platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&&);
 
     void prewarmGlobally();
-    void prewarmWithDomainInformation(const WebCore::PrewarmInformation&);
+    void prewarmWithDomainInformation(WebCore::PrewarmInformation&&);
 
 #if USE(OS_STATE)
     RetainPtr<NSDictionary> additionalStateForDiagnosticReport() const final;

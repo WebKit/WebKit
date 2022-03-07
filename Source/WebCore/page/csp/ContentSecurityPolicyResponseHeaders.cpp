@@ -45,10 +45,18 @@ ContentSecurityPolicyResponseHeaders::ContentSecurityPolicyResponseHeaders(const
     m_httpStatusCode = response.httpStatusCode();
 }
 
-ContentSecurityPolicyResponseHeaders ContentSecurityPolicyResponseHeaders::isolatedCopy() const
+ContentSecurityPolicyResponseHeaders ContentSecurityPolicyResponseHeaders::isolatedCopy() const &
 {
     ContentSecurityPolicyResponseHeaders isolatedCopy;
     isolatedCopy.m_headers = crossThreadCopy(m_headers);
+    isolatedCopy.m_httpStatusCode = m_httpStatusCode;
+    return isolatedCopy;
+}
+
+ContentSecurityPolicyResponseHeaders ContentSecurityPolicyResponseHeaders::isolatedCopy() &&
+{
+    ContentSecurityPolicyResponseHeaders isolatedCopy;
+    isolatedCopy.m_headers = crossThreadCopy(WTFMove(m_headers));
     isolatedCopy.m_httpStatusCode = m_httpStatusCode;
     return isolatedCopy;
 }

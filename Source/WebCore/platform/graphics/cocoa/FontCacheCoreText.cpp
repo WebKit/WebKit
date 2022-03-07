@@ -956,7 +956,7 @@ public:
         }();
 
         Locker locker { m_familyNameToFontDescriptorsLock };
-        return *m_familyNameToFontDescriptors.add(folded.isolatedCopy(), WTFMove(installedFontFamily)).iterator->value;
+        return *m_familyNameToFontDescriptors.add(WTFMove(folded).isolatedCopy(), WTFMove(installedFontFamily)).iterator->value;
     }
 
     const InstalledFont& fontForPostScriptName(const AtomString& postScriptName)
@@ -1630,7 +1630,7 @@ FontCache::PrewarmInformation FontCache::collectPrewarmInformation() const
     return { copyToVector(m_seenFamiliesForPrewarming), copyToVector(m_fontNamesRequiringSystemFallbackForPrewarming) };
 }
 
-void FontCache::prewarm(const PrewarmInformation& prewarmInformation)
+void FontCache::prewarm(PrewarmInformation&& prewarmInformation)
 {
     if (prewarmInformation.isEmpty())
         return;
@@ -1640,7 +1640,7 @@ void FontCache::prewarm(const PrewarmInformation& prewarmInformation)
 
     auto& database = FontDatabase::singletonDisallowingUserInstalledFonts();
 
-    m_prewarmQueue->dispatch([&database, prewarmInformation = prewarmInformation.isolatedCopy()] {
+    m_prewarmQueue->dispatch([&database, prewarmInformation = WTFMove(prewarmInformation).isolatedCopy()] {
         for (auto& family : prewarmInformation.seenFamilies)
             database.collectionForFamily(family);
 
@@ -1682,7 +1682,7 @@ void FontCache::prewarmGlobally()
 
     FontCache::PrewarmInformation prewarmInfo;
     prewarmInfo.seenFamilies = WTFMove(families);
-    FontCache::forCurrentThread().prewarm(prewarmInfo);
+    FontCache::forCurrentThread().prewarm(WTFMove(prewarmInfo));
 #endif
 }
 

@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "MoveOnly.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -128,7 +129,7 @@ TEST(WTF_Vector, ConstructWithFromString)
     EXPECT_TRUE(s3.isNull());
 }
 
-TEST(WTF_Vector, IsolateCopy)
+TEST(WTF_Vector, IsolatedCopy)
 {
     String s1 = "s1";
     String s2 = "s2";
@@ -140,7 +141,7 @@ TEST(WTF_Vector, IsolateCopy)
     auto* data1 = vector1[0].impl();
     auto* data2 = vector1[1].impl();
 
-    auto vector2 = vector1.isolatedCopy();
+    auto vector2 = crossThreadCopy(vector1);
 
     EXPECT_TRUE("s1" == vector2[0]);
     EXPECT_TRUE("s2" == vector2[1]);
@@ -148,7 +149,7 @@ TEST(WTF_Vector, IsolateCopy)
     EXPECT_FALSE(data1 == vector2[0].impl());
     EXPECT_FALSE(data2 == vector2[1].impl());
 
-    auto vector3 = WTFMove(vector1).isolatedCopy();
+    auto vector3 = crossThreadCopy(WTFMove(vector1));
     EXPECT_EQ(0U, vector1.size());
 
     EXPECT_TRUE("s1" == vector3[0]);

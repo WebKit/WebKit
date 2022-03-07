@@ -42,7 +42,8 @@ struct ClientOrigin {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ClientOrigin> decode(Decoder&);
 
-    ClientOrigin isolatedCopy() const;
+    ClientOrigin isolatedCopy() const & { return { topOrigin.isolatedCopy(), clientOrigin.isolatedCopy() }; }
+    ClientOrigin isolatedCopy() && { return { WTFMove(topOrigin).isolatedCopy(), WTFMove(clientOrigin).isolatedCopy() }; }
     bool isRelated(const SecurityOriginData& other) const { return topOrigin == other || clientOrigin == other; }
 
     RegistrableDomain clientRegistrableDomain() const { return RegistrableDomain::uncheckedCreateFromHost(clientOrigin.host); }
@@ -59,11 +60,6 @@ inline void add(Hasher& hasher, const ClientOrigin& origin)
 inline bool ClientOrigin::operator==(const ClientOrigin& other) const
 {
     return topOrigin == other.topOrigin && clientOrigin == other.clientOrigin;
-}
-
-inline ClientOrigin ClientOrigin::isolatedCopy() const
-{
-    return { topOrigin.isolatedCopy(), clientOrigin.isolatedCopy() };
 }
 
 template<class Encoder> inline void ClientOrigin::encode(Encoder& encoder) const

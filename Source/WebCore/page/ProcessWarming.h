@@ -35,7 +35,7 @@ public:
     static void prewarmGlobally();
 
     static PrewarmInformation collectPrewarmInformation();
-    static void prewarmWithInformation(const PrewarmInformation&);
+    static void prewarmWithInformation(PrewarmInformation&&);
 };
 
 }

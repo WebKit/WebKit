@@ -455,15 +455,15 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToPCMDatabaseIfNecessary()
     }
 
     if (!unattributed.isEmpty() || !attributed.isEmpty()) {
-        RunLoop::main().dispatch([store = Ref { store() }, unattributed = unattributed.isolatedCopy(), attributed = attributed.isolatedCopy()] () mutable {
+        RunLoop::main().dispatch([store = Ref { store() }, unattributed = crossThreadCopy(WTFMove(unattributed)), attributed = crossThreadCopy(WTFMove(attributed))] () mutable {
             auto* networkSession = store->networkSession();
             if (!networkSession)
                 return;
 
             auto& manager = networkSession->privateClickMeasurement();
-            for (auto& pcm : WTFMove(attributed))
+            for (auto&& pcm : WTFMove(attributed))
                 manager.migratePrivateClickMeasurementFromLegacyStorage(WTFMove(pcm), PrivateClickMeasurementAttributionType::Attributed);
-            for (auto& pcm : WTFMove(unattributed))
+            for (auto&& pcm : WTFMove(unattributed))
                 manager.migratePrivateClickMeasurementFromLegacyStorage(WTFMove(pcm), PrivateClickMeasurementAttributionType::Unattributed);
         });
 

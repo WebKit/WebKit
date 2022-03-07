@@ -43,15 +43,21 @@ struct VideoConfiguration {
     std::optional<HdrMetadataType> hdrMetadataType;
     std::optional<TransferFunction> transferFunction;
 
-    VideoConfiguration isolatedCopy() const;
+    VideoConfiguration isolatedCopy() const &;
+    VideoConfiguration isolatedCopy() &&;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<VideoConfiguration> decode(Decoder&);
 };
 
-inline VideoConfiguration VideoConfiguration::isolatedCopy() const
+inline VideoConfiguration VideoConfiguration::isolatedCopy() const &
 {
     return { contentType.isolatedCopy(), width, height, bitrate, framerate, alphaChannel, colorGamut, hdrMetadataType, transferFunction };
+}
+
+inline VideoConfiguration VideoConfiguration::isolatedCopy() &&
+{
+    return { WTFMove(contentType).isolatedCopy(), width, height, bitrate, framerate, alphaChannel, colorGamut, hdrMetadataType, transferFunction };
 }
 
 template<class Encoder>

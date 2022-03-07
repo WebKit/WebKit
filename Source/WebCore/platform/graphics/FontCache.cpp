@@ -508,7 +508,7 @@ void FontCache::prewarmGlobally()
 {
 }
 
-void FontCache::prewarm(const PrewarmInformation&)
+void FontCache::prewarm(PrewarmInformation&&)
 {
 }
 

@@ -495,13 +495,13 @@ bool FileInputType::receiveDroppedFilesWithImageTranscoding(const Vector<String>
         protectedThis->filesChosen(paths, replacementPaths);
     };
 
-    sharedImageTranscodingQueue().dispatch([callFilesChosen = WTFMove(callFilesChosen), transcodingPaths = transcodingPaths.isolatedCopy(), transcodingUTI = transcodingUTI.isolatedCopy(), transcodingExtension = transcodingExtension.isolatedCopy()]() mutable {
+    sharedImageTranscodingQueue().dispatch([callFilesChosen = WTFMove(callFilesChosen), transcodingPaths = crossThreadCopy(WTFMove(transcodingPaths)), transcodingUTI = WTFMove(transcodingUTI).isolatedCopy(), transcodingExtension = WTFMove(transcodingExtension).isolatedCopy()]() mutable {
         ASSERT(!RunLoop::isMain());
 
         auto replacementPaths = transcodeImages(transcodingPaths, transcodingUTI, transcodingExtension);
         ASSERT(transcodingPaths.size() == replacementPaths.size());
 
-        RunLoop::main().dispatch([callFilesChosen = WTFMove(callFilesChosen), replacementPaths = replacementPaths.isolatedCopy()]() {
+        RunLoop::main().dispatch([callFilesChosen = WTFMove(callFilesChosen), replacementPaths = crossThreadCopy(WTFMove(replacementPaths))] {
             callFilesChosen(replacementPaths);
         });
     });

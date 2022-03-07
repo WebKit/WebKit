@@ -344,7 +344,7 @@ IDBError MemoryObjectStore::populateIndexWithExistingRecords(MemoryIndex& index)
 
             IndexKey indexKey;
             generateIndexKeyForValue(globalObject, indexInfo, jsValue, indexKey, info.keyPath(), key);
-            resultIndexKey = indexKey.isolatedCopy();
+            resultIndexKey = WTFMove(indexKey).isolatedCopy();
         });
 
         if (!resultIndexKey)

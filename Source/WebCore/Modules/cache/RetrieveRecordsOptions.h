@@ -33,7 +33,8 @@
 namespace WebCore {
 
 struct RetrieveRecordsOptions {
-    RetrieveRecordsOptions isolatedCopy() const { return { request.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), sourceOrigin->isolatedCopy(), ignoreSearch, ignoreMethod, ignoreVary, shouldProvideResponse }; }
+    RetrieveRecordsOptions isolatedCopy() const & { return { request.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), sourceOrigin->isolatedCopy(), ignoreSearch, ignoreMethod, ignoreVary, shouldProvideResponse }; }
+    RetrieveRecordsOptions isolatedCopy() && { return { WTFMove(request).isolatedCopy(), WTFMove(crossOriginEmbedderPolicy).isolatedCopy(), sourceOrigin->isolatedCopy(), ignoreSearch, ignoreMethod, ignoreVary, shouldProvideResponse }; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<RetrieveRecordsOptions> decode(Decoder&);

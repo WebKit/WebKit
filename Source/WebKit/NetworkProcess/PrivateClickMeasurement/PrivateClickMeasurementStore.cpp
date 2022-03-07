@@ -129,7 +129,7 @@ void Store::allAttributedPrivateClickMeasurement(CompletionHandler<void(Vector<W
         Vector<WebCore::PrivateClickMeasurement> convertedAttributions;
         if (m_database)
             convertedAttributions = m_database->allAttributedPrivateClickMeasurement();
-        postTaskReply([convertedAttributions = convertedAttributions.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        postTaskReply([convertedAttributions = crossThreadCopy(WTFMove(convertedAttributions)), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(WTFMove(convertedAttributions));
         });
     });

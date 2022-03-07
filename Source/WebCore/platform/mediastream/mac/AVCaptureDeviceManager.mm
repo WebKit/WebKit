@@ -180,7 +180,7 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
 void AVCaptureDeviceManager::refreshCaptureDevices(CompletionHandler<void()>&& callback)
 {
     m_dispatchQueue->dispatch([this, callback = WTFMove(callback)]() mutable {
-        RunLoop::main().dispatch([this, callback = WTFMove(callback), deviceList = retrieveCaptureDevices().isolatedCopy()]() mutable {            
+        RunLoop::main().dispatch([this, callback = WTFMove(callback), deviceList = crossThreadCopy(retrieveCaptureDevices())]() mutable {
             bool deviceHasChanged = m_devices.size() != deviceList.size();
             if (!deviceHasChanged) {
                 for (size_t cptr = 0; cptr < deviceList.size(); ++cptr) {

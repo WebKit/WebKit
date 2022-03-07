@@ -40,6 +40,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <string>
 #include <wtf/CompletionHandler.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
@@ -551,7 +552,7 @@ void ContentRuleListStore::compileContentRuleList(const WTF::String& identifier,
     if (!parsedRules.has_value())
         return completionHandler(nullptr, parsedRules.error());
     
-    m_compileQueue->dispatch([protectedThis = Ref { *this }, identifier = identifier.isolatedCopy(), json = json.isolatedCopy(), parsedRules = parsedRules.value().isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+    m_compileQueue->dispatch([protectedThis = Ref { *this }, identifier = identifier.isolatedCopy(), json = json.isolatedCopy(), parsedRules = crossThreadCopy(WTFMove(parsedRules).value()), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
         auto path = constructedPath(storePath, identifier, false);
 
         auto result = compiledToFile(WTFMove(json), WTFMove(parsedRules), path);

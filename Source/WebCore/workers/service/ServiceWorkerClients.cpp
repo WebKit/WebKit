@@ -111,7 +111,7 @@ void ServiceWorkerClients::claim(ScriptExecutionContext& context, Ref<DeferredPr
     callOnMainThread([promisePointer, serviceWorkerIdentifier] () mutable {
         auto connection = SWContextManager::singleton().connection();
         connection->claim(serviceWorkerIdentifier, [promisePointer, serviceWorkerIdentifier](auto&& result) mutable {
-            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, result = isolatedCopy(WTFMove(result))](auto& scope) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, result = crossThreadCopy(WTFMove(result))](auto& scope) mutable {
                 if (auto promise = scope.clients().m_pendingPromises.take(promisePointer)) {
                     DOMPromiseDeferred<void> pendingPromise { promise.releaseNonNull() };
                     pendingPromise.settle(WTFMove(result));

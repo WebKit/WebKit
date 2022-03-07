@@ -68,15 +68,26 @@ Vector<Ref<PerformanceServerTiming>> ResourceTiming::populateServerTiming() cons
     });
 }
 
-ResourceTiming ResourceTiming::isolatedCopy() const
+ResourceTiming ResourceTiming::isolatedCopy() const &
 {
-    return ResourceTiming(
+    return ResourceTiming {
         m_url.isolatedCopy(),
         m_initiator.isolatedCopy(),
         m_resourceLoadTiming.isolatedCopy(),
         m_networkLoadMetrics.isolatedCopy(),
         crossThreadCopy(m_serverTiming)
-    );
+    };
+}
+
+ResourceTiming ResourceTiming::isolatedCopy() &&
+{
+    return ResourceTiming {
+        WTFMove(m_url).isolatedCopy(),
+        WTFMove(m_initiator).isolatedCopy(),
+        WTFMove(m_resourceLoadTiming).isolatedCopy(),
+        WTFMove(m_networkLoadMetrics).isolatedCopy(),
+        crossThreadCopy(WTFMove(m_serverTiming))
+    };
 }
 
 } // namespace WebCore

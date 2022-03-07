@@ -47,9 +47,10 @@ struct Trigger {
     ResourceFlags flags { 0 };
     Vector<String> conditions;
 
-    WEBCORE_EXPORT Trigger isolatedCopy() const;
+    WEBCORE_EXPORT Trigger isolatedCopy() const &;
+    WEBCORE_EXPORT Trigger isolatedCopy() &&;
     
-    ~Trigger()
+    void checkValidity()
     {
         auto actionCondition = static_cast<ActionCondition>(flags & ActionConditionMask);
         ASSERT_UNUSED(actionCondition, conditions.isEmpty() == (actionCondition == ActionCondition::None));
@@ -131,10 +132,11 @@ struct Action {
 
     const ActionData& data() const { return m_data; }
 
-    WEBCORE_EXPORT Action isolatedCopy() const;
+    WEBCORE_EXPORT Action isolatedCopy() const &;
+    WEBCORE_EXPORT Action isolatedCopy() &&;
 
 private:
-    const ActionData m_data;
+    ActionData m_data;
 };
 
 struct DeserializedAction : public Action {
@@ -158,18 +160,16 @@ public:
     const Trigger& trigger() const { return m_trigger; }
     const Action& action() const { return m_action; }
 
-    ContentExtensionRule isolatedCopy() const
-    {
-        return { m_trigger.isolatedCopy(), m_action.isolatedCopy() };
-    }
+    ContentExtensionRule isolatedCopy() const & { return { m_trigger.isolatedCopy(), m_action.isolatedCopy() }; }
+    ContentExtensionRule isolatedCopy() && { return { WTFMove(m_trigger).isolatedCopy(), WTFMove(m_action).isolatedCopy() }; }
     bool operator==(const ContentExtensionRule& other) const
     {
         return m_trigger == other.m_trigger && m_action == other.m_action;
     }
 
 private:
-    const Trigger m_trigger;
-    const Action m_action;
+    Trigger m_trigger;
+    Action m_action;
 };
 
 } // namespace WebCore::ContentExtensions

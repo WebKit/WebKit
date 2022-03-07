@@ -1,3 +1,31 @@
+2022-03-07  Chris Dumez  <cdumez@apple.com>
+
+        Optimize the passing of data across threads
+        https://bugs.webkit.org/show_bug.cgi?id=237502
+
+        Reviewed by Geoff Garen.
+
+        Drop isolatedCopy() on Vector since CrossThreadCopier already has logic to
+        isolate-copy a Vector. The logic in CrossThreadCopier has the benefit of
+        working on types that do not implement isolatedCopy() (e.g. a Vector of
+        std::optional or a Vector of std::variant).
+
+        Improve the CrossThreadCopier to optimize the case where crossThreadCopy()
+        is called on a r-value reference in more cases. In particular, the logic
+        for Vector, HashSet, HashMap, std::pair, std::variant was improved. I
+        also added API test coverage for those.
+
+        The API tests also found a bug where crossThreadCopy() was incorrectly
+        moving the source when called on a std::variant that was not a r-value
+        reference. This bug is fixed in this patch too.
+
+        * wtf/CrossThreadCopier.h:
+        * wtf/Vector.h:
+        (WTF::Malloc>::isolatedCopy const): Deleted.
+        (WTF::Malloc>::isolatedCopy): Deleted.
+        * wtf/mac/FileSystemMac.mm:
+        (WTF::FileSystem::setMetadataURL):
+
 2022-03-04  Sihui Liu  <sihui_liu@apple.com>
 
         Add null check for path in makeAllDirectories

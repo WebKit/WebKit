@@ -45,9 +45,14 @@ IDBIndexInfo::IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, 
 {
 }
 
-IDBIndexInfo IDBIndexInfo::isolatedCopy() const
+IDBIndexInfo IDBIndexInfo::isolatedCopy() const &
 {
     return { m_identifier, m_objectStoreIdentifier, m_name.isolatedCopy(), crossThreadCopy(m_keyPath), m_unique, m_multiEntry };
+}
+
+IDBIndexInfo IDBIndexInfo::isolatedCopy() &&
+{
+    return { m_identifier, m_objectStoreIdentifier, WTFMove(m_name).isolatedCopy(), crossThreadCopy(WTFMove(m_keyPath)), m_unique, m_multiEntry };
 }
 
 #if !LOG_DISABLED

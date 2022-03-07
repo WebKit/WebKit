@@ -46,9 +46,14 @@ void ServerTiming::setParameter(const String& name, const String& value)
     }
 }
 
-ServerTiming ServerTiming::isolatedCopy() const
+ServerTiming ServerTiming::isolatedCopy() const &
 {
-    return ServerTiming(name.isolatedCopy(), duration, description.isolatedCopy(), durationSet, descriptionSet);
+    return ServerTiming { name.isolatedCopy(), duration, description.isolatedCopy(), durationSet, descriptionSet };
+}
+
+ServerTiming ServerTiming::isolatedCopy() &&
+{
+    return ServerTiming { WTFMove(name).isolatedCopy(), duration, WTFMove(description).isolatedCopy(), durationSet, descriptionSet };
 }
 
 } // namespace WebCore

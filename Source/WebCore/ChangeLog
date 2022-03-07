@@ -1,5 +1,253 @@
 2022-03-07  Chris Dumez  <cdumez@apple.com>
 
+        Optimize the passing of data across threads
+        https://bugs.webkit.org/show_bug.cgi?id=237502
+
+        Reviewed by Geoff Garen.
+
+        Add more isolatedCopy() overloads that work on r-value references when the implementation
+        can be optimized. Also call isolatedCopy() / crossThreadCopy() on a r-value reference
+        whenever possible to leverage these optimizations.
+
+        * Modules/cache/CacheQueryOptions.h:
+        (WebCore::CacheQueryOptions::isolatedCopy const):
+        (WebCore::CacheQueryOptions::isolatedCopy):
+        * Modules/cache/DOMCacheEngine.cpp:
+        (WebCore::DOMCacheEngine::isolateCacheInfo): Deleted.
+        (WebCore::DOMCacheEngine::CacheInfos::isolatedCopy): Deleted.
+        * Modules/cache/DOMCacheEngine.h:
+        (WebCore::DOMCacheEngine::CacheInfo::isolatedCopy const):
+        (WebCore::DOMCacheEngine::CacheInfo::isolatedCopy):
+        (WebCore::DOMCacheEngine::CacheInfos::isolatedCopy const):
+        (WebCore::DOMCacheEngine::CacheInfos::isolatedCopy):
+        * Modules/cache/RetrieveRecordsOptions.h:
+        (WebCore::RetrieveRecordsOptions::isolatedCopy const):
+        (WebCore::RetrieveRecordsOptions::isolatedCopy):
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::WorkerCacheStorageConnection::retrieveCaches):
+        (WebCore::WorkerCacheStorageConnection::batchDeleteOperation):
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::ListedChild::isolatedCopy const):
+        (WebCore::ListedChild::isolatedCopy):
+        (WebCore::DOMFileSystem::listDirectory):
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::isolatedCopy const):
+        (WebCore::IDBDatabaseIdentifier::isolatedCopy):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        * Modules/indexeddb/IDBGetResult.cpp:
+        (WebCore::IDBGetResult::isolatedCopy):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::requestGetAllObjectStoreRecords):
+        (WebCore::IDBTransaction::requestGetAllIndexRecords):
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::populateIndexWithExistingRecords):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateOneIndexForAddRecord):
+        * Modules/indexeddb/shared/IDBDatabaseNameAndVersion.h:
+        (WebCore::IDBDatabaseNameAndVersion::isolatedCopy const):
+        (WebCore::IDBDatabaseNameAndVersion::isolatedCopy):
+        * Modules/indexeddb/shared/IDBError.cpp:
+        (WebCore::IDBError::isolatedCopy const): Deleted.
+        * Modules/indexeddb/shared/IDBError.h:
+        (WebCore::IDBError::isolatedCopy const):
+        (WebCore::IDBError::isolatedCopy):
+        * Modules/indexeddb/shared/IDBIndexInfo.cpp:
+        (WebCore::IDBIndexInfo::isolatedCopy const):
+        (WebCore::IDBIndexInfo::isolatedCopy):
+        * Modules/indexeddb/shared/IDBIndexInfo.h:
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.cpp:
+        (WebCore::IDBObjectStoreInfo::isolatedCopy const):
+        (WebCore::IDBObjectStoreInfo::isolatedCopy):
+        * Modules/indexeddb/shared/IDBObjectStoreInfo.h:
+        * Modules/web-locks/WebLockManagerSnapshot.h:
+        (WebCore::WebLockManagerSnapshot::Info::isolatedCopy const):
+        (WebCore::WebLockManagerSnapshot::Info::isolatedCopy):
+        (WebCore::WebLockManagerSnapshot::isolatedCopy const):
+        (WebCore::WebLockManagerSnapshot::isolatedCopy):
+        * Modules/webaudio/AudioParamDescriptor.h:
+        (WebCore::AudioParamDescriptor::isolatedCopy const):
+        (WebCore::AudioParamDescriptor::isolatedCopy):
+        * Modules/webaudio/AudioWorkletGlobalScope.cpp:
+        (WebCore::AudioWorkletGlobalScope::registerProcessor):
+        * Modules/webaudio/AudioWorkletThread.cpp:
+        (WebCore::AudioWorkletThread::AudioWorkletThread):
+        * Modules/webaudio/AudioWorkletThread.h:
+        (WebCore::AudioWorkletThread::create):
+        * Modules/webdatabase/DatabaseTask.cpp:
+        (WebCore::DatabaseOpenTask::doPerformTask):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::origins):
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::DatabaseTracker::originLockFor):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect):
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * contentextensions/ContentExtensionActions.cpp:
+        (WebCore::ContentExtensions::ModifyHeadersAction::isolatedCopy const):
+        (WebCore::ContentExtensions::ModifyHeadersAction::isolatedCopy):
+        (WebCore::ContentExtensions::ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy const):
+        (WebCore::ContentExtensions::ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy):
+        (WebCore::ContentExtensions::RedirectAction::isolatedCopy const):
+        (WebCore::ContentExtensions::RedirectAction::isolatedCopy):
+        (WebCore::ContentExtensions::RedirectAction::URLTransformAction::isolatedCopy const):
+        (WebCore::ContentExtensions::RedirectAction::URLTransformAction::isolatedCopy):
+        (WebCore::ContentExtensions::RedirectAction::URLTransformAction::QueryTransform::isolatedCopy const):
+        (WebCore::ContentExtensions::RedirectAction::URLTransformAction::QueryTransform::isolatedCopy):
+        (WebCore::ContentExtensions::RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::isolatedCopy const): Deleted.
+        * contentextensions/ContentExtensionActions.h:
+        (WebCore::ContentExtensions::ActionWithStringMetadata::isolatedCopy const):
+        (WebCore::ContentExtensions::ActionWithStringMetadata::isolatedCopy):
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::loadTrigger):
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::Trigger::isolatedCopy const):
+        (WebCore::ContentExtensions::Trigger::isolatedCopy):
+        (WebCore::ContentExtensions::Action::isolatedCopy const):
+        (WebCore::ContentExtensions::Action::isolatedCopy):
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::Trigger::checkValidity):
+        (WebCore::ContentExtensions::ContentExtensionRule::isolatedCopy const):
+        (WebCore::ContentExtensions::ContentExtensionRule::isolatedCopy):
+        (WebCore::ContentExtensions::Trigger::~Trigger): Deleted.
+        * dom/Exception.h:
+        (WebCore::Exception::isolatedCopy const):
+        (WebCore::Exception::isolatedCopy):
+        (WebCore::isolatedCopy): Deleted.
+        * dom/ExceptionData.cpp: Removed.
+        (WebCore::ExceptionData::isolatedCopy const): Deleted.
+        * dom/ExceptionData.h:
+        (WebCore::ExceptionData::isolatedCopy const):
+        (WebCore::ExceptionData::isolatedCopy):
+        * dom/ExceptionOr.h:
+        (WebCore::isolatedCopy): Deleted.
+        * html/DirectoryFileListCreator.cpp:
+        (WebCore::FileInformation::isolatedCopy const):
+        (WebCore::FileInformation::isolatedCopy):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::receiveDroppedFilesWithImageTranscoding):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::TokenPreloadScanner::updatePredictedBaseURL):
+        * loader/CrossOriginOpenerPolicy.cpp:
+        (WebCore::CrossOriginOpenerPolicy::isolatedCopy const):
+        (WebCore::CrossOriginOpenerPolicy::isolatedCopy):
+        * loader/CrossOriginOpenerPolicy.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::handleContentFilterDidBlock):
+        * loader/FetchOptions.h:
+        (WebCore::FetchOptions::isolatedCopy const):
+        (WebCore::FetchOptions::isolatedCopy):
+        * loader/PolicyContainer.h:
+        (WebCore::PolicyContainer::isolatedCopy const):
+        (WebCore::PolicyContainer::isolatedCopy):
+        * loader/PrivateClickMeasurement.cpp:
+        (WebCore::PrivateClickMeasurement::UnlinkableToken::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::UnlinkableToken::isolatedCopy):
+        (WebCore::PrivateClickMeasurement::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::isolatedCopy):
+        (WebCore::PrivateClickMeasurement::SecretToken::isolatedCopy const): Deleted.
+        (WebCore::PrivateClickMeasurement::SourceSecretToken::isolatedCopy const): Deleted.
+        (WebCore::PrivateClickMeasurement::DestinationSecretToken::isolatedCopy const): Deleted.
+        (WebCore::PrivateClickMeasurement::EphemeralNonce::isolatedCopy const): Deleted.
+        (WebCore::PrivateClickMeasurement::SourceUnlinkableToken::isolatedCopy const): Deleted.
+        (WebCore::PrivateClickMeasurement::DestinationUnlinkableToken::isolatedCopy const): Deleted.
+        * loader/PrivateClickMeasurement.h:
+        (WebCore::PrivateClickMeasurement::SourceSite::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::SourceSite::isolatedCopy):
+        (WebCore::PrivateClickMeasurement::AttributionDestinationSite::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::AttributionDestinationSite::isolatedCopy):
+        (WebCore::PrivateClickMeasurement::EphemeralNonce::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::EphemeralNonce::isolatedCopy):
+        (WebCore::PrivateClickMeasurement::SourceUnlinkableToken::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::SourceUnlinkableToken::isolatedCopy):
+        (WebCore::PrivateClickMeasurement::DestinationUnlinkableToken::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::DestinationUnlinkableToken::isolatedCopy):
+        (WebCore::PrivateClickMeasurement::SecretToken::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::SecretToken::isolatedCopy):
+        (WebCore::PrivateClickMeasurement::SourceSecretToken::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::SourceSecretToken::isolatedCopy):
+        (WebCore::PrivateClickMeasurement::DestinationSecretToken::isolatedCopy const):
+        (WebCore::PrivateClickMeasurement::DestinationSecretToken::isolatedCopy):
+        * loader/ResourceTiming.cpp:
+        (WebCore::ResourceTiming::isolatedCopy const):
+        (WebCore::ResourceTiming::isolatedCopy):
+        * loader/ResourceTiming.h:
+        * loader/ServerTiming.cpp:
+        (WebCore::ServerTiming::isolatedCopy const):
+        (WebCore::ServerTiming::isolatedCopy):
+        * loader/ServerTiming.h:
+        * loader/WorkerThreadableLoader.cpp:
+        * page/ClientOrigin.h:
+        (WebCore::ClientOrigin::isolatedCopy const):
+        (WebCore::ClientOrigin::isolatedCopy):
+        * page/ProcessWarming.cpp:
+        (WebCore::ProcessWarming::prewarmWithInformation):
+        * page/ProcessWarming.h:
+        * page/csp/ContentSecurityPolicyResponseHeaders.cpp:
+        (WebCore::ContentSecurityPolicyResponseHeaders::isolatedCopy const):
+        (WebCore::ContentSecurityPolicyResponseHeaders::isolatedCopy):
+        * page/csp/ContentSecurityPolicyResponseHeaders.h:
+        * platform/FileChooser.h:
+        (WebCore::FileChooserFileInfo::isolatedCopy const):
+        (WebCore::FileChooserFileInfo::isolatedCopy):
+        * platform/MediaSelectionOption.h:
+        (WebCore::MediaSelectionOption::isolatedCopy const):
+        (WebCore::MediaSelectionOption::isolatedCopy):
+        * platform/RegistrableDomain.h:
+        (WebCore::RegistrableDomain::isolatedCopy const):
+        (WebCore::RegistrableDomain::isolatedCopy):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::prewarm):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::PrewarmInformation::isolatedCopy const):
+        (WebCore::FontCache::PrewarmInformation::isolatedCopy):
+        * platform/graphics/FontGenericFamilies.cpp:
+        (WebCore::FontGenericFamilies::isolatedCopy const):
+        (WebCore::FontGenericFamilies::isolatedCopy):
+        * platform/graphics/FontGenericFamilies.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::startAsyncDecodingQueue):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::collectionForFamily):
+        (WebCore::FontCache::prewarm):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::audioMediaSelectionOptionsChanged):
+        (VideoFullscreenControllerContext::legibleMediaSelectionOptionsChanged):
+        (isolatedCopy): Deleted.
+        * platform/mediacapabilities/AudioConfiguration.h:
+        (WebCore::AudioConfiguration::isolatedCopy const):
+        (WebCore::AudioConfiguration::isolatedCopy):
+        * platform/mediacapabilities/MediaConfiguration.h:
+        (WebCore::MediaConfiguration::isolatedCopy const):
+        (WebCore::MediaConfiguration::isolatedCopy):
+        * platform/mediacapabilities/VideoConfiguration.h:
+        (WebCore::VideoConfiguration::isolatedCopy const):
+        (WebCore::VideoConfiguration::isolatedCopy):
+        * platform/mediastream/RTCDataChannelHandler.h:
+        (WebCore::RTCDataChannelInit::isolatedCopy const):
+        (WebCore::RTCDataChannelInit::isolatedCopy):
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        (WebCore::AVCaptureDeviceManager::refreshCaptureDevices):
+        * platform/network/HTTPHeaderMap.cpp:
+        (WebCore::HTTPHeaderMap::isolatedCopy const):
+        (WebCore::HTTPHeaderMap::isolatedCopy):
+        * platform/network/HTTPHeaderMap.h:
+        (WebCore::HTTPHeaderMap::CommonHeader::isolatedCopy const):
+        (WebCore::HTTPHeaderMap::CommonHeader::isolatedCopy):
+        (WebCore::HTTPHeaderMap::UncommonHeader::isolatedCopy const):
+        (WebCore::HTTPHeaderMap::UncommonHeader::isolatedCopy):
+        * workers/service/ServiceWorkerClients.cpp:
+        (WebCore::ServiceWorkerClients::claim):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::schedulePushChanges):
+        * worklets/WorkletParameters.h:
+        (WebCore::WorkletParameters::isolatedCopy const):
+        (WebCore::WorkletParameters::isolatedCopy):
+
+2022-03-07  Chris Dumez  <cdumez@apple.com>
+
         Make "true" count as truthy in window.open()'s boolean features
         https://bugs.webkit.org/show_bug.cgi?id=237530
 

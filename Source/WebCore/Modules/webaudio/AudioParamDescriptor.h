@@ -42,16 +42,8 @@ struct AudioParamDescriptor {
     float maxValue { 3.4028235e38 };
     AutomationRate automationRate { AutomationRate::ARate };
 
-    AudioParamDescriptor isolatedCopy() const
-    {
-        return {
-            name.isolatedCopy(),
-            defaultValue,
-            minValue,
-            maxValue,
-            automationRate
-        };
-    }
+    AudioParamDescriptor isolatedCopy() const & { return { name.isolatedCopy(), defaultValue, minValue, maxValue, automationRate }; }
+    AudioParamDescriptor isolatedCopy() && { return { WTFMove(name).isolatedCopy(), defaultValue, minValue, maxValue, automationRate }; }
 };
 
 } // namespace WebCore

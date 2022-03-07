@@ -51,7 +51,8 @@ public:
     const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
     NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
     Vector<Ref<PerformanceServerTiming>> populateServerTiming() const;
-    ResourceTiming isolatedCopy() const;
+    ResourceTiming isolatedCopy() const &;
+    ResourceTiming isolatedCopy() &&;
 
     void overrideInitiatorName(const String& name) { m_initiator = name; }
 

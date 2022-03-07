@@ -46,14 +46,12 @@ class FileChooser;
 class Icon;
 
 struct FileChooserFileInfo {
-    FileChooserFileInfo isolatedCopy() const
-    {
-        return { path.isolatedCopy(), replacementPath.isolatedCopy(), displayName.isolatedCopy() };
-    }
+    FileChooserFileInfo isolatedCopy() const & { return { path.isolatedCopy(), replacementPath.isolatedCopy(), displayName.isolatedCopy() }; }
+    FileChooserFileInfo isolatedCopy() && { return { WTFMove(path).isolatedCopy(), WTFMove(replacementPath).isolatedCopy(), WTFMove(displayName).isolatedCopy() }; }
 
-    const String path;
-    const String replacementPath;
-    const String displayName;
+    String path;
+    String replacementPath;
+    String displayName;
 };
 
 struct FileChooserSettings {

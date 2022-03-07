@@ -695,9 +695,9 @@ void WebProcess::prewarmGlobally()
     WebCore::ProcessWarming::prewarmGlobally();
 }
 
-void WebProcess::prewarmWithDomainInformation(const WebCore::PrewarmInformation& prewarmInformation)
+void WebProcess::prewarmWithDomainInformation(WebCore::PrewarmInformation&& prewarmInformation)
 {
-    WebCore::ProcessWarming::prewarmWithInformation(prewarmInformation);
+    WebCore::ProcessWarming::prewarmWithInformation(WTFMove(prewarmInformation));
 }
 
 void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)

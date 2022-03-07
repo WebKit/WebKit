@@ -36,7 +36,8 @@ struct PolicyContainer {
     CrossOriginOpenerPolicy crossOriginOpenerPolicy;
     // FIXME: CSP list and referrer policy should be part of the PolicyContainer.
 
-    PolicyContainer isolatedCopy() const;
+    PolicyContainer isolatedCopy() const & { return { crossOriginEmbedderPolicy.isolatedCopy(), crossOriginOpenerPolicy.isolatedCopy() }; }
+    PolicyContainer isolatedCopy() && { return { WTFMove(crossOriginEmbedderPolicy).isolatedCopy(), WTFMove(crossOriginOpenerPolicy).isolatedCopy() }; }
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PolicyContainer> decode(Decoder&);
 };
@@ -44,14 +45,6 @@ struct PolicyContainer {
 inline bool operator==(const PolicyContainer& a, const PolicyContainer& b)
 {
     return a.crossOriginEmbedderPolicy == b.crossOriginEmbedderPolicy && a.crossOriginOpenerPolicy == b.crossOriginOpenerPolicy;
-}
-
-inline PolicyContainer PolicyContainer::isolatedCopy() const
-{
-    return {
-        crossOriginEmbedderPolicy.isolatedCopy(),
-        crossOriginOpenerPolicy.isolatedCopy()
-    };
 }
 
 template<class Encoder>

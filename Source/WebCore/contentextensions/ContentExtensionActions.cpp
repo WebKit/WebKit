@@ -114,12 +114,14 @@ Expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const 
     return ModifyHeadersAction { WTFMove(*requestHeaders), WTFMove(*responseHeaders) };
 }
 
-ModifyHeadersAction ModifyHeadersAction::isolatedCopy() const
+ModifyHeadersAction ModifyHeadersAction::isolatedCopy() const &
 {
-    return {
-        crossThreadCopy(requestHeaders),
-        crossThreadCopy(responseHeaders)
-    };
+    return { crossThreadCopy(requestHeaders), crossThreadCopy(responseHeaders) };
+}
+
+ModifyHeadersAction ModifyHeadersAction::isolatedCopy() &&
+{
+    return { crossThreadCopy(WTFMove(requestHeaders)), crossThreadCopy(WTFMove(responseHeaders)) };
 }
 
 bool ModifyHeadersAction::operator==(const ModifyHeadersAction& other) const
@@ -222,11 +224,14 @@ auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) 
     return makeUnexpected(ContentExtensionError::JSONModifyHeadersInvalidOperation);
 }
 
-auto ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy() const -> ModifyHeaderInfo
+auto ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy() const & -> ModifyHeaderInfo
 {
-    return {
-        crossThreadCopy(operation)
-    };
+    return { crossThreadCopy(operation) };
+}
+
+auto ModifyHeadersAction::ModifyHeaderInfo::isolatedCopy() && -> ModifyHeaderInfo
+{
+    return { crossThreadCopy(WTFMove(operation)) };
 }
 
 bool ModifyHeadersAction::ModifyHeaderInfo::operator==(const ModifyHeaderInfo& other) const
@@ -314,11 +319,14 @@ Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Obje
     return makeUnexpected(ContentExtensionError::JSONRedirectInvalidType);
 }
 
-RedirectAction RedirectAction::isolatedCopy() const
+RedirectAction RedirectAction::isolatedCopy() const &
 {
-    return {
-        crossThreadCopy(action)
-    };
+    return { crossThreadCopy(action) };
+}
+
+RedirectAction RedirectAction::isolatedCopy() &&
+{
+    return { crossThreadCopy(WTFMove(action)) };
 }
 
 bool RedirectAction::operator==(const RedirectAction& other) const
@@ -432,18 +440,16 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
     return action;
 }
 
-auto RedirectAction::URLTransformAction::isolatedCopy() const -> URLTransformAction
+auto RedirectAction::URLTransformAction::isolatedCopy() const & -> URLTransformAction
 {
-    return {
-        crossThreadCopy(fragment),
-        crossThreadCopy(host),
-        crossThreadCopy(password),
-        crossThreadCopy(path),
-        crossThreadCopy(port),
-        crossThreadCopy(queryTransform),
-        crossThreadCopy(scheme),
-        crossThreadCopy(username)
-    };
+    return { crossThreadCopy(fragment), crossThreadCopy(host), crossThreadCopy(password), crossThreadCopy(path), crossThreadCopy(port), crossThreadCopy(queryTransform),
+        crossThreadCopy(scheme), crossThreadCopy(username) };
+}
+
+auto RedirectAction::URLTransformAction::isolatedCopy() && -> URLTransformAction
+{
+    return { crossThreadCopy(WTFMove(fragment)), crossThreadCopy(WTFMove(host)), crossThreadCopy(WTFMove(password)), crossThreadCopy(WTFMove(path)), crossThreadCopy(WTFMove(port)),
+        crossThreadCopy(WTFMove(queryTransform)), crossThreadCopy(WTFMove(scheme)), crossThreadCopy(WTFMove(username)) };
 }
 
 bool RedirectAction::URLTransformAction::operator==(const URLTransformAction& other) const
@@ -699,12 +705,14 @@ void RedirectAction::URLTransformAction::QueryTransform::applyToURL(URL& url) co
     url.setQuery(transformedQuery);
 }
 
-auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() const -> QueryTransform
+auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() const & -> QueryTransform
 {
-    return {
-        crossThreadCopy(addOrReplaceParams),
-        crossThreadCopy(removeParams)
-    };
+    return { crossThreadCopy(addOrReplaceParams), crossThreadCopy(removeParams) };
+}
+
+auto RedirectAction::URLTransformAction::QueryTransform::isolatedCopy() && -> QueryTransform
+{
+    return { crossThreadCopy(WTFMove(addOrReplaceParams)), crossThreadCopy(WTFMove(removeParams)) };
 }
 
 bool RedirectAction::URLTransformAction::QueryTransform::operator==(const QueryTransform& other) const
@@ -777,15 +785,6 @@ auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::parse(co
         replaceOnly = *boolean;
 
     return { { WTFMove(key), replaceOnly, WTFMove(value) } };
-}
-
-auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::isolatedCopy() const -> QueryKeyValue
-{
-    return {
-        crossThreadCopy(key),
-        crossThreadCopy(replaceOnly),
-        crossThreadCopy(value)
-    };
 }
 
 bool RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::operator==(const QueryKeyValue& other) const

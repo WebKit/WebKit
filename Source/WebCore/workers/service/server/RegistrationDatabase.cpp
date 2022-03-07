@@ -378,7 +378,7 @@ void RegistrationDatabase::schedulePushChanges(Vector<ServiceWorkerContextData>&
             updatedRegistrations.clear();
             removedRegistrations.clear();
         }
-        callOnMainThread([this, protectedThis = WTFMove(protectedThis), success, pushCounter, updatedRegistrations = WTFMove(updatedRegistrations).isolatedCopy(), removedRegistrations = WTFMove(removedRegistrations).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        callOnMainThread([this, protectedThis = WTFMove(protectedThis), success, pushCounter, updatedRegistrations = crossThreadCopy(WTFMove(updatedRegistrations)), removedRegistrations = crossThreadCopy(WTFMove(removedRegistrations)), completionHandler = WTFMove(completionHandler)]() mutable {
             if (!success && (pushCounter + 1) == m_pushCounter) {
                 // We retry writing once if no other change was pushed.
                 schedulePushChanges(WTFMove(updatedRegistrations), WTFMove(removedRegistrations), ShouldRetry::No, WTFMove(completionHandler));

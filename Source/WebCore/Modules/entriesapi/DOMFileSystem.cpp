@@ -44,7 +44,8 @@ struct ListedChild {
     String filename;
     FileSystem::FileType type;
 
-    ListedChild isolatedCopy() const { return { filename.isolatedCopy(), type }; }
+    ListedChild isolatedCopy() const & { return { filename.isolatedCopy(), type }; }
+    ListedChild isolatedCopy() && { return { WTFMove(filename).isolatedCopy(), type }; }
 };
 
 static std::optional<FileSystem::FileType> fileTypeIgnoringHiddenFiles(const String& fullPath)
@@ -256,7 +257,7 @@ void DOMFileSystem::listDirectory(ScriptExecutionContext& context, FileSystemDir
 
     m_workQueue->dispatch([protectedThis = Ref { *this }, context = Ref { context }, completionHandler = WTFMove(completionHandler), fullPath = crossThreadCopy(fullPath), directoryVirtualPath = crossThreadCopy(directoryVirtualPath)]() mutable {
         auto listedChildren = listDirectoryWithMetadata(fullPath);
-        callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), completionHandler = WTFMove(completionHandler), listedChildren = crossThreadCopy(listedChildren), directoryVirtualPath = directoryVirtualPath.isolatedCopy()]() mutable {
+        callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), completionHandler = WTFMove(completionHandler), listedChildren = crossThreadCopy(WTFMove(listedChildren)), directoryVirtualPath = directoryVirtualPath.isolatedCopy()]() mutable {
             completionHandler(toFileSystemEntries(context, protectedThis, WTFMove(listedChildren), directoryVirtualPath));
         });
     });

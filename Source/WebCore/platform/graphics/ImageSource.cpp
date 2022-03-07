@@ -373,7 +373,7 @@ void ImageSource::startAsyncDecodingQueue()
                 sleep(minDecodingDuration - (MonotonicTime::now() - startingTime));
 
             // Update the cached frames on the creation thread to avoid updating the MemoryCache from a different thread.
-            callOnMainThread([protectedThis, protectedDecodingQueue, protectedDecoder, sourceURL = sourceURL.isolatedCopy(), platformImage = WTFMove(platformImage), frameRequest] () mutable {
+            callOnMainThread([protectedThis, protectedDecodingQueue, protectedDecoder, sourceURL = WTFMove(sourceURL).isolatedCopy(), platformImage = WTFMove(platformImage), frameRequest] () mutable {
                 // The queue may have been closed if after we got the frame NativeImage, stopAsyncDecodingQueue() was called.
                 if (protectedDecodingQueue.ptr() == protectedThis->m_decodingQueue && protectedDecoder.ptr() == protectedThis->m_decoder) {
                     ASSERT(protectedThis->m_frameCommitQueue.first() == frameRequest);

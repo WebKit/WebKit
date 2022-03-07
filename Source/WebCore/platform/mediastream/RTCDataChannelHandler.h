@@ -42,16 +42,24 @@ struct RTCDataChannelInit {
     std::optional<unsigned short> id;
     RTCPriorityType priority { RTCPriorityType::Low };
 
-    RTCDataChannelInit isolatedCopy() const;
+    RTCDataChannelInit isolatedCopy() const &;
+    RTCDataChannelInit isolatedCopy() &&;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<RTCDataChannelInit> decode(Decoder&);
 };
 
-inline RTCDataChannelInit RTCDataChannelInit::isolatedCopy() const
+inline RTCDataChannelInit RTCDataChannelInit::isolatedCopy() const &
 {
     auto copy = *this;
     copy.protocol = protocol.isolatedCopy();
+    return copy;
+}
+
+inline RTCDataChannelInit RTCDataChannelInit::isolatedCopy() &&
+{
+    auto copy = WTFMove(*this);
+    copy.protocol = WTFMove(copy.protocol).isolatedCopy();
     return copy;
 }
 

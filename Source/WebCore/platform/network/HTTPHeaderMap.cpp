@@ -42,11 +42,19 @@ HTTPHeaderMap::HTTPHeaderMap()
 {
 }
 
-HTTPHeaderMap HTTPHeaderMap::isolatedCopy() const
+HTTPHeaderMap HTTPHeaderMap::isolatedCopy() const &
 {
     HTTPHeaderMap map;
     map.m_commonHeaders = crossThreadCopy(m_commonHeaders);
     map.m_uncommonHeaders = crossThreadCopy(m_uncommonHeaders);
+    return map;
+}
+
+HTTPHeaderMap HTTPHeaderMap::isolatedCopy() &&
+{
+    HTTPHeaderMap map;
+    map.m_commonHeaders = crossThreadCopy(WTFMove(m_commonHeaders));
+    map.m_uncommonHeaders = crossThreadCopy(WTFMove(m_uncommonHeaders));
     return map;
 }
 

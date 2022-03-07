@@ -43,6 +43,7 @@
 #import <QuartzCore/CoreAnimation.h>
 #import <UIKit/UIView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/CrossThreadCopier.h>
 #import <wtf/WorkQueue.h>
 
 #import <pal/ios/UIKitSoftLink.h>
@@ -482,19 +483,10 @@ void VideoFullscreenControllerContext::canPlayFastReverseChanged(bool canPlayFas
         client->canPlayFastReverseChanged(canPlayFastReverse);
 }
 
-static Vector<MediaSelectionOption> isolatedCopy(const Vector<MediaSelectionOption>& options)
-{
-    Vector<MediaSelectionOption> optionsCopy;
-    optionsCopy.reserveInitialCapacity(options.size());
-    for (auto& option : options)
-        optionsCopy.uncheckedAppend({ option.displayName.isolatedCopy(), option.type });
-    return optionsCopy;
-}
-
 void VideoFullscreenControllerContext::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     if (WebThreadIsCurrent()) {
-        RunLoop::main().dispatch([protectedThis = Ref { *this }, options = isolatedCopy(options), selectedIndex] {
+        RunLoop::main().dispatch([protectedThis = Ref { *this }, options = crossThreadCopy(options), selectedIndex] {
             protectedThis->audioMediaSelectionOptionsChanged(options, selectedIndex);
         });
         return;
@@ -507,7 +499,7 @@ void VideoFullscreenControllerContext::audioMediaSelectionOptionsChanged(const V
 void VideoFullscreenControllerContext::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
     if (WebThreadIsCurrent()) {
-        RunLoop::main().dispatch([protectedThis = Ref { *this }, options = isolatedCopy(options), selectedIndex] {
+        RunLoop::main().dispatch([protectedThis = Ref { *this }, options = crossThreadCopy(options), selectedIndex] {
             protectedThis->legibleMediaSelectionOptionsChanged(options, selectedIndex);
         });
         return;

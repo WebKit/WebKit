@@ -486,7 +486,7 @@ void InProcessIDBServer::getAllDatabaseNamesAndVersions(const WebCore::IDBResour
 
 void InProcessIDBServer::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, const Vector<WebCore::IDBDatabaseNameAndVersion>& databases)
 {
-    dispatchTaskReply([this, protectedThis = Ref { *this }, requestIdentifier, databases = databases.isolatedCopy()]() mutable {
+    dispatchTaskReply([this, protectedThis = Ref { *this }, requestIdentifier, databases = crossThreadCopy(databases)]() mutable {
         m_connectionToServer->didGetAllDatabaseNamesAndVersions(requestIdentifier, WTFMove(databases));
     });
 }

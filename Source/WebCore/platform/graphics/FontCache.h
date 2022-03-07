@@ -38,6 +38,7 @@
 #include "Timer.h"
 #include <array>
 #include <limits.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
@@ -356,13 +357,14 @@ public:
         Vector<String> fontNamesRequiringSystemFallback;
 
         bool isEmpty() const;
-        PrewarmInformation isolatedCopy() const;
+        PrewarmInformation isolatedCopy() const & { return { crossThreadCopy(seenFamilies), crossThreadCopy(fontNamesRequiringSystemFallback) }; }
+        PrewarmInformation isolatedCopy() && { return { crossThreadCopy(WTFMove(seenFamilies)), crossThreadCopy(WTFMove(fontNamesRequiringSystemFallback)) }; }
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static std::optional<PrewarmInformation> decode(Decoder&);
     };
     PrewarmInformation collectPrewarmInformation() const;
-    void prewarm(const PrewarmInformation&);
+    void prewarm(PrewarmInformation&&);
     static void prewarmGlobally();
 
 private:
@@ -429,11 +431,6 @@ inline void FontCache::platformPurgeInactiveFontData()
 inline bool FontCache::PrewarmInformation::isEmpty() const
 {
     return seenFamilies.isEmpty() && fontNamesRequiringSystemFallback.isEmpty();
-}
-
-inline FontCache::PrewarmInformation FontCache::PrewarmInformation::isolatedCopy() const
-{
-    return { seenFamilies.isolatedCopy(), fontNamesRequiringSystemFallback.isolatedCopy() };
 }
 
 template<class Encoder>

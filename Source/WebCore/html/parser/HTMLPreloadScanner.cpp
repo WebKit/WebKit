@@ -483,7 +483,7 @@ void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token, bool sh
         return;
     URL temp { m_documentURL, stripLeadingAndTrailingHTMLSpaces(StringImpl::create8BitIfPossible(hrefAttribute->value)) };
     if (!shouldRestrictBaseURLSchemes || SecurityPolicy::isBaseURLSchemeAllowed(temp))
-        m_predictedBaseElementURL = temp.isolatedCopy();
+        m_predictedBaseElementURL = WTFMove(temp).isolatedCopy();
 }
 
 HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const URL& documentURL, float deviceScaleFactor)

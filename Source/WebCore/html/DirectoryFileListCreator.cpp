@@ -44,10 +44,8 @@ struct FileInformation {
     String relativePath;
     String displayName;
 
-    FileInformation isolatedCopy() const
-    {
-        return FileInformation { path.isolatedCopy(), relativePath.isolatedCopy(), displayName.isolatedCopy() };
-    }
+    FileInformation isolatedCopy() const & { return { path.isolatedCopy(), relativePath.isolatedCopy(), displayName.isolatedCopy() }; }
+    FileInformation isolatedCopy() && { return { WTFMove(path).isolatedCopy(), relativePath.isolatedCopy(), WTFMove(displayName).isolatedCopy() }; }
 };
 
 static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<FileInformation>& files)

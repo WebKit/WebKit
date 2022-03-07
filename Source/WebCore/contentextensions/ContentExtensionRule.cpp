@@ -95,21 +95,24 @@ size_t DeserializedAction::serializedLength(Span<const uint8_t> serializedAction
     return 1 + VariantDeserializer<ActionData>::serializedLength(serializedActions.subspan(location + 1), serializedActions[location]);
 }
 
-Trigger Trigger::isolatedCopy() const
+Trigger Trigger::isolatedCopy() const &
 {
-    return {
-        urlFilter.isolatedCopy(),
-        urlFilterIsCaseSensitive,
-        topURLFilterIsCaseSensitive,
-        frameURLFilterIsCaseSensitive,
-        flags,
-        conditions.isolatedCopy()
-    };
+    return { urlFilter.isolatedCopy(), urlFilterIsCaseSensitive, topURLFilterIsCaseSensitive, frameURLFilterIsCaseSensitive, flags, crossThreadCopy(conditions) };
 }
 
-Action Action::isolatedCopy() const
+Trigger Trigger::isolatedCopy() &&
+{
+    return { WTFMove(urlFilter).isolatedCopy(), urlFilterIsCaseSensitive, topURLFilterIsCaseSensitive, frameURLFilterIsCaseSensitive, flags, crossThreadCopy(WTFMove(conditions)) };
+}
+
+Action Action::isolatedCopy() const &
 {
     return { crossThreadCopy(m_data) };
+}
+
+Action Action::isolatedCopy() &&
+{
+    return { crossThreadCopy(WTFMove(m_data)) };
 }
 
 } // namespace WebCore::ContentExtensions

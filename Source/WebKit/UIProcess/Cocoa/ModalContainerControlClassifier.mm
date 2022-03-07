@@ -207,7 +207,7 @@ static Vector<ModalContainerControlType> computePredictions(MLModel *model, Vect
 void ModalContainerControlClassifier::classify(Vector<String>&& texts, CompletionHandler<void(Vector<ModalContainerControlType>&&)>&& completion)
 {
     ASSERT(RunLoop::isMain());
-    m_queue->dispatch([this, texts = texts.isolatedCopy(), completion = WTFMove(completion)]() mutable {
+    m_queue->dispatch([this, texts = crossThreadCopy(WTFMove(texts)), completion = WTFMove(completion)]() mutable {
         loadModelIfNeeded();
         RunLoop::main().dispatch([completion = WTFMove(completion), predictions = computePredictions(m_model.get(), WTFMove(texts))]() mutable {
             completion(WTFMove(predictions));

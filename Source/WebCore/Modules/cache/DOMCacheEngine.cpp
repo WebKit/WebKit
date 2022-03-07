@@ -154,16 +154,6 @@ Record Record::copy() const
     return Record { identifier, updateResponseCounter, requestHeadersGuard, request, options, referrer, responseHeadersGuard, response, copyResponseBody(responseBody), responseBodySize };
 }
 
-static inline CacheInfo isolateCacheInfo(const CacheInfo& info)
-{
-    return CacheInfo { info.identifier, info.name.isolatedCopy() };
-}
-
-CacheInfos CacheInfos::isolatedCopy()
-{
-    return { WTF::map(infos, isolateCacheInfo), updateCounter };
-}
-
 } // namespace DOMCacheEngine
 
 } // namespace WebCore

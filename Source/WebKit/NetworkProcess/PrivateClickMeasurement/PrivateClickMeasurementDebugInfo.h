@@ -36,12 +36,14 @@ struct DebugInfo {
         JSC::MessageLevel messageLevel;
         String message;
 
-        Message isolatedCopy() const;
+        Message isolatedCopy() const &;
+        Message isolatedCopy() &&;
     };
 
     Vector<Message> messages;
 
-    DebugInfo isolatedCopy() const;
+    DebugInfo isolatedCopy() const &;
+    DebugInfo isolatedCopy() &&;
 };
 
 } // namespace WebKit

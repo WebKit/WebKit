@@ -34,7 +34,8 @@ struct ExceptionData {
     ExceptionCode code;
     String message;
 
-    WEBCORE_EXPORT ExceptionData isolatedCopy() const;
+    ExceptionData isolatedCopy() const & { return { code, message.isolatedCopy() }; }
+    ExceptionData isolatedCopy() && { return { code, WTFMove(message).isolatedCopy() }; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ExceptionData> decode(Decoder&);

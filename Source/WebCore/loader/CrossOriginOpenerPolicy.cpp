@@ -161,14 +161,14 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
     return policy;
 }
 
-CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() const
+CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() const &
 {
-    return {
-        value,
-        reportingEndpoint.isolatedCopy(),
-        reportOnlyValue,
-        reportOnlyReportingEndpoint.isolatedCopy()
-    };
+    return { value, reportingEndpoint.isolatedCopy(), reportOnlyValue, reportOnlyReportingEndpoint.isolatedCopy() };
+}
+
+CrossOriginOpenerPolicy CrossOriginOpenerPolicy::isolatedCopy() &&
+{
+    return { value, WTFMove(reportingEndpoint).isolatedCopy(), reportOnlyValue, WTFMove(reportOnlyReportingEndpoint).isolatedCopy() };
 }
 
 void addCrossOriginOpenerPolicyHeaders(ResourceResponse& response, const CrossOriginOpenerPolicy& coop)

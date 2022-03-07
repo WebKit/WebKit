@@ -776,9 +776,6 @@ public:
 
     void clear() { shrinkCapacity(0); }
 
-    template<typename U = T> Vector<U> isolatedCopy() const &;
-    template<typename U = T> Vector<U> isolatedCopy() &&;
-
     ALWAYS_INLINE void append(ValueType&& value) { append<ValueType>(std::forward<ValueType>(value)); }
     template<typename U> ALWAYS_INLINE void append(U&& u) { append<FailureAction::Crash, U>(std::forward<U>(u)); }
     template<typename U> ALWAYS_INLINE bool tryAppend(U&& u) { return append<FailureAction::Report, U>(std::forward<U>(u)); }
@@ -1658,26 +1655,6 @@ template<typename T> struct ValueCheck<Vector<T>> {
     }
 };
 #endif // ASSERT_ENABLED
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename U>
-inline Vector<U> Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::isolatedCopy() const &
-{
-    Vector<U> copy;
-    copy.reserveInitialCapacity(size());
-    for (const auto& element : *this)
-        copy.uncheckedAppend(element.isolatedCopy());
-    return copy;
-}
-
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-template<typename U>
-inline Vector<U> Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::isolatedCopy() &&
-{
-    for (auto iterator = begin(), iteratorEnd = end(); iterator < iteratorEnd; ++iterator)
-        *iterator = WTFMove(*iterator).isolatedCopy();
-    return WTFMove(*this);
-}
 
 template<typename VectorType, typename Func>
 size_t removeRepeatedElements(VectorType& vector, const Func& func)

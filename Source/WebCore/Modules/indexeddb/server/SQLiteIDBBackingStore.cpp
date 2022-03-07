@@ -1886,7 +1886,7 @@ IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(IDBObjectStoreInfo& o
 
         IndexKey indexKey;
         generateIndexKeyForValue(globalObject, info, jsValue, indexKey, objectStoreInfo.keyPath(), key);
-        resultIndexKey = indexKey.isolatedCopy();
+        resultIndexKey = WTFMove(indexKey).isolatedCopy();
     });
 
     if (!resultIndexKey)

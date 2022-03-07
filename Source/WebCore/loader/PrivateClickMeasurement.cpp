@@ -60,53 +60,27 @@ bool PrivateClickMeasurement::isValid() const
         && (m_timesToSend.sourceEarliestTimeToSend || m_timesToSend.destinationEarliestTimeToSend);
 }
 
-PrivateClickMeasurement::SecretToken PrivateClickMeasurement::SecretToken::isolatedCopy() const
-{
-    return {
-        tokenBase64URL.isolatedCopy(),
-        signatureBase64URL.isolatedCopy(),
-        keyIDBase64URL.isolatedCopy(),
-    };
-}
-
-PrivateClickMeasurement::SourceSecretToken PrivateClickMeasurement::SourceSecretToken::isolatedCopy() const
-{
-    return { SecretToken::isolatedCopy() };
-}
-
-PrivateClickMeasurement::DestinationSecretToken PrivateClickMeasurement::DestinationSecretToken::isolatedCopy() const
-{
-    return { SecretToken::isolatedCopy() };
-}
-
-PrivateClickMeasurement::EphemeralNonce PrivateClickMeasurement::EphemeralNonce::isolatedCopy() const
-{
-    return { nonce.isolatedCopy() };
-}
-
-PrivateClickMeasurement::UnlinkableToken PrivateClickMeasurement::UnlinkableToken::isolatedCopy() const
+PrivateClickMeasurement::UnlinkableToken PrivateClickMeasurement::UnlinkableToken::isolatedCopy() const &
 {
     return {
 #if PLATFORM(COCOA)
-        blinder,
-        waitingToken,
-        readyToken,
+        blinder, waitingToken, readyToken,
 #endif
         valueBase64URL.isolatedCopy()
     };
 }
 
-PrivateClickMeasurement::SourceUnlinkableToken PrivateClickMeasurement::SourceUnlinkableToken::isolatedCopy() const
+PrivateClickMeasurement::UnlinkableToken PrivateClickMeasurement::UnlinkableToken::isolatedCopy() &&
 {
-    return { UnlinkableToken::isolatedCopy() };
+    return {
+#if PLATFORM(COCOA)
+        blinder, waitingToken, readyToken,
+#endif
+        WTFMove(valueBase64URL).isolatedCopy()
+    };
 }
 
-PrivateClickMeasurement::DestinationUnlinkableToken PrivateClickMeasurement::DestinationUnlinkableToken::isolatedCopy() const
-{
-    return { UnlinkableToken::isolatedCopy() };
-}
-
-PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() const
+PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() const &
 {
     PrivateClickMeasurement copy {
         m_sourceID,
@@ -121,6 +95,24 @@ PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() const
     copy.m_ephemeralSourceNonce = crossThreadCopy(m_ephemeralSourceNonce);
     copy.m_sourceUnlinkableToken = m_sourceUnlinkableToken.isolatedCopy();
     copy.m_sourceSecretToken = crossThreadCopy(m_sourceSecretToken);
+    return copy;
+}
+
+PrivateClickMeasurement PrivateClickMeasurement::isolatedCopy() &&
+{
+    PrivateClickMeasurement copy {
+        m_sourceID,
+        WTFMove(m_sourceSite).isolatedCopy(),
+        WTFMove(m_destinationSite).isolatedCopy(),
+        WTFMove(m_sourceApplicationBundleID).isolatedCopy(),
+        WTFMove(m_timeOfAdClick).isolatedCopy(),
+        m_isEphemeral,
+    };
+    copy.m_attributionTriggerData = WTFMove(m_attributionTriggerData);
+    copy.m_timesToSend = WTFMove(m_timesToSend);
+    copy.m_ephemeralSourceNonce = crossThreadCopy(WTFMove(m_ephemeralSourceNonce));
+    copy.m_sourceUnlinkableToken = WTFMove(m_sourceUnlinkableToken).isolatedCopy();
+    copy.m_sourceSecretToken = crossThreadCopy(WTFMove(m_sourceSecretToken));
     return copy;
 }
 

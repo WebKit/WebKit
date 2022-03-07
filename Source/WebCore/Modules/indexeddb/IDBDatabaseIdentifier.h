@@ -42,7 +42,8 @@ public:
 
     WEBCORE_EXPORT IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin, bool isTransient = false);
 
-    IDBDatabaseIdentifier isolatedCopy() const;
+    IDBDatabaseIdentifier isolatedCopy() const &;
+    IDBDatabaseIdentifier isolatedCopy() &&;
 
     bool isHashTableDeletedValue() const
     {

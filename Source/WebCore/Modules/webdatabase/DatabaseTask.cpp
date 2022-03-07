@@ -95,7 +95,7 @@ DatabaseOpenTask::DatabaseOpenTask(Database& database, bool setVersionInNewDatab
 
 void DatabaseOpenTask::doPerformTask()
 {
-    m_result = isolatedCopy(database().performOpenAndVerify(m_setVersionInNewDatabase));
+    m_result = crossThreadCopy(database().performOpenAndVerify(m_setVersionInNewDatabase));
 }
 
 #if !LOG_DISABLED

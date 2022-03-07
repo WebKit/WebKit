@@ -41,6 +41,7 @@
 #include <WebCore/ResourceLoadObserver.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
@@ -76,14 +77,16 @@ struct RegistrableDomainsToBlockCookiesFor {
     Vector<WebCore::RegistrableDomain> domainsToBlockButKeepCookiesFor;
     Vector<WebCore::RegistrableDomain> domainsWithUserInteractionAsFirstParty;
     HashMap<TopFrameDomain, SubResourceDomain> domainsWithStorageAccess;
-    RegistrableDomainsToBlockCookiesFor isolatedCopy() const { return { domainsToBlockAndDeleteCookiesFor.isolatedCopy(), domainsToBlockButKeepCookiesFor.isolatedCopy(), domainsWithUserInteractionAsFirstParty.isolatedCopy(), domainsWithStorageAccess }; }
+    RegistrableDomainsToBlockCookiesFor isolatedCopy() const & { return { crossThreadCopy(domainsToBlockAndDeleteCookiesFor), crossThreadCopy(domainsToBlockButKeepCookiesFor), crossThreadCopy(domainsWithUserInteractionAsFirstParty), crossThreadCopy(domainsWithStorageAccess) }; }
+    RegistrableDomainsToBlockCookiesFor isolatedCopy() && { return { crossThreadCopy(WTFMove(domainsToBlockAndDeleteCookiesFor)), crossThreadCopy(WTFMove(domainsToBlockButKeepCookiesFor)), crossThreadCopy(WTFMove(domainsWithUserInteractionAsFirstParty)), crossThreadCopy(WTFMove(domainsWithStorageAccess)) }; }
 };
 struct RegistrableDomainsToDeleteOrRestrictWebsiteDataFor {
     Vector<WebCore::RegistrableDomain> domainsToDeleteAllCookiesFor;
     Vector<WebCore::RegistrableDomain> domainsToDeleteAllButHttpOnlyCookiesFor;
     Vector<WebCore::RegistrableDomain> domainsToDeleteAllNonCookieWebsiteDataFor;
     Vector<WebCore::RegistrableDomain> domainsToEnforceSameSiteStrictFor;
-    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor isolatedCopy() const { return { domainsToDeleteAllCookiesFor.isolatedCopy(), domainsToDeleteAllButHttpOnlyCookiesFor.isolatedCopy(), domainsToDeleteAllNonCookieWebsiteDataFor.isolatedCopy(), domainsToEnforceSameSiteStrictFor.isolatedCopy() }; }
+    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor isolatedCopy() const & { return { crossThreadCopy(domainsToDeleteAllCookiesFor), crossThreadCopy(domainsToDeleteAllButHttpOnlyCookiesFor), crossThreadCopy(domainsToDeleteAllNonCookieWebsiteDataFor), crossThreadCopy(domainsToEnforceSameSiteStrictFor) }; }
+    RegistrableDomainsToDeleteOrRestrictWebsiteDataFor isolatedCopy() && { return { crossThreadCopy(WTFMove(domainsToDeleteAllCookiesFor)), crossThreadCopy(WTFMove(domainsToDeleteAllButHttpOnlyCookiesFor)), crossThreadCopy(WTFMove(domainsToDeleteAllNonCookieWebsiteDataFor)), crossThreadCopy(WTFMove(domainsToEnforceSameSiteStrictFor)) }; }
     bool isEmpty() const { return domainsToDeleteAllCookiesFor.isEmpty() && domainsToDeleteAllButHttpOnlyCookiesFor.isEmpty() && domainsToDeleteAllNonCookieWebsiteDataFor.isEmpty() && domainsToEnforceSameSiteStrictFor.isEmpty(); }
 };
 

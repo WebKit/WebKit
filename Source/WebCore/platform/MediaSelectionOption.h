@@ -43,6 +43,9 @@ struct MediaSelectionOption {
     {
     }
 
+    MediaSelectionOption isolatedCopy() const & { return { displayName.isolatedCopy(), type }; }
+    MediaSelectionOption isolatedCopy() && { return { WTFMove(displayName).isolatedCopy(), type }; }
+
     String displayName;
     Type type { Type::Regular };
 };
