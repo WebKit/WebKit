@@ -1,3 +1,27 @@
+2022-03-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        LayoutTests/webgl/max-active-contexts-gc.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=237466
+
+        Reviewed by Alexey Proskuryakov.
+        The test:
+         - created 16 WebGL contexts
+         - unreferenced 8 WebGL contexts.
+         - forced gc
+         - added 9 WebGL contexts.
+        The test tries to test that GC removes unreferenced contexts.
+        To assert this, it ends up with 17 contexts, which is 1 above
+        the maximum active limit. This means one context is lost and the
+        implementation prints one line of error.
+
+        Since the GC is not exact, sometimes it would only collect 7 of the 8
+        unreferenced contexts. This would mean two error messages.
+
+        Fix by trying to collect each time a context is unreferenced. This seems to be
+        more predictable.
+
+        * webgl/max-active-contexts-gc.html:
+
 2022-03-07  Chris Dumez  <cdumez@apple.com>
 
         Make "true" count as truthy in window.open()'s boolean features

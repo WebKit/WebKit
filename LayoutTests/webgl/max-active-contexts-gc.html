@@ -1,5 +1,9 @@
 <script>
-function forceGC() {
+function collect() {
+    if (window.GCController) {
+        GCController.collect();
+        return;
+    }
     try {
         for (var ndx = 0; ndx < 99000; ndx++)
             var numbers = new Float64Array(50 * 1024);
@@ -24,24 +28,18 @@ while (contexts.length < maxNumberOfActiveContexts)
     addContext();
 
 // Now remove some of those contexts from this array so they may be garbage collected.
-while (contexts.length > contextsToKeep)
+while (contexts.length > contextsToKeep) {
     contexts.shift();
+    collect();
+}
 
+// Add contexts until we get to the limit then add one more. This should only
+// produce a single warning that an older context will be lost.
 setTimeout(function() {
-    if (window.GCController)
-        GCController.collect();
-    else
-        forceGC();
-
-    // Add contexts until we get to the limit then add one more. This should only
-    // produce a single warning that an older context will be lost.
-    setTimeout(function() {
-        while (contexts.length < maxNumberOfActiveContexts + 1)
-            addContext();
-
-        if (window.testRunner)
-            testRunner.notifyDone();
-    });
+    while (contexts.length < maxNumberOfActiveContexts + 1)
+        addContext();
+    if (window.testRunner)
+        testRunner.notifyDone();
 });
 
 </script>
