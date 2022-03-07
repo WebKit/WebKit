@@ -1,3 +1,26 @@
+2022-03-07  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Provide global frame identifier to ASCAgent SPI
+        https://bugs.webkit.org/show_bug.cgi?id=237454
+        rdar://problem/89782147
+
+        Reviewed by Brent Fulgham.
+
+        For purposes related to conditional mediation, the ASCAgent SPI
+        need to know what frame requested the assertion. This patch starts
+        passing that along.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::cancelRequest):
+        (WebKit::AuthenticatorManager::runPanel):
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.h:
+        * UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::configurationAssertionRequestContext):
+        (WebKit::WebAuthenticatorCoordinatorProxy::contextForRequest):
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+
 2022-03-07  Peng Liu  <peng.liu6@apple.com>
 
         Small cleanups of media code

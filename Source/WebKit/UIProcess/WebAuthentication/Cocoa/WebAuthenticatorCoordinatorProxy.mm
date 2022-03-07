@@ -236,7 +236,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
     return requestContext;
 }
 
-static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestContext(const PublicKeyCredentialRequestOptions& options, Vector<uint8_t> hash, std::optional<WebCore::MediationRequirement> mediation)
+static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestContext(const PublicKeyCredentialRequestOptions& options, Vector<uint8_t> hash, std::optional<WebCore::MediationRequirement> mediation, std::optional<WebCore::GlobalFrameIdentifier> globalFrameID)
 {
     ASCCredentialRequestTypes requestTypes = ASCCredentialRequestTypePlatformPublicKeyAssertion | ASCCredentialRequestTypeSecurityKeyPublicKeyAssertion;
 
@@ -262,6 +262,12 @@ static RetainPtr<ASCCredentialRequestContext> configurationAssertionRequestConte
     [requestContext setRelyingPartyIdentifier:options.rpId];
     if (mediation == MediationRequirement::Conditional && [requestContext respondsToSelector:@selector(setRequestStyle:)])
         requestContext.get().requestStyle = ASCredentialRequestStyleAutoFill;
+    if (globalFrameID && [requestContext respondsToSelector:@selector(setGlobalFrameID:)]) {
+        auto ascGlobalFrameID = adoptNS([allocASCGlobalFrameIdentifierInstance() init]);
+        ascGlobalFrameID.get().webFrameID = [NSNumber numberWithUnsignedLong:globalFrameID->frameID.toUInt64()];
+        ascGlobalFrameID.get().webPageID = [NSNumber numberWithUnsignedLong:globalFrameID->pageID.toUInt64()];
+        requestContext.get().globalFrameID = ascGlobalFrameID.get();
+    }
 
     if (requestTypes & ASCCredentialRequestTypePlatformPublicKeyAssertion) {
         auto assertionOptions = adoptNS(allocASCPublicKeyCredentialAssertionOptionsInstance());
@@ -302,7 +308,7 @@ RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::context
     WTF::switchOn(requestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
         result = configureRegistrationRequestContext(options, requestData.hash);
     }, [&](const PublicKeyCredentialRequestOptions& options) {
-        result = configurationAssertionRequestContext(options, requestData.hash, requestData.mediation);
+        result = configurationAssertionRequestContext(options, requestData.hash, requestData.mediation, requestData.globalFrameID);
     });
     return result;
 }

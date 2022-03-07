@@ -40,6 +40,7 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresentationContext);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresenter);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationRemotePresenter);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCCredentialRequestContext);
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCGlobalFrameIdentifier);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCWebAuthenticationExtensionsClientInputs);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPlatformPublicKeyCredentialAssertion);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPlatformPublicKeyCredentialLoginChoice);
