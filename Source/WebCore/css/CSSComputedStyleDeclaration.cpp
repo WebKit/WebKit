@@ -3570,7 +3570,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             case TextEmphasisMark::Triangle:
             case TextEmphasisMark::Sesame:
                 auto list = CSSValueList::createSpaceSeparated();
-                list->append(cssValuePool.createValue(style.textEmphasisFill()));
+                if (style.textEmphasisFill() != TextEmphasisFill::Filled)
+                    list->append(cssValuePool.createValue(style.textEmphasisFill()));
                 list->append(cssValuePool.createValue(style.textEmphasisMark()));
                 return list;
             }

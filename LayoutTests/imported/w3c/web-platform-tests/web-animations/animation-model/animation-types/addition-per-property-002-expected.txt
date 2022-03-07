@@ -162,6 +162,9 @@ PASS text-emphasis-color supports animating as color of hsla()
 PASS text-emphasis-position (type: discrete) has testAddition function
 PASS text-emphasis-position: "under left" onto "over"
 PASS text-emphasis-position: "over" onto "under left"
+PASS text-emphasis-style (type: discrete) has testAddition function
+PASS text-emphasis-style: "open dot" onto "circle"
+PASS text-emphasis-style: "circle" onto "open dot"
 PASS text-overflow (type: discrete) has testAddition function
 PASS text-overflow: "ellipsis" onto "clip"
 PASS text-overflow: "clip" onto "ellipsis"
