@@ -33,16 +33,14 @@
 
 namespace WebCore {
 
+// This class includes a lot of GC related subtle things, and changing this class easily causes GC crashes.
+// Any changes on this class must be reviewed by JavaScriptCore reviewers too.
 class JSValueInWrappedObject {
-    // It must not be copyable. Changing this will break concurrent GC.
+    // It must be neither copyable nor movable. Changing this will break concurrent GC.
     WTF_MAKE_NONCOPYABLE(JSValueInWrappedObject);
+    WTF_MAKE_NONMOVABLE(JSValueInWrappedObject);
 public:
     JSValueInWrappedObject(JSC::JSValue = { });
-
-    // FIXME: Remove them once AudioBuffer's m_channelWrappers bug is fixed.
-    // https://bugs.webkit.org/show_bug.cgi?id=236279
-    JSValueInWrappedObject(JSValueInWrappedObject&&) = default;
-    JSValueInWrappedObject& operator=(JSValueInWrappedObject&&) = default;
 
     explicit operator bool() const;
     template<typename Visitor> void visit(Visitor&) const;

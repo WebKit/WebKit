@@ -98,11 +98,11 @@ private:
     static constexpr uint64_t s_maxLength = (1ull << 32) / sizeof(float);
 
     float m_sampleRate;
-    mutable Lock m_channelsLock;
     size_t m_originalLength;
-    Vector<RefPtr<Float32Array>> m_channels;
-    Vector<JSValueInWrappedObject> m_channelWrappers;
+    FixedVector<RefPtr<Float32Array>> m_channels;
+    FixedVector<JSValueInWrappedObject> m_channelWrappers;
     bool m_isDetachable { true };
+    mutable Lock m_channelsLock;
 };
 
 } // namespace WebCore

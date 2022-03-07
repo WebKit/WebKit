@@ -91,21 +91,24 @@ AudioBuffer::AudioBuffer(unsigned numberOfChannels, size_t length, float sampleR
         return;
     }
 
-    m_channels.reserveCapacity(numberOfChannels);
+    Vector<RefPtr<Float32Array>> channels;
+    channels.reserveInitialCapacity(numberOfChannels);
 
     for (unsigned i = 0; i < numberOfChannels; ++i) {
         auto channelDataArray = Float32Array::tryCreate(m_originalLength);
         if (!channelDataArray) {
             invalidate();
-            break;
+            return;
         }
 
         if (preventDetaching == LegacyPreventDetaching::Yes)
             channelDataArray->setDetachable(false);
 
-        m_channels.append(WTFMove(channelDataArray));
+        channels.uncheckedAppend(WTFMove(channelDataArray));
     }
-    m_channelWrappers.resize(m_channels.size());
+
+    m_channels = WTFMove(channels);
+    m_channelWrappers = FixedVector<JSValueInWrappedObject> { m_channels.size() };
 }
 
 AudioBuffer::AudioBuffer(AudioBus& bus)
@@ -119,18 +122,21 @@ AudioBuffer::AudioBuffer(AudioBus& bus)
 
     // Copy audio data from the bus to the Float32Arrays we manage.
     unsigned numberOfChannels = bus.numberOfChannels();
-    m_channels.reserveCapacity(numberOfChannels);
+    Vector<RefPtr<Float32Array>> channels;
+    channels.reserveInitialCapacity(numberOfChannels);
     for (unsigned i = 0; i < numberOfChannels; ++i) {
         auto channelDataArray = Float32Array::tryCreate(m_originalLength);
         if (!channelDataArray) {
             invalidate();
-            break;
+            return;
         }
 
         channelDataArray->setRange(bus.channel(i)->data(), m_originalLength, 0);
-        m_channels.append(WTFMove(channelDataArray));
+        channels.uncheckedAppend(WTFMove(channelDataArray));
     }
-    m_channelWrappers.resize(m_channels.size());
+
+    m_channels = WTFMove(channels);
+    m_channelWrappers = FixedVector<JSValueInWrappedObject> { m_channels.size() };
 }
 
 void AudioBuffer::invalidate()
@@ -142,8 +148,8 @@ void AudioBuffer::invalidate()
 void AudioBuffer::releaseMemory()
 {
     Locker locker { m_channelsLock };
-    m_channels.clear();
-    m_channelWrappers.clear();
+    m_channels = { };
+    m_channelWrappers = { };
 }
 
 ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalObject, unsigned channelIndex)
@@ -168,8 +174,7 @@ ExceptionOr<JSC::JSValue> AudioBuffer::getChannelData(JSDOMGlobalObject& globalO
 template<typename Visitor>
 void AudioBuffer::visitChannelWrappers(Visitor& visitor)
 {
-    // FIXME: AudioBuffer::releaseMemory can clear this buffer while visiting it from concurrent GC thread.
-    // https://bugs.webkit.org/show_bug.cgi?id=236279
+    Locker locker { m_channelsLock };
     for (auto& channelWrapper : m_channelWrappers)
         channelWrapper.visit(visitor);
 }
