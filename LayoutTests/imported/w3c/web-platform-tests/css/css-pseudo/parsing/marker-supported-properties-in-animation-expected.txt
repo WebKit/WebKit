@@ -33,7 +33,7 @@ PASS Animation of tab-size in ::marker
 PASS Animation of text-transform in ::marker
 PASS Animation of word-break in ::marker
 PASS Animation of word-spacing in ::marker
-FAIL Animation of text-decoration-skip-ink in ::marker assert_equals: expected "none" but got "auto"
+PASS Animation of text-decoration-skip-ink in ::marker
 FAIL Animation of text-emphasis in ::marker assert_equals: expected "triangle rgb(50, 100, 100)" but got ""
 FAIL Animation of text-emphasis-color in ::marker assert_equals: expected "rgb(50, 100, 100)" but got "rgb(100, 0, 200)"
 PASS Animation of text-emphasis-position in ::marker
