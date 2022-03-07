@@ -34,7 +34,7 @@
 
 namespace WebGPU {
 
-RefPtr<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor* descriptor)
+RefPtr<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
     return RenderBundleEncoder::create(nil);
@@ -76,7 +76,7 @@ void RenderBundleEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t in
     UNUSED_PARAM(indirectOffset);
 }
 
-RefPtr<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor* descriptor)
+RefPtr<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
     return RenderBundle::create(nil);
@@ -160,7 +160,7 @@ void wgpuRenderBundleEncoderDrawIndirect(WGPURenderBundleEncoder renderBundleEnc
 
 WGPURenderBundle wgpuRenderBundleEncoderFinish(WGPURenderBundleEncoder renderBundleEncoder, const WGPURenderBundleDescriptor* descriptor)
 {
-    auto result = renderBundleEncoder->renderBundleEncoder->finish(descriptor);
+    auto result = renderBundleEncoder->renderBundleEncoder->finish(*descriptor);
     return result ? new WGPURenderBundleImpl { result.releaseNonNull() } : nullptr;
 }
 

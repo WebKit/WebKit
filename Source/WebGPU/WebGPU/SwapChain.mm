@@ -31,7 +31,7 @@
 
 namespace WebGPU {
 
-RefPtr<SwapChain> Device::createSwapChain(const Surface& surface, const WGPUSwapChainDescriptor* descriptor)
+RefPtr<SwapChain> Device::createSwapChain(const Surface& surface, const WGPUSwapChainDescriptor& descriptor)
 {
     UNUSED_PARAM(surface);
     UNUSED_PARAM(descriptor);

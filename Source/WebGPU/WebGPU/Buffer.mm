@@ -30,7 +30,7 @@
 
 namespace WebGPU {
 
-RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor* descriptor)
+RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
     return Buffer::create(nil);

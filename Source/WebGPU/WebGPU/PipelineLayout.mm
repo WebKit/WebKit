@@ -31,15 +31,15 @@
 
 namespace WebGPU {
 
-RefPtr<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescriptor* descriptor)
+RefPtr<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescriptor& descriptor)
 {
-    if (descriptor->nextInChain)
+    if (descriptor.nextInChain)
         return nullptr;
 
     Vector<Ref<BindGroupLayout>> bindGroupLayouts;
-    bindGroupLayouts.reserveInitialCapacity(descriptor->bindGroupLayoutCount);
-    for (uint32_t i = 0; i < descriptor->bindGroupLayoutCount; ++i) {
-        const auto* bindGroupLayout = descriptor->bindGroupLayouts[i];
+    bindGroupLayouts.reserveInitialCapacity(descriptor.bindGroupLayoutCount);
+    for (uint32_t i = 0; i < descriptor.bindGroupLayoutCount; ++i) {
+        const auto* bindGroupLayout = descriptor.bindGroupLayouts[i];
         bindGroupLayouts.uncheckedAppend(bindGroupLayout->bindGroupLayout);
     }
     return PipelineLayout::create(WTFMove(bindGroupLayouts));

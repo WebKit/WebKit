@@ -46,7 +46,7 @@ public:
 
     ~ShaderModule();
 
-    void getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo*)>&& callback);
+    void getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback);
     void setLabel(const char*);
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);

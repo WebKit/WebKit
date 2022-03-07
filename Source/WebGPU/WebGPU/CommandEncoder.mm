@@ -35,7 +35,7 @@
 
 namespace WebGPU {
 
-RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor* descriptor)
+RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
     return CommandEncoder::create(nil);
@@ -48,13 +48,13 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer)
 
 CommandEncoder::~CommandEncoder() = default;
 
-RefPtr<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor* descriptor)
+RefPtr<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
     return ComputePassEncoder::create(nil);
 }
 
-RefPtr<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor* descriptor)
+RefPtr<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
     return RenderPassEncoder::create(nil);
@@ -69,21 +69,21 @@ void CommandEncoder::copyBufferToBuffer(const Buffer& source, uint64_t sourceOff
     UNUSED_PARAM(size);
 }
 
-void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize)
+void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize)
 {
     UNUSED_PARAM(source);
     UNUSED_PARAM(destination);
     UNUSED_PARAM(copySize);
 }
 
-void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture* source, const WGPUImageCopyBuffer* destination, const WGPUExtent3D* copySize)
+void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize)
 {
     UNUSED_PARAM(source);
     UNUSED_PARAM(destination);
     UNUSED_PARAM(copySize);
 }
 
-void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize)
+void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize)
 {
     UNUSED_PARAM(source);
     UNUSED_PARAM(destination);
@@ -97,7 +97,7 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
     UNUSED_PARAM(size);
 }
 
-RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor* descriptor)
+RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
     return CommandBuffer::create(nil);
@@ -146,13 +146,13 @@ void wgpuCommandEncoderRelease(WGPUCommandEncoder commandEncoder)
 
 WGPUComputePassEncoder wgpuCommandEncoderBeginComputePass(WGPUCommandEncoder commandEncoder, const WGPUComputePassDescriptor* descriptor)
 {
-    auto result = commandEncoder->commandEncoder->beginComputePass(descriptor);
+    auto result = commandEncoder->commandEncoder->beginComputePass(*descriptor);
     return result ? new WGPUComputePassEncoderImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPURenderPassEncoder wgpuCommandEncoderBeginRenderPass(WGPUCommandEncoder commandEncoder, const WGPURenderPassDescriptor* descriptor)
 {
-    auto result = commandEncoder->commandEncoder->beginRenderPass(descriptor);
+    auto result = commandEncoder->commandEncoder->beginRenderPass(*descriptor);
     return result ? new WGPURenderPassEncoderImpl { result.releaseNonNull() } : nullptr;
 }
 
@@ -163,17 +163,17 @@ void wgpuCommandEncoderCopyBufferToBuffer(WGPUCommandEncoder commandEncoder, WGP
 
 void wgpuCommandEncoderCopyBufferToTexture(WGPUCommandEncoder commandEncoder, const WGPUImageCopyBuffer* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize)
 {
-    commandEncoder->commandEncoder->copyBufferToTexture(source, destination, copySize);
+    commandEncoder->commandEncoder->copyBufferToTexture(*source, *destination, *copySize);
 }
 
 void wgpuCommandEncoderCopyTextureToBuffer(WGPUCommandEncoder commandEncoder, const WGPUImageCopyTexture* source, const WGPUImageCopyBuffer* destination, const WGPUExtent3D* copySize)
 {
-    commandEncoder->commandEncoder->copyTextureToBuffer(source, destination, copySize);
+    commandEncoder->commandEncoder->copyTextureToBuffer(*source, *destination, *copySize);
 }
 
 void wgpuCommandEncoderCopyTextureToTexture(WGPUCommandEncoder commandEncoder, const WGPUImageCopyTexture* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize)
 {
-    commandEncoder->commandEncoder->copyTextureToTexture(source, destination, copySize);
+    commandEncoder->commandEncoder->copyTextureToTexture(*source, *destination, *copySize);
 }
 
 void wgpuCommandEncoderClearBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer buffer, uint64_t offset, uint64_t size)
@@ -183,7 +183,7 @@ void wgpuCommandEncoderClearBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer
 
 WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, const WGPUCommandBufferDescriptor* descriptor)
 {
-    auto result = commandEncoder->commandEncoder->finish(descriptor);
+    auto result = commandEncoder->commandEncoder->finish(*descriptor);
     return result ? new WGPUCommandBufferImpl { result.releaseNonNull() } : nullptr;
 }
 

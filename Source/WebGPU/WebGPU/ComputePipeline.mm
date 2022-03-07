@@ -143,16 +143,16 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
     return computePipelineState;
 }
 
-RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor* descriptor)
+RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor)
 {
-    if (descriptor->nextInChain || descriptor->compute.nextInChain)
+    if (descriptor.nextInChain || descriptor.compute.nextInChain)
         return nullptr;
 
-    const ShaderModule& shaderModule = descriptor->compute.module->shaderModule;
-    const PipelineLayout& pipelineLayout = descriptor->layout->pipelineLayout;
-    auto label = [NSString stringWithCString:descriptor->label encoding:NSUTF8StringEncoding];
+    const ShaderModule& shaderModule = descriptor.compute.module->shaderModule;
+    const PipelineLayout& pipelineLayout = descriptor.layout->pipelineLayout;
+    auto label = [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding];
 
-    auto libraryCreationResult = createLibrary(m_device, shaderModule, pipelineLayout, descriptor->compute.entryPoint, label);
+    auto libraryCreationResult = createLibrary(m_device, shaderModule, pipelineLayout, descriptor.compute.entryPoint, label);
     if (!libraryCreationResult)
         return nullptr;
 
@@ -163,14 +163,14 @@ RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineD
         return nullptr;
     const auto& computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
-    auto function = createFunction(library, entryPointInformation, descriptor->compute, label);
+    auto function = createFunction(library, entryPointInformation, descriptor.compute, label);
 
     auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, computeInformation, label);
 
     return ComputePipeline::create(computePipelineState);
 }
 
-void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor* descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback)
+void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback)
 {
     // FIXME: Implement this
     UNUSED_PARAM(descriptor);

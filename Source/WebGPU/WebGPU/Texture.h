@@ -44,7 +44,7 @@ public:
 
     ~Texture();
 
-    RefPtr<TextureView> createView(const WGPUTextureViewDescriptor*);
+    RefPtr<TextureView> createView(const WGPUTextureViewDescriptor&);
     void destroy();
     void setLabel(const char*);
 

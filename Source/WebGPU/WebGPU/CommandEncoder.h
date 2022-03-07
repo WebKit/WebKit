@@ -48,14 +48,14 @@ public:
 
     ~CommandEncoder();
 
-    RefPtr<ComputePassEncoder> beginComputePass(const WGPUComputePassDescriptor*);
-    RefPtr<RenderPassEncoder> beginRenderPass(const WGPURenderPassDescriptor*);
+    RefPtr<ComputePassEncoder> beginComputePass(const WGPUComputePassDescriptor&);
+    RefPtr<RenderPassEncoder> beginRenderPass(const WGPURenderPassDescriptor&);
     void copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size);
-    void copyBufferToTexture(const WGPUImageCopyBuffer* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize);
-    void copyTextureToBuffer(const WGPUImageCopyTexture* source, const WGPUImageCopyBuffer* destination, const WGPUExtent3D* copySize);
-    void copyTextureToTexture(const WGPUImageCopyTexture* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize);
+    void copyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize);
+    void copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize);
+    void copyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize);
     void clearBuffer(const Buffer&, uint64_t offset, uint64_t size);
-    RefPtr<CommandBuffer> finish(const WGPUCommandBufferDescriptor*);
+    RefPtr<CommandBuffer> finish(const WGPUCommandBufferDescriptor&);
     void insertDebugMarker(const char* markerLabel);
     void popDebugGroup();
     void pushDebugGroup(const char* groupLabel);

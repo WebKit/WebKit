@@ -46,10 +46,10 @@ public:
     ~Adapter();
 
     size_t enumerateFeatures(WGPUFeatureName* features);
-    bool getLimits(WGPUSupportedLimits*);
-    void getProperties(WGPUAdapterProperties*);
+    bool getLimits(WGPUSupportedLimits&);
+    void getProperties(WGPUAdapterProperties&);
     bool hasFeature(WGPUFeatureName);
-    void requestDevice(const WGPUDeviceDescriptor*, WTF::Function<void(WGPURequestDeviceStatus, RefPtr<Device>&&, const char*)>&& callback);
+    void requestDevice(const WGPUDeviceDescriptor&, WTF::Function<void(WGPURequestDeviceStatus, RefPtr<Device>&&, const char*)>&& callback);
 
 private:
     Adapter(id<MTLDevice>);

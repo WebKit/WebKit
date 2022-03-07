@@ -30,7 +30,7 @@
 
 namespace WebGPU {
 
-RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor* descriptor)
+RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
     return Sampler::create(nil);

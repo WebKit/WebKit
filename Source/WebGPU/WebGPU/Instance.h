@@ -40,13 +40,13 @@ class Surface;
 class Instance : public RefCounted<Instance> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<Instance> create(const WGPUInstanceDescriptor*);
+    static RefPtr<Instance> create(const WGPUInstanceDescriptor&);
 
     ~Instance();
 
-    RefPtr<Surface> createSurface(const WGPUSurfaceDescriptor*);
+    RefPtr<Surface> createSurface(const WGPUSurfaceDescriptor&);
     void processEvents();
-    void requestAdapter(const WGPURequestAdapterOptions*, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback);
+    void requestAdapter(const WGPURequestAdapterOptions&, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback);
 
     NSRunLoop *runLoop() const { return m_runLoop; }
 

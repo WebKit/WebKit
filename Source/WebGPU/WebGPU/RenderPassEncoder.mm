@@ -124,7 +124,7 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
     UNUSED_PARAM(dynamicOffsets);
 }
 
-void RenderPassEncoder::setBlendConstant(const WGPUColor* color)
+void RenderPassEncoder::setBlendConstant(const WGPUColor& color)
 {
     UNUSED_PARAM(color);
 }
@@ -260,7 +260,7 @@ void wgpuRenderPassEncoderSetBindGroup(WGPURenderPassEncoder renderPassEncoder, 
 
 void wgpuRenderPassEncoderSetBlendConstant(WGPURenderPassEncoder renderPassEncoder, const WGPUColor* color)
 {
-    renderPassEncoder->renderPassEncoder->setBlendConstant(color);
+    renderPassEncoder->renderPassEncoder->setBlendConstant(*color);
 }
 
 void wgpuRenderPassEncoderSetIndexBuffer(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)

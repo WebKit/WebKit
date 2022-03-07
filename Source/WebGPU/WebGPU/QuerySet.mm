@@ -30,7 +30,7 @@
 
 namespace WebGPU {
 
-RefPtr<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor* descriptor)
+RefPtr<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
 {
     UNUSED_PARAM(descriptor);
     return QuerySet::create(nil);

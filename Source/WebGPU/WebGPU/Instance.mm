@@ -35,9 +35,9 @@ namespace WebGPU {
 
 static constexpr NSString *runLoopMode = @"kCFRunLoopWebGPUMode";
 
-RefPtr<Instance> Instance::create(const WGPUInstanceDescriptor* descriptor)
+RefPtr<Instance> Instance::create(const WGPUInstanceDescriptor& descriptor)
 {
-    if (descriptor->nextInChain)
+    if (descriptor.nextInChain)
         return nullptr;
 
     NSRunLoop *runLoop = NSRunLoop.currentRunLoop;
@@ -54,7 +54,7 @@ Instance::Instance(NSRunLoop *runLoop)
 
 Instance::~Instance() = default;
 
-RefPtr<Surface> Instance::createSurface(const WGPUSurfaceDescriptor* descriptor)
+RefPtr<Surface> Instance::createSurface(const WGPUSurfaceDescriptor& descriptor)
 {
     // FIXME: Implement this.
     UNUSED_PARAM(descriptor);
@@ -110,7 +110,7 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WG
     }
 }
 
-void Instance::requestAdapter(const WGPURequestAdapterOptions* options, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback)
+void Instance::requestAdapter(const WGPURequestAdapterOptions& options, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback)
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     NSArray<id<MTLDevice>> *devices = MTLCopyAllDevices();
@@ -120,16 +120,16 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions* options, WTF::Fun
         [devices addObject:device];
 #endif
 
-    // FIXME: Deal with options->compatibleSurface.
+    // FIXME: Deal with options.compatibleSurface.
 
-    auto sortedDevices = WebGPU::sortedDevices(devices, options->powerPreference);
+    auto sortedDevices = WebGPU::sortedDevices(devices, options.powerPreference);
 
-    if (options->nextInChain) {
+    if (options.nextInChain) {
         callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown descriptor type");
         return;
     }
 
-    if (options->forceFallbackAdapter) {
+    if (options.forceFallbackAdapter) {
         callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present");
         return;
     }
@@ -161,7 +161,7 @@ void wgpuInstanceRelease(WGPUInstance instance)
 
 WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor* descriptor)
 {
-    auto result = WebGPU::Instance::create(descriptor);
+    auto result = WebGPU::Instance::create(*descriptor);
     return result ? new WGPUInstanceImpl { result.releaseNonNull() } : nullptr;
 }
 
@@ -416,7 +416,7 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
 
 WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
 {
-    auto result = instance->instance->createSurface(descriptor);
+    auto result = instance->instance->createSurface(*descriptor);
     return result ? new WGPUSurfaceImpl { result.releaseNonNull() } : nullptr;
 }
 
@@ -427,14 +427,14 @@ void wgpuInstanceProcessEvents(WGPUInstance instance)
 
 void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
 {
-    instance->instance->requestAdapter(options, [callback, userdata] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, const char* message) {
+    instance->instance->requestAdapter(*options, [callback, userdata] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, const char* message) {
         callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message, userdata);
     });
 }
 
 void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback)
 {
-    instance->instance->requestAdapter(options, [callback] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, const char* message) {
+    instance->instance->requestAdapter(*options, [callback] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, const char* message) {
         callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message);
     });
 }

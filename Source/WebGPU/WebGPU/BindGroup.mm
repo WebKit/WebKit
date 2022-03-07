@@ -49,12 +49,12 @@ static bool textureViewIsPresent(const WGPUBindGroupEntry& entry)
     return entry.textureView;
 }
 
-RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descriptor)
+RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)
 {
-    if (descriptor->nextInChain)
+    if (descriptor.nextInChain)
         return nullptr;
 
-    const BindGroupLayout& bindGroupLayout = descriptor->layout->bindGroupLayout;
+    const BindGroupLayout& bindGroupLayout = descriptor.layout->bindGroupLayout;
 
     // FIXME: Don't allocate 3 new buffers for every bind group.
     // In fact, don't even allocate a single new buffer for every bind group.
@@ -64,7 +64,7 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descrip
     if (!vertexArgumentBuffer || !fragmentArgumentBuffer || !computeArgumentBuffer)
         return nullptr;
 
-    auto label = [NSString stringWithCString:descriptor->label encoding:NSUTF8StringEncoding];
+    auto label = [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding];
     vertexArgumentBuffer.label = label;
     fragmentArgumentBuffer.label = label;
     computeArgumentBuffer.label = label;
@@ -76,8 +76,8 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor* descrip
     [fragmentArgumentEncoder setArgumentBuffer:fragmentArgumentBuffer offset:0];
     [computeArgumentEncoder setArgumentBuffer:computeArgumentBuffer offset:0];
 
-    for (uint32_t i = 0; i < descriptor->entryCount; ++i) {
-        const WGPUBindGroupEntry& entry = descriptor->entries[i];
+    for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
+        const WGPUBindGroupEntry& entry = descriptor.entries[i];
 
         if (entry.nextInChain)
             return nullptr;

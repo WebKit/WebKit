@@ -112,19 +112,19 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUStorageTextureB
     return descriptor;
 }
 
-RefPtr<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDescriptor* descriptor)
+RefPtr<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDescriptor& descriptor)
 {
-    if (descriptor->nextInChain)
+    if (descriptor.nextInChain)
         return nullptr;
 
-    NSMutableArray<MTLArgumentDescriptor *> *vertexArguments = [NSMutableArray arrayWithCapacity:descriptor->entryCount];
-    NSMutableArray<MTLArgumentDescriptor *> *fragmentArguments = [NSMutableArray arrayWithCapacity:descriptor->entryCount];
-    NSMutableArray<MTLArgumentDescriptor *> *computeArguments = [NSMutableArray arrayWithCapacity:descriptor->entryCount];
+    NSMutableArray<MTLArgumentDescriptor *> *vertexArguments = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
+    NSMutableArray<MTLArgumentDescriptor *> *fragmentArguments = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
+    NSMutableArray<MTLArgumentDescriptor *> *computeArguments = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
     if (!vertexArguments || !fragmentArguments || !computeArguments)
         return nullptr;
 
-    for (uint32_t i = 0; i < descriptor->entryCount; ++i) {
-        const WGPUBindGroupLayoutEntry& entry = descriptor->entries[i];
+    for (uint32_t i = 0; i < descriptor.entryCount; ++i) {
+        const WGPUBindGroupLayoutEntry& entry = descriptor.entries[i];
         if (entry.nextInChain)
             return nullptr;
 
@@ -205,7 +205,7 @@ RefPtr<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutD
     if (!vertexArgumentEncoder || !fragmentArgumentEncoder || !computeArgumentEncoder)
         return nullptr;
 
-    auto label = [NSString stringWithCString:descriptor->label encoding:NSUTF8StringEncoding];
+    auto label = [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding];
     vertexArgumentEncoder.label = label;
     fragmentArgumentEncoder.label = label;
     computeArgumentEncoder.label = label;

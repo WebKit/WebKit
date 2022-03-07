@@ -74,13 +74,13 @@ size_t Device::enumerateFeatures(WGPUFeatureName*)
     return 0;
 }
 
-bool Device::getLimits(WGPUSupportedLimits* limits)
+bool Device::getLimits(WGPUSupportedLimits& limits)
 {
-    if (limits->nextInChain != nullptr)
+    if (limits.nextInChain != nullptr)
         return false;
 
     // FIXME: Implement this.
-    limits->limits = { };
+    limits.limits = { };
     return true;
 }
 
@@ -134,107 +134,107 @@ void wgpuDeviceRelease(WGPUDevice device)
 
 WGPUBindGroup wgpuDeviceCreateBindGroup(WGPUDevice device, const WGPUBindGroupDescriptor* descriptor)
 {
-    auto result = device->device->createBindGroup(descriptor);
+    auto result = device->device->createBindGroup(*descriptor);
     return result ? new WGPUBindGroupImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPUBindGroupLayout wgpuDeviceCreateBindGroupLayout(WGPUDevice device, const WGPUBindGroupLayoutDescriptor* descriptor)
 {
-    auto result = device->device->createBindGroupLayout(descriptor);
+    auto result = device->device->createBindGroupLayout(*descriptor);
     return result ? new WGPUBindGroupLayoutImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPUBuffer wgpuDeviceCreateBuffer(WGPUDevice device, const WGPUBufferDescriptor* descriptor)
 {
-    auto result = device->device->createBuffer(descriptor);
+    auto result = device->device->createBuffer(*descriptor);
     return result ? new WGPUBufferImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPUCommandEncoder wgpuDeviceCreateCommandEncoder(WGPUDevice device, const WGPUCommandEncoderDescriptor* descriptor)
 {
-    auto result = device->device->createCommandEncoder(descriptor);
+    auto result = device->device->createCommandEncoder(*descriptor);
     return result ? new WGPUCommandEncoderImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPUComputePipeline wgpuDeviceCreateComputePipeline(WGPUDevice device, const WGPUComputePipelineDescriptor* descriptor)
 {
-    auto result = device->device->createComputePipeline(descriptor);
+    auto result = device->device->createComputePipeline(*descriptor);
     return result ? new WGPUComputePipelineImpl { result.releaseNonNull() } : nullptr;
 }
 
 void wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUComputePipelineDescriptor* descriptor, WGPUCreateComputePipelineAsyncCallback callback, void* userdata)
 {
-    device->device->createComputePipelineAsync(descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::ComputePipeline>&& pipeline, const char* message) {
+    device->device->createComputePipelineAsync(*descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::ComputePipeline>&& pipeline, const char* message) {
         callback(status, pipeline ? new WGPUComputePipelineImpl { pipeline.releaseNonNull() } : nullptr, message, userdata);
     });
 }
 
 void wgpuDeviceCreateComputePipelineAsyncWithBlock(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncBlockCallback callback)
 {
-    device->device->createComputePipelineAsync(descriptor, [callback] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::ComputePipeline>&& pipeline, const char* message) {
+    device->device->createComputePipelineAsync(*descriptor, [callback] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::ComputePipeline>&& pipeline, const char* message) {
         callback(status, pipeline ? new WGPUComputePipelineImpl { pipeline.releaseNonNull() } : nullptr, message);
     });
 }
 
 WGPUPipelineLayout wgpuDeviceCreatePipelineLayout(WGPUDevice device, const WGPUPipelineLayoutDescriptor* descriptor)
 {
-    auto result = device->device->createPipelineLayout(descriptor);
+    auto result = device->device->createPipelineLayout(*descriptor);
     return result ? new WGPUPipelineLayoutImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPUQuerySet wgpuDeviceCreateQuerySet(WGPUDevice device, const WGPUQuerySetDescriptor* descriptor)
 {
-    auto result = device->device->createQuerySet(descriptor);
+    auto result = device->device->createQuerySet(*descriptor);
     return result ? new WGPUQuerySetImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPURenderBundleEncoder wgpuDeviceCreateRenderBundleEncoder(WGPUDevice device, const WGPURenderBundleEncoderDescriptor* descriptor)
 {
-    auto result = device->device->createRenderBundleEncoder(descriptor);
+    auto result = device->device->createRenderBundleEncoder(*descriptor);
     return result ? new WGPURenderBundleEncoderImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPURenderPipeline wgpuDeviceCreateRenderPipeline(WGPUDevice device, const WGPURenderPipelineDescriptor* descriptor)
 {
-    auto result = device->device->createRenderPipeline(descriptor);
+    auto result = device->device->createRenderPipeline(*descriptor);
     return result ? new WGPURenderPipelineImpl { result.releaseNonNull() } : nullptr;
 }
 
 void wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, const WGPURenderPipelineDescriptor* descriptor, WGPUCreateRenderPipelineAsyncCallback callback, void* userdata)
 {
-    device->device->createRenderPipelineAsync(descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::RenderPipeline>&& pipeline, const char* message) {
+    device->device->createRenderPipelineAsync(*descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::RenderPipeline>&& pipeline, const char* message) {
         callback(status, pipeline ? new WGPURenderPipelineImpl { pipeline.releaseNonNull() } : nullptr, message, userdata);
     });
 }
 
 void wgpuDeviceCreateRenderPipelineAsyncWithBlock(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncBlockCallback callback)
 {
-    device->device->createRenderPipelineAsync(descriptor, [callback] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::RenderPipeline>&& pipeline, const char* message) {
+    device->device->createRenderPipelineAsync(*descriptor, [callback] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::RenderPipeline>&& pipeline, const char* message) {
         callback(status, pipeline ? new WGPURenderPipelineImpl { pipeline.releaseNonNull() } : nullptr, message);
     });
 }
 
 WGPUSampler wgpuDeviceCreateSampler(WGPUDevice device, const WGPUSamplerDescriptor* descriptor)
 {
-    auto result = device->device->createSampler(descriptor);
+    auto result = device->device->createSampler(*descriptor);
     return result ? new WGPUSamplerImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPUShaderModule wgpuDeviceCreateShaderModule(WGPUDevice device, const WGPUShaderModuleDescriptor* descriptor)
 {
-    auto result = device->device->createShaderModule(descriptor);
+    auto result = device->device->createShaderModule(*descriptor);
     return result ? new WGPUShaderModuleImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPUSwapChain wgpuDeviceCreateSwapChain(WGPUDevice device, WGPUSurface surface, const WGPUSwapChainDescriptor* descriptor)
 {
-    auto result = device->device->createSwapChain(surface->surface, descriptor);
+    auto result = device->device->createSwapChain(surface->surface, *descriptor);
     return result ? new WGPUSwapChainImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPUTexture wgpuDeviceCreateTexture(WGPUDevice device, const WGPUTextureDescriptor* descriptor)
 {
-    auto result = device->device->createTexture(descriptor);
+    auto result = device->device->createTexture(*descriptor);
     return result ? new WGPUTextureImpl { result.releaseNonNull() } : nullptr;
 }
 
@@ -250,7 +250,7 @@ size_t wgpuDeviceEnumerateFeatures(WGPUDevice device, WGPUFeatureName* features)
 
 bool wgpuDeviceGetLimits(WGPUDevice device, WGPUSupportedLimits* limits)
 {
-    return device->device->getLimits(limits);
+    return device->device->getLimits(*limits);
 }
 
 WGPUQueue wgpuDeviceGetQueue(WGPUDevice device)

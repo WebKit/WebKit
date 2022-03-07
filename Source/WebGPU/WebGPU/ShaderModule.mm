@@ -36,12 +36,12 @@ struct ShaderModuleParameters {
     const WGPUShaderModuleDescriptorHints* hints;
 };
 
-static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WGPUShaderModuleDescriptor* descriptor)
+static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WGPUShaderModuleDescriptor& descriptor)
 {
     const WGPUShaderModuleWGSLDescriptor* wgsl = nullptr;
     const WGPUShaderModuleDescriptorHints* hints = nullptr;
 
-    for (const WGPUChainedStruct* ptr = descriptor->nextInChain; ptr; ptr = ptr->next) {
+    for (const WGPUChainedStruct* ptr = descriptor.nextInChain; ptr; ptr = ptr->next) {
         auto type = ptr->sType;
 
         switch (static_cast<int>(type)) {
@@ -98,9 +98,9 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(id<MTLDevice> device, std::
     return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library);
 }
 
-RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor* descriptor)
+RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& descriptor)
 {
-    if (!descriptor->nextInChain)
+    if (!descriptor.nextInChain)
         return nullptr;
 
     auto shaderModuleParameters = findShaderModuleParameters(descriptor);
@@ -110,7 +110,7 @@ RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor
     auto checkResult = WGSL::staticCheck(String(shaderModuleParameters->wgsl.code), std::nullopt);
 
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && shaderModuleParameters->hints->hintsCount) {
-        if (auto result = earlyCompileShaderModule(m_device, WTFMove(checkResult), *shaderModuleParameters->hints, [NSString stringWithCString:descriptor->label encoding:NSUTF8StringEncoding]))
+        if (auto result = earlyCompileShaderModule(m_device, WTFMove(checkResult), *shaderModuleParameters->hints, [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding]))
             return result;
     }
 
@@ -182,7 +182,7 @@ static CompilationMessageData convertMessages(const Messages& messages1, const s
     return { WTFMove(flattenedCompilationMessages), WTFMove(flattenedMessages) };
 }
 
-void ShaderModule::getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo*)>&& callback)
+void ShaderModule::getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback)
 {
     WTF::switchOn(m_checkResult, [&] (const WGSL::SuccessfulCheck& successfulCheck) {
         auto compilationMessageData(convertMessages({ successfulCheck.warnings, WGPUCompilationMessageType_Warning }));
@@ -191,7 +191,7 @@ void ShaderModule::getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequ
             static_cast<uint32_t>(compilationMessageData.compilationMessages.size()),
             compilationMessageData.compilationMessages.data(),
         };
-        callback(WGPUCompilationInfoRequestStatus_Success, &compilationInfo);
+        callback(WGPUCompilationInfoRequestStatus_Success, compilationInfo);
     }, [&] (const WGSL::FailedCheck& failedCheck) {
         auto compilationMessageData(convertMessages(
             { failedCheck.errors, WGPUCompilationMessageType_Error },
@@ -201,7 +201,7 @@ void ShaderModule::getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequ
             static_cast<uint32_t>(compilationMessageData.compilationMessages.size()),
             compilationMessageData.compilationMessages.data(),
         };
-        callback(WGPUCompilationInfoRequestStatus_Error, &compilationInfo);
+        callback(WGPUCompilationInfoRequestStatus_Error, compilationInfo);
     });
 }
 
@@ -252,15 +252,15 @@ void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 
 void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallback callback, void * userdata)
 {
-    shaderModule->shaderModule->getCompilationInfo([callback, userdata] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo* compilationInfo) {
-        callback(status, compilationInfo, userdata);
+    shaderModule->shaderModule->getCompilationInfo([callback, userdata] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+        callback(status, &compilationInfo, userdata);
     });
 }
 
 void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback)
 {
-    shaderModule->shaderModule->getCompilationInfo([callback] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo* compilationInfo) {
-        callback(status, compilationInfo);
+    shaderModule->shaderModule->getCompilationInfo([callback] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+        callback(status, &compilationInfo);
     });
 }
 
