@@ -43,7 +43,6 @@
 #include "PrivateClickMeasurementManagerProxy.h"
 #include "RemoteWorkerType.h"
 #include "ServiceWorkerFetchTask.h"
-#include "WebIDBServer.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessProxy.h"

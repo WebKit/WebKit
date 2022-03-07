@@ -189,8 +189,6 @@ set(WebKit_MESSAGES_IN_FILES
 
     NetworkProcess/Cookies/WebCookieManager
 
-    NetworkProcess/IndexedDB/WebIDBServer
-
     NetworkProcess/NetworkBroadcastChannelRegistry
     NetworkProcess/NetworkConnectionToWebProcess
     NetworkProcess/NetworkContentRuleListManager

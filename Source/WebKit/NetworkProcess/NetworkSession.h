@@ -77,7 +77,6 @@ class NetworkResourceLoader;
 class NetworkSocketChannel;
 class NetworkStorageManager;
 class ServiceWorkerFetchTask;
-class WebIDBServer;
 class WebPageNetworkParameters;
 class WebResourceLoadStatisticsStore;
 class WebSharedWorkerServer;

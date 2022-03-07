@@ -117,9 +117,6 @@ NetworkProcess/Downloads/DownloadMap.cpp
 NetworkProcess/Downloads/DownloadMonitor.cpp
 NetworkProcess/Downloads/PendingDownload.cpp
 
-NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp
-NetworkProcess/IndexedDB/WebIDBServer.cpp
-
 NetworkProcess/Notifications/NetworkNotificationManager.cpp
 NetworkProcess/Notifications/WebPushDaemonConnection.cpp
 

@@ -56,7 +56,6 @@
 #include "StorageAccessStatus.h"
 #include "StorageManagerSet.h"
 #include "WebCookieManager.h"
-#include "WebIDBServer.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcessPoolMessages.h"
 #include "WebPushMessage.h"

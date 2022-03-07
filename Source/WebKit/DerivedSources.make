@@ -124,7 +124,6 @@ endif
 MESSAGE_RECEIVERS = \
 	NetworkProcess/NetworkBroadcastChannelRegistry \
 	NetworkProcess/NetworkConnectionToWebProcess \
-	NetworkProcess/IndexedDB/WebIDBServer \
 	NetworkProcess/NetworkContentRuleListManager \
 	NetworkProcess/WebStorage/StorageManagerSet \
 	NetworkProcess/cache/CacheStorageEngineConnection \

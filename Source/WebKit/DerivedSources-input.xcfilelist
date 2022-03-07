@@ -80,7 +80,6 @@ $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.messages.in
 $(PROJECT_DIR)/GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/Cookies/WebCookieManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
-$(PROJECT_DIR)/NetworkProcess/IndexedDB/WebIDBServer.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkBroadcastChannelRegistry.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/NetworkProcess/NetworkContentRuleListManager.messages.in

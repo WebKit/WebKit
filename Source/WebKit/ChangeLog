@@ -1,3 +1,29 @@
+2022-03-07  Sihui Liu  <sihui_liu@apple.com>
+
+        Delete WebIDBServer and WebIDBConnectionToClient
+        https://bugs.webkit.org/show_bug.cgi?id=237479
+
+        Reviewed by Chris Dumez.
+
+        The code is unused since r289474; remove it to avoid confusion when investigating issues including related
+        symbols.
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.cpp: Removed.
+        * NetworkProcess/IndexedDB/WebIDBConnectionToClient.h: Removed.
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp: Removed.
+        * NetworkProcess/IndexedDB/WebIDBServer.h: Removed.
+        * NetworkProcess/IndexedDB/WebIDBServer.messages.in: Removed.
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/NetworkSession.cpp:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        * Sources.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-07  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Provide global frame identifier to ASCAgent SPI
