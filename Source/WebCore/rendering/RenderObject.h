@@ -327,6 +327,7 @@ public:
     virtual bool isSVGRoot() const { return false; }
     virtual bool isSVGContainer() const { return false; }
     virtual bool isLegacySVGContainer() const { return false; }
+    virtual bool isSVGTransformableContainer() const { return false; }
     virtual bool isLegacySVGTransformableContainer() const { return false; }
     virtual bool isSVGViewportContainer() const { return false; }
     virtual bool isSVGGradientStop() const { return false; }

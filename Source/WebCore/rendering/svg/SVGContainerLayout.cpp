@@ -39,6 +39,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"
+#include "RenderSVGTransformableContainer.h"
 #include "RenderSVGViewportContainer.h"
 #include "SVGRenderSupport.h"
 #include "SVGRenderingContext.h"
@@ -271,11 +272,10 @@ bool SVGContainerLayout::layoutSizeOfNearestViewportChanged() const
 bool SVGContainerLayout::transformToRootChanged(const RenderObject* ancestor)
 {
     while (ancestor) {
-        // FIXME: [LBSE] Upstream RenderSVGTransformableContainer changes
-        // if (is<RenderSVGTransformableContainer>(*ancestor))
-        //     return downcast<const RenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
+        if (is<RenderSVGTransformableContainer>(*ancestor))
+            return downcast<const RenderSVGTransformableContainer>(*ancestor).didTransformToRootUpdate();
 
-        // FIXME: [LBSE] Upstream RenderSVGTransformableContainer changes
+        // FIXME: [LBSE] Upstream RenderSVGViewportContainer changes
         // if (is<RenderSVGViewportContainer>(*ancestor))
         //     return downcast<const RenderSVGViewportContainer>(*ancestor).didTransformToRootUpdate();
 

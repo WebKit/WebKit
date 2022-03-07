@@ -1,3 +1,41 @@
+2022-03-07  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [LBSE] Begin layer-aware RenderSVGTransformableContainer implementation
+        https://bugs.webkit.org/show_bug.cgi?id=237024
+
+        Reviewed by Rob Buis.
+
+        Create RenderSVGContainer based on the downstream LBSE implementation.
+
+        This patch does not yet enable the creation of RenderSVGContainer
+        renderers if LBSE is enabled, since the derived classes, such as
+        RenderSVGHiddenContainer / RenderSVGViewportContainer / ..., are still
+        missing in LBSE.
+
+        Covered by existing tests, no change in behaviour.
+
+        * Sources.txt: Add RenderSVGTransformableContainer.* to build.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSVGTransformableContainer const):
+        * rendering/svg/RenderSVGTransformableContainer.cpp: Added.
+        (WebCore::RenderSVGTransformableContainer::RenderSVGTransformableContainer):
+        (WebCore::associatedUseElement):
+        (WebCore::RenderSVGTransformableContainer::additionalContainerTranslation const):
+        (WebCore::RenderSVGTransformableContainer::calculateViewport):
+        (WebCore::RenderSVGTransformableContainer::layoutChildren):
+        (WebCore::RenderSVGTransformableContainer::updateFromStyle):
+        (WebCore::RenderSVGTransformableContainer::applyTransform const):
+        (WebCore::RenderSVGTransformableContainer::styleWillChange):
+        (WebCore::RenderSVGTransformableContainer::graphicsElement const):
+        * rendering/svg/RenderSVGTransformableContainer.h: Added.
+        * rendering/svg/SVGContainerLayout.cpp:
+        (WebCore::SVGContainerLayout::transformToRootChanged):
+        * svg/SVGElement.cpp: Create renderer for <g> elements in LBSE mode.
+        (WebCore::createSVGLayerAwareElementSet):
+        * svg/SVGGElement.cpp: Ditto.
+        (WebCore::SVGGElement::createElementRenderer):
+
 2022-03-07  Matt Woodrow  <mattwoodrow@apple.com>
 
         Compute correct containing block override size for items that are subgridden in one dimension only.

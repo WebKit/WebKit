@@ -531,7 +531,7 @@ static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> createSVGLayerAwareEl
     // List of all SVG elements whose renderers support the layer aware layout / painting / hit-testing mode ('LBSE-mode').
     using namespace SVGNames;
     MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
-    for (auto& tag : { rectTag.get() })
+    for (auto& tag : { gTag.get(), rectTag.get() })
         set.add(tag.localName());
     return set;
 }
