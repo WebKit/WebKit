@@ -68,7 +68,8 @@ FileReaderLoader::FileReaderLoader(ReadType readType, FileReaderLoaderClient* cl
 
 FileReaderLoader::~FileReaderLoader()
 {
-    terminate();
+    cancel();
+
     if (!m_urlForReading.isEmpty())
         ThreadableBlobRegistry::unregisterBlobURL(m_urlForReading);
 }
