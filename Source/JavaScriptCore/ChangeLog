@@ -1,3 +1,16 @@
+2022-03-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [JSC] Add missing CPU(RISCV64) guards in CTI thunk prologue, epilogue generators
+        https://bugs.webkit.org/show_bug.cgi?id=237517
+
+        Unreviewed, adding missing CPU(RISCV64) guards to the CTI thunk prologue
+        and epilogue generators in CCallHelpers, reusing the ARM variants of the
+        pair push/pop calls.
+
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::emitCTIThunkPrologue):
+        (JSC::CCallHelpers::emitCTIThunkEpilogue):
+
 2022-03-05  Mark Lam  <mark.lam@apple.com>
 
         Fix JITOperationList::addPointers() to support JIT_OPERATION_VALIDATION_ASSERT_ENABLED.
