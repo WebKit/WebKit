@@ -965,6 +965,35 @@ bool GridTrackSizingAlgorithmStrategy::updateOverridingContainingBlockContentSiz
     if (!overrideSize)
         overrideSize = m_algorithm.gridAreaBreadthForChild(child, direction);
 
+    if (renderGrid() != child.parent()) {
+        // If child is part of a subgrid, find the nearest ancestor this is directly part of this grid
+        // (either by being a child of the grid, or via being subgridded in this dimension.
+        RenderGrid* grid = downcast<RenderGrid>(child.parent());
+        GridTrackSizingDirection subgridDirection = GridLayoutFunctions::flowAwareDirectionForChild(*renderGrid(), *grid, direction);
+        while (grid->parent() != renderGrid() && !grid->isSubgridOf(subgridDirection, *renderGrid())) {
+            grid = downcast<RenderGrid>(grid->parent());
+            subgridDirection = GridLayoutFunctions::flowAwareDirectionForChild(*renderGrid(), *grid, direction);
+        }
+
+        if (grid == child.parent() && grid->isSubgrid(subgridDirection)) {
+            // If the item is subgridded in this direction (and thus the tracks it covers are tracks
+            // owned by this sizing algorithm), then we want to take the breadth of the tracks we occupy,
+            // and subtract any space occupied by the subgrid itself (and any ancestor subgrids).
+            *overrideSize -= GridLayoutFunctions::extraMarginForSubgridAncestors(subgridDirection, child);
+        } else {
+            // Otherwise the tracks that this child covers (in this non-subgridded axis) are owned
+            // by one of the intermediate RenderGrids (which are subgrids in the other axis), which may
+            // be |grid| or a descendent.
+            // Set the override size for |grid| (which is part of the outer grid), and force a layout
+            // so that it computes the track sizes for the non-subgridded dimension and makes the size
+            // of |child| available.
+            bool overrideSizeHasChanged =
+                updateOverridingContainingBlockContentSizeForChild(*grid, direction);
+            layoutGridItemForMinSizeComputation(*grid, overrideSizeHasChanged);
+            return overrideSizeHasChanged;
+        }
+    }
+
     if (GridLayoutFunctions::hasOverridingContainingBlockContentSizeForChild(child, direction) && GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, direction) == overrideSize)
         return false;
 

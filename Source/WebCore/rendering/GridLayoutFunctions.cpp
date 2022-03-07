@@ -103,7 +103,7 @@ static LayoutUnit extraMarginForSubgrid(const RenderGrid& parent, unsigned start
     return mbp;
 }
 
-static LayoutUnit extraMarginForSubgridAncestors(GridTrackSizingDirection direction, const RenderBox& child)
+LayoutUnit extraMarginForSubgridAncestors(GridTrackSizingDirection direction, const RenderBox& child)
 {
     const RenderGrid* grid = downcast<RenderGrid>(child.parent());
     LayoutUnit mbp;
