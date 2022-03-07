@@ -1,3 +1,13 @@
+2022-03-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK] generate-automation-atom.py breaks reproducible builds
+        https://bugs.webkit.org/show_bug.cgi?id=237506
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/generate-automation-atom.py:
+        (append_functions): Sort utility functions to produce stable output.
+
 2022-03-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Layer tree can get indefinitely frozen if WKWebView is unparented underneath -[UIWindow dealloc]
