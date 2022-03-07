@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input" type="file" accept=".pages, image/jpeg">
+</body>
+<script>
+
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Tests that a Pages file, chosen via the file picker which accepts Pages files and JPEG images, has a non-zero file size. To test manually, click on the file input and select a Pages file.");
+
+    if (window.testRunner)
+        testRunner.setOpenPanelFiles(['resources/documents/document.pages']);
+
+    input.addEventListener("change", (event) => {
+        fileList = event.target.files;
+        shouldBe("fileList.length", "1");
+
+        file = fileList[0];
+        shouldBe("file.size", "89650");
+
+        finishJSTest();
+    });
+
+    UIHelper.activateElement(input);
+});
+
+</script>
+</html>

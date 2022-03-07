@@ -49,7 +49,7 @@ static String transcodeImage(const String& path, const String& destinationUTI, c
         return nullString();
 
     auto sourceUTI = String(CGImageSourceGetType(source.get()));
-    if (sourceUTI == destinationUTI)
+    if (!sourceUTI || sourceUTI == destinationUTI)
         return nullString();
 
 #if !HAVE(IMAGEIO_FIX_FOR_RADAR_59589723)
