@@ -84,7 +84,7 @@ bool FileSystemStorageHandle::isSameEntry(WebCore::FileSystemHandleIdentifier id
 
 static bool isValidFileName(const String& name)
 {
-    return name != "." && name != ".." && !name.contains(pathSeparator);
+    return !name.isEmpty() && name != "." && name != ".." && !name.contains(pathSeparator);
 }
 
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::requestCreateHandle(IPC::Connection::UniqueID connection, Type type, String&& name, bool createIfNecessary)

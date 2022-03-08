@@ -1,3 +1,15 @@
+2022-03-08  Sihui Liu  <sihui_liu@apple.com>
+
+        File System Access: disallow empty name in FileSystemHandle
+        https://bugs.webkit.org/show_bug.cgi?id=237563
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-getDirectoryHandle.https.any.worker-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any-expected.txt:
+        * web-platform-tests/file-system-access/sandboxed_FileSystemDirectoryHandle-removeEntry.https.any.worker-expected.txt:
+
 2022-03-08  Alex Christensen  <achristensen@webkit.org>
 
         WebSocket.send() should synchronously update bufferedAmount
