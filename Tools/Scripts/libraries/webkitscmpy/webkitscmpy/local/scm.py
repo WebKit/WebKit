@@ -25,7 +25,7 @@ import os
 import re
 import six
 
-from webkitbugspy import Tracker, radar
+from webkitbugspy import Tracker, bugzilla, github, radar
 from webkitscmpy import ScmBase, Contributor
 
 
@@ -83,7 +83,12 @@ class Scm(ScmBase):
                 continue
             for contributor in self.contributors:
                 if contributor.name and contributor.emails:
-                    tracker.users.create(name=contributor.name, emails=contributor.emails)
+                    username = None
+                    if isinstance(tracker, bugzilla.Tracker):
+                        username = contributor.emails[0]
+                    if isinstance(tracker, github.Tracker):
+                        username = contributor.github
+                    tracker.users.create(name=contributor.name, username=username, emails=contributor.emails)
             Tracker.register(tracker)
 
     @property
