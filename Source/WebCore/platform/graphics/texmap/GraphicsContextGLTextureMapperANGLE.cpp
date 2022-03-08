@@ -197,7 +197,6 @@ bool GraphicsContextGLTextureMapper::platformInitialize()
     GL_GenFramebuffers(1, &m_fbo);
     GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-#if USE(COORDINATED_GRAPHICS)
     GL_GenTextures(1, &m_compositorTexture);
     GL_BindTexture(textureTarget, m_compositorTexture);
     GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -205,6 +204,7 @@ bool GraphicsContextGLTextureMapper::platformInitialize()
     GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+#if USE(COORDINATED_GRAPHICS)
     GL_GenTextures(1, &m_intermediateTexture);
     GL_BindTexture(textureTarget, m_intermediateTexture);
     GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -321,10 +321,8 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
     ASSERT_UNUSED(success, success);
     if (m_texture)
         GL_DeleteTextures(1, &m_texture);
-#if USE(COORDINATED_GRAPHICS)
     if (m_compositorTexture)
         GL_DeleteTextures(1, &m_compositorTexture);
-#endif
 
     auto attributes = contextAttributes();
 
@@ -405,14 +403,17 @@ bool GraphicsContextGLTextureMapper::reshapeDisplayBufferBacking()
         else
             GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     }
-#endif
     GL_BindTexture(textureTarget, m_texture);
-#if USE(COORDINATED_GRAPHICS)
     if (m_textureBacking && m_textureBacking->image())
         GL_EGLImageTargetTexture2DOES(textureTarget, m_textureBacking->image());
     else
-#endif
+        GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+#else
+    GL_BindTexture(textureTarget, m_compositorTexture);
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+    GL_BindTexture(textureTarget, m_texture);
+    GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+#endif
     GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
 
     return true;

@@ -45,27 +45,20 @@ TextureMapperGCGLPlatformLayer::~TextureMapperGCGLPlatformLayer()
 
 void TextureMapperGCGLPlatformLayer::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
-    m_context.markLayerComposited();
+    GLContext* previousActiveContext = GLContext::current();
 
-#if USE(TEXTURE_MAPPER_GL)
+    m_context.prepareTexture();
+
+    if (previousActiveContext)
+        previousActiveContext->makeContextCurrent();
+
     auto attrs = m_context.contextAttributes();
-    ASSERT(m_context.m_state.boundReadFBO == m_context.m_state.boundDrawFBO);
-    if (attrs.antialias && m_context.m_state.boundDrawFBO == m_context.m_multisampleFBO) {
-        GLContext* previousActiveContext = GLContext::current();
-        m_context.makeContextCurrent();
-
-        m_context.resolveMultisamplingIfNecessary();
-        GL_BindFramebuffer(GL_FRAMEBUFFER, m_context.m_state.boundDrawFBO);
-
-        if (previousActiveContext)
-            previousActiveContext->makeContextCurrent();
-    }
-
     TextureMapperGL& texmapGL = static_cast<TextureMapperGL&>(textureMapper);
     TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (attrs.alpha ? TextureMapperGL::ShouldBlend : 0);
     IntSize textureSize(m_context.m_currentWidth, m_context.m_currentHeight);
-    texmapGL.drawTexture(m_context.m_texture, flags, textureSize, targetRect, matrix, opacity);
-#endif // USE(TEXTURE_MAPPER_GL)
+    texmapGL.drawTexture(m_context.m_compositorTexture, flags, textureSize, targetRect, matrix, opacity);
+
+    m_context.markLayerComposited();
 }
 
 } // namespace WebCore

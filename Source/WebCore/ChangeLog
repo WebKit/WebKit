@@ -1,3 +1,27 @@
+2022-03-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] GraphicsContextGL should have one more output texture for double buffering WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=237460
+
+        Reviewed by Žan Doberšek.
+
+        WinCairo's GraphicsContextGL had only a single output texture. If the
+        page was interactive WebGL, the user interaction was causing the
+        rendering to the texture while the compositor is running.
+
+        Coordinated Graphics has another output texture m_compositorTexture.
+        This change reuses the code for WinCairo.
+
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::prepareTextureImpl):
+        * platform/graphics/angle/GraphicsContextGLANGLE.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLTextureMapper::platformInitialize):
+        (WebCore::GraphicsContextGLANGLE::~GraphicsContextGLANGLE):
+        (WebCore::GraphicsContextGLTextureMapper::reshapeDisplayBufferBacking):
+        * platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp:
+        (WebCore::TextureMapperGCGLPlatformLayer::paintToTextureMapper):
+
 2022-03-08  Youenn Fablet  <youenn@apple.com>
 
         Improve WebRTC VPX media capabilities accuracy

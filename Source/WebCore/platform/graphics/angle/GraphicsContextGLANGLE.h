@@ -457,10 +457,11 @@ protected:
     // When preserveDrawingBuffer == true, this is blitted to during display prepare.
     std::unique_ptr<IOSurface> m_displayBufferBacking;
     void* m_displayBufferPbuffer { nullptr };
-#endif
-#if USE(COORDINATED_GRAPHICS)
+#elif USE(TEXTURE_MAPPER)
     GCGLuint m_compositorTexture { 0 };
+#if USE(COORDINATED_GRAPHICS)
     GCGLuint m_intermediateTexture { 0 };
+#endif
 #endif
 #if USE(NICOSIA)
     std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
