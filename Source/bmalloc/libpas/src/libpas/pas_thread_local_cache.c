@@ -220,22 +220,25 @@ pas_thread_local_cache* pas_thread_local_cache_create(void)
     thread_local_cache = allocate_cache(allocator_index_upper_bound);
     
     thread_local_cache->node = pas_thread_local_cache_node_allocate();
-    thread_local_cache->node->cache = thread_local_cache;
 
     if (verbose) {
         pas_log("[%d] TLC %p created with thread %p\n", getpid(), thread_local_cache, (void*)pthread_self());
         dump_thread_diagnostics(pthread_self());
     }
     thread_local_cache->thread = pthread_self();
-    
-    thread_local_cache->allocator_index_upper_bound = allocator_index_upper_bound;
 
+    pas_compiler_fence();
+    thread_local_cache->allocator_index_upper_bound = allocator_index_upper_bound;
+    
     pas_local_allocator_construct_unselected(
         (pas_local_allocator*)pas_thread_local_cache_get_local_allocator_direct_unchecked(
             thread_local_cache, PAS_LOCAL_ALLOCATOR_UNSELECTED_INDEX));
 
     for (PAS_THREAD_LOCAL_CACHE_LAYOUT_EACH_ALLOCATOR(layout_node))
         pas_thread_local_cache_layout_node_commit_and_construct(layout_node, thread_local_cache);
+
+    pas_compiler_fence();
+    thread_local_cache->node->cache = thread_local_cache;
 
     pas_thread_local_cache_set(thread_local_cache);
     

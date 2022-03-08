@@ -49,14 +49,14 @@ void* pas_enumerator_region_allocate(pas_enumerator_region** region_ptr,
 
         allocation_size = PAS_OFFSETOF(pas_enumerator_region, payload) + size;
 
-        PAS_ASSERT(pas_is_aligned(allocation_size, PAS_INTERNAL_MIN_ALIGN));
+        PAS_ASSERT_WITH_DETAIL(pas_is_aligned(allocation_size, PAS_INTERNAL_MIN_ALIGN));
 
         allocation_result = pas_page_malloc_try_allocate_without_deallocating_padding(
             allocation_size, pas_alignment_create_trivial());
 
-        PAS_ASSERT(allocation_result.result);
-        PAS_ASSERT(allocation_result.result == allocation_result.left_padding);
-        PAS_ASSERT(!allocation_result.left_padding_size);
+        PAS_ASSERT_WITH_DETAIL(allocation_result.result);
+        PAS_ASSERT_WITH_DETAIL(allocation_result.result == allocation_result.left_padding);
+        PAS_ASSERT_WITH_DETAIL(!allocation_result.left_padding_size);
 
         new_region = allocation_result.result;
         new_region->previous = region;
@@ -69,8 +69,8 @@ void* pas_enumerator_region_allocate(pas_enumerator_region** region_ptr,
         region = new_region;
     }
 
-    PAS_ASSERT(region);
-    PAS_ASSERT(region->size - region->offset >= size);
+    PAS_ASSERT_WITH_DETAIL(region);
+    PAS_ASSERT_WITH_DETAIL(region->size - region->offset >= size);
 
     result = (char*)region->payload + region->offset;
     region->offset += size;

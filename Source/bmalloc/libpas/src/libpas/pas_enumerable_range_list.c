@@ -47,7 +47,7 @@ void pas_enumerable_range_list_append(pas_enumerable_range_list* list,
     if (!chunk || chunk->num_entries >= PAS_ENUMERABLE_RANGE_LIST_CHUNK_SIZE) {
         pas_enumerable_range_list_chunk* new_chunk;
         
-        PAS_ASSERT(!chunk || chunk->num_entries == PAS_ENUMERABLE_RANGE_LIST_CHUNK_SIZE);
+        PAS_ASSERT_WITH_DETAIL(!chunk || chunk->num_entries == PAS_ENUMERABLE_RANGE_LIST_CHUNK_SIZE);
 
         new_chunk = pas_immortal_heap_allocate(sizeof(pas_enumerable_range_list_chunk),
                                                "pas_enumerable_range_list_chunk",
@@ -59,7 +59,7 @@ void pas_enumerable_range_list_append(pas_enumerable_range_list* list,
         chunk = new_chunk;
     }
 
-    PAS_ASSERT(chunk->num_entries < PAS_ENUMERABLE_RANGE_LIST_CHUNK_SIZE);
+    PAS_ASSERT_WITH_DETAIL(chunk->num_entries < PAS_ENUMERABLE_RANGE_LIST_CHUNK_SIZE);
 
     chunk->entries[chunk->num_entries] = range;
     pas_compiler_fence();
@@ -78,7 +78,7 @@ bool pas_enumerable_range_list_iterate(
          chunk = pas_compact_atomic_enumerable_range_list_chunk_ptr_load(&chunk->next)) {
         size_t index;
 
-        PAS_ASSERT(chunk->num_entries <= PAS_ENUMERABLE_RANGE_LIST_CHUNK_SIZE);
+        PAS_ASSERT_WITH_DETAIL(chunk->num_entries <= PAS_ENUMERABLE_RANGE_LIST_CHUNK_SIZE);
 
         for (index = chunk->num_entries; index--;) {
             pas_range range;
@@ -113,7 +113,7 @@ bool pas_enumerable_range_list_iterate_remote(
                                                                                 &chunk->next)) {
         size_t index;
 
-        PAS_ASSERT(chunk->num_entries <= PAS_ENUMERABLE_RANGE_LIST_CHUNK_SIZE);
+        PAS_ASSERT_WITH_DETAIL(chunk->num_entries <= PAS_ENUMERABLE_RANGE_LIST_CHUNK_SIZE);
 
         for (index = chunk->num_entries; index--;) {
             pas_range range;

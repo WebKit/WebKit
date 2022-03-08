@@ -48,8 +48,6 @@
 
 #include "pas_utils_prefix.h"
 
-#define pas_zero_memory bzero
-
 #define PAS_BEGIN_EXTERN_C __PAS_BEGIN_EXTERN_C
 #define PAS_END_EXTERN_C __PAS_END_EXTERN_C
 
@@ -160,6 +158,11 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_TYPEOF(a) typeof (a)
 #endif
 
+PAS_ALWAYS_INLINE void pas_zero_memory(void* memory, size_t size)
+{
+    memset(memory, 0, size);
+}
+
 /* NOTE: panic format string must have \n at the end. */
 PAS_API PAS_NO_RETURN void pas_panic(const char* format, ...) PAS_FORMAT_PRINTF(1, 2);
 
@@ -192,6 +195,8 @@ static PAS_ALWAYS_INLINE PAS_NO_RETURN void pas_assertion_failed(
 }
 #endif /* PAS_ENABLE_TESTING -> so end of !PAS_ENABLE_TESTING */
 
+PAS_API PAS_NO_RETURN PAS_NEVER_INLINE void pas_assertion_failed_no_inline(const char* filename, int line, const char* function, const char* expression);
+
 PAS_IGNORE_WARNINGS_BEGIN("missing-noreturn")
 static PAS_ALWAYS_INLINE void pas_assertion_failed_noreturn_silencer(
     const char* filename, int line, const char* function, const char* expression)
@@ -219,6 +224,15 @@ PAS_IGNORE_WARNINGS_END
         if (PAS_LIKELY(exp)) \
             break; \
         pas_assertion_failed_noreturn_silencer(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
+    } while (0)
+
+#define PAS_ASSERT_WITH_DETAIL(exp) \
+    do { \
+        if (!PAS_ENABLE_ASSERT) \
+            break; \
+        if (PAS_LIKELY(exp)) \
+            break; \
+        pas_assertion_failed_no_inline(__FILE__, __LINE__, __PRETTY_FUNCTION__, #exp); \
     } while (0)
 
 static inline bool pas_is_power_of_2(uintptr_t value)

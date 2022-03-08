@@ -1,3 +1,72 @@
+2022-03-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] Report more actionable crash in pas_enumerator
+        https://bugs.webkit.org/show_bug.cgi?id=237572
+
+        Reviewed by Saam Barati.
+
+        1. Adds PAS_ASSERT_WITH_DETAIL, which can report more detailed crash information than PAS_ASSERT
+           while it is not efficient as much as PAS_ASSERT. We use it only in pas_enumerator related code
+           to report more actionable crash from these code. It is OK since pas_enumerator is not used usually,
+           which will be used only when vmmap is attached.
+        2. Extract enumerate_large_map, enumerate_small_large_map, and enumerate_tiny_large_map to report
+           which part of these functions can crash (in very rare case).
+        3. Ensure pas_thread_local_cache_create's thread_local_cache is exposed after setting up all the data.
+
+        * libpas/src/libpas/pas_enumerable_range_list.c:
+        (pas_enumerable_range_list_append):
+        (pas_enumerable_range_list_iterate):
+        (pas_enumerable_range_list_iterate_remote):
+        * libpas/src/libpas/pas_enumerate_bitfit_heaps.c:
+        (view_callback):
+        (enumerate_bitfit_heap_callback):
+        * libpas/src/libpas/pas_enumerate_initially_unaccounted_pages.c:
+        (range_list_iterate_add_unaccounted_callback):
+        (range_list_iterate_exclude_accounted_callback):
+        * libpas/src/libpas/pas_enumerate_large_heaps.c:
+        (range_list_iterate_add_large_payload_callback):
+        (record_span):
+        (large_map_hashtable_entry_callback):
+        (small_large_map_hashtable_entry_callback):
+        (tiny_large_map_hashtable_entry_callback):
+        (enumerate_large_map):
+        (enumerate_small_large_map):
+        (enumerate_tiny_large_map):
+        (pas_enumerate_large_heaps):
+        * libpas/src/libpas/pas_enumerate_segregated_heaps.c:
+        (local_allocator_map_entry_is_empty_or_deleted):
+        (local_allocator_map_entry_is_empty):
+        (local_allocator_map_entry_is_deleted):
+        (collect_shared_page_directories_heap_callback):
+        (enumerate_exclusive_view):
+        (enumerate_shared_view):
+        (enumerate_partial_view):
+        (shared_page_directory_view_callback):
+        (size_directory_view_callback):
+        (consider_allocator):
+        (pas_enumerate_segregated_heaps):
+        * libpas/src/libpas/pas_enumerate_unaccounted_pages_as_meta.c:
+        (pas_enumerate_unaccounted_pages_as_meta):
+        * libpas/src/libpas/pas_enumerator.c:
+        (pas_enumerator_create):
+        (pas_enumerator_read_compact):
+        (pas_enumerator_read):
+        (pas_enumerator_add_unaccounted_pages):
+        (pas_enumerator_exclude_accounted_page):
+        (pas_enumerator_exclude_accounted_pages):
+        (pas_enumerator_record):
+        (pas_enumerator_record_page_payload_and_meta):
+        * libpas/src/libpas/pas_enumerator.h:
+        (pas_enumerator_record_kind_get_string):
+        * libpas/src/libpas/pas_enumerator_region.c:
+        (pas_enumerator_region_allocate):
+        * libpas/src/libpas/pas_thread_local_cache.c:
+        (pas_thread_local_cache_create):
+        * libpas/src/libpas/pas_utils.c:
+        (pas_assertion_failed_no_inline):
+        * libpas/src/libpas/pas_utils.h:
+        (pas_zero_memory):
+
 2022-03-01  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [libpas] Add missing PlayStation implementation.

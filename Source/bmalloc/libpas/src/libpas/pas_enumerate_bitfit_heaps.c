@@ -74,11 +74,11 @@ static bool view_callback(pas_enumerator* enumerator,
     if (!view->is_owned)
         return true;
 
-    PAS_ASSERT(page_boundary);
+    PAS_ASSERT_WITH_DETAIL(page_boundary);
 
     page = (pas_bitfit_page*)page_config->base.page_header_for_boundary_remote(
         enumerator, (void*)page_boundary);
-    PAS_ASSERT(page);
+    PAS_ASSERT_WITH_DETAIL(page);
 
     page = pas_enumerator_read(enumerator, page, pas_bitfit_page_header_size(*page_config));
     if (!page)
@@ -159,7 +159,7 @@ static bool enumerate_bitfit_heap_callback(pas_enumerator* enumerator,
     pas_bitfit_heap* bitfit_heap;
     pas_bitfit_page_config_variant variant;
     
-    PAS_ASSERT(!arg);
+    PAS_ASSERT_WITH_DETAIL(!arg);
 
     bitfit_heap = pas_compact_atomic_bitfit_heap_ptr_load_remote(
         enumerator, &heap->segregated_heap.bitfit_heap);

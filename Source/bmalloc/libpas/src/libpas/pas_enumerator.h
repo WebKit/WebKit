@@ -65,7 +65,7 @@ static inline const char* pas_enumerator_record_kind_get_string(pas_enumerator_r
     case pas_enumerator_object_record:
         return "object";
     }
-    PAS_ASSERT(!"Should not be reached");
+    PAS_ASSERT_WITH_DETAIL(!"Should not be reached");
     return NULL;
 }
 

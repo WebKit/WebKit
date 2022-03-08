@@ -53,7 +53,7 @@ bool pas_enumerate_unaccounted_pages_as_meta(pas_enumerator* enumerator)
         if (pas_ptr_hash_set_entry_is_empty_or_deleted(page))
             continue;
 
-        PAS_ASSERT(page);
+        PAS_ASSERT_WITH_DETAIL(page);
 
         pas_ptr_min_heap_add(&ptr_heap, page, &enumerator->allocation_config);
     }
@@ -62,7 +62,7 @@ bool pas_enumerate_unaccounted_pages_as_meta(pas_enumerator* enumerator)
     span_end = NULL;
     while ((page = pas_ptr_min_heap_take_min(&ptr_heap))) {
         if (span_end != page) {
-            PAS_ASSERT(page > span_end);
+            PAS_ASSERT_WITH_DETAIL(page > span_end);
             pas_enumerator_record(
                 enumerator,
                 span_begin,
