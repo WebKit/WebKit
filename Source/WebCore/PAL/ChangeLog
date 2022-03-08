@@ -1,3 +1,12 @@
+2022-03-08  Peng Liu  <peng.liu6@apple.com>
+
+        [iOS] Flash media controls when a fullscreen video resets its source
+        https://bugs.webkit.org/show_bug.cgi?id=237493
+
+        Reviewed by Jer Noble.
+
+        * pal/spi/cocoa/AVKitSPI.h:
+
 2022-03-07  Jean-Yves Avenard  <jya@apple.com>
 
         MediaTime::invalidTime() conversion to CMTime incorrectly creates a valid time.

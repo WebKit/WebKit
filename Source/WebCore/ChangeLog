@@ -1,3 +1,21 @@
+2022-03-08  Peng Liu  <peng.liu6@apple.com>
+
+        [iOS] Flash media controls when a fullscreen video resets its source
+        https://bugs.webkit.org/show_bug.cgi?id=237493
+
+        Reviewed by Jer Noble.
+
+        Some pages reset the fullscreen video's source when a user rotates the device.
+        The screen will become black for a while, and users might think the player is broken.
+        With this patch, the player will show the media controls for 1 second when the source
+        is changed, so that users will know the player is working.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.h:
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        `_presentingViewController` is only used for watchOS.
+        (-[WebAVPlayerViewController flashPlaybackControlsWithDuration:]):
+        (VideoFullscreenInterfaceAVKit::setPlayerIdentifier):
+
 2022-03-08  Alex Christensen  <achristensen@webkit.org>
 
         WebSocket.send() should synchronously update bufferedAmount

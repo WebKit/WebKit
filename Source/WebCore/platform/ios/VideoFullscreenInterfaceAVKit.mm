@@ -56,6 +56,10 @@ using namespace WebCore;
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/ios/UIKitSoftLink.h>
 
+#if !PLATFORM(WATCHOS)
+static const NSTimeInterval playbackControlsVisibleDurationAfterResettingVideoSource = 1.0;
+#endif
+
 SOFTLINK_AVKIT_FRAMEWORK()
 #if HAVE(AVOBSERVATIONCONTROLLER)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVObservationController)
@@ -575,7 +579,9 @@ NS_ASSUME_NONNULL_END
 
 @implementation WebAVPlayerViewController {
     VideoFullscreenInterfaceAVKit *_fullscreenInterface;
+#if PLATFORM(WATCHOS)
     RetainPtr<UIViewController> _presentingViewController;
+#endif
     RetainPtr<AVPlayerViewController> _avPlayerViewController;
 #if HAVE(AVOBSERVATIONCONTROLLER)
     RetainPtr<NSTimer> _startPictureInPictureTimer;
@@ -752,6 +758,14 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 0.5;
 {
     return _avPlayerViewController.get().view;
 }
+
+#if !PLATFORM(WATCHOS)
+- (void)flashPlaybackControlsWithDuration:(NSTimeInterval)duration
+{
+    if ([_avPlayerViewController respondsToSelector:@selector(flashPlaybackControlsWithDuration:)])
+        [_avPlayerViewController flashPlaybackControlsWithDuration:duration];
+}
+#endif
 
 - (BOOL)showsPlaybackControls
 {
@@ -1048,6 +1062,16 @@ void VideoFullscreenInterfaceAVKit::modelDestroyed()
 {
     ASSERT(isUIThread());
     invalidate();
+}
+
+void VideoFullscreenInterfaceAVKit::setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier)
+{
+#if !PLATFORM(WATCHOS)
+    if (!identifier)
+        [m_playerViewController flashPlaybackControlsWithDuration:playbackControlsVisibleDurationAfterResettingVideoSource];
+#endif
+
+    m_playerIdentifier = identifier;
 }
 
 void VideoFullscreenInterfaceAVKit::requestHideAndExitFullscreen()
