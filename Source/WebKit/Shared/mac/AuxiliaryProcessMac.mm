@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -297,7 +297,8 @@ static String sandboxDirectory(WebCore::AuxiliaryProcessType processType, const 
         directory.append("/com.apple.WebKit.Networking.Sandbox");
         break;
     case WebCore::AuxiliaryProcessType::Plugin:
-        directory.append("/com.apple.WebKit.Plugin.Sandbox");
+        WTFLogAlways("sandboxDirectory: Unexpected Plugin process initialization.");
+        CRASH();
         break;
 #if ENABLE(GPU_PROCESS)
     case WebCore::AuxiliaryProcessType::GPU:
@@ -587,8 +588,10 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
 #if USE(CACHE_COMPILED_SANDBOX)
     // The plugin process's DARWIN_USER_TEMP_DIR and DARWIN_USER_CACHE_DIR sandbox parameters are randomized so
     // so the compiled sandbox should not be cached because it won't be reused.
-    if (parameters.processType == WebCore::AuxiliaryProcessType::Plugin)
-        return compileAndApplySandboxSlowCase(profileOrProfilePath, isProfilePath, sandboxInitializationParameters);
+    if (parameters.processType == WebCore::AuxiliaryProcessType::Plugin) {
+        WTFLogAlways("applySandbox: Unexpected Plugin process initialization.");
+        CRASH();
+    }
 
     SandboxParametersPtr sandboxParameters { sandbox_create_params() };
     if (!sandboxParameters) {

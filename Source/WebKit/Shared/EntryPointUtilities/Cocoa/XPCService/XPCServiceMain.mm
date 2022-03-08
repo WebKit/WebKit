@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,8 +103,6 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(WEBCONTENT_SERVICE_INITIALIZER));
             else if (!strcmp(serviceName, "com.apple.WebKit.Networking"))
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(NETWORK_SERVICE_INITIALIZER));
-            else if (!strcmp(serviceName, "com.apple.WebKit.Plugin.64"))
-                entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(PLUGIN_SERVICE_INITIALIZER));
             else if (!strcmp(serviceName, "com.apple.WebKit.GPU"))
                 entryPointFunctionName = CFSTR(STRINGIZE_VALUE_OF(GPU_SERVICE_INITIALIZER));
             else if (!strcmp(serviceName, "com.apple.WebKit.WebAuthn"))

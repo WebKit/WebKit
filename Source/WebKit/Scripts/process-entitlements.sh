@@ -38,7 +38,7 @@ function mac_process_webcontent_entitlements()
         fi
     fi
 
-    mac_process_webcontent_or_plugin_entitlements
+    mac_process_webcontent_shared_entitlements
 }
 
 function mac_process_webcontent_captiveportal_entitlements()
@@ -75,7 +75,7 @@ function mac_process_webcontent_captiveportal_entitlements()
         fi
     fi
 
-    mac_process_webcontent_or_plugin_entitlements
+    mac_process_webcontent_shared_entitlements
 }
 
 function mac_process_gpu_entitlements()
@@ -175,18 +175,7 @@ function mac_process_network_entitlements()
     fi
 }
 
-function mac_process_plugin_entitlements()
-{
-    plistbuddy Add :com.apple.security.cs.allow-jit                        bool YES
-    plistbuddy Add :com.apple.security.cs.allow-unsigned-executable-memory bool YES
-    plistbuddy Add :com.apple.security.cs.disable-library-validation       bool YES
-    plistbuddy Add :com.apple.security.files.user-selected.read-write      bool YES
-    plistbuddy Add :com.apple.security.print                               bool YES
-
-    mac_process_webcontent_or_plugin_entitlements
-}
-
-function mac_process_webcontent_or_plugin_entitlements()
+function mac_process_webcontent_shared_entitlements()
 {
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
@@ -333,30 +322,6 @@ function maccatalyst_process_network_entitlements()
         fi
     fi
 }
-
-function maccatalyst_process_plugin_entitlements()
-{
-    plistbuddy Add :com.apple.security.cs.allow-jit                        bool YES
-    plistbuddy Add :com.apple.security.cs.allow-unsigned-executable-memory bool YES
-    plistbuddy Add :com.apple.security.cs.disable-library-validation       bool YES
-    plistbuddy Add :com.apple.security.files.user-selected.read-write      bool YES
-    plistbuddy Add :com.apple.security.print                               bool YES
-
-    if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
-    then
-        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
-        then
-            plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
-        fi
-    fi
-
-    if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 120000 ))
-    then
-        plistbuddy Add :com.apple.private.verified-jit bool YES
-        plistbuddy Add :com.apple.security.cs.single-jit bool YES
-    fi
-}
-
 
 # ========================================
 # iOS Family entitlements
@@ -534,17 +499,6 @@ function ios_family_process_network_entitlements()
     plistbuddy Add :com.apple.symptom_analytics.configure bool YES
 }
 
-function ios_family_process_plugin_entitlements()
-{
-    plistbuddy Add :com.apple.private.verified-jit                         bool YES
-    plistbuddy Add :com.apple.security.cs.allow-jit                        bool YES
-    plistbuddy Add :com.apple.security.cs.allow-unsigned-executable-memory bool YES
-    plistbuddy Add :com.apple.security.cs.disable-library-validation       bool YES
-    plistbuddy Add :com.apple.security.files.user-selected.read-write      bool YES
-    plistbuddy Add :com.apple.security.print                               bool YES
-}
-
-
 rm -f "${WK_PROCESSED_XCENT_FILE}"
 plistbuddy Clear dict
 
@@ -562,7 +516,6 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent ]]; then mac_process_webcontent_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then mac_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then mac_process_network_entitlements
-    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Plugin.64 ]]; then mac_process_plugin_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then mac_process_gpu_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebAuthn ]]; then mac_process_webauthn_entitlements
     elif [[ "${PRODUCT_NAME}" == webpushd ]]; then mac_process_webpushd_entitlements
@@ -570,13 +523,12 @@ then
     fi
 elif [[ "${WK_PLATFORM_NAME}" == maccatalyst || "${WK_PLATFORM_NAME}" == iosmac ]]
 then
-    [[ "${RC_XBS}" != YES && ( "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.Development || "${PRODUCT_NAME}" == com.apple.WebKit.Plugin.64 ) ]] && plistbuddy Add :com.apple.security.get-task-allow bool YES
+    [[ "${RC_XBS}" != YES && ( "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.Development ) ]] && plistbuddy Add :com.apple.security.get-task-allow bool YES
 
     if [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.Development ]]; then maccatalyst_process_webcontent_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent ]]; then maccatalyst_process_webcontent_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then maccatalyst_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then maccatalyst_process_network_entitlements
-    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Plugin.64 ]]; then maccatalyst_process_plugin_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then maccatalyst_process_gpu_entitlements
     else echo "Unsupported/unknown product: ${PRODUCT_NAME}"
     fi
@@ -588,7 +540,6 @@ then
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent ]]; then ios_family_process_webcontent_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebContent.CaptivePortal ]]; then ios_family_process_webcontent_captiveportal_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Networking ]]; then ios_family_process_network_entitlements
-    elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.Plugin.64 ]]; then ios_family_process_plugin_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.GPU ]]; then ios_family_process_gpu_entitlements
     elif [[ "${PRODUCT_NAME}" == com.apple.WebKit.WebAuthn ]]; then ios_family_process_webauthn_entitlements
     elif [[ "${PRODUCT_NAME}" == adattributiond ]]; then

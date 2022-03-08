@@ -1,3 +1,22 @@
+2022-03-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Remove remnants of WebKit.Plugin.64.xpc service
+        https://bugs.webkit.org/show_bug.cgi?id=237555
+        <rdar://84485232>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Although plugins have been disabled for a number of years, the actual code behind this
+        feature was only removed this cycle (see Bugs 232462, 234354, and 234379). I noticed a few
+        remaining bits of the removed plugin process that should also be cleaned up.
+
+        * Scripts/process-entitlements.sh:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::sandboxDirectory):
+        (WebKit::applySandbox):
+
 2022-03-07  Per Arne Vollan  <pvollan@apple.com>
 
         Preconnecting after process swap is a page load time improvement on some devices
