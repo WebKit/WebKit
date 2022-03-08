@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Token.h"
+#include <wtf/ASCIICType.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
@@ -52,15 +53,6 @@ public:
     Token lex();
     bool isAtEndOfFile() const;
     SourcePosition currentPosition() const { return m_currentPosition; }
-
-    // Only public so that the UChar version of the Lexer can defer to the LChar version
-    static bool isWhiteSpace(T character);
-    static bool isIdentifierStart(T character);
-    static bool isValidIdentifierCharacter(T character);
-    static bool isDecimal(T character);
-    static bool isHexadecimal(T character);
-    static uint64_t readDecimal(T character);
-    static uint64_t readHexadecimal(T character);
 
 private:
     unsigned currentOffset() const { return m_currentPosition.m_offset; }
@@ -89,6 +81,14 @@ private:
     std::optional<int64_t> parseDecimalFloatExponent();
     // Checks whether there is an "i" or "u" coming, and return the right kind of literal token
     Token parseIntegerLiteralSuffix(double literalValue);
+
+    static bool isIdentifierStart(T character) { return isASCIIAlpha(character); }
+    static bool isValidIdentifierCharacter(T character) { return isASCIIAlphanumeric(character) || character == '_'; }
+    static unsigned readDecimal(T character)
+    {
+        ASSERT(isASCIIDigit(character));
+        return character - '0';
+    }
 
     T m_current;
     const T* m_code;

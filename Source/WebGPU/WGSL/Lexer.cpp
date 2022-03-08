@@ -110,9 +110,9 @@ Token Lexer<T>::lex()
             // FIXME: add support for hexadecimal floating point literals
             shift();
             bool hexNumberIsEmpty = true;
-            while (isHexadecimal(m_current)) {
+            while (isASCIIHexDigit(m_current)) {
                 literalValue *= 16;
-                literalValue += readHexadecimal(m_current);
+                literalValue += toASCIIHexValue(m_current);
                 shift();
                 hexNumberIsEmpty = false;
             }
@@ -122,7 +122,7 @@ Token Lexer<T>::lex()
         }
 
         bool isFloatingPoint = false;
-        if (isDecimal(m_current) || m_current == '.' || m_current == 'e' || m_current == 'E') {
+        if (isASCIIDigit(m_current) || m_current == '.' || m_current == 'e' || m_current == 'E') {
             std::optional<uint64_t> integerPart = parseDecimalInteger();
             if (integerPart)
                 literalValue = integerPart.value();
@@ -159,7 +159,7 @@ Token Lexer<T>::lex()
         return parseIntegerLiteralSuffix(literalValue);
     }
     default:
-        if (isDecimal (m_current)) {
+        if (isASCIIDigit(m_current)) {
             std::optional<uint64_t> value = parseDecimalInteger();
             if (!value)
                 return makeToken(TokenType::Invalid);
@@ -267,7 +267,7 @@ T Lexer<T>::peek(unsigned i)
 template <typename T>
 void Lexer<T>::skipWhitespace()
 {
-    while (isWhiteSpace(m_current)) {
+    while (isASCIISpace(m_current)) {
         if (m_current == '\n') {
             shift();
             ++m_currentPosition.m_line;
@@ -291,11 +291,11 @@ bool Lexer<T>::isAtEndOfFile() const
 template <typename T>
 std::optional<uint64_t> Lexer<T>::parseDecimalInteger()
 {
-    if (!isDecimal(m_current))
+    if (!isASCIIDigit(m_current))
         return std::nullopt;
 
     CheckedUint64 value = 0;
-    while (isDecimal(m_current)) {
+    while (isASCIIDigit(m_current)) {
         value *= 10ull;
         value += readDecimal(m_current);
         shift();
@@ -315,9 +315,9 @@ std::optional<int64_t> Lexer<T>::parseDecimalFloatExponent()
     if (m_current != 'e' && m_current != 'E')
         return std::nullopt;
     if (char1 == '+' || char1 == '-') {
-        if (!isDecimal(char2))
+        if (!isASCIIDigit(char2))
             return std::nullopt;
-    } else if (!isDecimal(char1))
+    } else if (!isASCIIDigit(char1))
         return std::nullopt;
     shift();
 
@@ -352,65 +352,6 @@ Token Lexer<T>::parseIntegerLiteralSuffix(double literalValue)
     }
     return makeLiteralToken(TokenType::IntegerLiteral, literalValue);
 };
-
-template <typename T>
-ALWAYS_INLINE bool Lexer<T>::isWhiteSpace(T ch)
-{
-    switch (ch) {
-    case WTF::Unicode::space:
-    case WTF::Unicode::tabCharacter:
-    case WTF::Unicode::carriageReturn:
-    case WTF::Unicode::newlineCharacter:
-    case WTF::Unicode::verticalTabulation:
-    case WTF::Unicode::formFeed:
-        return true;
-    default:
-        return false;
-    }
-}
-
-template <typename T>
-ALWAYS_INLINE bool Lexer<T>::isIdentifierStart(T ch)
-{
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
-}
-
-template <typename T>
-ALWAYS_INLINE bool Lexer<T>::isValidIdentifierCharacter(T ch)
-{
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9') || ch == '_';
-}
-
-template <typename T>
-ALWAYS_INLINE bool Lexer<T>::isDecimal(T ch)
-{
-    return (ch >= '0' && ch <= '9');
-}
-
-template <typename T>
-ALWAYS_INLINE bool Lexer<T>::isHexadecimal(T ch)
-{
-    return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
-}
-
-template <typename T>
-ALWAYS_INLINE uint64_t Lexer<T>::readDecimal(T ch)
-{
-    ASSERT(isDecimal(ch));
-    return ch - '0';
-}
-
-template <typename T>
-ALWAYS_INLINE uint64_t Lexer<T>::readHexadecimal(T ch)
-{
-    ASSERT(isHexadecimal(ch));
-    if (ch >= '0' && ch <= '9')
-        return ch - '0';
-    if (ch >= 'a' && ch <= 'f')
-        return ch - 'a';
-    ASSERT(ch >= 'A' && ch <= 'F');
-    return ch - 'A';
-}
 
 template class Lexer<LChar>;
 template class Lexer<UChar>;

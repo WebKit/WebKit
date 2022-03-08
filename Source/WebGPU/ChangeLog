@@ -1,3 +1,27 @@
+2022-03-08  Robin Morisset  <rmorisset@apple.com>
+
+        [WGSL] The lexer should use the functions from wtf/ASCIICType.h
+        https://bugs.webkit.org/show_bug.cgi?id=236783
+
+        Reviewed by Darin Adler.
+
+        I was not aware of these functions when I wrote the lexer, and I ended up reimplementing them.
+        Reusing them is both simpler, and slightly more efficient as some of them (especially isASCIISpace) have been optimized.
+
+        * WGSL/Lexer.cpp:
+        (WGSL::Lexer<T>::lex):
+        (WGSL::Lexer<T>::skipWhitespace):
+        (WGSL::Lexer<T>::parseDecimalInteger):
+        (WGSL::Lexer<T>::parseDecimalFloatExponent):
+        (WGSL::Lexer<T>::isWhiteSpace): Deleted.
+        (WGSL::Lexer<T>::isIdentifierStart): Deleted.
+        (WGSL::Lexer<T>::isValidIdentifierCharacter): Deleted.
+        (WGSL::Lexer<T>::isDecimal): Deleted.
+        (WGSL::Lexer<T>::isHexadecimal): Deleted.
+        (WGSL::Lexer<T>::readDecimal): Deleted.
+        (WGSL::Lexer<T>::readHexadecimal): Deleted.
+        * WGSL/Lexer.h:
+
 2022-03-07  Michael Saboff  <msaboff@apple.com>
 
         Catalyst build failure in WebGPU when building with SYSTEM_CONTENT_PATH
