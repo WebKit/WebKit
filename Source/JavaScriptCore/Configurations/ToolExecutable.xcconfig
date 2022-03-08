@@ -54,12 +54,6 @@ CLANG_ENABLE_OBJC_ARC = YES;
 OTHER_CFLAGS = $(inherited) -isystem icu;
 
 // Explicitly add the PrivateHeaders directory to the search path so that generated header files can be found in production builds.
-HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS_$(WK_WHICH_BUILD_SYSTEM)) "$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders" $(inherited);
-// XCBuild generates LLIntOffsets in TARGET_TEMP_DIR, which does not need to be manually specifed.
-HEADER_SEARCH_PATHS_legacy = "${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}";
-
-EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_WHICH_BUILD_SYSTEM));
-// Offset and settings headers are built by separate targets and script phases in the legacy build system, not using build rules.
-EXCLUDED_SOURCE_FILE_NAMES_legacy = *.asm;
+HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" "${BUILT_PRODUCTS_DIR}/LLIntOffsets/${ARCHS}" "$(JAVASCRIPTCORE_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders" $(inherited);
 
 OTHER_LDFLAGS = $(inherited) $(SOURCE_VERSION_LDFLAGS);

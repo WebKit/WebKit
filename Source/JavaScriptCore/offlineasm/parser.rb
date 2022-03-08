@@ -260,7 +260,7 @@ end
 #
 
 class Parser
-    def initialize(data, fileName, options, sources=nil)
+    def initialize(data, fileName, options)
         @tokens = lex(data, fileName)
         @idx = 0
         @annotation = nil
@@ -268,7 +268,6 @@ class Parser
         # https://bugs.webkit.org/show_bug.cgi?id=229340
         @buildProductsDirectory = ENV['BUILT_PRODUCTS_DIR'];
         @options = options
-        @sources = sources
     end
     
     def parseError(*comment)
@@ -844,7 +843,7 @@ class Parser
                 end
                 fileExists = File.exists?(fileName)
                 raise "File not found: #{fileName}" if not fileExists and not isOptional
-                list << parse(fileName, @options, @sources) if fileExists
+                list << parse(fileName, @options) if fileExists
             else
                 parseError "Expecting terminal #{final} #{comment}"
             end
@@ -901,14 +900,13 @@ def readTextFile(fileName)
     return data
 end
 
-def parseData(data, fileName, options, sources)
-    parser = Parser.new(data, SourceFile.new(fileName), options, sources)
+def parseData(data, fileName, options)
+    parser = Parser.new(data, SourceFile.new(fileName), options)
     parser.parseSequence(nil, "")
 end
 
-def parse(fileName, options, sources=nil)
-    sources << fileName if sources
-    parseData(readTextFile(fileName), fileName, options, sources)
+def parse(fileName, options)
+    parseData(readTextFile(fileName), fileName, options)
 end
 
 def parseHash(fileName, options)

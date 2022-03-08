@@ -1,3 +1,15 @@
+2022-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r290975.
+
+        Broke the build for some configurations
+
+        Reverted changeset:
+
+        "[XCBuild] Emit a discovered dependency file from offlineasm"
+        https://bugs.webkit.org/show_bug.cgi?id=237329
+        https://commits.webkit.org/r290975
+
 2022-03-08  Mark Lam  <mark.lam@apple.com>
 
         Remove invalid ASSERT in LocaleIDBuilder::overrideLanguageScriptRegion().

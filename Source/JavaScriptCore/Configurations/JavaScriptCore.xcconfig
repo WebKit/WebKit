@@ -61,7 +61,4 @@ OUTPUT_ALTERNATE_ROOT_PATH_YES = $(DSTROOT)$(ALTERNATE_ROOT_PATH)/$(FULL_PRODUCT
 INSTALLHDRS_SCRIPT_PHASE = YES;
 APPLY_RULES_IN_COPY_HEADERS = $(WK_USE_NEW_BUILD_SYSTEM);
 
-EXCLUDED_SOURCE_FILE_NAMES = $(inherited) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_WHICH_BUILD_SYSTEM));
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphone*] = $(inherited) framework.sb;
-// Offset and settings headers are built by separate targets and script phases in the legacy build system, not using build rules.
-EXCLUDED_SOURCE_FILE_NAMES_legacy = *.asm;
