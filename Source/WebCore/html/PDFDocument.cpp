@@ -33,8 +33,10 @@
 #include "Frame.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLBodyElement.h"
+#include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
 #include "RawDataDocumentParser.h"
@@ -109,7 +111,7 @@ private:
 void PDFDocumentEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
     if (is<HTMLIFrameElement>(event.target()) && event.type() == eventNames().loadEvent) {
-        m_document->injectContentScript();
+        m_document->injectStyleAndContentScript();
     } else if (is<HTMLScriptElement>(event.target()) && event.type() == eventNames().loadEvent) {
         m_document->setContentScriptLoaded(true);
         if (m_document->isFinishedParsing())
@@ -204,11 +206,18 @@ void PDFDocument::sendPDFArrayBuffer()
     call(globalObject, openFunction, callData, globalObject, arguments);
 }
 
-void PDFDocument::injectContentScript()
+void PDFDocument::injectStyleAndContentScript()
 {
-    auto contentDocument = m_iframe->contentDocument();
-    ASSERT(contentDocument->body());
+    auto* contentDocument = m_iframe->contentDocument();
+    ASSERT(contentDocument->head());
+    auto link = HTMLLinkElement::create(HTMLNames::linkTag, *contentDocument, false);
+    link->setAttribute(relAttr, "stylesheet"_s);
+#if PLATFORM(COCOA)
+    link->setAttribute(hrefAttr, "webkit-pdfjs-viewer://pdfjs/extras/cocoa/style.css"_s);
+#endif
+    contentDocument->head()->appendChild(link);
 
+    ASSERT(contentDocument->body());
     auto script = HTMLScriptElement::create(scriptTag, *contentDocument, false);
     script->addEventListener("load", m_listener.releaseNonNull(), false);
 

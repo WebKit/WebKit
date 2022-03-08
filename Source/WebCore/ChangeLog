@@ -1,3 +1,26 @@
+2022-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        PDF.js content script is adding custom cocoa style unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=237516
+
+        Reviewed by Tim Nguyen.
+
+        Add the custom style from the WebKit code instead of injected content script to make it easier to add the style
+        depending on the platform. Move current cocoa specific style files to a cocoa directory.
+
+        * Modules/pdfjs-extras/cocoa/arrow.down.circle@2x.png: Renamed from Source/WebCore/Modules/pdfjs-extras/arrow.down.circle@2x.png.
+        * Modules/pdfjs-extras/cocoa/minus.magnifyingglass@2x.png: Renamed from Source/WebCore/Modules/pdfjs-extras/minus.magnifyingglass@2x.png.
+        * Modules/pdfjs-extras/cocoa/plus.magnifyingglass@2x.png: Renamed from Source/WebCore/Modules/pdfjs-extras/plus.magnifyingglass@2x.png.
+        * Modules/pdfjs-extras/cocoa/style.css: Renamed from Source/WebCore/Modules/pdfjs-extras/style-cocoa.css.
+        * Modules/pdfjs-extras/content-script.js:
+        (const.PDFJSContentScript.injectStyle): Deleted.
+        (const.PDFJSContentScript.init): Deleted.
+        * html/PDFDocument.cpp:
+        (WebCore::PDFDocumentEventListener::handleEvent):
+        (WebCore::PDFDocument::injectStyleAndContentScript):
+        (WebCore::PDFDocument::injectContentScript): Deleted.
+        * html/PDFDocument.h:
+
 2022-03-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] GraphicsContextGL should have one more output texture for double buffering WebGL

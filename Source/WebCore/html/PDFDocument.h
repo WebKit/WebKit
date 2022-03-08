@@ -41,7 +41,7 @@ public:
 
     void updateDuringParsing();
     void finishedParsing();
-    void injectContentScript();
+    void injectStyleAndContentScript();
 
     void sendPDFArrayBuffer();
     bool isFinishedParsing() const { return m_isFinishedParsing; }

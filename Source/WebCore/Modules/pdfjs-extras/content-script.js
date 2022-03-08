@@ -23,18 +23,7 @@
  */
 
 const PDFJSContentScript = {
-    injectStyle() {
-        const stylesheet = document.createElement("link");
-        stylesheet.rel = "stylesheet";
-        stylesheet.href = "../extras/style-cocoa.css";
-        document.head.appendChild(stylesheet);
-    },
-    init() {
-        this.injectStyle();
-    },
     open(data) {
         PDFViewerApplication.open(data);
     }
 };
-
-PDFJSContentScript.init();
