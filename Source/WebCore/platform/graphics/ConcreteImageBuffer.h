@@ -298,11 +298,11 @@ protected:
         return true; // Just claim we succeedded.
     }
 
-    VolatilityState setNonVolatile() override
+    SetNonVolatileResult setNonVolatile() override
     {
         if (auto* backend = ensureBackendCreated())
             return backend->setNonVolatile();
-        return VolatilityState::Valid;
+        return SetNonVolatileResult::Valid;
     }
 
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override

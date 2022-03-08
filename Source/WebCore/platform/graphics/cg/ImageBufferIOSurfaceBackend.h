@@ -71,7 +71,7 @@ protected:
     void releaseBufferToPool() override;
 
     bool setVolatile() override;
-    VolatilityState setNonVolatile() override;
+    SetNonVolatileResult setNonVolatile() override;
 
     void ensureNativeImagesHaveCopiedBackingStore() final;
 

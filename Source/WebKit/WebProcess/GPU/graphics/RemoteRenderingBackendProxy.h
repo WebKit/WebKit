@@ -95,7 +95,7 @@ public:
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(Vector<WebCore::RenderingResourceIdentifier>&& inUseBufferIdentifiers)>&&);
 
-    WebCore::VolatilityState markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier);
+    WebCore::SetNonVolatileResult markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier);
 
     struct BufferSet {
         RefPtr<WebCore::ImageBuffer> front;

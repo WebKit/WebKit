@@ -92,7 +92,7 @@ public:
 
     // Returns true on success.
     virtual bool setVolatile() = 0;
-    virtual VolatilityState setNonVolatile() = 0;
+    virtual SetNonVolatileResult setNonVolatile() = 0;
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() = 0;
 

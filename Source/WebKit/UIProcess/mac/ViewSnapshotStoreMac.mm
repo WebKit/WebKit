@@ -75,13 +75,13 @@ void ViewSnapshot::clearImage()
     m_surface = nullptr;
 }
 
-WebCore::VolatilityState ViewSnapshot::setVolatile(bool becomeVolatile)
+WebCore::SetNonVolatileResult ViewSnapshot::setVolatile(bool becomeVolatile)
 {
     if (ViewSnapshotStore::singleton().disableSnapshotVolatilityForTesting())
-        return WebCore::VolatilityState::Valid;
+        return WebCore::SetNonVolatileResult::Valid;
 
     if (!m_surface)
-        return WebCore::VolatilityState::Empty;
+        return WebCore::SetNonVolatileResult::Empty;
 
     return m_surface->setVolatile(becomeVolatile);
 }
@@ -91,7 +91,7 @@ id ViewSnapshot::asLayerContents()
     if (!m_surface)
         return nullptr;
 
-    if (setVolatile(false) != WebCore::VolatilityState::Valid) {
+    if (setVolatile(false) != WebCore::SetNonVolatileResult::Valid) {
         clearImage();
         return nullptr;
     }

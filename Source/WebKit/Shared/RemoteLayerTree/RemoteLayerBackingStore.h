@@ -103,7 +103,7 @@ public:
     };
 
     void willMakeBufferVolatile(BufferType);
-    void didMakeFrontBufferNonVolatile(WebCore::VolatilityState);
+    void didMakeFrontBufferNonVolatile(WebCore::SetNonVolatileResult);
 
     RefPtr<WebCore::ImageBuffer> bufferForType(BufferType) const;
 
@@ -137,7 +137,7 @@ private:
     };
 
     bool setBufferVolatile(Buffer&);
-    WebCore::VolatilityState setBufferNonVolatile(Buffer&);
+    WebCore::SetNonVolatileResult setBufferNonVolatile(Buffer&);
 
     void swapBuffers();
 

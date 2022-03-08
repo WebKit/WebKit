@@ -243,7 +243,7 @@ bool ImageBufferIOSurfaceBackend::setVolatile()
     return true;
 }
 
-VolatilityState ImageBufferIOSurfaceBackend::setNonVolatile()
+SetNonVolatileResult ImageBufferIOSurfaceBackend::setNonVolatile()
 {
     return m_surface->setVolatile(false);
 }

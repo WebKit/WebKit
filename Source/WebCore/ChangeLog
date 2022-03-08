@@ -1,3 +1,25 @@
+2022-03-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename VolatilityState to SetNonVolatileResult
+        https://bugs.webkit.org/show_bug.cgi?id=237562
+
+        Reviewed by Tim Horton.
+
+        Pure rename. I want to use VolatilityState to actually reflect state.
+
+        * platform/graphics/ConcreteImageBuffer.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageBufferBackend.h:
+        (WebCore::ImageBufferBackend::setNonVolatile):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::setNonVolatile):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::state const):
+        (WebCore::IOSurface::setVolatile):
+        (WebCore::operator<<):
+
 2022-03-07  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build

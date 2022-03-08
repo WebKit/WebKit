@@ -49,7 +49,7 @@ class ImageBuffer;
 class ProcessIdentity;
 
 enum class PixelFormat : uint8_t;
-enum class VolatilityState : uint8_t;
+enum class SetNonVolatileResult : uint8_t;
 
 using IOSurfaceSeed = uint32_t;
 
@@ -137,10 +137,10 @@ public:
     // Querying volatility can be expensive, so in cases where the surface is
     // going to be used immediately, use the return value of setVolatile to
     // determine whether the data was purged, instead of first calling state() or isVolatile().
-    VolatilityState state() const;
+    SetNonVolatileResult state() const;
     bool isVolatile() const;
 
-    WEBCORE_EXPORT VolatilityState setVolatile(bool);
+    WEBCORE_EXPORT SetNonVolatileResult setVolatile(bool);
 
     IntSize size() const { return m_size; }
     size_t totalBytes() const { return m_totalBytes; }

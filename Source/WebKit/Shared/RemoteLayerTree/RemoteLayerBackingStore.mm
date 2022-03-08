@@ -542,15 +542,15 @@ bool RemoteLayerBackingStore::setBufferVolatile(Buffer& buffer)
     return false;
 }
 
-WebCore::VolatilityState RemoteLayerBackingStore::setBufferNonVolatile(Buffer& buffer)
+WebCore::SetNonVolatileResult RemoteLayerBackingStore::setBufferNonVolatile(Buffer& buffer)
 {
     ASSERT(!WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM));
 
     if (!buffer.imageBuffer)
-        return WebCore::VolatilityState::Valid; // Not really valid but the caller only checked the Empty state.
+        return WebCore::SetNonVolatileResult::Valid; // Not really valid but the caller only checked the Empty state.
 
     if (!buffer.isVolatile)
-        return WebCore::VolatilityState::Valid;
+        return WebCore::SetNonVolatileResult::Valid;
 
     buffer.isVolatile = false;
     return buffer.imageBuffer->setNonVolatile();
@@ -574,10 +574,10 @@ void RemoteLayerBackingStore::willMakeBufferVolatile(BufferType bufferType)
         downcast<ImageBufferBackendHandleSharing>(*sharing).clearBackendHandle();
 }
 
-void RemoteLayerBackingStore::didMakeFrontBufferNonVolatile(WebCore::VolatilityState result)
+void RemoteLayerBackingStore::didMakeFrontBufferNonVolatile(WebCore::SetNonVolatileResult result)
 {
     m_frontBuffer.isVolatile = false;
-    if (result == WebCore::VolatilityState::Empty)
+    if (result == WebCore::SetNonVolatileResult::Empty)
         setNeedsDisplay();
 }
 

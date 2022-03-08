@@ -333,7 +333,7 @@ auto RemoteRenderingBackendProxy::swapToValidFrontBuffer(const BufferSet& buffer
     };
 }
 
-VolatilityState RemoteRenderingBackendProxy::markSurfaceNonVolatile(RenderingResourceIdentifier identifier)
+SetNonVolatileResult RemoteRenderingBackendProxy::markSurfaceNonVolatile(RenderingResourceIdentifier identifier)
 {
     LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "Web Process: RemoteRenderingBackendProxy::markSurfaceNonVolatile " << identifier);
 
@@ -350,7 +350,7 @@ VolatilityState RemoteRenderingBackendProxy::markSurfaceNonVolatile(RenderingRes
         }
     }
 
-    return bufferWasEmpty ? VolatilityState::Empty : VolatilityState::Valid;
+    return bufferWasEmpty ? SetNonVolatileResult::Empty : SetNonVolatileResult::Valid;
 }
 
 void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&& identifiers, CompletionHandler<void(Vector<WebCore::RenderingResourceIdentifier>&&)>&& completionHandler)

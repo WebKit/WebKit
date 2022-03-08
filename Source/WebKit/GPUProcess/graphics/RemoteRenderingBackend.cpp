@@ -410,7 +410,7 @@ void RemoteRenderingBackend::markSurfaceNonVolatile(WebCore::RenderingResourceId
 
     auto backendHandle = handleFromBuffer(*imageBuffer);
     auto previousState = imageBuffer->setNonVolatile();
-    completionHandler(WTFMove(backendHandle), previousState == VolatilityState::Empty);
+    completionHandler(WTFMove(backendHandle), previousState == SetNonVolatileResult::Empty);
 }
 
 // This is the GPU Process version of RemoteLayerBackingStore::swapToValidFrontBuffer().
@@ -445,7 +445,7 @@ void RemoteRenderingBackend::swapToValidFrontBuffer(const BufferIdentifierSet& b
     bool frontBufferWasEmpty = false;
     if (frontBuffer) {
         auto previousState = frontBuffer->setNonVolatile();
-        frontBufferWasEmpty = previousState == VolatilityState::Empty;
+        frontBufferWasEmpty = previousState == SetNonVolatileResult::Empty;
         frontBufferHandle = handleFromBuffer(*frontBuffer);
     }
 

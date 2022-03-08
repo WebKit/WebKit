@@ -55,7 +55,7 @@ enum class PreserveResolution : uint8_t {
     Yes,
 };
 
-enum class VolatilityState : uint8_t {
+enum class SetNonVolatileResult : uint8_t {
     Valid,
     Empty
 };
@@ -126,7 +126,7 @@ public:
 
     // Returns true on success.
     virtual bool setVolatile() { return true; }
-    virtual VolatilityState setNonVolatile() { return VolatilityState::Valid; }
+    virtual SetNonVolatileResult setNonVolatile() { return SetNonVolatileResult::Valid; }
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
 

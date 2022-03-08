@@ -388,12 +388,12 @@ GraphicsContext& IOSurface::ensureGraphicsContext()
     return *m_graphicsContext;
 }
 
-VolatilityState IOSurface::state() const
+SetNonVolatileResult IOSurface::state() const
 {
     uint32_t previousState = 0;
     IOReturn ret = IOSurfaceSetPurgeable(m_surface.get(), kIOSurfacePurgeableKeepCurrent, &previousState);
     ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
-    return previousState == kIOSurfacePurgeableEmpty ? VolatilityState::Empty : VolatilityState::Valid;
+    return previousState == kIOSurfacePurgeableEmpty ? SetNonVolatileResult::Empty : SetNonVolatileResult::Valid;
 }
 
 IOSurfaceSeed IOSurface::seed() const
@@ -409,16 +409,16 @@ bool IOSurface::isVolatile() const
     return previousState != kIOSurfacePurgeableNonVolatile;
 }
 
-VolatilityState IOSurface::setVolatile(bool isVolatile)
+SetNonVolatileResult IOSurface::setVolatile(bool isVolatile)
 {
     uint32_t previousState = 0;
     IOReturn ret = IOSurfaceSetPurgeable(m_surface.get(), isVolatile ? kIOSurfacePurgeableVolatile : kIOSurfacePurgeableNonVolatile, &previousState);
     ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
 
     if (previousState == kIOSurfacePurgeableEmpty)
-        return VolatilityState::Empty;
+        return SetNonVolatileResult::Empty;
 
-    return VolatilityState::Valid;
+    return SetNonVolatileResult::Valid;
 }
 
 IOSurface::Format IOSurface::format() const
@@ -594,13 +594,13 @@ TextStream& operator<<(TextStream& ts, IOSurface::Format format)
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, VolatilityState state)
+static TextStream& operator<<(TextStream& ts, SetNonVolatileResult state)
 {
     switch (state) {
-    case VolatilityState::Valid:
+    case SetNonVolatileResult::Valid:
         ts << "valid";
         break;
-    case VolatilityState::Empty:
+    case SetNonVolatileResult::Empty:
         ts << "empty";
         break;
     }
