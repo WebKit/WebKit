@@ -1422,6 +1422,9 @@ public:
     const SVGRenderStyle& svgStyle() const { return m_svgStyle; }
     SVGRenderStyle& accessSVGStyle() { return m_svgStyle.access(); }
 
+    ColorInterpolation colorInterpolation() const { return svgStyle().colorInterpolation(); }
+    void setColorInterpolation(ColorInterpolation colorInterpolation) { accessSVGStyle().setColorInterpolation(colorInterpolation); }
+
     SVGPaintType fillPaintType() const { return svgStyle().fillPaintType(); }
     Color fillPaintColor() const { return svgStyle().fillPaintColor(); }
     void setFillPaintColor(const Color& color) { accessSVGStyle().setFillPaint(SVGPaintType::RGBColor, color, emptyString()); }

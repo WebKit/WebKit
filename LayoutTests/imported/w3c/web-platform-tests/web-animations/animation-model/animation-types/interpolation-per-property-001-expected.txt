@@ -157,6 +157,10 @@ PASS color supports animating as color of hsl()
 PASS color supports animating as color of #RGBa
 PASS color supports animating as color of rgba()
 PASS color supports animating as color of hsla()
+PASS color-interpolation (type: discrete) has testInterpolation function
+PASS color-interpolation uses discrete animation when animating between "linearrgb" and "auto" with linear easing
+PASS color-interpolation uses discrete animation when animating between "linearrgb" and "auto" with effect easing
+PASS color-interpolation uses discrete animation when animating between "linearrgb" and "auto" with keyframe easing
 PASS column-count (type: positiveInteger) has testInterpolation function
 PASS column-count supports animating as a positive integer
 PASS column-count (type: discrete) has testInterpolation function

@@ -1,3 +1,19 @@
+2022-03-08  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] color-interpolation should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237610
+
+        Reviewed by Tim Nguyen.
+
+        Since the input for the strings used in comparison for the WPT tests is using toLowerCase(),
+        we need to also use toLowerCase() for the output, so that "linearRGB" and "linearrgb" are
+        both correct values for "color-interpolation" values.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/property-list.js:
+
 2022-03-08  Sihui Liu  <sihui_liu@apple.com>
 
         File System Access: disallow empty name in FileSystemHandle
