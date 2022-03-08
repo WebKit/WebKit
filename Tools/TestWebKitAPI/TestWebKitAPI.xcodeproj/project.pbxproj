@@ -262,6 +262,8 @@
 		510477731D298DDD009747EB /* IDBDeleteRecovery.sqlite3-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477701D298D85009747EB /* IDBDeleteRecovery.sqlite3-shm */; };
 		510477741D298DDD009747EB /* IDBDeleteRecovery.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */; };
 		510477771D298E72009747EB /* IDBDeleteRecovery.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 510477761D298E57009747EB /* IDBDeleteRecovery.html */; };
+		510A667B27D301AC00D22629 /* CoreMediaUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A667A27D2FC7A00D22629 /* CoreMediaUtilities.mm */; };
+		510A667C27D301C600D22629 /* AVFoundationSoftLinkTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */; };
 		510A91F824D3622100BFD89C /* SonyDualShock3.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A91F724D3621900BFD89C /* SonyDualShock3.mm */; };
 		510A920A24D5048900BFD89C /* LogitechF310.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A920924D5048300BFD89C /* LogitechF310.mm */; };
 		510A920C24D5275500BFD89C /* LogitechF710.mm in Sources */ = {isa = PBXBuildFile; fileRef = 510A920B24D5275100BFD89C /* LogitechF710.mm */; };
@@ -2070,6 +2072,7 @@
 		510477711D298D85009747EB /* IDBDeleteRecovery.sqlite3-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IDBDeleteRecovery.sqlite3-wal"; sourceTree = "<group>"; };
 		510477751D298E03009747EB /* IDBDeleteRecovery.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IDBDeleteRecovery.mm; sourceTree = "<group>"; };
 		510477761D298E57009747EB /* IDBDeleteRecovery.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = IDBDeleteRecovery.html; sourceTree = "<group>"; };
+		510A667A27D2FC7A00D22629 /* CoreMediaUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreMediaUtilities.mm; sourceTree = "<group>"; };
 		510A91F724D3621900BFD89C /* SonyDualShock3.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SonyDualShock3.mm; sourceTree = "<group>"; };
 		510A920924D5048300BFD89C /* LogitechF310.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogitechF310.mm; sourceTree = "<group>"; };
 		510A920B24D5275100BFD89C /* LogitechF710.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LogitechF710.mm; sourceTree = "<group>"; };
@@ -5059,6 +5062,7 @@
 			children = (
 				0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */,
 				31F865E526701E73003BFC6D /* CoreCryptoSPI.h */,
+				510A667A27D2FC7A00D22629 /* CoreMediaUtilities.mm */,
 				751B05D51F8EAC1A0028A09E /* DatabaseTrackerTest.mm */,
 				57F1C91025DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm */,
 				5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */,
@@ -5531,6 +5535,7 @@
 				F4FA2A4F24D1F05700618A46 /* AttributedSubstringForProposedRange.mm in Sources */,
 				CDC8E48D1BC5CB4500594FEC /* AudioSessionCategoryIOS.mm in Sources */,
 				F42D634422A1729F00D2FB3A /* AutocorrectionTestsIOS.mm in Sources */,
+				510A667C27D301C600D22629 /* AVFoundationSoftLinkTest.mm in Sources */,
 				7CCE7EB51A411A7E00447C4C /* BackForwardList.mm in Sources */,
 				1C7FEB20207C0F2E00D23278 /* BackgroundColor.mm in Sources */,
 				C15CBB3023F1FF1A00300CC7 /* BacklightLevelNotification.mm in Sources */,
@@ -5560,6 +5565,7 @@
 				CD0BD0A61F79924D001AB2CF /* ContextMenuImgWithVideo.mm in Sources */,
 				A1C142C224AA7B2E00444207 /* ContextMenuMouseEvents.mm in Sources */,
 				F4034FA1275D5402003A81F8 /* CookieConsent.mm in Sources */,
+				510A667B27D301AC00D22629 /* CoreMediaUtilities.mm in Sources */,
 				7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */,
 				7AEAD47F1E20116C00416EFE /* CrossPartitionFileSchemeAccess.mm in Sources */,
 				7CCE7EDB1A411A9200447C4C /* CSSParser.cpp in Sources */,

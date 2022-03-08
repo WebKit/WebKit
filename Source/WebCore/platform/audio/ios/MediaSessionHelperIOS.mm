@@ -460,7 +460,7 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
             BEGIN_BLOCK_OBJC_EXCEPTIONS
             protectedSelf->_routeDetector = adoptNS([PAL::allocAVRouteDetectorInstance() init]);
             protectedSelf->_routeDetector.get().routeDetectionEnabled = protectedSelf->_monitoringAirPlayRoutes;
-            [[NSNotificationCenter defaultCenter] addObserver:protectedSelf.get() selector:@selector(wirelessRoutesAvailableDidChange:) name:AVRouteDetectorMultipleRoutesDetectedDidChangeNotification object:protectedSelf->_routeDetector.get()];
+            [[NSNotificationCenter defaultCenter] addObserver:protectedSelf.get() selector:@selector(wirelessRoutesAvailableDidChange:) name:PAL::AVRouteDetectorMultipleRoutesDetectedDidChangeNotification object:protectedSelf->_routeDetector.get()];
 
             protectedSelf->_callback->externalOutputDeviceAvailableDidChange();
             END_BLOCK_OBJC_EXCEPTIONS

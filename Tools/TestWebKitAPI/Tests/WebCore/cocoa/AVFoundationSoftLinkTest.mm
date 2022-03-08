@@ -193,11 +193,14 @@ TEST(AVFoundationSoftLink, Constants)
 #endif
 
 #endif
-    
+
+#if !PLATFORM(WATCHOS)
+    EXPECT_TRUE([PAL::AVRouteDetectorMultipleRoutesDetectedDidChangeNotification isEqualToString:@"AVRouteDetectorMultipleRoutesDetectedDidChangeNotification"]);
+#endif
+
 #if HAVE(AVROUTEPICKERVIEW)
-    EXPECT_TRUE([AVRouteDetectorMultipleRoutesDetectedDidChangeNotification isEqualToString:@"AVRouteDetectorMultipleRoutesDetectedDidChangeNotification"]);
-    EXPECT_TRUE([AVOutputContextOutputDevicesDidChangeNotification isEqualToString:@"AVOutputContextOutputDevicesDidChangeNotification"]);
-#endif // PLATFORM(WATCHOS)
+    EXPECT_TRUE([PAL::AVOutputContextOutputDevicesDidChangeNotification isEqualToString:@"AVOutputContextOutputDevicesDidChangeNotification"]);
+#endif // HAVE(AVROUTEPICKERVIEW)
 
 }
 

@@ -1,3 +1,19 @@
+2022-03-07  Jean-Yves Avenard  <jya@apple.com>
+
+        MediaTime::invalidTime() conversion to CMTime incorrectly creates a valid time.
+        https://bugs.webkit.org/show_bug.cgi?id=237473
+        rdar://problem/89814921
+
+        Reviewed by Jer Noble.
+
+        Fly-by fix: macro definition to access method
+        AVOutputContextOutputDevicesDidChangeNotification was incorrect.
+
+        * pal/avfoundation/MediaTimeAVFoundation.cpp:
+        (PAL::toCMTime): Ensure that if the converted time was invalid. The
+        flag is carried accross.
+        * pal/cocoa/AVFoundationSoftLink.h:
+
 2022-03-02  Dan Glastonbury  <djg@apple.com>
 
         [WebGPU] Implement GPUDeviceDescriptor.requiredLimits

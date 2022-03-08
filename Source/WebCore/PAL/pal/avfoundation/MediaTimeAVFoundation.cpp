@@ -65,6 +65,8 @@ CMTime toCMTime(const MediaTime& mediaTime)
 
     if (mediaTime.isValid())
         time.flags |= kCMTimeFlags_Valid;
+    else
+        time.flags &= ~kCMTimeFlags_Valid;
     if (mediaTime.hasBeenRounded())
         time.flags |= kCMTimeFlags_HasBeenRounded;
     if (mediaTime.isPositiveInfinite())

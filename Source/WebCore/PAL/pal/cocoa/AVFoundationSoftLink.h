@@ -338,11 +338,12 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AVFoundation, AVCaptureSessionSetAuthorizedTo
 
 #if !PLATFORM(WATCHOS)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVRouteDetectorMultipleRoutesDetectedDidChangeNotification, NSString *)
-#define AVRouteDetectorMultipleRoutesDetectedDidChangeNotification PAL::get_AVFoundation_AVRouteDetectorMultipleRoutesDetectedDidChangeNotification()
+#define AVRouteDetectorMultipleRoutesDetectedDidChangeNotification get_AVFoundation_AVRouteDetectorMultipleRoutesDetectedDidChangeNotification()
 #endif // HAVE(WATCHOS)
 
 #if HAVE(AVROUTEPICKERVIEW)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVOutputContextOutputDevicesDidChangeNotification, NSNotificationName)
+#define AVOutputContextOutputDevicesDidChangeNotification get_AVFoundation_AVOutputContextOutputDevicesDidChangeNotification()
 #endif // HAVE(AVROUTEPICKERVIEW)
 
 #if PLATFORM(COCOA)
