@@ -96,12 +96,13 @@ class GitHub(Scm):
                     raise ValueError("Must define '{}' when creating pull-request".format(key))
 
             user, _ = self.repository.credentials(required=True)
+            url = '{api_url}/repos/{owner}/{name}/pulls'.format(
+                api_url=self.repository.api_url,
+                owner=self.repository.owner,
+                name=self.repository.name,
+            )
             response = requests.post(
-                '{api_url}/repos/{owner}/{name}/pulls'.format(
-                    api_url=self.repository.api_url,
-                    owner=self.repository.owner,
-                    name=self.repository.name,
-                ), auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 json=dict(
                     title=title,
@@ -112,6 +113,8 @@ class GitHub(Scm):
                 ),
             )
             if response.status_code // 100 != 2:
+                sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
+                sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
                 return None
             result = self.PullRequest(response.json())
 
@@ -139,13 +142,14 @@ class GitHub(Scm):
                 updates['body'] = PullRequest.create_body(body, commits)
             if opened is not None:
                 updates['state'] = 'open' if opened else 'closed'
+            url = '{api_url}/repos/{owner}/{name}/pulls/{number}'.format(
+                api_url=self.repository.api_url,
+                owner=self.repository.owner,
+                name=self.repository.name,
+                number=pull_request.number,
+            )
             response = requests.post(
-                '{api_url}/repos/{owner}/{name}/pulls/{number}'.format(
-                    api_url=self.repository.api_url,
-                    owner=self.repository.owner,
-                    name=self.repository.name,
-                    number=pull_request.number,
-                ), auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
+                url, auth=HTTPBasicAuth(*self.repository.credentials(required=True)),
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 json=updates,
             )
@@ -153,6 +157,8 @@ class GitHub(Scm):
                 pull_request._opened = False
                 return pull_request
             if response.status_code // 100 != 2:
+                sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
+                sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
                 return None
             data = response.json()
 
@@ -315,6 +321,8 @@ class GitHub(Scm):
             message = response.json().get('message')
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
+            if auth:
+                sys.stderr.write(Tracker.REFRESH_TOKEN_PROMPT)
             return None
         result = response.json()
 

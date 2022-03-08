@@ -45,6 +45,7 @@ class Tracker(GenericTracker):
         r'\Ahttps?://api.github.{}/repos/{}/{}/issues/(?P<id>\d+)\Z',
         r'\Aapi.github.{}/repos/{}/{}/issues/(?P<id>\d+)\Z',
     ]
+    REFRESH_TOKEN_PROMPT = "Is your API token out of date? Run 'git-webkit setup' to refresh credentials\n"
 
     class Encoder(GenericTracker.Encoder):
         @webkitcorepy.decorators.hybridmethod
@@ -151,6 +152,8 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
             message = response.json().get('message')
             if message:
                 sys.stderr.write('Message: {}\n'.format(message))
+            if auth:
+                sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
             return None
         result = response.json()
 
@@ -170,14 +173,14 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         if not username:
             raise RuntimeError("Failed to find username for '{}'".format(name or email))
 
+        url = '{api_url}/users/{username}'.format(api_url=self.api_url, username=username)
         response = requests.get(
-            '{api_url}/users/{username}'.format(
-                api_url=self.api_url,
-                username=username,
-            ), auth=HTTPBasicAuth(*self.credentials(required=True)),
+            url, auth=HTTPBasicAuth(*self.credentials(required=True)),
             headers=dict(Accept='application/vnd.github.v3+json'),
         )
         if response.status_code // 100 != 2:
+            sys.stderr.write("Request to '{}' returned status code '{}'\n".format(url, response.status_code))
+            sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
             return None
 
         data = response.json()
@@ -320,6 +323,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
                 if opened is not None:
                     issue._opened = None
                 sys.stderr.write("Failed to modify '{}'\n".format(issue))
+                sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
                 return None
 
         return self.add_comment(issue, why) if why else issue
@@ -338,6 +342,7 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
         )
         if response.status_code // 100 != 2:
             sys.stderr.write("Failed to add comment to '{}'\n".format(issue))
+            sys.stderr.write(self.REFRESH_TOKEN_PROMPT)
             return None
 
         data = response.json()

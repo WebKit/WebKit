@@ -69,6 +69,7 @@ class TestCheckout(testing.PathTestCase):
         self.assertEqual(
             "Request to 'https://api.github.example.com/repos/WebKit/WebKit/pulls/1' returned status code '404'\n"
             "Message: Not found\n"
+            "Is your API token out of date? Run 'git-webkit setup' to refresh credentials\n"
             "Failed to find 'PR-1' associated with this repository\n",
             captured.stderr.getvalue(),
         )

@@ -1,5 +1,29 @@
 2022-03-08  Jonathan Bedard  <jbedard@apple.com>
 
+        [git-webkit] Prompt user when GitHub credentials are likely incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=237450
+        <rdar://problem/89781069>
+
+        Reviewed by Dewei Zhu.
+
+        GitHub doesn't make it obvious when credentials are invalid, but our scripts
+        can make an educated guess when invalid credentials are the root cause.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py:
+        (Tracker): Add REFRESH_TOKEN_PROMPT.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.PRGenerator.create):
+        (GitHub.PRGenerator.update):
+        (GitHub.request):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/checkout_unittest.py:
+        (TestCheckout.test_no_pr_github):
+
+2022-03-08  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Set bug tracker usernames from contributors.json
         https://bugs.webkit.org/show_bug.cgi?id=237608
         <rdar://problem/89971547>
