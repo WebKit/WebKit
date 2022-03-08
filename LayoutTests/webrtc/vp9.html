@@ -67,6 +67,30 @@ test(() => {
 }, "VP9 in receiver getCapabilities");
 
 if (hasVP9) {
+    promise_test(async () => {
+        let videoConfiguration = { contentType: 'video/vp9', width: 800, height: 600, bitrate: 3000, framerate: 24 };
+        let results = await navigator.mediaCapabilities.decodingInfo({type: 'webrtc', video: videoConfiguration });
+        assert_true(results.supported, "decoder supported 1");
+        assert_true(results.smooth, "decoder smooth 1");
+
+        videoConfiguration = { contentType: 'video/VP9', width: 800, height: 600, bitrate: 3000, framerate: 24 };
+        results = await navigator.mediaCapabilities.decodingInfo({type: 'webrtc', video: videoConfiguration });
+        assert_true(results.supported, "decoder supported 2");
+        assert_true(results.smooth, "decoder smooth 2");
+    }, "VP9 decoding in navigator.mediaCapabilities");
+
+    promise_test(async () => {
+        let videoConfiguration = { contentType: 'video/vp9', width: 800, height: 600, bitrate: 3000, framerate: 24 };
+        let results = await navigator.mediaCapabilities.encodingInfo({type: 'webrtc', video: videoConfiguration });
+        assert_true(results.supported, "encoder supported 1");
+        assert_equals(results.powerEfficient, results.smooth, "encoder powerEfficient 1");
+
+        videoConfiguration = { contentType: 'video/VP9', width: 800, height: 600, bitrate: 3000, framerate: 24 };
+        results = await navigator.mediaCapabilities.encodingInfo({type: 'webrtc', video: videoConfiguration });
+        assert_true(results.supported, "encoder supported 2");
+        assert_equals(results.powerEfficient, results.smooth, "encoder powerEfficient 2");
+    }, "VP9 encoding in navigator.mediaCapabilities");
+
     promise_test(async (test) => {
         const pc = new RTCPeerConnection();
         pc.addTransceiver("video");

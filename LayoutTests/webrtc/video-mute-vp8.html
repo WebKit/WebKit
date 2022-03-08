@@ -32,6 +32,29 @@ promise_test(async (test) => {
     const description = await pc.createOffer();
     pc.close();
     assert_true(description.sdp.indexOf("VP8") !== -1, "VP8 codec is in the SDP");
+
+    if (!navigator.mediaCapabilities)
+        return;
+
+    let videoConfiguration = { contentType: 'video/vp8', width: 800, height: 600, bitrate: 3000, framerate: 24 };
+    let results = await navigator.mediaCapabilities.decodingInfo({type: 'webrtc', video: videoConfiguration });
+    assert_true(results.supported, "decoder supported 1");
+    assert_false(results.powerEfficient, "decoder powerEfficient 1");
+    assert_true(results.smooth, "decoder smooth 1");
+
+    results = await navigator.mediaCapabilities.encodingInfo({type: 'webrtc', video: videoConfiguration });
+    assert_true(results.supported, "encoder supported 1");
+    assert_false(results.powerEfficient, "encoder powerEfficient 1");
+
+    videoConfiguration = { contentType: 'video/VP8', width: 800, height: 600, bitrate: 3000, framerate: 24 };
+    results = await navigator.mediaCapabilities.decodingInfo({type: 'webrtc', video: videoConfiguration });
+    assert_true(results.supported, "decoder supported 2");
+    assert_false(results.powerEfficient, "decoder powerEfficient 2");
+    assert_true(results.smooth, "decoder smooth 2");
+
+    results = await navigator.mediaCapabilities.encodingInfo({type: 'webrtc', video: videoConfiguration });
+    assert_true(results.supported, "encoder supported 2");
+    assert_false(results.powerEfficient, "encoder powerEfficient 2");
 }, "Verify VP8 activation")
 
 var track;

@@ -57,6 +57,10 @@ ALLOW_UNUSED_PARAMETERS_END
 #include <wtf/NeverDestroyed.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include "VP9UtilitiesCocoa.h"
+#endif
+
 namespace WebCore {
 
 #if !USE(LIBWEBRTC)
@@ -569,6 +573,19 @@ std::optional<RTCRtpCodecCapability> LibWebRTCProvider::codecCapability(const Co
 }
 #endif // USE(LIBWEBRTC)
 
+#if !PLATFORM(COCOA)
+// FIXME: Implement these routines.
+static std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration&)
+{
+    return { };
+}
+
+static bool isVPSoftwareDecoderSmooth(const VideoConfiguration&)
+{
+    return true;
+}
+#endif
+
 void LibWebRTCProvider::createDecodingConfiguration(MediaDecodingConfiguration&& configuration, DecodingConfigurationCallback&& callback)
 {
     ASSERT(configuration.type == MediaDecodingType::WebRTC);
@@ -584,17 +601,23 @@ void LibWebRTCProvider::createDecodingConfiguration(MediaDecodingConfiguration&&
             callback({ });
             return;
         }
-        info.supported = true;
-#if PLATFORM(COCOA)
         auto containerType = contentType.containerType();
-        if (containerType == "video/vp8")
+        if (equalIgnoringASCIICase(containerType, "video/vp8")) {
             info.powerEfficient = false;
-        else if (containerType == "video/vp9")
-            info.powerEfficient = isSupportingVP9VTB();
-        else
+            info.smooth = isVPSoftwareDecoderSmooth(*info.supportedConfiguration.video);
+        } else if (equalIgnoringASCIICase(containerType, "video/vp9")) {
+            auto decodingInfo = computeVPParameters(*info.supportedConfiguration.video);
+            if (decodingInfo && !decodingInfo->supported && isSupportingVP9VTB()) {
+                callback({ });
+                return;
+            }
+            info.powerEfficient = decodingInfo ? decodingInfo->powerEfficient : true;
+            info.smooth = decodingInfo ? decodingInfo->smooth : isVPSoftwareDecoderSmooth(*info.supportedConfiguration.video);
+        } else {
+            // FIXME: Provide more granular H.264 decoder information.
             info.powerEfficient = true;
-        info.smooth = info.powerEfficient;
-#endif
+            info.smooth = true;
+        }
     }
     if (info.supportedConfiguration.audio) {
         ContentType contentType { info.supportedConfiguration.audio->contentType };
@@ -603,8 +626,8 @@ void LibWebRTCProvider::createDecodingConfiguration(MediaDecodingConfiguration&&
             callback({ });
             return;
         }
-        info.supported = true;
     }
+    info.supported = true;
     callback(WTFMove(info));
 #else
     UNUSED_PARAM(configuration);
@@ -630,13 +653,15 @@ void LibWebRTCProvider::createEncodingConfiguration(MediaEncodingConfiguration&&
         info.supported = true;
 #if PLATFORM(COCOA)
         auto containerType = contentType.containerType();
-        if (containerType == "video/vp8")
+        if (equalIgnoringASCIICase(containerType, "video/vp8") || equalIgnoringASCIICase(containerType, "video/vp9")) {
             info.powerEfficient = false;
-        else if (containerType == "video/vp9")
-            info.powerEfficient = isSupportingVP9VTB();
-        else
+            // FIXME: Provide more granular VPX encoder smoothness.
+            info.smooth = false;
+        } else {
+            // FIXME: Provide more granular H.264 encoder information.
             info.powerEfficient = true;
-        info.smooth = info.powerEfficient;
+            info.smooth = true;
+        }
 #endif
     }
     if (info.supportedConfiguration.audio) {

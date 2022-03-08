@@ -49,6 +49,8 @@ WEBCORE_EXPORT bool vp9HardwareDecoderAvailable();
 bool isVP8DecoderAvailable();
 bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord&);
 std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord&, const VideoConfiguration&);
+std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration&);
+bool isVPSoftwareDecoderSmooth(const VideoConfiguration&);
 
 RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser&, const webm::Element<webm::Colour>&);
 

@@ -249,7 +249,22 @@ std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigura
         if (*videoConfiguration.colorGamut == ColorGamut::Rec2020 && codecConfiguration.colorPrimaries != 9)
             return std::nullopt;
     }
+    return computeVPParameters(videoConfiguration);
+}
 
+bool isVPSoftwareDecoderSmooth(const VideoConfiguration& videoConfiguration)
+{
+    if (videoConfiguration.height <= 1080 && videoConfiguration.framerate > 60)
+        return false;
+
+    if (videoConfiguration.height <= 2160 && videoConfiguration.framerate > 30)
+        return false;
+
+    return true;
+}
+
+std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration& videoConfiguration)
+{
     MediaCapabilitiesInfo info;
 
     if (vp9HardwareDecoderAvailable()) {
@@ -278,12 +293,7 @@ std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigura
     // SW VP9 Decoder has much more variable capabilities depending on CPU characteristics.
     // FIXME: Add a lookup table for device-to-capabilities. For now, assume that the SW VP9
     // decoder can support 4K @ 30.
-    if (videoConfiguration.height <= 1080 && videoConfiguration.framerate > 60)
-        info.smooth = false;
-    if (videoConfiguration.height <= 2160 && videoConfiguration.framerate > 30)
-        info.smooth = false;
-    else
-        info.smooth = true;
+    info.smooth = isVPSoftwareDecoderSmooth(videoConfiguration);
 
     // For wall-powered devices, always report VP9 as supported, even if not powerEfficient.
     if (!systemHasBattery()) {

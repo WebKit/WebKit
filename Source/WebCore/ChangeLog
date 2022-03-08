@@ -1,3 +1,18 @@
+2022-03-08  Youenn Fablet  <youenn@apple.com>
+
+        Improve WebRTC VPX media capabilities accuracy
+        https://bugs.webkit.org/show_bug.cgi?id=237462
+
+        Reviewed by Eric Carlson.
+
+        Reuse VPx decoder media capabilities routines for WebRTC.
+        Use caseless string comparison for content type.
+        Covered by updated tests.
+
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.h:
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+
 2022-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         Rename VolatilityState to SetNonVolatileResult
