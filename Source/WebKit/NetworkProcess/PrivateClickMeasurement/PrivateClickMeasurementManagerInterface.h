@@ -59,7 +59,7 @@ public:
     virtual void storeUnattributed(PrivateClickMeasurement&&, CompletionHandler<void()>&&) = 0;
     virtual void handleAttribution(AttributionTriggerData&&, const URL& requestURL, WebCore::RegistrableDomain&& redirectDomain, const URL& firstPartyURL, const ApplicationBundleIdentifier&) = 0;
     virtual void clear(CompletionHandler<void()>&&) = 0;
-    virtual void clearForRegistrableDomain(const RegistrableDomain&, CompletionHandler<void()>&&) = 0;
+    virtual void clearForRegistrableDomain(RegistrableDomain&&, CompletionHandler<void()>&&) = 0;
     virtual void migratePrivateClickMeasurementFromLegacyStorage(PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) = 0;
     virtual void setDebugModeIsEnabled(bool) = 0;
 

@@ -1,3 +1,196 @@
+2022-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Optimize further the passing of data across threads
+        https://bugs.webkit.org/show_bug.cgi?id=237568
+
+        Reviewed by Geoffrey Garen.
+
+        Optimize further the passing of data across threads by leveraging more broadly the optimized
+        versions of isolatedCopy() on r-value references.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grantStorageAccessInternal):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::dumpResourceLoadStatistics):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clear):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateCookieBlocking):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::ResourceLoadStatisticsStore::updateCookieBlockingForDomains):
+        (WebKit::ResourceLoadStatisticsStore::logTestingEvent):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResourceForDebugMode):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::grantStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::logFrameNavigation):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::logCrossSiteLoadWithLinkDecoration):
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setLastSeen):
+        (WebKit::WebResourceLoadStatisticsStore::mergeStatisticForTesting):
+        (WebKit::WebResourceLoadStatisticsStore::isRelationshipOnlyInDatabaseOnce):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::dumpResourceLoadStatistics):
+        (WebKit::WebResourceLoadStatisticsStore::isPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isVeryPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubresourceUnder):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsSubFrameUnder):
+        (WebKit::WebResourceLoadStatisticsStore::isRegisteredAsRedirectingTo):
+        (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::isGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::setSubframeUnderTopFrameDomain):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameDomain):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsStore::setTopFrameUniqueRedirectFrom):
+        (WebKit::WebResourceLoadStatisticsStore::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting):
+        * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::updateQuotaBasedOnSpaceUsageForTesting):
+        (WebKit::NetworkConnectionToWebProcess::writeBlobsToTemporaryFilesForIndexedDB):
+        (WebKit::NetworkConnectionToWebProcess::logUserInteraction):
+        (WebKit::NetworkConnectionToWebProcess::hasStorageAccess):
+        (WebKit::NetworkConnectionToWebProcess::requestStorageAccess):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::isGrandfathered):
+        (WebKit::NetworkProcess::isPrevalentResource):
+        (WebKit::NetworkProcess::isVeryPrevalentResource):
+        (WebKit::NetworkProcess::setGrandfathered):
+        (WebKit::NetworkProcess::setPrevalentResource):
+        (WebKit::NetworkProcess::setPrevalentResourceForDebugMode):
+        (WebKit::NetworkProcess::setVeryPrevalentResource):
+        (WebKit::NetworkProcess::clearPrevalentResource):
+        (WebKit::NetworkProcess::setSubframeUnderTopFrameDomain):
+        (WebKit::NetworkProcess::isRegisteredAsRedirectingTo):
+        (WebKit::NetworkProcess::isRegisteredAsSubFrameUnder):
+        (WebKit::NetworkProcess::setSubresourceUnderTopFrameDomain):
+        (WebKit::NetworkProcess::setSubresourceUniqueRedirectTo):
+        (WebKit::NetworkProcess::setSubresourceUniqueRedirectFrom):
+        (WebKit::NetworkProcess::isRegisteredAsSubresourceUnder):
+        (WebKit::NetworkProcess::setTopFrameUniqueRedirectTo):
+        (WebKit::NetworkProcess::setTopFrameUniqueRedirectFrom):
+        (WebKit::NetworkProcess::setLastSeen):
+        (WebKit::NetworkProcess::mergeStatisticForTesting):
+        (WebKit::NetworkProcess::insertExpiredStatisticForTesting):
+        (WebKit::NetworkProcess::logFrameNavigation):
+        (WebKit::NetworkProcess::logUserInteraction):
+        (WebKit::NetworkProcess::hadUserInteraction):
+        (WebKit::NetworkProcess::isRelationshipOnlyInDatabaseOnce):
+        (WebKit::NetworkProcess::clearUserInteraction):
+        (WebKit::NetworkProcess::didCommitCrossSiteLoadWithDataTransfer):
+        (WebKit::NetworkProcess::setCrossSiteLoadWithLinkDecorationForTesting):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::deleteCookiesForTesting):
+        (WebKit::NetworkProcess::registrableDomainsWithWebsiteData):
+        (WebKit::NetworkProcess::didIncreaseQuota):
+        (WebKit::NetworkProcess::renameOriginInWebsiteData):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::setResourceLoadStatisticsEnabled):
+        (WebKit::NetworkSession::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::clearForRegistrableDomain):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManager.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerInterface.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.cpp:
+        (WebKit::PCM::ManagerProxy::clearForRegistrableDomain):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementManagerProxy.h:
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.cpp:
+        (WebKit::PCM::Store::attributePrivateClickMeasurement):
+        (WebKit::PCM::Store::privateClickMeasurementToStringForTesting const):
+        (WebKit::PCM::Store::clearPrivateClickMeasurementForRegistrableDomain):
+        (WebKit::PCM::Store::clearSentAttribution):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementStore.h:
+        * NetworkProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        (WebKit::LocalStorageDatabaseTracker::OriginDetails::isolatedCopy const):
+        (WebKit::LocalStorageDatabaseTracker::OriginDetails::isolatedCopy):
+        * NetworkProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::getSessionStorageOriginsCrossThreadCopy const):
+        (WebKit::StorageManager::getLocalStorageOriginsCrossThreadCopy const):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::writeFile):
+        (WebKit::CacheStorage::Engine::readFile):
+        (WebKit::CacheStorage::Engine::removeFile):
+        (WebKit::CacheStorage::Engine::writeSizeFile):
+        (WebKit::CacheStorage::Engine::getDirectories):
+        (WebKit::CacheStorage::Engine::clearCachesForOriginFromDirectories):
+        (WebKit::CacheStorage::Engine::deleteNonEmptyDirectoryOnBackgroundThread):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::RecordInformation::isolatedCopy):
+        (WebKit::CacheStorage::TraversalResult::isolatedCopy):
+        (WebKit::CacheStorage::Cache::open):
+        (WebKit::CacheStorage::isolatedCopy): Deleted.
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::retrieveOriginFromDirectory):
+        (WebKit::CacheStorage::Caches::clear):
+        (WebKit::CacheStorage::Caches::readCachesFromDisk):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::clear):
+        * NetworkProcess/cache/NetworkCacheIOChannel.h:
+        (WebKit::NetworkCache::IOChannel::open):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::updateFileModificationTime):
+        (WebKit::NetworkCache::Storage::dispatchReadOperation):
+        (WebKit::NetworkCache::Storage::dispatchWriteOperation):
+        (WebKit::NetworkCache::Storage::traverse):
+        (WebKit::NetworkCache::Storage::clear):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        * NetworkProcess/storage/IDBStorageConnectionToClient.cpp:
+        (WebKit::IDBStorageConnectionToClient::didGetAllDatabaseNamesAndVersions):
+        * NetworkProcess/storage/IDBStorageConnectionToClient.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::didIncreaseQuota):
+        (WebKit::NetworkStorageManager::moveData):
+        (WebKit::NetworkStorageManager::registerTemporaryBlobFilePaths):
+        (WebKit::NetworkStorageManager::resetQuotaUpdatedBasedOnUsageForTesting):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * Shared/API/APIString.h:
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::isolatedCopy const):
+        (WebKit::WebsiteData::isolatedCopy):
+        (WebKit::WebsiteData::Entry::isolatedCopy const):
+        (WebKit::WebsiteData::Entry::isolatedCopy):
+        * Shared/WebsiteData/WebsiteData.h:
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::createExtension):
+        (API::ContentRuleListStore::lookupContentRuleList):
+        (API::ContentRuleListStore::compileContentRuleList):
+        (API::ContentRuleListStore::removeContentRuleList):
+        (API::ContentRuleListStore::getContentRuleListSource):
+        * UIProcess/API/APIContentRuleListStore.h:
+        * UIProcess/API/glib/WebKitUserContentFilterStore.cpp:
+        (webkitUserContentFilterStoreSaveBytes):
+        * UIProcess/DeviceIdHashSaltStorage.cpp:
+        (WebKit::DeviceIdHashSaltStorage::deleteHashSaltFromDisk):
+        * UIProcess/DeviceIdHashSaltStorage.h:
+        (WebKit::DeviceIdHashSaltStorage::HashSaltForOrigin::HashSaltForOrigin):
+        (WebKit::DeviceIdHashSaltStorage::HashSaltForOrigin::isolatedCopy const):
+        (WebKit::DeviceIdHashSaltStorage::HashSaltForOrigin::isolatedCopy):
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::isolatedCopy const):
+        (WebKit::WebsiteDataRecord::isolatedCopy):
+        * UIProcess/WebsiteData/WebsiteDataRecord.h:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::finishFetchingScriptInServer):
+        (WebKit::WebSWClientConnection::registerServiceWorkerClient):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebServiceWorkerFetchTaskClient.cpp:
+        (WebKit::WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish):
+
 2022-03-08  Sihui Liu  <sihui_liu@apple.com>
 
         Disable CFURLCache in WebKit

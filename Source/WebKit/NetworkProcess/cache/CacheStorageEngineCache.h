@@ -52,6 +52,8 @@ struct RecordInformation {
     URL url;
     bool hasVaryStar { false };
     HashMap<String, String> varyHeaders;
+
+    RecordInformation isolatedCopy() &&;
 };
 
 class AsynchronousPutTaskCounter;

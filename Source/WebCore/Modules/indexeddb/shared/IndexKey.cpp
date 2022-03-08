@@ -37,9 +37,14 @@ IndexKey::IndexKey(Vector<IDBKeyData>&& keys)
     m_keys.swap(keys);
 }
 
-IndexKey IndexKey::isolatedCopy() const
+IndexKey IndexKey::isolatedCopy() const &
 {
     return { crossThreadCopy(m_keys) };
+}
+
+IndexKey IndexKey::isolatedCopy() &&
+{
+    return { crossThreadCopy(WTFMove(m_keys)) };
 }
 
 IDBKeyData IndexKey::asOneKey() const

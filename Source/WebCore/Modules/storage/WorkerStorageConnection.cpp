@@ -94,8 +94,8 @@ void WorkerStorageConnection::fileSystemGetDirectory(const ClientOrigin& origin,
 
     callOnMainThread([callbackIdentifier, workerThread = Ref { m_scope->thread() }, origin = origin.isolatedCopy()]() mutable {
         auto mainThreadConnection = workerThread->workerLoaderProxy().storageConnection();
-        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto result) mutable {
-            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(result)] (auto& scope) mutable {
+        auto mainThreadCallback = [callbackIdentifier, workerThread = WTFMove(workerThread)](auto&& result) mutable {
+            workerThread->runLoop().postTaskForMode([callbackIdentifier, result = crossThreadCopy(WTFMove(result))] (auto& scope) mutable {
                 downcast<WorkerGlobalScope>(scope).storageConnection().didGetDirectory(callbackIdentifier, WTFMove(result));
             }, WorkerRunLoop::defaultMode());
         };

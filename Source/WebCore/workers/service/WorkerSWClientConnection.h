@@ -51,9 +51,9 @@ private:
     void postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&&, const ServiceWorkerOrClientIdentifier& source) final;
     SWServerConnectionIdentifier serverConnectionIdentifier() const final;
     bool mayHaveServiceWorkerRegisteredForOrigin(const SecurityOriginData&) const final;
-    void registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData&, const std::optional<ServiceWorkerRegistrationIdentifier>&, const String& userAgent) final;
+    void registerServiceWorkerClient(const SecurityOrigin& topOrigin, ServiceWorkerClientData&&, const std::optional<ServiceWorkerRegistrationIdentifier>&, String&& userAgent) final;
     void unregisterServiceWorkerClient(ScriptExecutionContextIdentifier) final;
-    void finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const WorkerFetchResult&) final;
+    void finishFetchingScriptInServer(const ServiceWorkerJobDataIdentifier&, ServiceWorkerRegistrationKey&&, WorkerFetchResult&&) final;
     void scheduleJobInServer(const ServiceWorkerJobData&) final;
     void scheduleJob(ServiceWorkerOrClientIdentifier, const ServiceWorkerJobData&) final;
     void scheduleUnregisterJobInServer(ServiceWorkerRegistrationIdentifier, ServiceWorkerOrClientIdentifier, CompletionHandler<void(ExceptionOr<bool>&&)>&&) final;

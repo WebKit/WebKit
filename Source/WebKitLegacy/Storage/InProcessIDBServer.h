@@ -113,7 +113,7 @@ public:
     void didStartTransaction(const WebCore::IDBResourceIdentifier& transactionIdentifier, const WebCore::IDBError&) final;
     void didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBError&) final;
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) final;
-    void didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, const Vector<WebCore::IDBDatabaseNameAndVersion>&) final;
+    void didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, Vector<WebCore::IDBDatabaseNameAndVersion>&&) final;
 
     void closeAndDeleteDatabasesModifiedSince(WallTime);
 

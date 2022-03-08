@@ -661,7 +661,7 @@ void Cache::clear(WallTime modifiedSince, Function<void()>&& completionHandler)
     LOG(NetworkCache, "(NetworkProcess) clearing cache");
 
     String anyType;
-    m_storage->clear(anyType, modifiedSince, WTFMove(completionHandler));
+    m_storage->clear(WTFMove(anyType), modifiedSince, WTFMove(completionHandler));
 
     deleteDumpFile();
 }

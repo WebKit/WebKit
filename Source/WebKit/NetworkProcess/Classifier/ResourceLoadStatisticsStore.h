@@ -108,7 +108,7 @@ public:
     virtual Vector<WebResourceLoadStatisticsStore::ThirdPartyData> aggregatedThirdPartyData() const = 0;
 
     virtual void updateCookieBlocking(CompletionHandler<void()>&&) = 0;
-    void updateCookieBlockingForDomains(const RegistrableDomainsToBlockCookiesFor&, CompletionHandler<void()>&&);
+    void updateCookieBlockingForDomains(RegistrableDomainsToBlockCookiesFor&&, CompletionHandler<void()>&&);
     void clearBlockingStateForDomains(const Vector<RegistrableDomain>& domains, CompletionHandler<void()>&&);
 
     void processStatisticsAndDataRecords();
@@ -127,7 +127,7 @@ public:
     virtual bool isRegisteredAsRedirectingTo(const RedirectedFromDomain&, const RedirectedToDomain&) const = 0;
 
     virtual void clearPrevalentResource(const RegistrableDomain&) = 0;
-    virtual void dumpResourceLoadStatistics(CompletionHandler<void(const String&)>&&) = 0;
+    virtual void dumpResourceLoadStatistics(CompletionHandler<void(String&&)>&&) = 0;
     virtual bool isPrevalentResource(const RegistrableDomain&) const = 0;
     virtual bool isVeryPrevalentResource(const RegistrableDomain&) const = 0;
     virtual void setPrevalentResource(const RegistrableDomain&) = 0;
@@ -146,7 +146,7 @@ public:
     virtual void setTopFrameUniqueRedirectTo(const TopFrameDomain&, const RedirectDomain&) = 0;
     virtual void setTopFrameUniqueRedirectFrom(const TopFrameDomain&, const RedirectDomain&) = 0;
 
-    void logTestingEvent(const String&);
+    void logTestingEvent(String&&);
 
     void setMaxStatisticsEntries(size_t maximumEntryCount);
     void setPruneEntriesDownTo(size_t pruneTargetCount);
@@ -172,7 +172,7 @@ public:
     void setAppBoundDomains(HashSet<RegistrableDomain>&&);
 #endif
     virtual bool areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain&) = 0;
-    virtual void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) = 0;
+    virtual void hasStorageAccess(SubFrameDomain&&, TopFrameDomain&&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) = 0;
     virtual void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessScope, CompletionHandler<void(StorageAccessStatus)>&&) = 0;
     virtual void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&) = 0;
 

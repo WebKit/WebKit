@@ -1,3 +1,72 @@
+2022-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Optimize further the passing of data across threads
+        https://bugs.webkit.org/show_bug.cgi?id=237568
+
+        Reviewed by Geoffrey Garen.
+
+        Optimize further the passing of data across threads by leveraging more broadly the optimized
+        versions of isolatedCopy() on r-value references.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::listDirectory):
+        (WebCore::DOMFileSystem::getParent):
+        (WebCore::DOMFileSystem::getEntry):
+        (WebCore::DOMFileSystem::getFile):
+        * Modules/filesystemaccess/WorkerFileSystemStorageConnection.cpp:
+        (WebCore::WorkerFileSystemStorageConnection::isSameEntry):
+        (WebCore::WorkerFileSystemStorageConnection::getFileHandle):
+        (WebCore::WorkerFileSystemStorageConnection::getDirectoryHandle):
+        (WebCore::WorkerFileSystemStorageConnection::removeEntry):
+        (WebCore::WorkerFileSystemStorageConnection::resolve):
+        (WebCore::WorkerFileSystemStorageConnection::getFile):
+        (WebCore::WorkerFileSystemStorageConnection::createSyncAccessHandle):
+        (WebCore::WorkerFileSystemStorageConnection::closeSyncAccessHandle):
+        (WebCore::WorkerFileSystemStorageConnection::getHandleNames):
+        (WebCore::WorkerFileSystemStorageConnection::getHandle):
+        (WebCore::WorkerFileSystemStorageConnection::move):
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+        * Modules/indexeddb/shared/IndexKey.cpp:
+        (WebCore::IndexKey::isolatedCopy const):
+        (WebCore::IndexKey::isolatedCopy):
+        * Modules/indexeddb/shared/IndexKey.h:
+        * Modules/storage/StorageManager.cpp:
+        (WebCore::StorageManager::fileSystemAccessGetDirectory):
+        * Modules/storage/WorkerStorageConnection.cpp:
+        (WebCore::WorkerStorageConnection::fileSystemGetDirectory):
+        * Modules/webaudio/AudioWorkletGlobalScope.cpp:
+        (WebCore::AudioWorkletGlobalScope::registerProcessor):
+        * crypto/CryptoAlgorithm.cpp:
+        (WebCore::dispatchAlgorithmOperation):
+        * dom/ExceptionOr.h:
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURL):
+        * fileapi/ThreadableBlobRegistry.h:
+        * workers/service/SWClientConnection.cpp:
+        (WebCore::SWClientConnection::startScriptFetchForServer):
+        * workers/service/SWClientConnection.h:
+        * workers/service/ServiceWorkerClients.cpp:
+        (WebCore::ServiceWorkerClients::get):
+        (WebCore::ServiceWorkerClients::matchAll):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        (WebCore::ServiceWorkerContainer::notifyFailedFetchingScript):
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerJobClient.h:
+        * workers/service/WorkerSWClientConnection.cpp:
+        (WebCore::WorkerSWClientConnection::registerServiceWorkerClient):
+        (WebCore::WorkerSWClientConnection::finishFetchingScriptInServer):
+        (WebCore::WorkerSWClientConnection::scheduleUnregisterJobInServer):
+        (WebCore::WorkerSWClientConnection::subscribeToPushService):
+        (WebCore::WorkerSWClientConnection::unsubscribeFromPushService):
+        (WebCore::WorkerSWClientConnection::getPushSubscription):
+        (WebCore::WorkerSWClientConnection::getPushPermissionState):
+        * workers/service/WorkerSWClientConnection.h:
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::doPushChanges):
+        * worklets/Worklet.cpp:
+        (WebCore::Worklet::addModule):
+
 2022-03-08  Sihui Liu  <sihui_liu@apple.com>
 
         UniqueIDBDatabase::didFireVersionChangeEvent should capture identifier of UniqueIDBDatabaseConnection

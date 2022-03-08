@@ -56,6 +56,8 @@ public:
 
     FileSystem::PlatformFileHandle handle() const;
 
+    FileHandle isolatedCopy() && { return WTFMove(*this); }
+
 private:
     String m_path;
     FileSystem::FileOpenMode m_mode { FileSystem::FileOpenMode::Read };

@@ -89,10 +89,10 @@ public:
 
     bool shouldPersist() const { return !!m_ioQueue;}
 
-    void writeFile(const String& filename, NetworkCache::Data&&, WebCore::DOMCacheEngine::CompletionCallback&&);
-    void readFile(const String& filename, CompletionHandler<void(const NetworkCache::Data&, int error)>&&);
-    void removeFile(const String& filename);
-    void writeSizeFile(const String&, uint64_t size, CompletionHandler<void()>&&);
+    void writeFile(String&& filename, NetworkCache::Data&&, WebCore::DOMCacheEngine::CompletionCallback&&);
+    void readFile(String&& filename, CompletionHandler<void(const NetworkCache::Data&, int error)>&&);
+    void removeFile(String&& filename);
+    void writeSizeFile(String&&, uint64_t size, CompletionHandler<void()>&&);
     static std::optional<uint64_t> readSizeFile(const String&);
 
     const String& rootPath() const { return m_rootPath; }
@@ -110,7 +110,7 @@ private:
     void clearAllCachesFromDisk(CompletionHandler<void()>&&);
     void clearCachesForOrigin(const WebCore::SecurityOriginData&, CompletionHandler<void()>&&);
     void clearCachesForOriginFromDisk(const WebCore::SecurityOriginData&, CompletionHandler<void()>&&);
-    void deleteNonEmptyDirectoryOnBackgroundThread(const String& path, CompletionHandler<void()>&&);
+    void deleteNonEmptyDirectoryOnBackgroundThread(String&& path, CompletionHandler<void()>&&);
 
     void clearMemoryRepresentation(const WebCore::ClientOrigin&, WebCore::DOMCacheEngine::CompletionCallback&&);
     String representation();

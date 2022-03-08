@@ -45,7 +45,7 @@ namespace NetworkCache {
 class IOChannel : public ThreadSafeRefCounted<IOChannel> {
 public:
     enum class Type { Read, Write, Create };
-    static Ref<IOChannel> open(const String& file, Type type, std::optional<WorkQueue::QOS> qos = { }) { return adoptRef(*new IOChannel(file.isolatedCopy(), type, qos)); }
+    static Ref<IOChannel> open(String&& file, Type type, std::optional<WorkQueue::QOS> qos = { }) { return adoptRef(*new IOChannel(WTFMove(file).isolatedCopy(), type, qos)); }
 
     // Using nullptr as queue submits the result to the main queue.
     // FIXME: We should add WorkQueue::main() instead.

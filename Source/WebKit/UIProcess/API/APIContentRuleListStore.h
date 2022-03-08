@@ -63,15 +63,15 @@ public:
     explicit ContentRuleListStore(const WTF::String& storePath);
     virtual ~ContentRuleListStore();
 
-    void compileContentRuleList(const WTF::String& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
-    void lookupContentRuleList(const WTF::String& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
-    void removeContentRuleList(const WTF::String& identifier, CompletionHandler<void(std::error_code)>);
+    void compileContentRuleList(WTF::String&& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void lookupContentRuleList(WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
+    void removeContentRuleList(WTF::String&& identifier, CompletionHandler<void(std::error_code)>);
     void getAvailableContentRuleListIdentifiers(CompletionHandler<void(WTF::Vector<WTF::String>)>);
 
     // For testing only.
     void synchronousRemoveAllContentRuleLists();
     void invalidateContentRuleListVersion(const WTF::String& identifier);
-    void getContentRuleListSource(const WTF::String& identifier, CompletionHandler<void(WTF::String)>);
+    void getContentRuleListSource(WTF::String&& identifier, CompletionHandler<void(WTF::String)>);
 
 private:
     WTF::String defaultStorePath();

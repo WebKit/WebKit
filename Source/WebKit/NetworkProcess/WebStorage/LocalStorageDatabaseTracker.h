@@ -57,7 +57,8 @@ public:
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static std::optional<OriginDetails> decode(Decoder&);
 
-        OriginDetails isolatedCopy() const { return { originIdentifier.isolatedCopy(), creationTime, modificationTime }; }
+        OriginDetails isolatedCopy() const & { return { originIdentifier.isolatedCopy(), creationTime, modificationTime }; }
+        OriginDetails isolatedCopy() && { return { WTFMove(originIdentifier).isolatedCopy(), creationTime, modificationTime }; }
     };
     Vector<OriginDetails> originDetailsCrossThreadCopy();
 

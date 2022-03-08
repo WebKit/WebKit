@@ -86,7 +86,7 @@ public:
 
     void remove(const Key&);
     void remove(const Vector<Key>&, CompletionHandler<void()>&&);
-    void clear(const String& type, WallTime modifiedSinceTime, CompletionHandler<void()>&&);
+    void clear(String&& type, WallTime modifiedSinceTime, CompletionHandler<void()>&&);
 
     struct RecordInfo {
         size_t bodySize;
@@ -147,7 +147,7 @@ private:
     Data encodeRecord(const Record&, std::optional<BlobStorage::Blob>);
     void readRecord(ReadOperation&, const Data&);
 
-    void updateFileModificationTime(const String& path);
+    void updateFileModificationTime(String&& path);
     void removeFromPendingWriteOperations(const Key&);
 
     ConcurrentWorkQueue& ioQueue() { return m_ioQueue.get(); }

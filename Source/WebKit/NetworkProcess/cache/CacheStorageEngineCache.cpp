@@ -37,6 +37,7 @@
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/RetrieveRecordsOptions.h>
 #include <pal/SessionID.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>
@@ -128,35 +129,23 @@ void Cache::clearMemoryRepresentation()
     m_state = State::Uninitialized;
 }
 
-static RecordInformation isolatedCopy(const RecordInformation& information)
+RecordInformation RecordInformation::isolatedCopy() &&
 {
-    auto result = RecordInformation { information.key, information.insertionTime, information.identifier, information.updateResponseCounter, information.size, information.url.isolatedCopy(), information.hasVaryStar, { } };
-    HashMap<String, String> varyHeaders;
-    for (const auto& keyValue : information.varyHeaders)
-        varyHeaders.set(keyValue.key.isolatedCopy(), keyValue.value.isolatedCopy());
-    result.varyHeaders = WTFMove(varyHeaders);
-    return result;
+    return { key, insertionTime, identifier, updateResponseCounter, size, WTFMove(url).isolatedCopy(), hasVaryStar, crossThreadCopy(WTFMove(varyHeaders)) };
 }
 
 struct TraversalResult {
     uint64_t cacheIdentifier;
     HashMap<String, Vector<RecordInformation>> records;
     Vector<Key> failedRecords;
+
+    TraversalResult isolatedCopy() &&;
 };
 
-static TraversalResult isolatedCopy(TraversalResult&& result)
+TraversalResult TraversalResult::isolatedCopy() &&
 {
-    HashMap<String, Vector<RecordInformation>> isolatedRecords;
-    for (auto& keyValue : result.records) {
-        auto& recordVector = keyValue.value;
-        for (size_t cptr = 0; cptr < recordVector.size(); cptr++)
-            recordVector[cptr] = isolatedCopy(recordVector[cptr]);
-
-        isolatedRecords.set(keyValue.key.isolatedCopy(), WTFMove(recordVector));
-    }
-
-    // No need to isolate keys since they are isolated through the copy constructor
-    return TraversalResult { result.cacheIdentifier, WTFMove(isolatedRecords), WTFMove(result.failedRecords) };
+    // No need to isolate keys since they are isolated through the copy constructor.
+    return { cacheIdentifier, crossThreadCopy(WTFMove(records)), WTFMove(failedRecords) };
 }
 
 void Cache::open(CompletionCallback&& callback)
@@ -173,7 +162,7 @@ void Cache::open(CompletionCallback&& callback)
     TraversalResult traversalResult { m_identifier, { }, { } };
     m_caches.readRecordsList(*this, [caches = Ref { m_caches }, callback = WTFMove(callback), traversalResult = WTFMove(traversalResult)](const auto* storageRecord, const auto&) mutable {
         if (!storageRecord) {
-            RunLoop::main().dispatch([caches = WTFMove(caches), callback = WTFMove(callback), traversalResult = isolatedCopy(WTFMove(traversalResult)) ]() mutable {
+            RunLoop::main().dispatch([caches = WTFMove(caches), callback = WTFMove(callback), traversalResult = WTFMove(traversalResult).isolatedCopy() ]() mutable {
                 for (auto& key : traversalResult.failedRecords)
                     caches->removeCacheEntry(key);
 

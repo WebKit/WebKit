@@ -98,7 +98,7 @@ static void dispatchAlgorithmOperation(WorkQueue& workQueue, ScriptExecutionCont
     workQueue.dispatch(
         [operation = WTFMove(operation), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback), contextIdentifier = context.identifier()]() mutable {
             auto result = operation();
-            ScriptExecutionContext::postTaskTo(contextIdentifier, [result = crossThreadCopy(result), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](auto&) mutable {
+            ScriptExecutionContext::postTaskTo(contextIdentifier, [result = crossThreadCopy(WTFMove(result)), callback = WTFMove(callback), exceptionCallback = WTFMove(exceptionCallback)](auto&) mutable {
                 if (result.hasException()) {
                     exceptionCallback(result.releaseException().code());
                     return;

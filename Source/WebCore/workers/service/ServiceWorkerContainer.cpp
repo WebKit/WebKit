@@ -491,13 +491,13 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
     job.fetchScriptWithContext(*context, cachePolicy);
 }
 
-void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const WorkerFetchResult& fetchResult)
+void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, WorkerFetchResult&& fetchResult)
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
 
     CONTAINER_RELEASE_LOG("jobFinishedLoadingScript: Successfuly finished fetching script for job %" PRIu64, job.identifier().toUInt64());
 
-    ensureSWClientConnection().finishFetchingScriptInServer(job.data().identifier(), job.data().registrationKey(), fetchResult);
+    ensureSWClientConnection().finishFetchingScriptInServer(job.data().identifier(), ServiceWorkerRegistrationKey { job.data().registrationKey() }, WTFMove(fetchResult));
 }
 
 void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const ResourceError& error, Exception&& exception)
@@ -522,7 +522,7 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
 
 void ServiceWorkerContainer::notifyFailedFetchingScript(ServiceWorkerJob& job, const ResourceError& error)
 {
-    ensureSWClientConnection().finishFetchingScriptInServer(job.data().identifier(), job.data().registrationKey(), workerFetchError(ResourceError { error }));
+    ensureSWClientConnection().finishFetchingScriptInServer(job.data().identifier(), ServiceWorkerRegistrationKey { job.data().registrationKey() }, workerFetchError(ResourceError { error }));
 }
 
 void ServiceWorkerContainer::destroyJob(ServiceWorkerJob& job)

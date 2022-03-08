@@ -157,7 +157,7 @@ String WebsiteDataRecord::topPrivatelyControlledDomain()
     return emptyString();
 }
 
-WebsiteDataRecord WebsiteDataRecord::isolatedCopy() const
+WebsiteDataRecord WebsiteDataRecord::isolatedCopy() const &
 {
     return WebsiteDataRecord {
         crossThreadCopy(displayName),
@@ -169,6 +169,22 @@ WebsiteDataRecord WebsiteDataRecord::isolatedCopy() const
         crossThreadCopy(alternativeServicesHostNames),
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
         crossThreadCopy(resourceLoadStatisticsRegistrableDomains),
+#endif
+    };
+}
+
+WebsiteDataRecord WebsiteDataRecord::isolatedCopy() &&
+{
+    return WebsiteDataRecord {
+        crossThreadCopy(WTFMove(displayName)),
+        types,
+        size,
+        crossThreadCopy(WTFMove(origins)),
+        crossThreadCopy(WTFMove(cookieHostNames)),
+        crossThreadCopy(WTFMove(HSTSCacheHostNames)),
+        crossThreadCopy(WTFMove(alternativeServicesHostNames)),
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+        crossThreadCopy(WTFMove(resourceLoadStatisticsRegistrableDomains)),
 #endif
     };
 }

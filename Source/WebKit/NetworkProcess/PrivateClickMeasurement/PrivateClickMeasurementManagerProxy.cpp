@@ -88,7 +88,7 @@ void ManagerProxy::clear(CompletionHandler<void()>&& completionHandler)
     sendMessageWithReply<MessageType::Clear>(WTFMove(completionHandler));
 }
 
-void ManagerProxy::clearForRegistrableDomain(const WebCore::RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
+void ManagerProxy::clearForRegistrableDomain(WebCore::RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
 {
     sendMessageWithReply<MessageType::ClearForRegistrableDomain>(WTFMove(completionHandler), domain);
 }

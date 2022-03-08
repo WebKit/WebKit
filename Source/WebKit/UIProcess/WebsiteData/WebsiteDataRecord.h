@@ -58,7 +58,8 @@ struct WebsiteDataRecord {
     bool matches(const WebCore::RegistrableDomain&) const;
     String topPrivatelyControlledDomain();
 
-    WebsiteDataRecord isolatedCopy() const;
+    WebsiteDataRecord isolatedCopy() const &;
+    WebsiteDataRecord isolatedCopy() &&;
 
     String displayName;
     OptionSet<WebsiteDataType> types;

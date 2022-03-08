@@ -115,7 +115,7 @@ void StorageManager::fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterfac
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.fileSystemGetDirectory(connectionInfo.origin, [promise = WTFMove(promise), weakNavigator = m_navigator](auto result) mutable {
+    connectionInfo.connection.fileSystemGetDirectory(connectionInfo.origin, [promise = WTFMove(promise), weakNavigator = m_navigator](auto&& result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 

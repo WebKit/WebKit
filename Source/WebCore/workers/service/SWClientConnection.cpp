@@ -109,13 +109,13 @@ void SWClientConnection::registrationJobResolvedInServer(ServiceWorkerJobIdentif
         didResolveRegistrationPromise(registrationData.key);
 }
 
-void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, FetchOptions::Cache cachePolicy)
+void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jobIdentifier, ServiceWorkerRegistrationKey&& registrationKey, FetchOptions::Cache cachePolicy)
 {
     bool isPosted = postTaskForJob(jobIdentifier, IsJobComplete::No, [cachePolicy] (auto& job) {
         job.startScriptFetch(cachePolicy);
     });
     if (!isPosted)
-        finishFetchingScriptInServer({ serverConnectionIdentifier(), jobIdentifier }, registrationKey, workerFetchError(ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope ", registrationKey.scope().string()) }));
+        finishFetchingScriptInServer({ serverConnectionIdentifier(), jobIdentifier }, WTFMove(registrationKey), workerFetchError(ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope ", registrationKey.scope().string()) }));
 }
 
 

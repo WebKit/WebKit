@@ -724,9 +724,9 @@ void Storage::deleteFiles(const Key& key)
     m_blobStorage.remove(blobPathForKey(key));
 }
 
-void Storage::updateFileModificationTime(const String& path)
+void Storage::updateFileModificationTime(String&& path)
 {
-    serialBackgroundIOQueue().dispatch([path = path.isolatedCopy()] {
+    serialBackgroundIOQueue().dispatch([path = WTFMove(path).isolatedCopy()] {
         updateFileModificationTimeIfNeeded(path);
     });
 }
@@ -763,7 +763,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
 
         readOperation.timings.recordIOStartTime = MonotonicTime::now();
 
-        auto channel = IOChannel::open(recordPath, IOChannel::Type::Read);
+        auto channel = IOChannel::open(WTFMove(recordPath), IOChannel::Type::Read);
         channel->read(0, std::numeric_limits<size_t>::max(), ioQueue(), [this, &readOperation](const Data& fileData, int error) {
             readOperation.timings.recordIOEndTime = MonotonicTime::now();
             if (!error)
@@ -901,7 +901,7 @@ void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperat
 
         auto recordData = encodeRecord(writeOperation.record, blob);
 
-        auto channel = IOChannel::open(recordPath, IOChannel::Type::Create);
+        auto channel = IOChannel::open(WTFMove(recordPath), IOChannel::Type::Create);
         size_t recordSize = recordData.size();
         channel->write(0, recordData, WorkQueue::main(), [this, &writeOperation, recordSize](int error) {
             // On error the entry still stays in the contents filter until next synchronization.
@@ -1011,7 +1011,7 @@ void Storage::traverse(const String& type, OptionSet<TraverseFlag> flags, Traver
             Locker lock { traverseOperation.activeLock };
             ++traverseOperation.activeCount;
 
-            auto channel = IOChannel::open(recordPath, IOChannel::Type::Read);
+            auto channel = IOChannel::open(WTFMove(recordPath), IOChannel::Type::Read);
             channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [this, &traverseOperation, worth, bodyShareCount](Data& fileData, int) {
                 RecordMetaData metaData;
                 Data headerData;
@@ -1081,7 +1081,7 @@ void Storage::setCapacity(size_t capacity)
     shrinkIfNeeded();
 }
 
-void Storage::clear(const String& type, WallTime modifiedSinceTime, CompletionHandler<void()>&& completionHandler)
+void Storage::clear(String&& type, WallTime modifiedSinceTime, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
     LOG(NetworkCacheStorage, "(NetworkProcess) clearing cache");
@@ -1092,7 +1092,7 @@ void Storage::clear(const String& type, WallTime modifiedSinceTime, CompletionHa
         m_blobFilter->clear();
     m_approximateRecordsSize = 0;
 
-    ioQueue().dispatch([this, protectedThis = Ref { *this }, modifiedSinceTime, completionHandler = WTFMove(completionHandler), type = type.isolatedCopy()] () mutable {
+    ioQueue().dispatch([this, protectedThis = Ref { *this }, modifiedSinceTime, completionHandler = WTFMove(completionHandler), type = WTFMove(type).isolatedCopy()] () mutable {
         auto recordsPath = this->recordsPathIsolatedCopy();
         traverseRecordsFiles(recordsPath, type, [modifiedSinceTime](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
             auto filePath = FileSystem::pathByAppendingComponent(recordDirectoryPath, fileName);

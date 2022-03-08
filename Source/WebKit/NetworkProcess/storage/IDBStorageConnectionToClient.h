@@ -64,7 +64,7 @@ private:
     void didDeleteRecord(const WebCore::IDBResultData&) final;
     void didOpenCursor(const WebCore::IDBResultData&) final;
     void didIterateCursor(const WebCore::IDBResultData&) final;
-    void didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, const Vector<WebCore::IDBDatabaseNameAndVersion>&) final;
+    void didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier&, Vector<WebCore::IDBDatabaseNameAndVersion>&&) final;
     void notifyOpenDBRequestBlocked(const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t oldVersion, uint64_t newVersion) final;
     void fireVersionChangeEvent(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBResourceIdentifier& requestIdentifier, uint64_t requestedVersion) final;
     void didCloseFromServer(WebCore::IDBServer::UniqueIDBDatabaseConnection&, const WebCore::IDBError&) final;

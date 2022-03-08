@@ -1,3 +1,19 @@
+2022-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Optimize further the passing of data across threads
+        https://bugs.webkit.org/show_bug.cgi?id=237568
+
+        Reviewed by Geoffrey Garen.
+
+        Optimize further the passing of data across threads by leveraging more broadly the optimized
+        versions of isolatedCopy() on r-value references.
+
+        * Storage/InProcessIDBServer.cpp:
+        (InProcessIDBServer::didGetAllDatabaseNamesAndVersions):
+        * Storage/InProcessIDBServer.h:
+        * Storage/StorageTracker.cpp:
+        (WebKit::StorageTracker::deleteOrigin):
+
 2022-03-08  Sihui Liu  <sihui_liu@apple.com>
 
         Disable CFURLCache in WebKit

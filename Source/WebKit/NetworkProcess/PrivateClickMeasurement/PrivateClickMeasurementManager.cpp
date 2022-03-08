@@ -667,12 +667,12 @@ void PrivateClickMeasurementManager::clear(CompletionHandler<void()>&& completio
     store().clearPrivateClickMeasurement(WTFMove(completionHandler));
 }
 
-void PrivateClickMeasurementManager::clearForRegistrableDomain(const RegistrableDomain& domain, CompletionHandler<void()>&& completionHandler)
+void PrivateClickMeasurementManager::clearForRegistrableDomain(RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
 {
     if (!featureEnabled())
         return completionHandler();
 
-    store().clearPrivateClickMeasurementForRegistrableDomain(domain, WTFMove(completionHandler));
+    store().clearPrivateClickMeasurementForRegistrableDomain(WTFMove(domain), WTFMove(completionHandler));
 }
 
 void PrivateClickMeasurementManager::clearExpired()

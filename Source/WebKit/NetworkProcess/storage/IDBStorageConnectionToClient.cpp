@@ -168,7 +168,7 @@ void IDBStorageConnectionToClient::didIterateCursor(const WebCore::IDBResultData
     didGetResult<Messages::WebIDBConnectionToServer::DidIterateCursor>(resultData);
 }
 
-void IDBStorageConnectionToClient::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, const Vector<WebCore::IDBDatabaseNameAndVersion>& databases)
+void IDBStorageConnectionToClient::didGetAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, Vector<WebCore::IDBDatabaseNameAndVersion>&& databases)
 {
     IPC::Connection::send(m_connection, Messages::WebIDBConnectionToServer::DidGetAllDatabaseNamesAndVersions(requestIdentifier, databases), 0);
 }

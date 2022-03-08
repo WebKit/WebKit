@@ -490,7 +490,7 @@ void StorageTracker::deleteOrigin(const SecurityOriginData& origin)
         m_originSet.remove(originId);
     }
 
-    m_thread->dispatch([this, originId = originId.isolatedCopy()] {
+    m_thread->dispatch([this, originId = WTFMove(originId).isolatedCopy()] {
         syncDeleteOrigin(originId);
     });
 }

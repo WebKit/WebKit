@@ -58,7 +58,7 @@ void ServiceWorkerClients::get(ScriptExecutionContext& context, const String& id
     callOnMainThread([promisePointer, serviceWorkerIdentifier, id = id.isolatedCopy()] () {
         auto connection = SWContextManager::singleton().connection();
         connection->findClientByVisibleIdentifier(serviceWorkerIdentifier, id, [promisePointer, serviceWorkerIdentifier] (auto&& clientData) {
-            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, data = crossThreadCopy(clientData)] (auto& context) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, data = crossThreadCopy(WTFMove(clientData))] (auto& context) mutable {
                 if (auto promise = context.clients().m_pendingPromises.take(promisePointer))
                     didFinishGetRequest(context, *promise, WTFMove(data));
             });
@@ -85,7 +85,7 @@ void ServiceWorkerClients::matchAll(ScriptExecutionContext& context, const Clien
     callOnMainThread([promisePointer, serviceWorkerIdentifier, options] () mutable {
         auto connection = SWContextManager::singleton().connection();
         connection->matchAll(serviceWorkerIdentifier, options, [promisePointer, serviceWorkerIdentifier] (auto&& clientsData) mutable {
-            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, clientsData = crossThreadCopy(clientsData)] (auto& scope) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promisePointer, clientsData = crossThreadCopy(WTFMove(clientsData))] (auto& scope) mutable {
                 if (auto promise = scope.clients().m_pendingPromises.take(promisePointer))
                     matchAllCompleted(scope, *promise, WTFMove(clientsData));
             });

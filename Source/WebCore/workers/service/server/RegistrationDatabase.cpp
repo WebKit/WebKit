@@ -484,13 +484,13 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
         if (!mainScript)
             return false;
         HashMap<URL, ScriptBuffer> importedScripts;
-        for (auto& pair : data.scriptResourceMap) {
-            auto importedScript = scriptStorage.store(data.registration.key, pair.key, pair.value.script);
+        for (auto& [scriptURL, script] : data.scriptResourceMap) {
+            auto importedScript = scriptStorage.store(data.registration.key, scriptURL, script.script);
             ASSERT(importedScript);
             if (importedScript)
-                importedScripts.add(crossThreadCopy(pair.key), crossThreadCopy(importedScript));
+                importedScripts.add(crossThreadCopy(scriptURL), crossThreadCopy(WTFMove(importedScript)));
         }
-        callOnMainThread([this, protectedThis = Ref { *this }, serviceWorkerIdentifier = data.serviceWorkerIdentifier, mainScript = crossThreadCopy(mainScript), importedScripts = WTFMove(importedScripts)]() mutable {
+        callOnMainThread([this, protectedThis = Ref { *this }, serviceWorkerIdentifier = data.serviceWorkerIdentifier, mainScript = crossThreadCopy(WTFMove(mainScript)), importedScripts = WTFMove(importedScripts)]() mutable {
             if (m_store)
                 m_store->didSaveWorkerScriptsToDisk(serviceWorkerIdentifier, WTFMove(mainScript), WTFMove(importedScripts));
         });

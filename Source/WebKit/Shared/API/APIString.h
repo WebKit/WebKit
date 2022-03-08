@@ -39,7 +39,7 @@ public:
 
     static Ref<String> create(WTF::String&& string)
     {
-        return adoptRef(*new String(string.isNull() ? WTF::String(StringImpl::empty()) : string.isolatedCopy()));
+        return adoptRef(*new String(string.isNull() ? WTF::String(StringImpl::empty()) : WTFMove(string).isolatedCopy()));
     }
 
     static Ref<String> create(const WTF::String& string)

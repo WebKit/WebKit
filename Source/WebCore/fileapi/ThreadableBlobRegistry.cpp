@@ -99,7 +99,7 @@ static inline bool isBlobURLContainsNullOrigin(const URL& url)
     return url.string().substring(startIndex, endIndex - startIndex - 1) == "null";
 }
 
-void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const PolicyContainer& policyContainer, const URL& url, const URL& srcURL)
+void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyContainer&& policyContainer, const URL& url, const URL& srcURL)
 {
     // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
     if (origin && isBlobURLContainsNullOrigin(url))
@@ -110,7 +110,7 @@ void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, const Polic
         return;
     }
 
-    callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), policyContainer = crossThreadCopy(policyContainer)] {
+    callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), policyContainer = crossThreadCopy(WTFMove(policyContainer))] {
         blobRegistry().registerBlobURL(url, srcURL, policyContainer);
     });
 }

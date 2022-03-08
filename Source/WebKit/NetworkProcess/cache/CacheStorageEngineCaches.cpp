@@ -83,7 +83,7 @@ void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& qu
             return;
         }
 
-        auto channel = IOChannel::open(filename, IOChannel::Type::Read);
+        auto channel = IOChannel::open(WTFMove(filename), IOChannel::Type::Read);
         channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [completionHandler = WTFMove(completionHandler)](const Data& data, int error) mutable {
             ASSERT(RunLoop::isMain());
             if (error) {
@@ -258,7 +258,8 @@ void Caches::clear(CompletionHandler<void()>&& completionHandler)
     if (m_engine)
         m_engine->removeFile(cachesListFilename(m_rootPath));
     if (m_storage) {
-        m_storage->clear(String { }, -WallTime::infinity(), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        String anyType;
+        m_storage->clear(WTFMove(anyType), -WallTime::infinity(), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
             ASSERT(RunLoop::isMain());
             protectedThis->clearMemoryRepresentation();
             completionHandler();
@@ -451,7 +452,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
         return;
     }
 
-    m_engine->readFile(filename, [protectedThis = Ref { *this }, this, callback = WTFMove(callback)](const Data& data, int error) mutable {
+    m_engine->readFile(WTFMove(filename), [protectedThis = Ref { *this }, this, callback = WTFMove(callback)](const Data& data, int error) mutable {
         if (!m_engine) {
             callback(Vector<Cache> { });
             return;

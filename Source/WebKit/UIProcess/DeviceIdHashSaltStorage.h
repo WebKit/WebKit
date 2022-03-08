@@ -51,19 +51,15 @@ private:
     struct HashSaltForOrigin {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-        HashSaltForOrigin(WebCore::SecurityOriginData&& documentOrigin, WebCore::SecurityOriginData&& parentOrigin, String&& deviceIdHashSalt)
+        HashSaltForOrigin(WebCore::SecurityOriginData&& documentOrigin, WebCore::SecurityOriginData&& parentOrigin, String&& deviceIdHashSalt, WallTime lastTimeUsed = WallTime::now())
             : documentOrigin(WTFMove(documentOrigin))
             , parentOrigin(WTFMove(parentOrigin))
             , deviceIdHashSalt(WTFMove(deviceIdHashSalt))
-            , lastTimeUsed(WallTime::now())
-        { };
+            , lastTimeUsed(lastTimeUsed)
+        { }
 
-        HashSaltForOrigin isolatedCopy() const
-        {
-            auto isolatedCopy = HashSaltForOrigin(documentOrigin.isolatedCopy(), parentOrigin.isolatedCopy(), deviceIdHashSalt.isolatedCopy());
-            isolatedCopy.lastTimeUsed = lastTimeUsed;
-            return isolatedCopy;
-        };
+        HashSaltForOrigin isolatedCopy() const & { return { documentOrigin.isolatedCopy(), parentOrigin.isolatedCopy(), deviceIdHashSalt.isolatedCopy(), lastTimeUsed }; }
+        HashSaltForOrigin isolatedCopy() && { return { WTFMove(documentOrigin).isolatedCopy(), WTFMove(parentOrigin).isolatedCopy(), WTFMove(deviceIdHashSalt).isolatedCopy(), lastTimeUsed }; }
 
         WebCore::SecurityOriginData documentOrigin;
         WebCore::SecurityOriginData parentOrigin;
