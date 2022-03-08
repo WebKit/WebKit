@@ -6,17 +6,7 @@ Blocked access to external URL https://www1.localhost:9443/worklets/resources/em
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
 CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources/addmodule-window.html was not allowed to display insecure content from http://localhost:8800/worklets/resources/empty-worklet-script-with-cors-header.js.
 

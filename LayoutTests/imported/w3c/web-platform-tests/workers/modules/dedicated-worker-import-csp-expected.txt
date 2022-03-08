@@ -1,21 +1,11 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
-Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
 Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
 Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
+Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
 Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
 Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.js
 Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.js
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'worker-src'.
-
 Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.js
 
 PASS worker-src 'self' directive should disallow cross origin static import.
