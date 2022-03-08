@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import <wtf/text/WTFString.h>
+
 namespace WebKit {
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)

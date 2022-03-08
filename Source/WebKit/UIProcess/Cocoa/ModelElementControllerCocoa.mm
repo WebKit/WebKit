@@ -25,6 +25,8 @@
 
 #import "config.h"
 #import "ModelElementController.h"
+#import <wtf/BlockPtr.h>
+#import <wtf/SoftLinking.h>
 
 #if ENABLE(ARKIT_INLINE_PREVIEW)
 

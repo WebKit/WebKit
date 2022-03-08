@@ -1,3 +1,13 @@
+2022-03-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [macOS] Unreviewed, non-unified build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=237586
+
+        * Shared/ModelIdentifier.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewControllerInternal.h:
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        * UIProcess/ModelElementController.h:
+
 2022-03-08  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Using WebAuthn within cross-origin iframe elements

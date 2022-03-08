@@ -30,6 +30,9 @@
 #include "ModelIdentifier.h"
 #include <WebCore/ElementContext.h>
 #include <WebCore/GraphicsLayer.h>
+#include <WebCore/HTMLModelElementCamera.h>
+#include <WebCore/ResourceError.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
