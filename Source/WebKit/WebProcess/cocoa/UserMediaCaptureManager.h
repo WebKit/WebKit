@@ -126,7 +126,8 @@ private:
     // Messages::UserMediaCaptureManager
     void captureFailed(WebCore::RealtimeMediaSourceIdentifier);
     void sourceStopped(WebCore::RealtimeMediaSourceIdentifier);
-    void sourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier, bool muted);
+    void sourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier, bool muted, bool interrupted);
+
     void sourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
     void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, String&&, String&&);

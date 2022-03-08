@@ -973,8 +973,11 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
     if (WKStringIsEqualToUTF8CString(messageName, "IsMockRealtimeMediaSourceCenterEnabled"))
         return adoptWK(WKBooleanCreate(TestController::singleton().isMockRealtimeMediaSourceCenterEnabled()));
     
-    if (WKStringIsEqualToUTF8CString(messageName, "SetMockCameraIsInterrupted")) {
-        TestController::singleton().setMockCameraIsInterrupted(booleanValue(messageBody));
+    if (WKStringIsEqualToUTF8CString(messageName, "SetMockCaptureDevicesInterrupted")) {
+        auto messageBodyDictionary = dictionaryValue(messageBody);
+        bool isCameraInterrupted = booleanValue(messageBodyDictionary, "camera");
+        bool isMicrophoneInterrupted = booleanValue(messageBodyDictionary, "microphone");
+        TestController::singleton().setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
         return nullptr;
     }
 

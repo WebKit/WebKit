@@ -351,9 +351,9 @@ void GPUProcess::resetMockMediaDevices()
     MockRealtimeMediaSourceCenter::resetDevices();
 }
 
-void GPUProcess::setMockCameraIsInterrupted(bool isInterrupted)
+void GPUProcess::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
 {
-    MockRealtimeMediaSourceCenter::setMockCameraIsInterrupted(isInterrupted);
+    MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
 }
 #endif // ENABLE(MEDIA_STREAM)
 

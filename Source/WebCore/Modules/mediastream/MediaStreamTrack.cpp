@@ -91,6 +91,7 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     if (!isCaptureTrack())
         return;
 
+    m_isInterrupted = m_private->source().interrupted();
     allCaptureTracks().add(this);
 
     if (m_private->hasAudio())
@@ -509,6 +510,18 @@ void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 #endif
 }
 
+static void updateVideoCaptureAccordingMicrophoneInterruption(Document& document, bool isMicrophoneInterrupted)
+{
+    auto* page = document.page();
+    for (auto* captureTrack : allCaptureTracks()) {
+        if (!captureTrack->document() || captureTrack->document()->page() != page)
+            continue;
+        auto& source = captureTrack->source();
+        if (!source.isEnded() && source.type() == RealtimeMediaSource::Type::Video)
+            source.setMuted(isMicrophoneInterrupted);
+    }
+}
+
 void MediaStreamTrack::updateToPageMutedState()
 {
     ASSERT(isCaptureTrack());
@@ -612,7 +625,8 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
     
 void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
 {
-    if (scriptExecutionContext()->activeDOMObjectsAreStopped() || m_ended)
+    auto* document = this->document();
+    if (document->activeDOMObjectsAreStopped() || m_ended)
         return;
 
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, muted = m_private->muted()] {
@@ -622,6 +636,11 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
         dispatchEvent(Event::create(muted ? eventNames().muteEvent : eventNames().unmuteEvent, Event::CanBubble::No, Event::IsCancelable::No));
     });
     configureTrackRendering();
+
+    bool wasInterrupted = m_isInterrupted;
+    m_isInterrupted = m_private->source().interrupted();
+    if (wasInterrupted != m_isInterrupted && m_private->source().type() == RealtimeMediaSource::Type::Audio && document->settings().muteCameraOnMicrophoneInterruptionEnabled())
+        updateVideoCaptureAccordingMicrophoneInterruption(*document, m_isInterrupted);
 }
 
 void MediaStreamTrack::trackSettingsChanged(MediaStreamTrackPrivate&)

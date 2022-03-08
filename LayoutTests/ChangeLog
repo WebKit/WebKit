@@ -1,5 +1,19 @@
 2022-03-08  Youenn Fablet  <youenn@apple.com>
 
+        Add a preference to mute video capture in case audio capture gets interrupted
+        https://bugs.webkit.org/show_bug.cgi?id=237524
+        <rdar://78421282>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/media-stream-video-track-interrupted-from-audio-expected.txt: Added.
+        * fast/mediastream/media-stream-video-track-interrupted-from-audio.html: Added.
+        * fast/mediastream/media-stream-video-track-interrupted.html: Migrated to testRunner API.
+        * fast/mediastream/track-ended-while-muted.html:
+        * platform/glib/TestExpectations:
+
+2022-03-08  Youenn Fablet  <youenn@apple.com>
+
         Improve WebRTC VPX media capabilities accuracy
         https://bugs.webkit.org/show_bug.cgi?id=237462
 

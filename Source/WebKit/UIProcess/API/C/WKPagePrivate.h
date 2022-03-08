@@ -201,7 +201,7 @@ WK_EXPORT void WKPageSetPrivateClickMeasurementAppBundleIDForTesting(WKPageRef p
 
 WK_EXPORT void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation);
 WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef page);
-WK_EXPORT void WKPageSetMockCameraIsInterrupted(WKPageRef page, bool isInterrupted);
+WK_EXPORT void WKPageSetMockCaptureDevicesInterrupted(WKPageRef page, bool isCameraInterrupted, bool isMicrophoneInterrupted);
 
 typedef void (*WKPageLoadedSubresourceDomainsFunction)(WKArrayRef domains, void* functionContext);
 WK_EXPORT void WKPageLoadedSubresourceDomains(WKPageRef page, WKPageLoadedSubresourceDomainsFunction callback, void* callbackContext);

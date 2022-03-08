@@ -1,3 +1,37 @@
+2022-03-08  Youenn Fablet  <youenn@apple.com>
+
+        Add a preference to mute video capture in case audio capture gets interrupted
+        https://bugs.webkit.org/show_bug.cgi?id=237524
+        <rdar://78421282>
+
+        Reviewed by Eric Carlson.
+
+        Add support for interrupt mock microphone devices.
+        Send to WebProcess sources whether sources are interrupted each time the source muted value changes.
+        Store that value in remote sources.
+
+        * GPUProcess/GPUProcess.cpp:
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.h:
+        * WebProcess/cocoa/RemoteRealtimeDisplaySource.h:
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.cpp:
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.h:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.messages.in:
+
 2022-03-07  Simon Fraser  <simon.fraser@apple.com>
 
         Rename VolatilityState to SetNonVolatileResult

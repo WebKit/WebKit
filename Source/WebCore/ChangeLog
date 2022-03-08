@@ -1,3 +1,30 @@
+2022-03-08  Youenn Fablet  <youenn@apple.com>
+
+        Add a preference to mute video capture in case audio capture gets interrupted
+        https://bugs.webkit.org/show_bug.cgi?id=237524
+        <rdar://78421282>
+
+        Reviewed by Eric Carlson.
+
+        In case we detect that a microphone track source gets muted due to interruption, we mute
+        capture video tracks based if allowed by the new MuteCameraOnMicrophoneInterruptionEnabled setting.
+
+        Add support for mock microphone interruption and remove previous in process internals API.
+
+        Test: fast/mediastream/media-stream-video-track-interrupted-from-audio.html
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        * Modules/mediastream/MediaStreamTrack.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        (WebCore::MockRealtimeAudioSource::setIsInterrupted):
+        * platform/mock/MockRealtimeAudioSource.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        (WebCore::MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted):
+        (WebCore::MockRealtimeMediaSourceCenter::setMockCameraIsInterrupted): Deleted.
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+
 2022-03-08  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] Handle gst pad error as format error

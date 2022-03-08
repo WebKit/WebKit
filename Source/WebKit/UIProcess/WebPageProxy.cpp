@@ -10882,9 +10882,9 @@ void WebPageProxy::setOrientationForMediaCapture(uint64_t orientation)
 }
 
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
-void WebPageProxy::setMockCameraIsInterrupted(bool isInterrupted)
+void WebPageProxy::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
 {
-    send(Messages::WebPage::SetMockCameraIsInterrupted(isInterrupted));
+    send(Messages::WebPage::SetMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted));
 }
 #endif
 

@@ -350,9 +350,9 @@ void GPUProcessProxy::resetMockMediaDevices()
     send(Messages::GPUProcess::ResetMockMediaDevices { }, 0);
 }
 
-void GPUProcessProxy::setMockCameraIsInterrupted(bool isInterrupted)
+void GPUProcessProxy::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
 {
-    send(Messages::GPUProcess::SetMockCameraIsInterrupted { isInterrupted }, 0);
+    send(Messages::GPUProcess::SetMockCaptureDevicesInterrupted { isCameraInterrupted, isMicrophoneInterrupted }, 0);
 }
 #endif // ENABLE(MEDIA_STREAM)
 

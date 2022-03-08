@@ -71,6 +71,9 @@ public:
 
     void didFail(String&& errorMessage);
 
+    bool interrupted() const { return m_interrupted; }
+    void setInterrupted(bool interrupted) { m_interrupted = interrupted; }
+
 private:
     WebCore::RealtimeMediaSourceIdentifier m_identifier;
     WebCore::CaptureDevice m_device;
@@ -81,6 +84,7 @@ private:
     bool m_isReady { false };
     CompletionHandler<void(String)> m_callback;
     String m_errorMessage;
+    bool m_interrupted { false };
 };
 
 inline RemoteRealtimeMediaSourceProxy::RemoteRealtimeMediaSourceProxy(WebCore::RealtimeMediaSourceIdentifier identifier, const WebCore::CaptureDevice& device, bool shouldCaptureInGPUProcess, const WebCore::MediaConstraints* constraints)

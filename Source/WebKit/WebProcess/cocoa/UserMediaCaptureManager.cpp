@@ -154,18 +154,18 @@ void UserMediaCaptureManager::captureFailed(RealtimeMediaSourceIdentifier identi
     }, [](std::nullptr_t) { });
 }
 
-void UserMediaCaptureManager::sourceMutedChanged(RealtimeMediaSourceIdentifier identifier, bool muted)
+void UserMediaCaptureManager::sourceMutedChanged(RealtimeMediaSourceIdentifier identifier, bool muted, bool interrupted)
 {
     auto iterator = m_sources.find(identifier);
     if (iterator == m_sources.end())
         return;
 
-    switchOn(iterator->value, [muted](Ref<RemoteRealtimeAudioSource>& source) {
-        source->sourceMutedChanged(muted);
-    }, [muted](Ref<RemoteRealtimeVideoSource>& source) {
-        source->sourceMutedChanged(muted);
-    }, [muted](Ref<RemoteRealtimeDisplaySource>& source) {
-        source->sourceMutedChanged(muted);
+    switchOn(iterator->value, [muted, interrupted](Ref<RemoteRealtimeAudioSource>& source) {
+        source->sourceMutedChanged(muted, interrupted);
+    }, [muted, interrupted](Ref<RemoteRealtimeVideoSource>& source) {
+        source->sourceMutedChanged(muted, interrupted);
+    }, [muted, interrupted](Ref<RemoteRealtimeDisplaySource>& source) {
+        source->sourceMutedChanged(muted, interrupted);
     }, [](std::nullptr_t) { });
 }
 

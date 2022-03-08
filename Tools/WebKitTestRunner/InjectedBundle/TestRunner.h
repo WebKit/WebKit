@@ -499,7 +499,7 @@ public:
     void resetMockMediaDevices();
     void setMockCameraOrientation(unsigned);
     bool isMockRealtimeMediaSourceCenterEnabled();
-    void setMockCameraIsInterrupted(bool);
+    void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
 
     bool hasAppBoundSession();
     void clearAppBoundSession();

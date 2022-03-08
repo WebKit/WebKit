@@ -640,6 +640,18 @@ MouseEventsSimulationEnabled:
     WebKit:
       default: false
 
+MuteCameraOnMicrophoneInterruptionEnabled:
+  type: bool
+  condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(IOS_FAMILY)": true
+      default: false
+    WebCore:
+      default: false
+
 NPAPIPlugInsEnabledForTestingInWebKitLegacy:
   type: bool
   humanReadableName: "NPAPI Plug-Ins Enabled In WebKitLegacy"

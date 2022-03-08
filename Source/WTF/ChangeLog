@@ -1,3 +1,13 @@
+2022-03-08  Youenn Fablet  <youenn@apple.com>
+
+        Add a preference to mute video capture in case audio capture gets interrupted
+        https://bugs.webkit.org/show_bug.cgi?id=237524
+        <rdar://78421282>
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-03-08  Sihui Liu  <sihui_liu@apple.com>
 
         Add early return for empty path in makeAllDirectories

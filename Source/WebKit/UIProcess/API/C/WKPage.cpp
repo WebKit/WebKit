@@ -3139,15 +3139,15 @@ bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef)
 #endif
 }
 
-void WKPageSetMockCameraIsInterrupted(WKPageRef pageRef, bool isInterrupted)
+void WKPageSetMockCaptureDevicesInterrupted(WKPageRef pageRef, bool isCameraInterrupted, bool isMicrophoneInterrupted)
 {
     CRASH_IF_SUSPENDED;
 #if ENABLE(MEDIA_STREAM) && ENABLE(GPU_PROCESS)
     auto& gpuProcess = toImpl(pageRef)->process().processPool().ensureGPUProcess();
-    gpuProcess.setMockCameraIsInterrupted(isInterrupted);
+    gpuProcess.setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
 #endif
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
-    toImpl(pageRef)->setMockCameraIsInterrupted(isInterrupted);
+    toImpl(pageRef)->setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
 #endif
 }
 
