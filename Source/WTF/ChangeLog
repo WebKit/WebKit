@@ -1,3 +1,15 @@
+2022-03-07  Per Arne Vollan  <pvollan@apple.com>
+
+        Preconnecting after process swap is a page load time improvement on some devices
+        https://bugs.webkit.org/show_bug.cgi?id=237055
+        <rdar://problem/89638872>
+
+        Reviewed by Geoffrey Garen.
+
+        Add ENABLE guard for this behavior.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2022-03-07  Chris Dumez  <cdumez@apple.com>
 
         Optimize the passing of data across threads

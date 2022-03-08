@@ -1,3 +1,35 @@
+2022-03-07  Per Arne Vollan  <pvollan@apple.com>
+
+        Preconnecting after process swap is a page load time improvement on some devices
+        https://bugs.webkit.org/show_bug.cgi?id=237055
+        <rdar://problem/89638872>
+
+        Reviewed by Geoffrey Garen.
+
+        On some devices we see that doing a second preconnect on HTTP/1.1 is a significant page load time improvement.
+        This is due to the fact that most page loads on HTTP/1.1 will open several connections, and having two
+        preconnected connections instead of one, will speed up page load time. This patch implements this by starting
+        a second preconnect after the first has finished. It is important to wait until the first preconnect has
+        finished, otherwise the second preconnect will go to waste, since the underlying network layer does not yet
+        know if this is HTTP/1.1 or not. Since we do not see page load time improvement on iOS with this behavior,
+        it is currently only enabled for macOS. The next step is to investigate why it does not seem to be a page
+        load time improvement on iOS. We probably need to make sure the main resource load has started before we
+        start the second preconect. This will avoid that the second preconnect returns immediately.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::sendH2Ping):
+        (WebKit::NetworkConnectionToWebProcess::preconnectTo):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        * NetworkProcess/PreconnectTask.cpp:
+        (WebKit::PreconnectTask::PreconnectTask):
+        (WebKit::PreconnectTask::didFinishLoading):
+        (WebKit::PreconnectTask::didFailLoading):
+        (WebKit::PreconnectTask::didFinish):
+        * NetworkProcess/PreconnectTask.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::SpeculativeLoadManager::preconnectForSubresource):
+
 2022-03-07  Richard Houle  <rhoule@apple.com>
 
         [macCatalyst] Compilation error: WebContentProcess.xib: error: macOS xibs do not support target device type "ipad".

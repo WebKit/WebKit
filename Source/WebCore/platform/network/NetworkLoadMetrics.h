@@ -65,7 +65,7 @@ class NetworkLoadMetrics {
 public:
     WEBCORE_EXPORT NetworkLoadMetrics();
 
-    static const NetworkLoadMetrics& emptyMetrics();
+    WEBCORE_EXPORT static const NetworkLoadMetrics& emptyMetrics();
 
     WEBCORE_EXPORT NetworkLoadMetrics isolatedCopy() const;
 

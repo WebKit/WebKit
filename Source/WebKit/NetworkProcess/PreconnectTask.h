@@ -41,7 +41,7 @@ class NetworkSession;
 
 class PreconnectTask final : public NetworkLoadClient {
 public:
-    PreconnectTask(NetworkSession&, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&)>&&);
+    PreconnectTask(NetworkSession&, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)>&&);
     ~PreconnectTask();
 
     void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
@@ -59,10 +59,10 @@ private:
     void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
     void didFailLoading(const WebCore::ResourceError&) final;
 
-    void didFinish(const WebCore::ResourceError&);
+    void didFinish(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&);
 
     std::unique_ptr<NetworkLoad> m_networkLoad;
-    CompletionHandler<void(const WebCore::ResourceError&)> m_completionHandler;
+    CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)> m_completionHandler;
     Seconds m_timeout;
     WebCore::Timer m_timeoutTimer;
 };

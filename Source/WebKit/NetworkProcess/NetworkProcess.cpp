@@ -1322,10 +1322,20 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
     parameters.storedCredentialsPolicy = storedCredentialsPolicy;
     parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
 
+    NetworkLoadParameters parametersForAdditionalPreconnect = parameters;
+
     session->networkLoadScheduler().startedPreconnectForMainResource(url, userAgent);
-    auto task = new PreconnectTask(*session, WTFMove(parameters), [session = WeakPtr { *session }, url, userAgent](const WebCore::ResourceError& error) {
-        if (session)
+    auto task = new PreconnectTask(*session, WTFMove(parameters), [session = WeakPtr { *session }, url, userAgent, parametersForAdditionalPreconnect = WTFMove(parametersForAdditionalPreconnect)](const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& metrics) mutable {
+        if (session) {
             session->networkLoadScheduler().finishedPreconnectForMainResource(url, userAgent, error);
+#if ENABLE(ADDITIONAL_PRECONNECT_ON_HTTP_1X)
+            if (equalIgnoringASCIICase(metrics.protocol, "http/1.1")) {
+                auto parameters = parametersForAdditionalPreconnect;
+                auto task = new PreconnectTask(*session, WTFMove(parameters), [](const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& metrics) { });
+                task->start();
+            }
+#endif // ENABLE(ADDITIONAL_PRECONNECT_ON_HTTP_1X)
+        }
     });
     task->setTimeout(10_s);
     task->start();
