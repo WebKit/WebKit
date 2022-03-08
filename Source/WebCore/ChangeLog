@@ -1,3 +1,9 @@
+2022-03-07  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build
+
+        * platform/graphics/GraphicsContext.h:
+
 2022-03-07  Per Arne Vollan  <pvollan@apple.com>
 
         Preconnecting after process swap is a page load time improvement on some devices
