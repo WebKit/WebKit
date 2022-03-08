@@ -467,6 +467,7 @@ private:
     void handleAriaRoleChanged(Node*);
     void handleAriaExpandedChange(Node*);
     void handleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
+    void handleMenuListValueChanged(Element&);
 
     // aria-modal or modal <dialog> related
     bool isModalElement(Element&) const;

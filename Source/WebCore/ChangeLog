@@ -1,3 +1,23 @@
+2022-03-07  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for <select> elements in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=237483
+        rdar://89530022
+
+        Reviewed by Chris Fleizach.
+
+        Test: accessibility/dropdown-value.html
+
+        AXObjectCache was not updating the isolated tree for
+        AXMenuListValueChanged notifications. Added handleMenuListValueChanged()
+        for this purpose.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        (WebCore::AXObjectCache::handleMenuListValueChanged):
+        (WebCore::AXObjectCache::updateIsolatedTree):
+        * accessibility/AXObjectCache.h:
+
 2022-03-07  Jean-Yves Avenard  <jya@apple.com>
 
         MediaTime::invalidTime() conversion to CMTime incorrectly creates a valid time.

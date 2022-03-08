@@ -3329,14 +3329,27 @@ void AXObjectCache::performDeferredCacheUpdate()
     });
     m_deferredModalChangedList.clear();
 
-    m_deferredMenuListChange.forEach([this] (auto& deferredMenuListChangeElement) {
-        postNotification(&deferredMenuListChangeElement, AXObjectCache::AXMenuListValueChanged);
+    m_deferredMenuListChange.forEach([this] (auto& element) {
+        handleMenuListValueChanged(element);
     });
     m_deferredMenuListChange.clear();
-    
+
     platformPerformDeferredCacheUpdate();
 }
-    
+
+void AXObjectCache::handleMenuListValueChanged(Element& element)
+{
+    RefPtr<AccessibilityObject> object = get(&element);
+    if (!object)
+        return;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(*object, AXMenuListValueChanged);
+#endif
+
+    postPlatformNotification(object.get(), AXMenuListValueChanged);
+}
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 // FIXME: should be added to WTF::Vector.
 template<typename T, typename F>
@@ -3402,6 +3415,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObjec
             break;
         case AXActiveDescendantChanged:
         case AXAriaRoleChanged:
+        case AXMenuListValueChanged:
         case AXSelectedChildrenChanged:
         case AXValueChanged: {
             bool needsUpdate = appendIfNotContainsMatching(filteredNotifications, notification, [&notification] (const std::pair<RefPtr<AXCoreObject>, AXNotification>& note) {

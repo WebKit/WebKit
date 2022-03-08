@@ -1,3 +1,14 @@
+2022-03-07  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for <select> elements in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=237483
+        rdar://89530022
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/dropdown-value-expected.txt: Added.
+        * accessibility/dropdown-value.html: Added.
+
 2022-03-07  Mark Lam  <mark.lam@apple.com>
 
         Remove TestExpectations for imported/w3c/web-platform-tests/IndexedDB/key-generators/reading-autoincrement-indexes-cursors.any.worker.html.
