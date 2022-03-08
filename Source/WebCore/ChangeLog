@@ -1,3 +1,20 @@
+2022-03-08  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Sync gtk-overlay-scrolling setting to web process
+        https://bugs.webkit.org/show_bug.cgi?id=236476
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        (WebCore::ScrollbarThemeAdwaita::usesOverlayScrollbars const):
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::shouldUseOverlayScrollbars):
+        * platform/gtk/GtkUtilities.h:
+        * platform/gtk/RenderThemeScrollbar.cpp:
+        (WebCore::RenderThemeScrollbar::RenderThemeScrollbar):
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::ScrollbarThemeGtk):
+
 2022-03-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [EME][Thunder] Disable hasBrokenEncryptedMediaAPISupportQuirk

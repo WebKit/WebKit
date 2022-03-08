@@ -1,3 +1,22 @@
+2022-03-08  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Sync gtk-overlay-scrolling setting to web process
+        https://bugs.webkit.org/show_bug.cgi?id=236476
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Shared/gtk/GtkSettingsState.cpp:
+        (WebKit::GtkSettingsState::encode const):
+        (WebKit::GtkSettingsState::decode):
+        * Shared/gtk/GtkSettingsState.h:
+        * UIProcess/gtk/GtkSettingsManager.cpp:
+        (WebKit::GtkSettingsManager::overlayScrolling const):
+        (WebKit::GtkSettingsManager::settingsDidChange):
+        (WebKit::GtkSettingsManager::GtkSettingsManager):
+        * UIProcess/gtk/GtkSettingsManager.h:
+        * WebProcess/gtk/GtkSettingsManagerProxy.cpp:
+        (WebKit::GtkSettingsManagerProxy::applySettings):
+
 2022-03-08  Youenn Fablet  <youenn@apple.com>
 
         Add a preference to mute video capture in case audio capture gets interrupted

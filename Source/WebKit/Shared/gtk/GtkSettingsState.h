@@ -50,6 +50,7 @@ struct GtkSettingsState {
     std::optional<bool> cursorBlink;
     std::optional<int> cursorBlinkTime;
     std::optional<bool> primaryButtonWarpsSlider;
+    std::optional<bool> overlayScrolling;
 };
 
 } // namespace WebKit

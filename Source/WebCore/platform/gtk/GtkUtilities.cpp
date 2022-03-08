@@ -207,4 +207,18 @@ void monitorWorkArea(GdkMonitor* monitor, GdkRectangle* area)
 #endif
 }
 
+bool shouldUseOverlayScrollbars()
+{
+#if !USE(GTK4)
+    if (!g_strcmp0 (g_getenv ("GTK_OVERLAY_SCROLLING"), "0"))
+        return false;
+#endif
+
+    gboolean overlayScrolling;
+    g_object_get(gtk_settings_get_default(),
+        "gtk-overlay-scrolling",
+        &overlayScrolling, nullptr);
+    return !!overlayScrolling;
+}
+
 } // namespace WebCore

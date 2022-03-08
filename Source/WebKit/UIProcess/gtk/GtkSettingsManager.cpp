@@ -118,6 +118,13 @@ bool GtkSettingsManager::primaryButtonWarpsSlider() const
     return buttonSetting ? true : false;
 }
 
+bool GtkSettingsManager::overlayScrolling() const
+{
+    gboolean overlayScrollingSetting;
+    g_object_get(m_settings, "gtk-overlay-scrolling", &overlayScrollingSetting, nullptr);
+    return overlayScrollingSetting ? true : false;
+}
+
 void GtkSettingsManager::settingsDidChange()
 {
     GtkSettingsState state;
@@ -162,6 +169,10 @@ void GtkSettingsManager::settingsDidChange()
     if (m_settingsState.primaryButtonWarpsSlider != primaryButtonWarpsSlider)
         m_settingsState.primaryButtonWarpsSlider = state.primaryButtonWarpsSlider = primaryButtonWarpsSlider;
 
+    auto overlayScrolling = this->overlayScrolling();
+    if (m_settingsState.overlayScrolling != overlayScrolling)
+        m_settingsState.overlayScrolling = state.overlayScrolling = overlayScrolling;
+
     for (auto& processPool : WebProcessPool::allProcessPools())
         processPool->sendToAllProcesses(Messages::GtkSettingsManagerProxy::SettingsDidChange(state));
 }
@@ -183,6 +194,7 @@ GtkSettingsManager::GtkSettingsManager()
     m_settingsState.cursorBlink = cursorBlink();
     m_settingsState.cursorBlinkTime = cursorBlinkTime();
     m_settingsState.primaryButtonWarpsSlider = primaryButtonWarpsSlider();
+    m_settingsState.overlayScrolling = overlayScrolling();
 
     g_signal_connect_swapped(m_settings, "notify::gtk-theme-name", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-font-name", G_CALLBACK(settingsChangedCallback), this);
@@ -194,6 +206,7 @@ GtkSettingsManager::GtkSettingsManager()
     g_signal_connect_swapped(m_settings, "notify::gtk-cursor-blink", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-cursor-blink-time", G_CALLBACK(settingsChangedCallback), this);
     g_signal_connect_swapped(m_settings, "notify::gtk-primary-button-warps-slider", G_CALLBACK(settingsChangedCallback), this);
+    g_signal_connect_swapped(m_settings, "notify::gtk-overlay-scrolling", G_CALLBACK(settingsChangedCallback), this);
 }
 
 } // namespace WebKit

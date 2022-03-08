@@ -58,6 +58,7 @@ ScrollbarThemeGtk::ScrollbarThemeGtk()
     static bool themeMonitorInitialized = false;
     if (!themeMonitorInitialized) {
         g_signal_connect(gtk_settings_get_default(), "notify::gtk-theme-name", G_CALLBACK(themeChangedCallback), nullptr);
+        g_signal_connect(gtk_settings_get_default(), "notify::gtk-overlay-scrolling", G_CALLBACK(themeChangedCallback), nullptr);
         themeMonitorInitialized = true;
         updateThemeProperties();
     }

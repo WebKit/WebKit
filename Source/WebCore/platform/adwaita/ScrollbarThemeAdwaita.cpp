@@ -35,6 +35,7 @@
 #include "ThemeAdwaita.h"
 
 #if PLATFORM(GTK)
+#include "GtkUtilities.h"
 #include <gtk/gtk.h>
 #endif
 
@@ -70,8 +71,7 @@ void ScrollbarThemeAdwaita::updateScrollbarOverlayStyle(Scrollbar& scrollbar)
 bool ScrollbarThemeAdwaita::usesOverlayScrollbars() const
 {
 #if PLATFORM(GTK)
-    static bool shouldUuseOverlayScrollbars = g_strcmp0(g_getenv("GTK_OVERLAY_SCROLLING"), "0");
-    return shouldUuseOverlayScrollbars;
+    return shouldUseOverlayScrollbars();
 #else
     return true;
 #endif

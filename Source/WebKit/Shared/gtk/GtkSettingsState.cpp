@@ -42,6 +42,7 @@ void GtkSettingsState::encode(IPC::Encoder& encoder) const
     encoder << cursorBlink;
     encoder << cursorBlinkTime;
     encoder << primaryButtonWarpsSlider;
+    encoder << overlayScrolling;
 }
 
 std::optional<GtkSettingsState> GtkSettingsState::decode(IPC::Decoder& decoder)
@@ -76,6 +77,9 @@ std::optional<GtkSettingsState> GtkSettingsState::decode(IPC::Decoder& decoder)
         return std::nullopt;
 
     if (!decoder.decode(state.primaryButtonWarpsSlider))
+        return std::nullopt;
+
+    if (!decoder.decode(state.overlayScrolling))
         return std::nullopt;
 
     return state;

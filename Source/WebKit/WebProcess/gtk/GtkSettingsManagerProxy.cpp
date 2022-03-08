@@ -85,6 +85,9 @@ void GtkSettingsManagerProxy::applySettings(GtkSettingsState&& state)
 
     if (state.primaryButtonWarpsSlider)
         g_object_set(m_settings, "gtk-primary-button-warps-slider", *state.primaryButtonWarpsSlider, nullptr);
+
+    if (state.overlayScrolling)
+        g_object_set(m_settings, "gtk-overlay-scrolling", *state.overlayScrolling, nullptr);
 }
 
 } // namespace WebKit
