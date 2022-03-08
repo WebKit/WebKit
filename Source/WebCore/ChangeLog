@@ -1,3 +1,20 @@
+2022-03-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (r290853): CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebCore: WebCore::FrameLoader::clear
+        https://bugs.webkit.org/show_bug.cgi?id=237565
+        <rdar://problem/88356074>
+
+        Reviewed by Chris Dumez.
+
+        No new tests. Fixes crashing test: accessibility/mac/value-change/value-change-user-info-textarea.html 
+
+        newDocument may be the frame's document. We should make it a RefPtr
+        because it could get set to null in this function.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        * loader/FrameLoader.h:
+
 2022-03-08  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Sync gtk-overlay-scrolling setting to web process

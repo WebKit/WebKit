@@ -620,7 +620,7 @@ static inline bool shouldClearWindowName(const Frame& frame, const Document& new
     return !newDocument.securityOrigin().isSameOriginAs(frame.document()->securityOrigin());
 }
 
-void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView, Function<void()>&& handleDOMWindowCreation)
+void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperties, bool clearScriptObjects, bool clearFrameView, Function<void()>&& handleDOMWindowCreation)
 {
     bool neededClear = m_needsClear;
     m_needsClear = false;
