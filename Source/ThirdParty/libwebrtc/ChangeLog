@@ -1,3 +1,16 @@
+2022-03-07  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r290966.
+
+        Broke ews and make
+
+        Reverted changeset:
+
+        "[XCBuild] libwebrtc's headers are copied via rsync and do not
+        emit task outputs"
+        https://bugs.webkit.org/show_bug.cgi?id=237112
+        https://commits.webkit.org/r290966
+
 2022-03-07  Elliott Williams  <emw@apple.com>
 
         [XCBuild] libwebrtc's headers are copied via rsync and do not emit task outputs
