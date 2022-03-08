@@ -1,3 +1,13 @@
+2022-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Rename allow-custom-protocols-navigation to allow-top-navigation-to-custom-protocols
+        https://bugs.webkit.org/show_bug.cgi?id=237605
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (TEST):
+
 2022-03-08  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Prompt user when GitHub credentials are likely incorrect

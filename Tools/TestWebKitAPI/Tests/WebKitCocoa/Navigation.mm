@@ -898,7 +898,7 @@ TEST(WKNavigation, LoadRadarURLFromSandboxedFrameAllowTopNavigation)
 
 TEST(WKNavigation, LoadRadarURLFromSandboxedFrameAllowCustomProtocolsNavigation)
 {
-    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-custom-protocols-navigation'></iframe>";
+    const char* mainHTML = "<iframe src='frame.html' sandbox='allow-scripts allow-top-navigation-to-custom-protocols'></iframe>";
     const char* frameHTML = "<a id='testLink' href='rdar://84498192'>Link</a><script>setTimeout(() => { document.getElementById('testLink').click() }, 0);</script>";
 
     using namespace TestWebKitAPI;

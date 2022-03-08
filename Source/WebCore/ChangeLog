@@ -1,3 +1,21 @@
+2022-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Rename allow-custom-protocols-navigation to allow-top-navigation-to-custom-protocols
+        https://bugs.webkit.org/show_bug.cgi?id=237605
+
+        Reviewed by Darin Adler.
+
+        Rename allow-custom-protocols-navigation sandbox flag to allow-top-navigation-to-custom-protocols as per:
+        - https://github.com/whatwg/html/pull/7654#issuecomment-1054219407
+
+        There is no backward compatibility risk since support for this flag was added very recently
+        in r290958.
+
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::isSupportedSandboxPolicy):
+        (WebCore::SecurityContext::parseSandboxPolicy):
+        * dom/SecurityContext.h:
+
 2022-03-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows debug build
