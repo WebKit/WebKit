@@ -1,3 +1,42 @@
+2022-03-07  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Emit a discovered dependency file from offlineasm
+        https://bugs.webkit.org/show_bug.cgi?id=237329
+
+        Reviewed by Keith Miller.
+
+        Xcode needs to know what files offlineasm uses and produces in order to schedule it
+        correctly in incremental builds. Rather than use generated xcfilelists like WebKit does
+        elsewhere in the project, emit a depfile from offlineasm based on the parse tree's source
+        files.
+
+        Discovered dependency files ("depfiles") are Makefile-formatted files which list the inputs
+        used to produce an output. They are emitting during the build to a temporary directory, and
+        ensure that subsequent incremental builds will re-run offlineasm when any of the included
+        sources change. This is the same mechanism clang uses to track header dependencies.
+
+        Unfortunately, the legacy build system will refuse to execute a script phase or rule that
+        emits a depfile. To work around this, convert the offlineasm pipeline to be based on build
+        rules, to be used by XCBuild only. The idea is that LowLevelInterpreter.asm is listed as a
+        source build file in JSCLLIntSettingsExtractor, JSCLLIntOffsetsExtractor, and
+        JavaScriptCore. Each target uses a build rule to generate its respective header from
+        LowLevelInterpreter.asm. Xcode schedules these rule executions before any clang tasks.
+
+        The legacy build system avoids executing the rules via EXCLUDED_SOURCE_FILE_NAMES, and
+        instead uses the existing build phases, which have "(Legacy)" in their names and are now
+        no-ops under XCBuild.
+
+        Aside from working around the legacy build system's limitations, using build rules is
+        probably a superior way to express what we're doing, as it gives Xcode the opportunity to
+        compile other objects in parallel, and could be easily extended to compile multiple discrete
+        asm files should the need arise.
+
+        * Configurations/ToolExecutable.xcconfig: Build rules are XCBuild-only.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Add build rules, rename legacy scripts.
+        * offlineasm/asm.rb: Add --depfile flag.
+        * offlineasm/generate_offset_extractor.rb: Add --depfile flag.
+        * offlineasm/generate_settings_extractor.rb: Add --depfile flag.
+
 2022-03-07  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         AssemblyHelpersSpoolers: use load/store pair on ARMv7
