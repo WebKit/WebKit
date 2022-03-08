@@ -117,7 +117,6 @@ CString LocaleIDBuilder::toCanonical()
 void LocaleIDBuilder::overrideLanguageScriptRegion(StringView language, StringView script, StringView region)
 {
     unsigned length = strlen(m_buffer.data());
-    ASSERT(length);
 
     StringView localeIDView { m_buffer.data(), length };
 

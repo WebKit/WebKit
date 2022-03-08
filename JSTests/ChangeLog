@@ -1,3 +1,13 @@
+2022-03-08  Mark Lam  <mark.lam@apple.com>
+
+        Remove invalid ASSERT in LocaleIDBuilder::overrideLanguageScriptRegion().
+        https://bugs.webkit.org/show_bug.cgi?id=237573
+        <rdar://problem/83326232>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/handle-empty-localeID-in-localeIDBufferForLanguageTagWithNullTerminator.js: Added.
+
 2022-03-03  Tom Tartarin  <tom@leaningtech.com>
 
         [JSC] Update wasm branch hinting

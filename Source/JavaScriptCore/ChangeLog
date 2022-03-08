@@ -1,3 +1,22 @@
+2022-03-08  Mark Lam  <mark.lam@apple.com>
+
+        Remove invalid ASSERT in LocaleIDBuilder::overrideLanguageScriptRegion().
+        https://bugs.webkit.org/show_bug.cgi?id=237573
+        <rdar://problem/83326232>
+
+        Reviewed by Yusuke Suzuki.
+
+        The ASSERT(length) in LocaleIDBuilder::overrideLanguageScriptRegion() is simply
+        incorrect.  The length can be 0 if uloc_forLanguageTag returns a 0 length in
+        localeIDBufferForLanguageTagWithNullTerminator().  LocaleIDBuilder::overrideLanguageScriptRegion()
+        already handles this scenario correctly.  We just need to remove this incorrect ASSERT.
+
+        Also verified that we're producing the same result on the attached test case as
+        Chrome and Firefox produces.
+
+        * runtime/IntlObject.cpp:
+        (JSC::localeIDBufferForLanguageTagWithNullTerminator):
+
 2022-03-07  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Emit a discovered dependency file from offlineasm
