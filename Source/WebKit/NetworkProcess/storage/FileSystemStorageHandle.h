@@ -43,7 +43,7 @@ class FileSystemStorageHandle : public CanMakeWeakPtr<FileSystemStorageHandle, W
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type : uint8_t { File, Directory, Any };
-    FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
+    static std::unique_ptr<FileSystemStorageHandle> create(FileSystemStorageManager&, Type, String&& path, String&& name);
 
     WebCore::FileSystemHandleIdentifier identifier() const { return m_identifier; }
     const String& path() const { return m_path; }
@@ -65,6 +65,7 @@ public:
     std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> activeSyncAccessHandle() const { return m_activeSyncAccessHandle; }
 
 private:
+    FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> requestCreateHandle(IPC::Connection::UniqueID, Type, String&& name, bool createIfNecessary);
 
     WebCore::FileSystemHandleIdentifier m_identifier;

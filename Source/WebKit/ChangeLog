@@ -1,3 +1,23 @@
+2022-03-08  Sihui Liu  <sihui_liu@apple.com>
+
+        File System Access: throw exception if file or directory cannot be accessed in file system
+        https://bugs.webkit.org/show_bug.cgi?id=237537
+
+        Reviewed by Youenn Fablet.
+
+        When a FileSystemHandle is created, we will ensure that corresponding directory or file exists (create the 
+        directory or file if it does not exist yet). However, we did not check the result of the file system calls.
+        That means, we may fail to create the file (e.g. due to no disk space, or cases in rdar://89291566), but we 
+        still return success to the FileSystemHandle creation request. We should fix this by checking the file system
+        call's result before completing the request.  
+
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::FileSystemStorageHandle::create):
+        (WebKit::FileSystemStorageHandle::FileSystemStorageHandle):
+        * NetworkProcess/storage/FileSystemStorageHandle.h:
+        * NetworkProcess/storage/FileSystemStorageManager.cpp:
+        (WebKit::FileSystemStorageManager::createHandle):
+
 2022-03-08  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r291006.
