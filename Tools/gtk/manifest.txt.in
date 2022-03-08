@@ -47,10 +47,6 @@ exclude .*\/(Configurations|mac|ios|cf|cg|cocoa|Cocoa|objc|avfoundation|ca|curl|
 
 directory Source
 exclude Source/JavaScriptCore/tests
-exclude Source/ThirdParty/capstone
-exclude Source/ThirdParty/libwebrtc
-exclude Source/ThirdParty/qunit
-exclude Source/ThirdParty/openvr
 exclude Source/WebCore/platform/audio/resources
 exclude Source/WebCore/bindings/scripts/test
 exclude Source/WebCore/Resources
@@ -60,6 +56,11 @@ exclude Source/cmake/OptionsWindows.cmake$
 exclude Source/cmake/OptionsAppleWin.cmake$
 exclude Source/cmake/OptionsWPE.cmake$
 exclude Source/WebInspectorUI/Tools
+
+exclude Source/ThirdParty
+directory Source/ThirdParty/ANGLE
+directory Source/ThirdParty/gtest
+directory Source/ThirdParty/xdgmime
 
 exclude Source/WebKit/Resources
 directory Source/WebKit/Resources/gtk

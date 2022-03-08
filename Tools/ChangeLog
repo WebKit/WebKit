@@ -1,3 +1,17 @@
+2022-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Do not add new modules under ThirdParty to the tarball
+        https://bugs.webkit.org/show_bug.cgi?id=237519
+
+        Reviewed by Michael Catanzaro.
+
+        We currently include ThirdParty and exclude individually what we don't want in the tarball. That means every
+        time something new is added to ThirdParty we have to manually exclude it. It's better to exclude ThirdParty and
+        manually add what we need instead.
+
+        * gtk/manifest.txt.in:
+        * wpe/manifest.txt.in:
+
 2022-03-08  Sihui Liu  <sihui_liu@apple.com>
 
         Add early return for empty path in makeAllDirectories
