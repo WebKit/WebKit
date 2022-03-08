@@ -1,3 +1,18 @@
+2022-03-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [EME][Thunder] Disable hasBrokenEncryptedMediaAPISupportQuirk
+        https://bugs.webkit.org/show_bug.cgi?id=237595
+
+        Reviewed by Philippe Normand.
+
+        Hulu and YouTube work fine with Thunder, no need for this quirk.
+
+        Patch based on one by Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::hasBrokenEncryptedMediaAPISupportQuirk const):
+        Return false if Thunder build is enabled.
+
 2022-03-08  Youenn Fablet  <youenn@apple.com>
 
         Add a preference to mute video capture in case audio capture gets interrupted
