@@ -55,7 +55,7 @@ FetchOptions AbstractWorker::workerFetchOptions(const WorkerOptions& options, Fe
     return fetchOptions;
 }
 
-ExceptionOr<URL> AbstractWorker::resolveURL(const String& url, bool shouldBypassMainWorldContentSecurityPolicy)
+ExceptionOr<URL> AbstractWorker::resolveURL(const String& url)
 {
     auto& context = *scriptExecutionContext();
 
@@ -68,7 +68,7 @@ ExceptionOr<URL> AbstractWorker::resolveURL(const String& url, bool shouldBypass
         return Exception { SecurityError };
 
     ASSERT(context.contentSecurityPolicy());
-    if (!shouldBypassMainWorldContentSecurityPolicy && !context.contentSecurityPolicy()->allowChildContextFromSource(scriptURL))
+    if (!context.contentSecurityPolicy()->allowWorkerFromSource(scriptURL))
         return Exception { SecurityError };
 
     return scriptURL;
