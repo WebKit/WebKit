@@ -84,11 +84,11 @@ String WorkerThreadableWebSocketChannel::extensions()
     return m_workerClientWrapper->extensions();
 }
 
-ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::send(const String& message)
+ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::send(CString&& message)
 {
     if (!m_bridge)
         return ThreadableWebSocketChannel::SendFail;
-    return m_bridge->send(message);
+    return m_bridge->send(WTFMove(message));
 }
 
 ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::send(const ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
@@ -168,13 +168,13 @@ WorkerThreadableWebSocketChannel::ConnectStatus WorkerThreadableWebSocketChannel
     return m_mainWebSocketChannel->connect(url, protocol);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::send(const String& message)
+void WorkerThreadableWebSocketChannel::Peer::send(CString&& message)
 {
     ASSERT(isMainThread());
     if (!m_mainWebSocketChannel)
         return;
 
-    ThreadableWebSocketChannel::SendResult sendRequestResult = m_mainWebSocketChannel->send(message);
+    ThreadableWebSocketChannel::SendResult sendRequestResult = m_mainWebSocketChannel->send(WTFMove(message));
     m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([workerClientWrapper = m_workerClientWrapper, sendRequestResult](ScriptExecutionContext&) mutable {
         workerClientWrapper->setSendRequestResult(sendRequestResult);
     }, m_taskMode);
@@ -424,18 +424,18 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
     });
 }
 
-ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge::send(const String& message)
+ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge::send(CString&& message)
 {
     if (!m_peer)
         return ThreadableWebSocketChannel::SendFail;
     setMethodNotCompleted();
 
-    m_loaderProxy.postTaskToLoader([peer = m_peer, message = message.isolatedCopy()](ScriptExecutionContext& context) {
+    m_loaderProxy.postTaskToLoader([peer = m_peer, message = WTFMove(message)](ScriptExecutionContext& context) mutable {
         ASSERT(isMainThread());
         ASSERT_UNUSED(context, context.isDocument());
         ASSERT(peer);
 
-        peer->send(message);
+        peer->send(WTFMove(message));
     });
 
     Ref<Bridge> protectedThis(*this);

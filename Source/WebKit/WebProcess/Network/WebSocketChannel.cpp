@@ -159,13 +159,12 @@ template<typename T> void WebSocketChannel::sendMessage(T&& message, size_t byte
     sendWithAsyncReply(WTFMove(message), WTFMove(completionHandler));
 }
 
-WebSocketChannel::SendResult WebSocketChannel::send(const String& message)
+WebSocketChannel::SendResult WebSocketChannel::send(CString&& message)
 {
-    auto utf8 = message.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
-    if (!increaseBufferedAmount(utf8.length()))
+    if (!increaseBufferedAmount(message.length()))
         return SendFail;
 
-    m_messageQueue.enqueue(WTFMove(utf8));
+    m_messageQueue.enqueue(WTFMove(message));
     return SendSuccess;
 }
 

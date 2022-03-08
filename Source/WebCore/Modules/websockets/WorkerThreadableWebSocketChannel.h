@@ -58,7 +58,7 @@ public:
     ConnectStatus connect(const URL&, const String& protocol) final;
     String subprotocol() final;
     String extensions() final;
-    ThreadableWebSocketChannel::SendResult send(const String& message) final;
+    ThreadableWebSocketChannel::SendResult send(CString&&) final;
     ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) final;
     ThreadableWebSocketChannel::SendResult send(Blob&) final;
     unsigned bufferedAmount() const final;
@@ -77,7 +77,7 @@ public:
         ~Peer();
 
         ConnectStatus connect(const URL&, const String& protocol);
-        void send(const String& message);
+        void send(CString&&);
         void send(const JSC::ArrayBuffer&);
         void send(Blob&);
         void bufferedAmount();
@@ -121,7 +121,7 @@ private:
         ~Bridge();
         void initialize();
         void connect(const URL&, const String& protocol);
-        ThreadableWebSocketChannel::SendResult send(const String& message);
+        ThreadableWebSocketChannel::SendResult send(CString&&);
         ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength);
         ThreadableWebSocketChannel::SendResult send(Blob&);
         unsigned bufferedAmount();

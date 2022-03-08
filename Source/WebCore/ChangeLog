@@ -1,3 +1,25 @@
+2022-03-08  Alex Christensen  <achristensen@webkit.org>
+
+        WebSocket.send() should synchronously update bufferedAmount
+        https://bugs.webkit.org/show_bug.cgi?id=235707
+
+        Reviewed by Chris Dumez.
+
+        This matches the behavior of Chrome and Firefox and is covered by web platform tests.
+
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::send):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send):
+        (WebCore::WebSocketChannel::enqueueTextFrame):
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::send):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+
 2022-03-08  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (r290853): CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebCore: WebCore::FrameLoader::clear

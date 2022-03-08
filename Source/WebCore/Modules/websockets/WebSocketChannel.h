@@ -74,7 +74,7 @@ public:
     ConnectStatus connect(const URL&, const String& protocol) final;
     String subprotocol() final;
     String extensions() final;
-    ThreadableWebSocketChannel::SendResult send(const String& message) final;
+    ThreadableWebSocketChannel::SendResult send(CString&&) final;
     ThreadableWebSocketChannel::SendResult send(const JSC::ArrayBuffer&, unsigned byteOffset, unsigned byteLength) final;
     ThreadableWebSocketChannel::SendResult send(Blob&) final;
     unsigned bufferedAmount() const final;
@@ -167,7 +167,7 @@ private:
         Vector<uint8_t> vectorData;
         RefPtr<Blob> blobData;
     };
-    void enqueueTextFrame(const CString&);
+    void enqueueTextFrame(CString&&);
     void enqueueRawFrame(WebSocketFrame::OpCode, const uint8_t* data, size_t dataLength);
     void enqueueBlobFrame(WebSocketFrame::OpCode, Blob&);
 

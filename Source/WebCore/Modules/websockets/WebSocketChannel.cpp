@@ -142,14 +142,13 @@ String WebSocketChannel::extensions()
     return extensions;
 }
 
-ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const String& message)
+ThreadableWebSocketChannel::SendResult WebSocketChannel::send(CString&& message)
 {
     if (m_outgoingFrameQueueStatus != OutgoingFrameQueueOpen)
         return ThreadableWebSocketChannel::SendSuccess;
 
-    LOG(Network, "WebSocketChannel %p send() Sending String '%s'", this, message.utf8().data());
-    CString utf8 = message.utf8(StrictConversionReplacingUnpairedSurrogatesWithFFFD);
-    enqueueTextFrame(utf8);
+    LOG(Network, "WebSocketChannel %p send() Sending String '%s'", this, message.data());
+    enqueueTextFrame(WTFMove(message));
     processOutgoingFrameQueue();
     // According to WebSocket API specification, WebSocket.send() should return void instead
     // of boolean. However, our implementation still returns boolean due to compatibility
@@ -719,13 +718,13 @@ bool WebSocketChannel::processFrame()
     return true;
 }
 
-void WebSocketChannel::enqueueTextFrame(const CString& string)
+void WebSocketChannel::enqueueTextFrame(CString&& string)
 {
     ASSERT(m_outgoingFrameQueueStatus == OutgoingFrameQueueOpen);
     auto frame = makeUnique<QueuedFrame>();
     frame->opCode = WebSocketFrame::OpCodeText;
     frame->frameType = QueuedFrameTypeString;
-    frame->stringData = string;
+    frame->stringData = WTFMove(string);
     m_outgoingFrameQueue.append(WTFMove(frame));
 }
 
