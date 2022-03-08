@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CompilationMessage.h"
 #include <cinttypes>
 #include <cstdint>
 #include <memory>
@@ -41,28 +42,16 @@ namespace WGSL {
 // Step 1
 //
 
-enum class CompilationMessageType : uint8_t {
-    Error,
-    Warning,
-    Info
-};
-
-struct CompilationMessage {
-    String message;
-    uint64_t lineNumber;
-    uint64_t linePosition;
-    uint64_t offset;
-    uint64_t length;
-};
-
-class AST;
+namespace AST {
+class ShaderModule;
+}
 
 struct SuccessfulCheck {
     SuccessfulCheck() = delete;
     SuccessfulCheck(SuccessfulCheck&&);
     ~SuccessfulCheck();
     Vector<CompilationMessage> warnings;
-    UniqueRef<AST> ast;
+    UniqueRef<AST::ShaderModule> ast;
 };
 
 struct FailedCheck {
@@ -214,7 +203,7 @@ struct PrepareResult {
 
 // These are not allowed to fail.
 // All failures must have already been caught in check().
-PrepareResult prepare(const AST&, const HashMap<String, PipelineLayout>&);
-PrepareResult prepare(const AST&, const String& entryPointName, const std::optional<PipelineLayout>&);
+PrepareResult prepare(const AST::ShaderModule&, const HashMap<String, PipelineLayout>&);
+PrepareResult prepare(const AST::ShaderModule&, const String& entryPointName, const std::optional<PipelineLayout>&);
 
 } // namespace WGSL

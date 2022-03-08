@@ -153,7 +153,7 @@ static CompilationMessageData convertMessages(const Messages& messages1, const s
 
     auto populateMessages = [&] (const Messages& compilationMessages) {
         for (const auto& compilationMessage : compilationMessages.messages)
-            flattenedMessages.append(compilationMessage.message.utf8());
+            flattenedMessages.append(compilationMessage.message().utf8());
     };
 
     populateMessages(messages1);
@@ -167,10 +167,10 @@ static CompilationMessageData convertMessages(const Messages& messages1, const s
                 nullptr,
                 flattenedMessages[i + base].data(),
                 compilationMessages.type,
-                compilationMessage.lineNumber,
-                compilationMessage.linePosition,
-                compilationMessage.offset,
-                compilationMessage.length,
+                compilationMessage.lineNumber(),
+                compilationMessage.lineOffset(),
+                compilationMessage.offset(),
+                compilationMessage.length(),
             });
         }
     };
@@ -218,11 +218,11 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
     return { { } };
 }
 
-const WGSL::AST* ShaderModule::ast() const
+const WGSL::AST::ShaderModule* ShaderModule::ast() const
 {
-    return WTF::switchOn(m_checkResult, [&] (const WGSL::SuccessfulCheck& successfulCheck) -> const WGSL::AST* {
+    return WTF::switchOn(m_checkResult, [&] (const WGSL::SuccessfulCheck& successfulCheck) -> const WGSL::AST::ShaderModule* {
         return successfulCheck.ast.ptr();
-    }, [&] (const WGSL::FailedCheck&) -> const WGSL::AST* {
+    }, [&] (const WGSL::FailedCheck&) -> const WGSL::AST::ShaderModule* {
         return nullptr;
     });
 }

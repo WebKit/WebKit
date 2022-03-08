@@ -26,8 +26,18 @@
 #include "config.h"
 #include "WGSL.h"
 
-#include "AST.h"
 #include "Lexer.h"
+// All of these are just to check that they compile, since for now they are not really used.
+#include "AST/GlobalVariableDecl.h"
+#include "AST/StructureDecl.h"
+#include "AST/FunctionDecl.h"
+#include "AST/ShaderModule.h"
+#include "AST/Statements/AssignmentStatement.h"
+#include "AST/Statements/ReturnStatement.h"
+#include "AST/Expressions/IdentifierExpression.h"
+#include "AST/Expressions/TypeConversion.h"
+#include "AST/Expressions/StructureAccess.h"
+#include "AST/Expressions/LiteralExpressions.h"
 
 namespace WGSL {
 
@@ -43,14 +53,14 @@ SuccessfulCheck::SuccessfulCheck(SuccessfulCheck&&) = default;
 
 SuccessfulCheck::~SuccessfulCheck() = default;
 
-PrepareResult prepare(const AST& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
+PrepareResult prepare(const AST::ShaderModule& ast, const HashMap<String, PipelineLayout>& pipelineLayouts)
 {
     UNUSED_PARAM(ast);
     UNUSED_PARAM(pipelineLayouts);
     return { String(), { } };
 }
 
-PrepareResult prepare(const AST& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayouts)
+PrepareResult prepare(const AST::ShaderModule& ast, const String& entryPointName, const std::optional<PipelineLayout>& pipelineLayouts)
 {
     UNUSED_PARAM(ast);
     UNUSED_PARAM(entryPointName);

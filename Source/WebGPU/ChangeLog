@@ -1,5 +1,148 @@
 2022-03-08  Robin Morisset  <rmorisset@apple.com>
 
+        [WGSL] Add enough of the AST for the simplest shaders
+        https://bugs.webkit.org/show_bug.cgi?id=236655
+
+        Reviewed by Myles Maxfield.
+
+        These AST nodes are just those required for the most trivial graphics and compute shaders.
+        I used the machinery from wtf/TypeCasts as suggested by Myles in https://bugs.webkit.org/show_bug.cgi?id=233276.
+        Currently all of the code for these nodes is included in WGSL.cpp to verify that they build. This will be removed in the parser patch.
+
+        Attributes are added in setAttributes methods instead of being part of the constructors, because it can fail, and returning an error from a constructor is tricky.
+
+        * WGSL/AST/Attribute.h: Added.
+        (WGSL::AST::Attribute::Attribute):
+        (WGSL::AST::Attribute::kind const):
+        (WGSL::AST::Attribute::isBlock const):
+        (WGSL::AST::Attribute::isGroup const):
+        (WGSL::AST::Attribute::isBinding const):
+        (WGSL::AST::Attribute::isStage const):
+        (WGSL::AST::Attribute::isLocation const):
+        (WGSL::AST::Attribute::isBuiltin const):
+        (WGSL::AST::BlockAttribute::BlockAttribute):
+        (WGSL::AST::GroupAttribute::GroupAttribute):
+        (WGSL::AST::GroupAttribute::group const):
+        (WGSL::AST::BindingAttribute::BindingAttribute):
+        (WGSL::AST::BindingAttribute::binding const):
+        (WGSL::AST::StageAttribute::StageAttribute):
+        (WGSL::AST::StageAttribute::stage const):
+        (WGSL::AST::BuiltinAttribute::BuiltinAttribute):
+        (WGSL::AST::BuiltinAttribute::name const):
+        (WGSL::AST::LocationAttribute::LocationAttribute):
+        (WGSL::AST::LocationAttribute::location const):
+        * WGSL/AST/Expression.h: Added.
+        (WGSL::AST::Expression::Expression):
+        (WGSL::AST::Expression::kind const):
+        (WGSL::AST::Expression::isBoolLiteral const):
+        (WGSL::AST::Expression::isInt32Literal const):
+        (WGSL::AST::Expression::isUInt32Literal const):
+        (WGSL::AST::Expression::isFloat32Literal const):
+        (WGSL::AST::Expression::isIdentifier const):
+        (WGSL::AST::Expression::isStructureAccess const):
+        (WGSL::AST::Expression::isTypeConversion const):
+        * WGSL/AST/Expressions/IdentifierExpression.h: Added.
+        (WGSL::AST::IdentifierExpression::IdentifierExpression):
+        (WGSL::AST::IdentifierExpression::identifier const):
+        * WGSL/AST/Expressions/LiteralExpressions.h: Added.
+        (WGSL::AST::BoolLiteral::BoolLiteral):
+        (WGSL::AST::BoolLiteral::value const):
+        (WGSL::AST::Int32Literal::Int32Literal):
+        (WGSL::AST::Int32Literal::value const):
+        (WGSL::AST::Uint32Literal::Uint32Literal):
+        (WGSL::AST::Uint32Literal::value const):
+        (WGSL::AST::Float32Literal::Float32Literal):
+        (WGSL::AST::Float32Literal::value const):
+        * WGSL/AST/Expressions/StructureAccess.h: Added.
+        (WGSL::AST::StructureAccess::StructureAccess):
+        (WGSL::AST::StructureAccess::base):
+        (WGSL::AST::StructureAccess::fieldName const):
+        * WGSL/AST/Expressions/TypeConversion.h: Added.
+        (WGSL::AST::TypeConversion::TypeConversion):
+        (WGSL::AST::TypeConversion::typeDecl):
+        (WGSL::AST::TypeConversion::arguments):
+        * WGSL/AST/FunctionDecl.h: Added.
+        (WGSL::AST::Parameter::Parameter):
+        (WGSL::AST::Parameter::setAttributes):
+        (WGSL::AST::Parameter::builtin const):
+        (WGSL::AST::Parameter::location const):
+        (WGSL::AST::Parameter::name const):
+        (WGSL::AST::Parameter::type):
+        (WGSL::AST::FunctionDecl::FunctionDecl):
+        (WGSL::AST::FunctionDecl::setAttributes):
+        (WGSL::AST::FunctionDecl::setReturnAttributes):
+        (WGSL::AST::FunctionDecl::entryPointStage const):
+        (WGSL::AST::FunctionDecl::name const):
+        (WGSL::AST::FunctionDecl::parameters):
+        (WGSL::AST::FunctionDecl::returnBuiltin const):
+        (WGSL::AST::FunctionDecl::returnLocation const):
+        (WGSL::AST::FunctionDecl::maybeReturnType):
+        (WGSL::AST::FunctionDecl::body):
+        * WGSL/AST/GlobalDecl.h: Added.
+        (WGSL::AST::GlobalDecl::GlobalDecl):
+        (WGSL::AST::GlobalDecl::kind const):
+        (WGSL::AST::GlobalDecl::isGlobalVariable const):
+        (WGSL::AST::GlobalDecl::isStruct const):
+        (WGSL::AST::GlobalDecl::isFunction const):
+        * WGSL/AST/GlobalDirective.h: Added.
+        (WGSL::AST::GlobalDirective::name const):
+        * WGSL/AST/GlobalVariableDecl.h: Added.
+        (WGSL::AST::GlobalVariableDecl::GlobalVariableDecl):
+        (WGSL::AST::GlobalVariableDecl::setAttributes):
+        (WGSL::AST::GlobalVariableDecl::group const):
+        (WGSL::AST::GlobalVariableDecl::binding const):
+        (WGSL::AST::GlobalVariableDecl::name const):
+        (WGSL::AST::GlobalVariableDecl::maybeQualifier):
+        (WGSL::AST::GlobalVariableDecl::maybeTypeDecl):
+        (WGSL::AST::GlobalVariableDecl::maybeInitializer):
+        * WGSL/AST/Shader.h: Renamed from Source/WebGPU/WGSL/AST.h.
+        * WGSL/AST/Statement.h: Added.
+        (WGSL::AST::Statement::Statement):
+        (WGSL::AST::Statement::kind const):
+        (WGSL::AST::Statement::isCompound const):
+        (WGSL::AST::Statement::isReturn const):
+        (WGSL::AST::Statement::isAssignment const):
+        * WGSL/AST/Statements/AssignmentStatement.h: Added.
+        (WGSL::AST::AssignmentStatement::AssignmentStatement):
+        (WGSL::AST::AssignmentStatement::maybeLhs):
+        (WGSL::AST::AssignmentStatement::rhs):
+        * WGSL/AST/Statements/ReturnStatement.h: Added.
+        (WGSL::AST::ReturnStatement::ReturnStatement):
+        (WGSL::AST::ReturnStatement::maybeExpression):
+        * WGSL/AST/StructureDecl.h: Added.
+        (WGSL::AST::StructMember::StructMember):
+        (WGSL::AST::StructMember::setAttributes):
+        (WGSL::AST::StructMember::builtin const):
+        (WGSL::AST::StructMember::location const):
+        (WGSL::AST::StructMember::name const):
+        (WGSL::AST::StructMember::type):
+        (WGSL::AST::StructDecl::StructDecl):
+        (WGSL::AST::StructDecl::setAttributes):
+        (WGSL::AST::StructDecl::isBlock const):
+        (WGSL::AST::StructDecl::name const):
+        (WGSL::AST::StructDecl::members):
+        * WGSL/AST/TypeDecl.h: Added.
+        (WGSL::AST::TypeDecl::TypeDecl):
+        (WGSL::AST::TypeDecl::kind const):
+        (WGSL::AST::TypeDecl::isNamed const):
+        (WGSL::AST::TypeDecl::isParameterized const):
+        * WGSL/AST/VariableQualifier.h: Added.
+        (WGSL::AST::VariableQualifier::VariableQualifier):
+        (WGSL::AST::VariableQualifier::storageClass const):
+        (WGSL::AST::VariableQualifier::accessMode const):
+        * WGSL/ASTNode.h: Added.
+        (WGSL::AST::ASTNode::ASTNode):
+        (WGSL::AST::ASTNode::span const):
+        * WGSL/CompilationMessage.cpp: Added.
+        (WGSL::CompilationMessage::dump const):
+        * WGSL/CompilationMessage.h: Added.
+        (WGSL::CompilationMessage::CompilationMessage):
+        * WGSL/WGSL.cpp:
+        * WGSL/WGSL.h:
+        * WebGPU.xcodeproj/project.pbxproj:
+
+2022-03-08  Robin Morisset  <rmorisset@apple.com>
+
         [WGSL] The lexer should use the functions from wtf/ASCIICType.h
         https://bugs.webkit.org/show_bug.cgi?id=236783
 
