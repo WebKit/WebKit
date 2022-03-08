@@ -1,3 +1,26 @@
+2022-03-07  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] libwebrtc's headers are copied via rsync and do not emit task outputs
+        https://bugs.webkit.org/show_bug.cgi?id=237112
+
+        Reviewed by Alexey Proskuryakov.
+
+        Reconfigure the Xcode project to copy libwebrtc's headers natively, using the same approach
+        as https://commits.webkit.org/247585@main and https://commits.webkit.org/247656@main.
+
+        Add a target for absl's headers, so that they can be copied and configured separately from
+        webrtc's headers. This target does not have any source files, so it is effectively
+        headers-only.
+
+        libwebrtc.xcodeproj is very messy and doesn't always align with the on-disk representation
+        of the project's sources, but I have combed through all the source directories to ensure
+        that all headers which aren't obviously testing or non-Mac-related are included.
+
+        * Configurations/Base.xcconfig: Copy WK_WHICH_BUILD_SYSTEM from other projects.
+        * Configurations/libabsl.xcconfig: Added.
+        * Configurations/libwebrtc.xcconfig: Set header-related build settings.
+        * libwebrtc.xcodeproj/project.pbxproj: Tons of header additions and visibility changes.
+
 2022-03-02  Michael Saboff  <msaboff@apple.com>
 
         Copy WebKit frameworks and XPC processes to Secondary Path
