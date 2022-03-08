@@ -270,14 +270,14 @@ bool deleteFile(const String& path)
 bool makeAllDirectories(const String& path)
 {
     auto fullPath = fileSystemRepresentation(path);
-    if (fullPath.isNull())
+    int length = fullPath.length();
+    if (!length)
         return false;
 
     if (!access(fullPath.data(), F_OK))
         return true;
 
     char* p = fullPath.mutableData() + 1;
-    int length = fullPath.length();
     if (p[length - 1] == '/')
         p[length - 1] = '\0';
     for (; *p; ++p) {

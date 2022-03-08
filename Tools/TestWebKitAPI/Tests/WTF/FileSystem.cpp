@@ -489,6 +489,7 @@ TEST_F(FileSystemTest, makeAllDirectories)
     invalidFolderPath.append('\0');
     invalidFolderPath.append('a');
     EXPECT_FALSE(FileSystem::makeAllDirectories(invalidFolderPath));
+    EXPECT_FALSE(FileSystem::makeAllDirectories(emptyString()));
 }
 
 TEST_F(FileSystemTest, volumeFreeSpace)

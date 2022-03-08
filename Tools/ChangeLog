@@ -1,3 +1,14 @@
+2022-03-08  Sihui Liu  <sihui_liu@apple.com>
+
+        Add early return for empty path in makeAllDirectories
+        https://bugs.webkit.org/show_bug.cgi?id=237540
+        rdar://89901536
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2022-03-07  David Kilzer  <ddkilzer@apple.com>
 
         Fix Release builds for sanitizers by defining RELEASE_WITHOUT_OPTIMIZATIONS

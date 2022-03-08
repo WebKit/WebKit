@@ -1,3 +1,14 @@
+2022-03-08  Sihui Liu  <sihui_liu@apple.com>
+
+        Add early return for empty path in makeAllDirectories
+        https://bugs.webkit.org/show_bug.cgi?id=237540
+        rdar://89901536
+
+        Reviewed by Chris Dumez.
+
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::makeAllDirectories):
+
 2022-03-07  Per Arne Vollan  <pvollan@apple.com>
 
         Preconnecting after process swap is a page load time improvement on some devices
