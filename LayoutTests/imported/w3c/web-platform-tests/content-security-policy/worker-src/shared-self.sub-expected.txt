@@ -1,3 +1,0 @@
-
-PASS Same-origin dedicated worker allowed by 'self'.
-

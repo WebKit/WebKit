@@ -1,3 +1,0 @@
-
-PASS Same-origin shared worker allowed by child-src 'self'.
-

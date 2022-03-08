@@ -97,18 +97,18 @@ ExceptionOr<Ref<Worker>> Worker::create(ScriptExecutionContext& context, JSC::Ru
 
     worker->suspendIfNeeded();
 
-    auto scriptURL = worker->resolveURL(url);
+    bool shouldBypassMainWorldContentSecurityPolicy = context.shouldBypassMainWorldContentSecurityPolicy();
+    auto scriptURL = worker->resolveURL(url, shouldBypassMainWorldContentSecurityPolicy);
     if (scriptURL.hasException())
         return scriptURL.releaseException();
 
-    bool shouldBypassMainWorldContentSecurityPolicy = context.shouldBypassMainWorldContentSecurityPolicy();
     worker->m_shouldBypassMainWorldContentSecurityPolicy = shouldBypassMainWorldContentSecurityPolicy;
 
     // https://html.spec.whatwg.org/multipage/workers.html#official-moment-of-creation
     worker->m_workerCreationTime = MonotonicTime::now();
 
     worker->m_scriptLoader = WorkerScriptLoader::create();
-    auto contentSecurityPolicyEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective;
+    auto contentSecurityPolicyEnforcement = shouldBypassMainWorldContentSecurityPolicy ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceChildSrcDirective;
 
     ResourceRequest request { scriptURL.releaseReturnValue() };
     request.setInitiatorIdentifier(worker->m_identifier);

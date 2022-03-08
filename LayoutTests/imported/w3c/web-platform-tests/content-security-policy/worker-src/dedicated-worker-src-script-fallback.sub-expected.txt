@@ -1,3 +1,3 @@
 
-PASS Same-origin dedicated worker allowed by script-src 'self'.
+FAIL Same-origin dedicated worker allowed by script-src 'self'. The operation is insecure.
 

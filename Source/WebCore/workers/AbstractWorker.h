@@ -51,7 +51,7 @@ protected:
     AbstractWorker() = default;
 
     // Helper function that converts a URL to an absolute URL and checks the result for validity.
-    ExceptionOr<URL> resolveURL(const String& url);
+    ExceptionOr<URL> resolveURL(const String& url, bool shouldBypassMainWorldContentSecurityPolicy);
 
     intptr_t asID() const { return reinterpret_cast<intptr_t>(this); }
 

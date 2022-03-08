@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SharedWorker.h"
 
-#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "MessageChannel.h"
 #include "MessagePort.h"
@@ -49,11 +48,6 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, JSC::Run
     auto url = document.completeURL(scriptURLString);
     if (!url.isValid())
         return Exception { SyntaxError, "Invalid script URL"_s };
-
-    if (auto* contentSecurityPolicy = document.contentSecurityPolicy()) {
-        if (!contentSecurityPolicy->allowWorkerFromSource(url))
-            return Exception { SecurityError };
-    }
 
     WorkerOptions options;
     if (maybeOptions) {

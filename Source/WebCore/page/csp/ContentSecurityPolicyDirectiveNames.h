@@ -54,7 +54,6 @@ extern const char* const styleSrcAttr;
 extern const char* const styleSrcElem;
 extern const char* const upgradeInsecureRequests;
 extern const char* const blockAllMixedContent;
-extern const char* const workerSrc;
 
 } // namespace ContentSecurityPolicyDirectiveNames
 

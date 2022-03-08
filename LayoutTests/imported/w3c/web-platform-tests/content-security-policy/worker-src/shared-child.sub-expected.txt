@@ -1,4 +1,0 @@
-
-PASS Same-origin dedicated worker allowed by 'self'.
-PASS blob: dedicated worker allowed by 'blob:'.
-
