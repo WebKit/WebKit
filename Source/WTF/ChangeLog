@@ -1,3 +1,16 @@
+2022-03-08  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows debug build
+        https://bugs.webkit.org/show_bug.cgi?id=237617
+
+        Reviewed by Fujii Hironori.
+
+        MSVC's linker is limited to generating 4GB libraries.
+        Currently, I'm seeing WebCore.lib be 3.9GB and some bots are failing to link debug builds.
+        More source unification reduces WebCore.lib's size to 3.3GB.
+
+        * Scripts/generate-unified-source-bundles.rb:
+
 2022-03-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Speech Synthesis no longer returning list of voices in macOS 12.3

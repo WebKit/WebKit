@@ -58,7 +58,9 @@ def usage(message)
     exit 1
 end
 
-MAX_BUNDLE_SIZE = 8
+# Windows needs a larger bundle size because that helps keep WebCore.lib's size below the 4GB maximum in debug builds.
+MAX_BUNDLE_SIZE = (ENV['OS'] == 'Windows_NT') ? 16 : 8
+
 MAX_DENSE_BUNDLE_SIZE = 64
 $derivedSourcesPath = nil
 $unifiedSourceOutputPath = nil
