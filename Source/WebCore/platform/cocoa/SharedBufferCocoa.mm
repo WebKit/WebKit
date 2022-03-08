@@ -29,6 +29,7 @@
 #import "WebCoreJITOperations.h"
 #import "WebCoreObjCExtras.h"
 #import <JavaScriptCore/InitializeThreading.h>
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <string.h>
 #import <wtf/MainThread.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -97,6 +98,55 @@ void FragmentedSharedBuffer::append(NSData *data)
 {
     ASSERT(!m_contiguous);
     return append(bridge_cast(data));
+}
+
+static void FreeDataSegment(void* refcon, void*, size_t)
+{
+    auto* buffer = reinterpret_cast<const DataSegment*>(refcon);
+    buffer->deref();
+}
+
+RetainPtr<CMBlockBufferRef> FragmentedSharedBuffer::createCMBlockBuffer() const
+{
+    auto segmentToCMBlockBuffer = [] (const DataSegment& segment) -> RetainPtr<CMBlockBufferRef> {
+        // From CMBlockBufferCustomBlockSource documentation:
+        // Note that for 64-bit architectures, this struct contains misaligned function pointers.
+        // To avoid link-time issues, it is recommended that clients fill CMBlockBufferCustomBlockSource's function pointer fields
+        // by using assignment statements, rather than declaring them as global or static structs.
+        CMBlockBufferCustomBlockSource allocator;
+        allocator.version = 0;
+        allocator.AllocateBlock = nullptr;
+        allocator.FreeBlock = FreeDataSegment;
+        allocator.refCon = const_cast<DataSegment*>(&segment);
+        segment.ref();
+        CMBlockBufferRef partialBuffer = nullptr;
+        if (PAL::CMBlockBufferCreateWithMemoryBlock(nullptr, static_cast<void*>(const_cast<uint8_t*>(segment.data())), segment.size(), nullptr, &allocator, 0, segment.size(), 0, &partialBuffer) != kCMBlockBufferNoErr)
+            return nullptr;
+        return adoptCF(partialBuffer);
+    };
+
+    if (hasOneSegment() && !isEmpty())
+        return segmentToCMBlockBuffer(m_segments[0].segment);
+
+    CMBlockBufferRef rawBlockBuffer = nullptr;
+    auto err = PAL::CMBlockBufferCreateEmpty(kCFAllocatorDefault, isEmpty() ? 0 : m_segments.size(), 0, &rawBlockBuffer);
+    if (err != kCMBlockBufferNoErr || !rawBlockBuffer)
+        return nullptr;
+    auto blockBuffer = adoptCF(rawBlockBuffer);
+
+    if (isEmpty())
+        return blockBuffer;
+
+    for (auto& segment : m_segments) {
+        if (!segment.segment->size())
+            continue;
+        auto partialBuffer = segmentToCMBlockBuffer(segment.segment);
+        if (!partialBuffer)
+            return nullptr;
+        if (PAL::CMBlockBufferAppendBufferReference(rawBlockBuffer, partialBuffer.get(), 0, 0, 0) != kCMBlockBufferNoErr)
+            return nullptr;
+    }
+    return blockBuffer;
 }
 
 RetainPtr<NSData> SharedBuffer::createNSData() const

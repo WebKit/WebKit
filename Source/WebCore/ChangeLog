@@ -1,3 +1,24 @@
+2022-03-07  Jean-Yves Avenard  <jya@apple.com>
+
+        Add ability to convert FragmentedSharedBuffer to CMBlockBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=237075
+        rdar://89338447
+
+        Reviewed by Jer Noble.
+
+        Add FragmentedSharedBuffer::getContiguousData and
+        FragmentedSharedBuffer::createCMBlockBuffer methods.
+
+        API tests added for getContiguousData.
+        createCMBlockBuffer will be used in a follow-up patch.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::FragmentedSharedBuffer::getContiguousData const):
+        * platform/SharedBuffer.h:
+        * platform/cocoa/SharedBufferCocoa.mm:
+        (WebCore::FreeSharedBuffer):
+        (WebCore::FragmentedSharedBuffer::createCMBlockBuffer const):
+
 2022-03-07  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for <select> elements in isolated tree mode.

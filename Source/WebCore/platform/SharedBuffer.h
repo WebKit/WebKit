@@ -54,6 +54,7 @@ typedef struct _GBytes GBytes;
 #if USE(FOUNDATION)
 OBJC_CLASS NSArray;
 OBJC_CLASS NSData;
+typedef struct OpaqueCMBlockBuffer* CMBlockBufferRef;
 #endif
 
 namespace WTF {
@@ -149,6 +150,7 @@ public:
 #if USE(FOUNDATION)
     WEBCORE_EXPORT RetainPtr<NSArray> createNSDataArray() const;
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(NSData*);
+    WEBCORE_EXPORT RetainPtr<CMBlockBufferRef> createCMBlockBuffer() const;
 #endif
 #if USE(CF)
     WEBCORE_EXPORT static Ref<FragmentedSharedBuffer> create(CFDataRef);
@@ -194,6 +196,7 @@ public:
 
     // begin and end take O(1) time, this takes O(log(N)) time.
     WEBCORE_EXPORT SharedBufferDataView getSomeData(size_t position) const;
+    WEBCORE_EXPORT Ref<SharedBuffer> getContiguousData(size_t position, size_t length) const;
 
     WEBCORE_EXPORT String toHexString() const;
 
@@ -246,7 +249,7 @@ private:
 
     // Combines all the segments into a Vector and returns that vector after clearing the FragmentedSharedBuffer.
     WEBCORE_EXPORT Vector<uint8_t> takeData();
-    const DataSegmentVectorEntry* getSegmentForPosition(size_t positition) const;
+    const DataSegmentVectorEntry* getSegmentForPosition(size_t position) const;
 
 #if ASSERT_ENABLED
     bool internallyConsistent() const;

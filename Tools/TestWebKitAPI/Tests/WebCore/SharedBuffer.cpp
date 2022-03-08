@@ -239,6 +239,41 @@ TEST_F(FragmentedSharedBufferTest, getSomeData)
     checkBuffer(l.data(), l.size(), "l");
 }
 
+TEST_F(FragmentedSharedBufferTest, getContiguousData)
+{
+    Vector<uint8_t> s1 = { 'a', 'b', 'c', 'd' };
+    Vector<uint8_t> s2 = { 'e', 'f', 'g', 'h' };
+    Vector<uint8_t> s3 = { 'i', 'j', 'k', 'l' };
+
+    SharedBufferBuilder builder;
+    builder.append(WTFMove(s1));
+    builder.append(WTFMove(s2));
+    builder.append(WTFMove(s3));
+    auto buffer = builder.take();
+
+    auto abcd = buffer->getContiguousData(0, 4);
+    auto bcdefghi = buffer->getContiguousData(1, 8);
+    auto gh = buffer->getContiguousData(6, 2);
+    auto ghij = buffer->getContiguousData(6, 4);
+    auto h = buffer->getContiguousData(7, 1);
+    auto ijk = buffer->getContiguousData(8, 3);
+    auto kl = buffer->getContiguousData(10, 2);
+    auto l = buffer->getContiguousData(11, 1);
+    checkBuffer(abcd->data(), abcd->size(), "abcd");
+    checkBuffer(bcdefghi->data(), bcdefghi->size(), "bcdefghi");
+    checkBuffer(gh->data(), gh->size(), "gh");
+    checkBuffer(ghij->data(), ghij->size(), "ghij");
+    checkBuffer(h->data(), h->size(), "h");
+    checkBuffer(ijk->data(), ijk->size(), "ijk");
+    checkBuffer(kl->data(), kl->size(), "kl");
+    checkBuffer(l->data(), l->size(), "l");
+    auto fghijkl = buffer->getContiguousData(5, 20);
+    EXPECT_EQ(fghijkl->size(), buffer->size() - 5);
+    checkBuffer(fghijkl->data(), fghijkl->size(), "fghijkl");
+    auto outBound = buffer->getContiguousData(30, 20);
+    EXPECT_EQ(outBound->size(), 0u);
+}
+
 TEST_F(FragmentedSharedBufferTest, isEqualTo)
 {
     auto makeBuffer = [] (Vector<Vector<uint8_t>>&& contents) {

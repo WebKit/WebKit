@@ -152,6 +152,26 @@ SharedBufferDataView FragmentedSharedBuffer::getSomeData(size_t position) const
     return { element->segment.copyRef(), position - element->beginPosition };
 }
 
+Ref<SharedBuffer> FragmentedSharedBuffer::getContiguousData(size_t position, size_t length) const
+{
+    if (position >= m_size)
+        return SharedBuffer::create();
+    length = std::min(m_size - position, length);
+    const DataSegmentVectorEntry* element = getSegmentForPosition(position);
+    size_t offsetInSegment = position - element->beginPosition;
+    ASSERT(element->segment->size() > offsetInSegment);
+    if (element->segment->size() - offsetInSegment >= length)
+        return SharedBufferDataView { element->segment.copyRef(), offsetInSegment, length }.createSharedBuffer();
+    Vector<uint8_t> combinedData;
+    combinedData.reserveInitialCapacity(length);
+    combinedData.append(element->segment->data() + offsetInSegment, element->segment->size() - offsetInSegment);
+    for (++element; combinedData.size() < length && element != m_segments.end(); element++) {
+        auto canCopy = std::min(length - combinedData.size(), element->segment->size());
+        combinedData.append(element->segment->data(), canCopy);
+    }
+    return SharedBuffer::create(WTFMove(combinedData));
+}
+
 const FragmentedSharedBuffer::DataSegmentVectorEntry* FragmentedSharedBuffer::getSegmentForPosition(size_t position) const
 {
     RELEASE_ASSERT(position < m_size);
