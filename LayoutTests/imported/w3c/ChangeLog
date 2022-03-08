@@ -1,3 +1,23 @@
+2022-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Resync web-platform-tests/beacon from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=237536
+
+        Unreviewed, drop web-platform-tests/beacon tests that are no longer upstream (as of 30d5f8f4c7687a4f2c0).
+
+        * web-platform-tests/beacon/beacon-basic-blob-expected.txt: Removed.
+        * web-platform-tests/beacon/beacon-navigate-expected.txt: Removed.
+        * web-platform-tests/beacon/beacon-redirect.sub.window-expected.txt: Removed.
+        * web-platform-tests/beacon/beacon-redirect.sub.window.html: Removed.
+        * web-platform-tests/beacon/resources/beacon-preflight.py: Removed.
+        (respondToCORSPreflight): Deleted.
+        (main): Deleted.
+        * web-platform-tests/beacon/resources/redirect.py: Removed.
+        (main): Deleted.
+        * web-platform-tests/beacon/resources/upgrade-iframe.html: Removed.
+        * web-platform-tests/beacon/upgrade-beacon.https-expected.txt: Removed.
+        * web-platform-tests/beacon/upgrade-beacon.https.html: Removed.
+
 2022-03-07  Chris Dumez  <cdumez@apple.com>
 
         Make "true" count as truthy in window.open()'s boolean features
