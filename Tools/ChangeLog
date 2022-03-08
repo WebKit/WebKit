@@ -1,3 +1,15 @@
+2022-03-07  David Kilzer  <ddkilzer@apple.com>
+
+        Fix Release builds for sanitizers by defining RELEASE_WITHOUT_OPTIMIZATIONS
+        <https://webkit.org/b/237556>
+        <rdar://problem/89929061>
+
+        Reviewed by Kate Cheney.
+
+        * sanitizer/sanitizer.xcconfig:
+        (OTHER_CFLAGS): Add `-DRELEASE_WITHOUT_OPTIMIZATIONS` so Release
+        builds at lower optimization levels don't fail.
+
 2022-03-07  Jean-Yves Avenard  <jya@apple.com>
 
         Add ability to convert FragmentedSharedBuffer to CMBlockBuffer
