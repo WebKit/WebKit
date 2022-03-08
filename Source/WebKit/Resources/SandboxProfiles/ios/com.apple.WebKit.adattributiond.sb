@@ -45,33 +45,37 @@
 
 (define (system-network)
     (allow file-read*
-         (literal "/Library/Preferences/com.apple.networkd.plist")
-         (literal "/private/var/db/nsurlstoraged/dafsaData.bin"))
+        (literal "/Library/Preferences/com.apple.networkd.plist")
+        (literal "/private/var/db/nsurlstoraged/dafsaData.bin"))
     (deny mach-lookup (with telemetry)
-         (global-name "com.apple.SystemConfiguration.PPPController")
-         (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
-         (global-name "com.apple.networkd")
-         (global-name "com.apple.nsurlstorage-cache")
-         (global-name "com.apple.symptomsd"))
+        (global-name "com.apple.SystemConfiguration.PPPController")
+        (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
+        (global-name "com.apple.networkd")
+        (global-name "com.apple.nsurlstorage-cache")
+        (global-name "com.apple.symptomsd"))
     (allow mach-lookup
-         (global-name "com.apple.dnssd.service")
-         (global-name "com.apple.nehelper")
-         (global-name "com.apple.nesessionmanager")
-         (global-name "com.apple.usymptomsd"))
+        (global-name "com.apple.trustd")
+        (global-name "com.apple.trustd.agent")
+        (global-name "com.apple.system.notification_center")
+        (global-name "com.apple.logd")
+        (global-name "com.apple.dnssd.service")
+        (global-name "com.apple.nehelper")
+        (global-name "com.apple.nesessionmanager")
+        (global-name "com.apple.usymptomsd"))
     (allow network-outbound
-         (control-name "com.apple.netsrc"))
+        (control-name "com.apple.netsrc"))
     (deny system-socket (with telemetry)
-          (socket-domain AF_ROUTE))
+        (socket-domain AF_ROUTE))
     (allow system-socket
-         (require-all (socket-domain AF_SYSTEM)
+        (require-all (socket-domain AF_SYSTEM)
                       (socket-protocol 2))) ; SYSPROTO_CONTROL
     (allow mach-lookup
-         (global-name "com.apple.AppSSO.service-xpc"))
+        (global-name "com.apple.AppSSO.service-xpc"))
     (deny ipc-posix-shm-read-data (with telemetry)
          (ipc-posix-name "/com.apple.AppSSO.version")))
 
 (allow file-read* file-write*
-    (subpath "/var/mobile/Library/com.apple.webkit.adattributiond"))
+    (subpath "/private/var/mobile/Library/com.apple.webkit.adattributiond"))
 
 (allow file-read* file-map-executable
     (subpath "/System/Library/Frameworks")
@@ -118,6 +122,7 @@
 ;; Various services required by CFNetwork and other frameworks
 (allow mach-lookup
     (global-name
+        "com.apple.containermanagerd"
         "com.apple.usymptomsd"
         "com.apple.cookied"
         "com.apple.distributed_notifications@Uv3"
@@ -125,16 +130,35 @@
         "com.apple.lsd.mapdb"
         "com.apple.lsd.modifydb"))
 
+;; <rdar://problem/10642881>
+(allow file-read*
+       (literal "/private/var/preferences/com.apple.networkd.plist"))
+
+(allow file-read-data
+    (literal "/System/Library/CoreServices/SystemVersion.plist")
+    (literal "/usr/lib/log")
+    (literal "/usr/local/lib/log")) ; <rdar://problem/36629495>
+
 ;; Security framework
 (allow mach-lookup (global-name "com.apple.SecurityServer")
-(global-name "com.apple.ocspd"))
+    (global-name "com.apple.ocspd"))
 (allow file-read*
+    (literal "/dev/urandom")
+    (literal "/private/etc/master.passwd")
+    (subpath "/private/var/preferences/Logging")
     (subpath "/Library/Keychains")
     (subpath "/private/var/db/mds")
     (literal "/Library/Preferences/com.apple.security.plist")
     (home-literal "/Library/Preferences/com.apple.security.plist"))
 
-(allow file-read* (subpath "/usr/share/zoneinfo"))
+;;; Allow reading internal profiles on development builds
+(allow file-read*
+    (require-all (file-mode #o0004)
+    (subpath "/AppleInternal/Library/Preferences/Logging")
+    (system-attribute apple-internal)))
+
+
+(allow file-read* (subpath "/usr/share"))
 
 (allow file-read* (literal "/Library/Application Support/CrashReporter/SubmitDiagInfo.domains"))
 
@@ -142,6 +166,8 @@
     (ipc-posix-name "com.apple.AppleDatabaseChanged"))
 (allow ipc-posix-shm-write-data
     (ipc-posix-name "com.apple.AppleDatabaseChanged"))
+(allow ipc-posix-shm-read*
+    (ipc-posix-name "apple.shm.notification_center")) ;; Needed by os_log_create
 
 ;; Read-only preferences and data
 (allow file-read*
