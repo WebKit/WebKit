@@ -1,3 +1,13 @@
+2022-03-08  Sihui Liu  <sihui_liu@apple.com>
+
+        Disable CFURLCache in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=237575
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/NetworkStorageSessionMap.cpp:
+        (NetworkStorageSessionMap::ensureSession):
+
 2022-03-07  Chris Dumez  <cdumez@apple.com>
 
         Optimize the passing of data across threads

@@ -90,7 +90,7 @@ void NetworkStorageSessionMap::ensureSession(PAL::SessionID sessionID, const Str
     if (sessionID.isEphemeral())
         storageSession = WebCore::createPrivateStorageSession(identifier.get());
     else
-        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(identifier.get(), WebCore::NetworkStorageSession::ShouldDisableCFURLCache::Yes);
+        storageSession = WebCore::NetworkStorageSession::createCFStorageSessionForIdentifier(identifier.get());
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage;
     if (WebCore::NetworkStorageSession::processMayUseCookieAPI()) {
