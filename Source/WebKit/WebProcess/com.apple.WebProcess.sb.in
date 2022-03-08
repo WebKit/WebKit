@@ -131,7 +131,9 @@
             (iokit-method-number
                 0
                 47
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120300
                 48
+#endif
             )
 #endif
         )
@@ -164,7 +166,24 @@
                 30
                 31
                 40
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120300
                 41
+                43
+                49
+                257
+                258
+                259
+                260
+                261
+                262
+                263
+                264
+                265
+                266
+                268
+                269
+                513
+#else
                 42
                 43
                 48
@@ -184,7 +203,7 @@
                 268
                 269
                 512
-                513
+#endif
             )
 #endif
         )
@@ -192,11 +211,16 @@
         (if (equal? (param "CPU") "arm64")
             (allow iokit-external-method
                 (iokit-method-number
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120300
+                    44
+                    45
+                    47
+#else
                     43
                     44
                     45
                     46
-                    47
+#endif
                 )
             )
         )
