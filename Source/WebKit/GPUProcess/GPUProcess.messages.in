@@ -39,11 +39,11 @@ messages -> GPUProcess LegacyReceiver {
     UpdateSandboxAccess(Vector<WebKit::SandboxExtension::Handle> extensions);
     UpdateCaptureAccess(bool allowAudioCapture, bool allowVideoCapture, bool allowDisplayCapture, WebCore::ProcessIdentifier processID) -> () Async
     UpdateCaptureOrigin(struct WebCore::SecurityOriginData originData, WebCore::ProcessIdentifier processID)
-    AddMockMediaDevice(struct WebCore::MockMediaDevice device);
-    ClearMockMediaDevices();
-    RemoveMockMediaDevice(String persistentId);
-    ResetMockMediaDevices();
-    SetMockCameraIsInterrupted(bool isInterrupted);
+    AddMockMediaDevice(struct WebCore::MockMediaDevice device)
+    ClearMockMediaDevices()
+    RemoveMockMediaDevice(String persistentId)
+    ResetMockMediaDevices()
+    SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
 #endif
 #if PLATFORM(MAC)
     DisplayConfigurationChanged(CGDirectDisplayID displayID, CGDisplayChangeSummaryFlags flags)

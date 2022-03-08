@@ -4903,9 +4903,9 @@ void WebPage::setOrientationForMediaCapture(uint64_t rotation)
     });
 }
 
-void WebPage::setMockCameraIsInterrupted(bool isInterrupted)
+void WebPage::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
 {
-    MockRealtimeMediaSourceCenter::setMockCameraIsInterrupted(isInterrupted);
+    MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted(isCameraInterrupted, isMicrophoneInterrupted);
 }
 #endif // USE(GSTREAMER)
 

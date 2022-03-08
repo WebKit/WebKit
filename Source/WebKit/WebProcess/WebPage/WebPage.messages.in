@@ -405,7 +405,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CaptureDevicesChanged()
 #if USE(GSTREAMER)
     SetOrientationForMediaCapture(int rotation)
-    SetMockCameraIsInterrupted(bool isInterrupted)
+    SetMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
 #endif
 #endif
 

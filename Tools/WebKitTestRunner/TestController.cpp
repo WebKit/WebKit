@@ -3620,9 +3620,9 @@ bool TestController::isMockRealtimeMediaSourceCenterEnabled() const
     return WKPageIsMockRealtimeMediaSourceCenterEnabled(m_mainWebView->page());
 }
 
-void TestController::setMockCameraIsInterrupted(bool isInterrupted)
+void TestController::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
 {
-    WKPageSetMockCameraIsInterrupted(m_mainWebView->page(), isInterrupted);
+    WKPageSetMockCaptureDevicesInterrupted(m_mainWebView->page(), isCameraInterrupted, isMicrophoneInterrupted);
 }
 
 struct InAppBrowserPrivacyCallbackContext {

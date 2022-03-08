@@ -208,6 +208,7 @@ private:
     bool m_muted { false };
     bool m_ended { false };
     const bool m_isCaptureTrack { false };
+    bool m_isInterrupted { false };
 };
 
 typedef Vector<RefPtr<MediaStreamTrack>> MediaStreamTrackVector;

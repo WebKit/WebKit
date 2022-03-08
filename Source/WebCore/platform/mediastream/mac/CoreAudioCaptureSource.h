@@ -74,7 +74,6 @@ private:
     void stopProducingData() final;
 
     void delaySamples(Seconds) final;
-    void setInterruptedForTesting(bool) final;
 
     std::optional<Vector<int>> discreteSampleRates() const final { return { { 8000, 16000, 32000, 44100, 48000, 96000 } }; }
 

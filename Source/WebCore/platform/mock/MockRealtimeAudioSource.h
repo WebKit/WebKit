@@ -45,6 +45,8 @@ public:
     static CaptureSourceOrError create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*);
     virtual ~MockRealtimeAudioSource();
 
+    static void setIsInterrupted(bool);
+
     WEBCORE_EXPORT void setChannelCount(unsigned);
 
 protected:

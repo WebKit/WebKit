@@ -42,6 +42,10 @@
 #include "RealtimeMediaSourceSettings.h"
 #include <wtf/UUID.h>
 
+#if PLATFORM(COCOA)
+#include "MockAudioSharedUnit.h"
+#endif
+
 namespace WebCore {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS_FAMILY) && !USE(GSTREAMER)
@@ -178,6 +182,17 @@ void MockRealtimeAudioSource::tick()
 void MockRealtimeAudioSource::delaySamples(Seconds delta)
 {
     m_delayUntil = MonotonicTime::now() + delta;
+}
+
+void MockRealtimeAudioSource::setIsInterrupted(bool isInterrupted)
+{
+    UNUSED_PARAM(isInterrupted);
+#if PLATFORM(COCOA)
+    if (isInterrupted)
+        MockAudioSharedUnit::singleton().suspend();
+    else
+        MockAudioSharedUnit::singleton().resume();
+#endif
 }
 
 } // namespace WebCore

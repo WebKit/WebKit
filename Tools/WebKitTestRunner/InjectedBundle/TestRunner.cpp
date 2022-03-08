@@ -1832,9 +1832,12 @@ bool TestRunner::isMockRealtimeMediaSourceCenterEnabled()
     return postSynchronousMessageReturningBoolean("IsMockRealtimeMediaSourceCenterEnabled");
 }
 
-void TestRunner::setMockCameraIsInterrupted(bool isInterrupted)
+void TestRunner::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
 {
-    postSynchronousMessage("SetMockCameraIsInterrupted", isInterrupted);
+    postSynchronousMessage("SetMockCaptureDevicesInterrupted", createWKDictionary({
+        { "camera", adoptWK(WKBooleanCreate(isCameraInterrupted)) },
+        { "microphone", adoptWK(WKBooleanCreate(isMicrophoneInterrupted)) },
+    }));
 }
 
 #if ENABLE(GAMEPAD)
