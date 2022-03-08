@@ -538,6 +538,7 @@ void UniqueIDBDatabase::didFireVersionChangeEvent(UniqueIDBDatabaseConnection& c
 
     ASSERT_UNUSED(requestIdentifier, m_currentOpenDBRequest->requestData().requestIdentifier() == requestIdentifier);
 
+    auto connectionIdentifier = connection.identifier();
     if (connectionClosedOnBehalfOfServer == IndexedDB::ConnectionClosedOnBehalfOfServer::Yes) {
         if (m_openDatabaseConnections.contains(&connection)) {
             clearTransactionsOnConnection(connection);
@@ -545,7 +546,7 @@ void UniqueIDBDatabase::didFireVersionChangeEvent(UniqueIDBDatabaseConnection& c
         }
     }
 
-    notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(connection.identifier());
+    notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(connectionIdentifier);
 }
 
 void UniqueIDBDatabase::openDBRequestCancelled(const IDBResourceIdentifier& requestIdentifier)
