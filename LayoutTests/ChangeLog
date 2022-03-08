@@ -1,3 +1,16 @@
+2022-03-08  J Pascoe  <j_pascoe@apple.com>
+
+        [ iOS ] 2X http/wpt/webauthn/public-key-credential-create-failure-local (layout-tests) are constant text failures
+        https://bugs.webkit.org/show_bug.cgi?id=237548
+        rdar://problem/89923849
+
+        Unreviewed test gardening.
+
+        These console messages differing is causing test failures, fixing expectations.
+
+        * http/wpt/webauthn/public-key-credential-create-failure-local-silent.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-local.https-expected.txt:
+
 2022-03-08  Youenn Fablet  <youenn@apple.com>
 
         Add a preference to mute video capture in case audio capture gets interrupted
