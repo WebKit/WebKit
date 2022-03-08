@@ -1,3 +1,13 @@
+2022-03-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, silence console logging for http/tests/security/cookie-module-import-propagate.html
+        <rdar://88842347>
+
+        This is to address flakiness on the bots.
+
+        * TestExpectations:
+        * http/tests/security/cookie-module-import-propagate-expected.txt:
+
 2022-03-08  J Pascoe  <j_pascoe@apple.com>
 
         [ iOS ] 2X http/wpt/webauthn/public-key-credential-create-failure-local (layout-tests) are constant text failures
