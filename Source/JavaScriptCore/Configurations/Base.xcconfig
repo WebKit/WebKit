@@ -190,9 +190,7 @@ EXCLUDED_SOURCE_FILE_NAMES = libWebKitAdditions.a libWTF.a
 WK_WEBKITADDITIONS_INSTALL_PATH = /usr/local/include/WebKitAdditions
 WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH = $(SDKROOT)/$(WK_WEBKITADDITIONS_INSTALL_PATH)
 
-// Disable LTO for JavaScriptCore, due to <rdar://problem/24543547>. Add back the following line and delete the one that says "LLVM_LTO = NO" when that issue is resolved.
-// LLVM_LTO = $(WK_LLVM_LTO_$(WK_XCODE_SUPPORTS_LTO));
-LLVM_LTO = NO;
+LLVM_LTO = $(WK_LLVM_LTO_$(WK_XCODE_SUPPORTS_LTO));
 WK_LLVM_LTO_NO = NO;
 WK_LLVM_LTO_YES = $(WK_USER_LTO_MODE);
 

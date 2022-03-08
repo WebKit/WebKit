@@ -1,3 +1,16 @@
+2022-03-08  Saam Barati  <sbarati@apple.com>
+
+        [JSC] Enable ThinLTO
+        https://bugs.webkit.org/show_bug.cgi?id=229019
+        <rdar://problem/82107543>
+
+        Reviewed by Mark Lam.
+
+        It's a 1% speedup on Speedometer2 across x86 and arm64, and 0.5-1% speedup on
+        JetStream2 depending on the device.
+
+        * Configurations/Base.xcconfig:
+
 2022-03-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r290975.
