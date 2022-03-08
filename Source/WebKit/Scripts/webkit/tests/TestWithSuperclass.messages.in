@@ -23,10 +23,10 @@
 messages -> TestWithSuperclass : WebPageBase {
     LoadURL(String url)
 #if ENABLE(TEST_FEATURE)
-    TestAsyncMessage(enum:bool WebKit::TestTwoStateEnum twoStateEnum) -> (uint64_t result) Async MainThreadCallback
-    TestAsyncMessageWithNoArguments() -> () Async
-    TestAsyncMessageWithMultipleArguments() -> (bool flag, uint64_t value) Async
-    TestAsyncMessageWithConnection(int value) -> (bool flag) Async WantsConnection
+    TestAsyncMessage(enum:bool WebKit::TestTwoStateEnum twoStateEnum) -> (uint64_t result) MainThreadCallback
+    TestAsyncMessageWithNoArguments() -> ()
+    TestAsyncMessageWithMultipleArguments() -> (bool flag, uint64_t value)
+    TestAsyncMessageWithConnection(int value) -> (bool flag) WantsConnection
 #endif
     TestSyncMessage(uint32_t param) -> (uint8_t reply) Synchronous
     TestSynchronousMessage(bool value) -> (std::optional<WebKit::TestClassName> optionalReply) Synchronous

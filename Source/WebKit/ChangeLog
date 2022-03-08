@@ -1,3 +1,14 @@
+2022-03-08  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unneeded Async keywords in messages.in files after r290903
+        https://bugs.webkit.org/show_bug.cgi?id=237574
+
+        Reviewed by Chris Dumez.
+
+        * GPUProcess/graphics/wc/RemoteWCLayerTreeHost.messages.in:
+        * Scripts/webkit/tests/TestWithSuperclass.messages.in:
+        * WebProcess/glib/UserMediaCaptureManager.messages.in:
+
 2022-03-08  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Sync gtk-overlay-scrolling setting to web process
