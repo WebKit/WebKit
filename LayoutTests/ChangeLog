@@ -1,3 +1,14 @@
+2022-03-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Speech Synthesis no longer returning list of voices in macOS 12.3
+        https://bugs.webkit.org/show_bug.cgi?id=237584
+        <rdar://problem/89952347>
+
+        Reviewed by Andres Gonzalez.
+
+        * fast/speechsynthesis/voices-non-mock-expected.txt: Added.
+        * fast/speechsynthesis/voices-non-mock.html: Added.
+
 2022-03-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, silence console logging for http/tests/security/cookie-module-import-propagate.html
