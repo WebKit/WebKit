@@ -39,6 +39,10 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+struct SecurityOriginData;
+}
+
 namespace WebKit {
 
 class WebPageProxy;
@@ -58,6 +62,7 @@ struct WebAuthenticationRequestData {
     String cachedPin; // Only used to improve NFC Client PIN experience.
     WeakPtr<API::WebAuthenticationPanel> weakPanel;
     std::optional<WebCore::MediationRequirement> mediation;
+    std::optional<WebCore::SecurityOriginData> parentOrigin;
 };
 
 WebCore::ClientDataType getClientDataType(const std::variant<WebCore::PublicKeyCredentialCreationOptions, WebCore::PublicKeyCredentialRequestOptions>&);

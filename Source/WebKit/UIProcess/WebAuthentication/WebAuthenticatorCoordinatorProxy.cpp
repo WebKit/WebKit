@@ -58,12 +58,12 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
 
 void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr, std::nullopt }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr, std::nullopt, std::nullopt }, WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, bool processingUserGesture, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr, mediation }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr, mediation, parentOrigin }, WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
@@ -74,13 +74,22 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
         auto& authenticatorManager = m_webPageProxy.websiteDataStore().authenticatorManager();
         if (result) {
 #if HAVE(UNIFIED_ASC_AUTH_UI)
-                if (!authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
-                    auto context = contextForRequest(WTFMove(data));
-                    // performRequest calls out to ASCAgent which will then call [_WKWebAuthenticationPanel makeCredential/getAssertionWithChallenge]
-                    // which calls authenticatorManager.handleRequest(..)
-                    performRequest(context, WTFMove(handler));
+            if (!authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
+                auto context = contextForRequest(WTFMove(data));
+                if (context.get() == nullptr) {
+                    handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
                     return;
                 }
+                // performRequest calls out to ASCAgent which will then call [_WKWebAuthenticationPanel makeCredential/getAssertionWithChallenge]
+                // which calls authenticatorManager.handleRequest(..)
+                performRequest(context, WTFMove(handler));
+                return;
+            }
+#else
+            if (data.parentOrigin && !authenticatorManager.isMock() && !authenticatorManager.isVirtual()) {
+                handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
+                return;
+            }
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
 
             authenticatorManager.handleRequest(WTFMove(data), [handler = WTFMove(handler)] (std::variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {

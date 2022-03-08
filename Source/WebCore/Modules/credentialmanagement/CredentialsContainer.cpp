@@ -46,27 +46,27 @@ CredentialsContainer::CredentialsContainer(WeakPtr<Document>&& document)
 {
 }
 
-WebAuthn::Scope CredentialsContainer::scope()
+ScopeAndCrossOriginParent CredentialsContainer::scopeAndCrossOriginParent() const
 {
     if (!m_document)
-        return WebAuthn::Scope::CrossOrigin;
+        return std::pair { WebAuthn::Scope::CrossOrigin, std::nullopt };
 
-    bool isSameOrigin = true;
     bool isSameSite = true;
     auto& origin = m_document->securityOrigin();
     auto& url = m_document->url();
+    std::optional<SecurityOriginData> crossOriginParent;
     for (auto* document = m_document->parentDocument(); document; document = document->parentDocument()) {
         if (!origin.isSameOriginDomain(document->securityOrigin()) && !areRegistrableDomainsEqual(url, document->url()))
             isSameSite = false;
-        if (!origin.isSameOriginAs(document->securityOrigin()))
-            isSameOrigin = false;
+        if (!crossOriginParent && !origin.isSameOriginAs(document->securityOrigin()))
+            crossOriginParent = origin.data();
     }
 
-    if (isSameOrigin)
-        return WebAuthn::Scope::SameOrigin;
+    if (!crossOriginParent)
+        return std::pair { WebAuthn::Scope::SameOrigin, std::nullopt };
     if (isSameSite)
-        return WebAuthn::Scope::SameSite;
-    return WebAuthn::Scope::CrossOrigin;
+        return std::pair { WebAuthn::Scope::SameSite, std::nullopt };
+    return std::pair { WebAuthn::Scope::CrossOrigin, crossOriginParent };
 }
 
 void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPromise&& promise)
@@ -98,7 +98,7 @@ void CredentialsContainer::get(CredentialRequestOptions&& options, CredentialPro
         return;
     }
 
-    m_document->page()->authenticatorCoordinator().discoverFromExternalSource(*m_document, WTFMove(options), scope(), WTFMove(promise));
+    m_document->page()->authenticatorCoordinator().discoverFromExternalSource(*m_document, WTFMove(options), scopeAndCrossOriginParent(), WTFMove(promise));
 }
 
 void CredentialsContainer::store(const BasicCredential&, CredentialPromise&& promise)
@@ -133,7 +133,7 @@ void CredentialsContainer::isCreate(CredentialCreationOptions&& options, Credent
         return;
     }
 
-    m_document->page()->authenticatorCoordinator().create(*m_document, options.publicKey.value(), scope(), WTFMove(options.signal), WTFMove(promise));
+    m_document->page()->authenticatorCoordinator().create(*m_document, options.publicKey.value(), scopeAndCrossOriginParent().first, WTFMove(options.signal), WTFMove(promise));
 }
 
 void CredentialsContainer::preventSilentAccess(DOMPromiseDeferred<void>&& promise) const

@@ -1,3 +1,32 @@
+2022-03-08  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Using WebAuthn within cross-origin iframe elements
+        https://bugs.webkit.org/show_bug.cgi?id=222240
+        rdar://problem/74830748
+
+        Reviewed by Brent Fulgham.
+
+        This patch relaxes the requirement to perform a Web Authentication assertion
+        inside an i-frame with the "publickey-credentials-get" feature policy from
+        'same-site' to 'cross-origin with consent'.
+
+        There is an additional requirement that there is only a single cross-origin
+        parent to present to the user in the prompt. If we can't display the updated
+        prompt, then cross-origin assertions are not allowed.
+
+        Test: http/wpt/webauthn/public-key-credential-cross-origin.https.html
+
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        (WebCore::CredentialsContainer::scopeAndSingleParent):
+        (WebCore::CredentialsContainer::get):
+        (WebCore::CredentialsContainer::isCreate):
+        (WebCore::CredentialsContainer::scope): Deleted.
+        * Modules/credentialmanagement/CredentialsContainer.h:
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinator::discoverFromExternalSource const):
+        * Modules/webauthn/AuthenticatorCoordinator.h:
+        * Modules/webauthn/AuthenticatorCoordinatorClient.h:
+
 2022-03-08  Chris Dumez  <cdumez@apple.com>
 
         Rename allow-custom-protocols-navigation to allow-top-navigation-to-custom-protocols

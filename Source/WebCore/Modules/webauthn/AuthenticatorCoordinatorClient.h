@@ -27,9 +27,14 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticatorCoordinator.h"
 #include "ExceptionData.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
+
+namespace WebAuthn {
+enum class Scope;
+}
 
 namespace WebCore {
 
@@ -43,6 +48,7 @@ enum class MediationRequirement : uint8_t;
 struct AuthenticatorResponseData;
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
+struct SecurityOriginData;
 
 using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorResponseData&&, WebCore::AuthenticatorAttachment, WebCore::ExceptionData&&)>;
 using QueryCompletionHandler = CompletionHandler<void(bool)>;
@@ -55,7 +61,7 @@ public:
     virtual ~AuthenticatorCoordinatorClient() = default;
 
     virtual void makeCredential(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialCreationOptions&, RequestCompletionHandler&&) = 0;
-    virtual void getAssertion(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, MediationRequirement, RequestCompletionHandler&&) = 0;
+    virtual void getAssertion(const Frame&, const SecurityOrigin&, const Vector<uint8_t>&, const PublicKeyCredentialRequestOptions&, MediationRequirement, const ScopeAndCrossOriginParent&, RequestCompletionHandler&&) = 0;
     virtual void isConditionalMediationAvailable(QueryCompletionHandler&&) = 0;
     virtual void isUserVerifyingPlatformAuthenticatorAvailable(QueryCompletionHandler&&) = 0;
 

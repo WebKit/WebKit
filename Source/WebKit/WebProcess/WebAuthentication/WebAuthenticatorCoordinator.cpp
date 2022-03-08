@@ -46,6 +46,7 @@
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserGestureIndicator.h>
+#include <WebCore/WebAuthenticationConstants.h>
 
 #undef WEBAUTHN_RELEASE_LOG
 #define PAGE_ID (m_webPage.identifier().toUInt64())
@@ -93,7 +94,7 @@ void WebAuthenticatorCoordinator::makeCredential(const Frame& frame, const Secur
     WebProcess::singleton().ensureWebAuthnProcessConnection().connection().sendWithAsyncReply(Messages::WebAuthnConnectionToWebProcess::MakeCredential(hash, options, isProcessingUserGesture), WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, MediationRequirement mediation, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const SecurityOrigin&, const Vector<uint8_t>& hash, const PublicKeyCredentialRequestOptions& options, MediationRequirement mediation, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, RequestCompletionHandler&& handler)
 {
     auto* webFrame = WebFrame::fromCoreFrame(frame);
     if (!webFrame)
@@ -106,7 +107,11 @@ void WebAuthenticatorCoordinator::getAssertion(const Frame& frame, const Securit
     bool useWebAuthnProcess = RuntimeEnabledFeatures::sharedFeatures().webAuthenticationModernEnabled();
 #endif
     if (!useWebAuthnProcess) {
-        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, mediation, isProcessingUserGesture), WTFMove(handler));
+        m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetAssertion(webFrame->frameID(), webFrame->info(), hash, options, mediation, scopeAndCrossOriginParent.second, isProcessingUserGesture), WTFMove(handler));
+        return;
+    }
+    if (scopeAndCrossOriginParent.first == WebAuthn::Scope::CrossOrigin) {
+        handler({ }, (AuthenticatorAttachment)0, ExceptionData { NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
         return;
     }
 

@@ -1,3 +1,19 @@
+2022-03-08  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Using WebAuthn within cross-origin iframe elements
+        https://bugs.webkit.org/show_bug.cgi?id=222240
+        rdar://problem/74830748
+
+        Reviewed by Brent Fulgham.
+
+        Update existing tests and create new test for cross-origin, non same-site i-frames.
+
+        * http/wpt/webauthn/public-key-credential-cross-origin.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-cross-origin.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-same-origin-with-ancestors.https.html:
+        * http/wpt/webauthn/resources/public-key-credential-cross-origin.https.html: Added.
+
 2022-03-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Speech Synthesis no longer returning list of voices in macOS 12.3
