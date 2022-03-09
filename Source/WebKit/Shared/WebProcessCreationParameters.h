@@ -255,6 +255,7 @@ struct WebProcessCreationParameters {
 #if USE(GLIB)
     String applicationID;
     String applicationName;
+    CString inspectorServerAddress;
 #endif
 
 #if USE(ATSPI)

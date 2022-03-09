@@ -31,6 +31,7 @@
 #include "WebKitWebExtensionPrivate.h"
 #include "WebPage.h"
 #include "WebProcessCreationParameters.h"
+#include <JavaScriptCore/RemoteInspector.h>
 
 #if USE(GSTREAMER)
 #include <WebCore/GStreamerCommon.h>
@@ -151,6 +152,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     if (!parameters.applicationName.isEmpty())
         WebCore::setApplicationName(parameters.applicationName);
+
+    if (!parameters.inspectorServerAddress.isNull())
+        Inspector::RemoteInspector::setInspectorServerAddress(WTFMove(parameters.inspectorServerAddress));
 
 #if USE(ATSPI)
     AccessibilityAtspi::singleton().connect(parameters.accessibilityBusAddress);

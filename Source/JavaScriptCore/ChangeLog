@@ -1,3 +1,18 @@
+2022-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Stop using the env var WEBKIT_INSPECTOR_SERVER to connect to the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=237646
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add RemoteInspector::s_inspectorServerAddress to keep the remote inspector server address instead of the
+        environment variable used to start the server.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/glib/RemoteInspectorGlib.cpp:
+        (Inspector::RemoteInspector::RemoteInspector): Only call start if s_inspectorServerAddress is not null.
+        (Inspector::RemoteInspector::start): Use s_inspectorServerAddress instead of querying the environment.
+
 2022-03-08  Robin Morisset  <rmorisset@apple.com>
 
         [WTF] LikelyDenseUnsignedIntegerSet::add can cause a reindexing of the entire bit vector with every call in the worst case

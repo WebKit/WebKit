@@ -32,6 +32,7 @@
 #include "MemoryPressureMonitor.h"
 #include "WebMemoryPressureHandler.h"
 #include "WebProcessCreationParameters.h"
+#include <JavaScriptCore/RemoteInspector.h>
 #include <WebCore/PlatformDisplay.h>
 #include <wtf/FileSystem.h>
 
@@ -117,6 +118,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     if (app)
         parameters.applicationID = g_application_get_application_id(app);
     parameters.applicationName = g_get_application_name();
+
+    parameters.inspectorServerAddress = Inspector::RemoteInspector::inspectorServerAddress();
 
 #if USE(ATSPI)
     static const char* accessibilityBusAddress = getenv("WEBKIT_A11Y_BUS_ADDRESS");

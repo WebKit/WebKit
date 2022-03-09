@@ -1,3 +1,27 @@
+2022-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Stop using the env var WEBKIT_INSPECTOR_SERVER to connect to the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=237646
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use it only in the UI process to start the server, but propagate the address to web process using creation
+        parameters.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const): Encode inspectorServerAddress.
+        (WebKit::WebProcessCreationParameters::decode): Decode inspectorServerAddress.
+        * Shared/WebProcessCreationParameters.h: Add inspectorServerAddress.
+        * UIProcess/API/glib/WebKitInitialize.cpp:
+        (WebKit::initializeRemoteInspectorServer): Set RemoteInspector::s_inspectorServerAddress if the server started
+        successfully.
+        * UIProcess/glib/WebProcessPoolGLib.cpp:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Set inspectorServerAddress parameter from
+        RemoteInspector::s_inspectorServerAddress value.
+        * WebProcess/glib/WebProcessGLib.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Set RemoteInspector::s_inspectorServerAddress from creation
+        parameter value.
+
 2022-03-09  Youenn Fablet  <youenn@apple.com>
 
         Scope capture sources by page identifiers
