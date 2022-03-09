@@ -1,3 +1,21 @@
+2022-03-08  Cameron McCormack  <heycam@apple.com>
+
+        Skip scheduling lazy UA shadow tree creation if already created or not needed
+        https://bugs.webkit.org/show_bug.cgi?id=237546
+        <rdar://problem/89922896>
+
+        Reviewed by Aditya Keerthi.
+
+        Bug 236747 made <input> element UA shadow trees get created lazily.
+        HTMLInputElement::insertedIntoAncestor now schedules the UA shadow tree
+        to be created the next time style is flushed. We currently do this every
+        time an <input> element is inserted into the document, but there's only
+        a need to do this if the particular input type needs a shadow tree and
+        we haven't already created it.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::insertedIntoAncestor):
+
 2022-03-08  Jean-Yves Avenard  <jya@apple.com>
 
         Split SourceBufferParserWebM and have platform agnostic WebMParser
