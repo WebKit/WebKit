@@ -245,6 +245,7 @@ void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
     }
     
     protectedNode->removeFromParent();
+    m_unparentedNodes.remove(nodeID);
     willRemoveNode(protectedNode.get());
 }
 
@@ -391,6 +392,17 @@ void ScrollingStateTree::reconcileViewportConstrainedLayerPositions(ScrollingNod
         return;
     
     reconcileLayerPositionsRecursive(*scrollingNode, layoutViewport, action);
+}
+
+String ScrollingStateTree::scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
+{
+    if (!rootStateNode())
+        return emptyString();
+
+    auto stateTreeAsString = rootStateNode()->scrollingStateTreeAsText(behavior);
+    if (!m_unparentedNodes.isEmpty())
+        stateTreeAsString.append(makeString("\nunparented node count: ", m_unparentedNodes.size()));
+    return stateTreeAsString;
 }
 
 } // namespace WebCore

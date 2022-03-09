@@ -85,6 +85,7 @@ public:
         --m_scrollingNodeCount;
     }
 
+    String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const;
 
 private:
     void setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&&);
