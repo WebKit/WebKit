@@ -26,6 +26,10 @@
 #include "config.h"
 #include "VideoFrame.h"
 
+#if PLATFORM(COCOA)
+#include "VideoFrameCV.h"
+#endif
+
 #if ENABLE(VIDEO)
 
 namespace WebCore {
@@ -118,6 +122,17 @@ void VideoFrame::initializeCharacteristics(MediaTime presentationTime, bool isMi
     const_cast<bool&>(m_isMirrored) = isMirrored;
     const_cast<VideoRotation&>(m_rotation) = rotation;
 }
+
+#if PLATFORM(COCOA)
+RefPtr<VideoFrameCV> VideoFrame::asVideoFrameCV()
+{
+    auto buffer = pixelBuffer();
+    if (!buffer)
+        return nullptr;
+
+    return VideoFrameCV::create(presentationTime(), videoMirrored(), videoRotation(), buffer);
+}
+#endif
 
 }
 

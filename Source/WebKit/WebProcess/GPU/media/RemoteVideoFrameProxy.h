@@ -88,7 +88,6 @@ public:
     bool isRemoteProxy() const final { return true; }
 #if PLATFORM(COCOA)
     CVPixelBufferRef pixelBuffer() const final;
-    RefPtr<WebCore::VideoFrameCV> asVideoFrameCV() final;
 #endif
 
 private:

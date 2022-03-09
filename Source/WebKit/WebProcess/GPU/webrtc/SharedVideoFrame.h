@@ -45,6 +45,7 @@ class SharedVideoFrameInfo;
 
 namespace webrtc {
 class VideoFrame;
+class VideoFrameBuffer;
 }
 
 namespace WebKit {
@@ -78,7 +79,11 @@ private:
     bool wait(const Function<void(IPC::Semaphore&)>&);
     bool allocateStorage(size_t, const Function<void(const SharedMemory::IPCHandle&)>&);
     bool prepareWriting(const WebCore::SharedVideoFrameInfo&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
+
     std::optional<SharedVideoFrame::Buffer> writeBuffer(WebCore::MediaSample&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
+#if USE(LIBWEBRTC)
+    std::optional<SharedVideoFrame::Buffer> writeBuffer(webrtc::VideoFrameBuffer&, const Function<void(IPC::Semaphore&)>&, const Function<void(const SharedMemory::IPCHandle&)>&);
+#endif
 
     UniqueRef<IPC::Semaphore> m_semaphore;
     RefPtr<SharedMemory> m_storage;

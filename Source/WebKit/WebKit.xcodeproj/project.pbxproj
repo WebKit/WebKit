@@ -846,6 +846,8 @@
 		413075B01DE85F580039EC69 /* WebRTCMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A31DE85EE70039EC69 /* WebRTCMonitor.h */; };
 		413075B21DE85F580039EC69 /* LibWebRTCSocketFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A61DE85EE70039EC69 /* LibWebRTCSocketFactory.h */; };
 		413075B41DE85F580039EC69 /* LibWebRTCProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 413075A81DE85EE70039EC69 /* LibWebRTCProvider.h */; };
+		413C541A27C67C39002FCDA8 /* LibWebRTCCodecsProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41E0A7C823B6397900561060 /* LibWebRTCCodecsProxy.mm */; };
+		413C542527CCB7CE002FCDA8 /* SharedVideoFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41DC04F927A816BB008CF968 /* SharedVideoFrame.cpp */; };
 		4176901422FDD41B00B1576D /* NetworkRTCProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4176901322FDD41B00B1576D /* NetworkRTCProvider.mm */; };
 		417915AF2256BB7500D6F97E /* WebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 417915AD2256BB7400D6F97E /* WebSocketChannel.h */; };
 		417915B12256C0D600D6F97E /* WebSocketChannelManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 417915B02256C0D600D6F97E /* WebSocketChannelManager.h */; };
@@ -16251,6 +16253,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				5CE912102293C277005BEC78 /* AuxiliaryProcessMain.cpp in Sources */,
+				413C541A27C67C39002FCDA8 /* LibWebRTCCodecsProxy.mm in Sources */,
+				413C542527CCB7CE002FCDA8 /* SharedVideoFrame.cpp in Sources */,
 				5C9A9111228F69CC005C5B17 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

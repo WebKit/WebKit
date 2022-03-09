@@ -72,6 +72,7 @@ size_t SharedVideoFrameInfo::storageSize() const
 void SharedVideoFrameInfo::encode(uint8_t* destination)
 {
     WTF::Persistence::Encoder encoder;
+
     encoder << (uint32_t)m_bufferType;
     encoder << m_width;
     encoder << m_height;
@@ -209,31 +210,31 @@ RetainPtr<CVPixelBufferPoolRef> SharedVideoFrameInfo::createCompatibleBufferPool
 }
 
 #if USE(LIBWEBRTC)
-SharedVideoFrameInfo SharedVideoFrameInfo::fromVideoFrame(const webrtc::VideoFrame& frame)
+SharedVideoFrameInfo SharedVideoFrameInfo::fromVideoFrameBuffer(const webrtc::VideoFrameBuffer& frame)
 {
-    auto buffer = frame.video_frame_buffer();
-    if (buffer->type() == webrtc::VideoFrameBuffer::Type::kNative)
+    if (frame.type() == webrtc::VideoFrameBuffer::Type::kNative)
         return SharedVideoFrameInfo { };
 
-    auto type = buffer->type();
-
+    auto type = frame.type();
     if (type == webrtc::VideoFrameBuffer::Type::kI420)
         return SharedVideoFrameInfo { kCVPixelFormatType_420YpCbCr8BiPlanarFullRange,
             static_cast<uint32_t>(frame.width()), static_cast<uint32_t>(frame.height()), static_cast<uint32_t>(frame.width()),
-            static_cast<uint32_t>(frame.width()), static_cast<uint32_t>(frame.height()), static_cast<uint32_t>(frame.width()) / 2 };
+            static_cast<uint32_t>(frame.width()) / 2, static_cast<uint32_t>(frame.height()) / 2, static_cast<uint32_t>(frame.width()) };
 
     if (type == webrtc::VideoFrameBuffer::Type::kI010)
         return SharedVideoFrameInfo { kCVPixelFormatType_420YpCbCr10BiPlanarFullRange,
             static_cast<uint32_t>(frame.width()), static_cast<uint32_t>(frame.height()), static_cast<uint32_t>(frame.width() * 2),
-            static_cast<uint32_t>(frame.width()), static_cast<uint32_t>(frame.height()), static_cast<uint32_t>(frame.width()) };
+            static_cast<uint32_t>(frame.width()) / 2, static_cast<uint32_t>(frame.height()) / 2, static_cast<uint32_t>(frame.width()) * 2 };
 
     return SharedVideoFrameInfo { };
 }
 
-bool SharedVideoFrameInfo::writeVideoFrame(const webrtc::VideoFrame& frame, uint8_t* data)
+bool SharedVideoFrameInfo::writeVideoFrameBuffer(webrtc::VideoFrameBuffer& frameBuffer, uint8_t* data)
 {
     ASSERT(m_bufferType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange || m_bufferType == kCVPixelFormatType_420YpCbCr10BiPlanarFullRange);
-    return webrtc::copyVideoFrame(frame, data);
+    encode(data);
+    data += sizeof(SharedVideoFrameInfo);
+    return webrtc::copyVideoFrameBuffer(frameBuffer, data);
 }
 #endif
 

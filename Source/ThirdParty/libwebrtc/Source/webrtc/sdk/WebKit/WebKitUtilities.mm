@@ -160,28 +160,32 @@ static bool CopyVideoFrameToPixelBuffer(const webrtc::I010BufferInterface* frame
 
 CVPixelBufferRef createPixelBufferFromFrame(const VideoFrame& frame, const std::function<CVPixelBufferRef(size_t, size_t, BufferType)>& createPixelBuffer)
 {
-    auto buffer = frame.video_frame_buffer();
-    if (buffer->type() != VideoFrameBuffer::Type::kNative) {
-        auto type = buffer->type();
+    return createPixelBufferFromFrameBuffer(*frame.video_frame_buffer(), createPixelBuffer);
+}
+
+CVPixelBufferRef createPixelBufferFromFrameBuffer(VideoFrameBuffer& buffer, const std::function<CVPixelBufferRef(size_t, size_t, BufferType)>& createPixelBuffer)
+{
+    if (buffer.type() != VideoFrameBuffer::Type::kNative) {
+        auto type = buffer.type();
         if (type != VideoFrameBuffer::Type::kI420 && type != VideoFrameBuffer::Type::kI010) {
             RTC_LOG(WARNING) << "Video frame buffer type is not expected.";
             return nullptr;
         }
 
-        auto pixelBuffer = createPixelBuffer(buffer->width(), buffer->height(), type == VideoFrameBuffer::Type::kI420 ? BufferType::I420 : BufferType::I010);
+        auto pixelBuffer = createPixelBuffer(buffer.width(), buffer.height(), type == VideoFrameBuffer::Type::kI420 ? BufferType::I420 : BufferType::I010);
         if (!pixelBuffer) {
             RTC_LOG(WARNING) << "Pixel buffer creation failed.";
             return nullptr;
         }
 
         if (type == VideoFrameBuffer::Type::kI420)
-            CopyVideoFrameToPixelBuffer(buffer->GetI420(), pixelBuffer);
+            CopyVideoFrameToPixelBuffer(buffer.GetI420(), pixelBuffer);
         else
-            CopyVideoFrameToPixelBuffer(buffer->GetI010(), pixelBuffer);
+            CopyVideoFrameToPixelBuffer(buffer.GetI010(), pixelBuffer);
         return pixelBuffer;
     }
 
-    auto *frameBuffer = static_cast<ObjCFrameBuffer*>(buffer.get())->wrapped_frame_buffer();
+    auto *frameBuffer = static_cast<ObjCFrameBuffer*>(&buffer)->wrapped_frame_buffer();
     if (![frameBuffer isKindOfClass:[RTCCVPixelBuffer class]])
         return nullptr;
 
@@ -203,18 +207,17 @@ CVPixelBufferRef pixelBufferFromFrame(const VideoFrame& frame)
     return CVPixelBufferRetain(rtcPixelBuffer.pixelBuffer);
 }
 
-bool copyVideoFrame(const VideoFrame& frame, uint8_t* data)
+bool copyVideoFrameBuffer(VideoFrameBuffer& buffer, uint8_t* data)
 {
-    auto buffer = frame.video_frame_buffer();
-    if (buffer->type() == VideoFrameBuffer::Type::kNative)
+    if (buffer.type() == VideoFrameBuffer::Type::kNative)
         return false;
 
-    auto type = buffer->type();
+    auto type = buffer.type();
     if (type == VideoFrameBuffer::Type::kI420) {
-        auto* i420Frame = buffer->GetI420();
+        auto* i420Frame = buffer.GetI420();
         auto* dataY = data;
         auto strideY = i420Frame->width();
-        auto strideUV = i420Frame->width() / 2;
+        auto strideUV = i420Frame->width();
         auto* dataUV = data + (i420Frame->width() * i420Frame->height());
         return !libyuv::I420ToNV12(i420Frame->DataY(), i420Frame->StrideY(),
                                    i420Frame->DataU(), i420Frame->StrideU(),
@@ -223,10 +226,10 @@ bool copyVideoFrame(const VideoFrame& frame, uint8_t* data)
                                    i420Frame->width(), i420Frame->height());
     }
     if (type == VideoFrameBuffer::Type::kI010) {
-        auto* i010Frame = buffer->GetI010();
+        auto* i010Frame = buffer.GetI010();
         auto* dataY = reinterpret_cast<uint16_t*>(data);
         auto strideY = i010Frame->width();
-        auto strideUV = i010Frame->width() / 2;
+        auto strideUV = i010Frame->width();
         auto* dataUV = dataY + (i010Frame->width() * i010Frame->height());
         return !libyuv::I010ToP010(i010Frame->DataY(), i010Frame->StrideY(),
                                    i010Frame->DataU(), i010Frame->StrideU(),

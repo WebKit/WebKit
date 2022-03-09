@@ -1,3 +1,20 @@
+2022-03-09  Youenn Fablet  <youenn@apple.com>
+
+        Allow to pass webrtc video frame buffers through RealtimeMediaSource based pipelines
+        https://bugs.webkit.org/show_bug.cgi?id=236131
+        <rdar://problem/88805580>
+
+        Reviewed by Eric Carlson.
+
+        Update routines to take VideoFrameBuffer instead of VideoFrame.
+        Fix bugs in handling of YUV conversion libwebrtc routines.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.h:
+        * Source/webrtc/sdk/WebKit/WebKitUtilities.mm:
+
 2022-03-07  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, reverting r290966.

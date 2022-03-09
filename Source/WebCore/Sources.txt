@@ -2198,6 +2198,7 @@ platform/mediastream/RealtimeVideoCaptureSource.cpp
 platform/mediastream/RealtimeVideoSource.cpp
 platform/mediastream/libwebrtc/LibWebRTCDTMFSenderBackend.cpp
 platform/mediastream/libwebrtc/LibWebRTCProvider.cpp
+platform/mediastream/libwebrtc/VideoFrameLibWebRTC.cpp
 platform/mock/DeviceOrientationClientMock.cpp
 platform/mock/GeolocationClientMock.cpp
 platform/mock/MediaEngineConfigurationFactoryMock.cpp

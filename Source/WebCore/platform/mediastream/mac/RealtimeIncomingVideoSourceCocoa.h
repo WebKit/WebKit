@@ -62,7 +62,8 @@ private:
 #if !RELEASE_LOG_DISABLED
     size_t m_numberOfFrames { 0 };
 #endif
-    RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool;
+    Lock m_pixelBufferPoolLock;
+    RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };
     webrtc::BufferType m_pixelBufferPoolBufferType;

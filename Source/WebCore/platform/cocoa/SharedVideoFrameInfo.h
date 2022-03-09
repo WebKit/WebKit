@@ -34,7 +34,7 @@ typedef struct __CVBuffer* CVPixelBufferRef;
 typedef struct __CVPixelBufferPool* CVPixelBufferPoolRef;
 
 namespace webrtc {
-class VideoFrame;
+class VideoFrameBuffer;
 }
 
 namespace WebCore {
@@ -51,8 +51,8 @@ public:
     WEBCORE_EXPORT bool writePixelBuffer(CVPixelBufferRef, uint8_t* data);
 
 #if USE(LIBWEBRTC)
-    WEBCORE_EXPORT static SharedVideoFrameInfo fromVideoFrame(const webrtc::VideoFrame&);
-    WEBCORE_EXPORT bool writeVideoFrame(const webrtc::VideoFrame&, uint8_t* data);
+    WEBCORE_EXPORT static SharedVideoFrameInfo fromVideoFrameBuffer(const webrtc::VideoFrameBuffer&);
+    WEBCORE_EXPORT bool writeVideoFrameBuffer(webrtc::VideoFrameBuffer&, uint8_t* data);
 #endif
 
     WEBCORE_EXPORT size_t storageSize() const;

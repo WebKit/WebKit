@@ -35,6 +35,7 @@
 #include <WebCore/IOSurface.h>
 #include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/SharedVideoFrameInfo.h>
+#include <WebCore/VideoFrameLibWebRTC.h>
 #include <wtf/Scope.h>
 
 #if USE(LIBWEBRTC)
@@ -105,6 +106,11 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(Medi
     if (is<RemoteVideoFrameProxy>(frame))
         return downcast<RemoteVideoFrameProxy>(frame).newReadReference();
 
+#if USE(LIBWEBRTC)
+    if (is<VideoFrameLibWebRTC>(frame))
+        return writeBuffer(*downcast<VideoFrameLibWebRTC>(frame).buffer(), newSemaphoreCallback, newMemoryCallback);
+#endif
+
     return writeBuffer(frame.pixelBuffer(), newSemaphoreCallback, newMemoryCallback);
 }
 
@@ -136,11 +142,16 @@ std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(cons
     if (auto pixelBuffer = adoptCF(webrtc::pixelBufferFromFrame(frame)))
         return writeBuffer(pixelBuffer.get(), newSemaphoreCallback, newMemoryCallback);
 
-    auto info = SharedVideoFrameInfo::fromVideoFrame(frame);
+    return writeBuffer(*frame.video_frame_buffer(), newSemaphoreCallback, newMemoryCallback);
+}
+
+std::optional<SharedVideoFrame::Buffer> SharedVideoFrameWriter::writeBuffer(webrtc::VideoFrameBuffer& frameBuffer, const Function<void(IPC::Semaphore&)>& newSemaphoreCallback, const Function<void(const SharedMemory::IPCHandle&)>& newMemoryCallback)
+{
+    auto info = SharedVideoFrameInfo::fromVideoFrameBuffer(frameBuffer);
     if (!prepareWriting(info, newSemaphoreCallback, newMemoryCallback))
         return { };
 
-    if (!info.writeVideoFrame(frame, static_cast<uint8_t*>(m_storage->data())))
+    if (!info.writeVideoFrameBuffer(frameBuffer, static_cast<uint8_t*>(m_storage->data())))
         return { };
     return nullptr;
 }

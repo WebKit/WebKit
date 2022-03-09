@@ -57,6 +57,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteVideoFrameObjectHeap;
+struct SharedVideoFrame;
 class SharedVideoFrameReader;
 
 class LibWebRTCCodecsProxy final : public IPC::Connection::ThreadMessageReceiverRefCounted {

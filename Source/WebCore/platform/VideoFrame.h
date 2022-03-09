@@ -52,9 +52,10 @@ public:
     WEBCORE_EXPORT PlatformSample::Type platformSampleType() const final;
 
     virtual bool isRemoteProxy() const { return false; }
+    virtual bool isLibWebRTC() const { return false; }
 #if USE(AVFOUNDATION)
     virtual bool isCV() const { return false; }
-    virtual RefPtr<WebCore::VideoFrameCV> asVideoFrameCV() = 0;
+    WEBCORE_EXPORT virtual RefPtr<VideoFrameCV> asVideoFrameCV();
 #endif
 
     void initializeCharacteristics(MediaTime presentationTime, bool isMirrored, VideoRotation);

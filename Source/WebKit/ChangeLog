@@ -1,3 +1,21 @@
+2022-03-09  Youenn Fablet  <youenn@apple.com>
+
+        Allow to pass webrtc video frame buffers through RealtimeMediaSource based pipelines
+        https://bugs.webkit.org/show_bug.cgi?id=236131
+        <rdar://problem/88805580>
+
+        Reviewed by Eric Carlson.
+
+        Add optimization support for VideoFrameLibWebRTC writing into shared memory.
+        This removes the need to convert the webrtc video frame into a CVPixelBuffer, just to send it to GPUProcess for rendering.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.cpp:
+        * WebProcess/GPU/media/RemoteVideoFrameProxy.h:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.cpp:
+        * WebProcess/GPU/webrtc/SharedVideoFrame.h:
+
 2022-03-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Improve WCTiledBacking and TextureMapperSparseBackingStore

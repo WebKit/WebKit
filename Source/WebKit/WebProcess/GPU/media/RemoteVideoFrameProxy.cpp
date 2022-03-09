@@ -127,15 +127,6 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
         m_pixelBuffer = WebCore::createBlackPixelBuffer(static_cast<size_t>(m_size.width()), static_cast<size_t>(m_size.height()));
     return m_pixelBuffer.get();
 }
-
-RefPtr<WebCore::VideoFrameCV> RemoteVideoFrameProxy::asVideoFrameCV()
-{
-    auto buffer = pixelBuffer();
-    if (!buffer)
-        return nullptr;
-    return VideoFrameCV::create(m_presentationTime, m_isMirrored, m_rotation, RetainPtr { buffer });
-}
-
 #endif
 
 TextStream& operator<<(TextStream& ts, const RemoteVideoFrameProxy::Properties& properties)

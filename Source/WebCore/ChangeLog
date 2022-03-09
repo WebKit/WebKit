@@ -1,5 +1,34 @@
 2022-03-09  Youenn Fablet  <youenn@apple.com>
 
+        Allow to pass webrtc video frame buffers through RealtimeMediaSource based pipelines
+        https://bugs.webkit.org/show_bug.cgi?id=236131
+        <rdar://problem/88805580>
+
+        Reviewed by Eric Carlson.
+
+        Introduce VideoFrameLibWebRTC as a wrapper to libwebrtc video frame buffer.
+        In case we send VideoFrameLibWebRTC through RealtimeOutgoingVideoSourceCocoa, directly send the video frame buffer.
+        When receiving libwebrtc video frame buffers in RealtimeIncomingVideoSourceCocoa, make use of VideoFrameLibWebRTC to delay conversion of the video frame buffer in a CVPixelBufferRef.
+        In most cases, the conversion is unneeded as the video frame buffer will be used for rendering and will be copied to shared memory through SharedVideoFrameWriter.
+        Fix bugs in handling of YUV conversion libwebrtc routines.
+        Minor refactoring to have a default asVideoFrameCV method implementatin in VideoFrame.
+
+        Covered by existing tests.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/VideoFrame.cpp:
+        * platform/VideoFrame.h:
+        * platform/cocoa/SharedVideoFrameInfo.h:
+        * platform/cocoa/SharedVideoFrameInfo.mm:
+        * platform/mediastream/libwebrtc/VideoFrameLibWebRTC.cpp: Added.
+        * platform/mediastream/libwebrtc/VideoFrameLibWebRTC.h: Added.
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+
+2022-03-09  Youenn Fablet  <youenn@apple.com>
+
         WebRTC decoded frames are not correctly rotated in case GPU Process DOM rendering flag is set to true
         https://bugs.webkit.org/show_bug.cgi?id=237468
         <rdar://problem/89807876>

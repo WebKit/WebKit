@@ -33,7 +33,7 @@
 #include "Logging.h"
 #include "RealtimeIncomingVideoSourceCocoa.h"
 #include "RealtimeVideoUtilities.h"
-#include "VideoFrame.h"
+#include "VideoFrameLibWebRTC.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 
@@ -86,14 +86,20 @@ void RealtimeOutgoingVideoSourceCocoa::videoSampleAvailable(MediaSample& sample,
     }
 
     bool shouldApplyRotation = m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0;
-    if (!shouldApplyRotation && is<VideoFrame>(sample) && downcast<VideoFrame>(sample).isRemoteProxy()) {
-        Ref videoFrame { downcast<VideoFrame>(sample) };
-        auto size = sample.presentationSize();
-        sendFrame(webrtc::toWebRTCVideoFrameBuffer(&videoFrame.leakRef(),
-            [](auto* pointer) { return static_cast<VideoFrame*>(pointer)->pixelBuffer(); },
-            [](auto* pointer) { static_cast<VideoFrame*>(pointer)->deref(); },
-            static_cast<int>(size.width()), static_cast<int>(size.height())));
-        return;
+    if (!shouldApplyRotation && is<VideoFrame>(sample)) {
+        if (downcast<VideoFrame>(sample).isRemoteProxy()) {
+            Ref videoFrame { downcast<VideoFrame>(sample) };
+            auto size = sample.presentationSize();
+            sendFrame(webrtc::toWebRTCVideoFrameBuffer(&videoFrame.leakRef(),
+                [](auto* pointer) { return static_cast<VideoFrame*>(pointer)->pixelBuffer(); },
+                [](auto* pointer) { static_cast<VideoFrame*>(pointer)->deref(); },
+                static_cast<int>(size.width()), static_cast<int>(size.height())));
+            return;
+        }
+        if (downcast<VideoFrame>(sample).isLibWebRTC()) {
+            sendFrame(downcast<VideoFrameLibWebRTC>(sample).buffer());
+            return;
+        }
     }
 
     auto pixelBuffer = sample.pixelBuffer();
