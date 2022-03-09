@@ -22,6 +22,9 @@ PASS background-color supports animating as color of hsl()
 PASS background-color supports animating as color of #RGBa
 PASS background-color supports animating as color of rgba()
 PASS background-color supports animating as color of hsla()
+PASS background-blend-mode (type: discrete) has testAccumulation function
+PASS background-blend-mode: "screen" onto "multiply"
+PASS background-blend-mode: "multiply" onto "screen"
 PASS background-clip (type: discrete) has testAccumulation function
 PASS background-clip: "content-box" onto "padding-box"
 PASS background-clip: "padding-box" onto "content-box"

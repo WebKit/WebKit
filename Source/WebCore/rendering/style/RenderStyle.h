@@ -431,6 +431,7 @@ public:
     const LengthSize& backgroundSizeLength() const { return m_backgroundData->background->sizeLength(); }
     FillLayer& ensureBackgroundLayers() { return m_backgroundData.access().background.access(); }
     const FillLayer& backgroundLayers() const { return m_backgroundData->background; }
+    BlendMode backgroundBlendMode() const { return static_cast<BlendMode>(m_backgroundData->background->blendMode()); }
 
     StyleImage* maskImage() const { return m_rareNonInheritedData->mask->image(); }
     FillRepeat maskRepeatX() const { return static_cast<FillRepeat>(m_rareNonInheritedData->mask->repeatX()); }
@@ -918,6 +919,7 @@ public:
     void setBackgroundOrigin(FillBox fillBox) { SET_NESTED_VAR(m_backgroundData, background, m_origin, static_cast<unsigned>(fillBox)); SET_NESTED_VAR(m_backgroundData, background, m_originSet, true); }
     void setBackgroundRepeatX(FillRepeat fillRepeat) { SET_NESTED_VAR(m_backgroundData, background, m_repeatX, static_cast<unsigned>(fillRepeat)); SET_NESTED_VAR(m_backgroundData, background, m_repeatXSet, true); }
     void setBackgroundRepeatY(FillRepeat fillRepeat) { SET_NESTED_VAR(m_backgroundData, background, m_repeatY, static_cast<unsigned>(fillRepeat)); SET_NESTED_VAR(m_backgroundData, background, m_repeatYSet, true); }
+    void setBackgroundBlendMode(BlendMode blendMode) { SET_NESTED_VAR(m_backgroundData, background, m_blendMode, static_cast<unsigned>(blendMode)); SET_NESTED_VAR(m_backgroundData, background, m_blendModeSet, true); }
 
     void setBorderImage(const NinePieceImage& b) { SET_VAR(m_surroundData, border.m_image, b); }
     void setBorderImageSource(RefPtr<StyleImage>&&);

@@ -27,6 +27,10 @@ PASS background-color supports animating as color of hsl()
 PASS background-color supports animating as color of #RGBa
 PASS background-color supports animating as color of rgba()
 PASS background-color supports animating as color of hsla()
+PASS background-blend-mode (type: discrete) has testInterpolation function
+PASS background-blend-mode uses discrete animation when animating between "multiply" and "screen" with linear easing
+PASS background-blend-mode uses discrete animation when animating between "multiply" and "screen" with effect easing
+PASS background-blend-mode uses discrete animation when animating between "multiply" and "screen" with keyframe easing
 PASS background-clip (type: discrete) has testInterpolation function
 PASS background-clip uses discrete animation when animating between "padding-box" and "content-box" with linear easing
 PASS background-clip uses discrete animation when animating between "padding-box" and "content-box" with effect easing

@@ -1,5 +1,18 @@
 2022-03-08  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] background-blend-mode should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237607
+
+        Reviewed by Antti Koivisto.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::backgroundBlendMode const):
+        (WebCore::RenderStyle::setBackgroundBlendMode):
+
+2022-03-08  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] font-family should support discrete animation
         https://bugs.webkit.org/show_bug.cgi?id=237591
 
