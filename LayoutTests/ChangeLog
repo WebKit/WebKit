@@ -1,3 +1,12 @@
+2022-03-09  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Import updated WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=237638
+
+        Reviewed by Antoine Quint.
+
+        * TestExpectations:
+
 2022-03-09  Youenn Fablet  <youenn@apple.com>
 
         Scope capture sources by page identifiers

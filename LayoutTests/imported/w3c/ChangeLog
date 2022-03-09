@@ -1,3 +1,129 @@
+2022-03-09  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Import updated WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=237638
+
+        Reviewed by Antoine Quint.
+
+        Upstream has been updated with the new syntax from
+
+        https://github.com/w3c/csswg-drafts/issues/6870
+
+        and behavior from
+
+        https://github.com/w3c/csswg-drafts/issues/6644
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-contain/container-queries/animation-container-size.html:
+        * web-platform-tests/css/css-contain/container-queries/animation-container-type-dynamic.html:
+        * web-platform-tests/css/css-contain/container-queries/animation-nested-animation.html:
+        * web-platform-tests/css/css-contain/container-queries/animation-nested-transition.html:
+        * web-platform-tests/css/css-contain/container-queries/aspect-ratio-feature-evaluation.html:
+        * web-platform-tests/css/css-contain/container-queries/at-container-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/at-container-parsing.html:
+        * web-platform-tests/css/css-contain/container-queries/auto-scrollbars.html:
+        * web-platform-tests/css/css-contain/container-queries/backdrop-invalidation.html:
+        * web-platform-tests/css/css-contain/container-queries/canvas-as-container-005-expected.txt: Added.
+        * web-platform-tests/css/css-contain/container-queries/canvas-as-container-005.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/canvas-as-container-006-expected.txt: Added.
+        * web-platform-tests/css/css-contain/container-queries/canvas-as-container-006.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/change-display-in-container.html:
+        * web-platform-tests/css/css-contain/container-queries/conditional-container-status.html:
+        * web-platform-tests/css/css-contain/container-queries/container-computed-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-computed.html:
+        * web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom.tentative-expected.txt.
+        * web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/container-for-shadow-dom.tentative.html.
+        * web-platform-tests/css/css-contain/container-queries/container-inner-at-rules-expected.txt: Added.
+        * web-platform-tests/css/css-contain/container-queries/container-inner-at-rules.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/container-name-computed-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-name-computed.html:
+        * web-platform-tests/css/css-contain/container-queries/container-name-invalidation.html:
+        * web-platform-tests/css/css-contain/container-queries/container-name-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-name-parsing.html:
+        * web-platform-tests/css/css-contain/container-queries/container-nested-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-nested.html:
+        * web-platform-tests/css/css-contain/container-queries/container-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-parsing.html:
+        * web-platform-tests/css/css-contain/container-queries/container-selection-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-selection.html:
+        * web-platform-tests/css/css-contain/container-queries/container-size-invalidation.html:
+        * web-platform-tests/css/css-contain/container-queries/container-type-invalidation.html:
+        * web-platform-tests/css/css-contain/container-queries/container-units-small-viewport-fallback-expected.txt: Added.
+        * web-platform-tests/css/css-contain/container-queries/container-units-small-viewport-fallback.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/counters-flex-circular.html:
+        * web-platform-tests/css/css-contain/container-queries/counters-in-container-dynamic.html:
+        * web-platform-tests/css/css-contain/container-queries/counters-in-container.html:
+        * web-platform-tests/css/css-contain/container-queries/deep-nested-inline-size-containers-expected.txt: Added.
+        * web-platform-tests/css/css-contain/container-queries/deep-nested-inline-size-containers.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/display-contents.html:
+        * web-platform-tests/css/css-contain/container-queries/display-in-container.html:
+        * web-platform-tests/css/css-contain/container-queries/display-none.html:
+        * web-platform-tests/css/css-contain/container-queries/fieldset-legend-change.html:
+        * web-platform-tests/css/css-contain/container-queries/flex-in-columns-000-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/flex-in-columns-001-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/flex-in-columns-002-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/flex-in-columns-003-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/focus-inside-content-visibility-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/font-relative-units-dynamic.html:
+        * web-platform-tests/css/css-contain/container-queries/font-relative-units.html:
+        * web-platform-tests/css/css-contain/container-queries/fragmented-container-001-expected.txt: Added.
+        * web-platform-tests/css/css-contain/container-queries/fragmented-container-001.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/get-animations.html:
+        * web-platform-tests/css/css-contain/container-queries/grid-in-columns-000-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/grid-in-columns-001-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/grid-in-columns-002-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/grid-in-columns-003-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/iframe-invalidation.html:
+        * web-platform-tests/css/css-contain/container-queries/ineligible-containment.html:
+        * web-platform-tests/css/css-contain/container-queries/inline-multicol-inside-container-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-and-min-width.html:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-bfc-floats.html:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-containment-vertical-rl.html:
+        * web-platform-tests/css/css-contain/container-queries/inline-size-containment.html:
+        * web-platform-tests/css/css-contain/container-queries/inline-with-columns-000-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/inline-with-columns-001-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/multicol-container-001-expected.txt: Added.
+        * web-platform-tests/css/css-contain/container-queries/multicol-container-001.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/multicol-inside-container.html:
+        * web-platform-tests/css/css-contain/container-queries/never-match-container-expected.txt: Added.
+        * web-platform-tests/css/css-contain/container-queries/never-match-container.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/orthogonal-wm-container-query.html:
+        * web-platform-tests/css/css-contain/container-queries/percentage-padding-orthogonal.html:
+        * web-platform-tests/css/css-contain/container-queries/pseudo-elements-001.html:
+        * web-platform-tests/css/css-contain/container-queries/pseudo-elements-002.tentative-expected.html: Removed.
+        * web-platform-tests/css/css-contain/container-queries/pseudo-elements-002.tentative-ref.html: Removed.
+        * web-platform-tests/css/css-contain/container-queries/pseudo-elements-002.tentative.html: Removed.
+        * web-platform-tests/css/css-contain/container-queries/pseudo-elements-003-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-003.tentative-expected.txt.
+        * web-platform-tests/css/css-contain/container-queries/pseudo-elements-003.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/pseudo-elements-003.tentative.html.
+        * web-platform-tests/css/css-contain/container-queries/query-content-box.html:
+        * web-platform-tests/css/css-contain/container-queries/query-evaluation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/query-evaluation.html:
+        * web-platform-tests/css/css-contain/container-queries/reattach-container-with-dirty-child.html:
+        * web-platform-tests/css/css-contain/container-queries/resize-while-content-visibility-hidden.html:
+        * web-platform-tests/css/css-contain/container-queries/size-container-no-principal-box.html:
+        * web-platform-tests/css/css-contain/container-queries/size-feature-evaluation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/size-feature-evaluation.html:
+        * web-platform-tests/css/css-contain/container-queries/style-change-in-container.html:
+        * web-platform-tests/css/css-contain/container-queries/svg-layout-root-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/svg-root-size-container-expected.txt: Added.
+        * web-platform-tests/css/css-contain/container-queries/svg-root-size-container.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/table-in-columns-000-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/table-in-columns-001-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/table-in-columns-002-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/table-in-columns-003-crash.html:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-dialog-backdrop.html:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-dialog-container.html:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-dialog.html:
+        * web-platform-tests/css/css-contain/container-queries/top-layer-nested-dialog.html:
+        * web-platform-tests/css/css-contain/container-queries/transition-scrollbars.html:
+        * web-platform-tests/css/css-contain/container-queries/transition-style-change-event.html:
+        * web-platform-tests/css/css-contain/container-queries/unsupported-axis-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/unsupported-axis.html:
+        * web-platform-tests/css/css-contain/container-queries/viewport-units-dynamic.html:
+        * web-platform-tests/css/css-contain/container-queries/viewport-units.html:
+        * web-platform-tests/css/css-contain/container-queries/w3c-import.log:
+        * web-platform-tests/css/css-contain/container-queries/whitespace-update-after-removal.html:
+
 2022-03-08  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] color-interpolation should support discrete animation

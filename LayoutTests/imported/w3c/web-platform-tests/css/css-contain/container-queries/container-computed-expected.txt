@@ -13,4 +13,5 @@ PASS Property container value 'inline-size /foo'
 PASS Property container value 'inline-size/ foo'
 PASS Property container value 'inline-size/foo'
 PASS Property container value 'size / FoO'
+PASS Property container value 'size / foo bar'
 
