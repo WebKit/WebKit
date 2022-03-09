@@ -918,6 +918,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     [Conditional=MEDIA_STREAM] undefined setCameraMediaStreamTrackOrientation(MediaStreamTrack track, short orientation);
     [Conditional=MEDIA_STREAM] undefined observeMediaStreamTrack(MediaStreamTrack track);
     [Conditional=MEDIA_STREAM] Promise<ImageData> grabNextMediaStreamTrackFrame();
+    [Conditional=MEDIA_STREAM] Promise<short> mediaStreamTrackVideoFrameRotation();
     [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackAudioSampleCount;
     [Conditional=MEDIA_STREAM] readonly attribute unsigned long trackVideoSampleCount;
     [Conditional=MEDIA_STREAM] undefined delayMediaStreamTrackSamples(MediaStreamTrack track, float delay);

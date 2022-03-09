@@ -57,6 +57,8 @@ public:
     virtual RefPtr<WebCore::VideoFrameCV> asVideoFrameCV() = 0;
 #endif
 
+    void initializeCharacteristics(MediaTime presentationTime, bool isMirrored, VideoRotation);
+
 protected:
     WEBCORE_EXPORT VideoFrame(MediaTime presentationTime, bool isMirrored, VideoRotation);
     const MediaTime m_presentationTime;

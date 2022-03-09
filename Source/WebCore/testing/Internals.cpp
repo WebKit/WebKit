@@ -5510,6 +5510,7 @@ void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
 {
     stopObservingRealtimeMediaSource();
 
+    m_trackVideoRotation = -1;
     m_trackSource = &track.source();
     m_trackSource->addObserver(*this);
     switch (m_trackSource->type()) {
@@ -5532,12 +5533,18 @@ void Internals::grabNextMediaStreamTrackFrame(TrackFramePromise&& promise)
     m_nextTrackFramePromise = makeUnique<TrackFramePromise>(WTFMove(promise));
 }
 
+void Internals::mediaStreamTrackVideoFrameRotation(DOMPromiseDeferred<IDLShort>&& promise)
+{
+    promise.resolve(m_trackVideoRotation);
+}
+
 void Internals::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
 {
     callOnMainThread([this, weakThis = WeakPtr { *this }, sample = Ref { sample }] {
         if (!weakThis)
             return;
         m_trackVideoSampleCount++;
+        m_trackVideoRotation = static_cast<int>(sample->videoRotation());
         if (!m_nextTrackFramePromise)
             return;
 

@@ -112,6 +112,13 @@ void VideoFrame::dump(PrintStream&) const
 {
 }
 
+void VideoFrame::initializeCharacteristics(MediaTime presentationTime, bool isMirrored, VideoRotation rotation)
+{
+    const_cast<MediaTime&>(m_presentationTime) = presentationTime;
+    const_cast<bool&>(m_isMirrored) = isMirrored;
+    const_cast<VideoRotation&>(m_rotation) = rotation;
+}
+
 }
 
 #endif

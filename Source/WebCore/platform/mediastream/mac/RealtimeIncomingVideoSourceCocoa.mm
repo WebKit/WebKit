@@ -130,7 +130,9 @@ RefPtr<MediaSample> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc:
 
     if (auto* provider = videoFrameBufferProvider(frame)) {
         // The only supported provider is VideoFrame.
-        return static_cast<VideoFrame*>(provider);
+        auto* videoFrame = static_cast<VideoFrame*>(provider);
+        videoFrame->initializeCharacteristics(MediaTime { frame.timestamp_us(), 1000000 }, false, rotation);
+        return videoFrame;
     }
 
     // In case of in memory samples, we have non interleaved YUV data while CVPixelBuffers prefer interleaved YUV data.

@@ -1,3 +1,26 @@
+2022-03-09  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC decoded frames are not correctly rotated in case GPU Process DOM rendering flag is set to true
+        https://bugs.webkit.org/show_bug.cgi?id=237468
+        <rdar://problem/89807876>
+
+        Reviewed by Eric Carlson.
+
+        We were creating remote video frames at webrtc decoder level but at that level, we do not know yet the rotation and timestamps of the frame.
+        We need to set those values when the frame is exposed to RealtimeIncomingVideoSource.
+        Previous tests did not catch the regression as we were correctly computing the size of the video using the webrtc rotation and not the rotation from the frame.
+        We should probably migrate to RemoteVideoFrameProxy as a buffer wrapper so that we can easily create remote video frames from a RemoteVideoFrameProxy buffer.
+        In the meantime, we use const_cast in VideoFrame::initializeCharacteristics.
+
+        Covered by updated test.
+
+        * platform/VideoFrame.cpp:
+        * platform/VideoFrame.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2022-03-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Improve WCTiledBacking and TextureMapperSparseBackingStore

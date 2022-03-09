@@ -50,6 +50,27 @@ function checkVideoBlack(expected, video, canvasId)
     });
 }
 
+async function waitForTrackRotation(track, angle, counter)
+{
+    if (!window.internals)
+        return;
+
+    if (!counter) {
+        internals.observeMediaStreamTrack(track);
+        counter = 1;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+    const value = await internals.mediaStreamTrackVideoFrameRotation()
+    if (angle === value)
+        return;    
+
+    if (++counter > 50)
+        return Promise.reject("waitForTrackRotation timed out with value " + value + " while expecting " + angle);
+
+    return waitForTrackRotation(track, angle, counter);
+}
+
 var track;
 promise_test((test) => {
     if (window.testRunner)
@@ -62,8 +83,6 @@ promise_test((test) => {
 
             createConnections((firstConnection) => {
                 firstConnection.addTrack(track, localStream);
-                if (window.internals)
-                    internals.applyRotationForOutgoingVideoSources(firstConnection);
             }, (secondConnection) => {
                 secondConnection.ontrack = (trackEvent) => {
                     resolve(trackEvent.streams[0]);
@@ -95,26 +114,30 @@ promise_test(async (test) => {
     await waitForVideoSize(localVideo, 240, 320);
 }, "Track is enabled and rotated, local video should not be black and should change size");
 
-promise_test((test) => {
+promise_test(async (test) => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 90);
     if (window.testRunner)
         testRunner.setMockCameraOrientation(90);
 
-    return checkVideoBlack(false, remoteVideo, "canvas2").then(() => {
+    await checkVideoBlack(false, remoteVideo, "canvas2").then(() => {
         return waitForVideoSize(remoteVideo, 240, 320);
     });
+
+    await waitForTrackRotation(remoteVideo.srcObject.getVideoTracks()[0], 90);
 }, "Track is enabled and rotated, remote video should not be black and should change size");
 
-promise_test((test) => {
+promise_test(async (test) => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 180);
     if (window.testRunner)
         testRunner.setMockCameraOrientation(180);
 
-    return checkVideoBlack(false, remoteVideo, "canvas3").then(() => {
+    await checkVideoBlack(false, remoteVideo, "canvas3").then(() => {
         return waitForVideoSize(remoteVideo, 320, 240);
     });
+
+    await waitForTrackRotation(remoteVideo.srcObject.getVideoTracks()[0], 180);
 }, "Track is enabled and rotated again, video should not be black and should change size");
         </script>
     </body>
