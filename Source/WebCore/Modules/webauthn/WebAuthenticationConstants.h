@@ -38,6 +38,7 @@ const int64_t y = -3;
 // Values
 const int64_t EC2 = 2;
 const int64_t ES256 = -7;
+const int64_t RS256 = -257;
 const int64_t ECDH256 = -25;
 const int64_t P_256 = 1;
 

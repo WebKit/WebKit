@@ -76,7 +76,7 @@ struct PublicKeyCredentialCreationOptions {
     UserEntity user;
 
     BufferSource challenge;
-    Vector<Parameters> pubKeyCredParams;
+    mutable Vector<Parameters> pubKeyCredParams;
 
     std::optional<unsigned> timeout;
     Vector<PublicKeyCredentialDescriptor> excludeCredentials;
