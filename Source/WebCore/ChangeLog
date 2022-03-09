@@ -1,3 +1,22 @@
+2022-03-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] SpatialNavigation.h(93): error C2365: 'WebCore::None': redefinition; previous definition was 'enumerator'
+        https://bugs.webkit.org/show_bug.cgi?id=237647
+
+        Unreviewed build fix.
+
+        Changed WebCore::RectsAlignment to an enum class.
+
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfNeeded):
+        * page/SpatialNavigation.cpp:
+        (WebCore::FocusCandidate::FocusCandidate):
+        (WebCore::alignmentForRects):
+        (WebCore::distanceDataForNode):
+        * page/SpatialNavigation.h:
+        (WebCore::FocusCandidate::FocusCandidate):
+        (): Deleted.
+
 2022-03-09  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] color-interpolation-filters should support discrete animation

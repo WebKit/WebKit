@@ -972,7 +972,7 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCa
     if (candidate.distance == maxDistance())
         return;
 
-    if (candidate.isOffscreenAfterScrolling && candidate.alignment < Full)
+    if (candidate.isOffscreenAfterScrolling && candidate.alignment < RectsAlignment::Full)
         return;
 
     if (closest.isNull()) {
