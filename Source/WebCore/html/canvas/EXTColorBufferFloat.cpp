@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 #include "EXTColorBufferFloat.h"
 
+#include "ExtensionsGL.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -37,10 +38,10 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(EXTColorBufferFloat);
 EXTColorBufferFloat::EXTColorBufferFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_color_buffer_float"_s);
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_EXT_color_buffer_float"_s);
     // https://github.com/KhronosGroup/WebGL/pull/2830
     // Spec requires EXT_float_blend to be turned on implicitly here.
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_float_blend"_s);
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_EXT_float_blend"_s);
 }
 
 EXTColorBufferFloat::~EXTColorBufferFloat() = default;
@@ -50,9 +51,9 @@ WebGLExtension::ExtensionName EXTColorBufferFloat::getName() const
     return EXTColorBufferFloatName;
 }
 
-bool EXTColorBufferFloat::supported(GraphicsContextGL& context)
+bool EXTColorBufferFloat::supported(const WebGLRenderingContextBase& context)
 {
-    return context.supportsExtension("GL_EXT_color_buffer_float"_s);
+    return context.graphicsContextGL()->getExtensions().supports("GL_EXT_color_buffer_float"_s);
 }
 
 } // namespace WebCore

@@ -52,7 +52,7 @@ public:
     void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor) override;
 
 protected:
-    bool platformSupportsExtension(const String&) override;
+    bool supportsExtension(const String&) override;
     String getExtensions() override;
 
 private:

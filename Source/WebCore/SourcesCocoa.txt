@@ -609,5 +609,6 @@ testing/cocoa/WebViewVisualIdentificationOverlay.mm
 // with files that use the system OpenGL.
 
 platform/graphics/angle/ANGLEUtilities.cpp @no-unify
+platform/graphics/angle/ExtensionsGLANGLE.cpp @no-unify
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
 platform/graphics/angle/TemporaryANGLESetting.cpp @no-unify

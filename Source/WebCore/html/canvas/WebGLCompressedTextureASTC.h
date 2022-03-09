@@ -40,7 +40,7 @@ public:
     ExtensionName getName() const override;
     Vector<String> getSupportedProfiles();
 
-    static bool supported(GraphicsContextGL&);
+    static bool supported(const WebGLRenderingContextBase&);
 private:
     bool m_isHDRSupported : 1;
     bool m_isLDRSupported : 1;

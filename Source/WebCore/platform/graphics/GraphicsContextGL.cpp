@@ -31,6 +31,7 @@
 
 #if ENABLE(WEBGL)
 
+#include "ExtensionsGL.h"
 #include "FormatConverter.h"
 #include "HostWindow.h"
 #include "Image.h"
@@ -375,13 +376,13 @@ bool GraphicsContextGL::computeFormatAndTypeParameters(GCGLenum format, GCGLenum
         break;
     case GraphicsContextGL::RGB:
     case GraphicsContextGL::RGB_INTEGER:
-    case GraphicsContextGL::SRGB_EXT:
+    case ExtensionsGL::SRGB_EXT:
         *componentsPerPixel = 3;
         break;
     case GraphicsContextGL::RGBA:
     case GraphicsContextGL::RGBA_INTEGER:
-    case GraphicsContextGL::BGRA_EXT: // GL_EXT_texture_format_BGRA8888
-    case GraphicsContextGL::SRGB_ALPHA_EXT:
+    case ExtensionsGL::BGRA_EXT: // GL_EXT_texture_format_BGRA8888
+    case ExtensionsGL::SRGB_ALPHA_EXT:
         *componentsPerPixel = 4;
         break;
     default:

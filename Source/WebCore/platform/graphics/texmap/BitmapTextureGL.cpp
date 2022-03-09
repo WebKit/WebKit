@@ -24,6 +24,7 @@
 
 #if USE(TEXTURE_MAPPER_GL)
 
+#include "ExtensionsGL.h"
 #include "FilterOperations.h"
 #include "LengthFunctions.h"
 #include "NativeImage.h"

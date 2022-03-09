@@ -1908,6 +1908,7 @@ if (ENABLE_WEBGL)
         )
         list(APPEND WebCore_SOURCES
             platform/graphics/angle/ANGLEUtilities.cpp
+            platform/graphics/angle/ExtensionsGLANGLE.cpp
             platform/graphics/angle/GraphicsContextGLANGLE.cpp
             platform/graphics/angle/TemporaryANGLESetting.cpp
         )

@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 #include "WebGLCompressedTextureETC.h"
 
+#include "ExtensionsGL.h"
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -38,18 +39,18 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureETC);
 WebGLCompressedTextureETC::WebGLCompressedTextureETC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_compressed_texture_etc");
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_ANGLE_compressed_texture_etc");
 
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_R11_EAC);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SIGNED_R11_EAC);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RG11_EAC);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SIGNED_RG11_EAC);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGB8_ETC2);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ETC2);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA8_ETC2_EAC);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB8_ALPHA8_ETC2_EAC);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_R11_EAC);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SIGNED_R11_EAC);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RG11_EAC);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SIGNED_RG11_EAC);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGB8_ETC2);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ETC2);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA8_ETC2_EAC);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ETC2_EAC);
 }
 
 WebGLCompressedTextureETC::~WebGLCompressedTextureETC() = default;
@@ -59,9 +60,9 @@ WebGLExtension::ExtensionName WebGLCompressedTextureETC::getName() const
     return WebGLCompressedTextureETCName;
 }
 
-bool WebGLCompressedTextureETC::supported(GraphicsContextGL& context)
+bool WebGLCompressedTextureETC::supported(WebGLRenderingContextBase& context)
 {
-    return context.supportsExtension("GL_ANGLE_compressed_texture_etc");
+    return context.graphicsContextGL()->getExtensions().supports("GL_ANGLE_compressed_texture_etc");
 }
 
 } // namespace WebCore

@@ -29,6 +29,7 @@
 
 #include "WebGLDebugShaders.h"
 
+#include "ExtensionsGL.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
 #include <wtf/IsoMallocInlines.h>
@@ -40,7 +41,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDebugShaders);
 WebGLDebugShaders::WebGLDebugShaders(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_translated_shader_source");
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_ANGLE_translated_shader_source");
 }
 
 WebGLDebugShaders::~WebGLDebugShaders() = default;
@@ -56,7 +57,7 @@ String WebGLDebugShaders::getTranslatedShaderSource(WebGLShader& shader)
         return String();
     if (!m_context->validateWebGLObject("getTranslatedShaderSource", &shader))
         return emptyString();
-    return m_context->graphicsContextGL()->getTranslatedShaderSourceANGLE(shader.object());
+    return m_context->graphicsContextGL()->getExtensions().getTranslatedShaderSourceANGLE(shader.object());
 }
 
 } // namespace WebCore

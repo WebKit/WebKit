@@ -29,6 +29,7 @@
 
 #include "WebGLCompressedTexturePVRTC.h"
 
+#include "ExtensionsGL.h"
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -39,12 +40,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTexturePVRTC);
 WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_IMG_texture_compression_pvrtc");
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_IMG_texture_compression_pvrtc");
 
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGB_PVRTC_4BPPV1_IMG);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGB_PVRTC_2BPPV1_IMG);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG);
-    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_PVRTC_2BPPV1_IMG);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGB_PVRTC_4BPPV1_IMG);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGB_PVRTC_2BPPV1_IMG);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG);
+    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RGBA_PVRTC_2BPPV1_IMG);
 }
 
 WebGLCompressedTexturePVRTC::~WebGLCompressedTexturePVRTC() = default;
@@ -54,9 +55,9 @@ WebGLExtension::ExtensionName WebGLCompressedTexturePVRTC::getName() const
     return WebGLCompressedTexturePVRTCName;
 }
 
-bool WebGLCompressedTexturePVRTC::supported(GraphicsContextGL& context)
+bool WebGLCompressedTexturePVRTC::supported(WebGLRenderingContextBase& context)
 {
-    return context.supportsExtension("GL_IMG_texture_compression_pvrtc");
+    return context.graphicsContextGL()->getExtensions().supports("GL_IMG_texture_compression_pvrtc");
 }
 
 } // namespace WebCore

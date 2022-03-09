@@ -72,7 +72,7 @@ public:
 
     ExtensionName getName() const override;
 
-    static bool supported(GraphicsContextGL&);
+    static bool supported(const WebGLRenderingContextBase&);
 
     void multiDrawArraysWEBGL(GCGLenum mode, Int32List firstsList, GCGLuint firstsOffset, Int32List countsList, GCGLuint countsOffset, GCGLsizei drawcount);
 

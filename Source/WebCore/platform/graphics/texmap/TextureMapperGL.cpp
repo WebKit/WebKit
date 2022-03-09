@@ -26,6 +26,7 @@
 
 #include "BitmapTextureGL.h"
 #include "BitmapTexturePool.h"
+#include "ExtensionsGL.h"
 #include "FilterOperations.h"
 #include "FloatQuad.h"
 #include "FloatRoundedRect.h"

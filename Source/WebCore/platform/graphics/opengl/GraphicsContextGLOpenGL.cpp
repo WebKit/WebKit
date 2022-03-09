@@ -312,20 +312,18 @@ bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 #endif
 }
 
-#if PLATFORM(GTK) && USE(OPENGL_ES)
-ExtensionsGLOpenGLES& GraphicsContextGLOpenGL::getExtensions()
+#if PLATFORM(GTK)
+ExtensionsGLOpenGLCommon& GraphicsContextGLOpenGL::getExtensions()
 {
-    // glGetStringi is not available on GLES2.
-    if (!m_extensions)
+    if (!m_extensions) {
+#if USE(OPENGL_ES)
+        // glGetStringi is not available on GLES2.
         m_extensions = makeUnique<ExtensionsGLOpenGLES>(this,  false);
-    return *m_extensions;
-}
-#elif PLATFORM(GTK)
-ExtensionsGLOpenGL& GraphicsContextGLOpenGL::getExtensions()
-{
-    // From OpenGL 3.2 on we use the Core profile, and there we must use glGetStringi.
-    if (!m_extensions)
+#else
+        // From OpenGL 3.2 on we use the Core profile, and there we must use glGetStringi.
         m_extensions = makeUnique<ExtensionsGLOpenGL>(this, GLContext::current()->version() >= 320);
+#endif
+    }
     return *m_extensions;
 }
 #endif
@@ -353,9 +351,10 @@ void GraphicsContextGLOpenGL::validateDepthStencil(const char* packedDepthStenci
 {
     auto attrs = contextAttributes();
 
+    ExtensionsGLOpenGLCommon& extensions = getExtensions();
     if (attrs.stencil) {
-        if (supportsExtension(packedDepthStencilExtension)) {
-            ensureExtensionEnabled(packedDepthStencilExtension);
+        if (extensions.supports(packedDepthStencilExtension)) {
+            extensions.ensureEnabled(packedDepthStencilExtension);
             // Force depth if stencil is true.
             attrs.depth = true;
         } else
@@ -363,11 +362,11 @@ void GraphicsContextGLOpenGL::validateDepthStencil(const char* packedDepthStenci
         setContextAttributes(attrs);
     }
     if (attrs.antialias && !m_isForWebGL2) {
-        if (!supportsExtension("GL_ANGLE_framebuffer_multisample")) {
+        if (!extensions.supports("GL_ANGLE_framebuffer_multisample")) {
             attrs.antialias = false;
             setContextAttributes(attrs);
         } else
-            ensureExtensionEnabled("GL_ANGLE_framebuffer_multisample");
+            extensions.ensureEnabled("GL_ANGLE_framebuffer_multisample");
     }
 }
 
@@ -3078,36 +3077,6 @@ void GraphicsContextGLOpenGL::multiDrawElementsANGLE(GCGLenum, GCGLSpan<const GC
 void GraphicsContextGLOpenGL::multiDrawElementsInstancedANGLE(GCGLenum, GCGLSpan<const GCGLsizei>, GCGLenum, GCGLSpan<const GCGLint>, GCGLSpan<const GCGLsizei>, GCGLsizei)
 {
     synthesizeGLError(GraphicsContextGL::INVALID_OPERATION);
-}
-
-bool GraphicsContextGLOpenGL::supportsExtension(const String& name)
-{
-    return getExtensions().supports(name);
-}
-
-void GraphicsContextGLOpenGL::ensureExtensionEnabled(const String& name)
-{
-    getExtensions().ensureEnabled(name);
-}
-
-bool GraphicsContextGLOpenGL::isExtensionEnabled(const String& name)
-{
-    return getExtensions().isEnabled(name);
-}
-
-GLint GraphicsContextGLOpenGL::getGraphicsResetStatusARB()
-{
-    return getExtensions().getGraphicsResetStatusARB();
-}
-
-void GraphicsContextGLOpenGL::drawBuffersEXT(GCGLSpan<const GCGLenum> buffers)
-{
-    return getExtensions().drawBuffersEXT(buffers);
-}
-
-String GraphicsContextGLOpenGL::getTranslatedShaderSourceANGLE(PlatformGLObject shader)
-{
-    return getExtensions().getTranslatedShaderSourceANGLE(shader);
 }
 
 bool GraphicsContextGLOpenGL::texImage2DResourceSafe(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLint unpackAlignment)

@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 #include "WebGLMultiDraw.h"
 
+#include "ExtensionsGL.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -42,8 +43,8 @@ static GCGLSpan<const int> makeSpanWithOffset(WebGLMultiDraw::Int32List& list, G
 WebGLMultiDraw::WebGLMultiDraw(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_multi_draw"_s);
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_instanced_arrays"_s);
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_ANGLE_multi_draw"_s);
+    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_ANGLE_instanced_arrays"_s);
 }
 
 WebGLMultiDraw::~WebGLMultiDraw() = default;
@@ -53,10 +54,10 @@ WebGLExtension::ExtensionName WebGLMultiDraw::getName() const
     return WebGLMultiDrawName;
 }
 
-bool WebGLMultiDraw::supported(GraphicsContextGL& context)
+bool WebGLMultiDraw::supported(const WebGLRenderingContextBase& context)
 {
-    return context.supportsExtension("GL_ANGLE_multi_draw"_s)
-        && context.supportsExtension("GL_ANGLE_instanced_arrays"_s);
+    return context.graphicsContextGL()->getExtensions().supports("GL_ANGLE_multi_draw"_s)
+        && context.graphicsContextGL()->getExtensions().supports("GL_ANGLE_instanced_arrays"_s);
 }
 
 void WebGLMultiDraw::multiDrawArraysWEBGL(GCGLenum mode, Int32List firstsList, GCGLuint firstsOffset, Int32List countsList, GCGLuint countsOffset, GCGLsizei drawcount)
