@@ -48,13 +48,15 @@
 		338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */ = {isa = PBXBuildFile; fileRef = 338BB2D127B6B63F00E066AB /* SourceSpan.h */; };
 		338BB2D427B6B66C00E066AB /* Lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = 338BB2D327B6B66C00E066AB /* Lexer.h */; };
 		338BB2D627B6B68700E066AB /* Lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 338BB2D527B6B68700E066AB /* Lexer.cpp */; };
-		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
+		339B7B1827D7FFA40072BF9A /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B7B1727D7FFA40072BF9A /* Parser.h */; };
+		339B7B1B27D800090072BF9A /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 339B7B1A27D800090072BF9A /* Parser.cpp */; };
+		339B7B1D27D80A1C0072BF9A /* WGSLParserTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 339B7B1C27D80A1C0072BF9A /* WGSLParserTests.mm */; };
+		339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */; };
 		33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA185D27BC194F00A1DD52 /* ASTNode.h */; };
 		33EA186027BC198100A1DD52 /* GlobalDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA185F27BC198100A1DD52 /* GlobalDirective.h */; };
 		33EA186227BC19C100A1DD52 /* GlobalDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186127BC19C100A1DD52 /* GlobalDecl.h */; };
 		33EA186427BC1A1D00A1DD52 /* GlobalVariableDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186327BC1A1D00A1DD52 /* GlobalVariableDecl.h */; };
 		33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186527BC1AD500A1DD52 /* CompilationMessage.h */; };
-		33EA186827BC1B1400A1DD52 /* CompilationMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */; };
 		33EA186A27BC1BE600A1DD52 /* Attribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186927BC1BE600A1DD52 /* Attribute.h */; };
 		33EA186C27BC1CBC00A1DD52 /* Expression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186B27BC1CBC00A1DD52 /* Expression.h */; };
 		33EA186E27BC1D4C00A1DD52 /* TypeDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186D27BC1D4C00A1DD52 /* TypeDecl.h */; };
@@ -70,6 +72,7 @@
 		33EA188427BC268600A1DD52 /* StructureAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188327BC268600A1DD52 /* StructureAccess.h */; };
 		33EA188627BC26DF00A1DD52 /* TypeConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188527BC26DF00A1DD52 /* TypeConversion.h */; };
 		33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188727BC361E00A1DD52 /* LiteralExpressions.h */; };
+		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -201,6 +204,9 @@
 		338BB2D127B6B63F00E066AB /* SourceSpan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SourceSpan.h; sourceTree = "<group>"; };
 		338BB2D327B6B66C00E066AB /* Lexer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lexer.h; sourceTree = "<group>"; };
 		338BB2D527B6B68700E066AB /* Lexer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lexer.cpp; sourceTree = "<group>"; };
+		339B7B1727D7FFA40072BF9A /* Parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
+		339B7B1A27D800090072BF9A /* Parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
+		339B7B1C27D80A1C0072BF9A /* WGSLParserTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WGSLParserTests.mm; sourceTree = "<group>"; };
 		33EA185D27BC194F00A1DD52 /* ASTNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ASTNode.h; path = WGSL/ASTNode.h; sourceTree = SOURCE_ROOT; };
 		33EA185F27BC198100A1DD52 /* GlobalDirective.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlobalDirective.h; sourceTree = "<group>"; };
 		33EA186127BC19C100A1DD52 /* GlobalDecl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlobalDecl.h; sourceTree = "<group>"; };
@@ -265,6 +271,7 @@
 		1C023D3D27449070001DB734 /* WGSLUnitTests */ = {
 			isa = PBXGroup;
 			children = (
+				339B7B1C27D80A1C0072BF9A /* WGSLParserTests.mm */,
 				1C023D3E27449070001DB734 /* WGSLLexerTests.mm */,
 			);
 			path = WGSLUnitTests;
@@ -368,11 +375,12 @@
 				1CEBD8042716BFAB00A5254D /* config.h */,
 				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
 				33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */,
-				338BB2D327B6B66C00E066AB /* Lexer.h */,
 				338BB2D527B6B68700E066AB /* Lexer.cpp */,
 				338BB2D327B6B66C00E066AB /* Lexer.h */,
 				338BB2D127B6B63F00E066AB /* SourceSpan.h */,
 				338BB2CF27B6B61B00E066AB /* Token.cpp */,
+				339B7B1727D7FFA40072BF9A /* Parser.h */,
+				339B7B1A27D800090072BF9A /* Parser.cpp */,
 				338BB2CD27B6B60200E066AB /* Token.h */,
 				1CEBD8022716BF8200A5254D /* WGSL.cpp */,
 				1CEBD7F72716B34400A5254D /* WGSL.h */,
@@ -472,6 +480,7 @@
 				33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */,
 				33EA188627BC26DF00A1DD52 /* TypeConversion.h in Headers */,
 				33EA186427BC1A1D00A1DD52 /* GlobalVariableDecl.h in Headers */,
+				339B7B1827D7FFA40072BF9A /* Parser.h in Headers */,
 				33EA187B27BC230E00A1DD52 /* CompoundStatement.h in Headers */,
 				33EA187627BC216B00A1DD52 /* FunctionDecl.h in Headers */,
 				338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */,
@@ -680,6 +689,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C023D3F27449070001DB734 /* WGSLLexerTests.mm in Sources */,
+				339B7B1D27D80A1C0072BF9A /* WGSLParserTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,6 +735,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
+				339B7B1B27D800090072BF9A /* Parser.cpp in Sources */,
 				338BB2D627B6B68700E066AB /* Lexer.cpp in Sources */,
 				338BB2D027B6B61B00E066AB /* Token.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,

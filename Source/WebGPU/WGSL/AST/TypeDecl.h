@@ -92,6 +92,35 @@ public:
     {
     }
 
+    static std::optional<Base> stringViewToKind(StringView& view)
+    {
+        if (view == "vec2")
+            return Base::Vec2;
+        if (view == "vec3")
+            return Base::Vec3;
+        if (view == "vec4")
+            return Base::Vec4;
+        if (view == "mat2x2")
+            return Base::Mat2x2;
+        if (view == "mat2x3")
+            return Base::Mat2x3;
+        if (view == "mat2x4")
+            return Base::Mat2x4;
+        if (view == "mat3x2")
+            return Base::Mat3x2;
+        if (view == "mat3x3")
+            return Base::Mat3x3;
+        if (view == "mat3x4")
+            return Base::Mat3x4;
+        if (view == "mat4x2")
+            return Base::Mat4x2;
+        if (view == "mat4x3")
+            return Base::Mat4x3;
+        if (view == "mat4x4")
+            return Base::Mat4x4;
+        return std::nullopt;
+    }
+
     Kind kind() const override { return Kind::Parameterized; }
     Base base() const { return m_base; }
     TypeDecl& elementType() { return m_elementType; }

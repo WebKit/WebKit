@@ -53,4 +53,7 @@ private:
     SourceSpan m_span;
 };
 
+using Warning = CompilationMessage;
+using Error = CompilationMessage;
+
 } // namespace WGSL

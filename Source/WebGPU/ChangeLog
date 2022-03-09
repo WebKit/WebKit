@@ -1,3 +1,72 @@
+2022-03-09  Robin Morisset  <rmorisset@apple.com>
+
+        [WGSL] Implement enough of the Parser for the simplest shaders
+        https://bugs.webkit.org/show_bug.cgi?id=237629
+
+        Reviewed by Myles Maxfield.
+
+        The specific "hello-world"-like shaders that I want this to be able to parse are included in WGSLParserTests.mm.
+
+        The general approach to the parser, such as its templating by the Lexer, is directly copied from JSC's parser.
+        Things are a bit simpler for us as WGSL is such a simple language to parse, being strictly LR(1).
+
+        In this patch I also deleted BlockAttribute, since this attribute was recently removed from the language.
+
+        * WGSL/AST/Attribute.h:
+        (WGSL::AST::Attribute::isBlock const): Deleted.
+        * WGSL/AST/Expressions/TypeConversion.h:
+        * WGSL/AST/FunctionDecl.h:
+        * WGSL/AST/ShaderModule.h:
+        * WGSL/AST/Statements/AssignmentStatement.h:
+        * WGSL/AST/StructureDecl.h:
+        * WGSL/AST/TypeDecl.h:
+        (WGSL::AST::ParameterizedType::stringViewToKind):
+        * WGSL/CompilationMessage.h:
+        * WGSL/Parser.cpp: Added.
+        (WGSL::Parser::Parser):
+        (WGSL::Parser::current):
+        (WGSL::parse):
+        (WGSL::parseLChar):
+        (WGSL::parseUChar):
+        (WGSL::Parser<Lexer>::consumeType):
+        (WGSL::Parser<Lexer>::consume):
+        (WGSL::Parser<Lexer>::parseShader):
+        (WGSL::Parser<Lexer>::parseGlobalDecl):
+        (WGSL::Parser<Lexer>::parseAttributes):
+        (WGSL::Parser<Lexer>::parseAttribute):
+        (WGSL::Parser<Lexer>::parseStructDecl):
+        (WGSL::Parser<Lexer>::parseStructMember):
+        (WGSL::Parser<Lexer>::parseTypeDecl):
+        (WGSL::Parser<Lexer>::parseTypeDeclAfterIdentifier):
+        (WGSL::Parser<Lexer>::parseGlobalVariableDecl):
+        (WGSL::Parser<Lexer>::parseVariableQualifier):
+        (WGSL::Parser<Lexer>::parseStorageClass):
+        (WGSL::Parser<Lexer>::parseAccessMode):
+        (WGSL::Parser<Lexer>::parseFunctionDecl):
+        (WGSL::Parser<Lexer>::parseParameter):
+        (WGSL::Parser<Lexer>::parseStatement):
+        (WGSL::Parser<Lexer>::parseCompoundStatement):
+        (WGSL::Parser<Lexer>::parseReturnStatement):
+        (WGSL::Parser<Lexer>::parseShortCircuitOrExpression):
+        (WGSL::Parser<Lexer>::parseRelationalExpression):
+        (WGSL::Parser<Lexer>::parseShiftExpression):
+        (WGSL::Parser<Lexer>::parseAdditiveExpression):
+        (WGSL::Parser<Lexer>::parseMultiplicativeExpression):
+        (WGSL::Parser<Lexer>::parseUnaryExpression):
+        (WGSL::Parser<Lexer>::parseSingularExpression):
+        (WGSL::Parser<Lexer>::parsePostfixExpression):
+        (WGSL::Parser<Lexer>::parsePrimaryExpression):
+        (WGSL::Parser<Lexer>::parseExpression):
+        (WGSL::Parser<Lexer>::parseLHSExpression):
+        (WGSL::Parser<Lexer>::parseCoreLHSExpression):
+        (WGSL::Parser<Lexer>::parseArgumentExpressionList):
+        * WGSL/Parser.h: Copied from Source/WebGPU/WGSL/CompilationMessage.h.
+        * WGSL/WGSL.cpp:
+        (WGSL::staticCheck):
+        (WGSL::SuccessfulCheck::SuccessfulCheck):
+        * WGSL/WGSL.h:
+        * WebGPU.xcodeproj/project.pbxproj:
+
 2022-03-08  Robin Morisset  <rmorisset@apple.com>
 
         [WGSL] Add enough of the AST for the simplest shaders

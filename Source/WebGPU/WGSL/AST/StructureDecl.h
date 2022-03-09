@@ -50,6 +50,7 @@ public:
 
     const StringView& name() const { return m_name; }
     TypeDecl& type() { return m_type; }
+    Attributes& attributes() { return m_attributes; }
 
 private:
     StringView m_name;

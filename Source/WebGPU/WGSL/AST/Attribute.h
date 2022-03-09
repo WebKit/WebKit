@@ -36,7 +36,6 @@ class Attribute : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Kind {
-        Block,
         Group,
         Binding,
         Stage,
@@ -52,23 +51,11 @@ public:
     virtual ~Attribute() {};
 
     virtual Kind kind() const = 0 ;
-    bool isBlock() const { return kind() == Kind::Block; }
     bool isGroup() const { return kind() == Kind::Group; }
     bool isBinding() const { return kind() == Kind::Binding; }
     bool isStage() const { return kind() == Kind::Stage; }
     bool isLocation() const { return kind() == Kind::Location; }
     bool isBuiltin() const { return kind() == Kind::Builtin; }
-};
-
-class BlockAttribute final : public Attribute {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    BlockAttribute(SourceSpan span)
-        : Attribute(span)
-    {
-    }
-
-    Kind kind() const override { return Kind::Block; }
 };
 
 class GroupAttribute final : public Attribute {
@@ -166,7 +153,6 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
     static bool isType(const WGSL::AST::Attribute& attr) { return attr.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-SPECIALIZE_TYPE_TRAITS_WGSL_ATTRIBUTE(BlockAttribute, isBlock())
 SPECIALIZE_TYPE_TRAITS_WGSL_ATTRIBUTE(GroupAttribute, isGroup())
 SPECIALIZE_TYPE_TRAITS_WGSL_ATTRIBUTE(BindingAttribute, isBinding())
 SPECIALIZE_TYPE_TRAITS_WGSL_ATTRIBUTE(StageAttribute, isStage())

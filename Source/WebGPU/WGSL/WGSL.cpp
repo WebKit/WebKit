@@ -26,30 +26,31 @@
 #include "config.h"
 #include "WGSL.h"
 
-#include "Lexer.h"
-// All of these are just to check that they compile, since for now they are not really used.
-#include "AST/GlobalVariableDecl.h"
-#include "AST/StructureDecl.h"
-#include "AST/FunctionDecl.h"
-#include "AST/ShaderModule.h"
-#include "AST/Statements/AssignmentStatement.h"
-#include "AST/Statements/ReturnStatement.h"
-#include "AST/Expressions/IdentifierExpression.h"
-#include "AST/Expressions/TypeConversion.h"
-#include "AST/Expressions/StructureAccess.h"
-#include "AST/Expressions/LiteralExpressions.h"
+#include "Parser.h"
 
 namespace WGSL {
 
-std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& str, const std::optional<SourceMap>&)
+std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const std::optional<SourceMap>&)
 {
-    // Making sure that the lexer builds correctly, will be removed in later patches
-    Lexer<LChar> lexer(str);
-    lexer.lex();
-    return FailedCheck { { }, { } };
+    Expected<AST::ShaderModule, Error> parserResult = wgsl.is8Bit() ? parseLChar(wgsl) : parseUChar(wgsl);
+    if (!parserResult.has_value()) {
+        // FIXME: Add support for returning multiple errors from the parser.
+        return FailedCheck { { parserResult.error() }, { /* warnings */ } };
+    }
+    UniqueRef<AST::ShaderModule> shader = makeUniqueRef<AST::ShaderModule>(WTFMove(parserResult.value()));
+
+    Vector<Warning> warnings { };
+    // FIXME: add validation
+    return std::variant<SuccessfulCheck, FailedCheck>(std::in_place_type<SuccessfulCheck>, WTFMove(warnings), WTFMove(shader));
 }
 
 SuccessfulCheck::SuccessfulCheck(SuccessfulCheck&&) = default;
+
+SuccessfulCheck::SuccessfulCheck(Vector<Warning>&& messages, UniqueRef<AST::ShaderModule>&& shader)
+    : warnings(WTFMove(messages))
+    , ast(WTFMove(shader))
+{
+}
 
 SuccessfulCheck::~SuccessfulCheck() = default;
 

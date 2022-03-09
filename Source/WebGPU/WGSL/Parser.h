@@ -25,32 +25,17 @@
 
 #pragma once
 
-#include "Expression.h"
-#include "Statement.h"
-#include <wtf/UniqueRef.h>
+#include "AST/ShaderModule.h"
+#include "CompilationMessage.h"
+#include "Lexer.h"
+#include <wtf/Expected.h>
 
-namespace WGSL::AST {
+namespace WGSL {
 
-class AssignmentStatement final : public Statement {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    AssignmentStatement(SourceSpan span, std::unique_ptr<Expression>&& lhs, UniqueRef<Expression>&& rhs)
-        : Statement(span)
-        , m_lhs(WTFMove(lhs))
-        , m_rhs(WTFMove(rhs))
-    {
-    }
+template<typename Lexer>
+Expected<AST::ShaderModule, Error> parse(const String& wgsl);
 
-    Kind kind() const override { return Kind::Assignment; }
-    Expression* maybeLhs() { return m_lhs.get(); }
-    Expression& rhs() { return m_rhs; }
+Expected<AST::ShaderModule, Error> parseLChar(const String& wgsl);
+Expected<AST::ShaderModule, Error> parseUChar(const String& wgsl);
 
-private:
-    // LHS can be null in the case it is '_', but RHS is never null
-    std::unique_ptr<Expression> m_lhs;
-    UniqueRef<Expression> m_rhs;
-};
-
-} // namespace WGSL::AST
-
-SPECIALIZE_TYPE_TRAITS_WGSL_STATEMENT(AssignmentStatement, isAssignment())
+} // namespace WGSL

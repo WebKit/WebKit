@@ -49,14 +49,15 @@ class ShaderModule;
 struct SuccessfulCheck {
     SuccessfulCheck() = delete;
     SuccessfulCheck(SuccessfulCheck&&);
+    SuccessfulCheck(Vector<Warning>&&, UniqueRef<AST::ShaderModule>&&);
     ~SuccessfulCheck();
-    Vector<CompilationMessage> warnings;
+    Vector<Warning> warnings;
     UniqueRef<AST::ShaderModule> ast;
 };
 
 struct FailedCheck {
-    Vector<CompilationMessage> errors;
-    Vector<CompilationMessage> warnings;
+    Vector<Error> errors;
+    Vector<Warning> warnings;
 };
 
 struct SourceMap {

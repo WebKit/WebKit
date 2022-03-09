@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Expression.h"
+#include "TypeDecl.h"
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 

@@ -28,6 +28,7 @@
 #include "ASTNode.h"
 #include "Attribute.h"
 #include "CompilationMessage.h"
+#include "GlobalDecl.h"
 #include "Statements/CompoundStatement.h"
 #include "TypeDecl.h"
 
@@ -46,6 +47,7 @@ public:
 
     const StringView& name() const { return m_name; }
     TypeDecl& type() { return m_type; }
+    Attributes& attributes() { return m_attributes; }
 
 private:
     StringView m_name;
