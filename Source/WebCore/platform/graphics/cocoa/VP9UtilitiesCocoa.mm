@@ -619,7 +619,7 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderParser(con
     return createFormatDescriptionFromVPCodecConfigurationRecord(record, parser.width(), parser.height());
 }
 
-std::optional<VP8FrameHeader> parseVP8FrameHeader(uint8_t* frameData, size_t frameSize)
+std::optional<VP8FrameHeader> parseVP8FrameHeader(const uint8_t* frameData, size_t frameSize)
 {
     // VP8 frame headers are defined in RFC 6386: <https://tools.ietf.org/html/rfc6386>.
 

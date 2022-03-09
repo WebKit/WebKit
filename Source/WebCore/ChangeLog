@@ -1,3 +1,41 @@
+2022-03-08  Jean-Yves Avenard  <jya@apple.com>
+
+        Have SourceBufferParserWebM use SharedBuffer internally
+        https://bugs.webkit.org/show_bug.cgi?id=237078
+        rdar://89348752
+
+        Reviewed by Eric Carlson.
+
+        This is a refactor to allow SourceBufferParser to return SharedBuffer
+        rather than CMBlockBuffer.
+
+        No change in observable behaviours.
+        Covered by existing tests.
+
+        * platform/graphics/SourceBufferPrivate.cpp:
+        (WebCore::SourceBufferPrivate::reenqueueMediaForTime): Fly-by fix: typo.
+        (WebCore::SourceBufferPrivate::didReceiveSample): Fly-by fix,  exit early
+        if end time is lower than start time which can happen if the duration is
+        smaller than contiguousFrameTolerance.
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::SourceBufferParserWebM::TrackData::contiguousCompleteBlockBuffer const):
+        (WebCore::SourceBufferParserWebM::TrackData::readFrameData):
+        (WebCore::SourceBufferParserWebM::TrackData::createSampleBuffer):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::resetCompleted):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::consumeFrameData):
+        (WebCore::SourceBufferParserWebM::VideoTrackData::postProcess):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::resetCompleted):
+        (WebCore::SourceBufferParserWebM::AudioTrackData::consumeFrameData):
+        (WebCore::SourceBufferParserWebM::flushPendingAudioBuffers):
+        * platform/graphics/cocoa/SourceBufferParserWebM.h:
+        (WebCore::SourceBufferParserWebM::TrackData::resetCompleted):
+        (WebCore::SourceBufferParserWebM::TrackData::reset):
+        (WebCore::SourceBufferParserWebM::TrackData::drainPendingSamples):
+        (WebCore::SourceBufferParserWebM::TrackData::postProcess):
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.h:
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+        (WebCore::parseVP8FrameHeader): Make methods const.
+
 2022-03-08  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Using WebAuthn within cross-origin iframe elements

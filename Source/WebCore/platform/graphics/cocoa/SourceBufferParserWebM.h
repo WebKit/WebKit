@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "SharedBuffer.h"
 #include "SourceBufferParser.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <CoreMedia/CMTime.h>
@@ -39,7 +40,6 @@
 #include <wtf/Vector.h>
 
 typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
-typedef struct OpaqueCMBlockBuffer *CMBlockBufferRef;
 
 namespace webm {
 class WebmParser;
@@ -155,32 +155,44 @@ public:
             return webm::Status(webm::Status::kInvalidElementId);
         }
 
-        virtual void resetCompleted()
+        virtual void resetCompletedFramesState()
         {
-            m_completeBlockBuffer = nullptr;
+            m_completeBlockBuffers.reset();
+            m_packetSizes.clear();
+            m_packetTimings.clear();
+            m_currentPacketByteOffset = 0;
         }
         void reset()
         {
-            resetCompleted();
+            resetCompletedFramesState();
             m_completePacketSize = std::nullopt;
             m_partialBytesRead = 0;
-            m_currentBlockBuffer = nullptr;
+            m_currentBlockBuffer.reset();
+        }
+
+        virtual void drainPendingSamples(std::optional<size_t> latestByteRangeOffset = std::nullopt)
+        {
+            createSampleBuffer(latestByteRangeOffset);
+            resetCompletedFramesState();
         }
 
     protected:
-        RetainPtr<CMBlockBufferRef> contiguousCompleteBlockBuffer(size_t offset, size_t length) const;
+        void createSampleBuffer(std::optional<size_t>);
+        virtual void postProcess(CMSampleBufferRef) { };
+        RefPtr<SharedBuffer> contiguousCompleteBlockBuffer(size_t offset, size_t length) const;
         webm::Status readFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t* bytesRemaining);
-        RetainPtr<CMBlockBufferRef> m_completeBlockBuffer;
+        SharedBufferBuilder m_completeBlockBuffers;
         std::optional<size_t> m_completePacketSize;
-        // Initial allocation size of empty CMBlockBuffer.
-        size_t mMaxBlockBufferCapacity { 0 };
+        size_t m_currentPacketByteOffset { 0 };
+        Vector<size_t> m_packetSizes;
+        Vector<CMSampleTimingInfo> m_packetTimings;
 
     private:
         CodecType m_codec;
         webm::TrackEntry m_track;
         Type m_trackType;
         RetainPtr<CMFormatDescriptionRef> m_formatDescription;
-        RetainPtr<CMBlockBufferRef> m_currentBlockBuffer;
+        SharedBufferBuilder m_currentBlockBuffer;
         SourceBufferParserWebM& m_parser;
         // Size of the currently incomplete parsed packet.
         size_t m_partialBytesRead { 0 };
@@ -198,14 +210,14 @@ public:
         {
         }
 
-        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
-
     private:
-        void createSampleBuffer(const CMTime&, int, const webm::FrameMetadata&);
         const char* logClassName() const { return "VideoTrackData"; }
-
+        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
+        void postProcess(CMSampleBufferRef) final;
+        void resetCompletedFramesState() final;
 #if ENABLE(VP9)
         vp9_parser::Vp9HeaderParser m_headerParser;
+        Vector<bool> m_keyFrames;
 #endif
     };
 
@@ -222,20 +234,15 @@ public:
         {
         }
 
-        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
-        void resetCompleted() final;
-        void createSampleBuffer(std::optional<size_t> latestByteRangeOffset = std::nullopt);
-
     private:
+        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
+        void resetCompletedFramesState() final;
         const char* logClassName() const { return "AudioTrackData"; }
 
         CMTime m_samplePresentationTime;
         CMTime m_packetDuration;
-        size_t m_currentPacketByteOffset { 0 };
         uint8_t m_framesPerPacket { 0 };
         Seconds m_frameDuration { 0_s };
-        Vector<size_t> m_packetSizes;
-        Vector<CMSampleTimingInfo> m_packetTimings;
         size_t mNumFramesInCompleteBlock { 0 };
         // FIXME: 0.5 - 1.0 seconds is a better duration per sample buffer, but use 2 seconds so at least the first
         // sample buffer will play until we fix MediaSampleCursor::createSampleBuffer to deal with `endCursor`.

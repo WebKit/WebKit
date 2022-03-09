@@ -398,7 +398,7 @@ void SourceBufferPrivate::reenqueueMediaForTime(TrackBuffer& trackBuffer, const 
         || (currentSamplePTSIterator->first - time) > timeFudgeFactor())
         return;
 
-    // Seach backward for the previous sync sample.
+    // Search backward for the previous sync sample.
     DecodeOrderSampleMap::KeyType decodeKey(currentSamplePTSIterator->second->decodeTime(), currentSamplePTSIterator->second->presentationTime());
     auto currentSampleDTSIterator = trackBuffer.samples.decodeOrder().findSampleWithDecodeKey(decodeKey);
     ASSERT(currentSampleDTSIterator != trackBuffer.samples.decodeOrder().end());
@@ -1170,6 +1170,9 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& originalSample)
                 MediaTime highestBufferedTime = trackBuffer.buffered.maximumBufferedTime();
                 MediaTime eraseBeginTime = trackBuffer.highestPresentationTimestamp;
                 MediaTime eraseEndTime = frameEndTimestamp - contiguousFrameTolerance;
+
+                if (eraseEndTime <= eraseBeginTime)
+                    break;
 
                 PresentationOrderSampleMap::iterator_range range;
                 if (highestBufferedTime - trackBuffer.highestPresentationTimestamp < trackBuffer.lastFrameDuration) {
