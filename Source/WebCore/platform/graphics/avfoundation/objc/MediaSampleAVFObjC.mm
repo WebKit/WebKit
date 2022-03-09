@@ -245,11 +245,6 @@ FloatSize MediaSampleAVFObjC::presentationSize() const
     return FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
 }
 
-void MediaSampleAVFObjC::dump(PrintStream& out) const
-{
-    out.print("{PTS(", presentationTime(), "), DTS(", decodeTime(), "), duration(", duration(), "), flags(", (int)flags(), "), presentationSize(", presentationSize().width(), "x", presentationSize().height(), ")}");
-}
-
 void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)
 {
     CMItemCount itemCount = 0;

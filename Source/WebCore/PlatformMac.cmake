@@ -312,6 +312,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cg/TransformationMatrixCG.cpp
     platform/graphics/cg/UTIRegistry.cpp
 
+    platform/graphics/cocoa/CMUtilities.mm
     platform/graphics/cocoa/FloatRectCocoa.mm
     platform/graphics/cocoa/FontCacheCoreText.cpp
     platform/graphics/cocoa/FontCascadeCocoa.cpp
@@ -649,6 +650,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cg/PDFDocumentImage.h
     platform/graphics/cg/UTIRegistry.h
 
+    platform/graphics/cocoa/CMUtilities.h
     platform/graphics/cocoa/ColorCocoa.h
     platform/graphics/cocoa/FontCacheCoreText.h
     platform/graphics/cocoa/FontFamilySpecificationCoreText.h

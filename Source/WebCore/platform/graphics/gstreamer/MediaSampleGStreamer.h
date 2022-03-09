@@ -57,8 +57,6 @@ public:
     FloatSize presentationSize() const override { return m_presentationSize; }
     void offsetTimestampsBy(const MediaTime&) override;
     void setTimestamps(const MediaTime&, const MediaTime&) override;
-    bool isDivisable() const override { return false; }
-    std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime&, UseEndTime) override  { return { nullptr, nullptr }; }
     Ref<MediaSample> createNonDisplayingCopy() const override;
     SampleFlags flags() const override { return m_flags; }
     PlatformSample platformSample() const override;

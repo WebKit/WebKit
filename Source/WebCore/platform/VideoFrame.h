@@ -72,8 +72,6 @@ private:
     WEBCORE_EXPORT size_t sizeInBytes() const final;
     WEBCORE_EXPORT void offsetTimestampsBy(const MediaTime&) final;
     WEBCORE_EXPORT void setTimestamps(const MediaTime&, const MediaTime&) final;
-    WEBCORE_EXPORT bool isDivisable() const final;
-    WEBCORE_EXPORT std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime, UseEndTime = UseEndTime::DoNotUse) final;
     WEBCORE_EXPORT Ref<WebCore::MediaSample> createNonDisplayingCopy() const final;
     WEBCORE_EXPORT SampleFlags flags() const final;
     WEBCORE_EXPORT std::optional<ByteRange> byteRange() const final;

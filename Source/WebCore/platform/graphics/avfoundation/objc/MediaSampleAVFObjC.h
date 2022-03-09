@@ -65,7 +65,6 @@ public:
     PlatformSample platformSample() const override;
     PlatformSample::Type platformSampleType() const override { return PlatformSample::CMSampleBufferType; }
     std::optional<ByteRange> byteRange() const override;
-    WEBCORE_EXPORT void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime&) override;
     void setTimestamps(const MediaTime&, const MediaTime&) override;
     WEBCORE_EXPORT bool isDivisable() const override;

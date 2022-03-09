@@ -1,5 +1,151 @@
 2022-03-08  Jean-Yves Avenard  <jya@apple.com>
 
+        Split SourceBufferParserWebM and have platform agnostic WebMParser
+        https://bugs.webkit.org/show_bug.cgi?id=237472
+        rdar://problem/89810969
+
+        Reviewed by Eric Carlson.
+
+        Split raw WebMParser from SourceBufferParserWebM and introduce platform
+        agnostic MediaSamplesBlock objects and TrackInfo
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/MediaSample.h:
+        (WebCore::MediaSample::dump const):
+        (WebCore::TrackInfo::isAudio const):
+        (WebCore::TrackInfo::isVideo const):
+        (WebCore::TrackInfo::type const):
+        (WebCore::TrackInfo::operator== const):
+        (WebCore::TrackInfo::operator!= const):
+        (WebCore::TrackInfo::TrackInfo):
+        (WebCore::VideoInfo::create):
+        (WebCore::VideoInfo::VideoInfo):
+        (WebCore::AudioInfo::create):
+        (WebCore::AudioInfo::AudioInfo):
+        (WebCore::MediaSamplesBlock::setInfo):
+        (WebCore::MediaSamplesBlock::info const):
+        (WebCore::MediaSamplesBlock::isVideo const):
+        (WebCore::MediaSamplesBlock::isAudio const):
+        (WebCore::MediaSamplesBlock::type const):
+        (WebCore::MediaSamplesBlock::append):
+        (WebCore::MediaSamplesBlock::size const):
+        (WebCore::MediaSamplesBlock::isEmpty const):
+        (WebCore::MediaSamplesBlock::clear):
+        (WebCore::MediaSamplesBlock::takeSamples):
+        (WebCore::MediaSamplesBlock::operator[] const):
+        (WebCore::MediaSamplesBlock::first const):
+        (WebCore::MediaSamplesBlock::last const):
+        (WebCore::MediaSamplesBlock::begin const):
+        (WebCore::MediaSamplesBlock::end const):
+        (isType):
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp:
+        (WebCore::AudioFileReader::demuxWebMData const):
+        * platform/graphics/PlatformVideoColorPrimaries.h:
+        * platform/graphics/PlatformVideoMatrixCoefficients.h:
+        * platform/graphics/PlatformVideoTransferCharacteristics.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        * platform/graphics/cocoa/CMUtilities.h: Copied from Source/WebCore/platform/graphics/PlatformVideoColorPrimaries.h.
+        * platform/graphics/cocoa/CMUtilities.mm: Added.
+        (WebCore::createAudioFormatDescription):
+        (WebCore::convertToCMColorPrimaries):
+        (WebCore::convertToCMTransferFunction):
+        (WebCore::convertToCMYCbCRMatrix):
+        (WebCore::createFormatDescriptionFromTrackInfo):
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::segmentReadErrorToWebmStatus):
+        (WebCore::WebMParser::WebMParser):
+        (WebCore::WebMParser::~WebMParser):
+        (WebCore::WebMParser::resetState):
+        (WebCore::WebMParser::reset):
+        (WebCore::WebMParser::parse):
+        (WebCore::WebMParser::setLogger):
+        (WebCore::WebMParser::invalidate):
+        (WebCore::WebMParser::trackDataForTrackNumber):
+        (WebCore::WebMParser::OnElementBegin):
+        (WebCore::WebMParser::OnElementEnd):
+        (WebCore::WebMParser::OnEbml):
+        (WebCore::WebMParser::OnSegmentBegin):
+        (WebCore::WebMParser::OnInfo):
+        (WebCore::WebMParser::OnClusterBegin):
+        (WebCore::WebMParser::OnTrackEntry):
+        (WebCore::WebMParser::OnBlockBegin):
+        (WebCore::WebMParser::OnBlockEnd):
+        (WebCore::WebMParser::OnSimpleBlockBegin):
+        (WebCore::WebMParser::OnSimpleBlockEnd):
+        (WebCore::WebMParser::OnBlockGroupBegin):
+        (WebCore::WebMParser::OnBlockGroupEnd):
+        (WebCore::WebMParser::OnFrame):
+        (WebCore::WebMParser::TrackData::contiguousCompleteBlockBuffer const):
+        (WebCore::WebMParser::TrackData::readFrameData):
+        (WebCore::WebMParser::VideoTrackData::resetCompletedFramesState):
+        (WebCore::WebMParser::VideoTrackData::consumeFrameData):
+        (WebCore::WebMParser::AudioTrackData::resetCompletedFramesState):
+        (WebCore::WebMParser::AudioTrackData::consumeFrameData):
+        (WebCore::WebMParser::isSupportedVideoCodec):
+        (WebCore::WebMParser::isSupportedAudioCodec):
+        (WebCore::SourceBufferParserWebM::SourceBufferParserWebM):
+        (WebCore::SourceBufferParserWebM::isWebMFormatReaderAvailable):
+        (WebCore::SourceBufferParserWebM::isContentTypeSupported):
+        (WebCore::SourceBufferParserWebM::create):
+        (WebCore::WebMParser::provideMediaData):
+        (WebCore::SourceBufferParserWebM::parsedInitializationData):
+        (WebCore::SourceBufferParserWebM::parsedMediaData):
+        (WebCore::SourceBufferParserWebM::returnSamples):
+        (WebCore::SourceBufferParserWebM::parsedTrimmingData):
+        (WebCore::SourceBufferParserWebM::contentKeyRequestInitializationDataForTrackID):
+        (WebCore::SourceBufferParserWebM::flushPendingAudioSamples):
+        (WebCore::SourceBufferParserWebM::appendData):
+        (WebCore::SourceBufferParserWebM::flushPendingMediaData):
+        (WebCore::SourceBufferParserWebM::setShouldProvideMediaDataForTrackID):
+        (WebCore::SourceBufferParserWebM::shouldProvideMediadataForTrackID):
+        (WebCore::SourceBufferParserWebM::invalidate):
+        (WebCore::SourceBufferParserWebM::setLogger):
+        (WebCore::SourceBufferParserWebM::setMinimumAudioSampleDuration):
+        * platform/graphics/cocoa/SourceBufferParserWebM.h:
+        (WebCore::WebMParser::Callback::parsedTrimmingData):
+        (WebCore::WebMParser::Callback::canDecrypt const):
+        (WebCore::WebMParser::Callback::contentKeyRequestInitializationDataForTrackID):
+        (WebCore::WebMParser::loggerPtr const):
+        (WebCore::WebMParser::logIdentifier const):
+        (WebCore::WebMParser::TrackData::create):
+        (WebCore::WebMParser::TrackData::TrackData):
+        (WebCore::WebMParser::TrackData::trackType const):
+        (WebCore::WebMParser::TrackData::formatDescription const):
+        (WebCore::WebMParser::TrackData::setFormatDescription):
+        (WebCore::WebMParser::TrackData::parser const):
+        (WebCore::WebMParser::TrackData::consumeFrameData):
+        (WebCore::WebMParser::TrackData::resetCompletedFramesState):
+        (WebCore::WebMParser::TrackData::drainPendingSamples):
+        (WebCore::WebMParser::VideoTrackData::create):
+        (WebCore::WebMParser::VideoTrackData::VideoTrackData):
+        (WebCore::WebMParser::AudioTrackData::create):
+        (WebCore::WebMParser::AudioTrackData::AudioTrackData):
+        (WebCore::SourceBufferParserWebM::type const):
+        (WebCore::SourceBufferParserWebM::appendData):
+        (WebCore::SourceBufferParserWebM::setDidParseTrimmingDataCallback):
+        (WebCore::SourceBufferParserWebM::loggerPtr const):
+        (WebCore::SourceBufferParserWebM::logIdentifier const):
+        (isType):
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.h:
+        * platform/graphics/cocoa/VP9UtilitiesCocoa.mm:
+        (WebCore::convertToPlatformVideoColorPrimaries):
+        (WebCore::convertToPlatformVideoTransferCharacteristics):
+        (WebCore::convertToPlatformVideoMatrixCoefficients):
+        (WebCore::createVideoInfoFromVPCodecConfigurationRecord):
+        (WebCore::createVideoInfoFromVP9HeaderParser):
+        (WebCore::createVideoInfoFromVP8Header):
+        * platform/graphics/cocoa/WebMAudioUtilitiesCocoa.h:
+        * platform/graphics/cocoa/WebMAudioUtilitiesCocoa.mm:
+        (WebCore::createAudioInfoForFormat):
+        (WebCore::parseOpusPrivateData):
+        (WebCore::createOpusAudioInfo):
+        (WebCore::createVorbisAudioInfo):
+
+2022-03-08  Jean-Yves Avenard  <jya@apple.com>
+
         Have SourceBufferParserWebM use SharedBuffer internally
         https://bugs.webkit.org/show_bug.cgi?id=237078
         rdar://89348752

@@ -33,6 +33,15 @@ enum class PlatformVideoColorPrimaries : uint8_t {
     Bt709,
     Bt470bg,
     Smpte170m,
+    Bt470m,
+    Smpte240m,
+    Film,
+    Bt2020,
+    SmpteSt4281,
+    SmpteRp431,
+    SmpteEg432,
+    JedecP22Phosphors,
+    Unspecified,
 };
 
 } // namespace WebCore
@@ -44,7 +53,16 @@ template<> struct EnumTraits<WebCore::PlatformVideoColorPrimaries> {
         WebCore::PlatformVideoColorPrimaries,
         WebCore::PlatformVideoColorPrimaries::Bt709,
         WebCore::PlatformVideoColorPrimaries::Bt470bg,
-        WebCore::PlatformVideoColorPrimaries::Smpte170m
+        WebCore::PlatformVideoColorPrimaries::Smpte170m,
+        WebCore::PlatformVideoColorPrimaries::Bt470m,
+        WebCore::PlatformVideoColorPrimaries::Smpte240m,
+        WebCore::PlatformVideoColorPrimaries::Film,
+        WebCore::PlatformVideoColorPrimaries::Bt2020,
+        WebCore::PlatformVideoColorPrimaries::SmpteSt4281,
+        WebCore::PlatformVideoColorPrimaries::SmpteRp431,
+        WebCore::PlatformVideoColorPrimaries::SmpteEg432,
+        WebCore::PlatformVideoColorPrimaries::JedecP22Phosphors,
+        WebCore::PlatformVideoColorPrimaries::Unspecified
     >;
 };
 

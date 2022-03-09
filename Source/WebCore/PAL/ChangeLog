@@ -1,3 +1,14 @@
+2022-03-08  Jean-Yves Avenard  <jya@apple.com>
+
+        Split SourceBufferParserWebM and have platform agnostic WebMParser
+        https://bugs.webkit.org/show_bug.cgi?id=237472
+        rdar://problem/89810969
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h: Method CMSampleBufferCreateReady wasn't soft-linked.
+
 2022-03-08  Peng Liu  <peng.liu6@apple.com>
 
         [iOS] Flash media controls when a fullscreen video resets its source

@@ -31,11 +31,12 @@
 #import "FourCC.h"
 #import "LibWebRTCProvider.h"
 #import "MediaCapabilitiesInfo.h"
+#import "MediaSample.h"
 #import "PlatformScreen.h"
 #import "ScreenProperties.h"
+#import "SharedBuffer.h"
 #import "SystemBattery.h"
 #import "VideoConfiguration.h"
-#import <CoreMedia/CMFormatDescription.h>
 #import <JavaScriptCore/DataView.h>
 #import <webm/vp9_header_parser.h>
 #import <wtf/text/StringToIntegerConversion.h>
@@ -360,25 +361,35 @@ static uint8_t convertToColorPrimaries(const Primaries& coefficients)
     }
 }
 
-static CFStringRef convertToCMColorPrimaries(uint8_t primaries)
+static PlatformVideoColorPrimaries convertToPlatformVideoColorPrimaries(uint8_t primaries)
 {
     switch (primaries) {
     case VPConfigurationColorPrimaries::BT_709_6:
-        return kCVImageBufferColorPrimaries_ITU_R_709_2;
-    case VPConfigurationColorPrimaries::EBU_Tech_3213_E:
-        return kCVImageBufferColorPrimaries_EBU_3213;
+        return PlatformVideoColorPrimaries::Bt709;
+    case VPConfigurationColorPrimaries::BT_470_6_M:
+        return PlatformVideoColorPrimaries::Bt470m;
+    case VPConfigurationColorPrimaries::BT_470_7_BG:
+        return PlatformVideoColorPrimaries::Bt470bg;
     case VPConfigurationColorPrimaries::BT_601_7:
+        return PlatformVideoColorPrimaries::Smpte170m;
     case VPConfigurationColorPrimaries::SMPTE_ST_240:
-        return kCVImageBufferColorPrimaries_SMPTE_C;
-    case VPConfigurationColorPrimaries::SMPTE_RP_431_2:
-        return PAL::kCMFormatDescriptionColorPrimaries_DCI_P3;
-    case VPConfigurationColorPrimaries::SMPTE_EG_432_1:
-        return PAL::kCMFormatDescriptionColorPrimaries_P3_D65;
+        return PlatformVideoColorPrimaries::Smpte240m;
+    case VPConfigurationColorPrimaries::Film:
+        return PlatformVideoColorPrimaries::Film;
     case VPConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance:
-        return PAL::kCMFormatDescriptionColorPrimaries_ITU_R_2020;
+        return PlatformVideoColorPrimaries::Bt2020;
+    case VPConfigurationColorPrimaries::SMPTE_ST_428_1:
+        return PlatformVideoColorPrimaries::SmpteSt4281;
+    case VPConfigurationColorPrimaries::SMPTE_RP_431_2:
+        return PlatformVideoColorPrimaries::SmpteRp431;
+    case VPConfigurationColorPrimaries::SMPTE_EG_432_1:
+        return PlatformVideoColorPrimaries::SmpteEg432;
+    case VPConfigurationColorPrimaries::EBU_Tech_3213_E:
+        return PlatformVideoColorPrimaries::JedecP22Phosphors;
+    case VPConfigurationColorPrimaries::Unspecified:
+    default:
+        return PlatformVideoColorPrimaries::Unspecified;
     }
-
-    return nullptr;
 }
 
 static uint8_t convertToTransferCharacteristics(const TransferCharacteristics& characteristics)
@@ -421,29 +432,45 @@ static uint8_t convertToTransferCharacteristics(const TransferCharacteristics& c
     }
 }
 
-static CFStringRef convertToCMTransferFunction(uint8_t characteristics)
+static PlatformVideoTransferCharacteristics convertToPlatformVideoTransferCharacteristics(uint8_t characteristics)
 {
     switch (characteristics) {
     case VPConfigurationTransferCharacteristics::BT_709_6:
-        return kCVImageBufferTransferFunction_ITU_R_709_2;
+        return PlatformVideoTransferCharacteristics::Bt709;
+    case VPConfigurationTransferCharacteristics::BT_470_6_M:
+        return PlatformVideoTransferCharacteristics::Gamma22curve;
+    case VPConfigurationTransferCharacteristics::BT_470_7_BG:
+        return PlatformVideoTransferCharacteristics::Gamma28curve;
+    case VPConfigurationTransferCharacteristics::BT_601_7:
+        return PlatformVideoTransferCharacteristics::Smpte170m;
     case VPConfigurationTransferCharacteristics::SMPTE_ST_240:
-        return kCVImageBufferTransferFunction_SMPTE_240M_1995;
-    case VPConfigurationTransferCharacteristics::SMPTE_ST_2084:
-        return PAL::kCMFormatDescriptionTransferFunction_SMPTE_ST_2084_PQ;
-    case VPConfigurationTransferCharacteristics::BT_2020_10bit:
-    case VPConfigurationTransferCharacteristics::BT_2020_12bit:
-        return PAL::kCMFormatDescriptionTransferFunction_ITU_R_2020;
-    case VPConfigurationTransferCharacteristics::SMPTE_ST_428_1:
-        return PAL::kCMFormatDescriptionTransferFunction_SMPTE_ST_428_1;
-    case VPConfigurationTransferCharacteristics::BT_2100_HLG:
-        return PAL::kCMFormatDescriptionTransferFunction_ITU_R_2100_HLG;
-    case VPConfigurationTransferCharacteristics::IEC_61966_2_1:
-        return PAL::canLoad_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() ? PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB() : nullptr;
+        return PlatformVideoTransferCharacteristics::Smpte240m;
     case VPConfigurationTransferCharacteristics::Linear:
-        return PAL::kCMFormatDescriptionTransferFunction_Linear;
+        return PlatformVideoTransferCharacteristics::Linear;
+    case VPConfigurationTransferCharacteristics::Logrithmic:
+        return PlatformVideoTransferCharacteristics::Log;
+    case VPConfigurationTransferCharacteristics::Logrithmic_Sqrt:
+        return PlatformVideoTransferCharacteristics::LogSqrt;
+    case VPConfigurationTransferCharacteristics::IEC_61966_2_4:
+        return PlatformVideoTransferCharacteristics::Iec6196624;
+    case VPConfigurationTransferCharacteristics::BT_1361_0:
+        return PlatformVideoTransferCharacteristics::Bt1361ExtendedColourGamut;
+    case VPConfigurationTransferCharacteristics::IEC_61966_2_1:
+        return PlatformVideoTransferCharacteristics::Iec6196621;
+    case VPConfigurationTransferCharacteristics::BT_2020_10bit:
+        return PlatformVideoTransferCharacteristics::Bt2020_10bit;
+    case VPConfigurationTransferCharacteristics::BT_2020_12bit:
+        return PlatformVideoTransferCharacteristics::Bt2020_12bit;
+    case VPConfigurationTransferCharacteristics::SMPTE_ST_2084:
+        return PlatformVideoTransferCharacteristics::SmpteSt2084;
+    case VPConfigurationTransferCharacteristics::SMPTE_ST_428_1:
+        return PlatformVideoTransferCharacteristics::SmpteSt4281;
+    case VPConfigurationTransferCharacteristics::BT_2100_HLG:
+        return PlatformVideoTransferCharacteristics::AribStdB67Hlg;
+    case VPConfigurationTransferCharacteristics::Unspecified:
+    default:
+        return PlatformVideoTransferCharacteristics::Unspecified;
     }
-
-    return nullptr;
 }
 
 static uint8_t convertToMatrixCoefficients(const MatrixCoefficients& coefficients)
@@ -472,21 +499,31 @@ static uint8_t convertToMatrixCoefficients(const MatrixCoefficients& coefficient
     }
 }
 
-static CFStringRef convertToCMYCbCRMatrix(uint8_t coefficients)
+static PlatformVideoMatrixCoefficients convertToPlatformVideoMatrixCoefficients(uint8_t coefficients)
 {
     switch (coefficients) {
-    case VPConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance:
-        return PAL::kCMFormatDescriptionYCbCrMatrix_ITU_R_2020;
-    case VPConfigurationMatrixCoefficients::BT_470_7_BG:
-    case VPConfigurationMatrixCoefficients::BT_601_7:
-        return kCVImageBufferYCbCrMatrix_ITU_R_601_4;
+    case VPConfigurationMatrixCoefficients::Identity:
+        return PlatformVideoMatrixCoefficients::Rgb;
     case VPConfigurationMatrixCoefficients::BT_709_6:
-        return kCVImageBufferYCbCrMatrix_ITU_R_709_2;
+        return PlatformVideoMatrixCoefficients::Bt709;
+    case VPConfigurationMatrixCoefficients::FCC:
+        return PlatformVideoMatrixCoefficients::Fcc;
+    case VPConfigurationMatrixCoefficients::BT_470_7_BG:
+        return PlatformVideoMatrixCoefficients::Bt470bg;
+    case VPConfigurationMatrixCoefficients::BT_601_7:
+        return PlatformVideoMatrixCoefficients::Smpte170m;
     case VPConfigurationMatrixCoefficients::SMPTE_ST_240:
-        return kCVImageBufferYCbCrMatrix_SMPTE_240M_1995;
+        return PlatformVideoMatrixCoefficients::Smpte240m;
+    case VPConfigurationMatrixCoefficients::YCgCo:
+        return PlatformVideoMatrixCoefficients::YCgCo;
+    case VPConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance:
+        return PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance;
+    case VPConfigurationMatrixCoefficients::BT_2020_Constant_Luminance:
+        return PlatformVideoMatrixCoefficients::Bt2020ConstantLuminance;
+    case VPConfigurationMatrixCoefficients::Unspecified:
+    default:
+        return PlatformVideoMatrixCoefficients::Unspecified;
     }
-
-    return nullptr;
 }
 
 static uint8_t convertSubsamplingXYToChromaSubsampling(uint64_t x, uint64_t y)
@@ -501,7 +538,7 @@ static uint8_t convertSubsamplingXYToChromaSubsampling(uint64_t x, uint64_t y)
     return VPConfigurationChromaSubsampling::Subsampling_420_Colocated;
 }
 
-static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord& record, int32_t width, int32_t height)
+static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord& record, int32_t width, int32_t height)
 {
     // Ref: "VP Codec ISO Media File Format Binding, v1.0, 2017-03-31"
     // <https://www.webmproject.org/vp9/mp4/>
@@ -530,12 +567,14 @@ static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVPCodecConfi
     // FIXME: Convert existing struct to an ISOBox and replace the writing code below
     // with a subclass of ISOFullBox.
 
+    auto videoInfo = VideoInfo::create();
+    videoInfo->size = videoInfo->displaySize = { float(width), float(height) };
+
     constexpr size_t VPCodecConfigurationContentsSize = 12;
 
     uint32_t versionAndFlags = 1 << 24;
     uint8_t bitDepthChromaAndRange = (0xF & record.bitDepth) << 4 | (0x7 & record.chromaSubsampling) << 1 | (0x1 & record.videoFullRangeFlag);
     uint16_t codecIntializationDataSize = 0;
-
     auto view = JSC::DataView::create(ArrayBuffer::create(VPCodecConfigurationContentsSize, 1), 0, VPCodecConfigurationContentsSize);
     view->set(0, versionAndFlags, false);
     view->set(4, record.profile, false);
@@ -545,46 +584,16 @@ static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVPCodecConfi
     view->set(8, record.transferCharacteristics, false);
     view->set(9, record.matrixCoefficients, false);
     view->set(10, codecIntializationDataSize, false);
-
-    auto data = adoptCF(CFDataCreate(kCFAllocatorDefault, (const UInt8 *)view->data(), view->byteLength()));
-
-    CFTypeRef configurationKeys[] = { CFSTR("vpcC") };
-    CFTypeRef configurationValues[] = { data.get() };
-    auto configurationDict = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, configurationKeys, configurationValues, WTF_ARRAY_LENGTH(configurationKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    Vector<CFTypeRef> extensionsKeys { PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms };
-    Vector<CFTypeRef> extensionsValues = { configurationDict.get() };
-
-    if (record.videoFullRangeFlag == VPConfigurationRange::FullRange) {
-        extensionsKeys.append(PAL::kCMFormatDescriptionExtension_FullRangeVideo);
-        extensionsValues.append(kCFBooleanTrue);
-    }
-
-    if (auto cmColorPrimaries = convertToCMColorPrimaries(record.colorPrimaries)) {
-        extensionsKeys.append(kCVImageBufferColorPrimariesKey);
-        extensionsValues.append(cmColorPrimaries);
-    }
-
-    if (auto cmTransferFunction = convertToCMTransferFunction(record.transferCharacteristics)) {
-        extensionsKeys.append(kCVImageBufferTransferFunctionKey);
-        extensionsValues.append(cmTransferFunction);
-    }
-
-    if (auto cmMatrix = convertToCMYCbCRMatrix(record.matrixCoefficients)) {
-        extensionsKeys.append(kCVImageBufferYCbCrMatrixKey);
-        extensionsValues.append(cmMatrix);
-    }
-
-    auto extensions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, extensionsKeys.data(), extensionsValues.data(), extensionsKeys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    CMVideoFormatDescriptionRef formatDescription = nullptr;
-    CMVideoCodecType codec = record.codecName == "vp09" ? kCMVideoCodecType_VP9 : 'vp08';
-    if (noErr != CMVideoFormatDescriptionCreate(kCFAllocatorDefault, codec, width, height, extensions.get(), &formatDescription))
-        return nullptr;
-    return adoptCF(formatDescription);
+    videoInfo->atomData = SharedBuffer::create(static_cast<uint8_t*>(view->data()), view->byteLength());
+    videoInfo->colorSpace.fullRange = record.videoFullRangeFlag == VPConfigurationRange::FullRange;
+    videoInfo->colorSpace.primaries = convertToPlatformVideoColorPrimaries(record.colorPrimaries);
+    videoInfo->colorSpace.transfer = convertToPlatformVideoTransferCharacteristics(record.transferCharacteristics);
+    videoInfo->colorSpace.matrix = convertToPlatformVideoMatrixCoefficients(record.matrixCoefficients);
+    videoInfo->codecName = record.codecName == "vp09" ? 'vp09' : 'vp08';
+    return videoInfo;
 }
 
-RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser& parser, const webm::Element<Colour>& color)
+Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser& parser, const webm::Element<Colour>& color)
 {
     VPCodecConfigurationRecord record;
 
@@ -616,7 +625,7 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderParser(con
             record.colorPrimaries = convertToColorPrimaries(colorValue.primaries.value());
     }
 
-    return createFormatDescriptionFromVPCodecConfigurationRecord(record, parser.width(), parser.height());
+    return createVideoInfoFromVPCodecConfigurationRecord(record, parser.width(), parser.height());
 }
 
 std::optional<VP8FrameHeader> parseVP8FrameHeader(const uint8_t* frameData, size_t frameSize)
@@ -681,7 +690,7 @@ std::optional<VP8FrameHeader> parseVP8FrameHeader(const uint8_t* frameData, size
     return header;
 }
 
-RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP8Header(const VP8FrameHeader& header, const webm::Element<Colour>& color)
+Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const webm::Element<Colour>& color)
 {
     VPCodecConfigurationRecord record;
     record.codecName = "vp08";
@@ -711,7 +720,7 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP8Header(const VP8
             record.colorPrimaries = convertToColorPrimaries(colorValue.primaries.value());
     }
 
-    return createFormatDescriptionFromVPCodecConfigurationRecord(record, header.width, header.height);
+    return createVideoInfoFromVPCodecConfigurationRecord(record, header.width, header.height);
 }
 
 }

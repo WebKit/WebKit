@@ -1,3 +1,16 @@
+2022-03-08  Jean-Yves Avenard  <jya@apple.com>
+
+        Split SourceBufferParserWebM and have platform agnostic WebMParser
+        https://bugs.webkit.org/show_bug.cgi?id=237472
+        rdar://problem/89810969
+
+        Reviewed by Eric Carlson.
+
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp:
+        (WebKit::MediaSampleByteRange::MediaSampleByteRange):
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.h: MediaSampleByteRange.h
+        didn't need to inherit from MediaSampleAVFObjC. 
+
 2022-03-08  Alex Christensen  <achristensen@webkit.org>
 
         Allow adattributiond to read and execute dylibs in /usr/lib on iOS

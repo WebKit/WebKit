@@ -98,18 +98,6 @@ void VideoFrame::setTimestamps(const MediaTime&, const MediaTime&)
     ASSERT_NOT_REACHED();
 }
 
-bool VideoFrame::isDivisable() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-std::pair<RefPtr<WebCore::MediaSample>, RefPtr<WebCore::MediaSample>> VideoFrame::divide(const MediaTime&, UseEndTime)
-{
-    ASSERT_NOT_REACHED();
-    return { nullptr, nullptr };
-}
-
 Ref<WebCore::MediaSample> VideoFrame::createNonDisplayingCopy() const
 {
     CRASH();

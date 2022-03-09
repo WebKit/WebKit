@@ -34,8 +34,7 @@ namespace WebKit {
 using namespace WebCore;
 
 MediaSampleByteRange::MediaSampleByteRange(MediaSample& sample, MTPluginByteSourceRef byteSource, uint64_t trackID)
-    : MediaSampleAVFObjC(nullptr)
-    , m_presentationTime(sample.presentationTime())
+    : m_presentationTime(sample.presentationTime())
     , m_decodeTime(sample.decodeTime())
     , m_duration(sample.duration())
     , m_byteRange(*sample.byteRange())

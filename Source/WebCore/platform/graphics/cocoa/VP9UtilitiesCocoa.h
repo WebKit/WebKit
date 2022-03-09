@@ -30,8 +30,6 @@
 #include "VP9Utilities.h"
 #include <webm/dom_types.h>
 
-typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
-
 namespace vp9_parser {
 class Vp9HeaderParser;
 }
@@ -40,6 +38,7 @@ namespace WebCore {
 
 struct MediaCapabilitiesInfo;
 struct VideoConfiguration;
+struct VideoInfo;
 
 WEBCORE_EXPORT void registerWebKitVP9Decoder();
 WEBCORE_EXPORT void registerWebKitVP8Decoder();
@@ -52,7 +51,7 @@ std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigura
 std::optional<MediaCapabilitiesInfo> computeVPParameters(const VideoConfiguration&);
 bool isVPSoftwareDecoderSmooth(const VideoConfiguration&);
 
-RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser&, const webm::Element<webm::Colour>&);
+Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser&, const webm::Element<webm::Colour>&);
 
 struct VP8FrameHeader {
     bool keyframe { false };
@@ -68,7 +67,7 @@ struct VP8FrameHeader {
 };
 
 std::optional<VP8FrameHeader> parseVP8FrameHeader(const uint8_t* frameData, size_t frameSize);
-RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP8Header(const VP8FrameHeader&, const webm::Element<webm::Colour>&);
+Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader&, const webm::Element<webm::Colour>&);
 
 class WEBCORE_EXPORT VP9TestingOverrides {
 public:

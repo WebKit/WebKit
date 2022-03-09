@@ -34,7 +34,7 @@
 
 namespace WebKit {
 
-class MediaSampleByteRange final : public WebCore::MediaSampleAVFObjC {
+class MediaSampleByteRange final : public WebCore::MediaSample {
 public:
     static Ref<MediaSampleByteRange> create(WebCore::MediaSample& sample, MTPluginByteSourceRef byteSource, uint64_t trackID)
     {
@@ -54,6 +54,7 @@ public:
     WebCore::PlatformSample::Type platformSampleType() const final { return WebCore::PlatformSample::ByteRangeSampleType; }
     void offsetTimestampsBy(const MediaTime&) final;
     void setTimestamps(const MediaTime&, const MediaTime&) final;
+    Ref<MediaSample> createNonDisplayingCopy() const { return *const_cast<MediaSampleByteRange*>(this); }
 
 private:
     MediaSampleByteRange(MediaSample&, MTPluginByteSourceRef, uint64_t trackID);

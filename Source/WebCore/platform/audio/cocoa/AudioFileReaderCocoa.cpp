@@ -219,7 +219,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
     parser->appendData(WTFMove(segment));
     if (!track)
         return nullptr;
-    parser->flushPendingAudioBuffers();
+    parser->flushPendingAudioSamples();
     return makeUnique<AudioFileReaderWebMData>(AudioFileReaderWebMData { WTFMove(buffer), track.releaseNonNull(), WTFMove(duration), WTFMove(samples) });
 }
 

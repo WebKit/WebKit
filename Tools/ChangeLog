@@ -1,3 +1,13 @@
+2022-03-08  Jean-Yves Avenard  <jya@apple.com>
+
+        Split SourceBufferParserWebM and have platform agnostic WebMParser
+        https://bugs.webkit.org/show_bug.cgi?id=237472
+        rdar://problem/89810969
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebCore/SampleMap.cpp: Update following base class definition change.
+
 2022-03-08  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused _grantAccessToPreferenceService
