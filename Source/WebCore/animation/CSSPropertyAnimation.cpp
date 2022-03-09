@@ -2550,15 +2550,15 @@ private:
     CSSPropertyAnimationWrapperMap();
     ~CSSPropertyAnimationWrapperMap() = delete;
 
-    unsigned char& indexFromPropertyID(CSSPropertyID propertyID)
+    unsigned short& indexFromPropertyID(CSSPropertyID propertyID)
     {
         return m_propertyToIdMap[propertyID - firstCSSProperty];
     }
 
     Vector<std::unique_ptr<AnimationPropertyWrapperBase>> m_propertyWrappers;
-    unsigned char m_propertyToIdMap[numCSSProperties];
+    unsigned short m_propertyToIdMap[numCSSProperties];
 
-    static const unsigned char cInvalidPropertyWrapperIndex = UCHAR_MAX;
+    static const unsigned short cInvalidPropertyWrapperIndex = std::numeric_limits<unsigned short>::max();
 
     friend class WTF::NeverDestroyed<CSSPropertyAnimationWrapperMap>;
 };
@@ -2893,7 +2893,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
     for (int i = 0; i < numCSSProperties; ++i)
         m_propertyToIdMap[i] = cInvalidPropertyWrapperIndex;
 
-    COMPILE_ASSERT(animatableLonghandPropertiesCount + animatableShorthandPropertiesCount < UCHAR_MAX, numberOfAnimatablePropertiesMustBeLessThanUCharMax);
+    COMPILE_ASSERT(animatableLonghandPropertiesCount + animatableShorthandPropertiesCount < std::numeric_limits<unsigned short>::max(), numberOfAnimatablePropertiesMustBeLessThanUShrtMax);
     m_propertyWrappers.reserveInitialCapacity(animatableLonghandPropertiesCount + animatableShorthandPropertiesCount);
 
     // First we put the non-shorthand property wrappers into the map, so the shorthand-building

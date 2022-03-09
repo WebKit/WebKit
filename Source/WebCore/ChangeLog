@@ -1,3 +1,15 @@
+2022-03-09  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] increase the max number of animatable properties
+        https://bugs.webkit.org/show_bug.cgi?id=237651
+
+        Reviewed by Antti Koivisto.
+
+        We've run out of space in m_propertyToIdMap, the limit was 255.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
 2022-03-09  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Remove size() function syntax
