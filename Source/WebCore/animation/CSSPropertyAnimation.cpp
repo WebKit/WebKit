@@ -2484,6 +2484,35 @@ private:
     }
 };
 
+class FontFamilyWrapper final : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    FontFamilyWrapper()
+        : AnimationPropertyWrapperBase(CSSPropertyFontFamily)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
+
+    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    {
+        return a.fontFamilies() == b.fontFamilies();
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
+    {
+        ASSERT(!context.progress || context.progress == 1.0);
+        destination.setFontFamilies((context.progress ? to : from).fontFamilies());
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const override
+    {
+    }
+#endif
+};
+
 class CSSPropertyAnimationWrapperMap final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -2810,7 +2839,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<TextDecorationSkipInk>(CSSPropertyTextDecorationSkipInk, &RenderStyle::textDecorationSkipInk, &RenderStyle::setTextDecorationSkipInk),
         new DiscretePropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolation, &RenderStyle::colorInterpolation, &RenderStyle::setColorInterpolation),
         new DiscretePropertyWrapper<Kerning>(CSSPropertyFontKerning, &RenderStyle::fontKerning, &RenderStyle::setFontKerning),
-        new DiscretePropertyWrapper<FontFeatureSettings>(CSSPropertyFontFeatureSettings, &RenderStyle::fontFeatureSettings, &RenderStyle::setFontFeatureSettings)
+        new DiscretePropertyWrapper<FontFeatureSettings>(CSSPropertyFontFeatureSettings, &RenderStyle::fontFeatureSettings, &RenderStyle::setFontFeatureSettings),
+        new FontFamilyWrapper
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

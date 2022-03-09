@@ -1,3 +1,13 @@
+2022-03-08  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] font-family should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237591
+
+        Reviewed by Myles Maxfield.
+
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-fonts/animations/system-fonts-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-fonts/animations/system-fonts-expected.txt:
+
 2022-03-09  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Import updated WPTs

@@ -265,6 +265,10 @@ PASS float (type: discrete) has testInterpolation function
 PASS float uses discrete animation when animating between "left" and "right" with linear easing
 PASS float uses discrete animation when animating between "left" and "right" with effect easing
 PASS float uses discrete animation when animating between "left" and "right" with keyframe easing
+PASS font-family (type: discrete) has testInterpolation function
+PASS font-family uses discrete animation when animating between "helvetica" and "verdana" with linear easing
+PASS font-family uses discrete animation when animating between "helvetica" and "verdana" with effect easing
+PASS font-family uses discrete animation when animating between "helvetica" and "verdana" with keyframe easing
 PASS font-feature-settings (type: discrete) has testInterpolation function
 PASS font-feature-settings uses discrete animation when animating between ""liga" 5" and "normal" with linear easing
 PASS font-feature-settings uses discrete animation when animating between ""liga" 5" and "normal" with effect easing

@@ -1,6 +1,6 @@
 
-FAIL Animation of font in ::marker assert_in_array: value "italic normal 500 expanded 15px/35px -webkit-standard" not in array ["italic small-caps 500 expanded 15px / 35px Ahem", "italic small-caps 500 expanded 15px/35px Ahem"]
-FAIL Animation of font-family in ::marker assert_equals: expected "Ahem" but got "-webkit-standard"
+FAIL Animation of font in ::marker assert_in_array: value "italic normal 500 expanded 15px/35px Ahem" not in array ["italic small-caps 500 expanded 15px / 35px Ahem", "italic small-caps 500 expanded 15px/35px Ahem"]
+PASS Animation of font-family in ::marker
 PASS Animation of font-feature-settings in ::marker
 PASS Animation of font-kerning in ::marker
 PASS Animation of font-size in ::marker

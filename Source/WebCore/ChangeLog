@@ -1,5 +1,20 @@
 2022-03-08  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] font-family should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237591
+
+        Reviewed by Myles Maxfield.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setFontPalette):
+        (WebCore::RenderStyle::setFontFamilies):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fontFamilies const):
+
+2022-03-08  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] font-feature-settings should support discrete animation
         https://bugs.webkit.org/show_bug.cgi?id=237587
 
