@@ -1,5 +1,18 @@
 2022-03-09  Matteo Flores  <matteo_flores@apple.com>
 
+        Unreviewed, reverting r290750.
+
+        Bug has been fixed, expectations are no longer needed.
+
+        Reverted changeset:
+
+        "[ iOS Debug ] editing/async-clipboard/* 20 tests are flaky
+        timeouts on iOS."
+        https://bugs.webkit.org/show_bug.cgi?id=237372
+        https://commits.webkit.org/r290750
+
+2022-03-09  Matteo Flores  <matteo_flores@apple.com>
+
         [ iOS ] 2 imported/w3c/web-platform-tests/content-security-policy/connect-src/* tests are flaky text failures
         https://bugs.webkit.org/show_bug.cgi?id=237603
 

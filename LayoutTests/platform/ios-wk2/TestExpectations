@@ -2195,28 +2195,6 @@ imported/w3c/web-platform-tests/fetch/api/policies/referrer-origin-when-cross-or
 imported/w3c/web-platform-tests/fetch/api/policies/referrer-unsafe-url-service-worker.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-worker.https.html [ Pass Failure ]
 
-# webkit.org/b/237372 The following 20 tests are flaky failures on iOS 15 Debug
-editing/async-clipboard/clipboard-change-data-while-getting-type.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-change-data-while-reading.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-change-data-while-writing.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-get-type-with-old-items.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-interfaces.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-item-get-type-basic.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-read-basic.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-read-text-from-platform.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-read-text-same-origin.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-read-text.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-read-while-pasting.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-read-write-images.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-write-basic.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-write-in-copy-event-handler-in-subframe.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-write-in-copy-event-handler.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-write-items-twice.html [ Pass Timeout ]
-editing/async-clipboard/clipboard-write-text.html [ Pass Timeout ]
-editing/async-clipboard/sanitize-when-reading-markup.html [ Pass Timeout ]
-editing/async-clipboard/sanitize-when-writing-image.html [ Pass Timeout ]
-
 # See webkit.org/b/233498 for context on this pointerevents tests
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 webkit.org/b/237348 pointerevents/mouse [ Skip ]
