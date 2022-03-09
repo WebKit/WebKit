@@ -1,3 +1,9 @@
+2022-03-09  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-03-09  Youenn Fablet  <youenn@apple.com>
 
         WebRTC decoded frames are not correctly rotated in case GPU Process DOM rendering flag is set to true
