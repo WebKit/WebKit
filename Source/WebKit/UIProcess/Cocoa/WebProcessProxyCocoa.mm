@@ -255,24 +255,6 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     m_hasSentMessageToUnblockAccessibilityServer = true;
 }
 
-#if ENABLE(CFPREFS_DIRECT_MODE)
-void WebProcessProxy::unblockPreferenceServiceIfNeeded()
-{
-    if (m_hasSentMessageToUnblockPreferenceService)
-        return;
-    if (!processIdentifier())
-        return;
-    if (!canSendMessage())
-        return;
-
-    auto handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.cfprefsd.agent"_s, "com.apple.cfprefsd.daemon"_s }, connection() ? connection()->getAuditToken() : std::nullopt);
-    ASSERT(handleArray.size() == 2);
-    
-    send(Messages::WebProcess::UnblockPreferenceService(WTFMove(handleArray)), 0);
-    m_hasSentMessageToUnblockPreferenceService = true;
-}
-#endif
-
 Vector<String> WebProcessProxy::platformOverrideLanguages() const
 {
     static const NeverDestroyed<Vector<String>> overrideLanguages = makeVector<String>([[NSUserDefaults standardUserDefaults] valueForKey:@"AppleLanguages"]);

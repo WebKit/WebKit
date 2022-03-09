@@ -357,9 +357,6 @@ public:
     
 #if PLATFORM(COCOA)
     void unblockAccessibilityServerIfNeeded();
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    void unblockPreferenceServiceIfNeeded();
-#endif
 #endif
 
     void updateAudibleMediaAssertions();
@@ -602,7 +599,6 @@ private:
 
 #if PLATFORM(COCOA)
     bool m_hasSentMessageToUnblockAccessibilityServer { false };
-    bool m_hasSentMessageToUnblockPreferenceService { false };
 #endif
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;

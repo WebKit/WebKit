@@ -3574,13 +3574,6 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 #endif
 }
 
-- (void)_grantAccessToPreferenceService
-{
-    THROW_IF_SUSPENDED;
-    if (_page)
-        _page->grantAccessToPreferenceService();
-}
-
 #pragma mark - scrollPerformanceData
 
 - (void)_setScrollPerformanceDataCollectionEnabled:(BOOL)enabled

@@ -989,7 +989,6 @@
 		E324A6F02041C82000A76593 /* UniqueArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E398BC0F2041C76300387136 /* UniqueArray.cpp */; };
 		E325C90723E3870200BC7D3B /* PictureInPictureSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = E325C90623E3870200BC7D3B /* PictureInPictureSupport.mm */; };
 		E32B549222810AC4008AD702 /* Packed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32B549122810AC0008AD702 /* Packed.cpp */; };
-		E34A6D192412DE390012AB6E /* GrantAccessToPreferencesService.mm in Sources */ = {isa = PBXBuildFile; fileRef = E34A6D182412DE390012AB6E /* GrantAccessToPreferencesService.mm */; };
 		E355A63026157174001C1129 /* RobinHoodHashSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E355A62F26157174001C1129 /* RobinHoodHashSet.cpp */; };
 		E355A6322615718F001C1129 /* RobinHoodHashMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E355A6312615718F001C1129 /* RobinHoodHashMap.cpp */; };
 		E35B908223F60DD0000011FF /* LocalizedDeviceModel.mm in Sources */ = {isa = PBXBuildFile; fileRef = E35B908123F60DD0000011FF /* LocalizedDeviceModel.mm */; };
@@ -2973,7 +2972,6 @@
 		E3210518261979F300157C67 /* FixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FixedVector.cpp; sourceTree = "<group>"; };
 		E325C90623E3870200BC7D3B /* PictureInPictureSupport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PictureInPictureSupport.mm; sourceTree = "<group>"; };
 		E32B549122810AC0008AD702 /* Packed.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Packed.cpp; sourceTree = "<group>"; };
-		E34A6D182412DE390012AB6E /* GrantAccessToPreferencesService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GrantAccessToPreferencesService.mm; sourceTree = "<group>"; };
 		E355A62F26157174001C1129 /* RobinHoodHashSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RobinHoodHashSet.cpp; sourceTree = "<group>"; };
 		E355A6312615718F001C1129 /* RobinHoodHashMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RobinHoodHashMap.cpp; sourceTree = "<group>"; };
 		E35B908123F60DD0000011FF /* LocalizedDeviceModel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedDeviceModel.mm; sourceTree = "<group>"; };
@@ -3386,7 +3384,6 @@
 				C13D82D82416F13200A62793 /* EnableAccessibility.mm */,
 				1C81802625FB09E200608B3E /* FontRegistrySandboxCheck.mm */,
 				E394AE6E23F2303E005B4936 /* GrantAccessToMobileAssets.mm */,
-				E34A6D182412DE390012AB6E /* GrantAccessToPreferencesService.mm */,
 				F460F656261116EA0064F2B6 /* InjectedBundleHitTest.mm */,
 				E35B908123F60DD0000011FF /* LocalizedDeviceModel.mm */,
 				1CF087D725ED7F73004148CB /* MobileAssetSandboxCheck.mm */,
@@ -5654,7 +5651,6 @@
 				07E499911F9E56DF002F1EF3 /* GetUserMediaReprompt.mm in Sources */,
 				510A921424D615B400BFD89C /* GoogleStadia.mm in Sources */,
 				E394AE6F23F2303E005B4936 /* GrantAccessToMobileAssets.mm in Sources */,
-				E34A6D192412DE390012AB6E /* GrantAccessToPreferencesService.mm in Sources */,
 				2D09CF0026A68297009C43C0 /* GraphicsContextTestsCG.cpp in Sources */,
 				8E4A85371E1D1AB200F53B0F /* GridPosition.cpp in Sources */,
 				51EB125924C68592000CB030 /* HIDGamepads.mm in Sources */,

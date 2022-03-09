@@ -478,13 +478,6 @@ void WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHos
 #endif // ENABLE(GPU_PROCESS)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
-void WebPageProxy::grantAccessToPreferenceService()
-{
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    process().unblockPreferenceServiceIfNeeded();
-#endif
-}
-
 #if ENABLE(MEDIA_USAGE)
 MediaUsageManager& WebPageProxy::mediaUsageManager()
 {

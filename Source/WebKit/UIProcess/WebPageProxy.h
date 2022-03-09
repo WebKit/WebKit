@@ -1905,10 +1905,6 @@ public:
     void revokeAccessToAssetServices();
     void switchFromStaticFontRegistryToUserFontRegistry();
 
-#if PLATFORM(COCOA)
-    void grantAccessToPreferenceService();
-#endif
-
     void setIsTakingSnapshotsForApplicationSuspension(bool);
     void setNeedsDOMWindowResizeEvent();
 

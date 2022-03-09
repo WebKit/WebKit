@@ -173,7 +173,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     UnblockServicesRequiredByAccessibility(Vector<WebKit::SandboxExtension::Handle> handleArray)
 #if ENABLE(CFPREFS_DIRECT_MODE)
     NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)
-    UnblockPreferenceService(Vector<WebKit::SandboxExtension::Handle> handleArray)
 #endif
     PowerSourceDidChange(bool hasAC)
 #endif

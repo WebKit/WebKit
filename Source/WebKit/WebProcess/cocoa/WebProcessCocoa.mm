@@ -1148,12 +1148,6 @@ void WebProcess::notifyPreferencesChanged(const String& domain, const String& ke
 {
     preferenceDidUpdate(domain, key, encodedValue);
 }
-
-void WebProcess::unblockPreferenceService(Vector<SandboxExtension::Handle>&& handleArray)
-{
-    SandboxExtension::consumePermanently(handleArray);
-    _CFPrefsSetDirectModeEnabled(false);
-}
 #endif
 
 void WebProcess::grantAccessToAssetServices(WebKit::SandboxExtension::Handle&& mobileAssetV2Handle)

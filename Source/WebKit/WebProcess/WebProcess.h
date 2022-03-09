@@ -353,7 +353,6 @@ public:
     void unblockServicesRequiredByAccessibility(const Vector<SandboxExtension::Handle>&);
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
-    void unblockPreferenceService(Vector<SandboxExtension::Handle>&&);
 #endif
     void powerSourceDidChange(bool);
 #endif

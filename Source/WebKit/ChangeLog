@@ -1,3 +1,25 @@
+2022-03-08  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused _grantAccessToPreferenceService
+        https://bugs.webkit.org/show_bug.cgi?id=237623
+
+        Reviewed by Per Arne Vollan.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _grantAccessToPreferenceService]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::grantAccessToPreferenceService): Deleted.
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::unblockPreferenceServiceIfNeeded): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::notifyPreferencesChanged):
+        (WebKit::WebProcess::unblockPreferenceService): Deleted.
+
 2022-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Rename TextRecognitionUtilities.* to ImageAnalysisUtilities.*

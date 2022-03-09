@@ -366,8 +366,6 @@ for this property.
 
 - (void)_getProcessDisplayNameWithCompletionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 
-- (void)_grantAccessToPreferenceService WK_API_AVAILABLE(macos(11.0), ios(14.0));
-
 - (void)_serviceWorkersEnabled:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 - (void)_clearServiceWorkerEntitlementOverride:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 

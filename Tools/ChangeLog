@@ -1,3 +1,13 @@
+2022-03-08  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused _grantAccessToPreferenceService
+        https://bugs.webkit.org/show_bug.cgi?id=237623
+
+        Reviewed by Per Arne Vollan.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/GrantAccessToPreferencesService.mm: Removed.
+
 2022-03-08  Chris Dumez  <cdumez@apple.com>
 
         Rename allow-custom-protocols-navigation to allow-top-navigation-to-custom-protocols
