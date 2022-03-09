@@ -1,3 +1,31 @@
+2022-03-09  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Empty float rects should remain empty after integrally enclosing them.
+        https://bugs.webkit.org/show_bug.cgi?id=237507
+
+        Reviewed by Alan Bujtas.
+
+        Test: compositing/tile-coverage-subpixel-empty-rect.html
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::enclosingIntRectPreservingEmptyRects):
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/ca/TileGrid.cpp:
+        (WebCore::TileGrid::setNeedsDisplayInRect):
+        (WebCore::TileGrid::dropTilesInRect):
+        (WebCore::TileGrid::tilesWouldChangeForCoverageRect const):
+        (WebCore::TileGrid::prepopulateRect):
+        (WebCore::TileGrid::revalidateTiles):
+        (WebCore::TileGrid::ensureTilesForRect):
+
+        Add a new variant of enclosingIntRect(const Float&) that ensures that empty input rects
+        always return an empty output rect, even if the x/y position is fractional.
+        Significant portions of the layout code (including, but not limited to linesBoundingBox()) depend
+        on the old behavior, so the new behaviour is opt-in and only used by TileGrid.
+
+        Fixes the case where TileGrid received an empty coverage rect at a fractional position, and rounded
+        it out to a 1x1 rect and allocated unnecessary tiles.
+
 2022-03-09  Alex Christensen  <achristensen@webkit.org>
 
         Fix AppleWin build
