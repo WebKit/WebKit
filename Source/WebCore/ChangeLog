@@ -1,3 +1,19 @@
+2022-03-09  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Remove size() function syntax
+        https://bugs.webkit.org/show_bug.cgi?id=237639
+
+        Reviewed by Antoine Quint.
+
+        Per https://github.com/w3c/csswg-drafts/issues/6870
+
+        * css/ContainerQueryParser.cpp:
+        (WebCore::ContainerQueryParser::consumeContainerQuery):
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeSingleContainerName):
+
+        Also disallow strings as container names (they need to be identifiers).
+
 2022-03-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] SpatialNavigation.h(93): error C2365: 'WebCore::None': redefinition; previous definition was 'enumerator'

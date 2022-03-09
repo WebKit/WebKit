@@ -24,7 +24,7 @@ PASS (width < 100px)
 PASS (100px < width)
 PASS (100px < width < 200px)
 PASS foo(width)
-FAIL size(width) assert_equals: expected "" but got "true"
+PASS size(width)
 PASS (asdf)
 PASS (resolution > 100dpi)
 PASS (resolution: 150dpi)
@@ -50,6 +50,6 @@ PASS Container selector: 1px
 PASS Container selector: 50gil
 PASS Container selector: name(foo)
 PASS Container selector: type(inline-size)
-FAIL Container selector: "foo" assert_equals: expected 0 but got 1
-FAIL Container selector: "inherit" assert_equals: expected 0 but got 1
+PASS Container selector: "foo"
+PASS Container selector: "inherit"
 

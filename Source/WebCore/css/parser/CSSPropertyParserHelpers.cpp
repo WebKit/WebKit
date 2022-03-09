@@ -4285,8 +4285,6 @@ RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange& range)
         return nullptr;
     if (auto ident = consumeCustomIdent(range))
         return ident;
-    if (auto string = consumeString(range))
-        return string;
     return nullptr;
 }
 

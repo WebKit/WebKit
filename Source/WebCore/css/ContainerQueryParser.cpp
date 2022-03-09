@@ -39,18 +39,9 @@ std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSPar
 std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range)
 {
     if (range.peek().type() == FunctionToken) {
-        bool isSizeQuery = range.peek().functionId() == CSSValueSize;
-
-        auto blockRange = range.consumeBlock();
-        blockRange.consumeWhitespace();
-
-        if (!isSizeQuery)
-            return CQ::UnknownQuery { };
-
-        auto sizeQuery = consumeSizeQuery(blockRange);
-        if (!sizeQuery)
-            return { };
-        return { *sizeQuery };
+        range.consumeBlock();
+        // This is where we would support style() queries.
+        return CQ::UnknownQuery { };
     }
 
     if (range.peek().type() == LeftParenthesisToken) {
