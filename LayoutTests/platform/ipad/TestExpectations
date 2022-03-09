@@ -96,6 +96,18 @@ webkit.org/b/203264 editing/pasteboard/smart-paste-paragraph-001.html [ Pass ]
 
 webkit.org/b/231635 [ Release ] editing/selection/ios/scroll-to-reveal-selection-when-showing-software-keyboard.html [ Timeout ]
 
+#webkit.org/b/237227 These 10 picture in picture tests are failing on iPad
+media/picture-in-picture/picture-in-picture-api-css-selector.html [ Timeout ]
+media/picture-in-picture/picture-in-picture-api-enter-pip-1.html [ Failure ]
+media/picture-in-picture/picture-in-picture-api-enter-pip-2.html [ Failure ]
+media/picture-in-picture/picture-in-picture-api-enter-pip-3.html [ Failure ]
+media/picture-in-picture/picture-in-picture-api-enter-pip-4.html [ Failure ]
+media/picture-in-picture/picture-in-picture-api-events.html [ Timeout ]
+media/picture-in-picture/picture-in-picture-api-exit-pip-1.html [ Timeout ]
+media/picture-in-picture/picture-in-picture-api-pip-window.html [ Failure ]
+media/picture-in-picture/picture-in-picture-window-aspect-ratio.html [ Failure ]
+platform/ipad/media/modern-media-controls/pip-support/pip-support-enabled.html [ Failure ]
+
 media/picture-in-picture [ Pass ]
 media/remove-video-element-in-pip-from-document.html [ Pass ]
 

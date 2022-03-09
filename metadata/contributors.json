@@ -4727,6 +4727,17 @@
    },
    {
       "emails" : [
+         "Matteo_flores@apple.com"
+      ],
+      "github" : "Smackteo",
+      "name" : "Matteo Flores",
+      "nicks" : [
+         "MatteoF"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "mvujovic@adobe.com",
          "maxvujovic@gmail.com"
       ],
