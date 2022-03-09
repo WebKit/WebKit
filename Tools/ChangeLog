@@ -1,3 +1,23 @@
+2022-03-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Support concept of 'blocked' pull requests
+        https://bugs.webkit.org/show_bug.cgi?id=237370
+        <rdar://problem/89689094>
+
+        Reviewed by Ryan Haddad.
+
+        cq- communicates that a change is blocked, either by an engineer or by a failed EWS run.
+        "changes requested" is not as dramatic as "cq-", so we are adding the concept of a "blocked"
+        pull request, which has simlar effects to "cq-".
+
+        * CISupport/ews-build/steps.py:
+        (GitHubMixin._is_pr_blocked): Check if a pull request currently has the "blocked" tag.
+        (GitHubMixin.modify_label): Add or remove a label from a pull request.
+        (SetCommitQueueMinusFlagOnPatch.hideStepIf): Added.
+        (BlockPullRequest): Added.
+        (AnalyzeCompileWebKitResults.analyzeResults): Block PR if failed.
+        (AnalyzeLayoutTestsResults.report_failure): Ditto.
+
 2022-03-09  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Extract revision from `git svn dcommit` (Follow-up fix)

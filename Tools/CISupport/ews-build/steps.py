@@ -191,6 +191,12 @@ class GitHubMixin(object):
             return -1
         return 0 if pr_sha == self.getProperty('github.head.sha', '?') else 1
 
+    def _is_pr_blocked(self, pr_json):
+        for label in (pr_json or {}).get('labels', {}):
+            if label.get('name', '') == 'blocked':
+                return 1
+        return 0
+
     def should_send_email_for_pr(self, pr_number):
         pr_json = self.get_pr_json(pr_number)
         if not pr_json:
@@ -201,6 +207,32 @@ class GitHubMixin(object):
             self._addToLog('stdio', 'Skipping email since hash {} on PR #{} is outdated\n'.format(
                 self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number,
             ))
+            return False
+        return True
+
+    def modify_label(self, pr_number, label, repository_url=None, action='add'):
+        api_url = GitHub.api_url(repository_url)
+        if not api_url:
+            return False
+        if action not in ('add', 'delete'):
+            self._addToLog('stdio', "'{}' is not a valid label modifcation action".format(action))
+            return False
+
+        pr_label_url = '{}/issues/{}/labels'.format(api_url, pr_number)
+        try:
+            username, access_token = GitHub.credentials()
+            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
+            response = requests.request(
+                'POST' if action == 'add' else 'DELETE',
+                pr_label_url, timeout=60, auth=auth,
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(labels=[label]),
+            )
+            if response.status_code // 100 != 2:
+                self._addToLog('stdio', "Unable to {} '{}' label on PR {}. Unexpected response code from GitHub: {}".format(action, label, pr_number, response.status_code))
+                return False
+        except Exception as e:
+            self._addToLog('stdio', "Error in {}ing '{}' label on PR {}".format(action, label, pr_number))
             return False
         return True
 
@@ -1293,7 +1325,12 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self.skip_build('Hash {} on PR {} is outdated'.format(self.getProperty('github.head.sha', '?')[:HASH_LENGTH_TO_DISPLAY], pr_number))
             return False
 
-        if obsolete == -1 or pr_closed == -1:
+        blocked = self._is_pr_blocked(pr_json) if self.verifyReviewDenied else 0
+        if blocked == 1:
+            self.skip_build("PR {} has been marked as 'blocked'".format(pr_number))
+            return False
+
+        if -1 in (obsolete, pr_closed, blocked):
             self.finished(WARNINGS)
             return False
 
@@ -1434,6 +1471,47 @@ class SetCommitQueueMinusFlagOnPatch(buildstep.BuildStep, BugzillaMixin):
 
     def doStepIf(self, step):
         return self.getProperty('patch_id', False)
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
+class BlockPullRequest(buildstep.BuildStep, GitHubMixin):
+    name = 'block-pull-request'
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+    def start(self):
+        pr_number = self.getProperty('github.number', '')
+        build_finish_summary = self.getProperty('build_finish_summary', None)
+
+        rc = SKIPPED
+        if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
+            rc = SUCCESS if self.modify_label(pr_number, 'blocked', repository_url=self.getProperty('repository', '')) else FAILURE
+        self.finished(rc)
+        if build_finish_summary:
+            self.build.buildFinished([build_finish_summary], FAILURE)
+        return None
+
+    def getResultSummary(self):
+        if self.results == SUCCESS:
+            return {'step': 'Added blocked label pull request'}
+        elif self.results == SKIPPED:
+            return buildstep.BuildStep.getResultSummary(self)
+        return {'step': 'Failed to add blocked label to pull request'}
+
+    def doStepIf(self, step):
+        return self.getProperty('github.number')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
 
 
 class RemoveFlagsOnPatch(buildstep.BuildStep, BugzillaMixin):
@@ -2117,13 +2195,14 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
         self.finished(FAILURE)
         self.setProperty('build_finish_summary', message)
 
-        # FIXME: Need a cq- equivalent for GitHub
         if patch_id:
             if self.getProperty('buildername', '').lower() == 'commit-queue':
                 self.setProperty('bugzilla_comment_text', message)
                 self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
             else:
                 self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch()])
+        else:
+            self.build.addStepsAfterCurrentStep([BlockPullRequest()])
 
     @defer.inlineCallbacks
     def getResults(self, name):
@@ -2947,7 +3026,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
             self.setProperty('bugzilla_comment_text', message)
             self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
         else:
-            self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch()])
+            self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch(), BlockPullRequest()])
         return defer.succeed(None)
 
     def report_pre_existing_failures(self, clean_tree_failures, flaky_failures):
