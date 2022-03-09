@@ -33,9 +33,20 @@ function pointCircleCollisionDetact(point, circle) {
 }
 
 function pointRectCollisionDetect(point, rect) {
-    const diffX = point.x - rect.topLeftX;
-    const diffY = point.y - rect.topLeftY;
-    return diffX <= rect.width && diffY <= rect.height && diffX >= 0 && diffY >= 0;
+    const x1 = rect.left;
+    const x2 = rect.left + rect.width;
+    const y1 = rect.top;
+    const y2 = rect.top + rect.height;
+    return (point.x > x1 && point.x < x2) && (point.y > y1 && point.y < y2);
+}
+
+function rectRectCollisionDetect(rectA, rectB) {
+    return !(
+        (rectA.left + rectA.width) < rectB.left ||
+        rectA.left > (rectB.left + rectB.width) ||
+        rectA.top > (rectB.top + rectB.height) ||
+        (rectA.top + rectA.height) < rectB.top
+    );
 }
 
 function pointPolygonCollisionDetect(point, polygon) {
@@ -103,7 +114,22 @@ function setupCanvasContextScale(canvas) {
     context.scale(dpr, dpr);
 }
 
-function XScrollableCanvasProvider(exporter, ...childrenFunctions) {
+function XScrollableCanvasProvider(props, exporter, ...childrenFunctions) {
+    let drag = false;
+    let initPos = null;
+    const onSelect = 'onSelect' in props ? props.onSelect : null;
+    const onSelecting = 'onSelecting' in props ? props.onSelecting: null;
+    const onSelectionScroll = 'onSelectionScroll' in props ? props.onSelectionScroll: null;
+    const onScroll = 'onScroll' in props ? props.onScroll : null;
+    const customizedLayer = 'customizedLayer' in props ? props.customizedLayer : '';
+    const timeLineMouseUpEventStream = new EventStream();
+    const selectionBoxChangeEventStream = new EventStream();
+    const selectionBoxDoneEventStream = new EventStream();
+    const selectingEventStream = new EventStream();
+    const clickSelectionDoneEventStream = new EventStream();
+    const selectedDotsScrollEventStream = new EventStream();
+    const resizeEventStream = new EventStream();
+
     const containerRef = REF.createRef({
         state: {width: 0},
         onStateUpdate: (element, stateDiff, state) => {
@@ -111,9 +137,16 @@ function XScrollableCanvasProvider(exporter, ...childrenFunctions) {
                 element.style.width = `${stateDiff.width}px`;
         },
     });
-    const scrollRef = REF.createRef({});
+    const containerMouseDownEventStream = containerRef.fromEvent('mousedown');
+    const containerMouseMoveEventStream = containerRef.fromEvent('mousemove');
+    const scrollRef = REF.createRef({
+        onElementMount: (element, stateDiff) => {
+            element.parentElement.addEventListener('mouseup', e => {
+                timeLineMouseUpEventStream.add(e);
+            });
+        }
+    });
     const scrollEventStream = scrollRef.fromEvent('scroll');
-    const resizeEventStream = new EventStream();
     window.addEventListener('resize', () => {
         presenterRef.setState({resize:true});
     });
@@ -138,11 +171,132 @@ function XScrollableCanvasProvider(exporter, ...childrenFunctions) {
     layoutSizeMayChange.action(() => {
         presenterRef.setState({resize:true});
     });
+
+    // Selection box
+    const selectionBoxRef = REF.createRef({
+        state: {x: 0, y: 0, width: 0, height: 0, show: false},
+        onStateUpdate: (element, stateDiff) => {
+            if ('x' in stateDiff)
+                element.style.left = `${stateDiff.x}px`;
+            if ('y' in stateDiff)
+                element.style.top = `${stateDiff.y}px`;
+            if ('width' in stateDiff)
+                element.style.width = `${stateDiff.width}px`;
+            if ('height' in stateDiff)
+                element.style.height = `${stateDiff.height}px`;
+            if ('show' in stateDiff)
+                if (stateDiff.show)
+                    element.style.display = 'block';
+                else
+                    element.style.display = 'none';
+        }
+    });
+    const selectedDotRect = {
+        left: Number.MAX_VALUE,
+        top: Number.MAX_VALUE,
+        right: 0,
+        bottom: 0,
+        width: 0,
+        height: 0
+    };
+
+    const updateSelectedDotsRect = (dots, seriesRect) => {
+        const contentRect = scrollRef.element.getBoundingClientRect();
+        const dotLeft = dots[0]._dotCenter.x - dots[0]._dotRadius + dots[0]._cachedScrollLeft * getDevicePixelRatio();
+        const dotRight = dots[dots.length - 1]._dotCenter.x + dots[dots.length - 1]._dotRadius + dots[dots.length - 1]._cachedScrollLeft * getDevicePixelRatio();
+        const dotTop = seriesRect.top - contentRect.top;
+        const dotBottom = seriesRect.bottom - contentRect.top;
+        if (dotLeft < selectedDotRect.left)
+            selectedDotRect.left = dotLeft;
+        if (dotTop < selectedDotRect.top)
+            selectedDotRect.top = dotTop;
+        if (dotRight > selectedDotRect.right)
+            selectedDotRect.right = dotRight;
+        if (dotBottom > selectedDotRect.bottom)
+            selectedDotRect.bottom = dotBottom;
+        selectedDotRect.width = selectedDotRect.right - selectedDotRect.left;
+        selectedDotRect.height = selectedDotRect.bottom - selectedDotRect.top;
+    };
+
+    scrollEventStream.action(e => {
+        selectedDotRect.left = Number.MAX_VALUE;
+        selectedDotRect.right = 0;
+        selectedDotRect.top = Number.MAX_VALUE;
+        selectedDotRect.bottom = 0;
+        selectedDotRect.width = 0;
+        selectedDotRect.height = 0;
+        if (onScroll)
+            onScroll(e);
+    });
+
+    selectingEventStream.action(() => {
+        if (onSelecting)
+            onSelecting();
+    });
+
+    selectedDotsScrollEventStream.action((dots, seriesRect) => {
+        if (!dots || !dots.length)
+            return;
+        updateSelectedDotsRect(dots, seriesRect);
+        if (onSelectionScroll)
+            onSelectionScroll(dots, selectedDotRect, seriesRect);
+    });
+
+    containerMouseDownEventStream.action(e => {
+        if (e.buttons != 1)
+            return; 
+        drag = true;
+        initPos = getMousePosInCanvas(e, containerRef.element);
+        selectedDotRect.left = Number.MAX_VALUE;
+        selectedDotRect.right = 0;
+        selectedDotRect.top = Number.MAX_VALUE;
+        selectedDotRect.bottom = 0;
+        selectedDotRect.width = 0;
+        selectedDotRect.height = 0;
+    });
+
+    containerMouseMoveEventStream.action(e => {
+        if (!drag)
+            return;
+        selectingEventStream.add(e);
+    });
+
+    const onSelectionDoneCallback = (dots, seriesRect, e) => {
+        if (!dots || !dots.length)
+            return;
+        updateSelectedDotsRect(dots, seriesRect);
+        if (onSelect)
+            onSelect(dots, selectedDotRect, seriesRect, e);
+    };
+    timeLineMouseUpEventStream.action(e => {
+        drag = false;
+        selectionBoxRef.setState({show: false});
+        if (onSelect)
+            selectionBoxDoneEventStream.add(onSelectionDoneCallback, e);
+    });
+    clickSelectionDoneEventStream.action(onSelectionDoneCallback);
+    window.addEventListener('mouseup', e => {
+        drag = false;
+        selectionBoxRef.setState({show: false});
+    });
+    window.addEventListener('mousemove', e => {
+        if (!drag)
+            return;
+        const cursorPos = getMousePosInCanvas(e, containerRef.element);
+        const width = Math.abs(cursorPos.x - initPos.x);
+        const height = Math.abs(cursorPos.y - initPos.y);
+        let x = initPos.x < cursorPos.x ? initPos.x : cursorPos.x;
+        let y = initPos.y < cursorPos.y ? initPos.y : cursorPos.y;
+        const containerBoundingRect = containerRef.element.getBoundingClientRect();
+        // notify with absolute pos
+        selectionBoxChangeEventStream.add({left: x + containerBoundingRect.left, top: y + containerBoundingRect.top, width, height});
+        selectionBoxRef.setState({x, y, width, height, show: true});
+    });
     // Provide parent functions/event to children to use
 
     return `<div class="content" ref="${scrollRef}">
         <div ref="${containerRef}" style="position: relative">
-            <div ref="${presenterRef}" style="position: -webkit-sticky; position:sticky; top:0; left: 0">${
+            <div ref="${presenterRef}" style="position: -webkit-sticky; position:sticky; top:0; left: 0; user-select: none; -webkit-user-select: none;">${
                 ListProvider((updateChildrenFunctions) => {
                     if (exporter) {
                         exporter(
@@ -168,8 +322,15 @@ function XScrollableCanvasProvider(exporter, ...childrenFunctions) {
                             }
                         );
                     }
-                }, [resizeContainerWidth, scrollEventStream, resizeEventStream, layoutSizeMayChange], ...childrenFunctions)
+                }, [
+                    resizeContainerWidth, scrollEventStream, resizeEventStream, 
+                    layoutSizeMayChange, selectionBoxChangeEventStream, 
+                    selectionBoxDoneEventStream, selectedDotsScrollEventStream, 
+                    selectingEventStream, clickSelectionDoneEventStream
+                ], ...childrenFunctions)
             }</div>
+            ${customizedLayer}
+            <div ref="${selectionBoxRef}" style="position:absolute; width: 0; height: 0; border: 1px solid var(--inverseColor)"></div>
         </div>
     </div>`;
 }
@@ -202,7 +363,7 @@ class ColorBatchRender {
     }
 }
 
-function xScrollStreamRenderFactory(height) {
+function xScrollStreamRenderFactory(height, callback=null) {
     return (redraw, element, stateDiff, state) => {
         const width = typeof stateDiff.width === 'number' ? stateDiff.width : state.width;
         if (width <= 0)
@@ -221,6 +382,8 @@ function xScrollStreamRenderFactory(height) {
             }
             element.getContext("2d", {alpha: false}).clearRect(startX, 0, renderWidth, element.logicHeight);
             redraw(startX, renderWidth, element, stateDiff, state);
+            if (callback)
+                callback(element, stateDiff, state);
         });
     }
 }
@@ -243,14 +406,16 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
 
     // Get configuration
     // Default order is left is biggest
+    const selectedOutLineSize = 3;
     const reversed = typeof option.reversed === "boolean" ? option.reversed : false;
     const getScale = typeof option.getScaleFunc === "function" ? option.getScaleFunc : (a) => a;
     const comp = typeof option.compareFunc === "function" ? option.compareFunc : (a, b) => a - b;
     const onDotClick = typeof option.onDotClick === "function" ? option.onDotClick : null;
     const onDotEnter = typeof option.onDotEnter === "function" ? option.onDotEnter : null;
     const onDotLeave = typeof option.onDotLeave === "function" ? option.onDotLeave : null;
+    const onDotsSelected = typeof option.onDotsSelected === "function" ? option.onDotsSelected : null;
     const tagHeight = defaultFontSize;
-    const height = option.height ? option.height : 2 * radius + tagHeight;
+    const height = option.height ? option.height : 2 * radius + tagHeight + selectedOutLineSize;
     const colorBatchRender = new ColorBatchRender();
     let drawLabelsSeqs = [];
 
@@ -349,15 +514,16 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
 
     const dotWidth = 2 * (radius + dotMargin);
     const padding = 100 * dotWidth / getDevicePixelRatio();
-    const xScrollStreamRender = xScrollStreamRenderFactory(height);
 
     const redraw = (startX, renderWidth, element, stateDiff, state) => {
         const scrollLeft = typeof stateDiff.scrollLeft === 'number' ? stateDiff.scrollLeft : state.scrollLeft;
         const scales = stateDiff.scales ? stateDiff.scales : state.scales;
         const dots = stateDiff.dots ? stateDiff.dots : state.dots;
+        if ('dots' in stateDiff)
+            dots.forEach((dot, index) => dot._index = index);
         // This color maybe change when switch dark/light mode
         const defaultLineColor = getComputedStyle(document.body).getPropertyValue('--borderColorInlineElement');
-
+        const defaultSelectedBackgroundColor = getComputedStyle(document.body).getPropertyValue('--blue');
         const context = element.getContext("2d", { alpha: false });
         // Clear pervious batchRender
         colorBatchRender.clear();
@@ -369,9 +535,18 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             context.strokeStyle = color;
             context.stroke();
         });
+
+        colorBatchRender.lazyCreateColorSeqs(defaultSelectedBackgroundColor, (context) => {
+            context.beginPath();
+        }, (context, color) => {
+            context.lineWidth = selectedOutLineSize;
+            context.strokeStyle = color;
+            context.stroke();
+        });
+
         colorBatchRender.addSeq(defaultLineColor, (context) => {
-            context.moveTo(startX, radius);
-            context.lineTo(startX + renderWidth, radius);
+            context.moveTo(startX, radius + selectedOutLineSize);
+            context.lineTo(startX + renderWidth, radius + selectedOutLineSize);
         });
         if (!scales || !dots || !scales.length || !dots.length) {
             colorBatchRender.batchRender(context);
@@ -406,18 +581,31 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
         for (let i = startScalesIndex; i <= endScalesIndex; i++) {
             let x = i * dotWidth - scrollLeft;
             if (currentDotIndex < dots.length && comp(scales[i], getScale(dots[currentDotIndex])) === 0) {
-                render(dots[currentDotIndex], context, x, 0);
+                if(dots[currentDotIndex]._selected) {
+                    colorBatchRender.addSeq(defaultSelectedBackgroundColor, (context, color) => {
+                        context.arc(x + dotMargin + radius, radius + selectedOutLineSize, radius, 0, 2 * Math.PI);
+                    });
+                }
+                render(dots[currentDotIndex], context, x, selectedOutLineSize);
                 dots[currentDotIndex]._dotCenter = {x: x + dotMargin + radius, y: radius};
+                dots[currentDotIndex]._dotRadius = radius;
                 dots[currentDotIndex]._cachedScrollLeft = scrollLeft;
                 inCacheDots.push(dots[currentDotIndex]);
                 currentDotIndex += 1;
             } else
-                render(null, context, x, 0);
+                render(null, context, x, selectedOutLineSize);
         }
         colorBatchRender.batchRender(context);
     };
 
-    return ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize) => {
+    return ListProviderReceiver((
+            updateContainerWidth, onContainerScroll, onResize, 
+            layoutSizeMayChange, onSelectionBoxChange, onSelectionBoxDone, 
+            onSelectionScroll, onSelecting, onClickSelectionDone
+    ) => {
+        let selectedDots = [];
+        let cmdKeyDown = null;
+        let shiftKeyDown = null;
         const mouseMove = (e) => {
             let dots = getMouseEventTirggerDots(e, canvasRef.state.scrollLeft, canvasRef.element);
             if (dots.length) {
@@ -435,12 +623,69 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
                 canvasRef.element.style.cursor = "default";
             }
         }
+        const unselectAllDots = () => {
+            selectedDots = [];
+            canvasRef.state.dots.forEach(dot => dot._selected = false);
+        }; 
         const onScrollAction = (e) => {
             canvasRef.setState({scrollLeft: e.target.scrollLeft / getDevicePixelRatio()});
             mouseMove(e);
         };
         const onResizeAction = (width) => {
             canvasRef.setState({width: width});
+        };
+
+        const xScrollStreamRender = xScrollStreamRenderFactory(height, (element, stateDiff, state) => {
+            if (selectedDots && selectedDots.length && 'scrollLeft' in stateDiff) {
+                const canvasBoundingRect = canvasRef.element.getBoundingClientRect();
+                onSelectionScroll.add(selectedDots, canvasBoundingRect);
+            }
+        });
+
+        const onSelectionBoxChangeAction = (selectionBoxRect) => {
+            const canvasBoundingRect = canvasRef.element.getBoundingClientRect();
+            if (!rectRectCollisionDetect(selectionBoxRect, canvasBoundingRect)) {
+                unselectAllDots();
+                canvasRef.setState({hasDotSelected: true});
+                if (onDotsSelected)
+                    onDotsSelected(selectedDots);
+                return;
+            }
+            canvasRef.state.dots.forEach(dot => dot._selected = false);
+            selectedDots = inCacheDots.filter(dot => {
+                // convert to absoulte pos
+                const dotCenter = {
+                    x: dot._dotCenter.x + canvasBoundingRect.left,
+                    y: dot._dotCenter.y + canvasBoundingRect.top,
+                };
+                return pointRectCollisionDetect(dotCenter, selectionBoxRect);
+            });
+            selectedDots.forEach(dot => {
+                dot._selected = true;
+            });
+            if (onDotsSelected)
+                onDotsSelected(selectedDots);
+            canvasRef.setState({hasDotSelected: true});
+        };
+
+        const onSelectionBoxDoneAction = (onSelectionDoneCallback, e) => {
+            if (selectedDots && selectedDots.length) {
+                const canvasBoundingRect = canvasRef.element.getBoundingClientRect();
+                onSelectionDoneCallback(selectedDots, canvasBoundingRect, e);
+            }
+        }
+
+        const globalKeyDownAction =  (e) => {
+            if (e.key === 'Meta')
+                cmdKeyDown = true;
+            else if (e.key === 'Shift')
+                shiftKeyDown = true;
+        };
+        const globalKeyUpAction =(e) => {
+            if (e.key === 'Meta')
+                cmdKeyDown = false;
+            else if (e.key === 'Shift')
+                shiftKeyDown = false;
         };
 
         const canvasRef = REF.createRef({
@@ -450,17 +695,50 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
                 scrollLeft: 0,
                 width: 0,
                 onScreen: false,
+                hasDotSelected: false,
             },
             onElementMount: (element) => {
                 setupCanvasHeightWithDpr(element, height);
                 setupCanvasContextScale(element);
-                if (onDotClick) {
-                    element.addEventListener('click', (e) => {
-                        let dots = getMouseEventTirggerDots(e, canvasRef.state.scrollLeft, element);
-                        if (dots.length)
-                            onDotClick(dots[0], e);
-                    });
-                }
+                window.addEventListener('keydown',globalKeyDownAction);
+                window.addEventListener('keyup', globalKeyUpAction);
+                element.addEventListener('click', (e) => {
+                    let dots = getMouseEventTirggerDots(e, canvasRef.state.scrollLeft, element);
+                    if (!dots.length)
+                        return;
+                    if (onDotClick)
+                        onDotClick(dots[0], e);
+                    if (!shiftKeyDown && cmdKeyDown) {
+                        selectedDots.push(dots[0]);
+                        dots[0]._selected = true;
+                    }
+                    else if (!cmdKeyDown && shiftKeyDown) {
+                        let startDotIndex = c
+                        let endDotIndex = dots[0]._index;
+                        if (selectedDots[0]._index < dost[0]._index) {
+                            if (selectedDots[selectedDots.length - 1]._index > dots[0]._index)
+                                startDotIndex = selectedDots[0]._index;
+                            else
+                                startDotIndex = selectedDots[selectedDots.length - 1]._index;
+                            endDotIndex = dots[0]._index;
+                        } else if (selectedDots[0]._index > dost[0]._index) {
+                            startDotIndex = dost[0]._index;
+                            endDotIndex = selectedDots[0]._index;
+                        }
+                        unselectAllDots();
+                        for(let i = startDotIndex; i <= endDotIndex; i++) {
+                            canvasRef.state.dots[i]._selected = true;
+                            selectedDots.push(canvasRef.state.dots[i]);
+                        }
+                    }
+                    if (shiftKeyDown || cmdKeyDown) {
+                        onSelecting.add(e);
+                        onClickSelectionDone.add(selectedDots, canvasRef.element.getBoundingClientRect(), e);
+                        if (onDotsSelected)
+                            onDotsSelected(selectedDots);
+                        canvasRef.setState({hasDotSelected: true});
+                    }
+                });
 
                 if (onDotClick || onDotEnter || onDotLeave)
                     element.addEventListener('mousemove', mouseMove);
@@ -474,6 +752,10 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             onElementUnmount: (element) => {
                 onContainerScroll.stopAction(onScrollAction);
                 onResize.stopAction(onResizeAction);
+                onContainerScroll.stopAction(onScrollAction);
+                onSelectionBoxDone.stopAction(onSelectionBoxDoneAction);
+                window.removeEventListener('keydown',globalKeyDownAction);
+                window.removeEventListener('keyup', globalKeyUpAction);
                 // Clean the canvas, free its memory
                 element.width = 0;
                 element.height = 0;
@@ -481,7 +763,7 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             onStateUpdate: (element, stateDiff, state) => {
                 if (!state.onScreen && !stateDiff.onScreen)
                     return;
-                if (stateDiff.scales || stateDiff.dots || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number' || stateDiff.onScreen) {
+                if (stateDiff.scales || stateDiff.dots || typeof stateDiff.scrollLeft === 'number' || typeof stateDiff.width === 'number' || stateDiff.onScreen || stateDiff.hasDotSelected) {
                     if (stateDiff.scales)
                         stateDiff.scales = stateDiff.scales.map(x => x);
                     if (stateDiff.dots)
@@ -503,7 +785,9 @@ Timeline.CanvasSeriesComponent = (dots, scales, option = {}) => {
             option.exporter(updateData);
         onContainerScroll.action(onScrollAction);
         onResize.action(onResizeAction);
-        return `<div class="series">
+        onSelectionBoxChange.action(onSelectionBoxChangeAction);
+        onSelectionBoxDone.action(onSelectionBoxDoneAction);
+        return `<div class="series" style="user-select: none; -webkit-user-select: none;">
             <canvas ref="${canvasRef}" width="0" height="0">
         </div>`;
     });
@@ -529,12 +813,23 @@ Timeline.ExpandableSeriesComponent = (mainSeries, options, subSerieses, exporter
     });
     if (exporter)
         exporter((expanded) => ref.setState({expanded: expanded}));
-    return ListProviderReceiver((updateContainerWidth, onContainerScroll, onResize, layoutSizeMayChange) => {
+    return ListProviderReceiver((
+        updateContainerWidth, onContainerScroll, onResize, 
+        layoutSizeMayChange, onSelectionBoxChange, onSelectionBoxDone, 
+        onSelectionScroll, onSelecting, onClickSelectionDone
+    ) => {
         layoutSizeMayChangeEvent = layoutSizeMayChange;
         return `<div class="groupSeries" ref="${ref}">
             <div class="series" style="display:none;"></div>
-            <div>${mainSeries(updateContainerWidth, onContainerScroll, onResize, layoutSizeMayChange)}</div>
-            <div style="display:none">${subSerieses.map((subSeries) => subSeries(updateContainerWidth, onContainerScroll, onResize, layoutSizeMayChange)).join("")}</div>
+            <div>${mainSeries(updateContainerWidth, onContainerScroll, onResize, 
+                layoutSizeMayChange, onSelectionBoxChange, onSelectionBoxDone, 
+                onSelectionScroll, onSelecting, onClickSelectionDone
+            )}</div>
+            <div style="display:none">${subSerieses.map((subSeries) => subSeries(
+                updateContainerWidth, onContainerScroll, onResize, 
+                layoutSizeMayChange, onSelectionBoxChange, onSelectionBoxDone, 
+                onSelectionScroll, onSelecting, onClickSelectionDone
+            )).join("")}</div>
         </div>`;
     });
 }
@@ -885,7 +1180,7 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
                 option.exporter(updateData);
             onContainerScroll.action(onScrollAction);
             onResize.action(onResizeAction);
-            return `<div class="x-axis">
+            return `<div class="x-axis" style="user-select: none; -webkit-user-select: none;">
                 <canvas ref="${canvasRef}">
             </div>`;
         }),
@@ -894,7 +1189,7 @@ Timeline.CanvasXAxisComponent = (scales, option = {}) => {
     };
 }
 
-Timeline.CanvasContainer = (exporter, ...children) => {
+Timeline.CanvasContainer = (props, exporter, ...children) => {
     let headerAxisPlaceHolderHeight = 0;
     let topAxis = true;
     const upackChildren = (children) => {
@@ -929,7 +1224,7 @@ Timeline.CanvasContainer = (exporter, ...children) => {
             <div class="header" style="padding-top:${headerAxisPlaceHolderHeight}px">
                 ${ListComponent(composer, ...headers)}
             </div>
-            ${XScrollableCanvasProvider(composer, ...serieses)}
+            ${XScrollableCanvasProvider(props, composer, ...serieses)}
         </div>`
     );
 }

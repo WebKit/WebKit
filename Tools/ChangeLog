@@ -1,3 +1,30 @@
+2021-12-07  Zhifei Fang  <facetothefate@gmail.com>
+
+        [results.webkit.org]Add selection box for results database.
+        https://bugs.webkit.org/show_bug.cgi?id=233958
+
+        Reviewed by Jonathan Bedard.
+
+        Allow user can drag a selection box to select multiple dots.
+        Allow user to use cmd + click to select multiple dots. 
+        Allow user to use shift + click to select a row of dots.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        (TimelineFromEndpoint):
+        (TimelineFromEndpoint.prototype.update):
+        (TimelineFromEndpoint.prototype.getTestResultStatus):
+        (TimelineFromEndpoint.prototype.getTestResultUrl):
+        (TimelineFromEndpoint.prototype.render):
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/tooltip.js:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/library/js/components/TimelineComponents.js:
+        (pointRectCollisionDetect): Detact if a point and a rect have a insertion.
+        (rectRectCollisionDetect): Detact if two rects have a insertion.
+        (XScrollableCanvasProvider): Add selection box.
+        (xScrollStreamRenderFactory):
+        (Timeline.CanvasSeriesComponent): Add selection box , cmd + click and shift + click.
+        (prototype.ExpandableSeriesComponent):
+        (prototype.Timeline.CanvasContainer):
+
 2022-03-01  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Support concept of 'blocked' pull requests

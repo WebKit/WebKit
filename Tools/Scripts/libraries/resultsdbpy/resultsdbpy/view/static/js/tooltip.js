@@ -69,6 +69,7 @@ class _ToolTip {
                     const lowerPoint = stateDiff.points.length > 1 && stateDiff.points[1].y > stateDiff.points[0].y ? stateDiff.points[1] : stateDiff.points[0];
                     const scrollDelta = document.documentElement.scrollTop || document.body.scrollTop;
                     const bounds = element.getBoundingClientRect();
+                    const computedStyle = getComputedStyle(element);
 
                     let direction = 'down';
                     let point = upperPoint;
@@ -79,11 +80,11 @@ class _ToolTip {
                         const rightPoint = stateDiff.points.length > 1 && stateDiff.points[1].x > stateDiff.points[0].x ? stateDiff.points[1] : stateDiff.points[0];
 
                         direction = 'left';
-                        let tipX = leftPoint.x - 12 - bounds.width;
+                        let tipX = leftPoint.x - bounds.width;
                         point = rightPoint;
                         if (tipX < 0 || tipX + bounds.width + (rightPoint.x - leftPoint.x) / 2 < stateDiff.viewport.x + stateDiff.viewport.width / 2) {
                             direction = 'right';
-                            tipX = rightPoint.x + 16;
+                            tipX = rightPoint.x;
                             point = rightPoint;
                         }
                         element.style.left = `${tipX}px`;
@@ -96,11 +97,11 @@ class _ToolTip {
                         element.style.top = `${tipY}px`;
                     } else {
                         // Make an effort to place the tooltip in the center of the viewport.
-                        let tipY = upperPoint.y - 8 - bounds.height;
+                        let tipY = upperPoint.y - bounds.height;
                         point = upperPoint;
                         if (tipY < scrollDelta || tipY + bounds.height + (lowerPoint.y - upperPoint.y) / 2 < scrollDelta + stateDiff.viewport.y + stateDiff.viewport.height / 2) {
                             direction = 'up';
-                            tipY = lowerPoint.y + 16;
+                            tipY = lowerPoint.y + parseFloat(computedStyle.getPropertyValue('--smallSize'));
                             point = lowerPoint;
                         }
                         element.style.top = `${tipY}px`;
@@ -144,19 +145,20 @@ class _ToolTip {
                 }
 
                 element.classList = [`tooltip arrow-${stateDiff.direction}`];
-                
+                const computedStyle = getComputedStyle(element);
+                const {width, height} = computedStyle;
                 if (stateDiff.direction == 'down') {
-                    element.style.left = `${stateDiff.location.x - 15}px`;
-                    element.style.top = `${stateDiff.location.y - 8}px`;
+                    element.style.left = `calc(${stateDiff.location.x}px - ${width} / 2)`;
+                    element.style.top = `calc(${stateDiff.location.y}px - ${height} / 2)`;
                 } else if (stateDiff.direction == 'left') {
-                    element.style.left = `${stateDiff.location.x - 30}px`;
-                    element.style.top = `${stateDiff.location.y - 15}px`;
+                    element.style.left = `calc(${stateDiff.location.y}px - ${width} / 2)`;
+                    element.style.top = `calc(${stateDiff.location.x}px - ${height} / 2)`;
                 } else if (stateDiff.direction == 'right') {
-                    element.style.left = `${stateDiff.location.x - 13}px`;
-                    element.style.top = `${stateDiff.location.y - 15}px`;
+                    element.style.left = `calc(${stateDiff.location.y}px - ${width} / 2)`;
+                    element.style.top = `calc(${stateDiff.location.x}px - ${height} / 2)`;
                 } else {
-                    element.style.left = `${stateDiff.location.x - 15}px`;
-                    element.style.top = `${stateDiff.location.y - 13}px`;
+                    element.style.left = `calc(${stateDiff.location.x}px - ${width} / 2)`;
+                    element.style.top = `calc(${stateDiff.location.y}px - ${height} / 2 + ${computedStyle.getPropertyValue('--smallSize')})`;
                 }
                 element.style.display = null;
             },

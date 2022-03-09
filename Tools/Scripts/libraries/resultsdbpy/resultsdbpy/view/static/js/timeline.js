@@ -353,6 +353,7 @@ class TimelineFromEndpoint {
 
         this.configurations = Configuration.fromQuery();
         this.results = {};
+        this.selectedDots = new Map();
 
         // Suite and test can often be implied by the endpoint, but doing so is more confusing then helpful
         this.suite = suite;
@@ -379,7 +380,6 @@ class TimelineFromEndpoint {
                     element.innerHTML = this.placeholder();
             }
         });
-
         this.commit_callback = () => {
             self.update();
         };
@@ -393,6 +393,8 @@ class TimelineFromEndpoint {
         });
     }
     update() {
+        if (this.selectedDotsButtonGroupRef)
+            this.selectedDotsButtonGroupRef.setState({show: false});
         const params = queryToParams(document.URL.split('?')[1]);
         const commits = commitsForResults(this.results, params.limit ? parseInt(params.limit[params.limit.length - 1]) : DEFAULT_LIMIT, this.allCommits);
         const scale = scaleForCommits(commits);
@@ -503,7 +505,111 @@ class TimelineFromEndpoint {
             }
         });
 
-        return `<div class="content" ref="${this.ref}"></div>`;
+        return `
+        <div style="position:relative">
+            <div class="content" ref="${this.ref}"></div>
+        </div>`;
+    }
+
+    getTestResultStatus(data, willFilterExpected=false) {
+        let failureType = null;
+        let failureNumber = null;
+        if (data.stats) {
+            if (data.start_time)
+                failureNumber = data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
+            else
+                failureNumber = data.stats[`worst_tests${willFilterExpected ? '_unexpected_' : '_'}failed`];
+            if (data.stats.worst_tests_run <= 1)
+                failureNumber = null;
+
+            Expectations.failureTypes.forEach(type => {
+                if (data.stats[`tests${willFilterExpected ? '_unexpected_' : '_'}${type}`] > 0) {
+                    failureType = type;
+                }
+            });
+        } else {
+            let resultId = Expectations.stringToStateId(data.actual);
+            if (willFilterExpected)
+                resultId = Expectations.stringToStateId(Expectations.unexpectedResults(data.actual, data.expected));
+            Expectations.failureTypes.forEach(type => {
+                if (Expectations.stringToStateId(Expectations.failureTypeMap[type]) >= resultId) {
+                    failureType = type;
+                }
+            });
+        }
+        return {failureType, failureNumber};
+    }
+
+    getTestResultUrl(config, data) {
+        const buildParams = config.toParams();
+        buildParams['suite'] = [this.suite];
+        buildParams['uuid'] = [data.uuid];
+        buildParams['after_time'] = [data.start_time];
+        buildParams['before_time'] = [data.start_time];
+        return `${window.location.protocol}//${window.location.host}/urls/build?${paramsToQuery(buildParams)}`;
+    }
+
+    _renderSelectedDotsButtonGroup(element) {
+        DOM.inject(element, this.bugTrackers.map(bugTracker => {
+            const buttonText = `${bugTracker}`;
+            const buttonRef = REF.createRef({
+                state: {
+                    loading: false
+                },
+                onStateUpdate: (element, stateDiff) => {
+                    if (stateDiff.loading)
+                        element.innerText = 'Waiting...';
+                    else
+                        element.innerText = buttonText;
+                }
+            });
+
+            buttonRef.fromEvent('click').action(e => {
+                const requestPayload = {
+                    selectedRows: [],
+                    willFilterExpected: InvestigateDrawer.willFilterExpected,
+                    repositories: this.repositories,
+                    suite: this.suite,
+                    test: this.test
+                };
+                Array.from(this.selectedDots.keys()).forEach(config => {
+                    const dots = this.selectedDots.get(config);
+                    requestPayload.selectedRows.push({
+                        config,
+                        results: dots
+                    });
+                });
+                buttonRef.setState({loading: true});
+                fetch(`api/bug-trackers/${bugTracker}/create-bug`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestPayload)
+                }).then(res => {
+                    if (res.ok)
+                        return res.json()
+                    return res.json().then((data) => {
+                        throw new Error(data.description);
+                    });
+                }).then(data => {
+                    const bugLinkElement = document.createElement('a');
+                    bugLinkElement.setAttribute('href', data['url']);
+                    bugLinkElement.click();
+                }).catch(e => {
+                    alert(e);
+                }).finally(() => {
+                    buttonRef.setState({loading: false});
+                });
+                
+            });
+
+            return `<div>
+                <button class="button tiny" style="position:absolute; background: var(--purple); color: var(--white)" ref="${buttonRef}">
+                    ${buttonText}
+                </button>
+            </div>`;
+        }).join(''));
     }
 
     render(limit) {
@@ -511,6 +617,59 @@ class TimelineFromEndpoint {
         const self = this;
         const commits = commitsForResults(this.results, limit, this.allCommits);
         const scale = scaleForCommits(commits);
+
+        this.selectedDotsButtonGroupRef = REF.createRef({
+            state: {
+                show: false,
+                top: 0,
+                left: 0,
+            },
+            onElementMount: (element) => {
+                if (this.bugTrackers)
+                    this._renderSelectedDotsButtonGroup(element);
+                fetch('api/bug-trackers').then(res => res.json()).then(bugTrackers => {
+                    this.bugTrackers = bugTrackers;
+                    this._renderSelectedDotsButtonGroup(element);
+                })
+            },
+            onStateUpdate: (element, stateDiff) => {
+                if ('show' in stateDiff) {
+                    if (stateDiff.show)
+                        element.style.display = 'block';
+                    else
+                        element.style.display = 'none';
+                }
+                if ('top' in stateDiff)
+                    element.style.top = `${stateDiff.top}px`;
+                if ('left' in stateDiff) {
+                    const rect = element.getBoundingClientRect();
+                    element.style.left = `${stateDiff.left - rect.width}px`;
+                }
+            }
+        });
+
+        this.radarButtonRef = REF.createRef({
+            state: {
+                show: false,
+                top: 0,
+                left: 0,
+                loading: false,
+            },
+            onStateUpdate: (element, stateDiff) => {
+                if ('show' in stateDiff) {
+                    if (stateDiff.show)
+                        element.style.display = 'block';
+                    else
+                        element.style.display = 'none';
+                }
+                if ('top' in stateDiff)
+                    element.style.top = `${stateDiff.top}px`;
+                if ('left' in stateDiff) {
+                    const rect = element.getBoundingClientRect();
+                    element.style.left = `${stateDiff.left - rect.width}px`;
+                }
+            }
+        });
 
         const colorMap = Expectations.colorMap();
         this.updates = [];
@@ -736,6 +895,12 @@ class TimelineFromEndpoint {
                         onDotClick: onDotClickFactory(config),
                         onDotEnter: onDotEnterFactory(config),
                         onDotLeave: onDotLeave,
+                        onDotsSelected: dots => {
+                            if (dots.length)
+                                this.selectedDots.set(config, dots);
+                            else
+                                this.selectedDots.delete(config);
+                        },
                         exporter: exporterFactory(resultsForConfig),
                     }));
 
@@ -752,6 +917,12 @@ class TimelineFromEndpoint {
                                     onDotClick: onDotClickFactory(sdkConfig),
                                     onDotEnter: onDotEnterFactory(sdkConfig),
                                     onDotLeave: onDotLeave,
+                                    onDotsSelected: dots => {
+                                        if (dots.length)
+                                            this.selectedDots.set(sdkConfig, dots);
+                                        else
+                                            this.selectedDots.delete(sdkConfig);
+                                    },
                                     exporter: exporterFactory(resultsByKey[sdkConfig.toKey()]),
                                 })));
                     });
@@ -779,6 +950,12 @@ class TimelineFromEndpoint {
                         onDotClick: onDotClickFactory(configuration),
                         onDotEnter: onDotEnterFactory(configuration),
                         onDotLeave: onDotLeave,
+                        onDotsSelected: dots => {
+                            if (dots.length)
+                                this.selectedDots.set(configuration, dots);
+                            else
+                                this.selectedDots.delete(configuration);
+                        },
                         exporter: exporterFactory(allResults),
                     })),
                 {expanded: this.configurations.length <= 1},
@@ -816,7 +993,20 @@ class TimelineFromEndpoint {
             };
             self.notifyRerender = notifyRerender;
         }));
-        return Timeline.CanvasContainer(composer, ...children);
+        return Timeline.CanvasContainer({
+            customizedLayer: `<div class="row" style="position:absolute" ref="${this.selectedDotsButtonGroupRef}"></div>`,
+            onSelecting: (e) => {
+                this.selectedDotsButtonGroupRef.setState({show: false});
+            },
+            onSelect: (dots, selectedDotRect, seriesRect, e) => {
+                // this api will called with selected dots for each series once, and compose the selectedDotRect during the call
+                this.selectedDotsButtonGroupRef.setState({show: true, top: selectedDotRect.bottom, left: selectedDotRect.right});
+            },
+            onSelectionScroll: (dots, selectedDotRect) => {
+                // this api will called with selected dots for each series once, and compose the selectedDotRect during the call
+                this.selectedDotsButtonGroupRef.setState({top: selectedDotRect.bottom, left: selectedDotRect.right});
+            },
+        }, composer, ...children);
     }
 }
 
@@ -936,3 +1126,4 @@ function Legend(callback=null, plural=false, defaultWillFilterExpected=false) {
 }
 
 export {Legend, TimelineFromEndpoint, Expectations};
+

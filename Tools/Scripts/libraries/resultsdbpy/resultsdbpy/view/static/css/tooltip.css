@@ -23,31 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-.tooltip {
+ .tooltip {
     z-index: var(--topZIndex);
     position: absolute;
-    opacity: 80%;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 15px;
-    -webkit-background-clip: padding-box;
-    background-clip: padding-box;
+    width: var(--largeSize);
+    height: var(--largeSize);
+    transform-origin: center center;
+    -webkit-backdrop-filter: blur(10px) brightness(88%);
+    backdrop-filter: blur(10px) brightness(88%);
+    color: var(--inverseColor);
 }
 
 .tooltip.arrow-up {
-     border-color: transparent transparent #cccd transparent;
+    transform: rotate(225deg);
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 
 .tooltip.arrow-down {
-    border-color: #cccd transparent transparent transparent;
+    transform: rotate(45deg);
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 
 .tooltip.arrow-left {
-    border-color: transparent transparent transparent #cccd;
+    transform: rotate(45deg);
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
 }
 .tooltip.arrow-right {
-     border-color: transparent #cccd transparent  transparent;
+    transform: rotate(225deg);
+    clip-path: polygon(0 0, 0 100%, 100% 100%);
 }
 
 .tooltip-content {

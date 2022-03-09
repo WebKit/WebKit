@@ -52,6 +52,9 @@ class Expectations:
 
     CRASH, TIMEOUT, IMAGE, AUDIO, TEXT, FAIL, ERROR, WARNING, PASS = STATE_ID_TO_STRING.values()
 
+    FAILURE_TYPES = [WARNING, ERROR, TIMEOUT, CRASH]
+    STATS_FAILURE_TYPES = ['warning', 'failed', 'timedout', 'crashed']
+
     @classmethod
     def string_to_state_ids(cls, string):
         result = set([elm for elm in [cls.STRING_TO_STATE_ID.get(str) for str in string.split(' ')] if elm is not None])
@@ -80,6 +83,55 @@ class Expectations:
 
         for key, value in results.items():
             recurse(key, value)
+
+    @classmethod
+    def get_test_result_status(cls, test_result_json, will_filter_expected=False):
+        failure_type = None
+        failure_number = None
+        if test_result_json.get('stats', None):
+            if test_result_json.get('start_time', None):
+                failure_number = test_result_json['stats']['tests{}failed'.format('_unexpected_' if will_filter_expected else '_')]
+            else:
+                failure_number = test_result_json['stats']['worst_tests{}failed'.format('_unexpected_' if will_filter_expected else '_')]
+            if 'worst_tests_run' in test_result_json and test_result_json['stats']['worst_tests_run'] <= 1:
+                failure_number = None
+
+            for type in Expectations.STATS_FAILURE_TYPES:
+                if test_result_json['stats'].get('tests{}{}'.format('_unexpected_' if will_filter_expected else '_', type.lower()), 0) > 0:
+                    failure_type = type
+        else:
+            resultId = Expectations.string_to_state_ids(test_result_json['actual'])
+            if will_filter_expected:
+                resultId = Expectations.string_to_state_ids(cls.unexpected_results(test_result_json['actual'], test_result_json['expected']))
+            for type in Expectations.FAILURE_TYPES:
+                if Expectations.string_to_state_ids(type) >= resultId:
+                    failure_type = type
+        return failure_type, failure_number
+
+    @classmethod
+    def unexpected_results(cls, results, expectations):
+        """
+        This function is a python translation for expectations.js Expectation.unexpectedResults
+        """
+        r = results.split('.')
+        for expectation in expectations.split(' '):
+            try:
+                i = r.index(expectation)
+                r = r[:i] + r[i + 1:]
+            except ValueError:
+                pass
+            if expectation == cls.FAIL:
+                for expectation in [cls.TEXT, cls.AUDIO, cls.IMAGE]:
+                    try:
+                        i = r.index(expectation)
+                        r = r[:i] + r[i + 1:]
+                    except ValueError:
+                        pass
+        result = cls.PASS
+        for candidate in r:
+            if Expectations.string_to_state_ids(candidate) < Expectations.string_to_state_ids(result):
+                result = candidate
+        return result
 
 
 class TestContext(UploadCallbackContext):
