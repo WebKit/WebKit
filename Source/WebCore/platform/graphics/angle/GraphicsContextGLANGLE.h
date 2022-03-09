@@ -358,12 +358,6 @@ public:
     std::optional<PixelBuffer> readRenderingResultsForPainting();
     std::optional<PixelBuffer> readCompositedResultsForPainting();
 
-    constexpr static GCGLNativeDisplayType defaultDisplay = gcGLDefaultDisplay;
-#if PLATFORM(COCOA)
-    constexpr static GCGLNativeDisplayType defaultOpenGLDisplay = static_cast<GCGLNativeDisplayType>(-1);
-    static_assert(defaultDisplay != defaultOpenGLDisplay);
-#endif
-
 protected:
     GraphicsContextGLANGLE(GraphicsContextGLAttributes);
 

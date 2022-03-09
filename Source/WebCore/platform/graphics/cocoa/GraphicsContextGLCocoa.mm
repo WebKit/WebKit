@@ -140,7 +140,6 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     }
 
     LOG(WebGL, "Attempting to use ANGLE's %s backend.", attrs.useMetal ? "Metal" : "OpenGL");
-    EGLNativeDisplayType nativeDisplay = GraphicsContextGLANGLE::defaultDisplay;
     if (attrs.useMetal) {
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
@@ -154,11 +153,10 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
             displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
             displayAttributes.append(EGL_HIGH_POWER_ANGLE);
         }
-    } else
-        nativeDisplay = GraphicsContextGLANGLE::defaultOpenGLDisplay;
+    }
 
     displayAttributes.append(EGL_NONE);
-    display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(nativeDisplay), displayAttributes.data());
+    display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(EGL_DEFAULT_DISPLAY), displayAttributes.data());
 
     if (EGL_Initialize(display, &majorVersion, &minorVersion) == EGL_FALSE) {
         LOG(WebGL, "EGLDisplay Initialization failed.");
@@ -422,7 +420,7 @@ bool GraphicsContextGLCocoa::platformInitialize()
     if (!attributes.useMetal && attributes.effectivePowerPreference() == GraphicsContextGLPowerPreference::HighPerformance)
         m_switchesGPUOnDisplayReconfiguration = true;
 #endif
-    return true;
+    return GraphicsContextGLANGLE::platformInitialize();
 }
 
 GraphicsContextGLANGLE::~GraphicsContextGLANGLE()

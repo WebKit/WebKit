@@ -233,7 +233,7 @@ bool GraphicsContextGLTextureMapper::platformInitialize()
     }
 
     GL_ClearColor(0, 0, 0, 0);
-    return true;
+    return GraphicsContextGLANGLE::platformInitialize();
 }
 
 #if USE(NICOSIA)

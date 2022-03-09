@@ -67,10 +67,6 @@ using GCGLContext = void*;
 typedef unsigned GLuint;
 #endif
 
-using GCGLNativeDisplayType = int;
-
-inline constexpr GCGLNativeDisplayType gcGLDefaultDisplay = 0;
-
 inline constexpr size_t gcGLSpanDynamicExtent = std::numeric_limits<size_t>::max();
 
 template<typename T, size_t Extent = gcGLSpanDynamicExtent>

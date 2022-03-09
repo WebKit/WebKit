@@ -1,3 +1,25 @@
+2022-03-09  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        GraphicsContextGLCocoa manages EGL native displays manually
+        https://bugs.webkit.org/show_bug.cgi?id=237313
+
+        Reviewed by Kenneth Russell.
+
+        ANGLE now keys the Metal EGL_DEFAULT_DISPLAY on the EGL_PLATFORM_ANGLE_TYPE_ANGLE.
+        This means that we do not need to use the default a native display for Metal and an
+        invented native display for OpenGL.
+
+        * platform/graphics/GraphicsTypesGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::platformInitialize):
+        (WebCore::GraphicsContextGLANGLE::releaseThreadResources):
+        * platform/graphics/angle/GraphicsContextGLANGLE.h:
+        * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+        (WebCore::initializeEGLDisplay):
+        (WebCore::GraphicsContextGLCocoa::platformInitialize):
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLTextureMapper::platformInitialize):
+
 2022-03-09  Youenn Fablet  <youenn@apple.com>
 
         Scope capture sources by page identifiers
