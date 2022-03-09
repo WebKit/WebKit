@@ -1,3 +1,14 @@
+2022-03-08  Robin Morisset  <rmorisset@apple.com>
+
+        [WTF] LikelyDenseUnsignedIntegerSet::add can cause a reindexing of the entire bit vector with every call in the worst case
+        https://bugs.webkit.org/show_bug.cgi?id=236997
+
+        Reviewed by Saam Barati.
+
+        Just make it a little bit easier to change the number of stack slots in testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister.
+
+        * b3/air/testair.cpp:
+
 2022-03-08   Robin Morisset  <rmorisset@apple.com>
 
         Enable tier-up in loops created by recursive tail call optimizations.

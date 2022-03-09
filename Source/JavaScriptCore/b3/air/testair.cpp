@@ -2371,7 +2371,8 @@ void testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister()
     BasicBlock* root = code.addBlock();
 
     Vector<StackSlot*> slots;
-    for (unsigned i = 0; i < 10000; ++i)
+    unsigned numberOfSlots = 10000;
+    for (unsigned i = 0; i < numberOfSlots; ++i)
         slots.append(code.addStackSlot(8, StackSlotKind::Spill));
 
     for (auto* slot : slots)
@@ -2388,7 +2389,7 @@ void testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister()
     root->append(Ret64, nullptr, Tmp(GPRInfo::returnValueGPR));
 
     int32_t result = compileAndRun<int>(proc, 1);
-    CHECK(result == 10000);
+    CHECK(result == static_cast<int32_t>(numberOfSlots));
 }
 
 #define PREFIX "O", Options::defaultB3OptLevel(), ": "

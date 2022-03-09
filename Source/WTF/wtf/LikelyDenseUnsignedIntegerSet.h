@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2021, 2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,8 +39,10 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LikelyDenseUnsignedIntegerSet);
 
 // This is effectively a std::variant<HashSet, Pair<BitVector, IndexType>>
 // If it is in BitVector mode, it keeps track of the minimum value in the set, and has the bitVector shifted by the same amount.
-// So for example {4000, 4002, 4003} would be represented as the bitVector 1101 with a m_min of 4000.
+// So for example {64000, 64002, 64003} would be represented as the bitVector 1101 with a m_min of 64000.
 // It shifts between the two modes whenever that would at least halve its memory usage. So it will never use more than twice the optimal amount of memory, and yet should not ping-pong between the two modes too often.
+// As an optimization, instead of keeping track of the minimum value, it keeps track of the minimum value rounded down to the next multiple of 64.
+// This reduces repeated re-indexings of the bitvector when repeatedly adding a value just below the current minimum.
 template<typename IndexType>
 class LikelyDenseUnsignedIntegerSet {
     WTF_MAKE_FAST_ALLOCATED;
@@ -111,18 +113,25 @@ public:
 
         if (!m_size) {
             ASSERT(isBitVector());
-            m_min = value;
+            m_min = value & ~63;
             m_max = value;
             m_size = 1;
-            m_inline.bitVector.quickSet(0);
+            // not quickSet, as value - m_min might be 63, and the inline bit vector cannot store that value.
+            // So there might be some overflow here, forcing an allocation of an outline bit vector.
+            m_inline.bitVector.set(value - m_min);
             return { true };
         }
+
+        auto computeNewMin = [&]() {
+            IndexType roundedDownValue = value & ~63;
+            return std::min(m_min, roundedDownValue);
+        };
 
         if (!isBitVector()) {
             bool isNewEntry = m_inline.hashSet.add(value).isNewEntry;
             if (!isNewEntry)
                 return { false };
-            m_min = std::min(m_min, value);
+            m_min = computeNewMin();
             m_max = std::max(m_max, value);
             unsigned hashSetSize = m_inline.hashSet.capacity() * sizeof(IndexType);
             unsigned wouldBeBitVectorSize = (m_max - m_min) / 8;
@@ -140,7 +149,7 @@ public:
         // We are in BitVector mode, and value is not in the bounds: we will definitely insert it as a new entry.
         ++m_size;
 
-        IndexType newMin = std::min(m_min, value);
+        IndexType newMin = computeNewMin();
         IndexType newMax = std::max(m_max, value);
         unsigned bitVectorSize = (newMax - newMin) / 8;
         unsigned wouldBeHashSetSize = estimateHashSetSize(m_size);
@@ -153,23 +162,15 @@ public:
             return { true };
         }
 
-        if (m_min <= value) {
-            bool isNewEntry = !m_inline.bitVector.set(value - m_min);
-            ASSERT_UNUSED(isNewEntry, isNewEntry);
-            ASSERT(newMax == value);
-            m_max = value;
-            return { true };
+        if (value < m_min) {
+            ASSERT(newMin < m_min);
+            m_inline.bitVector.shiftRightByMultipleOf64(m_min - newMin);
+            m_min = newMin;
         }
 
-        BitVector newBitVector;
-        newBitVector.resize(m_max - value + 1);
-        IndexType shiftReduction = m_min - value;
-        for (IndexType oldIndex : m_inline.bitVector)
-            newBitVector.quickSet(oldIndex + shiftReduction);
-        newBitVector.quickSet(0);
-        m_inline.bitVector = WTFMove(newBitVector);
-        ASSERT(newMin == value);
-        m_min = value;
+        bool isNewEntry = !m_inline.bitVector.set(value - m_min);
+        ASSERT_UNUSED(isNewEntry, isNewEntry);
+        m_max = newMax;
         return { true };
     }
 
@@ -265,7 +266,9 @@ public:
             }
         }
         if (m_size) {
-            RELEASE_ASSERT(m_min == min);
+            RELEASE_ASSERT(m_min <= min);
+            RELEASE_ASSERT(m_min + 64 > min);
+            RELEASE_ASSERT(!(m_min & 63));
             RELEASE_ASSERT(m_max == max);
         }
     }
@@ -312,7 +315,6 @@ private:
             newBitVector.quickSet(oldValue - m_min);
             ++m_size;
         }
-        ASSERT(newBitVector.quickGet(0));
         m_inline.hashSet.~Set();
         new (NotNull, &m_inline.bitVector) BitVector(WTFMove(newBitVector));
 

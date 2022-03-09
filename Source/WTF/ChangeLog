@@ -1,3 +1,38 @@
+2022-03-08  Robin Morisset  <rmorisset@apple.com>
+
+        [WTF] LikelyDenseUnsignedIntegerSet::add can cause a reindexing of the entire bit vector with every call in the worst case
+        https://bugs.webkit.org/show_bug.cgi?id=236997
+
+        Reviewed by Saam Barati.
+
+        This problem was found while investigating https://bugs.webkit.org/show_bug.cgi?id=236269.
+
+        LikelyDenseUnsignedIntegerSet has two forms: either as a HashSet (if sparse) or as a BitVector representing numbers above some value m_min (if sufficiently dense).
+        This is a massive memory win in most situations (>4x in practice for register allocation in JS2, >20x on some pathological webpages).
+        But it means that when adding a value below m_min to a set in BitVector shape, we have to rebuild the whole set, which takes a time proportional to the time of the set.
+        So if building a set by repeatedly adding decreasing values (like in https://bugs.webkit.org/show_bug.cgi?id=236269 where we add 10000, then 9999, then 9998, etc..), we have some awful performance.
+
+        In this patch I improve this situation in two ways:
+        - First I always round down m_min to the next multiple of 64. This means that when adding contiguous values like above we only re-index once every 64 adds.
+        - It then allows me to do the reindexing by simple memcpy instead of costly iteration of all the set bits, since they are now always at the same offset within the words of the BitVector.
+
+        On an M1 MBP, on testair:: testZDefOfSpillSlotWithOffsetNeedingToBeMaterializedInARegister, with n=5000, in release mode, measuring just the time spent building the interference graph:
+        Before this patch: 107 s
+        After this patch: 77 ms (note the different unit, it is not a typo!)
+
+        Unfortunately, it does not seem to significantly improve the time spent in LikelyDenseUnsignedIntgerSet::add in JetStream2,
+        probably because the pattern of always adding a value just before the minimum is quite pathological/rare.
+        I still think it is worth landing, as we don't know what code out there may hit this performance problem.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::shiftRightByMultipleOf64):
+        (WTF::BitVector::resizeOutOfLine):
+        * wtf/BitVector.h:
+        * wtf/LikelyDenseUnsignedIntegerSet.h:
+        (WTF::LikelyDenseUnsignedIntegerSet::add):
+        (WTF::LikelyDenseUnsignedIntegerSet::validate const):
+        (WTF::LikelyDenseUnsignedIntegerSet::transitionToBitVector):
+
 2022-03-08  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows debug build
