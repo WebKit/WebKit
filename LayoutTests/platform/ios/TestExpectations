@@ -3411,6 +3411,10 @@ fast/text/design-system-ui-14.html [ Pass ]
 fast/text/design-system-ui-15.html [ Pass ]
 fast/text/design-system-ui-16.html [ Pass ]
 
+# webkit.org/b/237603 
+imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Pass Failure ]
+imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub.html [ Pass Failure ]
+
 webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Pass ]
 
 # WPT css/css-pseudo import (webkit.org/b/235197)
