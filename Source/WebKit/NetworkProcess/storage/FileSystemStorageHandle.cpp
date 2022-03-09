@@ -91,9 +91,13 @@ bool FileSystemStorageHandle::isSameEntry(WebCore::FileSystemHandleIdentifier id
     return m_path == path;
 }
 
-static bool isValidFileName(const String& name)
+static bool isValidFileName(const String& directory, const String& name)
 {
-    return !name.isEmpty() && name != "." && name != ".." && !name.contains(pathSeparator);
+    // https://wicg.github.io/file-system-access/#valid-file-name
+    if (name.isEmpty() || (name == ".") || (name == "..") || name.contains(pathSeparator))
+        return false;
+
+    return FileSystem::pathFileName(FileSystem::pathByAppendingComponent(directory, name)) == name;
 }
 
 Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystemStorageHandle::requestCreateHandle(IPC::Connection::UniqueID connection, Type type, String&& name, bool createIfNecessary)
@@ -104,8 +108,7 @@ Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> FileSystem
     if (!m_manager)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
-    // https://wicg.github.io/file-system-access/#valid-file-name
-    if (!isValidFileName(name))
+    if (!isValidFileName(m_path, name))
         return makeUnexpected(FileSystemStorageError::InvalidName);
 
     auto path = FileSystem::pathByAppendingComponent(m_path, name);
@@ -127,7 +130,7 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::removeEntry(const
     if (m_type != Type::Directory)
         return FileSystemStorageError::TypeMismatch;
 
-    if (!isValidFileName(name))
+    if (!isValidFileName(m_path, name))
         return FileSystemStorageError::InvalidName;
 
     auto path = FileSystem::pathByAppendingComponent(m_path, name);
@@ -248,7 +251,7 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::move(WebCore::Fil
     if (path.isEmpty())
         return FileSystemStorageError::Unknown;
 
-    if (!isValidFileName(newName))
+    if (!isValidFileName(path, newName))
         return FileSystemStorageError::InvalidName;
 
     auto destinationPath = FileSystem::pathByAppendingComponent(path, newName);

@@ -1,3 +1,21 @@
+2022-03-09  Sihui Liu  <sihui_liu@apple.com>
+
+        File System Access: disallows names that are not permitted by underlying file system
+        https://bugs.webkit.org/show_bug.cgi?id=237635
+        rdar://89291566
+
+        We use FileSystem::fileSystemRepresentation to convert input name to a name that is permitted in current file 
+        system. This patch makes File System Access API to throw error if the input name does not match the converted 
+        name. 
+
+        Reviewed by Youenn Fablet.
+
+        * NetworkProcess/storage/FileSystemStorageHandle.cpp:
+        (WebKit::isValidFileName):
+        (WebKit::FileSystemStorageHandle::requestCreateHandle):
+        (WebKit::FileSystemStorageHandle::removeEntry):
+        (WebKit::FileSystemStorageHandle::move):
+
 2022-03-09  Jon Lee  <jonlee@apple.com>
 
         Update feature flags for WebGL
