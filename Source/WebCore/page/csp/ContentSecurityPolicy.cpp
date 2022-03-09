@@ -617,7 +617,7 @@ bool ContentSecurityPolicy::allowWorkerFromSource(const URL& url, RedirectRespon
     TextPosition sourcePosition(OrdinalNumber::beforeFirst(), OrdinalNumber());
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
         auto consoleMessage = consoleMessageForViolation(ContentSecurityPolicyDirectiveNames::workerSrc, violatedDirective, blockedURL, "Refused to load");
-        reportViolation(violatedDirective, blockedURL.string(), consoleMessage, sourceURL, StringView(), sourcePosition);
+        reportViolation(ContentSecurityPolicyDirectiveNames::workerSrc, violatedDirective, blockedURL.string(), consoleMessage, sourceURL, StringView(), sourcePosition);
     };
 
     return allPoliciesAllow(WTFMove(handleViolatedDirective), &ContentSecurityPolicyDirectiveList::violatedDirectiveForWorker, url, redirectResponseReceived == RedirectResponseReceived::Yes);
