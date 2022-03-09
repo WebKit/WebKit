@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,12 +24,13 @@
  */
 
 #import "config.h"
-#import "TextRecognitionUtilities.h"
+#import "ImageAnalysisUtilities.h"
 
 #if ENABLE(IMAGE_ANALYSIS)
 
 #import "CocoaImage.h"
 #import "Logging.h"
+#import "TransactionID.h"
 #import <WebCore/TextRecognitionResult.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/WorkQueue.h>
@@ -136,7 +137,7 @@ TextRecognitionResult makeTextRecognitionResult(CocoaImageAnalysis *analysis)
 }
 
 #if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/TextRecognitionUtilitiesAdditions.mm>
+#include <WebKitAdditions/ImageAnalysisUtilitiesAdditions.mm>
 #else
 
 bool textRecognitionEnhancementsSystemFeatureEnabled()

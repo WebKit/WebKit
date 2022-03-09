@@ -2044,7 +2044,7 @@
 		F42D634122A0EFDF00D2FB3A /* WebAutocorrectionData.h in Headers */ = {isa = PBXBuildFile; fileRef = F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */; };
 		F430E9422247335F005FE053 /* WebsiteMetaViewportPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */; };
 		F430E94422473DFF005FE053 /* WebContentMode.h in Headers */ = {isa = PBXBuildFile; fileRef = F430E94322473DB8005FE053 /* WebContentMode.h */; };
-		F4351B9E25EEC84C00D63892 /* TextRecognitionUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F4351B9D25EEC84C00D63892 /* TextRecognitionUtilities.h */; };
+		F4351B9E25EEC84C00D63892 /* ImageAnalysisUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F4351B9D25EEC84C00D63892 /* ImageAnalysisUtilities.h */; };
 		F438CD1C2241421400DE6DDA /* WKWebpagePreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F438CD1F22414D4000DE6DDA /* WKWebpagePreferencesInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */; };
 		F438CD212241F69500DE6DDA /* WKWebpagePreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F438CD202241F69500DE6DDA /* WKWebpagePreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6590,8 +6590,8 @@
 		F42D634022A0EFD300D2FB3A /* WebAutocorrectionData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebAutocorrectionData.mm; path = ios/WebAutocorrectionData.mm; sourceTree = "<group>"; };
 		F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsiteMetaViewportPolicy.h; sourceTree = "<group>"; };
 		F430E94322473DB8005FE053 /* WebContentMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebContentMode.h; sourceTree = "<group>"; };
-		F4351B9D25EEC84C00D63892 /* TextRecognitionUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextRecognitionUtilities.h; sourceTree = "<group>"; };
-		F4351B9F25EEC87800D63892 /* TextRecognitionUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextRecognitionUtilities.mm; sourceTree = "<group>"; };
+		F4351B9D25EEC84C00D63892 /* ImageAnalysisUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageAnalysisUtilities.h; sourceTree = "<group>"; };
+		F4351B9F25EEC87800D63892 /* ImageAnalysisUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageAnalysisUtilities.mm; sourceTree = "<group>"; };
 		F438CD1B224140A600DE6DDA /* WKWebpagePreferences.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebpagePreferences.h; sourceTree = "<group>"; };
 		F438CD1D22414AD600DE6DDA /* WKWebpagePreferences.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebpagePreferences.mm; sourceTree = "<group>"; };
 		F438CD1E22414D4000DE6DDA /* WKWebpagePreferencesInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebpagePreferencesInternal.h; sourceTree = "<group>"; };
@@ -9438,6 +9438,8 @@
 			children = (
 				4482734624528F6000A95493 /* CocoaImage.h */,
 				F4E47BB527B5AE5B00813B38 /* CocoaImage.mm */,
+				F4351B9D25EEC84C00D63892 /* ImageAnalysisUtilities.h */,
+				F4351B9F25EEC87800D63892 /* ImageAnalysisUtilities.mm */,
 				BCE0937614FB128B001138D9 /* LayerHostingContext.h */,
 				BCE0937514FB128B001138D9 /* LayerHostingContext.mm */,
 				A1798B3D222D97A2000764BD /* PaymentAuthorizationPresenter.h */,
@@ -9445,8 +9447,6 @@
 				A1798B3F222D98B6000764BD /* PaymentAuthorizationViewController.h */,
 				A1798B40222D98B6000764BD /* PaymentAuthorizationViewController.mm */,
 				4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */,
-				F4351B9D25EEC84C00D63892 /* TextRecognitionUtilities.h */,
-				F4351B9F25EEC87800D63892 /* TextRecognitionUtilities.mm */,
 				A181A79721ACAC610059A316 /* WebKitAdditions.mm */,
 				A1FB68221F6E518200C43F9F /* WKCrashReporter.h */,
 				A1FB68231F6E518200C43F9F /* WKCrashReporter.mm */,
@@ -13255,6 +13255,7 @@
 				93B631E827ABA65D00443A44 /* IDBStorageManager.h in Headers */,
 				93B631ED27ABA6B400443A44 /* IDBStorageRegistry.h in Headers */,
 				51E351CB180F2CCC00E53BE9 /* IDBUtilities.h in Headers */,
+				F4351B9E25EEC84C00D63892 /* ImageAnalysisUtilities.h in Headers */,
 				BCCF6B2512C93E7A008F9C35 /* ImageOptions.h in Headers */,
 				1A1EC69E1872092100B951F0 /* ImportanceAssertion.h in Headers */,
 				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,
@@ -13621,7 +13622,6 @@
 				53CFBBC82224D1B500266546 /* TextCheckerCompletion.h in Headers */,
 				1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */,
 				CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */,
-				F4351B9E25EEC84C00D63892 /* TextRecognitionUtilities.h in Headers */,
 				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
 				F48570A32644BEC500C05F71 /* Timeout.h in Headers */,

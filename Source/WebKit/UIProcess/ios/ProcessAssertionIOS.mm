@@ -280,7 +280,7 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 
 - (void)assertion:(RBSAssertion *)assertion didInvalidateWithError:(NSError *)error
 {
-    RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertion was invalidated, error: %{public}@", error, self);
+    RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertion was invalidated, error: %{public}@", self, error);
 
     RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
         auto strongSelf = weakSelf.get();

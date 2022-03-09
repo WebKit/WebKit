@@ -1,3 +1,41 @@
+2022-03-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename TextRecognitionUtilities.* to ImageAnalysisUtilities.*
+        https://bugs.webkit.org/show_bug.cgi?id=237613
+        rdar://89982051
+
+        Reviewed by Tim Horton and Kate Cheney.
+
+        Rename TextRecognitionUtilities.h and TextRecognitionUtilities.mm to ImageAnalysisUtilities.h and
+        ImageAnalysisUtilities.mm, respectively. This is because this file now contains helper functions that are not
+        specific to just the text recognition aspect of visual intelligence features on Cocoa, but rather encompass a
+        variety of image analysis helpers.
+
+        * Platform/cocoa/ImageAnalysisUtilities.h: Renamed from Source/WebKit/Platform/cocoa/TextRecognitionUtilities.h.
+        * Platform/cocoa/ImageAnalysisUtilities.mm: Renamed from Source/WebKit/Platform/cocoa/TextRecognitionUtilities.mm.
+        (WebKit::createImageAnalyzer):
+        (WebKit::createImageAnalyzerRequest):
+        (WebKit::floatQuad):
+        (WebKit::floatQuads):
+        (WebKit::makeTextRecognitionResult):
+        (WebKit::textRecognitionEnhancementsSystemFeatureEnabled):
+        (WebKit::imageAnalysisQueueSystemFeatureEnabled):
+        (WebKit::isImageAnalysisMarkupSystemFeatureEnabled):
+        (WebKit::isLiveTextAvailableAndEnabled):
+        * Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKRBSAssertionDelegate assertion:didInvalidateWithError:]):
+
+        Drive-by fix: additionally tweak a couple of release logging arguments that are currently in reverse order.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-08  Alex Christensen  <achristensen@webkit.org>
 
         Enable CFPrefs direct mode in adattributiond

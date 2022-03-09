@@ -29,7 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
-#import "TextRecognitionUtilities.h"
+#import "ImageAnalysisUtilities.h"
 #import "UIKitSPI.h"
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"

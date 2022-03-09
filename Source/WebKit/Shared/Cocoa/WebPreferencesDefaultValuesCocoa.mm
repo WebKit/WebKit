@@ -28,7 +28,7 @@
 
 #if PLATFORM(COCOA)
 
-#import "TextRecognitionUtilities.h"
+#import "ImageAnalysisUtilities.h"
 #import <Foundation/NSBundle.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <wtf/RetainPtr.h>

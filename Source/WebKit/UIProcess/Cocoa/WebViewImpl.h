@@ -27,9 +27,9 @@
 
 #if PLATFORM(MAC)
 
+#include "ImageAnalysisUtilities.h"
 #include "PDFPluginIdentifier.h"
 #include "ShareableBitmap.h"
-#include "TextRecognitionUtilities.h"
 #include "WKLayoutMode.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
