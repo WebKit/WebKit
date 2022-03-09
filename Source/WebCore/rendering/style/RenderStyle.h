@@ -1434,6 +1434,8 @@ public:
     void setClipRule(WindRule clipRule) { accessSVGStyle().setClipRule(clipRule); }
     ColorInterpolation colorInterpolation() const { return svgStyle().colorInterpolation(); }
     void setColorInterpolation(ColorInterpolation colorInterpolation) { accessSVGStyle().setColorInterpolation(colorInterpolation); }
+    ColorInterpolation colorInterpolationFilters() const { return svgStyle().colorInterpolationFilters(); }
+    void setColorInterpolationFilters(ColorInterpolation colorInterpolationFilters) { accessSVGStyle().setColorInterpolationFilters(colorInterpolationFilters); }
 
     SVGPaintType fillPaintType() const { return svgStyle().fillPaintType(); }
     Color fillPaintColor() const { return svgStyle().fillPaintColor(); }

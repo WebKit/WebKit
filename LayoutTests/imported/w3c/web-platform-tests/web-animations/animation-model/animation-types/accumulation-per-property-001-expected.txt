@@ -139,6 +139,9 @@ PASS color supports animating as color of hsla()
 PASS color-interpolation (type: discrete) has testAccumulation function
 PASS color-interpolation: "auto" onto "linearrgb"
 PASS color-interpolation: "linearrgb" onto "auto"
+PASS color-interpolation-filters (type: discrete) has testAccumulation function
+PASS color-interpolation-filters: "linearrgb" onto "srgb"
+PASS color-interpolation-filters: "srgb" onto "linearrgb"
 PASS column-count (type: positiveInteger) has testAccumulation function
 PASS column-count: positive integer
 PASS column-count (type: discrete) has testAccumulation function

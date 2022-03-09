@@ -1,3 +1,16 @@
+2022-03-09  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] color-interpolation-filters should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237637
+
+        Reviewed by Antti Koivisto.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::colorInterpolationFilters const):
+        (WebCore::RenderStyle::setColorInterpolationFilters):
+
 2022-03-08  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] clip-rule should support discrete animations
