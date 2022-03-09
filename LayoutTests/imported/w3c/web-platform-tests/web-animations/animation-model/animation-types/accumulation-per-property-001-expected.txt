@@ -221,6 +221,9 @@ PASS font-style: "italic" onto "oblique"
 PASS float (type: discrete) has testAccumulation function
 PASS float: "right" onto "left"
 PASS float: "left" onto "right"
+PASS font-feature-settings (type: discrete) has testAccumulation function
+PASS font-feature-settings: "normal" onto ""liga" 5"
+PASS font-feature-settings: ""liga" 5" onto "normal"
 PASS font-kerning (type: discrete) has testAccumulation function
 PASS font-kerning: "normal" onto "auto"
 PASS font-kerning: "auto" onto "normal"

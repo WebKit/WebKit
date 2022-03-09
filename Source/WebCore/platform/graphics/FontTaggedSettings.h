@@ -219,6 +219,7 @@ using FontFeature = FontTaggedSetting<int>;
 using FontFeatureSettings = FontTaggedSettings<int>;
 using FontVariationSettings = FontTaggedSettings<float>;
 
+TextStream& operator<<(TextStream&, const FontTaggedSettings<int>&);
 TextStream& operator<<(TextStream&, const FontTaggedSettings<float>&);
 
 }

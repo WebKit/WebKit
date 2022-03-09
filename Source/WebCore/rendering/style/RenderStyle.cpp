@@ -2034,6 +2034,16 @@ void RenderStyle::setFontKerning(Kerning kerning)
     fontCascade().update(currentFontSelector);
 }
 
+void RenderStyle::setFontFeatureSettings(FontFeatureSettings settings)
+{
+    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setFeatureSettings(WTFMove(settings));
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(currentFontSelector);
+}
+
 LayoutBoxExtent RenderStyle::shadowExtent(const ShadowData* shadow)
 {
     LayoutUnit top;
