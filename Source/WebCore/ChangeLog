@@ -1,3 +1,15 @@
+2022-03-09  Antoine Quint  <graouts@webkit.org>
+
+        [css-lists] css/css-lists/inherit-overwrites.html and css/css-lists/li-counter-increment-computed-style.html are unique failures
+        https://bugs.webkit.org/show_bug.cgi?id=237642
+
+        Reviewed by Antti Koivisto.
+
+        A std::nullopt means the property isn't set, not that it shoudl be 0.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::counterToCSSValue):
+
 2022-03-09  Simon Fraser  <simon.fraser@apple.com>
 
         Move RemoteLayerBackingStore::Buffer.isVolatile into ImageBufferBackend

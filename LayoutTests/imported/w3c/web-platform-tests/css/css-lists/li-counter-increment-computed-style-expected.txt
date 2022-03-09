@@ -5,5 +5,5 @@ Explicit list-item counter.
 Explicit and redundant list-item counter.
 Other counter.
 
-FAIL list-item counter-increment shouldn't be visible from computed style assert_equals: Inherited expected "none" but got ""
+PASS list-item counter-increment shouldn't be visible from computed style
 

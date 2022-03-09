@@ -1,3 +1,14 @@
+2022-03-09  Antoine Quint  <graouts@webkit.org>
+
+        [css-lists] css/css-lists/inherit-overwrites.html and css/css-lists/li-counter-increment-computed-style.html are unique failures
+        https://bugs.webkit.org/show_bug.cgi?id=237642
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-lists/inherit-overwrites-expected.txt:
+        * web-platform-tests/css/css-lists/li-counter-increment-computed-style-expected.txt:
+        * web-platform-tests/html/rendering/non-replaced-elements/lists/lists-styles-expected.txt:
+
 2022-03-09  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Remove size() function syntax

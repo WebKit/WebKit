@@ -2079,11 +2079,16 @@ static Ref<CSSValue> counterToCSSValue(const RenderStyle& style, CSSPropertyID p
     auto& cssValuePool = CSSValuePool::singleton();
     auto list = CSSValueList::createSpaceSeparated();
     for (auto& keyValue : *map) {
-        list->append(cssValuePool.createCustomIdent(keyValue.key));
-        int number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue).value_or(0);
-        list->append(cssValuePool.createValue(number, CSSUnitType::CSS_INTEGER));
+        if (auto number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue)) {
+            list->append(cssValuePool.createCustomIdent(keyValue.key));
+            list->append(cssValuePool.createValue(*number, CSSUnitType::CSS_INTEGER));
+        }
     }
-    return list;
+
+    if (list->length())
+        return list;
+
+    return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
 }
 
 static Ref<CSSValueList> fontFamilyListFromStyle(const RenderStyle& style)
