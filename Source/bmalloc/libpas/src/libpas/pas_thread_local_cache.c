@@ -584,25 +584,45 @@ void pas_thread_local_cache_flush_deallocation_log(pas_thread_local_cache* threa
         pas_scavenger_notify_eligibility_if_needed();
 }
 
+typedef struct scavenger_thread_suspend_data {
+    bool did_suspend;
+    bool is_scavenger_itself;
+#if PAS_OS(DARWIN)
+    mach_port_t mach_thread;
+#endif
+} scavenger_thread_suspend_data;
+
+static scavenger_thread_suspend_data scavenger_thread_suspend_data_create()
+{
+    scavenger_thread_suspend_data thread_suspend_data;
+    thread_suspend_data.did_suspend = false;
+    thread_suspend_data.is_scavenger_itself = false;
+    return thread_suspend_data;
+}
+
 #if PAS_OS(DARWIN)
 
-static void suspend(pas_thread_local_cache* cache)
+static void suspend(pas_thread_local_cache* cache, scavenger_thread_suspend_data* thread_suspend_data)
 {
     static const bool verbose = false;
 
     pthread_t thread;
-    mach_port_t mach_thread;
     kern_return_t result;
+
+    if (thread_suspend_data->did_suspend)
+        return;
+    thread_suspend_data->did_suspend = true;
     
     if (verbose)
         printf("Suspending TLC %p with thread %p.\n", cache, cache->thread);
 
     thread = cache->thread;
-    if (thread == pthread_self())
+    thread_suspend_data->is_scavenger_itself = thread == pthread_self();
+    if (thread_suspend_data->is_scavenger_itself)
         return;
 
-    mach_thread = pthread_mach_thread_np(thread);
-    result = thread_suspend(mach_thread);
+    thread_suspend_data->mach_thread = pthread_mach_thread_np(thread);
+    result = thread_suspend(thread_suspend_data->mach_thread);
     
     /* Fun fact: it's impossible for us to try to suspend a thread that has exited, since
        thread exit for any thread with a TLC needs to grab the heap lock and we hold the
@@ -610,20 +630,21 @@ static void suspend(pas_thread_local_cache* cache)
 
     if (result != KERN_SUCCESS) {
         pas_log("[%d] Failed to suspend pthread %p (mach thread %d) associated with TLC %p: %d\n",
-                getpid(), thread, mach_thread, cache, result);
+                getpid(), thread, thread_suspend_data->mach_thread, cache, result);
         dump_thread_diagnostics(thread);
         PAS_ASSERT(result == KERN_SUCCESS);
     }
 }
 
-static void resume(pas_thread_local_cache* cache)
+static void resume(pas_thread_local_cache* cache, scavenger_thread_suspend_data* thread_suspend_data)
 {
     kern_return_t result;
     
-    if (cache->thread == pthread_self())
+    PAS_UNUSED_PARAM(cache);
+    if (thread_suspend_data->is_scavenger_itself)
         return;
 
-    result = thread_resume(pthread_mach_thread_np(cache->thread));
+    result = thread_resume(thread_suspend_data->mach_thread);
     
     PAS_ASSERT(result == KERN_SUCCESS);
 }
@@ -688,14 +709,14 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
         }
 
         if (allocator_action != pas_allocator_scavenge_no_action) {
-            bool did_suspend;
+            scavenger_thread_suspend_data thread_suspend_data;
             pas_thread_local_cache_layout_segment* segment;
             pas_thread_local_cache_layout_node layout_node;
             uintptr_t node_index;
             
-            did_suspend = false;
+            thread_suspend_data = scavenger_thread_suspend_data_create();
 
-            PAS_UNUSED_PARAM(did_suspend);
+            PAS_ASSERT(!thread_suspend_data.did_suspend);
 
             segment = pas_thread_local_cache_layout_first_segment;
             node_index = 0;
@@ -769,10 +790,7 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
                 if (verbose)
                     pas_log("Need to suspend for allocator %p\n", scavenger_data);
                 
-                if (!did_suspend) {
-                    suspend(cache);
-                    did_suspend = true;
-                }
+                suspend(cache, &thread_suspend_data);
                 
                 if (scavenger_data->is_in_use) {
                     result = true;
@@ -788,8 +806,8 @@ bool pas_thread_local_cache_for_all(pas_allocator_scavenge_action allocator_acti
             }
             
 #if PAS_OS(DARWIN)
-            if (did_suspend)
-                resume(cache);
+            if (thread_suspend_data.did_suspend)
+                resume(cache, &thread_suspend_data);
 #endif
         }
         
