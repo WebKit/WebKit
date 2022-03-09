@@ -1467,6 +1467,11 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
     if (UNLIKELY(!Options::optimizeRecursiveTailCalls()))
         return false;
 
+    // This optimisation brings more performance if it only runs in FTL, probably because it interferes with tier-up.
+    // See https://bugs.webkit.org/show_bug.cgi?id=178389 for details.
+    if (!isFTL(m_graph.m_plan.mode()))
+        return false;
+
     auto targetExecutable = callVariant.executable();
     InlineStackEntry* stackEntry = m_inlineStackTop;
     do {
@@ -1488,18 +1493,15 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
             // a good target to jump into.
             if (callFrame->isVarargs())
                 continue;
+            // If an InlineCallFrame is not a closure, it was optimized using a constant callee.
+            // Check if this is the same callee that we are dealing with.
+            if (!callFrame->isClosureCall && callFrame->calleeConstant() != callVariant.function())
+                continue;
         } else {
             // We are in the machine code entry (i.e. the original caller).
             // If we have more arguments than the number of parameters to the function, it is not clear where we could put them on the stack.
             if (static_cast<unsigned>(argumentCountIncludingThis) > m_codeBlock->numParameters())
                 return false;
-        }
-
-        // If an InlineCallFrame is not a closure, it was optimized using a constant callee.
-        // Check if this is the same callee that we try to inline here.
-        if (stackEntry->m_inlineCallFrame && !stackEntry->m_inlineCallFrame->isClosureCall) {
-            if (stackEntry->m_inlineCallFrame->calleeConstant() != callVariant.function())
-                continue;
         }
 
         // We must add some check that the profiling information was correct and the target of this call is what we thought.
@@ -1508,11 +1510,11 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         flushForTerminal();
 
         // We must set the callee to the right value
-        if (stackEntry->m_inlineCallFrame) {
-            if (stackEntry->m_inlineCallFrame->isClosureCall)
-                setDirect(remapOperand(stackEntry->m_inlineCallFrame, CallFrameSlot::callee), callTargetNode, NormalSet);
-        } else
+        if (!stackEntry->m_inlineCallFrame)
             addToGraph(SetCallee, callTargetNode);
+        else if (stackEntry->m_inlineCallFrame->isClosureCall)
+            setDirect(remapOperand(stackEntry->m_inlineCallFrame, CallFrameSlot::callee), callTargetNode, NormalSet);
+
 
         // We must set the arguments to the right values
         if (!stackEntry->m_inlineCallFrame)
@@ -1550,7 +1552,6 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         // It would be unsound to jump over a non-tail call: the "tail" call is not really a tail call in that case.
     } while (stackEntry->m_inlineCallFrame && stackEntry->m_inlineCallFrame->kind == InlineCallFrame::TailCall && (stackEntry = stackEntry->m_caller));
 
-    // The tail call was not recursive
     return false;
 }
 

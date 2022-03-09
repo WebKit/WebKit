@@ -1,3 +1,14 @@
+2022-03-08  Robin Morisset  <rmorisset@apple.com>
+
+        Enable tier-up in loops created by recursive tail call optimizations.
+        https://bugs.webkit.org/show_bug.cgi?id=178389
+
+        Reviewed by Saam Barati.
+
+        Just changed a constant for consistency with TailBench9000/merge-sort.js
+
+        * TailBench9000/merge-sort-cps.js:
+
 2022-03-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Fix Speedometer's setTimeout throttling issue

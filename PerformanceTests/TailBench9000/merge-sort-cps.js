@@ -131,7 +131,7 @@ function buildArray(length, value)
 let arrays = [
     buildArray(10, x => x),
     buildArray(10, x => -x),
-    buildArray(1000, x => random())
+    buildArray(10000, x => random())
 ];
 
 function test(index)

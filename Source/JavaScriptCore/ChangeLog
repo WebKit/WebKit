@@ -1,3 +1,16 @@
+2022-03-08   Robin Morisset  <rmorisset@apple.com>
+
+        Enable tier-up in loops created by recursive tail call optimizations.
+        https://bugs.webkit.org/show_bug.cgi?id=178389
+
+        Reviewed by Saam Barati.
+
+        Made the recursive tail call optimization only run in FTL mode, since it is a significant progression on TailBench.
+        Also some trivial refactoring of handleRecursiveTailCall.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+
 2022-03-08  Saam Barati  <sbarati@apple.com>
 
         [JSC] Enable ThinLTO
