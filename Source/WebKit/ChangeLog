@@ -1,5 +1,17 @@
 2022-03-08  Alex Christensen  <achristensen@webkit.org>
 
+        Allow adattributiond to read and execute dylibs in /usr/lib on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=237625
+        <rdar://89809031>
+
+        Reviewed by Per Arne Vollan.
+
+        WebKit's other sandboxes allow this.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb:
+
+2022-03-08  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused _grantAccessToPreferenceService
         https://bugs.webkit.org/show_bug.cgi?id=237623
 

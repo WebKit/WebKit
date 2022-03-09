@@ -78,6 +78,7 @@
     (subpath "/private/var/mobile/Library/com.apple.webkit.adattributiond"))
 
 (allow file-read* file-map-executable
+    (subpath "/usr/lib")
     (subpath "/System/Library/Frameworks")
     (subpath "/System/Library/PrivateFrameworks"))
 
