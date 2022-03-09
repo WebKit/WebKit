@@ -1,3 +1,23 @@
+2022-03-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Improve WCTiledBacking and TextureMapperSparseBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=237355
+
+        Reviewed by Don Olmstead.
+
+        * platform/graphics/texmap/TextureMapperSparseBackingStore.cpp:
+        (WebCore::TextureMapperSparseBackingStore::setSize):
+        (WebCore::TextureMapperSparseBackingStore::paintToTextureMapper):
+        (WebCore::TextureMapperSparseBackingStore::drawBorder):
+        (WebCore::TextureMapperSparseBackingStore::drawRepaintCounter):
+        (WebCore::TextureMapperSparseBackingStore::updateContents):
+        (WebCore::TextureMapperSparseBackingStore::removeTile):
+        (WebCore::TextureMapperSparseBackingStore::TextureMapperSparseBackingStore): Deleted.
+        (WebCore::TextureMapperSparseBackingStore::removeUncoveredTiles): Deleted.
+        (WebCore::TextureMapperSparseBackingStore::tileDimension const): Deleted.
+        * platform/graphics/texmap/TextureMapperSparseBackingStore.h:
+        * platform/graphics/texmap/TextureMapperTile.h:
+
 2022-03-09  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] increase the max number of animatable properties

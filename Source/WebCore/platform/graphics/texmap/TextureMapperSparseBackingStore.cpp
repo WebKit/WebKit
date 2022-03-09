@@ -32,42 +32,12 @@
 
 namespace WebCore {
 
-TextureMapperSparseBackingStore::TextureMapperSparseBackingStore(int tileSize)
-    : m_tileSize(tileSize)
-{
-}
-
 void TextureMapperSparseBackingStore::setSize(const IntSize& size)
 {
     if (m_size == size)
         return;
-    m_tiles.clear();
     m_size = size;
-    auto tiles = tileDimension();
-    for (int y = 0; y < tiles.height(); y++) {
-        for (int x = 0; x < tiles.width(); x++) {
-            IntRect rect = { x * m_tileSize, y * m_tileSize, m_tileSize, m_tileSize };
-            rect.intersect({ { }, m_size });
-            m_tiles.append(TextureMapperTile(rect));
-        }
-    }
-}
-
-void TextureMapperSparseBackingStore::removeUncoveredTiles(const IntRect& coverage)
-{
-    auto minCoveredX = coverage.x() / m_tileSize;
-    auto maxCoveredX = (coverage.maxX() + m_tileSize - 1) / m_tileSize;
-    auto minCoveredY = coverage.y() / m_tileSize;
-    auto maxCoveredY = (coverage.maxY() + m_tileSize - 1) / m_tileSize;
-    auto tiles = tileDimension();
-    for (int y = 0; y < tiles.height(); y++) {
-        bool coveredY = minCoveredY <= y && y < maxCoveredY;
-        for (int x = 0; x < tiles.width(); x++) {
-            bool covered = coveredY && minCoveredX <= x && x < maxCoveredX;
-            if (!covered)
-                m_tiles[x + y * tiles.width()].setTexture(nullptr);
-        }
-    }
+    m_tiles.clear();
 }
 
 TransformationMatrix TextureMapperSparseBackingStore::adjustedTransformForRect(const FloatRect& targetRect)
@@ -79,33 +49,35 @@ void TextureMapperSparseBackingStore::paintToTextureMapper(TextureMapper& textur
 {
     IntRect rect = { { }, m_size };
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
-    for (auto& tile : m_tiles)
-        tile.paint(textureMapper, adjustedTransform, opacity, calculateExposedTileEdges(rect, tile.rect()));
+    for (auto& iterator : m_tiles)
+        iterator.value->paint(textureMapper, adjustedTransform, opacity, calculateExposedTileEdges(rect, iterator.value->rect()));
 }
 
 void TextureMapperSparseBackingStore::drawBorder(TextureMapper& textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)
 {
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
-    for (auto& tile : m_tiles)
-        textureMapper.drawBorder(borderColor, borderWidth, tile.rect(), adjustedTransform);
+    for (auto& iterator : m_tiles)
+        textureMapper.drawBorder(borderColor, borderWidth, iterator.value->rect(), adjustedTransform);
 }
 
 void TextureMapperSparseBackingStore::drawRepaintCounter(TextureMapper& textureMapper, int repaintCount, const Color& borderColor, const FloatRect& targetRect, const TransformationMatrix& transform)
 {
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
-    for (auto& tile : m_tiles)
-        textureMapper.drawNumber(repaintCount, borderColor, tile.rect().location(), adjustedTransform);
+    for (auto& iterator : m_tiles)
+        textureMapper.drawNumber(repaintCount, borderColor, iterator.value->rect().location(), adjustedTransform);
 }
 
-IntSize TextureMapperSparseBackingStore::tileDimension() const
+void TextureMapperSparseBackingStore::updateContents(TextureMapper& textureMapper, const TileIndex& index, Image& image, const IntRect& dirtyRect)
 {
-    return { (m_size.width() + m_tileSize - 1) / m_tileSize,  (m_size.height() + m_tileSize - 1) / m_tileSize };
+    auto addResult = m_tiles.ensure(index, [&]() {
+        return makeUnique<TextureMapperTile>(dirtyRect);
+    });
+    addResult.iterator->value->updateContents(textureMapper, &image, dirtyRect);
 }
 
-void TextureMapperSparseBackingStore::updateContents(TextureMapper& textureMapper, Image& image, const IntRect& dirtyRect)
+void TextureMapperSparseBackingStore::removeTile(const TileIndex& index)
 {
-    for (auto& tile : m_tiles)
-        tile.updateContents(textureMapper, &image, dirtyRect);
+    m_tiles.remove(index);
 }
 
 } // namespace WebCore

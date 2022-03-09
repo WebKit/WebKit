@@ -105,6 +105,7 @@ list(APPEND WebKit_SOURCES
     WebProcess/WebPage/wc/DrawingAreaWC.cpp
     WebProcess/WebPage/wc/GraphicsLayerWC.cpp
     WebProcess/WebPage/wc/WCLayerFactory.cpp
+    WebProcess/WebPage/wc/WCTileGrid.cpp
 
     WebProcess/WebPage/win/WebPageWin.cpp
 

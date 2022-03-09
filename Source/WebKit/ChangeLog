@@ -1,3 +1,51 @@
+2022-03-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Improve WCTiledBacking and TextureMapperSparseBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=237355
+
+        Reviewed by Don Olmstead.
+
+        TextureMapperSparseBackingStore simply had a Vector to have all
+        tiles. If a web page had a very large layer, the vector was
+        extended to be able to keep all tiles, and it performed poorly.
+        Use a HashMap to keep tiles only in the coverage rect.
+
+        GraphicsLayerWC had only one dirty rect, and created a
+        ImageBuffer for all tiles to update. Change it to have one dirty
+        rect for one tile, and create a ImageBuffer for every dirty tile.
+
+        * GPUProcess/graphics/wc/WCScene.cpp:
+        (WebKit::WCScene::update):
+        * PlatformWin.cmake:
+        * WebProcess/WebPage/wc/DrawingAreaWC.cpp:
+        (WebKit::flushLayerImageBuffers):
+        * WebProcess/WebPage/wc/GraphicsLayerWC.cpp:
+        (WebKit::GraphicsLayerWC::setSize):
+        (WebKit::GraphicsLayerWC::recursiveCommitChanges):
+        * WebProcess/WebPage/wc/WCTileGrid.cpp: Added.
+        (WebKit::WCTileGrid::Tile::Tile):
+        (WebKit::WCTileGrid::Tile::addDirtyRect):
+        (WebKit::WCTileGrid::Tile::clearDirtyRect):
+        (WebKit::WCTileGrid::Tile::hasDirtyRect const):
+        (WebKit::WCTileGrid::setSize):
+        (WebKit::WCTileGrid::tileRectFromPixelRect):
+        (WebKit::WCTileGrid::tileSizeFromPixelSize):
+        (WebKit::WCTileGrid::tilePixelSize const):
+        (WebKit::WCTileGrid::addDirtyRect):
+        (WebKit::WCTileGrid::clearDirtyRects):
+        (WebKit::WCTileGrid::ensureTile):
+        (WebKit::WCTileGrid::setCoverageRect):
+        * WebProcess/WebPage/wc/WCTileGrid.h: Added.
+        (WebKit::WCTileGrid::Tile::willRemove const):
+        (WebKit::WCTileGrid::Tile::setWillRemove):
+        (WebKit::WCTileGrid::Tile::dirtyRect):
+        (WebKit::WCTileGrid::tiles):
+        * WebProcess/WebPage/wc/WCUpateInfo.h:
+        (WebKit::WCTileUpdate::encode const):
+        (WebKit::WCTileUpdate::decode):
+        (WebKit::WCLayerUpateInfo::encode const):
+        (WebKit::WCLayerUpateInfo::decode):
+
 2022-03-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Stop using the env var WEBKIT_INSPECTOR_SERVER to connect to the inspector

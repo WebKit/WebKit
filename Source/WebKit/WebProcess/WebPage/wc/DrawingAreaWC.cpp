@@ -193,9 +193,11 @@ static void flushLayerImageBuffers(WCUpateInfo& info)
 {
     for (auto& layerInfo : info.changedLayers) {
         if (layerInfo.changes & WCLayerChange::Background) {
-            if (auto image = layerInfo.backingStore.imageBuffer()) {
-                if (auto flusher = image->createFlusher())
-                    flusher->flush();
+            for (auto& tileUpdate : layerInfo.tileUpdate) {
+                if (auto image = tileUpdate.backingStore.imageBuffer()) {
+                    if (auto flusher = image->createFlusher())
+                        flusher->flush();
+                }
             }
         }
     }

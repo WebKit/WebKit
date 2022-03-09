@@ -29,29 +29,30 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
+#include "IntPointHash.h"
 #include "TextureMapperBackingStore.h"
 #include "TextureMapperTile.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
 class TextureMapperSparseBackingStore final : public TextureMapperBackingStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperSparseBackingStore(int tileSize);
+    using TileIndex = WebCore::IntPoint;
+
     void setSize(const IntSize&);
-    void removeUncoveredTiles(const IntRect& coverage);
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix&, float) override;
     void drawBorder(TextureMapper&, const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) override;
     void drawRepaintCounter(TextureMapper&, int repaintCount, const Color&, const FloatRect&, const TransformationMatrix&) override;
-    void updateContents(TextureMapper&, Image&, const IntRect& dirtyRect);
+    void updateContents(TextureMapper&, const TileIndex&, Image&, const IntRect& dirtyRect);
+    void removeTile(const TileIndex&);
 
 private:
-    IntSize tileDimension() const;
     TransformationMatrix adjustedTransformForRect(const FloatRect&);
 
-    int m_tileSize;
-    Vector<TextureMapperTile> m_tiles;
     IntSize m_size;
+    HashMap<TileIndex, std::unique_ptr<TextureMapperTile>> m_tiles;
 };
 
 } // namespace WebCore

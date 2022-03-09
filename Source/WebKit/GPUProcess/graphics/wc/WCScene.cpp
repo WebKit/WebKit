@@ -53,7 +53,7 @@ public:
     }
 
     WebCore::TextureMapperLayer texmapLayer;
-    std::optional<WebCore::TextureMapperSparseBackingStore> backingStore;
+    std::unique_ptr<WebCore::TextureMapperSparseBackingStore> backingStore;
     std::unique_ptr<WebCore::TextureMapperLayer> backdropLayer;
 };
 
@@ -127,24 +127,28 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
         if (layerUpdate.changes & WCLayerChange::Background) {
             if (layerUpdate.hasBackingStore) {
                 if (!layer->backingStore) {
-                    const int tileSize = 512;
-                    layer->backingStore.emplace<WebCore::TextureMapperSparseBackingStore>(tileSize);
+                    layer->backingStore = makeUnique<WebCore::TextureMapperSparseBackingStore>();
                     auto& backingStore = *layer->backingStore;
                     layer->texmapLayer.setBackgroundColor({ });
                     layer->texmapLayer.setBackingStore(&backingStore);
                 }
                 auto& backingStore = *layer->backingStore;
                 backingStore.setSize(WebCore::IntSize(layer->texmapLayer.size()));
-                backingStore.removeUncoveredTiles(layerUpdate.coverageRect);
-                auto bitmap = layerUpdate.backingStore.bitmap();
-                if (bitmap) {
-                    auto image = bitmap->createImage();
-                    backingStore.updateContents(*m_textureMapper, *image, layerUpdate.dirtyRect);
+                for (auto& tileUpdate : layerUpdate.tileUpdate) {
+                    if (tileUpdate.willRemove)
+                        backingStore.removeTile(tileUpdate.index);
+                    else {
+                        auto bitmap = tileUpdate.backingStore.bitmap();
+                        if (bitmap) {
+                            auto image = bitmap->createImage();
+                            backingStore.updateContents(*m_textureMapper, tileUpdate.index, *image, tileUpdate.dirtyRect);
+                        }
+                    }
                 }
             } else {
                 layer->texmapLayer.setBackgroundColor(layerUpdate.backgroundColor);
                 layer->texmapLayer.setBackingStore(nullptr);
-                layer->backingStore = std::nullopt;
+                layer->backingStore = nullptr;
             }
         }
         if (layerUpdate.changes & WCLayerChange::SolidColor)

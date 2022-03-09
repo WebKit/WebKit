@@ -28,6 +28,7 @@
 #include "GraphicsLayerWC.h"
 
 #include "WCPlatformLayerGCGL.h"
+#include "WCTileGrid.h"
 #include <WebCore/TransformState.h>
 
 namespace WebKit {
@@ -41,57 +42,55 @@ public:
 
     bool paintAndFlush(WCLayerUpateInfo& update)
     {
-        update.dirtyRect = enclosingIntRect(m_dirtyRect);
-        update.coverageRect = m_coverageRect;
-        m_dirtyRect = { };
-        auto& imageRect = update.dirtyRect;
-        if (imageRect.isEmpty())
-            return false;
-        auto image = m_owner.createImageBuffer(imageRect.size());
-        auto& context = image->context();
-        context.translate(-imageRect.x(), -imageRect.y());
-        m_owner.paintGraphicsLayerContents(context, update.dirtyRect);
-        image->flushDrawingContextAsync();
-        update.backingStore.setImageBuffer(WTFMove(image));
-        return true;
+        bool repainted = false;
+        for (auto& entry : m_tileGrid.tiles()) {
+            auto& tile = *entry.value;
+            WCTileUpdate tileUpdate;
+            tileUpdate.index = entry.key;
+            tileUpdate.willRemove = tile.willRemove();
+            if (tileUpdate.willRemove) {
+                update.tileUpdate.append(WTFMove(tileUpdate));
+                continue;
+            }
+            if (!tile.hasDirtyRect())
+                continue;
+            repainted = true;
+            auto& dirtyRect = tile.dirtyRect();
+            tileUpdate.dirtyRect = dirtyRect;
+            auto image = m_owner.createImageBuffer(dirtyRect.size());
+            auto& context = image->context();
+            context.translate(-dirtyRect.x(), -dirtyRect.y());
+            m_owner.paintGraphicsLayerContents(context, dirtyRect);
+            image->flushDrawingContextAsync();
+            tileUpdate.backingStore.setImageBuffer(WTFMove(image));
+            update.tileUpdate.append(WTFMove(tileUpdate));
+        }
+        m_tileGrid.clearDirtyRects();
+        return repainted;
+    }
+
+    void setSize(const FloatSize& size)
+    {
+        m_tileGrid.setSize(expandedIntSize(size));
     }
 
     void setDirtyRect(const WebCore::FloatRect& rect)
     {
-        m_dirtyRect.unite(rect);
+        m_tileGrid.addDirtyRect(enclosingIntRect(rect));
     }
 
-    bool hasDirtyRect()
+    bool updateCoverageRect(const FloatRect& rect)
     {
-        return !m_dirtyRect.isEmpty();
+        return m_tileGrid.setCoverageRect(enclosingIntRect(rect));
     }
 
     TiledBacking* tiledBacking() const { return const_cast<WCTiledBacking*>(this); };
-
-    IntRect adjustCoverageRect(IntRect coverage)
-    {
-        int x = coverage.x() / tileSize().width() * tileSize().width();
-        int y = coverage.y() / tileSize().height() * tileSize().height();
-        int maxX = (coverage.maxX() + tileSize().width() - 1) / tileSize().width() * tileSize().width();
-        int maxY = (coverage.maxY() + tileSize().height() - 1) / tileSize().height() * tileSize().height();
-        IntRect newCoverage { x, y, maxX - x, maxY - y };
-        newCoverage.intersect(bounds());
-        return newCoverage;
-    }
 
     // TiledBacking override
     void setVisibleRect(const FloatRect&) final { }
     FloatRect visibleRect() const final { return { }; };
     void setLayoutViewportRect(std::optional<FloatRect>) final { }
-    void setCoverageRect(const FloatRect& rect) final
-    {
-        auto newCoverage = adjustCoverageRect(enclosingIntRect(rect));
-        WebCore::Region region(newCoverage);
-        region.subtract(m_coverageRect);
-        setDirtyRect(region.bounds());
-        m_coverageRect = newCoverage;
-        m_dirtyRect.intersect(m_coverageRect);
-    }
+    void setCoverageRect(const FloatRect& rect) final { }
     FloatRect coverageRect() const final { return { }; };
     bool tilesWouldChangeForCoverageRect(const FloatRect&) const final { return false; }
     void setTiledScrollingIndicatorPosition(const FloatPoint&) final { }
@@ -108,7 +107,7 @@ public:
     FloatRect adjustTileCoverageRectForScrolling(const FloatRect& coverageRect, const FloatSize& newSize, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect, float contentsScale) final { return { }; };
     void willStartLiveResize() final { };
     void didEndLiveResize() final { };
-    IntSize tileSize() const final { return { 512, 512 }; };
+    IntSize tileSize() const final { return m_tileGrid.tilePixelSize(); }
     void revalidateTiles() final { }
     void forceRepaint() final { }
     IntRect tileGridExtent() const final { return { }; }
@@ -133,9 +132,8 @@ public:
 
 private:
     bool m_isInWindow { false };
-    WebCore::IntRect m_coverageRect;
-    WebCore::FloatRect m_dirtyRect;
     GraphicsLayerWC& m_owner;
+    WCTileGrid m_tileGrid;
 };
 
 
@@ -282,6 +280,7 @@ void GraphicsLayerWC::setSize(const FloatSize& size)
     if (size == m_size)
         return;
     GraphicsLayer::setSize(size);
+    m_tiledBacking->setSize(size);
     noteLayerPropertyChanged(WCLayerChange::Geometry);
 }
 
@@ -695,8 +694,8 @@ void GraphicsLayerWC::recursiveCommitChanges(const TransformState& state)
 
     bool accumulateTransform = accumulatesTransform(*this);
     VisibleAndCoverageRects rects = computeVisibleAndCoverageRect(localState, accumulateTransform);
-    m_tiledBacking->setCoverageRect(rects.coverageRect);
-    if (m_tiledBacking->hasDirtyRect())
+    bool needsToPaint = m_tiledBacking->updateCoverageRect(rects.coverageRect);
+    if (needsToPaint)
         noteLayerPropertyChanged(WCLayerChange::Background, DontScheduleFlush);
 
     flushCompositingStateForThisLayerOnly();
