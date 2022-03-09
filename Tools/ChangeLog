@@ -1,5 +1,23 @@
 2022-03-09  Lauro Moura  <lmoura@igalia.com>
 
+        [Tools] Add script to query results database
+        https://bugs.webkit.org/show_bug.cgi?id=233800
+
+        Reviewed by Jonathan Bedard.
+
+        This commit adds a script to query https://results.webkit.org for the
+        history of a testcase for a given bot/config. It includes a
+        `--only-changes` switch to show only revisions when the actual changed
+        from the previous one (useful to check when a test started failing).
+
+        For now it supports only layout-tests and has GTK/WPE bots predefined,
+        although full configurations (the query string for results.webkit.org)
+        can be used to access other bots.
+
+        * Scripts/webkit-test-results: Added.
+
+2022-03-09  Lauro Moura  <lmoura@igalia.com>
+
         [webkitcorepy] Prefer xdg-open to open in linux
         https://bugs.webkit.org/show_bug.cgi?id=237655
 
