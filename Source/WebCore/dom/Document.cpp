@@ -818,6 +818,18 @@ void Document::commonTeardown()
 
     m_documentFragmentForInnerOuterHTML = nullptr;
 
+    auto intersectionObservers = m_intersectionObservers;
+    for (auto& intersectionObserver : intersectionObservers) {
+        if (intersectionObserver)
+            intersectionObserver->disconnect();
+    }
+
+    auto resizeObservers = m_resizeObservers;
+    for (auto& resizeObserver : resizeObservers) {
+        if (resizeObserver)
+            resizeObserver->disconnect();
+    }
+
     if (m_highlightRegister)
         m_highlightRegister->clear();
     if (m_fragmentHighlightRegister)

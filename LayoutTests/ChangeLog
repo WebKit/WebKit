@@ -1,3 +1,17 @@
+2022-03-08  Chris Dumez  <cdumez@apple.com>
+
+        IntersectionObserver is causing massive document leaks on haaretz.co.il
+        https://bugs.webkit.org/show_bug.cgi?id=237619
+        <rdar://problem/89989815>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * fast/dom/intersection-observer-document-leak-expected.txt: Added.
+        * fast/dom/intersection-observer-document-leak.html: Added.
+        * fast/dom/resources/intersection-observer-document-leak-popup.html: Added.
+
 2022-03-08  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] metadata cue endTime may not be updated

@@ -197,8 +197,10 @@ void IntersectionObserver::unobserve(Element& target)
 
 void IntersectionObserver::disconnect()
 {
-    if (!hasObservationTargets())
+    if (!hasObservationTargets()) {
+        ASSERT(m_targetsWaitingForFirstObservation.isEmpty());
         return;
+    }
 
     removeAllTargets();
     if (auto* document = trackingDocument())

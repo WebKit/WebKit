@@ -1,3 +1,30 @@
+2022-03-08  Chris Dumez  <cdumez@apple.com>
+
+        IntersectionObserver is causing massive document leaks on haaretz.co.il
+        https://bugs.webkit.org/show_bug.cgi?id=237619
+        <rdar://problem/89989815>
+
+        Reviewed by Simon Fraser.
+
+        On haaretz.co.il, many of the iframe documents (for Google ad frames) were leaking due to
+        IntersectionObserver. In particular, IntersectionObserver::isReachableFromOpaqueRoots()
+        was returning true because m_targetsWaitingForFirstObservation was non-empty. This indicates
+        that the IntersectionObserver is waiting for its first observation since that target was
+        added. However, the observation is not coming because we navigated away from the document.
+
+        To address the issue, I updated Document::commonTeardown() to disconnect all
+        IntersectionObservers (and the very similar ResizeObservers), right after stopping all
+        ActiveDOMObject.
+
+        Test: fast/dom/intersection-observer-document-leak.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::commonTeardown):
+        * dom/Document.h:
+        * page/IntersectionObserver.cpp:
+        (WebCore::IntersectionObserver::disconnect):
+        No longer return early if hasObservationTargets() returns false. This is because
+
 2022-03-08  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] metadata cue endTime may not be updated
