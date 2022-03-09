@@ -1,3 +1,13 @@
+2022-03-09  Lauro Moura  <lmoura@igalia.com>
+
+        [webkitcorepy] Prefer xdg-open to open in linux
+        https://bugs.webkit.org/show_bug.cgi?id=237655
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/terminal.py:
+        (Terminal.open_url):
+
 2021-12-07  Zhifei Fang  <facetothefate@gmail.com>
 
         [results.webkit.org]Add selection box for results database.
