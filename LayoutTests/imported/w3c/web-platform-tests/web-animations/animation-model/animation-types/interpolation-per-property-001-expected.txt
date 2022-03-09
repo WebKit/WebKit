@@ -215,6 +215,10 @@ PASS cursor (type: discrete) has testInterpolation function
 PASS cursor uses discrete animation when animating between "pointer" and "wait" with linear easing
 PASS cursor uses discrete animation when animating between "pointer" and "wait" with effect easing
 PASS cursor uses discrete animation when animating between "pointer" and "wait" with keyframe easing
+PASS dominant-baseline (type: discrete) has testInterpolation function
+PASS dominant-baseline uses discrete animation when animating between "ideographic" and "alphabetic" with linear easing
+PASS dominant-baseline uses discrete animation when animating between "ideographic" and "alphabetic" with effect easing
+PASS dominant-baseline uses discrete animation when animating between "ideographic" and "alphabetic" with keyframe easing
 PASS empty-cells (type: discrete) has testInterpolation function
 PASS empty-cells uses discrete animation when animating between "show" and "hide" with linear easing
 PASS empty-cells uses discrete animation when animating between "show" and "hide" with effect easing

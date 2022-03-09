@@ -1437,6 +1437,9 @@ public:
     ColorInterpolation colorInterpolationFilters() const { return svgStyle().colorInterpolationFilters(); }
     void setColorInterpolationFilters(ColorInterpolation colorInterpolationFilters) { accessSVGStyle().setColorInterpolationFilters(colorInterpolationFilters); }
 
+    DominantBaseline dominantBaseline() const { return svgStyle().dominantBaseline(); }
+    void setDominantBaseline(DominantBaseline dominantBaseline) { return accessSVGStyle().setDominantBaseline(dominantBaseline); }
+
     SVGPaintType fillPaintType() const { return svgStyle().fillPaintType(); }
     Color fillPaintColor() const { return svgStyle().fillPaintColor(); }
     void setFillPaintColor(const Color& color) { accessSVGStyle().setFillPaint(SVGPaintType::RGBColor, color, emptyString()); }

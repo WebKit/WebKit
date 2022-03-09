@@ -178,6 +178,9 @@ PASS column-width: "auto" onto "1px"
 PASS cursor (type: discrete) has testAddition function
 PASS cursor: "wait" onto "pointer"
 PASS cursor: "pointer" onto "wait"
+PASS dominant-baseline (type: discrete) has testAddition function
+PASS dominant-baseline: "alphabetic" onto "ideographic"
+PASS dominant-baseline: "ideographic" onto "alphabetic"
 PASS empty-cells (type: discrete) has testAddition function
 PASS empty-cells: "hide" onto "show"
 PASS empty-cells: "show" onto "hide"

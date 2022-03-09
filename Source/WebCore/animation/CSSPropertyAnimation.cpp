@@ -2843,7 +2843,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<FontFeatureSettings>(CSSPropertyFontFeatureSettings, &RenderStyle::fontFeatureSettings, &RenderStyle::setFontFeatureSettings),
         new FontFamilyWrapper,
         new DiscretePropertyWrapper<WindRule>(CSSPropertyClipRule, &RenderStyle::clipRule, &RenderStyle::setClipRule),
-        new DiscretePropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolationFilters, &RenderStyle::colorInterpolationFilters, &RenderStyle::setColorInterpolationFilters)
+        new DiscretePropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolationFilters, &RenderStyle::colorInterpolationFilters, &RenderStyle::setColorInterpolationFilters),
+        new DiscretePropertyWrapper<DominantBaseline>(CSSPropertyDominantBaseline, &RenderStyle::dominantBaseline, &RenderStyle::setDominantBaseline)
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 
