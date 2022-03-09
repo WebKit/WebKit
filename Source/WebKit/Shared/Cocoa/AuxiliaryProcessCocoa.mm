@@ -46,7 +46,7 @@
 #endif
 
 #if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)
-SOFT_LINK_LIBRARY(libAccessibility)
+SOFT_LINK_LIBRARY_OPTIONAL(libAccessibility)
 SOFT_LINK_OPTIONAL(libAccessibility, _AXSUpdateWebAccessibilitySettings, void, (), ());
 #endif
 
@@ -197,8 +197,13 @@ static const WTF::String& increaseContrastPreferenceKey()
 }
 #endif
 
-void AuxiliaryProcess::handlePreferenceChange(const String& domain, const String& key, id value)
+static void handleAXPreferenceChange(const String& domain, const String& key, id value)
 {
+#if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS)
+    if (!libAccessibilityLibrary())
+        return;
+#endif
+
     if (domain == String(kAXSAccessibilityPreferenceDomain)) {
 #if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS)
         if (_AXSUpdateWebAccessibilitySettingsPtr())
@@ -212,7 +217,11 @@ void AuxiliaryProcess::handlePreferenceChange(const String& domain, const String
             _AXSSetDarkenSystemColors([(NSNumber *)value boolValue]);
 #endif
     }
+}
 
+void AuxiliaryProcess::handlePreferenceChange(const String& domain, const String& key, id value)
+{
+    handleAXPreferenceChange(domain, key, value);
     dispatchSimulatedNotificationsForPreferenceChange(key);
 }
 
