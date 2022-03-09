@@ -154,7 +154,7 @@ class BaseTestsExecutor
             end
 
             # Regenerate the lists of tests to run
-            refreshExecution(@runlist, @serialPlans, completedTests)
+            refreshExecution(@runlist, @serialPlans, completedTests, @remoteHosts)
 
             numFlaky = @runlist.size - completedTests.size - evaluator.missing.size
             testsInfo = "completed #{completedTests.size}/#{@runlist.size} (#{numFlaky} flaky, #{evaluator.missing.size} missing)"
@@ -209,7 +209,7 @@ module ExecutorSelfTests
             putd("statusMap: #{statusMap}")
             statusMap
         end
-        def refreshExecution(runlist, serialPlans, completedTests)
+        def refreshExecution(runlist, serialPlans, completedTests, remoteHosts)
         end
     end
 

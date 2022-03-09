@@ -2589,15 +2589,19 @@ def runCommandOnTester(cmd)
     `#{cmd}`
 end
 
-def numberOfProcessors
+def commandToGetNumberOfProcessors
     if $hostOS == "windows"
-        numProcessors = runCommandOnTester("cmd /c echo %NUMBER_OF_PROCESSORS%").to_i
+        "cmd /c echo %NUMBER_OF_PROCESSORS%"
     else
-        begin
-            numProcessors = runCommandOnTester("sysctl -n hw.activecpu 2>/dev/null || nproc --all 2>/dev/null").to_i
-        rescue
-            numProcessors = 0
-        end
+        "sysctl -n hw.activecpu 2>/dev/null || nproc --all 2>/dev/null || getconf _NPROCESSORS_ONLN"
+    end
+end
+
+def numberOfProcessors
+    begin
+        numProcessors = runCommandOnTester(commandToGetNumberOfProcessors).to_i
+    rescue
+        numProcessors = 0
     end
 
     if numProcessors == 0
@@ -2727,12 +2731,8 @@ def runTestRunner(testRunner, remoteHosts, remoteIndex=0)
     if not remoteHosts.nil?
         remoteHost = remoteHosts[remoteIndex]
         getRemoteDirectoryIfNeeded(remoteHost)
-        copyBundleToRemote(remoteHost)
         remoteScript = "\""
-        remoteScript += "cd #{remoteHost.remoteDirectory} && "
-        remoteScript += "rm -rf #{$outputDir.basename} && "
-        remoteScript += "tar xzf #{$tarFileName} && "
-        remoteScript += "cd #{$outputDir.basename}/.runner && "
+        remoteScript += "cd #{remoteHost.remoteDirectory}/#{$outputDir.basename}/.runner && "
         remoteScript += exportBaseEnvironmentVariables(true)
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
         remoteScript += "#{testRunner.command(remoteIndex)}\""
@@ -3074,7 +3074,7 @@ def withGnuParallelSshLoginFile(remoteHosts, &blk)
     }
 end
 
-def unpackBundleGnuParallel(remoteHosts)
+def unpackBundleOnRemoteHosts(remoteHosts)
     forEachRemote(remoteHosts, :dropOnFailure => true, :timeout => REMOTE_TIMEOUT) {
         | _, remoteHost |
         mysys(["ssh"] + SSH_OPTIONS_DEFAULT +
@@ -3083,6 +3083,19 @@ def unpackBundleGnuParallel(remoteHosts)
                "#{remoteHost.user}@#{remoteHost.host}",
                "cd #{Shellwords.shellescape(remoteHost.remoteDirectory)} && rm -rf #{$outputDir.basename} && tar xzf #{$tarFileName}"])
     }
+end
+
+def prepareRemotes(remoteHosts)
+    # If the preparatory steps fail, drop the remote host from our
+    # list. Otherwise, if it comes back online in the middle of an
+    # iteration, we'll try to run test jobs on it, possibly using
+    # an unrelated bundle from a previous run.
+    remoteHosts = forEachRemote(remoteHosts, {:dropOnFailure => true, :timeout => REMOTE_TIMEOUT}) {
+        | _, remoteHost |
+        getRemoteDirectoryIfNeeded(remoteHost)
+        copyBundleToRemote(remoteHost)
+    }
+    return unpackBundleOnRemoteHosts(remoteHosts)
 end
 
 def runGnuParallelRunner(remoteHosts, inputs, options={})
@@ -3158,11 +3171,11 @@ class NonRemoteTestsExecutor < BaseTestsExecutor
     def prepareExecution(remoteHosts)
         remoteHosts
     end
-    def refreshExecution(runlist, serialPlans, completedTests)
+    def refreshExecution(runlist, serialPlans, completedTests, remoteHosts)
         if not @remoteHosts.nil?
             raise "remoteHosts #{@remoteHosts}, expected nil"
         end
-        @testRunner.prepare(runlist, serialPlans, completedTests, @remoteHosts)
+        @testRunner.prepare(runlist, serialPlans, completedTests, remoteHosts)
     end
 end
 
@@ -3205,13 +3218,13 @@ class BaseRemoteTestsExecutor < BaseTestsExecutor
     def updateStatusMap(iteration, statusMap)
         return getStatusMap(statusMap)
     end
-    def refreshExecution(runlist, serialPlans, completedTests)
+    def refreshExecution(runlist, serialPlans, completedTests, remoteHosts)
         # Note, when running tests remotely, we always prepare tests
         # for all the hosts when refreshing execution, as even hosts
         # that went away during testing may have come back online in
         # the meantime -- so we don't expect a list of live remote
         # hosts to be passed in.
-        @testRunner.prepare(runlist, serialPlans, completedTests, @remoteHosts)
+        @testRunner.prepare(runlist, serialPlans, completedTests, remoteHosts)
     end
 end
 
@@ -3219,16 +3232,42 @@ class RemoteTestsExecutor < BaseRemoteTestsExecutor
     def prepareArtifacts(remoteHosts)
         raise "remoteHosts nil" if remoteHosts.nil?
         prepareBundle
+
+        # The make runner statically shards the tests, so do a
+        # liveness check before @testRunner.prepare. Otherwise, we'd
+        # always end up scheduling tests on dead remotes and hamper
+        # our progress.
+        remoteHosts = getLiveRemoteHosts(remoteHosts)
         @testRunner.prepare(@runlist, @serialPlans, Set.new, remoteHosts)
         compressBundle
-    end
-    def prepareExecution(remoteHosts)
         remoteHosts
     end
+    def prepareExecution(remoteHosts)
+        return prepareRemotes(remoteHosts)
+    end
+    def refreshExecution(runlist, serialPlans, completedTests, remoteHosts)
+        # Don't assign tests to remotes that are down.
+        remoteHosts = getLiveRemoteHosts(remoteHosts)
+        super(runlist, serialPlans, completedTests, remoteHosts)
+    end
     def executeTests(remoteHosts)
-        forEachRemote(remoteHosts) {
+        forEachRemote(remoteHosts, :dropOnFailure => true) {
             | index |
             runTestRunner(@testRunner, remoteHosts, index)
+        }
+    end
+    private
+    def getLiveRemoteHosts(remoteHosts)
+        # This command is supposed to work on all remote hosts, so
+        # reuse it for the liveness check.
+        cmd = commandToGetNumberOfProcessors
+        forEachRemote(remoteHosts, :dropOnFailure => true, :timeout => REMOTE_TIMEOUT) { |_, remoteHost|
+            begin
+                sshRead(cmd, remoteHost)
+            rescue
+                # It's what forEachRemote considers an expected failure.
+                raise CommandExecutionFailed
+            end
         }
     end
 end
@@ -3240,16 +3279,7 @@ class GnuParallelTestsExecutor < BaseRemoteTestsExecutor
         compressBundle
     end
     def prepareExecution(remoteHosts)
-        # If the preparatory steps fail, drop the remote host from our
-        # list. Otherwise, if it comes back online in the middle of an
-        # iteration, we'll try to run test jobs on it, possibly using
-        # an unrelated bundle from a previous run.
-        remoteHosts = forEachRemote(remoteHosts, {:dropOnFailure => true, :timeout => REMOTE_TIMEOUT}) {
-            | _, remoteHost |
-            getRemoteDirectoryIfNeeded(remoteHost)
-            copyBundleToRemote(remoteHost)
-        }
-        return unpackBundleGnuParallel(remoteHosts)
+        return prepareRemotes(remoteHosts)
     end
     def executeTests(remoteHosts)
         runGnuParallelRunner(remoteHosts, $runnerDir + "serial-tests",

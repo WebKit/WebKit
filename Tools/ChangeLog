@@ -1,3 +1,49 @@
+2022-03-09  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Make runner should only schedule tests on live remotes
+        https://bugs.webkit.org/show_bug.cgi?id=237030
+
+        Reviewed by Adrian Perez de Castro.
+
+        The make runner does static scheduling of tests, i.e. it will
+        assign tests to all known remotes. In practice, this means that
+        even though the make runner participates in the retry loop, it
+        will always end up scheduling any tests that failed to run
+        (e.g. because the remote was down on startup or went away during
+        testing) on all remotes, including ones that are known to be down.
+
+        This patch makes it slightly more robust by introducing a liveness
+        check (getLiveRemoteHosts) before the static scheduling, i.e.
+        1. in the initial preparation of the tests to run (prepareArtifacts) and
+        2. in refreshExecution.
+
+        It reuses the command to get the number of processors as the
+        liveness check (it's a command we know currenly works in all
+        supported remotes), so flips numberOfProcessors inside-out.
+        While here, it adds getconf _NPROCESSORS_ONLN as a final attempt
+        to get the number of processors.
+
+        This does not mean that the make runner is now robust against
+        flaky remotes. At the very least, it's still missing an ssh
+        timeout (so it won't hang e.g. when hosts go away after the
+        initial connection is established) and child cleanup (e.g. when
+        bailing early from one remote in forEachRemote, it needs to kill
+        all children for other remotes, or we might end up retrying while
+        the old jobs are still running). But it's getting there.
+
+        Q: But isn't the GNU parallel runner much better suited for
+        handling flaky remotes?
+
+        A: Yes. However, the make runner is (somewhat) better at keeping
+        the remote CPUs busy with "fast" remotes, so we may still want to
+        use it when the remotes are both fast and stable enough. That
+        said, it still needs to be able to recover from the occasional
+        failed remote without producing false test failures.
+
+        * Scripts/run-jsc-stress-tests:
+        * Scripts/webkitruby/jsc-stress-test/executor.rb:
+        Make remoteHosts available to refreshExecution.
+
 2022-03-08  Jean-Yves Avenard  <jya@apple.com>
 
         Have MediaFormatReader plugin use WebMParser directly
