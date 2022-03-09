@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/inert/dynamic-inert-on-focused-element.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-and-contenteditable.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-canvas-fallback-content.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-does-not-match-disabled-selector.tentative.html
@@ -28,5 +29,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-node-is-unselectable.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-non-html.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-on-slots.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/inert/inert-svg-hittest.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-with-modal-dialog-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/inert/inert-with-modal-dialog-002.tentative.html
