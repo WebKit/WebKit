@@ -123,20 +123,16 @@ void VideoFrame::initializeCharacteristics(MediaTime presentationTime, bool isMi
     const_cast<VideoRotation&>(m_rotation) = rotation;
 }
 
-#if USE(AVFOUNDATION)
+#if PLATFORM(COCOA)
 RefPtr<VideoFrameCV> VideoFrame::asVideoFrameCV()
 {
-#if PLATFORM(COCOA)
     auto buffer = pixelBuffer();
     if (!buffer)
         return nullptr;
 
     return VideoFrameCV::create(presentationTime(), videoMirrored(), videoRotation(), buffer);
-#else
-    return nullptr;
-#endif
 }
-#endif // USE(AVFOUNDATION)
+#endif
 
 }
 

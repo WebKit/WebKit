@@ -31,10 +31,9 @@
 
 namespace WebCore {
 
-#if USE(AVFOUNDATION)
+#if USE(AVFOUNDATION) && PLATFORM(COCOA)
 class VideoFrameCV;
 #endif
-
 
 // A class representing a video frame from a decoder, capture source, or similar.
 // FIXME: Currently for implementation purposes inherts from MediaSample until capture code
@@ -55,7 +54,9 @@ public:
     virtual bool isLibWebRTC() const { return false; }
 #if USE(AVFOUNDATION)
     virtual bool isCV() const { return false; }
+#if PLATFORM(COCOA)
     WEBCORE_EXPORT virtual RefPtr<VideoFrameCV> asVideoFrameCV();
+#endif
 #endif
 
     void initializeCharacteristics(MediaTime presentationTime, bool isMirrored, VideoRotation);
