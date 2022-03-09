@@ -1,3 +1,57 @@
+2022-03-09  Youenn Fablet  <youenn@apple.com>
+
+        Scope capture sources by page identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=237359
+
+        Reviewed by Eric Carlson.
+
+        Pass PageIdentifier when creating capture sources.
+        This is used at WebKit layer to better handle creation of mulitple sources.
+        Since we are now sometimes answering to getUserMedia by cloning sources directly,
+        fix a bug in RealtimeVideoSource to use the preset aspect ratio to compute missing width or height.
+        Introduce a way to end immediately a capture source, this is used on GPUProcess side in case starting a capture using a different device.
+
+        Covered by existing tests.
+
+        * Headers.cmake:
+        * Modules/mediastream/MediaDevices.cpp:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        * Modules/speech/SpeechRecognitionCaptureSource.cpp:
+        * Modules/speech/SpeechRecognitionCaptureSource.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PageIdentifier.h: Renamed from Source/WebCore/page/PageIdentifier.h.
+        * platform/mediastream/MediaStreamRequest.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        * platform/mediastream/RealtimeMediaSourceFactory.cpp: Removed.
+        * platform/mediastream/RealtimeMediaSourceFactory.h:
+        * platform/mediastream/RealtimeVideoCaptureSource.cpp:
+        * platform/mediastream/RealtimeVideoCaptureSource.h:
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        * platform/mediastream/cocoa/DisplayCaptureSourceCocoa.cpp:
+        * platform/mediastream/cocoa/DisplayCaptureSourceCocoa.h:
+        * platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp:
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        * platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp:
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.h:
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm:
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/MockAudioSharedUnit.mm:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        * platform/mock/MockRealtimeAudioSource.cpp:
+        * platform/mock/MockRealtimeAudioSource.h:
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2022-03-08  Jean-Yves Avenard  <jya@apple.com>
 
         Have MediaFormatReader plugin use WebMParser directly

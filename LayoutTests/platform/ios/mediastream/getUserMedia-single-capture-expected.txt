@@ -1,3 +1,0 @@
-
-PASS Testing successive getUserMedia calls
-

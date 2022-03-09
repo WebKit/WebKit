@@ -39,7 +39,7 @@ static const double s_HumVolume = 0.1;
 static const double s_NoiseFrequency = 3000;
 static const double s_NoiseVolume = 0.05;
 
-CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError MockRealtimeAudioSource::create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier)
 {
 #ifndef NDEBUG
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
@@ -63,7 +63,7 @@ Ref<MockRealtimeAudioSource> MockRealtimeAudioSourceGStreamer::createForMockAudi
 }
 
 MockRealtimeAudioSourceGStreamer::MockRealtimeAudioSourceGStreamer(String&& deviceID, String&& name, String&& hashSalt)
-    : MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt))
+    : MockRealtimeAudioSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalt), { })
 {
     ensureGStreamerInitialized();
 }

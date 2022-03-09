@@ -51,7 +51,7 @@ public:
     using StateUpdateCallback = Function<void(const SpeechRecognitionUpdate&)>;
     SpeechRecognitionCaptureSource(SpeechRecognitionConnectionClientIdentifier, DataCallback&&, StateUpdateCallback&&, Ref<RealtimeMediaSource>&&);
     WEBCORE_EXPORT static std::optional<WebCore::CaptureDevice> findCaptureDevice();
-    WEBCORE_EXPORT static CaptureSourceOrError createRealtimeMediaSource(const CaptureDevice&);
+    WEBCORE_EXPORT static CaptureSourceOrError createRealtimeMediaSource(const CaptureDevice&, PageIdentifier);
 #endif
 
 private:

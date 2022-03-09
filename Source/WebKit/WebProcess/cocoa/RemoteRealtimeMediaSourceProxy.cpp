@@ -70,9 +70,9 @@ void RemoteRealtimeMediaSourceProxy::stopProducingData()
     connection()->send(Messages::UserMediaCaptureManagerProxy::StopProducingData { m_identifier }, 0);
 }
 
-void RemoteRealtimeMediaSourceProxy::createRemoteMediaSource(const String& deviceIDHashSalt, CreateCallback&& callback, bool shouldUseRemoteFrame)
+void RemoteRealtimeMediaSourceProxy::createRemoteMediaSource(const String& deviceIDHashSalt, WebCore::PageIdentifier pageIdentifier, CreateCallback&& callback, bool shouldUseRemoteFrame)
 {
-    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt, m_constraints, shouldUseRemoteFrame), WTFMove(callback));
+    connection()->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::CreateMediaSourceForCaptureDeviceWithConstraints(identifier(), m_device, deviceIDHashSalt, m_constraints, shouldUseRemoteFrame, pageIdentifier), WTFMove(callback));
 }
 
 void RemoteRealtimeMediaSourceProxy::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::ApplyConstraintsHandler&& completionHandler)
@@ -101,8 +101,10 @@ void RemoteRealtimeMediaSourceProxy::failApplyConstraintCallbacks(const String& 
         callbacks.takeFirst()(RealtimeMediaSource::ApplyConstraintsError { { }, errorMessage });
 }
 
-void RemoteRealtimeMediaSourceProxy::hasEnded()
+void RemoteRealtimeMediaSourceProxy::end()
 {
+    ASSERT(!m_isEnded);
+    m_isEnded = true;
     connection()->send(Messages::UserMediaCaptureManagerProxy::End { m_identifier }, 0);
 }
 

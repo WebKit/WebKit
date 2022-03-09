@@ -24,7 +24,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 messages -> UserMediaCaptureManagerProxy NotRefCounted {
-    CreateMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier id, WebCore::CaptureDevice device, String hashSalt, struct WebCore::MediaConstraints constraints, bool shouldUseGPUProcessRemoteFrames) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings, WebCore::RealtimeMediaSourceCapabilities capabilities, Vector<WebCore::VideoPresetData> presets, WebCore::IntSize size, double frameRate)
+    CreateMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier id, WebCore::CaptureDevice device, String hashSalt, struct WebCore::MediaConstraints constraints, bool shouldUseGPUProcessRemoteFrames, WebCore::PageIdentifier pageIdentifier) -> (bool success, String invalidConstraints, WebCore::RealtimeMediaSourceSettings settings, WebCore::RealtimeMediaSourceCapabilities capabilities, Vector<WebCore::VideoPresetData> presets, WebCore::IntSize size, double frameRate) Async
     StartProducingData(WebCore::RealtimeMediaSourceIdentifier id)
     StopProducingData(WebCore::RealtimeMediaSourceIdentifier id)
     End(WebCore::RealtimeMediaSourceIdentifier id)

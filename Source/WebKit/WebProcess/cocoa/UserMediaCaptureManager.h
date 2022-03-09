@@ -74,7 +74,7 @@ private:
         void setShouldCaptureInGPUProcess(bool);
 
     private:
-        WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*) final;
+        WebCore::CaptureSourceOrError createAudioCaptureSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*, WebCore::PageIdentifier) final;
         WebCore::CaptureDeviceManager& audioCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
         const Vector<WebCore::CaptureDevice>& speakerDevices() const final { return m_speakerDevices; }
 
@@ -88,7 +88,7 @@ private:
         void setShouldCaptureInGPUProcess(bool);
 
     private:
-        WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*) final;
+        WebCore::CaptureSourceOrError createVideoCaptureSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*, WebCore::PageIdentifier) final;
         WebCore::CaptureDeviceManager& videoCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
 
         UserMediaCaptureManager& m_manager;
@@ -100,7 +100,7 @@ private:
         void setShouldCaptureInGPUProcess(bool);
 
     private:
-        WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice&, String&&, const WebCore::MediaConstraints*) final;
+        WebCore::CaptureSourceOrError createDisplayCaptureSource(const WebCore::CaptureDevice&, String&&, const WebCore::MediaConstraints*, WebCore::PageIdentifier) final;
         WebCore::DisplayCaptureManager& displayCaptureDeviceManager() final { return m_manager.m_noOpCaptureDeviceManager; }
 
         UserMediaCaptureManager& m_manager;
@@ -124,8 +124,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages::UserMediaCaptureManager
-    void captureFailed(WebCore::RealtimeMediaSourceIdentifier);
-    void sourceStopped(WebCore::RealtimeMediaSourceIdentifier);
+    void sourceStopped(WebCore::RealtimeMediaSourceIdentifier, bool didFail);
     void sourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier, bool muted, bool interrupted);
 
     void sourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);

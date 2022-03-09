@@ -24,8 +24,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 messages -> UserMediaCaptureManager NotRefCounted {
-    CaptureFailed(WebCore::RealtimeMediaSourceIdentifier id)
-    SourceStopped(WebCore::RealtimeMediaSourceIdentifier id)
+    SourceStopped(WebCore::RealtimeMediaSourceIdentifier id, bool didFail)
     SourceMutedChanged(WebCore::RealtimeMediaSourceIdentifier id, bool muted, bool interrupted)
     SourceSettingsChanged(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RealtimeMediaSourceSettings settings)
     ApplyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier id, WebCore::RealtimeMediaSourceSettings settings)

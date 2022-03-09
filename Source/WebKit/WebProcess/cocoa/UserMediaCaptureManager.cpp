@@ -124,33 +124,18 @@ void UserMediaCaptureManager::removeSource(RealtimeMediaSourceIdentifier identif
     m_sources.remove(identifier);
 }
 
-void UserMediaCaptureManager::sourceStopped(RealtimeMediaSourceIdentifier identifier)
+void UserMediaCaptureManager::sourceStopped(RealtimeMediaSourceIdentifier identifier, bool didFail)
 {
     auto iterator = m_sources.find(identifier);
     if (iterator == m_sources.end())
         return;
 
-    switchOn(iterator->value, [](Ref<RemoteRealtimeAudioSource>& source) {
-        source->captureStopped();
-    }, [](Ref<RemoteRealtimeVideoSource>& source) {
-        source->captureStopped();
-    }, [](Ref<RemoteRealtimeDisplaySource>& source) {
-        source->captureStopped();
-    }, [](std::nullptr_t) { });
-}
-
-void UserMediaCaptureManager::captureFailed(RealtimeMediaSourceIdentifier identifier)
-{
-    auto iterator = m_sources.find(identifier);
-    if (iterator == m_sources.end())
-        return;
-
-    switchOn(iterator->value, [](Ref<RemoteRealtimeAudioSource>& source) {
-        source->captureFailed();
-    }, [](Ref<RemoteRealtimeVideoSource>& source) {
-        source->captureFailed();
-    }, [](Ref<RemoteRealtimeDisplaySource>& source) {
-        source->captureFailed();
+    switchOn(iterator->value, [didFail](Ref<RemoteRealtimeAudioSource>& source) {
+        source->captureStopped(didFail);
+    }, [didFail](Ref<RemoteRealtimeVideoSource>& source) {
+        source->captureStopped(didFail);
+    }, [didFail](Ref<RemoteRealtimeDisplaySource>& source) {
+        source->captureStopped(didFail);
     }, [](std::nullptr_t) { });
 }
 
@@ -212,7 +197,7 @@ void UserMediaCaptureManager::applyConstraintsFailed(RealtimeMediaSourceIdentifi
     }, [](std::nullptr_t) { });
 }
 
-CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
@@ -225,7 +210,7 @@ CaptureSourceOrError UserMediaCaptureManager::AudioFactory::createAudioCaptureSo
         DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
 #endif
 
-    return RemoteRealtimeAudioSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
+    return RemoteRealtimeAudioSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier);
 }
 
 void UserMediaCaptureManager::AudioFactory::setShouldCaptureInGPUProcess(bool value)
@@ -238,7 +223,7 @@ void UserMediaCaptureManager::VideoFactory::setShouldCaptureInGPUProcess(bool va
     m_shouldCaptureInGPUProcess = value;
 }
 
-CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
@@ -248,10 +233,10 @@ CaptureSourceOrError UserMediaCaptureManager::VideoFactory::createVideoCaptureSo
         m_manager.m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
 
     bool shouldUseIOSurface = !m_manager.m_shouldUseGPUProcessRemoteFrames;
-    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess), shouldUseIOSurface));
+    return CaptureSourceOrError(RealtimeVideoSource::create(RemoteRealtimeVideoSource::create(device, constraints, { }, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier), shouldUseIOSurface));
 }
 
-CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
 #if !ENABLE(GPU_PROCESS)
     if (m_shouldCaptureInGPUProcess)
@@ -260,7 +245,7 @@ CaptureSourceOrError UserMediaCaptureManager::DisplayFactory::createDisplayCaptu
     if (m_shouldCaptureInGPUProcess)
         m_manager.m_remoteCaptureSampleManager.setVideoFrameObjectHeapProxy(&WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy());
 
-    return RemoteRealtimeDisplaySource::create(device, constraints, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess);
+    return RemoteRealtimeDisplaySource::create(device, constraints, WTFMove(hashSalt), m_manager, m_shouldCaptureInGPUProcess, pageIdentifier);
 }
 
 void UserMediaCaptureManager::DisplayFactory::setShouldCaptureInGPUProcess(bool value)

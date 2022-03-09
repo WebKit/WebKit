@@ -53,13 +53,14 @@ public:
     bool shouldCaptureInGPUProcess() const { return m_shouldCaptureInGPUProcess; }
 
     using CreateCallback = CompletionHandler<void(bool, String&&, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&, Vector<WebCore::VideoPresetData>&&, WebCore::IntSize, double)>;
-    void createRemoteMediaSource(const String&, CreateCallback&&, bool shouldUseRemoteFrame = false);
+    void createRemoteMediaSource(const String&, WebCore::PageIdentifier, CreateCallback&&, bool shouldUseRemoteFrame = false);
 
     void applyConstraintsSucceeded();
     void applyConstraintsFailed(String&& failedConstraint, String&& errorMessage);
     void failApplyConstraintCallbacks(const String& errorMessage);
-    
-    void hasEnded();
+
+    bool isEnded() const { return m_isEnded; }
+    void end();
     void startProducingData();
     void stopProducingData();
     void applyConstraints(const WebCore::MediaConstraints&, WebCore::RealtimeMediaSource::ApplyConstraintsHandler&&);
@@ -78,6 +79,7 @@ private:
     WebCore::RealtimeMediaSourceIdentifier m_identifier;
     WebCore::CaptureDevice m_device;
     bool m_shouldCaptureInGPUProcess { false };
+    WebCore::PageIdentifier m_pageIdentifier;
 
     WebCore::MediaConstraints m_constraints;
     Deque<WebCore::RealtimeMediaSource::ApplyConstraintsHandler> m_pendingApplyConstraintsCallbacks;
@@ -85,6 +87,7 @@ private:
     CompletionHandler<void(String)> m_callback;
     String m_errorMessage;
     bool m_interrupted { false };
+    bool m_isEnded { false };
 };
 
 inline RemoteRealtimeMediaSourceProxy::RemoteRealtimeMediaSourceProxy(WebCore::RealtimeMediaSourceIdentifier identifier, const WebCore::CaptureDevice& device, bool shouldCaptureInGPUProcess, const WebCore::MediaConstraints* constraints)

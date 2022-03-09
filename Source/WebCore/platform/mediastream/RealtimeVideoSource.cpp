@@ -36,7 +36,7 @@
 namespace WebCore {
 
 RealtimeVideoSource::RealtimeVideoSource(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface)
-    : RealtimeMediaSource(Type::Video, String { source->name() }, String { source->persistentID() }, String { source->deviceIDHashSalt() })
+    : RealtimeMediaSource(Type::Video, String { source->name() }, String { source->persistentID() }, String { source->deviceIDHashSalt() }, source->pageIdentifier())
     , m_source(WTFMove(source))
 #if PLATFORM(COCOA)
     , m_shouldUseIOSurface(shouldUseIOSurface)
@@ -95,12 +95,15 @@ void RealtimeVideoSource::setSizeAndFrameRate(std::optional<int> width, std::opt
     ASSERT(sourceSize.height());
     ASSERT(sourceSize.width());
 
+    auto* currentPreset = m_source->currentPreset();
+    auto intrinsicSize = currentPreset ? currentPreset->size : sourceSize;
+
     if (!width)
-        width = sourceSize.width() * height.value() / sourceSize.height();
+        width = intrinsicSize.width() * height.value() / intrinsicSize.height();
     m_currentSettings.setWidth(*width);
 
     if (!height)
-        height = sourceSize.height() * width.value() / sourceSize.width();
+        height = intrinsicSize.height() * width.value() / intrinsicSize.width();
     m_currentSettings.setHeight(*height);
 
     if (frameRate)

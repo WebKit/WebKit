@@ -45,29 +45,25 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
-Ref<RealtimeVideoCaptureSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
+Ref<RealtimeVideoCaptureSource> RemoteRealtimeVideoSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
 {
-    auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
+    auto source = adoptRef(*new RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess, pageIdentifier));
     manager.addSource(source.copyRef());
     manager.remoteCaptureSampleManager().addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
 
-RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
-    : RealtimeVideoCaptureSource(WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt))
+RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+    : RealtimeVideoCaptureSource(WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt), pageIdentifier)
     , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
 {
-#if PLATFORM(IOS_FAMILY)
-    if (deviceType() == CaptureDevice::DeviceType::Camera)
-        RealtimeMediaSourceCenter::singleton().videoCaptureFactory().setActiveSource(*this);
-#endif
 }
 
 void RemoteRealtimeVideoSource::createRemoteMediaSource()
 {
-    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&& presets, auto size, auto frameRate) mutable {
+    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), pageIdentifier(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&& presets, auto size, auto frameRate) mutable {
         if (!succeeded) {
             m_proxy.didFail(WTFMove(errorMessage));
             return;
@@ -93,11 +89,6 @@ RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource()
         if (auto* connection = WebProcess::singleton().existingGPUProcessConnection())
             connection->removeClient(*this);
     }
-
-#if PLATFORM(IOS_FAMILY)
-    if (deviceType() == CaptureDevice::DeviceType::Camera)
-        RealtimeMediaSourceCenter::singleton().videoCaptureFactory().unsetActiveSource(*this);
-#endif
 }
 
 void RemoteRealtimeVideoSource::setCapabilities(RealtimeMediaSourceCapabilities&& capabilities)
@@ -147,20 +138,20 @@ const RealtimeMediaSourceCapabilities& RemoteRealtimeVideoSource::capabilities()
 
 void RemoteRealtimeVideoSource::hasEnded()
 {
-    m_proxy.hasEnded();
+    if (m_proxy.isEnded())
+        return;
+
+    m_proxy.end();
     m_manager.removeSource(identifier());
     m_manager.remoteCaptureSampleManager().removeSource(identifier());
 }
 
-void RemoteRealtimeVideoSource::captureStopped()
+void RemoteRealtimeVideoSource::captureStopped(bool didFail)
 {
-    stop();
-    hasEnded();
-}
-
-void RemoteRealtimeVideoSource::captureFailed()
-{
-    RealtimeMediaSource::captureFailed();
+    if (didFail)
+        captureFailed();
+    else
+        end();
     hasEnded();
 }
 
@@ -203,14 +194,6 @@ void RemoteRealtimeVideoSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     ASSERT(m_proxy.shouldCaptureInGPUProcess());
     if (isEnded())
         return;
-
-#if PLATFORM(IOS_FAMILY)
-    if (deviceType() == CaptureDevice::DeviceType::Camera && this != RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource()) {
-        // Track is muted and has no chance of being unmuted, let's end it.
-        captureFailed();
-        return;
-    }
-#endif
 
     m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(connection());
     m_proxy.resetReady();

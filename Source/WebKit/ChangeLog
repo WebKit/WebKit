@@ -1,3 +1,43 @@
+2022-03-09  Youenn Fablet  <youenn@apple.com>
+
+        Scope capture sources by page identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=237359
+
+        Reviewed by Eric Carlson.
+
+        Pass PageIdentifier where appropriate.
+        Make use of PageIdentifier in UserMediaCaptureManagerProxy:
+        - For microphone, if there is a source with a different device,
+          fail the source as we are not yet supporting concurrent captures.
+        - For camera, if there is a source with a different device,
+          fail the source as we are not yet supporting concurrent captures (only on iOS).
+          Otherwise, if there is a matching source, clone it so that we reduce the overhead
+          of creating a new source (setting up a camera can be an expensive operation).
+        We silently fail (meaning there is no console log message for now, while still firing ended event) but add release logging to detect this case.
+        Minor refactoring to have one message in case capture source ends (stopped or failing) instead of two.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in:
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp:
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.h:
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.h:
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.messages.in:
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp:
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.h:
+        * WebProcess/cocoa/RemoteRealtimeDisplaySource.cpp:
+        * WebProcess/cocoa/RemoteRealtimeDisplaySource.h:
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.cpp:
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.h:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.messages.in:
+
 2022-03-08  Jean-Yves Avenard  <jya@apple.com>
 
         Have MediaFormatReader plugin use WebMParser directly

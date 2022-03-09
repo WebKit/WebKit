@@ -1137,7 +1137,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PageConfiguration.h
     page/PageConsoleClient.h
     page/PageGroup.h
-    page/PageIdentifier.h
     page/PageInlines.h
     page/PageOverlay.h
     page/PageOverlayController.h
@@ -1294,6 +1293,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/PODInterval.h
     platform/PODIntervalTree.h
     platform/PODRedBlackTree.h
+    platform/PageIdentifier.h
     platform/Pasteboard.h
     platform/PasteboardContext.h
     platform/PasteboardCustomData.h

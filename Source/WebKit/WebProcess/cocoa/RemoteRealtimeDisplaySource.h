@@ -47,7 +47,7 @@ class RemoteRealtimeDisplaySource final : public WebCore::RealtimeMediaSource
 #endif
 {
 public:
-    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    static Ref<WebCore::RealtimeMediaSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
     ~RemoteRealtimeDisplaySource();
 
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_proxy.identifier(); }
@@ -58,14 +58,13 @@ public:
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&&);
     void applyConstraintsFailed(String&& failedConstraint, String&& errorMessage) { m_proxy.applyConstraintsFailed(WTFMove(failedConstraint), WTFMove(errorMessage)); }
 
-    void captureStopped();
-    void captureFailed() final;
+    void captureStopped(bool didFail);
 
     void remoteVideoSampleAvailable(WebCore::MediaSample& sample, WebCore::VideoSampleMetadata metadata) { videoSampleAvailable(sample, metadata); }
     void sourceMutedChanged(bool value, bool interrupted);
 
 private:
-    RemoteRealtimeDisplaySource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    RemoteRealtimeDisplaySource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
 
     // RealtimeMediaSource
     void startProducingData() final { m_proxy.startProducingData(); }

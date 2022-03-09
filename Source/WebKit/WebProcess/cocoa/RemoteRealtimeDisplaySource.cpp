@@ -38,17 +38,17 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RealtimeMediaSource> RemoteRealtimeDisplaySource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
+Ref<RealtimeMediaSource> RemoteRealtimeDisplaySource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
 {
-    auto source = adoptRef(*new RemoteRealtimeDisplaySource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
+    auto source = adoptRef(*new RemoteRealtimeDisplaySource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(hashSalt), manager, shouldCaptureInGPUProcess, pageIdentifier));
     manager.addSource(source.copyRef());
     manager.remoteCaptureSampleManager().addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
 
-RemoteRealtimeDisplaySource::RemoteRealtimeDisplaySource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, String { device.label() }, String { device.persistentId() }, WTFMove(hashSalt))
+RemoteRealtimeDisplaySource::RemoteRealtimeDisplaySource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Video, String { device.label() }, String { device.persistentId() }, WTFMove(hashSalt), pageIdentifier)
     , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
 {
@@ -57,7 +57,7 @@ RemoteRealtimeDisplaySource::RemoteRealtimeDisplaySource(RealtimeMediaSourceIden
 
 void RemoteRealtimeDisplaySource::createRemoteMediaSource()
 {
-    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
+    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), pageIdentifier(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
         if (!succeeded) {
             m_proxy.didFail(WTFMove(errorMessage));
             return;
@@ -100,20 +100,20 @@ void RemoteRealtimeDisplaySource::applyConstraintsSucceeded(WebCore::RealtimeMed
 
 void RemoteRealtimeDisplaySource::hasEnded()
 {
-    m_proxy.hasEnded();
+    if (m_proxy.isEnded())
+        return;
+
+    m_proxy.end();
     m_manager.removeSource(identifier());
     m_manager.remoteCaptureSampleManager().removeSource(identifier());
 }
 
-void RemoteRealtimeDisplaySource::captureStopped()
+void RemoteRealtimeDisplaySource::captureStopped(bool didFail)
 {
-    stop();
-    hasEnded();
-}
-
-void RemoteRealtimeDisplaySource::captureFailed()
-{
-    RealtimeMediaSource::captureFailed();
+    if (didFail)
+        captureFailed();
+    else
+        end();
     hasEnded();
 }
 

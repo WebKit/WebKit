@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "PageIdentifier.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -41,27 +42,10 @@ class RealtimeMediaSource;
 struct CaptureSourceOrError;
 struct MediaConstraints;
 
-class WEBCORE_EXPORT SingleSourceFactory {
-public:
-    virtual ~SingleSourceFactory() = default;
-
-    virtual void setActiveSource(RealtimeMediaSource&);
-    virtual void unsetActiveSource(RealtimeMediaSource&);
-
-    virtual RealtimeMediaSource* activeSource() { return m_activeSource; }
-
-private:
-    RealtimeMediaSource* m_activeSource { nullptr };
-};
-
-class AudioCaptureFactory
-#if PLATFORM(IOS_FAMILY)
-    : public SingleSourceFactory
-#endif
-{
+class AudioCaptureFactory {
 public:
     virtual ~AudioCaptureFactory() = default;
-    virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
+    virtual CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier) = 0;
     virtual CaptureDeviceManager& audioCaptureDeviceManager() = 0;
     virtual const Vector<CaptureDevice>& speakerDevices() const = 0;
     virtual void computeSpeakerDevices(CompletionHandler<void()>&& callback) const { callback(); }
@@ -74,28 +58,20 @@ protected:
     AudioCaptureFactory() = default;
 };
 
-class VideoCaptureFactory
-#if PLATFORM(IOS_FAMILY)
-    : public SingleSourceFactory
-#endif
-{
+class VideoCaptureFactory {
 public:
     virtual ~VideoCaptureFactory() = default;
-    virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
+    virtual CaptureSourceOrError createVideoCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier) = 0;
     virtual CaptureDeviceManager& videoCaptureDeviceManager() = 0;
 
 protected:
     VideoCaptureFactory() = default;
 };
 
-class DisplayCaptureFactory
-#if PLATFORM(IOS_FAMILY)
-    : public SingleSourceFactory
-#endif
-{
+class DisplayCaptureFactory {
 public:
     virtual ~DisplayCaptureFactory() = default;
-    virtual CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) = 0;
+    virtual CaptureSourceOrError createDisplayCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier) = 0;
     virtual DisplayCaptureManager& displayCaptureDeviceManager() = 0;
 
 protected:

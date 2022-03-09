@@ -112,14 +112,14 @@ public:
         const void* m_logIdentifier;
     };
 
-    static CaptureSourceOrError create(const CaptureDevice&, String&&, const MediaConstraints*);
-    static CaptureSourceOrError create(Expected<UniqueRef<Capturer>, String>&&, const CaptureDevice&, String&&, const MediaConstraints*);
+    static CaptureSourceOrError create(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier);
+    static CaptureSourceOrError create(Expected<UniqueRef<Capturer>, String>&&, const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier);
 
     Seconds elapsedTime();
     void updateFrameSize();
 
 private:
-    DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, String&& name, String&& deviceID, String&& hashSalt);
+    DisplayCaptureSourceCocoa(UniqueRef<Capturer>&&, String&& name, String&& deviceID, String&& hashSalt, PageIdentifier);
     virtual ~DisplayCaptureSourceCocoa();
 
     // RealtimeMediaSource

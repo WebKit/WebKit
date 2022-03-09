@@ -42,7 +42,7 @@ namespace WebCore {
 
 class MockRealtimeAudioSource : public RealtimeMediaSource {
 public:
-    static CaptureSourceOrError create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*);
+    static CaptureSourceOrError create(String&& deviceID, String&& name, String&& hashSalt, const MediaConstraints*, PageIdentifier);
     virtual ~MockRealtimeAudioSource();
 
     static void setIsInterrupted(bool);
@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT void setChannelCount(unsigned);
 
 protected:
-    MockRealtimeAudioSource(String&& deviceID, String&& name, String&& hashSalt);
+    MockRealtimeAudioSource(String&& deviceID, String&& name, String&& hashSalt, PageIdentifier);
 
     virtual void render(Seconds) = 0;
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;

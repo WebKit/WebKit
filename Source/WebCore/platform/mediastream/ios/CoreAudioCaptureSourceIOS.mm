@@ -116,13 +116,13 @@ void CoreAudioCaptureSourceFactoryIOS::removeExtensiveObserver(ExtensiveObserver
         AVAudioSessionCaptureDeviceManager::singleton().disableAllDevicesQuery();
 }
 
-CaptureSourceOrError CoreAudioCaptureSourceFactoryIOS::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints)
+CaptureSourceOrError CoreAudioCaptureSourceFactoryIOS::createAudioCaptureSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* constraints, PageIdentifier pageIdentifier)
 {
     // We enable exhaustive query to be sure to start capture with the right device.
     // FIXME: We should stop the auxiliary session after starting capture.
     if (m_observers.computesEmpty())
         AVAudioSessionCaptureDeviceManager::singleton().enableAllDevicesQuery();
-    return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints);
+    return CoreAudioCaptureSource::create(String { device.persistentId() }, WTFMove(hashSalt), constraints, pageIdentifier);
 }
 
 }

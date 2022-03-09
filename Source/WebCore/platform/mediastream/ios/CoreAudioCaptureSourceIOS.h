@@ -45,7 +45,7 @@ private:
     void beginAudioSessionInterruption() { beginInterruption(); }
     void endAudioSessionInterruption(AudioSession::MayResume) { endInterruption(); }
 
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*) final;
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, String&&, const MediaConstraints*, PageIdentifier) final;
     void addExtensiveObserver(ExtensiveObserver&) final;
     void removeExtensiveObserver(ExtensiveObserver&) final;
 

@@ -43,29 +43,26 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
+Ref<RealtimeMediaSource> RemoteRealtimeAudioSource::create(const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
 {
-    auto source = adoptRef(*new RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess));
+    auto source = adoptRef(*new RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier::generate(), device, constraints, WTFMove(name), WTFMove(hashSalt), manager, shouldCaptureInGPUProcess, pageIdentifier));
     manager.addSource(source.copyRef());
     manager.remoteCaptureSampleManager().addSource(source.copyRef());
     source->createRemoteMediaSource();
     return source;
 }
 
-RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess)
-    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt))
+RemoteRealtimeAudioSource::RemoteRealtimeAudioSource(RealtimeMediaSourceIdentifier identifier, const CaptureDevice& device, const MediaConstraints* constraints, String&& name, String&& hashSalt, UserMediaCaptureManager& manager, bool shouldCaptureInGPUProcess, PageIdentifier pageIdentifier)
+    : RealtimeMediaSource(RealtimeMediaSource::Type::Audio, WTFMove(name), String { device.persistentId() }, WTFMove(hashSalt), pageIdentifier)
     , m_proxy(identifier, device, shouldCaptureInGPUProcess, constraints)
     , m_manager(manager)
 {
     ASSERT(device.type() == CaptureDevice::DeviceType::Microphone);
-#if PLATFORM(IOS_FAMILY)
-    RealtimeMediaSourceCenter::singleton().audioCaptureFactory().setActiveSource(*this);
-#endif
 }
 
 void RemoteRealtimeAudioSource::createRemoteMediaSource()
 {
-    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
+    m_proxy.createRemoteMediaSource(deviceIDHashSalt(), pageIdentifier(), [this, protectedThis = Ref { *this }](bool succeeded, auto&& errorMessage, auto&& settings, auto&& capabilities, auto&&, auto, auto) {
         if (!succeeded) {
             m_proxy.didFail(WTFMove(errorMessage));
             return;
@@ -87,10 +84,6 @@ RemoteRealtimeAudioSource::~RemoteRealtimeAudioSource()
         if (auto* connection = WebProcess::singleton().existingGPUProcessConnection())
             connection->removeClient(*this);
     }
-
-#if PLATFORM(IOS_FAMILY)
-    RealtimeMediaSourceCenter::singleton().audioCaptureFactory().unsetActiveSource(*this);
-#endif
 }
 
 void RemoteRealtimeAudioSource::setCapabilities(RealtimeMediaSourceCapabilities&& capabilities)
@@ -119,20 +112,20 @@ void RemoteRealtimeAudioSource::remoteAudioSamplesAvailable(const MediaTime& tim
 
 void RemoteRealtimeAudioSource::hasEnded()
 {
-    m_proxy.hasEnded();
+    if (m_proxy.isEnded())
+        return;
+
+    m_proxy.end();
     m_manager.removeSource(identifier());
     m_manager.remoteCaptureSampleManager().removeSource(identifier());
 }
 
-void RemoteRealtimeAudioSource::captureStopped()
+void RemoteRealtimeAudioSource::captureStopped(bool didFail)
 {
-    stop();
-    hasEnded();
-}
-
-void RemoteRealtimeAudioSource::captureFailed()
-{
-    RealtimeMediaSource::captureFailed();
+    if (didFail)
+        captureFailed();
+    else
+        end();
     hasEnded();
 }
 
@@ -148,14 +141,6 @@ void RemoteRealtimeAudioSource::gpuProcessConnectionDidClose(GPUProcessConnectio
     ASSERT(m_proxy.shouldCaptureInGPUProcess());
     if (isEnded())
         return;
-
-#if PLATFORM(IOS_FAMILY)
-    if (this != RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource()) {
-        // Track is muted and has no chance of being unmuted, let's end it.
-        captureFailed();
-        return;
-    }
-#endif
 
     m_manager.remoteCaptureSampleManager().didUpdateSourceConnection(connection());
     m_proxy.resetReady();

@@ -55,7 +55,7 @@ class RemoteRealtimeVideoSource final : public WebCore::RealtimeVideoCaptureSour
 #endif
 {
 public:
-    static Ref<WebCore::RealtimeVideoCaptureSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    static Ref<WebCore::RealtimeVideoCaptureSource> create(const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
     ~RemoteRealtimeVideoSource();
 
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_proxy.identifier(); }
@@ -63,14 +63,13 @@ public:
 
     void setSettings(WebCore::RealtimeMediaSourceSettings&&);
 
-    void captureStopped();
-    void captureFailed() final;
+    void captureStopped(bool didFail);
 
     void videoSampleAvailable(WebCore::MediaSample&, WebCore::IntSize, WebCore::VideoSampleMetadata);
     void sourceMutedChanged(bool value, bool interrupted);
 
 private:
-    RemoteRealtimeVideoSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
+    RemoteRealtimeVideoSource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& name, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess, WebCore::PageIdentifier);
 
     // WebCore::RealtimeMediaSource
     void startProducingData() final { m_proxy.startProducingData(); }

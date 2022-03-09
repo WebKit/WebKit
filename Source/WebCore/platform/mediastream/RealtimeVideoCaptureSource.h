@@ -53,10 +53,11 @@ public:
 
     void ensureIntrinsicSizeMaintainsAspectRatio();
 
-protected:
-    RealtimeVideoCaptureSource(String&& name, String&& id, String&& hashSalt);
+    const VideoPreset* currentPreset() const { return m_currentPreset.get(); }
 
-    void prepareToProduceData();
+protected:
+    RealtimeVideoCaptureSource(String&& name, String&& id, String&& hashSalt, PageIdentifier);
+
     void setSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;
 
     virtual bool prefersPreset(VideoPreset&) { return true; }
@@ -90,6 +91,7 @@ private:
     const char* logClassName() const override { return "RealtimeVideoCaptureSource"; }
 #endif
 
+    RefPtr<VideoPreset> m_currentPreset;
     Vector<Ref<VideoPreset>> m_presets;
     Deque<double> m_observedFrameTimeStamps;
     double m_observedFrameRate { 0 };

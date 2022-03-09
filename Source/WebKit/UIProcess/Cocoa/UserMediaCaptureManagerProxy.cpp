@@ -138,11 +138,7 @@ public:
 
 private:
     void sourceStopped() final {
-        if (m_source->captureDidFail()) {
-            m_connection->send(Messages::UserMediaCaptureManager::CaptureFailed(m_id), 0);
-            return;
-        }
-        m_connection->send(Messages::UserMediaCaptureManager::SourceStopped(m_id), 0);
+        m_connection->send(Messages::UserMediaCaptureManager::SourceStopped(m_id, m_source->captureDidFail()), 0);
     }
 
     void sourceMutedChanged() final {
@@ -289,7 +285,72 @@ UserMediaCaptureManagerProxy::~UserMediaCaptureManagerProxy()
     m_connectionProxy->removeMessageReceiver(Messages::UserMediaCaptureManagerProxy::messageReceiverName());
 }
 
-void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& mediaConstraints, bool shouldUseGPUProcessRemoteFrames, CreateSourceCallback&& completionHandler)
+CaptureSourceOrError UserMediaCaptureManagerProxy::createMicrophoneSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* mediaConstraints, PageIdentifier pageIdentifier)
+{
+    auto sourceOrError = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().createAudioCaptureSource(device, WTFMove(hashSalt), mediaConstraints, pageIdentifier);
+    if (!sourceOrError)
+        return sourceOrError;
+
+    auto& perPageSources = m_pageSources.ensure(pageIdentifier, [] { return PageSources { }; }).iterator->value;
+
+    // FIXME: Support multiple microphones simultaneously.
+    if (auto* microphoneSource = perPageSources.microphoneSource.get()) {
+        if (microphoneSource->persistentID() != device.persistentId() && !microphoneSource->isEnded()) {
+            RELEASE_LOG_ERROR(WebRTC, "Ending microphone source as new source is using a different device.");
+            // FIXME: We should probably fail the capture in a way that shows a specific console log message.
+            microphoneSource->endImmediatly();
+        }
+    }
+
+    auto source = sourceOrError.source();
+    perPageSources.microphoneSource = WeakPtr { source.get() };
+    return source;
+}
+
+static bool canCaptureFromMultipleCameras()
+{
+#if PLATFORM(IOS_FAMILY)
+    return false;
+#else
+    return true;
+#endif
+}
+
+CaptureSourceOrError UserMediaCaptureManagerProxy::createCameraSource(const CaptureDevice& device, String&& hashSalt, const MediaConstraints* mediaConstraints, PageIdentifier pageIdentifier)
+{
+    auto& perPageSources = m_pageSources.ensure(pageIdentifier, [] { return PageSources { }; }).iterator->value;
+    auto* cameraSource = perPageSources.cameraSource.get();
+    if (cameraSource) {
+        // FIXME: Optimize multiple concurrent cameras.
+        if (cameraSource->persistentID() == device.persistentId() && !cameraSource->isEnded()) {
+            // We can reuse the source, let's do it.
+            auto source = cameraSource->clone();
+            if (mediaConstraints) {
+                auto error = source->applyConstraints(*mediaConstraints);
+                if (error)
+                    return WTFMove(error->message);
+            }
+            return source;
+        }
+    }
+
+    auto sourceOrError = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().createVideoCaptureSource(device, WTFMove(hashSalt), mediaConstraints, pageIdentifier);
+    if (!sourceOrError)
+        return sourceOrError;
+
+    if (!canCaptureFromMultipleCameras() && cameraSource) {
+        RELEASE_LOG_ERROR(WebRTC, "Ending camera source as new source is using a different device.");
+        // FIXME: We should probably fail the capture in a way that shows a specific console log message.
+        cameraSource->endImmediatly();
+    }
+
+    auto source = sourceOrError.source();
+    source->monitorOrientation(m_orientationNotifier);
+    perPageSources.cameraSource = WeakPtr { source.get() };
+    return source;
+}
+
+void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstraints(RealtimeMediaSourceIdentifier id, const CaptureDevice& device, String&& hashSalt, const MediaConstraints& mediaConstraints, bool shouldUseGPUProcessRemoteFrames, PageIdentifier pageIdentifier, CreateSourceCallback&& completionHandler)
 {
     if (!m_connectionProxy->willStartCapture(device.type()))
         return completionHandler(false, "Request is not allowed"_s, RealtimeMediaSourceSettings { }, { }, { }, { }, 0);
@@ -299,16 +360,14 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     CaptureSourceOrError sourceOrError;
     switch (device.type()) {
     case WebCore::CaptureDevice::DeviceType::Microphone:
-        sourceOrError = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().createAudioCaptureSource(device, WTFMove(hashSalt), constraints);
+        sourceOrError = createMicrophoneSource(device, WTFMove(hashSalt), constraints, pageIdentifier);
         break;
     case WebCore::CaptureDevice::DeviceType::Camera:
-        sourceOrError = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().createVideoCaptureSource(device, WTFMove(hashSalt), constraints);
-        if (sourceOrError)
-            sourceOrError.captureSource->monitorOrientation(m_orientationNotifier);
+        sourceOrError = createCameraSource(device, WTFMove(hashSalt), constraints, pageIdentifier);
         break;
     case WebCore::CaptureDevice::DeviceType::Screen:
     case WebCore::CaptureDevice::DeviceType::Window:
-        sourceOrError = RealtimeMediaSourceCenter::singleton().displayCaptureFactory().createDisplayCaptureSource(device, WTFMove(hashSalt), constraints);
+        sourceOrError = RealtimeMediaSourceCenter::singleton().displayCaptureFactory().createDisplayCaptureSource(device, WTFMove(hashSalt), constraints, pageIdentifier);
         break;
     case WebCore::CaptureDevice::DeviceType::SystemAudio:
     case WebCore::CaptureDevice::DeviceType::Speaker:

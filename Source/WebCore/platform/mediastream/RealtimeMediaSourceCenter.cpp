@@ -77,7 +77,7 @@ void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, Ne
 
     RefPtr<RealtimeMediaSource> audioSource;
     if (audioDevice) {
-        auto source = audioCaptureFactory().createAudioCaptureSource(WTFMove(audioDevice), String { hashSalt }, &request.audioConstraints);
+        auto source = audioCaptureFactory().createAudioCaptureSource(WTFMove(audioDevice), String { hashSalt }, &request.audioConstraints, request.pageIdentifier);
         if (!source) {
             completionHandler(makeUnexpected(makeString("Failed to create MediaStream audio source: ", source.errorMessage)));
             return;
@@ -89,9 +89,9 @@ void RealtimeMediaSourceCenter::createMediaStream(Ref<const Logger>&& logger, Ne
     if (videoDevice) {
         CaptureSourceOrError source;
         if (videoDevice.type() == CaptureDevice::DeviceType::Camera)
-            source = videoCaptureFactory().createVideoCaptureSource(WTFMove(videoDevice), WTFMove(hashSalt), &request.videoConstraints);
+            source = videoCaptureFactory().createVideoCaptureSource(WTFMove(videoDevice), WTFMove(hashSalt), &request.videoConstraints, request.pageIdentifier);
         else
-            source = displayCaptureFactory().createDisplayCaptureSource(WTFMove(videoDevice), WTFMove(hashSalt), &request.videoConstraints);
+            source = displayCaptureFactory().createDisplayCaptureSource(WTFMove(videoDevice), WTFMove(hashSalt), &request.videoConstraints, request.pageIdentifier);
 
         if (!source) {
             completionHandler(makeUnexpected(makeString("Failed to create MediaStream video source: ", source.errorMessage)));
@@ -204,7 +204,7 @@ void RealtimeMediaSourceCenter::getDisplayMediaDevices(const MediaStreamRequest&
         if (!device.enabled())
             return;
 
-        auto sourceOrError = displayCaptureFactory().createDisplayCaptureSource(device, String { hashSalt }, &request.videoConstraints);
+        auto sourceOrError = displayCaptureFactory().createDisplayCaptureSource(device, String { hashSalt }, &request.videoConstraints, request.pageIdentifier);
         if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
             displayDeviceInfo.append({ sourceOrError.captureSource->fitnessScore(), device });
 
@@ -221,7 +221,7 @@ void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& re
             if (!device.enabled())
                 continue;
 
-            auto sourceOrError = audioCaptureFactory().createAudioCaptureSource(device, String { hashSalt }, { });
+            auto sourceOrError = audioCaptureFactory().createAudioCaptureSource(device, String { hashSalt }, { }, request.pageIdentifier);
             if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.audioConstraints, invalidConstraint))
                 audioDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
 
@@ -235,7 +235,7 @@ void RealtimeMediaSourceCenter::getUserMediaDevices(const MediaStreamRequest& re
             if (!device.enabled())
                 continue;
 
-            auto sourceOrError = videoCaptureFactory().createVideoCaptureSource(device, String { hashSalt }, { });
+            auto sourceOrError = videoCaptureFactory().createVideoCaptureSource(device, String { hashSalt }, { }, request.pageIdentifier);
             if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
                 videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
 
