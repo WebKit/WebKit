@@ -1,0 +1,4 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/pending_webgl_test_files/conformance2/misc/webgl2-after-webgl1-bug.html?webglVersion=2
+[ PASS ] All tests passed
