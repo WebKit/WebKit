@@ -74,7 +74,6 @@ private:
     WEBCORE_EXPORT void setTimestamps(const MediaTime&, const MediaTime&) final;
     WEBCORE_EXPORT Ref<WebCore::MediaSample> createNonDisplayingCopy() const final;
     WEBCORE_EXPORT SampleFlags flags() const final;
-    WEBCORE_EXPORT std::optional<ByteRange> byteRange() const final;
     WEBCORE_EXPORT void dump(PrintStream&) const final;
 };
 

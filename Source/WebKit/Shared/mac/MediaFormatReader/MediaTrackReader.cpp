@@ -33,6 +33,7 @@
 #include "MediaSampleByteRange.h"
 #include "MediaSampleCursor.h"
 #include <WebCore/AudioTrackPrivate.h>
+#include <WebCore/CMUtilities.h>
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaDescription.h>
 #include <WebCore/SampleMap.h>
@@ -97,15 +98,17 @@ MediaTime MediaTrackReader::greatestPresentationTime() const
     return lastSample.presentationTime() + lastSample.duration();
 }
 
-void MediaTrackReader::addSample(Ref<MediaSample>&& sample, MTPluginByteSourceRef byteSource)
+void MediaTrackReader::addSample(MediaSamplesBlock&& sample, MTPluginByteSourceRef byteSource)
 {
     ASSERT(!isMainRunLoop());
     Locker locker { m_sampleStorageLock };
     if (!m_sampleStorage)
         m_sampleStorage = makeUnique<SampleStorage>();
 
-    ASSERT(!sample->isDivisable() && sample->byteRange());
-    auto sampleToAdd = MediaSampleByteRange::create(sample.get(), byteSource, m_trackID);
+    ASSERT(!sample.isEmpty());
+    ASSERT(std::holds_alternative<MediaSample::ByteRange>(sample.last().data));
+
+    auto sampleToAdd = MediaSampleByteRange::create(WTFMove(sample), byteSource);
 
     // FIXME: Even though WebM muxer guidelines say this must not happen, some video tracks have two
     // consecutive frames with the same presentation time. SampleMap will not store the second frame
@@ -185,7 +188,15 @@ OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocato
 
     if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginTrackReaderProperty_FormatDescriptionArray())) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(lastSample.platformSample().type == PlatformSample::ByteRangeSampleType);
-        const void* descriptions[1] = { lastSample.platformSample().sample.byteRangeSample.second };
+        const TrackInfo& trackInfo = lastSample.platformSample().sample.byteRangeSample.second;
+        if (!m_trackInfo) {
+            m_trackInfo = &lastSample.platformSample().sample.byteRangeSample.second.get();
+            m_formatDescription = WebCore::createFormatDescriptionFromTrackInfo(*m_trackInfo);
+        } else if (*m_trackInfo != trackInfo) {
+            m_trackInfo = &trackInfo;
+            m_formatDescription = WebCore::createFormatDescriptionFromTrackInfo(*m_trackInfo);
+        }
+        const void* descriptions[1] = { m_formatDescription.get() };
         *reinterpret_cast<CFArrayRef*>(copiedValue) = adoptCF(CFArrayCreate(allocator, descriptions, 1, &kCFTypeArrayCallBacks)).leakRef();
         return noErr;
     }

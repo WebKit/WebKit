@@ -28,6 +28,7 @@
 #if ENABLE(WEBM_FORMAT_READER)
 
 #include "CoreMediaWrapped.h"
+#include <WebCore/SourceBufferParserWebM.h>
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
@@ -36,15 +37,15 @@
 DECLARE_CORE_MEDIA_TRAITS(FormatReader);
 
 namespace WebCore {
-class MediaSampleAVFObjC;
-class SourceBufferParser;
+class MediaSamplesBlock;
+class WebMParser;
 }
 
 namespace WebKit {
 
 class MediaTrackReader;
 
-class MediaFormatReader final : public CoreMediaWrapped<MediaFormatReader> {
+class MediaFormatReader final : public CoreMediaWrapped<MediaFormatReader> , public WebCore::WebMParser::Callback {
 public:
     using CoreMediaWrapped<MediaFormatReader>::unwrap;
 
@@ -64,12 +65,16 @@ public:
 private:
     explicit MediaFormatReader(Allocator&&);
 
+    // WebMParser::Callback
+    void parsedInitializationData(WebCore::SourceBufferParser::InitializationSegment&&) final;
+    void parsedMediaData(WebCore::MediaSamplesBlock&&) final;
+
     void parseByteSource(RetainPtr<MTPluginByteSourceRef>&&);
     void didParseTracks(WebCore::SourceBufferPrivateClient::InitializationSegment&&, uint64_t errorCode);
     void didSelectVideoTrack(WebCore::VideoTrackPrivate&, bool) { }
     void didEnableAudioTrack(WebCore::AudioTrackPrivate&, bool) { }
-    void didProvideMediaData(Ref<WebCore::MediaSampleAVFObjC>&&, uint64_t, const String&);
-    void finishParsing(Ref<WebCore::SourceBufferParser>&&);
+    void didProvideMediaData(WebCore::MediaSamplesBlock&&);
+    void finishParsing();
 
     // CMBaseClass
     String debugDescription() const final { return "WebKit::MediaFormatReader"_s; }

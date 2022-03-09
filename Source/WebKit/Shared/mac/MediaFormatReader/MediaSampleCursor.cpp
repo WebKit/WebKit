@@ -30,6 +30,7 @@
 
 #include "Logging.h"
 #include "MediaTrackReader.h"
+#include <WebCore/CMUtilities.h>
 #include <WebCore/MediaSample.h>
 #include <WebCore/SampleMap.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
@@ -348,26 +349,18 @@ OSStatus MediaSampleCursor::getSampleTiming(CMSampleTimingInfo* sampleTiming) co
 
 OSStatus MediaSampleCursor::getSyncInfo(MTPluginSampleCursorSyncInfo* syncInfo) const
 {
-    OSStatus syncInfoStatus = noErr;
-    auto getSampleStatus = getMediaSample([&](MediaSample& sample) {
-        if (sample.hasSyncInfo()) {
-            *syncInfo = {
-                .fullSync = sample.isSync()
-            };
-            return;
-        }
-        syncInfoStatus = kCMBaseObjectError_ValueNotAvailable;
+    return getMediaSample([&](MediaSample& sample) {
+        *syncInfo = {
+            .fullSync = sample.isSync()
+        };
     });
-    if (syncInfoStatus != noErr)
-        return syncInfoStatus;
-    return getSampleStatus;
 }
 
 OSStatus MediaSampleCursor::copyFormatDescription(CMFormatDescriptionRef* formatDescriptionOut) const
 {
     return getMediaSample([&](MediaSample& sample) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sample.platformSample().type == PlatformSample::ByteRangeSampleType);
-        *formatDescriptionOut = retainPtr(sample.platformSample().sample.byteRangeSample.second).leakRef();
+        *formatDescriptionOut = createFormatDescriptionFromTrackInfo(sample.platformSample().sample.byteRangeSample.second).leakRef();
     });
 }
 

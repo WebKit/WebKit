@@ -41,7 +41,7 @@ class WorkQueue;
 namespace WebCore {
 class AudioTrackPrivate;
 class InbandTextTrackPrivate;
-class MediaSample;
+class MediaSamplesBlock;
 class TrackPrivateBase;
 class VideoTrackPrivate;
 }
@@ -65,7 +65,7 @@ public:
     MediaTime greatestPresentationTime() const;
 
     void setEnabled(bool enabled) { m_isEnabled = enabled ? Enabled::True : Enabled::False; }
-    void addSample(Ref<WebCore::MediaSample>&&, MTPluginByteSourceRef);
+    void addSample(WebCore::MediaSamplesBlock&&, MTPluginByteSourceRef);
     void waitForSample(Function<bool(WebCore::SampleMap&, bool)>&&) const;
     void finishParsing();
 
@@ -111,6 +111,8 @@ private:
     mutable std::unique_ptr<SampleStorage> m_sampleStorage WTF_GUARDED_BY_LOCK(m_sampleStorageLock);
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
+    RetainPtr<CMFormatDescriptionRef> m_formatDescription;
+    RefPtr<const WebCore::TrackInfo> m_trackInfo;
 };
 
 constexpr MediaTrackReader::WrapperClass MediaTrackReader::wrapperClass()

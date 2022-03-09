@@ -62,7 +62,6 @@ private:
     SampleFlags flags() const override;
     PlatformSample platformSample() const override;
     PlatformSample::Type platformSampleType() const override { return PlatformSample::MockSampleBoxType; }
-    std::optional<ByteRange> byteRange() const override { return std::nullopt; }
     FloatSize presentationSize() const override { return FloatSize(); }
     void dump(PrintStream&) const override;
     void offsetTimestampsBy(const MediaTime& offset) override { m_box.offsetTimestampsBy(offset); }

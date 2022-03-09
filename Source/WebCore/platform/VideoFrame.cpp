@@ -108,13 +108,6 @@ MediaSample::SampleFlags VideoFrame::flags() const
     return MediaSample::SampleFlags::None;
 }
 
-std::optional<MediaSample::ByteRange> VideoFrame::byteRange() const
-{
-    // FIXME: Remove from the base class.
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-
 void VideoFrame::dump(PrintStream&) const
 {
 }

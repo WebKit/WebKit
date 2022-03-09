@@ -30,6 +30,7 @@
 #include "PlatformVideoColorSpace.h"
 #include "SharedBuffer.h"
 #include <JavaScriptCore/TypedArrays.h>
+#include <functional>
 #include <wtf/EnumTraits.h>
 #include <wtf/MediaTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -47,6 +48,7 @@ class FragmentedSharedBuffer;
 class MockSampleBox;
 class ProcessIdentity;
 class SharedBuffer;
+struct TrackInfo;
 
 struct PlatformSample {
     enum Type {
@@ -61,7 +63,7 @@ struct PlatformSample {
         const MockSampleBox* mockSampleBox;
         CMSampleBufferRef cmSampleBuffer;
         GstSample* gstSample;
-        std::pair<MTPluginByteSourceRef, CMFormatDescriptionRef> byteRangeSample;
+        std::pair<MTPluginByteSourceRef, std::reference_wrapper<const TrackInfo>> byteRangeSample;
     } sample;
 };
 
@@ -107,7 +109,7 @@ public:
         size_t byteOffset { 0 };
         size_t byteLength { 0 };
     };
-    virtual std::optional<ByteRange> byteRange() const = 0;
+    virtual std::optional<ByteRange> byteRange() const { return std::nullopt; }
 
     enum class VideoRotation {
         None = 0,
@@ -227,11 +229,13 @@ private:
 
 class MediaSamplesBlock {
 public:
+    using MediaSampleDataType = std::variant<MediaSample::ByteRange, Ref<const FragmentedSharedBuffer>>;
     struct MediaSampleItem {
+        using MediaSampleDataType = MediaSamplesBlock::MediaSampleDataType;
         MediaTime presentationTime;
         MediaTime decodeTime;
         MediaTime duration;
-        std::variant<MediaSample::ByteRange, Ref<const FragmentedSharedBuffer>> data;
+        MediaSampleDataType data;
         MediaSample::SampleFlags flags;
     };
 

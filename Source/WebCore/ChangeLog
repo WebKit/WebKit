@@ -1,3 +1,37 @@
+2022-03-08  Jean-Yves Avenard  <jya@apple.com>
+
+        Have MediaFormatReader plugin use WebMParser directly
+        https://bugs.webkit.org/show_bug.cgi?id=237594
+        rdar://89960307
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        * platform/MediaSample.h:
+        (WebCore::MediaSample::byteRange const): Have default implementation.
+        * platform/VideoFrame.cpp:
+        * platform/VideoFrame.h:
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjCSample::byteRangeForAttachment const):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        * platform/graphics/cocoa/CMUtilities.h: Export symbols.
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::WebMParser::createByteRangeSamples):
+        (WebCore::WebMParser::OnTrackEntry):
+        (WebCore::WebMParser::VideoTrackData::consumeFrameData):
+        (WebCore::WebMParser::AudioTrackData::consumeFrameData):
+        (WebCore::WebMParser::provideMediaData):
+        (WebCore::SourceBufferParserWebM::parsedMediaData):
+        (WebCore::SourceBufferParserWebM::returnSamples):
+        (WebCore::SourceBufferParserWebM::flushPendingAudioSamples):
+        * platform/graphics/cocoa/SourceBufferParserWebM.h:
+        (WebCore::WebMParser::TrackData::createByteRangeSamples):
+        (WebCore::WebMParser::TrackData::drainPendingSamples):
+        * platform/graphics/gstreamer/MediaSampleGStreamer.h:
+        * platform/mock/mediasource/MockSourceBufferPrivate.cpp:
+
 2022-03-08  Chris Dumez  <cdumez@apple.com>
 
         IntersectionObserver is causing massive document leaks on haaretz.co.il

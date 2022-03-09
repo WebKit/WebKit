@@ -27,48 +27,37 @@
 
 #if ENABLE(WEBM_FORMAT_READER)
 
-#include <WebCore/MediaSampleAVFObjC.h>
-#include <pal/spi/cocoa/MediaToolboxSPI.h>
-#include <wtf/MediaTime.h>
-#include <wtf/RetainPtr.h>
+#include <WebCore/MediaSample.h>
 
 namespace WebKit {
 
 class MediaSampleByteRange final : public WebCore::MediaSample {
 public:
-    static Ref<MediaSampleByteRange> create(WebCore::MediaSample& sample, MTPluginByteSourceRef byteSource, uint64_t trackID)
+    static Ref<MediaSampleByteRange> create(WebCore::MediaSamplesBlock&& sample, MTPluginByteSourceRef byteSource)
     {
-        return adoptRef(*new MediaSampleByteRange(sample, byteSource, trackID));
+        return adoptRef(*new MediaSampleByteRange(WTFMove(sample), byteSource));
     }
 
-    MediaTime presentationTime() const final { return m_presentationTime; }
-    MediaTime decodeTime() const final { return m_decodeTime; }
-    MediaTime duration() const final { return m_duration; }
-    size_t sizeInBytes() const final { return m_sizeInBytes; }
-    WebCore::FloatSize presentationSize() const final { return m_presentationSize; }
-    SampleFlags flags() const final { return m_flags; }
-    std::optional<ByteRange> byteRange() const final { return m_byteRange; }
+    MediaTime presentationTime() const final;
+    MediaTime decodeTime() const final;
+    MediaTime duration() const final;
+    size_t sizeInBytes() const final;
+    WebCore::FloatSize presentationSize() const final;
+    SampleFlags flags() const final;
+    std::optional<ByteRange> byteRange() const final;
 
     AtomString trackID() const final;
     WebCore::PlatformSample platformSample() const final;
     WebCore::PlatformSample::Type platformSampleType() const final { return WebCore::PlatformSample::ByteRangeSampleType; }
     void offsetTimestampsBy(const MediaTime&) final;
     void setTimestamps(const MediaTime&, const MediaTime&) final;
-    Ref<MediaSample> createNonDisplayingCopy() const { return *const_cast<MediaSampleByteRange*>(this); }
+    Ref<MediaSample> createNonDisplayingCopy() const final { return *const_cast<MediaSampleByteRange*>(this); }
 
 private:
-    MediaSampleByteRange(MediaSample&, MTPluginByteSourceRef, uint64_t trackID);
+    MediaSampleByteRange(WebCore::MediaSamplesBlock&&, MTPluginByteSourceRef);
 
-    MediaTime m_presentationTime;
-    MediaTime m_decodeTime;
-    MediaTime m_duration;
-    ByteRange m_byteRange;
-    uint64_t m_trackID;
-    size_t m_sizeInBytes;
-    WebCore::FloatSize m_presentationSize;
+    const WebCore::MediaSamplesBlock m_block;
     RetainPtr<MTPluginByteSourceRef> m_byteSource;
-    RetainPtr<CMFormatDescriptionRef> m_formatDescription;
-    SampleFlags m_flags;
 };
 
 } // namespace WebKit

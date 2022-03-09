@@ -505,44 +505,6 @@ RetainPtr<CMSampleBufferRef> MediaSampleAVFObjC::cloneSampleBufferAndSetAsDispla
     return adoptCF(newSampleBuffer);
 }
 
-static CFStringRef byteRangeOffsetAttachmentKey()
-{
-    static CFStringRef key = CFSTR("WebKitMediaSampleByteRangeOffset");
-    return key;
-}
-
-std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRange() const
-{
-    return byteRangeForAttachment(byteRangeOffsetAttachmentKey());
-}
-
-void MediaSampleAVFObjC::setByteRangeOffset(size_t byteOffset)
-{
-    int64_t checkedOffset = CheckedInt64(byteOffset);
-    auto offsetNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &checkedOffset));
-    PAL::CMSetAttachment(m_sample.get(), byteRangeOffsetAttachmentKey(), offsetNumber.get(), kCMAttachmentMode_ShouldPropagate);
-}
-
-std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRangeForAttachment(CFStringRef key) const
-{
-    auto byteOffsetCF = dynamic_cf_cast<CFNumberRef>(PAL::CMGetAttachment(m_sample.get(), key, nullptr));
-    if (!byteOffsetCF)
-        return std::nullopt;
-
-    int64_t byteOffset = 0;
-    if (!CFNumberGetValue(byteOffsetCF, kCFNumberSInt64Type, &byteOffset))
-        return std::nullopt;
-
-    CMItemCount sizeArrayEntries = 0;
-    PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 0, nullptr, &sizeArrayEntries);
-    if (sizeArrayEntries != 1)
-        return std::nullopt;
-
-    size_t singleSizeEntry = 0;
-    PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 1, &singleSizeEntry, nullptr);
-    return { { CheckedSize(byteOffset), singleSizeEntry } };
-}
-
 CVPixelBufferRef MediaSampleAVFObjC::pixelBuffer() const
 {
     return static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));

@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ExceptionOr.h"
+#include "MediaSample.h"
 #include "SharedBuffer.h"
 #include "SourceBufferParser.h"
 #include <CoreAudio/CoreAudioTypes.h>
@@ -52,30 +53,30 @@ class WebMParser : private webm::Callback {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class Callback {
-        WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual void parsedTrimmingData(uint64_t, const MediaTime&) { }
         virtual void parsedInitializationData(SourceBufferParser::InitializationSegment&&) = 0;
-        virtual void parsedMediaData(MediaSamplesBlock&&, uint64_t) = 0;
+        virtual void parsedMediaData(MediaSamplesBlock&&) = 0;
         virtual bool canDecrypt() const { return false; }
         virtual void contentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&&, uint64_t) { }
         virtual ~Callback() = default;
     };
 
-    WebMParser(Callback&);
-    ~WebMParser();
+    WEBCORE_EXPORT WebMParser(Callback&);
+    WEBCORE_EXPORT ~WebMParser();
 
     class SegmentReader;
 
-    ExceptionOr<int> parse(SourceBufferParser::Segment&&);
-    void resetState();
-    void reset();
-    void invalidate();
+    WEBCORE_EXPORT void createByteRangeSamples();
+    WEBCORE_EXPORT ExceptionOr<int> parse(SourceBufferParser::Segment&&);
+    WEBCORE_EXPORT void resetState();
+    WEBCORE_EXPORT void reset();
+    WEBCORE_EXPORT void invalidate();
     const webm::Status& status() const { return m_status; }
 
-    void provideMediaData(MediaSamplesBlock&&, uint64_t);
+    void provideMediaData(MediaSamplesBlock&&);
 
-    void setLogger(const Logger&, const void* identifier);
+    WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier);
     const Logger* loggerPtr() const { return m_logger.get(); }
     const void* logIdentifier() const { return m_logIdentifier; }
 
@@ -134,6 +135,8 @@ public:
         webm::TrackEntry& track() { return m_track; }
         TrackInfo::TrackType trackType() const { return m_trackType; }
 
+        void createByteRangeSamples() { m_useByteRange = true; }
+
         RefPtr<TrackInfo> formatDescription() const { return m_formatDescription.copyRef(); }
         void setFormatDescription(Ref<TrackInfo>&& description)
         {
@@ -167,16 +170,16 @@ public:
         {
             if (!m_completeMediaSamples.size())
                 return;
-            m_parser.provideMediaData(WTFMove(m_completeMediaSamples), m_lastPosition);
+            m_parser.provideMediaData(WTFMove(m_completeMediaSamples));
             resetCompletedFramesState();
         }
 
     protected:
         RefPtr<SharedBuffer> contiguousCompleteBlockBuffer(size_t offset, size_t length) const;
         webm::Status readFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t* bytesRemaining);
-        RefPtr<FragmentedSharedBuffer> m_completeBlockBuffer;
         MediaSamplesBlock m_completeMediaSamples;
-        uint64_t m_lastPosition { 0 };
+        bool m_useByteRange { false };
+        MediaSamplesBlock::MediaSampleDataType m_completeFrameData;
 
     private:
         CodecType m_codec;
@@ -184,6 +187,7 @@ public:
         const TrackInfo::TrackType m_trackType;
         RefPtr<TrackInfo> m_formatDescription;
         SharedBufferBuilder m_currentBlockBuffer;
+        RefPtr<const FragmentedSharedBuffer> m_completeBlockBuffer;
         WebMParser& m_parser;
         std::optional<size_t> m_completePacketSize;
         // Size of the currently incomplete parsed packet.
@@ -279,6 +283,7 @@ private:
     const void* m_logIdentifier { nullptr };
     uint64_t m_nextChildIdentifier { 0 };
     Callback& m_callback;
+    bool m_createByteRangeSamples { false };
 };
 
 class SourceBufferParserWebM : public SourceBufferParser, WebMParser::Callback {
@@ -308,7 +313,7 @@ public:
         m_didParseTrimmingDataCallback = WTFMove(callback);
     }
 
-    void flushPendingAudioSamples(std::optional<uint64_t> = std::nullopt);
+    void flushPendingAudioSamples();
     void setMinimumAudioSampleDuration(float);
     
     WEBCORE_EXPORT void setLogger(const Logger&, const void* identifier) final;
@@ -318,12 +323,12 @@ public:
 private:
     // WebMParser::Callback
     void parsedInitializationData(SourceBufferParser::InitializationSegment&&) final;
-    void parsedMediaData(MediaSamplesBlock&&, uint64_t) final;
+    void parsedMediaData(MediaSamplesBlock&&) final;
     bool canDecrypt() const final { return !!m_didProvideContentKeyRequestInitializationDataForTrackIDCallback; }
     void contentKeyRequestInitializationDataForTrackID(Ref<SharedBuffer>&&, uint64_t) final;
     void parsedTrimmingData(uint64_t, const MediaTime&) final;
-    
-    void returnSamples(MediaSamplesBlock&&, CMFormatDescriptionRef, std::optional<uint64_t>);
+
+    void returnSamples(MediaSamplesBlock&&, CMFormatDescriptionRef);
 
     DidParseTrimmingDataCallback m_didParseTrimmingDataCallback;
     WebMParser m_parser;

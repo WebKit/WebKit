@@ -64,7 +64,6 @@ public:
     SampleFlags flags() const override;
     PlatformSample platformSample() const override;
     PlatformSample::Type platformSampleType() const override { return PlatformSample::CMSampleBufferType; }
-    std::optional<ByteRange> byteRange() const override;
     void offsetTimestampsBy(const MediaTime&) override;
     void setTimestamps(const MediaTime&, const MediaTime&) override;
     WEBCORE_EXPORT bool isDivisable() const override;
@@ -82,8 +81,6 @@ public:
     bool isHomogeneous() const;
     Vector<Ref<MediaSampleAVFObjC>> divideIntoHomogeneousSamples();
 
-    void setByteRangeOffset(size_t);
-
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     using KeyIDs = Vector<Ref<FragmentedSharedBuffer>>;
     void setKeyIDs(KeyIDs&& keyIDs) { m_keyIDs = WTFMove(keyIDs); }
@@ -100,8 +97,6 @@ protected:
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, uint64_t trackID);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, VideoRotation, bool mirrored);
     WEBCORE_EXPORT virtual ~MediaSampleAVFObjC();
-
-    std::optional<MediaSample::ByteRange> byteRangeForAttachment(CFStringRef key) const;
 
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomString m_id;

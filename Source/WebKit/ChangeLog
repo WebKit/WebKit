@@ -1,3 +1,49 @@
+2022-03-08  Jean-Yves Avenard  <jya@apple.com>
+
+        Have MediaFormatReader plugin use WebMParser directly
+        https://bugs.webkit.org/show_bug.cgi?id=237594
+        rdar://89960307
+
+        Reviewed by Eric Carlson.
+
+        Directly build the sample tables from the sample's offset/size without
+        first build MediaSampleAVFObjC objects.
+        The MTPluginByteSourceRef interface unfortunately doesn't allow to skip a
+        given number of bytes, and you must read the content into a buffer to be
+        able to continue reading the resource.
+        As such, we continue to have to create SharedBuffer objects for each sample.
+        However, those objects are now much shorter lived and not dispatched to
+        other work queues. So the peak memory usage when playing a webm is
+        significantly reduced: a 50% memory reduction (from 440MB to 202MB with a sample video)
+
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::parseByteSource):
+        (WebKit::MediaFormatReader::parsedInitializationData):
+        (WebKit::MediaFormatReader::parsedMediaData):
+        (WebKit::MediaFormatReader::didProvideMediaData):
+        (WebKit::MediaFormatReader::finishParsing):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.h:
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.cpp:
+        (WebKit::MediaSampleByteRange::MediaSampleByteRange):
+        (WebKit::MediaSampleByteRange::trackID const):
+        (WebKit::MediaSampleByteRange::platformSample const):
+        (WebKit::MediaSampleByteRange::presentationTime const):
+        (WebKit::MediaSampleByteRange::decodeTime const):
+        (WebKit::MediaSampleByteRange::duration const):
+        (WebKit::MediaSampleByteRange::sizeInBytes const):
+        (WebKit::MediaSampleByteRange::presentationSize const):
+        (WebKit::MediaSampleByteRange::flags const):
+        (WebKit::MediaSampleByteRange::byteRange const):
+        (WebKit::MediaSampleByteRange::offsetTimestampsBy):
+        (WebKit::MediaSampleByteRange::setTimestamps):
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.h:
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+        (WebKit::MediaSampleCursor::copyFormatDescription const):
+        * Shared/mac/MediaFormatReader/MediaTrackReader.cpp:
+        (WebKit::MediaTrackReader::addSample):
+        (WebKit::MediaTrackReader::copyProperty):
+        * Shared/mac/MediaFormatReader/MediaTrackReader.h:
+
 2022-03-08  John Cunningham  <johncunningham@apple.com>
 
         RemoteGraphicsContextGL ReadPixels does not preserve contents for area that is not part of the Framebuffer
