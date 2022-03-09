@@ -1,3 +1,15 @@
+2022-03-09  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Associate platform specific configuration with WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=237668
+
+        Reviewed by Basuke Suzuki.
+
+        Move all cairo and curl platform configuration under a check for WinCairo. This arranges
+        platform config in a consistent manner.
+
+        * PlatformWin.cmake:
+
 2022-03-09  Sihui Liu  <sihui_liu@apple.com>
 
         File System Access: disallows names that are not permitted by underlying file system
