@@ -139,6 +139,7 @@ class GitHubMixin(object):
     addURLs = False
     pr_open_states = ['open']
     pr_closed_states = ['closed']
+    BLOCKED_LABEL = 'merging-blocked'
 
     def fetch_data_from_url_with_authentication(self, url):
         response = None
@@ -193,7 +194,7 @@ class GitHubMixin(object):
 
     def _is_pr_blocked(self, pr_json):
         for label in (pr_json or {}).get('labels', {}):
-            if label.get('name', '') == 'blocked':
+            if label.get('name', '') == self.BLOCKED_LABEL:
                 return 1
         return 0
 
@@ -1327,7 +1328,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
 
         blocked = self._is_pr_blocked(pr_json) if self.verifyReviewDenied else 0
         if blocked == 1:
-            self.skip_build("PR {} has been marked as 'blocked'".format(pr_number))
+            self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
             return False
 
         if -1 in (obsolete, pr_closed, blocked):
@@ -1493,7 +1494,7 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin):
 
         rc = SKIPPED
         if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
-            rc = SUCCESS if self.modify_label(pr_number, 'blocked', repository_url=self.getProperty('repository', '')) else FAILURE
+            rc = SUCCESS if self.modify_label(pr_number, self.BLOCKED_LABEL, repository_url=self.getProperty('repository', '')) else FAILURE
         self.finished(rc)
         if build_finish_summary:
             self.build.buildFinished([build_finish_summary], FAILURE)
@@ -1501,10 +1502,10 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {'step': 'Added blocked label pull request'}
+            return {'step': "Added '' label pull request".format(self.BLOCKED_LABEL)}
         elif self.results == SKIPPED:
             return buildstep.BuildStep.getResultSummary(self)
-        return {'step': 'Failed to add blocked label to pull request'}
+        return {'step': "Failed to add '{}' label to pull request".format(self.BLOCKED_LABEL)}
 
     def doStepIf(self, step):
         return self.getProperty('github.number')
