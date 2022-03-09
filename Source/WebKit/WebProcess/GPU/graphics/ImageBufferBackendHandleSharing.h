@@ -37,6 +37,7 @@ public:
     virtual ImageBufferBackendHandle createBackendHandle() const = 0;
 
     virtual void setBackendHandle(ImageBufferBackendHandle&&) { }
+    virtual bool hasBackendHandle() const { return false; }
     virtual void clearBackendHandle() { }
 
 private:

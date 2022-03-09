@@ -1,3 +1,36 @@
+2022-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Move RemoteLayerBackingStore::Buffer.isVolatile into ImageBufferBackend
+        https://bugs.webkit.org/show_bug.cgi?id=237631
+
+        Reviewed by Tim Horton.
+
+        'isVolatile' is a property of a specific image buffer, so it makes more sense to have it in
+        ImageBuffer[Backend] than RemoteLayerBackingStore. This also allows GPU Process code to
+        maintain volatility state in the web process, which reduces the amount of IPC needed when
+        making the front buffer non-volatile before display.
+
+        So ImageBufferBackend gets volatilityState()/setVolatilityState(), accessed via ImageBuffer.
+        This state is maintained by RemoteRenderingBackendProxy for remote buffers. We set the state
+        to volatile when we receive the IPC reply for markSurfacesVolatile(), which requires
+        changing the reply to list buffers for which making volatile was successful.
+
+        RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile() can now
+        early return when the buffer is already non-volatile, and we have a backend handle (recall
+        that we clear backend handles when trying to make a buffer volatile).
+
+        * platform/graphics/ConcreteImageBuffer.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageBufferBackend.h:
+        (WebCore::ImageBufferBackend::volatilityState const):
+        (WebCore::ImageBufferBackend::setVolatilityState):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::setVolatile):
+        (WebCore::ImageBufferIOSurfaceBackend::setNonVolatile):
+        (WebCore::ImageBufferIOSurfaceBackend::volatilityState const):
+        (WebCore::ImageBufferIOSurfaceBackend::setVolatilityState):
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+
 2022-03-09  Youenn Fablet  <youenn@apple.com>
 
         Allow to pass webrtc video frame buffers through RealtimeMediaSource based pipelines

@@ -1,3 +1,52 @@
+2022-03-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Move RemoteLayerBackingStore::Buffer.isVolatile into ImageBufferBackend
+        https://bugs.webkit.org/show_bug.cgi?id=237631
+
+        Reviewed by Tim Horton.
+        
+        'isVolatile' is a property of a specific image buffer, so it makes more sense to have it in
+        ImageBuffer[Backend] than RemoteLayerBackingStore. This also allows GPU Process code to
+        maintain volatility state in the web process, which reduces the amount of IPC needed when
+        making the front buffer non-volatile before display.
+
+        So ImageBufferBackend gets volatilityState()/setVolatilityState(), accessed via ImageBuffer.
+        This state is maintained by RemoteRenderingBackendProxy for remote buffers. We set the state
+        to volatile when we receive the IPC reply for markSurfacesVolatile(), which requires
+        changing the reply to list buffers for which making volatile was successful.
+
+        RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile() can now
+        early return when the buffer is already non-volatile, and we have a backend handle (recall
+        that we clear backend handles when trying to make a buffer volatile).
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::markSurfacesVolatile):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applySwappedBuffers):
+        (WebKit::RemoteLayerBackingStore::setBufferVolatile):
+        (WebKit::RemoteLayerBackingStore::setBufferNonVolatile):
+        (WebKit::RemoteLayerBackingStore::didMakeFrontBufferNonVolatile):
+        (WebKit::RemoteLayerBackingStore::Buffer::discard):
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm:
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::RemoteLayerWithRemoteRenderingBackingStoreCollection):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::collectBackingStoreBufferIdentifiersToMarkVolatile):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::sendMarkBuffersVolatile): Call the completion handler inside the callback.
+        * WebProcess/GPU/graphics/ImageBufferBackendHandleSharing.h:
+        (WebKit::ImageBufferBackendHandleSharing::hasBackendHandle const):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::swapToValidFrontBuffer):
+        (WebKit::RemoteRenderingBackendProxy::markSurfaceNonVolatile):
+        (WebKit::RemoteRenderingBackendProxy::markSurfacesVolatile):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferRemoteIOSurfaceBackend::createBackendHandle const):
+        (WebKit::ImageBufferRemoteIOSurfaceBackend::hasBackendHandle const):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferRemoteIOSurfaceBackend.h:
+
 2022-03-09  Youenn Fablet  <youenn@apple.com>
 
         Allow to pass webrtc video frame buffers through RealtimeMediaSource based pipelines

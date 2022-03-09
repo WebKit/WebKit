@@ -66,6 +66,11 @@ std::unique_ptr<ImageBufferRemoteIOSurfaceBackend> ImageBufferRemoteIOSurfaceBac
 
 ImageBufferBackendHandle ImageBufferRemoteIOSurfaceBackend::createBackendHandle() const
 {
+    if (!std::holds_alternative<MachSendRight>(m_handle)) {
+        RELEASE_ASSERT_NOT_REACHED();
+        return { };
+    }
+
     return std::get<MachSendRight>(m_handle).copySendRight();
 }
 
@@ -77,6 +82,11 @@ void ImageBufferRemoteIOSurfaceBackend::setBackendHandle(ImageBufferBackendHandl
 void ImageBufferRemoteIOSurfaceBackend::clearBackendHandle()
 {
     m_handle = { };
+}
+
+bool ImageBufferRemoteIOSurfaceBackend::hasBackendHandle() const
+{
+    return std::holds_alternative<MachSendRight>(m_handle);
 }
 
 GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context() const

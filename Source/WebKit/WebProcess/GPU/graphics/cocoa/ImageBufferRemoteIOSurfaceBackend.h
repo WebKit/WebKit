@@ -72,12 +72,18 @@ private:
 
     unsigned bytesPerRow() const final;
 
+    WebCore::VolatilityState volatilityState() const final { return m_volatilityState; }
+    void setVolatilityState(WebCore::VolatilityState volatilityState) final { m_volatilityState = volatilityState; }
+
     // ImageBufferBackendSharing
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
     void setBackendHandle(ImageBufferBackendHandle&&) final;
     void clearBackendHandle() final;
+    bool hasBackendHandle() const final;
 
     ImageBufferBackendHandle m_handle;
+
+    WebCore::VolatilityState m_volatilityState { WebCore::VolatilityState::NonVolatile };
 };
 
 } // namespace WebKit

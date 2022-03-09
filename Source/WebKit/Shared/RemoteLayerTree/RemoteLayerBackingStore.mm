@@ -246,8 +246,6 @@ void RemoteLayerBackingStore::applySwappedBuffers(RefPtr<WebCore::ImageBuffer>&&
     m_backBuffer.imageBuffer = WTFMove(back);
     m_secondaryBackBuffer.imageBuffer = WTFMove(secondaryBack);
 
-    m_frontBuffer.isVolatile = false;
-
     if (frontBufferNeedsDisplay)
         setNeedsDisplay();
 }
@@ -531,15 +529,11 @@ Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerBackin
 
 bool RemoteLayerBackingStore::setBufferVolatile(Buffer& buffer)
 {
-    if (!buffer.imageBuffer || buffer.isVolatile)
+    if (!buffer.imageBuffer || buffer.imageBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
         return true;
 
     buffer.imageBuffer->releaseGraphicsContext();
-    if (buffer.imageBuffer->setVolatile()) {
-        buffer.isVolatile = true;
-        return true;
-    }
-    return false;
+    return buffer.imageBuffer->setVolatile();
 }
 
 WebCore::SetNonVolatileResult RemoteLayerBackingStore::setBufferNonVolatile(Buffer& buffer)
@@ -549,10 +543,9 @@ WebCore::SetNonVolatileResult RemoteLayerBackingStore::setBufferNonVolatile(Buff
     if (!buffer.imageBuffer)
         return WebCore::SetNonVolatileResult::Valid; // Not really valid but the caller only checked the Empty state.
 
-    if (!buffer.isVolatile)
+    if (buffer.imageBuffer->volatilityState() == WebCore::VolatilityState::NonVolatile)
         return WebCore::SetNonVolatileResult::Valid;
 
-    buffer.isVolatile = false;
     return buffer.imageBuffer->setNonVolatile();
 }
 
@@ -576,7 +569,6 @@ void RemoteLayerBackingStore::willMakeBufferVolatile(BufferType bufferType)
 
 void RemoteLayerBackingStore::didMakeFrontBufferNonVolatile(WebCore::SetNonVolatileResult result)
 {
-    m_frontBuffer.isVolatile = false;
     if (result == WebCore::SetNonVolatileResult::Empty)
         setNeedsDisplay();
 }
@@ -627,7 +619,6 @@ RefPtr<WebCore::ImageBuffer> RemoteLayerBackingStore::bufferForType(BufferType b
 
 void RemoteLayerBackingStore::Buffer::discard()
 {
-    isVolatile = false;
     if (imageBuffer)
         imageBuffer->releaseBufferToPool();
     imageBuffer = nullptr;

@@ -70,8 +70,10 @@ protected:
     void releaseGraphicsContext() override;
     void releaseBufferToPool() override;
 
-    bool setVolatile() override;
-    SetNonVolatileResult setNonVolatile() override;
+    bool setVolatile() final;
+    SetNonVolatileResult setNonVolatile() final;
+    VolatilityState volatilityState() const final;
+    void setVolatilityState(VolatilityState) final;
 
     void ensureNativeImagesHaveCopiedBackingStore() final;
 
@@ -89,6 +91,7 @@ protected:
     mutable bool m_requiresDrawAfterPutPixelBuffer { false };
 
     mutable bool m_needsSetupContext { false };
+    VolatilityState m_volatilityState { VolatilityState::NonVolatile };
 };
 
 } // namespace WebCore

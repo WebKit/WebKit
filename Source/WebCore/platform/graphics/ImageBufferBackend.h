@@ -60,6 +60,11 @@ enum class SetNonVolatileResult : uint8_t {
     Empty
 };
 
+enum class VolatilityState : uint8_t {
+    NonVolatile,
+    Volatile
+};
+
 class ThreadSafeImageBufferFlusher {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(ThreadSafeImageBufferFlusher);
@@ -127,6 +132,8 @@ public:
     // Returns true on success.
     virtual bool setVolatile() { return true; }
     virtual SetNonVolatileResult setNonVolatile() { return SetNonVolatileResult::Valid; }
+    virtual VolatilityState volatilityState() const { return VolatilityState::NonVolatile; }
+    virtual void setVolatilityState(VolatilityState) { }
 
     virtual std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() { return nullptr; }
 

@@ -45,11 +45,25 @@ RemoteRenderingBackendProxy& RemoteLayerWithRemoteRenderingBackingStoreCollectio
 
 void RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile(RemoteLayerBackingStore& backingStore)
 {
-    auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
     auto frontBuffer = backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front);
     if (!frontBuffer)
         return;
 
+    auto hasBackendHandle = [](const WebCore::ImageBuffer& buffer) {
+        if (auto* backend = buffer.ensureBackendCreated()) {
+            auto* sharing = backend->toBackendSharing();
+            if (is<ImageBufferBackendHandleSharing>(sharing))
+                return downcast<ImageBufferBackendHandleSharing>(*sharing).hasBackendHandle();
+        }
+        return false;
+    };
+
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile - front buffer " << frontBuffer->renderingResourceIdentifier() << " is non volatile " << (frontBuffer->volatilityState() == WebCore::VolatilityState::NonVolatile));
+
+    if (frontBuffer->volatilityState() == WebCore::VolatilityState::NonVolatile && hasBackendHandle(*frontBuffer))
+        return;
+
+    auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
     auto result = remoteRenderingBackend.markSurfaceNonVolatile(frontBuffer->renderingResourceIdentifier());
     backingStore.didMakeFrontBufferNonVolatile(result);
 }
@@ -77,10 +91,12 @@ bool RemoteLayerWithRemoteRenderingBackingStoreCollection::collectBackingStoreBu
 {
     ASSERT(!m_inLayerFlush);
 
-    // FIXME: This doesn't consult RemoteLayerBackingStore::Buffer::isVolatile, so we may redundantly request volatility.
     auto collectBuffer = [&](RemoteLayerBackingStore::BufferType bufferType) {
         auto buffer = backingStore.bufferForType(bufferType);
         if (!buffer)
+            return;
+
+        if (buffer->volatilityState() != WebCore::VolatilityState::NonVolatile)
             return;
 
         backingStore.willMakeBufferVolatile(bufferType);
@@ -178,14 +194,10 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::sendMarkBuffersVolati
 {
     auto& remoteRenderingBackend = m_layerTreeContext.ensureRemoteRenderingBackendProxy();
     
-    Vector<WebCore::RenderingResourceIdentifier> inUseBufferIdentifiers;
-    remoteRenderingBackend.markSurfacesVolatile(WTFMove(identifiers), [&inUseBufferIdentifiers](Vector<WebCore::RenderingResourceIdentifier>&& inUseBuffers) {
-        inUseBufferIdentifiers = WTFMove(inUseBuffers);
+    remoteRenderingBackend.markSurfacesVolatile(WTFMove(identifiers), [completionHandler = WTFMove(completionHandler)](bool markedAllVolatile) mutable {
+        LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerWithRemoteRenderingBackingStoreCollection::sendMarkBuffersVolatile: marked all volatile " << markedAllVolatile);
+        completionHandler(markedAllVolatile);
     });
-
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerWithRemoteRenderingBackingStoreCollection::sendMarkBuffersVolatile: " << inUseBufferIdentifiers.size() << " buffers still in-use");
-    // FIXME: inUseBufferIdentifiers will be used to map back to an ImageBuffer and maintain its "isVolatile" flag.
-    completionHandler(inUseBufferIdentifiers.isEmpty());
 }
 
 } // namespace WebKit

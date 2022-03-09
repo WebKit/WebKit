@@ -464,7 +464,7 @@ void RemoteRenderingBackend::swapToValidFrontBuffer(const BufferIdentifierSet& b
     completionHandler(resultBufferSet, WTFMove(frontBufferHandle), frontBufferWasEmpty);
 }
 
-void RemoteRenderingBackend::markSurfacesVolatile(const Vector<WebCore::RenderingResourceIdentifier>& identifiers, CompletionHandler<void(const Vector<WebCore::RenderingResourceIdentifier>& inUseBufferIdentifiers)>&& completionHandler)
+void RemoteRenderingBackend::markSurfacesVolatile(const Vector<WebCore::RenderingResourceIdentifier>& identifiers, CompletionHandler<void(const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers)>&& completionHandler)
 {
     LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: RemoteRenderingBackend::markSurfacesVolatile " << identifiers);
 
@@ -473,19 +473,19 @@ void RemoteRenderingBackend::markSurfacesVolatile(const Vector<WebCore::Renderin
         return imageBuffer.setVolatile();
     };
 
-    Vector<WebCore::RenderingResourceIdentifier> inUseBufferIdentifiers;
+    Vector<WebCore::RenderingResourceIdentifier> markedVolatileBufferIdentifiers;
     for (auto identifier : identifiers) {
         auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
         if (imageBuffer) {
-            if (!makeVolatile(*imageBuffer))
-                inUseBufferIdentifiers.append(identifier);
+            if (makeVolatile(*imageBuffer))
+                markedVolatileBufferIdentifiers.append(identifier);
         } else
             LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << " failed to find ImageBuffer for identifier " << identifier);
     }
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: markSurfacesVolatile - in-use surfaces " << inUseBufferIdentifiers);
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: markSurfacesVolatile - surfaces marked volatile " << markedVolatileBufferIdentifiers);
 
-    completionHandler(inUseBufferIdentifiers);
+    completionHandler(markedVolatileBufferIdentifiers);
 }
 
 void RemoteRenderingBackend::finalizeRenderingUpdate(RenderingUpdateID renderingUpdateID)
