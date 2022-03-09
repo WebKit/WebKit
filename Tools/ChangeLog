@@ -1,3 +1,306 @@
+2022-03-09  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r289790. rdar://problem/89997669
+
+    ExtensionsGL is not useful class, it should be removed
+    https://bugs.webkit.org/show_bug.cgi?id=236490
+    
+    Source/WebCore:
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-02-14
+    Reviewed by Dean Jackson.
+    
+    Remove ExtensionsGL. It is not a useful class, it does not abstract anything.
+    It has similar functions to GraphicsContextGL subclass, and needs and uses GraphicsContextGL subclass
+    underneath.
+    It is a problematic class as it is obtained through a virtual function, but that
+    virtual function override is being called during construction of the GraphicsContextGL subclass
+    instance.
+    Also the ExtensionsGL will neccessarily call back to GraphicsContextGL subclass instance being
+    constructed.
+    Current getExtensions() virtual function override calls are expected to go
+    where the C++ defines them going during construction.
+    Current calls back to the GraphicsContextGL subclass instance during construction *should*
+    access state that is already initialized, but it is quite error-prone and hard to
+    analyze.
+    
+    Move ExtensionsGL functions to GraphicsContextGL. Make call-sites call the context instead of the
+    extension helper. Rename the functions with pattern "isSupported" -> "isExtensionSupported".
+    Remove GraphicsContextGL::getExtensions() virtual function call.
+    
+    For legacy contexts GraphicsContextGLOpenGL, GraphicsContextGLOpenGLES preserve their
+    ExtensionGLCommon subclasses. Accessing it happens from a normal function from legacy call sites
+    that know that they're calling GraphicsContextGLOpenGL.
+    
+    For GraphicsContextGLANGLE, move context initialization code to GraphicsContextGLANGLE::initialize()
+    instead of the constructor. This way the initialization code can call virtual functions and the calls
+    are delivered normally to the last overrider.
+    
+    RemoteGraphicsContextGLProxyBase can now be removed, as it is unneeded anyway and its added virtual
+    functions would cause inconvenient naming duplication.
+    
+    No new tests, a refactor.
+    
+    * CMakeLists.txt:
+    * Headers.cmake:
+    * Modules/webxr/WebXROpaqueFramebuffer.cpp:
+    (WebCore::WebXROpaqueFramebuffer::startFrame):
+    (WebCore::WebXROpaqueFramebuffer::setupFramebuffer):
+    * Sources.txt:
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * html/canvas/ANGLEInstancedArrays.cpp:
+    (WebCore::ANGLEInstancedArrays::ANGLEInstancedArrays):
+    (WebCore::ANGLEInstancedArrays::supported):
+    * html/canvas/ANGLEInstancedArrays.h:
+    * html/canvas/EXTColorBufferFloat.cpp:
+    (WebCore::EXTColorBufferFloat::EXTColorBufferFloat):
+    (WebCore::EXTColorBufferFloat::supported):
+    * html/canvas/EXTColorBufferFloat.h:
+    * html/canvas/EXTColorBufferHalfFloat.cpp:
+    (WebCore::EXTColorBufferHalfFloat::EXTColorBufferHalfFloat):
+    (WebCore::EXTColorBufferHalfFloat::supported):
+    * html/canvas/EXTColorBufferHalfFloat.h:
+    * html/canvas/EXTFloatBlend.cpp:
+    (WebCore::EXTFloatBlend::EXTFloatBlend):
+    (WebCore::EXTFloatBlend::supported):
+    * html/canvas/EXTFloatBlend.h:
+    * html/canvas/EXTTextureCompressionRGTC.cpp:
+    (WebCore::EXTTextureCompressionRGTC::EXTTextureCompressionRGTC):
+    * html/canvas/KHRParallelShaderCompile.cpp:
+    (WebCore::KHRParallelShaderCompile::KHRParallelShaderCompile):
+    (WebCore::KHRParallelShaderCompile::supported):
+    * html/canvas/KHRParallelShaderCompile.h:
+    * html/canvas/OESFBORenderMipmap.cpp:
+    (WebCore::OESFBORenderMipmap::OESFBORenderMipmap):
+    (WebCore::OESFBORenderMipmap::supported):
+    * html/canvas/OESFBORenderMipmap.h:
+    * html/canvas/OESTextureFloat.cpp:
+    (WebCore::OESTextureFloat::OESTextureFloat):
+    (WebCore::OESTextureFloat::supported):
+    * html/canvas/OESTextureFloat.h:
+    * html/canvas/OESTextureHalfFloat.cpp:
+    (WebCore::OESTextureHalfFloat::OESTextureHalfFloat):
+    (WebCore::OESTextureHalfFloat::supported):
+    * html/canvas/OESTextureHalfFloat.h:
+    * html/canvas/OESVertexArrayObject.cpp:
+    * html/canvas/WebGL2RenderingContext.cpp:
+    (WebCore::WebGL2RenderingContext::initializeShaderExtensions):
+    (WebCore::WebGL2RenderingContext::getExtension):
+    (WebCore::WebGL2RenderingContext::getSupportedExtensions):
+    * html/canvas/WebGLColorBufferFloat.cpp:
+    (WebCore::WebGLColorBufferFloat::WebGLColorBufferFloat):
+    (WebCore::WebGLColorBufferFloat::supported):
+    * html/canvas/WebGLColorBufferFloat.h:
+    * html/canvas/WebGLCompressedTextureASTC.cpp:
+    (WebCore::WebGLCompressedTextureASTC::WebGLCompressedTextureASTC):
+    (WebCore::WebGLCompressedTextureASTC::supported):
+    * html/canvas/WebGLCompressedTextureASTC.h:
+    * html/canvas/WebGLCompressedTextureATC.cpp:
+    (WebCore::WebGLCompressedTextureATC::WebGLCompressedTextureATC):
+    (WebCore::WebGLCompressedTextureATC::supported):
+    * html/canvas/WebGLCompressedTextureATC.h:
+    * html/canvas/WebGLCompressedTextureETC.cpp:
+    (WebCore::WebGLCompressedTextureETC::WebGLCompressedTextureETC):
+    (WebCore::WebGLCompressedTextureETC::supported):
+    * html/canvas/WebGLCompressedTextureETC.h:
+    * html/canvas/WebGLCompressedTextureETC1.cpp:
+    (WebCore::WebGLCompressedTextureETC1::WebGLCompressedTextureETC1):
+    (WebCore::WebGLCompressedTextureETC1::supported):
+    * html/canvas/WebGLCompressedTextureETC1.h:
+    * html/canvas/WebGLCompressedTexturePVRTC.cpp:
+    (WebCore::WebGLCompressedTexturePVRTC::WebGLCompressedTexturePVRTC):
+    (WebCore::WebGLCompressedTexturePVRTC::supported):
+    * html/canvas/WebGLCompressedTexturePVRTC.h:
+    * html/canvas/WebGLCompressedTextureS3TC.cpp:
+    (WebCore::WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC):
+    (WebCore::WebGLCompressedTextureS3TC::supported):
+    * html/canvas/WebGLCompressedTextureS3TC.h:
+    * html/canvas/WebGLCompressedTextureS3TCsRGB.cpp:
+    (WebCore::WebGLCompressedTextureS3TCsRGB::WebGLCompressedTextureS3TCsRGB):
+    (WebCore::WebGLCompressedTextureS3TCsRGB::supported):
+    * html/canvas/WebGLCompressedTextureS3TCsRGB.h:
+    * html/canvas/WebGLDebugShaders.cpp:
+    (WebCore::WebGLDebugShaders::WebGLDebugShaders):
+    (WebCore::WebGLDebugShaders::getTranslatedShaderSource):
+    * html/canvas/WebGLDepthTexture.cpp:
+    (WebCore::WebGLDepthTexture::WebGLDepthTexture):
+    (WebCore::WebGLDepthTexture::supported):
+    * html/canvas/WebGLDrawBuffers.cpp:
+    (WebCore::WebGLDrawBuffers::WebGLDrawBuffers):
+    (WebCore::WebGLDrawBuffers::supported):
+    (WebCore::WebGLDrawBuffers::drawBuffersWEBGL):
+    (WebCore::WebGLDrawBuffers::satisfiesWebGLRequirements):
+    * html/canvas/WebGLFramebuffer.cpp:
+    (WebCore::getClearBitsByAttachmentType):
+    (WebCore::getClearBitsByFormat):
+    (WebCore::WebGLFramebuffer::checkStatus const):
+    (WebCore::WebGLFramebuffer::drawBuffersIfNecessary):
+    (WebCore::WebGLFramebuffer::getDrawBuffer):
+    * html/canvas/WebGLMultiDraw.cpp:
+    (WebCore::WebGLMultiDraw::WebGLMultiDraw):
+    (WebCore::WebGLMultiDraw::supported):
+    * html/canvas/WebGLMultiDraw.h:
+    * html/canvas/WebGLRenderingContext.cpp:
+    (WebCore::WebGLRenderingContext::getExtension):
+    (WebCore::WebGLRenderingContext::getSupportedExtensions):
+    (WebCore::WebGLRenderingContext::getFramebufferAttachmentParameter):
+    (WebCore::WebGLRenderingContext::getMaxDrawBuffers):
+    (WebCore::WebGLRenderingContext::getMaxColorAttachments):
+    (WebCore::WebGLRenderingContext::validateBlendEquation):
+    * html/canvas/WebGLRenderingContextBase.cpp:
+    (WebCore::getChannelBitsByFormat):
+    (WebCore::possibleFormatAndTypeForInternalFormat):
+    (WebCore::WebGLRenderingContextBase::setupFlags):
+    (WebCore::WebGLRenderingContextBase::getParameter):
+    (WebCore::WebGLRenderingContextBase::getProgramParameter):
+    (WebCore::WebGLRenderingContextBase::getShaderParameter):
+    (WebCore::WebGLRenderingContextBase::getTexParameter):
+    (WebCore::WebGLRenderingContextBase::getUniform):
+    (WebCore::WebGLRenderingContextBase::hint):
+    (WebCore::WebGLRenderingContextBase::readPixels):
+    (WebCore::WebGLRenderingContextBase::renderbufferStorageImpl):
+    (WebCore::WebGLRenderingContextBase::validateTexFuncFormatAndType):
+    (WebCore::WebGLRenderingContextBase::texParameter):
+    (WebCore::WebGLRenderingContextBase::loseContextImpl):
+    (WebCore::WebGLRenderingContextBase::validateCompressedTexFuncData):
+    (WebCore::WebGLRenderingContextBase::validateCompressedTexDimensions):
+    (WebCore::WebGLRenderingContextBase::validateCompressedTexSubDimensions):
+    (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+    (WebCore::WebGLRenderingContextBase::getMaxDrawBuffers):
+    (WebCore::WebGLRenderingContextBase::getMaxColorAttachments):
+    (WebCore::WebGLRenderingContextBase::enableSupportedExtension):
+    * html/canvas/WebGLVertexArrayObjectOES.cpp:
+    * loader/FrameLoaderClient.h:
+    * platform/graphics/ExtensionsGL.h: Removed.
+    * platform/graphics/GraphicsContextGL.cpp:
+    (WebCore::GraphicsContextGL::computeFormatAndTypeParameters):
+    * platform/graphics/GraphicsContextGL.h:
+    * platform/graphics/RemoteGraphicsContextGLProxyBase.cpp:
+    * platform/graphics/RemoteGraphicsContextGLProxyBase.h:
+    * platform/graphics/angle/ExtensionsGLANGLE.cpp: Removed.
+    * platform/graphics/angle/ExtensionsGLANGLE.h: Removed.
+    * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+    (WebCore::GraphicsContextGLANGLE::initialize):
+    (WebCore::GraphicsContextGLANGLE::platformInitializeContext):
+    (WebCore::GraphicsContextGLANGLE::platformInitialize):
+    (WebCore::GraphicsContextGLANGLE::texImage2D):
+    (WebCore::GraphicsContextGLANGLE::validateDepthStencil):
+    (WebCore::GraphicsContextGLANGLE::supportsExtension):
+    (WebCore::GraphicsContextGLANGLE::ensureExtensionEnabled):
+    (WebCore::GraphicsContextGLANGLE::isExtensionEnabled):
+    (WebCore::GraphicsContextGLANGLE::getGraphicsResetStatusARB):
+    (WebCore::GraphicsContextGLANGLE::getTranslatedShaderSourceANGLE):
+    (WebCore::GraphicsContextGLANGLE::drawBuffersEXT):
+    (WebCore::GraphicsContextGLANGLE::adjustWebGL1TextureInternalFormat):
+    * platform/graphics/angle/GraphicsContextGLANGLE.h:
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+    * platform/graphics/cocoa/GraphicsContextGLCocoa.h:
+    * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+    (WebCore::GraphicsContextGLCocoa::create):
+    (WebCore::GraphicsContextGLCocoa::GraphicsContextGLCocoa):
+    (WebCore::GraphicsContextGLANGLE::GraphicsContextGLANGLE):
+    (WebCore::GraphicsContextGLCocoa::platformInitializeContext):
+    (WebCore::GraphicsContextGLCocoa::platformInitialize):
+    (WebCore::GraphicsContextGLCocoa::reshapeDisplayBufferBacking):
+    (WebCore::GraphicsContextGLCocoa::allocateAndBindDisplayBufferBacking):
+    (WebCore::GraphicsContextGLCocoa::bindDisplayBufferBacking):
+    (WebCore::GraphicsContextGLCocoa::prepareForDisplay):
+    * platform/graphics/cocoa/WebProcessGraphicsContextGLCocoa.mm:
+    (WebCore::createWebProcessGraphicsContextGL):
+    * platform/graphics/opengl/ExtensionsGLOpenGL.cpp:
+    (WebCore::ExtensionsGLOpenGL::platformSupportsExtension):
+    * platform/graphics/opengl/ExtensionsGLOpenGL.h:
+    * platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp:
+    (WebCore::ExtensionsGLOpenGLCommon::supports):
+    (WebCore::ExtensionsGLOpenGLCommon::ensureEnabled):
+    * platform/graphics/opengl/ExtensionsGLOpenGLCommon.h:
+    * platform/graphics/opengl/ExtensionsGLOpenGLES.cpp:
+    (WebCore::ExtensionsGLOpenGLES::isEnabled):
+    (WebCore::ExtensionsGLOpenGLES::getGraphicsResetStatusARB):
+    (WebCore::ExtensionsGLOpenGLES::platformSupportsExtension):
+    * platform/graphics/opengl/ExtensionsGLOpenGLES.h:
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+    (WebCore::GraphicsContextGLOpenGL::getExtensions):
+    (WebCore::GraphicsContextGLOpenGL::validateDepthStencil):
+    (WebCore::GraphicsContextGLOpenGL::supportsExtension):
+    (WebCore::GraphicsContextGLOpenGL::ensureExtensionEnabled):
+    (WebCore::GraphicsContextGLOpenGL::isExtensionEnabled):
+    (WebCore::GraphicsContextGLOpenGL::getGraphicsResetStatusARB):
+    (WebCore::GraphicsContextGLOpenGL::drawBuffersEXT):
+    (WebCore::GraphicsContextGLOpenGL::getTranslatedShaderSourceANGLE):
+    * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+    * platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp:
+    (WebCore::GraphicsContextGLOpenGL::texImage2D):
+    (WebCore::GraphicsContextGLOpenGL::getExtensions):
+    * platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp:
+    (WebCore::GraphicsContextGLOpenGL::reshapeFBOs):
+    (WebCore::GraphicsContextGLOpenGL::validateAttributes):
+    (WebCore::GraphicsContextGLOpenGL::getExtensions):
+    * platform/graphics/texmap/BitmapTextureGL.cpp:
+    * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp:
+    (WebCore::GraphicsContextGLTextureMapper::create):
+    (WebCore::createWebProcessGraphicsContextGL):
+    * platform/graphics/texmap/GraphicsContextGLTextureMapper.h:
+    * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+    (WebCore::GraphicsContextGLANGLE::GraphicsContextGLANGLE):
+    (WebCore::GraphicsContextGLTextureMapper::prepareForDisplay):
+    (WebCore::GraphicsContextGLTextureMapper::reshapeDisplayBufferBacking):
+    * platform/graphics/texmap/TextureMapperGL.cpp:
+    
+    Source/WebKit:
+    
+    Move the RemoteGraphicsContextGLProxyBase functions to
+    RemoteGraphicsContextGL. The ..Base can now be removed
+    as ExtensionGL is removed.
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-02-14
+    Reviewed by Dean Jackson.
+    
+    * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+    (WebKit::RemoteGraphicsContextGL::workQueueInitialize):
+    (WebKit::RemoteGraphicsContextGL::ensureExtensionEnabled):
+    (WebKit::RemoteGraphicsContextGL::markContextChanged):
+    * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+    * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+    * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h:
+    (getGraphicsResetStatusARB):
+    (getTranslatedShaderSourceANGLE):
+    (drawBuffersEXT):
+    * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+    (WebKit::RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy):
+    (WebKit::RemoteGraphicsContextGLProxy::setContextVisibility):
+    (WebKit::RemoteGraphicsContextGLProxy::isGLES2Compliant const):
+    (WebKit::RemoteGraphicsContextGLProxy::markContextChanged):
+    (WebKit::RemoteGraphicsContextGLProxy::supportsExtension):
+    (WebKit::RemoteGraphicsContextGLProxy::ensureExtensionEnabled):
+    (WebKit::RemoteGraphicsContextGLProxy::isExtensionEnabled):
+    (WebKit::RemoteGraphicsContextGLProxy::initialize):
+    (WebKit::RemoteGraphicsContextGLProxy::reshape):
+    * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+    
+    Tools:
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-02-14
+    Reviewed by Dean Jackson.
+    
+    Update manually implemented functions.
+    * Scripts/generate-gpup-webgl:
+    * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLCocoa.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@289790 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            ExtensionsGL is not useful class, it should be removed
+            https://bugs.webkit.org/show_bug.cgi?id=236490
+
+            Reviewed by Dean Jackson.
+
+            Update manually implemented functions.
+            * Scripts/generate-gpup-webgl:
+            * TestWebKitAPI/Tests/WebCore/cocoa/TestGraphicsContextGLCocoa.mm:
+
 2022-03-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289255. rdar://problem/88490742

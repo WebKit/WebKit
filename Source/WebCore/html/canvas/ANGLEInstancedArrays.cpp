@@ -28,10 +28,6 @@
 #if ENABLE(WEBGL)
 #include "ANGLEInstancedArrays.h"
 
-#if PLATFORM(GTK) || USE(ANGLE) || PLATFORM(WPE)
-#include "ExtensionsGL.h"
-#endif
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -42,7 +38,7 @@ ANGLEInstancedArrays::ANGLEInstancedArrays(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
 #if USE(ANGLE)
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_ANGLE_instanced_arrays");
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_instanced_arrays");
 #endif
 }
 
@@ -53,10 +49,10 @@ WebGLExtension::ExtensionName ANGLEInstancedArrays::getName() const
     return ANGLEInstancedArraysName;
 }
 
-bool ANGLEInstancedArrays::supported(WebGLRenderingContextBase& context)
+bool ANGLEInstancedArrays::supported(GraphicsContextGL& context)
 {
 #if USE(ANGLE) || PLATFORM(GTK) || PLATFORM(WPE)
-    return context.graphicsContextGL()->getExtensions().supports("GL_ANGLE_instanced_arrays");
+    return context.supportsExtension("GL_ANGLE_instanced_arrays");
 #else
     UNUSED_PARAM(context);
     return false;

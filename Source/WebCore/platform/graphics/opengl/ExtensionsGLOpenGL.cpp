@@ -101,7 +101,7 @@ void ExtensionsGLOpenGL::bindVertexArrayOES(PlatformGLObject array)
 #endif
 }
 
-bool ExtensionsGLOpenGL::supportsExtension(const String& name)
+bool ExtensionsGLOpenGL::platformSupportsExtension(const String& name)
 {
     // GL_ANGLE_framebuffer_blit and GL_ANGLE_framebuffer_multisample are "fake". They are implemented using other
     // extensions. In particular GL_EXT_framebuffer_blit and GL_EXT_framebuffer_multisample/GL_APPLE_framebuffer_multisample.
