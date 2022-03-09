@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
+import subprocess
 import sys
 import time
 
@@ -193,7 +194,12 @@ class Land(Command):
                 sys.stderr.write("Failed to update subversion refs\n".format(target))
                 return 1 if cls.revert_branch(repository, cls.REMOTE, target) else -1
 
-            dcommit = run([repository.executable(), 'svn', 'dcommit'], cwd=repository.root_path, capture_output=True, encoding='utf-8')
+            dcommit = run(
+                [repository.executable(), 'svn', 'dcommit'],
+                cwd=repository.root_path,
+                stdout=subprocess.PIPE,
+                encoding='utf-8',
+            )
             if dcommit.returncode:
                 sys.stderr.write(dcommit.stdout)
                 sys.stderr.write(dcommit.stderr)
