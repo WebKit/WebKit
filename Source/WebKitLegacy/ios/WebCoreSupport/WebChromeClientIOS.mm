@@ -273,7 +273,7 @@ void WebChromeClientIOS::restoreFormNotifications()
         m_formNotificationSuppressions = 0;
 }
 
-void WebChromeClientIOS::elementDidFocus(WebCore::Element& element)
+void WebChromeClientIOS::elementDidFocus(WebCore::Element& element, const WebCore::FocusOptions&)
 {
     if (m_formNotificationSuppressions <= 0)
         [[webView() _UIKitDelegateForwarder] webView:webView() elementDidFocusNode:kit(&element)];

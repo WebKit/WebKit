@@ -138,6 +138,7 @@ struct FocusedElementInformation {
     bool shouldAvoidScrollingWhenFocusedContentIsVisible { false };
     bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation { false };
     bool isFocusingWithValidationMessage { false };
+    bool preventScroll { false };
 
     FocusedElementInformationIdentifier identifier;
     WebCore::ScrollingNodeID containerScrollingNodeID { 0 };

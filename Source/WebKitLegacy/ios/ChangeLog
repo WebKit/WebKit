@@ -1,3 +1,118 @@
+2022-03-09  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r290646. rdar://problem/88911184
+
+    focus({preventScroll: true}) does not prevent scrolling on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=236584
+    rdar://88911184
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Plumb `FocusOptions` through `Element::dispatchFocusEvent()` as well as the chrome client hooks for
+    `elementDidRefocus` and `elementDidFocus`, instead of just a `FocusDirection` flag.
+    
+    * dom/Document.cpp:
+    (WebCore::Document::setFocusedElement):
+    * dom/Element.cpp:
+    (WebCore::Element::focus):
+    (WebCore::Element::dispatchFocusEvent):
+    * dom/Element.h:
+    * html/HTMLSelectElement.cpp:
+    (WebCore::HTMLSelectElement::dispatchFocusEvent):
+    * html/HTMLSelectElement.h:
+    * html/HTMLTextFormControlElement.cpp:
+    (WebCore::HTMLTextFormControlElement::dispatchFocusEvent):
+    * html/HTMLTextFormControlElement.h:
+    * loader/EmptyClients.h:
+    * page/ChromeClient.h:
+    (WebCore::ChromeClient::elementDidFocus):
+    (WebCore::ChromeClient::elementDidRefocus):
+    * page/FocusController.cpp:
+    (WebCore::dispatchEventsOnWindowAndFocusedElement):
+    (WebCore::FocusController::setFocusedElement):
+    
+    Source/WebKit:
+    
+    Add support for `preventScroll` on iOS by avoiding UI-side zooming/scrolling to reveal the focused element if it
+    was focused with `preventScroll: true`. See below for more details.
+    
+    Tests: fast/forms/select-focus-prevent-scroll.html
+           fast/forms/text-field-focus-prevent-scroll.html
+    
+    * Shared/FocusedElementInformation.cpp:
+    (WebKit::FocusedElementInformation::encode const):
+    (WebKit::FocusedElementInformation::decode):
+    * Shared/FocusedElementInformation.h:
+    
+    Add a boolean flag to `FocusedElementInformation` to indicate whether or not scrolling to reveal the focused
+    element should be prevented.
+    
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView _zoomToRevealFocusedElement]):
+    
+    Only zoom to reveal the focused element if the focused element information's `preventScroll` flag is `NO`.
+    
+    (-[WKContentView _elementDidBlur]):
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::elementDidFocus):
+    (WebKit::WebChromeClient::elementDidRefocus):
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::elementDidRefocus):
+    (WebKit::WebPage::elementDidFocus):
+    
+    Use `FocusOptions` to set the `preventScroll` flag when propagating `FocusedElementInformation`.
+    
+    * WebProcess/WebPage/WebPage.h:
+    
+    Source/WebKitLegacy/ios:
+    
+    Adjust the method signature of elementDidFocus. See WebCore ChangeLog for more information.
+    
+    * WebCoreSupport/WebChromeClientIOS.h:
+    * WebCoreSupport/WebChromeClientIOS.mm:
+    (WebChromeClientIOS::elementDidFocus):
+    
+    Source/WebKitLegacy/mac:
+    
+    Adjust the method signature of elementDidFocus. See WebCore ChangeLog for more information.
+    
+    * WebCoreSupport/WebChromeClient.h:
+    * WebCoreSupport/WebChromeClient.mm:
+    (WebChromeClient::elementDidFocus):
+    
+    LayoutTests:
+    
+    Add a couple of new layout tests to verify that passing in `{ preventScroll: true }` for focus options causes
+    us to avoid scrolling to reveal focused select elements and text fields.
+    
+    * fast/forms/select-focus-prevent-scroll-expected.txt: Added.
+    * fast/forms/select-focus-prevent-scroll.html: Added.
+    * fast/forms/text-field-focus-prevent-scroll-expected.txt: Added.
+    * fast/forms/text-field-focus-prevent-scroll.html: Added.
+    * resources/ui-helper.js:
+    
+    Also make it safe to call `waitForInputSessionToDismiss()` in a platform-agnostic test, by bailing early if
+    we're not on iOS, using WebKit2.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290646 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            focus({preventScroll: true}) does not prevent scrolling on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=236584
+            rdar://88911184
+
+            Reviewed by Simon Fraser.
+
+            Adjust the method signature of elementDidFocus. See WebCore ChangeLog for more information.
+
+            * WebCoreSupport/WebChromeClientIOS.h:
+            * WebCoreSupport/WebChromeClientIOS.mm:
+            (WebChromeClientIOS::elementDidFocus):
+
 2021-10-22  Ian Anderson  <iana@apple.com>
 
         Add a module map file for PrivateFrameworks/WebKitLegacy

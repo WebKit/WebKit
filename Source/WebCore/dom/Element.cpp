@@ -3063,7 +3063,7 @@ void Element::focus(const FocusOptions& options)
     Ref document { this->document() };
     if (document->focusedElement() == this) {
         if (document->page())
-            document->page()->chrome().client().elementDidRefocus(*this);
+            document->page()->chrome().client().elementDidRefocus(*this, options);
         return;
     }
 
@@ -3081,7 +3081,7 @@ void Element::focus(const FocusOptions& options)
         RefPtr currentlyFocusedElement = document->focusedElement();
         if (root->containsIncludingShadowDOM(currentlyFocusedElement.get())) {
             if (document->page())
-                document->page()->chrome().client().elementDidRefocus(*currentlyFocusedElement);
+                document->page()->chrome().client().elementDidRefocus(*currentlyFocusedElement, options);
             return;
         }
 
@@ -3198,10 +3198,10 @@ void Element::dispatchFocusOutEventIfNeeded(RefPtr<Element>&& newFocusedElement)
     dispatchScopedEvent(FocusEvent::create(eventNames().focusoutEvent, Event::CanBubble::Yes, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(newFocusedElement)));
 }
 
-void Element::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection)
+void Element::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions& options)
 {
     if (auto* page = document().page())
-        page->chrome().client().elementDidFocus(*this);
+        page->chrome().client().elementDidFocus(*this, options);
     dispatchEvent(FocusEvent::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(oldFocusedElement)));
 }
 

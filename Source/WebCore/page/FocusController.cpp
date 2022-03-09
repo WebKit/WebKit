@@ -310,7 +310,7 @@ static inline void dispatchEventsOnWindowAndFocusedElement(Document* document, b
         document->focusedElement()->dispatchBlurEvent(nullptr);
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
     if (focused && document->focusedElement())
-        document->focusedElement()->dispatchFocusEvent(nullptr, FocusDirection::None);
+        document->focusedElement()->dispatchFocusEvent(nullptr, { });
 }
 
 static inline bool isFocusableElementOrScopeOwner(Element& element, KeyboardEvent* event)
@@ -837,7 +837,7 @@ bool FocusController::setFocusedElement(Element* element, Frame& newFocusedFrame
     Element* oldFocusedElement = oldDocument ? oldDocument->focusedElement() : nullptr;
     if (oldFocusedElement == element) {
         if (element)
-            m_page.chrome().client().elementDidRefocus(*element);
+            m_page.chrome().client().elementDidRefocus(*element, options);
         return true;
     }
 

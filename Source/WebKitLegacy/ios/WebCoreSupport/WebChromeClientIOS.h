@@ -79,7 +79,7 @@ private:
     void suppressFormNotifications() final;
     void restoreFormNotifications() final;
 
-    void elementDidFocus(WebCore::Element&) final;
+    void elementDidFocus(WebCore::Element&, const WebCore::FocusOptions&) final;
     void elementDidBlur(WebCore::Element&) final;
 
     void attachRootGraphicsLayer(WebCore::Frame&, WebCore::GraphicsLayer*) final;

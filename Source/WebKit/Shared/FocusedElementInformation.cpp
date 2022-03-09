@@ -114,6 +114,7 @@ void FocusedElementInformation::encode(IPC::Encoder& encoder) const
     encoder << shouldAvoidScrollingWhenFocusedContentIsVisible;
     encoder << shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation;
     encoder << isFocusingWithValidationMessage;
+    encoder << preventScroll;
 }
 
 bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInformation& result)
@@ -260,6 +261,9 @@ bool FocusedElementInformation::decode(IPC::Decoder& decoder, FocusedElementInfo
         return false;
 
     if (!decoder.decode(result.isFocusingWithValidationMessage))
+        return false;
+
+    if (!decoder.decode(result.preventScroll))
         return false;
 
     return true;

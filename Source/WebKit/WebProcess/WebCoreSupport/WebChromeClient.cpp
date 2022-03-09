@@ -214,14 +214,14 @@ void WebChromeClient::unfocus()
 
 #if PLATFORM(COCOA)
 
-void WebChromeClient::elementDidFocus(Element& element)
+void WebChromeClient::elementDidFocus(Element& element, const FocusOptions& options)
 {
-    m_page.elementDidFocus(element);
+    m_page.elementDidFocus(element, options);
 }
 
-void WebChromeClient::elementDidRefocus(Element& element)
+void WebChromeClient::elementDidRefocus(Element& element, const FocusOptions& options)
 {
-    m_page.elementDidRefocus(element);
+    m_page.elementDidRefocus(element, options);
 }
 
 void WebChromeClient::elementDidBlur(Element& element)
