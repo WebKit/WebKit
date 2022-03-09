@@ -1,3 +1,16 @@
+2022-03-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix assertion when DOM Rendering in GPU Process is enabled with accelerated drawing disabled
+        https://bugs.webkit.org/show_bug.cgi?id=237626
+
+        Reviewed by Tim Horton.
+
+        Override releaseGraphicsContext() in the base class (which asserts). This subclass
+        doesn't need to do anything; releaseGraphicsContext() is only relevant for IOSurface-
+        based backends.
+
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+
 2022-03-08  Jean-Yves Avenard  <jya@apple.com>
 
         Split SourceBufferParserWebM and have platform agnostic WebMParser
