@@ -2448,6 +2448,13 @@ void HTMLMediaElement::dispatchPlayPauseEventsIfNeedsQuirks()
     scheduleEvent(eventNames().pauseEvent);
 }
 
+void HTMLMediaElement::durationChanged()
+{
+    if (m_textTracks)
+        m_textTracks->setDuration(durationMediaTime());
+    scheduleEvent(eventNames().durationchangeEvent);
+}
+
 void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 {
     // Set "wasPotentiallyPlaying" BEFORE updating m_readyState, potentiallyPlaying() uses it
@@ -2508,7 +2515,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         // HAVE_METADATA.
         if (m_readyState >= HAVE_METADATA && oldState < HAVE_METADATA) {
             prepareMediaFragmentURI();
-            scheduleEvent(eventNames().durationchangeEvent);
+            durationChanged();
             scheduleResizeEvent();
             scheduleEvent(eventNames().loadedmetadataEvent);
 
@@ -5163,7 +5170,7 @@ void HTMLMediaElement::mediaPlayerDurationChanged()
 {
     beginProcessingMediaPlayerCallback();
 
-    scheduleEvent(eventNames().durationchangeEvent);
+    durationChanged();
     mediaPlayerCharacteristicChanged();
 
     MediaTime now = currentMediaTime();
@@ -5171,9 +5178,6 @@ void HTMLMediaElement::mediaPlayerDurationChanged()
     ALWAYS_LOG(LOGIDENTIFIER, "duration = ", dur, ", current time = ", now);
     if (now > dur)
         seekInternal(dur);
-
-    if (m_textTracks)
-        m_textTracks->setDuration(dur);
 
     endProcessingMediaPlayerCallback();
 }

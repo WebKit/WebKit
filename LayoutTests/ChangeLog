@@ -1,3 +1,14 @@
+2022-03-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] metadata cue endTime may not be updated
+        https://bugs.webkit.org/show_bug.cgi?id=237630
+        rdar://88690874
+
+        Reviewed by Jer Noble.
+
+        * http/tests/media/hls/track-in-band-hls-metadata-cue-duration-expected.txt: Added.
+        * http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html: Added.
+
 2022-03-08  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Using WebAuthn within cross-origin iframe elements

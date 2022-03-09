@@ -1,3 +1,43 @@
+2022-03-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] metadata cue endTime may not be updated
+        https://bugs.webkit.org/show_bug.cgi?id=237630
+        rdar://88690874
+
+        Reviewed by Jer Noble.
+
+        Data cues have a start time but not an explicit duration, a data cue ends when 
+        the next data cue from the same track starts. This means we don’t know the 
+        duration of cue #1 until cue #2 is delivered, so when cue #1 is delivered it is 
+        given the end time of the media file’s duration and the actual end time is updated
+        when cue #2 arrives.
+
+        http://webkit.org/b/229924 refactored text, audio, and video tracks to not depend
+        on HTMLMediaElement. Because InbandDataTextTrack could no longer access the
+        HTMLMediaElement to get its duration, a duration property was added to TextTrackList
+        that InbandDataTextTrack uses to set the duration of temporary cues.
+        TextTrackList.duration is set when it is created and updated when the media player
+        reports a duration change.
+
+        This means that if the media file’s duration is not known when the text track list
+        is created, and the file's duration never changes, the text track list never has a
+        valid duration and data cues were not added to the temporary list.
+
+        Fix this by updating TextTrackList.duration when a HTMLMediaElement reaches HAVE_METADATA.
+
+        Test: http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::durationChanged): Update m_textTracks.duration and post
+        the 'durationchange' event.
+        (WebCore::HTMLMediaElement::setReadyState): Call durationChanged.
+        (WebCore::HTMLMediaElement::mediaPlayerDurationChanged): Ditto.
+        * html/HTMLMediaElement.h:
+
+        * html/track/InbandDataTextTrack.cpp:
+        (WebCore::InbandDataTextTrack::addDataCue): Add cues to the incomplete cue map
+        even if the track list doesn't have duration.
+
 2022-03-08  Cameron McCormack  <heycam@apple.com>
 
         Skip scheduling lazy UA shadow tree creation if already created or not needed

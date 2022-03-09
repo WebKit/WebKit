@@ -71,8 +71,9 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
     }
 
     auto* textTrackList = downcast<TextTrackList>(trackList());
-    if (end.isPositiveInfinite() && textTrackList && textTrackList->duration().isValid()) {
-        cue->setEndTime(textTrackList->duration());
+    if (end.isPositiveInfinite()) {
+        if (textTrackList && textTrackList->duration().isValid())
+            cue->setEndTime(textTrackList->duration());
         m_incompleteCueMap.append(&cue.get());
     }
 

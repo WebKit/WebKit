@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../../media-resources/video-test.js></script>
+        <script src=../../../media-resources/media-file.js></script>
+
+        <script>
+            let cuechangeCount = 0;
+
+            async function start()
+            {
+                failTestIn(10000);
+
+                consoleWrite('<br><em>** Set video.src, wait for media data to load</em>');
+                findMediaElement();
+
+                waitForAndFail(video, 'error')
+                run('video.src = "http://127.0.0.1:8000/media/resources/hls/metadata/prog_index.m3u8"');
+
+                waitFor(video.textTracks, 'addtrack').then(evt => {
+                    run('track = video.textTracks[0]');
+                    run('track.mode = "hidden"');
+                    track.addEventListener('cuechange', evt => {
+                        if (++cuechangeCount != 6)
+                            return;
+
+                        for (var i = 0; i < 6; i++) {
+                            cue = track.cues[i];
+                            consoleWrite(`<br>cue ${i + 1}`);
+                            testExpected('cue.startTime', Number.POSITIVE_INFINITY, "!=");
+                            testExpected('cue.endTime', Number.POSITIVE_INFINITY, "!=");
+                        }
+
+                        consoleWrite('');
+                        endTest();
+                    });
+                });
+
+                await waitFor(video, 'canplaythrough');
+                await video.play();
+
+                consoleWrite('');
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that metadata cues have valid duration.</p>
+    </body>
+</html>

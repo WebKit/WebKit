@@ -202,6 +202,7 @@ public:
     void resolvePendingPlayPromises(PlayPromiseVector&&);
     void scheduleNotifyAboutPlaying();
     void notifyAboutPlaying(PlayPromiseVector&&);
+    void durationChanged();
     
     MediaPlayer::MovieLoadType movieLoadType() const;
     
