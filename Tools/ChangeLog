@@ -1,3 +1,16 @@
+2022-03-08  John Cunningham  <johncunningham@apple.com>
+
+        RemoteGraphicsContextGL ReadPixels does not preserve contents for area that is not part of the Framebuffer
+        https://bugs.webkit.org/show_bug.cgi?id=222410
+        <rdar://problem/75025951>
+
+        Reviewed by Kimmo Kinnunen.
+
+        Make a copy of the data buffer passed into readnpixels so that reads outside the framebuffer contain
+        the expected results, rather than being zero'd.
+
+        * Scripts/generate-gpup-webgl:
+
 2022-03-08  Jean-Yves Avenard  <jya@apple.com>
 
         Split SourceBufferParserWebM and have platform agnostic WebMParser

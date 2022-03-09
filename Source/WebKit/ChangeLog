@@ -1,3 +1,29 @@
+2022-03-08  John Cunningham  <johncunningham@apple.com>
+
+        RemoteGraphicsContextGL ReadPixels does not preserve contents for area that is not part of the Framebuffer
+        https://bugs.webkit.org/show_bug.cgi?id=222410
+        <rdar://problem/75025951>
+
+        Reviewed by Kimmo Kinnunen.
+
+        Make a copy of the data buffer passed into readnpixels so that reads outside the framebuffer contain
+        the expected results, rather than being zero'd.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::readnPixels0):
+        (WebKit::RemoteGraphicsContextGL::readnPixels1):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGL.messages.in:
+        * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h:
+        (bufferSubData):
+        (readnPixels0): Deleted.
+        (readnPixels1): Deleted.
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::readnPixels):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::readnPixels): Deleted.
+
 2022-03-08  Simon Fraser  <simon.fraser@apple.com>
 
         Fix assertion when DOM Rendering in GPU Process is enabled with accelerated drawing disabled

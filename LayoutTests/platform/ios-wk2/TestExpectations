@@ -2227,7 +2227,6 @@ imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-elemen
 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Pass Failure ]
 
 # Test failures from turning GPU Process on by default
-webkit.org/b/234536 webgl/2.0.0/conformance/reading/read-pixels-test.html
 webkit.org/b/234536 webxr/high-performance.html
 webkit.org/b/234536 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout ]
 

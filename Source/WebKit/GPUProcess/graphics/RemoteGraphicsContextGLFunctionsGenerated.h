@@ -778,18 +778,6 @@
         assertIsCurrent(workQueue());
         m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), makeGCGLSpan(reinterpret_cast<const GCGLvoid*>(data.data()), data.size()));
     }
-    void readnPixels0(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t dataSize, CompletionHandler<void(IPC::ArrayReference<uint8_t>)>&& completionHandler)
-    {
-        Vector<GCGLchar, 4> data(static_cast<size_t>(dataSize), 0);
-        assertIsCurrent(workQueue());
-        m_context->readnPixels(x, y, width, height, format, type, data);
-        completionHandler(IPC::ArrayReference<uint8_t>(reinterpret_cast<uint8_t*>(data.data()), data.size()));
-    }
-    void readnPixels1(int32_t x, int32_t y, int32_t width, int32_t height, uint32_t format, uint32_t type, uint64_t offset)
-    {
-        assertIsCurrent(workQueue());
-        m_context->readnPixels(x, y, width, height, format, type, static_cast<GCGLintptr>(offset));
-    }
     void texImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& pixels)
     {
         assertIsCurrent(workQueue());

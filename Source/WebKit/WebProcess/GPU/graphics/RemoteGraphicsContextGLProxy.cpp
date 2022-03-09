@@ -233,6 +233,27 @@ void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTest
     }
 }
 
+void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
+{
+    IPC::ArrayReference<uint8_t> dataReply;
+    if (!isContextLost()) {
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels0(x, y, width, height, format, type, IPC::ArrayReference<uint8_t>(reinterpret_cast<uint8_t*>(data.data), data.bufSize)), Messages::RemoteGraphicsContextGL::ReadnPixels0::Reply(dataReply));
+        if (!sendResult)
+            markContextLost();
+        else
+            memcpy(data.data, dataReply.data(), data.bufSize * sizeof(uint8_t));
+    }
+}
+
+void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset)
+{
+    if (!isContextLost()) {
+        auto sendResult = send(Messages::RemoteGraphicsContextGL::ReadnPixels1(x, y, width, height, format, type, static_cast<uint64_t>(offset)));
+        if (!sendResult)
+            markContextLost();
+    }
+}
+
 void RemoteGraphicsContextGLProxy::wasCreated(bool didSucceed, IPC::Semaphore&& semaphore, String&& availableExtensions, String&& requestedExtensions)
 {
     if (isContextLost())
