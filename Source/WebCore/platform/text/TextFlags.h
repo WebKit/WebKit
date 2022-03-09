@@ -28,6 +28,10 @@
 #include <optional>
 #include <wtf/EnumTraits.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 enum class TextRenderingMode : uint8_t {
@@ -579,6 +583,8 @@ enum class Kerning : uint8_t {
     Normal,
     NoShift
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, Kerning);
 
 enum class FontOpticalSizing : uint8_t {
     Enabled,

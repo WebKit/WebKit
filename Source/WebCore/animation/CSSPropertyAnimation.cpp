@@ -2808,7 +2808,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperContent,
         new OffsetRotatePropertyWrapper(CSSPropertyOffsetRotate, &RenderStyle::offsetRotate, &RenderStyle::setOffsetRotate),
         new DiscretePropertyWrapper<TextDecorationSkipInk>(CSSPropertyTextDecorationSkipInk, &RenderStyle::textDecorationSkipInk, &RenderStyle::setTextDecorationSkipInk),
-        new DiscretePropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolation, &RenderStyle::colorInterpolation, &RenderStyle::setColorInterpolation)
+        new DiscretePropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolation, &RenderStyle::colorInterpolation, &RenderStyle::setColorInterpolation),
+        new DiscretePropertyWrapper<Kerning>(CSSPropertyFontKerning, &RenderStyle::fontKerning, &RenderStyle::setFontKerning)
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

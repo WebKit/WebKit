@@ -221,6 +221,9 @@ PASS font-style: "italic" onto "oblique"
 PASS float (type: discrete) has testAddition function
 PASS float: "right" onto "left"
 PASS float: "left" onto "right"
+PASS font-kerning (type: discrete) has testAddition function
+PASS font-kerning: "normal" onto "auto"
+PASS font-kerning: "auto" onto "normal"
 PASS font-variation-settings (type: fontVariationSettings) has testAddition function
 FAIL font-variation-settings with composite type add assert_equals: The value should be "wght" 2.2 at 250ms expected "\"wght\" 2.2" but got "\"wght\" 1.2"
 PASS font-variation-settings (type: discrete) has testAddition function
