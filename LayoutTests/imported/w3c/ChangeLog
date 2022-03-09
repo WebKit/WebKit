@@ -1,5 +1,16 @@
 2022-03-08  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] clip-rule should support discrete animations
+        https://bugs.webkit.org/show_bug.cgi?id=237609
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2022-03-08  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] background-blend-mode should support discrete animation
         https://bugs.webkit.org/show_bug.cgi?id=237607
 

@@ -154,6 +154,10 @@ PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px,
 PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with linear easing
 PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with effect easing
 PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with keyframe easing
+PASS clip-rule (type: discrete) has testInterpolation function
+PASS clip-rule uses discrete animation when animating between "evenodd" and "nonzero" with linear easing
+PASS clip-rule uses discrete animation when animating between "evenodd" and "nonzero" with effect easing
+PASS clip-rule uses discrete animation when animating between "evenodd" and "nonzero" with keyframe easing
 PASS color (type: color) has testInterpolation function
 PASS color supports animating as color of rgb()
 PASS color supports animating as color of #RGB

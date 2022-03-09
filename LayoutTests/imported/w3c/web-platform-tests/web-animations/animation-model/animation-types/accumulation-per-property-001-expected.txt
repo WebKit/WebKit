@@ -126,6 +126,9 @@ PASS clip: "auto" onto "rect(10px, 10px, 10px, 10px)"
 PASS clip: "rect(10px, 10px, 10px, 10px)" onto "auto"
 PASS clip: "rect(10px, 10px, 10px, auto)" onto "rect(10px, 10px, 10px, 10px)"
 PASS clip: "rect(10px, 10px, 10px, 10px)" onto "rect(10px, 10px, 10px, auto)"
+PASS clip-rule (type: discrete) has testAccumulation function
+PASS clip-rule: "nonzero" onto "evenodd"
+PASS clip-rule: "evenodd" onto "nonzero"
 PASS color (type: color) has testAccumulation function
 FAIL color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
 PASS color supports animating as color of #RGB

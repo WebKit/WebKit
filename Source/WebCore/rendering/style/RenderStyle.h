@@ -1430,6 +1430,8 @@ public:
     const SVGRenderStyle& svgStyle() const { return m_svgStyle; }
     SVGRenderStyle& accessSVGStyle() { return m_svgStyle.access(); }
 
+    WindRule clipRule() const { return svgStyle().clipRule(); }
+    void setClipRule(WindRule clipRule) { accessSVGStyle().setClipRule(clipRule); }
     ColorInterpolation colorInterpolation() const { return svgStyle().colorInterpolation(); }
     void setColorInterpolation(ColorInterpolation colorInterpolation) { accessSVGStyle().setColorInterpolation(colorInterpolation); }
 
