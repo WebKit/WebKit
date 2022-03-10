@@ -2638,8 +2638,6 @@ http/tests/multipart/load-last-non-html-frame.py [ Failure  ]
 
 webkit.org/b/177366 http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-1.html [ Pass Timeout ]
 
-webkit.org/b/211509 platform/ios/mediastream/audio-muted-in-background-tab-gpu-process.html [ Failure ]
-
 webkit.org/b/177395 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Pass Failure ]
 fast/mediastream/getUserMedia-webaudio.html [ Pass Failure ]
 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]

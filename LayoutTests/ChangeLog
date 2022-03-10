@@ -1,3 +1,9 @@
+2022-03-10  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        * platform/ios/TestExpectations: r291034 fixed platform/ios/mediastream/audio-muted-in-background-tab-gpu-process.html.
+
 2022-03-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support updated WebSpeech API
