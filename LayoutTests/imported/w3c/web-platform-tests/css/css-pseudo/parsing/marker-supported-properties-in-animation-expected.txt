@@ -14,7 +14,7 @@ FAIL Animation of font-synthesis-weight in ::marker assert_true: font-synthesis-
 FAIL Animation of font-variant in ::marker assert_equals: expected "small-caps" but got "tabular-nums"
 FAIL Animation of font-variant-caps in ::marker assert_equals: expected "small-caps" but got "normal"
 PASS Animation of font-variant-east-asian in ::marker
-FAIL Animation of font-variant-ligatures in ::marker assert_equals: expected "historical-ligatures" but got "normal"
+PASS Animation of font-variant-ligatures in ::marker
 FAIL Animation of font-variant-numeric in ::marker assert_equals: expected "slashed-zero" but got "tabular-nums"
 FAIL Animation of font-variant-position in ::marker assert_equals: expected "sub" but got "normal"
 PASS Animation of font-weight in ::marker
