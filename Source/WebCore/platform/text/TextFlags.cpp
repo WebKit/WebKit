@@ -40,4 +40,13 @@ WTF::TextStream& operator<<(TextStream& ts, Kerning kerning)
     return ts;
 }
 
+WTF::TextStream& operator<<(TextStream& ts, FontVariantAlternates alternates)
+{
+    switch (alternates) {
+    case FontVariantAlternates::Normal: ts << "normal"; break;
+    case FontVariantAlternates::HistoricalForms: ts << "historical-forms"; break;
+    }
+    return ts;
+}
+
 } // namespace WebCore

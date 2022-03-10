@@ -1,3 +1,21 @@
+2022-03-09  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] font-variant-alternates should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237661
+
+        Reviewed by Myles C. Maxfield.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * platform/text/TextFlags.cpp:
+        (WebCore::operator<<):
+        * platform/text/TextFlags.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setFontFamilies):
+        (WebCore::RenderStyle::setFontVariantAlternates):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fontVariantAlternates const):
+
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] font-synthesis should support discrete animation

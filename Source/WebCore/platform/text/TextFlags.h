@@ -118,6 +118,8 @@ enum class FontVariantNumericOrdinal : bool { Normal, Yes };
 enum class FontVariantNumericSlashedZero : bool { Normal, Yes };
 enum class FontVariantAlternates : bool { Normal, HistoricalForms };
 
+WTF::TextStream& operator<<(WTF::TextStream&, FontVariantAlternates);
+
 enum class FontVariantEastAsianVariant : uint8_t {
     Normal,
     Jis78,
