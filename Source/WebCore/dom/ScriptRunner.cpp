@@ -141,4 +141,11 @@ void ScriptRunner::timerFired()
     }
 }
 
+void ScriptRunner::clearPendingScripts()
+{
+    m_scriptsToExecuteInOrder.clear();
+    m_scriptsToExecuteSoon.clear();
+    m_pendingAsyncScripts.clear();
 }
+
+} // namespace WebCore

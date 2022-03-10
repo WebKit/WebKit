@@ -55,6 +55,8 @@ public:
 
     void documentFinishedParsing();
 
+    void clearPendingScripts();
+
 private:
     void timerFired();
 

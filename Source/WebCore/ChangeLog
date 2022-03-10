@@ -1,3 +1,31 @@
+2022-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Document is leaking on haaretz.co.il due to an async script
+        https://bugs.webkit.org/show_bug.cgi?id=237672
+        <rdar://problem/90050632>
+
+        Reviewed by Geoffrey Garen.
+
+        I haven't been able to reproduce this in the context of a layout test, however,
+        I see the https://acdn.adnxs.com/dmp/async_usersync.html document flakily leaking
+        on haaretz.co.il due to an async script (sometimes the top document too).
+
+        From a memgraph, I can see that the cycle is:
+        HTMLDocument -> ScriptRunner -> PendingScript (via m_scriptsToExecuteSoon) -> HTMLScriptElement -> HTMLDocument (again)
+
+        To address the issue, I updated Document::commonTeardown() to clear all its ScriptRunner's pending scripts, right after
+        we stop all ActiveDOMObjects. At this point, we no longer want to run script and clearing any pending scripts is critical
+        since they hold a strong reference to the Document.
+
+        I have validated the fix on haaretz.co.il since I wasn't able to write an automated
+        test for this.
+
+        * dom/Document.cpp:
+        (WebCore::Document::commonTeardown):
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::clearPendingScripts):
+        * dom/ScriptRunner.h:
+
 2022-03-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support updated WebSpeech API

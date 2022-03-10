@@ -830,6 +830,8 @@ void Document::commonTeardown()
             resizeObserver->disconnect();
     }
 
+    scriptRunner().clearPendingScripts();
+
     if (m_highlightRegister)
         m_highlightRegister->clear();
     if (m_fragmentHighlightRegister)
