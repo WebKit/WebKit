@@ -59,6 +59,7 @@ Interpolate = properties.Interpolate
 GITHUB_URL = 'https://github.com/'
 GITHUB_PROJECTS = ['WebKit/WebKit']
 HASH_LENGTH_TO_DISPLAY = 8
+DEFAULT_BRANCH = 'main'
 
 
 class BufferLogHeaderObserver(logobserver.BufferLogObserver):
@@ -542,7 +543,7 @@ class ShowIdentifier(shell.ShellCommand):
         if match:
             identifier = match.group(1)
             if identifier:
-                identifier = identifier.replace('master', 'main')
+                identifier = identifier.replace('master', DEFAULT_BRANCH)
             self.setProperty('identifier', identifier)
             ews_revision = self.getProperty('ews_revision')
             if ews_revision:
@@ -699,7 +700,7 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
 
         remote = self.getProperty('github.head.repo.full_name', 'origin').split('/')[0]
         project = self.getProperty('github.head.repo.full_name', self.getProperty('project'))
-        pr_branch = self.getProperty('github.head.ref', 'main')
+        pr_branch = self.getProperty('github.head.ref', DEFAULT_BRANCH)
         base_hash = self.getProperty('github.base.sha')
         rebase_target_hash = self.getProperty('ews_revision') or self.getProperty('got_revision')
 
@@ -4101,7 +4102,7 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
     flunkOnFailure = False
     logEnviron = False
 
-    def __init__(self, default_branch='main', remote='origin', **kwargs):
+    def __init__(self, default_branch=DEFAULT_BRANCH, remote='origin', **kwargs):
         super(CleanGitRepo, self).__init__(timeout=5 * 60, **kwargs)
         self.default_branch = default_branch
         self.git_remote = remote

@@ -1,3 +1,16 @@
+2022-03-09  Jonathan Bedard  <jbedard@apple.com>
+
+        [EWS] Add DEFAULT_BRANCH variable
+        https://bugs.webkit.org/show_bug.cgi?id=237693
+        <rdar://problem/90067276>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (ShowIdentifier.evaluateCommand):
+        (CheckOutPullRequest.run):
+        (CleanGitRepo.__init__):
+
 2022-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add initial support for PDF documents using PDF.js
