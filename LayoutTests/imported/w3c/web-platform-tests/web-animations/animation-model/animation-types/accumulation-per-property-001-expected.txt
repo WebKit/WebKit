@@ -178,6 +178,9 @@ PASS column-width: "auto" onto "1px"
 PASS counter-increment (type: discrete) has testAccumulation function
 PASS counter-increment: "ident-2 2" onto "ident-1 1"
 PASS counter-increment: "ident-1 1" onto "ident-2 2"
+PASS counter-reset (type: discrete) has testAccumulation function
+PASS counter-reset: "ident-2 2" onto "ident-1 1"
+PASS counter-reset: "ident-1 1" onto "ident-2 2"
 PASS cursor (type: discrete) has testAccumulation function
 PASS cursor: "wait" onto "pointer"
 PASS cursor: "pointer" onto "wait"

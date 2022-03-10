@@ -2514,12 +2514,13 @@ private:
 #endif
 };
 
-class CounterIncrementWrapper final : public AnimationPropertyWrapperBase {
+class CounterWrapper final : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CounterIncrementWrapper()
-        : AnimationPropertyWrapperBase(CSSPropertyCounterIncrement)
+    CounterWrapper(CSSPropertyID property)
+        : AnimationPropertyWrapperBase(property)
     {
+        ASSERT(property == CSSPropertyCounterIncrement || property == CSSPropertyCounterReset);
     }
 
     bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
@@ -2539,7 +2540,8 @@ public:
                 if (it == bCounterDirectives->end())
                     return false;
                 auto& bDirective = it->value;
-                if (aDirective.incrementValue != bDirective.incrementValue)
+                if ((property() == CSSPropertyCounterIncrement && aDirective.incrementValue != bDirective.incrementValue)
+                    || (property() == CSSPropertyCounterReset && aDirective.resetValue != bDirective.resetValue))
                     return false;
             }
             return true;
@@ -2550,7 +2552,7 @@ public:
 #if !LOG_DISABLED
     void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << " blending counter-increment at " << TextStream::FormatNumberRespectingIntegers(progress) << ".");
+        LOG_WITH_STREAM(Animations, stream << " blending " << getPropertyName(property()) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << ".");
     }
 #endif
 
@@ -2561,8 +2563,12 @@ public:
 
         // Clear all existing values in the existing set of directives.
         if (destination.counterDirectives()) {
-            for (auto& [key, directive] : destination.accessCounterDirectives())
-                directive.incrementValue = std::nullopt;
+            for (auto& [key, directive] : destination.accessCounterDirectives()) {
+                if (property() == CSSPropertyCounterIncrement)
+                    directive.incrementValue = std::nullopt;
+                else
+                    directive.resetValue = std::nullopt;
+            }
         }
 
         auto& style = context.progress ? to : from;
@@ -2571,8 +2577,11 @@ public:
 
         auto& targetDirectives = destination.accessCounterDirectives();
         for (auto& [key, directive] : *style.counterDirectives()) {
-            auto updateDirective = [](CounterDirectives& target, const CounterDirectives& source) {
-                target.incrementValue = source.incrementValue;
+            auto updateDirective = [&](CounterDirectives& target, const CounterDirectives& source) {
+                if (property() == CSSPropertyCounterIncrement)
+                    target.incrementValue = source.incrementValue;
+                else
+                    target.resetValue = source.resetValue;
             };
             auto it = targetDirectives.find(key);
             if (it == targetDirectives.end())
@@ -2915,7 +2924,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<WindRule>(CSSPropertyClipRule, &RenderStyle::clipRule, &RenderStyle::setClipRule),
         new DiscretePropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolationFilters, &RenderStyle::colorInterpolationFilters, &RenderStyle::setColorInterpolationFilters),
         new DiscretePropertyWrapper<DominantBaseline>(CSSPropertyDominantBaseline, &RenderStyle::dominantBaseline, &RenderStyle::setDominantBaseline),
-        new CounterIncrementWrapper
+        new CounterWrapper(CSSPropertyCounterIncrement),
+        new CounterWrapper(CSSPropertyCounterReset)
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 
