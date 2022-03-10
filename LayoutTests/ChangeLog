@@ -1,3 +1,10 @@
+2022-03-10  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused iOS 14 test results
+
+        * platform/ios-14: Removed.
+        * platform/ios-14-wk2: Removed.
+
 2022-03-10  Jon Lee  <jonlee@apple.com>
 
         Unreviewed gardening.

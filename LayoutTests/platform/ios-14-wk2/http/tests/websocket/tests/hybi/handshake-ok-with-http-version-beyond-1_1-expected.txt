@@ -1,9 +1,0 @@
-Test http version parsing and validation. HTTP version 1.1 and above should be accepted for WebSockets.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-PASS for all URLs.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
