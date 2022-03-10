@@ -141,7 +141,7 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
         options.pubKeyCredParams.append({ PublicKeyCredentialType::PublicKey, COSE::ES256 });
         options.pubKeyCredParams.append({ PublicKeyCredentialType::PublicKey, COSE::RS256 });
     } else {
-        if (notFound != options.pubKeyCredParams.findIf([] (auto& pubKeyCredParam) {
+        if (notFound != options.pubKeyCredParams.findMatching([] (auto& pubKeyCredParam) {
             return pubKeyCredParam.type != PublicKeyCredentialType::PublicKey;
         })) {
 
