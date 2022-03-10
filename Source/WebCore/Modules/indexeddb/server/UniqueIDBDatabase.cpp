@@ -1547,5 +1547,11 @@ std::optional<IDBDatabaseNameAndVersion> UniqueIDBDatabase::nameAndVersion() con
     return IDBDatabaseNameAndVersion { m_databaseInfo->name(), m_databaseInfo->version() };
 }
 
+void UniqueIDBDatabase::handleLowMemoryWarning()
+{
+    if (m_backingStore)
+        m_backingStore->handleLowMemoryWarning();
+}
+
 } // namespace IDBServer
 } // namespace WebCore

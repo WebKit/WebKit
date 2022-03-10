@@ -100,6 +100,7 @@ public:
     WEBCORE_EXPORT static String decodeDatabaseName(const String& encodedDatabaseName);
 
     WEBCORE_EXPORT static std::optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
+    void handleLowMemoryWarning() final;
 
 private:
     IDBError ensureValidRecordsTable();

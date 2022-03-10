@@ -121,6 +121,7 @@ public:
     WEBCORE_EXPORT String filePath() const;
     WEBCORE_EXPORT std::optional<IDBDatabaseNameAndVersion> nameAndVersion() const;
     WEBCORE_EXPORT bool hasDataInMemory() const;
+    WEBCORE_EXPORT void handleLowMemoryWarning();
 
 private:
     void handleDatabaseOperations();

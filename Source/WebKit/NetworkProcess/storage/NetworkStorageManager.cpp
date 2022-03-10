@@ -668,6 +668,8 @@ void NetworkStorageManager::handleLowMemoryWarning()
         for (auto& manager : m_localOriginStorageManagers.values()) {
             if (auto localStorageManager = manager->existingLocalStorageManager())
                 localStorageManager->handleLowMemoryWarning();
+            if (auto idbStorageManager = manager->existingIDBStorageManager())
+                idbStorageManager->handleLowMemoryWarning();
         }
     });
 }

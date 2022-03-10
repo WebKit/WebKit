@@ -1,3 +1,19 @@
+2022-03-10  Sihui Liu  <sihui_liu@apple.com>
+
+        IndexedDB: free memory used by database connection on low-memory warning
+        https://bugs.webkit.org/show_bug.cgi?id=237673
+
+        Reviewed by Chris Dumez.
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::handleLowMemoryWarning):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::handleLowMemoryWarning):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] font-variant-position should support discrete animation

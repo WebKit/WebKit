@@ -49,6 +49,7 @@ public:
 
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
     void restoreObjectStoreForVersionChangeAbort(Ref<MemoryObjectStore>&&);
+    void handleLowMemoryWarning() final { };
 
 private:
     IDBError beginTransaction(const IDBTransactionInfo&) final;

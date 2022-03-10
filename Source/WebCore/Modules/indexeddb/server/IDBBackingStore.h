@@ -96,6 +96,8 @@ public:
     virtual void close() = 0;
 
     virtual bool hasTransaction(const IDBResourceIdentifier&) const = 0;
+    virtual void handleLowMemoryWarning() = 0;
+
 protected:
     IDBBackingStore() { RELEASE_ASSERT(!isMainThread()); }
 };

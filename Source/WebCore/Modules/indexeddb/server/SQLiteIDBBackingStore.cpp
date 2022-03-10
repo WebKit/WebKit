@@ -2838,6 +2838,12 @@ bool SQLiteIDBBackingStore::hasTransaction(const IDBResourceIdentifier& transact
     return m_transactions.contains(transactionIdentifier);
 }
 
+void SQLiteIDBBackingStore::handleLowMemoryWarning()
+{
+    if (m_sqliteDB)
+        m_sqliteDB->releaseMemory();
+}
+
 #undef TABLE_SCHEMA_PREFIX
 #undef V3_RECORDS_TABLE_SCHEMA_SUFFIX
 #undef V3_INDEX_RECORDS_TABLE_SCHEMA_SUFFIX

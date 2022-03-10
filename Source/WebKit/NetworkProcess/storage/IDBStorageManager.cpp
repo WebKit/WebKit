@@ -277,4 +277,10 @@ void IDBStorageManager::requestSpace(const WebCore::ClientOrigin&, uint64_t size
     m_quotaCheckFunction(size, WTFMove(completionHandler));
 }
 
+void IDBStorageManager::handleLowMemoryWarning()
+{
+    for (auto& database : m_databases.values())
+        database->handleLowMemoryWarning();
+}
+
 } // namespace WebKit

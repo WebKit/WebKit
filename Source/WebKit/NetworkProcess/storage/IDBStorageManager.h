@@ -58,6 +58,7 @@ public:
     bool hasDataInMemory() const;
     void closeDatabasesForDeletion();
     void stopDatabaseActivitiesForSuspend();
+    void handleLowMemoryWarning();
 
     void openDatabase(WebCore::IDBServer::IDBConnectionToClient&, const WebCore::IDBRequestData&);
     void openDBRequestCancelled(const WebCore::IDBRequestData&);
