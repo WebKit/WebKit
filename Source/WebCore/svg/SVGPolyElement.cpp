@@ -55,7 +55,8 @@ void SVGPolyElement::parseAttribute(const QualifiedName& name, const AtomString&
 
 void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::pointsAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
+        ASSERT(attrName == SVGNames::pointsAttr);
         if (auto* renderer = downcast<RenderSVGPath>(this->renderer())) {
             InstanceInvalidationGuard guard(*this);
             renderer->setNeedsShapeUpdate();

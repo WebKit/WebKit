@@ -83,15 +83,14 @@ bool SVGFEBlendElement::setFilterEffectAttribute(FilterEffect* effect, const Qua
 
 void SVGFEBlendElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::modeAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        primitiveAttributeChanged(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
-        InstanceInvalidationGuard guard(*this);
-        invalidate();
+        if (attrName == SVGNames::modeAttr)
+            primitiveAttributeChanged(attrName);
+        else {
+            ASSERT(attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr);
+            invalidate();
+        }
         return;
     }
 

@@ -125,15 +125,14 @@ bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect* effect,
 
 void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::surfaceScaleAttr || attrName == SVGNames::diffuseConstantAttr || attrName == SVGNames::kernelUnitLengthAttr || attrName == SVGNames::lighting_colorAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        primitiveAttributeChanged(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr) {
-        InstanceInvalidationGuard guard(*this);
-        invalidate();
+        if (attrName == SVGNames::inAttr)
+            invalidate();
+        else {
+            ASSERT(attrName == SVGNames::diffuseConstantAttr || attrName == SVGNames::surfaceScaleAttr || attrName == SVGNames::kernelUnitLengthAttr);
+            primitiveAttributeChanged(attrName);
+        }
         return;
     }
 

@@ -84,15 +84,14 @@ bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect* effect, con
 
 void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::typeAttr || attrName == SVGNames::valuesAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        primitiveAttributeChanged(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr) {
-        InstanceInvalidationGuard guard(*this);
-        invalidate();
+        if (attrName == SVGNames::inAttr)
+            invalidate();
+        else {
+            ASSERT(attrName == SVGNames::typeAttr || attrName == SVGNames::valuesAttr);
+            primitiveAttributeChanged(attrName);
+        }
         return;
     }
 

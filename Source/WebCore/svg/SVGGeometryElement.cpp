@@ -147,7 +147,8 @@ void SVGGeometryElement::parseAttribute(const QualifiedName& name, const AtomStr
 
 void SVGGeometryElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::pathLengthAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
+        ASSERT(attrName == SVGNames::pathLengthAttr);
         InstanceInvalidationGuard guard(*this);
         if (auto* renderer = this->renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);

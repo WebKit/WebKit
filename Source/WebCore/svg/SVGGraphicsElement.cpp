@@ -132,7 +132,8 @@ void SVGGraphicsElement::parseAttribute(const QualifiedName& name, const AtomStr
 
 void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::transformAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
+        ASSERT(attrName == SVGNames::transformAttr);
         InstanceInvalidationGuard guard(*this);
 
         if (auto renderer = this->renderer()) {

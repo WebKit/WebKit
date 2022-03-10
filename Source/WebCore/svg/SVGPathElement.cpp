@@ -65,7 +65,8 @@ void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomString&
 
 void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::dAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
+        ASSERT(attrName == SVGNames::dAttr);
         InstanceInvalidationGuard guard(*this);
         invalidateMPathDependencies();
 

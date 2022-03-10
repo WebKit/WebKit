@@ -98,15 +98,14 @@ bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect* effect, cons
 
 void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::operatorAttr || attrName == SVGNames::radiusAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        primitiveAttributeChanged(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr) {
-        InstanceInvalidationGuard guard(*this);
-        invalidate();
+        if (attrName == SVGNames::inAttr)
+            invalidate();
+        else {
+            ASSERT(attrName == SVGNames::operatorAttr || attrName == SVGNames::radiusAttr);
+            primitiveAttributeChanged(attrName);
+        }
         return;
     }
 

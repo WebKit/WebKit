@@ -99,15 +99,14 @@ bool SVGFEDisplacementMapElement::setFilterEffectAttribute(FilterEffect* effect,
 
 void SVGFEDisplacementMapElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::xChannelSelectorAttr || attrName == SVGNames::yChannelSelectorAttr || attrName == SVGNames::scaleAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        primitiveAttributeChanged(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
-        InstanceInvalidationGuard guard(*this);
-        invalidate();
+        if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr)
+            invalidate();
+        else {
+            ASSERT(attrName == SVGNames::xChannelSelectorAttr || attrName == SVGNames::yChannelSelectorAttr || attrName == SVGNames::scaleAttr);
+            primitiveAttributeChanged(attrName);
+        }
         return;
     }
 

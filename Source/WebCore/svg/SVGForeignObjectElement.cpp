@@ -74,15 +74,16 @@ void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const At
 
 void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
-        invalidateSVGPresentationalHintStyle();
-        return;
-    }
-
-    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr) {
-        updateRelativeLengthsInformation();
-        if (auto renderer = this->renderer())
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
+        if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr)
+            invalidateSVGPresentationalHintStyle();
+        else {
+            ASSERT(attrName == SVGNames::xAttr || attrName == SVGNames::yAttr);
+            updateRelativeLengthsInformation();
+            if (auto renderer = this->renderer())
+                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+        }
         return;
     }
 

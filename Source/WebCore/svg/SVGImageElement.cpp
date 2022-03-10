@@ -93,27 +93,22 @@ void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomString
 
 void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        updateRelativeLengthsInformation();
+        if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr) {
+            updateRelativeLengthsInformation();
 
-        if (auto* renderer = this->renderer()) {
-            if (downcast<RenderSVGImage>(*renderer).updateImageViewport())
+            if (auto* renderer = this->renderer()) {
+                if (downcast<RenderSVGImage>(*renderer).updateImageViewport())
+                    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+            }
+        } else if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr)
+            invalidateSVGPresentationalHintStyle();
+        else {
+            ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
+            if (auto* renderer = this->renderer())
                 RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         }
-        return;
-    }
-
-    if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
-        InstanceInvalidationGuard guard(*this);
-        invalidateSVGPresentationalHintStyle();
-        return;
-    }
-
-    if (attrName == SVGNames::preserveAspectRatioAttr) {
-        InstanceInvalidationGuard guard(*this);
-        if (auto* renderer = this->renderer())
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
         return;
     }
 

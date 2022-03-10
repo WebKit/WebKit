@@ -115,15 +115,14 @@ bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect* effect, const
 
 void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::operatorAttr || attrName == SVGNames::k1Attr || attrName == SVGNames::k2Attr || attrName == SVGNames::k3Attr || attrName == SVGNames::k4Attr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        primitiveAttributeChanged(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
-        InstanceInvalidationGuard guard(*this);
-        invalidate();
+        if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr)
+            invalidate();
+        else {
+            ASSERT(attrName == SVGNames::k1Attr || attrName == SVGNames::k2Attr || attrName == SVGNames::k3Attr || attrName == SVGNames::k4Attr || attrName == SVGNames::operatorAttr);
+            primitiveAttributeChanged(attrName);
+        }
         return;
     }
 

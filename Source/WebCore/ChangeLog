@@ -1,3 +1,50 @@
+2022-03-10  Rob Buis  <rbuis@igalia.com>
+
+        Use PropertyRegistry consistently in svgAttributeChanged
+        https://bugs.webkit.org/show_bug.cgi?id=237604
+
+        Reviewed by Martin Robinson.
+
+        Use PropertyRegistry consistently in svgAttributeChanged by always checking
+        PropertyRegistry::isKnownAttribute first thing, before delegating to subclasses.
+
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::svgAttributeChanged):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::svgAttributeChanged):
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::svgAttributeChanged):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::svgAttributeChanged):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::svgAttributeChanged):
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::svgAttributeChanged):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::svgAttributeChanged):
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::svgAttributeChanged):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::svgAttributeChanged):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::svgAttributeChanged):
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::svgAttributeChanged):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        * svg/SVGGeometryElement.cpp:
+        (WebCore::SVGGeometryElement::svgAttributeChanged):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::svgAttributeChanged):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::svgAttributeChanged):
+
 2022-03-10  Lauro Moura  <lmoura@igalia.com>
 
         Add context.roundRect support to OffScreenCanvas

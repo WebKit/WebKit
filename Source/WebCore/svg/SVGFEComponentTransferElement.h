@@ -40,7 +40,7 @@ private:
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGFEComponentTransferElement, SVGFilterPrimitiveStandardAttributes>;
     const SVGPropertyRegistry& propertyRegistry() const final { return m_propertyRegistry; }
 
-    // FIXME: svgAttributeChanged missing.
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=237702 - provide svgAttribute implementation for SVGFEComponentTransferElement.
     void parseAttribute(const QualifiedName&, const AtomString&) override;
 
     Vector<AtomString> filterEffectInputsNames() const override { return { in1() }; }

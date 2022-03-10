@@ -135,15 +135,14 @@ bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect* effect
 
 void SVGFESpecularLightingElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::surfaceScaleAttr || attrName == SVGNames::specularConstantAttr || attrName == SVGNames::specularExponentAttr || attrName == SVGNames::kernelUnitLengthAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        primitiveAttributeChanged(attrName);
-        return;
-    }
-
-    if (attrName == SVGNames::inAttr) {
-        InstanceInvalidationGuard guard(*this);
-        invalidate();
+        if (attrName == SVGNames::inAttr)
+            invalidate();
+        else {
+            ASSERT(attrName == SVGNames::specularConstantAttr || attrName == SVGNames::specularExponentAttr || attrName == SVGNames::surfaceScaleAttr || attrName == SVGNames::kernelUnitLengthAttr);
+            primitiveAttributeChanged(attrName);
+        }
         return;
     }
 

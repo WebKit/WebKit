@@ -127,7 +127,8 @@ void SVGFEImageElement::parseAttribute(const QualifiedName& name, const AtomStri
 
 void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (attrName == SVGNames::preserveAspectRatioAttr) {
+    if (PropertyRegistry::isKnownAttribute(attrName)) {
+        ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
         InstanceInvalidationGuard guard(*this);
         invalidate();
         return;
