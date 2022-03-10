@@ -1,3 +1,15 @@
+2022-03-09  Youenn Fablet  <youenn@apple.com>
+
+        imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=237327
+
+        Reviewed by Eric Carlson.
+
+        The worker is first sending the Opened message, than any message coming from the data channel.
+        Wait for the Opened message before proceeding with the rest of the test.
+
+        * web-platform-tests/webrtc-extensions/transfer-datachannel.html:
+
 2022-03-09  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] counter-increment should support discrete animation
