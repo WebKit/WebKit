@@ -263,10 +263,7 @@ void WebContextMenuProxyMac::setupServicesMenu()
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setSourceFrame:imageRect];
     [[WKSharingServicePickerDelegate sharedSharingServicePickerDelegate] setAttachmentID:m_context.controlledImageAttachmentID()];
 
-    if ([picker respondsToSelector:@selector(standardShareMenuItem)])
-        m_menu = adoptNS([[[picker standardShareMenuItem] menu] copy]);
-    else
-        m_menu = adoptNS([[picker menu] copy]);
+    m_menu = adoptNS([[picker menu] copy]);
 
     if (!hasControlledImage)
         [m_menu setShowsStateColumn:YES];

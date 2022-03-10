@@ -1,3 +1,17 @@
+2022-03-10  Kate Cheney  <katherine_cheney@apple.com>
+
+        Markup dropdown menu not working in Mail compose
+        https://bugs.webkit.org/show_bug.cgi?id=237726
+        <rdar://problem/89777983>
+
+        Reviewed by Wenson Hsieh.
+
+        Partial revert of r290103. No need for standardShareMenu in the
+        services menu case.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::setupServicesMenu):
+
 2022-03-10  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Support updated WebSpeech API
