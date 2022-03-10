@@ -1,5 +1,23 @@
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] font-variant-position should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237671
+
+        Reviewed by Myles C. Maxfield.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * platform/text/TextFlags.cpp:
+        (WebCore::operator<<):
+        * platform/text/TextFlags.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setFontVariantAlternates):
+        (WebCore::RenderStyle::setFontVariantPosition):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fontVariantPosition const):
+
+2022-03-10  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] font-variant-ligatures should support discrete animation
         https://bugs.webkit.org/show_bug.cgi?id=237667
 

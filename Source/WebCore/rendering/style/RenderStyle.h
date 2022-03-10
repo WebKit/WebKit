@@ -375,6 +375,7 @@ public:
     RefCountedFixedVector<AtomString>& fontFamilies() const { return fontDescription().families(); }
     FontSynthesis fontSynthesis() const { return fontDescription().fontSynthesis(); }
     FontVariantAlternates fontVariantAlternates() const { return fontDescription().variantAlternates(); }
+    FontVariantPosition fontVariantPosition() const { return fontDescription().variantPosition(); }
 
     const Length& textIndent() const { return m_rareInheritedData->indent; }
     TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }
@@ -1001,6 +1002,7 @@ public:
     void setFontFamilies(RefCountedFixedVector<AtomString>&);
     void setFontSynthesis(FontSynthesis);
     void setFontVariantAlternates(FontVariantAlternates);
+    void setFontVariantPosition(FontVariantPosition);
 
     void setColor(const Color&);
     void setTextIndent(Length&& length) { SET_VAR(m_rareInheritedData, indent, WTFMove(length)); }

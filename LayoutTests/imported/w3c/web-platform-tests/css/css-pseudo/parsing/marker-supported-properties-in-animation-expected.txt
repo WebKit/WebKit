@@ -16,7 +16,7 @@ FAIL Animation of font-variant-caps in ::marker assert_equals: expected "small-c
 PASS Animation of font-variant-east-asian in ::marker
 PASS Animation of font-variant-ligatures in ::marker
 FAIL Animation of font-variant-numeric in ::marker assert_equals: expected "slashed-zero" but got "tabular-nums"
-FAIL Animation of font-variant-position in ::marker assert_equals: expected "sub" but got "normal"
+PASS Animation of font-variant-position in ::marker
 PASS Animation of font-weight in ::marker
 PASS Animation of line-height in ::marker
 PASS Animation of white-space in ::marker

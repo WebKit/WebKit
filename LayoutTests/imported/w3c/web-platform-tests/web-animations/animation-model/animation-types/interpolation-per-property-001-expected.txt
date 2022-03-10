@@ -321,6 +321,10 @@ PASS font-variant-ligatures (type: discrete) has testInterpolation function
 PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with linear easing
 PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with effect easing
 PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with keyframe easing
+PASS font-variant-position (type: discrete) has testInterpolation function
+PASS font-variant-position uses discrete animation when animating between "sub" and "super" with linear easing
+PASS font-variant-position uses discrete animation when animating between "sub" and "super" with effect easing
+PASS font-variant-position uses discrete animation when animating between "sub" and "super" with keyframe easing
 PASS font-variation-settings (type: fontVariationSettings) has testInterpolation function
 PASS font-variation-settings supports animation as float
 PASS font-variation-settings supports animation as float with multiple tags

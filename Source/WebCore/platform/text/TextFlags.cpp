@@ -49,4 +49,14 @@ WTF::TextStream& operator<<(TextStream& ts, FontVariantAlternates alternates)
     return ts;
 }
 
+WTF::TextStream& operator<<(TextStream& ts, FontVariantPosition position)
+{
+    switch (position) {
+    case FontVariantPosition::Normal: ts << "normal"; break;
+    case FontVariantPosition::Subscript: ts << "subscript"; break;
+    case FontVariantPosition::Superscript: ts << "superscript"; break;
+    }
+    return ts;
+}
+
 } // namespace WebCore

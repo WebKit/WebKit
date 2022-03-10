@@ -263,6 +263,9 @@ PASS font-variant-east-asian: "full-width" onto "proportional-width"
 PASS font-variant-ligatures (type: discrete) has testAccumulation function
 PASS font-variant-ligatures: "no-common-ligatures" onto "common-ligatures"
 PASS font-variant-ligatures: "common-ligatures" onto "no-common-ligatures"
+PASS font-variant-position (type: discrete) has testAccumulation function
+PASS font-variant-position: "super" onto "sub"
+PASS font-variant-position: "sub" onto "super"
 PASS font-variation-settings (type: fontVariationSettings) has testAccumulation function
 FAIL font-variation-settings with composite type accumulate assert_equals: The value should be "wght" 2.2 at 250ms expected "\"wght\" 2.2" but got "\"wght\" 1.2"
 PASS font-variation-settings (type: discrete) has testAccumulation function

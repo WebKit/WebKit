@@ -2074,6 +2074,16 @@ void RenderStyle::setFontVariantAlternates(FontVariantAlternates value)
     fontCascade().update(currentFontSelector);
 }
 
+void RenderStyle::setFontVariantPosition(FontVariantPosition value)
+{
+    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setVariantPosition(value);
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(currentFontSelector);
+}
+
 LayoutBoxExtent RenderStyle::shadowExtent(const ShadowData* shadow)
 {
     LayoutUnit top;

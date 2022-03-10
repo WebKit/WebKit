@@ -86,6 +86,8 @@ const unsigned FontSynthesisWidth = 3;
 enum class FontVariantLigatures : uint8_t { Normal, Yes, No };
 enum class FontVariantPosition : uint8_t { Normal, Subscript, Superscript };
 
+WTF::TextStream& operator<<(WTF::TextStream&, FontVariantPosition);
+
 enum class FontVariantCaps : uint8_t {
     Normal,
     Small,
