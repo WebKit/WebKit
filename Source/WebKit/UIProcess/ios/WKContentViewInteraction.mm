@@ -4238,19 +4238,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)_defineForWebView:(id)sender
 {
-#if !PLATFORM(MACCATALYST)
-    MCProfileConnection *connection = [PAL::getMCProfileConnectionClass() sharedConnection];
-    if ([connection effectiveBoolValueForSetting:PAL::get_ManagedConfiguration_MCFeatureDefinitionLookupAllowed()] == MCRestrictedBoolExplicitNo)
-        return;
-#endif
-
-    RetainPtr<WKContentView> view = self;
-    _page->getSelectionOrContentsAsString([view](const String& string) {
-        if (!string)
-            return;
-
-        [view _showDictionary:string];
-    });
+    [self _lookupForWebView:sender];
 }
 
 - (void)accessibilityRetrieveSpeakSelectionContent

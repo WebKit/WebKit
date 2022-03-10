@@ -1,3 +1,14 @@
+2022-03-09  Megan Gardner  <megan_gardner@apple.com>
+
+        Combine Lookup and Define.
+        https://bugs.webkit.org/show_bug.cgi?id=237627
+        rdar://26205225
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _defineForWebView:]):
+
 2022-03-09  Per Arne Vollan  <pvollan@apple.com>
 
         The accessibility library should be soft linked optionally
