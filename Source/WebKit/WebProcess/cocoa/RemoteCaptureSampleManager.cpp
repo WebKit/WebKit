@@ -33,8 +33,7 @@
 #include "SharedRingBufferStorage.h"
 #include "WebProcess.h"
 #include <WebCore/CVUtilities.h>
-#include <WebCore/MediaSampleAVFObjC.h>
-#include <WebCore/RemoteVideoSample.h>
+#include <WebCore/VideoFrameCV.h>
 #include <WebCore/WebAudioBufferList.h>
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -159,7 +158,7 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
     iterator->value->setStorage(ipcHandle.handle, description, numberOfFrames, WTFMove(semaphore), mediaTime, frameChunkSize);
 }
 
-void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoSampleMetadata metadata)
+void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoSampleMetadata metadata)
 {
     ASSERT(!WTF::isMainRunLoop());
     // Create videoFrame before early outs so that the reference in `properties` is adopted.
@@ -177,7 +176,7 @@ void RemoteCaptureSampleManager::videoSampleAvailable(RealtimeMediaSourceIdentif
     iterator->value->videoFrameAvailable(WTFMove(videoFrame), videoFrameSize, metadata);
 }
 
-void RemoteCaptureSampleManager::videoSampleAvailableCV(RealtimeMediaSourceIdentifier identifier, RemoteVideoSample&& sample, VideoSampleMetadata metadata)
+void RemoteCaptureSampleManager::videoFrameAvailableCV(RealtimeMediaSourceIdentifier identifier, RetainPtr<CVPixelBufferRef>&& pixelBuffer, WebCore::MediaSample::VideoRotation rotation, bool mirrored, MediaTime presentationTime, WebCore::VideoSampleMetadata metadata)
 {
     ASSERT(!WTF::isMainRunLoop());
     auto iterator = m_videoSources.find(identifier);
@@ -185,7 +184,10 @@ void RemoteCaptureSampleManager::videoSampleAvailableCV(RealtimeMediaSourceIdent
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for remoteVideoSampleAvailable", identifier.toUInt64());
         return;
     }
-    iterator->value->videoSampleAvailable(WTFMove(sample), metadata);
+
+    auto videoFrame = VideoFrameCV::create(presentationTime, mirrored, rotation, WTFMove(pixelBuffer));
+    auto size = videoFrame->presentationSize();
+    iterator->value->videoFrameAvailable(videoFrame.get(), { static_cast<int>(size.width()), static_cast<int>(size.height()) }, metadata);
 }
 
 RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeAudioSource>&& source)
@@ -256,23 +258,6 @@ void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Han
 RemoteCaptureSampleManager::RemoteVideo::RemoteVideo(Source&& source)
     : m_source(WTFMove(source))
 {
-}
-
-void RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable(RemoteVideoSample&& remoteSample, VideoSampleMetadata metadata)
-{
-    auto pixelBuffer = createCVPixelBuffer(remoteSample.surface()).value_or(nullptr);
-    if (!pixelBuffer) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto videoFrame = MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(pixelBuffer), remoteSample.rotation(), remoteSample.mirrored(), remoteSample.time());
-    if (!videoFrame) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    videoFrameAvailable(videoFrame.releaseNonNull(), remoteSample.size(), metadata);
 }
 
 void RemoteCaptureSampleManager::RemoteVideo::videoFrameAvailable(Ref<MediaSample>&& sample, IntSize size, VideoSampleMetadata metadata)

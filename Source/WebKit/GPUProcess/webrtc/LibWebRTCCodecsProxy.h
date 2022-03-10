@@ -44,10 +44,6 @@ class Decoder;
 class Semaphore;
 }
 
-namespace WebCore {
-class RemoteVideoSample;
-}
-
 namespace webrtc {
 using LocalDecoder = void*;
 using LocalEncoder = void*;

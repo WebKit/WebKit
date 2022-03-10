@@ -1,3 +1,31 @@
+2022-03-10  Youenn Fablet  <youenn@apple.com>
+
+        Remove RemoteVideoSample
+        https://bugs.webkit.org/show_bug.cgi?id=237592
+
+        Reviewed by Eric Carlson.
+
+        Send RemoteVideoSample data directly as IPC message parameters instead of inside RemoteVideoSample.
+        Fix timeStampNs by sending them back to WebProcess and divide them by 1000 to put them as milliseconds, as expected by libwebrtc backend.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::createDecoderCallback):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::completedDecodingCV):
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.messages.in:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::videoFrameAvailable):
+        (WebKit::RemoteCaptureSampleManager::videoFrameAvailableCV):
+        (WebKit::RemoteCaptureSampleManager::videoSampleAvailable): Deleted.
+        (WebKit::RemoteCaptureSampleManager::videoSampleAvailableCV): Deleted.
+        (WebKit::RemoteCaptureSampleManager::RemoteVideo::videoSampleAvailable): Deleted.
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.messages.in:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+
 2022-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add initial support for PDF documents using PDF.js

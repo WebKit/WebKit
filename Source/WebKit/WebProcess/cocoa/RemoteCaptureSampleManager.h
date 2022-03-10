@@ -45,7 +45,6 @@
 
 namespace WebCore {
 class ImageTransferSessionVT;
-class RemoteVideoSample;
 }
 
 namespace WebKit {
@@ -75,9 +74,9 @@ private:
     // Messages
     void audioStorageChanged(WebCore::RealtimeMediaSourceIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames, IPC::Semaphore&&, const MediaTime&, size_t frameSampleSize);
     void audioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier, MediaTime, uint64_t numberOfFrames);
-    void videoSampleAvailable(WebCore::RealtimeMediaSourceIdentifier, RemoteVideoFrameProxy::Properties&&, WebCore::VideoSampleMetadata);
+    void videoFrameAvailable(WebCore::RealtimeMediaSourceIdentifier, RemoteVideoFrameProxy::Properties&&, WebCore::VideoSampleMetadata);
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
-    void videoSampleAvailableCV(WebCore::RealtimeMediaSourceIdentifier, WebCore::RemoteVideoSample&&, WebCore::VideoSampleMetadata);
+    void videoFrameAvailableCV(WebCore::RealtimeMediaSourceIdentifier, RetainPtr<CVPixelBufferRef>&&, WebCore::MediaSample::VideoRotation, bool mirrored, MediaTime, WebCore::VideoSampleMetadata);
 
     void setConnection(IPC::Connection*);
 
@@ -112,7 +111,6 @@ private:
         using Source = std::variant<Ref<RemoteRealtimeVideoSource>, Ref<RemoteRealtimeDisplaySource>>;
         explicit RemoteVideo(Source&&);
 
-        void videoSampleAvailable(WebCore::RemoteVideoSample&&, WebCore::VideoSampleMetadata);
         void videoFrameAvailable(Ref<WebCore::MediaSample>&&, WebCore::IntSize, WebCore::VideoSampleMetadata);
 
     private:

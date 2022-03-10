@@ -38,7 +38,6 @@
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
-#include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
 
 namespace WebKit {

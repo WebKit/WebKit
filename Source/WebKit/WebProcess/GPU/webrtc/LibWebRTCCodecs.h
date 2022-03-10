@@ -51,10 +51,6 @@ class Connection;
 class Decoder;
 }
 
-namespace WebCore {
-class RemoteVideoSample;
-}
-
 namespace webrtc {
 class VideoFrame;
 struct WebKitEncodedFrameInfo;
@@ -133,9 +129,9 @@ private:
     void gpuProcessConnectionMayNoLongerBeNeeded();
 
     void failedDecoding(RTCDecoderIdentifier);
-    void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, RemoteVideoFrameProxy::Properties&&);
+    void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RemoteVideoFrameProxy::Properties&&);
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
-    void completedDecodingCV(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&);
+    void completedDecodingCV(RTCDecoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef>&&);
     void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 

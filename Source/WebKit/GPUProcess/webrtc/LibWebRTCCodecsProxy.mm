@@ -40,7 +40,6 @@
 #import <WebCore/CVUtilities.h>
 #import <WebCore/LibWebRTCProvider.h>
 #import <WebCore/MediaSampleAVFObjC.h>
-#import <WebCore/RemoteVideoSample.h>
 #import <webrtc/sdk/WebKit/WebKitDecoder.h>
 #import <webrtc/sdk/WebKit/WebKitEncoder.h>
 #import <wtf/BlockPtr.h>
@@ -105,13 +104,10 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(RTCDecoderIdentifier identifier
             sample->setOwnershipIdentity(resourceOwner);
         if (videoFrameObjectHeap) {
             auto properties = videoFrameObjectHeap->add(sample.releaseNonNull());
-            connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, WTFMove(properties) }, 0);
+            connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, timeStampNs, WTFMove(properties) }, 0);
             return;
         }
-        auto remoteSample = WebCore::RemoteVideoSample::create(*sample);
-        if (!remoteSample)
-            return;
-        connection->send(Messages::LibWebRTCCodecs::CompletedDecodingCV { identifier, timeStamp, *remoteSample }, 0);
+        connection->send(Messages::LibWebRTCCodecs::CompletedDecodingCV { identifier, timeStamp, timeStampNs, pixelBuffer }, 0);
     };
 }
 

@@ -39,7 +39,6 @@
 #include <WebCore/CVUtilities.h>
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/PlatformMediaSessionManager.h>
-#include <WebCore/RemoteVideoSample.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
 #include <webrtc/sdk/WebKit/WebKitDecoder.h>
@@ -332,7 +331,7 @@ void LibWebRTCCodecs::failedDecoding(RTCDecoderIdentifier decoderIdentifier)
         decoder->hasError = true;
 }
 
-void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, RemoteVideoFrameProxy::Properties&& properties)
+void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RemoteVideoFrameProxy::Properties&& properties)
 {
     assertIsCurrent(workQueue());
 
@@ -354,13 +353,13 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
     if (!decoder->decodedImageCallback)
         return;
     auto& frame = remoteVideoFrame.leakRef(); // Balanced by the release callback of videoDecoderTaskComplete.
-    webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, frame.presentationTime().toDouble(), &frame,
+    webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, timeStampNs / 1000, &frame,
         [](auto* pointer) { return static_cast<RemoteVideoFrameProxy*>(pointer)->pixelBuffer(); },
         [](auto* pointer) { static_cast<RemoteVideoFrameProxy*>(pointer)->deref(); },
         frame.size().width(), frame.size().height());
 }
 
-void LibWebRTCCodecs::completedDecodingCV(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&& remoteSample)
+void LibWebRTCCodecs::completedDecodingCV(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
 {
     assertIsCurrent(workQueue());
 
@@ -373,14 +372,12 @@ void LibWebRTCCodecs::completedDecodingCV(RTCDecoderIdentifier decoderIdentifier
     Locker locker { AdoptLock, decoder->decodedImageCallbackLock };
     if (!decoder->decodedImageCallback)
         return;
-    if (!remoteSample.surface())
-        return;
-    auto pixelBuffer = createCVPixelBuffer(remoteSample.surface()).value_or(nullptr);
+
     if (!pixelBuffer) {
         ASSERT_NOT_REACHED();
         return;
     }
-    webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, remoteSample.time().toDouble(), pixelBuffer.get());
+    webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, timeStampNs / 1000, pixelBuffer.get());
 }
 
 static inline String formatNameFromCodecType(LibWebRTCCodecs::Type type)

@@ -44,7 +44,6 @@
 #include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeVideoSource.h>
-#include <WebCore/RemoteVideoSample.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/UniqueRef.h>
 
@@ -191,22 +190,19 @@ private:
         return &sample;
     }
 
-    void videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata) final
+    void videoSampleAvailable(MediaSample& frame, VideoSampleMetadata metadata) final
     {
-        auto videoSample = rotateVideoFrameIfNeeded(sample);
-        if (!videoSample)
+        auto videoFrame = rotateVideoFrameIfNeeded(frame);
+        if (!videoFrame)
             return;
         if (m_resourceOwner)
-            videoSample->setOwnershipIdentity(m_resourceOwner);
-        if (m_videoFrameObjectHeap) {
-            auto properties = m_videoFrameObjectHeap->add(sample);
-            m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailable(m_id, properties, metadata), 0);
+            videoFrame->setOwnershipIdentity(m_resourceOwner);
+        if (!m_videoFrameObjectHeap) {
+            m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailableCV(m_id, videoFrame->pixelBuffer(), videoFrame->videoRotation(), videoFrame->videoMirrored(), videoFrame->presentationTime(), metadata), 0);
             return;
         }
-        auto remoteSample = RemoteVideoSample::create(*videoSample);
-        if (!remoteSample)
-            return;
-        m_connection->send(Messages::RemoteCaptureSampleManager::VideoSampleAvailableCV(m_id, *remoteSample, metadata), 0);
+        auto properties = m_videoFrameObjectHeap->add(*videoFrame);
+        m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailable(m_id, properties, metadata), 0);
     }
 
     RetainPtr<CVPixelBufferRef> rotatePixelBuffer(MediaSample& sample)
