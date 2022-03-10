@@ -39,19 +39,19 @@ layer at (0,0) size 785x1023
           text run at (396,18) width 181: "width of the parent element."
       RenderBlock {UL} at (0,343) size 744x108 [bgcolor=#808080]
         RenderListItem {LI} at (40,0) size 704x36
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderListMarker at (10,0) size 8x18: bullet
           RenderText {#text} at (27,0) size 677x36
             text run at (27,0) width 677: "The right margin on this unordered list has been set to 25 pixels, and the background color has been set to"
             text run at (672,18) width 32: "gray."
         RenderListItem {LI} at (40,36) size 679x54 [bgcolor=#FFFFFF]
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderListMarker at (-7,0) size 8x18: bullet
           RenderText {#text} at (10,0) size 669x54
             text run at (10,0) width 669: "Another list item might not be such a bad idea, either, considering that such things do need to be double-"
             text run at (34,18) width 62: "checked. "
             text run at (95,18) width 584: "This list item has its right margin also set to 25 pixels, which should combine with the list's"
             text run at (141,36) width 538: "margin to make 50 pixels of margin, and its background-color has been set to white."
         RenderListItem {LI} at (40,90) size 704x18
-          RenderListMarker at (-17,0) size 7x18: bullet
+          RenderListMarker at (502,0) size 8x18: bullet
           RenderText {#text} at (519,0) size 185x18
             text run at (519,0) width 185: "This is an unclassed list item"
       RenderBlock {P} at (0,467) size 769x18 [bgcolor=#C0C0C0]
@@ -94,19 +94,19 @@ layer at (0,0) size 785x1023
                   text run at (356,18) width 205: "the width of the parent element."
               RenderBlock {UL} at (4,192) size 722x108 [bgcolor=#808080]
                 RenderListItem {LI} at (40,0) size 682x36
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderListMarker at (-12,0) size 8x18: bullet
                   RenderText {#text} at (5,0) size 677x36
                     text run at (5,0) width 677: "The right margin on this unordered list has been set to 25 pixels, and the background color has been set to"
                     text run at (650,18) width 32: "gray."
                 RenderListItem {LI} at (40,36) size 657x54 [bgcolor=#FFFFFF]
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderListMarker at (23,0) size 8x18: bullet
                   RenderText {#text} at (40,0) size 637x54
                     text run at (40,0) width 617: "Another list item might not be such a bad idea, either, considering that such things do need to be"
                     text run at (20,18) width 110: "double-checked. "
                     text run at (129,18) width 528: "This list item has its right margin also set to 25 pixels, which should combine with"
                     text run at (62,36) width 595: "the list's margin to make 50 pixels of margin, and its background-color has been set to white."
                 RenderListItem {LI} at (40,90) size 682x18
-                  RenderListMarker at (-17,0) size 7x18: bullet
+                  RenderListMarker at (480,0) size 8x18: bullet
                   RenderText {#text} at (497,0) size 185x18
                     text run at (497,0) width 185: "This is an unclassed list item"
               RenderBlock {P} at (4,316) size 747x18 [bgcolor=#C0C0C0]

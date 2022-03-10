@@ -349,7 +349,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
             appendHardLineBreakDisplayBox(lineRun, visualRectRelativeToRoot(lineBox.logicalRectForLineBreakBox(layoutBox)), boxes);
             continue;
         }
-        if (lineRun.isBox()) {
+        if (lineRun.isBox() || lineRun.isListMarker()) {
             appendAtomicInlineLevelDisplayBox(lineRun
                 , visualRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox)))
                 , boxes);
@@ -605,7 +605,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 displayBoxTree.append(parentDisplayBoxNodeIndex, boxes.size() - 1);
                 continue;
             }
-            if (lineRun.isBox()) {
+            if (lineRun.isBox() || lineRun.isListMarker()) {
                 auto& boxGeometry = formattingState().boxGeometry(layoutBox);
                 auto logicalRect = lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, boxGeometry);
                 auto visualRect = visualRectRelativeToRoot(logicalRect);

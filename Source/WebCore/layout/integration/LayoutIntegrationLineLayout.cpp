@@ -155,6 +155,25 @@ void LineLayout::updateInlineBlockDimensions(const RenderBlock& inlineBlock)
     updateLayoutBoxDimensions(inlineBlock);
 }
 
+void LineLayout::updateListItemDimensions(const RenderListItem& listItem)
+{
+    updateLayoutBoxDimensions(listItem);
+}
+
+void LineLayout::updateListMarkerDimensions(const RenderListMarker& listMarker)
+{
+    updateLayoutBoxDimensions(listMarker);
+
+    auto& layoutBox = m_boxTree.layoutBoxForRenderer(listMarker);
+    if (layoutBox.isOutsideListMarker()) {
+        auto& rootGeometry = m_layoutState.geometryForRootBox();
+        auto& listMarkerGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
+        auto horizontalMargin = listMarkerGeometry.horizontalMargin();
+        auto outsideOffset = rootGeometry.paddingStart().value_or(0_lu) + rootGeometry.borderStart();
+        listMarkerGeometry.setHorizontalMargin({ horizontalMargin.start - outsideOffset, horizontalMargin.end + outsideOffset });  
+    }
+}
+
 static inline LayoutUnit contentLogicalWidthForRenderer(const RenderBox& renderer)
 {
     return renderer.parent()->style().isHorizontalWritingMode() ? renderer.contentWidth() : renderer.contentHeight();
@@ -264,11 +283,12 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     replacedBoxGeometry.setPadding(logicalPadding(replacedOrInlineBlock, isLeftToRightInlineDirection, writingMode));
 
     auto hasNonSyntheticBaseline = [&] {
+        if (is<RenderListMarker>(replacedOrInlineBlock))
+            return !downcast<RenderListMarker>(replacedOrInlineBlock).isImage();
         if (is<RenderReplaced>(replacedOrInlineBlock)
             || is<RenderListBox>(replacedOrInlineBlock)
             || is<RenderSlider>(replacedOrInlineBlock)
             || is<RenderTextControlMultiLine>(replacedOrInlineBlock)
-            || is<RenderListMarker>(replacedOrInlineBlock)
 #if ENABLE(ATTACHMENT_ELEMENT)
             || is<RenderAttachment>(replacedOrInlineBlock)
 #endif
@@ -282,6 +302,10 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
     }();
     if (hasNonSyntheticBaseline) {
         auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, writingMode == WritingMode::TopToBottom ? HorizontalLine : VerticalLine, PositionOnContainingLine);
+        if (is<RenderListMarker>(replacedOrInlineBlock)) {
+            ASSERT(!downcast<RenderListMarker>(replacedOrInlineBlock).isImage());
+            baseline = replacedOrInlineBlock.style().metricsOfPrimaryFont().ascent();
+        }
         replacedBox.setBaseline(roundToInt(baseline));
     }
 }
@@ -338,7 +362,6 @@ void LineLayout::layout()
         return;
 
     prepareLayoutState();
-    updateFormattingRootGeometryAndInvalidate();
     prepareFloatingState();
 
     // FIXME: Do not clear the lines and boxes here unconditionally, but consult with the damage object instead.

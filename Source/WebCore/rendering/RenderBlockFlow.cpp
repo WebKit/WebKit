@@ -3583,6 +3583,7 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
     }
 
     auto& layoutFormattingContextLineLayout = *this->modernLineLayout();
+    layoutFormattingContextLineLayout.updateFormattingRootGeometryAndInvalidate();
 
     for (auto walker = InlineWalker(*this); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
@@ -3596,6 +3597,18 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
             auto& replaced = downcast<RenderReplaced>(renderer);
             replaced.layoutIfNeeded();
             layoutFormattingContextLineLayout.updateReplacedDimensions(replaced);
+            continue;
+        }
+        if (is<RenderListMarker>(renderer)) {
+            auto& marker = downcast<RenderListMarker>(renderer);
+            marker.layoutIfNeeded();
+            layoutFormattingContextLineLayout.updateListMarkerDimensions(marker);
+            continue;
+        }
+        if (is<RenderListItem>(renderer)) {
+            auto& listItem = downcast<RenderListItem>(renderer);
+            listItem.layoutIfNeeded();
+            layoutFormattingContextLineLayout.updateListItemDimensions(listItem);
             continue;
         }
         if (is<RenderBlock>(renderer)) {

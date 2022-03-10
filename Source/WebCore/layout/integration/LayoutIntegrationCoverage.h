@@ -99,7 +99,7 @@ enum class AvoidanceReason : uint64_t {
     UnsupportedImageMap                          = 1LLU  << 58,
     InlineBoxNeedsLayer                          = 1LLU  << 59,
     BoxDecorationBreakClone                      = 1LLU  << 60,
-    // Unused                                    = 1LLU  << 61,
+    FlowIsUnsupportedListItem                    = 1LLU  << 61,
     EndOfReasons                                 = 1LLU  << 62
 };
 

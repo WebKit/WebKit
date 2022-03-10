@@ -77,6 +77,7 @@ public:
     bool isRootInlineBox() const { return m_type == Type::RootInlineBox; }
     bool isLineSpanningInlineBox() const { return m_type == Type::LineSpanningInlineBox; }
     bool isAtomicInlineLevelBox() const { return m_type == Type::AtomicInlineLevelBox; }
+    bool isListMarker() const { return isAtomicInlineLevelBox() && layoutBox().isListMarker(); }
     bool isLineBreakBox() const { return m_type == Type::LineBreakBox; }
     bool hasLineBoxRelativeAlignment() const;
 

@@ -1,3 +1,21 @@
+2022-03-10  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Enable RenderListItem and RenderListMarker for IFC
+        https://bugs.webkit.org/show_bug.cgi?id=237497
+
+        Reviewed by Antti Koivisto.
+
+        * fast/replaced/ul-li-word-break-break-word-expected.html: progression. We do not break between the list marker and the content anymore.
+        * platform/mac/css1/box_properties/margin_right-expected.txt:
+        * platform/mac/css1/box_properties/padding_right-expected.txt: ^^progressions. Align list marker with the content (like Firefox does).
+        * platform/mac/css2.1/t0505-c16-descendant-01-e-expected.txt: inline box height progression (not visible)
+        * platform/mac/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt: usual 1px diff.
+        * platform/mac/fast/inline/emptyInlinesWithinLists-expected.txt: progression
+        * platform/mac/fast/lists/002-expected.txt: same as margin_right/padding_right. 
+        * platform/mac/fast/lists/003-expected.txt: ^^
+        * platform/mac/fast/lists/li-br-expected.txt: same as ul-li-word-break-break-word
+        * platform/mac/fast/selectors/166-expected.txt: usual 1px diff.
+
 2022-03-10  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused iOS 14 test results

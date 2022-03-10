@@ -144,6 +144,8 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
         // brings in unnecessary complexity.
         return true;
     }
+    if (current.layoutBox().isListMarker() || next.layoutBox().isListMarker())
+        return false;
     if (current.isBox() || next.isBox()) {
         auto isImageContent = current.layoutBox().isImage() || next.layoutBox().isImage();
         if (isImageContent && inlineFormattingContext.layoutState().inQuirksMode())

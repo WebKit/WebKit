@@ -46,6 +46,8 @@ public:
     void updateMarginsAndContent();
     void addOverflowFromListMarker();
 
+    bool isImage() const final;
+
 private:
     void willBeDestroyed() final;
     const char* renderName() const final { return "RenderListMarker"; }
@@ -58,7 +60,6 @@ private:
     std::unique_ptr<LegacyInlineElementBox> createInlineBox() final;
     LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode) const final;
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode) const final;
-    bool isImage() const final;
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent) final;
     bool canBeSelectionLeaf() const final { return true; }
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;

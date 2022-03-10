@@ -1,3 +1,59 @@
+2022-03-10  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Enable RenderListItem and RenderListMarker for IFC
+        https://bugs.webkit.org/show_bug.cgi?id=237497
+
+        Reviewed by Antti Koivisto.
+
+        This enables horizontal, RTL, "non-same line nested" list items for IFC.
+
+        List markers behave as regular inline level boxes except when it comes to vertical align,
+        when non-image based list markers are aligned as text. Also outside list markers (list-style-position: outside)
+        have extra (negative) horizontal margin to place them outside of the containing block's border box.  
+
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::isWrappableRun):
+        * layout/formattingContexts/inline/InlineFormattingGeometry.cpp:
+        (WebCore::Layout::InlineFormattingGeometry::inlineLevelBoxAffectsLineBox const):
+        * layout/formattingContexts/inline/InlineLevelBox.h:
+        (WebCore::Layout::InlineLevelBox::isListMarker const):
+        * layout/formattingContexts/inline/InlineLine.cpp:
+        (WebCore::Layout::Line::appendTextContent):
+        (WebCore::Layout::toLineRunType):
+        (WebCore::Layout::Line::Run::Run):
+        * layout/formattingContexts/inline/InlineLine.h:
+        (WebCore::Layout::Line::Run::isBox const):
+        (WebCore::Layout::Line::Run::isListMarker const):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.cpp:
+        (WebCore::Layout::LineBoxBuilder::setBaselineAndLayoutBounds const):
+        (WebCore::Layout::LineBoxBuilder::constructInlineLevelBoxes):
+        * layout/formattingContexts/inline/InlineLineBoxBuilder.h:
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::isAtSoftWrapOpportunity):
+        * layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::processNonBidiContent):
+        (WebCore::Layout::InlineDisplayContentBuilder::processBidiContent):
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::BoxTree::buildTree):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::printReason):
+        (WebCore::LayoutIntegration::canUseForChild):
+        (WebCore::LayoutIntegration::canUseForLineLayoutWithReason):
+        * layout/integration/LayoutIntegrationCoverage.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::updateListItemDimensions):
+        (WebCore::LayoutIntegration::LineLayout::updateListMarkerDimensions):
+        (WebCore::LayoutIntegration::LineLayout::updateLayoutBoxDimensions):
+        (WebCore::LayoutIntegration::LineLayout::layout):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isListMarker const):
+        (WebCore::Layout::Box::isInsideListMarker const):
+        (WebCore::Layout::Box::isOutsideListMarker const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutModernLines):
+        * rendering/RenderListMarker.h:
+
 2022-03-10  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Fix GeneratedSources dependency validation errors

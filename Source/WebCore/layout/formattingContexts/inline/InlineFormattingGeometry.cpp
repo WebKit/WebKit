@@ -104,6 +104,8 @@ bool InlineFormattingGeometry::inlineLevelBoxAffectsLineBox(const InlineLevelBox
 {
     if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox())
         return layoutState().inStandardsMode() ? true : formattingContext().formattingQuirks().inlineLevelBoxAffectsLineBox(inlineLevelBox, lineBox);
+    if (inlineLevelBox.isListMarker())
+        return inlineLevelBox.layoutBounds().height();
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
         if (inlineLevelBox.layoutBounds().height())
             return true;

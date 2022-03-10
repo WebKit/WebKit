@@ -35,6 +35,8 @@
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
+#include "RenderListItem.h"
+#include "RenderListMarker.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
@@ -193,6 +195,9 @@ static void printReason(AvoidanceReason reason, TextStream& stream)
         break;
     case AvoidanceReason::BoxDecorationBreakClone:
         stream << "webkit-box-decoration-break: clone";
+        break;
+    case AvoidanceReason::FlowIsUnsupportedListItem:
+        stream << "list item with text-indent";
         break;
     default:
         break;
@@ -497,6 +502,15 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         return reasons;
     }
 
+    if (is<RenderListItem>(child)) {
+        if (child.style().textIndent().value() || !child.style().isHorizontalWritingMode() || !child.style().isLeftToRightDirection() || child.isPositioned() || child.isFloating())
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
+        return reasons;
+    }
+
+    if (is<RenderListMarker>(child) && is<RenderListItem>(child.parent()) && !is<RenderListMarker>(child.nextSibling()))
+        return reasons;
+
     if (is<RenderBlockFlow>(child)) {
         auto& block = downcast<RenderBlockFlow>(child);
         if (!block.isReplacedOrInlineBlock() || !block.isInline())
@@ -571,6 +585,8 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     }
     if (flow.isRubyText() || flow.isRubyBase())
         SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
+    if (is<RenderListItem>(flow) && (flow.style().textIndent().value() || !flow.style().isHorizontalWritingMode() || !flow.style().isLeftToRightDirection() || flow.isPositioned() || flow.isFloating()))
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowIsUnsupportedListItem, reasons, includeReasons);
     if (!flow.style().hangingPunctuation().isEmpty())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasHangingPunctuation, reasons, includeReasons);
 

@@ -38,6 +38,8 @@
 #include "RenderDetailsMarker.h"
 #include "RenderImage.h"
 #include "RenderLineBreak.h"
+#include "RenderListItem.h"
+#include "RenderListMarker.h"
 #include "TextUtil.h"
 
 #if ENABLE(TREE_DEBUGGING)
@@ -117,12 +119,13 @@ void BoxTree::buildTree()
         if (is<RenderReplaced>(childRenderer))
             return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { is<RenderImage>(childRenderer) ? Layout::Box::ElementType::Image : Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
 
+        if (is<RenderListMarker>(childRenderer))
+            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { downcast<RenderListMarker>(childRenderer).isInside() ? Layout::Box::ElementType::InsideListMarker : Layout::Box::ElementType::OutsideListMarker }, WTFMove(style), WTFMove(firstLineStyle));
+
         if (is<RenderBlock>(childRenderer)) {
             auto attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationInlineBlock };
-            if (is<RenderDetailsMarker>(childRenderer)) {
-                // Details marker is not a real inline-block box.
+            if (is<RenderDetailsMarker>(childRenderer) || is<RenderListItem>(childRenderer))
                 attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement };
-            }
             return makeUnique<Layout::ReplacedBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
         }
 

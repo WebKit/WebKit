@@ -49,9 +49,9 @@ layer at (0,0) size 785x3324
               text run at (511,0) width 109: "HTML <iframe>"
           RenderText {#text} at (619,0) size 9x18
             text run at (619,0) width 9: ", "
-          RenderInline {A} at (0,0) size 674x36 [color=#0000EE]
-            RenderText {#text} at (627,0) size 674x36
-              text run at (627,0) width 47: "HTML"
+          RenderInline {A} at (0,0) size 673x36 [color=#0000EE]
+            RenderText {#text} at (627,0) size 673x36
+              text run at (627,0) width 46: "HTML"
               text run at (0,18) width 58: "<object>"
           RenderText {#text} at (57,18) size 9x18
             text run at (57,18) width 9: ", "
@@ -201,9 +201,9 @@ layer at (0,0) size 785x3324
               text run at (556,0) width 110: "HTML <iframe>"
           RenderText {#text} at (665,0) size 9x18
             text run at (665,0) width 9: ", "
-          RenderInline {A} at (0,0) size 719x36 [color=#0000EE]
-            RenderText {#text} at (673,0) size 719x36
-              text run at (673,0) width 46: "HTML"
+          RenderInline {A} at (0,0) size 718x36 [color=#0000EE]
+            RenderText {#text} at (673,0) size 718x36
+              text run at (673,0) width 45: "HTML"
               text run at (0,18) width 58: "<object>"
           RenderText {#text} at (57,18) size 9x18
             text run at (57,18) width 9: ", "
@@ -252,9 +252,9 @@ layer at (0,0) size 785x3324
               text run at (544,0) width 109: "HTML <iframe>"
           RenderText {#text} at (652,0) size 9x18
             text run at (652,0) width 9: ", "
-          RenderInline {A} at (0,0) size 707x36 [color=#0000EE]
-            RenderText {#text} at (660,0) size 707x36
-              text run at (660,0) width 47: "HTML"
+          RenderInline {A} at (0,0) size 706x36 [color=#0000EE]
+            RenderText {#text} at (660,0) size 706x36
+              text run at (660,0) width 46: "HTML"
               text run at (0,18) width 58: "<object>"
           RenderText {#text} at (57,18) size 9x18
             text run at (57,18) width 9: ", "

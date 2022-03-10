@@ -46,7 +46,8 @@ public:
     LineBox build(const LineBuilder::LineContent&, size_t lineIndex);
 
 private:
-    void setBaselineAndLayoutBounds(InlineLevelBox&, const LayoutBoundsMetrics&) const;
+    enum class BehavesAsText : uint8_t { No, Yes };
+    void setBaselineAndLayoutBounds(InlineLevelBox&, const LayoutBoundsMetrics&, BehavesAsText = BehavesAsText::No) const;
     void adjustLayoutBoundsWithFallbackFonts(InlineLevelBox&, const TextUtil::FallbackFontList& fallbackFontsForContent, FontBaseline) const;
     TextUtil::FallbackFontList collectFallbackFonts(const InlineLevelBox& parentInlineBox, const Line::Run&, const RenderStyle&);
 

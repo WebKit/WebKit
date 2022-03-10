@@ -191,9 +191,9 @@ static LayoutBoundsMetrics layoutBoundsPrimaryMetricsForInlineBox(const InlineLe
     return { ascent, descent, lineSpacing, inlineBox.isPreferredLineHeightFontMetricsBased() ? std::nullopt : std::make_optional(inlineBox.preferredLineHeight()) };
 }
 
-void LineBoxBuilder::setBaselineAndLayoutBounds(InlineLevelBox& inlineLevelBox, const LayoutBoundsMetrics& layoutBoundsMetrics) const
+void LineBoxBuilder::setBaselineAndLayoutBounds(InlineLevelBox& inlineLevelBox, const LayoutBoundsMetrics& layoutBoundsMetrics, BehavesAsText behavesAsText) const
 {
-    if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox()) {
+    if (inlineLevelBox.isInlineBox() || inlineLevelBox.isLineBreakBox() || behavesAsText == BehavesAsText::Yes) {
         auto logicalHeight = layoutBoundsMetrics.ascent + layoutBoundsMetrics.descent;
         auto halfLeading = InlineLayoutUnit { };
         if (layoutBoundsMetrics.preferredLineHeight) {
@@ -237,7 +237,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
         auto& style = styleToUse(layoutBox);
         auto runHasContent = [&] () -> bool {
             ASSERT(!lineHasContent);
-            if (run.isText() || run.isBox() || run.isSoftLineBreak() || run.isHardLineBreak())
+            if (run.isText() || run.isBox() || run.isSoftLineBreak() || run.isHardLineBreak() || run.isListMarker())
                 return true;
             if (run.isLineSpanningInlineBoxStart())
                 return false;
@@ -282,6 +282,19 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto atomicInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, { inlineLevelBoxGeometry.borderBoxWidth(), marginBoxHeight });
             setBaselineAndLayoutBounds(atomicInlineLevelBox, { ascent, marginBoxHeight - ascent });
             lineBox.addInlineLevelBox(WTFMove(atomicInlineLevelBox));
+            continue;
+        }
+        if (run.isListMarker()) {
+            auto& ListMarkerBoxGeometry = formattingContext().geometryForBox(layoutBox);
+            auto marginBoxHeight = ListMarkerBoxGeometry.marginBoxHeight();
+            // Integration codepath constructs ReplacedBoxes for list markers.
+            auto baseline = downcast<ReplacedBox>(layoutBox).baseline();
+            auto ascent = baseline.value_or(marginBoxHeight);
+
+            logicalLeft += std::max(0_lu, ListMarkerBoxGeometry.marginStart());
+            auto listMarkerInlineLevelBox = InlineLevelBox::createAtomicInlineLevelBox(layoutBox, style, logicalLeft, { ListMarkerBoxGeometry.borderBoxWidth(), marginBoxHeight });
+            setBaselineAndLayoutBounds(listMarkerInlineLevelBox, { ascent, marginBoxHeight - ascent }, baseline.has_value() ? BehavesAsText::Yes : BehavesAsText::No);
+            lineBox.addInlineLevelBox(WTFMove(listMarkerInlineLevelBox));
             continue;
         }
         if (run.isLineSpanningInlineBoxStart()) {

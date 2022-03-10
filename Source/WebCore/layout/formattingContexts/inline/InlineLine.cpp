@@ -318,7 +318,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
             // provided both spaces are within the same inline formatting context—is collapsed to have zero advance width.
             if (run.isText())
                 return run.hasCollapsibleTrailingWhitespace();
-            ASSERT(run.isLineSpanningInlineBoxStart() || run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isWordBreakOpportunity());
+            ASSERT(run.isListMarker() || run.isLineSpanningInlineBoxStart() || run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isWordBreakOpportunity());
         }
         // Leading whitespace.
         return true;
@@ -571,15 +571,15 @@ void Line::HangingTrailingContent::add(const InlineTextItem& trailingWhitespace,
     m_length += trailingWhitespace.length();
 }
 
-inline static Line::Run::Type toLineRunType(InlineItem::Type inlineItemType)
+inline static Line::Run::Type toLineRunType(const InlineItem& inlineItem)
 {
-    switch (inlineItemType) {
+    switch (inlineItem.type()) {
     case InlineItem::Type::HardLineBreak:
         return Line::Run::Type::HardLineBreak;
     case InlineItem::Type::WordBreakOpportunity:
         return Line::Run::Type::WordBreakOpportunity;
     case InlineItem::Type::Box:
-        return Line::Run::Type::AtomicBox;
+        return inlineItem.layoutBox().isListMarker() ? Line::Run::Type::ListMarker : Line::Run::Type::GenericInlineLevelBox;
     case InlineItem::Type::InlineBoxStart:
         return Line::Run::Type::InlineBoxStart;
     case InlineItem::Type::InlineBoxEnd:
@@ -602,7 +602,7 @@ std::optional<Line::Run::TrailingWhitespace::Type> Line::Run::trailingWhitespace
 }
 
 Line::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
-    : m_type(toLineRunType(inlineItem.type()))
+    : m_type(toLineRunType(inlineItem))
     , m_layoutBox(&inlineItem.layoutBox())
     , m_style(style)
     , m_logicalLeft(logicalLeft)
@@ -612,7 +612,7 @@ Line::Run::Run(const InlineItem& inlineItem, const RenderStyle& style, InlineLay
 }
 
 Line::Run::Run(const InlineItem& zeroWidhtInlineItem, const RenderStyle& style, InlineLayoutUnit logicalLeft)
-    : m_type(toLineRunType(zeroWidhtInlineItem.type()))
+    : m_type(toLineRunType(zeroWidhtInlineItem))
     , m_layoutBox(&zeroWidhtInlineItem.layoutBox())
     , m_style(style)
     , m_logicalLeft(logicalLeft)
