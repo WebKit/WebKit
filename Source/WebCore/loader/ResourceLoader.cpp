@@ -247,7 +247,7 @@ void ResourceLoader::start()
 #endif
 
 #if USE(SOUP)
-    if (m_request.url().protocolIs("resource")) {
+    if (m_request.url().protocolIs("resource") || isPDFJSResourceLoad()) {
         loadGResource();
         return;
     }
@@ -869,7 +869,7 @@ bool ResourceLoader::isQuickLookResource() const
 
 bool ResourceLoader::isPDFJSResourceLoad() const
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     if (!m_request.url().protocolIs("webkit-pdfjs-viewer"))
         return false;
 

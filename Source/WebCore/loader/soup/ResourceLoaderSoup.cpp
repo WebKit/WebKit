@@ -77,7 +77,8 @@ void ResourceLoader::loadGResource()
     g_task_run_in_thread(task.get(), [](GTask* task, gpointer, gpointer taskData, GCancellable*) {
         URL url({ }, String::fromUTF8(static_cast<const char*>(taskData)));
         GError* error = nullptr;
-        GBytes* bytes = g_resources_lookup_data(url.path().utf8().data(), G_RESOURCE_LOOKUP_FLAGS_NONE, &error);
+        GBytes* bytes = g_resources_lookup_data(url.protocolIs("webkit-pdfjs-viewer") ? makeString("/org/webkit/pdfjs", url.path().toString()).utf8().data() : url.path().utf8().data(),
+            G_RESOURCE_LOOKUP_FLAGS_NONE, &error);
         if (!bytes)
             g_task_return_error(task, error);
         else

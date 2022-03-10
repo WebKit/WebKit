@@ -121,6 +121,7 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
         || url.protocolIs("resource")
+        || url.protocolIs("webkit-pdfjs-viewer")
 #endif
         || url.protocolIs("blob"))
         return false;

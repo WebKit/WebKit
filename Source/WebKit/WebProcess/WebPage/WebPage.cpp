@@ -6456,6 +6456,9 @@ bool WebPage::canShowMIMEType(const String& mimeType, const Function<bool(const 
     if (pluginsSupport(mimeType, PluginData::OnlyApplicationPlugins))
         return true;
 
+    if (m_page->settings().pdfJSViewerEnabled() && MIMETypeRegistry::isPDFMIMEType(mimeType))
+        return true;
+
     return false;
 }
 

@@ -60,6 +60,7 @@ exclude Source/WebInspectorUI/Tools
 exclude Source/ThirdParty
 directory Source/ThirdParty/ANGLE
 directory Source/ThirdParty/gtest
+directory Source/ThirdParty/pdfjs
 directory Source/ThirdParty/xdgmime
 
 exclude Source/WebKit/Resources

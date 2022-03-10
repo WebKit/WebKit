@@ -1,3 +1,22 @@
+2022-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add initial support for PDF documents using PDF.js
+        https://bugs.webkit.org/show_bug.cgi?id=237513
+
+        Reviewed by Michael Catanzaro.
+
+        Add support for loading PDF documents using PDF.js.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::start):
+        (WebCore::ResourceLoader::isPDFJSResourceLoad const):
+        * loader/soup/ResourceLoaderSoup.cpp:
+        (WebCore::ResourceLoader::loadGResource):
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldTreatAsUniqueOrigin):
+        * platform/LegacySchemeRegistry.cpp:
+        (WebCore::builtinSecureSchemes):
+
 2022-03-09  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] counter-increment should support discrete animation

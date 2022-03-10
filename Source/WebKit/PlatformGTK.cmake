@@ -1,4 +1,5 @@
 include(InspectorGResources.cmake)
+include(PdfJSGResources.cmake)
 
 set(WebKit_OUTPUT_NAME webkit2gtk-${WEBKITGTK_API_VERSION})
 set(WebProcess_OUTPUT_NAME WebKitWebProcess)
@@ -53,6 +54,8 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit2Gtk_DERIVED_SOURCES_DIR}/InspectorGResourceBundle.c
+    ${WebKit2Gtk_DERIVED_SOURCES_DIR}/PdfJSGResourceBundle.c
+    ${WebKit2Gtk_DERIVED_SOURCES_DIR}/PdfJSGResourceBundleExtras.c
     ${WebKit2Gtk_DERIVED_SOURCES_DIR}/WebKitDirectoryInputStreamData.cpp
     ${WebKit2Gtk_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
 
@@ -560,6 +563,7 @@ add_custom_command(
 )
 
 WEBKIT_BUILD_INSPECTOR_GRESOURCES(${WebKit2Gtk_DERIVED_SOURCES_DIR})
+WEBKIT_BUILD_PDFJS_GRESOURCES(${WebKit2Gtk_DERIVED_SOURCES_DIR})
 
 set(WebKitResources "")
 list(APPEND WebKitResources "<file alias=\"css/gtk-theme.css\">gtk-theme.css</file>\n")

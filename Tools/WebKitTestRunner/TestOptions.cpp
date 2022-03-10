@@ -116,6 +116,7 @@ const TestFeatures& TestOptions::defaults()
             { "OffscreenCanvasEnabled", true },
             { "OffscreenCanvasInWorkersEnabled", true },
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
+            { "PdfJSViewerEnabled", false },
             { "PluginsEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },
             { "RequiresUserGestureForMediaPlayback", false },
