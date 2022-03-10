@@ -1,3 +1,39 @@
+2022-03-10  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Cleanup RenderLayer::currentTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=237553
+
+        Reviewed by Rob Buis.
+
+        In preparation for the upcoming SVG/CSS transforms support in LBSE,
+        the transform related code in RenderLayer is cleaned up, starting
+        with RenderLayers currentTransform() function.
+
+        RenderLayer::currentTransform() has two purposes. It can either be used
+        to re-compute the existing transformation matrix with different options
+        (e.g. include or exclude 'transform-origin' induced transformations), or
+        to retrieve the current transformation matrix from the animatedStyle() of
+        the associated renderer, if an accelerated transform animation is running
+        (triggered e.g. via CSS Animations / JS WebAnimations).
+
+        Currently the code to compute the transformation matrix is duplicated,
+        avoid that and unify the two code paths (re-compute CTM if accelerated transform
+        animations are running / re-compute CTM if transform-origin shall be excluded).
+
+        Add two new WPT tests that verify animating 'transform-box' is functional
+        for both composited & non-composited elements. Currently 'transform-box'
+        support is ignored for composited elements, as demonstrated by the
+        transform-box-with-change-transform-layer.html test.
+
+        Follow-up patches that fix the bugs depends on this initial cleanup patch.
+        For now mark the failing test as such until it's fixed.
+
+        Tests: imported/w3c/web-platform-tests/css/css-transforms/animation/transform-box-will-change-transform-layer.html
+               imported/w3c/web-platform-tests/css/css-transforms/animation/transform-box.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform const):
+
 2022-03-09  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] font-variant-alternates should support discrete animation

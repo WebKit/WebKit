@@ -1,3 +1,17 @@
+2022-03-10  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Cleanup RenderLayer::currentTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=237553
+
+        Reviewed by Rob Buis.
+
+        Add two new WPT tests covering animations of the 'transform-box' property.
+
+        * web-platform-tests/css/css-transforms/animation/transform-box-expected.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-box-will-change-transform-layer-expected.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-box-will-change-transform-layer.html: Added.
+        * web-platform-tests/css/css-transforms/animation/transform-box.html: Added.
+
 2022-03-09  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] font-variant-alternates should support discrete animation

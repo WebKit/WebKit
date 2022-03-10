@@ -1359,25 +1359,20 @@ TransformationMatrix RenderLayer::currentTransform(OptionSet<RenderStyle::Transf
 
     auto& renderBox = downcast<RenderBox>(renderer());
 
-    if (auto styleable = Styleable::fromRenderer(renderer())) {
-        if (styleable->isRunningAcceleratedTransformAnimation()) {
-            TransformationMatrix currTransform;
-            std::unique_ptr<RenderStyle> style = renderer().animatedStyle();
-            FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(renderBox.referenceBox(transformBoxToCSSBoxType(style->transformBox())), renderBox.document().deviceScaleFactor());
-            style->applyTransform(currTransform, pixelSnappedBorderRect, options);
-            makeMatrixRenderable(currTransform, canRender3DTransforms());
-            return currTransform;
-        }
-    }
+    // m_transform includes transform-origin and is affected by the choice of the transform-box.
+    // Therefore we can only use the cached m_transform, if the animation doesn't alter transform-box or excludes transform-origin.
 
-    // m_transform includes transform-origin, so we need to recompute the transform here.
-    if (!options.contains(RenderStyle::TransformOperationOption::TransformOrigin)) {
-        TransformationMatrix currTransform;
-        std::unique_ptr<RenderStyle> style = renderer().animatedStyle();
-        FloatRect pixelSnappedBorderRect = snapRectToDevicePixels(renderBox.referenceBox(transformBoxToCSSBoxType(style->transformBox())), renderBox.document().deviceScaleFactor());
-        renderBox.style().applyTransform(currTransform, pixelSnappedBorderRect, RenderStyle::individualTransformOperations);
-        makeMatrixRenderable(currTransform, canRender3DTransforms());
-        return currTransform;
+    // Query the animatedStyle() to obtain the current transformation, when accelerated transform animations are running.
+    auto styleable = Styleable::fromRenderer(renderBox);
+    if ((styleable && styleable->isRunningAcceleratedTransformAnimation()) || !options.contains(RenderStyle::TransformOperationOption::TransformOrigin)) {
+        std::unique_ptr<RenderStyle> animatedStyle = renderBox.animatedStyle();
+        auto pixelSnappedBorderRect = snapRectToDevicePixels(renderBox.referenceBox(transformBoxToCSSBoxType(animatedStyle->transformBox())), renderBox.document().deviceScaleFactor());
+
+        TransformationMatrix transform;
+        animatedStyle->applyTransform(transform, pixelSnappedBorderRect, options);
+
+        makeMatrixRenderable(transform, canRender3DTransforms());
+        return transform;
     }
 
     return *m_transform;

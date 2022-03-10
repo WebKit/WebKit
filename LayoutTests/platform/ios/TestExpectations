@@ -2988,6 +2988,9 @@ fast/canvas/set-colors.html [ Failure ]
 
 webkit.org/b/202958 css3/filters/svg-blur-filter-clipped.html [ ImageOnlyFailure ]
 
+# 'transform-box' support is broken for composited elements.
+webkit.org/b/237553 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-box-will-change-transform-layer.html [ ImageOnlyFailure ]
+
 webkit.org/b/203305 imported/w3c/web-platform-tests/css/css-transitions/properties-value-001.html [ Pass Failure ]
 webkit.org/b/203305 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-inherit-001.html [ Pass Failure ]
 webkit.org/b/203356 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Pass Failure ]

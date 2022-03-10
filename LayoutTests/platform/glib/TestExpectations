@@ -642,6 +642,9 @@ webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/perspecti
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/dynamic-fixed-pos-cb-change.html [ ImageOnlyFailure ]
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html [ ImageOnlyFailure ]
 
+# 'transform-box' support is broken for composited elements.
+webkit.org/b/237553 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-box-will-change-transform-layer.html [ ImageOnlyFailure ]
+
 webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/arabic-indic/css3-counter-styles-101.html [ ImageOnlyFailure ]
 webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/arabic-indic/css3-counter-styles-102.html [ ImageOnlyFailure ]
 webkit.org/b/227231 imported/w3c/web-platform-tests/css/css-counter-styles/arabic-indic/css3-counter-styles-103.html [ ImageOnlyFailure ]

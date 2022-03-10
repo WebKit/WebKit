@@ -933,6 +933,9 @@ webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-sh
 webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003.xht [ Skip ]
 webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001.xht [ Skip ]
 
+# 'transform-box' support is broken for composited elements.
+webkit.org/b/237553 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-box-will-change-transform-layer.html [ ImageOnlyFailure ]
+
 # TODO EXIF-resolution is not supported
 imported/w3c/web-platform-tests/density-size-correction/ [ Skip ]
 

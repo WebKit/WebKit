@@ -1,3 +1,18 @@
+2022-03-10  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Cleanup RenderLayer::currentTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=237553
+
+        Reviewed by Rob Buis.
+
+        Mark new WPT test css/css-transforms/animation/transform-box-will-change-transform-layer.html
+        as expected to fail, since 'transform-box' is ignored for composited elements at the moment.
+
+        * platform/glib/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+
 2022-03-09  Cameron McCormack  <heycam@apple.com>
 
         Unreviewed test gardening
