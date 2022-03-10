@@ -214,6 +214,8 @@ void PDFDocument::injectStyleAndContentScript()
     link->setAttribute(relAttr, "stylesheet"_s);
 #if PLATFORM(COCOA)
     link->setAttribute(hrefAttr, "webkit-pdfjs-viewer://pdfjs/extras/cocoa/style.css"_s);
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+    link->setAttribute(hrefAttr, "webkit-pdfjs-viewer://pdfjs/extras/adwaita/style.css"_s);
 #endif
     contentDocument->head()->appendChild(link);
 

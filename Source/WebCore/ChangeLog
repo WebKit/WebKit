@@ -1,3 +1,16 @@
+2022-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add initial adwaita style for PDF.js
+        https://bugs.webkit.org/show_bug.cgi?id=237527
+
+        Reviewed by Michael Catanzaro.
+
+        * Modules/pdfjs-extras/adwaita/style.css: Added.
+        (#openFile):
+        (.dropdownToolbarButton > select):
+        * html/PDFDocument.cpp:
+        (WebCore::PDFDocument::injectStyleAndContentScript):
+
 2022-03-10  Youenn Fablet  <youenn@apple.com>
 
         Remove RemoteVideoSample
