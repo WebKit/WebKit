@@ -855,18 +855,7 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
     if (prelude.atEnd())
         return nullptr;
 
-    auto consumeName = [&]() -> AtomString {
-        if (prelude.peek().type() == LeftParenthesisToken || prelude.peek().type() == FunctionToken)
-            return nullAtom();
-        auto nameValue = CSSPropertyParserHelpers::consumeSingleContainerName(prelude);
-        if (!nameValue)
-            return nullAtom();
-        return nameValue->stringValue();
-    };
-
-    auto name = consumeName();
-
-    auto query = ContainerQueryParser::consumeContainerQuery(prelude, m_context);
+    auto query = ContainerQueryParser::consumeFilteredContainerQuery(prelude, m_context);
     if (!query)
         return nullptr;
 
@@ -875,7 +864,7 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
         return nullptr;
 
     if (m_deferredParser)
-        return StyleRuleContainer::create({ name, *query }, makeUnique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
+        return StyleRuleContainer::create(WTFMove(*query), makeUnique<DeferredStyleGroupRuleList>(block, *m_deferredParser));
 
     Vector<RefPtr<StyleRuleBase>> rules;
 
@@ -893,7 +882,7 @@ RefPtr<StyleRuleContainer> CSSParserImpl::consumeContainerRule(CSSParserTokenRan
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
 
-    return StyleRuleContainer::create({ name, *query }, WTFMove(rules));
+    return StyleRuleContainer::create(WTFMove(*query), WTFMove(rules));
 }
     
 RefPtr<StyleRuleKeyframe> CSSParserImpl::consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)

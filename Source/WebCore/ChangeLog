@@ -1,3 +1,49 @@
+2022-03-10  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Implement new container selection algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=237657
+
+        Reviewed by Antoine Quint.
+
+        "For each element, the query container to be queried is selected from among the element’s
+        ancestor query containers that have a valid container-type for all the container features
+        in the <container-condition>."
+
+        https://drafts.csswg.org/css-contain-3/#container-rule
+
+        * css/ContainerQuery.cpp:
+        (WebCore::CQ::requiredAxesForFeature):
+        * css/ContainerQuery.h:
+        * css/ContainerQueryParser.cpp:
+        (WebCore::ContainerQueryParser::consumeFilteredContainerQuery):
+
+        Move container name parsing to ContainerQueryParser too.
+
+        (WebCore::ContainerQueryParser::consumeSizeQuery):
+
+        Collect required axes during parsing.
+
+        * css/ContainerQueryParser.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeContainerRule):
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::evaluate const):
+        (WebCore::Style::ContainerQueryEvaluator::selectContainer const):
+
+        Select container based on required axes for the features being used.
+
+        (WebCore::Style::ContainerQueryEvaluator::evaluateQuery const):
+        (WebCore::Style::ContainerQueryEvaluator::evaluateCondition const):
+        (WebCore::Style::ContainerQueryEvaluator::evaluateSizeFeature const):
+
+        No need to check axes during evaluation anymore. We only evaluate against containers that support them.
+
+        (WebCore::Style::ContainerQueryEvaluator::resolveContainer const): Deleted.
+
+        Rename resolveContainer -> selectContainer to match the spec.
+
+        * style/ContainerQueryEvaluator.h:
+
 2022-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add initial adwaita style for PDF.js

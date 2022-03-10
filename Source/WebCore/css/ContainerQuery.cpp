@@ -27,7 +27,9 @@
 
 #include <wtf/NeverDestroyed.h>
 
-namespace WebCore::CQ::FeatureNames {
+namespace WebCore::CQ {
+
+namespace FeatureNames {
 
 const AtomString& width()
 {
@@ -63,6 +65,23 @@ const AtomString& orientation()
 {
     static MainThreadNeverDestroyed<AtomString> name { "orientation"_s };
     return name;
+}
+
+}
+
+OptionSet<Axis> requiredAxesForFeature(const AtomString& featureName)
+{
+    if (featureName == FeatureNames::width())
+        return { Axis::Width };
+    if (featureName == FeatureNames::height())
+        return { Axis::Height };
+    if (featureName == FeatureNames::inlineSize())
+        return { Axis::Inline };
+    if (featureName == FeatureNames::blockSize())
+        return { Axis::Block };
+    if (featureName == FeatureNames::aspectRatio() || featureName == FeatureNames::orientation())
+        return { Axis::Inline, Axis::Block };
+    return { };
 }
 
 }

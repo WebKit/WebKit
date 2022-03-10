@@ -2,10 +2,10 @@ Test
 
 PASS (width > 0px)
 PASS (height > 0px)
-FAIL ((height > 0px) or (width > 0px)) assert_equals: expected "" but got "true"
-FAIL ((width > 0px) or (height > 0px)) assert_equals: expected "" but got "true"
-FAIL ((orientation: landscape) or (width > 0px)) assert_equals: expected "" but got "true"
-FAIL ((width > 0px) or (orientation: landscape)) assert_equals: expected "" but got "true"
+PASS ((height > 0px) or (width > 0px))
+PASS ((width > 0px) or (height > 0px))
+PASS ((orientation: landscape) or (width > 0px))
+PASS ((width > 0px) or (orientation: landscape))
 PASS ((height > 0px) or (orientation: landscape))
 PASS ((height > 0px) or (orientation: landscape)), with contain:size
 PASS (inline-size > 0px)

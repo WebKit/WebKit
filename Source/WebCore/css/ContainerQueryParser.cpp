@@ -30,10 +30,32 @@
 
 namespace WebCore {
 
-std::optional<ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range, const CSSParserContext& context)
+std::optional<FilteredContainerQuery> ContainerQueryParser::consumeFilteredContainerQuery(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     ContainerQueryParser parser(context);
-    return parser.consumeContainerQuery(range);
+    return parser.consumeFilteredContainerQuery(range);
+}
+
+std::optional<FilteredContainerQuery> ContainerQueryParser::consumeFilteredContainerQuery(CSSParserTokenRange& range)
+{
+    auto consumeName = [&]() -> AtomString {
+        if (range.peek().type() == LeftParenthesisToken || range.peek().type() == FunctionToken)
+            return nullAtom();
+        auto nameValue = CSSPropertyParserHelpers::consumeSingleContainerName(range);
+        if (!nameValue)
+            return nullAtom();
+        return nameValue->stringValue();
+    };
+
+    auto name = consumeName();
+
+    m_requiredAxes = { };
+
+    auto query = consumeContainerQuery(range);
+    if (!query)
+        return { };
+
+    return FilteredContainerQuery { name, m_requiredAxes, *query };
 }
 
 std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range)
@@ -137,6 +159,8 @@ std::optional<CQ::SizeQuery> ContainerQueryParser::consumeSizeQuery(CSSParserTok
     auto sizeFeature = consumeSizeFeature(range);
     if (!sizeFeature)
         return { };
+
+    m_requiredAxes.add(CQ::requiredAxesForFeature(sizeFeature->name));
 
     return { *sizeFeature };
 }
