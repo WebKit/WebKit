@@ -107,6 +107,9 @@ PASS pointer-events: "fill" onto "none"
 PASS position (type: discrete) has testAddition function
 PASS position: "fixed" onto "absolute"
 PASS position: "absolute" onto "fixed"
+PASS quotes (type: discrete) has testAddition function
+PASS quotes: ""‘" "’" "“" "”"" onto ""“" "”" "‘" "’""
+PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""
 PASS resize (type: discrete) has testAddition function
 PASS resize: "horizontal" onto "both"
 PASS resize: "both" onto "horizontal"

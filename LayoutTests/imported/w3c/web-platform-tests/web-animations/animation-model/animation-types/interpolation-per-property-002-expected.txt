@@ -125,6 +125,10 @@ PASS position (type: discrete) has testInterpolation function
 PASS position uses discrete animation when animating between "absolute" and "fixed" with linear easing
 PASS position uses discrete animation when animating between "absolute" and "fixed" with effect easing
 PASS position uses discrete animation when animating between "absolute" and "fixed" with keyframe easing
+PASS quotes (type: discrete) has testInterpolation function
+PASS quotes uses discrete animation when animating between ""“" "”" "‘" "’"" and ""‘" "’" "“" "”"" with linear easing
+PASS quotes uses discrete animation when animating between ""“" "”" "‘" "’"" and ""‘" "’" "“" "”"" with effect easing
+PASS quotes uses discrete animation when animating between ""“" "”" "‘" "’"" and ""‘" "’" "“" "”"" with keyframe easing
 PASS resize (type: discrete) has testInterpolation function
 PASS resize uses discrete animation when animating between "both" and "horizontal" with linear easing
 PASS resize uses discrete animation when animating between "both" and "horizontal" with effect easing

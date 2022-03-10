@@ -57,6 +57,7 @@
 #include "MatrixTransformOperation.h"
 #include "OffsetRotation.h"
 #include "PathOperation.h"
+#include "QuotesData.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "StyleCachedImage.h"
@@ -2716,6 +2717,35 @@ public:
     }
 };
 
+class QuotesWrapper final : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    QuotesWrapper()
+        : AnimationPropertyWrapperBase(CSSPropertyQuotes)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
+
+    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    {
+        return a.quotes() == b.quotes();
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
+    {
+        ASSERT(!context.progress || context.progress == 1.0);
+        destination.setQuotes((context.progress ? to : from).quotes());
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const override
+    {
+    }
+#endif
+};
+
 class CSSPropertyAnimationWrapperMap final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -3057,7 +3087,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new FontVariantLigaturesWrapper,
         new DiscretePropertyWrapper<FontVariantPosition>(CSSPropertyFontVariantPosition, &RenderStyle::fontVariantPosition, &RenderStyle::setFontVariantPosition),
         new DiscretePropertyWrapper<FontVariantCaps>(CSSPropertyFontVariantCaps, &RenderStyle::fontVariantCaps, &RenderStyle::setFontVariantCaps),
-        new GridTemplateAreasWrapper
+        new GridTemplateAreasWrapper,
+        new QuotesWrapper
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 
