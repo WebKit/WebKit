@@ -1,3 +1,22 @@
+2022-03-10  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r284711): [GStreamer] Buffering, seek broken on youtube.com
+        https://bugs.webkit.org/show_bug.cgi?id=233861
+
+        Unreviewed, manual revert of 284711.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::currentTimeFudgeFactor):
+        * platform/graphics/SourceBufferPrivate.h:
+        (WebCore::SourceBufferPrivate::timeFudgeFactor const):
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        (WebCore::toGstClockTime):
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        (WebCore::MediaSampleGStreamer::MediaSampleGStreamer):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::appsinkNewSample):
+        (WebCore::bufferTimeToStreamTime): Deleted.
+
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] font-variant-east-asian should support discrete animation

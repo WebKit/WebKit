@@ -1,5 +1,14 @@
 2022-03-10  Philippe Normand  <pnormand@igalia.com>
 
+        REGRESSION(r284711): [GStreamer] Buffering, seek broken on youtube.com
+        https://bugs.webkit.org/show_bug.cgi?id=233861
+
+        Unreviewed, manual revert of 284711.
+
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-remove-expected.txt:
+
+2022-03-10  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed GStreamer gardening
 
         * platform/glib/TestExpectations: media/video-src-blob-perf.html is failing actually.

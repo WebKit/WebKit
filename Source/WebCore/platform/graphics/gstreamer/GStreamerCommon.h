@@ -80,10 +80,6 @@ bool isThunderRanked();
 
 inline GstClockTime toGstClockTime(const MediaTime &mediaTime)
 {
-    if (mediaTime.isInvalid())
-        return GST_CLOCK_TIME_NONE;
-    if (mediaTime < MediaTime::zeroTime())
-        return 0;
     return static_cast<GstClockTime>(toGstUnsigned64Time(mediaTime));
 }
 

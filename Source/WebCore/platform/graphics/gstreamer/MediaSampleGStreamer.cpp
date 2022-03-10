@@ -49,9 +49,7 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     if (metadata)
         buffer = webkitGstBufferSetVideoSampleMetadata(buffer, WTFMove(metadata));
 
-    m_sample = adoptGRef(gst_sample_new(buffer, gst_sample_get_caps(sample.get()), nullptr,
-        gst_sample_get_info(sample.get()) ? gst_structure_copy(gst_sample_get_info(sample.get())) : nullptr));
-
+    m_sample = sample;
     initializeFromBuffer();
 }
 
