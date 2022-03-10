@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {

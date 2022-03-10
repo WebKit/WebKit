@@ -1,3 +1,10 @@
+2022-03-10  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified build fix after 248260@main
+        https://bugs.webkit.org/show_bug.cgi?id=237715
+
+        * css/ContainerQuery.h: Add missing include.
+
 2022-03-10  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r284711): [GStreamer] Buffering, seek broken on youtube.com
