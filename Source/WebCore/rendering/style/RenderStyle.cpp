@@ -2054,6 +2054,16 @@ void RenderStyle::setFontFamilies(RefCountedFixedVector<AtomString>& families)
     fontCascade().update(currentFontSelector);
 }
 
+void RenderStyle::setFontSynthesis(FontSynthesis value)
+{
+    FontSelector* currentFontSelector = fontCascade().fontSelector();
+    auto description = fontDescription();
+    description.setFontSynthesis(value);
+
+    setFontDescription(WTFMove(description));
+    fontCascade().update(currentFontSelector);
+}
+
 LayoutBoxExtent RenderStyle::shadowExtent(const ShadowData* shadow)
 {
     LayoutUnit top;

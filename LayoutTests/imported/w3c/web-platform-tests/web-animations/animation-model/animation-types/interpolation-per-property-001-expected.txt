@@ -305,6 +305,10 @@ PASS font-kerning (type: discrete) has testInterpolation function
 PASS font-kerning uses discrete animation when animating between "auto" and "normal" with linear easing
 PASS font-kerning uses discrete animation when animating between "auto" and "normal" with effect easing
 PASS font-kerning uses discrete animation when animating between "auto" and "normal" with keyframe easing
+PASS font-synthesis (type: discrete) has testInterpolation function
+PASS font-synthesis uses discrete animation when animating between "none" and "weight style" with linear easing
+PASS font-synthesis uses discrete animation when animating between "none" and "weight style" with effect easing
+PASS font-synthesis uses discrete animation when animating between "none" and "weight style" with keyframe easing
 PASS font-variation-settings (type: fontVariationSettings) has testInterpolation function
 PASS font-variation-settings supports animation as float
 PASS font-variation-settings supports animation as float with multiple tags

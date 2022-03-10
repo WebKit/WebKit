@@ -373,6 +373,7 @@ public:
     Kerning fontKerning() const { return fontDescription().kerning(); }
     FontFeatureSettings fontFeatureSettings() const { return fontDescription().featureSettings(); }
     RefCountedFixedVector<AtomString>& fontFamilies() const { return fontDescription().families(); }
+    FontSynthesis fontSynthesis() const { return fontDescription().fontSynthesis(); }
 
     const Length& textIndent() const { return m_rareInheritedData->indent; }
     TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }
@@ -997,6 +998,7 @@ public:
     void setFontKerning(Kerning);
     void setFontFeatureSettings(FontFeatureSettings);
     void setFontFamilies(RefCountedFixedVector<AtomString>&);
+    void setFontSynthesis(FontSynthesis);
 
     void setColor(const Color&);
     void setTextIndent(Length&& length) { SET_VAR(m_rareInheritedData, indent, WTFMove(length)); }

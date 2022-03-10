@@ -2926,7 +2926,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<DominantBaseline>(CSSPropertyDominantBaseline, &RenderStyle::dominantBaseline, &RenderStyle::setDominantBaseline),
         new CounterWrapper(CSSPropertyCounterIncrement),
         new CounterWrapper(CSSPropertyCounterReset),
-        new DiscretePropertyWrapper<WindRule>(CSSPropertyFillRule, &RenderStyle::fillRule, &RenderStyle::setFillRule)
+        new DiscretePropertyWrapper<WindRule>(CSSPropertyFillRule, &RenderStyle::fillRule, &RenderStyle::setFillRule),
+        new DiscretePropertyWrapper<FontSynthesis>(CSSPropertyFontSynthesis, &RenderStyle::fontSynthesis, &RenderStyle::setFontSynthesis)
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 
