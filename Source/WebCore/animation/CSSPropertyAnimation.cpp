@@ -43,6 +43,7 @@
 #include "CalculationValue.h"
 #include "ColorBlending.h"
 #include "ContentData.h"
+#include "CounterDirectives.h"
 #include "FloatConversion.h"
 #include "FontCascade.h"
 #include "FontSelectionAlgorithm.h"
@@ -2513,6 +2514,75 @@ private:
 #endif
 };
 
+class CounterIncrementWrapper final : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    CounterIncrementWrapper()
+        : AnimationPropertyWrapperBase(CSSPropertyCounterIncrement)
+    {
+    }
+
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
+
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+    {
+        auto* aCounterDirectives = a.counterDirectives();
+        auto* bCounterDirectives = b.counterDirectives();
+
+        if (!aCounterDirectives && !bCounterDirectives)
+            return true;
+        if (aCounterDirectives && bCounterDirectives) {
+            if (aCounterDirectives->size() != bCounterDirectives->size())
+                return false;
+            for (auto& [key, aDirective] : *aCounterDirectives) {
+                auto it = bCounterDirectives->find(key);
+                if (it == bCounterDirectives->end())
+                    return false;
+                auto& bDirective = it->value;
+                if (aDirective.incrementValue != bDirective.incrementValue)
+                    return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double progress) const final
+    {
+        LOG_WITH_STREAM(Animations, stream << " blending counter-increment at " << TextStream::FormatNumberRespectingIntegers(progress) << ".");
+    }
+#endif
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        ASSERT(context.isDiscrete);
+        ASSERT(!context.progress || context.progress == 1);
+
+        // Clear all existing values in the existing set of directives.
+        if (destination.counterDirectives()) {
+            for (auto& [key, directive] : destination.accessCounterDirectives())
+                directive.incrementValue = std::nullopt;
+        }
+
+        auto& style = context.progress ? to : from;
+        if (!style.counterDirectives())
+            return;
+
+        auto& targetDirectives = destination.accessCounterDirectives();
+        for (auto& [key, directive] : *style.counterDirectives()) {
+            auto updateDirective = [](CounterDirectives& target, const CounterDirectives& source) {
+                target.incrementValue = source.incrementValue;
+            };
+            auto it = targetDirectives.find(key);
+            if (it == targetDirectives.end())
+                updateDirective(targetDirectives.add(key, CounterDirectives { }).iterator->value, directive);
+            else
+                updateDirective(it->value, directive);
+        }
+    }
+};
+
 class CSSPropertyAnimationWrapperMap final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -2844,7 +2914,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new FontFamilyWrapper,
         new DiscretePropertyWrapper<WindRule>(CSSPropertyClipRule, &RenderStyle::clipRule, &RenderStyle::setClipRule),
         new DiscretePropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolationFilters, &RenderStyle::colorInterpolationFilters, &RenderStyle::setColorInterpolationFilters),
-        new DiscretePropertyWrapper<DominantBaseline>(CSSPropertyDominantBaseline, &RenderStyle::dominantBaseline, &RenderStyle::setDominantBaseline)
+        new DiscretePropertyWrapper<DominantBaseline>(CSSPropertyDominantBaseline, &RenderStyle::dominantBaseline, &RenderStyle::setDominantBaseline),
+        new CounterIncrementWrapper
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

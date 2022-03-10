@@ -175,6 +175,9 @@ PASS column-width: length of rem
 PASS column-width (type: discrete) has testAddition function
 PASS column-width: "1px" onto "auto"
 PASS column-width: "auto" onto "1px"
+PASS counter-increment (type: discrete) has testAddition function
+PASS counter-increment: "ident-2 2" onto "ident-1 1"
+PASS counter-increment: "ident-1 1" onto "ident-2 2"
 PASS cursor (type: discrete) has testAddition function
 PASS cursor: "wait" onto "pointer"
 PASS cursor: "pointer" onto "wait"

@@ -211,6 +211,10 @@ PASS column-width (type: discrete) has testInterpolation function
 PASS column-width uses discrete animation when animating between "auto" and "1px" with linear easing
 PASS column-width uses discrete animation when animating between "auto" and "1px" with effect easing
 PASS column-width uses discrete animation when animating between "auto" and "1px" with keyframe easing
+PASS counter-increment (type: discrete) has testInterpolation function
+PASS counter-increment uses discrete animation when animating between "ident-1 1" and "ident-2 2" with linear easing
+PASS counter-increment uses discrete animation when animating between "ident-1 1" and "ident-2 2" with effect easing
+PASS counter-increment uses discrete animation when animating between "ident-1 1" and "ident-2 2" with keyframe easing
 PASS cursor (type: discrete) has testInterpolation function
 PASS cursor uses discrete animation when animating between "pointer" and "wait" with linear easing
 PASS cursor uses discrete animation when animating between "pointer" and "wait" with effect easing
