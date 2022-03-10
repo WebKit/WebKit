@@ -320,9 +320,6 @@ webkit.org/b/236927 fast/forms/ios/choose-select-option.html [ Timeout Pass ]
 webkit.org/b/236927 fast/forms/autofocus-readonly-attribute.html [ Failure Pass ]
 webkit.org/b/236927 fast/forms/input-text-autofocus.html [ Pass Failure ]
 
-# Flaky timeout
-webkit.org/b/236931 editing/pasteboard/dom-paste/dom-paste-same-origin.html [ Timeout Pass ]
-
 # Flaky failure
 webkit.org/b/236932 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ImageOnlyFailure ]
 webkit.org/b/236932 css3/masking/mask-repeat-one-copy.html [ Pass ImageOnlyFailure ]
