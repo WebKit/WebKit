@@ -849,10 +849,6 @@ protected: // FIXME: Make the data members private.
     AccessibilityIsIgnoredFromParentData m_isIgnoredFromParentData;
     bool m_childrenDirty { false };
     bool m_subtreeDirty { false };
-private:
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    bool m_isolatedTreeNodeInitialized { false };
-#endif
 };
 
 #if !ENABLE(ACCESSIBILITY)

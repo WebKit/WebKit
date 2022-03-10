@@ -1,5 +1,18 @@
 2022-03-09  Andres Gonzalez  <andresg_22@apple.com>
 
+        Remove unused AccessibilityObject member variable.
+        https://bugs.webkit.org/show_bug.cgi?id=237670
+        <rdar://problem/90042470>
+
+        Reviewed by Chris Fleizach.
+
+        AccessibilityObject::m_isolatedTreeNodeInitialized is not used, thus
+        removing.
+
+        * accessibility/AccessibilityObject.h:
+
+2022-03-09  Andres Gonzalez  <andresg_22@apple.com>
+
         In isolated tree mode, do not call NSAccessibilityUnregisterUniqueIdForUIElement until the isolated object is detached.
         https://bugs.webkit.org/show_bug.cgi?id=237621
         <rdar://problem/89992486>
