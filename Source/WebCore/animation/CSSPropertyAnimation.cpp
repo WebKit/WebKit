@@ -3088,7 +3088,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<FontVariantPosition>(CSSPropertyFontVariantPosition, &RenderStyle::fontVariantPosition, &RenderStyle::setFontVariantPosition),
         new DiscretePropertyWrapper<FontVariantCaps>(CSSPropertyFontVariantCaps, &RenderStyle::fontVariantCaps, &RenderStyle::setFontVariantCaps),
         new GridTemplateAreasWrapper,
-        new QuotesWrapper
+        new QuotesWrapper,
+        new DiscretePropertyWrapper<bool>(CSSPropertyScrollBehavior, &RenderStyle::useSmoothScrolling, &RenderStyle::setUseSmoothScrolling)
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

@@ -113,6 +113,9 @@ PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""
 PASS resize (type: discrete) has testAccumulation function
 PASS resize: "horizontal" onto "both"
 PASS resize: "both" onto "horizontal"
+PASS scroll-behavior (type: discrete) has testAccumulation function
+PASS scroll-behavior: "smooth" onto "auto"
+PASS scroll-behavior: "auto" onto "smooth"
 PASS shape-outside (type: discrete) has testAccumulation function
 PASS shape-outside: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS shape-outside: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
