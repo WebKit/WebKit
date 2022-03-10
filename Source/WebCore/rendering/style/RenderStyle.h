@@ -1440,6 +1440,9 @@ public:
     DominantBaseline dominantBaseline() const { return svgStyle().dominantBaseline(); }
     void setDominantBaseline(DominantBaseline dominantBaseline) { return accessSVGStyle().setDominantBaseline(dominantBaseline); }
 
+    WindRule fillRule() const { return svgStyle().fillRule(); }
+    void setFillRule(WindRule fillRule) { accessSVGStyle().setFillRule(fillRule); }
+
     SVGPaintType fillPaintType() const { return svgStyle().fillPaintType(); }
     Color fillPaintColor() const { return svgStyle().fillPaintColor(); }
     void setFillPaintColor(const Color& color) { accessSVGStyle().setFillPaint(SVGPaintType::RGBColor, color, emptyString()); }

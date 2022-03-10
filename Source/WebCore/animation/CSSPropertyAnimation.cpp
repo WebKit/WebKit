@@ -2925,7 +2925,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolationFilters, &RenderStyle::colorInterpolationFilters, &RenderStyle::setColorInterpolationFilters),
         new DiscretePropertyWrapper<DominantBaseline>(CSSPropertyDominantBaseline, &RenderStyle::dominantBaseline, &RenderStyle::setDominantBaseline),
         new CounterWrapper(CSSPropertyCounterIncrement),
-        new CounterWrapper(CSSPropertyCounterReset)
+        new CounterWrapper(CSSPropertyCounterReset),
+        new DiscretePropertyWrapper<WindRule>(CSSPropertyFillRule, &RenderStyle::fillRule, &RenderStyle::setFillRule)
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

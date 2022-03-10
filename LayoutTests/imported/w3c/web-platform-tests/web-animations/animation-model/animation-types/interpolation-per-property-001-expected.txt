@@ -233,6 +233,10 @@ PASS empty-cells uses discrete animation when animating between "show" and "hide
 PASS empty-cells uses discrete animation when animating between "show" and "hide" with keyframe easing
 PASS fill-opacity (type: opacity) has testInterpolation function
 PASS fill-opacity supports animating as a [0, 1] number
+PASS fill-rule (type: discrete) has testInterpolation function
+PASS fill-rule uses discrete animation when animating between "evenodd" and "nonzero" with linear easing
+PASS fill-rule uses discrete animation when animating between "evenodd" and "nonzero" with effect easing
+PASS fill-rule uses discrete animation when animating between "evenodd" and "nonzero" with keyframe easing
 PASS filter (type: filterList) has testInterpolation function
 PASS filter: blur function
 PASS filter: hue-rotate function with same unit(deg)

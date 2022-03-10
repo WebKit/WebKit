@@ -1,3 +1,16 @@
+2022-03-09  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] fill-rule should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237648
+
+        Reviewed by Antti Koivisto.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fillRule const):
+        (WebCore::RenderStyle::setFillRule):
+
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] counter-reset should support discrete animation
