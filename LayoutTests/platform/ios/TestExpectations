@@ -3504,6 +3504,7 @@ webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
 
 webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash ]
 
+webkit.org/b/236930 accessibility/ios-simulator/aria-details.html [ Crash Pass ]
 webkit.org/b/236794 editing/spelling/editing-word-with-marker-2.html [ Pass Crash ]
 
 webkit.org/b/237159 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-049.html [ Pass Crash ]
