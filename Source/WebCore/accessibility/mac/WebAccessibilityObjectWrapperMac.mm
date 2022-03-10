@@ -524,21 +524,28 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 @implementation WebAccessibilityObjectWrapper
 
-- (void)unregisterUniqueIdForUIElement
-{
-    ASSERT(isMainThread());
-    NSAccessibilityUnregisterUniqueIdForUIElement(self);
-}
-
 - (void)detach
 {
-    // Send unregisterUniqueIdForUIElement unconditionally because if it is
-    // ever accidentally not done (via other bugs in our AX implementation) you
-    // end up with a crash like <rdar://problem/4273149>.  It is safe and not
-    // expensive to send even if the object is not registered.
-    [self unregisterUniqueIdForUIElement];
+    ASSERT(isMainThread());
+
+    // If the IsolatedObject is initialized, do not UnregisterUniqueIdForUIElement here because the wrapper may be in the middle of serving a request on the AX thread.
+    // The IsolatedObject is capable to tend to some requests after the live object is gone.
+    // In regular mode, UnregisterUniqueIdForUIElement immediately.
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!m_isolatedObjectInitialized)
+#endif
+        NSAccessibilityUnregisterUniqueIdForUIElement(self);
+
     [super detach];
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+- (void)detachIsolatedObject:(AccessibilityDetachmentType)detachmentType
+{
+    NSAccessibilityUnregisterUniqueIdForUIElement(self);
+    [super detachIsolatedObject:detachmentType];
+}
+#endif
 
 - (id)attachmentView
 {

@@ -63,9 +63,13 @@ void AXAttributedStringSetFont(NSMutableAttributedString *, CTFontRef, const NSR
 
 @interface WebAccessibilityObjectWrapperBase : NSObject {
     WebCore::AXCoreObject* m_axObject;
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     WebCore::AXCoreObject* m_isolatedObject;
+    // To be accessed only on the main thread.
+    bool m_isolatedObjectInitialized;
 #endif
+
     WebCore::AXID _identifier;
 }
 

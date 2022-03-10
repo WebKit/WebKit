@@ -279,9 +279,10 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
 - (id)initWithAccessibilityObject:(AXCoreObject*)axObject
 {
+    ASSERT(isMainThread());
+
     if (!(self = [super init]))
         return nil;
-
     [self attachAXObject:axObject];
     return self;
 }
@@ -299,6 +300,9 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 {
     ASSERT(isolatedObject && (!_identifier.isValid() || _identifier == isolatedObject->objectID()));
     m_isolatedObject = isolatedObject;
+    if (isMainThread())
+        m_isolatedObjectInitialized = true;
+
     if (!_identifier.isValid())
         _identifier = m_isolatedObject->objectID();
 }

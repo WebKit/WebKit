@@ -1,3 +1,29 @@
+2022-03-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        In isolated tree mode, do not call NSAccessibilityUnregisterUniqueIdForUIElement until the isolated object is detached.
+        https://bugs.webkit.org/show_bug.cgi?id=237621
+        <rdar://problem/89992486>
+
+        Reviewed by Chris Fleizach.
+
+        When the live object is detached from its wrapper on the main thread,
+        the wrapper may be in the middle of serving a request on the AX thread.
+        Therefore calling NSAccessibilityUnregisterUniqueIdForUIElement may
+        interfere with the completiong of the request, or even cause undefined
+        behavior since many of the internal lookups for objects depend on a data
+        structure updated by system call. With this patch, we unregister a
+        wrapper when the isolated object is detached, which happens after the
+        live object is detached.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase initWithAccessibilityObject:]):
+        (-[WebAccessibilityObjectWrapperBase attachIsolatedObject:]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper detach]):
+        (-[WebAccessibilityObjectWrapper detachIsolatedObject:]):
+        (-[WebAccessibilityObjectWrapper unregisterUniqueIdForUIElement]): Deleted.
+
 2022-03-09  Matt Woodrow  <mattwoodrow@apple.com>
 
         Empty float rects should remain empty after integrally enclosing them.
