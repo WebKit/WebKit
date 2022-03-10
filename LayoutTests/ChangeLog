@@ -1,3 +1,9 @@
+2022-03-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed GStreamer gardening
+
+        * platform/glib/TestExpectations: media/video-src-blob-perf.html is failing actually.
+
 2022-03-10  Lauro Moura  <lmoura@igalia.com>
 
         Add context.roundRect support to OffScreenCanvas

@@ -907,7 +907,7 @@ webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
 # bitrate estimation.
 webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
-webkit.org/b/237256 media/video-src-blob-perf.html [ Timeout ]
+webkit.org/b/237256 media/video-src-blob-perf.html [ Timeout Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
