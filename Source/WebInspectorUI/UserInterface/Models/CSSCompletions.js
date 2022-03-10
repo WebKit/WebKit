@@ -152,6 +152,9 @@ WI.CSSCompletions = class CSSCompletions
 
     executeQuery(query)
     {
+        if (!query)
+            return this._acceptEmptyPrefix ? this._values.slice() : [];
+
         this._queryController ||= new WI.CSSQueryController(this._values);
 
         return this._queryController.executeQuery(query);

@@ -1,3 +1,18 @@
+2022-03-10  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Styles Panel: CSS variable completions should be provided even without a query
+        https://bugs.webkit.org/show_bug.cgi?id=237679
+        <rdar://problem/90059628>
+
+        Reviewed by Patrick Angle.
+
+        Return the list of all available completion suggestions if `WI.CSSCompletions` is configured to allow empty
+        prefix search. This was already the case for classic autocompletion with prefix matching, but was missing
+        for fuzzy matching.
+
+        * UserInterface/Models/CSSCompletions.js:
+        (WI.CSSCompletions.prototype.executeQuery):
+
 2022-03-08  Adrian Perez de Castro  <aperez@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Web Inspector: make it possible to use the remote inspector from other browsers
