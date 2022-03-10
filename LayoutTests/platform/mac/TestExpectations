@@ -2397,6 +2397,8 @@ webkit.org/b/237172 imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-s
 
 webkit.org/b/233047 inspector/page/setShowPaintRects.html [ Pass Failure ]
 
+webkit.org/b/237680 imported/w3c/web-platform-tests/service-workers/service-worker/partitioned-service-worker-matchAll.tentative.https.html [ Pass Failure ]
+
 # Plugins
 # FIXME: Remove these tests.
 platform/mac/plugins/testplugin-onnew-onpaint.html [ Skip ]
