@@ -313,6 +313,10 @@ PASS font-variant-alternates (type: discrete) has testInterpolation function
 FAIL font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with linear easing assert_equals: The value should be swash(unknown) at 0ms expected "swash(unknown)" but got "normal"
 FAIL font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with effect easing assert_equals: The value should be swash(unknown) at 0ms expected "swash(unknown)" but got "normal"
 FAIL font-variant-alternates uses discrete animation when animating between "swash(unknown)" and "stylistic(unknown)" with keyframe easing assert_equals: The value should be swash(unknown) at 0ms expected "swash(unknown)" but got "normal"
+PASS font-variant-east-asian (type: discrete) has testInterpolation function
+PASS font-variant-east-asian uses discrete animation when animating between "full-width" and "proportional-width" with linear easing
+PASS font-variant-east-asian uses discrete animation when animating between "full-width" and "proportional-width" with effect easing
+PASS font-variant-east-asian uses discrete animation when animating between "full-width" and "proportional-width" with keyframe easing
 PASS font-variation-settings (type: fontVariationSettings) has testInterpolation function
 PASS font-variation-settings supports animation as float
 PASS font-variation-settings supports animation as float with multiple tags

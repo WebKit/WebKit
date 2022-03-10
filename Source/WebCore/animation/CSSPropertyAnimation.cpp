@@ -2592,6 +2592,47 @@ public:
     }
 };
 
+class FontVariantEastAsianWrapper final : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    FontVariantEastAsianWrapper()
+        : AnimationPropertyWrapperBase(CSSPropertyFontVariantEastAsian)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
+
+    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    {
+        auto& aFontDescription = a.fontDescription();
+        auto& bFontDescription = b.fontDescription();
+        return aFontDescription.variantEastAsianVariant() == bFontDescription.variantEastAsianVariant()
+            && aFontDescription.variantEastAsianWidth() == bFontDescription.variantEastAsianWidth()
+            && aFontDescription.variantEastAsianRuby() == bFontDescription.variantEastAsianRuby();
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
+    {
+        ASSERT(!context.progress || context.progress == 1.0);
+        auto& sourceFontDescription = (context.progress ? to : from).fontDescription();
+
+        FontSelector* currentFontSelector = destination.fontCascade().fontSelector();
+        auto description = destination.fontDescription();
+        description.setVariantEastAsianVariant(sourceFontDescription.variantEastAsianVariant());
+        description.setVariantEastAsianWidth(sourceFontDescription.variantEastAsianWidth());
+        description.setVariantEastAsianRuby(sourceFontDescription.variantEastAsianRuby());
+        destination.setFontDescription(WTFMove(description));
+        destination.fontCascade().update(currentFontSelector);
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const override
+    {
+    }
+#endif
+};
+
 class CSSPropertyAnimationWrapperMap final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -2928,7 +2969,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new CounterWrapper(CSSPropertyCounterReset),
         new DiscretePropertyWrapper<WindRule>(CSSPropertyFillRule, &RenderStyle::fillRule, &RenderStyle::setFillRule),
         new DiscretePropertyWrapper<FontSynthesis>(CSSPropertyFontSynthesis, &RenderStyle::fontSynthesis, &RenderStyle::setFontSynthesis),
-        new DiscretePropertyWrapper<FontVariantAlternates>(CSSPropertyFontVariantAlternates, &RenderStyle::fontVariantAlternates, &RenderStyle::setFontVariantAlternates)
+        new DiscretePropertyWrapper<FontVariantAlternates>(CSSPropertyFontVariantAlternates, &RenderStyle::fontVariantAlternates, &RenderStyle::setFontVariantAlternates),
+        new FontVariantEastAsianWrapper
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

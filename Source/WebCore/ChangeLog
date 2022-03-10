@@ -1,3 +1,13 @@
+2022-03-10  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] font-variant-east-asian should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237665
+
+        Reviewed by Myles C. Maxfield.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
 2022-03-10  Rob Buis  <rbuis@igalia.com>
 
         Use PropertyRegistry consistently in svgAttributeChanged
