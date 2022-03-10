@@ -5,6 +5,6 @@ PASS SpeechSynthesisEvent with empty eventInitDict throws TypeError (requires
     utterance)
 PASS SpeechSynthesisEvent with eventInitDict not having utterance throws
     TypeError
-FAIL SpeechSynthesisEvent with eventInitDict having an utterance Illegal constructor
-FAIL SpeechSynthesisEvent with custom eventInitDict Illegal constructor
+PASS SpeechSynthesisEvent with eventInitDict having an utterance
+PASS SpeechSynthesisEvent with custom eventInitDict
 

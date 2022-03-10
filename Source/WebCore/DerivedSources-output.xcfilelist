@@ -2516,8 +2516,16 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechRecognitionResultList.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechRecognitionResultList.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesis.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesis.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisErrorCode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisErrorCode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisErrorEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisErrorEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisErrorEventInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisErrorEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisEventInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisEventInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisUtterance.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisUtterance.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSpeechSynthesisVoice.cpp

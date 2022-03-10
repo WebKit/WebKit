@@ -1,3 +1,19 @@
+2022-03-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support updated WebSpeech API
+        https://bugs.webkit.org/show_bug.cgi?id=237614
+        <rdar://problem/89981851>
+
+        Reviewed by Andres Gonzalez.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::boundaryEventOccurred):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::boundaryEventOccurred):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-03-10  Chris Dumez  <cdumez@apple.com>
 
         Optimize further the passing of data across threads

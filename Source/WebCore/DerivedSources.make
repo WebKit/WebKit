@@ -521,7 +521,11 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl \
     $(WebCore)/Modules/speech/DOMWindow+SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesis.idl \
+    $(WebCore)/Modules/speech/SpeechSynthesisErrorCode.idl \
+    $(WebCore)/Modules/speech/SpeechSynthesisErrorEvent.idl \
+    $(WebCore)/Modules/speech/SpeechSynthesisErrorEventInit.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisEvent.idl \
+    $(WebCore)/Modules/speech/SpeechSynthesisEventInit.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisUtterance.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisVoice.idl \
     $(WebCore)/Modules/speech/SpeechRecognition.idl \

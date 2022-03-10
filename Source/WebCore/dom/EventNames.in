@@ -70,6 +70,7 @@ RTCTrackEvent conditional=WEB_RTC
 RTCTransformEvent conditional=WEB_RTC
 SpeechRecognitionErrorEvent
 SpeechRecognitionEvent
+SpeechSynthesisErrorEvent conditional=SPEECH_SYNTHESIS
 SpeechSynthesisEvent conditional=SPEECH_SYNTHESIS
 WebGLContextEvent conditional=WEBGL
 StorageEvent

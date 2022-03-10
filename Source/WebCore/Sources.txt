@@ -285,6 +285,7 @@ Modules/speech/SpeechRecognitionCaptureSourceImpl.cpp
 Modules/speech/SpeechRecognizer.cpp
 Modules/speech/DOMWindowSpeechSynthesis.cpp
 Modules/speech/SpeechSynthesis.cpp
+Modules/speech/SpeechSynthesisErrorEvent.cpp
 Modules/speech/SpeechSynthesisEvent.cpp
 Modules/speech/SpeechSynthesisUtterance.cpp
 Modules/speech/SpeechSynthesisVoice.cpp

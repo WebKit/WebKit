@@ -2585,7 +2585,7 @@ private:
     void didPauseSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) final;
     void didResumeSpeaking(WebCore::PlatformSpeechSynthesisUtterance&) final;
     void speakingErrorOccurred(WebCore::PlatformSpeechSynthesisUtterance&) final;
-    void boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary, unsigned charIndex) final;
+    void boundaryEventOccurred(WebCore::PlatformSpeechSynthesisUtterance&, WebCore::SpeechBoundary, unsigned charIndex, unsigned charLength) final;
     void voicesDidChange() final;
 
     struct SpeechSynthesisData;

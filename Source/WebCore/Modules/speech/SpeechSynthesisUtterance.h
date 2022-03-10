@@ -35,10 +35,13 @@
 
 namespace WebCore {
 
-class SpeechSynthesisUtterance final : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public ContextDestructionObserver, public EventTargetWithInlineData {
+class SpeechSynthesisUtterance final : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(SpeechSynthesisUtterance);
 public:
     static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&);
+    
+    // Create an empty default constructor so SpeechSynthesisEventInit compiles.
+    SpeechSynthesisUtterance();
 
     virtual ~SpeechSynthesisUtterance();
 
@@ -68,16 +71,19 @@ public:
 
     PlatformSpeechSynthesisUtterance* platformUtterance() const { return m_platformUtterance.get(); }
 
+    SpeechSynthesisUtterance(const SpeechSynthesisUtterance&);
+    
 private:
     SpeechSynthesisUtterance(ScriptExecutionContext&, const String&);
 
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }
     EventTargetInterface eventTargetInterface() const final { return SpeechSynthesisUtteranceEventTargetInterfaceType; }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     RefPtr<PlatformSpeechSynthesisUtterance> m_platformUtterance;
     RefPtr<SpeechSynthesisVoice> m_voice;
+    ScriptExecutionContext& m_scriptExecutionContext;
 };
 
 } // namespace WebCore

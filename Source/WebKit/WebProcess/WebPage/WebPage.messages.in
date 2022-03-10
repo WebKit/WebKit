@@ -615,7 +615,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(SPEECH_SYNTHESIS)
     SpeakingErrorOccurred()
-    BoundaryEventOccurred(bool wordBoundary, unsigned charIndex)
+    BoundaryEventOccurred(bool wordBoundary, unsigned charIndex, unsigned charLength)
     VoicesDidChange()
 #endif
 

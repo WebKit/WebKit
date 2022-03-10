@@ -1928,7 +1928,7 @@ private:
 
 #if ENABLE(SPEECH_SYNTHESIS)
     void speakingErrorOccurred();
-    void boundaryEventOccurred(bool wordBoundary, unsigned charIndex);
+    void boundaryEventOccurred(bool wordBoundary, unsigned charIndex, unsigned charLength);
     void voicesDidChange();
 #endif
 

@@ -1,40 +1,13 @@
 
-FAIL SpeechSynthesisErrorEvent with no arguments throws TypeError assert_throws_js: function "() => {
-    new SpeechSynthesisErrorEvent();
-  }" threw object "ReferenceError: Can't find variable: SpeechSynthesisErrorEvent" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL SpeechSynthesisErrorEvent with no eventInitDict throws TypeError assert_throws_js: function "() => {
-    new SpeechSynthesisErrorEvent("type");
-  }" threw object "ReferenceError: Can't find variable: SpeechSynthesisErrorEvent" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL SpeechSynthesisErrorEvent with empty eventInitDict throws TypeError (requires
-    utterance and error) assert_throws_js: function "() => {
-    new SpeechSynthesisErrorEvent("type", {});
-  }" threw object "ReferenceError: Can't find variable: SpeechSynthesisErrorEvent" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL SpeechSynthesisErrorEvent with eventInitDict without utterance throws
-    TypeError assert_throws_js: function "() => {
-    new SpeechSynthesisErrorEvent("type", {error:"not-allowed"});
-  }" threw object "ReferenceError: Can't find variable: SpeechSynthesisErrorEvent" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL SpeechSynthesisErrorEvent with eventInitDict without error throws
-    TypeError assert_throws_js: function "() => {
-    new SpeechSynthesisErrorEvent("type", {utterance: new SpeechSynthesisUtterance()});
-  }" threw object "ReferenceError: Can't find variable: SpeechSynthesisErrorEvent" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL SpeechSynthesisErrorEvent with eventInitDict having utterance and error Can't find variable: SpeechSynthesisErrorEvent
-FAIL SpeechSynthesisErrorEvent with custom eventInitDict Can't find variable: SpeechSynthesisErrorEvent
-FAIL SpeechSynthesisErrorEvent with wrong error enum assert_throws_js: function "() => {
-      new SpeechSynthesisErrorEvent("type", {
-        utterance: new SpeechSynthesisUtterance(),
-        error: error
-      });
-    }" threw object "ReferenceError: Can't find variable: SpeechSynthesisErrorEvent" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS SpeechSynthesisErrorEvent with no arguments throws TypeError
+PASS SpeechSynthesisErrorEvent with no eventInitDict throws TypeError
+PASS SpeechSynthesisErrorEvent with empty eventInitDict throws TypeError (requires
+    utterance and error)
+PASS SpeechSynthesisErrorEvent with eventInitDict without utterance throws
+    TypeError
+PASS SpeechSynthesisErrorEvent with eventInitDict without error throws
+    TypeError
+PASS SpeechSynthesisErrorEvent with eventInitDict having utterance and error
+PASS SpeechSynthesisErrorEvent with custom eventInitDict
+PASS SpeechSynthesisErrorEvent with wrong error enum
 

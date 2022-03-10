@@ -299,6 +299,7 @@ namespace WebCore {
     macro(validatemerchant) \
     macro(versionchange) \
     macro(visibilitychange) \
+    macro(voiceschanged) \
     macro(volumechange) \
     macro(waiting) \
     macro(waitingforkey) \

@@ -71,7 +71,7 @@ SpeechSynthesis* DOMWindowSpeechSynthesis::speechSynthesis(DOMWindow& window)
 SpeechSynthesis* DOMWindowSpeechSynthesis::speechSynthesis()
 {
     if (!m_speechSynthesis && frame() && frame()->document())
-        m_speechSynthesis = SpeechSynthesis::create(frame()->page()->speechSynthesisClient(), *frame()->document());
+        m_speechSynthesis = SpeechSynthesis::create(*frame()->document());
     return m_speechSynthesis.get();
 }
 

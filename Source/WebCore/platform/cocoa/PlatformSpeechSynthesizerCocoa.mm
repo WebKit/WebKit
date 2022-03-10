@@ -257,7 +257,7 @@ static float getAVSpeechUtteranceMaximumSpeechRate()
         return;
 
     // AVSpeechSynthesizer only supports word boundaries.
-    m_synthesizerObject->client()->boundaryEventOccurred(*m_utterance, WebCore::SpeechBoundary::SpeechWordBoundary, characterRange.location);
+    m_synthesizerObject->client()->boundaryEventOccurred(*m_utterance, WebCore::SpeechBoundary::SpeechWordBoundary, characterRange.location, characterRange.length);
 }
 
 @end
@@ -281,7 +281,6 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
         bool isDefault = true;
         NSString *voiceURI = [voice identifier];
         NSString *name = [voice name];
-        
         // Only show built-in voices when requesting through WebKit to reduce fingerprinting surface area.
 #if HAVE(AVSPEECHSYNTHESIS_SYSTEMVOICE)
         // FIXME: Remove respondsToSelector check when is available on all SDKs.

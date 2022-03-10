@@ -70,6 +70,10 @@ JSApplePayShippingMethod.cpp
 JSApplePayShippingMethodSelectedEvent.cpp
 JSApplePayShippingMethodUpdate.cpp
 JSApplePayValidateMerchantEvent.cpp
+JSSpeechSynthesisErrorCode.cpp
+JSSpeechSynthesisErrorEvent.cpp
+JSSpeechSynthesisErrorEventInit.cpp
+JSSpeechSynthesisEventInit.cpp
 Modules/airplay/WebMediaSessionManager.cpp
 Modules/applepay/ApplePayButtonSystemImage.mm
 Modules/applepay/ApplePayCouponCodeChangedEvent.cpp

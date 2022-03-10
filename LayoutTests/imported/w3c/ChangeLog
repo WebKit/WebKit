@@ -1,3 +1,15 @@
+2022-03-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support updated WebSpeech API
+        https://bugs.webkit.org/show_bug.cgi?id=237614
+        <rdar://problem/89981851>
+
+        Reviewed by Andres Gonzalez.
+
+        * web-platform-tests/speech-api/SpeechSynthesisErrorEvent-constructor-expected.txt:
+        * web-platform-tests/speech-api/SpeechSynthesisEvent-constructor-expected.txt:
+        * web-platform-tests/speech-api/idlharness.window-expected.txt:
+
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] grid-template-areas should support discrete animation

@@ -27,6 +27,9 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "Document.h"
+#include "IDLTypes.h"
+#include "JSDOMPromiseDeferred.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>

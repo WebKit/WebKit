@@ -52,7 +52,7 @@ public:
     virtual void didPauseSpeaking(PlatformSpeechSynthesisUtterance&) = 0;
     virtual void didResumeSpeaking(PlatformSpeechSynthesisUtterance&) = 0;
     virtual void speakingErrorOccurred(PlatformSpeechSynthesisUtterance&) = 0;
-    virtual void boundaryEventOccurred(PlatformSpeechSynthesisUtterance&, SpeechBoundary, unsigned charIndex) = 0;
+    virtual void boundaryEventOccurred(PlatformSpeechSynthesisUtterance&, SpeechBoundary, unsigned charIndex, unsigned charLength) = 0;
     virtual void voicesDidChange() = 0;
 protected:
     virtual ~PlatformSpeechSynthesizerClient() = default;

@@ -56,6 +56,7 @@ SharedWorkerGlobalScope
 SourceBuffer conditional=MEDIA_SOURCE
 SourceBufferList conditional=MEDIA_SOURCE
 SpeechRecognition
+SpeechSynthesis conditional=SPEECH_SYNTHESIS
 SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS
 TextTrack conditional=VIDEO
 TextTrackCue conditional=VIDEO

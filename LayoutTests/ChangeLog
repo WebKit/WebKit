@@ -1,3 +1,17 @@
+2022-03-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support updated WebSpeech API
+        https://bugs.webkit.org/show_bug.cgi?id=237614
+        <rdar://problem/89981851>
+
+        Reviewed by Andres Gonzalez.
+
+        Fixed expectations:
+        * imported/w3c/web-platform-tests/speech-api/SpeechSynthesisEvent-constructor-expected.txt: Updated.
+        * imported/w3c/web-platform-tests/speech-api/SpeechSynthesisErrorEvent-constructor-expected.txt: Updated.
+        * fast/speechsynthesis/speech-synthesis-boundary-events.html: Updated.
+        * fast/speechsynthesis/speech-synthesis-boundary-events-expected.txt: Updated.
+
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] font-variant-caps should support discrete animation

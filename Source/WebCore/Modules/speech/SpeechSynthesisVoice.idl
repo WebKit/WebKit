@@ -24,10 +24,9 @@
  */
 
 // https://wicg.github.io/speech-api/#speechsynthesisvoice
-// FIXME: This is not specified as "LegacyNoInterfaceObject". It should have an interface object and be Exposed=Window.
 [
-    LegacyNoInterfaceObject,
-    Conditional=SPEECH_SYNTHESIS
+    Conditional=SPEECH_SYNTHESIS,
+    Exposed=Window
 ] interface SpeechSynthesisVoice {
     readonly attribute DOMString voiceURI;
     readonly attribute DOMString name;

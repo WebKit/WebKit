@@ -7349,10 +7349,10 @@ void WebPage::speakingErrorOccurred()
         observer->speakingErrorOccurred();
 }
 
-void WebPage::boundaryEventOccurred(bool wordBoundary, unsigned charIndex)
+void WebPage::boundaryEventOccurred(bool wordBoundary, unsigned charIndex, unsigned charLength)
 {
     if (auto observer = corePage()->speechSynthesisClient()->observer())
-        observer->boundaryEventOccurred(wordBoundary, charIndex);
+        observer->boundaryEventOccurred(wordBoundary, charIndex, charLength);
 }
 
 void WebPage::voicesDidChange()

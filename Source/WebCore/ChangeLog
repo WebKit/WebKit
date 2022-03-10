@@ -1,3 +1,75 @@
+2022-03-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Support updated WebSpeech API
+        https://bugs.webkit.org/show_bug.cgi?id=237614
+        <rdar://problem/89981851>
+
+        Reviewed by Andres Gonzalez.
+
+        Adopt WebSpeech (18 August 2020) changes from
+        https://wicg.github.io/speech-api/
+
+        Tests Fixed:
+           imported/w3c/web-platform-tests/speech-api/ 
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Modules/speech/DOMWindow+SpeechSynthesis.idl:
+        * Modules/speech/DOMWindowSpeechSynthesis.cpp:
+        (WebCore::DOMWindowSpeechSynthesis::speechSynthesis):
+        * Modules/speech/SpeechSynthesis.cpp:
+        (WebCore::Ref<SpeechSynthesis>SpeechSynthesis::create):
+        (WebCore::SpeechSynthesis::SpeechSynthesis):
+        (WebCore::SpeechSynthesis::voicesDidChange):
+        (WebCore::SpeechSynthesis::fireEvent const):
+        (WebCore::SpeechSynthesis::fireErrorEvent const):
+        (WebCore::SpeechSynthesis::handleSpeakingCompleted):
+        (WebCore::SpeechSynthesis::boundaryEventOccurred):
+        (WebCore::SpeechSynthesis::didStartSpeaking):
+        (WebCore::SpeechSynthesis::didPauseSpeaking):
+        (WebCore::SpeechSynthesis::didResumeSpeaking):
+        (WebCore::SpeechSynthesis::create): Deleted.
+        (WebCore::SpeechSynthesis::fireEvent): Deleted.
+        * Modules/speech/SpeechSynthesis.h:
+        * Modules/speech/SpeechSynthesis.idl:
+        * Modules/speech/SpeechSynthesisErrorCode.h: Added.
+        * Modules/speech/SpeechSynthesisErrorCode.idl: Copied from Source/WebCore/Modules/speech/DOMWindow+SpeechSynthesis.idl.
+        * Modules/speech/SpeechSynthesisErrorEvent.cpp: Copied from Source/WebCore/Modules/speech/SpeechSynthesisEvent.cpp.
+        (WebCore::SpeechSynthesisErrorEvent::create):
+        (WebCore::SpeechSynthesisErrorEvent::SpeechSynthesisErrorEvent):
+        * Modules/speech/SpeechSynthesisErrorEvent.h: Copied from Source/WebCore/Modules/speech/SpeechSynthesisEvent.h.
+        * Modules/speech/SpeechSynthesisErrorEvent.idl: Copied from Source/WebCore/Modules/speech/SpeechSynthesisEvent.idl.
+        * Modules/speech/SpeechSynthesisErrorEventInit.h: Copied from Source/WebCore/Modules/speech/DOMWindow+SpeechSynthesis.idl.
+        * Modules/speech/SpeechSynthesisErrorEventInit.idl: Copied from Source/WebCore/Modules/speech/DOMWindow+SpeechSynthesis.idl.
+        * Modules/speech/SpeechSynthesisEvent.cpp:
+        (WebCore::SpeechSynthesisEvent::create):
+        (WebCore::SpeechSynthesisEvent::SpeechSynthesisEvent):
+        * Modules/speech/SpeechSynthesisEvent.h:
+        (WebCore::SpeechSynthesisEvent::utterance const):
+        (WebCore::SpeechSynthesisEvent::charLength const):
+        (): Deleted.
+        * Modules/speech/SpeechSynthesisEvent.idl:
+        * Modules/speech/SpeechSynthesisEventInit.h: Copied from Source/WebCore/Modules/speech/SpeechSynthesisEvent.h.
+        (WebCore::SpeechSynthesisEventInit::SpeechSynthesisEventInit):
+        * Modules/speech/SpeechSynthesisEventInit.idl: Copied from Source/WebCore/Modules/speech/DOMWindow+SpeechSynthesis.idl.
+        * Modules/speech/SpeechSynthesisUtterance.cpp:
+        (WebCore::SpeechSynthesisUtterance::SpeechSynthesisUtterance):
+        * Modules/speech/SpeechSynthesisUtterance.h:
+        * Modules/speech/SpeechSynthesisVoice.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * page/SpeechSynthesisClient.h:
+        * platform/PlatformSpeechSynthesizer.h:
+        * platform/cocoa/PlatformSpeechSynthesizerCocoa.mm:
+        (-[WebSpeechSynthesisWrapper speechSynthesizer:willSpeakRangeOfSpeechString:utterance:]):
+        (WebCore::PlatformSpeechSynthesizer::initializeVoiceList):
+        * platform/mock/PlatformSpeechSynthesizerMock.cpp:
+        (WebCore::PlatformSpeechSynthesizerMock::speak):
+
 2022-03-10  Chris Dumez  <cdumez@apple.com>
 
         Optimize further the passing of data across threads
