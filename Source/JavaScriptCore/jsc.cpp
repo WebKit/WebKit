@@ -2130,7 +2130,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentStart, (JSGlobalObject* globalObject
     
     Thread::create(
         "JSC Agent",
-        [sourceCode = sourceCode.isolatedCopy(), workerPath = workerPath.isolatedCopy(), &didStartLock, &didStartCondition, &didStart] () {
+        [sourceCode = WTFMove(sourceCode).isolatedCopy(), workerPath = WTFMove(workerPath).isolatedCopy(), &didStartLock, &didStartCondition, &didStart] () {
             CommandLine commandLine(CommandLine::CommandLineForWorkers);
             commandLine.m_interactive = false;
             runJSC(

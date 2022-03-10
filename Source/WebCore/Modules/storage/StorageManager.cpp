@@ -91,7 +91,7 @@ void StorageManager::persisted(DOMPromiseDeferred<IDLBoolean>&& promise)
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.getPersisted(connectionInfo.origin, [promise = WTFMove(promise)](bool persisted) mutable {
+    connectionInfo.connection.getPersisted(WTFMove(connectionInfo.origin), [promise = WTFMove(promise)](bool persisted) mutable {
         promise.resolve(persisted);
     });
 }
@@ -115,7 +115,7 @@ void StorageManager::fileSystemAccessGetDirectory(DOMPromiseDeferred<IDLInterfac
         return promise.reject(connectionInfoOrException.releaseException());
 
     auto connectionInfo = connectionInfoOrException.releaseReturnValue();
-    connectionInfo.connection.fileSystemGetDirectory(connectionInfo.origin, [promise = WTFMove(promise), weakNavigator = m_navigator](auto&& result) mutable {
+    connectionInfo.connection.fileSystemGetDirectory(WTFMove(connectionInfo.origin), [promise = WTFMove(promise), weakNavigator = m_navigator](auto&& result) mutable {
         if (result.hasException())
             return promise.reject(result.releaseException());
 

@@ -162,11 +162,11 @@ void ThreadableWebSocketChannelClientWrapper::didConnect()
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveMessage(const String& message)
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessage(String&& message)
 {
-    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, message = message.isolatedCopy()] (ScriptExecutionContext&) {
+    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, message = WTFMove(message).isolatedCopy()] (ScriptExecutionContext&) mutable {
         if (m_client)
-            m_client->didReceiveMessage(message);
+            m_client->didReceiveMessage(WTFMove(message));
     }));
 
     if (!m_suspended)
@@ -217,11 +217,11 @@ void ThreadableWebSocketChannelClientWrapper::didClose(unsigned unhandledBuffere
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveMessageError(const String& reason)
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessageError(String&& reason)
 {
-    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, reason = reason.isolatedCopy()] (ScriptExecutionContext&) {
+    m_pendingTasks.append(makeUnique<ScriptExecutionContext::Task>([this, protectedThis = Ref { *this }, reason = WTFMove(reason).isolatedCopy()] (ScriptExecutionContext&) mutable {
         if (m_client)
-            m_client->didReceiveMessageError(reason);
+            m_client->didReceiveMessageError(WTFMove(reason));
     }));
 
     if (!m_suspended)

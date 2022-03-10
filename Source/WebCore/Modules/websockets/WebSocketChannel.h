@@ -79,7 +79,7 @@ public:
     ThreadableWebSocketChannel::SendResult send(Blob&) final;
     unsigned bufferedAmount() const final;
     void close(int code, const String& reason) final; // Start closing handshake.
-    void fail(const String& reason) final;
+    void fail(String&& reason) final;
     void disconnect() final;
 
     void suspend() final;

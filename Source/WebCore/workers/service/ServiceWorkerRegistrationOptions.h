@@ -39,7 +39,8 @@ struct ServiceWorkerRegistrationOptions {
     WorkerType type;
     ServiceWorkerUpdateViaCache updateViaCache;
 
-    ServiceWorkerRegistrationOptions isolatedCopy() const;
+    ServiceWorkerRegistrationOptions isolatedCopy() const &;
+    ServiceWorkerRegistrationOptions isolatedCopy() &&;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerRegistrationOptions> decode(Decoder&);

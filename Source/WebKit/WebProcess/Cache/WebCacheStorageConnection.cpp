@@ -70,7 +70,7 @@ void WebCacheStorageConnection::retrieveCaches(const WebCore::ClientOrigin& orig
     connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::Caches(origin, updateCounter), WTFMove(callback));
 }
 
-void WebCacheStorageConnection::retrieveRecords(uint64_t cacheIdentifier, const WebCore::RetrieveRecordsOptions& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
+void WebCacheStorageConnection::retrieveRecords(uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
 {
     connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::RetrieveRecords(cacheIdentifier, options), WTFMove(callback));
 }

@@ -70,7 +70,7 @@ private:
     void didReceiveText(const String&);
     void didReceiveBinaryData(const uint8_t* data, size_t length);
     void didClose(unsigned short code, const String& reason);
-    void didReceiveMessageError(const String&);
+    void didReceiveMessageError(String&&);
     void didSendHandshakeRequest(WebCore::ResourceRequest&&);
     void didReceiveHandshakeResponse(WebCore::ResourceResponse&&);
 

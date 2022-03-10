@@ -42,7 +42,8 @@ struct PushSubscriptionData {
     Vector<uint8_t> clientECDHPublicKey;
     Vector<uint8_t> sharedAuthenticationSecret;
 
-    WEBCORE_EXPORT PushSubscriptionData isolatedCopy() const;
+    WEBCORE_EXPORT PushSubscriptionData isolatedCopy() const &;
+    WEBCORE_EXPORT PushSubscriptionData isolatedCopy() &&;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PushSubscriptionData> decode(Decoder&);

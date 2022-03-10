@@ -212,7 +212,7 @@ void WebSocketChannel::close(int code, const String& reason)
         m_closingTimer.startOneShot(TCPMaximumSegmentLifetime * 2);
 }
 
-void WebSocketChannel::fail(const String& reason)
+void WebSocketChannel::fail(String&& reason)
 {
     RELEASE_LOG(Network, "WebSocketChannel %p fail() reason='%s'", this, reason.utf8().data());
     ASSERT(!m_suspended);
@@ -238,7 +238,7 @@ void WebSocketChannel::fail(const String& reason)
     m_hasContinuousFrame = false;
     m_continuousFrameData.clear();
     if (m_client)
-        m_client->didReceiveMessageError(reason);
+        m_client->didReceiveMessageError(WTFMove(reason));
 
     if (m_handle && !m_closed)
         m_handle->disconnect(); // Will call didCloseSocketStream() but maybe not synchronously.
@@ -380,7 +380,7 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle& handle, const Soc
     }
     m_shouldDiscardReceivedData = true;
     if (m_client)
-        m_client->didReceiveMessageError(message);
+        m_client->didReceiveMessageError(WTFMove(message));
     handle.disconnect();
 }
 
@@ -546,7 +546,7 @@ bool WebSocketChannel::processFrame()
     if (result == WebSocketFrame::FrameIncomplete)
         return false;
     if (result == WebSocketFrame::FrameError) {
-        fail(errorString);
+        fail(WTFMove(errorString));
         return false;
     }
 
@@ -622,7 +622,7 @@ bool WebSocketChannel::processFrame()
                 if (message.isNull())
                     fail("Could not decode a text frame as UTF-8.");
                 else
-                    m_client->didReceiveMessage(message);
+                    m_client->didReceiveMessage(WTFMove(message));
             } else if (m_continuousFrameOpCode == WebSocketFrame::OpCodeBinary)
                 m_client->didReceiveBinaryData(WTFMove(continuousFrameData));
         }
@@ -639,7 +639,7 @@ bool WebSocketChannel::processFrame()
             if (message.isNull())
                 fail("Could not decode a text frame as UTF-8.");
             else
-                m_client->didReceiveMessage(message);
+                m_client->didReceiveMessage(WTFMove(message));
         } else {
             m_hasContinuousFrame = true;
             m_continuousFrameOpCode = WebSocketFrame::OpCodeText;

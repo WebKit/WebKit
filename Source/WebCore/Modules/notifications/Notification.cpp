@@ -52,21 +52,21 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Notification);
 
-Ref<Notification> Notification::create(ScriptExecutionContext& context, const String& title, const Options& options)
+Ref<Notification> Notification::create(ScriptExecutionContext& context, String&& title, Options&& options)
 {
-    auto notification = adoptRef(*new Notification(context, title, options));
+    auto notification = adoptRef(*new Notification(context, WTFMove(title), WTFMove(options)));
     notification->suspendIfNeeded();
     notification->showSoon();
     return notification;
 }
 
-Notification::Notification(ScriptExecutionContext& context, const String& title, const Options& options)
+Notification::Notification(ScriptExecutionContext& context, String&& title, Options&& options)
     : ActiveDOMObject(&context)
-    , m_title(title.isolatedCopy())
+    , m_title(WTFMove(title).isolatedCopy())
     , m_direction(options.dir)
-    , m_lang(options.lang.isolatedCopy())
-    , m_body(options.body.isolatedCopy())
-    , m_tag(options.tag.isolatedCopy())
+    , m_lang(WTFMove(options.lang).isolatedCopy())
+    , m_body(WTFMove(options.body).isolatedCopy())
+    , m_tag(WTFMove(options.tag).isolatedCopy())
     , m_state(Idle)
     , m_contextIdentifier(context.identifier())
 {

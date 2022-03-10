@@ -38,10 +38,10 @@ struct DetachedRTCDataChannel {
     WTF_MAKE_NONCOPYABLE(DetachedRTCDataChannel);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DetachedRTCDataChannel(RTCDataChannelIdentifier identifier, const String& label, const RTCDataChannelInit& options, RTCDataChannelState state)
+    DetachedRTCDataChannel(RTCDataChannelIdentifier identifier, String&& label, RTCDataChannelInit&& options, RTCDataChannelState state)
         : identifier(identifier)
-        , label(label.isolatedCopy())
-        , options(options.isolatedCopy())
+        , label(WTFMove(label).isolatedCopy())
+        , options(WTFMove(options).isolatedCopy())
         , state(state)
     {
     }
@@ -83,7 +83,7 @@ template<class Decoder> std::unique_ptr<DetachedRTCDataChannel> DetachedRTCDataC
     if (!state)
         return { };
 
-    return makeUnique<DetachedRTCDataChannel>(*identifier, WTFMove(label), *options, *state);
+    return makeUnique<DetachedRTCDataChannel>(*identifier, WTFMove(label), WTFMove(options).value(), *state);
 }
 
 } // namespace WebCore

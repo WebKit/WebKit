@@ -126,9 +126,9 @@ void ServiceWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& t
 
 void ServiceWorkerThreadProxy::postMessageToDebugger(const String& message)
 {
-    RunLoop::main().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()] {
+    RunLoop::main().dispatch([this, protectedThis = Ref { *this }, message = message.isolatedCopy()]() mutable {
         // FIXME: Handle terminated case.
-        m_inspectorProxy.sendMessageFromWorkerToFrontend(message);
+        m_inspectorProxy.sendMessageFromWorkerToFrontend(WTFMove(message));
     });
 }
 
@@ -194,7 +194,7 @@ void ServiceWorkerThreadProxy::startFetch(SWServerConnectionIdentifier connectio
 
     ASSERT(!m_ongoingFetchTasks.contains(key));
     m_ongoingFetchTasks.add(key, client.copyRef());
-    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, client = WTFMove(client), request = request.isolatedCopy(), referrer = WTFMove(referrer).isolatedCopy(), options = options.isolatedCopy(), fetchIdentifier, isServiceWorkerNavigationPreloadEnabled, clientIdentifier = WTFMove(clientIdentifier).isolatedCopy(), resultingClientIdentifier = WTFMove(resultingClientIdentifier).isolatedCopy()](auto&) mutable {
+    postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, client = WTFMove(client), request = request.isolatedCopy(), referrer = WTFMove(referrer).isolatedCopy(), options = WTFMove(options).isolatedCopy(), fetchIdentifier, isServiceWorkerNavigationPreloadEnabled, clientIdentifier = WTFMove(clientIdentifier).isolatedCopy(), resultingClientIdentifier = WTFMove(resultingClientIdentifier).isolatedCopy()](auto&) mutable {
         thread().queueTaskToFireFetchEvent(WTFMove(client), WTFMove(request), WTFMove(referrer), WTFMove(options), fetchIdentifier, isServiceWorkerNavigationPreloadEnabled, WTFMove(clientIdentifier), WTFMove(resultingClientIdentifier));
     }, WorkerRunLoop::defaultMode());
 }

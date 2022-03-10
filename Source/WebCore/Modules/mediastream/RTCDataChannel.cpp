@@ -303,7 +303,7 @@ std::unique_ptr<DetachedRTCDataChannel> RTCDataChannel::detach()
     Locker locker { s_rtcDataChannelLocalMapLock };
     rtcDataChannelLocalMap().add(identifier().channelIdentifier, WTFMove(m_handler));
 
-    return makeUnique<DetachedRTCDataChannel>(identifier(), label().isolatedCopy(), options(), state);
+    return makeUnique<DetachedRTCDataChannel>(identifier(), String { label() }, RTCDataChannelInit { options() }, state);
 }
 
 void RTCDataChannel::removeFromDataChannelLocalMapIfNeeded()

@@ -79,7 +79,8 @@ struct ServiceWorkerContextData {
             }};
         }
 
-        ImportedScript isolatedCopy() const { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
+        ImportedScript isolatedCopy() const & { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
+        ImportedScript isolatedCopy() && { return { WTFMove(script).isolatedCopy(), WTFMove(responseURL).isolatedCopy(), WTFMove(mimeType).isolatedCopy() }; }
     };
 
     std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;

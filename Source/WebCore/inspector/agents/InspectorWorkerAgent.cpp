@@ -107,9 +107,9 @@ Protocol::ErrorStringOr<void> InspectorWorkerAgent::sendMessageToWorker(const St
     return { };
 }
 
-void InspectorWorkerAgent::sendMessageFromWorkerToFrontend(WorkerInspectorProxy& proxy, const String& message)
+void InspectorWorkerAgent::sendMessageFromWorkerToFrontend(WorkerInspectorProxy& proxy, String&& message)
 {
-    m_frontendDispatcher->dispatchMessageFromWorker(proxy.identifier(), message);
+    m_frontendDispatcher->dispatchMessageFromWorker(proxy.identifier(), WTFMove(message));
 }
 
 bool InspectorWorkerAgent::shouldWaitForDebuggerOnStart() const

@@ -43,8 +43,8 @@ private:
     void didGetDirectory(uint64_t callbackIdentifier, ExceptionOr<StorageConnection::DirectoryInfo>&&);
 
     // StorageConnection
-    void getPersisted(const ClientOrigin&, StorageConnection::PersistCallback&&) final;
-    void fileSystemGetDirectory(const ClientOrigin&, StorageConnection::GetDirectoryCallback&&) final;
+    void getPersisted(ClientOrigin&&, StorageConnection::PersistCallback&&) final;
+    void fileSystemGetDirectory(ClientOrigin&&, StorageConnection::GetDirectoryCallback&&) final;
 
     WeakPtr<WorkerGlobalScope> m_scope;
     uint64_t m_lastCallbackIdentifier { 0 };

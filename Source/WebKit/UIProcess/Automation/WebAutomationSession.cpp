@@ -116,9 +116,9 @@ void WebAutomationSession::setProcessPool(WebKit::WebProcessPool* processPool)
 
 // Inspector::RemoteAutomationTarget API
 
-void WebAutomationSession::dispatchMessageFromRemote(const String& message)
+void WebAutomationSession::dispatchMessageFromRemote(String&& message)
 {
-    m_backendDispatcher->dispatch(message);
+    m_backendDispatcher->dispatch(WTFMove(message));
 }
 
 void WebAutomationSession::connect(Inspector::FrontendChannel& channel, bool isAutomaticConnection, bool immediatelyPause)

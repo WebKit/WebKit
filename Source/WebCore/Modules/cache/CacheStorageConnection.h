@@ -44,7 +44,7 @@ public:
     virtual void remove(uint64_t cacheIdentifier, DOMCacheEngine::CacheIdentifierCallback&&) = 0;
     virtual void retrieveCaches(const ClientOrigin&, uint64_t updateCounter, DOMCacheEngine::CacheInfosCallback&&) = 0;
 
-    virtual void retrieveRecords(uint64_t cacheIdentifier, const RetrieveRecordsOptions&, DOMCacheEngine::RecordsCallback&&) = 0;
+    virtual void retrieveRecords(uint64_t cacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::RecordsCallback&&) = 0;
     virtual void batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&) = 0;
     virtual void batchPutOperation(uint64_t cacheIdentifier, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&&) = 0;
 

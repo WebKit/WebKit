@@ -177,7 +177,7 @@ void WebSocketTask::didReceiveErrorCallback(WebSocketTask* task, GError* error)
     task->didFail(String::fromUTF8(error->message));
 }
 
-void WebSocketTask::didFail(const String& errorMessage)
+void WebSocketTask::didFail(String&& errorMessage)
 {
     if (m_receivedDidFail)
         return;
@@ -188,7 +188,7 @@ void WebSocketTask::didFail(const String& errorMessage)
         g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
         m_handshakeMessage = nullptr;
     }
-    m_channel.didReceiveMessageError(errorMessage);
+    m_channel.didReceiveMessageError(WTFMove(errorMessage));
     if (!m_connection) {
         didClose(SOUP_WEBSOCKET_CLOSE_ABNORMAL, { });
         return;
@@ -269,7 +269,7 @@ void WebSocketTask::resume()
 
 void WebSocketTask::delayFailTimerFired()
 {
-    didFail(m_delayErrorMessage);
+    didFail(WTFMove(m_delayErrorMessage));
 }
 
 } // namespace WebKit

@@ -56,7 +56,7 @@ public:
     class PageChannel {
     public:
         virtual ~PageChannel() = default;
-        virtual void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, const String&) = 0;
+        virtual void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, String&&) = 0;
     };
 
     static WeakHashSet<WorkerInspectorProxy>& allWorkerInspectorProxies();
@@ -74,7 +74,7 @@ public:
     void connectToWorkerInspectorController(PageChannel&);
     void disconnectFromWorkerInspectorController();
     void sendMessageToWorkerInspectorController(const String&);
-    void sendMessageFromWorkerToFrontend(const String&);
+    void sendMessageFromWorkerToFrontend(String&&);
 
 private:
     explicit WorkerInspectorProxy(const String& identifier);

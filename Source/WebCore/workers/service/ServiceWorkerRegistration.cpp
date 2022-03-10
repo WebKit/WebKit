@@ -269,7 +269,7 @@ NavigationPreloadManager& ServiceWorkerRegistration::navigationPreload()
 }
 
 #if ENABLE(NOTIFICATION_EVENT)
-void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, const String& title, const NotificationOptions& options, DOMPromiseDeferred<void>&& promise)
+void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context, String&& title, NotificationOptions&& options, DOMPromiseDeferred<void>&& promise)
 {
     if (!m_activeWorker) {
         promise.reject(Exception { TypeError, "Registration does not have an active worker"_s });
@@ -292,7 +292,7 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
 
     // The Notification is kept alive by virtue of being show()'n soon.
     // FIXME: When implementing getNotifications(), store this Notification in the registration's notification list.
-    auto notification = Notification::create(context, title, options);
+    auto notification = Notification::create(context, WTFMove(title), WTFMove(options));
 
     context.eventLoop().queueTask(TaskSource::DOMManipulation, [promise = WTFMove(promise)]() mutable {
         promise.resolve();

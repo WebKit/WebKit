@@ -47,7 +47,8 @@ struct ServiceWorkerClientData {
     URL url;
     LastNavigationWasAppInitiated lastNavigationWasAppInitiated;
 
-    ServiceWorkerClientData isolatedCopy() const;
+    ServiceWorkerClientData isolatedCopy() const &;
+    ServiceWorkerClientData isolatedCopy() &&;
 
     static ServiceWorkerClientData from(ScriptExecutionContext&);
 

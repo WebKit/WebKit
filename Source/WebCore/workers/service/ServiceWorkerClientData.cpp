@@ -56,9 +56,14 @@ static ServiceWorkerClientFrameType toServiceWorkerClientFrameType(ScriptExecuti
     return ServiceWorkerClientFrameType::Nested;
 }
 
-ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() const
+ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() const &
 {
     return { identifier, type, frameType, url.isolatedCopy(), lastNavigationWasAppInitiated };
+}
+
+ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() &&
+{
+    return { identifier, type, frameType, WTFMove(url).isolatedCopy(), lastNavigationWasAppInitiated };
 }
 
 ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& context)

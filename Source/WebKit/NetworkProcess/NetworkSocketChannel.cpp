@@ -124,9 +124,9 @@ void NetworkSocketChannel::didClose(unsigned short code, const String& reason)
     finishClosingIfPossible();
 }
 
-void NetworkSocketChannel::didReceiveMessageError(const String& errorMessage)
+void NetworkSocketChannel::didReceiveMessageError(String&& errorMessage)
 {
-    m_errorMessage = errorMessage;
+    m_errorMessage = WTFMove(errorMessage);
     m_errorTimer.startOneShot(NetworkProcess::randomClosedPortDelay());
 }
 

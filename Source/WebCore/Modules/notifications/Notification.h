@@ -64,7 +64,7 @@ public:
         String tag;
         String icon;
     };
-    static Ref<Notification> create(ScriptExecutionContext&, const String& title, const Options&);
+    static Ref<Notification> create(ScriptExecutionContext&, String&& title, Options&&);
     
     WEBCORE_EXPORT virtual ~Notification();
 
@@ -100,7 +100,7 @@ public:
     using ThreadSafeRefCounted::deref;
 
 private:
-    Notification(ScriptExecutionContext&, const String& title, const Options&);
+    Notification(ScriptExecutionContext&, String&& title, Options&&);
     Notification(const Notification&);
 
     void contextDestroyed() final;

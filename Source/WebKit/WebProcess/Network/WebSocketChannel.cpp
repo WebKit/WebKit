@@ -212,14 +212,14 @@ void WebSocketChannel::close(int code, const String& reason)
     MessageSender::send(Messages::NetworkSocketChannel::Close { code, reason });
 }
 
-void WebSocketChannel::fail(const String& reason)
+void WebSocketChannel::fail(String&& reason)
 {
     // The client can close the channel, potentially removing the last reference.
     Ref protectedThis { *this };
 
     logErrorMessage(reason);
     if (m_client)
-        m_client->didReceiveMessageError(reason);
+        m_client->didReceiveMessageError(String { reason });
 
     if (m_isClosing)
         return;
@@ -260,7 +260,7 @@ void WebSocketChannel::didReceiveText(String&& message)
     if (!m_client)
         return;
 
-    m_client->didReceiveMessage(message);
+    m_client->didReceiveMessage(WTFMove(message));
 }
 
 void WebSocketChannel::didReceiveBinaryData(IPC::DataReference&& data)
@@ -308,7 +308,7 @@ void WebSocketChannel::didReceiveMessageError(String&& errorMessage)
         return;
 
     logErrorMessage(errorMessage);
-    m_client->didReceiveMessageError(errorMessage);
+    m_client->didReceiveMessageError(WTFMove(errorMessage));
 }
 
 void WebSocketChannel::networkProcessCrashed()

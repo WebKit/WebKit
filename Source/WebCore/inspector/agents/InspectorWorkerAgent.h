@@ -54,7 +54,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> sendMessageToWorker(const String& workerId, const String& message);
 
     // WorkerInspectorProxy::PageChannel
-    void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, const String& message);
+    void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, String&& message);
 
     // InspectorInstrumentation
     bool shouldWaitForDebuggerOnStart() const;

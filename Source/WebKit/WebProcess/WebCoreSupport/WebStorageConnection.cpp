@@ -41,7 +41,7 @@ Ref<WebStorageConnection> WebStorageConnection::create()
     return adoptRef(*new WebStorageConnection);
 }
 
-void WebStorageConnection::getPersisted(const WebCore::ClientOrigin& origin, StorageConnection::PersistCallback&& completionHandler)
+void WebStorageConnection::getPersisted(WebCore::ClientOrigin&& origin, StorageConnection::PersistCallback&& completionHandler)
 {
     connection().sendWithAsyncReply(Messages::NetworkStorageManager::Persisted(origin), WTFMove(completionHandler));
 }
@@ -51,7 +51,7 @@ void WebStorageConnection::persist(const WebCore::ClientOrigin& origin, StorageC
     connection().sendWithAsyncReply(Messages::NetworkStorageManager::Persist(origin), WTFMove(completionHandler));
 }
 
-void WebStorageConnection::fileSystemGetDirectory(const WebCore::ClientOrigin& origin, StorageConnection::GetDirectoryCallback&& completionHandler)
+void WebStorageConnection::fileSystemGetDirectory(WebCore::ClientOrigin&& origin, StorageConnection::GetDirectoryCallback&& completionHandler)
 {
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
     connection.sendWithAsyncReply(Messages::NetworkStorageManager::FileSystemGetDirectory(origin), [completionHandler = WTFMove(completionHandler)](auto result) mutable {

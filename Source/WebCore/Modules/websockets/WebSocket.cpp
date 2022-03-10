@@ -566,21 +566,21 @@ void WebSocket::didConnect()
     });
 }
 
-void WebSocket::didReceiveMessage(const String& msg)
+void WebSocket::didReceiveMessage(String&& message)
 {
-    LOG(Network, "WebSocket %p didReceiveMessage() Text message '%s'", this, msg.utf8().data());
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, msg] {
+    LOG(Network, "WebSocket %p didReceiveMessage() Text message '%s'", this, message.utf8().data());
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, message = WTFMove(message)]() mutable {
         if (m_state != OPEN)
             return;
 
         if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
             if (auto* inspector = m_channel->channelInspector()) {
-                auto utf8Message = msg.utf8();
+                auto utf8Message = message.utf8();
                 inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(utf8Message.dataAsUInt8Ptr(), utf8Message.length(), WebSocketFrame::OpCode::OpCodeText));
             }
         }
         ASSERT(scriptExecutionContext());
-        dispatchEvent(MessageEvent::create(msg, SecurityOrigin::create(m_url)->toString()));
+        dispatchEvent(MessageEvent::create(WTFMove(message), SecurityOrigin::create(m_url)->toString()));
     });
 }
 
@@ -608,10 +608,10 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
     });
 }
 
-void WebSocket::didReceiveMessageError(const String& reason)
+void WebSocket::didReceiveMessageError(String&& reason)
 {
     LOG(Network, "WebSocket %p didReceiveErrorMessage()", this);
-    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, reason] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebSocket, [this, reason = WTFMove(reason)] {
         if (m_state == CLOSED)
             return;
         m_state = CLOSED;

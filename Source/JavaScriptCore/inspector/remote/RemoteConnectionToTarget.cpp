@@ -72,7 +72,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
     return true;
 }
 
-void RemoteConnectionToTarget::sendMessageToTarget(const String& message)
+void RemoteConnectionToTarget::sendMessageToTarget(String&& message)
 {
     RemoteControllableTarget* target = nullptr;
     {
@@ -82,7 +82,7 @@ void RemoteConnectionToTarget::sendMessageToTarget(const String& message)
         target = m_target;
     }
 
-    target->dispatchMessageFromRemote(message);
+    target->dispatchMessageFromRemote(WTFMove(message));
 }
 
 void RemoteConnectionToTarget::close()

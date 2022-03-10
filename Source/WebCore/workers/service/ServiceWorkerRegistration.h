@@ -99,7 +99,7 @@ public:
         String tag;
     };
 
-    void showNotification(ScriptExecutionContext&, const String& title, const NotificationOptions&, DOMPromiseDeferred<void>&&);
+    void showNotification(ScriptExecutionContext&, String&& title, NotificationOptions&&, DOMPromiseDeferred<void>&&);
     void getNotifications(ScriptExecutionContext&, const GetNotificationOptions& filter, DOMPromiseDeferred<IDLSequence<IDLInterface<Notification>>>);
 
     void addNotificationToList(Notification&);

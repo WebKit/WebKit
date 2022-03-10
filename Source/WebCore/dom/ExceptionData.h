@@ -40,10 +40,8 @@ struct ExceptionData {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ExceptionData> decode(Decoder&);
 
-    Exception toException() const
-    {
-        return Exception { code, String { message } };
-    }
+    Exception toException() const & { return Exception { code, String { message } }; }
+    Exception toException() && { return Exception { code, WTFMove(message) }; }
 };
 
 template<class Encoder>

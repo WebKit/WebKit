@@ -80,19 +80,19 @@ void ServiceWorkerInspectorProxy::disconnectFromWorker(FrontendChannel& channel)
     });
 }
 
-void ServiceWorkerInspectorProxy::sendMessageToWorker(const String& message)
+void ServiceWorkerInspectorProxy::sendMessageToWorker(String&& message)
 {
-    m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([message = message.isolatedCopy()] (ScriptExecutionContext& context) {
+    m_serviceWorkerThreadProxy.thread().runLoop().postDebuggerTask([message = WTFMove(message).isolatedCopy()] (ScriptExecutionContext& context) {
         downcast<WorkerGlobalScope>(context).inspectorController().dispatchMessageFromFrontend(message);
     });
 }
 
-void ServiceWorkerInspectorProxy::sendMessageFromWorkerToFrontend(const String& message)
+void ServiceWorkerInspectorProxy::sendMessageFromWorkerToFrontend(String&& message)
 {
     if (!m_channel)
         return;
 
-    m_channel->sendMessageToFrontend(message);
+    m_channel->sendMessageToFrontend(WTFMove(message));
 }
 
 } // namespace WebCore

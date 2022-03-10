@@ -137,7 +137,7 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     // Inspector::RemoteAutomationTarget API
     String name() const { return m_sessionIdentifier; }
-    void dispatchMessageFromRemote(const String& message);
+    void dispatchMessageFromRemote(String&& message);
     void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false);
     void disconnect(Inspector::FrontendChannel&);
 #endif

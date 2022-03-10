@@ -257,7 +257,7 @@ void DOMFileSystem::listDirectory(ScriptExecutionContext& context, FileSystemDir
 
     m_workQueue->dispatch([protectedThis = Ref { *this }, context = Ref { context }, completionHandler = WTFMove(completionHandler), fullPath = crossThreadCopy(WTFMove(fullPath)), directoryVirtualPath = crossThreadCopy(WTFMove(directoryVirtualPath))]() mutable {
         auto listedChildren = listDirectoryWithMetadata(fullPath);
-        callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), completionHandler = WTFMove(completionHandler), listedChildren = crossThreadCopy(WTFMove(listedChildren)), directoryVirtualPath = directoryVirtualPath.isolatedCopy()]() mutable {
+        callOnMainThread([protectedThis = WTFMove(protectedThis), context = WTFMove(context), completionHandler = WTFMove(completionHandler), listedChildren = crossThreadCopy(WTFMove(listedChildren)), directoryVirtualPath = WTFMove(directoryVirtualPath).isolatedCopy()]() mutable {
             completionHandler(toFileSystemEntries(context, protectedThis, WTFMove(listedChildren), directoryVirtualPath));
         });
     });

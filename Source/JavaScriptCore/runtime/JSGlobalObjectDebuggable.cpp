@@ -64,11 +64,11 @@ void JSGlobalObjectDebuggable::disconnect(FrontendChannel& frontendChannel)
     m_globalObject.inspectorController().disconnectFrontend(frontendChannel);
 }
 
-void JSGlobalObjectDebuggable::dispatchMessageFromRemote(const String& message)
+void JSGlobalObjectDebuggable::dispatchMessageFromRemote(String&& message)
 {
     JSLockHolder locker(&m_globalObject.vm());
 
-    m_globalObject.inspectorController().dispatchMessageFromFrontend(message);
+    m_globalObject.inspectorController().dispatchMessageFromFrontend(WTFMove(message));
 }
 
 void JSGlobalObjectDebuggable::pauseWaitingForAutomaticInspection()

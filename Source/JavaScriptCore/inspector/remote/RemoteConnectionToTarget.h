@@ -61,7 +61,7 @@ public:
 #if PLATFORM(COCOA)
     void sendMessageToTarget(NSString *);
 #else
-    void sendMessageToTarget(const String&);
+    void sendMessageToTarget(String&&);
 #endif
     void close();
     void targetClosed();

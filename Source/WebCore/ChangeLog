@@ -1,3 +1,131 @@
+2022-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Optimize further the passing of data across threads
+        https://bugs.webkit.org/show_bug.cgi?id=237695
+
+        Reviewed by Geoffrey Garen.
+
+        Optimize further the passing of data across threads by leveraging the optimized
+        version of isolatedCopy() on r-value references whenever possible.
+
+        * Modules/cache/CacheStorageConnection.h:
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::queryCache):
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::toCrossThreadRecordData):
+        (WebCore::recordsDataFromRecords):
+        (WebCore::recordsDataOrErrorFromRecords):
+        (WebCore::WorkerCacheStorageConnection::retrieveRecords):
+        (WebCore::WorkerCacheStorageConnection::batchPutOperation):
+        * Modules/cache/WorkerCacheStorageConnection.h:
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::listDirectory):
+        * Modules/mediastream/DetachedRTCDataChannel.h:
+        (WebCore::DetachedRTCDataChannel::DetachedRTCDataChannel):
+        (WebCore::DetachedRTCDataChannel::decode):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::detach):
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::create):
+        (WebCore::Notification::Notification):
+        * Modules/notifications/Notification.h:
+        * Modules/push-api/PushSubscriptionData.cpp:
+        (WebCore::PushSubscriptionData::isolatedCopy const):
+        (WebCore::PushSubscriptionData::isolatedCopy):
+        * Modules/push-api/PushSubscriptionData.h:
+        * Modules/storage/DummyStorageProvider.h:
+        * Modules/storage/StorageConnection.h:
+        * Modules/storage/StorageManager.cpp:
+        (WebCore::StorageManager::persisted):
+        (WebCore::StorageManager::fileSystemAccessGetDirectory):
+        * Modules/storage/WorkerStorageConnection.cpp:
+        (WebCore::WorkerStorageConnection::getPersisted):
+        (WebCore::WorkerStorageConnection::fileSystemGetDirectory):
+        * Modules/storage/WorkerStorageConnection.h:
+        * Modules/webdatabase/ChangeVersionWrapper.cpp:
+        (WebCore::ChangeVersionWrapper::ChangeVersionWrapper):
+        * Modules/webdatabase/ChangeVersionWrapper.h:
+        (WebCore::ChangeVersionWrapper::create):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::changeVersion):
+        * Modules/webdatabase/Database.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        * Modules/webdatabase/SQLError.h:
+        (WebCore::SQLError::create):
+        (WebCore::SQLError::SQLError):
+        * Modules/websockets/ThreadableWebSocketChannel.h:
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessage):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageError):
+        * Modules/websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveMessage):
+        (WebCore::WebSocket::didReceiveMessageError):
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::fail):
+        (WebCore::WebSocketChannel::didFailSocketStream):
+        (WebCore::WebSocketChannel::processFrame):
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WebSocketChannelClient.h:
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::setURL): Deleted.
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::fail):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::fail):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessage):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::fail):
+        * Modules/websockets/WorkerThreadableWebSocketChannel.h:
+        * dom/ExceptionData.h:
+        (WebCore::ExceptionData::toException const):
+        (WebCore::ExceptionData::toException):
+        * inspector/agents/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::sendMessageFromWorkerToFrontend):
+        * inspector/agents/InspectorWorkerAgent.h:
+        * page/CacheStorageProvider.h:
+        * page/PageDebuggable.cpp:
+        (WebCore::PageDebuggable::dispatchMessageFromRemote):
+        * page/PageDebuggable.h:
+        * workers/WorkerInspectorProxy.cpp:
+        (WebCore::WorkerInspectorProxy::sendMessageFromWorkerToFrontend):
+        * workers/WorkerInspectorProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToDebugger):
+        * workers/service/SWClientConnection.cpp:
+        (WebCore::SWClientConnection::jobRejectedInServer):
+        (WebCore::SWClientConnection::registrationJobResolvedInServer):
+        * workers/service/SWClientConnection.h:
+        * workers/service/ServiceWorkerClientData.cpp:
+        (WebCore::ServiceWorkerClientData::isolatedCopy const):
+        (WebCore::ServiceWorkerClientData::isolatedCopy):
+        * workers/service/ServiceWorkerClientData.h:
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::ImportedScript::isolatedCopy const):
+        (WebCore::ServiceWorkerContextData::ImportedScript::isolatedCopy):
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::showNotification):
+        * workers/service/ServiceWorkerRegistration.h:
+        * workers/service/ServiceWorkerRegistrationOptions.cpp:
+        (WebCore::ServiceWorkerRegistrationOptions::isolatedCopy const):
+        (WebCore::ServiceWorkerRegistrationOptions::isolatedCopy):
+        * workers/service/ServiceWorkerRegistrationOptions.h:
+        * workers/service/context/ServiceWorkerDebuggable.cpp:
+        (WebCore::ServiceWorkerDebuggable::dispatchMessageFromRemote):
+        * workers/service/context/ServiceWorkerDebuggable.h:
+        * workers/service/context/ServiceWorkerInspectorProxy.cpp:
+        (WebCore::ServiceWorkerInspectorProxy::sendMessageToWorker):
+        (WebCore::ServiceWorkerInspectorProxy::sendMessageFromWorkerToFrontend):
+        * workers/service/context/ServiceWorkerInspectorProxy.h:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::postMessageToDebugger):
+        (WebCore::ServiceWorkerThreadProxy::startFetch):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::importRecords):
+
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] grid-template-areas should support discrete animation

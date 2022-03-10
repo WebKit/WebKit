@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-ChangeVersionWrapper::ChangeVersionWrapper(const String& oldVersion, const String& newVersion)
-    : m_oldVersion(oldVersion.isolatedCopy())
-    , m_newVersion(newVersion.isolatedCopy())
+ChangeVersionWrapper::ChangeVersionWrapper(String&& oldVersion, String&& newVersion)
+    : m_oldVersion(WTFMove(oldVersion).isolatedCopy())
+    , m_newVersion(WTFMove(newVersion).isolatedCopy())
 {
 }
 

@@ -52,7 +52,7 @@ public:
 
 private:
     void didConnect(GRefPtr<SoupWebsocketConnection>&&);
-    void didFail(const String&);
+    void didFail(String&&);
     void didClose(unsigned short code, const String& reason);
     void delayFailTimerFired();
 

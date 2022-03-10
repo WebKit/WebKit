@@ -79,7 +79,7 @@ public:
     virtual unsigned bufferedAmount() const = 0;
     virtual void close(int code, const String& reason) = 0;
     // Log the reason text and close the connection. Will call didClose().
-    virtual void fail(const String& reason) = 0;
+    virtual void fail(String&& reason) = 0;
     virtual void disconnect() = 0; // Will suppress didClose().
 
     virtual void suspend() = 0;

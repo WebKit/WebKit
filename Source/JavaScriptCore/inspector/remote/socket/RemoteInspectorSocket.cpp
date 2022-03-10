@@ -345,7 +345,7 @@ void RemoteInspector::sendMessageToBackend(const Event& event)
             return;
     }
 
-    connectionToTarget->sendMessageToTarget(event.message.value());
+    connectionToTarget->sendMessageToTarget(String { event.message.value() });
 }
 
 void RemoteInspector::startAutomationSession(const Event& event)

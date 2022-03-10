@@ -1,3 +1,38 @@
+2022-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Optimize further the passing of data across threads
+        https://bugs.webkit.org/show_bug.cgi?id=237695
+
+        Reviewed by Geoffrey Garen.
+
+        Optimize further the passing of data across threads by leveraging the optimized
+        version of isolatedCopy() on r-value references whenever possible.
+
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::didReceiveMessageError):
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::fileSystemGetDirectory):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::dispatchMessageFromRemote):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Inspector/WebPageDebuggable.cpp:
+        (WebKit::WebPageDebuggable::dispatchMessageFromRemote):
+        * UIProcess/Inspector/WebPageDebuggable.h:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::retrieveRecords):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::fail):
+        (WebKit::WebSocketChannel::didReceiveText):
+        (WebKit::WebSocketChannel::didReceiveMessageError):
+        * WebProcess/Network/WebSocketChannel.h:
+        * WebProcess/WebCoreSupport/WebStorageConnection.cpp:
+        (WebKit::WebStorageConnection::getPersisted):
+        (WebKit::WebStorageConnection::fileSystemGetDirectory):
+        * WebProcess/WebCoreSupport/WebStorageConnection.h:
+
 2022-03-10  Sihui Liu  <sihui_liu@apple.com>
 
         IndexedDB: free memory used by database connection on low-memory warning

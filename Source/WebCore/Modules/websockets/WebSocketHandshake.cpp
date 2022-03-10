@@ -133,11 +133,6 @@ const URL& WebSocketHandshake::url() const
     return m_url;
 }
 
-void WebSocketHandshake::setURL(const URL& url)
-{
-    m_url = url.isolatedCopy();
-}
-
 // FIXME: Return type should just be String, not const String.
 const String WebSocketHandshake::host() const
 {

@@ -114,7 +114,7 @@ public:
 protected:
     WEBCORE_EXPORT SWClientConnection();
 
-    WEBCORE_EXPORT void jobRejectedInServer(ServiceWorkerJobIdentifier, const ExceptionData&);
+    WEBCORE_EXPORT void jobRejectedInServer(ServiceWorkerJobIdentifier, ExceptionData&&);
     WEBCORE_EXPORT void registrationJobResolvedInServer(ServiceWorkerJobIdentifier, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
     WEBCORE_EXPORT void startScriptFetchForServer(ServiceWorkerJobIdentifier, ServiceWorkerRegistrationKey&&, FetchOptions::Cache);
     WEBCORE_EXPORT void postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier destinationContextIdentifier, MessageWithMessagePorts&&, ServiceWorkerData&& source, String&& sourceOrigin);

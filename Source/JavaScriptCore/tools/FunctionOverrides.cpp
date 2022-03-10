@@ -170,7 +170,7 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
     String newBody;
     {
         Locker locker { overrides.m_lock };
-        auto it = overrides.m_entries.find(sourceBodyString.isolatedCopy());
+        auto it = overrides.m_entries.find(WTFMove(sourceBodyString).isolatedCopy());
         if (it == overrides.m_entries.end())
             return false;
         newBody = it->value.isolatedCopy();

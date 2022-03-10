@@ -74,12 +74,12 @@ public:
     void clearClient();
 
     void didConnect();
-    void didReceiveMessage(const String& message);
+    void didReceiveMessage(String&& message);
     void didReceiveBinaryData(Vector<uint8_t>&&);
     void didUpdateBufferedAmount(unsigned bufferedAmount);
     void didStartClosingHandshake();
     void didClose(unsigned unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
-    void didReceiveMessageError(const String& reason);
+    void didReceiveMessageError(String&& reason);
     void didUpgradeURL();
 
     void suspend();

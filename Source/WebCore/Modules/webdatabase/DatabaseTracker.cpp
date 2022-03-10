@@ -542,14 +542,14 @@ void DatabaseTracker::addOpenDatabase(Database& database)
     auto* nameMap = m_openDatabaseMap->get(origin);
     if (!nameMap) {
         nameMap = new DatabaseNameMap;
-        m_openDatabaseMap->add(origin.isolatedCopy(), nameMap);
+        m_openDatabaseMap->add(WTFMove(origin).isolatedCopy(), nameMap);
     }
 
     String name = database.stringIdentifierIsolatedCopy();
     auto* databaseSet = nameMap->get(name);
     if (!databaseSet) {
         databaseSet = new DatabaseSet;
-        nameMap->set(name.isolatedCopy(), databaseSet);
+        nameMap->set(WTFMove(name).isolatedCopy(), databaseSet);
     }
 
     databaseSet->add(&database);

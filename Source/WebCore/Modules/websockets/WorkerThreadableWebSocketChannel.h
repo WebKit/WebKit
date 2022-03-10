@@ -63,7 +63,7 @@ public:
     ThreadableWebSocketChannel::SendResult send(Blob&) final;
     unsigned bufferedAmount() const final;
     void close(int code, const String& reason) final;
-    void fail(const String& reason) final;
+    void fail(String&& reason) final;
     void disconnect() final; // Will suppress didClose().
     void suspend() final;
     void resume() final;
@@ -82,19 +82,19 @@ public:
         void send(Blob&);
         void bufferedAmount();
         void close(int code, const String& reason);
-        void fail(const String& reason);
+        void fail(String&& reason);
         void disconnect();
         void suspend();
         void resume();
 
         // WebSocketChannelClient functions.
         void didConnect() final;
-        void didReceiveMessage(const String& message) final;
+        void didReceiveMessage(String&& message) final;
         void didReceiveBinaryData(Vector<uint8_t>&&) final;
         void didUpdateBufferedAmount(unsigned bufferedAmount) final;
         void didStartClosingHandshake() final;
         void didClose(unsigned unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason) final;
-        void didReceiveMessageError(const String& reason) final;
+        void didReceiveMessageError(String&& reason) final;
         void didUpgradeURL() final;
 
     private:
@@ -126,7 +126,7 @@ private:
         ThreadableWebSocketChannel::SendResult send(Blob&);
         unsigned bufferedAmount();
         void close(int code, const String& reason);
-        void fail(const String& reason);
+        void fail(String&& reason);
         void disconnect();
         void suspend();
         void resume();

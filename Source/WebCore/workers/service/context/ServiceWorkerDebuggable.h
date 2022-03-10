@@ -51,7 +51,7 @@ public:
 
     void connect(Inspector::FrontendChannel&, bool isAutomaticConnection = false, bool immediatelyPause = false) final;
     void disconnect(Inspector::FrontendChannel&) final;
-    void dispatchMessageFromRemote(const String& message) final;
+    void dispatchMessageFromRemote(String&& message) final;
 
 private:
     ServiceWorkerThreadProxy& m_serviceWorkerThreadProxy;
