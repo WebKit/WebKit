@@ -2676,6 +2676,46 @@ private:
 #endif
 };
 
+class GridTemplateAreasWrapper final : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    GridTemplateAreasWrapper()
+        : AnimationPropertyWrapperBase(CSSPropertyGridTemplateAreas)
+    {
+    }
+
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
+
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+    {
+        return a.implicitNamedGridColumnLines() == b.implicitNamedGridColumnLines()
+            && a.implicitNamedGridRowLines() == b.implicitNamedGridRowLines()
+            && a.namedGridArea() == b.namedGridArea()
+            && a.namedGridAreaRowCount() == b.namedGridAreaRowCount()
+            && a.namedGridAreaColumnCount() == b.namedGridAreaColumnCount();
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double progress) const final
+    {
+        LOG_WITH_STREAM(Animations, stream << " blending " << getPropertyName(property()) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << ".");
+    }
+#endif
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        ASSERT(context.isDiscrete);
+        ASSERT(!context.progress || context.progress == 1);
+
+        auto& source = context.progress ? to : from;
+        destination.setImplicitNamedGridColumnLines(source.implicitNamedGridColumnLines());
+        destination.setImplicitNamedGridRowLines(source.implicitNamedGridRowLines());
+        destination.setNamedGridArea(source.namedGridArea());
+        destination.setNamedGridAreaRowCount(source.namedGridAreaRowCount());
+        destination.setNamedGridAreaColumnCount(source.namedGridAreaColumnCount());
+    }
+};
+
 class CSSPropertyAnimationWrapperMap final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -3016,7 +3056,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new FontVariantEastAsianWrapper,
         new FontVariantLigaturesWrapper,
         new DiscretePropertyWrapper<FontVariantPosition>(CSSPropertyFontVariantPosition, &RenderStyle::fontVariantPosition, &RenderStyle::setFontVariantPosition),
-        new DiscretePropertyWrapper<FontVariantCaps>(CSSPropertyFontVariantCaps, &RenderStyle::fontVariantCaps, &RenderStyle::setFontVariantCaps)
+        new DiscretePropertyWrapper<FontVariantCaps>(CSSPropertyFontVariantCaps, &RenderStyle::fontVariantCaps, &RenderStyle::setFontVariantCaps),
+        new GridTemplateAreasWrapper
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 
