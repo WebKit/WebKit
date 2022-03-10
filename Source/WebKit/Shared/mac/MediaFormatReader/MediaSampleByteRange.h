@@ -53,6 +53,10 @@ public:
     void setTimestamps(const MediaTime&, const MediaTime&) final;
     Ref<MediaSample> createNonDisplayingCopy() const final { return *const_cast<MediaSampleByteRange*>(this); }
 
+    using const_iterator = WebCore::MediaSamplesBlock::SamplesVector::const_iterator;
+    const_iterator begin() const { return m_block.begin(); }
+    const_iterator end() const { return m_block.end(); }
+
 private:
     MediaSampleByteRange(WebCore::MediaSamplesBlock&&, MTPluginByteSourceRef);
 

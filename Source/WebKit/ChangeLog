@@ -1,3 +1,43 @@
+2022-03-10  Jean-Yves Avenard  <jya@apple.com>
+
+        MediaSampleCursor should iterate over the samples contained in the MediaSamplesBlock
+        https://bugs.webkit.org/show_bug.cgi?id=237677
+        rdar://80869041
+
+        Reviewed by Eric Carlson.
+
+        No change in observable behaviour for now, as the current code can't
+        produce MediaSamplesBlock with more than one sub-sample.
+        Tests will be added in bug 236754.
+
+        * Shared/mac/MediaFormatReader/MediaSampleByteRange.h:
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+        (WebKit::stepIterator):
+        (WebKit::MediaSampleCursor::MediaSampleCursor):
+        (WebKit::MediaSampleCursor::locateIterator const):
+        (WebKit::MediaSampleCursor::setLocator const):
+        (WebKit::MediaSampleCursor::locateMediaSample const):
+        (WebKit::MediaSampleCursor::locateTiming const):
+        (WebKit::MediaSampleCursor::stepInOrderedMap):
+        (WebKit::MediaSampleCursor::stepInPresentationTime):
+        (WebKit::MediaSampleCursor::getMediaSample const):
+        (WebKit::MediaSampleCursor::getSyncInfo const):
+        (WebKit::MediaSampleCursor::copyFormatDescription const):
+        (WebKit::MediaSampleCursor::copySampleLocation const):
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.h: The Locator type and
+        the templated code making use of it makes use of strong assumptions that
+        the iterator can only be made of one type or the other.
+        As such, the originally obvious solution to expand the Locator type with
+        a MediaSamplesBlock iterator ended up being overly complex.
+        So instead we define an additional member m_currentEntry
+        and will add all the logic handling in the stepIterator method.
+        It should be noted that while the MediaSampleCursor implements all the
+        methods of MTPluginSampleCursor; in practice only the following appear used:
+        - stepInDecodeOrderAndReportStepsTaken
+        - getSampleTiming
+        - getSyncInfo
+        - copyFormatDescription
+
 2022-03-10  Kate Cheney  <katherine_cheney@apple.com>
 
         Markup dropdown menu not working in Mail compose
