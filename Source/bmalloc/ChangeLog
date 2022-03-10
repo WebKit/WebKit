@@ -1,3 +1,23 @@
+2022-03-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [libpas] We should gurantee that in-flux-stash is fully baked when pointing table is set
+        https://bugs.webkit.org/show_bug.cgi?id=237697
+        rdar://89116983
+
+        Reviewed by Mark Lam.
+
+        To support enumerating hashtable which can be in the middle of resizing, we have in-flux-stash: this
+        small stash is used to keep old table and size while resizing. However, Mark pointed that
+        pas_tiny_large_map_hashtable_for_each_entry_remote's assertion is firing, which is ensuring that table's
+        underlying pointer should be NULL when the size is 0. But in-flux-stash, we did not guarantee that
+        in-flux-stash data is consistent when it is exposed to the enumerator (when setting hashtable_being_resized).
+
+        This patch inserts pas_compiler_fence when exposing and unexposing in-flux-stash. pas_compiler_fence is
+        enough (pas_store_store_fence is not necessary) because pas_enumerator runs after suspending the process.
+        Thus, data structure's consistency between instruction boundary is enough.
+
+        * libpas/src/libpas/pas_hashtable.h:
+
 2022-03-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] Report more actionable crash in pas_enumerator

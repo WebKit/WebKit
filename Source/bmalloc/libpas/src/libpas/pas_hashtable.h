@@ -149,10 +149,11 @@ PAS_BEGIN_EXTERN_C;
             PAS_TESTING_ASSERT(!in_flux_stash->hashtable_being_resized); \
             in_flux_stash->table_before_resize = old_table; \
             in_flux_stash->table_size_before_resize = old_size; \
+            pas_compiler_fence(); /* When hashtable_being_resized is pointing at table, table_before_resize and table_size_before_resize need to be right values. */ \
             in_flux_stash->hashtable_being_resized = table; \
         } \
         pas_compiler_fence(); \
-        \
+        /* We do not need to ensure the ordering of the following stores since in-flux-stash is effective while running this code. */ \
         table->table = new_table; \
         table->table_size = new_size; \
         table->table_mask = new_table_mask; \
@@ -161,6 +162,7 @@ PAS_BEGIN_EXTERN_C;
         pas_compiler_fence(); \
         if (in_flux_stash) { \
             in_flux_stash->hashtable_being_resized = NULL; \
+            pas_compiler_fence(); /* We should clear hashtable_being_resized first to tell memory enumerator that in_flux_stash is no longer effective. */ \
             in_flux_stash->table_before_resize = NULL; \
             in_flux_stash->table_size_before_resize = 0; \
         } \
