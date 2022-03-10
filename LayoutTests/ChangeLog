@@ -1,6 +1,14 @@
 2022-03-09  Cameron McCormack  <heycam@apple.com>
 
         Unreviewed test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=237688
+
+        * gpu-process/TestExpectations:
+        * svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg:
+
+2022-03-09  Cameron McCormack  <heycam@apple.com>
+
+        Unreviewed test gardening
         https://bugs.webkit.org/show_bug.cgi?id=236931
 
         * gpu-process/TestExpectations:

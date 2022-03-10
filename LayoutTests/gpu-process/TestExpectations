@@ -321,20 +321,10 @@ webkit.org/b/236927 fast/forms/autofocus-readonly-attribute.html [ Failure Pass 
 webkit.org/b/236927 fast/forms/input-text-autofocus.html [ Pass Failure ]
 
 # Flaky failure
-webkit.org/b/236932 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ImageOnlyFailure ]
+webkit.org/b/237684 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ImageOnlyFailure ]
 webkit.org/b/236932 css3/masking/mask-repeat-one-copy.html [ Pass ImageOnlyFailure ]
-webkit.org/b/236932 editing/pasteboard/paste-dark-mode-color-filtered.html [ Pass Failure ]
-webkit.org/b/236932 fast/speechrecognition/start-recognition-then-stop.html [ Pass Failure ]
-webkit.org/b/236932 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-content-use-007.svg [ Pass Failure ]
-webkit.org/b/236932 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image.html [ Pass ImageOnlyFailure ]
-webkit.org/b/236932 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ Pass ImageOnlyFailure ]
-# Also happening on Mac...
-webkit.org/b/236932 imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Pass Failure ]
-webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html [ Pass Failure ]
-webkit.org/b/236932 imported/w3c/web-platform-tests/workers/SharedWorker_dataUrl.html [ Pass Failure ]
-webkit.org/b/236932 js/dom/Promise-reject-large-string.html [ Pass Failure ]
-webkit.org/b/236932 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
-webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Pass Failure ]
+webkit.org/b/237685 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/clip-path-content-use-007.svg [ Pass Failure ]
+webkit.org/b/237686 imported/w3c/web-platform-tests/css/css-masking/mask-image/mask-image-url-image.html [ Pass ImageOnlyFailure ]
 
 # Flaky crash
 webkit.org/b/236930 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html [ Crash Pass ]
