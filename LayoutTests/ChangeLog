@@ -1,3 +1,27 @@
+2022-03-10  Lauro Moura  <lmoura@igalia.com>
+
+        Add context.roundRect support to OffScreenCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=232780
+        <rdar://problem/85366210>
+
+        Reviewed by Darin Adler.
+
+        * inspector/canvas/recording-2d-full-expected.txt:
+        * inspector/canvas/resources/recording-2d.js: Added calls to roundRect
+        to test the inspector processArgument()
+        * platform/glib/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.worker-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ipad/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.worker-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt: Renamed from LayoutTests/platform/glib/imported/w3c/web-platform-tests/html/dom/idlharness.worker-expected.txt.
+
 2022-03-10  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Cleanup RenderLayer::currentTransform()

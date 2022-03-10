@@ -254,6 +254,12 @@ PASS HTMLTemplateElement interface: existence and properties of interface object
 PASS HTMLSlotElement interface: existence and properties of interface object
 PASS HTMLCanvasElement interface: existence and properties of interface object
 PASS CanvasRenderingContext2D interface: existence and properties of interface object
+FAIL CanvasFilter interface: existence and properties of interface object assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
+FAIL CanvasFilter interface object length assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
+FAIL CanvasFilter interface object name assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
+FAIL CanvasFilter interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
+FAIL CanvasFilter interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
+FAIL CanvasFilter interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CanvasFilter" expected property "CanvasFilter" missing
 PASS CanvasGradient interface: existence and properties of interface object
 PASS CanvasGradient interface object length
 PASS CanvasGradient interface object name
@@ -310,7 +316,7 @@ PASS Path2D interface: operation quadraticCurveTo(unrestricted double, unrestric
 PASS Path2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS Path2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS Path2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
-FAIL Path2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>) assert_own_property: interface prototype object missing non-static operation expected property "roundRect" missing
+PASS Path2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>)
 PASS Path2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS Path2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS ImageBitmapRenderingContext interface: existence and properties of interface object
@@ -405,12 +411,12 @@ PASS OffscreenCanvasRenderingContext2D interface: attribute font
 PASS OffscreenCanvasRenderingContext2D interface: attribute textAlign
 PASS OffscreenCanvasRenderingContext2D interface: attribute textBaseline
 PASS OffscreenCanvasRenderingContext2D interface: attribute direction
-FAIL OffscreenCanvasRenderingContext2D interface: attribute textLetterSpacing assert_true: The prototype object must have a property "textLetterSpacing" expected true got false
-FAIL OffscreenCanvasRenderingContext2D interface: attribute textWordSpacing assert_true: The prototype object must have a property "textWordSpacing" expected true got false
+FAIL OffscreenCanvasRenderingContext2D interface: attribute letterSpacing assert_true: The prototype object must have a property "letterSpacing" expected true got false
 FAIL OffscreenCanvasRenderingContext2D interface: attribute fontKerning assert_true: The prototype object must have a property "fontKerning" expected true got false
 FAIL OffscreenCanvasRenderingContext2D interface: attribute fontStretch assert_true: The prototype object must have a property "fontStretch" expected true got false
 FAIL OffscreenCanvasRenderingContext2D interface: attribute fontVariantCaps assert_true: The prototype object must have a property "fontVariantCaps" expected true got false
 FAIL OffscreenCanvasRenderingContext2D interface: attribute textRendering assert_true: The prototype object must have a property "textRendering" expected true got false
+FAIL OffscreenCanvasRenderingContext2D interface: attribute wordSpacing assert_true: The prototype object must have a property "wordSpacing" expected true got false
 PASS OffscreenCanvasRenderingContext2D interface: operation closePath()
 PASS OffscreenCanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double)
@@ -418,7 +424,7 @@ PASS OffscreenCanvasRenderingContext2D interface: operation quadraticCurveTo(unr
 PASS OffscreenCanvasRenderingContext2D interface: operation bezierCurveTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation arcTo(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation rect(unrestricted double, unrestricted double, unrestricted double, unrestricted double)
-FAIL OffscreenCanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>) assert_own_property: interface prototype object missing non-static operation expected property "roundRect" missing
+PASS OffscreenCanvasRenderingContext2D interface: operation roundRect(unrestricted double, unrestricted double, unrestricted double, unrestricted double, sequence<(unrestricted double or DOMPointInit)>)
 PASS OffscreenCanvasRenderingContext2D interface: operation arc(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS OffscreenCanvasRenderingContext2D interface: operation ellipse(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, optional boolean)
 PASS CustomElementRegistry interface: existence and properties of interface object

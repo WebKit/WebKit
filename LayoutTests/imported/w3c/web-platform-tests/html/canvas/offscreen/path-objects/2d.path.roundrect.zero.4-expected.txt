@@ -1,5 +1,5 @@
 2d.path.roundrect.zero.4
 
 
-FAIL OffscreenCanvas test: 2d.path.roundrect.zero.4 ctx.roundRect is not a function. (In 'ctx.roundRect(100, 25, 0, 0, [0])', 'ctx.roundRect' is undefined)
+PASS OffscreenCanvas test: 2d.path.roundrect.zero.4
 

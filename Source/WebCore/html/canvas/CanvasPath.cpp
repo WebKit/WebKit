@@ -36,7 +36,11 @@
 #include "CanvasPath.h"
 
 #include "AffineTransform.h"
+#include "DOMPointInit.h"
 #include "FloatRect.h"
+#include "FloatRoundedRect.h"
+#include "FloatSize.h"
+#include <algorithm>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -233,6 +237,210 @@ void CanvasPath::rect(float x, float y, float width, float height)
     }
 
     m_path.addRect(FloatRect(x, y, width, height));
+}
+
+ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float height, const RadiusVariant& radii)
+{
+    return roundRect(x, y, width, height, Span { &radii, 1 });
+}
+
+ExceptionOr<void> CanvasPath::roundRect(float x, float y, float width, float height, const Span<const RadiusVariant>& radii)
+{
+    // Based on Nov 5th 2021 version of https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-roundrect
+    // 1. If any of x, y, w, or h are infinite or NaN, then return.
+
+    if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(width) || !std::isfinite(height))
+        return { };
+
+    // 2. If radii is not a list of size one, two, three, or four, then throw a RangeError.
+    if (radii.size() > 4 || radii.empty())
+        return Exception { RangeError, makeString("radii must contain at least 1 element, up to 4. It contained ", radii.size(), " elements.") };
+
+    // 3. Let normalizedRadii be an empty list.
+    Vector<FloatPoint, 4> normalizedRadii;
+
+    // 4. For each radius of radii:
+    for (auto& radius : radii) {
+        auto shouldReturnSilently = false;
+        auto exception = WTF::switchOn(radius,
+            // 4.1 If radius is a DOMPointInit:
+            [&normalizedRadii, &shouldReturnSilently](DOMPointInit point) -> ExceptionOr<void> {
+                // 4.1.1 If radius["x"] or radius["y"] is infinite or NaN, then return.
+                if (!std::isfinite(point.x) || !std::isfinite(point.y)) {
+                    shouldReturnSilently = true;
+                    return { };
+                }
+
+                // 4.1.2 If radius["x"] or radius["y"] is negative, then throw a RangeError.
+                if (point.x < 0 || point.y < 0)
+                    return Exception { RangeError, makeString("radius point coordinates must be positive") };
+
+                // 4.1.3 Otherwise, append radius to normalizedRadii.
+                normalizedRadii.append({ static_cast<float>(point.x), static_cast<float>(point.y) });
+                return { };
+            },
+            // 4.2 If radius is a unrestricted double:
+            [&normalizedRadii, &shouldReturnSilently](double radiusValue) -> ExceptionOr<void> {
+
+                // 4.2.1 If radius is infinite or NaN, then return.
+                if (!std::isfinite(radiusValue)) {
+                    shouldReturnSilently = true;
+                    return { };
+                }
+
+                // 4.2.2 If radius is negative, then throw a RangeError.
+                if (radiusValue < 0)
+                    return Exception { RangeError, makeString("radius value must be positive") };
+
+                // 4.2.3 Otherwise append «[ "x" → radius, "y" → radius ]» to normalizedRadii.
+                normalizedRadii.append({ static_cast<float>(radiusValue), static_cast<float>(radiusValue) });
+                return { };
+            }
+        );
+        if (exception.hasException() || shouldReturnSilently)
+            return exception;
+    }
+
+    // Degenerate case, fall back to regular rect.
+    // We do not do this before parsing the radii in order to make sure the Exceptions can be raised.
+    if (!width || !height) {
+        rect(x, y, width, height);
+        return { };
+    }
+
+    // 5. Let upperLeft, upperRight, lowerRight, and lowerLeft be null.
+    FloatPoint upperLeft, upperRight, lowerRight, lowerLeft;
+
+    switch (normalizedRadii.size()) {
+    case 4:
+        // 6. If normalizedRadii's size is 4, then set upperLeft to normalizedRadii[0], set upperRight to normalizedRadii[1], set lowerRight to normalizedRadii[2], and set lowerLeft to normalizedRadii[3].
+        upperLeft = normalizedRadii[0];
+        upperRight = normalizedRadii[1];
+        lowerRight = normalizedRadii[2];
+        lowerLeft = normalizedRadii[3];
+        break;
+    case 3:
+        // 7. If normalizedRadii's size is 3, then set upperLeft to normalizedRadii[0], set upperRight and lowerLeft to normalizedRadii[1], and set lowerRight to normalizedRadii[2].
+        upperLeft = normalizedRadii[0];
+        upperRight = normalizedRadii[1];
+        lowerRight = normalizedRadii[2];
+        lowerLeft = normalizedRadii[1];
+        break;
+    case 2:
+        // 8. If normalizedRadii's size is 2, then set upperLeft and lowerRight to normalizedRadii[0] and set upperRight and lowerLeft to normalizedRadii[1].
+        upperLeft = normalizedRadii[0];
+        upperRight = normalizedRadii[1];
+        lowerRight = normalizedRadii[0];
+        lowerLeft = normalizedRadii[1];
+        break;
+    case 1:
+        // 9. If normalizedRadii's size is 1, then set upperLeft, upperRight, lowerRight, and lowerLeft to normalizedRadii[0].
+        upperLeft = normalizedRadii[0];
+        upperRight = normalizedRadii[0];
+        lowerRight = normalizedRadii[0];
+        lowerLeft = normalizedRadii[0];
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    // Must handle clockwise and counter-clockwise directions properly so path winding works correctly.
+    bool clockwise = true;
+    if (width < 0) {
+        clockwise = !clockwise;
+        width = std::abs(width);
+        x -= width;
+        std::swap(upperLeft, upperRight);
+        std::swap(lowerLeft, lowerRight);
+    }
+
+    if (height < 0) {
+        clockwise = !clockwise;
+        height = std::abs(height);
+        y -= height;
+        std::swap(upperLeft, lowerLeft);
+        std::swap(upperRight, lowerRight);
+    }
+
+    // 10. Corner curves must not overlap. Scale all radii to prevent this:
+
+    // 10.1    Let top be upperLeft["x"] + upperRight["x"].
+    auto top = upperLeft.x() + upperRight.x();
+
+    // 10.2    Let right be upperRight["y"] + lowerRight["y"].
+    auto right = upperRight.y() + lowerRight.y();
+
+    // 10.3    Let bottom be lowerRight["x"] + lowerLeft["x"].
+    auto bottom = lowerRight.x() + lowerLeft.x();
+
+    // 10.4    Let left be upperLeft["y"] + lowerLeft["y"].
+    auto left = upperLeft.y() + lowerLeft.y();
+
+    // 10.5    Let scale be the minimum value of the ratios w / top, h / right, w / bottom, h / left.
+    auto scale = std::min({ width / top, height / right, width / bottom, height / left });
+
+    // 10.6    If scale is less than 1, then set the x and y members of upperLeft, upperRight, lowerLeft, and lowerRight to their current values multiplied by scale.
+    if (scale < 1) {
+        upperLeft.scale(scale);
+        upperRight.scale(scale);
+        lowerLeft.scale(scale);
+        lowerRight.scale(scale);
+    }
+
+    // 11. Create a new subpath:
+    m_path.moveTo({ x + upperLeft.x(), y });
+
+    // The 11.x clockwise substeps are handled by Path::addRoundedRect directly.
+    if (clockwise) {
+        m_path.addRoundedRect({ FloatRect(x, y, width, height),
+            { static_cast<float>(upperLeft.x()), static_cast<float>(upperLeft.y()) },
+            { static_cast<float>(upperRight.x()), static_cast<float>(upperRight.y()) },
+            { static_cast<float>(lowerLeft.x()), static_cast<float>(lowerLeft.y()) },
+            { static_cast<float>(lowerRight.x()), static_cast<float>(lowerRight.y()) },
+        });
+    } else {
+        // Top Left corner
+        if (upperLeft.x() > 0 || upperLeft.y() > 0) {
+            m_path.addBezierCurveTo({ x + upperLeft.x() * m_path.circleControlPoint(), y },
+                { x, y + upperLeft.y() * m_path.circleControlPoint() },
+                { x, y + upperLeft.y() });
+        }
+        // Left edge
+        m_path.addLineTo({ x, y + height - lowerLeft.y() });
+        // Bottom left corner
+        if (lowerLeft.x() > 0 || lowerLeft.y() > 0) {
+            m_path.addBezierCurveTo({ x, y + height - lowerLeft.y() * m_path.circleControlPoint() },
+                { x + lowerLeft.x() * m_path.circleControlPoint(), y + height },
+                { x + lowerLeft.x(), y + height });
+        }
+        // Bottom edge
+        m_path.addLineTo({ x + width - lowerRight.x(), y + height });
+        // Bottom right corner
+        if (lowerRight.x() > 0 || lowerRight.y() > 0) {
+            m_path.addBezierCurveTo({ x + width - lowerRight.x() * m_path.circleControlPoint(), y + height },
+                { x + width, y + height - lowerRight.y() * m_path.circleControlPoint() },
+                { x + width, y + height - lowerRight.y() });
+        }
+        // Right edge
+        m_path.addLineTo({ x + width, y + upperRight.y() });
+        // Top right corner
+        if (upperRight.x() > 0 || upperRight.y() > 0) {
+            m_path.addBezierCurveTo({ x + width, y + upperRight.y() * m_path.circleControlPoint() },
+                { x + width - upperRight.x() * m_path.circleControlPoint(), y },
+                { x + width - upperRight.x(), y });
+        }
+        // Top edge
+        m_path.addLineTo({ x + upperLeft.x(), y });
+    }
+
+    // 12. Mark the subpath as closed.
+    m_path.closeSubpath();
+
+    // 13. Create a new subpath with the point (x, y) as the only point in the subpath.
+    m_path.moveTo({ x, y });
+
+    return { };
 }
 
 float CanvasPath::currentX() const

@@ -1,5 +1,5 @@
 2d.path.roundrect.winding
 
 
-FAIL OffscreenCanvas test: 2d.path.roundrect.winding ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 50, 50, [0])', 'ctx.roundRect' is undefined)
+PASS OffscreenCanvas test: 2d.path.roundrect.winding
 

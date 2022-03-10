@@ -3,5 +3,5 @@ Actual output:
 Expected output:
 
 
-FAIL Canvas test: 2d.path.roundrect.end.2 ctx.roundRect is not a function. (In 'ctx.roundRect(150, 150, 2000, 2000, [0])', 'ctx.roundRect' is undefined)
+PASS Canvas test: 2d.path.roundrect.end.2
 

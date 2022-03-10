@@ -382,6 +382,12 @@ function performActions() {
             ctx.canvas.height = 2;
         },
         () => {
+            // FIXME Add overload testing the non-vector DOMPointInit after bug233255
+            ctx.roundRect(0, 0, 50, 50, 42);
+            ctx.roundRect(0, 0, 50, 50, [23]);
+            ctx.roundRect(0, 0, 150, 150, [{x: 24, y: 42}]);
+        },
+        () => {
             TestPage.dispatchEventToFrontend("LastFrame");
         },
     ];

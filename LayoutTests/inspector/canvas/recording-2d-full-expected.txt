@@ -1017,4 +1017,23 @@ frames:
       trace:
         0: (anonymous function)
         1: executeFrameFunction
+  75: (duration)
+    0: roundRect(0, 0, 50, 50, 42)
+      swizzleTypes: [Number, Number, Number, Number, Number]
+      trace:
+        0: roundRect
+        1: (anonymous function)
+        2: executeFrameFunction
+    1: roundRect(0, 0, 50, 50, [23])
+      swizzleTypes: [Number, Number, Number, Number, Array]
+      trace:
+        0: roundRect
+        1: (anonymous function)
+        2: executeFrameFunction
+    2: roundRect(0, 0, 150, 150, [{"x":24,"y":42,"z":0,"w":1}])
+      swizzleTypes: [Number, Number, Number, Number, Array]
+      trace:
+        0: roundRect
+        1: (anonymous function)
+        2: executeFrameFunction
 

@@ -1,3 +1,15 @@
+2022-03-10  Lauro Moura  <lmoura@igalia.com>
+
+        Add context.roundRect support to OffScreenCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=232780
+        <rdar://problem/85366210>
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.displayNameForSwizzleType): Added name for DOMPointInit.
+        Proper support for it should come with bug233255.
+
 2022-03-10  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Styles Panel: CSS variable completions should be provided even without a query

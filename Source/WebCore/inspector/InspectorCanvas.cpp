@@ -35,6 +35,7 @@
 #include "CanvasRenderingContext2D.h"
 #include "ColorSerialization.h"
 #include "DOMMatrix2DInit.h"
+#include "DOMPointInit.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatPoint.h"
@@ -470,6 +471,44 @@ std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::pro
         return static_cast<double>(item);
     });
     return {{ buildArrayForVector(mapped), RecordingSwizzleType::Array }};
+}
+
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(CanvasPath::RadiusVariant& argument)
+{
+    return WTF::switchOn(argument,
+        [](DOMPointInit) -> std::optional<InspectorCanvasCallTracer::ProcessedArgument> {
+            // FIXME We'd likely want to either create a new RecordingSwizzleType::DOMPointInit or RecordingSwizzleType::Object to avoid
+            // encoding the same data multiple times. See https://webkit.org/b/233255
+            return std::nullopt;
+        },
+        [](double radius) -> std::optional<InspectorCanvasCallTracer::ProcessedArgument> {
+            return { { JSON::Value::create(radius), RecordingSwizzleType::Number } };
+        });
+}
+
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(WTF::Vector<CanvasPath::RadiusVariant>& argument)
+{
+    auto processed = argument.map([&](const CanvasPath::RadiusVariant& item) -> Ref<JSON::Value> {
+        return WTF::switchOn(item,
+            [](DOMPointInit point) -> Ref<JSON::Value> {
+                auto object = JSON::Object::create();
+                object->setDouble("x"_s, point.x);
+                object->setDouble("y"_s, point.y);
+                object->setDouble("z"_s, point.z);
+                object->setDouble("w"_s, point.w);
+                // FIXME We'd likely want to either create a new RecordingSwizzleType::DOMPointInit or RecordingSwizzleType::Object to avoid
+                // encoding the same data multiple times
+                return object;
+            },
+            [](double radius) -> Ref<JSON::Value> {
+                return JSON::Value::create(radius);
+            });
+    });
+    // Did not use buildArrayForVector due to WTFMov'ing the Ref<Value> to the vector as Value copy constructor was deleted.
+    auto array = JSON::ArrayOf<JSON::Value>::create();
+    for (auto& item : processed)
+        array->addItem(WTFMove(item));
+    return { { array, RecordingSwizzleType::Array } };
 }
 
 std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvas::processArgument(double argument)

@@ -2,5 +2,5 @@
 Verify that when one radius is given to roundRect() as a non-array argument, specified as a double, it applies to all corners.
 Actual output:
 
-FAIL Verify that when one radius is given to roundRect() as a non-array argument, specified as a double, it applies to all corners. ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 100, 50, 20)', 'ctx.roundRect' is undefined)
+PASS Verify that when one radius is given to roundRect() as a non-array argument, specified as a double, it applies to all corners.
 

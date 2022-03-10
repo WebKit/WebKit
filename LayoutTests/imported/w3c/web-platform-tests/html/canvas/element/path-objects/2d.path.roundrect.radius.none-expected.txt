@@ -2,7 +2,5 @@
 Check that roundRect throws an RangeError if radii is an empty array.
 Actual output:
 
-FAIL Check that roundRect throws an RangeError if radii is an empty array. assert_throws_js: function "() => { ctx.roundRect(0, 0, 100, 50, [])}" threw object "TypeError: ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 100, 50, [])', 'ctx.roundRect' is undefined)" ("TypeError") expected instance of function "function RangeError() {
-    [native code]
-}" ("RangeError")
+PASS Check that roundRect throws an RangeError if radii is an empty array.
 

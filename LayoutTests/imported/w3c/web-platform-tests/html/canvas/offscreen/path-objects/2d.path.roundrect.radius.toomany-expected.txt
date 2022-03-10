@@ -3,5 +3,5 @@
 Check that roundRect throws an IndeSizeError if radii has more than four items.
 
 
-FAIL Check that roundRect throws an IndeSizeError if radii has more than four items. assert_throws_dom: function "function () { ctx.roundRect(0, 0, 100, 50, [0, 0, 0, 0, 0]); }" threw object "TypeError: ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 100, 50, [0, 0, 0, 0, 0])', 'ctx.roundRect' is undefined)" that is not a DOMException INDEX_SIZE_ERR: property "code" is equal to undefined, expected 1
+PASS Check that roundRect throws an IndeSizeError if radii has more than four items.
 

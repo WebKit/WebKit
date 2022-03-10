@@ -3,5 +3,5 @@
 Check that roundRects with intersecting corner arcs are rendered correctly.
 
 
-FAIL Check that roundRects with intersecting corner arcs are rendered correctly. ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 100, 50, [40, 40, 40, 40])', 'ctx.roundRect' is undefined)
+PASS Check that roundRects with intersecting corner arcs are rendered correctly.
 

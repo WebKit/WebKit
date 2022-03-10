@@ -3,5 +3,5 @@
 roundRect() with Infinity/NaN is ignored
 
 
-FAIL roundRect() with Infinity/NaN is ignored ctx.roundRect is not a function. (In 'ctx.roundRect(Infinity, 50, 1, 1, [0])', 'ctx.roundRect' is undefined)
+PASS roundRect() with Infinity/NaN is ignored
 

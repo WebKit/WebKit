@@ -54,6 +54,7 @@ enum class RecordingSwizzleType : int {
     WebGLSync = 22,
     WebGLTransformFeedback = 23,
     WebGLVertexArrayObject = 24,
+    DOMPointInit = 25,
 };
 
 } // namespace WebCore

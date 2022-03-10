@@ -1,3 +1,3 @@
 
-FAIL 2d ctx.roundRect is not a function. (In 'ctx.roundRect(150, 150, 2000, 2000, [0])', 'ctx.roundRect' is undefined)
+PASS 2d
 

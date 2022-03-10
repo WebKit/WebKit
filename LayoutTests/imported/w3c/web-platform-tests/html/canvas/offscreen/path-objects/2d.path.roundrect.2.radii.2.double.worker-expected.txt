@@ -1,3 +1,3 @@
 
-FAIL Verify that when two radii are given to roundRect(), the second radius, specified as a double, applies to the top-right and bottom-left corners. ctx.roundRect is not a function. (In 'ctx.roundRect(0, 0, 100, 50, [0, 20])', 'ctx.roundRect' is undefined)
+PASS Verify that when two radii are given to roundRect(), the second radius, specified as a double, applies to the top-right and bottom-left corners.
 

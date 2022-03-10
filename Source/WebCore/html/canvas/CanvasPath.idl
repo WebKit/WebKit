@@ -36,6 +36,8 @@ interface mixin CanvasPath {
     undefined arcTo(unrestricted double x1, unrestricted double y1, unrestricted double x2, unrestricted double y2, unrestricted double radius);
     // undefined arcTo(unrestricted double x1, unrestricted double y1, unrestricted double x2, unrestricted double y2, unrestricted double radiusX, unrestricted double radiusY, unrestricted double rotation);
     undefined rect(unrestricted double x, unrestricted double y, unrestricted double w, unrestricted double h);
+    undefined roundRect(unrestricted double x, unrestricted double y, unrestricted double w, unrestricted double h, sequence<(unrestricted double or DOMPointInit)> radii);
+    undefined roundRect(unrestricted double x, unrestricted double y, unrestricted double w, unrestricted double h, (unrestricted double or DOMPointInit) radii);
     undefined arc(unrestricted double x, unrestricted double y, unrestricted double radius, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
     undefined ellipse(unrestricted double x, unrestricted double y, unrestricted double radiusX, unrestricted double radiusY, unrestricted double rotation, unrestricted double startAngle, unrestricted double endAngle, optional boolean anticlockwise = false);
 

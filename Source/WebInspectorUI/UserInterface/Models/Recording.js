@@ -218,6 +218,8 @@ WI.Recording = class Recording extends WI.Object
             return WI.unlocalizedString("WebGLTransformFeedback");
         case WI.Recording.Swizzle.WebGLVertexArrayObject:
             return WI.unlocalizedString("WebGLVertexArrayObject");
+        case WI.Recording.Swizzle.DOMPointInit:
+            return WI.unlocalizedString("DOMPointInit");
         default:
             console.error("Unknown swizzle type", swizzleType);
             return null;

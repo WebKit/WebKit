@@ -1,3 +1,173 @@
+2022-03-10  Lauro Moura  <lmoura@igalia.com>
+
+        Add context.roundRect support to OffScreenCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=232780
+        <rdar://problem/85366210>
+
+        Reviewed by Darin Adler.
+
+        Updated baselines with PASS.
+
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompointinit-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.dompointinit.single.argument-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.double-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.1.radius.double.single.argument-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.2.radii.1.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.2.radii.1.dompointinit-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.2.radii.1.double-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.2.radii.2.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.2.radii.2.dompointinit-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.2.radii.2.double-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.1.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.1.dompointinit-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.1.double-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.2.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.2.dompointinit-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.2.double-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.3.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.3.dompointinit-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.3.double-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.1.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.1.dompointinit-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.1.double-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.2.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.2.dompointinit-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.2.double-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.3.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.3.dompointinit-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.3.double-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.4.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.4.dompointinit-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.4.double-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.closed-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.end.1-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.end.2-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.end.3-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.end.4-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.negative-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.newsubpath-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.nonfinite-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.intersecting.1-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.intersecting.2-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.negative-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.none-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.radius.toomany-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.selfintersect-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.winding-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.zero.1-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.zero.2-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.zero.3-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.zero.4-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.zero.5-expected.txt:
+        * web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.zero.6-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompoint.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompointinit-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.dompointinit.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.double-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.1.radius.double.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.dompoint.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.dompointinit-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.dompointinit.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.double-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.1.double.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.dompoint.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.dompointinit-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.dompointinit.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.double-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.2.radii.2.double.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.dompoint.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.dompointinit-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.1.dompointinit-expected.txt.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.dompointinit.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.double-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.1.double.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.dompoint.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.dompointinit-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.dompointinit.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.double-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.2.double.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.dompoint.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.dompointinit-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.3.radii.3.dompointinit-expected.txt.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.dompointinit.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.double-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.3.radii.3.double.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.dompoint.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.dompointinit-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.1.dompointinit-expected.txt.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.dompointinit.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.double-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.1.double.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.dompoint.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.dompointinit-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.2.dompointinit-expected.txt.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.dompointinit.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.double-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.2.double.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.dompoint.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.dompointinit-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.3.dompointinit-expected.txt.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.dompointinit.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.double-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.3.double.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.dompoint-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.dompoint.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.dompointinit-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.roundrect.4.radii.4.dompointinit-expected.txt.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.dompointinit.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.double-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.4.radii.4.double.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.closed-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.closed.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.3-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.3.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.4-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.end.4.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.negative-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.negative.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.newsubpath-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.newsubpath.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.nonfinite-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.nonfinite.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.intersecting.1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.intersecting.1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.intersecting.2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.intersecting.2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.negative-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.negative.worker-expected.txt: Added.
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.none-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.none.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.toomany-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.radius.toomany.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.selfintersect-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.selfintersect.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.winding-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.winding.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.1-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.1.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.2-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.2.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.3-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.3.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.4-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.4.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.5-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.5.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.6-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/path-objects/2d.path.roundrect.zero.6.worker-expected.txt:
+        * web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * web-platform-tests/html/dom/idlharness.worker-expected.txt:
+
 2022-03-10  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Cleanup RenderLayer::currentTransform()

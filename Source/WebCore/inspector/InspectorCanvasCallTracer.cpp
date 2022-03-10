@@ -33,6 +33,7 @@
 #include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
 #include "DOMMatrix2DInit.h"
+#include "DOMPointInit.h"
 #include "Element.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
