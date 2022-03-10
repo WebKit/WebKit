@@ -1,3 +1,14 @@
+2022-03-10  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Netflix.com fails to resume after moving app to background during playback
+        https://bugs.webkit.org/show_bug.cgi?id=237659
+        <rdar://88775037>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-interruption-with-resume-allowing-play-expected.txt: Added.
+        * media/media-source/media-source-interruption-with-resume-allowing-play.html: Added.
+
 2022-03-10  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r284711): [GStreamer] Buffering, seek broken on youtube.com

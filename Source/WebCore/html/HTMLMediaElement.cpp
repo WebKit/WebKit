@@ -5205,17 +5205,19 @@ void HTMLMediaElement::mediaPlayerPlaybackStateChanged()
     if (!m_player || m_pausedInternal)
         return;
 
+    updateSleepDisabling();
+
     auto playerPaused = m_player->paused();
-    ALWAYS_LOG(LOGIDENTIFIER, playerPaused);
+    bool shouldBePaused = !potentiallyPlaying();
+    ALWAYS_LOG(LOGIDENTIFIER, "playerPaused: ", playerPaused, ", shouldBePaused: ", shouldBePaused);
+    if (playerPaused == shouldBePaused)
+        return;
 
     beginProcessingMediaPlayerCallback();
     if (playerPaused)
         pauseInternal();
     else
         playInternal();
-
-    updateSleepDisabling();
-
     endProcessingMediaPlayerCallback();
 }
 

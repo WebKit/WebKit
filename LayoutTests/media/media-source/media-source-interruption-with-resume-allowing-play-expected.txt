@@ -1,0 +1,20 @@
+This tests that a video element sucessfully resumes playback after an interruption.
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = loader.duration())
+RUN(sourceBuffer = source.addSourceBuffer(loader.type()))
+RUN(sourceBuffer.appendBuffer(loader.initSegment()))
+EVENT(update)
+Append a media segment.
+RUN(sourceBuffer.appendBuffer(loader.mediaSegment(0)))
+EVENT(update)
+RUN(video.playbackRate = 0.01)
+RUN(video.play())
+EVENT(playing)
+RUN(internals.beginMediaSessionInterruption('System'))
+EVENT(pause)
+RUN(internals.endMediaSessionInterruption('MayResumePlaying'))
+EVENT(playing)
+END OF TEST
+
