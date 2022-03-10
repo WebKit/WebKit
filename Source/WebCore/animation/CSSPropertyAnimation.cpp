@@ -3015,7 +3015,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<FontVariantAlternates>(CSSPropertyFontVariantAlternates, &RenderStyle::fontVariantAlternates, &RenderStyle::setFontVariantAlternates),
         new FontVariantEastAsianWrapper,
         new FontVariantLigaturesWrapper,
-        new DiscretePropertyWrapper<FontVariantPosition>(CSSPropertyFontVariantPosition, &RenderStyle::fontVariantPosition, &RenderStyle::setFontVariantPosition)
+        new DiscretePropertyWrapper<FontVariantPosition>(CSSPropertyFontVariantPosition, &RenderStyle::fontVariantPosition, &RenderStyle::setFontVariantPosition),
+        new DiscretePropertyWrapper<FontVariantCaps>(CSSPropertyFontVariantCaps, &RenderStyle::fontVariantCaps, &RenderStyle::setFontVariantCaps)
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

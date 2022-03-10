@@ -59,4 +59,18 @@ WTF::TextStream& operator<<(TextStream& ts, FontVariantPosition position)
     return ts;
 }
 
+WTF::TextStream& operator<<(TextStream& ts, FontVariantCaps caps)
+{
+    switch (caps) {
+    case FontVariantCaps::Normal: ts << "normal"; break;
+    case FontVariantCaps::Small: ts << "small"; break;
+    case FontVariantCaps::AllSmall: ts << "all-small"; break;
+    case FontVariantCaps::Petite: ts << "petite"; break;
+    case FontVariantCaps::AllPetite: ts << "all-petite"; break;
+    case FontVariantCaps::Unicase: ts << "unicase"; break;
+    case FontVariantCaps::Titling: ts << "titling"; break;
+    }
+    return ts;
+}
+
 } // namespace WebCore

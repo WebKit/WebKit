@@ -376,6 +376,7 @@ public:
     FontSynthesis fontSynthesis() const { return fontDescription().fontSynthesis(); }
     FontVariantAlternates fontVariantAlternates() const { return fontDescription().variantAlternates(); }
     FontVariantPosition fontVariantPosition() const { return fontDescription().variantPosition(); }
+    FontVariantCaps fontVariantCaps() const { return fontDescription().variantCaps(); }
 
     const Length& textIndent() const { return m_rareInheritedData->indent; }
     TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }
@@ -1003,6 +1004,7 @@ public:
     void setFontSynthesis(FontSynthesis);
     void setFontVariantAlternates(FontVariantAlternates);
     void setFontVariantPosition(FontVariantPosition);
+    void setFontVariantCaps(FontVariantCaps);
 
     void setColor(const Color&);
     void setTextIndent(Length&& length) { SET_VAR(m_rareInheritedData, indent, WTFMove(length)); }

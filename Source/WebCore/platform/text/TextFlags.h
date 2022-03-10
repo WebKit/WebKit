@@ -98,6 +98,8 @@ enum class FontVariantCaps : uint8_t {
     Titling
 };
 
+WTF::TextStream& operator<<(WTF::TextStream&, FontVariantCaps);
+
 enum class FontVariantNumericFigure : uint8_t {
     Normal,
     LiningNumbers,

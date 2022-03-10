@@ -1,5 +1,18 @@
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] font-variant-caps should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237662
+
+        Reviewed by Myles C. Maxfield.
+
+        * web-platform-tests/css/css-fonts/animations/system-fonts-expected.txt:
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2022-03-10  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] font-variant-position should support discrete animation
         https://bugs.webkit.org/show_bug.cgi?id=237671
 
