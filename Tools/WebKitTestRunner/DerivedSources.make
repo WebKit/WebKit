@@ -84,6 +84,7 @@ SCRIPTS = \
     $(WebKitTestRunner)/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm \
     $(WebCoreScripts)/IDLParser.pm \
     $(WebCoreScripts)/generate-bindings.pl \
+    $(WebCoreScripts)/preprocessor.pm \
 #
 
 IDL_ATTRIBUTES_FILE = $(WebCoreScripts)/IDLAttributes.json

@@ -341,6 +341,15 @@ sub setBaseProductDir($)
     ($baseProductDir) = @_;
 }
 
+sub setCreatedByXcodeBuildSystem
+{
+    determineBaseProductDir();
+    make_path($baseProductDir);
+    # This attribute is needed to support VALIDATE_DEPENDENCIES and other diagnostics.
+    my @xattr = ("xattr", "-w", "com.apple.xcode.CreatedByBuildSystem", "true", $baseProductDir);
+    system(@xattr) == 0 or die "xattr failed: $?";
+}
+
 sub determineConfiguration
 {
     return if defined $configuration;

@@ -66,35 +66,40 @@ endif
 endif
 
 ifeq ($(ASAN),YES)
-ASAN_OPTION=--asan
+CONFIG_OPTIONS += --asan
 else
 ifeq ($(ASAN),NO)
-ASAN_OPTION=--no-asan
+CONFIG_OPTIONS += --no-asan
 endif
 endif
 
 ifeq ($(TSAN),YES)
-TSAN_OPTION=--tsan
+CONFIG_OPTIONS += --tsan
 else
 ifeq ($(TSAN),NO)
-TSAN_OPTION=--no-tsan
+CONFIG_OPTIONS += --no-tsan
 endif
 endif
 
 ifeq ($(UBSAN),YES)
-UBSAN_OPTION=--ubsan
+CONFIG_OPTIONS += --ubsan
 else
 ifeq ($(UBSAN),NO)
-UBSAN_OPTION=--no-ubsan
+CONFIG_OPTIONS += --no-ubsan
 endif
 endif
 
 ifeq ($(WK_LTO_MODE),full)
-WK_LTO_OPTION=--lto-mode=full
+CONFIG_OPTIONS += --lto-mode=full
 else ifeq ($(WK_LTO_MODE),thin)
-WK_LTO_OPTION=--lto-mode=thin
+CONFIG_OPTIONS += --lto-mode=thin
 else ifeq ($(WK_LTO_MODE),none)
-WK_LTO_OPTION=--lto-mode=none
+CONFIG_OPTIONS += --lto-mode=none
+endif
+
+ifeq (YES,$(findstring YES,$(VALIDATE_DEPENDENCIES)))
+CONFIG_OPTIONS += --validate-dependencies
+XCODE_OPTIONS += -EnableBuildDebugging=1 VALIDATE_DEPENDENCIES=$(VALIDATE_DEPENDENCIES)
 endif
 
 export DSYMUTIL_NUM_THREADS = $(shell sysctl -n hw.activecpu)
@@ -105,7 +110,7 @@ export PATH = $(shell getconf PATH)
 
 
 define set_webkit_configuration
-	$(SCRIPTS_PATH)/set-webkit-configuration $1 $(ASAN_OPTION) $(TSAN_OPTION) $(UBSAN_OPTION) $(WK_LTO_OPTION)
+	$(SCRIPTS_PATH)/set-webkit-configuration $1 $(CONFIG_OPTIONS)
 endef
 
 define invoke_xcode
@@ -119,7 +124,7 @@ define invoke_xcode
 endef
 
 all:
-ifneq (,$(strip $(ASAN_OPTION) $(TSAN_OPTION) $(UBSAN_OPTION) $(WK_LTO_OPTION)))
+ifneq (,$(CONFIG_OPTIONS))
 	@$(call set_webkit_configuration,)
 endif
 	@$(call invoke_xcode,,,GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')

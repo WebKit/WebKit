@@ -1,3 +1,19 @@
+2022-03-10  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] Fix GeneratedSources dependency validation errors
+        https://bugs.webkit.org/show_bug.cgi?id=237490
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixes miscellanous targets which were not specifying their task outputs correctly.
+
+        For easier dependency validation testing, Make builds now recognize a VALIDATE_DEPENDENCIES
+        setting. Building with VALIDATE_DEPENDENCIES=YES or VALIDATE_DEPENDENCIES=YES_ERROR passes
+        the setting to xcodebuild and sets a magic xattr on the build directory so that product
+        files in it are validated.
+
+        * Makefile.shared:
+
 2022-03-07  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Update Basuke Suzuki's status to reviewer

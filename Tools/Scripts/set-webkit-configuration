@@ -46,6 +46,7 @@ Usage: $programName [options]
   --lto-mode=<mode>                  Set LTO mode: full, thin, or none
   --debug                            Set the default configuration to debug
   --release                          Set the default configuration to release
+  --validate-dependencies            Configure the build directory for Xcode dependency validation
   --reset                            Reset configurations
 EOF
 
@@ -63,6 +64,7 @@ my $enableUBSAN = checkForArgumentAndRemoveFromARGV("--ubsan");
 my $disableUBSAN = checkForArgumentAndRemoveFromARGV("--no-ubsan");
 my $enableCoverage = checkForArgumentAndRemoveFromARGV("--coverage");
 my $disableCoverage = checkForArgumentAndRemoveFromARGV("--no-coverage");
+my $validateDependencies = checkForArgumentAndRemoveFromARGV("--validate-dependencies");
 my $ltoMode;
 if (!checkForArgumentAndRemoveFromARGVGettingValue("--lto-mode", \$ltoMode)) {
     $ltoMode="";
@@ -162,6 +164,10 @@ if ($ltoMode) {
     open LTO, ">", "$baseProductDir/LTO" or die;
     print LTO "$ltoMode";
     close LTO;
+}
+
+if ($validateDependencies) {
+    setCreatedByXcodeBuildSystem();
 }
 
 printCurrentSettings();
