@@ -1,3 +1,19 @@
+2022-03-10  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [MSE][SourceBuffer] Fix creating float PTS/DTS when dividing sample
+        https://bugs.webkit.org/show_bug.cgi?id=237528
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The timestamps used for sample division in SourceBuffer aren't being
+        aligned with the same rounding margin used in
+        SourceBuffer::sourceBufferPrivateDidReceiveSample().
+
+        This patch is authored by Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+        See: https://github.com/WebPlatformForEmbedded/WPEWebKit/pull/797
+
+        * platform/graphics/SourceBufferPrivate.cpp: Extracted roundTowardsTimeScaleWithRoundingMargin lambda as a function and used it from removeCodedFrames(), on top of the current usage from sourceBufferPrivateDidReceiveSample().
+
 2022-03-09  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] fill-rule should support discrete animation
