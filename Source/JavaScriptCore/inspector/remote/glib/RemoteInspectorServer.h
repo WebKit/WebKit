@@ -45,6 +45,7 @@ public:
 
     JS_EXPORT_PRIVATE bool start(const char* address, unsigned port);
     bool isRunning() const { return !!m_service; }
+    uint16_t port() const { return m_port; }
 
 private:
     static gboolean incomingConnectionCallback(GSocketService*, GSocketConnection*, GObject*, RemoteInspectorServer*);
@@ -61,6 +62,7 @@ private:
     void startAutomationSession(SocketConnection&, const char* sessionID, const RemoteInspector::Client::SessionCapabilities&);
 
     GRefPtr<GSocketService> m_service;
+    uint16_t m_port { 0 };
     HashSet<RefPtr<SocketConnection>> m_connections;
     HashMap<SocketConnection*, uint64_t> m_remoteInspectorConnectionToIDMap;
     HashMap<uint64_t, SocketConnection*> m_idToRemoteInspectorConnectionMap;

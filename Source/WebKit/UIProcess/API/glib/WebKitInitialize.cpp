@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebKitInitialize.h"
 
+#include "RemoteInspectorHTTPServer.h"
 #include "WebKit2Initialize.h"
 #include <JavaScriptCore/RemoteInspector.h>
 #include <JavaScriptCore/RemoteInspectorServer.h>
@@ -35,29 +36,52 @@
 namespace WebKit {
 
 #if ENABLE(REMOTE_INSPECTOR)
-static void initializeRemoteInspectorServer(const char* address)
+static void initializeRemoteInspectorServer()
 {
+    const char* address = g_getenv("WEBKIT_INSPECTOR_SERVER");
+    const char* httpAddress = g_getenv("WEBKIT_INSPECTOR_HTTP_SERVER");
+    if (!address && !httpAddress)
+        return;
+
     if (Inspector::RemoteInspectorServer::singleton().isRunning())
         return;
 
-    if (!address[0])
+    auto parseAddress = [](const char* address, guint64& port) -> GUniquePtr<char> {
+        if (!address || !address[0])
+            return nullptr;
+
+        GUniquePtr<char> inspectorAddress(g_strdup(address));
+        char* portPtr = g_strrstr(inspectorAddress.get(), ":");
+        if (!portPtr)
+            return nullptr;
+
+        *portPtr = '\0';
+        portPtr++;
+        port = g_ascii_strtoull(portPtr, nullptr, 10);
+        if (!port)
+            return nullptr;
+
+        return inspectorAddress;
+    };
+
+    guint64 inspectorHTTPPort;
+    auto inspectorHTTPAddress = parseAddress(httpAddress, inspectorHTTPPort);
+    guint64 inspectorPort;
+    auto inspectorAddress = !httpAddress ? parseAddress(address, inspectorPort) : GUniquePtr<char>();
+    if (!inspectorHTTPAddress && !inspectorAddress)
         return;
 
-    GUniquePtr<char> inspectorAddress(g_strdup(address));
-    char* portPtr = g_strrstr(inspectorAddress.get(), ":");
-    if (!portPtr)
-        return;
-
-    *portPtr = '\0';
-    portPtr++;
-    guint64 port = g_ascii_strtoull(portPtr, nullptr, 10);
-    if (!port)
-        return;
-
-    if (!Inspector::RemoteInspectorServer::singleton().start(inspectorAddress.get(), port))
+    if (!Inspector::RemoteInspectorServer::singleton().start(inspectorAddress ? inspectorAddress.get() : inspectorHTTPAddress.get(), inspectorAddress ? inspectorPort : 0))
         return;
 
     Inspector::RemoteInspector::setInspectorServerAddress(address);
+
+    if (httpAddress) {
+        inspectorAddress.reset(g_strdup_printf("%s:%u", inspectorHTTPAddress.get(), Inspector::RemoteInspectorServer::singleton().port()));
+        Inspector::RemoteInspector::setInspectorServerAddress(inspectorAddress.get());
+        RemoteInspectorHTTPServer::singleton().start(inspectorHTTPAddress.get(), inspectorHTTPPort, Inspector::RemoteInspectorServer::singleton().port());
+    } else
+        Inspector::RemoteInspector::setInspectorServerAddress(address);
 }
 #endif
 
@@ -68,8 +92,7 @@ void webkitInitialize()
     std::call_once(onceFlag, [] {
         InitializeWebKit2();
 #if ENABLE(REMOTE_INSPECTOR)
-        if (const char* address = g_getenv("WEBKIT_INSPECTOR_SERVER"))
-            initializeRemoteInspectorServer(address);
+        initializeRemoteInspectorServer();
 #endif
     });
 }

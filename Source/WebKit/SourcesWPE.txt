@@ -206,6 +206,9 @@ UIProcess/glib/WebProcessPoolGLib.cpp
 UIProcess/glib/WebProcessProxyGLib.cpp
 UIProcess/glib/WebsiteDataStoreGLib.cpp @no-unify
 
+UIProcess/Inspector/glib/RemoteInspectorClient.cpp
+UIProcess/Inspector/glib/RemoteInspectorHTTPServer.cpp
+
 UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 UIProcess/Launcher/glib/BubblewrapLauncher.cpp
 UIProcess/Launcher/glib/FlatpakLauncher.cpp

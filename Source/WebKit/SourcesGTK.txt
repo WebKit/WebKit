@@ -225,6 +225,7 @@ UIProcess/Gamepad/manette/UIGamepadProviderManette.cpp
 UIProcess/geoclue/GeoclueGeolocationProvider.cpp
 
 UIProcess/Inspector/glib/RemoteInspectorClient.cpp
+UIProcess/Inspector/glib/RemoteInspectorHTTPServer.cpp
 
 UIProcess/Inspector/gtk/RemoteWebInspectorUIProxyGtk.cpp
 UIProcess/Inspector/gtk/WebInspectorUIProxyGtk.cpp

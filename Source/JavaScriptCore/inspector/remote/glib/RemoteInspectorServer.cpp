@@ -188,11 +188,14 @@ bool RemoteInspectorServer::start(const char* address, unsigned port)
     g_signal_connect(m_service.get(), "incoming", G_CALLBACK(incomingConnectionCallback), this);
 
     GRefPtr<GSocketAddress> socketAddress = adoptGRef(g_inet_socket_address_new_from_string(address, port));
+    GRefPtr<GSocketAddress> effectiveAddress;
     GUniqueOutPtr<GError> error;
-    if (!g_socket_listener_add_address(G_SOCKET_LISTENER(m_service.get()), socketAddress.get(), G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_TCP, nullptr, nullptr, &error.outPtr())) {
+    if (!g_socket_listener_add_address(G_SOCKET_LISTENER(m_service.get()), socketAddress.get(), G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_TCP, nullptr, &effectiveAddress.outPtr(), &error.outPtr())) {
         g_warning("Failed to start remote inspector server on %s:%u: %s\n", address, port, error->message);
         return false;
     }
+
+    m_port = g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(effectiveAddress.get()));
 
     return true;
 }

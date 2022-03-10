@@ -1,3 +1,77 @@
+2022-03-08  Adrian Perez de Castro  <aperez@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Web Inspector: make it possible to use the remote inspector from other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=237601
+
+        Reviewed by Michael Catanzaro.
+
+        Add Base/BrowserInspectorFrontendHost.js to be used when inspector is run and InspectorFrontendHost is not
+        defined in window. This new file is only included in the inspector sources for GTK and WPE ports.
+
+        * CMakeLists.txt:
+        * PlatformWPE: Added
+        * PlatformGTK:
+        * Scripts/combine-resources.pl: Add --input-script-name to be able to skip individual scripts too.
+        * Scripts/copy-user-interface-resources.pl: If inspector frontend host should not be included, remove the script
+        from generated files.
+        * UserInterface/Base/BrowserInspectorFrontendHost.js: Added.
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.get supportsShowCertificate):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.get isRemote):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.get inspectionLevel):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.get debuggableInfo):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.get port):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.get platform):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.get platformVersionName):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.get supportsDiagnosticLogging):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.get supportsWebExtensions):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.connect):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.loaded):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.closeWindow):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.reopen):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.reset):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.bringToFront):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.inspectedURLChanged):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.showCertificate):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.setZoomFactor):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.zoomFactor):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.setForcedAppearance):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.userInterfaceLayoutDirection):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.supportsDockSide):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.requestDockSide):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.setAttachedWindowHeight):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.setAttachedWindowWidth):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.setSheetRect):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.startWindowDrag):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.moveWindowBy):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.copyText):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.killText):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.openURLExternally):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.canSave):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.save):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.append):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.close):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.showContextMenu):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.dispatchEventAsContextMenuEvent):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.sendMessageToBackend):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.unbufferedLog):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.isUnderTest):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.isExperimentalBuild):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.beep):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.inspectInspector):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.isBeingInspected):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.setAllowsInspectingInspector):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.logDiagnosticEvent):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.didShowExtensionTab):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.didHideExtensionTab):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.didNavigateExtensionTab):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.inspectedPageDidNavigate):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype.evaluateScriptInExtensionTab):
+        (window.InspectorFrontendHost.WI.BrowserInspectorFrontendHost.prototype._sendPendingMessagesToBackendIfNeeded):
+        * UserInterface/Base/Main.js:
+        (WI.loaded): Connect the inspector host if needed.
+        * UserInterface/Main.html: Add Base/BrowserInspectorFrontendHost.js.
+
 2022-03-02  Michael Saboff  <msaboff@apple.com>
 
         Copy WebKit frameworks and XPC processes to Secondary Path

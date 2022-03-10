@@ -185,6 +185,7 @@ copy(File::Spec->catfile($ENV{'JAVASCRIPTCORE_PRIVATE_HEADERS_DIR'}, 'InspectorB
 my $forceToolInstall = defined $ENV{'FORCE_TOOL_INSTALL'} && ($ENV{'FORCE_TOOL_INSTALL'} eq 'YES');
 my $shouldCombineMain = defined $ENV{'COMBINE_INSPECTOR_RESOURCES'} && ($ENV{'COMBINE_INSPECTOR_RESOURCES'} eq 'YES');
 my $shouldCombineTest = defined $ENV{'COMBINE_TEST_RESOURCES'} && ($ENV{'COMBINE_TEST_RESOURCES'} eq 'YES');
+my $shouldIncludeBrowserInspectorFrontendHost = defined $ENV{'INCLUDE_BROWSER_INSPECTOR_FRONTEND_HOST'} && ($ENV{'INCLUDE_BROWSER_INSPECTOR_FRONTEND_HOST'} eq 'YES');
 my $combineResourcesCmd = File::Spec->catfile($scriptsRoot, 'combine-resources.pl');
 
 if ($forceToolInstall) {
@@ -201,12 +202,27 @@ if (!$shouldCombineMain) {
     # Keep the files separate for engineering builds. Copy these before altering Main.html
     # in other ways, such as combining for WebKitAdditions or inlining files.
     ditto($uiRoot, $targetResourcePath);
+
+    if (!$shouldIncludeBrowserInspectorFrontendHost) {
+        unlink File::Spec->catfile($targetResourcePath, 'Base', 'BrowserInspectorFrontendHost.js');
+    }
 }
 
 # Always refer to the copy in derived sources so the order of replacements does not matter.
 make_path($derivedSourcesDir);
 my $derivedSourcesMainHTML = File::Spec->catfile($derivedSourcesDir, 'Main.html');
 copy(File::Spec->catfile($uiRoot, 'Main.html'), File::Spec->catfile($derivedSourcesDir, 'Main.html')) or die "Copy failed: $!";
+
+if (!$shouldIncludeBrowserInspectorFrontendHost) {
+    system($perl, $combineResourcesCmd,
+        '--input-dir', 'Base',
+        '--input-html', $derivedSourcesMainHTML,
+        '--input-html-dir', $uiRoot,
+        '--input-script-name', 'BrowserInspectorFrontendHost.js',
+        '--derived-sources-dir', $derivedSourcesDir,
+        '--output-dir', $derivedSourcesDir,
+        '--strip');
+}
 
 sub webInspectorUIAdditionsDir() {
     my $webkitAdditionsDir;

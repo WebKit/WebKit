@@ -124,41 +124,7 @@ void RemoteInspectorProtocolHandler::handleRequest(WebKitURISchemeRequest* reque
         return makeUnique<RemoteInspectorClient>(requestURL.host().utf8().data(), requestURL.port().value(), *this);
     }).iterator->value.get();
 
-    GString* html = g_string_new(
-        "<html><head><title>Remote inspector</title>"
-        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
-        "<style>"
-        "  h1 { color: #babdb6; text-shadow: 0 1px 0 white; margin-bottom: 0; }"
-        "  html { font-family: -webkit-system-font; font-size: 11pt; color: #2e3436; padding: 20px 20px 0 20px; background-color: #f6f6f4; "
-        "         background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #eeeeec), color-stop(1, #f6f6f4));"
-        "         background-size: 100% 5em; background-repeat: no-repeat; }"
-        "  table { width: 100%; border-collapse: collapse; }"
-        "  table, td { border: 1px solid #d3d7cf; border-left: none; border-right: none; }"
-        "  p { margin-bottom: 30px; }"
-        "  td { padding: 15px; }"
-        "  td.data { width: 200px; }"
-        "  .targetname { font-weight: bold; }"
-        "  .targeturl { color: #babdb6; }"
-        "  td.input { width: 64px; }"
-        "  input { width: 100%; padding: 8px; }"
-        "</style>"
-        "</head><body><h1>Inspectable targets</h1>");
-    if (client->targets().isEmpty())
-        g_string_append(html, "<p>No targets found</p>");
-    else {
-        g_string_append(html, "<table>");
-        for (auto connectionID : client->targets().keys()) {
-            for (auto& target : client->targets().get(connectionID)) {
-                g_string_append_printf(html,
-                    "<tbody><tr>"
-                    "<td class=\"data\"><div class=\"targetname\">%s</div><div class=\"targeturl\">%s</div></td>"
-                    "<td class=\"input\"><input type=\"button\" value=\"Inspect\" onclick=\"window.webkit.messageHandlers.inspector.postMessage('%" G_GUINT64_FORMAT ":%" G_GUINT64_FORMAT ":%s');\"></td>"
-                    "</tr></tbody>", target.name.data(), target.url.data(), connectionID, target.id, target.type.data());
-            }
-        }
-        g_string_append(html, "</table>");
-    }
-    g_string_append(html, "</body></html>");
+    auto* html = client->buildTargetListPage(RemoteInspectorClient::InspectorType::UI);
     gsize streamLength = html->len;
     GRefPtr<GInputStream> stream = adoptGRef(g_memory_input_stream_new_from_data(g_string_free(html, FALSE), streamLength, g_free));
     webkit_uri_scheme_request_finish(request, stream.get(), streamLength, "text/html");

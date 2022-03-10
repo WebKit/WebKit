@@ -1,3 +1,17 @@
+2022-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Web Inspector: make it possible to use the remote inspector from other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=237601
+
+        Reviewed by Michael Catanzaro.
+
+        Make it possible to start the inspector server with 0 port, meaning any free one will be used.
+
+        * inspector/remote/glib/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::start): Pass the effective address to g_socket_listener_add_address and get the port.
+        * inspector/remote/glib/RemoteInspectorServer.h:
+        (Inspector::RemoteInspectorServer::port const): Return the port the server is listening to.
+
 2022-03-09  Saam Barati  <sbarati@apple.com>
 
         Limit WK_XCODE_SUPPORTS_LTO in JavaScriptCore based on target OS

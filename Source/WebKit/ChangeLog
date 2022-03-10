@@ -1,3 +1,36 @@
+2022-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Web Inspector: make it possible to use the remote inspector from other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=237601
+
+        Reviewed by Michael Catanzaro.
+
+        This is no longer possible since we switched to the new remote inspector. We don't want to bring the legacy
+        remote inspector back, but it should be possible to use a mixed approach, using a WebSocket for the inspector
+        protocol communication, but still using the new remote inspector code. This patch adds a simple HTTP browser to
+        server the inspector resources and open WebSocket connection to the inspector. It pretends to be a remote
+        inspector client, so we don't need any change in the current remote inspector implementation. The server is only
+        started when the env var WEBKIT_INSPECTOR_HTTP_SERVER is present, and the inspector server is started for the
+        same host but using a free port.
+
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * UIProcess/API/glib/WebKitInitialize.cpp:
+        (WebKit::initializeRemoteInspectorServer): Start the HTTP server if the env var WEBKIT_INSPECTOR_HTTP_SERVER is present.
+        (WebKit::webkitInitialize): Just call initializeRemoteInspectorServer().
+        * UIProcess/API/gtk/WebKitRemoteInspectorProtocolHandler.cpp:
+        (WebKit::RemoteInspectorProtocolHandler::handleRequest): Use RemoteInspectorClient::buildTargetListPage().
+        * UIProcess/Inspector/glib/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::inspect): Only call RemoteInspectorProxy::load() for UI inspector type.
+        (WebKit::RemoteInspectorClient::buildTargetListPage const): Build the target list page, using message handlers
+        for UI inspector and window.open for the HTTP inspector.
+        * UIProcess/Inspector/glib/RemoteInspectorClient.h:
+        (WebKit::RemoteInspectorClient::targets const): Deleted.
+        * UIProcess/Inspector/glib/RemoteInspectorHTTPServer.cpp: Added.
+        (WebKit::RemoteInspectorHTTPServer::singleton):
+        * UIProcess/Inspector/glib/RemoteInspectorHTTPServer.h: Added.
+
 2022-03-09  Megan Gardner  <megan_gardner@apple.com>
 
         Combine Lookup and Define.
