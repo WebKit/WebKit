@@ -53,6 +53,9 @@ WebAuthenticatorCoordinatorProxy::WebAuthenticatorCoordinatorProxy(WebPageProxy&
 
 WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
 {
+#if HAVE(UNIFIED_ASC_AUTH_UI)
+    cancel();
+#endif // HAVE(UNIFIED_ASC_AUTH_UI)
     m_webPageProxy.process().removeMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID());
 }
 

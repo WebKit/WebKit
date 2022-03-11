@@ -341,6 +341,8 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 - (void)performAutoFillAuthorizationRequestsForContext:(ASCCredentialRequestContext *)context withCompletionHandler:(void (^)(id <ASCCredentialProtocol> _Nullable credential, NSError * _Nullable error))completionHandler;
 #endif
 
+- (void)cancelCurrentRequest;
+
 @end
 
 @interface ASCAgentProxy : NSObject <ASCAgentProtocol>

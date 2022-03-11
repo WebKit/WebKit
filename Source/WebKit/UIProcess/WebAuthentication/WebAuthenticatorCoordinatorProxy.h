@@ -45,6 +45,7 @@ struct SecurityOriginData;
 #if HAVE(UNIFIED_ASC_AUTH_UI)
 OBJC_CLASS ASCAuthorizationRemotePresenter;
 OBJC_CLASS ASCCredentialRequestContext;
+OBJC_CLASS ASCAgentProxy;
 #endif
 
 namespace WebKit {
@@ -80,9 +81,11 @@ private:
     WebPageProxy& m_webPageProxy;
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)
+    void cancel();
     RetainPtr<ASCCredentialRequestContext> contextForRequest(WebAuthenticationRequestData&&);
     void performRequest(RetainPtr<ASCCredentialRequestContext>, RequestCompletionHandler&&);
     RetainPtr<ASCAuthorizationRemotePresenter> m_presenter;
+    RetainPtr<ASCAgentProxy> m_proxy;
 #endif // HAVE(UNIFIED_ASC_AUTH_UI)
 };
 

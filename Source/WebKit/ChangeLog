@@ -1,5 +1,26 @@
 2022-03-11  J Pascoe  <j_pascoe@apple.com>
 
+        [WebAuthn] Cancel running operations in ASA on navigation
+        https://bugs.webkit.org/show_bug.cgi?id=237452
+        rdar://problem/89781990
+
+        Reviewed by Brent Fulgham.
+
+        Pre-ASA WebAuthn calls cancel requests on navigation via calling authenticatorManager.cancelRequest
+        in WebPageProxy. In WebAuthn calls that go through ASA, the authenticatorManager lives in the ASA
+        process, so calls won't be cancelled on navigation.
+
+        This patch attempts to cancel ongoing operations whenever a WebAuthenticatorCoordinatorProxy that
+        uses ASA is destroyed, effectively cancelling requests on reload or navigation.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp:
+        (WebKit::WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy):
+        * UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.h:
+
+2022-03-11  J Pascoe  <j_pascoe@apple.com>
+
         [WebAuthn] Support authenticatorSelection.residentKey ResidentKeyRequirement
         https://bugs.webkit.org/show_bug.cgi?id=237567
         rdar://89788378
