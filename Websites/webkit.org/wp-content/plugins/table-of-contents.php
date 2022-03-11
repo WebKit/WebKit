@@ -20,6 +20,17 @@ class WebKitTableOfContents {
         add_filter( 'wp_insert_post_data', array( 'WebKitTableOfContents', 'wp_insert_post_data' ), 20, 2 );
         add_action( 'wp_insert_post', array( 'WebKitTableOfContents', 'wp_insert_post' ) );
     }
+    
+    public static function tocEnabled ($post_type) {
+        $build_toc = get_post_meta(get_the_ID(), 'build-table-of-contents', true);
+        if ($build_toc === 'enabled')
+            return true;
+
+        if (in_array($post_type, self::$supported_post_types))
+            return true;
+
+        return false;
+    }
 
     public static function hasIndex() {
         $toc = get_post_meta( get_the_ID(), 'toc', true );
@@ -33,10 +44,10 @@ class WebKitTableOfContents {
     }
 
     public static function renderMarkup() {
-        if (!in_array(get_post_type(), self::$supported_post_types))
+        if (!self::tocEnabled(get_post_type()))
             return;
 
-        if ( empty(self::$toc) || ! self::hasIndex() )
+        if ( ! self::hasIndex() || empty(self::$toc) )
             return;
 
         $depth = 0;
@@ -74,7 +85,7 @@ class WebKitTableOfContents {
     }
 
     public function wp_insert_post_data( $post_data, $record ) {
-        if (!in_array($post_data['post_type'], self::$supported_post_types))
+        if (!self::tocEnabled($post_data['post_type']))
             return $post_data;
 
         $post_data['post_content'] = self::parse($post_data['post_content']);

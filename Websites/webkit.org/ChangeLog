@@ -1,3 +1,14 @@
+2022-03-11  Jon Davis  <jond@apple.com>
+
+        Allow table of contents on posts in special cases
+        https://bugs.webkit.org/show_bug.cgi?id=237744
+
+        Reviewed by Devin Rousso.
+
+        * wp-content/plugins/table-of-contents.php:
+        * wp-content/themes/webkit/functions.php:
+        * wp-content/themes/webkit/single.php:
+
 2022-03-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Style] Forbid spaces between type names and protocol names in Objective-C

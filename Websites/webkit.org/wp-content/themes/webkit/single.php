@@ -13,6 +13,8 @@
             </div>
 
             <div class="bodycopy">
+                <?php table_of_contents(); ?>
+                
                 <?php the_content('<p class="serif">Read the rest of this entry &gt;&gt;</p>'); ?>
 
                 <?php link_pages('<p><strong>Pages:</strong> ', '</p>', 'number'); ?>
