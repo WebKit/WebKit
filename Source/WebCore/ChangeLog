@@ -1,3 +1,33 @@
+2022-03-11  Ben Nham  <nham@apple.com>
+
+        Fix WebContent jetsam that occurs when selecting text in a large e-mail
+        https://bugs.webkit.org/show_bug.cgi?id=237698
+
+        Reviewed by Simon Fraser.
+
+        When selecting text in a large e-mail in MobileMail, we often jetsam. This is due to this
+        chain of events:
+
+         1. If the selection extends enough to start causing the content to pan (which is easy
+            to do when zoomed in on the mail content), then AutoscrollController ends up changing
+            the scroll position of the FrameView to perform the pan.
+         2. FrameView::requestScrollPositionUpdate tries to prepopulate tiles around the endpoint
+            of the pan by calling TileController::prepopulateRect with visibleContentRect's size.
+
+        The problem is that MobileMail resizes their web view (and therefore FrameView) to match
+        the size of the content. This causes FrameView's visibleContentRect to be very large (>100k
+        pts high for some emails). As a result, we end up prepopulating every single tile in the
+        email, causing a huge spike in IOSurface memory usage that leads to a jetsam.
+
+        To fix this, we make FrameView::requestScrollPositionUpdate act more like
+        RenderLayerCompositor::visibleRectForLayerFlushing. In particular, on iOS, we now use
+        exposedContentRect instead of visibleContentRect. Since exposedContentRect is derived from
+        contentOffset/contentSize of the scroll view in the UIProcess, it's more correct and is much
+        smaller than visibleContentRect in this case.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::requestScrollPositionUpdate):
+
 2022-03-11  Brandon Stewart  <brandonstewart@apple.com>
 
         Verify values before adding to hash map
