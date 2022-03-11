@@ -1,3 +1,13 @@
+2022-03-11  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Unreviewed build fix after r291177
+        https://bugs.webkit.org/show_bug.cgi?id=237797
+        rdar://problem/90183881
+
+        Remove unused move that is breaking iOS build
+
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+
 2022-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         Do buffer swapping on all RemoteLayerBackingStores before painting all of them
