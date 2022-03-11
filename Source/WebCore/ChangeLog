@@ -1,5 +1,15 @@
 2022-03-11  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] text-rendering should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237777
+
+        Reviewed by Antti Koivisto.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
+2022-03-11  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] refactor discrete FontCascadeDescription to use dedicated animation wrappers
         https://bugs.webkit.org/show_bug.cgi?id=237776
 

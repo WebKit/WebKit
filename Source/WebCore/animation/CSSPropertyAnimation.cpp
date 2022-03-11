@@ -3247,7 +3247,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscreteFontDescriptionTypedWrapper<FontVariantCaps>(CSSPropertyFontVariantCaps, &FontCascadeDescription::variantCaps, &FontCascadeDescription::setVariantCaps),
         new GridTemplateAreasWrapper,
         new QuotesWrapper,
-        new DiscretePropertyWrapper<bool>(CSSPropertyScrollBehavior, &RenderStyle::useSmoothScrolling, &RenderStyle::setUseSmoothScrolling)
+        new DiscretePropertyWrapper<bool>(CSSPropertyScrollBehavior, &RenderStyle::useSmoothScrolling, &RenderStyle::setUseSmoothScrolling),
+        new DiscreteFontDescriptionTypedWrapper<TextRenderingMode>(CSSPropertyTextRendering, &FontCascadeDescription::textRenderingMode, &FontCascadeDescription::setTextRenderingMode),
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 

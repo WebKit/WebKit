@@ -213,6 +213,10 @@ PASS text-overflow (type: discrete) has testInterpolation function
 PASS text-overflow uses discrete animation when animating between "clip" and "ellipsis" with linear easing
 PASS text-overflow uses discrete animation when animating between "clip" and "ellipsis" with effect easing
 PASS text-overflow uses discrete animation when animating between "clip" and "ellipsis" with keyframe easing
+PASS text-rendering (type: discrete) has testInterpolation function
+PASS text-rendering uses discrete animation when animating between "optimizeSpeed" and "optimizeLegibility" with linear easing
+PASS text-rendering uses discrete animation when animating between "optimizeSpeed" and "optimizeLegibility" with effect easing
+PASS text-rendering uses discrete animation when animating between "optimizeSpeed" and "optimizeLegibility" with keyframe easing
 PASS text-shadow (type: textShadowList) has testInterpolation function
 PASS text-shadow: from none to other
 PASS text-shadow: from other to none

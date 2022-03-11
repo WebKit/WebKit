@@ -180,6 +180,9 @@ PASS text-emphasis-style: "circle" onto "open dot"
 PASS text-overflow (type: discrete) has testAddition function
 PASS text-overflow: "ellipsis" onto "clip"
 PASS text-overflow: "clip" onto "ellipsis"
+PASS text-rendering (type: discrete) has testAddition function
+PASS text-rendering: "optimizeLegibility" onto "optimizeSpeed"
+PASS text-rendering: "optimizeSpeed" onto "optimizeLegibility"
 PASS text-shadow (type: textShadowList) has testAddition function
 PASS text-shadow: shadow
 PASS text-transform (type: discrete) has testAddition function
