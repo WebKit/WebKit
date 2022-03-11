@@ -43,6 +43,9 @@ PASS mask-composite: "add" onto "subtract"
 PASS mask-image (type: discrete) has testAccumulation function
 PASS mask-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS mask-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
+PASS mask-mode (type: discrete) has testAccumulation function
+PASS mask-mode: "luminance" onto "alpha"
+PASS mask-mode: "alpha" onto "luminance"
 PASS mask-origin (type: discrete) has testAccumulation function
 PASS mask-origin: "border-box" onto "content-box"
 PASS mask-origin: "content-box" onto "border-box"
