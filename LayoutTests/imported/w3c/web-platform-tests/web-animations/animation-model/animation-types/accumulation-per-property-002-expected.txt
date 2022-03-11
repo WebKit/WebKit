@@ -152,6 +152,9 @@ PASS stroke-dasharray: dasharray
 PASS stroke-dasharray (type: discrete) has testAccumulation function
 PASS stroke-dasharray: "10px, 20px" onto "none"
 PASS stroke-dasharray: "none" onto "10px, 20px"
+PASS stroke-linecap (type: discrete) has testAccumulation function
+PASS stroke-linecap: "square" onto "round"
+PASS stroke-linecap: "round" onto "square"
 PASS stroke-miterlimit (type: positiveNumber) has testAccumulation function
 PASS stroke-miterlimit: positive number
 PASS stroke-opacity (type: opacity) has testAccumulation function

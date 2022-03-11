@@ -183,6 +183,10 @@ PASS stroke-dasharray (type: discrete) has testInterpolation function
 PASS stroke-dasharray uses discrete animation when animating between "none" and "10px, 20px" with linear easing
 PASS stroke-dasharray uses discrete animation when animating between "none" and "10px, 20px" with effect easing
 PASS stroke-dasharray uses discrete animation when animating between "none" and "10px, 20px" with keyframe easing
+PASS stroke-linecap (type: discrete) has testInterpolation function
+PASS stroke-linecap uses discrete animation when animating between "round" and "square" with linear easing
+PASS stroke-linecap uses discrete animation when animating between "round" and "square" with effect easing
+PASS stroke-linecap uses discrete animation when animating between "round" and "square" with keyframe easing
 PASS stroke-miterlimit (type: positiveNumber) has testInterpolation function
 PASS stroke-miterlimit supports animating as a positive number
 PASS stroke-opacity (type: opacity) has testInterpolation function

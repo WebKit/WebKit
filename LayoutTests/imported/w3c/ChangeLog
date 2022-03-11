@@ -1,5 +1,16 @@
 2022-03-11  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] stroke-linecap should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237763
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
+2022-03-11  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] mask-repeat should support discrete animation
         https://bugs.webkit.org/show_bug.cgi?id=237771
 
