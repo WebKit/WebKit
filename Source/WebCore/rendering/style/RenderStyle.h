@@ -1438,19 +1438,6 @@ public:
     const SVGRenderStyle& svgStyle() const { return m_svgStyle; }
     SVGRenderStyle& accessSVGStyle() { return m_svgStyle.access(); }
 
-    WindRule clipRule() const { return svgStyle().clipRule(); }
-    void setClipRule(WindRule clipRule) { accessSVGStyle().setClipRule(clipRule); }
-    ColorInterpolation colorInterpolation() const { return svgStyle().colorInterpolation(); }
-    void setColorInterpolation(ColorInterpolation colorInterpolation) { accessSVGStyle().setColorInterpolation(colorInterpolation); }
-    ColorInterpolation colorInterpolationFilters() const { return svgStyle().colorInterpolationFilters(); }
-    void setColorInterpolationFilters(ColorInterpolation colorInterpolationFilters) { accessSVGStyle().setColorInterpolationFilters(colorInterpolationFilters); }
-
-    DominantBaseline dominantBaseline() const { return svgStyle().dominantBaseline(); }
-    void setDominantBaseline(DominantBaseline dominantBaseline) { return accessSVGStyle().setDominantBaseline(dominantBaseline); }
-
-    WindRule fillRule() const { return svgStyle().fillRule(); }
-    void setFillRule(WindRule fillRule) { accessSVGStyle().setFillRule(fillRule); }
-
     SVGPaintType fillPaintType() const { return svgStyle().fillPaintType(); }
     Color fillPaintColor() const { return svgStyle().fillPaintColor(); }
     void setFillPaintColor(const Color& color) { accessSVGStyle().setFillPaint(SVGPaintType::RGBColor, color, emptyString()); }

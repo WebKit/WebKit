@@ -1,3 +1,30 @@
+2022-03-11  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] refactor discrete SVG properties to use a dedicated animation wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=237760
+
+        Reviewed by Antti Koivisto.
+
+        We added getters and setters on RenderStyle for properties exposed on SVGRenderStyle
+        solely for the purpose of animation support. Instead, we add a dedicated animation
+        wrapper that removes the methods from RenderStyle and do all the work in
+        CSSPropertyAnimation.cpp. This will be beneficial for future SVG properties
+        with discrete animation support that are yet to be added.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::clipRule const): Deleted.
+        (WebCore::RenderStyle::setClipRule): Deleted.
+        (WebCore::RenderStyle::colorInterpolation const): Deleted.
+        (WebCore::RenderStyle::setColorInterpolation): Deleted.
+        (WebCore::RenderStyle::colorInterpolationFilters const): Deleted.
+        (WebCore::RenderStyle::setColorInterpolationFilters): Deleted.
+        (WebCore::RenderStyle::dominantBaseline const): Deleted.
+        (WebCore::RenderStyle::setDominantBaseline): Deleted.
+        (WebCore::RenderStyle::fillRule const): Deleted.
+        (WebCore::RenderStyle::setFillRule): Deleted.
+
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] mask-origin should support discrete animation
