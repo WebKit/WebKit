@@ -1,3 +1,17 @@
+2022-03-11  Michael Saboff  <msaboff@apple.com>
+
+        WebGPU Catalyst builds fail when using the system content path
+        https://bugs.webkit.org/show_bug.cgi?id=237790
+
+        Reviewed by Saam Barati.
+
+        The value of ALTERNATE_ROOT_PATH should be set to the framework directory instead of
+        DYLIB_INSTALL_NAME_BASE since it will include the system content path as a prefix for
+        Catalyst builds.
+         This is similar to the construction of ALTERNATE_ROOT_PATH for the other frameworks.
+
+        * Configurations/WebGPU.xcconfig:
+
 2022-03-10  Michael Saboff  <msaboff@apple.com>
 
         Catalyst JavaScriptCore, WebCore, WebKitLegacy, and WebKit shouldn't be copied to the Secondary Path
