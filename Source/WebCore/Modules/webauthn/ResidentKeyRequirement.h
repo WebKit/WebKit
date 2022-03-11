@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,31 @@
 
 #pragma once
 
-#import <WebKit/WKFoundation.h>
+#if ENABLE(WEB_AUTHN)
 
-#import <Foundation/Foundation.h>
-#import <WebKit/_WKAuthenticatorAttachment.h>
-#import <WebKit/_WKResidentKeyRequirement.h>
+#include <wtf/EnumTraits.h>
 
-#import <WebKit/_WKUserVerificationRequirement.h>
+namespace WebCore {
 
-NS_ASSUME_NONNULL_BEGIN
+enum class ResidentKeyRequirement : uint8_t {
+    Required,
+    Preferred,
+    Discouraged
+};
 
-WK_CLASS_AVAILABLE(macos(12.0), ios(15.0))
-@interface _WKAuthenticatorSelectionCriteria : NSObject
+} // namespace WebCore
 
-/*!@discussion The default value is _WKAuthenticatorAttachmentAll.*/
-@property (nonatomic) _WKAuthenticatorAttachment authenticatorAttachment;
+namespace WTF {
 
-/* (@discussion The default value is _WKResidentKeyRequirementNotPresent */
-@property (nonatomic) _WKResidentKeyRequirement residentKey WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+template<> struct EnumTraits<WebCore::ResidentKeyRequirement> {
+    using values = EnumValues<
+        WebCore::ResidentKeyRequirement,
+        WebCore::ResidentKeyRequirement::Required,
+        WebCore::ResidentKeyRequirement::Preferred,
+        WebCore::ResidentKeyRequirement::Discouraged
+    >;
+};
 
-/*!@discussion The default value is NO.*/
-@property (nonatomic) BOOL requireResidentKey;
+} // namespace WTF
 
-/*!@discussion The default value is _WKUserVerificationRequirementPreferred.*/
-@property (nonatomic) _WKUserVerificationRequirement userVerification;
-
-@end
-
-NS_ASSUME_NONNULL_END
+#endif // ENABLE(WEB_AUTHN)

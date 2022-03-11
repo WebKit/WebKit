@@ -96,13 +96,14 @@ void CtapAuthenticator::makeCredential()
     Vector<uint8_t> cborCmd;
     auto& options = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
     auto internalUVAvailability = m_info.options().userVerificationAvailability();
+    auto residentKeyAvailability = m_info.options().residentKeyAvailability();
     // If UV is required, then either built-in uv or a pin will work.
     if (internalUVAvailability == UVAvailability::kSupportedAndConfigured && (!options.authenticatorSelection || options.authenticatorSelection->userVerification != UserVerificationRequirement::Discouraged) && m_pinAuth.isEmpty())
-        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability);
+        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability, residentKeyAvailability);
     else if (m_info.options().clientPinAvailability() == AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet)
-        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability, PinParameters { pin::kProtocolVersion, m_pinAuth });
+        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability, residentKeyAvailability, PinParameters { pin::kProtocolVersion, m_pinAuth });
     else
-        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability);
+        cborCmd = encodeMakeCredenitalRequestAsCBOR(requestData().hash, options, internalUVAvailability, residentKeyAvailability);
     driver().transact(WTFMove(cborCmd), [weakThis = WeakPtr { *this }](Vector<uint8_t>&& data) {
         ASSERT(RunLoop::isMain());
         if (!weakThis)

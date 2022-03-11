@@ -665,6 +665,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/PublicKeyCredentialDescriptor.idl
     Modules/webauthn/PublicKeyCredentialRequestOptions.idl
     Modules/webauthn/PublicKeyCredentialType.idl
+    Modules/webauthn/ResidentKeyRequirement.idl
     Modules/webauthn/UserVerificationRequirement.idl
 
     Modules/webcodecs/VideoColorPrimaries.idl

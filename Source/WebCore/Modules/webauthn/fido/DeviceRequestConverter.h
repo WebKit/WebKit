@@ -50,7 +50,7 @@ struct PinParameters {
 // Serializes MakeCredential request parameter into CBOR encoded map with
 // integer keys and CBOR encoded values as defined by the CTAP spec.
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#authenticatorMakeCredential
-WEBCORE_EXPORT Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability, std::optional<PinParameters> = std::nullopt);
+WEBCORE_EXPORT Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialCreationOptions&, AuthenticatorSupportedOptions::UserVerificationAvailability, AuthenticatorSupportedOptions::ResidentKeyAvailability, std::optional<PinParameters> = std::nullopt);
 
 // Serializes GetAssertion request parameter into CBOR encoded map with
 // integer keys and CBOR encoded values as defined by the CTAP spec.

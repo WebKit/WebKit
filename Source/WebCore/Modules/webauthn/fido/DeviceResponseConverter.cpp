@@ -264,8 +264,10 @@ std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector
         if (optionMapIt != optionMap.end()) {
             if (!optionMapIt->second.isBool())
                 return std::nullopt;
-
-            options.setSupportsResidentKey(optionMapIt->second.getBool());
+            if (optionMapIt->second.getBool())
+                options.setResidentKeyAvailability(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported);
+            else
+                options.setResidentKeyAvailability(AuthenticatorSupportedOptions::ResidentKeyAvailability::kNotSupported);
         }
 
         optionMapIt = optionMap.find(CBOR(kUserPresenceMapKey));

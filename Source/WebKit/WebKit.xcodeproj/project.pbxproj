@@ -1081,6 +1081,7 @@
 		51FAEC3A1B0657630009C4E7 /* AuxiliaryProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FAEC371B0657310009C4E7 /* AuxiliaryProcessMessages.h */; };
 		51FAEC3B1B0657680009C4E7 /* AuxiliaryProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FAEC361B0657310009C4E7 /* AuxiliaryProcessMessageReceiver.cpp */; };
 		51FD18B61651FBAD00DBE1CE /* NetworkResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */; };
+		52688AB427D7CE40003577A2 /* _WKResidentKeyRequirement.h in Headers */ = {isa = PBXBuildFile; fileRef = 52688AB327D7CE40003577A2 /* _WKResidentKeyRequirement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5272D4C91E735F0900EB4290 /* WKProtectionSpaceNS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		528C37C1195CBB1A00D8B9CC /* WKBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9F28101958F478008CAC72 /* WKBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52CDC5C42731DA0D00A3E3EB /* VirtualAuthenticatorConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 52CDC5BD2731DA0C00A3E3EB /* VirtualAuthenticatorConfiguration.h */; };
@@ -4642,6 +4643,7 @@
 		51FB0902163A3B1C00EC324A /* NetworkProcessConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = NetworkProcessConnection.messages.in; path = Network/NetworkProcessConnection.messages.in; sourceTree = "<group>"; };
 		51FD18B31651FBAD00DBE1CE /* NetworkResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkResourceLoader.cpp; sourceTree = "<group>"; };
 		51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoader.h; sourceTree = "<group>"; };
+		52688AB327D7CE40003577A2 /* _WKResidentKeyRequirement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = _WKResidentKeyRequirement.h; path = UIProcess/API/Cocoa/_WKResidentKeyRequirement.h; sourceTree = "<group>"; };
 		5272D4C71E735F0900EB4290 /* WKProtectionSpaceNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKProtectionSpaceNS.h; path = mac/WKProtectionSpaceNS.h; sourceTree = "<group>"; };
 		5272D4C81E735F0900EB4290 /* WKProtectionSpaceNS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKProtectionSpaceNS.mm; path = mac/WKProtectionSpaceNS.mm; sourceTree = "<group>"; };
 		52CDC5BD2731DA0C00A3E3EB /* VirtualAuthenticatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualAuthenticatorConfiguration.h; sourceTree = "<group>"; };
@@ -6980,6 +6982,7 @@
 		0867D691FE84028FC02AAC07 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
+				52688AB327D7CE40003577A2 /* _WKResidentKeyRequirement.h */,
 				5C157A0A2717C9F100ED5280 /* webpushd */,
 				B396EA5512E0ED2D00F4FEB7 /* config.h */,
 				2D7DEBE021269D5F00B9F73C /* Sources.txt */,
@@ -12982,6 +12985,7 @@
 				990E1E092384AA57004602DF /* _WKRemoteWebInspectorViewControllerPrivate.h in Headers */,
 				377216B81A4E6BE000DCA718 /* _WKRenderingProgressEvents.h in Headers */,
 				1F604BAA1889FBB800EE0395 /* _WKRenderingProgressEventsInternal.h in Headers */,
+				52688AB427D7CE40003577A2 /* _WKResidentKeyRequirement.h in Headers */,
 				5CB7AFE023C52CE500E49CF3 /* _WKResourceLoadDelegate.h in Headers */,
 				5CB7AFE823C69B6100E49CF3 /* _WKResourceLoadInfo.h in Headers */,
 				49FBF001239B1F8D00BD032F /* _WKResourceLoadStatisticsFirstParty.h in Headers */,
@@ -13673,7 +13677,6 @@
 				5742A30825358A0400B7BA14 /* WebAuthnProcessCreationParameters.h in Headers */,
 				572EBBC22536A60A000552B3 /* WebAuthnProcessMessages.h in Headers */,
 				572EBBC92536AFD5000552B3 /* WebAuthnProcessProxy.h in Headers */,
-				572EBBD02536BB11000552B3 /* WebAuthnProcessProxyMessages.h in Headers */,
 				F42D634122A0EFDF00D2FB3A /* WebAutocorrectionData.h in Headers */,
 				990D39F5243BE64800199388 /* WebAutomationDOMWindowObserver.h in Headers */,
 				9955A6EC1C7980C200EB6A93 /* WebAutomationSession.h in Headers */,

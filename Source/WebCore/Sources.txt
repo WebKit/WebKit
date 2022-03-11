@@ -3701,6 +3701,7 @@ JSRemotePlayback.cpp
 JSRemotePlaybackAvailabilityCallback.cpp
 JSRequestAnimationFrameCallback.cpp
 JSRequestCookieConsentOptions.cpp
+JSResidentKeyRequirement.cpp
 JSResizeObserver.cpp
 JSResizeObserverBoxOptions.cpp
 JSResizeObserverCallback.cpp

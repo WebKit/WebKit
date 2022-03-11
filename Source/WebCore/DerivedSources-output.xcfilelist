@@ -2115,6 +2115,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestAnimationFrameCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestAnimationFrameCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestCookieConsentOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSRequestCookieConsentOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResidentKeyRequirement.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResidentKeyRequirement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSResizeObserverBoxOptions.cpp

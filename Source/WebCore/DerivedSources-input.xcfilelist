@@ -751,6 +751,7 @@ $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialCreationOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialDescriptor.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialType.idl
+$(PROJECT_DIR)/Modules/webauthn/ResidentKeyRequirement.idl
 $(PROJECT_DIR)/Modules/webauthn/UserVerificationRequirement.idl
 $(PROJECT_DIR)/Modules/webcodecs/VideoColorPrimaries.idl
 $(PROJECT_DIR)/Modules/webcodecs/VideoColorSpace.idl

@@ -647,6 +647,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialDescriptor.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
+    $(WebCore)/Modules/webauthn/ResidentKeyRequirement.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \
 	$(WebCore)/Modules/webcodecs/VideoColorPrimaries.idl \
 	$(WebCore)/Modules/webcodecs/VideoColorSpace.idl \

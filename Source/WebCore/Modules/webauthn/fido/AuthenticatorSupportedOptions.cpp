@@ -36,9 +36,9 @@
 
 namespace fido {
 
-AuthenticatorSupportedOptions& AuthenticatorSupportedOptions::setSupportsResidentKey(bool supportsResidentKey)
+AuthenticatorSupportedOptions& AuthenticatorSupportedOptions::setResidentKeyAvailability(ResidentKeyAvailability residentKeyAvailability)
 {
-    m_supportsResidentKey = supportsResidentKey;
+    m_residentKeyAvailability = residentKeyAvailability;
     return *this;
 }
 
@@ -71,7 +71,7 @@ cbor::CBORValue convertToCBOR(const AuthenticatorSupportedOptions& options)
     using namespace cbor;
 
     CBORValue::MapValue optionMap;
-    optionMap.emplace(CBORValue(kResidentKeyMapKey), CBORValue(options.supportsResidentKey()));
+    optionMap.emplace(CBORValue(kResidentKeyMapKey), CBORValue(options.residentKeyAvailability() == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported));
     optionMap.emplace(CBORValue(kUserPresenceMapKey), CBORValue(options.userPresenceRequired()));
     optionMap.emplace(CBORValue(kPlatformDeviceMapKey), CBORValue(options.isPlatformDevice()));
 

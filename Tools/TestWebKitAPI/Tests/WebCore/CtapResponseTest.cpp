@@ -589,7 +589,7 @@ TEST(CTAPResponseTest, TestReadGetInfoResponse)
     EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kCtap), getInfoResponse->versions().end());
     EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kU2f), getInfoResponse->versions().end());
     EXPECT_TRUE(getInfoResponse->options().isPlatformDevice());
-    EXPECT_TRUE(getInfoResponse->options().supportsResidentKey());
+    EXPECT_EQ(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, getInfoResponse->options().residentKeyAvailability());
     EXPECT_TRUE(getInfoResponse->options().userPresenceRequired());
     EXPECT_EQ(AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured, getInfoResponse->options().userVerificationAvailability());
     EXPECT_EQ(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedButPinNotSet, getInfoResponse->options().clientPinAvailability());
@@ -604,7 +604,7 @@ TEST(CTAPResponseTest, TestReadGetInfoResponse2)
     EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kCtap), getInfoResponse->versions().end());
     EXPECT_NE(getInfoResponse->versions().find(ProtocolVersion::kU2f), getInfoResponse->versions().end());
     EXPECT_TRUE(getInfoResponse->options().isPlatformDevice());
-    EXPECT_TRUE(getInfoResponse->options().supportsResidentKey());
+    EXPECT_EQ(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, getInfoResponse->options().residentKeyAvailability());
     EXPECT_TRUE(getInfoResponse->options().userPresenceRequired());
     EXPECT_EQ(AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured, getInfoResponse->options().userVerificationAvailability());
     EXPECT_EQ(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedButPinNotSet, getInfoResponse->options().clientPinAvailability());
@@ -622,7 +622,7 @@ TEST(CTAPResponseTest, TestSerializeGetInfoResponse)
     AuthenticatorGetInfoResponse response({ ProtocolVersion::kCtap, ProtocolVersion::kU2f }, convertBytesToVector(kTestDeviceAaguid, sizeof(kTestDeviceAaguid)));
     response.setExtensions({ "uvm", "hmac-secret" });
     AuthenticatorSupportedOptions options;
-    options.setSupportsResidentKey(true);
+    options.setResidentKeyAvailability(AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported);
     options.setIsPlatformDevice(true);
     options.setClientPinAvailability(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedButPinNotSet);
     options.setUserVerificationAvailability(AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured);

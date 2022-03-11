@@ -1,3 +1,18 @@
+2022-03-11  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Support authenticatorSelection.residentKey ResidentKeyRequirement
+        https://bugs.webkit.org/show_bug.cgi?id=237567
+        rdar://89788378
+
+        Reviewed by Brent Fulgham and Chris Dumez.
+
+        Add layout tests using residentKey field.
+
+        * http/wpt/webauthn/public-key-credential-create-failure-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-failure-hid.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-hid.https.html:
+
 2022-03-11  Don Olmstead  <don.olmstead@sony.com>
 
         Platforms implementing WebSocketTask pass hybi/close-and-server-script-exception-expected.txt

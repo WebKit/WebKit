@@ -35,6 +35,7 @@
 #include "CBORWriter.h"
 #include "PublicKeyCredentialCreationOptions.h"
 #include "PublicKeyCredentialRequestOptions.h"
+#include "ResidentKeyRequirement.h"
 #include <wtf/Vector.h>
 
 namespace fido {
@@ -85,7 +86,7 @@ static CBORValue convertDescriptorToCBOR(const PublicKeyCredentialDescriptor& de
     return CBORValue(WTFMove(cborDescriptorMap));
 }
 
-Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, std::optional<PinParameters> pin)
+Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, AuthenticatorSupportedOptions::ResidentKeyAvailability residentKeyAvailability, std::optional<PinParameters> pin)
 {
     CBORValue::MapValue cborMap;
     cborMap[CBORValue(1)] = CBORValue(hash);
@@ -102,7 +103,11 @@ Vector<uint8_t> encodeMakeCredenitalRequestAsCBOR(const Vector<uint8_t>& hash, c
     CBORValue::MapValue optionMap;
     if (options.authenticatorSelection) {
         // Resident keys are not supported by default.
-        if (options.authenticatorSelection->requireResidentKey)
+        if (options.authenticatorSelection->residentKey) {
+            if (*options.authenticatorSelection->residentKey == ResidentKeyRequirement::Required
+                || (*options.authenticatorSelection->residentKey == ResidentKeyRequirement::Preferred && residentKeyAvailability == AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported))
+                optionMap[CBORValue(kResidentKeyMapKey)] = CBORValue(true);
+        } else if (options.authenticatorSelection->requireResidentKey)
             optionMap[CBORValue(kResidentKeyMapKey)] = CBORValue(true);
 
         // User verification is not required by default.

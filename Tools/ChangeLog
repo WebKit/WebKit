@@ -1,3 +1,18 @@
+2022-03-11  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Support authenticatorSelection.residentKey ResidentKeyRequirement
+        https://bugs.webkit.org/show_bug.cgi?id=237567
+        rdar://89788378
+
+        Reviewed by Brent Fulgham and Chris Dumez.
+
+        Add API tests for authenticatorSelection.residentKey.
+
+        * TestWebKitAPI/Tests/WebCore/CtapRequestTest.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp:
+        (TestWebKitAPI::TEST):
+
 2022-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add a unit tests to check the remote inspector HTTP server

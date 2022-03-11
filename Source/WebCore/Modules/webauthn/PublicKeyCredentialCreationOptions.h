@@ -31,6 +31,7 @@
 #include "BufferSource.h"
 #include "PublicKeyCredentialDescriptor.h"
 #include "PublicKeyCredentialType.h"
+#include "ResidentKeyRequirement.h"
 #include "UserVerificationRequirement.h"
 #include <wtf/Forward.h>
 #endif // ENABLE(WEB_AUTHN)
@@ -65,6 +66,8 @@ struct PublicKeyCredentialCreationOptions {
 
     struct AuthenticatorSelectionCriteria {
         std::optional<AuthenticatorAttachment> authenticatorAttachment;
+        // residentKey replaces requireResidentKey, see: https://www.w3.org/TR/webauthn-2/#dictionary-authenticatorSelection
+        std::optional<ResidentKeyRequirement> residentKey;
         bool requireResidentKey { false };
         UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
 
@@ -110,7 +113,7 @@ std::optional<PublicKeyCredentialCreationOptions::Parameters> PublicKeyCredentia
 template<class Encoder>
 void PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::encode(Encoder& encoder) const
 {
-    encoder << authenticatorAttachment << requireResidentKey << userVerification;
+    encoder << authenticatorAttachment << requireResidentKey << userVerification << residentKey;
 }
 
 template<class Decoder>
@@ -132,6 +135,13 @@ std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria
 
     if (!decoder.decode(result.userVerification))
         return std::nullopt;
+
+    std::optional<std::optional<ResidentKeyRequirement>> residentKey;
+    decoder >> residentKey;
+    if (!residentKey)
+        return std::nullopt;
+    result.residentKey = *residentKey;
+
     return result;
 }
 

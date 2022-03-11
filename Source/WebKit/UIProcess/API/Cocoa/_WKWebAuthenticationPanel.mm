@@ -735,10 +735,28 @@ static WebCore::UserVerificationRequirement userVerification(_WKUserVerification
     }
 }
 
+static std::optional<WebCore::ResidentKeyRequirement> toWebCore(_WKResidentKeyRequirement uv)
+{
+    switch (uv) {
+    case _WKResidentKeyRequirementNotPresent:
+        return std::nullopt;
+    case _WKResidentKeyRequirementRequired:
+        return WebCore::ResidentKeyRequirement::Required;
+    case _WKResidentKeyRequirementPreferred:
+        return WebCore::ResidentKeyRequirement::Preferred;
+    case _WKResidentKeyRequirementDiscouraged:
+        return WebCore::ResidentKeyRequirement::Discouraged;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebCore::ResidentKeyRequirement::Preferred;
+    }
+}
+
 static WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria authenticatorSelectionCriteria(_WKAuthenticatorSelectionCriteria *authenticatorSelection)
 {
     WebCore::PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria result;
     result.authenticatorAttachment = authenticatorAttachment(authenticatorSelection.authenticatorAttachment);
+    result.residentKey = toWebCore(authenticatorSelection.residentKey);
     result.requireResidentKey = authenticatorSelection.requireResidentKey;
     result.userVerification = userVerification(authenticatorSelection.userVerification);
 
@@ -930,7 +948,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
 #if ENABLE(WEB_AUTHN)
     auto hash = produceClientDataJsonHash(clientDataJSON);
 
-    auto encodedVector = fido::encodeMakeCredenitalRequestAsCBOR(hash, [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), std::nullopt);
+    auto encodedVector = fido::encodeMakeCredenitalRequestAsCBOR(hash, [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, std::nullopt);
     encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
 #endif
 
@@ -955,7 +973,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
 {
     RetainPtr<NSData> encodedCommand;
 #if ENABLE(WEB_AUTHN)
-    auto encodedVector = fido::encodeMakeCredenitalRequestAsCBOR(vectorFromNSData(clientDataHash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), std::nullopt);
+    auto encodedVector = fido::encodeMakeCredenitalRequestAsCBOR(vectorFromNSData(clientDataHash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], coreUserVerificationAvailability(userVerificationAvailability), fido::AuthenticatorSupportedOptions::ResidentKeyAvailability::kSupported, std::nullopt);
     encodedCommand = adoptNS([[NSData alloc] initWithBytes:encodedVector.data() length:encodedVector.size()]);
 #endif
 

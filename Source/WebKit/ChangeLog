@@ -1,3 +1,33 @@
+2022-03-11  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Support authenticatorSelection.residentKey ResidentKeyRequirement
+        https://bugs.webkit.org/show_bug.cgi?id=237567
+        rdar://89788378
+
+        Reviewed by Brent Fulgham and Chris Dumez.
+
+        In Web Authentication level one, relying parties can specify authenticatorSelection.residentKeyRequired,
+        to signify they require a client-side discoverable credential. However, if the authenticator does not
+        support client-side discoverable credentials, the rp has no way to clarify they want a client-side
+        discoverable credential only if available.
+
+        This patch implements authenticatorSelection.residentKeyRequired introduced in level 2, which has three
+        values 'Preferred', 'Required', and 'Discouraged'. This allows RPs to create a client-side discoverable
+        credential if possible.
+
+        * UIProcess/API/Cocoa/_WKAuthenticatorSelectionCriteria.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorSelectionCriteria.mm:
+        (-[_WKAuthenticatorSelectionCriteria init]):
+        * UIProcess/API/Cocoa/_WKResidentKeyRequirement.h: Copied from Source/WebKit/UIProcess/API/Cocoa/_WKAuthenticatorSelectionCriteria.mm.
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (residentKey):
+        (authenticatorSelectionCriteria):
+        (+[_WKWebAuthenticationPanel encodeMakeCredentialCommandWithClientDataJSON:options:userVerificationAvailability:]):
+        (+[_WKWebAuthenticationPanel encodeMakeCredentialCommandWithClientDataHash:options:userVerificationAvailability:]):
+        * UIProcess/WebAuthentication/fido/CtapAuthenticator.cpp:
+        (WebKit::CtapAuthenticator::makeCredential):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-11  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] DrawingAreaWC::sendUpdateAC should keep a WeakPtr of this for the reply handler
