@@ -80,7 +80,7 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        invalidateSVGPresentationalHintStyle();
+        setPresentationalHintStyleIsDirty();
         return;
     }
 

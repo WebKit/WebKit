@@ -82,8 +82,8 @@ public:
 
     virtual AffineTransform* supplementalTransform() { return nullptr; }
 
-    inline void invalidateSVGAttributes();
-    inline void invalidateSVGPresentationalHintStyle();
+    inline void setAnimatedSVGAttributesAreDirty();
+    inline void setPresentationalHintStyleIsDirty();
 
     // The instances of an element are clones made in shadow trees to implement <use>.
     const WeakHashSet<SVGElement>& instances() const;

@@ -103,7 +103,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
                     RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
             }
         } else if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr)
-            invalidateSVGPresentationalHintStyle();
+            setPresentationalHintStyleIsDirty();
         else {
             ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
             if (auto* renderer = this->renderer())

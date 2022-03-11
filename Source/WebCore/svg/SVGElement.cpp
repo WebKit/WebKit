@@ -610,7 +610,7 @@ void SVGElement::commitPropertyChange(SVGProperty* property)
     // SVGLengthList and not the SVGLength.
     property->setDirty();
 
-    invalidateSVGAttributes();
+    setAnimatedSVGAttributesAreDirty();
     svgAttributeChanged(propertyRegistry().propertyAttributeName(*property));
 }
 
@@ -626,7 +626,7 @@ void SVGElement::commitPropertyChange(SVGAnimatedProperty& animatedProperty)
     else
         setSynchronizedLazyAttribute(attributeName, animatedProperty.baseValAsString());
 
-    invalidateSVGAttributes();
+    setAnimatedSVGAttributesAreDirty();
     svgAttributeChanged(attributeName);
 }
 

@@ -40,7 +40,7 @@ bool SVGAttributeAnimator::isAnimatedStylePropertyAniamtor(const SVGElement& tar
 void SVGAttributeAnimator::invalidateStyle(SVGElement& targetElement)
 {
     SVGElement::InstanceInvalidationGuard guard(targetElement);
-    targetElement.invalidateSVGPresentationalHintStyle();
+    targetElement.setPresentationalHintStyleIsDirty();
 }
 
 void SVGAttributeAnimator::applyAnimatedStylePropertyChange(SVGElement& element, CSSPropertyID id, const String& value)

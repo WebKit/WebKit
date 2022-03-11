@@ -1,3 +1,42 @@
+2022-03-11  Rob Buis  <rbuis@igalia.com>
+
+        Rename invalidation methods in SVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=237716
+
+        Reviewed by Martin Robinson.
+
+        Rename invalidation methods in SVGElement to be more specific. This in fact
+        uses the naming in the underlying ElementData.
+
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::commitPropertyChange):
+        * svg/SVGElement.h:
+        * svg/SVGElementInlines.h:
+        (WebCore::SVGElement::setAnimatedSVGAttributesAreDirty):
+        (WebCore::SVGElement::setPresentationalHintStyleIsDirty):
+        (WebCore::SVGElement::invalidateSVGAttributes): Deleted.
+        (WebCore::SVGElement::invalidateSVGPresentationalHintStyle): Deleted.
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::svgAttributeChanged):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+        * svg/properties/SVGAttributeAnimator.cpp:
+        (WebCore::SVGAttributeAnimator::invalidateStyle):
+
 2022-03-11  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] mask-repeat should support discrete animation

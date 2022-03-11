@@ -77,7 +77,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr)
-            invalidateSVGPresentationalHintStyle();
+            setPresentationalHintStyleIsDirty();
         else {
             ASSERT(attrName == SVGNames::xAttr || attrName == SVGNames::yAttr);
             updateRelativeLengthsInformation();
