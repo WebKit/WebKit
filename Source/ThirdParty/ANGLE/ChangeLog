@@ -1,3 +1,60 @@
+2022-03-11  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291139. rdar://problem/90127039
+
+    Catalyst JavaScriptCore, WebCore, WebKitLegacy, and WebKit shouldn't be copied to the Secondary Path
+    https://bugs.webkit.org/show_bug.cgi?id=237748
+    
+    Reviewed by Mark Lam.
+    
+    Updated the configuration to exclude copying Catalyst build products to the secondary path.
+    
+    Source/JavaScriptCore:
+    
+    * Configurations/Base.xcconfig:
+    
+    Source/ThirdParty/ANGLE:
+    
+    * Configurations/ANGLE-dynamic.xcconfig:
+    
+    Source/ThirdParty/libwebrtc:
+    
+    * Configurations/libwebrtc.xcconfig:
+    
+    Source/WebCore:
+    
+    * Configurations/WebCore.xcconfig:
+    
+    Source/WebGPU:
+    
+    * Configurations/WebGPU.xcconfig:
+    
+    Source/WebInspectorUI:
+    
+    * Configurations/WebInspectorUIFramework.xcconfig:
+    
+    Source/WebKit:
+    
+    * Configurations/Base.xcconfig:
+    
+    Source/WebKitLegacy/mac:
+    
+    * Configurations/Base.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291139 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-10  Michael Saboff  <msaboff@apple.com>
+
+            Catalyst JavaScriptCore, WebCore, WebKitLegacy, and WebKit shouldn't be copied to the Secondary Path
+            https://bugs.webkit.org/show_bug.cgi?id=237748
+
+            Reviewed by Mark Lam.
+
+            Updated the configuration to exclude copying Catalyst build products to the secondary path.
+
+            * Configurations/ANGLE-dynamic.xcconfig:
+
 2022-03-03  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r290805. rdar://problem/89053248
