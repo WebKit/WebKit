@@ -144,8 +144,12 @@ void RemoteInspectorHTTPServer::sendMessageToFrontend(uint64_t connectionID, uin
 
     auto utf8 = message.utf8();
     // Soup is going to copy the data immediately, so we can use g_bytes_new_static() here to avoid more data copies.
+#if SOUP_CHECK_VERSION(2, 67, 3)
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(utf8.data(), utf8.length()));
     soup_websocket_connection_send_message(webSocketConnection, SOUP_WEBSOCKET_DATA_TEXT, bytes.get());
+#else
+    soup_websocket_connection_send_text(webSocketConnection, CString(reinterpret_cast<const char*>(utf8.data()), utf8.length()).data());
+#endif
 }
 
 void RemoteInspectorHTTPServer::targetDidClose(uint64_t connectionID, uint64_t targetID)
