@@ -2078,7 +2078,7 @@ webkit.org/b/231264 fast/events/ios/rotation/layout-viewport-during-rotation.htm
 
 webkit.org/b/231269 fast/events/ios/rotation/safari-like-rotation.html [ Failure ]
 
-webkit.org/b/231266 [ Release ] fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Pass Failure ]
+webkit.org/b/231266 fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html [ Pass Failure ]
 
 webkit.org/b/231315 fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation.html [ Pass Timeout Failure ]
 
