@@ -4,10 +4,10 @@ XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString
 
 ifeq ($(USE_WORKSPACE),YES)
 SCHEME ?= $(notdir $(CURDIR))
-XCODE_TARGET = -scheme "$(SCHEME)"
-WORKSPACE := $(dir $(lastword $(MAKEFILE_LIST)))WebKit.xcworkspace
+WORKSPACE_PATH ?= $(dir $(lastword $(MAKEFILE_LIST)))WebKit.xcworkspace
+XCODE_TARGET = -workspace $(WORKSPACE_PATH) -scheme "$(SCHEME)"
 else
-SCHEME =
+USE_WORKSPACE =
 endif
 
 ifneq (,$(SDKROOT))
@@ -117,9 +117,9 @@ define invoke_xcode
 	( \
 		[[ -t 1 ]] && COLOR_DIAGNOSTICS_ARG="COLOR_DIAGNOSTICS=YES"; \
 		echo; \
-		echo "===== BUILDING $(if $(WORKSPACE),$(SCHEME),$(notdir $(CURDIR))) ====="; \
+		echo "===== BUILDING $(if $(USE_WORKSPACE),$(SCHEME),$(notdir $(CURDIR))) ====="; \
 		echo; \
-		$1 xcodebuild $2 $(WORKSPACE:%=-workspace %) $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
+		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
 endef
 

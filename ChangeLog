@@ -1,3 +1,21 @@
+2022-03-11  Elliott Williams  <emw@apple.com>
+
+        Makefile.shared: Rename WORKSPACE to WORKSPACE_PATH and allow overrides
+        https://bugs.webkit.org/show_bug.cgi?id=237746
+
+        Reviewed by Alexey Proskuryakov.
+
+        This permits Make-based workflows which build out of a different workspace, e.g. a workspace
+        that includes WebKitAdditions.
+
+        WORKSPACE_PATH was chosen as a new name for parity with SCRIPTS_PATH and to avoid confusion
+        with USE_WORKSPACE.
+
+        Refactors Makefile.shared a bit to prevent SCHEME or WORKSPACE_PATH being set without
+        USE_WORKSPACE from breaking the build.
+
+        * Makefile.shared:
+
 2022-03-08  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Support multiple metadata locations
