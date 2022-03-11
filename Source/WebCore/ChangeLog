@@ -1,5 +1,18 @@
 2022-03-11  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] mask-composite should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237769
+
+        Reviewed by Antti Koivisto.
+
+        Refactor FillLayerFillBoxPropertyWrapper to a templatized DiscreteFillLayerPropertyWrapper
+        which allows us to support other enum types like CompositeOperator.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
+2022-03-11  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] mask-type should support discrete animation
         https://bugs.webkit.org/show_bug.cgi?id=237768
 

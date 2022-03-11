@@ -37,6 +37,9 @@ FAIL mask: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")
 PASS mask-clip (type: discrete) has testAccumulation function
 PASS mask-clip: "border-box" onto "content-box"
 PASS mask-clip: "content-box" onto "border-box"
+PASS mask-composite (type: discrete) has testAccumulation function
+PASS mask-composite: "subtract" onto "add"
+PASS mask-composite: "add" onto "subtract"
 PASS mask-image (type: discrete) has testAccumulation function
 PASS mask-image: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS mask-image: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"

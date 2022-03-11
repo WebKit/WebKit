@@ -1902,10 +1902,11 @@ private:
 #endif
 };
 
-class FillLayerFillBoxPropertyWrapper final : public FillLayerAnimationPropertyWrapperBase {
+template <typename T>
+class DiscreteFillLayerPropertyWrapper final : public FillLayerAnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FillLayerFillBoxPropertyWrapper(CSSPropertyID property, FillBox (FillLayer::*getter)() const, void (FillLayer::*setter)(FillBox))
+    DiscreteFillLayerPropertyWrapper(CSSPropertyID property, T (FillLayer::*getter)() const, void (FillLayer::*setter)(T))
         : FillLayerAnimationPropertyWrapperBase(property)
         , m_getter(getter)
         , m_setter(setter)
@@ -1933,8 +1934,8 @@ private:
         (destination->*m_setter)(((context.progress ? to : from)->*m_getter)());
     }
 
-    FillBox (FillLayer::*m_getter)() const;
-    void (FillLayer::*m_setter)(FillBox);
+    T (FillLayer::*m_getter)() const;
+    void (FillLayer::*m_setter)(T);
 };
 
 class FillLayersPropertyWrapper final : public AnimationPropertyWrapperBase {
@@ -1967,10 +1968,13 @@ public:
             m_fillLayerPropertyWrapper = makeUnique<FillLayerStyleImagePropertyWrapper>(property, &FillLayer::image, &FillLayer::setImage);
             break;
         case CSSPropertyMaskClip:
-            m_fillLayerPropertyWrapper = makeUnique<FillLayerFillBoxPropertyWrapper>(property, &FillLayer::clip, &FillLayer::setClip);
+            m_fillLayerPropertyWrapper = makeUnique<DiscreteFillLayerPropertyWrapper<FillBox>>(property, &FillLayer::clip, &FillLayer::setClip);
             break;
         case CSSPropertyMaskOrigin:
-            m_fillLayerPropertyWrapper = makeUnique<FillLayerFillBoxPropertyWrapper>(property, &FillLayer::origin, &FillLayer::setOrigin);
+            m_fillLayerPropertyWrapper = makeUnique<DiscreteFillLayerPropertyWrapper<FillBox>>(property, &FillLayer::origin, &FillLayer::setOrigin);
+            break;
+        case CSSPropertyMaskComposite:
+            m_fillLayerPropertyWrapper = makeUnique<DiscreteFillLayerPropertyWrapper<CompositeOperator>>(property, &FillLayer::composite, &FillLayer::setComposite);
             break;
         default:
             break;
@@ -3009,6 +3013,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new FillLayersPropertyWrapper(CSSPropertyWebkitBackgroundSize, &RenderStyle::backgroundLayers, &RenderStyle::ensureBackgroundLayers),
 
         new FillLayersPropertyWrapper(CSSPropertyMaskClip, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
+        new FillLayersPropertyWrapper(CSSPropertyMaskComposite, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
         new FillLayersPropertyWrapper(CSSPropertyMaskOrigin, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
         new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionX, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
         new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionY, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
