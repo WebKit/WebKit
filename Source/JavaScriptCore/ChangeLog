@@ -1,3 +1,23 @@
+2022-03-11  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Debug build failure after r246172: ASSERT_UNDER_CONSTEXPR_CONTEXT should work in constexpr contexts
+        https://bugs.webkit.org/show_bug.cgi?id=236728
+
+        Reviewed by Michael Catanzaro.
+
+        ASSERT_UNDER_CONSTEXPR_CONTEXT is calling a non-constexpr function (WTFReportAssertionFailure)
+        when it fails, so it cannot be used for an assert not reached.
+
+        This patch adds a new RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT() macro
+        that calls CRASH_UNDER_CONSTEXPR_CONTEXT() instead of WTFReportAssertionFailure.
+
+        No functional change.
+
+        * wasm/WasmCompilationMode.h:
+        (JSC::Wasm::isOSREntry):
+        (JSC::Wasm::isAnyBBQ):
+        (JSC::Wasm::isAnyOMG):
+
 2022-03-10  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Emit a discovered dependency file from offlineasm

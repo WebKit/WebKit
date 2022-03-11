@@ -331,6 +331,7 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #define ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) ((void)0)
 #define ASSERT_AT(assertion, file, line, function) ((void)0)
 #define ASSERT_NOT_REACHED(...) ((void)0)
+#define ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT(...) ((void)0)
 #define ASSERT_NOT_IMPLEMENTED_YET() ((void)0)
 #define ASSERT_IMPLIES(condition, assertion) ((void)0)
 #define NO_RETURN_DUE_TO_ASSERT
@@ -376,6 +377,10 @@ WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithSecurityImplication(v
 #define ASSERT_NOT_REACHED(...) do { \
     WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, 0); \
     CRASH_WITH_INFO(__VA_ARGS__); \
+} while (0)
+
+#define ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT(...) do { \
+    CRASH_UNDER_CONSTEXPR_CONTEXT(); \
 } while (0)
 
 #define ASSERT_NOT_IMPLEMENTED_YET() do { \
@@ -655,6 +660,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define RELEASE_ASSERT_WITH_MESSAGE(assertion, ...) RELEASE_ASSERT(assertion)
 #define RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(assertion) RELEASE_ASSERT(assertion)
 #define RELEASE_ASSERT_NOT_REACHED(...) CRASH_WITH_INFO(__VA_ARGS__)
+#define RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT() CRASH_UNDER_CONSTEXPR_CONTEXT();
 #define RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) do { \
     if (UNLIKELY(!(assertion))) { \
         CRASH_UNDER_CONSTEXPR_CONTEXT(); \
@@ -667,6 +673,7 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define RELEASE_ASSERT_WITH_MESSAGE(assertion, ...) ASSERT_WITH_MESSAGE(assertion, __VA_ARGS__)
 #define RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(assertion) ASSERT_WITH_SECURITY_IMPLICATION(assertion)
 #define RELEASE_ASSERT_NOT_REACHED() ASSERT_NOT_REACHED()
+#define RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT() ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT()
 #define RELEASE_ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion) ASSERT_UNDER_CONSTEXPR_CONTEXT(assertion)
 
 #endif /* ASSERT_ENABLED */
