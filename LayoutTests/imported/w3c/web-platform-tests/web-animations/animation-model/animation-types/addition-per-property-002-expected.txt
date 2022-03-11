@@ -137,6 +137,9 @@ PASS scroll-behavior: "auto" onto "smooth"
 PASS shape-outside (type: discrete) has testAddition function
 PASS shape-outside: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS shape-outside: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
+PASS shape-rendering (type: discrete) has testAddition function
+PASS shape-rendering: "crispEdges" onto "optimizeSpeed"
+PASS shape-rendering: "optimizeSpeed" onto "crispEdges"
 PASS stop-color (type: color) has testAddition function
 FAIL stop-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
 PASS stop-color supports animating as color of #RGB

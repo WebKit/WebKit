@@ -165,6 +165,10 @@ PASS shape-outside (type: discrete) has testInterpolation function
 PASS shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing
 PASS shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing
 PASS shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing
+PASS shape-rendering (type: discrete) has testInterpolation function
+PASS shape-rendering uses discrete animation when animating between "optimizeSpeed" and "crispEdges" with linear easing
+PASS shape-rendering uses discrete animation when animating between "optimizeSpeed" and "crispEdges" with effect easing
+PASS shape-rendering uses discrete animation when animating between "optimizeSpeed" and "crispEdges" with keyframe easing
 PASS stop-color (type: color) has testInterpolation function
 PASS stop-color supports animating as color of rgb()
 PASS stop-color supports animating as color of #RGB
