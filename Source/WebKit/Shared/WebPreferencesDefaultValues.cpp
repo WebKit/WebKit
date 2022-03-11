@@ -172,7 +172,11 @@ bool defaultUseGPUProcessForCanvasRenderingEnabled()
 
 bool defaultUseGPUProcessForDOMRenderingEnabled()
 {
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    return false;
+#else
     return isFeatureFlagEnabled("gpu_process_dom_rendering", false);
+#endif
 }
 
 bool defaultUseGPUProcessForMediaEnabled()
@@ -188,12 +192,16 @@ bool defaultUseGPUProcessForMediaEnabled()
 
 bool defaultUseGPUProcessForWebGLEnabled()
 {
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    return false;
+#else
 #if (ENABLE(GPU_PROCESS_BY_DEFAULT) && PLATFORM(IOS_FAMILY)) || PLATFORM(WIN)
     bool defaultValue = true;
 #else
     bool defaultValue = false;
 #endif
     return isFeatureFlagEnabled("gpu_process_webgl", defaultValue);
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)
