@@ -59,7 +59,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 146x19
           RenderText {#text} at (0,0) size 41x19
             text run at (0,0) width 41: "Text..."
-          RenderInline {SPAN} at (0,0) size 1x19
+          RenderInline {SPAN} at (0,0) size 0x19
           RenderTable at (40,0) size 106x20
             RenderTableSection (anonymous) at (0,0) size 105x20
               RenderTableRow (anonymous) at (0,0) size 105x20
@@ -120,7 +120,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 146x19
           RenderText {#text} at (0,0) size 41x19
             text run at (0,0) width 41: "Text..."
-          RenderInline {SPAN} at (0,0) size 1x19
+          RenderInline {SPAN} at (0,0) size 0x19
           RenderTable at (40,0) size 106x20
             RenderTableSection (anonymous) at (0,0) size 105x20
               RenderTableRow {DIV} at (0,0) size 105x20
@@ -183,7 +183,7 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 146x19
           RenderText {#text} at (0,0) size 41x19
             text run at (0,0) width 41: "Text..."
-          RenderInline {SPAN} at (0,0) size 1x19
+          RenderInline {SPAN} at (0,0) size 0x19
           RenderTable at (40,0) size 106x20
             RenderTableSection {DIV} at (0,0) size 105x20
               RenderTableRow (anonymous) at (0,0) size 105x20
