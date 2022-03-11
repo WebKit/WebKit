@@ -1,3 +1,17 @@
+2022-03-11  Brandon Stewart  <brandonstewart@apple.com>
+
+        Verify values before adding to hash map
+        https://bugs.webkit.org/show_bug.cgi?id=237781
+
+        Reviewed by Simon Fraser.
+
+        Verify values before adding to hash map to avoid hash map corruption.
+
+        Original patch by John Cunningham
+
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::updateSnapOffsetsForScrollableArea):
+
 2022-03-11  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] shape-rendering should support discrete animation

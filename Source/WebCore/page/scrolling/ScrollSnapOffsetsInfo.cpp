@@ -288,6 +288,9 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
 
     auto addOrUpdateStopForSnapOffset = [](HashMap<LayoutUnit, SnapOffset<LayoutUnit>>& offsets, LayoutUnit newOffset, ScrollSnapStop stop, bool hasSnapAreaLargerThanViewport, size_t snapAreaIndices)
     {
+        if (!offsets.isValidKey(newOffset))
+            return;
+
         auto offset = offsets.ensure(newOffset, [&] {
             return SnapOffset<LayoutUnit> { newOffset, stop, hasSnapAreaLargerThanViewport, { } };
         });
