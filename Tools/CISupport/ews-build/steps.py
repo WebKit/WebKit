@@ -141,6 +141,8 @@ class GitHubMixin(object):
     pr_open_states = ['open']
     pr_closed_states = ['closed']
     BLOCKED_LABEL = 'merging-blocked'
+    MERGE_QUEUE_LABEL = 'merge-queue'
+    FAST_MERGE_QUEUE_LABEL = 'fast-merge-queue'
 
     def fetch_data_from_url_with_authentication(self, url):
         response = None
@@ -160,7 +162,7 @@ class GitHubMixin(object):
             return None
         return response
 
-    def get_pr_json(self, pr_number, repository_url=None):
+    def get_pr_json(self, pr_number, repository_url=None, retry=0):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
             return None
@@ -169,14 +171,23 @@ class GitHubMixin(object):
         content = self.fetch_data_from_url_with_authentication(pr_url)
         if not content:
             return None
-        try:
-            pr_json = content.json()
-        except Exception as e:
-            print('Failed to get pull request data from {}, error: {}'.format(pr_url, e))
-            return None
-        if not pr_json or len(pr_json) == 0:
-            return None
-        return pr_json
+
+        for attempt in range(retry + 1):
+            try:
+                pr_json = content.json()
+                if pr_json and len(pr_json):
+                    return pr_json
+            except Exception as e:
+                self._addToLog('stdio', 'Failed to get pull request data from {}, error: {}'.format(pr_url, e))
+            
+            self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
+            if attempt > retry:
+                return None
+            wait_for = (index + 1) * 15
+            self._addToLog('stdio', 'Backing off for {} seconds before retrying.\n'.format(wait_for))
+            time.sleep(wait_for)
+
+        return None
 
     def _is_pr_closed(self, pr_json):
         if not pr_json or not pr_json.get('state'):
@@ -199,10 +210,15 @@ class GitHubMixin(object):
                 return 1
         return 0
 
+    def _is_pr_in_merge_queue(self, pr_json):
+        for label in (pr_json or {}).get('labels', {}):
+            if label.get('name', '') in (self.MERGE_QUEUE_LABEL, self.FAST_MERGE_QUEUE_LABEL):
+                return 1
+        return 0
+
     def should_send_email_for_pr(self, pr_number):
         pr_json = self.get_pr_json(pr_number)
         if not pr_json:
-            self._addToLog('stdio', 'Unable to fetch PR #{}\n'.format(pr_number))
             return True
 
         if 1 == self._is_hash_outdated(pr_json):
@@ -1218,11 +1234,20 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     flunkOnFailure = True
     haltOnFailure = True
 
-    def __init__(self, verifyObsolete=True, verifyBugClosed=True, verifyReviewDenied=True, addURLs=True, verifycqplus=False):
+    def __init__(
+        self,
+        verifyObsolete=True,
+        verifyBugClosed=True,
+        verifyReviewDenied=True,
+        addURLs=True,
+        verifycqplus=False,
+        verifyMergeQueue=False,
+    ):
         self.verifyObsolete = verifyObsolete
         self.verifyBugClosed = verifyBugClosed
         self.verifyReviewDenied = verifyReviewDenied
         self.verifycqplus = verifycqplus
+        self.verifyMergeQueue = verifyMergeQueue
         self.addURLs = addURLs
         buildstep.BuildStep.__init__(self)
 
@@ -1271,6 +1296,8 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         if self.verifycqplus and patch_id:
             self._addToLog('stdio', 'Change is in commit queue.\n')
             self._addToLog('stdio', 'Change has been reviewed.\n')
+        if self.verifyMergeQueue and pr_number:
+            self._addToLog('stdio', 'Change is in merge queue.\n')
         self.finished(SUCCESS)
         return None
 
@@ -1312,10 +1339,7 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             return False
 
         repository_url = self.getProperty('repository', '')
-
-        pr_json = self.get_pr_json(pr_number, repository_url)
-        if not pr_json:
-            self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
+        pr_json = self.get_pr_json(pr_number, repository_url, retry=3)
 
         pr_closed = self._is_pr_closed(pr_json) if self.verifyBugClosed else 0
         if pr_closed == 1:
@@ -1332,7 +1356,12 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self.skip_build("PR {} has been marked as '{}'".format(pr_number, self.BLOCKED_LABEL))
             return False
 
-        if -1 in (obsolete, pr_closed, blocked):
+        merge_queue = self._is_pr_in_merge_queue(pr_json) if self.verifyMergeQueue else 1
+        if merge_queue == 0:
+            self.skip_build("PR {} does not have a merge queue label".format(pr_number))
+            return False
+
+        if -1 in (obsolete, pr_closed, blocked, merge_queue):
             self.finished(WARNINGS)
             return False
 

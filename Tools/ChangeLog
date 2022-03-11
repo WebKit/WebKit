@@ -1,3 +1,22 @@
+2022-03-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Check for merge-queue labels
+        https://bugs.webkit.org/show_bug.cgi?id=237690
+        <rdar://problem/90064892>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (GitHubMixin):
+        (GitHubMixin.get_pr_json): Add retry.
+        (GitHubMixin._is_pr_in_merge_queue): Check for merge-queue label.
+        (GitHubMixin.should_send_email_for_pr): get_pr_json now owns logging.
+        (ValidateChange.__init__): Add verifyMergeQueue flag.
+        (ValidateChange):
+        (ValidateChange.start): Add log to indicate PR has a merge-queue flag.
+        (ValidateChange.validate_github): Add retry when getting PR json, add merge queue check.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add support for -[UITextInput removeEmojiAlternatives] on WKContentView
