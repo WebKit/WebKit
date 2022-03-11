@@ -43,6 +43,9 @@ PASS mask-image: "url("http://localhost/test-1")" onto "url("http://localhost/te
 PASS mask-origin (type: discrete) has testAccumulation function
 PASS mask-origin: "border-box" onto "content-box"
 PASS mask-origin: "content-box" onto "border-box"
+PASS mask-type (type: discrete) has testAccumulation function
+PASS mask-type: "luminance" onto "alpha"
+PASS mask-type: "alpha" onto "luminance"
 PASS mix-blend-mode (type: discrete) has testAccumulation function
 PASS mix-blend-mode: "screen" onto "multiply"
 PASS mix-blend-mode: "multiply" onto "screen"
