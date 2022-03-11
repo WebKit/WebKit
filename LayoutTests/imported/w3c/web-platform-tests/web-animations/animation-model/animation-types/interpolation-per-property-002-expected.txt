@@ -187,6 +187,10 @@ PASS stroke-linecap (type: discrete) has testInterpolation function
 PASS stroke-linecap uses discrete animation when animating between "round" and "square" with linear easing
 PASS stroke-linecap uses discrete animation when animating between "round" and "square" with effect easing
 PASS stroke-linecap uses discrete animation when animating between "round" and "square" with keyframe easing
+PASS stroke-linejoin (type: discrete) has testInterpolation function
+PASS stroke-linejoin uses discrete animation when animating between "round" and "miter" with linear easing
+PASS stroke-linejoin uses discrete animation when animating between "round" and "miter" with effect easing
+PASS stroke-linejoin uses discrete animation when animating between "round" and "miter" with keyframe easing
 PASS stroke-miterlimit (type: positiveNumber) has testInterpolation function
 PASS stroke-miterlimit supports animating as a positive number
 PASS stroke-opacity (type: opacity) has testInterpolation function
