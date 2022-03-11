@@ -54,9 +54,14 @@ WEBCORE_EXPORT const char* processTypeDescription(std::optional<AuxiliaryProcess
 bool isInAuxiliaryProcess();
 inline bool isInWebProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::WebContent); }
 inline bool isInNetworkProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::Network); }
+inline bool isInGPUProcess()
+{
 #if ENABLE(GPU_PROCESS)
-inline bool isInGPUProcess() { return checkAuxiliaryProcessType(AuxiliaryProcessType::GPU); }
+    return checkAuxiliaryProcessType(AuxiliaryProcessType::GPU);
+#else
+    return false;
 #endif
+}
 
 #if PLATFORM(COCOA)
 
