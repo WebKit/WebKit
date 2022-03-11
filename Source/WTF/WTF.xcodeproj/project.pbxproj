@@ -3521,7 +3521,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = YES ] && exit 0\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" installhdrs SYMROOT=\"${TARGET_TEMP_DIR}/LegacyNestHeaders-build\" DSTROOT=\"${BUILT_PRODUCTS_DIR}\" SDKROOT=\"${SDKROOT}\" -UseNewBuildSystem=YES\n\n";
+			shellScript = "[ \"${WK_USE_NEW_BUILD_SYSTEM}\" = YES ] && exit 0\nxcodebuild -project \"${PROJECT_FILE_PATH}\" -target \"${TARGET_NAME}\" installhdrs SYMROOT=\"${TARGET_TEMP_DIR}/LegacyNestHeaders-build\" DSTROOT=\"${BUILT_PRODUCTS_DIR}\" SDKROOT=\"${SDKROOT}\" SDK_VARIANT=\"${SDK_VARIANT}\" WK_USE_ALTERNATE_FRAMEWORKS_DIR=NO -UseNewBuildSystem=YES\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

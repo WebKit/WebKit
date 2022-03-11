@@ -1,3 +1,21 @@
+2022-03-11  Elliott Williams  <emw@apple.com>
+
+        [Xcode] "Nest Headers" script phases copy headers incorrectly on Catalyst
+        https://bugs.webkit.org/show_bug.cgi?id=237793
+
+        Reviewed by Alexey Proskuryakov.
+
+        SDK_VARIANT needs to be passed into the nested `xcodebuild` invocation that these script
+        phases run. Pass WK_USE_ALTERNATE_FRAMEWORKS_DIR=NO to prevent the default behavior where
+        Catalyst content is installed to /System/iOSSupport, as this causes headers to be copied to
+        WebKitBuild/Release/System/iOSSupport/...
+
+        This script phases only run under the legacy build system, so they do not affect production
+        builds. https://commits.webkit.org/247656@main provides more context on this hack (tl;dr
+        it's a temporary workaround for the XCBuild migration).
+
+        * WTF.xcodeproj/project.pbxproj:
+
 2022-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add a unit tests to check the remote inspector HTTP server
