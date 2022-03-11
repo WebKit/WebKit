@@ -1410,6 +1410,11 @@
 ))
 #endif
 
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name "com.apple.trustd.agent")))
+
 ;; Various services required by AppKit and other frameworks
 (allow mach-lookup
        (global-name "com.apple.logd")

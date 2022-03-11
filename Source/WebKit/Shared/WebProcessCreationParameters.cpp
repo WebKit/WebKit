@@ -167,7 +167,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if PLATFORM(MAC)
-    encoder << videoDecoderExtensionHandles;
+    encoder << trustdExtensionHandle;
 #endif
     encoder << restrictImageAndVideoDecoders;
 #endif
@@ -470,11 +470,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
 #if HAVE(VIDEO_RESTRICTED_DECODING)
 #if PLATFORM(MAC)
-    std::optional<Vector<SandboxExtension::Handle>> videoDecoderExtensionHandles;
-    decoder >> videoDecoderExtensionHandles;
-    if (!videoDecoderExtensionHandles)
+    std::optional<SandboxExtension::Handle> trustdExtensionHandle;
+    decoder >> trustdExtensionHandle;
+    if (!trustdExtensionHandle)
         return false;
-    parameters.videoDecoderExtensionHandles = WTFMove(*videoDecoderExtensionHandles);
+    parameters.trustdExtensionHandle = WTFMove(*trustdExtensionHandle);
 #endif
     std::optional<bool> restrictImageAndVideoDecoders;
     decoder >> restrictImageAndVideoDecoders;

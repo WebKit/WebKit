@@ -1,3 +1,20 @@
+2022-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Image decoders should be restricted for Mail
+        https://bugs.webkit.org/show_bug.cgi?id=237717
+        <rdar://89827733>
+
+        Reviewed by Geoffrey Garen.
+
+        Only add restricted decoding flag when it is explicitly requested.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::createImageSourceOptions):
+        (WebCore::ImageDecoderCG::enableRestrictedDecoding):
+        (WebCore::ImageDecoderCG::restrictedDecodingEnabled):
+        * platform/graphics/cg/ImageDecoderCG.h:
+
 2022-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add support for -[UITextInput removeEmojiAlternatives] on WKContentView

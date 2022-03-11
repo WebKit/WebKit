@@ -67,7 +67,8 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceOptions()
     CFDictionarySetValue(options.get(), kCGImageSourceShouldPreferRGB32, kCFBooleanTrue);
     CFDictionarySetValue(options.get(), kCGImageSourceSkipMetadata, kCFBooleanTrue);
 #if HAVE(IMAGE_RESTRICTED_DECODING) && USE(APPLE_INTERNAL_SDK)
-    CFDictionarySetValue(options.get(), kCGImageSourceEnableRestrictedDecoding, kCFBooleanTrue);
+    if (ImageDecoderCG::restrictedDecodingEnabled())
+        CFDictionarySetValue(options.get(), kCGImageSourceEnableRestrictedDecoding, kCFBooleanTrue);
 #endif
     return options;
 }
@@ -253,6 +254,8 @@ void sharedBufferRelease(void* info)
     sharedBuffer->deref();
 }
 #endif
+
+bool ImageDecoderCG::m_enableRestrictedDecoding = false;
 
 ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
@@ -592,6 +595,16 @@ void ImageDecoderCG::setData(const FragmentedSharedBuffer& data, bool allDataRec
 bool ImageDecoderCG::canDecodeType(const String& mimeType)
 {
     return MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
+}
+
+void ImageDecoderCG::enableRestrictedDecoding()
+{
+    m_enableRestrictedDecoding = true;
+}
+
+bool ImageDecoderCG::restrictedDecodingEnabled()
+{
+    return m_enableRestrictedDecoding;
 }
 
 }

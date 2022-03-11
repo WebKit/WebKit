@@ -68,10 +68,14 @@ public:
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
     void clearFrameBufferCache(size_t) final { }
 
+    WEBCORE_EXPORT static void enableRestrictedDecoding();
+    static bool restrictedDecodingEnabled();
+
 private:
     bool m_isAllDataReceived { false };
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
     RetainPtr<CGImageSourceRef> m_nativeDecoder;
+    static bool m_enableRestrictedDecoding;
 };
 
 }
