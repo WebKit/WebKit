@@ -1,3 +1,14 @@
+2022-03-08  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Support multiple metadata locations
+        https://bugs.webkit.org/show_bug.cgi?id=237395
+        <rdar://problem/89715863>
+
+        Reviewed by Dewei Zhu.
+
+        * metadata/git_config_extension: Renamed from metadata/project_config.
+        * metadata/project_config: Renamed to metadata/git_config_extension.
+
 2022-03-10  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Fix GeneratedSources dependency validation errors

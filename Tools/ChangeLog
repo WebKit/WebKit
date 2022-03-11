@@ -1,3 +1,23 @@
+2022-03-10  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Support multiple metadata locations
+        https://bugs.webkit.org/show_bug.cgi?id=237395
+        <rdar://problem/89715863>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git): Rename PROJECT_CONFIG_PATH to GIT_CONFIG_EXTENSION.
+        (Git.config): Use dynamic context.metadata instead of constant.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.__init__): Use self.metadata instead of constant.
+        (Scm.metadata): Support multiple locations for this directory.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup.py:
+        (Setup.git): Use dynamic repository.metadata instead of constant.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+
 2022-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add support for -[UITextInput addTextAlternatives:] on WKContentView

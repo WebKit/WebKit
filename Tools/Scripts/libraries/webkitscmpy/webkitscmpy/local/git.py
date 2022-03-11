@@ -302,7 +302,7 @@ class Git(Scm):
     HTTP_REMOTE = re.compile(r'(?P<protocol>https?)://(?P<host>[^\/]+)/(?P<path>.+).git')
     REMOTE_BRANCH = re.compile(r'remotes\/(?P<remote>[^\/]+)\/(?P<branch>.+)')
     USER_REMOTE = re.compile(r'(?P<username>[^:/]+):(?P<branch>.+)')
-    PROJECT_CONFIG_PATH = os.path.join(Scm.METADATA, 'project_config')
+    GIT_CONFIG_EXTENSION = 'git_config_extension'
     PROJECT_CONFIG_OPTIONS = {
         'pull.rebase': ['true', 'false'],
         'webkitscmpy.pull-request': ['overwrite', 'append'],
@@ -337,9 +337,9 @@ class Git(Scm):
             kwargs['cwd'] = context.root_path
             if location == 'project':
                 # Without a project config, use the library defaults
-                if not os.path.isfile(os.path.join(context.root_path, context.PROJECT_CONFIG_PATH)):
+                if not context.metadata or not os.path.isfile(os.path.join(context.metadata, context.GIT_CONFIG_EXTENSION)):
                     return {key: values[0] for key, values in context.PROJECT_CONFIG_OPTIONS.items()}
-                args += ['--file', context.PROJECT_CONFIG_PATH]
+                args += ['--file', os.path.join(context.metadata, context.GIT_CONFIG_EXTENSION)]
 
         command = run(args, **kwargs)
         if command.returncode:

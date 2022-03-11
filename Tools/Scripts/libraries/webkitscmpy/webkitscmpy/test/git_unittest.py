@@ -411,7 +411,7 @@ CommitDate: {time_b}
 
     def test_project_config(self):
         with mocks.local.Git(self.path, git_svn=True):
-            project_config = os.path.join(self.path, local.Git.PROJECT_CONFIG_PATH)
+            project_config = os.path.join(self.path, 'metadata', local.Git.GIT_CONFIG_EXTENSION)
             os.mkdir(os.path.dirname(project_config))
             with open(project_config, 'w') as f:
                 f.write('[webkitscmpy]\n')

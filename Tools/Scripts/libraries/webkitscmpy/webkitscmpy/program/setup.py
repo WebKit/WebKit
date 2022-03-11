@@ -118,10 +118,10 @@ class Setup(Command):
         else:
             log.info("Set git user name to '{}' for this repository".format(name))
 
-        if os.path.isfile(os.path.join(repository.path, local.Git.PROJECT_CONFIG_PATH)):
+        if repository.metadata and os.path.isfile(os.path.join(repository.metadata, local.Git.GIT_CONFIG_EXTENSION)):
             log.info('Adding project git config to repository config...')
             result += run(
-                [local.Git.executable(), 'config', 'include.path', os.path.join('..', local.Git.PROJECT_CONFIG_PATH)],
+                [local.Git.executable(), 'config', 'include.path', os.path.join('..', os.path.basename(repository.metadata), local.Git.GIT_CONFIG_EXTENSION)],
                 capture_output=True, cwd=repository.root_path,
             ).returncode
             log.info('Added project git config to repository config!')
