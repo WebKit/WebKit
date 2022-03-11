@@ -203,6 +203,10 @@ PASS text-align (type: discrete) has testInterpolation function
 PASS text-align uses discrete animation when animating between "start" and "end" with linear easing
 PASS text-align uses discrete animation when animating between "start" and "end" with effect easing
 PASS text-align uses discrete animation when animating between "start" and "end" with keyframe easing
+PASS text-anchor (type: discrete) has testInterpolation function
+PASS text-anchor uses discrete animation when animating between "middle" and "end" with linear easing
+PASS text-anchor uses discrete animation when animating between "middle" and "end" with effect easing
+PASS text-anchor uses discrete animation when animating between "middle" and "end" with keyframe easing
 PASS text-decoration-color (type: color) has testInterpolation function
 PASS text-decoration-color supports animating as color of rgb()
 PASS text-decoration-color supports animating as color of #RGB

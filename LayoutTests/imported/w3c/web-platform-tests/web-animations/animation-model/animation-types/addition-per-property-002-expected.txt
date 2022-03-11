@@ -169,6 +169,9 @@ PASS table-layout: "auto" onto "fixed"
 PASS text-align (type: discrete) has testAddition function
 PASS text-align: "end" onto "start"
 PASS text-align: "start" onto "end"
+PASS text-anchor (type: discrete) has testAddition function
+PASS text-anchor: "end" onto "middle"
+PASS text-anchor: "middle" onto "end"
 PASS text-decoration-color (type: color) has testAddition function
 FAIL text-decoration-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
 PASS text-decoration-color supports animating as color of #RGB
