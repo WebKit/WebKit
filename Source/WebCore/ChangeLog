@@ -1,3 +1,47 @@
+2022-03-11  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] refactor discrete FontCascadeDescription to use dedicated animation wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=237776
+
+        Reviewed by Antti Koivisto.
+
+        We added getters and setters on RenderStyle for properties exposed on FontCascadeDescription
+        solely for the purpose of animation support. Instead, we add a couple of dedicated animation
+        wrapper that removes the methods from RenderStyle and do all the work in
+        CSSPropertyAnimation.cpp.
+
+        The base class DiscreteFontDescriptionWrapper and is used for CSS properties backed by several
+        FontCascadeDescription methods.
+
+        The subclass DiscreteFontDescriptionTypedWrapper is used for CSS properties backed by a single
+        FontCascadeDescrption method dealing with a simple type.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::DiscreteFontDescriptionWrapper::DiscreteFontDescriptionWrapper):
+        (WebCore::DiscreteFontDescriptionWrapper::propertiesInFontDescriptionAreEqual const):
+        (WebCore::DiscreteFontDescriptionWrapper::setPropertiesInFontDescription const):
+        (WebCore::DiscreteFontDescriptionTypedWrapper::DiscreteFontDescriptionTypedWrapper):
+        (WebCore::DiscreteFontDescriptionTypedWrapper::value const):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setFontPalette):
+        (WebCore::RenderStyle::setFontKerning): Deleted.
+        (WebCore::RenderStyle::setFontFeatureSettings): Deleted.
+        (WebCore::RenderStyle::setFontFamilies): Deleted.
+        (WebCore::RenderStyle::setFontSynthesis): Deleted.
+        (WebCore::RenderStyle::setFontVariantAlternates): Deleted.
+        (WebCore::RenderStyle::setFontVariantPosition): Deleted.
+        (WebCore::RenderStyle::setFontVariantCaps): Deleted.
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::fontPalette const):
+        (WebCore::RenderStyle::fontKerning const): Deleted.
+        (WebCore::RenderStyle::fontFeatureSettings const): Deleted.
+        (WebCore::RenderStyle::fontFamilies const): Deleted.
+        (WebCore::RenderStyle::fontSynthesis const): Deleted.
+        (WebCore::RenderStyle::fontVariantAlternates const): Deleted.
+        (WebCore::RenderStyle::fontVariantPosition const): Deleted.
+        (WebCore::RenderStyle::fontVariantCaps const): Deleted.
+
 2022-03-11  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Allow AOM AV1 decoder and check for hardware AV1 decoders as well

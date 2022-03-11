@@ -2527,26 +2527,35 @@ private:
     }
 };
 
-class FontFamilyWrapper final : public AnimationPropertyWrapperBase {
+class DiscreteFontDescriptionWrapper : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FontFamilyWrapper()
-        : AnimationPropertyWrapperBase(CSSPropertyFontFamily)
+    DiscreteFontDescriptionWrapper(CSSPropertyID property)
+        : AnimationPropertyWrapperBase(property)
     {
     }
+
+protected:
+    virtual bool propertiesInFontDescriptionAreEqual(const FontCascadeDescription&, const FontCascadeDescription&) const { return false; }
+    virtual void setPropertiesInFontDescription(const FontCascadeDescription&, FontCascadeDescription&) const { }
 
 private:
     bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const override
     {
-        return a.fontFamilies() == b.fontFamilies();
+        return propertiesInFontDescriptionAreEqual(a.fontDescription(), b.fontDescription());
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
         ASSERT(!context.progress || context.progress == 1.0);
-        destination.setFontFamilies((context.progress ? to : from).fontFamilies());
+        FontSelector* currentFontSelector = destination.fontCascade().fontSelector();
+        auto destinationDescription = destination.fontDescription();
+        auto& sourceDescription = (context.progress ? to : from).fontDescription();
+        setPropertiesInFontDescription(sourceDescription, destinationDescription);
+        destination.setFontDescription(WTFMove(destinationDescription));
+        destination.fontCascade().update(currentFontSelector);
     }
 
 #if !LOG_DISABLED
@@ -2554,6 +2563,57 @@ private:
     {
     }
 #endif
+};
+
+template <typename T>
+class DiscreteFontDescriptionTypedWrapper : public DiscreteFontDescriptionWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    DiscreteFontDescriptionTypedWrapper(CSSPropertyID property, T (FontCascadeDescription::*getter)() const, void (FontCascadeDescription::*setter)(T))
+        : DiscreteFontDescriptionWrapper(property)
+        , m_getter(getter)
+        , m_setter(setter)
+    {
+    }
+
+private:
+    bool propertiesInFontDescriptionAreEqual(const FontCascadeDescription& a, const FontCascadeDescription& b) const override
+    {
+        return this->value(a) == this->value(b);
+    }
+
+    void setPropertiesInFontDescription(const FontCascadeDescription& source, FontCascadeDescription& destination) const override
+    {
+        (destination.*this->m_setter)(this->value(source));
+    }
+
+    T value(const FontCascadeDescription& description) const
+    {
+        return (description.*this->m_getter)();
+    }
+
+    T (FontCascadeDescription::*m_getter)() const;
+    void (FontCascadeDescription::*m_setter)(T);
+};
+
+class FontFamilyWrapper final : public DiscreteFontDescriptionWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    FontFamilyWrapper()
+        : DiscreteFontDescriptionWrapper(CSSPropertyFontFamily)
+    {
+    }
+
+private:
+    bool propertiesInFontDescriptionAreEqual(const FontCascadeDescription& a, const FontCascadeDescription& b) const override
+    {
+        return a.families() == b.families();
+    }
+
+    void setPropertiesInFontDescription(const FontCascadeDescription& source, FontCascadeDescription& destination) const override
+    {
+        destination.setFamilies(source.families());
+    }
 };
 
 class CounterWrapper final : public AnimationPropertyWrapperBase {
@@ -2634,88 +2694,74 @@ public:
     }
 };
 
-class FontVariantEastAsianWrapper final : public AnimationPropertyWrapperBase {
+class FontFeatureSettingsWrapper final : public DiscreteFontDescriptionWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    FontFeatureSettingsWrapper()
+        : DiscreteFontDescriptionWrapper(CSSPropertyFontFeatureSettings)
+    {
+    }
+
+private:
+    bool propertiesInFontDescriptionAreEqual(const FontCascadeDescription& a, const FontCascadeDescription& b) const override
+    {
+        return a.featureSettings() == b.featureSettings();
+    }
+
+    void setPropertiesInFontDescription(const FontCascadeDescription& source, FontCascadeDescription& destination) const override
+    {
+        destination.setFeatureSettings(FontFeatureSettings(source.featureSettings()));
+    }
+};
+
+class FontVariantEastAsianWrapper final : public DiscreteFontDescriptionWrapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FontVariantEastAsianWrapper()
-        : AnimationPropertyWrapperBase(CSSPropertyFontVariantEastAsian)
+        : DiscreteFontDescriptionWrapper(CSSPropertyFontVariantEastAsian)
     {
     }
 
 private:
-    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
-
-    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    bool propertiesInFontDescriptionAreEqual(const FontCascadeDescription& a, const FontCascadeDescription& b) const override
     {
-        auto& aFontDescription = a.fontDescription();
-        auto& bFontDescription = b.fontDescription();
-        return aFontDescription.variantEastAsianVariant() == bFontDescription.variantEastAsianVariant()
-            && aFontDescription.variantEastAsianWidth() == bFontDescription.variantEastAsianWidth()
-            && aFontDescription.variantEastAsianRuby() == bFontDescription.variantEastAsianRuby();
+        return a.variantEastAsianVariant() == b.variantEastAsianVariant()
+            && a.variantEastAsianWidth() == b.variantEastAsianWidth()
+            && a.variantEastAsianRuby() == b.variantEastAsianRuby();
     }
 
-    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
+    void setPropertiesInFontDescription(const FontCascadeDescription& source, FontCascadeDescription& destination) const override
     {
-        ASSERT(!context.progress || context.progress == 1.0);
-        auto& sourceFontDescription = (context.progress ? to : from).fontDescription();
-
-        FontSelector* currentFontSelector = destination.fontCascade().fontSelector();
-        auto description = destination.fontDescription();
-        description.setVariantEastAsianVariant(sourceFontDescription.variantEastAsianVariant());
-        description.setVariantEastAsianWidth(sourceFontDescription.variantEastAsianWidth());
-        description.setVariantEastAsianRuby(sourceFontDescription.variantEastAsianRuby());
-        destination.setFontDescription(WTFMove(description));
-        destination.fontCascade().update(currentFontSelector);
+        destination.setVariantEastAsianVariant(source.variantEastAsianVariant());
+        destination.setVariantEastAsianWidth(source.variantEastAsianWidth());
+        destination.setVariantEastAsianRuby(source.variantEastAsianRuby());
     }
-
-#if !LOG_DISABLED
-    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const override
-    {
-    }
-#endif
 };
 
-class FontVariantLigaturesWrapper final : public AnimationPropertyWrapperBase {
+class FontVariantLigaturesWrapper final : public DiscreteFontDescriptionWrapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FontVariantLigaturesWrapper()
-        : AnimationPropertyWrapperBase(CSSPropertyFontVariantLigatures)
+        : DiscreteFontDescriptionWrapper(CSSPropertyFontVariantLigatures)
     {
     }
 
 private:
-    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
-
-    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    bool propertiesInFontDescriptionAreEqual(const FontCascadeDescription& a, const FontCascadeDescription& b) const override
     {
-        auto& aFontDescription = a.fontDescription();
-        auto& bFontDescription = b.fontDescription();
-        return aFontDescription.variantCommonLigatures() == bFontDescription.variantCommonLigatures()
-            && aFontDescription.variantDiscretionaryLigatures() == bFontDescription.variantDiscretionaryLigatures()
-            && aFontDescription.variantHistoricalLigatures() == bFontDescription.variantHistoricalLigatures()
-            && aFontDescription.variantContextualAlternates() == bFontDescription.variantContextualAlternates();
+        return a.variantCommonLigatures() == b.variantCommonLigatures()
+            && a.variantDiscretionaryLigatures() == b.variantDiscretionaryLigatures()
+            && a.variantHistoricalLigatures() == b.variantHistoricalLigatures()
+            && a.variantContextualAlternates() == b.variantContextualAlternates();
     }
 
-    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
+    void setPropertiesInFontDescription(const FontCascadeDescription& source, FontCascadeDescription& destination) const override
     {
-        ASSERT(!context.progress || context.progress == 1.0);
-        auto& sourceFontDescription = (context.progress ? to : from).fontDescription();
-
-        FontSelector* currentFontSelector = destination.fontCascade().fontSelector();
-        auto description = destination.fontDescription();
-        description.setVariantCommonLigatures(sourceFontDescription.variantCommonLigatures());
-        description.setVariantDiscretionaryLigatures(sourceFontDescription.variantDiscretionaryLigatures());
-        description.setVariantHistoricalLigatures(sourceFontDescription.variantHistoricalLigatures());
-        description.setVariantContextualAlternates(sourceFontDescription.variantContextualAlternates());
-        destination.setFontDescription(WTFMove(description));
-        destination.fontCascade().update(currentFontSelector);
+        destination.setVariantCommonLigatures(source.variantCommonLigatures());
+        destination.setVariantDiscretionaryLigatures(source.variantDiscretionaryLigatures());
+        destination.setVariantHistoricalLigatures(source.variantHistoricalLigatures());
+        destination.setVariantContextualAlternates(source.variantContextualAlternates());
     }
-
-#if !LOG_DISABLED
-    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const override
-    {
-    }
-#endif
 };
 
 class GridTemplateAreasWrapper final : public AnimationPropertyWrapperBase {
@@ -2758,49 +2804,32 @@ public:
     }
 };
 
-class FontVariantNumericWrapper final : public AnimationPropertyWrapperBase {
+class FontVariantNumericWrapper final : public DiscreteFontDescriptionWrapper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FontVariantNumericWrapper()
-        : AnimationPropertyWrapperBase(CSSPropertyFontVariantNumeric)
+        : DiscreteFontDescriptionWrapper(CSSPropertyFontVariantNumeric)
     {
     }
 
 private:
-    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
-
-    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    bool propertiesInFontDescriptionAreEqual(const FontCascadeDescription& a, const FontCascadeDescription& b) const override
     {
-        auto& aFontDescription = a.fontDescription();
-        auto& bFontDescription = b.fontDescription();
-        return aFontDescription.variantNumericFigure() == bFontDescription.variantNumericFigure()
-            && aFontDescription.variantNumericSpacing() == bFontDescription.variantNumericSpacing()
-            && aFontDescription.variantNumericFraction() == bFontDescription.variantNumericFraction()
-            && aFontDescription.variantNumericOrdinal() == bFontDescription.variantNumericOrdinal()
-            && aFontDescription.variantNumericSlashedZero() == bFontDescription.variantNumericSlashedZero();
+        return a.variantNumericFigure() == b.variantNumericFigure()
+            && a.variantNumericSpacing() == b.variantNumericSpacing()
+            && a.variantNumericFraction() == b.variantNumericFraction()
+            && a.variantNumericOrdinal() == b.variantNumericOrdinal()
+            && a.variantNumericSlashedZero() == b.variantNumericSlashedZero();
     }
 
-    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
+    void setPropertiesInFontDescription(const FontCascadeDescription& source, FontCascadeDescription& destination) const override
     {
-        ASSERT(!context.progress || context.progress == 1.0);
-        auto& sourceFontDescription = (context.progress ? to : from).fontDescription();
-
-        FontSelector* currentFontSelector = destination.fontCascade().fontSelector();
-        auto description = destination.fontDescription();
-        description.setVariantNumericFigure(sourceFontDescription.variantNumericFigure());
-        description.setVariantNumericSpacing(sourceFontDescription.variantNumericSpacing());
-        description.setVariantNumericFraction(sourceFontDescription.variantNumericFraction());
-        description.setVariantNumericOrdinal(sourceFontDescription.variantNumericOrdinal());
-        description.setVariantNumericSlashedZero(sourceFontDescription.variantNumericSlashedZero());
-        destination.setFontDescription(WTFMove(description));
-        destination.fontCascade().update(currentFontSelector);
+        destination.setVariantNumericFigure(source.variantNumericFigure());
+        destination.setVariantNumericSpacing(source.variantNumericSpacing());
+        destination.setVariantNumericFraction(source.variantNumericFraction());
+        destination.setVariantNumericOrdinal(source.variantNumericOrdinal());
+        destination.setVariantNumericSlashedZero(source.variantNumericSlashedZero());
     }
-
-#if !LOG_DISABLED
-    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const override
-    {
-    }
-#endif
 };
 
 class QuotesWrapper final : public AnimationPropertyWrapperBase {
@@ -3200,8 +3229,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new OffsetRotatePropertyWrapper(CSSPropertyOffsetRotate, &RenderStyle::offsetRotate, &RenderStyle::setOffsetRotate),
         new DiscretePropertyWrapper<TextDecorationSkipInk>(CSSPropertyTextDecorationSkipInk, &RenderStyle::textDecorationSkipInk, &RenderStyle::setTextDecorationSkipInk),
         new DiscreteSVGPropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolation, &SVGRenderStyle::colorInterpolation, &SVGRenderStyle::setColorInterpolation),
-        new DiscretePropertyWrapper<Kerning>(CSSPropertyFontKerning, &RenderStyle::fontKerning, &RenderStyle::setFontKerning),
-        new DiscretePropertyWrapper<FontFeatureSettings>(CSSPropertyFontFeatureSettings, &RenderStyle::fontFeatureSettings, &RenderStyle::setFontFeatureSettings),
+        new DiscreteFontDescriptionTypedWrapper<Kerning>(CSSPropertyFontKerning, &FontCascadeDescription::kerning, &FontCascadeDescription::setKerning),
+        new FontFeatureSettingsWrapper,
         new FontFamilyWrapper,
         new DiscreteSVGPropertyWrapper<WindRule>(CSSPropertyClipRule, &SVGRenderStyle::clipRule, &SVGRenderStyle::setClipRule),
         new DiscreteSVGPropertyWrapper<ColorInterpolation>(CSSPropertyColorInterpolationFilters, &SVGRenderStyle::colorInterpolationFilters, &SVGRenderStyle::setColorInterpolationFilters),
@@ -3209,13 +3238,13 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new CounterWrapper(CSSPropertyCounterIncrement),
         new CounterWrapper(CSSPropertyCounterReset),
         new DiscreteSVGPropertyWrapper<WindRule>(CSSPropertyFillRule, &SVGRenderStyle::fillRule, &SVGRenderStyle::setFillRule),
-        new DiscretePropertyWrapper<FontSynthesis>(CSSPropertyFontSynthesis, &RenderStyle::fontSynthesis, &RenderStyle::setFontSynthesis),
-        new DiscretePropertyWrapper<FontVariantAlternates>(CSSPropertyFontVariantAlternates, &RenderStyle::fontVariantAlternates, &RenderStyle::setFontVariantAlternates),
+        new DiscreteFontDescriptionTypedWrapper<FontSynthesis>(CSSPropertyFontSynthesis, &FontCascadeDescription::fontSynthesis, &FontCascadeDescription::setFontSynthesis),
+        new DiscreteFontDescriptionTypedWrapper<FontVariantAlternates>(CSSPropertyFontVariantAlternates, &FontCascadeDescription::variantAlternates, &FontCascadeDescription::setVariantAlternates),
         new FontVariantEastAsianWrapper,
         new FontVariantLigaturesWrapper,
         new FontVariantNumericWrapper,
-        new DiscretePropertyWrapper<FontVariantPosition>(CSSPropertyFontVariantPosition, &RenderStyle::fontVariantPosition, &RenderStyle::setFontVariantPosition),
-        new DiscretePropertyWrapper<FontVariantCaps>(CSSPropertyFontVariantCaps, &RenderStyle::fontVariantCaps, &RenderStyle::setFontVariantCaps),
+        new DiscreteFontDescriptionTypedWrapper<FontVariantPosition>(CSSPropertyFontVariantPosition, &FontCascadeDescription::variantPosition, &FontCascadeDescription::setVariantPosition),
+        new DiscreteFontDescriptionTypedWrapper<FontVariantCaps>(CSSPropertyFontVariantCaps, &FontCascadeDescription::variantCaps, &FontCascadeDescription::setVariantCaps),
         new GridTemplateAreasWrapper,
         new QuotesWrapper,
         new DiscretePropertyWrapper<bool>(CSSPropertyScrollBehavior, &RenderStyle::useSmoothScrolling, &RenderStyle::setUseSmoothScrolling)

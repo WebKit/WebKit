@@ -370,13 +370,6 @@ public:
     FontSelectionValue fontStretch() const { return fontDescription().stretch(); }
     std::optional<FontSelectionValue> fontItalic() const { return fontDescription().italic(); }
     FontPalette fontPalette() const { return fontDescription().fontPalette(); }
-    Kerning fontKerning() const { return fontDescription().kerning(); }
-    FontFeatureSettings fontFeatureSettings() const { return fontDescription().featureSettings(); }
-    RefCountedFixedVector<AtomString>& fontFamilies() const { return fontDescription().families(); }
-    FontSynthesis fontSynthesis() const { return fontDescription().fontSynthesis(); }
-    FontVariantAlternates fontVariantAlternates() const { return fontDescription().variantAlternates(); }
-    FontVariantPosition fontVariantPosition() const { return fontDescription().variantPosition(); }
-    FontVariantCaps fontVariantCaps() const { return fontDescription().variantCaps(); }
 
     const Length& textIndent() const { return m_rareInheritedData->indent; }
     TextAlignMode textAlign() const { return static_cast<TextAlignMode>(m_inheritedFlags.textAlign); }
@@ -998,13 +991,6 @@ public:
     void setFontStretch(FontSelectionValue);
     void setFontItalic(std::optional<FontSelectionValue>);
     void setFontPalette(FontPalette);
-    void setFontKerning(Kerning);
-    void setFontFeatureSettings(FontFeatureSettings);
-    void setFontFamilies(RefCountedFixedVector<AtomString>&);
-    void setFontSynthesis(FontSynthesis);
-    void setFontVariantAlternates(FontVariantAlternates);
-    void setFontVariantPosition(FontVariantPosition);
-    void setFontVariantCaps(FontVariantCaps);
 
     void setColor(const Color&);
     void setTextIndent(Length&& length) { SET_VAR(m_rareInheritedData, indent, WTFMove(length)); }
