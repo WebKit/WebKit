@@ -78,19 +78,19 @@ auto ContainerQueryEvaluator::selectContainer(const FilteredContainerQuery& filt
         };
     };
 
-    auto computeUnsupportedAxes = [&](ContainerType containerType, const RenderElement* principalBox) -> OptionSet<CQ::Axis> {
+    auto isValidContainerForRequiredAxes = [&](ContainerType containerType, const RenderElement* principalBox) {
         switch (containerType) {
         case ContainerType::Size:
-            return { };
+            return true;
         case ContainerType::InlineSize:
             // Without a principal box the container matches but the query against it will evaluate to Unknown.
             if (!principalBox)
-                return { };
-            if (!principalBox->isHorizontalWritingMode())
-                return { CQ::Axis::Width, CQ::Axis::Block };
-            return { CQ::Axis::Height, CQ::Axis::Block };
+                return true;
+            if (filteredContainerQuery.axisFilter.contains(CQ::Axis::Block))
+                return false;
+            return !filteredContainerQuery.axisFilter.contains(principalBox->isHorizontalWritingMode() ? CQ::Axis::Height : CQ::Axis::Width);
         case ContainerType::None:
-            return { CQ::Axis::Width, CQ::Axis::Height, CQ::Axis::Inline, CQ::Axis::Block };
+            return false;
         }
         RELEASE_ASSERT_NOT_REACHED();
     };
@@ -99,12 +99,11 @@ auto ContainerQueryEvaluator::selectContainer(const FilteredContainerQuery& filt
         auto* style = element.existingComputedStyle();
         if (!style)
             return false;
-        auto unsupportedAxes = computeUnsupportedAxes(style->containerType(), element.renderer());
-        if (filteredContainerQuery.axisFilter.containsAny(unsupportedAxes))
+        if (!isValidContainerForRequiredAxes(style->containerType(), element.renderer()))
             return false;
         if (filteredContainerQuery.nameFilter.isEmpty())
             return true;
-        return element.existingComputedStyle()->containerNames().contains(filteredContainerQuery.nameFilter);
+        return style->containerNames().contains(filteredContainerQuery.nameFilter);
     };
 
     if (m_selectorMatchingState) {
@@ -201,12 +200,30 @@ static std::optional<LayoutUnit> computeSize(const CSSValue* value, const CSSToL
 
 auto ContainerQueryEvaluator::evaluateSizeFeature(const CQ::SizeFeature& sizeFeature, const SelectedContainer& container) const -> EvaluationResult
 {
-    // "If the query container does not have a principal box ... then the result of evaluating the size feature is unknown."
+    // "If the query container does not have a principal box, or the principal box is not a layout containment box,
+    // or the query container does not support container size queries on the relevant axes, then the result of
+    // evaluating the size feature is unknown."
     // https://drafts.csswg.org/css-contain-3/#size-container
     if (!container.renderer)
         return EvaluationResult::Unknown;
 
     auto& renderer = *container.renderer;
+
+    auto hasEligibleContainment = [&] {
+        if (!shouldApplyLayoutContainment(renderer))
+            return false;
+        switch (renderer.style().containerType()) {
+        case ContainerType::InlineSize:
+            return shouldApplyInlineSizeContainment(renderer);
+        case ContainerType::Size:
+            return shouldApplySizeContainment(renderer);
+        case ContainerType::None:
+            return true;
+        }
+    };
+
+    if (!hasEligibleContainment())
+        return EvaluationResult::Unknown;
 
     auto compare = [](CQ::ComparisonOperator op, auto left, auto right) {
         switch (op) {

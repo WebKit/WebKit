@@ -1,3 +1,37 @@
+2022-03-11  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Only apply inline-size containment when it is allowed
+        https://bugs.webkit.org/show_bug.cgi?id=237761
+
+        Reviewed by Antoine Quint.
+
+        "Giving an element inline-size containment has no effect if any of the following are true:
+
+        if the element does not generate a principal box (as is the case with display: contents or display: none)
+        if its inner display type is table
+        if its principal box is an internal table box
+        if its principal box is an internal ruby box or a non-atomic inline-level box"
+
+        https://drafts.csswg.org/css-contain-3/#containment-inline-size
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths const):
+
+        Check for valid inline-size containment.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::shouldApplyInlineSizeContainment):
+        * rendering/RenderObject.h:
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::selectContainer const):
+
+        Cleanups.
+
+        (WebCore::Style::ContainerQueryEvaluator::evaluateSizeFeature const):
+
+        Check for valid size containment for the type, evaluate to unknown if it doesn't exist.
+        Also check layout containment.
+
 2022-03-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed isInGPUProcess() fix after 248209@main

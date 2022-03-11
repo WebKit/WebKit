@@ -4095,7 +4095,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
 {
     // "The inline-axis intrinsic sizes of the principal box are determined as if the element had no content."
     // https://drafts.csswg.org/css-contain-3/#containment-inline-size
-    if (style().effectiveContainment().contains(Containment::InlineSize))
+    if (shouldApplyInlineSizeContainment(*this))
         return;
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)

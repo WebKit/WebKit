@@ -1210,6 +1210,7 @@ void printGraphicsLayerTreeForLiveDocuments();
 
 bool shouldApplyLayoutContainment(const RenderObject&);
 bool shouldApplySizeContainment(const RenderObject&);
+bool shouldApplyInlineSizeContainment(const RenderObject&);
 bool shouldApplyStyleContainment(const RenderObject&);
 bool shouldApplyPaintContainment(const RenderObject&);
 bool shouldApplyAnyContainment(const RenderObject&);
