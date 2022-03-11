@@ -373,6 +373,19 @@ void WebPageProxy::insertDictatedTextAsync(const String& text, const EditingRang
     send(Messages::WebPage::InsertDictatedTextAsync { text, replacementRange, dictationAlternatives, WTFMove(options) });
 }
 
+void WebPageProxy::addDictationAlternative(TextAlternativeWithRange&& alternative)
+{
+    if (!hasRunningProcess())
+        return;
+
+    auto nsAlternatives = alternative.alternatives.get();
+    auto context = pageClient().addDictationAlternatives(nsAlternatives);
+    sendWithAsyncReply(Messages::WebPage::AddDictationAlternative { nsAlternatives.primaryString, context }, [context, weakThis = WeakPtr { *this }](bool success) {
+        if (RefPtr protectedThis = weakThis.get(); protectedThis && !success)
+            protectedThis->removeDictationAlternatives(context);
+    });
+}
+
 #if USE(DICTATION_ALTERNATIVES)
 
 NSTextAlternatives *WebPageProxy::platformDictationAlternatives(WebCore::DictationContext dictationContext)

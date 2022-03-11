@@ -774,6 +774,7 @@ def headers_for_type(type):
         'WebCore::DOMPasteAccessCategory': ['<WebCore/DOMPasteAccess.h>'],
         'WebCore::DOMPasteAccessResponse': ['<WebCore/DOMPasteAccess.h>'],
         'WebCore::DestinationColorSpace': ['<WebCore/ColorSpace.h>'],
+        'WebCore::DictationContext': ['<WebCore/DictationContext.h>'],
         'WebCore::DisplayList::ItemBufferIdentifier': ['<WebCore/DisplayList.h>'],
         'WebCore::DocumentMarkerLineStyle': ['<WebCore/GraphicsTypes.h>'],
         'WebCore::DragApplicationFlags': ['<WebCore/DragData.h>'],

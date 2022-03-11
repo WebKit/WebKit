@@ -5642,6 +5642,11 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
     return !editorState.isMissingPostLayoutData && editorState.postLayoutData().hasPlainText;
 }
 
+- (void)addTextAlternatives:(NSTextAlternatives *)alternatives
+{
+    _page->addDictationAlternative({ alternatives, NSMakeRange(0, alternatives.primaryString.length) });
+}
+
 // end of UITextInput protocol implementation
 
 static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::AutocapitalizeType webkitType)

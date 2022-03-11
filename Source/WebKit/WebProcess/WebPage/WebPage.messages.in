@@ -478,6 +478,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     InsertTextAsync(String text, struct WebKit::EditingRange replacementRange, struct WebKit::InsertTextOptions options)
     InsertDictatedTextAsync(String text, struct WebKit::EditingRange replacementRange, Vector<WebCore::DictationAlternative> dictationAlternatives, struct WebKit::InsertTextOptions options)
+    AddDictationAlternative(String text, WebCore::DictationContext context) -> (bool success) Async
 
     HasMarkedText() -> (bool hasMarkedText)
     GetMarkedRangeAsync() -> (struct WebKit::EditingRange range)

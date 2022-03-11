@@ -1,3 +1,46 @@
+2022-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add support for -[UITextInput addTextAlternatives:] on WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=237691
+        rdar://89647018
+
+        Reviewed by Aditya Keerthi.
+
+        Work towards refactoring support for dictation alternatives on iOS; this patch adds support for an optional,
+        private UITextInput protocol method on WKContentView, which clients can use to directly insert
+        NSTextAlternatives for a given string of matching text (i.e., if the given string matches text at or before the
+        current selection range).
+
+        Tests:  TextAlternatives.AddTextAlternativesWithMatch
+                TextAlternatives.AddTextAlternativesWithSelectedMatch
+                TextAlternatives.AddTextAlternativesWithoutMatch
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+
+        Add support for sending WebCore::DictationContext as an IPC message argument.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::addDictationAlternative):
+
+        Register the dictation alternative (NSTextAlternative) on the page client, and send a message to the web process
+        to try and insert document markers corresponding to this dictation alternative. If, for whatever reason, we fail
+        to map dictation alternatives to an editable DOM range, make sure we automatically unregister this text
+        alternative as well.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView addTextAlternatives:]):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::addDictationAlternative):
+
+        Given a string to match and a dictation alternative identifier context, try to search for the matching string
+        before (or in) the selection; if found, install the dictation alternatives in the match range, as a document
+        marker.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-03-10  Jean-Yves Avenard  <jya@apple.com>
 
         MediaSampleCursor should iterate over the samples contained in the MediaSamplesBlock

@@ -67,6 +67,7 @@ IGNORE_WARNINGS_END
 #else // USE(APPLE_INTERNAL_SDK)
 
 @interface NSTextAlternatives : NSObject
+- (id)initWithPrimaryString:(NSString *)primaryString alternativeStrings:(NSArray<NSString *> *)alternativeStrings;
 @property (readonly) NSString *primaryString;
 @property (readonly) NSArray<NSString *> *alternativeStrings;
 @property (readonly) BOOL isLowConfidence;
@@ -320,6 +321,8 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 
 @protocol UITextInputInternal
 - (CGRect)_selectionClipRect;
+@optional
+- (void)addTextAlternatives:(NSTextAlternatives *)alternatives;
 @end
 
 @interface UIResponder (Internal)

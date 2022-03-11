@@ -1,3 +1,22 @@
+2022-03-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add support for -[UITextInput addTextAlternatives:] on WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=237691
+        rdar://89647018
+
+        Reviewed by Aditya Keerthi.
+
+        Add several basic API tests to exercise the new API; in particular, exercise both cases where the text
+        alternative's primary text matches before the selection, where it does not match, and where it matches inside
+        the selection.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/TextAlternatives.mm: Added.
+        (-[TestWKWebView dictationAlternativesMarkerCount:]):
+        (TestWebKitAPI::createWebViewForTestingTextAlternatives):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2022-03-10  Elliott Williams  <emw@apple.com>
 
         [XCBuild] Fix GeneratedSources dependency validation errors
