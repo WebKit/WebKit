@@ -50,6 +50,10 @@ PASS mask-image (type: discrete) has testInterpolation function
 FAIL mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 FAIL mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 FAIL mask-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+PASS mask-origin (type: discrete) has testInterpolation function
+PASS mask-origin uses discrete animation when animating between "content-box" and "border-box" with linear easing
+PASS mask-origin uses discrete animation when animating between "content-box" and "border-box" with effect easing
+PASS mask-origin uses discrete animation when animating between "content-box" and "border-box" with keyframe easing
 PASS mix-blend-mode (type: discrete) has testInterpolation function
 PASS mix-blend-mode uses discrete animation when animating between "multiply" and "screen" with linear easing
 PASS mix-blend-mode uses discrete animation when animating between "multiply" and "screen" with effect easing

@@ -1969,6 +1969,9 @@ public:
         case CSSPropertyMaskClip:
             m_fillLayerPropertyWrapper = makeUnique<FillLayerFillBoxPropertyWrapper>(property, &FillLayer::clip, &FillLayer::setClip);
             break;
+        case CSSPropertyMaskOrigin:
+            m_fillLayerPropertyWrapper = makeUnique<FillLayerFillBoxPropertyWrapper>(property, &FillLayer::origin, &FillLayer::setOrigin);
+            break;
         default:
             break;
         }
@@ -2937,6 +2940,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new FillLayersPropertyWrapper(CSSPropertyWebkitBackgroundSize, &RenderStyle::backgroundLayers, &RenderStyle::ensureBackgroundLayers),
 
         new FillLayersPropertyWrapper(CSSPropertyMaskClip, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
+        new FillLayersPropertyWrapper(CSSPropertyMaskOrigin, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
         new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionX, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
         new FillLayersPropertyWrapper(CSSPropertyWebkitMaskPositionY, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
         new FillLayersPropertyWrapper(CSSPropertyMaskSize, &RenderStyle::maskLayers, &RenderStyle::ensureMaskLayers),
