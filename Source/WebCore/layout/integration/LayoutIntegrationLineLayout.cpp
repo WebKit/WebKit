@@ -54,6 +54,7 @@
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderListBox.h"
+#include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderSlider.h"
 #include "RenderTextControlMultiLine.h"

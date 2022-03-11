@@ -1,3 +1,11 @@
+2022-03-10  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified build fix after 248294@main
+        https://bugs.webkit.org/show_bug.cgi?id=237751
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp: Add missing
+        include.
+
 2022-03-10  Chris Dumez  <cdumez@apple.com>
 
         Main document is leaking on haaretz.co.il due to lazy image loading
