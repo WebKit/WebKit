@@ -246,6 +246,22 @@ JSC_API JSCValue *
 jsc_value_function_callv                  (JSCValue             *value,
                                            guint                 n_parameters,
                                            JSCValue            **parameters) G_GNUC_WARN_UNUSED_RESULT;
+JSC_API JSCValue *
+jsc_value_new_array_buffer                (JSCContext           *context,
+                                           gpointer              data,
+                                           gsize                 size,
+                                           GDestroyNotify        destroy_notify,
+                                           gpointer              user_data);
+
+JSC_API gboolean
+jsc_value_is_array_buffer                 (JSCValue             *value);
+
+JSC_API gpointer
+jsc_value_array_buffer_get_data           (JSCValue             *value,
+                                           gsize                *size);
+
+JSC_API gsize
+jsc_value_array_buffer_get_size           (JSCValue             *value);
 
 JSC_API gboolean
 jsc_value_is_constructor                  (JSCValue             *value);

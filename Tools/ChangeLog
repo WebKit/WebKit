@@ -1,3 +1,18 @@
+2022-03-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GLib] Expose ArrayBuffer in the public API
+        https://bugs.webkit.org/show_bug.cgi?id=237088
+
+        Reviewed by Carlos Garcia Campos.
+
+        This adds a set of new functions to operate on JSCValue objects which refer to array
+        buffers in the JS side of the world. This allows sharing chunks of memory buffers
+        efficiently with native code, without needing to copy nor encode data back and forth.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp: Added test for array buffers.
+        (testJSCArrayBuffer):
+        (main):
+
 2022-03-11  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Add queue triggered by label addition

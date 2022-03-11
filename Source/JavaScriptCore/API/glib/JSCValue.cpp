@@ -22,12 +22,14 @@
 
 #include "APICast.h"
 #include "APIUtils.h"
+#include "JSArrayBuffer.h"
 #include "JSCCallbackFunction.h"
 #include "JSCClassPrivate.h"
 #include "JSCContextPrivate.h"
 #include "JSCInlines.h"
 #include "JSCValuePrivate.h"
 #include "JSRetainPtr.h"
+#include "JSTypedArray.h"
 #include "LiteralParser.h"
 #include "OpaqueJSString.h"
 #include <gobject/gvaluecollector.h>
@@ -1459,6 +1461,183 @@ JSCValue* jsc_value_constructor_callv(JSCValue* value, unsigned parametersCount,
         return jsc_value_new_undefined(priv->context.get());
 
     return jscContextGetOrCreateValue(priv->context.get(), result).leakRef();
+}
+
+struct ArrayBufferDeallocatorContext {
+    gpointer userData;
+    GDestroyNotify destroyNotify;
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ArrayBufferDeallocatorContext)
+
+/**
+ * jsc_value_new_array_buffer:
+ * @context: A #JSCContext
+ * @data: Pointer to a region of memory.
+ * @size: Size in bytes of the memory region.
+ * @destroy_notify: (nullable): destroy notifier for @user_data.
+ * @user_data: (closure): user data.
+ *
+ * Creates a new %ArrayBuffer from existing @data in memory.
+ *
+ * The @data is not copied: while this allows sharing data with JavaScript
+ * efficiently, the caller must ensure that the memory region remains valid
+ * until the newly created object is released by JSC.
+ *
+ * Optionally, a @destroy_notify callback can be provided, which will be
+ * invoked with @user_data as parameter when the %ArrayBuffer object is
+ * released. This is intended to be used for freeing resources related to
+ * the memory region which contains the data:
+ *
+ * |[!<-- language="C" -->
+ * GMappedFile *f = g_mapped_file_new (file_path, TRUE, NULL);
+ * JSCValue *value = jsc_value_new_array_buffer (context,
+ *     g_mapped_file_get_contents (f), g_mapped_file_get_length (f),
+ *     (GDestroyNotify) g_mapped_file_unref, f);
+ * ]|
+ *
+ * Note that the @user_data can be the same value as @data:
+ *
+ * |[!<-- language="C" -->
+ * void *bytes = g_malloc0 (100);
+ * JSCValue *value = jsc_value_new_array_buffer (context, bytes, 100, g_free, bytes);
+ * ]|
+ *
+ * Returns: (transfer full) (nullable): A #JSCValue, or %NULL in case of exception.
+ *
+ * Since: 2.38
+ */
+JSCValue* jsc_value_new_array_buffer(JSCContext* context, void* data, size_t length, GDestroyNotify destroyNotify, gpointer userData)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+
+    ArrayBufferDeallocatorContext* deallocatorContext = nullptr;
+    if (destroyNotify) {
+        deallocatorContext = createArrayBufferDeallocatorContext();
+        deallocatorContext->destroyNotify = destroyNotify;
+        deallocatorContext->userData = userData;
+    }
+
+    JSValueRef exception = nullptr;
+    auto* jsContext = jscContextGetJSContext(context);
+    auto* jsArrayBuffer = JSObjectMakeArrayBufferWithBytesNoCopy(jsContext, data, length, [](void*, void* deallocatorContext) {
+        if (deallocatorContext) {
+            auto* context = static_cast<ArrayBufferDeallocatorContext*>(deallocatorContext);
+            context->destroyNotify(context->userData);
+            destroyArrayBufferDeallocatorContext(context);
+        }
+    }, deallocatorContext, &exception);
+
+    if (jscContextHandleExceptionIfNeeded(context, exception))
+        return nullptr;
+
+    return jscContextGetOrCreateValue(context, jsArrayBuffer).leakRef();
+}
+
+/**
+ * jsc_value_is_array_buffer:
+ * @value: A #JSCValue.
+ *
+ * Check whether the @value is an %ArrayBuffer.
+ *
+ * Returns: whether the value is an %ArrayBuffer
+ *
+ * Since: 2.38
+ */
+gboolean jsc_value_is_array_buffer(JSCValue* value)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), FALSE);
+
+    using namespace JSC;
+
+    JSGlobalObject* globalObject = toJS(jscContextGetJSContext(value->priv->context.get()));
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+
+    JSValue jsValue = toJS(globalObject, value->priv->jsValue);
+    if (!jsValue.isObject())
+        return FALSE;
+
+    return !!jsDynamicCast<JSArrayBuffer*>(vm, jsValue.getObject());
+}
+
+/**
+ * jsc_value_array_buffer_get_data:
+ * @value: A #JSCValue
+ * @size: (nullable): location where to store the size of the memory region.
+ *
+ * Gets a pointer to memory that contains the array buffer data.
+ *
+ * Obtains a pointer to the memory region that holds the contents of the
+ * %ArrayBuffer; modifications done to the data will be visible to JavaScript
+ * code. If @size is not %NULL, the size in bytes of the memory region
+ * will also be stored in the pointed location.
+ *
+ * Note that the pointer returned by this function is not guaranteed to remain
+ * the same after calls to other JSC API functions. If you plan to access the
+ * data of the %ArrayBuffer later, you can keep a reference to the @value and
+ * obtain the data pointer at a later point. Keep in mind that if JavaScript
+ * code has a chance to run, for example due to main loop events that result
+ * in JSC being called, the contents of the memory region might be modified in
+ * the meantime. Consider taking a copy of the data and using the copy instead
+ * in asynchronous code.
+ *
+ * Returns: (transfer none): pointer to memory.
+ *
+ * Since: 2.38
+ */
+gpointer jsc_value_array_buffer_get_data(JSCValue* value, gsize* size)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), nullptr);
+
+    auto* jsContext = jscContextGetJSContext(value->priv->context.get());
+
+    JSValueRef exception = nullptr;
+    auto* jsObject = JSValueToObject(jsContext, value->priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return nullptr;
+
+    void* data = JSObjectGetArrayBufferBytesPtr(jsContext, jsObject, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return nullptr;
+
+    if (size) {
+        *size = JSObjectGetArrayBufferByteLength(jsContext, jsObject, &exception);
+        if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+            return nullptr;
+    }
+
+    return data;
+}
+
+/**
+ * jsc_value_array_buffer_get_size:
+ * @value: A #JSCValue
+ *
+ * Gets the size of the array buffer.
+ *
+ * Obtains the size in bytes of the memory region that holds the contents of
+ * an %ArrayBuffer.
+ *
+ * Returns: size, in bytes.
+ *
+ * Since: 2.38
+ */
+gsize jsc_value_array_buffer_get_size(JSCValue* value)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), 0);
+
+    auto* jsContext = jscContextGetJSContext(value->priv->context.get());
+
+    JSValueRef exception = nullptr;
+    auto* jsObject = JSValueToObject(jsContext, value->priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return 0;
+
+    size_t size = JSObjectGetArrayBufferByteLength(jsContext, jsObject, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return 0;
+
+    return size;
 }
 
 /**

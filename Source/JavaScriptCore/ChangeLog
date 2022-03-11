@@ -1,3 +1,23 @@
+2022-03-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GLib] Expose ArrayBuffer in the public API
+        https://bugs.webkit.org/show_bug.cgi?id=237088
+
+        Reviewed by Carlos Garcia Campos.
+
+        This adds a set of new functions to operate on JSCValue objects which refer to array
+        buffers in the JS side of the world. This allows sharing chunks of memory buffers
+        efficiently with native code, without needing to copy nor encode data back and forth.
+
+        * API/glib/JSCValue.cpp:
+        (jscArrayBufferDeallocate):
+        (jsc_value_new_array_buffer):
+        (jsc_value_is_array_buffer):
+        (jsc_value_array_buffer_get_data):
+        (jsc_value_array_buffer_get_length):
+        * API/glib/JSCValue.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+
 2022-03-11  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Debug build failure after r246172: ASSERT_UNDER_CONSTEXPR_CONTEXT should work in constexpr contexts
