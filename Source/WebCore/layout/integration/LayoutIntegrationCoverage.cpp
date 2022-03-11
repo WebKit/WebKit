@@ -38,6 +38,7 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderTable.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
@@ -510,6 +511,13 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
 
     if (is<RenderListMarker>(child) && is<RenderListItem>(child.parent()) && !is<RenderListMarker>(child.nextSibling()))
         return reasons;
+
+    if (is<RenderTable>(child)) {
+        auto& table = downcast<RenderTable>(child);
+        if (!table.isInline() || table.isPositioned() || !table.style().isHorizontalWritingMode())
+            SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
+        return reasons;
+    }
 
     if (is<RenderBlockFlow>(child)) {
         auto& block = downcast<RenderBlockFlow>(child);

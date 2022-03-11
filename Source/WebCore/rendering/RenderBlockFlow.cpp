@@ -3599,6 +3599,12 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
             layoutFormattingContextLineLayout.updateReplacedDimensions(replaced);
             continue;
         }
+        if (is<RenderTable>(renderer)) {
+            auto& inlineTable = downcast<RenderTable>(renderer);
+            inlineTable.layoutIfNeeded();
+            layoutFormattingContextLineLayout.updateInlineTableDimensions(inlineTable);
+            continue;
+        }
         if (is<RenderListMarker>(renderer)) {
             auto& marker = downcast<RenderListMarker>(renderer);
             marker.layoutIfNeeded();

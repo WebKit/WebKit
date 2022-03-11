@@ -57,6 +57,7 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderSlider.h"
+#include "RenderTable.h"
 #include "RenderTextControlMultiLine.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -154,6 +155,11 @@ void LineLayout::updateReplacedDimensions(const RenderBox& replaced)
 void LineLayout::updateInlineBlockDimensions(const RenderBlock& inlineBlock)
 {
     updateLayoutBoxDimensions(inlineBlock);
+}
+
+void LineLayout::updateInlineTableDimensions(const RenderTable& inlineTable)
+{
+    updateLayoutBoxDimensions(inlineTable);
 }
 
 void LineLayout::updateListItemDimensions(const RenderListItem& listItem)
@@ -290,6 +296,7 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
             || is<RenderListBox>(replacedOrInlineBlock)
             || is<RenderSlider>(replacedOrInlineBlock)
             || is<RenderTextControlMultiLine>(replacedOrInlineBlock)
+            || is<RenderTable>(replacedOrInlineBlock)
 #if ENABLE(ATTACHMENT_ELEMENT)
             || is<RenderAttachment>(replacedOrInlineBlock)
 #endif

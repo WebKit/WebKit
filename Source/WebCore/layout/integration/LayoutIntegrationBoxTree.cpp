@@ -40,6 +40,7 @@
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
+#include "RenderTable.h"
 #include "TextUtil.h"
 
 #if ENABLE(TREE_DEBUGGING)
@@ -124,7 +125,7 @@ void BoxTree::buildTree()
 
         if (is<RenderBlock>(childRenderer)) {
             auto attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationInlineBlock };
-            if (is<RenderDetailsMarker>(childRenderer) || is<RenderListItem>(childRenderer))
+            if (is<RenderTable>(childRenderer) || is<RenderDetailsMarker>(childRenderer) || is<RenderListItem>(childRenderer))
                 attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement };
             return makeUnique<Layout::ReplacedBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
         }

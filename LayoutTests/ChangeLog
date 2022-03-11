@@ -1,3 +1,12 @@
+2022-03-11  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Add support for inline table
+        https://bugs.webkit.org/show_bug.cgi?id=237498
+
+        Reviewed by Antti Koivisto.
+
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+
 2022-03-11  Youenn Fablet  <youenn@apple.com>
 
         Do capture video frame downsampling in GPUProcess

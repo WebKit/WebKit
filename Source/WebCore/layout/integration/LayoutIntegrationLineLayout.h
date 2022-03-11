@@ -50,6 +50,7 @@ class RenderInline;
 class RenderLineBreak;
 class RenderListItem;
 class RenderListMarker;
+class RenderTable;
 struct PaintInfo;
 
 namespace Layout {
@@ -82,6 +83,7 @@ public:
     void updateInlineBlockDimensions(const RenderBlock&);
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
     void updateInlineBoxDimensions(const RenderInline&);
+    void updateInlineTableDimensions(const RenderTable&);
     void updateListItemDimensions(const RenderListItem&);
     void updateListMarkerDimensions(const RenderListMarker&);
     void updateStyle(const RenderBoxModelObject&, const RenderStyle& oldStyle);

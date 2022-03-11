@@ -1,3 +1,27 @@
+2022-03-11  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Add support for inline table
+        https://bugs.webkit.org/show_bug.cgi?id=237498
+
+        Reviewed by Antti Koivisto.
+
+        This patch enables inline tables for IFC
+        e.g.
+        <div>inline content with <table style="display: inline-table">table</table></div>
+
+        We treat the inline table as any other atomic inline level box with synthetic baseline. 
+
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::BoxTree::buildTree):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+        (WebCore::LayoutIntegration::canUseForChild):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::updateInlineTableDimensions):
+        (WebCore::LayoutIntegration::LineLayout::updateLayoutBoxDimensions):
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutModernLines):
+
 2022-03-11  Youenn Fablet  <youenn@apple.com>
 
         Do capture video frame downsampling in GPUProcess
