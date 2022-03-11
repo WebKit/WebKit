@@ -33,6 +33,7 @@
 
 namespace WebCore {
 class ImageBuffer;
+enum class SetNonVolatileResult : uint8_t;
 }
 
 namespace WebKit {
@@ -55,8 +56,8 @@ public:
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
     
-    virtual void makeFrontBufferNonVolatile(RemoteLayerBackingStore&);
-    virtual void swapToValidFrontBuffer(RemoteLayerBackingStore&);
+    virtual WebCore::SetNonVolatileResult makeFrontBufferNonVolatile(RemoteLayerBackingStore&);
+    virtual WebCore::SetNonVolatileResult swapToValidFrontBuffer(RemoteLayerBackingStore&);
 
     void willFlushLayers();
     void willCommitLayerTree(RemoteLayerTreeTransaction&);

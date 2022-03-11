@@ -43,11 +43,11 @@ RemoteRenderingBackendProxy& RemoteLayerWithRemoteRenderingBackingStoreCollectio
     return layerTreeContext().ensureRemoteRenderingBackendProxy();
 }
 
-void RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile(RemoteLayerBackingStore& backingStore)
+WebCore::SetNonVolatileResult RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile(RemoteLayerBackingStore& backingStore)
 {
     auto frontBuffer = backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front);
     if (!frontBuffer)
-        return;
+        return WebCore::SetNonVolatileResult::Empty;
 
     auto hasBackendHandle = [](const WebCore::ImageBuffer& buffer) {
         if (auto* backend = buffer.ensureBackendCreated()) {
@@ -61,14 +61,13 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVol
     LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile - front buffer " << frontBuffer->renderingResourceIdentifier() << " is non volatile " << (frontBuffer->volatilityState() == WebCore::VolatilityState::NonVolatile));
 
     if (frontBuffer->volatilityState() == WebCore::VolatilityState::NonVolatile && hasBackendHandle(*frontBuffer))
-        return;
+        return WebCore::SetNonVolatileResult::Valid;
 
     auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
-    auto result = remoteRenderingBackend.markSurfaceNonVolatile(frontBuffer->renderingResourceIdentifier());
-    backingStore.didMakeFrontBufferNonVolatile(result);
+    return remoteRenderingBackend.markSurfaceNonVolatile(frontBuffer->renderingResourceIdentifier());
 }
 
-void RemoteLayerWithRemoteRenderingBackingStoreCollection::swapToValidFrontBuffer(RemoteLayerBackingStore& backingStore)
+WebCore::SetNonVolatileResult RemoteLayerWithRemoteRenderingBackingStoreCollection::swapToValidFrontBuffer(RemoteLayerBackingStore& backingStore)
 {
     auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
 
@@ -78,7 +77,8 @@ void RemoteLayerWithRemoteRenderingBackingStoreCollection::swapToValidFrontBuffe
         backingStore.bufferForType(RemoteLayerBackingStore::BufferType::SecondaryBack)
     };
     auto swapResult = remoteRenderingBackend.swapToValidFrontBuffer(WTFMove(identifiers));
-    backingStore.applySwappedBuffers(WTFMove(swapResult.buffers.front), WTFMove(swapResult.buffers.back), WTFMove(swapResult.buffers.secondaryBack), swapResult.frontBufferWasEmpty);
+    backingStore.applySwappedBuffers(WTFMove(swapResult.buffers.front), WTFMove(swapResult.buffers.back), WTFMove(swapResult.buffers.secondaryBack));
+    return swapResult.frontBufferWasEmpty ? WebCore::SetNonVolatileResult::Empty : WebCore::SetNonVolatileResult::Valid;
 }
 
 RefPtr<WebCore::ImageBuffer> RemoteLayerWithRemoteRenderingBackingStoreCollection::allocateBufferForBackingStore(const RemoteLayerBackingStore& backingStore)
@@ -99,7 +99,13 @@ bool RemoteLayerWithRemoteRenderingBackingStoreCollection::collectBackingStoreBu
         if (buffer->volatilityState() != WebCore::VolatilityState::NonVolatile)
             return;
 
-        backingStore.willMakeBufferVolatile(bufferType);
+        // Clearing the backend handle in the webcontent process is necessary to have the surface in-use count drop to zero.
+        if (auto* backend = buffer->ensureBackendCreated()) {
+            auto* sharing = backend->toBackendSharing();
+            if (is<ImageBufferBackendHandleSharing>(sharing))
+                downcast<ImageBufferBackendHandleSharing>(*sharing).clearBackendHandle();
+        }
+
         identifiers.append(buffer->renderingResourceIdentifier());
     };
 

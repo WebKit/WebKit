@@ -67,6 +67,7 @@ public:
     void setContents(WTF::MachSendRight&& surfaceHandle);
     // Returns true if the backing store changed.
     bool display();
+    void paintContents();
 
     WebCore::FloatSize size() const { return m_size; }
     float scale() const { return m_scale; }
@@ -91,8 +92,8 @@ public:
     }
 
     // Just for RemoteBackingStoreCollection.
-    void applySwappedBuffers(RefPtr<WebCore::ImageBuffer>&& front, RefPtr<WebCore::ImageBuffer>&& back, RefPtr<WebCore::ImageBuffer>&& secondaryBack, bool frontBufferNeedsDisplay);
-    void swapToValidFrontBuffer();
+    void applySwappedBuffers(RefPtr<WebCore::ImageBuffer>&& front, RefPtr<WebCore::ImageBuffer>&& back, RefPtr<WebCore::ImageBuffer>&& secondaryBack);
+    WebCore::SetNonVolatileResult swapToValidFrontBuffer();
 
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> takePendingFlushers();
 
@@ -102,13 +103,11 @@ public:
         SecondaryBack
     };
 
-    void willMakeBufferVolatile(BufferType);
-    void didMakeFrontBufferNonVolatile(WebCore::SetNonVolatileResult);
-
     RefPtr<WebCore::ImageBuffer> bufferForType(BufferType) const;
 
     // Returns true if it was able to fulfill the request. This can fail when trying to mark an in-use surface as volatile.
-    bool setBufferVolatility(BufferType, bool isVolatile);
+    bool setBufferVolatile(BufferType);
+    WebCore::SetNonVolatileResult setFrontBufferNonVolatile();
 
     MonotonicTime lastDisplayTime() const { return m_lastDisplayTime; }
 

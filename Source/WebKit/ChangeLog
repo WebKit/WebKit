@@ -1,3 +1,45 @@
+2022-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Some minor refactoring in RemoteLayerBackingStore
+        https://bugs.webkit.org/show_bug.cgi?id=237749
+
+        Reviewed by Tim Horton.
+
+        Simplify RemoteLayerBackingStore a little, primarily to push the setNeedsDisplay() calls
+        when swapToValidFrontBuffer() returns WebCore::SetNonVolatileResult::Empty out to the
+        callers, so it's clearer when m_dirtyRegion gets mutated.
+
+        In order to pass SetNonVolatileResult around more, change setBufferVolatility(bool) into
+        setBufferVolatile() and setFrontBufferNonVolatile(), which makes it clear that we only ever
+        set the front buffer to non-volatile.
+
+        Also move the call to clearBackendHandle() into
+        RemoteLayerWithRemoteRenderingBackingStoreCollection, since it's about GPU process.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::applySwappedBuffers):
+        (WebKit::RemoteLayerBackingStore::swapBuffers):
+        (WebKit::RemoteLayerBackingStore::setContents):
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::paintContents):
+        (WebKit::RemoteLayerBackingStore::setBufferVolatile):
+        (WebKit::RemoteLayerBackingStore::setFrontBufferNonVolatile):
+        (WebKit::RemoteLayerBackingStore::willMakeBufferVolatile): Deleted.
+        (WebKit::RemoteLayerBackingStore::didMakeFrontBufferNonVolatile): Deleted.
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility): Deleted.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::makeFrontBufferNonVolatile):
+        (WebKit::RemoteLayerBackingStoreCollection::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatile):
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm:
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::collectBackingStoreBufferIdentifiersToMarkVolatile):
+
 2022-03-11  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Cancel running operations in ASA on navigation

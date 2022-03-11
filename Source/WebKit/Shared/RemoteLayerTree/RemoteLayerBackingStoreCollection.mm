@@ -106,14 +106,14 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
     return true;
 }
 
-void RemoteLayerBackingStoreCollection::makeFrontBufferNonVolatile(RemoteLayerBackingStore& backingStore)
+WebCore::SetNonVolatileResult RemoteLayerBackingStoreCollection::makeFrontBufferNonVolatile(RemoteLayerBackingStore& backingStore)
 {
-    backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::Front, false);
+    return backingStore.setFrontBufferNonVolatile();
 }
 
-void RemoteLayerBackingStoreCollection::swapToValidFrontBuffer(RemoteLayerBackingStore& backingStore)
+WebCore::SetNonVolatileResult RemoteLayerBackingStoreCollection::swapToValidFrontBuffer(RemoteLayerBackingStore& backingStore)
 {
-    backingStore.swapToValidFrontBuffer();
+    return backingStore.swapToValidFrontBuffer();
 }
 
 bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBackingStore& backingStore, OptionSet<VolatilityMarkingBehavior> markingBehavior, MonotonicTime now)
@@ -124,7 +124,7 @@ bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBack
         auto timeSinceLastDisplay = now - backingStore.lastDisplayTime();
         if (timeSinceLastDisplay < volatileBackingStoreAgeThreshold) {
             if (timeSinceLastDisplay >= volatileSecondaryBackingStoreAgeThreshold)
-                backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true);
+                backingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::SecondaryBack);
 
             return false;
         }
@@ -132,14 +132,14 @@ bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBack
     
     bool successfullyMadeBackingStoreVolatile = true;
 
-    if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::SecondaryBack, true))
+    if (!backingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::SecondaryBack))
         successfullyMadeBackingStoreVolatile = false;
 
-    if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::Back, true))
+    if (!backingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Back))
         successfullyMadeBackingStoreVolatile = false;
 
     if (!m_reachableBackingStoreInLatestFlush.contains(&backingStore) || markingBehavior.contains(VolatilityMarkingBehavior::IgnoreReachability)) {
-        if (!backingStore.setBufferVolatility(RemoteLayerBackingStore::BufferType::Front, true))
+        if (!backingStore.setBufferVolatile(RemoteLayerBackingStore::BufferType::Front))
             successfullyMadeBackingStoreVolatile = false;
     }
 
