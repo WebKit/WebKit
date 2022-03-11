@@ -625,7 +625,11 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'create-local-git-commit',
             'push-commit-to-webkit-repo',
             'set-build-summary'
-        ]
+        ],
+        'Merge-Queue': [
+            'configure-build',
+            'validate-change',
+        ],
     }
 
     def setUp(self):

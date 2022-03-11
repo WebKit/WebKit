@@ -329,6 +329,12 @@
       "factory": "CommitQueueFactory", "platform": "mac-bigsur",
       "configuration": "release", "architectures": ["x86_64"],
       "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03"]
+    },
+    {
+      "name": "Merge-Queue", "shortname": "merge", "icon": "buildAndTest",
+      "factory": "MergeQueueFactory", "platform": "mac-bigsur",
+      "configuration": "release", "architectures": ["x86_64"],
+      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "ews151"]
     }
   ],
   "schedulers": [
@@ -347,7 +353,7 @@
       "builderNames": ["Commit-Queue"]
     },
     {
-      "type": "AnyBranchScheduler", "name": "pullrequest",
+      "type": "AnyBranchScheduler", "name": "pull_request",
       "builderNames": [
             "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-15-Build-EWS", "iOS-15-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-i386-32bits-EWS", "JSC-MIPSEL-32bits-Build-EWS", "JSC-Tests-EWS",
@@ -355,6 +361,10 @@
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-15-Build-EWS", "tvOS-15-Simulator-Build-EWS", "watchOS-8-Build-EWS",
             "watchOS-8-Simulator-Build-EWS", "WPE-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "WinCairo-EWS", "Windows-EWS"
       ]
+    },
+    {
+      "type": "AnyBranchScheduler", "name": "merge_queue",
+      "builderNames": ["Merge-Queue"]
     },
     {
       "type": "Triggerable", "name": "macos-bigsur-debug-build-ews",

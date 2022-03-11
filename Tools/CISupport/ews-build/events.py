@@ -311,8 +311,8 @@ class Events(service.BuildbotService):
 
 
 class GitHubEventHandlerNoEdits(GitHubEventHandler):
-    ACTIONS_TO_TRIGGER_EWS = ('opened', 'synchronize')
     OPEN_STATES = ('open',)
+    MERGE_QUEUE_LABELS = ('merge-queue', 'fast-merge-queue')
 
     @classmethod
     def file_with_status_sign(cls, info):
@@ -350,10 +350,14 @@ class GitHubEventHandlerNoEdits(GitHubEventHandler):
         pr_number = payload['number']
         action = payload.get('action')
         state = payload.get('pull_request', {}).get('state')
-        if action not in self.ACTIONS_TO_TRIGGER_EWS:
-            log.msg('Action {} on PR #{} does not indicate code has been changed'.format(action, pr_number))
-            return ([], 'git')
+        labels = [label.get('name') for label in payload.get('pull_request', {}).get('labels', [])]
+
         if state not in self.OPEN_STATES:
             log.msg("PR #{} is '{}', which triggers nothing".format(pr_number, state))
             return ([], 'git')
+        if action == 'labeled' and any(label in self.MERGE_QUEUE_LABELS for label in labels):
+            log.msg("PR #{} was labeled for merge-queue".format(pr_number))
+            # 'labeled' is usually an ignored action, override it to force build
+            payload['action'] = 'synchronize'
+            return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, 'merge_queue')
         return super(GitHubEventHandlerNoEdits, self).handle_pull_request(payload, event)

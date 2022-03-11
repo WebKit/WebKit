@@ -31,7 +31,7 @@ import loadConfig
 
 
 class ConfigDotJSONTest(unittest.TestCase):
-    DUPLICATED_TRIGGERS = ['try', 'pullrequest']
+    DUPLICATED_TRIGGERS = ['try', 'pull_request']
 
     def get_config(self):
         cwd = os.path.dirname(os.path.abspath(__file__))

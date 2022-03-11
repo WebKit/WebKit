@@ -1,5 +1,28 @@
 2022-03-11  Jonathan Bedard  <jbedard@apple.com>
 
+        [Merge-Queue] Add queue triggered by label addition
+        https://bugs.webkit.org/show_bug.cgi?id=237615
+        <rdar://problem/89983452>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/config.json: Add Merge-Queue.
+        * CISupport/ews-build/events.py:
+        (GitHubEventHandlerNoEdits): Remove action list, add merge-queue labels.
+        (GitHubEventHandlerNoEdits.handle_pull_request): Let parent class filter actions, treat
+        merge-queue label addition as a 'synchronize', but change event name to trigger different
+        scheduler family.
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory): Added.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps):
+        * CISupport/ews-build/loadConfig.py:
+        (loadBuilderConfig): AnyBranchSchedulers should only accept events which match their name.
+        * CISupport/ews-build/loadConfig_unittest.py:
+        (ConfigDotJSONTest): Match pull request scheduler name to pull request event.
+
+2022-03-11  Jonathan Bedard  <jbedard@apple.com>
+
         [Merge-Queue] Check for merge-queue labels
         https://bugs.webkit.org/show_bug.cgi?id=237690
         <rdar://problem/90064892>

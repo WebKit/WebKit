@@ -314,3 +314,10 @@ class CommitQueueFactory(factory.BuildFactory):
         self.addStep(CreateLocalGITCommit())
         self.addStep(PushCommitToWebKitRepo())
         self.addStep(SetBuildSummary())
+
+
+class MergeQueueFactory(factory.BuildFactory):
+    def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
+        factory.BuildFactory.__init__(self)
+        self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
+        self.addStep(ValidateChange(verifyMergeQueue=True))

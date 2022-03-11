@@ -30,9 +30,10 @@ from buildbot.schedulers.trysched import Try_Userpass
 from buildbot.schedulers.forcesched import ForceScheduler, StringParameter, FixedParameter, CodebaseParameter
 from buildbot.worker import Worker
 from buildbot.util import identifiers as buildbot_identifiers
+from buildbot.changes.filter import ChangeFilter
 
 from factories import (APITestsFactory, BindingsFactory, BuildFactory, CommitQueueFactory, Factory, GTKBuildFactory,
-                       GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, StressTestFactory,
+                       GTKTestsFactory, JSCBuildFactory, JSCBuildAndTestsFactory, JSCTestsFactory, MergeQueueFactory, StressTestFactory,
                        StyleFactory, TestFactory, tvOSBuildFactory, WPEFactory, WebKitPerlFactory, WebKitPyFactory,
                        WinCairoFactory, WindowsFactory, iOSBuildFactory, iOSEmbeddedBuildFactory, iOSTestsFactory,
                        macOSBuildFactory, macOSBuildOnlyFactory, macOSWK1Factory, macOSWK2Factory, ServicesFactory, WatchListFactory, watchOSBuildFactory)
@@ -80,10 +81,17 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     c['schedulers'] = []
     for scheduler in config['schedulers']:
         schedulerClassName = scheduler.pop('type')
+        schedulerName = scheduler.get('name')
         schedulerClass = globals()[schedulerClassName]
+
+        def filter_fn(change, schedulerName=schedulerName):
+            return change.properties.getProperty('event') == schedulerName
+
         if (schedulerClassName == 'Try_Userpass'):
             # FIXME: Read the credentials from local file on disk.
             scheduler['userpass'] = [(passwords.get('BUILDBOT_TRY_USERNAME', 'sampleuser'), passwords.get('BUILDBOT_TRY_PASSWORD', 'samplepass'))]
+        if schedulerClassName == 'AnyBranchScheduler' and schedulerName:
+            scheduler['change_filter'] = ChangeFilter(filter_fn=filter_fn)
         c['schedulers'].append(schedulerClass(**scheduler))
 
     forceScheduler = ForceScheduler(
