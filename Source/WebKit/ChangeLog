@@ -1,3 +1,14 @@
+2022-03-10  Michael Saboff  <msaboff@apple.com>
+
+        Catalyst JavaScriptCore, WebCore, WebKitLegacy, and WebKit shouldn't be copied to the Secondary Path
+        https://bugs.webkit.org/show_bug.cgi?id=237748
+
+        Reviewed by Mark Lam.
+
+        Updated the configuration to exclude copying Catalyst build products to the secondary path.
+
+        * Configurations/Base.xcconfig:
+
 2022-03-10  Chris Dumez  <cdumez@apple.com>
 
         [macOS] WebContent processes crash with XPC_EXIT_REASON_SIGTERM_TIMEOUT when logging out

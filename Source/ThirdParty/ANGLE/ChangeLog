@@ -1,3 +1,14 @@
+2022-03-10  Michael Saboff  <msaboff@apple.com>
+
+        Catalyst JavaScriptCore, WebCore, WebKitLegacy, and WebKit shouldn't be copied to the Secondary Path
+        https://bugs.webkit.org/show_bug.cgi?id=237748
+
+        Reviewed by Mark Lam.
+
+        Updated the configuration to exclude copying Catalyst build products to the secondary path.
+
+        * Configurations/ANGLE-dynamic.xcconfig:
+
 2022-03-08  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE display cache does not work with explicit device ids
