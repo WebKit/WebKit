@@ -1,3 +1,13 @@
+2022-03-10  Frédéric Wang  <fwang@igalia.com>
+
+        [ iOS ] editing/inserting/insert-paragraph-separator-with-inline-table-bold-crash.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=237551
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/inserting/insert-paragraph-separator-with-inline-table-bold-crash.html: Ensure the
+        test does not complete before the page load.
+
 2022-03-10  Peng Liu  <peng.liu6@apple.com>
 
         EnterPictureInPictureEvent event was renamed to PictureInPictureEvent in spec

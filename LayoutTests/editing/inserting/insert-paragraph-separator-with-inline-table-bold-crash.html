@@ -4,9 +4,11 @@
   }
 </style>
 <script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
   onload = () => {
-    if (window.testRunner)
-        testRunner.dumpAsText();
     document.designMode = 'on';
     document.execCommand('SelectAll');
     document.execCommand('InsertText', false, 'a');
@@ -16,5 +18,7 @@
     document.execCommand('PasteAsQuotation');
     document.execCommand('InsertParagraph');
     document.body.innerHTML = 'This test passes if it does not crash.';
+    if (window.testRunner)
+      testRunner.notifyDone();
   };
 </script>
