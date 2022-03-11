@@ -1,3 +1,17 @@
+2022-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Main document is leaking on haaretz.co.il due to lazy image loading
+        https://bugs.webkit.org/show_bug.cgi?id=237660
+        <rdar://problem/90035071>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * fast/dom/lazy-image-loading-document-leak-expected.txt: Added.
+        * fast/dom/lazy-image-loading-document-leak.html: Added.
+        * fast/dom/resources/lazy-image-loading-document-leak-popup.html: Added.
+
 2022-03-10  Matteo Flores  <matteo_flores@apple.com>
 
         [ iOS Mac ] imported/w3c/web-platform-tests/service-workers/service-worker/partitioned-service-worker-matchAll.tentative.https.html is a flaky text failure on all queues

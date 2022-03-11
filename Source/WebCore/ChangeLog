@@ -1,3 +1,46 @@
+2022-03-10  Chris Dumez  <cdumez@apple.com>
+
+        Main document is leaking on haaretz.co.il due to lazy image loading
+        https://bugs.webkit.org/show_bug.cgi?id=237660
+        <rdar://problem/90035071>
+
+        Reviewed by Geoffrey Garen.
+
+        When an HTML image uses `loading=lazy`, ImageLoader::updateFromElement() may get
+        called twice. If the image is outside the viewport, the first time ImageLoader::updateFromElement()
+        is called, we'll request a CachedImage but we'll set m_lazyImageLoadState to LazyImageLoadState::Deferred
+        and not ask the CachedImage to load. Then, later on, if the HTML image approaches the viewport,
+        ImageLoader::loadDeferredImage() will get called. It will set m_lazyImageLoadState to LazyImageLoadState::LoadImmediately
+        and call updateFromElement() again. This time however, updateFromElement() will actually ask the CachedImage
+        to load.
+
+        The issue was that the first time ImageLoader::updateFromElement(), we would set m_lazyImageLoadState to Deferred
+        and not ask the CachedImage to load but still set m_hasPendingLoadEvent to true. This is problematic if the CachedImage
+        is not already loaded since no was was started and thus no load event is coming (and no load event may ever come if the
+        image never approaches the viewport). When updatedHasPendingEvent() is called, it will protect the HTMLImageElement if
+        m_hasPendingLoadEvent is true, to make sure the image element stays alive long enough for us to dispatch the load event.
+        With lazy loading, this meant that we would protect the HTMLImageElement right away and undefinitely since no load event
+        may ever come. This meant that when navigating away from a page with images that are lazily loaded (and not loaded yet),
+        we would leak the HTMLImageElements (and ImageLoaders), which in turn would keep the Document alive too.
+
+        To address the issue, we now make sure that m_hasPendingLoadEvent is no longer set to true when updateFromElement()
+        is called but the CachedImage is not already loaded and not loading (lazy loading case). When updateFromElement() gets
+        called the second time (when the lazily loaded image approaches the viewport), we make sure that the m_hasPendingLoadEvent
+        flag gets set to true then.
+
+        Test: fast/dom/lazy-image-loading-document-leak.html
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::ImageLoader):
+        (WebCore::ImageLoader::updateFromElement):
+        (WebCore::ImageLoader::didUpdateCachedImage):
+        (WebCore::ImageLoader::didStartLoading):
+        * loader/ImageLoader.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::load):
+        * loader/cache/CachedImageClient.h:
+        (WebCore::CachedImageClient::didStartLoading):
+
 2022-03-10  Michael Saboff  <msaboff@apple.com>
 
         Catalyst JavaScriptCore, WebCore, WebKitLegacy, and WebKit shouldn't be copied to the Secondary Path

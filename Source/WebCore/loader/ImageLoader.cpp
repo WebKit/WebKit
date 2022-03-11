@@ -47,6 +47,7 @@
 #include "RenderSVGImage.h"
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 
 #if ENABLE(VIDEO)
 #include "RenderVideo.h"
@@ -106,6 +107,7 @@ ImageLoader::ImageLoader(Element& element)
     , m_imageComplete(true)
     , m_loadManually(false)
     , m_elementIsProtected(false)
+    , m_inUpdateFromElement(false)
 {
 }
 
@@ -177,6 +179,11 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     if (!m_failedLoadURL.isEmpty() && attr == m_failedLoadURL)
         return;
 
+    m_inUpdateFromElement = true;
+    auto inUpdateFromElementScope = makeScopeExit([this] {
+        m_inUpdateFromElement = false;
+    });
+
     // Do not load any image if the 'src' attribute is missing or if it is
     // an empty string.
     CachedResourceHandle<CachedImage> newImage = nullptr;
@@ -238,8 +245,16 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         errorEventSender().dispatchEventSoon(*this);
     }
 
+    didUpdateCachedImage(relevantMutation, WTFMove(newImage));
+}
+
+void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, CachedResourceHandle<CachedImage>&& newImage)
+{
+    auto& document = element().document();
+
     CachedImage* oldImage = m_image.get();
-    if (newImage != oldImage || relevantMutation == RelevantMutation::Yes) {
+    bool loadHasNowLazilyStarted = oldImage == newImage && !m_hasPendingLoadEvent && newImage && newImage->isLoading();
+    if (newImage != oldImage || relevantMutation == RelevantMutation::Yes || loadHasNowLazilyStarted) {
         if (m_hasPendingBeforeLoadEvent) {
             beforeLoadEventSender().cancelEvent(*this);
             m_hasPendingBeforeLoadEvent = false;
@@ -258,9 +273,12 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             m_hasPendingErrorEvent = false;
         }
 
+        // Due to lazy image loading and the loadsImagesAutomatically setting, it is possible that we did not actually start the image load.
+        bool imageWillBeLoadedLater = newImage && !newImage->isLoading() && newImage->stillNeedsLoad();
+
         m_image = newImage;
-        m_hasPendingBeforeLoadEvent = !document.isImageDocument() && newImage;
-        m_hasPendingLoadEvent = newImage;
+        m_hasPendingBeforeLoadEvent = !document.isImageDocument() && newImage && !imageWillBeLoadedLater;
+        m_hasPendingLoadEvent = newImage && !imageWillBeLoadedLater;
         m_imageComplete = !newImage;
 
         if (newImage) {
@@ -269,8 +287,12 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
             else
                 updateRenderer();
 
-            if (m_lazyImageLoadState == LazyImageLoadState::Deferred)
-                LazyLoadImageObserver::observe(element());
+            if (m_lazyImageLoadState == LazyImageLoadState::Deferred) {
+                if (imageWillBeLoadedLater)
+                    LazyLoadImageObserver::observe(element());
+                else // No need to set up a LazyLoadImageObserver if the image is already loaded (e.g. was already cached).
+                    m_lazyImageLoadState = LazyImageLoadState::None;
+            }
 
             // If newImage is cached, addClient() will result in the load event
             // being queued to fire. Ensure this happens after beforeload is
@@ -577,6 +599,13 @@ void ImageLoader::loadDeferredImage()
     updateFromElement(RelevantMutation::No);
 }
 
+void ImageLoader::didStartLoading()
+{
+    if (m_inUpdateFromElement)
+        return;
+
+    didUpdateCachedImage(RelevantMutation::No, CachedResourceHandle { m_image });
+}
 void ImageLoader::resetLazyImageLoading(Document& document)
 {
     if (isDeferred())
