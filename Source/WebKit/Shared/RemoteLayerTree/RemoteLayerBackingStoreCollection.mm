@@ -46,6 +46,12 @@ RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection(RemoteLayer
 
 RemoteLayerBackingStoreCollection::~RemoteLayerBackingStoreCollection() = default;
 
+void RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
+{
+    for (auto* backingStore : m_reachableBackingStoreInLatestFlush)
+        backingStore->paintContents();
+}
+
 void RemoteLayerBackingStoreCollection::willFlushLayers()
 {
     m_inLayerFlush = true;
@@ -69,12 +75,12 @@ void RemoteLayerBackingStoreCollection::didFlushLayers()
     m_inLayerFlush = false;
 
     Vector<RemoteLayerBackingStore*> newlyUnreachableBackingStore;
-    for (auto& backingStore : m_liveBackingStore) {
+    for (auto* backingStore : m_liveBackingStore) {
         if (!m_reachableBackingStoreInLatestFlush.contains(backingStore))
             newlyUnreachableBackingStore.append(backingStore);
     }
 
-    for (auto& backingStore : newlyUnreachableBackingStore)
+    for (auto* backingStore : newlyUnreachableBackingStore)
         backingStoreBecameUnreachable(*backingStore);
 
     if (!newlyUnreachableBackingStore.isEmpty())
@@ -172,10 +178,10 @@ bool RemoteLayerBackingStoreCollection::markAllBackingStoreVolatile(OptionSet<Vo
     bool successfullyMadeBackingStoreVolatile = true;
     auto now = MonotonicTime::now();
 
-    for (const auto& backingStore : m_liveBackingStore)
+    for (auto* backingStore : m_liveBackingStore)
         successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(*backingStore, liveBackingStoreMarkingBehavior, now);
 
-    for (const auto& backingStore : m_unparentedBackingStore)
+    for (auto* backingStore : m_unparentedBackingStore)
         successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(*backingStore, unparentedBackingStoreMarkingBehavior, now);
 
     return successfullyMadeBackingStoreVolatile;

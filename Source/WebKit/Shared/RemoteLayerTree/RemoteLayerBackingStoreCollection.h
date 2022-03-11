@@ -59,6 +59,8 @@ public:
     virtual WebCore::SetNonVolatileResult makeFrontBufferNonVolatile(RemoteLayerBackingStore&);
     virtual WebCore::SetNonVolatileResult swapToValidFrontBuffer(RemoteLayerBackingStore&);
 
+    void paintReachableBackingStoreContents();
+
     void willFlushLayers();
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
     void didFlushLayers();

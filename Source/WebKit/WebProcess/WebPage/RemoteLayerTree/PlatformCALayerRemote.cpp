@@ -178,7 +178,7 @@ void PlatformCALayerRemote::recursiveBuildTransaction(RemoteLayerTreeContext& co
         m_properties.backingStore = nullptr;
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
     }
-    if (m_properties.backingStore && m_properties.backingStoreAttached && m_properties.backingStore->display())
+    if (m_properties.backingStore && m_properties.backingStoreAttached && m_properties.backingStore->prepareToDisplay())
         m_properties.notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
 
     if (m_properties.changedProperties) {

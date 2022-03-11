@@ -283,7 +283,7 @@ void RemoteLayerBackingStore::setContents(WTF::MachSendRight&& contents)
     m_paintingRects.clear();
 }
 
-bool RemoteLayerBackingStore::display()
+bool RemoteLayerBackingStore::prepareToDisplay()
 {
     ASSERT(!m_frontBufferFlushers.size());
 
@@ -325,8 +325,6 @@ bool RemoteLayerBackingStore::display()
     }
 
     swapBuffers();
-
-    paintContents();
     return true;
 }
 

@@ -66,7 +66,7 @@ public:
 
     void setContents(WTF::MachSendRight&& surfaceHandle);
     // Returns true if the backing store changed.
-    bool display();
+    bool prepareToDisplay();
     void paintContents();
 
     WebCore::FloatSize size() const { return m_size; }
