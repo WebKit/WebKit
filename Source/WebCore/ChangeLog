@@ -1,3 +1,16 @@
+2022-03-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Allow AOM AV1 decoder and check for hardware AV1 decoders as well
+        https://bugs.webkit.org/show_bug.cgi?id=237713
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The AOM AV1 decoder performs better nowadays. Also it seems hardware-accelerated decoders
+        are appearing, so we should check for this as well.
+
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp:
+        (WebCore::GStreamerRegistryScanner::initializeDecoders):
+
 2022-03-11  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Only apply inline-size containment when it is allowed
