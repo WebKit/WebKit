@@ -513,8 +513,8 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/pictureinpicture/Document+PictureInPicture.idl
     Modules/pictureinpicture/DocumentOrShadowRoot+PictureInPicture.idl
-    Modules/pictureinpicture/EnterPictureInPictureEvent.idl
     Modules/pictureinpicture/HTMLVideoElement+PictureInPicture.idl
+    Modules/pictureinpicture/PictureInPictureEvent.idl
     Modules/pictureinpicture/PictureInPictureWindow.idl
 
     Modules/push-api/PushEncryptionKeyName.idl

@@ -29,12 +29,12 @@
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
-#include "EnterPictureInPictureEvent.h"
 #include "EventNames.h"
 #include "HTMLVideoElement.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSPictureInPictureWindow.h"
 #include "Logging.h"
+#include "PictureInPictureEvent.h"
 #include "PictureInPictureSupport.h"
 #include "PictureInPictureWindow.h"
 #include "VideoTrackList.h"
@@ -158,10 +158,10 @@ void HTMLVideoElementPictureInPicture::didEnterPictureInPicture(const IntSize& w
     m_videoElement.document().setPictureInPictureElement(&m_videoElement);
     m_pictureInPictureWindow->setSize(windowSize);
 
-    EnterPictureInPictureEvent::Init initializer;
+    PictureInPictureEvent::Init initializer;
     initializer.bubbles = true;
     initializer.pictureInPictureWindow = m_pictureInPictureWindow;
-    m_videoElement.scheduleEvent(EnterPictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTFMove(initializer)));
+    m_videoElement.scheduleEvent(PictureInPictureEvent::create(eventNames().enterpictureinpictureEvent, WTFMove(initializer)));
 
     if (m_enterPictureInPicturePromise) {
         m_enterPictureInPicturePromise->resolve<IDLInterface<PictureInPictureWindow>>(*m_pictureInPictureWindow);
@@ -175,7 +175,11 @@ void HTMLVideoElementPictureInPicture::didExitPictureInPicture()
     m_videoElement.invalidateStyle();
     m_pictureInPictureWindow->close();
     m_videoElement.document().setPictureInPictureElement(nullptr);
-    m_videoElement.scheduleEvent(Event::create(eventNames().leavepictureinpictureEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+
+    PictureInPictureEvent::Init initializer;
+    initializer.bubbles = true;
+    initializer.pictureInPictureWindow = m_pictureInPictureWindow;
+    m_videoElement.scheduleEvent(PictureInPictureEvent::create(eventNames().leavepictureinpictureEvent, WTFMove(initializer)));
 
     if (m_exitPictureInPicturePromise) {
         m_exitPictureInPicturePromise->resolve();

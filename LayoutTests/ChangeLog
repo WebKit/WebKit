@@ -1,3 +1,14 @@
+2022-03-10  Peng Liu  <peng.liu6@apple.com>
+
+        EnterPictureInPictureEvent event was renamed to PictureInPictureEvent in spec
+        https://bugs.webkit.org/show_bug.cgi?id=221083
+
+        Reviewed by Youenn Fablet.
+
+        * media/picture-in-picture/picture-in-picture-api-events-expected.txt:
+        * media/picture-in-picture/picture-in-picture-api-events.html:
+        Check the picture-in-picture window in the "leavepictureinpicture" event handler.
+
 2022-03-10  Chris Dumez  <cdumez@apple.com>
 
         Main document is leaking on haaretz.co.il due to lazy image loading

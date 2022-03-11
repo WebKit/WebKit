@@ -28,7 +28,11 @@
                 testExpected('pipWindow.height', 0, '>');
 
                 document.exitPictureInPicture();
-                waitForEventAndEnd('leavepictureinpicture');
+                waitForEventOnce('leavepictureinpicture', event => {
+                    window.pipWindow1 = event.pictureInPictureWindow;
+                    testExpected('pipWindow == pipWindow1', true);
+                    endTest();
+                });
             });
         });
     </script>

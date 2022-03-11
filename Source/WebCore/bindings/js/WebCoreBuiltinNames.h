@@ -124,7 +124,6 @@ namespace WebCore {
     macro(DelayNode) \
     macro(DocumentTimeline) \
     macro(DynamicsCompressorNode) \
-    macro(EnterPictureInPictureEvent) \
     macro(ExtendableEvent) \
     macro(ExtendableMessageEvent) \
     macro(FakeXRDevice) \
@@ -253,6 +252,7 @@ namespace WebCore {
     macro(PaymentRequestUpdateEvent) \
     macro(PaymentResponse) \
     macro(PerformanceNavigationTiming) \
+    macro(PictureInPictureEvent) \
     macro(PictureInPictureWindow) \
     macro(PaintWorkletGlobalScope) \
     macro(PerformanceEntry) \

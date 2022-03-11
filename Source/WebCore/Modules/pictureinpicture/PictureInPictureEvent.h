@@ -24,28 +24,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "EnterPictureInPictureEvent.h"
+#pragma once
 
 #if ENABLE(PICTURE_IN_PICTURE_API)
 
-#include "PictureInPictureWindow.h"
-#include <wtf/IsoMallocInlines.h>
+#include "Event.h"
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(EnterPictureInPictureEvent);
+class PictureInPictureWindow;
 
-Ref<EnterPictureInPictureEvent> EnterPictureInPictureEvent::create(const AtomString& type, Init&& init, IsTrusted isTrusted)
-{
-    return adoptRef(*new EnterPictureInPictureEvent(type, WTFMove(init), isTrusted));
-}
+class PictureInPictureEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(PictureInPictureEvent);
+public:
+    struct Init : EventInit {
+        RefPtr<PictureInPictureWindow> pictureInPictureWindow;
+    };
 
-EnterPictureInPictureEvent::EnterPictureInPictureEvent(const AtomString& type, Init&& init, IsTrusted isTrusted)
-    : Event(type, init, isTrusted)
-    , m_pictureInPictureWindow(init.pictureInPictureWindow.releaseNonNull())
-{
-}
+    static Ref<PictureInPictureEvent> create(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+
+    PictureInPictureWindow& pictureInPictureWindow() const { return m_pictureInPictureWindow.get(); }
+
+    EventInterface eventInterface() const final { return PictureInPictureEventInterfaceType; }
+
+private:
+    PictureInPictureEvent(const AtomString&, Init&&, IsTrusted = IsTrusted::No);
+
+    Ref<PictureInPictureWindow> m_pictureInPictureWindow;
+};
 
 } // namespace WebCore
 

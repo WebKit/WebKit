@@ -257,8 +257,8 @@ Modules/permissions/NavigatorPermissions.cpp
 Modules/permissions/PermissionStatus.cpp
 Modules/permissions/Permissions.cpp
 Modules/pictureinpicture/DocumentPictureInPicture.cpp
-Modules/pictureinpicture/EnterPictureInPictureEvent.cpp
 Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp
+Modules/pictureinpicture/PictureInPictureEvent.cpp
 Modules/pictureinpicture/PictureInPictureWindow.cpp
 Modules/push-api/PushCrypto.cpp
 Modules/push-api/PushDatabase.cpp
@@ -3115,7 +3115,6 @@ JSEffectTiming.cpp
 JSElement.cpp
 JSElementCSSInlineStyle.cpp
 JSEndingType.cpp
-JSEnterPictureInPictureEvent.cpp
 JSErrorCallback.cpp
 JSErrorEvent.cpp
 JSEvent.cpp
@@ -3594,6 +3593,7 @@ JSPermissionName.cpp
 JSPermissionState.cpp
 JSPermissionStatus.cpp
 JSPermissions.cpp
+JSPictureInPictureEvent.cpp
 JSPictureInPictureWindow.cpp
 JSPlaybackDirection.cpp
 JSPointerEvent.cpp

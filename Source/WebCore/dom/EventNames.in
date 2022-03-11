@@ -93,7 +93,7 @@ OverconstrainedErrorEvent conditional=MEDIA_STREAM
 MediaEncryptedEvent conditional=ENCRYPTED_MEDIA
 MediaKeyMessageEvent conditional=ENCRYPTED_MEDIA
 PointerEvent
-EnterPictureInPictureEvent conditional=PICTURE_IN_PICTURE_API
+PictureInPictureEvent conditional=PICTURE_IN_PICTURE_API
 XRInputSourceEvent conditional=WEBXR
 XRInputSourcesChangeEvent conditional=WEBXR
 XRReferenceSpaceEvent conditional=WEBXR

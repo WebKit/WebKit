@@ -8,5 +8,6 @@ EVENT(enterpictureinpicture)
 EXPECTED (pipWindow.width > '0') OK
 EXPECTED (pipWindow.height > '0') OK
 EVENT(leavepictureinpicture)
+EXPECTED (pipWindow == pipWindow1 == 'true') OK
 END OF TEST
 

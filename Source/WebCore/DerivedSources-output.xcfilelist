@@ -785,8 +785,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementContentEditable.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSElementContentEditable.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEndingType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEndingType.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEnterPictureInPictureEvent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSEnterPictureInPictureEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSErrorCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSErrorCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSErrorEvent.cpp
@@ -1889,6 +1887,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionStatus.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissionStatus.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPermissions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaybackDirection.cpp
