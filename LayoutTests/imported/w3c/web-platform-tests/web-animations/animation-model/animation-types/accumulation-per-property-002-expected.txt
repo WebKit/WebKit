@@ -248,6 +248,9 @@ PASS scale (type: scaleList) has testAccumulation function
 PASS scale with two unspecified values
 PASS scale with one unspecified value
 PASS scale
+PASS vector-effect (type: discrete) has testAccumulation function
+PASS vector-effect: "non-scaling-stroke" onto "none"
+PASS vector-effect: "none" onto "non-scaling-stroke"
 PASS visibility (type: visibility) has testAccumulation function
 PASS visibility: onto "visible"
 PASS visibility: onto "hidden"
