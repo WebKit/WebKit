@@ -1,3 +1,32 @@
+2022-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add support for -[UITextInput removeEmojiAlternatives] on WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=237742
+        rdar://89647018
+
+        Reviewed by Kate Cheney.
+
+        Add plumbing to AlternativeTextUIController and AlternativeTextContextController to replace an existing
+        DictationContext's NSTextAlternatives; passing in a nil NSTextAlternatives simply removes the DictationContext
+        and its existing text alternatives.
+
+        See WebKit ChangeLog for more details.
+
+        Tests:  TextAlternatives.AddAndRemoveTextAlternativesWithMatch
+                TextAlternatives.AddAndRemoveTextAlternativesWithTextAndEmojis
+
+        * dom/DocumentMarkerController.h:
+
+        Drive-by fix: adjust a comment to reflect the actual behavior in DocumentMarkerController, and also add a FIXME
+        to replace the `bool` return type with an enum type.
+
+        * editing/cocoa/AlternativeTextContextController.h:
+        * editing/cocoa/AlternativeTextContextController.mm:
+        (WebCore::AlternativeTextContextController::replaceAlternatives):
+        * editing/cocoa/AlternativeTextUIController.h:
+        * editing/cocoa/AlternativeTextUIController.mm:
+        (WebCore::AlternativeTextUIController::replaceAlternatives):
+
 2022-03-11  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Support authenticatorSelection.residentKey ResidentKeyRequirement

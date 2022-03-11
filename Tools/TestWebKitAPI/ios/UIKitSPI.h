@@ -321,8 +321,10 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 
 @protocol UITextInputInternal
 - (CGRect)_selectionClipRect;
+- (void)moveByOffset:(NSInteger)offset;
 @optional
 - (void)addTextAlternatives:(NSTextAlternatives *)alternatives;
+- (void)removeEmojiAlternatives;
 @end
 
 @interface UIResponder (Internal)

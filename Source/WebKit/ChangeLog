@@ -1,3 +1,57 @@
+2022-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add support for -[UITextInput removeEmojiAlternatives] on WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=237742
+        rdar://89647018
+
+        Reviewed by Kate Cheney.
+
+        Add support for `-removeEmojiAlternatives`, which removes all dictation alternatives at the current selection,
+        whose text alternative strings only contain emojis. See below for more details.
+
+        * Platform/spi/ios/TextInputSPI.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::replaceDictationAlternatives):
+
+        Add PageClient plumbing to the new AlternativeTextUIController methods in WebCore to replace an existing
+        dictation context's text alternatives.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::dictationAlternativesAtSelection):
+
+        We expand the selection range by one character here since `DocumentMarkerController::markersInRange()` does not
+        include document markers that end exactly at the given range.
+
+        (WebKit::WebPageProxy::clearDictationAlternatives):
+
+        Add two helper methods on WebPageProxy: one to query all dictation alternative identifiers that intersect with
+        the current selection range, and another to remove all dictation alternative document markers whose
+        DictationContext matches an identifier in a given list of identifiers.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView removeEmojiAlternatives]):
+
+        Implement the new SPI method with a two-step process:
+
+        1.  Request the list of dictation context IDs at the selection; for each ID, we either (a) replace the text
+            alternatives for that context ID with a new NSTextAlternatives object that doesn't have any of the emoji-
+            only alternatives that appear in the original NSTextAlternatives, or (b) remove the NSTextAlternatives and
+            dictation context ID mapping entirely, if all the alternatives only contain emojis.
+
+        2.  For all the text alternatives that were removed in step 1 (due to only containing emojis), clear out all
+            document markers corresponding to those text alternatives in the document.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::removeAnnotationRelativeToSelection):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::dictationAlternativesAtSelection):
+        (WebKit::WebPage::clearDictationAlternatives):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2022-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         Some minor refactoring in RemoteLayerBackingStore

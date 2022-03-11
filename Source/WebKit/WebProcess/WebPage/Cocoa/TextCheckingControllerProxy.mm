@@ -159,6 +159,7 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
     document->markers().filterMarkers(rangeAndOffset->range, [&] (const DocumentMarker& marker) {
         if (!std::holds_alternative<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()))
             return false;
+        // FIXME: Is this return value flipped?
         return std::get<WebCore::DocumentMarker::PlatformTextCheckingData>(marker.data()).key != annotation;
     }, types);
 }

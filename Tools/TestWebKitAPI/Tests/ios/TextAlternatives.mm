@@ -57,7 +57,7 @@ static RetainPtr<TestWKWebView> createWebViewForTestingTextAlternatives()
     return webView;
 }
 
-TEST(TextAlternatives, AddTextAlternativesWithMatch)
+TEST(TextAlternatives, AddAndRemoveTextAlternativesWithMatch)
 {
     auto webView = createWebViewForTestingTextAlternatives();
     [webView synchronouslyLoadHTMLString:@"<body>hello world&nbsp;</body>"];
@@ -65,6 +65,38 @@ TEST(TextAlternatives, AddTextAlternativesWithMatch)
 
     auto alternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:@"hello world" alternativeStrings:@[ @"👋🌎" ]]);
     [[webView textInputContentView] addTextAlternatives:alternatives.get()];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(1U, [webView dictationAlternativesMarkerCount:@"document.body.childNodes[0]"]);
+
+    // This should not remove the text alternatives above, since the selection does not intersect with the dictation alternative marker.
+    [[webView textInputContentView] removeEmojiAlternatives];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(1U, [webView dictationAlternativesMarkerCount:@"document.body.childNodes[0]"]);
+
+    [[webView textInputContentView] moveByOffset:-1];
+    [webView waitForNextPresentationUpdate];
+    [[webView textInputContentView] removeEmojiAlternatives];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(0U, [webView dictationAlternativesMarkerCount:@"document.body.childNodes[0]"]);
+}
+
+TEST(TextAlternatives, AddAndRemoveTextAlternativesWithTextAndEmojis)
+{
+    auto webView = createWebViewForTestingTextAlternatives();
+    [webView synchronouslyLoadHTMLString:@"<body>hello world</body>"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().setPosition(document.body, 1)"];
+
+    auto alternatives = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:@"hello world" alternativeStrings:@[ @"👋🌎", @"Hello world" ]]);
+    [[webView textInputContentView] addTextAlternatives:alternatives.get()];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_EQ(1U, [webView dictationAlternativesMarkerCount:@"document.body.childNodes[0]"]);
+
+    // This should only remove one of the two text alternative strings, which leaves the document marker intact.
+    [[webView textInputContentView] removeEmojiAlternatives];
     [webView waitForNextPresentationUpdate];
 
     EXPECT_EQ(1U, [webView dictationAlternativesMarkerCount:@"document.body.childNodes[0]"]);

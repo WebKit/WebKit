@@ -386,6 +386,24 @@ void WebPageProxy::addDictationAlternative(TextAlternativeWithRange&& alternativ
     });
 }
 
+void WebPageProxy::dictationAlternativesAtSelection(CompletionHandler<void(Vector<DictationContext>&&)>&& completion)
+{
+    if (!hasRunningProcess()) {
+        completion({ });
+        return;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::DictationAlternativesAtSelection(), WTFMove(completion));
+}
+
+void WebPageProxy::clearDictationAlternatives(Vector<DictationContext>&& alternativesToClear)
+{
+    if (!hasRunningProcess() || alternativesToClear.isEmpty())
+        return;
+
+    send(Messages::WebPage::ClearDictationAlternatives(WTFMove(alternativesToClear)));
+}
+
 #if USE(DICTATION_ALTERNATIVES)
 
 NSTextAlternatives *WebPageProxy::platformDictationAlternatives(WebCore::DictationContext dictationContext)

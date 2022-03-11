@@ -74,6 +74,7 @@ public:
 #endif
 
     WebCore::DictationContext addDictationAlternatives(NSTextAlternatives *) final;
+    void replaceDictationAlternatives(NSTextAlternatives *, WebCore::DictationContext) final;
     void removeDictationAlternatives(WebCore::DictationContext) final;
     Vector<String> dictationAlternatives(WebCore::DictationContext) final;
     NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext) final;

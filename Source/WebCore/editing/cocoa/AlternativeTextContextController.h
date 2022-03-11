@@ -34,6 +34,7 @@ namespace WebCore {
 class AlternativeTextContextController {
 public:
     DictationContext addAlternatives(NSTextAlternatives *);
+    void replaceAlternatives(NSTextAlternatives *, DictationContext);
     void removeAlternativesForContext(DictationContext);
     void clear();
 

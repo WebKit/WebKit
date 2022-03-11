@@ -53,6 +53,7 @@
 @interface NSString (TextInputDetails)
 - (BOOL)_containsCJScripts;
 - (BOOL)_containsCJScriptsOnly;
+- (BOOL)_containsEmojiOnly;
 @end
 
 #endif

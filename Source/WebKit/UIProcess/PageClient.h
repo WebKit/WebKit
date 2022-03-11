@@ -416,6 +416,7 @@ public:
 
 #if USE(DICTATION_ALTERNATIVES)
     virtual WebCore::DictationContext addDictationAlternatives(NSTextAlternatives *) = 0;
+    virtual void replaceDictationAlternatives(NSTextAlternatives *, WebCore::DictationContext) = 0;
     virtual void removeDictationAlternatives(WebCore::DictationContext) = 0;
     virtual void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, WebCore::DictationContext) = 0;
     virtual Vector<String> dictationAlternatives(WebCore::DictationContext) = 0;

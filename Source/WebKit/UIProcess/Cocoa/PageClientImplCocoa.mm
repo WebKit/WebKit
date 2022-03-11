@@ -158,6 +158,11 @@ WebCore::DictationContext PageClientImplCocoa::addDictationAlternatives(NSTextAl
     return m_alternativeTextUIController->addAlternatives(alternatives);
 }
 
+void PageClientImplCocoa::replaceDictationAlternatives(NSTextAlternatives *alternatives, WebCore::DictationContext context)
+{
+    m_alternativeTextUIController->replaceAlternatives(alternatives, context);
+}
+
 void PageClientImplCocoa::removeDictationAlternatives(WebCore::DictationContext dictationContext)
 {
     m_alternativeTextUIController->removeAlternatives(dictationContext);

@@ -57,6 +57,7 @@
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
+#import <WebCore/RenderedDocumentMarker.h>
 #import <WebCore/TextIterator.h>
 
 #if PLATFORM(IOS)
@@ -282,6 +283,53 @@ void WebPage::addDictationAlternative(const String& text, DictationContext conte
 
     document->markers().addMarker(matchRange, DocumentMarker::DictationAlternatives, { DocumentMarker::DictationData { context, text } });
     completion(true);
+}
+
+void WebPage::dictationAlternativesAtSelection(CompletionHandler<void(Vector<DictationContext>&&)>&& completion)
+{
+    Vector<DictationContext> contexts;
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr document = frame->document();
+    if (!document) {
+        completion(WTFMove(contexts));
+        return;
+    }
+
+    auto selection = frame->selection().selection();
+    auto expandedSelectionRange = VisibleSelection { selection.visibleStart().previous(CannotCrossEditingBoundary), selection.visibleEnd().next(CannotCrossEditingBoundary) }.range();
+    if (!expandedSelectionRange) {
+        completion(WTFMove(contexts));
+        return;
+    }
+
+    auto markers = document->markers().markersInRange(*expandedSelectionRange, DocumentMarker::DictationAlternatives);
+    contexts.reserveInitialCapacity(markers.size());
+    for (auto* marker : markers) {
+        if (std::holds_alternative<DocumentMarker::DictationData>(marker->data()))
+            contexts.uncheckedAppend(std::get<DocumentMarker::DictationData>(marker->data()).context);
+    }
+    completion(WTFMove(contexts));
+}
+
+void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
+{
+    Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
+    RefPtr document = frame->document();
+    if (!document)
+        return;
+
+    HashSet<DictationContext> setOfContextsToRemove;
+    setOfContextsToRemove.reserveInitialCapacity(contexts.size());
+    for (auto context : contexts)
+        setOfContextsToRemove.add(context);
+
+    auto documentRange = makeRangeSelectingNodeContents(*document);
+    document->markers().filterMarkers(documentRange, [&] (auto& marker) {
+        if (!std::holds_alternative<DocumentMarker::DictationData>(marker.data()))
+            return false;
+
+        return setOfContextsToRemove.contains(std::get<WebCore::DocumentMarker::DictationData>(marker.data()).context);
+    }, DocumentMarker::DictationAlternatives);
 }
 
 void WebPage::accessibilityTransferRemoteToken(RetainPtr<NSData> remoteToken)

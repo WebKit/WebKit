@@ -1,3 +1,17 @@
+2022-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add support for -[UITextInput removeEmojiAlternatives] on WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=237742
+        rdar://89647018
+
+        Reviewed by Kate Cheney.
+
+        Adjust an API test and augment an existing test to exercise `-removeEmojiAlternatives`.
+
+        * TestWebKitAPI/Tests/ios/TextAlternatives.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2022-03-11  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Support authenticatorSelection.residentKey ResidentKeyRequirement

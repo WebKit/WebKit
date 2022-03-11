@@ -974,6 +974,8 @@ public:
     void insertDictatedTextAsync(const String&, const EditingRange& replacementRange, const Vector<WebCore::TextAlternativeWithRange>&, InsertTextOptions&&);
 
     void addDictationAlternative(WebCore::TextAlternativeWithRange&&);
+    void dictationAlternativesAtSelection(CompletionHandler<void(Vector<WebCore::DictationContext>&&)>&&);
+    void clearDictationAlternatives(Vector<WebCore::DictationContext>&&);
 
 #if USE(DICTATION_ALTERNATIVES)
     NSTextAlternatives *platformDictationAlternatives(WebCore::DictationContext);

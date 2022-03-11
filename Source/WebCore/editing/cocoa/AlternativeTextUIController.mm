@@ -45,6 +45,11 @@ DictationContext AlternativeTextUIController::addAlternatives(NSTextAlternatives
     return m_contextController.addAlternatives(alternatives);
 }
 
+void AlternativeTextUIController::replaceAlternatives(NSTextAlternatives *alternatives, DictationContext context)
+{
+    m_contextController.replaceAlternatives(alternatives, context);
+}
+
 NSTextAlternatives *AlternativeTextUIController::alternativesForContext(DictationContext context)
 {
     return m_contextController.alternativesForContext(context);

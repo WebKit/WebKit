@@ -39,6 +39,16 @@ DictationContext AlternativeTextContextController::addAlternatives(NSTextAlterna
     }).iterator->value;
 }
 
+void AlternativeTextContextController::replaceAlternatives(NSTextAlternatives *alternatives, DictationContext context)
+{
+    removeAlternativesForContext(context);
+    if (!alternatives)
+        return;
+
+    m_contexts.set(alternatives, context);
+    m_alternatives.set(context, alternatives);
+}
+
 NSTextAlternatives *AlternativeTextContextController::alternativesForContext(DictationContext context) const
 {
     if (!context)

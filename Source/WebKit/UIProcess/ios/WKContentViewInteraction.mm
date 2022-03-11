@@ -38,6 +38,7 @@
 #import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
 #import "NativeWebTouchEvent.h"
+#import "PageClient.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreeViews.h"
 #import "RemoteScrollingCoordinatorProxy.h"
@@ -5645,6 +5646,42 @@ static WebKit::WritingDirection coreWritingDirection(NSWritingDirection directio
 - (void)addTextAlternatives:(NSTextAlternatives *)alternatives
 {
     _page->addDictationAlternative({ alternatives, NSMakeRange(0, alternatives.primaryString.length) });
+}
+
+- (void)removeEmojiAlternatives
+{
+    _page->dictationAlternativesAtSelection([weakSelf = WeakObjCPtr<WKContentView>(self)](auto&& contexts) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf || !strongSelf->_page)
+            return;
+
+        RefPtr page = strongSelf->_page;
+        Vector<WebCore::DictationContext> contextsToRemove;
+        for (auto context : contexts) {
+            auto alternatives = page->platformDictationAlternatives(context);
+            if (!alternatives)
+                continue;
+
+            auto originalAlternatives = alternatives.alternativeStrings;
+            auto nonEmojiAlternatives = [NSMutableArray arrayWithCapacity:originalAlternatives.count];
+            for (NSString *alternative in originalAlternatives) {
+                if (!alternative._containsEmojiOnly)
+                    [nonEmojiAlternatives addObject:alternative];
+            }
+
+            if (nonEmojiAlternatives.count == originalAlternatives.count)
+                continue;
+
+            RetainPtr<NSTextAlternatives> replacement;
+            if (nonEmojiAlternatives.count)
+                replacement = adoptNS([[NSTextAlternatives alloc] initWithPrimaryString:alternatives.primaryString alternativeStrings:nonEmojiAlternatives isLowConfidence:alternatives.isLowConfidence]);
+            else
+                contextsToRemove.append(context);
+
+            page->pageClient().replaceDictationAlternatives(replacement.get(), context);
+        }
+        page->clearDictationAlternatives(WTFMove(contextsToRemove));
+    });
 }
 
 // end of UITextInput protocol implementation
