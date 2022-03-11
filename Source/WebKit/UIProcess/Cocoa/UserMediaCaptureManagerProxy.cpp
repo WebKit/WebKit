@@ -83,9 +83,6 @@ public:
 
     ~SourceProxy()
     {
-        // Make sure the rendering thread is stopped before we proceed with the destruction.
-        stop();
-
         switch (m_source->type()) {
         case RealtimeMediaSource::Type::Audio:
         case RealtimeMediaSource::Type::SystemAudio:
@@ -117,19 +114,19 @@ public:
     void start()
     {
         m_shouldReset = true;
-        m_isEnded = false;
+        m_isStopped = false;
         m_source->start();
     }
 
     void stop()
     {
-        m_isEnded = true;
+        m_isStopped = true;
         m_source->stop();
     }
 
-    void requestToEnd()
+    void end()
     {
-        m_isEnded = true;
+        m_isStopped = true;
         m_source->requestToEnd(*this);
     }
 
@@ -247,7 +244,7 @@ private:
     bool preventSourceFromStopping()
     {
         // Do not allow the source to stop if we are still using it.
-        return !m_isEnded;
+        return !m_isStopped;
     }
 
     RealtimeMediaSourceIdentifier m_id;
@@ -258,7 +255,7 @@ private:
     std::unique_ptr<CARingBuffer> m_ringBuffer;
     CAAudioStreamDescription m_description { };
     int64_t m_numberOfFrames { 0 };
-    bool m_isEnded { false };
+    bool m_isStopped { false };
     std::unique_ptr<ImageRotationSessionVT> m_rotationSession;
     bool m_shouldApplyRotation { false };
     std::unique_ptr<IPC::Semaphore> m_captureSemaphore;
@@ -427,7 +424,7 @@ void UserMediaCaptureManagerProxy::stopProducingData(RealtimeMediaSourceIdentifi
         proxy->stop();
 }
 
-void UserMediaCaptureManagerProxy::end(RealtimeMediaSourceIdentifier id)
+void UserMediaCaptureManagerProxy::removeSource(RealtimeMediaSourceIdentifier id)
 {
     m_proxies.remove(id);
 }
@@ -464,10 +461,10 @@ void UserMediaCaptureManagerProxy::clone(RealtimeMediaSourceIdentifier clonedID,
         m_proxies.add(newSourceID, makeUnique<SourceProxy>(newSourceID, m_connectionProxy->connection(), ProcessIdentity { m_connectionProxy->resourceOwner() }, proxy->source().clone(), m_connectionProxy->remoteVideoFrameObjectHeap()));
 }
 
-void UserMediaCaptureManagerProxy::requestToEnd(RealtimeMediaSourceIdentifier sourceID)
+void UserMediaCaptureManagerProxy::endProducingData(RealtimeMediaSourceIdentifier sourceID)
 {
     if (auto* proxy = m_proxies.get(sourceID))
-        proxy->requestToEnd();
+        proxy->end();
 }
 
 void UserMediaCaptureManagerProxy::setShouldApplyRotation(RealtimeMediaSourceIdentifier sourceID, bool shouldApplyRotation)

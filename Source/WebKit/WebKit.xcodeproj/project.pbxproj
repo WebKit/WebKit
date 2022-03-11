@@ -4143,8 +4143,6 @@
 		41684C4D24643BFA001CE8ED /* RemoteCaptureSampleManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteCaptureSampleManager.messages.in; sourceTree = "<group>"; };
 		41684C4E24643C81001CE8ED /* RemoteCaptureSampleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteCaptureSampleManager.h; sourceTree = "<group>"; };
 		41684C4F24643D3F001CE8ED /* RemoteCaptureSampleManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteCaptureSampleManager.cpp; sourceTree = "<group>"; };
-		41684C50246450FD001CE8ED /* RemoteRealtimeVideoSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRealtimeVideoSource.cpp; sourceTree = "<group>"; };
-		41684C51246450FD001CE8ED /* RemoteRealtimeVideoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeVideoSource.h; sourceTree = "<group>"; };
 		416CD74523FB178B00661D99 /* MDNSRegisterIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MDNSRegisterIdentifier.h; path = Network/webrtc/MDNSRegisterIdentifier.h; sourceTree = "<group>"; };
 		416EDC052600F6B000092675 /* RTCDataChannelRemoteManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RTCDataChannelRemoteManager.cpp; path = Network/webrtc/RTCDataChannelRemoteManager.cpp; sourceTree = "<group>"; };
 		416EDC062600F6B000092675 /* RTCDataChannelRemoteManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RTCDataChannelRemoteManager.h; path = Network/webrtc/RTCDataChannelRemoteManager.h; sourceTree = "<group>"; };
@@ -4182,8 +4180,8 @@
 		41897ED41F415D850016FA42 /* CacheStorageEngineConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CacheStorageEngineConnection.h; sourceTree = "<group>"; };
 		41897ED51F415D850016FA42 /* CacheStorageEngineConnection.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CacheStorageEngineConnection.messages.in; sourceTree = "<group>"; };
 		41897ED61F415D860016FA42 /* CacheStorageEngine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageEngine.cpp; sourceTree = "<group>"; };
-		418FCBE3271049DB00F96ECA /* RemoteRealtimeDisplaySource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRealtimeDisplaySource.cpp; sourceTree = "<group>"; };
-		418FCBE4271049DC00F96ECA /* RemoteRealtimeDisplaySource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeDisplaySource.h; sourceTree = "<group>"; };
+		418FCBE3271049DB00F96ECA /* RemoteRealtimeVideoSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRealtimeVideoSource.cpp; sourceTree = "<group>"; };
+		418FCBE4271049DC00F96ECA /* RemoteRealtimeVideoSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeVideoSource.h; sourceTree = "<group>"; };
 		419ACF9B1F981D26009F1A83 /* WebServiceWorkerFetchTaskClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServiceWorkerFetchTaskClient.h; sourceTree = "<group>"; };
 		41A5F7B9226ECF7C00671764 /* AuthenticationChallengeDispositionCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallengeDispositionCocoa.h; sourceTree = "<group>"; };
 		41A5F7BA226ECF7C00671764 /* AuthenticationChallengeDispositionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationChallengeDispositionCocoa.mm; sourceTree = "<group>"; };
@@ -5173,7 +5171,6 @@
 		7B50E97F2771F6CE003DAAC4 /* IPCTester.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCTester.cpp; sourceTree = "<group>"; };
 		7B50E9802771F6CF003DAAC4 /* IPCTester.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCTester.h; sourceTree = "<group>"; };
 		7B5A3DA027A7DC1A006C6F97 /* RemoteVideoFrameIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteVideoFrameIdentifier.h; sourceTree = "<group>"; };
-		7B5A3DA127A7DC1A006C6F97 /* RemoteVideoFrameProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteVideoFrameProxy.messages.in; sourceTree = "<group>"; };
 		7B5A3DA227A7DC1A006C6F97 /* RemoteVideoFrameProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteVideoFrameProxy.h; sourceTree = "<group>"; };
 		7B5A3DA327A7DC6C006C6F97 /* RemoteVideoFrameProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteVideoFrameProxy.cpp; sourceTree = "<group>"; };
 		7B5A3DA727A7DCBC006C6F97 /* RemoteVideoFrameObjectHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteVideoFrameObjectHeap.h; sourceTree = "<group>"; };
@@ -6877,7 +6874,6 @@
 				7B5A3DA027A7DC1A006C6F97 /* RemoteVideoFrameIdentifier.h */,
 				7B5A3DA327A7DC6C006C6F97 /* RemoteVideoFrameProxy.cpp */,
 				7B5A3DA227A7DC1A006C6F97 /* RemoteVideoFrameProxy.h */,
-				7B5A3DA127A7DC1A006C6F97 /* RemoteVideoFrameProxy.messages.in */,
 				1DD2A63A255DE6D100FF7B6F /* SourceBufferPrivateRemote.cpp */,
 				1DD2A639255DE6D100FF7B6F /* SourceBufferPrivateRemote.h */,
 				1DD2A66F25622F1100FF7B6F /* SourceBufferPrivateRemote.messages.in */,
@@ -10456,12 +10452,10 @@
 				41684C4D24643BFA001CE8ED /* RemoteCaptureSampleManager.messages.in */,
 				41E67A8D25D2CFD0007B0A4C /* RemoteRealtimeAudioSource.cpp */,
 				41E67A8C25D2CFD0007B0A4C /* RemoteRealtimeAudioSource.h */,
-				418FCBE3271049DB00F96ECA /* RemoteRealtimeDisplaySource.cpp */,
-				418FCBE4271049DC00F96ECA /* RemoteRealtimeDisplaySource.h */,
 				416008B225DA895B00E892FE /* RemoteRealtimeMediaSourceProxy.cpp */,
 				416008B125DA86B900E892FE /* RemoteRealtimeMediaSourceProxy.h */,
-				41684C50246450FD001CE8ED /* RemoteRealtimeVideoSource.cpp */,
-				41684C51246450FD001CE8ED /* RemoteRealtimeVideoSource.h */,
+				418FCBE3271049DB00F96ECA /* RemoteRealtimeVideoSource.cpp */,
+				418FCBE4271049DC00F96ECA /* RemoteRealtimeVideoSource.h */,
 				CD491B051E70D05F00009066 /* UserMediaCaptureManager.cpp */,
 				CD491B061E70D05F00009066 /* UserMediaCaptureManager.h */,
 				CD491B0A1E732D1200009066 /* UserMediaCaptureManager.messages.in */,

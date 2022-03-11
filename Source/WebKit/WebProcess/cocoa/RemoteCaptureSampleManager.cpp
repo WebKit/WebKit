@@ -102,20 +102,7 @@ void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeVideoSource>&& sour
         auto identifier = source->identifier();
 
         ASSERT(!m_videoSources.contains(identifier));
-        m_videoSources.add(identifier, makeUnique<RemoteVideo>(WTFMove(source)));
-    });
-}
-
-void RemoteCaptureSampleManager::addSource(Ref<RemoteRealtimeDisplaySource>&& source)
-{
-    ASSERT(WTF::isMainRunLoop());
-    setConnection(source->connection());
-
-    m_queue->dispatch([this, protectedThis = Ref { *this }, source = WTFMove(source)]() mutable {
-        auto identifier = source->identifier();
-
-        ASSERT(!m_videoSources.contains(identifier));
-        m_videoSources.add(identifier, makeUnique<RemoteVideo>(WTFMove(source)));
+        m_videoSources.add(identifier, WTFMove(source));
     });
 }
 
@@ -169,7 +156,7 @@ void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifi
     }();
     auto iterator = m_videoSources.find(identifier);
     if (iterator == m_videoSources.end()) {
-        RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for remoteVideoSampleAvailable", identifier.toUInt64());
+        RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for videoFrameAvailable", identifier.toUInt64());
         return;
     }
     auto videoFrameSize = videoFrame->size();
@@ -181,7 +168,7 @@ void RemoteCaptureSampleManager::videoFrameAvailableCV(RealtimeMediaSourceIdenti
     ASSERT(!WTF::isMainRunLoop());
     auto iterator = m_videoSources.find(identifier);
     if (iterator == m_videoSources.end()) {
-        RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for remoteVideoSampleAvailable", identifier.toUInt64());
+        RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for videoFrameAvailableCV", identifier.toUInt64());
         return;
     }
 
@@ -253,20 +240,6 @@ void RemoteCaptureSampleManager::RemoteAudio::setStorage(const SharedMemory::Han
     m_buffer = makeUnique<WebAudioBufferList>(description, m_frameChunkSize);
 
     startThread();
-}
-
-RemoteCaptureSampleManager::RemoteVideo::RemoteVideo(Source&& source)
-    : m_source(WTFMove(source))
-{
-}
-
-void RemoteCaptureSampleManager::RemoteVideo::videoFrameAvailable(Ref<MediaSample>&& sample, IntSize size, VideoSampleMetadata metadata)
-{
-    switchOn(m_source, [&](Ref<RemoteRealtimeVideoSource>& source) {
-        source->videoSampleAvailable(sample.get(), size, metadata);
-    }, [&](Ref<RemoteRealtimeDisplaySource>& source) {
-        source->remoteVideoSampleAvailable(sample.get(), metadata);
-    });
 }
 
 }

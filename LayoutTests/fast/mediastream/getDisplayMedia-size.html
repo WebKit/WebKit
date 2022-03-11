@@ -25,6 +25,10 @@ promise_test(async () => {
 
     assert_equals(video2.videoWidth, 320);
 
+    video1.srcObject = null;
+    video1.srcObject = stream1;
+    await video1.play();
+
     test(() => {
         assert_equals(video1.videoWidth, 640);
     }, "original source should stay at a small size");
@@ -43,6 +47,10 @@ promise_test(async () => {
     await video2.play();
 
     assert_equals(video2.videoWidth, 1280);
+
+    video1.srcObject = null;
+    video1.srcObject = stream1;
+    await video1.play();
 
     test(() => {
         assert_equals(video1.videoWidth, 640);

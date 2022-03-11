@@ -1,3 +1,14 @@
+2022-03-11  Youenn Fablet  <youenn@apple.com>
+
+        Do capture video frame downsampling in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=237316
+        <rdar://problem/89959777>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/getDisplayMedia-size.html:
+        Remove potential race condition by restarting playing the stream to compute the size.
+
 2022-03-10  Frédéric Wang  <fwang@igalia.com>
 
         [ iOS ] editing/inserting/insert-paragraph-separator-with-inline-table-bold-crash.html is a flaky timeout

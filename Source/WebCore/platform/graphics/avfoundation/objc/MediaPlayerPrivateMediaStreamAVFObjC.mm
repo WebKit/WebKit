@@ -324,6 +324,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sa
     }
 
     m_presentationTime = presentationTime;
+    m_videoFrameSize = sample.presentationSize();
+    if (sample.videoRotation() == MediaSample::VideoRotation::Left || sample.videoRotation() == MediaSample::VideoRotation::Right)
+        m_videoFrameSize = { m_videoFrameSize.height(), m_videoFrameSize.width() };
     m_sampleMetadata = metadata;
     ++m_sampleCount;
 
@@ -1131,8 +1134,8 @@ std::optional<VideoFrameMetadata> MediaPlayerPrivateMediaStreamAVFObjC::videoFra
     m_lastVideoFrameMetadataSampleCount = m_sampleCount;
 
     VideoFrameMetadata metadata;
-    metadata.width = m_intrinsicSize.width();
-    metadata.height = m_intrinsicSize.height();
+    metadata.width = m_videoFrameSize.width();
+    metadata.height = m_videoFrameSize.height();
     metadata.presentedFrames = m_sampleCount;
     metadata.presentationTime = m_presentationTime.seconds();
     metadata.expectedDisplayTime = m_presentationTime.seconds();

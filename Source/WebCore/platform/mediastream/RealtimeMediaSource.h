@@ -262,6 +262,7 @@ protected:
 private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
+    virtual void endProducingData() { stop(); }
     virtual void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) { }
 
     virtual void stopBeingObserved() { stop(); }

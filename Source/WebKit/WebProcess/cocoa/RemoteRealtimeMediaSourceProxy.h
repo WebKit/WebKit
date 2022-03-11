@@ -47,13 +47,20 @@ public:
     RemoteRealtimeMediaSourceProxy(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, bool shouldCaptureInGPUProcess, const WebCore::MediaConstraints*);
     ~RemoteRealtimeMediaSourceProxy();
 
+    RemoteRealtimeMediaSourceProxy(RemoteRealtimeMediaSourceProxy&&) = default;
+    RemoteRealtimeMediaSourceProxy& operator=(RemoteRealtimeMediaSourceProxy&&) = default;
+
     IPC::Connection* connection();
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
     WebCore::CaptureDevice::DeviceType deviceType() const { return m_device.type(); }
+    const WebCore::CaptureDevice& device() const { return m_device; }
     bool shouldCaptureInGPUProcess() const { return m_shouldCaptureInGPUProcess; }
 
     using CreateCallback = CompletionHandler<void(bool, String&&, WebCore::RealtimeMediaSourceSettings&&, WebCore::RealtimeMediaSourceCapabilities&&, Vector<WebCore::VideoPresetData>&&, WebCore::IntSize, double)>;
     void createRemoteMediaSource(const String&, WebCore::PageIdentifier, CreateCallback&&, bool shouldUseRemoteFrame = false);
+
+    RemoteRealtimeMediaSourceProxy clone();
+    void createRemoteCloneSource(WebCore::RealtimeMediaSourceIdentifier);
 
     void applyConstraintsSucceeded();
     void applyConstraintsFailed(String&& failedConstraint, String&& errorMessage);
@@ -63,6 +70,7 @@ public:
     void end();
     void startProducingData();
     void stopProducingData();
+    void endProducingData();
     void applyConstraints(const WebCore::MediaConstraints&, WebCore::RealtimeMediaSource::ApplyConstraintsHandler&&);
 
     void whenReady(CompletionHandler<void(String)>&&);

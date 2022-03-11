@@ -78,6 +78,12 @@ void RealtimeVideoSource::stopProducingData()
     m_source->stop();
 }
 
+void RealtimeVideoSource::endProducingData()
+{
+    m_source->removeVideoSampleObserver(*this);
+    m_source->requestToEnd(*this);
+}
+
 bool RealtimeVideoSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
     return m_source->supportsSizeAndFrameRate(width, height, frameRate);
@@ -146,11 +152,6 @@ bool RealtimeVideoSource::preventSourceFromStopping()
             hasObserverPreventingStopping = true;
     });
     return hasObserverPreventingStopping;
-}
-
-void RealtimeVideoSource::requestToEnd(RealtimeMediaSource::Observer&)
-{
-    m_source->requestToEnd(*this);
 }
 
 void RealtimeVideoSource::stopBeingObserved()

@@ -287,6 +287,7 @@ private:
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
     Seconds m_presentationTime { 0 };
+    FloatSize m_videoFrameSize;
     VideoSampleMetadata m_sampleMetadata;
 };
     

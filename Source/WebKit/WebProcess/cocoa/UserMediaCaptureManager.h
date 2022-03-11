@@ -43,7 +43,6 @@ class CAAudioStreamDescription;
 namespace WebKit {
 
 class RemoteRealtimeAudioSource;
-class RemoteRealtimeDisplaySource;
 class RemoteRealtimeVideoSource;
 class WebProcess;
 
@@ -60,7 +59,6 @@ public:
 
     void addSource(Ref<RemoteRealtimeAudioSource>&&);
     void addSource(Ref<RemoteRealtimeVideoSource>&&);
-    void addSource(Ref<RemoteRealtimeDisplaySource>&&);
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
 
     RemoteCaptureSampleManager& remoteCaptureSampleManager() { return m_remoteCaptureSampleManager; }
@@ -131,7 +129,7 @@ private:
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceIdentifier, WebCore::RealtimeMediaSourceSettings&&);
     void applyConstraintsFailed(WebCore::RealtimeMediaSourceIdentifier, String&&, String&&);
 
-    using Source = std::variant<std::nullptr_t, Ref<RemoteRealtimeAudioSource>, Ref<RemoteRealtimeVideoSource>, Ref<RemoteRealtimeDisplaySource>>;
+    using Source = std::variant<std::nullptr_t, Ref<RemoteRealtimeAudioSource>, Ref<RemoteRealtimeVideoSource>>;
     HashMap<WebCore::RealtimeMediaSourceIdentifier, Source> m_sources;
     WebProcess& m_process;
     NoOpCaptureDeviceManager m_noOpCaptureDeviceManager;

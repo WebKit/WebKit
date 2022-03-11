@@ -1,3 +1,26 @@
+2022-03-11  Youenn Fablet  <youenn@apple.com>
+
+        Do capture video frame downsampling in GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=237316
+        <rdar://problem/89959777>
+
+        Reviewed by Eric Carlson.
+
+        To prevent some flakinesses, we now compute the video frame size from MediaSample given to rvfc metadata.
+        We stop making requestToEnd as virtual by introducing a virtual endProducingData method.
+        RealtimeMediaSource::end calls the new endProducingData virtual method, which is stop by default.
+        RealtimeVideoSource::endProducingData is implemented by calling requestToEnd on the underlying source.
+        This makes sure that ending a source will not end a related cloned source.
+
+        Covered by existing tests.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        * platform/mediastream/RealtimeVideoSource.h:
+
 2022-03-11  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] text-anchor should support discrete animation

@@ -87,11 +87,11 @@ private:
     void createMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice& deviceID, String&&, const WebCore::MediaConstraints&, bool shouldUseGPUProcessRemoteFrames, WebCore::PageIdentifier, CreateSourceCallback&&);
     void startProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void stopProducingData(WebCore::RealtimeMediaSourceIdentifier);
-    void end(WebCore::RealtimeMediaSourceIdentifier);
+    void removeSource(WebCore::RealtimeMediaSourceIdentifier);
     void capabilities(WebCore::RealtimeMediaSourceIdentifier, CompletionHandler<void(WebCore::RealtimeMediaSourceCapabilities&&)>&&);
     void applyConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::MediaConstraints&);
     void clone(WebCore::RealtimeMediaSourceIdentifier clonedID, WebCore::RealtimeMediaSourceIdentifier cloneID);
-    void requestToEnd(WebCore::RealtimeMediaSourceIdentifier);
+    void endProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void setShouldApplyRotation(WebCore::RealtimeMediaSourceIdentifier, bool shouldApplyRotation);
 
     WebCore::CaptureSourceOrError createMicrophoneSource(const WebCore::CaptureDevice&, String&& hashSalt, const WebCore::MediaConstraints*, WebCore::PageIdentifier);
