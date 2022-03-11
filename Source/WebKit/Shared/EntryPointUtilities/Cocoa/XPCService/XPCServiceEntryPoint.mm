@@ -29,6 +29,7 @@
 #import "SandboxUtilities.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/ProcessIdentifier.h>
+#import <signal.h>
 #import <wtf/cocoa/Entitlements.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/StringToIntegerConversion.h>
@@ -159,10 +160,24 @@ bool XPCServiceInitializerDelegate::isClientSandboxed()
 }
 
 #if PLATFORM(MAC)
-OSObjectPtr<os_transaction_t>& osTransaction()
+void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 {
-    static NeverDestroyed<OSObjectPtr<os_transaction_t>> transaction;
-    return transaction.get();
+    static NeverDestroyed<OSObjectPtr<os_transaction_t>> globalTransaction;
+
+    // Because we don't use RunningBoard on macOS, we leak an OS transaction to control the lifetime of our XPC
+    // services ourselves. However, one of the side effects of leaking this transaction is that the default SIGTERM
+    // handler doesn't cleanly exit our XPC services when logging out or rebooting. This led to crashes with
+    // XPC_EXIT_REASON_SIGTERM_TIMEOUT as termination reason (rdar://88940229). To address the issue, we now set our
+    // own SIGTERM handler that calls _exit(0). In the future, we should likely adopt RunningBoard on macOS and
+    // control our lifetime via process assertions instead of leaking this OS transaction.
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [] {
+        signal(SIGTERM, [](int) {
+            _exit(0);
+        });
+    });
+
+    globalTransaction.get() = WTFMove(transaction);
 }
 #endif
 
@@ -172,7 +187,7 @@ void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage)
     priorityBoostMessage = nullptr;
 
 #if PLATFORM(MAC)
-    osTransaction() = nullptr;
+    setOSTransaction(nullptr);
 #endif
 
     xpc_transaction_exit_clean();
