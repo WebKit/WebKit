@@ -266,6 +266,9 @@ PASS font-variant-east-asian: "full-width" onto "proportional-width"
 PASS font-variant-ligatures (type: discrete) has testAccumulation function
 PASS font-variant-ligatures: "no-common-ligatures" onto "common-ligatures"
 PASS font-variant-ligatures: "common-ligatures" onto "no-common-ligatures"
+PASS font-variant-numeric (type: discrete) has testAccumulation function
+PASS font-variant-numeric: "oldstyle-nums" onto "lining-nums"
+PASS font-variant-numeric: "lining-nums" onto "oldstyle-nums"
 PASS font-variant-position (type: discrete) has testAccumulation function
 PASS font-variant-position: "super" onto "sub"
 PASS font-variant-position: "sub" onto "super"

@@ -11,11 +11,11 @@ PASS Animation of font-synthesis in ::marker
 FAIL Animation of font-synthesis-small-caps in ::marker assert_true: font-synthesis-small-caps doesn't seem to be supported in the computed style expected true got false
 FAIL Animation of font-synthesis-style in ::marker assert_true: font-synthesis-style doesn't seem to be supported in the computed style expected true got false
 FAIL Animation of font-synthesis-weight in ::marker assert_true: font-synthesis-weight doesn't seem to be supported in the computed style expected true got false
-FAIL Animation of font-variant in ::marker assert_equals: expected "small-caps" but got "small-caps tabular-nums"
+PASS Animation of font-variant in ::marker
 PASS Animation of font-variant-caps in ::marker
 PASS Animation of font-variant-east-asian in ::marker
 PASS Animation of font-variant-ligatures in ::marker
-FAIL Animation of font-variant-numeric in ::marker assert_equals: expected "slashed-zero" but got "tabular-nums"
+PASS Animation of font-variant-numeric in ::marker
 PASS Animation of font-variant-position in ::marker
 PASS Animation of font-weight in ::marker
 PASS Animation of line-height in ::marker

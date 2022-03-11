@@ -2755,6 +2755,51 @@ public:
     }
 };
 
+class FontVariantNumericWrapper final : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    FontVariantNumericWrapper()
+        : AnimationPropertyWrapperBase(CSSPropertyFontVariantNumeric)
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const override { return false; }
+
+    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    {
+        auto& aFontDescription = a.fontDescription();
+        auto& bFontDescription = b.fontDescription();
+        return aFontDescription.variantNumericFigure() == bFontDescription.variantNumericFigure()
+            && aFontDescription.variantNumericSpacing() == bFontDescription.variantNumericSpacing()
+            && aFontDescription.variantNumericFraction() == bFontDescription.variantNumericFraction()
+            && aFontDescription.variantNumericOrdinal() == bFontDescription.variantNumericOrdinal()
+            && aFontDescription.variantNumericSlashedZero() == bFontDescription.variantNumericSlashedZero();
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
+    {
+        ASSERT(!context.progress || context.progress == 1.0);
+        auto& sourceFontDescription = (context.progress ? to : from).fontDescription();
+
+        FontSelector* currentFontSelector = destination.fontCascade().fontSelector();
+        auto description = destination.fontDescription();
+        description.setVariantNumericFigure(sourceFontDescription.variantNumericFigure());
+        description.setVariantNumericSpacing(sourceFontDescription.variantNumericSpacing());
+        description.setVariantNumericFraction(sourceFontDescription.variantNumericFraction());
+        description.setVariantNumericOrdinal(sourceFontDescription.variantNumericOrdinal());
+        description.setVariantNumericSlashedZero(sourceFontDescription.variantNumericSlashedZero());
+        destination.setFontDescription(WTFMove(description));
+        destination.fontCascade().update(currentFontSelector);
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const override
+    {
+    }
+#endif
+};
+
 class QuotesWrapper final : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -3124,6 +3169,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<FontVariantAlternates>(CSSPropertyFontVariantAlternates, &RenderStyle::fontVariantAlternates, &RenderStyle::setFontVariantAlternates),
         new FontVariantEastAsianWrapper,
         new FontVariantLigaturesWrapper,
+        new FontVariantNumericWrapper,
         new DiscretePropertyWrapper<FontVariantPosition>(CSSPropertyFontVariantPosition, &RenderStyle::fontVariantPosition, &RenderStyle::setFontVariantPosition),
         new DiscretePropertyWrapper<FontVariantCaps>(CSSPropertyFontVariantCaps, &RenderStyle::fontVariantCaps, &RenderStyle::setFontVariantCaps),
         new GridTemplateAreasWrapper,
@@ -3161,7 +3207,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyTransformOrigin,
         CSSPropertyPerspectiveOrigin,
         CSSPropertyOffset,
-        CSSPropertyTextEmphasis
+        CSSPropertyTextEmphasis,
+        CSSPropertyFontVariant
     };
     const unsigned animatableShorthandPropertiesCount = WTF_ARRAY_LENGTH(animatableShorthandProperties);
 

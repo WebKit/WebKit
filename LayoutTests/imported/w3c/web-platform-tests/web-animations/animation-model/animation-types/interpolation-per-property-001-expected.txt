@@ -325,6 +325,10 @@ PASS font-variant-ligatures (type: discrete) has testInterpolation function
 PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with linear easing
 PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with effect easing
 PASS font-variant-ligatures uses discrete animation when animating between "common-ligatures" and "no-common-ligatures" with keyframe easing
+PASS font-variant-numeric (type: discrete) has testInterpolation function
+PASS font-variant-numeric uses discrete animation when animating between "lining-nums" and "oldstyle-nums" with linear easing
+PASS font-variant-numeric uses discrete animation when animating between "lining-nums" and "oldstyle-nums" with effect easing
+PASS font-variant-numeric uses discrete animation when animating between "lining-nums" and "oldstyle-nums" with keyframe easing
 PASS font-variant-position (type: discrete) has testInterpolation function
 PASS font-variant-position uses discrete animation when animating between "sub" and "super" with linear easing
 PASS font-variant-position uses discrete animation when animating between "sub" and "super" with effect easing

@@ -1,5 +1,17 @@
 2022-03-10  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] font-variant-numeric should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237669
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-pseudo/parsing/marker-supported-properties-in-animation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2022-03-10  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] mask-clip should support discrete animation
         https://bugs.webkit.org/show_bug.cgi?id=237725
 
