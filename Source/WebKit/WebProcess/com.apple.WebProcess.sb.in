@@ -2000,6 +2000,7 @@
         SYS_necp_open
         SYS_openat_nocancel
         SYS_proc_rlimit_control
+        SYS_psynch_rw_rdlock
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
         SYS_rmdir
 #endif
@@ -2015,7 +2016,6 @@
         SYS_kqueue
         SYS_mkdirat
         SYS_open_dprotected_np
-        SYS_psynch_rw_rdlock
         SYS_setrlimit
         SYS_ulock_wait2
 #endif
