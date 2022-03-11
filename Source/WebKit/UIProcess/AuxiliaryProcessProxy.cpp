@@ -270,11 +270,6 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
             IPC::addAsyncReplyHandler(*connection(), pendingMessage.asyncReplyInfo->second, WTFMove(pendingMessage.asyncReplyInfo->first));
         m_connection->sendMessage(WTFMove(pendingMessage.encoder), pendingMessage.sendOptions);
     }
-
-    if (m_shouldStartResponsivenessTimerWhenLaunched) {
-        auto useLazyStop = *std::exchange(m_shouldStartResponsivenessTimerWhenLaunched, std::nullopt);
-        startResponsivenessTimer(useLazyStop);
-    }
 }
 
 void AuxiliaryProcessProxy::replyToPendingMessages()
@@ -363,10 +358,18 @@ void AuxiliaryProcessProxy::stopResponsivenessTimer()
     responsivenessTimer().stop();
 }
 
+void AuxiliaryProcessProxy::beginResponsivenessChecks()
+{
+    m_didBeginResponsivenessChecks = true;
+    if (m_delayedResponsivenessCheck)
+        startResponsivenessTimer(*std::exchange(m_delayedResponsivenessCheck, std::nullopt));
+}
+
 void AuxiliaryProcessProxy::startResponsivenessTimer(UseLazyStop useLazyStop)
 {
-    if (isLaunching()) {
-        m_shouldStartResponsivenessTimerWhenLaunched = useLazyStop;
+    if (!m_didBeginResponsivenessChecks) {
+        if (!m_delayedResponsivenessCheck)
+            m_delayedResponsivenessCheck = useLazyStop;
         return;
     }
 

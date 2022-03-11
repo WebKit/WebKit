@@ -303,8 +303,10 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
     });
 }
 
-void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters)
+void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
+    CompletionHandlerCallingScope callCompletionHandler(WTFMove(completionHandler));
+
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
 #if HAVE(SEC_KEY_PROXY)
     WTF::setProcessPrivileges({ ProcessPrivilege::CanAccessRawCookies });

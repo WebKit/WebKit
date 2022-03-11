@@ -230,7 +230,10 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 #endif
 
     WebProcessPool::platformInitializeNetworkProcess(parameters);
-    send(Messages::NetworkProcess::InitializeNetworkProcess(parameters), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::InitializeNetworkProcess(parameters), [weakThis = WeakPtr { *this }] {
+        if (weakThis)
+            weakThis->beginResponsivenessChecks();
+    });
 }
 
 static bool anyProcessPoolAlwaysRunsAtBackgroundPriority()

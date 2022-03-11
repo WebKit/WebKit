@@ -493,6 +493,8 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess())
         networkProcess->sendXPCEndpointToProcess(*this);
 #endif
+
+    beginResponsivenessChecks();
 }
 
 void GPUProcessProxy::updateProcessAssertion()

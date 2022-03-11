@@ -1072,6 +1072,8 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     enableRemoteInspectorIfNeeded();
 #endif
 #endif
+
+    beginResponsivenessChecks();
 }
 
 WebFrameProxy* WebProcessProxy::webFrame(FrameIdentifier frameID) const
