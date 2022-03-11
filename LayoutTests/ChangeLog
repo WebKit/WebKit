@@ -1,3 +1,21 @@
+2022-03-11  Don Olmstead  <don.olmstead@sony.com>
+
+        Platforms implementing WebSocketTask pass hybi/close-and-server-script-exception-expected.txt
+        https://bugs.webkit.org/show_bug.cgi?id=237727
+
+        Reviewed by Alex Christensen.
+
+        The root expected.txt had a line with FAIL but all platforms that implement WebSocketTask
+        PASS the test fully. Make this the default and remove redundant expectations and add a
+        FAIL for Apple WebKitLegacy ports which don't implement WebSocketTask.
+
+        * http/tests/websocket/tests/hybi/close-and-server-script-exception-expected.txt:
+        * platform/glib/http/tests/websocket/tests/hybi/close-and-server-script-exception-expected.txt: Removed.
+        * platform/ios-wk2/http/tests/websocket/tests/hybi/close-and-server-script-exception-expected.txt: Removed.
+        * platform/mac-wk1/http/tests/websocket/tests/hybi/close-and-server-script-exception-expected.txt: Copied from LayoutTests/http/tests/websocket/tests/hybi/close-and-server-script-exception-expected.txt.
+        * platform/mac-wk2/http/tests/websocket/tests/hybi/close-and-server-script-exception-expected.txt: Removed.
+        * platform/win/http/tests/websocket/tests/hybi/close-and-server-script-exception-expected.txt: Copied from LayoutTests/http/tests/websocket/tests/hybi/close-and-server-script-exception-expected.txt.
+
 2022-03-11  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Add support for inline table
