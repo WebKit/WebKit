@@ -1,3 +1,15 @@
+2022-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add a unit tests to check the remote inspector HTTP server
+        https://bugs.webkit.org/show_bug.cgi?id=237708
+
+        Reviewed by Michael Catanzaro.
+
+        Ensure we close the socket if it's still open when the remote inspector client is destroyed.
+
+        * UIProcess/Inspector/glib/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::~RemoteInspectorClient):
+
 2022-03-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Debian Stable & Ubuntu LTS build is failing after r291093

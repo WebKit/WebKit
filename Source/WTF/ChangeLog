@@ -1,3 +1,12 @@
+2022-03-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add a unit tests to check the remote inspector HTTP server
+        https://bugs.webkit.org/show_bug.cgi?id=237708
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/glib/SocketConnection.h: Export close().
+
 2022-03-10  Youenn Fablet  <youenn@apple.com>
 
         Enable Permissions API by default on Cocoa ports

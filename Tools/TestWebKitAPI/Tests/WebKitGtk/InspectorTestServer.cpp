@@ -25,18 +25,33 @@
 #include "config.h"
 
 #include <WebCore/GtkVersioning.h>
+#include <string.h>
+#include <sys/eventfd.h>
 #include <webkit2/webkit2.h>
 #include <wtf/glib/GRefPtr.h>
 
 int main(int argc, char** argv)
 {
+    g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
+    g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
+
     gtk_init(&argc, &argv);
 
-    // Overwrite WEBKIT_INSPECTOR_SERVER variable with default value.
-    g_setenv("WEBKIT_INSPECTOR_SERVER", "127.0.0.1:2999", TRUE);
+    int eventFD = argc == 2 ? atoi(argv[1]) : -1;
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
     webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(webView), TRUE);
+    g_signal_connect(webView, "load-changed", G_CALLBACK(+[](WebKitWebView*, WebKitLoadEvent loadEvent, int* eventFD) {
+        if (loadEvent != WEBKIT_LOAD_FINISHED)
+            return;
+
+        if (*eventFD != -1) {
+            uint64_t event = 1;
+            write(*eventFD, &event, sizeof(uint64_t));
+            close(*eventFD);
+        }
+    }), &eventFD);
+
     webkit_web_view_load_html(webView,
         "<html><body><p>WebKitGTK Inspector Test Server</p></body></html>",
         "http://127.0.0.1:2999/");

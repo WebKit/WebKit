@@ -45,7 +45,7 @@ public:
     WTF_EXPORT_PRIVATE void sendMessage(const char*, GVariant*);
 
     bool isClosed() const { return !m_connection; }
-    void close();
+    WTF_EXPORT_PRIVATE void close();
 
 private:
     WTF_EXPORT_PRIVATE SocketConnection(GRefPtr<GSocketConnection>&&, const MessageHandlers&, gpointer);

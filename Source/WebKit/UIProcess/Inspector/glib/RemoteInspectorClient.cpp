@@ -191,6 +191,8 @@ RemoteInspectorClient::RemoteInspectorClient(const char* address, unsigned port,
 
 RemoteInspectorClient::~RemoteInspectorClient()
 {
+    if (m_socketConnection)
+        m_socketConnection->close();
     g_cancellable_cancel(m_cancellable.get());
 }
 
