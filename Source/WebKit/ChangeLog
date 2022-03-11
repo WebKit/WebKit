@@ -1,3 +1,19 @@
+2022-03-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] DrawingAreaWC::sendUpdateAC should keep a WeakPtr of this for the reply handler
+        https://bugs.webkit.org/show_bug.cgi?id=237757
+
+        Reviewed by Don Olmstead.
+
+        WinCairo Release was crashing by visiting some random web sites
+        for several minutes. The reply handler in
+        DrawingAreaWC::sendUpdateAC should check that `this` object is
+        still alive with `weakThis`.
+
+        * WebProcess/WebPage/wc/DrawingAreaWC.cpp:
+        (WebKit::DrawingAreaWC::sendUpdateAC): Capture weakThis for the
+        reply handler and check it.
+
 2022-03-11  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS][WP] Add required sys call to sandbox
