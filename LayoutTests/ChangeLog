@@ -1,3 +1,16 @@
+2022-03-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        [iOS] Fix ovserscroll-behavior for main document
+        https://bugs.webkit.org/show_bug.cgi?id=237696
+
+        Reviewed by Simon Fraser.
+
+        Added test that does a scroll expecting a rubberband, sets overscroll-behavior:none for 
+        the body, then does another scroll, expected that no rubberband occurs.
+
+        * fast/scrolling/ios/overscroll-behavior-on-body-expected.txt: Added.
+        * fast/scrolling/ios/overscroll-behavior-on-body.html: Added.
+
 2022-03-11  Matteo Flores  <matteo_flores@apple.com>
 
         [ iOS ] fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html is flaky failing

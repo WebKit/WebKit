@@ -109,6 +109,7 @@ public:
     void clearTouchActionsForTouchIdentifier(unsigned);
     
     void resetStateAfterProcessExited();
+    WebCore::ScrollingTreeScrollingNode* rootNode() const;
 
 private:
     void connectStateNodeLayers(WebCore::ScrollingStateTree&, const RemoteLayerTreeHost&);

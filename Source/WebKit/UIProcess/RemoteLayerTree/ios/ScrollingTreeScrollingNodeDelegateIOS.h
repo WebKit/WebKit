@@ -49,6 +49,9 @@ namespace WebKit {
 class ScrollingTreeScrollingNodeDelegateIOS final : public WebCore::ScrollingTreeScrollingNodeDelegate {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    
+    enum class AllowOverscrollToPreventScrollPropagation : bool { Yes, No };
+    
     explicit ScrollingTreeScrollingNodeDelegateIOS(WebCore::ScrollingTreeScrollingNode&);
     ~ScrollingTreeScrollingNodeDelegateIOS() final;
 
@@ -82,6 +85,8 @@ public:
     void stopAnimatedScroll() final;
 
     void serviceScrollAnimation(MonotonicTime) final { }
+    
+    static void updateScrollViewForOverscrollBehavior(UIScrollView *, const WebCore::OverscrollBehavior, const WebCore::OverscrollBehavior, AllowOverscrollToPreventScrollPropagation);
 
 private:
     RetainPtr<CALayer> m_scrollLayer;

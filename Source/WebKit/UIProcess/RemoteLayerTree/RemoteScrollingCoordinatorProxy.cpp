@@ -265,6 +265,11 @@ bool RemoteScrollingCoordinatorProxy::hasScrollableMainFrame() const
     return rootNode && rootNode->canHaveScrollbars();
 }
 
+ScrollingTreeScrollingNode* RemoteScrollingCoordinatorProxy::rootNode() const
+{
+    return m_scrollingTree->rootNode();
+}
+
 bool RemoteScrollingCoordinatorProxy::hasScrollableOrZoomedMainFrame() const
 {
     auto* rootNode = m_scrollingTree->rootNode();

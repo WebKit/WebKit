@@ -518,6 +518,10 @@ typedef enum {
 @property (nonatomic, readonly) UIEdgeInsets _effectiveContentInset;
 @property (nonatomic, getter=_allowsAsyncScrollEvent, setter=_setAllowsAsyncScrollEvent:) BOOL _allowsAsyncScrollEvent;
 @property (nonatomic, getter=_isFirstResponderKeyboardAvoidanceEnabled, setter=_setFirstResponderKeyboardAvoidanceEnabled:) BOOL firstResponderKeyboardAvoidanceEnabled;
+@property (nonatomic) BOOL bouncesHorizontally;
+@property (nonatomic) BOOL bouncesVertically;
+@property (nonatomic, setter=_setAllowsParentToBeginHorizontally:) BOOL _allowsParentToBeginHorizontally;
+@property (nonatomic, setter=_setAllowsParentToBeginVertically:) BOOL _allowsParentToBeginVertically;
 @end
 
 typedef NS_ENUM(NSUInteger, UIScrollPhase) {
