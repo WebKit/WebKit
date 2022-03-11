@@ -1056,6 +1056,9 @@ public:
     void setMaskBoxImageSource(RefPtr<StyleImage>&& v) { m_rareNonInheritedData.access().maskBoxImage.setImage(WTFMove(v)); }
     void setMaskXPosition(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, mask, m_xPosition, WTFMove(length)); }
     void setMaskYPosition(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, mask, m_yPosition, WTFMove(length)); }
+    void setMaskRepeatX(FillRepeat fillRepeat) { SET_NESTED_VAR(m_rareNonInheritedData, mask, m_repeatX, static_cast<unsigned>(fillRepeat)); SET_NESTED_VAR(m_rareNonInheritedData, mask, m_repeatXSet, true); }
+    void setMaskRepeatY(FillRepeat fillRepeat) { SET_NESTED_VAR(m_rareNonInheritedData, mask, m_repeatY, static_cast<unsigned>(fillRepeat)); SET_NESTED_VAR(m_rareNonInheritedData, mask, m_repeatYSet, true); }
+
     void setMaskSize(LengthSize size) { SET_NESTED_VAR(m_rareNonInheritedData, mask, m_sizeLength, WTFMove(size)); }
 
     void setBorderCollapse(BorderCollapse collapse) { m_inheritedFlags.borderCollapse = static_cast<unsigned>(collapse); }

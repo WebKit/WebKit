@@ -62,6 +62,10 @@ PASS mask-origin (type: discrete) has testInterpolation function
 PASS mask-origin uses discrete animation when animating between "content-box" and "border-box" with linear easing
 PASS mask-origin uses discrete animation when animating between "content-box" and "border-box" with effect easing
 PASS mask-origin uses discrete animation when animating between "content-box" and "border-box" with keyframe easing
+PASS mask-repeat (type: discrete) has testInterpolation function
+PASS mask-repeat uses discrete animation when animating between "space" and "round" with linear easing
+PASS mask-repeat uses discrete animation when animating between "space" and "round" with effect easing
+PASS mask-repeat uses discrete animation when animating between "space" and "round" with keyframe easing
 PASS mask-type (type: discrete) has testInterpolation function
 PASS mask-type uses discrete animation when animating between "alpha" and "luminance" with linear easing
 PASS mask-type uses discrete animation when animating between "alpha" and "luminance" with effect easing
