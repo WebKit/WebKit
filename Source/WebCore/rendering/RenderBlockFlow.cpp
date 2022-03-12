@@ -3365,7 +3365,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     InlineIterator::LineIterator firstLineWithChildren;
     InlineIterator::LineIterator lastLineWithChildren;
     for (auto line = firstLine; line; line.traverseNext()) {
-        if (fragment && line->legacyRootInlineBox() && line->legacyRootInlineBox()->containingFragment() != fragment)
+        if (fragment && line->containingFragment() != fragment)
             continue;
 
         if (!line->firstLeafBox())
@@ -3373,7 +3373,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         if (!firstLineWithChildren)
             firstLineWithChildren = line;
 
-        if (!linesAreFlipped && line->legacyRootInlineBox() && line->legacyRootInlineBox()->isFirstAfterPageBreak()
+        if (!linesAreFlipped && line->isFirstAfterPageBreak()
             && (pointInLogicalContents.y() < line->lineBoxTop() || (blocksAreFlipped && pointInLogicalContents.y() == line->lineBoxTop())))
             break;
 
@@ -3386,7 +3386,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
                 while (nextLineWithChildren && !nextLineWithChildren->firstLeafBox())
                     nextLineWithChildren.traverseNext();
 
-                if (nextLineWithChildren && nextLineWithChildren->legacyRootInlineBox() && nextLineWithChildren->legacyRootInlineBox()->isFirstAfterPageBreak()
+                if (nextLineWithChildren && nextLineWithChildren->isFirstAfterPageBreak()
                     && (pointInLogicalContents.y() > nextLineWithChildren->lineBoxTop() || (!blocksAreFlipped && pointInLogicalContents.y() == nextLineWithChildren->lineBoxTop())))
                     continue;
             }

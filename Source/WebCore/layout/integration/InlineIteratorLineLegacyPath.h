@@ -57,7 +57,9 @@ public:
     FontBaseline baselineType() const { return m_rootInlineBox->baselineType(); }
 
     const RenderBlockFlow& containingBlock() const { return m_rootInlineBox->blockFlow(); }
-    const LegacyRootInlineBox* legacyRootInlineBox() const { return m_rootInlineBox; }
+
+    RenderFragmentContainer* containingFragment() const { return m_rootInlineBox->containingFragment(); }
+    bool isFirstAfterPageBreak() const { return m_rootInlineBox->isFirstAfterPageBreak(); }
 
     void traverseNext()
     {

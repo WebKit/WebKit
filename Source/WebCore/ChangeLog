@@ -1,3 +1,27 @@
+2022-03-12  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Replace generic InlineIterator::Line::legacyRootInlineBox() with 2 dedicated functions
+        https://bugs.webkit.org/show_bug.cgi?id=237807
+
+        Reviewed by Antti Koivisto.
+
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::Line::containingFragment const):
+        (WebCore::InlineIterator::Line::isFirstAfterPageBreak const):
+        (WebCore::InlineIterator::Line::legacyRootInlineBox const): Deleted.
+        * layout/integration/InlineIteratorLineLegacyPath.h:
+        (WebCore::InlineIterator::LineIteratorLegacyPath::containingFragment const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::isFirstAfterPageBreak const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::legacyRootInlineBox const): Deleted.
+        * layout/integration/InlineIteratorLineModernPath.h:
+        (WebCore::InlineIterator::LineIteratorModernPath::containingFragment const):
+        (WebCore::InlineIterator::LineIteratorModernPath::isFirstAfterPageBreak const):
+        (WebCore::InlineIterator::LineIteratorModernPath::legacyRootInlineBox const): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::collectSelectionGeometries):
+
 2022-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Adopt FALLBACK_PLATFORM_NAME in place of FALLBACK_PLATFORM

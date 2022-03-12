@@ -192,7 +192,7 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
     if (!line->isHorizontal())
         rect = rect.transposedRect();
 
-    if (line->legacyRootInlineBox() && line->legacyRootInlineBox()->isFirstAfterPageBreak()) {
+    if (line->isFirstAfterPageBreak()) {
         if (run->isHorizontal())
             rect.shiftYEdgeTo(line->lineBoxTop());
         else

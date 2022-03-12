@@ -76,7 +76,10 @@ public:
     FontBaseline baselineType() const;
 
     const RenderBlockFlow& containingBlock() const;
-    const LegacyRootInlineBox* legacyRootInlineBox() const;
+
+    // FIXME: We may move these multi-column bits to some dedicated structures.
+    RenderFragmentContainer* containingFragment() const;
+    bool isFirstAfterPageBreak() const;
 
     bool isFirst() const;
 
@@ -235,10 +238,17 @@ inline const RenderBlockFlow& Line::containingBlock() const
     });
 }
 
-inline const LegacyRootInlineBox* Line::legacyRootInlineBox() const
+inline RenderFragmentContainer* Line::containingFragment() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.legacyRootInlineBox();
+        return path.containingFragment();
+    });
+}
+
+inline bool Line::isFirstAfterPageBreak() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.isFirstAfterPageBreak();
     });
 }
 

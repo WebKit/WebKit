@@ -68,7 +68,9 @@ public:
     FontBaseline baselineType() const { return line().baselineType(); }
 
     const RenderBlockFlow& containingBlock() const { return m_inlineContent->containingBlock(); }
-    const LegacyRootInlineBox* legacyRootInlineBox() const { return nullptr; }
+
+    RenderFragmentContainer* containingFragment() const { return nullptr; }
+    bool isFirstAfterPageBreak() const { return false; }
 
     void traverseNext()
     {

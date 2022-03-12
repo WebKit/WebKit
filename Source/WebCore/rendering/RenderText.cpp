@@ -341,7 +341,7 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
                 continue;
         }
 
-        if (run->line()->legacyRootInlineBox() && run->line()->legacyRootInlineBox()->isFirstAfterPageBreak()) {
+        if (run->line()->isFirstAfterPageBreak()) {
             if (run->isHorizontal())
                 rect.shiftYEdgeTo(run->line()->lineBoxTop());
             else
