@@ -11772,7 +11772,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ ${FALLBACK_PLATFORM:-$PLATFORM_NAME} != \"iphoneos\" ]]; then\n    exit 0\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\" ]]; then\n    mkdir -p \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\"\nfi\n\nln -s -h -f ../Frameworks/JavaScriptCore.framework \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework\"\n";
+			shellScript = "if [[ ${FALLBACK_PLATFORM_NAME:-$PLATFORM_NAME} != \"iphoneos\" ]]; then\n    exit 0\nfi\n\nif [[ ! -d \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\" ]]; then\n    mkdir -p \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks\"\nfi\n\nln -s -h -f ../Frameworks/JavaScriptCore.framework \"${INSTALL_ROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/JavaScriptCore.framework\"\n";
 		};
 		3713F014142905240036387F /* Check For Inappropriate Objective-C Class Names */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -12159,8 +12159,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD41FA8727CDAD4300394D95 /* LowLevelInterpreter.asm in Sources */,
 				0FF922D414F46B410041A24E /* LLIntOffsetsExtractor.cpp in Sources */,
+				DD41FA8727CDAD4300394D95 /* LowLevelInterpreter.asm in Sources */,
 				DD41FA8727CDAD4300394D95 /* LowLevelInterpreter.asm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12208,8 +12208,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD41FA8627CDAD3200394D95 /* LowLevelInterpreter.asm in Sources */,
 				14BD689D215191C10050DAFF /* LLIntSettingsExtractor.cpp in Sources */,
+				DD41FA8627CDAD3200394D95 /* LowLevelInterpreter.asm in Sources */,
 				DD41FA8627CDAD3200394D95 /* LowLevelInterpreter.asm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12254,6 +12254,7 @@
 				E30873E7272559410053B601 /* IntlPluralRules.cpp in Sources */,
 				A3EE8543262514B000FC9B8D /* IntlWorkaround.cpp in Sources */,
 				E38E8790254B978400F6F9E4 /* JSDateMath.cpp in Sources */,
+				DD41FA8927CDDDEF00394D95 /* LowLevelInterpreter.asm in Sources */,
 				DD41FA8927CDDDEF00394D95 /* LowLevelInterpreter.asm in Sources */,
 				536B319E1F735F160037FC33 /* LowLevelInterpreter.cpp in Sources */,
 				DFBC2CA625E6D5B90081BDD1 /* SymbolStubsForSafariCompatibility.mm in Sources */,
@@ -12304,7 +12305,6 @@
 				536B31341F71C5990037FC33 /* UnifiedSource40.cpp in Sources */,
 				536B31311F71C5990037FC33 /* UnifiedSource41.cpp in Sources */,
 				536B313B1F71C5990037FC33 /* UnifiedSource42.cpp in Sources */,
-				DD41FA8927CDDDEF00394D95 /* LowLevelInterpreter.asm in Sources */,
 				536B313E1F71C5990037FC33 /* UnifiedSource43.cpp in Sources */,
 				536B314C1F71C5990037FC33 /* UnifiedSource44.cpp in Sources */,
 				536B31511F71C5990037FC33 /* UnifiedSource45.cpp in Sources */,

@@ -1,3 +1,20 @@
+2022-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt FALLBACK_PLATFORM_NAME in place of FALLBACK_PLATFORM
+        https://bugs.webkit.org/show_bug.cgi?id=237809
+
+        Reviewed by Per Arne Vollan.
+
+        * ContentExtensionTester/Configurations/SDKVariant.xcconfig:
+        * DumpRenderTree/mac/Configurations/SDKVariant.xcconfig:
+        * ImageDiff/cg/Configurations/SDKVariant.xcconfig:
+        * MiniBrowser/Configurations/SDKVariant.xcconfig:
+        * MobileMiniBrowser/Configurations/SDKVariant.xcconfig:
+        * TestWebKitAPI/Configurations/SDKVariant.xcconfig:
+        * WebEditingTester/Configurations/SDKVariant.xcconfig:
+        * WebKitTestRunner/Configurations/SDKVariant.xcconfig:
+        * lldb/lldbWebKitTester/Configurations/SDKVariant.xcconfig:
+
 2022-03-11  Alex Christensen  <achristensen@webkit.org>
 
         Finish implementing modify-headers actions for WKContentRuleList SPI

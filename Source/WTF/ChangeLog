@@ -1,3 +1,12 @@
+2022-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        Adopt FALLBACK_PLATFORM_NAME in place of FALLBACK_PLATFORM
+        https://bugs.webkit.org/show_bug.cgi?id=237809
+
+        Reviewed by Per Arne Vollan.
+
+        * Configurations/SDKVariant.xcconfig:
+
 2022-03-11  Chris Dumez  <cdumez@apple.com>
 
         IPC thread's QOS should match the sending thread's QOS when calling sendSync()
