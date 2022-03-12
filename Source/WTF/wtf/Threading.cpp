@@ -401,6 +401,38 @@ void Thread::setCurrentThreadIsUserInitiated(int relativePriority)
 }
 
 #if HAVE(QOS_CLASSES)
+static Thread::QOS toQOS(qos_class_t qosClass)
+{
+    switch (qosClass) {
+    case QOS_CLASS_USER_INTERACTIVE:
+        return Thread::QOS::UserInteractive;
+    case QOS_CLASS_USER_INITIATED:
+        return Thread::QOS::UserInitiated;
+    case QOS_CLASS_UTILITY:
+        return Thread::QOS::Utility;
+    case QOS_CLASS_BACKGROUND:
+        return Thread::QOS::Background;
+    case QOS_CLASS_UNSPECIFIED:
+    case QOS_CLASS_DEFAULT:
+    default:
+        return Thread::QOS::Default;
+    }
+}
+#endif
+
+auto Thread::currentThreadQOS() -> QOS
+{
+#if HAVE(QOS_CLASSES)
+    qos_class_t qos = QOS_CLASS_DEFAULT;
+    int relativePriority;
+    pthread_get_qos_class_np(pthread_self(), &qos, &relativePriority);
+    return toQOS(qos);
+#else
+    return QOS::Default;
+#endif
+}
+
+#if HAVE(QOS_CLASSES)
 static qos_class_t globalMaxQOSclass { QOS_CLASS_UNSPECIFIED };
 
 void Thread::setGlobalMaxQOSClass(qos_class_t maxClass)

@@ -195,6 +195,7 @@ public:
     // relativePriority is a value in the range [-15, 0] where a lower value indicates a lower priority.
     WTF_EXPORT_PRIVATE static void setCurrentThreadIsUserInteractive(int relativePriority = 0);
     WTF_EXPORT_PRIVATE static void setCurrentThreadIsUserInitiated(int relativePriority = 0);
+    WTF_EXPORT_PRIVATE static QOS currentThreadQOS();
 
 #if HAVE(QOS_CLASSES)
     WTF_EXPORT_PRIVATE static void setGlobalMaxQOSClass(qos_class_t);

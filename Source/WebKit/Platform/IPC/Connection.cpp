@@ -652,7 +652,10 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(SyncRequestID syncRequestID
         encoder->setShouldMaintainOrderingWithAsyncMessages();
 
     auto messageName = encoder->messageName();
-    sendMessage(WTFMove(encoder), sendOptions);
+
+    // Since sync IPC is blocking the current thread, make sure we use the same priority for the IPC sending thread
+    // as the current thread.
+    sendMessage(WTFMove(encoder), sendOptions, Thread::currentThreadQOS());
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.

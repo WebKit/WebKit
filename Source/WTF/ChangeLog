@@ -1,3 +1,18 @@
+2022-03-11  Chris Dumez  <cdumez@apple.com>
+
+        IPC thread's QOS should match the sending thread's QOS when calling sendSync()
+        https://bugs.webkit.org/show_bug.cgi?id=237800
+        <rdar://problem/90061548>
+
+        Reviewed by Geoffrey Garen.
+
+        Add function to get the QoS of the current thread.
+
+        * wtf/Threading.cpp:
+        (WTF::toQOS):
+        (WTF::Thread::currentThreadQOS):
+        * wtf/Threading.h:
+
 2022-03-11  Elliott Williams  <emw@apple.com>
 
         [Xcode] "Nest Headers" script phases copy headers incorrectly on Catalyst
