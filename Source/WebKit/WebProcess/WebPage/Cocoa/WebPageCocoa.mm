@@ -326,9 +326,8 @@ void WebPage::clearDictationAlternatives(Vector<DictationContext>&& contexts)
     auto documentRange = makeRangeSelectingNodeContents(*document);
     document->markers().filterMarkers(documentRange, [&] (auto& marker) {
         if (!std::holds_alternative<DocumentMarker::DictationData>(marker.data()))
-            return false;
-
-        return setOfContextsToRemove.contains(std::get<WebCore::DocumentMarker::DictationData>(marker.data()).context);
+            return FilterMarkerResult::Keep;
+        return setOfContextsToRemove.contains(std::get<WebCore::DocumentMarker::DictationData>(marker.data()).context) ? FilterMarkerResult::Remove : FilterMarkerResult::Keep;
     }, DocumentMarker::DictationAlternatives);
 }
 

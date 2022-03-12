@@ -92,7 +92,7 @@ void DocumentMarkerController::removeMarkers(const SimpleRange& range, OptionSet
     filterMarkers(range, nullptr, types, overlapRule);
 }
 
-void DocumentMarkerController::filterMarkers(const SimpleRange& range, const Function<bool(const DocumentMarker&)>& filter, OptionSet<DocumentMarker::MarkerType> types, RemovePartiallyOverlappingMarker overlapRule)
+void DocumentMarkerController::filterMarkers(const SimpleRange& range, const Function<FilterMarkerResult(const DocumentMarker&)>& filter, OptionSet<DocumentMarker::MarkerType> types, RemovePartiallyOverlappingMarker overlapRule)
 {
     for (auto& textPiece : collectTextRanges(range)) {
         if (!possiblyHasMarkers(types))
@@ -357,7 +357,7 @@ void DocumentMarkerController::copyMarkers(Node& source, OffsetRange range, Node
     }
 }
 
-void DocumentMarkerController::removeMarkers(Node& node, OffsetRange range, OptionSet<DocumentMarker::MarkerType> types, const Function<bool(const DocumentMarker&)>& filter, RemovePartiallyOverlappingMarker overlapRule)
+void DocumentMarkerController::removeMarkers(Node& node, OffsetRange range, OptionSet<DocumentMarker::MarkerType> types, const Function<FilterMarkerResult(const DocumentMarker&)>& filter, RemovePartiallyOverlappingMarker overlapRule)
 {
     if (range.start >= range.end)
         return;
@@ -384,7 +384,7 @@ void DocumentMarkerController::removeMarkers(Node& node, OffsetRange range, Opti
             continue;
         }
 
-        if (filter && !filter(marker)) {
+        if (filter && filter(marker) == FilterMarkerResult::Keep) {
             i++;
             continue;
         }

@@ -42,6 +42,7 @@ class Text;
 struct SimpleRange;
 
 enum class RemovePartiallyOverlappingMarker : bool { No, Yes };
+enum class FilterMarkerResult : bool { Keep, Remove };
 
 class DocumentMarkerController {
     WTF_MAKE_NONCOPYABLE(DocumentMarkerController); WTF_MAKE_FAST_ALLOCATED;
@@ -63,11 +64,9 @@ public:
     // remove the marker. If the argument is false, we will adjust the span of the marker so that it retains
     // the portion that is outside of the range.
     WEBCORE_EXPORT void removeMarkers(const SimpleRange&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
-    void removeMarkers(Node&, OffsetRange, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), const Function<bool(const DocumentMarker&)>& filterFunction = nullptr, RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
+    void removeMarkers(Node&, OffsetRange, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), const Function<FilterMarkerResult(const DocumentMarker&)>& filterFunction = nullptr, RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
-    // Return true from filterFunction to remove the marker.
-    // FIXME: This would be clearer if the `filter` function were refactored to return a strongly typed enum.
-    WEBCORE_EXPORT void filterMarkers(const SimpleRange&, const Function<bool(const DocumentMarker&)>& filterFunction, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
+    WEBCORE_EXPORT void filterMarkers(const SimpleRange&, const Function<FilterMarkerResult(const DocumentMarker&)>& filterFunction, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
     WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
     void removeMarkers(Node&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());

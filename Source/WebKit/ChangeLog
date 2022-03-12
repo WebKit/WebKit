@@ -1,3 +1,18 @@
+2022-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor the filter block in DocumentMarkerController::filterMarkers() to return an enum type
+        https://bugs.webkit.org/show_bug.cgi?id=237794
+
+        Reviewed by Megan Gardner.
+
+        Drive-by fix: only remove the spellchecking document marker in `removeAnnotationRelativeToSelection` if the
+        annotation string of the marker matches the given annotation string to the method.
+
+        * WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.mm:
+        (WebKit::TextCheckingControllerProxy::removeAnnotationRelativeToSelection):
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::clearDictationAlternatives):
+
 2022-03-11  Alex Christensen  <achristensen@webkit.org>
 
         Finish implementing modify-headers actions for WKContentRuleList SPI

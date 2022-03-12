@@ -1,3 +1,19 @@
+2022-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor the filter block in DocumentMarkerController::filterMarkers() to return an enum type
+        https://bugs.webkit.org/show_bug.cgi?id=237794
+
+        Reviewed by Megan Gardner.
+
+        Change the return value of the `filter` function argument in `filterMarkers()` from a `bool` to a named enum
+        type with 2 values: `Keep` or `Remove`; this makes it more obvious to call sites whether the return value will
+        cause document markers to remain or be removed from the document.
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::filterMarkers):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        * dom/DocumentMarkerController.h: Remove a FIXME and comment that's no longer needed.
+
 2022-03-11  Alex Christensen  <achristensen@webkit.org>
 
         Finish implementing modify-headers actions for WKContentRuleList SPI
