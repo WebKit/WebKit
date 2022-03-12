@@ -381,24 +381,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     auto commitEncoder = makeUniqueRef<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
     commitEncoder.get() << message.arguments();
 
-    // FIXME: Move all backing store flushing management to RemoteLayerBackingStoreCollection.
-    bool hadAnyChangedBackingStore = false;
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
-    for (auto& layer : layerTransaction.changedLayers()) {
-        if (layer->properties().changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
-            hadAnyChangedBackingStore = true;
-            if (layer->properties().backingStore)
-                flushers.appendVector(layer->properties().backingStore->takePendingFlushers());
-        }
-
-        layer->didCommit();
-    }
-
-    backingStoreCollection.didFlushLayers();
-
-    if (hadAnyChangedBackingStore)
-        backingStoreCollection.scheduleVolatilityTimer();
-
+    auto flushers = backingStoreCollection.didFlushLayers(layerTransaction);
     RefPtr<BackingStoreFlusher> backingStoreFlusher = BackingStoreFlusher::create(WebProcess::singleton().parentProcessConnection(), WTFMove(commitEncoder), WTFMove(flushers));
     m_pendingBackingStoreFlusher = backingStoreFlusher;
 

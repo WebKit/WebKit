@@ -1,3 +1,24 @@
+2022-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Move RemoteLayerBackingStore flusher creation into RemoteLayerBackingStoreCollection
+        https://bugs.webkit.org/show_bug.cgi?id=237798
+
+        Reviewed by Tim Horton.
+
+        Move the code that creates layer flushers from RemoteLayerTreeDrawingArea into
+        RemoteLayerBackingStoreCollection, per the FIXME.
+
+        RemoteLayerBackingStoreCollection::didFlushLayers() then becomes internal, and gets renamed
+        to updateUnreachableBackingStores(). Now we only need to schedule the volatility timer from
+        one place.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::didFlushLayers):
+        (WebKit::RemoteLayerBackingStoreCollection::updateUnreachableBackingStores):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updateRendering):
+
 2022-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor the filter block in DocumentMarkerController::filterMarkers() to return an enum type

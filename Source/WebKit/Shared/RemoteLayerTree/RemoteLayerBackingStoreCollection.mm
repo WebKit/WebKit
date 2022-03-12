@@ -70,10 +70,34 @@ void RemoteLayerBackingStoreCollection::willCommitLayerTree(RemoteLayerTreeTrans
     transaction.setLayerIDsWithNewlyUnreachableBackingStore(newlyUnreachableLayerIDs);
 }
 
-void RemoteLayerBackingStoreCollection::didFlushLayers()
+Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerBackingStoreCollection::didFlushLayers(RemoteLayerTreeTransaction& transaction)
 {
+    bool needToScheduleVolatilityTimer = false;
+
+    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
+    for (auto& layer : transaction.changedLayers()) {
+        if (layer->properties().changedProperties & RemoteLayerTreeTransaction::BackingStoreChanged) {
+            needToScheduleVolatilityTimer = true;
+            if (layer->properties().backingStore)
+                flushers.appendVector(layer->properties().backingStore->takePendingFlushers());
+        }
+
+        layer->didCommit();
+    }
+
     m_inLayerFlush = false;
 
+    if (updateUnreachableBackingStores())
+        needToScheduleVolatilityTimer = true;
+
+    if (needToScheduleVolatilityTimer)
+        scheduleVolatilityTimer();
+
+    return flushers;
+}
+
+bool RemoteLayerBackingStoreCollection::updateUnreachableBackingStores()
+{
     Vector<RemoteLayerBackingStore*> newlyUnreachableBackingStore;
     for (auto* backingStore : m_liveBackingStore) {
         if (!m_reachableBackingStoreInLatestFlush.contains(backingStore))
@@ -83,8 +107,7 @@ void RemoteLayerBackingStoreCollection::didFlushLayers()
     for (auto* backingStore : newlyUnreachableBackingStore)
         backingStoreBecameUnreachable(*backingStore);
 
-    if (!newlyUnreachableBackingStore.isEmpty())
-        scheduleVolatilityTimer();
+    return !newlyUnreachableBackingStore.isEmpty();
 }
 
 void RemoteLayerBackingStoreCollection::backingStoreWasCreated(RemoteLayerBackingStore& backingStore)

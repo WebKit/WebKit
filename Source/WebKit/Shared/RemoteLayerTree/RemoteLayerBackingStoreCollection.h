@@ -33,6 +33,7 @@
 
 namespace WebCore {
 class ImageBuffer;
+class ThreadSafeImageBufferFlusher;
 enum class SetNonVolatileResult : uint8_t;
 }
 
@@ -63,7 +64,7 @@ public:
 
     void willFlushLayers();
     void willCommitLayerTree(RemoteLayerTreeTransaction&);
-    void didFlushLayers();
+    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> didFlushLayers(RemoteLayerTreeTransaction&);
 
     virtual void tryMarkAllBackingStoreVolatile(CompletionHandler<void(bool)>&&);
 
@@ -86,6 +87,7 @@ private:
     bool markBackingStoreVolatile(RemoteLayerBackingStore&, OptionSet<VolatilityMarkingBehavior> = { }, MonotonicTime = { });
     bool markAllBackingStoreVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior);
 
+    bool updateUnreachableBackingStores();
     void volatilityTimerFired();
 
 protected:
