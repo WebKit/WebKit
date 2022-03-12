@@ -1,3 +1,21 @@
+2022-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        Adjust when _setPrivacyProxyFailClosedForUnreachableNonMainHosts is called
+        https://bugs.webkit.org/show_bug.cgi?id=237735
+        <rdar://89972004>
+
+        Reviewed by Geoff Garen.
+
+        It was originally being called differently between main resources and subresources on the same domain,
+        causing them to use connections with different properties, so we couldn't share connections any more.
+        This will make it so that more connections are shared, which should fix the performance regression from
+        no longer sharing connections to the same domain.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+
 2022-03-11  Simon Fraser  <simon.fraser@apple.com>
 
         Unreviewed logging removal.
