@@ -354,7 +354,8 @@ function ios_family_process_webcontent_entitlements()
     plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
     plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
 
-    plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebContent
+    plistbuddy Add :seatbelt-profiles array
+    plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.WebContent
 }
 
 function ios_family_process_webcontent_captiveportal_entitlements()
@@ -389,7 +390,8 @@ function ios_family_process_webcontent_captiveportal_entitlements()
     plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
     plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
 
-    plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebContent
+    plistbuddy Add :seatbelt-profiles array
+    plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.WebContent
 }
 
 function ios_family_process_gpu_entitlements()
@@ -416,7 +418,8 @@ function ios_family_process_gpu_entitlements()
     plistbuddy Add :com.apple.tcc.delegated-services:0 string kTCCServiceCamera
     plistbuddy Add :com.apple.tcc.delegated-services:1 string kTCCServiceMicrophone
 
-    plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.GPU
+    plistbuddy Add :seatbelt-profiles array
+    plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.GPU
 
     plistbuddy Add :com.apple.systemstatus.activityattribution bool YES
     plistbuddy Add :com.apple.security.exception.mach-lookup.global-name array
@@ -463,12 +466,14 @@ function ios_family_process_webauthn_entitlements()
     plistbuddy Add :com.apple.springboard.remote-alert bool YES
     plistbuddy Add :com.apple.frontboard.launchapplications bool YES
 
-    plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.WebAuthn
+    plistbuddy Add :seatbelt-profiles array
+    plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.WebAuthn
 }
 
 function ios_family_process_adattributiond_entitlements()
 {
-    plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.adattributiond
+    plistbuddy Add :seatbelt-profiles array
+    plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.adattributiond
 }
 
 function ios_family_process_webpushd_entitlements()
@@ -495,7 +500,8 @@ function ios_family_process_network_entitlements()
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token array
     plistbuddy Add :com.apple.private.tcc.manager.check-by-audit-token:0 string kTCCServiceWebKitIntelligentTrackingPrevention
 
-    plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.Networking
+    plistbuddy Add :seatbelt-profiles array
+    plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.Networking
     plistbuddy Add :com.apple.symptom_analytics.configure bool YES
 }
 
