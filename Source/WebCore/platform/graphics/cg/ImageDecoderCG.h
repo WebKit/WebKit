@@ -75,7 +75,7 @@ private:
     bool m_isAllDataReceived { false };
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
     RetainPtr<CGImageSourceRef> m_nativeDecoder;
-    static bool m_enableRestrictedDecoding;
+    static bool s_enableRestrictedDecoding;
 };
 
 }

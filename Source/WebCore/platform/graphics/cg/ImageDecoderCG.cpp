@@ -255,7 +255,7 @@ void sharedBufferRelease(void* info)
 }
 #endif
 
-bool ImageDecoderCG::m_enableRestrictedDecoding = false;
+bool ImageDecoderCG::s_enableRestrictedDecoding = false;
 
 ImageDecoderCG::ImageDecoderCG(FragmentedSharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
@@ -599,12 +599,12 @@ bool ImageDecoderCG::canDecodeType(const String& mimeType)
 
 void ImageDecoderCG::enableRestrictedDecoding()
 {
-    m_enableRestrictedDecoding = true;
+    s_enableRestrictedDecoding = true;
 }
 
 bool ImageDecoderCG::restrictedDecodingEnabled()
 {
-    return m_enableRestrictedDecoding;
+    return s_enableRestrictedDecoding;
 }
 
 }

@@ -1,3 +1,18 @@
+2022-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Image decoders should be restricted for Mail
+        https://bugs.webkit.org/show_bug.cgi?id=237717
+        <rdar://89827733>
+
+        Reviewed by Geoffrey Garen.
+
+        Use correct prefix for static member.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::enableRestrictedDecoding):
+        (WebCore::ImageDecoderCG::restrictedDecodingEnabled):
+        * platform/graphics/cg/ImageDecoderCG.h:
+
 2022-03-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor the filter block in DocumentMarkerController::filterMarkers() to return an enum type
