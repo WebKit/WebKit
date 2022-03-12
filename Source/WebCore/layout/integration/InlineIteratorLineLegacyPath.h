@@ -53,7 +53,6 @@ public:
 
     float contentLogicalLeft() const { return m_rootInlineBox->logicalLeft(); }
     float contentLogicalRight() const { return m_rootInlineBox->logicalRight(); }
-    float logicalHeight() const { return m_rootInlineBox->logicalHeight(); }
     bool isHorizontal() const { return m_rootInlineBox->isHorizontal(); }
     FontBaseline baselineType() const { return m_rootInlineBox->baselineType(); }
 

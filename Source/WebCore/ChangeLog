@@ -1,5 +1,27 @@
 2022-03-12  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] previousLinePosition/nextLinePosition should use Line::lineBoxHeight
+        https://bugs.webkit.org/show_bug.cgi?id=237788
+
+        Reviewed by Antti Koivisto.
+
+        Line::lineBoxHeight() should be sufficient for checking if the line is empty for VisualPosition.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::Line::lineBoxHeight const):
+        (WebCore::InlineIterator::Line::logicalHeight const): Deleted.
+        * layout/integration/InlineIteratorLineLegacyPath.h:
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalRight const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::logicalHeight const): Deleted.
+        * layout/integration/InlineIteratorLineModernPath.h:
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalRight const):
+        (WebCore::InlineIterator::LineIteratorModernPath::logicalHeight const): Deleted.
+
+2022-03-12  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] RenderBlockFlow::findClosestTextAtAbsolutePoint should use root inline box iterator
         https://bugs.webkit.org/show_bug.cgi?id=237786
 

@@ -973,7 +973,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
         line = run->line()->previous();
         // We want to skip zero height boxes.
         // This could happen in case it is a LegacyRootInlineBox with trailing floats.
-        if (!line || !line->logicalHeight() || !line->firstLeafBox())
+        if (!line || !line->lineBoxHeight() || !line->firstLeafBox())
             line = { };
     }
 
@@ -1026,7 +1026,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
         line = run->line()->next();
         // We want to skip zero height boxes.
         // This could happen in case it is a LegacyRootInlineBox with trailing floats.
-        if (!line || !line->logicalHeight() || !line->firstLeafBox())
+        if (!line || !line->lineBoxHeight() || !line->firstLeafBox())
             line = { };
     }
 

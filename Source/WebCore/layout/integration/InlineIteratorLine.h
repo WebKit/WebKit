@@ -60,6 +60,7 @@ public:
     LayoutUnit selectionHeightAdjustedForPrecedingBlock() const;
     LayoutUnit lineBoxTop() const;
     LayoutUnit lineBoxBottom() const;
+    LayoutUnit lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
 
     LayoutRect selectionRect() const;
     RenderObject::HighlightState selectionState() const;
@@ -67,7 +68,6 @@ public:
     float contentLogicalLeft() const;
     float contentLogicalRight() const;
     float contentLogicalWidth() const;
-    float logicalHeight() const;
 
     int blockDirectionPointInLine() const;
 
@@ -212,13 +212,6 @@ inline float Line::contentLogicalRight() const
 inline float Line::contentLogicalWidth() const
 {
     return contentLogicalRight() - contentLogicalLeft();
-}
-
-inline float Line::logicalHeight() const
-{
-    return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.logicalHeight();
-    });
 }
 
 inline bool Line::isHorizontal() const
