@@ -51,7 +51,6 @@ public:
     LayoutUnit lineBoxTop() const { return m_rootInlineBox->lineBoxTop(); }
     LayoutUnit lineBoxBottom() const { return m_rootInlineBox->lineBoxBottom(); }
 
-    float y() const { return m_rootInlineBox->y(); }
     float contentLogicalLeft() const { return m_rootInlineBox->logicalLeft(); }
     float contentLogicalRight() const { return m_rootInlineBox->logicalRight(); }
     float logicalHeight() const { return m_rootInlineBox->logicalHeight(); }

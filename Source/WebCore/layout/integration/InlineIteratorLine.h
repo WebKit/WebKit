@@ -64,7 +64,6 @@ public:
     LayoutRect selectionRect() const;
     RenderObject::HighlightState selectionState() const;
 
-    float y() const;
     float contentLogicalLeft() const;
     float contentLogicalRight() const;
     float contentLogicalWidth() const;
@@ -194,13 +193,6 @@ inline LayoutUnit Line::lineBoxBottom() const
 inline LayoutRect Line::selectionRect() const
 {
     return { LayoutPoint { contentLogicalLeft(), selectionTop() }, LayoutPoint { contentLogicalRight(), selectionBottom() } };
-}
-
-inline float Line::y() const
-{
-    return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.y();
-    });
 }
 
 inline float Line::contentLogicalLeft() const

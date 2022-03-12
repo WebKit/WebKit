@@ -1,3 +1,16 @@
+2022-03-12  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] RenderBlockFlow::findClosestTextAtAbsolutePoint should use root inline box iterator
+        https://bugs.webkit.org/show_bug.cgi?id=237786
+
+        Reviewed by Antti Koivisto.
+
+        Let's remove root inline box APIs from the line iterator interface.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::findClosestTextAtAbsolutePoint): Replace line iterator with root inline box iterator
+        and check whether the local point is in between these root inline boxes.
+
 2022-03-11  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Image decoders should be restricted for Mail

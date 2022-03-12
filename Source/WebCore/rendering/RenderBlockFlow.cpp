@@ -3331,18 +3331,19 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
     // Only check the gaps between the root line boxes. We deliberately ignore overflow because
     // experience has shown that hit tests on an exploded text node can fail when within the
     // overflow fragment.
-    for (auto current = InlineIterator::firstLineFor(blockFlow), last = InlineIterator::lastLineFor(blockFlow); current && current != last; current.traverseNext()) {
-        float currentBottom = current->y() + current->logicalHeight();
-        if (localPoint.y() < currentBottom)
-            return nullptr;
-        
-        auto next = current->next();
-        float nextTop = next->y();
-        if (localPoint.y() < nextTop) {
-            auto run = current->closestRunForLogicalLeftPosition(localPoint.x());
-            if (run && is<RenderText>(run->renderer()))
-                return const_cast<RenderText*>(&downcast<RenderText>(run->renderer()));
+    auto previousRootInlineBoxBottom = std::optional<float> { };
+    for (auto box = InlineIterator::firstRootInlineBoxFor(blockFlow); box; box.traverseNextInlineBox()) {
+        if (previousRootInlineBoxBottom) {
+            if (localPoint.y() < *previousRootInlineBoxBottom)
+                return nullptr;
+
+            if (localPoint.y() > *previousRootInlineBoxBottom && localPoint.y() < box->logicalTop()) {
+                auto run = box->line()->closestRunForLogicalLeftPosition(localPoint.x());
+                if (run && is<RenderText>(run->renderer()))
+                    return const_cast<RenderText*>(&downcast<RenderText>(run->renderer()));
+            }
         }
+        previousRootInlineBoxBottom = box->logicalBottom();
     }
     return nullptr;
 }
