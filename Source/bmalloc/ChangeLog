@@ -1,3 +1,11 @@
+2022-03-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, ASan specific build fix
+        https://bugs.webkit.org/show_bug.cgi?id=237572
+
+        * libpas/src/libpas/pas_utils.h:
+        (pas_zero_memory):
+
 2022-03-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [libpas] We should gurantee that in-flux-stash is fully baked when pointing table is set
