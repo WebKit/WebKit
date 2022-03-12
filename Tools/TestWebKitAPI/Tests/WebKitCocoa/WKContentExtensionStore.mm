@@ -650,6 +650,9 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
                 }
             } } },
             "trigger": { "url-filter": "8.txt" }
+        }, {
+            "action": { "type": "redirect", "redirect": { "regex-substitution": "testscheme://replaced-by-regex/\\1.txt" } },
+            "trigger": { "url-filter": "(9).txt" }
         } ]
     )JSON");
 
@@ -674,12 +677,13 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
                         try { await fetch('6.txt#fragment-should-be-removed') } catch(e) { };
                         try { await fetch('7.txt') } catch(e) { };
                         try { await fetch('8.txt?key-to-replace-only=pre-replacement-value') } catch(e) { };
+                        try { await fetch('9.txt') } catch(e) { };
                     }
                     fetchSubresources();
                 </script>
             )HTML");
         }
-        if ([path isEqualToString:@"/8.txt"])
+        if ([path isEqualToString:@"/9.txt"])
             receivedAllRequests = true;
         respond(task, "");
     };
@@ -713,6 +717,7 @@ TEST_F(WKContentRuleListStoreTest, Redirect)
         "testscheme://:testpassword@testhost/6.txt",
         "testscheme://testhost/7.txt?#",
         "testscheme://testhost/8.txt?key-to-replace-only=value-to-replace-only&key-to-add=value-to-add",
+        "testscheme://replaced-by-regex/9.txt",
     };
     EXPECT_EQ(expectedRequestedURLs.size(), [urls count]);
     for (size_t i = 0; i < expectedRequestedURLs.size(); i++)

@@ -1,3 +1,28 @@
+2022-03-11  Alex Christensen  <achristensen@webkit.org>
+
+        Finish implementing modify-headers actions for WKContentRuleList SPI
+        https://bugs.webkit.org/show_bug.cgi?id=237784
+        <rdar://72433048>
+
+        Reviewed by Tim Hatcher.
+
+        I hadn't implemented regex substitution yet.
+
+        * contentextensions/ContentExtensionActions.cpp:
+        (WebCore::ContentExtensions::RedirectAction::parse):
+        (WebCore::ContentExtensions::RedirectAction::serialize const):
+        (WebCore::ContentExtensions::RedirectAction::deserialize):
+        (WebCore::ContentExtensions::RedirectAction::applyToRequest):
+        (WebCore::ContentExtensions::RedirectAction::RegexSubstitutionAction::serialize const):
+        (WebCore::ContentExtensions::RedirectAction::RegexSubstitutionAction::deserialize):
+        (WebCore::ContentExtensions::makeJSString):
+        (WebCore::ContentExtensions::RedirectAction::RegexSubstitutionAction::applyToURL const):
+        * contentextensions/ContentExtensionActions.h:
+        (WebCore::ContentExtensions::add):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::loadAction):
+        (WebCore::ContentExtensions::loadRule):
+
 2022-03-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         [iOS] Fix ovserscroll-behavior for main document

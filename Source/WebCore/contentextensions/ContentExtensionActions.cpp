@@ -30,6 +30,8 @@
 
 #include "ContentExtensionError.h"
 #include "ResourceRequest.h"
+#include <JavaScriptCore/JSRetainPtr.h>
+#include <JavaScriptCore/JavaScript.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
@@ -285,7 +287,7 @@ size_t ModifyHeadersAction::ModifyHeaderInfo::serializedLength(Span<const uint8_
     return deserializeLength(span, 0);
 }
 
-Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject)
+Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject, const String& urlFilter)
 {
     auto redirect = redirectObject.getObject("redirect");
     if (!redirect)
@@ -298,7 +300,7 @@ Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Obje
     }
 
     if (auto regexSubstitution = redirect->getString("regex-substitution"); !!regexSubstitution)
-        return RedirectAction { RegexSubstitutionAction { WTFMove(regexSubstitution) } };
+        return RedirectAction { RegexSubstitutionAction { WTFMove(regexSubstitution), urlFilter } };
 
     if (auto transform = redirect->getObject("transform")) {
         auto parsedTransform = URLTransformAction::parse(*transform);
@@ -343,7 +345,7 @@ void RedirectAction::serialize(Vector<uint8_t>& vector) const
     std::visit(WTF::makeVisitor([&](const ExtensionPathAction& action) {
         append(vector, action.extensionPath.utf8());
     }, [&](const RegexSubstitutionAction& action) {
-        append(vector, action.regexSubstitution.utf8());
+        action.serialize(vector);
     }, [&](const URLTransformAction& action) {
         action.serialize(vector);
     }, [&](const URLAction& action) {
@@ -362,7 +364,7 @@ RedirectAction RedirectAction::deserialize(Span<const uint8_t> span)
         case WTF::alternativeIndexV<ExtensionPathAction, ActionVariant>:
             return ExtensionPathAction { deserializeUTF8String(span, headerSize, stringLength) };
         case WTF::alternativeIndexV<RegexSubstitutionAction, ActionVariant>:
-            return RegexSubstitutionAction { deserializeUTF8String(span, headerSize, stringLength) };
+            return RegexSubstitutionAction::deserialize(span.subspan(headerSize));
         case WTF::alternativeIndexV<URLTransformAction, ActionVariant>:
             return URLTransformAction::deserialize(span.subspan(headerSize));
         case WTF::alternativeIndexV<URLAction, ActionVariant>:
@@ -383,8 +385,10 @@ void RedirectAction::applyToRequest(ResourceRequest& request, const URL& extensi
         auto url = extensionBaseURL;
         url.setPath(action.extensionPath);
         request.setURL(WTFMove(url));
-    }, [&] (const RegexSubstitutionAction&) {
-        // FIXME: Implement, ideally in a way that doesn't require making a new VM and global object for each redirect operation.
+    }, [&] (const RegexSubstitutionAction& action) {
+        auto url = request.url();
+        action.applyToURL(url);
+        request.setURL(WTFMove(url));
     }, [&] (const URLTransformAction& action) {
         auto url = request.url();
         action.applyToURL(url);
@@ -392,6 +396,88 @@ void RedirectAction::applyToRequest(ResourceRequest& request, const URL& extensi
     }, [&] (const URLAction& action) {
         request.setURL(URL { action.url });
     }), action);
+}
+
+void RedirectAction::RegexSubstitutionAction::serialize(Vector<uint8_t>& vector) const
+{
+    auto regexSubstitutionUTF8 = regexSubstitution.utf8();
+    auto regexFilterUTF8 = regexFilter.utf8();
+    vector.reserveCapacity(vector.size()
+        + sizeof(uint32_t)
+        + sizeof(uint32_t)
+        + regexSubstitutionUTF8.length()
+        + regexFilterUTF8.length());
+    uncheckedAppend(vector, regexSubstitutionUTF8.length());
+    uncheckedAppend(vector, regexFilterUTF8.length());
+    uncheckedAppend(vector, regexSubstitutionUTF8);
+    uncheckedAppend(vector, regexFilterUTF8);
+}
+
+auto RedirectAction::RegexSubstitutionAction::deserialize(Span<const uint8_t> span) -> RegexSubstitutionAction
+{
+    auto regexSubstitutionLength = deserializeLength(span, 0);
+    auto regexFilterLength = deserializeLength(span, sizeof(uint32_t));
+    constexpr auto headerSize = sizeof(uint32_t) + sizeof(uint32_t);
+    auto regexSubstitution = deserializeUTF8String(span, headerSize, regexSubstitutionLength);
+    auto regexFilter = deserializeUTF8String(span, headerSize + regexSubstitutionLength, regexFilterLength);
+    return { WTFMove(regexSubstitution), WTFMove(regexFilter) };
+}
+
+static JSRetainPtr<JSStringRef> makeJSString(const char* utf8)
+{
+    return adopt(JSStringCreateWithUTF8CString(utf8));
+}
+
+static JSRetainPtr<JSStringRef> makeJSString(const String& string)
+{
+    return makeJSString(string.utf8().data());
+}
+
+void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
+{
+    static JSContextGroupRef contextGroup = nullptr;
+    static JSGlobalContextRef context = nullptr;
+    if (!contextGroup || !context) {
+        contextGroup = JSContextGroupCreate();
+        context = JSGlobalContextCreateInGroup(contextGroup, nullptr);
+    }
+
+    auto toObject = [&] (JSValueRef value) {
+        return JSValueToObject(context, value, nullptr);
+    };
+    auto getProperty = [&] (JSValueRef value, const char* name) {
+        return JSObjectGetProperty(context, toObject(value), makeJSString(name).get(), nullptr);
+    };
+    auto getArrayValue = [&] (JSValueRef value, size_t index) {
+        return JSObjectGetPropertyAtIndex(context, toObject(value), index, nullptr);
+    };
+    auto valueToWTFString = [&] (JSValueRef value) {
+        auto string = adopt(JSValueToStringCopy(context, value, nullptr));
+        size_t bufferSize = JSStringGetMaximumUTF8CStringSize(string.get());
+        Vector<char> buffer(bufferSize);
+        JSStringGetUTF8CString(string.get(), buffer.data(), buffer.size());
+        return String::fromUTF8(buffer.data());
+    };
+
+    // Effectively execute this JavaScript:
+    // const regexp = new RegExp(regexFilter);
+    // const result = url.match(regexp);
+    JSValueRef regexFilterValue = JSValueMakeString(context, makeJSString(regexFilter).get());
+    JSObjectRef regexp = JSObjectMakeRegExp(context, 1, &regexFilterValue, nullptr);
+    JSValueRef urlValue = JSValueMakeString(context, makeJSString(url.string()).get());
+    JSObjectRef matchFunction = JSValueToObject(context, getProperty(urlValue, "match"), nullptr);
+    JSValueRef result = JSObjectCallAsFunction(context, matchFunction, toObject(urlValue), 1, &regexp, nullptr);
+    if (!JSValueIsArray(context, result))
+        return;
+
+    String substitution = regexSubstitution;
+    size_t resultLength = JSValueToNumber(context, getProperty(result, "length"), nullptr);
+    for (size_t i = 0; i < std::min<size_t>(10, resultLength); i++)
+        substitution.replace(makeString('\\', i), valueToWTFString(getArrayValue(result, i)));
+
+    URL replacementURL(substitution);
+    if (replacementURL.isValid())
+        url = WTFMove(replacementURL);
 }
 
 auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) -> Expected<URLTransformAction, std::error_code>

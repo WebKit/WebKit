@@ -139,10 +139,14 @@ struct WEBCORE_EXPORT RedirectAction {
     };
     struct RegexSubstitutionAction {
         String regexSubstitution;
+        String regexFilter;
 
-        RegexSubstitutionAction isolatedCopy() const & { return { regexSubstitution.isolatedCopy() }; }
-        RegexSubstitutionAction isolatedCopy() && { return { WTFMove(regexSubstitution).isolatedCopy() }; }
-        bool operator==(const RegexSubstitutionAction& other) const { return other.regexSubstitution == this->regexSubstitution; }
+        RegexSubstitutionAction isolatedCopy() const & { return { regexSubstitution.isolatedCopy(), regexFilter.isolatedCopy() }; }
+        RegexSubstitutionAction isolatedCopy() && { return { WTFMove(regexSubstitution).isolatedCopy(), WTFMove(regexFilter).isolatedCopy() }; }
+        void serialize(Vector<uint8_t>&) const;
+        static RegexSubstitutionAction deserialize(Span<const uint8_t>);
+        bool operator==(const RegexSubstitutionAction& other) const { return other.regexSubstitution == this->regexSubstitution && other.regexFilter == this->regexFilter; }
+        WEBCORE_EXPORT void applyToURL(URL&) const;
     };
     struct URLTransformAction {
         struct QueryTransform {
@@ -214,7 +218,7 @@ struct WEBCORE_EXPORT RedirectAction {
     RedirectAction(DeletedValueTag) : hashTableType(HashTableType::Deleted) { }
     bool isDeletedValue() const { return hashTableType == HashTableType::Deleted; }
 
-    static Expected<RedirectAction, std::error_code> parse(const JSON::Object&);
+    static Expected<RedirectAction, std::error_code> parse(const JSON::Object&, const String& urlFilter);
     RedirectAction isolatedCopy() const &;
     RedirectAction isolatedCopy() &&;
     bool operator==(const RedirectAction&) const;
@@ -262,7 +266,7 @@ inline void add(Hasher& hasher, const RedirectAction::ExtensionPathAction& actio
 
 inline void add(Hasher& hasher, const RedirectAction::RegexSubstitutionAction& action)
 {
-    add(hasher, action.regexSubstitution);
+    add(hasher, action.regexSubstitution, action.regexFilter);
 }
 
 inline void add(Hasher& hasher, const RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue& queryKeyValue)

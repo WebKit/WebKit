@@ -3039,7 +3039,7 @@ TEST_F(ContentExtensionTest, Serialization)
         EXPECT_EQ(deserialized, action);
     };
     checkRedirectActionSerialization({ { RedirectAction::ExtensionPathAction { "extensionPath" } } }, 18);
-    checkRedirectActionSerialization({ { RedirectAction::RegexSubstitutionAction { "regexSubstitution" } } }, 22);
+    checkRedirectActionSerialization({ { RedirectAction::RegexSubstitutionAction { "regexSubstitution", "regexFilter" } } }, 41);
     checkRedirectActionSerialization({ { RedirectAction::URLAction { "url" } } }, 8);
     checkRedirectActionSerialization({ { RedirectAction::URLTransformAction {
         "frägment",
@@ -3095,6 +3095,22 @@ TEST_F(ContentExtensionTest, IfFrameURL)
     auto matchingEverything = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"https\", \"if-frame-url\":[\".*\"]}}]");
     testRequest(matchingEverything, requestInTopAndFrameURLs("https://example.com/", "https://webkit.org/", "https://whatwg.org/"), { variantIndex<BlockLoadAction> });
     testRequest(matchingEverything, requestInTopAndFrameURLs("http://example.com/", "https://webkit.org/", "https://webkit.org/"), { });
+}
+
+TEST_F(ContentExtensionTest, RegexSubstitution)
+{
+    auto transformURL = [] (String&& regexSubstitution, String&& regexFilter, String&& originalURL, const char* expectedTransformedURL) {
+        WebCore::ContentExtensions::RedirectAction::RegexSubstitutionAction action { WTFMove(regexSubstitution), WTFMove(regexFilter) };
+        URL url(WTFMove(originalURL));
+        action.applyToURL(url);
+        EXPECT_STREQ(url.string().utf8().data(), expectedTransformedURL);
+    };
+    transformURL("https://\\1.xyz.com/", "^https://www\\.(abc?)\\.xyz\\.com/", "https://www.abc.xyz.com", "https://abc.xyz.com/");
+    transformURL("https://\\1.\\1.xyz.com/", "^https://www\\.(abc?)\\.xyz\\.com/", "https://www.ab.xyz.com", "https://ab.ab.xyz.com/");
+    transformURL("https://\\1.\\1.xyz.com/", "^https://www\\.(abc?)\\.xyz\\.com/", "https://ab.xyz.com", "https://ab.xyz.com/");
+    transformURL("https://example.com/\\0\\1", "^https://www\\.(abc?)\\.xyz\\.com/", "https://www.ab.xyz.com", "https://example.com/https://www.ab.xyz.com/ab");
+    transformURL("https://example.com/\\1\\2\\3\\4\\5\\6\\7\\8\\9\\10\\11\\12\\13\\14", "^https://(e)(x)(a)(m)(p)(l)(e)(w)(e)(b)(s)(i)(t)(e)/", "https://examplewebsite/", "https://example.com/examplewee0e1e2e3e4");
+    transformURL("https://!@#$%^&*invalidURL\\1/", "^https://www\\.(abc?)\\.xyz\\.com/", "https://www.abc.xyz.com", "https://www.abc.xyz.com/");
 }
 
 } // namespace TestWebKitAPI
