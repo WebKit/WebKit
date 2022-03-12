@@ -1,3 +1,13 @@
+2022-03-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed logging removal.
+
+        Revert an ALWAYS_LOG_WITH_STREAM() that I inadvertently committed back to a
+        LOG_WITH_STREAM().
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::swapToValidFrontBuffer):
+
 2022-03-11  Chris Dumez  <cdumez@apple.com>
 
         IPC thread's QOS should match the sending thread's QOS when calling sendSync()

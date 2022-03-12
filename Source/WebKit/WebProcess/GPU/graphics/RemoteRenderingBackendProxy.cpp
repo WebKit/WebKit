@@ -304,7 +304,7 @@ auto RemoteRenderingBackendProxy::swapToValidFrontBuffer(const BufferSet& buffer
     sendSyncToStream(Messages::RemoteRenderingBackend::SwapToValidFrontBuffer(bufferSet),
         Messages::RemoteRenderingBackend::SwapToValidFrontBuffer::Reply(swappedBufferSet, frontBufferHandle, frontBufferWasEmpty));
 
-    ALWAYS_LOG_WITH_STREAM(stream << "RemoteRenderingBackendProxy::swapToValidFrontBuffer swapped to " << swappedBufferSet.front << " " << swappedBufferSet.back << " " << swappedBufferSet.secondaryBack);
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteRenderingBackendProxy::swapToValidFrontBuffer swapped to " << swappedBufferSet.front << " " << swappedBufferSet.back << " " << swappedBufferSet.secondaryBack);
 
     auto fetchBufferWithIdentifier = [&](std::optional<RenderingResourceIdentifier> identifier, std::optional<ImageBufferBackendHandle>&& handle = std::nullopt, bool isFrontBuffer = false) -> RefPtr<ImageBuffer> {
         if (!identifier)
