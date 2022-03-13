@@ -214,8 +214,7 @@ public:
 #if USE(JSVALUE64)
         load64(address, regs.gpr());
 #else
-        move(TrustedImmPtr(address), regs.payloadGPR());
-        loadValue(Address(regs.payloadGPR()), regs);
+        loadPair32(AbsoluteAddress(address), regs.payloadGPR(), regs.tagGPR());
 #endif
     }
     

@@ -1336,6 +1336,12 @@ public:
         }
     }
 
+    void loadPair32(AbsoluteAddress address, RegisterID dest1, RegisterID dest2)
+    {
+        move(TrustedImmPtr(address.m_ptr), addrTempRegister);
+        loadPair32(addrTempRegister, dest1, dest2);
+    }
+
     void loadPair32(BaseIndex address, RegisterID dest1, RegisterID dest2)
     {
         if (address.base == dest1 || address.index == dest1) {

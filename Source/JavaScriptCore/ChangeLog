@@ -1,3 +1,31 @@
+2022-03-13  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Use addressTempRegister in loadValue(void *) on 32 bits
+        https://bugs.webkit.org/show_bug.cgi?id=237773
+
+        Reviewed by Žan Doberšek.
+
+        Instead of using one of the destination registers as an address
+        temporary, use addressTempRegister instead. This allows reusing
+        the value in addressTempRegister (with an appropriate offset) if
+        possible, which results in a >25% size reduction for DFGOSRExit
+        (JS2) on ARMv7 (though not a significant size reduction overall).
+        Technically, this change could be killing some address reuse that
+        was previously possible because loadValue was not clobbering
+        addressTempRegister but, if so, this seems to be balanced out for
+        JS2.
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::BoundsNonDoubleWordOffset::within):
+        (JSC::MacroAssemblerARMv7::BoundsDoubleWordOffset::within):
+        (JSC::MacroAssemblerARMv7::loadPair32):
+        (JSC::MacroAssemblerARMv7::setupArmAddress):
+        (JSC::MacroAssemblerARMv7::absoluteAddressWithinShortOffset):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::loadPair32):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::loadValue):
+
 2022-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Adopt FALLBACK_PLATFORM_NAME in place of FALLBACK_PLATFORM
