@@ -642,6 +642,8 @@ MouseEventsSimulationEnabled:
 
 MuteCameraOnMicrophoneInterruptionEnabled:
   type: bool
+  humanReadableName: "Mute Camera on Microphone Interruption"
+  humanReadableDescription: "Mute Camera on Microphone Interruption"
   condition: ENABLE(MEDIA_STREAM)
   defaultValue:
     WebKitLegacy:

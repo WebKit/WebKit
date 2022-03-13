@@ -1,5 +1,19 @@
 2022-03-12  Tim Horton  <timothy_horton@apple.com>
 
+        Fail the build if Internal or Experimental web preferences are missing human readable names
+        https://bugs.webkit.org/show_bug.cgi?id=237813
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/GeneratePreferences.rb:
+        Ensure that all preferences that expose human readable strings to the
+        API client actually have such a name.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+        Add one missing human readable preference name.
+
+2022-03-12  Tim Horton  <timothy_horton@apple.com>
+
         Adopt FALLBACK_PLATFORM_NAME in place of FALLBACK_PLATFORM
         https://bugs.webkit.org/show_bug.cgi?id=237809
 

@@ -187,10 +187,10 @@ class Preferences
     @frontend = frontend
 
     @preferences = []
-    @preferencesNotDebug = initializeParsedPreferences(parsedBasePreferences)
-    @preferencesDebug = initializeParsedPreferences(parsedDebugPreferences)
-    @experimentalFeatures = initializeParsedPreferences(parsedExperimentalPreferences)
-    @internalFeatures = initializeParsedPreferences(parsedInternalPreferences)
+    @preferencesNotDebug = initializeParsedPreferences(parsedBasePreferences, false)
+    @preferencesDebug = initializeParsedPreferences(parsedDebugPreferences, false)
+    @experimentalFeatures = initializeParsedPreferences(parsedExperimentalPreferences, true)
+    @internalFeatures = initializeParsedPreferences(parsedInternalPreferences, true)
 
     @preferences.sort! { |x, y| x.name <=> y.name }
     @preferencesNotDebug.sort! { |x, y| x.name <=> y.name }
@@ -211,12 +211,15 @@ class Preferences
     @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
   end
 
-  def initializeParsedPreferences(parsedPreferences)
+  def initializeParsedPreferences(parsedPreferences, requireHumanReadableName)
     result = []
     if parsedPreferences
       parsedPreferences.each do |name, options|
         if !options["webcoreBinding"] && options["defaultValue"].size != 3
           raise "ERROR: Preferences bound to WebCore::Settings must have default values for all frontends: #{name}"
+        end
+        if requireHumanReadableName && !options["humanReadableName"]
+          raise "ERROR: Preference #{name} has no humanReadableName, which is required."
         end
         if options["defaultValue"].include?(@frontend)
           preference = Preference.new(name, options, @frontend)
