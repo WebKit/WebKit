@@ -1,5 +1,24 @@
 2022-03-12  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] Add InlineIterator::Line::selectionPhysicalRect
+        https://bugs.webkit.org/show_bug.cgi?id=237796
+
+        Reviewed by Antti Koivisto.
+
+        Introduce selectionPhysicalRect() so that the clients don't need to convert/flip the logical coords and
+        also rename selectionRect() to selectionLogicalRect() to clear up any ambiguity. 
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::absoluteSelectionBoundsForLine const):
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::Line::selectionLogicalRect const):
+        (WebCore::InlineIterator::Line::selectionPhysicalRect const):
+        (WebCore::InlineIterator::Line::selectionRect const): Deleted.
+        * rendering/CaretRectComputation.cpp:
+        (WebCore::computeCaretRectForLinePosition):
+
+2022-03-12  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Replace generic InlineIterator::Line::legacyRootInlineBox() with 2 dedicated functions
         https://bugs.webkit.org/show_bug.cgi?id=237807
 

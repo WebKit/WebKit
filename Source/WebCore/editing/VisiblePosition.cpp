@@ -669,11 +669,7 @@ FloatRect VisiblePosition::absoluteSelectionBoundsForLine() const
         return { };
 
     auto line = run->line();
-    auto localRect = FloatRect { FloatPoint { line->contentLogicalLeft(), line->selectionTop() }, FloatPoint { line->contentLogicalRight(), line->selectionBottom() } };
-    if (!line->isHorizontal())
-        localRect = localRect.transposedRect();
-    line->containingBlock().flipForWritingMode(localRect);
-    return line->containingBlock().localToAbsoluteQuad(localRect).boundingBox();
+    return line->containingBlock().localToAbsoluteQuad(FloatRect { line->selectionPhysicalRect() }).boundingBox();
 }
 
 int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const

@@ -52,17 +52,22 @@ public:
 
     LayoutUnit top() const;
     LayoutUnit bottom() const;
-    LayoutUnit selectionTop() const;
-    LayoutUnit selectionTopForHitTesting() const;
-    LayoutUnit selectionBottom() const;
-    LayoutUnit selectionHeight() const;
-    LayoutUnit selectionTopAdjustedForPrecedingBlock() const;
-    LayoutUnit selectionHeightAdjustedForPrecedingBlock() const;
+
     LayoutUnit lineBoxTop() const;
     LayoutUnit lineBoxBottom() const;
     LayoutUnit lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
 
-    LayoutRect selectionRect() const;
+    LayoutUnit selectionTop() const;
+    LayoutUnit selectionTopForHitTesting() const;
+    LayoutUnit selectionBottom() const;
+    LayoutUnit selectionHeight() const;
+
+    LayoutRect selectionLogicalRect() const;
+    LayoutRect selectionPhysicalRect() const;
+
+    LayoutUnit selectionTopAdjustedForPrecedingBlock() const;
+    LayoutUnit selectionHeightAdjustedForPrecedingBlock() const;
+
     RenderObject::HighlightState selectionState() const;
 
     float contentLogicalLeft() const;
@@ -193,9 +198,18 @@ inline LayoutUnit Line::lineBoxBottom() const
     });
 }
 
-inline LayoutRect Line::selectionRect() const
+inline LayoutRect Line::selectionLogicalRect() const
 {
     return { LayoutPoint { contentLogicalLeft(), selectionTop() }, LayoutPoint { contentLogicalRight(), selectionBottom() } };
+}
+
+inline LayoutRect Line::selectionPhysicalRect() const
+{
+    auto physicalRect = selectionLogicalRect();
+    if (!isHorizontal())
+        physicalRect = physicalRect.transposedRect();
+    containingBlock().flipForWritingMode(physicalRect);
+    return physicalRect;
 }
 
 inline float Line::contentLogicalLeft() const
