@@ -65,6 +65,14 @@ public:
     void setNeedsDisplay();
 
     void setContents(WTF::MachSendRight&& surfaceHandle);
+
+    enum class PrepareBuffersResult : uint8_t {
+        NeedsFullDisplay,
+        NeedsNormalDisplay,
+        NeedsNoDisplay
+    };
+    PrepareBuffersResult prepareBuffers(bool hasEmptyDirtyRegion);
+
     // Returns true if the backing store changed.
     bool prepareToDisplay();
     void paintContents();
@@ -133,8 +141,6 @@ private:
 
     bool setBufferVolatile(Buffer&);
     WebCore::SetNonVolatileResult setBufferNonVolatile(Buffer&);
-
-    void swapBuffers();
 
     bool supportsPartialRepaint() const;
 

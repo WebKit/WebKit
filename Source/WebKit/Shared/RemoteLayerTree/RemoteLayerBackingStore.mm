@@ -246,29 +246,6 @@ void RemoteLayerBackingStore::applySwappedBuffers(RefPtr<WebCore::ImageBuffer>&&
     m_secondaryBackBuffer.imageBuffer = WTFMove(secondaryBack);
 }
 
-void RemoteLayerBackingStore::swapBuffers()
-{
-    m_contentsBufferHandle = std::nullopt;
-
-    auto* collection = backingStoreCollection();
-    if (!collection)
-        return;
-
-    auto result = collection->swapToValidFrontBuffer(*this);
-    if (result == WebCore::SetNonVolatileResult::Empty)
-        setNeedsDisplay();
-    
-    if (m_frontBuffer.imageBuffer)
-        return;
-
-    m_frontBuffer.imageBuffer = collection->allocateBufferForBackingStore(*this);
-
-#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
-    if (m_includeDisplayList == IncludeDisplayList::Yes)
-        m_frontBuffer.displayListImageBuffer = WebCore::ConcreteImageBuffer<CGDisplayListImageBufferBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat(), nullptr);
-#endif
-}
-
 bool RemoteLayerBackingStore::supportsPartialRepaint() const
 {
     // FIXME: Find a way to support partial repaint for backing store that
@@ -282,6 +259,18 @@ void RemoteLayerBackingStore::setContents(WTF::MachSendRight&& contents)
     m_dirtyRegion = { };
     m_paintingRects.clear();
 }
+
+#if !LOG_DISABLED
+static TextStream& operator<<(TextStream& ts, RemoteLayerBackingStore::PrepareBuffersResult result)
+{
+    switch (result) {
+    case RemoteLayerBackingStore::PrepareBuffersResult::NeedsFullDisplay: ts << "full display"; break;
+    case RemoteLayerBackingStore::PrepareBuffersResult::NeedsNormalDisplay: ts << "normal display"; break;
+    case RemoteLayerBackingStore::PrepareBuffersResult::NeedsNoDisplay: ts << "no display"; break;
+    }
+    return ts;
+}
+#endif
 
 bool RemoteLayerBackingStore::prepareToDisplay()
 {
@@ -305,18 +294,16 @@ bool RemoteLayerBackingStore::prepareToDisplay()
         return true;
     }
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore::display()");
+    m_contentsBufferHandle = std::nullopt;
 
-    // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
-    if (collection->makeFrontBufferNonVolatile(*this) == WebCore::SetNonVolatileResult::Empty)
-        setNeedsDisplay();
+    auto displayRequirement = prepareBuffers(m_dirtyRegion.isEmpty() || m_size.isEmpty());
 
-    if (m_dirtyRegion.isEmpty() || m_size.isEmpty()) {
-        LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << " no dirty region");
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay() - " << displayRequirement);
+
+    if (displayRequirement == PrepareBuffersResult::NeedsNoDisplay)
         return needToEncodeBackingStore;
-    }
 
-    if (!hasFrontBuffer() || !supportsPartialRepaint())
+    if (displayRequirement == PrepareBuffersResult::NeedsFullDisplay)
         setNeedsDisplay();
 
     if (layerOwner.platformCALayerShowRepaintCounter(m_layer)) {
@@ -324,14 +311,47 @@ bool RemoteLayerBackingStore::prepareToDisplay()
         m_dirtyRegion.unite(indicatorRect);
     }
 
-    swapBuffers();
+    if (!m_frontBuffer.imageBuffer) {
+        m_frontBuffer.imageBuffer = collection->allocateBufferForBackingStore(*this);
+
+#if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
+        if (m_includeDisplayList == IncludeDisplayList::Yes)
+            m_frontBuffer.displayListImageBuffer = WebCore::ConcreteImageBuffer<CGDisplayListImageBufferBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat(), nullptr);
+#endif
+    }
+
     return true;
+}
+
+auto RemoteLayerBackingStore::prepareBuffers(bool hasEmptyDirtyRegion) -> PrepareBuffersResult
+{
+    auto* collection = backingStoreCollection();
+    if (!collection)
+        return PrepareBuffersResult::NeedsNoDisplay;
+
+    bool needsFullDisplay = false;
+
+    // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
+    if (collection->makeFrontBufferNonVolatile(*this) == WebCore::SetNonVolatileResult::Empty)
+        needsFullDisplay = true;
+
+    if (!needsFullDisplay && hasEmptyDirtyRegion)
+        return PrepareBuffersResult::NeedsNoDisplay;
+
+    if (!hasFrontBuffer() || !supportsPartialRepaint())
+        needsFullDisplay = true;
+
+    auto result = collection->swapToValidFrontBuffer(*this);
+    if (result == WebCore::SetNonVolatileResult::Empty)
+        needsFullDisplay = true;
+
+    return needsFullDisplay ? PrepareBuffersResult::NeedsFullDisplay : PrepareBuffersResult::NeedsNormalDisplay;
 }
 
 void RemoteLayerBackingStore::paintContents()
 {
     if (!m_frontBuffer.imageBuffer) {
-        ASSERT_NOT_REACHED();
+        ASSERT(m_contentsBufferHandle);
         return;
     }
 
