@@ -238,6 +238,7 @@ public:
         MediaSampleDataType data;
         MediaSample::SampleFlags flags;
     };
+    using SamplesVector = Vector<MediaSampleItem>;
 
     void setInfo(RefPtr<const TrackInfo>&& info) { m_info = WTFMove(info); }
     const TrackInfo* info() const { return m_info.get(); }
@@ -245,11 +246,11 @@ public:
     bool isAudio() const { return m_info && m_info->isAudio(); }
     TrackInfo::TrackType type() const { return m_info ? m_info->type() : TrackInfo::TrackType::Unknown; }
     void append(MediaSampleItem&& item) { m_samples.append(WTFMove(item)); }
-    void append(MediaSamplesBlock&& block) { m_samples.appendVector(std::exchange(block.m_samples, { })); }
+    void append(MediaSamplesBlock&& block) { append(std::exchange(block.m_samples, { })); }
+    void append(SamplesVector&& samples) { m_samples.appendVector(WTFMove(samples)); }
     size_t size() const { return m_samples.size(); };
     bool isEmpty() const { return m_samples.isEmpty(); }
     void clear() { m_samples.clear(); }
-    using SamplesVector = Vector<MediaSampleItem>;
     SamplesVector takeSamples() { return std::exchange(m_samples, { }); }
 
     const MediaSampleItem& operator[](size_t index) const { return m_samples[index]; }

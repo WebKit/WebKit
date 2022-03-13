@@ -37,6 +37,7 @@
 #include <webm/callback.h>
 #include <webm/status.h>
 #include <webm/vp9_header_parser.h>
+#include <wtf/Deque.h>
 #include <wtf/MediaTime.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
@@ -146,7 +147,7 @@ public:
 
         WebMParser& parser() const { return m_parser; }
 
-        virtual webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&, int)
+        virtual webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&)
         {
             ASSERT_NOT_REACHED();
             return webm::Status(webm::Status::kInvalidElementId);
@@ -155,7 +156,7 @@ public:
         virtual void resetCompletedFramesState()
         {
             m_completeBlockBuffer = nullptr;
-            m_completeMediaSamples = { };
+            m_processedMediaSamples = { };
         }
 
         void reset()
@@ -168,16 +169,16 @@ public:
 
         void drainPendingSamples()
         {
-            if (!m_completeMediaSamples.size())
+            if (!m_processedMediaSamples.size())
                 return;
-            m_parser.provideMediaData(WTFMove(m_completeMediaSamples));
+            m_parser.provideMediaData(WTFMove(m_processedMediaSamples));
             resetCompletedFramesState();
         }
 
     protected:
         RefPtr<SharedBuffer> contiguousCompleteBlockBuffer(size_t offset, size_t length) const;
         webm::Status readFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t* bytesRemaining);
-        MediaSamplesBlock m_completeMediaSamples;
+        MediaSamplesBlock m_processedMediaSamples;
         bool m_useByteRange { false };
         MediaSamplesBlock::MediaSampleDataType m_completeFrameData;
 
@@ -206,14 +207,19 @@ public:
         {
         }
 
+        void flushPendingSamples();
+
     private:
         const char* logClassName() const { return "VideoTrackData"; }
-        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&, int) final;
+        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
         void resetCompletedFramesState() final;
+        void processPendingMediaSamples(const MediaTime&);
+        WTF::Deque<MediaSamplesBlock::MediaSampleItem> m_pendingMediaSamples;
+        std::optional<MediaTime> m_lastDuration;
+        std::optional<MediaTime> m_lastPresentationTime;
 
 #if ENABLE(VP9)
         vp9_parser::Vp9HeaderParser m_headerParser;
-        Vector<bool> m_keyFrames;
 #endif
     };
 
@@ -230,7 +236,7 @@ public:
         }
 
     private:
-        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&, int) final;
+        webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
         void resetCompletedFramesState() final;
         const char* logClassName() const { return "AudioTrackData"; }
 
@@ -244,6 +250,7 @@ private:
     TrackData* trackDataForTrackNumber(uint64_t);
     static bool isSupportedVideoCodec(StringView);
     static bool isSupportedAudioCodec(StringView);
+    void flushPendingVideoSamples();
 
     // webm::Callback
     webm::Status OnElementBegin(const webm::ElementMetadata&, webm::Action*) final;

@@ -151,7 +151,7 @@ OSStatus WebKitDecoderReceiver::decoderFailed(int error)
     else
         vtError = kVTVideoDecoderBadDataErr;
 
-    VTDecoderSessionEmitDecodedFrame(m_session, m_currentFrame, vtError, 0, nullptr);
+    VTDecoderSessionEmitDecodedFrame(m_session, m_currentFrame, vtError, vtError ? 0 : kVTDecodeInfo_FrameDropped, nullptr);
     m_currentFrame = nullptr;
 
     RTC_LOG(LS_ERROR) << "VP9 decoder: decoder failed with error " << error << ", vtError " << vtError;

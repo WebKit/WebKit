@@ -67,6 +67,7 @@ fast/scrolling/mac [ Skip ]
 fast/scrolling/ipad [ Skip ]
 fast/text/mac [ Skip ]
 scrollingcoordinator [ Skip ]
+media/media-vp8-hiddenframes.html [ Skip ] # Requires MediaFormatReader and VP8 decoder
 media/ios [ Skip ]
 media/modern-media-controls/overflow-support [ Skip ]
 http/tests/media/modern-media-controls/overflow-support [ Skip ]
@@ -4767,6 +4768,7 @@ imported/w3c/web-platform-tests/webstorage/document-domain.html [ Skip ]
 
 webkit.org/b/221973 media/media-webm-no-duration.html [ Skip ]
 webkit.org/b/222493 media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
+media/media-source/media-source-vp8-hiddenframes.html [ Skip ] # Requires VP8 decoder
 
 # WebXR - Missing modules.
 imported/w3c/web-platform-tests/webxr/anchors [ Skip ]

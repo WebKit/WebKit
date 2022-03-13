@@ -1,3 +1,59 @@
+2022-03-12  Jean-Yves Avenard  <jya@apple.com>
+
+        Safari produces scrambled output for some webm videos with vp8 codec.
+        https://bugs.webkit.org/show_bug.cgi?id=236754
+        rdar://80869041
+
+        Reviewed by Eric Carlson.
+
+        The MediaFormatReader plugin and the MSE SourceBufferPrivate are using
+        a SampleMap to store all the media samples timing information: one sorted
+        by DTS order and the other in PTS order.
+        Those SampleMap use the sample's presentation time as unique key.
+        The VP8 codec can define hidden samples that are to be fed to the decoder
+        but will not decode into an actual image. Those samples are typically
+        packed together in the webm container in two or more consecutive blocks
+        with the same presentation time (similar behaviour can also be found in
+        webm where multiple frames may be stored with the same presentation
+        time).
+        When stored in the SampleMap, only the latest sample added would be kept
+        after overwriting the previous one with the same time.
+        To get around this issue, we pack all samples with the same presentation
+        time in a single MediaSamplesBlock so that they can be stored together in
+        the map without any losses.
+        Upon decoding, all those sub-samples will be retrieved and fed to the
+        decoder.
+
+        The CoreMedia MediaFormatReader backend however has a bug where it will
+        enter in an infinite if we return successive frames with the same
+        timestamp which will cause memory exhaustion and a crash.
+        To get around this, we make the grouped samples appear as discrete,
+        making each hidden sample have a duration of 1us followed by the
+        visible frames (which will see its duration shorten by 1us).
+
+        Tests: media/media-source/media-source-vp8-hiddenframes.html
+               media/media-vp8-hiddenframes.html
+        New tests had to be disabled due to bug 236755. We currently have no
+        way to guarantee which frame is currently displayed after either a seek
+        operation or reaching the end of playback.
+
+        * platform/MediaSample.h:
+        (WebCore::MediaSamplesBlock::append):
+        (WebCore::MediaSamplesBlock::clear):
+        * platform/graphics/cocoa/SourceBufferParserWebM.cpp:
+        (WebCore::WebMParser::parse):
+        (WebCore::WebMParser::OnFrame):
+        (WebCore::WebMParser::flushPendingVideoSamples):
+        (WebCore::WebMParser::VideoTrackData::resetCompletedFramesState):
+        (WebCore::WebMParser::VideoTrackData::consumeFrameData):
+        (WebCore::WebMParser::VideoTrackData::processPendingMediaSamples):
+        (WebCore::WebMParser::VideoTrackData::flushPendingSamples):
+        (WebCore::WebMParser::AudioTrackData::consumeFrameData):
+        * platform/graphics/cocoa/SourceBufferParserWebM.h:
+        (WebCore::WebMParser::TrackData::consumeFrameData):
+        (WebCore::WebMParser::TrackData::resetCompletedFramesState):
+        (WebCore::WebMParser::TrackData::drainPendingSamples):
+
 2022-03-12  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Add InlineIterator::Line::selectionPhysicalRect

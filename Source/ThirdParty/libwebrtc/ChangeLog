@@ -1,3 +1,15 @@
+2022-03-12  Jean-Yves Avenard  <jya@apple.com>
+
+        Safari produces scrambled output for some webm videos with vp8 codec.
+        https://bugs.webkit.org/show_bug.cgi?id=236754
+        rdar://80869041
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/WebKit/WebKitDecoderReceiver.cpp:
+        (webrtc::WebKitDecoderReceiver::decoderFailed): Tell CoreMedia if a frame
+        was silently dropped by the decoder.
+
 2022-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Adopt FALLBACK_PLATFORM_NAME in place of FALLBACK_PLATFORM

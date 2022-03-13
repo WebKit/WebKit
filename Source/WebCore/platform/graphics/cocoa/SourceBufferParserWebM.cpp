@@ -576,6 +576,9 @@ ExceptionOr<int> WebMParser::parse(SourceBufferParser::Segment&& segment)
         m_status = m_parser->Feed(this, &m_reader);
         if (m_status.ok() || m_status.code == Status::kEndOfFile || m_status.code == Status::kWouldBlock) {
             m_reader->reclaimSegments();
+
+            // We always keep one sample queued in order to calculate the video sample's time, return it now.
+            flushPendingVideoSamples();
             return 0;
         }
 
@@ -996,7 +999,7 @@ webm::Status WebMParser::OnFrame(const FrameMetadata& metadata, Reader* reader, 
         return Skip(reader, bytesRemaining);
     }
 
-    return trackData->consumeFrameData(*reader, metadata, bytesRemaining, MediaTime(block->timecode + m_currentTimecode, m_timescale), block->num_frames);
+    return trackData->consumeFrameData(*reader, metadata, bytesRemaining, MediaTime(block->timecode + m_currentTimecode, m_timescale));
 }
 
 
@@ -1046,13 +1049,21 @@ webm::Status WebMParser::TrackData::readFrameData(webm::Reader& reader, const we
     return webm::Status(webm::Status::kOkCompleted);
 }
 
+void WebMParser::flushPendingVideoSamples()
+{
+    for (auto& track : m_tracks) {
+        if (track->trackType() == TrackInfo::TrackType::Video)
+            downcast<WebMParser::VideoTrackData>(track.get()).flushPendingSamples();
+    }
+}
+
 void WebMParser::VideoTrackData::resetCompletedFramesState()
 {
-    m_keyFrames.clear();
+    ASSERT(!m_pendingMediaSamples.size());
     TrackData::resetCompletedFramesState();
 }
 
-webm::Status WebMParser::VideoTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const MediaTime& presentationTime, int)
+webm::Status WebMParser::VideoTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const MediaTime& presentationTime)
 {
 #if ENABLE(VP9)
     auto status = readFrameData(reader, metadata, bytesRemaining);
@@ -1085,20 +1096,9 @@ webm::Status WebMParser::VideoTrackData::consumeFrameData(webm::Reader& reader, 
         }
     }
 
-    if (!m_completeMediaSamples.info())
-        m_completeMediaSamples.setInfo(formatDescription());
-    else if (formatDescription() && *formatDescription() != *m_completeMediaSamples.info())
-        drainPendingSamples();
+    processPendingMediaSamples(presentationTime);
 
-    auto track = this->track();
-
-    uint64_t duration = 0;
-    if (track.default_duration.is_present())
-        duration = track.default_duration.value() * presentationTime.timeScale() / k_us_in_seconds;
-
-    m_completeMediaSamples.append({ presentationTime, presentationTime, MediaTime(duration, presentationTime.timeScale()), WTFMove(m_completeFrameData), isKey ? MediaSample::SampleFlags::IsSync : MediaSample::SampleFlags::None });
-
-    drainPendingSamples();
+    m_pendingMediaSamples.append({ presentationTime, presentationTime, MediaTime::indefiniteTime(), WTFMove(m_completeFrameData), isKey ? MediaSample::SampleFlags::IsSync : MediaSample::SampleFlags::None });
 
     ASSERT(!*bytesRemaining);
     return webm::Status(webm::Status::kOkCompleted);
@@ -1110,13 +1110,73 @@ webm::Status WebMParser::VideoTrackData::consumeFrameData(webm::Reader& reader, 
 #endif
 }
 
+void WebMParser::VideoTrackData::processPendingMediaSamples(const MediaTime& presentationTime)
+{
+    // WebM container doesn't contain information about duration; the end time of a frame is the start time of the next.
+    // Some frames however may have a duration of 0 which typically indicates that they should be decoded but not displayed.
+    // We group all the samples with the same presentation timestamp within the same final MediaSampleBlock.
+
+    if (!m_pendingMediaSamples.size())
+        return;
+    auto& lastSample = m_pendingMediaSamples.last();
+    lastSample.duration = presentationTime - lastSample.presentationTime;
+    if (presentationTime == lastSample.presentationTime)
+        return;
+
+    MediaTime timeOffset;
+    MediaTime durationOffset;
+    while (m_pendingMediaSamples.size()) {
+        auto sample = m_pendingMediaSamples.takeFirst();
+        if (timeOffset) {
+            sample.presentationTime += timeOffset;
+            sample.decodeTime += timeOffset;
+            auto usableOffset = std::min(durationOffset, sample.duration);
+            sample.duration -= usableOffset;
+            durationOffset -= usableOffset;
+        }
+        // The MediaFormatReader is unable to deal with samples having a duration of 0.
+        // We instead set those samples to have a 1us duration and shift the presentation/decode time
+        // of the following samples in the block by the same offset.
+        if (!sample.duration) {
+            sample.duration = MediaTime(1, k_us_in_seconds);
+            timeOffset += sample.duration;
+            durationOffset += sample.duration;
+        }
+        m_processedMediaSamples.append(WTFMove(sample));
+    }
+    m_lastDuration = m_processedMediaSamples.last().duration;
+    m_lastPresentationTime = presentationTime;
+    if (!m_processedMediaSamples.info())
+        m_processedMediaSamples.setInfo(formatDescription());
+    drainPendingSamples();
+}
+
+void WebMParser::VideoTrackData::flushPendingSamples()
+{
+    // We haven't been able to calculate the duration of the last sample as none will follow.
+    // We set its duration to the track's default duration, or if not known the time of the last sample processed.
+    if (!m_pendingMediaSamples.size())
+        return;
+    ASSERT(m_lastPresentationTime);
+    auto track = this->track();
+
+    MediaTime duration;
+    if (track.default_duration.is_present())
+        duration = MediaTime(track.default_duration.value() * m_lastPresentationTime->timeScale() / k_us_in_seconds, m_lastPresentationTime->timeScale());
+    else if (m_lastDuration)
+        duration = *m_lastDuration;
+    processPendingMediaSamples(*m_lastPresentationTime + duration);
+    m_lastPresentationTime.reset();
+    m_lastDuration.reset();
+}
+
 void WebMParser::AudioTrackData::resetCompletedFramesState()
 {
     mNumFramesInCompleteBlock = 0;
     TrackData::resetCompletedFramesState();
 }
 
-webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const MediaTime& presentationTime, int)
+webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, const FrameMetadata& metadata, uint64_t* bytesRemaining, const MediaTime& presentationTime)
 {
     auto status = readFrameData(reader, metadata, bytesRemaining);
     if (!status.completed_ok())
@@ -1179,12 +1239,12 @@ webm::Status WebMParser::AudioTrackData::consumeFrameData(webm::Reader& reader, 
         }
     }
 
-    if (!m_completeMediaSamples.info())
-        m_completeMediaSamples.setInfo(formatDescription());
-    else if (formatDescription() && *formatDescription() != *m_completeMediaSamples.info())
+    if (!m_processedMediaSamples.info())
+        m_processedMediaSamples.setInfo(formatDescription());
+    else if (formatDescription() && *formatDescription() != *m_processedMediaSamples.info())
         drainPendingSamples();
 
-    m_completeMediaSamples.append({ presentationTime, MediaTime::invalidTime(), m_packetDuration, WTFMove(m_completeFrameData), MediaSample::SampleFlags::IsSync });
+    m_processedMediaSamples.append({ presentationTime, MediaTime::invalidTime(), m_packetDuration, WTFMove(m_completeFrameData), MediaSample::SampleFlags::IsSync });
 
     drainPendingSamples();
 

@@ -1,3 +1,29 @@
+2022-03-12  Jean-Yves Avenard  <jya@apple.com>
+
+        Safari produces scrambled output for some webm videos with vp8 codec.
+        https://bugs.webkit.org/show_bug.cgi?id=236754
+
+        Reviewed by Eric Carlson.
+
+        VP8 files were generated such that alternative reference frames were used:
+        $ fmpeg -i dragon.webm -c:v libvpx -vf scale=320:-1 -auto-alt-ref 1 -arnr-maxframes 5 -arnr-strength 3 -pass 1 test-vp8-hiddenframes.webm
+        $ fmpeg -i dragon.webm -c:v libvpx -vf scale=320:-1 -auto-alt-ref 1 -arnr-maxframes 5 -arnr-strength 3 -pass 2 test-vp8-hiddenframes.webm
+
+        The command used to extract the last frame in png format was:
+        $ ffmpeg -sseof -3 -i test-vp8-hiddenframes.webm -pred mixed -pix_fmt rgb24 -sws_flags +accurate_rnd+full_chroma_int -update 1 -q:v 1 test-vp8-hiddenframes.png
+
+        * TestExpectations:
+        * media/content/test-vp8-hiddenframes.png: Added.
+        * media/content/test-vp8-hiddenframes.webm: Added.
+        * media/media-source/media-source-vp8-hiddenframes-expected.html: Added.
+        * media/media-source/media-source-vp8-hiddenframes.html: Added.
+        * media/media-vp8-hiddenframes-expected.html: Added.
+        * media/media-vp8-hiddenframes.html: Added.
+        * media/utilities.js: Added.
+        (once):
+        (fetchWithXHR):
+        (loadSegment):
+
 2022-03-11  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         [iOS] Fix ovserscroll-behavior for main document
