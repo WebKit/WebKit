@@ -54,13 +54,8 @@ depends:
 - sdk/perl-term-readkey.bst
 - sdk/psmisc.bst
 - sdk/pygls.bst
-- sdk/python2-pycairo.bst
-- sdk/python2-pygobject.bst
-- sdk/python2-six.bst
-- sdk/python2-subprocess32.bst
-- sdk/python2.bst
-- sdk/ruby-highline.bst
 - sdk/ruby-json.bst
+- sdk/ruby-highline.bst
 - sdk/ruby-webrick.bst
 - sdk/sccache.bst
 - sdk/shared-mime-info.bst
