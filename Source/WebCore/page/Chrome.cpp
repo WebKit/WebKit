@@ -542,7 +542,7 @@ RefPtr<ImageBuffer> Chrome::createImageBuffer(const FloatSize& size, RenderingMo
 #if ENABLE(WEBGL)
 RefPtr<GraphicsContextGL> Chrome::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
-    return m_client.createGraphicsContextGL(attributes, displayID());
+    return m_client.createGraphicsContextGL(attributes);
 }
 #endif
 

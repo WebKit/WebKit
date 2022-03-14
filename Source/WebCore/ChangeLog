@@ -1,3 +1,45 @@
+2022-03-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL context should use discrete gpu if the context is created when the window is on external monitor, ANGLE Metal backend
+        https://bugs.webkit.org/show_bug.cgi?id=236487
+
+        Reviewed by Kenneth Russell.
+
+        Add GraphicsContextGLAttributes::windowGPUID which describes the GPU ID
+        for the window that the context is on.
+        Create the ANGLE Metal context based on this, unless high-performance GPU
+        is requested.
+
+        Changes the behavior so that new WebGL contexts will use dgpu is always when user has
+        external display plugged in. The system changes all the windows to the dgpu, so
+        this is consistent with the system expectation.
+
+        Notable difference due to the above is that we get different layout tests for a developer
+        that has a external monitor than before.
+
+        Tested by new unit tests.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::createGraphicsContextGL const):
+        * page/ChromeClient.cpp:
+        (WebCore::ChromeClient::createGraphicsContextGL const):
+        * page/ChromeClient.h:
+        * platform/PlatformScreen.h:
+        * platform/ScreenProperties.h:
+        (WebCore::ScreenData::decode):
+        * platform/graphics/GraphicsContextGLAttributes.h:
+        (WebCore::GraphicsContextGLAttributes::encode const):
+        (WebCore::GraphicsContextGLAttributes::decode):
+        * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+        (WebCore::initializeEGLDisplay):
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::collectScreenProperties):
+        (WebCore::primaryGPUID):
+        (WebCore::gpuIDForDisplay):
+        (WebCore::gpuIDForDisplayMask):
+
 2022-03-14  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, fixing an incomplete-type build error in InlineIteratorLine

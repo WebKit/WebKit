@@ -150,6 +150,10 @@
 #endif
 #endif
 
+#if PLATFORM(MAC)
+#include "PlatformScreen.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLRenderingContextBase);
@@ -893,7 +897,11 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     attributes.shareResources = false;
     attributes.initialPowerPreference = attributes.powerPreference;
     attributes.webGLVersion = type;
-
+#if PLATFORM(MAC)
+    // FIXME: Add MACCATALYST support for gpuIDForDisplay.
+    if (hostWindow)
+        attributes.windowGPUID = gpuIDForDisplay(hostWindow->displayID());
+#endif
 #if PLATFORM(COCOA)
     attributes.useMetal = scriptExecutionContext->settingsValues().webGLUsingMetal;
 #endif

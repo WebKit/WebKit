@@ -37,7 +37,7 @@ ChromeClient::ChromeClient() = default;
 ChromeClient::~ChromeClient() = default;
 
 #if ENABLE(WEBGL)
-RefPtr<GraphicsContextGL> ChromeClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes, WebCore::PlatformDisplayID) const
+RefPtr<GraphicsContextGL> ChromeClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
     return createWebProcessGraphicsContextGL(attributes);
 }

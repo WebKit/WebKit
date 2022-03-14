@@ -941,7 +941,7 @@ RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, Re
 #endif
 
 #if ENABLE(WEBGL)
-RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes, PlatformDisplayID) const
+RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const GraphicsContextGLAttributes& attributes) const
 {
 #if ENABLE(GPU_PROCESS) && (PLATFORM(COCOA) || PLATFORM(WIN))
     if (WebProcess::singleton().shouldUseRemoteRenderingForWebGL())

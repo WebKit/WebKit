@@ -44,6 +44,10 @@ enum class GraphicsContextGLWebGLVersion {
 #endif
 };
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+using PlatformGPUID = uint64_t;
+#endif
+
 struct GraphicsContextGLAttributes {
     // WebGLContextAttributes
     bool alpha { true };
@@ -64,12 +68,16 @@ struct GraphicsContextGLAttributes {
     using WebGLVersion = GraphicsContextGLWebGLVersion;
     WebGLVersion webGLVersion { WebGLVersion::WebGL1 };
     bool forceRequestForHighPerformanceGPU { false };
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    PlatformGPUID windowGPUID { 0 };
+#endif
 #if PLATFORM(COCOA)
     bool useMetal { true };
 #endif
 #if ENABLE(WEBXR)
     bool xrCompatible { false };
 #endif
+
     PowerPreference effectivePowerPreference() const
     {
         if (forceRequestForHighPerformanceGPU)
@@ -102,6 +110,9 @@ void GraphicsContextGLAttributes::encode(Encoder& encoder) const
         << initialPowerPreference
         << webGLVersion
         << forceRequestForHighPerformanceGPU;
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    encoder << windowGPUID;
+#endif
 #if PLATFORM(COCOA)
     encoder << useMetal;
 #endif
@@ -127,6 +138,9 @@ std::optional<WebCore::GraphicsContextGLAttributes> GraphicsContextGLAttributes:
     auto initialPowerPreference = decoder.template decode<PowerPreference>();
     auto webGLVersion = decoder.template decode<WebGLVersion>();
     auto forceRequestForHighPerformanceGPU = decoder.template decode<bool>();
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    auto windowGPUID = decoder.template decode<PlatformGPUID>();
+#endif
 #if PLATFORM(COCOA)
     auto useMetal = decoder.template decode<bool>();
 #endif
@@ -150,6 +164,9 @@ std::optional<WebCore::GraphicsContextGLAttributes> GraphicsContextGLAttributes:
         *initialPowerPreference,
         *webGLVersion,
         *forceRequestForHighPerformanceGPU,
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        *windowGPUID,
+#endif
 #if PLATFORM(COCOA)
         *useMetal,
 #endif

@@ -110,29 +110,56 @@ static ::testing::AssertionResult changeContextContents(TestedGraphicsContextGLC
     return ::testing::AssertionSuccess();
 }
 
-static bool hasMultipleGPUs()
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+static RetainPtr<NSArray<id<MTLDevice>>> allDevices()
 {
-#if (PLATFORM(MAC) || PLATFORM(MACCATALYST))
-    auto devices = adoptNS(MTLCopyAllDevices());
-    return [devices count] > 1;
-#else
-    return false;
-#endif
+    return adoptNS(MTLCopyAllDevices());
 }
 
-#if HAVE(WEBGL_COMPATIBLE_METAL) && (PLATFORM(MAC) || PLATFORM(MACCATALYST))
-#define MAYBE_MultipleGPUsDifferentPowerPreferenceMetal MultipleGPUsDifferentPowerPreferenceMetal
-#else
-#define MAYBE_MultipleGPUsDifferentPowerPreferenceMetal DISABLED_MultipleGPUsDifferentPowerPreferenceMetal
-#endif
-// Tests for a bug where high-performance context would use low-power GPU if low-power or default
-// context was created first. Test is applicable only for Metal, since GPU selection for OpenGL is
-// very different.
-TEST_F(GraphicsContextGLCocoaTest, MAYBE_MultipleGPUsDifferentPowerPreferenceMetal)
+static RetainPtr<id<MTLDevice>> lowPowerDevice()
+{
+    auto devices = allDevices();
+    for (id<MTLDevice> device in devices.get()) {
+        if (device.lowPower)
+            return device;
+    }
+    return nullptr;
+}
+
+static RetainPtr<id<MTLDevice>> highPerformanceDevice()
+{
+    auto devices = allDevices();
+    for (id<MTLDevice> device in devices.get()) {
+        if (!device.lowPower && !device.removable)
+            return device;
+    }
+    return nullptr;
+}
+
+static bool hasMultipleGPUs()
+{
+    return highPerformanceDevice() && lowPowerDevice();
+}
+
+// Sanity check for the MultipleGPUs* tests.
+TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsHaveDifferentGPUs)
 {
     if (!hasMultipleGPUs())
         return;
+    auto a = highPerformanceDevice();
+    auto b = lowPowerDevice();
+    EXPECT_NE(a.get(), nullptr);
+    EXPECT_NE(b.get(), nullptr);
+    EXPECT_NE(a.get(), b.get());
+}
 
+// Tests for a bug where high-performance context would use low-power GPU if low-power or default
+// context was created first. Test is applicable only for Metal, since GPU selection for OpenGL is
+// very different.
+TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentPowerPreferenceMetal)
+{
+    if (!hasMultipleGPUs())
+        return;
     WebCore::GraphicsContextGLAttributes attributes;
     attributes.useMetal = true;
     EXPECT_EQ(attributes.powerPreference, WebCore::GraphicsContextGLPowerPreference::Default);
@@ -150,6 +177,93 @@ TEST_F(GraphicsContextGLCocoaTest, MAYBE_MultipleGPUsDifferentPowerPreferenceMet
     EXPECT_NE(lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER), highPerformanceContext->getString(WebCore::GraphicsContextGL::RENDERER));
     EXPECT_EQ(defaultContext->getString(WebCore::GraphicsContextGL::RENDERER), lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER));
 }
+
+// Tests that requesting context with windowGPUID from low power device results
+// to same thing as requesting default low power context.
+// Tests that windowGPUID from low power device still respects high performance request.
+TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsExplicitLowPowerDeviceMetal)
+{
+    if (!hasMultipleGPUs())
+        return;
+    WebCore::GraphicsContextGLAttributes attributes1;
+    attributes1.useMetal = true;
+    attributes1.powerPreference = WebCore::GraphicsContextGLPowerPreference::LowPower;
+    auto lowPowerContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes1 });
+    ASSERT_NE(lowPowerContext, nullptr);
+
+    WebCore::GraphicsContextGLAttributes attributes2;
+    attributes2.useMetal = true;
+    attributes2.windowGPUID = [lowPowerDevice() registryID];
+    auto explicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
+    ASSERT_NE(explicitDeviceContext.get(), nullptr);
+
+    // Context with windowGPUID from low power device results to same thing as requesting default low power context.
+    EXPECT_EQ(lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER), explicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER));
+
+    // High performance request on a low power explicit device as windowGPUID respects the high performance request.
+    attributes2.powerPreference = WebCore::GraphicsContextGLPowerPreference::HighPerformance;
+    auto highPerformanceExplicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
+    ASSERT_NE(highPerformanceExplicitDeviceContext.get(), nullptr);
+    EXPECT_NE(highPerformanceExplicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER), explicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER));
+}
+
+// Tests that requesting context with windowGPUID from high performance device results to same thing
+// as requesting default high performance context.
+// Tests that windowGPUID from high performance device still uses that device even when low-power context is requested.
+// It is likely that context on a specific window + gpu is the lowest power if the window is on that gpu.
+TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsExplicitHighPerformanceDeviceMetal)
+{
+    if (!hasMultipleGPUs())
+        return;
+    WebCore::GraphicsContextGLAttributes attributes1;
+    attributes1.useMetal = true;
+    attributes1.powerPreference = WebCore::GraphicsContextGLPowerPreference::HighPerformance;
+    auto highPerformanceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes1 });
+    ASSERT_NE(highPerformanceContext, nullptr);
+
+    WebCore::GraphicsContextGLAttributes attributes2;
+    attributes2.useMetal = true;
+    attributes2.windowGPUID = [highPerformanceDevice() registryID];
+    auto explicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
+    ASSERT_NE(explicitDeviceContext.get(), nullptr);
+
+    // Context with windowGPUID from high performance device results to same thing as requesting default high performance context.
+    EXPECT_EQ(highPerformanceContext->getString(WebCore::GraphicsContextGL::RENDERER), explicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER));
+
+    // Low power request on a high performance explicit device as windowGPUID ignores the low power request.
+    attributes2.powerPreference = WebCore::GraphicsContextGLPowerPreference::LowPower;
+    auto lowPowerExplicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
+    ASSERT_NE(lowPowerExplicitDeviceContext.get(), nullptr);
+    EXPECT_EQ(lowPowerExplicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER), explicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER));
+}
+
+// Tests that requesting GraphicsContextGL instances with different devices results in different underlying
+// EGLDisplays.
+TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentGPUIDsMetal)
+{
+    if (!hasMultipleGPUs())
+        return;
+    Vector<Ref<TestedGraphicsContextGLCocoa>> contexts;
+    auto devices = allDevices();
+    for (id<MTLDevice> device in devices.get()) {
+        WebCore::GraphicsContextGLAttributes attributes;
+        attributes.useMetal = true;
+        attributes.windowGPUID = [device registryID];
+        auto context = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+        EXPECT_NE(context.get(), nullptr);
+        if (!context)
+            continue;
+        contexts.append(context.releaseNonNull());
+    }
+    EXPECT_GT(contexts.size(), 1u);
+
+    // The requested EGLDisplays must differ if the devices differ.
+    for (auto itA = contexts.begin(); itA != contexts.end(); ++itA) {
+        for (auto itB = itA + 1; itB != contexts.end(); ++itB)
+            EXPECT_NE((*itA)->platformDisplay(), (*itB)->platformDisplay());
+    }
+}
+#endif
 
 TEST_F(GraphicsContextGLCocoaTest, DisplayBuffersAreRecycled)
 {

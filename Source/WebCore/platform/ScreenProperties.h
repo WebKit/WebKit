@@ -47,7 +47,7 @@ struct ScreenData {
 #if PLATFORM(MAC)
     bool screenIsMonochrome { false };
     uint32_t displayMask { 0 };
-    IORegistryGPUID gpuID { 0 };
+    PlatformGPUID gpuID { 0 };
     DynamicRangeMode preferredDynamicRangeMode { DynamicRangeMode::Standard };
 #endif
 
@@ -159,7 +159,7 @@ std::optional<ScreenData> ScreenData::decode(Decoder& decoder)
     if (!displayMask)
         return std::nullopt;
 
-    std::optional<IORegistryGPUID> gpuID;
+    std::optional<PlatformGPUID> gpuID;
     decoder >> gpuID;
     if (!gpuID)
         return std::nullopt;
