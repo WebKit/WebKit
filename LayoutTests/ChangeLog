@@ -1,3 +1,12 @@
+2022-03-14  Matteo Flores  <matteo_flores@apple.com>
+
+        [ iOS iPhone 12 ] fast/hidpi & fast/layers/hidpi tests are flaky text/image failing
+        https://bugs.webkit.org/show_bug.cgi?id=232384
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2022-03-14  Enrique Ocaña González  <eocanha@igalia.com>
 
         [MSE][SourceBuffer] Fix removal of paddings from buffered range

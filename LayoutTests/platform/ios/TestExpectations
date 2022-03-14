@@ -3404,6 +3404,11 @@ fast/canvas/canvas-blending-text.html [ Pass Failure ]
 model-element/model-element-camera.html [ Skip ]
 model-element/model-element-interactive-dragging.html [ Skip ]
 
+# webkit.org/b/232384 these are flaky failures on iOS
+fast/hidpi/image-srcset-simple-1x.html [ Pass Failure ]
+fast/hidpi/image-srcset-simple-in-variable-1x.html [ Pass Failure ]
+fast/hidpi/pdf-image-scaled.html [ Pass Failure ]
+
 # These tests require the design system ui fonts to be installed.
 fast/text/design-system-ui-11.html [ Pass ]
 fast/text/design-system-ui-12.html [ Pass ]
