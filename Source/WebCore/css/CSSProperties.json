@@ -4615,17 +4615,10 @@
             }
         },
         "text-decoration": {
-            "values": [
-                "underline",
-                "overline",
-                "line-through",
-                {
-                    "value": "blink",
-                    "status": "not considering"
-                }
-            ],
             "codegen-properties": {
-                "converter": "TextDecoration"
+                "longhands": [
+                    "text-decoration-line"
+                ]
             },
             "specification": {
                 "category": "css-22",
@@ -6854,6 +6847,15 @@
                     "-webkit-text-decoration-line"
                 ]
             },
+            "values": [
+                "underline",
+                "overline",
+                "line-through",
+                {
+                    "value": "blink",
+                    "status": "not considering"
+                }
+            ],
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-decoration-line"

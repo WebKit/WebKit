@@ -275,6 +275,12 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
         return fontValue();
     case CSSPropertyFontVariant:
         return fontVariantValue();
+    case CSSPropertyTextDecoration:
+        if (auto line = getPropertyCSSValue(CSSPropertyTextDecorationLine))
+            return line->cssText();
+        return String();
+    case CSSPropertyWebkitTextDecoration:
+        return getShorthandValue(webkitTextDecorationShorthand());
     case CSSPropertyTextDecorationSkip:
         return textDecorationSkipValue();
     case CSSPropertyInset:
@@ -1432,6 +1438,9 @@ String StyleProperties::asText() const
             case CSSPropertyScrollPaddingInlineStart:
             case CSSPropertyScrollPaddingInlineEnd:
                 shorthandPropertyID = CSSPropertyScrollPaddingInline;
+                break;
+            case CSSPropertyTextDecorationLine:
+                shorthandPropertyID = CSSPropertyTextDecoration;
                 break;
             case CSSPropertyTransitionProperty:
             case CSSPropertyTransitionDuration:

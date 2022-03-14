@@ -159,7 +159,7 @@ void Editor::removeUnchangeableStyles()
     defaultStyle->removeProperty(CSSPropertyFontStyle);
     defaultStyle->removeProperty(CSSPropertyFontVariantCaps);
     // FIXME: we should handle also pasted quoted text, strikethrough, etc. <rdar://problem/9255115>
-    defaultStyle->removeProperty(CSSPropertyTextDecoration);
+    defaultStyle->removeProperty(CSSPropertyTextDecorationLine);
     defaultStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect); // implements underline
 
     // FIXME add EditAction::MatchStlye <rdar://problem/9156507> Undo rich text's paste & match style should say "Undo Match Style"

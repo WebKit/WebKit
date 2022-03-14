@@ -935,8 +935,8 @@ static String serializePreservingVisualAppearanceInternal(const Position& start,
                     // Reset the CSS properties to avoid an assertion error in addStyleMarkup().
                     // This assertion is caused at least when we select all text of a <body> element whose
                     // 'text-decoration' property is "inherit", and copy it.
-                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyTextDecoration))
-                        fullySelectedRootStyle->style()->setProperty(CSSPropertyTextDecoration, CSSValueNone);
+                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyTextDecorationLine))
+                        fullySelectedRootStyle->style()->setProperty(CSSPropertyTextDecorationLine, CSSValueNone);
                     if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyWebkitTextDecorationsInEffect))
                         fullySelectedRootStyle->style()->setProperty(CSSPropertyWebkitTextDecorationsInEffect, CSSValueNone);
                     accumulator.wrapWithStyleNode(fullySelectedRootStyle->style(), document, true);

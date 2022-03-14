@@ -344,8 +344,14 @@ rect: style.getPropertyValue(text-anchor) : start
 rect: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-combine-upright) : none
 rect: style.getPropertyCSSValue(text-combine-upright) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(text-decoration) : none
-rect: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(text-decoration-color) : rgb(0, 0, 0)
+rect: style.getPropertyCSSValue(text-decoration-color) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(text-decoration-line) : none
+rect: style.getPropertyCSSValue(text-decoration-line) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(text-decoration-style) : solid
+rect: style.getPropertyCSSValue(text-decoration-style) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(text-decoration-thickness) : auto
+rect: style.getPropertyCSSValue(text-decoration-thickness) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-emphasis-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(text-emphasis-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-emphasis-position) : over right
@@ -854,8 +860,14 @@ g: style.getPropertyValue(text-anchor) : start
 g: style.getPropertyCSSValue(text-anchor) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-combine-upright) : none
 g: style.getPropertyCSSValue(text-combine-upright) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(text-decoration) : none
-g: style.getPropertyCSSValue(text-decoration) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(text-decoration-color) : rgb(0, 0, 0)
+g: style.getPropertyCSSValue(text-decoration-color) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(text-decoration-line) : none
+g: style.getPropertyCSSValue(text-decoration-line) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(text-decoration-style) : solid
+g: style.getPropertyCSSValue(text-decoration-style) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(text-decoration-thickness) : auto
+g: style.getPropertyCSSValue(text-decoration-thickness) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-emphasis-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(text-emphasis-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-emphasis-position) : over right

@@ -1,3 +1,21 @@
+2022-03-14  Oriol Brufau  <obrufau@igalia.com>
+
+        [css] Implement 'text-decoration' as a shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=237175
+
+        Reviewed by Darin Adler.
+
+        Update tests to take into account that 'text-decoration' is a shorthand.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-text-decoration-expected.txt:
+        * fast/css/getComputedStyle/getComputedStyle-text-decoration.html:
+        * fast/css/getComputedStyle/resources/property-names.js:
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand-expected.txt:
+        * fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-shorthand.html:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2022-03-14  Antoine Quint  <graouts@webkit.org>
 
         [model] model-element/model-element-camera.html fails due to `promise_rejects` being undefined

@@ -5,22 +5,41 @@
 </head>
 <body>
 <script>
-function testElementStyle(propertyJS, propertyCSS, type, value)
+function testElementStyle(type, value)
 {
     if (type != null) {
-        shouldBe("e.style." + propertyJS, "'" + value + "'");
-        shouldBe("e.style.getPropertyCSSValue('" + propertyCSS + "').toString()", "'" + type + "'");
-        shouldBe("e.style.getPropertyCSSValue('" + propertyCSS + "').cssText", "'" + value + "'");
-    } else
-        shouldBeNull("e.style.getPropertyCSSValue('" + propertyCSS + "')");
+        shouldBe("e.style.textDecoration", "'" + value + "'");
+        shouldBe("e.style.getPropertyValue('text-decoration')", "'" + value + "'");
+        shouldBeNull("e.style.getPropertyCSSValue('text-decoration')");
+
+        shouldBe("e.style.textDecorationLine", "'" + value + "'");
+        shouldBe("e.style.getPropertyValue('text-decoration-line')", "'" + value + "'");
+        shouldBe("e.style.getPropertyCSSValue('text-decoration-line').toString()", "'" + type + "'");
+        shouldBe("e.style.getPropertyCSSValue('text-decoration-line').cssText", "'" + value + "'");
+    } else {
+        shouldBe("e.style.textDecoration", "''");
+        shouldBe("e.style.getPropertyValue('text-decoration')", "''");
+        shouldBeNull("e.style.getPropertyCSSValue('text-decoration')");
+
+        shouldBe("e.style.textDecorationLine", "''");
+        shouldBe("e.style.getPropertyValue('text-decoration-line')", "''");
+        shouldBeNull("e.style.getPropertyCSSValue('text-decoration-line')");
+    }
 }
 
-function testComputedStyle(propertyJS, propertyCSS, type, value)
+function testComputedStyle(type, value)
 {
     computedStyle = window.getComputedStyle(e, null);
-    shouldBe("computedStyle." + propertyJS, "'" + value + "'");
-    shouldBe("computedStyle.getPropertyCSSValue('" + propertyCSS + "').toString()", "'" + type + "'");
-    shouldBe("computedStyle.getPropertyCSSValue('" + propertyCSS + "').cssText", "'" + value + "'");
+
+    shouldBe("computedStyle.textDecoration", "'" + value + "'");
+    shouldBe("computedStyle.getPropertyValue('text-decoration')", "'" + value + "'");
+    shouldBe("computedStyle.getPropertyCSSValue('text-decoration').toString()", "'" + type + "'");
+    shouldBe("computedStyle.getPropertyCSSValue('text-decoration').cssText", "'" + value + "'");
+
+    shouldBe("computedStyle.textDecorationLine", "'" + value + "'");
+    shouldBe("computedStyle.getPropertyValue('text-decoration-line')", "'" + value + "'");
+    shouldBe("computedStyle.getPropertyCSSValue('text-decoration-line').toString()", "'" + type + "'");
+    shouldBe("computedStyle.getPropertyCSSValue('text-decoration-line').cssText", "'" + value + "'");
 }
 
 description("Test to make sure text-decoration property returns values properly.")
@@ -32,75 +51,75 @@ document.body.appendChild(testContainer);
 testContainer.innerHTML = '<div id="test">hello world</div>';
 debug("Initial value:");
 e = document.getElementById('test');
-testElementStyle("textDecoration", "text-decoration", null, '');
-testComputedStyle("textDecoration", "text-decoration", "[object CSSPrimitiveValue]", "none");
+testElementStyle(null, '');
+testComputedStyle("[object CSSPrimitiveValue]", "none");
 debug('');
 
 debug("Initial value (explicit):");
 e.style.textDecoration = 'initial';
-testElementStyle("textDecoration", "text-decoration", "[object CSSValue]", "initial");
-testComputedStyle("textDecoration", "text-decoration", "[object CSSPrimitiveValue]", "none");
+testElementStyle("[object CSSValue]", "initial");
+testComputedStyle("[object CSSPrimitiveValue]", "none");
 debug('');
 
 debug("Value 'none':");
 e.style.textDecoration = 'none';
-testElementStyle("textDecoration", "text-decoration", "[object CSSPrimitiveValue]", "none");
-testComputedStyle("textDecoration", "text-decoration", "[object CSSPrimitiveValue]", "none");
+testElementStyle("[object CSSPrimitiveValue]", "none");
+testComputedStyle("[object CSSPrimitiveValue]", "none");
 debug('');
 
 debug("Value 'underline':");
 e.style.textDecoration = 'underline';
-testElementStyle("textDecoration", "text-decoration", "[object CSSValueList]", "underline");
-testComputedStyle("textDecoration", "text-decoration", "[object CSSValueList]", "underline");
+testElementStyle("[object CSSValueList]", "underline");
+testComputedStyle("[object CSSValueList]", "underline");
 debug('');
 
 debug("Value 'overline':");
 e.style.textDecoration = 'overline';
-testElementStyle("textDecoration", "text-decoration", "[object CSSValueList]", "overline");
-testComputedStyle("textDecoration", "text-decoration", "[object CSSValueList]", "overline");
+testElementStyle("[object CSSValueList]", "overline");
+testComputedStyle("[object CSSValueList]", "overline");
 debug('');
 
 debug("Value 'line-through':");
 e.style.textDecoration = 'line-through';
-testElementStyle("textDecoration", "text-decoration", "[object CSSValueList]", "line-through");
-testComputedStyle("textDecoration", "text-decoration", "[object CSSValueList]", "line-through");
+testElementStyle("[object CSSValueList]", "line-through");
+testComputedStyle("[object CSSValueList]", "line-through");
 debug('');
 
 debug("Value 'underline overline line-through':");
 e.style.textDecoration = 'underline overline line-through';
-testElementStyle("textDecoration", "text-decoration", "[object CSSValueList]", "underline overline line-through");
-testComputedStyle("textDecoration", "text-decoration", "[object CSSValueList]", "underline overline line-through");
+testElementStyle("[object CSSValueList]", "underline overline line-through");
+testComputedStyle("[object CSSValueList]", "underline overline line-through");
 debug('');
 
 debug("Value 'blink' (valid but ignored):");
 e.style.textDecoration = 'blink';
-testElementStyle("textDecoration", "text-decoration", "[object CSSValueList]", "blink");
-testComputedStyle("textDecoration", "text-decoration", "[object CSSPrimitiveValue]", "none");
+testElementStyle("[object CSSValueList]", "blink");
+testComputedStyle("[object CSSPrimitiveValue]", "none");
 debug('');
 
 debug("Value '':");
 e.style.textDecoration = '';
-testElementStyle("textDecoration", "text-decoration", null, '');
-testComputedStyle("textDecoration", "text-decoration", "[object CSSPrimitiveValue]", "none");
+testElementStyle(null, '');
+testComputedStyle("[object CSSPrimitiveValue]", "none");
 debug('');
 
 testContainer.innerHTML = '<div id="test-parent" style="text-decoration: underline;">hello <span id="test-ancestor" style="text-decoration: inherit;">world</span></div>';
 debug("Parent gets 'underline' value:");
 e = document.getElementById('test-parent');
-testElementStyle("textDecoration", "text-decoration", "[object CSSValueList]", "underline");
-testComputedStyle("textDecoration", "text-decoration", "[object CSSValueList]", "underline");
+testElementStyle("[object CSSValueList]", "underline");
+testComputedStyle("[object CSSValueList]", "underline");
 debug('');
 
 debug("Ancestor should explicitly inherit value from parent when 'inherit' value is used:");
 e = document.getElementById('test-ancestor');
-testElementStyle("textDecoration", "text-decoration", "[object CSSValue]", "inherit");
-testComputedStyle("textDecoration", "text-decoration", "[object CSSValueList]", "underline");
+testElementStyle("[object CSSValue]", "inherit");
+testComputedStyle("[object CSSValueList]", "underline");
 debug('');
 
 debug("Ancestor should not implicitly inherit value from parent (i.e. when value is void):");
 e.style.textDecoration = '';
-testElementStyle("textDecoration", "text-decoration", null, '');
-testComputedStyle("textDecoration", "text-decoration", "[object CSSPrimitiveValue]", "none");
+testElementStyle(null, '');
+testComputedStyle("[object CSSPrimitiveValue]", "none");
 debug('');
 
 document.body.removeChild(testContainer);
