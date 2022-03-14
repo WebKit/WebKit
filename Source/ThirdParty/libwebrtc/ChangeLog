@@ -1,5 +1,19 @@
 2022-03-14  Elliott Williams  <emw@apple.com>
 
+        Unreviewed, reverting r291239.
+
+        Some builds failing with "fatal error:
+        'absl/utility/utility.h' file not found"
+
+        Reverted changeset:
+
+        "Reland "[XCBuild] libwebrtc's headers are copied via rsync
+        and do not emit task outputs""
+        https://bugs.webkit.org/show_bug.cgi?id=237112
+        https://commits.webkit.org/r291239
+
+2022-03-14  Elliott Williams  <emw@apple.com>
+
         Reland "[XCBuild] libwebrtc's headers are copied via rsync and do not emit task outputs"
         https://bugs.webkit.org/show_bug.cgi?id=237112
 
