@@ -1,3 +1,18 @@
+2022-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mail Compose] Spelling and grammar context menu items need custom identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=237804
+        rdar://90124049
+
+        Reviewed by Aditya Keerthi.
+
+        Add a new API test to exercise the new identifiers.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/ContextMenuTests.mm: Added.
+        (-[NSMenu itemWithIdentifier:]):
+        (TestWebKitAPI::TEST):
+
 2022-03-10  Jonathan Bedard  <jbedard@apple.com>
 
         [EWS] Clean up PR branches and remotes

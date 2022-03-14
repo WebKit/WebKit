@@ -58,3 +58,9 @@ NSString * const _WKMenuItemIdentifierSpeechMenu = @"WKMenuItemIdentifierSpeechM
 
 NSString * const _WKMenuItemIdentifierTranslate = @"WKMenuItemIdentifierTranslate";
 NSString * const _WKMenuItemIdentifierCopyCroppedImage = @"WKMenuItemIdentifierCopyCroppedImage";
+
+NSString * const _WKMenuItemIdentifierSpellingMenu = @"WKMenuItemIdentifierSpellingMenu";
+NSString * const _WKMenuItemIdentifierShowSpellingPanel = @"WKMenuItemIdentifierShowSpellingPanel";
+NSString * const _WKMenuItemIdentifierCheckSpelling = @"WKMenuItemIdentifierCheckSpelling";
+NSString * const _WKMenuItemIdentifierCheckSpellingWhileTyping = @"WKMenuItemIdentifierCheckSpellingWhileTyping";
+NSString * const _WKMenuItemIdentifierCheckGrammarWithSpelling = @"WKMenuItemIdentifierCheckGrammarWithSpelling";

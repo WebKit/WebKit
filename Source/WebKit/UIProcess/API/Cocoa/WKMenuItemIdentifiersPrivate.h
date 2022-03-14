@@ -60,3 +60,9 @@ WK_EXPORT extern NSString * const _WKMenuItemIdentifierAddHighlightToNewQuickNot
 
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierTranslate WK_API_AVAILABLE(macos(12.0), ios(15.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierCopyCroppedImage WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierSpellingMenu WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierShowSpellingPanel WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierCheckSpelling WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierCheckSpellingWhileTyping WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierCheckGrammarWithSpelling WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));

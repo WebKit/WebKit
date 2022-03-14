@@ -545,6 +545,21 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
     case ContextMenuItemTagSpeechMenu:
         return _WKMenuItemIdentifierSpeechMenu;
 
+    case ContextMenuItemTagSpellingMenu:
+        return _WKMenuItemIdentifierSpellingMenu;
+
+    case ContextMenuItemTagShowSpellingPanel:
+        return _WKMenuItemIdentifierShowSpellingPanel;
+
+    case ContextMenuItemTagCheckSpelling:
+        return _WKMenuItemIdentifierCheckSpelling;
+
+    case ContextMenuItemTagCheckSpellingWhileTyping:
+        return _WKMenuItemIdentifierCheckSpellingWhileTyping;
+
+    case ContextMenuItemTagCheckGrammarWithSpelling:
+        return _WKMenuItemIdentifierCheckGrammarWithSpelling;
+
     default:
         return nil;
     }

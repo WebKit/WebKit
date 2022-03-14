@@ -1,3 +1,22 @@
+2022-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mail Compose] Spelling and grammar context menu items need custom identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=237804
+        rdar://90124049
+
+        Reviewed by Aditya Keerthi.
+
+        Introduce several new context menu item identifier strings that correspond to the default spelling and grammar
+        menu items that appear when showing the context menu for editable content, such that Mail can replace or
+        customize behaviors around these items in compose, via WKUIDelegate.
+
+        Test: ContextMenuTests.ProposedMenuContainsSpellingMenu
+
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm:
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+
 2022-03-14  Antoine Quint  <graouts@webkit.org>
 
         [model] <model interactive> doesn't allow model to be rotated on iOS

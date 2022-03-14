@@ -1080,6 +1080,7 @@
 		F46128B7211C8ED500D9FADB /* DragAndDropSimulatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46128B6211C8ED500D9FADB /* DragAndDropSimulatorMac.mm */; };
 		F46128CB211D475100D9FADB /* TestDraggingInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46128CA211D475100D9FADB /* TestDraggingInfo.mm */; };
 		F46128D4211E40FD00D9FADB /* link-in-iframe-and-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F46128D1211E2D2500D9FADB /* link-in-iframe-and-input.html */; };
+		F4613F1D27DC2EDD007CCDE6 /* ContextMenuTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4613F1C27DC2EDD007CCDE6 /* ContextMenuTests.mm */; };
 		F464AF9220BB66EA007F9B18 /* RenderingProgressTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */; };
 		F46849BE1EEF58E400B937FE /* UIPasteboardTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */; };
 		F46849C01EEF5EF300B937FE /* rich-and-plain-text.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F46849BF1EEF5EDC00B937FE /* rich-and-plain-text.html */; };
@@ -3101,6 +3102,7 @@
 		F46128D1211E2D2500D9FADB /* link-in-iframe-and-input.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "link-in-iframe-and-input.html"; sourceTree = "<group>"; };
 		F46128D6211E489C00D9FADB /* DragAndDropTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropTests.mm; sourceTree = "<group>"; };
 		F46128D8211E496300D9FADB /* full-page-dropzone.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "full-page-dropzone.html"; sourceTree = "<group>"; };
+		F4613F1C27DC2EDD007CCDE6 /* ContextMenuTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuTests.mm; sourceTree = "<group>"; };
 		F464AF9120BB66EA007F9B18 /* RenderingProgressTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderingProgressTests.mm; sourceTree = "<group>"; };
 		F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIPasteboardTests.mm; sourceTree = "<group>"; };
 		F46849BF1EEF5EDC00B937FE /* rich-and-plain-text.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "rich-and-plain-text.html"; sourceTree = "<group>"; };
@@ -4886,6 +4888,7 @@
 				A1146A8A1D2D704F000FE710 /* ContentFiltering.mm */,
 				5142B2701517C88B00C32B19 /* ContextMenuCanCopyURL.mm */,
 				37FB72951DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm */,
+				F4613F1C27DC2EDD007CCDE6 /* ContextMenuTests.mm */,
 				7AEAD47C1E20113800416EFE /* CrossPartitionFileSchemeAccess.mm */,
 				E5AA8D1C25151CC60051CC45 /* DateInputTests.mm */,
 				939BA91614103412001A01BD /* DeviceScaleFactorOnBack.mm */,
@@ -5564,6 +5567,7 @@
 				8349D3C21DB96DDE004A9F65 /* ContextMenuDownload.mm in Sources */,
 				CD0BD0A61F79924D001AB2CF /* ContextMenuImgWithVideo.mm in Sources */,
 				A1C142C224AA7B2E00444207 /* ContextMenuMouseEvents.mm in Sources */,
+				F4613F1D27DC2EDD007CCDE6 /* ContextMenuTests.mm in Sources */,
 				F4034FA1275D5402003A81F8 /* CookieConsent.mm in Sources */,
 				510A667B27D301AC00D22629 /* CoreMediaUtilities.mm in Sources */,
 				7CCE7EAC1A411A3400447C4C /* Counters.cpp in Sources */,
