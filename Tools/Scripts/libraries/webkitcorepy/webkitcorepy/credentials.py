@@ -72,7 +72,7 @@ def credentials(url, required=True, name=None, prompt=None, key_name='password',
                 username = Terminal.input()
                 username_prompted = True
 
-        if not key:
+        if not key and username:
             try:
                 if keyring and not attempt:
                     key = keyring.get_password(url, username)

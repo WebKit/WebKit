@@ -1,3 +1,16 @@
+2022-03-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Do not fetch key without username
+        https://bugs.webkit.org/show_bug.cgi?id=237830
+        <rdar://problem/90248939>
+
+        Unreviewed git-webkit fix.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/credentials.py:
+        (credentials): Only attempt to fetch key if username is defined.
+
 2022-03-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GLib] Expose typed arrays in the public API
