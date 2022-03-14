@@ -1,3 +1,22 @@
+2022-03-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Handle comparing User and Contributor to None
+        https://bugs.webkit.org/show_bug.cgi?id=237622
+        <rdar://problem/89992772>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/user_unittest.py:
+        (TestUser.test_compare):
+        * Scripts/libraries/webkitbugspy/webkitbugspy/user.py:
+        (User.__cmp__): Handle 'None' case.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor.__cmp__): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/contributor_unittest.py:
+        (TestContributor.test_comparison):
+
 2022-03-14  Alejandro G. Castro  <alex@igalia.com>
 
         [Flatpack SDK] Api tests scripts have conflicting parameters with the flatpak scripts

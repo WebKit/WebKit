@@ -145,6 +145,8 @@ class User(object):
             ref_value = other
         elif isinstance(other, User):
             ref_value = other.username or self.name
+        elif other is None:
+            ref_value = ''
         else:
             raise ValueError('Cannot compare {} with {}'.format(User, type(other)))
         if (self.username or self.name) == ref_value:

@@ -220,6 +220,8 @@ class Contributor(object):
             ref_value = other
         elif isinstance(other, Contributor):
             ref_value = other.name
+        elif other is None:
+            ref_value = ''
         else:
             raise ValueError('Cannot compare {} with {}'.format(Contributor, type(other)))
         if self.name == ref_value:
