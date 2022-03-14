@@ -20,11 +20,11 @@ promise_test(async test => {
     const model = makeModel();
 
     const getCameraPromise = model.getCamera();
-    await promise_rejects(test, "AbortError", getCameraPromise,
+    await promise_rejects_dom(test, "AbortError", getCameraPromise,
                               "The promise returned by getCamera() should be rejected if the model element is not ready.");
 
     const setCameraPromise = model.setCamera(expectedCamera);
-    await promise_rejects(test, "AbortError", setCameraPromise,
+    await promise_rejects_dom(test, "AbortError", setCameraPromise,
                             "The promise returned by setCamera() should be rejected if the model element is not ready.");
 }, "<model> cannot get or set the camera until it's ready");
 

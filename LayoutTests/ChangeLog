@@ -1,3 +1,14 @@
+2022-03-14  Antoine Quint  <graouts@webkit.org>
+
+        [model] model-element/model-element-camera.html fails due to `promise_rejects` being undefined
+        https://bugs.webkit.org/show_bug.cgi?id=237833
+        rdar://88982597
+
+        Unreviewed test fix after testharness.js was updated in bug 235398 but neglected to update this
+        test to use promise_rejects_dom.
+
+        * model-element/model-element-camera.html:
+
 2022-03-14  Matteo Flores  <matteo_flores@apple.com>
 
         [GTK][WPE] EXIF orientation tests are failing since added in r249364 - "EXIF orientation should be respected when rendering images"
