@@ -38,6 +38,10 @@ PASS list-style-type (type: discrete) has testInterpolation function
 PASS list-style-type uses discrete animation when animating between "circle" and "square" with linear easing
 PASS list-style-type uses discrete animation when animating between "circle" and "square" with effect easing
 PASS list-style-type uses discrete animation when animating between "circle" and "square" with keyframe easing
+PASS marker-end (type: discrete) has testInterpolation function
+FAIL marker-end uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "none"
+FAIL marker-end uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "none"
+FAIL marker-end uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "none"
 PASS mask (type: discrete) has testInterpolation function
 FAIL mask uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-1\") 0% 0% / auto repeat border-box border-box add match-source"
 FAIL mask uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-1\") 0% 0% / auto repeat border-box border-box add match-source"
