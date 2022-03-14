@@ -263,7 +263,7 @@ class ShellMixin(object):
 
     def shell_command(self, command):
         if self.has_windows_shell():
-            return ['cmd', '/c', command]
+            return ['sh', '-c', command]
         return ['/bin/sh', '-c', command]
 
     def shell_exit_0(self):
@@ -4146,6 +4146,8 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
             ['git', 'checkout', '{}/{}'.format(self.git_remote, branch), '-f'],  # Checkout branch from specific remote
             ['git', 'branch', '-D', '{}'.format(branch)],  # Delete any local cache of the specified branch
             ['git', 'checkout', '{}/{}'.format(self.git_remote, branch), '-b', '{}'.format(branch)],  # Checkout local instance of branch from remote
+            self.shell_command('git branch | grep -v {} | grep -v {} | xargs git branch -D || {}'.format(self.default_branch, branch, self.shell_exit_0())),
+            self.shell_command('git remote | grep -v {} | xargs -L 1 git remote rm || {}'.format(self.git_remote, self.shell_exit_0())),
         ]:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
         return super(CleanGitRepo, self).run()
