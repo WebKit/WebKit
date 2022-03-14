@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,6 @@
 #include <wtf/StackBounds.h>
 #include <wtf/Threading.h>
 
-namespace WTF {
-
 // We only enable the reserved zone size check by default on ASSERT_ENABLED
 // builds (which usually mean Debug builds). However, it is more valuable to
 // run this test on Release builds. That said, we don't want to do pay this
@@ -40,6 +38,14 @@ namespace WTF {
 
 #define VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE ASSERT_ENABLED
 
+#if VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE
+#include <wtf/StackTrace.h>
+
+constexpr bool verboseStackCheckVerification = false;
+#endif
+
+namespace WTF {
+
 class StackCheck {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -48,7 +54,6 @@ public:
         Scope(StackCheck& checker)
             : m_checker(checker)
         {
-            m_checker.isSafeToRecurse();
 #if VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE
             RELEASE_ASSERT(checker.m_ownerThread == &Thread::current());
 
@@ -59,11 +64,17 @@ public:
             // 2. use a larger reservedZone size.
             uint8_t* currentStackCheckpoint = static_cast<uint8_t*>(currentStackPointer());
             uint8_t* previousStackCheckpoint = m_checker.m_lastStackCheckpoint;
-            RELEASE_ASSERT(previousStackCheckpoint - currentStackCheckpoint > 0);
-            RELEASE_ASSERT(previousStackCheckpoint - currentStackCheckpoint < static_cast<ptrdiff_t>(m_checker.m_reservedZone));
+            ptrdiff_t stackBetweenCheckpoints = previousStackCheckpoint - currentStackCheckpoint;
 
             m_savedLastStackCheckpoint = m_checker.m_lastStackCheckpoint;
             m_checker.m_lastStackCheckpoint = currentStackCheckpoint;
+            if constexpr (verboseStackCheckVerification) {
+                m_savedLastCheckpointStackTrace = WTFMove(m_checker.m_lastCheckpointStackTrace);
+                m_checker.m_lastCheckpointStackTrace = StackTrace::captureStackTrace(INT_MAX);
+            }
+
+            if (UNLIKELY(stackBetweenCheckpoints <= 0 || stackBetweenCheckpoints >= static_cast<ptrdiff_t>(m_checker.m_reservedZone)))
+                reportVerificationFailureAndCrash();
 #endif
         }
 
@@ -71,19 +82,26 @@ public:
         ~Scope()
         {
             m_checker.m_lastStackCheckpoint = m_savedLastStackCheckpoint;
+            if constexpr (verboseStackCheckVerification)
+                m_checker.m_lastCheckpointStackTrace = WTFMove(m_savedLastCheckpointStackTrace);
         }
 #endif
 
         bool isSafeToRecurse() { return m_checker.isSafeToRecurse(); }
 
     private:
+#if VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE
+        WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void reportVerificationFailureAndCrash();
+#endif
+
         StackCheck& m_checker;
 #if VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE
         uint8_t* m_savedLastStackCheckpoint;
+        std::unique_ptr<StackTrace> m_savedLastCheckpointStackTrace;
 #endif
     };
 
-    StackCheck(const StackBounds& bounds = Thread::current().stack(), size_t minReservedZone = defaultReservedZoneSize)
+    StackCheck(const StackBounds& bounds = Thread::current().stack(), size_t minReservedZone = StackBounds::DefaultReservedZone)
         : m_stackLimit(bounds.recursionLimit(minReservedZone))
 #if VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE
         , m_ownerThread(&Thread::current())
@@ -95,17 +113,12 @@ public:
     inline bool isSafeToRecurse() { return currentStackPointer() >= m_stackLimit; }
 
 private:
-#if ASAN_ENABLED
-    static constexpr size_t defaultReservedZoneSize = StackBounds::DefaultReservedZone * 2;
-#else
-    static constexpr size_t defaultReservedZoneSize = StackBounds::DefaultReservedZone;
-#endif
-
     void* m_stackLimit;
 #if VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE
     Thread* m_ownerThread;
     uint8_t* m_lastStackCheckpoint;
     size_t m_reservedZone;
+    std::unique_ptr<StackTrace> m_lastCheckpointStackTrace;
 #endif
 
     friend class Scope;

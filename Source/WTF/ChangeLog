@@ -1,3 +1,29 @@
+2022-03-14  Mark Lam  <mark.lam@apple.com>
+
+        Enhance StackCheck debugging support and bump up the ASAN reserved zone size.
+        https://bugs.webkit.org/show_bug.cgi?id=237805
+
+        Reviewed by Robin Morisset.
+
+        1. Apply the ASAN multiplier to StackBound::DefaultReservedZone instead of just
+           in the StackCheck class.  This ensures that all stack checks using this
+           default value gets the necessary bump for ASAN as well.
+
+           Also bump the ASAN multipler from 2 to 3.  We have evidence that an ASAN Debug
+           build inflates stack usage more than 2x over a non-ASAN Debug build.
+
+        2. Enhance the StackCheck class to dump some debugging information when
+           VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE is enabled.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/StackBounds.h:
+        * wtf/StackCheck.cpp: Added.
+        (WTF::StackCheck::Scope::reportVerificationFailureAndCrash):
+        * wtf/StackCheck.h:
+        (WTF::StackCheck::Scope::Scope):
+        (WTF::StackCheck::Scope::~Scope):
+        (WTF::StackCheck::StackCheck):
+
 2022-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Fail the build if Internal or Experimental web preferences are missing human readable names

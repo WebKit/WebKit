@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,15 @@ public:
     // functions was seen to be as high as 27k. Hence, 64k is chosen as a
     // conservative availability value that is not too large but comfortably
     // exceeds 27k with some buffer for error.
+#if !ASAN_ENABLED
     static constexpr size_t DefaultReservedZone = 64 * 1024;
+#else
+    // ASAN inflates stack frames a lot. A factor of 3 was empirically found to
+    // be the ratio of inflation of stack usage between 2 consecutive stack
+    // recursion checkpoints. So, we'll also multiply the reserved zone size
+    // accordingly to accommodate this.
+    static constexpr size_t DefaultReservedZone = 64 * 1024 * 3;
+#endif
 
     static constexpr StackBounds emptyBounds() { return StackBounds(); }
 
