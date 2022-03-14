@@ -1,0 +1,9 @@
+{
+    "timeout": 300,
+    "count": 5,
+    "svn_source": "https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/Speedometer/@r183695",
+    "webserver_benchmark_patch": "data/patches/webserver/Speedometer.patch",
+    "webdriver_benchmark_patch": "data/patches/webdriver/Speedometer.patch",
+    "entry_point": "Full.html",
+    "output_file": "speedometer.result"
+}
