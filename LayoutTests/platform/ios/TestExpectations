@@ -3409,6 +3409,12 @@ fast/hidpi/image-srcset-simple-1x.html [ Pass Failure ]
 fast/hidpi/image-srcset-simple-in-variable-1x.html [ Pass Failure ]
 fast/hidpi/pdf-image-scaled.html [ Pass Failure ]
 
+webkit.org/b/201982 These are flaky failures on iOS
+fast/images/exif-orientation-svg-feimage.html [ Pass Failure ]
+fast/images/exif-orientation-background-image-repeat.html [ Pass Failure ]
+fast/images/image-orientation-dynamic-from-image.html [ Pass Failure ]
+fast/images/image-orientation-none.html [ Pass Failure ]
+
 # These tests require the design system ui fonts to be installed.
 fast/text/design-system-ui-11.html [ Pass ]
 fast/text/design-system-ui-12.html [ Pass ]
