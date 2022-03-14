@@ -1,3 +1,18 @@
+2022-03-14  Elliott Williams  <emw@apple.com>
+
+        Reland "[XCBuild] libwebrtc's headers are copied via rsync and do not emit task outputs"
+        https://bugs.webkit.org/show_bug.cgi?id=237112
+
+        Reviewed by Alexey Proskuryakov.
+
+        r290966 had a bad xcconfig setting in libabsl.xcconfig, which prevented absl's headers from
+        being copied to the right location, causing build failures. Fix this setting and reland.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/libabsl.xcconfig: s/PREFIX/PATH/g to fix settings.
+        * Configurations/libwebrtc.xcconfig:
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2022-03-12  Jean-Yves Avenard  <jya@apple.com>
 
         Safari produces scrambled output for some webm videos with vp8 codec.
