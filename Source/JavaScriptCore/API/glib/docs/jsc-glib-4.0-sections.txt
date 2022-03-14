@@ -69,6 +69,7 @@ jsc_context_get_type
 <TITLE>JSCValue</TITLE>
 JSCValue
 JSCValuePropertyFlags
+JSCTypedArrayType
 jsc_value_get_context
 jsc_value_new_undefined
 jsc_value_is_undefined
@@ -114,6 +115,15 @@ jsc_value_new_array_buffer
 jsc_value_is_array_buffer
 jsc_value_array_buffer_get_data
 jsc_value_array_buffer_get_size
+jsc_value_new_typed_array
+jsc_value_new_typed_array_with_buffer
+jsc_value_is_typed_array
+jsc_value_typed_array_get_type
+jsc_value_typed_array_get_data
+jsc_value_typed_array_get_size
+jsc_value_typed_array_get_offset
+jsc_value_typed_array_get_length
+jsc_value_typed_array_get_buffer
 jsc_value_is_constructor
 jsc_value_constructor_call
 jsc_value_constructor_callv

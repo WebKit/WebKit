@@ -32,6 +32,7 @@
 #include "JSTypedArray.h"
 #include "LiteralParser.h"
 #include "OpaqueJSString.h"
+#include "TypedArrayType.h"
 #include <gobject/gvaluecollector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -1613,7 +1614,7 @@ gpointer jsc_value_array_buffer_get_data(JSCValue* value, gsize* size)
  * jsc_value_array_buffer_get_size:
  * @value: A #JSCValue
  *
- * Gets the size of the array buffer.
+ * Gets the size in bytes of the array buffer.
  *
  * Obtains the size in bytes of the memory region that holds the contents of
  * an %ArrayBuffer.
@@ -1638,6 +1639,427 @@ gsize jsc_value_array_buffer_get_size(JSCValue* value)
         return 0;
 
     return size;
+}
+
+/**
+ * JSCTypedArrayType:
+ * @JSC_TYPED_ARRAY_NONE: Not a typed array, or type unsupported.
+ * @JSC_TYPED_ARRAY_INT8: Array elements are 8-bit signed integers (int8_t).
+ * @JSC_TYPED_ARRAY_INT16: Array elements are 16-bit signed integers (int16_t).
+ * @JSC_TYPED_ARRAY_INT32: Array elements are 32-bit signed integers (int32_t).
+ * @JSC_TYPED_ARRAY_INT64: Array elements are 64-bit signed integers (int64_t).
+ * @JSC_TYPED_ARRAY_UINT8: Array elements are 8-bit unsigned integers (uint8_t).
+ * @JSC_TYPED_ARRAY_UINT8_CLAMPED: Array elements are 8-bit unsigned integers (uint8_t).
+ * @JSC_TYPED_ARRAY_UINT16: Array elements are 16-bit unsigned integers (uint16_t).
+ * @JSC_TYPED_ARRAY_UINT32: Array elements are 32-bit unsigned integers (uint32_t).
+ * @JSC_TYPED_ARRAY_UINT64: Array elements are 64-bit unsigned integers (uint64_t).
+ * @JSC_TYPED_ARRAY_FLOAT32: Array elements are 32-bit floating point numbers (float).
+ * @JSC_TYPED_ARRAY_FLOAT64: Array elements are 64-bit floating point numbers (double).
+ *
+ * Possible types of the elements contained in a typed array.
+ *
+ * Since: 2.38
+ */
+
+static JSTypedArrayType toTypedArrayType(JSCTypedArrayType type)
+{
+    switch (type) {
+    case JSC_TYPED_ARRAY_NONE:
+        return kJSTypedArrayTypeNone;
+    case JSC_TYPED_ARRAY_INT8:
+        return kJSTypedArrayTypeInt8Array;
+    case JSC_TYPED_ARRAY_INT16:
+        return kJSTypedArrayTypeInt16Array;
+    case JSC_TYPED_ARRAY_INT32:
+        return kJSTypedArrayTypeInt32Array;
+    case JSC_TYPED_ARRAY_INT64:
+        return kJSTypedArrayTypeBigInt64Array;
+    case JSC_TYPED_ARRAY_UINT8:
+        return kJSTypedArrayTypeUint8Array;
+    case JSC_TYPED_ARRAY_UINT8_CLAMPED:
+        return kJSTypedArrayTypeUint8ClampedArray;
+    case JSC_TYPED_ARRAY_UINT16:
+        return kJSTypedArrayTypeUint16Array;
+    case JSC_TYPED_ARRAY_UINT32:
+        return kJSTypedArrayTypeUint32Array;
+    case JSC_TYPED_ARRAY_UINT64:
+        return kJSTypedArrayTypeBigUint64Array;
+    case JSC_TYPED_ARRAY_FLOAT32:
+        return kJSTypedArrayTypeFloat32Array;
+    case JSC_TYPED_ARRAY_FLOAT64:
+        return kJSTypedArrayTypeFloat64Array;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static JSC::TypedArrayType toJSCTypedArrayType(JSCTypedArrayType type)
+{
+    switch (type) {
+    case JSC_TYPED_ARRAY_NONE:
+        return JSC::TypedArrayType::NotTypedArray;
+    case JSC_TYPED_ARRAY_INT8:
+        return JSC::TypedArrayType::TypeInt8;
+    case JSC_TYPED_ARRAY_INT16:
+        return JSC::TypedArrayType::TypeInt16;
+    case JSC_TYPED_ARRAY_INT32:
+        return JSC::TypedArrayType::TypeInt32;
+    case JSC_TYPED_ARRAY_INT64:
+        return JSC::TypedArrayType::TypeBigInt64;
+    case JSC_TYPED_ARRAY_UINT8:
+        return JSC::TypedArrayType::TypeUint8;
+    case JSC_TYPED_ARRAY_UINT8_CLAMPED:
+        return JSC::TypedArrayType::TypeUint8Clamped;
+    case JSC_TYPED_ARRAY_UINT16:
+        return JSC::TypedArrayType::TypeUint16;
+    case JSC_TYPED_ARRAY_UINT32:
+        return JSC::TypedArrayType::TypeUint32;
+    case JSC_TYPED_ARRAY_UINT64:
+        return JSC::TypedArrayType::TypeBigUint64;
+    case JSC_TYPED_ARRAY_FLOAT32:
+        return JSC::TypedArrayType::TypeFloat32;
+    case JSC_TYPED_ARRAY_FLOAT64:
+        return JSC::TypedArrayType::TypeFloat64;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+/**
+ * jsc_value_new_typed_array:
+ * @context: a #JSCContext
+ * @type: the type of array elements
+ * @length: number of elements in the array
+ *
+ * Create a new typed array containing a given amount of elements.
+ *
+ * Create a #JSCValue referencing a new typed array with space for @length
+ * elements of a given @type. As all typed arrays must have an associated
+ * `ArrayBuffer`, a new one of suitable size will be allocated to store
+ * the elements, which will be initialized to zero.
+ *
+ * The @type must *not* be %JSC_TYPED_ARRAY_NONE.
+ *
+ * Returns: (transfer full): a #JSCValue
+ *
+ * Since: 2.38
+ */
+JSCValue* jsc_value_new_typed_array(JSCContext* context, JSCTypedArrayType type, gsize count)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+    g_return_val_if_fail(type != JSC_TYPED_ARRAY_NONE, nullptr);
+
+    auto* jsContext = jscContextGetJSContext(context);
+
+    JSValueRef exception = nullptr;
+    auto* jsTypedArray = JSObjectMakeTypedArray(jsContext, toTypedArrayType(type), count, &exception);
+    if (jscContextHandleExceptionIfNeeded(context, exception))
+        return nullptr;
+
+    return jscContextGetOrCreateValue(context, jsTypedArray).leakRef();
+}
+
+/**
+ * jsc_value_new_typed_array_with_buffer:
+ * @array_buffer: a #JSCValue.
+ * @type: type of array elements.
+ * @offset: offset, in bytes.
+ * @length: number of array elements, or `-1`.
+ *
+ * Create a new typed array value with elements from an array buffer.
+ *
+ * Create a #JSCValue referencing a new typed array value containing
+ * elements of the given @type, where the elements are stored at the memory
+ * region represented by the @array_buffer.
+ *
+ * The @type must *not* be %JSC_TYPED_ARRAY_NONE.
+ *
+ * The @offset and @length parameters can be used to indicate which part of
+ * the array buffer can be accessed through the typed array. If both are
+ * omitted (passing zero as @offset, and `-1` as @length), the whole
+ * @array_buffer is exposed through the typed array. Omitting the @length
+ * with a non-zero @offset will expose the remainder of the @array_buffer
+ * starting at the indicated offset.
+ *
+ * Returns: (transfer full): a #JSCValue
+ *
+ * Since: 2.38
+ */
+JSCValue* jsc_value_new_typed_array_with_buffer(JSCValue* arrayBuffer, JSCTypedArrayType type, gsize offset, gssize length)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(arrayBuffer), nullptr);
+    g_return_val_if_fail(jsc_value_is_array_buffer(arrayBuffer), nullptr);
+    g_return_val_if_fail(type != JSC_TYPED_ARRAY_NONE, nullptr);
+    g_return_val_if_fail(length >= -1, nullptr);
+
+    auto* jsContext = jscContextGetJSContext(arrayBuffer->priv->context.get());
+
+    JSValueRef exception = nullptr;
+    auto* jsObject = JSValueToObject(jsContext, arrayBuffer->priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(arrayBuffer->priv->context.get(), exception))
+        return nullptr;
+
+    if (length < 0) {
+        const auto bufferByteSize = JSObjectGetArrayBufferByteLength(jsContext, jsObject, &exception);
+        if (jscContextHandleExceptionIfNeeded(arrayBuffer->priv->context.get(), exception))
+            return nullptr;
+
+        const auto remainingBytes = bufferByteSize - offset;
+        const auto elementByteSize = JSC::elementSize(toJSCTypedArrayType(type));
+        if (remainingBytes >= elementByteSize)
+            length = remainingBytes / elementByteSize;
+        else
+            length = 0;
+    }
+
+    auto* jsTypedArray = JSObjectMakeTypedArrayWithArrayBufferAndOffset(jsContext, toTypedArrayType(type), jsObject, offset, length, &exception);
+    if (jscContextHandleExceptionIfNeeded(arrayBuffer->priv->context.get(), exception))
+        return nullptr;
+
+    return jscContextGetOrCreateValue(arrayBuffer->priv->context.get(), jsTypedArray).leakRef();
+}
+
+/**
+ * jsc_value_is_typed_array:
+ * @value: a #JSCValue
+ *
+ * Determines whether a value is a typed array.
+ *
+ * Returns: Whether @value is a typed array.
+ *
+ * Since: 2.38
+ */
+gboolean jsc_value_is_typed_array(JSCValue* value)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), FALSE);
+
+    return jsc_value_typed_array_get_type(value) != JSC_TYPED_ARRAY_NONE;
+}
+
+/**
+ * jsc_value_typed_array_get_type:
+ * @value: a #JSCValue
+ *
+ * Gets the type of elements contained in a typed array.
+ *
+ * Returns: type of the elements, or %JSC_TYPED_ARRAY_NONE if @value is not a typed array.
+ *
+ * Since: 2.38
+ */
+JSCTypedArrayType jsc_value_typed_array_get_type(JSCValue *value)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), JSC_TYPED_ARRAY_NONE);
+
+    JSC::JSGlobalObject* globalObject = toJS(jscContextGetJSContext(value->priv->context.get()));
+    JSC::VM& vm = globalObject->vm();
+    JSC::JSLockHolder locker(vm);
+
+    JSC::JSValue jsValue = toJS(globalObject, value->priv->jsValue);
+    if (!jsValue.isObject())
+        return JSC_TYPED_ARRAY_NONE;
+
+    switch (jsValue.getObject()->classInfo(vm)->typedArrayStorageType) {
+    case JSC::TypeDataView:
+    case JSC::NotTypedArray:
+        return JSC_TYPED_ARRAY_NONE;
+    case JSC::TypeInt8:
+        return JSC_TYPED_ARRAY_INT8;
+    case JSC::TypeUint8:
+        return JSC_TYPED_ARRAY_UINT8;
+    case JSC::TypeUint8Clamped:
+        return JSC_TYPED_ARRAY_UINT8_CLAMPED;
+    case JSC::TypeInt16:
+        return JSC_TYPED_ARRAY_INT16;
+    case JSC::TypeUint16:
+        return JSC_TYPED_ARRAY_UINT16;
+    case JSC::TypeInt32:
+        return JSC_TYPED_ARRAY_INT32;
+    case JSC::TypeUint32:
+        return JSC_TYPED_ARRAY_UINT32;
+    case JSC::TypeFloat32:
+        return JSC_TYPED_ARRAY_FLOAT32;
+    case JSC::TypeFloat64:
+        return JSC_TYPED_ARRAY_FLOAT64;
+    case JSC::TypeBigInt64:
+        return JSC_TYPED_ARRAY_INT64;
+    case JSC::TypeBigUint64:
+        return JSC_TYPED_ARRAY_UINT64;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+/**
+ * jsc_value_typed_array_get_data:
+ * @value: a #JSCValue
+ * @length: (nullable) (out): location to return the number of elements contained
+ *
+ * Obtains a pointer to the memory region that holds the elements of the typed
+ * array; modifications done to them will be visible to JavaScript code. If
+ * @length is not %NULL, the number of elements contained in the typed array
+ * are also stored in the pointed location.
+ *
+ * The returned pointer needs to be casted to the appropriate type (see
+ * #JSCTypedArrayType), and has the `offset` over the underlying array
+ * buffer data applied—that is, points to the first element of the typed
+ * array:
+ *
+ * |[<!-- language="C" -->
+ * if (jsc_value_typed_array_get_type(value) != JSC_TYPED_ARRAY_UINT32)
+ *     g_error ("Only arrays of uint32_t are supported");
+ *
+ * gsize count = 0;
+ * uint32_t *elements = jsc_value_typed_array_get_contents (value, &count);
+ * for (gsize i = 0; i < count; i++)
+ *      g_print ("index %zu, value %" PRIu32 "\n", i, elements[i]);
+ * ]|
+ *
+ * Note that the pointer returned by this function is not guaranteed to remain
+ * the same after calls to other JSC API functions. See
+ * jsc_value_array_buffer_get_data() for details.
+ *
+ * Returns: (transfer none): pointer to memory.
+ *
+ * Since: 2.38
+ */
+gpointer jsc_value_typed_array_get_data(JSCValue* value, gsize* length)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), nullptr);
+
+    auto* jsContext = jscContextGetJSContext(value->priv->context.get());
+
+    JSValueRef exception = nullptr;
+    auto* jsObject = JSValueToObject(jsContext, value->priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return nullptr;
+
+    auto* bytes = JSObjectGetTypedArrayBytesPtr(jsContext, jsObject, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return nullptr;
+
+    // Pointer may have an offset, which we want to return directly a pointer to the actual data.
+    const auto offset = JSObjectGetTypedArrayByteOffset(jsContext, jsObject, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return nullptr;
+
+    if (length) {
+        const auto numElements = JSObjectGetTypedArrayLength(jsContext, jsObject, &exception);
+        if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+            return nullptr;
+        *length = numElements;
+    }
+
+    return static_cast<uint8_t*>(bytes) + offset;
+}
+
+/**
+ * jsc_value_typed_array_get_length:
+ * @value: a #JSCValue
+ *
+ * Gets the number of elements in a typed array.
+ *
+ * Returns: number of elements.
+ *
+ * Since: 2.38
+ */
+gsize jsc_value_typed_array_get_length(JSCValue* value)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), 0);
+
+    auto* jsContext = jscContextGetJSContext(value->priv->context.get());
+
+    JSValueRef exception = nullptr;
+    auto* jsObject = JSValueToObject(jsContext, value->priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return 0;
+
+    const auto length = JSObjectGetTypedArrayLength(jsContext, jsObject, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return 0;
+
+    return length;
+}
+
+/**
+ * jsc_value_typed_array_get_size:
+ * @value: a #JSCValue
+ *
+ * Gets the size of a typed array.
+ *
+ * Returns: size, in bytes.
+ *
+ * Since: 2.38
+ */
+gsize jsc_value_typed_array_get_size(JSCValue* value)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), 0);
+
+    auto* jsContext = jscContextGetJSContext(value->priv->context.get());
+
+    JSValueRef exception = nullptr;
+    auto* jsObject = JSValueToObject(jsContext, value->priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return 0;
+
+    const auto size = JSObjectGetTypedArrayByteLength(jsContext, jsObject, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return 0;
+
+    return size;
+}
+
+/**
+ * jsc_value_typed_array_get_offset:
+ * @value: A #JSCValue
+ *
+ * Gets the offset over the underlying array buffer data.
+ *
+ * Returns: offset, in bytes.
+ *
+ * Since: 2.38
+ */
+gsize jsc_value_typed_array_get_offset(JSCValue* value)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), 0);
+
+    auto* jsContext = jscContextGetJSContext(value->priv->context.get());
+
+    JSValueRef exception = nullptr;
+    auto* jsObject = JSValueToObject(jsContext, value->priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return 0;
+
+    const auto offset = JSObjectGetTypedArrayByteOffset(jsContext, jsObject, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return 0;
+
+    return offset;
+}
+
+/**
+ * jsc_value_typed_array_get_buffer:
+ * @value: a #JSCValue
+ *
+ * Obtain the %ArrayBuffer for the memory region of the typed array elements.
+ *
+ * Returns: (transfer full): A #JSCValue
+ *
+ * Since: 2.38
+ */
+JSCValue* jsc_value_typed_array_get_buffer(JSCValue* value)
+{
+    g_return_val_if_fail(JSC_IS_VALUE(value), nullptr);
+
+    auto* jsContext = jscContextGetJSContext(value->priv->context.get());
+
+    JSValueRef exception = nullptr;
+    auto* jsObject = JSValueToObject(jsContext, value->priv->jsValue, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return nullptr;
+
+    auto* jsArrayBuffer = JSObjectGetTypedArrayBuffer(jsContext, jsObject, &exception);
+    if (jscContextHandleExceptionIfNeeded(value->priv->context.get(), exception))
+        return nullptr;
+
+    return jscContextGetOrCreateValue(value->priv->context.get(), jsArrayBuffer).leakRef();
 }
 
 /**

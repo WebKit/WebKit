@@ -1,3 +1,24 @@
+2022-03-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GLib] Expose typed arrays in the public API
+        https://bugs.webkit.org/show_bug.cgi?id=197535
+
+        Reviewed by Carlos Garcia Campos.
+
+        This adds a set of new functions to operate on JSCValue objects which refer to typed
+        arrays in the JavaScript side of the world. Typed array values can be created with an
+        existing ArrayBuffer to hold the contents, in which case custom allocations are possible;
+        or letting JSC handle allocation. Operating on typed arrays is expected to be done on an
+        element-by-element basis, and in general it is recommended to use the functions dealing
+        with the "length" (number of elements) of typed arrays; nevertheless it is also possible
+        to retrieve their "size" and "offset" over the underlying ArrayBuffer, and/or retrieving
+        said ArrayBuffer.
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp: Added test for typed arrays.
+        (elementSize):
+        (testJSCTypedArray):
+        (main):
+
 2022-03-14  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL context should use discrete gpu if the context is created when the window is on external monitor, ANGLE Metal backend

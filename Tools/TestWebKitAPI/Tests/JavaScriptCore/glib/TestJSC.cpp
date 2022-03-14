@@ -2971,6 +2971,355 @@ static void testJSCArrayBuffer()
     }
 }
 
+static constexpr size_t elementSize(JSCTypedArrayType type)
+{
+    switch (type) {
+    case JSC_TYPED_ARRAY_INT8: return sizeof(int8_t);
+    case JSC_TYPED_ARRAY_INT16: return sizeof(int16_t);
+    case JSC_TYPED_ARRAY_INT32: return sizeof(int32_t);
+    case JSC_TYPED_ARRAY_INT64: return sizeof(int64_t);
+    case JSC_TYPED_ARRAY_UINT8: return sizeof(uint8_t);
+    case JSC_TYPED_ARRAY_UINT8_CLAMPED: return sizeof(uint8_t);
+    case JSC_TYPED_ARRAY_UINT16: return sizeof(uint16_t);
+    case JSC_TYPED_ARRAY_UINT32: return sizeof(uint32_t);
+    case JSC_TYPED_ARRAY_UINT64: return sizeof(uint64_t);
+    case JSC_TYPED_ARRAY_FLOAT32: return sizeof(float);
+    case JSC_TYPED_ARRAY_FLOAT64: return sizeof(double);
+    case JSC_TYPED_ARRAY_NONE: break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void testJSCTypedArray()
+{
+    static const struct {
+        const char* name;
+        JSCTypedArrayType type;
+    } typeMap[] = {
+        { "Int8Array", JSC_TYPED_ARRAY_INT8 },
+        { "Int16Array", JSC_TYPED_ARRAY_INT16 },
+        { "Int32Array", JSC_TYPED_ARRAY_INT32 },
+        { "BigInt64Array", JSC_TYPED_ARRAY_INT64 },
+        { "Uint8Array", JSC_TYPED_ARRAY_UINT8 },
+        { "Uint8ClampedArray", JSC_TYPED_ARRAY_UINT8_CLAMPED },
+        { "Uint16Array", JSC_TYPED_ARRAY_UINT16 },
+        { "Uint32Array", JSC_TYPED_ARRAY_UINT32 },
+        { "BigUint64Array", JSC_TYPED_ARRAY_UINT64 },
+        { "Float32Array", JSC_TYPED_ARRAY_FLOAT32 },
+        { "Float64Array", JSC_TYPED_ARRAY_FLOAT64 },
+    };
+
+    for (const auto& entry : typeMap) {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        // Create in JS, check types using the API.
+        const bool isBigInt = g_str_has_prefix(entry.name, "Big");
+        GUniquePtr<char> script(g_strdup_printf("const arr = new %s(1); arr[0] = 42%s; arr;", entry.name, isBigInt ? "n" : ""));
+        auto value = adoptGRef(jsc_context_evaluate(context.get(), script.get(), -1));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_typed_array(value.get()));
+        g_assert_cmpuint(jsc_value_typed_array_get_length(value.get()), ==, 1);
+        g_assert_cmpuint(jsc_value_typed_array_get_offset(value.get()), ==, 0);
+        g_assert_cmpuint(jsc_value_typed_array_get_type(value.get()), ==, entry.type);
+        g_assert_cmpuint(jsc_value_typed_array_get_size(value.get()), ==, elementSize(entry.type));
+    }
+
+    for (const auto& entry : typeMap) {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        // Create using the API, check type in JS.
+        auto value = adoptGRef(jsc_value_new_typed_array(context.get(), entry.type, 1));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_typed_array(value.get()));
+        g_assert_cmpuint(jsc_value_typed_array_get_length(value.get()), ==, 1);
+        g_assert_cmpuint(jsc_value_typed_array_get_offset(value.get()), ==, 0);
+        g_assert_cmpuint(jsc_value_typed_array_get_type(value.get()), ==, entry.type);
+        g_assert_cmpuint(jsc_value_typed_array_get_size(value.get()), ==, elementSize(entry.type));
+
+        jsc_context_set_value(context.get(), "arr", value.get());
+
+        value = adoptGRef(jsc_context_evaluate(context.get(), "arr.constructor.name;", -1));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_string(value.get()));
+        GUniquePtr<char> typeName(jsc_value_to_string(value.get()));
+        g_assert_cmpstr(typeName.get(), ==, entry.name);
+
+        value = adoptGRef(jsc_context_evaluate(context.get(), "arr.length;", -1));
+        checker.watch(value.get());
+        g_assert_true(jsc_value_is_number(value.get()));
+        g_assert_cmpint(jsc_value_to_int32(value.get()), == , 1);
+    }
+
+    {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        int data = 0x42;
+        auto value = adoptGRef(jsc_value_new_array_buffer(context.get(), &data, sizeof(data), nullptr, nullptr));
+        g_assert_false(jsc_value_is_typed_array(value.get()));
+        g_assert_cmpuint(jsc_value_typed_array_get_type(value.get()), ==, JSC_TYPED_ARRAY_NONE);
+    }
+
+    {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        auto value = adoptGRef(jsc_value_new_number(context.get(), 1.23));
+        g_assert_false(jsc_value_is_typed_array(value.get()));
+        g_assert_cmpuint(jsc_value_typed_array_get_type(value.get()), ==, JSC_TYPED_ARRAY_NONE);
+    }
+
+    {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        int16_t point3d[3] = { -1, 10, 42 };
+        auto value = adoptGRef(jsc_value_new_array_buffer(context.get(), point3d, sizeof(point3d), nullptr, nullptr));
+        checker.watch(value.get());
+
+        value = adoptGRef(jsc_value_new_typed_array_with_buffer(value.get(), JSC_TYPED_ARRAY_INT16, 0, -1));
+        checker.watch(value.get());
+
+        g_assert_cmpuint(jsc_value_typed_array_get_length(value.get()), ==, G_N_ELEMENTS(point3d));
+        g_assert_cmpuint(jsc_value_typed_array_get_size(value.get()), ==, sizeof(point3d));
+        g_assert_cmpuint(jsc_value_typed_array_get_offset(value.get()), ==, 0);
+
+        jsc_context_set_value(context.get(), "p", value.get());
+        value = adoptGRef(jsc_context_evaluate(context.get(), "p[0] + p[1] * p[2];", -1));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_number(value.get()));
+        g_assert_cmpint(jsc_value_to_int32(value.get()), ==, point3d[0] + point3d[1] * point3d[2]);
+
+        point3d[0] = -20;
+        point3d[1] = -11;
+
+        value = adoptGRef(jsc_context_evaluate(context.get(), "p[0] + p[1] * p[2];", -1));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_number(value.get()));
+        g_assert_cmpint(jsc_value_to_int32(value.get()), ==, point3d[0] + point3d[1] * point3d[2]);
+    }
+
+    {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        auto value = adoptGRef(jsc_context_evaluate(context.get(), "let data = Int32Array.of(-314, 150, 42); data;", -1));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_typed_array(value.get()));
+        g_assert_cmpuint(jsc_value_typed_array_get_type(value.get()), ==, JSC_TYPED_ARRAY_INT32);
+        g_assert_cmpuint(jsc_value_typed_array_get_offset(value.get()), ==, 0);
+
+        gsize length = 0;
+        auto* items = static_cast<int32_t*>(jsc_value_typed_array_get_data(value.get(), &length));
+        g_assert_cmpuint(length, ==, 3);
+        g_assert_cmpuint(jsc_value_typed_array_get_size(value.get()), ==, sizeof(int32_t) * 3);
+
+        int32_t sum = 0;
+        for (auto i = 0; i < length; i++) {
+            sum += items[i];
+            items[i] = length - i;
+        }
+        g_assert_cmpint(sum, ==, -122);
+
+        value = adoptGRef(jsc_context_evaluate(context.get(), "data[0] == 3 && data[1] == 2 && data[2] == 1;", -1));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_boolean(value.get()));
+        g_assert_true(jsc_value_to_boolean(value.get()));
+    }
+
+    {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        auto value = adoptGRef(jsc_context_evaluate(context.get(), "let data = new BigInt64Array(1); data;", -1));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_typed_array(value.get()));
+        g_assert_cmpuint(jsc_value_typed_array_get_type(value.get()), ==, JSC_TYPED_ARRAY_INT64);
+        g_assert_cmpuint(jsc_value_typed_array_get_size(value.get()), ==, sizeof(int64_t));
+
+        value = adoptGRef(jsc_value_typed_array_get_buffer(value.get()));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_array_buffer(value.get()));
+        gsize size = 0;
+        auto* data = static_cast<int64_t*>(jsc_value_array_buffer_get_data(value.get(), &size));
+        g_assert_cmpuint(size, ==, sizeof(int64_t));
+
+        const int64_t zero = 0;
+        g_assert_cmpmem(data, sizeof(int64_t), &zero, sizeof(zero));
+
+        *data = 0xC0FFEE;
+        value = adoptGRef(jsc_context_evaluate(context.get(), "data[0] == 0xC0FFEE;", -1));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_boolean(value.get()));
+        g_assert_true(jsc_value_to_boolean(value.get()));
+    }
+
+    {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        uint8_t data[10];
+        for (auto i = 0; i < sizeof(data); i++)
+            data[i] = 42 + i;
+
+        auto value = adoptGRef(jsc_value_new_array_buffer(context.get(), data, sizeof(data), nullptr, nullptr));
+        checker.watch(value.get());
+
+        jsc_context_set_value(context.get(), "data", value.get());
+        value = adoptGRef(jsc_context_evaluate(context.get(), "new Uint8Array(data, 4, 2);", -1));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_typed_array(value.get()));
+        g_assert_cmpuint(jsc_value_typed_array_get_type(value.get()), ==, JSC_TYPED_ARRAY_UINT8);
+        g_assert_cmpuint(jsc_value_typed_array_get_size(value.get()), ==, sizeof(uint8_t) * 2);
+        g_assert_cmpuint(jsc_value_typed_array_get_offset(value.get()), ==, sizeof(uint8_t) * 4);
+
+        gsize length = 0;
+        uint8_t* bytes = static_cast<uint8_t*>(jsc_value_typed_array_get_data(value.get(), &length));
+        g_assert_cmpuint(length, ==, 2);
+        g_assert_true(bytes == data + 4);
+    }
+
+    {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        uint8_t data[10];
+        for (auto i = 0; i < sizeof(data); i++)
+            data[i] = 42 + i;
+
+        auto value = adoptGRef(jsc_value_new_array_buffer(context.get(), data, sizeof(data), nullptr, nullptr));
+        checker.watch(value.get());
+
+        value = adoptGRef(jsc_value_new_typed_array_with_buffer(value.get(), JSC_TYPED_ARRAY_UINT8, 4, 2));
+        checker.watch(value.get());
+
+        g_assert_true(jsc_value_is_typed_array(value.get()));
+        g_assert_cmpuint(jsc_value_typed_array_get_type(value.get()), ==, JSC_TYPED_ARRAY_UINT8);
+        g_assert_cmpuint(jsc_value_typed_array_get_size(value.get()), ==, sizeof(uint8_t) * 2);
+        g_assert_cmpuint(jsc_value_typed_array_get_offset(value.get()), ==, sizeof(uint8_t) * 4);
+
+        gsize length = 0;
+        uint8_t* bytes = static_cast<uint8_t*>(jsc_value_typed_array_get_data(value.get(), &length));
+        g_assert_cmpuint(length, ==, 2);
+        g_assert_true(bytes == data + 4);
+    }
+
+    static const struct {
+        JSCTypedArrayType type;
+        size_t size;
+        size_t offset;
+        ssize_t length;
+        ssize_t expectedLength;
+    } validOffsetsAndSizes[] = {
+        { JSC_TYPED_ARRAY_UINT8,  10, 0, -1, 10 },
+        { JSC_TYPED_ARRAY_UINT16, 10, 0, -1,  5 },
+        { JSC_TYPED_ARRAY_UINT32, 10, 0, -1,  2 },
+        { JSC_TYPED_ARRAY_UINT64, 10, 0, -1,  1 },
+        { JSC_TYPED_ARRAY_UINT64, 10, 8, -1,  0 },
+        { JSC_TYPED_ARRAY_UINT8,  10, 1, -1,  9 },
+        { JSC_TYPED_ARRAY_UINT16, 10, 2, -1,  4 },
+        { JSC_TYPED_ARRAY_UINT32, 10, 4, -1,  1 },
+        { JSC_TYPED_ARRAY_UINT64, 10, 8, -1,  0 },
+        { JSC_TYPED_ARRAY_UINT16, 20, 8,  6,  6 },
+        { JSC_TYPED_ARRAY_UINT32, 20, 8,  0,  0 },
+        { JSC_TYPED_ARRAY_UINT32, 20, 0,  0,  0 },
+    };
+
+    for (const auto& item : validOffsetsAndSizes) {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        auto* data = g_malloc(item.size);
+        auto value = adoptGRef(jsc_value_new_array_buffer(context.get(), data, item.size, g_free, data));
+        checker.watch(value.get());
+
+        value = adoptGRef(jsc_value_new_typed_array_with_buffer(value.get(), item.type, item.offset, item.length));
+        checker.watch(value.get());
+
+        g_assert_cmpuint(jsc_value_typed_array_get_type(value.get()), ==, item.type);
+        g_assert_cmpuint(jsc_value_typed_array_get_offset(value.get()), ==, item.offset);
+        g_assert_cmpuint(jsc_value_typed_array_get_length(value.get()), ==, item.expectedLength);
+        g_assert_cmpuint(jsc_value_typed_array_get_size(value.get()), ==, elementSize(item.type) * item.expectedLength);
+    }
+
+    static const struct {
+        JSCTypedArrayType type;
+        size_t size;
+        size_t offset;
+        ssize_t length;
+    } invalidOffsetsAndSizes[] = {
+        { JSC_TYPED_ARRAY_UINT8,  1, 2, -1 },
+        { JSC_TYPED_ARRAY_UINT8,  1, 2,  1 },
+        { JSC_TYPED_ARRAY_UINT8,  1, 2,  0 },
+        { JSC_TYPED_ARRAY_UINT16, 4, 1, -1 },
+        { JSC_TYPED_ARRAY_UINT16, 4, 1,  1 },
+        { JSC_TYPED_ARRAY_UINT16, 4, 1,  0 },
+        { JSC_TYPED_ARRAY_UINT32, 0, 1, -1 },
+        { JSC_TYPED_ARRAY_UINT32, 5, 4,  1 },
+    };
+
+    for (const auto& item : invalidOffsetsAndSizes) {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        auto* data = g_malloc(item.size);
+        auto value = adoptGRef(jsc_value_new_array_buffer(context.get(), data, item.size, g_free, data));
+        checker.watch(value.get());
+
+        bool didThrow = false;
+        g_assert_throw_begin(exceptionHandler, didThrow);
+        value = adoptGRef(jsc_value_new_typed_array_with_buffer(value.get(), item.type, item.offset, item.length));
+        g_assert_did_throw(exceptionHandler, didThrow);
+    }
+
+    {
+        LeakChecker checker;
+        auto context = adoptGRef(jsc_context_new());
+        checker.watch(context.get());
+        ExceptionHandler exceptionHandler(context.get());
+
+        // Allocation too big, cannot be indexed with a 32-bit integer.
+        bool didThrow = false;
+        g_assert_throw_begin(exceptionHandler, didThrow);
+        auto value = adoptGRef(jsc_value_new_typed_array(context.get(), JSC_TYPED_ARRAY_UINT64, SIZE_MAX));
+        g_assert_did_throw(exceptionHandler, didThrow);
+    }
+}
+
 typedef struct {
     Foo parent;
     int bar;
@@ -4332,6 +4681,7 @@ int main(int argc, char** argv)
     g_test_add_func("/jsc/object", testJSCObject);
     g_test_add_func("/jsc/class", testJSCClass);
     g_test_add_func("/jsc/array-buffer", testJSCArrayBuffer);
+    g_test_add_func("/jsc/typed-array", testJSCTypedArray);
     g_test_add_func("/jsc/prototypes", testJSCPrototypes);
     g_test_add_func("/jsc/exceptions", testJSCExceptions);
     g_test_add_func("/jsc/promises", testJSCPromises);

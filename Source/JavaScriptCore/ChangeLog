@@ -1,3 +1,34 @@
+2022-03-14  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GLib] Expose typed arrays in the public API
+        https://bugs.webkit.org/show_bug.cgi?id=197535
+
+        Reviewed by Carlos Garcia Campos.
+
+        This adds a set of new functions to operate on JSCValue objects which refer to typed
+        arrays in the JavaScript side of the world. Typed array values can be created with an
+        existing ArrayBuffer to hold the contents, in which case custom allocations are possible;
+        or letting JSC handle allocation. Operating on typed arrays is expected to be done on an
+        element-by-element basis, and in general it is recommended to use the functions dealing
+        with the "length" (number of elements) of typed arrays; nevertheless it is also possible
+        to retrieve their "size" and "offset" over the underlying ArrayBuffer, and/or retrieving
+        said ArrayBuffer.
+
+        * API/glib/JSCValue.cpp:
+        (toTypedArrayType):
+        (toJSCTypedArrayType):
+        (jsc_value_new_typed_array):
+        (jsc_value_new_typed_array_with_buffer):
+        (jsc_value_is_typed_array):
+        (jsc_value_typed_array_get_buffer):
+        (jsc_value_typed_array_get_data):
+        (jsc_value_typed_array_get_length):
+        (jsc_value_typed_array_get_offset):
+        (jsc_value_typed_array_get_size):
+        (jsc_value_typed_array_get_type):
+        * API/glib/JSCValue.h:
+        * API/glib/docs/jsc-glib-4.0-sections.txt:
+
 2022-03-13  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Use addressTempRegister in loadValue(void *) on 32 bits

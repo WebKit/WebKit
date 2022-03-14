@@ -49,6 +49,21 @@ typedef enum {
     JSC_VALUE_PROPERTY_WRITABLE     = 1 << 2
 } JSCValuePropertyFlags;
 
+typedef enum {
+    JSC_TYPED_ARRAY_NONE = 0,
+    JSC_TYPED_ARRAY_INT8,
+    JSC_TYPED_ARRAY_INT16,
+    JSC_TYPED_ARRAY_INT32,
+    JSC_TYPED_ARRAY_INT64,
+    JSC_TYPED_ARRAY_UINT8,
+    JSC_TYPED_ARRAY_UINT8_CLAMPED,
+    JSC_TYPED_ARRAY_UINT16,
+    JSC_TYPED_ARRAY_UINT32,
+    JSC_TYPED_ARRAY_UINT64,
+    JSC_TYPED_ARRAY_FLOAT32,
+    JSC_TYPED_ARRAY_FLOAT64,
+} JSCTypedArrayType;
+
 struct _JSCValue {
     GObject parent;
 
@@ -262,6 +277,39 @@ jsc_value_array_buffer_get_data           (JSCValue             *value,
 
 JSC_API gsize
 jsc_value_array_buffer_get_size           (JSCValue             *value);
+
+JSC_API JSCValue *
+jsc_value_new_typed_array                 (JSCContext           *context,
+                                           JSCTypedArrayType     type,
+                                           gsize                 length);
+
+JSC_API JSCValue *
+jsc_value_new_typed_array_with_buffer     (JSCValue             *array_buffer,
+                                           JSCTypedArrayType     type,
+                                           gsize                 offset,
+                                           gssize                length);
+
+JSC_API gboolean
+jsc_value_is_typed_array                  (JSCValue             *value);
+
+JSC_API JSCTypedArrayType
+jsc_value_typed_array_get_type            (JSCValue             *value);
+
+JSC_API gpointer
+jsc_value_typed_array_get_data            (JSCValue             *value,
+                                           gsize                *length);
+
+JSC_API gsize
+jsc_value_typed_array_get_length          (JSCValue             *value);
+
+JSC_API gsize
+jsc_value_typed_array_get_size            (JSCValue             *value);
+
+JSC_API gsize
+jsc_value_typed_array_get_offset          (JSCValue             *value);
+
+JSC_API JSCValue *
+jsc_value_typed_array_get_buffer          (JSCValue             *value);
 
 JSC_API gboolean
 jsc_value_is_constructor                  (JSCValue             *value);
