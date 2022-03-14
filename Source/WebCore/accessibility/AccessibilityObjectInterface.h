@@ -1266,22 +1266,8 @@ public:
     virtual void decrement() = 0;
 
     virtual const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) = 0;
-
-    enum class DescendIfIgnored : uint8_t {
-        No,
-        Yes
-    };
-    virtual void addChildren() = 0;
-    virtual void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes) = 0;
-    virtual void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) = 0;
     Vector<AXID> childrenIDs(bool updateChildrenIfNecessary = true);
-
-    virtual bool canHaveChildren() const = 0;
     virtual void updateChildrenIfNecessary() = 0;
-    virtual void setNeedsToUpdateChildren() = 0;
-    virtual void setNeedsToUpdateSubtree() = 0;
-    virtual void clearChildren() = 0;
-    virtual bool needsToUpdateChildren() const = 0;
     virtual void detachFromParent() = 0;
     virtual bool isDetachedFromParent() = 0;
 

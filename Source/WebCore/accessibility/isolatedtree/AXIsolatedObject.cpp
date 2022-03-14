@@ -2219,48 +2219,6 @@ ScrollView* AXIsolatedObject::scrollViewAncestor() const
     return nullptr;
 }
 
-void AXIsolatedObject::addChildren()
-{
-    ASSERT_NOT_REACHED();
-}
-
-void AXIsolatedObject::addChild(AXCoreObject*, DescendIfIgnored)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void AXIsolatedObject::insertChild(AXCoreObject*, unsigned, DescendIfIgnored)
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool AXIsolatedObject::canHaveChildren() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-void AXIsolatedObject::setNeedsToUpdateChildren()
-{
-    ASSERT_NOT_REACHED();
-}
-
-void AXIsolatedObject::setNeedsToUpdateSubtree()
-{
-    ASSERT_NOT_REACHED();
-}
-
-void AXIsolatedObject::clearChildren()
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool AXIsolatedObject::needsToUpdateChildren() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::shouldFocusActiveDescendant() const
 {
     ASSERT_NOT_REACHED();

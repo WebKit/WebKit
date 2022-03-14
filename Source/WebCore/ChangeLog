@@ -1,3 +1,31 @@
+2022-03-14  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Move addChildren, addChild, insertChild, canHaveChildren, setNeedsToUpdateChildren, setNeedsToUpdateSubtree, clearChildren, and needsToUpdateChildren out of AXCoreObject interface
+        https://bugs.webkit.org/show_bug.cgi?id=237801
+
+        Reviewed by Andres Gonzalez.
+
+        All of these virtual methods are ASSERT_NOT_REACHED no-ops for AXIsolatedObjects,
+        so this patch moves them to AccessibilityObject.h instead.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::addChildren):
+        (WebCore::AccessibilityObject::canHaveChildren const):
+        (WebCore::AccessibilityObject::setNeedsToUpdateChildren):
+        (WebCore::AccessibilityObject::setNeedsToUpdateSubtree):
+        (WebCore::AccessibilityObject::needsToUpdateChildren const):
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::addChildren): Deleted.
+        (WebCore::AXIsolatedObject::addChild): Deleted.
+        (WebCore::AXIsolatedObject::insertChild): Deleted.
+        (WebCore::AXIsolatedObject::canHaveChildren const): Deleted.
+        (WebCore::AXIsolatedObject::setNeedsToUpdateChildren): Deleted.
+        (WebCore::AXIsolatedObject::setNeedsToUpdateSubtree): Deleted.
+        (WebCore::AXIsolatedObject::clearChildren): Deleted.
+        (WebCore::AXIsolatedObject::needsToUpdateChildren const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2022-03-14  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] marker-start should support discrete animation

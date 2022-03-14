@@ -513,16 +513,16 @@ public:
 
     virtual void updateAccessibilityRole() { }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
-    void addChildren() override { }
-    void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes) override;
-    void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) override;
-
-    bool canHaveChildren() const override { return true; }
+    virtual void addChildren() { }
+    enum class DescendIfIgnored : uint8_t { No, Yes };
+    virtual void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes);
+    virtual void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes);
+    virtual bool canHaveChildren() const { return true; }
     void updateChildrenIfNecessary() override;
-    void setNeedsToUpdateChildren() override { }
-    void setNeedsToUpdateSubtree() override { }
-    void clearChildren() override;
-    bool needsToUpdateChildren() const override { return false; }
+    virtual void setNeedsToUpdateChildren() { }
+    virtual void setNeedsToUpdateSubtree() { }
+    virtual void clearChildren();
+    virtual bool needsToUpdateChildren() const { return false; }
 #if PLATFORM(COCOA)
     void detachFromParent() override;
 #else

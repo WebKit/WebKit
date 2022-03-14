@@ -612,14 +612,6 @@ private:
     Document* topDocument() const override;
     ScrollView* scrollView() const override;
     ScrollView* scrollViewAncestor() const override;
-    void addChildren() override;
-    void addChild(AXCoreObject*, DescendIfIgnored = DescendIfIgnored::Yes) override;
-    void insertChild(AXCoreObject*, unsigned, DescendIfIgnored = DescendIfIgnored::Yes) override;
-    bool canHaveChildren() const override;
-    void setNeedsToUpdateChildren() override;
-    void setNeedsToUpdateSubtree() override;
-    void clearChildren() override;
-    bool needsToUpdateChildren() const override;
     void detachFromParent() override;
     bool shouldFocusActiveDescendant() const override;
     AXCoreObject* activeDescendant() const override;
