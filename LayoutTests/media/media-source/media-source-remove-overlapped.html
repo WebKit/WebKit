@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>mock-media-source</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var initSegment;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function runTest() {
+        findMediaElement();
+
+        source = new MediaSource();
+        waitForEventOn(source, 'sourceopen', sourceOpen);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples1, false, true);
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSamples1() {
+        // Adding buffered ranges [0, 4].
+        samples = concatenateSamples([
+            makeASample(   0,    0, 1000, 1000, 1, SAMPLE_FLAG.SYNC),
+            makeASample(1000, 1000, 1000, 1000, 1, SAMPLE_FLAG.NONE),
+            makeASample(2000, 2000, 1000, 1000, 1, SAMPLE_FLAG.NONE),
+            makeASample(3000, 3000, 1000, 1000, 1, SAMPLE_FLAG.NONE),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', parserReset, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function parserReset() {
+        waitForEventOn(sourceBuffer, 'updateend', loadSamples2, false, true);
+        run('sourceBuffer.abort()');
+        initSegment = makeAInit(8, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+        run('sourceBuffer.appendBuffer(initSegment)');
+    }
+
+    function loadSamples2() {
+        // Adding buffered ranges [3.96, 5.28]. The first sample overlaps with the last [3, 4] one from loadSamples1(),
+        // but the fudge factor allows the insertion without truncating [3, 4]. Those samples are slightly overlapped.
+        samples = concatenateSamples([
+            makeASample(3960, 3960, 330,  1000, 1, SAMPLE_FLAG.SYNC),
+            makeASample(4290, 4290, 330,  1000, 1, SAMPLE_FLAG.NONE),
+            makeASample(4620, 4620, 330,  1000, 1, SAMPLE_FLAG.NONE),
+            makeASample(4950, 4950, 330,  1000, 1, SAMPLE_FLAG.NONE),
+        ]);
+        waitForEventOn(sourceBuffer, 'updateend', remove, false, true);
+        run('sourceBuffer.appendBuffer(samples)');
+    }
+
+    function remove() {
+        waitForEventOn(sourceBuffer, 'updateend', checkRemoved, false, true);
+        run('sourceBuffer.remove(sourceBuffer.buffered.start(0), 3.96)');
+        // This doesn't remove sample [3.96, 4.29], just [0, 4], so the buffered range should remain [4, 5.28].
+        // It's wrong that it remains [4.29, 5.28].
+    }
+
+    function checkRemoved() {
+        testExpected('sourceBuffer.buffered.start(0)', 4, '<=');
+        waitForEventOn(sourceBuffer, 'updateend', checkRemoved2, false, true);
+        run('sourceBuffer.remove(sourceBuffer.buffered.start(0), 5)');
+    }
+
+    function checkRemoved2() {
+        testExpected('sourceBuffer.buffered.length', 0);
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <div>This tests that overlapped samples in the boundaries of removal ranges aren't leaked.</div>
+    <video></video>
+</body>
+</html>

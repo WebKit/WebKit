@@ -1,3 +1,18 @@
+2022-03-14  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [MSE][SourceBuffer] Fix removal of paddings from buffered range
+        https://bugs.webkit.org/show_bug.cgi?id=237780
+
+        Reviewed by Jer Noble.
+
+        This tests that overlapped samples in the boundaries of removal ranges aren't leaked.
+
+        This patch is authored by Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+        See: https://github.com/WebPlatformForEmbedded/WPEWebKit/pull/797
+
+        * media/media-source/media-source-remove-overlapped-expected.txt: Added.
+        * media/media-source/media-source-remove-overlapped.html: Added.
+
 2022-03-14  Youenn Fablet  <youenn@apple.com>
 
         [ MacOS ] imported/w3c/web-platform-tests/webrtc-extensions/transfer-datachannel.html is a flaky failure
