@@ -56,6 +56,14 @@ promise_test(async test => {
     assert_cameras_are_not_equal(cameraAfterDrag, cameraBeforeDrag, "cameras before and after drag are different");
 }, "Dragging over a <model> affects the camera when interactive is true");
 
+promise_test(async test => {
+    const model = await readyModel(test, { interactive: true });
+    const cameraBeforeDrag = await model.getCamera();
+    await dragModel(model);
+    const cameraAfterDrag = await model.getCamera();
+    assert_cameras_are_not_equal(cameraAfterDrag, cameraBeforeDrag, "cameras before and after drag are different");
+}, "Dragging over a <model> affects the camera when interactive is set to true using the HTML attribute as the element is created");
+
 </script>
 </body>
 </html>

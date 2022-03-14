@@ -1,3 +1,20 @@
+2022-03-14  Antoine Quint  <graouts@webkit.org>
+
+        [model] <model interactive> doesn't allow model to be rotated on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=237831
+        rdar://89698247
+
+        Reviewed by Simon Fraser.
+
+        Add a test where the <model> element is added to the DOM with the "interactive"
+        HTML attribute already set.
+
+        * model-element/model-element-interactive-dragging-expected.txt:
+        * model-element/model-element-interactive-dragging.html:
+        * model-element/resources/model-utils.js:
+        (const.makeModel):
+        (const.readyModel.async test):
+
 2022-03-14  Oriol Brufau  <obrufau@igalia.com>
 
         [css] Implement 'text-decoration' as a shorthand.

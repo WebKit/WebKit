@@ -1,3 +1,32 @@
+2022-03-14  Antoine Quint  <graouts@webkit.org>
+
+        [model] <model interactive> doesn't allow model to be rotated on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=237831
+        rdar://89698247
+
+        Reviewed by Simon Fraser.
+
+        A <model> element is *not* interactive by default and the "interactive" HTML attribute
+        must be set explicitly. We used to mirror this initial disabled state by explicitly
+        setting "userInteractionEnabled" to NO on WKModelView during its creation, and we would
+        update that property when HTMLModelElement::isInteractive() would change value.
+
+        However, in the case where the attribute was originally set, we would completely
+        disregard that value.
+
+        We now account for it when we create the GraphicsLayer for the <model> element, letting the
+        existing GraphicsLayer machinery to set the matching "userInteractionEnabled" property on
+        the WKModelView.
+
+        * Modules/model-element/HTMLModelElement.h:
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsToModel):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsToModel):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+
 2022-03-14  Oriol Brufau  <obrufau@igalia.com>
 
         [css] Implement 'text-decoration' as a shorthand.

@@ -1,8 +1,10 @@
 
-const makeModel = () => {
+const makeModel = (options = { interactive: false }) => {
     const source = document.createElement("source");
     source.src = "resources/cube.usdz";
     const model = document.createElement("model");
+    if (options.interactive)
+        model.setAttribute("interactive", "");
     model.appendChild(source);
     return model;
 }
@@ -16,9 +18,9 @@ const bodyAvailability = async () => {
     });
 };
 
-const readyModel = async (test) => {
+const readyModel = async (test, options) => {
     await bodyAvailability();
-    const model = document.body.appendChild(makeModel());
+    const model = document.body.appendChild(makeModel(options));
     test.add_cleanup(() => model.remove());
     await model.ready;
     return model;

@@ -101,6 +101,8 @@ public:
     bool supportsDragging() const;
     bool isDraggableIgnoringAttributes() const final;
 
+    bool isInteractive() const;
+
 #if PLATFORM(COCOA)
     Vector<RetainPtr<id>> accessibilityChildren();
 #endif
@@ -145,8 +147,6 @@ private:
     LayoutPoint flippedLocationInElementForMouseEvent(MouseEvent&);
 
     void setAnimationIsPlaying(bool, DOMPromiseDeferred<void>&&);
-
-    bool isInteractive() const;
 
     LayoutSize contentSize() const;
 

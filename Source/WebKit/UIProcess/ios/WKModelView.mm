@@ -99,7 +99,6 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
 
     _modelInteractionGestureRecognizer = adoptNS([[WKModelInteractionGestureRecognizer alloc] init]);
     [self addGestureRecognizer:_modelInteractionGestureRecognizer.get()];
-    self.userInteractionEnabled = NO;
 
     return self;
 }

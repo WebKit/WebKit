@@ -1285,7 +1285,7 @@ void GraphicsLayerCA::setContentsToImage(Image* image)
 }
 
 #if ENABLE(MODEL_ELEMENT)
-void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
+void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model, ModelInteraction interactive)
 {
     if (model == m_contentsModel)
         return;
@@ -1302,6 +1302,7 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
         m_contentsLayer->setName(MAKE_STATIC_STRING_IMPL("contents model"));
 #endif
 
+        m_contentsLayer->setUserInteractionEnabled(interactive == ModelInteraction::Enabled);
         m_contentsLayer->setAnchorPoint({ });
         m_contentsLayerPurpose = ContentsLayerPurpose::Model;
         contentsLayerChanged = true;

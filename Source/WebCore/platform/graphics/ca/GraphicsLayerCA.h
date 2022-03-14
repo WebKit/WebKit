@@ -154,7 +154,7 @@ public:
 
     WEBCORE_EXPORT void setContentsToSolidColor(const Color&) override;
 #if ENABLE(MODEL_ELEMENT)
-    WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&) override;
+    WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&, ModelInteraction) override;
     WEBCORE_EXPORT PlatformLayerID contentsLayerIDForModel() const override;
 #endif
     WEBCORE_EXPORT void setContentsMinificationFilter(ScalingFilter) override;

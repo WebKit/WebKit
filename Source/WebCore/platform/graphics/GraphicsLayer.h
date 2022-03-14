@@ -525,7 +525,8 @@ public:
     virtual void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) { }
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
 #if ENABLE(MODEL_ELEMENT)
-    virtual void setContentsToModel(RefPtr<Model>&&) { }
+    enum class ModelInteraction : uint8_t { Enabled, Disabled };
+    virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }
     virtual PlatformLayerID contentsLayerIDForModel() const { return 0; }
 #endif
     virtual bool usesContentsLayer() const { return false; }
