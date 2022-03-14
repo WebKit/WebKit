@@ -363,6 +363,7 @@ void FrameView::willBeDestroyed()
 {
     setHasHorizontalScrollbar(false);
     setHasVerticalScrollbar(false);
+    m_scrollCorner = nullptr;
 }
 
 void FrameView::recalculateScrollbarOverlayStyle()
@@ -4125,7 +4126,7 @@ void FrameView::updateScrollCorner()
         }
     }
 
-    if (!cornerStyle)
+    if (!cornerStyle || !renderer)
         m_scrollCorner = nullptr;
     else {
         if (!m_scrollCorner) {
