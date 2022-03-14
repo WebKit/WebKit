@@ -1,7 +1,7 @@
 2022-03-14  Matteo Flores  <matteo_flores@apple.com>
 
         [GTK][WPE] EXIF orientation tests are failing since added in r249364 - "EXIF orientation should be respected when rendering images"
-        Nhttps://bugs.webkit.org/show_bug.cgi?id=201982
+        https://bugs.webkit.org/show_bug.cgi?id=201982
 
         Unreviewed test gardening.
 
