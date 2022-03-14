@@ -1,3 +1,30 @@
+2022-03-14  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION (iOS 15.4 beta) - WebGL yields incorrect results when using preserveDrawingBuffer on iOS 15.4 Beta
+        https://bugs.webkit.org/show_bug.cgi?id=237113
+
+        Reviewed by Myles C. Maxfield.
+
+        Cherry-pick without tests conflicting tests.
+
+        Cherry-pick ANGLE commit: 74f3270214394c896154e4bf9338e7d75002de61
+        From: Gregg Tavares <gman@chromium.org>
+        Date: Thu, 3 Mar 2022 13:13:34 -0800
+        Subject: [PATCH] Metal: Fix for mulitsampled buffers losing their contents
+
+        Fixes tst included as well as WebGL CTS
+
+        https://www.khronos.org/registry/webgl/sdk/tests/conformance2/renderbuffers/multisample-draws-between-blits.html
+
+        Both fail on M1 without this fix.
+
+        Also fixes WebKit bug https://bugs.webkit.org/show_bug.cgi?id=237113
+
+        Bug: angleproject:7073
+
+        * src/libANGLE/renderer/metal/FrameBufferMtl.mm:
+        (rx::FramebufferMtl::setLoadStoreActionOnRenderPassFirstStart):
+
 2022-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Adopt FALLBACK_PLATFORM_NAME in place of FALLBACK_PLATFORM
