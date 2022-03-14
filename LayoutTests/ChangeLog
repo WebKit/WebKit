@@ -1,5 +1,16 @@
 2022-03-14  Youenn Fablet  <youenn@apple.com>
 
+        [BigSur wk2] http/tests/fetch/redirectmode-and-preload.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=230112
+        <rdar://problem/82932781>
+
+        Unreviewed.
+
+        * platform/mac-wk2/TestExpectations:
+        Unflake test now that is passing consistently on bots.
+
+2022-03-14  Youenn Fablet  <youenn@apple.com>
+
         [ BigSur wk2 arm64 ] 4 webrtc/ Layout-tests are consistently timing out
         https://bugs.webkit.org/show_bug.cgi?id=223043
         <rdar://problem/75280718>
