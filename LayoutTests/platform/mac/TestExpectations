@@ -2081,23 +2081,8 @@ webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeou
 [ Debug arm64 ] svg/W3C-SVG-1.1/paths-data-03-f.svg [ Failure ]
 
 # webkit.org/b/223043 the following tests have issues only on Apple Silicon
-[ arm64 ] webrtc/concurrentVideoPlayback2.html [ Pass Timeout ]
-[ arm64 ] webrtc/concurrentVideoPlayback.html [ Pass Timeout ]
-[ arm64 ] webrtc/multi-video.html [ Pass Timeout ]
-[ arm64 ] webrtc/h265.html [ Pass Timeout ]
-[ arm64 ] webrtc/video-setDirection.html [ Pass Timeout ]
-[ arm64 ] webrtc/video-rotation.html [ Pass Timeout ]
-[ arm64 ] webrtc/video-rotation-no-cvo.html [ Pass Timeout ]
-[ arm64 ] webrtc/video-sframe.html [ Pass Timeout ]
-[ arm64 ] webrtc/video.html [ Pass Timeout ]
-[ arm64 ] webrtc/video-with-data-channel.html [ Pass Timeout ]
-[ arm64 ] webrtc/video-unmute.html [ Pass Timeout ]
-[ arm64 ] webrtc/vp9-profile2.html [ Skip ]
 [ arm64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Pass Failure ]
-#These two are failing on intel as well for ews
 webrtc/h264-baseline.html  [ Failure Timeout ]
-
-webkit.org/b/223043 [ BigSur ] webrtc/multi-audio.html [ Pass Failure ]
 
 webkit.org/b/223259 [ arm64 ] webgl/2.0.0/conformance2/textures/misc/tex-mipmap-levels.html [ Failure ]
 

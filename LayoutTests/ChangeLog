@@ -1,3 +1,14 @@
+2022-03-14  Youenn Fablet  <youenn@apple.com>
+
+        [ BigSur wk2 arm64 ] 4 webrtc/ Layout-tests are consistently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=223043
+        <rdar://problem/75280718>
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+        Unflake tests now that are passing consistently on bots.
+
 2022-03-12  Jean-Yves Avenard  <jya@apple.com>
 
         Safari produces scrambled output for some webm videos with vp8 codec.
