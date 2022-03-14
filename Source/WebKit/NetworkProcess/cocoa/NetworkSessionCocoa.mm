@@ -1717,17 +1717,6 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     appPrivacyReportTestingData().didLoadAppInitiatedRequest(nsRequest.get().attribution == NSURLRequestAttributionDeveloper);
 #endif
 
-    // FIXME: This function can make up to 3 copies of a request.
-    // Reduce that to one if the protocol is null, the request isn't app initiated,
-    // or the main frame main resource was private relayed, then set all properties
-    // on the one copy.
-    if (hadMainFrameMainResourcePrivateRelayed) {
-        RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
-        if ([mutableRequest respondsToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableNonMainHosts:)])
-            [mutableRequest _setPrivacyProxyFailClosedForUnreachableNonMainHosts:YES];
-        nsRequest = WTFMove(mutableRequest);
-    }
-
     auto& sessionSet = sessionSetForPage(webPageProxyID);
     RetainPtr<NSURLSessionWebSocketTask> task = [sessionSet.sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
     
