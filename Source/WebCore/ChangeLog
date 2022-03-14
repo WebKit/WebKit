@@ -1,3 +1,13 @@
+2022-03-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, fixing an incomplete-type build error in InlineIteratorLine
+        https://bugs.webkit.org/show_bug.cgi?id=237822
+
+        * layout/integration/InlineIteratorLine.h:
+        Add the missing RenderBlockFlow.h include to avoid incomplete-type
+        error in InlineIterator::Line::selectionPhysicalRect() that might occur
+        when unified sources are sorted some other way.
+
 2022-03-12  Jean-Yves Avenard  <jya@apple.com>
 
         Safari produces scrambled output for some webm videos with vp8 codec.

@@ -28,6 +28,7 @@
 #include "FontBaseline.h"
 #include "InlineIteratorLineLegacyPath.h"
 #include "InlineIteratorLineModernPath.h"
+#include "RenderBlockFlow.h"
 #include <variant>
 
 namespace WebCore {
