@@ -931,7 +931,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         NSURLSessionTaskTransactionMetrics *metrics = taskMetrics.transactionMetrics.lastObject;
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
-        auto privateRelayed = metrics._privacyStance == nw_connection_privacy_stance_failed ? PrivateRelayed::No : PrivateRelayed::Yes;
+        auto privateRelayed = metrics._privacyStance == nw_connection_privacy_stance_direct ? PrivateRelayed::No : PrivateRelayed::Yes;
 #else
         auto privateRelayed = PrivateRelayed::No;
 #endif
@@ -1721,7 +1721,7 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
     // Reduce that to one if the protocol is null, the request isn't app initiated,
     // or the main frame main resource was private relayed, then set all properties
     // on the one copy.
-    if (hadMainFrameMainResourcePrivateRelayed || request.url().host() == clientOrigin.topOrigin.host) {
+    if (hadMainFrameMainResourcePrivateRelayed) {
         RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
         if ([mutableRequest respondsToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableNonMainHosts:)])
             [mutableRequest _setPrivacyProxyFailClosedForUnreachableNonMainHosts:YES];
