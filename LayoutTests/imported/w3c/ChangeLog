@@ -1,5 +1,20 @@
 2022-03-14  Antoine Quint  <graouts@webkit.org>
 
+        [web-animations] marker-mid should support discrete animation
+        https://bugs.webkit.org/show_bug.cgi?id=237825
+
+        Reviewed by Antti Koivisto.
+
+        Test failures are due to SVGURIReference::fragmentIdentifierFromIRIString() rejecting the values used in the
+        test which do not contain a "#". While this is not the greatest test values for this property, this is indeed
+        a bug that we reject the value during parsing instead of storing it.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
+2022-03-14  Antoine Quint  <graouts@webkit.org>
+
         [web-animations] marker-end should support discrete animation
         https://bugs.webkit.org/show_bug.cgi?id=237824
 

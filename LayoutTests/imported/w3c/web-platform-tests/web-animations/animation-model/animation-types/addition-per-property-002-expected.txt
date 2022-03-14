@@ -34,6 +34,9 @@ PASS list-style-type: "circle" onto "square"
 PASS marker-end (type: discrete) has testAddition function
 FAIL marker-end: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" assert_equals: The value should be url("http://localhost/test-2") at 0ms expected "url(\"http://localhost/test-2\")" but got "none"
 FAIL marker-end: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "none"
+PASS marker-mid (type: discrete) has testAddition function
+FAIL marker-mid: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" assert_equals: The value should be url("http://localhost/test-2") at 0ms expected "url(\"http://localhost/test-2\")" but got "none"
+FAIL marker-mid: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "none"
 PASS mask (type: discrete) has testAddition function
 FAIL mask: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")" assert_equals: The value should be url("http://localhost/test-2") at 0ms expected "url(\"http://localhost/test-2\")" but got "url(\"http://localhost/test-2\") 0% 0% / auto repeat border-box border-box add match-source"
 FAIL mask: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")" assert_equals: The value should be url("http://localhost/test-1") at 0ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-1\") 0% 0% / auto repeat border-box border-box add match-source"

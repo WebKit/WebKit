@@ -3267,7 +3267,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscreteSVGPropertyWrapper<TextAnchor>(CSSPropertyTextAnchor, &SVGRenderStyle::textAnchor, &SVGRenderStyle::setTextAnchor),
         new DiscreteSVGPropertyWrapper<VectorEffect>(CSSPropertyVectorEffect, &SVGRenderStyle::vectorEffect, &SVGRenderStyle::setVectorEffect),
         new DiscreteSVGPropertyWrapper<ShapeRendering>(CSSPropertyShapeRendering, &SVGRenderStyle::shapeRendering, &SVGRenderStyle::setShapeRendering),
-        new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerEnd, &SVGRenderStyle::markerEndResource, &SVGRenderStyle::setMarkerEndResource)
+        new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerEnd, &SVGRenderStyle::markerEndResource, &SVGRenderStyle::setMarkerEndResource),
+        new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerMid, &SVGRenderStyle::markerMidResource, &SVGRenderStyle::setMarkerMidResource)
     };
     const unsigned animatableLonghandPropertiesCount = WTF_ARRAY_LENGTH(animatableLonghandPropertyWrappers);
 
