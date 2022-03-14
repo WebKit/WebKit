@@ -31,6 +31,7 @@
 #import "PlatformImageBufferShareableBackend.h"
 #import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
+#import "SwapBuffersDisplayRequirement.h"
 #import <WebCore/ConcreteImageBuffer.h>
 #import <wtf/text/TextStream.h>
 
@@ -135,14 +136,9 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
     return true;
 }
 
-WebCore::SetNonVolatileResult RemoteLayerBackingStoreCollection::makeFrontBufferNonVolatile(RemoteLayerBackingStore& backingStore)
+SwapBuffersDisplayRequirement RemoteLayerBackingStoreCollection::prepareBackingStoreBuffers(RemoteLayerBackingStore& backingStore)
 {
-    return backingStore.setFrontBufferNonVolatile();
-}
-
-WebCore::SetNonVolatileResult RemoteLayerBackingStoreCollection::swapToValidFrontBuffer(RemoteLayerBackingStore& backingStore)
-{
-    return backingStore.swapToValidFrontBuffer();
+    return backingStore.prepareBuffers(backingStore.hasEmptyDirtyRegion());
 }
 
 bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBackingStore& backingStore, OptionSet<VolatilityMarkingBehavior> markingBehavior, MonotonicTime now)

@@ -1,3 +1,50 @@
+2022-03-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Do a single IPC for MarkSurfaceNonVolatile and SwapToValidFrontBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=237814
+
+        Reviewed by Tim Horton.
+
+        Now that we know how to group the calls to markSurfaceNonVolatile() followed by
+        swapToValidFrontBuffer(), we can do them with a single sync IPC to the GPU process, passing
+        supportsPartialRepaint and hasEmptyDirtyRegion.
+
+        RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoreBuffers() takes
+        care to avoid IPCs for layers which don't need display, which is important for performance.
+
+        Introduce the SwapBuffersDisplayRequirement enum which is returned, and used to know if
+        we have to do a full repaint.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::prepareBuffersForDisplay):
+        (WebKit::RemoteRenderingBackend::markSurfaceNonVolatile): Deleted.
+        (WebKit::RemoteRenderingBackend::swapToValidFrontBuffer): Deleted.
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::hasEmptyDirtyRegion const):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::operator<<):
+        (WebKit::RemoteLayerBackingStore::prepareToDisplay):
+        (WebKit::RemoteLayerBackingStore::prepareBuffers):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::prepareBackingStoreBuffers):
+        (WebKit::RemoteLayerBackingStoreCollection::makeFrontBufferNonVolatile): Deleted.
+        (WebKit::RemoteLayerBackingStoreCollection::swapToValidFrontBuffer): Deleted.
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm:
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoreBuffers):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::makeFrontBufferNonVolatile): Deleted.
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::swapToValidFrontBuffer): Deleted.
+        * Shared/RemoteLayerTree/SwapBuffersDisplayRequirement.h: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::prepareBuffersForDisplay):
+        (WebKit::RemoteRenderingBackendProxy::swapToValidFrontBuffer): Deleted.
+        (WebKit::RemoteRenderingBackendProxy::markSurfaceNonVolatile): Deleted.
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2022-03-14  Alex Christensen  <achristensen@webkit.org>
 
         Revert r290659

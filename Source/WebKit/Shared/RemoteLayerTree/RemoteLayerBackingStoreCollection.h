@@ -43,6 +43,8 @@ class RemoteLayerBackingStore;
 class RemoteLayerTreeContext;
 class RemoteLayerTreeTransaction;
 
+enum class SwapBuffersDisplayRequirement : uint8_t;
+
 class RemoteLayerBackingStoreCollection : public CanMakeWeakPtr<RemoteLayerBackingStoreCollection> {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStoreCollection);
     WTF_MAKE_FAST_ALLOCATED;
@@ -57,8 +59,7 @@ public:
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
     
-    virtual WebCore::SetNonVolatileResult makeFrontBufferNonVolatile(RemoteLayerBackingStore&);
-    virtual WebCore::SetNonVolatileResult swapToValidFrontBuffer(RemoteLayerBackingStore&);
+    virtual SwapBuffersDisplayRequirement prepareBackingStoreBuffers(RemoteLayerBackingStore&);
 
     void paintReachableBackingStoreContents();
 

@@ -40,6 +40,7 @@
 #include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
+#include "SwapBuffersDisplayRequirement.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/HTMLCanvasElement.h>
 #include <wtf/CheckedArithmetic.h>
@@ -398,36 +399,46 @@ static std::optional<ImageBufferBackendHandle> handleFromBuffer(WebCore::ImageBu
     return std::nullopt;
 }
 
-void RemoteRenderingBackend::markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier identifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle> backendHandle, bool bufferWasEmpty)>&& completionHandler)
-{
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: markSurfaceNonVolatile -  " << identifier);
-
-    auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
-    if (!imageBuffer) {
-        completionHandler({ }, false);
-        return;
-    }
-
-    auto backendHandle = handleFromBuffer(*imageBuffer);
-    auto previousState = imageBuffer->setNonVolatile();
-    completionHandler(WTFMove(backendHandle), previousState == SetNonVolatileResult::Empty);
-}
-
-// This is the GPU Process version of RemoteLayerBackingStore::swapToValidFrontBuffer().
-void RemoteRenderingBackend::swapToValidFrontBuffer(const BufferIdentifierSet& bufferSet, CompletionHandler<void(const BufferIdentifierSet& swappedBufferSet, std::optional<ImageBufferBackendHandle>&& frontBufferHandle, bool frontBufferWasEmpty)>&& completionHandler)
+// This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
+void RemoteRenderingBackend::prepareBuffersForDisplay(const BufferIdentifierSet& bufferSet, bool supportsPartialRepaint, bool hasEmptyDirtyRegion, CompletionHandler<void(const BufferIdentifierSet& swappedBufferSet, std::optional<ImageBufferBackendHandle>&& frontBufferHandle, SwapBuffersDisplayRequirement prepareResult)>&& completionHandler)
 {
     auto fetchBuffer = [&](std::optional<RenderingResourceIdentifier> identifier) -> ImageBuffer* {
         return identifier ? m_remoteResourceCache.cachedImageBuffer({ *identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }) : nullptr;
+    };
+
+    auto bufferIdentifer = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
+        if (!buffer)
+            return std::nullopt;
+        return buffer->renderingResourceIdentifier();
     };
 
     auto frontBuffer = fetchBuffer(bufferSet.front);
     auto backBuffer = fetchBuffer(bufferSet.back);
     auto secondaryBackBuffer = fetchBuffer(bufferSet.secondaryBack);
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: RemoteRenderingBackend::swapToValidFrontBuffer - front "
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: RemoteRenderingBackend::prepareBuffersForDisplay - front "
         << bufferSet.front << " (in-use " << (frontBuffer && frontBuffer->isInUse()) << ") "
         << bufferSet.back << " (in-use " << (backBuffer && backBuffer->isInUse()) << ") "
         << bufferSet.secondaryBack << " (in-use " << (secondaryBackBuffer && secondaryBackBuffer->isInUse()) << ") ");
+
+    bool needsFullDisplay = false;
+
+    if (frontBuffer) {
+        auto previousState = frontBuffer->setNonVolatile();
+        if (previousState == SetNonVolatileResult::Empty)
+            needsFullDisplay = true;
+    }
+
+    if (frontBuffer && !needsFullDisplay && hasEmptyDirtyRegion) {
+        // No swap necessary, but we do need to return the front buffer handle.
+        auto frontBufferHandle = handleFromBuffer(*frontBuffer);
+        auto resultBufferSet = BufferIdentifierSet { bufferIdentifer(frontBuffer), bufferIdentifer(backBuffer), bufferIdentifer(secondaryBackBuffer) };
+        completionHandler(resultBufferSet, WTFMove(frontBufferHandle), SwapBuffersDisplayRequirement::NeedsNoDisplay);
+        return;
+    }
+    
+    if (!frontBuffer || !supportsPartialRepaint)
+        needsFullDisplay = true;
 
     if (!backBuffer || backBuffer->isInUse()) {
         std::swap(backBuffer, secondaryBackBuffer);
@@ -442,26 +453,22 @@ void RemoteRenderingBackend::swapToValidFrontBuffer(const BufferIdentifierSet& b
     std::swap(frontBuffer, backBuffer);
 
     std::optional<ImageBufferBackendHandle> frontBufferHandle;
-    bool frontBufferWasEmpty = false;
     if (frontBuffer) {
         auto previousState = frontBuffer->setNonVolatile();
-        frontBufferWasEmpty = previousState == SetNonVolatileResult::Empty;
+        if (previousState == SetNonVolatileResult::Empty)
+            needsFullDisplay = true;
+
         frontBufferHandle = handleFromBuffer(*frontBuffer);
     }
 
-    auto bufferIdentifer = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
-        if (!buffer)
-            return std::nullopt;
-        return buffer->renderingResourceIdentifier();
-    };
-    
     auto resultBufferSet = BufferIdentifierSet { bufferIdentifer(frontBuffer), bufferIdentifer(backBuffer), bufferIdentifer(secondaryBackBuffer) };
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: swapToValidFrontBuffer - swapped from ["
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "GPU Process: prepareBuffersForDisplay - swapped from ["
         << bufferSet.front << ", " << bufferSet.back << ", " << bufferSet.secondaryBack << "] to ["
         << resultBufferSet.front << ", " << resultBufferSet.back << ", " << resultBufferSet.secondaryBack << "]");
 
-    completionHandler(resultBufferSet, WTFMove(frontBufferHandle), frontBufferWasEmpty);
+    auto displayRequirement = needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
+    completionHandler(resultBufferSet, WTFMove(frontBufferHandle), displayRequirement);
 }
 
 void RemoteRenderingBackend::markSurfacesVolatile(const Vector<WebCore::RenderingResourceIdentifier>& identifiers, CompletionHandler<void(const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers)>&& completionHandler)

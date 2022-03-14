@@ -35,6 +35,7 @@
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreeLayers.h"
 #import "ShareableBitmap.h"
+#import "SwapBuffersDisplayRequirement.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebProcess.h"
 #import <QuartzCore/QuartzCore.h>
@@ -261,12 +262,12 @@ void RemoteLayerBackingStore::setContents(WTF::MachSendRight&& contents)
 }
 
 #if !LOG_DISABLED
-static TextStream& operator<<(TextStream& ts, RemoteLayerBackingStore::PrepareBuffersResult result)
+static TextStream& operator<<(TextStream& ts, SwapBuffersDisplayRequirement result)
 {
     switch (result) {
-    case RemoteLayerBackingStore::PrepareBuffersResult::NeedsFullDisplay: ts << "full display"; break;
-    case RemoteLayerBackingStore::PrepareBuffersResult::NeedsNormalDisplay: ts << "normal display"; break;
-    case RemoteLayerBackingStore::PrepareBuffersResult::NeedsNoDisplay: ts << "no display"; break;
+    case SwapBuffersDisplayRequirement::NeedsFullDisplay: ts << "full display"; break;
+    case SwapBuffersDisplayRequirement::NeedsNormalDisplay: ts << "normal display"; break;
+    case SwapBuffersDisplayRequirement::NeedsNoDisplay: ts << "no display"; break;
     }
     return ts;
 }
@@ -284,6 +285,8 @@ bool RemoteLayerBackingStore::prepareToDisplay()
         return false;
     }
 
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay()");
+
     bool needToEncodeBackingStore = collection->backingStoreWillBeDisplayed(*this);
 
     auto& layerOwner = *m_layer->owner();
@@ -296,14 +299,14 @@ bool RemoteLayerBackingStore::prepareToDisplay()
 
     m_contentsBufferHandle = std::nullopt;
 
-    auto displayRequirement = prepareBuffers(m_dirtyRegion.isEmpty() || m_size.isEmpty());
+    auto displayRequirement = collection->prepareBackingStoreBuffers(*this);
 
     LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay() - " << displayRequirement);
 
-    if (displayRequirement == PrepareBuffersResult::NeedsNoDisplay)
+    if (displayRequirement == SwapBuffersDisplayRequirement::NeedsNoDisplay)
         return needToEncodeBackingStore;
 
-    if (displayRequirement == PrepareBuffersResult::NeedsFullDisplay)
+    if (displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay)
         setNeedsDisplay();
 
     if (layerOwner.platformCALayerShowRepaintCounter(m_layer)) {
@@ -323,29 +326,27 @@ bool RemoteLayerBackingStore::prepareToDisplay()
     return true;
 }
 
-auto RemoteLayerBackingStore::prepareBuffers(bool hasEmptyDirtyRegion) -> PrepareBuffersResult
+SwapBuffersDisplayRequirement RemoteLayerBackingStore::prepareBuffers(bool hasEmptyDirtyRegion)
 {
-    auto* collection = backingStoreCollection();
-    if (!collection)
-        return PrepareBuffersResult::NeedsNoDisplay;
+    ASSERT(!WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM));
 
     bool needsFullDisplay = false;
 
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
-    if (collection->makeFrontBufferNonVolatile(*this) == WebCore::SetNonVolatileResult::Empty)
+    if (setFrontBufferNonVolatile() == WebCore::SetNonVolatileResult::Empty)
         needsFullDisplay = true;
 
     if (!needsFullDisplay && hasEmptyDirtyRegion)
-        return PrepareBuffersResult::NeedsNoDisplay;
+        return SwapBuffersDisplayRequirement::NeedsNoDisplay;
 
     if (!hasFrontBuffer() || !supportsPartialRepaint())
         needsFullDisplay = true;
 
-    auto result = collection->swapToValidFrontBuffer(*this);
+    auto result = swapToValidFrontBuffer();
     if (result == WebCore::SetNonVolatileResult::Empty)
         needsFullDisplay = true;
 
-    return needsFullDisplay ? PrepareBuffersResult::NeedsFullDisplay : PrepareBuffersResult::NeedsNormalDisplay;
+    return needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
 }
 
 void RemoteLayerBackingStore::paintContents()

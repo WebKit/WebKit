@@ -69,6 +69,7 @@ class GPUConnectionToWebProcess;
 class RemoteDisplayListRecorder;
 struct BufferIdentifierSet;
 struct RemoteRenderingBackendCreationParameters;
+enum class SwapBuffersDisplayRequirement : uint8_t;
 
 class RemoteRenderingBackend : private IPC::MessageSender, public IPC::StreamMessageReceiver {
 public:
@@ -120,8 +121,7 @@ private:
     void finalizeRenderingUpdate(RenderingUpdateID);
     void markSurfacesVolatile(const Vector<WebCore::RenderingResourceIdentifier>&, CompletionHandler<void(const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers)>&&);
 
-    void markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier, CompletionHandler<void(std::optional<ImageBufferBackendHandle>, bool bufferWasEmpty)>&&);
-    void swapToValidFrontBuffer(const BufferIdentifierSet& bufferSet, CompletionHandler<void(const BufferIdentifierSet& swappedBufferSet, std::optional<ImageBufferBackendHandle>&& frontBufferHandle, bool frontBufferWasEmpty)>&&);
+    void prepareBuffersForDisplay(const BufferIdentifierSet& bufferSet, bool supportsPartialRepaint, bool hasEmptyDirtyRegion, CompletionHandler<void(const BufferIdentifierSet& swappedBufferSet, std::optional<ImageBufferBackendHandle>&& frontBufferHandle, SwapBuffersDisplayRequirement prepareResult)>&&);
 
     // Received messages translated to use QualifiedRenderingResourceIdentifier.
     void createImageBufferWithQualifiedIdentifier(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, QualifiedRenderingResourceIdentifier);

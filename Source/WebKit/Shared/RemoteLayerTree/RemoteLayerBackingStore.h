@@ -45,6 +45,7 @@ namespace WebKit {
 
 class PlatformCALayerRemote;
 class RemoteLayerBackingStoreCollection;
+enum class SwapBuffersDisplayRequirement : uint8_t;
 
 class RemoteLayerBackingStore {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
@@ -66,12 +67,7 @@ public:
 
     void setContents(WTF::MachSendRight&& surfaceHandle);
 
-    enum class PrepareBuffersResult : uint8_t {
-        NeedsFullDisplay,
-        NeedsNormalDisplay,
-        NeedsNoDisplay
-    };
-    PrepareBuffersResult prepareBuffers(bool hasEmptyDirtyRegion);
+    SwapBuffersDisplayRequirement prepareBuffers(bool hasEmptyDirtyRegion);
 
     // Returns true if the backing store changed.
     bool prepareToDisplay();
@@ -117,6 +113,9 @@ public:
     bool setBufferVolatile(BufferType);
     WebCore::SetNonVolatileResult setFrontBufferNonVolatile();
 
+    bool hasEmptyDirtyRegion() const { return m_dirtyRegion.isEmpty() || m_size.isEmpty(); }
+    bool supportsPartialRepaint() const;
+
     MonotonicTime lastDisplayTime() const { return m_lastDisplayTime; }
 
     void clearBackingStore();
@@ -141,8 +140,6 @@ private:
 
     bool setBufferVolatile(Buffer&);
     WebCore::SetNonVolatileResult setBufferNonVolatile(Buffer&);
-
-    bool supportsPartialRepaint() const;
 
     PlatformCALayerRemote* m_layer;
 

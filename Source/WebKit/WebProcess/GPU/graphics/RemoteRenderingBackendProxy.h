@@ -95,8 +95,6 @@ public:
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(bool madeAllVolatile)>&&);
 
-    WebCore::SetNonVolatileResult markSurfaceNonVolatile(WebCore::RenderingResourceIdentifier);
-
     struct BufferSet {
         RefPtr<WebCore::ImageBuffer> front;
         RefPtr<WebCore::ImageBuffer> back;
@@ -105,9 +103,9 @@ public:
     
     struct SwapBuffersResult {
         BufferSet buffers;
-        bool frontBufferWasEmpty { false };
+        SwapBuffersDisplayRequirement displayRequirement;
     };
-    SwapBuffersResult swapToValidFrontBuffer(const BufferSet&);
+    SwapBuffersResult prepareBuffersForDisplay(const BufferSet&, bool supportsPartialRepaint, bool hasEmptyDirtyRegion);
 
     void finalizeRenderingUpdate();
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
