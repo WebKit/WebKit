@@ -1,3 +1,24 @@
+2022-03-14  Alejandro G. Castro  <alex@igalia.com>
+
+        [Flatpack SDK] Api tests scripts have conflicting parameters with the flatpak scripts
+        https://bugs.webkit.org/show_bug.cgi?id=237778
+
+        Reviewed by Philippe Normand.
+
+        run-gtk-tests and run-wpe-tests have arguments that cause
+        conflicts with the flatpak sdk, we have to rewrite and consume
+        some of them to avoid problems because we do not know what the
+        user is requesting. This patch gives priority to the api tests
+        parameters, the flatpak ones for the conflictive situations need
+        to be passed with the long format, namely regenerate-toolchains
+        and sccache-token.
+
+        * Scripts/run-gtk-tests:
+        * Scripts/run-wpe-tests:
+        * glib/api_test_runner.py:
+        (add_options):
+        (get_runner_args):
+
 2022-03-14  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Do not fetch key without username

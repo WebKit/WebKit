@@ -396,3 +396,25 @@ def add_options(option_parser):
                              help='Save test results as JSON to file')
     option_parser.add_option('-p', action='append', dest='subtests', default=[],
                              help='Subtests to run')
+
+
+def get_runner_args(argv):
+    runner_args = []
+    for arg in argv:
+        if (arg == "-d"):
+            runner_args.append("--debug")
+            continue
+        # FIXME: This parameter -r is ambiguous for some or the
+        # scripts using flatpak, we consume it, users must use the
+        # long name format for the flatpak option --regenerate-toolchains.
+        if (arg == "-r"):
+            runner_args.append("--release")
+            continue
+        # FIXME: This parameter -t is ambiguous for some or the
+        # scripts using flatpak, we consume it, users must use the
+        # long name format for the flatpak option --sccache-token.
+        if (arg == "-t"):
+            runner_args.append("--timeout")
+            continue
+        runner_args.append(arg)
+    return runner_args
