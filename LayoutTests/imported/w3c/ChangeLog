@@ -1,3 +1,21 @@
+2022-03-15  Antoine Quint  <graouts@webkit.org>
+
+        Dialog element only animates once
+        https://bugs.webkit.org/show_bug.cgi?id=236274
+
+        Reviewed by Dean Jackson, Tim Nguyen and Antti Koivisto.
+
+        Import relevant WPT tests that had already been upstreamed in a previous, reverted
+        version of this patch.
+
+        * web-platform-tests/css/css-animations/dialog-animation-expected.txt: Added.
+        * web-platform-tests/css/css-animations/dialog-animation.html: Added.
+        * web-platform-tests/css/css-animations/dialog-backdrop-animation-expected.txt: Added.
+        * web-platform-tests/css/css-animations/dialog-backdrop-animation.html: Added.
+        * web-platform-tests/css/css-animations/support/testcommon.js:
+        (addElement):
+        (addDiv):
+
 2022-03-14  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Fix 'revert' on low-priority properties

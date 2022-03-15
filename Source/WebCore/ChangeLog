@@ -1,3 +1,40 @@
+2022-03-15  Antoine Quint  <graouts@webkit.org>
+
+        Dialog element only animates once
+        https://bugs.webkit.org/show_bug.cgi?id=236274
+
+        Reviewed by Dean Jackson, Tim Nguyen and Antti Koivisto.
+
+        Two issues related to CSS Animation surfaced in this bug which animates both <dialog>
+        and its ::backdrop as the dialog is open and eventually re-opened.
+
+        The first issue was that we didn't clear all CSS Animations state when a <dialog> was
+        closed and its style was set to `display: none`. We now call setAnimationsCreatedByMarkup
+        to correctly clear such state both when we identify a Styleable is newly getting
+        `display: none`. We do the same when cancelDeclarativeAnimations() is called, but also
+        call setCSSAnimationList() on the associated effect stack since that wasn't done either.
+        Now both functions do similar cleanup.
+        
+        
+        This allows us to remove removeCSSAnimationCreatedByMarkup() which did a fair bit of work
+        to clear CSS Animation state per-animation when we only ever used that function for
+        _all_ animations.
+
+        The second issue was that we never called cancelDeclarativeAnimations() for ::backdrop.
+        We now do that inside of Element::removeFromTopLayer() at a point where the code in
+        Styleable::fromRenderer() will still work as the element will still be contained in
+        Document::topLayerElements().
+
+        Tests: imported/w3c/web-platform-tests/css/css-animations/dialog-animation.html
+               imported/w3c/web-platform-tests/css/css-animations/dialog-backdrop-animation.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::removeFromTopLayer):
+        * style/Styleable.cpp:
+        (WebCore::Styleable::cancelDeclarativeAnimations const):
+        (WebCore::Styleable::updateCSSAnimations const):
+        (WebCore::removeCSSAnimationCreatedByMarkup): Deleted.
+
 2022-03-15  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Crash in KeyframeList.cpp:183 in WebCore::KeyframeList::fillImplicitKeyframes
