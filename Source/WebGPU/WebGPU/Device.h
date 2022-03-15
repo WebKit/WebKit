@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "Queue.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
@@ -47,12 +48,11 @@ class ShaderModule;
 class Surface;
 class SwapChain;
 class Texture;
-class Queue;
 
 class Device : public RefCounted<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<Device> create(id<MTLDevice>);
+    static RefPtr<Device> create(id<MTLDevice>, const char* deviceLabel);
 
     ~Device();
 
@@ -74,7 +74,7 @@ public:
     void destroy();
     size_t enumerateFeatures(WGPUFeatureName* features);
     bool getLimits(WGPUSupportedLimits&);
-    RefPtr<Queue> getQueue();
+    Queue& getQueue();
     bool hasFeature(WGPUFeatureName);
     bool popErrorScope(WTF::Function<void(WGPUErrorType, const char*)>&& callback);
     void pushErrorScope(WGPUErrorFilter);
@@ -93,4 +93,5 @@ private:
 
 struct WGPUDeviceImpl {
     Ref<WebGPU::Device> device;
+    WGPUQueueImpl defaultQueue;
 };

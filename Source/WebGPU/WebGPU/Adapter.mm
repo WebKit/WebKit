@@ -120,9 +120,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, WTF::Functio
         return;
     }
 
-    // See the comment in Device::setLabel() about why we're not setting the label here.
-
-    callback(WGPURequestDeviceStatus_Success, Device::create(m_device), nullptr);
+    callback(WGPURequestDeviceStatus_Success, Device::create(m_device, descriptor.label), nullptr);
 }
 
 } // namespace WebGPU
@@ -155,13 +153,21 @@ bool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)
 {
     adapter->adapter->requestDevice(*descriptor, [callback, userdata] (WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, const char* message) {
-        callback(status, device ? new WGPUDeviceImpl { device.releaseNonNull() } : nullptr, message, userdata);
+        if (device) {
+            auto& queue = device->getQueue();
+            callback(status, new WGPUDeviceImpl { device.releaseNonNull(), { queue } }, message, userdata);
+        } else
+            callback(status, nullptr, message, userdata);
     });
 }
 
 void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback)
 {
     adapter->adapter->requestDevice(*descriptor, [callback] (WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, const char* message) {
-        callback(status, device ? new WGPUDeviceImpl { device.releaseNonNull() } : nullptr, message);
+        if (device) {
+            auto& queue = device->getQueue();
+            callback(status, new WGPUDeviceImpl { device.releaseNonNull(), { queue } }, message);
+        } else
+            callback(status, nullptr, message);
     });
 }

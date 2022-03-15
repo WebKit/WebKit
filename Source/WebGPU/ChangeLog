@@ -1,5 +1,25 @@
 2022-03-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Repeated calls to wgpuDeviceGetQueue() are supposed to return the same pointer
+        https://bugs.webkit.org/show_bug.cgi?id=237861
+
+        Reviewed by Kimmo Kinnunen.
+
+        Previously, wgpuDeviceGetQueue() had "new WGPUQueueImpl { ... }" but this is wrong because
+        the default queue doesn't change from one call to the next.
+
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::requestDevice):
+        (wgpuAdapterRequestDevice):
+        (wgpuAdapterRequestDeviceWithBlock):
+        * WebGPU/Device.h:
+        * WebGPU/Device.mm:
+        (WebGPU::Device::create):
+        (WebGPU::Device::getQueue):
+        (wgpuDeviceGetQueue):
+
+2022-03-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Allow for scheduling asynchronous work
         https://bugs.webkit.org/show_bug.cgi?id=237755
 

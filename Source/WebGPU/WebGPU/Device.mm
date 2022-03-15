@@ -45,12 +45,18 @@
 
 namespace WebGPU {
 
-RefPtr<Device> Device::create(id<MTLDevice> device)
+RefPtr<Device> Device::create(id<MTLDevice> device, const char* deviceLabel)
 {
     id<MTLCommandQueue> commandQueue = [device newCommandQueue];
     if (!commandQueue)
         return nullptr;
     auto queue = Queue::create(commandQueue);
+
+    // See the comment in Device::setLabel() about why we're not setting the label on the MTLDevice here.
+
+    commandQueue.label = @"Default queue";
+    if (deviceLabel && deviceLabel[0] != '\0')
+        commandQueue.label = [NSString stringWithFormat:@"Default queue for device %s", deviceLabel];
 
     return adoptRef(*new Device(device, WTFMove(queue)));
 }
@@ -84,9 +90,9 @@ bool Device::getLimits(WGPUSupportedLimits& limits)
     return true;
 }
 
-RefPtr<Queue> Device::getQueue()
+Queue& Device::getQueue()
 {
-    return m_defaultQueue.copyRef();
+    return m_defaultQueue;
 }
 
 bool Device::hasFeature(WGPUFeatureName)
@@ -255,8 +261,7 @@ bool wgpuDeviceGetLimits(WGPUDevice device, WGPUSupportedLimits* limits)
 
 WGPUQueue wgpuDeviceGetQueue(WGPUDevice device)
 {
-    auto result = device->device->getQueue();
-    return result ? new WGPUQueueImpl { result.releaseNonNull() } : nullptr;
+    return &device->defaultQueue;
 }
 
 bool wgpuDeviceHasFeature(WGPUDevice device, WGPUFeatureName feature)
