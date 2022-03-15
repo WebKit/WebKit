@@ -1057,6 +1057,61 @@ TEST(WebKit2, CapturePermission)
     done = false;
 }
 
+#if PLATFORM(IOS_FAMILY)
+TEST(WebKit2, CapturePermissionWithSystemBlocking)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._mediaCaptureEnabled = YES;
+
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    preferences._mockCaptureDevicesEnabled = NO;
+    preferences._getUserMediaRequiresFocus = NO;
+    [preferences _setEnabled:YES forExperimentalFeature:permissionsAPIEnabledExperimentalFeature()];
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration.get() userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView loadTestPageNamed:@"getUserMediaPermission"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [delegate setAudioDecision:WKPermissionDecisionGrant];
+    [delegate setVideoDecision:WKPermissionDecisionGrant];
+
+    // Given mock capture is not enabled, system is forbidding access to camera and microphone.
+    // Permission API should not show granted even if our callback grants access.
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Permission API should show denied now that getUserMedia was called.
+    [webView stringByEvaluatingJavaScript:@"callGetUserMedia(true, false)"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView stringByEvaluatingJavaScript:@"checkPermission('microphone', 'denied')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [webView stringByEvaluatingJavaScript:@"checkPermission('camera', 'prompt')"];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // We cannot start camera on iOS simulator as there might not be any camera available.
+}
+#endif
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(MEDIA_STREAM)

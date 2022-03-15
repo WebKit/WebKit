@@ -8587,18 +8587,21 @@ void WebPageProxy::revokeGeolocationAuthorizationToken(const String& authorizati
 
 void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const PermissionDescriptor& descriptor, CompletionHandler<void(std::optional<PermissionState>, bool shouldCache)>&& completionHandler)
 {
+    bool canAPISucceed = true;
     bool shouldChangeDeniedToPrompt = true;
     bool shouldChangePromptToGrant = false;
     String name;
     if (descriptor.name == PermissionName::Camera) {
 #if ENABLE(MEDIA_STREAM)
         name = "camera"_s;
+        canAPISucceed = userMediaPermissionRequestManager().canVideoCaptureSucceed();
         shouldChangeDeniedToPrompt = userMediaPermissionRequestManager().shouldChangeDeniedToPromptForCamera(clientOrigin);
         shouldChangePromptToGrant = userMediaPermissionRequestManager().shouldChangePromptToGrantForCamera(clientOrigin);
 #endif
     } else if (descriptor.name == PermissionName::Microphone) {
 #if ENABLE(MEDIA_STREAM)
         name = "microphone"_s;
+        canAPISucceed = userMediaPermissionRequestManager().canAudioCaptureSucceed();
         shouldChangeDeniedToPrompt = userMediaPermissionRequestManager().shouldChangeDeniedToPromptForMicrophone(clientOrigin);
         shouldChangePromptToGrant = userMediaPermissionRequestManager().shouldChangePromptToGrantForMicrophone(clientOrigin);
 #endif
@@ -8610,6 +8613,11 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
 
     if (name.isNull()) {
         completionHandler({ }, false);
+        return;
+    }
+
+    if (!canAPISucceed) {
+        completionHandler(shouldChangeDeniedToPrompt ? PermissionState::Prompt : PermissionState::Denied, false);
         return;
     }
 

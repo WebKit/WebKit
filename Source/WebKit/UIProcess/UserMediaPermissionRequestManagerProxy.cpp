@@ -883,6 +883,21 @@ void UserMediaPermissionRequestManagerProxy::setMockCaptureDevicesEnabledOverrid
     syncWithWebCorePrefs();
 }
 
+bool UserMediaPermissionRequestManagerProxy::mockCaptureDevicesEnabled() const
+{
+    return m_mockDevicesEnabledOverride ? *m_mockDevicesEnabledOverride : m_page.preferences().mockCaptureDevicesEnabled();
+}
+
+bool UserMediaPermissionRequestManagerProxy::canAudioCaptureSucceed() const
+{
+    return mockCaptureDevicesEnabled() || permittedToCaptureAudio();
+}
+
+bool UserMediaPermissionRequestManagerProxy::canVideoCaptureSucceed() const
+{
+    return mockCaptureDevicesEnabled() || permittedToCaptureVideo();
+}
+
 void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 {
 #if ENABLE(MEDIA_STREAM)

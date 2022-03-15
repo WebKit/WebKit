@@ -100,6 +100,8 @@ public:
         Prompt
     };
 
+    bool canAudioCaptureSucceed() const;
+    bool canVideoCaptureSucceed() const;
     void setMockCaptureDevicesEnabledOverride(std::optional<bool>);
     bool hasPendingCapture() const { return m_hasPendingCapture; }
 
@@ -156,6 +158,8 @@ private:
 
     void platformValidateUserMediaRequestConstraints(WebCore::RealtimeMediaSourceCenter::ValidConstraintsHandler&& validHandler, WebCore::RealtimeMediaSourceCenter::InvalidConstraintsHandler&& invalidHandler, String&& deviceIDHashSalt);
 #endif
+
+    bool mockCaptureDevicesEnabled() const;
 
     void watchdogTimerFired();
 

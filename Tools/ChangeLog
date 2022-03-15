@@ -1,3 +1,13 @@
+2022-03-15  Youenn Fablet  <youenn@apple.com>
+
+        Mark permission as denied if system forbids access to camera and/or microphone
+        https://bugs.webkit.org/show_bug.cgi?id=237823
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        * TestWebKitAPI/Tests/WebKit/getUserMediaPermission.html:
+
 2022-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mail compose] Allow copied resources with remote (HTTP/HTTPS) URLs to be pasted as attachments

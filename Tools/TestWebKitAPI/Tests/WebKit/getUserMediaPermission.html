@@ -19,9 +19,18 @@
                 navigator.mediaDevices.getUserMedia({video: true}).then(s => stream = s);
             }
 
+            function callGetUserMedia(audio, video)
+            {
+                navigator.mediaDevices.getUserMedia({audio: audio, video:video}).then(() => {
+                    window.webkit.messageHandlers.gum.postMessage("PASS");
+                }, () => {
+                    window.webkit.messageHandlers.gum.postMessage("PASS");
+                });
+            }
+
             function checkPermission(name, expected) {
                 navigator.permissions.query({ name }).then((status) => {
-                    window.webkit.messageHandlers.gum.postMessage(expected == status.state  ? "PASS" : ("FAILED, expected " + expected + " but got " + status.state));
+                    window.webkit.messageHandlers.gum.postMessage(expected == status.state  ? "PASS" : ("FAILED for " + name + ", expected " + expected + " but got " + status.state));
                 }, error => window.webkit.messageHandlers.gum.postMessage("Permission query failed with " + error));
             }
 
