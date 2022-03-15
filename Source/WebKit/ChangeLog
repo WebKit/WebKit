@@ -1,3 +1,16 @@
+2022-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Fix logging in GPUProcessProxy::didCreateContextForVisibilityPropagation()
+        https://bugs.webkit.org/show_bug.cgi?id=237907
+
+        Reviewed by Simon Fraser.
+
+        LayerHostingContextID is a uint32_t. The current printing ends up logging negative values:
+        `GPUProcessProxy::didCreateContextForVisibilityPropagation: webPageProxyID: 7, pagePID: 79, contextID: -2041854761`
+
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::didCreateContextForVisibilityPropagation):
+
 2022-03-15  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Indefinite hang when printing using a UIPrintPageRenderer
