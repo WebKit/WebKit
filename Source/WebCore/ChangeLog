@@ -1,3 +1,15 @@
+2022-03-15  Sihui Liu  <sihui_liu@apple.com>
+
+        Add RELEASE_LOG_FAULT to ApplicationCache entry function
+        https://bugs.webkit.org/show_bug.cgi?id=237866
+
+        Reviewed by Alex Christensen.
+
+        To help learn remaining ApplicationCache usage.
+
+        * html/HTMLHtmlElement.cpp:
+        (WebCore::HTMLHtmlElement::insertedByParser):
+
 2022-03-15  Chris Dumez  <cdumez@apple.com>
 
         Make it clearer in the loading logging when it is for the main frame or not
