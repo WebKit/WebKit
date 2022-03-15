@@ -1,3 +1,16 @@
+2022-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Fix SQL statement in ApplicationCacheStorage::verifySchemaVersion()
+        https://bugs.webkit.org/show_bug.cgi?id=237905
+
+        Reviewed by Geoffrey Garen.
+
+        This was leading to the following logging:
+        `SQLiteDatabase::prepareStatement: Failed to prepare statement PRAGMA user_version=%7`
+
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion):
+
 2022-03-15  Antti Koivisto  <antti@apple.com>
 
         background-clip:text doesn't work with display:flex

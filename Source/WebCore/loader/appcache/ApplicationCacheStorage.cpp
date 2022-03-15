@@ -567,7 +567,7 @@ void ApplicationCacheStorage::verifySchemaVersion()
     SQLiteTransaction setDatabaseVersion(m_database);
     setDatabaseVersion.begin();
 
-    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA user_version=%", schemaVersion));
+    auto statement = m_database.prepareStatementSlow(makeString("PRAGMA user_version=", schemaVersion));
     if (!statement)
         return;
     
