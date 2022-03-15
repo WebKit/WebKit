@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>override interruption with getUserMedia</title>
+        <script src=../../../resources/testharness.js></script>
+        <script src=../../../resources/testharnessreport.js></script>
+    </head>
+    <body>
+        <video id="video" autoplay playsinline muted></video>
+        <script>
+async function waitForVideoPlaying(video)
+{
+    let counter = 0;
+    while (video.paused && ++counter < 20)
+        await new Promise(resolve => setTimeout(resolve, 100));
+    return !video.paused;
+}
+
+promise_test(async () => {
+    if (window.internals)
+        internals.setMediaElementRestrictions(video, "invisibleautoplaynotpermitted");
+
+    let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    video.srcObject = stream;
+    assert_true(await waitForVideoPlaying(video), "test before system interruption");
+
+    stream.getAudioTracks()[0].stop();
+    // Let's simulate an AudioSession interruption due to not using it during some time.
+    if (window.internals)
+        internals.beginAudioSessionInterruption();
+
+    video.srcObject = null;
+
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    video.srcObject = stream;
+    assert_true(await waitForVideoPlaying(video), "test after system interruption");
+}, "call getUserMedia, stop, interrupt and recall getUserMedia");
+        </script>
+    </body>
+</html>

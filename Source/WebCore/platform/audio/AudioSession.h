@@ -144,6 +144,7 @@ protected:
     WeakPtr<AudioSessionRoutingArbitrationClient> m_routingArbitrationClient;
     AudioSession::CategoryType m_categoryOverride { AudioSession::CategoryType::None };
     bool m_active { false }; // Used only for testing.
+    bool m_isInterrupted { false };
 
     static bool s_shouldManageAudioSessionCategory;
 };

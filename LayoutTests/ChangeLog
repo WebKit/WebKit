@@ -1,5 +1,16 @@
 2022-03-15  Youenn Fablet  <youenn@apple.com>
 
+        Make sure to end any pending AudioSession interruption when activating it
+        https://bugs.webkit.org/show_bug.cgi?id=237654
+        <rdar://88405081>
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/mediastream/getUserMedia-override-audio-session-interruption-expected.txt: Added.
+        * platform/ios/mediastream/getUserMedia-override-audio-session-interruption.html: Added.
+
+2022-03-15  Youenn Fablet  <youenn@apple.com>
+
         AudioContext stops playing when minimizing or moving the macOS Safari window to the background.
         https://bugs.webkit.org/show_bug.cgi?id=231105
         <rdar://problem/83889697>

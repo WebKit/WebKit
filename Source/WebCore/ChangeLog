@@ -1,5 +1,25 @@
 2022-03-15  Youenn Fablet  <youenn@apple.com>
 
+        Make sure to end any pending AudioSession interruption when activating it
+        https://bugs.webkit.org/show_bug.cgi?id=237654
+        <rdar://88405081>
+
+        Reviewed by Eric Carlson.
+
+        In some cases, we receive audio session interruptions without receiving any end of interruption notification.
+        In those cases, if we reactivate the audio session, we should end this pending interruption so that our WebCore code
+        gets its expected end of interruption message. This for instance allows to get back regular autoplay behavior.
+
+        Test: platform/ios/mediastream/getUserMedia-override-audio-session-interruption.html
+
+        * platform/audio/AudioSession.cpp:
+        * platform/audio/AudioSession.h:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2022-03-15  Youenn Fablet  <youenn@apple.com>
+
         AudioContext stops playing when minimizing or moving the macOS Safari window to the background.
         https://bugs.webkit.org/show_bug.cgi?id=231105
         <rdar://problem/83889697>

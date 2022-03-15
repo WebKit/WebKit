@@ -100,6 +100,9 @@ bool AudioSession::tryToSetActive(bool active)
         return false;
 
     m_active = active;
+    if (m_isInterrupted)
+        endInterruption(MayResume::Yes);
+
     return true;
 }
 
@@ -115,12 +118,18 @@ void AudioSession::removeInterruptionObserver(InterruptionObserver& observer)
 
 void AudioSession::beginInterruption()
 {
+    ASSERT(!m_isInterrupted);
+    m_isInterrupted = true;
     for (auto& observer : m_interruptionObservers)
         observer.beginAudioSessionInterruption();
 }
 
 void AudioSession::endInterruption(MayResume mayResume)
 {
+    if (!m_isInterrupted)
+        return;
+    m_isInterrupted = false;
+
     for (auto& observer : m_interruptionObservers)
         observer.endAudioSessionInterruption(mayResume);
 }
