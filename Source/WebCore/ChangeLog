@@ -1,3 +1,23 @@
+2022-03-15  Antti Koivisto  <antti@apple.com>
+
+        CSSConditionRule.conditionText should be readonly
+        https://bugs.webkit.org/show_bug.cgi?id=237880
+
+        Reviewed by Antoine Quint.
+
+        Per CSSWG resolution https://github.com/w3c/csswg-drafts/issues/6819#issuecomment-1016695585
+
+        This also matches Blink.
+
+        * css/CSSConditionRule.h:
+        * css/CSSConditionRule.idl:
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::setConditionText): Deleted.
+        * css/CSSMediaRule.h:
+        * css/CSSSupportsRule.cpp:
+        (WebCore::CSSSupportsRule::setConditionText): Deleted.
+        * css/CSSSupportsRule.h:
+
 2022-03-15  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer][MSE] add ac-3,ec-3 and flac codecs gst caps

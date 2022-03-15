@@ -44,7 +44,6 @@ private:
     void reattach(StyleRuleBase&) final;
     String cssText() const final;
     String conditionText() const final;
-    void setConditionText(const String&) final;
 
     MediaQuerySet& mediaQueries() const;
 

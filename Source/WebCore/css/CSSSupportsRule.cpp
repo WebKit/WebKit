@@ -61,9 +61,4 @@ String CSSSupportsRule::conditionText() const
     return downcast<StyleRuleSupports>(groupRule()).conditionText();
 }
 
-void CSSSupportsRule::setConditionText(const String&)
-{
-    // FIXME: Not implemented yet.
-}
-
 } // namespace WebCore
