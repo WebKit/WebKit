@@ -45,9 +45,9 @@ public:
 
     LayoutUnit top() const { return m_rootInlineBox->lineTop(); }
     LayoutUnit bottom() const { return m_rootInlineBox->lineBottom(); }
-    LayoutUnit selectionTop() const { return m_rootInlineBox->selectionTop(); }
-    LayoutUnit selectionTopForHitTesting() const { return m_rootInlineBox->selectionTop(LegacyRootInlineBox::ForHitTesting::Yes); }
-    LayoutUnit selectionBottom() const { return m_rootInlineBox->selectionBottom(); }
+    LayoutUnit enclosingTop() const { return m_rootInlineBox->selectionTop(); }
+    LayoutUnit enclosingTopForHitTesting() const { return m_rootInlineBox->selectionTop(LegacyRootInlineBox::ForHitTesting::Yes); }
+    LayoutUnit enclosingBottom() const { return m_rootInlineBox->selectionBottom(); }
     LayoutUnit lineBoxTop() const { return m_rootInlineBox->lineBoxTop(); }
     LayoutUnit lineBoxBottom() const { return m_rootInlineBox->lineBoxBottom(); }
 

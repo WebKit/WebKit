@@ -393,7 +393,7 @@ public:
     
     LayoutUnit endPaddingWidthForCaret() const;
 
-    LayoutUnit adjustSelectionTopForPrecedingBlock(LayoutUnit top) const;
+    LayoutUnit adjustEnclosingTopForPrecedingBlock(LayoutUnit top) const;
 
 protected:
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }

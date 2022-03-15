@@ -187,7 +187,7 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
         return;
     auto line = run->line();
 
-    auto lineSelectionRect = line->selectionLogicalRect();
+    auto lineSelectionRect = line->enclosingLogicalRect();
     LayoutRect rect = IntRect(run->logicalLeft(), lineSelectionRect.y(), 0, lineSelectionRect.height());
     if (!line->isHorizontal())
         rect = rect.transposedRect();

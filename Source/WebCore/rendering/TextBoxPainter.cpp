@@ -290,8 +290,8 @@ void TextBoxPainter::paintBackground(unsigned startOffset, unsigned endOffset, c
     // draw its own highlight.
 
     const auto line = textBox().line();
-    LayoutUnit selectionBottom = line->selectionBottom();
-    LayoutUnit selectionTop = line->selectionTopAdjustedForPrecedingBlock();
+    LayoutUnit selectionBottom = line->enclosingBottom();
+    LayoutUnit selectionTop = line->enclosingTopAdjustedForPrecedingBlock();
 
     // Use same y positioning and height as for selection, so that when the selection and this subrange are on
     // the same word there are no pieces sticking out.

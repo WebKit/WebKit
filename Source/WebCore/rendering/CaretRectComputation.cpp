@@ -112,7 +112,7 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
 static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineIterator& line, float logicalLeftPosition, CaretRectMode caretRectMode)
 {
     auto& containingBlock = line->containingBlock();
-    auto lineSelectionRect = line->selectionLogicalRect();
+    auto lineSelectionRect = line->enclosingLogicalRect();
 
     int height = lineSelectionRect.height();
     int top = lineSelectionRect.y();

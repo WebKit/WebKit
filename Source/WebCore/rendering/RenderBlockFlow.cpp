@@ -3014,7 +3014,7 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
     return LayoutUnit { style().overflowY() == Overflow::Visible ? lastBaseline : std::min(boxHeight, lastBaseline) };
 }
 
-LayoutUnit RenderBlockFlow::adjustSelectionTopForPrecedingBlock(LayoutUnit top) const
+LayoutUnit RenderBlockFlow::adjustEnclosingTopForPrecedingBlock(LayoutUnit top) const
 {
     if (selectionState() != RenderObject::HighlightState::Inside && selectionState() != RenderObject::HighlightState::End)
         return top;
@@ -3065,7 +3065,7 @@ LayoutUnit RenderBlockFlow::adjustSelectionTopForPrecedingBlock(LayoutUnit top) 
         if (lastLineSelectionState != RenderObject::HighlightState::Inside && lastLineSelectionState != RenderObject::HighlightState::Start)
             return top;
 
-        LayoutUnit lastLineSelectionBottom = lastLine->selectionBottom() + offsetToBlockBefore.height();
+        LayoutUnit lastLineSelectionBottom = lastLine->enclosingBottom() + offsetToBlockBefore.height();
         top = std::max(top, lastLineSelectionBottom);
     }
     return top;
@@ -3151,8 +3151,8 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     // Now paint the gaps for the lines.
     for (; line && hasSelectedChildren(line); line.traverseNext()) {
-        LayoutUnit selTop =  line->selectionTopAdjustedForPrecedingBlock();
-        LayoutUnit selHeight = line->selectionHeightAdjustedForPrecedingBlock();
+        LayoutUnit selTop =  line->enclosingTopAdjustedForPrecedingBlock();
+        LayoutUnit selHeight = line->enclosingHeightAdjustedForPrecedingBlock();
 
         if (!containsStart && !lastSelectedLine &&
             selectionState() != HighlightState::Start && selectionState() != HighlightState::Both && !isRubyBase())
@@ -3174,9 +3174,9 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     if (lastSelectedLine && selectionState() != HighlightState::End && selectionState() != HighlightState::Both) {
         // Update our lastY to be the bottom of the last selected line.
-        lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + lastSelectedLine->selectionBottom();
-        lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, lastSelectedLine->selectionBottom(), cache);
-        lastLogicalRight = logicalRightSelectionOffset(rootBlock, lastSelectedLine->selectionBottom(), cache);
+        lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + lastSelectedLine->enclosingBottom();
+        lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, lastSelectedLine->enclosingBottom(), cache);
+        lastLogicalRight = logicalRightSelectionOffset(rootBlock, lastSelectedLine->enclosingBottom(), cache);
     }
     return result;
 }
@@ -3380,7 +3380,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         lastLineWithChildren = line;
 
         // check if this root line box is located at this y coordinate
-        if (pointInLogicalContents.y() < line->selectionBottom() || (blocksAreFlipped && pointInLogicalContents.y() == line->selectionBottom())) {
+        if (pointInLogicalContents.y() < line->enclosingBottom() || (blocksAreFlipped && pointInLogicalContents.y() == line->enclosingBottom())) {
             if (linesAreFlipped) {
                 auto nextLineWithChildren = line->next();
                 while (nextLineWithChildren && !nextLineWithChildren->firstLeafBox())
@@ -3405,7 +3405,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
 
     if (closestRun) {
         if (moveCaretToBoundary) {
-            LayoutUnit firstLineWithChildrenTop = std::min(firstLineWithChildren->selectionTopForHitTesting(), LayoutUnit(firstLineWithChildren->top()));
+            LayoutUnit firstLineWithChildrenTop = std::min(firstLineWithChildren->enclosingTopForHitTesting(), LayoutUnit(firstLineWithChildren->top()));
             if (pointInLogicalContents.y() < firstLineWithChildrenTop
                 || (blocksAreFlipped && pointInLogicalContents.y() == firstLineWithChildrenTop)) {
                 auto run = firstLineWithChildren->firstLeafBox();

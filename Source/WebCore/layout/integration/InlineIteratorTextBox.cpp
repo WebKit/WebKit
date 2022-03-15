@@ -45,8 +45,8 @@ LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
     if (clampedStart >= clampedEnd && !(rangeStart == rangeEnd && rangeStart >= start() && rangeStart <= end()))
         return { };
 
-    auto selectionTop = line()->selectionTop();
-    auto selectionHeight = line()->selectionHeight();
+    auto selectionTop = line()->enclosingTop();
+    auto selectionHeight = line()->enclosingHeight();
 
     LayoutRect selectionRect { logicalLeft(), selectionTop, logicalWidth(), selectionHeight };
 

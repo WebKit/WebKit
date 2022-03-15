@@ -1,3 +1,56 @@
+2022-03-15  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Rename selection* to enclosing* in InlineIterator::Line
+        https://bugs.webkit.org/show_bug.cgi?id=237909
+
+        Reviewed by Antti Koivisto.
+
+        These functions return enclosing (line box and content) geometries which we happen to use to compute selection boundaries (among other things).
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::absoluteSelectionBoundsForLine const):
+        * layout/integration/InlineIteratorLine.cpp:
+        (WebCore::InlineIterator::Line::blockDirectionPointInLine const):
+        (WebCore::InlineIterator::Line::enclosingTopAdjustedForPrecedingBlock const):
+        (WebCore::InlineIterator::Line::enclosingHeightAdjustedForPrecedingBlock const):
+        (WebCore::InlineIterator::Line::selectionTopAdjustedForPrecedingBlock const): Deleted.
+        (WebCore::InlineIterator::Line::selectionHeightAdjustedForPrecedingBlock const): Deleted.
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::Line::enclosingTop const):
+        (WebCore::InlineIterator::Line::enclosingTopForHitTesting const):
+        (WebCore::InlineIterator::Line::enclosingBottom const):
+        (WebCore::InlineIterator::Line::enclosingHeight const):
+        (WebCore::InlineIterator::Line::enclosingLogicalRect const):
+        (WebCore::InlineIterator::Line::enclosingPhysicalRect const):
+        (WebCore::InlineIterator::Line::selectionTop const): Deleted.
+        (WebCore::InlineIterator::Line::selectionTopForHitTesting const): Deleted.
+        (WebCore::InlineIterator::Line::selectionBottom const): Deleted.
+        (WebCore::InlineIterator::Line::selectionHeight const): Deleted.
+        (WebCore::InlineIterator::Line::selectionLogicalRect const): Deleted.
+        (WebCore::InlineIterator::Line::selectionPhysicalRect const): Deleted.
+        * layout/integration/InlineIteratorTextBox.cpp:
+        (WebCore::InlineIterator::TextBox::selectionRect const):
+        * rendering/CaretRectComputation.cpp:
+        (WebCore::computeCaretRectForLinePosition):
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::selectionTopAdjustedForPrecedingBlock const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustEnclosingTopForPrecedingBlock const):
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        (WebCore::RenderBlockFlow::adjustSelectionTopForPrecedingBlock const): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::collectSelectionGeometries):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::collectSelectionGeometries):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::paintBackground):
+
 2022-03-15  Patrick Griffis  <pgriffis@igalia.com>
 
         Add initial implementation of Fetch Metadata

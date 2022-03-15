@@ -58,16 +58,16 @@ public:
     LayoutUnit lineBoxBottom() const;
     LayoutUnit lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
 
-    LayoutUnit selectionTop() const;
-    LayoutUnit selectionTopForHitTesting() const;
-    LayoutUnit selectionBottom() const;
-    LayoutUnit selectionHeight() const;
+    LayoutUnit enclosingTop() const;
+    LayoutUnit enclosingBottom() const;
+    LayoutUnit enclosingHeight() const;
 
-    LayoutRect selectionLogicalRect() const;
-    LayoutRect selectionPhysicalRect() const;
+    LayoutRect enclosingLogicalRect() const;
+    LayoutRect enclosingPhysicalRect() const;
 
-    LayoutUnit selectionTopAdjustedForPrecedingBlock() const;
-    LayoutUnit selectionHeightAdjustedForPrecedingBlock() const;
+    LayoutUnit enclosingTopForHitTesting() const;
+    LayoutUnit enclosingTopAdjustedForPrecedingBlock() const;
+    LayoutUnit enclosingHeightAdjustedForPrecedingBlock() const;
 
     RenderObject::HighlightState selectionState() const;
 
@@ -159,30 +159,30 @@ inline LayoutUnit Line::bottom() const
     });
 }
 
-inline LayoutUnit Line::selectionTop() const
+inline LayoutUnit Line::enclosingTop() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.selectionTop();
+        return path.enclosingTop();
     });
 }
 
-inline LayoutUnit Line::selectionTopForHitTesting() const
+inline LayoutUnit Line::enclosingTopForHitTesting() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.selectionTopForHitTesting();
+        return path.enclosingTopForHitTesting();
     });
 }
 
-inline LayoutUnit Line::selectionBottom() const
+inline LayoutUnit Line::enclosingBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.selectionBottom();
+        return path.enclosingBottom();
     });
 }
 
-inline LayoutUnit Line::selectionHeight() const
+inline LayoutUnit Line::enclosingHeight() const
 {
-    return selectionBottom() - selectionTop();
+    return enclosingBottom() - enclosingTop();
 }
 
 inline LayoutUnit Line::lineBoxTop() const
@@ -199,14 +199,14 @@ inline LayoutUnit Line::lineBoxBottom() const
     });
 }
 
-inline LayoutRect Line::selectionLogicalRect() const
+inline LayoutRect Line::enclosingLogicalRect() const
 {
-    return { LayoutPoint { contentLogicalLeft(), selectionTop() }, LayoutPoint { contentLogicalRight(), selectionBottom() } };
+    return { LayoutPoint { contentLogicalLeft(), enclosingTop() }, LayoutPoint { contentLogicalRight(), enclosingBottom() } };
 }
 
-inline LayoutRect Line::selectionPhysicalRect() const
+inline LayoutRect Line::enclosingPhysicalRect() const
 {
-    auto physicalRect = selectionLogicalRect();
+    auto physicalRect = enclosingLogicalRect();
     if (!isHorizontal())
         physicalRect = physicalRect.transposedRect();
     containingBlock().flipForWritingMode(physicalRect);

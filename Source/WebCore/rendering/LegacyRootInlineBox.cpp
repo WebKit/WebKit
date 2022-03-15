@@ -533,7 +533,7 @@ LayoutUnit LegacyRootInlineBox::selectionTop(ForHitTesting forHitTesting) const
 
 LayoutUnit LegacyRootInlineBox::selectionTopAdjustedForPrecedingBlock() const
 {
-    return blockFlow().adjustSelectionTopForPrecedingBlock(selectionTop());
+    return blockFlow().adjustEnclosingTopForPrecedingBlock(selectionTop());
 }
 
 LayoutUnit LegacyRootInlineBox::selectionBottom() const

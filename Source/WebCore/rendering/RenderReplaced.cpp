@@ -721,7 +721,7 @@ VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point, const
     auto [top, bottom] = [&] {
         if (auto run = InlineIterator::boxFor(*this)) {
             auto line = run->line();
-            return std::make_pair(line->selectionTopForHitTesting(), line->selectionBottom());
+            return std::make_pair(line->enclosingTopForHitTesting(), line->enclosingBottom());
         }
         return std::make_pair(logicalTop(), logicalBottom());
     }();
