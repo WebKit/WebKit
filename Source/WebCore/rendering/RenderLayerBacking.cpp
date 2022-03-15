@@ -1110,6 +1110,8 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         else if (auto model = element->model())
             m_graphicsLayer->setContentsToModel(WTFMove(model), element->isInteractive() ? GraphicsLayer::ModelInteraction::Enabled : GraphicsLayer::ModelInteraction::Disabled);
 
+        element->sizeMayHaveChanged();
+
         layerConfigChanged = true;
     }
 #endif
@@ -1518,11 +1520,8 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         setContentsNeedDisplay();
 
 #if ENABLE(MODEL_ELEMENT)
-    if (is<RenderModel>(renderer())) {
-        auto* element = downcast<HTMLModelElement>(renderer().element());
-        if (element->usesPlatformLayer())
-            element->sizeMayHaveChanged();
-    }
+    if (is<RenderModel>(renderer()))
+        downcast<HTMLModelElement>(renderer().element())->sizeMayHaveChanged();
 #endif
 }
 

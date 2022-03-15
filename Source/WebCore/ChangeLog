@@ -1,3 +1,27 @@
+2022-03-15  Antoine Quint  <graouts@webkit.org>
+
+        [model] model-element/model-element-camera.html is a failure
+        https://bugs.webkit.org/show_bug.cgi?id=237894
+        rdar://88982597
+
+        Reviewed by Tim Horton.
+
+        Ensure we have a non-zero contentSize() and model data before attempting to
+        create a player. Otherwise, we could end up with a zero frame when calling
+        into ARKit and the model would fail to load and the ready promise would be
+        rejected, causing this test to fail.
+
+        We can change the existing call site to sizeMayHaveChanged() to no longer
+        check whether we are using a platform layer since sizeMayHaveChanged() now
+        takes care of checking whether it has a player.
+
+        * Modules/model-element/HTMLModelElement.cpp:
+        (WebCore::HTMLModelElement::createModelPlayer):
+        (WebCore::HTMLModelElement::sizeMayHaveChanged):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateGeometry):
+
 2022-03-15  Brandon Stewart  <brandonstewart@apple.com>
 
         Line Builder and Content Breaker out of sync

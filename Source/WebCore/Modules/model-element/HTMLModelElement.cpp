@@ -255,6 +255,13 @@ void HTMLModelElement::modelDidChange()
 
 void HTMLModelElement::createModelPlayer()
 {
+    if (!m_model)
+        return;
+
+    auto size = contentSize();
+    if (size.isEmpty())
+        return;
+
     ASSERT(document().page());
     m_modelPlayer = document().page()->modelPlayerProvider().createModelPlayer(*this);
     if (!m_modelPlayer) {
@@ -264,7 +271,7 @@ void HTMLModelElement::createModelPlayer()
 
     // FIXME: We need to tell the player if the size changes as well, so passing this
     // in with load probably doesn't make sense.
-    m_modelPlayer->load(*m_model, contentSize());
+    m_modelPlayer->load(*m_model, size);
 }
 
 bool HTMLModelElement::usesPlatformLayer() const
@@ -281,7 +288,10 @@ PlatformLayer* HTMLModelElement::platformLayer() const
 
 void HTMLModelElement::sizeMayHaveChanged()
 {
-    m_modelPlayer->sizeDidChange(contentSize());
+    if (m_modelPlayer)
+        m_modelPlayer->sizeDidChange(contentSize());
+    else
+        createModelPlayer();
 }
 
 void HTMLModelElement::didFinishLoading(ModelPlayer& modelPlayer)
