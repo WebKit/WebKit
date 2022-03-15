@@ -91,6 +91,7 @@ public:
     AccessibilityObject* nextSibling() const override;
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
+    AXCoreObject* parentObjectUnignored() const override;
     AccessibilityObject* observableObject() const override;
     void linkedUIElements(AccessibilityChildrenVector&) const override;
     AccessibilityObject* titleUIElement() const override;
@@ -237,6 +238,9 @@ private:
 
     bool renderObjectIsObservable(RenderObject&) const;
     RenderObject* renderParentObject() const;
+#if USE(ATSPI)
+    RenderObject* markerRenderer() const;
+#endif
 
     bool isSVGImage() const;
     void detachRemoteSVGRoot();
@@ -252,6 +256,9 @@ private:
     void addCanvasChildren();
     void addAttachmentChildren();
     void addRemoteSVGChildren();
+#if USE(ATSPI)
+    void addListItemMarker();
+#endif
 #if PLATFORM(COCOA)
     void updateAttachmentViewParents();
 #endif

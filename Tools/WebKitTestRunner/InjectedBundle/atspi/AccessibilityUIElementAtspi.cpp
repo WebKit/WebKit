@@ -772,6 +772,7 @@ static String roleValueToString(unsigned roleValue)
     case WebCore::Atspi::Role::SpinButton:
         return "AXSpinButton"_s;
     case WebCore::Atspi::Role::Static:
+    case WebCore::Atspi::Role::Text:
         return "AXStatic"_s;
     case WebCore::Atspi::Role::StatusBar:
         return "AXStatusBar"_s;

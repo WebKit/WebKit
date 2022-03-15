@@ -136,7 +136,6 @@ accessibility/model-element-attributes.html [ Skip ]
 
 # Tests failing with ATSPI implementation.
 webkit.org/b/235941 accessibility/gtk/no-notification-for-unrendered-iframe-children.html [ Failure ]
-webkit.org/b/235941 accessibility/gtk/spans.html [ Failure ]
 webkit.org/b/235941 accessibility/gtk/text-at-offset-embedded-objects.html [ Failure ]
 webkit.org/b/235941 accessibility/gtk/text-at-offset-special-chars.html [ Failure ]
 webkit.org/b/235941 accessibility/gtk/caret-offsets.html [ Timeout ]

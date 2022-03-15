@@ -8,7 +8,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS list.role is 'AXRole: AXList'
 PASS item1.role is 'AXRole: AXListItem'
+PASS marker1.role is 'AXRole: AXStatic'
 PASS item2.role is 'AXRole: AXListItem'
+PASS marker2.role is 'AXRole: AXStatic'
 PASS paragraph.role is 'AXRole: AXParagraph'
 PASS successfullyParsed is true
 
