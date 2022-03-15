@@ -156,7 +156,7 @@ static Expected<UniqueRef<SQLiteDatabase>, ShouldDeleteAndRetry> openAndMigrateD
         transaction.commit();
     }
 
-    return WTFMove(db);
+    return db;
 }
 
 static std::unique_ptr<SQLiteDatabase> openAndMigrateDatabase(const String& path)

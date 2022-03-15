@@ -80,6 +80,7 @@ inline EvaluationResult operator!(EvaluationResult result)
     case EvaluationResult::Unknown:
         return EvaluationResult::Unknown;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 }

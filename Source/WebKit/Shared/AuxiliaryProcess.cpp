@@ -283,12 +283,6 @@ void AuxiliaryProcess::didReceiveMemoryPressureEvent(bool isCritical)
 }
 #endif
 
-#if !PLATFORM(MAC)
-static void applySandboxProfileForDaemon(const String&, const String&)
-{
-}
-#endif
-
 #endif // !PLATFORM(COCOA)
 
 } // namespace WebKit

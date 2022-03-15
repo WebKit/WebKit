@@ -62,7 +62,7 @@ std::optional<WebFoundTextRange> WebFoundTextRange::decode(IPC::Decoder& decoder
     if (!decoder.decode(result.order))
         return std::nullopt;
 
-    return WTFMove(result);
+    return result;
 }
 
 } // namespace WebKit
