@@ -1,3 +1,16 @@
+2022-03-15  Youenn Fablet  <youenn@apple.com>
+
+        AudioContext stops playing when minimizing or moving the macOS Safari window to the background.
+        https://bugs.webkit.org/show_bug.cgi?id=231105
+        <rdar://problem/83889697>
+
+        Reviewed by Eric Carlson.
+
+        Use internals API to be working on iOS as well (this does not trigger enterBackground code path).
+
+        * webaudio/silent-audio-interrupted-in-background-expected.txt:
+        * webaudio/silent-audio-interrupted-in-background.html:
+
 2022-03-14  Lauro Moura  <lmoura@igalia.com>
 
         [GLIB] Unreviewed, gardening crash and timeout

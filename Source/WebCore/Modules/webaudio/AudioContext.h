@@ -30,7 +30,6 @@
 #include "MediaCanStartListener.h"
 #include "MediaProducer.h"
 #include "PlatformMediaSession.h"
-#include "VisibilityChangeClient.h"
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -48,8 +47,7 @@ class AudioContext final
     : public BaseAudioContext
     , public MediaProducer
     , public MediaCanStartListener
-    , private PlatformMediaSessionClient
-    , private VisibilityChangeClient {
+    , private PlatformMediaSessionClient {
     WTF_MAKE_ISO_ALLOCATED(AudioContext);
 public:
     // Create an AudioContext for rendering to the audio hardware.
@@ -135,9 +133,6 @@ private:
 
     // MediaCanStartListener.
     void mediaCanStart(Document&) final;
-
-    // VisibilityChangeClient
-    void visibilityStateChanged() final;
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;

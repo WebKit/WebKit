@@ -1,3 +1,21 @@
+2022-03-15  Youenn Fablet  <youenn@apple.com>
+
+        AudioContext stops playing when minimizing or moving the macOS Safari window to the background.
+        https://bugs.webkit.org/show_bug.cgi?id=231105
+        <rdar://problem/83889697>
+
+        Reviewed by Eric Carlson.
+
+        AudioContext was stopped when minimizing windows if not playing audio as a way to reduce CPU usage.
+        But this is visible to users (if AudioContext produces audio through a track) or to web pages (use of audio worklet or script processor node).
+        Remove that code.
+        Small refactoring to remove isOfflineContext checks that can only be false in AudioContext.
+
+        Covered by existing tests.
+
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioContext.h:
+
 2022-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mail compose] Allow copied resources with remote (HTTP/HTTPS) URLs to be pasted as attachments
