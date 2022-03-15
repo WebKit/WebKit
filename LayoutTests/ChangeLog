@@ -1,3 +1,13 @@
+2022-03-15  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        Crash in KeyframeList.cpp:183 in WebCore::KeyframeList::fillImplicitKeyframes
+        https://bugs.webkit.org/show_bug.cgi?id=237858
+
+        Reviewed by Antoine Quint.
+
+        * animations/fill-implicit-keyframes-crash-expected.txt: Added.
+        * animations/fill-implicit-keyframes-crash.html: Added.
+
 2022-03-15  Youenn Fablet  <youenn@apple.com>
 
         Make sure to end any pending AudioSession interruption when activating it

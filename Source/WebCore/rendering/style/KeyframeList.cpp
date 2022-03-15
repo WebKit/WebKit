@@ -168,11 +168,6 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
                 zeroKeyframeImplicitProperties.remove(cssPropertyId);
             if (!implicitZeroKeyframe && isSuitableKeyframeForImplicitValues(keyframe))
                 implicitZeroKeyframe = &keyframe;
-        } else if (keyframe.key() == 1) {
-            for (auto cssPropertyId : keyframe.properties())
-                oneKeyframeImplicitProperties.remove(cssPropertyId);
-            if (!implicitOneKeyframe && isSuitableKeyframeForImplicitValues(keyframe))
-                implicitOneKeyframe = &keyframe;
         }
     }
 
@@ -199,6 +194,16 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
 
     if (!zeroKeyframeImplicitProperties.isEmpty())
         addImplicitKeyframe(0, zeroKeyframeImplicitProperties, zeroPercentKeyframe(), implicitZeroKeyframe);
+
+    for (auto& keyframe : m_keyframes) {
+        if (keyframe.key() == 1) {
+            for (auto cssPropertyId : keyframe.properties())
+                oneKeyframeImplicitProperties.remove(cssPropertyId);
+            if (!implicitOneKeyframe && isSuitableKeyframeForImplicitValues(keyframe))
+                implicitOneKeyframe = &keyframe;
+        }
+    }
+
     if (!oneKeyframeImplicitProperties.isEmpty())
         addImplicitKeyframe(1, oneKeyframeImplicitProperties, hundredPercentKeyframe(), implicitOneKeyframe);
 }
