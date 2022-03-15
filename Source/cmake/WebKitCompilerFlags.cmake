@@ -150,6 +150,12 @@ if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-stringop-overread)
     endif ()
 
+    # -Wodr trips over our bindings integrity feature when LTO is enabled.
+    # https://bugs.webkit.org/show_bug.cgi?id=229867
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        WEBKIT_PREPEND_GLOBAL_CXX_FLAGS(-Wno-odr)
+    endif ()
+
     # -Wexpansion-to-defined produces false positives with GCC but not Clang
     # https://bugs.webkit.org/show_bug.cgi?id=167643#c13
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
