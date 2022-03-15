@@ -9,15 +9,15 @@ AXFocusedUIElementChanged: AXRole: AXButton
 Focused element is: AXRole: AXButton
 
 Changing selected item in non-focused combobox.
-AXSelectedChildrenChanged: AXRole: AXComboBox
+AXMenuItemSelected: AXRole: AXMenu
+Selected item is: AXTitle: four
 Focused element is: AXRole: AXButton
 
 Changing selected item in non-focused combobox.
-AXSelectedChildrenChanged: AXRole: AXComboBox
+AXMenuItemSelected: AXRole: AXMenu
+Selected item is: AXTitle: three
 Focused element is: AXRole: AXButton
 
-AXLoadComplete: AXRole: AXWebArea
-AXElementBusyChanged: AXRole: AXWebArea
 PASS successfullyParsed is true
 
 TEST COMPLETE

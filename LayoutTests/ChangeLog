@@ -1,5 +1,21 @@
 2022-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r216096): [GTK] Test accessibility/gtk/menu-list-unfocused-notifications.html is failing since r216096
+        https://bugs.webkit.org/show_bug.cgi?id=171598
+
+        Reviewed by Adrian Perez de Castro.
+
+        Since r216096 the notification for menu list changes is deffered, so we need to wait one run loop cycle to get
+        the notifications. Also update the test to ignore notifications that are not interesting like AXLoadComplete and
+        AXElementBusyChanged, and update expectations for the new behavior with ATSPI where the notification is emitted
+        on the menu and not the combo.
+
+        * accessibility/gtk/menu-list-unfocused-notifications-expected.txt:
+        * accessibility/gtk/menu-list-unfocused-notifications.html:
+        * platform/gtk/TestExpectations:
+
+2022-03-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [ATSPI] Test accessibility/select-element-at-index.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=237315
 
