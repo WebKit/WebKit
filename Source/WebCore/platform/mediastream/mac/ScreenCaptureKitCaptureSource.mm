@@ -380,7 +380,7 @@ RetainPtr<SCStreamConfiguration> ScreenCaptureKitCaptureSource::streamConfigurat
     [m_streamConfiguration setPixelFormat:preferedPixelBufferFormat()];
     [m_streamConfiguration setShowsCursor:YES];
     [m_streamConfiguration setQueueDepth:6];
-    [m_streamConfiguration setColorSpaceName:kCGColorSpaceLinearSRGB];
+    [m_streamConfiguration setColorSpaceName:kCGColorSpaceSRGB];
     [m_streamConfiguration setColorMatrix:kCGDisplayStreamYCbCrMatrix_SMPTE_240M_1995];
 
     if (m_frameRate) {

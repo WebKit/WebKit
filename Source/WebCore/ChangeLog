@@ -1,3 +1,15 @@
+2022-03-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Use sRGB colorspace in ScreenCaptureKitCaptureSource
+        https://bugs.webkit.org/show_bug.cgi?id=237855
+        <rdar://problem/90273792>
+
+        Reviewed by Jer Noble.
+
+        * platform/mediastream/mac/ScreenCaptureKitCaptureSource.mm:
+        (WebCore::ScreenCaptureKitCaptureSource::streamConfiguration): Configure 
+        ScreenCaptureKit to capture in kCGColorSpaceSRGB.
+
 2022-03-14  Oriol Brufau  <obrufau@igalia.com>
 
         Rename RenderStyle::textDecoration() to RenderStyle::textDecorationLine()
