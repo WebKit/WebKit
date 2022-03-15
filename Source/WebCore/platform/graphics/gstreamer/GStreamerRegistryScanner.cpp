@@ -337,6 +337,13 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
         m_decoderCodecMap.add(AtomString("x-av1"), av1DecoderAvailable.isUsingHardware);
     }
 
+    Vector<GstCapsWebKitMapping> mseCompatibleMapping = {
+        { ElementFactories::Type::AudioDecoder, "audio/x-ac3", { }, {"x-ac3", "ac-3", "ac3"} },
+        { ElementFactories::Type::AudioDecoder, "audio/x-eac3", {"audio/x-ac3"},  {"x-eac3", "ec3", "ec-3", "eac3"} },
+        { ElementFactories::Type::AudioDecoder, "audio/x-flac", {"audio/x-flac", "audio/flac"}, {"x-flac", "flac" } },
+    };
+    fillMimeTypeSetFromCapsMapping(factories, mseCompatibleMapping);
+
     if (m_isMediaSource)
         return;
 
@@ -344,10 +351,7 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
 
     Vector<GstCapsWebKitMapping> mapping = {
         { ElementFactories::Type::AudioDecoder, "audio/midi", { "audio/midi", "audio/riff-midi" }, { } },
-        { ElementFactories::Type::AudioDecoder, "audio/x-ac3", { }, { } },
         { ElementFactories::Type::AudioDecoder, "audio/x-dts", { }, { } },
-        { ElementFactories::Type::AudioDecoder, "audio/x-eac3", { "audio/x-ac3" }, { } },
-        { ElementFactories::Type::AudioDecoder, "audio/x-flac", { "audio/x-flac", "audio/flac" }, { } },
         { ElementFactories::Type::AudioDecoder, "audio/x-sbc", { }, { } },
         { ElementFactories::Type::AudioDecoder, "audio/x-sid", { }, { } },
         { ElementFactories::Type::AudioDecoder, "audio/x-speex", { "audio/speex", "audio/x-speex" }, { } },

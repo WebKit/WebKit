@@ -1,3 +1,22 @@
+2022-03-15  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer][MSE] add ac-3,ec-3 and flac codecs gst caps
+        https://bugs.webkit.org/show_bug.cgi?id=237843
+
+        Reviewed by Philippe Normand.
+
+        AC-3, EC-3 and FLAC formats should be supported on MSE and EME on those
+        platforms having the appropriate decoders for them.
+
+        This patch adds the appropriate mime types, factories and caps to the
+        set of codecs whose local support will be tested on MSE.
+
+        This patch is authored by Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+        See: https://github.com/WebPlatformForEmbedded/WPEWebKit/pull/804
+
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp: Add support for the codecs, factories and caps.
+        * platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp: Add support for the caps.
+
 2022-03-15  Antoine Quint  <graouts@webkit.org>
 
         Dialog element only animates once
