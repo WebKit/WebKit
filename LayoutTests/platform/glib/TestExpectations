@@ -909,6 +909,8 @@ webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
 webkit.org/b/237256 media/video-src-blob-perf.html [ Timeout Failure ]
 
+webkit.org/b/237872 webrtc/vp8-then-h264.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1091,7 +1093,8 @@ webkit.org/b/227659 imported/w3c/web-platform-tests/resource-timing/same-origin-
 # Scrolling-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/173412 fast/scrolling/overflow-scrollable-after-back.html [ Failure Pass ]
+# Previous expectation: webkit.org/b/173412 fast/scrolling/overflow-scrollable-after-back.html [ Failure Pass ]
+webkit.org/b/212202 fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
 
 # Warning: this test is expected to fail in the global expectations file, but
 # we expect it to Pass because we support RTL scrollbars. When fixed, it should

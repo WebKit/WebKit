@@ -1,3 +1,10 @@
+2022-03-14  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Unreviewed, gardening crash and timeout
+        https://bugs.webkit.org/show_bug.cgi?id=237873
+
+        * platform/glib/TestExpectations:
+
 2022-03-14  Robert Jenner  <Jenner@apple.com>
 
         [ Mac wk1 ] 8X imported/w3c/web-platform-tests/pointerevents/pointere vent (layout-tests) are flaky text failures (236128)
