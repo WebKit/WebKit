@@ -1,3 +1,13 @@
+2022-03-14  Robert Jenner  <Jenner@apple.com>
+
+        WindowServer returned not alive with context:,unresponsive work processor(s)
+        <rdar://86037417>
+
+        Uneviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2022-03-14  Antoine Quint  <graouts@webkit.org>
 
         [model] <model interactive> doesn't allow model to be rotated on iOS

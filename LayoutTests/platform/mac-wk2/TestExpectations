@@ -1690,6 +1690,7 @@ http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.
 [ Monterey+ ] http/tests/model/model-document.html [ Skip ]
 [ Monterey+ ] http/tests/model/model-document-interactive.html [ Skip ]
 [ Monterey+ ] accessibility/model-element-attributes.html [ Skip ]
+[ Monterey+ ] model-element/model-element-interactive.html [ Skip ]
 
 # Captured WebGL to another context2d or WebGL not implemented yet.
 webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
