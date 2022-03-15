@@ -62,6 +62,9 @@ public:
     bool hasProperty(CSSPropertyID) const;
     const Property& property(CSSPropertyID) const;
 
+    bool hasDeferredProperty(CSSPropertyID) const;
+    const Property& deferredProperty(CSSPropertyID) const;
+
     bool hasCustomProperty(const String&) const;
     Property customProperty(const String&) const;
 
@@ -93,6 +96,8 @@ private:
     std::bitset<numCSSProperties + 2> m_propertyIsPresent;
 
     Vector<Property, 8> m_deferredProperties;
+    HashMap<CSSPropertyID, unsigned> m_deferredPropertiesIndices;
+
     HashMap<AtomString, Property> m_customProperties;
 };
 
@@ -105,6 +110,19 @@ inline bool PropertyCascade::hasProperty(CSSPropertyID id) const
 inline const PropertyCascade::Property& PropertyCascade::property(CSSPropertyID id) const
 {
     return m_properties[id];
+}
+
+inline bool PropertyCascade::hasDeferredProperty(CSSPropertyID id) const
+{
+    return m_deferredPropertiesIndices.contains(id);
+}
+
+inline const PropertyCascade::Property& PropertyCascade::deferredProperty(CSSPropertyID id) const
+{
+    ASSERT(hasDeferredProperty(id));
+    unsigned index = m_deferredPropertiesIndices.get(id);
+    ASSERT(index < m_deferredProperties.size());
+    return m_deferredProperties[index];
 }
 
 inline bool PropertyCascade::hasCustomProperty(const String& name) const

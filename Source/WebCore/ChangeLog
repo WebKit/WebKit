@@ -1,3 +1,30 @@
+2022-03-14  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Fix 'revert' on low-priority properties
+        https://bugs.webkit.org/show_bug.cgi?id=236272
+
+        Reviewed by Darin Adler.
+
+        Some CSS properties are low-priority (a.k.a deferred or applied in parse
+        order). The logic for the 'revert' keyword was not taking these into
+        account, so it just behaved as 'unset'.
+        That made elements like <del>, <ins>, <s> and <u> lose the line-through
+        or underline thet they get in UA origin, when styled with 'all: revert'
+        or 'text-decoration: revert'.
+
+        This patch takes these properties into account so that 'revert' works.
+
+        Tests: imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer-noop.html
+               imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-noop.html
+
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::PropertyCascade::setDeferred):
+        * style/PropertyCascade.h:
+        (WebCore::Style::PropertyCascade::hasDeferredProperty const):
+        (WebCore::Style::PropertyCascade::deferredProperty const):
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::applyProperty):
+
 2022-03-14  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Use sRGB colorspace in ScreenCaptureKitCaptureSource

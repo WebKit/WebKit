@@ -320,6 +320,10 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
                 auto& property = rollbackCascade->property(id);
                 applyRollbackCascadeProperty(property, linkMatchMask);
                 return;
+            } else if (rollbackCascade->hasDeferredProperty(id)) {
+                auto& property = rollbackCascade->deferredProperty(id);
+                applyRollbackCascadeProperty(property, linkMatchMask);
+                return;
             }
         }
 

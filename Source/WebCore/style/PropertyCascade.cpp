@@ -173,6 +173,7 @@ void PropertyCascade::setDeferred(CSSPropertyID id, CSSValue& cssValue, const Ma
     Property property;
     memset(property.cssValue, 0, sizeof(property.cssValue));
     setPropertyInternal(property, id, cssValue, matchedProperties, cascadeLevel);
+    m_deferredPropertiesIndices.set(id, m_deferredProperties.size());
     m_deferredProperties.append(property);
 }
 

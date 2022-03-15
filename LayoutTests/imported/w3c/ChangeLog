@@ -1,3 +1,16 @@
+2022-03-14  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Fix 'revert' on low-priority properties
+        https://bugs.webkit.org/show_bug.cgi?id=236272
+
+        Reviewed by Darin Adler.
+
+        Add one test and expect an existing one to pass.
+
+        * web-platform-tests/css/css-cascade/all-prop-revert-layer-noop-expected.txt:
+        * web-platform-tests/css/css-cascade/all-prop-revert-noop-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/all-prop-revert-layer-noop-expected.txt.
+        * web-platform-tests/css/css-cascade/all-prop-revert-noop.html: Added.
+
 2022-03-14  Antoine Quint  <graouts@webkit.org>
 
         [web-animations] marker-start should support discrete animation
