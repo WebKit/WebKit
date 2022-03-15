@@ -1,8 +1,8 @@
 Test
 
-FAIL qi respond when selected container changes type (inline-size -> none) assert_equals: expected "30px" but got "0px"
-FAIL qb respond when selected container changes type (size -> none) assert_equals: expected "40px" but got "0px"
-FAIL qb respond when intermediate container changes type (inline-size -> size) assert_equals: expected "40px" but got "0px"
-FAIL qi respond when selected container changes inline-size assert_equals: expected "30px" but got "0px"
-FAIL qb respond when selected container changes block-size assert_equals: expected "40px" but got "0px"
+FAIL cqi respond when selected container changes type (inline-size -> none) assert_equals: expected "30px" but got "0px"
+FAIL cqb respond when selected container changes type (size -> none) assert_equals: expected "40px" but got "0px"
+FAIL cqb respond when intermediate container changes type (inline-size -> size) assert_equals: expected "40px" but got "0px"
+FAIL cqi respond when selected container changes inline-size assert_equals: expected "30px" but got "0px"
+FAIL cqb respond when selected container changes block-size assert_equals: expected "40px" but got "0px"
 

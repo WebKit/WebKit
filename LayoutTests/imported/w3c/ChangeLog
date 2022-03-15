@@ -1,5 +1,44 @@
 2022-03-15  Antti Koivisto  <antti@apple.com>
 
+        [CSS Container Queries] Some more WPT updates
+        https://bugs.webkit.org/show_bug.cgi?id=237890
+
+        Reviewed by Antoine Quint.
+
+        * web-platform-tests/css/css-contain/container-queries/canvas-as-container-005.html:
+        * web-platform-tests/css/css-contain/container-queries/canvas-as-container-006.html:
+        * web-platform-tests/css/css-contain/container-queries/chrome-legacy-skip-recalc.html:
+        * web-platform-tests/css/css-contain/container-queries/container-computed-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-computed.html:
+        * web-platform-tests/css/css-contain/container-queries/container-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-parsing.html:
+        * web-platform-tests/css/css-contain/container-queries/container-type-parsing-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-type-parsing.html:
+        * web-platform-tests/css/css-contain/container-queries/container-units-animation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-animation.html:
+        * web-platform-tests/css/css-contain/container-queries/container-units-basic.html:
+        * web-platform-tests/css/css-contain/container-queries/container-units-computational-independence-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-computational-independence.html:
+        * web-platform-tests/css/css-contain/container-queries/container-units-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-invalidation.html:
+        * web-platform-tests/css/css-contain/container-queries/container-units-selection.html:
+        * web-platform-tests/css/css-contain/container-queries/container-units-small-viewport-fallback.html:
+        * web-platform-tests/css/css-contain/container-queries/container-units-typed-om-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-typed-om.html:
+        * web-platform-tests/css/css-contain/container-queries/display-none-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/display-none.html:
+        * web-platform-tests/css/css-contain/container-queries/fragmented-container-001.html:
+        * web-platform-tests/css/css-contain/container-queries/multicol-container-001.html:
+        * web-platform-tests/css/css-contain/container-queries/sibling-layout-dependency-expected.txt: Added.
+        * web-platform-tests/css/css-contain/container-queries/sibling-layout-dependency.html: Added.
+        * web-platform-tests/css/css-contain/container-queries/svg-foreignobject-no-size-container.html:
+        * web-platform-tests/css/css-contain/container-queries/svg-root-size-container.html:
+        * web-platform-tests/css/css-contain/container-queries/table-inside-container-changing-display.html:
+        * web-platform-tests/css/css-contain/container-queries/w3c-import.log:
+        * web-platform-tests/css/css-contain/container-queries/whitespace-update-after-removal.html:
+
+2022-03-15  Antti Koivisto  <antti@apple.com>
+
         CSSConditionRule.conditionText should be readonly
         https://bugs.webkit.org/show_bug.cgi?id=237880
 

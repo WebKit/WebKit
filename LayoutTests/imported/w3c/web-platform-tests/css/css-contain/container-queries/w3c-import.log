@@ -128,6 +128,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/resize-while-content-visibility-hidden-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/resize-while-content-visibility-hidden-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/resize-while-content-visibility-hidden.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/sibling-layout-dependency.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/size-container-no-principal-box.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/size-feature-evaluation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/style-change-in-container.html

@@ -1,0 +1,7 @@
+XXXX
+
+FAIL Sibling style mutation assert_equals: expected "10" but got "20"
+FAIL Sibling style mutation, parent is affected assert_equals: expected "10" but got "20"
+FAIL Sibling style mutation, ancestor is affected assert_equals: expected "10" but got "20"
+FAIL Sibling text mutation assert_equals: expected "10" but got "20"
+
