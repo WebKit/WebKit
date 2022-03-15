@@ -363,3 +363,9 @@ webkit.org/b/232090 imported/w3c/web-platform-tests/html/canvas/element/manual/i
 webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Pass ]
 webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Pass ]
 webkit.org/b/292090 media/video-canvas-createPattern.html [ Pass ]
+
+#webkit.org/b/236921 
+imported/w3c/web-platform-tests/css/css-writing-modes/block-flow-direction-vlr-010.xht [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/table-column-order-003.xht [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/row-progression-vlr-007.xht [ Pass Failure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/line-box-direction-vrl-002.xht [ Pass Failure ]
