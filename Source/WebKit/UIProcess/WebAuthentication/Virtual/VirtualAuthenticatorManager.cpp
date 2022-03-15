@@ -63,6 +63,27 @@ UniqueRef<AuthenticatorTransportService> VirtualAuthenticatorManager::createServ
     return VirtualService::createVirtual(transport, observer, configs);
 }
 
+void VirtualAuthenticatorManager::runPanel()
+{
+    auto transports = getTransports();
+    if (transports.isEmpty()) {
+        cancel();
+        return;
+    }
+
+    startDiscovery(transports);
+}
+
+void VirtualAuthenticatorManager::selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&& responses, WebAuthenticationSource source, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&& completionHandler)
+{
+    completionHandler(responses[0].ptr());
+}
+
+void VirtualAuthenticatorManager::decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&& completionHandler)
+{
+    completionHandler(LocalAuthenticatorPolicy::Allow);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WEB_AUTHN)

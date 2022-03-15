@@ -40,6 +40,9 @@ public:
     bool removeAuthenticator(const String& /*authenticatorId*/);
 
     bool isVirtual() const final { return true; }
+    void runPanel();
+    void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&);
+    void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&);
 
 private:
     UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const final;

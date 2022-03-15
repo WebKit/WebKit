@@ -1,3 +1,20 @@
+2022-03-15  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Mock UI interactions whenever virtual authenticators are in use.
+        https://bugs.webkit.org/show_bug.cgi?id=237856
+        rdar://problem/90274854
+
+        Reviewed by Brent Fulgham.
+
+        Tested by wpt's webauthn tests.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.cpp:
+        (WebKit::VirtualAuthenticatorManager::runPanel):
+        (WebKit::VirtualAuthenticatorManager::selectAssertionResponse):
+        (WebKit::VirtualAuthenticatorManager::decidePolicyForLocalAuthenticator):
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.h:
+
 2022-03-15  Chris Dumez  <cdumez@apple.com>
 
         Make it clearer in the loading logging when it is for the main frame or not
