@@ -50,7 +50,9 @@ def parse_utils(utils):
 
 
 def append_functions(utils_data, util_functions, util_functions_impl, functions_written):
-    for function in util_functions:
+    util_functions_list = list(util_functions)
+    util_functions_list.sort()
+    for function in util_functions_list:
         if function in functions_written:
             continue
 
