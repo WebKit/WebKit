@@ -1,3 +1,18 @@
+2022-03-15  Antti Koivisto  <antti@apple.com>
+
+        background-clip:text doesn't work with display:flex
+        https://bugs.webkit.org/show_bug.cgi?id=169125
+        <rdar://problem/72432683>
+
+        Reviewed by Simon Fraser.
+
+        Tests: imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex.html
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::paintAsInlineBlock):
+
+        Flexbox children paint as inline blocks. This path didn't support text clip paint phase.
+
 2022-03-15  Alex Christensen  <achristensen@webkit.org>
 
         Stop using DYLD_INTERPOSE

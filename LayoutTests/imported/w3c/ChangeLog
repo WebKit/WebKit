@@ -1,3 +1,15 @@
+2022-03-15  Antti Koivisto  <antti@apple.com>
+
+        background-clip:text doesn't work with display:flex
+        https://bugs.webkit.org/show_bug.cgi?id=169125
+        <rdar://problem/72432683>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex-expected.html: Added.
+        * web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex-ref.html: Added.
+        * web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex.html: Added.
+
 2022-03-15  Joseph Griego  <jgriego@igalia.com>
 
         Expose some web APIs on Shadow Realms and Worklets
