@@ -49,13 +49,13 @@ static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderO
     return false;
 }
 
-static void minLogicalTopForTextDecorationLine(const InlineIterator::LineIterator& line, float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecoration)
+static void minLogicalTopForTextDecorationLine(const InlineIterator::LineIterator& line, float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
 {
     for (auto run = line->firstLeafBox(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
-        if (!(run->style().textDecorationsInEffect() & textDecoration))
+        if (!(run->style().textDecorationsInEffect() & textDecorationLine))
             continue; // If the text decoration isn't in effect on the child, then it must be outside of |decorationRenderer|'s hierarchy.
 
         if (decorationRenderer && decorationRenderer->isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(*decorationRenderer), &run->renderer()))
@@ -66,13 +66,13 @@ static void minLogicalTopForTextDecorationLine(const InlineIterator::LineIterato
     }
 }
 
-static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineIterator& line, float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecoration)
+static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineIterator& line, float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
 {
     for (auto run = line->firstLeafBox(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
-        if (!(run->style().textDecorationsInEffect() & textDecoration))
+        if (!(run->style().textDecorationsInEffect() & textDecorationLine))
             continue; // If the text decoration isn't in effect on the child, then it must be outside of |decorationRenderer|'s hierarchy.
 
         if (decorationRenderer && decorationRenderer->isRenderInline() && !isAncestorAndWithinBlock(downcast<RenderInline>(*decorationRenderer), &run->renderer()))
@@ -83,7 +83,7 @@ static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineIter
     }
 }
 
-static const RenderElement* enclosingRendererWithTextDecoration(const RenderText& renderer, OptionSet<TextDecorationLine> textDecoration, bool firstLine)
+static const RenderElement* enclosingRendererWithTextDecoration(const RenderText& renderer, OptionSet<TextDecorationLine> textDecorationLine, bool firstLine)
 {
     const RenderElement* current = renderer.parent();
     do {
@@ -93,7 +93,7 @@ static const RenderElement* enclosingRendererWithTextDecoration(const RenderText
             return nullptr;
 
         const RenderStyle& styleToUse = firstLine ? current->firstLineStyle() : current->style();
-        if (styleToUse.textDecoration() & textDecoration)
+        if (styleToUse.textDecorationLine() & textDecorationLine)
             return current;
         current = current->parent();
     } while (current && (!current->element() || (!is<HTMLAnchorElement>(*current->element()) && !current->element()->hasTagName(HTMLNames::fontTag))));

@@ -6841,8 +6841,7 @@
         },
         "text-decoration-line": {
             "codegen-properties": {
-                "name-for-methods": "TextDecoration",
-                "converter": "TextDecoration",
+                "converter": "TextDecorationLine",
                 "aliases": [
                     "-webkit-text-decoration-line"
                 ]

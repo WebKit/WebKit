@@ -168,7 +168,7 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_inheritedFlags.visibility = static_cast<unsigned>(initialVisibility());
     m_inheritedFlags.textAlign = static_cast<unsigned>(initialTextAlign());
     m_inheritedFlags.textTransform = static_cast<unsigned>(initialTextTransform());
-    m_inheritedFlags.textDecorations = initialTextDecoration().toRaw();
+    m_inheritedFlags.textDecorationLines = initialTextDecorationLine().toRaw();
     m_inheritedFlags.cursor = static_cast<unsigned>(initialCursor());
 #if ENABLE(CURSOR_VISIBILITY)
     m_inheritedFlags.cursorVisibility = static_cast<unsigned>(initialCursorVisibility());
@@ -639,7 +639,7 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
         && !arePointingToEqualData(m_rareInheritedData->textShadow, other.m_rareInheritedData->textShadow))
         return true;
 
-    if (m_inheritedFlags.textDecorations != other.m_inheritedFlags.textDecorations
+    if (m_inheritedFlags.textDecorationLines != other.m_inheritedFlags.textDecorationLines
         || m_rareNonInheritedData->textDecorationStyle != other.m_rareNonInheritedData->textDecorationStyle
         || m_rareInheritedData->textDecorationThickness != other.m_rareInheritedData->textDecorationThickness
         || m_rareInheritedData->textUnderlineOffset != other.m_rareInheritedData->textUnderlineOffset
@@ -1181,8 +1181,8 @@ bool RenderStyle::changeRequiresRepaint(const RenderStyle& other, OptionSet<Styl
 bool RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline(const RenderStyle& other, OptionSet<StyleDifferenceContextSensitiveProperty>&) const
 {
     if (m_inheritedData->color != other.m_inheritedData->color
-        || m_inheritedFlags.textDecorations != other.m_inheritedFlags.textDecorations
-        || m_visualData->textDecoration != other.m_visualData->textDecoration
+        || m_inheritedFlags.textDecorationLines != other.m_inheritedFlags.textDecorationLines
+        || m_visualData->textDecorationLine != other.m_visualData->textDecorationLine
         || m_rareNonInheritedData->textDecorationStyle != other.m_rareNonInheritedData->textDecorationStyle
         || m_rareNonInheritedData->textDecorationColor != other.m_rareNonInheritedData->textDecorationColor
         || m_rareInheritedData->textDecorationSkipInk != other.m_rareInheritedData->textDecorationSkipInk

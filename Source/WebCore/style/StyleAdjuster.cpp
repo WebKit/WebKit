@@ -419,9 +419,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     }
 
     if (shouldInheritTextDecorationsInEffect(style, m_element))
-        style.addToTextDecorationsInEffect(style.textDecoration());
+        style.addToTextDecorationsInEffect(style.textDecorationLine());
     else
-        style.setTextDecorationsInEffect(style.textDecoration());
+        style.setTextDecorationsInEffect(style.textDecorationLine());
 
     auto overflowReplacement = [] (Overflow overflow, Overflow overflowInOtherDimension) -> std::optional<Overflow> {
         if (overflow != Overflow::Visible && overflow != Overflow::Clip) {

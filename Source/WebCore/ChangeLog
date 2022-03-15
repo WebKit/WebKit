@@ -1,3 +1,63 @@
+2022-03-14  Oriol Brufau  <obrufau@igalia.com>
+
+        Rename RenderStyle::textDecoration() to RenderStyle::textDecorationLine()
+        https://bugs.webkit.org/show_bug.cgi?id=237400
+
+        Reviewed by Darin Adler.
+
+        Before https://webkit.org/b/237175, the text-decoration-line and
+        text-decoration properties were 2 longhands that shared a computed
+        value, accessed via RenderStyle::textDecoration().
+
+        But now text-decoration is a proper shorthand of text-decoration-line.
+        So it doesn't make much sense to continue accessing the line via
+        textDecoration(), it should be textDecorationLine() instead.
+
+        Same for RenderStyle::setTextDecoration(), etc.
+
+        No tests since it's just a rename, no change in behavior.
+
+        * accessibility/atspi/AccessibilityObjectTextAtspi.cpp:
+        (WebCore::AccessibilityObjectAtspi::textAttributes const):
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::collectStylesForRenderer):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::changeAffectsVisualOverflow const):
+        (WebCore::RenderStyle::changeRequiresRepaintIfTextOrBorderOrOutline const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::textDecorationsInEffect const):
+        (WebCore::RenderStyle::textDecorationLine const):
+        (WebCore::RenderStyle::addToTextDecorationsInEffect):
+        (WebCore::RenderStyle::setTextDecorationsInEffect):
+        (WebCore::RenderStyle::setTextDecorationLine):
+        (WebCore::RenderStyle::initialTextDecorationLine):
+        (WebCore::RenderStyle::InheritedFlags::operator== const):
+        (WebCore::RenderStyle::textDecoration const): Deleted.
+        (WebCore::RenderStyle::setTextDecoration): Deleted.
+        (WebCore::RenderStyle::initialTextDecoration): Deleted.
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleVisualData.cpp:
+        (WebCore::StyleVisualData::StyleVisualData):
+        * rendering/style/StyleVisualData.h:
+        (WebCore::StyleVisualData::operator== const):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::findRendererDefininingTextDecoration):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::minLogicalTopForTextDecorationLine):
+        (WebCore::maxLogicalBottomForTextDecorationLine):
+        (WebCore::enclosingRendererWithTextDecoration):
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjust const):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertTextDecorationLine):
+        (WebCore::Style::BuilderConverter::convertTextDecoration): Deleted.
+
 2022-03-14  Antoine Quint  <graouts@webkit.org>
 
         [model] <model interactive> doesn't allow model to be rotated on iOS

@@ -81,7 +81,7 @@ public:
     static LengthSize convertRadius(BuilderState&, const CSSValue&);
     static LengthPoint convertPosition(BuilderState&, const CSSValue&);
     static LengthPoint convertPositionOrAuto(BuilderState&, const CSSValue&);
-    static OptionSet<TextDecorationLine> convertTextDecoration(BuilderState&, const CSSValue&);
+    static OptionSet<TextDecorationLine> convertTextDecorationLine(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumber(BuilderState&, const CSSValue&);
     template<typename T> static T convertNumberOrAuto(BuilderState&, const CSSValue&);
     static short convertWebkitHyphenateLimitLines(BuilderState&, const CSSValue&);
@@ -432,9 +432,9 @@ inline LengthPoint BuilderConverter::convertPositionOrAuto(BuilderState& builder
     return LengthPoint(Length(LengthType::Auto), Length(LengthType::Auto));
 }
 
-inline OptionSet<TextDecorationLine> BuilderConverter::convertTextDecoration(BuilderState&, const CSSValue& value)
+inline OptionSet<TextDecorationLine> BuilderConverter::convertTextDecorationLine(BuilderState&, const CSSValue& value)
 {
-    auto result = RenderStyle::initialTextDecoration();
+    auto result = RenderStyle::initialTextDecorationLine();
     if (is<CSSValueList>(value)) {
         for (auto& currentValue : downcast<CSSValueList>(value))
             result.add(downcast<CSSPrimitiveValue>(currentValue.get()));

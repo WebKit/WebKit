@@ -3552,7 +3552,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyTextAlign:
             return cssValuePool.createValue(style.textAlign());
         case CSSPropertyTextDecoration:
-            return renderTextDecorationLineFlagsToCSSValue(style.textDecoration());
+            return renderTextDecorationLineFlagsToCSSValue(style.textDecorationLine());
 #if ENABLE(CSS3_TEXT)
         case CSSPropertyWebkitTextAlignLast:
             return cssValuePool.createValue(style.textAlignLast());
@@ -3562,7 +3562,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitTextDecoration:
             return getCSSPropertyValuesForShorthandProperties(webkitTextDecorationShorthand());
         case CSSPropertyTextDecorationLine:
-            return renderTextDecorationLineFlagsToCSSValue(style.textDecoration());
+            return renderTextDecorationLineFlagsToCSSValue(style.textDecorationLine());
         case CSSPropertyTextDecorationStyle:
             return renderTextDecorationStyleFlagsToCSSValue(style.textDecorationStyle());
         case CSSPropertyTextDecorationColor:

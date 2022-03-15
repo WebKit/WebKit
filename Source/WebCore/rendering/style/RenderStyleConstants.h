@@ -734,7 +734,7 @@ enum class TextTransform : uint8_t {
     None
 };
 
-static const size_t TextDecorationBits = 4;
+static const size_t TextDecorationLineBits = 4;
 enum class TextDecorationLine : uint8_t {
     None          = 0,
     Underline     = 1 << 0,

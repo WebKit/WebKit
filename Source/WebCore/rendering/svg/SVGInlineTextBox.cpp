@@ -453,7 +453,7 @@ static inline RenderBoxModelObject& findRendererDefininingTextDecoration(LegacyI
     while (parentBox) {
         renderer = &parentBox->renderer();
 
-        if (!renderer->style().textDecoration().isEmpty())
+        if (!renderer->style().textDecorationLine().isEmpty())
             break;
 
         parentBox = parentBox->parent();

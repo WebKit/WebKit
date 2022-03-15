@@ -784,8 +784,8 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
         addAttributeIfNeeded("size"_s, makeString(std::round(style.computedFontPixelSize() * 72 / WebCore::screenDPI()), "pt"));
         addAttributeIfNeeded("weight"_s, makeString(static_cast<float>(style.fontCascade().weight())));
         addAttributeIfNeeded("style"_s, style.fontCascade().italic() ? "italic" : "normal");
-        addAttributeIfNeeded("strikethrough"_s, style.textDecoration() & TextDecorationLine::LineThrough ? "true" : "false");
-        addAttributeIfNeeded("underline"_s, style.textDecoration() & TextDecorationLine::Underline ? "single" : "none");
+        addAttributeIfNeeded("strikethrough"_s, style.textDecorationLine() & TextDecorationLine::LineThrough ? "true" : "false");
+        addAttributeIfNeeded("underline"_s, style.textDecorationLine() & TextDecorationLine::Underline ? "single" : "none");
         addAttributeIfNeeded("invisible"_s, style.visibility() == Visibility::Hidden ? "true" : "false");
         addAttributeIfNeeded("editable"_s, m_coreObject->canSetValueAttribute() ? "true" : "false");
         addAttributeIfNeeded("direction"_s, style.direction() == TextDirection::LTR ? "ltr" : "rtl");

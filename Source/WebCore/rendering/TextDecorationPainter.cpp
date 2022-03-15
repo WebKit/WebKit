@@ -369,7 +369,7 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
     auto* current = &renderer;
     do {
         const auto& style = styleForRenderer(*current);
-        extractDecorations(style, style.textDecoration());
+        extractDecorations(style, style.textDecorationLine());
 
         if (current->isRubyText())
             return;
