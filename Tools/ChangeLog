@@ -1,5 +1,21 @@
 2022-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [Mail compose] Allow copied resources with remote (HTTP/HTTPS) URLs to be pasted as attachments
+        https://bugs.webkit.org/show_bug.cgi?id=237810
+        rdar://90119983
+
+        Reviewed by Devin Rousso.
+
+        Add an API test to exercise copying remote images and pasting as attachment-backed images. This API test first
+        loads a web page (simulating page load via HTTPS, along with multiple image subresources); it then pastes into
+        an attachment-enabled WKWebView-based editor and verifies that the _WKAttachment UI delegate hooks are invoked
+        with attachments corresponding to each of the remote images.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
+2022-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Mail Compose] Spelling and grammar context menu items need custom identifiers
         https://bugs.webkit.org/show_bug.cgi?id=237804
         rdar://90124049

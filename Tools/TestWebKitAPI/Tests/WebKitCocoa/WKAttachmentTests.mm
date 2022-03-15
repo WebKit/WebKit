@@ -31,6 +31,7 @@
 #import "NSItemProviderAdditions.h"
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestProtocol.h"
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <Contacts/Contacts.h>
@@ -69,6 +70,12 @@ SOFT_LINK_CLASS(MapKit, MKPlacemark)
 @end
 
 #define USES_MODERN_ATTRIBUTED_STRING_CONVERSION (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
+
+#if USE(APPKIT)
+using CocoaPasteboard = NSPasteboard;
+#else
+using CocoaPasteboard = UIPasteboard;
+#endif
 
 @interface AttachmentUpdateObserver : NSObject <WKUIDelegatePrivate>
 @property (nonatomic, readonly) NSArray *inserted;
@@ -1667,6 +1674,58 @@ TEST(WKAttachmentTests, PastingPreservesImageFormat)
         EXPECT_EQ(1U, observer.observer().inserted.count);
         _WKAttachment *attachment = observer.observer().inserted[0];
         EXPECT_WK_STREQ("image/jpeg", attachment.info.contentType);
+    }
+}
+
+TEST(WKAttachmentTests, CopyAndPasteRemoteImages)
+{
+    {
+        [TestProtocol registerWithScheme:@"https"];
+
+        auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+        auto sourceView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+        [sourceView setNavigationDelegate:navigationDelegate.get()];
+        [sourceView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://bundle-file/multiple-images.html"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        auto pasteboard = [CocoaPasteboard generalPasteboard];
+        auto changeCountBeforeCopying = pasteboard.changeCount;
+
+        [sourceView selectAll:nil];
+        [sourceView _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
+
+        Util::waitForConditionWithLogging([changeCountBeforeCopying, pasteboard] {
+            return changeCountBeforeCopying != pasteboard.changeCount;
+        }, 2, @"Expected %@ to change.", pasteboard);
+    }
+    {
+        auto webView = webViewForTestingAttachments();
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        [webView expectElementCount:5 querySelector:@"IMG"];
+        EXPECT_EQ(5U, observer.observer().inserted.count);
+        Vector attachmentInfo { {
+            RetainPtr { [observer.observer().inserted[0] info] },
+            RetainPtr { [observer.observer().inserted[1] info] },
+            RetainPtr { [observer.observer().inserted[2] info] },
+            RetainPtr { [observer.observer().inserted[3] info] },
+            RetainPtr { [observer.observer().inserted[4] info] },
+        } };
+
+        std::sort(attachmentInfo.begin(), attachmentInfo.end(), [] (auto& a, auto& b) {
+            return [[a name] compare:[b name]] == NSOrderedAscending;
+        });
+
+        EXPECT_WK_STREQ("400x400-green.png", [attachmentInfo[0] name]);
+        EXPECT_WK_STREQ("image/png", [attachmentInfo[0] contentType]);
+        EXPECT_WK_STREQ("large-red-square.png", [attachmentInfo[1] name]);
+        EXPECT_WK_STREQ("image/png", [attachmentInfo[1] contentType]);
+        EXPECT_WK_STREQ("sunset-in-cupertino-100px.tiff", [attachmentInfo[2] name]);
+        EXPECT_WK_STREQ("image/tiff", [attachmentInfo[2] contentType]);
+        EXPECT_WK_STREQ("sunset-in-cupertino-200px.png", [attachmentInfo[3] name]);
+        EXPECT_WK_STREQ("image/png", [attachmentInfo[3] contentType]);
+        EXPECT_WK_STREQ("test.jpg", [attachmentInfo[4] name]);
+        EXPECT_WK_STREQ("image/jpeg", [attachmentInfo[4] contentType]);
     }
 }
 

@@ -200,10 +200,16 @@ private:
     bool m_didDisableImage { false };
 };
 
-
-static bool shouldReplaceSubresourceURL(const URL& url)
+enum class ReplacementMethod : bool { BlobURL, Attachment };
+static bool shouldReplaceSubresourceURL(const URL& url, ReplacementMethod replacementType = ReplacementMethod::BlobURL)
 {
-    return !(url.protocolIsInHTTPFamily() || url.protocolIsData());
+    if (url.protocolIsData())
+        return false;
+
+    if (url.protocolIsInHTTPFamily())
+        return replacementType == ReplacementMethod::Attachment;
+
+    return true;
 }
 
 static bool shouldReplaceRichContentWithAttachments()
@@ -297,7 +303,7 @@ static void replaceRichContentWithAttachments(Frame& frame, DocumentFragment& fr
     HashMap<AtomString, Ref<ArchiveResource>> urlToResourceMap;
     for (auto& subresource : subresources) {
         auto& url = subresource->url();
-        if (shouldReplaceSubresourceURL(url))
+        if (shouldReplaceSubresourceURL(url, ReplacementMethod::Attachment))
             urlToResourceMap.set(url.string(), subresource.copyRef());
     }
 

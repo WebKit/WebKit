@@ -1,3 +1,23 @@
+2022-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mail compose] Allow copied resources with remote (HTTP/HTTPS) URLs to be pasted as attachments
+        https://bugs.webkit.org/show_bug.cgi?id=237810
+        rdar://90119983
+
+        Reviewed by Devin Rousso.
+
+        When creating attachments by pasting subresources with remote URLs, Mail compose in shipping macOS inserts such
+        subresources as attachments, which are sent as MIME parts alongside the rest of the Mail message. However, when
+        using the WebKit2 client-side attachment API, we currently leave remote (i.e. HTTP-family) URLs as-is, which
+        means they don't end up being sent as attachments.
+
+        I implemented this current behavior in r226340; back then, we opted to preserve the HTTP/HTTPS URL in pasted
+        resources over falling back to blob URL conversion. However, in order to match legacy Mail compose behavior, we
+        should've handled it by propagating the data as attachments to the client layer instead.
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::shouldReplaceSubresourceURL):
+
 2022-03-14  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Fix 'revert' on low-priority properties
