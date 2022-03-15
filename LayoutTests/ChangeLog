@@ -1,5 +1,14 @@
 2022-03-15  Matteo Flores  <matteo_flores@apple.com>
 
+        Implement ElementInternals
+        https://bugs.webkit.org/show_bug.cgi?id=197960
+
+        Unreviewed test gardening.
+
+        * platform/ipad/TestExpectations:
+
+2022-03-15  Matteo Flores  <matteo_flores@apple.com>
+
         [GPU Process] Test failures in writing modes
         https://bugs.webkit.org/show_bug.cgi?id=236921
 
