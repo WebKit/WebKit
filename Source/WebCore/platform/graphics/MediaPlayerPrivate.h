@@ -329,6 +329,8 @@ public:
     virtual void playerContentBoxRectChanged(const LayoutRect&) { }
 
     virtual void setResourceOwner(const ProcessIdentity&) { }
+
+    virtual String errorMessage() const { return { }; }
 };
 
 }

@@ -392,6 +392,8 @@ protected:
 
     std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
 
+    String errorMessage() const override { return m_errorMessage; }
+
 private:
     class TaskAtMediaTimeScheduler {
     public:
@@ -579,6 +581,7 @@ private:
 #endif
 
     RefPtr<GBMBufferSwapchain> m_swapchain;
+    String m_errorMessage;
 };
 
 }

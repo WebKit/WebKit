@@ -697,6 +697,8 @@ public:
 
     void playerContentBoxRectChanged(const LayoutRect&);
 
+    String lastErrorMessage() const;
+
 private:
     MediaPlayer(MediaPlayerClient&);
     MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
@@ -741,6 +743,7 @@ private:
     bool m_shouldContinueAfterKeyNeeded { false };
 #endif
     bool m_isGatheringVideoFrameMetadata { false };
+    String m_lastErrorMessage;
 };
 
 class MediaPlayerFactory {

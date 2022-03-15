@@ -210,7 +210,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
             return GST_FLOW_FLUSHING;
         }
         if (!priv->cdmProxy) {
-            GST_ERROR_OBJECT(self, "CDMProxy was not retrieved in time");
+            GST_ELEMENT_ERROR(self, STREAM, FAILED, ("CDMProxy was not retrieved in time"), (nullptr));
             return GST_FLOW_NOT_SUPPORTED;
         }
         GST_DEBUG_OBJECT(self, "CDM now available with address %p", priv->cdmProxy.get());
@@ -224,18 +224,18 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
 
     unsigned ivSize;
     if (!gst_structure_get_uint(protectionMeta->info, "iv_size", &ivSize)) {
-        GST_ERROR_OBJECT(self, "Failed to get iv_size");
+        GST_ELEMENT_ERROR(self, STREAM, FAILED, ("Failed to get iv_size"), (nullptr));
         return GST_FLOW_NOT_SUPPORTED;
     }
     if (!ivSize && !gst_structure_get_uint(protectionMeta->info, "constant_iv_size", &ivSize)) {
-        GST_ERROR_OBJECT(self, "No iv_size and failed to get constant_iv_size");
+        GST_ELEMENT_ERROR(self, STREAM, FAILED, ("No iv_size and failed to get constant_iv_size"), (nullptr));
         ASSERT(isCbcs);
         return GST_FLOW_NOT_SUPPORTED;
     }
 
     gboolean encrypted;
     if (!gst_structure_get_boolean(protectionMeta->info, "encrypted", &encrypted)) {
-        GST_ERROR_OBJECT(self, "Failed to get encrypted flag");
+        GST_ELEMENT_ERROR(self, STREAM, FAILED, ("Failed to get encrypted flag"), (nullptr));
         return GST_FLOW_NOT_SUPPORTED;
     }
 
@@ -249,7 +249,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
     unsigned subSampleCount = 0;
     // cbcs could not include the subsample_count.
     if (!gst_structure_get_uint(protectionMeta->info, "subsample_count", &subSampleCount) && !isCbcs) {
-        GST_ERROR_OBJECT(self, "Failed to get subsample_count");
+        GST_ELEMENT_ERROR(self, STREAM, FAILED, ("Failed to get subsample_count"), (nullptr));
         return GST_FLOW_NOT_SUPPORTED;
     }
 
@@ -258,12 +258,12 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
     if (subSampleCount) {
         value = gst_structure_get_value(protectionMeta->info, "subsamples");
         if (!value) {
-            GST_ERROR_OBJECT(self, "Failed to get subsamples");
+            GST_ELEMENT_ERROR(self, STREAM, FAILED, ("Failed to get subsamples"), (nullptr));
             return GST_FLOW_NOT_SUPPORTED;
         }
         subSamplesBuffer = gst_value_get_buffer(value);
         if (!subSamplesBuffer) {
-            GST_ERROR_OBJECT(self, "There is no subsamples buffer, but a positive subsample count");
+            GST_ELEMENT_ERROR(self, STREAM, FAILED, ("There is no subsamples buffer, but a positive subsample count"), (nullptr));
             return GST_FLOW_NOT_SUPPORTED;
         }
     }
@@ -271,14 +271,14 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
     value = gst_structure_get_value(protectionMeta->info, "kid");
 
     if (!value) {
-        GST_ERROR_OBJECT(self, "Failed to get key id for buffer");
+        GST_ELEMENT_ERROR(self, STREAM, FAILED, ("Failed to get key id for buffer"), (nullptr));
         return GST_FLOW_NOT_SUPPORTED;
     }
     GstBuffer* keyIDBuffer = gst_value_get_buffer(value);
 
     value = gst_structure_get_value(protectionMeta->info, "iv");
     if (!value) {
-        GST_ERROR_OBJECT(self, "Failed to get IV for sample");
+        GST_ELEMENT_ERROR(self, STREAM, FAILED, ("Failed to get IV for sample"), (nullptr));
         return GST_FLOW_NOT_SUPPORTED;
     }
 
@@ -307,7 +307,7 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
             GST_DEBUG_OBJECT(self, "Decryption aborted because of flush");
             return GST_FLOW_FLUSHING;
         }
-        GST_ERROR_OBJECT(self, "Decryption failed");
+        GST_ELEMENT_ERROR(self, STREAM, DECRYPT, ("Decryption failed"), (nullptr));
         return GST_FLOW_NOT_SUPPORTED;
     }
 
