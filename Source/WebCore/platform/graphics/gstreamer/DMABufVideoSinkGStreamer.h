@@ -50,7 +50,6 @@ struct _WebKitDMABufVideoSinkClass {
 
 GType webkit_dmabuf_video_sink_get_type(void);
 
-bool webKitDMABufVideoSinkIsEnabled();
 bool webKitDMABufVideoSinkProbePlatform();
 void webKitDMABufVideoSinkSetMediaPlayerPrivate(WebKitDMABufVideoSink*, WebCore::MediaPlayerPrivateGStreamer*);
 

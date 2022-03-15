@@ -105,8 +105,6 @@ class InbandTextTrackPrivateGStreamer;
 class MediaPlayerRequestInstallMissingPluginsCallback;
 class VideoTrackPrivateGStreamer;
 
-class GBMBufferSwapchain;
-
 void registerWebKitGStreamerElements();
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on another thread.
@@ -269,14 +267,12 @@ protected:
     bool shouldIgnoreIntrinsicSize() final { return true; }
 #endif
 
-    GstElement* createVideoSinkDMABuf();
 #if USE(GSTREAMER_GL)
     GstElement* createVideoSinkGL();
 #endif
 
 #if USE(TEXTURE_MAPPER_GL)
     void pushTextureToCompositor();
-    void pushDMABufToCompositor();
 #if USE(NICOSIA)
     void swapBuffersIfNeeded() final;
 #else
@@ -514,7 +510,7 @@ private:
     RunLoop::Timer<MediaPlayerPrivateGStreamer> m_readyTimerHandler;
 #if USE(TEXTURE_MAPPER_GL)
 #if USE(NICOSIA)
-    RefPtr<Nicosia::ContentLayer> m_nicosiaLayer;
+    Ref<Nicosia::ContentLayer> m_nicosiaLayer;
 #else
     RefPtr<TextureMapperPlatformLayerProxy> m_platformLayerProxy;
 #endif
@@ -580,7 +576,6 @@ private:
     const void* m_logIdentifier;
 #endif
 
-    RefPtr<GBMBufferSwapchain> m_swapchain;
     String m_errorMessage;
 };
 

@@ -89,7 +89,6 @@ platform/graphics/PlatformDisplay.cpp
 platform/graphics/egl/GLContextEGL.cpp
 platform/graphics/egl/GLContextEGLLibWPE.cpp
 
-platform/graphics/gbm/GBMBufferSwapchain.cpp
 platform/graphics/gbm/GBMDevice.cpp
 
 platform/graphics/libwpe/PlatformDisplayLibWPE.cpp

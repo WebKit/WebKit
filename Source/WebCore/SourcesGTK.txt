@@ -101,7 +101,6 @@ platform/graphics/egl/GLContextEGLLibWPE.cpp @no-unify
 platform/graphics/egl/GLContextEGLWayland.cpp @no-unify
 platform/graphics/egl/GLContextEGLX11.cpp @no-unify
 
-platform/graphics/gbm/GBMBufferSwapchain.cpp
 platform/graphics/gbm/GBMDevice.cpp
 
 platform/graphics/glx/GLContextGLX.cpp @no-unify

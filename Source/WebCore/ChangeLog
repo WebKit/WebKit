@@ -1,3 +1,39 @@
+2022-03-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r291270): Changes need better build-time guards
+        https://bugs.webkit.org/show_bug.cgi?id=237908
+
+        Unreviewed, rolling out r291270 and r291294 until proper build guards
+        and relevant configuration options are introduced.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * platform/TextureMapper.cmake:
+        * platform/graphics/gbm/DMABufFormat.h: Removed.
+        * platform/graphics/gbm/DMABufObject.h: Removed.
+        * platform/graphics/gbm/DMABufReleaseFlag.h: Removed.
+        * platform/graphics/gbm/GBMBufferSwapchain.cpp: Removed.
+        * platform/graphics/gbm/GBMBufferSwapchain.h: Removed.
+        * platform/graphics/gstreamer/DMABufVideoSinkGStreamer.cpp:
+        (webKitDMABufVideoSinkProbePlatform):
+        (webKitDMABufVideoSinkIsEnabled): Deleted.
+        * platform/graphics/gstreamer/DMABufVideoSinkGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::platformLayer const):
+        (WebCore::MediaPlayerPrivateGStreamer::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSink):
+        (WebCore::fourccValue): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::pushDMABufToCompositor): Deleted.
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSinkDMABuf): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.cpp:
+        (Nicosia::ContentLayerTextureMapperImpl::createFactory):
+        * platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.cpp: Removed.
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.h: Removed.
+
 2022-03-15  Chris Dumez  <cdumez@apple.com>
 
         Fix SQL statement in ApplicationCacheStorage::verifySchemaVersion()
