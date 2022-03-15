@@ -948,7 +948,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     RetainPtr<NSString> toolTip;
     NSToolTipTag lastToolTipTag;
 
-    id trackingRectOwner;
+    WeakObjCPtr<id> trackingRectOwner;
     void* trackingRectUserData;
     
     RetainPtr<NSTimer> autoscrollTimer;
@@ -1713,7 +1713,7 @@ static BOOL isQuickLookEvent(NSEvent *event)
 
 - (NSTrackingRectTag)addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)assumeInside
 {
-    ASSERT(_private->trackingRectOwner == nil);
+    ASSERT(!_private->trackingRectOwner);
     _private->trackingRectOwner = owner;
     _private->trackingRectUserData = data;
     return TRACKING_RECT_TAG;
@@ -1722,7 +1722,7 @@ static BOOL isQuickLookEvent(NSEvent *event)
 - (NSTrackingRectTag)_addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)assumeInside useTrackingNum:(int)tag
 {
     ASSERT(tag == 0 || tag == TRACKING_RECT_TAG);
-    ASSERT(_private->trackingRectOwner == nil);
+    ASSERT(!_private->trackingRectOwner);
     _private->trackingRectOwner = owner;
     _private->trackingRectUserData = data;
     return TRACKING_RECT_TAG;
@@ -1732,7 +1732,7 @@ static BOOL isQuickLookEvent(NSEvent *event)
 {
     ASSERT(count == 1);
     ASSERT(trackingNums[0] == 0 || trackingNums[0] == TRACKING_RECT_TAG);
-    ASSERT(_private->trackingRectOwner == nil);
+    ASSERT(!_private->trackingRectOwner);
     _private->trackingRectOwner = owner;
     _private->trackingRectUserData = userDataList[0];
     trackingNums[0] = TRACKING_RECT_TAG;
@@ -1773,6 +1773,25 @@ static BOOL isQuickLookEvent(NSEvent *event)
     }
 }
 
+- (id)_toolTipOwnerForSendingMouseEvents
+{
+    if (id owner = _private->trackingRectOwner.getAutoreleased())
+        return owner;
+
+    for (NSTrackingArea *trackingArea in self.trackingAreas) {
+        static Class managerClass;
+        static std::once_flag onceFlag;
+        std::call_once(onceFlag, [] {
+            managerClass = NSClassFromString(@"NSToolTipManager");
+        });
+
+        id owner = trackingArea.owner;
+        if ([owner class] == managerClass)
+            return owner;
+    }
+    return nil;
+}
+
 - (void)_sendToolTipMouseExited
 {
     // Nothing matters except window, trackingNumber, and userData.
@@ -1785,7 +1804,7 @@ static BOOL isQuickLookEvent(NSEvent *event)
         eventNumber:0
         trackingNumber:TRACKING_RECT_TAG
         userData:_private->trackingRectUserData];
-    [_private->trackingRectOwner mouseExited:fakeEvent];
+    [self._toolTipOwnerForSendingMouseEvents mouseExited:fakeEvent];
 }
 
 - (void)_sendToolTipMouseEntered
@@ -1800,7 +1819,7 @@ static BOOL isQuickLookEvent(NSEvent *event)
         eventNumber:0
         trackingNumber:TRACKING_RECT_TAG
         userData:_private->trackingRectUserData];
-    [_private->trackingRectOwner mouseEntered:fakeEvent];
+    [self._toolTipOwnerForSendingMouseEvents mouseEntered:fakeEvent];
 }
 
 #endif // PLATFORM(MAC)

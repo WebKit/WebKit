@@ -1,3 +1,21 @@
+2022-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Tooltip no longer disappears after leaving hovered element
+        https://bugs.webkit.org/show_bug.cgi?id=237815
+        rdar://90187247
+
+        Reviewed by Tim Horton.
+
+        Apply the same fix to legacy WebKit; see WebKit/ChangeLog for more information.
+
+        * WebView/WebHTMLView.mm:
+
+        Also wrap the owner in a WeakObjCPtr to avoid the possibility of calling methods on deallocated instances.
+
+        (-[WebHTMLView _toolTipOwnerForSendingMouseEvents]):
+        (-[WebHTMLView _sendToolTipMouseExited]):
+        (-[WebHTMLView _sendToolTipMouseEntered]):
+
 2022-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Adopt FALLBACK_PLATFORM_NAME in place of FALLBACK_PLATFORM

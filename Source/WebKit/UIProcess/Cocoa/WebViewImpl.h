@@ -737,6 +737,8 @@ private:
 
     void viewWillMoveToWindowImpl(NSWindow *);
 
+    id toolTipOwnerForSendingMouseEvents() const;
+
 #if ENABLE(DRAG_SUPPORT)
     void sendDragEndToPage(CGPoint endPoint, NSDragOperation);
 #endif
@@ -820,7 +822,7 @@ private:
     RetainPtr<NSTrackingArea> m_primaryTrackingArea;
 
     NSToolTipTag m_lastToolTipTag { 0 };
-    id m_trackingRectOwner { nil };
+    WeakObjCPtr<id> m_trackingRectOwner;
     void* m_trackingRectUserData { nullptr };
 
     RetainPtr<CALayer> m_rootLayer;

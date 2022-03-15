@@ -1,3 +1,31 @@
+2022-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Tooltip no longer disappears after leaving hovered element
+        https://bugs.webkit.org/show_bug.cgi?id=237815
+        rdar://90187247
+
+        Reviewed by Tim Horton.
+
+        On certain versions of macOS, AppKit's tooltip management system installs tracking areas (NSTrackingArea) using
+        `-addTrackingArea:` instead of tracking rects. This breaks our existing mechanism for keeping track of the
+        current tracking rect owner by overriding `-addTrackingRect:owner:userData:assumeInside:` (which assumes that
+        the only client that adds tracking rects is the tooltip manager). Since `-addTrackingRect:` isn't called,
+        `m_trackingRectOwner` remains nil, which causes both `sendToolTipMouseExited()` and `sendToolTipMouseEntered()`
+        to be no-ops.
+
+        To fix this, in the case where `m_trackingRectOwner` is nil, we instead fall back on `-[WKWebView trackingAreas]`
+        and look for an NSTrackingArea that's owned by AppKit's NSToolTipManager. We then send fake mouse enter/exit
+        events to this owner, the same way as we currently do.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::addTrackingRect):
+        (WebKit::WebViewImpl::addTrackingRectWithTrackingNum):
+        (WebKit::WebViewImpl::addTrackingRectsWithTrackingNums):
+        (WebKit::WebViewImpl::toolTipTrackingAreaOwner const):
+        (WebKit::WebViewImpl::sendToolTipMouseExited):
+        (WebKit::WebViewImpl::sendToolTipMouseEntered):
+
 2022-03-15  Youenn Fablet  <youenn@apple.com>
 
         Mark permission as denied if system forbids access to camera and/or microphone
