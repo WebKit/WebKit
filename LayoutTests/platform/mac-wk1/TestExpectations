@@ -1574,9 +1574,6 @@ webkit.org/b/223816 [ arm64 ] platform/mac/fast/objc/webScriptObject-hasWebScrip
 # rdar://80346975
 [ Debug ] media/track/track-in-band-cues-added-once.html [ Pass Failure Crash ]
 
-# rdar://80346516
-media/media-source/media-webm-vorbis-partial.html [ Skip ]
-
 # rdar://80343074 ([ Mac wk1 ] http/tests/websocket/tests/hybi/client-close-2.html [ Failure ])
 http/tests/websocket/tests/hybi/client-close-2.html [ Pass Failure ]
 

@@ -1,3 +1,18 @@
+2022-03-15  Jean-Yves Avenard  <jya@apple.com>
+
+        REGRESSION(r287249): [ Monterey wk2 ] media/media-source/media-webm-vorbis-partial.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=236656
+        rdar://88978504
+
+        Reviewed by Eric Carlson.
+
+        Update test expectations, they didn't get committed after the test got
+        modified in bug 236211
+
+        * media/media-source/media-webm-vorbis-partial-expected.txt:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2022-03-15  Patrick Griffis  <pgriffis@igalia.com>
 
         Add initial implementation of Fetch Metadata
