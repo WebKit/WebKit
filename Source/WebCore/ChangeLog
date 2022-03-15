@@ -1,3 +1,17 @@
+2022-03-15  Brandon Stewart  <brandonstewart@apple.com>
+
+        Line Builder and Content Breaker out of sync
+        https://bugs.webkit.org/show_bug.cgi?id=237903
+
+        Reviewed by Simon Fraser.
+
+        Line builder and content breaker could become out of sync in the case where
+        the first line style was different than following styles. This could result
+        in issues with wrapping later on.
+
+        * layout/formattingContexts/inline/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::handleInlineContent):
+
 2022-03-15  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt AVAssetPrefersSandboxedParsingOptionKey
