@@ -1,3 +1,0 @@
-
-PASS CSS Animations tied to <dialog open> are canceled and restarted as the dialog is hidden and shown
-
