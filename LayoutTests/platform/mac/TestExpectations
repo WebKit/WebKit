@@ -115,7 +115,6 @@ model-element/model-element-interactive-dragging.html [ Skip ]
 accessibility/aria-checkbox-sends-notification.html
 accessibility/aria-switch-sends-notification.html
 accessibility/combo-box-collapsed-selection-changed.html
-accessibility/children-changed-sends-notification.html
 accessibility/multiselect-list-reports-active-option.html
 
 # Need to implement AccessibilityUIElement::clearSelectedChildren()
