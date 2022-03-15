@@ -2009,6 +2009,8 @@
 #if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
         SYS_rmdir
 #endif
+        ;; FIXME: SYS_setsockopt can be removed when contentfiltering has moved to the Network process
+        SYS_setsockopt ;; <rdar://90249455>
         SYS_shm_open
         SYS_sigaction
         SYS_sysctl

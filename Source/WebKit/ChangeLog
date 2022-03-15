@@ -1,3 +1,15 @@
+2022-03-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS][WP] Add required syscall
+        https://bugs.webkit.org/show_bug.cgi?id=237846
+        <rdar://90249455>
+
+        Reviewed by Brent Fulgham.
+
+        Add required syscall to the WebContent process' sandbox on macOS.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-03-15  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt AVAssetPrefersSandboxedParsingOptionKey
