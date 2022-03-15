@@ -1,3 +1,14 @@
+2022-03-15  Lauro Moura  <lmoura@igalia.com>
+
+        [GStreamer] Unreviewed, tentative clang build fix after 248419@main
+        https://bugs.webkit.org/show_bug.cgi?id=237897
+
+        Adds static_cast to avoid "non-const-expression cannot be narrowed"
+        error.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::pushDMABufToCompositor):
+
 2022-03-15  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] clarify playback errors with MediaError.message
