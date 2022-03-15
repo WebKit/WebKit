@@ -1,3 +1,26 @@
+2022-03-15  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Rename bugzilla_comment_text
+        https://bugs.webkit.org/show_bug.cgi?id=237911
+        <rdar://problem/90319995>
+
+        Reviewed by Aakash Jain.
+
+        Rename bugzilla_comment_text to comment_text to re-use
+        code to comment on pull requests.
+
+        * CISupport/ews-build/steps.py:
+        (ApplyPatch.evaluateCommand):
+        (ValidateCommiterAndReviewer.fail_build):
+        (ValidateChangeLogAndReviewer.evaluateCommand):
+        (CommentOnBug.start):
+        (AnalyzeCompileWebKitResults.analyzeResults):
+        (AnalyzeLayoutTestsResults.report_failure):
+        (FindModifiedChangeLogs.evaluateCommand):
+        (CreateLocalGITCommit.evaluateCommand):
+        (PushCommitToWebKitRepo.evaluateCommand):
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-03-15  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Indefinite hang when printing using a UIPrintPageRenderer

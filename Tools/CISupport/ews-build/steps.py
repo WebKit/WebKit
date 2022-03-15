@@ -689,7 +689,7 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin, ShellMixin):
             message = 'Tools/Scripts/svn-apply failed to apply patch {} to trunk'.format(patch_id)
             if self.getProperty('buildername', '').lower() == 'commit-queue':
                 comment_text = '{}.\nPlease resolve the conflicts and upload a new patch.'.format(message.replace('patch', 'attachment'))
-                self.setProperty('bugzilla_comment_text', comment_text)
+                self.setProperty('comment_text', comment_text)
                 self.setProperty('build_finish_summary', message)
                 self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
             else:
@@ -1414,7 +1414,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
         reason = '{} does not have {} permissions'.format(email, status)
         comment = '{} does not have {} permissions according to {}.'.format(email, status, Contributors.url)
         comment += '\n\nRejecting attachment {} from commit queue.'.format(self.getProperty('patch_id', ''))
-        self.setProperty('bugzilla_comment_text', comment)
+        self.setProperty('comment_text', comment)
 
         self._addToLog('stdio', reason)
         self.setProperty('build_finish_summary', reason)
@@ -1493,7 +1493,7 @@ class ValidateChangeLogAndReviewer(shell.ShellCommand):
         rc = shell.ShellCommand.evaluateCommand(self, cmd)
         if rc == FAILURE:
             log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
-            self.setProperty('bugzilla_comment_text', log_text)
+            self.setProperty('comment_text', log_text)
             self.setProperty('build_finish_summary', 'ChangeLog validation failed')
             self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
         return rc
@@ -1619,10 +1619,10 @@ class CommentOnBug(buildstep.BuildStep, BugzillaMixin):
 
     def start(self):
         self.bug_id = self.getProperty('bug_id', '')
-        self.comment_text = self.getProperty('bugzilla_comment_text', '')
+        self.comment_text = self.getProperty('comment_text', '')
 
         if not self.comment_text:
-            self._addToLog('stdio', 'bugzilla_comment_text build property not found.\n')
+            self._addToLog('stdio', 'comment_text build property not found.\n')
             self.descriptionDone = 'No bugzilla comment found'
             self.finished(WARNINGS)
             return None
@@ -2249,7 +2249,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
 
         if patch_id:
             if self.getProperty('buildername', '').lower() == 'commit-queue':
-                self.setProperty('bugzilla_comment_text', message)
+                self.setProperty('comment_text', message)
                 self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
             else:
                 self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch()])
@@ -3075,7 +3075,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
         self.setProperty('build_finish_summary', message)
 
         if self.getProperty('buildername', '').lower() == 'commit-queue':
-            self.setProperty('bugzilla_comment_text', message)
+            self.setProperty('comment_text', message)
             self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
         else:
             self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch(), BlockPullRequest()])
@@ -4246,7 +4246,7 @@ class FindModifiedChangeLogs(shell.ShellCommand):
             patch_id = self.getProperty('patch_id', '')
             message = 'Unable to find any modified ChangeLog in Patch {}'.format(patch_id)
             if self.getProperty('buildername', '').lower() == 'commit-queue':
-                self.setProperty('bugzilla_comment_text', message.replace('Patch', 'Attachment'))
+                self.setProperty('comment_text', message.replace('Patch', 'Attachment'))
                 self.setProperty('build_finish_summary', message)
                 self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
             else:
@@ -4306,7 +4306,7 @@ class CreateLocalGITCommit(shell.ShellCommand):
             patch_id = self.getProperty('patch_id', '')
             message = self.failure_message or 'Failed to create git commit for Patch {}'.format(patch_id)
             if self.getProperty('buildername', '').lower() == 'commit-queue':
-                self.setProperty('bugzilla_comment_text', message.replace('Patch', 'Attachment'))
+                self.setProperty('comment_text', message.replace('Patch', 'Attachment'))
                 self.setProperty('build_finish_summary', message)
                 self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
             else:
@@ -4337,7 +4337,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
             svn_revision = self.svn_revision_from_commit_text(log_text)
             identifier = self.identifier_for_revision(svn_revision)
-            self.setProperty('bugzilla_comment_text', self.comment_text_for_bug(svn_revision, identifier))
+            self.setProperty('comment_text', self.comment_text_for_bug(svn_revision, identifier))
             commit_summary = 'Committed {}'.format(identifier)
             self.descriptionDone = commit_summary
             self.setProperty('build_summary', commit_summary)
@@ -4350,7 +4350,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                 self.build.addStepsAfterCurrentStep([GitResetHard(), CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
                 return rc
 
-            self.setProperty('bugzilla_comment_text', self.comment_text_for_bug())
+            self.setProperty('comment_text', self.comment_text_for_bug())
             self.setProperty('build_finish_summary', 'Failed to commit to WebKit repository')
             self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
         return rc

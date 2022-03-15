@@ -444,7 +444,7 @@ class TestValidateChangeLogAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         )
         self.expectOutcome(result=FAILURE, state_string='ChangeLog validation failed')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'ChangeLog entry in LayoutTests/ChangeLog contains OOPS!.\n')
+        self.assertEqual(self.getProperty('comment_text'), 'ChangeLog entry in LayoutTests/ChangeLog contains OOPS!.\n')
         self.assertEqual(self.getProperty('build_finish_summary'), 'ChangeLog validation failed')
         return rc
 
@@ -1271,7 +1271,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.setProperty('patch_id', '1234')
         self.expectOutcome(result=FAILURE, state_string='Patch 1234 does not build (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('comment_text'), None)
         self.assertEqual(self.getProperty('build_finish_summary'), 'Patch 1234 does not build')
         return rc
 
@@ -1298,7 +1298,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.setProperty('buildername', 'commit-queue')
         self.expectOutcome(result=FAILURE, state_string='Patch 1234 does not build (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Patch 1234 does not build')
+        self.assertEqual(self.getProperty('comment_text'), 'Patch 1234 does not build')
         self.assertEqual(self.getProperty('build_finish_summary'), 'Patch 1234 does not build')
         return rc
 
@@ -2409,7 +2409,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('second_run_failures', ['test1'])
         self.expectOutcome(result=FAILURE, state_string='Found 1 new test failure: test1 (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('comment_text'), None)
         self.assertEqual(self.getProperty('build_finish_summary'), 'Found 1 new test failure: test1')
         return rc
 
@@ -2420,7 +2420,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('second_run_failures', ['test1'])
         self.expectOutcome(result=FAILURE, state_string='Found 1 new test failure: test1 (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Found 1 new test failure: test1')
+        self.assertEqual(self.getProperty('comment_text'), 'Found 1 new test failure: test1')
         self.assertEqual(self.getProperty('build_finish_summary'), 'Found 1 new test failure: test1')
         return rc
 
@@ -2547,7 +2547,7 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         failure_message = 'Found 300 new test failures: test0, test1, test10, test100, test101, test102, test103, test104, test105, test106 ...'
         self.expectOutcome(result=FAILURE, state_string=failure_message + ' (failure)')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), failure_message)
+        self.assertEqual(self.getProperty('comment_text'), failure_message)
         self.assertEqual(self.getProperty('build_finish_summary'), failure_message)
         return rc
 
@@ -3175,7 +3175,7 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='svn-apply failed to apply patch to trunk')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('comment_text'), None)
         self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
 
@@ -3200,7 +3200,7 @@ class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='svn-apply failed to apply patch to trunk')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Tools/Scripts/svn-apply failed to apply attachment 1234 to trunk.\nPlease resolve the conflicts and upload a new patch.')
+        self.assertEqual(self.getProperty('comment_text'), 'Tools/Scripts/svn-apply failed to apply attachment 1234 to trunk.\nPlease resolve the conflicts and upload a new patch.')
         self.assertEqual(self.getProperty('build_finish_summary'), 'Tools/Scripts/svn-apply failed to apply patch 1234 to trunk')
         return rc
 
@@ -4910,7 +4910,7 @@ M	Tools/TestWebKitAPI/CMakeLists.txt''') +
         self.expectOutcome(result=SUCCESS, state_string='Found modified ChangeLogs')
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_changelogs'), ['Source/WebCore/ChangeLog', 'Tools/ChangeLog'])
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('comment_text'), None)
         self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
 
@@ -4928,7 +4928,7 @@ M	Tools/Scripts/run-api-tests''') +
         self.expectOutcome(result=SUCCESS, state_string='Found modified ChangeLogs')
         rc = self.runStep()
         self.assertEqual(self.getProperty('modified_changelogs'), ['Tools/Scripts/ChangeLog'])
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('comment_text'), None)
         self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
 
@@ -4946,7 +4946,7 @@ M	Tools/Scripts/run-api-tests''') +
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to find any modified ChangeLog in Patch 1234')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Unable to find any modified ChangeLog in Attachment 1234')
+        self.assertEqual(self.getProperty('comment_text'), 'Unable to find any modified ChangeLog in Attachment 1234')
         self.assertEqual(self.getProperty('build_finish_summary'), 'Unable to find any modified ChangeLog in Patch 1234')
         return rc
 
@@ -4973,7 +4973,7 @@ class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=SUCCESS, state_string='Created local git commit')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+        self.assertEqual(self.getProperty('comment_text'), None)
         self.assertEqual(self.getProperty('build_finish_summary'), None)
         return rc
 
@@ -4998,7 +4998,7 @@ class TestCreateLocalGITCommit(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to create git commit')
         rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Failed to create git commit for Attachment 1234')
+        self.assertEqual(self.getProperty('comment_text'), 'Failed to create git commit for Attachment 1234')
         self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to create git commit for Patch 1234')
         return rc
 
@@ -5292,7 +5292,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             self.expectOutcome(result=SUCCESS, state_string='Committed 220797@main')
             with current_hostname(EWS_BUILD_HOSTNAME):
                 rc = self.runStep()
-            self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729 (220797@main): <https://commits.webkit.org/220797@main>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
+            self.assertEqual(self.getProperty('comment_text'), 'Committed r256729 (220797@main): <https://commits.webkit.org/220797@main>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
             self.assertEqual(self.getProperty('build_finish_summary'), None)
             self.assertEqual(self.getProperty('build_summary'), 'Committed 220797@main')
             return rc
@@ -5312,7 +5312,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             self.expectOutcome(result=SUCCESS, state_string='Committed r256729')
             with current_hostname(EWS_BUILD_HOSTNAME):
                 rc = self.runStep()
-            self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729 (?): <https://commits.webkit.org/r256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
+            self.assertEqual(self.getProperty('comment_text'), 'Committed r256729 (?): <https://commits.webkit.org/r256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
             self.assertEqual(self.getProperty('build_finish_summary'), None)
             self.assertEqual(self.getProperty('build_summary'), 'Committed r256729')
             return rc
@@ -5334,7 +5334,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
                 rc = self.runStep()
             self.assertEqual(self.getProperty('retry_count'), 1)
             self.assertEqual(self.getProperty('build_finish_summary'), None)
-            self.assertEqual(self.getProperty('bugzilla_comment_text'), None)
+            self.assertEqual(self.getProperty('comment_text'), None)
             return rc
 
     def test_failure(self):
@@ -5354,7 +5354,7 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
             with current_hostname(EWS_BUILD_HOSTNAME):
                 rc = self.runStep()
             self.assertEqual(self.getProperty('build_finish_summary'), 'Failed to commit to WebKit repository')
-            self.assertEqual(self.getProperty('bugzilla_comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
+            self.assertEqual(self.getProperty('comment_text'), 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
             return rc
 
 
