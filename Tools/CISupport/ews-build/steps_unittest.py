@@ -5021,12 +5021,13 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
                      "is_patch": 1,
                      "summary": "{}"}}'''.format(obsolete, title))
 
-    def get_pr(self, pr_number, title='Sample pull request', closed=False, labels=None):
+    def get_pr(self, pr_number, title='Sample pull request', closed=False, labels=None, draft=False):
         return dict(
             number=pr_number,
             state='closed' if closed else 'open',
             title=title,
             user=dict(login='JonWBedard'),
+            draft=draft,
             head=dict(
                 sha='7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c',
                 ref='eng/pull-request',
@@ -5129,6 +5130,28 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('repository', 'https://github.com/WebKit/WebKit')
         self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
         self.expectOutcome(result=FAILURE, state_string='PR 1234 does not have a merge queue label')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        return rc
+
+    def test_draft(self):
+        self.setupStep(ValidateChange(verifyNoDraftForMergeQueue=True))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request, draft=True)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.expectOutcome(result=FAILURE, state_string='PR 1234 is a draft pull request')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        return rc
+
+    def test_no_draft(self):
+        self.setupStep(ValidateChange(verifyNoDraftForMergeQueue=True))
+        ValidateChange.get_pr_json = lambda x, pull_request, repository_url=None, retry=None: self.get_pr(pr_number=pull_request, draft=False)
+        self.setProperty('github.number', '1234')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
+        self.expectOutcome(result=SUCCESS, state_string='Validated change')
         rc = self.runStep()
         self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
         return rc

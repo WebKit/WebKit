@@ -1,3 +1,23 @@
+2022-03-14  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Fail draft PRs
+        https://bugs.webkit.org/show_bug.cgi?id=237859
+        <rdar://problem/90277316>
+
+        Reviewed by Aakash Jain.
+
+        We should never merge a draft pull request.
+
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory.__init__): Verify that provided change is not a draft.
+        * CISupport/ews-build/steps.py:
+        (GitHubMixin._is_pr_draft): Check if pr_json indicates a draft PR.
+        (ValidateChange.__init__): Accept verifyNoDraft flag.
+        (ValidateChange.start):
+        (ValidateChange.fail_build):
+        (ValidateChange.validate_github): Fail the build if the provided PR is a draft.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-03-15  Youenn Fablet  <youenn@apple.com>
 
         Mark permission as denied if system forbids access to camera and/or microphone

@@ -320,4 +320,4 @@ class MergeQueueFactory(factory.BuildFactory):
     def __init__(self, platform, configuration=None, architectures=None, additionalArguments=None, **kwargs):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
-        self.addStep(ValidateChange(verifyMergeQueue=True))
+        self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))

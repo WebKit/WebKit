@@ -216,6 +216,11 @@ class GitHubMixin(object):
                 return 1
         return 0
 
+    def _is_pr_draft(self, pr_json):
+        if pr_json.get('draft', False):
+            return 1
+        return 0
+
     def should_send_email_for_pr(self, pr_number):
         pr_json = self.get_pr_json(pr_number)
         if not pr_json:
@@ -1242,12 +1247,14 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         addURLs=True,
         verifycqplus=False,
         verifyMergeQueue=False,
+        verifyNoDraftForMergeQueue=False,
     ):
         self.verifyObsolete = verifyObsolete
         self.verifyBugClosed = verifyBugClosed
         self.verifyReviewDenied = verifyReviewDenied
         self.verifycqplus = verifycqplus
         self.verifyMergeQueue = verifyMergeQueue
+        self.verifyNoDraftForMergeQueue = verifyNoDraftForMergeQueue
         self.addURLs = addURLs
         buildstep.BuildStep.__init__(self)
 
@@ -1265,6 +1272,13 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         self.build.results = SKIPPED
         self.descriptionDone = reason
         self.build.buildFinished([reason], SKIPPED)
+
+    def fail_build(self, reason):
+        self._addToLog('stdio', reason)
+        self.finished(FAILURE)
+        self.build.results = FAILURE
+        self.descriptionDone = reason
+        self.build.buildFinished([reason], FAILURE)
 
     def start(self):
         patch_id = self.getProperty('patch_id', '')
@@ -1296,6 +1310,8 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         if self.verifycqplus and patch_id:
             self._addToLog('stdio', 'Change is in commit queue.\n')
             self._addToLog('stdio', 'Change has been reviewed.\n')
+        if self.verifyNoDraftForMergeQueue and pr_number:
+            self._addToLog('stdio', 'Change is not a draft.\n')
         if self.verifyMergeQueue and pr_number:
             self._addToLog('stdio', 'Change is in merge queue.\n')
         self.finished(SUCCESS)
@@ -1361,7 +1377,12 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
             self.skip_build("PR {} does not have a merge queue label".format(pr_number))
             return False
 
-        if -1 in (obsolete, pr_closed, blocked, merge_queue):
+        draft = self._is_pr_draft(pr_json) if self.verifyNoDraftForMergeQueue else 0
+        if draft == 1:
+            self.fail_build("PR {} is a draft pull request".format(pr_number))
+            return False
+
+        if -1 in (obsolete, pr_closed, blocked, merge_queue, draft):
             self.finished(WARNINGS)
             return False
 
