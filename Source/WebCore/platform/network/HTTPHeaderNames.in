@@ -84,6 +84,8 @@ Referer
 Referrer-Policy
 Refresh
 Report-To
+Sec-Fetch-Dest
+Sec-Fetch-Mode
 Sec-WebSocket-Accept
 Sec-WebSocket-Extensions
 Sec-WebSocket-Key

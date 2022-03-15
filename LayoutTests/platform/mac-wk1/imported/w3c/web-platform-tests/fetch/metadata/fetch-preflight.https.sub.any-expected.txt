@@ -1,0 +1,4 @@
+
+FAIL Same-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL Cross-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: URL is not valid or contains user credentials."
+

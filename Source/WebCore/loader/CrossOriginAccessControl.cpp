@@ -216,6 +216,8 @@ void cleanHTTPRequestHeadersForAccessControl(ResourceRequest& request, OptionSet
         request.clearHTTPAcceptEncoding();
     if (!headersToKeep.contains(HTTPHeadersToKeepFromCleaning::CacheControl))
         request.removeHTTPHeaderField(HTTPHeaderName::CacheControl);
+    request.removeHTTPHeaderField(HTTPHeaderName::SecFetchDest);
+    request.removeHTTPHeaderField(HTTPHeaderName::SecFetchMode);
 }
 
 CrossOriginAccessControlCheckDisabler& CrossOriginAccessControlCheckDisabler::singleton()

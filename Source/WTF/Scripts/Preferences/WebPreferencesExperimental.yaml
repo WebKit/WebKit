@@ -537,6 +537,18 @@ FetchAPIKeepAliveEnabled:
     WebKit:
       default: true
 
+FetchMetadataEnabled:
+  type: bool
+  humanReadableName: "Fetch Metadata"
+  humanReadableDescription: "Enable Fetch Metadata headers"
+  defaultValue:
+    WebCore:
+      default: false
+    WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+
 FileSystemAccessEnabled:
   type: bool
   humanReadableName: "File System Access API"

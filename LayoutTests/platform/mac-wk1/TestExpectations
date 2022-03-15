@@ -542,6 +542,12 @@ imported/w3c/web-platform-tests/eventsource/eventsource-constructor-empty-url.an
 imported/w3c/web-platform-tests/eventsource/eventsource-constructor-url-bogus.any.serviceworker.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/request/destination [ Skip ]
 imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/fetch-preflight.https.sub.any.worker.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/fetch-via-serviceworker--fallback.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/fetch-via-serviceworker--respondWith.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/serviceworker-accessors.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/serviceworker.https.sub.html
+imported/w3c/web-platform-tests/fetch/metadata/sharedworker.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Skip ]
 imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
 imported/w3c/web-platform-tests/push-api [ Skip ]
@@ -751,6 +757,10 @@ css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 # Lack of ways to control the cross-frame scroll chaining in WK1.
 fast/scrolling/sync-scroll-overscroll-behavior-iframe.html [ Skip ]
 fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-iframe.html [ Skip ]
+
+# Fetch tests that only timeout in WK1.
+imported/w3c/web-platform-tests/fetch/metadata/download.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/unload.https.sub.html [ Skip ]
 
 ### END OF (2) Failures without bug reports
 ########################################

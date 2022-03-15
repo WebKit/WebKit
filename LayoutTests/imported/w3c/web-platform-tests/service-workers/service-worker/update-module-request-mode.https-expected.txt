@@ -1,3 +1,3 @@
 
-FAIL headers of a main module script assert_equals: expected (string) "same-origin" but got (undefined) undefined
+PASS headers of a main module script
 

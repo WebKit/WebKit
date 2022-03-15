@@ -1,3 +1,14 @@
+2022-03-15  Patrick Griffis  <pgriffis@igalia.com>
+
+        Add initial implementation of Fetch Metadata
+        https://bugs.webkit.org/show_bug.cgi?id=204744
+
+        Reviewed by Youenn Fablet.
+
+        Add new experimental preference for Fetch Metadata, disabled by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-03-15  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, CMake Debug build fix attempt after 248407@main

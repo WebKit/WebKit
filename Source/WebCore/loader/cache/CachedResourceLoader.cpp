@@ -790,11 +790,13 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
 
 void CachedResourceLoader::updateHTTPRequestHeaders(FrameLoader& frameLoader, CachedResource::Type type, CachedResourceRequest& request)
 {
-    // Implementing steps 7 to 12 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
+    // Implementing steps 11 to 19 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch as of 22 Feb 2022.
 
     // FIXME: We should reconcile handling of MainResource with other resources.
     if (type != CachedResource::Type::MainResource)
         request.updateReferrerAndOriginHeaders(frameLoader);
+    if (frameLoader.frame().settings().fetchMetadataEnabled())
+        request.updateFetchMetadataHeaders();
     request.updateUserAgentHeader(frameLoader);
 
     request.updateAccordingCacheMode();

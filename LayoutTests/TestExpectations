@@ -1032,13 +1032,26 @@ imported/w3c/web-platform-tests/fetch/content-encoding/bad-gzip-body.any.html [ 
 
 # Fetch features that are not implemented.
 imported/w3c/web-platform-tests/fetch/corb [ Skip ]
-imported/w3c/web-platform-tests/fetch/metadata/ [ Skip ]
 imported/w3c/web-platform-tests/fetch/sec-metadata [ Skip ]
 
 # These fetch tests time out
 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/api/request/destination/fetch-destination-prefetch.https.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/content-type/response.window.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/history.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/object.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/prefetch.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/preload.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/report.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/embed.https.sub.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/form.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/iframe.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/iframe.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/navigation.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/style.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/redirect/redirect-http-upgrade.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/window-open.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/metadata/redirect/ [ Skip ]
 
 # Not supported
 imported/w3c/web-platform-tests/background-fetch [ Skip ]
