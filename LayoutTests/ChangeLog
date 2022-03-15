@@ -1,5 +1,14 @@
 2022-03-14  Robert Jenner  <Jenner@apple.com>
 
+        [ Mac wk1 ] 8X imported/w3c/web-platform-tests/pointerevents/pointere vent (layout-tests) are flaky text failures (236128)
+        https://bugs.webkit.org/show_bug.cgi?id=236128
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations: Disabling test that is believed to cause the others to fail as a test.
+
+2022-03-14  Robert Jenner  <Jenner@apple.com>
+
         WindowServer returned not alive with context:,unresponsive work processor(s)
         <rdar://86037417>
 
