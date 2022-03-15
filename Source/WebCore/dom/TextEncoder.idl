@@ -31,7 +31,7 @@
 };
 
 [
-    Exposed=(Window,Worker),
+    Exposed=*,
 ] interface TextEncoder {
     constructor();
 

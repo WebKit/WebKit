@@ -31,74 +31,75 @@ PASS Window includes WindowOrWorkerGlobalScope: member names are unique
 PASS Window includes AnimationFrameProvider: member names are unique
 PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
-FAIL Event interface: existence and properties of interface object assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface object length assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface object name assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: existence and properties of interface prototype object assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute type assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute target assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute srcElement assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute currentTarget assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: operation composedPath() assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: constant NONE on interface object assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: constant NONE on interface prototype object assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: constant CAPTURING_PHASE on interface object assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: constant CAPTURING_PHASE on interface prototype object assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: constant AT_TARGET on interface object assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: constant AT_TARGET on interface prototype object assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: constant BUBBLING_PHASE on interface object assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: constant BUBBLING_PHASE on interface prototype object assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute eventPhase assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: operation stopPropagation() assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute cancelBubble assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: operation stopImmediatePropagation() assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute bubbles assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute cancelable assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute returnValue assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: operation preventDefault() assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute defaultPrevented assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute composed assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: attribute timeStamp assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL Event interface: operation initEvent(DOMString, optional boolean, optional boolean) assert_own_property: self does not have own property "Event" expected property "Event" missing
-FAIL CustomEvent interface: existence and properties of interface object assert_own_property: self does not have own property "CustomEvent" expected property "CustomEvent" missing
-FAIL CustomEvent interface object length assert_own_property: self does not have own property "CustomEvent" expected property "CustomEvent" missing
-FAIL CustomEvent interface object name assert_own_property: self does not have own property "CustomEvent" expected property "CustomEvent" missing
-FAIL CustomEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CustomEvent" expected property "CustomEvent" missing
-FAIL CustomEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CustomEvent" expected property "CustomEvent" missing
-FAIL CustomEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CustomEvent" expected property "CustomEvent" missing
-FAIL CustomEvent interface: attribute detail assert_own_property: self does not have own property "CustomEvent" expected property "CustomEvent" missing
-FAIL CustomEvent interface: operation initCustomEvent(DOMString, optional boolean, optional boolean, optional any) assert_own_property: self does not have own property "CustomEvent" expected property "CustomEvent" missing
-FAIL EventTarget interface: existence and properties of interface object assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface object length assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface object name assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: existence and properties of interface prototype object assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: operation addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean)) assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: operation removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean)) assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
-FAIL EventTarget interface: operation dispatchEvent(Event) assert_own_property: self does not have own property "EventTarget" expected property "EventTarget" missing
+PASS Event interface: existence and properties of interface object
+PASS Event interface object length
+PASS Event interface object name
+PASS Event interface: existence and properties of interface prototype object
+PASS Event interface: existence and properties of interface prototype object's "constructor" property
+PASS Event interface: existence and properties of interface prototype object's @@unscopables property
+PASS Event interface: attribute type
+PASS Event interface: attribute target
+PASS Event interface: attribute srcElement
+PASS Event interface: attribute currentTarget
+PASS Event interface: operation composedPath()
+PASS Event interface: constant NONE on interface object
+PASS Event interface: constant NONE on interface prototype object
+PASS Event interface: constant CAPTURING_PHASE on interface object
+PASS Event interface: constant CAPTURING_PHASE on interface prototype object
+PASS Event interface: constant AT_TARGET on interface object
+PASS Event interface: constant AT_TARGET on interface prototype object
+PASS Event interface: constant BUBBLING_PHASE on interface object
+PASS Event interface: constant BUBBLING_PHASE on interface prototype object
+PASS Event interface: attribute eventPhase
+PASS Event interface: operation stopPropagation()
+PASS Event interface: attribute cancelBubble
+PASS Event interface: operation stopImmediatePropagation()
+PASS Event interface: attribute bubbles
+PASS Event interface: attribute cancelable
+PASS Event interface: attribute returnValue
+PASS Event interface: operation preventDefault()
+PASS Event interface: attribute defaultPrevented
+PASS Event interface: attribute composed
+PASS Event interface: attribute timeStamp
+PASS Event interface: operation initEvent(DOMString, optional boolean, optional boolean)
+PASS CustomEvent interface: existence and properties of interface object
+PASS CustomEvent interface object length
+PASS CustomEvent interface object name
+PASS CustomEvent interface: existence and properties of interface prototype object
+PASS CustomEvent interface: existence and properties of interface prototype object's "constructor" property
+PASS CustomEvent interface: existence and properties of interface prototype object's @@unscopables property
+PASS CustomEvent interface: attribute detail
+PASS CustomEvent interface: operation initCustomEvent(DOMString, optional boolean, optional boolean, optional any)
+PASS EventTarget interface: existence and properties of interface object
+PASS EventTarget interface object length
+PASS EventTarget interface object name
+PASS EventTarget interface: existence and properties of interface prototype object
+PASS EventTarget interface: existence and properties of interface prototype object's "constructor" property
+PASS EventTarget interface: existence and properties of interface prototype object's @@unscopables property
+PASS EventTarget interface: operation addEventListener(DOMString, EventListener?, optional (AddEventListenerOptions or boolean))
+PASS EventTarget interface: operation removeEventListener(DOMString, EventListener?, optional (EventListenerOptions or boolean))
+PASS EventTarget interface: operation dispatchEvent(Event)
 PASS EventListener interface: existence and properties of interface object
-FAIL AbortController interface: existence and properties of interface object assert_own_property: self does not have own property "AbortController" expected property "AbortController" missing
-FAIL AbortController interface object length assert_own_property: self does not have own property "AbortController" expected property "AbortController" missing
-FAIL AbortController interface object name assert_own_property: self does not have own property "AbortController" expected property "AbortController" missing
-FAIL AbortController interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AbortController" expected property "AbortController" missing
-FAIL AbortController interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AbortController" expected property "AbortController" missing
-FAIL AbortController interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AbortController" expected property "AbortController" missing
-FAIL AbortController interface: attribute signal assert_own_property: self does not have own property "AbortController" expected property "AbortController" missing
-FAIL AbortController interface: operation abort(optional any) assert_own_property: self does not have own property "AbortController" expected property "AbortController" missing
-FAIL AbortSignal interface: existence and properties of interface object assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
-FAIL AbortSignal interface object length assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
-FAIL AbortSignal interface object name assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
-FAIL AbortSignal interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
-FAIL AbortSignal interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
-FAIL AbortSignal interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
-FAIL AbortSignal interface: operation abort(optional any) assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
-FAIL AbortSignal interface: attribute aborted assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
-FAIL AbortSignal interface: attribute reason assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
-FAIL AbortSignal interface: operation throwIfAborted() assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
-FAIL AbortSignal interface: attribute onabort assert_own_property: self does not have own property "AbortSignal" expected property "AbortSignal" missing
+PASS AbortController interface: existence and properties of interface object
+PASS AbortController interface object length
+PASS AbortController interface object name
+PASS AbortController interface: existence and properties of interface prototype object
+PASS AbortController interface: existence and properties of interface prototype object's "constructor" property
+PASS AbortController interface: existence and properties of interface prototype object's @@unscopables property
+PASS AbortController interface: attribute signal
+PASS AbortController interface: operation abort(optional any)
+PASS AbortSignal interface: existence and properties of interface object
+PASS AbortSignal interface object length
+PASS AbortSignal interface object name
+PASS AbortSignal interface: existence and properties of interface prototype object
+PASS AbortSignal interface: existence and properties of interface prototype object's "constructor" property
+PASS AbortSignal interface: existence and properties of interface prototype object's @@unscopables property
+PASS AbortSignal interface: operation abort(optional any)
+FAIL AbortSignal interface: member timeout assert_false: The interface object must not have a property "timeout" expected false got true
+PASS AbortSignal interface: attribute aborted
+PASS AbortSignal interface: attribute reason
+PASS AbortSignal interface: operation throwIfAborted()
+PASS AbortSignal interface: attribute onabort
 PASS NodeList interface: existence and properties of interface object
 PASS HTMLCollection interface: existence and properties of interface object
 PASS MutationObserver interface: existence and properties of interface object

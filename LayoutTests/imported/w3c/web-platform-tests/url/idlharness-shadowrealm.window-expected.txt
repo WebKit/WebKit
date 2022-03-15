@@ -1,0 +1,39 @@
+
+PASS setup
+PASS URL interface: existence and properties of interface object
+PASS URL interface object length
+PASS URL interface object name
+PASS URL interface: legacy window alias
+PASS URL interface: existence and properties of interface prototype object
+PASS URL interface: existence and properties of interface prototype object's "constructor" property
+PASS URL interface: existence and properties of interface prototype object's @@unscopables property
+PASS URL interface: attribute href
+PASS URL interface: stringifier
+PASS URL interface: attribute origin
+PASS URL interface: attribute protocol
+PASS URL interface: attribute username
+PASS URL interface: attribute password
+PASS URL interface: attribute host
+PASS URL interface: attribute hostname
+PASS URL interface: attribute port
+PASS URL interface: attribute pathname
+PASS URL interface: attribute search
+PASS URL interface: attribute searchParams
+PASS URL interface: attribute hash
+PASS URL interface: operation toJSON()
+PASS URLSearchParams interface: existence and properties of interface object
+PASS URLSearchParams interface object length
+PASS URLSearchParams interface object name
+PASS URLSearchParams interface: existence and properties of interface prototype object
+PASS URLSearchParams interface: existence and properties of interface prototype object's "constructor" property
+PASS URLSearchParams interface: existence and properties of interface prototype object's @@unscopables property
+PASS URLSearchParams interface: operation append(USVString, USVString)
+PASS URLSearchParams interface: operation delete(USVString)
+PASS URLSearchParams interface: operation get(USVString)
+PASS URLSearchParams interface: operation getAll(USVString)
+PASS URLSearchParams interface: operation has(USVString)
+PASS URLSearchParams interface: operation set(USVString, USVString)
+PASS URLSearchParams interface: operation sort()
+PASS URLSearchParams interface: iterable<USVString, USVString>
+PASS URLSearchParams interface: stringifier
+

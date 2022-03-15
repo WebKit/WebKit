@@ -34,7 +34,7 @@ typedef double DOMHighResTimeStamp;
 
 [
     CustomToJSObject,
-    Exposed=(Window,Worker),
+    Exposed=*,
 ] interface PerformanceEntry {
     readonly attribute DOMString name;
     readonly attribute DOMString entryType;

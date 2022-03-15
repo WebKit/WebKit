@@ -29,7 +29,7 @@
 typedef double DOMHighResTimeStamp;
 
 [
-    Exposed=(Window,Worker),
+    Exposed=*,
     EnabledAtRuntime=ServerTimingEnabled
 ] interface PerformanceServerTiming {
     readonly attribute DOMString name;

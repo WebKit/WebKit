@@ -1847,7 +1847,7 @@ interface BeforeUnloadEvent : Event {
   attribute DOMString returnValue;
 };
 
-[Exposed=(Window,Worker)]
+[Exposed=*]
 interface ErrorEvent : Event {
   constructor(DOMString type, optional ErrorEventInit eventInitDict = {});
 
@@ -1866,7 +1866,7 @@ dictionary ErrorEventInit : EventInit {
   any error = null;
 };
 
-[Exposed=(Window,Worker)]
+[Exposed=*]
 interface PromiseRejectionEvent : Event {
   constructor(DOMString type, PromiseRejectionEventInit eventInitDict);
 

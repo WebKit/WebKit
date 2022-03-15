@@ -5,7 +5,7 @@
 
 typedef double DOMHighResTimeStamp;
 
-[Exposed=(Window,Worker)]
+[Exposed=*]
 interface Performance : EventTarget {
     DOMHighResTimeStamp now();
     readonly attribute DOMHighResTimeStamp timeOrigin;

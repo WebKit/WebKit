@@ -162,6 +162,7 @@ PASS AbortSignal interface: existence and properties of interface prototype obje
 PASS AbortSignal interface: existence and properties of interface prototype object's "constructor" property
 PASS AbortSignal interface: existence and properties of interface prototype object's @@unscopables property
 PASS AbortSignal interface: operation abort(optional any)
+PASS AbortSignal interface: operation timeout(unsigned long long)
 PASS AbortSignal interface: attribute aborted
 PASS AbortSignal interface: attribute reason
 PASS AbortSignal interface: operation throwIfAborted()
@@ -170,6 +171,8 @@ PASS AbortSignal must be primary interface of new AbortController().signal
 PASS Stringification of new AbortController().signal
 PASS AbortSignal interface: new AbortController().signal must inherit property "abort(optional any)" with the proper type
 PASS AbortSignal interface: calling abort(optional any) on new AbortController().signal with too few arguments must throw TypeError
+PASS AbortSignal interface: new AbortController().signal must inherit property "timeout(unsigned long long)" with the proper type
+PASS AbortSignal interface: calling timeout(unsigned long long) on new AbortController().signal with too few arguments must throw TypeError
 PASS AbortSignal interface: new AbortController().signal must inherit property "aborted" with the proper type
 PASS AbortSignal interface: new AbortController().signal must inherit property "reason" with the proper type
 PASS AbortSignal interface: new AbortController().signal must inherit property "throwIfAborted()" with the proper type

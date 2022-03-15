@@ -27,7 +27,7 @@
 
 [
     CustomIsReachable,
-    Exposed=(Window,Worker),
+    Exposed=*,
     JSCustomMarkFunction,
 ] interface PerformanceObserver {
     [CallWith=CurrentScriptExecutionContext] constructor(PerformanceObserverCallback callback);

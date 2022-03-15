@@ -20,7 +20,7 @@
 
 [
     CustomToJSObject,
-    Exposed=(Window,Worker),
+    Exposed=*,
     IsImmutablePrototypeExoticObjectOnPrototype,
     JSCustomHeader,
     JSCustomMarkFunction,

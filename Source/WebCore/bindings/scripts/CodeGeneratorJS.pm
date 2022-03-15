@@ -1971,7 +1971,16 @@ sub IsAlwaysExposedOnInterface
     }
 
     if (ref($interfaceExposures) ne "ARRAY") {
-        $interfaceExposures = [$interfaceExposures];
+        # if the interface exposure list isn't an arary, wrap it in one; unless the
+        # interface is Exposed=*, in which case, the only way the context could
+        # fail to be visible is if it is not also Exposed=* (or it lists out all
+        # of the possible contexts separately, which we deliberately do not
+        # handle)
+        if ($interfaceExposures eq "*") {
+            return $contextExposures eq "*";
+        } else {
+            $interfaceExposures = [$interfaceExposures];
+        }
     }
 
     foreach my $interfaceExposure (@$interfaceExposures) {
@@ -3973,6 +3982,25 @@ sub ToMethodName
     return $ret;
 }
 
+sub GenerateRuntimeEnableConditionalStringForExposeScope
+{
+    my ($exposed, $context, $globalObjectPtr) = @_;
+
+    if ($exposed eq "Window") {
+      return "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isDocument()";
+    } elsif ($exposed eq "Worker") {
+      return "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isWorkerGlobalScope()";
+    } elsif ($exposed eq "ShadowRealm") {
+      return "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isShadowRealmGlobalScope()";
+    } elsif ($exposed eq "Worklet") {
+      return "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isWorkletGlobalScope()";
+    } elsif ($exposed eq "AudioWorklet") {
+      return "is<AudioWorkletGlobalScope>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())";
+    } else {
+      assert("Unrecognized value '" . Dumper($context->extendedAttributes->{Exposed}) . "' for the Exposed extended attribute on '" . ref($context) . "'.");
+    }
+}
+
 sub GenerateRuntimeEnableConditionalStringForExposed
 {
     my ($interface, $context, $globalObjectPtr, $conjuncts) = @_;
@@ -3985,24 +4013,15 @@ sub GenerateRuntimeEnableConditionalStringForExposed
     return if $exposed eq "*";
 
     if (ref($exposed) eq 'ARRAY') {
-        if (scalar(@$exposed) > 1) {
-            return;
+        my @disjuncts;
+        # if the interface is exposed on more than one global, we need to check
+        # the context against _each one_ and take the disjunction
+        foreach my $scope (@$exposed) {
+            push(@disjuncts, GenerateRuntimeEnableConditionalStringForExposeScope($scope, $context, $globalObjectPtr));
         }
-        $exposed = @$exposed[0];
-    }
-
-    if ($exposed eq "Window") {
-        push(@$conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isDocument()");
-    } elsif ($exposed eq "Worker") {
-        push(@$conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isWorkerGlobalScope()");
-    } elsif ($exposed eq "ShadowRealm") {
-        push(@$conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isShadowRealmGlobalScope()");
-    } elsif ($exposed eq "Worklet") {
-        push(@$conjuncts, "jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext()->isWorkletGlobalScope()");
-    } elsif ($exposed eq "AudioWorklet") {
-        push(@$conjuncts, "is<AudioWorkletGlobalScope>(jsCast<JSDOMGlobalObject*>(" . $globalObjectPtr . ")->scriptExecutionContext())");
+        push(@$conjuncts, "(" . (join ' || ', @disjuncts) . ")");
     } else {
-        assert("Unrecognized value '" . Dumper($context->extendedAttributes->{Exposed}) . "' for the Exposed extended attribute on '" . ref($context) . "'.");
+        push(@$conjuncts, GenerateRuntimeEnableConditionalStringForExposeScope($exposed, $context, $globalObjectPtr));
     }
 }
 

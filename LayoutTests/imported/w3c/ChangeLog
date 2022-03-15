@@ -1,3 +1,57 @@
+2022-03-15  Joseph Griego  <jgriego@igalia.com>
+
+        Expose some web APIs on Shadow Realms and Worklets
+        https://bugs.webkit.org/show_bug.cgi?id=235736
+
+        Reviewed by Yusuke Suzuki.
+
+        Import the latest relevant idl definitions and new idlharness-shadowrealm tests
+
+        * web-platform-tests/dom/idlharness-shadowrealm.window-expected.txt:
+        * web-platform-tests/dom/idlharness.any.serviceworker-expected.txt:
+        * web-platform-tests/dom/idlharness.any.sharedworker-expected.txt:
+        * web-platform-tests/dom/idlharness.any.worker-expected.txt:
+        * web-platform-tests/dom/idlharness.window-expected.txt:
+        * web-platform-tests/encoding/idlharness-shadowrealm.window-expected.txt: Added.
+        * web-platform-tests/encoding/idlharness-shadowrealm.window.html: Added.
+        * web-platform-tests/encoding/idlharness-shadowrealm.window.js: Added.
+        * web-platform-tests/hr-time/idlharness-shadowrealm.window-expected.txt: Added.
+        * web-platform-tests/hr-time/idlharness-shadowrealm.window.html: Added.
+        * web-platform-tests/hr-time/idlharness-shadowrealm.window.js: Added.
+        * web-platform-tests/html/dom/idlharness-shadowrealm.window-expected.txt: Added.
+        * web-platform-tests/html/dom/idlharness-shadowrealm.window.html: Added.
+        * web-platform-tests/html/dom/idlharness-shadowrealm.window.js: Added.
+        * web-platform-tests/interfaces/compression.idl:
+        * web-platform-tests/interfaces/dom.idl:
+        * web-platform-tests/interfaces/encoding.idl:
+        * web-platform-tests/interfaces/hr-time.idl:
+        * web-platform-tests/interfaces/html.idl:
+        * web-platform-tests/interfaces/performance-timeline.idl:
+        * web-platform-tests/interfaces/streams.idl:
+        * web-platform-tests/interfaces/url.idl:
+        * web-platform-tests/interfaces/user-timing.idl:
+        * web-platform-tests/performance-timeline/idlharness-shadowrealm.window-expected.txt: Added.
+        * web-platform-tests/performance-timeline/idlharness-shadowrealm.window.html: Added.
+        * web-platform-tests/performance-timeline/idlharness-shadowrealm.window.js: Added.
+        * web-platform-tests/resources/idlharness-shadowrealm.js:
+        (promise_setup.):
+        (idl_test_shadowrealm):
+        (promise_setup): Deleted.
+        * web-platform-tests/resources/idlharness.js:
+        (IdlInterface.prototype.test_self):
+        * web-platform-tests/streams/idlharness-shadowrealm.window-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/streams/idlharness.any-expected.txt.
+        * web-platform-tests/streams/idlharness-shadowrealm.window.html: Added.
+        * web-platform-tests/streams/idlharness-shadowrealm.window.js: Added.
+        * web-platform-tests/streams/idlharness.any-expected.txt:
+        * web-platform-tests/streams/idlharness.any.serviceworker-expected.txt:
+        * web-platform-tests/streams/idlharness.any.worker-expected.txt:
+        * web-platform-tests/url/idlharness-shadowrealm.window-expected.txt: Added.
+        * web-platform-tests/url/idlharness-shadowrealm.window.html: Added.
+        * web-platform-tests/url/idlharness-shadowrealm.window.js: Added.
+        * web-platform-tests/user-timing/idlharness-shadowrealm.window-expected.txt: Added.
+        * web-platform-tests/user-timing/idlharness-shadowrealm.window.html: Added.
+        * web-platform-tests/user-timing/idlharness-shadowrealm.window.js: Added.
+
 2022-03-15  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Some more WPT updates

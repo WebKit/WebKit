@@ -1,3 +1,4 @@
 partial interface SharedWorkerGlobalScope {
+    attribute ExposedStarConstructor ExposedStar;
     attribute SharedWorkerGlobalScopeConstructor SharedWorkerGlobalScope;
 };

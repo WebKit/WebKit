@@ -24,7 +24,7 @@
  */
 
 [
-    Exposed=(Window,Worker),
+    Exposed=*,
     JSBuiltin,
     PrivateIdentifier,
     PublicIdentifier

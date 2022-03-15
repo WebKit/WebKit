@@ -1,3 +1,83 @@
+2022-03-15  Joseph Griego  <jgriego@igalia.com>
+
+        Expose some web APIs on Shadow Realms and Worklets
+        https://bugs.webkit.org/show_bug.cgi?id=235736
+
+        Reviewed by Yusuke Suzuki.
+
+        Mark a handful of web APIs as Exposed=*, making them visible in shadow
+        realm contexts. The existence of these APIs is checked by new idlharness-shadowrealm
+        tests in WPT, which have been imported.
+
+        Safety: I looked at the implementation of the interfaces that are exposed here and
+        some of them interact with the scriptExecutionContext() of the calling global scope--
+        since shadow realms pass that context through unchanged, nothing should go dramatically wrong.
+        
+        I'm planning on adding more comprehensive testing in WPT shortly. 
+
+        There's one bug currently which is that AbortSignal.timeout is exposed
+        on shadow realms but shouldn't be. It will only be exposed when the
+        incubating realm is a worker or window, which is good since it should still
+        work there, but it's just not supported in the spec; I'll submit a patch after
+        this to fix; the problem is that the script execution context in a shadow realm
+        does not return true for `isShadowRealmGlobalScope`
+
+        Also required adjustment to CodeGeneratorJS.pm since it refused to
+        generate a runtime check when a member is exposed less than the interface it
+        appears on *and* in more than one scope.
+
+        Tests: imported/w3c/web-platform-tests/encoding/idlharness-shadowrealm.window.html
+               imported/w3c/web-platform-tests/hr-time/idlharness-shadowrealm.window.html
+               imported/w3c/web-platform-tests/html/dom/idlharness-shadowrealm.window.html
+               imported/w3c/web-platform-tests/performance-timeline/idlharness-shadowrealm.window.html
+               imported/w3c/web-platform-tests/streams/idlharness-shadowrealm.window.html
+               imported/w3c/web-platform-tests/url/idlharness-shadowrealm.window.html
+               imported/w3c/web-platform-tests/user-timing/idlharness-shadowrealm.window.html
+
+        * Modules/streams/ByteLengthQueuingStrategy.idl:
+        * Modules/streams/CountQueuingStrategy.idl:
+        * Modules/streams/ReadableByteStreamController.idl:
+        * Modules/streams/ReadableStream.idl:
+        * Modules/streams/ReadableStreamBYOBReader.idl:
+        * Modules/streams/ReadableStreamBYOBRequest.idl:
+        * Modules/streams/ReadableStreamDefaultController.idl:
+        * Modules/streams/ReadableStreamDefaultReader.idl:
+        * Modules/streams/TransformStream.idl:
+        * Modules/streams/TransformStreamDefaultController.idl:
+        * Modules/streams/WritableStream.idl:
+        * Modules/streams/WritableStreamDefaultController.idl:
+        * Modules/streams/WritableStreamDefaultWriter.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsAlwaysExposedOnInterface):
+        (GenerateRuntimeEnableConditionalStringForExposeScope):
+        (GenerateRuntimeEnableConditionalStringForExposed):
+        * bindings/scripts/preprocess-idls.pl: Add SharedWorker to list for Exposed=*
+        * bindings/scripts/test/JS/JSSharedWorkerGlobalScope.cpp: Fixed after adding SharedWorker to the list for Exposed=*
+        (WebCore::jsSharedWorkerGlobalScope_ExposedStarConstructorGetter):
+        (WebCore::JSC_DEFINE_CUSTOM_GETTER):
+        * bindings/scripts/test/SharedWorkerGlobalScopeConstructors.idl: Fixed after adding SharedWorker to the list for Exposed=*
+        * dom/AbortController.idl:
+        * dom/AbortSignal.idl:
+        * dom/CustomEvent.idl:
+        * dom/ErrorEvent.idl:
+        * dom/Event.idl:
+        * dom/EventTarget.idl:
+        * dom/PromiseRejectionEvent.idl:
+        * dom/TextDecoder.idl:
+        * dom/TextDecoderStream.idl:
+        * dom/TextEncoder.idl:
+        * dom/TextEncoderStream.idl:
+        * html/DOMURL.idl:
+        * html/URLSearchParams.idl:
+        * page/Performance.idl:
+        * page/PerformanceEntry.idl:
+        * page/PerformanceMark.idl:
+        * page/PerformanceMeasure.idl:
+        * page/PerformanceObserver.idl:
+        * page/PerformanceObserverEntryList.idl:
+        * page/PerformanceResourceTiming.idl:
+        * page/PerformanceServerTiming.idl:
+
 2022-03-15  Lauro Moura  <lmoura@igalia.com>
 
         [GStreamer] Unreviewed, tentative clang build fix after 248419@main

@@ -26,7 +26,7 @@
 // https://w3c.github.io/performance-timeline/
 
 [
-    Exposed=(Window,Worker),
+    Exposed=*,
 ] interface PerformanceObserverEntryList {
     PerformanceEntryList getEntries();
     PerformanceEntryList getEntriesByType(DOMString type);

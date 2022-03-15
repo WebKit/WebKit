@@ -33,7 +33,7 @@
 typedef double DOMHighResTimeStamp;
 
 [
-    Exposed=(Window,Worker),
+    Exposed=*,
 ] interface PerformanceResourceTiming : PerformanceEntry {
     readonly attribute DOMString initiatorType;
     readonly attribute DOMString nextHopProtocol;

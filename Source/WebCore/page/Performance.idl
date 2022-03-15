@@ -34,7 +34,7 @@
 typedef double DOMHighResTimeStamp;
 
 [
-    Exposed=(Window,Worker),
+    Exposed=*,
     GenerateIsReachable=ImplScriptExecutionContext,
 ] interface Performance : EventTarget {
     DOMHighResTimeStamp now();

@@ -26,7 +26,7 @@
 
 [
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=(Window,Worker),
+    Exposed=*,
     InterfaceName=URL,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
