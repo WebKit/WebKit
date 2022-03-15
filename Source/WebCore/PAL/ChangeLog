@@ -1,3 +1,27 @@
+2022-03-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Allow for scheduling asynchronous work
+        https://bugs.webkit.org/show_bug.cgi?id=237755
+
+        Reviewed by Kimmo Kinnunen.
+
+        WebGPU doesn't know how to schedule asynchronous work, so that will have to be handled
+        by dependency injection from the caller. The way it works is Instance creation takes
+        a block, which is retained. Whenever asynchronous work needs to be scheduled on the
+        relevant thread, this block is called, and is passed another block for the work to be
+        performed.
+
+        The API contract is: callers of WebGPU must call its functions in a non-racey way. The
+        schedule function will execute on a background thread, and it must schedule the block
+        it's passed to be run in a non-racey way with regards to all the other WebGPU calls.
+        The schedule function can be NULL, in which case the asynchronous tasks will just be
+        internally queued up inside WebGPU, and then users will have to call
+        wgpuInstanceProcessEvents() periodically to synchronously call the queued callbacks.
+
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.cpp:
+        (PAL::WebGPU::GPUImpl::create):
+        * pal/graphics/WebGPU/Impl/WebGPUImpl.h:
+
 2022-03-15  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt AVAssetPrefersSandboxedParsingOptionKey

@@ -25,19 +25,20 @@
 
 #pragma once
 
-#import <Foundation/Foundation.h>
+#import <wtf/Deque.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
+#import <wtf/Lock.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
+#import <wtf/ThreadSafeRefCounted.h>
 
 namespace WebGPU {
 
 class Adapter;
 class Surface;
 
-class Instance : public RefCounted<Instance> {
+class Instance : public ThreadSafeRefCounted<Instance> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<Instance> create(const WGPUInstanceDescriptor&);
@@ -48,12 +49,20 @@ public:
     void processEvents();
     void requestAdapter(const WGPURequestAdapterOptions&, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback);
 
-    NSRunLoop *runLoop() const { return m_runLoop; }
+    // This can be called on a background thread.
+    using WorkItem = Function<void(void)>;
+    void scheduleWork(WorkItem&&);
 
 private:
-    Instance(NSRunLoop *);
+    Instance(WGPUScheduleWorkBlock);
 
-    NSRunLoop *m_runLoop;
+    // This can be called on a background thread.
+    void defaultScheduleWork(WGPUWorkItem&&);
+
+    // This can be used on a background thread.
+    Deque<WGPUWorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
+    WGPUScheduleWorkBlock m_scheduleWorkBlock;
+    Lock m_lock;
 };
 
 } // namespace WebGPU

@@ -39,12 +39,25 @@ typedef void (^WGPUErrorBlockCallback)(WGPUErrorType type, char const * message)
 typedef void (^WGPUQueueWorkDoneBlockCallback)(WGPUQueueWorkDoneStatus status);
 typedef void (^WGPURequestAdapterBlockCallback)(WGPURequestAdapterStatus status, WGPUAdapter adapter, char const * message);
 typedef void (^WGPURequestDeviceBlockCallback)(WGPURequestDeviceStatus status, WGPUDevice device, char const * message);
+typedef void (^WGPUWorkItem)(void);
+typedef void (^WGPUScheduleWorkBlock)(WGPUWorkItem workItem);
 
 typedef enum WGPUSTypeExtended {
     WGPUSTypeExtended_ShaderModuleDescriptorHints = 0x348970F3, // Random
     WGPUSTypeExtended_TextureDescriptorViewFormats = 0x1D5BC57, // Random
+    WGPUSTypeExtended_InstanceCocoaDescriptor = 0x151BBC00, // Random
     WGPUSTypeExtended_Force32 = 0x7FFFFFFF
 } WGPUSTypeExtended;
+
+typedef struct WGPUInstanceCocoaDescriptor {
+    WGPUChainedStruct chain;
+    // The API contract is: callers must call WebGPU's functions in a non-racey way with respect
+    // to each other. This scheduleWorkBlock will execute on a background thread, and it must
+    // schedule the block it's passed to be run in a non-racey way with regards to all the other
+    // WebGPU calls. It's fine to pass NULL here, but if you do, you must periodically call
+    // wgpuInstanceProcessEvents() to synchronously run the queued callbacks.
+    WGPUScheduleWorkBlock scheduleWorkBlock;
+} WGPUInstanceCocoaDescriptor;
 
 typedef struct WGPUShaderModuleCompilationHint {
     WGPUPipelineLayout layout;

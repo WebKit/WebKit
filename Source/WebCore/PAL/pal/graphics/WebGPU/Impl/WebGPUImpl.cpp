@@ -31,6 +31,7 @@
 #include "WebGPUAdapterImpl.h"
 #include "WebGPUDowncastConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/BlockPtr.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/darwin/WeakLinking.h>
@@ -40,9 +41,21 @@ WTF_WEAK_LINK_FORCE_IMPORT(wgpuCreateInstance);
 
 namespace PAL::WebGPU {
 
-RefPtr<GPUImpl> GPUImpl::create()
+RefPtr<GPUImpl> GPUImpl::create(ScheduleWorkFunction&& scheduleWorkFunction)
 {
-    WGPUInstanceDescriptor descriptor = { nullptr };
+    auto scheduleWorkBlock = makeBlockPtr([scheduleWorkFunction = WTFMove(scheduleWorkFunction)](WGPUWorkItem workItem)
+    {
+        scheduleWorkFunction(makeBlockPtr(WTFMove(workItem)));
+    });
+    WGPUInstanceCocoaDescriptor cocoaDescriptor {
+        {
+            nullptr,
+            static_cast<WGPUSType>(WGPUSTypeExtended_InstanceCocoaDescriptor),
+        },
+        scheduleWorkBlock.get(),
+    };
+    WGPUInstanceDescriptor descriptor = { &cocoaDescriptor.chain };
+
     if (!&wgpuCreateInstance)
         return nullptr;
     auto instance = wgpuCreateInstance(&descriptor);

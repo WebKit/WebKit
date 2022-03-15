@@ -79,7 +79,14 @@ void RemoteGPU::workQueueInitialize()
 {
     assertIsCurrent(workQueue());
 #if HAVE(WEBGPU_IMPLEMENTATION)
-    auto backing = PAL::WebGPU::GPUImpl::create();
+    // BEWARE: This is a retain cycle.
+    // this owns m_backing, but m_backing contains a callback which has a stong reference to this.
+    // The retain cycle is required because callbacks need to execute even if this is disowned
+    // (because the callbacks handle resource cleanup, etc.).
+    // The retain cycle is broken in workQueueUninitialize().
+    auto backing = PAL::WebGPU::GPUImpl::create([protectedThis = Ref { *this }](PAL::WebGPU::GPUImpl::WorkItem&& workItem) {
+        protectedThis->workQueue().dispatch(WTFMove(workItem));
+    });
 #else
     RefPtr<PAL::WebGPU::GPU> backing;
 #endif
@@ -95,6 +102,7 @@ void RemoteGPU::workQueueUninitialize()
     assertIsCurrent(workQueue());
     m_streamConnection = nullptr;
     m_objectHeap->clear();
+    m_backing = nullptr;
 }
 
 void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, WTF::CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&& callback)

@@ -29,7 +29,9 @@
 
 #include "WebGPU.h"
 #include <WebGPU/WebGPU.h>
+#include <functional>
 #include <wtf/Deque.h>
+#include <wtf/Function.h>
 
 namespace PAL::WebGPU {
 
@@ -38,7 +40,9 @@ class ConvertToBackingContext;
 class GPUImpl final : public GPU {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PAL_EXPORT static RefPtr<GPUImpl> create();
+    using WorkItem = Function<void(void)>;
+    using ScheduleWorkFunction = Function<void(WorkItem&&)>;
+    PAL_EXPORT static RefPtr<GPUImpl> create(ScheduleWorkFunction&&);
 
     static Ref<GPUImpl> create(WGPUInstance instance, ConvertToBackingContext& convertToBackingContext)
     {
