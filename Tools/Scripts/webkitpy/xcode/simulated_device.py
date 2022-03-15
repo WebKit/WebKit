@@ -540,8 +540,8 @@ class SimulatedDevice(object):
     ]
 
     UI_MANAGER_SERVICE = {
-        'iOS': 'com.apple.springboard.services',
-        'watchOS': 'com.apple.carousel.sessionservice',
+        'iOS': 'com.apple.SpringBoard',
+        'watchOS': 'com.apple.Carousel',
     }
 
     def __init__(self, name, udid, host, device_type, build_version):
@@ -596,8 +596,8 @@ class SimulatedDevice(object):
             _log.debug(u'{} has no service to check if the device is usable'.format(self.device_type.software_variant))
             return True
 
-        system_processes = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'print', 'system'], decode_output=True, return_stderr=False)
-        if re.search(r'"{}"'.format(service), system_processes) or re.search(r'A\s+{}'.format(service), system_processes):
+        exit_code = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'list', service], return_exit_code=True)
+        if exit_code == 0:
             return True
         return False
 
