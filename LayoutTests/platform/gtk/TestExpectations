@@ -614,9 +614,6 @@ webkit.org/b/152620 css3/font-variant-all.html [ ImageOnlyFailure ]
 webkit.org/b/152620 css3/font-variant-petite-caps-synthesis.html [ ImageOnlyFailure ]
 webkit.org/b/152620 css3/font-variant-small-caps-synthesis.html [ ImageOnlyFailure ]
 
-# monitorWheelEvents doesn't work in this test.
-css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
-
 # Requires ENABLE(SAMPLING_PROFILER)
 webkit.org/b/153466 inspector/sampling-profiler [ Skip ]
 
@@ -936,9 +933,6 @@ webkit.org/b/225921 printing/print-close-crash.html [ Crash ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
-
-# Tests behavior specific to MediaSessionManagerCocoa
-media/audio-session-category.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 4. FLAKY TESTS

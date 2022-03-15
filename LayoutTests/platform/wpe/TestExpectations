@@ -230,10 +230,6 @@ webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing
 # We don't yet support EXIF-based resolution
 webkit.org/b/217821 imported/w3c/web-platform-tests/density-size-correction/ [ Skip ]
 
-# Scrolling
-webkit.org/b/223729 [ Release ] css3/scroll-snap/scroll-snap-wheel-event.html [ Pass Failure ]
-webkit.org/b/223729 [ Debug ] css3/scroll-snap/scroll-snap-wheel-event.html [ Pass ]
-
 # Scrolling coordinator
 webkit.org/b/215508 [ Release ] scrollingcoordinator/overflow-proxy-reattach.html [ Pass Timeout ]
 webkit.org/b/215508 [ Release ] scrollingcoordinator/fixed-node-reattach.html [ Pass Timeout ]
@@ -1265,6 +1261,7 @@ webkit.org/b/208188 webgl/webgl2-rendering-context-obtain.html [ Skip ]
 webkit.org/b/208188 webgl/2.0.0 [ Skip ]
 webkit.org/b/208188 webgl/2.0.y [ Skip ]
 webkit.org/b/208188 webgl/pending/conformance2 [ Skip ]
+webkit.org/b/166536 http/tests/webgl/2.0.y/ [ Skip ]
 
 webkit.org/b/212080 mathml/presentation/href-enter.html [ ImageOnlyFailure ]
 webkit.org/b/212080 mathml/presentation/href-style.html [ ImageOnlyFailure ]

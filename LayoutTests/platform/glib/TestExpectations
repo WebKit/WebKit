@@ -911,6 +911,8 @@ webkit.org/b/237256 media/video-src-blob-perf.html [ Timeout Failure ]
 
 webkit.org/b/237872 webrtc/vp8-then-h264.html [ Crash ]
 
+webkit.org/b/237901 media/media-source/media-source-interruption-with-resume-allowing-play.html [ Slow ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1095,6 +1097,12 @@ webkit.org/b/227659 imported/w3c/web-platform-tests/resource-timing/same-origin-
 
 # Previous expectation: webkit.org/b/173412 fast/scrolling/overflow-scrollable-after-back.html [ Failure Pass ]
 webkit.org/b/212202 fast/scrolling/overflow-scrollable-after-back.html [ Skip ]
+
+# Previous: webkit.org/b/223729 [ Release ] css3/scroll-snap/scroll-snap-wheel-event.html [ Pass Failure ]
+# Previous: webkit.org/b/223729 [ Debug ] css3/scroll-snap/scroll-snap-wheel-event.html [ Pass ]
+webkit.org/b/212202 css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
+
+
 
 # Warning: this test is expected to fail in the global expectations file, but
 # we expect it to Pass because we support RTL scrollbars. When fixed, it should
@@ -1783,6 +1791,9 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.
 #////////////////////////////////////////////////////////////////////////////////////////
 # UNSUPPORTED tests. Things we must skip.
 #////////////////////////////////////////////////////////////////////////////////////////
+
+# Tests behavior specific to MediaSessionManagerCocoa
+media/audio-session-category.html [ Skip ]
 
 # This test assumes we cannot play RTSP, but we can.
 media/unsupported-rtsp.html [ WontFix Skip ]
