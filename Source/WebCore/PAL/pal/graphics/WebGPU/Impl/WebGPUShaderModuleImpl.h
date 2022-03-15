@@ -56,7 +56,7 @@ private:
 
     WGPUShaderModule backing() const { return m_backing; }
 
-    void compilationInfo(WTF::Function<void(Ref<CompilationInfo>&&)>&&) final;
+    void compilationInfo(CompletionHandler<void(Ref<CompilationInfo>&&)>&&) final;
 
     void setLabelInternal(const String&) final;
 

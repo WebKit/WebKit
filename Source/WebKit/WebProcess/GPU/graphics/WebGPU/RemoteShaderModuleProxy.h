@@ -72,7 +72,7 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
     }
 
-    void compilationInfo(WTF::Function<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&&) final;
+    void compilationInfo(CompletionHandler<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&&) final;
 
     void setLabelInternal(const String&) final;
 

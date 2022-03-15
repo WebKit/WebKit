@@ -50,7 +50,7 @@ void mapCallback(WGPUBufferMapAsyncStatus status, void* userdata)
     buffer->mapCallback(status);
 }
 
-void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optional<Size64> size, WTF::Function<void()>&& callback)
+void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optional<Size64> size, CompletionHandler<void()>&& callback)
 {
     Ref protectedThis(*this);
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #import "Queue.h"
+#import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
@@ -61,12 +62,12 @@ public:
     RefPtr<Buffer> createBuffer(const WGPUBufferDescriptor&);
     RefPtr<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
     RefPtr<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor&);
-    void createComputePipelineAsync(const WGPUComputePipelineDescriptor&, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback);
+    void createComputePipelineAsync(const WGPUComputePipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback);
     RefPtr<PipelineLayout> createPipelineLayout(const WGPUPipelineLayoutDescriptor&);
     RefPtr<QuerySet> createQuerySet(const WGPUQuerySetDescriptor&);
     RefPtr<RenderBundleEncoder> createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor&);
     RefPtr<RenderPipeline> createRenderPipeline(const WGPURenderPipelineDescriptor&);
-    void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, const char* message)>&& callback);
+    void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, const char* message)>&& callback);
     RefPtr<Sampler> createSampler(const WGPUSamplerDescriptor&);
     RefPtr<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor&);
     RefPtr<SwapChain> createSwapChain(const Surface&, const WGPUSwapChainDescriptor&);
@@ -76,10 +77,10 @@ public:
     bool getLimits(WGPUSupportedLimits&);
     Queue& getQueue();
     bool hasFeature(WGPUFeatureName);
-    bool popErrorScope(WTF::Function<void(WGPUErrorType, const char*)>&& callback);
+    bool popErrorScope(CompletionHandler<void(WGPUErrorType, const char*)>&& callback);
     void pushErrorScope(WGPUErrorFilter);
-    void setDeviceLostCallback(WTF::Function<void(WGPUDeviceLostReason, const char*)>&&);
-    void setUncapturedErrorCallback(WTF::Function<void(WGPUErrorType, const char*)>&&);
+    void setDeviceLostCallback(Function<void(WGPUDeviceLostReason, const char*)>&&);
+    void setUncapturedErrorCallback(Function<void(WGPUErrorType, const char*)>&&);
     void setLabel(const char*);
 
 private:

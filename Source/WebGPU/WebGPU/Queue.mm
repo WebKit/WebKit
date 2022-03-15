@@ -38,7 +38,7 @@ Queue::Queue(id<MTLCommandQueue> commandQueue)
 
 Queue::~Queue() = default;
 
-void Queue::onSubmittedWorkDone(uint64_t signalValue, WTF::Function<void(WGPUQueueWorkDoneStatus)>&& callback)
+void Queue::onSubmittedWorkDone(uint64_t signalValue, CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback)
 {
     UNUSED_PARAM(signalValue);
     UNUSED_PARAM(callback);

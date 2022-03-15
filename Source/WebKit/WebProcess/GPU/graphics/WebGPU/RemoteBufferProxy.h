@@ -73,7 +73,7 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
     }
 
-    void mapAsync(PAL::WebGPU::MapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> sizeForMap, WTF::Function<void()>&&) final;
+    void mapAsync(PAL::WebGPU::MapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> sizeForMap, CompletionHandler<void()>&&) final;
     MappedRange getMappedRange(PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64>) final;
     void unmap() final;
 
@@ -81,7 +81,7 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    Deque<WTF::Function<void()>> m_callbacks;
+    Deque<CompletionHandler<void()>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

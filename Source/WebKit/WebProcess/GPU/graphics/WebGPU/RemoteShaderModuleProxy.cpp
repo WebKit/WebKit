@@ -46,7 +46,7 @@ RemoteShaderModuleProxy::~RemoteShaderModuleProxy()
 {
 }
 
-void RemoteShaderModuleProxy::compilationInfo(WTF::Function<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&& callback)
+void RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&& callback)
 {
     Vector<CompilationMessage> messages;
     auto sendResult = sendSync(Messages::RemoteShaderModule::CompilationInfo(), { messages });

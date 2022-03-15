@@ -25,9 +25,9 @@
 
 #pragma once
 
+#import <wtf/CompletionHandler.h>
 #import <wtf/Deque.h>
 #import <wtf/FastMalloc.h>
-#import <wtf/Function.h>
 #import <wtf/Lock.h>
 #import <wtf/Ref.h>
 #import <wtf/RefPtr.h>
@@ -47,10 +47,10 @@ public:
 
     RefPtr<Surface> createSurface(const WGPUSurfaceDescriptor&);
     void processEvents();
-    void requestAdapter(const WGPURequestAdapterOptions&, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback);
+    void requestAdapter(const WGPURequestAdapterOptions&, CompletionHandler<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback);
 
     // This can be called on a background thread.
-    using WorkItem = Function<void(void)>;
+    using WorkItem = CompletionHandler<void(void)>;
     void scheduleWork(WorkItem&&);
 
 private:

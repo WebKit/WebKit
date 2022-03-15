@@ -29,7 +29,7 @@
 #include "WebGPUSupportedFeatures.h"
 #include "WebGPUSupportedLimits.h"
 #include <optional>
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -47,7 +47,7 @@ public:
     SupportedLimits& limits() const { return m_limits; }
     bool isFallbackAdapter() const { return m_isFallbackAdapter; }
 
-    virtual void requestDevice(const DeviceDescriptor&, WTF::Function<void(Ref<Device>&&)>&&) = 0;
+    virtual void requestDevice(const DeviceDescriptor&, CompletionHandler<void(Ref<Device>&&)>&&) = 0;
 
 protected:
     Adapter(String&& name, SupportedFeatures& features, SupportedLimits& limits, bool isFallbackAdapter)

@@ -53,7 +53,7 @@ void RemoteShaderModule::stopListeningForIPC()
     m_streamConnection->stopReceivingMessages(Messages::RemoteShaderModule::messageReceiverName(), m_identifier.toUInt64());
 }
 
-void RemoteShaderModule::compilationInfo(WTF::CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&& callback)
+void RemoteShaderModule::compilationInfo(CompletionHandler<void(Vector<WebGPU::CompilationMessage>&&)>&& callback)
 {
     m_backing->compilationInfo([callback = WTFMove(callback)] (Ref<PAL::WebGPU::CompilationInfo>&& compilationMessage) mutable {
         auto convertedMessages = compilationMessage->messages().map([] (const Ref<PAL::WebGPU::CompilationMessage>& message) {

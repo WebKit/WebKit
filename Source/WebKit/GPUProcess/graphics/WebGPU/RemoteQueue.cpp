@@ -65,7 +65,7 @@ void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
     m_backing->submit(WTFMove(convertedCommandBuffers));
 }
 
-void RemoteQueue::onSubmittedWorkDone(WTF::CompletionHandler<void()>&& callback)
+void RemoteQueue::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 {
     m_backing->onSubmittedWorkDone([callback = WTFMove(callback)] () mutable {
         callback();

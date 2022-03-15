@@ -25,8 +25,8 @@
 
 #pragma once
 
+#import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
-#import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
@@ -45,7 +45,7 @@ public:
     void destroy();
     const void* getConstMappedRange(size_t offset, size_t);
     void* getMappedRange(size_t offset, size_t);
-    void mapAsync(WGPUMapModeFlags, size_t offset, size_t, WTF::Function<void(WGPUBufferMapAsyncStatus)>&& callback);
+    void mapAsync(WGPUMapModeFlags, size_t offset, size_t, CompletionHandler<void(WGPUBufferMapAsyncStatus)>&& callback);
     void unmap();
     void setLabel(const char*);
 

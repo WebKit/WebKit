@@ -182,7 +182,7 @@ static CompilationMessageData convertMessages(const Messages& messages1, const s
     return { WTFMove(flattenedCompilationMessages), WTFMove(flattenedMessages) };
 }
 
-void ShaderModule::getCompilationInfo(WTF::Function<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback)
+void ShaderModule::getCompilationInfo(CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback)
 {
     WTF::switchOn(m_checkResult, [&] (const WGSL::SuccessfulCheck& successfulCheck) {
         auto compilationMessageData(convertMessages({ successfulCheck.warnings, WGPUCompilationMessageType_Warning }));

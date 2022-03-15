@@ -103,7 +103,7 @@ static bool deviceMeetsRequiredLimits(id<MTLDevice>, const WGPURequiredLimits& r
         && !requiredLimits.limits.maxComputeWorkgroupsPerDimension;
 }
 
-void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, WTF::Function<void(WGPURequestDeviceStatus, RefPtr<Device>&&, const char*)>&& callback)
+void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, RefPtr<Device>&&, const char*)>&& callback)
 {
     if (descriptor.nextInChain) {
         callback(WGPURequestDeviceStatus_Error, nullptr, "Unknown descriptor type");

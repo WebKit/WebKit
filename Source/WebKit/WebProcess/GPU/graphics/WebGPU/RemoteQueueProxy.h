@@ -75,7 +75,7 @@ private:
 
     void submit(Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>>&&) final;
 
-    void onSubmittedWorkDone(WTF::Function<void()>&&) final;
+    void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
 
     void writeBuffer(
         const PAL::WebGPU::Buffer&,
@@ -99,7 +99,7 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    Deque<WTF::Function<void()>> m_callbacks;
+    Deque<CompletionHandler<void()>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

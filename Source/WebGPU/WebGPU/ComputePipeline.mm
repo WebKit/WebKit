@@ -170,7 +170,7 @@ RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineD
     return ComputePipeline::create(computePipelineState);
 }
 
-void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback)
+void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback)
 {
     // FIXME: Implement this
     UNUSED_PARAM(descriptor);

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "WebGPUBindGroupLayout.h"
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -47,7 +47,7 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void compilationInfo(WTF::Function<void(Ref<CompilationInfo>&&)>&&) = 0;
+    virtual void compilationInfo(CompletionHandler<void(Ref<CompilationInfo>&&)>&&) = 0;
 
 protected:
     ShaderModule() = default;

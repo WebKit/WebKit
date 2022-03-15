@@ -95,11 +95,11 @@ private:
     }
     IPC::Connection& connection() const { return m_gpuProcessConnection->connection(); }
 
-    void requestAdapter(const PAL::WebGPU::RequestAdapterOptions&, WTF::Function<void(RefPtr<PAL::WebGPU::Adapter>&&)>&&) final;
+    void requestAdapter(const PAL::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>&&) final;
 
     void abandonGPUProcess();
 
-    Deque<WTF::Function<void(RefPtr<PAL::WebGPU::Adapter>&&)>> m_callbacks;
+    Deque<CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;

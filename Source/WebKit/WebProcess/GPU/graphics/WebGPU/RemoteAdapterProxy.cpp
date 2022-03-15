@@ -46,7 +46,7 @@ RemoteAdapterProxy::~RemoteAdapterProxy()
 {
 }
 
-void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& descriptor, WTF::Function<void(Ref<PAL::WebGPU::Device>&&)>&& callback)
+void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& descriptor, CompletionHandler<void(Ref<PAL::WebGPU::Device>&&)>&& callback)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);

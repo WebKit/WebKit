@@ -61,7 +61,7 @@ private:
     void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) final;
 
     void onSubmittedWorkDoneCallback(WGPUQueueWorkDoneStatus);
-    void onSubmittedWorkDone(WTF::Function<void()>&&) final;
+    void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
 
     void writeBuffer(
         const Buffer&,
@@ -87,7 +87,7 @@ private:
 
     uint64_t m_signalValue { 1 };
 
-    Deque<WTF::Function<void()>> m_callbacks;
+    Deque<CompletionHandler<void()>> m_callbacks;
 
     WGPUQueue m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;

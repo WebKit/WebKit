@@ -101,7 +101,7 @@ bool Device::hasFeature(WGPUFeatureName)
     return false;
 }
 
-bool Device::popErrorScope(WTF::Function<void(WGPUErrorType, const char*)>&& callback)
+bool Device::popErrorScope(CompletionHandler<void(WGPUErrorType, const char*)>&& callback)
 {
     // FIXME: Implement this.
     UNUSED_PARAM(callback);
@@ -114,13 +114,13 @@ void Device::pushErrorScope(WGPUErrorFilter filter)
     UNUSED_PARAM(filter);
 }
 
-void Device::setDeviceLostCallback(WTF::Function<void(WGPUDeviceLostReason, const char*)>&& callback)
+void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, const char*)>&& callback)
 {
     // FIXME: Implement this.
     UNUSED_PARAM(callback);
 }
 
-void Device::setUncapturedErrorCallback(WTF::Function<void(WGPUErrorType, const char*)>&& callback)
+void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, const char*)>&& callback)
 {
     // FIXME: Implement this.
     UNUSED_PARAM(callback);

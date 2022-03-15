@@ -77,9 +77,9 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
     }
 
-    void requestDevice(const PAL::WebGPU::DeviceDescriptor&, WTF::Function<void(Ref<PAL::WebGPU::Device>&&)>&&) final;
+    void requestDevice(const PAL::WebGPU::DeviceDescriptor&, CompletionHandler<void(Ref<PAL::WebGPU::Device>&&)>&&) final;
 
-    Deque<WTF::Function<void(Ref<PAL::WebGPU::Device>)>> m_callbacks;
+    Deque<CompletionHandler<void(Ref<PAL::WebGPU::Device>)>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

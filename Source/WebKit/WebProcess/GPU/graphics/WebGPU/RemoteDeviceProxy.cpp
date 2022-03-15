@@ -213,7 +213,7 @@ Ref<PAL::WebGPU::RenderPipeline> RemoteDeviceProxy::createRenderPipeline(const P
     return RemoteRenderPipelineProxy::create(*this, m_convertToBackingContext, identifier);
 }
 
-void RemoteDeviceProxy::createComputePipelineAsync(const PAL::WebGPU::ComputePipelineDescriptor& descriptor, WTF::Function<void(Ref<PAL::WebGPU::ComputePipeline>&&)>&& callback)
+void RemoteDeviceProxy::createComputePipelineAsync(const PAL::WebGPU::ComputePipelineDescriptor& descriptor, CompletionHandler<void(Ref<PAL::WebGPU::ComputePipeline>&&)>&& callback)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);
@@ -228,7 +228,7 @@ void RemoteDeviceProxy::createComputePipelineAsync(const PAL::WebGPU::ComputePip
     callback(RemoteComputePipelineProxy::create(*this, m_convertToBackingContext, identifier));
 }
 
-void RemoteDeviceProxy::createRenderPipelineAsync(const PAL::WebGPU::RenderPipelineDescriptor& descriptor, WTF::Function<void(Ref<PAL::WebGPU::RenderPipeline>&&)>&& callback)
+void RemoteDeviceProxy::createRenderPipelineAsync(const PAL::WebGPU::RenderPipelineDescriptor& descriptor, CompletionHandler<void(Ref<PAL::WebGPU::RenderPipeline>&&)>&& callback)
 {
     auto convertedDescriptor = m_convertToBackingContext->convertToBacking(descriptor);
     ASSERT(convertedDescriptor);
@@ -297,7 +297,7 @@ void RemoteDeviceProxy::pushErrorScope(PAL::WebGPU::ErrorFilter errorFilter)
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteDeviceProxy::popErrorScope(WTF::Function<void(std::optional<PAL::WebGPU::Error>&&)>&& callback)
+void RemoteDeviceProxy::popErrorScope(CompletionHandler<void(std::optional<PAL::WebGPU::Error>&&)>&& callback)
 {
     std::optional<Error> error;
     auto sendResult = sendSync(Messages::RemoteDevice::PopErrorScope(), { error });

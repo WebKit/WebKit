@@ -37,7 +37,7 @@ RefPtr<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDesc
     return RenderPipeline::create(nil);
 }
 
-void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, WTF::Function<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, const char* message)>&& callback)
+void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, const char* message)>&& callback)
 {
     UNUSED_PARAM(descriptor);
     UNUSED_PARAM(callback);

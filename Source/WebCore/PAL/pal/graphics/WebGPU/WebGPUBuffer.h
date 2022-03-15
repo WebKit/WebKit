@@ -29,7 +29,7 @@
 #include "WebGPUMapMode.h"
 #include <cstdint>
 #include <optional>
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -48,7 +48,7 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64>, WTF::Function<void()>&&) = 0;
+    virtual void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64>, CompletionHandler<void()>&&) = 0;
     struct MappedRange {
         void* source { nullptr };
         size_t byteLength { 0 };

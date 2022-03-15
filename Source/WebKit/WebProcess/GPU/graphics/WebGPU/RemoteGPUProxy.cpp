@@ -90,7 +90,7 @@ void RemoteGPUProxy::waitUntilInitialized()
     m_lost = true;
 }
 
-void RemoteGPUProxy::requestAdapter(const PAL::WebGPU::RequestAdapterOptions& options, WTF::Function<void(RefPtr<PAL::WebGPU::Adapter>&&)>&& callback)
+void RemoteGPUProxy::requestAdapter(const PAL::WebGPU::RequestAdapterOptions& options, CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>&& callback)
 {
     if (m_lost) {
         callback(nullptr);

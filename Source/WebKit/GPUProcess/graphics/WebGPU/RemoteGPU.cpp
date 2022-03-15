@@ -105,7 +105,7 @@ void RemoteGPU::workQueueUninitialize()
     m_backing = nullptr;
 }
 
-void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, WTF::CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&& callback)
+void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, WebGPUIdentifier identifier, CompletionHandler<void(std::optional<RequestAdapterResponse>&&)>&& callback)
 {
     assertIsCurrent(workQueue());
     ASSERT(m_backing);

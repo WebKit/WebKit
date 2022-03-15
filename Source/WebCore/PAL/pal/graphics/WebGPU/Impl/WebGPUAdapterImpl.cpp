@@ -146,7 +146,7 @@ void requestDeviceCallback(WGPURequestDeviceStatus status, WGPUDevice device, co
     adapter->requestDeviceCallback(status, device, message);
 }
 
-void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, WTF::Function<void(Ref<Device>&&)>&& callback)
+void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHandler<void(Ref<Device>&&)>&& callback)
 {
     Ref protectedThis(*this);
 

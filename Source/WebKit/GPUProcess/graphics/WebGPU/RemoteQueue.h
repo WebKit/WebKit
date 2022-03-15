@@ -83,7 +83,7 @@ private:
 
     void submit(Vector<WebGPUIdentifier>&&);
 
-    void onSubmittedWorkDone(WTF::CompletionHandler<void()>&&);
+    void onSubmittedWorkDone(CompletionHandler<void()>&&);
 
     void writeBuffer(
         WebGPUIdentifier,

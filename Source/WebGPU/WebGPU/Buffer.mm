@@ -61,7 +61,7 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
     return nullptr;
 }
 
-void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, WTF::Function<void(WGPUBufferMapAsyncStatus)>&& callback)
+void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, CompletionHandler<void(WGPUBufferMapAsyncStatus)>&& callback)
 {
     UNUSED_PARAM(mode);
     UNUSED_PARAM(offset);

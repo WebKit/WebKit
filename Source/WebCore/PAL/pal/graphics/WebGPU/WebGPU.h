@@ -27,7 +27,7 @@
 
 #include "WebGPURequestAdapterOptions.h"
 #include <optional>
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -39,7 +39,7 @@ class GPU : public RefCounted<GPU> {
 public:
     virtual ~GPU() = default;
 
-    virtual void requestAdapter(const RequestAdapterOptions&, WTF::Function<void(RefPtr<Adapter>&&)>&&) = 0;
+    virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
 
 protected:
     GPU() = default;

@@ -88,8 +88,8 @@ private:
     Ref<PAL::WebGPU::ShaderModule> createShaderModule(const PAL::WebGPU::ShaderModuleDescriptor&) final;
     Ref<PAL::WebGPU::ComputePipeline> createComputePipeline(const PAL::WebGPU::ComputePipelineDescriptor&) final;
     Ref<PAL::WebGPU::RenderPipeline> createRenderPipeline(const PAL::WebGPU::RenderPipelineDescriptor&) final;
-    void createComputePipelineAsync(const PAL::WebGPU::ComputePipelineDescriptor&, WTF::Function<void(Ref<PAL::WebGPU::ComputePipeline>&&)>&&) final;
-    void createRenderPipelineAsync(const PAL::WebGPU::RenderPipelineDescriptor&, WTF::Function<void(Ref<PAL::WebGPU::RenderPipeline>&&)>&&) final;
+    void createComputePipelineAsync(const PAL::WebGPU::ComputePipelineDescriptor&, CompletionHandler<void(Ref<PAL::WebGPU::ComputePipeline>&&)>&&) final;
+    void createRenderPipelineAsync(const PAL::WebGPU::RenderPipelineDescriptor&, CompletionHandler<void(Ref<PAL::WebGPU::RenderPipeline>&&)>&&) final;
 
     Ref<PAL::WebGPU::CommandEncoder> createCommandEncoder(const std::optional<PAL::WebGPU::CommandEncoderDescriptor>&) final;
     Ref<PAL::WebGPU::RenderBundleEncoder> createRenderBundleEncoder(const PAL::WebGPU::RenderBundleEncoderDescriptor&) final;
@@ -97,13 +97,13 @@ private:
     Ref<PAL::WebGPU::QuerySet> createQuerySet(const PAL::WebGPU::QuerySetDescriptor&) final;
 
     void pushErrorScope(PAL::WebGPU::ErrorFilter) final;
-    void popErrorScope(WTF::Function<void(std::optional<PAL::WebGPU::Error>&&)>&&) final;
+    void popErrorScope(CompletionHandler<void(std::optional<PAL::WebGPU::Error>&&)>&&) final;
 
     void setLabelInternal(const String&) final;
 
-    Deque<WTF::Function<void(Ref<PAL::WebGPU::ComputePipeline>&&)>> m_createComputePipelineAsyncCallbacks;
-    Deque<WTF::Function<void(Ref<PAL::WebGPU::RenderPipeline>&&)>> m_createRenderPipelineAsyncCallbacks;
-    Deque<WTF::Function<void(std::optional<PAL::WebGPU::Error>&&)>> m_popErrorScopeCallbacks;
+    Deque<CompletionHandler<void(Ref<PAL::WebGPU::ComputePipeline>&&)>> m_createComputePipelineAsyncCallbacks;
+    Deque<CompletionHandler<void(Ref<PAL::WebGPU::RenderPipeline>&&)>> m_createRenderPipelineAsyncCallbacks;
+    Deque<CompletionHandler<void(std::optional<PAL::WebGPU::Error>&&)>> m_popErrorScopeCallbacks;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

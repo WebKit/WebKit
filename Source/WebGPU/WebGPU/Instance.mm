@@ -126,7 +126,7 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WG
     }
 }
 
-void Instance::requestAdapter(const WGPURequestAdapterOptions& options, WTF::Function<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback)
+void Instance::requestAdapter(const WGPURequestAdapterOptions& options, CompletionHandler<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback)
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     NSArray<id<MTLDevice>> *devices = MTLCopyAllDevices();

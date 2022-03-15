@@ -102,8 +102,8 @@ private:
     void createShaderModule(const WebGPU::ShaderModuleDescriptor&, WebGPUIdentifier);
     void createComputePipeline(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier);
     void createRenderPipeline(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier);
-    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, WTF::CompletionHandler<void()>&&);
-    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, WTF::CompletionHandler<void()>&&);
+    void createComputePipelineAsync(const WebGPU::ComputePipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void()>&&);
+    void createRenderPipelineAsync(const WebGPU::RenderPipelineDescriptor&, WebGPUIdentifier, CompletionHandler<void()>&&);
 
     void createCommandEncoder(const std::optional<WebGPU::CommandEncoderDescriptor>&, WebGPUIdentifier);
     void createRenderBundleEncoder(const WebGPU::RenderBundleEncoderDescriptor&, WebGPUIdentifier);
@@ -111,7 +111,7 @@ private:
     void createQuerySet(const WebGPU::QuerySetDescriptor&, WebGPUIdentifier);
 
     void pushErrorScope(PAL::WebGPU::ErrorFilter);
-    void popErrorScope(WTF::CompletionHandler<void(std::optional<WebGPU::Error>&&)>&&);
+    void popErrorScope(CompletionHandler<void(std::optional<WebGPU::Error>&&)>&&);
 
     void setLabel(String&&);
 

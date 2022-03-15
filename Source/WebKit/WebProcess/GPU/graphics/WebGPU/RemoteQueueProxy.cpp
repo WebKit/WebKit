@@ -59,7 +59,7 @@ void RemoteQueueProxy::submit(Vector<std::reference_wrapper<PAL::WebGPU::Command
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteQueueProxy::onSubmittedWorkDone(WTF::Function<void()>&& callback)
+void RemoteQueueProxy::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 {
     auto sendResult = sendSync(Messages::RemoteQueue::OnSubmittedWorkDone(), { });
     UNUSED_VARIABLE(sendResult);

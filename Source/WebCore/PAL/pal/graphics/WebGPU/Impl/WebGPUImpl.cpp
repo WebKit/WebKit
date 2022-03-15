@@ -82,7 +82,7 @@ void requestAdapterCallback(WGPURequestAdapterStatus status, WGPUAdapter adapter
     gpu->requestAdapterCallback(status, adapter, message);
 }
 
-void GPUImpl::requestAdapter(const RequestAdapterOptions& options, WTF::Function<void(RefPtr<Adapter>&&)>&& callback)
+void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHandler<void(RefPtr<Adapter>&&)>&& callback)
 {
     Ref protectedThis(*this);
 

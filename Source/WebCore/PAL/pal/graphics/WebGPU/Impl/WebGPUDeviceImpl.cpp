@@ -515,7 +515,7 @@ void createComputePipelineAsyncCallback(WGPUCreatePipelineAsyncStatus status, WG
     device->createComputePipelineAsyncCallback(status, pipeline, message);
 }
 
-void DeviceImpl::createComputePipelineAsync(const ComputePipelineDescriptor& descriptor, WTF::Function<void(Ref<ComputePipeline>&&)>&& callback)
+void DeviceImpl::createComputePipelineAsync(const ComputePipelineDescriptor& descriptor, CompletionHandler<void(Ref<ComputePipeline>&&)>&& callback)
 {
     Ref protectedThis(*this);
 
@@ -539,7 +539,7 @@ void createRenderPipelineAsyncCallback(WGPUCreatePipelineAsyncStatus status, WGP
     device->createRenderPipelineAsyncCallback(status, pipeline, message);
 }
 
-void DeviceImpl::createRenderPipelineAsync(const RenderPipelineDescriptor& descriptor, WTF::Function<void(Ref<RenderPipeline>&&)>&& callback)
+void DeviceImpl::createRenderPipelineAsync(const RenderPipelineDescriptor& descriptor, CompletionHandler<void(Ref<RenderPipeline>&&)>&& callback)
 {
     Ref protectedThis(*this);
 
@@ -618,7 +618,7 @@ void popErrorScopeCallback(WGPUErrorType type, const char* message, void* userda
     device->popErrorScopeCallback(type, message);
 }
 
-void DeviceImpl::popErrorScope(WTF::Function<void(std::optional<Error>&&)>&& callback)
+void DeviceImpl::popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&& callback)
 {
     Ref protectedThis(*this);
 

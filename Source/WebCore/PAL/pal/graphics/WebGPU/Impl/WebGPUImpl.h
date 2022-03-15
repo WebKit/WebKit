@@ -29,7 +29,7 @@
 
 #include "WebGPU.h"
 #include <WebGPU/WebGPU.h>
-#include <functional>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 
@@ -40,7 +40,7 @@ class ConvertToBackingContext;
 class GPUImpl final : public GPU {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using WorkItem = Function<void(void)>;
+    using WorkItem = CompletionHandler<void(void)>;
     using ScheduleWorkFunction = Function<void(WorkItem&&)>;
     PAL_EXPORT static RefPtr<GPUImpl> create(ScheduleWorkFunction&&);
 
@@ -65,9 +65,9 @@ private:
     WGPUInstance backing() const { return m_backing; }
 
     void requestAdapterCallback(WGPURequestAdapterStatus, WGPUAdapter, const char* message);
-    void requestAdapter(const RequestAdapterOptions&, WTF::Function<void(RefPtr<Adapter>&&)>&&) final;
+    void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) final;
 
-    Deque<WTF::Function<void(RefPtr<Adapter>&&)>> m_callbacks;
+    Deque<CompletionHandler<void(RefPtr<Adapter>&&)>> m_callbacks;
 
     WGPUInstance m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;

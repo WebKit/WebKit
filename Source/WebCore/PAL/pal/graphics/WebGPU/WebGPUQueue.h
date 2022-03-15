@@ -35,7 +35,7 @@
 #include <cstdint>
 #include <functional>
 #include <optional>
-#include <wtf/Function.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -59,7 +59,7 @@ public:
 
     virtual void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) = 0;
 
-    virtual void onSubmittedWorkDone(WTF::Function<void()>&&) = 0;
+    virtual void onSubmittedWorkDone(CompletionHandler<void()>&&) = 0;
 
     virtual void writeBuffer(
         const Buffer&,
