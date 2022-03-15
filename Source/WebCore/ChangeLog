@@ -1,3 +1,21 @@
+2022-03-15  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using DYLD_INTERPOSE
+        https://bugs.webkit.org/show_bug.cgi?id=237867
+
+        Reviewed by Anders Carlsson.
+
+        It never worked on iOS, and it doesn't work on M1 Macs.
+        It used to be used for NPAPI and the SecItemShim,
+        but those have been removed and updated to use other methods that work on M1 Macs.
+        It is currently only used for tests in editing/secure-input which continue to pass
+        as much as they did before this change.
+
+        * Configurations/WebCoreTestShim.xcconfig: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/DynamicLinkerInterposing.h: Removed.
+        * testing/WebCoreTestShimLibrary.cpp: Removed.
+
 2022-03-15  Antoine Quint  <graouts@webkit.org>
 
         [model] model-element/model-element-camera.html is a failure

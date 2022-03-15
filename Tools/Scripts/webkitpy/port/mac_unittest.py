@@ -88,7 +88,7 @@ class MacTest(darwin_testcase.DarwinTest):
         env = port.setup_environ_for_server(port.driver_name())
         self.assertEqual(env['MallocStackLogging'], '1')
         self.assertEqual(env['MallocScribble'], '1')
-        self.assertEqual(env['DYLD_INSERT_LIBRARIES'], '/usr/lib/libgmalloc.dylib:/mock-build/libWebCoreTestShim.dylib')
+        self.assertEqual(env['DYLD_INSERT_LIBRARIES'], '/usr/lib/libgmalloc.dylib')
 
     def test_show_results_html_file(self):
         port = self.make_port()

@@ -1,3 +1,15 @@
+2022-03-15  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using DYLD_INTERPOSE
+        https://bugs.webkit.org/show_bug.cgi?id=237867
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_setup_environ_for_server):
+
 2022-03-14  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Fail draft PRs
