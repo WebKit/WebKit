@@ -138,6 +138,8 @@ void RemoteGraphicsContextGLProxy::reshape(int width, int height)
 
 void RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas(ImageBuffer& buffer)
 {
+    if (isContextLost())
+        return;
     // FIXME: the buffer is "relatively empty" always, but for consistency, we need to ensure
     // no pending operations are targeted for the `buffer`.
     buffer.flushDrawingContext();
@@ -158,6 +160,8 @@ void RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas(ImageBuffer& bu
 
 void RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas(ImageBuffer& buffer)
 {
+    if (isContextLost())
+        return;
     buffer.flushDrawingContext();
     auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintCompositedResultsToCanvas(buffer.renderingResourceIdentifier()), Messages::RemoteGraphicsContextGL::PaintCompositedResultsToCanvas::Reply());
     if (!sendResult) {
@@ -186,6 +190,8 @@ RefPtr<WebCore::MediaSample> RemoteGraphicsContextGLProxy::paintCompositedResult
 #if ENABLE(VIDEO)
 bool RemoteGraphicsContextGLProxy::copyTextureFromMedia(MediaPlayer& mediaPlayer, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {
+    if (isContextLost())
+        return false;
     auto videoFrame = mediaPlayer.videoFrameForCurrentTime();
     // Video in WP while WebGL in GPUP is not supported.
     if (!videoFrame || !is<RemoteVideoFrameProxy>(*videoFrame))

@@ -1,3 +1,33 @@
+2022-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteGraphicsContextGLProxy omits context lost checks for back and front buffer access functions
+        https://bugs.webkit.org/show_bug.cgi?id=237891
+
+        Reviewed by Myles Maxfield.
+
+        Add missing isContextLost() checks to RemoteGraphicsContextGLProxy functions.
+        WebGLRenderingContextBase would call as follows:
+        void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
+        {
+            if (isContextLostOrPending())
+                return;
+            ...
+            m_context->prepareForDisplay();
+            ...
+            m_context->paintCompositedResultsToCanvas();
+        }
+
+        The context may be ok during the first check but then fail later,
+        and so all the context functions need to check for validity.
+
+        No new tests, testing hooks need non-trivial implementation.
+        This is tracked in bug 237891.
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGLProxy::copyTextureFromMedia):
+
 2022-03-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Allow for scheduling asynchronous work
