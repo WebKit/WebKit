@@ -55,7 +55,7 @@ my $input;
 my $jsonDecoder = JSON::PP->new->utf8;
 my $jsonHashRef = $jsonDecoder->decode($input);
 my $propertiesHashRef = $jsonHashRef->{properties};
-my @allNames = keys(%$propertiesHashRef);
+my @allNames = sort keys(%$propertiesHashRef);
 die "We've reached more than 1024 CSS properties, please make sure to update CSSProperty/StylePropertyMetadata accordingly" if @allNames > 1024;
 
 my %defines = map { $_ => 1 } split(/ /, $defines);
@@ -472,7 +472,7 @@ bool isEnabledCSSProperty(const CSSPropertyID id)
 {
     switch (id) {
 EOF
-  foreach my $name (keys %runtimeFlags) {
+  foreach my $name (sort keys %runtimeFlags) {
     print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
     print GPERF "        return RuntimeEnabledFeatures::sharedFeatures()." . $runtimeFlags{$name} . "Enabled();\n";
   }
@@ -500,7 +500,7 @@ bool isCSSPropertyEnabledBySettings(const CSSPropertyID id, const Settings* sett
     switch (id) {
 EOF
 
-foreach my $name (keys %settingsFlags) {
+foreach my $name (sort keys %settingsFlags) {
   print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
   print GPERF "        return settings->" . $settingsFlags{$name} . "();\n";
 }
@@ -647,8 +647,8 @@ bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)
 {
     switch (id) {
 EOF
-for my $logicalPropertyGroup (values %logicalPropertyGroups) {
-    for my $name (values %{ $logicalPropertyGroup->{"logical"} }) {
+for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
+    for my $name (sort values %{ $logicalPropertyGroup->{"logical"} }) {
         print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
     }
 }
@@ -665,9 +665,9 @@ bool CSSProperty::isInLogicalPropertyGroup(CSSPropertyID id)
     switch (id) {
 EOF
 
-for my $logicalPropertyGroup (values %logicalPropertyGroups) {
+for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
     for my $kind ("logical", "physical") {
-        for my $name (values %{ $logicalPropertyGroup->{$kind} }) {
+        for my $name (sort values %{ $logicalPropertyGroup->{$kind} }) {
             print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
         }
     }
@@ -685,16 +685,18 @@ bool CSSProperty::areInSameLogicalPropertyGroupWithDifferentMappingLogic(CSSProp
     switch (id1) {
 EOF
 
-for my $logicalPropertyGroup (values %logicalPropertyGroups) {
+for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
     my $logical = $logicalPropertyGroup->{"logical"};
     my $physical = $logicalPropertyGroup->{"physical"};
     for my $first ($logical, $physical) {
         my $second = $first eq $logical ? $physical : $logical;
-        while (my ($resolver, $name) = each %{ $first }) {
+        for my $resolver (sort keys %{ $first }) {
+            my $name = $first->{$resolver};
             print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
         }
         print GPERF "        switch (id2) {\n";
-        while (my ($resolver, $name) = each %{ $second }) {
+        for my $resolver (sort keys %{ $second }) {
+            my $name = $second->{$resolver};
             print GPERF "        case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
         }
         print GPERF << "EOF";
@@ -718,8 +720,9 @@ CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyI
     switch (propertyID) {
 EOF
 
-for my $logicalPropertyGroup (values %logicalPropertyGroups) {
-    while (my ($resolver, $name) = each %{ $logicalPropertyGroup->{"logical"} }) {
+for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
+    for my $resolver (sort keys %{ $logicalPropertyGroup->{"logical"} }) {
+        my $name = $logicalPropertyGroup->{"logical"}->{$resolver};
         my $kind = $logicalPropertyGroup->{"kind"};
         my $kindId = nameToId($kind);
         my $resolverEnum = "LogicalBox" . $kindId . "::" . nameToId($resolver);
