@@ -471,6 +471,7 @@ set(WTF_SOURCES
     SixCharacterHash.cpp
     SmallSet.cpp
     StackBounds.cpp
+    StackCheck.cpp
     StackPointer.cpp
     StackStats.cpp
     StackTrace.cpp

@@ -1,3 +1,9 @@
+2022-03-15  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, CMake Debug build fix attempt after 248407@main
+
+        * wtf/CMakeLists.txt: Include StackCheck source unit.
+
 2022-03-15  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Indefinite hang when printing using a UIPrintPageRenderer
