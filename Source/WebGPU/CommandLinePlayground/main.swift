@@ -26,12 +26,25 @@
 import Foundation
 import WebGPU
 
-var instanceDescriptor = WGPUInstanceDescriptor(nextInChain: nil)
-let instance = wgpuCreateInstance(&instanceDescriptor)
+let instance = createDefaultInstance()
 defer {
     wgpuInstanceRelease(instance)
 }
 
-let _ = WGPUTextureDescriptorViewFormats(chain: WGPUChainedStruct(next: nil, sType: WGPUSType(rawValue: WGPUSTypeExtended_TextureDescriptorViewFormats.rawValue)), viewFormatsCount: 0, viewFormats: nil)
+var adapter: WGPUAdapter!
+var requestAdapterOptions = WGPURequestAdapterOptions(nextInChain: nil, compatibleSurface: nil, powerPreference: WGPUPowerPreference_Undefined, forceFallbackAdapter: false)
+wgpuInstanceRequestAdapterWithBlock(instance, &requestAdapterOptions) { (status: WGPURequestAdapterStatus, localAdapter: Optional<WGPUAdapter>, message: Optional<UnsafePointer<Int8>>) in
+    guard let localAdapter = localAdapter else {
+        fatalError()
+    }
+    adapter = localAdapter
+}
+defer {
+    wgpuAdapterRelease(adapter)
+}
+print("Adapter: \(String(describing: adapter))")
 
-print("Done.")
+//wgpuInstanceProcessEvents(instance)
+
+
+CFRunLoopRun()

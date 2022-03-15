@@ -39,6 +39,7 @@
 		1C5ACAE9273A55FD0095F8D5 /* Sampler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAE8273A55FD0095F8D5 /* Sampler.mm */; };
 		1C5ACAEB273A560D0095F8D5 /* TextureView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACAEA273A560D0095F8D5 /* TextureView.mm */; };
 		1CBAB0922718CCA0006080BB /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */; };
+		1CC5B9FE27DFEB0400C77B3B /* Utilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CC5B9FD27DFEB0400C77B3B /* Utilities.c */; };
 		1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEBD7E62716AFBA00A5254D /* WebGPU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1CEBD7F82716B34400A5254D /* WGSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEBD7F72716B34400A5254D /* WGSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CEBD8022716BF8200A5254D /* WGSL.cpp */; };
@@ -128,6 +129,7 @@
 		1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WGSLUnitTests.xcconfig; sourceTree = "<group>"; };
 		1C023D4A274495B9001DB734 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C2CEDED271E8A7300EDC16F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		1C2FC0EC27DFF44C00C72337 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		1C5319BD27BDC6CB00CD127E /* CommandLinePlayground */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CommandLinePlayground; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C5319BF27BDC6CC00CD127E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CommandLinePlayground.xcconfig; sourceTree = "<group>"; };
@@ -180,6 +182,9 @@
 		1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = WebGPU.modulemap; sourceTree = "<group>"; };
 		1CC0C8CA273A819100D0B481 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		1CC5B9FB27DFEB0400C77B3B /* CommandLinePlayground-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CommandLinePlayground-Bridging-Header.h"; sourceTree = "<group>"; };
+		1CC5B9FC27DFEB0400C77B3B /* Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
+		1CC5B9FD27DFEB0400C77B3B /* Utilities.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Utilities.c; sourceTree = "<group>"; };
 		1CEBD7E32716AFBA00A5254D /* WebGPU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebGPU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CEBD7E62716AFBA00A5254D /* WebGPU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPU.h; sourceTree = "<group>"; };
 		1CEBD7F22716B2CC00A5254D /* libwgsl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libwgsl.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -271,8 +276,8 @@
 		1C023D3D27449070001DB734 /* WGSLUnitTests */ = {
 			isa = PBXGroup;
 			children = (
-				339B7B1C27D80A1C0072BF9A /* WGSLParserTests.mm */,
 				1C023D3E27449070001DB734 /* WGSLLexerTests.mm */,
+				339B7B1C27D80A1C0072BF9A /* WGSLParserTests.mm */,
 			);
 			path = WGSLUnitTests;
 			sourceTree = "<group>";
@@ -280,7 +285,11 @@
 		1C5319BE27BDC6CB00CD127E /* CommandLinePlayground */ = {
 			isa = PBXGroup;
 			children = (
+				1CC5B9FB27DFEB0400C77B3B /* CommandLinePlayground-Bridging-Header.h */,
+				1C2FC0EC27DFF44C00C72337 /* config.h */,
 				1C5319BF27BDC6CC00CD127E /* main.swift */,
+				1CC5B9FD27DFEB0400C77B3B /* Utilities.c */,
+				1CC5B9FC27DFEB0400C77B3B /* Utilities.h */,
 			);
 			path = CommandLinePlayground;
 			sourceTree = "<group>";
@@ -372,15 +381,15 @@
 			isa = PBXGroup;
 			children = (
 				33EA185C27BC193D00A1DD52 /* AST */,
-				1CEBD8042716BFAB00A5254D /* config.h */,
-				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
 				33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */,
+				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
+				1CEBD8042716BFAB00A5254D /* config.h */,
 				338BB2D527B6B68700E066AB /* Lexer.cpp */,
 				338BB2D327B6B66C00E066AB /* Lexer.h */,
+				339B7B1A27D800090072BF9A /* Parser.cpp */,
+				339B7B1727D7FFA40072BF9A /* Parser.h */,
 				338BB2D127B6B63F00E066AB /* SourceSpan.h */,
 				338BB2CF27B6B61B00E066AB /* Token.cpp */,
-				339B7B1727D7FFA40072BF9A /* Parser.h */,
-				339B7B1A27D800090072BF9A /* Parser.cpp */,
 				338BB2CD27B6B60200E066AB /* Token.h */,
 				1CEBD8022716BF8200A5254D /* WGSL.cpp */,
 				1CEBD7F72716B34400A5254D /* WGSL.h */,
@@ -420,17 +429,17 @@
 		33EA185C27BC193D00A1DD52 /* AST */ = {
 			isa = PBXGroup;
 			children = (
+				33EA187C27BC246000A1DD52 /* Expressions */,
+				33EA187727BC229A00A1DD52 /* Statements */,
 				33EA185D27BC194F00A1DD52 /* ASTNode.h */,
 				33EA186927BC1BE600A1DD52 /* Attribute.h */,
 				33EA186B27BC1CBC00A1DD52 /* Expression.h */,
-				33EA187C27BC246000A1DD52 /* Expressions */,
 				33EA187527BC216B00A1DD52 /* FunctionDecl.h */,
-				33EA185F27BC198100A1DD52 /* GlobalDirective.h */,
 				33EA186127BC19C100A1DD52 /* GlobalDecl.h */,
+				33EA185F27BC198100A1DD52 /* GlobalDirective.h */,
 				33EA186327BC1A1D00A1DD52 /* GlobalVariableDecl.h */,
 				33EA186F27BC1E8A00A1DD52 /* ShaderModule.h */,
 				33EA187827BC22AA00A1DD52 /* Statement.h */,
-				33EA187727BC229A00A1DD52 /* Statements */,
 				33EA187327BC204900A1DD52 /* StructureDecl.h */,
 				33EA186D27BC1D4C00A1DD52 /* TypeDecl.h */,
 				33EA187127BC1FE100A1DD52 /* VariableQualifier.h */,
@@ -452,9 +461,9 @@
 			isa = PBXGroup;
 			children = (
 				33EA188127BC25D000A1DD52 /* IdentifierExpression.h */,
+				33EA188727BC361E00A1DD52 /* LiteralExpressions.h */,
 				33EA188327BC268600A1DD52 /* StructureAccess.h */,
 				33EA188527BC26DF00A1DD52 /* TypeConversion.h */,
-				33EA188727BC361E00A1DD52 /* LiteralExpressions.h */,
 			);
 			path = Expressions;
 			sourceTree = "<group>";
@@ -476,31 +485,31 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33EA187927BC22AA00A1DD52 /* Statement.h in Headers */,
+				33EA188027BC24E200A1DD52 /* AssignmentStatement.h in Headers */,
 				33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */,
-				33EA188627BC26DF00A1DD52 /* TypeConversion.h in Headers */,
-				33EA186427BC1A1D00A1DD52 /* GlobalVariableDecl.h in Headers */,
-				339B7B1827D7FFA40072BF9A /* Parser.h in Headers */,
-				33EA187B27BC230E00A1DD52 /* CompoundStatement.h in Headers */,
-				33EA187627BC216B00A1DD52 /* FunctionDecl.h in Headers */,
-				338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */,
+				33EA186A27BC1BE600A1DD52 /* Attribute.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
-				33EA187027BC1E8A00A1DD52 /* ShaderModule.h in Headers */,
+				33EA187B27BC230E00A1DD52 /* CompoundStatement.h in Headers */,
+				33EA186C27BC1CBC00A1DD52 /* Expression.h in Headers */,
+				33EA187627BC216B00A1DD52 /* FunctionDecl.h in Headers */,
+				33EA186227BC19C100A1DD52 /* GlobalDecl.h in Headers */,
+				33EA186027BC198100A1DD52 /* GlobalDirective.h in Headers */,
+				33EA186427BC1A1D00A1DD52 /* GlobalVariableDecl.h in Headers */,
+				33EA188227BC25D000A1DD52 /* IdentifierExpression.h in Headers */,
 				338BB2D427B6B66C00E066AB /* Lexer.h in Headers */,
 				33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */,
-				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
-				33EA186C27BC1CBC00A1DD52 /* Expression.h in Headers */,
-				1CEBD7F82716B34400A5254D /* WGSL.h in Headers */,
-				33EA186227BC19C100A1DD52 /* GlobalDecl.h in Headers */,
-				33EA188027BC24E200A1DD52 /* AssignmentStatement.h in Headers */,
-				33EA188427BC268600A1DD52 /* StructureAccess.h in Headers */,
-				33EA188227BC25D000A1DD52 /* IdentifierExpression.h in Headers */,
-				33EA186027BC198100A1DD52 /* GlobalDirective.h in Headers */,
-				33EA186E27BC1D4C00A1DD52 /* TypeDecl.h in Headers */,
-				33EA187427BC204900A1DD52 /* StructureDecl.h in Headers */,
+				339B7B1827D7FFA40072BF9A /* Parser.h in Headers */,
 				33EA187E27BC249000A1DD52 /* ReturnStatement.h in Headers */,
-				33EA186A27BC1BE600A1DD52 /* Attribute.h in Headers */,
+				33EA187027BC1E8A00A1DD52 /* ShaderModule.h in Headers */,
+				338BB2D227B6B63F00E066AB /* SourceSpan.h in Headers */,
+				33EA187927BC22AA00A1DD52 /* Statement.h in Headers */,
+				33EA188427BC268600A1DD52 /* StructureAccess.h in Headers */,
+				33EA187427BC204900A1DD52 /* StructureDecl.h in Headers */,
+				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
+				33EA188627BC26DF00A1DD52 /* TypeConversion.h in Headers */,
+				33EA186E27BC1D4C00A1DD52 /* TypeDecl.h in Headers */,
 				33EA187227BC1FE100A1DD52 /* VariableQualifier.h in Headers */,
+				1CEBD7F82716B34400A5254D /* WGSL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -597,6 +606,7 @@
 					};
 					1C5319BC27BDC6CB00CD127E = {
 						CreatedOnToolsVersion = 14.0;
+						LastSwiftMigration = 1330;
 					};
 					1CEBD7E22716AFBA00A5254D = {
 						CreatedOnToolsVersion = 13.3;
@@ -698,6 +708,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C5319C027BDC6CC00CD127E /* main.swift in Sources */,
+				1CC5B9FE27DFEB0400C77B3B /* Utilities.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -736,8 +747,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */,
-				339B7B1B27D800090072BF9A /* Parser.cpp in Sources */,
 				338BB2D627B6B68700E066AB /* Lexer.cpp in Sources */,
+				339B7B1B27D800090072BF9A /* Parser.cpp in Sources */,
 				338BB2D027B6B61B00E066AB /* Token.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,
 			);
@@ -789,6 +800,15 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SWIFT_OBJC_BRIDGING_HEADER = "CommandLinePlayground/CommandLinePlayground-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -796,6 +816,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SWIFT_OBJC_BRIDGING_HEADER = "CommandLinePlayground/CommandLinePlayground-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -803,6 +831,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				SWIFT_OBJC_BRIDGING_HEADER = "CommandLinePlayground/CommandLinePlayground-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Production;
 		};

@@ -1,5 +1,26 @@
 2022-03-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Update WebGPU CommandLinePlayground to execute asynchronous tasks
+        https://bugs.webkit.org/show_bug.cgi?id=237852
+
+        Reviewed by Kimmo Kinnunen.
+
+        This patch hooks up dispatch_async(dispatch_get_main_queue()) to WebGPU's CommandLinePlayground,
+        so asynchronous tasks get run.
+
+        * CommandLinePlayground/CommandLinePlayground-Bridging-Header.h: Copied from Source/WebGPU/CommandLinePlayground/main.swift.
+        * CommandLinePlayground/Utilities.c: Copied from Source/WebGPU/CommandLinePlayground/main.swift.
+        (createDefaultInstance):
+        * CommandLinePlayground/Utilities.h: Copied from Source/WebGPU/CommandLinePlayground/main.swift.
+        * CommandLinePlayground/config.h: Copied from Source/WebGPU/CommandLinePlayground/main.swift.
+        * CommandLinePlayground/main.swift:
+        (adapter):
+        * Configurations/CommandLinePlayground.xcconfig:
+        * WebGPU.xcodeproj/project.pbxproj:
+        * WebGPU/TextureView.mm:
+
+2022-03-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Repeated calls to wgpuDeviceGetQueue() are supposed to return the same pointer
         https://bugs.webkit.org/show_bug.cgi?id=237861
 

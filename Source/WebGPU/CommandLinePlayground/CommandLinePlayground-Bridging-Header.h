@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "TextureView.h"
-
-namespace WebGPU {
-
-TextureView::TextureView(id<MTLTexture> texture)
-    : m_texture(texture)
-{
-}
-
-TextureView::~TextureView() = default;
-
-void TextureView::setLabel(const char* label)
-{
-    m_texture.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
-}
-
-}
-
-void wgpuTextureViewRelease(WGPUTextureView textureView)
-{
-    UNUSED_PARAM(textureView);
-}
-
-void wgpuTextureViewSetLabel(WGPUTextureView textureView, const char* label)
-{
-    textureView->textureView->setLabel(label);
-}
+#import "Utilities.h"

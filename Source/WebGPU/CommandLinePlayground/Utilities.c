@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "TextureView.h"
+#include "config.h"
+#include "Utilities.h"
 
-namespace WebGPU {
+#include <WebGPU/WebGPUExt.h>
+#include <dispatch/dispatch.h>
 
-TextureView::TextureView(id<MTLTexture> texture)
-    : m_texture(texture)
+// rdar://90268765 Swift can't see the WGPUInstanceCocoaDescriptor type, so this has to be done in C.
+WGPUInstance createDefaultInstance(void)
 {
-}
+    WGPUInstanceCocoaDescriptor instanceCocoaDescriptor = {
+        {
+            NULL,
+            (WGPUSType)WGPUSTypeExtended_InstanceCocoaDescriptor,
+        },
+        ^(WGPUWorkItem workItem)
+        {
+            dispatch_async(dispatch_get_main_queue(), workItem);
+        },
+    };
 
-TextureView::~TextureView() = default;
+    WGPUInstanceDescriptor instanceDescriptor = {
+        &instanceCocoaDescriptor.chain,
+    };
 
-void TextureView::setLabel(const char* label)
-{
-    m_texture.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
-}
-
-}
-
-void wgpuTextureViewRelease(WGPUTextureView textureView)
-{
-    UNUSED_PARAM(textureView);
-}
-
-void wgpuTextureViewSetLabel(WGPUTextureView textureView, const char* label)
-{
-    textureView->textureView->setLabel(label);
+    return wgpuCreateInstance(&instanceDescriptor);
 }
