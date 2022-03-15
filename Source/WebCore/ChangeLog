@@ -1,3 +1,24 @@
+2022-03-15  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt AVAssetPrefersSandboxedParsingOptionKey
+        https://bugs.webkit.org/show_bug.cgi?id=237832
+        <rdar://89029829>
+
+        Reviewed by Eric Carlson.
+
+        Adopt a AVURLAsset option which would allow the media file parser to run out-of-process.
+        Because this adoption may have a performance impact (though it should not affect the
+        functionality of AVURLAsset), add a Setting to disable this adoption at runtime for the
+        purpose of A/B testing.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::requestInstallMissingPlugins):
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerPrefersSandboxedParsing const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+
 2022-03-15  Joseph Griego  <jgriego@igalia.com>
 
         Expose some web APIs on Shadow Realms and Worklets

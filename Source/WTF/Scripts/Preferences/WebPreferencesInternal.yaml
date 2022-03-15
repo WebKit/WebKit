@@ -745,6 +745,19 @@ PreferInlineTextSelectionInImages:
       "HAVE(UIKIT_WEBKIT_INTERNALS)": false
       default: true
 
+PreferSandboxedMediaParsing:
+  type: bool
+  humanReadableName: "Prefer Sandboxed Parsing of Media"
+  humanReadableDescription: "Prefer parsing media out-of-process in a sandboxed service"
+  condition: ENABLE(VIDEO)
+  defaultValue:
+    WebCore:
+      default: true
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
 ReplayCGDisplayListsIntoBackingStore:
   type: bool
   humanReadableName: "CG Display Lists: Replay for Testing"

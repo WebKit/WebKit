@@ -903,6 +903,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const URL& url, Ret
     if (!identifier.isEmpty())
         [options setObject:identifier forKey:AVURLAssetClientBundleIdentifierKey];
 #endif
+    if (player()->prefersSandboxedParsing() && PAL::canLoad_AVFoundation_AVAssetPrefersSandboxedParsingOptionKey())
+        [options setObject:@YES forKey:AVAssetPrefersSandboxedParsingOptionKey];
 
     auto type = player()->contentMIMEType();
 

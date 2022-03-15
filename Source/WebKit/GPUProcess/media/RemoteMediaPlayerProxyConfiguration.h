@@ -57,6 +57,7 @@ struct RemoteMediaPlayerProxyConfiguration {
     bool shouldUsePersistentCache { false };
     bool isVideo { false };
     bool renderingCanBeAccelerated { false };
+    bool prefersSandboxedParsing { false };
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -81,6 +82,7 @@ struct RemoteMediaPlayerProxyConfiguration {
         encoder << shouldUsePersistentCache;
         encoder << isVideo;
         encoder << renderingCanBeAccelerated;
+        encoder << prefersSandboxedParsing;
     }
 
     template <class Decoder>
@@ -105,7 +107,8 @@ struct RemoteMediaPlayerProxyConfiguration {
             && decoder.decode(configuration.logIdentifier)
             && decoder.decode(configuration.shouldUsePersistentCache)
             && decoder.decode(configuration.isVideo)
-            && decoder.decode(configuration.renderingCanBeAccelerated);
+            && decoder.decode(configuration.renderingCanBeAccelerated)
+            && decoder.decode(configuration.prefersSandboxedParsing);
     }
 };
 

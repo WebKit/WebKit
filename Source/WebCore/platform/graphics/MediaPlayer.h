@@ -291,6 +291,8 @@ public:
     virtual void mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&) { }
 #endif
 
+    virtual bool mediaPlayerPrefersSandboxedParsing() const { return false; }
+
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
     virtual const Logger& mediaPlayerLogger() = 0;
@@ -698,6 +700,8 @@ public:
     void playerContentBoxRectChanged(const LayoutRect&);
 
     String lastErrorMessage() const;
+
+    bool prefersSandboxedParsing() const { return client().mediaPlayerPrefersSandboxedParsing(); }
 
 private:
     MediaPlayer(MediaPlayerClient&);

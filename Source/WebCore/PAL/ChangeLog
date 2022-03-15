@@ -1,3 +1,13 @@
+2022-03-15  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt AVAssetPrefersSandboxedParsingOptionKey
+        https://bugs.webkit.org/show_bug.cgi?id=237832
+        <rdar://89029829>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+
 2022-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Adopt FALLBACK_PLATFORM_NAME in place of FALLBACK_PLATFORM

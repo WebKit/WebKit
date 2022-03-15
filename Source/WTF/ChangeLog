@@ -1,3 +1,13 @@
+2022-03-15  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt AVAssetPrefersSandboxedParsingOptionKey
+        https://bugs.webkit.org/show_bug.cgi?id=237832
+        <rdar://89029829>
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-03-14  Mark Lam  <mark.lam@apple.com>
 
         Enhance StackCheck debugging support and bump up the ASAN reserved zone size.

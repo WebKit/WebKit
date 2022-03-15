@@ -1,3 +1,20 @@
+2022-03-15  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Adopt AVAssetPrefersSandboxedParsingOptionKey
+        https://bugs.webkit.org/show_bug.cgi?id=237832
+        <rdar://89029829>
+
+        Reviewed by Eric Carlson.
+
+        Propogate the `prefersSandboxedParsing()` property across to the GPU process.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxyConfiguration.h:
+        (WebKit::RemoteMediaPlayerProxyConfiguration::encode const):
+        (WebKit::RemoteMediaPlayerProxyConfiguration::decode):
+        * WebProcess/GPU/media/RemoteMediaPlayerManager.cpp:
+        (WebKit::RemoteMediaPlayerManager::createRemoteMediaPlayer):
+
 2022-03-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Tooltip no longer disappears after leaving hovered element
