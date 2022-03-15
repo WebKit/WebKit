@@ -2597,6 +2597,16 @@
    },
    {
       "emails" : [
+         "gnavamarino@apple.com"
+      ],
+      "name" : "Gabriel Nava Marino",
+      "nicks" : [
+         "gnavamarino"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "barraclough@apple.com"
       ],
       "expertise" : "JavaScript/ECMAScript",

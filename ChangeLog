@@ -1,3 +1,12 @@
+2022-03-14  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        Add myself (Gabriel Nava Marino) to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=237634
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2022-03-11  Elliott Williams  <emw@apple.com>
 
         Makefile.shared: Rename WORKSPACE to WORKSPACE_PATH and allow overrides
