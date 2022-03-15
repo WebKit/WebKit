@@ -1294,7 +1294,7 @@ private:
 
 #if ENABLE(MEDIA_STREAM)
     // RealtimeMediaSource::Observer API
-    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
+    void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) final;
     // RealtimeMediaSource::AudioSampleObserver API
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final { m_trackAudioSampleCount++; }
 

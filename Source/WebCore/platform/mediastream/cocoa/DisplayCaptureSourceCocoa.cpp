@@ -319,7 +319,7 @@ void DisplayCaptureSourceCocoa::emitFrame()
         return;
     }
 
-    VideoSampleMetadata metadata;
+    VideoFrameTimeMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
     videoSampleAvailable(*sample.get(), metadata);
 }

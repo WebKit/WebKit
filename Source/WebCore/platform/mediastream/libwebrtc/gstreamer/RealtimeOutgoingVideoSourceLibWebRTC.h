@@ -42,7 +42,7 @@ private:
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> createBlackFrame(size_t, size_t) final;
 
     // RealtimeMediaSource::VideoSampleObserver API
-    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
+    void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) final;
 };
 
 } // namespace WebCore

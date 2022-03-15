@@ -83,7 +83,7 @@ void MediaRecorderPrivateAVFImpl::startRecording(StartRecordingCallback&& callba
     callback(String(m_writer->mimeType()), m_writer->audioBitRate(), m_writer->videoBitRate());
 }
 
-void MediaRecorderPrivateAVFImpl::videoSampleAvailable(MediaSample& sampleBuffer, VideoSampleMetadata)
+void MediaRecorderPrivateAVFImpl::videoSampleAvailable(MediaSample& sampleBuffer, VideoFrameTimeMetadata)
 {
     if (shouldMuteVideo()) {
         if (!m_blackFrame) {

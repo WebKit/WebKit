@@ -145,7 +145,7 @@ void RemoteCaptureSampleManager::audioStorageChanged(WebCore::RealtimeMediaSourc
     iterator->value->setStorage(ipcHandle.handle, description, numberOfFrames, WTFMove(semaphore), mediaTime, frameChunkSize);
 }
 
-void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoSampleMetadata metadata)
+void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifier identifier, RemoteVideoFrameProxy::Properties&& properties, VideoFrameTimeMetadata metadata)
 {
     ASSERT(!WTF::isMainRunLoop());
     // Create videoFrame before early outs so that the reference in `properties` is adopted.
@@ -163,7 +163,7 @@ void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifi
     iterator->value->videoFrameAvailable(WTFMove(videoFrame), videoFrameSize, metadata);
 }
 
-void RemoteCaptureSampleManager::videoFrameAvailableCV(RealtimeMediaSourceIdentifier identifier, RetainPtr<CVPixelBufferRef>&& pixelBuffer, WebCore::MediaSample::VideoRotation rotation, bool mirrored, MediaTime presentationTime, WebCore::VideoSampleMetadata metadata)
+void RemoteCaptureSampleManager::videoFrameAvailableCV(RealtimeMediaSourceIdentifier identifier, RetainPtr<CVPixelBufferRef>&& pixelBuffer, WebCore::MediaSample::VideoRotation rotation, bool mirrored, MediaTime presentationTime, WebCore::VideoFrameTimeMetadata metadata)
 {
     ASSERT(!WTF::isMainRunLoop());
     auto iterator = m_videoSources.find(identifier);

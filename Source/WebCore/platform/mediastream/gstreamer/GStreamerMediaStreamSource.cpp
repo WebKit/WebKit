@@ -266,7 +266,7 @@ public:
         }
     }
 
-    void videoSampleAvailable(MediaSample& sample, VideoSampleMetadata) final
+    void videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata) final
     {
         if (!m_parent || !m_isObserving)
             return;
@@ -356,9 +356,9 @@ private:
     void pushBlackFrame()
     {
         GST_TRACE_OBJECT(m_src.get(), "Pushing black video frame");
-        VideoSampleMetadata metadata;
+        VideoFrameTimeMetadata metadata;
         metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
-        auto* buffer = webkitGstBufferSetVideoSampleMetadata(gst_sample_get_buffer(m_blackFrame.get()), metadata);
+        auto* buffer = webkitGstBufferSetVideoFrameTimeMetadata(gst_sample_get_buffer(m_blackFrame.get()), metadata);
         // TODO: Use gst_sample_set_buffer() after bumping GStreamer dependency to 1.16.
         auto* caps = gst_sample_get_caps(m_blackFrame.get());
         m_blackFrame = adoptGRef(gst_sample_new(buffer, caps, nullptr, nullptr));

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-struct VideoSampleMetadata {
+struct VideoFrameTimeMetadata {
     std::optional<double> processingDuration;
 
     std::optional<Seconds> captureTime;
@@ -38,17 +38,17 @@ struct VideoSampleMetadata {
     std::optional<unsigned> rtpTimestamp;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<VideoSampleMetadata> decode(Decoder&);
+    template<class Decoder> static std::optional<VideoFrameTimeMetadata> decode(Decoder&);
 };
 
 template<class Encoder>
-inline void VideoSampleMetadata::encode(Encoder& encoder) const
+inline void VideoFrameTimeMetadata::encode(Encoder& encoder) const
 {
     encoder << processingDuration << captureTime << receiveTime << rtpTimestamp;
 }
 
 template<class Decoder>
-inline std::optional<VideoSampleMetadata> VideoSampleMetadata::decode(Decoder& decoder)
+inline std::optional<VideoFrameTimeMetadata> VideoFrameTimeMetadata::decode(Decoder& decoder)
 {
     std::optional<std::optional<double>> processingDuration;
     decoder >> processingDuration;
@@ -70,7 +70,7 @@ inline std::optional<VideoSampleMetadata> VideoSampleMetadata::decode(Decoder& d
     if (!rtpTimestamp)
         return std::nullopt;
 
-    return VideoSampleMetadata { *processingDuration, *captureTime, *receiveTime, *rtpTimestamp };
+    return VideoFrameTimeMetadata { *processingDuration, *captureTime, *receiveTime, *rtpTimestamp };
 }
 
 }

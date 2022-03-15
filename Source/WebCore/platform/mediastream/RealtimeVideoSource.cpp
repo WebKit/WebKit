@@ -196,7 +196,7 @@ RefPtr<MediaSample> RealtimeVideoSource::adaptVideoSample(MediaSample& sample)
 }
 #endif
 
-void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata)
+void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata metadata)
 {
     if (m_frameDecimation > 1 && ++m_frameDecimationCounter % m_frameDecimation)
         return;

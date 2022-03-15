@@ -1363,7 +1363,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ValidationBubble.h
     platform/VideoFrame.h
     platform/VideoFrameMetadata.h
-    platform/VideoSampleMetadata.h
+    platform/VideoFrameTimeMetadata.h
     platform/WebGLStateTracker.h
     platform/Widget.h
     platform/WindowsKeyboardCodes.h

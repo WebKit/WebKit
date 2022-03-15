@@ -244,7 +244,7 @@ static inline CGAffineTransform videoTransformationMatrix(MediaSample& sample)
     return videoTransform;
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata)
+void MediaPlayerPrivateMediaStreamAVFObjC::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata metadata)
 {
     auto presentationTime = MonotonicTime::now().secondsSinceEpoch();
     processNewVideoSample(sample, metadata, presentationTime);
@@ -289,7 +289,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::reenqueueCurrentVideoSampleIfNeeded()
     enqueueVideoSample(m_currentVideoSample ? *m_currentVideoSample : *m_imagePainter.mediaSample);
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sample, VideoSampleMetadata metadata, Seconds presentationTime)
+void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoSample(MediaSample& sample, VideoFrameTimeMetadata metadata, Seconds presentationTime)
 {
     if (!isMainThread()) {
         {

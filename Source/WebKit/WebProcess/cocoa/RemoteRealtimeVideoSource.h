@@ -58,7 +58,7 @@ public:
 
     void captureStopped(bool didFail);
 
-    void videoFrameAvailable(WebCore::VideoFrame& frame, WebCore::IntSize, WebCore::VideoSampleMetadata metadata) { videoSampleAvailable(frame, metadata); }
+    void videoFrameAvailable(WebCore::VideoFrame& frame, WebCore::IntSize, WebCore::VideoFrameTimeMetadata metadata) { videoSampleAvailable(frame, metadata); }
     void sourceMutedChanged(bool value, bool interrupted);
 
     void applyConstraintsSucceeded(WebCore::RealtimeMediaSourceSettings&&);

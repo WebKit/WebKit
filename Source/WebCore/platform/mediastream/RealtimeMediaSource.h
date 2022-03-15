@@ -42,7 +42,7 @@
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
-#include "VideoSampleMetadata.h"
+#include "VideoFrameTimeMetadata.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
@@ -103,7 +103,7 @@ public:
         virtual ~VideoSampleObserver() = default;
 
         // May be called on a background thread.
-        virtual void videoSampleAvailable(MediaSample&, VideoSampleMetadata) = 0;
+        virtual void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) = 0;
     };
 
     virtual ~RealtimeMediaSource() = default;
@@ -250,7 +250,7 @@ protected:
     void initializeSampleRate(int sampleRate) { m_sampleRate = sampleRate; }
     void initializeEchoCancellation(bool echoCancellation) { m_echoCancellation = echoCancellation; }
 
-    void videoSampleAvailable(MediaSample&, VideoSampleMetadata);
+    void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata);
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
     void forEachObserver(const Function<void(Observer&)>&);

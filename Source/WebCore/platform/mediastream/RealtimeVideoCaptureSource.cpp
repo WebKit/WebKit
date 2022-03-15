@@ -365,7 +365,7 @@ void RealtimeVideoCaptureSource::setSizeAndFrameRate(std::optional<int> width, s
     setFrameRate(match->requestedFrameRate);
 }
 
-void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sample, WebCore::VideoSampleMetadata metadata)
+void RealtimeVideoCaptureSource::dispatchMediaSampleToObservers(MediaSample& sample, WebCore::VideoFrameTimeMetadata metadata)
 {
     MediaTime sampleTime = sample.presentationTime();
 

@@ -49,7 +49,7 @@ private:
     explicit MediaRecorderPrivateAVFImpl(Ref<MediaRecorderPrivateWriter>&&);
 
     // MediaRecorderPrivate
-    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
+    void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) final;
     void fetchData(FetchDataCallback&&) final;
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     void startRecording(StartRecordingCallback&&) final;

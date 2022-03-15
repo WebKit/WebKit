@@ -196,7 +196,7 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
     if (!sample)
         return;
 
-    VideoSampleMetadata metadata;
+    VideoFrameTimeMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
     videoSampleAvailable(*sample, metadata);
 }

@@ -32,7 +32,7 @@ GST_DEBUG_CATEGORY_STATIC(webkit_video_frame_meta_debug);
 using namespace WebCore;
 
 struct VideoFrameMetadataPrivate {
-    std::optional<VideoSampleMetadata> videoSampleMetadata;
+    std::optional<VideoFrameTimeMetadata> videoSampleMetadata;
     HashMap<String, std::pair<GstClockTime, GstClockTime>> processingTimes;
 };
 
@@ -99,7 +99,7 @@ const GstMetaInfo* videoFrameMetadataGetInfo()
     return metaInfo;
 }
 
-GstBuffer* webkitGstBufferSetVideoSampleMetadata(GstBuffer* buffer, std::optional<VideoSampleMetadata>&& metadata)
+GstBuffer* webkitGstBufferSetVideoFrameTimeMetadata(GstBuffer* buffer, std::optional<VideoFrameTimeMetadata>&& metadata)
 {
     if (!GST_IS_BUFFER(buffer))
         return nullptr;

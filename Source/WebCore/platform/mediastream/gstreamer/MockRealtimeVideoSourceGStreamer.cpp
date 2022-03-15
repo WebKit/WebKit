@@ -96,7 +96,7 @@ void MockDisplayCaptureSourceGStreamer::setMuted(bool isMuted)
     m_source->setMuted(isMuted);
 }
 
-void MockDisplayCaptureSourceGStreamer::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata metadata)
+void MockDisplayCaptureSourceGStreamer::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata metadata)
 {
     RealtimeMediaSource::videoSampleAvailable(sample, metadata);
 }
@@ -162,7 +162,7 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     if (!pixelBuffer)
         return;
 
-    std::optional<VideoSampleMetadata> metadata;
+    std::optional<VideoFrameTimeMetadata> metadata;
     metadata->captureTime = MonotonicTime::now().secondsSinceEpoch();
     auto sample = MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer), size(), frameRate(), sampleRotation(), false, WTFMove(metadata));
     sample->offsetTimestampsBy(MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds()));

@@ -73,7 +73,7 @@ protected:
 
     void updateCapabilities(RealtimeMediaSourceCapabilities&);
 
-    void dispatchMediaSampleToObservers(MediaSample&, WebCore::VideoSampleMetadata);
+    void dispatchMediaSampleToObservers(MediaSample&, WebCore::VideoFrameTimeMetadata);
 
     static Span<const IntSize> standardVideoSizes();
 

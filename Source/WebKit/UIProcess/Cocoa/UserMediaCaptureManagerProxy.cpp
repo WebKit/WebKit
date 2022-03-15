@@ -187,7 +187,7 @@ private:
         return &sample;
     }
 
-    void videoSampleAvailable(MediaSample& frame, VideoSampleMetadata metadata) final
+    void videoSampleAvailable(MediaSample& frame, VideoFrameTimeMetadata metadata) final
     {
         auto videoFrame = rotateVideoFrameIfNeeded(frame);
         if (!videoFrame)

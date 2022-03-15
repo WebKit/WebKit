@@ -105,10 +105,10 @@ GstElement* GStreamerCapturer::createSource()
         auto srcPad = adoptGRef(gst_element_get_static_pad(m_src.get(), "src"));
         if (m_deviceType == CaptureDevice::DeviceType::Camera) {
             gst_pad_add_probe(srcPad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_BUFFER), [](GstPad*, GstPadProbeInfo* info, gpointer) -> GstPadProbeReturn {
-                VideoSampleMetadata metadata;
+                VideoFrameTimeMetadata metadata;
                 metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
                 auto* buffer = GST_PAD_PROBE_INFO_BUFFER(info);
-                auto* modifiedBuffer = webkitGstBufferSetVideoSampleMetadata(buffer, metadata);
+                auto* modifiedBuffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer, metadata);
                 gst_buffer_replace(&buffer, modifiedBuffer);
                 return GST_PAD_PROBE_OK;
             }, nullptr, nullptr);

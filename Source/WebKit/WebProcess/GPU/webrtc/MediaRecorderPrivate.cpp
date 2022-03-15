@@ -92,7 +92,7 @@ MediaRecorderPrivate::~MediaRecorderPrivate()
     WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
 }
 
-void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
+void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata)
 {
     if (shouldMuteVideo()) {
         if (!m_blackFrameSize) {

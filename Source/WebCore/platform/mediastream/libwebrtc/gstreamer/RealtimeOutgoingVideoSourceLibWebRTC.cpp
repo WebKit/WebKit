@@ -50,7 +50,7 @@ RealtimeOutgoingVideoSourceLibWebRTC::RealtimeOutgoingVideoSourceLibWebRTC(Ref<M
 {
 }
 
-void RealtimeOutgoingVideoSourceLibWebRTC::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
+void RealtimeOutgoingVideoSourceLibWebRTC::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata)
 {
     switch (sample.videoRotation()) {
     case MediaSample::VideoRotation::None:

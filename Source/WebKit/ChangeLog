@@ -1,3 +1,25 @@
+2022-03-15  Youenn Fablet  <youenn@apple.com>
+
+        Rename VideoSampleMetadata to VideoFrameTimeMetadata
+        https://bugs.webkit.org/show_bug.cgi?id=237593
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp:
+        (WebKit::MediaRecorderPrivate::videoSampleAvailable):
+        * WebProcess/GPU/webrtc/MediaRecorderPrivate.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.cpp:
+        (WebKit::RemoteCaptureSampleManager::videoFrameAvailable):
+        (WebKit::RemoteCaptureSampleManager::videoFrameAvailableCV):
+        (WebKit::RemoteCaptureSampleManager::RemoteVideo::videoFrameAvailable):
+        * WebProcess/cocoa/RemoteCaptureSampleManager.h:
+        * WebProcess/cocoa/RemoteCaptureSampleManager.messages.in:
+        * WebProcess/cocoa/RemoteRealtimeDisplaySource.h:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        (WebKit::RemoteRealtimeVideoSource::videoSampleAvailable):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+
 2022-03-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mail Compose] Spelling and grammar context menu items need custom identifiers

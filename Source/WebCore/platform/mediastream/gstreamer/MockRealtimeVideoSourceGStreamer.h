@@ -50,7 +50,7 @@ public:
 
 protected:
     // RealtimeMediaSource::VideoSampleObserver
-    void videoSampleAvailable(MediaSample&, VideoSampleMetadata) final;
+    void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) final;
 
 private:
     MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type, Ref<MockRealtimeVideoSourceGStreamer>&&, String&&, CaptureDevice::DeviceType);

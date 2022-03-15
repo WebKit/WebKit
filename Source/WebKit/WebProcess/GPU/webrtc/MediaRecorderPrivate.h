@@ -56,7 +56,7 @@ public:
 
 private:
     // WebCore::MediaRecorderPrivate
-    void videoSampleAvailable(WebCore::MediaSample&, WebCore::VideoSampleMetadata) final;
+    void videoSampleAvailable(WebCore::MediaSample&, WebCore::VideoFrameTimeMetadata) final;
     void fetchData(CompletionHandler<void(RefPtr<WebCore::FragmentedSharedBuffer>&&, const String& mimeType, double)>&&) final;
     void stopRecording(CompletionHandler<void()>&&) final;
     void startRecording(StartRecordingCallback&&) final;

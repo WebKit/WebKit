@@ -563,7 +563,7 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
     auto sample = MediaSampleAVFObjC::create(sampleBuffer, m_sampleRotation, [captureConnection isVideoMirrored]);
     m_buffer = &sample.get();
     setIntrinsicSize(expandedIntSize(sample->presentationSize()));
-    VideoSampleMetadata metadata;
+    VideoFrameTimeMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
     dispatchMediaSampleToObservers(WTFMove(sample), metadata);
 }

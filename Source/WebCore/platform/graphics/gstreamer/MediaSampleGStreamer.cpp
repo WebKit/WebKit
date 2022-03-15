@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomString& trackId, VideoRotation videoRotation, bool videoMirrored, std::optional<VideoSampleMetadata>&& metadata)
+MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomString& trackId, VideoRotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
     : m_pts(MediaTime::zeroTime())
     , m_dts(MediaTime::zeroTime())
     , m_duration(MediaTime::zeroTime())
@@ -47,7 +47,7 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
     RELEASE_ASSERT(buffer);
 
     if (metadata)
-        buffer = webkitGstBufferSetVideoSampleMetadata(buffer, WTFMove(metadata));
+        buffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer, WTFMove(metadata));
 
     m_sample = sample;
     initializeFromBuffer();
@@ -79,7 +79,7 @@ Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, Media
     return adoptRef(*gstreamerMediaSample);
 }
 
-Ref<MediaSampleGStreamer> MediaSampleGStreamer::createImageSample(PixelBuffer&& pixelBuffer, const IntSize& destinationSize, double frameRate, VideoRotation videoRotation, bool videoMirrored, std::optional<VideoSampleMetadata>&& metadata)
+Ref<MediaSampleGStreamer> MediaSampleGStreamer::createImageSample(PixelBuffer&& pixelBuffer, const IntSize& destinationSize, double frameRate, VideoRotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
 {
     ensureGStreamerInitialized();
 
@@ -99,7 +99,7 @@ Ref<MediaSampleGStreamer> MediaSampleGStreamer::createImageSample(PixelBuffer&& 
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_BGRA, width, height);
 
     if (metadata)
-        webkitGstBufferSetVideoSampleMetadata(buffer.get(), *metadata);
+        webkitGstBufferSetVideoFrameTimeMetadata(buffer.get(), *metadata);
 
     int frameRateNumerator, frameRateDenominator;
     gst_util_double_to_fraction(frameRate, &frameRateNumerator, &frameRateDenominator);

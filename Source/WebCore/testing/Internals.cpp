@@ -5545,7 +5545,7 @@ void Internals::mediaStreamTrackVideoFrameRotation(DOMPromiseDeferred<IDLShort>&
     promise.resolve(m_trackVideoRotation);
 }
 
-void Internals::videoSampleAvailable(MediaSample& sample, VideoSampleMetadata)
+void Internals::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata)
 {
     callOnMainThread([this, weakThis = WeakPtr { *this }, sample = Ref { sample }] {
         if (!weakThis)

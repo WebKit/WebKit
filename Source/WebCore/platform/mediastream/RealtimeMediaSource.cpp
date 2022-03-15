@@ -192,7 +192,7 @@ void RealtimeMediaSource::updateHasStartedProducingData()
     });
 }
 
-void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample, VideoSampleMetadata metadata)
+void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample, VideoFrameTimeMetadata metadata)
 {
 #if !RELEASE_LOG_DISABLED
     ++m_frameCount;

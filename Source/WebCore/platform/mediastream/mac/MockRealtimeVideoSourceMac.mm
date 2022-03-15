@@ -101,7 +101,7 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
 
     auto captureTime = MonotonicTime::now().secondsSinceEpoch();
     m_workQueue->dispatch([this, protectedThis = Ref { *this }, sampleBuffer = WTFMove(sampleBuffer), captureTime]() mutable {
-        VideoSampleMetadata metadata;
+        VideoFrameTimeMetadata metadata;
         metadata.captureTime = captureTime;
         dispatchMediaSampleToObservers(*sampleBuffer, metadata);
     });

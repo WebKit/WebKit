@@ -104,9 +104,9 @@ void RealtimeIncomingVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourc
         m_currentSettings = std::nullopt;
 }
 
-VideoSampleMetadata RealtimeIncomingVideoSource::metadataFromVideoFrame(const webrtc::VideoFrame& frame)
+VideoFrameTimeMetadata RealtimeIncomingVideoSource::metadataFromVideoFrame(const webrtc::VideoFrame& frame)
 {
-    VideoSampleMetadata metadata;
+    VideoFrameTimeMetadata metadata;
     if (frame.ntp_time_ms() > 0)
         metadata.captureTime = Seconds::fromMilliseconds(frame.ntp_time_ms());
     if (isInBounds<uint32_t>(frame.timestamp()))
