@@ -44,14 +44,10 @@
     BOOL _suppressPageCountRecalc;
 }
 
-#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-
 - (BOOL)requiresMainThread
 {
     return self._webView._printProvider._wk_printFormatterRequiresMainThread;
 }
-
-#endif // HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
 
 - (_WKFrameHandle *)frameToPrint
 {

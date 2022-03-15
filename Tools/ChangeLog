@@ -1,3 +1,18 @@
+2022-03-15  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Indefinite hang when printing using a UIPrintPageRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=237835
+        rdar://90002387
+
+        Reviewed by Devin Rousso.
+
+        Add API test coverage for printing web content to a PDF, using a
+        UIPrintPageRenderer (which uses the main thread) and a
+        UIPrintInteractionController (which uses a background thread).
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewPrintFormatter.mm:
+        (TEST):
+
 2022-03-15  Alex Christensen  <achristensen@webkit.org>
 
         Stop using DYLD_INTERPOSE

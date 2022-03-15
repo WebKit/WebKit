@@ -1028,8 +1028,6 @@ void WebPageProxy::handleSmartMagnificationInformationForPotentialTap(WebKit::Ta
     pageClient().handleSmartMagnificationInformationForPotentialTap(requestID, renderRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel);
 }
 
-#if !HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-
 size_t WebPageProxy::computePagesForPrintingiOS(FrameIdentifier frameID, const PrintInfo& printInfo)
 {
     ASSERT_WITH_MESSAGE(!printInfo.snapshotFirstPage, "If we are just snapshotting the first page, we don't need a synchronous message to determine the page count, which is 1.");
@@ -1041,8 +1039,6 @@ size_t WebPageProxy::computePagesForPrintingiOS(FrameIdentifier frameID, const P
     sendSync(Messages::WebPage::ComputePagesForPrintingiOS(frameID, printInfo), Messages::WebPage::ComputePagesForPrintingiOS::Reply(pageCount), Seconds::infinity());
     return pageCount;
 }
-
-#endif // !HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
 
 uint64_t WebPageProxy::drawToPDFiOS(FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, CompletionHandler<void(const IPC::SharedBufferCopy&)>&& completionHandler)
 {

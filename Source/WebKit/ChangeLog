@@ -1,3 +1,47 @@
+2022-03-15  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Indefinite hang when printing using a UIPrintPageRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=237835
+        rdar://90002387
+
+        Reviewed by Devin Rousso.
+
+        r290186 adopted UIKit API to support printing web content on a
+        background thread, to avoid blocking the main thread while waiting
+        on PDF data from the web process. However, the changes made the
+        assumption that, with the new API, all printing would be performed on
+        a background thread. While this is the case when using
+        UIPrintInteractionController, clients can also print using
+        UIPrintPageRenderer on the main thread. The background thread logic
+        waits on a semaphore, until PDF data is received on the main thread.
+        However, if the logic runs on the main thread, it will wait on the
+        semaphore indefinitely.
+
+        To fix, restore the original sync IPC codepath when performing printing
+        on the main thread. Additionally, make the BinarySemaphore a
+        unique_ptr, so that it can be signalled and reset in failure scenarios,
+        regardless of whether a thread was waiting on the semaphore. This
+        change also allows us to avoid creating the BinarySemaphore unless it
+        is actually needed.
+
+        All uses of HAVE(UIKIT_BACKGROUND_THREAD_PRINTING) are removed, as the
+        API adoption only involves a method override, which is harmless in
+        builds that lack support for the new API.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/_WKWebViewPrintFormatter.mm:
+        * UIProcess/_WKWebViewPrintFormatterInternal.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _processDidExit]):
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+        (-[WKContentView _waitForDrawToPDFCallbackIfNeeded]):
+        (-[WKContentView _wk_printedDocument]):
+        * UIProcess/ios/WKPDFView.mm:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+
 2022-03-15  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS][WP] Add required syscall

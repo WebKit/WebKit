@@ -4282,8 +4282,6 @@ void WebPage::cancelAsynchronousTouchEvents(Vector<std::pair<WebTouchEvent, Comp
 }
 #endif
 
-#if !HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-
 void WebPage::computePagesForPrintingiOS(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, Messages::WebPage::ComputePagesForPrintingiOS::DelayedReply&& reply)
 {
     ASSERT_WITH_MESSAGE(!printInfo.snapshotFirstPage, "If we are just snapshotting the first page, we don't need a synchronous message to determine the page count, which is 1.");
@@ -4296,8 +4294,6 @@ void WebPage::computePagesForPrintingiOS(WebCore::FrameIdentifier frameID, const
     ASSERT(pageRects.size() >= 1);
     reply(pageRects.size());
 }
-
-#endif // !HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
 
 void WebPage::drawToPDFiOS(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, size_t pageCount, Messages::WebPage::DrawToPDFiOSAsyncReply&& reply)
 {

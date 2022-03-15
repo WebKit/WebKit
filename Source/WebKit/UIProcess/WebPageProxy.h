@@ -1419,9 +1419,7 @@ public:
     uint64_t drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&&);
     void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, CompletionHandler<void(const IPC::SharedBufferCopy&)>&&);
 #if PLATFORM(IOS_FAMILY)
-#if !HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
     size_t computePagesForPrintingiOS(WebCore::FrameIdentifier, const PrintInfo&);
-#endif
     uint64_t drawToPDFiOS(WebCore::FrameIdentifier, const PrintInfo&, size_t pageCount, CompletionHandler<void(const IPC::SharedBufferCopy&)>&&);
 #endif
 #elif PLATFORM(GTK)

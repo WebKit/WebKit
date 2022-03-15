@@ -1,3 +1,15 @@
+2022-03-15  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Indefinite hang when printing using a UIPrintPageRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=237835
+        rdar://90002387
+
+        Reviewed by Devin Rousso.
+
+        Remove unused HAVE macro.
+
+        * wtf/PlatformHave.h:
+
 2022-03-15  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Adopt AVAssetPrefersSandboxedParsingOptionKey

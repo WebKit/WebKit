@@ -148,9 +148,7 @@
     RetainPtr<NSUndoManager> _undoManager;
     RetainPtr<WKQuirkyNSUndoManager> _quirkyUndoManager;
 
-#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-    BinarySemaphore _pdfPrintCompletionSemaphore;
-#endif
+    std::unique_ptr<BinarySemaphore> _pdfPrintCompletionSemaphore;
     uint64_t _pdfPrintCallbackID;
     RetainPtr<CGPDFDocumentRef> _printedDocument;
     Vector<RetainPtr<NSURL>> _temporaryURLsToDeleteWhenDeallocated;
@@ -691,10 +689,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     [self _removeVisibilityPropagationViewForWebProcess];
 #endif
 
-#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-    if (_pdfPrintCallbackID)
-        _pdfPrintCompletionSemaphore.signal();
-#endif
+    if (auto pdfPrintCompletionSemaphore = std::exchange(_pdfPrintCompletionSemaphore, nullptr))
+        pdfPrintCompletionSemaphore->signal();
+
     _pdfPrintCallbackID = 0;
 }
 
@@ -869,20 +866,14 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 @implementation WKContentView (_WKWebViewPrintFormatter)
 
-#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-
 - (BOOL)_wk_printFormatterRequiresMainThread
 {
     return NO;
 }
 
-#endif // HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-
 - (NSUInteger)_wk_pageCountForPrintFormatter:(_WKWebViewPrintFormatter *)printFormatter
 {
-#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-    ASSERT(!isMainRunLoop());
-#endif
+    bool isPrintingOnBackgroundThread = !isMainRunLoop();
 
     [self _waitForDrawToPDFCallbackIfNeeded];
 
@@ -920,21 +911,24 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     if (printInfo.snapshotFirstPage)
         pageCount = 1;
     else {
-#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-        BinarySemaphore computePagesSemaphore;
-        callOnMainRunLoop([self, frameID, printInfo, &pageCount, &computePagesSemaphore]() mutable {
-            _page->computePagesForPrinting(frameID, printInfo, [&pageCount, &computePagesSemaphore](const Vector<WebCore::IntRect>& pageRects, double /* totalScaleFactorForPrinting */, const WebCore::FloatBoxExtent& /* computedPageMargin */) mutable {
-                ASSERT(pageRects.size() >= 1);
-                pageCount = pageRects.size();
+        if (isPrintingOnBackgroundThread) {
+            BinarySemaphore computePagesSemaphore;
+            callOnMainRunLoop([self, frameID, printInfo, &pageCount, &computePagesSemaphore]() mutable {
+                _page->computePagesForPrinting(frameID, printInfo, [&pageCount, &computePagesSemaphore](const Vector<WebCore::IntRect>& pageRects, double /* totalScaleFactorForPrinting */, const WebCore::FloatBoxExtent& /* computedPageMargin */) mutable {
+                    ASSERT(pageRects.size() >= 1);
+                    pageCount = pageRects.size();
 
-                computePagesSemaphore.signal();
+                    computePagesSemaphore.signal();
+                });
             });
-        });
-        computePagesSemaphore.wait();
-#else
-        pageCount = _page->computePagesForPrintingiOS(frameID, printInfo);
-#endif
+            computePagesSemaphore.wait();
+        } else
+            pageCount = _page->computePagesForPrintingiOS(frameID, printInfo);
     }
+
+    ASSERT(!_pdfPrintCompletionSemaphore);
+    if (isPrintingOnBackgroundThread)
+        _pdfPrintCompletionSemaphore = makeUnique<BinarySemaphore>();
 
     // Begin generating the PDF in expectation of a (eventual) request for the drawn data.
     _pdfPrintCallbackID = _page->drawToPDFiOS(frameID, printInfo, pageCount, [retainedSelf = retainPtr(self)](const IPC::SharedBufferCopy& pdfData) {
@@ -946,9 +940,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
             retainedSelf->_printedDocument = adoptCF(CGPDFDocumentCreateWithProvider(dataProvider.get()));
         }
 
-#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-        retainedSelf->_pdfPrintCompletionSemaphore.signal();
-#endif
+        if (auto pdfPrintCompletionSemaphore = std::exchange(retainedSelf->_pdfPrintCompletionSemaphore, nullptr))
+            pdfPrintCompletionSemaphore->signal();
+
         retainedSelf->_pdfPrintCallbackID = 0;
     });
 
@@ -958,13 +952,10 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 - (BOOL)_waitForDrawToPDFCallbackIfNeeded
 {
     if (auto callbackID = std::exchange(_pdfPrintCallbackID, 0)) {
-#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-        ASSERT(!isMainRunLoop());
-        _pdfPrintCompletionSemaphore.wait();
-#else
-        if (!_page->process().connection()->waitForAsyncCallbackAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(callbackID, Seconds::infinity()))
+        if (_pdfPrintCompletionSemaphore)
+            _pdfPrintCompletionSemaphore->wait();
+        else if (!_page->process().connection()->waitForAsyncCallbackAndDispatchImmediately<Messages::WebPage::DrawToPDFiOS>(callbackID, Seconds::infinity()))
             return false;
-#endif
     }
     ASSERT(!_pdfPrintCallbackID);
     return true;
@@ -972,10 +963,6 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 - (CGPDFDocumentRef)_wk_printedDocument
 {
-#if HAVE(UIKIT_BACKGROUND_THREAD_PRINTING)
-    ASSERT(!isMainRunLoop());
-#endif
-
     if (![self _waitForDrawToPDFCallbackIfNeeded])
         return nullptr;
 
