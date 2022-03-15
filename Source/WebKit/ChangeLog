@@ -1,3 +1,25 @@
+2022-03-15  Chris Dumez  <cdumez@apple.com>
+
+        Make it clearer in the loading logging when it is for the main frame or not
+        https://bugs.webkit.org/show_bug.cgi?id=237913
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::willPerformClientRedirectForFrame):
+        (WebKit::WebPageProxy::didCancelClientRedirectForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrameShared):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::didPerformClientRedirectShared):
+
 2022-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteGraphicsContextGLProxy omits context lost checks for back and front buffer access functions
