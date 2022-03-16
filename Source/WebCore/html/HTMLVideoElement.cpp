@@ -271,7 +271,7 @@ bool HTMLVideoElement::shouldDisplayPosterImage() const
 
 void HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable()
 {
-    INFO_LOG(LOGIDENTIFIER, "m_showPoster = ", showPosterFlag());
+    ALWAYS_LOG(LOGIDENTIFIER, "m_showPoster = ", showPosterFlag());
 
     if (showPosterFlag())
         return;

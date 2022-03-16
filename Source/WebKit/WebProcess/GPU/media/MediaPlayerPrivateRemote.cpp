@@ -122,14 +122,14 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     , m_id(playerIdentifier)
     , m_documentSecurityOrigin(player->documentSecurityOrigin())
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     acceleratedRenderingStateChanged();
 }
 
 MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
 #if PLATFORM(COCOA)
     m_videoLayerManager->didDestroyVideoLayer();
 #endif
@@ -161,9 +161,10 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
         if (!player)
             return;
 
-        m_videoLayer = createVideoLayerRemote(this, inlineLayerHostingContextId.value(), m_videoFullscreenGravity);
+        auto contentBox = snappedIntRect(player->playerContentBoxRect()).size();
+        m_videoLayer = createVideoLayerRemote(this, inlineLayerHostingContextId.value(), m_videoFullscreenGravity, contentBox);
 #if PLATFORM(COCOA)
-        m_videoLayerManager->setVideoLayer(m_videoLayer.get(), snappedIntRect(player->playerContentBoxRect()).size());
+        m_videoLayerManager->setVideoLayer(m_videoLayer.get(), contentBox);
 #endif
     }, m_id);
 }
@@ -442,14 +443,14 @@ void MediaPlayerPrivateRemote::currentTimeChanged(const MediaTime& mediaTime, co
 
 void MediaPlayerPrivateRemote::firstVideoFrameAvailable()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (RefPtr player = m_player.get())
         player->firstVideoFrameAvailable();
 }
 
 void MediaPlayerPrivateRemote::renderingModeChanged()
 {
-    INFO_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (RefPtr player = m_player.get())
         player->renderingModeChanged();
 }

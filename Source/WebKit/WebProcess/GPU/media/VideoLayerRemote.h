@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "LayerHostingContext.h"
+#include <WebCore/IntSize.h>
 #include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/PlatformLayer.h>
 
@@ -35,7 +36,7 @@ namespace WebKit {
 
 class MediaPlayerPrivateRemote;
 
-PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote*, LayerHostingContextID, WebCore::MediaPlayerEnums::VideoGravity);
+PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote*, LayerHostingContextID, WebCore::MediaPlayerEnums::VideoGravity, WebCore::IntSize);
 
 } // namespace WebKit
 

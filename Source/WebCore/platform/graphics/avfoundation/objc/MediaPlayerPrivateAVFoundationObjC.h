@@ -107,6 +107,7 @@ public:
     void seekableTimeRangesDidChange(RetainPtr<NSArray>&&, NSTimeInterval, NSTimeInterval);
     void tracksDidChange(const RetainPtr<NSArray>&);
     void hasEnabledAudioDidChange(bool);
+    void hasEnabledVideoDidChange(bool);
     void presentationSizeDidChange(FloatSize);
     void durationDidChange(const MediaTime&);
     void rateDidChange(double);
@@ -448,6 +449,7 @@ private:
     bool m_cachedBufferEmpty { false };
     bool m_cachedBufferFull { false };
     bool m_cachedHasEnabledAudio { false };
+    bool m_cachedHasEnabledVideo { false };
     bool m_cachedIsReadyForDisplay { false };
     bool m_haveBeenAskedToCreateLayer { false };
     bool m_cachedCanPlayFastForward { false };

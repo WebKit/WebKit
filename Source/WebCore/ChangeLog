@@ -1,3 +1,43 @@
+2022-03-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Video poster disappears prematurely on play, leaving transparent video element.
+        https://bugs.webkit.org/show_bug.cgi?id=226960
+        <rdar://problem/79315114>
+
+        Reviewed by Jer Noble.
+
+        If a media file has an enabled video track, don't advance readyState to
+        HAVE_ENOUGH_DATA until we have the first frame so we won't hide the poster image
+        until AVFoundation has something to render.
+
+        Tested manually.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::mediaPlayerFirstVideoFrameAvailable): Always log.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates): Move the test for the
+        first video frame above the player item status check. If a file has a video track,
+        don't advance to HAVE_ENOUGH_DATA unless we have the first video frame.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad): Clear m_cachedHasEnabledVideo.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer): Remove unneeded
+        local variable.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformSetVisible): Minro cleanup.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Set `hasVideo` if
+        AVPlayerItem.hasEnabledVideo is true, because it remains stable while AVAssetTracks
+        sometimes disappear and reappear.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::firstFrameAvailableDidChange): Add logging.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasEnabledAudioDidChange): Ditto
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasEnabledVideoDidChange): New, cache
+        AVPlayerItem.hasEnabledVideo.
+        (WebCore::itemKVOProperties):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]): Respond
+        to @"hasEnabledVideo".
+        * platform/graphics/avfoundation/objc/VideoLayerManagerObjC.h:
+
 2022-03-15  Per Arne Vollan  <pvollan@apple.com>
 
         Crash under HTMLDocumentParser::didBeginYieldingParser()

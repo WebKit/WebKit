@@ -178,7 +178,7 @@ static const Seconds PostAnimationDelay { 100_ms };
 
 namespace WebKit {
 
-PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote* mediaPlayerPrivateRemote, LayerHostingContextID contextId, WebCore::MediaPlayerEnums::VideoGravity videoGravity)
+PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote* mediaPlayerPrivateRemote, LayerHostingContextID contextId, WebCore::MediaPlayerEnums::VideoGravity videoGravity, IntSize contentSize)
 {
     // Initially, all the layers will be empty (both width and height are 0) and invisible.
     // The renderer will change the sizes of WKVideoLayerRemote to trigger layout of sublayers and make them visible.
@@ -186,7 +186,9 @@ PlatformLayerContainer createVideoLayerRemote(MediaPlayerPrivateRemote* mediaPla
     [videoLayerRemote setName:@"WKVideoLayerRemote"];
     [videoLayerRemote setVideoGravity:videoGravity];
     [videoLayerRemote setMediaPlayerPrivateRemote:mediaPlayerPrivateRemote];
-    [videoLayerRemote addSublayer:LayerHostingContext::createPlatformLayerForHostingContext(contextId).get()];
+    auto layerForHostContext = LayerHostingContext::createPlatformLayerForHostingContext(contextId).get();
+    [layerForHostContext setFrame:CGRectMake(0, 0, contentSize.width(), contentSize.height())];
+    [videoLayerRemote addSublayer:WTFMove(layerForHostContext)];
 
     return videoLayerRemote;
 }
