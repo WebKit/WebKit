@@ -259,6 +259,29 @@ class GitHubMixin(object):
             return False
         return True
 
+    def comment_on_pr(self, pr_number, content, repository_url=None):
+        api_url = GitHub.api_url(repository_url)
+        if not api_url:
+            return False
+
+        comment_url = f'{api_url}/issues/{pr_number}/comments'
+        try:
+            username, access_token = GitHub.credentials()
+            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
+            response = requests.request(
+                'POST', comment_url, timeout=60, auth=auth,
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(body=content),
+            )
+            if response.status_code // 100 != 2:
+                self._addToLog('stdio', f"Failed to post comment to PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
+                return False
+        except Exception as e:
+            for label in labels:
+                self._addToLog('stdio', f"Error in posting comment to PR {pr_number}\n")
+            return False
+        return True
+
 
 class ShellMixin(object):
     WINDOWS_SHELL_PLATFORMS = ['wincairo']
@@ -691,7 +714,7 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin, ShellMixin):
                 comment_text = '{}.\nPlease resolve the conflicts and upload a new patch.'.format(message.replace('patch', 'attachment'))
                 self.setProperty('comment_text', comment_text)
                 self.setProperty('build_finish_summary', message)
-                self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+                self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
             else:
                 self.build.buildFinished([message], FAILURE)
         return rc
@@ -1418,7 +1441,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
 
         self._addToLog('stdio', reason)
         self.setProperty('build_finish_summary', reason)
-        self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+        self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
         self.finished(FAILURE)
         self.descriptionDone = reason
 
@@ -1495,7 +1518,7 @@ class ValidateChangeLogAndReviewer(shell.ShellCommand):
             log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
             self.setProperty('comment_text', log_text)
             self.setProperty('build_finish_summary', 'ChangeLog validation failed')
-            self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+            self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
         return rc
 
 
@@ -1612,31 +1635,49 @@ class CloseBug(buildstep.BuildStep, BugzillaMixin):
         return {'step': 'Failed to close bug {}'.format(self.bug_id)}
 
 
-class CommentOnBug(buildstep.BuildStep, BugzillaMixin):
-    name = 'comment-on-bugzilla-bug'
+class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
+    name = 'leave-comment'
     flunkOnFailure = False
     haltOnFailure = False
 
     def start(self):
         self.bug_id = self.getProperty('bug_id', '')
+        self.pr_number = self.getProperty('github.number', '')
         self.comment_text = self.getProperty('comment_text', '')
 
         if not self.comment_text:
             self._addToLog('stdio', 'comment_text build property not found.\n')
-            self.descriptionDone = 'No bugzilla comment found'
+            self.descriptionDone = 'No comment found'
             self.finished(WARNINGS)
             return None
 
-        rc = self.comment_on_bug(self.bug_id, self.comment_text)
+        if self.pr_number:
+            rc = SUCCESS if self.comment_on_pr(self.pr_number, self.comment_text) else FAILURE
+        elif self.bug_id:
+            rc = self.comment_on_bug(self.bug_id, self.comment_text)
+        else:
+            self._addToLog('stdio', 'No bug or pull request to comment to.\n')
+            self.descriptionDone = 'No bug or PR found'
+            self.finished(FAILURE)
+            return None
+
         self.finished(rc)
         return None
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {'step': 'Added comment on bug {}'.format(self.bug_id)}
+            if self.pr_number:
+                return {'step': f'Added comment on PR {self.pr_number}'}
+            elif self.bug_id:
+                return {'step': f'Added comment on bug {self.bug_id}'}
         elif self.results == SKIPPED:
             return buildstep.BuildStep.getResultSummary(self)
-        return {'step': 'Failed to add comment on bug {}'.format(self.bug_id)}
+
+        if self.pr_number:
+            return {'step': f'Failed to add comment on PR {self.pr_number}'}
+        elif self.bug_id:
+            return {'step': f'Failed to add comment on bug {self.bug_id}'}
+        return {'step': 'Failed to add comment'}
 
     def doStepIf(self, step):
         return CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME
@@ -2250,7 +2291,7 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
         if patch_id:
             if self.getProperty('buildername', '').lower() == 'commit-queue':
                 self.setProperty('comment_text', message)
-                self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+                self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
             else:
                 self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch()])
         else:
@@ -3076,7 +3117,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
 
         if self.getProperty('buildername', '').lower() == 'commit-queue':
             self.setProperty('comment_text', message)
-            self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+            self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
         else:
             self.build.addStepsAfterCurrentStep([SetCommitQueueMinusFlagOnPatch(), BlockPullRequest()])
         return defer.succeed(None)
@@ -4248,7 +4289,7 @@ class FindModifiedChangeLogs(shell.ShellCommand):
             if self.getProperty('buildername', '').lower() == 'commit-queue':
                 self.setProperty('comment_text', message.replace('Patch', 'Attachment'))
                 self.setProperty('build_finish_summary', message)
-                self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+                self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
             else:
                 self.build.buildFinished([message], FAILURE)
         return rc
@@ -4308,7 +4349,7 @@ class CreateLocalGITCommit(shell.ShellCommand):
             if self.getProperty('buildername', '').lower() == 'commit-queue':
                 self.setProperty('comment_text', message.replace('Patch', 'Attachment'))
                 self.setProperty('build_finish_summary', message)
-                self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+                self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
             else:
                 self.build.buildFinished([message], FAILURE)
         return rc
@@ -4341,7 +4382,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             commit_summary = 'Committed {}'.format(identifier)
             self.descriptionDone = commit_summary
             self.setProperty('build_summary', commit_summary)
-            self.build.addStepsAfterCurrentStep([CommentOnBug(), RemoveFlagsOnPatch(), CloseBug()])
+            self.build.addStepsAfterCurrentStep([LeaveComment(), RemoveFlagsOnPatch(), CloseBug()])
             self.addURL(identifier, self.url_for_identifier(identifier))
         else:
             retry_count = int(self.getProperty('retry_count', 0))
@@ -4352,7 +4393,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
 
             self.setProperty('comment_text', self.comment_text_for_bug())
             self.setProperty('build_finish_summary', 'Failed to commit to WebKit repository')
-            self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
+            self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
         return rc
 
     def url_for_revision_details(self, revision):

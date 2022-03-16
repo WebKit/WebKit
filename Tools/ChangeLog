@@ -1,3 +1,26 @@
+2022-03-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Add step to make comment on pull requests
+        https://bugs.webkit.org/show_bug.cgi?id=237962
+        <rdar://problem/90371727>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (GitHubMixin.comment_on_pr): Make a comment on pull request for in repository.
+        (ApplyPatch.evaluateCommand): Rename CommentOnBug to LeaveComment.
+        (ValidateCommiterAndReviewer.fail_build): Ditto.
+        (ValidateChangeLogAndReviewer.evaluateCommand): Ditto.
+        (LeaveComment): Renamed from CommentOnBug, support pull request
+        (LeaveComment.start):
+        (LeaveComment.getResultSummary):
+        (AnalyzeCompileWebKitResults.analyzeResults): Rename CommentOnBug to LeaveComment.
+        (AnalyzeLayoutTestsResults.report_failure): Ditto.
+        (FindModifiedChangeLogs.evaluateCommand): Ditto.
+        (CreateLocalGITCommit.evaluateCommand): Ditto.
+        (PushCommitToWebKitRepo.evaluateCommand): Ditto.
+        (CommentOnBug): Renamed to LeaveComment.
+
 2022-03-16  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Suppress warnings for implicit conversion from unsigned long to double
