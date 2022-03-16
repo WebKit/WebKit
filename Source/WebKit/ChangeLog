@@ -1,3 +1,18 @@
+2022-03-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Do not suspend NetworkStorageManager if it is used for ephemeral session
+        https://bugs.webkit.org/show_bug.cgi?id=237943
+
+        Reviewed by Chris Dumez.
+
+        The reason we need to suspend NetworkStorageManager when process is suspended, is that it might hold file lock 
+        during its operations. NetworkStorageManager of ephemeral sessions will not hold file lock; suspending its 
+        WorkQueue will only delay storage operations.
+
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::suspend):
+        (WebKit::NetworkStorageManager::resume):
+
 2022-03-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo][WebGL] Crash in WebKit::WCContentBuffer::platformLayerWillBeDestroyed()
