@@ -63,7 +63,7 @@
 #endif
 
 #if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
-#include "MediaSampleGStreamer.h"
+#include "VideoFrameGStreamer.h"
 #endif
 
 #if ENABLE(VIDEO)
@@ -122,7 +122,7 @@ RefPtr<MediaSample> GraphicsContextGLTextureMapper::paintCompositedResultsToMedi
 {
 #if USE(GSTREAMER)
     if (auto pixelBuffer = readCompositedResults())
-        return MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer));
+        return VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer));
 #endif
     return nullptr;
 }

@@ -94,7 +94,7 @@
 #endif
 
 #if USE(GSTREAMER)
-#include "MediaSampleGStreamer.h"
+#include "VideoFrameGStreamer.h"
 #endif
 
 #if PLATFORM(COCOA)
@@ -800,7 +800,7 @@ RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
 #if PLATFORM(COCOA)
     return MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(*pixelBuffer));
 #elif USE(GSTREAMER)
-    return MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer));
+    return VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer));
 #endif
 #else
     return nullptr;

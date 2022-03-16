@@ -31,7 +31,7 @@
 #include "RealtimeOutgoingVideoSourceLibWebRTC.h"
 
 #include "GStreamerVideoFrameLibWebRTC.h"
-#include "MediaSampleGStreamer.h"
+#include "VideoFrameGStreamer.h"
 
 namespace WebCore {
 
@@ -67,9 +67,8 @@ void RealtimeOutgoingVideoSourceLibWebRTC::videoSampleAvailable(MediaSample& sam
         break;
     }
 
-    ASSERT(sample.platformSample().type == PlatformSample::GStreamerSampleType);
-    auto& mediaSample = static_cast<MediaSampleGStreamer&>(sample);
-    auto frameBuffer = GStreamerVideoFrameLibWebRTC::create(mediaSample.platformSample().sample.gstSample);
+    auto& videoFrame = static_cast<VideoFrameGStreamer&>(sample);
+    auto frameBuffer = GStreamerVideoFrameLibWebRTC::create(videoFrame.sample());
 
     sendFrame(WTFMove(frameBuffer));
 }

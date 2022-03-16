@@ -1,3 +1,48 @@
+2022-03-16  Philippe Normand  <pnormand@igalia.com>
+
+        Migrate use of MediaSampleGStreamer to VideoFrame in WebRTC pipelines
+        https://bugs.webkit.org/show_bug.cgi?id=237885
+
+        Reviewed by Youenn Fablet.
+
+        Introducing VideoFrameGStreamer, meant to be used from mediastream producers and consumers.
+        The VideoFrame internally manages a GstSample storing the actual video frame data that can
+        be passed around between RealtimeMediaSources and the mediastream GStreamer source element.
+
+        Covered by existing layout tests.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toMediaSample):
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        (WebCore::MediaSampleGStreamer::MediaSampleGStreamer):
+        (WebCore::MediaSampleGStreamer::createFakeSample):
+        (WebCore::MediaSampleGStreamer::createImageSample): Deleted.
+        (WebCore::MediaSampleGStreamer::initializeFromBuffer): Deleted.
+        (WebCore::MediaSampleGStreamer::getRGBAImageData const): Deleted.
+        * platform/graphics/gstreamer/MediaSampleGStreamer.h:
+        (WebCore::MediaSampleGStreamer::create):
+        (WebCore::MediaSampleGStreamer::createWrappedSample): Deleted.
+        (WebCore::MediaSampleGStreamer::createImageSample): Deleted.
+        * platform/graphics/gstreamer/VideoFrameGStreamer.cpp: Added.
+        (WebCore::VideoFrameGStreamer::createFromPixelBuffer):
+        (WebCore::VideoFrameGStreamer::VideoFrameGStreamer):
+        (WebCore::VideoFrameGStreamer::getRGBAImageData const):
+        * platform/graphics/gstreamer/VideoFrameGStreamer.h: Added.
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp:
+        (WebCore::GraphicsContextGLTextureMapper::paintCompositedResultsToMediaSample):
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp:
+        (WebCore::GStreamerVideoCaptureSource::processNewFrame):
+        (WebCore::GStreamerVideoCaptureSource::newSampleCallback):
+        * platform/mediastream/gstreamer/GStreamerVideoCaptureSource.h:
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        (WebCore::MockRealtimeVideoSourceGStreamer::updateSampleBuffer):
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp:
+        (WebCore::RealtimeIncomingVideoSourceLibWebRTC::OnFrame):
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingVideoSourceLibWebRTC::videoSampleAvailable):
+
 2022-03-16  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Move firstSelectedBox/lastSelectedBox out of InlineIterator::Line

@@ -26,9 +26,9 @@
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 #include "MockRealtimeVideoSourceGStreamer.h"
 
-#include "MediaSampleGStreamer.h"
 #include "MockRealtimeMediaSourceCenter.h"
 #include "PixelBuffer.h"
+#include "VideoFrameGStreamer.h"
 
 namespace WebCore {
 
@@ -164,9 +164,9 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
 
     std::optional<VideoFrameTimeMetadata> metadata;
     metadata->captureTime = MonotonicTime::now().secondsSinceEpoch();
-    auto sample = MediaSampleGStreamer::createImageSample(WTFMove(*pixelBuffer), size(), frameRate(), sampleRotation(), false, WTFMove(metadata));
-    sample->offsetTimestampsBy(MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds()));
-    dispatchMediaSampleToObservers(sample.get(), { });
+    auto presentationTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
+    auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer), presentationTime, size(), frameRate(), sampleRotation(), false, WTFMove(metadata));
+    dispatchMediaSampleToObservers(videoFrame.get(), { });
 }
 
 } // namespace WebCore

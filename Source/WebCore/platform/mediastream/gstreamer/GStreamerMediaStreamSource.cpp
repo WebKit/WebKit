@@ -29,8 +29,8 @@
 #include "AudioTrackPrivateMediaStream.h"
 #include "GStreamerAudioData.h"
 #include "GStreamerCommon.h"
-#include "MediaSampleGStreamer.h"
 #include "MediaStreamPrivate.h"
+#include "VideoFrameGStreamer.h"
 #include "VideoFrameMetadataGStreamer.h"
 #include "VideoTrackPrivateMediaStream.h"
 
@@ -283,7 +283,6 @@ public:
         if (!m_configuredSize.height())
             m_configuredSize.setHeight(captureSize.height());
 
-        auto* mediaSample = static_cast<MediaSampleGStreamer*>(&sample);
         auto videoRotation = sample.videoRotation();
         bool videoMirrored = sample.videoMirrored();
         if (m_videoRotation != videoRotation || m_videoMirrored != videoMirrored) {
@@ -296,7 +295,8 @@ public:
             gst_pad_push_event(pad.get(), gst_event_new_tag(gst_tag_list_new(GST_TAG_IMAGE_ORIENTATION, orientation.utf8().data(), nullptr)));
         }
 
-        auto* gstSample = mediaSample->platformSample().sample.gstSample;
+        auto* videoFrame = static_cast<VideoFrameGStreamer*>(&sample);
+        auto* gstSample = videoFrame->sample();
         if (!m_configuredSize.isEmpty() && m_lastKnownSize != m_configuredSize) {
             m_lastKnownSize = m_configuredSize;
             updateBlackFrame(gst_sample_get_caps(gstSample));

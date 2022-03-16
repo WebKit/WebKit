@@ -27,7 +27,6 @@
 
 #include "DisplayCaptureManager.h"
 #include "GStreamerCaptureDeviceManager.h"
-#include "MediaSampleGStreamer.h"
 
 #include <gst/app/gstappsink.h>
 
@@ -191,21 +190,22 @@ void GStreamerVideoCaptureSource::startProducingData()
     m_capturer->play();
 }
 
-void GStreamerVideoCaptureSource::processNewFrame(Ref<MediaSample>&& sample)
+void GStreamerVideoCaptureSource::processNewFrame(Ref<VideoFrameGStreamer>&& videoFrame)
 {
     if (!isProducingData() || muted())
         return;
 
-    dispatchMediaSampleToObservers(WTFMove(sample), { });
+    dispatchMediaSampleToObservers(WTFMove(videoFrame), { });
 }
 
 GstFlowReturn GStreamerVideoCaptureSource::newSampleCallback(GstElement* sink, GStreamerVideoCaptureSource* source)
 {
     auto gstSample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
-    auto mediaSample = MediaSampleGStreamer::create(WTFMove(gstSample), WebCore::FloatSize(), String());
+    auto presentationTime = fromGstClockTime(GST_BUFFER_PTS(gst_sample_get_buffer(gstSample.get())));
+    auto videoFrame = VideoFrameGStreamer::create(WTFMove(gstSample), WebCore::FloatSize(), presentationTime);
 
-    source->scheduleDeferredTask([source, sample = WTFMove(mediaSample)] () mutable {
-        source->processNewFrame(WTFMove(sample));
+    source->scheduleDeferredTask([source, videoFrame = WTFMove(videoFrame)] () mutable {
+        source->processNewFrame(WTFMove(videoFrame));
     });
 
     return GST_FLOW_OK;
