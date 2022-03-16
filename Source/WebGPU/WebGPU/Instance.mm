@@ -165,7 +165,7 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
         return;
     }
 
-    callback(WGPURequestAdapterStatus_Success, Adapter::create(sortedDevices[0]), nullptr);
+    callback(WGPURequestAdapterStatus_Success, Adapter::create(sortedDevices[0], *this), nullptr);
 }
 
 } // namespace WebGPU

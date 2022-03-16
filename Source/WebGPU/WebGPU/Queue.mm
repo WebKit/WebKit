@@ -28,11 +28,13 @@
 
 #import "Buffer.h"
 #import "CommandBuffer.h"
+#import "Device.h"
 
 namespace WebGPU {
 
-Queue::Queue(id<MTLCommandQueue> commandQueue)
+Queue::Queue(id<MTLCommandQueue> commandQueue, Device& device)
     : m_commandQueue(commandQueue)
+    , m_device(device)
 {
 }
 
@@ -69,6 +71,11 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
 void Queue::setLabel(const char* label)
 {
     m_commandQueue.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
+}
+
+void Queue::scheduleWork(Instance::WorkItem&& workItem)
+{
+    m_device.instance().scheduleWork(WTFMove(workItem));
 }
 
 } // namespace WebGPU

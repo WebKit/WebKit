@@ -34,13 +34,14 @@
 namespace WebGPU {
 
 class Device;
+class Instance;
 
 class Adapter : public RefCounted<Adapter> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Adapter> create(id<MTLDevice> device)
+    static Ref<Adapter> create(id<MTLDevice> device, Instance& instance)
     {
-        return adoptRef(*new Adapter(device));
+        return adoptRef(*new Adapter(device, instance));
     }
 
     ~Adapter();
@@ -52,9 +53,10 @@ public:
     void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, RefPtr<Device>&&, const char*)>&& callback);
 
 private:
-    Adapter(id<MTLDevice>);
+    Adapter(id<MTLDevice>, Instance&);
 
     id<MTLDevice> m_device { nil };
+    Ref<Instance> m_instance;
 };
 
 } // namespace WebGPU

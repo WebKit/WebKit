@@ -27,12 +27,14 @@
 #import "Adapter.h"
 
 #import "Device.h"
+#import "Instance.h"
 #import <wtf/StdLibExtras.h>
 
 namespace WebGPU {
 
-Adapter::Adapter(id<MTLDevice> device)
+Adapter::Adapter(id<MTLDevice> device, Instance& instance)
     : m_device(device)
+    , m_instance(instance)
 {
 }
 
@@ -120,7 +122,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
         return;
     }
 
-    callback(WGPURequestDeviceStatus_Success, Device::create(m_device, descriptor.label), nullptr);
+    callback(WGPURequestDeviceStatus_Success, Device::create(m_device, descriptor.label, m_instance), nullptr);
 }
 
 } // namespace WebGPU

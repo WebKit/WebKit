@@ -40,6 +40,7 @@ class BindGroupLayout;
 class Buffer;
 class CommandEncoder;
 class ComputePipeline;
+class Instance;
 class PipelineLayout;
 class QuerySet;
 class RenderBundleEncoder;
@@ -53,7 +54,7 @@ class Texture;
 class Device : public RefCounted<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<Device> create(id<MTLDevice>, const char* deviceLabel);
+    static RefPtr<Device> create(id<MTLDevice>, const char* deviceLabel, Instance&);
 
     ~Device();
 
@@ -83,11 +84,14 @@ public:
     void setUncapturedErrorCallback(Function<void(WGPUErrorType, const char*)>&&);
     void setLabel(const char*);
 
+    Instance& instance() { return m_instance; }
+
 private:
-    Device(id<MTLDevice>, Ref<Queue>&&);
+    Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, Instance&);
 
     id<MTLDevice> m_device { nil };
     Ref<Queue> m_defaultQueue;
+    Ref<Instance> m_instance;
 };
 
 } // namespace WebGPU

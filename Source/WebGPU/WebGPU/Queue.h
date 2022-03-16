@@ -25,23 +25,25 @@
 
 #pragma once
 
+#import "Instance.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
+#import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/Vector.h>
 
 namespace WebGPU {
 
 class Buffer;
 class CommandBuffer;
+class Device;
 
-class Queue : public RefCounted<Queue> {
+class Queue : public ThreadSafeRefCounted<Queue> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Queue> create(id<MTLCommandQueue> commandQueue)
+    static Ref<Queue> create(id<MTLCommandQueue> commandQueue, Device& device)
     {
-        return adoptRef(*new Queue(commandQueue));
+        return adoptRef(*new Queue(commandQueue, device));
     }
 
     ~Queue();
@@ -53,9 +55,13 @@ public:
     void setLabel(const char*);
 
 private:
-    Queue(id<MTLCommandQueue>);
+    Queue(id<MTLCommandQueue>, Device&);
+
+    // This can be called on a background thread.
+    void scheduleWork(Instance::WorkItem&&);
 
     id<MTLCommandQueue> m_commandQueue { nil };
+    Device& m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
 };
 
 } // namespace WebGPU

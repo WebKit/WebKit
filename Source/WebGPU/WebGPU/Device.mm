@@ -45,12 +45,11 @@
 
 namespace WebGPU {
 
-RefPtr<Device> Device::create(id<MTLDevice> device, const char* deviceLabel)
+RefPtr<Device> Device::create(id<MTLDevice> device, const char* deviceLabel, Instance& instance)
 {
     id<MTLCommandQueue> commandQueue = [device newCommandQueue];
     if (!commandQueue)
         return nullptr;
-    auto queue = Queue::create(commandQueue);
 
     // See the comment in Device::setLabel() about why we're not setting the label on the MTLDevice here.
 
@@ -58,12 +57,13 @@ RefPtr<Device> Device::create(id<MTLDevice> device, const char* deviceLabel)
     if (deviceLabel && deviceLabel[0] != '\0')
         commandQueue.label = [NSString stringWithFormat:@"Default queue for device %s", deviceLabel];
 
-    return adoptRef(*new Device(device, WTFMove(queue)));
+    return adoptRef(*new Device(device, commandQueue, instance));
 }
 
-Device::Device(id<MTLDevice> device, Ref<Queue>&& queue)
+Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, Instance& instance)
     : m_device(device)
-    , m_defaultQueue(WTFMove(queue))
+    , m_defaultQueue(Queue::create(defaultQueue, *this))
+    , m_instance(instance)
 {
 }
 

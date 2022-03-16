@@ -1,3 +1,49 @@
+2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Create a path of Ref<>s between Instance and Queue
+        https://bugs.webkit.org/show_bug.cgi?id=237864
+
+        Reviewed by Kimmo Kinnunen.
+
+        The ownership model of WebGPU is that there is a tree of objects, and Javascript has references
+        to the leaves of the tree. The leaves are therefore allowed to reference their parents, all the
+        way up the tree. Therefore, Buffer can have a Ref to Device, which can have a Ref to Instance.
+        Device has to be in the chain eventually, because of the "valid to use with" check:
+        https://gpuweb.github.io/gpuweb/#abstract-opdef-valid-to-use-with, so we might as well add it in
+        to the chain now.
+
+        The one exception from this ownership model is Queue, which needs to be owned by Device, so
+        Device::getQueue() can return the same object when called multiple times (see
+        https://bugs.webkit.org/show_bug.cgi?id=237861). So, Queue has a raw C++ reference to its owning
+        Device.
+
+        Queue needs to be able to run asynchronous work, becuase Queue will need to add completedHandlers
+        to all command buffers committed, in order to perform its own internal bookkeeping. So, Queue
+        uses its C++ reference to its owning Device, which uses its Ref to its Instance, in order to use
+        Instance's facilities for running asynchronous work. This patch adds the necessesary Ref<>s to
+        make that happen.
+
+        * WebGPU/Adapter.h:
+        (WebGPU::Adapter::create):
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::Adapter):
+        (WebGPU::Adapter::requestDevice):
+        (WebGPU::Adapter::scheduleWork):
+        * WebGPU/Device.h:
+        (WebGPU::Device::create):
+        * WebGPU/Device.mm:
+        (WebGPU::createDefaultQueue):
+        (WebGPU::Device::Device):
+        (WebGPU::Device::scheduleWork):
+        (WebGPU::Device::create): Deleted.
+        * WebGPU/Instance.mm:
+        (WebGPU::Instance::requestAdapter):
+        * WebGPU/Queue.h:
+        (WebGPU::Queue::create):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::Queue):
+        (WebGPU::Queue::scheduleWork):
+
 2022-03-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Migrate from WTF::Function to WTF::CompletionHandler
