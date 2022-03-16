@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2010-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -96,7 +96,7 @@ messages -> WebPage LegacyReceiver {
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
     StartInteractionWithElementContextOrPosition(std::optional<WebCore::ElementContext> elementContext, WebCore::IntPoint point)
     StopInteraction()
-    PerformActionOnElement(uint32_t action)
+    PerformActionOnElement(uint32_t action, String authenticationToken) -> ()
     FocusNextFocusedElement(bool isForward) -> ()
     AutofillLoginCredentials(String username, String password)
     SetFocusedElementValue(struct WebCore::ElementContext context, String value)
