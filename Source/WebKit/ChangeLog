@@ -1,3 +1,21 @@
+2022-03-16  Sihui Liu  <sihui_liu@apple.com>
+
+        Suspend newly created NetworkStorageManager if network process is or will be suspended
+        https://bugs.webkit.org/show_bug.cgi?id=237915
+
+        Reviewed by Chris Dumez.
+
+        When network process receives prepareToSuspend message, we suspend existing NetworkStorageManagers (so no more
+        database operation can be performed). We should do the same thing for new NetworkStorageManager created between
+        prepareToSuspend and processDidResume messages.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::addWebsiteDataStore):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::processDidResume):
+        (WebKit::NetworkProcess::resume): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+
 2022-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r291191): [iOS] ASSERTION FAILED: m_contentsBufferHandle in WebKit::RemoteLayerBackingStore::paintContents()

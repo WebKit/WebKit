@@ -442,10 +442,12 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
     auto sessionID = parameters.networkSessionParameters.sessionID;
     addStorageSession(sessionID, parameters.networkSessionParameters.shouldUseTestingNetworkSession, parameters.uiProcessCookieStorageIdentifier, parameters.cookieStoragePathExtensionHandle);
 
-    m_networkSessions.ensure(sessionID, [&]() {
+    auto& session = m_networkSessions.ensure(sessionID, [&]() {
         return NetworkSession::create(*this, parameters.networkSessionParameters);
-    });
-    
+    }).iterator->value;
+
+    if (m_isSuspended)
+        session->storageManager().suspend([] { });
 }
 
 void NetworkProcess::forEachNetworkSession(const Function<void(NetworkSession&)>& functor)
@@ -2114,6 +2116,7 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(), isSuspensionImminent=%d", this, isSuspensionImminent);
 
+    m_isSuspended = true;
     lowMemoryHandler(Critical::Yes);
 
     RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create([this, completionHandler = WTFMove(completionHandler)]() mutable {
@@ -2153,11 +2156,9 @@ void NetworkProcess::applicationWillEnterForeground()
 void NetworkProcess::processDidResume()
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume()", this);
-    resume();
-}
 
-void NetworkProcess::resume()
-{
+    m_isSuspended = false;
+
     for (auto& connection : m_webProcessConnections.values())
         connection->endSuspension();
 

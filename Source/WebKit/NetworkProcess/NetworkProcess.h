@@ -175,7 +175,6 @@ public:
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
     void prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&&);
     void processDidResume();
-    void resume();
 
     CacheModel cacheModel() const { return m_cacheModel; }
 
@@ -524,6 +523,7 @@ private:
 
     bool m_privateClickMeasurementEnabled { true };
     bool m_ftpEnabled { false };
+    bool m_isSuspended { false };
 };
 
 #if !PLATFORM(COCOA)
