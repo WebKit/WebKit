@@ -41,6 +41,13 @@ class OSXChromeDriverBase(OSXBrowserDriver):
     def _set_chrome_binary_location(self, options, browser_build_path):
         pass
 
+def set_binary_location_impl(options, browser_build_path, app_name, process_name):
+    if not browser_build_path:
+        return
+    app_path = os.path.join(browser_build_path, app_name)
+    binary_path = os.path.join(app_path, "Contents/MacOS", process_name)
+    options.binary_location = binary_path
+
 
 class OSXChromeDriver(OSXChromeDriverBase):
     process_name = 'Google Chrome'
@@ -49,22 +56,33 @@ class OSXChromeDriver(OSXChromeDriverBase):
     bundle_id = 'com.google.Chrome'
 
     def _set_chrome_binary_location(self, options, browser_build_path):
-        if not browser_build_path:
-            return
-        app_path = os.path.join(browser_build_path, self.app_name)
-        binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
-        options.binary_location = binary_path
+        set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
 
 
-class OSXChromeCanaryDriver(OSXBrowserDriver):
+class OSXChromeCanaryDriver(OSXChromeDriverBase):
     process_name = 'Google Chrome Canary'
     browser_name = 'chrome-canary'
     app_name = 'Google Chrome Canary.app'
     bundle_id = 'com.google.Chrome.canary'
 
     def _set_chrome_binary_location(self, options, browser_build_path):
-        if not browser_build_path:
-            browser_build_path = '/Applications/'
-        app_path = os.path.join(browser_build_path, self.app_name)
-        binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
-        options.binary_location = binary_path
+        set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
+
+
+class OSXChromeBetaDriver(OSXChromeDriverBase):
+    process_name = 'Google Chrome Beta'
+    browser_name = 'chrome-beta'
+    app_name = 'Google Chrome Beta.app'
+    bundle_id = 'com.google.Chrome.beta'
+
+    def _set_chrome_binary_location(self, options, browser_build_path):
+        set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
+
+class OSXChromeDevDriver(OSXChromeDriverBase):
+    process_name = 'Google Chrome Dev'
+    browser_name = 'chrome-dev'
+    app_name = 'Google Chrome Dev.app'
+    bundle_id = 'com.google.Chrome.dev'
+
+    def _set_chrome_binary_location(self, options, browser_build_path):
+        set_binary_location_impl(options, browser_build_path, self.app_name, self.process_name)
