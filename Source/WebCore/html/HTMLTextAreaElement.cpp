@@ -345,11 +345,6 @@ RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElement() cons
     return childrenOfType<TextControlInnerTextElement>(*root).first();
 }
 
-RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElementCreatingShadowSubtreeIfNeeded()
-{
-    return innerTextElement();
-}
-
 void HTMLTextAreaElement::rendererWillBeDestroyed()
 {
     updateValue();

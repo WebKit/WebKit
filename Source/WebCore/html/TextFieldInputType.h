@@ -70,7 +70,7 @@ protected:
 #endif
 
     virtual bool needsContainer() const;
-    void createShadowSubtree() override;
+    void createShadowSubtreeAndUpdateInnerTextElementEditability(bool) override;
     void destroyShadowSubtree() override;
     void attributeChanged(const QualifiedName&) override;
     void disabledStateChanged() final;

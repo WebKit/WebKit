@@ -206,7 +206,6 @@ public:
     bool supportLabels() const;
     bool isEnumeratable() const;
     bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type); }
-    bool hasCreatedShadowSubtree() const { return m_hasCreatedShadowSubtree; }
 
     // Form value functions.
 
@@ -307,8 +306,7 @@ public:
 
     // Shadow tree handling.
 
-    void createShadowSubtreeIfNeeded();
-    virtual void createShadowSubtree();
+    virtual void createShadowSubtreeAndUpdateInnerTextElementEditability(bool);
     virtual void destroyShadowSubtree();
 
     virtual HTMLElement* containerElement() const { return nullptr; }
@@ -325,7 +323,6 @@ public:
 #if ENABLE(DATALIST_ELEMENT)
     virtual HTMLElement* dataListButtonElement() const { return nullptr; }
 #endif
-    RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded();
 
     // Miscellaneous functions.
 
@@ -416,7 +413,6 @@ private:
     ExceptionOr<void> applyStep(int count, AnyStepHandling, TextFieldEventBehavior);
 
     const Type m_type;
-    bool m_hasCreatedShadowSubtree { false };
     // m_element is null if this InputType is no longer associated with an element (either the element died or changed input type).
     WeakPtr<HTMLInputElement> m_element;
 };

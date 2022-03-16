@@ -136,7 +136,7 @@ Color ColorInputType::valueAsColor() const
     return parseSimpleColorValue(element()->value()).value();
 }
 
-void ColorInputType::createShadowSubtree()
+void ColorInputType::createShadowSubtreeAndUpdateInnerTextElementEditability(bool)
 {
     ASSERT(needsShadowSubtree());
     ASSERT(element());
