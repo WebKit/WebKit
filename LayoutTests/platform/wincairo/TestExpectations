@@ -2113,3 +2113,10 @@ fast/js-promise/js-promise-invalid-context-access.html [ Failure ]
 # Not applicable.
 webgl/webgl-via-metal-flag-on.html [ Skip ]
 webgl/webgl-via-metal-flag-off.html [ Skip ]
+
+fast/text/collapsible-non-breaking-space.html [ ImageOnlyFailure ]
+fast/text/rtl-pre-wrap-hanging-offset.html [ ImageOnlyFailure ]
+fast/text/synthetic-bold-percentage-word-spacing.html [ ImageOnlyFailure ]
+fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]
+
+http/tests/misc/ftp-eplf-directory.py [ Failure ]

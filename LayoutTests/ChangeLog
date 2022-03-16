@@ -1,3 +1,18 @@
+2022-03-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/css1/box_properties/margin_right-expected.txt:
+        * platform/wincairo/css1/box_properties/padding_right-expected.txt:
+        * platform/wincairo/css2.1/t0505-c16-descendant-01-e-expected.txt:
+        * platform/wincairo/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/wincairo/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/wincairo/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt:
+        * platform/wincairo/fast/dom/scroll-reveal-top-overflow-expected.txt:
+        * platform/wincairo/fast/html/details-writing-mode-expected.txt:
+        * platform/wincairo/fast/text/international/synthesized-italic-vertical-latin-expected.txt:
+
 2022-03-16  Rob Buis  <rbuis@igalia.com>
 
         Sync css/css-contain from WPT
