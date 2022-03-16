@@ -1,0 +1,43 @@
+From b8ccf7f80283d06841a0b191be940f7ab78940c8 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Tue, 8 Mar 2022 12:04:41 +0000
+Subject: [PATCH 1/2] typefind: Skip parsing of data URIs
+
+Commit a46ab2ced20d757e0e770d4de1edc3a152cc4f2f introduced a regression,
+breaking typefinding for media content muxed in mp4 container and serialized to
+data URIs. For this case it doesn't make sense to look for a file extension, so
+skip URI parsing.
+
+Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/1909>
+---
+ .../plugins/elements/gsttypefindelement.c        | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/plugins/elements/gsttypefindelement.c b/plugins/elements/gsttypefindelement.c
+index 84e60a9c68..41dedb27fe 100644
+--- a/plugins/elements/gsttypefindelement.c
++++ b/plugins/elements/gsttypefindelement.c
+@@ -803,6 +803,8 @@ gst_type_find_get_extension (GstTypeFindElement * typefind, GstPad * pad)
+   gchar *uri, *result, *path, *base_path, *find;
+   GstUri *gst_uri;
+ 
++  base_path = NULL;
++
+   query = gst_query_new_uri ();
+ 
+   /* try getting the caps with an uri query and from the extension */
+@@ -813,6 +815,11 @@ gst_type_find_get_extension (GstTypeFindElement * typefind, GstPad * pad)
+   if (uri == NULL)
+     goto no_uri;
+ 
++  /* data URIs paths are opaque and do not semantically represent a
++     filesystem-like resource path, so skip URI parsing for this case. */
++  if (g_str_has_prefix (uri, "data:"))
++    goto no_extension;
++
+   GST_DEBUG_OBJECT (typefind, "finding extension of %s", uri);
+ 
+   gst_uri = gst_uri_from_string (uri);
+-- 
+2.35.1
+

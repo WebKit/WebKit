@@ -1,3 +1,20 @@
+2022-03-16  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to GStreamer 1.20.1
+        https://bugs.webkit.org/show_bug.cgi?id=237954
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/sdk/gst-libav.bst:
+        * elements/sdk/gst-plugins-bad.bst:
+        * elements/sdk/gst-plugins-base.bst:
+        * elements/sdk/gst-plugins-good.bst:
+        * elements/sdk/gst-plugins-ugly.bst:
+        * elements/sdk/gstreamer.bst:
+        * patches/gstreamer-0001-dtlstransport-Notify-ICE-transport-property-changes.patch: Removed.
+        * patches/gstreamer-0001-typefind-Skip-parsing-of-data-URIs.patch: Added.
+        * patches/gstreamer-0002-uri-Build-doubly-linked-list-by-prepending-items.patch: Added.
+
 2022-03-14  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Get rid of Python2

@@ -1,8 +1,8 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gst-plugins-base/gst-plugins-base-1.20.0.tar.xz
-  ref: 4cb66fccf730b1037e6533862c2128990912a6db4e5bbd14e0ef914450eb4c7c
+  url: gst_downloads:gst-plugins-base/gst-plugins-base-1.20.1.tar.xz
+  ref: 96d8a6413ba9394fbec1217aeef63741a729d476a505a797c1d5337d8fa7c204
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:

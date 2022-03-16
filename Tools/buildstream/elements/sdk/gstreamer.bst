@@ -1,8 +1,13 @@
 kind: meson
 sources:
 - kind: tar
-  url: gst_downloads:gstreamer/gstreamer-1.20.0.tar.xz
-  ref: edf4bffff85591d4fff7b21bb9ed7f0feabc123ac4a4eff29e73cbce454f9db7
+  url: gst_downloads:gstreamer/gstreamer-1.20.1.tar.xz
+  ref: de094a404a3ad8f4977829ea87edf695a4da0b5c8f613ebe54ab414bac89f031
+# Upstreamed patches most likely shipping in 1.20.2.
+- kind: patch
+  path: patches/gstreamer-0001-typefind-Skip-parsing-of-data-URIs.patch
+- kind: patch
+  path: patches/gstreamer-0002-uri-Build-doubly-linked-list-by-prepending-items.patch
 build-depends:
 - freedesktop-sdk.bst:components/gobject-introspection.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
