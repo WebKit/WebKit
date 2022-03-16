@@ -1,3 +1,20 @@
+2022-03-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        [ MacOS ] http/tests/security/content SecurityPolicy/frame-src-cross-origin-load.html is a flakey failure (230428)
+        https://bugs.webkit.org/show_bug.cgi?id=230428
+        <rdar://problem/83254559>
+
+        Reviewed by Brent Fulgham.
+
+        The flakiness was caused by relying on ordered output from iframe
+        loads that are not guaranteed to load in order. This change loads
+        iframes in script to make sure they load only after the previous
+        iframe has loaded.
+
+        * http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load-expected.txt:
+        * http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html:
+        * platform/mac/TestExpectations:
+
 2022-03-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][1.20] media/video-src-blob-perf.html failing
