@@ -67,6 +67,7 @@ public:
 
     void updateSceneState(const WebCore::CoordinatedGraphicsState&);
     void updateScene();
+    void updateSceneWithoutRendering();
 
     void invalidate();
 
