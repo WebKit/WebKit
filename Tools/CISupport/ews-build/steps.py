@@ -666,9 +666,9 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin, ShellMixin):
             shell.ShellCommand.start(self)
             return None
 
-        patch_reviewer_name = self.getProperty('patch_reviewer_full_name', '')
-        if patch_reviewer_name:
-            self.command.extend(['--reviewer', patch_reviewer_name])
+        reviewer_name = self.getProperty('reviewer_full_name', '')
+        if reviewer_name:
+            self.command.extend(['--reviewer', reviewer_name])
         d = self.downloadFileContentToWorker('.buildbot-diff', patch)
         d.addCallback(lambda res: shell.ShellCommand.start(self))
 
@@ -1081,10 +1081,10 @@ class BugzillaMixin(object):
             if flag.get('name') == 'review':
                 review_status = flag.get('status')
                 if review_status == '+':
-                    patch_reviewer = flag.get('setter', '')
-                    self.setProperty('patch_reviewer', patch_reviewer)
+                    reviewer = flag.get('setter', '')
+                    self.setProperty('reviewer', reviewer)
                     if self.addURLs:
-                        self.addURL('Reviewed by: {}'.format(patch_reviewer), '')
+                        self.addURL('Reviewed by: {}'.format(reviewer), '')
                     return 1
                 if review_status in ['-', '?']:
                     self._addToLog('stdio', 'Patch {} is marked r{}.\n'.format(patch_id, review_status))
@@ -1453,18 +1453,18 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             return None
         self._addToLog('stdio', '{} is a valid commiter.\n'.format(patch_committer))
 
-        patch_reviewer = self.getProperty('patch_reviewer', '').lower()
-        if not patch_reviewer:
+        reviewer = self.getProperty('reviewer', '').lower()
+        if not reviewer:
             # Patch does not have r+ flag. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
             self.descriptionDone = 'Validated committer'
             self.finished(SUCCESS)
             return None
 
-        self.setProperty('patch_reviewer_full_name', self.full_name_from_email(patch_reviewer))
-        if not self.is_reviewer(patch_reviewer):
-            self.fail_build(patch_reviewer, 'reviewer')
+        self.setProperty('reviewer_full_name', self.full_name_from_email(reviewer))
+        if not self.is_reviewer(reviewer):
+            self.fail_build(reviewer, 'reviewer')
             return None
-        self._addToLog('stdio', '{} is a valid reviewer.\n'.format(patch_reviewer))
+        self._addToLog('stdio', '{} is a valid reviewer.\n'.format(reviewer))
         self.finished(SUCCESS)
         return None
 
