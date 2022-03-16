@@ -1,3 +1,16 @@
+2022-03-16  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Suppress warnings for implicit conversion from unsigned long to double
+        https://bugs.webkit.org/show_bug.cgi?id=237899
+        <rdar://problem/90364907>
+
+        Reviewed by Darin Adler.
+
+        Add static_cast for approx casting to double.
+
+        * TestWebKitAPI/Tests/WTF/Int128.cpp:
+        (TestWebKitAPI::TEST):
+
 2022-03-15  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Rename patch_reviewer
