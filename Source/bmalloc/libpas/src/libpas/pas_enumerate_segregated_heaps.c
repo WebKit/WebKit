@@ -728,12 +728,7 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
                     allocator_index = redundant_node->allocator_index;
                     has_allocator = true;
                 } else {
-                    pas_segregated_size_directory* directory;
-                    
                     PAS_ASSERT_WITH_DETAIL(pas_is_wrapped_local_view_cache_node(layout_node));
-
-                    directory = pas_unwrap_local_view_cache_node(layout_node);
-
                     allocator_index = 0;
                     has_allocator = false;
                 }
