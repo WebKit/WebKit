@@ -1,3 +1,19 @@
+2022-03-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Refactor some position information hit-testing logic related to data detectors in Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=237927
+
+        Reviewed by Tim Horton.
+
+        Add a simple layout test that exercises context menu presentation when long pressing a data detector result
+        inside Live Text in an image. While this behavior isn't new, it's currently untested before this patch.
+
+        * fast/images/text-recognition/ios/show-data-detector-context-menu-expected.txt: Added.
+        * fast/images/text-recognition/ios/show-data-detector-context-menu.html:
+
+        Also add `-webkit-user-select: none;` to test that disabling text selection does not also disable the ability to
+        present the context menu over data detectors by long pressing on iOS.
+
 2022-03-16  Youenn Fablet  <youenn@apple.com>
 
         redirectCount returns 0 when using a Service Worker

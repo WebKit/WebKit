@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body, html {
+    margin: 0;
+}
+</style>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+<img src="../../resources/green-400x400.png" style="-webkit-user-select: none;"></img>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    internals.installImageOverlay(document.querySelector("img"), [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.5),
+            bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [{
+                text : "Link",
+                topLeft : new DOMPointReadOnly(0, 0),
+                topRight : new DOMPointReadOnly(1, 0),
+                bottomRight : new DOMPointReadOnly(1, 0.5),
+                bottomLeft : new DOMPointReadOnly(0, 0.5),
+            }],
+        },
+        {
+            topLeft : new DOMPointReadOnly(0, 0.5),
+            topRight : new DOMPointReadOnly(1, 0.5),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0, 1),
+            children: [{
+                text : "webkit.org",
+                topLeft : new DOMPointReadOnly(0, 0.5),
+                topRight : new DOMPointReadOnly(1, 0.5),
+                bottomRight : new DOMPointReadOnly(1, 1),
+                bottomLeft : new DOMPointReadOnly(0, 1),
+            }],
+        }
+    ], [], [
+        {
+            topLeft : new DOMPointReadOnly(0, 0.5),
+            topRight : new DOMPointReadOnly(1, 0.5),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0, 1),
+        }
+    ]);
+
+    result = await UIHelper.longPressAndGetContextMenuContentAt(200, 330);
+    shouldBeTrue("result?.contextMenu?.items?.includes('Open Link')");
+    finishJSTest();
+});
+</script>
+</body>
+</html>

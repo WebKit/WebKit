@@ -2963,13 +2963,6 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
         boundsPositionInformation(*renderer, info);
     }
 
-#if ENABLE(DATA_DETECTION)
-    if (info.isImageOverlayText && innerNonSharedNode->shadowHost() == &element && is<HTMLElement>(element)) {
-        if (Ref htmlElement = downcast<HTMLElement>(element); ImageOverlay::hasOverlay(htmlElement.get()))
-            dataDetectorImageOverlayPositionInformation(htmlElement.get(), request, info);
-    }
-#endif
-
     info.elementContext = page.contextForElement(element);
 }
     
@@ -3197,6 +3190,26 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
         if (info.isLink && !info.isImage && request.includeSnapshot)
             info.image = shareableBitmapSnapshotForNode(element);
     }
+
+#if ENABLE(DATA_DETECTION)
+    auto hitTestedImageOverlayHost = ([&]() -> RefPtr<HTMLElement> {
+        if (!hitTestNode || !info.isImageOverlayText)
+            return nullptr;
+
+        RefPtr shadowHost = hitTestNode->shadowHost();
+        if (!is<HTMLElement>(shadowHost.get()))
+            return nullptr;
+
+        RefPtr htmlElement = downcast<HTMLElement>(shadowHost.get());
+        if (!ImageOverlay::hasOverlay(*htmlElement))
+            return nullptr;
+
+        return htmlElement;
+    })();
+
+    if (hitTestedImageOverlayHost)
+        dataDetectorImageOverlayPositionInformation(*hitTestedImageOverlayHost, request, info);
+#endif // ENABLE(DATA_DETECTION)
 
     if (!info.isImage && request.includeImageData && hitTestNode) {
         if (auto video = hostVideoElementIgnoringImageOverlay(*hitTestNode))
