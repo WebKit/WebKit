@@ -1,5 +1,32 @@
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement first draft of buffer copying according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=237871
+
+        Reviewed by Kimmo Kinnunen.
+
+        Implement CommandEncoder::copyBufferToBuffer() and CommandEncoder::finish(),
+        according to the algorithms in the spec. There are a few things which the spec
+        lists which we can't do yet (like reporting validation errors), so those things
+        are left with FIXMEs. Every step is listed with links to the spec where
+        appropriate, and with quotes to the spec describing what is being implemented.
+
+        * WebGPU.xcodeproj/project.pbxproj:
+        * WebGPU/CommandEncoder.h:
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::Device::createCommandEncoder):
+        (WebGPU::CommandEncoder::ensureBlitCommandEncoder):
+        (WebGPU::CommandEncoder::finalizeBlitCommandEncoder):
+        (WebGPU::validateCopyBufferToBuffer):
+        (WebGPU::CommandEncoder::copyBufferToBuffer):
+        (WebGPU::CommandEncoder::validateFinish const):
+        (WebGPU::CommandEncoder::finish):
+        * WebGPU/CommandsMixin.h: Added.
+        * WebGPU/CommandsMixin.mm: Added.
+        (WebGPU::CommandsMixin::prepareTheEncoderState const):
+
+2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement first draft of buffer mapping according to the spec
         https://bugs.webkit.org/show_bug.cgi?id=237870
 

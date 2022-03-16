@@ -25,9 +25,9 @@
 
 #pragma once
 
+#import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 
 namespace WebGPU {
@@ -38,7 +38,7 @@ class ComputePassEncoder;
 class QuerySet;
 class RenderPassEncoder;
 
-class CommandEncoder : public RefCounted<CommandEncoder> {
+class CommandEncoder : public RefCounted<CommandEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer)
@@ -66,7 +66,13 @@ public:
 private:
     CommandEncoder(id<MTLCommandBuffer>);
 
+    bool validateFinish() const;
+
+    void ensureBlitCommandEncoder();
+    void finalizeBlitCommandEncoder();
+
     id<MTLCommandBuffer> m_commandBuffer { nil };
+    id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
 };
 
 } // namespace WebGPU

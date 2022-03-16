@@ -13,6 +13,8 @@
 		1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2CEDED271E8A7300EDC16F /* Metal.framework */; };
 		1C5319C027BDC6CC00CD127E /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C5319BF27BDC6CC00CD127E /* main.swift */; };
 		1C5319C527BDC72700CD127E /* WebGPU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD7E32716AFBA00A5254D /* WebGPU.framework */; };
+		1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C582FF727E04131009B40F0 /* CommandsMixin.mm */; };
+		1C582FFA27E04131009B40F0 /* CommandsMixin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C582FF827E04131009B40F0 /* CommandsMixin.h */; };
 		1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA92273A41C20095F8D5 /* Instance.mm */; };
 		1C5ACAB6273A426D0095F8D5 /* RenderPipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA98273A426D0095F8D5 /* RenderPipeline.mm */; };
 		1C5ACABB273A426D0095F8D5 /* Buffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA9D273A426D0095F8D5 /* Buffer.mm */; };
@@ -133,6 +135,8 @@
 		1C5319BD27BDC6CB00CD127E /* CommandLinePlayground */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CommandLinePlayground; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C5319BF27BDC6CC00CD127E /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CommandLinePlayground.xcconfig; sourceTree = "<group>"; };
+		1C582FF727E04131009B40F0 /* CommandsMixin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CommandsMixin.mm; sourceTree = "<group>"; };
+		1C582FF827E04131009B40F0 /* CommandsMixin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandsMixin.h; sourceTree = "<group>"; };
 		1C5ACA92273A41C20095F8D5 /* Instance.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Instance.mm; sourceTree = "<group>"; };
 		1C5ACA96273A426D0095F8D5 /* Surface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Surface.h; sourceTree = "<group>"; };
 		1C5ACA97273A426D0095F8D5 /* SwapChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwapChain.h; sourceTree = "<group>"; };
@@ -334,6 +338,8 @@
 				1C5ACAE2273A55CD0095F8D5 /* CommandBuffer.mm */,
 				1C5ACA9E273A426D0095F8D5 /* CommandEncoder.h */,
 				1C5ACAAB273A426D0095F8D5 /* CommandEncoder.mm */,
+				1C582FF827E04131009B40F0 /* CommandsMixin.h */,
+				1C582FF727E04131009B40F0 /* CommandsMixin.mm */,
 				1C5ACAAA273A426D0095F8D5 /* ComputePassEncoder.h */,
 				1C5ACAA8273A426D0095F8D5 /* ComputePassEncoder.mm */,
 				1C5ACAA7273A426D0095F8D5 /* ComputePipeline.h */,
@@ -476,6 +482,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C5ACAD7273A4D700095F8D5 /* BindGroup.h in Headers */,
+				1C582FFA27E04131009B40F0 /* CommandsMixin.h in Headers */,
 				1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
 			);
@@ -722,6 +729,7 @@
 				1C5ACABB273A426D0095F8D5 /* Buffer.mm in Sources */,
 				1C5ACAE3273A55CD0095F8D5 /* CommandBuffer.mm in Sources */,
 				1C5ACAC9273A426E0095F8D5 /* CommandEncoder.mm in Sources */,
+				1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */,
 				1C5ACAC6273A426D0095F8D5 /* ComputePassEncoder.mm in Sources */,
 				1C5ACAC0273A426D0095F8D5 /* ComputePipeline.mm in Sources */,
 				1C5ACAC1273A426D0095F8D5 /* Device.mm in Sources */,

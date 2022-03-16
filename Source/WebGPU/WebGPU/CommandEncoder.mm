@@ -32,13 +32,26 @@
 #import "Device.h"
 #import "QuerySet.h"
 #import "RenderPassEncoder.h"
+#import "Utilities.h"
 
 namespace WebGPU {
 
 RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescriptor& descriptor)
 {
-    UNUSED_PARAM(descriptor);
-    return CommandEncoder::create(nil);
+    if (descriptor.nextInChain)
+        return nullptr;
+
+    // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createcommandencoder
+
+    auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
+    commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
+    id<MTLCommandBuffer> commandBuffer = [getQueue().commandQueue() commandBufferWithDescriptor:commandBufferDescriptor];
+    if (!commandBuffer)
+        return nullptr;
+
+    commandBuffer.label = [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding];
+
+    return CommandEncoder::create(commandBuffer);
 }
 
 CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer)
@@ -47,6 +60,18 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer)
 }
 
 CommandEncoder::~CommandEncoder() = default;
+
+void CommandEncoder::ensureBlitCommandEncoder()
+{
+    if (!m_blitCommandEncoder)
+        m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
+}
+
+void CommandEncoder::finalizeBlitCommandEncoder()
+{
+    if (m_blitCommandEncoder)
+        [m_blitCommandEncoder endEncoding];
+}
 
 RefPtr<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor& descriptor)
 {
@@ -60,13 +85,70 @@ RefPtr<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDe
     return RenderPassEncoder::create(nil);
 }
 
+static bool validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)
+{
+    // FIXME: "source is valid to use with this."
+
+    // FIXME: "destination is valid to use with this."
+
+    // "source.[[usage]] contains COPY_SRC."
+    if (!(source.usage() & WGPUBufferUsage_CopySrc))
+        return false;
+
+    // "destination.[[usage]] contains COPY_DST."
+    if (!(destination.usage() & WGPUBufferUsage_CopyDst))
+        return false;
+
+    // "size is a multiple of 4."
+    if (size % 4)
+        return false;
+
+    // "sourceOffset is a multiple of 4."
+    if (sourceOffset % 4)
+        return false;
+
+    // "destinationOffset is a multiple of 4."
+    if (destinationOffset % 4)
+        return false;
+
+    // FIXME: "(sourceOffset + size) does not overflow a GPUSize64."
+
+    // FIXME: "(destinationOffset + size) does not overflow a GPUSize64."
+
+    // FIXME: "source.[[size]] is greater than or equal to (sourceOffset + size)."
+    // FIXME: Use checked arithmetic
+    if (source.size() < sourceOffset + size)
+        return false;
+
+    // FIXME: "destination.[[size]] is greater than or equal to (destinationOffset + size)."
+    // FIXME: Use checked arithmetic
+    if (destination.size() < destinationOffset + size)
+        return false;
+
+    // FIXME: "source and destination are not the same GPUBuffer."
+    if (&source == &destination)
+        return false;
+
+    return true;
+}
+
 void CommandEncoder::copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)
 {
-    UNUSED_PARAM(source);
-    UNUSED_PARAM(sourceOffset);
-    UNUSED_PARAM(destination);
-    UNUSED_PARAM(destinationOffset);
-    UNUSED_PARAM(size);
+    // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-copybuffertobuffer
+
+    // "Prepare the encoder state of this. If it returns false, stop."
+    if (!prepareTheEncoderState())
+        return;
+
+    // "If any of the following conditions are unsatisfied
+    if (!validateCopyBufferToBuffer(source, sourceOffset, destination, destinationOffset, size)) {
+        // FIXME: "generate a validation error and stop."
+        return;
+    }
+
+    ensureBlitCommandEncoder();
+
+    [m_blitCommandEncoder copyFromBuffer:source.buffer() sourceOffset:static_cast<NSUInteger>(sourceOffset) toBuffer:destination.buffer() destinationOffset:destinationOffset size:size];
 }
 
 void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize)
@@ -97,10 +179,53 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
     UNUSED_PARAM(size);
 }
 
+bool CommandEncoder::validateFinish() const
+{
+    // "Let validationSucceeded be true if all of the following requirements are met, and false otherwise."
+
+    // FIXME: "this must be valid."
+
+    // "this.[[state]] must be "open"."
+    if (m_state != EncoderState::Open)
+        return false;
+
+    // FIXME: "this.[[debug_group_stack]] must be empty."
+
+    // FIXME: "Every usage scope contained in this must satisfy the usage scope validation."
+
+    return true;
+}
+
 RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& descriptor)
 {
-    UNUSED_PARAM(descriptor);
-    return CommandBuffer::create(nil);
+    if (descriptor.nextInChain)
+        return nullptr;
+
+    // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-finish
+
+    // "Let validationSucceeded be true if all of the following requirements are met, and false otherwise."
+    auto validationFailed = !validateFinish();
+
+    // "Set this.[[state]] to "ended"."
+    m_state = EncoderState::Ended;
+
+    // "If validationSucceeded is false, then:"
+    if (validationFailed) {
+        // FIXME: "Generate a validation error."
+
+        // FIXME: "Return a new invalid GPUCommandBuffer."
+        return nullptr;
+    }
+
+    finalizeBlitCommandEncoder();
+
+    // "Set commandBuffer.[[command_list]] to this.[[commands]]."
+    auto *commandBuffer = m_commandBuffer;
+    m_commandBuffer = nil;
+
+    commandBuffer.label = [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding];
+
+    return CommandBuffer::create(commandBuffer);
 }
 
 void CommandEncoder::insertDebugMarker(const char* markerLabel)
