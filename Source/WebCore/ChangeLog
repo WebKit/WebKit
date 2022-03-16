@@ -1,3 +1,21 @@
+2022-03-15  Alan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r282737): `text-shadow` is clipped
+        https://bugs.webkit.org/show_bug.cgi?id=237898
+        <rdar://problem/90320701>
+
+        Reviewed by Darin Adler.
+
+        Inflate the ink overflow rect with the text shadow values (note that here, in the display builder we work with physical coordinates).
+
+        Test: fast/text/text-shadow-ink-overflow-missing.html
+
+        * layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::appendTextDisplayBox):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::getTextShadowHorizontalExtent const):
+        (WebCore::RenderStyle::getTextShadowVerticalExtent const):
+
 2022-03-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] REGRESSION(r291257): Unreviewed, fix build when using ATK

@@ -505,6 +505,7 @@ public:
 
     float outlineOffset() const;
     const ShadowData* textShadow() const { return m_rareInheritedData->textShadow.get(); }
+    LayoutBoxExtent textShadowExtent() const { return shadowExtent(textShadow()); }
     void getTextShadowInlineDirectionExtent(LayoutUnit& logicalLeft, LayoutUnit& logicalRight) const { getShadowInlineDirectionExtent(textShadow(), logicalLeft, logicalRight); }
     void getTextShadowBlockDirectionExtent(LayoutUnit& logicalTop, LayoutUnit& logicalBottom) const { getShadowBlockDirectionExtent(textShadow(), logicalTop, logicalBottom); }
 
