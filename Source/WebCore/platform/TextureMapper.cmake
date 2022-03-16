@@ -51,6 +51,16 @@ if (USE_TEXTURE_MAPPER_GL)
     )
 endif ()
 
+if (USE_TEXTURE_MAPPER_DMABUF)
+    list(APPEND WebCore_SOURCES
+        platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.cpp
+    )
+
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.h
+    )
+endif ()
+
 if (USE_COORDINATED_GRAPHICS)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/page/scrolling/nicosia"

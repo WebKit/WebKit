@@ -50,6 +50,7 @@ public:
     };
 
     static Factory createFactory(Client&);
+    static Factory createFactory(Client&, Ref<WebCore::TextureMapperPlatformLayerProxy>&&);
 
     explicit ContentLayerTextureMapperImpl(Client&, Ref<WebCore::TextureMapperPlatformLayerProxy>&&);
     virtual ~ContentLayerTextureMapperImpl();

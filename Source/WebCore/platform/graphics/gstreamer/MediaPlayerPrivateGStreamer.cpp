@@ -92,6 +92,7 @@
 #include <wtf/text/AtomString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenateNumbers.h>
+#include <wtf/UniStdExtras.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 
@@ -116,6 +117,17 @@
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
 #endif // USE(TEXTURE_MAPPER_GL)
+
+#if USE(TEXTURE_MAPPER_DMABUF)
+#include "DMABufFormat.h"
+#include "DMABufObject.h"
+#include "DMABufVideoSinkGStreamer.h"
+#include "GBMBufferSwapchain.h"
+#include "GBMDevice.h"
+#include "TextureMapperPlatformLayerProxyDMABuf.h"
+#include <gbm.h>
+#include <gst/allocators/gstdmabuf.h>
+#endif // USE(TEXTURE_MAPPER_DMABUF)
 
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
 #include "PlatformDisplayLibWPE.h"
@@ -155,22 +167,32 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_maxTimeLoadedAtLastDidLoadingProgress(MediaTime::zeroTime())
     , m_drawTimer(RunLoop::main(), this, &MediaPlayerPrivateGStreamer::repaint)
     , m_readyTimerHandler(RunLoop::main(), this, &MediaPlayerPrivateGStreamer::readyTimerFired)
-#if USE(TEXTURE_MAPPER_GL)
-#if USE(NICOSIA)
-    , m_nicosiaLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
-#else
+#if USE(TEXTURE_MAPPER_GL) && !USE(NICOSIA)
     , m_platformLayerProxy(adoptRef(new TextureMapperPlatformLayerProxyGL))
-#endif
 #endif
 #if !RELEASE_LOG_DISABLED
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
+#endif
+#if USE(TEXTURE_MAPPER_DMABUF)
+    , m_swapchain(adoptRef(new GBMBufferSwapchain(GBMBufferSwapchain::BufferSwapchainSize::Eight)))
 #endif
 {
 #if USE(GLIB)
     m_readyTimerHandler.setPriority(G_PRIORITY_DEFAULT_IDLE);
 #endif
     m_isPlayerShuttingDown.store(false);
+
+#if USE(TEXTURE_MAPPER_GL) && USE(NICOSIA)
+    m_nicosiaLayer = Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this,
+        [&]() -> Ref<TextureMapperPlatformLayerProxy> {
+#if USE(TEXTURE_MAPPER_DMABUF)
+            if (webKitDMABufVideoSinkIsEnabled() && webKitDMABufVideoSinkProbePlatform())
+                return adoptRef(*new TextureMapperPlatformLayerProxyDMABuf);
+#endif
+            return adoptRef(*new TextureMapperPlatformLayerProxyGL);
+        }()));
+#endif
 
     ensureGStreamerInitialized();
     m_audioSink = createAudioSink();
@@ -2871,7 +2893,7 @@ bool MediaPlayerPrivateGStreamer::performTaskAtMediaTime(Function<void()>&& task
 PlatformLayer* MediaPlayerPrivateGStreamer::platformLayer() const
 {
 #if USE(NICOSIA)
-    return m_nicosiaLayer.ptr();
+    return m_nicosiaLayer.get();
 #else
     return const_cast<MediaPlayerPrivateGStreamer*>(this);
 #endif
@@ -2984,6 +3006,233 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
 #endif
 }
 #endif // USE(TEXTURE_MAPPER_GL)
+
+#if USE(TEXTURE_MAPPER_DMABUF)
+// GStreamer's gst_video_format_to_fourcc() doesn't cover RGB-like formats, so we
+// provide the appropriate FourCC values for those through this funcion.
+static uint32_t fourccValue(GstVideoFormat format)
+{
+    switch (format) {
+    case GST_VIDEO_FORMAT_RGBx:
+        return uint32_t(DMABufFormat::FourCC::XBGR8888);
+    case GST_VIDEO_FORMAT_BGRx:
+        return uint32_t(DMABufFormat::FourCC::XRGB8888);
+    case GST_VIDEO_FORMAT_xRGB:
+        return uint32_t(DMABufFormat::FourCC::BGRX8888);
+    case GST_VIDEO_FORMAT_xBGR:
+        return uint32_t(DMABufFormat::FourCC::RGBX8888);
+    case GST_VIDEO_FORMAT_RGBA:
+        return uint32_t(DMABufFormat::FourCC::ABGR8888);
+    case GST_VIDEO_FORMAT_BGRA:
+        return uint32_t(DMABufFormat::FourCC::ARGB8888);
+    case GST_VIDEO_FORMAT_ARGB:
+        return uint32_t(DMABufFormat::FourCC::BGRA8888);
+    case GST_VIDEO_FORMAT_ABGR:
+        return uint32_t(DMABufFormat::FourCC::RGBA8888);
+    default:
+        break;
+    }
+
+    return gst_video_format_to_fourcc(format);
+}
+
+void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
+{
+    Locker sampleLocker { m_sampleMutex };
+    if (!GST_IS_SAMPLE(m_sample.get()))
+        return;
+
+    auto* caps = gst_sample_get_caps(m_sample.get());
+    if (!caps)
+        return;
+
+    GstVideoInfo videoInfo;
+    gst_video_info_init(&videoInfo);
+    if (!gst_video_info_from_caps(&videoInfo, caps))
+        return;
+
+    auto* buffer = gst_sample_get_buffer(m_sample.get());
+    if (!buffer)
+        return;
+
+    auto* meta = gst_buffer_get_video_meta(buffer);
+    if (meta) {
+        GST_VIDEO_INFO_WIDTH(&videoInfo) = meta->width;
+        GST_VIDEO_INFO_HEIGHT(&videoInfo) = meta->height;
+
+        for (unsigned i = 0; i < meta->n_planes; ++i) {
+            GST_VIDEO_INFO_PLANE_OFFSET(&videoInfo, i) = meta->offset[i];
+            GST_VIDEO_INFO_PLANE_STRIDE(&videoInfo, i) = meta->stride[i];
+        }
+    }
+
+    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy();
+    ASSERT(is<TextureMapperPlatformLayerProxyDMABuf>(proxy));
+
+    auto* features = gst_caps_get_features(caps, 0);
+    if (gst_caps_features_contains(features, GST_CAPS_FEATURE_MEMORY_DMABUF)) {
+        // In case of a hardware decoder that's yielding dmabuf memory, we can take the relevant data and
+        // push it into the composition process.
+
+        ++m_sampleCount;
+        Locker locker { proxy.lock() };
+        if (!proxy.isActive())
+            return;
+
+        // Provide the DMABufObject with a relevant handle (memory address). When provided for the first time,
+        // the lambda will be invoked and all dmabuf data is filled in.
+        downcast<TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(
+            DMABufObject(reinterpret_cast<uintptr_t>(gst_buffer_peek_memory(buffer, 0))),
+            [&](auto&& object) {
+                object.format = DMABufFormat::create(fourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo)));
+                object.width = GST_VIDEO_INFO_WIDTH(&videoInfo);
+                object.height = GST_VIDEO_INFO_HEIGHT(&videoInfo);
+
+                // TODO: release mechanism for a decoder-provided dmabuf is a bit tricky. The dmabuf object
+                // itself doesn't provide anything useful, but the decoder won't reuse the dmabuf until the
+                // relevant GstSample reference is dropped by the downstream pipeline. So for this to work,
+                // there's a need to somehow associate the GstSample reference with this release flag so that
+                // the reference is dropped once the release flag is signalled. There's ways to achieve that,
+                // but left for later.
+                object.releaseFlag = DMABufReleaseFlag { };
+
+                // For each plane, the relevant data (stride, offset, skip, dmabuf fd) is retrieved and assigned
+                // as appropriate. Modifier values are zeroed out for now, since GStreamer doesn't yet provide
+                // the information.
+                for (unsigned i = 0; i < object.format.numPlanes; ++i) {
+                    gsize offset = GST_VIDEO_INFO_PLANE_OFFSET(&videoInfo, i);
+                    guint memid = 0;
+                    guint length = 0;
+                    gsize skip = 0;
+                    if (gst_buffer_find_memory(buffer, offset, 1, &memid, &length, &skip)) {
+                        auto* mem = gst_buffer_peek_memory(buffer, memid);
+                        object.fd[i] = dupCloseOnExec(gst_dmabuf_memory_get_fd(mem));
+                        offset = mem->offset + skip;
+                    } else
+                        object.fd[i] = -1;
+
+                    gint comp[GST_VIDEO_MAX_COMPONENTS];
+                    gst_video_format_info_component(videoInfo.finfo, i, comp);
+                    object.offset[i] = offset;
+                    object.stride[i] = GST_VIDEO_INFO_PLANE_STRIDE(&videoInfo, i);
+                    object.modifier[i] = 0;
+                }
+                return object;
+            });
+        return;
+    }
+
+    // If the decoder is exporting raw memory, we have to use the swapchain to allocate appropriate buffers
+    // and copy over the data for each plane.
+    GBMBufferSwapchain::BufferDescription bufferDescription {
+        DMABufFormat::create(fourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo))),
+        GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo),
+    };
+    if (bufferDescription.format.fourcc == DMABufFormat::FourCC::Invalid)
+        return;
+
+    auto swapchainBuffer = m_swapchain->getBuffer(bufferDescription);
+
+    // Source helper struct, maps the raw memory and exposes the mapped data for copying.
+    struct Source {
+        Source(GstMemory* memory, gsize offset, uint32_t stride, uint32_t height)
+            : memory(memory)
+            , stride(stride)
+            , height(height)
+        {
+            if (!gst_memory_map(memory, &mapInfo, GST_MAP_READ))
+                return;
+
+            valid = true;
+            data = &mapInfo.data[offset];
+        }
+
+        ~Source()
+        {
+            if (valid)
+                gst_memory_unmap(memory, &mapInfo);
+        }
+
+        bool valid { false };
+        GstMemory* memory { nullptr };
+        GstMapInfo mapInfo;
+        uint8_t* data { nullptr };
+        uint32_t stride { 0 };
+        uint32_t height { 0 };
+    };
+
+    // Destination helper struct, maps the gbm_bo object into CPU-memory space and copies from the accompanying Source in fill().
+    struct Destination {
+        Destination(struct gbm_bo* bo, uint32_t width, uint32_t height)
+            : bo(bo)
+        {
+            map = gbm_bo_map(bo, 0, 0, width, height, GBM_BO_TRANSFER_WRITE, &stride, &mapData);
+            if (!map)
+                return;
+
+            valid = true;
+            data = reinterpret_cast<uint8_t*>(map);
+        }
+
+        ~Destination()
+        {
+            if (valid)
+                gbm_bo_unmap(bo, mapData);
+        }
+
+        void fill(const Source& source)
+        {
+            for (uint32_t y = 0; y < source.height; ++y) {
+                auto* sourceData = &source.data[y * source.stride];
+                auto* destinationData = &data[y * stride];
+                memcpy(destinationData, sourceData, std::min(source.stride, stride));
+            }
+        }
+
+        bool valid { false };
+        struct gbm_bo* bo { nullptr };
+        void* map { nullptr };
+        void* mapData { nullptr };
+        uint8_t* data { nullptr };
+        uint32_t stride { 0 };
+    };
+
+    for (unsigned i = 0; i < GST_VIDEO_INFO_N_PLANES(&videoInfo); ++i) {
+        gint comp[GST_VIDEO_MAX_COMPONENTS];
+        gst_video_format_info_component(videoInfo.finfo, i, comp);
+
+        auto& planeData = swapchainBuffer->planeData(i);
+        gsize offset = GST_VIDEO_INFO_PLANE_OFFSET(&videoInfo, i);
+        guint stride = GST_VIDEO_INFO_PLANE_STRIDE(&videoInfo, i);
+
+        guint memid, length;
+        gsize skip;
+        if (gst_buffer_find_memory(buffer, offset, 1, &memid, &length, &skip)) {
+            auto* mem = gst_buffer_peek_memory(buffer, memid);
+
+            Source source(mem, offset, stride, planeData.height);
+            Destination destination(planeData.bo, planeData.width, planeData.height);
+
+            if (source.valid && destination.valid)
+                destination.fill(source);
+        }
+    }
+
+    ++m_sampleCount;
+    Locker locker { proxy.lock() };
+    if (!proxy.isActive())
+        return;
+
+    // The updated buffer is pushed into the composition stage. The DMABufObject handle uses the swapchain address as the handle base.
+    // When the buffer is pushed for the first time, the lambda will be invoked to retrieve a more complete DMABufObject for the
+    // given GBMBufferSwapchain::Buffer object.
+    downcast<TextureMapperPlatformLayerProxyDMABuf>(proxy).pushDMABuf(
+        DMABufObject(reinterpret_cast<uintptr_t>(m_swapchain.get()) + swapchainBuffer->handle()),
+        [&](auto&& object) {
+            return swapchainBuffer->createDMABufObject(object.handle);
+        });
+}
+#endif // USE(TEXTURE_MAPPER_DMABUF)
 
 void MediaPlayerPrivateGStreamer::repaint()
 {
@@ -3189,8 +3438,16 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
 #endif
         m_drawTimer.startOneShot(0_s);
         m_drawCondition.wait(m_drawLock);
-    } else
+    } else {
+#if USE(NICOSIA) && USE(TEXTURE_MAPPER_DMABUF)
+        if (is<TextureMapperPlatformLayerProxyDMABuf>(downcast<Nicosia::ContentLayerTextureMapperImpl>(m_nicosiaLayer->impl()).proxy())) {
+            pushDMABufToCompositor();
+            return;
+        }
+#endif
+
         pushTextureToCompositor();
+    }
 #endif // USE(TEXTURE_MAPPER_GL)
 }
 
@@ -3430,6 +3687,23 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamer::movieLoadType() const
     return MediaPlayer::MovieLoadType::Download;
 }
 
+#if USE(TEXTURE_MAPPER_DMABUF)
+GstElement* MediaPlayerPrivateGStreamer::createVideoSinkDMABuf()
+{
+    if (!webKitDMABufVideoSinkIsEnabled())
+        return nullptr;
+    if (!webKitDMABufVideoSinkProbePlatform()) {
+        g_warning("WebKit wasn't able to find the DMABuf video sink dependencies. Hardware-accelerated zero-copy video rendering won't be achievable with this plugin.");
+        return nullptr;
+    }
+
+    GstElement* sink = gst_element_factory_make("webkitdmabufvideosink", nullptr);
+    ASSERT(sink);
+    webKitDMABufVideoSinkSetMediaPlayerPrivate(WEBKIT_DMABUF_VIDEO_SINK(sink), this);
+    return sink;
+}
+#endif
+
 #if USE(GSTREAMER_GL)
 GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
 {
@@ -3521,8 +3795,12 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
     return m_videoSink.get();
 #endif
 
+#if USE(TEXTURE_MAPPER_DMABUF)
+    if (!m_videoSink && m_canRenderingBeAccelerated)
+        m_videoSink = createVideoSinkDMABuf();
+#endif
 #if USE(GSTREAMER_GL)
-    if (m_canRenderingBeAccelerated)
+    if (!m_videoSink && m_canRenderingBeAccelerated)
         m_videoSink = createVideoSinkGL();
 #endif
 

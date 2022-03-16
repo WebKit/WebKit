@@ -1,3 +1,138 @@
+2022-03-16  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Provide DMABuf-based composition layers, DMABufVideoSink integration
+        https://bugs.webkit.org/show_bug.cgi?id=237328
+        <rdar://problem/90295492>
+
+        Reviewed by Alejandro G. Castro.
+
+        Introduce TextureMapperPlatformLayerProxyDMABuf, a TextureMapper proxy
+        implementation that handles platform layers backed by dmabuf objects.
+        This will be used to handle display of dmabuf producers like GStreamer
+        pipelines or ANGLE-backed WebGL contexts. The DMABufLayer class is the
+        platform layer object, handling display of the actual dmabuf. The proxy
+        itself is tasked with creating and caching such layers for any dmabuf
+        object that originates from the producer.
+
+        For each dmabuf object pushed into the proxy, the according DMABufLayer
+        object is spawned and cached for future reuse, expecting the producer
+        to be able to provide dmabufs from a pool or swapchain of these objects.
+        The cache is emptied whenever dmabufs go unused for a certain amount of
+        swaps, or if the size of the provided dmabufs changes.
+
+        DMABufFormat provides information for different DRM formats, for
+        instance how different planes for specific formats are formatted and
+        sized.
+
+        DMABufObject is a class that handles a given grouping of dmabufs
+        according to the specified format. It has an associated handle value,
+        size, and per-plane dmabuf file descriptors, offsets, strides and
+        modifiers, along with a DMABufReleaseFlag instance.
+
+        DMABufReleaseFlag objects are used as an eventfd-based release mechanism
+        that indicates to the producer that the given DMABufObject has been
+        presented and subsequently released and is thus available for reuse.
+
+        GBMBufferSwapchain provides a custom swapchain implementation that's
+        based on libgbm functionality. Each such swapchain has a capacity
+        specified during construction, with the capacities of four or eight
+        currently supported. getBuffer() is called by the producer to obtain a
+        buffer object that's then used for backing of specific content like
+        ANGLE execution or media's software-decoded video frames. Buffers
+        obtained this way are moved over to the end of the buffer array, with
+        the expectation of reusing them once they are released by the
+        composition engine.
+
+        MediaPlayerPrivateGStreamer implementation is enhanced to use the
+        recently-added WebKitDMABufVideoSink element if its use is enabled
+        through the development-purpose environment variable and if the
+        necessary GStreamer facilities are present on the system. When these
+        conditions are met, the Nicosia::ContentLayer instance is also
+        constructed with a TextureMapperPlatformLayerProxyDMABuf instance, since
+        we expect to present the dmabufs through that functionality.
+
+        With the WebKitDMABufVideoSink, the incoming samples are either based
+        on dmabufs (in case of dmabuf-capable hardware decoder) or are just raw
+        data (most likely coming from a software-based decoder). In case of
+        dmabufs we can use the GstMemory pointer as the handle through which
+        the relevant data is cached in TextureMapperPlatformLayerProxyDMABuf,
+        and upon the first occurrence we retrieve all the relevant dmabuf data
+        so that it can be used by that proxy implementation to construct a
+        renderable EGLImage.
+
+        In case of software-decoded raw data, we have to use the swapchain
+        object and copy the data on a per-plane basis for each such sample,
+        finally pushing the dmabuf data of that swapchain buffer into the
+        TextureMapperPlatformLayerProxyDMABuf instance.
+
+        Changes around TextureMapperPlatformLayerProxyDMABuf and GStreamer
+        integration are guarded with USE(TEXTURE_MAPPER_DMABUF). No port yet
+        enables this build guard, but this will be handled later. Similarly,
+        the code specific to libgbm will also be guarded in a separate set of
+        changes.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * platform/TextureMapper.cmake:
+        * platform/graphics/gbm/DMABufFormat.h: Added.
+        (WebCore::DMABufFormatImpl::createFourCC):
+        (WebCore::DMABufFormat::planeWidth const):
+        (WebCore::DMABufFormat::planeHeight const):
+        (WebCore::DMABufFormat::Plane::Plane):
+        (WebCore::DMABufFormatImpl::createSinglePlaneRGBA):
+        (WebCore::DMABufFormatImpl::definePlane):
+        (WebCore::DMABufFormat::instantiate):
+        (WebCore::DMABufFormat::create):
+        * platform/graphics/gbm/DMABufObject.h: Added.
+        (WebCore::DMABufObject::DMABufObject):
+        (WebCore::DMABufObject::~DMABufObject):
+        (WebCore::DMABufObject::operator=):
+        * platform/graphics/gbm/DMABufReleaseFlag.h: Added.
+        (WebCore::DMABufReleaseFlag::DMABufReleaseFlag):
+        (WebCore::DMABufReleaseFlag::~DMABufReleaseFlag):
+        (WebCore::DMABufReleaseFlag::operator=):
+        (WebCore::DMABufReleaseFlag::dup const):
+        (WebCore::DMABufReleaseFlag::released const):
+        (WebCore::DMABufReleaseFlag::release):
+        * platform/graphics/gbm/GBMBufferSwapchain.cpp: Added.
+        (WebCore::GBMBufferSwapchain::GBMBufferSwapchain):
+        (WebCore::GBMBufferSwapchain::getBuffer):
+        (WebCore::GBMBufferSwapchain::Buffer::Buffer):
+        (WebCore::GBMBufferSwapchain::Buffer::createDMABufObject const):
+        (WebCore::GBMBufferSwapchain::Buffer::PlaneData::~PlaneData):
+        * platform/graphics/gbm/GBMBufferSwapchain.h: Added.
+        (WebCore::GBMBufferSwapchain::Buffer::handle const):
+        (WebCore::GBMBufferSwapchain::Buffer::numPlanes const):
+        (WebCore::GBMBufferSwapchain::Buffer::planeData const):
+        * platform/graphics/gstreamer/DMABufVideoSinkGStreamer.cpp:
+        (webKitDMABufVideoSinkIsEnabled):
+        (webKitDMABufVideoSinkSetMediaPlayerPrivate):
+        * platform/graphics/gstreamer/DMABufVideoSinkGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::platformLayer const):
+        (WebCore::fourccValue):
+        (WebCore::MediaPlayerPrivateGStreamer::pushDMABufToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSinkDMABuf):
+        (WebCore::MediaPlayerPrivateGStreamer::createVideoSink):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.cpp:
+        (Nicosia::ContentLayerTextureMapperImpl::createFactory):
+        * platform/graphics/nicosia/texmap/NicosiaContentLayerTextureMapperImpl.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.cpp: Added.
+        (WebCore::createImageKHR):
+        (WebCore::destroyImageKHR):
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::EGLImageData::~EGLImageData):
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::activateOnCompositingThread):
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::invalidate):
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::swapBuffer):
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::pushDMABuf):
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::DMABufLayer):
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::paintToTextureMapper):
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::DMABufLayer::createEGLImageData):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.h: Added.
+
 2022-03-16  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Debug build assertion, TextureMapperPlatformLayerProxyGL asserts when going back in the minibrowser
