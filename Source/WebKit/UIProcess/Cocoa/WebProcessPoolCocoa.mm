@@ -113,8 +113,8 @@
 #import "WKStylusDeviceObserver.h"
 #endif
 
-#if __has_include(<AVKit/AVKitPictureInPictureController.h>)
-#import <AVKit/AVKitPictureInPictureController.h>
+#if __has_include(<AVKit/AVPictureInPictureController.h>)
+#import <AVKit/AVPictureInPictureController.h>
 #endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
@@ -420,7 +420,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if PLATFORM(IOS_FAMILY)
     parameters.currentUserInterfaceIdiomIsSmallScreen = currentUserInterfaceIdiomIsSmallScreen();
-#if ENABLE(VIDEO_PRESENTATION_MODE) && __has_include(<AVKit/AVKitPictureInPictureController.h>)
+#if ENABLE(VIDEO_PRESENTATION_MODE) && !PLATFORM(WATCHOS) && __has_include(<AVKit/AVPictureInPictureController.h>)
     parameters.supportsPictureInPicture = [AVPictureInPictureController isPictureInPictureSupported];
 #else
     parameters.supportsPictureInPicture = false;
