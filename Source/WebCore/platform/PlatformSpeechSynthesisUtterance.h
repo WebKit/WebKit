@@ -65,7 +65,12 @@ public:
     
     PlatformSpeechSynthesisUtteranceClient* client() const { return m_client; }
     void setClient(PlatformSpeechSynthesisUtteranceClient* client) { m_client = client; }
-    
+
+#if PLATFORM(COCOA)
+    id wrapper() const { return m_wrapper.get(); }
+    void setWrapper(id utterance) { m_wrapper = utterance; }
+#endif
+
 private:
     explicit PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient&);
 
@@ -77,6 +82,10 @@ private:
     float m_rate { 1 };
     float m_pitch { 1 };
     MonotonicTime m_startTime;
+
+#if PLATFORM(COCOA)
+    RetainPtr<id> m_wrapper;
+#endif
 };
     
 } // namespace WebCore

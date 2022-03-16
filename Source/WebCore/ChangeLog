@@ -1,3 +1,29 @@
+2022-03-16  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: imported/w3c/web-platform-tests/speech-api/SpeechSynthesis (layout-tests) are constant text failures
+        https://bugs.webkit.org/show_bug.cgi?id=237881
+        <rdar://problem/90293806>
+
+        Reviewed by Andres Gonzalez.
+
+        Keep track of the platform utterances so that we can verify the callbacks are for the ones we are interested in.
+        This test failure was due to a previous speech job that was canceled (before a new one started). When the callback for
+        the last one came back, it wiped out the stored new one.
+
+        Fixed test: imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-speak-events.html.
+
+        * platform/PlatformSpeechSynthesisUtterance.h:
+        (WebCore::PlatformSpeechSynthesisUtterance::platformSpeechUtteranceWrapper const):
+        (WebCore::PlatformSpeechSynthesisUtterance::setPlatformSpeechUtteranceWrapper):
+        * platform/cocoa/PlatformSpeechSynthesizerCocoa.mm:
+        (-[WebSpeechSynthesisWrapper speakUtterance:]):
+        (-[WebSpeechSynthesisWrapper speechSynthesizer:didStartSpeechUtterance:]):
+        (-[WebSpeechSynthesisWrapper speechSynthesizer:didFinishSpeechUtterance:]):
+        (-[WebSpeechSynthesisWrapper speechSynthesizer:didPauseSpeechUtterance:]):
+        (-[WebSpeechSynthesisWrapper speechSynthesizer:didContinueSpeechUtterance:]):
+        (-[WebSpeechSynthesisWrapper speechSynthesizer:didCancelSpeechUtterance:]):
+        (-[WebSpeechSynthesisWrapper speechSynthesizer:willSpeakRangeOfSpeechString:utterance:]):
+
 2022-03-16  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Provide DMABuf-based composition layers, DMABufVideoSink integration
