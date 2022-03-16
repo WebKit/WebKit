@@ -1,3 +1,18 @@
+2022-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r291191): [iOS] ASSERTION FAILED: m_contentsBufferHandle in WebKit::RemoteLayerBackingStore::paintContents()
+        https://bugs.webkit.org/show_bug.cgi?id=237922
+
+        Reviewed by Geoffrey Garen.
+
+        The assertion added in r291191 is incorrect. With that change, we end up calling
+        RemoteLayerBackingStore::paintContents() on WebGL layers (which use delegated display)
+        when we used to just early return from display(). So it's OK for m_frontBuffer.imageBuffer
+        to be null on these layers.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::paintContents):
+
 2022-03-15  Eric Carlson  <eric.carlson@apple.com>
 
         Video poster disappears prematurely on play, leaving transparent video element.

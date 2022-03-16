@@ -351,10 +351,8 @@ SwapBuffersDisplayRequirement RemoteLayerBackingStore::prepareBuffers(bool hasEm
 
 void RemoteLayerBackingStore::paintContents()
 {
-    if (!m_frontBuffer.imageBuffer) {
-        ASSERT(m_contentsBufferHandle);
+    if (!m_frontBuffer.imageBuffer)
         return;
-    }
 
     if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
         return;
