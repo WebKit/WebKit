@@ -1,5 +1,28 @@
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement queue submission methods according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=237869
+
+        Reviewed by Kimmo Kinnunen.
+
+        Now that we can enqueue tasks to the main thread (https://bugs.webkit.org/show_bug.cgi?id=237852)
+        we can now implement Queue::onSubmittedWorkDone() and Queue::submit(). The way it works is pretty
+        simple - there's a count of the number of submitted command buffers (m_submittedCommandBufferCount)
+        and the number of completed command buffers (m_completedCommandBufferCount). When the two values
+        are equal, the queue is idle, and the onSubmittedWorkDone() work should happen the next time the
+        runloop turns. Otherwise, we stick the work in a HashMap, keyed by the value that
+        m_completedCommandBufferCount will have to become at the point this callback should run.
+
+        * WebGPU/Queue.h:
+        (WebGPU::Queue::commandQueue const):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::onSubmittedWorkDone):
+        (WebGPU::Queue::validateSubmit const):
+        (WebGPU::Queue::submit):
+        * WebGPU/TextureView.mm:
+
+2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Create a path of Ref<>s between Instance and Queue
         https://bugs.webkit.org/show_bug.cgi?id=237864
 

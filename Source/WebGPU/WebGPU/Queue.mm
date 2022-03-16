@@ -40,15 +40,63 @@ Queue::Queue(id<MTLCommandQueue> commandQueue, Device& device)
 
 Queue::~Queue() = default;
 
-void Queue::onSubmittedWorkDone(uint64_t signalValue, CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback)
+void Queue::onSubmittedWorkDone(uint64_t, CompletionHandler<void(WGPUQueueWorkDoneStatus)>&& callback)
 {
-    UNUSED_PARAM(signalValue);
-    UNUSED_PARAM(callback);
+    // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-onsubmittedworkdone
+
+    ASSERT(m_submittedCommandBufferCount >= m_completedCommandBufferCount);
+
+    if (m_submittedCommandBufferCount == m_completedCommandBufferCount) {
+        scheduleWork([callback = WTFMove(callback)]() mutable {
+            callback(WGPUQueueWorkDoneStatus_Success);
+        });
+        return;
+    }
+
+    auto& callbacks = m_onSubmittedWorkDoneCallbacks.add(m_submittedCommandBufferCount, OnSubmittedWorkDoneCallbacks()).iterator->value;
+    callbacks.append(WTFMove(callback));
+}
+
+bool Queue::validateSubmit() const
+{
+    // FIXME: "Every {{GPUCommandBuffer}} in |commandBuffers| is [$valid to use with$] |this|."
+
+    // FIXME: "Every GPUBuffer referenced in any element of commandBuffers is in the "unmapped" buffer state."
+
+    // FIXME: "Every GPUQuerySet referenced in a command in any element of commandBuffers is in the available state."
+    // FIXME: "For occlusion queries, occlusionQuerySet in beginRenderPass() does not constitute a reference, while beginOcclusionQuery() does."
+
+    // There's only one queue right now, so there is no need to make sure that the command buffers are being submitted to the correct queue.
+
+    return true;
 }
 
 void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands)
 {
-    UNUSED_PARAM(commands);
+    // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-submit
+
+    // "If any of the following conditions are unsatisfied"
+    if (!validateSubmit()) {
+        // FIXME: "generate a validation error and stop."
+        return;
+    }
+
+    // "For each commandBuffer in commandBuffers:"
+    for (auto commandBuffer : commands) {
+        ASSERT(commandBuffer.get().commandBuffer().commandQueue == m_commandQueue); //
+        [commandBuffer.get().commandBuffer() addCompletedHandler:[protectedThis = Ref { *this }] (id<MTLCommandBuffer>) {
+            protectedThis->scheduleWork([protectedThis = protectedThis.copyRef()]() {
+                ++(protectedThis->m_completedCommandBufferCount);
+                for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
+                    callback(WGPUQueueWorkDoneStatus_Success);
+            });
+        }];
+
+        // "Execute each command in commandBuffer.[[command_list]]."
+        [commandBuffer.get().commandBuffer() commit];
+    }
+
+    m_submittedCommandBufferCount += commands.size();
 }
 
 void Queue::writeBuffer(const Buffer& buffer, uint64_t bufferOffset, const void* data, size_t size)

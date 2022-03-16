@@ -40,7 +40,7 @@ void TextureView::setLabel(const char* label)
     m_texture.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
 }
 
-}
+} // namespace WebGPU
 
 void wgpuTextureViewRelease(WGPUTextureView textureView)
 {

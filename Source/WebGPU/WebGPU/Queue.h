@@ -28,6 +28,7 @@
 #import "Instance.h"
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/HashMap.h>
 #import <wtf/Ref.h>
 #import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/Vector.h>
@@ -54,14 +55,23 @@ public:
     void writeTexture(const WGPUImageCopyTexture& destination, const void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize);
     void setLabel(const char*);
 
+    id<MTLCommandQueue> commandQueue() const { return m_commandQueue; }
+
 private:
     Queue(id<MTLCommandQueue>, Device&);
+
+    bool validateSubmit() const;
 
     // This can be called on a background thread.
     void scheduleWork(Instance::WorkItem&&);
 
     id<MTLCommandQueue> m_commandQueue { nil };
     Device& m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
+
+    uint64_t m_submittedCommandBufferCount { 0 };
+    uint64_t m_completedCommandBufferCount { 0 };
+    using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(WGPUQueueWorkDoneStatus)>>;
+    HashMap<uint64_t, OnSubmittedWorkDoneCallbacks> m_onSubmittedWorkDoneCallbacks;
 };
 
 } // namespace WebGPU
