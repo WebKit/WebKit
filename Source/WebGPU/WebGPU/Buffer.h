@@ -25,19 +25,30 @@
 
 #pragma once
 
+#import <utility>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
+#import <wtf/Range.h>
+#import <wtf/RangeSet.h>
 #import <wtf/Ref.h>
-#import <wtf/RefCounted.h>
+#import <wtf/ThreadSafeRefCounted.h>
 
 namespace WebGPU {
 
-class Buffer : public RefCounted<Buffer> {
+class Device;
+
+class Buffer : public ThreadSafeRefCounted<Buffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Buffer> create(id<MTLBuffer> buffer)
+    enum class State : uint8_t;
+    struct MappingRange {
+        size_t beginOffset; // Inclusive
+        size_t endOffset; // Exclusive
+    };
+
+    static Ref<Buffer> create(id<MTLBuffer> buffer, uint64_t size, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
     {
-        return adoptRef(*new Buffer(buffer));
+        return adoptRef(*new Buffer(buffer, size, usage, initialState, initialMappingRange, device));
     }
 
     ~Buffer();
@@ -49,12 +60,41 @@ public:
     void unmap();
     void setLabel(const char*);
 
+    // https://gpuweb.github.io/gpuweb/#buffer-state
+    // Each GPUBuffer has a current buffer state on the Content timeline which is one of the following:
+    enum class State : uint8_t {
+        Mapped, // "where the GPUBuffer is available for CPU operations on its content."
+        MappedAtCreation, // "where the GPUBuffer was just created and is available for CPU operations on its content."
+        MappingPending, // "where the GPUBuffer is being made available for CPU operations on its content."
+        Unmapped, // "where the GPUBuffer is available for GPU operations."
+        Destroyed, // "where the GPUBuffer is no longer available for any operations except destroy."
+    };
+
     id<MTLBuffer> buffer() const { return m_buffer; }
+    size_t size() const { return m_size; }
+    WGPUBufferUsageFlags usage() const { return m_usage; }
 
 private:
-    Buffer(id<MTLBuffer>);
+    Buffer(id<MTLBuffer>, uint64_t size, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);
+
+    bool validateGetMappedRange(size_t offset, size_t rangeSize) const;
+    bool validateMapAsync(WGPUMapModeFlags, size_t offset, size_t rangeSize) const;
+    bool validateUnmap() const;
 
     id<MTLBuffer> m_buffer { nil };
+
+    // https://gpuweb.github.io/gpuweb/#buffer-interface
+    // "GPUBuffer has the following internal slots:"
+    const size_t m_size { 0 }; // "The length of the GPUBuffer allocation in bytes."
+    const WGPUBufferUsageFlags m_usage { 0 }; // "The allowed usages for this GPUBuffer."
+    State m_state { State::Unmapped }; // "The current state of the GPUBuffer."
+    // "[[mapping]] of type ArrayBuffer or Promise or null." This is unnecessary; we can just use m_device.contents.
+    MappingRange m_mappingRange { 0, 0 }; // "[[mapping_range]] of type list<unsigned long long> or null."
+    using MappedRanges = RangeSet<Range<size_t>>;
+    MappedRanges m_mappedRanges; // "[[mapped_ranges]] of type list<ArrayBuffer> or null."
+    WGPUMapModeFlags m_mapMode { WGPUMapMode_None }; // "The GPUMapModeFlags of the last call to mapAsync() (if any)."
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

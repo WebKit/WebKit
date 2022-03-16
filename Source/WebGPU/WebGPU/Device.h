@@ -85,6 +85,7 @@ public:
     void setLabel(const char*);
 
     Instance& instance() { return m_instance; }
+    bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, Instance&);

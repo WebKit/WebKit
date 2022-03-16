@@ -1,5 +1,41 @@
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement first draft of buffer mapping according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=237870
+
+        Reviewed by Kimmo Kinnunen.
+
+        Implement the various GPUBuffer methods, according to the algorithms in the spec.
+        There are a few things which the spec lists which we can't do yet (like reporting
+        validation errors), so those things are left with FIXMEs. Every step is listed with
+        links to the spec where appropriate, and with quotes to the spec describing what
+        is being implemented.
+
+        * WebGPU.xcodeproj/project.pbxproj:
+        * WebGPU/Buffer.h:
+        (WebGPU::Buffer::create):
+        (WebGPU::Buffer::size const):
+        (WebGPU::Buffer::usage const):
+        * WebGPU/Buffer.mm:
+        (WebGPU::validateDescriptor):
+        (WebGPU::validateCreateBuffer):
+        (WebGPU::storageMode):
+        (WebGPU::Device::createBuffer):
+        (WebGPU::Buffer::Buffer):
+        (WebGPU::Buffer::destroy):
+        (WebGPU::Buffer::getConstMappedRange):
+        (WebGPU::Buffer::validateGetMappedRange const):
+        (WebGPU::Buffer::getMappedRange):
+        (WebGPU::Buffer::validateMapAsync const):
+        (WebGPU::Buffer::mapAsync):
+        (WebGPU::Buffer::validateUnmap const):
+        (WebGPU::Buffer::unmap):
+        * WebGPU/Device.h:
+        * WebGPU/Device.mm:
+        (WebGPU::Device::Device):
+
+2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement queue submission methods according to the spec
         https://bugs.webkit.org/show_bug.cgi?id=237869
 

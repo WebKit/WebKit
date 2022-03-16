@@ -1,3 +1,14 @@
+2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Implement first draft of buffer mapping according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=237870
+
+        Reviewed by Kimmo Kinnunen.
+
+        WTF classes usually have 'using' statements so users don't have to qualify all uses.
+
+        * wtf/Range.h:
+
 2022-03-15  Patrick Griffis  <pgriffis@igalia.com>
 
         Add initial implementation of Fetch Metadata
