@@ -1,3 +1,21 @@
+2022-03-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Concurrent byteOffsetImpl should not assume non-detached array-buffer
+        https://bugs.webkit.org/show_bug.cgi?id=237935
+
+        Reviewed by Saam Barati.
+
+        r279707 is not enough to fix the issue since underlying ArrayBuffer can be also detached concurrently to
+        the compiler thread too. This patch fixes it by using dataWithoutPACValidation in the concurrent compiler
+        thread.
+
+        * runtime/ArrayBuffer.h:
+        (JSC::ArrayBufferContents::dataWithoutPACValidation const):
+        (JSC::ArrayBuffer::dataWithoutPACValidation):
+        (JSC::ArrayBuffer::dataWithoutPACValidation const):
+        * runtime/JSArrayBufferViewInlines.h:
+        (JSC::JSArrayBufferView::byteOffsetImpl):
+
 2022-03-14  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GLib] Expose typed arrays in the public API

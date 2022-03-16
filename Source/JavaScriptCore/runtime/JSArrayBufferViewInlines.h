@@ -91,16 +91,21 @@ inline ResultType JSArrayBufferView::byteOffsetImpl()
 
     ArrayBuffer* buffer = possiblySharedBufferImpl<requester>();
     ASSERT(buffer);
-    if (requester == Mutator) {
+    ptrdiff_t delta = 0;
+    if constexpr (requester == Mutator) {
         ASSERT(!isCompilationThread());
         ASSERT(!vector() == !buffer->data());
+        delta = bitwise_cast<uint8_t*>(vector()) - static_cast<uint8_t*>(buffer->data());
+    } else {
+        uint8_t* vector = bitwise_cast<uint8_t*>(vectorWithoutPACValidation());
+        uint8_t* data = static_cast<uint8_t*>(buffer->dataWithoutPACValidation());
+        if (!vector || !data)
+            return 0;
+        delta = vector - data;
     }
 
-    ptrdiff_t delta =
-        bitwise_cast<uint8_t*>(vectorWithoutPACValidation()) - static_cast<uint8_t*>(buffer->data());
-
     size_t result = static_cast<size_t>(delta);
-    if (requester == Mutator)
+    if constexpr (requester == Mutator)
         ASSERT(static_cast<ptrdiff_t>(result) == delta);
     else {
         if (static_cast<ptrdiff_t>(result) != delta)

@@ -88,6 +88,7 @@ public:
     explicit operator bool() { return !!m_data; }
     
     void* data() const { return m_data.getMayBeNull(sizeInBytes()); }
+    void* dataWithoutPACValidation() const { return m_data.getUnsafe(); }
     size_t sizeInBytes() const { return m_sizeInBytes; }
     
     bool isShared() const { return m_shared; }
@@ -136,6 +137,9 @@ public:
     inline void* data();
     inline const void* data() const;
     inline size_t byteLength() const;
+
+    inline void* dataWithoutPACValidation();
+    inline const void* dataWithoutPACValidation() const;
     
     void makeShared();
     void setSharingMode(ArrayBufferSharingMode);
@@ -199,6 +203,16 @@ void* ArrayBuffer::data()
 const void* ArrayBuffer::data() const
 {
     return m_contents.data();
+}
+
+void* ArrayBuffer::dataWithoutPACValidation()
+{
+    return m_contents.dataWithoutPACValidation();
+}
+
+const void* ArrayBuffer::dataWithoutPACValidation() const
+{
+    return m_contents.dataWithoutPACValidation();
 }
 
 size_t ArrayBuffer::byteLength() const
