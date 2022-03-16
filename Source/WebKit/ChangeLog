@@ -1,3 +1,16 @@
+2022-03-16  Pablo Saavedra  <psaavedra@igalia.com>
+
+        [GTK][WPE] Crash during the WebPage::close() related to GL resources destruction
+        https://bugs.webkit.org/show_bug.cgi?id=237588
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::invalidate):
+        (WebKit::ThreadedCompositor::updateSceneWithoutRendering):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2022-03-16  Sihui Liu  <sihui_liu@apple.com>
 
         Suspend newly created NetworkStorageManager if network process is or will be suspended

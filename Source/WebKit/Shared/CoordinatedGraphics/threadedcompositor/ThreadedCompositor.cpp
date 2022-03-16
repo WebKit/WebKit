@@ -106,6 +106,11 @@ void ThreadedCompositor::invalidate()
     m_compositingRunLoop->performTaskSync([this, protectedThis = Ref { *this }] {
         if (!m_context || !m_context->makeContextCurrent())
             return;
+
+        // Update the scene at this point ensures the layers state are correctly propagated
+        // in the ThreadedCompositor and in the CompositingCoordinator.
+        updateSceneWithoutRendering();
+
         m_scene->purgeGLResources();
         m_context = nullptr;
         m_client.didDestroyGLContext();
@@ -279,6 +284,19 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 void ThreadedCompositor::updateScene()
 {
     m_compositingRunLoop->scheduleUpdate();
+}
+
+void ThreadedCompositor::updateSceneWithoutRendering()
+{
+    Vector<WebCore::CoordinatedGraphicsState> states;
+
+    {
+        Locker locker { m_attributes.lock };
+        states = WTFMove(m_attributes.states);
+
+    }
+    m_scene->applyStateChanges(states);
+    m_scene->updateSceneState();
 }
 
 RefPtr<WebCore::DisplayRefreshMonitor> ThreadedCompositor::displayRefreshMonitor(PlatformDisplayID)

@@ -65,6 +65,7 @@ public:
 
     void applyStateChanges(const Vector<WebCore::CoordinatedGraphicsState>&);
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::FloatRect&, WebCore::TextureMapper::PaintFlags = 0);
+    void updateSceneState();
     void detach();
 
     // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_client.
@@ -76,7 +77,6 @@ public:
 
 private:
     void commitSceneState(const WebCore::CoordinatedGraphicsState::NicosiaState&);
-    void updateSceneState();
 
     WebCore::TextureMapperLayer* rootLayer() { return m_rootLayer.get(); }
 
