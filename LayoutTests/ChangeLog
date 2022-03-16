@@ -1,3 +1,52 @@
+2022-03-16  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTests/webaudio tests are skipped in iOS
+        https://bugs.webkit.org/show_bug.cgi?id=237889
+
+        Unreviewed.
+
+        Unskip tests and removed obsolete iOS specific expected.txt files.
+
+        * platform/ios/TestExpectations:
+        * platform/ios/webaudio/analyser-exception-expected.txt: Removed.
+        * platform/ios/webaudio/audiobuffer-expected.txt: Removed.
+        * platform/ios/webaudio/audiobuffer-neuter-expected.txt: Removed.
+        * platform/ios/webaudio/audiobuffersource-channels-expected.txt: Removed.
+        * platform/ios/webaudio/audiobuffersource-ended-expected.txt: Removed.
+        * platform/ios/webaudio/audiobuffersource-exception-expected.txt: Removed.
+        * platform/ios/webaudio/audiobuffersource-loop-comprehensive-expected.txt: Removed.
+        * platform/ios/webaudio/audiobuffersource-loop-points-expected.wav: Removed.
+        * platform/ios/webaudio/audiobuffersource-playbackState-expected.txt: Removed.
+        * platform/ios/webaudio/audiobuffersource-playbackrate-expected.wav: Removed.
+        * platform/ios/webaudio/audiobuffersource-start-expected.txt: Removed.
+        * platform/ios/webaudio/audiochannelmerger-basic-expected.txt: Removed.
+        * platform/ios/webaudio/audiochannelsplitter-expected.txt: Removed.
+        * platform/ios/webaudio/audionode-expected.txt: Removed.
+        * platform/ios/webaudio/biquadfilternode-basic-expected.txt: Removed.
+        * platform/ios/webaudio/codec-tests/aac/vbr-128kbps-44khz-expected.wav: Removed.
+        * platform/ios/webaudio/codec-tests/mp3/128kbps-44khz-expected.wav: Removed.
+        * platform/ios/webaudio/codec-tests/vorbis/vbr-128kbps-44khz-expected.txt: Removed.
+        * platform/ios/webaudio/codec-tests/vorbis/vbr-96kbps-44khz-expected.txt: Removed.
+        * platform/ios/webaudio/codec-tests/wav/24bit-22khz-resample-expected.wav: Removed.
+        * platform/ios/webaudio/convolver-setBuffer-null-expected.txt: Removed.
+        * platform/ios/webaudio/decode-audio-data-basic-expected.txt: Removed.
+        * platform/ios/webaudio/delaynode-maxdelaylimit-expected.txt: Removed.
+        * platform/ios/webaudio/distance-exponential-expected.txt: Removed.
+        * platform/ios/webaudio/distance-inverse-expected.txt: Removed.
+        * platform/ios/webaudio/distance-linear-expected.txt: Removed.
+        * platform/ios/webaudio/javascriptaudionode-expected.txt: Removed.
+        * platform/ios/webaudio/mediaelementaudiosourcenode-expected.txt: Removed.
+        * platform/ios/webaudio/note-grain-on-play-expected.txt: Removed.
+        * platform/ios/webaudio/note-grain-on-timing-expected.txt: Removed.
+        * platform/ios/webaudio/oscillator-basic-expected.txt: Removed.
+        * platform/ios/webaudio/oscillator-custom-expected.wav: Removed.
+        * platform/ios/webaudio/oscillator-ended-expected.txt: Removed.
+        * platform/ios/webaudio/oscillator-sawtooth-expected.wav: Removed.
+        * platform/ios/webaudio/oscillator-square-expected.wav: Removed.
+        * platform/ios/webaudio/oscillator-triangle-expected.wav: Removed.
+        * platform/ios/webaudio/pannernode-basic-expected.txt: Removed.
+        * platform/ios/webaudio/realtimeanalyser-fft-sizing-expected.txt: Removed.
+
 2022-03-15  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r282737): `text-shadow` is clipped

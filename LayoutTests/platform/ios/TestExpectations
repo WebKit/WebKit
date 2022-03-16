@@ -91,11 +91,12 @@ fast/history/page-cache-notification-showing.html
 fast/history/page-cache-notification-suspendable.html
 imported/w3c/web-platform-tests/notifications/
 
-# Web Audio tests are skipped on iOS for now.
-webaudio
-fast/history/page-cache-closed-audiocontext.html
-fast/history/page-cache-running-audiocontext.html
-fast/history/page-cache-suspended-audiocontext.html
+# Web Audio failures
+webaudio/audiocontext-restriction-audiobuffersourcenode-start.html [ Skip ]
+webaudio/audiocontext-restriction.html [ Skip ]
+webaudio/suspend-context-while-interrupted.html [ Skip ]
+webaudio/codec-tests/vorbis [ Skip ]
+webaudio/decode-audio-data-webm-vorbis.html [ Failure ]
 
 # No wheel events on iOS
 fast/events/wheel [ Skip ]
