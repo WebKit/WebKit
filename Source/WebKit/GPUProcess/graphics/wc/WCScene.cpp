@@ -45,16 +45,23 @@ struct WCScene::Layer final : public WCContentBuffer::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Layer() = default;
+    ~Layer()
+    {
+        if (contentBuffer)
+            contentBuffer->setClient(nullptr);
+    }
 
     // WCContentBuffer::Client
     void platformLayerWillBeDestroyed() override
     {
+        contentBuffer = nullptr;
         texmapLayer.setContentsLayer(nullptr);
     }
 
     WebCore::TextureMapperLayer texmapLayer;
     std::unique_ptr<WebCore::TextureMapperSparseBackingStore> backingStore;
     std::unique_ptr<WebCore::TextureMapperLayer> backdropLayer;
+    WCContentBuffer* contentBuffer { nullptr };
 };
 
 void WCScene::initialize(WCSceneContext& context)
@@ -183,14 +190,21 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
             layer->texmapLayer.setBackdropFiltersRect(layerUpdate.backdropFiltersRect);
         }
         if (layerUpdate.changes & WCLayerChange::PlatformLayer) {
-            if (!layerUpdate.hasPlatformLayer)
+            if (!layerUpdate.hasPlatformLayer) {
+                if (layer->contentBuffer) {
+                    layer->contentBuffer->setClient(nullptr);
+                    layer->contentBuffer = nullptr;
+                }
                 layer->texmapLayer.setContentsLayer(nullptr);
-            else {
+            } else {
                 WCContentBuffer* contentBuffer = nullptr;
                 for (auto identifier : layerUpdate.contentBufferIdentifiers)
                     contentBuffer = WCContentBufferManager::singleton().releaseContentBufferIdentifier(m_webProcessIdentifier, identifier);
                 if (contentBuffer) {
+                    if (layer->contentBuffer)
+                        layer->contentBuffer->setClient(nullptr);
                     contentBuffer->setClient(layer);
+                    layer->contentBuffer = contentBuffer;
                     layer->texmapLayer.setContentsLayer(contentBuffer->platformLayer());
                 }
             }

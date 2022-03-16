@@ -1,3 +1,19 @@
+2022-03-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][WebGL] Crash in WebKit::WCContentBuffer::platformLayerWillBeDestroyed()
+        https://bugs.webkit.org/show_bug.cgi?id=237819
+
+        Reviewed by Don Olmstead.
+
+        WinCairo WTR was randomly crashing in
+        WCContentBuffer::platformLayerWillBeDestroyed(). It accessed a
+        stale pointer of WCScene::Layer.
+
+        * GPUProcess/graphics/wc/WCScene.cpp:
+        (WebKit::WCScene::Layer::~Layer): Clear the client of
+        WCContentBuffer.
+        (WebKit::WCScene::update):
+
 2022-03-16  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] WebAVMediaSelectionOption should implement -mediaType
