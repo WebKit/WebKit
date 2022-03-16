@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WindRule.h"
+#include <optional>
 #include <wtf/EnumTraits.h>
 #include <wtf/Forward.h>
 
@@ -73,6 +74,43 @@ enum class BlendMode : uint8_t {
     PlusLighter
 };
 
+struct DocumentMarkerLineStyle {
+    enum class Mode : uint8_t {
+        TextCheckingDictationPhraseWithAlternatives,
+        Spelling,
+        Grammar,
+        AutocorrectionReplacement,
+        DictationAlternatives
+    } mode;
+    bool shouldUseDarkAppearance { false };
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<DocumentMarkerLineStyle> decode(Decoder&);
+};
+
+template<class Encoder>
+void DocumentMarkerLineStyle::encode(Encoder& encoder) const
+{
+    encoder << mode;
+    encoder << shouldUseDarkAppearance;
+}
+
+template<class Decoder>
+std::optional<DocumentMarkerLineStyle> DocumentMarkerLineStyle::decode(Decoder& decoder)
+{
+    std::optional<Mode> mode;
+    decoder >> mode;
+    if (!mode)
+        return std::nullopt;
+
+    std::optional<bool> shouldUseDarkAppearance;
+    decoder >> shouldUseDarkAppearance;
+    if (!shouldUseDarkAppearance)
+        return std::nullopt;
+
+    return { { *mode, *shouldUseDarkAppearance } };
+}
+
 enum class GradientSpreadMethod : uint8_t {
     Pad,
     Reflect,
@@ -103,6 +141,28 @@ enum HorizontalAlignment {
     AlignLeft,
     AlignRight,
     AlignHCenter
+};
+
+enum StrokeStyle {
+    NoStroke,
+    SolidStroke,
+    DottedStroke,
+    DashedStroke,
+    DoubleStroke,
+    WavyStroke,
+};
+
+enum class TextDrawingMode : uint8_t {
+    Fill = 1 << 0,
+    Stroke = 1 << 1,
+};
+using TextDrawingModeFlags = OptionSet<TextDrawingMode>;
+
+// Legacy shadow blur radius is used for canvas, and -webkit-box-shadow.
+// It has different treatment of radii > 8px.
+enum class ShadowRadiusMode : bool {
+    Default,
+    Legacy
 };
 
 enum TextBaseline {
@@ -216,6 +276,37 @@ template<> struct EnumTraits<WebCore::LineJoin> {
     WebCore::LineJoin::Miter,
     WebCore::LineJoin::Round,
     WebCore::LineJoin::Bevel
+    >;
+};
+
+template<> struct EnumTraits<WebCore::DocumentMarkerLineStyle::Mode> {
+    using values = EnumValues<
+    WebCore::DocumentMarkerLineStyle::Mode,
+    WebCore::DocumentMarkerLineStyle::Mode::TextCheckingDictationPhraseWithAlternatives,
+    WebCore::DocumentMarkerLineStyle::Mode::Spelling,
+    WebCore::DocumentMarkerLineStyle::Mode::Grammar,
+    WebCore::DocumentMarkerLineStyle::Mode::AutocorrectionReplacement,
+    WebCore::DocumentMarkerLineStyle::Mode::DictationAlternatives
+    >;
+};
+
+template<> struct EnumTraits<WebCore::StrokeStyle> {
+    using values = EnumValues<
+    WebCore::StrokeStyle,
+    WebCore::StrokeStyle::NoStroke,
+    WebCore::StrokeStyle::SolidStroke,
+    WebCore::StrokeStyle::DottedStroke,
+    WebCore::StrokeStyle::DashedStroke,
+    WebCore::StrokeStyle::DoubleStroke,
+    WebCore::StrokeStyle::WavyStroke
+    >;
+};
+
+template<> struct EnumTraits<WebCore::TextDrawingMode> {
+    using values = EnumValues<
+        WebCore::TextDrawingMode,
+        WebCore::TextDrawingMode::Fill,
+        WebCore::TextDrawingMode::Stroke
     >;
 };
 

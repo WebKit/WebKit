@@ -156,6 +156,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ca/win/CACFLayerTreeHostClient.h
     platform/graphics/ca/win/PlatformCALayerWin.h
 
+    platform/graphics/cg/CGContextStateSaver.h
     platform/graphics/cg/ColorSpaceCG.h
     platform/graphics/cg/GradientRendererCG.h
     platform/graphics/cg/GraphicsContextCG.h

@@ -1,3 +1,99 @@
+2022-03-16  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Move other classes out of GraphicsContext.h
+        https://bugs.webkit.org/show_bug.cgi?id=237944
+
+        Reviewed by Simon Fraser.
+
+        This is a step towards making GraphicsContextState a class and move
+        more functionalities to it.
+
+        * Headers.cmake:
+        * PlatformAppleWin.cmake:
+        * PlatformMac.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::TextBoxIterator::TextBoxIterator): Deleted.
+        (WebCore::TextBoxIterator::offset const): Deleted.
+        (WebCore::TextBoxIterator::increment): Deleted.
+        (WebCore::TextBoxIterator::atEnd const): Deleted.
+        (WebCore::TextBoxIterator::current const): Deleted.
+        (WebCore::TextBoxIterator::direction const): Deleted.
+        (WebCore::TextBoxIterator::operator== const): Deleted.
+        (WebCore::TextBoxIterator::operator!= const): Deleted.
+        (WebCore::GraphicsContextState::GraphicsContextState): Deleted.
+        (WebCore::GraphicsContextState::mergeChanges): Deleted.
+        (WebCore::GraphicsContextStateChange::changesFromState const): Deleted.
+        (WebCore::GraphicsContextStateChange::accumulate): Deleted.
+        (WebCore::GraphicsContextStateChange::apply const): Deleted.
+        (WebCore::GraphicsContextStateChange::dump const): Deleted.
+        (WebCore::operator<<): Deleted.
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::DocumentMarkerLineStyle::encode const): Deleted.
+        (WebCore::DocumentMarkerLineStyle::decode): Deleted.
+        (WebCore::GraphicsContextStateChange::GraphicsContextStateChange): Deleted.
+        (WebCore::GraphicsContextStateSaver::GraphicsContextStateSaver): Deleted.
+        (WebCore::GraphicsContextStateSaver::~GraphicsContextStateSaver): Deleted.
+        (WebCore::GraphicsContextStateSaver::save): Deleted.
+        (WebCore::GraphicsContextStateSaver::restore): Deleted.
+        (WebCore::GraphicsContextStateSaver::context const): Deleted.
+        (WebCore::TransparencyLayerScope::TransparencyLayerScope): Deleted.
+        (WebCore::TransparencyLayerScope::beginLayer): Deleted.
+        (WebCore::TransparencyLayerScope::~TransparencyLayerScope): Deleted.
+        (WebCore::GraphicsContextStateStackChecker::GraphicsContextStateStackChecker): Deleted.
+        (WebCore::GraphicsContextStateStackChecker::~GraphicsContextStateStackChecker): Deleted.
+        (WebCore::InterpolationQualityMaintainer::InterpolationQualityMaintainer): Deleted.
+        (WebCore::InterpolationQualityMaintainer::~InterpolationQualityMaintainer): Deleted.
+        * platform/graphics/GraphicsContextState.cpp: Added.
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContextState::mergeChanges):
+        (WebCore::GraphicsContextStateChange::changesFromState const):
+        (WebCore::GraphicsContextStateChange::accumulate):
+        (WebCore::GraphicsContextStateChange::apply const):
+        (WebCore::GraphicsContextStateChange::dump const):
+        (WebCore::operator<<):
+        * platform/graphics/GraphicsContextState.h: Added.
+        (WebCore::GraphicsContextStateChange::GraphicsContextStateChange):
+        * platform/graphics/GraphicsContextStateSaver.h: Added.
+        (WebCore::GraphicsContextStateSaver::GraphicsContextStateSaver):
+        (WebCore::GraphicsContextStateSaver::~GraphicsContextStateSaver):
+        (WebCore::GraphicsContextStateSaver::save):
+        (WebCore::GraphicsContextStateSaver::restore):
+        (WebCore::GraphicsContextStateSaver::context const):
+        (WebCore::TransparencyLayerScope::TransparencyLayerScope):
+        (WebCore::TransparencyLayerScope::beginLayer):
+        (WebCore::TransparencyLayerScope::~TransparencyLayerScope):
+        (WebCore::GraphicsContextStateStackChecker::GraphicsContextStateStackChecker):
+        (WebCore::GraphicsContextStateStackChecker::~GraphicsContextStateStackChecker):
+        (WebCore::InterpolationQualityMaintainer::InterpolationQualityMaintainer):
+        (WebCore::InterpolationQualityMaintainer::~InterpolationQualityMaintainer):
+        * platform/graphics/GraphicsTypes.h:
+        (WebCore::DocumentMarkerLineStyle::encode const):
+        (WebCore::DocumentMarkerLineStyle::decode):
+        * platform/graphics/PlatformGraphicsContext.h: Added.
+        * platform/graphics/TextBoxIterator.h: Added.
+        (WebCore::TextBoxIterator::TextBoxIterator):
+        (WebCore::TextBoxIterator::offset const):
+        (WebCore::TextBoxIterator::increment):
+        (WebCore::TextBoxIterator::atEnd const):
+        (WebCore::TextBoxIterator::current const):
+        (WebCore::TextBoxIterator::direction const):
+        (WebCore::TextBoxIterator::operator== const):
+        (WebCore::TextBoxIterator::operator!= const):
+        * platform/graphics/cg/CGContextStateSaver.h: Added.
+        (WebCore::CGContextStateSaver::CGContextStateSaver):
+        (WebCore::CGContextStateSaver::~CGContextStateSaver):
+        (WebCore::CGContextStateSaver::save):
+        (WebCore::CGContextStateSaver::restore):
+        (WebCore::CGContextStateSaver::didSave const):
+        * platform/graphics/cg/GraphicsContextCG.h:
+        (WebCore::CGContextStateSaver::CGContextStateSaver): Deleted.
+        (WebCore::CGContextStateSaver::~CGContextStateSaver): Deleted.
+        (WebCore::CGContextStateSaver::save): Deleted.
+        (WebCore::CGContextStateSaver::restore): Deleted.
+        (WebCore::CGContextStateSaver::didSave const): Deleted.
+
 2022-03-16  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] WebAVMediaSelectionOption should implement -mediaType

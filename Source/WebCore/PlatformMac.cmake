@@ -640,6 +640,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ca/cocoa/PlatformCALayerCocoa.h
     platform/graphics/ca/cocoa/WebVideoContainerLayer.h
 
+    platform/graphics/cg/CGContextStateSaver.h
     platform/graphics/cg/ColorSpaceCG.h
     platform/graphics/cg/GraphicsContextCG.h
     platform/graphics/cg/IOSurfacePool.h
