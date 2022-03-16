@@ -1,3 +1,44 @@
+2022-03-16  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Extract transform-origin handling out of RenderStyle::applyTransform()
+        https://bugs.webkit.org/show_bug.cgi?id=237590
+
+        Reviewed by Simon Fraser.
+
+        RenderStyle::applyTransform() implements the algorithm given in
+        CSS Transforms Module Level 2 (https://www.w3.org/TR/css-transforms-2/#ctm)
+        that yields the "current transformation matrix". It is used e.g. in
+        RenderLayer::updateTransform() to compute the layer transformation
+        matrix, that's used for rendering.
+
+        LBSE wants to re-use the same algorithm, interchanging the individual
+        CSS transform properties / the CSS transform property with an external
+        AffineTransform, representing the SVG 2D transform.
+
+        Therefore split RenderStyle::applyTransform() into three main methods:
+        applyTransformOrigin / applyCSSTransform / unapplyTransformOrigin.
+
+        LBSE can call applyTransformOrigin(), multiply the TransformationMatrix
+        with the given SVG 2D AffineTransform and call unapplyTransformOrigin():
+
+            auto originTranslate = style.applyTransformOrigin(transform, boundingBox);
+            transform.multiplyAffineTransform(svgTransform.value());
+            style.unapplyTransformOrigin(transform, originTranslate);
+
+        The LBSE transform changes will follow in a separated patch, this only contains
+        the general changes. The non-SVG code paths remain unchained, since the applyTransform()
+        is kept as-is, just refactored to make use of the new (un)applyTransformOrigin() methods.
+
+        Covered by existing tests, no change in behaviour.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::affectedByTransformOrigin const):
+        (WebCore::RenderStyle::applyTransformOrigin const):
+        (WebCore::RenderStyle::unapplyTransformOrigin const):
+        (WebCore::RenderStyle::applyTransform const):
+        (WebCore::RenderStyle::applyCSSTransform const):
+        * rendering/style/RenderStyle.h:
+
 2022-03-16  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] Avoid auto-selection of hole punching player

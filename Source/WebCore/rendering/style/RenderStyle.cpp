@@ -1421,26 +1421,64 @@ void RenderStyle::setHasAttrContent()
     SET_VAR(m_rareNonInheritedData, hasAttrContent, true);
 }
 
+bool RenderStyle::affectedByTransformOrigin() const
+{
+    if (m_rareNonInheritedData->rotate && !m_rareNonInheritedData->rotate->isIdentity())
+        return true;
+
+    if (m_rareNonInheritedData->scale && !m_rareNonInheritedData->scale->isIdentity())
+        return true;
+
+    auto& transformOperations = m_rareNonInheritedData->transform->operations;
+    if (transformOperations.affectedByTransformOrigin())
+        return true;
+
+    if (offsetPath())
+        return true;
+
+    return false;
+}
+
+FloatPoint3D RenderStyle::applyTransformOrigin(TransformationMatrix& transform, const FloatRect& boundingBox) const
+{
+    // https://www.w3.org/TR/css-transforms-2/#ctm
+    // 2. Translate by the computed X, Y, and Z values of transform-origin.
+    FloatPoint3D originTranslate;
+    originTranslate.setXY(boundingBox.location() + floatPointForLengthPoint(transformOriginXY(), boundingBox.size()));
+    originTranslate.setZ(transformOriginZ());
+    if (!originTranslate.isZero())
+        transform.translate3d(originTranslate.x(), originTranslate.y(), originTranslate.z());
+    return originTranslate;
+}
+
+void RenderStyle::unapplyTransformOrigin(TransformationMatrix& transform, const FloatPoint3D& originTranslate) const
+{
+    // https://www.w3.org/TR/css-transforms-2/#ctm
+    // 8. Translate by the negated computed X, Y and Z values of transform-origin.
+    if (!originTranslate.isZero())
+        transform.translate3d(-originTranslate.x(), -originTranslate.y(), -originTranslate.z());
+}
+
 void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+{
+    if (!options.contains(RenderStyle::TransformOperationOption::TransformOrigin) || !affectedByTransformOrigin()) {
+        applyCSSTransform(transform, boundingBox, options);
+        return;
+    }
+
+    auto originTranslate = applyTransformOrigin(transform, boundingBox);
+    applyCSSTransform(transform, boundingBox, options);
+    unapplyTransformOrigin(transform, originTranslate);
+}
+
+void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
     // https://www.w3.org/TR/css-transforms-2/#ctm
     // The transformation matrix is computed from the transform, transform-origin, translate, rotate, scale, and offset properties as follows:
     // 1. Start with the identity matrix.
 
-    auto& transformOperations = m_rareNonInheritedData->transform->operations;
-    bool applyTransformOrigin = options.contains(RenderStyle::TransformOperationOption::TransformOrigin)
-        && ((m_rareNonInheritedData->rotate && !m_rareNonInheritedData->rotate->isIdentity())
-            || (m_rareNonInheritedData->scale && !m_rareNonInheritedData->scale->isIdentity())
-            || transformOperations.affectedByTransformOrigin()
-            || offsetPath());
-
     // 2. Translate by the computed X, Y, and Z values of transform-origin.
-    FloatPoint3D originTranslate;
-    if (applyTransformOrigin) {
-        originTranslate.setXY(boundingBox.location() + floatPointForLengthPoint(transformOriginXY(), boundingBox.size()));
-        originTranslate.setZ(transformOriginZ());
-        transform.translate3d(originTranslate.x(), originTranslate.y(), originTranslate.z());
-    }
+    // (implemented in applyTransformOrigin)
 
     // 3. Translate by the computed X, Y, and Z values of translate.
     if (options.contains(RenderStyle::TransformOperationOption::Translate)) {
@@ -1465,12 +1503,12 @@ void RenderStyle::applyTransform(TransformationMatrix& transform, const FloatRec
         applyMotionPathTransform(transform, boundingBox);
 
     // 7. Multiply by each of the transform functions in transform from left to right.
+    auto& transformOperations = m_rareNonInheritedData->transform->operations;
     for (auto& operation : transformOperations.operations())
         operation->apply(transform, boundingBox.size());
 
     // 8. Translate by the negated computed X, Y and Z values of transform-origin.
-    if (applyTransformOrigin)
-        transform.translate3d(-originTranslate.x(), -originTranslate.y(), -originTranslate.z());
+    // (implemented in unapplyTransformOrigin)
 }
 
 static std::optional<Path> getPathFromPathOperation(const FloatRect& box, const PathOperation& operation)
