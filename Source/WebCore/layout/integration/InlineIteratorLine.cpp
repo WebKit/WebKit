@@ -202,24 +202,6 @@ RenderObject::HighlightState Line::selectionState() const
     return lineState;
 }
 
-LeafBoxIterator Line::firstSelectedBox() const
-{
-    for (auto box = firstLeafBox(); box; box.traverseNextOnLine()) {
-        if (box->selectionState() != RenderObject::HighlightState::None)
-            return box;
-    }
-    return { };
-}
-
-LeafBoxIterator Line::lastSelectedBox() const
-{
-    for (auto box = lastLeafBox(); box; box.traversePreviousOnLine()) {
-        if (box->selectionState() != RenderObject::HighlightState::None)
-            return box;
-    }
-    return { };
-}
-
 }
 }
 

@@ -1,3 +1,19 @@
+2022-03-16  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Move firstSelectedBox/lastSelectedBox out of InlineIterator::Line
+        https://bugs.webkit.org/show_bug.cgi?id=237941
+
+        Reviewed by Simon Fraser.
+
+        These functions don't belong in InlineIterator::Line (they are standalone functions with only one callsite).
+
+        * layout/integration/InlineIteratorLine.cpp:
+        (WebCore::InlineIterator::Line::firstSelectedBox const): Deleted.
+        (WebCore::InlineIterator::Line::lastSelectedBox const): Deleted.
+        * layout/integration/InlineIteratorLine.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+
 2022-03-16  Chris Fleizach  <cfleizach@apple.com>
 
         AX: imported/w3c/web-platform-tests/speech-api/SpeechSynthesis (layout-tests) are constant text failures

@@ -98,9 +98,6 @@ public:
     LeafBoxIterator closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const;
     LeafBoxIterator closestRunForLogicalLeftPosition(int position, bool editableOnly = false) const;
     
-    LeafBoxIterator firstSelectedBox() const;
-    LeafBoxIterator lastSelectedBox() const;
-
 private:
     friend class LineIterator;
 
