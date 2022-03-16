@@ -1,3 +1,18 @@
+2022-03-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Minor AVVideoCaptureSource cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=237978
+        <rdar://problem/90388332>
+
+        Reviewed by Jer Noble.
+
+        No new tests, no behavior change.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::setupSession): Use `instancesRespondToSelector:`
+        instead of `respondsToSelector:` so we don't have to allocate an AVCaptureSession
+        just to find out how to initialize it.
+
 2022-03-16  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation] Fix build break after r291341
