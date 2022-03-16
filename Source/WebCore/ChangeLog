@@ -1,3 +1,30 @@
+2022-03-16  Youenn Fablet  <youenn@apple.com>
+
+        Make MIMETypeRegistry::mimeTypeForPath take a StringView
+        https://bugs.webkit.org/show_bug.cgi?id=236441
+        <rdar://problem/89084526>
+
+        Reviewed by Chris Dumez.
+
+        Passing a StringView is more efficient for some code paths.
+        Covered by existing tests.
+
+        * editing/cocoa/WebArchiveResourceFromNSAttributedString.mm:
+        (WebCore::if):
+        * fileapi/File.cpp:
+        (WebCore::File::computeNameAndContentType):
+        * loader/cocoa/BundleResourceLoader.mm:
+        (WebCore::BundleResourceLoader::loadResourceFromBundle):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::commonMimeTypesMap):
+        * platform/MIMETypeRegistry.h:
+        * platform/cocoa/MIMETypeRegistryCocoa.mm:
+        (WebCore::MIMETypeRegistry::mimeTypeForExtension):
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::MIMETypeRegistry::mimeTypeForExtension):
+        * platform/xdg/MIMETypeRegistryXdg.cpp:
+        (WebCore::MIMETypeRegistry::mimeTypeForExtension):
+
 2022-03-16  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Extract transform-origin handling out of RenderStyle::applyTransform()

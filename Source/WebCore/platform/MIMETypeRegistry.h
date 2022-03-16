@@ -53,12 +53,12 @@ private:
 
 class MIMETypeRegistry {
 public:
-    WEBCORE_EXPORT static String mimeTypeForExtension(const String& extension);
+    WEBCORE_EXPORT static String mimeTypeForExtension(StringView);
     WEBCORE_EXPORT static Vector<String> extensionsForMIMEType(const String& type);
     WEBCORE_EXPORT static String preferredExtensionForMIMEType(const String& type);
     WEBCORE_EXPORT static String mediaMIMETypeForExtension(const String& extension);
 
-    WEBCORE_EXPORT static String mimeTypeForPath(const String& path);
+    WEBCORE_EXPORT static String mimeTypeForPath(StringView);
 
     static std::unique_ptr<MIMETypeRegistryThreadGlobalData> createMIMETypeRegistryThreadGlobalData();
 

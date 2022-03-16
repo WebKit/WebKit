@@ -368,7 +368,7 @@ static const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& commonMi
                 // First type in the vector must always be the one from mimeTypeForExtension,
                 // so we can use the map without also calling mimeTypeForExtension each time.
                 Vector<String> synonyms;
-                String systemType = MIMETypeRegistry::mimeTypeForExtension(extension);
+                String systemType = MIMETypeRegistry::mimeTypeForExtension(StringView(extension));
                 if (!systemType.isEmpty() && type != systemType)
                     synonyms.append(systemType);
                 return synonyms;
@@ -395,12 +395,11 @@ String MIMETypeRegistry::mediaMIMETypeForExtension(const String& extension)
     return mimeTypeForExtension(extension);
 }
 
-String MIMETypeRegistry::mimeTypeForPath(const String& path)
+String MIMETypeRegistry::mimeTypeForPath(StringView path)
 {
-    size_t pos = path.reverseFind('.');
-    if (pos != notFound) {
-        String extension = path.substring(pos + 1);
-        String result = mimeTypeForExtension(extension);
+    auto position = path.reverseFind('.');
+    if (position != notFound) {
+        auto result = mimeTypeForExtension(path.substring(position + 1));
         if (result.length())
             return result;
     }

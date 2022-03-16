@@ -459,7 +459,7 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
     Ref<API::Array> acceptFileExtensions = parameters->acceptFileExtensions();
     for (auto extension : acceptFileExtensions->elementsOfType<API::String>()) {
-        String mimeType = WebCore::MIMETypeRegistry::mimeTypeForExtension(extension->stringView().substring(1).toString());
+        String mimeType = WebCore::MIMETypeRegistry::mimeTypeForExtension(extension->stringView().substring(1));
         if (!mimeType.isEmpty())
             [mimeTypes addObject:mimeType];
     }

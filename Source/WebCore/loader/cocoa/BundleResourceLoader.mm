@@ -64,7 +64,7 @@ void loadResourceFromBundle(ResourceLoader& loader, const String& subdirectory)
         }
 
         RunLoop::main().dispatch([protectedLoader = WTFMove(protectedLoader), url = WTFMove(url).isolatedCopy(), buffer = SharedBuffer::create(data)]() mutable {
-            auto mimeType = MIMETypeRegistry::mimeTypeForPath(url.path().toString());
+            auto mimeType = MIMETypeRegistry::mimeTypeForPath(url.path());
             ResourceResponse response { url, mimeType, static_cast<long long>(buffer->size()), MIMETypeRegistry::isTextMIMEType(mimeType) ? "UTF-8"_s : nullptr };
             response.setHTTPStatusCode(200);
             response.setHTTPStatusText("OK"_s);

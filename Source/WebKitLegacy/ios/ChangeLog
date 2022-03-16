@@ -1,3 +1,14 @@
+2022-03-16  Youenn Fablet  <youenn@apple.com>
+
+        Make MIMETypeRegistry::mimeTypeForPath take a StringView
+        https://bugs.webkit.org/show_bug.cgi?id=236441
+        <rdar://problem/89084526>
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebMIMETypeRegistry.mm:
+        (+[WebMIMETypeRegistry mimeTypeForExtension:]):
+
 2022-03-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         focus({preventScroll: true}) does not prevent scrolling on iOS

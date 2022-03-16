@@ -45,7 +45,7 @@ using namespace WebCore;
 
     if ([MIMEType isEqualToString:@"application/octet-stream"]) {
         // FIXME: This is a workaround for <rdar://problem/36074429>, and can be removed once that is fixed.
-        auto mimeTypeFromURL = MIMETypeRegistry::mimeTypeForExtension(URL.pathExtension);
+        auto mimeTypeFromURL = MIMETypeRegistry::mimeTypeForExtension(String(URL.pathExtension));
         if (!mimeTypeFromURL.isEmpty())
             MIMEType = mimeTypeFromURL;
     }

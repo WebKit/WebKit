@@ -63,13 +63,14 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
     return String();
 }
 
-String MIMETypeRegistry::mimeTypeForExtension(const String &ext)
+String MIMETypeRegistry::mimeTypeForExtension(StringView string)
 {
     ASSERT(isMainThread());
 
-    if (ext.isEmpty())
+    if (string.isEmpty())
         return String();
 
+    auto ext = string.toString();
     static HashMap<String, String> mimetypeMap;
     if (mimetypeMap.isEmpty()) {
         //fill with initial values
