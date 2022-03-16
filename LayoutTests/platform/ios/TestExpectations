@@ -3528,3 +3528,5 @@ webkit.org/b/237108 http/tests/websocket/tests/hybi/extensions.html [ Pass ]
 
 webkit.org/b/237433 editing/pasteboard/4076267-3.html [ Timeout Pass Failure ]
 webkit.org/b/237433 editing/pasteboard/paste-and-sanitize.html [ Timeout Pass Failure ]
+
+webkit.org/b/237955 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-044.html [ Failure ]

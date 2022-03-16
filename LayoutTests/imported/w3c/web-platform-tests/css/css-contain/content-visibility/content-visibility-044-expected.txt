@@ -1,11 +1,4 @@
-CONSOLE MESSAGE: Error: assert_equals: expected 0 but got 2
 
 
-Harness Error (FAIL), message = Error: assert_equals: expected 0 but got 2
-
-TIMEOUT Content Visibility: slot moved after container is hidden Test timed out
-
-Harness Error (FAIL), message = Error: assert_equals: expected 0 but got 2
-
-TIMEOUT Content Visibility: slot moved after container is hidden Test timed out
+PASS Content Visibility: slot moved after container is hidden
 

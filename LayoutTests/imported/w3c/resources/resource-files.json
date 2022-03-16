@@ -721,6 +721,7 @@
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-in-svg-000-crash.html",
         "web-platform-tests/css/css-contain/content-visibility/content-with-top-layer-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/contentvisibility-nestedslot-crash.html",
+        "web-platform-tests/css/css-contain/content-visibility/detach-locked-slot-children-crash.html",
         "web-platform-tests/css/css-contain/content-visibility/hidden-execcommand-crash.html",
         "web-platform-tests/css/css-contain/content-visibility/hidden-pseudo-element-removed-crash.html",
         "web-platform-tests/css/css-contain/content-visibility/inline-container-with-child-ref.html",

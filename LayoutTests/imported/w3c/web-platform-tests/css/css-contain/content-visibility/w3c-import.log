@@ -201,6 +201,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-004.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-with-top-layer-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/contentvisibility-nestedslot-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/detach-locked-slot-children-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/document-element-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/element-reassigned-to-skipped-slot-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/element-reassigned-to-skipped-slot.html

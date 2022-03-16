@@ -1,3 +1,23 @@
+2022-03-16  Rob Buis  <rbuis@igalia.com>
+
+        Sync css/css-contain from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=237705
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Sync css/css-contain from WPT.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-contain/contain-layout-ink-overflow-013-expected.html:
+        * web-platform-tests/css/css-contain/contain-layout-ink-overflow-013.html:
+        * web-platform-tests/css/css-contain/contain-layout-ink-overflow-014.html:
+        * web-platform-tests/css/css-contain/contain-layout-ink-overflow-017.html:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-044-expected.txt:
+        * web-platform-tests/css/css-contain/content-visibility/content-visibility-044.html:
+        * web-platform-tests/css/css-contain/content-visibility/resources/text-fragment-target-auto.html:
+        * web-platform-tests/css/css-contain/content-visibility/w3c-import.log:
+        * web-platform-tests/css/css-contain/w3c-import.log:
+
 2022-03-16  Youenn Fablet  <youenn@apple.com>
 
         redirectCount returns 0 when using a Service Worker
