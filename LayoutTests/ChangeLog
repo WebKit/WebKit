@@ -1,5 +1,15 @@
 2022-03-16  Youenn Fablet  <youenn@apple.com>
 
+        redirectCount returns 0 when using a Service Worker
+        https://bugs.webkit.org/show_bug.cgi?id=235710
+        <rdar://problem/88432190>
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/navigation-redirect-main-frame.https.html:
+
+2022-03-16  Youenn Fablet  <youenn@apple.com>
+
         LayoutTests/webaudio tests are skipped in iOS
         https://bugs.webkit.org/show_bug.cgi?id=237889
 

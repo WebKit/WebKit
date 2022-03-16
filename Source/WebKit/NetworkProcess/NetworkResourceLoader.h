@@ -165,6 +165,8 @@ public:
     void deref() const final { RefCounted<NetworkResourceLoader>::deref(); }
 #endif
 
+    void willSendServiceWorkerRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&);
+
 private:
     NetworkResourceLoader(NetworkResourceLoadParameters&&, NetworkConnectionToWebProcess&, Messages::NetworkConnectionToWebProcess::PerformSynchronousLoadDelayedReply&&);
 
@@ -241,6 +243,10 @@ private:
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     void startContentFiltering(WebCore::ResourceRequest&);
 #endif
+
+    enum class IsFromServiceWorker : bool { No, Yes };
+    void willSendRedirectedRequestInternal(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, IsFromServiceWorker);
+    std::optional<WebCore::NetworkLoadMetrics> computeResponseMetrics(const WebCore::ResourceResponse&) const;
 
     const NetworkResourceLoadParameters m_parameters;
 

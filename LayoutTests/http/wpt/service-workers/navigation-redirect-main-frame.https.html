@@ -7,14 +7,19 @@
 async function doTest()
 {
     if (window.location.hash === "#redirected") {
-        if (window.testRunner)
-            document.body.innerHTML = testRunner.didReceiveServerRedirectForProvisionalNavigation ? "PASS" : "FAIL";
-        else
-            document.body.innerHTML = "PASS";
-        if (window.testRunner) {
+        let status = "PASS";
+        if (window.performance.navigation.redirectCount !== 1)
+                 status = "FAIL: redirectCount is " + window.performance.navigation.redirectCount;
+        else if (window.testRunner) {
+             if (!testRunner.didReceiveServerRedirectForProvisionalNavigation)
+                 status = "FAIL: no server redirect for provisional navigation ";
             testRunner.clearDidReceiveServerRedirectForProvisionalNavigation();
-            testRunner.notifyDone();
         }
+
+        document.body.innerHTML = status;
+
+        if (window.testRunner)
+            testRunner.notifyDone();
         return;
     }
     var registration = await navigator.serviceWorker.register("navigation-redirect-main-frame-worker.js", { scope : "resources" });

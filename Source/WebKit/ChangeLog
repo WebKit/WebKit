@@ -1,3 +1,24 @@
+2022-03-16  Youenn Fablet  <youenn@apple.com>
+
+        redirectCount returns 0 when using a Service Worker
+        https://bugs.webkit.org/show_bug.cgi?id=235710
+        <rdar://problem/88432190>
+
+        Reviewed by Chris Dumez.
+
+        Pass an optional NetworkLoadMetrics when sending the response to web process.
+        Include the redirectCount value computed by NetworkResourceLoader.
+        Make service worker redirections go through NetworkResourceLoader to set the redirectCount value and for correctness.
+
+        Covered by updated test.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::processRedirectResponse):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
 2022-03-16  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GTK][WPE] Crash during the WebPage::close() related to GL resources destruction

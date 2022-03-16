@@ -1,3 +1,14 @@
+2022-03-16  Youenn Fablet  <youenn@apple.com>
+
+        redirectCount returns 0 when using a Service Worker
+        https://bugs.webkit.org/show_bug.cgi?id=235710
+        <rdar://problem/88432190>
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/navigation-preload/resource-timing.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/redirected-response.https-expected.txt:
+
 2022-03-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r291282.
