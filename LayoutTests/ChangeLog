@@ -1,3 +1,13 @@
+2022-03-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][1.20] media/video-src-blob-perf.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=237256
+        <rdar://problem/89530009>
+
+        Unreviewed, unflag test passing after Flatpak SDK update.
+
+        * platform/glib/TestExpectations:
+
 2022-03-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Refactor some position information hit-testing logic related to data detectors in Live Text
