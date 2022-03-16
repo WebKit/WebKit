@@ -1,3 +1,22 @@
+2022-03-16  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] Avoid auto-selection of hole punching player
+        https://bugs.webkit.org/show_bug.cgi?id=237828
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The hole punch player private shouldn't be automatically selected when
+        the mime type is empty or unsupported by that specific player
+        ("video/holepunch" in practice). This patch returns a FormatError
+        networkState in those cases, forcing the selection algorithm to
+        discard the hole punch player private.
+
+        This patch is authored by Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+        See: https://github.com/WebPlatformForEmbedded/WPEWebKit/pull/797
+
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.cpp: Implement networkState setter. Set FormatError networkState on load when the mime type is empty or unknown.
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.h: Refactor networkState management. Move load() implementation to cpp file.
+
 2022-03-15  Alan Bujtas  <zalan@apple.com>
 
         REGRESSION (r282737): `text-shadow` is clipped
