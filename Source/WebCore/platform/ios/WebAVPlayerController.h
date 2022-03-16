@@ -33,7 +33,11 @@ class PlaybackSessionInterfaceAVKit;
 }
 
 @interface WebAVMediaSelectionOption : NSObject
+- (instancetype)initWithMediaType:(AVMediaType)type displayName:(NSString *)displayName;
+
 @property (retain) NSString *localizedDisplayName;
+@property (nonatomic, readonly) AVMediaType mediaType;
+
 @end
 
 WEBCORE_EXPORT @interface WebAVPlayerController : NSObject {

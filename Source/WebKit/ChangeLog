@@ -1,3 +1,16 @@
+2022-03-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] WebAVMediaSelectionOption should implement -mediaType
+        https://bugs.webkit.org/show_bug.cgi?id=237966
+        rdar://89934589
+
+        Reviewed by Jer Noble.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<MediaSelectionOption>::encode): Deleted.
+        (IPC::ArgumentCoder<MediaSelectionOption>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+
 2022-03-16  Per Arne Vollan  <pvollan@apple.com>
 
         Incorrect header name used in __has_include

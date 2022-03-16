@@ -1,3 +1,55 @@
+2022-03-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] WebAVMediaSelectionOption should implement -mediaType
+        https://bugs.webkit.org/show_bug.cgi?id=237966
+        rdar://89934589
+
+        Reviewed by Jer Noble.
+
+        WebKit uses AVKit to implement "video fullscreen" on iOS. AVKit can only be used
+        in the UI process, but WebKit's AVFoundation objects are in the GPU process, so we
+        create "proxy" objects in the UI process and pass state from them between the two
+        processes. One such object is WebAVMediaSelectionOption, which proxies for an
+        AVMediaSelectionOption. This proxy originally only implemented -localizedDisplayName
+        but AVKit now sometimes uses -mediaType, which causes an assert when it messages the
+        non-existent selector. Add -mediaType to fix the assert, and add log-only stubs 
+        for every other AVMediaSelectionOption selector to catch future changes.
+
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::CaptionUserPreferences::mediaSelectionOptionForTrack const):
+        * platform/MediaSelectionOption.h:
+        (WebCore::MediaSelectionOption::MediaSelectionOption):
+        (WebCore::MediaSelectionOption::isolatedCopy const):
+        (WebCore::MediaSelectionOption::isolatedCopy):
+        (WebCore::MediaSelectionOption::encode const):
+        (WebCore::MediaSelectionOption::decode):
+        * platform/ios/PlaybackSessionInterfaceAVKit.mm:
+        (WebCore::toAVMediaType):
+        (WebCore::mediaSelectionOptions):
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVMediaSelectionOption initWithMediaType:displayName:]):
+        (-[WebAVMediaSelectionOption mediaSubTypes]):
+        (-[WebAVMediaSelectionOption hasMediaCharacteristic:]):
+        (-[WebAVMediaSelectionOption isPlayable]):
+        (-[WebAVMediaSelectionOption extendedLanguageTag]):
+        (-[WebAVMediaSelectionOption locale]):
+        (-[WebAVMediaSelectionOption commonMetadata]):
+        (-[WebAVMediaSelectionOption availableMetadataFormats]):
+        (-[WebAVMediaSelectionOption metadataForFormat:]):
+        (-[WebAVMediaSelectionOption associatedMediaSelectionOptionInMediaSelectionGroup:]):
+        (-[WebAVMediaSelectionOption propertyList]):
+        (-[WebAVMediaSelectionOption displayNameWithLocale:]):
+        (-[WebAVMediaSelectionOption mediaCharacteristics]):
+        (-[WebAVMediaSelectionOption outOfBandSource]):
+        (-[WebAVMediaSelectionOption outOfBandIdentifier]):
+        (-[WebAVMediaSelectionOption _isDesignatedDefault]):
+        (-[WebAVMediaSelectionOption languageCode]):
+        (-[WebAVMediaSelectionOption track]):
+        * platform/mac/WebPlaybackControlsManager.mm:
+        (toAVTouchBarMediaSelectionOptionType):
+        (mediaSelectionOptions):
+
 2022-03-16  Philippe Normand  <pnormand@igalia.com>
 
         Migrate use of MediaSampleGStreamer to VideoFrame in WebRTC pipelines

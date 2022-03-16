@@ -710,11 +710,6 @@ template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientIdentifier> {
 
 #endif
 
-template<> struct ArgumentCoder<WebCore::MediaSelectionOption> {
-    static void encode(Encoder&, const WebCore::MediaSelectionOption&);
-    static std::optional<WebCore::MediaSelectionOption> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::PromisedAttachmentInfo> {
     static void encode(Encoder&, const WebCore::PromisedAttachmentInfo&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PromisedAttachmentInfo&);
@@ -904,15 +899,6 @@ template<> struct EnumTraits<WebCore::RealtimeMediaSource::Type> {
     >;
 };
 #endif
-
-template<> struct EnumTraits<WebCore::MediaSelectionOption::Type> {
-    using values = EnumValues<
-        WebCore::MediaSelectionOption::Type,
-        WebCore::MediaSelectionOption::Type::Regular,
-        WebCore::MediaSelectionOption::Type::LegibleOff,
-        WebCore::MediaSelectionOption::Type::LegibleAuto
-    >;
-};
 
 template <> struct EnumTraits<WebCore::WorkerType> {
     using values = EnumValues<

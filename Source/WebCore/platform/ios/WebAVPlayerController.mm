@@ -762,10 +762,141 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
 
 @implementation WebAVMediaSelectionOption
 
+- (instancetype)initWithMediaType:(AVMediaType)mediaType displayName:(NSString *)displayName
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _mediaType = mediaType;
+    _localizedDisplayName = displayName;
+
+    return self;
+}
+
 - (void)dealloc
 {
     [_localizedDisplayName release];
     [super dealloc];
+}
+
+- (NSArray<NSNumber *> *)mediaSubTypes
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption mediaSubTypes] unimplemented");
+    return @[];
+}
+
+- (BOOL)hasMediaCharacteristic:(AVMediaCharacteristic)mediaCharacteristic
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption hasMediaCharacteristic:] unimplemented");
+    return NO;
+}
+
+- (BOOL) isPlayable
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption isPlayable:] unimplemented");
+    return YES;
+}
+
+- (NSString *)extendedLanguageTag
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption extendedLanguageTag] unimplemented");
+    return nil;
+}
+
+- (NSLocale *)locale
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption locale] unimplemented");
+    return nil;
+}
+
+- (NSArray<AVMetadataItem *> *)commonMetadata
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption commonMetadata] unimplemented");
+    return @[];
+}
+
+- (NSArray<NSString *> *)availableMetadataFormats
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption availableMetadataFormats] unimplemented");
+    return @[];
+}
+
+- (NSArray<AVMetadataItem *> *)metadataForFormat:(NSString *)format
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption metadataForFormat:] unimplemented");
+    return @[];
+}
+
+- (AVMediaSelectionOption *)associatedMediaSelectionOptionInMediaSelectionGroup:(AVMediaSelectionGroup *)mediaSelectionGroup
+{
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption associatedMediaSelectionOptionInMediaSelectionGroup] unimplemented");
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+- (id)propertyList
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption propertyList] unimplemented");
+    return @[];
+}
+
+- (NSString *)displayNameWithLocale:(NSLocale *)locale
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption displayNameWithLocale:] unimplemented");
+    return nil;
+}
+
+- (NSArray<NSString *> *)mediaCharacteristics
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption mediaCharacteristics] unimplemented");
+    return @[];
+}
+
+- (NSString *)outOfBandSource
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption outOfBandSource] unimplemented");
+    return nil;
+}
+
+- (NSString *)outOfBandIdentifier
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption outOfBandIdentifier] unimplemented");
+    return nil;
+}
+
+- (BOOL)_isDesignatedDefault
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption _isDesignatedDefault] unimplemented");
+    return NO;
+}
+
+- (NSString *)languageCode
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption languageCode] unimplemented");
+    return nil;
+}
+
+- (AVAssetTrack *)track
+{
+    ASSERT_NOT_REACHED();
+    WTFLogAlways("ERROR: -[WebAVMediaSelectionOption track:] unimplemented");
+    return nil;
 }
 
 @end

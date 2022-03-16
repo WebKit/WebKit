@@ -2880,27 +2880,6 @@ bool ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode(Decoder& decoder, Se
 
 #endif
 
-void ArgumentCoder<MediaSelectionOption>::encode(Encoder& encoder, const MediaSelectionOption& option)
-{
-    encoder << option.displayName;
-    encoder << option.type;
-}
-
-std::optional<MediaSelectionOption> ArgumentCoder<MediaSelectionOption>::decode(Decoder& decoder)
-{
-    std::optional<String> displayName;
-    decoder >> displayName;
-    if (!displayName)
-        return std::nullopt;
-    
-    std::optional<MediaSelectionOption::Type> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-    
-    return {{ WTFMove(*displayName), WTFMove(*type) }};
-}
-
 void ArgumentCoder<PromisedAttachmentInfo>::encode(Encoder& encoder, const PromisedAttachmentInfo& info)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
