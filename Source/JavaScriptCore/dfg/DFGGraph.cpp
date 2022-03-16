@@ -1061,6 +1061,9 @@ void Graph::clearFlagsOnAllNodes(NodeFlags flags)
 
 bool Graph::watchCondition(const ObjectPropertyCondition& key)
 {
+    if (m_plan.isUnlinked())
+        return false;
+
     if (!key.isWatchable())
         return false;
 
@@ -1081,6 +1084,9 @@ bool Graph::watchCondition(const ObjectPropertyCondition& key)
 
 bool Graph::watchConditions(const ObjectPropertyConditionSet& keys)
 {
+    if (m_plan.isUnlinked())
+        return false;
+
     if (!keys.isValid())
         return false;
 
@@ -1098,6 +1104,9 @@ bool Graph::isSafeToLoad(JSObject* base, PropertyOffset offset)
 
 bool Graph::watchGlobalProperty(JSGlobalObject* globalObject, unsigned identifierNumber)
 {
+    if (m_plan.isUnlinked())
+        return false;
+
     UniquedStringImpl* uid = identifiers()[identifierNumber];
     // If we already have a WatchpointSet, and it is already invalidated, it means that this scope operation must be changed from GlobalProperty to GlobalLexicalVar,
     // but we still have stale metadata here since we have not yet executed this bytecode operation since the invalidation. Just emitting ForceOSRExit to update the
@@ -1267,6 +1276,9 @@ unsigned Graph::requiredRegisterCountForExecutionAndExit()
 JSValue Graph::tryGetConstantProperty(
     JSValue base, const RegisteredStructureSet& structureSet, PropertyOffset offset)
 {
+    if (m_plan.isUnlinked())
+        return JSValue();
+
     if (!base || !base.isObject())
         return JSValue();
     
@@ -1352,6 +1364,9 @@ AbstractValue Graph::inferredValueForProperty(
 JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)
 {
     // This has an awesome concurrency story. See comment for GetGlobalVar in ByteCodeParser.
+
+    if (m_plan.isUnlinked())
+        return JSValue();
     
     if (!base)
         return JSValue();
@@ -1402,6 +1417,8 @@ JSValue Graph::tryGetConstantClosureVar(Node* node, ScopeOffset offset)
 
 JSArrayBufferView* Graph::tryGetFoldableView(JSValue value)
 {
+    if (m_plan.isUnlinked())
+        return nullptr;
     if (!value)
         return nullptr;
     JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(m_vm, value);
@@ -1730,6 +1747,9 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
 
 bool Graph::getRegExpPrototypeProperty(JSObject* regExpPrototype, Structure* regExpPrototypeStructure, UniquedStringImpl* uid, JSValue& returnJSValue)
 {
+    if (m_plan.isUnlinked())
+        return false;
+
     PropertyOffset offset = regExpPrototypeStructure->getConcurrently(uid);
     if (!isValidOffset(offset))
         return false;
@@ -1777,6 +1797,9 @@ bool Graph::isStringPrototypeMethodSane(JSGlobalObject* globalObject, UniquedStr
 
 bool Graph::canOptimizeStringObjectAccess(const CodeOrigin& codeOrigin)
 {
+    if (m_plan.isUnlinked())
+        return false;
+
     if (hasExitSite(codeOrigin, BadCache) || hasExitSite(codeOrigin, BadConstantCache))
         return false;
 
@@ -1828,6 +1851,9 @@ bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
 {
     // The parameter 'value' is the AbstractValue for child1 (the thing being spread).
     ASSERT(node->op() == Spread);
+
+    if (m_plan.isUnlinked())
+        return false;
 
     if (node->child1().useKind() != ArrayUse) {
         // Note: we only speculate on ArrayUse when we've set up the necessary watchpoints

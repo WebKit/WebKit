@@ -44,6 +44,9 @@ void printInternal(PrintStream& out, JITCompilationMode mode)
     case JITCompilationMode::DFG:
         out.print("DFGMode");
         return;
+    case JITCompilationMode::UnlinkedDFG:
+        out.print("UnlinkedDFG");
+        return;
     case JITCompilationMode::FTL:
         out.print("FTLMode");
         return;

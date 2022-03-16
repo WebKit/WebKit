@@ -42,6 +42,9 @@ void printInternal(PrintStream& out, JSC::Profiler::CompilationKind kind)
     case JSC::Profiler::DFG:
         out.print("DFG");
         return;
+    case JSC::Profiler::UnlinkedDFG:
+        out.print("UnlinkedDFG");
+        return;
     case JSC::Profiler::FTL:
         out.print("FTL");
         return;

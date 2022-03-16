@@ -56,7 +56,9 @@ public:
     JITCompilationMode mode() const { return m_mode; }
 
     JITPlanStage stage() const { return m_stage; }
+    bool isDFG() const { return ::JSC::isDFG(m_mode); }
     bool isFTL() const { return ::JSC::isFTL(m_mode); }
+    bool isUnlinked() const { return ::JSC::isUnlinked(m_mode); }
 
     enum class Tier { Baseline = 0, DFG = 1, FTL = 2, Count = 3 };
     Tier tier() const;

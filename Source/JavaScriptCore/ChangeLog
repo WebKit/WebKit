@@ -1,5 +1,46 @@
 2022-03-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Add UnlinkedDFG compilation mode enum
+        https://bugs.webkit.org/show_bug.cgi?id=237934
+
+        Reviewed by Mark Lam.
+
+        This patch adds UnlinkedDFG compilation mode to prepare new unlinked DFG.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::watchCondition):
+        (JSC::DFG::Graph::watchConditions):
+        (JSC::DFG::Graph::watchGlobalProperty):
+        (JSC::DFG::Graph::tryGetConstantProperty):
+        (JSC::DFG::Graph::tryGetConstantClosureVar):
+        (JSC::DFG::Graph::tryGetFoldableView):
+        (JSC::DFG::Graph::getRegExpPrototypeProperty):
+        (JSC::DFG::Graph::canOptimizeStringObjectAccess):
+        (JSC::DFG::Graph::canDoFastSpread):
+        * dfg/DFGGraph.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::compileInThreadImpl):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * jit/JITCompilationMode.cpp:
+        (WTF::printInternal):
+        * jit/JITCompilationMode.h:
+        (JSC::isDFG):
+        (JSC::isUnlinked):
+        * jit/JITPlan.cpp:
+        (JSC::JITPlan::tier const):
+        (JSC::JITPlan::reportCompileTimes const):
+        * jit/JITPlan.h:
+        (JSC::JITPlan::isDFG const):
+        (JSC::JITPlan::isUnlinked const):
+        * profiler/ProfilerCompilationKind.cpp:
+        (WTF::printInternal):
+        * profiler/ProfilerCompilationKind.h:
+
+2022-03-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Concurrent byteOffsetImpl should not assume non-detached array-buffer
         https://bugs.webkit.org/show_bug.cgi?id=237935
 

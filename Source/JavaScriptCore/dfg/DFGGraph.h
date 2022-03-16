@@ -476,19 +476,6 @@ public:
         return jsCast<JSObject*>(object->methodTable(m_vm)->toThis(object, object, ECMAMode::sloppy()));
     }
     
-    ScriptExecutable* executableFor(InlineCallFrame* inlineCallFrame)
-    {
-        if (!inlineCallFrame)
-            return m_codeBlock->ownerExecutable();
-        
-        return inlineCallFrame->baselineCodeBlock->ownerExecutable();
-    }
-    
-    ScriptExecutable* executableFor(const CodeOrigin& codeOrigin)
-    {
-        return executableFor(codeOrigin.inlineCallFrame());
-    }
-    
     CodeBlock* baselineCodeBlockFor(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)
@@ -503,6 +490,8 @@ public:
     
     bool masqueradesAsUndefinedWatchpointIsStillValid(const CodeOrigin& codeOrigin)
     {
+        if (m_plan.isUnlinked())
+            return false;
         return globalObjectFor(codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid();
     }
     
@@ -795,12 +784,17 @@ public:
 
     bool isWatchingHavingABadTimeWatchpoint(Node* node)
     {
+        if (m_plan.isUnlinked())
+            return false;
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         return watchpoints().isWatched(globalObject->havingABadTimeWatchpoint());
     }
 
     bool isWatchingGlobalObjectWatchpoint(JSGlobalObject* globalObject, InlineWatchpointSet& set)
     {
+        if (m_plan.isUnlinked())
+            return false;
+
         if (watchpoints().isWatched(set))
             return true;
 
@@ -819,6 +813,9 @@ public:
 
     bool isWatchingArrayIteratorProtocolWatchpoint(Node* node)
     {
+        if (m_plan.isUnlinked())
+            return false;
+
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->arrayIteratorProtocolWatchpointSet();
         return isWatchingGlobalObjectWatchpoint(globalObject, set);
@@ -826,6 +823,9 @@ public:
 
     bool isWatchingNumberToStringWatchpoint(Node* node)
     {
+        if (m_plan.isUnlinked())
+            return false;
+
         JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
         InlineWatchpointSet& set = globalObject->numberToStringWatchpointSet();
         return isWatchingGlobalObjectWatchpoint(globalObject, set);

@@ -112,6 +112,8 @@ Profiler::CompilationKind profilerCompilationKindForMode(JITCompilationMode mode
         return Profiler::DFG;
     case JITCompilationMode::DFG:
         return Profiler::DFG;
+    case JITCompilationMode::UnlinkedDFG:
+        return Profiler::UnlinkedDFG;
     case JITCompilationMode::FTL:
         return Profiler::FTL;
     case JITCompilationMode::FTLForOSREntry:
@@ -315,7 +317,8 @@ Plan::CompilationPath Plan::compileInThreadImpl()
     }
 
     switch (m_mode) {
-    case JITCompilationMode::DFG: {
+    case JITCompilationMode::DFG:
+    case JITCompilationMode::UnlinkedDFG: {
         dfg.m_fixpointState = FixpointConverged;
 
         RUN_PHASE(performTierUpCheckInjection);

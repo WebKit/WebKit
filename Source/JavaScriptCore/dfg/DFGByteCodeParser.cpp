@@ -1566,6 +1566,11 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
         return UINT_MAX;
     }
 
+    if (m_graph.m_plan.isUnlinked()) {
+        VERBOSE_LOG("    Failing because the compilation mode is unlinked DFG.\n");
+        return UINT_MAX;
+    }
+
     FunctionExecutable* executable = callee.functionExecutable();
     if (!executable) {
         VERBOSE_LOG("    Failing because there is no function executable.\n");
