@@ -91,6 +91,9 @@ void TextureMapperPlatformLayerProxyGL::invalidate()
     {
         Locker locker { m_lock };
         m_compositor = nullptr;
+#ifndef NDEBUG
+        m_compositorThread = nullptr;
+#endif
         m_targetLayer = nullptr;
 
         m_currentBuffer = nullptr;

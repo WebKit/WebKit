@@ -1,3 +1,23 @@
+2022-03-16  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Debug build assertion, TextureMapperPlatformLayerProxyGL asserts when going back in the minibrowser
+        https://bugs.webkit.org/show_bug.cgi?id=237948
+
+        We are not initializing m_compositorThread properly with the
+        invalidation and the ThreadedCompositor is destroyed after a
+        navigation, and when going back the browser asserts because the
+        ThreadedCompositor is a different one. This is just for debug
+        builds.
+
+        Reviewed by Carlos Garcia Campos.
+
+        Not clear how to reproduce this situation with tests because we
+        need to navigate back with different origins. I'm opening a bug
+        connected to this one to check how to do it.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.cpp:
+        (WebCore::TextureMapperPlatformLayerProxyGL::invalidate):
+
 2022-03-16  Youenn Fablet  <youenn@apple.com>
 
         Make MIMETypeRegistry::mimeTypeForPath take a StringView
