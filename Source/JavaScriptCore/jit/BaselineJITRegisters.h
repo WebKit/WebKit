@@ -310,7 +310,7 @@ namespace PutByVal {
                 GPRInfo::regT5
 #elif CPU(ARM_THUMB2)
                 // We are a bit short on registers on ARM_THUMB2, but we can just about get away with this
-                MacroAssemblerARMv7::scratchRegister()
+                MacroAssemblerARMv7::s_scratchRegister
 #else // Other JSVALUE32_64
                 GPRInfo::regT8
 #endif

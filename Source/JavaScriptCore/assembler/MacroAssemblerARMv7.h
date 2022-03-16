@@ -78,7 +78,12 @@ public:
     static constexpr unsigned numGPRs = std::initializer_list<int>({ FOR_EACH_GP_REGISTER(DUMMY_REGISTER_VALUE) }).size();
     static constexpr unsigned numFPRs = std::initializer_list<int>({ FOR_EACH_FP_REGISTER(DUMMY_REGISTER_VALUE) }).size();
 #undef DUMMY_REGISTER_VALUE
-    static constexpr RegisterID scratchRegister() { return addressTempRegister; }
+    static constexpr RegisterID s_scratchRegister = addressTempRegister;
+    RegisterID scratchRegister()
+    {
+        RELEASE_ASSERT(m_allowScratchRegister);
+        return s_scratchRegister;
+    }
 
     MacroAssemblerARMv7()
         : m_makeJumpPatchable(false)
@@ -679,7 +684,7 @@ private:
     void load32(ArmAddress address, RegisterID dest)
     {
         if (dest == addressTempRegister)
-            cachedAddressTempRegister().invalidate();
+            invalidateCachedAddressTempRegister();
         else if (dest == dataTempRegister)
             cachedDataTempRegister().invalidate();
 
@@ -698,7 +703,7 @@ private:
     void load16(ArmAddress address, RegisterID dest)
     {
         if (dest == addressTempRegister)
-            cachedAddressTempRegister().invalidate();
+            invalidateCachedAddressTempRegister();
         else if (dest == dataTempRegister)
             cachedDataTempRegister().invalidate();
 
@@ -718,7 +723,7 @@ private:
     {
         ASSERT(address.type == ArmAddress::HasIndex);
         if (dest == addressTempRegister)
-            cachedAddressTempRegister().invalidate();
+            invalidateCachedAddressTempRegister();
         else if (dest == dataTempRegister)
             cachedDataTempRegister().invalidate();
 
@@ -728,7 +733,7 @@ private:
     void load8(ArmAddress address, RegisterID dest)
     {
         if (dest == addressTempRegister)
-            cachedAddressTempRegister().invalidate();
+            invalidateCachedAddressTempRegister();
         else if (dest == dataTempRegister)
             cachedDataTempRegister().invalidate();
 
@@ -748,7 +753,7 @@ private:
     {
         ASSERT(address.type == ArmAddress::HasIndex);
         if (dest == addressTempRegister)
-            cachedAddressTempRegister().invalidate();
+            invalidateCachedAddressTempRegister();
         else if (dest == dataTempRegister)
             cachedDataTempRegister().invalidate();
 
@@ -933,7 +938,7 @@ public:
                 absOffset = -absOffset;
             if (!(absOffset & ~0x3fc)) {
                 if ((dest1 == addressTempRegister) || (dest2 == addressTempRegister))
-                    cachedAddressTempRegister().invalidate();
+                    invalidateCachedAddressTempRegister();
                 if ((dest1 == dataTempRegister) || (dest2 == dataTempRegister))
                     cachedDataTempRegister().invalidate();
                 m_assembler.ldrd(dest1, dest2, address.base, address.u.offset, /* index: */ true, /* wback: */ false);
@@ -1665,7 +1670,7 @@ public:
         if (dest == dataTempRegister)
             cachedDataTempRegister().invalidate();
         else if (dest == addressTempRegister)
-            cachedAddressTempRegister().invalidate();
+            invalidateCachedAddressTempRegister();
     }
 
     void move(TrustedImmPtr imm, RegisterID dest)
@@ -2054,7 +2059,7 @@ public:
     void farJump(RegisterID target, PtrTag)
     {
         cachedDataTempRegister().invalidate();
-        cachedAddressTempRegister().invalidate();
+        invalidateCachedAddressTempRegister();
         m_assembler.bx(target);
     }
 
@@ -2062,7 +2067,7 @@ public:
     {
         move(target, addressTempRegister);
         cachedDataTempRegister().invalidate();
-        cachedAddressTempRegister().invalidate();
+        invalidateCachedAddressTempRegister();
         m_assembler.bx(addressTempRegister);
     }
 
@@ -2529,8 +2534,8 @@ protected:
                 m_assembler.add(scratch, address.base, imm);
             } else {
                 move(TrustedImm32(address.offset), addressTempRegister);
-                cachedAddressTempRegister().invalidate();
                 m_assembler.add(addressTempRegister, addressTempRegister, address.base);
+                cachedAddressTempRegister().invalidate();
             }
 
             return ArmAddress(addressTempRegister, address.index, address.scale);
@@ -2618,6 +2623,14 @@ protected:
     ALWAYS_INLINE CachedTempRegister& cachedDataTempRegister()
     {
         return m_cachedDataTempRegister;
+    }
+
+    ALWAYS_INLINE void invalidateCachedAddressTempRegister()
+    {
+        // This function is intended for when we are explicitly using
+        // addressTempRegister (because the caller supplied it), so it can
+        // ignore m_allowScratchRegister.
+        m_cachedAddressTempRegister.invalidate();
     }
 
     ALWAYS_INLINE CachedTempRegister& cachedAddressTempRegister()

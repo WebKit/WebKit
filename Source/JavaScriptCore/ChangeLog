@@ -1,3 +1,43 @@
+2022-03-16  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        MacroAssemblerARMv7: Be friendlier to DisallowMacroScratchRegisterUsage
+        https://bugs.webkit.org/show_bug.cgi?id=237888
+
+        Reviewed by Žan Doberšek.
+
+        Only check that we're allowed to use the scratch register at sites
+        where we're using it implicitly. When it's explicitly passed in by the
+        caller, use invalidateCachedAddressTempRegister to invalidate it
+        without asserting anything about m_allowScratchRegister.
+
+        Since helpers can explictly make use of addressTempRegister, an
+        argument can be made that this is still fragile (i.e. future changes
+        could run into this). The alternative would be to have the topmost caller
+        do fine-grained management of DisallowMacroScratchRegisterUsage,
+        allowing it around explicit calls to MacroAssemblerARMv7 with
+        scratchRegister() in the arguments and disallowing it for helpers.
+
+        As there are currently no helpers that would trip this, this patch opts
+        for the former approach, to make DisallowMacroScratchRegisterUsage
+        easier to work with (there'll be more usage of the API in an upcoming
+        wasm32 patch).
+
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::scratchRegister):
+        (JSC::MacroAssemblerARMv7::load32):
+        (JSC::MacroAssemblerARMv7::load16):
+        (JSC::MacroAssemblerARMv7::load16SignedExtendTo32):
+        (JSC::MacroAssemblerARMv7::load8):
+        (JSC::MacroAssemblerARMv7::load8SignedExtendTo32):
+        (JSC::MacroAssemblerARMv7::loadPair32):
+        (JSC::MacroAssemblerARMv7::move):
+        (JSC::MacroAssemblerARMv7::farJump):
+        (JSC::MacroAssemblerARMv7::setupArmAddress):
+        (JSC::MacroAssemblerARMv7::invalidateCachedAddressTempRegister):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::emitFastPathImpl):
+        * jit/BaselineJITRegisters.h:
+
 2022-03-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Add UnlinkedDFG compilation mode enum
