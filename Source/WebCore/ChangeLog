@@ -1,3 +1,18 @@
+2022-03-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] REGRESSION(r291257): Unreviewed, fix build when using ATK
+        https://bugs.webkit.org/show_bug.cgi?id=237939
+
+        r291257 renamed RenderStyle::textDecoration() to
+        RenderStyle::textDecorationLine() in the ATSPI module, but it missed
+        to do the same for the ATK module.
+
+        ATK is still in use when building with flag -DUSE_ATSPI=OFF, which is
+        used by Ubuntu 18.04 and Debian Stable bots.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getAttributeSetForAccessibilityObject):
+
 2022-03-15  Eric Carlson  <eric.carlson@apple.com>
 
         Video poster disappears prematurely on play, leaving transparent video element.
