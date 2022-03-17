@@ -11,6 +11,7 @@ textarea.value = "\n";
 textarea.rows = 10;
 document.body.appendChild(textarea);
 textarea.focus();
+textarea.setSelectionRange(0, 0);
 shouldBe("document.execCommand('InsertHTML', false, 'first<br><br>third'); textarea.value", "'first\\n\\nthird\\n'");
 
 var successfullyParsed = true;

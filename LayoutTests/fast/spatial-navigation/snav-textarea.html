@@ -66,6 +66,9 @@
 
       // starting the test itself: get to a known place.
       document.getElementById("start").focus();
+      textarea.focus();
+      textarea.setSelectionRange(0, 0);
+
 
       initTest(resultMap, testCompleted);
     }

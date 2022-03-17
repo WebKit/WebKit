@@ -153,9 +153,9 @@ void ColorInputType::createShadowSubtree()
     updateColorSwatch();
 }
 
-void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior)
+void ColorInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
-    InputType::setValue(value, valueChanged, eventBehavior);
+    InputType::setValue(value, valueChanged, eventBehavior, selection);
 
     if (!valueChanged)
         return;

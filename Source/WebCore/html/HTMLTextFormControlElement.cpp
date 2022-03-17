@@ -254,8 +254,6 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
     else
         text.insert(replacement, start);
 
-    setInnerTextValue(text);
-
     // FIXME: This shouldn't need synchronous style update, or renderer at all.
     if (!renderer())
         document().updateStyleIfNeeded();
@@ -263,7 +261,7 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
     if (!renderer())
         return { };
 
-    subtreeHasChanged();
+    setValue(text, TextFieldEventBehavior::DispatchNoEvent, TextControlSetValueSelection::DoNotSet);
 
     if (equalLettersIgnoringASCIICase(selectionMode, "select")) {
         newSelectionStart = start;
@@ -314,6 +312,10 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextField
 
     auto innerText = innerTextElementCreatingShadowSubtreeIfNeeded();
     bool hasFocus = document().focusedElement() == this;
+
+    RefPtr frame = document().frame();
+    if (direction == SelectionHasNoDirection && frame && frame->editor().behavior().shouldConsiderSelectionAsDirectional())
+        direction = SelectionHasForwardDirection;
     if (!hasFocus && innerText) {
         if (!isConnected()) {
             cacheSelection(start, end, direction);

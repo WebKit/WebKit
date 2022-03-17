@@ -1,3 +1,15 @@
+2022-03-17  Ziran Sun  <zsun@igalia.com>
+
+        [Selection] Fixes selection range settings for TEXTAREA
+        https://bugs.webkit.org/show_bug.cgi?id=237641
+
+        Reviewed by Chris Dumez.
+
+        Updated two tests that expect resetting value of textarea to change selection to 0.
+        These changes are in line with changes made in Chromium.
+        * editing/pasteboard/paste-into-textarea-with-new-line.html:
+        * fast/spatial-navigation/snav-textarea.html:
+
 2022-03-17  Youenn Fablet  <youenn@apple.com>
 
         AudioContext is suspended on iOS when page is backgrounded

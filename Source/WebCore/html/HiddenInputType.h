@@ -48,7 +48,7 @@ private:
     bool rendererIsNeeded() override;
     bool storesValueSeparateFromAttribute() override;
     bool shouldRespectHeightAndWidthAttributes() override;
-    void setValue(const String&, bool, TextFieldEventBehavior) override;
+    void setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection) override;
     bool appendFormData(DOMFormData&) const override;
 };
 

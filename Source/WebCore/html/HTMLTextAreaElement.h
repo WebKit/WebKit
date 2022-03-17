@@ -44,7 +44,7 @@ public:
     bool shouldWrapText() const { return m_wrap != NoWrap; }
 
     WEBCORE_EXPORT String value() const final;
-    WEBCORE_EXPORT void setValue(const String&);
+    WEBCORE_EXPORT ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) final;
     WEBCORE_EXPORT String defaultValue() const;
     WEBCORE_EXPORT void setDefaultValue(const String&);
     int textLength() const { return value().length(); }
@@ -83,8 +83,8 @@ private:
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) const;
     static String sanitizeUserInputValue(const String&, unsigned maxLength);
     void updateValue() const;
-    void setNonDirtyValue(const String&);
-    void setValueCommon(const String&);
+    void setNonDirtyValue(const String&, TextControlSetValueSelection);
+    void setValueCommon(const String&, TextFieldEventBehavior, TextControlSetValueSelection);
 
     bool supportsPlaceholder() const final { return true; }
     HTMLElement* placeholderElement() const final;

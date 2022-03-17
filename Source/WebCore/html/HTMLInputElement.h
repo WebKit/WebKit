@@ -171,7 +171,7 @@ public:
     WEBCORE_EXPORT void setType(const AtomString&);
 
     WEBCORE_EXPORT String value() const final;
-    WEBCORE_EXPORT ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent);
+    WEBCORE_EXPORT ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) final;
     WEBCORE_EXPORT void setValueForUser(const String&);
     // Checks if the specified string would be a valid value.
     // We should not call this for types with no string value such as CHECKBOX and RADIO.

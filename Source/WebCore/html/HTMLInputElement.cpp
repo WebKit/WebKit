@@ -1064,7 +1064,7 @@ void HTMLInputElement::setValueForUser(const String& value)
     setValue(value, DispatchChangeEvent);
 }
 
-ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior)
+ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     if (isFileUpload() && !value.isEmpty())
         return Exception { InvalidStateError };
@@ -1079,7 +1079,7 @@ ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEvent
 
     setLastChangeWasNotUserEdit();
     setFormControlValueMatchesRenderer(false);
-    m_inputType->setValue(sanitizedValue, valueChanged, eventBehavior);
+    m_inputType->setValue(sanitizedValue, valueChanged, eventBehavior, selection);
 
     bool wasModifiedProgrammatically = eventBehavior == DispatchNoEvent;
     if (wasModifiedProgrammatically)

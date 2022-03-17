@@ -6,18 +6,18 @@ PASS Initial .value set on input-appended should set selectionStart to end of va
 PASS Initial .value set on input-not-appended should set selectionStart to end of value
 PASS Initial .value set on input-appended-prefocused should set selectionStart to end of value
 PASS Initial .value set on input-not-appended-prefocused should set selectionStart to end of value
-FAIL Initial .value set on textarea-appended should set selectionStart to end of value assert_equals: expected 10 but got 0
-FAIL Initial .value set on textarea-not-appended should set selectionStart to end of value assert_equals: expected 10 but got 0
-FAIL Initial .value set on textarea-appended-prefocused should set selectionStart to end of value assert_equals: expected 10 but got 0
-FAIL Initial .value set on textarea-not-appended-prefocused should set selectionStart to end of value assert_equals: expected 10 but got 0
+PASS Initial .value set on textarea-appended should set selectionStart to end of value
+PASS Initial .value set on textarea-not-appended should set selectionStart to end of value
+PASS Initial .value set on textarea-appended-prefocused should set selectionStart to end of value
+PASS Initial .value set on textarea-not-appended-prefocused should set selectionStart to end of value
 PASS Initial .value set on input-appended should set selectionEnd to end of value
 PASS Initial .value set on input-not-appended should set selectionEnd to end of value
 PASS Initial .value set on input-appended-prefocused should set selectionEnd to end of value
 PASS Initial .value set on input-not-appended-prefocused should set selectionEnd to end of value
-FAIL Initial .value set on textarea-appended should set selectionEnd to end of value assert_equals: expected 10 but got 0
-FAIL Initial .value set on textarea-not-appended should set selectionEnd to end of value assert_equals: expected 10 but got 0
-FAIL Initial .value set on textarea-appended-prefocused should set selectionEnd to end of value assert_equals: expected 10 but got 0
-FAIL Initial .value set on textarea-not-appended-prefocused should set selectionEnd to end of value assert_equals: expected 10 but got 0
+PASS Initial .value set on textarea-appended should set selectionEnd to end of value
+PASS Initial .value set on textarea-not-appended should set selectionEnd to end of value
+PASS Initial .value set on textarea-appended-prefocused should set selectionEnd to end of value
+PASS Initial .value set on textarea-not-appended-prefocused should set selectionEnd to end of value
 PASS onselect should fire when selectionStart is changed
 NOTRUN onselect should fire when selectionStart is changed on input-appended
 NOTRUN onselect should fire when selectionStart is changed on input-not-appended

@@ -42,7 +42,7 @@ public:
 
 private:
     const AtomString& formControlType() const final;
-    void setValue(const String&, bool valueChanged, TextFieldEventBehavior) final;
+    void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDouble(double, TextFieldEventBehavior) const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;

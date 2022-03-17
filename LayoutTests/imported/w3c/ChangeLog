@@ -1,3 +1,17 @@
+2022-03-17  Ziran Sun  <zsun@igalia.com>
+
+        [Selection] Fixes selection range settings for TEXTAREA
+        https://bugs.webkit.org/show_bug.cgi?id=237641
+
+        Reviewed by Chris Dumez.
+
+        Updating test expectations as some sub-tests are now passing.
+        * web-platform-tests/html/semantics/forms/textfieldselection/defaultSelection-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-start-end-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-start-end-extra-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-value-interactions-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textarea-selection-while-parsing-expected.txt:
+
 2022-03-16  Rob Buis  <rbuis@igalia.com>
 
         Sync css/css-contain from WPT

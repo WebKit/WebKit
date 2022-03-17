@@ -94,12 +94,12 @@ const AtomString& NumberInputType::formControlType() const
     return InputTypeNames::number();
 }
 
-void NumberInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
+void NumberInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     ASSERT(element());
     if (!valueChanged && sanitizedValue.isEmpty() && !element()->innerTextValue().isEmpty())
         updateInnerTextValue();
-    TextFieldInputType::setValue(sanitizedValue, valueChanged, eventBehavior);
+    TextFieldInputType::setValue(sanitizedValue, valueChanged, eventBehavior, selection);
 }
 
 double NumberInputType::valueAsDouble() const

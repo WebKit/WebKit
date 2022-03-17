@@ -62,7 +62,7 @@ bool BaseButtonInputType::storesValueSeparateFromAttribute()
     return false;
 }
 
-void BaseButtonInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior)
+void BaseButtonInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     ASSERT(element());
     element()->setAttributeWithoutSynchronization(valueAttr, sanitizedValue);

@@ -127,7 +127,7 @@ bool TextFieldInputType::valueMissing(const String& value) const
     return !element()->isDisabledOrReadOnly() && element()->isRequired() && value.isEmpty();
 }
 
-void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
+void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
     ASSERT(element());
 
@@ -137,18 +137,20 @@ void TextFieldInputType::setValue(const String& sanitizedValue, bool valueChange
 
     // We don't ask InputType::setValue to dispatch events because
     // TextFieldInputType dispatches events different way from InputType.
-    InputType::setValue(sanitizedValue, valueChanged, DispatchNoEvent);
+    InputType::setValue(sanitizedValue, valueChanged, DispatchNoEvent, selection);
 
     if (!valueChanged)
         return;
 
     updateInnerTextValue();
 
-    unsigned max = visibleValue().length();
-    if (input->focused())
-        input->setSelectionRange(max, max);
-    else
-        input->cacheSelectionInResponseToSetValue(max);
+    if (selection == TextControlSetValueSelection::SetSelectionToEnd) {
+        auto max = visibleValue().length();
+        if (input->focused())
+            input->setSelectionRange(max, max);
+        else
+            input->cacheSelectionInResponseToSetValue(max);
+    }
 
     switch (eventBehavior) {
     case DispatchChangeEvent:

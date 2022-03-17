@@ -345,9 +345,9 @@ void RangeInputType::attributeChanged(const QualifiedName& name)
     InputType::attributeChanged(name);
 }
 
-void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior)
+void RangeInputType::setValue(const String& value, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
-    InputType::setValue(value, valueChanged, eventBehavior);
+    InputType::setValue(value, valueChanged, eventBehavior, selection);
 
     if (!valueChanged)
         return;

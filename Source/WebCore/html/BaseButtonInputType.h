@@ -44,7 +44,7 @@ private:
     bool appendFormData(DOMFormData&) const override;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) override;
     bool storesValueSeparateFromAttribute() override;
-    void setValue(const String&, bool, TextFieldEventBehavior) override;
+    void setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection) override;
 };
 
 } // namespace WebCore

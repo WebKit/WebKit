@@ -136,7 +136,7 @@ void HTMLTextAreaElement::childrenChanged(const ChildChange& change)
     if (m_isDirty)
         setInnerTextValue(value());
     else
-        setNonDirtyValue(defaultValue());
+        setNonDirtyValue(defaultValue(),  TextControlSetValueSelection::DoNotSet);
 }
 
 bool HTMLTextAreaElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
@@ -241,7 +241,7 @@ bool HTMLTextAreaElement::appendFormData(DOMFormData& formData)
 
 void HTMLTextAreaElement::reset()
 {
-    setNonDirtyValue(defaultValue());
+    setNonDirtyValue(defaultValue(), TextControlSetValueSelection::SetSelectionToEnd);
 }
 
 bool HTMLTextAreaElement::hasCustomFocusLogic() const
@@ -374,21 +374,22 @@ String HTMLTextAreaElement::value() const
     return m_value;
 }
 
-void HTMLTextAreaElement::setValue(const String& value)
+ExceptionOr<void> HTMLTextAreaElement::setValue(const String& value, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection selection)
 {
-    setValueCommon(value);
+    setValueCommon(value, eventBehavior, selection);
     m_isDirty = true;
     updateValidity();
+    return { };
 }
 
-void HTMLTextAreaElement::setNonDirtyValue(const String& value)
+void HTMLTextAreaElement::setNonDirtyValue(const String& value, TextControlSetValueSelection selection)
 {
-    setValueCommon(value);
+    setValueCommon(value, TextFieldEventBehavior::DispatchNoEvent, selection);
     m_isDirty = false;
     updateValidity();
 }
 
-void HTMLTextAreaElement::setValueCommon(const String& newValue)
+void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventBehavior, TextControlSetValueSelection selection)
 {
     m_wasModifiedByUser = false;
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
@@ -409,10 +410,14 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue)
     invalidateStyleForSubtree();
     setFormControlValueMatchesRenderer(true);
 
-    // Set the caret to the end of the text value.
     if (document().focusedElement() == this) {
         unsigned endOfString = m_value.length();
         setSelectionRange(endOfString, endOfString);
+    }  else if (selection == TextControlSetValueSelection::SetSelectionToEnd) {
+        // We don't change text selection here but need to update caret to
+        // the end of the text value except for initialize.
+        unsigned endOfString = m_value.length();
+        cacheSelection(endOfString, endOfString, SelectionHasNoDirection);
     }
 
     setTextAsOfLastFormControlChangeEvent(normalizedValue);
@@ -576,7 +581,7 @@ void HTMLTextAreaElement::copyNonAttributePropertiesFromElement(const Element& s
 {
     auto& sourceElement = downcast<HTMLTextAreaElement>(source);
 
-    setValueCommon(sourceElement.value());
+    setValueCommon(sourceElement.value(), DispatchNoEvent, TextControlSetValueSelection::SetSelectionToEnd);
     m_isDirty = sourceElement.m_isDirty;
     HTMLTextFormControlElement::copyNonAttributePropertiesFromElement(source);
 

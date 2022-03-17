@@ -50,7 +50,7 @@ private:
     bool accessKeyAction(bool sendMouseEvents) override;
     String fallbackValue() const override;
     bool storesValueSeparateFromAttribute() override;
-    void setValue(const String&, bool, TextFieldEventBehavior) override;
+    void setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection) override;
 };
 
 } // namespace WebCore

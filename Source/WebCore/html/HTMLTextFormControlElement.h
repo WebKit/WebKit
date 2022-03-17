@@ -39,6 +39,7 @@ struct SimpleRange;
 enum class AutoFillButtonType : uint8_t { None, Credentials, Contacts, StrongPassword, CreditCard };
 enum TextFieldSelectionDirection { SelectionHasNoDirection, SelectionHasForwardDirection, SelectionHasBackwardDirection };
 enum TextFieldEventBehavior { DispatchNoEvent, DispatchChangeEvent, DispatchInputAndChangeEvent };
+enum TextControlSetValueSelection { SetSelectionToEnd, DoNotSet };
 
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
     WTF_MAKE_ISO_ALLOCATED(HTMLTextFormControlElement);
@@ -88,6 +89,7 @@ public:
 
     virtual String value() const = 0;
 
+    virtual ExceptionOr<void> setValue(const String&, TextFieldEventBehavior = DispatchNoEvent, TextControlSetValueSelection = TextControlSetValueSelection::SetSelectionToEnd) = 0;
     virtual RefPtr<TextControlInnerTextElement> innerTextElement() const = 0;
     virtual RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded() = 0;
     virtual RenderStyle createInnerTextStyle(const RenderStyle&) = 0;

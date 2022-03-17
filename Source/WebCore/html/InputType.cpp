@@ -721,7 +721,7 @@ bool InputType::storesValueSeparateFromAttribute()
     return true;
 }
 
-void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
+void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior, TextControlSetValueSelection)
 {
     ASSERT(element());
     element()->setValueInternal(sanitizedValue, eventBehavior);

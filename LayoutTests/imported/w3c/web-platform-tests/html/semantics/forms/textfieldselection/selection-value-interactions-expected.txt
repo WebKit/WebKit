@@ -11,6 +11,6 @@ PASS value dirty flag behavior after setRangeText on focused then blurred textar
 PASS value dirty flag behavior after setRangeText on focused then blurred input
 PASS selection is collapsed to the end after changing values on input
 PASS selection is not collapsed to the end when value is set to its existing value on input
-FAIL selection is collapsed to the end after changing values on textarea assert_equals: element.selectionStart should be value.length expected 3 but got 0
+PASS selection is collapsed to the end after changing values on textarea
 PASS selection is not collapsed to the end when value is set to its existing value on textarea
 

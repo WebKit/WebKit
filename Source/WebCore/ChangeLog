@@ -1,3 +1,72 @@
+2022-03-17  Ziran Sun  <zsun@igalia.com>
+
+        [Selection] Fixes selection range settings for TEXTAREA
+        https://bugs.webkit.org/show_bug.cgi?id=237641
+
+        Reviewed by Chris Dumez.
+
+        This CL is to fix the settings of SelectionStart/SelectionEnd for TEXTAREA for non-focused Element. It sets the
+        caret to the end of the text value except for initializing in most cases. For the case of updating defaultValue
+        for a non-dirty TEXTAREA, we should following the clamping steps as per spec and it will be addressed in a 
+        follow-up patch.        
+
+        This CL refers and imports part of the changes in chromium CL at
+        https://codereview.chromium.org/392573002
+
+        TextArea only calls setSelectionRange() for focused element. While for non-focused element, we need to update the caret
+        except for initializing. Since we are not change text selection for text area in this case, we only cache the selections.
+        It would be ideal to have a unified function call for both focused and non-focused cases. However, the selectionRange()
+        function changes focus of the element and the approach we are having here is to avoid the impacts on a good number of
+        exisiting tests.
+
+        This CL also introduces a unified setValue() API in HTMLFormControlElement for HTMLTextAreaElement and HTMLInputElement.
+
+        * html/BaseButtonInputType.cpp:
+        (WebCore::BaseButtonInputType::setValue):
+        * html/BaseButtonInputType.h:
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::setValue):
+        * html/BaseCheckableInputType.h:
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::setValue):
+        (WebCore::BaseDateAndTimeInputType::didChangeValueFromControl):
+        * html/BaseDateAndTimeInputType.h:
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::setValue):
+        * html/ColorInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::setValue):
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+        * html/HTMLInputElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::childrenChanged):
+        (WebCore::HTMLTextAreaElement::reset):
+        (WebCore::HTMLTextAreaElement::setValue):
+        (WebCore::HTMLTextAreaElement::setNonDirtyValue):
+        (WebCore::HTMLTextAreaElement::setValueCommon):
+        (WebCore::HTMLTextAreaElement::copyNonAttributePropertiesFromElement):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setRangeText):
+        * html/HTMLTextFormControlElement.h:
+        * html/HiddenInputType.cpp:
+        (WebCore::HiddenInputType::setValue):
+        * html/HiddenInputType.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::setValue):
+        * html/InputType.h:
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::setValue):
+        * html/NumberInputType.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::setValue):
+        * html/RangeInputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::setValue):
+        * html/TextFieldInputType.h:
+
 2022-03-17  Antoine Quint  <graouts@webkit.org>
 
         [model] some tests under model-element crash on Big Sur bots

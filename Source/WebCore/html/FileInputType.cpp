@@ -253,7 +253,7 @@ bool FileInputType::getTypeSpecificValue(String& value)
     return true;
 }
 
-void FileInputType::setValue(const String&, bool, TextFieldEventBehavior)
+void FileInputType::setValue(const String&, bool, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     // FIXME: Should we clear the file list, or replace it with a new empty one here? This is observable from JavaScript through custom properties.
     m_fileList->clear();

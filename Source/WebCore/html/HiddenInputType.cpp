@@ -83,7 +83,7 @@ bool HiddenInputType::storesValueSeparateFromAttribute()
     return false;
 }
 
-void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior)
+void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEventBehavior, TextControlSetValueSelection)
 {
     ASSERT(element());
     element()->setAttributeWithoutSynchronization(valueAttr, sanitizedValue);
