@@ -1,5 +1,28 @@
 2022-03-17  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r291433. rdar://problem/90431433
+
+    Removed telemetry from Networking.sb
+    https://bugs.webkit.org/show_bug.cgi?id=238026
+    
+    Patch by Adam Mazander <mazander@apple.com> on 2022-03-17
+    Reviewed by Per Arne Vollan.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291433 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-17  Adam Mazander  <mazander@apple.com>
+
+            Removed telemetry from Networking.sb
+            https://bugs.webkit.org/show_bug.cgi?id=238026
+
+            Reviewed by Per Arne Vollan.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+
+2022-03-17  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r291314. rdar://problem/90245766
 
     RemoteGraphicsContextGLProxy omits context lost checks for back and front buffer access functions
