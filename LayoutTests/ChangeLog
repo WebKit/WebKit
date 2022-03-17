@@ -1,5 +1,23 @@
 2022-03-17  Andres Gonzalez  <andresg_22@apple.com>
 
+        Make accessibility/roles-exposed.html faster.
+        https://bugs.webkit.org/show_bug.cgi?id=237960
+        <rdar://problem/90371580>
+
+        Reviewed by Chris Fleizach.
+
+        Make this test to run faster by storing the output in memory and
+        modifying the DOM once as opposed to doing it in each iteration. This is
+        particularly important in isolated tree mode, since the test is failing
+        because it takes too long to execute.
+        Also modify the test and expectations to explicitly output when the AX
+        object cannot be retrieved, i.e., it is not exposed for some reason.
+
+        * accessibility/roles-exposed.html:
+        * platform/mac-wk2/accessibility/roles-exposed-expected.txt:
+
+2022-03-17  Andres Gonzalez  <andresg_22@apple.com>
+
         Fix for accessibility/aria-option-role.html in isolated tree mode.
         https://bugs.webkit.org/show_bug.cgi?id=237975
         <rdar://problem/90386629>

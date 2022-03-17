@@ -1,7 +1,9 @@
 <!DOCTYPE HTML>
 <html>
+<head>
+<script src="../resources/js-test.js"></script>
+</head>
 <body>
-<script src="../resources/js-test-pre.js"></script>
 
 <!-- ==================================================================================================== -->
 <!-- HTML elements in alphabetical order, excepting the need for nesting (e.g. <li> is with its <ol> and <ul> parents) -->
@@ -395,59 +397,45 @@
     </div>
 </div>
 
-<div id="console"></div>
 <script>
 if (window.testRunner && window.accessibilityController) {
     description("This tests that native elements and ARIA overrides result in the expected role, subrole and role description.")
+
     var currentPlatform = accessibilityController.platformName;
     var examples = document.querySelectorAll('.ex');
-    var indent = "\n      "; // newline and six spaces
-    var el, supportedPlatforms, ariaRole, axElement, role, subrole, roleDescription, output, result;
-    for (var i = 0, c = examples.length; i < c; i++) {
+    var indent = "      "; // six spaces
+    var output = "";
+    for (let i = 0; i < examples.length; ++i) {
         el = examples[i];
 
-        supportedPlatforms = el.getAttribute('data-platform');
+        let supportedPlatforms = el.getAttribute('data-platform');
         if (!supportedPlatforms || supportedPlatforms.indexOf(currentPlatform) == -1)
             continue;
 
-        el.id = 'ex' + i;
-        ariaRole = el.getAttribute('role');
-        axElement = accessibilityController.accessibleElementById(el.id);
-        if (axElement) {
-            role = axElement.role;
-            subrole = axElement.subrole;
-            roleDescription = axElement.roleDescription;
-        } else {
-            role = 'AXRole: ';
-            subrole = 'AXSubrole: ';
-            roleDescription = 'AXRoleDescription: ';
-        }
-
-        output = el.tagName.toLowerCase() + (ariaRole?("[role="+ariaRole+"]"):'');
-        if (el.getAttribute('data-note')) {
+        let ariaRole = el.getAttribute('role');
+        el.id = `ex${i}`;
+        output += el.tagName.toLowerCase() + (ariaRole ? ("[role=" + ariaRole + "]") : '');
+        if (el.getAttribute('data-note'))
             output += el.getAttribute('data-note');
-        }
-        output += indent;
-        output += role + indent;
+        output += "\n";
 
-        // In the Mac platform more things than just the role
-        // are tested so we need to expand a bit the output.
-        if (currentPlatform == "mac")
-            output += subrole + indent + roleDescription + indent;
-
-        result = document.getElementById('console');
-        result.innerText += output + "\n";
+        let axElement = accessibilityController.accessibleElementById(el.id);
+        if (axElement) {
+            output += `${indent}${axElement.role}\n`;
+            if (currentPlatform == "mac")
+                output += `${indent}${axElement.subrole}\n${indent}${axElement.roleDescription}\n`;
+        } else
+            output += `${indent}Could not get AX element.\n`;
+        output += "\n";
     }
+    debug(output);
 
     // Once tests are complete, hide all the example markup.
-    examples = document.querySelectorAll('.ex');
-    for (var i = 0, c = examples.length; i < c; i++) {
-        el = examples[i];
+    examples.forEach((el) => {
         if (el.style)
             el.style.display = 'none';
-    }
+    });
 }
 </script>
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
