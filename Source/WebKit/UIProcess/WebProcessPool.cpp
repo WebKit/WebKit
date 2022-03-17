@@ -1778,10 +1778,9 @@ WeakHashSet<WebProcessProxy>& WebProcessPool::remoteWorkerProcesses()
 
 void WebProcessPool::updateProcessAssertions()
 {
-    WebsiteDataStore::forEachWebsiteDataStore([] (WebsiteDataStore& dataStore) {
-        if (auto* networkProcess = dataStore.networkProcessIfExists())
-            networkProcess->updateProcessAssertion();
-    });
+    if (auto& networkProcess = NetworkProcessProxy::defaultNetworkProcess())
+        networkProcess->updateProcessAssertion();
+
 #if ENABLE(GPU_PROCESS)
     if (auto* gpuProcess = GPUProcessProxy::singletonIfCreated())
         gpuProcess->updateProcessAssertion();
