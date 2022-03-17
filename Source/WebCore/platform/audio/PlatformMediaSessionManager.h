@@ -169,6 +169,8 @@ public:
 
     virtual void resetHaveEverRegisteredAsNowPlayingApplicationForTesting() { };
 
+    bool isApplicationInBackground() const { return m_isApplicationInBackground; }
+
 protected:
     friend class PlatformMediaSession;
     static std::unique_ptr<PlatformMediaSessionManager> create();
@@ -181,7 +183,6 @@ protected:
     void forEachSessionInGroup(MediaSessionGroupIdentifier, const Function<void(PlatformMediaSession&)>&);
     bool anyOfSessions(const Function<bool(const PlatformMediaSession&)>&) const;
 
-    bool isApplicationInBackground() const { return m_isApplicationInBackground; }
     void maybeDeactivateAudioSession();
     bool maybeActivateAudioSession();
 

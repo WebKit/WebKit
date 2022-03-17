@@ -525,6 +525,8 @@ public:
 
     Ref<WebProcessProxy> createNewWebProcess(WebsiteDataStore*, WebProcessProxy::CaptivePortalMode, WebProcessProxy::IsPrewarmed = WebProcessProxy::IsPrewarmed::No, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared);
 
+    bool hasAudibleMediaActivity() const { return !!m_audibleMediaActivity; }
+
 private:
     void platformInitialize();
 

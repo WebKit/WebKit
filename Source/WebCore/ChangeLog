@@ -1,3 +1,32 @@
+2022-03-17  Youenn Fablet  <youenn@apple.com>
+
+        AudioContext is suspended on iOS when page is backgrounded
+        https://bugs.webkit.org/show_bug.cgi?id=237878
+
+        Reviewed by Eric Carlson.
+
+        On iOS, when the application goes in the background, AudioContext gets suspended.
+        This is problematic when AudioContext is used to generate audio samples but not play audio samples.
+        To allow those silent AudioContexts to run even in background, the following is done:
+        - Override background interruptions in case the audio context default destination is not connected.
+        - Monitor whether the default destination is connected or not.
+        - If the default destination gets connected while application is in the background, trigger an interruption to prevent playing audio.
+
+        To prevent potential audio burst, we interrupt just before the destination gets connected and not just after.
+        For that reason, we add m_canOverrideBackgroundPlaybackRestriction to enforce interruption when we now the connection will be connected.
+
+        This approach keeps the existing iOS behavior in terms of rendered audio while allowing for not-playing audio contexts to continue in the background.
+
+        Tests: webaudio/suspend-context-while-backgrounded.html and API test.
+
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioNode.cpp:
+        * Modules/webaudio/AudioSummingJunction.h:
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * platform/audio/PlatformMediaSessionManager.h:
+
 2022-03-16  Devin Rousso  <drousso@apple.com>
 
         [Apple Pay] version values are incorrect, causing incorrect feature detection

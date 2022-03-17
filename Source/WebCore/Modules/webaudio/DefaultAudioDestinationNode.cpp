@@ -64,6 +64,12 @@ AudioContext& DefaultAudioDestinationNode::context()
     return downcast<AudioContext>(AudioDestinationNode::context());
 }
 
+bool DefaultAudioDestinationNode::isConnected() const
+{
+    auto* input = const_cast<DefaultAudioDestinationNode*>(this)->input(0);
+    return input ? !!input->numberOfConnections() : false;
+}
+
 const AudioContext& DefaultAudioDestinationNode::context() const
 {
     return downcast<AudioContext>(AudioDestinationNode::context());

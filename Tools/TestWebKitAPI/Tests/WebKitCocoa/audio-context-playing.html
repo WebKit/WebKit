@@ -2,13 +2,38 @@
 <html>
 <body>
 <script>
+var context;
+var oscillator;
 function startPlaying()
 {
+    if (context)
+        context.close();
+
     context = new AudioContext();
-    let oscillator = new OscillatorNode(context);
+    oscillator = new OscillatorNode(context);
     oscillator.connect(context.destination);
     oscillator.start();
 }
+
+function generateAudioInMediaStreamTrack()
+{
+    if (context)
+        context.close();
+
+    context = new AudioContext();
+    oscillator = new OscillatorNode(context);
+
+    const mediaStreamDestination = context.createMediaStreamDestination();
+    oscillator.connect(mediaStreamDestination);
+    oscillator.start();
+}
+
+function transitionAudioToSpeakers()
+{
+    if (context)
+        oscillator.connect(context.destination);
+}
+
 </script>
 </body>
 </html>

@@ -94,6 +94,8 @@ public:
     void addBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions |= restriction; }
     void removeBehaviorRestriction(BehaviorRestrictions restriction) { m_restrictions &= ~restriction; }
 
+    void defaultDestinationWillBecomeConnected();
+
 private:
     AudioContext(Document&, const AudioContextOptions&);
 
@@ -125,7 +127,7 @@ private:
     bool canReceiveRemoteControlCommands() const final { return false; }
     void didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType, const PlatformMediaSession::RemoteCommandArgument&) final { }
     bool supportsSeeking() const final { return false; }
-    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final { return false; }
+    bool shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType) const final;
     bool canProduceAudio() const final { return true; }
     bool isSuspended() const final;
     bool isPlaying() const final;
@@ -148,6 +150,8 @@ private:
     // [[suspended by user]] flag in the specification:
     // https://www.w3.org/TR/webaudio/#dom-audiocontext-suspended-by-user-slot
     bool m_wasSuspendedByScript { false };
+
+    bool m_canOverrideBackgroundPlaybackRestriction { true };
 };
 
 } // WebCore

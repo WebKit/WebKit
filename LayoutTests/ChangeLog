@@ -1,3 +1,13 @@
+2022-03-17  Youenn Fablet  <youenn@apple.com>
+
+        AudioContext is suspended on iOS when page is backgrounded
+        https://bugs.webkit.org/show_bug.cgi?id=237878
+
+        Reviewed by Eric Carlson.
+
+        * webaudio/suspend-context-while-backgrounded-expected.txt: Added.
+        * webaudio/suspend-context-while-backgrounded.html: Added.
+
 2022-03-16  Matteo Flores  <matteo_flores@apple.com>
 
         [ iOS EWS ] imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-textarea.html is a flaky text failure

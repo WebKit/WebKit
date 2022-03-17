@@ -764,3 +764,41 @@ TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioNonRenderingAudioContext)
     TestWebKitAPI::Util::sleep(0.5);
     EXPECT_EQ(0, [configuration.get().processPool _gpuProcessIdentifier]);
 }
+
+TEST(GPUProcess, ValidateWebAudioMediaProcessingAssertion)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"audio-context-playing"];
+
+    // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
+    __block bool done = false;
+    [webView evaluateJavaScript:@"generateAudioInMediaStreamTrack()" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // A GPUProcess should get launched.
+    while (![configuration.get().processPool _gpuProcessIdentifier])
+        TestWebKitAPI::Util::sleep(0.1);
+
+    // There should be no audible activity.
+    EXPECT_FALSE([configuration.get().processPool _hasAudibleMediaActivity]);
+
+    done = false;
+    [webView evaluateJavaScript:@"transitionAudioToSpeakers()" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // There should be audible activity.
+    int counter = 20;
+    while (--counter && ![configuration.get().processPool _hasAudibleMediaActivity])
+        TestWebKitAPI::Util::sleep(0.1);
+
+    EXPECT_TRUE([configuration.get().processPool _hasAudibleMediaActivity]);
+}

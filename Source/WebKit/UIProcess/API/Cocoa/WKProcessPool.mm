@@ -402,6 +402,11 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 #endif
 }
 
+- (BOOL)_hasAudibleMediaActivity
+{
+    return _processPool->hasAudibleMediaActivity() ? YES : NO;
+}
+
 - (BOOL)_requestWebProcessTermination:(pid_t)pid
 {
     for (auto& process : _processPool->processes()) {

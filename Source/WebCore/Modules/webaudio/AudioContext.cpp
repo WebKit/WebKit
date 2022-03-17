@@ -485,6 +485,25 @@ void AudioContext::isPlayingAudioDidChange()
     });
 }
 
+bool AudioContext::shouldOverrideBackgroundPlaybackRestriction(PlatformMediaSession::InterruptionType interruption) const
+{
+    return m_canOverrideBackgroundPlaybackRestriction && interruption == PlatformMediaSession::InterruptionType::EnteringBackground && !destination().isConnected();
+}
+
+void AudioContext::defaultDestinationWillBecomeConnected()
+{
+    // We might need to interrupt if we previously overrode a background interruption.
+    if (!PlatformMediaSessionManager::sharedManager().isApplicationInBackground() || m_mediaSession->state() == PlatformMediaSession::Interrupted)
+        return;
+
+    // We end the overriden interruption (if any) to get the right count of interruptions and start a new interruption.
+    m_mediaSession->endInterruption(PlatformMediaSession::EndInterruptionFlags::NoFlags);
+
+    m_canOverrideBackgroundPlaybackRestriction = false;
+    m_mediaSession->beginInterruption(PlatformMediaSession::EnteringBackground);
+    m_canOverrideBackgroundPlaybackRestriction = true;
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& AudioContext::logger() const
 {

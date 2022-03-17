@@ -1,3 +1,16 @@
+2022-03-17  Youenn Fablet  <youenn@apple.com>
+
+        AudioContext is suspended on iOS when page is backgrounded
+        https://bugs.webkit.org/show_bug.cgi?id=237878
+
+        Reviewed by Eric Carlson.
+
+        Expose private SPI for testing purposes.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.h:
+
 2022-03-16  Sihui Liu  <sihui_liu@apple.com>
 
         Always update assertion state for existing default network process

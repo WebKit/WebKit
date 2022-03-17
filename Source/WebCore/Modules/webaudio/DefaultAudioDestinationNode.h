@@ -51,6 +51,7 @@ public:
 
     void setMuted(bool muted) { m_muted = muted; }
     bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
+    bool isConnected() const;
 
 private:
     void createDestination();

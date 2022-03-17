@@ -118,6 +118,7 @@
 - (void)_clearWebProcessCache WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 - (void)_setUseSeparateServiceWorkerProcess:(BOOL)forceServiceWorkerProcess WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 - (pid_t)_gpuProcessIdentifier WK_API_AVAILABLE(macos(12.0), ios(15.0));
+- (BOOL)_hasAudibleMediaActivity WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (BOOL)_requestWebProcessTermination:(pid_t)pid WK_API_AVAILABLE(macos(12.0), ios(15.0));
 
 // Test only. Returns web processes running web pages (does not include web processes running service workers)
