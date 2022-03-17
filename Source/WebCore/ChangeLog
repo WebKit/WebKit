@@ -1,3 +1,20 @@
+2022-03-17  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (iOS 15.4 / r287669): Mobile app stopped working due to CSS / angular animation
+        https://bugs.webkit.org/show_bug.cgi?id=237920
+
+        Reviewed by Antti Koivisto.
+
+        We refactored the computed style output for the "transition" and "animation" shorthand
+        properties in r287669 and always returned a CSSValueList, even when the list of transitions
+        or animations was empty. This meant that for an element without any transition or animation
+        properties, we'd return the empty string for those properties.
+
+        Now we return the computed style for a default animation instead.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::animationShorthandValue):
+
 2022-03-17  Peng Liu  <peng.liu6@icloud.com>
 
         PiP on Vimeo freezes when toggled

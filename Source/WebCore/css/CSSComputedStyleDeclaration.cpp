@@ -1599,14 +1599,20 @@ static Ref<CSSValueList> valueListForAnimationOrTransitionProperty(CSSPropertyID
 static Ref<CSSValueList> animationShorthandValue(CSSPropertyID property, const AnimationList* animationList)
 {
     auto parentList = CSSValueList::createCommaSeparated();
-    if (animationList) {
-        for (const auto& animation : *animationList) {
-            auto childList = CSSValueList::createSpaceSeparated();
-            for (auto longhand : shorthandForProperty(property))
-                ComputedStyleExtractor::addValueForAnimationPropertyToList(childList.get(), longhand, animation.ptr());
-            parentList->append(childList);
-        }
-    }
+
+    auto addAnimation = [&](Ref<Animation> animation) {
+        auto childList = CSSValueList::createSpaceSeparated();
+        for (auto longhand : shorthandForProperty(property))
+            ComputedStyleExtractor::addValueForAnimationPropertyToList(childList.get(), longhand, animation.ptr());
+        parentList->append(childList);
+    };
+
+    if (animationList && !animationList->isEmpty()) {
+        for (const auto& animation : *animationList)
+            addAnimation(animation);
+    } else
+        addAnimation(Animation::create());
+
     return parentList;
 }
 
