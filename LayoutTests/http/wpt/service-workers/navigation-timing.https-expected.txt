@@ -1,0 +1,1 @@
+PASS - navigation timing as expected

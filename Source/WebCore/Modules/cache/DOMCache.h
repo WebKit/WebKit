@@ -82,7 +82,7 @@ private:
     void batchPutOperation(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&, CompletionHandler<void(ExceptionOr<void>&&)>&&);
     void batchPutOperation(Vector<DOMCacheEngine::Record>&&, CompletionHandler<void(ExceptionOr<void>&&)>&&);
 
-    Vector<Ref<FetchResponse>> cloneResponses(const Vector<DOMCacheEngine::Record>&);
+    Vector<Ref<FetchResponse>> cloneResponses(const Vector<DOMCacheEngine::Record>&, MonotonicTime);
     DOMCacheEngine::Record toConnectionRecord(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&);
 
     String m_name;

@@ -1,0 +1,26 @@
+<html>
+<head>
+<title>Service Worker navigation timing request and response time</title>
+</head>
+<body onload="doTest()">
+<script>
+async function doTest()
+{
+    const navTiming = performance.getEntries()[0];
+    const navTimingResult = (navigator.serviceWorker.controller
+        && navTiming.requestStart + navTiming.responseStart + navTiming.responseEnd > 0
+        && navTiming.responseStart >= navTiming.requestStart
+        && navTiming.responseEnd >= navTiming.responseStart) ? "PASS - navigation timing as expected"
+        : "FAIL - navigation timing incorrect "
+            + navTiming.requestStart + " "
+            + navTiming.responseStart + " "
+            + navTiming.responseEnd;
+
+    document.body.innerHTML = navTimingResult;
+    if (window.testRunner) {
+        testRunner.notifyDone();
+    }
+}
+</script>
+</body>
+</html>

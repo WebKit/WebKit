@@ -142,7 +142,7 @@ double PerformanceNavigationTiming::duration() const
 void PerformanceNavigationTiming::navigationFinished(const NetworkLoadMetrics& metrics)
 {
     m_documentLoadTiming.markEndTime();
-    m_resourceTiming.networkLoadMetrics() = metrics;
+    m_resourceTiming.networkLoadMetrics().updateFromFinalMetrics(metrics);
 }
 
 } // namespace WebCore

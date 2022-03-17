@@ -1,3 +1,19 @@
+2022-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        PerformanceNavigationTiming Response Start unavailable when using Service Worker Cache
+        https://bugs.webkit.org/show_bug.cgi?id=237317
+
+        Reviewed by Youenn Fablet.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::createResponse):
+        * page/PerformanceNavigationTiming.cpp:
+        (WebCore::PerformanceNavigationTiming::navigationFinished):
+        * platform/network/NetworkLoadMetrics.cpp:
+        (WebCore::NetworkLoadMetrics::updateFrom):
+        (WebCore::NetworkLoadMetrics::NetworkLoadMetrics): Deleted.
+        * platform/network/NetworkLoadMetrics.h:
+
 2022-03-17  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Fix build breakage from r291361

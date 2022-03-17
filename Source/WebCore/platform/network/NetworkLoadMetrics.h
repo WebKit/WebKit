@@ -75,6 +75,8 @@ public:
     bool isComplete() const { return complete; }
     void markComplete() { complete = true; }
 
+    void updateFromFinalMetrics(const NetworkLoadMetrics&);
+
     // https://www.w3.org/TR/resource-timing-2/#attribute-descriptions
     MonotonicTime redirectStart;
     MonotonicTime fetchStart;
@@ -92,14 +94,14 @@ public:
 
     uint16_t redirectCount { 0 };
 
-    bool complete : 1;
-    bool cellular : 1;
-    bool expensive : 1;
-    bool constrained : 1;
-    bool multipath : 1;
-    bool isReusedConnection : 1;
-    bool failsTAOCheck : 1;
-    bool hasCrossOriginRedirect : 1;
+    bool complete : 1 { false };
+    bool cellular : 1 { false };
+    bool expensive : 1 { false };
+    bool constrained : 1 { false };
+    bool multipath : 1 { false };
+    bool isReusedConnection : 1 { false };
+    bool failsTAOCheck : 1 { false };
+    bool hasCrossOriginRedirect : 1 { false };
 
     PrivacyStance privacyStance { PrivacyStance::Unknown };
 

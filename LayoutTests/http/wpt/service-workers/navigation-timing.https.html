@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>Service Worker navigation timing request and response time</title>
+</head>
+<body onload="doTest()">
+<script>
+async function doTest()
+{
+    var registration = await navigator.serviceWorker.register("navigation-timing.js", { scope : "resources/" });
+    var activeWorker = registration.active;
+    if (!activeWorker) {
+        activeWorker = registration.installing;
+        await new Promise(resolve => {
+            activeWorker.addEventListener('statechange', () => {
+                if (activeWorker.state === "activated")
+                    resolve(registration);
+            });
+        });
+    }
+    window.location = "resources/navigation-timing-part-2.html";
+}
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+</body>
+</html>
