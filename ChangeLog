@@ -1,3 +1,26 @@
+2022-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Guard libgbm and libdrm code, make them conditional dependencies for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=237974
+
+        Reviewed by Alejandro G. Castro.
+
+        Guard usage of libgbm and libdrm dependencies with the USE_LIBGBM
+        define. This should be required until we can switch to a possibly more
+        dynamic implementation that doesn't require build-time dependencies.
+
+        For the GTK port, the desire is to keep these dependencies fully
+        optional. At the moment they are required when enabling ANGLE-backed
+        WebGL, with the USE_LIBGBM also defined in that case. This is needed
+        because ANGLE integration for Linux ports already depends on these
+        libraries.
+
+        For the WPE port only USE_LIBGBM is defined and the two dependencies
+        remain required.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2022-03-14  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         Add myself (Gabriel Nava Marino) to contributors.json

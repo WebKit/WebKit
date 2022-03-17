@@ -27,6 +27,8 @@
 #include "config.h"
 #include "GBMDevice.h"
 
+#if USE(LIBGBM)
+
 #include <fcntl.h>
 #include <gbm.h>
 #include <mutex>
@@ -89,3 +91,5 @@ GBMDevice::~GBMDevice()
 }
 
 } // namespace WebCore
+
+#endif // USE(LIBGBM)

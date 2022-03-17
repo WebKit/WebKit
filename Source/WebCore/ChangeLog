@@ -1,3 +1,22 @@
+2022-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Guard libgbm and libdrm code, make them conditional dependencies for GTK
+        https://bugs.webkit.org/show_bug.cgi?id=237974
+
+        Reviewed by Alejandro G. Castro.
+
+        Add USE(LIBGBM) guards around GBMDevice and GBMBufferSwapchain code,
+        and compile against the libgbm and libdrm dependencies only when
+        USE_LIBGBM is defined. This makes the two dependencies optional if
+        desired.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * platform/graphics/gbm/GBMBufferSwapchain.cpp:
+        * platform/graphics/gbm/GBMBufferSwapchain.h:
+        * platform/graphics/gbm/GBMDevice.cpp:
+        * platform/graphics/gbm/GBMDevice.h:
+
 2022-03-17  Youenn Fablet  <youenn@apple.com>
 
         AudioContext is suspended on iOS when page is backgrounded

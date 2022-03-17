@@ -27,6 +27,8 @@
 #include "config.h"
 #include "GBMBufferSwapchain.h"
 
+#if USE(LIBGBM)
+
 #include "GBMDevice.h"
 #include <gbm.h>
 
@@ -170,3 +172,5 @@ GBMBufferSwapchain::Buffer::PlaneData::~PlaneData()
 }
 
 } // namespace WebCore
+
+#endif // USE(LIBGBM)

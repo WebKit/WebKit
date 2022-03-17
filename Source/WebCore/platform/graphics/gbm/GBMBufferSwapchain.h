@@ -26,6 +26,8 @@
 
 #pragma once
 
+#if USE(LIBGBM)
+
 #include "DMABufFormat.h"
 #include "DMABufObject.h"
 #include "DMABufReleaseFlag.h"
@@ -125,3 +127,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // USE(LIBGBM)

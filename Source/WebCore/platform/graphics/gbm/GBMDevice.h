@@ -26,6 +26,8 @@
 
 #pragma once
 
+#if USE(LIBGBM)
+
 #include <wtf/Noncopyable.h>
 
 struct gbm_device;
@@ -48,3 +50,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // USE(LIBGBM)
