@@ -140,11 +140,26 @@ void ARKitInlinePreviewModelPlayerMac::load(WebCore::Model& modelSource, WebCore
     }
 
     createFile(modelSource);
+    createPreviewsForModelWithURL(modelSource.url());
+}
 
-    m_inlinePreview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:CGRectMake(0, 0, size.width(), size.height())]);
-    LOG(ModelElement, "ARKitInlinePreviewModelPlayer::modelDidChange() created preview with UUID %s and size %f x %f.", ((String)[m_inlinePreview uuid].UUIDString).utf8().data(), size.width(), size.height());
+void ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL(const URL& url)
+{
+    // First, create the WebProcess preview.
+    m_inlinePreview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:CGRectMake(0, 0, m_size.width(), m_size.height())]);
+    LOG(ModelElement, "ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL() created preview with UUID %s and size %f x %f.", ((String)[m_inlinePreview uuid].UUIDString).utf8().data(), m_size.width(), m_size.height());
 
-    CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)> completionHandler = [weakSelf = WeakPtr { *this }] (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result) mutable {
+    auto strongClient = client();
+    if (!strongClient)
+        return;
+
+    RefPtr strongPage = page();
+    if (!strongPage) {
+        strongClient->didFailLoading(*this, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, url, "WebPage destroyed"_s });
+        return;
+    }
+
+    CompletionHandler<void(Expected<std::pair<String, uint32_t>, WebCore::ResourceError>)> completionHandler = [weakSelf = WeakPtr { *this }, url] (Expected<std::pair<String, uint32_t>, WebCore::ResourceError> result) mutable {
         RefPtr strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -154,7 +169,7 @@ void ARKitInlinePreviewModelPlayerMac::load(WebCore::Model& modelSource, WebCore
             return;
 
         if (!result) {
-            LOG(ModelElement, "ARKitInlinePreviewModelPlayer::inlinePreviewDidObtainContextId() received error from UIProcess");
+            LOG(ModelElement, "ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL() received error from UIProcess");
             strongClient->didFailLoading(*strongSelf, result.error());
             return;
         }
@@ -163,18 +178,55 @@ void ARKitInlinePreviewModelPlayerMac::load(WebCore::Model& modelSource, WebCore
         String expectedUUID = [strongSelf->m_inlinePreview uuid].UUIDString;
 
         if (uuid != expectedUUID) {
-            LOG(ModelElement, "ARKitInlinePreviewModelPlayer::inlinePreviewDidObtainContextId() UUID mismatch, received %s but expected %s.", uuid.utf8().data(), expectedUUID.utf8().data());
-            strongClient->didFailLoading(*strongSelf, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, makeString("ARKitInlinePreviewModelPlayer::inlinePreviewDidObtainContextId() UUID mismatch, received ", uuid, " but expected ", expectedUUID, ".") });
+            LOG(ModelElement, "ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL() UUID mismatch, received %s but expected %s.", uuid.utf8().data(), expectedUUID.utf8().data());
+            strongClient->didFailLoading(*strongSelf, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, { }, makeString("ARKitInlinePreviewModelPlayer::createPreviewsForModelWithURL() UUID mismatch, received ", uuid, " but expected ", expectedUUID, ".") });
             return;
         }
 
         [strongSelf->m_inlinePreview setRemoteContext:contextId];
-        LOG(ModelElement, "ARKitInlinePreviewModelPlayer::inlinePreviewDidObtainContextId() successfully established remote connection for UUID %s.", uuid.utf8().data());
+        LOG(ModelElement, "ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL() successfully established remote connection for UUID %s.", uuid.utf8().data());
+
+        strongSelf->didCreateRemotePreviewForModelWithURL(url);
+    };
+
+    // Then, create the UIProcess preview.
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementCreateRemotePreview([m_inlinePreview uuid].UUIDString, m_size), WTFMove(completionHandler));
+}
+
+void ARKitInlinePreviewModelPlayerMac::didCreateRemotePreviewForModelWithURL(const URL& url)
+{
+    auto strongClient = client();
+    if (!strongClient)
+        return;
+
+    RefPtr strongPage = page();
+    if (!strongPage) {
+        strongClient->didFailLoading(*this, WebCore::ResourceError { WebCore::errorDomainWebKitInternal, 0, url, "WebPage destroyed"_s });
+        return;
+    }
+
+    CompletionHandler<void(std::optional<WebCore::ResourceError>&&)> completionHandler = [weakSelf = WeakPtr { *this }] (std::optional<WebCore::ResourceError>&& error) mutable {
+        RefPtr strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        auto strongClient = strongSelf->client();
+        if (!strongClient)
+            return;
+
+        if (error) {
+            LOG(ModelElement, "ARKitInlinePreviewModelPlayer::didCreateRemotePreviewForModelWithURL() received error from UIProcess");
+            strongClient->didFailLoading(*strongSelf, *error);
+            return;
+        }
+
+        LOG(ModelElement, "ARKitInlinePreviewModelPlayer::didCreateRemotePreviewForModelWithURL() successfully completed load for UUID %s.", [strongSelf->m_inlinePreview uuid]);
 
         strongClient->didFinishLoading(*strongSelf);
     };
-    
-    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementDidCreatePreview(URL::fileURLWithFileSystemPath(m_filePath), [m_inlinePreview uuid].UUIDString, size), WTFMove(completionHandler));
+
+    // Now that both the WebProcess and UIProcess previews are created, load the file into the remote preview.
+    strongPage->sendWithAsyncReply(Messages::WebPageProxy::ModelElementLoadRemotePreview([m_inlinePreview uuid].UUIDString, URL::fileURLWithFileSystemPath(m_filePath)), WTFMove(completionHandler));
 }
 
 void ARKitInlinePreviewModelPlayerMac::sizeDidChange(WebCore::LayoutSize size)

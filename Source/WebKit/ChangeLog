@@ -1,3 +1,35 @@
+2022-03-16  Antoine Quint  <graouts@webkit.org>
+
+        [model] -[ASVInlinePreview setRemoteContext:] should be called inside the -[ASVInlinePreview setupRemoteConnectionWithCompletionHandler:] callback
+        https://bugs.webkit.org/show_bug.cgi?id=237959
+        rdar://87832635
+
+        Reviewed by Dean Jackson.
+
+        We need to split the code that creates a remote ASVInlinePreview on macOS in two. The first step is to create the remote ASVInlinePreview
+        and obtain its remote context id from the UIProcess, setting it on the WebProcess ASVInlinePreview in the callback.
+
+        The second step is to load the file in the remote ASVInlinePreview.
+
+        For these two steps, we now have two separate WebProxy messages: ModelElementCreateRemotePreview and ModelElementLoadRemotePreview.
+
+        * UIProcess/Cocoa/ModelElementControllerCocoa.mm:
+        (WebKit::ModelElementController::modelElementCreateRemotePreview):
+        (WebKit::ModelElementController::modelElementLoadRemotePreview):
+        (WebKit::ModelElementController::modelElementDidCreatePreview): Deleted.
+        * UIProcess/ModelElementController.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::modelElementCreateRemotePreview):
+        (WebKit::WebPageProxy::modelElementLoadRemotePreview):
+        (WebKit::WebPageProxy::modelElementDidCreatePreview): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.h:
+        * WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm:
+        (WebKit::ARKitInlinePreviewModelPlayerMac::load):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::createPreviewsForModelWithURL):
+        (WebKit::ARKitInlinePreviewModelPlayerMac::didCreateRemotePreviewForModelWithURL):
+
 2022-03-17  Youenn Fablet  <youenn@apple.com>
 
         AudioContext is suspended on iOS when page is backgrounded

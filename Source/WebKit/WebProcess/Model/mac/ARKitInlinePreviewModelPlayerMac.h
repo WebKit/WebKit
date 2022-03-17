@@ -62,6 +62,9 @@ private:
     void createFile(WebCore::Model&);
     void clearFile();
 
+    void createPreviewsForModelWithURL(const URL&);
+    void didCreateRemotePreviewForModelWithURL(const URL&);
+
     WebCore::LayoutSize m_size;
     String m_filePath;
     RetainPtr<ASVInlinePreview> m_inlinePreview;
