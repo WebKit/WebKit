@@ -55,7 +55,6 @@ my $coverageSupport = 0;
 my $showHelp = 0;
 my $ftlJIT = int(isAppleCocoaWebKit() && !willUseIOSSimulatorSDK() || ((isARM64() || isX86_64()) && (isGtk() || isJSCOnly())));
 my $forceCLoop = 0;
-my $cli = 0;
 my $makeArgs = "";
 my @cmakeArgs;
 my $buildDir = "";
@@ -88,7 +87,6 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]coverage               Toggle code coverage support (default: $coverageSupport)
   --[no-]ftl-jit                Toggle FTL JIT support (default: $ftlJIT)
   --cloop                       Use C Loop interpreter (default: $forceCLoop)
-  --cli                         Build the new jsc command line interface (default: $cli)
   --makeargs=<arguments>        Optional Makefile flags
   --cmakeargs=<arguments>       One or more optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
   --build-dir=<path>            Build out of tree in directory at <path>
@@ -103,7 +101,6 @@ my %options = (
     'help' => \$showHelp,
     'ftl-jit!' => \$ftlJIT,
     'cloop!' => \$forceCLoop,
-    'cli!' => \$cli,
     'makeargs=s' => \$makeArgs,
     'cmakeargs=s' => \@cmakeArgs,
     'build-dir=s' => \$buildDir,
@@ -272,7 +269,4 @@ buildMyProject("Source/WTF", "WTF");
 buildMyProject("Source/JavaScriptCore", "JavaScriptCore");
 if (isAppleCocoaWebKit()) {
     writeCongrats();
-}
-if (isAppleCocoaWebKit() && $cli) {
-    buildMyProject("Tools/jsc-cli", "jsc-cli");
 }
