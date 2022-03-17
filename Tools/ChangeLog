@@ -1,3 +1,17 @@
+2022-03-17  Saam Barati  <sbarati@apple.com>
+
+        compare-results should break down sync vs async time in Speedometer2
+        https://bugs.webkit.org/show_bug.cgi?id=237993
+
+        Reviewed by Alexey Shvayka.
+
+        * Scripts/compare-results:
+        (speedometer2Breakdown):
+        (speedometer2BreakdownSyncAsync):
+        (dumpBreakdowns):
+        (getOptions):
+        (main):
+
 2022-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Delete Tools/jsc-cli in favor of the jsc target in JavaScriptCore itself

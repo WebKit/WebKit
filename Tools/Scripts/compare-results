@@ -72,6 +72,26 @@ def speedometer2Breakdown(jsonObject):
         result[test] = breakdown._results["Speedometer-2"]["tests"][test]["metrics"]["Time"]["Total"]["current"]
     return result
 
+def speedometer2BreakdownSyncAsync(jsonObject):
+    breakdown = BenchmarkResults(jsonObject)
+    result = {}
+    result[unitMarker] = "ms"
+    for test in breakdown._results["Speedometer-2"]["tests"].keys():
+        syncTime = None
+        asyncTime = None
+        for value in breakdown._results["Speedometer-2"]["tests"][test]["tests"].values():
+            syncArray = value["tests"]["Sync"]["metrics"]["Time"][None]["current"]
+            asyncArray = value["tests"]["Async"]["metrics"]["Time"][None]["current"]
+            if not syncTime:
+                syncTime = syncArray
+                asyncTime = asyncArray
+            else:
+                syncTime = [x + y for x, y in zip(syncTime, syncArray)]
+                asyncTime = [x + y for x, y in zip(asyncTime, asyncArray)]
+        result[test + "-sync"] = syncTime
+        result[test + "-async"] = asyncTime
+    return result
+
 def jetStream2Breakdown(jsonObject):
     breakdown = BenchmarkResults(jsonObject)
     result = {}
@@ -239,7 +259,7 @@ def dumpBreakdowns(a, b):
 
     strings = []
     strings.append("|{key:^{nameLength}}|{aScore:^{aLength}} |{bScore:^{bLength}} |{compare:^{ratioLength}}|{pMarker:^{pLength}}|".format(key="subtest", aScore=a[unitMarker], bScore=b[unitMarker], nameLength=nameLength, aLength=aLength, bLength=bLength , compare="b / a", ratioLength=ratioLength, pMarker=pValueHeader, pLength=pLength))
-    for key in a.keys():
+    for key in sorted(a.keys()):
         if key == unitMarker:
             continue
 
@@ -495,6 +515,9 @@ def getOptions():
     parser.add_argument("--breakdown", action="store_true",
         default=False, help="Print a per subtest breakdown.")
 
+    parser.add_argument("--sync-vs-async", action="store_true",
+        default=False, help="Print a per subtest breakdown in Speedometer2 by sync and async time.")
+
     return parser.parse_known_args()[0]
 
 
@@ -529,7 +552,10 @@ def main():
             writeCSV(jetStream2Breakdown(a), jetStream2Breakdown(b), args.csv)
     elif typeA == Speedometer2:
         if args.breakdown:
-            dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b))
+            if args.sync_vs_async:
+                dumpBreakdowns(speedometer2BreakdownSyncAsync(a), speedometer2BreakdownSyncAsync(b))
+            else:
+                dumpBreakdowns(speedometer2Breakdown(a), speedometer2Breakdown(b))
 
         ttest(typeA, Speedometer2Results(a), Speedometer2Results(b))
 
