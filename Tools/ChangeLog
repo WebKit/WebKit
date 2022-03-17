@@ -1,3 +1,19 @@
+2022-03-17  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Remove merge-queue labels when blocking PR
+        https://bugs.webkit.org/show_bug.cgi?id=237964
+        <rdar://problem/90372805>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (GitHubMixin.add_label): Renamed from modify_label, only handle add case
+        because removal case requires 'get' request first.
+        (GitHubMixin.remove_labels): Remove list of labels from PR.
+        (BlockPullRequest.start): Remove merge-queue labels.
+        (BlockPullRequest.getResultSummary): Add label name in results summary.
+        (GitHubMixin.modify_label): Renamed add_label.
+
 2022-03-17  Saam Barati  <sbarati@apple.com>
 
         compare-results should break down sync vs async time in Speedometer2

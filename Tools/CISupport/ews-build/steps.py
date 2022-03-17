@@ -233,12 +233,9 @@ class GitHubMixin(object):
             return False
         return True
 
-    def modify_label(self, pr_number, label, repository_url=None, action='add'):
+    def add_label(self, pr_number, label, repository_url=None):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
-            return False
-        if action not in ('add', 'delete'):
-            self._addToLog('stdio', "'{}' is not a valid label modifcation action".format(action))
             return False
 
         pr_label_url = '{}/issues/{}/labels'.format(api_url, pr_number)
@@ -246,16 +243,52 @@ class GitHubMixin(object):
             username, access_token = GitHub.credentials()
             auth = HTTPBasicAuth(username, access_token) if username and access_token else None
             response = requests.request(
-                'POST' if action == 'add' else 'DELETE',
-                pr_label_url, timeout=60, auth=auth,
+                'POST', pr_label_url, timeout=60, auth=auth,
                 headers=dict(Accept='application/vnd.github.v3+json'),
                 json=dict(labels=[label]),
             )
             if response.status_code // 100 != 2:
-                self._addToLog('stdio', "Unable to {} '{}' label on PR {}. Unexpected response code from GitHub: {}".format(action, label, pr_number, response.status_code))
+                self._addToLog('stdio', f"Unable to add '{label}' label on PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
                 return False
         except Exception as e:
-            self._addToLog('stdio', "Error in {}ing '{}' label on PR {}".format(action, label, pr_number))
+            self._addToLog('stdio', f"Error in adding '{label}' label on PR {pr_number}\n")
+            return False
+        return True
+
+    def remove_labels(self, pr_number, labels=None, repository_url=None):
+        labels = labels or []
+        if not labels:
+            return True
+        api_url = GitHub.api_url(repository_url)
+        if not api_url:
+            return False
+
+        pr_label_url = f'{api_url}/issues/{pr_number}/labels'
+        content = self.fetch_data_from_url_with_authentication(pr_label_url)
+        if not content:
+            self._addToLog('stdio', "Failed to fetch existing labels, cannot remove labels\n")
+            return True
+
+        existing_labels = [label.get('name') for label in (content.json() or [])]
+        new_labels = list(filter(lambda label: label not in labels, existing_labels))
+        if len(existing_labels) == len(new_labels):
+            return True
+
+        try:
+            username, access_token = GitHub.credentials()
+            auth = HTTPBasicAuth(username, access_token) if username and access_token else None
+            response = requests.request(
+                'PUT', pr_label_url, timeout=60, auth=auth,
+                headers=dict(Accept='application/vnd.github.v3+json'),
+                json=dict(labels=new_labels),
+            )
+            if response.status_code // 100 != 2:
+                for label in labels:
+                    self._addToLog('stdio', f"Unable to remove '{label}' label on PR {pr_number}. Unexpected response code from GitHub: {response.status_code}\n")
+                return False
+        except Exception as e:
+            for label in labels:
+                self._addToLog('stdio', f"Error in removing '{label}' label on PR {pr_number}\n")
             return False
         return True
 
@@ -1568,7 +1601,13 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin):
 
         rc = SKIPPED
         if CURRENT_HOSTNAME == EWS_BUILD_HOSTNAME:
-            rc = SUCCESS if self.modify_label(pr_number, self.BLOCKED_LABEL, repository_url=self.getProperty('repository', '')) else FAILURE
+            repository_url = self.getProperty('repository', '')
+            rc = SUCCESS
+            if any((
+                not self.remove_labels(pr_number, [self.MERGE_QUEUE_LABEL, self.FAST_MERGE_QUEUE_LABEL], repository_url=repository_url),
+                not self.add_label(pr_number, self.BLOCKED_LABEL, repository_url=repository_url),
+            )):
+                rc = FAILURE
         self.finished(rc)
         if build_finish_summary:
             self.build.buildFinished([build_finish_summary], FAILURE)
@@ -1576,10 +1615,10 @@ class BlockPullRequest(buildstep.BuildStep, GitHubMixin):
 
     def getResultSummary(self):
         if self.results == SUCCESS:
-            return {'step': "Added '' label pull request".format(self.BLOCKED_LABEL)}
+            return {'step': f"Added '{self.BLOCKED_LABEL}' label to pull request"}
         elif self.results == SKIPPED:
             return buildstep.BuildStep.getResultSummary(self)
-        return {'step': "Failed to add '{}' label to pull request".format(self.BLOCKED_LABEL)}
+        return {'step': f"Failed to add '{self.BLOCKED_LABEL}' label to pull request"}
 
     def doStepIf(self, step):
         return self.getProperty('github.number')
