@@ -1,5 +1,25 @@
 2022-03-17  Andres Gonzalez  <andresg_22@apple.com>
 
+        Fix for accessibility/aria-tab-xxx.html tests in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=237980
+        <rdar://problem/90392451>
+
+        Reviewed by Chris Fleizach.
+
+        these tests are flaky in isolated tree mode due to setting the focus to
+        the body is async.
+
+        * accessibility/aria-tab-role-on-buttons-expected.txt:
+        * accessibility/aria-tab-role-on-buttons.html:
+        * accessibility/aria-tab-roles.html:
+        * platform/glib/accessibility/aria-tab-roles-expected.txt:
+        * platform/mac/accessibility/aria-tab-role-on-buttons-expected.txt:
+        * platform/mac/accessibility/aria-tab-roles-expected.txt:
+        * platform/win/accessibility/aria-tab-role-on-buttons-expected.txt:
+        * platform/win/accessibility/aria-tab-roles-expected.txt:
+
+2022-03-17  Andres Gonzalez  <andresg_22@apple.com>
+
         Make accessibility/roles-exposed.html faster.
         https://bugs.webkit.org/show_bug.cgi?id=237960
         <rdar://problem/90371580>

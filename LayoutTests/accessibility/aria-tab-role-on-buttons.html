@@ -1,43 +1,35 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
-<div role="tablist">
+<div role="tablist" id="tablist">
     <button id="tab a" role="tab" aria-selected="true">Tab A</button>
     <button id="tab b" role="tab" aria-selected="false">Tab B</button>
     <button id="tab c" role="tab" aria-selected="false">Tab C</button>
 </div>
 
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
-
     description("This tests that the aria roles for tab and tablist work as expected for buttons.");
 
     if (window.accessibilityController) {
+        let output = "";
 
-          var body = document.getElementById("body");
-          body.focus();
+        let tabList = accessibilityController.accessibleElementById("tablist");
+        let tab1 = tabList.childAtIndex(0);
+        let tab2 = tabList.childAtIndex(1);
 
-          var tabList = accessibilityController.focusedElement.childAtIndex(0);
-          var tab1 = tabList.childAtIndex(0);
-          var tab2 = tabList.childAtIndex(1);
-          var tabPanel = accessibilityController.focusedElement.childAtIndex(1);
+        output += `tabList.role = ${tabList.role}\n`;
+        output += `tab1.role = ${tab1.role}\n`;
+        output += `tab1.title = ${tab1.title}\n`;
+        output += `tab1.childrenCount = ${tab1.childrenCount}\n`;
+        output += `tab2.role = ${tab2.role}\n`;
+        output += `tab2.title = ${tab2.title}\n`;
 
-          debug("tabList.role = " + tabList.role);
-          debug("tab1.role = " + tab1.role);
-          debug("tab1.title = " + tab1.title);
-          shouldBe("tab1.childrenCount", "0");
-          debug("tab2.role = " + tab2.role);
-          debug("tab2.title = " + tab2.title);
+        debug(output);
     }
-
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
