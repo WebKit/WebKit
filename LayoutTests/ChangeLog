@@ -1,3 +1,20 @@
+2022-03-17  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/aria-option-role.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=237975
+        <rdar://problem/90386629>
+
+        Reviewed by Chris Fleizach.
+
+        This test was flaky in isolated tree mode due to setting the focus to
+        the body is async. Solved by retrieving the AX element of the listbox
+        directly.
+
+        * accessibility/aria-option-role.html:
+        * platform/glib/accessibility/aria-option-role-expected.txt:
+        * platform/mac/accessibility/aria-option-role-expected.txt:
+        * platform/win/accessibility/aria-option-role-expected.txt:
+
 2022-03-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL context lost event is not sent again for contexts that are lost and restored
