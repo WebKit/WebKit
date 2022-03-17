@@ -77,6 +77,8 @@ static bool validateCreateBuffer(const Device& device, const WGPUBufferDescripto
     if (descriptor.mappedAtCreation && (descriptor.size % 4))
         return false;
 
+    // FIXME: Make sure descriptor.size is less than maxBufferSize
+
     return true;
 }
 
@@ -107,7 +109,7 @@ RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
     // FIXME: Consider write-combining CPU cache mode.
     // FIXME: Consider implementing hazard tracking ourself.
     MTLStorageMode storageMode = WebGPU::storageMode(hasUnifiedMemory(), descriptor.usage);
-    id<MTLBuffer> buffer = [m_device newBufferWithLength:descriptor.size options:storageMode];
+    id<MTLBuffer> buffer = [m_device newBufferWithLength:static_cast<NSUInteger>(descriptor.size) options:storageMode];
     if (!buffer)
         return nullptr;
 
@@ -129,7 +131,7 @@ RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
         // "Set b.[[mapping_range]] to [0, descriptor.size]."
         // "Set b.[[mapped_ranges]] to []."
         // "Set b.[[state]] to mapped at creation."
-        return Buffer::create(buffer, descriptor.size, descriptor.usage, Buffer::State::MappedAtCreation, { static_cast<size_t>(0), descriptor.size }, *this);
+        return Buffer::create(buffer, descriptor.size, descriptor.usage, Buffer::State::MappedAtCreation, { static_cast<size_t>(0), static_cast<size_t>(descriptor.size) }, *this);
     }
 
     // "Set b.[[mapping]] to null." This is unnecessary.
