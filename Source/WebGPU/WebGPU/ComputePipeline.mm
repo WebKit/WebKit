@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ComputePipeline.h"
 
-
+#import "APIConversions.h"
 #import "BindGroupLayout.h"
 #import "Device.h"
 #import "PipelineLayout.h"
@@ -148,9 +148,9 @@ RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineD
     if (descriptor.nextInChain || descriptor.compute.nextInChain)
         return nullptr;
 
-    const ShaderModule& shaderModule = descriptor.compute.module->shaderModule;
-    const PipelineLayout& pipelineLayout = descriptor.layout->pipelineLayout;
-    auto label = [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding];
+    const ShaderModule& shaderModule = WebGPU::fromAPI(descriptor.compute.module);
+    const PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
+    auto label = fromAPI(descriptor.label);
 
     auto libraryCreationResult = createLibrary(m_device, shaderModule, pipelineLayout, descriptor.compute.entryPoint, label);
     if (!libraryCreationResult)
@@ -170,7 +170,7 @@ RefPtr<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineD
     return ComputePipeline::create(computePipelineState);
 }
 
-void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback)
+void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, String&& message)>&& callback)
 {
     // FIXME: Implement this
     UNUSED_PARAM(descriptor);
@@ -190,7 +190,7 @@ Ref<BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
     return BindGroupLayout::create(nil, nil, nil);
 }
 
-void ComputePipeline::setLabel(const char*)
+void ComputePipeline::setLabel(String&&)
 {
     // MTLComputePipelineState's labels are read-only.
 }
@@ -204,10 +204,10 @@ void wgpuComputePipelineRelease(WGPUComputePipeline computePipeline)
 
 WGPUBindGroupLayout wgpuComputePipelineGetBindGroupLayout(WGPUComputePipeline computePipeline, uint32_t groupIndex)
 {
-    return new WGPUBindGroupLayoutImpl { computePipeline->computePipeline->getBindGroupLayout(groupIndex) };
+    return new WGPUBindGroupLayoutImpl { WebGPU::fromAPI(computePipeline).getBindGroupLayout(groupIndex) };
 }
 
 void wgpuComputePipelineSetLabel(WGPUComputePipeline computePipeline, const char* label)
 {
-    computePipeline->computePipeline->setLabel(label);
+    WebGPU::fromAPI(computePipeline).setLabel(WebGPU::fromAPI(label));
 }

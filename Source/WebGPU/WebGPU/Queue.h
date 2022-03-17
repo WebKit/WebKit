@@ -53,7 +53,7 @@ public:
     void submit(Vector<std::reference_wrapper<const CommandBuffer>>&& commands);
     void writeBuffer(const Buffer&, uint64_t bufferOffset, const void* data, size_t);
     void writeTexture(const WGPUImageCopyTexture& destination, const void* data, size_t dataSize, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize);
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     id<MTLCommandQueue> commandQueue() const { return m_commandQueue; }
 

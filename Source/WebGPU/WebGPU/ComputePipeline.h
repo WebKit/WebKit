@@ -44,7 +44,7 @@ public:
     ~ComputePipeline();
 
     Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     id<MTLComputePipelineState> computePipelineState() const { return m_computePipelineState; }
 

@@ -50,7 +50,7 @@ public:
     bool getLimits(WGPUSupportedLimits&);
     void getProperties(WGPUAdapterProperties&);
     bool hasFeature(WGPUFeatureName);
-    void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, RefPtr<Device>&&, const char*)>&& callback);
+    void requestDevice(const WGPUDeviceDescriptor&, CompletionHandler<void(WGPURequestDeviceStatus, RefPtr<Device>&&, String&&)>&& callback);
 
 private:
     Adapter(id<MTLDevice>, Instance&);

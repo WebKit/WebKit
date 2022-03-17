@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Queue.h"
 
+#import "APIConversions.h"
 #import "Buffer.h"
 #import "CommandBuffer.h"
 #import "Device.h"
@@ -116,9 +117,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
     UNUSED_PARAM(writeSize);
 }
 
-void Queue::setLabel(const char* label)
+void Queue::setLabel(String&& label)
 {
-    m_commandQueue.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
+    m_commandQueue.label = label;
 }
 
 void Queue::scheduleWork(Instance::WorkItem&& workItem)
@@ -135,14 +136,14 @@ void wgpuQueueRelease(WGPUQueue queue)
 
 void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneCallback callback, void* userdata)
 {
-    queue->queue->onSubmittedWorkDone(signalValue, [callback, userdata] (WGPUQueueWorkDoneStatus status) {
+    WebGPU::fromAPI(queue).onSubmittedWorkDone(signalValue, [callback, userdata] (WGPUQueueWorkDoneStatus status) {
         callback(status, userdata);
     });
 }
 
 void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneBlockCallback callback)
 {
-    queue->queue->onSubmittedWorkDone(signalValue, [callback] (WGPUQueueWorkDoneStatus status) {
+    WebGPU::fromAPI(queue).onSubmittedWorkDone(signalValue, [callback] (WGPUQueueWorkDoneStatus status) {
         callback(status);
     });
 }
@@ -151,21 +152,21 @@ void wgpuQueueSubmit(WGPUQueue queue, uint32_t commandCount, const WGPUCommandBu
 {
     Vector<std::reference_wrapper<const WebGPU::CommandBuffer>> commandsToForward;
     for (uint32_t i = 0; i < commandCount; ++i)
-        commandsToForward.append(commands[i]->commandBuffer);
-    queue->queue->submit(WTFMove(commandsToForward));
+        commandsToForward.append(WebGPU::fromAPI(commands[i]));
+    WebGPU::fromAPI(queue).submit(WTFMove(commandsToForward));
 }
 
 void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, const void* data, size_t size)
 {
-    queue->queue->writeBuffer(buffer->buffer, bufferOffset, data, size);
+    WebGPU::fromAPI(queue).writeBuffer(WebGPU::fromAPI(buffer), bufferOffset, data, size);
 }
 
 void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUImageCopyTexture* destination, const void* data, size_t dataSize, const WGPUTextureDataLayout* dataLayout, const WGPUExtent3D* writeSize)
 {
-    queue->queue->writeTexture(*destination, data, dataSize, *dataLayout, *writeSize);
+    WebGPU::fromAPI(queue).writeTexture(*destination, data, dataSize, *dataLayout, *writeSize);
 }
 
 void wgpuQueueSetLabel(WGPUQueue queue, const char* label)
 {
-    queue->queue->setLabel(label);
+    WebGPU::fromAPI(queue).setLabel(WebGPU::fromAPI(label));
 }

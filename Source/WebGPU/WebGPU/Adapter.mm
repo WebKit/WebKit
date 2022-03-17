@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Adapter.h"
 
+#import "APIConversions.h"
 #import "Device.h"
 #import "Instance.h"
 #import <wtf/StdLibExtras.h>
@@ -105,24 +106,24 @@ static bool deviceMeetsRequiredLimits(id<MTLDevice>, const WGPURequiredLimits& r
         && !requiredLimits.limits.maxComputeWorkgroupsPerDimension;
 }
 
-void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, RefPtr<Device>&&, const char*)>&& callback)
+void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHandler<void(WGPURequestDeviceStatus, RefPtr<Device>&&, String&&)>&& callback)
 {
     if (descriptor.nextInChain) {
-        callback(WGPURequestDeviceStatus_Error, nullptr, "Unknown descriptor type");
+        callback(WGPURequestDeviceStatus_Error, nullptr, "Unknown descriptor type"_s);
         return;
     }
 
     if (descriptor.requiredFeaturesCount) {
-        callback(WGPURequestDeviceStatus_Error, nullptr, "Device does not support requested features");
+        callback(WGPURequestDeviceStatus_Error, nullptr, "Device does not support requested features"_s);
         return;
     }
 
     if (descriptor.requiredLimits && !deviceMeetsRequiredLimits(m_device, *descriptor.requiredLimits)) {
-        callback(WGPURequestDeviceStatus_Error, nullptr, "Device does not support requested limits");
+        callback(WGPURequestDeviceStatus_Error, nullptr, "Device does not support requested limits"_s);
         return;
     }
 
-    callback(WGPURequestDeviceStatus_Success, Device::create(m_device, descriptor.label, m_instance), nullptr);
+    callback(WGPURequestDeviceStatus_Success, Device::create(m_device, descriptor.label, m_instance), { });
 }
 
 } // namespace WebGPU
@@ -134,42 +135,42 @@ void wgpuAdapterRelease(WGPUAdapter adapter)
 
 size_t wgpuAdapterEnumerateFeatures(WGPUAdapter adapter, WGPUFeatureName* features)
 {
-    return adapter->adapter->enumerateFeatures(features);
+    return WebGPU::fromAPI(adapter).enumerateFeatures(features);
 }
 
 bool wgpuAdapterGetLimits(WGPUAdapter adapter, WGPUSupportedLimits* limits)
 {
-    return adapter->adapter->getLimits(*limits);
+    return WebGPU::fromAPI(adapter).getLimits(*limits);
 }
 
 void wgpuAdapterGetProperties(WGPUAdapter adapter, WGPUAdapterProperties* properties)
 {
-    adapter->adapter->getProperties(*properties);
+    WebGPU::fromAPI(adapter).getProperties(*properties);
 }
 
 bool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 {
-    return adapter->adapter->hasFeature(feature);
+    return WebGPU::fromAPI(adapter).hasFeature(feature);
 }
 
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)
 {
-    adapter->adapter->requestDevice(*descriptor, [callback, userdata] (WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, const char* message) {
+    WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback, userdata] (WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, String&& message) {
         if (device) {
             auto& queue = device->getQueue();
-            callback(status, new WGPUDeviceImpl { device.releaseNonNull(), { queue } }, message, userdata);
+            callback(status, new WGPUDeviceImpl { device.releaseNonNull(), { queue } }, message.utf8().data(), userdata);
         } else
-            callback(status, nullptr, message, userdata);
+            callback(status, nullptr, message.utf8().data(), userdata);
     });
 }
 
 void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback)
 {
-    adapter->adapter->requestDevice(*descriptor, [callback] (WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, const char* message) {
+    WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback] (WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, String&& message) {
         if (device) {
             auto& queue = device->getQueue();
-            callback(status, new WGPUDeviceImpl { device.releaseNonNull(), { queue } }, message);
+            callback(status, new WGPUDeviceImpl { device.releaseNonNull(), { queue } }, message.utf8().data());
         } else
-            callback(status, nullptr, message);
+            callback(status, nullptr, message.utf8().data());
     });
 }

@@ -44,7 +44,7 @@ public:
 
     ~PipelineLayout();
 
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     bool operator==(const PipelineLayout&) const;
     bool operator!=(const PipelineLayout&) const;

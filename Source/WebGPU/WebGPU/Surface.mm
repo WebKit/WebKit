@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Surface.h"
 
+#import "APIConversions.h"
 #import "Adapter.h"
 
 namespace WebGPU {
@@ -49,5 +50,5 @@ void wgpuSurfaceRelease(WGPUSurface surface)
 
 WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter adapter)
 {
-    return surface->surface->getPreferredFormat(adapter->adapter);
+    return WebGPU::fromAPI(surface).getPreferredFormat(WebGPU::fromAPI(adapter));
 }

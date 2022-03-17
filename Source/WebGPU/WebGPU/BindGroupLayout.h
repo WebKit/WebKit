@@ -41,7 +41,7 @@ public:
 
     ~BindGroupLayout();
 
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     NSUInteger encodedLength() const;
 

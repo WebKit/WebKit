@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Buffer.h"
 
+#import "APIConversions.h"
 #import "Device.h"
 #import "Utilities.h"
 #import <wtf/StdLibExtras.h>
@@ -111,7 +112,7 @@ RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
     if (!buffer)
         return nullptr;
 
-    buffer.label = [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding];
+    buffer.label = fromAPI(descriptor.label);
 
     // FIXME: Handle descriptor.mappedAtCreation.
     // Because non-mappable buffers can be mapped at creation,
@@ -382,9 +383,9 @@ void Buffer::unmap()
     m_state = State::Unmapped;
 }
 
-void Buffer::setLabel(const char* label)
+void Buffer::setLabel(String&& label)
 {
-    m_buffer.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
+    m_buffer.label = label;
 }
 
 } // namespace WebGPU
@@ -396,39 +397,39 @@ void wgpuBufferRelease(WGPUBuffer buffer)
 
 void wgpuBufferDestroy(WGPUBuffer buffer)
 {
-    buffer->buffer->destroy();
+    WebGPU::fromAPI(buffer).destroy();
 }
 
 const void* wgpuBufferGetConstMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
-    return buffer->buffer->getConstMappedRange(offset, size);
+    return WebGPU::fromAPI(buffer).getConstMappedRange(offset, size);
 }
 
 void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
-    return buffer->buffer->getMappedRange(offset, size);
+    return WebGPU::fromAPI(buffer).getMappedRange(offset, size);
 }
 
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
 {
-    buffer->buffer->mapAsync(mode, offset, size, [callback, userdata] (WGPUBufferMapAsyncStatus status) {
+    WebGPU::fromAPI(buffer).mapAsync(mode, offset, size, [callback, userdata] (WGPUBufferMapAsyncStatus status) {
         callback(status, userdata);
     });
 }
 
 void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback)
 {
-    buffer->buffer->mapAsync(mode, offset, size, [callback] (WGPUBufferMapAsyncStatus status) {
+    WebGPU::fromAPI(buffer).mapAsync(mode, offset, size, [callback] (WGPUBufferMapAsyncStatus status) {
         callback(status);
     });
 }
 
 void wgpuBufferUnmap(WGPUBuffer buffer)
 {
-    buffer->buffer->unmap();
+    WebGPU::fromAPI(buffer).unmap();
 }
 
 void wgpuBufferSetLabel(WGPUBuffer buffer, const char* label)
 {
-    buffer->buffer->setLabel(label);
+    WebGPU::fromAPI(buffer).setLabel(WebGPU::fromAPI(label));
 }

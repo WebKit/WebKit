@@ -41,7 +41,7 @@ public:
 
     ~BindGroup();
 
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     id<MTLBuffer> vertexArgumentBuffer() const { return m_vertexArgumentBuffer; }
     id<MTLBuffer> fragmentArgumentBuffer() const { return m_fragmentArgumentBuffer; }

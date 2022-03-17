@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Texture.h"
 
+#import "APIConversions.h"
 #import "Device.h"
 #import "TextureView.h"
 
@@ -54,9 +55,9 @@ void Texture::destroy()
 {
 }
 
-void Texture::setLabel(const char* label)
+void Texture::setLabel(String&& label)
 {
-    m_texture.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
+    m_texture.label = label;
 }
 
 } // namespace WebGPU
@@ -68,16 +69,16 @@ void wgpuTextureRelease(WGPUTexture texture)
 
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
 {
-    auto result = texture->texture->createView(*descriptor);
+    auto result = WebGPU::fromAPI(texture).createView(*descriptor);
     return result ? new WGPUTextureViewImpl { result.releaseNonNull() } : nullptr;
 }
 
 void wgpuTextureDestroy(WGPUTexture texture)
 {
-    texture->texture->destroy();
+    WebGPU::fromAPI(texture).destroy();
 }
 
 void wgpuTextureSetLabel(WGPUTexture texture, const char* label)
 {
-    texture->texture->setLabel(label);
+    WebGPU::fromAPI(texture).setLabel(WebGPU::fromAPI(label));
 }

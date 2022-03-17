@@ -41,7 +41,7 @@ public:
 
     ~CommandBuffer();
 
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     id<MTLCommandBuffer> commandBuffer() const { return m_commandBuffer; }
 

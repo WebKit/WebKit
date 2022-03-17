@@ -51,12 +51,12 @@ public:
     void dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset);
     void endPass();
     void endPipelineStatisticsQuery();
-    void insertDebugMarker(const char* markerLabel);
+    void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
-    void pushDebugGroup(const char* groupLabel);
+    void pushDebugGroup(String&& groupLabel);
     void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
     void setPipeline(const ComputePipeline&);
-    void setLabel(const char*);
+    void setLabel(String&&);
 
 private:
     ComputePassEncoder(id<MTLComputeCommandEncoder>);

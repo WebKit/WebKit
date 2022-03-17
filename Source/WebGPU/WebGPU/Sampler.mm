@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Sampler.h"
 
+#import "APIConversions.h"
 #import "Device.h"
 
 namespace WebGPU {
@@ -43,12 +44,12 @@ Sampler::Sampler(id<MTLSamplerState> samplerState)
 
 Sampler::~Sampler() = default;
 
-void Sampler::setLabel(const char*)
+void Sampler::setLabel(String&&)
 {
     // MTLRenderPipelineState's labels are read-only.
 }
 
-}
+} // namespace WebGPU
 
 void wgpuSamplerRelease(WGPUSampler sampler)
 {
@@ -57,5 +58,5 @@ void wgpuSamplerRelease(WGPUSampler sampler)
 
 void wgpuSamplerSetLabel(WGPUSampler sampler, const char* label)
 {
-    sampler->sampler->setLabel(label);
+    WebGPU::fromAPI(sampler).setLabel(WebGPU::fromAPI(label));
 }

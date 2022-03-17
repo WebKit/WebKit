@@ -54,7 +54,7 @@ class Texture;
 class Device : public RefCounted<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<Device> create(id<MTLDevice>, const char* deviceLabel, Instance&);
+    static RefPtr<Device> create(id<MTLDevice>, String&& deviceLabel, Instance&);
 
     ~Device();
 
@@ -63,12 +63,12 @@ public:
     RefPtr<Buffer> createBuffer(const WGPUBufferDescriptor&);
     RefPtr<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
     RefPtr<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor&);
-    void createComputePipelineAsync(const WGPUComputePipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, const char* message)>&& callback);
+    void createComputePipelineAsync(const WGPUComputePipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<ComputePipeline>&&, String&& message)>&& callback);
     RefPtr<PipelineLayout> createPipelineLayout(const WGPUPipelineLayoutDescriptor&);
     RefPtr<QuerySet> createQuerySet(const WGPUQuerySetDescriptor&);
     RefPtr<RenderBundleEncoder> createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor&);
     RefPtr<RenderPipeline> createRenderPipeline(const WGPURenderPipelineDescriptor&);
-    void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, const char* message)>&& callback);
+    void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, RefPtr<RenderPipeline>&&, String&& message)>&& callback);
     RefPtr<Sampler> createSampler(const WGPUSamplerDescriptor&);
     RefPtr<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor&);
     RefPtr<SwapChain> createSwapChain(const Surface&, const WGPUSwapChainDescriptor&);
@@ -78,11 +78,11 @@ public:
     bool getLimits(WGPUSupportedLimits&);
     Queue& getQueue();
     bool hasFeature(WGPUFeatureName);
-    bool popErrorScope(CompletionHandler<void(WGPUErrorType, const char*)>&& callback);
+    bool popErrorScope(CompletionHandler<void(WGPUErrorType, String&&)>&& callback);
     void pushErrorScope(WGPUErrorFilter);
-    void setDeviceLostCallback(Function<void(WGPUDeviceLostReason, const char*)>&&);
-    void setUncapturedErrorCallback(Function<void(WGPUErrorType, const char*)>&&);
-    void setLabel(const char*);
+    void setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&&);
+    void setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&&);
+    void setLabel(String&&);
 
     Instance& instance() { return m_instance; }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }

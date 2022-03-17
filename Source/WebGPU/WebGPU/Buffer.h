@@ -58,7 +58,7 @@ public:
     void* getMappedRange(size_t offset, size_t);
     void mapAsync(WGPUMapModeFlags, size_t offset, size_t, CompletionHandler<void(WGPUBufferMapAsyncStatus)>&& callback);
     void unmap();
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     // https://gpuweb.github.io/gpuweb/#buffer-state
     // Each GPUBuffer has a current buffer state on the Content timeline which is one of the following:

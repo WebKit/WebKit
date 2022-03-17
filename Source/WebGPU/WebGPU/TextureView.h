@@ -41,7 +41,7 @@ public:
 
     ~TextureView();
 
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     id<MTLTexture> texture() const { return m_texture; }
 

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "SwapChain.h"
 
+#import "APIConversions.h"
 #import "Device.h"
 #import "TextureView.h"
 
@@ -60,10 +61,10 @@ void wgpuSwapChainRelease(WGPUSwapChain swapChain)
 
 WGPUTextureView wgpuSwapChainGetCurrentTextureView(WGPUSwapChain swapChain)
 {
-    return new WGPUTextureViewImpl { swapChain->swapChain->getCurrentTextureView() };
+    return new WGPUTextureViewImpl { WebGPU::fromAPI(swapChain).getCurrentTextureView() };
 }
 
 void wgpuSwapChainPresent(WGPUSwapChain swapChain)
 {
-    swapChain->swapChain->present();
+    WebGPU::fromAPI(swapChain).present();
 }

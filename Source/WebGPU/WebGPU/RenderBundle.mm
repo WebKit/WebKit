@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RenderBundle.h"
 
+#import "APIConversions.h"
 
 namespace WebGPU {
 
@@ -36,9 +37,9 @@ RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer)
 
 RenderBundle::~RenderBundle() = default;
 
-void RenderBundle::setLabel(const char* label)
+void RenderBundle::setLabel(String&& label)
 {
-    m_indirectCommandBuffer.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
+    m_indirectCommandBuffer.label = label;
 }
 
 }
@@ -50,5 +51,5 @@ void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
 
 void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, const char* label)
 {
-    renderBundle->renderBundle->setLabel(label);
+    WebGPU::fromAPI(renderBundle).setLabel(WebGPU::fromAPI(label));
 }

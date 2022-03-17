@@ -26,6 +26,7 @@
 #import "config.h"
 #import "CommandEncoder.h"
 
+#import "APIConversions.h"
 #import "Buffer.h"
 #import "CommandBuffer.h"
 #import "ComputePassEncoder.h"
@@ -49,7 +50,7 @@ RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDesc
     if (!commandBuffer)
         return nullptr;
 
-    commandBuffer.label = [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding];
+    commandBuffer.label = fromAPI(descriptor.label);
 
     return CommandEncoder::create(commandBuffer);
 }
@@ -223,12 +224,12 @@ RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& 
     auto *commandBuffer = m_commandBuffer;
     m_commandBuffer = nil;
 
-    commandBuffer.label = [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding];
+    commandBuffer.label = fromAPI(descriptor.label);
 
     return CommandBuffer::create(commandBuffer);
 }
 
-void CommandEncoder::insertDebugMarker(const char* markerLabel)
+void CommandEncoder::insertDebugMarker(String&& markerLabel)
 {
     UNUSED_PARAM(markerLabel);
 }
@@ -237,7 +238,7 @@ void CommandEncoder::popDebugGroup()
 {
 }
 
-void CommandEncoder::pushDebugGroup(const char* groupLabel)
+void CommandEncoder::pushDebugGroup(String&& groupLabel)
 {
     UNUSED_PARAM(groupLabel);
 }
@@ -257,9 +258,9 @@ void CommandEncoder::writeTimestamp(const QuerySet& querySet, uint32_t queryInde
     UNUSED_PARAM(queryIndex);
 }
 
-void CommandEncoder::setLabel(const char* label)
+void CommandEncoder::setLabel(String&& label)
 {
-    m_commandBuffer.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
+    m_commandBuffer.label = label;
 }
 
 } // namespace WebGPU
@@ -271,73 +272,73 @@ void wgpuCommandEncoderRelease(WGPUCommandEncoder commandEncoder)
 
 WGPUComputePassEncoder wgpuCommandEncoderBeginComputePass(WGPUCommandEncoder commandEncoder, const WGPUComputePassDescriptor* descriptor)
 {
-    auto result = commandEncoder->commandEncoder->beginComputePass(*descriptor);
+    auto result = WebGPU::fromAPI(commandEncoder).beginComputePass(*descriptor);
     return result ? new WGPUComputePassEncoderImpl { result.releaseNonNull() } : nullptr;
 }
 
 WGPURenderPassEncoder wgpuCommandEncoderBeginRenderPass(WGPUCommandEncoder commandEncoder, const WGPURenderPassDescriptor* descriptor)
 {
-    auto result = commandEncoder->commandEncoder->beginRenderPass(*descriptor);
+    auto result = WebGPU::fromAPI(commandEncoder).beginRenderPass(*descriptor);
     return result ? new WGPURenderPassEncoderImpl { result.releaseNonNull() } : nullptr;
 }
 
 void wgpuCommandEncoderCopyBufferToBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer source, uint64_t sourceOffset, WGPUBuffer destination, uint64_t destinationOffset, uint64_t size)
 {
-    commandEncoder->commandEncoder->copyBufferToBuffer(source->buffer, sourceOffset, destination->buffer, destinationOffset, size);
+    WebGPU::fromAPI(commandEncoder).copyBufferToBuffer(WebGPU::fromAPI(source), sourceOffset, WebGPU::fromAPI(destination), destinationOffset, size);
 }
 
 void wgpuCommandEncoderCopyBufferToTexture(WGPUCommandEncoder commandEncoder, const WGPUImageCopyBuffer* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize)
 {
-    commandEncoder->commandEncoder->copyBufferToTexture(*source, *destination, *copySize);
+    WebGPU::fromAPI(commandEncoder).copyBufferToTexture(*source, *destination, *copySize);
 }
 
 void wgpuCommandEncoderCopyTextureToBuffer(WGPUCommandEncoder commandEncoder, const WGPUImageCopyTexture* source, const WGPUImageCopyBuffer* destination, const WGPUExtent3D* copySize)
 {
-    commandEncoder->commandEncoder->copyTextureToBuffer(*source, *destination, *copySize);
+    WebGPU::fromAPI(commandEncoder).copyTextureToBuffer(*source, *destination, *copySize);
 }
 
 void wgpuCommandEncoderCopyTextureToTexture(WGPUCommandEncoder commandEncoder, const WGPUImageCopyTexture* source, const WGPUImageCopyTexture* destination, const WGPUExtent3D* copySize)
 {
-    commandEncoder->commandEncoder->copyTextureToTexture(*source, *destination, *copySize);
+    WebGPU::fromAPI(commandEncoder).copyTextureToTexture(*source, *destination, *copySize);
 }
 
 void wgpuCommandEncoderClearBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer buffer, uint64_t offset, uint64_t size)
 {
-    commandEncoder->commandEncoder->clearBuffer(buffer->buffer, offset, size);
+    WebGPU::fromAPI(commandEncoder).clearBuffer(WebGPU::fromAPI(buffer), offset, size);
 }
 
 WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, const WGPUCommandBufferDescriptor* descriptor)
 {
-    auto result = commandEncoder->commandEncoder->finish(*descriptor);
+    auto result = WebGPU::fromAPI(commandEncoder).finish(*descriptor);
     return result ? new WGPUCommandBufferImpl { result.releaseNonNull() } : nullptr;
 }
 
 void wgpuCommandEncoderInsertDebugMarker(WGPUCommandEncoder commandEncoder, const char* markerLabel)
 {
-    commandEncoder->commandEncoder->insertDebugMarker(markerLabel);
+    WebGPU::fromAPI(commandEncoder).insertDebugMarker(WebGPU::fromAPI(markerLabel));
 }
 
 void wgpuCommandEncoderPopDebugGroup(WGPUCommandEncoder commandEncoder)
 {
-    commandEncoder->commandEncoder->popDebugGroup();
+    WebGPU::fromAPI(commandEncoder).popDebugGroup();
 }
 
 void wgpuCommandEncoderPushDebugGroup(WGPUCommandEncoder commandEncoder, const char* groupLabel)
 {
-    commandEncoder->commandEncoder->pushDebugGroup(groupLabel);
+    WebGPU::fromAPI(commandEncoder).pushDebugGroup(WebGPU::fromAPI(groupLabel));
 }
 
 void wgpuCommandEncoderResolveQuerySet(WGPUCommandEncoder commandEncoder, WGPUQuerySet querySet, uint32_t firstQuery, uint32_t queryCount, WGPUBuffer destination, uint64_t destinationOffset)
 {
-    commandEncoder->commandEncoder->resolveQuerySet(querySet->querySet, firstQuery, queryCount, destination->buffer, destinationOffset);
+    WebGPU::fromAPI(commandEncoder).resolveQuerySet(WebGPU::fromAPI(querySet), firstQuery, queryCount, WebGPU::fromAPI(destination), destinationOffset);
 }
 
 void wgpuCommandEncoderWriteTimestamp(WGPUCommandEncoder commandEncoder, WGPUQuerySet querySet, uint32_t queryIndex)
 {
-    commandEncoder->commandEncoder->writeTimestamp(querySet->querySet, queryIndex);
+    WebGPU::fromAPI(commandEncoder).writeTimestamp(WebGPU::fromAPI(querySet), queryIndex);
 }
 
 void wgpuCommandEncoderSetLabel(WGPUCommandEncoder commandEncoder, const char* label)
 {
-    commandEncoder->commandEncoder->setLabel(label);
+    WebGPU::fromAPI(commandEncoder).setLabel(WebGPU::fromAPI(label));
 }

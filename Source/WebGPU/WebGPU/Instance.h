@@ -47,7 +47,7 @@ public:
 
     RefPtr<Surface> createSurface(const WGPUSurfaceDescriptor&);
     void processEvents();
-    void requestAdapter(const WGPURequestAdapterOptions&, CompletionHandler<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback);
+    void requestAdapter(const WGPURequestAdapterOptions&, CompletionHandler<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, String&&)>&& callback);
 
     // This can be called on a background thread.
     using WorkItem = CompletionHandler<void(void)>;

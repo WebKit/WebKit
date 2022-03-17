@@ -41,7 +41,7 @@ public:
 
     ~Sampler();
 
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     id<MTLSamplerState> samplerState() const { return m_samplerState; }
 

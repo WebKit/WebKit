@@ -41,7 +41,7 @@ public:
 
     ~RenderBundle();
 
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     id<MTLIndirectCommandBuffer> indirectCommandBuffer() const { return m_indirectCommandBuffer; }
 

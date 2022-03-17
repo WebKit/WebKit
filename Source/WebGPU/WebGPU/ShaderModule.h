@@ -47,10 +47,10 @@ public:
     ~ShaderModule();
 
     void getCompilationInfo(CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback);
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     static WGSL::PipelineLayout convertPipelineLayout(const PipelineLayout&);
-    static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, NSString *label);
+    static id<MTLLibrary> createLibrary(id<MTLDevice>, const String& msl, String&& label);
 
     const WGSL::AST::ShaderModule* ast() const;
 

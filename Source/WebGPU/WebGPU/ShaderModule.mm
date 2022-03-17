@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ShaderModule.h"
 
+#import "APIConversions.h"
 #import "Device.h"
 #import "PipelineLayout.h"
 
@@ -66,7 +67,7 @@ static std::optional<ShaderModuleParameters> findShaderModuleParameters(const WG
     return { { *wgsl, hints } };
 }
 
-id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, NSString *label)
+id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& msl, String&& label)
 {
     auto options = [MTLCompileOptions new];
     options.fastMathEnabled = YES;
@@ -79,7 +80,7 @@ id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& m
     return library;
 }
 
-static RefPtr<ShaderModule> earlyCompileShaderModule(id<MTLDevice> device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptorHints& suppliedHints, NSString *label)
+static RefPtr<ShaderModule> earlyCompileShaderModule(id<MTLDevice> device, std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, const WGPUShaderModuleDescriptorHints& suppliedHints, String&& label)
 {
     HashMap<String, Ref<PipelineLayout>> hints;
     HashMap<String, WGSL::PipelineLayout> wgslHints;
@@ -92,7 +93,7 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(id<MTLDevice> device, std::
         wgslHints.add(hint.key, WTFMove(convertedPipelineLayout));
     }
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
-    auto library = ShaderModule::createLibrary(device, prepareResult.msl, label);
+    auto library = ShaderModule::createLibrary(device, prepareResult.msl, WTFMove(label));
     if (!library)
         return nullptr;
     return ShaderModule::create(WTFMove(checkResult), WTFMove(hints), WTFMove(prepareResult.entryPoints), library);
@@ -110,7 +111,7 @@ RefPtr<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor
     auto checkResult = WGSL::staticCheck(String(shaderModuleParameters->wgsl.code), std::nullopt);
 
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult) && shaderModuleParameters->hints && shaderModuleParameters->hints->hintsCount) {
-        if (auto result = earlyCompileShaderModule(m_device, WTFMove(checkResult), *shaderModuleParameters->hints, [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding]))
+        if (auto result = earlyCompileShaderModule(m_device, WTFMove(checkResult), *shaderModuleParameters->hints, fromAPI(descriptor.label)))
             return result;
     }
 
@@ -205,10 +206,10 @@ void ShaderModule::getCompilationInfo(CompletionHandler<void(WGPUCompilationInfo
     });
 }
 
-void ShaderModule::setLabel(const char* label)
+void ShaderModule::setLabel(String&& label)
 {
     if (m_library)
-        m_library.label = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
+        m_library.label = label;
 }
 
 WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& pipelineLayout)
@@ -252,19 +253,19 @@ void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 
 void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallback callback, void * userdata)
 {
-    shaderModule->shaderModule->getCompilationInfo([callback, userdata] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+    WebGPU::fromAPI(shaderModule).getCompilationInfo([callback, userdata] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
         callback(status, &compilationInfo, userdata);
     });
 }
 
 void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback)
 {
-    shaderModule->shaderModule->getCompilationInfo([callback] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+    WebGPU::fromAPI(shaderModule).getCompilationInfo([callback] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
         callback(status, &compilationInfo);
     });
 }
 
 void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, const char* label)
 {
-    shaderModule->shaderModule->setLabel(label);
+    WebGPU::fromAPI(shaderModule).setLabel(WebGPU::fromAPI(label));
 }

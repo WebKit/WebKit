@@ -56,12 +56,12 @@ public:
     void copyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize);
     void clearBuffer(const Buffer&, uint64_t offset, uint64_t size);
     RefPtr<CommandBuffer> finish(const WGPUCommandBufferDescriptor&);
-    void insertDebugMarker(const char* markerLabel);
+    void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
-    void pushDebugGroup(const char* groupLabel);
+    void pushDebugGroup(String&& groupLabel);
     void resolveQuerySet(const QuerySet&, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset);
     void writeTimestamp(const QuerySet&, uint32_t queryIndex);
-    void setLabel(const char*);
+    void setLabel(String&&);
 
 private:
     CommandEncoder(id<MTLCommandBuffer>);

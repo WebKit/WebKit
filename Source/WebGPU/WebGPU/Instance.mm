@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Instance.h"
 
+#import "APIConversions.h"
 #import "Adapter.h"
 #import "Surface.h"
 #import <cstring>
@@ -126,7 +127,7 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WG
     }
 }
 
-void Instance::requestAdapter(const WGPURequestAdapterOptions& options, CompletionHandler<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, const char*)>&& callback)
+void Instance::requestAdapter(const WGPURequestAdapterOptions& options, CompletionHandler<void(WGPURequestAdapterStatus, RefPtr<Adapter>&&, String&&)>&& callback)
 {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     NSArray<id<MTLDevice>> *devices = MTLCopyAllDevices();
@@ -141,31 +142,31 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
     auto sortedDevices = WebGPU::sortedDevices(devices, options.powerPreference);
 
     if (options.nextInChain) {
-        callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown descriptor type");
+        callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown descriptor type"_s);
         return;
     }
 
     if (options.forceFallbackAdapter) {
-        callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present");
+        callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present"_s);
         return;
     }
 
     if (!sortedDevices) {
-        callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown power preference");
+        callback(WGPURequestAdapterStatus_Error, nullptr, "Unknown power preference"_s);
         return;
     }
 
     if (!sortedDevices.count) {
-        callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present");
+        callback(WGPURequestAdapterStatus_Unavailable, nullptr, "No adapters present"_s);
         return;
     }
 
     if (!sortedDevices[0]) {
-        callback(WGPURequestAdapterStatus_Error, nullptr, "Adapter is internally null");
+        callback(WGPURequestAdapterStatus_Error, nullptr, "Adapter is internally null"_s);
         return;
     }
 
-    callback(WGPURequestAdapterStatus_Success, Adapter::create(sortedDevices[0], *this), nullptr);
+    callback(WGPURequestAdapterStatus_Success, Adapter::create(sortedDevices[0], *this), { });
 }
 
 } // namespace WebGPU
@@ -432,25 +433,25 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
 
 WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
 {
-    auto result = instance->instance->createSurface(*descriptor);
+    auto result = WebGPU::fromAPI(instance).createSurface(*descriptor);
     return result ? new WGPUSurfaceImpl { result.releaseNonNull() } : nullptr;
 }
 
 void wgpuInstanceProcessEvents(WGPUInstance instance)
 {
-    instance->instance->processEvents();
+    WebGPU::fromAPI(instance).processEvents();
 }
 
 void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
 {
-    instance->instance->requestAdapter(*options, [callback, userdata] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, const char* message) {
-        callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message, userdata);
+    WebGPU::fromAPI(instance).requestAdapter(*options, [callback, userdata] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, String&& message) {
+        callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message.utf8().data(), userdata);
     });
 }
 
 void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback)
 {
-    instance->instance->requestAdapter(*options, [callback] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, const char* message) {
-        callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message);
+    WebGPU::fromAPI(instance).requestAdapter(*options, [callback] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, String&& message) {
+        callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message.utf8().data());
     });
 }

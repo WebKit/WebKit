@@ -26,6 +26,7 @@
 #import "config.h"
 #import "BindGroup.h"
 
+#import "APIConversions.h"
 #import "BindGroupLayout.h"
 #import "Buffer.h"
 #import "Device.h"
@@ -54,7 +55,7 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descrip
     if (descriptor.nextInChain)
         return nullptr;
 
-    const BindGroupLayout& bindGroupLayout = descriptor.layout->bindGroupLayout;
+    const BindGroupLayout& bindGroupLayout = WebGPU::fromAPI(descriptor.layout);
 
     // FIXME: Don't allocate 3 new buffers for every bind group.
     // In fact, don't even allocate a single new buffer for every bind group.
@@ -64,7 +65,7 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descrip
     if (!vertexArgumentBuffer || !fragmentArgumentBuffer || !computeArgumentBuffer)
         return nullptr;
 
-    auto label = [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding];
+    auto label = fromAPI(descriptor.label);
     vertexArgumentBuffer.label = label;
     fragmentArgumentBuffer.label = label;
     computeArgumentBuffer.label = label;
@@ -89,18 +90,18 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descrip
             return nullptr;
 
         if (bufferIsPresent) {
-            id<MTLBuffer> buffer = entry.buffer->buffer->buffer();
+            id<MTLBuffer> buffer = WebGPU::fromAPI(entry.buffer).buffer();
             // FIXME: Use checked casts.
             [vertexArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
             [fragmentArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
             [computeArgumentEncoder setBuffer:buffer offset:static_cast<NSUInteger>(entry.offset) atIndex:entry.binding];
         } else if (samplerIsPresent) {
-            id<MTLSamplerState> sampler = entry.sampler->sampler->samplerState();
+            id<MTLSamplerState> sampler = WebGPU::fromAPI(entry.sampler).samplerState();
             [vertexArgumentEncoder setSamplerState:sampler atIndex:entry.binding];
             [fragmentArgumentEncoder setSamplerState:sampler atIndex:entry.binding];
             [computeArgumentEncoder setSamplerState:sampler atIndex:entry.binding];
         } else if (textureViewIsPresent) {
-            id<MTLTexture> texture = entry.textureView->textureView->texture();
+            id<MTLTexture> texture = WebGPU::fromAPI(entry.textureView).texture();
             [vertexArgumentEncoder setTexture:texture atIndex:entry.binding];
             [fragmentArgumentEncoder setTexture:texture atIndex:entry.binding];
             [computeArgumentEncoder setTexture:texture atIndex:entry.binding];
@@ -122,9 +123,9 @@ BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentA
 
 BindGroup::~BindGroup() = default;
 
-void BindGroup::setLabel(const char* label)
+void BindGroup::setLabel(String&& label)
 {
-    auto labelString = [NSString stringWithCString:label encoding:NSUTF8StringEncoding];
+    auto labelString = label;
     m_vertexArgumentBuffer.label = labelString;
     m_fragmentArgumentBuffer.label = labelString;
     m_computeArgumentBuffer.label = labelString;
@@ -139,5 +140,5 @@ void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
 
 void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, const char* label)
 {
-    bindGroup->bindGroup->setLabel(label);
+    WebGPU::fromAPI(bindGroup).setLabel(WebGPU::fromAPI(label));
 }

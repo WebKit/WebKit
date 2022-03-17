@@ -42,7 +42,7 @@ public:
     ~QuerySet();
 
     void destroy();
-    void setLabel(const char*);
+    void setLabel(String&&);
 
     id<MTLCounterSampleBuffer> counterSampleBuffer() const { return m_counterSampleBuffer; }
 

@@ -58,9 +58,9 @@ public:
     void endPass();
     void endPipelineStatisticsQuery();
     void executeBundles(Vector<std::reference_wrapper<const RenderBundle>>&& bundles);
-    void insertDebugMarker(const char* markerLabel);
+    void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
-    void pushDebugGroup(const char* groupLabel);
+    void pushDebugGroup(String&& groupLabel);
     void setBindGroup(uint32_t groupIndex, const BindGroup&, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets);
     void setBlendConstant(const WGPUColor&);
     void setIndexBuffer(const Buffer&, WGPUIndexFormat, uint64_t offset, uint64_t size);
@@ -69,7 +69,7 @@ public:
     void setStencilReference(uint32_t);
     void setVertexBuffer(uint32_t slot, const Buffer&, uint64_t offset, uint64_t size);
     void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
-    void setLabel(const char*);
+    void setLabel(String&&);
 
 private:
     RenderPassEncoder(id<MTLRenderCommandEncoder>);
