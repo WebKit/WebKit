@@ -1,3 +1,18 @@
+2022-03-17  Ben Nham  <nham@apple.com>
+
+        Allow push preference to be set programatically
+        https://bugs.webkit.org/show_bug.cgi?id=238003
+
+        Reviewed by Geoffrey Garen.
+
+        This exposes the PushAPIEnabled experimental preference through WKPreferences so it can be
+        enabled programatically by API clients.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _pushAPIEnabled]):
+        (-[WKPreferences _setPushAPIEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2022-03-17  Kate Cheney  <katherine_cheney@apple.com>
 
         Calls to print can result in unresponsive print modal

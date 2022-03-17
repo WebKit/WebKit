@@ -416,10 +416,9 @@ protected:
         clearWebsiteDataStore([m_configuration websiteDataStore]);
 
         [m_configuration.get().preferences _setNotificationsEnabled:YES];
+        [m_configuration.get().preferences _setPushAPIEnabled:YES];
         for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
             if ([feature.key isEqualToString:@"BuiltInNotificationsEnabled"])
-                [[m_configuration preferences] _setEnabled:YES forFeature:feature];
-            else if ([feature.key isEqualToString:@"PushAPIEnabled"])
                 [[m_configuration preferences] _setEnabled:YES forFeature:feature];
         }
 

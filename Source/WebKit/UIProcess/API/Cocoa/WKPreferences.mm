@@ -1570,6 +1570,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->notificationsEnabled();
 }
 
+- (BOOL)_pushAPIEnabled
+{
+    return _preferences->pushAPIEnabled();
+}
+
+- (void)_setPushAPIEnabled:(BOOL)pushAPIEnabled
+{
+    _preferences->setPushAPIEnabled(pushAPIEnabled);
+}
+
 - (void)_setModelDocumentEnabled:(BOOL)enabled
 {
     _preferences->setModelDocumentEnabled(enabled);
