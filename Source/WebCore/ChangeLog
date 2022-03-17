@@ -1,3 +1,14 @@
+2022-03-17  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        [Xcode] Build broken after r289139
+        https://bugs.webkit.org/show_bug.cgi?id=238010
+
+        Unreviewed build fix: Remove duplicate entry from Xcode project file.
+
+        No change of behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2022-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Guard libgbm and libdrm code, make them conditional dependencies for GTK
