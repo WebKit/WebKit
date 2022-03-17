@@ -1,3 +1,13 @@
+2022-03-17  Keith Miller  <keith_miller@apple.com>
+
+        Fix crash in Bleacher Report due to bad JSObjectRef passed to API
+        https://bugs.webkit.org/show_bug.cgi?id=238048
+        <rdar://88766464>
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/cocoa/RuntimeApplicationChecksCocoa.h:
+
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Implement first draft of buffer mapping according to the spec

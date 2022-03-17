@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Dominic Szablewski (dominic@phoboslab.org)
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,10 @@
 #include "JSTypedArrays.h"
 #include "TypedArrayController.h"
 #include <wtf/RefPtr.h>
+
+#if PLATFORM(IOS)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
 
 using namespace JSC;
 
@@ -361,11 +365,31 @@ void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JS
     return nullptr;
 }
 
+#if PLATFORM(IOS)
+inline static bool isBleecherReport()
+{
+    auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
+    return bundleID
+        && CFEqual(bundleID, CFSTR("com.bleacherreport.TeamStream"))
+        && !linkedOnOrAfter(SDKVersion::FirstWithoutBleecherReportQuirk);
+}
+#else
+inline static bool isBleecherReport() { return false; }
+#endif
+
 size_t JSObjectGetArrayBufferByteLength(JSContextRef ctx, JSObjectRef objectRef, JSValueRef*)
 {
     JSGlobalObject* globalObject = toJS(ctx);
     VM& vm = globalObject->vm();
     JSObject* object = toJS(objectRef);
+
+    if (!object) {
+        // For some reason prior to https://bugs.webkit.org/show_bug.cgi?id=235720 Clang would emit code
+        // to early return if objectRef is 0 but not after. Passing 0 should be invalid API use.
+        static bool shouldntCrash = isBleecherReport();
+        RELEASE_ASSERT(shouldntCrash);
+        return 0;
+    }
 
     if (JSArrayBuffer* jsBuffer = jsDynamicCast<JSArrayBuffer*>(vm, object))
         return jsBuffer->impl()->byteLength();

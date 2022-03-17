@@ -1,3 +1,22 @@
+2022-03-17  Keith Miller  <keith_miller@apple.com>
+
+        Fix crash in Bleacher Report due to bad JSObjectRef passed to API
+        https://bugs.webkit.org/show_bug.cgi?id=238048
+        <rdar://88766464>
+
+        Reviewed by Yusuke Suzuki.
+
+        Prior to the StructureID overhaul the JSObjectGetArrayBufferByteLength would
+        automatically check if the JSObjectRef passed to that function was null before
+        short circuiting to the non-typed array return value, 0. While technically valid
+        since derefencing null is UB, this meant the Clang was covering up this crash.
+        To fix this I'm adding an app specific workaround for the time being so Bleacher
+        Report can fix their code to no longer pass this nullptr.
+
+        * API/JSTypedArray.cpp:
+        (isBleecherReport):
+        (JSObjectGetArrayBufferByteLength):
+
 2022-03-17  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Unreviewed, non-unified build fix

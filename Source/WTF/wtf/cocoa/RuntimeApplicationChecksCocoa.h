@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,6 +86,7 @@ enum class SDKVersion : uint32_t {
     FirstWithoutExpandoIndexedPropertiesOnWindow = DYLD_IOS_VERSION_15_0,
     FirstThatDoesNotDrainTheMicrotaskQueueWhenCallingObjC = DYLD_IOS_VERSION_15_0,
     FirstWithAuthorizationHeaderOnSameOriginRedirects = DYLD_IOS_VERSION_15_4,
+    FirstWithoutBleecherReportQuirk = DYLD_IOS_VERSION_16_0,
     FirstForbiddingDotPrefixedFonts = DYLD_IOS_VERSION_16_0,
 #elif PLATFORM(MAC)
     FirstVersionThatSupportsInitConstructors = 0xA0A00, // OS X 10.10
