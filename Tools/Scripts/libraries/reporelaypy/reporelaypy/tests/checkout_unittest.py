@@ -35,6 +35,41 @@ class CheckoutUnittest(testing.PathTestCase):
         super(CheckoutUnittest, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
 
+    def test_json(self):
+        with mocks.local.Git(self.path) as repo, OutputCapture():
+            checkout = Checkout(
+                path=self.path,
+                url=repo.remote,
+                credentials={
+                    'https://github.com': dict(
+                        username='username',
+                        password='password',
+                    ),
+                }, sentinal=False,
+            )
+
+            encoded = Checkout.Encoder().default(checkout)
+            self.assertEqual(
+                encoded, dict(
+                    path=self.path,
+                    url=repo.remote,
+                    remotes={},
+                    credentials={
+                        'https://github.com': dict(
+                            username='username',
+                            password='password',
+                        ),
+                    }, sentinal=False,
+                ),
+            )
+
+            constructed = Checkout(**encoded)
+            self.assertEqual(checkout.path, constructed.path)
+            self.assertEqual(checkout.url, constructed.url)
+            self.assertEqual(checkout.remotes, constructed.remotes)
+            self.assertEqual(checkout.credentials, constructed.credentials)
+
+
     def test_constructor_sentinal(self):
         with mocks.local.Git(self.path) as repo, OutputCapture():
             with open(os.path.join(os.path.dirname(self.path), 'cloned'), 'w') as sentinal:

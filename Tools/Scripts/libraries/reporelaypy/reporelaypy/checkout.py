@@ -48,6 +48,7 @@ class Checkout(object):
                 url=obj.url,
                 sentinal=obj.sentinal,
                 remotes=obj.remotes,
+                credentials=obj.credentials,
             )
             if obj.fallback_repository:
                 result['fallback_url'] = obj.fallback_repository.url
@@ -61,11 +62,12 @@ class Checkout(object):
         return cls(**data, primary=False)
 
     @staticmethod
-    def clone(url, path, remotes, sentinal_file=None):
+    def clone(url, path, remotes, credentials, sentinal_file=None):
         run([local.Git.executable(), 'clone', url, path], cwd=os.path.dirname(path))
         run([local.Git.executable(), 'config', 'pull.ff', 'only'], cwd=path)
 
         Checkout.add_remotes(local.Git(path), remotes)
+        Checkout.add_credentials(local.Git(path), credentials)
 
         if sentinal_file:
             with open(sentinal_file, 'w') as cloned:
@@ -77,11 +79,35 @@ class Checkout(object):
         for name, url in (remotes or {}).items():
             run([repository.executable(), 'remote', 'add', name, url], cwd=repository.root_path)
 
-    def __init__(self, path, url=None, http_proxy=None, sentinal=True, fallback_url=None, primary=True, remotes=None):
+    @staticmethod
+    def add_credentials(repository, credentials):
+        git_credentials_content = ''
+
+        for url, creds in (credentials or {}).items():
+            username = creds.get('username')
+            password = creds.get('password')
+            if username:
+                run(
+                    [repository.executable(), 'config', '--local', 'credential.{}.username'.format(url), username],
+                    cwd=repository.root_path,
+                )
+            protocol, host = url.split('://')
+            if username and password and protocol and host:
+                git_credentials_content += '{}://{}:{}@{}\n'.format(protocol, username, password, host)
+
+        if not git_credentials_content:
+            return
+
+        run([repository.executable(), 'config', '--local', 'credential.helper', 'store'], cwd=repository.root_path)
+        with open(os.path.expanduser('~/.git-credentials'), 'w') as f:
+            f.write(git_credentials_content)
+
+    def __init__(self, path, url=None, http_proxy=None, sentinal=True, fallback_url=None, primary=True, remotes=None, credentials=None):
         self.sentinal = sentinal
         self.path = path
         self.url = url
         self.remotes = remotes or dict()
+        self.credentials = credentials or dict()
         self._repository = None
         self._child_process = None
         self.fallback_repository = remote.Scm.from_url(fallback_url) if fallback_url else None
@@ -110,6 +136,7 @@ class Checkout(object):
                     ))
                 if primary:
                     Checkout.add_remotes(self.repository, remotes)
+                    Checkout.add_credentials(self.repository, self.credentials)
                 return
         except FileNotFoundError:
             pass
@@ -128,11 +155,11 @@ class Checkout(object):
         if self.sentinal:
             self._child_process = multiprocessing.Process(
                 target=self.clone,
-                args=(self.url, path, self.remotes, self.sentinal_file),
+                args=(self.url, path, self.remotes, self.credentials, self.sentinal_file),
             )
             self._child_process.start()
         else:
-            self.clone(self.url, path, self.remotes)
+            self.clone(self.url, path, self.remotes, self.credentials)
 
     @property
     def sentinal_file(self):

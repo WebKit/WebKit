@@ -1,3 +1,22 @@
+2022-03-16  Jonathan Bedard  <jbedard@apple.com>
+
+        [reporelaypy] Support credentialed https repositories
+        https://bugs.webkit.org/show_bug.cgi?id=237853
+        <rdar://90252426>
+
+        Reviewed by Ryan Haddad, Dewei Zhu and Stephanie Lewis.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py: Bump version.
+        * Scripts/libraries/reporelaypy/reporelaypy/checkout.py:
+        (Checkout.Encoder.default): Pass credentials.
+        (Checkout.clone): Add credentials to local configuration.
+        (Checkout.add_credentials): Add username to .git/config and populate
+        .git-credentials file appropriately.
+        (Checkout.__init__): Re-add credentials.
+        * Scripts/libraries/reporelaypy/reporelaypy/tests/checkout_unittest.py:
+        (CheckoutUnittest.test_json):
+        * Scripts/libraries/reporelaypy/setup.py: Bump version.
+
 2022-03-17  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Build broken on macOS Monterey 12.3 - PassKitSPI related error
