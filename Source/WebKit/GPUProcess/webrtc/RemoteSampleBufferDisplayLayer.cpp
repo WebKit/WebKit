@@ -119,12 +119,8 @@ void RemoteSampleBufferDisplayLayer::pause()
 
 void RemoteSampleBufferDisplayLayer::enqueue(SharedVideoFrame&& frame)
 {
-    auto sample = m_sharedVideoFrameReader.read(WTFMove(frame));
-    if (!sample)
-        return;
-
-    MediaSampleAVFObjC::setAsDisplayImmediately(*sample);
-    m_sampleBufferDisplayLayer->enqueueSample(*sample);
+    if (auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(frame)))
+        m_sampleBufferDisplayLayer->enqueue(videoFrame->pixelBuffer(), videoFrame->presentationTime());
 }
 
 void RemoteSampleBufferDisplayLayer::clearEnqueuedSamples()

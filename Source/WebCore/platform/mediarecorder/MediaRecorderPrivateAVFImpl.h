@@ -60,8 +60,7 @@ private:
     void resumeRecording(CompletionHandler<void()>&&) final;
 
     Ref<MediaRecorderPrivateWriter> m_writer;
-    RetainPtr<CVPixelBufferRef> m_blackFrame;
-    RetainPtr<CMFormatDescriptionRef> m_blackFrameDescription;
+    RefPtr<VideoFrame> m_blackFrame;
     CAAudioStreamDescription m_description;
     std::unique_ptr<WebAudioBufferList> m_audioBuffer;
 };

@@ -32,6 +32,7 @@
 #import "IntSize.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
+#import "MediaUtilities.h"
 
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #import <QuartzCore/CALayer.h>
@@ -333,23 +334,28 @@ void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
 
 void LocalSampleBufferDisplayLayer::enqueueSampleBuffer(MediaSample& sample)
 {
-    ASSERT(!isMainThread());
-    // FIXME: Local playback of RemoteVideoFrameProxy is not implemented.
-    if (!is<MediaSampleAVFObjC>(sample))
-        return;
+    enqueue(sample.pixelBuffer(), sample.presentationTime());
+}
 
-    auto sampleToEnqueue = sample.platformSample().sample.cmSampleBuffer;
-    auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);
-
-    // If needed, we set the sample buffer to kCMSampleAttachmentKey_DisplayImmediately as a workaround to rdar://problem/49274083.
-    // We clone the sample buffer as modifying the attachments of a sample buffer used elsewhere (encoding e.g.) may not be thread safe.
-    RetainPtr<CMSampleBufferRef> newSampleBuffer;
-    if (m_renderPolicy == RenderPolicy::Immediately || now >= sample.presentationTime()) {
-        newSampleBuffer = MediaSampleAVFObjC::cloneSampleBufferAndSetAsDisplayImmediately(sampleToEnqueue);
-        sampleToEnqueue = newSampleBuffer.get();
+static void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
+{
+    CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
+    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
+        CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
+        CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
     }
+}
 
-    [m_sampleBufferDisplayLayer enqueueSampleBuffer:sampleToEnqueue];
+void LocalSampleBufferDisplayLayer::enqueue(CVPixelBufferRef pixelBuffer, MediaTime presentationTime)
+{
+    ASSERT(!isMainThread());
+
+    auto sampleBuffer = createVideoSampleBuffer(pixelBuffer, PAL::toCMTime(presentationTime));
+    auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);
+    if (m_renderPolicy == RenderPolicy::Immediately || now >= presentationTime)
+        setSampleBufferAsDisplayImmediately(sampleBuffer.get());
+
+    [m_sampleBufferDisplayLayer enqueueSampleBuffer:sampleBuffer.get()];
 
 #if !RELEASE_LOG_DISABLED
     constexpr size_t frameCountPerLog = 1800; // log every minute at 30 fps

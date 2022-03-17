@@ -79,6 +79,7 @@ public:
     void play() final;
     void pause() final;
 
+    void enqueue(CVPixelBufferRef, MediaTime);
     void enqueueSample(MediaSample&) final;
     void clearEnqueuedSamples() final;
     void setRenderPolicy(RenderPolicy) final;

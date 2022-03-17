@@ -35,6 +35,7 @@
 #include "MediaRecorderPrivateOptions.h"
 #include "MediaStreamTrackPrivate.h"
 #include "MediaUtilities.h"
+#include "VideoFrame.h"
 #include "VideoSampleBufferCompressor.h"
 #include "WebAudioBufferList.h"
 #include <AVFoundation/AVAssetWriter.h>
@@ -380,42 +381,21 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
         [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:block.get()];
 }
 
-static inline RetainPtr<CMSampleBufferRef> copySampleBufferWithCurrentTimeStamp(CMSampleBufferRef originalBuffer, CMTime startTime)
-{
-    CMItemCount count = 0;
-    PAL::CMSampleBufferGetSampleTimingInfoArray(originalBuffer, 0, nil, &count);
-
-    Vector<CMSampleTimingInfo> timeInfo(count);
-    PAL::CMSampleBufferGetSampleTimingInfoArray(originalBuffer, count, timeInfo.data(), &count);
-
-    for (auto i = 0; i < count; i++) {
-        timeInfo[i].decodeTimeStamp = PAL::kCMTimeInvalid;
-        timeInfo[i].presentationTimeStamp = startTime;
-    }
-
-    CMSampleBufferRef newBuffer = nullptr;
-    if (auto error = PAL::CMSampleBufferCreateCopyWithNewTiming(kCFAllocatorDefault, originalBuffer, count, timeInfo.data(), &newBuffer)) {
-        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateWriter CMSampleBufferCreateCopyWithNewTiming failed with %d", error);
-        return nullptr;
-    }
-    return adoptCF(newBuffer);
-}
-
-void MediaRecorderPrivateWriter::appendVideoSampleBuffer(MediaSample& sample)
+void MediaRecorderPrivateWriter::appendVideoFrame(VideoFrame& frame)
 {
     if (!m_firstVideoFrame) {
         m_firstVideoFrame = true;
         m_resumedVideoTime = PAL::CMClockGetTime(PAL::CMClockGetHostTimeClock());
-        if (sample.videoRotation() != MediaSample::VideoRotation::None || sample.videoMirrored()) {
-            m_videoTransform = CGAffineTransformMakeRotation(static_cast<int>(sample.videoRotation()) * M_PI / 180);
-            if (sample.videoMirrored())
+        if (frame.videoRotation() != MediaSample::VideoRotation::None || frame.videoMirrored()) {
+            m_videoTransform = CGAffineTransformMakeRotation(static_cast<int>(frame.videoRotation()) * M_PI / 180);
+            if (frame.videoMirrored())
                 m_videoTransform = CGAffineTransformScale(*m_videoTransform, -1, 1);
         }
     }
 
-    auto sampleTime = PAL::CMTimeSubtract(PAL::CMClockGetTime(PAL::CMClockGetHostTimeClock()), m_resumedVideoTime);
-    sampleTime = PAL::CMTimeAdd(sampleTime, m_currentVideoDuration);
-    if (auto bufferWithCurrentTime = copySampleBufferWithCurrentTimeStamp(sample.platformSample().sample.cmSampleBuffer, sampleTime))
+    auto frameTime = PAL::CMTimeSubtract(PAL::CMClockGetTime(PAL::CMClockGetHostTimeClock()), m_resumedVideoTime);
+    frameTime = PAL::CMTimeAdd(frameTime, m_currentVideoDuration);
+    if (auto bufferWithCurrentTime = createVideoSampleBuffer(frame.pixelBuffer(), frameTime))
         m_videoCompressor->addSampleBuffer(bufferWithCurrentTime.get());
 }
 

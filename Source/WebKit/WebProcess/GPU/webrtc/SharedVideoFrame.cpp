@@ -33,8 +33,8 @@
 #include "RemoteVideoFrameProxy.h"
 #include <WebCore/CVUtilities.h>
 #include <WebCore/IOSurface.h>
-#include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/SharedVideoFrameInfo.h>
+#include <WebCore/VideoFrameCV.h>
 #include <WebCore/VideoFrameLibWebRTC.h>
 #include <wtf/Scope.h>
 
@@ -229,13 +229,13 @@ RetainPtr<CVPixelBufferRef> SharedVideoFrameReader::readBuffer(SharedVideoFrame:
     });
 }
 
-RefPtr<MediaSample> SharedVideoFrameReader::read(SharedVideoFrame&& sharedVideoFrame)
+RefPtr<VideoFrame> SharedVideoFrameReader::read(SharedVideoFrame&& sharedVideoFrame)
 {
     auto pixelBuffer = readBuffer(WTFMove(sharedVideoFrame.buffer));
     if (!pixelBuffer)
         return nullptr;
 
-    return MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(pixelBuffer), sharedVideoFrame.rotation, sharedVideoFrame.mirrored, sharedVideoFrame.time);
+    return VideoFrameCV::create(sharedVideoFrame.time, sharedVideoFrame.mirrored, sharedVideoFrame.rotation, WTFMove(pixelBuffer));
 }
 
 CVPixelBufferPoolRef SharedVideoFrameReader::pixelBufferPool(const SharedVideoFrameInfo& info)

@@ -1,3 +1,23 @@
+2022-03-17  Youenn Fablet  <youenn@apple.com>
+
+        Make SharedVideoFrameReader use VideoFrameCV instead of MediaSample
+        https://bugs.webkit.org/show_bug.cgi?id=237596
+
+        Reviewed by Eric Carlson.
+
+        Update media recorder and display layer to use pixel buffers instead of MediaSample.
+        This allows migrating to VideoFrameCV.
+        No change of behavior.
+
+        * platform/cocoa/MediaUtilities.cpp:
+        * platform/cocoa/MediaUtilities.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+
 2022-03-17  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (iOS 15.4 / r287669): Mobile app stopped working due to CSS / angular animation

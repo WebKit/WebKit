@@ -89,8 +89,8 @@ void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberO
 
 void RemoteMediaRecorder::videoSampleAvailable(SharedVideoFrame&& sharedVideoFrame)
 {
-    if (auto sample = m_sharedVideoFrameReader.read(WTFMove(sharedVideoFrame)))
-        m_writer->appendVideoSampleBuffer(*sample);
+    if (auto frame = m_sharedVideoFrameReader.read(WTFMove(sharedVideoFrame)))
+        m_writer->appendVideoFrame(*frame);
 }
 
 void RemoteMediaRecorder::fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&& completionHandler)

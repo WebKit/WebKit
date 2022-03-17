@@ -30,8 +30,8 @@
 #include "IPCSemaphore.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "SharedMemory.h"
-#include <WebCore/MediaSample.h>
 #include <WebCore/ProcessIdentity.h>
+#include <WebCore/VideoFrame.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/UniqueRef.h>
@@ -101,7 +101,7 @@ public:
     void setSemaphore(IPC::Semaphore&& semaphore) { m_semaphore = WTFMove(semaphore); }
     bool setSharedMemory(const SharedMemory::IPCHandle&);
 
-    RefPtr<WebCore::MediaSample> read(SharedVideoFrame&&);
+    RefPtr<WebCore::VideoFrame> read(SharedVideoFrame&&);
     RetainPtr<CVPixelBufferRef> readBuffer(SharedVideoFrame::Buffer&&);
 
 private:
