@@ -115,6 +115,9 @@ public:
     void encode(Encoder&) const;
     static std::optional<StreamConnectionBuffer> decode(Decoder&);
 
+    Span<uint8_t> headerForTesting();
+    Span<uint8_t> dataForTesting();
+
 private:
     StreamConnectionBuffer(Ref<WebKit::SharedMemory>&&, size_t memorySize, Semaphore&& clientWaitSemaphore);
 

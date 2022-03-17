@@ -78,4 +78,9 @@ void StreamClientConnection::sendDeferredWakeUpMessageIfNeeded()
     wakeUpServer();
 }
 
+StreamConnectionBuffer& StreamClientConnection::bufferForTesting()
+{
+    return m_buffer;
+}
+
 }

@@ -1,3 +1,32 @@
+2022-03-17  Simon Lewis  <simon.lewis@apple.com>
+
+        Add read and write methods to JSIPCStreamConnectionBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=237730
+        rdar://problem/89676460
+
+        Reviewed by Kimmo Kinnunen.
+
+        When using IPCTestingAPI, this change enables the underlying bytes
+        of a StreamClientConnection buffer to be modified.
+
+        Test: ipc/stream-buffer-read-write.html
+
+        * Platform/IPC/StreamClientConnection.cpp:
+        (IPC::StreamClientConnection::bufferForTesting):
+        * Platform/IPC/StreamClientConnection.h:
+        * Platform/IPC/StreamConnectionBuffer.cpp:
+        (IPC::StreamConnectionBuffer::headerForTesting):
+        (IPC::StreamConnectionBuffer::dataForTesting):
+        * Platform/IPC/StreamConnectionBuffer.h:
+        * WebProcess/WebPage/IPCTestingAPI.cpp:
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::staticFunctions):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::readHeaderBytes):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::readDataBytes):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::readBytes):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::writeHeaderBytes):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::writeDataBytes):
+        (WebKit::IPCTestingAPI::JSIPCStreamConnectionBuffer::writeBytes):
+
 2022-03-17  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the build when LOG_DISABLED is 0 in release builds

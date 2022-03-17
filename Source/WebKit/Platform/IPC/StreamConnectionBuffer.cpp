@@ -100,4 +100,14 @@ std::optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& de
     return StreamConnectionBuffer { sharedMemory.releaseNonNull(), dataSize,  WTFMove(*semaphore) };
 }
 
+Span<uint8_t> StreamConnectionBuffer::headerForTesting()
+{
+    return { static_cast<uint8_t*>(m_sharedMemory->data()), headerSize() };
+}
+
+Span<uint8_t> StreamConnectionBuffer::dataForTesting()
+{
+    return { data(), m_sharedMemory->size() - headerSize() };
+}
+
 }

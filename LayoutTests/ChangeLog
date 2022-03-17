@@ -1,3 +1,14 @@
+2022-03-17  Simon Lewis  <simon.lewis@apple.com>
+
+        Functional tests for read and write methods of JSIPCStreamConnectionBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=237730
+        rdar://problem/89676460
+
+        Reviewed by Kimmo Kinnunen.
+
+        * ipc/stream-buffer-read-write-expected.txt: Added.
+        * ipc/stream-buffer-read-write.html: Added.
+
 2022-03-17  Ellie Epskamp-Hunt  <eepskamphunt@apple.com>
 
         When a “autofilled and obscured” field becomes empty, turn “autofilled and obscured” off

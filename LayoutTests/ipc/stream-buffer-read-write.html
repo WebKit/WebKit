@@ -1,0 +1,74 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+function arraysAreEqual(a, b) {
+    if (a.byteLength !== b.byteLength) return false;
+    return a.every((val, i) => val === b[i]);
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText()
+
+if (window.IPC) {
+    let headerReadSuccess = false;
+    let headerWriteSuccess = false;
+    let dataReadSuccess = false;
+    let dataWriteSuccess = false;
+
+    const testBytes = Uint8Array.from({length: 16}, (x, i) => i + 0x41);
+    const bufferSize = 48;
+    const streamConnection = IPC.createStreamClientConnection('GPU', bufferSize);
+
+    let streamBuffer = streamConnection.streamBuffer();
+    let initialData = new Uint8Array(streamBuffer.readHeaderBytes(0, 32));
+
+    streamBuffer.writeHeaderBytes(testBytes, 0, 4);
+    streamBuffer.writeHeaderBytes(testBytes.slice(4,8), 4, 4);
+
+    let readResult = new Uint8Array(streamBuffer.readHeaderBytes(0, 32));
+
+    let expected = initialData.slice();
+    for(let i=0; i<8; i++){
+        expected[i] = testBytes[i];
+    }
+
+    if(arraysAreEqual(readResult, expected)){
+        headerWriteSuccess = true;
+        readResult = new Uint8Array(streamBuffer.readHeaderBytes(4, 28));
+        if(arraysAreEqual(readResult, expected.slice(4, 32))){
+            headerReadSuccess = true;
+        } else {
+            document.write("FAIL: Header offset read");
+        }   
+    } else {
+        document.write("FAIL: Header write");
+    }
+
+    if(headerWriteSuccess && headerReadSuccess){
+        streamBuffer.writeDataBytes(testBytes.slice(0,8), 0, 8);
+        streamBuffer.writeDataBytes(testBytes.slice(8,16), 8, 8);
+        readResult = new Uint8Array(streamBuffer.readDataBytes(0));
+
+        if(arraysAreEqual(readResult, testBytes)){
+            dataWriteSuccess = true;
+            readResult = new Uint8Array(streamBuffer.readDataBytes(3));
+            if(arraysAreEqual(readResult, testBytes.slice(3))){
+                dataReadSuccess = true;
+            }  else {
+                document.write("FAIL: Data offset read");
+            }
+        } else {
+            document.write("FAIL: Data write");
+        }
+
+        if(dataWriteSuccess && dataReadSuccess){
+            document.write("PASS");
+        }
+    }
+} else {
+    // IPC not enabled so this test passes by default.
+    document.write("PASS");    
+}
+</script>
+<p>Test passes if it does not crash and has no 'FAIL' output</p>
+</body>
+</html>
