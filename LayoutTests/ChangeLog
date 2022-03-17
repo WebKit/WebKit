@@ -1,3 +1,7 @@
+2022-03-17  Russell Epstein  <repstein@apple.com>
+
+        Revert r290628. rdar://problem/90310316
+
 2022-03-12  Jean-Yves Avenard  <jya@apple.com>
 
         Safari produces scrambled output for some webm videos with vp8 codec.

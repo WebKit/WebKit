@@ -1958,10 +1958,8 @@ void RenderLayer::setBackingProviderLayer(RenderLayer* backingProvider)
     if (backingProvider == m_backingProviderLayer)
         return;
 
-    if (!renderer().renderTreeBeingDestroyed()) {
+    if (!renderer().renderTreeBeingDestroyed())
         clearClipRectsIncludingDescendants();
-        clearRepaintRects();
-    }
 
     m_backingProviderLayer = backingProvider;
 }
@@ -5309,8 +5307,7 @@ void RenderLayer::setBackingNeedsRepaintInRect(const LayoutRect& r, GraphicsLaye
 // Since we're only painting non-composited layers, we know that they all share the same repaintContainer.
 void RenderLayer::repaintIncludingNonCompositingDescendants(RenderLayerModelObject* repaintContainer)
 {
-    auto clippedOverflowRect = m_repaintRectsValid ? m_repaintRects.clippedOverflowRect : renderer().clippedOverflowRectForRepaint(repaintContainer);
-    renderer().repaintUsingContainer(repaintContainer, clippedOverflowRect);
+    renderer().repaintUsingContainer(repaintContainer, renderer().clippedOverflowRectForRepaint(repaintContainer));
 
     for (RenderLayer* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isComposited())
