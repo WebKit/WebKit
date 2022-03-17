@@ -288,17 +288,14 @@ void TextBoxPainter::paintBackground(unsigned startOffset, unsigned endOffset, c
 
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
-
-    const auto line = textBox().line();
-    LayoutUnit selectionBottom = line->enclosingBottom();
-    LayoutUnit selectionTop = line->enclosingTopAdjustedForPrecedingBlock();
-
+    auto line = textBox().line();
+    auto selectionBottom = line->enclosingBottom();
+    auto selectionTop = line->enclosingTopAdjustedForPrecedingBlock();
     // Use same y positioning and height as for selection, so that when the selection and this subrange are on
     // the same word there are no pieces sticking out.
-    LayoutUnit deltaY { m_style.isFlippedLinesWritingMode() ? selectionBottom - textBox().logicalBottom() : textBox().logicalTop() - selectionTop };
-    LayoutUnit selectionHeight = std::max<LayoutUnit>(0, selectionBottom - selectionTop);
-
-    LayoutRect selectionRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(textBox().logicalWidth()), selectionHeight };
+    auto deltaY = LayoutUnit { m_style.isFlippedLinesWritingMode() ? selectionBottom - textBox().logicalBottom() : textBox().logicalTop() - selectionTop };
+    auto selectionHeight = LayoutUnit { std::max(0_lu, selectionBottom - selectionTop) };
+    auto selectionRect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(textBox().logicalWidth()), selectionHeight };
     fontCascade().adjustSelectionRectForText(m_paintTextRun, selectionRect, startOffset, endOffset);
 
     // FIXME: Support painting combined text. See <https://bugs.webkit.org/show_bug.cgi?id=180993>.

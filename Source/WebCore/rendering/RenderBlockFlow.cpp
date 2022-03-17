@@ -3187,9 +3187,10 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     if (lastSelectedLine && selectionState() != HighlightState::End && selectionState() != HighlightState::Both) {
         // Update our lastY to be the bottom of the last selected line.
-        lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + lastSelectedLine->enclosingBottom();
-        lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, lastSelectedLine->enclosingBottom(), cache);
-        lastLogicalRight = logicalRightSelectionOffset(rootBlock, lastSelectedLine->enclosingBottom(), cache);
+        auto lastLineSelectionBottom = lastSelectedLine->enclosingBottom();
+        lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + lastLineSelectionBottom;
+        lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, lastLineSelectionBottom, cache);
+        lastLogicalRight = logicalRightSelectionOffset(rootBlock, lastLineSelectionBottom, cache);
     }
     return result;
 }
@@ -3393,7 +3394,8 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
         lastLineWithChildren = line;
 
         // check if this root line box is located at this y coordinate
-        if (pointInLogicalContents.y() < line->enclosingBottom() || (blocksAreFlipped && pointInLogicalContents.y() == line->enclosingBottom())) {
+        auto selectionBottom = line->enclosingBottom();
+        if (pointInLogicalContents.y() < selectionBottom || (blocksAreFlipped && pointInLogicalContents.y() == selectionBottom)) {
             if (linesAreFlipped) {
                 auto nextLineWithChildren = line->next();
                 while (nextLineWithChildren && !nextLineWithChildren->firstLeafBox())

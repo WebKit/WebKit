@@ -60,7 +60,6 @@ public:
 
     LayoutUnit enclosingTop() const;
     LayoutUnit enclosingBottom() const;
-    LayoutUnit enclosingHeight() const;
 
     LayoutRect enclosingLogicalRect() const;
     LayoutRect enclosingPhysicalRect() const;
@@ -175,11 +174,6 @@ inline LayoutUnit Line::enclosingBottom() const
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.enclosingBottom();
     });
-}
-
-inline LayoutUnit Line::enclosingHeight() const
-{
-    return enclosingBottom() - enclosingTop();
 }
 
 inline LayoutUnit Line::lineBoxTop() const
