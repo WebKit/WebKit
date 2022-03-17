@@ -31,6 +31,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUDeviceImpl.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/BlockPtr.h>
 
 namespace PAL::WebGPU {
 
@@ -140,16 +141,8 @@ AdapterImpl::~AdapterImpl()
     wgpuAdapterRelease(m_backing);
 }
 
-void requestDeviceCallback(WGPURequestDeviceStatus status, WGPUDevice device, const char* message, void* userdata)
-{
-    auto adapter = adoptRef(*static_cast<AdapterImpl*>(userdata)); // adoptRef is balanced by leakRef in requestDevice() below. We have to do this because we're using a C API with no concept of reference counting or blocks.
-    adapter->requestDeviceCallback(status, device, message);
-}
-
 void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHandler<void(Ref<Device>&&)>&& callback)
 {
-    Ref protectedThis(*this);
-
     auto label = descriptor.label.utf8();
 
     auto features = descriptor.requiredFeatures.map([this] (auto featureName) {
@@ -195,16 +188,9 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         &limits,
     };
 
-    m_callbacks.append(WTFMove(callback));
-
-    wgpuAdapterRequestDevice(m_backing, &backingDescriptor, &WebGPU::requestDeviceCallback, &protectedThis.leakRef()); // leakRef is balanced by adoptRef in requestDeviceCallback() above. We have to do this because we're using a C API with no concept of reference counting or blocks.
-}
-
-void AdapterImpl::requestDeviceCallback(WGPURequestDeviceStatus, WGPUDevice device, const char* message)
-{
-    UNUSED_PARAM(message);
-    auto callback = m_callbacks.takeFirst();
-    callback(DeviceImpl::create(device, Ref { features() }, Ref { limits() }, m_convertToBackingContext));
+    wgpuAdapterRequestDeviceWithBlock(m_backing, &backingDescriptor, makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestDeviceStatus, WGPUDevice device, const char*) mutable {
+        callback(DeviceImpl::create(device, Ref { protectedThis->features() }, Ref { protectedThis->limits() }, convertToBackingContext));
+    }).get());
 }
 
 } // namespace PAL::WebGPU

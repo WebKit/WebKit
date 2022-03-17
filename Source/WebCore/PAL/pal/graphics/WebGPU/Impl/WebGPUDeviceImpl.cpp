@@ -58,6 +58,7 @@
 #include "WebGPUTextureViewImpl.h"
 #include "WebGPUValidationError.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/BlockPtr.h>
 
 namespace PAL::WebGPU {
 
@@ -509,52 +510,22 @@ Ref<RenderPipeline> DeviceImpl::createRenderPipeline(const RenderPipelineDescrip
     });
 }
 
-void createComputePipelineAsyncCallback(WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, const char* message, void* userdata)
-{
-    auto device = adoptRef(*static_cast<DeviceImpl*>(userdata)); // adoptRef is balanced by leakRef in createComputePipelineAsync() below. We have to do this because we're using a C API with no concept of reference counting or blocks.
-    device->createComputePipelineAsyncCallback(status, pipeline, message);
-}
-
 void DeviceImpl::createComputePipelineAsync(const ComputePipelineDescriptor& descriptor, CompletionHandler<void(Ref<ComputePipeline>&&)>&& callback)
 {
-    Ref protectedThis(*this);
-
-    m_createComputePipelineAsyncCallbacks.append(WTFMove(callback));
-
-    convertToBacking(descriptor, m_convertToBackingContext, [this, protectedThis = WTFMove(protectedThis)] (const WGPUComputePipelineDescriptor& backingDescriptor) mutable {
-        wgpuDeviceCreateComputePipelineAsync(m_backing, &backingDescriptor, &WebGPU::createComputePipelineAsyncCallback, &protectedThis.leakRef()); // leakRef is balanced by adoptRef in requestDeviceCallback() above. We have to do this because we're using a C API with no concept of reference counting or blocks.
+    convertToBacking(descriptor, m_convertToBackingContext, [this, callback = WTFMove(callback)] (const WGPUComputePipelineDescriptor& backingDescriptor) mutable {
+        wgpuDeviceCreateComputePipelineAsyncWithBlock(m_backing, &backingDescriptor, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus, WGPUComputePipeline pipeline, const char*) mutable {
+            callback(ComputePipelineImpl::create(pipeline, convertToBackingContext));
+        }).get());
     });
-}
-
-void DeviceImpl::createComputePipelineAsyncCallback(WGPUCreatePipelineAsyncStatus, WGPUComputePipeline pipeline, const char* message)
-{
-    UNUSED_PARAM(message);
-    auto callback = m_createComputePipelineAsyncCallbacks.takeFirst();
-    callback(ComputePipelineImpl::create(pipeline, m_convertToBackingContext));
-}
-
-void createRenderPipelineAsyncCallback(WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, const char* message, void* userdata)
-{
-    auto device = adoptRef(*static_cast<DeviceImpl*>(userdata)); // adoptRef is balanced by leakRef in createRenderPipelineAsync() below. We have to do this because we're using a C API with no concept of reference counting or blocks.
-    device->createRenderPipelineAsyncCallback(status, pipeline, message);
 }
 
 void DeviceImpl::createRenderPipelineAsync(const RenderPipelineDescriptor& descriptor, CompletionHandler<void(Ref<RenderPipeline>&&)>&& callback)
 {
-    Ref protectedThis(*this);
-
-    m_createRenderPipelineAsyncCallbacks.append(WTFMove(callback));
-
-    convertToBacking(descriptor, m_convertToBackingContext, [this, protectedThis = WTFMove(protectedThis)] (const WGPURenderPipelineDescriptor& backingDescriptor) mutable {
-    wgpuDeviceCreateRenderPipelineAsync(m_backing, &backingDescriptor, &WebGPU::createRenderPipelineAsyncCallback, &protectedThis.leakRef()); // leakRef is balanced by adoptRef in requestDeviceCallback() above. We have to do this because we're using a C API with no concept of reference counting or blocks.
+    convertToBacking(descriptor, m_convertToBackingContext, [this, callback = WTFMove(callback)] (const WGPURenderPipelineDescriptor& backingDescriptor) mutable {
+        wgpuDeviceCreateRenderPipelineAsyncWithBlock(m_backing, &backingDescriptor, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus, WGPURenderPipeline pipeline, const char*) mutable {
+            callback(RenderPipelineImpl::create(pipeline, convertToBackingContext));
+        }).get());
     });
-}
-
-void DeviceImpl::createRenderPipelineAsyncCallback(WGPUCreatePipelineAsyncStatus, WGPURenderPipeline pipeline, const char* message)
-{
-    UNUSED_PARAM(message);
-    auto callback = m_createRenderPipelineAsyncCallbacks.takeFirst();
-    callback(RenderPipelineImpl::create(pipeline, m_convertToBackingContext));
 }
 
 Ref<CommandEncoder> DeviceImpl::createCommandEncoder(const std::optional<CommandEncoderDescriptor>& descriptor)
@@ -612,44 +583,30 @@ void DeviceImpl::pushErrorScope(ErrorFilter errorFilter)
     wgpuDevicePushErrorScope(m_backing, m_convertToBackingContext->convertToBacking(errorFilter));
 }
 
-void popErrorScopeCallback(WGPUErrorType type, const char* message, void* userdata)
-{
-    auto device = adoptRef(*static_cast<DeviceImpl*>(userdata)); // adoptRef is balanced by leakRef in popErrorScope() below. We have to do this because we're using a C API with no concept of reference counting or blocks.
-    device->popErrorScopeCallback(type, message);
-}
-
 void DeviceImpl::popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&& callback)
 {
-    Ref protectedThis(*this);
+    wgpuDevicePopErrorScopeWithBlock(m_backing, makeBlockPtr([callback = WTFMove(callback)](WGPUErrorType errorType, const char* message) mutable {
+        std::optional<Error> error;
+        switch (errorType) {
+        case WGPUErrorType_NoError:
+        case WGPUErrorType_Force32:
+            break;
+        case WGPUErrorType_Validation:
+            error = { { ValidationError::create(message) } };
+            break;
+        case WGPUErrorType_OutOfMemory:
+            error = { { OutOfMemoryError::create() } };
+            break;
+        case WGPUErrorType_Unknown:
+            error = { { OutOfMemoryError::create() } };
+            break;
+        case WGPUErrorType_DeviceLost:
+            error = { { OutOfMemoryError::create() } };
+            break;
+        }
 
-    m_popErrorScopeCallbacks.append(WTFMove(callback));
-
-    wgpuDevicePopErrorScope(m_backing, &WebGPU::popErrorScopeCallback, &protectedThis.leakRef()); // leakRef is balanced by adoptRef in requestDeviceCallback() above. We have to do this because we're using a C API with no concept of reference counting or blocks.
-}
-
-void DeviceImpl::popErrorScopeCallback(WGPUErrorType errorType, const char* message)
-{
-    std::optional<Error> error;
-    switch (errorType) {
-    case WGPUErrorType_NoError:
-    case WGPUErrorType_Force32:
-        break;
-    case WGPUErrorType_Validation:
-        error = { { ValidationError::create(message) } };
-        break;
-    case WGPUErrorType_OutOfMemory:
-        error = { { OutOfMemoryError::create() } };
-        break;
-    case WGPUErrorType_Unknown:
-        error = { { OutOfMemoryError::create() } };
-        break;
-    case WGPUErrorType_DeviceLost:
-        error = { { OutOfMemoryError::create() } };
-        break;
-    }
-
-    auto callback = m_popErrorScopeCallbacks.takeFirst();
-    callback(WTFMove(error));
+        callback(WTFMove(error));
+    }).get());
 }
 
 void DeviceImpl::setLabelInternal(const String& label)

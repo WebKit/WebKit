@@ -47,7 +47,6 @@ public:
 
 private:
     friend class DowncastConvertToBackingContext;
-    friend void onSubmittedWorkDoneCallback(WGPUQueueWorkDoneStatus, void* userdata);
 
     QueueImpl(WGPUQueue, ConvertToBackingContext&);
 
@@ -60,7 +59,6 @@ private:
 
     void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) final;
 
-    void onSubmittedWorkDoneCallback(WGPUQueueWorkDoneStatus);
     void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
 
     void writeBuffer(
@@ -86,8 +84,6 @@ private:
     void setLabelInternal(const String&) final;
 
     uint64_t m_signalValue { 1 };
-
-    Deque<CompletionHandler<void()>> m_callbacks;
 
     WGPUQueue m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;

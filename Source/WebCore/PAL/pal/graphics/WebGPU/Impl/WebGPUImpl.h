@@ -53,7 +53,6 @@ public:
 
 private:
     friend class DowncastConvertToBackingContext;
-    friend void requestAdapterCallback(WGPURequestAdapterStatus, WGPUAdapter, const char* message, void* userdata);
 
     GPUImpl(WGPUInstance, ConvertToBackingContext&);
 
@@ -64,10 +63,7 @@ private:
 
     WGPUInstance backing() const { return m_backing; }
 
-    void requestAdapterCallback(WGPURequestAdapterStatus, WGPUAdapter, const char* message);
     void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) final;
-
-    Deque<CompletionHandler<void(RefPtr<Adapter>&&)>> m_callbacks;
 
     WGPUInstance m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;

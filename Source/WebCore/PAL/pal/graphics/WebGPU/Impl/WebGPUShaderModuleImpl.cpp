@@ -46,6 +46,7 @@ ShaderModuleImpl::~ShaderModuleImpl()
 
 void ShaderModuleImpl::compilationInfo(CompletionHandler<void(Ref<CompilationInfo>&&)>&&)
 {
+    // FIXME: Implement this.
 }
 
 void ShaderModuleImpl::setLabelInternal(const String& label)

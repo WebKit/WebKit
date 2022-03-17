@@ -294,7 +294,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
     m_mapMode = mode;
 
     // "Enqueue an operation on the default queue’s Queue timeline that will execute the following:"
-    m_device->getQueue().onSubmittedWorkDone(0, [protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)] (WGPUQueueWorkDoneStatus status) mutable {
+    m_device->getQueue().onSubmittedWorkDone(0, [protectedThis = Ref { *this }, offset, rangeSize, callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) mutable {
         // "If this.[[state]] is mapping pending:"
         if (protectedThis->m_state == State::MappingPending) {
             // "Let m be a new ArrayBuffer of size rangeSize."
@@ -412,14 +412,14 @@ void* wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(buffer).mapAsync(mode, offset, size, [callback, userdata] (WGPUBufferMapAsyncStatus status) {
+    WebGPU::fromAPI(buffer).mapAsync(mode, offset, size, [callback, userdata](WGPUBufferMapAsyncStatus status) {
         callback(status, userdata);
     });
 }
 
 void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback)
 {
-    WebGPU::fromAPI(buffer).mapAsync(mode, offset, size, [callback] (WGPUBufferMapAsyncStatus status) {
+    WebGPU::fromAPI(buffer).mapAsync(mode, offset, size, [callback = WTFMove(callback)](WGPUBufferMapAsyncStatus status) {
         callback(status);
     });
 }

@@ -1,5 +1,41 @@
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Use block-based WebGPU API instead of function pointer & userdata API
+        https://bugs.webkit.org/show_bug.cgi?id=237932
+
+        Reviewed by Kimmo Kinnunen.
+
+        Move callbacks instead of copying them. Also, update according to the style guide.
+
+        * WebGPU/Adapter.mm:
+        (wgpuAdapterRequestDevice):
+        (wgpuAdapterRequestDeviceWithBlock):
+        * WebGPU/Buffer.mm:
+        (wgpuBufferMapAsync):
+        (wgpuBufferMapAsyncWithBlock):
+        * WebGPU/Device.mm:
+        (wgpuDeviceCreateComputePipelineAsync):
+        (wgpuDeviceCreateComputePipelineAsyncWithBlock):
+        (wgpuDeviceCreateRenderPipelineAsync):
+        (wgpuDeviceCreateRenderPipelineAsyncWithBlock):
+        (wgpuDevicePopErrorScope):
+        (wgpuDevicePopErrorScopeWithBlock):
+        (wgpuDeviceSetDeviceLostCallback):
+        (wgpuDeviceSetDeviceLostCallbackWithBlock):
+        (wgpuDeviceSetUncapturedErrorCallback):
+        (wgpuDeviceSetUncapturedErrorCallbackWithBlock):
+        * WebGPU/Instance.mm:
+        (wgpuInstanceRequestAdapter):
+        (wgpuInstanceRequestAdapterWithBlock):
+        * WebGPU/Queue.mm:
+        (wgpuQueueOnSubmittedWorkDone):
+        (wgpuQueueOnSubmittedWorkDoneWithBlock):
+        * WebGPU/ShaderModule.mm:
+        (wgpuShaderModuleGetCompilationInfo):
+        (wgpuShaderModuleGetCompilationInfoWithBlock):
+
+2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement queue submission methods according to the spec
         https://bugs.webkit.org/show_bug.cgi?id=237869
 

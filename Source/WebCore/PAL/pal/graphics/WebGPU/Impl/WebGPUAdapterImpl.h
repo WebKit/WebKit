@@ -47,7 +47,6 @@ public:
 
 private:
     friend class DowncastConvertToBackingContext;
-    friend void requestDeviceCallback(WGPURequestDeviceStatus, WGPUDevice, const char* message, void* userdata);
 
     AdapterImpl(WGPUAdapter, ConvertToBackingContext&);
 
@@ -58,10 +57,7 @@ private:
 
     WGPUAdapter backing() const { return m_backing; }
 
-    void requestDeviceCallback(WGPURequestDeviceStatus, WGPUDevice, const char* message);
     void requestDevice(const DeviceDescriptor&, CompletionHandler<void(Ref<Device>&&)>&&) final;
-
-    Deque<CompletionHandler<void(Ref<Device>&&)>> m_callbacks;
 
     WGPUAdapter m_backing { nullptr };
     Ref<ConvertToBackingContext> m_convertToBackingContext;

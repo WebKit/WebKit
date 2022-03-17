@@ -85,7 +85,7 @@ void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& command
     // "For each commandBuffer in commandBuffers:"
     for (auto commandBuffer : commands) {
         ASSERT(commandBuffer.get().commandBuffer().commandQueue == m_commandQueue); //
-        [commandBuffer.get().commandBuffer() addCompletedHandler:[protectedThis = Ref { *this }] (id<MTLCommandBuffer>) {
+        [commandBuffer.get().commandBuffer() addCompletedHandler:[protectedThis = Ref { *this }](id<MTLCommandBuffer>) {
             protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
                 ++(protectedThis->m_completedCommandBufferCount);
                 for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
@@ -136,14 +136,14 @@ void wgpuQueueRelease(WGPUQueue queue)
 
 void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(queue).onSubmittedWorkDone(signalValue, [callback, userdata] (WGPUQueueWorkDoneStatus status) {
+    WebGPU::fromAPI(queue).onSubmittedWorkDone(signalValue, [callback, userdata](WGPUQueueWorkDoneStatus status) {
         callback(status, userdata);
     });
 }
 
 void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneBlockCallback callback)
 {
-    WebGPU::fromAPI(queue).onSubmittedWorkDone(signalValue, [callback] (WGPUQueueWorkDoneStatus status) {
+    WebGPU::fromAPI(queue).onSubmittedWorkDone(signalValue, [callback = WTFMove(callback)](WGPUQueueWorkDoneStatus status) {
         callback(status);
     });
 }

@@ -171,14 +171,14 @@ WGPUComputePipeline wgpuDeviceCreateComputePipeline(WGPUDevice device, const WGP
 
 void wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUComputePipelineDescriptor* descriptor, WGPUCreateComputePipelineAsyncCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(device).createComputePipelineAsync(*descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::ComputePipeline>&& pipeline, String&& message) {
+    WebGPU::fromAPI(device).createComputePipelineAsync(*descriptor, [callback, userdata](WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::ComputePipeline>&& pipeline, String&& message) {
         callback(status, pipeline ? new WGPUComputePipelineImpl { pipeline.releaseNonNull() } : nullptr, message.utf8().data(), userdata);
     });
 }
 
 void wgpuDeviceCreateComputePipelineAsyncWithBlock(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncBlockCallback callback)
 {
-    WebGPU::fromAPI(device).createComputePipelineAsync(*descriptor, [callback] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::ComputePipeline>&& pipeline, String&& message) {
+    WebGPU::fromAPI(device).createComputePipelineAsync(*descriptor, [callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::ComputePipeline>&& pipeline, String&& message) {
         callback(status, pipeline ? new WGPUComputePipelineImpl { pipeline.releaseNonNull() } : nullptr, message.utf8().data());
     });
 }
@@ -209,14 +209,14 @@ WGPURenderPipeline wgpuDeviceCreateRenderPipeline(WGPUDevice device, const WGPUR
 
 void wgpuDeviceCreateRenderPipelineAsync(WGPUDevice device, const WGPURenderPipelineDescriptor* descriptor, WGPUCreateRenderPipelineAsyncCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(device).createRenderPipelineAsync(*descriptor, [callback, userdata] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::RenderPipeline>&& pipeline, String&& message) {
+    WebGPU::fromAPI(device).createRenderPipelineAsync(*descriptor, [callback, userdata](WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::RenderPipeline>&& pipeline, String&& message) {
         callback(status, pipeline ? new WGPURenderPipelineImpl { pipeline.releaseNonNull() } : nullptr, message.utf8().data(), userdata);
     });
 }
 
 void wgpuDeviceCreateRenderPipelineAsyncWithBlock(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncBlockCallback callback)
 {
-    WebGPU::fromAPI(device).createRenderPipelineAsync(*descriptor, [callback] (WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::RenderPipeline>&& pipeline, String&& message) {
+    WebGPU::fromAPI(device).createRenderPipelineAsync(*descriptor, [callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus status, RefPtr<WebGPU::RenderPipeline>&& pipeline, String&& message) {
         callback(status, pipeline ? new WGPURenderPipelineImpl { pipeline.releaseNonNull() } : nullptr, message.utf8().data());
     });
 }
@@ -272,14 +272,14 @@ bool wgpuDeviceHasFeature(WGPUDevice device, WGPUFeatureName feature)
 
 bool wgpuDevicePopErrorScope(WGPUDevice device, WGPUErrorCallback callback, void* userdata)
 {
-    return WebGPU::fromAPI(device).popErrorScope([callback, userdata] (WGPUErrorType type, String&& message) {
+    return WebGPU::fromAPI(device).popErrorScope([callback, userdata](WGPUErrorType type, String&& message) {
         callback(type, message.utf8().data(), userdata);
     });
 }
 
 bool wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback)
 {
-    return WebGPU::fromAPI(device).popErrorScope([callback] (WGPUErrorType type, String&& message) {
+    return WebGPU::fromAPI(device).popErrorScope([callback = WTFMove(callback)](WGPUErrorType type, String&& message) {
         callback(type, message.utf8().data());
     });
 }
@@ -291,7 +291,7 @@ void wgpuDevicePushErrorScope(WGPUDevice device, WGPUErrorFilter filter)
 
 void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback callback, void* userdata)
 {
-    return WebGPU::fromAPI(device).setDeviceLostCallback([callback, userdata] (WGPUDeviceLostReason reason, String&& message) {
+    return WebGPU::fromAPI(device).setDeviceLostCallback([callback, userdata](WGPUDeviceLostReason reason, String&& message) {
         if (callback)
             callback(reason, message.utf8().data(), userdata);
     });
@@ -299,7 +299,7 @@ void wgpuDeviceSetDeviceLostCallback(WGPUDevice device, WGPUDeviceLostCallback c
 
 void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostBlockCallback callback)
 {
-    return WebGPU::fromAPI(device).setDeviceLostCallback([callback] (WGPUDeviceLostReason reason, String&& message) {
+    return WebGPU::fromAPI(device).setDeviceLostCallback([callback = WTFMove(callback)](WGPUDeviceLostReason reason, String&& message) {
         if (callback)
             callback(reason, message.utf8().data());
     });
@@ -307,7 +307,7 @@ void wgpuDeviceSetDeviceLostCallbackWithBlock(WGPUDevice device, WGPUDeviceLostB
 
 void wgpuDeviceSetUncapturedErrorCallback(WGPUDevice device, WGPUErrorCallback callback, void* userdata)
 {
-    return WebGPU::fromAPI(device).setUncapturedErrorCallback([callback, userdata] (WGPUErrorType type, String&& message) {
+    return WebGPU::fromAPI(device).setUncapturedErrorCallback([callback, userdata](WGPUErrorType type, String&& message) {
         if (callback)
             callback(type, message.utf8().data(), userdata);
     });
@@ -315,7 +315,7 @@ void wgpuDeviceSetUncapturedErrorCallback(WGPUDevice device, WGPUErrorCallback c
 
 void wgpuDeviceSetUncapturedErrorCallbackWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback)
 {
-    return WebGPU::fromAPI(device).setUncapturedErrorCallback([callback] (WGPUErrorType type, String&& message) {
+    return WebGPU::fromAPI(device).setUncapturedErrorCallback([callback = WTFMove(callback)](WGPUErrorType type, String&& message) {
         if (callback)
             callback(type, message.utf8().data());
     });

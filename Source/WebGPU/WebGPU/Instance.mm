@@ -444,14 +444,14 @@ void wgpuInstanceProcessEvents(WGPUInstance instance)
 
 void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(instance).requestAdapter(*options, [callback, userdata] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, String&& message) {
+    WebGPU::fromAPI(instance).requestAdapter(*options, [callback, userdata](WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, String&& message) {
         callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message.utf8().data(), userdata);
     });
 }
 
 void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback)
 {
-    WebGPU::fromAPI(instance).requestAdapter(*options, [callback] (WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, String&& message) {
+    WebGPU::fromAPI(instance).requestAdapter(*options, [callback = WTFMove(callback)](WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, String&& message) {
         callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message.utf8().data());
     });
 }

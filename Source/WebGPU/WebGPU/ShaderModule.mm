@@ -152,7 +152,7 @@ static CompilationMessageData convertMessages(const Messages& messages1, const s
     Vector<WGPUCompilationMessage> flattenedCompilationMessages;
     Vector<CString> flattenedMessages;
 
-    auto populateMessages = [&] (const Messages& compilationMessages) {
+    auto populateMessages = [&](const Messages& compilationMessages) {
         for (const auto& compilationMessage : compilationMessages.messages)
             flattenedMessages.append(compilationMessage.message().utf8());
     };
@@ -161,7 +161,7 @@ static CompilationMessageData convertMessages(const Messages& messages1, const s
     if (messages2)
         populateMessages(*messages2);
 
-    auto populateCompilationMessages = [&] (const Messages& compilationMessages, size_t base) {
+    auto populateCompilationMessages = [&](const Messages& compilationMessages, size_t base) {
         for (size_t i = 0; i < compilationMessages.messages.size(); ++i) {
             const auto& compilationMessage = compilationMessages.messages[i];
             flattenedCompilationMessages.append({
@@ -185,7 +185,7 @@ static CompilationMessageData convertMessages(const Messages& messages1, const s
 
 void ShaderModule::getCompilationInfo(CompletionHandler<void(WGPUCompilationInfoRequestStatus, const WGPUCompilationInfo&)>&& callback)
 {
-    WTF::switchOn(m_checkResult, [&] (const WGSL::SuccessfulCheck& successfulCheck) {
+    WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) {
         auto compilationMessageData(convertMessages({ successfulCheck.warnings, WGPUCompilationMessageType_Warning }));
         WGPUCompilationInfo compilationInfo {
             nullptr,
@@ -193,7 +193,7 @@ void ShaderModule::getCompilationInfo(CompletionHandler<void(WGPUCompilationInfo
             compilationMessageData.compilationMessages.data(),
         };
         callback(WGPUCompilationInfoRequestStatus_Success, compilationInfo);
-    }, [&] (const WGSL::FailedCheck& failedCheck) {
+    }, [&](const WGSL::FailedCheck& failedCheck) {
         auto compilationMessageData(convertMessages(
             { failedCheck.errors, WGPUCompilationMessageType_Error },
             { { failedCheck.warnings, WGPUCompilationMessageType_Warning } }));
@@ -221,9 +221,9 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
 
 const WGSL::AST::ShaderModule* ShaderModule::ast() const
 {
-    return WTF::switchOn(m_checkResult, [&] (const WGSL::SuccessfulCheck& successfulCheck) -> const WGSL::AST::ShaderModule* {
+    return WTF::switchOn(m_checkResult, [&](const WGSL::SuccessfulCheck& successfulCheck) -> const WGSL::AST::ShaderModule* {
         return successfulCheck.ast.ptr();
-    }, [&] (const WGSL::FailedCheck&) -> const WGSL::AST::ShaderModule* {
+    }, [&](const WGSL::FailedCheck&) -> const WGSL::AST::ShaderModule* {
         return nullptr;
     });
 }
@@ -253,14 +253,14 @@ void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 
 void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallback callback, void * userdata)
 {
-    WebGPU::fromAPI(shaderModule).getCompilationInfo([callback, userdata] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+    WebGPU::fromAPI(shaderModule).getCompilationInfo([callback, userdata](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
         callback(status, &compilationInfo, userdata);
     });
 }
 
 void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback)
 {
-    WebGPU::fromAPI(shaderModule).getCompilationInfo([callback] (WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+    WebGPU::fromAPI(shaderModule).getCompilationInfo([callback = WTFMove(callback)](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
         callback(status, &compilationInfo);
     });
 }

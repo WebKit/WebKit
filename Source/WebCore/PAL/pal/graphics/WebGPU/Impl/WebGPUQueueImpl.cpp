@@ -33,6 +33,7 @@
 #include "WebGPUConvertToBackingContext.h"
 #include "WebGPUTextureImpl.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/BlockPtr.h>
 
 namespace PAL::WebGPU {
 
@@ -56,27 +57,13 @@ void QueueImpl::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commandBu
     wgpuQueueSubmit(m_backing, backingCommandBuffers.size(), backingCommandBuffers.data());
 }
 
-void onSubmittedWorkDoneCallback(WGPUQueueWorkDoneStatus status, void* userdata)
-{
-    auto queue = adoptRef(*static_cast<QueueImpl*>(userdata)); // adoptRef is balanced by leakRef in onSubmittedWorkDone() below. We have to do this because we're using a C API with no concept of reference counting or blocks.
-    queue->onSubmittedWorkDoneCallback(status);
-}
-
 void QueueImpl::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 {
-    Ref protectedThis(*this);
-
-    m_callbacks.append(WTFMove(callback));
-
-    wgpuQueueOnSubmittedWorkDone(m_backing, m_signalValue, &WebGPU::onSubmittedWorkDoneCallback, &protectedThis.leakRef()); // leakRef is balanced by adoptRef in onSubmittedWorkDoneCallback() above. We have to do this because we're using a C API with no concept of reference counting or blocks.
+    wgpuQueueOnSubmittedWorkDoneWithBlock(m_backing, m_signalValue, makeBlockPtr([callback = WTFMove(callback)](WGPUQueueWorkDoneStatus) mutable {
+        callback();
+    }).get());
 
     ++m_signalValue;
-}
-
-void QueueImpl::onSubmittedWorkDoneCallback(WGPUQueueWorkDoneStatus)
-{
-    auto callback = m_callbacks.takeFirst();
-    callback();
 }
 
 void QueueImpl::writeBuffer(

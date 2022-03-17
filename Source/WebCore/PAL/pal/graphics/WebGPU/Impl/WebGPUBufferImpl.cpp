@@ -30,6 +30,7 @@
 
 #include "WebGPUConvertToBackingContext.h"
 #include <WebGPU/WebGPUExt.h>
+#include <wtf/BlockPtr.h>
 
 namespace PAL::WebGPU {
 
@@ -44,31 +45,16 @@ BufferImpl::~BufferImpl()
     wgpuBufferRelease(m_backing);
 }
 
-void mapCallback(WGPUBufferMapAsyncStatus status, void* userdata)
-{
-    auto buffer = adoptRef(*static_cast<BufferImpl*>(userdata)); // adoptRef is balanced by leakRef in mapAsync() below. We have to do this because we're using a C API with no concept of reference counting or blocks.
-    buffer->mapCallback(status);
-}
-
 void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optional<Size64> size, CompletionHandler<void()>&& callback)
 {
-    Ref protectedThis(*this);
-
     auto backingMapModeFlags = m_convertToBackingContext->convertMapModeFlagsToBacking(mapModeFlags);
 
     auto usedSize = size.value_or(WGPU_WHOLE_MAP_SIZE);
 
-    m_callbacks.append(WTFMove(callback));
-
     // FIXME: Check the casts.
-    wgpuBufferMapAsync(m_backing, backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), &WebGPU::mapCallback, &protectedThis.leakRef()); // leakRef is balanced by adoptRef in mapCallback() above. We have to do this because we're using a C API with no concept of reference counting or blocks.
-}
-
-void BufferImpl::mapCallback(WGPUBufferMapAsyncStatus status)
-{
-    UNUSED_PARAM(status);
-    auto callback = m_callbacks.takeFirst();
-    callback();
+    wgpuBufferMapAsyncWithBlock(m_backing, backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), makeBlockPtr([callback = WTFMove(callback)](WGPUBufferMapAsyncStatus) mutable {
+        callback();
+    }).get());
 }
 
 auto BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size) -> MappedRange
