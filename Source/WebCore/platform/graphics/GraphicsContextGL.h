@@ -1035,7 +1035,6 @@ public:
         WEBCORE_EXPORT virtual ~Client();
         virtual void didComposite() = 0;
         virtual void forceContextLost() = 0;
-        virtual void recycleContext() = 0;
         virtual void dispatchContextChangedNotification() = 0;
     };
 
@@ -1048,8 +1047,7 @@ public:
     WEBCORE_EXPORT GraphicsContextGL(GraphicsContextGLAttributes);
     WEBCORE_EXPORT virtual ~GraphicsContextGL();
 
-    void addClient(Client& client) { m_clients.add(&client); }
-    void removeClient(Client& client) { m_clients.remove(&client); }
+    void setClient(Client* client) { m_client = client; }
 
     // ========== WebGL 1 entry points.
     virtual void activeTexture(GCGLenum texture) = 0;
@@ -1507,9 +1505,12 @@ public:
 
     WEBCORE_EXPORT static void paintToCanvas(const GraphicsContextGLAttributes&, PixelBuffer&&, const IntSize& canvasSize, GraphicsContext&);
 protected:
+    WEBCORE_EXPORT void forceContextLost();
+    WEBCORE_EXPORT void dispatchContextChangedNotification();
+
     int m_currentWidth { 0 };
     int m_currentHeight { 0 };
-    HashSet<Client*> m_clients;
+    Client* m_client { nullptr };
     // A bitmask of GL buffer bits (GL_COLOR_BUFFER_BIT,
     // GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT) which need to be
     // auto-cleared.

@@ -101,7 +101,6 @@ protected:
     // GraphicsContextGL::Client overrides.
     void didComposite() final;
     void forceContextLost() final;
-    void recycleContext() final;
     void dispatchContextChangedNotification() final;
 
     // Messages to be received.

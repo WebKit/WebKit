@@ -279,21 +279,20 @@ void RemoteGraphicsContextGLProxy::wasLost()
     if (isContextLost())
         return;
     markContextLost();
+
 }
 
 void RemoteGraphicsContextGLProxy::wasChanged()
 {
     if (isContextLost())
         return;
-    for (auto* client : copyToVector(m_clients))
-        client->dispatchContextChangedNotification();
+    dispatchContextChangedNotification();
 }
 
 void RemoteGraphicsContextGLProxy::markContextLost()
 {
     disconnectGpuProcessIfNeeded();
-    for (auto* client : copyToVector(m_clients))
-        client->forceContextLost();
+    forceContextLost();
 }
 
 bool RemoteGraphicsContextGLProxy::handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder& decoder)

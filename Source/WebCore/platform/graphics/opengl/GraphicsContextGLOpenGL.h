@@ -377,11 +377,6 @@ public:
     String getTranslatedShaderSourceANGLE(PlatformGLObject) final;
 
     // Helper methods.
-    void forceContextLost();
-    void recycleContext();
-
-    void dispatchContextChangedNotification();
-
     void paintRenderingResultsToCanvas(ImageBuffer&) final;
     std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     void paintCompositedResultsToCanvas(ImageBuffer&) final;

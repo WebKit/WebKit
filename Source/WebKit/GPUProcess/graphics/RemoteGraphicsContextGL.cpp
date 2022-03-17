@@ -118,7 +118,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
     assertIsCurrent(workQueue());
     platformWorkQueueInitialize(WTFMove(attributes));
     if (m_context) {
-        m_context->addClient(*this);
+        m_context->setClient(this);
         String extensions = m_context->getString(GraphicsContextGL::EXTENSIONS);
         String requestableExtensions = m_context->getString(GraphicsContextGL::REQUESTABLE_EXTENSIONS_ANGLE);
         send(Messages::RemoteGraphicsContextGLProxy::WasCreated(true, remoteGraphicsContextGLStreamWorkQueue().wakeUpSemaphore(), extensions, requestableExtensions));
@@ -129,6 +129,7 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
 void RemoteGraphicsContextGL::workQueueUninitialize()
 {
     assertIsCurrent(workQueue());
+    m_context->setClient(nullptr);
     m_context = nullptr;
     m_streamConnection = nullptr;
 }
@@ -142,11 +143,6 @@ void RemoteGraphicsContextGL::forceContextLost()
 {
     assertIsCurrent(workQueue());
     send(Messages::RemoteGraphicsContextGLProxy::WasLost());
-}
-
-void RemoteGraphicsContextGL::recycleContext()
-{
-    ASSERT_NOT_REACHED();
 }
 
 void RemoteGraphicsContextGL::dispatchContextChangedNotification()

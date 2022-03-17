@@ -1,3 +1,23 @@
+2022-03-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL context lost event is not sent again for contexts that are lost and restored
+        https://bugs.webkit.org/show_bug.cgi?id=237952
+
+        Reviewed by Antti Koivisto.
+
+        * platform/glib/TestExpectations:
+        * webgl/lose-context-after-context-lost-expected.txt:
+        * webgl/lose-context-after-context-lost.html:
+        Enable the test for GPUP, it works now after
+        r290816 "WebGL context count is not limited for GPU process.".
+        Adjust the order of waiting for webglcontextlost and checking
+        isContextLost(), so that it works when context loss is reported
+        asynchronously by GPUP.
+
+        * webgl/multiple-context-losses-expected.txt: Added.
+        * webgl/multiple-context-losses.html: Added.
+        Add a test testing the bug fix.
+
 2022-03-17  Ziran Sun  <zsun@igalia.com>
 
         [Selection] Fixes selection range settings for TEXTAREA

@@ -981,8 +981,6 @@ WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, Ref<Gra
     m_contextGroup = WebGLContextGroup::create();
     m_contextGroup->addContext(*this);
 
-    m_context->addClient(*this);
-
     m_context->getIntegerv(GraphicsContextGL::MAX_VIEWPORT_DIMS, m_maxViewportDims);
 
     setupFlags();
@@ -1256,7 +1254,12 @@ WebGLRenderingContextBase::~WebGLRenderingContextBase()
 void WebGLRenderingContextBase::setGraphicsContextGL(Ref<GraphicsContextGL>&& context)
 {
     bool wasActive = m_context;
+    if (m_context) {
+        m_context->setClient(nullptr);
+        m_context = nullptr;
+    }
     m_context = WTFMove(context);
+    m_context->setClient(this);
     updateActiveOrdinal();
     if (!wasActive)
         addActiveContext(*this);
@@ -1270,7 +1273,7 @@ void WebGLRenderingContextBase::destroyGraphicsContextGL()
     removeActivityStateChangeObserver();
 
     if (m_context) {
-        m_context->removeClient(*this);
+        m_context->setClient(nullptr);
         m_context = nullptr;
         removeActiveContext(*this);
     }

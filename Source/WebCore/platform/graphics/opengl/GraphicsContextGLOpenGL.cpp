@@ -2337,24 +2337,6 @@ void GraphicsContextGLOpenGL::synthesizeGLError(GCGLenum error)
     m_syntheticErrors.add(error);
 }
 
-void GraphicsContextGLOpenGL::forceContextLost()
-{
-    for (auto* client : copyToVector(m_clients))
-        client->forceContextLost();
-}
-
-void GraphicsContextGLOpenGL::recycleContext()
-{
-    for (auto* client : copyToVector(m_clients))
-        client->recycleContext();
-}
-
-void GraphicsContextGLOpenGL::dispatchContextChangedNotification()
-{
-    for (auto* client : copyToVector(m_clients))
-        client->dispatchContextChangedNotification();
-}
-
 void GraphicsContextGLOpenGL::texImage2DDirect(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, const void* pixels)
 {
     if (!makeContextCurrent())

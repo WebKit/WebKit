@@ -633,8 +633,21 @@ void GraphicsContextGL::markLayerComposited()
         if (attrs.stencil)
             m_buffersToAutoClear |= GraphicsContextGL::STENCIL_BUFFER_BIT;
     }
-    for (auto* client : copyToVector(m_clients))
-        client->didComposite();
+    if (m_client)
+        m_client->didComposite();
+}
+
+
+void GraphicsContextGL::forceContextLost()
+{
+    if (m_client)
+        m_client->forceContextLost();
+}
+
+void GraphicsContextGL::dispatchContextChangedNotification()
+{
+    if (m_client)
+        m_client->dispatchContextChangedNotification();
 }
 
 } // namespace WebCore

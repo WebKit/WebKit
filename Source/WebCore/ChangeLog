@@ -1,3 +1,37 @@
+2022-03-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL context lost event is not sent again for contexts that are lost and restored
+        https://bugs.webkit.org/show_bug.cgi?id=237952
+
+        Reviewed by Antti Koivisto.
+
+        WebGLRenderingContextBase did not register the GraphicsContextGL::Client
+        for new contexts after a context lost.
+        Move the client registration to WebGLRenderingContextBase::setGraphicsContextGL()
+        which is called always when setting a new context.
+        Rename the GraphicsContextGL::addClient as GraphicsContextGL::setClient(),
+        move the shared implementation to the base class GraphicsContextGL.
+        Remove GraphicsContextGL::Client::recycleContext(), the use was removed in
+        r290816 "WebGL context count is not limited for GPU process.".
+
+        Test: webgl/multiple-context-losses.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::WebGLRenderingContextBase):
+        (WebCore::WebGLRenderingContextBase::setGraphicsContextGL):
+        (WebCore::WebGLRenderingContextBase::destroyGraphicsContextGL):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * platform/graphics/GraphicsContextGL.cpp:
+        (WebCore::GraphicsContextGL::markLayerComposited):
+        (WebCore::GraphicsContextGL::forceContextLost):
+        (WebCore::GraphicsContextGL::dispatchContextChangedNotification):
+        * platform/graphics/GraphicsContextGL.h:
+        (WebCore::GraphicsContextGL::setClient):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        * platform/graphics/angle/GraphicsContextGLANGLE.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2022-03-17  Antti Koivisto  <antti@apple.com>
 
         Pass style builder context to CSSToLengthConversionData

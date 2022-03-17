@@ -412,8 +412,9 @@ public:
     // GraphicsContextGL::Client
     void didComposite() override;
     void forceContextLost() override;
-    void recycleContext() override;
     void dispatchContextChangedNotification() override;
+
+    void recycleContext();
 
     virtual void addMembersToOpaqueRoots(JSC::AbstractSlotVisitor&);
     // This lock must be held across all mutations of containers like

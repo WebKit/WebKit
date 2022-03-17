@@ -2192,24 +2192,6 @@ void GraphicsContextGLANGLE::synthesizeGLError(GCGLenum error)
     m_syntheticErrors.add(error);
 }
 
-void GraphicsContextGLANGLE::forceContextLost()
-{
-    for (auto* client : copyToVector(m_clients))
-        client->forceContextLost();
-}
-
-void GraphicsContextGLANGLE::recycleContext()
-{
-    for (auto* client : copyToVector(m_clients))
-        client->recycleContext();
-}
-
-void GraphicsContextGLANGLE::dispatchContextChangedNotification()
-{
-    for (auto* client : copyToVector(m_clients))
-        client->dispatchContextChangedNotification();
-}
-
 void GraphicsContextGLANGLE::drawArraysInstanced(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)
 {
     if (!makeContextCurrent())

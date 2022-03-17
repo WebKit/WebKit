@@ -1,3 +1,21 @@
+2022-03-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL context lost event is not sent again for contexts that are lost and restored
+        https://bugs.webkit.org/show_bug.cgi?id=237952
+
+        Reviewed by Antti Koivisto.
+
+        Adjust after GraphicsContextGL::addClient() was renamed setClient().
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::workQueueInitialize):
+        (WebKit::RemoteGraphicsContextGL::workQueueUninitialize):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::wasLost):
+        (WebKit::RemoteGraphicsContextGLProxy::wasChanged):
+        (WebKit::RemoteGraphicsContextGLProxy::markContextLost):
+
 2022-03-16  Antoine Quint  <graouts@webkit.org>
 
         [model] -[ASVInlinePreview setRemoteContext:] should be called inside the -[ASVInlinePreview setupRemoteConnectionWithCompletionHandler:] callback
