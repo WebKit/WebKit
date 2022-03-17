@@ -128,6 +128,9 @@ enum class BoxSide : uint8_t {
     Left
 };
 
+// The mapping is with the first start/end giving the block axis side,
+// and the second the inline-axis side, e.g LogicalBoxCorner::StartEnd is
+// the corner between LogicalBoxSide::BlockStart and LogicalBoxSide::InlineEnd.
 enum class LogicalBoxCorner : uint8_t {
     StartStart,
     StartEnd,
@@ -135,8 +138,6 @@ enum class LogicalBoxCorner : uint8_t {
     EndEnd
 };
 
-// The mapping is with the first start/end giving the block axis side,
-// and the second the inline-axis side, i.e. patterned as 'border-block-inline-radius'.
 enum class BoxCorner : uint8_t {
     TopLeft,
     TopRight,
@@ -156,64 +157,77 @@ enum class BoxAxis : uint8_t {
 
 constexpr std::array<BoxSide, 4> allBoxSides = { BoxSide::Top, BoxSide::Right, BoxSide::Bottom, BoxSide::Left };
 
-constexpr inline bool isHorizontalPhysicalSide(BoxSide physicalSide)
+constexpr BoxSide mapLogicalSideToPhysicalSide(TextFlow textflow, LogicalBoxSide logicalSide)
 {
-    return physicalSide == BoxSide::Left || physicalSide == BoxSide::Right;
+    bool isBlock = logicalSide == LogicalBoxSide::BlockStart || logicalSide == LogicalBoxSide::BlockEnd;
+    bool isStart = logicalSide == LogicalBoxSide::BlockStart || logicalSide == LogicalBoxSide::InlineStart;
+    bool isNormalStart = isStart != (isBlock ? isFlippedTextFlow(textflow) : isReversedTextFlow(textflow));
+    bool isVertical = isBlock != isVerticalTextFlow(textflow);
+    if (isVertical)
+        return isNormalStart ? BoxSide::Top : BoxSide::Bottom;
+    return isNormalStart ? BoxSide::Left : BoxSide::Right;
 }
 
-constexpr inline BoxSide mirrorPhysicalSide(BoxSide physicalSide)
-{
-    // top <-> bottom and left <-> right conversion
-    return static_cast<BoxSide>((static_cast<int>(physicalSide) + 2) % 4);
-}
-
-constexpr inline BoxSide rotatePhysicalSide(BoxSide physicalSide)
-{
-    // top <-> left and right <-> bottom conversion
-    bool horizontalSide = isHorizontalPhysicalSide(physicalSide);
-    return static_cast<BoxSide>((static_cast<int>(physicalSide) + (horizontalSide ? 1 : 3)) % 4);
-}
-
-constexpr inline BoxSide mapLogicalSideToPhysicalSide(TextFlow textflow, LogicalBoxSide logicalSide)
-{
-    BoxSide physicalSide = static_cast<BoxSide>(logicalSide);
-    bool horizontalSide = isHorizontalPhysicalSide(physicalSide);
-
-    if (isVerticalTextFlow(textflow))
-        physicalSide = rotatePhysicalSide(physicalSide);
-
-    if ((horizontalSide && isReversedTextFlow(textflow)) || (!horizontalSide && isFlippedTextFlow(textflow)))
-        physicalSide = mirrorPhysicalSide(physicalSide);
-
-    return physicalSide;
-}
-
-constexpr inline BoxSide mapLogicalSideToPhysicalSide(WritingMode writingMode, LogicalBoxSide logicalSide)
+constexpr BoxSide mapLogicalSideToPhysicalSide(WritingMode writingMode, LogicalBoxSide logicalSide)
 {
     // Set the direction such that side is mirrored if isFlippedWritingMode() is true
     TextDirection direction = isFlippedWritingMode(writingMode) ? TextDirection::RTL : TextDirection::LTR;
     return mapLogicalSideToPhysicalSide(makeTextFlow(writingMode, direction), logicalSide);
 }
 
-constexpr inline BoxCorner mapLogicalCornerToPhysicalCorner(TextFlow textflow, LogicalBoxCorner logicalBoxCorner)
+constexpr LogicalBoxSide mapPhysicalSideToLogicalSide(TextFlow textflow, BoxSide side)
+{
+    bool isNormalStart = side == BoxSide::Top || side == BoxSide::Left;
+    bool isVertical = side == BoxSide::Top || side == BoxSide::Bottom;
+    bool isBlock = isVertical != isVerticalTextFlow(textflow);
+    if (isBlock) {
+        bool isBlockStart = isNormalStart != isFlippedTextFlow(textflow);
+        return isBlockStart ? LogicalBoxSide::BlockStart : LogicalBoxSide::BlockEnd;
+    }
+    bool isInlineStart = isNormalStart != isReversedTextFlow(textflow);
+    return isInlineStart ? LogicalBoxSide::InlineStart : LogicalBoxSide::InlineEnd;
+}
+
+constexpr BoxCorner mapLogicalCornerToPhysicalCorner(TextFlow textflow, LogicalBoxCorner logicalBoxCorner)
 {
     bool isBlockStart = logicalBoxCorner == LogicalBoxCorner::StartStart || logicalBoxCorner == LogicalBoxCorner::StartEnd;
     bool isInlineStart = logicalBoxCorner == LogicalBoxCorner::StartStart || logicalBoxCorner == LogicalBoxCorner::EndStart;
-    if (isBlockStart == isFlippedTextFlow(textflow)) {
-        if (isInlineStart == isReversedTextFlow(textflow))
-            return BoxCorner::BottomRight;
-    } else if (isInlineStart != isReversedTextFlow(textflow))
-        return BoxCorner::TopLeft;
-    if (isBlockStart == isFlippedLinesTextFlow(textflow))
-        return BoxCorner::BottomLeft;
-    return BoxCorner::TopRight;
+    bool isNormalBlockStart = isBlockStart != isFlippedTextFlow(textflow);
+    bool isNormalInlineStart = isInlineStart != isReversedTextFlow(textflow);
+    bool usingVerticalTextFlow = isVerticalTextFlow(textflow);
+    bool isTop = usingVerticalTextFlow ? isNormalInlineStart : isNormalBlockStart;
+    bool isLeft = usingVerticalTextFlow ? isNormalBlockStart : isNormalInlineStart;
+    if (isTop)
+        return isLeft ? BoxCorner::TopLeft : BoxCorner::TopRight;
+    return isLeft ? BoxCorner::BottomLeft : BoxCorner::BottomRight;
 }
 
-constexpr inline BoxAxis mapLogicalAxisToPhysicalAxis(TextFlow textflow, LogicalBoxAxis logicalAxis)
+constexpr LogicalBoxCorner mapPhysicalCornerToLogicalCorner(TextFlow textflow, BoxCorner boxCorner)
 {
-    if (isVerticalTextFlow(textflow))
-        return logicalAxis == LogicalBoxAxis::Inline ? BoxAxis::Vertical : BoxAxis::Horizontal;
-    return logicalAxis == LogicalBoxAxis::Inline ? BoxAxis::Horizontal : BoxAxis::Vertical;
+    bool isTop = boxCorner == BoxCorner::TopLeft || boxCorner == BoxCorner::TopRight;
+    bool isLeft = boxCorner == BoxCorner::TopLeft || boxCorner == BoxCorner::BottomLeft;
+    bool usingVerticalTextFlow = isVerticalTextFlow(textflow);
+    bool isNormalBlockStart = usingVerticalTextFlow ? isLeft : isTop;
+    bool isNormalInlineStart = usingVerticalTextFlow ? isTop : isLeft;
+    bool isBlockStart = isNormalBlockStart != isFlippedTextFlow(textflow);
+    bool isInlineStart = isNormalInlineStart != isReversedTextFlow(textflow);
+    if (isBlockStart)
+        return isInlineStart ? LogicalBoxCorner::StartStart : LogicalBoxCorner::StartEnd;
+    return isInlineStart ? LogicalBoxCorner::EndStart : LogicalBoxCorner::EndEnd;
+}
+
+constexpr BoxAxis mapLogicalAxisToPhysicalAxis(TextFlow textflow, LogicalBoxAxis logicalAxis)
+{
+    bool isBlock = logicalAxis == LogicalBoxAxis::Block;
+    bool isVertical = isBlock != isVerticalTextFlow(textflow);
+    return isVertical ? BoxAxis::Vertical : BoxAxis::Horizontal;
+}
+
+constexpr LogicalBoxAxis mapPhysicalAxisToLogicalAxis(TextFlow textflow, BoxAxis axis)
+{
+    bool isVertical = axis == BoxAxis::Vertical;
+    bool isBlock = isVertical != isVerticalTextFlow(textflow);
+    return isBlock ? LogicalBoxAxis::Block : LogicalBoxAxis::Inline;
 }
 
 } // namespace WebCore

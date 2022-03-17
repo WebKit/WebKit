@@ -716,7 +716,7 @@ print GPERF << "EOF";
 
 CSSPropertyID CSSProperty::resolveDirectionAwareProperty(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode)
 {
-    const TextFlow& textflow = makeTextFlow(writingMode, direction);
+    auto textflow = makeTextFlow(writingMode, direction);
     switch (propertyID) {
 EOF
 
@@ -731,6 +731,32 @@ for my $logicalPropertyGroup (sort values %logicalPropertyGroups) {
         print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ": {\n";
         print GPERF "        static constexpr CSSPropertyID properties[" . scalar(@properties) . "] = { " . join(", ", @properties) . " };\n";
         print GPERF "        return properties[static_cast<size_t>(mapLogical" . $kindId . "ToPhysical" . $kindId . "(textflow, " . $resolverEnum . "))];\n";
+        print GPERF "    }\n";
+    }
+}
+
+print GPERF << "EOF";
+    default:
+        return propertyID;
+    }
+}
+
+CSSPropertyID CSSProperty::unresolvePhysicalProperty(CSSPropertyID propertyID, TextDirection direction, WritingMode writingMode)
+{
+    auto textflow = makeTextFlow(writingMode, direction);
+    switch (propertyID) {
+EOF
+
+for my $logicalPropertyGroup (values %logicalPropertyGroups) {
+    while (my ($resolver, $name) = each %{ $logicalPropertyGroup->{"physical"} }) {
+        my $kind = $logicalPropertyGroup->{"kind"};
+        my $kindId = nameToId($kind);
+        my $resolverEnum = "Box" . $kindId . "::" . nameToId($resolver);
+        my $logicals = $logicalPropertyGroupResolvers{"logical"}->{$kind};
+        my @properties = map { "CSSProperty" . $nameToId{$logicalPropertyGroup->{"logical"}{$_}} } @{ $logicals };
+        print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ": {\n";
+        print GPERF "        static constexpr CSSPropertyID properties[" . scalar(@properties) . "] = { " . join(", ", @properties) . " };\n";
+        print GPERF "        return properties[static_cast<size_t>(mapPhysical" . $kindId . "ToLogical" . $kindId . "(textflow, " . $resolverEnum . "))];\n";
         print GPERF "    }\n";
     }
 }

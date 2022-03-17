@@ -1,3 +1,17 @@
+2022-03-17  Oriol Brufau  <obrufau@igalia.com>
+
+        Clarify code for logical-to-physical mappings, and add physical-to-logical mappings
+        https://bugs.webkit.org/show_bug.cgi?id=237967
+
+        Reviewed by Darin Adler.
+
+        Add tests.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/WritingModeTests.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2022-03-17  Aakash Jain  <aakash_jain@apple.com>
 
         XSS in EWS App

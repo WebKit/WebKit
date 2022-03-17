@@ -1,3 +1,47 @@
+2022-03-17  Oriol Brufau  <obrufau@igalia.com>
+
+        Clarify code for logical-to-physical mappings, and add physical-to-logical mappings
+        https://bugs.webkit.org/show_bug.cgi?id=237967
+
+        Reviewed by Darin Adler.
+
+        The code for logical-to-physical mappings wasn't easy to understand, e.g.
+        mapLogicalSideToPhysicalSide used to cast a LogicalBoxSide enum into a
+        BoxSide enum, and then maybe casting it into an int and back to BoxSide.
+        So the code relied on the arbitrary order of the enum values, and it was
+        hard to grasp what was going on.
+
+        This patch makes these mappings much clearer, and also adds the inverse
+        physical-to-logical mappings. Being able to convert a physical property
+        into its logical equivalent will be needed for bug 236199.
+
+        No new tests because there is no change in behavior.
+
+        Tests in imported/w3c/web-platform-tests/css/css-logical/ ensure that
+        this patch doesn't break logical-to-physical mappings.
+        Some new API tests ensure that the physical-to-logical mappings
+        are the correct inverse.
+
+        Tests: WritingMode.LogicalBoxSide
+               WritingMode.BoxSide
+               WritingMode.LogicalBoxCorner
+               WritingMode.BoxCorner
+               WritingMode.LogicalBoxAxis
+               WritingMode.BoxAxis
+
+        * css/CSSProperty.h:
+        * css/makeprop.pl:
+        * platform/text/WritingMode.h:
+        (WebCore::mapLogicalSideToPhysicalSide):
+        (WebCore::mapPhysicalSideToLogicalSide):
+        (WebCore::mapLogicalCornerToPhysicalCorner):
+        (WebCore::mapPhysicalCornerToLogicalCorner):
+        (WebCore::mapLogicalAxisToPhysicalAxis):
+        (WebCore::mapPhysicalAxisToLogicalAxis):
+        (WebCore::isHorizontalPhysicalSide): Deleted.
+        (WebCore::mirrorPhysicalSide): Deleted.
+        (WebCore::rotatePhysicalSide): Deleted.
+
 2022-03-17  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Build broken on macOS Monterey 12.3 - PassKitSPI related error
