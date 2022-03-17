@@ -1,3 +1,18 @@
+2022-03-17  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Build broken on macOS Monterey 12.3 - PassKitSPI related error
+        https://bugs.webkit.org/show_bug.cgi?id=238010
+        <rdar://problem/90417687>
+
+        Reviewed by Antoine Quint.
+
+        Unbreak the macOS 12.3 build: assure that 'PKShippingMethod' is declared before used
+        in the 'PKShippingMethods' interface. Fix various unused variable warnings.
+
+        No new tests. No change in functionality.
+
+        * pal/spi/cocoa/PassKitSPI.h: Swap PKShippingMethod/PKShippingMethods declarations
+
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Use block-based WebGPU API instead of function pointer & userdata API

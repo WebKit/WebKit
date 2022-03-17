@@ -437,7 +437,7 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
     };
 
     size_t copied = strlcpy(cachedHeader.sandboxBuildID, SANDBOX_BUILD_ID, sizeof(cachedHeader.sandboxBuildID));
-    ASSERT(copied == guidSize - 1);
+    ASSERT_UNUSED(copied, copied == guidSize - 1);
     copied = strlcpy(cachedHeader.osVersion, osVersion.utf8().data(), sizeof(cachedHeader.osVersion));
     ASSERT(copied < versionSize - 1);
 

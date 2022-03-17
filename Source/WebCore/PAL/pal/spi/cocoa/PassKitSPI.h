@@ -304,12 +304,6 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @end
 #endif
 
-#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
-@interface PKShippingMethods : NSObject
-- (instancetype)initWithMethods:(NSArray<PKShippingMethod *> *)methods defaultMethod:(nullable PKShippingMethod *)defaultMethod;
-@end
-#endif
-
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 @interface PKDateComponentsRange : NSObject <NSCopying, NSSecureCoding>
 - (nullable instancetype)initWithStartDateComponents:(NSDateComponents *)startDateComponents endDateComponents:(NSDateComponents *)endDateComponents;
@@ -325,6 +319,12 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @property (nonatomic, copy, nullable) PKDateComponentsRange *dateComponentsRange;
 #endif
 @end
+
+#if HAVE(PASSKIT_DEFAULT_SHIPPING_METHOD)
+@interface PKShippingMethods : NSObject
+- (instancetype)initWithMethods:(NSArray<PKShippingMethod *> *)methods defaultMethod:(nullable PKShippingMethod *)defaultMethod;
+@end
+#endif
 
 #if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
 typedef NS_ENUM(NSUInteger, PKShippingContactEditingMode) {

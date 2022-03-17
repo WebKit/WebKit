@@ -3539,7 +3539,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
             valuesOK = setFilterAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, internalFilterPropertyIndex);
         }
         
-        ASSERT(valuesOK);
+        ASSERT_UNUSED(valuesOK, valuesOK);
 
         m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, internalFilterPropertyIndex, timeOffset));
     }

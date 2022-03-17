@@ -54,7 +54,7 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
     ASSERT(comp);
 
     OSStatus result = PAL::AudioComponentInstanceNew(comp, &m_outputUnit);
-    ASSERT(!result);
+    ASSERT_UNUSED(result, !result);
 
     result = PAL::AudioUnitInitialize(m_outputUnit);
     ASSERT(!result);

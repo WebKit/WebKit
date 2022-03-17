@@ -1,3 +1,23 @@
+2022-03-17  Nikolas Zimmermann  <nzimmermann@igalia.com>
+
+        Build broken on macOS Monterey 12.3 - PassKitSPI related error
+        https://bugs.webkit.org/show_bug.cgi?id=238010
+        <rdar://problem/90417687>
+
+        Reviewed by Antoine Quint.
+
+        Unbreak the macOS 12.3 build: assure that 'PKShippingMethod' is declared before used
+        in the 'PKShippingMethods' interface. Fix various unused variable warnings.
+
+        No new tests. No change in functionality.
+
+        * platform/audio/mac/AudioOutputUnitAdaptorMac.cpp:
+        (WebCore::AudioOutputUnitAdaptor::configure):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::getRGBAImageData const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+
 2022-03-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL context lost event is not sent again for contexts that are lost and restored

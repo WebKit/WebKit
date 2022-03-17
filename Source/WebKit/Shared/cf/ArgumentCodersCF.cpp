@@ -650,7 +650,7 @@ void ArgumentCoder<CFStringRef>::encode(Encoder& encoder, CFStringRef string)
     CFIndex bufferLength = 0;
 
     CFIndex numConvertedBytes = CFStringGetBytes(string, range, encoding, 0, false, 0, 0, &bufferLength);
-    ASSERT(numConvertedBytes == length);
+    ASSERT_UNUSED(numConvertedBytes, numConvertedBytes == length);
 
     Vector<UInt8, 128> buffer(bufferLength);
     numConvertedBytes = CFStringGetBytes(string, range, encoding, 0, false, buffer.data(), buffer.size(), &bufferLength);
