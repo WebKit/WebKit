@@ -71,7 +71,7 @@ public:
     };
 
     id<MTLBuffer> buffer() const { return m_buffer; }
-    size_t size() const { return m_size; }
+    uint64_t size() const { return m_size; }
     WGPUBufferUsageFlags usage() const { return m_usage; }
 
 private:
@@ -85,7 +85,7 @@ private:
 
     // https://gpuweb.github.io/gpuweb/#buffer-interface
     // "GPUBuffer has the following internal slots:"
-    const size_t m_size { 0 }; // "The length of the GPUBuffer allocation in bytes."
+    const uint64_t m_size { 0 }; // "The length of the GPUBuffer allocation in bytes."
     const WGPUBufferUsageFlags m_usage { 0 }; // "The allowed usages for this GPUBuffer."
     State m_state { State::Unmapped }; // "The current state of the GPUBuffer."
     // "[[mapping]] of type ArrayBuffer or Promise or null." This is unnecessary; we can just use m_device.contents.

@@ -1,5 +1,21 @@
 2022-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Fix 32-bit build
+        https://bugs.webkit.org/show_bug.cgi?id=238046
+
+        Unreviewed.
+
+        * WebGPU/Buffer.h:
+        (WebGPU::Buffer::size const):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Buffer::getMappedRange):
+        (WebGPU::Buffer::validateMapAsync const):
+        (WebGPU::Buffer::mapAsync):
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::clearBuffer):
+
+2022-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Fix the 32-bit build
         https://bugs.webkit.org/show_bug.cgi?id=238031
 

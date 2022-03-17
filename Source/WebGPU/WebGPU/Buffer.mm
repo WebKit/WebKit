@@ -213,7 +213,7 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
     // FIXME: Use checked arithmetic.
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
-        rangeSize = std::max(static_cast<size_t>(0), m_size - offset);
+        rangeSize = std::max(static_cast<uint64_t>(0), m_size - static_cast<uint64_t>(offset));
 
     // "If any of the following conditions are unsatisfied"
     if (!validateGetMappedRange(offset, rangeSize)) {
@@ -244,7 +244,7 @@ bool Buffer::validateMapAsync(WGPUMapModeFlags mode, size_t offset, size_t range
 
     // "offset + rangeSize is less or equal to this.[[size]]"
     // FIXME: Use checked arithmetic.
-    if (offset + rangeSize > m_size)
+    if (static_cast<uint64_t>(offset + rangeSize) > m_size)
         return false;
 
     // "this.[[state]] is unmapped"
@@ -275,7 +275,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
     // FIXME: Use checked arithmetic.
     auto rangeSize = size;
     if (size == WGPU_WHOLE_MAP_SIZE)
-        rangeSize = std::max(static_cast<size_t>(0), m_size - offset);
+        rangeSize = std::max(static_cast<uint64_t>(0), static_cast<uint64_t>(m_size - offset));
 
     // "If any of the following conditions are unsatisfied:"
     if (!validateMapAsync(mode, offset, rangeSize)) {

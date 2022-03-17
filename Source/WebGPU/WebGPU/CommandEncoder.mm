@@ -218,7 +218,7 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
 
     ensureBlitCommandEncoder();
 
-    [m_blitCommandEncoder fillBuffer:buffer.buffer() range:NSMakeRange(offset, size) value:0];
+    [m_blitCommandEncoder fillBuffer:buffer.buffer() range:NSMakeRange(static_cast<NSUInteger>(offset), static_cast<NSUInteger>(size)) value:0];
 }
 
 bool CommandEncoder::validateFinish() const
