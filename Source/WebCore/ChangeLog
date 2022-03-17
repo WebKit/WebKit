@@ -1,3 +1,20 @@
+2022-03-17  Ellie Epskamp-Hunt  <eepskamphunt@apple.com>
+
+        When a “autofilled and obscured” field becomes empty, turn “autofilled and obscured” off
+        https://bugs.webkit.org/show_bug.cgi?id=235256
+
+        Reviewed by Devin Rousso.
+
+        Tests: fast/forms/input-autofilled-and-obscured-clear-field-programatically.html
+               fast/forms/input-autofilled-and-obscured-clear-form-programatically.html
+               fast/forms/input-autofilled-and-obscured.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue):
+        Turn off the property if the page's JavaScript deletes all the text in the field.
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        Turn off the property if the user deletes all the text in the field.
+
 2022-03-17  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Support makeCredential for virtual HID authenticators

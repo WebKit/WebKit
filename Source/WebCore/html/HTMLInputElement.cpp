@@ -1082,8 +1082,13 @@ ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEvent
     m_inputType->setValue(sanitizedValue, valueChanged, eventBehavior, selection);
 
     bool wasModifiedProgrammatically = eventBehavior == DispatchNoEvent;
-    if (wasModifiedProgrammatically)
+    if (wasModifiedProgrammatically) {
         resignStrongPasswordAppearance();
+
+        if (m_isAutoFilledAndObscured)
+            setAutoFilledAndObscured(false);
+    }
+
     return { };
 }
 
@@ -1144,8 +1149,15 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
 
     // We clear certain AutoFill flags here because this catches user edits.
     setAutoFilled(false);
-    if (m_isAutoFilledAndViewable && value.isEmpty())
+
+    if (!value.isEmpty())
+        return;
+
+    if (m_isAutoFilledAndViewable)
         setAutoFilledAndViewable(false);
+
+    if (m_isAutoFilledAndObscured)
+        setAutoFilledAndObscured(false);
 }
 
 void HTMLInputElement::willDispatchEvent(Event& event, InputElementClickState& state)
