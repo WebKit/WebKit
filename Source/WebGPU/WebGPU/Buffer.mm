@@ -328,7 +328,6 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
             callback(WGPUBufferMapAsyncStatus_DeviceLost);
             return;
         default:
-            ASSERT_NOT_REACHED();
             callback(WGPUBufferMapAsyncStatus_Error);
             return;
         }

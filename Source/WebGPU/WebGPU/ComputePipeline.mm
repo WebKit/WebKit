@@ -100,8 +100,6 @@ static MTLFunctionConstantValues *createConstantValues(uint32_t constantCount, c
             [constantValues setConstantValue:&value type:MTLDataTypeUInt withName:specializationConstant.mangledName];
             break;
         }
-        default:
-            return nullptr;
         }
     }
     return constantValues;
