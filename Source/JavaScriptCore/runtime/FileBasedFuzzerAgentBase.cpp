@@ -27,6 +27,7 @@
 #include "FileBasedFuzzerAgentBase.h"
 
 #include "CodeBlock.h"
+#include "JSCellInlines.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {

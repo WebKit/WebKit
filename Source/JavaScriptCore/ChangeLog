@@ -1,3 +1,16 @@
+2022-03-17  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Unreviewed, non-unified build fix
+        https://bugs.webkit.org/show_bug.cgi?id=237929
+
+        * dfg/DFGCapabilities.cpp:
+        * jit/JITDisassembler.cpp:
+        * jit/JITPlan.cpp:
+        * llint/LLIntEntrypoint.cpp:
+        * runtime/FileBasedFuzzerAgentBase.cpp:
+        * runtime/ShadowRealmObject.cpp:
+        * runtime/ShadowRealmPrototype.cpp:
+
 2022-03-16  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(r290720): Debugger: Step next should not behave the same as Step into

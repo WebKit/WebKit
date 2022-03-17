@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
 #include "Disassembler.h"
+#include "JSCellInlines.h"
 #include "LinkBuffer.h"
 #include "ProfilerCompilation.h"
 #include <wtf/StringPrintStream.h>

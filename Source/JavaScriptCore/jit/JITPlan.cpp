@@ -31,6 +31,7 @@
 #include "AbstractSlotVisitor.h"
 #include "CodeBlock.h"
 #include "HeapInlines.h"
+#include "JSCellInlines.h"
 #include "VMInlines.h"
 #include <wtf/CompilationThread.h>
 

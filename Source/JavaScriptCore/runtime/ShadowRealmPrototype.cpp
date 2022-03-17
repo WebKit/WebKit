@@ -32,6 +32,7 @@
 #include "JSGlobalObject.h"
 #include "JSInternalPromise.h"
 #include "JSModuleLoader.h"
+#include "JSObjectInlines.h"
 #include "ShadowRealmObject.h"
 #include "StructureInlines.h"
 

@@ -28,6 +28,7 @@
 #include "CodeBlock.h"
 #include "HeapInlines.h"
 #include "JITCode.h"
+#include "JSCellInlines.h"
 #include "LLIntData.h"
 #include "LLIntThunks.h"
 #include "MaxFrameExtentForSlowPathCall.h"
