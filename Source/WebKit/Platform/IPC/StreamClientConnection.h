@@ -74,6 +74,7 @@ public:
     using SendSyncResult = Connection::SendSyncResult;
     template<typename T, typename U>
     SendSyncResult sendSync(T&& message, typename T::Reply&&, ObjectIdentifier<U> destinationID, Timeout);
+    StreamConnectionBuffer& bufferForTesting();
 
 private:
     friend class WebKit::IPCTestingAPI::JSIPCStreamClientConnection;
