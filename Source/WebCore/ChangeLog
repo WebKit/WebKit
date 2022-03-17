@@ -1,3 +1,9 @@
+2022-03-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, non-unified build fix after r291390
+
+        * Modules/webaudio/DefaultAudioDestinationNode.cpp:
+
 2022-03-17  Ziran Sun  <zsun@igalia.com>
 
         [Selection] Fixes selection range settings for TEXTAREA

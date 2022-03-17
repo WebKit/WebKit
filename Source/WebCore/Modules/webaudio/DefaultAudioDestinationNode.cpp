@@ -31,6 +31,7 @@
 
 #include "AudioContext.h"
 #include "AudioDestination.h"
+#include "AudioNodeInput.h"
 #include "AudioWorklet.h"
 #include "AudioWorkletMessagingProxy.h"
 #include "Logging.h"
