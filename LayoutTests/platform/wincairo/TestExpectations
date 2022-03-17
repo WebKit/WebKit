@@ -1468,8 +1468,6 @@ webkit.org/b/225258 js/dom/Promise-reject-large-string.html [ Pass Failure ]
 
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.
 
-webkit.org/b/215271 storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////

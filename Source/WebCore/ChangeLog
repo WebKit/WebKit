@@ -1,3 +1,22 @@
+2022-03-17  Cameron McCormack  <heycam@apple.com>
+
+        Avoid calling connectionClosedFromServer on a connection twice when a version change is active
+        https://bugs.webkit.org/show_bug.cgi?id=215271
+
+        Reviewed by Sihui Liu.
+
+        Since bug 203690, all IDB work is done on a single background thread.
+        A consequence of this change is that there are states when
+        UniqueIDBDatabase::m_versionChangeDatabaseConnection is also in
+        m_openDatabaseConnections. We should avoid calling
+        connectionClosedFromServer on the same connection twice, since that
+        can result in a spurious second error event being sent to the
+        IDBDatabase JS object if connections are closed while a version chnge
+        is in progress.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateClose):
+
 2022-03-17  Ellie Epskamp-Hunt  <eepskamphunt@apple.com>
 
         When a “autofilled and obscured” field becomes empty, turn “autofilled and obscured” off

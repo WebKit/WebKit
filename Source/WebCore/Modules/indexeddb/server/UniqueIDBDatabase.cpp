@@ -1457,7 +1457,8 @@ void UniqueIDBDatabase::immediateClose()
         connectionClosedFromServer(*connection);
 
     if (m_versionChangeDatabaseConnection) {
-        connectionClosedFromServer(*m_versionChangeDatabaseConnection);
+        if (!openDatabaseConnections.contains(m_versionChangeDatabaseConnection.get()))
+            connectionClosedFromServer(*m_versionChangeDatabaseConnection);
         m_versionChangeDatabaseConnection = nullptr;
     }
 

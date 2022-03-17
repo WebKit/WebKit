@@ -1913,8 +1913,6 @@ webkit.org/b/215204 imported/w3c/web-platform-tests/svg/import/linking-a-10-f-ma
 
 webkit.org/b/215268 http/wpt/resource-timing/rt-revalidate-requests-3.html [ Pass Failure ]
 
-webkit.org/b/215271 [ Debug ] storage/indexeddb/modern/new-database-after-user-delete.html [ Pass Failure ]
-
 webkit.org/b/215273 svg/animations/smil-multiple-animate-list.svg [ Pass Timeout ]
 
 webkit.org/b/215324 compositing/clipping/border-radius-on-webgl.html [ Pass ImageOnlyFailure Timeout ]

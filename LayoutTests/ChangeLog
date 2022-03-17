@@ -1,3 +1,16 @@
+2022-03-17  Cameron McCormack  <heycam@apple.com>
+
+        Avoid calling connectionClosedFromServer on a connection twice when a version change is active
+        https://bugs.webkit.org/show_bug.cgi?id=215271
+
+        Reviewed by Sihui Liu.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        Remove test flakiness annotations.
+
 2022-03-17  Simon Lewis  <simon.lewis@apple.com>
 
         Functional tests for read and write methods of JSIPCStreamConnectionBuffer
