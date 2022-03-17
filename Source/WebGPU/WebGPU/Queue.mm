@@ -86,11 +86,11 @@ void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& command
     for (auto commandBuffer : commands) {
         ASSERT(commandBuffer.get().commandBuffer().commandQueue == m_commandQueue); //
         [commandBuffer.get().commandBuffer() addCompletedHandler:[protectedThis = Ref { *this }] (id<MTLCommandBuffer>) {
-            protectedThis->scheduleWork([protectedThis = protectedThis.copyRef()]() {
+            protectedThis->scheduleWork(CompletionHandler<void(void)>([protectedThis = protectedThis.copyRef()]() {
                 ++(protectedThis->m_completedCommandBufferCount);
                 for (auto& callback : protectedThis->m_onSubmittedWorkDoneCallbacks.take(protectedThis->m_completedCommandBufferCount))
                     callback(WGPUQueueWorkDoneStatus_Success);
-            });
+            }, CompletionHandlerCallThread::MainThread));
         }];
 
         // "Execute each command in commandBuffer.[[command_list]]."

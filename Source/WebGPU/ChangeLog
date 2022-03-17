@@ -1,5 +1,17 @@
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement queue submission methods according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=237869
+
+        Reviewed by Kimmo Kinnunen.
+
+        Addressing post-review comments.
+
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::submit):
+
+2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Put nontrivial code in WebGPU's command line playground
         https://bugs.webkit.org/show_bug.cgi?id=237876
 
