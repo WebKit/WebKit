@@ -1,3 +1,28 @@
+2022-03-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Calls to print can result in unresponsive print modal
+        https://bugs.webkit.org/show_bug.cgi?id=237940
+        <rdar://problem/88257828>
+
+        Reviewed by Chris Dumez.
+
+        Add API test. Adjust delegate naming in the PDF case to be more
+        specific so we can use the generic PrintUIDelegate name in the general
+        case.
+
+        * TestWebKitAPI/SourcesCocoa.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPDFView.mm:
+        (TEST):
+        (-[PrintUIDelegate _webView:printFrame:pdfFirstPageSize:completionHandler:]): Deleted.
+        (-[PrintUIDelegate waitForPageSize]): Deleted.
+        (-[PrintUIDelegate lastPrintedFrame]): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/WKPrinting.mm: Added.
+        (-[PrintUIDelegate callBlockAsync:]):
+        (-[PrintUIDelegate _webView:printFrame:pdfFirstPageSize:completionHandler:]):
+        (-[PrintUIDelegate waitForPagination]):
+        (TEST):
+
 2022-03-17  Oriol Brufau  <obrufau@igalia.com>
 
         Clarify code for logical-to-physical mappings, and add physical-to-logical mappings

@@ -376,14 +376,14 @@ TEST(PDFHUD, LoadPDFTypeWithPluginsBlocked)
 
 #if PLATFORM(MAC)
 
-@interface PrintUIDelegate : NSObject <WKUIDelegate>
+@interface PDFPrintUIDelegate : NSObject <WKUIDelegate>
 
 - (NSSize)waitForPageSize;
 - (_WKFrameHandle *)lastPrintedFrame;
 
 @end
 
-@implementation PrintUIDelegate {
+@implementation PDFPrintUIDelegate {
     NSSize _pageSize;
     bool _receivedSize;
     RetainPtr<_WKFrameHandle> _lastPrintedFrame;
@@ -418,7 +418,7 @@ TEST(PDF, PrintSize)
     auto schemeHandler = adoptNS([TestURLSchemeHandler new]);
     [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"test"];
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    auto delegate = adoptNS([PrintUIDelegate new]);
+    auto delegate = adoptNS([PDFPrintUIDelegate new]);
     [webView setUIDelegate:delegate.get()];
 
     schemeHandler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {

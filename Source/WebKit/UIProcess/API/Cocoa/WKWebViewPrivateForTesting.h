@@ -119,6 +119,8 @@ struct WKAppPrivacyReportTestingData {
 
 - (void)_isLayerTreeFrozenForTesting:(void (^)(BOOL frozen))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+- (void)_computePagesForPrinting:(_WKFrameHandle *)handle completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKMediaSessionReadyState) {

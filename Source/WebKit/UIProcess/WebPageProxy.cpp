@@ -4512,7 +4512,7 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
 static OptionSet<IPC::SendOption> printingSendOptions(bool isPerformingDOMPrintOperation)
 {
     if (isPerformingDOMPrintOperation)
-        return IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply;
+        return IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply;
 
     return { };
 }

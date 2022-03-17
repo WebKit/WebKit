@@ -1,3 +1,27 @@
+2022-03-17  Kate Cheney  <katherine_cheney@apple.com>
+
+        Calls to print can result in unresponsive print modal
+        https://bugs.webkit.org/show_bug.cgi?id=237940
+        <rdar://problem/88257828>
+
+        Reviewed by Chris Dumez.
+
+        Calls to print were hanging in the case of the client asynchronously
+        handling the completion handler passed to the delegate. To fix this
+        we can adjust all printing IPC to have the option
+        DispatchMessageEvenWhenWaitingForUnboundedSyncReply which allows IPC
+        messages when waiting for a sync reply in the case where the receiver
+        of the message is not guranteed to call the completion handler at the
+        end of the runloop.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _computePagesForPrinting:completionHandler:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::printingSendOptions):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::print):
+
 2022-03-17  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         Build broken on macOS Monterey 12.3 - PassKitSPI related error

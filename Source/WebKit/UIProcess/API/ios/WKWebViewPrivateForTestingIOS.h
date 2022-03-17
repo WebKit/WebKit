@@ -25,6 +25,7 @@
 
 #import <WebKit/WKWebView.h>
 #import <WebKit/_WKElementAction.h>
+#import <WebKit/_WKFrameHandle.h>
 #import <WebKit/_WKTapHandlingResult.h>
 
 #if TARGET_OS_IPHONE

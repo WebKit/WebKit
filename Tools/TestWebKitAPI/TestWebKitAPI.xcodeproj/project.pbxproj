@@ -2058,6 +2058,7 @@
 		4995A6EF25E876A300E5F0A9 /* csp-document-uri-report.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "csp-document-uri-report.html"; sourceTree = "<group>"; };
 		49AEEF682407276F00C87E4C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49AEEF6B2407358600C87E4C /* InAppBrowserPrivacy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InAppBrowserPrivacy.mm; sourceTree = "<group>"; };
+		49CB61AF27E17E4D0017078E /* WKPrinting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrinting.mm; sourceTree = "<group>"; };
 		49D2E5C12731E37400BCCAED /* file-with-iframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "file-with-iframe.html"; sourceTree = "<group>"; };
 		49D7FBA7241FDDDA00AB67FA /* in-app-browser-privacy-local-file.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "in-app-browser-privacy-local-file.html"; sourceTree = "<group>"; };
 		49EF6AD42677C0BE007967DC /* AppPrivacyReport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppPrivacyReport.mm; sourceTree = "<group>"; };
@@ -3721,6 +3722,7 @@
 				375E0E151D66674400EFEC2C /* WKNSNumber.mm */,
 				37B47E2E1D64E7CA005F4EFF /* WKObject.mm */,
 				2D00065D1C1F58940088E6A7 /* WKPDFView.mm */,
+				49CB61AC27E145B40017078E /* WKPrinting.mm */,
 				3781746C2198AE2400062C26 /* WKProcessPoolConfiguration.mm */,
 				44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */,
 				5E4B1D2C1D404C6100053621 /* WKScrollViewDelegate.mm */,

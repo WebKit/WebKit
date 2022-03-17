@@ -267,6 +267,7 @@ Tests/WebKitCocoa/WKNSNumber.mm
 Tests/WebKitCocoa/WKNavigationResponse.mm
 Tests/WebKitCocoa/WKObject.mm
 Tests/WebKitCocoa/WKPDFView.mm
+Tests/WebKitCocoa/WKPrinting.mm
 Tests/WebKitCocoa/WKProcessPoolConfiguration.mm
 Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm
 Tests/WebKitCocoa/WKURLSchemeHandler-1.mm

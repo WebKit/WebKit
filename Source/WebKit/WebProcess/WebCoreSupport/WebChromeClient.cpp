@@ -759,6 +759,8 @@ void WebChromeClient::print(Frame& frame, const StringWithDirection& title)
 #endif
 
     auto truncatedTitle = truncateFromEnd(title, maxTitleLength);
+
+    IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
     m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::PrintFrame(webFrame->frameID(), truncatedTitle.string, pdfFirstPageSize), Messages::WebPageProxy::PrintFrame::Reply());
 }
 
