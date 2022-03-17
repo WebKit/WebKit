@@ -44,15 +44,6 @@ using namespace WebCore;
 using namespace cbor;
 using namespace fido;
 
-namespace MockHidConnectionInternal {
-// https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#mandatory-commands
-const size_t CtapChannelIdSize = 4;
-const uint8_t CtapKeepAliveStatusProcessing = 1;
-// https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#commands
-const int64_t CtapMakeCredentialRequestOptionsKey = 7;
-const int64_t CtapGetAssertionRequestOptionsKey = 5;
-}
-
 MockHidConnection::MockHidConnection(IOHIDDeviceRef device, const MockWebAuthenticationConfiguration& configuration)
     : HidConnection(device)
     , m_configuration(configuration)
@@ -130,8 +121,6 @@ void MockHidConnection::assembleRequest(Vector<uint8_t>&& data)
 
 void MockHidConnection::parseRequest()
 {
-    using namespace MockHidConnectionInternal;
-
     ASSERT(m_requestMessage);
     // Set stages.
     if (m_requestMessage->cmd() == FidoHidDeviceCommand::kInit) {
@@ -162,7 +151,7 @@ void MockHidConnection::parseRequest()
             ASSERT(requestMap || cmd == CtapRequestCommand::kAuthenticatorGetNextAssertion);
 
             if (cmd == CtapRequestCommand::kAuthenticatorMakeCredential) {
-                auto it = requestMap->getMap().find(CBORValue(CtapMakeCredentialRequestOptionsKey)); // Find options.
+                auto it = requestMap->getMap().find(CBORValue(kCtapMakeCredentialRequestOptionsKey)); // Find options.
                 if (it != requestMap->getMap().end()) {
                     auto& optionMap = it->second.getMap();
 
@@ -177,7 +166,7 @@ void MockHidConnection::parseRequest()
             }
 
             if (cmd == CtapRequestCommand::kAuthenticatorGetAssertion) {
-                auto it = requestMap->getMap().find(CBORValue(CtapGetAssertionRequestOptionsKey)); // Find options.
+                auto it = requestMap->getMap().find(CBORValue(kCtapGetAssertionRequestOptionsKey)); // Find options.
                 if (it != requestMap->getMap().end()) {
                     auto& optionMap = it->second.getMap();
                     auto itr = optionMap.find(CBORValue(kUserVerificationMapKey));
@@ -202,8 +191,6 @@ void MockHidConnection::parseRequest()
 
 void MockHidConnection::feedReports()
 {
-    using namespace MockHidConnectionInternal;
-
     if (m_subStage == Mock::HidSubStage::Init) {
         Vector<uint8_t> payload;
         payload.reserveInitialCapacity(kHidInitResponseSize);
@@ -212,7 +199,7 @@ void MockHidConnection::feedReports()
         if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongNonce)
             payload[0]--;
         payload.grow(kHidInitResponseSize);
-        cryptographicallyRandomValues(payload.data() + writePosition, CtapChannelIdSize);
+        cryptographicallyRandomValues(payload.data() + writePosition, kCtapChannelIdSize);
         auto channel = kHidBroadcastChannel;
         if (stagesMatch() && m_configuration.hid->error == Mock::HidError::WrongChannelId)
             channel--;
@@ -256,7 +243,7 @@ void MockHidConnection::feedReports()
             return;
         if (m_configuration.hid->keepAlive) {
             m_configuration.hid->keepAlive = false;
-            FidoHidInitPacket initPacket(m_currentChannel, FidoHidDeviceCommand::kKeepAlive, { CtapKeepAliveStatusProcessing }, 1);
+            FidoHidInitPacket initPacket(m_currentChannel, FidoHidDeviceCommand::kKeepAlive, { kCtapKeepAliveStatusProcessing }, 1);
             receiveReport(initPacket.getSerializedData());
             continueFeedReports();
             return;

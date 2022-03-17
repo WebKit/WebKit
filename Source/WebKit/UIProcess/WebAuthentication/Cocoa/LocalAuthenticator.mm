@@ -65,15 +65,16 @@ static inline String groupForAttributes(NSDictionary *attributes)
 namespace WebKit {
 using namespace fido;
 using namespace WebCore;
+using namespace WebAuthn;
 using CBOR = cbor::CBORValue;
 
 namespace LocalAuthenticatorInternal {
 
 // See https://www.w3.org/TR/webauthn/#flags.
-const uint8_t makeCredentialFlags = 0b01000101; // UP, UV and AT are set.
-const uint8_t otherMakeCredentialFlags = 0b01000001; // UP and AT are set.
-const uint8_t getAssertionFlags = 0b00000101; // UP and UV are set.
-const uint8_t otherGetAssertionFlags = 0b00000001; // UP is set.
+const uint8_t makeCredentialFlags = userPresenceFlag | userVerifiedFlag | attestedCredentialDataIncludedFlag; // UP, UV and AT are set.
+const uint8_t otherMakeCredentialFlags = userPresenceFlag | attestedCredentialDataIncludedFlag; // UP and AT are set.
+const uint8_t getAssertionFlags = userPresenceFlag | userVerifiedFlag; // UP and UV are set.
+const uint8_t otherGetAssertionFlags = userPresenceFlag; // UP is set.
 // Credential ID is currently SHA-1 of the corresponding public key.
 const uint16_t credentialIdLength = 20;
 const uint64_t counter = 0;

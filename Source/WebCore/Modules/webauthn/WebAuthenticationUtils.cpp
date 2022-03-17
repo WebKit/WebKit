@@ -110,7 +110,7 @@ Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, const uin
     return authData;
 }
 
-Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation)
+cbor::CBORValue::MapValue buildAttestationMap(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation)
 {
     cbor::CBORValue::MapValue attestationObjectMap;
     // The following implements Step 20 with regard to AttestationConveyancePreference
@@ -127,6 +127,12 @@ Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& form
     attestationObjectMap[cbor::CBORValue("authData")] = cbor::CBORValue(WTFMove(authData));
     attestationObjectMap[cbor::CBORValue("fmt")] = cbor::CBORValue(WTFMove(format));
     attestationObjectMap[cbor::CBORValue("attStmt")] = cbor::CBORValue(WTFMove(statementMap));
+    return attestationObjectMap;
+}
+
+Vector<uint8_t> buildAttestationObject(Vector<uint8_t>&& authData, String&& format, cbor::CBORValue::MapValue&& statementMap, const AttestationConveyancePreference& attestation)
+{
+    cbor::CBORValue::MapValue attestationObjectMap = buildAttestationMap(WTFMove(authData), WTFMove(format), WTFMove(statementMap), attestation);
 
     auto attestationObject = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(attestationObjectMap)));
     ASSERT(attestationObject);

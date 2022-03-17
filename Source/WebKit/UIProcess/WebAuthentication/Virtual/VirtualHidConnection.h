@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,38 +27,36 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AuthenticatorManager.h"
+#include "HidConnection.h"
 #include "VirtualAuthenticatorConfiguration.h"
-#include "VirtualCredential.h"
+#include <WebCore/FidoHidMessage.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
-struct VirtualCredential;
+struct VirtualAuthenticatorConfiguration;
+class VirtualAuthenticatorManager;
 
-class VirtualAuthenticatorManager final : public AuthenticatorManager {
+class VirtualHidConnection final : public CanMakeWeakPtr<VirtualHidConnection>, public HidConnection {
 public:
-    explicit VirtualAuthenticatorManager();
+    explicit VirtualHidConnection(const String& authenticatorId, const VirtualAuthenticatorConfiguration&, const WeakPtr<VirtualAuthenticatorManager>&);
 
-    String createAuthenticator(const VirtualAuthenticatorConfiguration& /*config/*/);
-    bool removeAuthenticator(const String& /*authenticatorId*/);
-
-    bool isVirtual() const final { return true; }
-
-    void addCredential(const String&, const VirtualCredential&);
-
-protected:
-    void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) override;
-    void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) override;
-    
-    
 private:
-    UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const final;
-    void runPanel() override;
+    void initialize() final;
+    void terminate() final;
+    DataSent sendSync(const Vector<uint8_t>& data) final;
+    void send(Vector<uint8_t>&& data, DataSentCallback&&) final;
+    void assembleRequest(Vector<uint8_t>&&);
+    void parseRequest();
 
-    HashMap<String, UniqueRef<VirtualAuthenticatorConfiguration>> m_virtualAuthenticators;
-    HashMap<String, Vector<VirtualCredential>> m_credentialsByAuthenticator;
+    void receiveHidMessage(fido::FidoHidMessage&&);
+    void recieveResponseCode(fido::CtapDeviceResponseCode);
+
+    WeakPtr<VirtualAuthenticatorManager> m_manager;
+    VirtualAuthenticatorConfiguration m_configuration;
+    std::optional<fido::FidoHidMessage> m_requestMessage;
+    Vector<uint8_t> m_nonce;
+    uint32_t m_currentChannel { fido::kHidBroadcastChannel };
+    String m_authenticatorId;
 };
-
 } // namespace WebKit
-
-#endif // ENABLE(WEB_AUTHN)
+#endif

@@ -28,32 +28,54 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#import "CtapAuthenticator.h"
+#import "CtapHidDriver.h"
 #import "LocalAuthenticator.h"
+#import "VirtualAuthenticatorManager.h"
+#import "VirtualHidConnection.h"
 #import "VirtualLocalConnection.h"
+#import <WebCore/FidoConstants.h>
+#import <WebCore/WebAuthenticationConstants.h>
+#import <wtf/UniqueRef.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
+using namespace fido;
+using namespace WebCore;
 
-VirtualService::VirtualService(Observer& observer, const Vector<VirtualAuthenticatorConfiguration>& configurations)
-    : AuthenticatorTransportService(observer), m_configurations(configurations)
+VirtualService::VirtualService(Observer& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
+    : AuthenticatorTransportService(observer), m_authenticators(authenticators)
 {
 }
 
-UniqueRef<AuthenticatorTransportService> VirtualService::createVirtual(WebCore::AuthenticatorTransport transport, Observer& observer,  const Vector<VirtualAuthenticatorConfiguration>& configs)
+UniqueRef<AuthenticatorTransportService> VirtualService::createVirtual(WebCore::AuthenticatorTransport transport, Observer& observer, Vector<std::pair<String, VirtualAuthenticatorConfiguration>>& authenticators)
 {
-    return makeUniqueRef<VirtualService>(observer, configs);
+    return makeUniqueRef<VirtualService>(observer, authenticators);
+}
+
+static AuthenticatorGetInfoResponse authenticatorInfoForConfig(const VirtualAuthenticatorConfiguration& config)
+{
+    AuthenticatorGetInfoResponse infoResponse({ ProtocolVersion::kCtap }, Vector<uint8_t>(aaguidLength, 0u));
+    AuthenticatorSupportedOptions options;
+    infoResponse.setOptions(WTFMove(options));
+    return infoResponse;
 }
 
 void VirtualService::startDiscoveryInternal()
 {
 
-    for (auto& config : m_configurations) {
+    for (auto& authenticator : m_authenticators) {
         if (!observer())
             return;
+        auto config = authenticator.second;
+        auto authenticatorId = authenticator.first;
         switch (config.transport) {
+        case WebCore::AuthenticatorTransport::Usb:
+            observer()->authenticatorAdded(CtapAuthenticator::create(WTF::makeUnique<CtapHidDriver>(makeUniqueRef<VirtualHidConnection>(authenticatorId, config, WeakPtr { static_cast<VirtualAuthenticatorManager *>(observer()) })), authenticatorInfoForConfig(config)));
+            break;
         case WebCore::AuthenticatorTransport::Internal:
             observer()->authenticatorAdded(LocalAuthenticator::create(makeUniqueRef<VirtualLocalConnection>(config)));
-                break;
+            break;
         default:
             UNIMPLEMENTED();
         }

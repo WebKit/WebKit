@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,37 +27,14 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "AuthenticatorManager.h"
 #include "VirtualAuthenticatorConfiguration.h"
-#include "VirtualCredential.h"
-#include <wtf/WeakPtr.h>
 
 namespace WebKit {
-struct VirtualCredential;
 
-class VirtualAuthenticatorManager final : public AuthenticatorManager {
-public:
-    explicit VirtualAuthenticatorManager();
-
-    String createAuthenticator(const VirtualAuthenticatorConfiguration& /*config/*/);
-    bool removeAuthenticator(const String& /*authenticatorId*/);
-
-    bool isVirtual() const final { return true; }
-
-    void addCredential(const String&, const VirtualCredential&);
-
-protected:
-    void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) override;
-    void selectAssertionResponse(Vector<Ref<WebCore::AuthenticatorAssertionResponse>>&&, WebAuthenticationSource, CompletionHandler<void(WebCore::AuthenticatorAssertionResponse*)>&&) override;
-    
-    
-private:
-    UniqueRef<AuthenticatorTransportService> createService(WebCore::AuthenticatorTransport, AuthenticatorTransportService::Observer&) const final;
-    void runPanel() override;
-
-    HashMap<String, UniqueRef<VirtualAuthenticatorConfiguration>> m_virtualAuthenticators;
-    HashMap<String, Vector<VirtualCredential>> m_credentialsByAuthenticator;
-};
+uint8_t flagsForConfig(const VirtualAuthenticatorConfiguration&);
+RetainPtr<SecKeyRef> createPrivateKey();
+std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateKey(RetainPtr<SecKeyRef> privateKey);
+String base64PrivateKey(RetainPtr<SecKeyRef> privateKey);
 
 } // namespace WebKit
 

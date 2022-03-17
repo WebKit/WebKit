@@ -1,3 +1,52 @@
+2022-03-17  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Support makeCredential for virtual HID authenticators
+        https://bugs.webkit.org/show_bug.cgi?id=237984
+        rdar://problem/90393676
+
+        Reviewed by Brent Fulgham.
+
+        Virtual authenticators for WebAuthn supports different transports: nfc,usb,internal,ble.
+        Currently, we support the internal transport, but the default transport used in web platform
+        tests is usb. This patch implements makeCredential for hid-based virtual authenticators. Virtual
+        credential information is stored in the VirtualCredential struct as suggested by the spec.
+
+        Tested manually via creating virtual authenticator and performing create and via wpt tests.
+
+        * UIProcess/WebAuthentication/Mock/MockHidConnection.cpp:
+        (WebKit::MockHidConnection::parseRequest):
+        (WebKit::MockHidConnection::feedReports):
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.cpp:
+        (WebKit::VirtualAuthenticatorManager::createAuthenticator):
+        (WebKit::VirtualAuthenticatorManager::addCredential):
+        (WebKit::VirtualAuthenticatorManager::createService const):
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorUtils.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Virtual/VirtualService.h.
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorUtils.mm: Added.
+        (WebKit::flagsForConfig):
+        (WebKit::createPrivateKey):
+        (WebKit::credentialIdAndCosePubKeyForPrivateKey):
+        (WebKit::base64PrivateKey):
+        * UIProcess/WebAuthentication/Virtual/VirtualCredential.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Virtual/VirtualService.h.
+        * UIProcess/WebAuthentication/Virtual/VirtualHidConnection.cpp: Added.
+        (WebKit::VirtualHidConnection::VirtualHidConnection):
+        (WebKit::VirtualHidConnection::initialize):
+        (WebKit::VirtualHidConnection::terminate):
+        (WebKit::VirtualHidConnection::sendSync):
+        (WebKit::VirtualHidConnection::send):
+        (WebKit::VirtualHidConnection::assembleRequest):
+        (WebKit::VirtualHidConnection::receiveHidMessage):
+        (WebKit::VirtualHidConnection::recieveResponseCode):
+        (WebKit::VirtualHidConnection::parseRequest):
+        * UIProcess/WebAuthentication/Virtual/VirtualHidConnection.h: Copied from Source/WebKit/UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.h.
+        * UIProcess/WebAuthentication/Virtual/VirtualService.h:
+        * UIProcess/WebAuthentication/Virtual/VirtualService.mm:
+        (WebKit::VirtualService::VirtualService):
+        (WebKit::VirtualService::createVirtual):
+        (WebKit::authenticatorInfoForConfig):
+        (WebKit::VirtualService::startDiscoveryInternal):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-17  Youenn Fablet  <youenn@apple.com>
 
         Make SharedVideoFrameReader use VideoFrameCV instead of MediaSample

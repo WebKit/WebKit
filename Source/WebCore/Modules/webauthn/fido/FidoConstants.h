@@ -255,6 +255,19 @@ const uint8_t kCtapNfcAppletSelectionCtap[] = {
 const uint8_t kCtapNfcApduCla = 0x80;
 const uint8_t kCtapNfcApduIns = 0x10;
 
+// https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#mandatory-commands
+const size_t kCtapChannelIdSize = 4;
+const uint8_t kCtapKeepAliveStatusProcessing = 1;
+// https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#commands
+const int64_t kCtapMakeCredentialClientDataHashKey = 1;
+const int64_t kCtapMakeCredentialRpKey = 2;
+const int64_t kCtapMakeCredentialUserKey = 3;
+const int64_t kCtapMakeCredentialPubKeyCredParamsKey = 4;
+const int64_t kCtapMakeCredentialExcludeListKey = 5;
+const int64_t kCtapMakeCredentialExtensionsKey = 6;
+const int64_t kCtapMakeCredentialRequestOptionsKey = 7;
+const int64_t kCtapGetAssertionRequestOptionsKey = 5;
+
 } // namespace fido
 
 #endif // ENABLE(WEB_AUTHN)

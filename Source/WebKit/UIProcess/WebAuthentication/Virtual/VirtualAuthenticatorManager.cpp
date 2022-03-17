@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+struct VirtualCredential;
+
 VirtualAuthenticatorManager::VirtualAuthenticatorManager()
     : AuthenticatorManager()
 {
@@ -40,10 +42,12 @@ VirtualAuthenticatorManager::VirtualAuthenticatorManager()
 
 String VirtualAuthenticatorManager::createAuthenticator(const VirtualAuthenticatorConfiguration& config)
 {
-    if (config.transport != WebCore::AuthenticatorTransport::Internal)
+    if (config.transport != WebCore::AuthenticatorTransport::Internal && config.transport != WebCore::AuthenticatorTransport::Usb)
         UNIMPLEMENTED();
     auto id = createVersion4UUIDString();
     m_virtualAuthenticators.set(id, makeUniqueRef<VirtualAuthenticatorConfiguration>(config));
+    Vector<VirtualCredential> credentials;
+    m_credentialsByAuthenticator.set(id, WTFMove(credentials));
 
     return id;
 }
@@ -53,12 +57,18 @@ bool VirtualAuthenticatorManager::removeAuthenticator(const String& id)
     return m_virtualAuthenticators.remove(id);
 }
 
+void VirtualAuthenticatorManager::addCredential(const String& authenticatorId, const VirtualCredential& credential)
+{
+    m_credentialsByAuthenticator.get(authenticatorId).append(credential);
+}
+
 UniqueRef<AuthenticatorTransportService> VirtualAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
 {
-    Vector<VirtualAuthenticatorConfiguration> configs;
-    for (auto& config : m_virtualAuthenticators.values()) {
-        if (config.get().transport == transport)
-            configs.append(config.get());
+    Vector<std::pair<String, VirtualAuthenticatorConfiguration>> configs;
+    for (auto& id : m_virtualAuthenticators.keys()) {
+        auto config = m_virtualAuthenticators.get(id);
+        if (config->transport == transport)
+            configs.append(std::pair { id, *config });
     }
     return VirtualService::createVirtual(transport, observer, configs);
 }
