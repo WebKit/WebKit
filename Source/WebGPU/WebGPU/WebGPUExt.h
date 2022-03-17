@@ -54,9 +54,11 @@ typedef struct WGPUInstanceCocoaDescriptor {
     // The API contract is: callers must call WebGPU's functions in a non-racey way with respect
     // to each other. This scheduleWorkBlock will execute on a background thread, and it must
     // schedule the block it's passed to be run in a non-racey way with regards to all the other
-    // WebGPU calls. It's fine to pass NULL here, but if you do, you must periodically call
+    // WebGPU calls. If calls to scheduleWorkBlock are ordered (e.g. multiple calls on the same
+    // thread), then the work that is scheduled must also be ordered in the same order.
+    // It's fine to pass NULL here, but if you do, you must periodically call
     // wgpuInstanceProcessEvents() to synchronously run the queued callbacks.
-    WGPUScheduleWorkBlock scheduleWorkBlock;
+    __unsafe_unretained WGPUScheduleWorkBlock scheduleWorkBlock;
 } WGPUInstanceCocoaDescriptor;
 
 typedef struct WGPUShaderModuleCompilationHint {

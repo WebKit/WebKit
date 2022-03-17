@@ -28,7 +28,6 @@
 
 #import "APIConversions.h"
 #import "Device.h"
-#import "Utilities.h"
 #import <wtf/StdLibExtras.h>
 
 namespace WebGPU {

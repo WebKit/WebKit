@@ -33,7 +33,6 @@
 #import "Device.h"
 #import "QuerySet.h"
 #import "RenderPassEncoder.h"
-#import "Utilities.h"
 
 namespace WebGPU {
 

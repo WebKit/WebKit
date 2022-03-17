@@ -26,7 +26,12 @@
 import Foundation
 import WebGPU
 
-let instance = createDefaultInstance()
+func dispatchWork(callback: (() -> Void)?) {
+    DispatchQueue.main.async(execute: callback!)
+}
+var instanceCocoaDescriptor = WGPUInstanceCocoaDescriptor(chain: WGPUChainedStruct(next: nil, sType: WGPUSType(WGPUSTypeExtended_InstanceCocoaDescriptor.rawValue)), scheduleWorkBlock: dispatchWork)
+var instanceDescriptor = WGPUInstanceDescriptor(nextInChain: &instanceCocoaDescriptor.chain)
+let instance = wgpuCreateInstance(&instanceDescriptor)
 defer {
     wgpuInstanceRelease(instance)
 }
