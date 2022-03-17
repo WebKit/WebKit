@@ -3,6 +3,15 @@
         Only show notification permission prompt on user gesture
         https://bugs.webkit.org/show_bug.cgi?id=237946
 
+        Unreviewed build fix for r291414.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+
+2022-03-17  Ben Nham  <nham@apple.com>
+
+        Only show notification permission prompt on user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=237946
+
         Reviewed by Geoffrey Garen.
 
         Change existing permission tests to use evaluateJavaScript since that executes in the

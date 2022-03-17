@@ -742,6 +742,12 @@ static void deleteAllRegistrationsForDataStore(WKWebsiteDataStore *dataStore)
 
 }
 
+static const char* mainBytes = R"WEBPUSHRESOURCE(
+<script>
+    Notification.requestPermission().then(() => { alert("done") })
+</script>
+)WEBPUSHRESOURCE";
+
 TEST(WebPushD, InstallCoordinationBundles)
 {
     NSURL *tempDirectory = setUpTestWebPushD();
