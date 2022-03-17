@@ -1,5 +1,21 @@
 2022-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Make Emoji gender tests more robust
+        https://bugs.webkit.org/show_bug.cgi?id=238057
+        <rdar://problem/88842010>
+
+        Unreviewed.
+
+        U+26F9 PERSON WITH BALL might have a non-emoji glyph, so we can't expect it to
+        always render in its emoji form without a variation selector.
+
+        * fast/text/emoji-gender-2-3-expected.html:
+        * fast/text/emoji-gender-2-3.html:
+        * fast/text/emoji-gender-fe0f-3-expected.html:
+        * fast/text/emoji-gender-fe0f-3.html:
+
+2022-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
         Make fast/text/emoji-num-glyphs.html more robust
         https://bugs.webkit.org/show_bug.cgi?id=238055
         <rdar://problem/88842010>
