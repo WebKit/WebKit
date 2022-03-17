@@ -1,3 +1,68 @@
+2022-03-17  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291314. rdar://problem/90245766
+
+    RemoteGraphicsContextGLProxy omits context lost checks for back and front buffer access functions
+    https://bugs.webkit.org/show_bug.cgi?id=237891
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-03-15
+    Reviewed by Myles Maxfield.
+    
+    Add missing isContextLost() checks to RemoteGraphicsContextGLProxy functions.
+    WebGLRenderingContextBase would call as follows:
+    void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
+    {
+        if (isContextLostOrPending())
+            return;
+        ...
+        m_context->prepareForDisplay();
+        ...
+        m_context->paintCompositedResultsToCanvas();
+    }
+    
+    The context may be ok during the first check but then fail later,
+    and so all the context functions need to check for validity.
+    
+    No new tests, testing hooks need non-trivial implementation.
+    This is tracked in bug 237891.
+    
+    * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+    (WebKit::RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas):
+    (WebKit::RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas):
+    (WebKit::RemoteGraphicsContextGLProxy::copyTextureFromMedia):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291314 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-15  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            RemoteGraphicsContextGLProxy omits context lost checks for back and front buffer access functions
+            https://bugs.webkit.org/show_bug.cgi?id=237891
+
+            Reviewed by Myles Maxfield.
+
+            Add missing isContextLost() checks to RemoteGraphicsContextGLProxy functions.
+            WebGLRenderingContextBase would call as follows:
+            void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
+            {
+                if (isContextLostOrPending())
+                    return;
+                ...
+                m_context->prepareForDisplay();
+                ...
+                m_context->paintCompositedResultsToCanvas();
+            }
+
+            The context may be ok during the first check but then fail later,
+            and so all the context functions need to check for validity.
+
+            No new tests, testing hooks need non-trivial implementation.
+            This is tracked in bug 237891.
+
+            * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+            (WebKit::RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas):
+            (WebKit::RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas):
+            (WebKit::RemoteGraphicsContextGLProxy::copyTextureFromMedia):
+
 2022-03-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r291352. rdar://problem/90271228
