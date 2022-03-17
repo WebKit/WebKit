@@ -30,6 +30,7 @@
 #include "ChromeClient.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
+#include "Editor.h"
 #include "ElementAncestorIterator.h"
 #include "Event.h"
 #include "EventNames.h"

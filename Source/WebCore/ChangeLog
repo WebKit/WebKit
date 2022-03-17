@@ -1,3 +1,9 @@
+2022-03-17  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix non-unified build after r291396
+
+        * html/HTMLTextFormControlElement.cpp:
+
 2022-03-17  Oriol Brufau  <obrufau@igalia.com>
 
         Clarify code for logical-to-physical mappings, and add physical-to-logical mappings
