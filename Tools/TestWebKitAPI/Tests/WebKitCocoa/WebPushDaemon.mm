@@ -312,12 +312,6 @@ TEST(WebPushD, BasicCommunication)
     cleanUpTestWebPushD(tempDir);
 }
 
-static const char* mainBytes = R"WEBPUSHRESOURCE(
-<script>
-    Notification.requestPermission().then(() => { alert("done") })
-</script>
-)WEBPUSHRESOURCE";
-
 TEST(WebPushD, PermissionManagement)
 {
     NSURL *tempDirectory = setUpTestWebPushD();
@@ -335,21 +329,11 @@ TEST(WebPushD, PermissionManagement)
             [[configuration preferences] _setEnabled:YES forFeature:feature];
     }
 
-    auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
-    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
-
-    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        auto response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:0 textEncodingName:nil]);
-        [task didReceiveResponse:response.get()];
-        [task didReceiveData:[NSData dataWithBytes:mainBytes length:strlen(mainBytes)]];
-        [task didFinish];
-    }];
-
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     auto uiDelegate = adoptNS([[NotificationPermissionDelegate alloc] init]);
     [webView setUIDelegate:uiDelegate.get()];
-
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"testing://main/index.html"]]];
+    [webView synchronouslyLoadHTMLString:@"" baseURL:[NSURL URLWithString:@"https://example.org"]];
+    [webView evaluateJavaScript:@"Notification.requestPermission().then(() => { alert('done') })" completionHandler:nil];
     TestWebKitAPI::Util::run(&alertReceived);
 
     static bool originOperationDone = false;
@@ -362,8 +346,8 @@ TEST(WebPushD, PermissionManagement)
 
     TestWebKitAPI::Util::run(&originOperationDone);
 
-    EXPECT_WK_STREQ(origin.get().protocol, "testing");
-    EXPECT_WK_STREQ(origin.get().host, "main");
+    EXPECT_WK_STREQ(origin.get().protocol, "https");
+    EXPECT_WK_STREQ(origin.get().host, "example.org");
 
     // If we failed to retrieve an expected origin, we will have failed the above checks
     if (!origin) {

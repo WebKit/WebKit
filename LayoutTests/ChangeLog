@@ -1,3 +1,35 @@
+2022-03-17  Ben Nham  <nham@apple.com>
+
+        Only show notification permission prompt on user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=237946
+
+        Reviewed by Geoffrey Garen.
+
+        Add test cases to make sure that prompting for notification permissions fails when not
+        handling a user gesture and succeeds when handling a user gesture.
+
+        * http/tests/notifications/notification-request-permission-no-callback.html:
+        * http/tests/notifications/notification-request-permission.html:
+        * http/tests/notifications/request-expected.txt:
+        * http/tests/notifications/request-with-promise-expected.txt:
+        * http/tests/notifications/request-with-promise.html:
+        * http/tests/notifications/request.html:
+        * http/tests/push-api/resources/subscribe-iframe-cross-origin.html:
+        * http/tests/push-api/resources/subscribe-iframe-same-origin.html:
+        * http/tests/push-api/resources/subscribe-tests.js:
+        (async testDocumentSubscribeWithUserGesture): Added.
+        (async testDocumentSubscribeWithoutUserGesture): Added.
+        (async testDocumentSubscribeImpl): Added.
+        (async testDocumentSubscribe): Deleted.
+        * http/tests/push-api/subscribe-default-permissions-expected.txt:
+        * http/tests/push-api/subscribe-default-permissions-iframe-cross-origin-expected.txt:
+        * http/tests/push-api/subscribe-default-permissions-iframe-same-origin-expected.txt:
+        * http/tests/push-api/subscribe-default-permissions.html:
+        * http/tests/push-api/subscribe-deny-permissions-expected.txt:
+        * http/tests/push-api/subscribe-deny-permissions.html:
+        * http/tests/push-api/subscribe-grant-permissions-expected.txt:
+        * http/tests/push-api/subscribe-grant-permissions.html:
+
 2022-03-17  Andres Gonzalez  <andresg_22@apple.com>
 
         Fix for accessibility/aria-tab-xxx.html tests in isolated tree mode.

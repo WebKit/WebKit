@@ -43,6 +43,7 @@
 #include "NotificationEvent.h"
 #include "NotificationPermissionCallback.h"
 #include "ServiceWorkerGlobalScope.h"
+#include "UserGestureIndicator.h"
 #include "WindowEventLoop.h"
 #include "WindowFocusAllowedIndicator.h"
 #include <wtf/CompletionHandler.h>
@@ -293,6 +294,11 @@ void Notification::requestPermission(Document& document, RefPtr<NotificationPerm
 
     if (!document.isSecureContext()) {
         document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "The Notification permission may only be requested in a secure context."_s);
+        return resolvePromiseAndCallback(Permission::Denied);
+    }
+
+    if (!UserGestureIndicator::processingUserGesture()) {
+        document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Notification prompting can only be done from a user gesture."_s);
         return resolvePromiseAndCallback(Permission::Denied);
     }
 

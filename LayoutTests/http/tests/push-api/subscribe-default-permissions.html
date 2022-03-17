@@ -11,7 +11,8 @@ navigator.serviceWorker.register("resources/subscribe-worker.js", { }).then(asyn
         await testServiceWorkerPermissionState(registration, 'prompt');
         await testDocumentPermissionState(registration, 'prompt');
         await testServiceWorkerSubscribe(registration, 'NotAllowedError');
-        await testDocumentSubscribe(registration);
+        await testDocumentSubscribeWithoutUserGesture(registration, 'NotAllowedError');
+        await testDocumentSubscribeWithUserGesture(registration);
     } catch (e) {
         log(`FAIL: unexpected exception ${e}`);
     } finally {

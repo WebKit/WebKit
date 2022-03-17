@@ -9,16 +9,21 @@
 if (!window.Notification)
     testFailed("window.Notification does not exist.");
 
-window.Notification.requestPermission(function() { });
-testPassed("Notification.requestPermission does not crash.");
+if (!window.internals)
+    testFailed("This test requires internals.");
 
-testRunner.grantWebNotificationPermission(testURL);
-window.Notification.requestPermission(function() { });
-testPassed("Notification.requestPermission does not crash.");
+internals.withUserGesture(() => {
+    window.Notification.requestPermission(function() { });
+    testPassed("Notification.requestPermission does not crash.");
 
-testRunner.denyWebNotificationPermission(testURL);
-window.Notification.requestPermission(function() { });
-testPassed("Notification.requestPermission does not crash.");
+    testRunner.grantWebNotificationPermission(testURL);
+    window.Notification.requestPermission(function() { });
+    testPassed("Notification.requestPermission does not crash.");
+
+    testRunner.denyWebNotificationPermission(testURL);
+    window.Notification.requestPermission(function() { });
+    testPassed("Notification.requestPermission does not crash.");
+});
 </script>
 <script src="/resources/js-test-post.js"></script>
 </body>

@@ -2,5 +2,6 @@
 PASS: service worker permissionState was prompt
 PASS: document permissionState was prompt
 PASS: service worker subscribe was error: NotAllowedError
-PASS: document subscribe was successful
+PASS: document subscribe without user gesture was error: NotAllowedError
+PASS: document subscribe with user gesture was successful
 

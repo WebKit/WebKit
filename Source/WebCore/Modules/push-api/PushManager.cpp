@@ -37,6 +37,7 @@
 #include "PushCrypto.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerRegistration.h"
+#include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
@@ -70,8 +71,8 @@ void PushManager::deref() const
 void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushSubscriptionOptionsInit>&& options, DOMPromiseDeferred<IDLInterface<PushSubscription>>&& promise)
 {
     RELEASE_ASSERT(context.isSecureContext());
-    
-    context.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, context = Ref { context }, options = WTFMove(options), promise = WTFMove(promise)]() mutable {
+
+    context.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, context = Ref { context }, options = WTFMove(options), promise = WTFMove(promise), processingUserGesture = UserGestureIndicator::processingUserGesture()]() mutable {
         if (!options || !options->userVisibleOnly) {
             promise.reject(Exception { NotAllowedError, "Subscribing for push requires userVisibleOnly to be true"_s });
             return;
@@ -132,6 +133,11 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
 
             if (!downcast<Document>(context.get()).isSameOriginAsTopDocument()) {
                 promise.reject(Exception { NotAllowedError, "Cannot request permission from cross-origin iframe"_s });
+                return;
+            }
+
+            if (!processingUserGesture) {
+                promise.reject(Exception { NotAllowedError, "Push notification prompting can only be done from a user gesture"_s });
                 return;
             }
 

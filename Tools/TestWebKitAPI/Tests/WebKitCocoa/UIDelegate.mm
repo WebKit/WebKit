@@ -705,16 +705,18 @@ TEST(WebKit, PrintWithCompletionHandler)
 
 TEST(WebKit, NotificationPermission)
 {
-    NSString *html = @"<script>Notification.requestPermission(function(p){alert('permission '+p)})</script>";
-    auto webView = adoptNS([[WKWebView alloc] init]);
+    NSString *html = @"<script>function requestPermission() { Notification.requestPermission(function(p){alert('permission '+p)}); }</script>";
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()]);
     auto uiDelegate = adoptNS([[NotificationDelegate alloc] initWithAllowNotifications:YES]);
     [webView setUIDelegate:uiDelegate.get()];
-    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.org"]];
+    [webView synchronouslyLoadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.org"]];
+    [webView evaluateJavaScript:@"requestPermission()" completionHandler:nil];
     TestWebKitAPI::Util::run(&done);
     done = false;
     uiDelegate = adoptNS([[NotificationDelegate alloc] initWithAllowNotifications:NO]);
     [webView setUIDelegate:uiDelegate.get()];
-    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com"]];
+    [webView synchronouslyLoadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com"]];
+    [webView evaluateJavaScript:@"requestPermission()" completionHandler:nil];
     TestWebKitAPI::Util::run(&done);
 }
 
