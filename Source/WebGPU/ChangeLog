@@ -1,5 +1,17 @@
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Put nontrivial code in WebGPU's command line playground
+        https://bugs.webkit.org/show_bug.cgi?id=237876
+
+        Reviewed by Kimmo Kinnunen.
+
+        This is a simple mempcy() example. It uses asynchronous mapping and a queue submit.
+
+        * CommandLinePlayground/main.swift:
+        (device):
+
+2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Use the fromAPI() pattern
         https://bugs.webkit.org/show_bug.cgi?id=237942
 

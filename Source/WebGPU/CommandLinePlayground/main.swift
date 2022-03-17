@@ -34,9 +34,7 @@ defer {
 var adapter: WGPUAdapter!
 var requestAdapterOptions = WGPURequestAdapterOptions(nextInChain: nil, compatibleSurface: nil, powerPreference: WGPUPowerPreference_Undefined, forceFallbackAdapter: false)
 wgpuInstanceRequestAdapterWithBlock(instance, &requestAdapterOptions) { (status: WGPURequestAdapterStatus, localAdapter: Optional<WGPUAdapter>, message: Optional<UnsafePointer<Int8>>) in
-    guard let localAdapter = localAdapter else {
-        fatalError()
-    }
+    assert(localAdapter != nil)
     adapter = localAdapter
 }
 defer {
@@ -44,7 +42,62 @@ defer {
 }
 print("Adapter: \(String(describing: adapter))")
 
-//wgpuInstanceProcessEvents(instance)
+var device: WGPUDevice!
+var deviceDescriptor = WGPUDeviceDescriptor(nextInChain: nil, label: nil, requiredFeaturesCount: 0, requiredFeatures: nil, requiredLimits: nil)
+wgpuAdapterRequestDeviceWithBlock(adapter, &deviceDescriptor) { (status: WGPURequestDeviceStatus, localDevice: Optional<WGPUDevice>, message: Optional<UnsafePointer<Int8>>) in
+    assert(localDevice != nil)
+    device = localDevice
+}
+defer {
+    wgpuDeviceRelease(device)
+}
+print("Device: \(String(describing: device))")
 
+var uploadBufferDescriptor = WGPUBufferDescriptor(nextInChain: nil, label: nil, usage: WGPUBufferUsage_MapWrite.rawValue | WGPUBufferUsage_CopySrc.rawValue, size: UInt64(MemoryLayout<Int32>.size), mappedAtCreation: false)
+let uploadBuffer = wgpuDeviceCreateBuffer(device, &uploadBufferDescriptor)
+assert(uploadBuffer != nil)
+defer {
+    wgpuBufferRelease(uploadBuffer)
+}
+
+var downloadBufferDescriptor = WGPUBufferDescriptor(nextInChain: nil, label: nil, usage: WGPUBufferUsage_MapRead.rawValue | WGPUBufferUsage_CopyDst.rawValue, size: UInt64(MemoryLayout<Int32>.size), mappedAtCreation: false)
+let downloadBuffer = wgpuDeviceCreateBuffer(device, &downloadBufferDescriptor)
+assert(downloadBuffer != nil)
+defer {
+    wgpuBufferRelease(downloadBuffer)
+}
+
+wgpuBufferMapAsyncWithBlock(uploadBuffer, WGPUMapMode_Write.rawValue, 0, MemoryLayout<Int32>.size) { (status: WGPUBufferMapAsyncStatus) in
+    assert(status == WGPUBufferMapAsyncStatus_Success);
+    let writePointer = wgpuBufferGetMappedRange(uploadBuffer, 0, MemoryLayout<Int32>.size).bindMemory(to: Int32.self, capacity: 1)
+    writePointer[0] = 17
+    wgpuBufferUnmap(uploadBuffer)
+
+    var commandEncoderDescriptor = WGPUCommandEncoderDescriptor(nextInChain: nil, label: nil)
+    let commandEncoder = wgpuDeviceCreateCommandEncoder(device, &commandEncoderDescriptor)
+    defer {
+        wgpuCommandEncoderRelease(commandEncoder)
+    }
+    wgpuCommandEncoderCopyBufferToBuffer(commandEncoder, uploadBuffer, 0, downloadBuffer, 0, UInt64(MemoryLayout<Int32>.size))
+    var commandBufferDescriptor = WGPUCommandBufferDescriptor(nextInChain: nil, label: nil)
+    let commandBuffer = wgpuCommandEncoderFinish(commandEncoder, &commandBufferDescriptor)
+    defer {
+        wgpuCommandBufferRelease(commandBuffer)
+    }
+
+    let commands: [WGPUCommandBuffer?] = [commandBuffer]
+    wgpuQueueSubmit(wgpuDeviceGetQueue(device), UInt32(commands.count), commands)
+
+    wgpuQueueOnSubmittedWorkDoneWithBlock(wgpuDeviceGetQueue(device), 0) { (status: WGPUQueueWorkDoneStatus) in
+        assert(status == WGPUQueueWorkDoneStatus_Success)
+        wgpuBufferMapAsyncWithBlock(downloadBuffer, WGPUMapMode_Read.rawValue, 0, MemoryLayout<Int32>.size) { (status: WGPUBufferMapAsyncStatus) in
+            assert(status == WGPUBufferMapAsyncStatus_Success);
+            let readPointer = wgpuBufferGetMappedRange(downloadBuffer, 0, MemoryLayout<Int32>.size).bindMemory(to: Int32.self, capacity: 1)
+            print("Result: \(readPointer[0])")
+            wgpuBufferUnmap(downloadBuffer)
+            CFRunLoopStop(CFRunLoopGetMain())
+        }
+    }
+}
 
 CFRunLoopRun()
