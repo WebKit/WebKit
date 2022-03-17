@@ -1,3 +1,13 @@
+2022-03-17  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Fix build breakage from r291361
+        https://bugs.webkit.org/show_bug.cgi?id=238043
+        rdar://90447279
+
+        Unreviewed build fix.
+
+        * platform/ios/WebAVPlayerController.mm: Declare AVMetadataItem.
+
 2022-03-17  Cameron McCormack  <heycam@apple.com>
 
         Avoid calling connectionClosedFromServer on a connection twice when a version change is active
