@@ -149,7 +149,7 @@ public:
     size_t getResourceBytesAtPositionMainThread(void* buffer, off_t position, size_t count);
     void receivedNonLinearizedPDFSentinel();
     bool incrementalPDFLoadingEnabled() const { return m_incrementalPDFLoadingEnabled; }
-#ifndef NDEBUG
+#if !LOG_DISABLED
     void pdfLog(const String& event);
     size_t incrementThreadsWaitingOnCallback() { return ++m_threadsWaitingOnCallback; }
     size_t decrementThreadsWaitingOnCallback() { return --m_threadsWaitingOnCallback; }
