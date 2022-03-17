@@ -1,3 +1,18 @@
+2022-03-17  Peng Liu  <peng.liu6@icloud.com>
+
+        PiP on Vimeo freezes when toggled
+        https://bugs.webkit.org/show_bug.cgi?id=237985
+
+        Reviewed by Jer Noble.
+
+        Add a quirk for vimeo.com to disable the "webkitendfullscreen" event when a video enters
+        picture-in-picture from fullscreen.
+
+        Tested manually.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk const):
+
 2022-03-17  Chris Dumez  <cdumez@apple.com>
 
         Stop returning NodeVector from functions
