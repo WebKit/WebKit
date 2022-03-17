@@ -53,9 +53,9 @@ public:
 private:
     Sampler(id<MTLSamplerState>, const WGPUSamplerDescriptor& descriptor);
 
-    id<MTLSamplerState> m_samplerState { nil };
+    const id<MTLSamplerState> m_samplerState { nil };
 
-    WGPUSamplerDescriptor m_descriptor { }; // "The GPUSamplerDescriptor with which the GPUSampler was created."
+    const WGPUSamplerDescriptor m_descriptor { }; // "The GPUSamplerDescriptor with which the GPUSampler was created."
     // "[[isComparison]] of type boolean." This is unnecessary; it's implemented in isComparison().
     // "[[isFiltering]] of type boolean." This is unnecessary; it's implemented in isFiltering().
 };

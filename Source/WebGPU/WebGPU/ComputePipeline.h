@@ -51,7 +51,7 @@ public:
 private:
     ComputePipeline(id<MTLComputePipelineState>);
 
-    id<MTLComputePipelineState> m_computePipelineState { nil };
+    const id<MTLComputePipelineState> m_computePipelineState { nil };
 };
 
 } // namespace WebGPU

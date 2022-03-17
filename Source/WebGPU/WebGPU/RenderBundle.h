@@ -48,7 +48,7 @@ public:
 private:
     RenderBundle(id<MTLIndirectCommandBuffer>);
 
-    id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
+    const id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 };
 
 } // namespace WebGPU

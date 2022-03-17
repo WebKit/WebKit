@@ -52,9 +52,9 @@ public:
 private:
     BindGroupLayout(id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder);
 
-    id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
-    id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
-    id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
+    const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
+    const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
+    const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
 };
 
 } // namespace WebGPU

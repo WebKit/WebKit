@@ -1,3 +1,33 @@
+2022-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Mark unchanging class members as const
+        https://bugs.webkit.org/show_bug.cgi?id=237998
+
+        Reviewed by Kimmo Kinnunen.
+
+        Let's use the C++ type system to our advantage.
+
+        * WebGPU/Adapter.h:
+        * WebGPU/BindGroup.h:
+        * WebGPU/BindGroupLayout.h:
+        * WebGPU/CommandBuffer.h:
+        * WebGPU/ComputePassEncoder.h:
+        * WebGPU/ComputePipeline.h:
+        * WebGPU/Device.h:
+        (WebGPU::Device::instance const):
+        (WebGPU::Device::instance): Deleted.
+        * WebGPU/Instance.h:
+        * WebGPU/QuerySet.h:
+        * WebGPU/Queue.h:
+        * WebGPU/RenderBundle.h:
+        * WebGPU/RenderBundleEncoder.h:
+        * WebGPU/RenderPassEncoder.h:
+        * WebGPU/RenderPipeline.h:
+        * WebGPU/Sampler.h:
+        * WebGPU/ShaderModule.h:
+        * WebGPU/Texture.h:
+        * WebGPU/TextureView.h:
+
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Implement sampler creation according to the spec

@@ -50,9 +50,9 @@ public:
 private:
     BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer);
 
-    id<MTLBuffer> m_vertexArgumentBuffer { nil };
-    id<MTLBuffer> m_fragmentArgumentBuffer { nil };
-    id<MTLBuffer> m_computeArgumentBuffer { nil };
+    const id<MTLBuffer> m_vertexArgumentBuffer { nil };
+    const id<MTLBuffer> m_fragmentArgumentBuffer { nil };
+    const id<MTLBuffer> m_computeArgumentBuffer { nil };
 };
 
 } // namespace WebGPU

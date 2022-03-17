@@ -77,7 +77,7 @@ private:
 
     bool validatePopDebugGroup() const;
 
-    id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
+    const id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
 };

@@ -84,15 +84,15 @@ public:
     void setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&&);
     void setLabel(String&&);
 
-    Instance& instance() { return m_instance; }
+    Instance& instance() const { return m_instance; }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, Instance&);
 
-    id<MTLDevice> m_device { nil };
-    Ref<Queue> m_defaultQueue;
-    Ref<Instance> m_instance;
+    const id<MTLDevice> m_device { nil };
+    const Ref<Queue> m_defaultQueue;
+    const Ref<Instance> m_instance;
 };
 
 } // namespace WebGPU

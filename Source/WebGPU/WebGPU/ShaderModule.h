@@ -64,7 +64,7 @@ private:
     const std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck> m_checkResult;
     const HashMap<String, Ref<PipelineLayout>> m_pipelineLayoutHints;
     const HashMap<String, WGSL::Reflection::EntryPointInformation> m_entryPointInformation;
-    id<MTLLibrary> m_library { nil }; // This is only non-null if we could compile the module early.
+    const id<MTLLibrary> m_library { nil }; // This is only non-null if we could compile the module early.
 };
 
 } // namespace WebGPU

@@ -53,7 +53,7 @@ public:
 private:
     Texture(id<MTLTexture>);
 
-    id<MTLTexture> m_texture { nil };
+    const id<MTLTexture> m_texture { nil };
 };
 
 } // namespace WebGPU

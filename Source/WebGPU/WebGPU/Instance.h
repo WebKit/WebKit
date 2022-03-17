@@ -61,7 +61,7 @@ private:
 
     // This can be used on a background thread.
     Deque<WGPUWorkItem> m_pendingWork WTF_GUARDED_BY_LOCK(m_lock);
-    WGPUScheduleWorkBlock m_scheduleWorkBlock;
+    const WGPUScheduleWorkBlock m_scheduleWorkBlock;
     Lock m_lock;
 };
 

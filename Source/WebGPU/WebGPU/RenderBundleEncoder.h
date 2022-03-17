@@ -67,7 +67,7 @@ private:
 
     bool validatePopDebugGroup() const;
 
-    id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
+    const id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
 };

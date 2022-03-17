@@ -55,8 +55,8 @@ public:
 private:
     Adapter(id<MTLDevice>, Instance&);
 
-    id<MTLDevice> m_device { nil };
-    Ref<Instance> m_instance;
+    const id<MTLDevice> m_device { nil };
+    const Ref<Instance> m_instance;
 };
 
 } // namespace WebGPU

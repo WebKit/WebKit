@@ -49,7 +49,7 @@ public:
 private:
     QuerySet(id<MTLCounterSampleBuffer>);
 
-    id<MTLCounterSampleBuffer> m_counterSampleBuffer { nil };
+    const id<MTLCounterSampleBuffer> m_counterSampleBuffer { nil };
 };
 
 } // namespace WebGPU

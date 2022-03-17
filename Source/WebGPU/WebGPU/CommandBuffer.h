@@ -48,7 +48,7 @@ public:
 private:
     CommandBuffer(id<MTLCommandBuffer>);
 
-    id<MTLCommandBuffer> m_commandBuffer { nil };
+    const id<MTLCommandBuffer> m_commandBuffer { nil };
 };
 
 } // namespace WebGPU

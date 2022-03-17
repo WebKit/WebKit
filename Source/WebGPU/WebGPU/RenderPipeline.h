@@ -51,7 +51,7 @@ public:
 private:
     RenderPipeline(id<MTLRenderPipelineState>);
 
-    id<MTLRenderPipelineState> m_renderPipelineState { nil };
+    const id<MTLRenderPipelineState> m_renderPipelineState { nil };
 };
 
 } // namespace WebGPU
