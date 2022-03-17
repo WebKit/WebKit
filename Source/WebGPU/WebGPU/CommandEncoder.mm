@@ -173,11 +173,53 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
     UNUSED_PARAM(copySize);
 }
 
+static bool validateClearBuffer(const Buffer& buffer, uint64_t offset, uint64_t size)
+{
+    // FIXME: "buffer is valid to use with this."
+
+    // "buffer.[[usage]] contains COPY_DST."
+    if (!(buffer.usage() & WGPUBufferUsage_CopyDst))
+        return false;
+
+    // "size is a multiple of 4."
+    if (size % 4)
+        return false;
+
+    // "offset is a multiple of 4."
+    if (offset % 4)
+        return false;
+
+    // "buffer.[[size]] is greater than or equal to (offset + size)."
+    // FIXME: Use checked arithmetic.
+    if (buffer.size() < offset + size)
+        return false;
+
+    return true;
+}
+
 void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t size)
 {
-    UNUSED_PARAM(buffer);
-    UNUSED_PARAM(offset);
-    UNUSED_PARAM(size);
+    // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-clearbuffer
+
+    // "Prepare the encoder state of this. If it returns false, stop."
+    if (!prepareTheEncoderState())
+        return;
+
+    // "If size is missing, set size to max(0, |buffer|.{{GPUBuffer/[[size]]}} - |offset|)."
+    if (size == WGPU_WHOLE_SIZE) {
+        // FIXME: Use checked arithmetic.
+        size = buffer.size() - offset;
+    }
+
+    // "If any of the following conditions are unsatisfied"
+    if (!validateClearBuffer(buffer, offset, size)) {
+        // FIXME: "generate a validation error and stop."
+        return;
+    }
+
+    ensureBlitCommandEncoder();
+
+    [m_blitCommandEncoder fillBuffer:buffer.buffer() range:NSMakeRange(offset, size) value:0];
 }
 
 bool CommandEncoder::validateFinish() const

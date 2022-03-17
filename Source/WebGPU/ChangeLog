@@ -1,5 +1,22 @@
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement first draft of CommandEncoder::clearBuffer() according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=237877
+
+        Reviewed by Kimmo Kinnunen.
+
+        Implement CommandEncoder::clearBuffer() according to the algorithms in the spec.
+        There are a few things which the spec lists which we can't do yet (like reporting
+        validation errors), so those things are left with FIXMEs. Every step is listed
+        with links to the spec where appropriate, and with quotes to the spec describing
+        what is being implemented.
+
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::validateClearBuffer):
+        (WebGPU::CommandEncoder::clearBuffer):
+
+2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Use block-based WebGPU API instead of function pointer & userdata API
         https://bugs.webkit.org/show_bug.cgi?id=237932
 
