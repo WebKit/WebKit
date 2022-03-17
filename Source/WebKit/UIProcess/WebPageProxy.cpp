@@ -10193,17 +10193,14 @@ DataOwnerType WebPageProxy::dataOwnerForPasteboard(PasteboardAccessIntent intent
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+#if PLATFORM(IOS_FAMILY)
 void WebPageProxy::writePromisedAttachmentToPasteboard(WebCore::PromisedAttachmentInfo&& info, const String& authorizationToken)
 {
-#if PLATFORM(IOS_FAMILY)
     MESSAGE_CHECK(m_process, isValidPerformActionOnElementAuthorizationToken(authorizationToken));
 
     pageClient().writePromisedAttachmentToPasteboard(WTFMove(info));
-#else
-    UNUSED_PARAM(info);
-    UNUSED_PARAM(authorizationToken);
-#endif
 }
+#endif
 
 void WebPageProxy::requestAttachmentIcon(const String& identifier, const String& contentType, const String& fileName, const String& title, const FloatSize& requestedSize)
 {
