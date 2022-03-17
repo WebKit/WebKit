@@ -170,7 +170,7 @@ protected:
 private:
     void executePreparedChildrenRemoval();
     enum class DeferChildrenChanged { Yes, No };
-    NodeVector removeAllChildrenWithScriptAssertion(ChildChange::Source, DeferChildrenChanged = DeferChildrenChanged::No);
+    void removeAllChildrenWithScriptAssertion(ChildChange::Source, NodeVector& children, DeferChildrenChanged = DeferChildrenChanged::No);
     bool removeNodeWithScriptAssertion(Node&, ChildChange::Source);
     ExceptionOr<void> removeSelfOrChildNodesForInsertion(Node&, NodeVector&);
 
@@ -223,12 +223,10 @@ inline Node& Node::rootNode() const
     return traverseToRootNode();
 }
 
-inline NodeVector collectChildNodes(Node& node)
+inline void collectChildNodes(Node& node, NodeVector& children)
 {
-    NodeVector children;
     for (Node* child = node.firstChild(); child; child = child->nextSibling())
         children.append(*child);
-    return children;
 }
 
 class ChildNodesLazySnapshot {

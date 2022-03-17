@@ -1046,7 +1046,8 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle& style, Node*
     // Each child of the removed element, exclusing ancestors of targetNode, is then wrapped by clones of elements in elementsToPushDown.
     Vector<Ref<Element>> elementsToPushDown;
     while (current && current != targetNode && current->contains(targetNode)) {
-        auto currentChildren = collectChildNodes(*current);
+        NodeVector currentChildren;
+        collectChildNodes(*current, currentChildren);
 
         RefPtr<StyledElement> styledElement;
         if (is<StyledElement>(*current) && isStyledInlineElementToRemove(downcast<Element>(current.get()))) {

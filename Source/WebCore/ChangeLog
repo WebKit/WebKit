@@ -1,3 +1,39 @@
+2022-03-17  Chris Dumez  <cdumez@apple.com>
+
+        Stop returning NodeVector from functions
+        https://bugs.webkit.org/show_bug.cgi?id=237988
+
+        Reviewed by Darin Adler.
+
+        Stop returning NodeVector from functions and use a out-parameter instead. While this doesn't look
+        as modern, this is actually more efficient. This is because NodeVector has a fairly large inline
+        buffer and is thus not that cheap to "move".
+
+        This was causing functions like `ContainerNode::parserAppendChild(Node&)` to spend unnecessary
+        time under:
+        `VectorBuffer<Ref<Node, RawPtrTraits<Node>>, 11, FastMalloc>::swap(VectorBuffer<Ref<Node, RawPtrTraits<Node>>, 11, FastMalloc>&, unsigned long, unsigned long)`
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeAllChildrenWithScriptAssertion):
+        (WebCore::executeNodeInsertionWithScriptAssertion):
+        (WebCore::ContainerNode::removeSelfOrChildNodesForInsertion):
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        (WebCore::ContainerNode::replaceAll):
+        (WebCore::ContainerNode::removeChildren):
+        (WebCore::ContainerNode::replaceChildren):
+        * dom/ContainerNode.h:
+        (WebCore::collectChildNodes):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::notifyChildNodeInserted):
+        * dom/ContainerNodeAlgorithms.h:
+        * dom/Element.cpp:
+        (WebCore::Element::addShadowRoot):
+        (WebCore::Element::insertAdjacentHTML):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode):
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::swapInNodePreservingAttributesAndChildren):
+
 2022-03-17  Ben Nham  <nham@apple.com>
 
         Only show notification permission prompt on user gesture

@@ -79,9 +79,10 @@ unsigned ScriptDisallowedScope::s_count = 0;
 ScriptDisallowedScope::EventAllowedScope* ScriptDisallowedScope::EventAllowedScope::s_currentScope = nullptr;
 #endif
 
-ALWAYS_INLINE NodeVector ContainerNode::removeAllChildrenWithScriptAssertion(ChildChange::Source source, DeferChildrenChanged deferChildrenChanged)
+ALWAYS_INLINE void ContainerNode::removeAllChildrenWithScriptAssertion(ChildChange::Source source, NodeVector& children, DeferChildrenChanged deferChildrenChanged)
 {
-    auto children = collectChildNodes(*this);
+    ASSERT(children.isEmpty());
+    collectChildNodes(*this, children);
 
     if (UNLIKELY(isDocumentFragmentForInnerOuterHTML())) {
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -90,7 +91,7 @@ ALWAYS_INLINE NodeVector ContainerNode::removeAllChildrenWithScriptAssertion(Chi
         while (RefPtr<Node> child = m_firstChild)
             removeBetween(nullptr, child->nextSibling(), *child);
         document().incDOMTreeVersion();
-        return children;
+        return;
     }
 
     if (source == ChildChange::Source::API) {
@@ -136,8 +137,6 @@ ALWAYS_INLINE NodeVector ContainerNode::removeAllChildrenWithScriptAssertion(Chi
 
     if (deferChildrenChanged == DeferChildrenChanged::No)
         childrenChanged(childChange);
-
-    return children;
 }
 
 static ContainerNode::ChildChange makeChildChangeForRemoval(Node& childToRemove, ContainerNode::ChildChange::Source source)
@@ -262,7 +261,7 @@ static ALWAYS_INLINE void executeNodeInsertionWithScriptAssertion(ContainerNode&
 
         doNodeInsertion();
         ChildListMutationScope(containerNode).childAdded(child);
-        postInsertionNotificationTargets = notifyChildNodeInserted(containerNode, child);
+        notifyChildNodeInserted(containerNode, child, postInsertionNotificationTargets);
     }
 
     // FIXME: Move childrenChanged into ScriptDisallowedScope block.
@@ -282,8 +281,8 @@ ExceptionOr<void> ContainerNode::removeSelfOrChildNodesForInsertion(Node& child,
         if (!fragment->hasChildNodes())
             return { };
 
-        auto removedChildNodes = fragment->removeAllChildrenWithScriptAssertion(ContainerNode::ChildChange::Source::API);
-        nodesForInsertion.swap(removedChildNodes);
+        ASSERT(nodesForInsertion.isEmpty());
+        fragment->removeAllChildrenWithScriptAssertion(ContainerNode::ChildChange::Source::API, nodesForInsertion);
 
         fragment->rebuildSVGExtensionsElementsIfNecessary();
         fragment->dispatchSubtreeModifiedEvent();
@@ -328,7 +327,8 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 {
     ASSERT(oldParent);
 
-    auto children = oldParent->removeAllChildrenWithScriptAssertion(ChildChange::Source::Parser);
+    NodeVector children;
+    oldParent->removeAllChildrenWithScriptAssertion(ChildChange::Source::Parser, children);
 
     // FIXME: assert that we don't dispatch events here since this container node is still disconnected.
     for (auto& child : children) {
@@ -710,7 +710,8 @@ void ContainerNode::replaceAll(Node* node)
 
     Ref<ContainerNode> protectedThis(*this);
     ChildListMutationScope mutation(*this);
-    removeAllChildrenWithScriptAssertion(ChildChange::Source::API, DeferChildrenChanged::Yes);
+    NodeVector removedChildren;
+    removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren, DeferChildrenChanged::Yes);
 
     executeNodeInsertionWithScriptAssertion(*this, *node, nullptr, ChildChange::Source::API, ReplacedAllChildren::Yes, [&] {
         InspectorInstrumentation::willInsertDOMNode(document(), *this);
@@ -742,7 +743,8 @@ void ContainerNode::removeChildren()
         return;
 
     Ref<ContainerNode> protectedThis(*this);
-    removeAllChildrenWithScriptAssertion(ChildChange::Source::API);
+    NodeVector removedChildren;
+    removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren);
 
     rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();
@@ -1026,7 +1028,8 @@ ExceptionOr<void> ContainerNode::replaceChildren(FixedVector<NodeOrString>&& vec
     // step 3
     Ref protectedThis { *this };
     ChildListMutationScope mutation(*this);
-    removeAllChildrenWithScriptAssertion(ChildChange::Source::API, DeferChildrenChanged::No);
+    NodeVector removedChildren;
+    removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren, DeferChildrenChanged::No);
 
     if (node) {
         if (auto appendResult = appendChildWithoutPreInsertionValidityCheck(*node); appendResult.hasException())

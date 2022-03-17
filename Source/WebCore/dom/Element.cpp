@@ -2458,11 +2458,9 @@ void Element::addShadowRoot(Ref<ShadowRoot>&& newShadowRoot)
         shadowRoot.setHost(*this);
         shadowRoot.setParentTreeScope(treeScope());
 
-#if ASSERT_ENABLED
-        ASSERT(notifyChildNodeInserted(*this, shadowRoot).isEmpty());
-#else
-        notifyChildNodeInserted(*this, shadowRoot);
-#endif
+        NodeVector postInsertionNotificationTargets;
+        notifyChildNodeInserted(*this, shadowRoot, postInsertionNotificationTargets);
+        ASSERT_UNUSED(postInsertionNotificationTargets, postInsertionNotificationTargets.isEmpty());
 
         InspectorInstrumentation::didPushShadowRoot(*this, shadowRoot);
 
@@ -4640,7 +4638,7 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
     if (UNLIKELY(addedNodes)) {
         // Must be called before insertAdjacent, as otherwise the children of fragment will be moved
         // to their new parent and will be harder to keep track of.
-        *addedNodes = collectChildNodes(fragment.returnValue());
+        collectChildNodes(fragment.returnValue(), *addedNodes);
     }
 
     // Step 4.

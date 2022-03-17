@@ -86,7 +86,9 @@ static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node
         notifyNodeInsertedIntoTree(parentOfInsertedTree, *root, TreeScopeChange::DidNotChange, postInsertionNotificationTargets);
 }
 
-NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node)
+// We intentionally use an out-parameter for postInsertionNotificationTargets instead of returning the vector. This is because
+// NodeVector has a large inline buffer and is thus not cheap to move.
+void notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node, NodeVector& postInsertionNotificationTargets)
 {
     ASSERT(ScriptDisallowedScope::InMainThread::hasDisallowedScope());
 
@@ -95,16 +97,12 @@ NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& no
     Ref<Document> protectDocument(node.document());
     Ref<Node> protectNode(node);
 
-    NodeVector postInsertionNotificationTargets;
-
     // Tree scope has changed if the container node into which "node" is inserted is in a document or a shadow root.
     auto treeScopeChange = parentOfInsertedTree.isInTreeScope() ? TreeScopeChange::Changed : TreeScopeChange::DidNotChange;
     if (parentOfInsertedTree.isConnected())
         notifyNodeInsertedIntoDocument(parentOfInsertedTree, node, treeScopeChange, postInsertionNotificationTargets);
     else
         notifyNodeInsertedIntoTree(parentOfInsertedTree, node, treeScopeChange, postInsertionNotificationTargets);
-
-    return postInsertionNotificationTargets;
 }
 
 inline RemovedSubtreeObservability observabilityOfRemovedNode(Node& node)
