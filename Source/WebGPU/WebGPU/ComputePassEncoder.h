@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
@@ -36,7 +37,7 @@ class Buffer;
 class ComputePipeline;
 class QuerySet;
 
-class ComputePassEncoder : public RefCounted<ComputePassEncoder> {
+class ComputePassEncoder : public RefCounted<ComputePassEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ComputePassEncoder> create(id<MTLComputeCommandEncoder> computeCommandEncoder)
@@ -61,7 +62,11 @@ public:
 private:
     ComputePassEncoder(id<MTLComputeCommandEncoder>);
 
+    bool validatePopDebugGroup() const;
+
     id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
+
+    uint64_t m_debugGroupStackSize { 0 };
 };
 
 } // namespace WebGPU

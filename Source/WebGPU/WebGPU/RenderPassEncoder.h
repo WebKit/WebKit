@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
@@ -38,7 +39,7 @@ class QuerySet;
 class RenderBundle;
 class RenderPipeline;
 
-class RenderPassEncoder : public RefCounted<RenderPassEncoder> {
+class RenderPassEncoder : public RefCounted<RenderPassEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder)
@@ -74,7 +75,11 @@ public:
 private:
     RenderPassEncoder(id<MTLRenderCommandEncoder>);
 
+    bool validatePopDebugGroup() const;
+
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
+
+    uint64_t m_debugGroupStackSize { 0 };
 };
 
 } // namespace WebGPU

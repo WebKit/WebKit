@@ -273,16 +273,62 @@ RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& 
 
 void CommandEncoder::insertDebugMarker(String&& markerLabel)
 {
-    UNUSED_PARAM(markerLabel);
+    // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-insertdebugmarker
+
+    // "Prepare the encoder state of this. If it returns false, stop."
+    if (!prepareTheEncoderState())
+        return;
+
+    finalizeBlitCommandEncoder();
+
+    // There's no direct way of doing this, so we just push/pop an empty debug group.
+    [m_commandBuffer pushDebugGroup:markerLabel];
+    [m_commandBuffer popDebugGroup];
+}
+
+bool CommandEncoder::validatePopDebugGroup() const
+{
+    // "this.[[debug_group_stack]] must not be empty."
+    if (!m_debugGroupStackSize)
+        return false;
+
+    return true;
 }
 
 void CommandEncoder::popDebugGroup()
 {
+    // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-popdebuggroup
+
+    // "Prepare the encoder state of this. If it returns false, stop."
+    if (!prepareTheEncoderState())
+        return;
+
+    // "If any of the following requirements are unmet"
+    if (!validatePopDebugGroup()) {
+        // FIXME: "make this invalid, and stop."
+        return;
+    }
+
+    finalizeBlitCommandEncoder();
+
+    // "Pop an entry off of this.[[debug_group_stack]]."
+    --m_debugGroupStackSize;
+    [m_commandBuffer popDebugGroup];
 }
 
 void CommandEncoder::pushDebugGroup(String&& groupLabel)
 {
-    UNUSED_PARAM(groupLabel);
+    // https://gpuweb.github.io/gpuweb/#dom-gpudebugcommandsmixin-pushdebuggroup
+
+    // "Prepare the encoder state of this. If it returns false, stop."
+    if (!prepareTheEncoderState())
+        return;
+    
+    finalizeBlitCommandEncoder();
+
+    // "Push groupLabel onto this.[[debug_group_stack]]."
+    ++m_debugGroupStackSize;
+    [m_commandBuffer pushDebugGroup:groupLabel];
 }
 
 void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQuery, uint32_t queryCount, const Buffer& destination, uint64_t destinationOffset)

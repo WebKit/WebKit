@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
@@ -37,7 +38,7 @@ class Buffer;
 class RenderBundle;
 class RenderPipeline;
 
-class RenderBundleEncoder : public RefCounted<RenderBundleEncoder> {
+class RenderBundleEncoder : public RefCounted<RenderBundleEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RenderBundleEncoder> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer)
@@ -64,7 +65,11 @@ public:
 private:
     RenderBundleEncoder(id<MTLIndirectCommandBuffer>);
 
+    bool validatePopDebugGroup() const;
+
     id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
+
+    uint64_t m_debugGroupStackSize { 0 };
 };
 
 } // namespace WebGPU

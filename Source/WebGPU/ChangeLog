@@ -1,5 +1,46 @@
 2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement first draft of debug commands according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=237879
+
+        Reviewed by Kimmo Kinnunen.
+
+        Implement insertDebugMarker(), pushDebugGroup(), and popDebugGroup() according to
+        the algorithms in the spec. There are a few things which the spec lists which we
+        can't do yet (like making objects invalid), so those things are left with FIXMEs.
+        Every step is listed with links to the spec where appropriate, and with quotes to
+        the spec describing what is being implemented. Also, because each class handles
+        these debug commands slightly differently (CommandEncoders support debug groups
+        but not debug markers; RenderBundles don't support any of them, and
+        ComputeEncoders support all of them) I opted to not try to do any code sharing.
+
+        * WebGPU/CommandEncoder.h:
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::insertDebugMarker):
+        (WebGPU::CommandEncoder::validatePopDebugGroup const):
+        (WebGPU::CommandEncoder::popDebugGroup):
+        (WebGPU::CommandEncoder::pushDebugGroup):
+        * WebGPU/ComputePassEncoder.h:
+        * WebGPU/ComputePassEncoder.mm:
+        (WebGPU::ComputePassEncoder::insertDebugMarker):
+        (WebGPU::ComputePassEncoder::validatePopDebugGroup const):
+        (WebGPU::ComputePassEncoder::popDebugGroup):
+        (WebGPU::ComputePassEncoder::pushDebugGroup):
+        * WebGPU/RenderBundleEncoder.h:
+        * WebGPU/RenderBundleEncoder.mm:
+        (WebGPU::RenderBundleEncoder::insertDebugMarker):
+        (WebGPU::RenderBundleEncoder::validatePopDebugGroup const):
+        (WebGPU::RenderBundleEncoder::popDebugGroup):
+        (WebGPU::RenderBundleEncoder::pushDebugGroup):
+        * WebGPU/RenderPassEncoder.h:
+        * WebGPU/RenderPassEncoder.mm:
+        (WebGPU::RenderPassEncoder::insertDebugMarker):
+        (WebGPU::RenderPassEncoder::validatePopDebugGroup const):
+        (WebGPU::RenderPassEncoder::popDebugGroup):
+        (WebGPU::RenderPassEncoder::pushDebugGroup):
+
+2022-03-16  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement first draft of CommandEncoder::clearBuffer() according to the spec
         https://bugs.webkit.org/show_bug.cgi?id=237877
 

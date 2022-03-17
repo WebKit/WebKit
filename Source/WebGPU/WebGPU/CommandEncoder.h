@@ -67,12 +67,15 @@ private:
     CommandEncoder(id<MTLCommandBuffer>);
 
     bool validateFinish() const;
+    bool validatePopDebugGroup() const;
 
     void ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
+
+    uint64_t m_debugGroupStackSize { 0 };
 };
 
 } // namespace WebGPU
