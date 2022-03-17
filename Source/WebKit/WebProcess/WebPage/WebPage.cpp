@@ -4096,6 +4096,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(NOTIFICATIONS)
         settings.setNotificationsEnabled(false);
 #endif
+#if ENABLE(SERVICE_WORKER)
+        settings.setPushAPIEnabled(false);
+#endif
 #if ENABLE(WEBXR)
         settings.setWebXREnabled(false);
         settings.setWebXRAugmentedRealityModuleEnabled(false);

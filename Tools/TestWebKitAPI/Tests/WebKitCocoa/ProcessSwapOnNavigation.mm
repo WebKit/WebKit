@@ -7832,6 +7832,9 @@ static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, Shoul
     EXPECT_EQ(runJSCheck("!!navigator.getUserMedia"_s), false); // Legacy GetUserMedia (currently always disabled).
     EXPECT_EQ(runJSCheck("!!window.MathMLElement"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // MathML.
     EXPECT_EQ(runJSCheck("!!window.MathMLMathElement"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // MathML.
+    EXPECT_EQ(runJSCheck("!!window.PushManager"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
+    EXPECT_EQ(runJSCheck("!!window.PushSubscription"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
+    EXPECT_EQ(runJSCheck("!!window.PushSubscriptionOptions"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes); // Push API.
     String mathMLCheck = makeString("document.createElementNS('http://www.w3.org/1998/Math/MathML','mspace').__proto__ == ", shouldBeEnabled == ShouldBeEnabled::Yes ? "MathMLElement" : "Element", ".prototype");
     EXPECT_EQ(runJSCheck(mathMLCheck), true); // MathML.
 }
@@ -7849,14 +7852,26 @@ static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, Shoul
 
 @end
 
+void configureCaptivePortalWKWebViewConfiguration(WKWebViewConfiguration *config)
+{
+    [config.preferences _setMediaDevicesEnabled:YES];
+    config.preferences._mediaCaptureRequiresSecureConnection = NO;
+    [config.preferences _setNotificationsEnabled:YES];
+
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        if ([feature.key isEqualToString:@"PushAPIEnabled"]) {
+            [config.preferences _setEnabled:YES forFeature:feature];
+        }
+    }
+}
+
 TEST(ProcessSwap, NavigatingToCaptivePortalMode)
 {
     auto messageHandler = adoptNS([[CaptivePortalMessageHandler alloc] init]);
 
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences._captivePortalModeEnabled);
-    [webViewConfiguration.get().preferences _setMediaDevicesEnabled:YES];
-    webViewConfiguration.get().preferences._mediaCaptureRequiresSecureConnection = NO;
+    configureCaptivePortalWKWebViewConfiguration(webViewConfiguration.get());
     [webViewConfiguration.get().userContentController addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
@@ -7986,9 +8001,8 @@ TEST(ProcessSwap, CannotDisableCaptivePortalModeWithoutBrowserEntitlement)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences._captivePortalModeEnabled);
+    configureCaptivePortalWKWebViewConfiguration(webViewConfiguration.get());
     [webViewConfiguration.get().defaultWebpagePreferences _setCaptivePortalModeEnabled:YES];
-    [webViewConfiguration.get().preferences _setMediaDevicesEnabled:YES];
-    webViewConfiguration.get().preferences._mediaCaptureRequiresSecureConnection = NO;
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
@@ -8031,9 +8045,8 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
 {
     auto webViewConfiguration = adoptNS([WKWebViewConfiguration new]);
     EXPECT_FALSE(webViewConfiguration.get().defaultWebpagePreferences._captivePortalModeEnabled);
+    configureCaptivePortalWKWebViewConfiguration(webViewConfiguration.get());
     [webViewConfiguration.get().defaultWebpagePreferences _setCaptivePortalModeEnabled:YES];
-    [webViewConfiguration.get().preferences _setMediaDevicesEnabled:YES];
-    webViewConfiguration.get().preferences._mediaCaptureRequiresSecureConnection = NO;
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
     auto delegate = adoptNS([TestNavigationDelegate new]);
@@ -8088,8 +8101,8 @@ TEST(ProcessSwap, CaptivePortalModeEnabledByDefaultThenOptOut)
 
     // captive portal mode should be disabled in new WebViews since it is not enabled globally.
     auto webViewConfiguration2 = adoptNS([WKWebViewConfiguration new]);
-    [webViewConfiguration2.get().preferences _setMediaDevicesEnabled:YES];
-    webViewConfiguration2.get().preferences._mediaCaptureRequiresSecureConnection = NO;
+    configureCaptivePortalWKWebViewConfiguration(webViewConfiguration2.get());
+    EXPECT_TRUE([webViewConfiguration2.get().defaultWebpagePreferences _captivePortalModeEnabled] == NO);
     auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration2.get()]);
     [webView2 setNavigationDelegate:delegate.get()];
     EXPECT_TRUE(isJITEnabled(webView2.get()));
