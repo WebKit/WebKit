@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ class SubmitToEWS(View):
             patch_id = request.POST.get('patch_id')
             patch_id = int(patch_id)
         except:
-            return HttpResponse("Invalid patch id {}".format(request.POST.get('patch_id')))
+            return HttpResponse('Invalid patch id provided, should be an integer.')
 
         _log.info('SubmitToEWS::patch: {}'.format(patch_id))
         if Patch.is_patch_sent_to_buildbot(patch_id):
