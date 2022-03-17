@@ -156,7 +156,8 @@ void HTMLModelElement::setSourceURL(const URL& url)
     auto resource = document().cachedResourceLoader().requestModelResource(WTFMove(request));
     if (!resource.has_value()) {
         queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        m_readyPromise->reject(Exception { NetworkError });
+        if (!m_readyPromise->isFulfilled())
+            m_readyPromise->reject(Exception { NetworkError });
         return;
     }
 
@@ -220,7 +221,8 @@ void HTMLModelElement::notifyFinished(CachedResource& resource, const NetworkLoa
 
         invalidateResourceHandleAndUpdateRenderer();
 
-        m_readyPromise->reject(Exception { NetworkError });
+        if (!m_readyPromise->isFulfilled())
+            m_readyPromise->reject(Exception { NetworkError });
         return;
     }
 
@@ -240,7 +242,8 @@ void HTMLModelElement::modelDidChange()
 {
     auto* page = document().page();
     if (!page) {
-        m_readyPromise->reject(Exception { AbortError });
+        if (!m_readyPromise->isFulfilled())
+            m_readyPromise->reject(Exception { AbortError });
         return;
     }
 
@@ -265,7 +268,8 @@ void HTMLModelElement::createModelPlayer()
     ASSERT(document().page());
     m_modelPlayer = document().page()->modelPlayerProvider().createModelPlayer(*this);
     if (!m_modelPlayer) {
-        m_readyPromise->reject(Exception { AbortError });
+        if (!m_readyPromise->isFulfilled())
+            m_readyPromise->reject(Exception { AbortError });
         return;
     }
 
@@ -307,7 +311,8 @@ void HTMLModelElement::didFinishLoading(ModelPlayer& modelPlayer)
 void HTMLModelElement::didFailLoading(ModelPlayer& modelPlayer, const ResourceError&)
 {
     ASSERT_UNUSED(modelPlayer, &modelPlayer == m_modelPlayer);
-    m_readyPromise->reject(Exception { AbortError });
+    if (!m_readyPromise->isFulfilled())
+        m_readyPromise->reject(Exception { AbortError });
 }
 
 GraphicsLayer::PlatformLayerID HTMLModelElement::platformLayerID()

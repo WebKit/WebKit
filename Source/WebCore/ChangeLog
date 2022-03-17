@@ -1,3 +1,24 @@
+2022-03-17  Antoine Quint  <graouts@webkit.org>
+
+        [model] some tests under model-element crash on Big Sur bots
+        https://bugs.webkit.org/show_bug.cgi?id=238011
+
+        Reviewed by Cameron McCormack.
+
+        The fix for bug 237894 added another place where we might reject the ready
+        failure, but we didn't check whether it had already been rejected before,
+        which would cause an assertion failure leading to a crash on debug builds.
+
+        We now consistently check whether the ready promise had already been
+        fulfilled before rejecting it.
+
+        * Modules/model-element/HTMLModelElement.cpp:
+        (WebCore::HTMLModelElement::setSourceURL):
+        (WebCore::HTMLModelElement::notifyFinished):
+        (WebCore::HTMLModelElement::modelDidChange):
+        (WebCore::HTMLModelElement::createModelPlayer):
+        (WebCore::HTMLModelElement::didFailLoading):
+
 2022-03-17  Nikolas Zimmermann  <nzimmermann@igalia.com>
 
         [Xcode] Build broken after r289139
