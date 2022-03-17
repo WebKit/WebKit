@@ -1,3 +1,17 @@
+2022-03-16  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] version values are incorrect, causing incorrect feature detection
+        https://bugs.webkit.org/show_bug.cgi?id=237989
+        <rdar://problem/90399356>
+
+        Reviewed by Tim Horton.
+
+        Version 13 should also be enabled for `ENABLE_APPLE_PAY_SELECTED_SHIPPING_METHOD`, and
+        `ENABLE_APPLE_PAY_PAYMENT_DETAILS_DATA` really corresponds to Version 14.
+
+        * Modules/applepay/cocoa/PaymentAPIVersionCocoa.mm:
+        (WebCore::PaymentAPIVersion::current):
+
 2022-03-16  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Minor AVVideoCaptureSource cleanup
