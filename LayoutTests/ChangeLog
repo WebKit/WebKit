@@ -1,3 +1,17 @@
+2022-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/text/emoji-num-glyphs.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=238055
+        <rdar://problem/88842010>
+
+        Unreviewed.
+
+        U+26F9 PERSON WITH BALL might have a non-emoji glyph. If it has one, and the OS prefers it over the
+        emoji glyph, then this test will fail. The solution is to use the emoji-style variation selector
+        to specifically request the emoji form.
+
+        * fast/text/emoji-num-glyphs.html:
+
 2022-03-17  Alex Christensen  <achristensen@webkit.org>
 
         PerformanceNavigationTiming Response Start unavailable when using Service Worker Cache
