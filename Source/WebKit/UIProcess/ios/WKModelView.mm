@@ -68,37 +68,13 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
 
 - (instancetype)initWithModel:(WebCore::Model&)model
 {
-    self = [super initWithFrame:CGRectZero];
+    _lastBounds = CGRectZero;
+    self = [super initWithFrame:_lastBounds];
     if (!self)
         return nil;
 
-    if (![self createFileForModel:model])
-        return self;
-
-    _preview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:self.bounds]);
-    [self.layer addSublayer:[_preview layer]];
-
-    auto url = adoptNS([[NSURL alloc] initFileURLWithPath:_filePath]);
-
-    [_preview setupRemoteConnectionWithCompletionHandler:^(NSError *contextError) {
-        if (contextError) {
-            LOG(ModelElement, "Unable to create remote connection, error: %@", [contextError localizedDescription]);
-            return;
-        }
-
-        [_preview preparePreviewOfFileAtURL:url.get() completionHandler:^(NSError *loadError) {
-            if (loadError) {
-                LOG(ModelElement, "Unable to load file, error: %@", [loadError localizedDescription]);
-                return;
-            }
-
-            LOG(ModelElement, "File loaded successfully.");
-            [self updateBounds];
-        }];
-    }];
-
-    _modelInteractionGestureRecognizer = adoptNS([[WKModelInteractionGestureRecognizer alloc] init]);
-    [self addGestureRecognizer:_modelInteractionGestureRecognizer.get()];
+    [self createFileForModel:model];
+    [self updateBounds];
 
     return self;
 }
@@ -134,11 +110,43 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
     return YES;
 }
 
+- (void)createPreview
+{
+    if (!_filePath)
+        return;
+
+    auto bounds = self.bounds;
+    ASSERT(!CGRectEqualToRect(bounds, CGRectZero));
+
+    _preview = adoptNS([allocASVInlinePreviewInstance() initWithFrame:bounds]);
+    [self.layer addSublayer:[_preview layer]];
+
+    auto url = adoptNS([[NSURL alloc] initFileURLWithPath:_filePath]);
+
+    [_preview setupRemoteConnectionWithCompletionHandler:^(NSError *contextError) {
+        if (contextError) {
+            LOG(ModelElement, "Unable to create remote connection, error: %@", [contextError localizedDescription]);
+            return;
+        }
+
+        [_preview preparePreviewOfFileAtURL:url.get() completionHandler:^(NSError *loadError) {
+            if (loadError) {
+                LOG(ModelElement, "Unable to load file, error: %@", [loadError localizedDescription]);
+                return;
+            }
+
+            LOG(ModelElement, "File loaded successfully.");
+        }];
+    }];
+
+    _modelInteractionGestureRecognizer = adoptNS([[WKModelInteractionGestureRecognizer alloc] init]);
+    [self addGestureRecognizer:_modelInteractionGestureRecognizer.get()];
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    if (!CGRectEqualToRect(_lastBounds, CGRectZero))
-        [self updateBounds];
+    [self updateBounds];
 }
 
 - (void)updateBounds
@@ -148,6 +156,11 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
         return;
 
     _lastBounds = bounds;
+
+    if (!_preview) {
+        [self createPreview];
+        return;
+    }
 
     [_preview updateFrame:bounds completionHandler:^(CAFenceHandle *fenceHandle, NSError *error) {
         if (error) {
