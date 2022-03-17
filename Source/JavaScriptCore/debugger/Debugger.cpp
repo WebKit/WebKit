@@ -887,7 +887,7 @@ void Debugger::pauseIfNeeded(JSGlobalObject* globalObject)
     if (m_pauseAtNextOpportunity) {
         pauseNow = true;
         didPauseForStep = !afterBlackboxedScript;
-    } else if (m_pauseOnStepNext || m_pauseOnStepOut || (m_pauseOnCallFrame == m_currentCallFrame)) {
+    } else if (m_pauseOnCallFrame == m_currentCallFrame) {
         pauseNow = true;
         didPauseForStep = true;
     }

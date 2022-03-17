@@ -1,3 +1,21 @@
+2022-03-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(r290720): Debugger: Step next should not behave the same as Step into
+        https://bugs.webkit.org/show_bug.cgi?id=237936
+
+        Reviewed by Joseph Pecoraro.
+
+        Covered by existing tests (not sure why they don't fail on EWS, but they fail locally).
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        Checking that the desired `CallFrame` matches the current `CallFrame` is enough to determine
+        whether the `Debugger` should pause for Step next and Step out, as both of those actions set
+        a desired `CallFrame`. We explicitly do not want to check for the `bool` flags that indicate
+        those actions because they have different behaviors regarding the current `CallFrame` (the
+        former desires the same `CallFrame` and the latter desires the parent `CallFrame`). This
+        patch partially reverts r290720.
+
 2022-03-16  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         MacroAssemblerARMv7: Be friendlier to DisallowMacroScratchRegisterUsage
