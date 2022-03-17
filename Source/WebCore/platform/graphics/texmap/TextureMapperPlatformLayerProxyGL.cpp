@@ -54,7 +54,7 @@ TextureMapperPlatformLayerProxyGL::~TextureMapperPlatformLayerProxyGL()
 
 void TextureMapperPlatformLayerProxyGL::activateOnCompositingThread(Compositor* compositor, TextureMapperLayer* targetLayer)
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     if (!m_compositorThread)
         m_compositorThread = &Thread::current();
 #endif
@@ -87,13 +87,13 @@ void TextureMapperPlatformLayerProxyGL::activateOnCompositingThread(Compositor* 
 void TextureMapperPlatformLayerProxyGL::invalidate()
 {
     ASSERT(m_compositorThread == &Thread::current());
+#if ASSERT_ENABLED
+    m_compositorThread = nullptr;
+#endif
     Function<void()> updateFunction;
     {
         Locker locker { m_lock };
         m_compositor = nullptr;
-#ifndef NDEBUG
-        m_compositorThread = nullptr;
-#endif
         m_targetLayer = nullptr;
 
         m_currentBuffer = nullptr;

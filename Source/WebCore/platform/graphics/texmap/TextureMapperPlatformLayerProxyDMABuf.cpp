@@ -95,7 +95,7 @@ TextureMapperPlatformLayerProxyDMABuf::~TextureMapperPlatformLayerProxyDMABuf() 
 
 void TextureMapperPlatformLayerProxyDMABuf::activateOnCompositingThread(Compositor* compositor, TextureMapperLayer* targetLayer)
 {
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     if (!m_compositorThread)
         m_compositorThread = &Thread::current();
 #endif
@@ -113,7 +113,7 @@ void TextureMapperPlatformLayerProxyDMABuf::activateOnCompositingThread(Composit
 void TextureMapperPlatformLayerProxyDMABuf::invalidate()
 {
     ASSERT(m_compositorThread == &Thread::current());
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     m_compositorThread = nullptr;
 #endif
 

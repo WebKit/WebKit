@@ -93,7 +93,7 @@ public:
 private:
     void pushDMABuf(Ref<DMABufLayer>&&);
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     RefPtr<Thread> m_compositorThread;
 #endif
 

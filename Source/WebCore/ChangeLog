@@ -1,3 +1,22 @@
+2022-03-17  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] m_compositorThread ASSERT in TextureMapper classes can just be used in debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=238020
+
+        Reviewed by Michael Catanzaro.
+
+        This is a build fix for the case where someone compiles release
+        with asserts activated.
+
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.cpp:
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::activateOnCompositingThread):
+        (WebCore::TextureMapperPlatformLayerProxyDMABuf::invalidate):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyDMABuf.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.cpp:
+        (WebCore::TextureMapperPlatformLayerProxyGL::activateOnCompositingThread):
+        (WebCore::TextureMapperPlatformLayerProxyGL::invalidate):
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.h:
+
 2022-03-17  Alex Christensen  <achristensen@webkit.org>
 
         PerformanceNavigationTiming Response Start unavailable when using Service Worker Cache

@@ -75,7 +75,7 @@ private:
     Vector<std::unique_ptr<TextureMapperPlatformLayerBuffer>> m_usedBuffers;
     std::unique_ptr<RunLoop::Timer<TextureMapperPlatformLayerProxyGL>> m_releaseUnusedBuffersTimer;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     RefPtr<Thread> m_compositorThread;
 #endif
 
