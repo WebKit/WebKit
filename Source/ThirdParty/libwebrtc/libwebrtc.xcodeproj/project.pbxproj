@@ -2915,15 +2915,6 @@
 		5C6024971E4950A50088F0B2 /* sctp6_usrreq.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B431E42CA00002651C8 /* sctp6_usrreq.c */; };
 		5C6024981E4950A50088F0B2 /* sctp6_var.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B4B441E42CA00002651C8 /* sctp6_var.h */; };
 		5C6024991E4951610088F0B2 /* sctp_pcb.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4B041E42C9EF002651C8 /* sctp_pcb.c */; };
-		5C63F8D91E416D53002CA531 /* assertions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F8D01E416D53002CA531 /* assertions.h */; };
-		5C63F8DA1E416D53002CA531 /* autolink.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F8D11E416D53002CA531 /* autolink.h */; };
-		5C63F8DB1E416D53002CA531 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F8D21E416D53002CA531 /* config.h */; };
-		5C63F8DC1E416D53002CA531 /* features.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F8D31E416D53002CA531 /* features.h */; };
-		5C63F8DD1E416D53002CA531 /* forwards.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F8D41E416D53002CA531 /* forwards.h */; };
-		5C63F8DE1E416D53002CA531 /* json.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F8D51E416D53002CA531 /* json.h */; };
-		5C63F8DF1E416D53002CA531 /* reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F8D61E416D53002CA531 /* reader.h */; };
-		5C63F8E01E416D53002CA531 /* value.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F8D71E416D53002CA531 /* value.h */; };
-		5C63F8E11E416D53002CA531 /* writer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C63F8D81E416D53002CA531 /* writer.h */; };
 		5CD284671E6A57F40094FDC8 /* i420_buffer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CD284611E6A57F40094FDC8 /* i420_buffer.cc */; };
 		5CD284681E6A57F40094FDC8 /* i420_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD284621E6A57F40094FDC8 /* i420_buffer.h */; };
 		5CD284691E6A57F40094FDC8 /* video_frame_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD284631E6A57F40094FDC8 /* video_frame_buffer.h */; };
@@ -7287,15 +7278,6 @@
 		5C4B4D591E4323D4002651C8 /* scale.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scale.cc; path = source/scale.cc; sourceTree = "<group>"; };
 		5C4B4D5A1E4323D4002651C8 /* video_common.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = video_common.cc; path = source/video_common.cc; sourceTree = "<group>"; };
 		5C5F408F1E978FD200D94279 /* SigProc_FIX_sse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SigProc_FIX_sse.h; path = silk/x86/SigProc_FIX_sse.h; sourceTree = "<group>"; };
-		5C63F8D01E416D53002CA531 /* assertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = assertions.h; path = json/assertions.h; sourceTree = "<group>"; };
-		5C63F8D11E416D53002CA531 /* autolink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = autolink.h; path = json/autolink.h; sourceTree = "<group>"; };
-		5C63F8D21E416D53002CA531 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = json/config.h; sourceTree = "<group>"; };
-		5C63F8D31E416D53002CA531 /* features.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = features.h; path = json/features.h; sourceTree = "<group>"; };
-		5C63F8D41E416D53002CA531 /* forwards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = forwards.h; path = json/forwards.h; sourceTree = "<group>"; };
-		5C63F8D51E416D53002CA531 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = json.h; path = json/json.h; sourceTree = "<group>"; };
-		5C63F8D61E416D53002CA531 /* reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reader.h; path = json/reader.h; sourceTree = "<group>"; };
-		5C63F8D71E416D53002CA531 /* value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = value.h; path = json/value.h; sourceTree = "<group>"; };
-		5C63F8D81E416D53002CA531 /* writer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = writer.h; path = json/writer.h; sourceTree = "<group>"; };
 		5C63FC601E418411002CA531 /* libboringssl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libboringssl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C85C4CA1E5780DD00D097B1 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		5CD284611E6A57F40094FDC8 /* i420_buffer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = i420_buffer.cc; sourceTree = "<group>"; };
@@ -12857,7 +12839,6 @@
 			children = (
 				413AD19E21265ACB003F7263 /* abseil-cpp */,
 				5C63FC631E4184C0002CA531 /* boringssl */,
-				5C63F8CC1E416CEB002CA531 /* jsoncpp */,
 				5CDD90841E43D30300621E92 /* libsrtp */,
 				4105EB64212E018C008C0C20 /* libvpx */,
 				CDEBB11F24C0191800ADBD44 /* libwebm */,
@@ -12869,46 +12850,6 @@
 				41F773FE215BE33300E72967 /* yasm */,
 			);
 			path = third_party;
-			sourceTree = "<group>";
-		};
-		5C63F8CC1E416CEB002CA531 /* jsoncpp */ = {
-			isa = PBXGroup;
-			children = (
-				5C63F8CD1E416D0C002CA531 /* source */,
-			);
-			path = jsoncpp;
-			sourceTree = "<group>";
-		};
-		5C63F8CD1E416D0C002CA531 /* source */ = {
-			isa = PBXGroup;
-			children = (
-				5C63F8CE1E416D1C002CA531 /* include */,
-			);
-			path = source;
-			sourceTree = "<group>";
-		};
-		5C63F8CE1E416D1C002CA531 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				5C63F8CF1E416D46002CA531 /* json */,
-			);
-			path = include;
-			sourceTree = "<group>";
-		};
-		5C63F8CF1E416D46002CA531 /* json */ = {
-			isa = PBXGroup;
-			children = (
-				5C63F8D01E416D53002CA531 /* assertions.h */,
-				5C63F8D11E416D53002CA531 /* autolink.h */,
-				5C63F8D21E416D53002CA531 /* config.h */,
-				5C63F8D31E416D53002CA531 /* features.h */,
-				5C63F8D41E416D53002CA531 /* forwards.h */,
-				5C63F8D51E416D53002CA531 /* json.h */,
-				5C63F8D61E416D53002CA531 /* reader.h */,
-				5C63F8D71E416D53002CA531 /* value.h */,
-				5C63F8D81E416D53002CA531 /* writer.h */,
-			);
-			name = json;
 			sourceTree = "<group>";
 		};
 		5C63F8E21E41732B002CA531 /* api */ = {
@@ -15861,7 +15802,6 @@
 				4131C052234B898D0028A615 /* arraysize.h in Headers */,
 				41FCBB7921B1FFC000A5DF27 /* ascii.h in Headers */,
 				41F263B1212680A800274F59 /* asm_defines.h in Headers */,
-				5C63F8D91E416D53002CA531 /* assertions.h in Headers */,
 				41323A5B2665294D00B38623 /* scalability_structure_full_svc.h in Headers */,
 				4131C026234B898D0028A615 /* async_invoker.h in Headers */,
 				4131C04B234B898D0028A615 /* async_invoker_inl.h in Headers */,
@@ -15968,7 +15908,6 @@
 				5CDD8A051E43BFB300621E92 /* audio_vector.h in Headers */,
 				5C0885291E4A99D200403995 /* auth.h in Headers */,
 				4131C406234C7B7E0028A615 /* auto_correlation.h in Headers */,
-				5C63F8DA1E416D53002CA531 /* autolink.h in Headers */,
 				5CDD8A081E43BFB300621E92 /* background_noise.h in Headers */,
 				41A08BC7212695DE001D5D7B /* bad_optional_access.h in Headers */,
 				419241822127497100634FCF /* bad_variant_access.h in Headers */,
@@ -16063,7 +16002,6 @@
 				5CDD89451E43BF3A00621E92 /* compound_packet.h in Headers */,
 				415F1FAB21272FBA00064CBF /* compute_interpolated_gain_curve.h in Headers */,
 				415F88B9273963260047AD64 /* clipping_predictor.h in Headers */,
-				5C63F8DB1E416D53002CA531 /* config.h in Headers */,
 				41FCBB4021B1FDB800A5DF27 /* congestion_window_pushback_controller.h in Headers */,
 				4131C1CF234B8A4B0028A615 /* connection.h in Headers */,
 				4131C1E9234B8A4B0028A615 /* connection_info.h in Headers */,
@@ -16208,7 +16146,6 @@
 				4131C1DB234B8A4B0028A615 /* fake_port_allocator.h in Headers */,
 				4131C020234B898D0028A615 /* fake_ssl_identity.h in Headers */,
 				4189398B242A7252007FDC41 /* fast_math.h in Headers */,
-				5C63F8DC1E416D53002CA531 /* features.h in Headers */,
 				4192413B2127372400634FCF /* features_extraction.h in Headers */,
 				4131C30B234B8DC20028A615 /* fec_controller.h in Headers */,
 				41E02C8C212734B900C27CD6 /* fec_controller_default.h in Headers */,
@@ -16257,7 +16194,6 @@
 				4131C01F234B898D0028A615 /* format_macros.h in Headers */,
 				5CDD88891E43BE3C00621E92 /* forward_error_correction.h in Headers */,
 				5CDD88871E43BE3C00621E92 /* forward_error_correction_internal.h in Headers */,
-				5C63F8DD1E416D53002CA531 /* forwards.h in Headers */,
 				5CD285CA1E6A63430094FDC8 /* frame_blocker.h in Headers */,
 				41323AA026652F1700B38623 /* rtp_frame_id_only_ref_finder.h in Headers */,
 				5CDD83D01E439A6F00621E92 /* frame_buffer.h in Headers */,
@@ -16357,7 +16293,6 @@
 				4131C31F234B8DC20028A615 /* jsep_session_description.h in Headers */,
 				4131BF34234B88200028A615 /* jsep_transport.h in Headers */,
 				4131BF28234B88200028A615 /* jsep_transport_controller.h in Headers */,
-				5C63F8DE1E416D53002CA531 /* json.h in Headers */,
 				5C0885301E4A99D200403995 /* key.h in Headers */,
 				5CDD84201E439B2900621E92 /* legacy_encoded_audio_frame.h in Headers */,
 				415F888C273961710047AD64 /* capture_clock_offset_updater.h in Headers */,
@@ -16598,7 +16533,6 @@
 				41A08BCB2126961F001D5D7B /* raw_logging.h in Headers */,
 				5C0885331E4A99D200403995 /* rdb.h in Headers */,
 				5C0885341E4A99D200403995 /* rdbx.h in Headers */,
-				5C63F8DF1E416D53002CA531 /* reader.h in Headers */,
 				5C4B4C781E431F9C002651C8 /* real_fourier.h in Headers */,
 				5C4B4C731E431F9C002651C8 /* real_fourier_ooura.h in Headers */,
 				419C83CA1FE247B40040C30F /* receive_statistics.h in Headers */,
@@ -17098,7 +17032,6 @@
 				41323A1A2665283800B38623 /* libvpx_interface.h in Headers */,
 				415F1FB621272FBA00064CBF /* vad_with_level.h in Headers */,
 				41323A7F26652C4C00B38623 /* audio_samples_scaler.h in Headers */,
-				5C63F8E01E416D53002CA531 /* value.h in Headers */,
 				415F1FB721272FBA00064CBF /* vector_float_frame.h in Headers */,
 				41893A09242A753C007FDC41 /* vector_math.h in Headers */,
 				412FF9AE254B3EFB001DF036 /* video_adaptation_counters.h in Headers */,
@@ -17215,7 +17148,6 @@
 				5C4B4C871E431F9C002651C8 /* window_generator.h in Headers */,
 				5CDD8C991E43C66000621E92 /* wpd_node.h in Headers */,
 				5CDD8C9C1E43C66000621E92 /* wpd_tree.h in Headers */,
-				5C63F8E11E416D53002CA531 /* writer.h in Headers */,
 				412FFA16254B40E1001DF036 /* yield.h in Headers */,
 				4131C4FD234C86CB0028A615 /* yield_policy.h in Headers */,
 				4131C12A234B89E20028A615 /* zero_memory.h in Headers */,
