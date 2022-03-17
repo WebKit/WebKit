@@ -34,14 +34,32 @@
 #include "FloatSize.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
+#include "StyleBuilderState.h"
 
 namespace WebCore {
 
+CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, const Style::BuilderContext& builderContext)
+    : m_style(&style)
+    , m_rootStyle(builderContext.rootElementStyle)
+    , m_parentStyle(&builderContext.parentStyle)
+    , m_renderView(builderContext.document->renderView())
+    , m_viewportDependencyDetectionStyle(const_cast<RenderStyle*>(m_style))
+{
+}
+
+CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView)
+    : m_style(&style)
+    , m_rootStyle(rootStyle)
+    , m_parentStyle(parentStyle)
+    , m_renderView(renderView)
+    , m_zoom(1.f)
+    , m_viewportDependencyDetectionStyle(const_cast<RenderStyle*>(m_style))
+{
+}
+
 float CSSToLengthConversionData::zoom() const
 {
-    if (!m_zoom)
-        return m_style ? m_style->effectiveZoom() : 1;
-    return *m_zoom;
+    return m_zoom.value_or(m_style ? m_style->effectiveZoom() : 1.f);
 }
 
 FloatSize CSSToLengthConversionData::defaultViewportFactor() const

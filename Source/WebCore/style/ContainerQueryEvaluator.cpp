@@ -74,7 +74,7 @@ auto ContainerQueryEvaluator::selectContainer(const FilteredContainerQuery& filt
         auto& view = renderer->view();
         return {
             renderer,
-            CSSToLengthConversionData { &renderer->style(), &view.style(), nullptr, &view, 1 }
+            CSSToLengthConversionData { renderer->style(), &view.style(), nullptr, &view }
         };
     };
 

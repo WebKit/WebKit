@@ -250,12 +250,12 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
 inline Length BuilderCustom::mmLength(double mm)
 {
     Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(mm, CSSUnitType::CSS_MM));
-    return value.get().computeLength<Length>(CSSToLengthConversionData());
+    return value.get().computeLength<Length>({ });
 }
 inline Length BuilderCustom::inchLength(double inch)
 {
     Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(inch, CSSUnitType::CSS_IN));
-    return value.get().computeLength<Length>(CSSToLengthConversionData());
+    return value.get().computeLength<Length>({ });
 }
 bool BuilderCustom::getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
 {
@@ -1834,13 +1834,13 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
     } else {
         fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize || !(primitiveValue.isPercentage() || primitiveValue.isFontRelativeLength()));
         if (primitiveValue.isLength()) {
-            CSSToLengthConversionData conversionData { &builderState.parentStyle(), builderState.rootElementStyle(), &builderState.parentStyle(), builderState.document().renderView(), 1.0f, CSSPropertyFontSize, &builderState.style() };
+            // font-size is resolved against the parent style instead of the current style.
+            auto conversionData = builderState.cssToLengthConversionData().copyForFontSizeWithParentStyle();
             size = primitiveValue.computeLength<float>(conversionData);
         } else if (primitiveValue.isPercentage())
             size = (primitiveValue.floatValue() * parentSize) / 100.0f;
         else if (primitiveValue.isCalculatedPercentageWithLength()) {
-            // FIXME: Why does this need a different root style than the isLength case above?
-            CSSToLengthConversionData conversionData { &builderState.parentStyle(), builderState.cssToLengthConversionData().rootStyle(), &builderState.parentStyle(), builderState.document().renderView(), 1.0f, CSSPropertyFontSize, &builderState.style() };
+            auto conversionData = builderState.cssToLengthConversionData().copyForFontSizeWithParentStyle();
             size = primitiveValue.cssCalcValue()->createCalculationValue(conversionData)->evaluate(parentSize);
         } else
             return;

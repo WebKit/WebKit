@@ -125,7 +125,7 @@ std::optional<Style::ElementStyle> TextControlInnerElement::resolveCustomStyle(c
         // style to calculate em lengths. Since the element might not be in a document, just pass nullptr
         // for the root element style, the parent element style, and the render view.
         auto emSize = CSSPrimitiveValue::create(1, CSSUnitType::CSS_EMS);
-        int pixels = emSize->computeLength<int>(CSSToLengthConversionData { newStyle.get(), nullptr, nullptr, nullptr, 1.0, std::nullopt });
+        int pixels = emSize->computeLength<int>(CSSToLengthConversionData { *newStyle, nullptr, nullptr, nullptr });
         newStyle->setFlexBasis(Length { pixels, LengthType::Fixed });
     }
 

@@ -1565,7 +1565,7 @@ inline std::optional<Length> BuilderConverter::convertLineHeight(BuilderState& b
         return RenderStyle::initialLineHeight();
 
     if (primitiveValue.isLength()) {
-        auto conversionData = builderState.cssToLengthConversionData().copyWithAdjustedZoomAndPropertyToCompute(zoomWithTextZoomFactor(builderState), CSSPropertyLineHeight);
+        auto conversionData = builderState.cssToLengthConversionData().copyForLineHeight(zoomWithTextZoomFactor(builderState));
         Length length = primitiveValue.computeLength<Length>(conversionData);
         if (multiplier != 1.f)
             length = Length(length.value() * multiplier, LengthType::Fixed);

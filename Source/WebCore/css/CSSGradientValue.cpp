@@ -884,7 +884,7 @@ Ref<Gradient> CSSLinearGradientValue::createGradient(RenderElement& renderer, co
     if (auto* documentElement = renderer.document().documentElement())
         rootStyle = documentElement->renderStyle();
 
-    CSSToLengthConversionData conversionData(&renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
+    CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
 
     FloatPoint firstPoint;
     FloatPoint secondPoint;
@@ -1142,7 +1142,7 @@ Ref<Gradient> CSSRadialGradientValue::createGradient(RenderElement& renderer, co
     if (auto* documentElement = renderer.document().documentElement())
         rootStyle = documentElement->renderStyle();
 
-    CSSToLengthConversionData conversionData(&renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
+    CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
 
     FloatPoint firstPoint = computeEndPoint(firstX(), firstY(), conversionData, size);
     if (!firstX())
@@ -1335,7 +1335,7 @@ Ref<Gradient> CSSConicGradientValue::createGradient(RenderElement& renderer, con
     if (auto* documentElement = renderer.document().documentElement())
         rootStyle = documentElement->renderStyle();
 
-    CSSToLengthConversionData conversionData(&renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
+    CSSToLengthConversionData conversionData(renderer.style(), rootStyle, renderer.parentStyle(), &renderer.view());
 
     FloatPoint centerPoint = computeEndPoint(firstX(), firstY(), conversionData, size);
     if (!firstX())

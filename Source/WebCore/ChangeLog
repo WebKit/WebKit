@@ -1,3 +1,58 @@
+2022-03-17  Antti Koivisto  <antti@apple.com>
+
+        Pass style builder context to CSSToLengthConversionData
+        https://bugs.webkit.org/show_bug.cgi?id=237963
+
+        Reviewed by Antoine Quint.
+
+        This is preparation for resolving container units.
+
+        Also general cleanups to CSSToLengthConversionData.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSLinearGradientValue::createGradient):
+        (WebCore::CSSRadialGradientValue::createGradient):
+        (WebCore::CSSConicGradientValue::createGradient):
+        * css/CSSToLengthConversionData.cpp:
+        (WebCore::CSSToLengthConversionData::CSSToLengthConversionData):
+        (WebCore::CSSToLengthConversionData::zoom const): Deleted.
+        * css/CSSToLengthConversionData.h:
+        (WebCore::CSSToLengthConversionData::zoom const):
+        (WebCore::CSSToLengthConversionData::copyForFontSizeWithParentStyle const):
+        (WebCore::CSSToLengthConversionData::copyWithAdjustedZoom const):
+        (WebCore::CSSToLengthConversionData::copyForLineHeight const):
+        (WebCore::CSSToLengthConversionData::CSSToLengthConversionData): Deleted.
+        (WebCore::CSSToLengthConversionData::copyWithAdjustedZoomAndPropertyToCompute const): Deleted.
+        * css/DOMMatrixReadOnly.cpp:
+        (WebCore::DOMMatrixReadOnly::parseStringIntoAbstractMatrix):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::evaluate const):
+        * css/parser/SizesAttributeParser.cpp:
+        (WebCore::SizesAttributeParser::computeLength):
+        (WebCore::SizesAttributeParser::effectiveSizeDefaultValue):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::resolveCustomStyle):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::popupInternalPaddingBox const):
+        (WebCore::applyCommonButtonPaddingToStyle):
+
+        Setting the zoom to a weird value here does nothing, ems unit resolution ignores it.
+        Just don't do it.
+
+        (WebCore::RenderThemeIOS::adjustButtonStyle const):
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh):
+        (WebCore::RenderThemeIOS::adjustSearchFieldDecorationPartStyle const):
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::selectContainer const):
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertLineHeight):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::mmLength):
+        (WebCore::Style::BuilderCustom::inchLength):
+        (WebCore::Style::BuilderCustom::applyValueFontSize):
+        * style/StyleBuilderState.cpp:
+        (WebCore::Style::BuilderState::BuilderState):
+
 2022-03-17  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, non-unified build fix after r291390

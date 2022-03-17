@@ -946,7 +946,7 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
     defaultStyle.fontCascade().update();
     
     // Pass `nullptr` for `parentStyle` because we are in the context of a media query.
-    return function(expression.value(), { m_style, &defaultStyle, nullptr, document.renderView(), 1, std::nullopt }, *frame, NoPrefix);
+    return function(expression.value(), { *m_style, &defaultStyle, nullptr, document.renderView() }, *frame, NoPrefix);
 }
 
 bool MediaQueryEvaluator::mediaAttributeMatches(Document& document, const String& attributeValue)
