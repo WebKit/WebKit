@@ -383,9 +383,18 @@ if (USE_OPENGL_OR_ES)
     SET_AND_EXPOSE_TO_BUILD(USE_ANGLE ${USE_ANGLE_WEBGL})
 
     if (USE_ANGLE_WEBGL)
+        # ANGLE-backed WebGL depends on DMABuf support, which at the moment is leveraged
+        # through libgbm and libdrm dependencies. USE_LIBGBM and USE_TEXTURE_MAPPER_DMABUF
+        # also have to be defined in that case.
+        # TODO: There should be a more generic configuration option on which USE_ANGLE_WEBGL
+        # should depend. These dependencies and defines would be applied when that option
+        # is enabled.
+
         find_package(GBM REQUIRED)
         find_package(LibDRM REQUIRED)
+
         SET_AND_EXPOSE_TO_BUILD(USE_LIBGBM TRUE)
+        SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF TRUE)
     endif ()
 endif ()
 

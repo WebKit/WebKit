@@ -1,5 +1,25 @@
 2022-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK][WPE] Also enable USE_TEXTURE_MAPPER_DMABUF alongside other DMABuf-related defines
+        https://bugs.webkit.org/show_bug.cgi?id=238017
+
+        Reviewed by Alejandro G. Castro.
+
+        For the GTK port, define USE_TEXTURE_MAPPER_DMABUF alongside the
+        dependencies and defines for DMABuf-backed ANGLE integration. This will
+        enable usage of the DMABuf-based video sink in any GStreamer pipeline
+        and subsequently display of the provided DMABuf objects. A comment is
+        added to explain this should be covered by a separate configuration
+        option on which USE_ANGLE_WEBGL should then depend.
+
+        For the WPE port the define is also added but without conditions, just
+        like it's done for the dependencies and the USE_LIBGBM define.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2022-03-17  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK][WPE] Guard libgbm and libdrm code, make them conditional dependencies for GTK
         https://bugs.webkit.org/show_bug.cgi?id=237974
 
