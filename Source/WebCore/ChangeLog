@@ -1,3 +1,16 @@
+2022-03-17  Chris Dumez  <cdumez@apple.com>
+
+        Microsoft Teams fails to launch from Safari
+        https://bugs.webkit.org/show_bug.cgi?id=238045
+        <rdar://90434296>
+
+        Reviewed by Geoffrey Garen.
+
+        Extend MS Teams quirk to teams.microsoft.com, not just teams.live.com.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture):
+
 2022-03-17  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] m_compositorThread ASSERT in TextureMapper classes can just be used in debug mode
