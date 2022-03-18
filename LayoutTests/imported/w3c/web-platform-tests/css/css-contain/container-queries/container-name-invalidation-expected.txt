@@ -1,5 +1,5 @@
 Test
 
 PASS Changing a named container invalidates relevant descendants
-FAIL Changing container-name invalidates relevant descendants assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
+PASS Changing container-name invalidates relevant descendants
 

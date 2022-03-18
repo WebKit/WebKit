@@ -63,7 +63,7 @@ private:
     void resolveComposedTree();
 
     enum class QueryContainerAction : uint8_t { None, Continue, Layout };
-    QueryContainerAction updateQueryContainer(Element&, const RenderStyle&);
+    QueryContainerAction updateQueryContainer(Element&, const RenderStyle&, ContainerType previousContainerType);
 
     enum class DescendantsToResolve : uint8_t { None, ChildrenWithExplicitInherit, Children, All };
     std::pair<ElementUpdate, DescendantsToResolve> resolveElement(Element&);
@@ -127,7 +127,6 @@ private:
     bool m_didSeePendingStylesheet { false };
 
     HashSet<RefPtr<Element>> m_unresolvedQueryContainers;
-    HashSet<RefPtr<Element>> m_resolvedQueryContainers;
 
     std::unique_ptr<Update> m_update;
 };

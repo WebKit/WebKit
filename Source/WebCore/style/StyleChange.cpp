@@ -63,6 +63,10 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
     if (!s1.descendantAffectingNonInheritedPropertiesEqual(s2))
         return Change::Inherited;
 
+    // Query container changes affect descendant style.
+    if (s1.containerType() != s2.containerType() || s1.containerNames() != s2.containerNames())
+        return Change::Inherited;
+
     if (s1 != s2)
         return Change::NonInherited;
 

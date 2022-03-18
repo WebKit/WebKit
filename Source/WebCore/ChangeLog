@@ -1,3 +1,24 @@
+2022-03-18  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Ensure container style changes are propagated to descendants
+        https://bugs.webkit.org/show_bug.cgi?id=238072
+
+        Reviewed by Alan Bujtas.
+
+        * style/StyleChange.cpp:
+        (WebCore::Style::determineChange):
+
+        Ensure we recompute the descendants when container properties change.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        (WebCore::Style::TreeResolver::updateQueryContainer):
+
+        We need to ensure layout is up-to-date also when a query container stops being one.
+        Remove the unused m_resolvedQueryContainers maps.
+
+        * style/StyleTreeResolver.h:
+
 2022-03-18  Per Arne Vollan  <pvollan@apple.com>
 
         Fix test failures when enabling content filtering in the Network process

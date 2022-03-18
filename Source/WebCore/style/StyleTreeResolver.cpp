@@ -706,6 +706,7 @@ void TreeResolver::resolveComposedTree()
         auto* style = element.renderOrDisplayContentsStyle();
         auto change = Change::None;
         auto descendantsToResolve = DescendantsToResolve::None;
+        auto previousContainerType = style ? style->containerType() : ContainerType::None;
 
         bool shouldResolve = shouldResolveElement(element, parent.descendantsToResolve);
         if (shouldResolve) {
@@ -737,7 +738,7 @@ void TreeResolver::resolveComposedTree()
         bool shouldIterateChildren = style && (element.childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None);
 
         if (shouldIterateChildren) {
-            if (updateQueryContainer(element, *style) == QueryContainerAction::Layout)
+            if (updateQueryContainer(element, *style, previousContainerType) == QueryContainerAction::Layout)
                 shouldIterateChildren = false;
         }
 
@@ -762,25 +763,24 @@ void TreeResolver::resolveComposedTree()
     popParentsToDepth(1);
 }
 
-auto TreeResolver::updateQueryContainer(Element& element, const RenderStyle& style) -> QueryContainerAction
+auto TreeResolver::updateQueryContainer(Element& element, const RenderStyle& style, ContainerType previousContainerType) -> QueryContainerAction
 {
-    if (style.containerType() == ContainerType::None)
+    if (style.containerType() != ContainerType::None)
+        scope().selectorMatchingState.queryContainers.append(element);
+
+    if (m_unresolvedQueryContainers.remove(&element))
+        return QueryContainerAction::Continue;
+
+    // Render tree needs to be updated before proceeding to children also if we have a former query container
+    // because container query resolution for descendants relies on it being up-to-date.
+    if (style.containerType() == ContainerType::None && previousContainerType == ContainerType::None)
         return QueryContainerAction::None;
 
-    scope().selectorMatchingState.queryContainers.append(element);
-
-    if (m_unresolvedQueryContainers.remove(&element)) {
-        m_resolvedQueryContainers.add(&element);
+    if (m_update->isEmpty())
         return QueryContainerAction::Continue;
-    }
 
-    if (m_update->isEmpty()) {
-        m_resolvedQueryContainers.add(&element);
-        return QueryContainerAction::Continue;
-    }
-
+    // Bail out from TreeResolver to build a render tree and do a layout. Resolution continues after.
     m_unresolvedQueryContainers.add(&element);
-
     return QueryContainerAction::Layout;
 }
 

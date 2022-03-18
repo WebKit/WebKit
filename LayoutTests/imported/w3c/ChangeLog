@@ -1,5 +1,16 @@
 2022-03-18  Antti Koivisto  <antti@apple.com>
 
+        [CSS Container Queries] Ensure container style changes are propagated to descendants
+        https://bugs.webkit.org/show_bug.cgi?id=238072
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/css/css-contain/container-queries/container-name-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-type-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-selection-expected.txt:
+
+2022-03-18  Antti Koivisto  <antti@apple.com>
+
         [CSS Container Queries] Basic support for container units
         https://bugs.webkit.org/show_bug.cgi?id=238021
 
