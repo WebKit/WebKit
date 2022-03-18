@@ -1,3 +1,38 @@
+2022-03-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Linux] GBMDevice as a thread-specific object is problematic
+        https://bugs.webkit.org/show_bug.cgi?id=237758
+        <rdar://problem/90476889>
+
+        Reviewed by Alejandro G. Castro.
+
+        Per-thread GBMDevice instances (and the internal gbm_device objects) can
+        end up causing trouble if the gbm_bo objects spawned from it are moved
+        across threads and used after the originating thread (and that thread's
+        GBMDevice instance) is destroyed. This can happen with a GStreamer
+        pipeline where repeated playback is possibly moved across different
+        threads.
+
+        The original intention was to preemptively avoid any thread-safety
+        issues in the libgbm implementations but we haven't seen any yet. That
+        might change down the line once we adapt against implementations from
+        different vendors, at which point the most sensible solution would be
+        to deploy a specific thread on which all libgbm operations would be
+        handled.
+
+        * platform/graphics/gbm/GBMBufferSwapchain.cpp:
+        (WebCore::GBMBufferSwapchain::getBuffer):
+        * platform/graphics/gbm/GBMDevice.cpp:
+        (WebCore::GBMDevice::singleton):
+        (WebCore::GBMDevice::GBMDevice):
+        (WebCore::GBMDevice::~GBMDevice):
+        (WebCore::threadSpecificDevice): Deleted.
+        (WebCore::GBMDevice::get): Deleted.
+        * platform/graphics/gbm/GBMDevice.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLTextureMapper::platformInitialize):
+        (WebCore::GraphicsContextGLANGLE::EGLImageBacking::reset):
+
 2022-03-18  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Recycling a webgl context when it has been lost and restored causes a crash

@@ -32,32 +32,25 @@
 #include <fcntl.h>
 #include <gbm.h>
 #include <mutex>
-#include <wtf/ThreadSpecific.h>
+#include <wtf/StdLibExtras.h>
 #include <xf86drm.h>
 
 namespace WebCore {
 
-static ThreadSpecific<GBMDevice>& threadSpecificDevice()
+const GBMDevice& GBMDevice::singleton()
 {
-    static ThreadSpecific<GBMDevice>* s_gbmDevice;
+    static std::unique_ptr<GBMDevice> s_device;
     static std::once_flag s_onceFlag;
     std::call_once(s_onceFlag,
         [] {
-            s_gbmDevice = new ThreadSpecific<GBMDevice>;
+            s_device = makeUnique<GBMDevice>();
         });
-    return *s_gbmDevice;
-}
-
-const GBMDevice& GBMDevice::get()
-{
-    return *threadSpecificDevice();
+    return *s_device;
 }
 
 GBMDevice::GBMDevice()
 {
-    static int s_globalFd { -1 };
-    static std::once_flag s_onceFlag;
-    std::call_once(s_onceFlag, [] {
+    [&] {
         drmDevicePtr devices[64];
         memset(devices, 0, sizeof(devices));
 
@@ -70,24 +63,24 @@ GBMDevice::GBMDevice()
             if (!(device->available_nodes & (1 << DRM_NODE_RENDER)))
                 continue;
 
-            s_globalFd = open(device->nodes[DRM_NODE_RENDER], O_RDWR | O_CLOEXEC);
-            if (s_globalFd >= 0)
+            m_fd = open(device->nodes[DRM_NODE_RENDER], O_RDWR | O_CLOEXEC);
+            if (m_fd >= 0)
                 break;
         }
 
         drmFreeDevices(devices, numDevices);
-    });
+    }();
 
-    if (s_globalFd >= 0)
-        m_device = gbm_create_device(s_globalFd);
+    if (m_fd >= 0)
+        m_device = gbm_create_device(m_fd);
 }
 
 GBMDevice::~GBMDevice()
 {
-    if (m_device) {
+    if (m_device)
         gbm_device_destroy(m_device);
-        m_device = nullptr;
-    }
+    if (m_fd >= 0)
+        close(m_fd);
 }
 
 } // namespace WebCore

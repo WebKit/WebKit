@@ -163,7 +163,7 @@ bool GraphicsContextGLTextureMapper::platformInitialize()
     m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
     m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(&m_nicosiaLayer->contentLayer());
 
-    const auto& gbmDevice = GBMDevice::get();
+    const auto& gbmDevice = GBMDevice::singleton();
     if (gbmDevice.device()) {
         m_textureBacking = makeUnique<EGLImageBacking>(platformDisplay());
         m_compositorTextureBacking = makeUnique<EGLImageBacking>(platformDisplay());
@@ -290,7 +290,7 @@ bool GraphicsContextGLANGLE::EGLImageBacking::reset(int width, int height, bool 
     if (!width || !height)
         return false;
 
-    const auto& gbmDevice = GBMDevice::get();
+    const auto& gbmDevice = GBMDevice::singleton();
     m_BO = gbm_bo_create(gbmDevice.device(), width, height, hasAlpha ? GBM_BO_FORMAT_ARGB8888 : GBM_BO_FORMAT_XRGB8888, GBM_BO_USE_RENDERING);
     if (m_BO) {
         m_FD = gbm_bo_get_fd(m_BO);

@@ -44,7 +44,7 @@ GBMBufferSwapchain::~GBMBufferSwapchain() = default;
 
 RefPtr<GBMBufferSwapchain::Buffer> GBMBufferSwapchain::getBuffer(const BufferDescription& description)
 {
-    auto& device = GBMDevice::get();
+    auto& device = GBMDevice::singleton();
 
     // If the description of the requested buffers has changed, update the description to the new one and wreck the existing buffers.
     // This should handle changes in format or dimension of the buffers.
