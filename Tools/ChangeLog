@@ -1,3 +1,16 @@
+2022-03-18  J Pascoe  <j_pascoe@apple.com>
+
+        Trigger PDF download in captive portal mode instead of using PDF viewer
+        https://bugs.webkit.org/show_bug.cgi?id=237245
+        rdar://problem/89525531
+
+        Reviewed by Chris Dumez.
+
+        Add API test for captive portal pdf behavior.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (tempPDFThatDoesNotExist):
+
 2022-03-18  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Make radar conditional on authentication

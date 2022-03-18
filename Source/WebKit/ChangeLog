@@ -1,3 +1,20 @@
+2022-03-18  J Pascoe  <j_pascoe@apple.com>
+
+        Trigger PDF download in captive portal mode instead of using PDF viewer
+        https://bugs.webkit.org/show_bug.cgi?id=237245
+        rdar://problem/89525531
+
+        Reviewed by Chris Dumez.
+
+        This is a stopgap solution since PDF.js needs more cycles to polish.
+
+        Added API test WKDownload.CaptivePortalPDF.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForResponseShared):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2022-03-18  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Recycling a webgl context when it has been lost and restored causes a crash
