@@ -98,8 +98,10 @@ static void registerScheduledActivityHandler()
             return;
         }
 
-        NSLog(@"XPC activity happening");
-        PCM::doDailyActivityInManager();
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"XPC activity happening");
+            PCM::doDailyActivityInManager();
+        });
     });
 }
 

@@ -1,3 +1,18 @@
+2022-03-17  Alex Christensen  <achristensen@webkit.org>
+
+        Call doDailyActivityInManager on main thread in adattributiond
+        https://bugs.webkit.org/show_bug.cgi?id=238059
+        <rdar://90335028>
+
+        Reviewed by Tim Horton.
+
+        It turns out that xpc activities don't happen on the main thread.
+        Everything else in adattributiond happens on the main thread (except database operations)
+        and to be thread safe this also needs to happen on the main thread.
+
+        * Shared/EntryPointUtilities/Cocoa/Daemon/PCMDaemonEntryPoint.mm:
+        (WebKit::registerScheduledActivityHandler):
+
 2022-03-17  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Support PDF search when using a find interaction
