@@ -152,7 +152,7 @@ WK_LIBNETWORKEXTENSION_LDFLAGS_maccatalyst = -lnetworkextension;
 WK_LIBNETWORKEXTENSION_LDFLAGS_macosx = -weak_library /usr/lib/libnetworkextension.dylib;
 WK_LIBNETWORKEXTENSION_LDFLAGS_tvos = ;
 
-WK_AVKIT_LDFLAGS = $(WK_AVKIT_LDFLAGS_$(WK_PLATFORM_NAME));
+WK_AVKIT_LDFLAGS = $(WK_AVKIT_LDFLAGS$(WK_PLATFORM_NAME));
 WK_AVKIT_LDFLAGS_iphoneos = -framework AVKit;
 WK_AVKIT_LDFLAGS_iphonesimulator = -framework AVKit;
 WK_AVKIT_LDFLAGS_maccatalyst = -framework AVKit;
