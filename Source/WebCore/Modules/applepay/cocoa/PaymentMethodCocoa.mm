@@ -98,7 +98,6 @@ static std::optional<ApplePayPaymentMethod::Type> convert(PKPaymentMethodType pa
     }
 }
 
-#if HAVE(PASSKIT_PAYMENT_METHOD_BILLING_ADDRESS)
 static void convert(CNLabeledValue<CNPostalAddress*> *postalAddress, ApplePayPaymentContact &result)
 {
     if (NSString *street = postalAddress.value.street)
@@ -136,7 +135,6 @@ static std::optional<ApplePayPaymentContact> convert(CNContact *billingContact)
 
     return result;
 }
-#endif
 
 static ApplePayPaymentMethod convert(PKPaymentMethod *paymentMethod)
 {
@@ -146,9 +144,7 @@ static ApplePayPaymentMethod convert(PKPaymentMethod *paymentMethod)
         result.displayName = displayName;
     if (NSString *network = paymentMethod.network)
         result.network = network;
-#if HAVE(PASSKIT_PAYMENT_METHOD_BILLING_ADDRESS)
     result.billingContact = convert(paymentMethod.billingAddress);
-#endif
     result.type = convert(paymentMethod.type);
     result.paymentPass = convert(paymentMethod.paymentPass);
 

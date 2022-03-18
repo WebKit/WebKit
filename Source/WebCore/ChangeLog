@@ -1,3 +1,14 @@
+2022-03-17  Devin Rousso  <drousso@apple.com>
+
+        [Apple Pay] REGRESSION(r283431): `HAVE_PASSKIT_PAYMENT_METHOD_BILLING_ADDRESS` was removed without also removing where it was used
+        https://bugs.webkit.org/show_bug.cgi?id=238056
+        <rdar://problem/89940620>
+
+        Reviewed by Tim Horton.
+
+        * Modules/applepay/cocoa/PaymentMethodCocoa.mm:
+        (WebCore::convert):
+
 2022-03-17  Chris Dumez  <cdumez@apple.com>
 
         Microsoft Teams fails to launch from Safari
