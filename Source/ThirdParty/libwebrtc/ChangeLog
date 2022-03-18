@@ -1,3 +1,15 @@
+2022-03-17  Michael Saboff  <msaboff@apple.com>
+
+        libANGLE-shared.dylib, libwebrtc.dylib & WebGPU install names are prefixed with the system content path
+        https://bugs.webkit.org/show_bug.cgi?id=238058
+
+        Reviewed by Mark Lam.
+
+        We need to create a default value for DYLIB_INSTALL_NAME_BASE for iOS builds.
+        We want to allow executables to use the framework via the symlink from the old location.
+
+        * Configurations/libwebrtc.xcconfig:
+
 2022-03-17  Youenn Fablet  <youenn@apple.com>
 
         Remove no longer used third party webrtc modules
