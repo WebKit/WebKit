@@ -1,3 +1,17 @@
+2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ATSPI] accessibility/dropdown-value.html is timing out since added in 248145@main
+        https://bugs.webkit.org/show_bug.cgi?id=237803
+        <rdar://problem/90193311>
+
+        Reviewed by Andres Gonzalez.
+
+        The test expects the combo box to expose the selected element name as the string value.
+
+        * WebKitTestRunner/InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp:
+        (WTR::AccessibilityUIElement::stringValue): Handle combo boxes as special case and return the selected element
+        name.
+
 2022-03-18  Youenn Fablet  <youenn@apple.com>
 
         Keep service workers alive when they are inspected even though they should be terminated

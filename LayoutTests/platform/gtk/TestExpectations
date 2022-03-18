@@ -133,7 +133,6 @@ webkit.org/b/223862 accessibility/gtk/text-for-range-simple.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-table-cells.html [ Failure ]
 webkit.org/b/223862 accessibility/gtk/text-for-range-with-link.html [ Failure ]
 accessibility/model-element-attributes.html [ Skip ]
-accessibility/dropdown-value.html [ Skip ]
 
 # Tests failing with ATSPI implementation.
 webkit.org/b/235941 accessibility/gtk/text-at-offset-embedded-objects.html [ Failure ]

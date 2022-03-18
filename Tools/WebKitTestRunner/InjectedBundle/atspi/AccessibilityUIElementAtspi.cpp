@@ -877,10 +877,18 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 {
+    m_element->updateBackingStore();
+    if (m_element->role() == WebCore::Atspi::Role::ComboBox) {
+        // Tests expect the combo box to expose the selected element name as the string value.
+        if (auto menu = childAtIndex(0)) {
+            if (auto* selectedChild = menu->m_element->selectedChild(0))
+                return OpaqueJSString::tryCreate(makeString("AXValue: ", String::fromUTF8(selectedChild->name()))).leakRef();
+        }
+    }
+
     if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Text))
         return JSStringCreateWithCharacters(nullptr, 0);
 
-    m_element->updateBackingStore();
     auto value = makeString("AXValue: ", m_element->text().replace("\n", "<\\n>").replace(objectReplacementCharacter, "<obj>"));
     return OpaqueJSString::tryCreate(value).leakRef();
 }
