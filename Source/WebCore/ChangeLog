@@ -1,3 +1,36 @@
+2022-03-17  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Subgrid items should always be stretched.
+        https://bugs.webkit.org/show_bug.cgi?id=237628
+
+        Reviewed by Alan Bujtas.
+
+        Fixes https://drafts.csswg.org/css-grid-2/#subgrid-box-alignment
+
+        Test: imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-stretch.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidthInFragment const):
+        (WebCore::RenderBox::hasStretchedLogicalHeight const):
+        (WebCore::RenderBox::hasStretchedLogicalWidth const):
+        * rendering/RenderBox.h:
+
+        Makes computeLogicalWidthInFragment use the override logical width for grid items
+        if it's been set, as we already do for height. We don't early return, so that margins
+        still get computed relative to this width.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutGridItems):
+        (WebCore::RenderGrid::availableAlignmentSpaceForChildBeforeStretching const):
+        (WebCore::RenderGrid::alignSelfForChild const):
+        (WebCore::RenderGrid::justifySelfForChild const):
+        (WebCore::RenderGrid::applyStretchAlignmentToChildIfNeeded):
+        (WebCore::RenderGrid::applySubgridStretchAlignmentToChildIfNeeded):
+        * rendering/RenderGrid.h:
+
+        Sets the required override width/height size on subgrid items so that they get
+        stretched.
+
 2022-03-17  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Introduce LineSelection

@@ -1,3 +1,16 @@
+2022-03-17  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Subgrid items should always be stretched.
+        https://bugs.webkit.org/show_bug.cgi?id=237628
+
+        Reviewed by Alan Bujtas.
+
+        * web-platform-tests/css/css-grid/subgrid/subgrid-stretch-expected.html: Added.
+        * web-platform-tests/css/css-grid/subgrid/subgrid-stretch.html: Added.
+
+        Added new WPT test covering various width/height and alignement contraints that should be
+        ignored since subgrids are always stretched.
+
 2022-03-17  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (iOS 15.4 / r287669): Mobile app stopped working due to CSS / angular animation

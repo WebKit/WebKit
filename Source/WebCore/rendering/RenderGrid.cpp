@@ -1055,6 +1055,7 @@ void RenderGrid::layoutGridItems()
         // call to avoid unnecessary relayouts. This might imply that child margins, needed to correctly
         // determine the available space before stretching, are not set yet.
         applyStretchAlignmentToChildIfNeeded(*child);
+        applySubgridStretchAlignmentToChildIfNeeded(*child);
 
         child->layoutIfNeeded();
 
@@ -1199,17 +1200,19 @@ static LayoutUnit computeOverflowAlignmentOffset(OverflowAlignment overflow, Lay
     return 0;
 }
 
-LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUnit gridAreaBreadthForChild, const RenderBox& child) const
+LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUnit gridAreaBreadthForChild, const RenderBox& child, GridTrackSizingDirection direction) const
 {
     // Because we want to avoid multiple layouts, stretching logic might be performed before
     // children are laid out, so we can't use the child cached values. Hence, we need to
     // compute margins in order to determine the available height before stretching.
-    GridTrackSizingDirection childBlockFlowDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, ForRows);
-    return std::max(0_lu, gridAreaBreadthForChild - GridLayoutFunctions::marginLogicalSizeForChild(*this, childBlockFlowDirection, child));
+    auto childFlowDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, direction);
+    return std::max(0_lu, gridAreaBreadthForChild - GridLayoutFunctions::marginLogicalSizeForChild(*this, childFlowDirection, child));
 }
 
 StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child, StretchingMode stretchingMode, const RenderStyle* gridStyle) const
 {
+    if (isSubgridInParentDirection(ForRows))
+        return { ItemPosition::Stretch, OverflowAlignment::Default };
     if (!gridStyle)
         gridStyle = &style();
     auto normalBehavior = stretchingMode == StretchingMode::Any ? selfAlignmentNormalBehavior(&child) : ItemPosition::Normal;
@@ -1218,6 +1221,8 @@ StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child, Str
 
 StyleSelfAlignmentData RenderGrid::justifySelfForChild(const RenderBox& child, StretchingMode stretchingMode, const RenderStyle* gridStyle) const
 {
+    if (isSubgridInParentDirection(ForColumns))
+        return { ItemPosition::Stretch, OverflowAlignment::Default };
     if (!gridStyle)
         gridStyle = &style();
     auto normalBehavior = stretchingMode == StretchingMode::Any ? selfAlignmentNormalBehavior(&child) : ItemPosition::Normal;
@@ -1251,7 +1256,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     bool blockFlowIsColumnAxis = childBlockDirection == ForRows;
     bool allowedToStretchChildBlockSize = blockFlowIsColumnAxis ? allowedToStretchChildAlongColumnAxis(child) : allowedToStretchChildAlongRowAxis(child);
     if (allowedToStretchChildBlockSize && !aspectRatioPrefersInline(child, blockFlowIsColumnAxis)) {
-        LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
+        LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child, ForRows);
         LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, std::nullopt);
         child.setOverridingLogicalHeight(desiredLogicalHeight);
 
@@ -1264,12 +1269,30 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
             child.setNeedsLayout(MarkOnlyThis);
         }
     } else if (!allowedToStretchChildBlockSize && allowedToStretchChildAlongRowAxis(child)) {
-        LayoutUnit stretchedLogicalWidth = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childInlineDirection).value(), child);
+        LayoutUnit stretchedLogicalWidth = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childInlineDirection).value(), child, ForColumns);
         LayoutUnit desiredLogicalWidth = child.constrainLogicalWidthInFragmentByMinMax(stretchedLogicalWidth, contentWidth(), *this, nullptr);
         child.setOverridingLogicalWidth(desiredLogicalWidth);
         if (desiredLogicalWidth != child.logicalWidth())
             child.setNeedsLayout(MarkOnlyThis);
-    } 
+    }
+}
+
+void RenderGrid::applySubgridStretchAlignmentToChildIfNeeded(RenderBox& child)
+{
+    if (!is<RenderGrid>(child))
+        return;
+
+    if (downcast<RenderGrid>(child).isSubgrid(ForRows)) {
+        auto childBlockDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, ForRows);
+        auto stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child, ForRows);
+        child.setOverridingLogicalHeight(stretchedLogicalHeight);
+    }
+
+    if (downcast<RenderGrid>(child).isSubgrid(ForColumns)) {
+        auto childInlineDirection = GridLayoutFunctions::flowAwareDirectionForChild(*this, child, ForColumns);
+        auto stretchedLogicalWidth = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childInlineDirection).value(), child, ForColumns);
+        child.setOverridingLogicalWidth(stretchedLogicalWidth);
+    }
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.
