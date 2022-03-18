@@ -1,3 +1,13 @@
+2022-03-17  Jonathan Bedard  <JonWBedard@gmail.com>
+
+        configure-xcode-for-embedded-development fails with Xcode 13.3
+        https://bugs.webkit.org/show_bug.cgi?id=237994
+        <rdar://problem/90455614>
+
+        Reviewed by Ryan Haddad.
+
+        * Scripts/configure-xcode-for-embedded-development: Handle different xcspec locations in XCode 13.3.
+
 2022-03-17  Brent Fulgham  <bfulgham@apple.com>
 
         Disable push features in CaptivePortal mode 

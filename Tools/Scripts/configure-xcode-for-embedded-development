@@ -72,14 +72,18 @@ MISSING_FRAMEWORKS = [
 ]
 
 xcode_version = subprocess.run(['/usr/bin/xcodebuild', '-version'], capture_output=True, encoding='ascii').stdout.splitlines()[0].split(' ')[1]
-if int(xcode_version.split('.')[0]) >= 12:
-    mac_xcspec_location = 'Platforms/MacOSX.platform/Developer/Library/Xcode/PrivatePlugIns/IDEOSXSupportCore.ideplugin/Contents/Resources'
+if tuple(int(n) for n in xcode_version.split('.')) >= (13, 3):
+    mac_xcspec_location = f'Platforms/MacOSX.platform/Developer/Library/Xcode/PrivatePlugIns/IDEOSXSupportCore.xcplugindata/Contents/Resources'
+elif int(xcode_version.split('.')[0]) >= 12:
+    mac_xcspec_location = f'Platforms/MacOSX.platform/Developer/Library/Xcode/PrivatePlugIns/IDEOSXSupportCore.ideplugin/Contents/Resources'
 else:
     mac_xcspec_location = 'Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications'
 
+ideplugin = 'XCBSpecifications' if tuple(int(n) for n in xcode_version.split('.')) >= (13, 3) else 'IDEiOSSupportCore'
+
 XCSPEC_INFO = [dict(
     id='com.apple.product-type.tool',
-    dest='../PlugIns/IDEiOSSupportCore.ideplugin/Contents/Resources/Embedded-Shared.xcspec',
+    dest=f'../PlugIns/{ideplugin}.ideplugin/Contents/Resources/Embedded-Shared.xcspec',
     content='''
     // Tool (normal Unix command-line executable)
     {   Type = ProductType;
@@ -114,7 +118,7 @@ XCSPEC_INFO = [dict(
 ''',
 ), dict(
     id='com.apple.package-type.mach-o-executable',
-    dest='../PlugIns/IDEiOSSupportCore.ideplugin/Contents/Resources/Embedded-Shared.xcspec',
+    dest=f'../PlugIns/{ideplugin}.ideplugin/Contents/Resources/Embedded-Shared.xcspec',
     content='''
     {   Type = PackageType;
         Identifier = com.apple.package-type.mach-o-executable;
@@ -274,7 +278,7 @@ def update_xcspec_files():
     for spec_info in XCSPEC_INFO:
         dest_spec_path = xcode_developer_dir() / spec_info['dest']
         if not dest_spec_path.exists():
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), dest_spec_path)
 
         result = subprocess.run(
             [PLIST_BUDDY_PATH, '-x', '-c', 'Print', dest_spec_path],
