@@ -256,7 +256,6 @@ void WebGeolocationManagerProxy::providerStartUpdating(PerDomainData& perDomainD
         ASSERT(!perDomainData.provider);
         perDomainData.provider = makeUnique<WebCore::CoreLocationGeolocationProvider>(registrableDomain, *this);
         perDomainData.provider->setEnableHighAccuracy(!perDomainData.watchersNeedingHighAccuracy.computesEmpty());
-        perDomainData.provider->start();
         return;
     }
 #else
@@ -273,7 +272,7 @@ void WebGeolocationManagerProxy::providerStopUpdating(PerDomainData& perDomainDa
 {
 #if PLATFORM(IOS_FAMILY)
     if (!m_clientProvider) {
-        perDomainData.provider->stop();
+        perDomainData.provider = nullptr;
         return;
     }
 #else

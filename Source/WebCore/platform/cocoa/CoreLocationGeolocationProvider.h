@@ -51,11 +51,9 @@ public:
         virtual void resetGeolocation(const String& websiteIdentifier) = 0;
     };
 
-    CoreLocationGeolocationProvider(const RegistrableDomain&, Client&);
+    enum class Mode : bool { AuthorizationOnly, AuthorizationAndLocationUpdates };
+    CoreLocationGeolocationProvider(const RegistrableDomain&, Client&, Mode = Mode::AuthorizationAndLocationUpdates);
     ~CoreLocationGeolocationProvider();
-
-    void start();
-    void stop();
 
     void setEnableHighAccuracy(bool);
 

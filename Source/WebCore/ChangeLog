@@ -1,5 +1,39 @@
 2022-03-18  Chris Dumez  <cdumez@apple.com>
 
+        Avoid calls to [CLLocationManager authorizationStatus] & [CLLocationManager locationServicesEnabled]
+        https://bugs.webkit.org/show_bug.cgi?id=237933
+        <rdar://89931043>
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid calls to [CLLocationManager authorizationStatus] & [CLLocationManager locationServicesEnabled]
+        for performance reasons since those are synchronous, potentially slow and called on the UIProcess
+        main thread.
+
+        Instead, rely on the fact that the locationManagerDidChangeAuthorization always gets called
+        asynchronously right after constructing the CLLocationManager with the actual authorization.
+        This simplifies our logic a bit too.
+
+        We now only call [CLLocationManager requestWhenInUseAuthorization] when locationManagerDidChangeAuthorization
+        gets called with kCLAuthorizationStatusNotDetermined asynchronously after construction.
+        If locationManagerDidChangeAuthorization gets called with an authorized enum value, we
+        call [CLLocationManager startUpdatingLocation] then (if the client is interested in locations, and not
+        merely in the authorization).
+
+        * platform/cocoa/CoreLocationGeolocationProvider.h:
+        * platform/cocoa/CoreLocationGeolocationProvider.mm:
+        (-[WebCLLocationManager initWithWebsiteIdentifier:client:mode:]):
+        (-[WebCLLocationManager locationManagerDidChangeAuthorization:]):
+        (WebCore::CoreLocationGeolocationProvider::CoreLocationGeolocationProvider):
+        (isAuthorizationGranted): Deleted.
+        (-[WebCLLocationManager initWithWebsiteIdentifier:client:]): Deleted.
+        (-[WebCLLocationManager start]): Deleted.
+        (-[WebCLLocationManager requestGeolocationAuthorization]): Deleted.
+        (WebCore::CoreLocationGeolocationProvider::start): Deleted.
+        (WebCore::CoreLocationGeolocationProvider::stop): Deleted.
+
+2022-03-18  Chris Dumez  <cdumez@apple.com>
+
         Avoid extra pointer dereference in EventListenerMap::m_entries
         https://bugs.webkit.org/show_bug.cgi?id=238075
 

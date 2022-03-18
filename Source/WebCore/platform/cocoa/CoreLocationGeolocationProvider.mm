@@ -49,15 +49,6 @@ SOFT_LINK_CONSTANT(CoreLocation, kCLLocationAccuracyHundredMeters, double)
 #define kCLLocationAccuracyBest getkCLLocationAccuracyBest()
 #define kCLLocationAccuracyHundredMeters getkCLLocationAccuracyHundredMeters()
 
-static bool isAuthorizationGranted(CLAuthorizationStatus status)
-{
-    return status == kCLAuthorizationStatusAuthorizedAlways
-#if HAVE(CORE_LOCATION_AUTHORIZED_WHEN_IN_USE)
-        || status == kCLAuthorizationStatusAuthorizedWhenInUse
-#endif
-        ;
-}
-
 @interface WebCLLocationManager : NSObject<CLLocationManagerDelegate>
 @end
 
@@ -66,13 +57,17 @@ static bool isAuthorizationGranted(CLAuthorizationStatus status)
     WebCore::CoreLocationGeolocationProvider::Client* _client;
     String _websiteIdentifier;
     BOOL _isWaitingForAuthorization;
+    WebCore::CoreLocationGeolocationProvider::Mode _mode;
 }
 
-- (instancetype)initWithWebsiteIdentifier:(const String&)websiteIdentifier client:(WebCore::CoreLocationGeolocationProvider::Client&)client
+- (instancetype)initWithWebsiteIdentifier:(const String&)websiteIdentifier client:(WebCore::CoreLocationGeolocationProvider::Client&)client mode:(WebCore::CoreLocationGeolocationProvider::Mode)mode
 {
     self = [super init];
     if (!self)
         return nil;
+
+    _isWaitingForAuthorization = YES;
+    _mode = mode;
 
 #if USE(APPLE_INTERNAL_SDK) && HAVE(CORE_LOCATION_WEBSITE_IDENTIFIERS) && defined(CL_HAS_RADAR_88834301)
     if (!websiteIdentifier.isEmpty())
@@ -94,17 +89,6 @@ static bool isAuthorizationGranted(CLAuthorizationStatus status)
     [super dealloc];
 }
 
-- (void)start
-{
-    if (![getCLLocationManagerClass() locationServicesEnabled] || !isAuthorizationGranted([_locationManager authorizationStatus])) {
-        [_locationManager stopUpdatingLocation];
-        _client->resetGeolocation(_websiteIdentifier);
-        return;
-    }
-
-    [_locationManager startUpdatingLocation];
-}
-
 - (void)stop
 {
     [_locationManager stopUpdatingLocation];
@@ -115,41 +99,13 @@ static bool isAuthorizationGranted(CLAuthorizationStatus status)
     [_locationManager setDesiredAccuracy:highAccuracyEnabled ? kCLLocationAccuracyBest : kCLLocationAccuracyHundredMeters];
 }
 
-- (void)requestGeolocationAuthorization
-{
-    if (![getCLLocationManagerClass() locationServicesEnabled]) {
-        _client->geolocationAuthorizationDenied(_websiteIdentifier);
-        return;
-    }
-
-    switch ([_locationManager authorizationStatus]) {
-    case kCLAuthorizationStatusNotDetermined: {
-        if (!_isWaitingForAuthorization) {
-            _isWaitingForAuthorization = YES;
-            [_locationManager requestWhenInUseAuthorization];
-        }
-        break;
-    }
-    case kCLAuthorizationStatusAuthorizedAlways:
-#if HAVE(CORE_LOCATION_AUTHORIZED_WHEN_IN_USE)
-    case kCLAuthorizationStatusAuthorizedWhenInUse:
-#endif
-        _client->geolocationAuthorizationGranted(_websiteIdentifier);
-        break;
-    case kCLAuthorizationStatusRestricted:
-    case kCLAuthorizationStatusDenied:
-        _client->geolocationAuthorizationDenied(_websiteIdentifier);
-        break;
-    }
-}
-
 - (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager
 {
     auto status = [_locationManager authorizationStatus];
     if (_isWaitingForAuthorization) {
         switch (status) {
         case kCLAuthorizationStatusNotDetermined:
-            // This can happen after resume if the user has still not answered the dialog. We just have to wait for the permission.
+            [_locationManager requestWhenInUseAuthorization];
             break;
         case kCLAuthorizationStatusDenied:
         case kCLAuthorizationStatusRestricted:
@@ -162,6 +118,8 @@ static bool isAuthorizationGranted(CLAuthorizationStatus status)
 #endif
             _isWaitingForAuthorization = NO;
             _client->geolocationAuthorizationGranted(_websiteIdentifier);
+            if (_mode != WebCore::CoreLocationGeolocationProvider::Mode::AuthorizationOnly)
+                [_locationManager startUpdatingLocation];
             break;
         }
     } else {
@@ -197,24 +155,12 @@ static bool isAuthorizationGranted(CLAuthorizationStatus status)
 
 namespace WebCore {
 
-CoreLocationGeolocationProvider::CoreLocationGeolocationProvider(const RegistrableDomain& registrableDomain, Client& client)
-    : m_locationManager(adoptNS([[WebCLLocationManager alloc] initWithWebsiteIdentifier:registrableDomain.string() client:client]))
+CoreLocationGeolocationProvider::CoreLocationGeolocationProvider(const RegistrableDomain& registrableDomain, Client& client, Mode mode)
+    : m_locationManager(adoptNS([[WebCLLocationManager alloc] initWithWebsiteIdentifier:registrableDomain.string() client:client mode:mode]))
 {
-    // Request permission for the app to use geolocation (if it doesn't already).
-    [m_locationManager requestGeolocationAuthorization];
 }
 
 CoreLocationGeolocationProvider::~CoreLocationGeolocationProvider()
-{
-    [m_locationManager stop];
-}
-
-void CoreLocationGeolocationProvider::start()
-{
-    [m_locationManager start];
-}
-
-void CoreLocationGeolocationProvider::stop()
 {
     [m_locationManager stop];
 }
@@ -234,7 +180,7 @@ public:
     void check(const RegistrableDomain& registrableDomain, CompletionHandler<void(bool)>&& completionHandler)
     {
         m_completionHandler = WTFMove(completionHandler);
-        m_provider = makeUnique<CoreLocationGeolocationProvider>(registrableDomain, *this);
+        m_provider = makeUnique<CoreLocationGeolocationProvider>(registrableDomain, *this, CoreLocationGeolocationProvider::Mode::AuthorizationOnly);
     }
 
 private:
