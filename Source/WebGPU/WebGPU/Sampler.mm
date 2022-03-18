@@ -219,6 +219,8 @@ void Sampler::setLabel(String&&)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuSamplerRelease(WGPUSampler sampler)
 {
     delete sampler;

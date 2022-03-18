@@ -99,6 +99,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUBufferImpl {
     Ref<WebGPU::Buffer> buffer;
 };

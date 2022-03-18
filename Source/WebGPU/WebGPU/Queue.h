@@ -76,6 +76,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUQueueImpl {
     Ref<WebGPU::Queue> queue;
 };

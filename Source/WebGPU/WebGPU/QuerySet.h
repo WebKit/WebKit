@@ -54,6 +54,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUQuerySetImpl {
     Ref<WebGPU::QuerySet> querySet;
 };

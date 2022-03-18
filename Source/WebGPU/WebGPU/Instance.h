@@ -67,6 +67,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUInstanceImpl {
     Ref<WebGPU::Instance> instance;
 };

@@ -131,7 +131,9 @@ void BindGroup::setLabel(String&& label)
     m_computeArgumentBuffer.label = labelString;
 }
 
-}
+} // namespace WebGPU
+
+#pragma mark WGPU Stubs
 
 void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
 {

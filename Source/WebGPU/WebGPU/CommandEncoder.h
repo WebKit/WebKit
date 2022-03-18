@@ -80,6 +80,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUCommandEncoderImpl {
     Ref<WebGPU::CommandEncoder> commandEncoder;
 };

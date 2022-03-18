@@ -1,3 +1,59 @@
+2022-03-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add #pragma marks to strategic places
+        https://bugs.webkit.org/show_bug.cgi?id=238065
+
+        Reviewed by Alexey Proskuryakov.
+
+        They help a little bit with Xcode navigation.
+
+        * WebGPU/Adapter.h:
+        * WebGPU/Adapter.mm:
+        * WebGPU/BindGroup.h:
+        * WebGPU/BindGroup.mm:
+        * WebGPU/BindGroupLayout.h:
+        * WebGPU/BindGroupLayout.mm:
+        * WebGPU/Buffer.h:
+        * WebGPU/Buffer.mm:
+        * WebGPU/CommandBuffer.h:
+        * WebGPU/CommandBuffer.mm:
+        * WebGPU/CommandEncoder.h:
+        * WebGPU/CommandEncoder.mm:
+        * WebGPU/ComputePassEncoder.h:
+        * WebGPU/ComputePassEncoder.mm:
+        * WebGPU/ComputePipeline.h:
+        * WebGPU/ComputePipeline.mm:
+        * WebGPU/Device.h:
+        * WebGPU/Device.mm:
+        * WebGPU/Instance.h:
+        * WebGPU/Instance.mm:
+        * WebGPU/PipelineLayout.h:
+        * WebGPU/PipelineLayout.mm:
+        * WebGPU/QuerySet.h:
+        * WebGPU/QuerySet.mm:
+        * WebGPU/Queue.h:
+        * WebGPU/Queue.mm:
+        * WebGPU/RenderBundle.h:
+        * WebGPU/RenderBundle.mm:
+        * WebGPU/RenderBundleEncoder.h:
+        * WebGPU/RenderBundleEncoder.mm:
+        * WebGPU/RenderPassEncoder.h:
+        * WebGPU/RenderPassEncoder.mm:
+        * WebGPU/RenderPipeline.h:
+        * WebGPU/RenderPipeline.mm:
+        * WebGPU/Sampler.h:
+        * WebGPU/Sampler.mm:
+        * WebGPU/ShaderModule.h:
+        * WebGPU/ShaderModule.mm:
+        * WebGPU/Surface.h:
+        * WebGPU/Surface.mm:
+        * WebGPU/SwapChain.h:
+        * WebGPU/SwapChain.mm:
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        * WebGPU/TextureView.h:
+        * WebGPU/TextureView.mm:
+
 2022-03-17  Michael Saboff  <msaboff@apple.com>
 
         libANGLE-shared.dylib, libwebrtc.dylib & WebGPU install names are prefixed with the system content path

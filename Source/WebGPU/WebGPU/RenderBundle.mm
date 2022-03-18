@@ -42,7 +42,9 @@ void RenderBundle::setLabel(String&& label)
     m_indirectCommandBuffer.label = label;
 }
 
-}
+} // namespace WebGPU
+
+#pragma mark WGPU Stubs
 
 void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
 {

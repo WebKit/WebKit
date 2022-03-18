@@ -129,6 +129,8 @@ void Queue::scheduleWork(Instance::WorkItem&& workItem)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuQueueRelease(WGPUQueue queue)
 {
     delete queue;

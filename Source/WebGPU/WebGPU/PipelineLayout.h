@@ -60,6 +60,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUPipelineLayoutImpl {
     Ref<WebGPU::PipelineLayout> pipelineLayout;
 };

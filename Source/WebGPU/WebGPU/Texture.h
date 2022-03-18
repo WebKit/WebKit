@@ -58,6 +58,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUTextureImpl {
     Ref<WebGPU::Texture> texture;
 };

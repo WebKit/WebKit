@@ -128,6 +128,8 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuAdapterRelease(WGPUAdapter adapter)
 {
     delete adapter;

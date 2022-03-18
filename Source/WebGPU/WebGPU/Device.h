@@ -97,6 +97,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUDeviceImpl {
     Ref<WebGPU::Device> device;
     WGPUQueueImpl defaultQueue;

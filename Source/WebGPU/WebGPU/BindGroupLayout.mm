@@ -239,7 +239,9 @@ NSUInteger BindGroupLayout::encodedLength() const
     return result;
 }
 
-}
+} // namespace WebGPU
+
+#pragma mark WGPU Stubs
 
 void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout bindGroupLayout)
 {

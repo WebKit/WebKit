@@ -62,6 +62,8 @@ void Texture::setLabel(String&& label)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuTextureRelease(WGPUTexture texture)
 {
     delete texture;

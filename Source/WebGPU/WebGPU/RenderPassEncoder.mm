@@ -218,6 +218,8 @@ void RenderPassEncoder::setLabel(String&& label)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuRenderPassEncoderRelease(WGPURenderPassEncoder renderPassEncoder)
 {
     delete renderPassEncoder;

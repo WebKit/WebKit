@@ -352,6 +352,8 @@ void CommandEncoder::setLabel(String&& label)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuCommandEncoderRelease(WGPUCommandEncoder commandEncoder)
 {
     delete commandEncoder;

@@ -84,6 +84,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPURenderPassEncoderImpl {
     Ref<WebGPU::RenderPassEncoder> renderPassEncoder;
 };

@@ -62,6 +62,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUSamplerImpl {
     Ref<WebGPU::Sampler> sampler;
 };

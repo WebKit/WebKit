@@ -134,6 +134,8 @@ void Device::setLabel(String&&)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuDeviceRelease(WGPUDevice device)
 {
     delete device;

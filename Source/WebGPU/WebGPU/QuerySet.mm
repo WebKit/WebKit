@@ -55,6 +55,8 @@ void QuerySet::setLabel(String&&)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuQuerySetRelease(WGPUQuerySet querySet)
 {
     delete querySet;

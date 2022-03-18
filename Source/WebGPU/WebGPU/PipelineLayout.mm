@@ -70,7 +70,9 @@ bool PipelineLayout::operator!=(const PipelineLayout& other) const
     return !(*this == other);
 }
 
-}
+} // namespace WebGPU
+
+#pragma mark WGPU Stubs
 
 void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
 {

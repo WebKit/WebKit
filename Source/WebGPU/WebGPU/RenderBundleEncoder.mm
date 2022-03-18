@@ -171,6 +171,8 @@ void RenderBundleEncoder::setLabel(String&& label)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuRenderBundleEncoderRelease(WGPURenderBundleEncoder renderBundleEncoder)
 {
     delete renderBundleEncoder;

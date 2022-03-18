@@ -56,6 +56,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPURenderPipelineImpl {
     Ref<WebGPU::RenderPipeline> renderPipeline;
 };

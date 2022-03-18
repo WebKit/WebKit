@@ -57,6 +57,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUBindGroupImpl {
     Ref<WebGPU::BindGroup> bindGroup;
 };

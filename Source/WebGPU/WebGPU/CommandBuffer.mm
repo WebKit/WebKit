@@ -42,7 +42,9 @@ void CommandBuffer::setLabel(String&& label)
     m_commandBuffer.label = label;
 }
 
-}
+} // namespace WebGPU
+
+#pragma mark WGPU Stubs
 
 void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
 {

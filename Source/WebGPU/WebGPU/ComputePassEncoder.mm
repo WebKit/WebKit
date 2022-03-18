@@ -140,6 +140,8 @@ void ComputePassEncoder::setLabel(String&& label)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder)
 {
     delete computePassEncoder;

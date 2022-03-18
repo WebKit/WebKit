@@ -64,6 +64,8 @@ void RenderPipeline::setLabel(String&&)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 {
     delete renderPipeline;

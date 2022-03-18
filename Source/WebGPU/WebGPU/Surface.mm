@@ -43,6 +43,8 @@ WGPUTextureFormat Surface::getPreferredFormat(const Adapter& adapter)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuSurfaceRelease(WGPUSurface surface)
 {
     delete surface;

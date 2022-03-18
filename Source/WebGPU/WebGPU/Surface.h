@@ -51,6 +51,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUSurfaceImpl {
     Ref<WebGPU::Surface> surface;
 };

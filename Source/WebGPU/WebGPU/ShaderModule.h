@@ -69,6 +69,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUShaderModuleImpl {
     Ref<WebGPU::ShaderModule> shaderModule;
 };

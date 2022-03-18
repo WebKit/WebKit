@@ -195,6 +195,8 @@ void ComputePipeline::setLabel(String&&)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuComputePipelineRelease(WGPUComputePipeline computePipeline)
 {
     delete computePipeline;

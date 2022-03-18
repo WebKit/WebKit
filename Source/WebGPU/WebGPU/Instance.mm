@@ -171,6 +171,8 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuInstanceRelease(WGPUInstance instance)
 {
     delete instance;

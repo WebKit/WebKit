@@ -246,6 +246,8 @@ const WGSL::Reflection::EntryPointInformation* ShaderModule::entryPointInformati
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 {
     delete shaderModule;

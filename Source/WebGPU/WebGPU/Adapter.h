@@ -61,6 +61,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPUAdapterImpl {
     Ref<WebGPU::Adapter> adapter;
 };

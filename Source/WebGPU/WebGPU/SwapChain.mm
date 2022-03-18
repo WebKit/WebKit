@@ -54,6 +54,8 @@ void SwapChain::present()
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuSwapChainRelease(WGPUSwapChain swapChain)
 {
     delete swapChain;

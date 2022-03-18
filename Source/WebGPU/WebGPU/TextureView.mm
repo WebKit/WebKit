@@ -44,6 +44,8 @@ void TextureView::setLabel(String&& label)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuTextureViewRelease(WGPUTextureView textureView)
 {
     UNUSED_PARAM(textureView);

@@ -390,6 +390,8 @@ void Buffer::setLabel(String&& label)
 
 } // namespace WebGPU
 
+#pragma mark WGPU Stubs
+
 void wgpuBufferRelease(WGPUBuffer buffer)
 {
     delete buffer;

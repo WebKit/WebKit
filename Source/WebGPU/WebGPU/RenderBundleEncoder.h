@@ -74,6 +74,8 @@ private:
 
 } // namespace WebGPU
 
+#pragma mark WGPU Wrapper
+
 struct WGPURenderBundleEncoderImpl {
     Ref<WebGPU::RenderBundleEncoder> renderBundleEncoder;
 };
