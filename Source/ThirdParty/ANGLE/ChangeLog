@@ -1,3 +1,49 @@
+2022-03-17  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291455. rdar://problem/90449608
+
+    libANGLE-shared.dylib, libwebrtc.dylib & WebGPU install names are prefixed with the system content path
+    https://bugs.webkit.org/show_bug.cgi?id=238058
+    
+    Reviewed by Mark Lam.
+    
+    Source/ThirdParty/ANGLE:
+    
+    We need to create a default value for DYLIB_INSTALL_NAME_BASE for iOS builds.
+    We want to allow executables to use the framework via the symlink from the old location.
+    
+    * Configurations/ANGLE-dynamic.xcconfig:
+    
+    Source/ThirdParty/libwebrtc:
+    
+    We need to create a default value for DYLIB_INSTALL_NAME_BASE for iOS builds.
+    We want to allow executables to use the framework via the symlink from the old location.
+    
+    * Configurations/libwebrtc.xcconfig:
+    
+    Source/WebGPU:
+    
+    We need to set  DYLIB_INSTALL_NAME_BASE for WK_USE_ALTERNATE_FRAMEWORKS_DIR installs without the
+    system content path prefix.
+    We want to allow executables to use the framework via the symlink from the old location.
+    
+    * Configurations/WebGPU.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291455 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-17  Michael Saboff  <msaboff@apple.com>
+
+            libANGLE-shared.dylib, libwebrtc.dylib & WebGPU install names are prefixed with the system content path
+            https://bugs.webkit.org/show_bug.cgi?id=238058
+
+            Reviewed by Mark Lam.
+
+            We need to create a default value for DYLIB_INSTALL_NAME_BASE for iOS builds.
+            We want to allow executables to use the framework via the symlink from the old location.
+
+            * Configurations/ANGLE-dynamic.xcconfig:
+
 2022-03-11  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r291139. rdar://problem/90127039
