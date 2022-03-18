@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SWContextManager.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThreadProxy.h"

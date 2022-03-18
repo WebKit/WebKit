@@ -1,3 +1,9 @@
+2022-03-18  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix non-unified build after r291467
+
+        * workers/service/context/ServiceWorkerInspectorProxy.cpp:
+
 2022-03-18  Youenn Fablet  <youenn@apple.com>
 
         Remove MediaSample usage from canvas capture code
