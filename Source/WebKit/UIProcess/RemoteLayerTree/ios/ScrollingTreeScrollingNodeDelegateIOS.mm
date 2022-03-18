@@ -82,16 +82,10 @@
         _scrollingTreeNodeDelegate->clearActiveTouchActions();
         
         if (touchActions && !touchActions.containsAny({ WebCore::TouchAction::Auto, WebCore::TouchAction::Manipulation })) {
-            bool canPanX = true;
-            bool canPanY = true;
-            if (!touchActions.contains(WebCore::TouchAction::PanX)) {
-                canPanX = false;
+            if (!touchActions.contains(WebCore::TouchAction::PanX))
                 targetContentOffset->x = scrollView.contentOffset.x;
-            }
-            if (!touchActions.contains(WebCore::TouchAction::PanY)) {
-                canPanY = false;
+            if (!touchActions.contains(WebCore::TouchAction::PanY))
                 targetContentOffset->y = scrollView.contentOffset.y;
-            }
         }
     }
 

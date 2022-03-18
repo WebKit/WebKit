@@ -387,7 +387,8 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
             parameters.audioCaptureExtensionHandle = WTFMove(*handle);
     }
 #else
-    UNUSED_PARAM(mediaDevicesEnabled);
+    UNUSED_VARIABLE(mediaDevicesEnabled);
+    UNUSED_VARIABLE(isSafari);
 #endif
 #endif
 

@@ -341,14 +341,11 @@ static bool isJavaScriptURL(NSURL *url)
     _interactionSheet.get().preferredStyle = UIAlertControllerStyleActionSheet;
 
     NSString *titleString = nil;
-    BOOL titleIsURL = NO;
     if (showLinkTitle && [[targetURL absoluteString] length]) {
         if (isJavaScriptURL(targetURL))
             titleString = WEB_UI_STRING_KEY("JavaScript", "JavaScript Action Sheet Title", "Title for action sheet for JavaScript link");
-        else {
+        else
             titleString = WTF::userVisibleString(targetURL);
-            titleIsURL = YES;
-        }
     } else if (defaultTitle)
         titleString = defaultTitle;
     else

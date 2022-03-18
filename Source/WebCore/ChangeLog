@@ -1,3 +1,22 @@
+2022-03-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15.4] Fix unused variables
+        https://bugs.webkit.org/show_bug.cgi?id=238089
+        <rdar://problem/90498642>
+
+        Reviewed by Alexey Proskuryakov and Chris Dumez.
+
+        Covered by exisiting tests.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint const): frameView is only used on Mac.
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverter::_addAttachmentForElement): Declare ignoreOrientation as unused on iOS family.
+        * platform/audio/ios/AudioOutputUnitAdaptorIOS.cpp:
+        (WebCore::AudioOutputUnitAdaptor::configure): Assert that result is unused.
+        * platform/graphics/coretext/FontCascadeCoreText.cpp:
+        (WebCore::FontCascade::drawGlyphs): Declare shouldSmoothFonts as unused on iOS family.
+
 2022-03-18  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Ensure container style changes are propagated to descendants

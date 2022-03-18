@@ -1,3 +1,19 @@
+2022-03-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [iOS 15.4] Fix unused variables
+        https://bugs.webkit.org/show_bug.cgi?id=238089
+        <rdar://problem/90498642>
+
+        Reviewed by Alexey Proskuryakov and Chris Dumez.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Declare isSafari as unused for Mac and Catalyst.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm:
+        (-[WKScrollingNodeScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        Remove canPanX and canPanY, since they are unused.
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant _createSheetWithElementActions:defaultTitle:showLinkTitle:]): Remove titleIsURL.
+
 2022-03-18  Per Arne Vollan  <pvollan@apple.com>
 
         Fix test failures when enabling content filtering in the Network process

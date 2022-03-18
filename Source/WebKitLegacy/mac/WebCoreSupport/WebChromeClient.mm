@@ -444,6 +444,7 @@ void WebChromeClient::addMessageToConsole(MessageSource source, MessageLevel lev
 
 #if PLATFORM(IOS_FAMILY)
     [[[m_webView _UIKitDelegateForwarder] asyncForwarder] webView:m_webView addMessageToConsole:dictionary withSource:messageSource];
+    UNUSED_VARIABLE(respondsToNewSelector);
 #else
     if (respondsToNewSelector)
         CallUIDelegate(m_webView, selector, dictionary, messageSource);

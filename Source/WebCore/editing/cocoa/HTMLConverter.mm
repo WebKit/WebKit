@@ -1319,7 +1319,9 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         NSRange rangeToReplace = NSMakeRange(textLength, 0);
         NSDictionary *attrs;
         if (fileWrapper) {
-#if !PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
+            UNUSED_VARIABLE(ignoreOrientation);
+#else
             if (ignoreOrientation)
                 [attachment setIgnoresOrientation:YES];
 #endif

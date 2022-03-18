@@ -2374,7 +2374,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
     if (!renderView)
         return VisiblePosition();
 
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     FrameView* frameView = &renderView->frameView();
 #endif
 
@@ -2413,7 +2413,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
             break;
         Frame& frame = downcast<FrameView>(*widget).frame();
         renderView = frame.document()->renderView();
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
         frameView = downcast<FrameView>(widget);
 #endif
     }

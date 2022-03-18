@@ -221,10 +221,12 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
         break;
     }
 
+#if PLATFORM(IOS_FAMILY)
+    UNUSED_VARIABLE(shouldSmoothFonts);
+#else
     if (!shouldUseSmoothing())
         shouldSmoothFonts = false;
 
-#if !PLATFORM(IOS_FAMILY)
     bool originalShouldUseFontSmoothing = CGContextGetShouldSmoothFonts(cgContext);
     if (shouldSmoothFonts != originalShouldUseFontSmoothing)
         CGContextSetShouldSmoothFonts(cgContext, shouldSmoothFonts);

@@ -55,7 +55,7 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
     ASSERT(comp);
 
     OSStatus result = PAL::AudioComponentInstanceNew(comp, &m_outputUnit);
-    ASSERT(!result);
+    ASSERT_UNUSED(result, !result);
 
     UInt32 flag = 1;
     result = PAL::AudioUnitSetProperty(m_outputUnit,
@@ -64,23 +64,23 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
         0,
         &flag,
         sizeof(flag));
-    ASSERT(!result);
+    ASSERT_UNUSED(result, !result);
 
     result = PAL::AudioUnitInitialize(m_outputUnit);
-    ASSERT(!result);
+    ASSERT_UNUSED(result, !result);
     // Set render callback
     AURenderCallbackStruct input;
     input.inputProc = inputProc;
     input.inputProcRefCon = this;
     result = PAL::AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Input, 0, &input, sizeof(input));
-    ASSERT(!result);
+    ASSERT_UNUSED(result, !result);
 
     // Set stream format
     AudioStreamBasicDescription streamFormat;
 
     UInt32 size = sizeof(AudioStreamBasicDescription);
     result = PAL::AudioUnitGetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, (void*)&streamFormat, &size);
-    ASSERT(!result);
+    ASSERT_UNUSED(result, !result);
 
     constexpr int bytesPerFloat = sizeof(Float32);
     constexpr int bitsPerByte = 8;
@@ -94,7 +94,7 @@ void AudioOutputUnitAdaptor::configure(float hardwareSampleRate, unsigned number
     streamFormat.mBitsPerChannel = bitsPerByte * bytesPerFloat;
 
     result = PAL::AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
-    ASSERT(!result);
+    ASSERT_UNUSED(result, !result);
 
     AudioSession::sharedSession().setPreferredBufferSize(kPreferredBufferSize);
 }
