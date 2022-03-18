@@ -223,6 +223,22 @@ template <> void derefGPtr(GUri* ptr)
 }
 #endif
 
+template <>
+GArray* refGPtr(GArray* ptr)
+{
+    if (ptr)
+        g_array_ref(ptr);
+
+    return ptr;
+}
+
+template <>
+void derefGPtr(GArray* ptr)
+{
+    if (ptr)
+        g_array_unref(ptr);
+}
+
 } // namespace WTF
 
 #endif // USE(GLIB)

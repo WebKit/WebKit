@@ -1,3 +1,18 @@
+2022-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Initial import of the GstWebRTC backend
+        https://bugs.webkit.org/show_bug.cgi?id=236540
+
+        Reviewed by Carlos Garcia Campos and Xabier Rodriguez-Calvar.
+
+        * Scripts/Preferences/WebPreferences.yaml: Unconditionally enable WebRTC when GstWebRTC is
+        enabled. We don't have a runtime Provider yet.
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Disable encoded transforms unless libwebrtc is enabled.
+        * wtf/glib/GRefPtr.cpp: Add GArray handling.
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * wtf/glib/GRefPtr.h:
+
 2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Make it possible to call GRefPtr::outPtr() multiple times wihtout an explicit clear

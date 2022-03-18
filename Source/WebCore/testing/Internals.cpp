@@ -599,6 +599,9 @@ void Internals::resetToConsistentState(Page& page)
     rtcProvider.setH265Support(true);
     rtcProvider.setVP9Support(true, true);
     rtcProvider.clearFactory();
+#elif USE(GSTREAMER_WEBRTC)
+    page.settings().setWebRTCEncryptionEnabled(true);
+    page.settings().setPeerConnectionEnabled(true);
 #endif
 
     page.setFullscreenAutoHideDuration(0_s);
@@ -1619,6 +1622,7 @@ void Internals::applyRotationForOutgoingVideoSources(RTCPeerConnection& connecti
 {
     connection.applyRotationForOutgoingVideoSources();
 }
+
 void Internals::setWebRTCH265Support(bool value)
 {
 #if USE(LIBWEBRTC)
@@ -1626,6 +1630,8 @@ void Internals::setWebRTCH265Support(bool value)
         page->libWebRTCProvider().setH265Support(value);
         page->libWebRTCProvider().clearFactory();
     }
+#else
+    UNUSED_PARAM(value);
 #endif
 }
 
@@ -1636,6 +1642,9 @@ void Internals::setWebRTCVP9Support(bool supportVP9Profile0, bool supportVP9Prof
         page->libWebRTCProvider().setVP9Support(supportVP9Profile0, supportVP9Profile2);
         page->libWebRTCProvider().clearFactory();
     }
+#else
+    UNUSED_PARAM(supportVP9Profile0);
+    UNUSED_PARAM(supportVP9Profile2);
 #endif
 }
 
@@ -1646,6 +1655,8 @@ void Internals::setWebRTCVP9VTBSupport(bool value)
         page->libWebRTCProvider().setVP9VTBSupport(value);
         page->libWebRTCProvider().clearFactory();
     }
+#else
+    UNUSED_PARAM(value);
 #endif
 }
 
@@ -1686,6 +1697,8 @@ void Internals::setEnableWebRTCEncryption(bool value)
 #if USE(LIBWEBRTC)
     if (auto* page = contextDocument()->page())
         page->settings().setWebRTCEncryptionEnabled(value);
+#else
+    UNUSED_PARAM(value);
 #endif
 }
 
@@ -1696,6 +1709,8 @@ void Internals::setUseDTLS10(bool useDTLS10)
     if (!document || !document->page())
         return;
     document->page()->libWebRTCProvider().setUseDTLS10(useDTLS10);
+#else
+    UNUSED_PARAM(useDTLS10);
 #endif
 }
 

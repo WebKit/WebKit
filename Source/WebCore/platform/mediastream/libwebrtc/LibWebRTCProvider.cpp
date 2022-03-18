@@ -571,7 +571,6 @@ std::optional<RTCRtpCodecCapability> LibWebRTCProvider::codecCapability(const Co
     }
     return { };
 }
-#endif // USE(LIBWEBRTC)
 
 #if !PLATFORM(COCOA)
 // FIXME: Implement these routines.
@@ -584,7 +583,9 @@ static bool isVPSoftwareDecoderSmooth(const VideoConfiguration&)
 {
     return true;
 }
-#endif
+#endif // !PLATFORM(COCOA)
+
+#endif // USE(LIBWEBRTC)
 
 void LibWebRTCProvider::createDecodingConfiguration(MediaDecodingConfiguration&& configuration, DecodingConfigurationCallback&& callback)
 {

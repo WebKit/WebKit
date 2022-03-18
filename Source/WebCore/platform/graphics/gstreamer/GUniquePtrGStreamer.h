@@ -30,6 +30,12 @@
 #include <gst/video/video.h>
 #include <wtf/glib/GUniquePtr.h>
 
+#if defined(BUILDING_WebCore) && USE(GSTREAMER_WEBRTC)
+#define GST_USE_UNSTABLE_API
+#include <gst/webrtc/webrtc.h>
+#undef GST_USE_UNSTABLE_API
+#endif
+
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
 #include <wpe/extensions/video-plane-display-dmabuf.h>
 #endif
@@ -48,6 +54,10 @@ WTF_DEFINE_GPTR_DELETER(GstFlowCombiner, gst_flow_combiner_free)
 WTF_DEFINE_GPTR_DELETER(GstByteReader, gst_byte_reader_free)
 WTF_DEFINE_GPTR_DELETER(GstVideoConverter, gst_video_converter_free)
 WTF_DEFINE_GPTR_DELETER(GstAudioConverter, gst_audio_converter_free)
+
+#if defined(BUILDING_WebCore) && USE(GSTREAMER_WEBRTC)
+WTF_DEFINE_GPTR_DELETER(GstWebRTCSessionDescription, gst_webrtc_session_description_free)
+#endif
 
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
 WTF_DEFINE_GPTR_DELETER(struct wpe_video_plane_display_dmabuf_source, wpe_video_plane_display_dmabuf_source_destroy)

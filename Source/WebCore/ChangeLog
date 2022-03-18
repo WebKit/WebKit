@@ -1,3 +1,374 @@
+2022-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Initial import of the GstWebRTC backend
+        https://bugs.webkit.org/show_bug.cgi?id=236540
+
+        Reviewed by Carlos Garcia Campos and Xabier Rodriguez-Calvar.
+
+        Initial GstWebRTC backend. A lot of features unimplemented still, but we will incrementally
+        improve the layout test coverage in follow-up patches. Most notable short-comings currently:
+
+        - DataChannel support is incomplete (bug 235879)
+        - Network traffic not routed through Network process yet
+        - Stats support incomplete
+        - DTMF support unimplemented
+        - ICE restarts not supported yet
+        - Re-negotiation unlikely to work
+        - Simulcast not handled yet
+        - Balanced bundle not supported
+        - RTX and FEC un-tested, but shouldn't be hard to fix
+
+        * Modules/mediastream/MediaDevices.cpp:
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::generateCertificate):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::create):
+        * Modules/mediastream/gstreamer/GStreamerDataChannelHandler.cpp: Added.
+        (WebCore::GStreamerDataChannelHandler::fromRTCDataChannelInit):
+        (WebCore::GStreamerDataChannelHandler::channelEvent):
+        (WebCore::GStreamerDataChannelHandler::GStreamerDataChannelHandler):
+        (WebCore::GStreamerDataChannelHandler::~GStreamerDataChannelHandler):
+        (WebCore::GStreamerDataChannelHandler::setClient):
+        (WebCore::GStreamerDataChannelHandler::sendStringData):
+        (WebCore::GStreamerDataChannelHandler::sendRawData):
+        (WebCore::GStreamerDataChannelHandler::close):
+        (WebCore::GStreamerDataChannelHandler::checkState):
+        (WebCore::GStreamerDataChannelHandler::readyStateChanged):
+        (WebCore::GStreamerDataChannelHandler::onMessageData):
+        (WebCore::GStreamerDataChannelHandler::onMessageString):
+        (WebCore::GStreamerDataChannelHandler::onError):
+        (WebCore::GStreamerDataChannelHandler::onBufferedAmountLow):
+        (WebCore::GStreamerDataChannelHandler::postTask):
+        * Modules/mediastream/gstreamer/GStreamerDataChannelHandler.h: Added.
+        * Modules/mediastream/gstreamer/GStreamerDtlsTransportBackend.cpp: Added.
+        (WebCore::GStreamerDtlsTransportBackend::GStreamerDtlsTransportBackend):
+        (WebCore::GStreamerDtlsTransportBackend::~GStreamerDtlsTransportBackend):
+        (WebCore::GStreamerDtlsTransportBackend::iceTransportBackend):
+        (WebCore::GStreamerDtlsTransportBackend::registerClient):
+        (WebCore::GStreamerDtlsTransportBackend::unregisterClient):
+        (WebCore::GStreamerDtlsTransportBackend::stateChanged):
+        * Modules/mediastream/gstreamer/GStreamerDtlsTransportBackend.h: Added.
+        * Modules/mediastream/gstreamer/GStreamerIceTransportBackend.cpp: Added.
+        (WebCore::GStreamerIceTransportBackend::GStreamerIceTransportBackend):
+        (WebCore::GStreamerIceTransportBackend::~GStreamerIceTransportBackend):
+        (WebCore::GStreamerIceTransportBackend::iceTransportChanged):
+        (WebCore::GStreamerIceTransportBackend::registerClient):
+        (WebCore::GStreamerIceTransportBackend::unregisterClient):
+        (WebCore::GStreamerIceTransportBackend::stateChanged):
+        (WebCore::GStreamerIceTransportBackend::gatheringStateChanged):
+        * Modules/mediastream/gstreamer/GStreamerIceTransportBackend.h: Added.
+        * Modules/mediastream/gstreamer/GStreamerMediaEndpoint.cpp: Added.
+        (WebCore::GStreamerMediaEndpoint::GStreamerMediaEndpoint):
+        (WebCore::GStreamerMediaEndpoint::initializePipeline):
+        (WebCore::GStreamerMediaEndpoint::~GStreamerMediaEndpoint):
+        (WebCore::GStreamerMediaEndpoint::teardownPipeline):
+        (WebCore::GStreamerMediaEndpoint::handleMessage):
+        (WebCore::GStreamerMediaEndpoint::disposeElementChain):
+        (WebCore::GStreamerMediaEndpoint::setConfiguration):
+        (WebCore::GStreamerMediaEndpoint::restartIce):
+        (WebCore::fetchDescription):
+        (WebCore::fetchSignalingState):
+        (WebCore::descriptionsFromWebRTCBin):
+        (WebCore::GStreamerMediaEndpoint::doSetLocalDescription):
+        (WebCore::GStreamerMediaEndpoint::setRemoteDescriptionSucceeded):
+        (WebCore::GStreamerMediaEndpoint::doSetRemoteDescription):
+        (WebCore::SetDescriptionCallData::SetDescriptionCallData):
+        (WebCore::GStreamerMediaEndpoint::setDescription):
+        (WebCore::GStreamerMediaEndpoint::storeRemoteMLineInfo):
+        (WebCore::GStreamerMediaEndpoint::configureAndLinkSource):
+        (WebCore::GStreamerMediaEndpoint::requestPad):
+        (WebCore::GStreamerMediaEndpoint::addTrack):
+        (WebCore::GStreamerMediaEndpoint::removeTrack):
+        (WebCore::GStreamerMediaEndpoint::doCreateOffer):
+        (WebCore::GStreamerMediaEndpoint::doCreateAnswer):
+        (WebCore::GStreamerMediaEndpoint::initiate):
+        (WebCore::GStreamerMediaEndpoint::getStats):
+        (WebCore::GStreamerMediaEndpoint::mediaStreamFromRTCStream):
+        (WebCore::GStreamerMediaEndpoint::addRemoteStream):
+        (WebCore::GStreamerMediaEndpoint::removeRemoteStream):
+        (WebCore::GStreamerMediaEndpoint::createTransceiverBackends):
+        (WebCore::GStreamerMediaEndpoint::addTransceiver):
+        (WebCore::GStreamerMediaEndpoint::createSourceForTrack):
+        (WebCore::GStreamerMediaEndpoint::setSenderSourceFromTrack):
+        (WebCore::GStreamerMediaEndpoint::transceiverBackendFromSender):
+        (WebCore::GStreamerMediaEndpoint::addIceCandidate):
+        (WebCore::GStreamerMediaEndpoint::createDataChannel):
+        (WebCore::GStreamerMediaEndpoint::onDataChannel):
+        (WebCore::GStreamerMediaEndpoint::close):
+        (WebCore::GStreamerMediaEndpoint::stop):
+        (WebCore::GStreamerMediaEndpoint::suspend):
+        (WebCore::GStreamerMediaEndpoint::resume):
+        (WebCore::GStreamerMediaEndpoint::onNegotiationNeeded):
+        (WebCore::GStreamerMediaEndpoint::onIceConnectionChange):
+        (WebCore::GStreamerMediaEndpoint::onIceGatheringChange):
+        (WebCore::GStreamerMediaEndpoint::onIceCandidate):
+        (WebCore::GStreamerMediaEndpoint::createSessionDescriptionSucceeded):
+        (WebCore::GStreamerMediaEndpoint::createSessionDescriptionFailed):
+        (WebCore::GStreamerMediaEndpoint::collectTransceivers):
+        (WebCore::GStreamerMediaEndpoint::gatherStatsForLogging):
+        (WebCore::RTCStatsLogger::RTCStatsLogger):
+        (WebCore::RTCStatsLogger::toJSONString const):
+        (WebCore::GStreamerMediaEndpoint::processStats):
+        (WebCore::GStreamerMediaEndpoint::onStatsDelivered):
+        (WebCore::GStreamerMediaEndpoint::startLoggingStats):
+        (WebCore::GStreamerMediaEndpoint::stopLoggingStats):
+        (WebCore::GStreamerMediaEndpoint::logChannel const):
+        (WebCore::GStreamerMediaEndpoint::statsLogInterval const):
+        (WebCore::GStreamerMediaEndpoint::gatherDecoderImplementationName):
+        (WTF::LogArgument<WebCore::RTCStatsLogger>::toString):
+        * Modules/mediastream/gstreamer/GStreamerMediaEndpoint.h: Added.
+        (WebCore::GStreamerMediaEndpoint::create):
+        (WebCore::GStreamerMediaEndpoint::isStopped const):
+        (WebCore::GStreamerMediaEndpoint::isNegotiationNeeded const):
+        (WebCore::GStreamerMediaEndpoint::pipeline const):
+        * Modules/mediastream/gstreamer/GStreamerPeerConnectionBackend.cpp: Added.
+        (WebCore::createGStreamerPeerConnectionBackend):
+        (WebCore::PeerConnectionBackend::receiverCapabilities):
+        (WebCore::PeerConnectionBackend::senderCapabilities):
+        (WebCore::GStreamerPeerConnectionBackend::GStreamerPeerConnectionBackend):
+        (WebCore::GStreamerPeerConnectionBackend::suspend):
+        (WebCore::GStreamerPeerConnectionBackend::resume):
+        (WebCore::GStreamerPeerConnectionBackend::restartIce):
+        (WebCore::GStreamerPeerConnectionBackend::setConfiguration):
+        (WebCore::GStreamerPeerConnectionBackend::getStats):
+        (WebCore::backendFromRTPSender):
+        (WebCore::GStreamerPeerConnectionBackend::doSetLocalDescription):
+        (WebCore::GStreamerPeerConnectionBackend::doSetRemoteDescription):
+        (WebCore::GStreamerPeerConnectionBackend::doCreateOffer):
+        (WebCore::GStreamerPeerConnectionBackend::doCreateAnswer):
+        (WebCore::GStreamerPeerConnectionBackend::close):
+        (WebCore::GStreamerPeerConnectionBackend::doStop):
+        (WebCore::GStreamerPeerConnectionBackend::doAddIceCandidate):
+        (WebCore::GStreamerPeerConnectionBackend::createReceiver):
+        (WebCore::GStreamerPeerConnectionBackend::createDataChannelHandler):
+        (WebCore::findExistingSender):
+        (WebCore::GStreamerPeerConnectionBackend::addTrack):
+        (WebCore::GStreamerPeerConnectionBackend::addTransceiverFromTrackOrKind):
+        (WebCore::GStreamerPeerConnectionBackend::addTransceiver):
+        (WebCore::GStreamerPeerConnectionBackend::setSenderSourceFromTrack):
+        (WebCore::backendFromRTPTransceiver):
+        (WebCore::GStreamerPeerConnectionBackend::existingTransceiver):
+        (WebCore::GStreamerPeerConnectionBackend::newRemoteTransceiver):
+        (WebCore::GStreamerPeerConnectionBackend::collectTransceivers):
+        (WebCore::GStreamerPeerConnectionBackend::removeTrack):
+        (WebCore::GStreamerPeerConnectionBackend::applyRotationForOutgoingVideoSources):
+        (WebCore::GStreamerPeerConnectionBackend::gatherDecoderImplementationName):
+        (WebCore::GStreamerPeerConnectionBackend::isNegotiationNeeded const):
+        * Modules/mediastream/gstreamer/GStreamerPeerConnectionBackend.h: Added.
+        * Modules/mediastream/gstreamer/GStreamerRtpReceiverBackend.cpp: Added.
+        (WebCore::GStreamerRtpReceiverBackend::getParameters):
+        (WebCore::GStreamerRtpReceiverBackend::getContributingSources const):
+        (WebCore::GStreamerRtpReceiverBackend::getSynchronizationSources const):
+        (WebCore::GStreamerRtpReceiverBackend::createSource):
+        (WebCore::GStreamerRtpReceiverBackend::rtcRtpTransformBackend):
+        (WebCore::GStreamerRtpReceiverBackend::dtlsTransportBackend):
+        * Modules/mediastream/gstreamer/GStreamerRtpReceiverBackend.h: Added.
+        * Modules/mediastream/gstreamer/GStreamerRtpReceiverTransformBackend.cpp: Added.
+        (WebCore::mediaTypeFromReceiver):
+        (WebCore::GStreamerRtpReceiverTransformBackend::GStreamerRtpReceiverTransformBackend):
+        (WebCore::GStreamerRtpReceiverTransformBackend::~GStreamerRtpReceiverTransformBackend):
+        (WebCore::GStreamerRtpReceiverTransformBackend::setTransformableFrameCallback):
+        (WebCore::GStreamerRtpReceiverTransformBackend::requestKeyFrame):
+        * Modules/mediastream/gstreamer/GStreamerRtpReceiverTransformBackend.h: Added.
+        * Modules/mediastream/gstreamer/GStreamerRtpSenderBackend.cpp: Added.
+        (WebCore::updateTrackSource):
+        (WebCore::GStreamerRtpSenderBackend::startSource):
+        (WebCore::GStreamerRtpSenderBackend::stopSource):
+        (WebCore::GStreamerRtpSenderBackend::replaceTrack):
+        (WebCore::GStreamerRtpSenderBackend::getParameters const):
+        (WebCore::GStreamerRtpSenderBackend::setParameters):
+        (WebCore::GStreamerRtpSenderBackend::createDTMFBackend):
+        (WebCore::GStreamerRtpSenderBackend::rtcRtpTransformBackend):
+        (WebCore::GStreamerRtpSenderBackend::setMediaStreamIds):
+        (WebCore::GStreamerRtpSenderBackend::dtlsTransportBackend):
+        * Modules/mediastream/gstreamer/GStreamerRtpSenderBackend.h: Added.
+        * Modules/mediastream/gstreamer/GStreamerRtpSenderTransformBackend.cpp: Added.
+        (WebCore::mediaTypeFromSender):
+        (WebCore::GStreamerRtpSenderTransformBackend::GStreamerRtpSenderTransformBackend):
+        (WebCore::GStreamerRtpSenderTransformBackend::~GStreamerRtpSenderTransformBackend):
+        (WebCore::GStreamerRtpSenderTransformBackend::setTransformableFrameCallback):
+        (WebCore::GStreamerRtpSenderTransformBackend::requestKeyFrame):
+        * Modules/mediastream/gstreamer/GStreamerRtpSenderTransformBackend.h: Added.
+        * Modules/mediastream/gstreamer/GStreamerRtpTransceiverBackend.cpp: Added.
+        (WebCore::GStreamerRtpTransceiverBackend::GStreamerRtpTransceiverBackend):
+        (WebCore::GStreamerRtpTransceiverBackend::createReceiverBackend):
+        (WebCore::GStreamerRtpTransceiverBackend::createSenderBackend):
+        (WebCore::GStreamerRtpTransceiverBackend::direction const):
+        (WebCore::GStreamerRtpTransceiverBackend::currentDirection const):
+        (WebCore::GStreamerRtpTransceiverBackend::setDirection):
+        (WebCore::GStreamerRtpTransceiverBackend::mid):
+        (WebCore::GStreamerRtpTransceiverBackend::stop):
+        (WebCore::GStreamerRtpTransceiverBackend::stopped const):
+        (WebCore::GStreamerRtpTransceiverBackend::setCodecPreferences):
+        * Modules/mediastream/gstreamer/GStreamerRtpTransceiverBackend.h: Added.
+        * Modules/mediastream/gstreamer/GStreamerRtpTransformBackend.cpp: Added.
+        (WebCore::GStreamerRtpTransformBackend::setInputCallback):
+        (WebCore::GStreamerRtpTransformBackend::clearTransformableFrameCallback):
+        (WebCore::GStreamerRtpTransformBackend::processTransformedFrame):
+        * Modules/mediastream/gstreamer/GStreamerRtpTransformBackend.h: Added.
+        (WebCore::GStreamerRtpTransformBackend::GStreamerRtpTransformBackend):
+        * Modules/mediastream/gstreamer/GStreamerSctpTransportBackend.cpp: Added.
+        (WebCore::toRTCSctpTransportState):
+        (WebCore::GStreamerSctpTransportBackend::GStreamerSctpTransportBackend):
+        (WebCore::GStreamerSctpTransportBackend::~GStreamerSctpTransportBackend):
+        (WebCore::GStreamerSctpTransportBackend::dtlsTransportBackend):
+        (WebCore::GStreamerSctpTransportBackend::registerClient):
+        (WebCore::GStreamerSctpTransportBackend::unregisterClient):
+        (WebCore::GStreamerSctpTransportBackend::stateChanged):
+        * Modules/mediastream/gstreamer/GStreamerSctpTransportBackend.h: Added.
+        * Modules/mediastream/gstreamer/GStreamerStatsCollector.cpp: Added.
+        (WebCore::fillRTCStats):
+        (WebCore::fillRTCRTPStreamStats):
+        (WebCore::fillRTCCodecStats):
+        (WebCore::fillInboundRTPStreamStats):
+        (WebCore::fillOutboundRTPStreamStats):
+        (WebCore::fillRTCPeerConnectionStats):
+        (WebCore::fillRTCTransportStats):
+        (WebCore::fillReportCallback):
+        (WebCore::CallbackHolder::CallbackHolder):
+        (WebCore::GStreamerStatsCollector::getStats):
+        * Modules/mediastream/gstreamer/GStreamerStatsCollector.h: Added.
+        (WebCore::GStreamerStatsCollector::create):
+        (WebCore::GStreamerStatsCollector::setElement):
+        * Modules/mediastream/gstreamer/GStreamerWebRTCUtils.cpp: Added.
+        (WebCore::toRTCIceComponent):
+        (WebCore::toRTCIceProtocol):
+        (WebCore::toRTCIceTcpCandidateType):
+        (WebCore::toRTCIceCandidateType):
+        (WebCore::toRTCError):
+        (WebCore::toWebRTCBitRatePriority):
+        (WebCore::fromRTCEncodingParameters):
+        (WebCore::fromWebRTCBitRatePriority):
+        (WebCore::toRTCEncodingParameters):
+        (WebCore::toRTCRtpSendParameters):
+        (WebCore::ensureDebugCategoryInitialized):
+        (WebCore::parseIceCandidateSDP):
+        (WebCore::x509Serialize):
+        (WebCore::privateKeySerialize):
+        (WebCore::generateCertificate):
+        (WebCore::sdpMediaHasAttributeKey):
+        * Modules/mediastream/gstreamer/GStreamerWebRTCUtils.h: Added.
+        (WebCore::toRTCRtpTransceiverDirection):
+        (WebCore::fromRTCRtpTransceiverDirection):
+        (WebCore::toSessionDescriptionType):
+        (WebCore::fromSessionDescriptionType):
+        (WebCore::toSignalingState):
+        (WebCore::toRTCIceConnectionState):
+        (WebCore::toRTCDtlsTransportState):
+        (WebCore::toRTCIceTransportState):
+        (WebCore::toRTCIceGatheringState):
+        (WebCore::bundlePolicyFromConfiguration):
+        (WebCore::iceTransportPolicyFromConfiguration):
+        (WebCore::toRTCErrorDetailType):
+        * platform/GStreamer.cmake:
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::AudioSourceProviderGStreamer):
+        (WebCore::AudioSourceProviderGStreamer::~AudioSourceProviderGStreamer):
+        (WebCore::AudioSourceProviderGStreamer::handleNewDeinterleavePad):
+        * platform/audio/gstreamer/GStreamerAudioStreamDescription.h:
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef):
+        (WTF::refGPtr<GstWebRTCRTPReceiver>):
+        (WTF::derefGPtr<GstWebRTCRTPReceiver>):
+        (WTF::refGPtr<GstWebRTCRTPSender>):
+        (WTF::derefGPtr<GstWebRTCRTPSender>):
+        (WTF::refGPtr<GstWebRTCRTPTransceiver>):
+        (WTF::derefGPtr<GstWebRTCRTPTransceiver>):
+        (WTF::refGPtr<GstWebRTCDataChannel>):
+        (WTF::derefGPtr<GstWebRTCDataChannel>):
+        (WTF::refGPtr<GstWebRTCDTLSTransport>):
+        (WTF::derefGPtr<GstWebRTCDTLSTransport>):
+        (WTF::refGPtr<GstWebRTCICETransport>):
+        (WTF::derefGPtr<GstWebRTCICETransport>):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::capsMediaType):
+        * platform/graphics/gstreamer/GUniquePtrGStreamer.h:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::createAudioSourceProvider):
+        * platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp:
+        (WebCore::GStreamerAudioCapturer::GStreamerAudioCapturer):
+        (WebCore::GStreamerAudioCapturer::createConverter):
+        * platform/mediastream/gstreamer/GStreamerCapturer.cpp:
+        (WebCore::GStreamerCapturer::createSource):
+        * platform/mediastream/gstreamer/GStreamerDTMFSenderBackend.cpp: Added.
+        (WebCore::GStreamerDTMFSenderBackend::GStreamerDTMFSenderBackend):
+        (WebCore::GStreamerDTMFSenderBackend::~GStreamerDTMFSenderBackend):
+        (WebCore::GStreamerDTMFSenderBackend::canInsertDTMF):
+        (WebCore::GStreamerDTMFSenderBackend::playTone):
+        (WebCore::GStreamerDTMFSenderBackend::tones const):
+        (WebCore::GStreamerDTMFSenderBackend::duration const):
+        (WebCore::GStreamerDTMFSenderBackend::interToneGap const):
+        (WebCore::GStreamerDTMFSenderBackend::onTonePlayed):
+        * platform/mediastream/gstreamer/GStreamerDTMFSenderBackend.h: Added.
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (webkitMediaStreamSrcAddTrack):
+        * platform/mediastream/gstreamer/GStreamerVideoEncoder.cpp:
+        (webkit_webrtc_video_encoder_class_init):
+        * platform/mediastream/gstreamer/RealtimeIncomingAudioSourceGStreamer.cpp: Added.
+        (WebCore::RealtimeIncomingAudioSourceGStreamer::RealtimeIncomingAudioSourceGStreamer):
+        (WebCore::RealtimeIncomingAudioSourceGStreamer::~RealtimeIncomingAudioSourceGStreamer):
+        (WebCore::RealtimeIncomingAudioSourceGStreamer::startProducingData):
+        (WebCore::RealtimeIncomingAudioSourceGStreamer::stopProducingData):
+        (WebCore::RealtimeIncomingAudioSourceGStreamer::capabilities):
+        (WebCore::RealtimeIncomingAudioSourceGStreamer::settings):
+        (WebCore::RealtimeIncomingAudioSourceGStreamer::dispatchSample):
+        * platform/mediastream/gstreamer/RealtimeIncomingAudioSourceGStreamer.h: Added.
+        (WebCore::RealtimeIncomingAudioSourceGStreamer::create):
+        (isType):
+        * platform/mediastream/gstreamer/RealtimeIncomingSourceGStreamer.cpp: Added.
+        (WebCore::RealtimeIncomingSourceGStreamer::RealtimeIncomingSourceGStreamer):
+        (WebCore::RealtimeIncomingSourceGStreamer::lockValve const):
+        (WebCore::RealtimeIncomingSourceGStreamer::releaseValve const):
+        (WebCore::RealtimeIncomingSourceGStreamer::registerClient):
+        * platform/mediastream/gstreamer/RealtimeIncomingSourceGStreamer.h: Added.
+        (WebCore::RealtimeIncomingSourceGStreamer::bin):
+        (WebCore::RealtimeIncomingSourceGStreamer::dispatchSample):
+        * platform/mediastream/gstreamer/RealtimeIncomingVideoSourceGStreamer.cpp: Added.
+        (WebCore::RealtimeIncomingVideoSourceGStreamer::RealtimeIncomingVideoSourceGStreamer):
+        (WebCore::RealtimeIncomingVideoSourceGStreamer::startProducingData):
+        (WebCore::RealtimeIncomingVideoSourceGStreamer::stopProducingData):
+        (WebCore::RealtimeIncomingVideoSourceGStreamer::capabilities):
+        (WebCore::RealtimeIncomingVideoSourceGStreamer::settings):
+        (WebCore::RealtimeIncomingVideoSourceGStreamer::settingsDidChange):
+        (WebCore::RealtimeIncomingVideoSourceGStreamer::dispatchSample):
+        * platform/mediastream/gstreamer/RealtimeIncomingVideoSourceGStreamer.h: Added.
+        (WebCore::RealtimeIncomingVideoSourceGStreamer::create):
+        (isType):
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp: Added.
+        (WebCore::RealtimeOutgoingAudioSourceGStreamer::RealtimeOutgoingAudioSourceGStreamer):
+        (WebCore::RealtimeOutgoingAudioSourceGStreamer::setPayloadType):
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.h: Added.
+        * platform/mediastream/gstreamer/RealtimeOutgoingMediaSourceGStreamer.cpp: Added.
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::~RealtimeOutgoingMediaSourceGStreamer):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::setSource):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::start):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::stop):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::sourceMutedChanged):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::sourceEnabledChanged):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::initializeFromTrack):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::link):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::setSinkPad):
+        * platform/mediastream/gstreamer/RealtimeOutgoingMediaSourceGStreamer.h: Added.
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::source const):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::allowedCaps const):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::pad const):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::sender const):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::bin const):
+        (WebCore::RealtimeOutgoingMediaSourceGStreamer::setPayloadType):
+        * platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceGStreamer.cpp: Added.
+        (WebCore::RealtimeOutgoingVideoSourceGStreamer::RealtimeOutgoingVideoSourceGStreamer):
+        (WebCore::RealtimeOutgoingVideoSourceGStreamer::setPayloadType):
+        * platform/mediastream/gstreamer/RealtimeOutgoingVideoSourceGStreamer.h: Added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setWebRTCH265Support):
+        (WebCore::Internals::setWebRTCVP9Support):
+        (WebCore::Internals::setWebRTCVP9VTBSupport):
+        (WebCore::Internals::setEnableWebRTCEncryption):
+        (WebCore::Internals::setUseDTLS10):
+
 2022-03-18  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Rename InlineIterator::Line::closestRun* to closestBoxFor*

@@ -1722,7 +1722,9 @@ PeerConnectionEnabled:
     WebKitLegacy:
       default: true
     WebKit:
-      default: WebCore::LibWebRTCProvider::webRTCAvailable()
+      "USE(LIBWEBRTC)": WebCore::LibWebRTCProvider::webRTCAvailable()
+      "USE(GSTREAMER_WEBRTC)": true
+      default: false
     WebCore:
       default: true
 

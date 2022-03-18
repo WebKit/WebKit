@@ -1735,9 +1735,11 @@ WebRTCEncodedTransformEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      "USE(LIBWEBRTC)": true
+      default: false
     WebCore:
-      default: true
+      "USE(LIBWEBRTC)": true
+      default: false
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebRTCH264LowLatencyEncoderEnabled:

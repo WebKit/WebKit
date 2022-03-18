@@ -297,9 +297,11 @@ static void webkit_webrtc_video_encoder_class_init(WebKitWebrtcVideoEncoderClass
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
         }, "target-bitrate", setBitrateBitPerSec, "interval-intraframes");
     Encoders::registerEncoder(X264, "x264enc", "h264parse", "video/x-h264",
-        "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline",
+        "video/x-h264,alignment=au,stream-format=byte-stream,profile=constrained-baseline",
         [](WebKitWebrtcVideoEncoder* self) {
             gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "tune", "zerolatency");
+            gst_util_set_object_arg(G_OBJECT(self->priv->encoder.get()), "speed-preset", "ultrafast");
+            g_object_set(G_OBJECT(self->priv->encoder.get()), "key-int-max", 15, NULL);
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
         }, "bitrate", setBitrateKbitPerSec, "key-int-max");
     Encoders::registerEncoder(OpenH264, "openh264enc", "h264parse", "video/x-h264",

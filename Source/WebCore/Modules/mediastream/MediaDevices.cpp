@@ -40,6 +40,7 @@
 #include "Frame.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaDeviceInfo.h"
+#include "Logging.h"
 #include "MediaTrackSupportedConstraints.h"
 #include "RealtimeMediaSourceSettings.h"
 #include "Settings.h"

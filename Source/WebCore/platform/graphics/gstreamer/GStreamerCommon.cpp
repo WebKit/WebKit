@@ -188,6 +188,9 @@ const char* capsMediaType(const GstCaps* caps)
     if (gst_structure_has_name(structure, "application/x-cenc") || gst_structure_has_name(structure, "application/x-cbcs") || gst_structure_has_name(structure, "application/x-webm-enc"))
         return gst_structure_get_string(structure, "original-media-type");
 #endif
+    if (gst_structure_has_name(structure, "application/x-rtp"))
+        return gst_structure_get_string(structure, "media");
+
     return gst_structure_get_name(structure);
 }
 

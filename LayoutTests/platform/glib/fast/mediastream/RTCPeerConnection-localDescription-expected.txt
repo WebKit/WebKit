@@ -1,0 +1,19 @@
+Tests RTCPeerConnection localDescription.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pc.setLocalDescription(sessionDescription).then(requestSucceeded1, requestFailed1); did not throw exception.
+PASS requestSucceeded was called.
+PASS pc.setLocalDescription(sessionDescription).then(requestSucceeded2, requestFailed2); did not throw exception.
+PASS requestFailed was called.
+PASS pc.localDescription.type is "offer"
+FAIL pc.localDescription.sdp should be local. Was t=0 0
+.
+PASS pc.localDescription.type is "offer"
+FAIL pc.localDescription.sdp should be local. Was t=0 0
+.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -53,9 +53,14 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
+#if USE(GSTREAMER_WEBRTC)
+#include "GStreamerWebRTCUtils.h"
+#endif
+
 namespace WebCore {
 
-#if !USE(LIBWEBRTC)
+#if !USE(LIBWEBRTC) && !USE(GSTREAMER_WEBRTC)
+
 static std::unique_ptr<PeerConnectionBackend> createNoPeerConnectionBackend(RTCPeerConnection&)
 {
     return nullptr;
@@ -217,18 +222,8 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
         if (descriptionStates)
             m_peerConnection.updateDescriptions(WTFMove(*descriptionStates));
 
-        for (auto& event : events) {
-            auto& track = event.track.get();
-
-            m_peerConnection.dispatchEvent(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
-            ALWAYS_LOG(LOGIDENTIFIER, "Dispatched if feasible track of type ", track.source().type());
-
-            if (m_peerConnection.isClosed())
-                return;
-
-            // FIXME: As per spec, we should set muted to 'false' when starting to receive the content from network.
-            track.source().setMuted(false);
-        }
+        for (auto& event : events)
+            dispatchTrackEvent(event);
 
         if (m_peerConnection.isClosed())
             return;
@@ -238,6 +233,20 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded(std::optional<Descript
         m_peerConnection.processIceTransportChanges();
         callback({ });
     });
+}
+
+void PeerConnectionBackend::dispatchTrackEvent(PendingTrackEvent& event)
+{
+    auto& track = event.track.get();
+
+    m_peerConnection.dispatchEvent(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
+    ALWAYS_LOG(LOGIDENTIFIER, "Dispatched if feasible track of type ", track.source().type());
+
+    if (m_peerConnection.isClosed())
+        return;
+
+    // FIXME: As per spec, we should set muted to 'false' when starting to receive the content from network.
+    track.source().setMuted(false);
 }
 
 void PeerConnectionBackend::setRemoteDescriptionFailed(Exception&& exception)
@@ -437,13 +446,19 @@ void PeerConnectionBackend::generateCertificate(Document& document, const Certif
         promise.reject(InvalidStateError);
         return;
     }
+
     LibWebRTCCertificateGenerator::generateCertificate(document.securityOrigin(), page->libWebRTCProvider(), info, [promise = WTFMove(promise)](auto&& result) mutable {
         promise.settle(WTFMove(result));
     });
+#elif USE(GSTREAMER_WEBRTC)
+    auto certificate = ::WebCore::generateCertificate(document.securityOrigin(), info);
+    if (certificate.has_value())
+        promise.resolve(*certificate);
+    else
+        promise.reject(NotSupportedError);
 #else
     UNUSED_PARAM(document);
-    UNUSED_PARAM(expires);
-    UNUSED_PARAM(type);
+    UNUSED_PARAM(info);
     promise.reject(NotSupportedError);
 #endif
 }

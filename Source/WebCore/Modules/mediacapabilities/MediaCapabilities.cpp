@@ -180,7 +180,7 @@ static void gatherDecodingInfo(Document& document, MediaDecodingConfiguration&& 
     configuration.canExposeVP9 = document.settings().vp9DecoderEnabled();
 #endif
 
-#if ENABLE(WEB_RTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
     if (configuration.type == MediaDecodingType::WebRTC) {
         if (auto* page = document.page())
             page->libWebRTCProvider().createDecodingConfiguration(WTFMove(configuration), WTFMove(decodingCallback));
@@ -200,7 +200,7 @@ static void gatherEncodingInfo(Document& document, MediaEncodingConfiguration&& 
         callback(WTFMove(result));
     };
 
-#if ENABLE(WEB_RTC)
+#if ENABLE(WEB_RTC) && USE(LIBWEBRTC)
     if (configuration.type == MediaEncodingType::WebRTC) {
         if (auto* page = document.page())
             page->libWebRTCProvider().createEncodingConfiguration(WTFMove(configuration), WTFMove(encodingCallback));

@@ -1,3 +1,13 @@
+2022-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Initial import of the GstWebRTC backend
+        https://bugs.webkit.org/show_bug.cgi?id=236540
+
+        Reviewed by Carlos Garcia Campos and Xabier Rodriguez-Calvar.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Allow libnice debug log environment variable in runtime sandbox.
+
 2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] Make it possible to call GRefPtr::outPtr() multiple times wihtout an explicit clear

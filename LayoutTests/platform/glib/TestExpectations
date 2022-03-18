@@ -864,7 +864,6 @@ webkit.org/b/229973 media/track/in-band/track-in-band-srt-mkv-cues-added-once.ht
 
 webkit.org/b/230028 media/media-source/media-source-seek-twice.html [ Pass Timeout ]
 
-webkit.org/b/231811 fast/mediastream/MediaStream-video-element-enter-background.html [ Failure ]
 webkit.org/b/231811 media/audio-background-playback-playlist.html [ Failure ]
 webkit.org/b/231811 media/media-session/actionHandlerInternalMappings.html [ Failure ]
 webkit.org/b/231811 media/media-session/default-actionHandlers.html [ Failure ]
@@ -873,7 +872,6 @@ webkit.org/b/231811 media/video-concurrent-playback.html [ Failure ]
 webkit.org/b/231811 media/video-interruption-with-resume-not-allowing-play.html [ Failure ]
 webkit.org/b/231811 media/video-multiple-concurrent-playback.html [ Failure ]
 webkit.org/b/231811 media/webaudio-background-playback.html [ Failure ]
-webkit.org/b/231811 webrtc/concurrentVideoPlayback2.html [ Failure ]
 webkit.org/b/231811 media/media-session/callActionHandler.html [ Timeout ]
 webkit.org/b/231811 media/media-session/play-after-seek.html [ Timeout ]
 webkit.org/b/231811 media/remote-control-command-is-user-gesture.html [ Timeout ]
@@ -886,10 +884,10 @@ webkit.org/b/231811 media/video-system-sleep.html [ Timeout ]
 webkit.org/b/231811 webaudio/audiocontext-state-interrupted.html [ Timeout ]
 webkit.org/b/231811 webaudio/suspend-context-while-interrupted.html [ Timeout ]
 
+# rvfc related failures
 imported/w3c/web-platform-tests/video-rvfc [ Pass ]
 fast/mediastream/getUserMedia-rvfc.html [ Pass Failure ]
 webrtc/peerConnection-rvfc.html [ Failure ]
-webrtc/canvas-to-peer-connection.html [ Failure ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
@@ -907,9 +905,88 @@ webkit.org/b/234084 media/track/audio-track-configuration.html [ Failure ]
 # bitrate estimation.
 webkit.org/b/234084 media/track/video-track-configuration.html [ Failure ]
 
-webkit.org/b/237872 webrtc/vp8-then-h264.html [ Crash ]
-
 webkit.org/b/237901 media/media-source/media-source-interruption-with-resume-allowing-play.html [ Slow ]
+
+# DataChannel GstWebRTC implementation incomplete
+webkit.org/b/235885 webrtc/datachannel [ Skip ]
+webkit.org/b/235885 http/wpt/webrtc/transfer-datachannel-service-worker.https.html [ Skip ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-statsSelector.html [ Skip ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-datachannel.html [ Skip ]
+
+# The GstWebRTC backend doesn't support transforms yet.
+webkit.org/b/235885 http/wpt/webrtc/audiovideo-script-transform.html [ Skip ]
+webkit.org/b/235885 http/wpt/webrtc/video-script-transform-keyframe-only.html [ Skip ]
+webkit.org/b/235885 http/wpt/webrtc/video-script-transform.html [ Skip ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-audio-transform.https.html [ Skip ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-change-transform.https.html [ Skip ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Skip ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform.https.html [ Skip ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-write-twice-transform.https.html [ Skip ]
+
+# The generated SDP offer currently does not reflect the codec-preferences set
+# on transceivers. Instead the negotiated outgoing media source caps are used
+# and our current implementation of outgoing source doesn't support multiple
+# payload types.
+webkit.org/b/235885 webrtc/audio-peer-connection-g722.html [ Failure ]
+
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Failure ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Failure ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-local-offer.html [ Crash ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Crash ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Failure ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Crash ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Failure ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-inspect-answer.html [ Failure ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-inspect-offer.html [ Failure ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-callbacks-single-dialog.html [ Failure ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Crash ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Pass Timeout ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-page-cache.html [ Crash ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass Failure Timeout ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Failure ]
+webkit.org/b/235885 fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html [ Crash ]
+webkit.org/b/235885 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpParameters-maxFramerate.html [ Failure ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html [ Failure ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc-priority/RTCRtpParameters-encodings.html [ Failure ]
+webkit.org/b/235885 inspector/page/overrideSetting-ICECandidateFilteringEnabled.html [ Timeout ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/media-capabilities/decodingInfo.webrtc.html [ Failure ]
+webkit.org/b/235885 imported/w3c/web-platform-tests/media-capabilities/encodingInfo.webrtc.html [ Failure ]
+webkit.org/b/235885 webrtc/addTransceiver-then-addTrack.html [ Failure ]
+webkit.org/b/235885 webrtc/audio-video-element-playing.html [ Timeout ]
+webkit.org/b/235885 webrtc/candidate-stats.html [ Failure ]
+webkit.org/b/235885 webrtc/canvas-to-peer-connection.html [ Failure ]
+webkit.org/b/235885 webrtc/captureCanvas-webrtc.html [ Timeout ]
+webkit.org/b/235885 webrtc/closing-peerconnection.html [ Timeout ]
+webkit.org/b/235885 webrtc/direction-change.html [ Failure ]
+webkit.org/b/235885 webrtc/disable-encryption.html [ Failure ]
+webkit.org/b/235885 webrtc/ephemeral-certificates-and-cnames.html [ Failure ]
+webkit.org/b/235885 webrtc/filtering-ice-candidate-after-reload.html [ Timeout ]
+webkit.org/b/235885 webrtc/h264-packetization-mode.html [ Timeout Failure ]
+webkit.org/b/235885 webrtc/libwebrtc/setLocalDescriptionCrash.html [ Failure ]
+webkit.org/b/235885 webrtc/no-port-zero-in-upd-candidates.html [ Failure ]
+webkit.org/b/235885 webrtc/peer-connection-remote-audio-mute.html [ Timeout ]
+webkit.org/b/235885 webrtc/peer-connection-remote-audio-mute2.html [ Timeout ]
+webkit.org/b/235885 webrtc/peer-connection-track-end.html [ Timeout ]
+webkit.org/b/235885 webrtc/peerconnection-page-cache-long.html [ Timeout ]
+webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Timeout ]
+webkit.org/b/235885 webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html [ Failure ]
+webkit.org/b/235885 webrtc/remove-track.html [ Failure ]
+webkit.org/b/235885 webrtc/utf8-sdp.html [ Failure ]
+webkit.org/b/235885 webrtc/video-addTransceiver.html [ Failure ]
+webkit.org/b/235885 webrtc/video-getParameters.html [ Failure ]
+webkit.org/b/235885 webrtc/video-mediastreamtrack-stats.html [ Failure ]
+webkit.org/b/235885 webrtc/video-mute-vp8.html [ Timeout ]
+webkit.org/b/235885 webrtc/video-mute.html [ Timeout ]
+webkit.org/b/235885 webrtc/video-replace-track-to-null.html [ Failure ]
+webkit.org/b/235885 webrtc/video-replace-track.html [ Failure ]
+webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
+webkit.org/b/235885 webrtc/video-unmute.html [ Crash ]
+webkit.org/b/235885 webrtc/video-vp8-videorange.html [ Timeout ]
+webkit.org/b/235885 webrtc/video.html [ Failure ]
+webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure ]
+webkit.org/b/235885 webrtc/vp9-svc.html [ Failure ]
+webkit.org/b/235885 webrtc/vp9.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -1431,16 +1508,14 @@ webkit.org/b/79203 webkit.org/b/186678 fast/mediastream/MediaStream-video-elemen
 
 fast/mediastream/MediaDevices-addEventListener.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
+webkit.org/b/191006 webkit.org/b/235885 webrtc/simulcast-h264.html [ Failure Timeout ]
 
-webkit.org/b/193641 webrtc/video-setDirection.html [ Failure Pass ]
+webkit.org/b/193641 webkit.org/b/235885 webrtc/video-setDirection.html [ Failure Pass Timeout ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
 webkit.org/b/201267 [ Release ] webrtc/video-h264.html [ Timeout Failure ]
-webkit.org/b/222585 [ Debug ] webrtc/video-h264.html [ Crash ]
-
-webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
+webkit.org/b/222585 webkit.org/b/235885 [ Debug ] webrtc/video-h264.html [ Crash Failure ]
 
 webkit.org/b/215005 webkit.org/b/218787 webrtc/h264-baseline.html [ Crash Timeout ]
 # h264-high.html is marked as slow in the root expectation
@@ -1449,7 +1524,7 @@ webkit.org/b/215007 [ Debug ] webrtc/h264-high.html [ Slow Failure ]
 
 webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Slow Failure ]
 
-webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
+webkit.org/b/216763 webkit.org/b/235885 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure Timeout ]
 
 webkit.org/b/218221 webrtc/vp9-profile2.html [ Timeout Failure ]
 
@@ -2241,13 +2316,12 @@ webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.htm
 webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
 
-webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html [ Timeout ]
 webkit.org/b/187064 webrtc/video-addTrack.html [ Failure ]
-webkit.org/b/187064 webrtc/video-disabled-black.html [ Crash ]
-webkit.org/b/187064 webrtc/video-remote-mute.html [ Crash ]
-webkit.org/b/187064 webrtc/video-replace-muted-track.html [ Timeout ]
+webkit.org/b/187064 webkit.org/b/235885 webrtc/video-replace-muted-track.html [ Timeout Failure ]
+webkit.org/b/187064 webkit.org/b/235885 webrtc/video-disabled-black.html [ Crash Timeout ]
+webkit.org/b/187064 webkit.org/b/235885 webrtc/video-remote-mute.html [ Crash Failure ]
 webkit.org/b/187064 webrtc/video-rotation.html [ Failure ]
-webkit.org/b/187064 webrtc/video-rotation-no-cvo.html [ Failure ]
+webkit.org/b/187064 webkit.org/b/235885 webrtc/video-rotation-no-cvo.html [ Failure Crash ]
 webkit.org/b/187064 webrtc/video-with-data-channel.html [ Failure ]
 webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Failure Pass ]
 
@@ -2454,9 +2528,6 @@ webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
 webkit.org/b/182108 http/tests/media/hls/hls-webvtt-tracks.html [ Timeout ]
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout Crash ]
 
-webkit.org/b/198113 [ Release ] fast/mediastream/media-stream-page-muted.html [ Pass ]
-webkit.org/b/198113 [ Debug ] fast/mediastream/media-stream-page-muted.html [ Timeout ]
-
 webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
 
 # Removed from general TestExpectations in r276393, but console error message still happening in GLib.
@@ -2541,10 +2612,7 @@ media/video-remote-control-playpause.html [ Skip ]
 
 webkit.org/b/207062 imported/w3c/web-platform-tests/media-source/mediasource-replay.html [ Failure Pass ]
 
-webkit.org/b/229346 webrtc/multi-audio.html [ Timeout Pass ]
-
-webkit.org/b/229715 [ Debug ] fast/mediastream/getDisplayMedia-max-constraints3.html [ Timeout ]
-webkit.org/b/229715 [ Debug ] fast/mediastream/screencapture-user-gesture.html [ Timeout ]
+webkit.org/b/229346 webkit.org/b/235885 webrtc/multi-audio.html [ Timeout Pass Failure ]
 
 webkit.org/b/229738 fast/text/whitespace/tab-character-basics.html [ Failure ]
 webkit.org/b/229738 fast/text/word-break.html [ Failure ]

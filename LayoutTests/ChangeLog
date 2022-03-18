@@ -1,3 +1,18 @@
+2022-03-18  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Initial import of the GstWebRTC backend
+        https://bugs.webkit.org/show_bug.cgi?id=236540
+
+        Reviewed by Carlos Garcia Campos and Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Flag most WebRTC as failing. During this first development
+        cycle I focused mostly on fixing crashes and only fixed a few failures. The remaining ones
+        will be adressed in follow-up patches.
+        * platform/glib/fast/mediastream/RTCPeerConnection-localDescription-expected.txt: Added.
+        * platform/glib/fast/mediastream/RTCPeerConnection-remoteDescription-expected.txt: Added.
+        * platform/glib/fast/mediastream/RTCPeerConnection-setRemoteDescription-offer-expected.txt: Added.
+        * platform/glib/fast/mediastream/RTCPeerConnection-stable-expected.txt: Added.
+
 2022-03-18  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Recycling a webgl context when it has been lost and restored causes a crash

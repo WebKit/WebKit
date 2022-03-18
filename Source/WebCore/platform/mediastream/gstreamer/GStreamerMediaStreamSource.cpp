@@ -34,17 +34,23 @@
 #include "VideoFrameMetadataGStreamer.h"
 #include "VideoTrackPrivateMediaStream.h"
 
+#if USE(GSTREAMER_WEBRTC)
+#include "RealtimeIncomingAudioSourceGStreamer.h"
+#include "RealtimeIncomingVideoSourceGStreamer.h"
+#endif
+
 #include <gst/app/gstappsrc.h>
+#include <gst/base/gstflowcombiner.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/WTFGType.h>
 
 using namespace WebCore;
 
 static GstStaticPadTemplate videoSrcTemplate = GST_STATIC_PAD_TEMPLATE("video_src%u", GST_PAD_SRC, GST_PAD_SOMETIMES,
-    GST_STATIC_CAPS("video/x-raw;video/x-h264;video/x-vp8"));
+    GST_STATIC_CAPS("video/x-raw;video/x-h264;video/x-vp8;video/x-vp9;application/x-rtp, media=(string)video"));
 
 static GstStaticPadTemplate audioSrcTemplate = GST_STATIC_PAD_TEMPLATE("audio_src%u", GST_PAD_SRC, GST_PAD_SOMETIMES,
-    GST_STATIC_CAPS("audio/x-raw(ANY);"));
+    GST_STATIC_CAPS("audio/x-raw(ANY);application/x-rtp, media=(string)audio"));
 
 GST_DEBUG_CATEGORY_STATIC(webkitMediaStreamSrcDebug);
 #define GST_CAT_DEFAULT webkitMediaStreamSrcDebug
@@ -236,7 +242,7 @@ public:
 
         if (drop) {
             m_needsDiscont = true;
-            GST_INFO_OBJECT(m_src.get(), "%s queue full already... not pushing", m_track.hasVideo() ? "Video" : "Audio");
+            GST_TRACE_OBJECT(m_src.get(), "%s queue full already... not pushing", m_track.hasVideo() ? "Video" : "Audio");
             return;
         }
 
@@ -688,6 +694,7 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
     const char* sourceType;
     unsigned counter;
     GstStaticPadTemplate* padTemplate;
+
     if (track->hasAudio()) {
         padTemplate = &audioSrcTemplate;
         sourceType = "audio";
@@ -699,9 +706,19 @@ void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc* self, MediaStreamTrackPr
         counter = self->priv->videoPadCounter.exchangeAdd(1);
     }
 
-    auto padName = makeString(sourceType, "_src", counter);
+#if USE(GSTREAMER_WEBRTC)
+    if (track->source().isIncomingAudioSource()) {
+        auto& source = static_cast<RealtimeIncomingAudioSourceGStreamer&>(track->source());
+        source.registerClient();
+    } else if (track->source().isIncomingVideoSource()) {
+        auto& source = static_cast<RealtimeIncomingVideoSourceGStreamer&>(track->source());
+        source.registerClient();
+    }
+#endif
+
     GST_DEBUG_OBJECT(self, "Setup %s source for track %s, only track: %s", sourceType, track->id().utf8().data(), boolForPrinting(onlyTrack));
 
+    auto padName = makeString(sourceType, "_src", counter);
     auto source = makeUnique<InternalSource>(GST_ELEMENT_CAST(self), *track, padName);
     auto* element = source->get();
     gst_bin_add(GST_BIN_CAST(self), element);
