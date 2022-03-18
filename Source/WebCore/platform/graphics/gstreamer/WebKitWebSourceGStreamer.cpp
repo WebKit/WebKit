@@ -674,8 +674,12 @@ static void webKitWebSrcMakeRequest(WebKitWebSrc* src, DataMutexLocker<WebKitWeb
         || !g_ascii_strcasecmp("trailers.apple.com", url.host().utf8().data()))
         request.setHTTPUserAgent("Quicktime/7.6.6");
 
-    if (members->requestedPosition) {
-        GUniquePtr<char> formatedRange(g_strdup_printf("bytes=%" G_GUINT64_FORMAT "-", members->requestedPosition));
+    if (members->requestedPosition || members->stopPosition != UINT64_MAX) {
+        GUniquePtr<char> formatedRange;
+        if (members->stopPosition != UINT64_MAX)
+            formatedRange.reset(g_strdup_printf("bytes=%" G_GUINT64_FORMAT "-%" G_GUINT64_FORMAT, members->requestedPosition, members->stopPosition > 0 ? members->stopPosition - 1 : 0));
+        else
+            formatedRange.reset(g_strdup_printf("bytes=%" G_GUINT64_FORMAT "-", members->requestedPosition));
         GST_DEBUG_OBJECT(src, "Range request: %s", formatedRange.get());
         request.setHTTPHeaderField(HTTPHeaderName::Range, formatedRange.get());
     }

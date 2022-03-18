@@ -1,3 +1,24 @@
+2022-03-18  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] Add stop position to the range request
+        https://bugs.webkit.org/show_bug.cgi?id=238028
+
+        Reviewed by Philippe Normand.
+
+        Currently, the range requests performed by WebKitWebSourceGStreamer indicate a range
+        start position but not a range stop one, even though it's set in the internal
+        members->stopPosition attribute.
+
+        This may not be a problem when WebKitWebSrc is used as a source for the whole video,
+        but certainly is when it's used as an embedded source inside adaptive demux
+        (replacing SoupHttpSrc). It causes decoding errors in some MPEG-DASH streams.
+        See: https://github.com/WebPlatformForEmbedded/WPEWebKit/issues/813
+
+        This patch is authored by Eugene Mutavchi <Ievgen_Mutavchi@comcast.com>
+        See: https://github.com/WebPlatformForEmbedded/WPEWebKit/pull/814
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp: Apply stopPosition to the range request when it's valid.
+
 2022-03-18  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION(r290356-r290351?): [ iOS EWS ] 3 imported/w3c/web-platform-tests/service-workers/service-worker/* tests are constant text failures.
