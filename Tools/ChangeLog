@@ -1,3 +1,21 @@
+2022-03-18  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Make radar conditional on authentication
+        https://bugs.webkit.org/show_bug.cgi?id=238051
+        <rdar://problem/90384655>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/radar.py:
+        (Tracker.__init__): Only instantiate client with valid authentication.
+        (Tracker.authentication): Catch exceptions from failed authentication.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/scm.py:
+        (Scm.__init__): Only instantiate Radar as a tracker with valid authentication.
+
 2022-03-18  Patrick Griffis  <pgriffis@igalia.com>
 
         [Flatpak] Pass extra webkit-flatpak args to sub-command

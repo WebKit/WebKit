@@ -102,10 +102,10 @@ class Tracker(GenericTracker):
         self._projects = [project] if project else (projects or [])
 
         self.library = self.radarclient()
-        if self.library:
+        authentication = authentication or self.authentication()
+        if authentication and self.library:
             self.client = self.library.RadarClient(
-                authentication or self.authentication(),
-                self.library.ClientSystemIdentifier(library_name, str(library_version)),
+                authentication, self.library.ClientSystemIdentifier(library_name, str(library_version)),
             )
         else:
             self.client = None
@@ -116,11 +116,15 @@ class Tracker(GenericTracker):
         totp_secret = Environment.instance().get('RADAR_TOTP_SECRET')
         totp_id = Environment.instance().get('RADAR_TOTP_ID') or 1
 
-        if username and password and totp_secret and totp_id:
-            return self.library.AuthenticationStrategySystemAccount(
-                username, password, totp_secret, totp_id,
-            )
-        return self.library.AuthenticationStrategySPNego()
+        try:
+            if username and password and totp_secret and totp_id:
+                return self.library.AuthenticationStrategySystemAccount(
+                    username, password, totp_secret, totp_id,
+                )
+            return self.library.AuthenticationStrategySPNego()
+        except Exception:
+            sys.stderr.write('No valid authentication session for Radar\n')
+            return None
 
     def from_string(self, string):
         for regex in self.RES:

@@ -79,7 +79,7 @@ class Scm(ScmBase):
                 with open(path, 'r') as file:
                     trackers = Tracker.from_json(json.load(file))
         for tracker in trackers:
-            if isinstance(tracker, radar.Tracker) and not tracker.radarclient():
+            if isinstance(tracker, radar.Tracker) and (not tracker.radarclient() or not tracker.client):
                 continue
             for contributor in self.contributors:
                 if contributor.name and contributor.emails:
