@@ -1,3 +1,42 @@
+2022-03-18  Cameron McCormack  <heycam@apple.com>
+
+        Remove the 1ms minimum for setTimeout
+        https://bugs.webkit.org/show_bug.cgi?id=221124
+        <rdar://problem/73852354>
+
+        Reviewed by Sam Weinig.
+
+        The HTML spec makes no mention of a 1ms minimum for timers. Removing
+        the 1ms minimum for setTimeout results in a 0.7-2.1% improvement on
+        Speedometer, depending on platform and hardware.
+
+        The WPT added here demonstrates how this change can affect pages: if a
+        page schedules a 1ms and then a 0ms timeout in the same turn of the
+        event loop, then with this patch they will now be fired in the reverse
+        order. Firefox and Chrome do not impose a 1ms minimum, which reduces
+        the risk of this being a problem.
+
+        Not addressing the setTimeout 1ms minimum here, which should likely also
+        be removed.
+
+        While we're here, settle on "one shot" rather rather than "single
+        shot" as the term for timers that fire once.
+
+        Tests: imported/w3c/web-platform-tests/html/webappapis/timers/zero-settimeout.any.html
+               imported/w3c/web-platform-tests/html/webappapis/timers/zero-settimeout.any.worker.html
+
+        * page/DOMTimer.h:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer): We must pass oneShot into
+        intervalClampedToMinimum, since the way isOneShot determines whether
+        we are a one shot timer is by checking repeatInterval, which is only
+        set once startRepeating is called.
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+        (WebCore::DOMTimer::updateTimerIntervalIfNecessary):
+        (WebCore::DOMTimer::isOneShot const):
+        (WebCore::DOMTimer::intervalClampedToMinimum const):
+
 2022-03-18  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Basic support for container units

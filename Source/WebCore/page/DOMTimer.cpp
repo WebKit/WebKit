@@ -49,6 +49,8 @@
 namespace WebCore {
 
 static const Seconds minIntervalForNonUserObservableChangeTimers { 1_s }; // Empirically determined to maximize battery life.
+static const Seconds minIntervalForOneShotTimers { 0_ms };
+static const Seconds minIntervalForRepeatingTimers { 1_ms };
 static const int maxTimerNestingLevel = 5;
 
 class DOMTimerFireState {
@@ -155,16 +157,16 @@ private:
 
 bool NestedTimersMap::isTrackingNestedTimers = false;
 
-DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds interval, bool singleShot)
+DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds interval, bool oneShot)
     : SuspendableTimerBase(&context)
     , m_nestingLevel(context.timerNestingLevel())
     , m_action(WTFMove(action))
     , m_originalInterval(interval)
     , m_throttleState(Undetermined)
-    , m_currentTimerInterval(intervalClampedToMinimum())
+    , m_currentTimerInterval(intervalClampedToMinimum(oneShot))
     , m_userGestureTokenToForward(UserGestureIndicator::currentUserGesture())
 {
-    if (singleShot)
+    if (oneShot)
         startOneShot(m_currentTimerInterval);
     else
         startRepeating(m_currentTimerInterval);
@@ -172,17 +174,17 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutio
 
 DOMTimer::~DOMTimer() = default;
 
-int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds timeout, bool singleShot)
+int DOMTimer::install(ScriptExecutionContext& context, std::unique_ptr<ScheduledAction> action, Seconds timeout, bool oneShot)
 {
     auto actionFunction = [action = WTFMove(action)](ScriptExecutionContext& context) mutable {
         action->execute(context);
     };
-    return DOMTimer::install(context, WTFMove(actionFunction), timeout, singleShot);
+    return DOMTimer::install(context, WTFMove(actionFunction), timeout, oneShot);
 }
 
-int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds timeout, bool singleShot)
+int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecutionContext&)>&& action, Seconds timeout, bool oneShot)
 {
-    Ref<DOMTimer> timer = adoptRef(*new DOMTimer(context, WTFMove(action), timeout, singleShot));
+    Ref<DOMTimer> timer = adoptRef(*new DOMTimer(context, WTFMove(action), timeout, oneShot));
     timer->suspendIfNeeded();
 
     // Keep asking for the next id until we're given one that we don't already have.
@@ -190,7 +192,7 @@ int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecu
         timer->m_timeoutId = context.circularSequentialID();
     } while (!context.addTimeout(timer->m_timeoutId, timer.get()));
 
-    InspectorInstrumentation::didInstallTimer(context, timer->m_timeoutId, timeout, singleShot);
+    InspectorInstrumentation::didInstallTimer(context, timer->m_timeoutId, timeout, oneShot);
 
     // Keep track of nested timer installs.
     if (NestedTimersMap* nestedTimers = NestedTimersMap::instanceForContext(context))
@@ -198,7 +200,7 @@ int DOMTimer::install(ScriptExecutionContext& context, Function<void(ScriptExecu
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
     if (is<Document>(context)) {
         auto& document = downcast<Document>(context);
-        document.contentChangeObserver().didInstallDOMTimer(timer.get(), timeout, singleShot);
+        document.contentChangeObserver().didInstallDOMTimer(timer.get(), timeout, oneShot);
         if (DeferDOMTimersForScope::isDeferring())
             document.domTimerHoldingTank().add(timer.get());
     }
@@ -288,7 +290,7 @@ void DOMTimer::fired()
     // wait unit the end of this function to delete DOMTimer.
     Ref<DOMTimer> protectedThis(*this);
 
-    bool oneShot = !repeatInterval();
+    bool oneShot = isOneShot();
 
     ASSERT(scriptExecutionContext());
     ScriptExecutionContext& context = *scriptExecutionContext();
@@ -350,7 +352,7 @@ void DOMTimer::fired()
     if (nestedTimers) {
         for (auto& idAndTimer : *nestedTimers) {
             auto& timer = idAndTimer.value;
-            if (timer->isActive() && !timer->repeatInterval())
+            if (timer->isActive() && timer->isOneShot())
                 timer->updateThrottlingStateIfNecessary(fireState);
         }
         nestedTimers->stopTracking();
@@ -374,22 +376,32 @@ void DOMTimer::updateTimerIntervalIfNecessary()
     if (previousInterval == m_currentTimerInterval)
         return;
 
-    if (repeatInterval()) {
+    if (isOneShot()) {
+        LOG(DOMTimers, "%p - Updating DOMTimer's fire interval from %.2f ms to %.2f ms due to throttling.", this, previousInterval.milliseconds(), m_currentTimerInterval.milliseconds());
+        augmentFireInterval(m_currentTimerInterval - previousInterval);
+    } else {
         ASSERT(repeatInterval() == previousInterval);
         LOG(DOMTimers, "%p - Updating DOMTimer's repeat interval from %.2f ms to %.2f ms due to throttling.", this, previousInterval.milliseconds(), m_currentTimerInterval.milliseconds());
         augmentRepeatInterval(m_currentTimerInterval - previousInterval);
-    } else {
-        LOG(DOMTimers, "%p - Updating DOMTimer's fire interval from %.2f ms to %.2f ms due to throttling.", this, previousInterval.milliseconds(), m_currentTimerInterval.milliseconds());
-        augmentFireInterval(m_currentTimerInterval - previousInterval);
     }
+}
+
+bool DOMTimer::isOneShot() const
+{
+    return !repeatInterval();
 }
 
 Seconds DOMTimer::intervalClampedToMinimum() const
 {
+    return intervalClampedToMinimum(isOneShot());
+}
+
+Seconds DOMTimer::intervalClampedToMinimum(bool oneShot) const
+{
     ASSERT(scriptExecutionContext());
     ASSERT(m_nestingLevel <= maxTimerNestingLevel);
 
-    Seconds interval = std::max(1_ms, m_originalInterval);
+    Seconds interval = std::max(oneShot ? minIntervalForOneShotTimers : minIntervalForRepeatingTimers, m_originalInterval);
 
     // Only apply throttling to repeating timers.
     if (m_nestingLevel < maxTimerNestingLevel)
