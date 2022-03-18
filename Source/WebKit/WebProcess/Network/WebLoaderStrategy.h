@@ -99,7 +99,9 @@ private:
     void internallyFailedLoadTimerFired();
     void startLocalLoad(WebCore::ResourceLoader&);
     bool tryLoadingUsingURLSchemeHandler(WebCore::ResourceLoader&, const WebResourceLoader::TrackingParameters&);
+#if ENABLE(PDFJS)
     bool tryLoadingUsingPDFJSHandler(WebCore::ResourceLoader&, const WebResourceLoader::TrackingParameters&);
+#endif
 
     struct SyncLoadResult {
         WebCore::ResourceResponse response;

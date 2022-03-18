@@ -1,6 +1,9 @@
 include(InspectorGResources.cmake)
-include(PdfJSGResources.cmake)
 include(GNUInstallDirs)
+
+if (ENABLE_PDFJS)
+    include(PdfJSGResources.cmake)
+endif ()
 
 set(WebKit_OUTPUT_NAME WPEWebKit-${WPE_API_VERSION})
 set(WebProcess_OUTPUT_NAME WPEWebProcess)
@@ -110,8 +113,6 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 )
 
 list(APPEND WebKit_DERIVED_SOURCES
-    ${WebKit_DERIVED_SOURCES_DIR}/PdfJSGResourceBundle.c
-    ${WebKit_DERIVED_SOURCES_DIR}/PdfJSGResourceBundleExtras.c
     ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
     ${WebKit_DERIVED_SOURCES_DIR}/WebKitDirectoryInputStreamData.cpp
 
@@ -119,7 +120,14 @@ list(APPEND WebKit_DERIVED_SOURCES
     ${DERIVED_SOURCES_WPE_API_DIR}/WebKitWebProcessEnumTypes.cpp
 )
 
-WEBKIT_BUILD_PDFJS_GRESOURCES(${WebKit_DERIVED_SOURCES_DIR})
+if (ENABLE_PDFJS)
+    list(APPEND WebKit_DERIVED_SOURCES
+        ${WebKit_DERIVED_SOURCES_DIR}/PdfJSGResourceBundle.c
+        ${WebKit_DERIVED_SOURCES_DIR}/PdfJSGResourceBundleExtras.c
+    )
+
+    WEBKIT_BUILD_PDFJS_GRESOURCES(${WebKit_DERIVED_SOURCES_DIR})
+endif ()
 
 set(WebKit_DirectoryInputStream_DATA
     ${WEBKIT_DIR}/NetworkProcess/soup/Resources/directory.css

@@ -1,5 +1,25 @@
 2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Add a public build option for PDF.js
+        https://bugs.webkit.org/show_bug.cgi?id=238023
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad):
+        * WebProcess/Network/WebLoaderStrategy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::objectContentType):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::canShowMIMEType const):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::shouldUsePDFPlugin const):
+
+2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Remove AuxiliaryProcess termination timeout
         https://bugs.webkit.org/show_bug.cgi?id=238012
 

@@ -708,6 +708,7 @@ PdfJSViewerEnabled:
   type: bool
   humanReadableName: "Enable PDF.js viewer"
   humanReadableDescription: "Enable PDF.js viewer"
+  condition: ENABLE(PDFJS)
   defaultValue:
     WebKitLegacy:
       default: false

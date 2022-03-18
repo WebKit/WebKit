@@ -1,3 +1,21 @@
+2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add a public build option for PDF.js
+        https://bugs.webkit.org/show_bug.cgi?id=238023
+
+        Reviewed by Michael Catanzaro.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * html/PDFDocument.cpp:
+        * html/PDFDocument.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::isPDFJSResourceLoad const):
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldTreatAsUniqueOrigin):
+        * platform/LegacySchemeRegistry.cpp:
+        (WebCore::builtinSecureSchemes):
+
 2022-03-18  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, fix non-unified build after r291467

@@ -4116,7 +4116,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(MATHML)
         settings.setMathMLEnabled(false);
 #endif
+#if ENABLE(PDFJS)
         settings.setPdfJSViewerEnabled(true);
+#endif
 
         settings.setAllowedMediaContainerTypes(store.getStringValueForKey(WebPreferencesKey::mediaContainerTypesAllowedInCaptivePortalModeKey()));
         settings.setAllowedMediaCodecTypes(store.getStringValueForKey(WebPreferencesKey::mediaCodecTypesAllowedInCaptivePortalModeKey()));
@@ -6459,8 +6461,10 @@ bool WebPage::canShowMIMEType(const String& mimeType, const Function<bool(const 
     if (pluginsSupport(mimeType, PluginData::OnlyApplicationPlugins))
         return true;
 
+#if ENABLE(PDFJS)
     if (m_page->settings().pdfJSViewerEnabled() && MIMETypeRegistry::isPDFMIMEType(mimeType))
         return true;
+#endif
 
     return false;
 }

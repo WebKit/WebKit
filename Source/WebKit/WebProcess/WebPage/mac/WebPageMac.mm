@@ -206,7 +206,9 @@ NSObject *WebPage::accessibilityObjectForMainFramePlugin()
 bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) const
 {
     return pdfPluginEnabled()
+#if ENABLE(PDFJS)
         && !corePage()->settings().pdfJSViewerEnabled()
+#endif
         && getPDFLayerControllerClass()
         && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType)
             || (contentType.isEmpty()

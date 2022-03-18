@@ -231,8 +231,10 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 #endif
 
+#if ENABLE(PDFJS)
     if (tryLoadingUsingPDFJSHandler(resourceLoader, trackingParameters))
         return;
+#endif
 
     if (!tryLoadingUsingURLSchemeHandler(resourceLoader, trackingParameters)) {
         WEBLOADERSTRATEGY_RELEASE_LOG("scheduleLoad: URL will be scheduled with the NetworkProcess");
@@ -272,6 +274,7 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
     return true;
 }
 
+#if ENABLE(PDFJS)
 bool WebLoaderStrategy::tryLoadingUsingPDFJSHandler(ResourceLoader& resourceLoader, const WebResourceLoader::TrackingParameters& trackingParameters)
 {
     if (!resourceLoader.request().url().protocolIs("webkit-pdfjs-viewer"))
@@ -283,6 +286,7 @@ bool WebLoaderStrategy::tryLoadingUsingPDFJSHandler(ResourceLoader& resourceLoad
     startLocalLoad(resourceLoader);
     return true;
 }
+#endif
 
 static void addParametersShared(const Frame* frame, NetworkResourceLoadParameters& parameters)
 {

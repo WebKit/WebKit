@@ -1,3 +1,17 @@
+2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add a public build option for PDF.js
+        https://bugs.webkit.org/show_bug.cgi?id=238023
+
+        Reviewed by Michael Catanzaro.
+
+        PDF.js increases the binary size of the library quite a bit, so embedders might want to disable it if they know
+        they don't need PDF support at all.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2022-03-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Also enable USE_TEXTURE_MAPPER_DMABUF alongside other DMABuf-related defines

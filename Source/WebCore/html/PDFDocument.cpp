@@ -25,6 +25,8 @@
 #include "config.h"
 #include "PDFDocument.h"
 
+#if ENABLE(PDFJS)
+
 #include "AddEventListenerOptions.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
@@ -227,4 +229,6 @@ void PDFDocument::injectStyleAndContentScript()
     contentDocument->body()->appendChild(script);
 }
 
-}
+} // namepsace WebCore
+
+#endif // ENABLE(PDFJS)

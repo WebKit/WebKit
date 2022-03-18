@@ -153,8 +153,10 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Frame
     if (equalLettersIgnoringASCIICase(contentType, "text/plain"))
         return TextDocument::create(frame, settings, url, documentIdentifier);
 
+#if ENABLE(PDFJS)
     if (frame && settings.pdfJSViewerEnabled() && MIMETypeRegistry::isPDFMIMEType(contentType))
         return PDFDocument::create(*frame, url);
+#endif
 
     bool isImage = MIMETypeRegistry::isSupportedImageMIMEType(contentType);
     if (frame && isImage && !MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType))

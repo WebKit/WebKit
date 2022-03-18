@@ -869,7 +869,7 @@ bool ResourceLoader::isQuickLookResource() const
 
 bool ResourceLoader::isPDFJSResourceLoad() const
 {
-#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
+#if ENABLE(PDFJS)
     if (!m_request.url().protocolIs("webkit-pdfjs-viewer"))
         return false;
 
