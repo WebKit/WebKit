@@ -1,3 +1,24 @@
+2022-03-18  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Allow history swipe in scroller with overscroll-behavior
+        https://bugs.webkit.org/show_bug.cgi?id=235851
+
+        Reviewed by Simon Fraser.
+
+        Re-add code to allow history swipe. Does so by returning unhandled if a horizontal
+        swipe is used. Also add test to make sure history swipes are allowed in scrolling nodes
+        with overscroll-behavior.
+
+        Test: scrollingcoordinator/mac/latching/horizontal-overflow-back-swipe-overscroll-behavior.html
+
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::handleWheelEventWithNode):
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::shouldRubberBand const):
+        (WebCore::ScrollingTreeScrollingNode::computeScrollPropagation const):
+        (WebCore::ScrollingTreeScrollingNode::shouldBlockScrollPropagation const): Deleted.
+        * page/scrolling/ScrollingTreeScrollingNode.h:
+
 2022-03-18  Chris Dumez  <cdumez@apple.com>
 
         Avoid calls to [CLLocationManager authorizationStatus] & [CLLocationManager locationServicesEnabled]

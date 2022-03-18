@@ -128,7 +128,8 @@ bool ScrollingTreeScrollingNode::shouldRubberBand(const PlatformWheelEvent& whee
     // The stateless wheel event doesn't trigger rubber-band.
     // Also rubberband when we should block scroll propagation
     // at this node, which has overscroll behavior that is not none.
-    return (isLatchedNode() || eventTargeting == EventTargeting::NodeOnly || (isRootNode() && !wheelEvent.isNonGestureEvent()) || (shouldBlockScrollPropagation(wheelEvent.delta()) && overscrollBehaviorAllowsRubberBand()));
+    auto scrollPropagationInfo = computeScrollPropagation(wheelEvent.delta());
+    return (isLatchedNode() || eventTargeting == EventTargeting::NodeOnly || (isRootNode() && !wheelEvent.isNonGestureEvent()) || ( scrollPropagationInfo.shouldBlockScrollPropagation && scrollPropagationInfo.isHandled && overscrollBehaviorAllowsRubberBand()));
 }
 
 bool ScrollingTreeScrollingNode::canHandleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting) const
@@ -418,9 +419,26 @@ PlatformWheelEvent ScrollingTreeScrollingNode::eventForPropagation(const Platfor
     return wheelEvent;
 }
 
-bool ScrollingTreeScrollingNode::shouldBlockScrollPropagation(const FloatSize& delta) const
+ScrollPropagationInfo ScrollingTreeScrollingNode::computeScrollPropagation(const FloatSize& delta) const
 {
-    return ((horizontalOverscrollBehaviorPreventsPropagation() || verticalOverscrollBehaviorPreventsPropagation()) && ((horizontalOverscrollBehaviorPreventsPropagation() && verticalOverscrollBehaviorPreventsPropagation()) || (horizontalOverscrollBehaviorPreventsPropagation() && !delta.height()) || (verticalOverscrollBehaviorPreventsPropagation() && !delta.width())));
+    ScrollPropagationInfo propagation;
+    if (!horizontalOverscrollBehaviorPreventsPropagation() && !verticalOverscrollBehaviorPreventsPropagation())
+        return propagation;
+    
+    // History swipe case
+    if (horizontalOverscrollBehaviorPreventsPropagation() && !delta.height() && delta.width()) {
+        propagation.shouldBlockScrollPropagation = true;
+        propagation.isHandled = false;
+        return propagation;
+    }
+
+    if ((horizontalOverscrollBehaviorPreventsPropagation() && verticalOverscrollBehaviorPreventsPropagation())
+        || (horizontalOverscrollBehaviorPreventsPropagation() && !delta.height())
+        || (verticalOverscrollBehaviorPreventsPropagation() && !delta.width())) {
+        propagation.shouldBlockScrollPropagation = true;
+        propagation.isHandled = true;
+    }
+    return propagation;
 }
 
 } // namespace WebCore

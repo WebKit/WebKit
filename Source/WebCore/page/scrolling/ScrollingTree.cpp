@@ -217,7 +217,10 @@ WheelEventHandlingResult ScrollingTree::handleWheelEventWithNode(const PlatformW
             if (result.needsMainThreadProcessing() || eventTargeting != EventTargeting::Propagate)
                 return result;
             
-            if (scrollingNode.shouldBlockScrollPropagation(adjustedWheelEvent.delta())) {
+            auto scrollPropagationInfo = scrollingNode.computeScrollPropagation(adjustedWheelEvent.delta());
+            if (scrollPropagationInfo.shouldBlockScrollPropagation) {
+                if (!scrollPropagationInfo.isHandled)
+                    return WheelEventHandlingResult::unhandled();
                 m_latchingController.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), processingSteps, adjustedWheelEvent, m_allowLatching);
                 m_gestureState.nodeDidHandleEvent(scrollingNode.scrollingNodeID(), adjustedWheelEvent);
                 return WheelEventHandlingResult::handled();
