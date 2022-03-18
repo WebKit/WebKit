@@ -59,7 +59,8 @@ public:
     void replace(const AtomString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, const RegisteredEventListener::Options&);
     bool add(const AtomString& eventType, Ref<EventListener>&&, const RegisteredEventListener::Options&);
     bool remove(const AtomString& eventType, EventListener&, bool useCapture);
-    WEBCORE_EXPORT EventListenerVector* find(const AtomString& eventType) const;
+    WEBCORE_EXPORT EventListenerVector* find(const AtomString& eventType);
+    const EventListenerVector* find(const AtomString& eventType) const { return const_cast<EventListenerMap*>(this)->find(eventType); }
     Vector<AtomString> eventTypes() const;
 
     void removeFirstEventListenerCreatedFromMarkup(const AtomString& eventType);
@@ -72,7 +73,7 @@ private:
 
     void assertNoActiveIterators() const;
 
-    Vector<std::pair<AtomString, std::unique_ptr<EventListenerVector>>, 2> m_entries;
+    Vector<std::pair<AtomString, EventListenerVector>> m_entries;
 
 #ifndef NDEBUG
     std::atomic<int> m_activeIteratorCount { 0 };
