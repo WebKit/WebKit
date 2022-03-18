@@ -43,7 +43,6 @@ public:
     virtual bool supports(const String&);
     virtual void ensureEnabled(const String&);
     virtual bool isEnabled(const String&);
-    virtual int getGraphicsResetStatusARB();
     virtual String getTranslatedShaderSourceANGLE(PlatformGLObject);
     virtual void drawBuffersEXT(GCGLSpan<const GCGLenum> bufs) = 0;
 
@@ -57,7 +56,7 @@ public:
     virtual void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount) = 0;
     virtual void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor) = 0;
 
-    // EXT Robustness - uses getGraphicsResetStatusARB()
+    // EXT Robustness
     virtual void readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data);
     virtual void getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params);
     virtual void getnUniformivEXT(GCGLuint program, int location, GCGLsizei bufSize, int *params);

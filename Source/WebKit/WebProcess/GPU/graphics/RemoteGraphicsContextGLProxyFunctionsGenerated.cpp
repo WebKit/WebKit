@@ -2267,17 +2267,6 @@ void RemoteGraphicsContextGLProxy::getActiveUniformBlockiv(GCGLuint program, GCG
     }
 }
 
-GCGLint RemoteGraphicsContextGLProxy::getGraphicsResetStatusARB()
-{
-    int32_t returnValue = { };
-    if (!isContextLost()) {
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetGraphicsResetStatusARB(), Messages::RemoteGraphicsContextGL::GetGraphicsResetStatusARB::Reply(returnValue));
-        if (!sendResult)
-            markContextLost();
-    }
-    return returnValue;
-}
-
 String RemoteGraphicsContextGLProxy::getTranslatedShaderSourceANGLE(PlatformGLObject arg0)
 {
     String returnValue = { };

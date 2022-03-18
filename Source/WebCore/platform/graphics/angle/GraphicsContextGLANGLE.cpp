@@ -2923,11 +2923,6 @@ bool GraphicsContextGLANGLE::isExtensionEnabled(const String& name)
     return m_availableExtensions.contains(name) || m_enabledExtensions.contains(name);
 }
 
-GLint GraphicsContextGLANGLE::getGraphicsResetStatusARB()
-{
-    return GraphicsContextGL::NO_ERROR;
-}
-
 String GraphicsContextGLANGLE::getTranslatedShaderSourceANGLE(PlatformGLObject shader)
 {
     if (!makeContextCurrent())

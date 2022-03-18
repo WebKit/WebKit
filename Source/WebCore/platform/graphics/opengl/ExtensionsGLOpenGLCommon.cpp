@@ -159,11 +159,6 @@ bool ExtensionsGLOpenGLCommon::isEnabled(const String& name)
     return supports(name);
 }
 
-int ExtensionsGLOpenGLCommon::getGraphicsResetStatusARB()
-{
-    return GraphicsContextGL::NO_ERROR;
-}
-
 String ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE(PlatformGLObject shader)
 {
     ASSERT(shader);

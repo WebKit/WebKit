@@ -6452,16 +6452,6 @@ void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostC
     m_contextLost = true;
     m_contextLostMode = mode;
 
-    if (mode == RealLostContext) {
-        // Inform the embedder that a lost context was received. In response, the embedder might
-        // decide to take action such as asking the user for permission to use WebGL again.
-        auto* canvas = htmlCanvas();
-        if (canvas) {
-            if (RefPtr<Frame> frame = canvas->document().frame())
-                frame->loader().client().didLoseWebGLContext(m_context->getGraphicsResetStatusARB());
-        }
-    }
-
     detachAndRemoveAllObjects();
     loseExtensions(mode);
 
@@ -7770,33 +7760,6 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     // the retry loop for real context lost events.
     if (!m_restoreAllowed)
         return;
-
-    int contextLostReason = m_context->getGraphicsResetStatusARB();
-
-    switch (contextLostReason) {
-    case GraphicsContextGL::NO_ERROR:
-        // The GraphicsContextGLOpenGL implementation might not fully
-        // support GL_ARB_robustness semantics yet. Alternatively, the
-        // WEBGL_lose_context extension might have been used to force
-        // a lost context.
-        break;
-    case GraphicsContextGL::GUILTY_CONTEXT_RESET_ARB:
-        // The rendering context is not restored if this context was
-        // guilty of causing the graphics reset.
-        printToConsole(MessageLevel::Warning, "WARNING: WebGL content on the page caused the graphics card to reset; not restoring the context");
-        return;
-    case GraphicsContextGL::INNOCENT_CONTEXT_RESET_ARB:
-        // Always allow the context to be restored.
-        break;
-    case GraphicsContextGL::UNKNOWN_CONTEXT_RESET_ARB:
-        // Warn. Ideally, prompt the user telling them that WebGL
-        // content on the page might have caused the graphics card to
-        // reset and ask them whether they want to continue running
-        // the content. Only if they say "yes" should we start
-        // attempting to restore the context.
-        printToConsole(MessageLevel::Warning, "WARNING: WebGL content on the page might have caused the graphics card to reset");
-        break;
-    }
 
     auto* canvas = htmlCanvas();
     if (!canvas)

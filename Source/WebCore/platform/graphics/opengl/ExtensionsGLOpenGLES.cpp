@@ -166,26 +166,6 @@ void ExtensionsGLOpenGLES::drawBuffersEXT(GCGLSpan<const GCGLenum> /* bufs */)
     notImplemented();
 }
 
-int ExtensionsGLOpenGLES::getGraphicsResetStatusARB()
-{
-    // FIXME: This does not call getGraphicsResetStatusARB, but instead getGraphicsResetStatusEXT.
-    // The return codes from the two extensions are identical and their purpose is the same, so it
-    // may be best to rename getGraphicsResetStatusARB() to getGraphicsResetStatus().
-    if (m_contextResetStatus != GL_NO_ERROR)
-        return m_contextResetStatus;
-    if (m_glGetGraphicsResetStatusEXT) {
-        int reasonForReset = GraphicsContextGL::UNKNOWN_CONTEXT_RESET_ARB;
-        if (m_context->makeContextCurrent())
-            reasonForReset = m_glGetGraphicsResetStatusEXT();
-        if (reasonForReset != GL_NO_ERROR)
-            m_contextResetStatus = reasonForReset;
-        return reasonForReset;
-    }
-
-    m_context->synthesizeGLError(GL_INVALID_OPERATION);
-    return false;
-}
-
 void ExtensionsGLOpenGLES::readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data)
 {
     if (m_glReadnPixelsEXT) {

@@ -372,7 +372,6 @@ public:
     bool supportsExtension(const String&) final;
     void ensureExtensionEnabled(const String&) final;
     bool isExtensionEnabled(const String&) final;
-    GLint getGraphicsResetStatusARB() final;
     void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
     String getTranslatedShaderSourceANGLE(PlatformGLObject) final;
 

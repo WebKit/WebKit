@@ -1321,13 +1321,6 @@
         m_context->getActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
         completionHandler(IPC::ArrayReference<int32_t>(reinterpret_cast<int32_t*>(params.data()), params.size()));
     }
-    void getGraphicsResetStatusARB(CompletionHandler<void(int32_t)>&& completionHandler)
-    {
-        GCGLint returnValue = { };
-        assertIsCurrent(workQueue());
-        returnValue = m_context->getGraphicsResetStatusARB();
-        completionHandler(returnValue);
-    }
     void getTranslatedShaderSourceANGLE(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
         String returnValue = { };

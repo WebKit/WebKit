@@ -1,3 +1,40 @@
+2022-03-18  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Recycling a webgl context when it has been lost and restored causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=238024
+
+        Reviewed by Geoffrey Garen.
+
+        Creating excessive amount of contexts will lose the oldest context via
+        "simulated context lost" logic, making the contexts non-restorable.
+
+        Previously the test tried to test that requesting a restore on a context that
+        had simulated context lost would not restore. However, the test was invalid,
+        as it asserted that the context is still lost immediately after preventDefault():
+
+          event.preventDefault();
+          if (!contexts[0].isContextLost())
+             document.getElementById("result").textContent = "FAIL";
+
+        This is not correct, as the preventDefault() only informs the browser
+        that the context should be restored. The restore happens asynchronously.
+
+        Fix the test logic and add extra cases. Make the logic as such:
+        1. Lose the context in some way
+        2. Wait for context lost event, request restore
+        3. Optionally do something that would trigger another way of losing the context
+        4. Run assertions about context being still expectedly lost
+
+        The failures in the test expectation:
+        FAIL getError expected: INVALID_OPERATION. Was NO_ERROR :
+        FAIL getError expected: CONTEXT_LOST_WEBGL. Was NO_ERROR :
+        bug 236965
+
+        FAIL Expected restore be ignored, but it was not.
+        bug 238034
+
+        * webgl/max-active-contexts-webglcontextlost-prevent-default.html:
+
 2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ATSPI] accessibility/dropdown-value.html is timing out since added in 248145@main

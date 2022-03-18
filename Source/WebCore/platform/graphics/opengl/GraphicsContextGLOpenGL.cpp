@@ -3070,11 +3070,6 @@ bool GraphicsContextGLOpenGL::isExtensionEnabled(const String& name)
     return getExtensions().isEnabled(name);
 }
 
-GLint GraphicsContextGLOpenGL::getGraphicsResetStatusARB()
-{
-    return getExtensions().getGraphicsResetStatusARB();
-}
-
 void GraphicsContextGLOpenGL::drawBuffersEXT(GCGLSpan<const GCGLenum> buffers)
 {
     return getExtensions().drawBuffersEXT(buffers);

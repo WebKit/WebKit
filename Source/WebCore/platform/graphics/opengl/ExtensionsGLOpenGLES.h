@@ -98,9 +98,6 @@ public:
     void drawElementsInstancedANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLvoidptr offset, GCGLsizei primcount) override;
     void vertexAttribDivisorANGLE(GCGLuint index, GCGLuint divisor) override;
 
-    // EXT Robustness - reset
-    int getGraphicsResetStatusARB() override;
-
     // EXT Robustness - etc
     void readnPixelsEXT(int x, int y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLsizei bufSize, void *data) override;
     void getnUniformfvEXT(GCGLuint program, int location, GCGLsizei bufSize, float *params) override;

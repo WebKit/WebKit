@@ -329,7 +329,6 @@ public:
     bool supportsExtension(const String&) override;
     void ensureExtensionEnabled(const String&) override;
     bool isExtensionEnabled(const String&) override;
-    GCGLint getGraphicsResetStatusARB() override;
     void drawBuffersEXT(GCGLSpan<const GCGLenum>) override;
     String getTranslatedShaderSourceANGLE(PlatformGLObject) override;
 

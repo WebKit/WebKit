@@ -1,3 +1,51 @@
+2022-03-18  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Recycling a webgl context when it has been lost and restored causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=238024
+
+        Reviewed by Geoffrey Garen.
+
+        Simulated context lost makes WebGLRenderingContextBase::m_context = nullptr
+        Real context lost preserves WebGLRenderingContextBase::m_context.
+
+        WebGLRenderingContextBase::maybeRestoreContext() used m_context.
+
+        The intention was that simulated context lost never invokes maybeRestoreContext()
+        as the timer to run maybeRestoreContext() is started only on real context lost.
+
+        However, it is possible to invoke simulated context lost after a real context lost,
+        but before the timer triggers maybeRestoreContext().
+
+        The sequence would be:
+        1. Lose the context somehow
+        2. Wait for webglcontextlost, use event.preventDefault() to request a restore.
+        3. Before restore happens, lose the context via simulated context lost.
+           This can be done by creating many contexts or via the WEBGL_lose_context.loseContext().
+        4. maybeRestoreContext() would query m_context->getGraphicsResetStatusARB() for
+           console log reasons, trying to explain to the developer why the context was lost.
+           In case simulated context lost set the m_context == nullptr, this would crash.
+
+        getGraphicsResetStatusARB() has likely not been accurate for any platform ever.
+        For ANGLE, it is unimplemented and cannot pinpoint which context caused the context lost.
+        Just remove getGraphicsResetStatusARB() use from maybeRestoreContext(), this prevents
+        the crash. Remove it also from WebKit use altogether, it is never used for anything.
+
+        Adds the case to webgl/max-active-contexts-webglcontextlost-prevent-default.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::loseContextImpl):
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+        * loader/FrameLoaderClient.h:
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        * platform/graphics/angle/GraphicsContextGLANGLE.h:
+        * platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp:
+        * platform/graphics/opengl/ExtensionsGLOpenGLCommon.h:
+        * platform/graphics/opengl/ExtensionsGLOpenGLES.cpp:
+        * platform/graphics/opengl/ExtensionsGLOpenGLES.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
 2022-03-18  Cameron McCormack  <heycam@apple.com>
 
         Remove the 1ms minimum for setTimeout

@@ -284,7 +284,6 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetActiveUniformBlockName(uint32_t program, uint32_t uniformBlockIndex) -> (String returnValue) Synchronous
     void UniformBlockBinding(uint32_t program, uint32_t uniformBlockIndex, uint32_t uniformBlockBinding)
     void GetActiveUniformBlockiv(uint32_t program, uint32_t uniformBlockIndex, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
-    void GetGraphicsResetStatusARB() -> (int32_t returnValue) Synchronous
     void GetTranslatedShaderSourceANGLE(uint32_t arg0) -> (String returnValue) Synchronous
     void DrawBuffersEXT(IPC::ArrayReference<uint32_t> bufs)
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
