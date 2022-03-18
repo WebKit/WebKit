@@ -1,3 +1,17 @@
+2022-03-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: REGRESSION(r287753): Settings: checkboxes are smaller and no longer vertically align with related text
+        https://bugs.webkit.org/show_bug.cgi?id=237745
+        <rdar://problem/90129658>
+
+        Reviewed by Devin Rousso.
+
+        After r287753, `font-size` no longer affects the size of the checkboxes.
+        Use `width` and `height` to make the checkbox the expected size.
+
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="checkbox"]):
+
 2022-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Adopt FALLBACK_PLATFORM_NAME in place of FALLBACK_PLATFORM
