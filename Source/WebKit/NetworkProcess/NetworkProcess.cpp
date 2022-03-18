@@ -1511,8 +1511,13 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 
 #if ENABLE(SERVICE_WORKER)
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
-    if (clearServiceWorkers && !sessionID.isEphemeral() && session)
+    if (clearServiceWorkers && !sessionID.isEphemeral() && session) {
         session->ensureSWServer().clearAll([clearTasksHandler] { });
+
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+        session->notificationManager().removeAllPushSubscriptions([clearTasksHandler](auto&&) { });
+#endif
+    }
 #endif
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
@@ -1605,8 +1610,13 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
     if (clearServiceWorkers && !sessionID.isEphemeral() && session) {
         auto& server = session->ensureSWServer();
-        for (auto& originData : originDatas)
+        for (auto& originData : originDatas) {
             server.clear(originData, [clearTasksHandler] { });
+
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+            session->notificationManager().removePushSubscriptionsForOrigin(SecurityOriginData { originData }, [clearTasksHandler](auto&&) { });
+#endif
+        }
     }
 #endif
 
@@ -1798,8 +1808,13 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
                 if (!domainsToDeleteAllNonCookieWebsiteDataFor.contains(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host)))
                     continue;
                 callbackAggregator->m_domains.add(RegistrableDomain::uncheckedCreateFromHost(securityOrigin.host));
-                if (session)
+                if (session) {
                     session->ensureSWServer().clear(securityOrigin, [callbackAggregator] { });
+
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+                    session->notificationManager().removePushSubscriptionsForOrigin(SecurityOriginData { securityOrigin }, [callbackAggregator](auto&&) { });
+#endif
+                }
             }
         });
     }
@@ -2312,6 +2327,20 @@ void NetworkProcess::getOriginsWithPushAndNotificationPermissions(PAL::SessionID
     }
 #endif
     callback({ });
+}
+
+void NetworkProcess::hasPushSubscriptionForTesting(PAL::SessionID sessionID, URL&& scopeURL, CompletionHandler<void(bool)>&& callback)
+{
+#if ENABLE(BUILT_IN_NOTIFICATIONS)
+    if (auto* session = networkSession(sessionID)) {
+        session->notificationManager().getPushSubscription(WTFMove(scopeURL), [callback = WTFMove(callback)](auto &&result) mutable {
+            callback(result && result->has_value());
+        });
+        return;
+    }
+#endif
+
+    callback(false);
 }
 
 void NetworkProcess::requestStorageSpace(PAL::SessionID sessionID, const ClientOrigin& origin, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t>)>&& callback)

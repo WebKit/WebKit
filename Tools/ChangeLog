@@ -1,3 +1,15 @@
+2022-03-18  Ben Nham  <nham@apple.com>
+
+        Remove push subscriptions when associated service worker registrations are removed
+        https://bugs.webkit.org/show_bug.cgi?id=237983
+
+        Reviewed by Youenn Fablet.
+
+        Add new tests to make sure that we delete push subscriptions when unregistering a service
+        worker or deleting website data.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebPushDaemon.mm:
+
 2022-03-18  J Pascoe  <j_pascoe@apple.com>
 
         Trigger PDF download in captive portal mode instead of using PDF viewer

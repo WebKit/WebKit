@@ -58,10 +58,12 @@ public:
     void getPendingPushMessages(CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
 
     void subscribeToPushService(URL&& scopeURL, Vector<uint8_t>&& applicationServerKey, CompletionHandler<void(Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&&)>&&);
-    void unsubscribeFromPushService(URL&& scopeURL, WebCore::PushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&&);
+    void unsubscribeFromPushService(URL&& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&&);
     void getPushSubscription(URL&& scopeURL, CompletionHandler<void(Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&&)>&&);
     void getPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&&);
     void incrementSilentPushCount(WebCore::SecurityOriginData&&, CompletionHandler<void(unsigned)>&&);
+    void removeAllPushSubscriptions(CompletionHandler<void(unsigned)>&&);
+    void removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&&, CompletionHandler<void(unsigned)>&&);
 
 private:
     NetworkNotificationManager(NetworkSession&, const String& webPushMachServiceName);

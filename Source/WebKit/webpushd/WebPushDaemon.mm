@@ -105,7 +105,7 @@ REPLY(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)
 END
 
 FUNCTION(unsubscribeFromPushService)
-ARGUMENTS(URL, WebCore::PushSubscriptionIdentifier)
+ARGUMENTS(URL, std::optional<WebCore::PushSubscriptionIdentifier>)
 REPLY(const Expected<bool, WebCore::ExceptionData>&)
 END
 
@@ -120,6 +120,16 @@ REPLY(const Expected<uint8_t, WebCore::ExceptionData>&)
 END
 
 FUNCTION(incrementSilentPushCount)
+ARGUMENTS(WebCore::SecurityOriginData)
+REPLY(unsigned)
+END
+
+FUNCTION(removeAllPushSubscriptions)
+ARGUMENTS()
+REPLY(unsigned)
+END
+
+FUNCTION(removePushSubscriptionsForOrigin)
 ARGUMENTS(WebCore::SecurityOriginData)
 REPLY(unsigned)
 END
@@ -207,6 +217,20 @@ WebPushD::EncodedMessage getPushPermissionState::encodeReply(const Expected<uint
 }
 
 WebPushD::EncodedMessage incrementSilentPushCount::encodeReply(unsigned reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage removeAllPushSubscriptions::encodeReply(unsigned reply)
+{
+    WebKit::Daemon::Encoder encoder;
+    encoder << reply;
+    return encoder.takeBuffer();
+}
+
+WebPushD::EncodedMessage removePushSubscriptionsForOrigin::encodeReply(unsigned reply)
 {
     WebKit::Daemon::Encoder encoder;
     encoder << reply;
@@ -415,6 +439,12 @@ void Daemon::decodeAndHandleMessage(xpc_connection_t connection, MessageType mes
     case MessageType::IncrementSilentPushCount:
         handleWebPushDMessageWithReply<MessageInfo::incrementSilentPushCount>(clientConnection, encodedMessage, WTFMove(replySender));
         break;
+    case MessageType::RemoveAllPushSubscriptions:
+        handleWebPushDMessageWithReply<MessageInfo::removeAllPushSubscriptions>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
+    case MessageType::RemovePushSubscriptionsForOrigin:
+        handleWebPushDMessageWithReply<MessageInfo::removePushSubscriptionsForOrigin>(clientConnection, encodedMessage, WTFMove(replySender));
+        break;
     }
 }
 
@@ -609,7 +639,7 @@ void Daemon::subscribeToPushService(ClientConnection* connection, const URL& sco
     });
 }
 
-void Daemon::unsubscribeFromPushService(ClientConnection* connection, const URL& scopeURL, WebCore::PushSubscriptionIdentifier subscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender)
+void Daemon::unsubscribeFromPushService(ClientConnection* connection, const URL& scopeURL, std::optional<WebCore::PushSubscriptionIdentifier> subscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& replySender)
 {
     runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), scope = scopeURL.string(), subscriptionIdentifier, replySender = WTFMove(replySender)]() mutable {
         if (!m_pushService) {
@@ -650,6 +680,30 @@ void Daemon::incrementSilentPushCount(ClientConnection* connection, const WebCor
         }
 
         m_pushService->incrementSilentPushCount(bundleIdentifier, securityOrigin, WTFMove(replySender));
+    });
+}
+
+void Daemon::removeAllPushSubscriptions(ClientConnection* connection, CompletionHandler<void(unsigned)>&& replySender)
+{
+    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), replySender = WTFMove(replySender)]() mutable {
+        if (!m_pushService) {
+            replySender(0);
+            return;
+        }
+
+        m_pushService->removeRecordsForBundleIdentifier(bundleIdentifier, WTFMove(replySender));
+    });
+}
+
+void Daemon::removePushSubscriptionsForOrigin(ClientConnection* connection, const WebCore::SecurityOriginData& securityOrigin, CompletionHandler<void(unsigned)>&& replySender)
+{
+    runAfterStartingPushService([this, bundleIdentifier = connection->hostAppCodeSigningIdentifier(), securityOrigin = securityOrigin.toString(), replySender = WTFMove(replySender)]() mutable {
+        if (!m_pushService) {
+            replySender(0);
+            return;
+        }
+
+        m_pushService->removeRecordsForBundleIdentifierAndOrigin(bundleIdentifier, securityOrigin, WTFMove(replySender));
     });
 }
 

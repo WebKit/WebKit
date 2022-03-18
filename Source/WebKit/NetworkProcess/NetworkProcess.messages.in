@@ -215,4 +215,5 @@ messages -> NetworkProcess LegacyReceiver {
 #endif
     DeletePushAndNotificationRegistration(PAL::SessionID sessionID, struct WebCore::SecurityOriginData origin) -> (String errorMessage)
     GetOriginsWithPushAndNotificationPermissions(PAL::SessionID sessionID) -> (Vector<WebCore::SecurityOriginData> origins)
+    HasPushSubscriptionForTesting(PAL::SessionID sessionID, URL scopeURL) -> (bool hasSubscription)
 }

@@ -59,7 +59,10 @@ public:
 
     void getSubscription(const String& bundleIdentifier, const String& scope, CompletionHandler<void(const Expected<std::optional<WebCore::PushSubscriptionData>, WebCore::ExceptionData>&)>&&);
     void subscribe(const String& bundleIdentifier, const String& scope, const Vector<uint8_t>& vapidPublicKey, CompletionHandler<void(const Expected<WebCore::PushSubscriptionData, WebCore::ExceptionData>&)>&&);
-    void unsubscribe(const String& bundleIdentifier, const String& scope, WebCore::PushSubscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&&);
+    void unsubscribe(const String& bundleIdentifier, const String& scope, std::optional<WebCore::PushSubscriptionIdentifier>, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&&);
+
+    void removeRecordsForBundleIdentifier(const String& bundleIdentifier, CompletionHandler<void(unsigned)>&&);
+    void removeRecordsForBundleIdentifierAndOrigin(const String& bundleIdentifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);
 
     void incrementSilentPushCount(const String& bundleIdentifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&&);
 
@@ -75,6 +78,8 @@ private:
     using PushServiceRequestMap = HashMap<std::tuple<String, String>, Deque<std::unique_ptr<PushServiceRequest>>>;
     void enqueuePushServiceRequest(PushServiceRequestMap&, std::unique_ptr<PushServiceRequest>&&);
     void finishedPushServiceRequest(PushServiceRequestMap&, PushServiceRequest&);
+    
+    void removeRecordsImpl(const String& bundleIdentifier, const std::optional<String>& securityOrigin, CompletionHandler<void(unsigned)>&&);
 
     UniqueRef<PushServiceConnection> m_connection;
     UniqueRef<WebCore::PushDatabase> m_database;

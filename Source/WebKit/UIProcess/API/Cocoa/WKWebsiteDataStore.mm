@@ -835,4 +835,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     });
 }
 
+-(void)_scopeURL:(NSURL *)scopeURL hasPushSubscriptionForTesting:(void(^)(BOOL))completionHandler
+{
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    _websiteDataStore->networkProcess()
+        .hasPushSubscriptionForTesting(_websiteDataStore->sessionID(), scopeURL, [completionHandlerCopy](bool result) {
+            completionHandlerCopy(result);
+        });
+}
+
 @end

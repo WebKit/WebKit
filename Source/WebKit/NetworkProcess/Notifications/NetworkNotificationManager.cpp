@@ -145,7 +145,7 @@ void NetworkNotificationManager::subscribeToPushService(URL&& scopeURL, Vector<u
     sendMessageWithReply<WebPushD::MessageType::SubscribeToPushService>(WTFMove(completionHandler), WTFMove(scopeURL), WTFMove(applicationServerKey));
 }
 
-void NetworkNotificationManager::unsubscribeFromPushService(URL&& scopeURL, PushSubscriptionIdentifier pushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
+void NetworkNotificationManager::unsubscribeFromPushService(URL&& scopeURL, std::optional<PushSubscriptionIdentifier> pushSubscriptionIdentifier, CompletionHandler<void(Expected<bool, WebCore::ExceptionData>&&)>&& completionHandler)
 {
     if (!m_connection) {
         completionHandler(makeUnexpected(ExceptionData { AbortError, "No connection to push daemon"_s }));
@@ -183,6 +183,26 @@ void NetworkNotificationManager::incrementSilentPushCount(WebCore::SecurityOrigi
     }
 
     sendMessageWithReply<WebPushD::MessageType::IncrementSilentPushCount>(WTFMove(completionHandler), WTFMove(origin));
+}
+
+void NetworkNotificationManager::removeAllPushSubscriptions(CompletionHandler<void(unsigned)>&& completionHandler)
+{
+    if (!m_connection) {
+        completionHandler(0);
+        return;
+    }
+
+    sendMessageWithReply<WebPushD::MessageType::RemoveAllPushSubscriptions>(WTFMove(completionHandler));
+}
+
+void NetworkNotificationManager::removePushSubscriptionsForOrigin(WebCore::SecurityOriginData&& origin, CompletionHandler<void(unsigned)>&& completionHandler)
+{
+    if (!m_connection) {
+        completionHandler(0);
+        return;
+    }
+
+    sendMessageWithReply<WebPushD::MessageType::RemovePushSubscriptionsForOrigin>(WTFMove(completionHandler), WTFMove(origin));
 }
 
 template<WebPushD::MessageType messageType, typename... Args>

@@ -349,7 +349,7 @@ void SubscribeRequest::attemptToRecoverFromTopicAlreadyInFilterError(String&& to
 
 class UnsubscribeRequest : public PushServiceRequestImpl<bool> {
 public:
-    UnsubscribeRequest(PushService&, const String& bundleIdentifier, const String& scope, PushSubscriptionIdentifier, ResultHandler&&);
+    UnsubscribeRequest(PushService&, const String& bundleIdentifier, const String& scope, std::optional<PushSubscriptionIdentifier>, ResultHandler&&);
     virtual ~UnsubscribeRequest() = default;
 
 protected:
@@ -358,10 +358,10 @@ protected:
     void finish() final { m_service.didCompleteUnsubscribeRequest(*this); }
 
 private:
-    PushSubscriptionIdentifier m_subscriptionIdentifier;
+    std::optional<PushSubscriptionIdentifier> m_subscriptionIdentifier;
 };
 
-UnsubscribeRequest::UnsubscribeRequest(PushService& service, const String& bundleIdentifier, const String& scope, PushSubscriptionIdentifier subscriptionIdentifier, ResultHandler&& resultHandler)
+UnsubscribeRequest::UnsubscribeRequest(PushService& service, const String& bundleIdentifier, const String& scope, std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, ResultHandler&& resultHandler)
     : PushServiceRequestImpl(service, bundleIdentifier, scope, WTFMove(resultHandler))
     , m_subscriptionIdentifier(subscriptionIdentifier)
 {
@@ -371,32 +371,25 @@ UnsubscribeRequest::UnsubscribeRequest(PushService& service, const String& bundl
 void UnsubscribeRequest::startInternal()
 {
     m_database.getRecordByBundleIdentifierAndScope(m_bundleIdentifier, m_scope, [this](auto&& result) mutable {
-        if (!result || m_subscriptionIdentifier != result->identifier) {
+        if (!result || (m_subscriptionIdentifier && *m_subscriptionIdentifier != result->identifier)) {
             fulfill(false);
             return;
         }
+        
+        m_database.removeRecordByIdentifier(result->identifier, [this, serverVAPIDPublicKey = result->serverVAPIDPublicKey](bool removed) mutable {
+            if (!removed) {
+                fulfill(false);
+                return;
+            }
 
-        auto topic = makePushTopic(m_bundleIdentifier, m_scope);
-        m_connection.unsubscribe(topic, result->serverVAPIDPublicKey, [this](bool unsubscribed, NSError *error) mutable {
-#if !RELEASE_LOG_DISABLED
-            // If we fail to unsubscribe from apsd, just drop a log. We still want to continue and remove the record from our database in case there's a state mismatch between our database and apsd's database.
-            if (!unsubscribed)
-                RELEASE_LOG(Push, "PushSubscription.unsubscribe(bundleID: %{public}s, scope: %{sensitive}s) failed with domain: %{public}s code: %lld)", m_bundleIdentifier.utf8().data(), m_scope.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
-#else
-            UNUSED_PARAM(unsubscribed);
-            UNUSED_PARAM(error);
-#endif
+            // FIXME: support partial topic list updates.
+            updateTopicLists(m_connection, m_database, [this]() mutable {
+                fulfill(true);
+            });
 
-            m_database.removeRecordByIdentifier(m_subscriptionIdentifier, [this](bool removed) mutable {
-                if (!removed) {
-                    fulfill(false);
-                    return;
-                }
-
-                // FIXME: support partial topic list updates.
-                updateTopicLists(m_connection, m_database, [this]() mutable {
-                    fulfill(true);
-                });
+            auto topic = makePushTopic(m_bundleIdentifier, m_scope);
+            m_connection.unsubscribe(topic, serverVAPIDPublicKey, [this](bool unsubscribed, NSError *error) mutable {
+                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "PushSubscription.unsubscribe(bundleID: %{public}s, scope: %{sensitive}s) failed with domain: %{public}s code: %lld)", m_bundleIdentifier.utf8().data(), m_scope.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
             });
         });
     });
@@ -463,7 +456,7 @@ void PushService::didCompleteSubscribeRequest(SubscribeRequest& request)
     finishedPushServiceRequest(m_subscribeRequests, request);
 }
 
-void PushService::unsubscribe(const String& bundleIdentifier, const String& scope, PushSubscriptionIdentifier subscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& completionHandler)
+void PushService::unsubscribe(const String& bundleIdentifier, const String& scope, std::optional<PushSubscriptionIdentifier> subscriptionIdentifier, CompletionHandler<void(const Expected<bool, WebCore::ExceptionData>&)>&& completionHandler)
 {
     enqueuePushServiceRequest(m_unsubscribeRequests, makeUnique<UnsubscribeRequest>(*this, bundleIdentifier, scope, subscriptionIdentifier, WTFMove(completionHandler)));
 }
@@ -483,19 +476,40 @@ void PushService::incrementSilentPushCount(const String& bundleIdentifier, const
 
         RELEASE_LOG(Push, "Removing all subscriptions associated with %{public}s %{sensitive}s since it processed %u silent pushes", bundleIdentifier.utf8().data(), securityOrigin.utf8().data(), silentPushCount);
 
-        m_database->removeRecordsByBundleIdentifierAndSecurityOrigin(bundleIdentifier, securityOrigin, [this, bundleIdentifier, securityOrigin, silentPushCount, handler = WTFMove(handler)](auto&& removedRecords) mutable {
-            for (auto& record : removedRecords) {
-                m_connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
-                    if (!unsubscribed)
-                        RELEASE_LOG_ERROR(Push, "IncrementSilentPushRequest couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
-                });
-            }
-
-            updateTopicLists(m_connection, m_database, [silentPushCount, handler = WTFMove(handler)]() mutable {
-                handler(silentPushCount);
-            });
+        removeRecordsImpl(bundleIdentifier, securityOrigin, [handler = WTFMove(handler), silentPushCount](auto&&) mutable {
+            handler(silentPushCount);
         });
     });
+}
+
+void PushService::removeRecordsForBundleIdentifier(const String& bundleIdentifier, CompletionHandler<void(unsigned)>&& handler)
+{
+    removeRecordsImpl(bundleIdentifier, std::nullopt, WTFMove(handler));
+}
+
+void PushService::removeRecordsForBundleIdentifierAndOrigin(const String& bundleIdentifier, const String& securityOrigin, CompletionHandler<void(unsigned)>&& handler)
+{
+    removeRecordsImpl(bundleIdentifier, securityOrigin, WTFMove(handler));
+}
+
+void PushService::removeRecordsImpl(const String& bundleIdentifier, const std::optional<String>& securityOrigin, CompletionHandler<void(unsigned)>&& handler)
+{
+    auto removedRecordsHandler = [this, bundleIdentifier, securityOrigin, handler = WTFMove(handler)](Vector<RemovedPushRecord>&& removedRecords) mutable {
+        for (auto& record : removedRecords) {
+            m_connection->unsubscribe(record.topic, record.serverVAPIDPublicKey, [topic = record.topic](bool unsubscribed, NSError* error) {
+                RELEASE_LOG_ERROR_IF(!unsubscribed, Push, "removeRecordsImpl couldn't remove subscription for topic %{sensitive}s: %{public}s code: %lld)", topic.utf8().data(), error.domain.UTF8String ?: "none", static_cast<int64_t>(error.code));
+            });
+        }
+
+        updateTopicLists(m_connection, m_database, [count = removedRecords.size(), handler = WTFMove(handler)]() mutable {
+            handler(count);
+        });
+    };
+
+    if (securityOrigin)
+        m_database->removeRecordsByBundleIdentifierAndSecurityOrigin(bundleIdentifier, *securityOrigin, WTFMove(removedRecordsHandler));
+    else
+        m_database->removeRecordsByBundleIdentifier(bundleIdentifier, WTFMove(removedRecordsHandler));
 }
 
 enum class ContentEncoding {

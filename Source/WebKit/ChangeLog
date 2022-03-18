@@ -1,3 +1,67 @@
+2022-03-18  Ben Nham  <nham@apple.com>
+
+        Remove push subscriptions when associated service worker registrations are removed
+        https://bugs.webkit.org/show_bug.cgi?id=237983
+
+        Reviewed by Youenn Fablet.
+
+        When a ServiceWorkerRegistration is removed, we also need to remove its associated
+        PushSubscription. This can occur when:
+
+          1. The application calls ServiceWorkerRegistration.unregister. This is implemented by
+             having resolveUnregistrationJobInClient call unsubscribeFromPushService in webpushd.
+             The identifier passed to unsubscribeFromPushService is now optional; if the identifier
+             is not present, then we delete whatever PushSubscription is associated with the given
+             scope URL.
+
+          2. The user clears website data for a particular origin. This is implemented by having
+             deleteWebsiteDataForOrigins invoke removePushSubscriptionsForOrigin in webpushd.
+
+          3. The user clears all website data. This is implemented by having deleteWebsiteData
+             invoke removeAllPushSubscriptions in webpushd.
+
+        Covered by new API tests.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        (WebKit::NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains):
+        (WebKit::NetworkProcess::hasPushSubscriptionForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/Notifications/NetworkNotificationManager.cpp:
+        (WebKit::NetworkNotificationManager::unsubscribeFromPushService):
+        (WebKit::NetworkNotificationManager::removeAllPushSubscriptions):
+        (WebKit::NetworkNotificationManager::removePushSubscriptionsForOrigin):
+        * NetworkProcess/Notifications/NetworkNotificationManager.h:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::resolveUnregistrationJobInClient):
+        * Shared/WebPushDaemonConstants.h:
+        (WebKit::WebPushD::messageTypeSendsReply):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _scopeURL:hasPushSubscriptionForTesting:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::hasPushSubscriptionForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * webpushd/PushService.h:
+        * webpushd/PushService.mm:
+        (WebPushD::UnsubscribeRequest::UnsubscribeRequest):
+        (WebPushD::UnsubscribeRequest::startInternal):
+        (WebPushD::PushService::unsubscribe):
+        (WebPushD::PushService::incrementSilentPushCount):
+        (WebPushD::PushService::removeRecordsForBundleIdentifier):
+        (WebPushD::PushService::removeRecordsForBundleIdentifierAndOrigin):
+        (WebPushD::PushService::removeRecordsImpl):
+        * webpushd/WebPushDaemon.h:
+        * webpushd/WebPushDaemon.mm:
+        (WebPushD::MessageInfo::removeAllPushSubscriptions::encodeReply):
+        (WebPushD::MessageInfo::removePushSubscriptionsForOrigin::encodeReply):
+        (WebPushD::Daemon::decodeAndHandleMessage):
+        (WebPushD::Daemon::unsubscribeFromPushService):
+        (WebPushD::Daemon::removeAllPushSubscriptions):
+        (WebPushD::Daemon::removePushSubscriptionsForOrigin):
+
 2022-03-18  J Pascoe  <j_pascoe@apple.com>
 
         Trigger PDF download in captive portal mode instead of using PDF viewer

@@ -36,6 +36,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebsiteDataRecordPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebPushDaemonConstants.h>
 #import <WebKit/_WKExperimentalFeature.h>
@@ -434,6 +435,20 @@ protected:
         [m_webView loadRequest:m_server->request()];
     }
 
+    bool hasPushSubscription()
+    {
+        __block bool done = false;
+        __block bool result = false;
+
+        [m_dataStore _scopeURL:m_server->request().URL hasPushSubscriptionForTesting:^(BOOL fetchedResult) {
+            result = fetchedResult;
+            done = true;
+        }];
+
+        TestWebKitAPI::Util::run(&done);
+        return result;
+    }
+
     ~WebPushDTest()
     {
         cleanUpTestWebPushD(m_tempDirectory.get());
@@ -629,6 +644,8 @@ TEST_F(WebPushDTest, SubscribeTest)
 
     // Client public key should be 65 bytes (87 bytes in unpadded base64url).
     ASSERT_EQ([subscription[@"keys"][@"p256dh"] length], 87u);
+
+    ASSERT_TRUE(hasPushSubscription());
 }
 
 TEST_F(WebPushDTest, SubscribeFailureTest)
@@ -666,6 +683,8 @@ TEST_F(WebPushDTest, SubscribeFailureTest)
     // Spec says that an error in the push service should be an AbortError.
     ASSERT_TRUE([obj isKindOfClass:[NSString class]]);
     ASSERT_TRUE([obj hasPrefix:@"Error: AbortError"]);
+
+    ASSERT_FALSE(hasPushSubscription());
 }
 
 TEST_F(WebPushDTest, UnsubscribeTest)
@@ -705,6 +724,149 @@ TEST_F(WebPushDTest, UnsubscribeTest)
     // First unsubscribe should succeed. Second one should fail since the first one removed the record from the database.
     id expected = @[@(1), @(0)];
     ASSERT_TRUE([obj isEqual:expected]);
+
+    ASSERT_FALSE(hasPushSubscription());
+}
+
+TEST_F(WebPushDTest, UnsubscribesOnServiceWorkerUnregisterTest)
+{
+    static const char* source = R"HTML(
+    <script src="/constants.js"></script>
+    <script>
+    navigator.serviceWorker.register('/sw.js').then(async () => {
+        const registration = await navigator.serviceWorker.ready;
+        let result = null;
+        try {
+            let subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: VALID_SERVER_KEY
+            });
+            result = await registration.unregister();
+        } catch (e) {
+            result = "Error: " + e;
+        }
+        window.webkit.messageHandlers.note.postMessage(result);
+    });
+    </script>
+    )HTML";
+
+    __block RetainPtr<id> unregisterSucceeded = nil;
+    __block bool done = false;
+    [m_notificationMessageHandler setMessageHandler:^(id message) {
+        unregisterSucceeded = message;
+        done = true;
+    }];
+
+    loadRequest(source, "");
+    TestWebKitAPI::Util::run(&done);
+
+    ASSERT_TRUE([unregisterSucceeded isEqual:@YES]);
+    ASSERT_FALSE(hasPushSubscription());
+}
+
+TEST_F(WebPushDTest, UnsubscribesOnClearingAllWebsiteData)
+{
+    static const char* source = R"HTML(
+    <script src="/constants.js"></script>
+    <script>
+    navigator.serviceWorker.register('/sw.js').then(async () => {
+        const registration = await navigator.serviceWorker.ready;
+        let result = null;
+        try {
+            let subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: VALID_SERVER_KEY
+            });
+            result = "Subscribed";
+        } catch (e) {
+            result = "Error: " + e;
+        }
+        window.webkit.messageHandlers.note.postMessage(result);
+    });
+    </script>
+    )HTML";
+
+    __block RetainPtr<id> result = nil;
+    __block bool done = false;
+    [m_notificationMessageHandler setMessageHandler:^(id message) {
+        result = message;
+        done = true;
+    }];
+
+    loadRequest(source, "");
+    TestWebKitAPI::Util::run(&done);
+
+    ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
+
+    __block bool removedData = false;
+    [m_dataStore removeDataOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] modifiedSince:[NSDate distantPast] completionHandler:^(void) {
+        removedData = true;
+    }];
+    TestWebKitAPI::Util::run(&removedData);
+
+    ASSERT_FALSE(hasPushSubscription());
+}
+
+TEST_F(WebPushDTest, UnsubscribesOnClearingWebsiteDataForOrigin)
+{
+    static const char* source = R"HTML(
+    <script src="/constants.js"></script>
+    <script>
+    navigator.serviceWorker.register('/sw.js').then(async () => {
+        const registration = await navigator.serviceWorker.ready;
+        let result = null;
+        try {
+            let subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: VALID_SERVER_KEY
+            });
+            result = "Subscribed";
+        } catch (e) {
+            result = "Error: " + e;
+        }
+        window.webkit.messageHandlers.note.postMessage(result);
+    });
+    </script>
+    )HTML";
+
+    __block RetainPtr<id> result = nil;
+    __block bool done = false;
+    [m_notificationMessageHandler setMessageHandler:^(id message) {
+        result = message;
+        done = true;
+    }];
+
+    loadRequest(source, "");
+    TestWebKitAPI::Util::run(&done);
+
+    ASSERT_TRUE([result isEqualToString:@"Subscribed"]);
+
+    __block bool fetchedRecords = false;
+    __block RetainPtr<NSArray<WKWebsiteDataRecord *>> records;
+    [m_dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        records = dataRecords;
+        fetchedRecords = true;
+    }];
+    TestWebKitAPI::Util::run(&fetchedRecords);
+
+    WKWebsiteDataRecord *filteredRecord = nil;
+    for (WKWebsiteDataRecord *record in records.get()) {
+        for (NSString *originString in record._originsStrings) {
+            if ([originString isEqualToString:m_server->origin()]) {
+                filteredRecord = record;
+                break;
+            }
+        }
+    }
+    ASSERT_TRUE(filteredRecord);
+
+    __block bool removedData = false;
+    [m_dataStore removeDataOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] forDataRecords:[NSArray arrayWithObject:filteredRecord] completionHandler:^(void) {
+        removedData = true;
+    }];
+    TestWebKitAPI::Util::run(&removedData);
+
+    ASSERT_FALSE(hasPushSubscription());
 }
 
 #if ENABLE(INSTALL_COORDINATION_BUNDLES)

@@ -53,6 +53,8 @@ enum class MessageType : uint8_t {
     GetPushSubscription,
     GetPushPermissionState,
     IncrementSilentPushCount,
+    RemoveAllPushSubscriptions,
+    RemovePushSubscriptionsForOrigin,
 };
 
 inline bool messageTypeSendsReply(MessageType messageType)
@@ -70,6 +72,8 @@ inline bool messageTypeSendsReply(MessageType messageType)
     case MessageType::GetPushSubscription:
     case MessageType::GetPushPermissionState:
     case MessageType::IncrementSilentPushCount:
+    case MessageType::RemoveAllPushSubscriptions:
+    case MessageType::RemovePushSubscriptionsForOrigin:
         return true;
     case MessageType::SetDebugModeIsEnabled:
     case MessageType::UpdateConnectionConfiguration:
