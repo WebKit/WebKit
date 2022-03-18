@@ -37,6 +37,11 @@ const DEFAULT_LIMIT = 100;
 let willFilterExpected = false;
 let showTestTimes = false;
 
+const BUG_TRACKER_COLORS = {
+    radar: 'var(--purple)',
+    bugzilla: 'var(--blue)'
+} 
+
 function minimumUuidForResults(results, limit) {
     const now = Math.floor(Date.now() / 10);
     let minDisplayedUuid = now;
@@ -550,66 +555,69 @@ class TimelineFromEndpoint {
     }
 
     _renderSelectedDotsButtonGroup(element) {
-        DOM.inject(element, this.bugTrackers.map(bugTracker => {
-            const buttonText = `${bugTracker}`;
-            const buttonRef = REF.createRef({
-                state: {
-                    loading: false
-                },
-                onStateUpdate: (element, stateDiff) => {
-                    if (stateDiff.loading)
-                        element.innerText = 'Waiting...';
-                    else
-                        element.innerText = buttonText;
-                }
-            });
-
-            buttonRef.fromEvent('click').action(e => {
-                const requestPayload = {
-                    selectedRows: [],
-                    willFilterExpected: InvestigateDrawer.willFilterExpected,
-                    repositories: this.repositories,
-                    suite: this.suite,
-                    test: this.test
-                };
-                Array.from(this.selectedDots.keys()).forEach(config => {
-                    const dots = this.selectedDots.get(config);
-                    requestPayload.selectedRows.push({
-                        config,
-                        results: dots
+        DOM.inject(element, 
+            `<div class="row">
+                ${this.bugTrackers.map(bugTracker => {
+                    const buttonText = `${bugTracker[0].toUpperCase()}${bugTracker.substring(1)}`;
+                    const buttonRef = REF.createRef({
+                        state: {
+                            loading: false
+                        },
+                        onStateUpdate: (element, stateDiff) => {
+                            if (stateDiff.loading)
+                                element.innerText = 'Waiting...';
+                            else
+                                element.innerText = buttonText;
+                        }
                     });
-                });
-                buttonRef.setState({loading: true});
-                fetch(`api/bug-trackers/${bugTracker}/create-bug`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestPayload)
-                }).then(res => {
-                    if (res.ok)
-                        return res.json()
-                    return res.json().then((data) => {
-                        throw new Error(data.description);
+        
+                    buttonRef.fromEvent('click').action(e => {
+                        const requestPayload = {
+                            selectedRows: [],
+                            willFilterExpected: InvestigateDrawer.willFilterExpected,
+                            repositories: this.repositories,
+                            suite: this.suite,
+                            test: this.test
+                        };
+                        Array.from(this.selectedDots.keys()).forEach(config => {
+                            const dots = this.selectedDots.get(config);
+                            requestPayload.selectedRows.push({
+                                config,
+                                results: dots
+                            });
+                        });
+                        buttonRef.setState({loading: true});
+                        fetch(`api/bug-trackers/${bugTracker}/create-bug`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(requestPayload)
+                        }).then(res => {
+                            if (res.ok)
+                                return res.json()
+                            return res.json().then((data) => {
+                                throw new Error(data.description);
+                            });
+                        }).then(data => {
+                            const bugLinkElement = document.createElement('a');
+                            if (data['newWindow'])
+                                bugLinkElement.setAttribute('target', '_blank');
+                            bugLinkElement.setAttribute('href', data['url']);
+                            bugLinkElement.click();
+                        }).catch(e => {
+                            alert(e);
+                        }).finally(() => {
+                            buttonRef.setState({loading: false});
+                        });
+                        
                     });
-                }).then(data => {
-                    const bugLinkElement = document.createElement('a');
-                    bugLinkElement.setAttribute('href', data['url']);
-                    bugLinkElement.click();
-                }).catch(e => {
-                    alert(e);
-                }).finally(() => {
-                    buttonRef.setState({loading: false});
-                });
-                
-            });
-
-            return `<div>
-                <button class="button tiny" style="position:absolute; background: var(--purple); color: var(--white)" ref="${buttonRef}">
-                    ${buttonText}
-                </button>
-            </div>`;
-        }).join(''));
+                    return `
+                        <button class="button tiny" style="background: ${BUG_TRACKER_COLORS[bugTracker]}; color: var(--white)" ref="${buttonRef}">
+                            ${buttonText}
+                        </button>`;
+                }).join('')}
+            </div>`);
     }
 
     render(limit) {
@@ -994,7 +1002,7 @@ class TimelineFromEndpoint {
             self.notifyRerender = notifyRerender;
         }));
         return Timeline.CanvasContainer({
-            customizedLayer: `<div class="row" style="position:absolute" ref="${this.selectedDotsButtonGroupRef}"></div>`,
+            customizedLayer: `<div style="position:absolute" ref="${this.selectedDotsButtonGroupRef}"></div>`,
             onSelecting: (e) => {
                 this.selectedDotsButtonGroupRef.setState({show: false});
             },
