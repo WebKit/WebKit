@@ -458,6 +458,13 @@ def disable_signals(signals=[signal.SIGINT, signal.SIGTERM, signal.SIGHUP]):
         signal.signal(disabled_signal, previous_handler)
 
 
+def extract_extra_command_args(args):
+    """Takes a list of unparsed args and splits them at '--' to pass to subprocesses."""
+    try:
+        return args[args.index('--') + 1:]
+    except ValueError:
+        return []
+
 class WebkitFlatpak:
 
     @staticmethod
@@ -513,7 +520,8 @@ class WebkitFlatpak:
         buildoptions.add_argument("--cmakeargs",
                                   help="One or more optional CMake flags (e.g. --cmakeargs=\"-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local\")")
 
-        _, self.args = parser.parse_known_args(args=args, namespace=self)
+        parsing_namespace, self.args = parser.parse_known_args(args=args, namespace=self)
+        self.extra_command_args = extract_extra_command_args(parsing_namespace.args)
 
         if not self.build_type:
             self.build_type = "Release"
@@ -1209,7 +1217,7 @@ class WebkitFlatpak:
             if self.is_build_webkit(program) and self.cmakeargs:
                 self.user_command.append("--cmakeargs=%s" % self.cmakeargs)
 
-            return self.run_in_sandbox(*self.user_command)
+            return self.run_in_sandbox(*self.user_command + self.extra_command_args)
         elif not self.update and not self.build_gst and not self.regenerate_toolchains:
             return self.run_in_sandbox()
 

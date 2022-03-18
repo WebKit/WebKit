@@ -1,3 +1,19 @@
+2022-03-18  Patrick Griffis  <pgriffis@igalia.com>
+
+        [Flatpak] Pass extra webkit-flatpak args to sub-command
+        https://bugs.webkit.org/show_bug.cgi?id=238027
+
+        Reviewed by Carlos Garcia Campos.
+
+        This adds the abillity to run something like:
+          webkit-flatpak --command=echo -- --help
+        Where our script doesn't parse anything after `--` and it gets passed to the subcommand.
+
+        * flatpak/flatpakutils.py:
+        (extract_extra_command_args):
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.setup_dev_env):
+
 2022-03-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Initial import of the GstWebRTC backend
