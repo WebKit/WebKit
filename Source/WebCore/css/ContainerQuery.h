@@ -24,12 +24,14 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class CSSValue;
+class Element;
 
 namespace CQ {
 
@@ -92,5 +94,7 @@ struct FilteredContainerQuery {
     OptionSet<CQ::Axis> axisFilter;
     ContainerQuery query;
 };
+
+using CachedQueryContainers = Vector<Ref<const Element>>;
 
 }

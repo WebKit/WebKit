@@ -43,6 +43,7 @@ CSSToLengthConversionData::CSSToLengthConversionData(const RenderStyle& style, c
     , m_rootStyle(builderContext.rootElementStyle)
     , m_parentStyle(&builderContext.parentStyle)
     , m_renderView(builderContext.document->renderView())
+    , m_element(builderContext.element)
     , m_viewportDependencyDetectionStyle(const_cast<RenderStyle*>(m_style))
 {
 }

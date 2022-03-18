@@ -75,6 +75,12 @@ CalculationCategory calcUnitCategory(CSSUnitType type)
     case CSSUnitType::CSS_DVMAX:
     case CSSUnitType::CSS_DVB:
     case CSSUnitType::CSS_DVI:
+    case CSSUnitType::CSS_CQW:
+    case CSSUnitType::CSS_CQH:
+    case CSSUnitType::CSS_CQI:
+    case CSSUnitType::CSS_CQB:
+    case CSSUnitType::CSS_CQMIN:
+    case CSSUnitType::CSS_CQMAX:
         return CalculationCategory::Length;
     case CSSUnitType::CSS_PERCENTAGE:
         return CalculationCategory::Percent;
@@ -152,6 +158,12 @@ CalculationCategory calculationCategoryForCombination(CSSUnitType type)
     case CSSUnitType::CSS_DVMAX:
     case CSSUnitType::CSS_DVB:
     case CSSUnitType::CSS_DVI:
+    case CSSUnitType::CSS_CQW:
+    case CSSUnitType::CSS_CQH:
+    case CSSUnitType::CSS_CQI:
+    case CSSUnitType::CSS_CQB:
+    case CSSUnitType::CSS_CQMIN:
+    case CSSUnitType::CSS_CQMAX:
     default:
         return CalculationCategory::Other;
     }
@@ -233,6 +245,12 @@ bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_Q:
     case CSSUnitType::CSS_LHS:
     case CSSUnitType::CSS_RLHS:
+    case CSSUnitType::CSS_CQW:
+    case CSSUnitType::CSS_CQH:
+    case CSSUnitType::CSS_CQI:
+    case CSSUnitType::CSS_CQB:
+    case CSSUnitType::CSS_CQMIN:
+    case CSSUnitType::CSS_CQMAX:
         return true;
     case CSSUnitType::CSS_UNKNOWN:
     case CSSUnitType::CSS_STRING:

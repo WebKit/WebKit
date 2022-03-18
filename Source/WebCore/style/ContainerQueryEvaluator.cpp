@@ -78,6 +78,23 @@ auto ContainerQueryEvaluator::selectContainer(const FilteredContainerQuery& filt
         };
     };
 
+    auto* cachedQueryContainers = m_selectorMatchingState ? &m_selectorMatchingState->queryContainers : nullptr;
+
+    auto* container = selectContainer(filteredContainerQuery.axisFilter, filteredContainerQuery.nameFilter, m_element.get(), cachedQueryContainers, m_pseudoId);
+    if (!container)
+        return { };
+
+    return makeSelectedContainer(*container);
+}
+
+const Element* ContainerQueryEvaluator::selectContainer(OptionSet<CQ::Axis> axes, const String& name, const Element& element, const CachedQueryContainers* cachedQueryContainers, PseudoId pseudoId)
+{
+    // "For each element, the query container to be queried is selected from among the element’s
+    // ancestor query containers that have a valid container-type for all the container features
+    // in the <container-condition>. The optional <container-name> filters the set of query containers
+    // considered to just those with a matching query container name."
+    // https://drafts.csswg.org/css-contain-3/#container-rule
+
     auto isValidContainerForRequiredAxes = [&](ContainerType containerType, const RenderElement* principalBox) {
         switch (containerType) {
         case ContainerType::Size:
@@ -86,9 +103,9 @@ auto ContainerQueryEvaluator::selectContainer(const FilteredContainerQuery& filt
             // Without a principal box the container matches but the query against it will evaluate to Unknown.
             if (!principalBox)
                 return true;
-            if (filteredContainerQuery.axisFilter.contains(CQ::Axis::Block))
+            if (axes.contains(CQ::Axis::Block))
                 return false;
-            return !filteredContainerQuery.axisFilter.contains(principalBox->isHorizontalWritingMode() ? CQ::Axis::Height : CQ::Axis::Width);
+            return !axes.contains(principalBox->isHorizontalWritingMode() ? CQ::Axis::Height : CQ::Axis::Width);
         case ContainerType::None:
             return false;
         }
@@ -101,27 +118,27 @@ auto ContainerQueryEvaluator::selectContainer(const FilteredContainerQuery& filt
             return false;
         if (!isValidContainerForRequiredAxes(style->containerType(), element.renderer()))
             return false;
-        if (filteredContainerQuery.nameFilter.isEmpty())
+        if (name.isEmpty())
             return true;
-        return style->containerNames().contains(filteredContainerQuery.nameFilter);
+        return style->containerNames().contains(name);
     };
 
-    if (m_selectorMatchingState) {
-        for (auto& container : makeReversedRange(m_selectorMatchingState->queryContainers)) {
+    if (cachedQueryContainers) {
+        for (auto& container : makeReversedRange(*cachedQueryContainers)) {
             if (isContainerForQuery(container))
-                return makeSelectedContainer(container);
+                return container.ptr();
         }
         return { };
     }
 
-    if (m_pseudoId != PseudoId::None) {
-        if (isContainerForQuery(m_element))
-            return makeSelectedContainer(m_element);
+    if (pseudoId != PseudoId::None) {
+        if (isContainerForQuery(element))
+            return &element;
     }
 
-    for (auto& ancestor : composedTreeAncestors(const_cast<Element&>(m_element.get()))) {
+    for (auto& ancestor : composedTreeAncestors(const_cast<Element&>(element))) {
         if (isContainerForQuery(ancestor))
-            return makeSelectedContainer(ancestor);
+            return &ancestor;
     }
     return { };
 }

@@ -1,5 +1,5 @@
 Test
 
-FAIL Container relative units assert_equals: expected "3px" but got "0px"
-FAIL Container relative units in math functions assert_equals: expected "30px" but got "0px"
+PASS Container relative units
+PASS Container relative units in math functions
 

@@ -42,6 +42,8 @@ public:
 
     bool evaluate(const FilteredContainerQuery&) const;
 
+    static const Element* selectContainer(OptionSet<CQ::Axis>, const String& name, const Element&, const CachedQueryContainers*, PseudoId = PseudoId::None);
+
 private:
     struct SelectedContainer;
     std::optional<SelectedContainer> selectContainer(const FilteredContainerQuery&) const;

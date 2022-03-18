@@ -35,6 +35,7 @@
 #include "CalculationValue.h"
 #include "Color.h"
 #include "ColorSerialization.h"
+#include "ContainerQueryEvaluator.h"
 #include "Counter.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "FontCascade.h"
@@ -113,6 +114,12 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPPX:
     case CSSUnitType::CSS_X:
+    case CSSUnitType::CSS_CQW:
+    case CSSUnitType::CSS_CQH:
+    case CSSUnitType::CSS_CQI:
+    case CSSUnitType::CSS_CQB:
+    case CSSUnitType::CSS_CQMIN:
+    case CSSUnitType::CSS_CQMAX:
         return true;
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_COUNTER:
@@ -221,6 +228,12 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CSS_VMAX:
     case CSSUnitType::CSS_VMIN:
     case CSSUnitType::CSS_VW:
+    case CSSUnitType::CSS_CQW:
+    case CSSUnitType::CSS_CQH:
+    case CSSUnitType::CSS_CQI:
+    case CSSUnitType::CSS_CQB:
+    case CSSUnitType::CSS_CQMIN:
+    case CSSUnitType::CSS_CQMAX:
         return false;
     }
 
@@ -606,6 +619,12 @@ void CSSPrimitiveValue::cleanup()
     case CSSUnitType::CSS_UNICODE_RANGE:
     case CSSUnitType::CSS_PROPERTY_ID:
     case CSSUnitType::CSS_VALUE_ID:
+    case CSSUnitType::CSS_CQW:
+    case CSSUnitType::CSS_CQH:
+    case CSSUnitType::CSS_CQI:
+    case CSSUnitType::CSS_CQB:
+    case CSSUnitType::CSS_CQMIN:
+    case CSSUnitType::CSS_CQMAX:
         ASSERT(!isStringType(type));
         break;
     }
@@ -803,6 +822,16 @@ double CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(CSSUnitType primiti
 
 double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversionData& conversionData, CSSUnitType primitiveType, double value)
 {
+    auto selectContainerRenderer = [&](CQ::Axis axis) -> const RenderBox* {
+        if (!conversionData.element())
+            return nullptr;
+        // FIXME: Use cached query containers when available.
+        auto* container = Style::ContainerQueryEvaluator::selectContainer(axis, nullString(), *conversionData.element(), nullptr);
+        if (!container)
+            return nullptr;
+        return dynamicDowncast<RenderBox>(container->renderer());
+    };
+
     switch (primitiveType) {
     case CSSUnitType::CSS_EMS:
     case CSSUnitType::CSS_QUIRKY_EMS:
@@ -920,6 +949,36 @@ double CSSPrimitiveValue::computeNonCalcLengthDouble(const CSSToLengthConversion
         } else
             value *= conversionData.style()->computedLineHeight();
         break;
+
+    case CSSUnitType::CSS_CQW: {
+        if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Width))
+            return containerRenderer->width() * value / 100;
+        return value * conversionData.smallViewportFactor().width();
+    }
+
+    case CSSUnitType::CSS_CQH: {
+        if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Height))
+            return containerRenderer->height() * value / 100;
+        return value * conversionData.smallViewportFactor().height();
+    }
+
+    case CSSUnitType::CSS_CQI: {
+        if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Inline))
+            return containerRenderer->logicalWidth() * value / 100;
+        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Inline, conversionData.smallViewportFactor(), conversionData.rootStyle());
+    }
+
+    case CSSUnitType::CSS_CQB: {
+        if (auto* containerRenderer = selectContainerRenderer(CQ::Axis::Block))
+            return containerRenderer->logicalHeight() * value / 100;
+        return value * lengthOfViewportPhysicalAxisForLogicalAxis(LogicalBoxAxis::Block, conversionData.smallViewportFactor(), conversionData.rootStyle());
+    }
+
+    case CSSUnitType::CSS_CQMAX:
+        return std::max(computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_CQB, value), computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_CQI, value));
+
+    case CSSUnitType::CSS_CQMIN:
+        return std::min(computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_CQB, value), computeNonCalcLengthDouble(conversionData, CSSUnitType::CSS_CQI, value));
 
     case CSSUnitType::CSS_RLHS:
         if (conversionData.rootStyle()) {
@@ -1224,6 +1283,12 @@ String CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
         case CSSUnitType::CSS_REMS: return "rem";
         case CSSUnitType::CSS_CHS: return "ch";
         case CSSUnitType::CSS_IC: return "ic";
+        case CSSUnitType::CSS_CQW: return "cqw";
+        case CSSUnitType::CSS_CQH: return "cqh";
+        case CSSUnitType::CSS_CQI: return "cqi";
+        case CSSUnitType::CSS_CQB: return "cqb";
+        case CSSUnitType::CSS_CQMAX: return "cqmax";
+        case CSSUnitType::CSS_CQMIN: return "cqmin";
 
         case CSSUnitType::CSS_UNKNOWN:
         case CSSUnitType::CSS_NUMBER:
@@ -1321,6 +1386,18 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         return formatNumberValue("lh");
     case CSSUnitType::CSS_RLHS:
         return formatNumberValue("rlh");
+    case CSSUnitType::CSS_CQW:
+        return formatNumberValue("cqw");
+    case CSSUnitType::CSS_CQH:
+        return formatNumberValue("cqh");
+    case CSSUnitType::CSS_CQI:
+        return formatNumberValue("cqi");
+    case CSSUnitType::CSS_CQB:
+        return formatNumberValue("cqb");
+    case CSSUnitType::CSS_CQMAX:
+        return formatNumberValue("cqmax");
+    case CSSUnitType::CSS_CQMIN:
+        return formatNumberValue("cqmin");
     case CSSUnitType::CSS_DIMENSION:
         // FIXME: This isn't correct.
         return formatNumberValue("");
@@ -1510,6 +1587,12 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CSS_LHS:
     case CSSUnitType::CSS_RLHS:
     case CSSUnitType::CSS_DIMENSION:
+    case CSSUnitType::CSS_CQW:
+    case CSSUnitType::CSS_CQH:
+    case CSSUnitType::CSS_CQI:
+    case CSSUnitType::CSS_CQB:
+    case CSSUnitType::CSS_CQMIN:
+    case CSSUnitType::CSS_CQMAX:
         return m_value.num == other.m_value.num;
     case CSSUnitType::CSS_PROPERTY_ID:
         return propertyName(m_value.propertyID) == propertyName(other.m_value.propertyID);

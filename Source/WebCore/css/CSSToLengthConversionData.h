@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class Element;
 class FloatSize;
 class RenderStyle;
 class RenderView;
@@ -61,6 +62,7 @@ public:
     bool computingLineHeight() const { return m_propertyToCompute == CSSPropertyLineHeight; }
     CSSPropertyID propertyToCompute() const { return m_propertyToCompute.value_or(CSSPropertyInvalid); }
     const RenderView* renderView() const { return m_renderView; }
+    const Element* element() const { return m_element.get(); }
 
     FloatSize defaultViewportFactor() const;
     FloatSize smallViewportFactor() const;
@@ -96,6 +98,7 @@ private:
     const RenderStyle* m_rootStyle { nullptr };
     const RenderStyle* m_parentStyle { nullptr };
     const RenderView* m_renderView { nullptr };
+    RefPtr<const Element> m_element;
     std::optional<float> m_zoom;
     std::optional<CSSPropertyID> m_propertyToCompute;
     // FIXME: Remove this hack.

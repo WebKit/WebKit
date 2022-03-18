@@ -1,3 +1,55 @@
+2022-03-18  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Basic support for container units
+        https://bugs.webkit.org/show_bug.cgi?id=238021
+
+        Reviewed by Antoine Quint.
+
+        Container Relative Lengths: the cqw, cqh, cqi, cqb, cqmin, cqmax units
+        https://drafts.csswg.org/css-contain-3/#container-lengths
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion):
+        (WebCore::isStringType):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::computeNonCalcLengthDouble):
+
+        Resolve container units by resolving the query container and computing the value against it.
+
+        (WebCore::CSSPrimitiveValue::unitTypeString):
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const):
+        (WebCore::CSSPrimitiveValue::equals const):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isLength):
+        * css/CSSToLengthConversionData.cpp:
+        (WebCore::CSSToLengthConversionData::CSSToLengthConversionData):
+        * css/CSSToLengthConversionData.h:
+        (WebCore::CSSToLengthConversionData::element const):
+        * css/CSSUnits.cpp:
+        (WebCore::unitCategory):
+        (WebCore::operator<<):
+        * css/CSSUnits.h:
+        * css/ContainerQuery.h:
+        * css/calc/CSSCalcCategoryMapping.cpp:
+        (WebCore::calcUnitCategory):
+        (WebCore::calculationCategoryForCombination):
+        (WebCore::hasDoubleValue):
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::cssPrimitiveValueUnitFromTrie):
+
+        Parsing support.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::LengthRawKnownTokenTypeDimensionConsumer::consume):
+        * style/ContainerQueryEvaluator.cpp:
+        (WebCore::Style::ContainerQueryEvaluator::selectContainer const):
+        (WebCore::Style::ContainerQueryEvaluator::selectContainer):
+
+        Factor container selection into static function that can be used from the unit resolution code.
+
+        * style/ContainerQueryEvaluator.h:
+        * style/SelectorMatchingState.h:
+
 2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add a public build option for PDF.js

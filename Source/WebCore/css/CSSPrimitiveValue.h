@@ -314,6 +314,12 @@ constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
         || type == CSSUnitType::CSS_Q
         || type == CSSUnitType::CSS_LHS
         || type == CSSUnitType::CSS_RLHS
+        || type == CSSUnitType::CSS_CQW
+        || type == CSSUnitType::CSS_CQH
+        || type == CSSUnitType::CSS_CQI
+        || type == CSSUnitType::CSS_CQB
+        || type == CSSUnitType::CSS_CQMIN
+        || type == CSSUnitType::CSS_CQMAX
         || isViewportPercentageLength(type)
         || type == CSSUnitType::CSS_QUIRKY_EMS;
 }

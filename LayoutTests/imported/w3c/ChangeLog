@@ -1,3 +1,18 @@
+2022-03-18  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Basic support for container units
+        https://bugs.webkit.org/show_bug.cgi?id=238021
+
+        Reviewed by Antoine Quint.
+
+        * web-platform-tests/css/css-contain/container-queries/container-units-animation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-basic-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-computational-independence-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-invalidation-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-selection-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-small-viewport-fallback-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/container-units-typed-om-expected.txt:
+
 2022-03-17  Matt Woodrow  <mattwoodrow@apple.com>
 
         Subgrid items should always be stretched.
