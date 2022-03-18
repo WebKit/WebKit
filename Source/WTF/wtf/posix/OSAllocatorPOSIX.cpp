@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -200,7 +200,7 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
     char* mapped = reinterpret_cast<char*>(tryReserveUncommitted(mappedSize, usage, writable, executable, jitCageEnabled, includesGuardPages));
     char* mappedEnd = mapped + mappedSize;
 
-    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(bytes, reinterpret_cast<uintptr_t>(mapped)));
+    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(alignment, reinterpret_cast<uintptr_t>(mapped)));
     char* alignedEnd = aligned + bytes;
 
     RELEASE_ASSERT(alignedEnd <= mappedEnd);

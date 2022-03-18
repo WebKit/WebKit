@@ -1,5 +1,15 @@
 2022-03-17  Keith Miller  <keith_miller@apple.com>
 
+        tryReserveUncommittedAligned should round up to alignment not bytes requested
+        https://bugs.webkit.org/show_bug.cgi?id=238052
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/posix/OSAllocatorPOSIX.cpp:
+        (WTF::OSAllocator::tryReserveUncommittedAligned):
+
+2022-03-17  Keith Miller  <keith_miller@apple.com>
+
         Fix crash in Bleacher Report due to bad JSObjectRef passed to API
         https://bugs.webkit.org/show_bug.cgi?id=238048
         <rdar://88766464>
