@@ -41,10 +41,6 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
-#if USE(GSTREAMER_FULL)
-#include <gst/gstinitstaticplugins.h>
-#endif
-
 #if USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API
 #include <gst/mpegts/mpegts.h>
@@ -310,9 +306,6 @@ void registerWebKitGStreamerElements()
 {
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-#if USE(GSTREAMER_FULL)
-        gst_init_static_plugins();
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA) && ENABLE(THUNDER)
         if (!CDMFactoryThunder::singleton().supportedKeySystems().isEmpty()) {

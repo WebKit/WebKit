@@ -1,5 +1,16 @@
 2022-03-18  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] Migrate gst-full support to 1.20
+        https://bugs.webkit.org/show_bug.cgi?id=237772
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/GStreamerCommon.cpp:
+        (WebCore::registerWebKitGStreamerElements): GStreamer 1.20 no longer requires manual
+        initialization of gst-full. It is done during the gst_init().
+
+2022-03-18  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] Initial import of the GstWebRTC backend
         https://bugs.webkit.org/show_bug.cgi?id=236540
 

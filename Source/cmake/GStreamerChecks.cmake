@@ -12,7 +12,7 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
 
     SET_AND_EXPOSE_TO_BUILD(USE_GSTREAMER TRUE)
       if (USE_GSTREAMER_FULL)
-          find_package(GStreamer 1.17.0 REQUIRED COMPONENTS full)
+          find_package(GStreamer 1.20.0 REQUIRED COMPONENTS full)
           if (NOT PC_GSTREAMER_FULL_FOUND)
               message(FATAL_ERROR "GStreamer static library libgstreamer-full-1.0 not found")
           else ()
