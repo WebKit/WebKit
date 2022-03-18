@@ -1958,10 +1958,8 @@ void RenderLayer::setBackingProviderLayer(RenderLayer* backingProvider)
     if (backingProvider == m_backingProviderLayer)
         return;
 
-    if (!renderer().renderTreeBeingDestroyed()) {
+    if (!renderer().renderTreeBeingDestroyed())
         clearClipRectsIncludingDescendants();
-        clearRepaintRects();
-    }
 
     m_backingProviderLayer = backingProvider;
 }

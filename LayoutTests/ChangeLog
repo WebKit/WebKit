@@ -1,3 +1,14 @@
+2022-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r290628): Scrubber makes a visual trail when scrubbing on tv.youtube.com
+        https://bugs.webkit.org/show_bug.cgi?id=238047
+        <rdar://problem/90451319>
+
+        Reviewed by Alan Bujtas.
+
+        * compositing/repaint/move-backing-sharing-layer-expected.txt: Added.
+        * compositing/repaint/move-backing-sharing-layer.html: Added.
+
 2022-03-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Initial import of the GstWebRTC backend

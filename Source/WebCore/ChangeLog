@@ -1,3 +1,25 @@
+2022-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r290628): Scrubber makes a visual trail when scrubbing on tv.youtube.com
+        https://bugs.webkit.org/show_bug.cgi?id=238047
+        <rdar://problem/90451319>
+
+        Reviewed by Alan Bujtas.
+
+        In r290628 I added a call to clearRepaintRects() when changing the backing sharing
+        target layer for a RenderLayer. However, for a layer using backing sharing, this
+        gets called twice during a normal compositing update, which has the effect of
+        clearing the cached repaint rects so that a layer repaint always computes new rects.
+        Thus, if a layer moved, we'd fail to repaint the old rect.
+
+        RenderLayerBacking::setBackingSharingLayers() already has logic to update repaint
+        rects when state changes, so we don't need this clearing.
+
+        Test: compositing/repaint/move-backing-sharing-layer.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setBackingProviderLayer):
+
 2022-03-18  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] Add stop position to the range request
