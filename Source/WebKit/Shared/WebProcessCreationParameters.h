@@ -143,8 +143,6 @@ struct WebProcessCreationParameters {
     bool hasRichContentServices { false };
 #endif
 
-    Seconds terminationTimeout;
-
     TextCheckerState textCheckerState;
 
 #if PLATFORM(COCOA)

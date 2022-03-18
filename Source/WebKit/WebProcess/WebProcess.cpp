@@ -551,8 +551,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     setShouldUseFontSmoothing(parameters.shouldUseFontSmoothing);
 
-    setTerminationTimeout(parameters.terminationTimeout);
-
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setAttrStyleEnabled(parameters.attrStyleEnabled);
