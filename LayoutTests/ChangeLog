@@ -1,3 +1,18 @@
+2022-03-18  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION(r291129-r291128): [WK1 EWS] 3 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/* tests are a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=238054
+        <rdar://problem/90458721>
+
+        Unreviewed test gardening.
+
+        The scroll-behavior property is not enabled on WK1 so we must have specific test expectations for these tests.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt: Added.
+        * platform/mac-wk1/imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt: Added.
+
 2022-03-17  Matteo Flores  <matteo_flores@apple.com>
 
         REGRESSION(r291129-r291128): [WK1 EWS] 3 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/* tests are a constant text failure
