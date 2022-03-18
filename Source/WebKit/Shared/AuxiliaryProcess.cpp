@@ -35,6 +35,7 @@
 #include <WebCore/LogInitialization.h>
 #include <pal/SessionID.h>
 #include <wtf/LogInitialization.h>
+#include <wtf/SetForScope.h>
 
 #if !OS(WINDOWS)
 #include <unistd.h>
@@ -161,7 +162,7 @@ void AuxiliaryProcess::enableTermination()
     ASSERT(m_terminationCounter > 0);
     m_terminationCounter--;
 
-    if (m_terminationCounter)
+    if (m_terminationCounter || m_isInShutDown)
         return;
 
     if (shouldTerminate())
@@ -204,6 +205,7 @@ void AuxiliaryProcess::terminate()
 
 void AuxiliaryProcess::shutDown()
 {
+    SetForScope<bool> isInShutDown(m_isInShutDown, true);
     terminate();
 }
 
