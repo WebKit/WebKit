@@ -3046,14 +3046,14 @@ LayoutRect AXObjectCache::localCaretRectForCharacterOffset(RenderObject*& render
     if (!range)
         return IntRect();
 
-    auto runAndOffset = makeContainerOffsetPosition(range->start).inlineRunAndOffset(Affinity::Downstream);
-    if (runAndOffset.run)
-        renderer = const_cast<RenderObject*>(&runAndOffset.run->renderer());
+    auto boxAndOffset = makeContainerOffsetPosition(range->start).inlineBoxAndOffset(Affinity::Downstream);
+    if (boxAndOffset.box)
+        renderer = const_cast<RenderObject*>(&boxAndOffset.box->renderer());
 
-    if (is<RenderLineBreak>(renderer) && InlineIterator::boxFor(downcast<RenderLineBreak>(*renderer)) != runAndOffset.run)
+    if (is<RenderLineBreak>(renderer) && InlineIterator::boxFor(downcast<RenderLineBreak>(*renderer)) != boxAndOffset.box)
         return IntRect();
 
-    return computeLocalCaretRect(*renderer, runAndOffset);
+    return computeLocalCaretRect(*renderer, boxAndOffset);
 }
 
 IntRect AXObjectCache::absoluteCaretBoundsForCharacterOffset(const CharacterOffset& characterOffset)

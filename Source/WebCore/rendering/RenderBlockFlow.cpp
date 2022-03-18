@@ -3282,19 +3282,19 @@ bool RenderBlockFlow::containsNonZeroBidiLevel() const
     return false;
 }
 
-static Position positionForRun(const RenderBlockFlow& flow, InlineIterator::BoxIterator run, bool start)
+static Position positionForRun(const RenderBlockFlow& flow, InlineIterator::BoxIterator box, bool start)
 {
-    if (!run)
+    if (!box)
         return Position();
 
-    if (!run->renderer().nonPseudoNode())
+    if (!box->renderer().nonPseudoNode())
         return makeDeprecatedLegacyPosition(flow.nonPseudoElement(), start ? flow.caretMinOffset() : flow.caretMaxOffset());
 
-    if (!is<InlineIterator::TextBoxIterator>(run))
-        return makeDeprecatedLegacyPosition(run->renderer().nonPseudoNode(), start ? run->renderer().caretMinOffset() : run->renderer().caretMaxOffset());
+    if (!is<InlineIterator::TextBoxIterator>(box))
+        return makeDeprecatedLegacyPosition(box->renderer().nonPseudoNode(), start ? box->renderer().caretMinOffset() : box->renderer().caretMaxOffset());
 
-    auto& textRun = downcast<InlineIterator::TextBoxIterator>(run);
-    return makeDeprecatedLegacyPosition(textRun->renderer().nonPseudoNode(), start ? textRun->start() : textRun->end());
+    auto& textBox = downcast<InlineIterator::TextBoxIterator>(box);
+    return makeDeprecatedLegacyPosition(textBox->renderer().nonPseudoNode(), start ? textBox->start() : textBox->end());
 }
 
 RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& point)
@@ -3353,9 +3353,9 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
                 return nullptr;
 
             if (localPoint.y() > *previousRootInlineBoxBottom && localPoint.y() < box->logicalTop()) {
-                auto run = box->line()->closestRunForLogicalLeftPosition(localPoint.x());
-                if (run && is<RenderText>(run->renderer()))
-                    return const_cast<RenderText*>(&downcast<RenderText>(run->renderer()));
+                auto closestBox = box->line()->closestBoxForLogicalLeftPosition(localPoint.x());
+                if (closestBox && is<RenderText>(closestBox->renderer()))
+                    return const_cast<RenderText*>(&downcast<RenderText>(closestBox->renderer()));
             }
         }
         previousRootInlineBoxBottom = box->logicalBottom();
@@ -3376,7 +3376,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
     bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
 
     // look for the closest line box in the root box which is at the passed-in y coordinate
-    InlineIterator::LeafBoxIterator closestRun;
+    InlineIterator::LeafBoxIterator closestBox;
     InlineIterator::LineIterator firstLineWithChildren;
     InlineIterator::LineIterator lastLineWithChildren;
     for (auto line = firstLine; line; line.traverseNext()) {
@@ -3406,49 +3406,49 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
                     && (pointInLogicalContents.y() > nextLineWithChildren->lineBoxTop() || (!blocksAreFlipped && pointInLogicalContents.y() == nextLineWithChildren->lineBoxTop())))
                     continue;
             }
-            closestRun = line->closestRunForLogicalLeftPosition(pointInLogicalContents.x());
-            if (closestRun)
+            closestBox = line->closestBoxForLogicalLeftPosition(pointInLogicalContents.x());
+            if (closestBox)
                 break;
         }
     }
 
     bool moveCaretToBoundary = frame().editor().behavior().shouldMoveCaretToHorizontalBoundaryWhenPastTopOrBottom();
 
-    if (!moveCaretToBoundary && !closestRun && lastLineWithChildren) {
+    if (!moveCaretToBoundary && !closestBox && lastLineWithChildren) {
         // y coordinate is below last root line box, pretend we hit it
-        closestRun = lastLineWithChildren->closestRunForLogicalLeftPosition(pointInLogicalContents.x());
+        closestBox = lastLineWithChildren->closestBoxForLogicalLeftPosition(pointInLogicalContents.x());
     }
 
-    if (closestRun) {
+    if (closestBox) {
         if (moveCaretToBoundary) {
             LayoutUnit firstLineWithChildrenTop = std::min(firstLineWithChildren->enclosingTopForHitTesting(), LayoutUnit(firstLineWithChildren->top()));
             if (pointInLogicalContents.y() < firstLineWithChildrenTop
                 || (blocksAreFlipped && pointInLogicalContents.y() == firstLineWithChildrenTop)) {
-                auto run = firstLineWithChildren->firstLeafBox();
-                if (run->isLineBreak()) {
-                    if (auto next = run->nextOnLineIgnoringLineBreak())
-                        run = next;
+                auto box = firstLineWithChildren->firstLeafBox();
+                if (box->isLineBreak()) {
+                    if (auto next = box->nextOnLineIgnoringLineBreak())
+                        box = next;
                 }
                 // y coordinate is above first root line box, so return the start of the first
-                return positionForRun(*this, run, true);
+                return positionForRun(*this, box, true);
             }
         }
 
         // pass the box a top position that is inside it
-        LayoutPoint point(pointInLogicalContents.x(), closestRun->line()->blockDirectionPointInLine());
+        LayoutPoint point(pointInLogicalContents.x(), closestBox->line()->blockDirectionPointInLine());
         if (!isHorizontalWritingMode())
             point = point.transposedPoint();
-        if (closestRun->renderer().isReplacedOrInlineBlock())
-            return positionForPointRespectingEditingBoundaries(*this, const_cast<RenderBox&>(downcast<RenderBox>(closestRun->renderer())), point);
-        return const_cast<RenderObject&>(closestRun->renderer()).positionForPoint(point, nullptr);
+        if (closestBox->renderer().isReplacedOrInlineBlock())
+            return positionForPointRespectingEditingBoundaries(*this, const_cast<RenderBox&>(downcast<RenderBox>(closestBox->renderer())), point);
+        return const_cast<RenderObject&>(closestBox->renderer()).positionForPoint(point, nullptr);
     }
 
     if (lastLineWithChildren) {
         // We hit this case for Mac behavior when the Y coordinate is below the last box.
         ASSERT(moveCaretToBoundary);
         InlineIterator::LineLogicalOrderCache orderCache;
-        if (auto logicallyLastRun = InlineIterator::lastLeafOnLineInLogicalOrderWithNode(lastLineWithChildren, orderCache))
-            return positionForRun(*this, logicallyLastRun, false);
+        if (auto logicallyLastBox = InlineIterator::lastLeafOnLineInLogicalOrderWithNode(lastLineWithChildren, orderCache))
+            return positionForRun(*this, logicallyLastBox, false);
     }
 
     // Can't reach this. We have a root line box, but it has no kids.

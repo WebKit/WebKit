@@ -87,8 +87,8 @@ public:
     LineIterator next() const;
     LineIterator previous() const;
 
-    LeafBoxIterator closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const;
-    LeafBoxIterator closestRunForLogicalLeftPosition(int position, bool editableOnly = false) const;
+    LeafBoxIterator closestBoxForPoint(const IntPoint& pointInContents, bool editableOnly) const;
+    LeafBoxIterator closestBoxForLogicalLeftPosition(int position, bool editableOnly = false) const;
     
 private:
     friend class LineIterator;

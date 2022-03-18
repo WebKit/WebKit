@@ -115,46 +115,46 @@ LeafBoxIterator Line::lastLeafBox() const
     });
 }
 
-LeafBoxIterator Line::closestRunForPoint(const IntPoint& pointInContents, bool editableOnly) const
+LeafBoxIterator Line::closestBoxForPoint(const IntPoint& pointInContents, bool editableOnly) const
 {
-    return closestRunForLogicalLeftPosition(isHorizontal() ? pointInContents.x() : pointInContents.y(), editableOnly);
+    return closestBoxForLogicalLeftPosition(isHorizontal() ? pointInContents.x() : pointInContents.y(), editableOnly);
 }
 
-LeafBoxIterator Line::closestRunForLogicalLeftPosition(int leftPosition, bool editableOnly) const
+LeafBoxIterator Line::closestBoxForLogicalLeftPosition(int leftPosition, bool editableOnly) const
 {
-    auto isEditable = [&](auto run) {
-        return run && run->renderer().node() && run->renderer().node()->hasEditableStyle();
+    auto isEditable = [&](auto box) {
+        return box && box->renderer().node() && box->renderer().node()->hasEditableStyle();
     };
 
-    auto firstRun = this->firstLeafBox();
-    auto lastRun = this->lastLeafBox();
+    auto firstBox = this->firstLeafBox();
+    auto lastBox = this->lastLeafBox();
 
-    if (firstRun != lastRun) {
-        if (firstRun->isLineBreak())
-            firstRun = firstRun->nextOnLineIgnoringLineBreak();
-        else if (lastRun->isLineBreak())
-            lastRun = lastRun->previousOnLineIgnoringLineBreak();
+    if (firstBox != lastBox) {
+        if (firstBox->isLineBreak())
+            firstBox = firstBox->nextOnLineIgnoringLineBreak();
+        else if (lastBox->isLineBreak())
+            lastBox = lastBox->previousOnLineIgnoringLineBreak();
     }
 
-    if (firstRun == lastRun && (!editableOnly || isEditable(firstRun)))
-        return firstRun;
+    if (firstBox == lastBox && (!editableOnly || isEditable(firstBox)))
+        return firstBox;
 
-    if (firstRun && leftPosition <= firstRun->logicalLeft() && !firstRun->renderer().isListMarker() && (!editableOnly || isEditable(firstRun)))
-        return firstRun;
+    if (firstBox && leftPosition <= firstBox->logicalLeft() && !firstBox->renderer().isListMarker() && (!editableOnly || isEditable(firstBox)))
+        return firstBox;
 
-    if (lastRun && leftPosition >= lastRun->logicalRight() && !lastRun->renderer().isListMarker() && (!editableOnly || isEditable(lastRun)))
-        return lastRun;
+    if (lastBox && leftPosition >= lastBox->logicalRight() && !lastBox->renderer().isListMarker() && (!editableOnly || isEditable(lastBox)))
+        return lastBox;
 
-    auto closestRun = lastRun;
-    for (auto run = firstRun; run; run = run.traverseNextOnLineIgnoringLineBreak()) {
-        if (!run->renderer().isListMarker() && (!editableOnly || isEditable(run))) {
-            if (leftPosition < run->logicalRight())
-                return run;
-            closestRun = run;
+    auto closestBox = lastBox;
+    for (auto box = firstBox; box; box = box.traverseNextOnLineIgnoringLineBreak()) {
+        if (!box->renderer().isListMarker() && (!editableOnly || isEditable(box))) {
+            if (leftPosition < box->logicalRight())
+                return box;
+            closestBox = box;
         }
     }
 
-    return closestRun;
+    return closestBox;
 }
 
 int Line::blockDirectionPointInLine() const

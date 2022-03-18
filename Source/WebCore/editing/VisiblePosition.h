@@ -67,8 +67,8 @@ public:
     // FIXME: This does not handle [table, 0] correctly.
     Element* rootEditableElement() const { return m_deepPosition.isNotNull() ? m_deepPosition.deprecatedNode()->rootEditableElement() : 0; }
 
-    InlineRunAndOffset inlineRunAndOffset() const;
-    InlineRunAndOffset inlineRunAndOffset(TextDirection primaryDirection) const;
+    InlineBoxAndOffset inlineBoxAndOffset() const;
+    InlineBoxAndOffset inlineBoxAndOffset(TextDirection primaryDirection) const;
 
     struct LocalCaretRect {
         LayoutRect rect;

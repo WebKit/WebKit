@@ -78,7 +78,7 @@ class VisiblePosition;
 class SelectionGeometry;
 #endif
 
-struct InlineRunAndOffset;
+struct InlineBoxAndOffset;
 struct PaintInfo;
 struct SimpleRange;
 

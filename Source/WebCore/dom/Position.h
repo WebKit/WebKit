@@ -49,7 +49,7 @@ enum PositionMoveType {
     BackwardDeletion // Subject to platform conventions.
 };
 
-struct InlineRunAndOffset;
+struct InlineBoxAndOffset;
 
 class Position {
 public:
@@ -170,8 +170,8 @@ public:
     bool isRenderedCharacter() const;
     bool rendersInDifferentPosition(const Position&) const;
 
-    InlineRunAndOffset inlineRunAndOffset(Affinity) const;
-    InlineRunAndOffset inlineRunAndOffset(Affinity, TextDirection primaryDirection) const;
+    InlineBoxAndOffset inlineBoxAndOffset(Affinity) const;
+    InlineBoxAndOffset inlineBoxAndOffset(Affinity, TextDirection primaryDirection) const;
 
     TextDirection primaryDirection() const;
 

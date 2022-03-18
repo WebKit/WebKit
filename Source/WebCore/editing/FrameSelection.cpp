@@ -675,10 +675,10 @@ TextDirection FrameSelection::directionOfSelection()
     // can cause layout, which has the potential to invalidate lineboxes.
     auto startPosition = m_selection.visibleStart();
     auto endPosition = m_selection.visibleEnd();
-    auto startRun = startPosition.inlineRunAndOffset().run;
-    auto endRun = endPosition.inlineRunAndOffset().run;
-    if (startRun && endRun && startRun->direction() == endRun->direction())
-        return startRun->direction();
+    auto startBox = startPosition.inlineBoxAndOffset().box;
+    auto endBox = endPosition.inlineBoxAndOffset().box;
+    if (startBox && endBox && startBox->direction() == endBox->direction())
+        return startBox->direction();
     return directionOfEnclosingBlock();
 }
 

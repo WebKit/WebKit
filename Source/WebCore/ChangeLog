@@ -1,3 +1,89 @@
+2022-03-18  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Rename InlineIterator::Line::closestRun* to closestBoxFor*
+        https://bugs.webkit.org/show_bug.cgi?id=238064
+
+        Reviewed by Antti Koivisto.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::localCaretRectForCharacterOffset):
+        * dom/Position.cpp:
+        (WebCore::Position::upstream const):
+        (WebCore::Position::downstream const):
+        (WebCore::Position::rendersInDifferentPosition const):
+        (WebCore::Position::inlineBoxAndOffset const):
+        (WebCore::searchAheadForBetterMatch):
+        (WebCore::Position::inlineRunAndOffset const): Deleted.
+        * dom/Position.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::directionOfSelection):
+        * editing/InlineRunAndOffset.h:
+        * editing/RenderedPosition.cpp:
+        (WebCore::RenderedPosition::RenderedPosition):
+        (WebCore::RenderedPosition::previousLeafOnLine const):
+        (WebCore::RenderedPosition::nextLeafOnLine const):
+        (WebCore::RenderedPosition::isEquivalent const):
+        (WebCore::RenderedPosition::bidiLevelOnLeft const):
+        (WebCore::RenderedPosition::bidiLevelOnRight const):
+        (WebCore::RenderedPosition::leftBoundaryOfBidiRun):
+        (WebCore::RenderedPosition::rightBoundaryOfBidiRun):
+        (WebCore::RenderedPosition::atLeftBoundaryOfBidiRun const):
+        (WebCore::RenderedPosition::atRightBoundaryOfBidiRun const):
+        (WebCore::RenderedPosition::absoluteRect const):
+        * editing/RenderedPosition.h:
+        (WebCore::RenderedPosition::line const):
+        (WebCore::RenderedPosition::atLeftmostOffsetInBox const):
+        (WebCore::RenderedPosition::atRightmostOffsetInBox const):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate const):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate const):
+        (WebCore::VisiblePosition::inlineBoxAndOffset const):
+        (WebCore::VisiblePosition::localCaretRect const):
+        (WebCore::VisiblePosition::absoluteSelectionBoundsForLine const):
+        (WebCore::VisiblePosition::inlineRunAndOffset const): Deleted.
+        * editing/VisiblePosition.h:
+        * editing/VisibleUnits.cpp:
+        (WebCore::isTextOrLineBreakBox):
+        (WebCore::previousTextOrLineBreakBox):
+        (WebCore::nextTextOrLineBreakBox):
+        (WebCore::startTextOrLineBreakBox):
+        (WebCore::endTextOrLineBreakBox):
+        (WebCore::logicallyPreviousBox):
+        (WebCore::logicallyNextBox):
+        (WebCore::wordBreakIteratorForMinOffsetBoundary):
+        (WebCore::wordBreakIteratorForMaxOffsetBoundary):
+        (WebCore::visualWordPosition):
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        (WebCore::isTextOrLineBreakRun): Deleted.
+        (WebCore::previousTextOrLineBreakRun): Deleted.
+        (WebCore::nextTextOrLineBreakRun): Deleted.
+        (WebCore::startTextOrLineBreakRun): Deleted.
+        (WebCore::endTextOrLineBreakRun): Deleted.
+        (WebCore::logicallyPreviousRun): Deleted.
+        (WebCore::logicallyNextRun): Deleted.
+        * layout/integration/InlineIteratorLine.cpp:
+        (WebCore::InlineIterator::Line::closestBoxForPoint const):
+        (WebCore::InlineIterator::Line::closestBoxForLogicalLeftPosition const):
+        (WebCore::InlineIterator::Line::closestRunForPoint const): Deleted.
+        (WebCore::InlineIterator::Line::closestRunForLogicalLeftPosition const): Deleted.
+        * layout/integration/InlineIteratorLine.h:
+        * rendering/CaretRectComputation.cpp:
+        (WebCore::computeCaretRectForText):
+        (WebCore::computeCaretRectForLineBreak):
+        (WebCore::computeCaretRectForSVGInlineText):
+        (WebCore::computeCaretRectForBox):
+        (WebCore::computeCaretRectForBlock):
+        (WebCore::computeLocalCaretRect):
+        * rendering/CaretRectComputation.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::positionForRun):
+        (WebCore::RenderBlockFlow::findClosestTextAtAbsolutePoint):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        * rendering/RenderObject.h:
+
 2022-03-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [Linux] GBMDevice as a thread-specific object is problematic

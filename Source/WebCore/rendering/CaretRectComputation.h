@@ -35,6 +35,6 @@ enum class CaretRectMode {
     ExpandToEndOfLine
 };
 
-LayoutRect computeLocalCaretRect(const RenderObject&, const InlineRunAndOffset&, CaretRectMode = CaretRectMode::Normal);
+LayoutRect computeLocalCaretRect(const RenderObject&, const InlineBoxAndOffset&, CaretRectMode = CaretRectMode::Normal);
 
 };

@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-struct InlineRunAndOffset {
-    InlineIterator::LeafBoxIterator run { };
+struct InlineBoxAndOffset {
+    InlineIterator::LeafBoxIterator box { };
     unsigned offset { 0 };
 };
 
