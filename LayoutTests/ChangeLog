@@ -1,3 +1,12 @@
+2022-03-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [macOS arm64] webrtc/vp9-profile2.html is consistently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=238104
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2022-03-18  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Allow history swipe in scroller with overscroll-behavior
