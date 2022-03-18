@@ -105,8 +105,6 @@ protected:
     explicit AuxiliaryProcess();
     virtual ~AuxiliaryProcess();
 
-    void setTerminationTimeout(Seconds seconds) { m_terminationTimeout = seconds; }
-
     virtual void initializeProcess(const AuxiliaryProcessInitializationParameters&);
     virtual void initializeProcessName(const AuxiliaryProcessInitializationParameters&);
     virtual void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&);
@@ -162,20 +160,11 @@ private:
 
     void shutDown();
 
-    void terminationTimerFired();
-
     void platformInitialize(const AuxiliaryProcessInitializationParameters&);
     void platformStopRunLoop();
 
-    // The timeout, in seconds, before this process will be terminated if termination
-    // has been enabled. If the timeout is 0 seconds, the process will be terminated immediately.
-    Seconds m_terminationTimeout;
-
-    // A termination counter; when the counter reaches zero, the process will be terminated
-    // after a given period of time.
+    // A termination counter; when the counter reaches zero, the process will be terminated.
     unsigned m_terminationCounter;
-
-    RunLoop::Timer<AuxiliaryProcess> m_terminationTimer;
 
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
