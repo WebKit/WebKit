@@ -1336,8 +1336,14 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // Check if the cache headers requires us to revalidate (cache expiration for example).
     if (revalidationDecision != CachedResource::RevalidationDecision::No) {
         // See if the resource has usable ETag or Last-modified headers.
-        if (existingResource->canUseCacheValidator())
+        if (existingResource->canUseCacheValidator()) {
+#if ENABLE(SERVICE_WORKER)
+            // Revalidating will mean exposing headers to the service worker, let's reload given the service worker already handled it.
+            if (cachedResourceRequest.options().serviceWorkerRegistrationIdentifier)
+                return Reload;
+#endif
             return Revalidate;
+        }
         
         // No, must reload.
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to missing cache validators.");

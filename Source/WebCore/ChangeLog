@@ -1,3 +1,20 @@
+2022-03-18  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(r290356-r290351?): [ iOS EWS ] 3 imported/w3c/web-platform-tests/service-workers/service-worker/* tests are constant text failures.
+        https://bugs.webkit.org/show_bug.cgi?id=237160
+        <rdar://problem/89440067>
+
+        Reviewed by Chris Dumez.
+
+        When we try reusing a resource in the MemoryCache that was provided by a service worker, we might need to revalidate it.
+        In that case, we might add revalidation headers that will show up in service workers fetch event request.
+        To prevent this, we reload instead of revalidating at document level.
+        The service worker will then be able to revalidate itself the resource since it is probably in its memory cache.
+
+        Covered by test that is no longer flaky.
+
+        * loader/cache/CachedResourceLoader.cpp:
+
 2022-03-18  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Migrate gst-full support to 1.20
