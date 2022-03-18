@@ -29,6 +29,7 @@
 #include "Editing.h"
 #include "InlineIteratorLine.h"
 #include "InlineIteratorTextBox.h"
+#include "LineSelection.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
@@ -112,7 +113,7 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
 static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineIterator& line, float logicalLeftPosition, CaretRectMode caretRectMode)
 {
     auto& containingBlock = line->containingBlock();
-    auto lineSelectionRect = line->enclosingLogicalRect();
+    auto lineSelectionRect = LineSelection::logicalRect(*line);
 
     int height = lineSelectionRect.height();
     int top = lineSelectionRect.y();

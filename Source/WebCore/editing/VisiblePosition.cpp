@@ -38,6 +38,7 @@
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLine.h"
 #include "InlineRunAndOffset.h"
+#include "LineSelection.h"
 #include "Logging.h"
 #include "Range.h"
 #include "RenderBlockFlow.h"
@@ -669,7 +670,7 @@ FloatRect VisiblePosition::absoluteSelectionBoundsForLine() const
         return { };
 
     auto line = run->line();
-    return line->containingBlock().localToAbsoluteQuad(FloatRect { line->enclosingPhysicalRect() }).boundingBox();
+    return line->containingBlock().localToAbsoluteQuad(FloatRect { LineSelection::physicalRect(*line) }).boundingBox();
 }
 
 int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const

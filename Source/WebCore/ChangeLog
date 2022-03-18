@@ -1,3 +1,44 @@
+2022-03-17  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Introduce LineSelection
+        https://bugs.webkit.org/show_bug.cgi?id=237997
+
+        Reviewed by Antti Koivisto.
+
+        Use LineSelection to retrieve line based selection information.
+        This is in preparation for removing selection/hittesting related functions from InlineIterator::Line.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::absoluteSelectionBoundsForLine const):
+        * layout/integration/InlineIteratorLine.h:
+        * layout/integration/InlineIteratorTextBox.cpp:
+        (WebCore::InlineIterator::TextBox::selectionRect const):
+        * layout/integration/LineSelection.h: Added.
+        (WebCore::LineSelection::logicalTop):
+        (WebCore::LineSelection::logicalBottom):
+        (WebCore::LineSelection::logicalRect):
+        (WebCore::LineSelection::physicalRect):
+        (WebCore::LineSelection::logicalTopAdjustedForPrecedingBlock):
+        (WebCore::LineSelection::logicalHeightAdjustedForPrecedingBlock):
+        (WebCore::LineSelection::selectionState):
+        * rendering/CaretRectComputation.cpp:
+        (WebCore::computeCaretRectForLinePosition):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustEnclosingTopForPrecedingBlock const):
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::collectSelectionGeometries):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::collectSelectionGeometries):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::paintBackground):
+
 2022-03-17  Devin Rousso  <drousso@apple.com>
 
         [Apple Pay] REGRESSION(r283431): `HAVE_PASSKIT_PAYMENT_METHOD_BILLING_ADDRESS` was removed without also removing where it was used

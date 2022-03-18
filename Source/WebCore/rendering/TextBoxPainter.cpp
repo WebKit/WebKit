@@ -31,6 +31,7 @@
 #include "GraphicsContext.h"
 #include "InlineIteratorLine.h"
 #include "LegacyInlineTextBox.h"
+#include "LineSelection.h"
 #include "PaintInfo.h"
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
@@ -289,8 +290,8 @@ void TextBoxPainter::paintBackground(unsigned startOffset, unsigned endOffset, c
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
     auto line = textBox().line();
-    auto selectionBottom = line->enclosingBottom();
-    auto selectionTop = line->enclosingTopAdjustedForPrecedingBlock();
+    auto selectionBottom = LineSelection::logicalBottom(*line);
+    auto selectionTop = LineSelection::logicalTopAdjustedForPrecedingBlock(*line);
     // Use same y positioning and height as for selection, so that when the selection and this subrange are on
     // the same word there are no pieces sticking out.
     auto deltaY = LayoutUnit { m_style.isFlippedLinesWritingMode() ? selectionBottom - textBox().logicalBottom() : textBox().logicalTop() - selectionTop };

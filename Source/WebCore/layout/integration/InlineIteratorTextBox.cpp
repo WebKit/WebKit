@@ -28,6 +28,7 @@
 
 #include "InlineIteratorLine.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LineSelection.h"
 #include "RenderCombineText.h"
 
 namespace WebCore {
@@ -45,7 +46,7 @@ LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
     if (clampedStart >= clampedEnd && !(rangeStart == rangeEnd && rangeStart >= start() && rangeStart <= end()))
         return { };
 
-    auto lineSelectionRect = line()->enclosingLogicalRect();
+    auto lineSelectionRect = LineSelection::logicalRect(*line());
     auto selectionRect = LayoutRect { logicalLeft(), lineSelectionRect.y(), logicalWidth(), lineSelectionRect.height() };
 
     TextRun textRun = createTextRun();

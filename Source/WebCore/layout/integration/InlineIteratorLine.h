@@ -32,6 +32,9 @@
 #include <variant>
 
 namespace WebCore {
+
+class LineSelection;
+
 namespace InlineIterator {
 
 class LineIterator;
@@ -58,21 +61,11 @@ public:
     LayoutUnit lineBoxBottom() const;
     LayoutUnit lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
 
-    LayoutUnit enclosingTop() const;
-    LayoutUnit enclosingBottom() const;
-
-    LayoutRect enclosingLogicalRect() const;
-    LayoutRect enclosingPhysicalRect() const;
-
-    LayoutUnit enclosingTopForHitTesting() const;
-    LayoutUnit enclosingTopAdjustedForPrecedingBlock() const;
-    LayoutUnit enclosingHeightAdjustedForPrecedingBlock() const;
-
-    RenderObject::HighlightState selectionState() const;
-
     float contentLogicalLeft() const;
     float contentLogicalRight() const;
     float contentLogicalWidth() const;
+
+    LayoutUnit enclosingTopForHitTesting() const;
 
     int blockDirectionPointInLine() const;
 
@@ -99,6 +92,19 @@ public:
     
 private:
     friend class LineIterator;
+    // FIXME: This is temporary.
+    friend class WebCore::LineSelection;
+
+    LayoutUnit enclosingTop() const;
+    LayoutUnit enclosingBottom() const;
+
+    LayoutRect enclosingLogicalRect() const;
+    LayoutRect enclosingPhysicalRect() const;
+
+    LayoutUnit enclosingTopAdjustedForPrecedingBlock() const;
+    LayoutUnit enclosingHeightAdjustedForPrecedingBlock() const;
+
+    RenderObject::HighlightState selectionState() const;
 
     PathVariant m_pathVariant;
 };

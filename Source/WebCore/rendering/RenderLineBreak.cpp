@@ -31,6 +31,7 @@
 #include "InlineRunAndOffset.h"
 #include "LegacyInlineElementBox.h"
 #include "LegacyRootInlineBox.h"
+#include "LineSelection.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"
 #include "RenderView.h"
@@ -187,7 +188,7 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
         return;
     auto line = run->line();
 
-    auto lineSelectionRect = line->enclosingLogicalRect();
+    auto lineSelectionRect = LineSelection::logicalRect(*line);
     LayoutRect rect = IntRect(run->logicalLeft(), lineSelectionRect.y(), 0, lineSelectionRect.height());
     if (!line->isHorizontal())
         rect = rect.transposedRect();

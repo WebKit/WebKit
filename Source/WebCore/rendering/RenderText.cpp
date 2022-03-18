@@ -42,6 +42,7 @@
 #include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyEllipsisBox.h"
+#include "LineSelection.h"
 #include "Range.h"
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
@@ -675,7 +676,7 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
         auto line = run->line();
         LayoutUnit top = std::min(line->enclosingTopForHitTesting(), line->top());
         if (pointBlockDirection > top || (!blocksAreFlipped && pointBlockDirection == top)) {
-            LayoutUnit bottom = line->enclosingBottom();
+            auto bottom = LineSelection::logicalBottom(*line);
             if (auto nextLine = line->next())
                 bottom = std::min(bottom, nextLine->top());
 
