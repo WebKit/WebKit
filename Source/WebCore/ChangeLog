@@ -1,3 +1,19 @@
+2022-03-18  Alex Christensen  <achristensen@webkit.org>
+
+        Keep a strong reference to session in [WebCoreNSURLSessionDataTask _restart]
+        https://bugs.webkit.org/show_bug.cgi?id=238061
+        <rdar://88242622>
+
+        Reviewed by Eric Carlson.
+
+        _session is a WeakObjCPtr<WebCoreNSURLSession> and since we're not using ARC self.session
+        returns a raw pointer to an object that may be deallocated and null out its loader on a different thread.
+        To prevent null crashes, keep a strong reference to the session when using it.
+
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSession dealloc]):
+        (-[WebCoreNSURLSessionDataTask _restart]):
+
 2022-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r290628): Scrubber makes a visual trail when scrubbing on tv.youtube.com
