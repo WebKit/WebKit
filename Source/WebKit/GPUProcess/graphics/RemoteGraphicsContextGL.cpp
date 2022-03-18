@@ -220,11 +220,11 @@ void RemoteGraphicsContextGL::paintCompositedResultsToCanvasWithQualifiedIdentif
 }
 
 #if ENABLE(MEDIA_STREAM)
-void RemoteGraphicsContextGL::paintCompositedResultsToMediaSample(CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&& completionHandler)
+void RemoteGraphicsContextGL::paintCompositedResultsToVideoFrame(CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&& completionHandler)
 {
     assertIsCurrent(workQueue());
     std::optional<WebKit::RemoteVideoFrameProxy::Properties> result;
-    if (auto videoFrame = m_context->paintCompositedResultsToMediaSample())
+    if (auto videoFrame = m_context->paintCompositedResultsToVideoFrame())
         result = m_videoFrameObjectHeap->add(videoFrame.releaseNonNull());
     completionHandler(WTFMove(result));
 }

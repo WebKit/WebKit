@@ -59,7 +59,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include "MediaSample.h"
+#include "VideoFrame.h"
 #endif
 
 #if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
@@ -118,7 +118,7 @@ RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContex
 }
 
 #if ENABLE(MEDIA_STREAM)
-RefPtr<MediaSample> GraphicsContextGLTextureMapper::paintCompositedResultsToMediaSample()
+RefPtr<VideoFrame> GraphicsContextGLTextureMapper::paintCompositedResultsToVideoFrame()
 {
 #if USE(GSTREAMER)
     if (auto pixelBuffer = readCompositedResults())

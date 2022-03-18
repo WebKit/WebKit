@@ -35,9 +35,12 @@ using CVPixelBufferRef = struct __CVBuffer*;
 
 namespace WebCore {
 
+class PixelBuffer;
+
 class VideoFrameCV : public VideoFrame {
 public:
     WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, VideoRotation, RetainPtr<CVPixelBufferRef>&&);
+    static RefPtr<VideoFrameCV> createFromPixelBuffer(PixelBuffer&&);
     WEBCORE_EXPORT ~VideoFrameCV();
 
     CVPixelBufferRef pixelBuffer() const final { return m_pixelBuffer.get(); }

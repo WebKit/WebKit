@@ -39,6 +39,32 @@ Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirror
     return adoptRef(*new VideoFrameCV(presentationTime, isMirrored, rotation, WTFMove(pixelBuffer)));
 }
 
+RefPtr<VideoFrameCV> VideoFrameCV::createFromPixelBuffer(PixelBuffer&& pixelBuffer)
+{
+    auto size = pixelBuffer.size();
+    auto width = size.width();
+    auto height = size.height();
+
+    auto data = pixelBuffer.takeData();
+    auto dataBaseAddress = data->data();
+    auto leakedData = &data.leakRef();
+    
+    auto derefBuffer = [] (void* context, const void*) {
+        static_cast<JSC::Uint8ClampedArray*>(context)->deref();
+    };
+
+    CVPixelBufferRef cvPixelBufferRaw = nullptr;
+    auto status = CVPixelBufferCreateWithBytes(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, dataBaseAddress, width * 4, derefBuffer, leakedData, nullptr, &cvPixelBufferRaw);
+
+    auto cvPixelBuffer = adoptCF(cvPixelBufferRaw);
+    if (!cvPixelBuffer) {
+        derefBuffer(leakedData, nullptr);
+        return nullptr;
+    }
+    ASSERT_UNUSED(status, !status);
+    return create({ }, false, VideoRotation::None, WTFMove(cvPixelBuffer));
+}
+
 VideoFrameCV::VideoFrameCV(MediaTime presentationTime, bool isMirrored, VideoRotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
     : VideoFrame(presentationTime, isMirrored, rotation)
     , m_pixelBuffer(WTFMove(pixelBuffer))

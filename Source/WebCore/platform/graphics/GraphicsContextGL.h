@@ -55,7 +55,7 @@ class GraphicsContextGLCV;
 class MediaPlayer;
 #endif
 #if ENABLE(MEDIA_STREAM)
-class MediaSample;
+class VideoFrame;
 #endif
 
 // Base class for graphics context for implementing WebGL rendering model.
@@ -1439,7 +1439,7 @@ public:
     virtual std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
     virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
 #if ENABLE(MEDIA_STREAM)
-    virtual RefPtr<MediaSample> paintCompositedResultsToMediaSample() = 0;
+    virtual RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() = 0;
 #endif
 
     // FIXME: this should be removed. The layer should be marked composited by

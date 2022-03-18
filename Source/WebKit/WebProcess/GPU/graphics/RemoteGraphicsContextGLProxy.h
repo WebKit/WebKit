@@ -69,7 +69,7 @@ public:
     void paintRenderingResultsToCanvas(WebCore::ImageBuffer&) final;
     void paintCompositedResultsToCanvas(WebCore::ImageBuffer&) final;
 #if ENABLE(MEDIA_STREAM)
-    RefPtr<WebCore::MediaSample> paintCompositedResultsToMediaSample() final;
+    RefPtr<WebCore::VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
     void synthesizeGLError(GCGLenum error) final;
     GCGLenum getError() final;

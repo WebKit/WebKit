@@ -76,7 +76,7 @@ public:
     GraphicsContextGLCV* asCV() final;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
+    RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
     void setContextVisibility(bool) final;
     void prepareForDisplay() override;

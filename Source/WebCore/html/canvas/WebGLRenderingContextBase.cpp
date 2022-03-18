@@ -1462,11 +1462,11 @@ std::optional<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPix
 }
 
 #if ENABLE(MEDIA_STREAM)
-RefPtr<MediaSample> WebGLRenderingContextBase::paintCompositedResultsToMediaSample()
+RefPtr<VideoFrame> WebGLRenderingContextBase::paintCompositedResultsToVideoFrame()
 {
     if (isContextLostOrPending())
         return nullptr;
-    return m_context->paintCompositedResultsToMediaSample();
+    return m_context->paintCompositedResultsToVideoFrame();
 }
 #endif
 

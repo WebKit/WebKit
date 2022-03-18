@@ -52,7 +52,7 @@ public:
     bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
 #endif
 #if ENABLE(MEDIA_STREAM)
-    RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
+    RefPtr<VideoFrame> paintCompositedResultsToVideoFrame() final;
 #endif
 #if USE(ANGLE)
     void setContextVisibility(bool) final;

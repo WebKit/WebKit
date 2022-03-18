@@ -171,12 +171,12 @@ void RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas(ImageBuffer& b
 }
 
 #if ENABLE(MEDIA_STREAM)
-RefPtr<WebCore::MediaSample> RemoteGraphicsContextGLProxy::paintCompositedResultsToMediaSample()
+RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::paintCompositedResultsToVideoFrame()
 {
     if (isContextLost())
         return nullptr;
     std::optional<RemoteVideoFrameProxy::Properties> result;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintCompositedResultsToMediaSample(), Messages::RemoteGraphicsContextGL::PaintCompositedResultsToMediaSample::Reply(result));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintCompositedResultsToVideoFrame(), Messages::RemoteGraphicsContextGL::PaintCompositedResultsToVideoFrame::Reply(result));
     if (!sendResult) {
         markContextLost();
         return nullptr;

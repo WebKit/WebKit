@@ -48,9 +48,9 @@ class GraphicsContext;
 class Image;
 class ImageBuffer;
 class ImageData;
-class MediaSample;
 class MediaStream;
 class OffscreenCanvas;
+class VideoFrame;
 class WebGLRenderingContextBase;
 class GPUCanvasContext;
 struct CanvasRenderingContext2DSettings;
@@ -107,7 +107,7 @@ public:
     void paint(GraphicsContext&, const LayoutRect&);
 
 #if ENABLE(MEDIA_STREAM)
-    RefPtr<MediaSample> toMediaSample();
+    RefPtr<VideoFrame> toVideoFrame();
     ExceptionOr<Ref<MediaStream>> captureStream(std::optional<double>&& frameRequestRate);
 #endif
 

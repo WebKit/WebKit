@@ -98,7 +98,7 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "MediaSampleAVFObjC.h"
+#include "VideoFrameCV.h"
 #include <pal/cf/CoreMediaSoftLink.h>
 #endif
 
@@ -772,14 +772,14 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
 
 #if ENABLE(MEDIA_STREAM)
 
-RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
+RefPtr<VideoFrame> HTMLCanvasElement::toVideoFrame()
 {
 #if PLATFORM(COCOA) || USE(GSTREAMER)
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContextBase>(m_context.get())) {
         if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
             ResourceLoadObserver::shared().logCanvasRead(document());
-        return downcast<WebGLRenderingContextBase>(*m_context).paintCompositedResultsToMediaSample();
+        return downcast<WebGLRenderingContextBase>(*m_context).paintCompositedResultsToVideoFrame();
     }
 #endif
     auto* imageBuffer = buffer();
@@ -792,13 +792,13 @@ RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
 
     // FIXME: This can likely be optimized quite a bit, especially in the cases where
     // the ImageBuffer is backed by GPU memory already and/or is in the GPU process by
-    // specializing toMediaSample() in ImageBufferBackend to not use getPixelBuffer().
+    // specializing toVideoFrame() in ImageBufferBackend to not use getPixelBuffer().
     auto pixelBuffer = imageBuffer->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, { { }, imageBuffer->truncatedLogicalSize() });
     if (!pixelBuffer)
         return nullptr;
 
 #if PLATFORM(COCOA)
-    return MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(*pixelBuffer));
+    return VideoFrameCV::createFromPixelBuffer(WTFMove(*pixelBuffer));
 #elif USE(GSTREAMER)
     return VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer));
 #endif

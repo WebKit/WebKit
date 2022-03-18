@@ -67,7 +67,7 @@ public:
     void prepareForDisplay() final;
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
 #if ENABLE(MEDIA_STREAM)
-    RefPtr<WebCore::MediaSample> paintCompositedResultsToMediaSample() final { return nullptr; }
+    RefPtr<WebCore::VideoFrame> paintCompositedResultsToVideoFrame() final { return nullptr; }
 #endif
 private:
     RemoteGraphicsContextGLProxyWC(GPUProcessConnection& gpuProcessConnection, const WebCore::GraphicsContextGLAttributes& attributes, RenderingBackendIdentifier renderingBackend)

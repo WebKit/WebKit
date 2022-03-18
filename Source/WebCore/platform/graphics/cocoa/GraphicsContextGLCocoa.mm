@@ -55,7 +55,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 #import "ImageRotationSessionVT.h"
-#import "MediaSampleAVFObjC.h"
 #endif
 
 namespace WebCore {
@@ -762,7 +761,7 @@ std::optional<PixelBuffer> GraphicsContextGLANGLE::readCompositedResults()
 }
 
 #if ENABLE(MEDIA_STREAM)
-RefPtr<MediaSample> GraphicsContextGLCocoa::paintCompositedResultsToMediaSample()
+RefPtr<VideoFrame> GraphicsContextGLCocoa::paintCompositedResultsToVideoFrame()
 {
     auto &displayBuffer = m_swapChain.displayBuffer();
     if (!displayBuffer.surface || !displayBuffer.handle)
@@ -782,7 +781,7 @@ RefPtr<MediaSample> GraphicsContextGLCocoa::paintCompositedResultsToMediaSample(
         return nullptr;
     if (m_resourceOwner)
         setOwnershipIdentityForCVPixelBuffer(mediaSamplePixelBuffer.get(), m_resourceOwner);
-    return MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(mediaSamplePixelBuffer), MediaSampleAVFObjC::VideoRotation::None, false);
+    return VideoFrameCV::create({ }, false, VideoFrame::VideoRotation::None, WTFMove(mediaSamplePixelBuffer));
 }
 #endif
 

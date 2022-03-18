@@ -130,7 +130,7 @@ using WebGLCanvas = std::variant<RefPtr<HTMLCanvasElement>>;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-class MediaSample;
+class VideoFrame;
 #endif
 
 class WebGLRenderingContextBase : public GraphicsContextGL::Client, public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {
@@ -394,7 +394,7 @@ public:
     void paintRenderingResultsToCanvas() final;
     std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer();
 #if ENABLE(MEDIA_STREAM)
-    RefPtr<MediaSample> paintCompositedResultsToMediaSample();
+    RefPtr<VideoFrame> paintCompositedResultsToVideoFrame();
 #endif
 
     void removeSharedObject(WebGLSharedObject&);
