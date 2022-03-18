@@ -1,5 +1,24 @@
 2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE][GTK] Fix a crash after r290360
+        https://bugs.webkit.org/show_bug.cgi?id=237917
+
+        Reviewed by Youenn Fablet.
+
+        When AuxiliaryProcess::shutDown is called for the WebProcess there might be pages not closed yet, for example
+        when swapping process on navigation, the close message is sent to the page after the shutdown. In the case of
+        GTK and WPE ports the pages are closed before stopping the run loop to ensure associated resources (like GPU
+        resources) are released. Closing the last page makes the process termination allowed, which ends up calling
+        AuxiliaryProcess::terminate again. Also, when the shutdown message is received we don't want to ask again the UI
+        process whether the process can be terminated, since the UI process asked it.
+
+        * Shared/AuxiliaryProcess.cpp:
+        (WebKit::AuxiliaryProcess::enableTermination): Return early if m_isInShutDown is true.
+        (WebKit::AuxiliaryProcess::shutDown): Set m_isInShutDown for the scope.
+        * Shared/AuxiliaryProcess.h:
+
+2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Add a public build option for PDF.js
         https://bugs.webkit.org/show_bug.cgi?id=238023
 

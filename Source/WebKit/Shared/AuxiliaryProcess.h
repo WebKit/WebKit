@@ -166,6 +166,8 @@ private:
     // A termination counter; when the counter reaches zero, the process will be terminated.
     unsigned m_terminationCounter;
 
+    bool m_isInShutDown { false };
+
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
 
