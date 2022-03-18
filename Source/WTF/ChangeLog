@@ -1,5 +1,18 @@
 2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GLIB] Make it possible to call GRefPtr::outPtr() multiple times wihtout an explicit clear
+        https://bugs.webkit.org/show_bug.cgi?id=238070
+
+        Reviewed by Adrian Perez de Castro.
+
+        Clear the GRefPtr before returning the value in outPtr(), similar to what GUniqueOutPtr does, since it's easy to
+        forget to explicitly call clear from the callers.
+
+        * wtf/glib/GRefPtr.h:
+        (WTF::GRefPtr::outPtr):
+
+2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Add a public build option for PDF.js
         https://bugs.webkit.org/show_bug.cgi?id=238023
 

@@ -99,7 +99,7 @@ public:
 
     T*& outPtr()
     {
-        ASSERT(!m_ptr);
+        clear();
         return m_ptr;
     }
 

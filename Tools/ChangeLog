@@ -1,5 +1,22 @@
 2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GLIB] Make it possible to call GRefPtr::outPtr() multiple times wihtout an explicit clear
+        https://bugs.webkit.org/show_bug.cgi?id=238070
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add a unit tests for GRefPtr.
+
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/Tests/WTF/glib/GRefPtr.cpp: Added.
+        (TestWebKitAPI::GWeakPtr::GWeakPtr):
+        (TestWebKitAPI::GWeakPtr::~GWeakPtr):
+        (TestWebKitAPI::GWeakPtr::set):
+        (TestWebKitAPI::TEST):
+
+2022-03-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [ATSPI] accessibility/dropdown-value.html is timing out since added in 248145@main
         https://bugs.webkit.org/show_bug.cgi?id=237803
         <rdar://problem/90193311>

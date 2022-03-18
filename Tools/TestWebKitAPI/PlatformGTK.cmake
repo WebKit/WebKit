@@ -14,6 +14,7 @@ set(test_main_SOURCES gtk/main.cpp)
 list(APPEND TestWTF_SOURCES
     ${test_main_SOURCES}
 
+    Tests/WTF/glib/GRefPtr.cpp
     Tests/WTF/glib/GUniquePtr.cpp
     Tests/WTF/glib/WorkQueueGLib.cpp
 
