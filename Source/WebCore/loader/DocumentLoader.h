@@ -159,7 +159,7 @@ class DocumentLoader
     : public RefCounted<DocumentLoader>
     , public FrameDestructionObserver
     , public ContentSecurityPolicyClient
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     , public ContentFilterClient
 #endif
     , private CachedRawResourceClient {
@@ -402,13 +402,15 @@ public:
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToPropagate() const;
 
 #if ENABLE(CONTENT_FILTERING)
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    void setBlockedPageURL(const URL& blockedPageURL) { m_blockedPageURL = blockedPageURL; }
+    void setSubstituteDataFromContentFilter(SubstituteData&& substituteDataFromContentFilter) { m_substituteDataFromContentFilter = WTFMove(substituteDataFromContentFilter); }
+#endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     ContentFilter* contentFilter() const { return m_contentFilter.get(); }
     void ref() const final { RefCounted<DocumentLoader>::ref(); }
     void deref() const final { RefCounted<DocumentLoader>::deref(); }
-#endif
+
     WEBCORE_EXPORT ResourceError handleContentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript);
-    WEBCORE_EXPORT void handleContentFilterProvisionalLoadFailure(const URL& blockedPageURL, const SubstituteData&);
 #endif
 
     void startIconLoading();
@@ -512,9 +514,9 @@ private:
 
     void responseReceived(const ResourceResponse&, CompletionHandler<void()>&&);
 
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     // ContentFilterClient
-    WEBCORE_EXPORT void dataReceivedThroughContentFilter(const SharedBuffer&) final;
+    WEBCORE_EXPORT void dataReceivedThroughContentFilter(const SharedBuffer&, size_t) final;
     WEBCORE_EXPORT ResourceError contentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) final;
     WEBCORE_EXPORT void cancelMainResourceLoadForContentFilter(const ResourceError&) final;
     WEBCORE_EXPORT void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&) final;
@@ -664,13 +666,14 @@ private:
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
 
 #if ENABLE(CONTENT_FILTERING)
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     std::unique_ptr<ContentFilter> m_contentFilter;
-#else
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     bool m_blockedByContentFilter { false };
     ResourceError m_blockedError;
-#endif
-#endif
+    URL m_blockedPageURL;
+    SubstituteData m_substituteDataFromContentFilter;
+#endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#endif // ENABLE(CONTENT_FILTERING)
 
 #if USE(QUICK_LOOK)
     RefPtr<PreviewConverter> m_previewConverter;

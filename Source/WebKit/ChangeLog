@@ -1,3 +1,43 @@
+2022-03-18  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix test failures when enabling content filtering in the Network process
+        https://bugs.webkit.org/show_bug.cgi?id=237217
+
+        Reviewed by Brent Fulgham.
+
+        Add a WebMockContentFilterManager in the WebContent process, which will be notified
+        when mock content filter settings are changed from JavaScript, and then send the new
+        settings to the Network process and install the mock content filter. The other
+        changes are addressing layout and API test failures.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::installMockContentFilter):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start):
+        (WebKit::NetworkResourceLoader::startContentFiltering):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::willSendRedirectedRequestInternal):
+        (WebKit::NetworkResourceLoader::contentFilterDidBlock):
+        (WebKit::NetworkResourceLoader::cancelMainResourceLoadForContentFilter):
+        (WebKit::NetworkResourceLoader::handleProvisionalLoadFailureFromContentFilter):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * Shared/WebCoreArgumentCoders.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/Network/WebMockContentFilterManager.cpp: Added.
+        (WebKit::WebMockContentFilterManager::singleton):
+        (WebKit::WebMockContentFilterManager::startObservingSettings):
+        (WebKit::WebMockContentFilterManager::mockContentFilterSettingsChanged):
+        * WebProcess/Network/WebMockContentFilterManager.h: Added.
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::contentFilterDidBlockLoad):
+        (WebKit::WebResourceLoader::cancelMainResourceLoadForContentFilter):
+        (WebKit::WebResourceLoader::handleProvisionalLoadFailureFromContentFilter): Deleted.
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        * WebProcess/WebProcess.cpp:
+
 2022-03-18  Chris Dumez  <cdumez@apple.com>
 
         Avoid calls to [CLLocationManager authorizationStatus] & [CLLocationManager locationServicesEnabled]

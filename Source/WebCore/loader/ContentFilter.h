@@ -57,9 +57,8 @@ public:
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     WEBCORE_EXPORT void startFilteringMainResource(const URL&);
-#else
-    void startFilteringMainResource(CachedRawResource&);
 #endif
+    void startFilteringMainResource(CachedRawResource&);
     WEBCORE_EXPORT void stopFilteringMainResource();
 
     WEBCORE_EXPORT bool continueAfterWillSendRequest(ResourceRequest&, const ResourceResponse&);
@@ -67,16 +66,16 @@ public:
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     WEBCORE_EXPORT bool continueAfterDataReceived(const SharedBuffer&, size_t encodedDataLength);
     WEBCORE_EXPORT bool continueAfterNotifyFinished(const URL& resourceURL);
-#else
+#endif
     bool continueAfterDataReceived(const SharedBuffer&);
     bool continueAfterNotifyFinished(CachedResource&);
-#endif
 
     static bool continueAfterSubstituteDataRequest(const DocumentLoader& activeLoader, const SubstituteData&);
     bool willHandleProvisionalLoadFailure(const ResourceError&) const;
     WEBCORE_EXPORT void handleProvisionalLoadFailure(const ResourceError&);
 
     const ResourceError& blockedError() const { return m_blockedError; }
+    void setBlockedError(const ResourceError& error) { m_blockedError = error; }
     bool isAllowed() const { return m_state == State::Allowed; }
     bool responseReceived() const { return m_responseReceived; }
     
@@ -112,9 +111,8 @@ private:
     };
     
     Vector<ResourceDataItem> m_buffers;
-#else
-    CachedResourceHandle<CachedRawResource> m_mainResource;
 #endif
+    CachedResourceHandle<CachedRawResource> m_mainResource;
     const PlatformContentFilter* m_blockingContentFilter { nullptr };
     State m_state { State::Stopped };
     ResourceError m_blockedError;

@@ -28,7 +28,7 @@
 #if ENABLE(CONTENT_FILTERING)
 
 #import "ContentFiltering.h"
-#import "MockContentFilterSettings.h"
+#import <WebCore/MockContentFilterSettings.h>
 #import <WebKit/WKWebProcessPlugIn.h>
 #import <WebKit/WKWebProcessPlugInBrowserContextControllerPrivate.h>
 #import <WebKit/_WKRemoteObjectInterface.h>

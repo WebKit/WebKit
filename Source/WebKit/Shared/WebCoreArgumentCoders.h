@@ -94,6 +94,10 @@
 #include <WebCore/PlatformXR.h>
 #endif
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#include <WebCore/MockContentFilterSettings.h>
+#endif
+
 #if PLATFORM(COCOA)
 #include "ArgumentCodersCF.h"
 
@@ -846,6 +850,28 @@ template<> struct EnumTraits<WebCore::RenderingMode> {
         WebCore::RenderingMode::Accelerated
     >;
 };
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+template<> struct EnumTraits<WebCore::MockContentFilterSettings::DecisionPoint> {
+    using values = EnumValues<
+        WebCore::MockContentFilterSettings::DecisionPoint,
+        WebCore::MockContentFilterSettings::DecisionPoint::AfterWillSendRequest,
+        WebCore::MockContentFilterSettings::DecisionPoint::AfterRedirect,
+        WebCore::MockContentFilterSettings::DecisionPoint::AfterResponse,
+        WebCore::MockContentFilterSettings::DecisionPoint::AfterAddData,
+        WebCore::MockContentFilterSettings::DecisionPoint::AfterFinishedAddingData,
+        WebCore::MockContentFilterSettings::DecisionPoint::Never
+    >;
+};
+
+template<> struct EnumTraits<WebCore::MockContentFilterSettings::Decision> {
+    using values = EnumValues<
+        WebCore::MockContentFilterSettings::Decision,
+        WebCore::MockContentFilterSettings::Decision::Allow,
+        WebCore::MockContentFilterSettings::Decision::Block
+    >;
+};
+#endif
 
 template<> struct EnumTraits<WebCore::AutoplayEvent> {
     using values = EnumValues<

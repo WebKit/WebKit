@@ -47,7 +47,7 @@ public:
     };
 
     WEBCORE_TESTSUPPORT_EXPORT static MockContentFilterSettings& singleton();
-    static void reset();
+    WEBCORE_TESTSUPPORT_EXPORT static void reset();
     static const char* unblockURLHost() { return "mock-unblock"; }
 
     // Trick the generated bindings into thinking we're RefCounted.
@@ -58,26 +58,29 @@ public:
     WEBCORE_TESTSUPPORT_EXPORT void setEnabled(bool);
 
     const String& blockedString() const { return m_blockedString; }
-    void setBlockedString(const String& blockedString) { m_blockedString = blockedString; }
+    WEBCORE_TESTSUPPORT_EXPORT void setBlockedString(const String&);
 
     DecisionPoint decisionPoint() const { return m_decisionPoint; }
-    void setDecisionPoint(DecisionPoint decisionPoint) { m_decisionPoint = decisionPoint; }
+    WEBCORE_TESTSUPPORT_EXPORT void setDecisionPoint(DecisionPoint);
 
     Decision decision() const { return m_decision; }
-    void setDecision(Decision decision) { m_decision = decision; }
+    WEBCORE_TESTSUPPORT_EXPORT void setDecision(Decision);
 
     Decision unblockRequestDecision() const { return m_unblockRequestDecision; }
-    void setUnblockRequestDecision(Decision unblockRequestDecision) { m_unblockRequestDecision = unblockRequestDecision; }
+    WEBCORE_TESTSUPPORT_EXPORT void setUnblockRequestDecision(Decision);
 
-    const String& unblockRequestURL() const;
+    WEBCORE_TESTSUPPORT_EXPORT const String& unblockRequestURL() const;
 
     const String& modifiedRequestURL() const { return m_modifiedRequestURL; }
-    void setModifiedRequestURL(const String& modifiedRequestURL) { m_modifiedRequestURL = modifiedRequestURL; }
+    WEBCORE_TESTSUPPORT_EXPORT void setModifiedRequestURL(const String&);
 
-private:
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<MockContentFilterSettings> decode(Decoder&);
+
     MockContentFilterSettings() = default;
-    MockContentFilterSettings(const MockContentFilterSettings&) = delete;
+    MockContentFilterSettings(const MockContentFilterSettings&) = default;
     MockContentFilterSettings& operator=(const MockContentFilterSettings&) = default;
+private:
 
     bool m_enabled { false };
     DecisionPoint m_decisionPoint { DecisionPoint::AfterResponse };
@@ -87,4 +90,53 @@ private:
     String m_modifiedRequestURL;
 };
 
+template<class Encoder>
+void MockContentFilterSettings::encode(Encoder& encoder) const
+{
+    encoder << m_enabled;
+    encoder << decisionPoint();
+    encoder << decision();
+    encoder << unblockRequestDecision();
+    encoder << blockedString();
+    encoder << modifiedRequestURL();
+}
+
+template<class Decoder>
+std::optional<MockContentFilterSettings> MockContentFilterSettings::decode(Decoder& decoder )
+{
+    std::optional<bool> enabled;
+    decoder >> enabled;
+    if (!enabled)
+        return std::nullopt;
+    std::optional<DecisionPoint> decisionPoint;
+    decoder >> decisionPoint;
+    if (!decisionPoint)
+        return std::nullopt;
+    std::optional<WebCore::MockContentFilterSettings::Decision> decision;
+    decoder >> decision;
+    if (!decision)
+        return std::nullopt;
+    std::optional<WebCore::MockContentFilterSettings::Decision> unblockRequestDecision;
+    decoder >> unblockRequestDecision;
+    if (!unblockRequestDecision)
+        return std::nullopt;
+    std::optional<String> blockedString;
+    decoder >> blockedString;
+    if (!blockedString)
+        return std::nullopt;
+    std::optional<String> modifiedRequestURL;
+    decoder >> modifiedRequestURL;
+    if (!modifiedRequestURL)
+        return std::nullopt;
+
+    MockContentFilterSettings settings;
+    settings.setEnabled(*enabled);
+    settings.setDecisionPoint(*decisionPoint);
+    settings.setDecision(*decision);
+    settings.setUnblockRequestDecision(*unblockRequestDecision);
+    settings.setBlockedString(WTFMove(*blockedString));
+    settings.setModifiedRequestURL(WTFMove(*modifiedRequestURL));
+
+    return settings;
+}
 } // namespace WebCore

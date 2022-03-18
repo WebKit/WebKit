@@ -187,15 +187,16 @@ void NetworkResourceLoader::start()
     ASSERT(RunLoop::isMain());
     LOADER_RELEASE_LOG("start: hasNetworkLoadChecker=%d", !!m_networkLoadChecker);
 
+    auto newRequest = ResourceRequest { originalRequest() };
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    if (!startContentFiltering(newRequest))
+        return;
+#endif
+
     m_networkActivityTracker = m_connection->startTrackingResourceLoad(m_parameters.webPageID, m_parameters.identifier, isMainFrameLoad());
 
     ASSERT(!m_wasStarted);
     m_wasStarted = true;
-
-    auto newRequest = ResourceRequest { originalRequest() };
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    startContentFiltering(newRequest);
-#endif
 
     if (m_networkLoadChecker) {
         m_networkLoadChecker->check(ResourceRequest { newRequest }, this, [this, weakThis = WeakPtr { *this }] (auto&& result) {
@@ -236,14 +237,17 @@ void NetworkResourceLoader::start()
 }
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-void NetworkResourceLoader::startContentFiltering(ResourceRequest& request)
+bool NetworkResourceLoader::startContentFiltering(ResourceRequest& request)
 {
     if (!isMainResource())
-        return;
+        return true;
     m_contentFilter = ContentFilter::create(*this);
-    if (!m_contentFilter->continueAfterWillSendRequest(request, ResourceResponse()))
-        return;
     m_contentFilter->startFilteringMainResource(request.url());
+    if (!m_contentFilter->continueAfterWillSendRequest(request, ResourceResponse())) {
+        m_contentFilter->stopFilteringMainResource();
+        return false;
+    }
+    return true;
 }
 #endif
 
@@ -946,11 +950,11 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
         }
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
         if (m_contentFilter) {
-            m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url());
+            if (!m_contentFilter->continueAfterNotifyFinished(m_parameters.request.url()))
+                return;
             m_contentFilter->stopFilteringMainResource();
         }
 #endif
-
         send(Messages::WebResourceLoader::DidFinishResourceLoad(networkLoadMetrics));
     }
 
@@ -1051,7 +1055,7 @@ void NetworkResourceLoader::willSendRedirectedRequestInternal(ResourceRequest&& 
         m_firstResponseURL = redirectResponse.url();
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(request, redirectResponse))
+    if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(redirectRequest, redirectResponse))
         return;
 #endif
 
@@ -1798,32 +1802,38 @@ void NetworkResourceLoader::dataReceivedThroughContentFilter(const SharedBuffer&
 
 WebCore::ResourceError NetworkResourceLoader::contentFilterDidBlock(WebCore::ContentFilterUnblockHandler unblockHandler, String&& unblockRequestDeniedScript)
 {
-    send(Messages::WebResourceLoader::ContentFilterDidBlockLoad(unblockHandler, unblockRequestDeniedScript));
-    if (!unblockHandler.needsUIProcess()) {
-        unblockHandler.requestUnblockAsync([this, protectedThis = Ref { *this }](bool unblocked) {
-            if (!unblocked)
-                return;
-            m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ReloadAfterUnblockedContentFilter(m_parameters.webPageProxyID), 0);
+    auto error = WebKit::blockedByContentFilterError(m_parameters.request);
+
+    m_unblockHandler = unblockHandler;
+    m_unblockRequestDeniedScript = unblockRequestDeniedScript;
+    
+    if (unblockHandler.needsUIProcess())
+        m_contentFilter->handleProvisionalLoadFailure(error);
+    else {
+        unblockHandler.requestUnblockAsync([this, protectedThis = Ref { *this }](bool unblocked) mutable {
+            m_unblockHandler.setUnblockedAfterRequest(unblocked);
+
+            ResourceRequest request;
+            if (m_wasStarted || unblocked)
+                request = m_parameters.request;
+            else
+                request = ResourceRequest(aboutBlankURL());
+            auto error = WebKit::blockedByContentFilterError(request);
+            m_contentFilter->setBlockedError(error);
+            m_contentFilter->handleProvisionalLoadFailure(error);
         });
     }
-    return WebKit::blockedByContentFilterError(m_parameters.request);
+    return error;
 }
 
 void NetworkResourceLoader::cancelMainResourceLoadForContentFilter(const WebCore::ResourceError& error)
 {
     RELEASE_ASSERT(m_contentFilter);
-    m_contentFilter->handleProvisionalLoadFailure(error);
 }
 
 void NetworkResourceLoader::handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData& substituteData)
 {
-    if (substituteData.isValid())
-        send(Messages::WebResourceLoader::HandleProvisionalLoadFailureFromContentFilter(blockedPageURL, substituteData));
-    else {
-        RELEASE_ASSERT(m_contentFilter);
-        auto& error = m_contentFilter->blockedError();
-        send(Messages::WebResourceLoader::CancelMainResourceLoadForContentFilter(error));
-    }
+    send(Messages::WebResourceLoader::ContentFilterDidBlockLoad(m_unblockHandler, m_unblockRequestDeniedScript, m_contentFilter->blockedError(), blockedPageURL, substituteData));
 }
 #endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 

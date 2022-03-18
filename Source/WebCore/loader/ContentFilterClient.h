@@ -42,11 +42,7 @@ public:
     virtual void ref() const = 0;
     virtual void deref() const = 0;
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     virtual void dataReceivedThroughContentFilter(const SharedBuffer&, size_t) = 0;
-#else
-    virtual void dataReceivedThroughContentFilter(const SharedBuffer&) = 0;
-#endif
     virtual ResourceError contentFilterDidBlock(ContentFilterUnblockHandler, String&& unblockRequestDeniedScript) = 0;
     virtual void cancelMainResourceLoadForContentFilter(const ResourceError&) = 0;
     virtual void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&) = 0;

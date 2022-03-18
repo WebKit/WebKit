@@ -113,4 +113,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #endif
     SetResourceLoadSchedulingMode(WebCore::PageIdentifier webPageID, enum:uint8_t WebCore::LoadSchedulingMode mode)
     PrioritizeResourceLoads(Vector<WebCore::ResourceLoaderIdentifier> loadIdentifiers)
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    InstallMockContentFilter(WebCore::MockContentFilterSettings settings)
+#endif
 }

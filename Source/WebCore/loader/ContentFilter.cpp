@@ -122,7 +122,8 @@ void ContentFilter::startFilteringMainResource(const URL& url)
     ASSERT(m_mainResourceURL.isEmpty());
     m_mainResourceURL = url;
 }
-#else
+#endif
+
 void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
 {
     if (m_state != State::Stopped)
@@ -133,7 +134,6 @@ void ContentFilter::startFilteringMainResource(CachedRawResource& resource)
     ASSERT(!m_mainResource);
     m_mainResource = &resource;
 }
-#endif
 
 void ContentFilter::stopFilteringMainResource()
 {
@@ -164,9 +164,6 @@ bool ContentFilter::continueAfterResponseReceived(const ResourceResponse& respon
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data, size_t encodedDataLength)
-#else
-bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
-#endif
 {
     Ref<ContentFilterClient> protectedClient { m_client };
 
@@ -176,19 +173,33 @@ bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
         forEachContentFilterUntilBlocked([data = Ref { data }](auto& contentFilter) {
             contentFilter.addData(data);
         });
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
         if (m_state == State::Allowed) {
             deliverStoredResourceData();
             deliverResourceData(data, encodedDataLength);
         } else
             m_buffers.append(ResourceDataItem { RefPtr { &data }, encodedDataLength });
-#else
+        return false;
+    }
+
+    return m_state != State::Blocked;
+}
+#endif
+
+bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
+{
+    Ref<ContentFilterClient> protectedClient { m_client };
+
+    if (m_state == State::Filtering) {
+        LOG(ContentFiltering, "ContentFilter received %zu bytes of data from <%{sensitive}s>.\n", data.size(), url().string().ascii().data());
+
+        forEachContentFilterUntilBlocked([data = Ref { data }](auto& contentFilter) {
+            contentFilter.addData(data);
+        });
         if (m_state == State::Allowed) {
             ASSERT(m_mainResource->dataBufferingPolicy() == DataBufferingPolicy::BufferData);
             if (auto* buffer = m_mainResource->resourceBuffer())
                 deliverResourceData(buffer->makeContiguous());
         }
-#endif
         return false;
     }
 
@@ -197,18 +208,9 @@ bool ContentFilter::continueAfterDataReceived(const SharedBuffer& data)
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 bool ContentFilter::continueAfterNotifyFinished(const URL& resourceURL)
-#else
-bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
-#endif
 {
     Ref<ContentFilterClient> protectedClient { m_client };
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     ASSERT_UNUSED(resourceURL, resourceURL == m_mainResourceURL);
-#else
-    ASSERT_UNUSED(resource, &resource == m_mainResource);
-    if (m_mainResource->errorOccurred())
-        return true;
-#endif
 
     if (m_state == State::Filtering) {
         LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", url().string().ascii().data());
@@ -218,14 +220,36 @@ bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
 
         if (m_state != State::Blocked) {
             m_state = State::Allowed;
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
             deliverStoredResourceData();
-#else
+        }
+
+        if (m_state == State::Stopped)
+            return false;
+    }
+
+    return m_state != State::Blocked;
+}
+#endif
+
+bool ContentFilter::continueAfterNotifyFinished(CachedResource& resource)
+{
+    Ref<ContentFilterClient> protectedClient { m_client };
+    ASSERT_UNUSED(resource, &resource == m_mainResource);
+    if (m_mainResource->errorOccurred())
+        return true;
+
+    if (m_state == State::Filtering) {
+        LOG(ContentFiltering, "ContentFilter will finish filtering main resource at <%{sensitive}s>.\n", url().string().ascii().data());
+        forEachContentFilterUntilBlocked([](PlatformContentFilter& contentFilter) {
+            contentFilter.finishedAddingData();
+        });
+
+        if (m_state != State::Blocked) {
+            m_state = State::Allowed;
             if (auto* buffer = m_mainResource->resourceBuffer()) {
                 ASSERT(m_mainResource->dataBufferingPolicy() == DataBufferingPolicy::BufferData);
                 deliverResourceData(buffer->makeContiguous());
             }
-#endif
         }
 
         if (m_state == State::Stopped)
@@ -279,21 +303,16 @@ void ContentFilter::didDecide(State state)
 void ContentFilter::deliverResourceData(const SharedBuffer& buffer, size_t encodedDataLength)
 {
     ASSERT(m_state == State::Allowed);
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     m_client.dataReceivedThroughContentFilter(buffer, encodedDataLength);
-#else
-    UNUSED_PARAM(encodedDataLength);
-    m_client.dataReceivedThroughContentFilter(buffer);
-#endif
 }
 
 URL ContentFilter::url()
 {
+    if (m_mainResource)
+        return m_mainResource->url();
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     return m_mainResourceURL;
 #else
-    if (m_mainResource)
-        return m_mainResource->url();
     return URL();
 #endif
 }
@@ -307,7 +326,6 @@ static const URL& blockedPageURL()
     return blockedPageURL;
 }
 
-#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 bool ContentFilter::continueAfterSubstituteDataRequest(const DocumentLoader& activeLoader, const SubstituteData& substituteData)
 {
     if (auto contentFilter = activeLoader.contentFilter()) {
@@ -322,7 +340,6 @@ bool ContentFilter::continueAfterSubstituteDataRequest(const DocumentLoader& act
 
     return true;
 }
-#endif
 
 bool ContentFilter::willHandleProvisionalLoadFailure(const ResourceError& error) const
 {

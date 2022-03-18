@@ -138,6 +138,15 @@
 
 namespace WebCore {
 
+#if ENABLE(CONTENT_FILTERING)
+static bool& contentFilterInDocumentLoader()
+{
+    static bool filter = false;
+    RELEASE_ASSERT(isMainThread());
+    return filter;
+}
+#endif
+
 static void cancelAll(const ResourceLoaderMap& loaders)
 {
     for (auto& loader : copyToVector(loaders.values()))
@@ -419,7 +428,7 @@ bool DocumentLoader::isLoading() const
 void DocumentLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetrics& metrics)
 {
     ASSERT(isMainThread());
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !m_contentFilter->continueAfterNotifyFinished(resource))
         return;
 #endif
@@ -710,7 +719,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         newRequest.setURL(WTFMove(url));
     }
 
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !m_contentFilter->continueAfterWillSendRequest(newRequest, redirectResponse))
         return completionHandler(WTFMove(newRequest));
 #endif
@@ -902,7 +911,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response, Completi
     ASSERT(response.certificateInfo());
     CompletionHandlerCallingScope completionHandlerCaller(WTFMove(completionHandler));
 
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !m_contentFilter->continueAfterResponseReceived(response))
         return;
 #endif
@@ -1322,7 +1331,7 @@ void DocumentLoader::dataReceived(CachedResource& resource, const SharedBuffer& 
 
 void DocumentLoader::dataReceived(const SharedBuffer& buffer)
 {
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(buffer))
         return;
 #endif
@@ -1463,7 +1472,7 @@ void DocumentLoader::detachFromFrame()
     stopLoading();
     if (m_mainResource && m_mainResource->hasClient(*this))
         m_mainResource->removeClient(*this);
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter)
         m_contentFilter->stopFilteringMainResource();
 #endif
@@ -2025,10 +2034,17 @@ void DocumentLoader::startLoadingMainResource()
         return;
     }
 
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    m_contentFilter = !m_substituteData.isValid() ? ContentFilter::create(*this) : nullptr;
+#if ENABLE(CONTENT_FILTERING)
+    contentFilterInDocumentLoader() = true;
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    // Always filter in WK1
+    contentFilterInDocumentLoader() = m_frame && m_frame->view() && m_frame->view()->platformWidget();
 #endif
-
+    if (contentFilterInDocumentLoader())
+        m_contentFilter = !m_substituteData.isValid() ? ContentFilter::create(*this) : nullptr;
+#endif
+    
+    
     // Make sure we re-apply the user agent to the Document's ResourceRequest upon reload in case the embedding
     // application has changed it, by clearing the previous user agent value here and applying the new value in CachedResourceLoader.
     m_request.clearHTTPUserAgent();
@@ -2230,7 +2246,7 @@ void DocumentLoader::clearMainResource()
     ASSERT(isMainThread());
     if (m_mainResource && m_mainResource->hasClient(*this))
         m_mainResource->removeClient(*this);
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter)
         m_contentFilter->stopFilteringMainResource();
 #endif
@@ -2357,7 +2373,7 @@ ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropa
 
 void DocumentLoader::becomeMainResourceClient()
 {
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter)
         m_contentFilter->startFilteringMainResource(*m_mainResource);
 #endif
@@ -2414,8 +2430,8 @@ void DocumentLoader::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolation
     m_frame->document()->enqueueSecurityPolicyViolationEvent(WTFMove(eventInit));
 }
 
-#if ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-void DocumentLoader::dataReceivedThroughContentFilter(const SharedBuffer& buffer)
+#if ENABLE(CONTENT_FILTERING)
+void DocumentLoader::dataReceivedThroughContentFilter(const SharedBuffer& buffer, size_t)
 {
     dataReceived(buffer);
 }
@@ -2434,7 +2450,7 @@ void DocumentLoader::handleProvisionalLoadFailureFromContentFilter(const URL& bl
 {
     frameLoader()->load(FrameLoadRequest(*frame(), blockedPageURL, substituteData));
 }
-#endif // ENABLE(CONTENT_FILTERING) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#endif // ENABLE(CONTENT_FILTERING)
 
 #if ENABLE(CONTENT_FILTERING)
 ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHandler unblockHandler, String&& unblockRequestDeniedScript)
@@ -2457,27 +2473,27 @@ ResourceError DocumentLoader::handleContentFilterDidBlock(ContentFilterUnblockHa
     return error;
 }
 
-void DocumentLoader::handleContentFilterProvisionalLoadFailure(const URL& blockedPageURL, const SubstituteData& substituteData)
-{
-    frameLoader()->load(FrameLoadRequest(*frame(), blockedPageURL, substituteData));
-}
-
 bool DocumentLoader::contentFilterWillHandleProvisionalLoadFailure(const ResourceError& error)
 {
+    if (m_contentFilter && m_contentFilter->willHandleProvisionalLoadFailure(error))
+        return true;
+    if (contentFilterInDocumentLoader())
+        return false;
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     return m_blockedByContentFilter && m_blockedError.errorCode() == error.errorCode() && m_blockedError.domain() == error.domain();
 #else
-    return m_contentFilter && m_contentFilter->willHandleProvisionalLoadFailure(error);
+    return false;
 #endif
 }
 
 void DocumentLoader::contentFilterHandleProvisionalLoadFailure(const ResourceError& error)
 {
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    UNUSED_PARAM(error);
-#else
     if (m_contentFilter)
         m_contentFilter->handleProvisionalLoadFailure(error);
+    if (contentFilterInDocumentLoader())
+        return;
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    handleProvisionalLoadFailureFromContentFilter(m_blockedPageURL, m_substituteDataFromContentFilter);
 #endif
 }
 

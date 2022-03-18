@@ -1,3 +1,21 @@
+2022-03-18  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix test failures when enabling content filtering in the Network process
+        https://bugs.webkit.org/show_bug.cgi?id=237217
+
+        Reviewed by Brent Fulgham.
+
+        TestWebKitAPI needs to link with WebCore now that the mock content filter is compiled into WebCore.
+        Adjust test expectations, since the content filters are not expected to be loaded in the WebContent
+        process anymore.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        * TestWebKitAPI/Configurations/WebProcessPlugIn.xcconfig:
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFiltering.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentFilteringPlugIn.mm:
+        * TestWebKitAPI/Tests/mac/ContentFiltering.mm:
+
 2022-03-18  Ben Nham  <nham@apple.com>
 
         Remove push subscriptions when associated service worker registrations are removed

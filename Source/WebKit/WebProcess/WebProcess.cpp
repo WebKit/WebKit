@@ -232,6 +232,10 @@
 #include <wtf/linux/RealTimeThreads.h>
 #endif
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+#include "WebMockContentFilterManager.h"
+#endif
+
 #undef WEBPROCESS_RELEASE_LOG
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #if RELEASE_LOG_DISABLED
@@ -341,6 +345,10 @@ WebProcess::WebProcess()
 #endif
 
     Gigacage::forbidDisablingPrimitiveGigacage();
+
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    WebMockContentFilterManager::singleton().startObservingSettings();
+#endif
 }
 
 WebProcess::~WebProcess()
@@ -2228,7 +2236,6 @@ RemoteMediaEngineConfigurationFactory& WebProcess::mediaEngineConfigurationFacto
     return *supplement<RemoteMediaEngineConfigurationFactory>();
 }
 #endif
-
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID

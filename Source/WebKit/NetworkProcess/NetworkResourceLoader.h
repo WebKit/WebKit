@@ -35,6 +35,7 @@
 #include "NetworkResourceLoadParameters.h"
 #include "PrivateRelayed.h"
 #include <WebCore/ContentFilterClient.h>
+#include <WebCore/ContentFilterUnblockHandler.h>
 #include <WebCore/ContentSecurityPolicyClient.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/PrivateClickMeasurement.h>
@@ -241,7 +242,7 @@ private:
     ResourceLoadInfo resourceLoadInfo();
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    void startContentFiltering(WebCore::ResourceRequest&);
+    bool startContentFiltering(WebCore::ResourceRequest&);
 #endif
 
     enum class IsFromServiceWorker : bool { No, Yes };
@@ -295,6 +296,8 @@ private:
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     std::unique_ptr<WebCore::ContentFilter> m_contentFilter;
+    WebCore::ContentFilterUnblockHandler m_unblockHandler;
+    String m_unblockRequestDeniedScript;
 #endif
 
     PrivateRelayed m_privateRelayed { PrivateRelayed::No };

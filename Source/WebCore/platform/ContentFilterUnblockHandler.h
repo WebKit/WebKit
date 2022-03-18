@@ -33,6 +33,7 @@
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS NSCoder;
+OBJC_CLASS NSNumber;
 
 #if PLATFORM(IOS_FAMILY)
 OBJC_CLASS WebFilterEvaluator;
@@ -64,12 +65,19 @@ public:
     const URL& unreachableURL() const { return m_unreachableURL; }
     void setUnreachableURL(const URL& url) { m_unreachableURL = url; }
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    WEBCORE_EXPORT void setUnblockedAfterRequest(bool);
+#endif
+
 private:
     String m_unblockURLHost;
     URL m_unreachableURL;
     UnblockRequesterFunction m_unblockRequester;
 #if HAVE(PARENTAL_CONTROLS_WITH_UNBLOCK_HANDLER)
     RetainPtr<WebFilterEvaluator> m_webFilterEvaluator;
+#endif
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    NSNumber* m_unblockedAfterRequest { nil };
 #endif
 };
 

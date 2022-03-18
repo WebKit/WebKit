@@ -29,10 +29,10 @@
 
 #import "DeprecatedGlobalValues.h"
 #import "ContentFiltering.h"
-#import "MockContentFilterSettings.h"
 #import "PlatformUtilities.h"
 #import "TestProtocol.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebCore/MockContentFilterSettings.h>
 #import <WebKit/WKErrorRef.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -433,7 +433,7 @@ TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
         [TestProtocol registerWithScheme:@"http"];
         [[controller webView] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://test"]]];
         TestWebKitAPI::Util::run(&isDone);
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
         [controller expectParentalControlsLoaded:NO];
 #else
         [controller expectParentalControlsLoaded:YES];
@@ -445,7 +445,11 @@ TEST(ContentFiltering, LazilyLoadPlatformFrameworks)
         [TestProtocol registerWithScheme:@"https"];
         [[controller webView] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://test"]]];
         TestWebKitAPI::Util::run(&isDone);
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+        [controller expectParentalControlsLoaded:NO];
+#else
         [controller expectParentalControlsLoaded:YES];
+#endif
         [TestProtocol unregister];
 #endif
     }

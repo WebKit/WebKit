@@ -354,11 +354,14 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
 #endif
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-void WebResourceLoader::contentFilterDidBlockLoad(const WebCore::ContentFilterUnblockHandler& unblockHandler, String&& unblockRequestDeniedScript)
+void WebResourceLoader::contentFilterDidBlockLoad(const WebCore::ContentFilterUnblockHandler& unblockHandler, String&& unblockRequestDeniedScript, const ResourceError& error, const URL& blockedPageURL,  WebCore::SubstituteData&& substituteData)
 {
     if (!m_coreLoader || !m_coreLoader->documentLoader())
         return;
+    m_coreLoader->documentLoader()->setBlockedPageURL(blockedPageURL);
+    m_coreLoader->documentLoader()->setSubstituteDataFromContentFilter(WTFMove(substituteData));
     m_coreLoader->documentLoader()->handleContentFilterDidBlock(unblockHandler, WTFMove(unblockRequestDeniedScript));
+    m_coreLoader->documentLoader()->cancelMainResourceLoad(error);
 }
 
 void WebResourceLoader::cancelMainResourceLoadForContentFilter(const WebCore::ResourceError& error)
@@ -366,13 +369,6 @@ void WebResourceLoader::cancelMainResourceLoadForContentFilter(const WebCore::Re
     if (!m_coreLoader || !m_coreLoader->documentLoader())
         return;
     m_coreLoader->documentLoader()->cancelMainResourceLoad(error);
-}
-
-void WebResourceLoader::handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, const WebCore::SubstituteData& substituteData)
-{
-    if (!m_coreLoader || !m_coreLoader->documentLoader() || !substituteData.isValid())
-        return;
-    m_coreLoader->documentLoader()->handleContentFilterProvisionalLoadFailure(blockedPageURL, substituteData);
 }
 #endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 

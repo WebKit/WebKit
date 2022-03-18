@@ -1,3 +1,83 @@
+2022-03-18  Per Arne Vollan  <pvollan@apple.com>
+
+        Fix test failures when enabling content filtering in the Network process
+        https://bugs.webkit.org/show_bug.cgi?id=237217
+
+        Reviewed by Brent Fulgham.
+
+        This patch addresses test failures when enabling content filtering in the Network process.
+        When content filtering is running in the Network process, we need to send the mock content
+        filter and settings to the Network process to support testing. The mock content filter is
+        moved from the WebCore test support library target to the WebCore framework, since WebKit
+        now also will reference the mock content filter when sending it to the Network process.
+        Previously a compile time guard was used to disable the content filtering code in the
+        document loader. However, we still need to support content filtering in the document
+        loader for WK1, so this patch changes that to use a runtime check instead. The rest of
+        this patch addresses test failures seen when running the layout and API tests. This patch
+        does not enable the feature.
+        
+        No new tests, covered by existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::startFilteringMainResource):
+        (WebCore::ContentFilter::continueAfterDataReceived):
+        (WebCore::ContentFilter::continueAfterNotifyFinished):
+        (WebCore::ContentFilter::deliverResourceData):
+        (WebCore::ContentFilter::url):
+        (WebCore::ContentFilter::continueAfterSubstituteDataRequest):
+        * loader/ContentFilter.h:
+        (WebCore::ContentFilter::setBlockedError):
+        * loader/ContentFilterClient.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::contentFilterInDocumentLoader):
+        (WebCore::DocumentLoader::notifyFinished):
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::responseReceived):
+        (WebCore::DocumentLoader::dataReceived):
+        (WebCore::DocumentLoader::detachFromFrame):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        (WebCore::DocumentLoader::clearMainResource):
+        (WebCore::DocumentLoader::becomeMainResourceClient):
+        (WebCore::DocumentLoader::dataReceivedThroughContentFilter):
+        (WebCore::DocumentLoader::contentFilterWillHandleProvisionalLoadFailure):
+        (WebCore::DocumentLoader::contentFilterHandleProvisionalLoadFailure):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setBlockedPageURL):
+        (WebCore::DocumentLoader::setSubstituteDataFromContentFilter):
+        * loader/PolicyChecker.cpp:
+        (WebCore::FrameLoader::PolicyChecker::checkNavigationPolicy):
+        * platform/ContentFilterUnblockHandler.h:
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        (WebCore::ContentFilterUnblockHandler::encode const):
+        (WebCore::ContentFilterUnblockHandler::decode):
+        (WebCore::ContentFilterUnblockHandler::canHandleRequest const):
+        (WebCore::ContentFilterUnblockHandler::requestUnblockAsync const):
+        (WebCore::ContentFilterUnblockHandler::setUnblockedAfterRequest):
+        * testing/MockContentFilterManager.cpp: Added.
+        (WebCore::MockContentFilterManager::singleton):
+        (WebCore::MockContentFilterManager::setClient):
+        (WebCore::MockContentFilterManager::notifySettingsChanged const):
+        * testing/MockContentFilterManager.h: Added.
+        * testing/MockContentFilterSettings.cpp:
+        (WebCore::MockContentFilterSettings::reset):
+        (WebCore::MockContentFilterSettings::setEnabled):
+        (WebCore::MockContentFilterSettings::setBlockedString):
+        (WebCore::MockContentFilterSettings::setDecisionPoint):
+        (WebCore::MockContentFilterSettings::setDecision):
+        (WebCore::MockContentFilterSettings::setUnblockRequestDecision):
+        (WebCore::MockContentFilterSettings::setModifiedRequestURL):
+        * testing/MockContentFilterSettings.h:
+        (WebCore::MockContentFilterSettings::encode const):
+        (WebCore::MockContentFilterSettings::decode):
+        (WebCore::MockContentFilterSettings::setBlockedString): Deleted.
+        (WebCore::MockContentFilterSettings::setDecisionPoint): Deleted.
+        (WebCore::MockContentFilterSettings::setDecision): Deleted.
+        (WebCore::MockContentFilterSettings::setUnblockRequestDecision): Deleted.
+        (WebCore::MockContentFilterSettings::setModifiedRequestURL): Deleted.
+        * testing/MockContentFilterSettingsClient.h: Added.
+        (WebCore::MockContentFilterSettingsClient::~MockContentFilterSettingsClient):
+
 2022-03-18  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Allow history swipe in scroller with overscroll-behavior
