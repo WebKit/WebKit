@@ -135,6 +135,12 @@ public:
 
     WorkerThreadMode workerThreadMode() const;
 
+    void incrementPushEventCounter() { ++m_pushEventCounter; }
+    void decrementPushEventCounter();
+    void setAsInspected(bool);
+
+    bool shouldContinue() const { return !!m_pushEventCounter || m_isInspected; }
+
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
 
@@ -144,6 +150,7 @@ private:
     void terminationCompleted();
     void terminationTimerFired();
     void callTerminationCallbacks();
+    void terminateIfPossible();
 
     WeakPtr<SWServer> m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
@@ -166,6 +173,8 @@ private:
     Vector<CompletionHandler<void()>> m_terminationCallbacks;
     Timer m_terminationTimer;
     LastNavigationWasAppInitiated m_lastNavigationWasAppInitiated;
+    int m_pushEventCounter { 0 };
+    bool m_isInspected { false };
 };
 
 } // namespace WebCore

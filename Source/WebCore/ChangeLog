@@ -1,3 +1,41 @@
+2022-03-18  Youenn Fablet  <youenn@apple.com>
+
+        Keep service workers alive when they are inspected even though they should be terminated
+        https://bugs.webkit.org/show_bug.cgi?id=237827
+        <rdar://88313935>
+
+        Reviewed by Alex Christensen.
+
+        Store in SWServerWorker whether a worker is inspected or is processing push events.
+        In that case, we delay termination of workers until it is no longer inspected or no longer processing push events.
+        Two code paths are happening:
+        1. A service worker was triggered with service worker clients, and all service worker clients are removed.
+           At that point, we were previously terminating service workers after a delay.
+           Instead, we now only terminate workers that are no longer inspected or no longer processing push events.
+           We reschedule the timer to continue trying removing the context connection.
+        2. A service worker is not stopped by removal of service worker clients. In that case, we need to terminate
+           the service workers when inspected and/or push counter gets back to regular (not inspected, no push counter).
+           When terminating such a service worker, we try removing the context connection as well.
+
+        To make sure SWServerWorker knows whether inspectable or not, we add connection support to transmit whether inspected from WebProcess.
+        ServiceWorkerInspectorProxy is responsible to update the inspectable value.
+        Introduce internals API to set inspected state of a service worker.
+
+        Covered by new API tests.
+
+        * testing/ServiceWorkerInternals.cpp:
+        * testing/ServiceWorkerInternals.h:
+        * testing/ServiceWorkerInternals.idl:
+        * workers/service/context/SWContextManager.cpp:
+        * workers/service/context/SWContextManager.h:
+        * workers/service/context/ServiceWorkerInspectorProxy.cpp:
+        * workers/service/server/SWServer.cpp:
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerToContextConnection.cpp:
+        * workers/service/server/SWServerToContextConnection.h:
+        * workers/service/server/SWServerWorker.cpp:
+        * workers/service/server/SWServerWorker.h:
+
 2022-03-17  Matt Woodrow  <mattwoodrow@apple.com>
 
         Subgrid items should always be stretched.

@@ -367,3 +367,232 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
+
+#if WK_HAVE_C_SPI
+
+static const char* pushEventsAndInspectedServiceWorkerScriptBytes = R"SWRESOURCE(
+let port;
+self.addEventListener("message", (event) => {
+    port = event.data.port;
+    port.postMessage(self.internals ? "Ready" : "No internals");
+});
+self.addEventListener("push", (event) => {
+    self.registration.showNotification("notification");
+    if (event.data.text() === 'first') {
+        self.internals.setAsInspected(true);
+        self.previousMessageData = 'first';
+        return;
+    }
+    if (event.data.text() === 'second') {
+        self.internals.setAsInspected(false);
+        if (self.previousMessageData !== 'first')
+            event.waitUntil(Promise.reject('expected first'));
+        return;
+    }
+    if (event.data.text() === 'third') {
+        if (self.previousMessageData !== undefined)
+            event.waitUntil(Promise.reject('expected undefined'));
+        return;
+    }
+    self.previousMessageData = event.data.text();
+    event.waitUntil(Promise.reject('expected a known message'));
+});
+)SWRESOURCE";
+
+TEST(PushAPI, pushEventsAndInspectedServiceWorker)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, pushEventsAndInspectedServiceWorkerScriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    [configuration setProcessPool:(WKProcessPool *)context.get()];
+
+    auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
+    provider.setPermission(server.origin(), true);
+
+    auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    expectedMessage = "Ready";
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    [webView _close];
+    webView = nullptr;
+
+    terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
+
+    // Push event for service worker without any related page.
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    NSString *message = @"first";
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_TRUE(pushMessageSuccessful);
+
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    message = @"second";
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_TRUE(pushMessageSuccessful);
+
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    message = @"third";
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_TRUE(pushMessageSuccessful);
+}
+
+static const char* inspectedServiceWorkerWithoutPageScriptBytes = R"SWRESOURCE(
+let port;
+self.addEventListener("message", (event) => {
+    port = event.data.port;
+    port.postMessage(self.internals ? "Ready" : "No internals");
+});
+self.addEventListener("push", async (event) => {
+    self.registration.showNotification("notification");
+    if (event.data.text() === 'firstmessage-inspected' || event.data.text() === 'firstmessage-not-inspected') {
+        if (event.data.text() === 'firstmessage-inspected')
+            self.internals.setAsInspected(true);
+        if (self.previousMessageData !== undefined)
+            event.waitUntil(Promise.reject('unexpected state with inspected message'));
+        self.previousMessageData = 'inspected';
+        // Wait for client to go away before resolving the event promise;
+        let resolve;
+        event.waitUntil(new Promise(r => resolve = r));
+        while (true) {
+            const clients = await self.clients.matchAll({ includeUncontrolled : true });
+            if (!clients.length)
+                resolve();
+        }
+        return;
+    }
+    if (event.data.text() === 'not inspected') {
+        setTimeout(() => self.internals.setAsInspected(false), 10);
+        if (self.previousMessageData !== 'inspected')
+            event.waitUntil(Promise.reject('unexpected state with not inspected message'));
+        self.previousMessageData = 'not inspected';
+        return;
+    }
+    if (event.data.text() === 'last') {
+        if (self.previousMessageData !== undefined)
+            event.waitUntil(Promise.reject('unexpected state with last message'));
+    }
+});
+)SWRESOURCE";
+
+static void testInspectedServiceWorkerWithoutPage(bool enableServiceWorkerInspection)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/", { mainBytes } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, inspectedServiceWorkerWithoutPageScriptBytes } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = dataStore.get();
+    clearWebsiteDataStore([configuration websiteDataStore]);
+
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    [configuration setProcessPool:(WKProcessPool *)context.get()];
+
+    auto provider = TestWebKitAPI::TestNotificationProvider({ [[configuration processPool] _notificationManagerForTesting], WKNotificationManagerGetSharedServiceWorkerNotificationManager() });
+    provider.setPermission(server.origin(), true);
+
+    auto messageHandler = adoptNS([[PushAPIMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    expectedMessage = "Ready";
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView loadRequest:server.request()];
+
+    TestWebKitAPI::Util::run(&done);
+
+    // Push event for service worker without any related page.
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    NSString *message = @"firstmessage-inspected";
+    if (!enableServiceWorkerInspection)
+        message = @"firstmessage-not-inspected";
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+
+    // We delay so that the push message will happen before the unregistration of the service worker client.
+    sleep(0.5);
+
+    // Closing the web view should not terminate the service worker as service worker is inspected.
+    [webView _close];
+    webView = nullptr;
+
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_TRUE(pushMessageSuccessful);
+
+    // We delay so that the timer to terminate service worker kicks in, at most up to the max push message allowed time, aka 2 seconds.
+    sleep(3);
+
+    // Send message at which point the service worker will not be inspected anymore and will be closed.
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    message = @"not inspected";
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_EQ(pushMessageSuccessful, enableServiceWorkerInspection);
+
+    // We delay so that the timer to terminate service worker kicks in, at most up to the max push message allowed time, aka 2 seconds.
+    sleep(3);
+
+    pushMessageProcessed = false;
+    pushMessageSuccessful = false;
+    message = @"last";
+    [[configuration websiteDataStore] _processPushMessage:messageDictionary([message dataUsingEncoding:NSUTF8StringEncoding], [server.request() URL]) completionHandler:^(bool result) {
+        pushMessageSuccessful = result;
+        pushMessageProcessed = true;
+    }];
+
+    TestWebKitAPI::Util::run(&pushMessageProcessed);
+    EXPECT_TRUE(pushMessageSuccessful);
+}
+
+TEST(PushAPI, inspectedServiceWorkerWithoutPage)
+{
+    bool enableServiceWorkerInspection = true;
+    testInspectedServiceWorkerWithoutPage(enableServiceWorkerInspection);
+}
+
+TEST(PushAPI, uninspectedServiceWorkerWithoutPage)
+{
+    bool enableServiceWorkerInspection = false;
+    testInspectedServiceWorkerWithoutPage(enableServiceWorkerInspection);
+}
+
+#endif // WK_HAVE_C_SPI

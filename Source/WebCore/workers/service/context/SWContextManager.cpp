@@ -208,6 +208,12 @@ void SWContextManager::stopAllServiceWorkers()
         stopWorker(serviceWorker, workerTerminationTimeout, [] { });
 }
 
+void SWContextManager::setAsInspected(ServiceWorkerIdentifier identifier, bool isInspected)
+{
+    if (m_connection)
+        m_connection->setAsInspected(identifier, isInspected);
+}
+
 } // namespace WebCore
 
 #endif

@@ -1038,17 +1038,17 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
         iterator->value.terminateServiceWorkersTimer = makeUnique<Timer>([clientOrigin, clientRegistrableDomain, this] {
             Vector<SWServerWorker*> workersToTerminate;
             for (auto& worker : m_runningOrTerminatingWorkers.values()) {
-                if (worker->isRunning() && worker->origin() == clientOrigin)
+                if (worker->isRunning() && worker->origin() == clientOrigin && !worker->shouldContinue())
                     workersToTerminate.append(worker.ptr());
             }
             for (auto* worker : workersToTerminate)
                 worker->terminate();
 
-            if (!m_clientsByRegistrableDomain.contains(clientRegistrableDomain)) {
-                if (auto* connection = contextConnectionForRegistrableDomain(clientRegistrableDomain)) {
-                    removeContextConnection(*connection);
-                    connection->connectionIsNoLongerNeeded();
-                }
+            if (removeContextConnectionIfPossible(clientRegistrableDomain) == ShouldDelayRemoval::Yes) {
+                auto iterator = m_clientIdentifiersPerOrigin.find(clientOrigin);
+                ASSERT(iterator != m_clientIdentifiersPerOrigin.end());
+                iterator->value.terminateServiceWorkersTimer->startOneShot(m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultPushMessageDuration);
+                return;
             }
 
             m_clientIdentifiersPerOrigin.remove(clientOrigin);
@@ -1072,6 +1072,25 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
         registration->removeClientUsingRegistration(clientIdentifier);
 
     m_clientToControllingRegistration.remove(registrationIterator);
+}
+
+SWServer::ShouldDelayRemoval SWServer::removeContextConnectionIfPossible(const RegistrableDomain& domain)
+{
+    if (m_clientsByRegistrableDomain.contains(domain))
+        return ShouldDelayRemoval::No;
+
+    auto* connection = contextConnectionForRegistrableDomain(domain);
+    if (!connection)
+        return ShouldDelayRemoval::No;
+
+    for (auto& worker : m_runningOrTerminatingWorkers.values()) {
+        if (worker->isRunning() && worker->registrableDomain() == domain && worker->shouldContinue())
+            return ShouldDelayRemoval::Yes;
+    }
+
+    removeContextConnection(*connection);
+    connection->connectionIsNoLongerNeeded();
+    return ShouldDelayRemoval::No;
 }
 
 void SWServer::handleLowMemoryWarning()
@@ -1281,14 +1300,18 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
             }
 
             auto serviceWorkerIdentifier = worker->identifier();
-            auto terminateWorkerTimer = makeUnique<Timer>([worker = WTFMove(worker)] {
-                RELEASE_LOG_ERROR(ServiceWorker, "Terminating service worker as processing push event took too much time");
-                worker->terminate();
+
+            worker->incrementPushEventCounter();
+            auto terminateWorkerTimer = makeUnique<Timer>([worker] {
+                RELEASE_LOG_ERROR(ServiceWorker, "Service worker is taking too much time to process a push event");
+                worker->decrementPushEventCounter();
             });
-            terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : 2_s);
-            connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, [callback = WTFMove(callback), terminateWorkerTimer = WTFMove(terminateWorkerTimer)](bool succeeded) mutable {
-                if (terminateWorkerTimer->isActive())
+            terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultPushMessageDuration);
+            connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, [callback = WTFMove(callback), terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
+                if (terminateWorkerTimer->isActive()) {
+                    worker->decrementPushEventCounter();
                     terminateWorkerTimer->stop();
+                }
 
                 callback(succeeded);
             });

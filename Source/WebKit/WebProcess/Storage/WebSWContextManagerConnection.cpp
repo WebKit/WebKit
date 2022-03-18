@@ -372,6 +372,11 @@ void WebSWContextManagerConnection::didFailHeartBeatCheck(ServiceWorkerIdentifie
     m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::DidFailHeartBeatCheck { serviceWorkerIdentifier }, 0);
 }
 
+void WebSWContextManagerConnection::setAsInspected(WebCore::ServiceWorkerIdentifier identifier, bool isInspected)
+{
+    m_connectionToNetworkProcess->send(Messages::WebSWServerToContextConnection::SetAsInspected { identifier, isInspected }, 0);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

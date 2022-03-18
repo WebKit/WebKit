@@ -199,6 +199,11 @@ String ServiceWorkerInternals::serviceWorkerClientInternalIdentifier(const Servi
     return client.identifier().toString();
 }
 
+void ServiceWorkerInternals::setAsInspected(bool isInspected)
+{
+    SWContextManager::singleton().setAsInspected(m_identifier, isInspected);
+}
+
 } // namespace WebCore
 
 #endif

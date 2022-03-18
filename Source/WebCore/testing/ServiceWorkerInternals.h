@@ -73,6 +73,7 @@ public:
     bool fetchEventIsSameSite(FetchEvent&);
 
     String serviceWorkerClientInternalIdentifier(const ServiceWorkerClient&);
+    void setAsInspected(bool);
 
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);

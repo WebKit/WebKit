@@ -79,6 +79,7 @@ public:
     WEBCORE_EXPORT void claim(ServiceWorkerIdentifier, CompletionHandler<void(std::optional<ExceptionData>&&)>&&);
     WEBCORE_EXPORT void setScriptResource(ServiceWorkerIdentifier, URL&& scriptURL, ServiceWorkerContextData::ImportedScript&&);
     WEBCORE_EXPORT void didFailHeartBeatCheck(ServiceWorkerIdentifier);
+    WEBCORE_EXPORT void setAsInspected(ServiceWorkerIdentifier, bool);
     WEBCORE_EXPORT void findClientByVisibleIdentifier(ServiceWorkerIdentifier, const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&);
 
     const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }

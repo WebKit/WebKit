@@ -52,4 +52,6 @@
     boolean fetchEventIsSameSite(FetchEvent event);
 
     DOMString serviceWorkerClientInternalIdentifier(ServiceWorkerClient client);
+
+    undefined setAsInspected(boolean isInspected);
 };

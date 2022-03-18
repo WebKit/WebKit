@@ -397,6 +397,28 @@ std::optional<ScriptExecutionContextIdentifier> SWServerWorker::serviceWorkerPag
     return m_registration->serviceWorkerPageIdentifier();
 }
 
+void SWServerWorker::decrementPushEventCounter()
+{
+    ASSERT(m_pushEventCounter);
+    --m_pushEventCounter;
+    terminateIfPossible();
+}
+
+void SWServerWorker::setAsInspected(bool isInspected)
+{
+    m_isInspected = isInspected;
+    terminateIfPossible();
+}
+
+void SWServerWorker::terminateIfPossible()
+{
+    if (m_pushEventCounter || m_isInspected || !m_server || m_server->hasClientsWithOrigin(origin()))
+        return;
+
+    terminate();
+    m_server->removeContextConnectionIfPossible(registrableDomain());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

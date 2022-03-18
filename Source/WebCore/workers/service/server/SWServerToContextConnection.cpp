@@ -137,6 +137,12 @@ void SWServerToContextConnection::didFailHeartBeatCheck(ServiceWorkerIdentifier 
         worker->didFailHeartBeatCheck();
 }
 
+void SWServerToContextConnection::setAsInspected(ServiceWorkerIdentifier identifier, bool isInspected)
+{
+    if (auto* worker = SWServerWorker::existingWorkerForIdentifier(identifier))
+        worker->setAsInspected(isInspected);
+}
+
 void SWServerToContextConnection::terminateWhenPossible()
 {
     m_shouldTerminateWhenPossible = true;

@@ -38,6 +38,7 @@ messages -> WebSWServerToContextConnection NotRefCounted {
     SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, WebCore::ServiceWorkerContextData::ImportedScript script)
     PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier source, String sourceOrigin)
     DidFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier identifier)
+    SetAsInspected(WebCore::ServiceWorkerIdentifier identifier, bool isInspected)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

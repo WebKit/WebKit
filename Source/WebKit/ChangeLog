@@ -1,3 +1,15 @@
+2022-03-18  Youenn Fablet  <youenn@apple.com>
+
+        Keep service workers alive when they are inspected even though they should be terminated
+        https://bugs.webkit.org/show_bug.cgi?id=237827
+        <rdar://88313935>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+
 2022-03-17  Alex Christensen  <achristensen@webkit.org>
 
         Call doDailyActivityInManager on main thread in adattributiond
