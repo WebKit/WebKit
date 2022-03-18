@@ -1144,6 +1144,11 @@ imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_compat-mouse-e
 
 webkit.org/b/198459 [ Debug ] inspector/canvas/recording-webgl-full.html [ Slow ]
 
+# webkit.org/b/238054 Three constant failures
+imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt [ Failure ]
+imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt [ Failure ]
+imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt [ Failure ]
+
 webkit.org/b/219449 [ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ]
 
 webkit.org/b/196508 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Pass Failure ]
