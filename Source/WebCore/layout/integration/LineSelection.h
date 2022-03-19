@@ -38,7 +38,6 @@ public:
     static LayoutRect physicalRect(const InlineIterator::Line& line) { return line.enclosingPhysicalRect(); }
 
     static LayoutUnit logicalTopAdjustedForPrecedingBlock(const InlineIterator::Line& line) { return line.enclosingTopAdjustedForPrecedingBlock(); }
-    static LayoutUnit logicalHeightAdjustedForPrecedingBlock(const InlineIterator::Line& line) { return line.enclosingHeightAdjustedForPrecedingBlock(); }
 
     static RenderObject::HighlightState selectionState(const InlineIterator::Line& line) { return line.selectionState(); }
 };

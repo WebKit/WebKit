@@ -167,11 +167,6 @@ LayoutUnit Line::enclosingTopAdjustedForPrecedingBlock() const
     return containingBlock().adjustEnclosingTopForPrecedingBlock(enclosingTopAdjustedForPrecedingLine());
 }
 
-LayoutUnit Line::enclosingHeightAdjustedForPrecedingBlock() const
-{
-    return std::max<LayoutUnit>(0, enclosingBottom() - enclosingTopAdjustedForPrecedingBlock());
-}
-
 RenderObject::HighlightState Line::selectionState() const
 {
     auto& block = containingBlock();

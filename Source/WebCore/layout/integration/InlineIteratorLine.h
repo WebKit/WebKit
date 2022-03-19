@@ -102,7 +102,6 @@ private:
 
     LayoutUnit enclosingTopAdjustedForPrecedingLine() const;
     LayoutUnit enclosingTopAdjustedForPrecedingBlock() const;
-    LayoutUnit enclosingHeightAdjustedForPrecedingBlock() const;
 
     RenderObject::HighlightState selectionState() const;
 

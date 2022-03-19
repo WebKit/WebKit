@@ -1,3 +1,20 @@
+2022-03-19  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Move enclosingHeightAdjustedForPrecedingBlock off of InlineIterator::Line
+        https://bugs.webkit.org/show_bug.cgi?id=238081
+
+        Reviewed by Antti Koivisto.
+
+        This function is way too specific to be on InlineIterator::Line (and has only one callsite).
+
+        * layout/integration/InlineIteratorLine.cpp:
+        (WebCore::InlineIterator::Line::enclosingHeightAdjustedForPrecedingBlock const): Deleted.
+        * layout/integration/LineSelection.h:
+        (WebCore::LineSelection::logicalTopAdjustedForPrecedingBlock):
+        (WebCore::LineSelection::logicalHeightAdjustedForPrecedingBlock): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+
 2022-03-18  Joseph Griego  <jgriego@igalia.com>
 
         Fix typo from r291295

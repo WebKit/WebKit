@@ -3166,7 +3166,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
     // Now paint the gaps for the lines.
     for (; line && hasSelectedChildren(line); line.traverseNext()) {
         auto selectionTop =  LineSelection::logicalTopAdjustedForPrecedingBlock(*line);
-        auto selectionHeight = LineSelection::logicalHeightAdjustedForPrecedingBlock(*line);
+        auto selectionHeight = std::max(0_lu, LineSelection::logicalBottom(*line) - selectionTop);
 
         if (!containsStart && !lastSelectedLine &&
             selectionState() != HighlightState::Start && selectionState() != HighlightState::Both && !isRubyBase())
