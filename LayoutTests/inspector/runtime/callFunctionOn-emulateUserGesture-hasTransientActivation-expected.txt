@@ -1,0 +1,9 @@
+Tests for Runtime.callFunctionOn emulateUserGesture option.
+
+
+== Running test suite: Runtime.callFunctionOn
+-- Running test case: Runtime.callFunctionOn.emulateUserGesture.hasTransientActivation.false
+No transient activation
+-- Running test case: Runtime.callFunctionOn.emulateUserGesture.hasTransientActivation.true
+Has transient activation
+

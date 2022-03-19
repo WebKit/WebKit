@@ -869,6 +869,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     boolean userIsInteracting();
 
+    boolean hasTransientActivation();
+
     GCObservation? observeGC(any observed);
 
     undefined setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInterfaceLayoutDirection);

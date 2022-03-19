@@ -1,3 +1,52 @@
+2022-03-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(?): Emulate User Gesture doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=232584
+        <rdar://problem/84899576>
+
+        Reviewed by Patrick Angle.
+
+        Recently some new web APIs have gone a step further by using a new way to detect one-time
+        user interaction called [transient activation](https://html.spec.whatwg.org/multipage/interaction.html#transient-activation).
+        In order to support invoking these APIs from Web Inspector, `UserGestureEmulationScope`
+        needs to be adjusted to support marking the context as having recently been interacted with,
+        which turns out to just involve plumbing a `Document` through to the `UserGestureIndicator`,
+        as the rest has already been implemented.
+
+        Tests: inspector/debugger/breakpoint-action-emulateUserGesture-hasTransientActiviation.html
+               inspector/debugger/evaluateOnCallFrame-emulateUserGesture-hasTransientActivation.html
+               inspector/runtime/callFunctionOn-emulateUserGesture-hasTransientActivation.html
+               inspector/runtime/evaluate-emulateUserGesture-hasTransientActivation.html
+
+        * inspector/agents/page/PageDebuggerAgent.h:
+        * inspector/agents/page/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::evaluateOnCallFrame):
+        (WebCore::PageDebuggerAgent::debuggerWillEvaluate):
+        (WebCore::PageDebuggerAgent::debuggerDidEvaluate):
+        * inspector/agents/page/PageRuntimeAgent.cpp:
+        (WebCore::PageRuntimeAgent::evaluate):
+        (WebCore::PageRuntimeAgent::callFunctionOn):
+        * inspector/agents/page/UserGestureEmulationScope.h:
+        * inspector/agents/page/UserGestureEmulationScope.cpp:
+        (WebCore::UserGestureEmulationScope::UserGestureEmulationScope):
+        Derive a `Document` from the `JSGlobalObject` of the relevant `InjectedScript`.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openURLExternally):
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::FrontendMenuProvider::contextMenuItemSelected):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::navigate):
+        Drive-by: Pass the relevant `Document` to the `UserGestureIndicator` just in case the Web
+                  Inspector frontend needs it.
+
+        * page/DOMWindow.h:
+        * testing/Internals.idl:
+        * testing/Internals.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasTransientActivation): Added.
+        Expose `DOMWindow::hasTransientActivation` to tests.
+
 2022-03-18  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Calc() cleanup

@@ -147,8 +147,8 @@ public:
         virtual ~Client() = default;
 
         virtual JSObject* debuggerScopeExtensionObject(Debugger&, JSGlobalObject*, DebuggerCallFrame&) { return nullptr; }
-        virtual void debuggerWillEvaluate(Debugger&, const Breakpoint::Action&) { }
-        virtual void debuggerDidEvaluate(Debugger&, const Breakpoint::Action&) { }
+        virtual void debuggerWillEvaluate(Debugger&, JSGlobalObject*, const Breakpoint::Action&) { }
+        virtual void debuggerDidEvaluate(Debugger&, JSGlobalObject*, const Breakpoint::Action&) { }
     };
 
     void setClient(Client*);

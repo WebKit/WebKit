@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function triggerPause() {
+    TestPage.addResult("before debugger");
+    debugger;
+    TestPage.addResult("after debugger");
+}
+
+function testEmulateUserGesture() {
+    if (window.internals)
+        TestPage.addResult(window.internals.hasTransientActivation() ? "Has transient activation" : "No transient activation");
+}
+
+function test()
+{
+    const expression = `testEmulateUserGesture()`;
+    const objectGroup = "test";
+
+    let suite = InspectorTest.createAsyncSuite("Debugger.evaluateOnCallFrame");
+
+    suite.addTestCase({
+        name: "Debugger.evaluateOnCallFrame.emulateUserGesture.hasTransientActivation.false",
+        description: "Evalute with the emulateUserGesture option set to false.",
+        async test() {
+            InspectorTest.assert(!WI.debuggerManager.paused, "Should not be paused.");
+
+            InspectorTest.log("Pausing...");
+            let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            let evaluatePromise = InspectorTest.evaluateInPage("triggerPause()");
+            await pausedPromise;
+
+            InspectorTest.assert(WI.debuggerManager.activeCallFrame, "Should have active call frame.");
+            await DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, emulateUserGesture: false});
+
+            InspectorTest.log("Resuming...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed),
+                WI.debuggerManager.resume(),
+            ]);
+
+            await evaluatePromise;
+        }
+    });
+
+    suite.addTestCase({
+        name: "Debugger.evaluateOnCallFrame.emulateUserGesture.hasTransientActivation.true",
+        description: "Evalute with the emulateUserGesture option set to true.",
+        async test() {
+            InspectorTest.assert(!WI.debuggerManager.paused, "Should not be paused.");
+
+            InspectorTest.log("Pausing...");
+            let pausedPromise = WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused);
+            let evaluatePromise = InspectorTest.evaluateInPage("triggerPause()");
+            await pausedPromise;
+
+            InspectorTest.assert(WI.debuggerManager.activeCallFrame, "Should have active call frame.");
+            await DebuggerAgent.evaluateOnCallFrame.invoke({callFrameId: WI.debuggerManager.activeCallFrame.id, expression, objectGroup, emulateUserGesture: true});
+
+            InspectorTest.log("Resuming...");
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Resumed),
+                WI.debuggerManager.resume(),
+            ]);
+
+            await evaluatePromise;
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests for Debugger.evaluateOnCallFrame emulateUserGesture option.</p>
+</body>
+</html>

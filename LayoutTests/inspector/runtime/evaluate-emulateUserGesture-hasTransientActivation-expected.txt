@@ -1,0 +1,9 @@
+Tests for Runtime emulateUserGesture option.
+
+
+== Running test suite: Runtime.evaluate
+-- Running test case: Runtime.evaluate.emulateUserGesture.hasTransientActivation.false
+No transient activation
+-- Running test case: Runtime.evaluate.emulateUserGesture.hasTransientActivation.true
+Has transient activation
+

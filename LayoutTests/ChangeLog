@@ -1,3 +1,20 @@
+2022-03-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(?): Emulate User Gesture doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=232584
+        <rdar://problem/84899576>
+
+        Reviewed by Patrick Angle.
+
+        * inspector/debugger/breakpoint-action-emulateUserGesture-hasTransientActiviation.html: Added.
+        * inspector/debugger/breakpoint-action-emulateUserGesture-hasTransientActiviation-expected.txt: Added.
+        * inspector/debugger/evaluateOnCallFrame-emulateUserGesture-hasTransientActivation.html: Added.
+        * inspector/debugger/evaluateOnCallFrame-emulateUserGesture-hasTransientActivation-expected.txt: Added.
+        * inspector/runtime/callFunctionOn-emulateUserGesture-hasTransientActivation.html: Added.
+        * inspector/runtime/callFunctionOn-emulateUserGesture-hasTransientActivation-expected.txt: Added.
+        * inspector/runtime/evaluate-emulateUserGesture-hasTransientActivation.html: Added.
+        * inspector/runtime/evaluate-emulateUserGesture-hasTransientActivation-expected.txt: Added.
+
 2022-03-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS arm64] webrtc/vp9-profile2.html is consistently timing out

@@ -409,8 +409,9 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::reload(std::optional<bool>&& i
 
 Protocol::ErrorStringOr<void> InspectorPageAgent::navigate(const String& url)
 {
-    UserGestureIndicator indicator { ProcessingUserGesture };
     Frame& frame = m_inspectedPage.mainFrame();
+
+    UserGestureIndicator indicator { ProcessingUserGesture, frame.document() };
 
     ResourceRequest resourceRequest { frame.document()->completeURL(url) };
     FrameLoadRequest frameLoadRequest { *frame.document(), frame.document()->securityOrigin(), WTFMove(resourceRequest), selfTargetFrameName(), InitiatedByMainFrame::Unknown };

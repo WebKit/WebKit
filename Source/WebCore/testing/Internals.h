@@ -811,6 +811,8 @@ public:
 
     bool userIsInteracting();
 
+    bool hasTransientActivation();
+
     RefPtr<GCObservation> observeGC(JSC::JSValue);
 
     enum class UserInterfaceLayoutDirection : uint8_t { LTR, RTL };
