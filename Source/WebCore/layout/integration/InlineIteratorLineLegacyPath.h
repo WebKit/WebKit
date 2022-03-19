@@ -45,7 +45,7 @@ public:
 
     LayoutUnit top() const { return m_rootInlineBox->lineTop(); }
     LayoutUnit bottom() const { return m_rootInlineBox->lineBottom(); }
-    LayoutUnit enclosingTop() const { return m_rootInlineBox->selectionTop(); }
+    LayoutUnit enclosingTopAdjustedForPrecedingLine() const { return m_rootInlineBox->selectionTop(); }
     LayoutUnit enclosingTopForHitTesting() const { return m_rootInlineBox->selectionTop(LegacyRootInlineBox::ForHitTesting::Yes); }
     LayoutUnit enclosingBottom() const { return m_rootInlineBox->selectionBottom(); }
     LayoutUnit lineBoxTop() const { return m_rootInlineBox->lineBoxTop(); }

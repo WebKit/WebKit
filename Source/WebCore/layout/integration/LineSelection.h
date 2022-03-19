@@ -31,7 +31,7 @@ namespace WebCore {
 
 class LineSelection {
 public:
-    static LayoutUnit logicalTop(const InlineIterator::Line& line) { return line.enclosingTop(); }
+    static LayoutUnit logicalTop(const InlineIterator::Line& line) { return line.enclosingTopAdjustedForPrecedingLine(); }
     static LayoutUnit logicalBottom(const InlineIterator::Line& line) { return line.enclosingBottom(); }
 
     static LayoutRect logicalRect(const InlineIterator::Line& line) { return line.enclosingLogicalRect(); }

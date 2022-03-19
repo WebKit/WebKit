@@ -95,12 +95,12 @@ private:
     // FIXME: This is temporary.
     friend class WebCore::LineSelection;
 
-    LayoutUnit enclosingTop() const;
     LayoutUnit enclosingBottom() const;
 
     LayoutRect enclosingLogicalRect() const;
     LayoutRect enclosingPhysicalRect() const;
 
+    LayoutUnit enclosingTopAdjustedForPrecedingLine() const;
     LayoutUnit enclosingTopAdjustedForPrecedingBlock() const;
     LayoutUnit enclosingHeightAdjustedForPrecedingBlock() const;
 
@@ -161,10 +161,10 @@ inline LayoutUnit Line::bottom() const
     });
 }
 
-inline LayoutUnit Line::enclosingTop() const
+inline LayoutUnit Line::enclosingTopAdjustedForPrecedingLine() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.enclosingTop();
+        return path.enclosingTopAdjustedForPrecedingLine();
     });
 }
 
@@ -198,7 +198,7 @@ inline LayoutUnit Line::lineBoxBottom() const
 
 inline LayoutRect Line::enclosingLogicalRect() const
 {
-    return { LayoutPoint { contentLogicalLeft(), enclosingTop() }, LayoutPoint { contentLogicalRight(), enclosingBottom() } };
+    return { LayoutPoint { contentLogicalLeft(), enclosingTopAdjustedForPrecedingLine() }, LayoutPoint { contentLogicalRight(), enclosingBottom() } };
 }
 
 inline LayoutRect Line::enclosingPhysicalRect() const

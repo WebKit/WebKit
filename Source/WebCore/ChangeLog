@@ -1,3 +1,28 @@
+2022-03-18  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] InlineIterator::Line::enclosingTop is really an enclosingTopAdjustedForPrecedingLine
+        https://bugs.webkit.org/show_bug.cgi?id=238079
+
+        Reviewed by Antti Koivisto.
+
+        This is used for selection and hittesting.
+
+        * layout/integration/InlineIteratorLine.cpp:
+        (WebCore::InlineIterator::Line::enclosingTopAdjustedForPrecedingBlock const):
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::Line::enclosingTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::Line::enclosingLogicalRect const):
+        (WebCore::InlineIterator::Line::enclosingTop const): Deleted.
+        * layout/integration/InlineIteratorLineLegacyPath.h:
+        (WebCore::InlineIterator::LineIteratorLegacyPath::enclosingTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::enclosingTop const): Deleted.
+        * layout/integration/InlineIteratorLineModernPath.h:
+        (WebCore::InlineIterator::LineIteratorModernPath::enclosingTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::LineIteratorModernPath::enclosingTopForHitTesting const):
+        (WebCore::InlineIterator::LineIteratorModernPath::enclosingTop const): Deleted.
+        * layout/integration/LineSelection.h:
+        (WebCore::LineSelection::logicalTop):
+
 2022-03-18  Chris Dumez  <cdumez@apple.com>
 
         Optimize AtomHTMLToken::initializeAttributes()

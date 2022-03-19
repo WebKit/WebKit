@@ -164,7 +164,7 @@ int Line::blockDirectionPointInLine() const
 
 LayoutUnit Line::enclosingTopAdjustedForPrecedingBlock() const
 {
-    return containingBlock().adjustEnclosingTopForPrecedingBlock(enclosingTop());
+    return containingBlock().adjustEnclosingTopForPrecedingBlock(enclosingTopAdjustedForPrecedingLine());
 }
 
 LayoutUnit Line::enclosingHeightAdjustedForPrecedingBlock() const
