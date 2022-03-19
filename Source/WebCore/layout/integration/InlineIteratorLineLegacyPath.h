@@ -45,9 +45,9 @@ public:
 
     LayoutUnit contentLogicalTop() const { return m_rootInlineBox->lineTop(); }
     LayoutUnit contentLogicalBottom() const { return m_rootInlineBox->lineBottom(); }
-    LayoutUnit enclosingTopAdjustedForPrecedingLine() const { return m_rootInlineBox->selectionTop(); }
-    LayoutUnit enclosingTopForHitTesting() const { return m_rootInlineBox->selectionTop(LegacyRootInlineBox::ForHitTesting::Yes); }
-    LayoutUnit enclosingBottomAdjustedForFollowingLine() const { return m_rootInlineBox->selectionBottom(); }
+    LayoutUnit contentLogicalTopAdjustedForPrecedingLine() const { return m_rootInlineBox->selectionTop(); }
+    LayoutUnit contentLogicalTopForHitTesting() const { return m_rootInlineBox->selectionTop(LegacyRootInlineBox::ForHitTesting::Yes); }
+    LayoutUnit contentLogicalBottomAdjustedForFollowingLine() const { return m_rootInlineBox->selectionBottom(); }
     LayoutUnit lineBoxTop() const { return m_rootInlineBox->lineBoxTop(); }
     LayoutUnit lineBoxBottom() const { return m_rootInlineBox->lineBoxBottom(); }
 

@@ -65,7 +65,7 @@ public:
     float contentLogicalRight() const;
     float contentLogicalWidth() const;
 
-    LayoutUnit enclosingTopForHitTesting() const;
+    LayoutUnit contentLogicalTopForHitTesting() const;
 
     int blockDirectionPointInLine() const;
 
@@ -95,8 +95,8 @@ private:
     // FIXME: This is temporary.
     friend class WebCore::LineSelection;
 
-    LayoutUnit enclosingTopAdjustedForPrecedingLine() const;
-    LayoutUnit enclosingBottomAdjustedForFollowingLine() const;
+    LayoutUnit contentLogicalTopAdjustedForPrecedingLine() const;
+    LayoutUnit contentLogicalBottomAdjustedForFollowingLine() const;
 
     PathVariant m_pathVariant;
 };
@@ -153,24 +153,24 @@ inline LayoutUnit Line::contentLogicalBottom() const
     });
 }
 
-inline LayoutUnit Line::enclosingTopAdjustedForPrecedingLine() const
+inline LayoutUnit Line::contentLogicalTopAdjustedForPrecedingLine() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.enclosingTopAdjustedForPrecedingLine();
+        return path.contentLogicalTopAdjustedForPrecedingLine();
     });
 }
 
-inline LayoutUnit Line::enclosingTopForHitTesting() const
+inline LayoutUnit Line::contentLogicalTopForHitTesting() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.enclosingTopForHitTesting();
+        return path.contentLogicalTopForHitTesting();
     });
 }
 
-inline LayoutUnit Line::enclosingBottomAdjustedForFollowingLine() const
+inline LayoutUnit Line::contentLogicalBottomAdjustedForFollowingLine() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.enclosingBottomAdjustedForFollowingLine();
+        return path.contentLogicalBottomAdjustedForFollowingLine();
     });
 }
 

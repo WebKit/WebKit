@@ -1,5 +1,49 @@
 2022-03-19  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] Use a more descriptive name for InlineIterator::Line::enclosing* functions
+        https://bugs.webkit.org/show_bug.cgi?id=238094
+
+        Reviewed by Antti Koivisto.
+
+        Enlcosing essentially means content logical top/bottom here.
+
+        * layout/integration/InlineIteratorLine.cpp:
+        (WebCore::InlineIterator::Line::blockDirectionPointInLine const):
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::Line::contentLogicalTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::Line::contentLogicalTopForHitTesting const):
+        (WebCore::InlineIterator::Line::contentLogicalBottomAdjustedForFollowingLine const):
+        (WebCore::InlineIterator::Line::enclosingTopAdjustedForPrecedingLine const): Deleted.
+        (WebCore::InlineIterator::Line::enclosingTopForHitTesting const): Deleted.
+        (WebCore::InlineIterator::Line::enclosingBottomAdjustedForFollowingLine const): Deleted.
+        * layout/integration/InlineIteratorLineLegacyPath.h:
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalTopForHitTesting const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalBottomAdjustedForFollowingLine const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::enclosingTopAdjustedForPrecedingLine const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::enclosingTopForHitTesting const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::enclosingBottomAdjustedForFollowingLine const): Deleted.
+        * layout/integration/InlineIteratorLineModernPath.h:
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTopForHitTesting const):
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalBottomAdjustedForFollowingLine const):
+        (WebCore::InlineIterator::LineIteratorModernPath::enclosingTopAdjustedForPrecedingLine const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::enclosingTopForHitTesting const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::enclosingBottomAdjustedForFollowingLine const): Deleted.
+        * layout/integration/LineSelection.h:
+        (WebCore::LineSelection::logicalTop):
+        (WebCore::LineSelection::logicalBottom):
+        (WebCore::LineSelection::logicalRect):
+        (WebCore::LineSelection::logicalTopAdjustedForPrecedingBlock):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+
+2022-03-19  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Rename InlineIterator::Line:top/bottom to contentLogicalTop/contentLogicalBottom
         https://bugs.webkit.org/show_bug.cgi?id=238085
 

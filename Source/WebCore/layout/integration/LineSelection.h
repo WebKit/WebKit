@@ -32,12 +32,12 @@ namespace WebCore {
 
 class LineSelection {
 public:
-    static LayoutUnit logicalTop(const InlineIterator::Line& line) { return line.enclosingTopAdjustedForPrecedingLine(); }
-    static LayoutUnit logicalBottom(const InlineIterator::Line& line) { return line.enclosingBottomAdjustedForFollowingLine(); }
+    static LayoutUnit logicalTop(const InlineIterator::Line& line) { return line.contentLogicalTopAdjustedForPrecedingLine(); }
+    static LayoutUnit logicalBottom(const InlineIterator::Line& line) { return line.contentLogicalBottomAdjustedForFollowingLine(); }
 
     static LayoutRect logicalRect(const InlineIterator::Line& line)
     {
-        return { LayoutPoint { line.contentLogicalLeft(), line.enclosingTopAdjustedForPrecedingLine() }, LayoutPoint { line.contentLogicalRight(), line.enclosingBottomAdjustedForFollowingLine() } };
+        return { LayoutPoint { line.contentLogicalLeft(), line.contentLogicalTopAdjustedForPrecedingLine() }, LayoutPoint { line.contentLogicalRight(), line.contentLogicalBottomAdjustedForFollowingLine() } };
     }
 
     static LayoutRect physicalRect(const InlineIterator::Line& line)
@@ -52,7 +52,7 @@ public:
     static LayoutUnit logicalTopAdjustedForPrecedingBlock(const InlineIterator::Line& line)
     {
         // FIXME: Move adjustEnclosingTopForPrecedingBlock from RenderBlockFlow to here.
-        return line.containingBlock().adjustEnclosingTopForPrecedingBlock(line.enclosingTopAdjustedForPrecedingLine());
+        return line.containingBlock().adjustEnclosingTopForPrecedingBlock(line.contentLogicalTopAdjustedForPrecedingLine());
     }
 
     static RenderObject::HighlightState selectionState(const InlineIterator::Line& line)
