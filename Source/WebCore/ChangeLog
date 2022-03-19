@@ -1,3 +1,20 @@
+2022-03-18  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Calc() cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=237982
+
+        Reviewed by Simon Fraser.
+
+        Small cleanup of CSSCalcExpressionNodeParser and CSSCalcOperationNode needed after 
+        adding more math functions.
+
+        * css/calc/CSSCalcExpressionNodeParser.cpp:
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction):
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::determineCategory):
+        (WebCore::CSSCalcOperationNode::simplifyNode):
+        * css/calc/CSSCalcOperationNode.h:
+
 2022-03-18  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Fix more build breakage from r291361

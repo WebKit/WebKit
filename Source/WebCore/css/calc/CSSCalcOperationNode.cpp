@@ -73,30 +73,7 @@ static CalculationCategory determineCategory(const CSSCalcExpressionNode& leftSi
         if (rightCategory != CalculationCategory::Number)
             return CalculationCategory::Other;
         return leftCategory;
-    case CalcOperator::Sin:
-    case CalcOperator::Cos:
-    case CalcOperator::Tan:
-    case CalcOperator::Min:
-    case CalcOperator::Max:
-    case CalcOperator::Clamp:
-    case CalcOperator::Log:
-    case CalcOperator::Exp:
-    case CalcOperator::Asin:
-    case CalcOperator::Acos:
-    case CalcOperator::Atan:
-    case CalcOperator::Atan2:
-    case CalcOperator::Abs:
-    case CalcOperator::Sign:
-    case CalcOperator::Mod:
-    case CalcOperator::Rem:
-    case CalcOperator::Round:
-    case CalcOperator::Up:
-    case CalcOperator::Down:
-    case CalcOperator::Nearest:
-    case CalcOperator::ToZero:
-    case CalcOperator::Pow:
-    case CalcOperator::Sqrt:
-    case CalcOperator::Hypot:
+    default:
         ASSERT_NOT_REACHED();
         return CalculationCategory::Other;
     }
@@ -162,33 +139,13 @@ static CalculationCategory determineCategory(const Vector<Ref<CSSCalcExpressionN
                 return CalculationCategory::Other;
             break;
         }
-        case CalcOperator::Sin:
-        case CalcOperator::Cos:
-        case CalcOperator::Tan:
-        case CalcOperator::Abs:
-        case CalcOperator::Sign:
-        case CalcOperator::Min:
-        case CalcOperator::Max:
-        case CalcOperator::Clamp:
-        case CalcOperator::Log:
-        case CalcOperator::Exp:
-        case CalcOperator::Asin:
-        case CalcOperator::Acos:
-        case CalcOperator::Atan:
-        case CalcOperator::Atan2:
-        case CalcOperator::Mod:
-        case CalcOperator::Rem:
-        case CalcOperator::Round:
-        case CalcOperator::Up:
-        case CalcOperator::Down:
-        case CalcOperator::Nearest:
-        case CalcOperator::ToZero:
-        case CalcOperator::Hypot:
-            return CalculationCategory::Other;
         case CalcOperator::Pow:
         case CalcOperator::Sqrt:
             // The type of pow() and sqrt() functions must evaluate to a number.
             return CalculationCategory::Number;
+        default:
+            return CalculationCategory::Other;
+        
         }
     }
 
@@ -933,41 +890,13 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
         
         if (calcOperationNode.isCalcSumNode()) {
             calcOperationNode.hoistChildrenWithOperator(CalcOperator::Add);
-            calcOperationNode.combineChildren();
         }
 
         if (calcOperationNode.isCalcProductNode()) {
             calcOperationNode.hoistChildrenWithOperator(CalcOperator::Multiply);
-            calcOperationNode.combineChildren();
         }
         
-        if (calcOperationNode.isMinOrMaxNode())
-            calcOperationNode.combineChildren();
-        
-        if (calcOperationNode.isTrigNode() && depth)
-            calcOperationNode.combineChildren();
-        
-        if (calcOperationNode.isExpNode() && depth)
-            calcOperationNode.combineChildren();
-        
-        if (calcOperationNode.isInverseTrigNode() && depth)
-            calcOperationNode.combineChildren();
-        
-        if (calcOperationNode.isAtan2Node() && depth)
-            calcOperationNode.combineChildren();
-        if (calcOperationNode.isSignNode() && depth)
-            calcOperationNode.combineChildren();
-
-        if (calcOperationNode.isSteppedNode() && depth)
-            calcOperationNode.combineChildren();
-        
-        if (calcOperationNode.isRoundOperation() && depth)
-            calcOperationNode.combineChildren();
-
-        if (calcOperationNode.isHypotNode())
-            calcOperationNode.combineChildren();
-
-        if (calcOperationNode.isPowOrSqrtNode() && depth)
+        if (calcOperationNode.isMinOrMaxNode() || calcOperationNode.isHypotNode() || calcOperationNode.isCalcProductNode() || calcOperationNode.isCalcSumNode() || (calcOperationNode.shouldPreserveFunction() && depth))
             calcOperationNode.combineChildren();
 
         // If only one child remains, return the child (except at the root).

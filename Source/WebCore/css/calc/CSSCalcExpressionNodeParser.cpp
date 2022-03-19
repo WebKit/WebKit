@@ -140,11 +140,6 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     std::optional<unsigned> maxArgumentCount;
 
     switch (functionID) {
-    case CSSValueMin:
-    case CSSValueMax:
-    case CSSValueHypot:
-        maxArgumentCount = std::nullopt;
-        break;
     case CSSValueClamp:
         minArgumentCount = 3;
         maxArgumentCount = 3;
