@@ -13,7 +13,7 @@ for (let [filenameBase, expectedPixels] of Object.entries(videoTests)) {
             for (let scaleImage of [false, true]) {
                 async_test(function(t) {
                     let video = document.createElement("video");
-                    video.onloadeddata = t.step_func_done(function() {
+                    let testVidoe = t.step_func_done(function() {
 
                         let canvas = document.createElement("canvas");
                         canvas.width = 2;
@@ -31,6 +31,10 @@ for (let [filenameBase, expectedPixels] of Object.entries(videoTests)) {
                         let expected = expectedPixels[`${contextColorSpace} ${imageDataColorSpace}`];
                         assert_true(pixelsApproximatelyEqual(imageData.data, expected), `Actual pixel value ${[...imageData.data]} is approximately equal to ${expected}.`);
                     });
+                    if (video.requestVideoFrameCallback)
+                        video.requestVideoFrameCallback(testVideo)
+                    else
+                        video.onloadeddata = testVideo;
                     for (let format of ["mp4", "webm"]) {
                         let source = document.createElement("source");
                         source.src = `resources/${filenameBase}.${format}`;
@@ -38,6 +42,7 @@ for (let [filenameBase, expectedPixels] of Object.entries(videoTests)) {
                         video.append(source);
                     }
                     document.body.append(video);
+                    video.play();
                 }, `${filenameBase}, Context ${contextColorSpace}, ImageData ${imageDataColorSpace}, scaleImage=${scaleImage}`);
             }
         }

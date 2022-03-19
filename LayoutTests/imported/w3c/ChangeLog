@@ -1,3 +1,35 @@
+2022-03-18  Cameron McCormack  <heycam@apple.com>
+
+        Update Display P3 canvas drawImage(video) tests to avoid edge case bugs
+        https://bugs.webkit.org/show_bug.cgi?id=237286
+
+        Reviewed by Jer Noble.
+
+        This test is intermittently failing, due to the odd single frame
+        videos causing issues and loadeddata not being guaranteed to mean the
+        video is ready for drawing. Update the tests to work around these.
+
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html:
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html:
+        Use requestVideoFrameCallback if available, since that should be
+        better than loadeddata to guarantee the pixel data is available. Also
+        play the videos that are inserted, to avoid issues with the video
+        frame callback being called a bit late.
+
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3.js:
+        Fix the command line in the comment that's used to generate the test
+        videos.
+
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Rec2020-222000000.mp4:
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Rec2020-222000000.webm:
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Rec2020-3FF000000.mp4:
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/Rec2020-3FF000000.webm:
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BB0000.mp4:
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-BB0000.webm:
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FF0100.mp4:
+        * web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/resources/sRGB-FF0100.webm:
+        Change these videos from being a single frame long to 10s long.
+
 2022-03-18  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Ensure container style changes are propagated to descendants

@@ -13,7 +13,7 @@ for (let [filenameBase, expectedPixels] of Object.entries(videoTests)) {
             for (let cropSource of [false, true]) {
                 async_test(function(t) {
                     let video = document.createElement("video");
-                    video.onloadeddata = t.step_func(function() {
+                    let testVideo = t.step_func(function() {
 
                         let canvas = document.createElement("canvas");
                         canvas.width = 2;
@@ -40,6 +40,10 @@ for (let [filenameBase, expectedPixels] of Object.entries(videoTests)) {
                             throw error;
                         }));
                     });
+                    if (video.requestVideoFrameCallback)
+                        video.requestVideoFrameCallback(testVideo)
+                    else
+                        video.onloadeddata = testVideo;
                     for (let format of ["mp4", "webm"]) {
                         let source = document.createElement("source");
                         source.src = `resources/${filenameBase}.${format}`;
@@ -47,6 +51,7 @@ for (let [filenameBase, expectedPixels] of Object.entries(videoTests)) {
                         video.append(source);
                     }
                     document.body.append(video);
+                    video.play();
                 }, `${filenameBase}, Context ${contextColorSpace}, ImageData ${imageDataColorSpace}, cropSource=${cropSource}`);
             }
         }
