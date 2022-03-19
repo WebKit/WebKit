@@ -2699,6 +2699,10 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
 {
     RegExp* regExp = jsCast<RegExp*>(node->cellOperand2()->value());
 
+    auto jitCodeBlock = regExp->getRegExpJITCodeBlock();
+    ASSERT(jitCodeBlock);
+    auto inlineCodeStats8Bit = jitCodeBlock->get8BitInlineStats();
+
     ASSERT(!regExp->globalOrSticky());
 
     SpeculateCellOperand globalObject(this, node->child1());
@@ -2709,8 +2713,7 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
     GPRTemporary strLength(this);
     GPRTemporary output(this);
     GPRTemporary temp0(this);
-    GPRTemporary temp1(this);
-    std::optional<GPRTemporary> temp2;
+    std::optional<GPRTemporary> temp1;
 
     GPRReg globalObjectGPR = globalObject.gpr();
     GPRReg baseGPR = base.gpr();
@@ -2719,19 +2722,12 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
     GPRReg outputGPR = output.gpr();
     GPRReg strLengthGPR = strLength.gpr();
     GPRReg temp0GPR = temp0.gpr();
-    GPRReg temp1GPR = temp1.gpr();
-    GPRReg temp2GPR = InvalidGPRReg;
+    GPRReg temp1GPR = InvalidGPRReg;
 
-    auto jitCodeBlock = regExp->getRegExpJITCodeBlock();
-    ASSERT(jitCodeBlock);
-    auto inlineCodeStats8Bit = jitCodeBlock->get8BitInlineStats();
-
-#if !CPU(X86_64)
     if (inlineCodeStats8Bit.needsTemp2()) {
-        temp2.emplace(this);
-        temp2GPR = temp2->gpr();
+        temp1.emplace(this);
+        temp1GPR = temp1->gpr();
     }
-#endif
 
     speculateRegExpObject(node->child2(), baseGPR);
 
@@ -2750,18 +2746,16 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
         m_jit.load32(MacroAssembler::Address(stringImplGPR, StringImpl::lengthMemoryOffset()), strLengthGPR);
 
         // Clobbering input registers is OK since we already called flushRegisters.
+        // slowCases jumps are already done. So we can modify baseGPR etc.
         Yarr::YarrJITRegisters yarrRegisters;
         yarrRegisters.input = stringDataGPR;
         yarrRegisters.index = stringImplGPR;
         yarrRegisters.length = strLengthGPR;
         yarrRegisters.output = outputGPR;
         yarrRegisters.regT0 = temp0GPR;
-        yarrRegisters.regT1 = temp1GPR;
-#if CPU(X86_64)
-        temp2GPR = globalObjectGPR;
-#endif
+        yarrRegisters.regT1 = baseGPR;
         if (inlineCodeStats8Bit.needsTemp2())
-            yarrRegisters.regT2 = temp2GPR;
+            yarrRegisters.regT2 = temp1GPR;
 
         yarrRegisters.returnRegister = temp0GPR;
         yarrRegisters.returnRegister2 = stringDataGPR;
@@ -2773,13 +2767,6 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
         auto failedMatch = m_jit.branch32(MacroAssembler::LessThan, yarrRegisters.returnRegister, TrustedImm32(0));
 
         //  Saved cached result
-#if CPU(X86_64)
-        if (inlineCodeStats8Bit.needsTemp2()) {
-            // Since we reused globalObjectGPR for temp2, let's restore the global object.
-            m_jit.move(TrustedImmPtr::weakPointer(m_graph, jsCast<JSGlobalObject*>(node->cellOperand()->value())), globalObjectGPR);
-        }
-#endif
-
         ptrdiff_t offset = JSGlobalObject::regExpGlobalDataOffset() + RegExpGlobalData::offsetOfCachedResult();
 
         m_jit.storePtr(TrustedImmPtr::weakPointer(m_graph, regExp), JITCompiler::Address(globalObjectGPR, offset + RegExpCachedResult::offsetOfLastRegExp()));

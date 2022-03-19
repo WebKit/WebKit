@@ -1,3 +1,18 @@
+2022-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Further reduce # of registers used in RegExpTestInline
+        https://bugs.webkit.org/show_bug.cgi?id=238105
+
+        Reviewed by Saam Barati.
+
+        This patch further reduces # of registers used in RegExpTestInline.
+        After flushRegisters(), we can use baseGPR for any purpose.
+        We also remove x64 hack since we have enough registers for x64 even
+        if we use one callee-save register in unlinked DFG.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileRegExpTestInline):
+
 2022-03-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(?): Emulate User Gesture doesn't work
