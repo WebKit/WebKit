@@ -215,33 +215,6 @@ void Styleable::animationWasRemoved(WebAnimation& animation) const
         removeDeclarativeAnimationFromListsForOwningElement(animation);
 }
 
-static void removeCSSAnimationCreatedByMarkup(const Styleable& styleable, CSSAnimation& cssAnimation)
-{
-    styleable.animationsCreatedByMarkup().remove(&cssAnimation);
-
-    if (!styleable.hasKeyframeEffects())
-        return;
-
-    auto& keyframeEffectStack = styleable.ensureKeyframeEffectStack();
-    auto* cssAnimationList = keyframeEffectStack.cssAnimationList();
-    if (!cssAnimationList || cssAnimationList->isEmpty())
-        return;
-
-    auto& backingAnimation = cssAnimation.backingAnimation();
-    for (size_t i = 0; i < cssAnimationList->size(); ++i) {
-        if (cssAnimationList->animation(i) == backingAnimation) {
-            // It is important we do not make a clone of the Animation references contained
-            // within cssAnimationList since sorting animations in compareCSSAnimations()
-            // makes pointer comparisons to distinguish between backing animations of various
-            // CSSAnimation objects.
-            auto newAnimationList = cssAnimationList->shallowCopy();
-            newAnimationList->remove(i);
-            keyframeEffectStack.setCSSAnimationList(WTFMove(newAnimationList));
-            return;
-        }
-    }
-}
-
 void Styleable::elementWasRemoved() const
 {
     cancelDeclarativeAnimations();
@@ -259,13 +232,15 @@ void Styleable::cancelDeclarativeAnimations() const
 {
     if (auto* animations = this->animations()) {
         for (auto& animation : *animations) {
-            if (is<DeclarativeAnimation>(animation)) {
-                if (is<CSSAnimation>(animation))
-                    removeCSSAnimationCreatedByMarkup(*this, downcast<CSSAnimation>(*animation));
+            if (is<DeclarativeAnimation>(animation))
                 downcast<DeclarativeAnimation>(*animation).cancelFromStyle();
-            }
         }
     }
+
+    if (auto* effectStack = keyframeEffectStack())
+        effectStack->setCSSAnimationList(nullptr);
+
+    setAnimationsCreatedByMarkup({ });
 }
 
 static bool keyframesRuleExistsForAnimation(Element& element, const Animation& animation, const String& animationName)
@@ -298,6 +273,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
         for (auto& cssAnimation : animationsCreatedByMarkup())
             cssAnimation->cancelFromStyle();
         keyframeEffectStack.setCSSAnimationList(nullptr);
+        setAnimationsCreatedByMarkup({ });
         return;
     }
 

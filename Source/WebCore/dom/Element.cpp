@@ -3443,6 +3443,16 @@ void Element::removeFromTopLayer()
         layer.establishesTopLayerWillChange();
     });
 
+    // We need to call Styleable::fromRenderer() while this element is still contained in
+    // Document::topLayerElements(), since Styleable::fromRenderer() relies on this to
+    // find the backdrop's associated element.
+    if (auto* renderer = this->renderer()) {
+        if (auto backdrop = renderer->backdropRenderer()) {
+            if (auto styleable = Styleable::fromRenderer(*backdrop))
+                styleable->cancelDeclarativeAnimations();
+        }
+    }
+
     document().removeTopLayerElement(*this);
     clearNodeFlag(NodeFlag::IsInTopLayer);
 
@@ -4050,6 +4060,8 @@ CSSAnimationCollection& Element::animationsCreatedByMarkup(PseudoId pseudoId)
 
 void Element::setAnimationsCreatedByMarkup(PseudoId pseudoId, CSSAnimationCollection&& animations)
 {
+    if (animations.isEmpty() && !animationRareData(pseudoId))
+        return;
     ensureAnimationRareData(pseudoId).setAnimationsCreatedByMarkup(WTFMove(animations));
 }
 
