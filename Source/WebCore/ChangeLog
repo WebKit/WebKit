@@ -1,3 +1,17 @@
+2022-03-19  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Add Typed OM support for container units
+        https://bugs.webkit.org/show_bug.cgi?id=238078
+
+        Reviewed by Alan Bujtas.
+
+        For completeness, Typed OM is not enabled or fully implemented yet.
+
+        * css/DOMCSSNamespace+CSSNumericFactory.idl:
+        * css/typedom/CSSNumericFactory.h:
+        * css/typedom/CSSStyleValueFactory.cpp:
+        (WebCore::CSSStyleValueFactory::reifyValue):
+
 2022-03-19  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Move enclosingHeightAdjustedForPrecedingBlock off of InlineIterator::Line

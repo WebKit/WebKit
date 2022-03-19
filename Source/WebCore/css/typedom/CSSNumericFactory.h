@@ -68,6 +68,12 @@ public:
     static Ref<CSSUnitValue> pt(double value) { return CSSUnitValue::create(value, "pt"); }
     static Ref<CSSUnitValue> pc(double value) { return CSSUnitValue::create(value, "pc"); }
     static Ref<CSSUnitValue> px(double value) { return CSSUnitValue::create(value, "px"); }
+    static Ref<CSSUnitValue> cqw(double value) { return CSSUnitValue::create(value, "cqw"); }
+    static Ref<CSSUnitValue> cqh(double value) { return CSSUnitValue::create(value, "cqh"); }
+    static Ref<CSSUnitValue> cqi(double value) { return CSSUnitValue::create(value, "cqi"); }
+    static Ref<CSSUnitValue> cqb(double value) { return CSSUnitValue::create(value, "cqb"); }
+    static Ref<CSSUnitValue> cqmin(double value) { return CSSUnitValue::create(value, "cqmin"); }
+    static Ref<CSSUnitValue> cqmax(double value) { return CSSUnitValue::create(value, "cqmax"); }
 
 
     // <angle>

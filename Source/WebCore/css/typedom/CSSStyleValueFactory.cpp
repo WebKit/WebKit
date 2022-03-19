@@ -219,6 +219,18 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue>&&
             return Ref<CSSStyleValue> { CSSNumericFactory::dppx(primitiveValue->doubleValue()) };
         case CSSUnitType::CSS_FR:
             return Ref<CSSStyleValue> { CSSNumericFactory::fr(primitiveValue->doubleValue()) };
+        case CSSUnitType::CSS_CQW:
+            return Ref<CSSStyleValue> { CSSNumericFactory::cqw(primitiveValue->doubleValue()) };
+        case CSSUnitType::CSS_CQH:
+            return Ref<CSSStyleValue> { CSSNumericFactory::cqh(primitiveValue->doubleValue()) };
+        case CSSUnitType::CSS_CQI:
+            return Ref<CSSStyleValue> { CSSNumericFactory::cqi(primitiveValue->doubleValue()) };
+        case CSSUnitType::CSS_CQB:
+            return Ref<CSSStyleValue> { CSSNumericFactory::cqb(primitiveValue->doubleValue()) };
+        case CSSUnitType::CSS_CQMIN:
+            return Ref<CSSStyleValue> { CSSNumericFactory::cqmin(primitiveValue->doubleValue()) };
+        case CSSUnitType::CSS_CQMAX:
+            return Ref<CSSStyleValue> { CSSNumericFactory::cqmax(primitiveValue->doubleValue()) };
         
         case CSSUnitType::CSS_STRING: {
             auto value = CSSKeywordValue::create(primitiveValue->stringValue());

@@ -1,26 +1,26 @@
 
-FAIL CSS.cqw function func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL Reify value with cqw unit assert_equals: expected (number) 10 but got (undefined) undefined
+PASS CSS.cqw function
+PASS Reify value with cqw unit
 FAIL Set value with cqw unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqw unit (CSS.cqw) func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL CSS.cqh function func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL Reify value with cqh unit assert_equals: expected (number) 10 but got (undefined) undefined
+FAIL Set value with cqw unit (CSS.cqw) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+PASS CSS.cqh function
+PASS Reify value with cqh unit
 FAIL Set value with cqh unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqh unit (CSS.cqh) func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL CSS.cqi function func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL Reify value with cqi unit assert_equals: expected (number) 10 but got (undefined) undefined
+FAIL Set value with cqh unit (CSS.cqh) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+PASS CSS.cqi function
+PASS Reify value with cqi unit
 FAIL Set value with cqi unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqi unit (CSS.cqi) func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL CSS.cqb function func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL Reify value with cqb unit assert_equals: expected (number) 10 but got (undefined) undefined
+FAIL Set value with cqi unit (CSS.cqi) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+PASS CSS.cqb function
+PASS Reify value with cqb unit
 FAIL Set value with cqb unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqb unit (CSS.cqb) func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL CSS.cqmin function func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL Reify value with cqmin unit assert_equals: expected (number) 10 but got (undefined) undefined
+FAIL Set value with cqb unit (CSS.cqb) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+PASS CSS.cqmin function
+PASS Reify value with cqmin unit
 FAIL Set value with cqmin unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqmin unit (CSS.cqmin) func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL CSS.cqmax function func is not a function. (In 'func(10)', 'func' is undefined)
-FAIL Reify value with cqmax unit assert_equals: expected (number) 10 but got (undefined) undefined
+FAIL Set value with cqmin unit (CSS.cqmin) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
+PASS CSS.cqmax function
+PASS Reify value with cqmax unit
 FAIL Set value with cqmax unit (string) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', `10${unit}`)', 'element.attributeStyleMap.set' is undefined)
-FAIL Set value with cqmax unit (CSS.cqmax) func is not a function. (In 'func(10)', 'func' is undefined)
+FAIL Set value with cqmax unit (CSS.cqmax) element.attributeStyleMap.set is not a function. (In 'element.attributeStyleMap.set('top', func(10))', 'element.attributeStyleMap.set' is undefined)
 

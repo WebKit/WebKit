@@ -54,6 +54,12 @@
     CSSUnitValue pt(double value);
     CSSUnitValue pc(double value);
     CSSUnitValue px(double value);
+    CSSUnitValue cqw(double value);
+    CSSUnitValue cqh(double value);
+    CSSUnitValue cqi(double value);
+    CSSUnitValue cqb(double value);
+    CSSUnitValue cqmin(double value);
+    CSSUnitValue cqmax(double value);
 
     // <angle>
     CSSUnitValue deg(double value);
