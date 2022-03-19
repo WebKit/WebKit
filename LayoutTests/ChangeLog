@@ -1,3 +1,20 @@
+2022-03-19  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r285529): Flash of missing text when content on https://ahumanfuture.co animates
+        https://bugs.webkit.org/show_bug.cgi?id=237972
+        rdar://90385586
+
+        Reviewed by Simon Fraser.
+
+        Add a new test which would fail prior to the source change. In this test we start two animations: a "scale"
+        animation which lasts for 100ms, and an "opacity" animation which lasts much longer but only visually updates
+        for the duration of the "scale" animation. When the "scale" animation completes, we stop the test and ensure
+        that the reference test shows that the "opacity" animation is at the state it should be in at at that time,
+        and was not rewound due to the bug being fixed.
+
+        * webanimations/accelerated-animation-opacity-animation-begin-time-after-scale-animation-ends-expected.html: Added.
+        * webanimations/accelerated-animation-opacity-animation-begin-time-after-scale-animation-ends.html: Added.
+
 2022-03-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION(?): Emulate User Gesture doesn't work

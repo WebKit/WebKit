@@ -1,3 +1,49 @@
+2022-03-19  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r285529): Flash of missing text when content on https://ahumanfuture.co animates
+        https://bugs.webkit.org/show_bug.cgi?id=237972
+        rdar://90385586
+
+        Reviewed by Simon Fraser.
+
+        Accelerated animations are added to a CALayer in two different ways.
+
+        Transform-related animations are added in a CAAnimationGroup so that we can have control of the
+        way they interact with each other. We added this system when we added support for individual CSS
+        transform properties on top of the existing "transform" property. All CAAnimationGroup animations
+        are timed to start at 1s and thus we subtract that same 1s value from all animations contained
+        within such groups.
+
+        All other animations, such as "opacity" animations, are added as simple leaf animations and their
+        begin time is not subject to that 1s subtraction.
+
+        In r285529, when we introduced leaf animations for transform properties other than transform-related
+        properties, we took an unfortunate approach to deal with that 1s subtraction. We would *always* subtract
+        1s for all animations, and for leaf animation add that 1s back when we added them in the
+        addLeafAnimation() lambda.
+
+        However, we *did not* check whether that animation was newly started or if we were merely adding it
+        again. This meant that every time GraphicsLayerCA::updateAnimations() was called, any leaf animation
+        would have 1s added to their begin time.
+
+        So, if for instance a page ran on a given element a "scale" animation for 1s and an "opacity" animation
+        for 2s, when the "scale" animation would complete, GraphicsLayerCA::updateAnimations() would be called
+        to remove that animation, and add 1s to the "opacity" animation begin time.
+
+        We now set the begin time, if not already set, in two places: in the addLeafAnimation() lambda for
+        leaf animations, and in the addAnimationsForProperty() lambda for animations added to groups. We
+        only ever set the begin time if not already set during a previous update and only subtract the
+        parent group begin time for animations contained within a group.
+
+        Additionally, this means we set the begin times when we iterate over remaining animations after culling
+        finished animations. As such, we no longer need to iterate over *all* known animations to set their
+        begin time if needed prior to adding them.
+
+        Test: webanimations/accelerated-animation-opacity-animation-begin-time-after-scale-animation-ends.html
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateAnimations):
+
 2022-03-19  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, WPE clang build fix after r291343.
