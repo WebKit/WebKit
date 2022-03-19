@@ -1,3 +1,15 @@
+2022-03-18  Joseph Griego  <jgriego@igalia.com>
+
+        Fix typo from r291295
+        https://bugs.webkit.org/show_bug.cgi?id=238087
+
+        Reviewed by Chris Dumez.
+
+        No new tests (changes only comments)
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsAlwaysExposedOnInterface):
+
 2022-03-18  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: `console.screenshot` has extra transparent pixels at bottom of screenshot on platforms with viewports that are obscured by browser chrome

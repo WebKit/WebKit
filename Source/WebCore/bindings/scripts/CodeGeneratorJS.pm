@@ -1971,7 +1971,7 @@ sub IsAlwaysExposedOnInterface
     }
 
     if (ref($interfaceExposures) ne "ARRAY") {
-        # if the interface exposure list isn't an arary, wrap it in one; unless the
+        # if the interface exposure list isn't an array, wrap it in one; unless the
         # interface is Exposed=*, in which case, the only way the context could
         # fail to be visible is if it is not also Exposed=* (or it lists out all
         # of the possible contexts separately, which we deliberately do not
