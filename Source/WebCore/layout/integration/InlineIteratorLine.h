@@ -65,9 +65,9 @@ public:
     float contentLogicalRight() const;
     float contentLogicalWidth() const;
 
-    LayoutUnit contentLogicalTopForHitTesting() const;
-
-    int blockDirectionPointInLine() const;
+    LayoutUnit contentLogicalTopAdjustedForHitTesting() const;
+    LayoutUnit contentLogicalTopAdjustedForPrecedingLine() const;
+    LayoutUnit contentLogicalBottomAdjustedForFollowingLine() const;
 
     bool isHorizontal() const;
 
@@ -92,11 +92,6 @@ public:
     
 private:
     friend class LineIterator;
-    // FIXME: This is temporary.
-    friend class WebCore::LineSelection;
-
-    LayoutUnit contentLogicalTopAdjustedForPrecedingLine() const;
-    LayoutUnit contentLogicalBottomAdjustedForFollowingLine() const;
 
     PathVariant m_pathVariant;
 };
@@ -133,6 +128,12 @@ LineIterator firstLineFor(const RenderBlockFlow&);
 LineIterator lastLineFor(const RenderBlockFlow&);
 
 // -----------------------------------------------
+inline LayoutUnit contentStartInBlockDirection(const Line& line)
+{
+    if (!line.containingBlock().style().isFlippedBlocksWritingMode())
+        return std::max(line.contentLogicalTop(), line.contentLogicalTopAdjustedForHitTesting());
+    return std::min(line.contentLogicalBottom(), line.contentLogicalBottomAdjustedForFollowingLine());
+}
 
 inline Line::Line(PathVariant&& path)
     : m_pathVariant(WTFMove(path))
@@ -160,10 +161,10 @@ inline LayoutUnit Line::contentLogicalTopAdjustedForPrecedingLine() const
     });
 }
 
-inline LayoutUnit Line::contentLogicalTopForHitTesting() const
+inline LayoutUnit Line::contentLogicalTopAdjustedForHitTesting() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.contentLogicalTopForHitTesting();
+        return path.contentLogicalTopAdjustedForHitTesting();
     });
 }
 

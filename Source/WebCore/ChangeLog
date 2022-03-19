@@ -1,5 +1,38 @@
 2022-03-19  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] Rename InlineIterator::Line::blockDirectionPointInLine to contentStartInBlockDirection
+        https://bugs.webkit.org/show_bug.cgi?id=238101
+
+        Reviewed by Antti Koivisto.
+
+        blockDirectionPointInLine returns the position (vertical or horizontal, depending on the writing mode) where the content
+        starts (which for flipped writing mode is the bottom of the line).
+        Let's also move this function out of the Line class and have it as a standalone helper function (and move/rename some private Line
+        functions to public).
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::absoluteLineDirectionPointToLocalPointInBlock):
+        * layout/integration/InlineIteratorLine.cpp:
+        (WebCore::InlineIterator::Line::blockDirectionPointInLine const): Deleted.
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::contentStartInBlockDirection):
+        (WebCore::InlineIterator::Line::contentLogicalTopAdjustedForHitTesting const):
+        (WebCore::InlineIterator::Line::contentLogicalTopForHitTesting const): Deleted.
+        * layout/integration/InlineIteratorLineLegacyPath.h:
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalTopAdjustedForHitTesting const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalTopForHitTesting const): Deleted.
+        * layout/integration/InlineIteratorLineModernPath.h:
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTopAdjustedForHitTesting const):
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTopForHitTesting const): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+
+2022-03-19  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Use a more descriptive name for InlineIterator::Line::enclosing* functions
         https://bugs.webkit.org/show_bug.cgi?id=238094
 

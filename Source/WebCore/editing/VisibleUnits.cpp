@@ -942,9 +942,9 @@ static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(InlineItera
     FloatPoint absoluteBlockPoint = containingBlock.localToAbsolute(FloatPoint()) - toFloatSize(containingBlock.scrollPosition());
 
     if (containingBlock.isHorizontalWritingMode())
-        return IntPoint(lineDirectionPoint - absoluteBlockPoint.x(), line->blockDirectionPointInLine());
+        return IntPoint(lineDirectionPoint - absoluteBlockPoint.x(), contentStartInBlockDirection(*line));
 
-    return IntPoint(line->blockDirectionPointInLine(), lineDirectionPoint - absoluteBlockPoint.y());
+    return IntPoint(contentStartInBlockDirection(*line), lineDirectionPoint - absoluteBlockPoint.y());
 }
 
 static Element* rootEditableOrDocumentElement(Node& node, EditableType editableType)
