@@ -990,7 +990,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     if (line) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
         auto pointInLine = absoluteLineDirectionPointToLocalPointInBlock(line, lineDirectionPoint);
-        auto box = line->closestBoxForPoint(pointInLine, isEditablePosition(p));
+        auto box = closestBoxForHorizontalPosition(*line, line->isHorizontal() ? pointInLine.x() : pointInLine.y(), isEditablePosition(p));
         if (!box)
             return VisiblePosition();
         auto& renderer = box->renderer();
@@ -1046,7 +1046,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
     if (line) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
         auto pointInLine = absoluteLineDirectionPointToLocalPointInBlock(line, lineDirectionPoint);
-        auto box = line->closestBoxForPoint(pointInLine, isEditablePosition(p));
+        auto box = closestBoxForHorizontalPosition(*line, line->isHorizontal() ? pointInLine.x() : pointInLine.y(), isEditablePosition(p));
         if (!box)
             return VisiblePosition();
         auto& renderer = box->renderer();

@@ -115,19 +115,14 @@ LeafBoxIterator Line::lastLeafBox() const
     });
 }
 
-LeafBoxIterator Line::closestBoxForPoint(const IntPoint& pointInContents, bool editableOnly) const
-{
-    return closestBoxForLogicalLeftPosition(isHorizontal() ? pointInContents.x() : pointInContents.y(), editableOnly);
-}
-
-LeafBoxIterator Line::closestBoxForLogicalLeftPosition(int leftPosition, bool editableOnly) const
+LeafBoxIterator closestBoxForHorizontalPosition(const Line& line, float horizontalPosition, bool editableOnly)
 {
     auto isEditable = [&](auto box) {
         return box && box->renderer().node() && box->renderer().node()->hasEditableStyle();
     };
 
-    auto firstBox = this->firstLeafBox();
-    auto lastBox = this->lastLeafBox();
+    auto firstBox = line.firstLeafBox();
+    auto lastBox = line.lastLeafBox();
 
     if (firstBox != lastBox) {
         if (firstBox->isLineBreak())
@@ -139,16 +134,16 @@ LeafBoxIterator Line::closestBoxForLogicalLeftPosition(int leftPosition, bool ed
     if (firstBox == lastBox && (!editableOnly || isEditable(firstBox)))
         return firstBox;
 
-    if (firstBox && leftPosition <= firstBox->logicalLeft() && !firstBox->renderer().isListMarker() && (!editableOnly || isEditable(firstBox)))
+    if (firstBox && horizontalPosition <= firstBox->logicalLeft() && !firstBox->renderer().isListMarker() && (!editableOnly || isEditable(firstBox)))
         return firstBox;
 
-    if (lastBox && leftPosition >= lastBox->logicalRight() && !lastBox->renderer().isListMarker() && (!editableOnly || isEditable(lastBox)))
+    if (lastBox && horizontalPosition >= lastBox->logicalRight() && !lastBox->renderer().isListMarker() && (!editableOnly || isEditable(lastBox)))
         return lastBox;
 
     auto closestBox = lastBox;
     for (auto box = firstBox; box; box = box.traverseNextOnLineIgnoringLineBreak()) {
         if (!box->renderer().isListMarker() && (!editableOnly || isEditable(box))) {
-            if (leftPosition < box->logicalRight())
+            if (horizontalPosition < box->logicalRight())
                 return box;
             closestBox = box;
         }

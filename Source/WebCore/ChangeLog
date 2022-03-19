@@ -1,5 +1,28 @@
 2022-03-19  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] Remove redundant InlineIterator::Line::closestBoxForPoint function
+        https://bugs.webkit.org/show_bug.cgi?id=238103
+
+        Reviewed by Antti Koivisto.
+
+        1. Rename closestBoxForLogicalLeftPosition to closestBoxForHorizontalPosition and move it off of the Line class.
+        2. Replace InlineIterator::Line::closestBoxForPoint calls with closestBoxForHorizontalPosition.
+        3. Tidy up Line class.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * layout/integration/InlineIteratorLine.cpp:
+        (WebCore::InlineIterator::closestBoxForHorizontalPosition):
+        (WebCore::InlineIterator::Line::closestBoxForPoint const): Deleted.
+        (WebCore::InlineIterator::Line::closestBoxForLogicalLeftPosition const): Deleted.
+        * layout/integration/InlineIteratorLine.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::findClosestTextAtAbsolutePoint):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+
+2022-03-19  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Rename InlineIterator::Line::blockDirectionPointInLine to contentStartInBlockDirection
         https://bugs.webkit.org/show_bug.cgi?id=238101
 

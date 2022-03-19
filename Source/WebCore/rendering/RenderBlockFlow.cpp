@@ -3353,7 +3353,7 @@ RenderText* RenderBlockFlow::findClosestTextAtAbsolutePoint(const FloatPoint& po
                 return nullptr;
 
             if (localPoint.y() > *previousRootInlineBoxBottom && localPoint.y() < box->logicalTop()) {
-                auto closestBox = box->line()->closestBoxForLogicalLeftPosition(localPoint.x());
+                auto closestBox = closestBoxForHorizontalPosition(*box->line(), localPoint.x());
                 if (closestBox && is<RenderText>(closestBox->renderer()))
                     return const_cast<RenderText*>(&downcast<RenderText>(closestBox->renderer()));
             }
@@ -3406,7 +3406,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
                     && (pointInLogicalContents.y() > nextLineWithChildren->lineBoxTop() || (!blocksAreFlipped && pointInLogicalContents.y() == nextLineWithChildren->lineBoxTop())))
                     continue;
             }
-            closestBox = line->closestBoxForLogicalLeftPosition(pointInLogicalContents.x());
+            closestBox = closestBoxForHorizontalPosition(*line, pointInLogicalContents.x());
             if (closestBox)
                 break;
         }
@@ -3416,7 +3416,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
 
     if (!moveCaretToBoundary && !closestBox && lastLineWithChildren) {
         // y coordinate is below last root line box, pretend we hit it
-        closestBox = lastLineWithChildren->closestBoxForLogicalLeftPosition(pointInLogicalContents.x());
+        closestBox = closestBoxForHorizontalPosition(*lastLineWithChildren, pointInLogicalContents.x());
     }
 
     if (closestBox) {

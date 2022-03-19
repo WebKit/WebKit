@@ -69,17 +69,14 @@ public:
     LayoutUnit contentLogicalTopAdjustedForPrecedingLine() const;
     LayoutUnit contentLogicalBottomAdjustedForFollowingLine() const;
 
-    bool isHorizontal() const;
+    const RenderBlockFlow& containingBlock() const;
+    RenderFragmentContainer* containingFragment() const;
 
+    bool isHorizontal() const;
     FontBaseline baselineType() const;
 
-    const RenderBlockFlow& containingBlock() const;
-
-    // FIXME: We may move these multi-column bits to some dedicated structures.
-    RenderFragmentContainer* containingFragment() const;
-    bool isFirstAfterPageBreak() const;
-
     bool isFirst() const;
+    bool isFirstAfterPageBreak() const;
 
     LeafBoxIterator firstLeafBox() const;
     LeafBoxIterator lastLeafBox() const;
@@ -87,9 +84,6 @@ public:
     LineIterator next() const;
     LineIterator previous() const;
 
-    LeafBoxIterator closestBoxForPoint(const IntPoint& pointInContents, bool editableOnly) const;
-    LeafBoxIterator closestBoxForLogicalLeftPosition(int position, bool editableOnly = false) const;
-    
 private:
     friend class LineIterator;
 
@@ -126,6 +120,7 @@ private:
 
 LineIterator firstLineFor(const RenderBlockFlow&);
 LineIterator lastLineFor(const RenderBlockFlow&);
+LeafBoxIterator closestBoxForHorizontalPosition(const Line&, float horizontalPosition, bool editableOnly = false);
 
 // -----------------------------------------------
 inline LayoutUnit contentStartInBlockDirection(const Line& line)
