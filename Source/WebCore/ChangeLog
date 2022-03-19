@@ -1,3 +1,16 @@
+2022-03-18  Chris Dumez  <cdumez@apple.com>
+
+        Optimize AtomHTMLToken::initializeAttributes()
+        https://bugs.webkit.org/show_bug.cgi?id=238074
+
+        Reviewed by Geoffrey Garen.
+
+        Use a HashSet to find duplicate attributes instead of doing a linear search.
+        This is a confirmed 1.2% progression on Speedometer on iMac20,1 via A/B bots.
+
+        * html/parser/AtomHTMLToken.h:
+        (WebCore::AtomHTMLToken::initializeAttributes):
+
 2022-03-18  Jonathan Bedard  <jbedard@apple.com>
 
         [iOS 15.4] Fix unused variables
