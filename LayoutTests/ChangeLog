@@ -1,3 +1,14 @@
+2022-03-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Make fast/text/emoji-num-glyphs.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=238120
+        <rdar://problem/88842010>
+
+        Unreviewed test gardening.
+
+        * fast/text/emoji-num-glyphs-expected.txt:
+        * fast/text/emoji-num-glyphs.html:
+
 2022-03-19  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r285529): Flash of missing text when content on https://ahumanfuture.co animates
