@@ -69,8 +69,6 @@ private:
     friend class Internals;
 
     WEBCORE_EXPORT Seconds intervalClampedToMinimum() const;
-    Seconds intervalClampedToMinimum(bool oneShot) const;
-    bool isOneShot() const;
 
     bool isDOMTimersThrottlingEnabled(Document&) const;
     void updateThrottlingStateIfNecessary(const DOMTimerFireState&);
