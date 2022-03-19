@@ -175,8 +175,30 @@ public:
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
 class YarrJITRegisters {
 public:
-    YarrJITRegisters()
+    YarrJITRegisters() = default;
+
+    void validate()
     {
+#if ASSERT_ENABLED
+        ASSERT(input != InvalidGPRReg);
+        ASSERT(index != InvalidGPRReg);
+        ASSERT(length != InvalidGPRReg);
+        ASSERT(output != InvalidGPRReg);
+
+        ASSERT(returnRegister != InvalidGPRReg);
+        ASSERT(returnRegister2 != InvalidGPRReg);
+
+        ASSERT(regT0 != InvalidGPRReg);
+        ASSERT(regT1 != InvalidGPRReg);
+
+        ASSERT(noOverlap(input, index, length, output, regT0, regT1));
+        ASSERT(noOverlap(returnRegister, returnRegister2));
+        ASSERT(noOverlap(index, output, returnRegister));
+
+#if CPU(X86_64) && OS(WINDOWS)
+        ASSERT(noOverlap(X86Registers::ecx, returnRegister, m_regs.returnRegister2));
+#endif
+#endif
     }
 
     // Argument registers
@@ -184,6 +206,7 @@ public:
     GPRReg index { InvalidGPRReg };
     GPRReg length { InvalidGPRReg };
     GPRReg output { InvalidGPRReg };
+
     GPRReg matchingContext { InvalidGPRReg };
     GPRReg freelistRegister { InvalidGPRReg };
     GPRReg freelistSizeRegister { InvalidGPRReg };

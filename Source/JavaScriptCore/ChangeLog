@@ -1,3 +1,24 @@
+2022-03-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Reduce # of registers used in RegExpTestInline to allow using unlinked DFG in x64
+        https://bugs.webkit.org/show_bug.cgi?id=238092
+
+        Reviewed by Michael Saboff.
+
+        This patch reduces # of registers used in RegExpTestInline implementation to make it work
+        well for x64 unlinked DFG since it can reduce # of registers to use one callee-save register
+        for constants buffer.
+
+        We also add YarrJITRegisters::validate to ensure that used registers meet the invariants in YarrJIT.
+
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileRegExpTestInline):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::jitCompileInlinedTest):
+        * yarr/YarrJITRegisters.h:
+        (JSC::Yarr::YarrJITRegisters::validate):
+        (JSC::Yarr::YarrJITRegisters::YarrJITRegisters): Deleted.
+
 2022-03-17  Keith Miller  <keith_miller@apple.com>
 
         Fix crash in Bleacher Report due to bad JSObjectRef passed to API

@@ -2443,6 +2443,7 @@ class YarrGenerator final : public YarrJITInfo {
                 // slot, and return. In the case of pattern with a fixed size, we will
                 // not have yet set the value in the first 
                 ASSERT(m_regs.index != m_regs.returnRegister);
+                ASSERT(m_regs.output != m_regs.returnRegister);
                 if (m_pattern.m_body->m_hasFixedSize) {
                     if (priorAlternative->m_minimumSize)
                         m_jit.sub32(m_regs.index, MacroAssembler::Imm32(priorAlternative->m_minimumSize), m_regs.returnRegister);
@@ -4033,6 +4034,7 @@ class YarrGenerator final : public YarrJITInfo {
 #if CPU(X86_64)
 #if OS(WINDOWS)
         // Store the return value in the allocated space pointed by rcx.
+        ASSERT(noOverlap(X86Registers::ecx, m_regs.returnRegister, m_regs.returnRegister2));
         m_jit.pop(X86Registers::ecx);
         m_jit.store64(m_regs.returnRegister, MacroAssembler::Address(X86Registers::ecx));
         m_jit.store64(m_regs.returnRegister2, MacroAssembler::Address(X86Registers::ecx, sizeof(void*)));
@@ -4749,6 +4751,8 @@ void jitCompileInlinedTest(StackCheck* m_compilationThreadStackChecker, const St
 {
     Yarr::ErrorCode errorCode;
     Yarr::YarrPattern pattern(patternString, flags, errorCode);
+
+    jitRegisters.validate();
 
     YarrGenerator<YarrJITRegisters> yarrGenerator(jit, vm, &boyerMooreData, jitRegisters, pattern, patternString, charSize, JITCompileMode::InlineTest);
     yarrGenerator.setStackChecker(m_compilationThreadStackChecker);
