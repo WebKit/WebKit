@@ -229,9 +229,9 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
 
     if (boxAndOffset.box) {
         auto line = boxAndOffset.box->line();
-        LayoutUnit top = line->top();
+        auto top = line->contentLogicalTop();
         rect.setY(top);
-        rect.setHeight(line->bottom() - top);
+        rect.setHeight(line->contentLogicalBottom() - top);
     }
 
     // If height of box is smaller than font height, use the latter one,

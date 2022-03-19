@@ -1591,7 +1591,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
             if (is<RenderText>(*o)) {
                 auto& textRenderer = downcast<RenderText>(*o);
                 if (auto run = InlineIterator::firstTextBoxFor(textRenderer))
-                    point.move(textRenderer.linesBoundingBox().x(), run->line()->top());
+                    point.move(textRenderer.linesBoundingBox().x(), run->line()->contentLogicalTop());
             } else if (is<RenderBox>(*o))
                 point.moveBy(downcast<RenderBox>(*o).location());
             point = o->container()->localToAbsolute(point, UseTransforms, &insideFixed);

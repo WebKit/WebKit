@@ -3421,7 +3421,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
 
     if (closestBox) {
         if (moveCaretToBoundary) {
-            LayoutUnit firstLineWithChildrenTop = std::min(firstLineWithChildren->enclosingTopForHitTesting(), LayoutUnit(firstLineWithChildren->top()));
+            LayoutUnit firstLineWithChildrenTop = std::min(firstLineWithChildren->enclosingTopForHitTesting(), LayoutUnit(firstLineWithChildren->contentLogicalTop()));
             if (pointInLogicalContents.y() < firstLineWithChildrenTop
                 || (blocksAreFlipped && pointInLogicalContents.y() == firstLineWithChildrenTop)) {
                 auto box = firstLineWithChildren->firstLeafBox();
@@ -3474,8 +3474,8 @@ void RenderBlockFlow::addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rec
         auto line = box->line();
         // FIXME: This is mixing physical and logical coordinates.
         auto unflippedVisualRect = box->visualRectIgnoringBlockDirection();
-        auto top = std::max(line->top(), LayoutUnit { unflippedVisualRect.y() });
-        auto bottom = std::min(line->bottom(), LayoutUnit { unflippedVisualRect.maxY() });
+        auto top = std::max(line->contentLogicalTop(), LayoutUnit { unflippedVisualRect.y() });
+        auto bottom = std::min(line->contentLogicalBottom(), LayoutUnit { unflippedVisualRect.maxY() });
         auto rect = LayoutRect { LayoutUnit { additionalOffset.x() + unflippedVisualRect.x() }
             , additionalOffset.y() + top
             , LayoutUnit { unflippedVisualRect.width() }

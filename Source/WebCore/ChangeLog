@@ -1,5 +1,30 @@
 2022-03-19  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] Rename InlineIterator::Line:top/bottom to contentLogicalTop/contentLogicalBottom
+        https://bugs.webkit.org/show_bug.cgi?id=238085
+
+        Reviewed by Antti Koivisto.
+
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::Line::contentLogicalTop const):
+        (WebCore::InlineIterator::Line::contentLogicalBottom const):
+        (WebCore::InlineIterator::Line::top const): Deleted.
+        (WebCore::InlineIterator::Line::bottom const): Deleted.
+        * layout/integration/InlineIteratorLineLegacyPath.h:
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalTop const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalBottom const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::top const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::bottom const): Deleted.
+        * layout/integration/InlineIteratorLineModernPath.h:
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTop const):
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalBottom const):
+        (WebCore::InlineIterator::LineIteratorModernPath::enclosingTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::LineIteratorModernPath::enclosingBottomAdjustedForFollowingLine const):
+        (WebCore::InlineIterator::LineIteratorModernPath::top const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::bottom const): Deleted.
+
+2022-03-19  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] InlineIterator::Line::enclosingBottom should read enclosingBottomAdjustedForFollowingLine
         https://bugs.webkit.org/show_bug.cgi?id=238084
 

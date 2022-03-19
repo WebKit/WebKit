@@ -54,13 +54,13 @@ public:
 
     Line(PathVariant&&);
 
-    LayoutUnit top() const;
-    LayoutUnit bottom() const;
-
     LayoutUnit lineBoxTop() const;
     LayoutUnit lineBoxBottom() const;
     LayoutUnit lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
 
+    // FIXME: Make sure we use the same type for content geometry.
+    LayoutUnit contentLogicalTop() const;
+    LayoutUnit contentLogicalBottom() const;
     float contentLogicalLeft() const;
     float contentLogicalRight() const;
     float contentLogicalWidth() const;
@@ -139,17 +139,17 @@ inline Line::Line(PathVariant&& path)
 {
 }
 
-inline LayoutUnit Line::top() const
+inline LayoutUnit Line::contentLogicalTop() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.top();
+        return path.contentLogicalTop();
     });
 }
 
-inline LayoutUnit Line::bottom() const
+inline LayoutUnit Line::contentLogicalBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.bottom();
+        return path.contentLogicalBottom();
     });
 }
 

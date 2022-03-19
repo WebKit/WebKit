@@ -674,11 +674,11 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
             run.traverseNextTextBox();
 
         auto line = run->line();
-        LayoutUnit top = std::min(line->enclosingTopForHitTesting(), line->top());
+        auto top = std::min(line->enclosingTopForHitTesting(), line->contentLogicalTop());
         if (pointBlockDirection > top || (!blocksAreFlipped && pointBlockDirection == top)) {
             auto bottom = LineSelection::logicalBottom(*line);
             if (auto nextLine = line->next())
-                bottom = std::min(bottom, nextLine->top());
+                bottom = std::min(bottom, nextLine->contentLogicalTop());
 
             if (pointBlockDirection < bottom || (blocksAreFlipped && pointBlockDirection == bottom)) {
                 ShouldAffinityBeDownstream shouldAffinityBeDownstream;

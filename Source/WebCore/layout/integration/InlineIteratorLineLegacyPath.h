@@ -43,8 +43,8 @@ public:
     LineIteratorLegacyPath& operator=(const LineIteratorLegacyPath&) = default;
     LineIteratorLegacyPath& operator=(LineIteratorLegacyPath&&) = default;
 
-    LayoutUnit top() const { return m_rootInlineBox->lineTop(); }
-    LayoutUnit bottom() const { return m_rootInlineBox->lineBottom(); }
+    LayoutUnit contentLogicalTop() const { return m_rootInlineBox->lineTop(); }
+    LayoutUnit contentLogicalBottom() const { return m_rootInlineBox->lineBottom(); }
     LayoutUnit enclosingTopAdjustedForPrecedingLine() const { return m_rootInlineBox->selectionTop(); }
     LayoutUnit enclosingTopForHitTesting() const { return m_rootInlineBox->selectionTop(LegacyRootInlineBox::ForHitTesting::Yes); }
     LayoutUnit enclosingBottomAdjustedForFollowingLine() const { return m_rootInlineBox->selectionBottom(); }
