@@ -46,8 +46,6 @@
 #import <UIKit/UIFontDescriptor.h>
 #endif
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface WKSecureCodingArchivingDelegate : NSObject <NSKeyedArchiverDelegate, NSKeyedUnarchiverDelegate>
 @end
 
@@ -670,7 +668,5 @@ template<> struct EnumTraits<IPC::NSType> {
     >;
 };
 } // namespace WTF
-
-NS_ASSUME_NONNULL_END
 
 #endif // PLATFORM(COCOA)

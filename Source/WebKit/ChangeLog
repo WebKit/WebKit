@@ -1,3 +1,9 @@
+2022-03-19  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build (hopefully)
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+
 2022-03-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Teach WebKit how to serialize CGColors
