@@ -1,3 +1,23 @@
+2022-03-18  Gavin Phillips  <gavin.p@apple.com>
+
+        Update preference location used for CaptivePortal testing. 
+        https://bugs.webkit.org/show_bug.cgi?id=237970
+        <rdar://problem/88897735>
+
+        Reviewed by Brent Fulgham.
+
+        Update the location of the setting used to determine whether we should ignore CaptivePortal requests for testing 
+        as well as group the various iterations of preference checking into a single location. 
+
+        * UIProcess/API/Cocoa/_WKSystemPreferences.mm:
+        (+[_WKSystemPreferences isCaptivePortalModeEnabled]):
+        (+[_WKSystemPreferences setCaptivePortalModeEnabled:]):
+        (+[_WKSystemPreferences isCaptivePortalModeIgnored:]):
+        (+[_WKSystemPreferences setCaptivePortalModeIgnored:ignore:]):
+        * UIProcess/API/Cocoa/_WKSystemPreferencesInternal.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::isCaptivePortalModeEnabledBySystemIgnoringCaching):
+
 2022-03-18  Jonathan Bedard  <jbedard@apple.com>
 
         [iOS 15.4] Fix unused variables

@@ -130,7 +130,6 @@ NSString *WebKitJSCFTLJITEnabledDefaultsKey = @"WebKitJSCFTLJITEnabledDefaultsKe
 static NSString *WebKitApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification = @"NSApplicationDidChangeAccessibilityEnhancedUserInterfaceNotification";
 static CFStringRef AppleColorPreferencesChangedNotification = CFSTR("AppleColorPreferencesChangedNotification");
 #endif
-static const char* const WebKitCaptivePortalModeChangedNotification_Legacy = "WebKitCaptivePortalModeEnabled";
 
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
 
@@ -951,9 +950,6 @@ static bool isCaptivePortalModeEnabledBySystemIgnoringCaching()
 {
     if (auto& enabledForTesting = isCaptivePortalModeEnabledGloballyForTesting())
         return *enabledForTesting;
-
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:[NSString stringWithUTF8String:WebKitCaptivePortalModeChangedNotification_Legacy]])
-        return true;
 
     if (![_WKSystemPreferences isCaptivePortalModeEnabled])
         return false;
