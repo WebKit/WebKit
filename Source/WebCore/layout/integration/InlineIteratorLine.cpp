@@ -162,41 +162,6 @@ int Line::blockDirectionPointInLine() const
     return !containingBlock().style().isFlippedBlocksWritingMode() ? std::max(top(), enclosingTopForHitTesting()) : std::min(bottom(), enclosingBottom());
 }
 
-LayoutUnit Line::enclosingTopAdjustedForPrecedingBlock() const
-{
-    return containingBlock().adjustEnclosingTopForPrecedingBlock(enclosingTopAdjustedForPrecedingLine());
-}
-
-RenderObject::HighlightState Line::selectionState() const
-{
-    auto& block = containingBlock();
-    if (block.selectionState() == RenderObject::HighlightState::None)
-        return RenderObject::HighlightState::None;
-
-    auto lineState = RenderObject::HighlightState::None;
-    for (auto box = firstLeafBox(); box; box.traverseNextOnLine()) {
-        auto boxState = box->selectionState();
-        if (lineState == RenderObject::HighlightState::None)
-            lineState = boxState;
-        else if (lineState == RenderObject::HighlightState::Start) {
-            if (boxState == RenderObject::HighlightState::End || boxState == RenderObject::HighlightState::None)
-                lineState = RenderObject::HighlightState::Both;
-        } else if (lineState == RenderObject::HighlightState::Inside) {
-            if (boxState == RenderObject::HighlightState::Start || boxState == RenderObject::HighlightState::End)
-                lineState = boxState;
-            else if (boxState == RenderObject::HighlightState::None)
-                lineState = RenderObject::HighlightState::End;
-        } else if (lineState == RenderObject::HighlightState::End) {
-            if (boxState == RenderObject::HighlightState::Start)
-                lineState = RenderObject::HighlightState::Both;
-        }
-
-        if (lineState == RenderObject::HighlightState::Both)
-            break;
-    }
-    return lineState;
-}
-
 }
 }
 

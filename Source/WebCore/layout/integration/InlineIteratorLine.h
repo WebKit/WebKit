@@ -96,14 +96,7 @@ private:
     friend class WebCore::LineSelection;
 
     LayoutUnit enclosingBottom() const;
-
-    LayoutRect enclosingLogicalRect() const;
-    LayoutRect enclosingPhysicalRect() const;
-
     LayoutUnit enclosingTopAdjustedForPrecedingLine() const;
-    LayoutUnit enclosingTopAdjustedForPrecedingBlock() const;
-
-    RenderObject::HighlightState selectionState() const;
 
     PathVariant m_pathVariant;
 };
@@ -193,20 +186,6 @@ inline LayoutUnit Line::lineBoxBottom() const
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.lineBoxBottom();
     });
-}
-
-inline LayoutRect Line::enclosingLogicalRect() const
-{
-    return { LayoutPoint { contentLogicalLeft(), enclosingTopAdjustedForPrecedingLine() }, LayoutPoint { contentLogicalRight(), enclosingBottom() } };
-}
-
-inline LayoutRect Line::enclosingPhysicalRect() const
-{
-    auto physicalRect = enclosingLogicalRect();
-    if (!isHorizontal())
-        physicalRect = physicalRect.transposedRect();
-    containingBlock().flipForWritingMode(physicalRect);
-    return physicalRect;
 }
 
 inline float Line::contentLogicalLeft() const
