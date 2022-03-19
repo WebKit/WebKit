@@ -1,3 +1,60 @@
+2022-03-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Teach WebKit how to serialize CGColors
+        https://bugs.webkit.org/show_bug.cgi?id=238069
+        <rdar://problem/90124325>
+
+        Reviewed by Dean Jackson and Tim Horton.
+
+        We have 2 ways of serializing Cocoa objects: NS type handling in ArgumentCodersCocoa.mm,
+        and CF type handling in ArgumentCodersCF.mm. CGColors are CF types, so this patch adds
+        direct support in ArgumentCodersCF to serialize them, by round-tripping them through
+        WebCore::Colors. However, NS containers (like font descriptor attribute dictionaries)
+        can contain CGColors, so this patch also teaches ArgumentCodersCocoa that there may be
+        CF types inside NS containers. If one is present, ArgumentCodersCocoa has to call into
+        ArgumentCodersCF to serialize it.
+
+        This patch doesn't add support for the reverse path, where an NS object is contained
+        within a CF container. I intentionally omitted implementing this because I wasn't sure
+        if it would be a layering violation; ArgumentCodersCococa.mm already #includes
+        ArgumentCodersCF.h, but ArgumentCodersCF.mm doesn't #include ArgumentCodersCocoa.h.
+        This path isn't actually necessary to solve my problem at hand, so someone else can
+        add support if necessary in the future. I also added a comment at the site where the
+        code would fail, describing what the problem is and a potential workaround.
+
+        This patch also adds support for our NSSecureCoding implementation for CGColors. This
+        is necessary because sometimes we want to serialize things like NSAttributedStrings,
+        which we don't have direct support for, so we use NSSecureCoding to serialize them
+        instead. NSAttributedStrings can contain fonts whose descriptor dictionaries contain
+        CGColors, so this path needs to work with CGColors too. Support is implemented using
+        NSKeyedArchiverDelegate and NSKeyedUnarchiverDelegate.
+
+        Test: IPCTestingAPI.CGColorInNSSecureCoding
+              The non-NSSecureCoding parts of this patch are tested by our regular LayoutTests
+              when DOM GPU Process rendering is enabled.
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (-[WKSecureCodingArchivingDelegate archiver:willEncodeObject:]):
+        (-[WKSecureCodingArchivingDelegate unarchiver:didDecodeObject:]):
+        (-[WKSecureCodingCGColorWrapper wrappedColor]):
+        (+[WKSecureCodingCGColorWrapper supportsSecureCoding]):
+        (-[WKSecureCodingCGColorWrapper encodeWithCoder:]):
+        (-[WKSecureCodingCGColorWrapper initWithCoder:]):
+        (-[WKSecureCodingCGColorWrapper initWithCGColor:]):
+        (IPC::typeFromObject):
+        (IPC::decodeSecureCodingInternal):
+        (IPC::encodeCFInternal):
+        (IPC::decodeCFInternal):
+        (IPC::encodeObject):
+        (IPC::decodeObject):
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::typeFromCFTypeRef):
+        (IPC::ArgumentCoder<CFTypeRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CFTypeRef>>::decode):
+        (IPC::ArgumentCoder<CGColorRef>::encode):
+        (IPC::ArgumentCoder<RetainPtr<CGColorRef>>::decode):
+        * Shared/cf/ArgumentCodersCF.h:
+
 2022-03-18  Gavin Phillips  <gavin.p@apple.com>
 
         Update preference location used for CaptivePortal testing. 

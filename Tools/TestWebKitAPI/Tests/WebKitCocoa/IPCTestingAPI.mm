@@ -548,4 +548,33 @@ TEST(IPCTestingAPI, CanInterceptFindString)
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
+TEST(IPCTestingAPI, CGColorInNSSecureCoding)
+{
+    auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
+
+    RetainPtr<id<NSKeyedArchiverDelegate, NSKeyedUnarchiverDelegate>> delegate = adoptNS([[NSClassFromString(@"WKSecureCodingArchivingDelegate") alloc] init]);
+    archiver.get().delegate = delegate.get();
+
+    auto payload = @{ @"SomeString" : static_cast<id>(adoptCF(CGColorCreateSRGB(0.2, 0.3, 0.4, 0.5)).get()) };
+    [archiver encodeObject:payload forKey:NSKeyedArchiveRootObjectKey];
+    [archiver finishEncoding];
+    [archiver setDelegate:nil];
+
+    auto data = [archiver encodedData];
+
+    auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:data error:nullptr]);
+    unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
+    unarchiver.get().delegate = delegate.get();
+
+    auto allowedClassSet = adoptNS([NSMutableSet new]);
+    [allowedClassSet addObject:NSDictionary.class];
+    [allowedClassSet addObject:NSString.class];
+    [allowedClassSet addObject:NSClassFromString(@"WKSecureCodingCGColorWrapper")];
+
+    id result = [unarchiver decodeObjectOfClasses:allowedClassSet.get() forKey:NSKeyedArchiveRootObjectKey];
+    EXPECT_TRUE([payload isEqual:result]);
+    [unarchiver finishDecoding];
+    unarchiver.get().delegate = nil;
+}
+
 #endif

@@ -52,25 +52,39 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface WKSecureCodingURLWrapper : NSURL <NSSecureCoding>
-- (instancetype _Nullable)initWithURL:(NSURL *)wrappedURL;
+- (instancetype)initWithURL:(NSURL *)wrappedURL;
 @property (nonatomic, readonly) NSURL * wrappedURL;
+@end
+
+@interface WKSecureCodingCGColorWrapper : NSObject <NSSecureCoding>
+- (instancetype)initWithCGColor:(CGColorRef)wrappedColor;
+@property (nonatomic, readonly) CGColorRef wrappedColor;
 @end
 
 @implementation WKSecureCodingArchivingDelegate
 
-- (nullable id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
+- (id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
 {
     if (auto unwrappedURL = dynamic_objc_cast<NSURL>(object))
         return adoptNS([[WKSecureCodingURLWrapper alloc] initWithURL:unwrappedURL]).autorelease();
 
+    // We can't just return a WebCore::CocoaColor here, because the decoder would
+    // have no way of distinguishing an authentic WebCore::CocoaColor vs a CGColor
+    // masquerading as a WebCore::CocoaColor.
+    if (CFGetTypeID(object) == CGColorGetTypeID())
+        return adoptNS([[WKSecureCodingCGColorWrapper alloc] initWithCGColor:static_cast<CGColorRef>(object)]).autorelease();
+
     return object;
 }
 
-- (id _Nullable)unarchiver:(NSKeyedUnarchiver *)unarchiver didDecodeObject:(id _Nullable) NS_RELEASES_ARGUMENT object NS_RETURNS_RETAINED
+- (id)unarchiver:(NSKeyedUnarchiver *)unarchiver didDecodeObject:(id) NS_RELEASES_ARGUMENT object NS_RETURNS_RETAINED
 {
     auto adoptedObject = adoptNS(object);
     if (auto wrapper = dynamic_objc_cast<WKSecureCodingURLWrapper>(adoptedObject.get()))
         return retainPtr(wrapper.wrappedURL).leakRef();
+
+    if (auto wrapper = dynamic_objc_cast<WKSecureCodingCGColorWrapper>(adoptedObject.get()))
+        return static_cast<id>(retainPtr(wrapper.wrappedColor).leakRef());
 
     return adoptedObject.leakRef();
 }
@@ -107,7 +121,7 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
     [coder encodeBytes:bytes.data() length:bytes.size()];
 }
 
-- (_Nullable instancetype)initWithCoder:(NSCoder *)coder
+- (instancetype)initWithCoder:(NSCoder *)coder
 {
     auto selfPtr = adoptNS([super initWithString:@""]);
     if (!selfPtr)
@@ -133,10 +147,54 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
     return selfPtr.leakRef();
 }
 
-- (_Nullable instancetype)initWithURL:(NSURL *)url
+- (instancetype)initWithURL:(NSURL *)url
 {
     if (self = [super initWithString:@""])
         m_wrappedURL = url;
+
+    return self;
+}
+
+@end
+
+@implementation WKSecureCodingCGColorWrapper {
+    RetainPtr<CGColorRef> m_wrappedColor;
+}
+
+- (CGColorRef)wrappedColor
+{
+    return m_wrappedColor.get();
+}
+
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
+static constexpr NSString *innerColorKey = @"WK.CocoaColor";
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    RELEASE_ASSERT(m_wrappedColor);
+    [coder encodeObject:[WebCore::CocoaColor colorWithCGColor:m_wrappedColor.get()] forKey:innerColorKey];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    auto selfPtr = adoptNS([super init]);
+    if (!selfPtr)
+        return nil;
+
+    RetainPtr<WebCore::CocoaColor> color = static_cast<WebCore::CocoaColor *>([coder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:innerColorKey]);
+    m_wrappedColor = color.get().CGColor;
+
+    return selfPtr.leakRef();
+}
+
+- (instancetype)initWithCGColor:(CGColorRef)color
+{
+    if (self = [super init])
+        m_wrappedColor = color;
 
     return self;
 }
@@ -159,6 +217,7 @@ enum class NSType {
     SecureCoding,
     String,
     URL,
+    CF,
     Unknown,
 };
 
@@ -187,6 +246,10 @@ static NSType typeFromObject(id object)
         return NSType::String;
     if ([object isKindOfClass:[NSURL class]])
         return NSType::URL;
+    // Not all CF types are toll-free-bridged to NS types.
+    // Non-toll-free-bridged CF types do not conform to NSSecureCoding.
+    if ([object isKindOfClass:NSClassFromString(@"__NSCFType")])
+        return NSType::CF;
 
     // Check NSSecureCoding after the specific cases since
     // most of the classes above conform to NSSecureCoding,
@@ -430,6 +493,7 @@ static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder,
 
     auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithArray:allowedClasses]);
     [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
+    [allowedClassSet addObject:WKSecureCodingCGColorWrapper.class];
     
     @try {
         id result = [unarchiver decodeObjectOfClasses:allowedClassSet.get() forKey:NSKeyedArchiveRootObjectKey];
@@ -474,6 +538,22 @@ static inline std::optional<RetainPtr<id>> decodeURLInternal(Decoder& decoder)
     return { bridge_cast(WTFMove(URL)) };
 }
 
+#pragma mark - CF
+
+static inline void encodeCFInternal(Encoder& encoder, CFTypeRef cf)
+{
+    ArgumentCoder<CFTypeRef>::encode(encoder, cf);
+}
+
+static inline std::optional<RetainPtr<id>> decodeCFInternal(Decoder& decoder)
+{
+    auto result = ArgumentCoder<RetainPtr<CFTypeRef>>::decode(decoder);
+    if (!result)
+        return std::nullopt;
+
+    return static_cast<id>(result->get());
+}
+
 #pragma mark - Entry Point Encoder / Decoder
 
 void encodeObject(Encoder& encoder, id object)
@@ -516,6 +596,9 @@ void encodeObject(Encoder& encoder, id object)
     case NSType::URL:
         encodeURLInternal(encoder, static_cast<NSURL *>(object));
         return;
+    case NSType::CF:
+        encodeCFInternal(encoder, static_cast<CFTypeRef>(object));
+        return;
     case NSType::Unknown:
         break;
     }
@@ -556,6 +639,8 @@ std::optional<RetainPtr<id>> decodeObject(Decoder& decoder, NSArray<Class> *allo
         return decodeDataInternal(decoder);
     case NSType::URL:
         return decodeURLInternal(decoder);
+    case NSType::CF:
+        return decodeCFInternal(decoder);
     case NSType::Unknown:
         break;
     }
@@ -580,6 +665,7 @@ template<> struct EnumTraits<IPC::NSType> {
         IPC::NSType::SecureCoding,
         IPC::NSType::String,
         IPC::NSType::URL,
+        IPC::NSType::CF,
         IPC::NSType::Unknown
     >;
 };

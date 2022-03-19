@@ -41,9 +41,6 @@ namespace IPC {
 class Encoder;
 class Decoder;
 
-// NOTE: These coders are structured such that they expose encoder functions for both CFType and RetainPtr<CFType>
-// but only a decoder only for RetainPtr<CFType>.
-
 template<typename T>
 struct CFRetainPtrArgumentCoder {
     template<typename Encoder> static void encode(Encoder& encoder, const RetainPtr<T>& retainPtr)
@@ -127,6 +124,13 @@ template<> struct ArgumentCoder<CGColorSpaceRef> {
 };
 template<> struct ArgumentCoder<RetainPtr<CGColorSpaceRef>> : CFRetainPtrArgumentCoder<CGColorSpaceRef> {
     static std::optional<RetainPtr<CGColorSpaceRef>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<CGColorRef> {
+    template<typename Encoder> static void encode(Encoder&, CGColorRef);
+};
+template<> struct ArgumentCoder<RetainPtr<CGColorRef>> : CFRetainPtrArgumentCoder<CGColorRef> {
+    static std::optional<RetainPtr<CGColorRef>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<SecCertificateRef> {
