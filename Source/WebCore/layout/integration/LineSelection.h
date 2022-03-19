@@ -33,11 +33,11 @@ namespace WebCore {
 class LineSelection {
 public:
     static LayoutUnit logicalTop(const InlineIterator::Line& line) { return line.enclosingTopAdjustedForPrecedingLine(); }
-    static LayoutUnit logicalBottom(const InlineIterator::Line& line) { return line.enclosingBottom(); }
+    static LayoutUnit logicalBottom(const InlineIterator::Line& line) { return line.enclosingBottomAdjustedForFollowingLine(); }
 
     static LayoutRect logicalRect(const InlineIterator::Line& line)
     {
-        return { LayoutPoint { line.contentLogicalLeft(), line.enclosingTopAdjustedForPrecedingLine() }, LayoutPoint { line.contentLogicalRight(), line.enclosingBottom() } };
+        return { LayoutPoint { line.contentLogicalLeft(), line.enclosingTopAdjustedForPrecedingLine() }, LayoutPoint { line.contentLogicalRight(), line.enclosingBottomAdjustedForFollowingLine() } };
     }
 
     static LayoutRect physicalRect(const InlineIterator::Line& line)

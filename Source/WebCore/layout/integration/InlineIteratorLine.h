@@ -95,8 +95,8 @@ private:
     // FIXME: This is temporary.
     friend class WebCore::LineSelection;
 
-    LayoutUnit enclosingBottom() const;
     LayoutUnit enclosingTopAdjustedForPrecedingLine() const;
+    LayoutUnit enclosingBottomAdjustedForFollowingLine() const;
 
     PathVariant m_pathVariant;
 };
@@ -167,10 +167,10 @@ inline LayoutUnit Line::enclosingTopForHitTesting() const
     });
 }
 
-inline LayoutUnit Line::enclosingBottom() const
+inline LayoutUnit Line::enclosingBottomAdjustedForFollowingLine() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.enclosingBottom();
+        return path.enclosingBottomAdjustedForFollowingLine();
     });
 }
 

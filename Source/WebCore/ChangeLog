@@ -1,5 +1,22 @@
 2022-03-19  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] InlineIterator::Line::enclosingBottom should read enclosingBottomAdjustedForFollowingLine
+        https://bugs.webkit.org/show_bug.cgi?id=238084
+
+        Reviewed by Antti Koivisto.
+
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::Line::enclosingBottomAdjustedForFollowingLine const):
+        (WebCore::InlineIterator::Line::enclosingBottom const): Deleted.
+        * layout/integration/InlineIteratorLineLegacyPath.h:
+        (WebCore::InlineIterator::LineIteratorLegacyPath::enclosingBottomAdjustedForFollowingLine const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::enclosingBottom const): Deleted.
+        * layout/integration/InlineIteratorLineModernPath.h:
+        (WebCore::InlineIterator::LineIteratorModernPath::enclosingBottomAdjustedForFollowingLine const):
+        (WebCore::InlineIterator::LineIteratorModernPath::enclosingBottom const): Deleted.
+
+2022-03-19  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Move selection specific code from InlineIterator::Line to LineSelection
         https://bugs.webkit.org/show_bug.cgi?id=238083
 
