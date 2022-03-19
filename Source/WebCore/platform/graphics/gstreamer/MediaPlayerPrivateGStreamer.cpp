@@ -3117,7 +3117,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                     object.stride[i] = GST_VIDEO_INFO_PLANE_STRIDE(&videoInfo, i);
                     object.modifier[i] = 0;
                 }
-                return object;
+                return WTFMove(object);
             });
         return;
     }
@@ -3126,7 +3126,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     // and copy over the data for each plane.
     GBMBufferSwapchain::BufferDescription bufferDescription {
         DMABufFormat::create(fourccValue(GST_VIDEO_INFO_FORMAT(&videoInfo))),
-        GST_VIDEO_INFO_WIDTH(&videoInfo), GST_VIDEO_INFO_HEIGHT(&videoInfo),
+        static_cast<uint32_t>GST_VIDEO_INFO_WIDTH(&videoInfo), static_cast<uint32_t>GST_VIDEO_INFO_HEIGHT(&videoInfo),
     };
     if (bufferDescription.format.fourcc == DMABufFormat::FourCC::Invalid)
         return;

@@ -1,3 +1,10 @@
+2022-03-19  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE clang build fix after r291343.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::pushDMABufToCompositor):
+
 2022-03-19  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Add Typed OM support for container units
