@@ -19,6 +19,7 @@ depends:
 - sdk/eigen.bst
 - sdk/enchant-2.bst
 - sdk/ffmpeg.bst
+- sdk/gi-docgen.bst
 - sdk/glib-networking.bst
 - sdk/glib.bst
 - sdk/graphviz.bst
