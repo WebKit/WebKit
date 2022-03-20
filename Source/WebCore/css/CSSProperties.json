@@ -1342,11 +1342,7 @@
                     "border-block-end-width",
                     "border-block-end-style",
                     "border-block-end-color"
-                ],
-                "logical-property-group": {
-                    "name": "border",
-                    "resolver": "block-end"
-                }
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1423,11 +1419,7 @@
                     "border-block-start-width",
                     "border-block-start-style",
                     "border-block-start-color"
-                ],
-                "logical-property-group": {
-                    "name": "border",
-                    "resolver": "block-start"
-                }
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1525,11 +1517,7 @@
                     "border-bottom-width",
                     "border-bottom-style",
                     "border-bottom-color"
-                ],
-                "logical-property-group": {
-                    "name": "border",
-                    "resolver": "bottom"
-                }
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -1770,11 +1758,7 @@
                     "border-inline-end-width",
                     "border-inline-end-style",
                     "border-inline-end-color"
-                ],
-                "logical-property-group": {
-                    "name": "border",
-                    "resolver": "inline-end"
-                }
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1851,11 +1835,7 @@
                     "border-inline-start-width",
                     "border-inline-start-style",
                     "border-inline-start-color"
-                ],
-                "logical-property-group": {
-                    "name": "border",
-                    "resolver": "inline-start"
-                }
+                ]
             },
             "specification": {
                 "category": "css-logical-props",
@@ -1953,11 +1933,7 @@
                     "border-left-width",
                     "border-left-style",
                     "border-left-color"
-                ],
-                "logical-property-group": {
-                    "name": "border",
-                    "resolver": "left"
-                }
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2038,11 +2014,7 @@
                     "border-right-width",
                     "border-right-style",
                     "border-right-color"
-                ],
-                "logical-property-group": {
-                    "name": "border",
-                    "resolver": "right"
-                }
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -2162,11 +2134,7 @@
                     "border-top-width",
                     "border-top-style",
                     "border-top-color"
-                ],
-                "logical-property-group": {
-                    "name": "border",
-                    "resolver": "top"
-                }
+                ]
             },
             "specification": {
                 "category": "css-backgrounds",

@@ -40,12 +40,7 @@ class PropertyCascade {
 public:
     enum IncludedProperties { All, InheritedOnly };
 
-    struct Direction {
-        TextDirection textDirection;
-        WritingMode writingMode;
-    };
-
-    PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties, Direction);
+    PropertyCascade(const MatchResult&, CascadeLevel, IncludedProperties);
     PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
 
     ~PropertyCascade();
@@ -63,6 +58,7 @@ public:
     const Property& property(CSSPropertyID) const;
 
     bool hasDeferredProperty(CSSPropertyID) const;
+    bool areDeferredInOrder(CSSPropertyID, CSSPropertyID) const;
     const Property& deferredProperty(CSSPropertyID) const;
 
     bool hasCustomProperty(const String&) const;
@@ -70,8 +66,6 @@ public:
 
     const Vector<Property, 8>& deferredProperties() const { return m_deferredProperties; }
     const HashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
-
-    Direction direction() const;
 
 private:
     void buildCascade();
@@ -83,14 +77,10 @@ private:
     void setDeferred(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
 
-    Direction resolveDirectionAndWritingMode(Direction inheritedDirection) const;
-
     const MatchResult& m_matchResult;
     const IncludedProperties m_includedProperties;
     const CascadeLevel m_maximumCascadeLevel;
     const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;
-    mutable Direction m_direction;
-    mutable bool m_directionIsUnresolved { true };
 
     Property m_properties[numCSSProperties + 2];
     std::bitset<numCSSProperties + 2> m_propertyIsPresent;
@@ -115,6 +105,13 @@ inline const PropertyCascade::Property& PropertyCascade::property(CSSPropertyID 
 inline bool PropertyCascade::hasDeferredProperty(CSSPropertyID id) const
 {
     return m_deferredPropertiesIndices.contains(id);
+}
+
+inline bool PropertyCascade::areDeferredInOrder(CSSPropertyID id1, CSSPropertyID id2) const
+{
+    ASSERT(hasDeferredProperty(id1));
+    ASSERT(hasDeferredProperty(id2));
+    return m_deferredPropertiesIndices.get(id1) < m_deferredPropertiesIndices.get(id2);
 }
 
 inline const PropertyCascade::Property& PropertyCascade::deferredProperty(CSSPropertyID id) const

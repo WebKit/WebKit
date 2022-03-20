@@ -1,3 +1,17 @@
+2022-03-20  Oriol Brufau  <obrufau@igalia.com>
+
+        Fix CSS cascade regarding logical properties
+        https://bugs.webkit.org/show_bug.cgi?id=236199
+
+        Reviewed by Darin Adler.
+
+        Expect animation-004.html to pass.
+        Add new test logicalprops-with-deferred-writing-mode.html
+
+        * web-platform-tests/css/css-logical/animation-004-expected.txt:
+        * web-platform-tests/css/css-logical/logicalprops-with-deferred-writing-mode-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logicalprops-with-deferred-writing-mode.html: Added.
+
 2022-03-19  Oriol Brufau  <obrufau@igalia.com>
 
         [cssom] Implement border-image serialization

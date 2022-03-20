@@ -1,3 +1,43 @@
+2022-03-20  Oriol Brufau  <obrufau@igalia.com>
+
+        Fix CSS cascade regarding logical properties
+        https://bugs.webkit.org/show_bug.cgi?id=236199
+
+        Reviewed by Darin Adler.
+
+        The CSS cascade was trying to resolve logical properties into physical
+        ones too early. This failed if we still didn't know the direction or
+        writing-mode, e.g. because they were set to a variable or to a CSS-wide
+        keyword.
+
+        This patch keeps logical properties as-is during the cascade. They are
+        only resolved when finally applied. Also, both logical properties and
+        their physical equivalents are now set to apply in parse order, since
+        'height: 0px; block-size: 1px' and 'block-size: 1px; height: 0px' can be
+        different, the order matters.
+
+        Tests: imported/w3c/web-platform-tests/css/css-logical/animation-004.html
+               imported/w3c/web-platform-tests/css/css-logical/logicalprops-with-deferred-writing-mode.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        * css/CSSProperties.json:
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::shouldApplyPropertyInParseOrder):
+        (WebCore::Style::PropertyCascade::PropertyCascade):
+        (WebCore::Style::PropertyCascade::set):
+        (WebCore::Style::PropertyCascade::setDeferred):
+        (WebCore::Style::PropertyCascade::resolveDirectionAndWritingMode const): Deleted.
+        (WebCore::Style::PropertyCascade::direction const): Deleted.
+        * style/PropertyCascade.h:
+        (WebCore::Style::PropertyCascade::areDeferredInOrder const):
+        * style/StyleBuilder.cpp:
+        (WebCore::Style::Builder::Builder):
+        (WebCore::Style::Builder::applyProperty):
+        (WebCore::Style::directionFromStyle): Deleted.
+
 2022-03-20  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Remove redundant InlineIterator::Line::contentLogicalTopAdjustedForHitTesting
