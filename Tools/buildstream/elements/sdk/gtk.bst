@@ -29,8 +29,6 @@ depends:
 
 variables:
   meson-local: >-
-    -Denable-broadway-backend=true
-    -Dprint-cloudprint=disabled
     -Dmedia-ffmpeg=disabled
     -Dvulkan=disabled
     -Dbuild-tests=false

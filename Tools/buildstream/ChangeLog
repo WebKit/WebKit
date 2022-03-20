@@ -1,3 +1,25 @@
+2022-03-20  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Bump to meson 0.60
+        https://bugs.webkit.org/show_bug.cgi?id=238112
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/freedesktop-sdk.bst: Update junction and include patches for Meson update and
+        follow-up recipe updates.
+        * elements/sdk-platform.bst: Remove shared-mime-info, the same version is shipped by the upstream SDK already.
+        * elements/sdk/glib.bst: Remove invalid meson options
+        * elements/sdk/gst-plugins-bad.bst: Ditto.
+        * elements/sdk/gst-plugins-base.bst: Ditto.
+        * elements/sdk/gstreamer.bst: Ditto.
+        * elements/sdk/gtk+-3.bst: Ditto.
+        * elements/sdk/gtk.bst: Ditto.
+        * elements/sdk/shared-mime-info.bst: Removed.
+        * patches/fdo-0001-gdk-pixbuf-Remove-invalid-meson-options.patch: Added.
+        * patches/fdo-0001-gst-plugins-bad-Remove-invalid-meson-option.patch: Added.
+        * patches/fdo-0001-meson-Bump-to-0.60.3.patch: Added.
+        * patches/fdo-0001-shared-mime-info-Backport-meson-0.60-build-fix.patch: Added.
+
 2022-03-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         [Flatpak SDK] Include gi-docgen and its dependencies

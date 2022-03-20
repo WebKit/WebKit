@@ -1,0 +1,25 @@
+From b79f1c050dce1f774e980c2e8ba0cf8725de41f2 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sat, 19 Mar 2022 17:32:56 +0000
+Subject: [PATCH] gdk-pixbuf: Remove invalid meson options
+
+---
+ elements/components/gdk-pixbuf.bst | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/elements/components/gdk-pixbuf.bst b/elements/components/gdk-pixbuf.bst
+index f22d6fab0..237c4d6e2 100644
+--- a/elements/components/gdk-pixbuf.bst
++++ b/elements/components/gdk-pixbuf.bst
+@@ -15,8 +15,6 @@ depends:
+ 
+ variables:
+   meson-local: >
+-    -Dx11=false
+-    -Djasper=false
+     -Dbuiltin_loaders=png,jpeg
+     -Dinstalled_tests=false
+ 
+-- 
+2.35.1
+

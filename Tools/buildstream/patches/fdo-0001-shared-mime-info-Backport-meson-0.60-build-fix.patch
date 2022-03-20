@@ -1,0 +1,144 @@
+From 3d67db03d8c8c513881645d7900de6c7d8a8159f Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sat, 19 Mar 2022 17:16:11 +0000
+Subject: [PATCH] shared-mime-info: Backport meson 0.60 build fix
+
+https://gitlab.freedesktop.org/xdg/shared-mime-info/-/merge_requests/162
+---
+ elements/components/shared-mime-info.bst      |   2 +
+ ...tom-itstool-to-builtin-msgfmt-for-cr.patch | 113 ++++++++++++++++++
+ 2 files changed, 115 insertions(+)
+ create mode 100644 patches/shared-mime-info-0001-migrate-from-custom-itstool-to-builtin-msgfmt-for-cr.patch
+
+diff --git a/elements/components/shared-mime-info.bst b/elements/components/shared-mime-info.bst
+index 0aa629d50..2cdad570a 100644
+--- a/elements/components/shared-mime-info.bst
++++ b/elements/components/shared-mime-info.bst
+@@ -22,3 +22,5 @@ sources:
+   track-extra:
+   - '2.0'
+   ref: 2.1-0-g18e558fa1c8b90b86757ade09a4ba4d6a6cf8f70
++- kind: patch
++  path: patches/shared-mime-info-0001-migrate-from-custom-itstool-to-builtin-msgfmt-for-cr.patch
+diff --git a/patches/shared-mime-info-0001-migrate-from-custom-itstool-to-builtin-msgfmt-for-cr.patch b/patches/shared-mime-info-0001-migrate-from-custom-itstool-to-builtin-msgfmt-for-cr.patch
+new file mode 100644
+index 000000000..6b104e081
+--- /dev/null
++++ b/patches/shared-mime-info-0001-migrate-from-custom-itstool-to-builtin-msgfmt-for-cr.patch
+@@ -0,0 +1,113 @@
++From 5a406b06792e26a83c7346b3c2443c0bd8d4cdb2 Mon Sep 17 00:00:00 2001
++From: Eli Schwartz <eschwartz@archlinux.org>
++Date: Mon, 8 Nov 2021 18:22:47 -0500
++Subject: [PATCH] migrate from custom itstool to builtin msgfmt for creating
++ translated XML
++
++gettext upstream has supported this for a very long time (since 0.19.7
++via commit b3c2a5a242c36fbbaa0c5b17f975d6c638598a23, released in 2015),
++and itstool is (mostly) a legacy of the time before gettext had proper
++support for these sorts of use cases.
++
++This is similar to the state of intltool, which is described at
++https://wiki.gnome.org/MigratingFromIntltoolToGettext
++
++During the port from autotools to meson, the legacy use of itstool was
++faithfully translated to meson in the only way possible: by jumping
++through hoops to run ninja inside ninja in order to generate the .mo
++files for itstool, because meson's i18n module used a flawed design and
++there was no "real" target to create those files, only a .PHONY
++run_target which other rules cannot depend on.
++
++Although meson 0.60.0 added support for real targets for the built .mo
++files, this changed the rules for output filenames, breaking the script.
++
++But msgfmt does not care, and anyways comes with builtin meson functions
++for convenient use with XML files. So let's take this opportunity to
++drop legacy dependencies and use the modern, builtin tooling, which
++fixes this bug as a side effect.
++
++Fixes #170
++---
++ .gitlab-ci.yml               |  2 --
++ README.md                    |  2 +-
++ data/freedesktop_generate.sh | 12 ------------
++ data/meson.build             | 16 +++++-----------
++ meson.build                  |  1 -
++ 5 files changed, 6 insertions(+), 27 deletions(-)
++ delete mode 100755 data/freedesktop_generate.sh
++
++diff --git a/README.md b/README.md
++index c23d9d5..b2fb0ac 100644
++--- a/README.md
+++++ b/README.md
++@@ -19,7 +19,7 @@ $ ninja -v -C _build install
++ ```
++ 
++ It requires the glib development package to be installed as well as
++-gettext and itstool.
+++gettext.
++ This database is translated at Transifex.
++ 
++ 
++diff --git a/data/freedesktop_generate.sh b/data/freedesktop_generate.sh
++deleted file mode 100755
++index 62ccffa..0000000
++--- a/data/freedesktop_generate.sh
+++++ /dev/null
++@@ -1,12 +0,0 @@
++-#!/bin/sh -e
++-
++-src_root="$1"
++-build_root="$2"
++-
++-ninja -C "${build_root}" shared-mime-info-gmo
++-
++-itstool \
++-    --its "${src_root}/data/its/shared-mime-info.its" \
++-    --join "${src_root}/data/freedesktop.org.xml.in" \
++-    -o "${build_root}/data/freedesktop.org.xml" \
++-    "${build_root}/po/"*".gmo"
++diff --git a/data/meson.build b/data/meson.build
++index 24361c9..09ed7a9 100644
++--- a/data/meson.build
+++++ b/data/meson.build
++@@ -1,18 +1,12 @@
++ 
++ install_man('update-mime-database.1')
++ 
++-freedesktop_org_xml = custom_target('freedesktop.org.xml',
++-    input : files(
++-        'freedesktop.org.xml.in',
++-        'its/shared-mime-info.its',
++-        'its/shared-mime-info.loc',
++-    ),
+++freedesktop_org_xml = i18n.merge_file(
+++    input: 'freedesktop.org.xml.in',
++     output: 'freedesktop.org.xml',
++-    command: [
++-        find_program('freedesktop_generate.sh'),
++-        meson.source_root(),
++-        meson.build_root()
++-    ],
+++    data_dirs: '.',
+++    po_dir: '../po',
+++    type: 'xml',
++     install: true,
++     install_dir: get_option('datadir') / 'mime' / 'packages',
++ )
++diff --git a/meson.build b/meson.build
++index 0d08c8a..60f17ae 100644
++--- a/meson.build
+++++ b/meson.build
++@@ -20,7 +20,6 @@ config.set_quoted('VERSION', meson.project_version())
++ ###############################################################################
++ # Find tools
++ 
++-itstool = find_program('itstool')
++ xmllint = find_program('xmllint')
++ xmlto   = find_program('xmlto', required: false)
++ 
++-- 
++2.35.1
++
+-- 
+2.35.1
+

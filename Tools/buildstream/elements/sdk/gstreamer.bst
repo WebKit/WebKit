@@ -29,7 +29,6 @@ variables:
     -Dlibdw=enabled
     -Ddbghelp=disabled
     -Dbash-completion=disabled
-    -Dgtk_doc=disabled
     -Ddoc=disabled
     -Dpackage-origin="webkit-sdk"
 public:

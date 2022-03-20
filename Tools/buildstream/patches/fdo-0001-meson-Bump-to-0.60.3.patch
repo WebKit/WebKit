@@ -1,0 +1,36 @@
+From 0cfdf05a0e1489907e0e45a9f68cd63a9ab03e6d Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Sat, 19 Mar 2022 16:42:03 +0000
+Subject: [PATCH] meson: Bump to 0.60.3
+
+Needed for GStreamer development builds.
+---
+ elements/components/meson.bst | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/elements/components/meson.bst b/elements/components/meson.bst
+index 4c4e1ba5b..17654df2c 100644
+--- a/elements/components/meson.bst
++++ b/elements/components/meson.bst
+@@ -1,5 +1,4 @@
+ kind: pip
+-
+ depends:
+ - bootstrap-import.bst
+ - components/python3.bst
+@@ -12,9 +11,9 @@ build-depends:
+ sources:
+ - kind: pypi
+   name: meson
+-  url: pypi:57/90/1f5768627ef72e95483b2a899f5efc6efa6c999966b2a1a5ba2d1de6db9c/meson-0.59.4.tar.gz
+-  sha256sum: a77988cc50554f73ede075bc9bf77a2d7ecb6ff892f2a0180d4940920eaaec84
++  url: pypi:48/fb/09b5098772ce484b203be026d8047c596a28107e1ecc0df1412058d9f715/meson-0.60.3.tar.gz
++  sha256sum: 87ca5fa9358a01864529392bd64e027158eb94afca7c7766b1866ef27eccb98e
+   include:
+-  - 0\.59\..*
++  - 0\.60\..*
+ - kind: patch
+   path: patches/meson/meson-no-lib64.patch
+-- 
+2.35.1
+

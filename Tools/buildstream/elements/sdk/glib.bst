@@ -21,7 +21,6 @@ depends:
 variables:
   meson-local: >-
     -Dgtk_doc=false
-    -Dinstalled-tests=true
     -Dselinux=disabled
 public:
   bst:

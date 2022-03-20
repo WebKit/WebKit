@@ -42,7 +42,6 @@ variables:
     -Dbs2b=disabled
     -Dchromaprint=disabled
     -Dcolormanagement=disabled
-    -Dcuda=disabled
     -Dcurl-ssh2=disabled
     -Dcurl=disabled
     -Dd3dvideosink=disabled
@@ -66,7 +65,6 @@ variables:
     -Dladspa=disabled
     -Dldac=disabled
     -Dlibde265=disabled
-    -Dlibmms=disabled
     -Dlv2=disabled
     -Dmagicleap=disabled
     -Dmicrodns=disabled
@@ -77,9 +75,6 @@ variables:
     -Dmusepack=disabled
     -Dneon=disabled
     -Dnvcodec=disabled
-    -Dnvdec=disabled
-    -Dnvenc=disabled
-    -Dofa=disabled
     -Donnx=disabled
     -Dopenal=disabled
     -Dopenaptx=disabled
@@ -103,8 +98,6 @@ variables:
     -Dtinyalsa=disabled
     -Dttml=disabled
     -Dva=disabled
-    -Dvaacenc=disabled
-    -Dvdpau=disabled
     -Dvoaacenc=disabled
     -Dvoamrwbenc=disabled
     -Dvulkan=disabled

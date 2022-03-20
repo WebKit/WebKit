@@ -34,7 +34,6 @@ variables:
     -Dlibvisual=disabled
     -Dtremor=disabled
     -Dexamples=disabled
-    -Dgtk_doc=disabled
     -Ddoc=disabled
     -Dtests=disabled
 public:

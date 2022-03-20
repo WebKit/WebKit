@@ -59,7 +59,6 @@ depends:
 - sdk/ruby-highline.bst
 - sdk/ruby-webrick.bst
 - sdk/sccache.bst
-- sdk/shared-mime-info.bst
 - sdk/sparkle-cdm.bst
 - sdk/subversion.bst
 - sdk/woff2.bst
@@ -204,6 +203,7 @@ depends:
 - freedesktop-sdk.bst:components/sdl2-net.bst
 - freedesktop-sdk.bst:components/sdl2-ttf.bst
 - freedesktop-sdk.bst:components/sdl2.bst
+- freedesktop-sdk.bst:components/shared-mime-info.bst
 - freedesktop-sdk.bst:components/sndfile.bst
 - freedesktop-sdk.bst:components/speex.bst
 - freedesktop-sdk.bst:components/speexdsp.bst
