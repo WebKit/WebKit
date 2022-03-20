@@ -405,22 +405,6 @@ void EventTarget::removeAllEventListeners()
     threadData.setIsInRemoveAllEventListeners(false);
 }
 
-template<typename Visitor>
-void EventTarget::visitJSEventListeners(Visitor& visitor)
-{
-    EventTargetData* data = eventTargetDataConcurrently();
-    if (!data)
-        return;
-    
-    Locker locker { data->eventListenerMap.lock() };
-    EventListenerIterator iterator(&data->eventListenerMap);
-    while (auto* listener = iterator.nextListener())
-        listener->visitJSFunction(visitor);
-}
-
-template void EventTarget::visitJSEventListeners(JSC::AbstractSlotVisitor&);
-template void EventTarget::visitJSEventListeners(JSC::SlotVisitor&);
-
 void EventTarget::invalidateEventListenerRegions()
 {
     if (is<Element>(*this)) {

@@ -44,16 +44,7 @@
 
 namespace WebCore {
 
-#ifndef NDEBUG
-void EventListenerMap::assertNoActiveIterators() const
-{
-    ASSERT(!m_activeIteratorCount);
-}
-#endif
-
-EventListenerMap::EventListenerMap()
-{
-}
+EventListenerMap::EventListenerMap() = default;
 
 bool EventListenerMap::containsCapturing(const AtomString& eventType) const
 {
@@ -84,8 +75,6 @@ bool EventListenerMap::containsActive(const AtomString& eventType) const
 void EventListenerMap::clear()
 {
     Locker locker { m_lock };
-    
-    assertNoActiveIterators();
 
     for (auto& entry : m_entries) {
         for (auto& listener : entry.second)
@@ -115,8 +104,6 @@ static inline size_t findListener(const EventListenerVector& listeners, EventLis
 void EventListenerMap::replace(const AtomString& eventType, EventListener& oldListener, Ref<EventListener>&& newListener, const RegisteredEventListener::Options& options)
 {
     Locker locker { m_lock };
-    
-    assertNoActiveIterators();
 
     auto* listeners = find(eventType);
     ASSERT(listeners);
@@ -130,8 +117,6 @@ void EventListenerMap::replace(const AtomString& eventType, EventListener& oldLi
 bool EventListenerMap::add(const AtomString& eventType, Ref<EventListener>&& listener, const RegisteredEventListener::Options& options)
 {
     Locker locker { m_lock };
-    
-    assertNoActiveIterators();
 
     if (auto* listeners = find(eventType)) {
         if (findListener(*listeners, listener, options.capture) != notFound)
@@ -158,8 +143,6 @@ static bool removeListenerFromVector(EventListenerVector& listeners, EventListen
 bool EventListenerMap::remove(const AtomString& eventType, EventListener& listener, bool useCapture)
 {
     Locker locker { m_lock };
-    
-    assertNoActiveIterators();
 
     for (unsigned i = 0; i < m_entries.size(); ++i) {
         if (m_entries[i].first == eventType) {
@@ -198,8 +181,6 @@ static void removeFirstListenerCreatedFromMarkup(EventListenerVector& listenerVe
 void EventListenerMap::removeFirstEventListenerCreatedFromMarkup(const AtomString& eventType)
 {
     Locker locker { m_lock };
-    
-    assertNoActiveIterators();
 
     for (unsigned i = 0; i < m_entries.size(); ++i) {
         if (m_entries[i].first == eventType) {
@@ -225,53 +206,6 @@ void EventListenerMap::copyEventListenersNotCreatedFromMarkupToTarget(EventTarge
 {
     for (auto& entry : m_entries)
         copyListenersNotCreatedFromMarkupToTarget(entry.first, entry.second, target);
-}
-
-EventListenerIterator::EventListenerIterator(EventTarget* target)
-{
-    ASSERT(target);
-    EventTargetData* data = target->eventTargetData();
-
-    if (!data)
-        return;
-
-    m_map = &data->eventListenerMap;
-
-#ifndef NDEBUG
-    m_map->m_activeIteratorCount++;
-#endif
-}
-
-EventListenerIterator::EventListenerIterator(EventListenerMap* map)
-{
-    m_map = map;
-
-#ifndef NDEBUG
-    m_map->m_activeIteratorCount++;
-#endif
-}
-
-#ifndef NDEBUG
-EventListenerIterator::~EventListenerIterator()
-{
-    if (m_map)
-        m_map->m_activeIteratorCount--;
-}
-#endif
-
-EventListener* EventListenerIterator::nextListener()
-{
-    if (!m_map)
-        return nullptr;
-
-    for (; m_entryIndex < m_map->m_entries.size(); ++m_entryIndex) {
-        EventListenerVector& listeners = m_map->m_entries[m_entryIndex].second;
-        if (m_index < listeners.size())
-            return &listeners[m_index++]->callback();
-        m_index = 0;
-    }
-
-    return nullptr;
 }
 
 } // namespace WebCore

@@ -125,8 +125,6 @@ private:
     
     void innerInvokeEventListeners(Event&, EventListenerVector, EventInvokePhase);
     void invalidateEventListenerRegions();
-
-    friend class EventListenerIterator;
 };
 
 class EventTargetWithInlineData : public EventTarget {
@@ -166,6 +164,13 @@ inline bool EventTarget::hasCapturingEventListeners(const AtomString& eventType)
 {
     auto* data = eventTargetData();
     return data && data->eventListenerMap.containsCapturing(eventType);
+}
+
+template<typename Visitor>
+void EventTarget::visitJSEventListeners(Visitor& visitor)
+{
+    if (auto* data = eventTargetDataConcurrently())
+        data->eventListenerMap.visitJSEventListeners(visitor);
 }
 
 } // namespace WebCore
