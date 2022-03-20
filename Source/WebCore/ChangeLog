@@ -1,5 +1,58 @@
 2022-03-19  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] InlineIterator::Line functions should all return float values
+        https://bugs.webkit.org/show_bug.cgi?id=238106
+
+        Reviewed by Antti Koivisto.
+
+        Display structures are supposed to be all float based.
+
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::Line::lineBoxHeight const):
+        (WebCore::InlineIterator::contentStartInBlockDirection):
+        (WebCore::InlineIterator::Line::contentLogicalTop const):
+        (WebCore::InlineIterator::Line::contentLogicalBottom const):
+        (WebCore::InlineIterator::Line::contentLogicalTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::Line::contentLogicalTopAdjustedForHitTesting const):
+        (WebCore::InlineIterator::Line::contentLogicalBottomAdjustedForFollowingLine const):
+        (WebCore::InlineIterator::Line::lineBoxTop const):
+        (WebCore::InlineIterator::Line::lineBoxBottom const):
+        * layout/integration/InlineIteratorLineLegacyPath.h:
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalTop const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalBottom const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalTopAdjustedForHitTesting const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalBottomAdjustedForFollowingLine const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::lineBoxTop const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::lineBoxBottom const):
+        * layout/integration/InlineIteratorLineModernPath.h:
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTop const):
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalBottom const):
+        (WebCore::InlineIterator::LineIteratorModernPath::lineBoxTop const):
+        (WebCore::InlineIterator::LineIteratorModernPath::lineBoxBottom const):
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTopAdjustedForHitTesting const):
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalBottomAdjustedForFollowingLine const):
+        * layout/integration/LineSelection.h:
+        (WebCore::LineSelection::logicalTop):
+        (WebCore::LineSelection::logicalBottom):
+        (WebCore::LineSelection::logicalRect):
+        (WebCore::LineSelection::physicalRect):
+        (WebCore::LineSelection::logicalTopAdjustedForPrecedingBlock):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustEnclosingTopForPrecedingBlock const):
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        (WebCore::RenderBlockFlow::addFocusRingRectsForInlineChildren):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::paintBackground):
+
+2022-03-19  Alan Bujtas  <zalan@apple.com>
+
         [IFC][Integration] Remove redundant InlineIterator::Line::closestBoxForPoint function
         https://bugs.webkit.org/show_bug.cgi?id=238103
 

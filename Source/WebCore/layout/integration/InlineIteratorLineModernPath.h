@@ -49,18 +49,18 @@ public:
     LineIteratorModernPath& operator=(const LineIteratorModernPath&) = default;
     LineIteratorModernPath& operator=(LineIteratorModernPath&&) = default;
 
-    LayoutUnit contentLogicalTop() const { return LayoutUnit::fromFloatRound(line().enclosingContentTop()); }
-    LayoutUnit contentLogicalBottom() const { return LayoutUnit::fromFloatRound(line().enclosingContentBottom()); }
-    LayoutUnit lineBoxTop() const { return LayoutUnit::fromFloatRound(line().lineBoxTop()); }
-    LayoutUnit lineBoxBottom() const { return LayoutUnit::fromFloatRound(line().lineBoxBottom()); }
+    float contentLogicalTop() const { return line().enclosingContentTop(); }
+    float contentLogicalBottom() const { return line().enclosingContentBottom(); }
+    float lineBoxTop() const { return line().lineBoxTop(); }
+    float lineBoxBottom() const { return line().lineBoxBottom(); }
 
-    LayoutUnit contentLogicalTopAdjustedForPrecedingLine() const { return !m_lineIndex ? contentLogicalTop() : LineIteratorModernPath(*m_inlineContent, m_lineIndex - 1).contentLogicalBottomAdjustedForFollowingLine(); }
+    float contentLogicalTopAdjustedForPrecedingLine() const { return !m_lineIndex ? contentLogicalTop() : LineIteratorModernPath(*m_inlineContent, m_lineIndex - 1).contentLogicalBottomAdjustedForFollowingLine(); }
     // FIXME: Remove the containingBlock().borderAndPaddingBefore() offset after retiring legacy line layout. It also requires changes in RenderText::positionForPoint to find the first line with offset.
     // - the "before" value is already factored in to the line offset
     // - this logic negates the first line's natural offset (e.g. block has no border/padding but the first line has a computed offset).
-    LayoutUnit contentLogicalTopAdjustedForHitTesting() const { return !m_lineIndex ? containingBlock().borderAndPaddingBefore() : contentLogicalTopAdjustedForPrecedingLine(); };
+    float contentLogicalTopAdjustedForHitTesting() const { return !m_lineIndex ? containingBlock().borderAndPaddingBefore().toFloat() : contentLogicalTopAdjustedForPrecedingLine(); };
     // FIXME: Implement.
-    LayoutUnit contentLogicalBottomAdjustedForFollowingLine() const { return contentLogicalBottom(); }
+    float contentLogicalBottomAdjustedForFollowingLine() const { return contentLogicalBottom(); }
 
     float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentLogicalOffset(); }
     float contentLogicalRight() const { return contentLogicalLeft() + line().contentLogicalWidth(); }

@@ -43,13 +43,13 @@ public:
     LineIteratorLegacyPath& operator=(const LineIteratorLegacyPath&) = default;
     LineIteratorLegacyPath& operator=(LineIteratorLegacyPath&&) = default;
 
-    LayoutUnit contentLogicalTop() const { return m_rootInlineBox->lineTop(); }
-    LayoutUnit contentLogicalBottom() const { return m_rootInlineBox->lineBottom(); }
-    LayoutUnit contentLogicalTopAdjustedForPrecedingLine() const { return m_rootInlineBox->selectionTop(); }
-    LayoutUnit contentLogicalTopAdjustedForHitTesting() const { return m_rootInlineBox->selectionTop(LegacyRootInlineBox::ForHitTesting::Yes); }
-    LayoutUnit contentLogicalBottomAdjustedForFollowingLine() const { return m_rootInlineBox->selectionBottom(); }
-    LayoutUnit lineBoxTop() const { return m_rootInlineBox->lineBoxTop(); }
-    LayoutUnit lineBoxBottom() const { return m_rootInlineBox->lineBoxBottom(); }
+    float contentLogicalTop() const { return m_rootInlineBox->lineTop().toFloat(); }
+    float contentLogicalBottom() const { return m_rootInlineBox->lineBottom().toFloat(); }
+    float contentLogicalTopAdjustedForPrecedingLine() const { return m_rootInlineBox->selectionTop().toFloat(); }
+    float contentLogicalTopAdjustedForHitTesting() const { return m_rootInlineBox->selectionTop(LegacyRootInlineBox::ForHitTesting::Yes).toFloat(); }
+    float contentLogicalBottomAdjustedForFollowingLine() const { return m_rootInlineBox->selectionBottom().toFloat(); }
+    float lineBoxTop() const { return m_rootInlineBox->lineBoxTop().toFloat(); }
+    float lineBoxBottom() const { return m_rootInlineBox->lineBoxBottom().toFloat(); }
 
     float contentLogicalLeft() const { return m_rootInlineBox->logicalLeft(); }
     float contentLogicalRight() const { return m_rootInlineBox->logicalRight(); }

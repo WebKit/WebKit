@@ -32,15 +32,15 @@ namespace WebCore {
 
 class LineSelection {
 public:
-    static LayoutUnit logicalTop(const InlineIterator::Line& line) { return line.contentLogicalTopAdjustedForPrecedingLine(); }
-    static LayoutUnit logicalBottom(const InlineIterator::Line& line) { return line.contentLogicalBottomAdjustedForFollowingLine(); }
+    static float logicalTop(const InlineIterator::Line& line) { return line.contentLogicalTopAdjustedForPrecedingLine(); }
+    static float logicalBottom(const InlineIterator::Line& line) { return line.contentLogicalBottomAdjustedForFollowingLine(); }
 
-    static LayoutRect logicalRect(const InlineIterator::Line& line)
+    static FloatRect logicalRect(const InlineIterator::Line& line)
     {
-        return { LayoutPoint { line.contentLogicalLeft(), line.contentLogicalTopAdjustedForPrecedingLine() }, LayoutPoint { line.contentLogicalRight(), line.contentLogicalBottomAdjustedForFollowingLine() } };
+        return { FloatPoint { line.contentLogicalLeft(), line.contentLogicalTopAdjustedForPrecedingLine() }, FloatPoint { line.contentLogicalRight(), line.contentLogicalBottomAdjustedForFollowingLine() } };
     }
 
-    static LayoutRect physicalRect(const InlineIterator::Line& line)
+    static FloatRect physicalRect(const InlineIterator::Line& line)
     {
         auto physicalRect = logicalRect(line);
         if (!line.isHorizontal())
@@ -49,10 +49,10 @@ public:
         return physicalRect;
     }
 
-    static LayoutUnit logicalTopAdjustedForPrecedingBlock(const InlineIterator::Line& line)
+    static float logicalTopAdjustedForPrecedingBlock(const InlineIterator::Line& line)
     {
         // FIXME: Move adjustEnclosingTopForPrecedingBlock from RenderBlockFlow to here.
-        return line.containingBlock().adjustEnclosingTopForPrecedingBlock(line.contentLogicalTopAdjustedForPrecedingLine());
+        return line.containingBlock().adjustEnclosingTopForPrecedingBlock(LayoutUnit { line.contentLogicalTopAdjustedForPrecedingLine() });
     }
 
     static RenderObject::HighlightState selectionState(const InlineIterator::Line& line)

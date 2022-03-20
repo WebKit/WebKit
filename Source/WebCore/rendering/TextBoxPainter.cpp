@@ -295,7 +295,7 @@ void TextBoxPainter::paintBackground(unsigned startOffset, unsigned endOffset, c
     // Use same y positioning and height as for selection, so that when the selection and this subrange are on
     // the same word there are no pieces sticking out.
     auto deltaY = LayoutUnit { m_style.isFlippedLinesWritingMode() ? selectionBottom - textBox().logicalBottom() : textBox().logicalTop() - selectionTop };
-    auto selectionHeight = LayoutUnit { std::max(0_lu, selectionBottom - selectionTop) };
+    auto selectionHeight = LayoutUnit { std::max(0.f, selectionBottom - selectionTop) };
     auto selectionRect = LayoutRect { LayoutUnit(m_paintRect.x()), LayoutUnit(m_paintRect.y() - deltaY), LayoutUnit(textBox().logicalWidth()), selectionHeight };
     fontCascade().adjustSelectionRectForText(m_paintTextRun, selectionRect, startOffset, endOffset);
 

@@ -54,20 +54,19 @@ public:
 
     Line(PathVariant&&);
 
-    LayoutUnit lineBoxTop() const;
-    LayoutUnit lineBoxBottom() const;
-    LayoutUnit lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
+    float lineBoxTop() const;
+    float lineBoxBottom() const;
+    float lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
 
-    // FIXME: Make sure we use the same type for content geometry.
-    LayoutUnit contentLogicalTop() const;
-    LayoutUnit contentLogicalBottom() const;
+    float contentLogicalTop() const;
+    float contentLogicalBottom() const;
     float contentLogicalLeft() const;
     float contentLogicalRight() const;
     float contentLogicalWidth() const;
 
-    LayoutUnit contentLogicalTopAdjustedForHitTesting() const;
-    LayoutUnit contentLogicalTopAdjustedForPrecedingLine() const;
-    LayoutUnit contentLogicalBottomAdjustedForFollowingLine() const;
+    float contentLogicalTopAdjustedForHitTesting() const;
+    float contentLogicalTopAdjustedForPrecedingLine() const;
+    float contentLogicalBottomAdjustedForFollowingLine() const;
 
     const RenderBlockFlow& containingBlock() const;
     RenderFragmentContainer* containingFragment() const;
@@ -123,7 +122,7 @@ LineIterator lastLineFor(const RenderBlockFlow&);
 LeafBoxIterator closestBoxForHorizontalPosition(const Line&, float horizontalPosition, bool editableOnly = false);
 
 // -----------------------------------------------
-inline LayoutUnit contentStartInBlockDirection(const Line& line)
+inline float contentStartInBlockDirection(const Line& line)
 {
     if (!line.containingBlock().style().isFlippedBlocksWritingMode())
         return std::max(line.contentLogicalTop(), line.contentLogicalTopAdjustedForHitTesting());
@@ -135,49 +134,49 @@ inline Line::Line(PathVariant&& path)
 {
 }
 
-inline LayoutUnit Line::contentLogicalTop() const
+inline float Line::contentLogicalTop() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalTop();
     });
 }
 
-inline LayoutUnit Line::contentLogicalBottom() const
+inline float Line::contentLogicalBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalBottom();
     });
 }
 
-inline LayoutUnit Line::contentLogicalTopAdjustedForPrecedingLine() const
+inline float Line::contentLogicalTopAdjustedForPrecedingLine() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalTopAdjustedForPrecedingLine();
     });
 }
 
-inline LayoutUnit Line::contentLogicalTopAdjustedForHitTesting() const
+inline float Line::contentLogicalTopAdjustedForHitTesting() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalTopAdjustedForHitTesting();
     });
 }
 
-inline LayoutUnit Line::contentLogicalBottomAdjustedForFollowingLine() const
+inline float Line::contentLogicalBottomAdjustedForFollowingLine() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalBottomAdjustedForFollowingLine();
     });
 }
 
-inline LayoutUnit Line::lineBoxTop() const
+inline float Line::lineBoxTop() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.lineBoxTop();
     });
 }
 
-inline LayoutUnit Line::lineBoxBottom() const
+inline float Line::lineBoxBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.lineBoxBottom();

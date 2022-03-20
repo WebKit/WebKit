@@ -3067,7 +3067,7 @@ LayoutUnit RenderBlockFlow::adjustEnclosingTopForPrecedingBlock(LayoutUnit top) 
             return top;
 
         auto lastLineSelectionBottom = LineSelection::logicalBottom(*lastLine) + offsetToBlockBefore.height();
-        top = std::max(top, lastLineSelectionBottom);
+        top = std::max(top, LayoutUnit { lastLineSelectionBottom });
     }
     return top;
 }
@@ -3165,8 +3165,8 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     // Now paint the gaps for the lines.
     for (; line && hasSelectedChildren(line); line.traverseNext()) {
-        auto selectionTop =  LineSelection::logicalTopAdjustedForPrecedingBlock(*line);
-        auto selectionHeight = std::max(0_lu, LineSelection::logicalBottom(*line) - selectionTop);
+        auto selectionTop =  LayoutUnit { LineSelection::logicalTopAdjustedForPrecedingBlock(*line) };
+        auto selectionHeight = LayoutUnit { std::max(0.f, LineSelection::logicalBottom(*line) - selectionTop) };
 
         if (!containsStart && !lastSelectedLine &&
             selectionState() != HighlightState::Start && selectionState() != HighlightState::Both && !isRubyBase())
@@ -3188,7 +3188,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     if (lastSelectedLine && selectionState() != HighlightState::End && selectionState() != HighlightState::Both) {
         // Update our lastY to be the bottom of the last selected line.
-        auto lastLineSelectionBottom = LineSelection::logicalBottom(*lastSelectedLine);
+        auto lastLineSelectionBottom = LayoutUnit { LineSelection::logicalBottom(*lastSelectedLine) };
         lastLogicalTop = blockDirectionOffset(rootBlock, offsetFromRootBlock) + lastLineSelectionBottom;
         lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, lastLineSelectionBottom, cache);
         lastLogicalRight = logicalRightSelectionOffset(rootBlock, lastLineSelectionBottom, cache);
@@ -3421,7 +3421,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
 
     if (closestBox) {
         if (moveCaretToBoundary) {
-            LayoutUnit firstLineWithChildrenTop = std::min(firstLineWithChildren->contentLogicalTopAdjustedForHitTesting(), LayoutUnit(firstLineWithChildren->contentLogicalTop()));
+            auto firstLineWithChildrenTop = LayoutUnit { std::min(firstLineWithChildren->contentLogicalTopAdjustedForHitTesting(), firstLineWithChildren->contentLogicalTop()) };
             if (pointInLogicalContents.y() < firstLineWithChildrenTop
                 || (blocksAreFlipped && pointInLogicalContents.y() == firstLineWithChildrenTop)) {
                 auto box = firstLineWithChildren->firstLeafBox();
@@ -3474,8 +3474,8 @@ void RenderBlockFlow::addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rec
         auto line = box->line();
         // FIXME: This is mixing physical and logical coordinates.
         auto unflippedVisualRect = box->visualRectIgnoringBlockDirection();
-        auto top = std::max(line->contentLogicalTop(), LayoutUnit { unflippedVisualRect.y() });
-        auto bottom = std::min(line->contentLogicalBottom(), LayoutUnit { unflippedVisualRect.maxY() });
+        auto top = std::max(line->contentLogicalTop(), unflippedVisualRect.y());
+        auto bottom = std::min(line->contentLogicalBottom(), unflippedVisualRect.maxY());
         auto rect = LayoutRect { LayoutUnit { additionalOffset.x() + unflippedVisualRect.x() }
             , additionalOffset.y() + top
             , LayoutUnit { unflippedVisualRect.width() }

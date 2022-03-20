@@ -719,7 +719,7 @@ void RenderReplaced::computePreferredLogicalWidths()
 
 VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
 {
-    auto [top, bottom] = [&] {
+    auto [top, bottom] = [&]() -> std::pair<float, float> {
         if (auto run = InlineIterator::boxFor(*this)) {
             auto line = run->line();
             return std::make_pair(line->contentLogicalTopAdjustedForHitTesting(), LineSelection::logicalBottom(*line));
