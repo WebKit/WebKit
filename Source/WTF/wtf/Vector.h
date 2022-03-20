@@ -435,6 +435,21 @@ public:
 protected:
     using Base::m_size;
 
+    VectorBuffer(VectorBuffer<T, 0, Malloc>&& other)
+    {
+        m_buffer = std::exchange(other.m_buffer, nullptr);
+        m_capacity = std::exchange(other.m_capacity, 0);
+        m_size = std::exchange(other.m_size, 0);
+    }
+
+    void adopt(VectorBuffer&& other)
+    {
+        deallocateBuffer(buffer());
+        m_buffer = std::exchange(other.m_buffer, nullptr);
+        m_capacity = std::exchange(other.m_capacity, 0);
+        m_size = std::exchange(other.m_size, 0);
+    }
+
 private:
     friend class JSC::LLIntOffsetsExtractor;
     using Base::m_buffer;
@@ -555,6 +570,34 @@ public:
 
 protected:
     using Base::m_size;
+
+    VectorBuffer(VectorBuffer&& other)
+        : Base(inlineBuffer(), inlineCapacity, 0)
+    {
+        if (other.buffer() == other.inlineBuffer())
+            VectorTypeOperations<T>::move(other.inlineBuffer(), other.inlineBuffer() + other.m_size, inlineBuffer());
+        else {
+            m_buffer = std::exchange(other.m_buffer, other.inlineBuffer());
+            m_capacity = std::exchange(other.m_capacity, inlineCapacity);
+        }
+        m_size = std::exchange(other.m_size, 0);
+    }
+
+    void adopt(VectorBuffer&& other)
+    {
+        if (buffer() != inlineBuffer()) {
+            deallocateBuffer(buffer());
+            m_buffer = inlineBuffer();
+        }
+        if (other.buffer() == other.inlineBuffer()) {
+            VectorTypeOperations<T>::move(other.inlineBuffer(), other.inlineBuffer() + other.m_size, inlineBuffer());
+            m_capacity = other.m_capacity;
+        } else {
+            m_buffer = std::exchange(other.m_buffer, other.inlineBuffer());
+            m_capacity = std::exchange(other.m_capacity, inlineCapacity);
+        }
+        m_size = std::exchange(other.m_size, 0);
+    }
 
 private:
     using Base::m_buffer;
@@ -974,14 +1017,24 @@ Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& Vector<T, inlin
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 inline Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::Vector(Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>&& other)
+    : Base(WTFMove(other))
 {
-    swap(other);
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 inline Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::operator=(Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>&& other)
 {
-    swap(other);
+    if (m_size)
+        VectorTypeOperations<T>::destruct(begin(), end());
+
+    // Make it possible to copy inline buffer.
+    asanSetBufferSizeToFullCapacity();
+    other.asanSetBufferSizeToFullCapacity();
+
+    Base::adopt(WTFMove(other));
+
+    asanSetInitialBufferSizeTo(m_size);
+
     return *this;
 }
 

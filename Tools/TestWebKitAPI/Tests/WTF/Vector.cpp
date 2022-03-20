@@ -1512,4 +1512,233 @@ TEST(WTF_Vector, MapCustomReturnType)
     EXPECT_FLOAT_EQ(output[1], 2.0f);
 }
 
+TEST(WTF_Vector, MoveConstructor)
+{
+    {
+        Vector<String> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        EXPECT_EQ(strings.size(), 5U);
+        Vector<String> strings2(WTFMove(strings));
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 0U);
+        EXPECT_EQ(strings2.size(), 5U);
+        EXPECT_EQ(strings2.capacity(), 5U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+        EXPECT_STREQ(strings2[3].utf8().data(), "d");
+        EXPECT_STREQ(strings2[4].utf8().data(), "e");
+        strings2.append("f"_str);
+        EXPECT_EQ(strings2.size(), 6U);
+        EXPECT_EQ(strings2.capacity(), 16U);
+        EXPECT_STREQ(strings2[5].utf8().data(), "f");
+    }
+
+    {
+        Vector<String, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        EXPECT_EQ(strings.size(), 5U);
+        EXPECT_EQ(strings.capacity(), 10U);
+        Vector<String, 10> strings2(WTFMove(strings));
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 10U);
+        EXPECT_EQ(strings2.size(), 5U);
+        EXPECT_EQ(strings2.capacity(), 10U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+        EXPECT_STREQ(strings2[3].utf8().data(), "d");
+        EXPECT_STREQ(strings2[4].utf8().data(), "e");
+        strings2.append("f"_str);
+        EXPECT_EQ(strings2.size(), 6U);
+        EXPECT_EQ(strings2.capacity(), 10U);
+        EXPECT_STREQ(strings2[5].utf8().data(), "f");
+    }
+
+    {
+        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        EXPECT_EQ(strings.size(), 5U);
+        EXPECT_EQ(strings.capacity(), 5U);
+        Vector<String, 2> strings2(WTFMove(strings));
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 2U);
+        EXPECT_EQ(strings2.size(), 5U);
+        EXPECT_EQ(strings2.capacity(), 5U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+        EXPECT_STREQ(strings2[3].utf8().data(), "d");
+        EXPECT_STREQ(strings2[4].utf8().data(), "e");
+        strings2.append("f"_str);
+        EXPECT_EQ(strings2.size(), 6U);
+        EXPECT_EQ(strings2.capacity(), 16U);
+        EXPECT_STREQ(strings2[5].utf8().data(), "f");
+    }
+}
+
+TEST(WTF_Vector, MoveAssignmentOperator)
+{
+    {
+        Vector<String> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        EXPECT_EQ(strings.size(), 5U);
+        EXPECT_EQ(strings.capacity(), 5U);
+        Vector<String> strings2;
+        strings2 = WTFMove(strings);
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 0U);
+        EXPECT_EQ(strings2.size(), 5U);
+        EXPECT_EQ(strings2.capacity(), 5U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+        EXPECT_STREQ(strings2[3].utf8().data(), "d");
+        EXPECT_STREQ(strings2[4].utf8().data(), "e");
+        strings2.append("f"_str);
+        EXPECT_EQ(strings2.size(), 6U);
+        EXPECT_EQ(strings2.capacity(), 16U);
+        EXPECT_STREQ(strings2[5].utf8().data(), "f");
+    }
+
+    {
+        Vector<String> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        EXPECT_EQ(strings.size(), 5U);
+        Vector<String> strings2({ "foo"_str, "bar"_str });
+        strings2 = WTFMove(strings);
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 0U);
+        EXPECT_EQ(strings2.size(), 5U);
+        EXPECT_EQ(strings2.capacity(), 5U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+        EXPECT_STREQ(strings2[3].utf8().data(), "d");
+        EXPECT_STREQ(strings2[4].utf8().data(), "e");
+        strings2.append("f"_str);
+        EXPECT_EQ(strings2.size(), 6U);
+        EXPECT_EQ(strings2.capacity(), 16U);
+        EXPECT_STREQ(strings2[5].utf8().data(), "f");
+    }
+
+    {
+        Vector<String, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        EXPECT_EQ(strings.size(), 5U);
+        EXPECT_EQ(strings.capacity(), 10U);
+        Vector<String, 10> strings2;
+        strings2 = WTFMove(strings);
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 10U);
+        EXPECT_EQ(strings2.size(), 5U);
+        EXPECT_EQ(strings2.capacity(), 10U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+        EXPECT_STREQ(strings2[3].utf8().data(), "d");
+        EXPECT_STREQ(strings2[4].utf8().data(), "e");
+        strings2.append("f"_str);
+        EXPECT_EQ(strings2.size(), 6U);
+        EXPECT_EQ(strings2.capacity(), 10U);
+        EXPECT_STREQ(strings2[5].utf8().data(), "f");
+    }
+
+    {
+        Vector<String, 10> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        EXPECT_EQ(strings.size(), 5U);
+        EXPECT_EQ(strings.capacity(), 10U);
+        Vector<String, 10> strings2({ "foo"_str, "bar"_str });
+        strings2 = WTFMove(strings);
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 10U);
+        EXPECT_EQ(strings2.size(), 5U);
+        EXPECT_EQ(strings2.capacity(), 10U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+        EXPECT_STREQ(strings2[3].utf8().data(), "d");
+        EXPECT_STREQ(strings2[4].utf8().data(), "e");
+        strings2.append("f"_str);
+        EXPECT_EQ(strings2.size(), 6U);
+        EXPECT_EQ(strings2.capacity(), 10U);
+        EXPECT_STREQ(strings2[5].utf8().data(), "f");
+    }
+
+    {
+        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        EXPECT_EQ(strings.size(), 5U);
+        EXPECT_EQ(strings.capacity(), 5U);
+        Vector<String, 2> strings2;
+        strings2 = WTFMove(strings);
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 2U);
+        EXPECT_EQ(strings2.size(), 5U);
+        EXPECT_EQ(strings2.capacity(), 5U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+        EXPECT_STREQ(strings2[3].utf8().data(), "d");
+        EXPECT_STREQ(strings2[4].utf8().data(), "e");
+        strings2.append("f"_str);
+        EXPECT_EQ(strings2.size(), 6U);
+        EXPECT_EQ(strings2.capacity(), 16U);
+        EXPECT_STREQ(strings2[5].utf8().data(), "f");
+    }
+
+    {
+        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        EXPECT_EQ(strings.size(), 5U);
+        EXPECT_EQ(strings.capacity(), 5U);
+        Vector<String, 2> strings2({ "foo"_str, "bar"_str });
+        strings2 = WTFMove(strings);
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 2U);
+        EXPECT_EQ(strings2.size(), 5U);
+        EXPECT_EQ(strings2.capacity(), 5U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+        EXPECT_STREQ(strings2[3].utf8().data(), "d");
+        EXPECT_STREQ(strings2[4].utf8().data(), "e");
+        strings2.append("f"_str);
+        EXPECT_EQ(strings2.size(), 6U);
+        EXPECT_EQ(strings2.capacity(), 16U);
+        EXPECT_STREQ(strings2[5].utf8().data(), "f");
+    }
+
+    {
+        Vector<String, 2> strings({ "a"_str, "b"_str, "c"_str, "d"_str, "e"_str });
+        EXPECT_EQ(strings.size(), 5U);
+        EXPECT_EQ(strings.capacity(), 5U);
+        Vector<String, 2> strings2({ "foo"_str, "bar"_str, "baz"_str });
+        strings2 = WTFMove(strings);
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 2U);
+        EXPECT_EQ(strings2.size(), 5U);
+        EXPECT_EQ(strings2.capacity(), 5U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+        EXPECT_STREQ(strings2[3].utf8().data(), "d");
+        EXPECT_STREQ(strings2[4].utf8().data(), "e");
+        strings2.append("f"_str);
+        EXPECT_EQ(strings2.size(), 6U);
+        EXPECT_EQ(strings2.capacity(), 16U);
+        EXPECT_STREQ(strings2[5].utf8().data(), "f");
+    }
+
+    {
+        Vector<String, 2> strings({ "a"_str, "b"_str });
+        EXPECT_EQ(strings.size(), 2U);
+        EXPECT_EQ(strings.capacity(), 2U);
+        Vector<String, 2> strings2({ "foo"_str, "bar"_str, "baz"_str });
+        strings2 = WTFMove(strings);
+        EXPECT_EQ(strings.size(), 0U);
+        EXPECT_EQ(strings.capacity(), 2U);
+        EXPECT_EQ(strings2.size(), 2U);
+        EXPECT_EQ(strings2.capacity(), 2U);
+        EXPECT_STREQ(strings2[0].utf8().data(), "a");
+        EXPECT_STREQ(strings2[1].utf8().data(), "b");
+        strings2.append("c"_str);
+        EXPECT_EQ(strings2.size(), 3U);
+        EXPECT_EQ(strings2.capacity(), 16U);
+        EXPECT_STREQ(strings2[2].utf8().data(), "c");
+    }
+}
+
 } // namespace TestWebKitAPI
