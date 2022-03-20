@@ -2986,9 +2986,8 @@ static constexpr size_t elementSize(JSCTypedArrayType type)
     case JSC_TYPED_ARRAY_FLOAT32: return sizeof(float);
     case JSC_TYPED_ARRAY_FLOAT64: return sizeof(double);
     case JSC_TYPED_ARRAY_NONE: break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void testJSCTypedArray()
