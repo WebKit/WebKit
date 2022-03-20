@@ -469,7 +469,7 @@ const LegacyInlineBox* LegacyRootInlineBox::lastSelectedBox() const
     return nullptr;
 }
 
-LayoutUnit LegacyRootInlineBox::selectionTop(ForHitTesting forHitTesting) const
+LayoutUnit LegacyRootInlineBox::selectionTop() const
 {
     LayoutUnit selectionTop = m_lineTop;
     
@@ -514,7 +514,7 @@ LayoutUnit LegacyRootInlineBox::selectionTop(ForHitTesting forHitTesting) const
     if (auto* previousBox = prevRootBox())
         prevBottom = previousBox->selectionBottom();
     else
-        prevBottom = forHitTesting == ForHitTesting::Yes ? blockFlow().borderAndPaddingBefore() : selectionTop;
+        prevBottom = selectionTop;
 
     if (prevBottom < selectionTop && blockFlow().containsFloats()) {
         // This line has actually been moved further down, probably from a large line-height, but possibly because the

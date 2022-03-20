@@ -55,10 +55,6 @@ public:
     float lineBoxBottom() const { return line().lineBoxBottom(); }
 
     float contentLogicalTopAdjustedForPrecedingLine() const { return !m_lineIndex ? contentLogicalTop() : LineIteratorModernPath(*m_inlineContent, m_lineIndex - 1).contentLogicalBottomAdjustedForFollowingLine(); }
-    // FIXME: Remove the containingBlock().borderAndPaddingBefore() offset after retiring legacy line layout. It also requires changes in RenderText::positionForPoint to find the first line with offset.
-    // - the "before" value is already factored in to the line offset
-    // - this logic negates the first line's natural offset (e.g. block has no border/padding but the first line has a computed offset).
-    float contentLogicalTopAdjustedForHitTesting() const { return !m_lineIndex ? containingBlock().borderAndPaddingBefore().toFloat() : contentLogicalTopAdjustedForPrecedingLine(); };
     // FIXME: Implement.
     float contentLogicalBottomAdjustedForFollowingLine() const { return contentLogicalBottom(); }
 

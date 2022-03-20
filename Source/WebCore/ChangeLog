@@ -1,3 +1,28 @@
+2022-03-20  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Remove redundant InlineIterator::Line::contentLogicalTopAdjustedForHitTesting
+        https://bugs.webkit.org/show_bug.cgi?id=238107
+
+        Reviewed by Antti Koivisto.
+
+        It looks like contentLogicalTopAdjustedForHitTesting is just the combination of
+        - containingBlock's border and padding before
+        - LineSelection::logicalTop (which is either the line's content top or the previous line's content bottom)
+        - line's content top
+
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::contentStartInBlockDirection):
+        (WebCore::InlineIterator::Line::contentLogicalTopAdjustedForHitTesting const): Deleted.
+        * layout/integration/InlineIteratorLineModernPath.h:
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTopAdjustedForPrecedingLine const):
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTopAdjustedForHitTesting const): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint): This seems to be missing the contentLogicalTop check.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+
 2022-03-20  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r289154) [GSTREAMER] webrtc/vp8-then-h264.html is crashing after SDK update to fdo 21.08 and Gstreamer 1.20

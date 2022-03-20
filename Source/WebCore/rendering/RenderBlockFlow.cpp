@@ -3421,7 +3421,7 @@ VisiblePosition RenderBlockFlow::positionForPointWithInlineChildren(const Layout
 
     if (closestBox) {
         if (moveCaretToBoundary) {
-            auto firstLineWithChildrenTop = LayoutUnit { std::min(firstLineWithChildren->contentLogicalTopAdjustedForHitTesting(), firstLineWithChildren->contentLogicalTop()) };
+            auto firstLineWithChildrenTop = LayoutUnit { std::min(previousLineContentBottomOrBorderAndPadding(*firstLineWithChildren), firstLineWithChildren->contentLogicalTop()) };
             if (pointInLogicalContents.y() < firstLineWithChildrenTop
                 || (blocksAreFlipped && pointInLogicalContents.y() == firstLineWithChildrenTop)) {
                 auto box = firstLineWithChildren->firstLeafBox();

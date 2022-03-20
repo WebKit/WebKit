@@ -46,7 +46,6 @@ public:
     float contentLogicalTop() const { return m_rootInlineBox->lineTop().toFloat(); }
     float contentLogicalBottom() const { return m_rootInlineBox->lineBottom().toFloat(); }
     float contentLogicalTopAdjustedForPrecedingLine() const { return m_rootInlineBox->selectionTop().toFloat(); }
-    float contentLogicalTopAdjustedForHitTesting() const { return m_rootInlineBox->selectionTop(LegacyRootInlineBox::ForHitTesting::Yes).toFloat(); }
     float contentLogicalBottomAdjustedForFollowingLine() const { return m_rootInlineBox->selectionBottom().toFloat(); }
     float lineBoxTop() const { return m_rootInlineBox->lineBoxTop().toFloat(); }
     float lineBoxBottom() const { return m_rootInlineBox->lineBoxBottom().toFloat(); }

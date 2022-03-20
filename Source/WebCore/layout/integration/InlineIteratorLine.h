@@ -64,7 +64,6 @@ public:
     float contentLogicalRight() const;
     float contentLogicalWidth() const;
 
-    float contentLogicalTopAdjustedForHitTesting() const;
     float contentLogicalTopAdjustedForPrecedingLine() const;
     float contentLogicalBottomAdjustedForFollowingLine() const;
 
@@ -122,10 +121,15 @@ LineIterator lastLineFor(const RenderBlockFlow&);
 LeafBoxIterator closestBoxForHorizontalPosition(const Line&, float horizontalPosition, bool editableOnly = false);
 
 // -----------------------------------------------
+inline float previousLineContentBottomOrBorderAndPadding(const Line& line)
+{
+    return line.isFirst() ? line.containingBlock().borderAndPaddingBefore().toFloat() : line.contentLogicalTopAdjustedForPrecedingLine(); 
+}
+
 inline float contentStartInBlockDirection(const Line& line)
 {
     if (!line.containingBlock().style().isFlippedBlocksWritingMode())
-        return std::max(line.contentLogicalTop(), line.contentLogicalTopAdjustedForHitTesting());
+        return std::max(line.contentLogicalTop(), previousLineContentBottomOrBorderAndPadding(line));
     return std::min(line.contentLogicalBottom(), line.contentLogicalBottomAdjustedForFollowingLine());
 }
 
@@ -152,13 +156,6 @@ inline float Line::contentLogicalTopAdjustedForPrecedingLine() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalTopAdjustedForPrecedingLine();
-    });
-}
-
-inline float Line::contentLogicalTopAdjustedForHitTesting() const
-{
-    return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.contentLogicalTopAdjustedForHitTesting();
     });
 }
 

@@ -674,7 +674,7 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
             run.traverseNextTextBox();
 
         auto line = run->line();
-        auto top = std::min(line->contentLogicalTopAdjustedForHitTesting(), line->contentLogicalTop());
+        auto top = LayoutUnit { std::min(previousLineContentBottomOrBorderAndPadding(*line), line->contentLogicalTop()) };
         if (pointBlockDirection > top || (!blocksAreFlipped && pointBlockDirection == top)) {
             auto bottom = LineSelection::logicalBottom(*line);
             if (auto nextLine = line->next())
