@@ -1,3 +1,16 @@
+2022-03-19  Oriol Brufau  <obrufau@igalia.com>
+
+        [cssom] Implement border-image serialization
+        https://bugs.webkit.org/show_bug.cgi?id=238102
+
+        Reviewed by Darin Adler.
+
+        Let the test accept some equivalent serializations.
+        Expect it to pass.
+
+        * web-platform-tests/css/css-backgrounds/parsing/border-image-valid-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-image-valid.html:
+
 2022-03-19  Antoine Quint  <graouts@webkit.org>
 
         Dialog element only animates once

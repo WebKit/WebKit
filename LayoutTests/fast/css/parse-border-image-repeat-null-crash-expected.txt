@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: border-image-source: url("images/shadow-border.png"); border-image-slice: 10; border-image-repeat: stretch;
+CONSOLE MESSAGE: border-image: url("images/shadow-border.png") 10 stretch;
 This test should not crash

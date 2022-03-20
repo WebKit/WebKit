@@ -1,5 +1,23 @@
 2022-03-19  Oriol Brufau  <obrufau@igalia.com>
 
+        [cssom] Implement border-image serialization
+        https://bugs.webkit.org/show_bug.cgi?id=238102
+
+        Reviewed by Darin Adler.
+
+        Add logic for serializing border-image at specified-value time.
+
+        Tests: fast/css/parse-border-image-repeat-null-crash.html
+               imported/w3c/web-platform-tests/css/css-backgrounds/parsing/border-image-valid.html
+
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        (WebCore::StyleProperties::borderImagePropertyValue const):
+        (WebCore::StyleProperties::asText const):
+        * css/StyleProperties.h:
+
+2022-03-19  Oriol Brufau  <obrufau@igalia.com>
+
         Fix hasExplicitlySetBorderRadius flag
         https://bugs.webkit.org/show_bug.cgi?id=238062
 

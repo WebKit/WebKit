@@ -1,5 +1,16 @@
 2022-03-19  Oriol Brufau  <obrufau@igalia.com>
 
+        [cssom] Implement border-image serialization
+        https://bugs.webkit.org/show_bug.cgi?id=238102
+
+        Reviewed by Darin Adler.
+
+        Expect cssText to serialize border-image instead of longhands.
+
+        * fast/css/parse-border-image-repeat-null-crash-expected.txt:
+
+2022-03-19  Oriol Brufau  <obrufau@igalia.com>
+
         Fix hasExplicitlySetBorderRadius flag
         https://bugs.webkit.org/show_bug.cgi?id=238062
 
