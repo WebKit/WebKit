@@ -36,7 +36,7 @@ namespace WebCore {
 
 GBMBufferSwapchain::GBMBufferSwapchain(BufferSwapchainSize size)
 {
-    ASSERT(unsigned(size) < c_maxBuffers);
+    ASSERT(unsigned(size) <= c_maxBuffers);
     m_array.size = unsigned(size);
 }
 
