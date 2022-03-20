@@ -305,7 +305,11 @@ public:
     const LengthSize& borderBottomLeftRadius() const { return m_surroundData->border.bottomLeftRadius(); }
     const LengthSize& borderBottomRightRadius() const { return m_surroundData->border.bottomRightRadius(); }
     bool hasBorderRadius() const { return m_surroundData->border.hasBorderRadius(); }
-    bool hasExplicitlySetBorderRadius() const { return m_nonInheritedFlags.hasExplicitlySetBorderRadius; }
+    bool hasExplicitlySetBorderBottomLeftRadius() const { return m_nonInheritedFlags.hasExplicitlySetBorderBottomLeftRadius; }
+    bool hasExplicitlySetBorderBottomRightRadius() const { return m_nonInheritedFlags.hasExplicitlySetBorderBottomRightRadius; }
+    bool hasExplicitlySetBorderTopLeftRadius() const { return m_nonInheritedFlags.hasExplicitlySetBorderTopLeftRadius; }
+    bool hasExplicitlySetBorderTopRightRadius() const { return m_nonInheritedFlags.hasExplicitlySetBorderTopRightRadius; }
+    bool hasExplicitlySetBorderRadius() const { return hasExplicitlySetBorderBottomLeftRadius() || hasExplicitlySetBorderBottomRightRadius() || hasExplicitlySetBorderTopLeftRadius() || hasExplicitlySetBorderTopRightRadius(); }
 
     float borderLeftWidth() const { return m_surroundData->border.borderLeftWidth(); }
     BorderStyle borderLeftStyle() const { return m_surroundData->border.left().style(); }
@@ -941,7 +945,10 @@ public:
 
     void setBorderRadius(LengthSize&&);
     void setBorderRadius(const IntSize&);
-    void setHasExplicitlySetBorderRadius(bool v) { m_nonInheritedFlags.hasExplicitlySetBorderRadius = v; }
+    void setHasExplicitlySetBorderBottomLeftRadius(bool v) { m_nonInheritedFlags.hasExplicitlySetBorderBottomLeftRadius = v; }
+    void setHasExplicitlySetBorderBottomRightRadius(bool v) { m_nonInheritedFlags.hasExplicitlySetBorderBottomRightRadius = v; }
+    void setHasExplicitlySetBorderTopLeftRadius(bool v) { m_nonInheritedFlags.hasExplicitlySetBorderTopLeftRadius = v; }
+    void setHasExplicitlySetBorderTopRightRadius(bool v) { m_nonInheritedFlags.hasExplicitlySetBorderTopRightRadius = v; }
 
     RoundedRect getRoundedBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
@@ -1954,7 +1961,10 @@ private:
         unsigned floating : 3; // Float
         unsigned tableLayout : 1; // TableLayoutType
 
-        unsigned hasExplicitlySetBorderRadius : 1;
+        unsigned hasExplicitlySetBorderBottomLeftRadius : 1;
+        unsigned hasExplicitlySetBorderBottomRightRadius : 1;
+        unsigned hasExplicitlySetBorderTopLeftRadius : 1;
+        unsigned hasExplicitlySetBorderTopRightRadius : 1;
         unsigned hasExplicitlySetDirection : 1;
         unsigned hasExplicitlySetWritingMode : 1;
         unsigned hasExplicitlySetTextAlign : 1;
@@ -2091,7 +2101,10 @@ inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& 
         && unicodeBidi == other.unicodeBidi
         && floating == other.floating
         && tableLayout == other.tableLayout
-        && hasExplicitlySetBorderRadius == other.hasExplicitlySetBorderRadius
+        && hasExplicitlySetBorderBottomLeftRadius == other.hasExplicitlySetBorderBottomLeftRadius
+        && hasExplicitlySetBorderBottomRightRadius == other.hasExplicitlySetBorderBottomRightRadius
+        && hasExplicitlySetBorderTopLeftRadius == other.hasExplicitlySetBorderTopLeftRadius
+        && hasExplicitlySetBorderTopRightRadius == other.hasExplicitlySetBorderTopRightRadius
         && hasExplicitlySetDirection == other.hasExplicitlySetDirection
         && hasExplicitlySetWritingMode == other.hasExplicitlySetWritingMode
         && hasExplicitlySetTextAlign == other.hasExplicitlySetTextAlign
@@ -2128,7 +2141,10 @@ inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheri
 
     // Unlike properties tracked by the other hasExplicitlySet* flags, border-radius is non-inherited
     // and we need to remember whether it's been explicitly set when copying m_surroundData.
-    hasExplicitlySetBorderRadius = other.hasExplicitlySetBorderRadius;
+    hasExplicitlySetBorderBottomLeftRadius = other.hasExplicitlySetBorderBottomLeftRadius;
+    hasExplicitlySetBorderBottomRightRadius = other.hasExplicitlySetBorderBottomRightRadius;
+    hasExplicitlySetBorderTopLeftRadius = other.hasExplicitlySetBorderTopLeftRadius;
+    hasExplicitlySetBorderTopRightRadius = other.hasExplicitlySetBorderTopRightRadius;
 }
 
 inline bool RenderStyle::NonInheritedFlags::hasPseudoStyle(PseudoId pseudo) const

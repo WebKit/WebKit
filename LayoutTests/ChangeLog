@@ -1,3 +1,18 @@
+2022-03-19  Oriol Brufau  <obrufau@igalia.com>
+
+        Fix hasExplicitlySetBorderRadius flag
+        https://bugs.webkit.org/show_bug.cgi?id=238062
+
+        Reviewed by Darin Adler.
+
+        Add test, skip it except in iOS and Mac.
+
+        * TestExpectations:
+        * fast/css/appearance-apple-pay-button-border-radius-longhands-expected.html: Added.
+        * fast/css/appearance-apple-pay-button-border-radius-longhands.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2022-03-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make fast/text/emoji-num-glyphs.html more robust

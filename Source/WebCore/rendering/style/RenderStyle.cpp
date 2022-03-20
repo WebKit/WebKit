@@ -197,7 +197,10 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(initialUnicodeBidi());
     m_nonInheritedFlags.floating = static_cast<unsigned>(initialFloating());
     m_nonInheritedFlags.tableLayout = static_cast<unsigned>(initialTableLayout());
-    m_nonInheritedFlags.hasExplicitlySetBorderRadius = false;
+    m_nonInheritedFlags.hasExplicitlySetBorderBottomLeftRadius = false;
+    m_nonInheritedFlags.hasExplicitlySetBorderBottomRightRadius = false;
+    m_nonInheritedFlags.hasExplicitlySetBorderTopLeftRadius = false;
+    m_nonInheritedFlags.hasExplicitlySetBorderTopRightRadius = false;
     m_nonInheritedFlags.hasExplicitlySetDirection = false;
     m_nonInheritedFlags.hasExplicitlySetWritingMode = false;
     m_nonInheritedFlags.hasExplicitlySetTextAlign = false;

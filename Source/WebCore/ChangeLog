@@ -1,3 +1,51 @@
+2022-03-19  Oriol Brufau  <obrufau@igalia.com>
+
+        Fix hasExplicitlySetBorderRadius flag
+        https://bugs.webkit.org/show_bug.cgi?id=238062
+
+        Reviewed by Darin Adler.
+
+        The four border-*-radius longhands were sharing the same flag, so the
+        behavior was broken when setting longhands individually.
+
+        This patch splits the flag into 4 different ones, one for each longhand.
+        Also makes sure to set it properly when a longhand is set to 'initial'.
+
+        It's ugly to have all this boilerplate code for the flags, but
+        https://webkit.org/b/212506 will make it automatically generated.
+
+        Test: fast/css/appearance-apple-pay-button-border-radius-longhands.html
+
+        * css/CSSProperties.json:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::hasExplicitlySetBorderBottomLeftRadius const):
+        (WebCore::RenderStyle::hasExplicitlySetBorderBottomRightRadius const):
+        (WebCore::RenderStyle::hasExplicitlySetBorderTopLeftRadius const):
+        (WebCore::RenderStyle::hasExplicitlySetBorderTopRightRadius const):
+        (WebCore::RenderStyle::hasExplicitlySetBorderRadius const):
+        (WebCore::RenderStyle::setHasExplicitlySetBorderBottomLeftRadius):
+        (WebCore::RenderStyle::setHasExplicitlySetBorderBottomRightRadius):
+        (WebCore::RenderStyle::setHasExplicitlySetBorderTopLeftRadius):
+        (WebCore::RenderStyle::setHasExplicitlySetBorderTopRightRadius):
+        (WebCore::RenderStyle::NonInheritedFlags::operator== const):
+        (WebCore::RenderStyle::NonInheritedFlags::copyNonInheritedFrom):
+        (WebCore::RenderStyle::setHasExplicitlySetBorderRadius): Deleted.
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInitialBorderBottomLeftRadius):
+        (WebCore::Style::BuilderCustom::applyInheritBorderBottomLeftRadius):
+        (WebCore::Style::BuilderCustom::applyValueBorderBottomLeftRadius):
+        (WebCore::Style::BuilderCustom::applyInitialBorderBottomRightRadius):
+        (WebCore::Style::BuilderCustom::applyInheritBorderBottomRightRadius):
+        (WebCore::Style::BuilderCustom::applyValueBorderBottomRightRadius):
+        (WebCore::Style::BuilderCustom::applyInitialBorderTopLeftRadius):
+        (WebCore::Style::BuilderCustom::applyInheritBorderTopLeftRadius):
+        (WebCore::Style::BuilderCustom::applyValueBorderTopLeftRadius):
+        (WebCore::Style::BuilderCustom::applyInitialBorderTopRightRadius):
+        (WebCore::Style::BuilderCustom::applyInheritBorderTopRightRadius):
+        (WebCore::Style::BuilderCustom::applyValueBorderTopRightRadius):
+
 2022-03-19  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] InlineIterator::Line functions should all return float values

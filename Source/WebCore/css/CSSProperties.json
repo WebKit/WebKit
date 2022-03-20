@@ -1556,8 +1556,7 @@
                 "aliases": [
                     "-webkit-border-bottom-left-radius"
                 ],
-                "initial": "initialBorderRadius",
-                "custom": "Inherit|Value",
+                "custom": "All",
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "bottom-left"
@@ -1573,8 +1572,7 @@
                 "aliases": [
                     "-webkit-border-bottom-right-radius"
                 ],
-                "initial": "initialBorderRadius",
-                "custom": "Inherit|Value",
+                "custom": "All",
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "bottom-right"
@@ -2195,8 +2193,7 @@
                 "aliases": [
                     "-webkit-border-top-left-radius"
                 ],
-                "initial": "initialBorderRadius",
-                "custom": "Inherit|Value",
+                "custom": "All",
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "top-left"
@@ -2212,8 +2209,7 @@
                 "aliases": [
                     "-webkit-border-top-right-radius"
                 ],
-                "initial": "initialBorderRadius",
-                "custom": "Inherit|Value",
+                "custom": "All",
                 "logical-property-group": {
                     "name": "border-radius",
                     "resolver": "top-right"
