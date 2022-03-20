@@ -1,3 +1,13 @@
+2022-03-20  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r289154) [GSTREAMER] webrtc/vp8-then-h264.html is crashing after SDK update to fdo 21.08 and Gstreamer 1.20
+        https://bugs.webkit.org/show_bug.cgi?id=237872
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/mediastream/libwebrtc/gstreamer/GStreamerVideoDecoderFactory.cpp:
+        (WebCore::VP8Decoder::Create): Fix typo in decoder factory test.
+
 2022-03-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE][GStreamer] media playback broken
