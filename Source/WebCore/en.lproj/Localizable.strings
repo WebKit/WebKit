@@ -1676,7 +1676,7 @@
 "“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";
 
 /* The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only). */
-"“%@” in “%%@”" = "“%@” in “%%@”";
+"%@ in %%@" = "%@ in %%@";
 
 /* Allow the specified bundle to sign in to the specified website */
 "“%@” would like to sign in to “%@”." = "“%@” would like to sign in to “%@”.";

@@ -1,3 +1,13 @@
+2022-03-21  Youenn Fablet  <youenn@apple.com>
+
+        Remove unneeded quotes in capture attribution string
+        https://bugs.webkit.org/show_bug.cgi?id=238132
+        <rdar://88794701>
+
+        Reviewed by Eric Carlson.
+
+        * en.lproj/Localizable.strings:
+
 2022-03-21  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Accessing WebGL content crashes in macOS Recovery OS
