@@ -49,7 +49,7 @@
     (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
 #if PLATFORM(MAC)
-(deny mach-register (with telemetry) (local-name-prefix ""))
+(deny mach-register (local-name-prefix ""))
 
 (allow system-automount
        (process-attribute is-platform-binary))
@@ -71,7 +71,7 @@
     (literal "/var")
     (literal "/private/etc/localtime"))
 
-(allow file-read-metadata (with telemetry) (path-ancestors "/System/Volumes/Data/private"))
+(allow file-read-metadata (path-ancestors "/System/Volumes/Data/private"))
 
 (allow file-read* (literal "/"))
 
@@ -130,7 +130,7 @@
     (allow file-read*
          (literal "/Library/Preferences/com.apple.networkd.plist")
          (literal "/private/var/db/nsurlstoraged/dafsaData.bin"))
-    (deny mach-lookup (with telemetry)
+    (deny mach-lookup 
          (global-name "com.apple.SystemConfiguration.PPPController")
          (global-name "com.apple.SystemConfiguration.SCNetworkReachability")
          (global-name "com.apple.networkd")
@@ -143,14 +143,14 @@
          (global-name "com.apple.usymptomsd"))
     (allow network-outbound
          (control-name "com.apple.netsrc"))
-    (deny system-socket (with telemetry)
+    (deny system-socket 
           (socket-domain AF_ROUTE))
     (allow system-socket
          (require-all (socket-domain AF_SYSTEM)
                       (socket-protocol 2))) ; SYSPROTO_CONTROL
     (allow mach-lookup
          (global-name "com.apple.AppSSO.service-xpc"))
-    (deny ipc-posix-shm-read-data (with telemetry)
+    (deny ipc-posix-shm-read-data 
          (ipc-posix-name "/com.apple.AppSSO.version")))
 #else
 (import "system.sb")
@@ -162,7 +162,7 @@
 (allow process-info-pidinfo)
 (allow process-info-setcontrol (target self))
 
-(deny sysctl* (with telemetry))
+(deny sysctl*) 
 (allow sysctl-read
     (sysctl-name
         "hw.cputype"
@@ -274,7 +274,7 @@
     (iokit-user-client-class "RootDomainUserClient") ; Used by PowerObserver
 )
 
-(deny mach-lookup (with telemetry)
+(deny mach-lookup 
     (global-name "com.apple.PowerManagement.control"))
 
 ;; Various services required by CFNetwork and other frameworks
@@ -300,19 +300,19 @@
         (global-name "com.apple.analyticsd")
         (global-name "com.apple.diagnosticd")))
 
-(allow mach-lookup (with telemetry) (global-name "com.apple.webkit.adattributiond.service"))
-(allow mach-lookup (with telemetry) (global-name "org.webkit.pcmtestdaemon.service"))
+(allow mach-lookup (global-name "com.apple.webkit.adattributiond.service"))
+(allow mach-lookup (global-name "org.webkit.pcmtestdaemon.service"))
 
-(allow mach-lookup (with telemetry) (global-name "com.apple.webkit.webpushd.service"))
-(allow mach-lookup (with telemetry) (global-name "org.webkit.webpushtestdaemon.service"))
+(allow mach-lookup (global-name "com.apple.webkit.webpushd.service"))
+(allow mach-lookup (global-name "org.webkit.webpushtestdaemon.service"))
 
 (with-filter (uid 0)
-    (allow mach-lookup (with telemetry)
+    (allow mach-lookup 
         (global-name "com.apple.DiskArbitration.diskarbitrationd")
     )
 )
 
-(deny mach-lookup (with telemetry)
+(deny mach-lookup 
    (global-name "com.apple.ctkd.token-client")
    (global-name "com.apple.securityd.xpc")
    (global-name "com.apple.CoreAuthentication.agent")
@@ -335,7 +335,7 @@
 
 (allow file-read* (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 (with-filter (uid 0)
-    (allow file-write* (with telemetry)
+    (allow file-write* 
         (subpath "/private/var/db/mds/system")) ;; FIXME: This should be removed when <rdar://problem/9538414> is fixed.
 )
 
@@ -379,7 +379,7 @@
     (global-name "org.h5l.kcm")
     (global-name "com.apple.GSSCred")
     (global-name "com.apple.ist.ds.appleconnect.service.kdctunnel")) ;; Remove after <rdar://problem/35542803> ships
-(allow network-outbound (with telemetry)
+(allow network-outbound 
     (remote udp))
 (shared-preferences-read
     "com.apple.GSS"
@@ -436,7 +436,7 @@
         (set! allow orig-allow))))
 
 ;; FIXME should be removed when <rdar://problem/30498072> is fixed.
-(allow network* (with telemetry)
+(allow network* 
     (local udp)
     (remote udp)
     (local tcp)

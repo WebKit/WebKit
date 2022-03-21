@@ -1,5 +1,28 @@
 2022-03-21  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r291563. rdar://problem/90448244
+
+    Sandbox: Remove telemetry in Network Process sandbox macOS
+    https://bugs.webkit.org/show_bug.cgi?id=238041
+    
+    Patch by Adam Mazander <mazander@apple.com> on 2022-03-21
+    Reviewed by Brent Fulgham.
+    
+    * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291563 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-21  Adam Mazander  <mazander@apple.com>
+
+            Sandbox: Remove telemetry in Network Process sandbox macOS
+            https://bugs.webkit.org/show_bug.cgi?id=238041
+
+            Reviewed by Brent Fulgham.
+
+            * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
+2022-03-21  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r291564. rdar://problem/90463946
 
     Add an addition point for system background color
