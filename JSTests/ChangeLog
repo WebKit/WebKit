@@ -1,3 +1,20 @@
+2022-03-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ReferenceError when using extra parens in class fields
+        https://bugs.webkit.org/show_bug.cgi?id=236843
+
+        Reviewed by Saam Barati.
+
+        * stress/class-field-initializer-should-have-variable-scope.js: Added.
+        (shouldBe):
+        (test1.const.a.x.B):
+        (test1):
+        (test2.const.a.x.B):
+        (test2):
+        (test3.B.prototype.b):
+        (test3.B):
+        (test3):
+
 2022-03-08  Mark Lam  <mark.lam@apple.com>
 
         Remove invalid ASSERT in LocaleIDBuilder::overrideLanguageScriptRegion().

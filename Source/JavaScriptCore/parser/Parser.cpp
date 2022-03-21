@@ -3110,12 +3110,14 @@ parseMethod:
 
             TreeExpression initializer = 0;
             if (consume(EQUAL)) {
+                size_t usedVariablesSize = currentScope()->currentUsedVariablesSize();
+                currentScope()->pushUsedVariableSet();
                 SetForScope overrideParsingClassFieldInitializer(m_parserState.isParsingClassFieldInitializer, true);
                 classScope->setExpectedSuperBinding(SuperBinding::Needed);
                 initializer = parseAssignmentExpression(context);
                 classScope->setExpectedSuperBinding(SuperBinding::NotNeeded);
                 failIfFalse(initializer, "Cannot parse initializer for class field");
-                classScope->markLastUsedVariablesSetAsCaptured();
+                classScope->markLastUsedVariablesSetAsCaptured(usedVariablesSize);
             }
             failIfFalse(autoSemiColon(), "Expected a ';' following a class field");
             auto inferName = initializer ? InferName::Allowed : InferName::Disallowed;

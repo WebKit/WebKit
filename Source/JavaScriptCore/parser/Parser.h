@@ -663,10 +663,12 @@ public:
         m_closedVariableCandidates.add(impl);
     }
 
-    void markLastUsedVariablesSetAsCaptured()
+    void markLastUsedVariablesSetAsCaptured(unsigned from)
     {
-        for (UniquedStringImpl* impl : m_usedVariables.last())
-            m_closedVariableCandidates.add(impl);
+        for (unsigned index = from; index < m_usedVariables.size(); ++index) {
+            for (UniquedStringImpl* impl : m_usedVariables[index])
+                m_closedVariableCandidates.add(impl);
+        }
     }
     
     void collectFreeVariables(Scope* nestedScope, bool shouldTrackClosedVariables)

@@ -1,3 +1,23 @@
+2022-03-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] ReferenceError when using extra parens in class fields
+        https://bugs.webkit.org/show_bug.cgi?id=236843
+
+        Reviewed by Saam Barati.
+
+        class field initializer should create its own used-variables set
+        to capture used variables separately from the other variables since
+        it becomes independent CodeBlock internally later. The current code
+        was wrong since,
+
+            1. Incorrectly using the current set of class-scope.
+            2. Incorrectly marking only the last set while parseAssignmentExpression can create a new set inside it.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        * parser/Parser.h:
+        (JSC::Scope::markLastUsedVariablesSetAsCaptured):
+
 2022-03-21  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, reverting r291558.
