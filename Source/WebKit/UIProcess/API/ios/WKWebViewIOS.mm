@@ -60,6 +60,7 @@
 #import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/WebCoreUIColorExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/BlockPtr.h>
@@ -541,7 +542,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
     if (!color.isValid()) {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-        color = WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
+        color = WebCore::roundAndClampToSRGBALossy(WebCore::systemBackgroundColor().CGColor);
 #else
         color = WebCore::Color::white;
 #endif
