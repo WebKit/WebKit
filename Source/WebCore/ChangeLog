@@ -1,3 +1,57 @@
+2022-03-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable PGO when building for release and production
+        https://bugs.webkit.org/show_bug.cgi?id=238119
+        rdar://90182309
+
+        Reviewed by Saam Barati.
+
+        Add LLVM profiles to the WebCore, JavaScriptCore and WebKit frameworks, collected by running certain benchmarks
+        on ARM macOS. We then use this data for release and production builds by specifying a `-fprofile-instr-use` in
+        `OTHER_CPLUSPLUSFLAGS`. Across various configurations of macOS and iOS, this is an ~8% speedup on Speedometer.
+
+        ---------------------------------------------------------------------------------------------------------
+        |               subtest                |     ms      |     ms      |  b / a   | pValue                  |
+        ---------------------------------------------------------------------------------------------------------
+        | Elm-TodoMVC                          |101.721667   |99.571667    |0.978864  | 0.000211 (significant)  |
+        | VueJS-TodoMVC                        |18.643333    |17.196667    |0.922403  | 0.000000 (significant)  |
+        | EmberJS-TodoMVC                      |108.763333   |103.306667   |0.949830  | 0.000000 (significant)  |
+        | BackboneJS-TodoMVC                   |37.951667    |34.693333    |0.914145  | 0.000000 (significant)  |
+        | Preact-TodoMVC                       |13.586667    |12.818333    |0.943449  | 0.053277                |
+        | AngularJS-TodoMVC                    |117.130000   |110.755000   |0.945573  | 0.000000 (significant)  |
+        | Vanilla-ES2015-TodoMVC               |58.950000    |52.716667    |0.894261  | 0.000000 (significant)  |
+        | Inferno-TodoMVC                      |52.660000    |49.571667    |0.941353  | 0.000000 (significant)  |
+        | Flight-TodoMVC                       |51.551667    |46.230000    |0.896770  | 0.000000 (significant)  |
+        | Angular2-TypeScript-TodoMVC          |35.753333    |33.698333    |0.942523  | 0.000000 (significant)  |
+        | VanillaJS-TodoMVC                    |48.400000    |42.670000    |0.881612  | 0.000000 (significant)  |
+        | jQuery-TodoMVC                       |218.346667   |200.051667   |0.916211  | 0.000000 (significant)  |
+        | EmberJS-Debug-TodoMVC                |304.171667   |291.903333   |0.959666  | 0.000000 (significant)  |
+        | React-TodoMVC                        |75.475000    |72.761667    |0.964050  | 0.000008 (significant)  |
+        | React-Redux-TodoMVC                  |126.448333   |120.458333   |0.952629  | 0.000000 (significant)  |
+        | Vanilla-ES2015-Babel-Webpack-TodoMVC |55.643333    |49.665000    |0.892560  | 0.000000 (significant)  |
+        ---------------------------------------------------------------------------------------------------------
+
+        a mean = 306.08529
+        b mean = 330.01548
+        pValue = 0.0000000000
+        (Bigger means are better.)
+        1.078 times better
+        Results ARE significant
+
+        * Configurations/Base.xcconfig:
+
+        For now, we additionally ignore errors that arise if profiled symbols differ from built symbols; in the future,
+        we'll need to implement some kind of strategy to detect when enough symbols in the profile data no longer match
+        symbols that appear in the built binaries, such that it might begin to negate the performance benefit from PGO.
+
+        Note that while the profile data was collected on an ARM Mac, performance tests have shown the profile data to
+        largely generalize well to other architectures and platforms as well (i.e. macOS x86_64 and iOS arm64e). As
+        such, instead of limiting this profile to ARM macOS, we can just use it everywhere (and perhaps, add platform-
+        or architecture-specific profile data later, if needed).
+
+        * Configurations/WebCore.xcconfig:
+        * Profiling/WebCore.profdata: Added.
+
 2022-03-21  Ziran Sun  <zsun@igalia.com>
 
         [selection] HTMLTextFormControlElement::subtreeHasChanged() shouldn't be called in setRangeText
