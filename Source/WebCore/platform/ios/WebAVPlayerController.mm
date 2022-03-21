@@ -44,6 +44,7 @@ SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVValueTiming)
 
+OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVMetadataItem;
 
 using namespace WebCore;
