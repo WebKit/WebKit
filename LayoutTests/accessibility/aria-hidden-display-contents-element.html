@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body id="body">
+
+<main id="main" style="display: contents">
+    <ol id="list">
+        <li>List item one</li>
+        <li>List item two</li>
+    </ol>
+    <p id="paragraph">Content inside main > p tag.<p>
+</main>
+
+<script>
+    var testOutput = "This test ensures that an aria-hidden display:contents element behaves as expected.";
+
+    function debugElement(id) {
+        testOutput += `\n\nTesting element #${id}\n`;
+        const axElement = accessibilityController.accessibleElementById(id);
+        if (!axElement) {
+            debug(`\nFAIL: Couldn't get AX element for #${id}.`);
+            return;
+        }
+
+        testOutput += axElement.role;
+        const computedRoleString = axElement.computedRoleString;
+        if (computedRoleString)
+            testOutput += `\ncomputedRoleString: ${computedRoleString}`;
+
+        let subrole = axElement.subrole;
+        if (subrole.replace("AXSubrole: ", ""))
+            testOutput += `\n${subrole}`;
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        debugElement("main");
+        debugElement("list");
+        debugElement("paragraph");
+
+        testOutput += "\n\nHiding #main with aria-hidden='true'.";
+        document.getElementById("main").ariaHidden = "true";
+        setTimeout(async function() {
+            await waitFor(() => {
+                // Wait for the main to be hidden.
+                return !accessibilityController.accessibleElementById("main");
+            });
+            const list = accessibilityController.accessibleElementById("list");
+            const paragraph = accessibilityController.accessibleElementById("paragraph");
+            if (!list && !paragraph)
+                testOutput += "\nPASS: All elements are now hidden.";
+            else {
+                if (list)
+                    testOutput += "\nFAIL: <ol> was not hidden by aria-hidden.";
+                if (paragraph)
+                    testOutput += "\nFAIL: <p> was not hidden by aria-hidden.";
+            }
+
+            document.getElementById("main").style.visibility = "hidden";
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

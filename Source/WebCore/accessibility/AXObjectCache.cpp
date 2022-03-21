@@ -720,14 +720,10 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
         return object.get();
     }
 
-    // It's only allowed to create an AccessibilityObject from a Node if it's in a canvas subtree.
-    // Or if it's a hidden element, but we still want to expose it because of other ARIA attributes.
     bool inCanvasSubtree = lineageOfType<HTMLCanvasElement>(*node->parentElement()).first();
-    bool isHidden = isNodeAriaVisible(node);
-
     bool insideMeterElement = is<HTMLMeterElement>(*node->parentElement());
-    
-    if (!inCanvasSubtree && !isHidden && !insideMeterElement)
+    bool hasDisplayContents = is<Element>(*node) && downcast<Element>(*node).hasDisplayContents();
+    if (!inCanvasSubtree && !insideMeterElement && !hasDisplayContents && !isNodeAriaVisible(node))
         return nullptr;
 
     Ref protectedNode { *node };
@@ -760,6 +756,9 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
     if (AccessibilityObject* obj = get(renderer))
         return obj;
 
+    // Don't create an object for this renderer if it's being destroyed.
+    if (renderer->beingDestroyed())
+        return nullptr;
     RefPtr<AccessibilityObject> newObj = createFromRenderer(renderer);
 
     // Will crash later if we have two objects for the same renderer.

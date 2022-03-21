@@ -373,6 +373,7 @@ public:
     AccessibilityObject* nextSiblingUnignored(int limit) const override;
     AccessibilityObject* previousSiblingUnignored(int limit) const override;
     AccessibilityObject* parentObject() const override { return nullptr; }
+    AccessibilityObject* displayContentsParent() const;
     AXCoreObject* parentObjectUnignored() const override;
     AccessibilityObject* parentObjectIfExists() const override { return nullptr; }
     static AccessibilityObject* firstAccessibleObjectFromNode(const Node*);

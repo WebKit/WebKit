@@ -1,3 +1,57 @@
+2022-03-21  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Include display: contents elements in the AX tree
+        https://bugs.webkit.org/show_bug.cgi?id=237834
+
+        Reviewed by Chris Fleizach.
+
+        Because display: contents intentionally prevents a render object from being
+        generated for the element it's applied to, we don't add it to the AX tree as
+        part of our normal render tree walk, making these elements inaccessible.
+
+        This patch includes these elements as part of the DOM walk that
+        addHiddenChildren (now renamed to addNodeOnlyChildren) already does.
+
+        Also, because display: contents moves the affected element's children up a
+        level in the render tree, this patch also special cases:
+
+          1. AccessibilityRenderObject::parentObject and similar methods to
+          return their display: contents parent instead of their render tree
+          parent
+          2. AccessibilityObject::insertChild to only insert display: contents
+          children to their display: contents parent, rather than their render
+          tree parent
+
+        Test: accessibility/display-contents-element-roles.html, accessibility/aria-hidden-display-contents-element.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::getOrCreate):
+        Allow creation of AX objects from display: contents `Node`s.
+        Also, don't create an object for a renderer that is in the process of
+        being destroyed (prevents display-contents-element-roles.html from crashing in ITM)
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::displayContentsParent const):
+        (WebCore::AccessibilityObject::insertChild):
+        If an object has a display: contents parent, and that parent isn't
+        `this`, return early.
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::parentObjectIfExists const):
+        (WebCore::AccessibilityRenderObject::parentObject const):
+        (WebCore::AccessibilityRenderObject::parentObjectUnignored const):
+        If an object has a display: contents parent, return that instead of
+        its render tree parent.
+        (WebCore::AccessibilityRenderObject::addNodeOnlyChildren):
+        Renamed from addHiddenChildren.
+        (WebCore::AccessibilityRenderObject::addChildren):
+        Don't clear m_subtreeDirty until after all children have been added.
+        Necessary to make aria-hidden-display-contents-element.html pass, as
+        we were clearing this too early, causing display: contents subtrees to
+        not be updated after aria-hidden changes.
+        (WebCore::AccessibilityRenderObject::addHiddenChildren):
+        Renamed to addNodeOnlyChildren.
+        * accessibility/AccessibilityRenderObject.h:
+
 2022-03-21  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Don't defer applying text decoration properties

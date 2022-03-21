@@ -1540,6 +1540,8 @@ webkit.org/b/140528 fast/encoding/idn-security.html [ Skip ]
 ##################        Accessibility Issues              ####################
 ################################################################################
 
+accessibility/display-contents-element-roles.html [ Skip ]
+
 # Missing 'press' support
 accessibility/axpress-on-aria-button.html [ Skip ]
 accessibility/svg-element-press.html [ Skip ]

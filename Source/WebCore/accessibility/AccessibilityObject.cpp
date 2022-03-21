@@ -448,6 +448,16 @@ AXCoreObject* AccessibilityObject::parentObjectUnignored() const
     });
 }
 
+AccessibilityObject* AccessibilityObject::displayContentsParent() const
+{
+    auto* parentNode = node() ? node()->parentNode() : nullptr;
+    if (!is<Element>(parentNode) || !downcast<Element>(parentNode)->hasDisplayContents())
+        return nullptr;
+
+    auto* cache = axObjectCache();
+    return cache ? cache->getOrCreate(parentNode) : nullptr;
+}
+
 AccessibilityObject* AccessibilityObject::previousSiblingUnignored(int limit) const
 {
     AccessibilityObject* previous;
@@ -575,7 +585,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
 {
     if (!newChild)
         return;
-    
+
     ASSERT(is<AccessibilityObject>(newChild));
     if (!is<AccessibilityObject>(newChild))
         return;
@@ -600,7 +610,12 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
             }
         }
     }
-    
+
+    auto* displayContentsParent = child->displayContentsParent();
+    // To avoid double-inserting a child of a `display: contents` element, only insert if `this` is the rightful parent.
+    if (displayContentsParent && displayContentsParent != this)
+        return;
+
     auto thisAncestorFlags = computeAncestorFlags();
     child->initializeAncestorFlags(thisAncestorFlags);
     setIsIgnoredFromParentDataForChild(child);
@@ -625,7 +640,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
     } else {
         // Table component child-parent relationships often don't line up properly, hence the need for methods
         // like parentTable() and parentRow(). Exclude them from this ASSERT.
-        ASSERT((!isTableComponent(*child) && !isTableComponent(*this)) ? child->parentObject() == this : true);
+        ASSERT(isTableComponent(*child) || isTableComponent(*this) || child->parentObject() == this);
         m_children.insert(index, child);
     }
     

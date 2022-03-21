@@ -1,3 +1,22 @@
+2022-03-21  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Include display: contents elements in the AX tree
+        https://bugs.webkit.org/show_bug.cgi?id=237834
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-hidden-display-contents-element-expected.txt: Added.
+        * accessibility/aria-hidden-display-contents-element.html: Added.
+        * accessibility/display-contents-element-roles-expected.txt: Added.
+        * accessibility/display-contents-element-roles.html: Added.
+        * platform/glib/accessibility/aria-hidden-display-contents-element-expected.txt: Added.
+        * platform/glib/accessibility/display-contents-element-roles-expected.txt: Added.
+        * platform/ios/TestExpectations: Enable new tests.
+        * platform/ios/accessibility/aria-hidden-display-contents-element-expected.txt: Added.
+        * platform/ios/accessibility/display-contents-element-roles-expected.txt: Added.
+        * platform/win/TestExpectations: Skip display-contents-element-roles.html.
+        * platform/win/accessibility/aria-hidden-display-contents-element-expected.txt: Added.
+
 2022-03-21  Ziran Sun  <zsun@igalia.com>
 
         [selection] HTMLTextFormControlElement::subtreeHasChanged() shouldn't be called in setRangeText

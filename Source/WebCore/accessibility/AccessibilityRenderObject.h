@@ -248,7 +248,7 @@ private:
     void offsetBoundingBoxForRemoteSVGElement(LayoutRect&) const;
     bool supportsPath() const override;
 
-    void addHiddenChildren();
+    void addNodeOnlyChildren();
     void addTextFieldChildren();
     void addImageMapChildren();
     void addCanvasChildren();
