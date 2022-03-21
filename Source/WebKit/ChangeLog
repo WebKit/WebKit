@@ -1,3 +1,20 @@
+2022-03-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Disable the <model> element in Captive Portal mode.
+        https://bugs.webkit.org/show_bug.cgi?id=238148
+        <rdar://90562002>
+
+        Reviewed by Chris Dumez.
+
+        When displaying content in a captive portal, we should make sure the experimental
+        <model> element is unavailable.
+
+        Tests: TestWebKitAPI
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::adjustSettingsForCaptivePortal): Added. Also turn off <model> support.
+        (WebKit::WebPage::updatePreferences): Call new helper function.
+
 2022-03-21  Per Arne Vollan  <pvollan@apple.com>
 
         [watchOS] Add required syscall
