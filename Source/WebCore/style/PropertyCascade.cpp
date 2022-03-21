@@ -56,16 +56,6 @@ static inline bool shouldApplyPropertyInParseOrder(CSSPropertyID propertyID)
     case CSSPropertyBorderImageWidth:
     case CSSPropertyWebkitBoxShadow:
     case CSSPropertyBoxShadow:
-    case CSSPropertyWebkitTextDecoration:
-    case CSSPropertyTextDecorationLine:
-    case CSSPropertyTextDecorationStyle:
-    case CSSPropertyTextDecorationColor:
-    case CSSPropertyTextDecorationSkip:
-    case CSSPropertyTextDecorationSkipInk:
-    case CSSPropertyTextUnderlinePosition:
-    case CSSPropertyTextUnderlineOffset:
-    case CSSPropertyTextDecorationThickness:
-    case CSSPropertyTextDecoration:
         return true;
     default:
         return CSSProperty::isInLogicalPropertyGroup(propertyID);

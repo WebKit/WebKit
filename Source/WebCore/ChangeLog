@@ -1,3 +1,40 @@
+2022-03-21  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Don't defer applying text decoration properties
+        https://bugs.webkit.org/show_bug.cgi?id=238126
+
+        Reviewed by Darin Adler.
+
+        shouldApplyPropertyInParseOrder() was returning true for these:
+         - webkit-text-decoration
+         - text-decoration-line
+         - text-decoration-style
+         - text-decoration-color
+         - text-decoration-skip
+         - text-decoration-skip-ink
+         - text-underline-position
+         - text-underline-offset
+         - text-decoration-thickness
+         - text-decoration
+
+        This was previously needed for text-decoration-line and text-decoration,
+        since they were implemented as longhands that shared a computed value.
+        But that's no longer the case, text-decoration became a shorthand in bug
+        237175.
+
+        AFAIK -webkit-text-decoration has always been a shorthand since it was
+        implemented in bug 92000, so having it in the list it's pointless,
+        only longhands matter. And text-decoration-skip became a shorthand in
+        bug 230244, so it's also pointless.
+
+        The other longhands seem unnecessary too, since they don't share a
+        computed style with other properties.
+
+        No test since there should be no observable change in behavior.
+
+        * style/PropertyCascade.cpp:
+        (WebCore::Style::shouldApplyPropertyInParseOrder):
+
 2022-03-21  Youenn Fablet  <youenn@apple.com>
 
         Remove unneeded quotes in capture attribution string
