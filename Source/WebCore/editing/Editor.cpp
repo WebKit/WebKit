@@ -1009,7 +1009,8 @@ void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingActio
 
     ApplyStyleCommand::create(document(), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::ForceBlockProperties)->apply();
 
-    client()->didApplyStyle();
+    if (client())
+        client()->didApplyStyle();
     if (element)
         dispatchInputEvent(*element, inputTypeName, inputEventData);
 }

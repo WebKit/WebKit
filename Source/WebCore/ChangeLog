@@ -1,3 +1,15 @@
+2022-03-21  Rob Buis  <rbuis@igalia.com>
+
+        Null check style in Editor::applyParagraphStyle
+        https://bugs.webkit.org/show_bug.cgi?id=238137
+
+        Reviewed by Wenson Hsieh.
+
+        Null check style in Editor::applyParagraphStyle.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::applyParagraphStyle):
+
 2022-03-21  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, reverting r291558.
