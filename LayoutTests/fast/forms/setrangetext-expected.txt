@@ -597,7 +597,7 @@ PASS element.setRangeText('A', 7, 3) threw exception IndexSizeError: The index i
 Check that setRangeText() on disconnected elements doesn't crash and has proper values.
 element.value = '0123456789'
 element.setRangeText('ABC', 0, 0, 'select')
-FAIL element.value should be ABC0123456789. Was 0123456789.
+PASS element.value is "ABC0123456789"
 
 Running tests on input with attributes: {"type":"button"}
 

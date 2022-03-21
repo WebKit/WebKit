@@ -56,12 +56,12 @@ PASS password setRangeText without argument throws a type error
 NOTRUN password setRangeText fires a select event
 NOTRUN password setRangeText fires a select event when fully selected
 NOTRUN password setRangeText fires a select event after select()
-FAIL display_none setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments assert_equals: expected "foobar2bar" but got "foobar"
-FAIL display_none selectionMode missing assert_equals: expected "foobar2bar" but got "foobar"
-FAIL display_none selectionMode 'select' assert_equals: expected "foofoo" but got "foobar"
-FAIL display_none selectionMode 'start' assert_equals: expected "foofoo" but got "foobar"
-FAIL display_none selectionMode 'end' assert_equals: expected "foofoobar" but got "foobar"
-FAIL display_none selectionMode 'preserve' assert_equals: expected "foo" but got "foobar"
+PASS display_none setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
+PASS display_none selectionMode missing
+PASS display_none selectionMode 'select'
+PASS display_none selectionMode 'start'
+PASS display_none selectionMode 'end'
+PASS display_none selectionMode 'preserve'
 PASS display_none setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
 PASS display_none setRangeText without argument throws a type error
 NOTRUN display_none setRangeText fires a select event
@@ -78,12 +78,12 @@ PASS textarea setRangeText without argument throws a type error
 NOTRUN textarea setRangeText fires a select event
 NOTRUN textarea setRangeText fires a select event when fully selected
 NOTRUN textarea setRangeText fires a select event after select()
-FAIL input_not_in_doc setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments assert_equals: expected "foobar2bar" but got "foobar"
-FAIL input_not_in_doc selectionMode missing assert_equals: expected "foobar2bar" but got "foobar"
-FAIL input_not_in_doc selectionMode 'select' assert_equals: expected "foofoo" but got "foobar"
-FAIL input_not_in_doc selectionMode 'start' assert_equals: expected "foofoo" but got "foobar"
-FAIL input_not_in_doc selectionMode 'end' assert_equals: expected "foofoobar" but got "foobar"
-FAIL input_not_in_doc selectionMode 'preserve' assert_equals: expected "foo" but got "foobar"
+PASS input_not_in_doc setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
+PASS input_not_in_doc selectionMode missing
+PASS input_not_in_doc selectionMode 'select'
+PASS input_not_in_doc selectionMode 'start'
+PASS input_not_in_doc selectionMode 'end'
+PASS input_not_in_doc selectionMode 'preserve'
 PASS input_not_in_doc setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
 PASS input_not_in_doc setRangeText without argument throws a type error
 NOTRUN input_not_in_doc setRangeText fires a select event

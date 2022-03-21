@@ -1,3 +1,14 @@
+2022-03-21  Ziran Sun  <zsun@igalia.com>
+
+        [selection] HTMLTextFormControlElement::subtreeHasChanged() shouldn't be called in setRangeText
+        https://bugs.webkit.org/show_bug.cgi?id=237720
+
+        Reviewed by Chris Dumez.
+
+        Update test expectations as more sub-tests are now passing.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-value-interactions-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText-expected.txt:
+
 2022-03-20  Oriol Brufau  <obrufau@igalia.com>
 
         Fix CSS cascade regarding logical properties

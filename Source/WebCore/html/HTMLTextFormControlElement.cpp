@@ -255,13 +255,6 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
     else
         text.insert(replacement, start);
 
-    // FIXME: This shouldn't need synchronous style update, or renderer at all.
-    if (!renderer())
-        document().updateStyleIfNeeded();
-
-    if (!renderer())
-        return { };
-
     setValue(text, TextFieldEventBehavior::DispatchNoEvent, TextControlSetValueSelection::DoNotSet);
 
     if (equalLettersIgnoringASCIICase(selectionMode, "select")) {
