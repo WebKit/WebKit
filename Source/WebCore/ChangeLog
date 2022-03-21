@@ -1,5 +1,18 @@
 2022-03-21  Antoine Quint  <graouts@webkit.org>
 
+        [media-controls] scrubbing on iOS when inline does not work
+        https://bugs.webkit.org/show_bug.cgi?id=238138
+        rdar://90046770
+
+        Reviewed by Dean Jackson.
+
+        This bug is simular to bug 238136. We cannot register pointer events on window on iOS.
+
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype._interactionEndTarget):
+
+2022-03-21  Antoine Quint  <graouts@webkit.org>
+
         [media-controls] tap gesture recognizer sometimes fails to recognize on iOS
         https://bugs.webkit.org/show_bug.cgi?id=238136
 
