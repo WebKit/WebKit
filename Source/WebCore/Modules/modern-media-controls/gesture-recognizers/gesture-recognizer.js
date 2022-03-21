@@ -125,9 +125,9 @@ class GestureRecognizer
         if (event.currentTarget !== this._target)
             return;
 
-        window.addEventListener(GestureRecognizer.Events.PointerMove, this, true);
-        window.addEventListener(GestureRecognizer.Events.PointerUp, this, true);
-        window.addEventListener(GestureRecognizer.Events.PointerCancel, this, true);
+        this._captureTarget.addEventListener(GestureRecognizer.Events.PointerMove, this, true);
+        this._captureTarget.addEventListener(GestureRecognizer.Events.PointerUp, this, true);
+        this._captureTarget.addEventListener(GestureRecognizer.Events.PointerCancel, this, true);
         this.enterPossibleState();
     }
 
@@ -269,11 +269,18 @@ class GestureRecognizer
         }
     }
 
+    get _captureTarget()
+    {
+        if (GestureRecognizer.SupportsTouches)
+            return this._target;
+        return window;
+    }
+
     _removeTrackingListeners()
     {
-        window.removeEventListener(GestureRecognizer.Events.PointerMove, this, true);
-        window.removeEventListener(GestureRecognizer.Events.PointerUp, this, true);
-        window.removeEventListener(GestureRecognizer.Events.PointerCancel, this, true);
+        this._captureTarget.removeEventListener(GestureRecognizer.Events.PointerMove, this, true);
+        this._captureTarget.removeEventListener(GestureRecognizer.Events.PointerUp, this, true);
+        this._captureTarget.removeEventListener(GestureRecognizer.Events.PointerCancel, this, true);
         this._target.removeEventListener(GestureRecognizer.Events.GestureChange, this, true);
         this._target.removeEventListener(GestureRecognizer.Events.GestureEnd, this, true);
 

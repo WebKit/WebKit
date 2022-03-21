@@ -1,3 +1,20 @@
+2022-03-21  Antoine Quint  <graouts@webkit.org>
+
+        [media-controls] tap gesture recognizer sometimes fails to recognize on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=238136
+
+        Reviewed by Dean Jackson.
+
+        While on macOS it's fine to register pointer events handlers on the `window` object,
+        on iOS it may not be depending on the fullscreen state. However, it's always fine to
+        use the gesture recognizer's target on iOS, so let's default to that when touches
+        are supported.
+
+        * Modules/modern-media-controls/gesture-recognizers/gesture-recognizer.js:
+        (GestureRecognizer.prototype.touchesBegan):
+        (GestureRecognizer.prototype.get _captureTarget):
+        (GestureRecognizer.prototype._removeTrackingListeners):
+
 2022-03-21  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Include display: contents elements in the AX tree
