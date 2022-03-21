@@ -1,3 +1,10 @@
+2022-03-20  Diego Pino Garcia  <dpino@igalia.com>
+
+        [WPE] Unreviewed, fix non-unified build after r291474 and r291508
+
+        * css/CSSToLengthConversionData.h: 
+        * html/parser/AtomHTMLToken.h: 
+
 2022-03-20  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Rename InlineIterator::Line to LineBox

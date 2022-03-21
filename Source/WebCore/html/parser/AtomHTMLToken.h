@@ -28,6 +28,8 @@
 
 #include "HTMLNameCache.h"
 #include "HTMLToken.h"
+#include <wtf/HashSet.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
