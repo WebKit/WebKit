@@ -1,3 +1,23 @@
+2022-03-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Add a build-webgpu script
+        https://bugs.webkit.org/show_bug.cgi?id=238040
+
+        Reviewed by Saam Barati.
+
+        This patch adds a build-webgpu script by sharing code with the build-jsc script.
+        It moves almost all of the contents of the build-jsc script to a shared Perl module,
+        webkitperl/BuildSubproject.pm, and then has build-jsc and build-webgpu both call
+        into it to build the relevant projects.
+
+        * Scripts/build-jsc:
+        (buildMyProject): Deleted.
+        (writeCongrats): Deleted.
+        * Scripts/build-webgpu: Added.
+        * Scripts/webkitperl/BuildSubproject.pm: Copied from Tools/Scripts/build-jsc.
+        (buildMyProject):
+        (writeCongrats):
+
 2022-03-18  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Support multiple reviewers names

@@ -35,6 +35,5 @@ use webkitperl::BuildSubproject;
 buildMyProject("Source/bmalloc", "bmalloc");
 buildMyProject("Source/WTF", "WTF");
 buildMyProject("Source/JavaScriptCore", "JavaScriptCore");
-if (isAppleCocoaWebKit()) {
-    writeCongrats("JavaScriptCore");
-}
+buildMyProject("Source/WebGPU", "WebGPU");
+writeCongrats("WebGPU");
