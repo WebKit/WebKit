@@ -1,3 +1,15 @@
+2022-03-21  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, reverting r291558.
+
+        Exceeded GitHub file size limit
+
+        Reverted changeset:
+
+        "Enable PGO when building for release and production"
+        https://bugs.webkit.org/show_bug.cgi?id=238119
+        https://commits.webkit.org/r291558
+
 2022-03-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable PGO when building for release and production
