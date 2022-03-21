@@ -4,6 +4,7 @@ find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-DJSC_CLASS_AVAILABLE\\\(...\\\)=)
+add_definitions(-fobjc-weak)
 
 list(APPEND WebKitLegacy_PRIVATE_LIBRARIES
     ${SECURITYINTERFACE_LIBRARY}

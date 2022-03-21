@@ -18,6 +18,7 @@ find_library(NETWORKEXTENSION_LIBRARY NetworkExtension)
 find_library(OPENGL_LIBRARY OpenGL)
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(QUARTZCORE_LIBRARY QuartzCore)
+find_library(SCENEKIT_LIBRARY SceneKit)
 find_library(SECURITY_LIBRARY Security)
 find_library(SYSTEMCONFIGURATION_LIBRARY SystemConfiguration)
 find_library(VIDEOTOOLBOX_LIBRARY VideoToolbox)
@@ -50,6 +51,7 @@ list(APPEND WebCore_LIBRARIES
     ${OPENGL_LIBRARY}
     ${QUARTZ_LIBRARY}
     ${QUARTZCORE_LIBRARY}
+    ${SCENEKIT_LIBRARY}
     ${SECURITY_LIBRARY}
     ${SQLITE3_LIBRARIES}
     ${SYSTEMCONFIGURATION_LIBRARY}
@@ -91,6 +93,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/mac"
     "${WEBCORE_DIR}/bridge/objc"
     "${WEBCORE_DIR}/crypto/mac"
+    "${WEBCORE_DIR}/dom/mac"
     "${WEBCORE_DIR}/editing/cocoa"
     "${WEBCORE_DIR}/editing/mac"
     "${WEBCORE_DIR}/html/shadow/cocoa"
@@ -144,22 +147,14 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}"
 )
 
-list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-    ${WEBCORE_DIR}/Modules/plugins/QuickTimePluginReplacement.css
-    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
-)
-
-set(WebCore_USER_AGENT_SCRIPTS
-    ${WEBCORE_DIR}/Modules/plugins/QuickTimePluginReplacement.js
-    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
-)
-
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     "${CMAKE_OSX_SYSROOT}/usr/include/libxslt"
     "${CMAKE_OSX_SYSROOT}/usr/include/libxml2"
 )
 
 list(APPEND WebCore_SOURCES
+    Modules/geolocation/cocoa/GeolocationPositionDataCocoa.mm
+
     Modules/paymentrequest/MerchantValidationEvent.cpp
 
     Modules/webaudio/MediaStreamAudioSourceCocoa.cpp
@@ -265,6 +260,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm
     platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm
     platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm
+    platform/graphics/avfoundation/objc/QueuedVideoOutput.mm
     platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm
     platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp
     platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm
@@ -371,7 +367,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/PlatformEventFactoryMac.mm
     platform/mac/PlatformPasteboardMac.mm
     platform/mac/PlatformScreenMac.mm
-    platform/mac/PlatformSpeechSynthesizerMac.mm
     platform/mac/PowerObserverMac.cpp
     platform/mac/PublicSuffixMac.mm
     platform/mac/SSLKeyGeneratorMac.mm
@@ -436,13 +431,18 @@ list(APPEND WebCore_SOURCES
 
     platform/text/mac/TextBoundaries.mm
     platform/text/mac/TextCheckingMac.mm
-    platform/text/mac/TextEncodingRegistryMac.mm
 
     rendering/RenderThemeCocoa.mm
     rendering/RenderThemeMac.mm
     rendering/TextAutoSizing.cpp
 
     xml/SoftLinkLibxslt.cpp
+)
+
+list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
+    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
+
+    ${WEBCORE_DIR}/html/shadow/mac/imageControlsMac.css
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
@@ -574,6 +574,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/cocoa/AudioDestinationCocoa.h
     platform/audio/cocoa/AudioOutputUnitAdaptor.h
     platform/audio/cocoa/AudioSampleBufferList.h
+    platform/audio/cocoa/AudioSampleDataConverter.h
     platform/audio/cocoa/AudioSampleDataSource.h
     platform/audio/cocoa/CAAudioStreamDescription.h
     platform/audio/cocoa/CARingBuffer.h
@@ -595,9 +596,9 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/cocoa/PlaybackSessionModelMediaElement.h
     platform/cocoa/PowerSourceNotifier.h
     platform/cocoa/SearchPopupMenuCocoa.h
+    platform/cocoa/SharedVideoFrameInfo.h
     platform/cocoa/SystemBattery.h
     platform/cocoa/SystemVersion.h
-    platform/cocoa/VersionChecks.h
     platform/cocoa/VideoFullscreenChangeObserver.h
     platform/cocoa/VideoFullscreenModel.h
     platform/cocoa/VideoFullscreenModelVideoElement.h
@@ -642,6 +643,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/cg/CGContextStateSaver.h
     platform/graphics/cg/ColorSpaceCG.h
+    platform/graphics/cg/GradientRendererCG.h
     platform/graphics/cg/GraphicsContextCG.h
     platform/graphics/cg/IOSurfacePool.h
     platform/graphics/cg/ImageBufferCGBackend.h
@@ -654,6 +656,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/CMUtilities.h
     platform/graphics/cocoa/ColorCocoa.h
     platform/graphics/cocoa/FontCacheCoreText.h
+    platform/graphics/cocoa/FontCocoa.h
     platform/graphics/cocoa/FontFamilySpecificationCoreText.h
     platform/graphics/cocoa/GraphicsContextGLCocoa.h
     platform/graphics/cocoa/GraphicsContextGLOpenGL.h
@@ -665,13 +668,13 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/VP9UtilitiesCocoa.h
     platform/graphics/cocoa/WebActionDisablingCALayerDelegate.h
     platform/graphics/cocoa/WebCoreCALayerExtras.h
-    platform/graphics/cocoa/WebGLLayer.h
     platform/graphics/cocoa/WebMAudioUtilitiesCocoa.h
 
     platform/graphics/cv/CVUtilities.h
     platform/graphics/cv/GraphicsContextGLCV.h
     platform/graphics/cv/ImageRotationSessionVT.h
     platform/graphics/cv/PixelBufferConformerCV.h
+    platform/graphics/cv/VideoFrameCV.h
 
     platform/graphics/mac/ColorMac.h
     platform/graphics/mac/DisplayConfigurationMonitor.h
@@ -681,7 +684,12 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/mac/SwitchingGPUClient.h
     platform/graphics/mac/WebLayer.h
 
-    platform/mac/DynamicLinkerInterposing.h
+    platform/ios/PlaybackSessionInterfaceAVKit.h
+    platform/ios/WebAVPlayerController.h
+
+    platform/ios/wak/FloatingPointEnvironment.h
+    platform/ios/wak/WebCoreThreadRun.h
+
     platform/mac/HIDDevice.h
     platform/mac/HIDElement.h
     platform/mac/LegacyNSPasteboardTypes.h
@@ -722,6 +730,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mediastream/mac/WebAudioSourceProviderCocoa.h
 
     platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.h
+    platform/mediastream/libwebrtc/VideoFrameLibWebRTC.h
 
     platform/network/cf/AuthenticationCF.h
     platform/network/cf/AuthenticationChallenge.h
@@ -803,8 +812,6 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/paymentrequest/ApplePayRequest.idl
 
     Modules/applepay-ams-ui/ApplePayAMSUIRequest.idl
-
-    Modules/plugins/QuickTimePluginReplacement.idl
 )
 
 set(FEATURE_DEFINES_OBJECTIVE_C "LANGUAGE_OBJECTIVE_C=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
@@ -813,7 +820,7 @@ set(ADDITIONAL_BINDINGS_DEPENDENCIES
     ${WORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
     ${DEDICATEDWORKERGLOBALSCOPE_CONSTRUCTORS_FILE}
 )
-set(CSS_VALUE_PLATFORM_DEFINES "WTF_PLATFORM_MAC=1 HAVE_OS_DARK_MODE_SUPPORT=1 WTF_PLATFORM_COCOA=1")
+set(CSS_VALUE_PLATFORM_DEFINES "WTF_PLATFORM_MAC=1 HAVE_OS_DARK_MODE_SUPPORT=1 WTF_PLATFORM_COCOA=1 ENABLE_APPLE_PAY_NEW_BUTTON_TYPES=1")
 
 set(MODERN_MEDIA_CONTROLS_STYLE_SHEETS
     "${WEBCORE_DIR}/Modules/modern-media-controls/controls/activity-indicator.css"
@@ -919,6 +926,8 @@ add_custom_command(
     DEPENDS ${MODERN_MEDIA_CONTROLS_SCRIPTS}
     COMMAND cat ${MODERN_MEDIA_CONTROLS_SCRIPTS} > ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
     VERBATIM)
+
+set(WebCore_USER_AGENT_SCRIPTS ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js)
 
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)
 list(APPEND WebCoreTestSupport_PRIVATE_HEADERS testing/cocoa/WebArchiveDumpSupport.h)

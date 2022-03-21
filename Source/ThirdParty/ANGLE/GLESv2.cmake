@@ -102,7 +102,7 @@ if(is_linux OR is_chromeos OR is_android OR is_fuchsia)
 endif()
 
 
-if(is_apple)
+if (APPLE)
     list(APPEND libangle_common_sources
         "src/common/apple/SoftLinking.h"
         "src/common/apple/apple_platform.h"
@@ -449,6 +449,7 @@ set(libangle_sources
     "src/libANGLE/renderer/ProgramPipelineImpl.cpp"
     "src/libANGLE/renderer/QueryImpl.cpp"
     "src/libANGLE/renderer/ShaderImpl.cpp"
+    "src/libANGLE/renderer/ShaderInterfaceVariableInfoMap.cpp"
     "src/libANGLE/renderer/SurfaceImpl.cpp"
     "src/libANGLE/renderer/TextureImpl.cpp"
     "src/libANGLE/renderer/driver_utils.cpp"

@@ -26,14 +26,123 @@ if (NOT APPLE)
 endif ()
 
 set(webrtc_SOURCES
-    Source/third_party/abseil-cpp/absl/base/internal/raw_logging.cc
-    Source/third_party/abseil-cpp/absl/base/internal/throw_delegate.cc
-    Source/third_party/abseil-cpp/absl/strings/ascii.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/memutil.cc
     Source/third_party/abseil-cpp/absl/strings/match.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/charconv_bigint.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cordz_info.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cord_internal.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cordz_sample_token.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/charconv_parse.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/arg.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/float_conversion.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/output.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/bind.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/parser.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/extension.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cord_rep_ring.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cordz_handle.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/memutil.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/ostringstream.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/pow10_helper.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/utf8.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cordz_functions.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/escaping.cc
     Source/third_party/abseil-cpp/absl/strings/string_view.cc
+    Source/third_party/abseil-cpp/absl/strings/str_cat.cc
+    Source/third_party/abseil-cpp/absl/strings/cord.cc
+    Source/third_party/abseil-cpp/absl/strings/ascii.cc
+    Source/third_party/abseil-cpp/absl/strings/numbers.cc
+    Source/third_party/abseil-cpp/absl/strings/charconv.cc
+    Source/third_party/abseil-cpp/absl/strings/str_split.cc
+    Source/third_party/abseil-cpp/absl/strings/substitute.cc
+    Source/third_party/abseil-cpp/absl/strings/escaping.cc
+    Source/third_party/abseil-cpp/absl/strings/str_replace.cc
+    Source/third_party/abseil-cpp/absl/types/bad_any_cast.cc
     Source/third_party/abseil-cpp/absl/types/bad_optional_access.cc
     Source/third_party/abseil-cpp/absl/types/bad_variant_access.cc
+    Source/third_party/abseil-cpp/absl/flags/parse.cc
+    Source/third_party/abseil-cpp/absl/flags/usage.cc
+    Source/third_party/abseil-cpp/absl/flags/internal/private_handle_accessor.cc
+    Source/third_party/abseil-cpp/absl/flags/internal/usage.cc
+    Source/third_party/abseil-cpp/absl/flags/internal/program_name.cc
+    Source/third_party/abseil-cpp/absl/flags/internal/flag.cc
+    Source/third_party/abseil-cpp/absl/flags/internal/commandlineflag.cc
+    Source/third_party/abseil-cpp/absl/flags/reflection.cc
+    Source/third_party/abseil-cpp/absl/flags/usage_config.cc
+    Source/third_party/abseil-cpp/absl/flags/flag.cc
+    Source/third_party/abseil-cpp/absl/flags/marshalling.cc
+    Source/third_party/abseil-cpp/absl/flags/commandlineflag.cc
+    Source/third_party/abseil-cpp/absl/synchronization/blocking_counter.cc
+    Source/third_party/abseil-cpp/absl/synchronization/mutex.cc
+    Source/third_party/abseil-cpp/absl/synchronization/internal/per_thread_sem.cc
+    Source/third_party/abseil-cpp/absl/synchronization/internal/create_thread_identity.cc
+    Source/third_party/abseil-cpp/absl/synchronization/internal/waiter.cc
+    Source/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc
+    Source/third_party/abseil-cpp/absl/synchronization/barrier.cc
+    Source/third_party/abseil-cpp/absl/synchronization/notification.cc
+    Source/third_party/abseil-cpp/absl/hash/internal/wyhash.cc
+    Source/third_party/abseil-cpp/absl/hash/internal/hash.cc
+    Source/third_party/abseil-cpp/absl/hash/internal/print_hash_of.cc
+    Source/third_party/abseil-cpp/absl/hash/internal/city.cc
+    Source/third_party/abseil-cpp/absl/debugging/symbolize.cc
+    Source/third_party/abseil-cpp/absl/debugging/failure_signal_handler.cc
+    Source/third_party/abseil-cpp/absl/debugging/leak_check_disable.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/stack_consumption.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/demangle.cc
+    Source/third_party/abseil-cpp/absl/debugging/leak_check.cc
+    Source/third_party/abseil-cpp/absl/debugging/stacktrace.cc
+    Source/third_party/abseil-cpp/absl/status/status_payload_printer.cc
+    Source/third_party/abseil-cpp/absl/status/status.cc
+    Source/third_party/abseil-cpp/absl/status/statusor.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_format.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_impl.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_lookup.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_if.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_fixed.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/zone_info_source.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/civil_time_detail.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_posix.cc
+    Source/third_party/abseil-cpp/absl/time/clock.cc
+    Source/third_party/abseil-cpp/absl/time/duration.cc
+    Source/third_party/abseil-cpp/absl/time/civil_time.cc
+    Source/third_party/abseil-cpp/absl/time/format.cc
+    Source/third_party/abseil-cpp/absl/time/time.cc
+    Source/third_party/abseil-cpp/absl/container/internal/raw_hash_set.cc
+    Source/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler_force_weak_definition.cc
+    Source/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler.cc
+    Source/third_party/abseil-cpp/absl/numeric/int128.cc
+    Source/third_party/abseil-cpp/absl/random/gaussian_distribution.cc
+    Source/third_party/abseil-cpp/absl/random/discrete_distribution.cc
+    Source/third_party/abseil-cpp/absl/random/seed_gen_exception.cc
+    Source/third_party/abseil-cpp/absl/random/internal/gaussian_distribution_gentables.cc
+    Source/third_party/abseil-cpp/absl/random/internal/seed_material.cc
+    Source/third_party/abseil-cpp/absl/random/internal/randen_slow.cc
+    Source/third_party/abseil-cpp/absl/random/internal/chi_square.cc
+    Source/third_party/abseil-cpp/absl/random/internal/randen.cc
+    Source/third_party/abseil-cpp/absl/random/internal/randen_detect.cc
+    Source/third_party/abseil-cpp/absl/random/internal/randen_round_keys.cc
+    Source/third_party/abseil-cpp/absl/random/internal/randen_hwaes.cc
+    Source/third_party/abseil-cpp/absl/random/internal/pool_urbg.cc
+    Source/third_party/abseil-cpp/absl/random/seed_sequences.cc
+    Source/third_party/abseil-cpp/absl/base/internal/spinlock_wait.cc
+    Source/third_party/abseil-cpp/absl/base/internal/periodic_sampler.cc
+    Source/third_party/abseil-cpp/absl/base/internal/cycleclock.cc
+    Source/third_party/abseil-cpp/absl/base/internal/spinlock.cc
+    Source/third_party/abseil-cpp/absl/base/internal/unscaledcycleclock.cc
+    Source/third_party/abseil-cpp/absl/base/internal/scoped_set_env.cc
+    Source/third_party/abseil-cpp/absl/base/internal/sysinfo.cc
+    Source/third_party/abseil-cpp/absl/base/internal/raw_logging.cc
+    Source/third_party/abseil-cpp/absl/base/internal/throw_delegate.cc
+    Source/third_party/abseil-cpp/absl/base/internal/strerror.cc
+    Source/third_party/abseil-cpp/absl/base/internal/thread_identity.cc
+    Source/third_party/abseil-cpp/absl/base/internal/exponential_biased.cc
+    Source/third_party/abseil-cpp/absl/base/internal/low_level_alloc.cc
+    Source/third_party/abseil-cpp/absl/base/log_severity.cc
     Source/third_party/boringssl/err_data.c
     Source/third_party/boringssl/src/crypto/asn1/a_bitstr.c
     Source/third_party/boringssl/src/crypto/asn1/a_bool.c
@@ -533,6 +642,7 @@ set(webrtc_SOURCES
     Source/webrtc/common_audio/window_generator.cc
     Source/webrtc/common_video/bitrate_adjuster.cc
     Source/webrtc/common_video/frame_rate_estimator.cc
+    Source/webrtc/common_video/framerate_controller.cc
     Source/webrtc/common_video/generic_frame_descriptor/generic_frame_info.cc
     Source/webrtc/common_video/h264/h264_bitstream_parser.cc
     Source/webrtc/common_video/h264/h264_common.cc
@@ -2432,7 +2542,6 @@ if (APPLE)
             Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/sum_neon.h
             Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/quantize_neon.c
             Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/loopfilter_neon.c
-            Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/highbd_vpx_convolve_neon.c
             Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/vpx_convolve8_avg_vert_filter_type2_neon.asm
             Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/fdct32x32_neon.c
             Source/third_party/libvpx/source/libvpx/vpx_dsp/arm/transpose_neon.h

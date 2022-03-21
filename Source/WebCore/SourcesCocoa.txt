@@ -280,7 +280,6 @@ platform/cocoa/PlaybackSessionModelMediaElement.mm
 platform/cocoa/PowerSourceNotifier.mm
 platform/cocoa/RemoteCommandListenerCocoa.mm
 platform/cocoa/RuntimeApplicationChecksCocoa.mm
-platform/cocoa/SharedVideoFrameUtilities.mm @no-unify
 platform/cocoa/SearchPopupMenuCocoa.mm
 platform/cocoa/SharedBufferCocoa.mm
 platform/cocoa/SystemVersion.mm

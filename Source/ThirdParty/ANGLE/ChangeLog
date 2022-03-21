@@ -1,3 +1,13 @@
+2022-03-21  Alex Christensen  <achristensen@webkit.org>
+
+        Dust off Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=238121
+
+        Reviewed by Yusuke Suzuki.
+
+        * GLESv2.cmake:
+        * Metal.cmake:
+
 2022-03-17  Michael Saboff  <msaboff@apple.com>
 
         libANGLE-shared.dylib, libwebrtc.dylib & WebGPU install names are prefixed with the system content path

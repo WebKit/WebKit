@@ -154,12 +154,14 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/Cocoa"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/mac"
     "${WEBKIT_DIR}/WebProcess/MediaSession"
+    "${WEBKIT_DIR}/WebProcess/Model/mac"
     "${WEBKIT_DIR}/WebProcess/Plugins/PDF"
     "${WEBKIT_DIR}/WebProcess/Plugins/Netscape/mac"
     "${WEBKIT_DIR}/WebProcess/WebPage/Cocoa"
     "${WEBKIT_DIR}/WebProcess/WebPage/RemoteLayerTree"
     "${WEBKIT_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/mac"
+    "${WEBKIT_DIR}/webpushd"
     "${WEBKITLEGACY_DIR}"
     "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}"
 )
@@ -215,6 +217,8 @@ set(WebKit_FORWARDING_HEADERS_FILES
 list(APPEND WebKit_MESSAGES_IN_FILES
     GPUProcess/media/RemoteImageDecoderAVFProxy
 
+    GPUProcess/media/ios/RemoteMediaSessionHelperProxy
+
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager
 
     Shared/API/Cocoa/RemoteObjectRegistry
@@ -236,7 +240,6 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy
 
     UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy
-    UIProcess/WebAuthentication/WebAuthnProcessProxy
 
     UIProcess/mac/SecItemShimProxy
 
@@ -246,6 +249,8 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     WebProcess/ApplePay/WebPaymentCoordinator
 
     WebProcess/GPU/media/RemoteImageDecoderAVFManager
+
+    WebProcess/GPU/media/ios/RemoteMediaSessionHelper
 
     WebProcess/Inspector/WebInspectorUIExtensionController
 

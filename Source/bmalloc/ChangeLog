@@ -1,3 +1,12 @@
+2022-03-21  Alex Christensen  <achristensen@webkit.org>
+
+        Dust off Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=238121
+
+        Reviewed by Yusuke Suzuki.
+
+        * PlatformMac.cmake:
+
 2022-03-15  Mark Lam  <mark.lam@apple.com>
 
         Remove unused directory local variable in pas_enumerate_segregated_heaps.
