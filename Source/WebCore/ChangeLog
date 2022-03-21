@@ -1,3 +1,16 @@
+2022-03-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Accessing WebGL content crashes in macOS Recovery OS
+        https://bugs.webkit.org/show_bug.cgi?id=238139
+
+        Reviewed by Antti Koivisto.
+
+        Add a quick fix trying to circumvent a Recovery OS crash.
+        Parts of this will be reverted once the true source is found.
+
+        * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+        (WebCore::platformSupportsMetal):
+
 2022-03-21  Tim Horton  <timothy_horton@apple.com>
 
         Add an addition point for system background color

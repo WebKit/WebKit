@@ -41,6 +41,7 @@
 #import <Metal/Metal.h>
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -56,6 +57,9 @@
 #if ENABLE(MEDIA_STREAM)
 #import "ImageRotationSessionVT.h"
 #endif
+
+// Metal may not be available, for example in recovery OS.
+WTF_WEAK_LINK_FORCE_IMPORT(MTLCreateSystemDefaultDevice);
 
 namespace WebCore {
 
@@ -96,6 +100,22 @@ static bool checkVolatileContextSupportIfDeviceExists(EGLDisplay display, const 
 
 static bool platformSupportsMetal(bool isWebGL2)
 {
+    // FIXME: Figure out why WebKit runs in recovery system using -framework Metal, but seemingly cannot call into Metal.
+    // The hunk about runnningInRecoverySystem should be removed once it is clear how WebKit can link strongly to Metal
+    // but run without Metal.
+    static bool runningInRecoverySystem = [] {
+        if (getenv("__OSINSTALL_ENVIRONMENT")) {
+            WTFLogAlways("WebGL: Running in recovery. Has access to Metal: %s", !MTLCreateSystemDefaultDevice ? "no" : "yes");
+            return true;
+        }
+        return false;
+    }();
+    if (runningInRecoverySystem)
+        return false;
+
+    if (!MTLCreateSystemDefaultDevice)
+        return false;
+
     auto device = adoptNS(MTLCreateSystemDefaultDevice());
 
     if (device) {
