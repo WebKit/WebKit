@@ -1,3 +1,10 @@
+2022-03-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix Debian Stable build after r291543
+
+        * TestWebKitAPI/Tests/JavaScriptCore/glib/TestJSC.cpp:
+        (elementSize): Replace RELEASE_ASSERT_NOT_REACHED() for RELEASE_ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT().
+
 2022-03-20  Adrian Perez de Castro  <aperez@igalia.com>
 
         Fix clang warning after r291229
