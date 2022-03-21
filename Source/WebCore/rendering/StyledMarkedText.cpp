@@ -198,7 +198,7 @@ Vector<StyledMarkedText> StyledMarkedText::coalesceAdjacentWithEqualForeground(c
 Vector<StyledMarkedText> StyledMarkedText::coalesceAdjacentWithEqualDecorations(const Vector<StyledMarkedText>& markedTexts)
 {
     return coalesceAdjacent(markedTexts, [&](auto& a, auto& b) {
-        return a.textDecorationStyles == b.textDecorationStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
+        return a.textDecorationStyles == b.textDecorationStyles && a.textStyles == b.textStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
     });
 }
 
