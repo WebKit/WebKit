@@ -1,3 +1,18 @@
+2022-03-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        nj.gov: Background color incorrect for 'State Vehicles' section
+        https://bugs.webkit.org/show_bug.cgi?id=238035
+        <rdar://problem/84543795>
+
+        Reviewed by Aditya Keerthi.
+
+        * fast/css/non-form-control-element-drop-appearance-expected.html: Added.
+        * fast/css/non-form-control-element-drop-appearance.html: Added.
+        * editing/deleting/insert-in-orphaned-selection-crash.html: Added.
+        Now that we drop native style for non-form control elements, we need to
+        add height to the style to make sure this table element is selectable and
+        successfully tests what it needs to test.
+
 2022-03-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r291055.

@@ -1939,6 +1939,8 @@ public:
     void setOffsetRotate(OffsetRotation&& rotation) { SET_VAR(m_rareNonInheritedData, offsetRotate, WTFMove(rotation)); }
     static OffsetRotation initialOffsetRotate() { return OffsetRotation(true, 0); }
 
+    bool borderAndBackgroundEqual(const RenderStyle&) const;
+
 private:
     struct NonInheritedFlags {
         bool operator==(const NonInheritedFlags&) const;

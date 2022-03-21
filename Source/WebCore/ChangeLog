@@ -1,3 +1,25 @@
+2022-03-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        nj.gov: Background color incorrect for 'State Vehicles' section
+        https://bugs.webkit.org/show_bug.cgi?id=238035
+        <rdar://problem/84543795>
+
+        Reviewed by Aditya Keerthi.
+
+        Test: fast/css/non-form-control-element-drop-appearance.html
+
+        Update RenderTheme::adjustStyle to drop appearance for non-form
+        control elements when they are styled by the author.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustAppearanceForElement const):
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::isControlStyled const):
+        * rendering/RenderTheme.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::borderAndBackgroundEqual const):
+        * rendering/style/RenderStyle.h:
+
 2022-03-21  Antoine Quint  <graouts@webkit.org>
 
         [media-controls] scrubbing on iOS when inline does not work

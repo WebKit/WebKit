@@ -84,13 +84,12 @@ RenderTheme::RenderTheme()
 {
 }
 
-ControlPart RenderTheme::adjustAppearanceForElement(RenderStyle& style, const Element* element) const
+ControlPart RenderTheme::adjustAppearanceForElement(RenderStyle& style, const Element* element, ControlPart autoAppearance) const
 {
     if (!element)
         return NoControlPart;
 
     ControlPart part = style.effectiveAppearance();
-    ControlPart autoAppearance = autoAppearanceForElement(element);
     if (part == autoAppearance)
         return part;
 
@@ -113,7 +112,8 @@ ControlPart RenderTheme::adjustAppearanceForElement(RenderStyle& style, const El
 
 void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const RenderStyle* userAgentAppearanceStyle)
 {
-    auto part = adjustAppearanceForElement(style, element);
+    ControlPart autoAppearance = autoAppearanceForElement(element);
+    auto part = adjustAppearanceForElement(style, element, autoAppearance);
 
     if (part == NoControlPart)
         return;
@@ -139,6 +139,11 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
 
         style.setEffectiveAppearance(part);
     }
+
+    if (!userAgentAppearanceStyle
+        && autoAppearance == NoControlPart
+        && !style.borderAndBackgroundEqual(RenderStyle::defaultStyle()))
+        style.setEffectiveAppearance(NoControlPart);
 
     if (!style.hasEffectiveAppearance())
         return;
@@ -923,9 +928,7 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
     case TextFieldPart:
     case TextAreaPart:
         // Test the style to see if the UA border and background match.
-        return style.border() != userAgentStyle.border()
-            || style.backgroundLayers() != userAgentStyle.backgroundLayers()
-            || !style.backgroundColorEqualsToColorIgnoringVisited(userAgentStyle.backgroundColor());
+        return !style.borderAndBackgroundEqual(userAgentStyle);
     default:
         return false;
     }

@@ -459,7 +459,7 @@ protected:
 
 private:
     ControlPart autoAppearanceForElement(const Element*) const;
-    ControlPart adjustAppearanceForElement(RenderStyle&, const Element*) const;
+    ControlPart adjustAppearanceForElement(RenderStyle&, const Element*, ControlPart) const;
 
     void adjustSearchFieldDecorationStyle(RenderStyle&, const Element*) const;
 

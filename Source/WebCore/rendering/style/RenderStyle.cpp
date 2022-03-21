@@ -463,6 +463,13 @@ bool RenderStyle::descendantAffectingNonInheritedPropertiesEqual(const RenderSty
         && m_rareNonInheritedData->justifyItems == other.m_rareNonInheritedData->justifyItems;
 }
 
+bool RenderStyle::borderAndBackgroundEqual(const RenderStyle& other) const
+{
+    return border() == other.border()
+        && backgroundLayers() == other.backgroundLayers()
+        && backgroundColorEqualsToColorIgnoringVisited(other.backgroundColor());
+}
+
 #if ENABLE(TEXT_AUTOSIZING)
 
 static inline unsigned computeFontHash(const FontCascade& font)
