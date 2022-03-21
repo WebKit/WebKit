@@ -47,7 +47,7 @@
 #include "HitTestResult.h"
 #include "ImageOverlay.h"
 #include "InlineIteratorInlineBox.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "LineSelection.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -110,7 +110,7 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
             lineExtentRect.setHeight(containingBlock->height());
         }
     } else {
-        auto selectionLogicalRect = LineSelection::logicalRect(*run->line());
+        auto selectionLogicalRect = LineSelection::logicalRect(*run->lineBox());
         int selectionTop = !containingBlock->style().isFlippedBlocksWritingMode() ? selectionLogicalRect.y() - logicalTop() : logicalBottom() - selectionLogicalRect.maxY();
         int selectionHeight = selectionLogicalRect.height();
         imageRect = IntRect { 0,  selectionTop, logicalWidth(), selectionHeight };

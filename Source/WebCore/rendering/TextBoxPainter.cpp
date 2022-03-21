@@ -29,7 +29,7 @@
 #include "Editor.h"
 #include "EventRegion.h"
 #include "GraphicsContext.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LineSelection.h"
 #include "PaintInfo.h"
@@ -66,7 +66,7 @@ TextBoxPainter::TextBoxPainter(const InlineIterator::TextBoxIterator& textBox, P
     , m_paintInfo(paintInfo)
     , m_selectableRange(m_textBox->selectableRange())
     , m_paintRect(computePaintRect(paintOffset))
-    , m_isFirstLine(m_textBox->line()->isFirst())
+    , m_isFirstLine(m_textBox->lineBox()->isFirst())
     , m_isPrinting(m_document.printing())
     , m_haveSelection(computeHaveSelection())
     , m_containsComposition(m_renderer.textNode() && m_renderer.frame().editor().compositionNode() == m_renderer.textNode())
@@ -289,9 +289,9 @@ void TextBoxPainter::paintBackground(unsigned startOffset, unsigned endOffset, c
 
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
-    auto line = textBox().line();
-    auto selectionBottom = LineSelection::logicalBottom(*line);
-    auto selectionTop = LineSelection::logicalTopAdjustedForPrecedingBlock(*line);
+    auto lineBox = textBox().lineBox();
+    auto selectionBottom = LineSelection::logicalBottom(*lineBox);
+    auto selectionTop = LineSelection::logicalTopAdjustedForPrecedingBlock(*lineBox);
     // Use same y positioning and height as for selection, so that when the selection and this subrange are on
     // the same word there are no pieces sticking out.
     auto deltaY = LayoutUnit { m_style.isFlippedLinesWritingMode() ? selectionBottom - textBox().logicalBottom() : textBox().logicalTop() - selectionTop };
@@ -446,7 +446,7 @@ static float textPosition(const InlineIterator::TextBoxIterator& textBox)
     // from the containing block edge in its measurement. textPosition() should be consistent so the text are rendered in the same width.
     if (!textBox->logicalLeft())
         return 0;
-    return textBox->logicalLeft() - textBox->line()->contentLogicalLeft();
+    return textBox->logicalLeft() - textBox->lineBox()->contentLogicalLeft();
 }
 
 void TextBoxPainter::paintCompositionUnderline(const CompositionUnderline& underline)
@@ -570,7 +570,7 @@ FloatRect TextBoxPainter::computePaintRect(const LayoutPoint& paintOffset)
 
     localPaintOffset.move(0, m_style.isHorizontalWritingMode() ? 0 : -textBox().logicalHeight());
 
-    auto boxOrigin = textBox().visualRect(textBox().line()->containingBlock().logicalHeight()).location();
+    auto boxOrigin = textBox().visualRect(textBox().lineBox()->containingBlock().logicalHeight()).location();
     boxOrigin.moveBy(localPaintOffset);
     return { boxOrigin, FloatSize(textBox().logicalWidth(), textBox().logicalHeight()) };
 }

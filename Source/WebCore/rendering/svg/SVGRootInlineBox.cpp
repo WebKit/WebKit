@@ -311,9 +311,9 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(Vector<SVGTextLayo
 
 void SVGRootInlineBox::reorderValueListsToLogicalOrder(Vector<SVGTextLayoutAttributes*>& attributes)
 {
-    auto line = InlineIterator::LineIterator(this);
+    auto lineBox = InlineIterator::LineBoxIterator(this);
 
-    InlineIterator::leafBoxesInLogicalOrder(line, [&](auto first, auto last) {
+    InlineIterator::leafBoxesInLogicalOrder(lineBox, [&](auto first, auto last) {
         reverseInlineBoxRangeAndValueListsIfNeeded(attributes, first, last);
     });
 

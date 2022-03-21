@@ -36,27 +36,27 @@ namespace InlineIterator {
 
 class BoxModernPath;
 
-class LineIteratorModernPath {
+class LineBoxIteratorModernPath {
 public:
-    LineIteratorModernPath(const LayoutIntegration::InlineContent& inlineContent, size_t lineIndex)
+    LineBoxIteratorModernPath(const LayoutIntegration::InlineContent& inlineContent, size_t lineIndex)
         : m_inlineContent(&inlineContent)
         , m_lineIndex(lineIndex)
     {
         ASSERT(lineIndex <= lines().size());
     }
-    LineIteratorModernPath(LineIteratorModernPath&&) = default;
-    LineIteratorModernPath(const LineIteratorModernPath&) = default;
-    LineIteratorModernPath& operator=(const LineIteratorModernPath&) = default;
-    LineIteratorModernPath& operator=(LineIteratorModernPath&&) = default;
+    LineBoxIteratorModernPath(LineBoxIteratorModernPath&&) = default;
+    LineBoxIteratorModernPath(const LineBoxIteratorModernPath&) = default;
+    LineBoxIteratorModernPath& operator=(const LineBoxIteratorModernPath&) = default;
+    LineBoxIteratorModernPath& operator=(LineBoxIteratorModernPath&&) = default;
 
     float contentLogicalTop() const { return line().enclosingContentTop(); }
     float contentLogicalBottom() const { return line().enclosingContentBottom(); }
-    float lineBoxTop() const { return line().lineBoxTop(); }
-    float lineBoxBottom() const { return line().lineBoxBottom(); }
+    float top() const { return line().lineBoxTop(); }
+    float bottom() const { return line().lineBoxBottom(); }
 
-    float contentLogicalTopAdjustedForPrecedingLine() const { return !m_lineIndex ? contentLogicalTop() : LineIteratorModernPath(*m_inlineContent, m_lineIndex - 1).contentLogicalBottomAdjustedForFollowingLine(); }
+    float contentLogicalTopAdjustedForPrecedingLineBox() const { return !m_lineIndex ? contentLogicalTop() : LineBoxIteratorModernPath(*m_inlineContent, m_lineIndex - 1).contentLogicalBottomAdjustedForFollowingLineBox(); }
     // FIXME: Implement.
-    float contentLogicalBottomAdjustedForFollowingLine() const { return contentLogicalBottom(); }
+    float contentLogicalBottomAdjustedForFollowingLineBox() const { return contentLogicalBottom(); }
 
     float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentLogicalOffset(); }
     float contentLogicalRight() const { return contentLogicalLeft() + line().contentLogicalWidth(); }
@@ -87,7 +87,7 @@ public:
         --m_lineIndex;
     }
 
-    bool operator==(const LineIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_lineIndex == other.m_lineIndex; }
+    bool operator==(const LineBoxIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_lineIndex == other.m_lineIndex; }
 
     bool atEnd() const { return m_lineIndex == lines().size(); }
 

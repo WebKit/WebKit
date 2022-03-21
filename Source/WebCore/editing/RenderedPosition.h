@@ -32,7 +32,7 @@
 
 #include "CaretRectComputation.h"
 #include "InlineIteratorBox.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "TextAffinity.h"
 
 namespace WebCore {
@@ -50,7 +50,7 @@ public:
     bool isEquivalent(const RenderedPosition&) const;
 
     bool isNull() const { return !m_renderer; }
-    InlineIterator::LineIterator line() const { return m_box ? m_box->line() : InlineIterator::LineIterator(); }
+    InlineIterator::LineBoxIterator lineBox() const { return m_box ? m_box->lineBox() : InlineIterator::LineBoxIterator(); }
 
     unsigned char bidiLevelOnLeft() const;
     unsigned char bidiLevelOnRight() const;

@@ -42,7 +42,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InlineIteratorBox.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "LayoutDisallowedScope.h"
 #include "Logging.h"
 #include "NodeTraversal.h"
@@ -727,20 +727,20 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
 
     Node* softLineBreakNode = nullptr;
     unsigned softLineBreakOffset = 0;
-    auto currentLine = InlineIterator::firstLineFor(*renderer);
-    if (!currentLine)
+    auto currentLineBox = InlineIterator::firstLineBoxFor(*renderer);
+    if (!currentLineBox)
         return value();
 
     auto skipToNextSoftLineBreakPosition = [&] {
-        for (; currentLine; currentLine.traverseNext()) {
-            auto lastRun = currentLine->lastLeafBox();
+        for (; currentLineBox; currentLineBox.traverseNext()) {
+            auto lastRun = currentLineBox->lastLeafBox();
             ASSERT(lastRun);
             auto& renderer = lastRun->renderer();
             auto lineEndsWithBR = is<RenderLineBreak>(renderer) && !downcast<RenderLineBreak>(renderer).isWBR();
             if (!lineEndsWithBR) {
                 softLineBreakNode = renderer.node();
                 softLineBreakOffset = lastRun->maximumCaretOffset();
-                currentLine.traverseNext();
+                currentLineBox.traverseNext();
                 return;
             }
         }

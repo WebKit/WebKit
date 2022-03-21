@@ -36,7 +36,7 @@
 #include "FrameView.h"
 #include "HTMLParserIdioms.h"
 #include "Hyphenation.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineRunAndOffset.h"
@@ -342,11 +342,11 @@ void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, un
                 continue;
         }
 
-        if (run->line()->isFirstAfterPageBreak()) {
+        if (run->lineBox()->isFirstAfterPageBreak()) {
             if (run->isHorizontal())
-                rect.shiftYEdgeTo(run->line()->lineBoxTop());
+                rect.shiftYEdgeTo(run->lineBox()->top());
             else
-                rect.shiftXEdgeTo(run->line()->lineBoxTop());
+                rect.shiftXEdgeTo(run->lineBox()->top());
         }
 
         RenderBlock* containingBlock = this->containingBlock();
@@ -673,12 +673,12 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const Ren
         if (run->isLineBreak() && !run->previousOnLine() && run->nextOnLine() && !run->nextOnLine()->isLineBreak())
             run.traverseNextTextBox();
 
-        auto line = run->line();
-        auto top = LayoutUnit { std::min(previousLineContentBottomOrBorderAndPadding(*line), line->contentLogicalTop()) };
+        auto lineBox = run->lineBox();
+        auto top = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(*lineBox), lineBox->contentLogicalTop()) };
         if (pointBlockDirection > top || (!blocksAreFlipped && pointBlockDirection == top)) {
-            auto bottom = LineSelection::logicalBottom(*line);
-            if (auto nextLine = line->next())
-                bottom = std::min(bottom, nextLine->contentLogicalTop());
+            auto bottom = LineSelection::logicalBottom(*lineBox);
+            if (auto nextLineBox = lineBox->next())
+                bottom = std::min(bottom, nextLineBox->contentLogicalTop());
 
             if (pointBlockDirection < bottom || (blocksAreFlipped && pointBlockDirection == bottom)) {
                 ShouldAffinityBeDownstream shouldAffinityBeDownstream;

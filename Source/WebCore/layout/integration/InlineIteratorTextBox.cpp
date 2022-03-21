@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InlineIteratorTextBox.h"
 
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LineSelection.h"
 #include "RenderCombineText.h"
@@ -46,7 +46,7 @@ LayoutRect TextBox::selectionRect(unsigned rangeStart, unsigned rangeEnd) const
     if (clampedStart >= clampedEnd && !(rangeStart == rangeEnd && rangeStart >= start() && rangeStart <= end()))
         return { };
 
-    auto lineSelectionRect = LineSelection::logicalRect(*line());
+    auto lineSelectionRect = LineSelection::logicalRect(*lineBox());
     auto selectionRect = LayoutRect { logicalLeft(), lineSelectionRect.y(), logicalWidth(), lineSelectionRect.height() };
 
     TextRun textRun = createTextRun();

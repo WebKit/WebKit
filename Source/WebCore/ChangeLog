@@ -1,3 +1,232 @@
+2022-03-20  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Rename InlineIterator::Line to LineBox
+        https://bugs.webkit.org/show_bug.cgi?id=238128
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Position.cpp:
+        (WebCore::Position::upstream const):
+        (WebCore::Position::downstream const):
+        (WebCore::Position::rendersInDifferentPosition const):
+        * editing/RenderedPosition.h:
+        (WebCore::RenderedPosition::lineBox const):
+        (WebCore::RenderedPosition::line const): Deleted.
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate const):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate const):
+        (WebCore::VisiblePosition::absoluteSelectionBoundsForLine const):
+        * editing/VisibleUnits.cpp:
+        (WebCore::startTextOrLineBreakBox):
+        (WebCore::endTextOrLineBreakBox):
+        (WebCore::logicallyPreviousBox):
+        (WebCore::logicallyNextBox):
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        (WebCore::absoluteLineDirectionPointToLocalPointInBlock):
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::valueWithHardLineBreaks const):
+        * layout/integration/InlineIteratorBox.cpp:
+        (WebCore::InlineIterator::Box::lineBox const):
+        (WebCore::InlineIterator::Box::style const):
+        (WebCore::InlineIterator::Box::line const): Deleted.
+        * layout/integration/InlineIteratorBox.h:
+        * layout/integration/InlineIteratorLine.cpp:
+        (WebCore::InlineIterator::LineBoxIterator::LineBoxIterator):
+        (WebCore::InlineIterator::LineBoxIterator::atEnd const):
+        (WebCore::InlineIterator::LineBoxIterator::traverseNext):
+        (WebCore::InlineIterator::LineBoxIterator::traversePrevious):
+        (WebCore::InlineIterator::LineBoxIterator::operator== const):
+        (WebCore::InlineIterator::firstLineBoxFor):
+        (WebCore::InlineIterator::lastLineBoxFor):
+        (WebCore::InlineIterator::LineBox::next const):
+        (WebCore::InlineIterator::LineBox::previous const):
+        (WebCore::InlineIterator::LineBox::firstLeafBox const):
+        (WebCore::InlineIterator::LineBox::lastLeafBox const):
+        (WebCore::InlineIterator::closestBoxForHorizontalPosition):
+        (WebCore::InlineIterator::LineIterator::LineIterator): Deleted.
+        (WebCore::InlineIterator::LineIterator::atEnd const): Deleted.
+        (WebCore::InlineIterator::LineIterator::traverseNext): Deleted.
+        (WebCore::InlineIterator::LineIterator::traversePrevious): Deleted.
+        (WebCore::InlineIterator::LineIterator::operator== const): Deleted.
+        (WebCore::InlineIterator::firstLineFor): Deleted.
+        (WebCore::InlineIterator::lastLineFor): Deleted.
+        (WebCore::InlineIterator::Line::next const): Deleted.
+        (WebCore::InlineIterator::Line::previous const): Deleted.
+        (WebCore::InlineIterator::Line::firstLeafBox const): Deleted.
+        (WebCore::InlineIterator::Line::lastLeafBox const): Deleted.
+        * layout/integration/InlineIteratorLine.h:
+        (WebCore::InlineIterator::LineBox::height const):
+        (WebCore::InlineIterator::LineBoxIterator::LineBoxIterator):
+        (WebCore::InlineIterator::LineBoxIterator::operator++):
+        (WebCore::InlineIterator::LineBoxIterator::operator!= const):
+        (WebCore::InlineIterator::LineBoxIterator::operator== const):
+        (WebCore::InlineIterator::LineBoxIterator::operator* const):
+        (WebCore::InlineIterator::LineBoxIterator::operator-> const):
+        (WebCore::InlineIterator::previousLineBoxContentBottomOrBorderAndPadding):
+        (WebCore::InlineIterator::contentStartInBlockDirection):
+        (WebCore::InlineIterator::LineBox::LineBox):
+        (WebCore::InlineIterator::LineBox::contentLogicalTop const):
+        (WebCore::InlineIterator::LineBox::contentLogicalBottom const):
+        (WebCore::InlineIterator::LineBox::contentLogicalTopAdjustedForPrecedingLineBox const):
+        (WebCore::InlineIterator::LineBox::contentLogicalBottomAdjustedForFollowingLineBox const):
+        (WebCore::InlineIterator::LineBox::top const):
+        (WebCore::InlineIterator::LineBox::bottom const):
+        (WebCore::InlineIterator::LineBox::contentLogicalLeft const):
+        (WebCore::InlineIterator::LineBox::contentLogicalRight const):
+        (WebCore::InlineIterator::LineBox::contentLogicalWidth const):
+        (WebCore::InlineIterator::LineBox::isHorizontal const):
+        (WebCore::InlineIterator::LineBox::baselineType const):
+        (WebCore::InlineIterator::LineBox::containingBlock const):
+        (WebCore::InlineIterator::LineBox::containingFragment const):
+        (WebCore::InlineIterator::LineBox::isFirstAfterPageBreak const):
+        (WebCore::InlineIterator::LineBox::isFirst const):
+        (WebCore::InlineIterator::Line::lineBoxHeight const): Deleted.
+        (WebCore::InlineIterator::LineIterator::LineIterator): Deleted.
+        (WebCore::InlineIterator::LineIterator::operator++): Deleted.
+        (WebCore::InlineIterator::LineIterator::operator bool const): Deleted.
+        (WebCore::InlineIterator::LineIterator::operator!= const): Deleted.
+        (WebCore::InlineIterator::LineIterator::operator== const): Deleted.
+        (WebCore::InlineIterator::LineIterator::operator* const): Deleted.
+        (WebCore::InlineIterator::LineIterator::operator-> const): Deleted.
+        (WebCore::InlineIterator::previousLineContentBottomOrBorderAndPadding): Deleted.
+        (WebCore::InlineIterator::Line::Line): Deleted.
+        (WebCore::InlineIterator::Line::contentLogicalTop const): Deleted.
+        (WebCore::InlineIterator::Line::contentLogicalBottom const): Deleted.
+        (WebCore::InlineIterator::Line::contentLogicalTopAdjustedForPrecedingLine const): Deleted.
+        (WebCore::InlineIterator::Line::contentLogicalBottomAdjustedForFollowingLine const): Deleted.
+        (WebCore::InlineIterator::Line::lineBoxTop const): Deleted.
+        (WebCore::InlineIterator::Line::lineBoxBottom const): Deleted.
+        (WebCore::InlineIterator::Line::contentLogicalLeft const): Deleted.
+        (WebCore::InlineIterator::Line::contentLogicalRight const): Deleted.
+        (WebCore::InlineIterator::Line::contentLogicalWidth const): Deleted.
+        (WebCore::InlineIterator::Line::isHorizontal const): Deleted.
+        (WebCore::InlineIterator::Line::baselineType const): Deleted.
+        (WebCore::InlineIterator::Line::containingBlock const): Deleted.
+        (WebCore::InlineIterator::Line::containingFragment const): Deleted.
+        (WebCore::InlineIterator::Line::isFirstAfterPageBreak const): Deleted.
+        (WebCore::InlineIterator::Line::isFirst const): Deleted.
+        * layout/integration/InlineIteratorLineLegacyPath.h:
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::LineBoxIteratorLegacyPath):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::contentLogicalTopAdjustedForPrecedingLineBox const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::contentLogicalBottomAdjustedForFollowingLineBox const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::top const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::bottom const):
+        (WebCore::InlineIterator::LineBoxIteratorLegacyPath::operator== const):
+        (WebCore::InlineIterator::LineIteratorLegacyPath::LineIteratorLegacyPath): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalTop const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalBottom const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalTopAdjustedForPrecedingLine const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalBottomAdjustedForFollowingLine const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::lineBoxTop const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::lineBoxBottom const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalLeft const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::contentLogicalRight const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::isHorizontal const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::baselineType const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::containingBlock const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::containingFragment const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::isFirstAfterPageBreak const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::traverseNext): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::traversePrevious): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::operator== const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::atEnd const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::firstLeafBox const): Deleted.
+        (WebCore::InlineIterator::LineIteratorLegacyPath::lastLeafBox const): Deleted.
+        * layout/integration/InlineIteratorLineModernPath.h:
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::LineBoxIteratorModernPath):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::top const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::bottom const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::contentLogicalTopAdjustedForPrecedingLineBox const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::contentLogicalBottomAdjustedForFollowingLineBox const):
+        (WebCore::InlineIterator::LineBoxIteratorModernPath::operator== const):
+        (WebCore::InlineIterator::LineIteratorModernPath::LineIteratorModernPath): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTop const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalBottom const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::lineBoxTop const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::lineBoxBottom const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalTopAdjustedForPrecedingLine const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalBottomAdjustedForFollowingLine const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalLeft const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::contentLogicalRight const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::isHorizontal const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::baselineType const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::containingBlock const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::containingFragment const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::isFirstAfterPageBreak const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::traverseNext): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::traversePrevious): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::operator== const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::atEnd const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::firstLeafBox const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::lastLeafBox const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::setAtEnd): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::lines const): Deleted.
+        (WebCore::InlineIterator::LineIteratorModernPath::line const): Deleted.
+        * layout/integration/InlineIteratorLogicalOrderTraversal.cpp:
+        (WebCore::InlineIterator::makeLineLogicalOrderCache):
+        (WebCore::InlineIterator::updateLineLogicalOrderCacheIfNeeded):
+        (WebCore::InlineIterator::firstLeafOnLineInLogicalOrder):
+        (WebCore::InlineIterator::lastLeafOnLineInLogicalOrder):
+        (WebCore::InlineIterator::firstLeafOnLineInLogicalOrderWithNode):
+        (WebCore::InlineIterator::lastLeafOnLineInLogicalOrderWithNode):
+        * layout/integration/InlineIteratorLogicalOrderTraversal.h:
+        (WebCore::InlineIterator::leafBoxesInLogicalOrder):
+        * layout/integration/InlineIteratorTextBox.cpp:
+        (WebCore::InlineIterator::TextBox::selectionRect const):
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::firstLineBox const):
+        (WebCore::LayoutIntegration::LineLayout::lastLineBox const):
+        (WebCore::LayoutIntegration::LineLayout::firstLine const): Deleted.
+        (WebCore::LayoutIntegration::LineLayout::lastLine const): Deleted.
+        * layout/integration/LayoutIntegrationLineLayout.h:
+        * layout/integration/LineSelection.h:
+        (WebCore::LineSelection::logicalTop):
+        (WebCore::LineSelection::logicalBottom):
+        (WebCore::LineSelection::logicalRect):
+        (WebCore::LineSelection::physicalRect):
+        (WebCore::LineSelection::logicalTopAdjustedForPrecedingBlock):
+        (WebCore::LineSelection::selectionState):
+        * rendering/CaretRectComputation.cpp:
+        (WebCore::computeCaretRectForLinePosition):
+        (WebCore::computeCaretRectForText):
+        (WebCore::computeCaretRectForLineBreak):
+        (WebCore::computeCaretRectForBox):
+        * rendering/InlineBoxPainter.cpp:
+        (WebCore::InlineBoxPainter::InlineBoxPainter):
+        (WebCore::InlineBoxPainter::paintMask):
+        (WebCore::InlineBoxPainter::paintDecorations):
+        (WebCore::InlineBoxPainter::style const):
+        * rendering/InlineBoxPainter.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::adjustEnclosingTopForPrecedingBlock const):
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        (WebCore::RenderBlockFlow::containsNonZeroBidiLevel const):
+        (WebCore::RenderBlockFlow::findClosestTextAtAbsolutePoint):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        (WebCore::RenderBlockFlow::addFocusRingRectsForInlineChildren):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::getLeadingCorner const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::TextBoxPainter):
+        (WebCore::TextBoxPainter::paintBackground):
+        (WebCore::textPosition):
+        (WebCore::TextBoxPainter::computePaintRect):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::reorderValueListsToLogicalOrder):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::minLogicalTopForTextDecorationLine):
+        (WebCore::maxLogicalBottomForTextDecorationLine):
+        (WebCore::computeUnderlineOffset):
+
 2022-03-20  Oriol Brufau  <obrufau@igalia.com>
 
         Fix CSS cascade regarding logical properties

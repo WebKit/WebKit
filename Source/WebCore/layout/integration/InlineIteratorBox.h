@@ -38,7 +38,7 @@ class RenderStyle;
 
 namespace InlineIterator {
 
-class LineIterator;
+class LineBoxIterator;
 class BoxIterator;
 class LeafBoxIterator;
 class TextBoxIterator;
@@ -98,7 +98,7 @@ public:
     LeafBoxIterator nextOnLineIgnoringLineBreak() const;
     LeafBoxIterator previousOnLineIgnoringLineBreak() const;
 
-    LineIterator line() const;
+    LineBoxIterator lineBox() const;
 
 protected:
     friend class BoxIterator;

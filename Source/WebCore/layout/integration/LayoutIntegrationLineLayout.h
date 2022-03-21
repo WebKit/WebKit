@@ -29,7 +29,7 @@
 
 #include "FloatRect.h"
 #include "InlineIteratorInlineBox.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutPoint.h"
@@ -111,8 +111,8 @@ public:
     InlineIterator::LeafBoxIterator boxFor(const RenderElement&) const;
     InlineIterator::InlineBoxIterator firstInlineBoxFor(const RenderInline&) const;
     InlineIterator::InlineBoxIterator firstRootInlineBox() const;
-    InlineIterator::LineIterator firstLine() const;
-    InlineIterator::LineIterator lastLine() const;
+    InlineIterator::LineBoxIterator firstLineBox() const;
+    InlineIterator::LineBoxIterator lastLineBox() const;
 
     LayoutRect firstInlineBoxRect(const RenderInline&) const;
     LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;

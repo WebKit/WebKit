@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "RenderBlockFlow.h"
 
@@ -46,35 +46,35 @@ TextBoxIterator nextTextBoxInLogicalOrder(const TextBoxIterator&, TextLogicalOrd
 struct LineLogicalOrderCacheData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    LineIterator line;
+    LineBoxIterator lineBox;
     Vector<LeafBoxIterator> boxes;
     size_t index { 0 };
 };
 using LineLogicalOrderCache = std::unique_ptr<LineLogicalOrderCacheData>;
 
-LeafBoxIterator firstLeafOnLineInLogicalOrder(const LineIterator&, LineLogicalOrderCache&);
-LeafBoxIterator lastLeafOnLineInLogicalOrder(const LineIterator&, LineLogicalOrderCache&);
+LeafBoxIterator firstLeafOnLineInLogicalOrder(const LineBoxIterator&, LineLogicalOrderCache&);
+LeafBoxIterator lastLeafOnLineInLogicalOrder(const LineBoxIterator&, LineLogicalOrderCache&);
 LeafBoxIterator nextLeafOnLineInLogicalOrder(const LeafBoxIterator&, LineLogicalOrderCache&);
 LeafBoxIterator previousLeafOnLineInLogicalOrder(const LeafBoxIterator&, LineLogicalOrderCache&);
 
-LeafBoxIterator firstLeafOnLineInLogicalOrderWithNode(const LineIterator&, LineLogicalOrderCache&);
-LeafBoxIterator lastLeafOnLineInLogicalOrderWithNode(const LineIterator&, LineLogicalOrderCache&);
+LeafBoxIterator firstLeafOnLineInLogicalOrderWithNode(const LineBoxIterator&, LineLogicalOrderCache&);
+LeafBoxIterator lastLeafOnLineInLogicalOrderWithNode(const LineBoxIterator&, LineLogicalOrderCache&);
 
 template<typename ReverseFunction>
-Vector<LeafBoxIterator> leafBoxesInLogicalOrder(const LineIterator& line, ReverseFunction&& reverseFunction)
+Vector<LeafBoxIterator> leafBoxesInLogicalOrder(const LineBoxIterator& lineBox, ReverseFunction&& reverseFunction)
 {
     Vector<LeafBoxIterator> boxes;
 
     unsigned char minLevel = 128;
     unsigned char maxLevel = 0;
 
-    for (auto box = line->firstLeafBox(); box; box = box.traverseNextOnLine()) {
+    for (auto box = lineBox->firstLeafBox(); box; box = box.traverseNextOnLine()) {
         minLevel = std::min(minLevel, box->bidiLevel());
         maxLevel = std::max(maxLevel, box->bidiLevel());
         boxes.append(box);
     }
 
-    if (line->containingBlock().style().rtlOrdering() == Order::Visual)
+    if (lineBox->containingBlock().style().rtlOrdering() == Order::Visual)
         return boxes;
 
     // Reverse of reordering of the line (L2 according to Bidi spec):

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 
 namespace WebCore {
 namespace InlineIterator {
@@ -89,12 +89,12 @@ TextBoxIterator nextTextBoxInLogicalOrder(const TextBoxIterator& textBox, TextLo
     return { };
 }
 
-static LineLogicalOrderCache makeLineLogicalOrderCache(const LineIterator& line)
+static LineLogicalOrderCache makeLineLogicalOrderCache(const LineBoxIterator& lineBox)
 {
     auto cache = makeUnique<LineLogicalOrderCacheData>();
 
-    cache->line = line;
-    cache->boxes = leafBoxesInLogicalOrder(line, [](auto first, auto last) {
+    cache->lineBox = lineBox;
+    cache->boxes = leafBoxesInLogicalOrder(lineBox, [](auto first, auto last) {
         std::reverse(first, last);
     });
 
@@ -103,9 +103,9 @@ static LineLogicalOrderCache makeLineLogicalOrderCache(const LineIterator& line)
 
 static void updateLineLogicalOrderCacheIfNeeded(const LeafBoxIterator& box, LineLogicalOrderCache& cache)
 {
-    auto line = box->line();
-    if (!cache || cache->line != line)
-        cache = makeLineLogicalOrderCache(line);
+    auto lineBox = box->lineBox();
+    if (!cache || cache->lineBox != lineBox)
+        cache = makeLineLogicalOrderCache(lineBox);
 
     if (cache->index < cache->boxes.size() && cache->boxes[cache->index] == box)
         return;
@@ -115,9 +115,9 @@ static void updateLineLogicalOrderCacheIfNeeded(const LeafBoxIterator& box, Line
     ASSERT(cache->index != notFound);
 }
 
-LeafBoxIterator firstLeafOnLineInLogicalOrder(const LineIterator& line, LineLogicalOrderCache& cache)
+LeafBoxIterator firstLeafOnLineInLogicalOrder(const LineBoxIterator& lineBox, LineLogicalOrderCache& cache)
 {
-    cache = makeLineLogicalOrderCache(line);
+    cache = makeLineLogicalOrderCache(lineBox);
 
     if (cache->boxes.isEmpty())
         return { };
@@ -126,9 +126,9 @@ LeafBoxIterator firstLeafOnLineInLogicalOrder(const LineIterator& line, LineLogi
     return cache->boxes.first();
 }
 
-LeafBoxIterator lastLeafOnLineInLogicalOrder(const LineIterator& line, LineLogicalOrderCache& cache)
+LeafBoxIterator lastLeafOnLineInLogicalOrder(const LineBoxIterator& lineBox, LineLogicalOrderCache& cache)
 {
-    cache = makeLineLogicalOrderCache(line);
+    cache = makeLineLogicalOrderCache(lineBox);
 
     if (cache->boxes.isEmpty())
         return { };
@@ -161,17 +161,17 @@ LeafBoxIterator previousLeafOnLineInLogicalOrder(const LeafBoxIterator& box, Lin
     return cache->boxes[cache->index];
 }
 
-LeafBoxIterator firstLeafOnLineInLogicalOrderWithNode(const LineIterator& line, LineLogicalOrderCache& cache)
+LeafBoxIterator firstLeafOnLineInLogicalOrderWithNode(const LineBoxIterator& lineBox, LineLogicalOrderCache& cache)
 {
-    auto box = firstLeafOnLineInLogicalOrder(line, cache);
+    auto box = firstLeafOnLineInLogicalOrder(lineBox, cache);
     while (box && !box->renderer().node())
         box = nextLeafOnLineInLogicalOrder(box, cache);
     return box;
 }
 
-LeafBoxIterator lastLeafOnLineInLogicalOrderWithNode(const LineIterator& line, LineLogicalOrderCache& cache)
+LeafBoxIterator lastLeafOnLineInLogicalOrderWithNode(const LineBoxIterator& lineBox, LineLogicalOrderCache& cache)
 {
-    auto box = lastLeafOnLineInLogicalOrder(line, cache);
+    auto box = lastLeafOnLineInLogicalOrder(lineBox, cache);
     while (box && !box->renderer().node())
         box = previousLeafOnLineInLogicalOrder(box, cache);
     return box;

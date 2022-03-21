@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 
 #include "InlineIteratorBox.h"
 #include "LayoutIntegrationLineLayout.h"
@@ -33,96 +33,96 @@
 namespace WebCore {
 namespace InlineIterator {
 
-LineIterator::LineIterator(Line::PathVariant&& pathVariant)
-    : m_line(WTFMove(pathVariant))
+LineBoxIterator::LineBoxIterator(LineBox::PathVariant&& pathVariant)
+    : m_lineBox(WTFMove(pathVariant))
 {
 }
 
-LineIterator::LineIterator(const Line& line)
-    : m_line(line)
+LineBoxIterator::LineBoxIterator(const LineBox& lineBox)
+    : m_lineBox(lineBox)
 {
 }
 
-bool LineIterator::atEnd() const
+bool LineBoxIterator::atEnd() const
 {
-    return WTF::switchOn(m_line.m_pathVariant, [](auto& path) {
+    return WTF::switchOn(m_lineBox.m_pathVariant, [](auto& path) {
         return path.atEnd();
     });
 }
 
-LineIterator& LineIterator::traverseNext()
+LineBoxIterator& LineBoxIterator::traverseNext()
 {
-    WTF::switchOn(m_line.m_pathVariant, [](auto& path) {
+    WTF::switchOn(m_lineBox.m_pathVariant, [](auto& path) {
         return path.traverseNext();
     });
     return *this;
 }
 
-LineIterator& LineIterator::traversePrevious()
+LineBoxIterator& LineBoxIterator::traversePrevious()
 {
-    WTF::switchOn(m_line.m_pathVariant, [](auto& path) {
+    WTF::switchOn(m_lineBox.m_pathVariant, [](auto& path) {
         return path.traversePrevious();
     });
     return *this;
 }
 
-bool LineIterator::operator==(const LineIterator& other) const
+bool LineBoxIterator::operator==(const LineBoxIterator& other) const
 {
-    return m_line.m_pathVariant == other.m_line.m_pathVariant;
+    return m_lineBox.m_pathVariant == other.m_lineBox.m_pathVariant;
 }
 
-LineIterator firstLineFor(const RenderBlockFlow& flow)
-{
-#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-    if (auto* lineLayout = flow.modernLineLayout())
-        return lineLayout->firstLine();
-#endif
-
-    return { LineIteratorLegacyPath { flow.firstRootBox() } };
-}
-
-LineIterator lastLineFor(const RenderBlockFlow& flow)
+LineBoxIterator firstLineBoxFor(const RenderBlockFlow& flow)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* lineLayout = flow.modernLineLayout())
-        return lineLayout->lastLine();
+        return lineLayout->firstLineBox();
 #endif
 
-    return { LineIteratorLegacyPath { flow.lastRootBox() } };
+    return { LineBoxIteratorLegacyPath { flow.firstRootBox() } };
 }
 
-LineIterator Line::next() const
+LineBoxIterator lastLineBoxFor(const RenderBlockFlow& flow)
 {
-    return LineIterator(*this).traverseNext();
+#if ENABLE(LAYOUT_FORMATTING_CONTEXT)
+    if (auto* lineLayout = flow.modernLineLayout())
+        return lineLayout->lastLineBox();
+#endif
+
+    return { LineBoxIteratorLegacyPath { flow.lastRootBox() } };
 }
 
-LineIterator Line::previous() const
+LineBoxIterator LineBox::next() const
 {
-    return LineIterator(*this).traversePrevious();
+    return LineBoxIterator(*this).traverseNext();
 }
 
-LeafBoxIterator Line::firstLeafBox() const
+LineBoxIterator LineBox::previous() const
+{
+    return LineBoxIterator(*this).traversePrevious();
+}
+
+LeafBoxIterator LineBox::firstLeafBox() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
         return { path.firstLeafBox() };
     });
 }
 
-LeafBoxIterator Line::lastLeafBox() const
+LeafBoxIterator LineBox::lastLeafBox() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) -> LeafBoxIterator {
         return { path.lastLeafBox() };
     });
 }
 
-LeafBoxIterator closestBoxForHorizontalPosition(const Line& line, float horizontalPosition, bool editableOnly)
+LeafBoxIterator closestBoxForHorizontalPosition(const LineBox& lineBox, float horizontalPosition, bool editableOnly)
 {
     auto isEditable = [&](auto box) {
         return box && box->renderer().node() && box->renderer().node()->hasEditableStyle();
     };
 
-    auto firstBox = line.firstLeafBox();
-    auto lastBox = line.lastLeafBox();
+    auto firstBox = lineBox.firstLeafBox();
+    auto lastBox = lineBox.lastLeafBox();
 
     if (firstBox != lastBox) {
         if (firstBox->isLineBreak())

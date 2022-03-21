@@ -26,8 +26,8 @@
 #pragma once
 
 #include "FontBaseline.h"
-#include "InlineIteratorLineLegacyPath.h"
-#include "InlineIteratorLineModernPath.h"
+#include "InlineIteratorLineBoxLegacyPath.h"
+#include "InlineIteratorLineBoxModernPath.h"
 #include "RenderBlockFlow.h"
 #include <variant>
 
@@ -37,26 +37,26 @@ class LineSelection;
 
 namespace InlineIterator {
 
-class LineIterator;
+class LineBoxIterator;
 class PathIterator;
 class LeafBoxIterator;
 
-struct EndLineIterator { };
+struct EndLineBoxIterator { };
 
-class Line {
+class LineBox {
 public:
     using PathVariant = std::variant<
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        LineIteratorModernPath,
+        LineBoxIteratorModernPath,
 #endif
-        LineIteratorLegacyPath
+        LineBoxIteratorLegacyPath
     >;
 
-    Line(PathVariant&&);
+    LineBox(PathVariant&&);
 
-    float lineBoxTop() const;
-    float lineBoxBottom() const;
-    float lineBoxHeight() const { return lineBoxBottom() - lineBoxTop(); }
+    float top() const;
+    float bottom() const;
+    float height() const { return bottom() - top(); }
 
     float contentLogicalTop() const;
     float contentLogicalBottom() const;
@@ -64,8 +64,8 @@ public:
     float contentLogicalRight() const;
     float contentLogicalWidth() const;
 
-    float contentLogicalTopAdjustedForPrecedingLine() const;
-    float contentLogicalBottomAdjustedForFollowingLine() const;
+    float contentLogicalTopAdjustedForPrecedingLineBox() const;
+    float contentLogicalBottomAdjustedForFollowingLineBox() const;
 
     const RenderBlockFlow& containingBlock() const;
     RenderFragmentContainer* containingFragment() const;
@@ -79,162 +79,162 @@ public:
     LeafBoxIterator firstLeafBox() const;
     LeafBoxIterator lastLeafBox() const;
 
-    LineIterator next() const;
-    LineIterator previous() const;
+    LineBoxIterator next() const;
+    LineBoxIterator previous() const;
 
 private:
-    friend class LineIterator;
+    friend class LineBoxIterator;
 
     PathVariant m_pathVariant;
 };
 
-class LineIterator {
+class LineBoxIterator {
 public:
-    LineIterator() : m_line(LineIteratorLegacyPath { nullptr }) { };
-    LineIterator(const LegacyRootInlineBox* rootInlineBox) : m_line(LineIteratorLegacyPath { rootInlineBox }) { };
-    LineIterator(Line::PathVariant&&);
-    LineIterator(const Line&);
+    LineBoxIterator() : m_lineBox(LineBoxIteratorLegacyPath { nullptr }) { };
+    LineBoxIterator(const LegacyRootInlineBox* rootInlineBox) : m_lineBox(LineBoxIteratorLegacyPath { rootInlineBox }) { };
+    LineBoxIterator(LineBox::PathVariant&&);
+    LineBoxIterator(const LineBox&);
 
-    LineIterator& operator++() { return traverseNext(); }
-    LineIterator& traverseNext();
-    LineIterator& traversePrevious();
+    LineBoxIterator& operator++() { return traverseNext(); }
+    LineBoxIterator& traverseNext();
+    LineBoxIterator& traversePrevious();
 
     explicit operator bool() const { return !atEnd(); }
 
-    bool operator==(const LineIterator&) const;
-    bool operator!=(const LineIterator& other) const { return !(*this == other); }
+    bool operator==(const LineBoxIterator&) const;
+    bool operator!=(const LineBoxIterator& other) const { return !(*this == other); }
 
-    bool operator==(EndLineIterator) const { return atEnd(); }
-    bool operator!=(EndLineIterator) const { return !atEnd(); }
+    bool operator==(EndLineBoxIterator) const { return atEnd(); }
+    bool operator!=(EndLineBoxIterator) const { return !atEnd(); }
 
-    const Line& operator*() const { return m_line; }
-    const Line* operator->() const { return &m_line; }
+    const LineBox& operator*() const { return m_lineBox; }
+    const LineBox* operator->() const { return &m_lineBox; }
 
     bool atEnd() const;
 
 private:
-    Line m_line;
+    LineBox m_lineBox;
 };
 
-LineIterator firstLineFor(const RenderBlockFlow&);
-LineIterator lastLineFor(const RenderBlockFlow&);
-LeafBoxIterator closestBoxForHorizontalPosition(const Line&, float horizontalPosition, bool editableOnly = false);
+LineBoxIterator firstLineBoxFor(const RenderBlockFlow&);
+LineBoxIterator lastLineBoxFor(const RenderBlockFlow&);
+LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontalPosition, bool editableOnly = false);
 
 // -----------------------------------------------
-inline float previousLineContentBottomOrBorderAndPadding(const Line& line)
+inline float previousLineBoxContentBottomOrBorderAndPadding(const LineBox& lineBox)
 {
-    return line.isFirst() ? line.containingBlock().borderAndPaddingBefore().toFloat() : line.contentLogicalTopAdjustedForPrecedingLine(); 
+    return lineBox.isFirst() ? lineBox.containingBlock().borderAndPaddingBefore().toFloat() : lineBox.contentLogicalTopAdjustedForPrecedingLineBox(); 
 }
 
-inline float contentStartInBlockDirection(const Line& line)
+inline float contentStartInBlockDirection(const LineBox& lineBox)
 {
-    if (!line.containingBlock().style().isFlippedBlocksWritingMode())
-        return std::max(line.contentLogicalTop(), previousLineContentBottomOrBorderAndPadding(line));
-    return std::min(line.contentLogicalBottom(), line.contentLogicalBottomAdjustedForFollowingLine());
+    if (!lineBox.containingBlock().style().isFlippedBlocksWritingMode())
+        return std::max(lineBox.contentLogicalTop(), previousLineBoxContentBottomOrBorderAndPadding(lineBox));
+    return std::min(lineBox.contentLogicalBottom(), lineBox.contentLogicalBottomAdjustedForFollowingLineBox());
 }
 
-inline Line::Line(PathVariant&& path)
+inline LineBox::LineBox(PathVariant&& path)
     : m_pathVariant(WTFMove(path))
 {
 }
 
-inline float Line::contentLogicalTop() const
+inline float LineBox::contentLogicalTop() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalTop();
     });
 }
 
-inline float Line::contentLogicalBottom() const
+inline float LineBox::contentLogicalBottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalBottom();
     });
 }
 
-inline float Line::contentLogicalTopAdjustedForPrecedingLine() const
+inline float LineBox::contentLogicalTopAdjustedForPrecedingLineBox() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.contentLogicalTopAdjustedForPrecedingLine();
+        return path.contentLogicalTopAdjustedForPrecedingLineBox();
     });
 }
 
-inline float Line::contentLogicalBottomAdjustedForFollowingLine() const
+inline float LineBox::contentLogicalBottomAdjustedForFollowingLineBox() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.contentLogicalBottomAdjustedForFollowingLine();
+        return path.contentLogicalBottomAdjustedForFollowingLineBox();
     });
 }
 
-inline float Line::lineBoxTop() const
+inline float LineBox::top() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.lineBoxTop();
+        return path.top();
     });
 }
 
-inline float Line::lineBoxBottom() const
+inline float LineBox::bottom() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
-        return path.lineBoxBottom();
+        return path.bottom();
     });
 }
 
-inline float Line::contentLogicalLeft() const
+inline float LineBox::contentLogicalLeft() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalLeft();
     });
 }
 
-inline float Line::contentLogicalRight() const
+inline float LineBox::contentLogicalRight() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.contentLogicalRight();
     });
 }
 
-inline float Line::contentLogicalWidth() const
+inline float LineBox::contentLogicalWidth() const
 {
     return contentLogicalRight() - contentLogicalLeft();
 }
 
-inline bool Line::isHorizontal() const
+inline bool LineBox::isHorizontal() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.isHorizontal();
     });
 }
 
-inline FontBaseline Line::baselineType() const
+inline FontBaseline LineBox::baselineType() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.baselineType();
     });
 }
 
-inline const RenderBlockFlow& Line::containingBlock() const
+inline const RenderBlockFlow& LineBox::containingBlock() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) -> const RenderBlockFlow& {
         return path.containingBlock();
     });
 }
 
-inline RenderFragmentContainer* Line::containingFragment() const
+inline RenderFragmentContainer* LineBox::containingFragment() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.containingFragment();
     });
 }
 
-inline bool Line::isFirstAfterPageBreak() const
+inline bool LineBox::isFirstAfterPageBreak() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.isFirstAfterPageBreak();
     });
 }
 
-inline bool Line::isFirst() const
+inline bool LineBox::isFirst() const
 {
     return !previous();
 }

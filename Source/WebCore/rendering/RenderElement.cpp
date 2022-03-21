@@ -40,7 +40,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LengthFunctions.h"
 #include "Logging.h"
@@ -1591,7 +1591,7 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
             if (is<RenderText>(*o)) {
                 auto& textRenderer = downcast<RenderText>(*o);
                 if (auto run = InlineIterator::firstTextBoxFor(textRenderer))
-                    point.move(textRenderer.linesBoundingBox().x(), run->line()->contentLogicalTop());
+                    point.move(textRenderer.linesBoundingBox().x(), run->lineBox()->contentLogicalTop());
             } else if (is<RenderBox>(*o))
                 point.moveBy(downcast<RenderBox>(*o).location());
             point = o->container()->localToAbsolute(point, UseTransforms, &insideFixed);

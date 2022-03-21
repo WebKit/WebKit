@@ -26,7 +26,7 @@
 #include "config.h"
 #include "InlineIteratorBox.h"
 
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderBlockFlow.h"
@@ -81,14 +81,14 @@ LeafBoxIterator Box::previousOnLineIgnoringLineBreak() const
     return LeafBoxIterator(*this).traversePreviousOnLineIgnoringLineBreak();
 }
 
-LineIterator Box::line() const
+LineBoxIterator Box::lineBox() const
 {
     return WTF::switchOn(m_pathVariant, [](const BoxLegacyPath& path) {
-        return LineIterator(LineIteratorLegacyPath(&path.rootInlineBox()));
+        return LineBoxIterator(LineBoxIteratorLegacyPath(&path.rootInlineBox()));
     }
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     , [](const BoxModernPath& path) {
-        return LineIterator(LineIteratorModernPath(path.inlineContent(), path.box().lineIndex()));
+        return LineBoxIterator(LineBoxIteratorModernPath(path.inlineContent(), path.box().lineIndex()));
     }
 #endif
     );
@@ -96,7 +96,7 @@ LineIterator Box::line() const
 
 const RenderStyle& Box::style() const
 {
-    return line()->isFirst() ? renderer().firstLineStyle() : renderer().style();
+    return lineBox()->isFirst() ? renderer().firstLineStyle() : renderer().style();
 }
 
 RenderObject::HighlightState Box::selectionState() const

@@ -27,7 +27,7 @@
 #include "CaretRectComputation.h"
 
 #include "Editing.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LineSelection.h"
 #include "RenderBlockFlow.h"
@@ -110,10 +110,10 @@ static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& re
     return currentStyle.isHorizontalWritingMode() ? rect : rect.transposedRect();
 }
 
-static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineIterator& line, float logicalLeftPosition, CaretRectMode caretRectMode)
+static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxIterator& lineBox, float logicalLeftPosition, CaretRectMode caretRectMode)
 {
-    auto& containingBlock = line->containingBlock();
-    auto lineSelectionRect = LineSelection::logicalRect(*line);
+    auto& containingBlock = lineBox->containingBlock();
+    auto lineSelectionRect = LineSelection::logicalRect(*lineBox);
 
     int height = lineSelectionRect.height();
     int top = lineSelectionRect.y();
@@ -173,10 +173,10 @@ static LayoutRect computeCaretRectForText(const InlineBoxAndOffset& boxAndOffset
         return { };
 
     auto& textBox = downcast<InlineIterator::TextBoxIterator>(boxAndOffset.box);
-    auto line = textBox->line();
+    auto lineBox = textBox->lineBox();
 
     float position = textBox->positionForOffset(boxAndOffset.offset);
-    return computeCaretRectForLinePosition(line, position, caretRectMode);
+    return computeCaretRectForLinePosition(lineBox, position, caretRectMode);
 }
 
 static LayoutRect computeCaretRectForLineBreak(const InlineBoxAndOffset& boxAndOffset, CaretRectMode caretRectMode)
@@ -186,8 +186,8 @@ static LayoutRect computeCaretRectForLineBreak(const InlineBoxAndOffset& boxAndO
     if (!boxAndOffset.box)
         return { };
 
-    auto line = boxAndOffset.box->line();
-    return computeCaretRectForLinePosition(line, line->contentLogicalLeft(), caretRectMode);
+    auto lineBox = boxAndOffset.box->lineBox();
+    return computeCaretRectForLinePosition(lineBox, lineBox->contentLogicalLeft(), caretRectMode);
 }
 
 static LayoutRect computeCaretRectForSVGInlineText(const InlineBoxAndOffset& boxAndOffset, CaretRectMode)
@@ -228,10 +228,10 @@ static LayoutRect computeCaretRectForBox(const RenderBox& renderer, const Inline
         rect.move(LayoutSize(renderer.width() - caretWidth, 0_lu));
 
     if (boxAndOffset.box) {
-        auto line = boxAndOffset.box->line();
-        auto top = line->contentLogicalTop();
+        auto lineBox = boxAndOffset.box->lineBox();
+        auto top = lineBox->contentLogicalTop();
         rect.setY(top);
-        rect.setHeight(line->contentLogicalBottom() - top);
+        rect.setHeight(lineBox->contentLogicalBottom() - top);
     }
 
     // If height of box is smaller than font height, use the latter one,

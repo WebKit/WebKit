@@ -25,44 +25,44 @@
 
 #pragma once
 
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "RenderBlockFlow.h"
 
 namespace WebCore {
 
 class LineSelection {
 public:
-    static float logicalTop(const InlineIterator::Line& line) { return line.contentLogicalTopAdjustedForPrecedingLine(); }
-    static float logicalBottom(const InlineIterator::Line& line) { return line.contentLogicalBottomAdjustedForFollowingLine(); }
+    static float logicalTop(const InlineIterator::LineBox& lineBox) { return lineBox.contentLogicalTopAdjustedForPrecedingLineBox(); }
+    static float logicalBottom(const InlineIterator::LineBox& lineBox) { return lineBox.contentLogicalBottomAdjustedForFollowingLineBox(); }
 
-    static FloatRect logicalRect(const InlineIterator::Line& line)
+    static FloatRect logicalRect(const InlineIterator::LineBox& lineBox)
     {
-        return { FloatPoint { line.contentLogicalLeft(), line.contentLogicalTopAdjustedForPrecedingLine() }, FloatPoint { line.contentLogicalRight(), line.contentLogicalBottomAdjustedForFollowingLine() } };
+        return { FloatPoint { lineBox.contentLogicalLeft(), lineBox.contentLogicalTopAdjustedForPrecedingLineBox() }, FloatPoint { lineBox.contentLogicalRight(), lineBox.contentLogicalBottomAdjustedForFollowingLineBox() } };
     }
 
-    static FloatRect physicalRect(const InlineIterator::Line& line)
+    static FloatRect physicalRect(const InlineIterator::LineBox& lineBox)
     {
-        auto physicalRect = logicalRect(line);
-        if (!line.isHorizontal())
+        auto physicalRect = logicalRect(lineBox);
+        if (!lineBox.isHorizontal())
             physicalRect = physicalRect.transposedRect();
-        line.containingBlock().flipForWritingMode(physicalRect);
+        lineBox.containingBlock().flipForWritingMode(physicalRect);
         return physicalRect;
     }
 
-    static float logicalTopAdjustedForPrecedingBlock(const InlineIterator::Line& line)
+    static float logicalTopAdjustedForPrecedingBlock(const InlineIterator::LineBox& lineBox)
     {
         // FIXME: Move adjustEnclosingTopForPrecedingBlock from RenderBlockFlow to here.
-        return line.containingBlock().adjustEnclosingTopForPrecedingBlock(LayoutUnit { line.contentLogicalTopAdjustedForPrecedingLine() });
+        return lineBox.containingBlock().adjustEnclosingTopForPrecedingBlock(LayoutUnit { lineBox.contentLogicalTopAdjustedForPrecedingLineBox() });
     }
 
-    static RenderObject::HighlightState selectionState(const InlineIterator::Line& line)
+    static RenderObject::HighlightState selectionState(const InlineIterator::LineBox& lineBox)
     {
-        auto& block = line.containingBlock();
+        auto& block = lineBox.containingBlock();
         if (block.selectionState() == RenderObject::HighlightState::None)
             return RenderObject::HighlightState::None;
 
         auto lineState = RenderObject::HighlightState::None;
-        for (auto box = line.firstLeafBox(); box; box.traverseNextOnLine()) {
+        for (auto box = lineBox.firstLeafBox(); box; box.traverseNextOnLine()) {
             auto boxState = box->selectionState();
             if (lineState == RenderObject::HighlightState::None)
                 lineState = boxState;

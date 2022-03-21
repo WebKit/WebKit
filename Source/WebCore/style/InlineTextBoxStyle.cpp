@@ -29,7 +29,7 @@
 #include "FontCascade.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
@@ -49,9 +49,9 @@ static bool isAncestorAndWithinBlock(const RenderInline& ancestor, const RenderO
     return false;
 }
 
-static void minLogicalTopForTextDecorationLine(const InlineIterator::LineIterator& line, float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
+static void minLogicalTopForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
 {
-    for (auto run = line->firstLeafBox(); run; run.traverseNextOnLine()) {
+    for (auto run = lineBox->firstLeafBox(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
@@ -66,9 +66,9 @@ static void minLogicalTopForTextDecorationLine(const InlineIterator::LineIterato
     }
 }
 
-static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineIterator& line, float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
+static void maxLogicalBottomForTextDecorationLine(const InlineIterator::LineBoxIterator& lineBox, float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecorationLine> textDecorationLine)
 {
-    for (auto run = line->firstLeafBox(); run; run.traverseNextOnLine()) {
+    for (auto run = lineBox->firstLeafBox(); run; run.traverseNextOnLine()) {
         if (run->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
@@ -119,7 +119,7 @@ float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderl
     auto resolvedUnderlinePosition = underlinePosition;
     if (resolvedUnderlinePosition == TextUnderlinePosition::Auto && underlineOffset.isAuto()) {
         if (textRun)
-            resolvedUnderlinePosition = textRun->line()->baselineType() == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Auto;
+            resolvedUnderlinePosition = textRun->lineBox()->baselineType() == IdeographicBaseline ? TextUnderlinePosition::Under : TextUnderlinePosition::Auto;
         else
             resolvedUnderlinePosition = TextUnderlinePosition::Auto;
     }
@@ -134,17 +134,17 @@ float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderl
     case TextUnderlinePosition::Under: {
         ASSERT(textRun);
         // Position underline relative to the bottom edge of the lowest element's content box.
-        auto line = textRun->line();
-        auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), TextDecorationLine::Underline, line->isFirst());
+        auto lineBox = textRun->lineBox();
+        auto* decorationRenderer = enclosingRendererWithTextDecoration(textRun->renderer(), TextDecorationLine::Underline, lineBox->isFirst());
         
         float offset;
         if (textRun->renderer().style().isFlippedLinesWritingMode()) {
             offset = textRun->logicalTop();
-            minLogicalTopForTextDecorationLine(line, offset, decorationRenderer, TextDecorationLine::Underline);
+            minLogicalTopForTextDecorationLine(lineBox, offset, decorationRenderer, TextDecorationLine::Underline);
             offset = textRun->logicalTop() - offset;
         } else {
             offset = textRun->logicalBottom();
-            maxLogicalBottomForTextDecorationLine(line, offset, decorationRenderer, TextDecorationLine::Underline);
+            maxLogicalBottomForTextDecorationLine(lineBox, offset, decorationRenderer, TextDecorationLine::Underline);
             offset -= textRun->logicalBottom();
         }
         auto desiredOffset = textRun->logicalHeight() + gap + std::max(offset, 0.0f) + underlineOffset.lengthOr(0);

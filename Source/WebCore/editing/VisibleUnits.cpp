@@ -32,7 +32,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InlineIteratorBox.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineRunAndOffset.h"
 #include "NodeTraversal.h"
@@ -150,17 +150,17 @@ static InlineIterator::LeafBoxIterator nextTextOrLineBreakBox(InlineIterator::Le
     return { };
 }
 
-static InlineIterator::LeafBoxIterator startTextOrLineBreakBox(InlineIterator::LineIterator line, InlineIterator::LineLogicalOrderCache& orderCache)
+static InlineIterator::LeafBoxIterator startTextOrLineBreakBox(InlineIterator::LineBoxIterator lineBox, InlineIterator::LineLogicalOrderCache& orderCache)
 {
-    auto box = InlineIterator::firstLeafOnLineInLogicalOrder(line, orderCache);
+    auto box = InlineIterator::firstLeafOnLineInLogicalOrder(lineBox, orderCache);
     if (isTextOrLineBreakBox(box))
         return box;
     return nextTextOrLineBreakBox(box, orderCache);
 }
 
-static InlineIterator::LeafBoxIterator endTextOrLineBreakBox(InlineIterator::LineIterator line, InlineIterator::LineLogicalOrderCache& orderCache)
+static InlineIterator::LeafBoxIterator endTextOrLineBreakBox(InlineIterator::LineBoxIterator lineBox, InlineIterator::LineLogicalOrderCache& orderCache)
 {
-    auto box = InlineIterator::lastLeafOnLineInLogicalOrder(line, orderCache);
+    auto box = InlineIterator::lastLeafOnLineInLogicalOrder(lineBox, orderCache);
     if (isTextOrLineBreakBox(box))
         return box;
     return previousTextOrLineBreakBox(box, orderCache);
@@ -171,9 +171,9 @@ static const InlineIterator::LeafBoxIterator logicallyPreviousBox(const VisibleP
     if (auto previousBox = previousTextOrLineBreakBox(startBox, orderCache))
         return previousBox;
 
-    if (auto previousLine = startBox->line()->previous()) {
+    if (auto previousLineBox = startBox->lineBox()->previous()) {
         // FIXME: Why isn't previousBoxInDifferentLine set here?
-        if (auto previousBox = endTextOrLineBreakBox(previousLine, orderCache))
+        if (auto previousBox = endTextOrLineBreakBox(previousLineBox, orderCache))
             return previousBox;
     }
 
@@ -187,18 +187,18 @@ static const InlineIterator::LeafBoxIterator logicallyPreviousBox(const VisibleP
             break;
 
         RenderedPosition renderedPosition(position, Affinity::Downstream);
-        auto previousLine = renderedPosition.line();
-        if (!previousLine)
+        auto previousLineBox = renderedPosition.lineBox();
+        if (!previousLineBox)
             break;
 
-        if (previousLine != startBox->line()) {
-            if (auto previousBox = endTextOrLineBreakBox(previousLine, orderCache)) {
+        if (previousLineBox != startBox->lineBox()) {
+            if (auto previousBox = endTextOrLineBreakBox(previousLineBox, orderCache)) {
                 previousBoxInDifferentLine = true;
                 return previousBox;
             }
         }
 
-        startBox = InlineIterator::firstLeafOnLineInLogicalOrder(previousLine, orderCache);
+        startBox = InlineIterator::firstLeafOnLineInLogicalOrder(previousLineBox, orderCache);
     }
     return { };
 }
@@ -209,9 +209,9 @@ static const InlineIterator::LeafBoxIterator logicallyNextBox(const VisiblePosit
     if (auto nextBox = nextTextOrLineBreakBox(startBox, orderCache))
         return nextBox;
 
-    if (auto nextLine = startBox->line()->next()) {
+    if (auto nextLineBox = startBox->lineBox()->next()) {
         // FIXME: Why isn't previousBoxInDifferentLine set here?
-        if (auto nextBox = startTextOrLineBreakBox(nextLine, orderCache))
+        if (auto nextBox = startTextOrLineBreakBox(nextLineBox, orderCache))
             return nextBox;
     }
 
@@ -225,18 +225,18 @@ static const InlineIterator::LeafBoxIterator logicallyNextBox(const VisiblePosit
             break;
 
         RenderedPosition renderedPosition(position, Affinity::Downstream);
-        auto nextLine = renderedPosition.line();
-        if (!nextLine)
+        auto nextLineBox = renderedPosition.lineBox();
+        if (!nextLineBox)
             break;
 
-        if (nextLine != startBox->line()) {
-            if (auto nextBox = startTextOrLineBreakBox(nextLine, orderCache)) {
+        if (nextLineBox != startBox->lineBox()) {
+            if (auto nextBox = startTextOrLineBreakBox(nextLineBox, orderCache)) {
                 nextBoxInDifferentLine = true;
                 return nextBox;
             }
         }
 
-        startBox = InlineIterator::lastLeafOnLineInLogicalOrderWithNode(nextLine, orderCache);
+        startBox = InlineIterator::lastLeafOnLineInLogicalOrderWithNode(nextLineBox, orderCache);
     }
     return { };
 }
@@ -738,8 +738,8 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
     if (c.isNull())
         return VisiblePosition();
 
-    auto line = RenderedPosition(c).line();
-    if (!line) {
+    auto lineBox = RenderedPosition(c).lineBox();
+    if (!lineBox) {
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
         Position p = c.deepEquivalent();
@@ -752,7 +752,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
     InlineIterator::LineLogicalOrderCache orderCache;
 
     Node* startNode = nullptr;
-    auto startBox = mode == UseLogicalOrdering ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(line, orderCache) : line->firstLeafBox();
+    auto startBox = mode == UseLogicalOrdering ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(lineBox, orderCache) : lineBox->firstLeafBox();
     // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
     // and so cannot be represented by a VisiblePosition. Use whatever follows instead.
     while (true) {
@@ -811,8 +811,8 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     if (c.isNull())
         return VisiblePosition();
 
-    auto line = RenderedPosition(c).line();
-    if (!line) {
+    auto lineBox = RenderedPosition(c).lineBox();
+    if (!lineBox) {
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
         Position p = c.deepEquivalent();
@@ -824,7 +824,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     InlineIterator::LineLogicalOrderCache orderCache;
 
     Node* endNode = nullptr;
-    auto endBox = mode == UseLogicalOrdering ? InlineIterator::lastLeafOnLineInLogicalOrder(line, orderCache) : line->lastLeafBox();
+    auto endBox = mode == UseLogicalOrdering ? InlineIterator::lastLeafOnLineInLogicalOrder(lineBox, orderCache) : lineBox->lastLeafBox();
     // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
     // and so cannot be represented by a VisiblePosition. Use whatever precedes instead.
     while (true) {
@@ -936,15 +936,15 @@ bool isLogicalEndOfLine(const VisiblePosition& p)
     return p.isNotNull() && p == logicalEndOfLine(p);
 }
 
-static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(InlineIterator::LineIterator& line, int lineDirectionPoint)
+static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(InlineIterator::LineBoxIterator& lineBox, int lineDirectionPoint)
 {
-    auto& containingBlock = line->containingBlock();
+    auto& containingBlock = lineBox->containingBlock();
     FloatPoint absoluteBlockPoint = containingBlock.localToAbsolute(FloatPoint()) - toFloatSize(containingBlock.scrollPosition());
 
     if (containingBlock.isHorizontalWritingMode())
-        return IntPoint(lineDirectionPoint - absoluteBlockPoint.x(), contentStartInBlockDirection(*line));
+        return IntPoint(lineDirectionPoint - absoluteBlockPoint.x(), contentStartInBlockDirection(*lineBox));
 
-    return IntPoint(contentStartInBlockDirection(*line), lineDirectionPoint - absoluteBlockPoint.y());
+    return IntPoint(contentStartInBlockDirection(*lineBox), lineDirectionPoint - absoluteBlockPoint.y());
 }
 
 static Element* rootEditableOrDocumentElement(Node& node, EditableType editableType)
@@ -968,29 +968,29 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     if (!renderer)
         return VisiblePosition();
 
-    InlineIterator::LineIterator line;
+    InlineIterator::LineBoxIterator lineBox;
     if (auto box = visiblePosition.inlineBoxAndOffset().box) {
-        line = box->line()->previous();
+        lineBox = box->lineBox()->previous();
         // We want to skip zero height boxes.
         // This could happen in case it is a LegacyRootInlineBox with trailing floats.
-        if (!line || !line->lineBoxHeight() || !line->firstLeafBox())
-            line = { };
+        if (!lineBox || !lineBox->height() || !lineBox->firstLeafBox())
+            lineBox = { };
     }
 
-    if (!line) {
+    if (!lineBox) {
         Position position = previousLineCandidatePosition(node, visiblePosition, editableType);
         if (position.isNotNull()) {
             RenderedPosition renderedPosition(position);
-            line = renderedPosition.line();
-            if (!line)
+            lineBox = renderedPosition.lineBox();
+            if (!lineBox)
                 return position;
         }
     }
     
-    if (line) {
+    if (lineBox) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
-        auto pointInLine = absoluteLineDirectionPointToLocalPointInBlock(line, lineDirectionPoint);
-        auto box = closestBoxForHorizontalPosition(*line, line->isHorizontal() ? pointInLine.x() : pointInLine.y(), isEditablePosition(p));
+        auto pointInLine = absoluteLineDirectionPointToLocalPointInBlock(lineBox, lineDirectionPoint);
+        auto box = closestBoxForHorizontalPosition(*lineBox, lineBox->isHorizontal() ? pointInLine.x() : pointInLine.y(), isEditablePosition(p));
         if (!box)
             return VisiblePosition();
         auto& renderer = box->renderer();
@@ -1021,32 +1021,32 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
     if (!node->renderer())
         return VisiblePosition();
 
-    InlineIterator::LineIterator line;
+    InlineIterator::LineBoxIterator lineBox;
     if (auto box = visiblePosition.inlineBoxAndOffset().box) {
-        line = box->line()->next();
+        lineBox = box->lineBox()->next();
         // We want to skip zero height boxes.
         // This could happen in case it is a LegacyRootInlineBox with trailing floats.
-        if (!line || !line->lineBoxHeight() || !line->firstLeafBox())
-            line = { };
+        if (!lineBox || !lineBox->height() || !lineBox->firstLeafBox())
+            lineBox = { };
     }
 
-    if (!line) {
+    if (!lineBox) {
         // FIXME: We need do the same in previousLinePosition.
         Node* child = node->traverseToChildAt(p.deprecatedEditingOffset());
         node = child ? child : node->lastDescendant();
         Position position = nextLineCandidatePosition(node, visiblePosition, editableType);
         if (position.isNotNull()) {
             RenderedPosition renderedPosition(position);
-            line = renderedPosition.line();
-            if (!line)
+            lineBox = renderedPosition.lineBox();
+            if (!lineBox)
                 return position;
         }
     }
     
-    if (line) {
+    if (lineBox) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
-        auto pointInLine = absoluteLineDirectionPointToLocalPointInBlock(line, lineDirectionPoint);
-        auto box = closestBoxForHorizontalPosition(*line, line->isHorizontal() ? pointInLine.x() : pointInLine.y(), isEditablePosition(p));
+        auto pointInLine = absoluteLineDirectionPointToLocalPointInBlock(lineBox, lineDirectionPoint);
+        auto box = closestBoxForHorizontalPosition(*lineBox, lineBox->isHorizontal() ? pointInLine.x() : pointInLine.y(), isEditablePosition(p));
         if (!box)
             return VisiblePosition();
         auto& renderer = box->renderer();

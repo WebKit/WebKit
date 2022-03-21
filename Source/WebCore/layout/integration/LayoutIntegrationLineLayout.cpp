@@ -620,20 +620,20 @@ InlineIterator::InlineBoxIterator LineLayout::firstRootInlineBox() const
     return InlineIterator::inlineBoxFor(*m_inlineContent, m_inlineContent->boxes[0]);
 }
 
-InlineIterator::LineIterator LineLayout::firstLine() const
+InlineIterator::LineBoxIterator LineLayout::firstLineBox() const
 {
     if (!m_inlineContent)
         return { };
 
-    return { InlineIterator::LineIteratorModernPath(*m_inlineContent, 0) };
+    return { InlineIterator::LineBoxIteratorModernPath(*m_inlineContent, 0) };
 }
 
-InlineIterator::LineIterator LineLayout::lastLine() const
+InlineIterator::LineBoxIterator LineLayout::lastLineBox() const
 {
     if (!m_inlineContent)
         return { };
 
-    return { InlineIterator::LineIteratorModernPath(*m_inlineContent, m_inlineContent->lines.isEmpty() ? 0 : m_inlineContent->lines.size() - 1) };
+    return { InlineIterator::LineBoxIteratorModernPath(*m_inlineContent, m_inlineContent->lines.isEmpty() ? 0 : m_inlineContent->lines.size() - 1) };
 }
 
 LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) const

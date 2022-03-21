@@ -36,7 +36,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "InlineIteratorBox.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "InlineRunAndOffset.h"
 #include "LineSelection.h"
 #include "Logging.h"
@@ -160,7 +160,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                 if (!previousBox) {
                     Position positionOnLeft = primaryDirection == TextDirection::LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
                     auto boxOnLeft = positionOnLeft.inlineBoxAndOffset(m_affinity, primaryDirection).box;
-                    if (boxOnLeft && boxOnLeft->line() == box->line())
+                    if (boxOnLeft && boxOnLeft->lineBox() == box->lineBox())
                         return Position();
                     return positionOnLeft;
                 }
@@ -178,8 +178,8 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             if (box->direction() == primaryDirection) {
                 if (!previousBox) {
                     auto logicalStart = primaryDirection == TextDirection::LTR
-                        ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(box->line(), orderCache)
-                        : InlineIterator::lastLeafOnLineInLogicalOrderWithNode(box->line(), orderCache);
+                        ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(box->lineBox(), orderCache)
+                        : InlineIterator::lastLeafOnLineInLogicalOrderWithNode(box->lineBox(), orderCache);
                     if (logicalStart) {
                         box = logicalStart;
                         renderer = &box->renderer();
@@ -326,7 +326,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                 if (!nextBox) {
                     Position positionOnRight = primaryDirection == TextDirection::LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
                     auto boxOnRight = positionOnRight.inlineBoxAndOffset(m_affinity, primaryDirection).box;
-                    if (boxOnRight && boxOnRight->line() == box->line())
+                    if (boxOnRight && boxOnRight->lineBox() == box->lineBox())
                         return Position();
                     return positionOnRight;
                 }
@@ -344,8 +344,8 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             if (box->direction() == primaryDirection) {
                 if (!nextBox) {
                     auto logicalEnd = primaryDirection == TextDirection::LTR
-                        ? InlineIterator::lastLeafOnLineInLogicalOrderWithNode(box->line(), orderCache)
-                        : InlineIterator::firstLeafOnLineInLogicalOrderWithNode(box->line(), orderCache);
+                        ? InlineIterator::lastLeafOnLineInLogicalOrderWithNode(box->lineBox(), orderCache)
+                        : InlineIterator::firstLeafOnLineInLogicalOrderWithNode(box->lineBox(), orderCache);
 
                     if (logicalEnd) {
                         box = logicalEnd;
@@ -669,7 +669,7 @@ FloatRect VisiblePosition::absoluteSelectionBoundsForLine() const
     if (!box)
         return { };
 
-    auto line = box->line();
+    auto line = box->lineBox();
     return line->containingBlock().localToAbsoluteQuad(FloatRect { LineSelection::physicalRect(*line) }).boundingBox();
 }
 

@@ -35,7 +35,7 @@
 #include "HighlightData.h"
 #include "HighlightRegister.h"
 #include "InlineIteratorBox.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "LayoutRepainter.h"
 #include "LineSelection.h"
 #include "RenderBlock.h"
@@ -721,9 +721,9 @@ VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point, const
 {
     auto [top, bottom] = [&]() -> std::pair<float, float> {
         if (auto run = InlineIterator::boxFor(*this)) {
-            auto line = run->line();
-            auto lineContentTop = LayoutUnit { std::min(previousLineContentBottomOrBorderAndPadding(*line), line->contentLogicalTop()) };
-            return std::make_pair(lineContentTop, LineSelection::logicalBottom(*line));
+            auto lineBox = run->lineBox();
+            auto lineContentTop = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(*lineBox), lineBox->contentLogicalTop()) };
+            return std::make_pair(lineContentTop, LineSelection::logicalBottom(*lineBox));
         }
         return std::make_pair(logicalTop(), logicalBottom());
     }();

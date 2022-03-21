@@ -32,23 +32,23 @@
 namespace WebCore {
 namespace InlineIterator {
 
-class LineIteratorLegacyPath {
+class LineBoxIteratorLegacyPath {
 public:
-    LineIteratorLegacyPath(const LegacyRootInlineBox* rootInlineBox)
+    LineBoxIteratorLegacyPath(const LegacyRootInlineBox* rootInlineBox)
         : m_rootInlineBox(rootInlineBox)
     {
     }
-    LineIteratorLegacyPath(LineIteratorLegacyPath&&) = default;
-    LineIteratorLegacyPath(const LineIteratorLegacyPath&) = default;
-    LineIteratorLegacyPath& operator=(const LineIteratorLegacyPath&) = default;
-    LineIteratorLegacyPath& operator=(LineIteratorLegacyPath&&) = default;
+    LineBoxIteratorLegacyPath(LineBoxIteratorLegacyPath&&) = default;
+    LineBoxIteratorLegacyPath(const LineBoxIteratorLegacyPath&) = default;
+    LineBoxIteratorLegacyPath& operator=(const LineBoxIteratorLegacyPath&) = default;
+    LineBoxIteratorLegacyPath& operator=(LineBoxIteratorLegacyPath&&) = default;
 
     float contentLogicalTop() const { return m_rootInlineBox->lineTop().toFloat(); }
     float contentLogicalBottom() const { return m_rootInlineBox->lineBottom().toFloat(); }
-    float contentLogicalTopAdjustedForPrecedingLine() const { return m_rootInlineBox->selectionTop().toFloat(); }
-    float contentLogicalBottomAdjustedForFollowingLine() const { return m_rootInlineBox->selectionBottom().toFloat(); }
-    float lineBoxTop() const { return m_rootInlineBox->lineBoxTop().toFloat(); }
-    float lineBoxBottom() const { return m_rootInlineBox->lineBoxBottom().toFloat(); }
+    float contentLogicalTopAdjustedForPrecedingLineBox() const { return m_rootInlineBox->selectionTop().toFloat(); }
+    float contentLogicalBottomAdjustedForFollowingLineBox() const { return m_rootInlineBox->selectionBottom().toFloat(); }
+    float top() const { return m_rootInlineBox->lineBoxTop().toFloat(); }
+    float bottom() const { return m_rootInlineBox->lineBoxBottom().toFloat(); }
 
     float contentLogicalLeft() const { return m_rootInlineBox->logicalLeft(); }
     float contentLogicalRight() const { return m_rootInlineBox->logicalRight(); }
@@ -70,7 +70,7 @@ public:
         m_rootInlineBox = m_rootInlineBox->prevRootBox();
     }
 
-    bool operator==(const LineIteratorLegacyPath& other) const { return m_rootInlineBox == other.m_rootInlineBox; }
+    bool operator==(const LineBoxIteratorLegacyPath& other) const { return m_rootInlineBox == other.m_rootInlineBox; }
 
     bool atEnd() const { return !m_rootInlineBox; }
 

@@ -36,7 +36,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
-#include "InlineIteratorLine.h"
+#include "InlineIteratorLineBox.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
 #include "InlineIteratorTextBox.h"
 #include "InlineRunAndOffset.h"
@@ -760,7 +760,7 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
                     return currentPosition;
 
                 auto nextBox = InlineIterator::nextTextBoxInLogicalOrder(box, orderCache);
-                if (textOffset == box->end() + 1 && nextBox && box->line() != nextBox->line())
+                if (textOffset == box->end() + 1 && nextBox && box->lineBox() != nextBox->lineBox())
                     return currentPosition;
 
                 box = nextBox;
@@ -866,7 +866,7 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
                     return currentPosition;
 
                 auto nextBox = InlineIterator::nextTextBoxInLogicalOrder(box, orderCache);
-                if (textOffset == box->end() && nextBox && box->line() != nextBox->line())
+                if (textOffset == box->end() && nextBox && box->lineBox() != nextBox->lineBox())
                     return currentPosition;
 
                 box = nextBox;
@@ -1095,7 +1095,7 @@ bool Position::rendersInDifferentPosition(const Position& position) const
     if (!box1 || !box2)
         return false;
 
-    if (box1->line() != box2->line())
+    if (box1->lineBox() != box2->lineBox())
         return true;
 
     if (nextRenderedEditable(deprecatedNode()) == position.deprecatedNode()
