@@ -1600,11 +1600,7 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
     if (auto contentViewBackgroundColor = pageClient().contentViewBackgroundColor(); contentViewBackgroundColor.isValid())
         return contentViewBackgroundColor;
 
-#if HAVE(OS_DARK_MODE_SUPPORT)
-    return WebCore::roundAndClampToSRGBALossy(UIColor.systemBackgroundColor.CGColor);
-#else
     return WebCore::Color::white;
-#endif
 }
 
 } // namespace WebKit

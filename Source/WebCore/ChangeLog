@@ -1,5 +1,67 @@
 2022-03-21  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r291564. rdar://problem/90463946
+
+    Add an addition point for system background color
+    https://bugs.webkit.org/show_bug.cgi?id=238108
+    <rdar://problem/90463946>
+    
+    Reviewed by Aditya Keerthi.
+    
+    Source/WebCore:
+    
+    * SourcesCocoa.txt:
+    * WebCore.xcodeproj/project.pbxproj:
+    * platform/ios/WebCoreUIColorExtras.h: Added.
+    * platform/ios/WebCoreUIColorExtras.mm: Added.
+    (WebCore::systemBackgroundColor):
+    Add an addition point.
+    
+    * rendering/RenderThemeIOS.mm:
+    (WebCore::CSSValueSystemColorInformation::function):
+    (WebCore::cssValueSystemColorInformationList):
+    (WebCore::systemColorFromCSSValueSystemColorInformation):
+    Adopt it for CSS use of system background color.
+    
+    Source/WebKit:
+    
+    * UIProcess/API/ios/WKWebViewIOS.mm:
+    (scrollViewBackgroundColor):
+    Adopt systemBackgroundColor().
+    
+    * UIProcess/ios/PageClientImplIOS.mm:
+    (WebKit::PageClientImpl::contentViewBackgroundColor):
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::platformUnderPageBackgroundColor const):
+    Move the fallback to systemBackgroundColor into PageClientImpl
+    so that it can realize the web view's trait collection.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291564 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-21  Tim Horton  <timothy_horton@apple.com>
+
+            Add an addition point for system background color
+            https://bugs.webkit.org/show_bug.cgi?id=238108
+            <rdar://problem/90463946>
+
+            Reviewed by Aditya Keerthi.
+
+            * SourcesCocoa.txt:
+            * WebCore.xcodeproj/project.pbxproj:
+            * platform/ios/WebCoreUIColorExtras.h: Added.
+            * platform/ios/WebCoreUIColorExtras.mm: Added.
+            (WebCore::systemBackgroundColor):
+            Add an addition point.
+
+            * rendering/RenderThemeIOS.mm:
+            (WebCore::CSSValueSystemColorInformation::function):
+            (WebCore::cssValueSystemColorInformationList):
+            (WebCore::systemColorFromCSSValueSystemColorInformation):
+            Adopt it for CSS use of system background color.
+
+2022-03-21  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r291514. rdar://problem/90500863
 
     [iOS] Fix more build breakage from r291361
