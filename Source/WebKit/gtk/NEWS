@@ -1,3 +1,16 @@
+================
+WebKitGTK 2.36.0
+================
+
+What's new in WebKitGTK 2.36.0?
+
+  - Fix selection foreground color on text with decorations.
+  - Fix seeking on YouTube videos.
+  - Fix list item marker not exposed to a11y when not a direct child of a list item.
+  - Fix a crash while closing a page.
+  - Fix the build to make it reproducible again.
+  - Fix several crashes and rendering issues.
+
 =================
 WebKitGTK 2.35.90
 =================
