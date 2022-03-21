@@ -118,6 +118,13 @@
         * inspector/runtime/evaluate-emulateUserGesture-hasTransientActivation.html: Added.
         * inspector/runtime/evaluate-emulateUserGesture-hasTransientActivation-expected.txt: Added.
 
+2022-03-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening.
+
+        * fast/viewport/watchos/viewport-adaptations-after-navigation-expected.txt:
+        * fast/viewport/watchos/viewport-with-system-minimum-layout-margins.html:
+
 2022-03-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         [macOS arm64] webrtc/vp9-profile2.html is consistently timing out
