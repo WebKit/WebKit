@@ -9,6 +9,7 @@ navigator.contacts is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
 navigator.getStorageUpdates() is OK
+navigator.gpu is OK
 navigator.hardwareConcurrency is OK
 navigator.isLoggedIn() is OK
 navigator.javaEnabled() is OK
@@ -46,6 +47,7 @@ navigator.contacts is OK
 navigator.cookieEnabled is OK
 navigator.credentials is OK
 navigator.getStorageUpdates() is OK
+navigator.gpu is OK
 navigator.hardwareConcurrency is OK
 navigator.isLoggedIn() is OK
 navigator.javaEnabled() is OK

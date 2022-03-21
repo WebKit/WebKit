@@ -102,6 +102,7 @@ const TestFeatures& TestOptions::defaults()
             { "TextAutosizingEnabled", false },
             { "UsesBackForwardCache", false },
             { "WebAudioEnabled", true },
+            { "WebGPU", true },
             { "WebSQLEnabled", true },
             { "XSSAuditorEnabled", false },
 

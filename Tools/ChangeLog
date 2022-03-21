@@ -1,5 +1,26 @@
 2022-03-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Set the WebGPU WKPreference to true in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=238130
+
+        Reviewed by Sam Weinig.
+
+        WebGPU isn't ready yet to show up in any Safari menus, so rather than just marking it as an experimental feature,
+        this patch just enables the preference in DumpRenderTree and WebKitTestRunner.
+
+        This doesn't require a linker change, because all of the WebGPU calls are already behind HAS(WEBGPU_IMPLEMENTATION).
+        Therefore, the immediate behavior change of this patch is that the IDL types are exposed in layout tests, but calling
+        WebGPU functions in layout tests will return undefined. When we finally link WebCore with WebGPU, then these
+        functions will automatically start working in layout tests. Outside of layout tests, the IDL types are still not
+        present, and so therefore the WebGPU functions cannot be called because they are not visible from script.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
+2022-03-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Add a build-webgpu script
         https://bugs.webkit.org/show_bug.cgi?id=238040
 
