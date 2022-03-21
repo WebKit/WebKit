@@ -722,9 +722,9 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin, ShellMixin):
             shell.ShellCommand.start(self)
             return None
 
-        reviewer_name = self.getProperty('reviewer_full_name', '')
-        if reviewer_name:
-            self.command.extend(['--reviewer', reviewer_name])
+        reviewers_names = self.getProperty('reviewers_full_names', [])
+        if reviewers_names:
+            self.command.extend(['--reviewer', reviewers_names[0]])
         d = self.downloadFileContentToWorker('.buildbot-diff', patch)
         d.addCallback(lambda res: shell.ShellCommand.start(self))
 
@@ -1516,7 +1516,7 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             self.finished(SUCCESS)
             return None
 
-        self.setProperty('reviewer_full_name', self.full_name_from_email(reviewer))
+        self.setProperty('reviewers_full_names', [self.full_name_from_email(reviewer)])
         if not self.is_reviewer(reviewer):
             self.fail_build(reviewer, 'reviewer')
             return None
