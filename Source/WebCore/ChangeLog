@@ -1,3 +1,29 @@
+2022-03-21  Youenn Fablet  <youenn@apple.com>
+
+        Remove use of MediaSampleAVFObjC from WebRTC pipelines
+        https://bugs.webkit.org/show_bug.cgi?id=237706
+        <rdar://problem/90425391>
+
+        Reviewed by Eric Carlson.
+
+        Replace MediaSampleAVFObjC by VideoFrameCV when handling CVPixelBuffers.
+
+        Covered by existing tests.
+
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        * platform/graphics/cv/ImageRotationSessionVT.mm:
+        * platform/graphics/cv/ImageTransferSessionVT.h:
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+        * platform/graphics/cv/VideoFrameCV.h:
+        * platform/graphics/cv/VideoFrameCV.mm:
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        * platform/mediastream/RealtimeVideoSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+
 2022-03-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed, fix non-unified build after r291474 and r291508

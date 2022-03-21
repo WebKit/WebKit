@@ -26,7 +26,7 @@
 #pragma once
 
 #include "IntSize.h"
-#include "MediaSample.h"
+#include "VideoFrame.h"
 #include <wtf/RetainPtr.h>
 
 typedef struct CGImage *CGImageRef;
@@ -45,7 +45,7 @@ public:
         return std::unique_ptr<ImageTransferSessionVT>(new ImageTransferSessionVT(pixelFormat, shouldUseIOSurface));
     }
 
-    RefPtr<MediaSample> convertMediaSample(MediaSample&, const IntSize&);
+    RefPtr<MediaSample> convertVideoFrame(MediaSample&, const IntSize&);
     RefPtr<MediaSample> createMediaSample(CGImageRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
     RefPtr<MediaSample> createMediaSample(CMSampleBufferRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
 

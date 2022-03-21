@@ -30,7 +30,7 @@
 
 #if PLATFORM(COCOA)
 #include "ImageTransferSessionVT.h"
-#include "MediaSampleAVFObjC.h"
+#include "VideoFrameCV.h"
 #endif
 
 namespace WebCore {
@@ -172,31 +172,23 @@ void RealtimeVideoSource::sourceStopped()
 }
 
 #if PLATFORM(COCOA)
-RefPtr<MediaSample> RealtimeVideoSource::adaptVideoSample(MediaSample& sample)
+RefPtr<MediaSample> RealtimeVideoSource::adaptVideoFrame(MediaSample& videoFrame)
 {
-    if (sample.platformSample().type != PlatformSample::CMSampleBufferType) {
-        // FIXME: Support more efficiently downsampling of remote video frames by downsampling in GPUProcess.
-        auto newSample = MediaSampleAVFObjC::createFromPixelBuffer(sample.pixelBuffer(), sample.videoRotation(), sample.videoMirrored(), sample.presentationTime(), { });
-        if (!newSample)
-            return nullptr;
-        return adaptVideoSample(*newSample);
-    }
-    ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
-    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != sample.videoPixelFormat())
-        m_imageTransferSession = ImageTransferSessionVT::create(sample.videoPixelFormat(), m_shouldUseIOSurface);
+    if (!m_imageTransferSession || m_imageTransferSession->pixelFormat() != videoFrame.videoPixelFormat())
+        m_imageTransferSession = ImageTransferSessionVT::create(videoFrame.videoPixelFormat(), m_shouldUseIOSurface);
 
     ASSERT(m_imageTransferSession);
     if (!m_imageTransferSession)
         return nullptr;
 
-    auto mediaSample = m_imageTransferSession->convertMediaSample(sample, size());
-    ASSERT(mediaSample);
+    auto newVideoFrame = m_imageTransferSession->convertVideoFrame(videoFrame, size());
+    ASSERT(newVideoFrame);
 
-    return mediaSample;
+    return newVideoFrame;
 }
 #endif
 
-void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata metadata)
+void RealtimeVideoSource::videoSampleAvailable(MediaSample& videoFrame, VideoFrameTimeMetadata metadata)
 {
     if (m_frameDecimation > 1 && ++m_frameDecimationCounter % m_frameDecimation)
         return;
@@ -208,15 +200,15 @@ void RealtimeVideoSource::videoSampleAvailable(MediaSample& sample, VideoFrameTi
 
 #if PLATFORM(COCOA)
     auto size = this->size();
-    if (!size.isEmpty() && size != expandedIntSize(sample.presentationSize())) {
-        if (auto mediaSample = adaptVideoSample(sample)) {
-            RealtimeMediaSource::videoSampleAvailable(*mediaSample, metadata);
+    if (!size.isEmpty() && size != expandedIntSize(videoFrame.presentationSize())) {
+        if (auto newVideoFrame = adaptVideoFrame(videoFrame)) {
+            RealtimeMediaSource::videoSampleAvailable(*newVideoFrame, metadata);
             return;
         }
     }
 #endif
 
-    RealtimeMediaSource::videoSampleAvailable(sample, metadata);
+    RealtimeMediaSource::videoSampleAvailable(videoFrame, metadata);
 }
 
 Ref<RealtimeMediaSource> RealtimeVideoSource::clone()

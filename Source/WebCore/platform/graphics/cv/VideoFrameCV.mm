@@ -28,10 +28,21 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "CVUtilities.h"
+#include "PixelBuffer.h"
 #include "ProcessIdentity.h"
 #include "CoreVideoSoftLink.h"
 
 namespace WebCore {
+
+Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMirrored, VideoRotation rotation)
+{
+    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(sampleBuffer));
+    auto timeStamp = PAL::CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer);
+    if (CMTIME_IS_INVALID(timeStamp))
+        timeStamp = PAL::CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+
+    return VideoFrameCV::create(PAL::toMediaTime(timeStamp), isMirrored, rotation, pixelBuffer);
+}
 
 Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirrored, VideoRotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
 {

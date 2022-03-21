@@ -41,9 +41,9 @@
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/ImageRotationSessionVT.h>
 #include <WebCore/MediaConstraints.h>
-#include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/RealtimeVideoSource.h>
+#include <WebCore/VideoFrameCV.h>
 #include <WebCore/WebAudioBufferList.h>
 #include <wtf/UniqueRef.h>
 
@@ -182,7 +182,7 @@ private:
     {
         if (m_shouldApplyRotation && sample.videoRotation() != MediaSample::VideoRotation::None) {
             auto pixelBuffer = rotatePixelBuffer(sample);
-            return MediaSampleAVFObjC::createFromPixelBuffer(WTFMove(pixelBuffer), MediaSample::VideoRotation::None, sample.videoMirrored(), sample.presentationTime(), sample.decodeTime());
+            return VideoFrameCV::create(sample.presentationTime(), sample.videoMirrored(), MediaSample::VideoRotation::None, WTFMove(pixelBuffer));
         }
         return &sample;
     }

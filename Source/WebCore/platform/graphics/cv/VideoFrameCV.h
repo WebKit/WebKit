@@ -40,6 +40,7 @@ class PixelBuffer;
 class VideoFrameCV : public VideoFrame {
 public:
     WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, VideoRotation, RetainPtr<CVPixelBufferRef>&&);
+    WEBCORE_EXPORT static Ref<VideoFrameCV> create(CMSampleBufferRef, bool isMirrored, VideoRotation);
     static RefPtr<VideoFrameCV> createFromPixelBuffer(PixelBuffer&&);
     WEBCORE_EXPORT ~VideoFrameCV();
 

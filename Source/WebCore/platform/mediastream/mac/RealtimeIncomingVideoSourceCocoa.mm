@@ -32,7 +32,7 @@
 
 #import "CVUtilities.h"
 #import "Logging.h"
-#import "MediaSampleAVFObjC.h"
+#import "VideoFrameCV.h"
 #import "VideoFrameLibWebRTC.h"
 #import <wtf/cf/TypeCastsCF.h>
 
@@ -91,33 +91,12 @@ CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t wi
     return m_pixelBufferPool.get();
 }
 
-RefPtr<MediaSample> RealtimeIncomingVideoSourceCocoa::createMediaSampleFromCVPixelBuffer(CVPixelBufferRef pixelBuffer, MediaSample::VideoRotation rotation, int64_t timeStamp)
+Ref<VideoFrame> RealtimeIncomingVideoSourceCocoa::createVideoSampleFromCVPixelBuffer(CVPixelBufferRef pixelBuffer, MediaSample::VideoRotation rotation, int64_t timeStamp)
 {
-    CMSampleTimingInfo timingInfo;
-    timingInfo.presentationTimeStamp = PAL::CMTimeMake(timeStamp, 1000000);
-    timingInfo.decodeTimeStamp = PAL::kCMTimeInvalid;
-    timingInfo.duration = PAL::kCMTimeInvalid;
-
-    CMVideoFormatDescriptionRef formatDescription;
-    OSStatus ostatus = PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, &formatDescription);
-    if (ostatus != noErr) {
-        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "Failed to initialize CMVideoFormatDescription with error ", static_cast<int>(ostatus));
-        return nullptr;
-    }
-
-    CMSampleBufferRef sampleBuffer;
-    ostatus = PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, (CVImageBufferRef)pixelBuffer, formatDescription, &timingInfo, &sampleBuffer);
-    CFRelease(formatDescription);
-    if (ostatus != noErr) {
-        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "Failed to create the sample buffer with error ", static_cast<int>(ostatus));
-        return nullptr;
-    }
-
-    auto sample = adoptCF(sampleBuffer);
-    return MediaSampleAVFObjC::create(sample.get(), rotation);
+    return VideoFrameCV::create(MediaTime(timeStamp, 1000000), false, rotation, pixelBuffer);
 }
 
-RefPtr<MediaSample> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::VideoFrame& frame, MediaSample::VideoRotation rotation)
+RefPtr<VideoFrame> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::VideoFrame& frame, MediaSample::VideoRotation rotation)
 {
     if (muted()) {
         if (!m_blackFrame || m_blackFrameWidth != frame.width() || m_blackFrameHeight != frame.height()) {
@@ -125,7 +104,7 @@ RefPtr<MediaSample> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc:
             m_blackFrameHeight = frame.height();
             m_blackFrame = createBlackPixelBuffer(m_blackFrameWidth, m_blackFrameHeight);
         }
-        return createMediaSampleFromCVPixelBuffer(m_blackFrame.get(), rotation, frame.timestamp_us());
+        return createVideoSampleFromCVPixelBuffer(m_blackFrame.get(), rotation, frame.timestamp_us());
     }
 
     if (auto* provider = videoFrameBufferProvider(frame)) {
@@ -137,7 +116,7 @@ RefPtr<MediaSample> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc:
 
     // If we already have a CVPixelBufferRef, use it directly.
     if (auto pixelBuffer = webrtc::pixelBufferFromFrame(frame))
-        return createMediaSampleFromCVPixelBuffer(pixelBuffer, rotation, frame.timestamp_us());
+        return createVideoSampleFromCVPixelBuffer(pixelBuffer, rotation, frame.timestamp_us());
 
     // In case of in memory libwebrtc samples, we have non interleaved YUV data, let's lazily create CVPixelBuffers if needed.
     return VideoFrameLibWebRTC::create(MediaTime(frame.timestamp_us(), 1000000), false, rotation, frame.video_frame_buffer(), [protectedThis = Ref { *this }, this](auto& buffer) {

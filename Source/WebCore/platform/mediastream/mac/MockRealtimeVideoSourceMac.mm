@@ -36,7 +36,6 @@
 #import "ImageBuffer.h"
 #import "ImageTransferSessionVT.h"
 #import "MediaConstraints.h"
-#import "MediaSampleAVFObjC.h"
 #import "MockRealtimeMediaSourceCenter.h"
 #import "NotImplemented.h"
 #import "PlatformLayer.h"

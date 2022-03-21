@@ -75,7 +75,7 @@ private:
     void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) final;
 
 #if PLATFORM(COCOA)
-    RefPtr<MediaSample> adaptVideoSample(MediaSample&);
+    RefPtr<MediaSample> adaptVideoFrame(MediaSample&);
 #endif
 
 #if !RELEASE_LOG_DISABLED

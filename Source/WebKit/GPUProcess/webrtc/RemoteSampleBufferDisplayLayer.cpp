@@ -33,7 +33,6 @@
 #include "SampleBufferDisplayLayerMessages.h"
 #include <WebCore/ImageTransferSessionVT.h>
 #include <WebCore/LocalSampleBufferDisplayLayer.h>
-#include <WebCore/MediaSampleAVFObjC.h>
 
 namespace WebKit {
 

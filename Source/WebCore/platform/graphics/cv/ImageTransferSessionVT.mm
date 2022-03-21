@@ -29,9 +29,10 @@
 #import "CVUtilities.h"
 #import "GraphicsContextCG.h"
 #import "Logging.h"
-#import "MediaSampleAVFObjC.h"
+#import "VideoFrameCV.h"
 #import <CoreMedia/CMFormatDescription.h>
 #import <CoreMedia/CMSampleBuffer.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 
 #if !PLATFORM(MACCATALYST)
 #import <pal/spi/cocoa/IOSurfaceSPI.h>
@@ -254,18 +255,16 @@ RetainPtr<CMSampleBufferRef> ImageTransferSessionVT::createCMSampleBuffer(IOSurf
 }
 #endif
 
-RefPtr<MediaSample> ImageTransferSessionVT::convertMediaSample(MediaSample& sample, const IntSize& size)
+RefPtr<MediaSample> ImageTransferSessionVT::convertVideoFrame(MediaSample& videoFrame, const IntSize& size)
 {
-    ASSERT(sample.platformSample().type == PlatformSample::CMSampleBufferType);
+    if (size == expandedIntSize(videoFrame.presentationSize()))
+        return &videoFrame;
 
-    if (size == expandedIntSize(sample.presentationSize()))
-        return &sample;
-
-    auto resizedBuffer = convertCMSampleBuffer(sample.platformSample().sample.cmSampleBuffer, size);
+    auto resizedBuffer = convertPixelBuffer(videoFrame.pixelBuffer(), size);
     if (!resizedBuffer)
         return nullptr;
 
-    return MediaSampleAVFObjC::create(resizedBuffer.get(), sample.videoRotation(), sample.videoMirrored());
+    return VideoFrameCV::create(videoFrame.presentationTime(), videoFrame.videoMirrored(), videoFrame.videoRotation(), WTFMove(resizedBuffer));
 }
 
 #if !PLATFORM(MACCATALYST)
@@ -275,7 +274,7 @@ RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(IOSurfaceRef surfa
     if (!sampleBuffer)
         return nullptr;
 
-    return MediaSampleAVFObjC::create(sampleBuffer.get(), rotation, mirrored);
+    return VideoFrameCV::create(sampleBuffer.get(), mirrored, rotation);
 }
 #endif
 
@@ -285,7 +284,7 @@ RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(CGImageRef image, 
     if (!sampleBuffer)
         return nullptr;
 
-    return MediaSampleAVFObjC::create(sampleBuffer.get(), rotation, mirrored);
+    return VideoFrameCV::create(sampleBuffer.get(), mirrored, rotation);
 }
 
 RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(CMSampleBufferRef buffer, const MediaTime& sampleTime, const IntSize& size, MediaSample::VideoRotation rotation, bool mirrored)
@@ -294,7 +293,7 @@ RefPtr<MediaSample> ImageTransferSessionVT::createMediaSample(CMSampleBufferRef 
     if (!sampleBuffer)
         return nullptr;
 
-    return MediaSampleAVFObjC::create(sampleBuffer.get(), rotation, mirrored);
+    return VideoFrameCV::create(sampleBuffer.get(), mirrored, rotation);
 }
 
 } // namespace WebCore

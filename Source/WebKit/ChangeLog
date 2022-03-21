@@ -1,3 +1,16 @@
+2022-03-21  Youenn Fablet  <youenn@apple.com>
+
+        Remove use of MediaSampleAVFObjC from WebRTC pipelines
+        https://bugs.webkit.org/show_bug.cgi?id=237706
+        <rdar://problem/90425391>
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        * GPUProcess/webrtc/RemoteMediaRecorder.cpp:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+
 2022-03-19  Tim Horton  <timothy_horton@apple.com>
 
         Fix the build (hopefully)
