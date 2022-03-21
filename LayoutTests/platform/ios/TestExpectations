@@ -136,6 +136,7 @@ fast/selectors/text-field-selection-stroke-color.html  [ WontFix ]
 fast/selectors/text-field-selection-text-shadow.html  [ WontFix ]
 fast/selectors/text-field-selection-window-inactive-stroke-color.html  [ WontFix ]
 fast/selectors/text-field-selection-window-inactive-text-shadow.html  [ WontFix ]
+fast/text/selection-with-text-decorations.html  [ WontFix ]
 
 # Plugins are not supported on iOS
 plugins

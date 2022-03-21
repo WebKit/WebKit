@@ -1,3 +1,23 @@
+2022-03-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r286955): Rendering Links during search: highlighting fails
+        https://bugs.webkit.org/show_bug.cgi?id=237816
+
+        Reviewed by Simon Fraser.
+
+        Since r286955 the same coalesced marked text loop is used for painting the foreground text in case of text with
+        decorations. StyledMarkedText::coalesceAdjacentWithEqualDecorations() doesn't take into account the text style,
+        so when selected foreground color is different we end up painting the whole decorated text with the same
+        foreground color for the selected and non-selected parts.
+
+        Test: fast/text/selection-with-text-decorations.html
+
+        * rendering/StyledMarkedText.cpp:
+        (WebCore::StyledMarkedText::coalesceAdjacentWithEqualDecorations): Take into account the text styles too.
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::paintForegroundAndDecorations): Do not call
+        StyledMarkedText::coalesceAdjacentWithEqualForeground() in case of text with decorations, since it's unused.
+
 2022-03-21  Youenn Fablet  <youenn@apple.com>
 
         Remove use of MediaSampleAVFObjC from WebRTC pipelines

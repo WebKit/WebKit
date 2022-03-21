@@ -186,9 +186,6 @@ void TextBoxPainter::paintForegroundAndDecorations()
         });
     }
 
-    // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
-    auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualForeground(styledMarkedTexts);
-
     auto textDecorations = m_style.textDecorationsInEffect();
     bool highlightDecorations = !MarkedText::collectForHighlights(m_renderer, m_selectableRange, MarkedText::PaintPhase::Decoration).isEmpty();
     bool lineDecorations = !textDecorations.isEmpty();
@@ -241,6 +238,9 @@ void TextBoxPainter::paintForegroundAndDecorations()
             }
         }
     } else {
+        // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
+        auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualForeground(styledMarkedTexts);
+
         for (auto& markedText : coalescedStyledMarkedTexts)
             paintForeground(markedText);
     }
