@@ -24,7 +24,7 @@
  */
 
 #include <WebCore/BroadcastChannelRegistry.h>
-#include <WebCore/ClientOrigin.h>
+#include <WebCore/PartitionedSecurityOrigin.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -34,13 +34,13 @@ class WebBroadcastChannelRegistry : public WebCore::BroadcastChannelRegistry, pu
 public:
     static Ref<WebBroadcastChannelRegistry> getOrCreate(bool privateSession);
 
-    void registerChannel(const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier) final;
-    void unregisterChannel(const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier) final;
-    void postMessage(const WebCore::ClientOrigin&, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&&, CompletionHandler<void()>&&) final;
+    void registerChannel(const WebCore::PartitionedSecurityOrigin&, const String& name, WebCore::BroadcastChannelIdentifier) final;
+    void unregisterChannel(const WebCore::PartitionedSecurityOrigin&, const String& name, WebCore::BroadcastChannelIdentifier) final;
+    void postMessage(const WebCore::PartitionedSecurityOrigin&, const String& name, WebCore::BroadcastChannelIdentifier source, Ref<WebCore::SerializedScriptValue>&&, CompletionHandler<void()>&&) final;
 
 private:
     WebBroadcastChannelRegistry() = default;
 
     using NameToChannelIdentifiersMap = HashMap<String, Vector<WebCore::BroadcastChannelIdentifier>>;
-    HashMap<WebCore::ClientOrigin, NameToChannelIdentifiersMap> m_channels;
+    HashMap<WebCore::PartitionedSecurityOrigin, NameToChannelIdentifiersMap> m_channels;
 };
