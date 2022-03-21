@@ -31,12 +31,14 @@
 
 namespace WebGPU {
 
+class Device;
+
 class Sampler : public RefCounted<Sampler> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Sampler> create(id<MTLSamplerState> samplerState, const WGPUSamplerDescriptor& descriptor)
+    static Ref<Sampler> create(id<MTLSamplerState> samplerState, const WGPUSamplerDescriptor& descriptor, Device& device)
     {
-        return adoptRef(*new Sampler(samplerState, descriptor));
+        return adoptRef(*new Sampler(samplerState, descriptor, device));
     }
 
     ~Sampler();
@@ -51,13 +53,15 @@ public:
     bool isFiltering() const { return descriptor().minFilter == WGPUFilterMode_Linear || descriptor().magFilter == WGPUFilterMode_Linear || descriptor().mipmapFilter == WGPUFilterMode_Linear; }
 
 private:
-    Sampler(id<MTLSamplerState>, const WGPUSamplerDescriptor& descriptor);
+    Sampler(id<MTLSamplerState>, const WGPUSamplerDescriptor&, Device&);
 
     const id<MTLSamplerState> m_samplerState { nil };
 
     const WGPUSamplerDescriptor m_descriptor { }; // "The GPUSamplerDescriptor with which the GPUSampler was created."
     // "[[isComparison]] of type boolean." This is unnecessary; it's implemented in isComparison().
     // "[[isFiltering]] of type boolean." This is unnecessary; it's implemented in isFiltering().
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

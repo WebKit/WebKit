@@ -58,6 +58,8 @@ defer {
 }
 print("Device: \(String(describing: device))")
 
+wgpuDevicePushErrorScope(device, WGPUErrorFilter_Validation)
+
 var uploadBufferDescriptor = WGPUBufferDescriptor(nextInChain: nil, label: nil, usage: WGPUBufferUsage_MapWrite.rawValue | WGPUBufferUsage_CopySrc.rawValue, size: UInt64(MemoryLayout<Int32>.size), mappedAtCreation: false)
 let uploadBuffer = wgpuDeviceCreateBuffer(device, &uploadBufferDescriptor)
 assert(uploadBuffer != nil)
@@ -100,7 +102,18 @@ wgpuBufferMapAsyncWithBlock(uploadBuffer, WGPUMapMode_Write.rawValue, 0, MemoryL
             let readPointer = wgpuBufferGetMappedRange(downloadBuffer, 0, MemoryLayout<Int32>.size).bindMemory(to: Int32.self, capacity: 1)
             print("Result: \(readPointer[0])")
             wgpuBufferUnmap(downloadBuffer)
-            CFRunLoopStop(CFRunLoopGetMain())
+            wgpuDevicePopErrorScopeWithBlock(device) { (type: WGPUErrorType, message: Optional<UnsafePointer<Int8>>) in
+                if type != WGPUErrorType_NoError {
+                    if message != nil {
+                        print("Message: \(String(cString: message!))")
+                    } else {
+                        print("Empty message.")
+                    }
+                } else {
+                    print("Success!")
+                }
+                CFRunLoopStop(CFRunLoopGetMain())
+            }
         }
     }
 }

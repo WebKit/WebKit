@@ -66,7 +66,7 @@ private:
     void scheduleWork(Instance::WorkItem&&);
 
     const id<MTLCommandQueue> m_commandQueue { nil };
-    const Device& m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
+    Device& m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
 
     uint64_t m_submittedCommandBufferCount { 0 };
     uint64_t m_completedCommandBufferCount { 0 };

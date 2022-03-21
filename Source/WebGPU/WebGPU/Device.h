@@ -32,6 +32,8 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
+#import <wtf/Vector.h>
+#import <wtf/text/WTFString.h>
 
 namespace WebGPU {
 
@@ -84,15 +86,33 @@ public:
     void setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&&);
     void setLabel(String&&);
 
+    void generateAValidationError(String&& message);
+
     Instance& instance() const { return m_instance; }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, Instance&);
 
+    struct ErrorScope;
+    ErrorScope* currentErrorScope(WGPUErrorFilter);
+    bool validatePopErrorScope() const;
+
+    struct Error {
+        WGPUErrorType type;
+        String message;
+    };
+    struct ErrorScope {
+        std::optional<Error> error; // "The first GPUError, if any, observed while the GPU error scope was current."
+        const WGPUErrorFilter filter; // Determines what type of GPUError this GPU error scope observes.
+    };
+
     const id<MTLDevice> m_device { nil };
     const Ref<Queue> m_defaultQueue;
     const Ref<Instance> m_instance;
+
+    Function<void(WGPUErrorType, String&&)> m_uncapturedErrorCallback;
+    Vector<ErrorScope> m_errorScopeStack; // "A stack of GPU error scopes that have been pushed to the GPUDevice."
 };
 
 } // namespace WebGPU

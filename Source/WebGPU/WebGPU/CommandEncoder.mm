@@ -51,11 +51,12 @@ RefPtr<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDesc
 
     commandBuffer.label = fromAPI(descriptor.label);
 
-    return CommandEncoder::create(commandBuffer);
+    return CommandEncoder::create(commandBuffer, *this);
 }
 
-CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer)
+CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& device)
     : m_commandBuffer(commandBuffer)
+    , m_device(device)
 {
 }
 
@@ -142,7 +143,8 @@ void CommandEncoder::copyBufferToBuffer(const Buffer& source, uint64_t sourceOff
 
     // "If any of the following conditions are unsatisfied
     if (!validateCopyBufferToBuffer(source, sourceOffset, destination, destinationOffset, size)) {
-        // FIXME: "generate a validation error and stop."
+        // "generate a validation error and stop."
+        m_device->generateAValidationError("Validation failure.");
         return;
     }
 
@@ -212,7 +214,8 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
 
     // "If any of the following conditions are unsatisfied"
     if (!validateClearBuffer(buffer, offset, size)) {
-        // FIXME: "generate a validation error and stop."
+        // "generate a validation error and stop."
+        m_device->generateAValidationError("Validation failure.");
         return;
     }
 
@@ -253,7 +256,8 @@ RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& 
 
     // "If validationSucceeded is false, then:"
     if (validationFailed) {
-        // FIXME: "Generate a validation error."
+        // "Generate a validation error."
+        m_device->generateAValidationError("Validation failure.");
 
         // FIXME: "Return a new invalid GPUCommandBuffer."
         return nullptr;

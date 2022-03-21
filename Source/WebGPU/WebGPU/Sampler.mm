@@ -75,7 +75,8 @@ RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
 
     // "If validating GPUSamplerDescriptor(this, descriptor) returns false:"
     if (!validateCreateSampler(*this, descriptor)) {
-        // FIXME: "Generate a validation error."
+        // "Generate a validation error."
+        generateAValidationError("Validation failure.");
 
         // "Create a new invalid GPUSampler and return the result."
         return nullptr;
@@ -201,12 +202,13 @@ RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
     if (!samplerState)
         return nullptr;
 
-    return Sampler::create(samplerState, descriptor);
+    return Sampler::create(samplerState, descriptor, *this);
 }
 
-Sampler::Sampler(id<MTLSamplerState> samplerState, const WGPUSamplerDescriptor& descriptor)
+Sampler::Sampler(id<MTLSamplerState> samplerState, const WGPUSamplerDescriptor& descriptor, Device& device)
     : m_samplerState(samplerState)
     , m_descriptor(descriptor)
+    , m_device(device)
 {
 }
 

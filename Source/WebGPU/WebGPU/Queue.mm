@@ -78,7 +78,8 @@ void Queue::submit(Vector<std::reference_wrapper<const CommandBuffer>>&& command
 
     // "If any of the following conditions are unsatisfied"
     if (!validateSubmit()) {
-        // FIXME: "generate a validation error and stop."
+        // "generate a validation error and stop."
+        m_device.generateAValidationError("Validation failure.");
         return;
     }
 

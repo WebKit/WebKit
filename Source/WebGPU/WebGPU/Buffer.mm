@@ -279,7 +279,8 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
 
     // "If any of the following conditions are unsatisfied:"
     if (!validateMapAsync(mode, offset, rangeSize)) {
-        // FIXME: "Record a validation error on the current scope."
+        // "Record a validation error on the current scope."
+        m_device->generateAValidationError("Validation failure.");
 
         // "Return a promise rejected with an OperationError on the Device timeline."
         callback(WGPUBufferMapAsyncStatus_Error);
@@ -352,7 +353,8 @@ void Buffer::unmap()
 
     // "If any of the following requirements are unmet"
     if (!validateUnmap()) {
-        // FIXME: "generate a validation error and stop."
+        // "generate a validation error and stop."
+        m_device->generateAValidationError("Validation failure.");
         return;
     }
 

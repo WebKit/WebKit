@@ -35,15 +35,16 @@ namespace WebGPU {
 class Buffer;
 class CommandBuffer;
 class ComputePassEncoder;
+class Device;
 class QuerySet;
 class RenderPassEncoder;
 
 class CommandEncoder : public RefCounted<CommandEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer)
+    static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer, Device& device)
     {
-        return adoptRef(*new CommandEncoder(commandBuffer));
+        return adoptRef(*new CommandEncoder(commandBuffer, device));
     }
 
     ~CommandEncoder();
@@ -64,7 +65,7 @@ public:
     void setLabel(String&&);
 
 private:
-    CommandEncoder(id<MTLCommandBuffer>);
+    CommandEncoder(id<MTLCommandBuffer>, Device&);
 
     bool validateFinish() const;
     bool validatePopDebugGroup() const;
@@ -76,6 +77,8 @@ private:
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
+
+    const Ref<Device> m_device;
 };
 
 } // namespace WebGPU

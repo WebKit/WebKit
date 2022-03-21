@@ -102,17 +102,94 @@ bool Device::hasFeature(WGPUFeatureName)
     return false;
 }
 
+auto Device::currentErrorScope(WGPUErrorFilter type) -> ErrorScope*
+{
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-current-error-scope
+
+    // "Let scope be the last item of device.[[errorScopeStack]]."
+    // "While scope is not undefined:"
+    for (auto iterator = m_errorScopeStack.rbegin(); iterator != m_errorScopeStack.rend(); ++iterator) {
+        // "If scope.[[filter]] is type, return scope."
+        if (iterator->filter == type)
+            return &*iterator;
+        // "Set scope to the previous item of device.[[errorScopeStack]]."
+    }
+    // "Return undefined."
+    return nullptr;
+}
+
+void Device::generateAValidationError(String&& message)
+{
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-a-validation-error
+
+    // "Let scope be the current error scope for error and device."
+    auto* scope = currentErrorScope(WGPUErrorFilter_Validation);
+
+    // "If scope is not undefined:"
+    if (scope) {
+        // "If scope.[[error]] is null, set scope.[[error]] to error."
+        if (!scope->error)
+            scope->error = Error { WGPUErrorType_Validation, WTFMove(message) };
+        // "Stop."
+        return;
+    }
+
+    // "Otherwise issue the following steps to the Content timeline:"
+    // "If the user agent chooses, queue a task to fire a GPUUncapturedErrorEvent named "uncapturederror" on device with an error of error."
+    if (m_uncapturedErrorCallback) {
+        m_instance->scheduleWork([protectedThis = Ref { *this }, message = WTFMove(message)]() mutable {
+            protectedThis->m_uncapturedErrorCallback(WGPUErrorType_Validation, WTFMove(message));
+        });
+    }
+}
+
+bool Device::validatePopErrorScope() const
+{
+    // FIXME: "this must not be lost."
+
+    // "this.[[errorScopeStack]].size > 0."
+    if (m_errorScopeStack.isEmpty())
+        return false;
+
+    return true;
+}
+
 bool Device::popErrorScope(CompletionHandler<void(WGPUErrorType, String&&)>&& callback)
 {
-    // FIXME: Implement this.
-    UNUSED_PARAM(callback);
-    return false;
+    // https://gpuweb.github.io/gpuweb/#dom-gpudevice-poperrorscope
+
+    // "If any of the following requirements are unmet"
+    if (!validatePopErrorScope()) {
+        // "reject promise with an OperationError and stop."
+        callback(WGPUErrorType_Unknown, "popErrorScope() failed validation."_s);
+        return false;
+    }
+
+    // "Let scope be the result of popping an item off of this.[[errorScopeStack]]."
+    auto scope = m_errorScopeStack.takeLast();
+
+    // "Resolve promise with scope.[[error]]."
+    m_instance->scheduleWork([scope = WTFMove(scope), callback = WTFMove(callback)]() mutable {
+        if (scope.error)
+            callback(scope.error->type, WTFMove(scope.error->message));
+        else
+            callback(WGPUErrorType_NoError, { });
+    });
+
+    // FIXME: Make sure this is the right thing to return.
+    return true;
 }
 
 void Device::pushErrorScope(WGPUErrorFilter filter)
 {
-    // FIXME: Implement this.
-    UNUSED_PARAM(filter);
+    // https://gpuweb.github.io/gpuweb/#dom-gpudevice-pusherrorscope
+
+    // "Let scope be a new GPU error scope."
+    // "Set scope.[[filter]] to filter."
+    ErrorScope scope { std::nullopt, filter };
+
+    // "Push scope onto this.[[errorScopeStack]]."
+    m_errorScopeStack.append(WTFMove(scope));
 }
 
 void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&& callback)
@@ -123,8 +200,7 @@ void Device::setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)
 
 void Device::setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&& callback)
 {
-    // FIXME: Implement this.
-    UNUSED_PARAM(callback);
+    m_uncapturedErrorCallback = WTFMove(callback);
 }
 
 void Device::setLabel(String&&)
