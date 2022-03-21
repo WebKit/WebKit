@@ -64,6 +64,7 @@
 #import <WebCore/Cursor.h>
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/LocalCurrentTraitCollection.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PromisedAttachmentInfo.h>
@@ -71,6 +72,7 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/ValidationBubble.h>
+#import <WebCore/WebCoreUIColorExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/Entitlements.h>
 
@@ -1018,7 +1020,18 @@ void PageClientImpl::runModalJavaScriptDialog(CompletionHandler<void()>&& callba
 
 WebCore::Color PageClientImpl::contentViewBackgroundColor()
 {
-    return WebCore::roundAndClampToSRGBALossy([m_contentView backgroundColor].CGColor);
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    WebCore::LocalCurrentTraitCollection localTraitCollection([m_webView traitCollection]);
+#endif
+
+    WebCore::Color color = WebCore::roundAndClampToSRGBALossy([m_contentView backgroundColor].CGColor);
+    if (color.isValid())
+        return color;
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    return WebCore::roundAndClampToSRGBALossy(WebCore::systemBackgroundColor().CGColor);
+#else
+    return { };
+#endif
 }
 
 void PageClientImpl::requestScrollToRect(const FloatRect& targetRect, const FloatPoint& origin)
