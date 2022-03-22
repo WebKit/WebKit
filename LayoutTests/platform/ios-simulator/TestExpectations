@@ -127,3 +127,10 @@ webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
 
 # This test relies on ARQL APIs which are not available in the Simulator
 model-element/model-element-ready.html [ Skip ]
+
+# webkit.org/b/238220 These 5 tests are constant failures on gpup arm64
+[ arm64 ] webaudio/Analyser/realtimeanalyser-fftsize-reset.html [ Failure ]
+[ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data-smoothing.html [ Failure ]
+[ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
+[ arm64 ] webaudio/OfflineAudioContext-bad-buffer-crash.html [ Failure ]
+[ arm64 ] webaudio/OfflineAudioContext/bad-buffer-length.html [ Failure ]

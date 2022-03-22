@@ -16,6 +16,15 @@
 
         * platform/mac/TestExpectations: Removing no longer needed test expectation.
 
+2022-03-22  Matteo Flores  <matteo_flores@apple.com>
+
+        [ iOS GPUP arm64 ] 5 webaudio/* are constant text failures since being unskipped.
+        https://bugs.webkit.org/show_bug.cgi?id=238220
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations:
+
 2022-03-22  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (iOS 15.1 / r280824) QuickLook - model not loading when passing extra parameters
