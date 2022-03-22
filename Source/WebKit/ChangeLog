@@ -1,3 +1,15 @@
+2022-03-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS][WP] Add telemetry for syscalls used during launch
+        https://bugs.webkit.org/show_bug.cgi?id=235865
+        <rdar://problem/88228583>
+
+        Reviewed by Brent Fulgham.
+
+        Add telemetry in the WebContent process' sandbox on macOS to determine which syscalls are used only during launch.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-03-22  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Pass along timeout to ASA and ignore timeout for conditional mediation requests
