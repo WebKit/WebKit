@@ -104,7 +104,7 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
     didComplete();
 }
 
-void SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse, ResponseCompletionHandler&& completionHandler)
+void SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     m_response = receivedResponse;
 

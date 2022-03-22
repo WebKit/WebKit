@@ -140,7 +140,7 @@ void ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest(ResourceRequest&&,
     fail(ResourceError { ResourceError::Type::Cancellation });
 }
 
-void ServiceWorkerSoftUpdateLoader::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
+void ServiceWorkerSoftUpdateLoader::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     m_certificateInfo = *response.certificateInfo();
     if (response.httpStatusCode() == 304 && m_cacheEntry) {

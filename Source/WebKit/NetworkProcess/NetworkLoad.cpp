@@ -229,7 +229,7 @@ void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, Negot
         m_networkProcess->authenticationManager().didReceiveAuthenticationChallenge(m_task->sessionID(), m_parameters.webPageProxyID, m_parameters.topOrigin ? &m_parameters.topOrigin->data() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(completionHandler));
 }
 
-void NetworkLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, ResponseCompletionHandler&& completionHandler)
+void NetworkLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -241,17 +241,17 @@ void NetworkLoad::didReceiveResponse(ResourceResponse&& response, NegotiatedLega
     if (negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes)
         m_networkProcess->authenticationManager().negotiatedLegacyTLS(m_parameters.webPageProxyID);
     
-    notifyDidReceiveResponse(WTFMove(response), negotiatedLegacyTLS, WTFMove(completionHandler));
+    notifyDidReceiveResponse(WTFMove(response), negotiatedLegacyTLS, privateRelayed, WTFMove(completionHandler));
 }
 
-void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS negotiatedLegacyTLS, ResponseCompletionHandler&& completionHandler)
+void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, NegotiatedLegacyTLS, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     if (m_parameters.needsCertificateInfo)
         response.includeCertificateInfo();
 
-    m_client.get().didReceiveResponse(WTFMove(response), WTFMove(completionHandler));
+    m_client.get().didReceiveResponse(WTFMove(response), privateRelayed, WTFMove(completionHandler));
 }
 
 void NetworkLoad::didReceiveData(const WebCore::SharedBuffer& buffer)

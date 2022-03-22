@@ -73,7 +73,7 @@ void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceReques
     // HSTS redirection may happen here.
 }
 
-void PreconnectTask::didReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
+void PreconnectTask::didReceiveResponse(ResourceResponse&& response, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
 {
     ASSERT_NOT_REACHED();
     completionHandler(PolicyAction::Ignore);
