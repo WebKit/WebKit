@@ -159,7 +159,7 @@ JSC_DEFINE_HOST_FUNCTION(dateParse, (JSGlobalObject* globalObject, CallFrame* ca
     auto scope = DECLARE_THROW_SCOPE(vm);
     String dateStr = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(vm.dateCache.parseDate(globalObject, vm, dateStr))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(timeClip(vm.dateCache.parseDate(globalObject, vm, dateStr)))));
 }
 
 JSValue dateNowImpl()
