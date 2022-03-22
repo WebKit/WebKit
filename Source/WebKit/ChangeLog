@@ -1,3 +1,27 @@
+2022-03-22  Tyler Wilcock  <tyler_w@apple.com>
+
+        Expose the AX tree of PDFs loaded via iframes on the Mac
+        https://bugs.webkit.org/show_bug.cgi?id=238168
+
+        Reviewed by Chris Fleizach.
+
+        Given this markup:
+
+        <iframe src="/path/to/paystub.pdf">
+
+        An accessibility tree is built for paystub.pdf, but we don't expose it
+        to AX clients, making the PDF entirely inaccessible.
+
+        This happens because we were setting the AX parent to be the webpage
+        for full-frame PDF plugins (which an iframe with this markup is).
+        This behavior is correct only for main-frame (i.e. not iframe)
+        full-frame plugins, so this patch adds an extra condition to that logic.
+
+        Test: accessibility/mac/iframe-pdf.html
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPlugin):
+
 2022-03-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] RemoteGraphicsContextGL.h(78): error C2027: use of undefined type 'WebCore::GraphicsContextGL'
