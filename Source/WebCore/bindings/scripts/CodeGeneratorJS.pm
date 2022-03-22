@@ -6603,7 +6603,7 @@ sub GenerateCallbackImplementationContent
             push(@$contentRef, "        return CallbackResultType::UnableToExecute;\n\n");
 
             push(@$contentRef, "    Ref<$className> protectedThis(*this);\n\n");
-            push(@$contentRef, "    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());\n");
+            push(@$contentRef, "    auto& globalObject = *jsCast<JSDOMGlobalObject*>(m_data->callback()->globalObject());\n");
             push(@$contentRef, "    auto& vm = globalObject.vm();\n\n");
             push(@$contentRef, "    JSLockHolder lock(vm);\n");
 

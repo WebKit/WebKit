@@ -68,7 +68,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestVoidCallbackFunc
 
     Ref<JSTestVoidCallbackFunction> protectedThis(*this);
 
-    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(m_data->callback()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);

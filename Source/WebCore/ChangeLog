@@ -1,3 +1,28 @@
+2022-03-22  Alexey Shvayka  <ashvayka@apple.com>
+
+        REGRESSION(r288307): instanceof value wrong in MutationObserver callback for Safari extensions
+        https://bugs.webkit.org/show_bug.cgi?id=237912
+        <rdar://90333276>
+
+        Reviewed by Saam Barati.
+
+        ScriptExecutionContext::globalObject() returns stray global object if called on an object
+        that was created inside a Safari extension. I am unsure whether this is a bug, and if so,
+        how to promptly fix it, so this patch changes the way callback functions / interfaces
+        resolve lexical global object, which is used to create DOM wrappers.
+
+        Now they rely only on their JSCallbackData, which was proven to return correct
+        global object for Safari extensions.
+
+        For [IsWeakCallback] interfaces, liveness of the callback object is guaranteed
+        by the canInvokeCallback() check above.
+
+        No new tests: Safari extensions are covered in internal repo.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackImplementationContent):
+        * bindings/scripts/test/JS/*: Updated.
+
 2022-03-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r291546.

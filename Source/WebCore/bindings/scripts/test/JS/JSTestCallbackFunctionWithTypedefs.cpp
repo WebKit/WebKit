@@ -61,7 +61,7 @@ CallbackResult<typename IDLUndefined::ImplementationType> JSTestCallbackFunction
 
     Ref<JSTestCallbackFunctionWithTypedefs> protectedThis(*this);
 
-    auto& globalObject = *jsCast<JSDOMGlobalObject*>(scriptExecutionContext()->globalObject());
+    auto& globalObject = *jsCast<JSDOMGlobalObject*>(m_data->callback()->globalObject());
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
