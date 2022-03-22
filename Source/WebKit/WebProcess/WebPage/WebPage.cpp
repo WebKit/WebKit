@@ -3558,9 +3558,15 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
         pluginView->setLayerHostingMode(m_layerHostingMode);
 }
 
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyDecision&& policyDecision)
+#else
 void WebPage::didReceivePolicyDecision(FrameIdentifier frameID, uint64_t listenerID, PolicyDecision&& policyDecision, const Vector<SandboxExtension::Handle>& networkExtensionsHandles)
+#endif
 {
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     consumeNetworkExtensionSandboxExtensions(networkExtensionsHandles);
+#endif
 
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     WEBPAGE_RELEASE_LOG(Loading, "didReceivePolicyDecision: policyAction=%u - frameID=%llu - webFrame=%p - mainFrame=%d", (unsigned)policyDecision.policyAction, frameID.toUInt64(), frame, frame ? frame->isMainFrame() : 0);

@@ -48,10 +48,15 @@ static inline NSData *replacementDataFromDecisionInfo(NSDictionary *decisionInfo
 
 namespace WebCore {
 
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 NetworkExtensionContentFilter::SandboxExtensionsState NetworkExtensionContentFilter::m_sandboxExtensionsState = SandboxExtensionsState::NotSet;
+#endif
 
 bool NetworkExtensionContentFilter::enabled()
 {
+#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+    return isRequired();
+#else
     bool enabled = false;
     switch (m_sandboxExtensionsState) {
     case SandboxExtensionsState::Consumed:
@@ -66,6 +71,7 @@ bool NetworkExtensionContentFilter::enabled()
     }
     LOG(ContentFiltering, "NetworkExtensionContentFilter is %s.\n", enabled ? "enabled" : "not enabled");
     return enabled;
+#endif
 }
 
 UniqueRef<NetworkExtensionContentFilter> NetworkExtensionContentFilter::create()
@@ -228,6 +234,7 @@ bool NetworkExtensionContentFilter::isRequired()
     return [NEFilterSource filterRequired];
 }
 
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 void NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(bool hasConsumedSandboxExtensions)
 {
     if (m_sandboxExtensionsState == SandboxExtensionsState::Consumed)
@@ -235,6 +242,7 @@ void NetworkExtensionContentFilter::setHasConsumedSandboxExtensions(bool hasCons
 
     m_sandboxExtensionsState = (hasConsumedSandboxExtensions ? SandboxExtensionsState::Consumed : SandboxExtensionsState::NotConsumed);
 }
+#endif
 
 } // namespace WebCore
 

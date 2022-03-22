@@ -1085,10 +1085,12 @@
             "com.apple.iphone.axserver-systemwide"
             "com.apple.mobileassetd.v2"
             "com.apple.mobilegestalt.xpc"
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
             "com.apple.nehelper"
             "com.apple.nesessionmanager.content-filter"
-            "com.apple.tccd"
             "com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"
+#endif
+            "com.apple.tccd"
             "com.apple.webinspector"
 )))
 

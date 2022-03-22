@@ -1,3 +1,17 @@
+2022-03-22  Per Arne Vollan  <pvollan@apple.com>
+
+        Enable content filtering in the Network process
+        https://bugs.webkit.org/show_bug.cgi?id=238156
+
+        Reviewed by Geoffrey Garen.
+
+        There is no need for sandbox extensions in the WebContent process when content filtering
+        is taking place in the Network process.
+
+        * platform/cocoa/NetworkExtensionContentFilter.h:
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (WebCore::NetworkExtensionContentFilter::enabled):
+
 2022-03-22  Jer Noble  <jer.noble@apple.com>
 
         YouTube.com - Clicking anywhere on the progress bar pauses the video

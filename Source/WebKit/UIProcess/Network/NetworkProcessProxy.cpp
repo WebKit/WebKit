@@ -673,14 +673,6 @@ void NetworkProcessProxy::resourceLoadDidCompleteWithError(WebPageProxyIdentifie
     page->resourceLoadDidCompleteWithError(WTFMove(loadInfo), WTFMove(response), WTFMove(error));
 }
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-void NetworkProcessProxy::reloadAfterUnblockedContentFilter(WebPageProxyIdentifier pageID)
-{
-    if (auto* page = WebProcessProxy::webPage(pageID))
-        page->reload({ });
-}
-#endif
-
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
 void NetworkProcessProxy::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {

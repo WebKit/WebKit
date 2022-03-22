@@ -85,7 +85,9 @@ struct LoadParameters {
 
 #if PLATFORM(COCOA)
     RetainPtr<NSDictionary> dataDetectionContext;
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     Vector<SandboxExtension::Handle> networkExtensionSandboxExtensionHandles;
+#endif
 #endif
 #if PLATFORM(IOS)
     std::optional<SandboxExtension::Handle> contentFilterExtensionHandle;

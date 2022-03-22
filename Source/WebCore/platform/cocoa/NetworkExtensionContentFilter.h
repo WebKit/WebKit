@@ -55,7 +55,9 @@ public:
     ContentFilterUnblockHandler unblockHandler() const override;
 
     WEBCORE_EXPORT static bool isRequired();
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     WEBCORE_EXPORT static void setHasConsumedSandboxExtensions(bool);
+#endif
 
 private:
     static bool enabled();
@@ -64,6 +66,7 @@ private:
     void initialize(const URL* = nullptr);
     void handleDecision(NEFilterSourceStatus, NSData *replacementData);
 
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     enum class SandboxExtensionsState : uint8_t {
         Consumed,
         NotConsumed,
@@ -71,6 +74,7 @@ private:
     };
 
     WEBCORE_EXPORT static SandboxExtensionsState m_sandboxExtensionsState;
+#endif
 
     OSObjectPtr<dispatch_queue_t> m_queue;
     RetainPtr<NSData> m_replacementData;

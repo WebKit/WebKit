@@ -82,7 +82,9 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {
     m_dataDetectionContext = parameters.dataDetectionContext;
 
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     consumeNetworkExtensionSandboxExtensions(parameters.networkExtensionSandboxExtensionHandles);
+#endif
 
 #if PLATFORM(IOS)
     if (parameters.contentFilterExtensionHandle)
@@ -496,6 +498,7 @@ void WebPage::getPlatformEditorStateCommon(const Frame& frame, EditorState& resu
     postLayoutData.baseWritingDirection = frame.editor().baseWritingDirectionForSelectionStart();
 }
 
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 void WebPage::consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExtension::Handle>& networkExtensionsHandles)
 {
 #if ENABLE(CONTENT_FILTERING)
@@ -505,6 +508,7 @@ void WebPage::consumeNetworkExtensionSandboxExtensions(const Vector<SandboxExten
     UNUSED_PARAM(networkExtensionsHandles);
 #endif
 }
+#endif
 
 void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHandler<void(WebCore::FloatSize)>&& completionHandler)
 {

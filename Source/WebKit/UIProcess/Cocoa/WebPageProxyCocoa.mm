@@ -198,8 +198,9 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 {
     loadParameters.dataDetectionContext = m_uiClient->dataDetectionContext();
 
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     loadParameters.networkExtensionSandboxExtensionHandles = createNetworkExtensionsSandboxExtensions(process);
-    
+#endif
 #if PLATFORM(IOS)
     if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {
         if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, std::nullopt))
@@ -784,6 +785,7 @@ void WebPageProxy::abortApplePayAMSUISession()
 
 #endif // ENABLE(APPLE_PAY_AMS_UI)
 
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
 {
 #if ENABLE(CONTENT_FILTERING)
@@ -796,6 +798,7 @@ Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExt
 #endif
     return { };
 }
+#endif
 
 #if ENABLE(CONTEXT_MENUS)
 #if HAVE(TRANSLATION_UI_SERVICES)

@@ -103,7 +103,6 @@ private:
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     void contentFilterDidBlockLoad(const WebCore::ContentFilterUnblockHandler&, String&& unblockRequestDeniedScript, const WebCore::ResourceError&, const URL& blockedPageURL, WebCore::SubstituteData&&);
-    void cancelMainResourceLoadForContentFilter(const WebCore::ResourceError&);
 #endif
     
     RefPtr<WebCore::ResourceLoader> m_coreLoader;

@@ -358,17 +358,11 @@ void WebResourceLoader::contentFilterDidBlockLoad(const WebCore::ContentFilterUn
 {
     if (!m_coreLoader || !m_coreLoader->documentLoader())
         return;
-    m_coreLoader->documentLoader()->setBlockedPageURL(blockedPageURL);
-    m_coreLoader->documentLoader()->setSubstituteDataFromContentFilter(WTFMove(substituteData));
-    m_coreLoader->documentLoader()->handleContentFilterDidBlock(unblockHandler, WTFMove(unblockRequestDeniedScript));
-    m_coreLoader->documentLoader()->cancelMainResourceLoad(error);
-}
-
-void WebResourceLoader::cancelMainResourceLoadForContentFilter(const WebCore::ResourceError& error)
-{
-    if (!m_coreLoader || !m_coreLoader->documentLoader())
-        return;
-    m_coreLoader->documentLoader()->cancelMainResourceLoad(error);
+    auto documentLoader = m_coreLoader->documentLoader();
+    documentLoader->setBlockedPageURL(blockedPageURL);
+    documentLoader->setSubstituteDataFromContentFilter(WTFMove(substituteData));
+    documentLoader->handleContentFilterDidBlock(unblockHandler, WTFMove(unblockRequestDeniedScript));
+    documentLoader->cancelMainResourceLoad(error);
 }
 #endif // ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 

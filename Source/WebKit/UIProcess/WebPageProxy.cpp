@@ -5361,7 +5361,11 @@ void WebPageProxy::decidePolicyForNavigationActionAsyncShared(Ref<WebProcessProx
     MESSAGE_CHECK(process, frame);
 
     auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process] (const auto& policyDecision) {
-        process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision, createNetworkExtensionsSandboxExtensions(process)), webPageID);
+        process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+            , createNetworkExtensionsSandboxExtensions(process)
+#endif
+        ), webPageID);
     });
 
     decidePolicyForNavigationAction(process.copyRef(), webPageID, *frame, WTFMove(frameInfo), navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID,
@@ -5694,7 +5698,11 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
 
         auto sender = PolicyDecisionSender::create(identifier, [this, protectedThis = WTFMove(protectedThis), frameID, listenerID] (const auto& policyDecision) {
-            send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision, createNetworkExtensionsSandboxExtensions(m_process)));
+            send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+                , createNetworkExtensionsSandboxExtensions(m_process)
+#endif
+            ));
         });
 
         receivedPolicyDecision(policyAction, nullptr, nullptr, WTFMove(navigationAction), WTFMove(sender));
@@ -5733,7 +5741,11 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         ASSERT_UNUSED(safeBrowsingWarning, !safeBrowsingWarning);
 
         auto sender = PolicyDecisionSender::create(identifier, [webPageID, frameID, listenerID, process] (const auto& policyDecision) {
-            process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision, createNetworkExtensionsSandboxExtensions(process)), webPageID);
+            process->send(Messages::WebPage::DidReceivePolicyDecision(frameID, listenerID, policyDecision
+#if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
+            , createNetworkExtensionsSandboxExtensions(process)
+#endif
+        ), webPageID);
         });
         if (process->captivePortalMode() == WebProcessProxy::CaptivePortalMode::Enabled && MIMETypeRegistry::isPDFOrPostScriptMIMEType(navigationResponse->response().mimeType()))
             policyAction = PolicyAction::Download;
@@ -11144,7 +11156,7 @@ void WebPageProxy::handleMouseUpForModelElement(const String& uuid, const WebCor
 }
 #endif
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
 {
     return { };
