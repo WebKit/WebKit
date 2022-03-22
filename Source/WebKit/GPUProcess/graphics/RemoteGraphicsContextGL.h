@@ -42,7 +42,7 @@
 #if PLATFORM(COCOA)
 #include <WebCore/GraphicsContextGLCocoa.h>
 #else
-#include <WebCore/GraphicsContextGLTextureMapper.h>
+#include <WebCore/GraphicsContextGLTextureMapperANGLE.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -141,7 +141,7 @@ protected:
 #if PLATFORM(COCOA)
     using GCGLContext = WebCore::GraphicsContextGLCocoa;
 #else
-    using GCGLContext = WebCore::GraphicsContextGLTextureMapper;
+    using GCGLContext = WebCore::GraphicsContextGLTextureMapperANGLE;
 #endif
     RefPtr<GCGLContext> m_context WTF_GUARDED_BY_CAPABILITY(workQueue());
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;

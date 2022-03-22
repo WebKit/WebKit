@@ -21,7 +21,7 @@
 
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
 
-#include "GraphicsContextGLANGLE.h"
+#include "GraphicsContextGLTextureMapperANGLE.h"
 #include "PlatformLayer.h"
 #include "TextureMapperPlatformLayer.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
@@ -33,13 +33,13 @@ class TextureMapperPlatformLayerProxy;
 class TextureMapperGCGLPlatformLayer : public PlatformLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperGCGLPlatformLayer(GraphicsContextGLANGLE&);
+    TextureMapperGCGLPlatformLayer(GraphicsContextGLTextureMapperANGLE&);
     virtual ~TextureMapperGCGLPlatformLayer();
 
     virtual void paintToTextureMapper(TextureMapper&, const FloatRect& target, const TransformationMatrix&, float opacity);
 
 private:
-    GraphicsContextGLANGLE& m_context;
+    GraphicsContextGLTextureMapperANGLE& m_context;
 };
 
 } // namespace WebCore

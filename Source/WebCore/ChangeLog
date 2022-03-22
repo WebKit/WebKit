@@ -1,3 +1,15 @@
+2022-03-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] RemoteGraphicsContextGL.h(78): error C2027: use of undefined type 'WebCore::GraphicsContextGL'
+        https://bugs.webkit.org/show_bug.cgi?id=238223
+
+        Unreviewed build fix.
+        r291610 renamed GraphicsContextGLTextureMapper to GraphicsContextGLTextureMapperANGLE.
+
+        * platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp:
+        (WebCore::TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer):
+        * platform/graphics/texmap/TextureMapperGCGLPlatformLayer.h:
+
 2022-03-22  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Make GraphicsContextState a class

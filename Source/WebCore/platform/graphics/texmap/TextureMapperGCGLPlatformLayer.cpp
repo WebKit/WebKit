@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGLANGLE& context)
+TextureMapperGCGLPlatformLayer::TextureMapperGCGLPlatformLayer(GraphicsContextGLTextureMapperANGLE& context)
     : m_context(context)
 {
 }
