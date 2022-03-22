@@ -54,7 +54,7 @@ class ImageTransferSessionVT;
 
 class AVVideoCaptureSource : public RealtimeVideoCaptureSource, private OrientationNotifier::Observer {
 public:
-    static CaptureSourceOrError create(String&& id, String&& hashSalt, const MediaConstraints*);
+    static CaptureSourceOrError create(const CaptureDevice&, String&& hashSalt, const MediaConstraints*);
 
     WEBCORE_EXPORT static VideoCaptureFactory& factory();
 
@@ -70,7 +70,7 @@ public:
     void captureDeviceSuspendedDidChange();
 
 private:
-    AVVideoCaptureSource(AVCaptureDevice*, String&& id, String&& hashSalt);
+    AVVideoCaptureSource(AVCaptureDevice*, const CaptureDevice&, String&& hashSalt);
     virtual ~AVVideoCaptureSource();
 
     void clearSession();
