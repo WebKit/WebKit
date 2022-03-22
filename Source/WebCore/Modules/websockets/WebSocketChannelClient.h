@@ -41,7 +41,7 @@ public:
     virtual void didConnect() = 0;
     virtual void didReceiveMessage(const String&) = 0;
     virtual void didReceiveBinaryData(Vector<uint8_t>&&) = 0;
-    virtual void didReceiveMessageError() = 0;
+    virtual void didReceiveMessageError(const String&) = 0;
     virtual void didUpdateBufferedAmount(unsigned bufferedAmount) = 0;
     virtual void didStartClosingHandshake() = 0;
     enum ClosingHandshakeCompletionStatus {

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebSocketFrame.h"
 #include <wtf/Forward.h>
 #include <wtf/ObjectIdentifier.h>
 
@@ -35,7 +36,6 @@ class ResourceRequest;
 class ResourceResponse;
 class WebSocketChannel;
 class WebSocketChannelInspector;
-struct WebSocketFrame;
 
 using WebSocketChannelIdentifier = ObjectIdentifier<WebSocketChannel>;
 
@@ -43,17 +43,20 @@ class WEBCORE_EXPORT WebSocketChannelInspector {
 public:
     explicit WebSocketChannelInspector(Document&);
 
-    void didCreateWebSocket(Document*, const URL&);
-    void willSendWebSocketHandshakeRequest(Document*, const ResourceRequest&);
-    void didReceiveWebSocketHandshakeResponse(Document*, const ResourceResponse&);
-    void didCloseWebSocket(Document*);
-    void didReceiveWebSocketFrame(Document*, const WebSocketFrame&);
-    void didSendWebSocketFrame(Document*, const WebSocketFrame&);
-    void didReceiveWebSocketFrameError(Document*, const String& errorMessage);
+    void didCreateWebSocket(const URL&) const;
+    void willSendWebSocketHandshakeRequest(const ResourceRequest&) const;
+    void didReceiveWebSocketHandshakeResponse(const ResourceResponse&) const;
+    void didCloseWebSocket() const;
+    void didReceiveWebSocketFrame(const WebSocketFrame&) const;
+    void didSendWebSocketFrame(const WebSocketFrame&) const;
+    void didReceiveWebSocketFrameError(const String& errorMessage) const;
     
     WebSocketChannelIdentifier progressIdentifier() const;
 
+    static WebSocketFrame createFrame(const uint8_t* data, size_t length, WebSocketFrame::OpCode);
+
 private:
+    WeakPtr<Document> m_document;
     WebSocketChannelIdentifier m_progressIdentifier;
 };
 

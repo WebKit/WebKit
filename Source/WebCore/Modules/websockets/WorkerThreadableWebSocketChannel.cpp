@@ -323,13 +323,13 @@ void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned unhandledBuffered
     }, m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError()
+void WorkerThreadableWebSocketChannel::Peer::didReceiveMessageError(const String& reason)
 {
     ASSERT(isMainThread());
 
-    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([workerClientWrapper = m_workerClientWrapper](ScriptExecutionContext& context) mutable {
+    m_loaderProxy.postTaskForModeToWorkerOrWorkletGlobalScope([workerClientWrapper = m_workerClientWrapper, reason = reason.isolatedCopy()](ScriptExecutionContext& context) mutable {
         ASSERT_UNUSED(context, context.isWorkerGlobalScope() || context.isWorkletGlobalScope());
-        workerClientWrapper->didReceiveMessageError();
+        workerClientWrapper->didReceiveMessageError(reason);
     }, m_taskMode);
 }
 
@@ -420,7 +420,7 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
         }
 
         if (peer->connect(url, protocol) == ThreadableWebSocketChannel::ConnectStatus::KO)
-            peer->didReceiveMessageError();
+            peer->didReceiveMessageError(nullString());
     });
 }
 

@@ -35,6 +35,7 @@
 #include "SocketStreamHandleClient.h"
 #include "ThreadableWebSocketChannel.h"
 #include "Timer.h"
+#include "WebSocketChannelInspector.h"
 #include "WebSocketDeflateFramer.h"
 #include "WebSocketFrame.h"
 #include "WebSocketHandshake.h"

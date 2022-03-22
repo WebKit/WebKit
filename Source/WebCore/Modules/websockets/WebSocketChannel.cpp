@@ -239,7 +239,7 @@ void WebSocketChannel::fail(const String& reason)
     m_hasContinuousFrame = false;
     m_continuousFrameData.clear();
     if (m_client)
-        m_client->didReceiveMessageError();
+        m_client->didReceiveMessageError(reason);
 
     if (m_handle && !m_closed)
         m_handle->disconnect(); // Will call didCloseSocketStream() but maybe not synchronously.
@@ -365,21 +365,23 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle& handle, const Soc
 {
     LOG(Network, "WebSocketChannel %p didFailSocketStream()", this);
     ASSERT(&handle == m_handle || !m_handle);
+
+    String message;
+    if (error.isNull())
+        message = "WebSocket network error"_s;
+    else if (error.localizedDescription().isNull())
+        message = makeString("WebSocket network error: error code ", error.errorCode());
+    else
+        message = "WebSocket network error: " + error.localizedDescription();
+
     if (m_document) {
-        String message;
-        if (error.isNull())
-            message = "WebSocket network error"_s;
-        else if (error.localizedDescription().isNull())
-            message = makeString("WebSocket network error: error code ", error.errorCode());
-        else
-            message = "WebSocket network error: " + error.localizedDescription();
         InspectorInstrumentation::didReceiveWebSocketFrameError(m_document.get(), m_progressIdentifier, message);
         m_document->addConsoleMessage(MessageSource::Network, MessageLevel::Error, message);
         LOG_ERROR("%s", message.utf8().data());
     }
     m_shouldDiscardReceivedData = true;
     if (m_client)
-        m_client->didReceiveMessageError();
+        m_client->didReceiveMessageError(message);
     handle.disconnect();
 }
 
