@@ -1,3 +1,60 @@
+2022-03-22  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291713. rdar://problem/90604028
+
+    REGRESSION(r291455): libwebrtc has the wrong install name when using override frameworks directory
+    https://bugs.webkit.org/show_bug.cgi?id=238212
+    rdar://90604028
+    
+    Reviewed by Alexey Proskuryakov.
+    
+    r291455 introduced a default definition of DYLIB_INSTALL_NAME_BASE for non-macOS platforms that
+    stays defined as /S/L/PF/WebCore.framework/Frameworks. This explicit definition (rather than
+    falling back to the build system default of $INSTALL_PATH) is fine for those platforms but
+    clashes with the macOS definition of this variable when building with an override frameworks path:
+    
+        DYLIB_INSTALL_NAME_BASE_USE_OVERRIDE_FRAMEWORKS_DIR_YES = $(DYLIB_INSTALL_NAME_BASE);
+    
+    Because of the new default definition of `DYLIB_INSTALL_NAME_BASE`, the semantics of this line
+    were changed from "use the install path as the install name when there's an override frameworks
+    directory" to "use /S/L/PF/WebCore.frameworks/Frameworks as the install name when there's an
+    override frameworks directory", which completely bypasses the point of the *override* directory.
+    
+    Resolve this by redefining DYLIB_INSTALL_NAME_BASE_USE_OVERRIDE_FRAMEWORKS_DIR_YES to explicitly
+    use the INSTALL_PATH as the base of the install name, which was the original intent before
+    r291455 changed the behavior of falling back to DYLIB_INSTALL_NAME_BASE.
+    
+    * Configurations/libwebrtc.xcconfig:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291713 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-22  David Quesada  <david_quesada@apple.com>
+
+            REGRESSION(r291455): libwebrtc has the wrong install name when using override frameworks directory
+            https://bugs.webkit.org/show_bug.cgi?id=238212
+            rdar://90604028
+
+            Reviewed by Alexey Proskuryakov.
+
+            r291455 introduced a default definition of DYLIB_INSTALL_NAME_BASE for non-macOS platforms that
+            stays defined as /S/L/PF/WebCore.framework/Frameworks. This explicit definition (rather than
+            falling back to the build system default of $INSTALL_PATH) is fine for those platforms but
+            clashes with the macOS definition of this variable when building with an override frameworks path:
+
+                DYLIB_INSTALL_NAME_BASE_USE_OVERRIDE_FRAMEWORKS_DIR_YES = $(DYLIB_INSTALL_NAME_BASE);
+
+            Because of the new default definition of `DYLIB_INSTALL_NAME_BASE`, the semantics of this line
+            were changed from "use the install path as the install name when there's an override frameworks
+            directory" to "use /S/L/PF/WebCore.frameworks/Frameworks as the install name when there's an
+            override frameworks directory", which completely bypasses the point of the *override* directory.
+
+            Resolve this by redefining DYLIB_INSTALL_NAME_BASE_USE_OVERRIDE_FRAMEWORKS_DIR_YES to explicitly
+            use the INSTALL_PATH as the base of the install name, which was the original intent before
+            r291455 changed the behavior of falling back to DYLIB_INSTALL_NAME_BASE.
+
+            * Configurations/libwebrtc.xcconfig:
+
 2022-03-17  Michael Saboff  <msaboff@apple.com>
 
         libANGLE-shared.dylib, libwebrtc.dylib & WebGPU install names are prefixed with the system content path
