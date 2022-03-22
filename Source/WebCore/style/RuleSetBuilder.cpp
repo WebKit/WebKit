@@ -289,8 +289,14 @@ void RuleSetBuilder::updateCascadeLayerPriorities()
 
     std::sort(layersInPriorityOrder.begin(), layersInPriorityOrder.end(), compare);
 
+    // Priorities matter only relative to each other, so assign them enforcing these constraints:
+    // - Layers must get a priority greater than RuleSet::cascadeLayerPriorityForPresentationalHints.
+    // - Layers must get a priority smaller than RuleSet::cascadeLayerPriorityForUnlayered.
+    // - A layer must get at least the same priority as the previous one.
+    // - A layer should get more priority than the previous one, but this may be impossible if there are too many layers.
+    //   In that case, the last layers will get the maximum priority for layers, RuleSet::cascadeLayerPriorityForUnlayered - 1.
     for (unsigned i = 0; i < layerCount; ++i) {
-        auto priority = std::min<unsigned>(i, RuleSet::cascadeLayerPriorityForUnlayered - 1);
+        auto priority = std::min<unsigned>(i + RuleSet::cascadeLayerPriorityForPresentationalHints + 1, RuleSet::cascadeLayerPriorityForUnlayered - 1);
         m_ruleSet->cascadeLayerForIdentifier(layersInPriorityOrder[i]).priority = priority;
     }
 }

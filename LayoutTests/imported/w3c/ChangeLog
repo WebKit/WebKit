@@ -1,3 +1,15 @@
+2022-03-21  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-cascade] Let revert-layer roll back to preshints
+        https://bugs.webkit.org/show_bug.cgi?id=237532
+
+        Reviewed by Darin Adler.
+
+        Add test.
+
+        * web-platform-tests/css/css-cascade/presentational-hints-rollback-expected.txt: Added.
+        * web-platform-tests/css/css-cascade/presentational-hints-rollback.html: Added.
+
 2022-03-21  Chris Dumez  <cdumez@apple.com>
 
         BroadcastChannel instances in distinct opaque origins can communicate

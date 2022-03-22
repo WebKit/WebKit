@@ -126,7 +126,7 @@ void ElementRuleCollector::clearMatchedRules()
     m_matchedRuleTransferIndex = 0;
 }
 
-inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, bool isCacheable, FromStyleAttribute fromStyleAttribute)
+inline void ElementRuleCollector::addElementStyleProperties(const StyleProperties* propertySet, CascadeLayerPriority priority, bool isCacheable, FromStyleAttribute fromStyleAttribute)
 {
     if (!propertySet || propertySet->isEmpty())
         return;
@@ -135,6 +135,7 @@ inline void ElementRuleCollector::addElementStyleProperties(const StylePropertie
         m_result.isCacheable = false;
 
     auto matchedProperty = MatchedProperties { propertySet };
+    matchedProperty.cascadeLayerPriority = priority;
     matchedProperty.fromStyleAttribute = fromStyleAttribute;
     addMatchedProperties(WTFMove(matchedProperty), DeclarationOrigin::Author);
 }
@@ -549,11 +550,11 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
     if (is<StyledElement>(element())) {
         auto& styledElement = downcast<StyledElement>(element());
         // https://html.spec.whatwg.org/#presentational-hints
-        addElementStyleProperties(styledElement.presentationalHintStyle());
+        addElementStyleProperties(styledElement.presentationalHintStyle(), RuleSet::cascadeLayerPriorityForPresentationalHints);
 
         // Tables and table cells share an additional presentation style that must be applied
         // after all attributes, since their style depends on the values of multiple attributes.
-        addElementStyleProperties(styledElement.additionalPresentationalHintStyle());
+        addElementStyleProperties(styledElement.additionalPresentationalHintStyle(), RuleSet::cascadeLayerPriorityForPresentationalHints);
 
         if (is<HTMLElement>(styledElement)) {
             bool isAuto;
@@ -588,11 +589,11 @@ void ElementRuleCollector::addElementInlineStyleProperties(bool includeSMILPrope
     if (auto* inlineStyle = downcast<StyledElement>(element()).inlineStyle()) {
         // FIXME: Media control shadow trees seem to have problems with caching.
         bool isInlineStyleCacheable = !inlineStyle->isMutable() && !element().isInShadowTree();
-        addElementStyleProperties(inlineStyle, isInlineStyleCacheable, FromStyleAttribute::Yes);
+        addElementStyleProperties(inlineStyle, RuleSet::cascadeLayerPriorityForUnlayered, isInlineStyleCacheable, FromStyleAttribute::Yes);
     }
 
     if (includeSMILProperties && is<SVGElement>(element()))
-        addElementStyleProperties(downcast<SVGElement>(element()).animatedSMILStyleProperties(), false /* isCacheable */);
+        addElementStyleProperties(downcast<SVGElement>(element()).animatedSMILStyleProperties(), RuleSet::cascadeLayerPriorityForUnlayered, false /* isCacheable */);
 }
 
 bool ElementRuleCollector::hasAnyMatchingRules(const RuleSet& ruleSet)
