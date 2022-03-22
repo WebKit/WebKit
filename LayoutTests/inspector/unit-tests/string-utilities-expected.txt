@@ -19,6 +19,10 @@ PASS: integer format specifier with float argument should convert to integer
 PASS: integer format specifier with string argument should attempt conversion to integer
 PASS: integer format specifier with Infinity argument should show "NaN"
 PASS: integer format specifier with NaN argument should show "NaN"
+Testing string with unknown specifier.
+WARN: String.format("%_ %s", "first", "second"): Unsupported format specifier "%_" will be ignored.
+PASS: Formatter string with unknown specifier should not replace unknown specifier.
+PASS: Formatter string with unknown specifier should have an unused substitution value.
 
 -- Running test case: String.prototype.extendedLocaleCompare
 PASS: "1" < "2"

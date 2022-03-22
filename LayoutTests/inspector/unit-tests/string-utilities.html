@@ -30,6 +30,12 @@ function test()
             InspectorTest.expectThat("%d".format("137") === "137", "integer format specifier with string argument should attempt conversion to integer");
             InspectorTest.expectThat("%d".format(Infinity) === "NaN", "integer format specifier with Infinity argument should show \"NaN\"");
             InspectorTest.expectThat("%d".format(NaN) === "NaN", "integer format specifier with NaN argument should show \"NaN\"");
+
+            InspectorTest.log("Testing string with unknown specifier.");
+            let formatWithUnknownSpecifiers = String.format("%_ %s", ["first", "second"], String.standardFormatters, "", function(a, b) { return a + b; });
+            InspectorTest.expectThat(formatWithUnknownSpecifiers.formattedResult === "%_ first", "Formatter string with unknown specifier should not replace unknown specifier.");
+            InspectorTest.expectThat(formatWithUnknownSpecifiers.unusedSubstitutions[0] === "second", "Formatter string with unknown specifier should have an unused substitution value.");
+
             return true;
         }
     });

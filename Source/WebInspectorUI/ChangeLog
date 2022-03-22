@@ -1,3 +1,21 @@
+2022-03-22  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: `console.log` format strings containing invalid specifiers results in `[Object object]` replacing the specifier instead of ignoring the invalid specifier
+        https://bugs.webkit.org/show_bug.cgi?id=235061
+
+        Reviewed by Devin Rousso.
+
+        Logged console messages previously allows an specifier, even invalid ones, to be replaced with values. We should
+        instead ignore the invalid specifier to match Firefox's behavior. (Chrome's behavior currently is to remove the
+        invalid specifier from the result without replacing it with the first next available substitution value.)
+
+        Other call sites using `String.format` are handling localized strings or other backend-provided strings that
+        should always be well-formatted, so falling back to handling a format specifier as a string is not a particularly
+        useful behavior.
+
+        * UserInterface/Base/Utilities.js:
+        (value):
+
 2022-03-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Inline swatch popovers should hide when inline swatches are removed

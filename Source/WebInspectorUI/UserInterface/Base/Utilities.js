@@ -1125,6 +1125,7 @@ Object.defineProperty(String, "format",
         var result = initialValue;
         var tokens = String.tokenizeFormatString(format);
         var usedSubstitutionIndexes = {};
+        let ignoredUnknownSpecifierCount = 0;
 
         for (var i = 0; i < tokens.length; ++i) {
             var token = tokens[i];
@@ -1139,24 +1140,24 @@ Object.defineProperty(String, "format",
                 continue;
             }
 
-            if (token.substitutionIndex >= substitutions.length) {
+            let substitutionIndex = token.substitutionIndex - ignoredUnknownSpecifierCount;
+            if (substitutionIndex >= substitutions.length) {
                 // If there are not enough substitutions for the current substitutionIndex
                 // just output the format specifier literally and move on.
-                error("not enough substitution arguments. Had " + substitutions.length + " but needed " + (token.substitutionIndex + 1) + ", so substitution was skipped.");
+                error("not enough substitution arguments. Had " + substitutions.length + " but needed " + (substitutionIndex + 1) + ", so substitution was skipped.");
                 result = append(result, "%" + (token.precision > -1 ? token.precision : "") + token.specifier);
                 continue;
             }
 
-            usedSubstitutionIndexes[token.substitutionIndex] = true;
-
             if (!(token.specifier in formatters)) {
-                // Encountered an unsupported format character, treat as a string.
-                warn("unsupported format character \u201C" + token.specifier + "\u201D. Treating as a string.");
-                result = append(result, substitutions[token.substitutionIndex]);
+                warn(`Unsupported format specifier "%${token.specifier}" will be ignored.`);
+                result = append(result, "%" + token.specifier);
+                ++ignoredUnknownSpecifierCount;
                 continue;
             }
 
-            result = append(result, formatters[token.specifier](substitutions[token.substitutionIndex], token));
+            usedSubstitutionIndexes[substitutionIndex] = true;
+            result = append(result, formatters[token.specifier](substitutions[substitutionIndex], token));
         }
 
         var unusedSubstitutions = [];

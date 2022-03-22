@@ -1,3 +1,13 @@
+2022-03-22  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: console.log print strings contains '%_' result is Object
+        https://bugs.webkit.org/show_bug.cgi?id=235061
+
+        Reviewed by Devin Rousso.
+
+        * inspector/unit-tests/string-utilities-expected.txt:
+        * inspector/unit-tests/string-utilities.html:
+        
 2022-03-22  Matteo Flores  <matteo_flores@apple.com>
 
         REGRESSION(r291523-r291501): [ iOS ] fast/dom/intersection-observer-document-leak.html is a flaky text failure
