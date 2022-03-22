@@ -814,8 +814,6 @@ webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]
 
 webkit.org/b/173188 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
 
-webkit.org/b/172201 webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
-
 webkit.org/b/167757 workers/bomb.html [ Pass Timeout ]
 
 webkit.org/b/187649 editing/selection/update-selection-by-style-change.html [ Pass ImageOnlyFailure ]
