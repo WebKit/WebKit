@@ -82,14 +82,18 @@ static bool validateCreateBuffer(const Device& device, const WGPUBufferDescripto
     return true;
 }
 
-static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFlags usage)
+static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFlags usage, bool mappedAtCreation)
 {
     if (deviceHasUnifiedMemory)
         return MTLStorageModeShared;
-    // On discrete memory GPUs, mappable memory is shared, whereas non-mappable memory is private.
-    // There is no situation where we'll use the managed storage mode.
     if ((usage & WGPUBufferUsage_MapRead) || (usage & WGPUBufferUsage_MapWrite))
         return MTLStorageModeShared;
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    if (mappedAtCreation)
+        return MTLStorageModeManaged;
+#else
+    UNUSED_PARAM(mappedAtCreation);
+#endif
     return MTLStorageModePrivate;
 }
 
@@ -108,7 +112,7 @@ RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
     // If/when we do that, we have to make sure that "new" buffers get cleared to 0.
     // FIXME: Consider write-combining CPU cache mode.
     // FIXME: Consider implementing hazard tracking ourself.
-    MTLStorageMode storageMode = WebGPU::storageMode(hasUnifiedMemory(), descriptor.usage);
+    MTLStorageMode storageMode = WebGPU::storageMode(hasUnifiedMemory(), descriptor.usage, descriptor.mappedAtCreation);
     id<MTLBuffer> buffer = [m_device newBufferWithLength:static_cast<NSUInteger>(descriptor.size) options:storageMode];
     if (!buffer)
         return nullptr;
@@ -225,6 +229,7 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
 
     // "Append m to this.[[mapped_ranges]]."
     m_mappedRanges.add({ offset, offset + rangeSize });
+    m_mappedRanges.compact();
 
     // "Return m."
     return static_cast<char*>(m_buffer.contents) + offset;
@@ -380,6 +385,13 @@ void Buffer::unmap()
 
         // "Set this.[[mapped_ranges]] to null."
     }
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    if (m_state == State::MappedAtCreation && m_buffer.storageMode == MTLStorageModeManaged) {
+        for (const auto& mappedRange : m_mappedRanges)
+            [m_buffer didModifyRange:NSMakeRange(static_cast<NSUInteger>(mappedRange.begin()), static_cast<NSUInteger>(mappedRange.end() - mappedRange.begin()))];
+    }
+#endif
 
     // "Set this.[[state]] to unmapped."
     m_state = State::Unmapped;

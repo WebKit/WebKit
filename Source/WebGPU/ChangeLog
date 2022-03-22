@@ -1,5 +1,25 @@
 2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement GPUBufferDescriptor.mappedAtCreation
+        https://bugs.webkit.org/show_bug.cgi?id=238190
+
+        Reviewed by Kimmo Kinnunen.
+
+        On Macs, we can use MTLStorageModeManaged to implement mappedAtCreation.
+        On non-Macs, all resources are shared, so they're already mapped.
+        This patch turned out to be surprisingly easy to write, because Metal has
+        already implemented all the heavy lifting.
+
+        Test: api/validation/buffer/mapping.spec.ts
+
+        * WebGPU/Buffer.mm:
+        (WebGPU::storageMode):
+        (WebGPU::Device::createBuffer):
+        (WebGPU::Buffer::getMappedRange):
+        (WebGPU::Buffer::unmap):
+
+2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Lifetime of CommandEncoder's internal MTLBlitCommandEncoder is not managed correctly
         https://bugs.webkit.org/show_bug.cgi?id=238167
 
