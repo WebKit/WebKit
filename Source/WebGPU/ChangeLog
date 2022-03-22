@@ -1,5 +1,23 @@
 2022-03-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] maxAnisotropy > 16 is clamped, rather than illegal
+        https://bugs.webkit.org/show_bug.cgi?id=238063
+
+        Reviewed by Kimmo Kinnunen.
+
+        See https://github.com/gpuweb/gpuweb/issues/696#issuecomment-644343897
+
+        > Let's add a maxAnisotropy value to samplers, and a maxAnisotropy limit(? query?) (likely only
+        > ever 16 or 1), but not to validate that the former is less than the latter.
+
+        Test: api/operation/sampling/anisotropy.spec.ts
+
+        * WebGPU/Sampler.mm:
+        (WebGPU::validateCreateSampler):
+        (WebGPU::Device::createSampler):
+
+2022-03-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement error reporting facilities
         https://bugs.webkit.org/show_bug.cgi?id=238131
 

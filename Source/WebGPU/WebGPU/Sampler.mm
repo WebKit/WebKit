@@ -50,10 +50,6 @@ static bool validateCreateSampler(Device&, const WGPUSamplerDescriptor& descript
     if (descriptor.maxAnisotropy < 1)
         return false;
 
-    // "descriptor.maxAnisotropy is less than or equal to 16."
-    if (descriptor.maxAnisotropy > 16)
-        return false;
-
     // "When descriptor.maxAnisotropy is greater than 1"
     if (descriptor.maxAnisotropy > 1) {
         // "descriptor.magFilter, descriptor.minFilter, and descriptor.mipmapFilter must be equal to "linear"."
@@ -194,7 +190,10 @@ RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
         return nullptr;
     }
 
-    samplerDescriptor.maxAnisotropy = descriptor.maxAnisotropy;
+    // "The used value of maxAnisotropy will be clamped to the maximum value that the platform supports."
+    // https://developer.apple.com/documentation/metal/mtlsamplerdescriptor/1516164-maxanisotropy?language=objc
+    // "Values must be between 1 and 16, inclusive."
+    samplerDescriptor.maxAnisotropy = std::min<uint16_t>(descriptor.maxAnisotropy, 16);
 
     samplerDescriptor.label = descriptor.label ? [NSString stringWithCString:descriptor.label encoding:NSUTF8StringEncoding] : nil;
 
