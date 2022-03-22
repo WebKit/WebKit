@@ -141,7 +141,7 @@ static GVariant* handleGetProperty(GDBusConnection*, const char* /* sender */, c
     case MprisProperty::GetPosition:
         return session.getPositionAsGVariant();
     case MprisProperty::Identity:
-        return g_variant_new_string(getApplicationName());
+        return g_variant_new_string(getApplicationName().ascii().data());
     case MprisProperty::DesktopEntry:
         return g_variant_new_string("");
     case MprisProperty::CanSeek:

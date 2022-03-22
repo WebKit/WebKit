@@ -25,7 +25,7 @@
 namespace WebCore {
 
 WEBCORE_EXPORT void setApplicationName(const String&);
-WEBCORE_EXPORT const char* getApplicationName();
+WEBCORE_EXPORT const String& getApplicationName();
 
 WEBCORE_EXPORT void setApplicationID(const String&);
 WEBCORE_EXPORT const String& getApplicationID();

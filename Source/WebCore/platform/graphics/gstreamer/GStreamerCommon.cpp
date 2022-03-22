@@ -477,8 +477,10 @@ GstElement* createAutoAudioSink(const String& role)
             g_object_set(object, "stream-properties", properties.get(), nullptr);
             GST_DEBUG("Set media.role as %s on %" GST_PTR_FORMAT, role->utf8().data(), GST_ELEMENT_CAST(object));
         }
-        if (g_object_class_find_property(objectClass, "client-name"))
-            g_object_set(object, "client-name", getApplicationName(), nullptr);
+        if (g_object_class_find_property(objectClass, "client-name")) {
+            auto& clientName = getApplicationName();
+            g_object_set(object, "client-name", clientName.ascii().data(), nullptr);
+        }
     }), role.isolatedCopy().releaseImpl().leakRef(), static_cast<GClosureNotify>([](gpointer userData, GClosure*) {
         reinterpret_cast<StringImpl*>(userData)->deref();
     }), static_cast<GConnectFlags>(0));
