@@ -1,5 +1,25 @@
 2022-03-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291199. rdar://problem/89984164
+
+    Unreviewed, ASan specific build fix
+    https://bugs.webkit.org/show_bug.cgi?id=237572
+    
+    * libpas/src/libpas/pas_utils.h:
+    (pas_zero_memory):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291199 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+            Unreviewed, ASan specific build fix
+            https://bugs.webkit.org/show_bug.cgi?id=237572
+
+            * libpas/src/libpas/pas_utils.h:
+            (pas_zero_memory):
+
+2022-03-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291097. rdar://problem/89116983
 
     [libpas] We should gurantee that in-flux-stash is fully baked when pointing table is set

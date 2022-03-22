@@ -158,7 +158,7 @@ PAS_BEGIN_EXTERN_C;
 #define PAS_TYPEOF(a) typeof (a)
 #endif
 
-PAS_ALWAYS_INLINE void pas_zero_memory(void* memory, size_t size)
+static PAS_ALWAYS_INLINE void pas_zero_memory(void* memory, size_t size)
 {
     memset(memory, 0, size);
 }
