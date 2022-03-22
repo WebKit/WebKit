@@ -1,3 +1,32 @@
+2022-03-22  Youenn Fablet  <youenn@apple.com>
+
+        Website policies are not respected when doing COOP based process swap
+        https://bugs.webkit.org/show_bug.cgi?id=238036
+        <rdar://89616625>
+
+        Reviewed by Chris Dumez.
+
+        In case of normal process swap, we make use of website policies so everything is fine.
+        For COOP based process swap, this happens later on, at a point where we lost website policies.
+        To overcome this, we store the website policies used by a navigation inside the API::Navigation object.
+        It is used by continueNavigationInNewProcess to correctly initialize the new WebPage website policies.
+        We then set the website policies in the navigation object just before continuing the load in the same process,
+        as process swap may happen later when inspecting the response.
+        Minor refactoring in continueNavigationInNewProcess to get the policies directly from the given Navigation object.
+        Minor refactoring in receivedNavigationPolicyDecision to make the code doing process swap clearer.
+
+        Covered by API test.
+
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::setWebsitePoliciesForProcessSwap):
+        (API::Navigation::takeWebsitePoliciesForProcessSwap):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::continueNavigationInNewProcess):
+        (WebKit::WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation):
+        * UIProcess/WebPageProxy.h:
+
 2022-03-21  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Make GraphicsContextState keep track of changes till they are applied
