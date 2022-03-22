@@ -4,7 +4,7 @@
         testRunner.dumpAsText();
 
     // The Mac port exposes static text objects as an accessible child of an element with text.
-    // The Atk port folds static text objects into the parent element.
+    // The ATSPI based ports fold static text objects into the parent element.
     function getTextChild(accessibilityObject) {
         if (accessibilityObject.childrenCount)
             return accessibilityObject.childAtIndex(0);

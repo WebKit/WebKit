@@ -48,10 +48,6 @@
 #include "AccessibilityObjectAtspi.h"
 #endif
 
-#if USE(ATK)
-#include <wtf/glib/GRefPtr.h>
-#endif
-
 #if PLATFORM(COCOA)
 OBJC_CLASS WebAccessibilityObjectWrapper;
 typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
@@ -60,9 +56,6 @@ typedef const struct __AXTextMarker* AXTextMarkerRef;
 typedef const struct __AXTextMarkerRange* AXTextMarkerRangeRef;
 #elif USE(ATSPI)
 typedef WebCore::AccessibilityObjectAtspi AccessibilityObjectWrapper;
-#elif USE(ATK)
-typedef struct _WebKitAccessible WebKitAccessible;
-typedef struct _WebKitAccessible AccessibilityObjectWrapper;
 #else
 class AccessibilityObjectWrapper;
 #endif
@@ -1542,8 +1535,6 @@ private:
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
 #elif USE(ATSPI)
     RefPtr<AccessibilityObjectAtspi> m_wrapper;
-#elif USE(ATK)
-    GRefPtr<WebKitAccessible> m_wrapper;
 #endif
     virtual void detachPlatformWrapper(AccessibilityDetachmentType) = 0;
 };

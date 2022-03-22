@@ -966,7 +966,7 @@ HashMap<String, String> AccessibilityObjectAtspi::attributes() const
 
     // According to the W3C Core Accessibility API Mappings 1.1, section 5.4.1 General Rules:
     // "User agents must expose the WAI-ARIA role string if the API supports a mechanism to do so."
-    // In the case of ATK, the mechanism to do so is an object attribute pair (xml-roles:"string").
+    // In the case of ATSPI, the mechanism to do so is an object attribute pair (xml-roles:"string").
     // We cannot use the computedRoleString for this purpose because it is not limited to elements
     // with ARIA roles, and it might not contain the actual ARIA role value (e.g. DPub ARIA).
     String roleString = static_cast<AccessibilityObject*>(m_coreObject)->getAttribute(HTMLNames::roleAttr);

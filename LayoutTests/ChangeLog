@@ -1,3 +1,18 @@
+2022-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Remove the ATK implementation
+        https://bugs.webkit.org/show_bug.cgi?id=238198
+
+        Reviewed by Adrian Perez de Castro.
+
+        * accessibility/gtk/aria-modal-state-exposed-expected.txt:
+        * accessibility/gtk/aria-modal-state-exposed.html:
+        * accessibility/gtk/name-from-label-expected.txt:
+        * accessibility/gtk/name-from-label.html:
+        * accessibility/gtk/object-attributes-expected.txt:
+        * accessibility/gtk/object-attributes.html:
+        * accessibility/language-attribute.html:
+
 2022-03-22  Ziran Sun  <zsun@igalia.com>
 
         [selection] Change form's selection attribute to unsigned long

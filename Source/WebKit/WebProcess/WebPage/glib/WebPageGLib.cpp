@@ -32,7 +32,6 @@
 #include "WebKitExtensionManager.h"
 #include "WebKitUserMessage.h"
 #include "WebKitWebExtension.h"
-#include "WebKitWebPageAccessibilityObject.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/Editor.h>
@@ -51,35 +50,11 @@ using namespace WebCore;
 
 void WebPage::platformInitialize(const WebPageCreationParameters&)
 {
-#if ENABLE(ACCESSIBILITY)
+#if USE(ATSPI)
     // Create the accessible object (the plug) that will serve as the
     // entry point to the Web process, and send a message to the UI
     // process to connect the two worlds through the accessibility
     // object there specifically placed for that purpose (the socket).
-#if USE(ATK)
-    auto isValidPlugID = [](const char* plugID) -> bool {
-        if (!plugID || plugID[0] != ':')
-            return false;
-
-        auto* p = g_strrstr(plugID, ":");
-        if (!p)
-            return false;
-
-        if (!g_variant_is_object_path(p + 1))
-            return false;
-
-        GUniquePtr<char> name(g_strndup(plugID, p - plugID));
-        if (!g_dbus_is_unique_name(name.get()))
-            return false;
-
-        return true;
-    };
-
-    m_accessibilityObject = adoptGRef(webkitWebPageAccessibilityObjectNew(this));
-    GUniquePtr<gchar> plugID(atk_plug_get_id(ATK_PLUG(m_accessibilityObject.get())));
-    if (isValidPlugID(plugID.get()))
-        send(Messages::WebPageProxy::BindAccessibilityTree(String(plugID.get())));
-#elif USE(ATSPI)
 #if PLATFORM(GTK) && USE(GTK4)
     // FIXME: we need a way to connect DOM and app a11y tree in GTK4.
 #else
@@ -90,7 +65,6 @@ void WebPage::platformInitialize(const WebPageCreationParameters&)
                 send(Messages::WebPageProxy::BindAccessibilityTree(plugID));
         });
     }
-#endif
 #endif
 #endif
 }

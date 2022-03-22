@@ -2405,8 +2405,8 @@ bool AccessibilityNodeObject::canSetValueAttribute() const
     if (isProgressIndicator() || isSlider() || isScrollbar())
         return true;
 
-#if USE(ATK) || USE(ATSPI)
-    // In ATK, input types which support aria-readonly are treated as having a
+#if USE(ATSPI)
+    // In ATSPI, input types which support aria-readonly are treated as having a
     // settable value if the user can modify the widget's value or its state.
     if (supportsReadOnly())
         return true;

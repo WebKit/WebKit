@@ -15,9 +15,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 )
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${WEBCORE_DIR}/accessibility/atk"
     "${WEBCORE_DIR}/accessibility/atspi"
-    "${WEBCORE_DIR}/editing/atk"
     "${WEBCORE_DIR}/page/gtk"
     "${WEBCORE_DIR}/platform/adwaita"
     "${WEBCORE_DIR}/platform/audio/glib"
@@ -88,7 +86,6 @@ set(WebCore_USER_AGENT_SCRIPTS
 set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/rendering/RenderThemeAdwaita.cpp)
 
 list(APPEND WebCore_LIBRARIES
-    ${ATK_LIBRARIES}
     ${ENCHANT_LIBRARIES}
     ${GLIB_GIO_LIBRARIES}
     ${GLIB_GMODULE_LIBRARIES}
@@ -113,7 +110,6 @@ if (USE_WPE_RENDERER)
 endif ()
 
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-    ${ATK_INCLUDE_DIRS}
     ${ENCHANT_INCLUDE_DIRS}
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}

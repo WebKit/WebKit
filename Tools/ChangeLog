@@ -1,3 +1,246 @@
+2022-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Remove the ATK implementation
+        https://bugs.webkit.org/show_bug.cgi?id=238198
+
+        Reviewed by Adrian Perez de Castro.
+
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * Scripts/valgrind/suppressions.txt:
+        * Scripts/webkit-filter-log:
+        * TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp:
+        (testAccessibleChildrenChanged):
+        (testAccessibleAttributes):
+        (testAccessibleState):
+        (testAccessibleStateChanged):
+        (testAccessibleListMarkers):
+        (testTextSurrogatePair):
+        (testTextIterator):
+        (testTextExtents):
+        (testTextSelections):
+        (testTextAttributes):
+        (testTextStateChanged):
+        (testTextReplacedObjects):
+        (testTextListMarkers):
+        (testHyperlinkBasic):
+        (testHypertextBasic):
+        (testActionBasic):
+        (testDocumentBasic):
+        (testImageBasic):
+        (testSelectionMenuList):
+        (testTableBasic):
+        * TestWebKitAPI/glib/PlatformGTK.cmake:
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.h:
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp: Removed.
+        (WTR::AccessibilityController::resetToConsistentState): Deleted.
+        (WTR::childElementById): Deleted.
+        (WTR::AccessibilityController::accessibleElementById): Deleted.
+        (WTR::AccessibilityController::platformName): Deleted.
+        (WTR::AccessibilityController::injectAccessibilityPreference): Deleted.
+        (WTR::AccessibilityController::rootElement): Deleted.
+        (WTR::AccessibilityController::focusedElement): Deleted.
+        (WTR::AccessibilityController::addNotificationListener): Deleted.
+        (WTR::AccessibilityController::removeNotificationListener): Deleted.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp: Removed.
+        (): Deleted.
+        (WTR::AccessibilityNotificationHandler::AccessibilityNotificationHandler): Deleted.
+        (WTR::AccessibilityNotificationHandler::~AccessibilityNotificationHandler): Deleted.
+        (WTR::AccessibilityNotificationHandler::setNotificationFunctionCallback): Deleted.
+        (WTR::AccessibilityNotificationHandler::removeAccessibilityNotificationHandler): Deleted.
+        (WTR::AccessibilityNotificationHandler::connectAccessibilityCallbacks): Deleted.
+        (WTR::AccessibilityNotificationHandler::disconnectAccessibilityCallbacks): Deleted.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityNotificationHandlerAtk.h: Removed.
+        (WTR::AccessibilityNotificationHandler::create): Deleted.
+        (WTR::AccessibilityNotificationHandler::setPlatformElement): Deleted.
+        (WTR::AccessibilityNotificationHandler::platformElement const): Deleted.
+        (WTR::AccessibilityNotificationHandler::notificationFunctionCallback const): Deleted.
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp: Removed.
+        (): Deleted.
+        (WTR::AccessibilityUIElement::AccessibilityUIElement): Deleted.
+        (WTR::AccessibilityUIElement::~AccessibilityUIElement): Deleted.
+        (WTR::AccessibilityUIElement::isEqual): Deleted.
+        (WTR::AccessibilityUIElement::getChildren): Deleted.
+        (WTR::AccessibilityUIElement::getChildrenWithRange): Deleted.
+        (WTR::AccessibilityUIElement::childrenCount): Deleted.
+        (WTR::AccessibilityUIElement::elementAtPoint): Deleted.
+        (WTR::AccessibilityUIElement::indexOfChild): Deleted.
+        (WTR::AccessibilityUIElement::childAtIndex): Deleted.
+        (WTR::accessibilityElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::linkedUIElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaOwnsElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaOwnsReferencingElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaFlowToElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaFlowToReferencingElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaControlsElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaControlsReferencingElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaLabelledByElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaLabelledByReferencingElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaDescribedByElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaDescribedByReferencingElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaDetailsElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaDetailsReferencingElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaErrorMessageElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::ariaErrorMessageReferencingElementAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::disclosedRowAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::rowAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::selectedChildAtIndex const): Deleted.
+        (WTR::AccessibilityUIElement::selectedChildrenCount const): Deleted.
+        (WTR::AccessibilityUIElement::selectedRowAtIndex): Deleted.
+        (WTR::AccessibilityUIElement::titleUIElement): Deleted.
+        (WTR::AccessibilityUIElement::parentElement): Deleted.
+        (WTR::AccessibilityUIElement::disclosedByRow): Deleted.
+        (WTR::AccessibilityUIElement::attributesOfLinkedUIElements): Deleted.
+        (WTR::AccessibilityUIElement::attributesOfDocumentLinks): Deleted.
+        (WTR::AccessibilityUIElement::attributesOfChildren): Deleted.
+        (WTR::AccessibilityUIElement::allAttributes): Deleted.
+        (WTR::AccessibilityUIElement::stringDescriptionOfAttributeValue): Deleted.
+        (WTR::AccessibilityUIElement::stringAttributeValue): Deleted.
+        (WTR::AccessibilityUIElement::numberAttributeValue): Deleted.
+        (WTR::AccessibilityUIElement::currentStateValue const): Deleted.
+        (WTR::AccessibilityUIElement::uiElementArrayAttributeValue const): Deleted.
+        (WTR::AccessibilityUIElement::rowHeaders const): Deleted.
+        (WTR::AccessibilityUIElement::columnHeaders const): Deleted.
+        (WTR::AccessibilityUIElement::uiElementAttributeValue const): Deleted.
+        (WTR::AccessibilityUIElement::boolAttributeValue): Deleted.
+        (WTR::AccessibilityUIElement::isAttributeSettable): Deleted.
+        (WTR::AccessibilityUIElement::isAttributeSupported): Deleted.
+        (WTR::AccessibilityUIElement::parameterizedAttributeNames): Deleted.
+        (WTR::AccessibilityUIElement::role): Deleted.
+        (WTR::AccessibilityUIElement::subrole): Deleted.
+        (WTR::AccessibilityUIElement::roleDescription): Deleted.
+        (WTR::AccessibilityUIElement::computedRoleString): Deleted.
+        (WTR::AccessibilityUIElement::title): Deleted.
+        (WTR::AccessibilityUIElement::description): Deleted.
+        (WTR::AccessibilityUIElement::orientation const): Deleted.
+        (WTR::AccessibilityUIElement::stringValue): Deleted.
+        (WTR::AccessibilityUIElement::language): Deleted.
+        (WTR::AccessibilityUIElement::helpText const): Deleted.
+        (WTR::AccessibilityUIElement::x): Deleted.
+        (WTR::AccessibilityUIElement::y): Deleted.
+        (WTR::AccessibilityUIElement::width): Deleted.
+        (WTR::AccessibilityUIElement::height): Deleted.
+        (WTR::AccessibilityUIElement::clickPointX): Deleted.
+        (WTR::AccessibilityUIElement::clickPointY): Deleted.
+        (WTR::AccessibilityUIElement::intValue const): Deleted.
+        (WTR::AccessibilityUIElement::minValue): Deleted.
+        (WTR::AccessibilityUIElement::maxValue): Deleted.
+        (WTR::AccessibilityUIElement::valueDescription): Deleted.
+        (WTR::AccessibilityUIElement::insertionPointLineNumber): Deleted.
+        (WTR::AccessibilityUIElement::isPressActionSupported): Deleted.
+        (WTR::AccessibilityUIElement::isIncrementActionSupported): Deleted.
+        (WTR::AccessibilityUIElement::isDecrementActionSupported): Deleted.
+        (WTR::AccessibilityUIElement::isEnabled): Deleted.
+        (WTR::AccessibilityUIElement::isRequired const): Deleted.
+        (WTR::AccessibilityUIElement::isFocused const): Deleted.
+        (WTR::AccessibilityUIElement::isSelected const): Deleted.
+        (WTR::AccessibilityUIElement::isSelectedOptionActive const): Deleted.
+        (WTR::AccessibilityUIElement::isExpanded const): Deleted.
+        (WTR::AccessibilityUIElement::isChecked const): Deleted.
+        (WTR::AccessibilityUIElement::isIndeterminate const): Deleted.
+        (WTR::AccessibilityUIElement::hierarchicalLevel const): Deleted.
+        (WTR::AccessibilityUIElement::speakAs): Deleted.
+        (WTR::AccessibilityUIElement::ariaIsGrabbed const): Deleted.
+        (WTR::AccessibilityUIElement::ariaDropEffects const): Deleted.
+        (WTR::AccessibilityUIElement::lineForIndex): Deleted.
+        (WTR::AccessibilityUIElement::rangeForLine): Deleted.
+        (WTR::AccessibilityUIElement::rangeForPosition): Deleted.
+        (WTR::AccessibilityUIElement::boundsForRange): Deleted.
+        (WTR::AccessibilityUIElement::stringForRange): Deleted.
+        (WTR::AccessibilityUIElement::attributedStringForRange): Deleted.
+        (WTR::AccessibilityUIElement::attributedStringRangeIsMisspelled): Deleted.
+        (WTR::AccessibilityUIElement::uiElementCountForSearchPredicate): Deleted.
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate): Deleted.
+        (WTR::AccessibilityUIElement::selectTextWithCriteria): Deleted.
+        (WTR::AccessibilityUIElement::attributesOfColumnHeaders): Deleted.
+        (WTR::AccessibilityUIElement::attributesOfRowHeaders): Deleted.
+        (WTR::AccessibilityUIElement::attributesOfColumns): Deleted.
+        (WTR::AccessibilityUIElement::attributesOfRows): Deleted.
+        (WTR::AccessibilityUIElement::attributesOfVisibleCells): Deleted.
+        (WTR::AccessibilityUIElement::attributesOfHeader): Deleted.
+        (WTR::AccessibilityUIElement::rowCount): Deleted.
+        (WTR::AccessibilityUIElement::columnCount): Deleted.
+        (WTR::AccessibilityUIElement::indexInTable): Deleted.
+        (WTR::AccessibilityUIElement::rowIndexRange): Deleted.
+        (WTR::AccessibilityUIElement::columnIndexRange): Deleted.
+        (WTR::AccessibilityUIElement::cellForColumnAndRow): Deleted.
+        (WTR::AccessibilityUIElement::horizontalScrollbar const): Deleted.
+        (WTR::AccessibilityUIElement::verticalScrollbar const): Deleted.
+        (WTR::AccessibilityUIElement::selectedTextRange): Deleted.
+        (WTR::AccessibilityUIElement::setSelectedTextRange): Deleted.
+        (WTR::AccessibilityUIElement::increment): Deleted.
+        (WTR::AccessibilityUIElement::decrement): Deleted.
+        (WTR::AccessibilityUIElement::showMenu): Deleted.
+        (WTR::AccessibilityUIElement::press): Deleted.
+        (WTR::AccessibilityUIElement::setSelectedChild const): Deleted.
+        (WTR::AccessibilityUIElement::setSelectedChildAtIndex const): Deleted.
+        (WTR::AccessibilityUIElement::removeSelectionAtIndex const): Deleted.
+        (WTR::AccessibilityUIElement::clearSelectedChildren const): Deleted.
+        (WTR::AccessibilityUIElement::accessibilityValue const): Deleted.
+        (WTR::AccessibilityUIElement::documentEncoding): Deleted.
+        (WTR::AccessibilityUIElement::documentURI): Deleted.
+        (WTR::AccessibilityUIElement::url): Deleted.
+        (WTR::AccessibilityUIElement::addNotificationListener): Deleted.
+        (WTR::AccessibilityUIElement::removeNotificationListener): Deleted.
+        (WTR::AccessibilityUIElement::isFocusable const): Deleted.
+        (WTR::AccessibilityUIElement::isSelectable const): Deleted.
+        (WTR::AccessibilityUIElement::isMultiSelectable const): Deleted.
+        (WTR::AccessibilityUIElement::isVisible const): Deleted.
+        (WTR::AccessibilityUIElement::isOffScreen const): Deleted.
+        (WTR::AccessibilityUIElement::isCollapsed const): Deleted.
+        (WTR::AccessibilityUIElement::isIgnored const): Deleted.
+        (WTR::AccessibilityUIElement::isSingleLine const): Deleted.
+        (WTR::AccessibilityUIElement::isMultiLine const): Deleted.
+        (WTR::AccessibilityUIElement::hasPopup const): Deleted.
+        (WTR::AccessibilityUIElement::takeFocus): Deleted.
+        (WTR::AccessibilityUIElement::takeSelection): Deleted.
+        (WTR::AccessibilityUIElement::addSelection): Deleted.
+        (WTR::AccessibilityUIElement::removeSelection): Deleted.
+        (WTR::AccessibilityUIElement::lineTextMarkerRangeForTextMarker): Deleted.
+        (WTR::AccessibilityUIElement::textMarkerRangeForElement): Deleted.
+        (WTR::AccessibilityUIElement::textMarkerRangeLength): Deleted.
+        (WTR::AccessibilityUIElement::previousTextMarker): Deleted.
+        (WTR::AccessibilityUIElement::nextTextMarker): Deleted.
+        (WTR::AccessibilityUIElement::stringForTextMarkerRange): Deleted.
+        (WTR::AccessibilityUIElement::rectsForTextMarkerRange): Deleted.
+        (WTR::AccessibilityUIElement::textMarkerRangeForMarkers): Deleted.
+        (WTR::AccessibilityUIElement::startTextMarkerForTextMarkerRange): Deleted.
+        (WTR::AccessibilityUIElement::endTextMarkerForTextMarkerRange): Deleted.
+        (WTR::AccessibilityUIElement::endTextMarkerForBounds): Deleted.
+        (WTR::AccessibilityUIElement::startTextMarkerForBounds): Deleted.
+        (WTR::AccessibilityUIElement::textMarkerForPoint): Deleted.
+        (WTR::AccessibilityUIElement::accessibilityElementForTextMarker): Deleted.
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRange): Deleted.
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeWithOptions): Deleted.
+        (WTR::AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute): Deleted.
+        (WTR::AccessibilityUIElement::indexForTextMarker): Deleted.
+        (WTR::AccessibilityUIElement::isTextMarkerValid): Deleted.
+        (WTR::AccessibilityUIElement::textMarkerForIndex): Deleted.
+        (WTR::AccessibilityUIElement::startTextMarker): Deleted.
+        (WTR::AccessibilityUIElement::endTextMarker): Deleted.
+        (WTR::AccessibilityUIElement::setSelectedTextMarkerRange): Deleted.
+        (WTR::AccessibilityUIElement::scrollToMakeVisible): Deleted.
+        (WTR::AccessibilityUIElement::scrollToGlobalPoint): Deleted.
+        (WTR::AccessibilityUIElement::scrollToMakeVisibleWithSubFocus): Deleted.
+        (WTR::AccessibilityUIElement::supportedActions const): Deleted.
+        (WTR::AccessibilityUIElement::pathDescription const): Deleted.
+        (WTR::AccessibilityUIElement::mathPostscriptsDescription const): Deleted.
+        (WTR::AccessibilityUIElement::mathPrescriptsDescription const): Deleted.
+        (WTR::AccessibilityUIElement::classList const): Deleted.
+        (WTR::stringAtOffset): Deleted.
+        (WTR::AccessibilityUIElement::characterAtOffset): Deleted.
+        (WTR::AccessibilityUIElement::wordAtOffset): Deleted.
+        (WTR::AccessibilityUIElement::lineAtOffset): Deleted.
+        (WTR::AccessibilityUIElement::sentenceAtOffset): Deleted.
+        (WTR::AccessibilityUIElement::replaceTextInRange): Deleted.
+        (WTR::AccessibilityUIElement::insertText): Deleted.
+        (WTR::AccessibilityUIElement::popupValue const): Deleted.
+        * WebKitTestRunner/PlatformGTK.cmake:
+        * WebKitTestRunner/PlatformWPE.cmake:
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Squelch warning message from output of build-jsc

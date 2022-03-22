@@ -322,7 +322,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe/DOM"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
-    "${WEBKIT_DIR}/WebProcess/WebPage/atk"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
     "${WEBKIT_DIR}/WebProcess/WebPage/wpe"
     "${WEBKIT_DIR}/WebProcess/glib"

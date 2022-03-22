@@ -1,3 +1,32 @@
+2022-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Remove the ATK implementation
+        https://bugs.webkit.org/show_bug.cgi?id=238198
+
+        Reviewed by Adrian Perez de Castro.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/atk/WebKitWebPageAccessibilityObject.cpp: Removed.
+        (coreRootObjectWrapperDetachedCallback): Deleted.
+        (rootWebAreaWrapper): Deleted.
+        (accessibilityRootObjectWrapper): Deleted.
+        (webkitWebPageAccessibilityObjectInitialize): Deleted.
+        (webkitWebPageAccessibilityObjectGetIndexInParent): Deleted.
+        (webkitWebPageAccessibilityObjectGetNChildren): Deleted.
+        (webkitWebPageAccessibilityObjectRefChild): Deleted.
+        (webkitWebPageAccessibilityObjectRefStateSet): Deleted.
+        (webkit_web_page_accessibility_object_class_init): Deleted.
+        (webkitWebPageAccessibilityObjectNew): Deleted.
+        * WebProcess/WebPage/atk/WebKitWebPageAccessibilityObject.h: Removed.
+        * WebProcess/WebPage/glib/WebPageGLib.cpp:
+        (WebKit::WebPage::platformInitialize):
+        * WebProcess/wpe/WebProcessMainWPE.cpp:
+        (WebKit::initializeAccessibility): Deleted.
+
 2022-03-22  Youenn Fablet  <youenn@apple.com>
 
         Move RealtimeMediaSource::VideoSampleObserver::videoSampleAvailable to VideoFrame

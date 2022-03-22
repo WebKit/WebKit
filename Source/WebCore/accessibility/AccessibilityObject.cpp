@@ -3618,8 +3618,8 @@ TextIteratorBehaviors AccessibilityObject::textIteratorBehaviorForTextRange() co
 {
     TextIteratorBehaviors behaviors { TextIteratorBehavior::IgnoresStyleVisibility };
 
-#if USE(ATK) || USE(ATSPI)
-    // We need to emit replaced elements for GTK, and present
+#if USE(ATSPI)
+    // We need to emit replaced elements for ATSPI, and present
     // them with the 'object replacement character' (0xFFFC).
     behaviors.add(TextIteratorBehavior::EmitsObjectReplacementCharacters);
 #endif

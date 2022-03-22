@@ -24,7 +24,7 @@ Odd	Even
 foo
 bar
 baz
-This tests the exposure of Atk object attributes.
+This tests the exposure of object attributes.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -282,7 +282,7 @@ AXPosition:  { 8.00000, 462.000 }
 AXSize: { 784.000, 53.0000 }
 AXTitle:
 AXDescription:
-AXValue: This tests the exposure of Atk object attributes.<\n><\n>On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".<\n><\n><\n>
+AXValue: This tests the exposure of object attributes.<\n><\n>On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".<\n><\n><\n>
 AXFocusable: 0
 AXFocused: 0
 AXSelectable: 0

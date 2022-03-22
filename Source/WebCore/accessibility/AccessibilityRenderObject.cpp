@@ -2160,8 +2160,6 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     TextIteratorBehaviors behaviors;
 #if USE(ATSPI)
     behaviors.add(TextIteratorBehavior::EmitsObjectReplacementCharacters);
-#elif USE(ATK)
-    behaviors.add(TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
 #endif
 
     return WebCore::indexForVisiblePosition(*node, position, behaviors);
@@ -2671,11 +2669,6 @@ AXCoreObject* AccessibilityRenderObject::accessibilityHitTest(const IntPoint& po
 
 bool AccessibilityRenderObject::shouldNotifyActiveDescendant() const
 {
-#if USE(ATK)
-    // According to the Core AAM spec, ATK expects object:state-changed:focused notifications
-    // whenever the active descendant changes.
-    return true;
-#endif
     // We want to notify that the combo box has changed its active descendant,
     // but we do not want to change the focus, because focus should remain with the combo box.
     if (isComboBox())

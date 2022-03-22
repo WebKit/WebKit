@@ -80,7 +80,7 @@
 #include <wtf/NeverDestroyed.h>
 #endif
 
-#if USE(ATSPI) || USE(ATK)
+#if USE(ATSPI)
 #include <wtf/glib/GUniquePtr.h>
 #endif
 
@@ -294,7 +294,7 @@ cmsHPROFILE PlatformDisplay::colorProfile() const
 }
 #endif
 
-#if USE(ATSPI) || USE(ATK)
+#if USE(ATSPI)
 const String& PlatformDisplay::accessibilityBusAddress() const
 {
     if (m_accessibilityBusAddress)

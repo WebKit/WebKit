@@ -31,11 +31,6 @@
 #include "WebProcess.h"
 #include <glib.h>
 
-#if USE(ATK)
-#include <atk-bridge.h>
-#include <atk/atk.h>
-#endif
-
 #if USE(GCRYPT)
 #include <pal/crypto/gcrypt/Initialization.h>
 #endif
@@ -46,39 +41,6 @@
 
 namespace WebKit {
 using namespace WebCore;
-
-#if USE(ATK)
-static void initializeAccessibility()
-{
-    auto* atkUtilClass = ATK_UTIL_CLASS(g_type_class_ref(ATK_TYPE_UTIL));
-
-    atkUtilClass->add_key_event_listener = [](AtkKeySnoopFunc, gpointer) -> guint {
-        return 0;
-    };
-
-    atkUtilClass->remove_key_event_listener = [](guint) {
-    };
-
-    atkUtilClass->get_root = []() -> AtkObject* {
-        // ATK bridge needs a root object. We use an AtkPlug because that way the
-        // web process is not registered as an application.
-        static AtkObject* root = nullptr;
-        if (!root)
-            root = atk_plug_new();
-        return root;
-    };
-
-    atkUtilClass->get_toolkit_name = []() -> const gchar* {
-        return "WPEWebKit";
-    };
-
-    atkUtilClass->get_toolkit_version = []() -> const gchar* {
-        return "";
-    };
-
-    atk_bridge_adaptor_init(nullptr, nullptr);
-}
-#endif
 
 class WebProcessMainWPE final : public AuxiliaryProcessMainBase<WebProcess> {
 public:
@@ -96,10 +58,6 @@ public:
         // Required for GStreamer initialization.
         // FIXME: This should be probably called in other processes as well.
         g_set_prgname("WPEWebProcess");
-
-#if USE(ATK)
-        initializeAccessibility();
-#endif
 
         return true;
     }

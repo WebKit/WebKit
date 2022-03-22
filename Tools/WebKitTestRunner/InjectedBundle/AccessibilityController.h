@@ -37,10 +37,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/Threading.h>
 
-#if USE(ATK)
-#include "AccessibilityNotificationHandlerAtk.h"
-#endif
-
 namespace WTR {
 
 class AccessibilityUIElement;
@@ -100,8 +96,6 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<id> m_globalNotificationHandler;
-#elif USE(ATK)
-    RefPtr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #elif USE(ATSPI)
     std::unique_ptr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif

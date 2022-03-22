@@ -21,7 +21,6 @@ find_package(PNG REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(Threads REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(ATK 2.16.0 REQUIRED)
 find_package(WebP REQUIRED COMPONENTS demux)
 find_package(ATSPI 2.5.3)
 find_package(EGL)
@@ -76,7 +75,6 @@ WEBKIT_OPTION_DEFINE(USE_WPE_RENDERER "Whether to enable WPE rendering" PUBLIC O
 
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
-WEBKIT_OPTION_DEFINE(USE_ATSPI "Whether to use the ATSPI a11y implementation instead of ATK." PRIVATE ON)
 
 WEBKIT_OPTION_DEPEND(ENABLE_3D_TRANSFORMS USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING USE_OPENGL_OR_ES)
@@ -273,17 +271,7 @@ if (NOT EXISTS "${TOOLS_DIR}/glib/apply-build-revision-to-files.py")
     set(BUILD_REVISION "tarball")
 endif ()
 
-if (ENABLE_ACCESSIBILITY)
-    if (USE_ATSPI)
-        SET_AND_EXPOSE_TO_BUILD(USE_ATK FALSE)
-    else ()
-        SET_AND_EXPOSE_TO_BUILD(USE_ATK TRUE)
-    endif ()
-else ()
-    SET_AND_EXPOSE_TO_BUILD(USE_ATK FALSE)
-    SET_AND_EXPOSE_TO_BUILD(USE_ATSPI FALSE)
-endif ()
-
+SET_AND_EXPOSE_TO_BUILD(USE_ATSPI ${ENABLE_ACCESSIBILITY})
 SET_AND_EXPOSE_TO_BUILD(HAVE_GTK_UNIX_PRINTING ${GTK_UNIX_PRINT_FOUND})
 SET_AND_EXPOSE_TO_BUILD(HAVE_OS_DARK_MODE_SUPPORT 1)
 

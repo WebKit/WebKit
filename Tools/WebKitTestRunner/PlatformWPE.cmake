@@ -19,7 +19,6 @@ list(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebKitTestRunner_SYSTEM_INCLUDE_DIRECTORIES
-    ${ATK_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBXKBCOMMON_INCLUDE_DIRS}
     ${WPEBACKEND_FDO_INCLUDE_DIRS}
@@ -35,16 +34,11 @@ list(APPEND WebKitTestRunner_LIBRARIES
 
 list(APPEND WebKitTestRunnerInjectedBundle_LIBRARIES
     $<TARGET_OBJECTS:JavaScriptCore>
-    ${ATK_LIBRARIES}
     ${GLIB_LIBRARIES}
     Cairo::Cairo
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
-    InjectedBundle/atk/AccessibilityControllerAtk.cpp
-    InjectedBundle/atk/AccessibilityNotificationHandlerAtk.cpp
-    InjectedBundle/atk/AccessibilityUIElementAtk.cpp
-
     InjectedBundle/atspi/AccessibilityControllerAtspi.cpp
     InjectedBundle/atspi/AccessibilityNotificationHandler.cpp
     InjectedBundle/atspi/AccessibilityUIElementAtspi.cpp
@@ -55,9 +49,7 @@ list(APPEND WebKitTestRunnerInjectedBundle_SOURCES
 )
 
 list(APPEND WebKitTestRunnerInjectedBundle_INCLUDE_DIRECTORIES
-    ${ATK_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
-    ${WebKitTestRunner_DIR}/InjectedBundle/atk
     ${WebKitTestRunner_DIR}/InjectedBundle/atspi
     ${WebKitTestRunner_DIR}/InjectedBundle/wpe
 )

@@ -1,3 +1,285 @@
+2022-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Remove the ATK implementation
+        https://bugs.webkit.org/show_bug.cgi?id=238198
+
+        Reviewed by Adrian Perez de Castro.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * accessibility/AXObjectCache.h:
+        * accessibility/AccessibilityList.cpp:
+        (WebCore::AccessibilityList::childHasPseudoVisibleListItemMarkers):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canSetValueAttribute const):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::textIteratorBehaviorForTextRange const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::indexForVisiblePosition const):
+        (WebCore::AccessibilityRenderObject::shouldNotifyActiveDescendant const):
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::computeAccessibilityIsIgnored const):
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::computeAccessibilityIsIgnored const):
+        * accessibility/atk/AXObjectCacheAtk.cpp: Removed.
+        (WebCore::wrapperParent): Deleted.
+        (WebCore::AXObjectCache::detachWrapper): Deleted.
+        (WebCore::AXObjectCache::attachWrapper): Deleted.
+        (WebCore::AXObjectCache::platformPerformDeferredCacheUpdate): Deleted.
+        (WebCore::getListObject): Deleted.
+        (WebCore::notifyChildrenSelectionChange): Deleted.
+        (WebCore::AXObjectCache::postPlatformNotification): Deleted.
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification): Deleted.
+        (WebCore::AXObjectCache::frameLoadingEventPlatformNotification): Deleted.
+        (WebCore::AXObjectCache::platformHandleFocusedUIElementChanged): Deleted.
+        (WebCore::AXObjectCache::handleScrolledToAnchor): Deleted.
+        * accessibility/atk/AccessibilityObjectAtk.cpp: Removed.
+        (WebCore::AccessibilityObject::detachPlatformWrapper): Deleted.
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment const): Deleted.
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject const): Deleted.
+        (WebCore::AccessibilityObject::allowsTextRanges const): Deleted.
+        (WebCore::AccessibilityObject::getLengthForTextRange const): Deleted.
+        * accessibility/atk/WebKitAccessible.cpp: Removed.
+        (webkitAccessibleGetName): Deleted.
+        (webkitAccessibleGetDescription): Deleted.
+        (removeAtkRelationByType): Deleted.
+        (setAtkRelationSetFromCoreObject): Deleted.
+        (isRootObject): Deleted.
+        (webkitAccessibleGetParent): Deleted.
+        (webkitAccessibleGetNChildren): Deleted.
+        (webkitAccessibleRefChild): Deleted.
+        (webkitAccessibleGetIndexInParent): Deleted.
+        (webkitAccessibleGetAttributes): Deleted.
+        (atkRole): Deleted.
+        (webkitAccessibleGetRole): Deleted.
+        (isTextWithCaret): Deleted.
+        (setAtkStateSetFromCoreObject): Deleted.
+        (webkitAccessibleRefStateSet): Deleted.
+        (webkitAccessibleRefRelationSet): Deleted.
+        (webkitAccessibleInit): Deleted.
+        (webkitAccessibleGetObjectLocale): Deleted.
+        (webkit_accessible_class_init): Deleted.
+        (roleIsTextType): Deleted.
+        (interfaceMaskFromObject): Deleted.
+        (uniqueAccessibilityTypeName): Deleted.
+        (accessibilityTypeFromObject): Deleted.
+        (webkitAccessibleNew): Deleted.
+        (webkitAccessibleGetAccessibilityObject): Deleted.
+        (webkitAccessibleDetach): Deleted.
+        (webkitAccessibleIsDetached): Deleted.
+        (webkitAccessibleCacheAndReturnAtkProperty): Deleted.
+        * accessibility/atk/WebKitAccessible.h: Removed.
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp: Removed.
+        (webkitAccessibleHyperlinkActionDoAction): Deleted.
+        (webkitAccessibleHyperlinkActionGetNActions): Deleted.
+        (webkitAccessibleHyperlinkActionGetDescription): Deleted.
+        (webkitAccessibleHyperlinkActionGetKeybinding): Deleted.
+        (webkitAccessibleHyperlinkActionGetName): Deleted.
+        (webkit_accessible_hyperlink_atk_action_interface_init): Deleted.
+        (webkitAccessibleHyperlinkGetURI): Deleted.
+        (webkitAccessibleHyperlinkGetObject): Deleted.
+        (rangeLengthForObject): Deleted.
+        (webkitAccessibleHyperlinkGetStartIndex): Deleted.
+        (webkitAccessibleHyperlinkGetEndIndex): Deleted.
+        (webkitAccessibleHyperlinkIsValid): Deleted.
+        (webkitAccessibleHyperlinkGetNAnchors): Deleted.
+        (webkitAccessibleHyperlinkIsSelectedLink): Deleted.
+        (webkitAccessibleHyperlinkGetProperty): Deleted.
+        (webkitAccessibleHyperlinkSetProperty): Deleted.
+        (webkit_accessible_hyperlink_class_init): Deleted.
+        (webkitAccessibleHyperlinkGetOrCreate): Deleted.
+        * accessibility/atk/WebKitAccessibleHyperlink.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceAction.cpp: Removed.
+        (core): Deleted.
+        (webkitAccessibleActionDoAction): Deleted.
+        (webkitAccessibleActionGetNActions): Deleted.
+        (webkitAccessibleActionGetDescription): Deleted.
+        (webkitAccessibleActionGetKeybinding): Deleted.
+        (webkitAccessibleActionGetName): Deleted.
+        (webkitAccessibleActionInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceAction.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp: Removed.
+        (atkToContents): Deleted.
+        (webkitAccessibleComponentRefAccessibleAtPoint): Deleted.
+        (webkitAccessibleComponentGetExtents): Deleted.
+        (webkitAccessibleComponentGrabFocus): Deleted.
+        (webkitAccessibleComponentScrollTo): Deleted.
+        (webkitAccessibleComponentScrollToPoint): Deleted.
+        (webkitAccessibleComponentInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.cpp: Removed.
+        (core): Deleted.
+        (documentAttributeValue): Deleted.
+        (webkitAccessibleDocumentGetAttributeValue): Deleted.
+        (webkitAccessibleDocumentGetAttributes): Deleted.
+        (webkitAccessibleDocumentGetLocale): Deleted.
+        (webkitAccessibleDocumentInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp: Removed.
+        (core): Deleted.
+        (webkitAccessibleEditableTextSetRunAttributes): Deleted.
+        (webkitAccessibleEditableTextSetTextContents): Deleted.
+        (webkitAccessibleEditableTextInsertText): Deleted.
+        (webkitAccessibleEditableTextCopyText): Deleted.
+        (webkitAccessibleEditableTextCutText): Deleted.
+        (webkitAccessibleEditableTextDeleteText): Deleted.
+        (webkitAccessibleEditableTextPasteText): Deleted.
+        (webkitAccessibleEditableTextInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceEditableText.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp: Removed.
+        (webkitAccessibleHyperlinkImplGetHyperlink): Deleted.
+        (webkitAccessibleHyperlinkImplInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp: Removed.
+        (core): Deleted.
+        (webkitAccessibleHypertextGetLink): Deleted.
+        (webkitAccessibleHypertextGetNLinks): Deleted.
+        (webkitAccessibleHypertextGetLinkIndex): Deleted.
+        (webkitAccessibleHypertextInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceImage.cpp: Removed.
+        (core): Deleted.
+        (webkitAccessibleImageGetImagePosition): Deleted.
+        (webkitAccessibleImageGetImageDescription): Deleted.
+        (webkitAccessibleImageGetImageSize): Deleted.
+        (webkitAccessibleImageInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceImage.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp: Removed.
+        (core): Deleted.
+        (listObjectForCoreSelection): Deleted.
+        (optionFromList): Deleted.
+        (optionFromSelection): Deleted.
+        (webkitAccessibleSelectionAddSelection): Deleted.
+        (webkitAccessibleSelectionClearSelection): Deleted.
+        (webkitAccessibleSelectionRefSelection): Deleted.
+        (webkitAccessibleSelectionGetSelectionCount): Deleted.
+        (webkitAccessibleSelectionIsChildSelected): Deleted.
+        (webkitAccessibleSelectionRemoveSelection): Deleted.
+        (webkitAccessibleSelectionSelectAllSelection): Deleted.
+        (webkitAccessibleSelectionInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp: Removed.
+        (core): Deleted.
+        (cell): Deleted.
+        (cellIndex): Deleted.
+        (cellAtIndex): Deleted.
+        (webkitAccessibleTableRefAt): Deleted.
+        (webkitAccessibleTableGetIndexAt): Deleted.
+        (webkitAccessibleTableGetColumnAtIndex): Deleted.
+        (webkitAccessibleTableGetRowAtIndex): Deleted.
+        (webkitAccessibleTableGetNColumns): Deleted.
+        (webkitAccessibleTableGetNRows): Deleted.
+        (webkitAccessibleTableGetColumnExtentAt): Deleted.
+        (webkitAccessibleTableGetRowExtentAt): Deleted.
+        (webkitAccessibleTableGetColumnHeader): Deleted.
+        (webkitAccessibleTableGetRowHeader): Deleted.
+        (webkitAccessibleTableGetCaption): Deleted.
+        (webkitAccessibleTableGetColumnDescription): Deleted.
+        (webkitAccessibleTableGetRowDescription): Deleted.
+        (webkitAccessibleTableInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceTable.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp: Removed.
+        (convertToGPtrArray): Deleted.
+        (core): Deleted.
+        (webkitAccessibleTableCellGetColumnHeaderCells): Deleted.
+        (webkitAccessibleTableCellGetRowHeaderCells): Deleted.
+        (webkitAccessibleTableCellGetColumnSpan): Deleted.
+        (webkitAccessibleTableCellGetRowSpan): Deleted.
+        (webkitAccessibleTableCellGetPosition): Deleted.
+        (webkitAccessibleTableCellGetTable): Deleted.
+        (webkitAccessibleTableCellInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceTableCell.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp: Removed.
+        (core): Deleted.
+        (baselinePositionForRenderObject): Deleted.
+        (getAttributeSetForAccessibilityObject): Deleted.
+        (compareAttribute): Deleted.
+        (attributeSetDifference): Deleted.
+        (accessibilityObjectLength): Deleted.
+        (getAccessibilityObjectForOffset): Deleted.
+        (getRunAttributesFromAccessibilityObject): Deleted.
+        (textExtents): Deleted.
+        (offsetAdjustmentForListItem): Deleted.
+        (webCoreOffsetToAtkOffset): Deleted.
+        (atkOffsetToWebCoreOffset): Deleted.
+        (getNodeForAccessibilityObject): Deleted.
+        (getSelectionOffsetsForObject): Deleted.
+        (webkitAccessibleTextGetText): Deleted.
+        (emptyTextSelectionAtOffset): Deleted.
+        (webkitAccessibleTextGetChar): Deleted.
+        (nextWordStartPosition): Deleted.
+        (previousWordEndPosition): Deleted.
+        (wordAtPositionForAtkBoundary): Deleted.
+        (numberOfReplacedElementsBeforeOffset): Deleted.
+        (webkitAccessibleTextWordForBoundary): Deleted.
+        (isSentenceBoundary): Deleted.
+        (isWhiteSpaceBetweenSentences): Deleted.
+        (sentenceAtPositionForAtkBoundary): Deleted.
+        (webkitAccessibleTextSentenceForBoundary): Deleted.
+        (lineAtPositionForAtkBoundary): Deleted.
+        (webkitAccessibleTextLineForBoundary): Deleted.
+        (webkitAccessibleTextGetTextForOffset): Deleted.
+        (webkitAccessibleTextGetTextAfterOffset): Deleted.
+        (webkitAccessibleTextGetTextAtOffset): Deleted.
+        (webkitAccessibleTextGetTextBeforeOffset): Deleted.
+        (webkitAccessibleTextGetCharacterAtOffset): Deleted.
+        (webkitAccessibleTextGetCaretOffset): Deleted.
+        (webkitAccessibleTextGetRunAttributes): Deleted.
+        (webkitAccessibleTextGetDefaultAttributes): Deleted.
+        (webkitAccessibleTextGetCharacterExtents): Deleted.
+        (webkitAccessibleTextGetRangeExtents): Deleted.
+        (webkitAccessibleTextGetCharacterCount): Deleted.
+        (webkitAccessibleTextGetOffsetAtPoint): Deleted.
+        (webkitAccessibleTextGetNSelections): Deleted.
+        (webkitAccessibleTextGetSelection): Deleted.
+        (webkitAccessibleTextAddSelection): Deleted.
+        (webkitAccessibleTextSetSelection): Deleted.
+        (webkitAccessibleTextRemoveSelection): Deleted.
+        (webkitAccessibleTextSetCaretOffset): Deleted.
+        (webkitAccessibleTextGetStringAtOffset): Deleted.
+        (webkitAccessibleTextInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceText.h: Removed.
+        * accessibility/atk/WebKitAccessibleInterfaceValue.cpp: Removed.
+        (core): Deleted.
+        (webkitAccessibleSetNewValue): Deleted.
+        (webkitAccessibleGetIncrementValue): Deleted.
+        (webkitAccessibleGetValueAndText): Deleted.
+        (webkitAccessibleGetIncrement): Deleted.
+        (webkitAccessibleSetValue): Deleted.
+        (webkitAccessibleGetRange): Deleted.
+        (webkitAccessibleValueGetCurrentValue): Deleted.
+        (webkitAccessibleValueGetMaximumValue): Deleted.
+        (webkitAccessibleValueGetMinimumValue): Deleted.
+        (webkitAccessibleValueSetCurrentValue): Deleted.
+        (webkitAccessibleValueGetMinimumIncrement): Deleted.
+        (webkitAccessibleValueInterfaceInit): Deleted.
+        * accessibility/atk/WebKitAccessibleInterfaceValue.h: Removed.
+        * accessibility/atk/WebKitAccessibleUtil.cpp: Removed.
+        (addToAtkAttributeSet): Deleted.
+        (contentsRelativeToAtkCoordinateType): Deleted.
+        (titleTagShouldBeUsedInDescriptionField): Deleted.
+        (accessibilityTitle): Deleted.
+        (accessibilityDescription): Deleted.
+        (selectionBelongsToObject): Deleted.
+        (objectFocusedAndCaretOffsetUnignored): Deleted.
+        * accessibility/atk/WebKitAccessibleUtil.h: Removed.
+        * accessibility/atspi/AccessibilityObjectAtspi.cpp:
+        (WebCore::AccessibilityObjectAtspi::attributes const):
+        * editing/FrameSelection.h:
+        * editing/atk/FrameSelectionAtk.cpp: Removed.
+        (WebCore::emitTextSelectionChange): Deleted.
+        (WebCore::maybeEmitTextFocusChange): Deleted.
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange): Deleted.
+        * page/Settings.yaml:
+        * platform/graphics/PlatformDisplay.cpp:
+        * platform/graphics/PlatformDisplay.h:
+        * platform/graphics/x11/PlatformDisplayX11.cpp:
+        * platform/graphics/x11/PlatformDisplayX11.h:
+
 2022-03-22  Philippe Normand  <pnormand@igalia.com>
 
         [GLIB] Use a static string for default application name

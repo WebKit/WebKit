@@ -12,7 +12,7 @@
 <p id="description"></p>
 <div id="console"></div>
 <script>
-    description("This tests that a dialog with aria-modal='true' exposes ATK_STATE_MODAL");
+    description("This tests that a dialog with aria-modal='true' exposes modal state");
     if (window.accessibilityController) {
         var axElement = accessibilityController.accessibleElementById("test");
         shouldBeTrue("axElement.boolAttributeValue('AXModal')");

@@ -55,7 +55,7 @@ except NotImplementedError as e:
 
 scm = SCMDetector(FileSystem(), Executive()).default_scm()
 
-filter_dirs = [ 'gobject', 'glib', 'soup', 'cairo', 'gstreamer', 'atk', 'adwaita',
+filter_dirs = [ 'gobject', 'glib', 'soup', 'cairo', 'gstreamer', 'atspi', 'adwaita',
                 'unix', 'linux', 'CoordinatedGraphics', 'texmap', 'nicosia',
                 'WebDriver', 'harfbuzz', 'freetype', 'egl', 'buildstream' ]
 if port.name() == 'gtk':

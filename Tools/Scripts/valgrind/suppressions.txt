@@ -530,58 +530,6 @@
 # These should all be in webkit's bug tracking system (but a few aren't yet).
 
 {
-   # AtkProperty is cached but not released (see https://bugs.webkit.org/show_bug.cgi?id=118567#c2).
-   cacheAndReturnAtkProperty
-   Memcheck:Leak
-   fun:malloc
-   fun:_ZN3WTF10fastMallocEm
-   fun:_ZN3WTF13CStringBuffer19createUninitializedEm
-   fun:_ZN3WTF7CString4initEPKcm
-   fun:_ZN3WTF7CStringC1EPKcm
-   fun:_ZNK3WTF6String4utf8ENS0_14ConversionModeE
-   fun:cacheAndReturnAtkProperty
-}
-
-{
-   # AtkRelationSet is never freed because the target AtkObject is
-   # cached. See https://bugs.webkit.org/show_bug.cgi?id=118567.
-   AccessibilityUIElement::title()
-   Memcheck:Leak
-   fun:malloc
-   ...
-   fun:g_object_weak_ref
-   fun:atk_relation_set_property
-   fun:g_object_newv
-   fun:g_object_new_valist
-   fun:g_object_new
-   fun:atk_relation_new
-   fun:atk_relation_set_add_relation_by_type
-   fun:_ZL31setAtkRelationSetFromCoreObjectPN7WebCore19AccessibilityObjectEP15_AtkRelationSet
-   fun:_ZL30webkitAccessibleRefRelationSetP10_AtkObject
-   fun:_ZN22AccessibilityUIElement14titleUIElementEv
-}
-
-{
-   # Leak in webkitAccessibleNew https://bugs.webkit.org/show_bug.cgi?id=118382
-   webkitAccessibleNew
-   Memcheck:Leak
-   fun:*alloc
-   ...
-   fun:webkitAccessibleNew
-}
-
-{
-   # Leak ATK text https://bugs.webkit.org/show_bug.cgi?id=118385
-   webkitAccessibleTextGetText
-   Memcheck:Leak
-   fun:malloc
-   fun:g_malloc
-   fun:g_strdup
-   fun:_ZL27webkitAccessibleTextGetTextP8_AtkTextii
-   fun:_ZL23webkitAccessibleGetNameP10_AtkObject
-}
-
-{
    # Leak PluginObject in exceptional circumstances https://bugs.webkit.org/show_bug.cgi?id=118528
    WebCore::PluginView::start()
    Memcheck:Leak

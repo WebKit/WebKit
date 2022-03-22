@@ -37,10 +37,6 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/WeakHashSet.h>
 
-#if USE(ATK)
-#include <wtf/glib/GRefPtr.h>
-#endif
-
 namespace WTF {
 class TextStream;
 }
@@ -530,10 +526,6 @@ private:
     bool m_performingDeferredCacheUpdate { false };
     double m_loadingProgress { 0 };
 
-#if USE(ATK)
-    ListHashSet<RefPtr<AccessibilityObject>> m_deferredAttachedWrapperObjectList;
-    ListHashSet<GRefPtr<AccessibilityObjectWrapper>> m_deferredDetachedWrapperList;
-#endif
 #if USE(ATSPI)
     ListHashSet<RefPtr<AXCoreObject>> m_deferredParentChangedList;
 #endif

@@ -465,12 +465,10 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/gtk"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
-    "${WEBKIT_DIR}/WebProcess/WebPage/atk"
     "${WEBKIT_DIR}/WebProcess/WebPage/gtk"
 )
 
 list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-    ${ATK_INCLUDE_DIRS}
     ${ENCHANT_INCLUDE_DIRS}
     ${GIO_UNIX_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}

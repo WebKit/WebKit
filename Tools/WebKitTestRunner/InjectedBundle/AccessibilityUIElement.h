@@ -43,11 +43,6 @@ OBJC_CLASS NSArray;
 OBJC_CLASS NSString;
 #include <wtf/RetainPtr.h>
 using PlatformUIElement = id;
-#elif ENABLE(ACCESSIBILITY) && USE(ATK)
-#include "AccessibilityNotificationHandlerAtk.h"
-#include <atk/atk.h>
-#include <wtf/glib/GRefPtr.h>
-typedef GRefPtr<AtkObject> PlatformUIElement;
 #elif USE(ATSPI)
 namespace WebCore {
 class AccessibilityObjectAtspi;
@@ -247,7 +242,7 @@ public:
     RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
-#if PLATFORM(COCOA) || USE(ATK) || USE(ATSPI)
+#if PLATFORM(COCOA) || USE(ATSPI)
     RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned);
 #else
@@ -255,7 +250,7 @@ public:
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned) { return nullptr; }
 #endif
 
-#if USE(ATK) || USE(ATSPI)
+#if USE(ATSPI)
     RefPtr<AccessibilityUIElement> ariaLabelledByElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaOwnsReferencingElementAtIndex(unsigned);
@@ -435,9 +430,7 @@ private:
     void getChildren(Vector<RefPtr<AccessibilityUIElement> >&);
     void getChildrenWithRange(Vector<RefPtr<AccessibilityUIElement> >&, unsigned location, unsigned length);
 
-#if USE(ATK)
-    RefPtr<AccessibilityNotificationHandler> m_notificationHandler;
-#elif USE(ATSPI)
+#if USE(ATSPI)
     static RefPtr<AccessibilityController> s_controller;
     RefPtr<WebCore::AccessibilityObjectAtspi> m_element;
     std::unique_ptr<AccessibilityNotificationHandler> m_notificationHandler;

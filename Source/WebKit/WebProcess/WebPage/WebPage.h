@@ -108,13 +108,8 @@
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(ACCESSIBILITY)
-#if USE(ATK)
-typedef struct _AtkObject AtkObject;
-#include <wtf/glib/GRefPtr.h>
-#elif USE(ATSPI)
+#if USE(ATSPI)
 #include <WebCore/AccessibilityRootAtspi.h>
-#endif
 #endif
 
 #if PLATFORM(GTK)
@@ -2071,12 +2066,8 @@ private:
     RetainPtr<NSDictionary> m_dataDetectionContext;
 #endif
 
-#if ENABLE(ACCESSIBILITY)
-#if USE(ATK)
-    GRefPtr<AtkObject> m_accessibilityObject;
-#elif USE(ATSPI)
+#if USE(ATSPI)
     RefPtr<WebCore::AccessibilityRootAtspi> m_accessibilityRootObject;
-#endif
 #endif
 
 #if PLATFORM(WIN)

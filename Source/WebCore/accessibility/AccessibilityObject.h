@@ -42,10 +42,6 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-#if USE(ATK)
-#include <wtf/glib/GRefPtr.h>
-#endif
-
 #if PLATFORM(COCOA)
 
 OBJC_CLASS NSArray;
@@ -886,7 +882,7 @@ inline void AccessibilityObject::updateBackingStore() { }
 inline void AccessibilityObject::detachPlatformWrapper(AccessibilityDetachmentType) { }
 #endif
 
-#if !(ENABLE(ACCESSIBILITY) && (USE(ATK) || USE(ATSPI)))
+#if !(ENABLE(ACCESSIBILITY) && USE(ATSPI))
 inline bool AccessibilityObject::allowsTextRanges() const { return true; }
 inline unsigned AccessibilityObject::getLengthForTextRange() const { return text().length(); }
 #endif
