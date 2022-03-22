@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if __building_module(MobileSafari)
+#error "how did this get here?"
+#endif
+
 #import <Foundation/Foundation.h>
 #import <WebKit/WKDeclarationSpecifiers.h>
 #import <WebKit/WKFoundation.h>
