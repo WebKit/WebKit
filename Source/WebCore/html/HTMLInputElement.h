@@ -344,16 +344,16 @@ public:
     bool shouldTruncateText(const RenderStyle&) const;
     void invalidateStyleOnFocusChangeIfNeeded();
 
-    std::optional<int> selectionStartForBindings() const;
-    ExceptionOr<void> setSelectionStartForBindings(std::optional<int>);
+    std::optional<unsigned> selectionStartForBindings() const;
+    ExceptionOr<void> setSelectionStartForBindings(std::optional<unsigned>);
 
-    std::optional<int> selectionEndForBindings() const;
-    ExceptionOr<void> setSelectionEndForBindings(std::optional<int>);
+    std::optional<unsigned> selectionEndForBindings() const;
+    ExceptionOr<void> setSelectionEndForBindings(std::optional<unsigned>);
 
     ExceptionOr<String> selectionDirectionForBindings() const;
     ExceptionOr<void> setSelectionDirectionForBindings(const String&);
 
-    ExceptionOr<void> setSelectionRangeForBindings(int start, int end, const String& direction);
+    ExceptionOr<void> setSelectionRangeForBindings(unsigned start, unsigned end, const String& direction);
 
     String resultForDialogSubmit() const final;
 

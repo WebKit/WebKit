@@ -1,3 +1,25 @@
+2022-03-22  Ziran Sun  <zsun@igalia.com>
+
+        [selection] Change form's selection attribute to unsigned long
+        https://bugs.webkit.org/show_bug.cgi?id=237951
+
+        Reviewed by Chris Dumez.
+
+        Update test accordingly. This is inline with Chromium.
+
+        Note that for selection-start-end-readonly.html, two sub-tests
+        are now failing. This is the right behaviour since the test assumes
+        types for selectionStart and selectionEnd as "int". We could modify the
+        test and make the type as unsigned. Interestingly the test script's
+        format is strange and it seems having "return" for each line. Simply updating
+        some lines on the test scripts causes errors when applying the patch. We have
+        decided to address this test in a separate patch (maybe remove the file and added
+        a new one with proper format).
+        
+        * fast/forms/input-appearance-selection.html:
+        * fast/forms/selection-functions-expected.txt:
+        * fast/forms/selection-start-end-readonly-expected.txt:
+
 2022-03-21  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Make GraphicsContextState keep track of changes till they are applied

@@ -1,3 +1,43 @@
+2022-03-22  Ziran Sun  <zsun@igalia.com>
+
+        [selection] Change form's selection attribute to unsigned long
+        https://bugs.webkit.org/show_bug.cgi?id=237951
+
+        Reviewed by Chris Dumez.
+
+        We should change the type of attribute "selectionStart" and "selectionEnd"
+        from long to unsigned long. Also "start" and "end" parameters in function
+        selectionRange() need to be changed correspondingly.
+        
+        This change is in line with Chromium CL at
+        https://github.com/chromium/chromium/commit/b6ff6db1c5683b5e564a72b0941ad504b410d1af
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setDefaultSelectionAfterFocus):
+        (WebCore::HTMLInputElement::selectionStartForBindings const):
+        (WebCore::HTMLInputElement::setSelectionStartForBindings):
+        (WebCore::HTMLInputElement::selectionEndForBindings const):
+        (WebCore::HTMLInputElement::setSelectionEndForBindings):
+        (WebCore::HTMLInputElement::setSelectionRangeForBindings):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::HTMLTextFormControlElement):
+        (WebCore::HTMLTextFormControlElement::setSelectionStart):
+        (WebCore::HTMLTextFormControlElement::setSelectionEnd):
+        (WebCore::HTMLTextFormControlElement::select):
+        (WebCore::HTMLTextFormControlElement::setSelectionRange):
+        (WebCore::HTMLTextFormControlElement::selectionStart const):
+        (WebCore::HTMLTextFormControlElement::computeSelectionStart const):
+        (WebCore::HTMLTextFormControlElement::selectionEnd const):
+        (WebCore::HTMLTextFormControlElement::computeSelectionEnd const):
+        * html/HTMLTextFormControlElement.h:
+        (WebCore::HTMLTextFormControlElement::cacheSelection):
+        (WebCore::HTMLTextFormControlElement::hasCachedSelection const):
+
 2022-03-22  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, fix non-unified build after r291597

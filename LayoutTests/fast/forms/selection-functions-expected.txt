@@ -6,43 +6,43 @@ If this test passed you'll see a bunch of correct selection ranges below. Check 
 ===textarea===
 setSelectionRange():
 3, 7
-0, 5
+5, 5
 42, 48
 2, 2
 
 selectionStart:
 3, 3
 7, 7
-0, 7
+48, 48
 48, 48
 3, 48
 
 selectionEnd:
 3, 5
 2, 2
-0, 0
-0, 48
+2, 48
+2, 48
 7, 7
 
 ===input===
 setSelectionRange():
 3, 7
-0, 5
+5, 5
 42, 48
 2, 2
 
 selectionStart:
 3, 3
 7, 7
-0, 7
+48, 48
 48, 48
 3, 48
 
 selectionEnd:
 3, 5
 2, 2
-0, 0
-0, 48
+2, 48
+2, 48
 7, 7
 
 ===button===

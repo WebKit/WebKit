@@ -40,8 +40,8 @@ NOTRUN onselect should fire when selectionEnd is changed on textarea-not-appende
 NOTRUN onselect should fire when selectionEnd is changed on
 PASS Setting selectionStart to a value larger than selectionEnd should increase selectionEnd
 PASS Setting selectionEnd to a value smaller than selectionStart should decrease selectionStart
-FAIL selectionStart edge-case values assert_equals: selectionStart setter on input-appended should convert -1 to 2^32-1 expected 10 but got 0
-FAIL selectionEnd edge-case values assert_equals: selectionEnd setter on input-appended should convert -1 to 2^32-1 expected 10 but got 0
+PASS selectionStart edge-case values
+PASS selectionEnd edge-case values
 PASS selectionStart should be clamped by the current value length
 PASS selectionEnd should be clamped by the current value length
 PASS setSelectionRange should be clamped by the current value length

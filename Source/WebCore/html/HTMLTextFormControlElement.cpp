@@ -88,8 +88,8 @@ HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagN
     , m_lastChangeWasUserEdit(false)
     , m_isPlaceholderVisible(false)
     , m_canShowPlaceholder(true)
-    , m_cachedSelectionStart(-1)
-    , m_cachedSelectionEnd(-1)
+    , m_cachedSelectionStart(0)
+    , m_cachedSelectionEnd(0)
 {
 }
 
@@ -195,12 +195,12 @@ void HTMLTextFormControlElement::setCanShowPlaceholder(bool canShowPlaceholder)
     updatePlaceholderVisibility();
 }
 
-void HTMLTextFormControlElement::setSelectionStart(int start)
+void HTMLTextFormControlElement::setSelectionStart(unsigned start)
 {
     setSelectionRange(start, std::max(start, selectionEnd()), selectionDirection());
 }
 
-void HTMLTextFormControlElement::setSelectionEnd(int end)
+void HTMLTextFormControlElement::setSelectionEnd(unsigned end)
 {
     setSelectionRange(std::min(end, selectionStart()), end, selectionDirection());
 }
@@ -212,7 +212,7 @@ void HTMLTextFormControlElement::setSelectionDirection(const String& direction)
 
 void HTMLTextFormControlElement::select(SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
 {
-    setSelectionRange(0, std::numeric_limits<int>::max(), SelectionHasNoDirection, revealMode, intent);
+    setSelectionRange(0, std::numeric_limits<unsigned>::max(), SelectionHasNoDirection, revealMode, intent);
 }
 
 String HTMLTextFormControlElement::selectedText() const
@@ -284,7 +284,7 @@ ExceptionOr<void> HTMLTextFormControlElement::setRangeText(const String& replace
     return { };
 }
 
-void HTMLTextFormControlElement::setSelectionRange(int start, int end, const String& directionString, const AXTextStateChangeIntent& intent)
+void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, const String& directionString, const AXTextStateChangeIntent& intent)
 {
     TextFieldSelectionDirection direction = SelectionHasNoDirection;
     if (directionString == "forward")
@@ -295,14 +295,15 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end, const Str
     return setSelectionRange(start, end, direction, SelectionRevealMode::DoNotReveal, intent);
 }
 
-void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextFieldSelectionDirection direction, SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
+void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, TextFieldSelectionDirection direction, SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
 {
     if (!isTextField())
         return;
 
     // Clamps to the current value length.
-    end = std::clamp(end, 0, clampTo<int>(innerTextValue().length()));
-    start = std::clamp(start, 0, end);
+    unsigned innerTextValueLength = innerTextValue().length();
+    end = std::min(end, innerTextValueLength);
+    start = std::min(start, end);
 
     auto innerText = innerTextElementCreatingShadowSubtreeIfNeeded();
     bool hasFocus = document().focusedElement() == this;
@@ -374,7 +375,7 @@ VisiblePosition HTMLTextFormControlElement::visiblePositionForIndex(int index) c
     return position;
 }
 
-int HTMLTextFormControlElement::selectionStart() const
+unsigned HTMLTextFormControlElement::selectionStart() const
 {
     if (!isTextField())
         return 0;
@@ -384,7 +385,7 @@ int HTMLTextFormControlElement::selectionStart() const
     return computeSelectionStart();
 }
 
-int HTMLTextFormControlElement::computeSelectionStart() const
+unsigned HTMLTextFormControlElement::computeSelectionStart() const
 {
     ASSERT(isTextField());
     RefPtr<Frame> frame = document().frame();
@@ -394,7 +395,7 @@ int HTMLTextFormControlElement::computeSelectionStart() const
     return indexForPosition(frame->selection().selection().start());
 }
 
-int HTMLTextFormControlElement::selectionEnd() const
+unsigned HTMLTextFormControlElement::selectionEnd() const
 {
     if (!isTextField())
         return 0;
@@ -403,7 +404,7 @@ int HTMLTextFormControlElement::selectionEnd() const
     return computeSelectionEnd();
 }
 
-int HTMLTextFormControlElement::computeSelectionEnd() const
+unsigned HTMLTextFormControlElement::computeSelectionEnd() const
 {
     ASSERT(isTextField());
     RefPtr<Frame> frame = document().frame();

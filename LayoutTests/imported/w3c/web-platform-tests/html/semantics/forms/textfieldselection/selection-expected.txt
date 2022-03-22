@@ -13,4 +13,8 @@ FAIL test SelectionEnd offset for textarea that is appended assert_equals: Selec
 FAIL test SelectionEnd offset for textarea that is  not appended assert_equals: SelectionEnd offset without selection in textarea-not-appended expected 10 but got 0
 PASS test SelectionDirection for input
 PASS test SelectionDirection for textarea
+PASS test scrollLeft for input
+PASS test scrollLeft preservation for input
+PASS test container.scrollTop for input
+PASS test container.scrollTop for textarea
 

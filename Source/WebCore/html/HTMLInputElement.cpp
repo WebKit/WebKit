@@ -492,14 +492,14 @@ void HTMLInputElement::updateFocusAppearance(SelectionRestorationMode restoratio
 void HTMLInputElement::setDefaultSelectionAfterFocus(SelectionRestorationMode restorationMode, SelectionRevealMode revealMode)
 {
     ASSERT(isTextField());
-    int start = 0;
+    unsigned start = 0;
     auto direction = SelectionHasNoDirection;
     auto* frame = document().frame();
     if (frame && frame->editor().behavior().shouldMoveSelectionToEndWhenFocusingTextInput()) {
-        start = std::numeric_limits<int>::max();
+        start = std::numeric_limits<unsigned>::max();
         direction = SelectionHasForwardDirection;
     }
-    int end = restorationMode == SelectionRestorationMode::PlaceCaretAtStart ? start : std::numeric_limits<int>::max();
+    unsigned end = restorationMode == SelectionRestorationMode::PlaceCaretAtStart ? start : std::numeric_limits<unsigned>::max();
     setSelectionRange(start, end, direction, revealMode, Element::defaultFocusTextStateChangeIntent());
 }
 
@@ -2081,7 +2081,7 @@ void HTMLInputElement::invalidateStyleOnFocusChangeIfNeeded()
         invalidateStyleForSubtreeInternal();
 }
 
-std::optional<int> HTMLInputElement::selectionStartForBindings() const
+std::optional<unsigned> HTMLInputElement::selectionStartForBindings() const
 {
     if (!canHaveSelection() || !m_inputType->supportsSelectionAPI())
         return std::nullopt;
@@ -2089,7 +2089,7 @@ std::optional<int> HTMLInputElement::selectionStartForBindings() const
     return selectionStart();
 }
 
-ExceptionOr<void> HTMLInputElement::setSelectionStartForBindings(std::optional<int> start)
+ExceptionOr<void> HTMLInputElement::setSelectionStartForBindings(std::optional<unsigned> start)
 {
     if (!canHaveSelection() || !m_inputType->supportsSelectionAPI())
         return Exception { InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
@@ -2098,7 +2098,7 @@ ExceptionOr<void> HTMLInputElement::setSelectionStartForBindings(std::optional<i
     return { };
 }
 
-std::optional<int> HTMLInputElement::selectionEndForBindings() const
+std::optional<unsigned> HTMLInputElement::selectionEndForBindings() const
 {
     if (!canHaveSelection() || !m_inputType->supportsSelectionAPI())
         return std::nullopt;
@@ -2106,7 +2106,7 @@ std::optional<int> HTMLInputElement::selectionEndForBindings() const
     return selectionEnd();
 }
 
-ExceptionOr<void> HTMLInputElement::setSelectionEndForBindings(std::optional<int> end)
+ExceptionOr<void> HTMLInputElement::setSelectionEndForBindings(std::optional<unsigned> end)
 {
     if (!canHaveSelection() || !m_inputType->supportsSelectionAPI())
         return Exception { InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };
@@ -2132,7 +2132,7 @@ ExceptionOr<void> HTMLInputElement::setSelectionDirectionForBindings(const Strin
     return { };
 }
 
-ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(int start, int end, const String& direction)
+ExceptionOr<void> HTMLInputElement::setSelectionRangeForBindings(unsigned start, unsigned end, const String& direction)
 {
     if (!canHaveSelection() || !m_inputType->supportsSelectionAPI())
         return Exception { InvalidStateError, "The input element's type ('" + m_inputType->formControlType() + "') does not support selection." };

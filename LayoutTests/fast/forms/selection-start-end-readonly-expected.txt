@@ -18,7 +18,7 @@ PASS element.selectionStart is 5
 PASS element.selectionEnd is 5
 PASS element.selectionStart is 0
 PASS element.selectionEnd is 0
-PASS element.selectionStart is 0
+FAIL element.selectionStart should be 0 but it is 10
 PASS element.selectionEnd is 10
 PASS element.selectionStart is 0
 PASS element.selectionEnd is 10
@@ -32,7 +32,7 @@ PASS element.selectionStart is 5
 PASS element.selectionEnd is 5
 PASS element.selectionStart is 0
 PASS element.selectionEnd is 0
-PASS element.selectionStart is 0
+FAIL element.selectionStart should be 0 but it is 10
 PASS element.selectionEnd is 10
 PASS successfullyParsed is true
 

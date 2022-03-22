@@ -606,7 +606,7 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent& 
     unsigned selectionLength = 0;
     if (element()->focused()) {
         ASSERT(enclosingTextFormControl(element()->document().frame()->selection().selection().start()) == element());
-        int selectionStart = element()->selectionStart();
+        unsigned selectionStart = element()->selectionStart();
         ASSERT(selectionStart <= element()->selectionEnd());
         int selectionCodeUnitCount = element()->selectionEnd() - selectionStart;
         selectionLength = selectionCodeUnitCount ? numGraphemeClusters(StringView(innerText).substring(selectionStart, selectionCodeUnitCount)) : 0;
