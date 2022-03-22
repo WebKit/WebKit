@@ -47,6 +47,10 @@
 #include "TextureMapperGCGLPlatformLayer.h"
 #endif
 
+#if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
+#include "VideoFrameGStreamer.h"
+#endif
+
 namespace WebCore {
 
 GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attributes)

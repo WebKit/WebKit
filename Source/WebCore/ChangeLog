@@ -1,3 +1,14 @@
+2022-03-22  Alejandro G. Castro  <alex@igalia.com>
+
+        [WPE][GTK] VideoFrameGStreamer missing include after -r291610 refactor
+        https://bugs.webkit.org/show_bug.cgi?id=238199
+
+        Reviewed by Žan Doberšek.
+
+        We need to add the define we had in the file before the refactor.
+
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+
 2022-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Remove the ATK implementation
