@@ -821,17 +821,7 @@ void FramebufferMtl::setLoadStoreActionOnRenderPassFirstStart(
 
     if (attachment.hasImplicitMSTexture())
     {
-        if (mBackbuffer)
-        {
-            // Default action for default framebuffer is resolve and keep MS texture's content.
-            // We only discard MS texture's content at the end of the frame. See onFrameEnd().
-            attachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
-        }
-        else
-        {
-            // Default action is resolve but don't keep MS texture's content.
-            attachment.storeAction = MTLStoreActionMultisampleResolve;
-        }
+        attachment.storeAction = MTLStoreActionStoreAndMultisampleResolve;
     }
     else
     {
