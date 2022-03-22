@@ -69,8 +69,11 @@ public:
 
     SwapBuffersDisplayRequirement prepareBuffers(bool hasEmptyDirtyRegion);
 
-    // Returns true if the backing store changed.
-    bool prepareToDisplay();
+    // Returns true if we need encode the buffer.
+    bool layerWillBeDisplayed();
+    bool needsDisplay() const;
+
+    void prepareToDisplay();
     void paintContents();
 
     WebCore::FloatSize size() const { return m_size; }

@@ -58,9 +58,12 @@ public:
     // Return value indicates whether the backing store needs to be included in the transaction.
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
-    
+
+    virtual bool backingStoreNeedsDisplay(const RemoteLayerBackingStore&);
+
     virtual SwapBuffersDisplayRequirement prepareBackingStoreBuffers(RemoteLayerBackingStore&);
 
+    void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
     void paintReachableBackingStoreContents();
 
     void willFlushLayers();
@@ -102,6 +105,7 @@ protected:
 
     // Only used during a single flush.
     HashSet<RemoteLayerBackingStore*> m_reachableBackingStoreInLatestFlush;
+    HashSet<RemoteLayerBackingStore*> m_backingStoresNeedingDisplay;
 
     WebCore::Timer m_volatilityTimer;
 

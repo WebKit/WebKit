@@ -47,16 +47,40 @@ RemoteLayerBackingStoreCollection::RemoteLayerBackingStoreCollection(RemoteLayer
 
 RemoteLayerBackingStoreCollection::~RemoteLayerBackingStoreCollection() = default;
 
+bool RemoteLayerBackingStoreCollection::backingStoreNeedsDisplay(const RemoteLayerBackingStore& backingStore)
+{
+    auto frontBuffer = backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front);
+    if (!frontBuffer)
+        return true;
+
+    if (frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
+        return true;
+
+    return !backingStore.hasEmptyDirtyRegion();
+}
+
+void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLayerTreeTransaction& transaction)
+{
+    for (auto* backingStore : m_backingStoresNeedingDisplay) {
+        backingStore->prepareToDisplay();
+        backingStore->layer()->properties().notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
+        transaction.layerPropertiesChanged(*backingStore->layer());
+    }
+}
+
 void RemoteLayerBackingStoreCollection::paintReachableBackingStoreContents()
 {
-    for (auto* backingStore : m_reachableBackingStoreInLatestFlush)
+    for (auto* backingStore : m_backingStoresNeedingDisplay)
         backingStore->paintContents();
 }
 
 void RemoteLayerBackingStoreCollection::willFlushLayers()
 {
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "\nRemoteLayerBackingStoreCollection::willFlushLayers()");
+
     m_inLayerFlush = true;
     m_reachableBackingStoreInLatestFlush.clear();
+    m_backingStoresNeedingDisplay.clear();
 }
 
 void RemoteLayerBackingStoreCollection::willCommitLayerTree(RemoteLayerTreeTransaction& transaction)
@@ -126,6 +150,9 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
 {
     ASSERT(m_inLayerFlush);
     m_reachableBackingStoreInLatestFlush.add(&backingStore);
+
+    if (backingStore.needsDisplay())
+        m_backingStoresNeedingDisplay.add(&backingStore);
 
     auto backingStoreIter = m_unparentedBackingStore.find(&backingStore);
     if (backingStoreIter == m_unparentedBackingStore.end())

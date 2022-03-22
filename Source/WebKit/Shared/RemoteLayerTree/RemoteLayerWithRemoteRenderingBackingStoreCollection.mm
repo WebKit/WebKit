@@ -44,36 +44,32 @@ RemoteRenderingBackendProxy& RemoteLayerWithRemoteRenderingBackingStoreCollectio
     return layerTreeContext().ensureRemoteRenderingBackendProxy();
 }
 
-SwapBuffersDisplayRequirement RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoreBuffers(RemoteLayerBackingStore& backingStore)
+bool RemoteLayerWithRemoteRenderingBackingStoreCollection::backingStoreNeedsDisplay(const RemoteLayerBackingStore& backingStore)
 {
     auto frontBuffer = backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front);
+    if (!frontBuffer)
+        return true;
 
-    auto needToFetchFrontBuffer = [](ImageBuffer* frontBuffer) {
-        if (!frontBuffer)
-            return true;
+    if (frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
+        return true;
 
-        if (frontBuffer->volatilityState() == WebCore::VolatilityState::Volatile)
-            return true;
-
-        if (auto* backend = frontBuffer->ensureBackendCreated()) {
-            auto* sharing = backend->toBackendSharing();
-            if (is<ImageBufferBackendHandleSharing>(sharing)) {
-                if (!downcast<ImageBufferBackendHandleSharing>(*sharing).hasBackendHandle())
-                    return true;
-            }
+    if (auto* backend = frontBuffer->ensureBackendCreated()) {
+        auto* sharing = backend->toBackendSharing();
+        if (is<ImageBufferBackendHandleSharing>(sharing)) {
+            if (!downcast<ImageBufferBackendHandleSharing>(*sharing).hasBackendHandle())
+                return true;
         }
+    }
 
-        return false;
-    };
+    return !backingStore.hasEmptyDirtyRegion();
+}
 
-    // Avoid IPC if not necessary.
-    if (!needToFetchFrontBuffer(frontBuffer.get()) && backingStore.hasEmptyDirtyRegion())
-        return SwapBuffersDisplayRequirement::NeedsNoDisplay;
-
+SwapBuffersDisplayRequirement RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoreBuffers(RemoteLayerBackingStore& backingStore)
+{
     auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
 
     auto identifiers = RemoteRenderingBackendProxy::BufferSet {
-        frontBuffer,
+        backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front),
         backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Back),
         backingStore.bufferForType(RemoteLayerBackingStore::BufferType::SecondaryBack)
     };

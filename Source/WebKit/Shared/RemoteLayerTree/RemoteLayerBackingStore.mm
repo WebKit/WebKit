@@ -182,6 +182,17 @@ bool RemoteLayerBackingStore::decode(IPC::Decoder& decoder, RemoteLayerBackingSt
     return true;
 }
 
+bool RemoteLayerBackingStore::layerWillBeDisplayed()
+{
+    auto* collection = backingStoreCollection();
+    if (!collection) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    return collection->backingStoreWillBeDisplayed(*this);
+}
+
 void RemoteLayerBackingStore::setNeedsDisplay(const WebCore::IntRect rect)
 {
     m_dirtyRegion.unite(rect);
@@ -273,28 +284,44 @@ static TextStream& operator<<(TextStream& ts, SwapBuffersDisplayRequirement resu
 }
 #endif
 
-bool RemoteLayerBackingStore::prepareToDisplay()
+bool RemoteLayerBackingStore::needsDisplay() const
 {
-    ASSERT(!m_frontBufferFlushers.size());
-
-    m_lastDisplayTime = MonotonicTime::now();
-
     auto* collection = backingStoreCollection();
     if (!collection) {
         ASSERT_NOT_REACHED();
         return false;
     }
 
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay()");
+    if (m_layer->owner()->platformCALayerDelegatesDisplay(m_layer)) {
+        LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " needsDisplay() - delegates display");
+        return true;
+    }
 
-    bool needToEncodeBackingStore = collection->backingStoreWillBeDisplayed(*this);
+    bool needsDisplay = collection->backingStoreNeedsDisplay(*this);
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " needsDisplay() - needsDisplay " << needsDisplay);
+    return needsDisplay;
+}
+
+void RemoteLayerBackingStore::prepareToDisplay()
+{
+    ASSERT(!m_frontBufferFlushers.size());
+
+    auto* collection = backingStoreCollection();
+    if (!collection) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    ASSERT(collection->backingStoreNeedsDisplay(*this));
+
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay()");
 
     auto& layerOwner = *m_layer->owner();
     if (layerOwner.platformCALayerDelegatesDisplay(m_layer)) {
         // This can call back to setContents(), setting m_contentsBufferHandle.
         layerOwner.platformCALayerLayerDisplay(m_layer);
         layerOwner.platformCALayerLayerDidDisplay(m_layer);
-        return true;
+        return;
     }
 
     m_contentsBufferHandle = std::nullopt;
@@ -303,8 +330,7 @@ bool RemoteLayerBackingStore::prepareToDisplay()
 
     LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay() - " << displayRequirement);
 
-    if (displayRequirement == SwapBuffersDisplayRequirement::NeedsNoDisplay)
-        return needToEncodeBackingStore;
+    ASSERT(displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay);
 
     if (displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay)
         setNeedsDisplay();
@@ -322,8 +348,6 @@ bool RemoteLayerBackingStore::prepareToDisplay()
             m_frontBuffer.displayListImageBuffer = WebCore::ConcreteImageBuffer<CGDisplayListImageBufferBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB(), pixelFormat(), nullptr);
 #endif
     }
-
-    return true;
 }
 
 SwapBuffersDisplayRequirement RemoteLayerBackingStore::prepareBuffers(bool hasEmptyDirtyRegion)
@@ -354,8 +378,11 @@ void RemoteLayerBackingStore::paintContents()
     if (!m_frontBuffer.imageBuffer)
         return;
 
-    if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " paintContents() - has dirty region " << !hasEmptyDirtyRegion());
+    if (hasEmptyDirtyRegion())
         return;
+
+    m_lastDisplayTime = MonotonicTime::now();
 
     if (m_includeDisplayList == IncludeDisplayList::Yes) {
 #if ENABLE(CG_DISPLAY_LIST_BACKED_IMAGE_BUFFER)
@@ -552,6 +579,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
 
 Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerBackingStore::takePendingFlushers()
 {
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " takePendingFlushers()");
     return std::exchange(m_frontBufferFlushers, { });
 }
 
