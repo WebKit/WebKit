@@ -1,3 +1,89 @@
+2022-03-21  Alex Christensen  <achristensen@webkit.org>
+
+        Implement CSSNumericValue.mul, div, add, sub, max, and min
+        https://bugs.webkit.org/show_bug.cgi?id=238153
+
+        Reviewed by Simon Fraser.
+
+        This implements all except the derived units of multiplication and the unit checking of the others.
+        They are an off-by-default experimental feature right now, part of css-typed-om which is being implemented.
+        They are covered by wpt tests.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSStyleValueCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * css/typedom/CSSKeywordValue.h:
+        (WebCore::CSSKeywordValue::value const): Deleted.
+        (WebCore::CSSKeywordValue::CSSKeywordValue): Deleted.
+        * css/typedom/CSSNumericValue.cpp:
+        (WebCore::negate):
+        (WebCore::invert):
+        (WebCore::operationOnValuesOfSameUnit):
+        (WebCore::CSSNumericValue::prependItemsOfTypeOrThis):
+        (WebCore::CSSNumericValue::addInternal):
+        (WebCore::CSSNumericValue::add):
+        (WebCore::CSSNumericValue::sub):
+        (WebCore::CSSNumericValue::multiplyInternal):
+        (WebCore::CSSNumericValue::mul):
+        (WebCore::CSSNumericValue::div):
+        (WebCore::CSSNumericValue::min):
+        (WebCore::CSSNumericValue::max):
+        (WebCore::CSSNumericValue::rectifyNumberish):
+        (WebCore::CSSNumericValue::toSum):
+        * css/typedom/CSSNumericValue.h:
+        (isType):
+        * css/typedom/CSSStyleValue.h:
+        (WebCore::isCSSNumericValue):
+        (WebCore::isCSSMathValue):
+        * css/typedom/CSSUnitValue.h:
+        (isType):
+        * css/typedom/numeric/CSSMathInvert.cpp:
+        (WebCore::CSSMathInvert::CSSMathInvert):
+        * css/typedom/numeric/CSSMathInvert.h:
+        (isType):
+        (WebCore::CSSMathInvert::value const): Deleted.
+        * css/typedom/numeric/CSSMathMax.cpp:
+        (WebCore::CSSMathMax::CSSMathMax):
+        (WebCore::CSSMathMax::create): Deleted.
+        * css/typedom/numeric/CSSMathMax.h:
+        (isType):
+        * css/typedom/numeric/CSSMathMin.cpp:
+        (WebCore::CSSMathMin::CSSMathMin):
+        (WebCore::CSSMathMin::create): Deleted.
+        * css/typedom/numeric/CSSMathMin.h:
+        (isType):
+        * css/typedom/numeric/CSSMathNegate.cpp:
+        (WebCore::CSSMathNegate::CSSMathNegate):
+        (WebCore::CSSMathNegate::create): Deleted.
+        * css/typedom/numeric/CSSMathNegate.h:
+        (isType):
+        (WebCore::CSSMathNegate::value const): Deleted.
+        * css/typedom/numeric/CSSMathProduct.cpp:
+        (WebCore::CSSMathProduct::CSSMathProduct):
+        (WebCore::CSSMathProduct::create): Deleted.
+        * css/typedom/numeric/CSSMathProduct.h:
+        (isType):
+        * css/typedom/numeric/CSSMathSum.cpp:
+        (WebCore::CSSMathSum::CSSMathSum):
+        (WebCore::CSSMathSum::create): Deleted.
+        (WebCore::CSSMathSum::values const): Deleted.
+        * css/typedom/numeric/CSSMathSum.h:
+        (isType):
+        * css/typedom/numeric/CSSMathValue.cpp: Removed.
+        * css/typedom/numeric/CSSMathValue.h:
+        (WebCore::CSSMathValue::getOperator const): Deleted.
+        (): Deleted.
+        (isType): Deleted.
+        * css/typedom/numeric/CSSNumericArray.cpp:
+        (WebCore::CSSNumericArray::create):
+        (WebCore::CSSNumericArray::CSSNumericArray):
+        * css/typedom/numeric/CSSNumericArray.h:
+        (WebCore::CSSNumericArray::array const):
+        * css/typedom/numeric/CSSNumericType.h:
+        * css/typedom/transform/CSSTransformValue.h:
+        (WebCore::CSSTransformValue::length const): Deleted.
+
 2022-03-21  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Let revert-layer roll back to preshints

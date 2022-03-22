@@ -1,3 +1,12 @@
+2022-03-21  Alex Christensen  <achristensen@webkit.org>
+
+        Implement CSSNumericValue.mul, div, add, sub, max, and min
+        https://bugs.webkit.org/show_bug.cgi?id=238153
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-typed-om/stylevalue-subclasses/numeric-objects/arithmetic.tentative-expected.txt:
+
 2022-03-21  Oriol Brufau  <obrufau@igalia.com>
 
         [css-cascade] Let revert-layer roll back to preshints

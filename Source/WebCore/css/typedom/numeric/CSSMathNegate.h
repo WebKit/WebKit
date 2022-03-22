@@ -34,23 +34,27 @@ namespace WebCore {
 
 class CSSNumericValue;
 
-class CSSMathNegate : public CSSMathValue {
+class CSSMathNegate final : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathNegate);
 public:
-    static Ref<CSSMathNegate> create(CSSNumberish&&);
-    const CSSNumericValue& value() const { return m_value.get(); }
+    template<typename... Args> static Ref<CSSMathNegate> create(Args&&... args) { return adoptRef(*new CSSMathNegate(std::forward<Args>(args)...)); }
+    CSSNumericValue& value() { return m_value.get(); }
     
 private:
+    CSSMathOperator getOperator() const final { return CSSMathOperator::Negate; }
+    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathNegate; }
+
     CSSMathNegate(CSSNumberish&&);
+    CSSMathNegate(Ref<CSSNumericValue>&&);
     Ref<CSSNumericValue> m_value;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSMathNegate)
-    static bool isType(const WebCore::CSSStyleValue& styleValue) { return is<WebCore::CSSNumericValue>(styleValue) && isType(downcast<WebCore::CSSNumericValue>(styleValue)); }
-    static bool isType(const WebCore::CSSNumericValue& numericValue) { return is<WebCore::CSSMathValue>(numericValue) && isType(downcast<WebCore::CSSMathValue>(numericValue)); }
-    static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getOperator() == WebCore::CSSMathOperator::Negate; }
+static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSMathNegate; }
+static bool isType(const WebCore::CSSNumericValue& numericValue) { return numericValue.getType() == WebCore::CSSStyleValueType::CSSMathNegate; }
+static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getType() == WebCore::CSSStyleValueType::CSSMathNegate; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

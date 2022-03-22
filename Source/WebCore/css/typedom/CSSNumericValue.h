@@ -48,7 +48,7 @@ public:
     Ref<CSSNumericValue> add(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericValue> sub(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericValue> mul(FixedVector<CSSNumberish>&&);
-    Ref<CSSNumericValue> div(FixedVector<CSSNumberish>&&);
+    ExceptionOr<Ref<CSSNumericValue>> div(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericValue> min(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericValue> max(FixedVector<CSSNumberish>&&);
     
@@ -60,10 +60,14 @@ public:
     
     static ExceptionOr<Ref<CSSNumericValue>> parse(String&&);
     static Ref<CSSNumericValue> rectifyNumberish(CSSNumberish&&);
-    
+
     CSSStyleValueType getType() const override { return CSSStyleValueType::CSSNumericValue; }
 
 protected:
+    Ref<CSSNumericValue> addInternal(Vector<Ref<CSSNumericValue>>&&);
+    Ref<CSSNumericValue> multiplyInternal(Vector<Ref<CSSNumericValue>>&&);
+    template<typename T> Vector<Ref<CSSNumericValue>> prependItemsOfTypeOrThis(Vector<Ref<CSSNumericValue>>&&);
+
     CSSNumericValue() = default;
 };
 
@@ -72,7 +76,7 @@ using CSSNumberish = CSSNumericValue::CSSNumberish;
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSNumericValue)
-    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSNumericValue; }
+    static bool isType(const WebCore::CSSStyleValue& styleValue) { return isCSSNumericValue(styleValue.getType()); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

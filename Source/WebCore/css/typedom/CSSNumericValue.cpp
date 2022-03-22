@@ -30,68 +30,189 @@
 #include "config.h"
 #include "CSSNumericValue.h"
 
+#if ENABLE(CSS_TYPED_OM)
+
+#include "CSSMathInvert.h"
+#include "CSSMathMax.h"
+#include "CSSMathMin.h"
+#include "CSSMathNegate.h"
+#include "CSSMathProduct.h"
 #include "CSSMathSum.h"
+#include "CSSNumericArray.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericType.h"
 #include "CSSUnitValue.h"
 #include "ExceptionOr.h"
-
-#if ENABLE(CSS_TYPED_OM)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSNumericValue);
 
+static Ref<CSSNumericValue> negate(Ref<CSSNumericValue>&& value)
+{
+    // https://drafts.css-houdini.org/css-typed-om/#cssmath-negate-a-cssnumericvalue
+    if (auto* mathNegate = dynamicDowncast<CSSMathNegate>(value.get()))
+        return mathNegate->value();
+    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get()))
+        return CSSUnitValue::create(-unitValue->value(), unitValue->unit());
+    return CSSMathNegate::create(WTFMove(value));
+}
+
+static ExceptionOr<Ref<CSSNumericValue>> invert(Ref<CSSNumericValue>&& value)
+{
+    // https://drafts.css-houdini.org/css-typed-om/#cssmath-invert-a-cssnumericvalue
+    if (auto* mathInvert = dynamicDowncast<CSSMathInvert>(value.get()))
+        return Ref { mathInvert->value() };
+
+    if (auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get())) {
+        // FIXME: units should be either AtomicStrings or CSSUnitType enumeration values.
+        if (unitValue->unit() == "number") {
+            if (unitValue->value() == 0.0 || unitValue->value() == -0.0)
+                return Exception { RangeError };
+            return Ref<CSSNumericValue> { CSSUnitValue::create(1.0 / unitValue->value(), unitValue->unit()) };
+        }
+    }
+
+    return Ref<CSSNumericValue> { CSSMathInvert::create(WTFMove(value)) };
+}
+
+template<typename T>
+static RefPtr<CSSNumericValue> operationOnValuesOfSameUnit(T&& operation, const Vector<Ref<CSSNumericValue>>& values)
+{
+    bool allValuesHaveSameUnit = values.size() && WTF::allOf(values, [&] (const Ref<CSSNumericValue>& value) {
+        auto* unitValue = dynamicDowncast<CSSUnitValue>(value.get());
+        return unitValue ? unitValue->unit() == downcast<CSSUnitValue>(values[0].get()).unit() : false;
+    });
+    if (allValuesHaveSameUnit) {
+        auto& firstUnitValue = downcast<CSSUnitValue>(values[0].get());
+        String unit = firstUnitValue.unit();
+        double result = firstUnitValue.value();
+        for (size_t i = 1; i < values.size(); i++)
+            result = operation(result, downcast<CSSUnitValue>(values[i].get()).value());
+        return CSSUnitValue::create(result, unit);
+    }
+    return nullptr;
+}
+
+template<typename T> Vector<Ref<CSSNumericValue>> CSSNumericValue::prependItemsOfTypeOrThis(Vector<Ref<CSSNumericValue>>&& numericValues)
+{
+    Vector<Ref<CSSNumericValue>> values;
+    if (T* t = dynamicDowncast<T>(*this))
+        values.appendVector(t->values().array());
+    else
+        values.append(*this);
+    values.appendVector(numericValues);
+    return values;
+}
+
+Ref<CSSNumericValue> CSSNumericValue::addInternal(Vector<Ref<CSSNumericValue>>&& numericValues)
+{
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-add
+    auto values = prependItemsOfTypeOrThis<CSSMathSum>(WTFMove(numericValues));
+
+    if (auto result = operationOnValuesOfSameUnit(std::plus<double>(), values))
+        return *result;
+
+    // FIXME: Implement step 4 to check that the types can be added.
+
+    return CSSMathSum::create(WTFMove(values));
+}
+
 Ref<CSSNumericValue> CSSNumericValue::add(FixedVector<CSSNumberish>&& values)
 {
-    UNUSED_PARAM(values);
-    // FIXME: add impl.
-
-    return *this;
+    return addInternal(WTF::map(WTFMove(values), rectifyNumberish));
 }
 
 Ref<CSSNumericValue> CSSNumericValue::sub(FixedVector<CSSNumberish>&& values)
 {
-    UNUSED_PARAM(values);
-    // FIXME: add impl.
+    return addInternal(WTF::map(WTFMove(values), [] (CSSNumberish&& numberish) {
+        return negate(rectifyNumberish(WTFMove(numberish)));
+    }));
+}
 
-    return *this;
+Ref<CSSNumericValue> CSSNumericValue::multiplyInternal(Vector<Ref<CSSNumericValue>>&& numericValues)
+{
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-mul
+    auto values = prependItemsOfTypeOrThis<CSSMathProduct>(WTFMove(numericValues));
+
+    bool allUnitValues = WTF::allOf(values, [&] (const Ref<CSSNumericValue>& value) {
+        return is<CSSUnitValue>(value.get());
+    });
+    if (allUnitValues) {
+        bool multipleUnitsFound { false };
+        std::optional<size_t> nonNumberUnitIndex;
+        for (size_t i = 0; i < values.size(); i++) {
+            auto& unit = downcast<CSSUnitValue>(values[i].get()).unit();
+            if (unit == "number")
+                continue;
+            if (nonNumberUnitIndex) {
+                multipleUnitsFound = true;
+                break;
+            }
+            nonNumberUnitIndex = i;
+        }
+        if (!multipleUnitsFound) {
+            double product = 1;
+            for (const Ref<CSSNumericValue>& value : values)
+                product *= downcast<CSSUnitValue>(value.get()).value();
+            String unit = nonNumberUnitIndex ? downcast<CSSUnitValue>(values[*nonNumberUnitIndex].get()).unit() : "number";
+            return CSSUnitValue::create(product, unit);
+        }
+    }
+
+    // FIXME: Implement step 5 to produce a unit of the correct type.
+
+    return CSSMathProduct::create(WTFMove(values));
 }
 
 Ref<CSSNumericValue> CSSNumericValue::mul(FixedVector<CSSNumberish>&& values)
 {
-    UNUSED_PARAM(values);
-    // FIXME: add impl.
-
-    return *this;
+    return multiplyInternal(WTF::map(WTFMove(values), rectifyNumberish));
 }
 
-Ref<CSSNumericValue> CSSNumericValue::div(FixedVector<CSSNumberish>&& values)
+ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::div(FixedVector<CSSNumberish>&& values)
 {
-    UNUSED_PARAM(values);
-    // FIXME: add impl.
-
-    return *this;
+    Vector<Ref<CSSNumericValue>> invertedValues;
+    invertedValues.reserveInitialCapacity(values.size());
+    for (auto&& value : WTFMove(values)) {
+        auto inverted = invert(rectifyNumberish(WTFMove(value)));
+        if (inverted.hasException())
+            return inverted.releaseException();
+        invertedValues.uncheckedAppend(inverted.releaseReturnValue());
+    }
+    return multiplyInternal(WTFMove(invertedValues));
 }
-Ref<CSSNumericValue> CSSNumericValue::min(FixedVector<CSSNumberish>&& values)
-{
-    UNUSED_PARAM(values);
-    // FIXME: add impl.
 
-    return *this;
+Ref<CSSNumericValue> CSSNumericValue::min(FixedVector<CSSNumberish>&& numberishes)
+{
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-min
+    auto values = prependItemsOfTypeOrThis<CSSMathMin>(WTF::map(WTFMove(numberishes), rectifyNumberish));
+    
+    if (auto result = operationOnValuesOfSameUnit<const double&(*)(const double&, const double&)>(std::min<double>, values))
+        return *result;
+
+    // FIXME: Implement step 4 to check that the types can be added.
+
+    return CSSMathMin::create(WTFMove(values));
 }
-Ref<CSSNumericValue> CSSNumericValue::max(FixedVector<CSSNumberish>&& values)
-{
-    UNUSED_PARAM(values);
-    // FIXME: add impl.
 
-    return *this;
+Ref<CSSNumericValue> CSSNumericValue::max(FixedVector<CSSNumberish>&& numberishes)
+{
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-max
+    auto values = prependItemsOfTypeOrThis<CSSMathMax>(WTF::map(WTFMove(numberishes), rectifyNumberish));
+    
+    if (auto result = operationOnValuesOfSameUnit<const double&(*)(const double&, const double&)>(std::max<double>, values))
+        return *result;
+
+    // FIXME: Implement step 4 to check that the types can be added.
+
+    return CSSMathMax::create(WTFMove(values));
 }
 
 Ref<CSSNumericValue> CSSNumericValue::rectifyNumberish(CSSNumberish&& numberish)
 {
+    // https://drafts.css-houdini.org/css-typed-om/#rectify-a-numberish-value
     return WTF::switchOn(numberish, [](RefPtr<CSSNumericValue>& value) {
         RELEASE_ASSERT(!!value);
         return Ref<CSSNumericValue> { *value };
@@ -121,7 +242,7 @@ Ref<CSSMathSum> CSSNumericValue::toSum(FixedVector<String>&& units)
     UNUSED_PARAM(units);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-tosum
     // FIXME: add impl.
-    return CSSMathSum::create({ 1.0 });
+    return CSSMathSum::create(FixedVector<CSSNumberish> { 1.0 });
 }
 
 CSSNumericType CSSNumericValue::type()

@@ -45,9 +45,14 @@ Ref<CSSNumericArray> CSSNumericArray::create(const FixedVector<CSSNumberish>& nu
     })));
 }
 
-Ref<CSSNumericArray> CSSNumericArray::create(FixedVector<Ref<CSSNumericValue>>&& values)
+Ref<CSSNumericArray> CSSNumericArray::create(Vector<Ref<CSSNumericValue>>&& values)
 {
     return adoptRef(*new CSSNumericArray(WTFMove(values)));
+}
+
+CSSNumericArray::CSSNumericArray(Vector<Ref<CSSNumericValue>>&& values)
+    : m_array(WTFMove(values))
+{
 }
 
 CSSNumericArray::CSSNumericArray(FixedVector<Ref<CSSNumericValue>>&& values)

@@ -35,7 +35,7 @@ namespace WebCore {
 
 template<typename> class ExceptionOr;
 
-class CSSKeywordValue : public CSSStyleValue {
+class CSSKeywordValue final : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSKeywordValue);
 public:
     static ExceptionOr<Ref<CSSKeywordValue>> create(const String&);

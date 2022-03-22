@@ -41,12 +41,14 @@ class CSSNumericArray : public RefCounted<CSSNumericArray> {
     WTF_MAKE_ISO_ALLOCATED(CSSNumericArray);
 public:
     static Ref<CSSNumericArray> create(const FixedVector<CSSNumberish>&);
-    static Ref<CSSNumericArray> create(FixedVector<Ref<CSSNumericValue>>&&);
+    static Ref<CSSNumericArray> create(Vector<Ref<CSSNumericValue>>&&);
     size_t length() const { return m_array.size(); };
     ExceptionOr<Ref<CSSNumericValue>> item(size_t index);
+    const Vector<Ref<CSSNumericValue>>& array() const { return m_array; }
 
 private:
-    FixedVector<Ref<CSSNumericValue>> m_array;
+    Vector<Ref<CSSNumericValue>> m_array;
+    CSSNumericArray(Vector<Ref<CSSNumericValue>>&&);
     CSSNumericArray(FixedVector<Ref<CSSNumericValue>>&&);
 };
 

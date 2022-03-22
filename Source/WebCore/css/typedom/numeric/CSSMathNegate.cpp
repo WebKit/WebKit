@@ -36,14 +36,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathNegate);
 
-Ref<CSSMathNegate> CSSMathNegate::create(CSSNumberish&& numberish)
+CSSMathNegate::CSSMathNegate(CSSNumberish&& numberish)
+    : m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
 {
-    return adoptRef(*new CSSMathNegate(WTFMove(numberish)));
 }
 
-CSSMathNegate::CSSMathNegate(CSSNumberish&& numberish)
-    : CSSMathValue(CSSMathOperator::Negate)
-    , m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
+CSSMathNegate::CSSMathNegate(Ref<CSSNumericValue>&& value)
+    : m_value(WTFMove(value))
 {
 }
 

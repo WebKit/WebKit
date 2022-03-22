@@ -36,14 +36,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathMax);
 
-Ref<CSSMathMax> CSSMathMax::create(FixedVector<CSSNumberish>&& numberishes)
+CSSMathMax::CSSMathMax(FixedVector<CSSNumberish>&& numberishes)
+    : m_values(CSSNumericArray::create(WTFMove(numberishes)))
 {
-    return adoptRef(*new CSSMathMax(WTFMove(numberishes)));
 }
 
-CSSMathMax::CSSMathMax(FixedVector<CSSNumberish>&& numberishes)
-    : CSSMathValue(CSSMathOperator::Max)
-    , m_values(CSSNumericArray::create(WTFMove(numberishes)))
+CSSMathMax::CSSMathMax(Vector<Ref<CSSNumericValue>>&& values)
+    : m_values(CSSNumericArray::create(WTFMove(values)))
 {
 }
 

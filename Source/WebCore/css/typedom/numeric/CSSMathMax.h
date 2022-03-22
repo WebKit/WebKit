@@ -34,23 +34,27 @@ namespace WebCore {
 
 class CSSNumericArray;
 
-class CSSMathMax : public CSSMathValue {
+class CSSMathMax final : public CSSMathValue {
     WTF_MAKE_ISO_ALLOCATED(CSSMathMax);
 public:
-    static Ref<CSSMathMax> create(FixedVector<CSSNumberish>&&);
+    template<typename... Args> static Ref<CSSMathMax> create(Args&&... args) { return adoptRef(*new CSSMathMax(std::forward<Args>(args)...)); }
     const CSSNumericArray& values() const;
-    
+
 private:
+    CSSMathOperator getOperator() const final { return CSSMathOperator::Max; }
+    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathMax; }
+
     CSSMathMax(FixedVector<CSSNumberish>&&);
+    CSSMathMax(Vector<Ref<CSSNumericValue>>&&);
     Ref<CSSNumericArray> m_values;
 };
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSMathMax)
-    static bool isType(const WebCore::CSSStyleValue& styleValue) { return is<WebCore::CSSNumericValue>(styleValue) && isType(downcast<WebCore::CSSNumericValue>(styleValue)); }
-    static bool isType(const WebCore::CSSNumericValue& numericValue) { return is<WebCore::CSSMathValue>(numericValue) && isType(downcast<WebCore::CSSMathValue>(numericValue)); }
-static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getOperator() == WebCore::CSSMathOperator::Max; }
+static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSMathMax; }
+static bool isType(const WebCore::CSSNumericValue& numericValue) { return numericValue.getType() == WebCore::CSSStyleValueType::CSSMathMax; }
+static bool isType(const WebCore::CSSMathValue& mathValue) { return mathValue.getType() == WebCore::CSSStyleValueType::CSSMathMax; }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

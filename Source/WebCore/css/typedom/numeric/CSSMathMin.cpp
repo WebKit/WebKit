@@ -36,14 +36,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathMin);
 
-Ref<CSSMathMin> CSSMathMin::create(FixedVector<CSSNumberish>&& numberishes)
+CSSMathMin::CSSMathMin(FixedVector<CSSNumberish>&& numberishes)
+    : m_values(CSSNumericArray::create(WTFMove(numberishes)))
 {
-    return adoptRef(*new CSSMathMin(WTFMove(numberishes)));
 }
 
-CSSMathMin::CSSMathMin(FixedVector<CSSNumberish>&& numberishes)
-    : CSSMathValue(CSSMathOperator::Min)
-    , m_values(CSSNumericArray::create(WTFMove(numberishes)))
+CSSMathMin::CSSMathMin(Vector<Ref<CSSNumericValue>>&& values)
+    : m_values(CSSNumericArray::create(WTFMove(values)))
 {
 }
 

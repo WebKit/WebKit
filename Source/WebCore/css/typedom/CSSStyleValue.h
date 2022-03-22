@@ -44,11 +44,60 @@ enum class CSSStyleValueType : uint8_t {
     CSSStyleImageValue,
     CSSTransformValue,
     CSSNumericValue,
-    CSSMathValue,
+    CSSMathInvert,
+    CSSMathMin,
+    CSSMathMax,
+    CSSMathNegate,
+    CSSMathProduct,
+    CSSMathSum,
     CSSUnitValue,
     CSSUnparsedValue,
     CSSKeywordValue
 };
+
+inline bool isCSSNumericValue(CSSStyleValueType type)
+{
+    switch (type) {
+    case CSSStyleValueType::CSSNumericValue:
+    case CSSStyleValueType::CSSMathInvert:
+    case CSSStyleValueType::CSSMathMin:
+    case CSSStyleValueType::CSSMathMax:
+    case CSSStyleValueType::CSSMathNegate:
+    case CSSStyleValueType::CSSMathProduct:
+    case CSSStyleValueType::CSSMathSum:
+    case CSSStyleValueType::CSSUnitValue:
+        return true;
+    case CSSStyleValueType::CSSStyleValue:
+    case CSSStyleValueType::CSSStyleImageValue:
+    case CSSStyleValueType::CSSTransformValue:
+    case CSSStyleValueType::CSSUnparsedValue:
+    case CSSStyleValueType::CSSKeywordValue:
+        break;
+    }
+    return false;
+}
+
+inline bool isCSSMathValue(CSSStyleValueType type)
+{
+    switch (type) {
+    case CSSStyleValueType::CSSMathInvert:
+    case CSSStyleValueType::CSSMathMin:
+    case CSSStyleValueType::CSSMathMax:
+    case CSSStyleValueType::CSSMathNegate:
+    case CSSStyleValueType::CSSMathProduct:
+    case CSSStyleValueType::CSSMathSum:
+        return true;
+    case CSSStyleValueType::CSSNumericValue:
+    case CSSStyleValueType::CSSUnitValue:
+    case CSSStyleValueType::CSSStyleValue:
+    case CSSStyleValueType::CSSStyleImageValue:
+    case CSSStyleValueType::CSSTransformValue:
+    case CSSStyleValueType::CSSUnparsedValue:
+    case CSSStyleValueType::CSSKeywordValue:
+        break;
+    }
+    return false;
+}
 
 class CSSStyleValue : public RefCounted<CSSStyleValue>, public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(CSSStyleValue);

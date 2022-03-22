@@ -29,9 +29,16 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "JSCSSKeywordValue.h"
+#include "JSCSSMathInvert.h"
+#include "JSCSSMathMax.h"
+#include "JSCSSMathMin.h"
+#include "JSCSSMathNegate.h"
+#include "JSCSSMathProduct.h"
+#include "JSCSSMathSum.h"
 #include "JSCSSMathValue.h"
 #include "JSCSSNumericValue.h"
 #include "JSCSSStyleImageValue.h"
+#include "JSCSSTransformValue.h"
 #include "JSCSSUnitValue.h"
 #include "JSCSSUnparsedValue.h"
 #include "JSDOMWrapperCache.h"
@@ -46,8 +53,18 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSStyleImageValue>(globalObject, WTFMove(value));
     case CSSStyleValueType::CSSNumericValue:
         return createWrapper<CSSNumericValue>(globalObject, WTFMove(value));
-    case CSSStyleValueType::CSSMathValue:
-        return createWrapper<CSSMathValue>(globalObject, WTFMove(value));
+    case CSSStyleValueType::CSSMathInvert:
+        return createWrapper<CSSMathInvert>(globalObject, WTFMove(value));
+    case CSSStyleValueType::CSSMathMin:
+        return createWrapper<CSSMathMin>(globalObject, WTFMove(value));
+    case CSSStyleValueType::CSSMathMax:
+        return createWrapper<CSSMathMax>(globalObject, WTFMove(value));
+    case CSSStyleValueType::CSSMathNegate:
+        return createWrapper<CSSMathNegate>(globalObject, WTFMove(value));
+    case CSSStyleValueType::CSSMathProduct:
+        return createWrapper<CSSMathProduct>(globalObject, WTFMove(value));
+    case CSSStyleValueType::CSSMathSum:
+        return createWrapper<CSSMathSum>(globalObject, WTFMove(value));
     case CSSStyleValueType::CSSUnitValue:
         return createWrapper<CSSUnitValue>(globalObject, WTFMove(value));
     case CSSStyleValueType::CSSUnparsedValue:
@@ -55,6 +72,7 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
     case CSSStyleValueType::CSSKeywordValue:
         return createWrapper<CSSKeywordValue>(globalObject, WTFMove(value));
     case CSSStyleValueType::CSSTransformValue:
+        return createWrapper<CSSTransformValue>(globalObject, WTFMove(value));
     case CSSStyleValueType::CSSStyleValue:
         return createWrapper<CSSStyleValue>(globalObject, WTFMove(value));
     }

@@ -36,14 +36,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathProduct);
 
-Ref<CSSMathProduct> CSSMathProduct::create(FixedVector<CSSNumberish>&& numberishes)
+CSSMathProduct::CSSMathProduct(FixedVector<CSSNumberish>&& numberishes)
+    : m_values(CSSNumericArray::create(WTFMove(numberishes)))
 {
-    return adoptRef(*new CSSMathProduct(WTFMove(numberishes)));
 }
 
-CSSMathProduct::CSSMathProduct(FixedVector<CSSNumberish>&& numberishes)
-    : CSSMathValue(CSSMathOperator::Product)
-    , m_values(CSSNumericArray::create(WTFMove(numberishes)))
+CSSMathProduct::CSSMathProduct(Vector<Ref<CSSNumericValue>>&& values)
+    : m_values(CSSNumericArray::create(WTFMove(values)))
 {
 }
 

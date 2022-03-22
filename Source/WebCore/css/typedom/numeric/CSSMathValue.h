@@ -34,22 +34,10 @@
 namespace WebCore {
 
 class CSSMathValue : public CSSNumericValue {
-    WTF_MAKE_ISO_ALLOCATED(CSSMathValue);
 public:
-    virtual CSSMathOperator getOperator() const { return m_operator; }
-    
-    CSSStyleValueType getType() const final { return CSSStyleValueType::CSSMathValue; }
-    
-protected:
-    CSSMathValue(CSSMathOperator);
-    CSSMathOperator m_operator;
+    virtual CSSMathOperator getOperator() const = 0;
 };
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSMathValue)
-    static bool isType(const WebCore::CSSStyleValue& styleValue) { return styleValue.getType() == WebCore::CSSStyleValueType::CSSMathValue; }
-    static bool isType(const WebCore::CSSNumericValue& numericValue) { return numericValue.getType() == WebCore::CSSStyleValueType::CSSMathValue; }
-SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

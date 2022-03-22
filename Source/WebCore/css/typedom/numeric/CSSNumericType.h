@@ -28,18 +28,19 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "CSSNumericBaseType.h"
+#include <optional>
 
 namespace WebCore {
 
 struct CSSNumericType {
-    long length;
-    long angle;
-    long time;
-    long frequency;
-    long resolution;
-    long flex;
-    long percent;
-    CSSNumericBaseType percentHint;
+    long length { 0 };
+    long angle { 0 };
+    long time { 0 };
+    long frequency { 0 };
+    long resolution { 0 };
+    long flex { 0 };
+    long percent { 0 };
+    std::optional<CSSNumericBaseType> percentHint;
 };
 
 } // namespace WebCore

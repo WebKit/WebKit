@@ -36,20 +36,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMathSum);
 
-Ref<CSSMathSum> CSSMathSum::create(FixedVector<CSSNumberish>&& numberishes)
-{
-    return adoptRef(*new CSSMathSum(WTFMove(numberishes)));
-}
-
 CSSMathSum::CSSMathSum(FixedVector<CSSNumberish>&& numberishes)
-    : CSSMathValue(CSSMathOperator::Sum)
-    , m_values(CSSNumericArray::create(WTFMove(numberishes)))
+    : m_values(CSSNumericArray::create(WTFMove(numberishes)))
 {
 }
 
-const CSSNumericArray& CSSMathSum::values() const
+CSSMathSum::CSSMathSum(Vector<Ref<CSSNumericValue>>&& values)
+    : m_values(CSSNumericArray::create(WTFMove(values)))
 {
-    return m_values.get();
 }
 
 } // namespace WebCore

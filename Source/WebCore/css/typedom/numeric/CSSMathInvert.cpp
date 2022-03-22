@@ -42,8 +42,7 @@ Ref<CSSMathInvert> CSSMathInvert::create(CSSNumberish&& numberish)
 }
 
 CSSMathInvert::CSSMathInvert(CSSNumberish&& numberish)
-    : CSSMathValue(CSSMathOperator::Invert)
-    , m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
+    : m_value(CSSNumericValue::rectifyNumberish(WTFMove(numberish)))
 {
 }
 
