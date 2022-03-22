@@ -1773,6 +1773,13 @@ webkit.org/b/178739 css3/viewport-percentage-lengths/viewport-percentage-lengths
 webkit.org/b/178739 css3/viewport-percentage-lengths/viewport-percentage-lengths-relative-font-size.html [ Skip ]
 webkit.org/b/178739 css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html [ Skip ]
 
+# Webkit.org/b/232384 these tests are flaky failures on iOS
+fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ Pass Failure ]
+fast/layers/hidpi-box-positioned-off-by-one-when-transform-is-present.html [ Pass Failure ]
+fast/layers/hidpi-floor-negative-coordinate-values-to-maintain-rounding-direction.html [ Pass Failure ]
+fast/layers/hidpi-nested-layers-with-subpixel-accumulation.html [ Pass Failure ]
+fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Pass Failure ]
+
 # LayoutTests/fast tests that timeout:
 fast/events/reveal-link-when-focused.html
 fast/forms/validation-message-appearance.html
