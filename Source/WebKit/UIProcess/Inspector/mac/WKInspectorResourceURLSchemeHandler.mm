@@ -38,7 +38,6 @@
 @implementation WKInspectorResourceURLSchemeHandler {
     RetainPtr<NSMapTable<id <WKURLSchemeTask>, NSOperation *>> _fileLoadOperations;
     RetainPtr<NSBundle> _cachedBundle;
-    RetainPtr<NSOperationQueue> _operationQueue;
     
     RetainPtr<NSSet<NSString *>> _allowedURLSchemesForCSP;
     RetainPtr<NSSet<NSURL *>> _mainResourceURLsForCSP;
@@ -66,6 +65,7 @@
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
+    dispatch_assert_queue(dispatch_get_main_queue());
     if (!_cachedBundle) {
         _cachedBundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
 
@@ -77,20 +77,8 @@
     if (!_fileLoadOperations)
         _fileLoadOperations = adoptNS([[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsStrongMemory capacity:5]);
 
-    if (!_operationQueue) {
-        _operationQueue = adoptNS([[NSOperationQueue alloc] init]);
-        _operationQueue.get().underlyingQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
-        _operationQueue.get().qualityOfService = NSOperationQualityOfServiceUserInteractive;
-
-        // The default value (NSOperationQueueDefaultMaxConcurrentOperationCount) results in a large number of threads
-        // that can exceed the soft limit if two Web Inspector instances are being loaded simultaneously.
-        _operationQueue.get().maxConcurrentOperationCount = 4;
-    }
-
     NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_fileLoadOperations removeObjectForKey:urlSchemeTask];
-        });
+        [_fileLoadOperations removeObjectForKey:urlSchemeTask];
 
         NSURL *requestURL = urlSchemeTask.request.URL;
         NSURL *fileURLForRequest = [_cachedBundle URLForResource:requestURL.relativePath withExtension:@""];
@@ -134,18 +122,16 @@
     }];
     
     [_fileLoadOperations setObject:operation forKey:urlSchemeTask];
-    [_operationQueue addOperation:operation];
+    [[NSOperationQueue mainQueue] addOperation:operation];
 }
 
 - (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
-    // Ensure that all blocks with pending removals are dispatched before doing a map lookup.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (NSOperation *operation = [_fileLoadOperations objectForKey:urlSchemeTask]) {
-            [operation cancel];
-            [_fileLoadOperations removeObjectForKey:urlSchemeTask];
-        }
-    });
+    dispatch_assert_queue(dispatch_get_main_queue());
+    if (NSOperation *operation = [_fileLoadOperations objectForKey:urlSchemeTask]) {
+        [operation cancel];
+        [_fileLoadOperations removeObjectForKey:urlSchemeTask];
+    }
 }
 
 @end
