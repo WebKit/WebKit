@@ -1,5 +1,22 @@
 2022-03-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291522. rdar://problem/90124325
+
+    Fix the build (hopefully)
+    
+    * Shared/Cocoa/ArgumentCodersCocoa.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291522 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-19  Tim Horton  <timothy_horton@apple.com>
+
+            Fix the build (hopefully)
+
+            * Shared/Cocoa/ArgumentCodersCocoa.mm:
+
+2022-03-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291518. rdar://problem/90124325
 
     [Cocoa] Teach WebKit how to serialize CGColors
