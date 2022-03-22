@@ -60,7 +60,10 @@ CommandEncoder::CommandEncoder(id<MTLCommandBuffer> commandBuffer, Device& devic
 {
 }
 
-CommandEncoder::~CommandEncoder() = default;
+CommandEncoder::~CommandEncoder()
+{
+    finalizeBlitCommandEncoder();
+}
 
 void CommandEncoder::ensureBlitCommandEncoder()
 {
@@ -70,8 +73,10 @@ void CommandEncoder::ensureBlitCommandEncoder()
 
 void CommandEncoder::finalizeBlitCommandEncoder()
 {
-    if (m_blitCommandEncoder)
+    if (m_blitCommandEncoder) {
         [m_blitCommandEncoder endEncoding];
+        m_blitCommandEncoder = nil;
+    }
 }
 
 RefPtr<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDescriptor& descriptor)

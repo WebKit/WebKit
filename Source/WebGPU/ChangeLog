@@ -1,3 +1,21 @@
+2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Lifetime of CommandEncoder's internal MTLBlitCommandEncoder is not managed correctly
+        https://bugs.webkit.org/show_bug.cgi?id=238167
+
+        Reviewed by Kimmo Kinnunen.
+
+        We lazily create a MTLBlitCommandEncoder inside CommandEncoder to service a few various calls
+        which require one. Metal has some state tracking inside it, such that when objects are destroyed,
+        they have to be in the right state. This patch aligns WebGPU's state tracking and Metal's state
+        tracking.
+
+        Test: api/validation/encoding/programmable/pipeline_bind_group_compat.spec.ts
+
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::~CommandEncoder):
+        (WebGPU::CommandEncoder::finalizeBlitCommandEncoder):
+
 2022-03-21  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] maxAnisotropy > 16 is clamped, rather than illegal
