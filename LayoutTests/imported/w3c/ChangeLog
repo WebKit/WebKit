@@ -1,3 +1,77 @@
+2022-03-21  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r291282. rdar://problem/88857731
+
+    Dialog element only animates once
+    https://bugs.webkit.org/show_bug.cgi?id=236274
+    
+    Reviewed by Dean Jackson, Tim Nguyen and Antti Koivisto.
+    
+    LayoutTests/imported/w3c:
+    
+    Import relevant WPT tests that had already been upstreamed in a previous, reverted
+    version of this patch.
+    
+    * web-platform-tests/css/css-animations/dialog-animation-expected.txt: Added.
+    * web-platform-tests/css/css-animations/dialog-animation.html: Added.
+    * web-platform-tests/css/css-animations/dialog-backdrop-animation-expected.txt: Added.
+    * web-platform-tests/css/css-animations/dialog-backdrop-animation.html: Added.
+    * web-platform-tests/css/css-animations/support/testcommon.js:
+    (addElement):
+    (addDiv):
+    
+    Source/WebCore:
+    
+    Two issues related to CSS Animation surfaced in this bug which animates both <dialog>
+    and its ::backdrop as the dialog is open and eventually re-opened.
+    
+    The first issue was that we didn't clear all CSS Animations state when a <dialog> was
+    closed and its style was set to `display: none`. We now call setAnimationsCreatedByMarkup
+    to correctly clear such state both when we identify a Styleable is newly getting
+    `display: none`. We do the same when cancelDeclarativeAnimations() is called, but also
+    call setCSSAnimationList() on the associated effect stack since that wasn't done either.
+    Now both functions do similar cleanup.
+    
+    This allows us to remove removeCSSAnimationCreatedByMarkup() which did a fair bit of work
+    to clear CSS Animation state per-animation when we only ever used that function for
+    _all_ animations.
+    
+    The second issue was that we never called cancelDeclarativeAnimations() for ::backdrop.
+    We now do that inside of Element::removeFromTopLayer() at a point where the code in
+    Styleable::fromRenderer() will still work as the element will still be contained in
+    Document::topLayerElements().
+    
+    Tests: imported/w3c/web-platform-tests/css/css-animations/dialog-animation.html
+           imported/w3c/web-platform-tests/css/css-animations/dialog-backdrop-animation.html
+    
+    * dom/Element.cpp:
+    (WebCore::Element::removeFromTopLayer):
+    * style/Styleable.cpp:
+    (WebCore::Styleable::cancelDeclarativeAnimations const):
+    (WebCore::Styleable::updateCSSAnimations const):
+    (WebCore::removeCSSAnimationCreatedByMarkup): Deleted.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291282 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-15  Antoine Quint  <graouts@webkit.org>
+
+            Dialog element only animates once
+            https://bugs.webkit.org/show_bug.cgi?id=236274
+
+            Reviewed by Dean Jackson, Tim Nguyen and Antti Koivisto.
+
+            Import relevant WPT tests that had already been upstreamed in a previous, reverted
+            version of this patch.
+
+            * web-platform-tests/css/css-animations/dialog-animation-expected.txt: Added.
+            * web-platform-tests/css/css-animations/dialog-animation.html: Added.
+            * web-platform-tests/css/css-animations/dialog-backdrop-animation-expected.txt: Added.
+            * web-platform-tests/css/css-animations/dialog-backdrop-animation.html: Added.
+            * web-platform-tests/css/css-animations/support/testcommon.js:
+            (addElement):
+            (addDiv):
+
 2022-03-09  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r290556. rdar://problem/89525864
