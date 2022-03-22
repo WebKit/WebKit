@@ -161,12 +161,14 @@ inline bool HTMLDocumentParser::shouldDelayEnd() const
 
 void HTMLDocumentParser::didBeginYieldingParser()
 {
-    m_parserScheduler->didBeginYieldingParser();
+    if (m_parserScheduler)
+        m_parserScheduler->didBeginYieldingParser();
 }
 
 void HTMLDocumentParser::didEndYieldingParser()
 {
-    m_parserScheduler->didEndYieldingParser();
+    if (m_parserScheduler)
+        m_parserScheduler->didEndYieldingParser();
 }
 
 bool HTMLDocumentParser::isParsingFragment() const
