@@ -29,7 +29,21 @@
 
 #include "GraphicsContextGLANGLE.h"
 
+#if USE(NICOSIA)
+namespace Nicosia {
+class GCGLANGLELayer;
+class GCGLLayer;
+}
+
+struct gbm_device;
+struct gbm_bo;
+
+typedef void *EGLImage;
+#endif
+
 namespace WebCore {
+
+class TextureMapperGCGLPlatformLayer;
 
 class WEBCORE_EXPORT GraphicsContextGLTextureMapperANGLE : public GraphicsContextGLANGLE {
 public:
@@ -55,7 +69,56 @@ private:
     bool platformInitializeContext() final;
     bool platformInitialize() final;
 
+    void prepareTextureImpl() final;
+
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
+
+    GCGLuint m_compositorTexture { 0 };
+#if USE(COORDINATED_GRAPHICS)
+    GCGLuint m_intermediateTexture { 0 };
+#endif
+
+#if USE(NICOSIA)
+    std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
+
+    class EGLImageBacking {
+    WTF_MAKE_FAST_ALLOCATED;
+    public:
+        EGLImageBacking(GCGLDisplay);
+        ~EGLImageBacking();
+
+        bool reset(int width, int height, bool hasAlpha);
+
+        EGLImage image() const { return m_image; }
+        int fd() const { return m_FD; }
+
+        uint32_t format() const;
+        uint32_t stride() const;
+
+        bool isReleased();
+    private:
+        void releaseResources();
+
+        GCGLDisplay m_display;
+
+        gbm_bo* m_BO { nullptr };
+        int m_FD { -1 };
+        EGLImage m_image;
+    };
+
+    std::unique_ptr<EGLImageBacking> m_textureBacking;
+    std::unique_ptr<EGLImageBacking> m_compositorTextureBacking;
+    std::unique_ptr<EGLImageBacking> m_intermediateTextureBacking;
+#else
+    std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
+#endif
+
+#if USE(NICOSIA)
+    friend class Nicosia::GCGLANGLELayer;
+    friend class Nicosia::GCGLLayer;
+#else
+    friend class TextureMapperGCGLPlatformLayer;
+#endif
 };
 
 } // namespace WebCore

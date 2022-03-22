@@ -32,6 +32,7 @@
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
 #include "ANGLEHeaders.h"
+#include "GraphicsContextGLTextureMapperANGLE.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
 #include "TextureMapperGL.h"
@@ -92,7 +93,7 @@ void GCGLANGLELayer::swapBuffersIfNeeded()
     m_context.markLayerComposited();
 }
 
-GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLANGLE& context)
+GCGLANGLELayer::GCGLANGLELayer(GraphicsContextGLTextureMapperANGLE& context)
     : m_context(context)
     , m_contentLayer(Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this)))
 {

@@ -1,3 +1,49 @@
+2022-03-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Move TextureMapper member variables, types and code out of GraphicsContextGLANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=238200
+
+        Reviewed by Alejandro G. Castro.
+
+        Move member variables and code specific to the TextureMapper-oriented
+        GraphicsContextGLTextureMapperANGLE class from the parent
+        GraphicsContextGLANGLE class into GraphicsContextGLTextureMapperANGLE.
+
+        This means moving down various member variables and types as well as
+        friendship declarations. For behavior to remain the same, the
+        prepareTextureImpl() method is made virtual and overridden in the
+        TextureMapper class, but otherwise matches the previous behavior.
+
+        Nicosia::GCGLANGLELayer is adjusted to operate on a reference to the
+        derived class, not on the base GraphicsContextGLANGLE.
+
+        No new tests as there's no change in behavior.
+
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::prepareTextureImpl):
+        * platform/graphics/angle/GraphicsContextGLANGLE.h:
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.cpp:
+        (Nicosia::GCGLANGLELayer::GCGLANGLELayer):
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::~GraphicsContextGLANGLE):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::prepareTextureImpl):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::EGLImageBacking):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::~EGLImageBacking):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::format const):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::stride const):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::releaseResources):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::isReleased):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::reset):
+        (WebCore::GraphicsContextGLANGLE::EGLImageBacking::EGLImageBacking): Deleted.
+        (WebCore::GraphicsContextGLANGLE::EGLImageBacking::~EGLImageBacking): Deleted.
+        (WebCore::GraphicsContextGLANGLE::EGLImageBacking::format const): Deleted.
+        (WebCore::GraphicsContextGLANGLE::EGLImageBacking::stride const): Deleted.
+        (WebCore::GraphicsContextGLANGLE::EGLImageBacking::releaseResources): Deleted.
+        (WebCore::GraphicsContextGLANGLE::EGLImageBacking::isReleased): Deleted.
+        (WebCore::GraphicsContextGLANGLE::EGLImageBacking::reset): Deleted.
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h:
+
 2022-03-22  Alejandro G. Castro  <alex@igalia.com>
 
         [WPE][GTK] VideoFrameGStreamer missing include after -r291610 refactor

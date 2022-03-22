@@ -64,8 +64,6 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
     ASSERT_UNUSED(success, success);
     if (m_texture)
         GL_DeleteTextures(1, &m_texture);
-    if (m_compositorTexture)
-        GL_DeleteTextures(1, &m_compositorTexture);
 
     auto attributes = contextAttributes();
 
@@ -79,9 +77,6 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
             GL_DeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
     GL_DeleteFramebuffers(1, &m_fbo);
-#if USE(COORDINATED_GRAPHICS)
-    GL_DeleteTextures(1, &m_intermediateTexture);
-#endif
 }
 
 GCGLDisplay GraphicsContextGLANGLE::platformDisplay() const
@@ -351,6 +346,28 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     return GraphicsContextGLANGLE::platformInitialize();
 }
 
+void GraphicsContextGLTextureMapperANGLE::prepareTextureImpl()
+{
+    ASSERT(!m_layerComposited);
+
+    if (contextAttributes().antialias)
+        resolveMultisamplingIfNecessary();
+
+    std::swap(m_texture, m_compositorTexture);
+#if USE(COORDINATED_GRAPHICS)
+    std::swap(m_texture, m_intermediateTexture);
+    std::swap(m_textureBacking, m_compositorTextureBacking);
+    std::swap(m_textureBacking, m_intermediateTextureBacking);
+#endif
+
+    GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
+    GL_Flush();
+
+    if (m_state.boundDrawFBO != m_fbo)
+        GL_BindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_state.boundDrawFBO);
+}
+
 void GraphicsContextGLTextureMapperANGLE::setContextVisibility(bool)
 {
 }
@@ -409,32 +426,32 @@ void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
 }
 
 #if USE(NICOSIA)
-GraphicsContextGLANGLE::EGLImageBacking::EGLImageBacking(GCGLDisplay display)
+GraphicsContextGLTextureMapperANGLE::EGLImageBacking::EGLImageBacking(GCGLDisplay display)
     : m_display(display)
     , m_image(EGL_NO_IMAGE)
 {
 }
 
-GraphicsContextGLANGLE::EGLImageBacking::~EGLImageBacking()
+GraphicsContextGLTextureMapperANGLE::EGLImageBacking::~EGLImageBacking()
 {
     releaseResources();
 }
 
-uint32_t GraphicsContextGLANGLE::EGLImageBacking::format() const
+uint32_t GraphicsContextGLTextureMapperANGLE::EGLImageBacking::format() const
 {
     if (m_BO)
         return gbm_bo_get_format(m_BO);
     return 0;
 }
 
-uint32_t GraphicsContextGLANGLE::EGLImageBacking::stride() const
+uint32_t GraphicsContextGLTextureMapperANGLE::EGLImageBacking::stride() const
 {
     if (m_BO)
         return gbm_bo_get_stride(m_BO);
     return 0;
 }
 
-void GraphicsContextGLANGLE::EGLImageBacking::releaseResources()
+void GraphicsContextGLTextureMapperANGLE::EGLImageBacking::releaseResources()
 {
     if (m_BO) {
         gbm_bo_destroy(m_BO);
@@ -450,12 +467,12 @@ void GraphicsContextGLANGLE::EGLImageBacking::releaseResources()
     }
 }
 
-bool GraphicsContextGLANGLE::EGLImageBacking::isReleased()
+bool GraphicsContextGLTextureMapperANGLE::EGLImageBacking::isReleased()
 {
     return !m_BO;
 }
 
-bool GraphicsContextGLANGLE::EGLImageBacking::reset(int width, int height, bool hasAlpha)
+bool GraphicsContextGLTextureMapperANGLE::EGLImageBacking::reset(int width, int height, bool hasAlpha)
 {
     releaseResources();
 
