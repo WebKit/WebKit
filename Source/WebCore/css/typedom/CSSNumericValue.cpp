@@ -43,6 +43,7 @@
 #include "CSSNumericType.h"
 #include "CSSUnitValue.h"
 #include "ExceptionOr.h"
+#include <wtf/Algorithms.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

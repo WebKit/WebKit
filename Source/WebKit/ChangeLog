@@ -1,3 +1,9 @@
+2022-03-22  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix non-unified build after r291589
+
+        * NetworkProcess/NetworkBroadcastChannelRegistry.cpp:
+
 2022-03-22  Youenn Fablet  <youenn@apple.com>
 
         Website policies are not respected when doing COOP based process swap

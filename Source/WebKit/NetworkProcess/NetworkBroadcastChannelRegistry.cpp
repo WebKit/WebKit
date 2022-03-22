@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NetworkBroadcastChannelRegistry.h"
 
+#include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
 #include "WebBroadcastChannelRegistryMessages.h"
 #include <WebCore/MessageWithMessagePorts.h>
