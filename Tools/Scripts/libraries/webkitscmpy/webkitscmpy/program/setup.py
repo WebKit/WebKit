@@ -80,43 +80,51 @@ class Setup(Command):
 
     @classmethod
     def git(cls, args, repository, additional_setup=None, hooks=None, **kwargs):
+        local_config = repository.config()
         global_config = local.Git.config()
         result = 0
 
-        email = os.environ.get('EMAIL_ADDRESS') or global_config.get('user.email')
+        email = os.environ.get('EMAIL_ADDRESS') or global_config.get('user.email') or local_config.get('user.email')
         log.info('Setting git user email for {}...'.format(repository.root_path))
-        if not email or args.defaults is False or (not args.defaults and Terminal.choose(
+        if not email or args.defaults is False or (not args.defaults and args.all and Terminal.choose(
             "Set '{}' as the git user email for this repository".format(email),
             default='Yes',
         ) == 'No'):
             email = Terminal.input('Enter git user email for this repository: ')
 
-        if run(
-            [local.Git.executable(), 'config', 'user.email', email], capture_output=True, cwd=repository.root_path,
-        ).returncode:
-            sys.stderr.write('Failed to set the git user email to {} for this repository\n'.format(email))
-            result += 1
+        if email != local_config.get('user.email'):
+            if run(
+                [local.Git.executable(), 'config', 'user.email', email], capture_output=True, cwd=repository.root_path,
+            ).returncode:
+                sys.stderr.write('Failed to set the git user email to {} for this repository\n'.format(email))
+                result += 1
+            else:
+                log.info("Set git user email to '{}' for this repository".format(email))
         else:
-            log.info("Set git user email to '{}' for this repository".format(email))
+            log.info("Skipped setting email to '{}', it's already set for this repository".format(email))
 
-        name = repository.contributors.get(email)
-        if name:
-            name = name.name
+        contributor = repository.contributors.get(email)
+        if contributor:
+            name = contributor.name
         else:
-            name = global_config.get('user.name')
+            name = global_config.get('user.name') or local_config.get('user.name')
         log.info('Setting git user name for {}...'.format(repository.root_path))
-        if not name or args.defaults is False or (not args.defaults and Terminal.choose(
+        if not name or args.defaults is False or (not args.defaults and args.all and Terminal.choose(
             "Set '{}' as the git user name for this repository".format(name),
             default='Yes',
         ) == 'No'):
             name = Terminal.input('Enter git user name for this repository: ')
-        if run(
-            [local.Git.executable(), 'config', 'user.name', name], capture_output=True, cwd=repository.root_path,
-        ).returncode:
-            sys.stderr.write('Failed to set the git user name to {} for this repository\n'.format(name))
-            result += 1
+
+        if name != local_config.get('user.name'):
+            if run(
+                [local.Git.executable(), 'config', 'user.name', name], capture_output=True, cwd=repository.root_path,
+            ).returncode:
+                sys.stderr.write('Failed to set the git user name to {} for this repository\n'.format(name))
+                result += 1
+            else:
+                log.info("Set git user name to '{}' for this repository".format(name))
         else:
-            log.info("Set git user name to '{}' for this repository".format(name))
+            log.info("Skipped setting name to '{}', it's already set for this repository".format(name))
 
         if repository.metadata and os.path.isfile(os.path.join(repository.metadata, local.Git.GIT_CONFIG_EXTENSION)):
             log.info('Adding project git config to repository config...')
@@ -139,15 +147,18 @@ class Setup(Command):
         ).returncode
         log.info('Set better Objective-C diffing behavior for this repository!')
 
-        if args.defaults or Terminal.choose(
+        commands_to_color = ('color.status', 'color.diff', 'color.branch')
+        need_prompt_color = args.all or any([not local_config.get(command) for command in commands_to_color])
+        if args.defaults or (need_prompt_color and Terminal.choose(
             'Auto-color status, diff, and branch for this repository?',
-            default='Yes',
-        ) == 'Yes':
-            for command in ('status', 'diff', 'branch'):
-                result += run(
-                    [local.Git.executable(), 'config', 'color.{}'.format(command), 'auto'],
-                    capture_output=True, cwd=repository.root_path,
-                ).returncode
+            default='Yes', options=('Yes', 'Skip'),
+        ) == 'Yes'):
+            for command in commands_to_color:
+                if not local_config.get(command):
+                    result += run(
+                        [local.Git.executable(), 'config', command, 'auto'],
+                        capture_output=True, cwd=repository.root_path,
+                    ).returncode
 
         if args.merge is None:
             args.merge = repository.config(location='project')['pull.rebase'] == 'false'
@@ -159,24 +170,25 @@ class Setup(Command):
             sys.stderr.write('Failed to use {} as the merge strategy for this repository\n'.format('merge commits' if args.merge else 'rebase'))
             result += 1
 
-        if repository.config(location='project')['webkitscmpy.history'] == 'never':
-            pr_history = 'never'
-        elif repository.config(location='project')['webkitscmpy.pull-request'] != 'overwrite':
-            pr_history = None
-        elif args.defaults:
-            pr_history = repository.config(location='project')['webkitscmpy.history']
-        else:
-            pr_history = Terminal.choose(
-                'Would you like to create new branches to retain history when you overwrite\na pull request branch?',
-                default=repository.config(location='project')['webkitscmpy.history'],
-                options=repository.PROJECT_CONFIG_OPTIONS['webkitscmpy.history'],
-            )
-        if pr_history and run(
-            [local.Git.executable(), 'config', 'webkitscmpy.history', pr_history],
-            capture_output=True, cwd=repository.root_path,
-        ).returncode:
-            sys.stderr.write("Failed to set '{}' as the default history management approach\n".format(pr_history))
-            result += 1
+        if args.all or not local_config.get('webkitscmpy.history'):
+            if repository.config(location='project')['webkitscmpy.history'] == 'never':
+                pr_history = 'never'
+            elif repository.config(location='project')['webkitscmpy.pull-request'] != 'overwrite':
+                pr_history = None
+            elif args.defaults:
+                pr_history = repository.config(location='project')['webkitscmpy.history']
+            else:
+                pr_history = Terminal.choose(
+                    'Would you like to create new branches to retain history when you overwrite\na pull request branch?',
+                    default=repository.config(location='project')['webkitscmpy.history'],
+                    options=repository.PROJECT_CONFIG_OPTIONS['webkitscmpy.history'],
+                )
+            if pr_history and run(
+                [local.Git.executable(), 'config', 'webkitscmpy.history', pr_history],
+                capture_output=True, cwd=repository.root_path,
+            ).returncode:
+                sys.stderr.write("Failed to set '{}' as the default history management approach\n".format(pr_history))
+                result += 1
 
         if hooks:
             for hook in os.listdir(hooks):
@@ -200,24 +212,25 @@ class Setup(Command):
                     f.write('\n')
                 os.chmod(target, 0o775)
 
-        log.info('Setting git editor for {}...'.format(repository.root_path))
-        editor_name = 'default' if args.defaults else Terminal.choose(
-            'Pick a commit message editor for this repository',
-            options=['default'] + [program.name for program in Editor.programs()],
-            default='default',
-            numbered=True,
-        )
-        if editor_name == 'default':
-            log.info('Using the default git editor for this repository')
-        elif run(
-            [local.Git.executable(), 'config', 'core.editor', ' '.join([arg.replace(' ', '\\ ') for arg in Editor.by_name(editor_name).wait])],
-            capture_output=True,
-            cwd=repository.root_path,
-        ).returncode:
-            sys.stderr.write('Failed to set the git editor to {} for this repository\n'.format(editor_name))
-            result += 1
-        else:
-            log.info("Set git editor to '{}' for this repository".format(editor_name))
+        if args.all or not local_config.get('core.editor'):
+            log.info('Setting git editor for {}...'.format(repository.root_path))
+            editor_name = 'default' if args.defaults else Terminal.choose(
+                'Pick a commit message editor for this repository',
+                options=['default'] + [program.name for program in Editor.programs()],
+                default='default',
+                numbered=True,
+            )
+            if editor_name == 'default':
+                log.info('Using the default git editor for this repository')
+            elif run(
+                [local.Git.executable(), 'config', 'core.editor', ' '.join([arg.replace(' ', '\\ ') for arg in Editor.by_name(editor_name).wait])],
+                capture_output=True,
+                cwd=repository.root_path,
+            ).returncode:
+                sys.stderr.write('Failed to set the git editor to {} for this repository\n'.format(editor_name))
+                result += 1
+            else:
+                log.info("Set git editor to '{}' for this repository".format(editor_name))
 
         # Pushing to http repositories is difficult, offer to change http checkouts to ssh
         http_remote = local.Git.HTTP_REMOTE.match(repository.url())
@@ -297,6 +310,10 @@ class Setup(Command):
         parser.add_argument(
             '--merge', '--no-merge', action=arguments.NoAction, default=None,
             help='Use a merge-commit workflow instead of a rebase workflow',
+        )
+        parser.add_argument(
+            '--all', '-a', action='store_true', default=False,
+            help='Prompt the user for all options, do not assume responses from the current configuration',
         )
 
     @classmethod

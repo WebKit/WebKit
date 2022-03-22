@@ -68,6 +68,7 @@ Created a private fork of 'WebKit' belonging to 'username'!
         )
 
     def test_git(self):
+        self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, \
             mocks.local.Svn(), wkmocks.Environment(EMAIL_ADDRESS=''):
 
@@ -94,9 +95,9 @@ Created a private fork of 'WebKit' belonging to 'username'!
         self.assertEqual(
             captured.root.log.getvalue(),
             '''Setting git user email for {repository}...
-Set git user email to 'tapple@webkit.org' for this repository
+Skipped setting email to 'tapple@webkit.org', it's already set for this repository
 Setting git user name for {repository}...
-Set git user name to 'Tim Apple' for this repository
+Skipped setting name to 'Tim Apple', it's already set for this repository
 No project git config found, continuing
 Setting better Objective-C diffing behavior for this repository...
 Set better Objective-C diffing behavior for this repository!
@@ -109,14 +110,14 @@ Using the default git editor for this repository
     def test_github_checkout(self):
         self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub() as remote, \
-            MockTerminal.input('n', 'n', 'committer@webkit.org', 'n', 'Committer', 'n', 'overwrite', 'disabled', '1', 'y', 'y'), \
+            MockTerminal.input('n', 'n', 'committer@webkit.org', 'n', 'Committer', 's', 'overwrite', 'disabled', '1', 'y', 'y'), \
             mocks.local.Git(self.path, remote='https://{}.git'.format(remote.remote)) as repo, \
             wkmocks.Environment(EMAIL_ADDRESS=''):
 
             self.assertEqual('https://github.example.com/WebKit/WebKit.git', local.Git(self.path).url())
 
             self.assertEqual(0, program.main(
-                args=('setup', '-v'),
+                args=('setup', '-v', '-a'),
                 path=self.path,
             ))
 
@@ -138,7 +139,7 @@ Set 'tapple@webkit.org' as the git user email for this repository ([Yes]/No):
 Enter git user email for this repository: 
 Set 'Tim Apple' as the git user name for this repository ([Yes]/No): 
 Enter git user name for this repository: 
-Auto-color status, diff, and branch for this repository? ([Yes]/No): 
+Auto-color status, diff, and branch for this repository? ([Yes]/Skip): 
 Would you like to create new branches to retain history when you overwrite
 a pull request branch? ([when-user-owned]/disabled/always/never): 
 Pick a commit message editor for this repository:
