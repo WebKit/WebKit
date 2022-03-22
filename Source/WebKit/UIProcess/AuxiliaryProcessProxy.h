@@ -165,6 +165,8 @@ protected:
 
     virtual bool shouldSendPendingMessage(const PendingMessage&) { return true; }
 
+    void beginResponsivenessChecks();
+
     // ResponsivenessTimer::Client.
     void didBecomeUnresponsive() override;
     void didBecomeResponsive() override { }
@@ -182,8 +184,9 @@ private:
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_alwaysRunsAtBackgroundPriority { false };
+    bool m_didBeginResponsivenessChecks { false };
     WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
-    std::optional<UseLazyStop> m_shouldStartResponsivenessTimerWhenLaunched;
+    std::optional<UseLazyStop> m_delayedResponsivenessCheck;
 };
 
 template<typename T>

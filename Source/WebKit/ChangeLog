@@ -1,5 +1,72 @@
 2022-03-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291182. rdar://problem/88226412
+
+    Delay responsiveness checks for the Network Process until it has finished initialization
+    https://bugs.webkit.org/show_bug.cgi?id=237782
+    <rdar://88226412>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Delay responsiveness checks for the Network Process until it has finished initialization.
+    Network process initialization can be slow but we have evidence that it is not truly
+    hung since we see network process terminations right as the network process is initiating
+    the WebProcess connection later on.
+    
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::initializeNetworkProcess):
+    * NetworkProcess/NetworkProcess.h:
+    * NetworkProcess/NetworkProcess.messages.in:
+    * UIProcess/AuxiliaryProcessProxy.cpp:
+    (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+    (WebKit::AuxiliaryProcessProxy::beginResponsivenessChecks):
+    (WebKit::AuxiliaryProcessProxy::startResponsivenessTimer):
+    * UIProcess/AuxiliaryProcessProxy.h:
+    * UIProcess/GPU/GPUProcessProxy.cpp:
+    (WebKit::GPUProcessProxy::didFinishLaunching):
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+    * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+    (WebKit::WebAuthnProcessProxy::didFinishLaunching):
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::didFinishLaunching):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291182 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-11  Chris Dumez  <cdumez@apple.com>
+
+            Delay responsiveness checks for the Network Process until it has finished initialization
+            https://bugs.webkit.org/show_bug.cgi?id=237782
+            <rdar://88226412>
+
+            Reviewed by Geoffrey Garen.
+
+            Delay responsiveness checks for the Network Process until it has finished initialization.
+            Network process initialization can be slow but we have evidence that it is not truly
+            hung since we see network process terminations right as the network process is initiating
+            the WebProcess connection later on.
+
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::initializeNetworkProcess):
+            * NetworkProcess/NetworkProcess.h:
+            * NetworkProcess/NetworkProcess.messages.in:
+            * UIProcess/AuxiliaryProcessProxy.cpp:
+            (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+            (WebKit::AuxiliaryProcessProxy::beginResponsivenessChecks):
+            (WebKit::AuxiliaryProcessProxy::startResponsivenessTimer):
+            * UIProcess/AuxiliaryProcessProxy.h:
+            * UIProcess/GPU/GPUProcessProxy.cpp:
+            (WebKit::GPUProcessProxy::didFinishLaunching):
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::sendCreationParametersToNewProcess):
+            * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+            (WebKit::WebAuthnProcessProxy::didFinishLaunching):
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::didFinishLaunching):
+
+2022-03-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291006. rdar://problem/85361911
 
     The accessibility library should be soft linked optionally
