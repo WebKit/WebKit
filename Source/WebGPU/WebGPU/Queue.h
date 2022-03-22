@@ -64,11 +64,20 @@ private:
     Queue(id<MTLCommandQueue>, Device&);
 
     bool validateSubmit() const;
+    bool validateWriteBuffer(const Buffer&, uint64_t bufferOffset, size_t) const;
+
+    void ensureBlitCommandEncoder();
+    void finalizeBlitCommandEncoder();
+
+    void commitMTLCommandBuffer(id<MTLCommandBuffer>);
+    bool isIdle() const { return m_submittedCommandBufferCount == m_completedCommandBufferCount; }
 
     // This can be called on a background thread.
     void scheduleWork(Instance::WorkItem&&);
 
     const id<MTLCommandQueue> m_commandQueue { nil };
+    id<MTLCommandBuffer> m_commandBuffer { nil };
+    id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
     Device& m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
 
     uint64_t m_submittedCommandBufferCount { 0 };

@@ -1,5 +1,45 @@
 2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement Queue::writeBuffer()
+        https://bugs.webkit.org/show_bug.cgi?id=238194
+
+        Reviewed by Kimmo Kinnunen.
+
+        The semantics of writeBuffer() are that the data should be written, but specifically
+        at the current point in the queue. So, we can't just naively memcpy(), for 2 reasons:
+        1. If the buffer is in-use, memcpy() will clobber its current contents, leading to
+                corruption. Instead, it's supposed to populate the buffer at the current point
+                in the queue, as-if it was a queue item.
+        2. If the buffer is a private buffer, we can't memcpy() to it anyway
+
+        So, the implementation of this function first tries to see if we can memcpy(): if the
+        buffer is shared or managed, and if the queue is idle. If it can, then it does so, but
+        if it can't, it creates a temporary buffer and enqueues a queue command to copy the
+        contents of the temporary buffer into the destination buffer.
+
+        That copy command is part of a lazily created command buffer.
+
+        Test: api/validation/queue/writeBuffer.spec.ts
+
+        * WebGPU/Buffer.h:
+        (WebGPU::Buffer::state const):
+        * WebGPU/Device.h:
+        (WebGPU::Device::device const):
+        * WebGPU/Queue.h:
+        (WebGPU::Queue::isIdle const):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::~Queue):
+        (WebGPU::Queue::ensureBlitCommandEncoder):
+        (WebGPU::Queue::finalizeBlitCommandEncoder):
+        (WebGPU::Queue::onSubmittedWorkDone):
+        (WebGPU::Queue::commitMTLCommandBuffer):
+        (WebGPU::Queue::submit):
+        (WebGPU::validateWriteBufferInitial):
+        (WebGPU::Queue::validateWriteBuffer const):
+        (WebGPU::Queue::writeBuffer):
+
+2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Remove the double pointer indirection in front of all objects
         https://bugs.webkit.org/show_bug.cgi?id=238001
 

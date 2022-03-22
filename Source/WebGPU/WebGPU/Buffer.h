@@ -76,6 +76,7 @@ public:
     id<MTLBuffer> buffer() const { return m_buffer; }
     uint64_t size() const { return m_size; }
     WGPUBufferUsageFlags usage() const { return m_usage; }
+    State state() const { return m_state; }
 
 private:
     Buffer(id<MTLBuffer>, uint64_t size, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);

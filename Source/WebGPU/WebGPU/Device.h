@@ -89,6 +89,8 @@ public:
     void setUncapturedErrorCallback(Function<void(WGPUErrorType, String&&)>&&);
     void setLabel(String&&);
 
+    id<MTLDevice> device() const { return m_device; }
+
     void generateAValidationError(String&& message);
 
     Instance& instance() const { return m_instance; }
