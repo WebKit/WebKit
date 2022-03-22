@@ -1,3 +1,12 @@
+2022-03-22  Matteo Flores  <matteo_flores@apple.com>
+
+        REGRESSION(r289402-r289376): [ Debug iOS ] webgl/1.0.3/conformance/uniforms/uniform-samplers-test.html is a constant timeout
+        https://bugs.webkit.org/show_bug.cgi?id=237694
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2022-03-22  Robert Jenner  <Jenner@apple.com>
 
         imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html fails (221819)
