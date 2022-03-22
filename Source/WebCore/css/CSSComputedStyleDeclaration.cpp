@@ -4034,10 +4034,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         case CSSPropertyBorderBlockColor:
             return getCSSPropertyValuesFor2SidesShorthand(borderBlockColorShorthand());
-        case CSSPropertyBorderBlockEnd:
-            return getCSSPropertyValuesForShorthandProperties(borderBlockEndShorthand());
-        case CSSPropertyBorderBlockStart:
-            return getCSSPropertyValuesForShorthandProperties(borderBlockStartShorthand());
         case CSSPropertyBorderBlockStyle:
             return getCSSPropertyValuesFor2SidesShorthand(borderBlockStyleShorthand());
         case CSSPropertyBorderBlockWidth:
@@ -4058,10 +4054,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         case CSSPropertyBorderInlineColor:
             return getCSSPropertyValuesFor2SidesShorthand(borderInlineColorShorthand());
-        case CSSPropertyBorderInlineEnd:
-            return getCSSPropertyValuesForShorthandProperties(borderInlineEndShorthand());
-        case CSSPropertyBorderInlineStart:
-            return getCSSPropertyValuesForShorthandProperties(borderInlineStartShorthand());
         case CSSPropertyBorderInlineStyle:
             return getCSSPropertyValuesFor2SidesShorthand(borderInlineStyleShorthand());
         case CSSPropertyBorderInlineWidth:
@@ -4213,17 +4205,21 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             break;
 
         /* Directional properties are resolved by resolveDirectionAwareProperty() before the switch. */
+        case CSSPropertyBorderBlockEnd:
         case CSSPropertyBorderBlockEndColor:
         case CSSPropertyBorderBlockEndStyle:
         case CSSPropertyBorderBlockEndWidth:
+        case CSSPropertyBorderBlockStart:
         case CSSPropertyBorderBlockStartColor:
         case CSSPropertyBorderBlockStartStyle:
         case CSSPropertyBorderBlockStartWidth:
-        case CSSPropertyBorderEndEndRadius:
-        case CSSPropertyBorderEndStartRadius:
+        case CSSPropertyBorderEndEndRadius:        
+        case CSSPropertyBorderEndStartRadius:        
+        case CSSPropertyBorderInlineEnd:
         case CSSPropertyBorderInlineEndColor:
         case CSSPropertyBorderInlineEndStyle:
         case CSSPropertyBorderInlineEndWidth:
+        case CSSPropertyBorderInlineStart:
         case CSSPropertyBorderInlineStartColor:
         case CSSPropertyBorderInlineStartStyle:
         case CSSPropertyBorderInlineStartWidth:

@@ -48,6 +48,11 @@ namespace Style {
 
 static const CSSPropertyID firstLowPriorityProperty = static_cast<CSSPropertyID>(lastHighPriorityProperty + 1);
 
+inline PropertyCascade::Direction directionFromStyle(const RenderStyle& style)
+{
+    return { style.direction(), style.writingMode() };
+}
+
 inline bool isValidVisitedLinkProperty(CSSPropertyID id)
 {
     switch (id) {
@@ -76,7 +81,7 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
 }
 
 Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, CascadeLevel cascadeLevel, PropertyCascade::IncludedProperties includedProperties)
-    : m_cascade(matchResult, cascadeLevel, includedProperties)
+    : m_cascade(matchResult, cascadeLevel, includedProperties, directionFromStyle(style))
     , m_state(*this, style, WTFMove(context))
 {
 }
@@ -268,8 +273,8 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
     auto valueToApply = resolveValue(id, value);
 
     if (CSSProperty::isDirectionAwareProperty(id)) {
-        auto& style = m_state.style();
-        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, style.direction(), style.writingMode());
+        auto direction = m_cascade.direction();
+        CSSPropertyID newId = CSSProperty::resolveDirectionAwareProperty(id, direction.textDirection, direction.writingMode);
         ASSERT(newId != id);
         return applyProperty(newId, valueToApply.get(), linkMatchMask);
     }
@@ -315,19 +320,6 @@ void Builder::applyProperty(CSSPropertyID id, CSSValue& value, SelectorChecker::
                 auto& property = rollbackCascade->property(id);
                 applyRollbackCascadeProperty(property, linkMatchMask);
                 return;
-            } else if (CSSProperty::isInLogicalPropertyGroup(id)) {
-                ASSERT(!CSSProperty::isDirectionAwareProperty(id));
-                auto& style = m_state.style();
-                auto logicalId = CSSProperty::unresolvePhysicalProperty(id, style.direction(), style.writingMode());
-                bool hasPhysical = rollbackCascade->hasDeferredProperty(id);
-                bool hasLogical = rollbackCascade->hasDeferredProperty(logicalId);
-                if (hasPhysical || hasLogical) {
-                    if (hasLogical && (!hasPhysical || rollbackCascade->areDeferredInOrder(id, logicalId)))
-                        id = logicalId;
-                    auto& property = rollbackCascade->deferredProperty(id);
-                    applyRollbackCascadeProperty(property, linkMatchMask);
-                    return;
-                }
             } else if (rollbackCascade->hasDeferredProperty(id)) {
                 auto& property = rollbackCascade->deferredProperty(id);
                 applyRollbackCascadeProperty(property, linkMatchMask);
