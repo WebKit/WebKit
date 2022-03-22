@@ -31,6 +31,13 @@
 
         tf.focus();
         document.execCommand("SelectAll");
+
+        var couldCopy = document.execCommand("Copy");
+        if (!couldCopy) {
+            testFailed('Could not copy text from "AutoFilledAndViewable" field.');
+            return;
+        }
+
         document.execCommand("Delete");
 
         // Colors should be restored.

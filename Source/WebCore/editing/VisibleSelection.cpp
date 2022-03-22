@@ -683,6 +683,13 @@ bool VisibleSelection::isInPasswordField() const
     return is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(*textControl).isPasswordField();
 }
 
+bool VisibleSelection::isInAutoFilledAndViewableField() const
+{
+    if (auto* input = dynamicDowncast<HTMLInputElement>(enclosingTextFormControl(start())))
+        return input->isAutoFilledAndViewable();
+    return false;
+}
+
 #if ENABLE(TREE_DEBUGGING)
 
 void VisibleSelection::debugPosition() const

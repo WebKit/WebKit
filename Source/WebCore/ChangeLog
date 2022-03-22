@@ -1,3 +1,16 @@
+2022-03-22  Ricky Mondello  <rmondello@apple.com>
+
+        It should be possible to copy text out of "AutoFilledAndViewable" password fields
+        https://bugs.webkit.org/show_bug.cgi?id=238160
+
+        Reviewed by Geoffrey Garen.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::canCopy const): Allow copy in AutoFilledAndViewable password fields.
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::isInAutoFilledAndViewableField const): Added.
+        * editing/VisibleSelection.h: Declare member function.
+
 2022-03-22  Jer Noble  <jer.noble@apple.com>
 
         Fetching a Blob URL with an unbounded Range header do not generate a Content-Range response header

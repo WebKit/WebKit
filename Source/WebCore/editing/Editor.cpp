@@ -507,7 +507,7 @@ bool Editor::canCopy() const
     if (imageElementFromImageDocument(document()))
         return true;
     const VisibleSelection& selection = m_document.selection().selection();
-    return selection.isRange() && !selection.isInPasswordField();
+    return selection.isRange() && (!selection.isInPasswordField() || selection.isInAutoFilledAndViewableField());
 }
 
 bool Editor::canPaste() const
