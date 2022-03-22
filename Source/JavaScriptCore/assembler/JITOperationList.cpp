@@ -66,11 +66,11 @@ SUPPRESS_ASAN ALWAYS_INLINE void JITOperationList::addPointers(const JITOperatio
         return;
     }
 #endif
-    if constexpr (ASSERT_ENABLED) {
+    if constexpr (JIT_OPERATION_VALIDATION_ASSERT_ENABLED) {
         for (const auto* current = begin; current != end; ++current) {
             void* operation = removeCodePtrTag(current->operation);
             if (operation) {
-                void* validator = removeCodePtrTag(current->operationWithValidation);
+                void* validator = removeCodePtrTag(Options::useJITCage() ? current->operationWithValidation : current->operation);
                 validator = WTF::tagNativeCodePtrImpl<OperationPtrTag>(validator);
                 map.add(operation, validator);
                 JSC_REGISTER_INVERSE_JIT_CAGED_POINTER_FOR_DEBUG(validator, operation);
