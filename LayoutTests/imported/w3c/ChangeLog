@@ -1,5 +1,45 @@
 2022-03-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291303. rdar://problem/72432683
+
+    background-clip:text doesn't work with display:flex
+    https://bugs.webkit.org/show_bug.cgi?id=169125
+    <rdar://problem/72432683>
+    
+    Reviewed by Simon Fraser.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex-expected.html: Added.
+    * web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex-ref.html: Added.
+    * web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex.html: Added.
+    
+    Source/WebCore:
+    
+    Tests: imported/w3c/web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex.html
+    
+    * rendering/RenderElement.cpp:
+    (WebCore::RenderElement::paintAsInlineBlock):
+    
+    Flexbox children paint as inline blocks. This path didn't support text clip paint phase.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291303 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-15  Antti Koivisto  <antti@apple.com>
+
+            background-clip:text doesn't work with display:flex
+            https://bugs.webkit.org/show_bug.cgi?id=169125
+            <rdar://problem/72432683>
+
+            Reviewed by Simon Fraser.
+
+            * web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex-expected.html: Added.
+            * web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex-ref.html: Added.
+            * web-platform-tests/css/css-backgrounds/background-clip/clip-text-flex.html: Added.
+
+2022-03-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291282. rdar://problem/88857731
 
     Dialog element only animates once
