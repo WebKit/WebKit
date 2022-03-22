@@ -1,5 +1,34 @@
 2022-03-22  J Pascoe  <j_pascoe@apple.com>
 
+        [WebAuthn] Pass along timeout to ASA and ignore timeout for conditional mediation requests
+        https://bugs.webkit.org/show_bug.cgi?id=238147
+        rdar://90509464
+
+        Reviewed by Brent Fulgham.
+
+        Currently we don't pass the timeout from the rp into ASA, so the default timeout is always used.
+        This patch starts passing along the timeout to ASA, and creates a place for ASA to specify the
+        mediation of the request, so we can ignore the timeout for requests using conditional mediation.
+
+        Modified API test.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.mm:
+        (toWebCore):
+        (-[_WKWebAuthenticationPanel makeCredentialWithMediationRequirement:clientDataHash:options:completionHandler:]):
+        (-[_WKWebAuthenticationPanel makeCredentialWithClientDataHash:options:completionHandler:]):
+        (-[_WKWebAuthenticationPanel getAssertionWithMediationRequirement:clientDataHash:options:completionHandler:]):
+        (-[_WKWebAuthenticationPanel getAssertionWithClientDataHash:options:completionHandler:]):
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::respondReceived):
+        (WebKit::AuthenticatorManager::initTimeOutTimer):
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::configureRegistrationRequestContext):
+        (WebKit::configureAssertionOptions):
+
+2022-03-22  J Pascoe  <j_pascoe@apple.com>
+
         [WebAuthn] Support getAssertion for virtual HID authenticators
         https://bugs.webkit.org/show_bug.cgi?id=238154
         rdar://problem/90593150

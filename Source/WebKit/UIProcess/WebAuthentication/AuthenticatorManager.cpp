@@ -281,7 +281,7 @@ void AuthenticatorManager::serviceStatusUpdated(WebAuthenticationStatus status)
 void AuthenticatorManager::respondReceived(Respond&& respond)
 {
     ASSERT(RunLoop::isMain());
-    if (!m_requestTimeOutTimer.isActive())
+    if (!m_requestTimeOutTimer.isActive() && (m_pendingRequestData.mediation != WebCore::CredentialRequestOptions::MediationRequirement::Conditional || !m_pendingCompletionHandler))
         return;
     ASSERT(m_pendingCompletionHandler);
 
@@ -425,6 +425,8 @@ void AuthenticatorManager::startDiscovery(const TransportSet& transports)
 
 void AuthenticatorManager::initTimeOutTimer()
 {
+    if (m_pendingRequestData.mediation == WebCore::CredentialRequestOptions::MediationRequirement::Conditional)
+        return;
     std::optional<unsigned> timeOutInMs;
     WTF::switchOn(m_pendingRequestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
         timeOutInMs = options.timeout;

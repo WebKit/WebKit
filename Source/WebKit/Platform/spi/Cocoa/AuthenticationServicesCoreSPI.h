@@ -164,6 +164,7 @@ typedef NS_ENUM(NSUInteger, ASCPublicKeyCredentialKind) {
 @property (nonatomic, nullable, copy) NSData *clientDataHash;
 @property (nonatomic, nullable, readonly, copy) NSString *userVerificationPreference;
 @property (nonatomic, nullable, copy) ASCWebAuthenticationExtensionsClientInputs *extensions;
+@property (nonatomic, nullable, copy) NSNumber *timeout;
 
 @property (nonatomic, nullable, readonly, copy) NSArray<ASCPublicKeyCredentialDescriptor *> *allowedCredentials;
 
@@ -194,6 +195,7 @@ typedef NS_OPTIONS(NSUInteger, ASCCredentialRequestTypes) {
 @property (nonatomic, nullable, copy) NSString *userVerificationPreference;
 @property (nonatomic, nullable, copy) NSString *attestationPreference;
 @property (nonatomic, nullable, copy) ASCWebAuthenticationExtensionsClientInputs *extensions;
+@property (nonatomic, nullable, copy) NSNumber *timeout;
 
 @property (nonatomic) BOOL shouldRequireResidentKey;
 @property (nonatomic, copy) NSArray<ASCPublicKeyCredentialDescriptor *> *excludedCredentials;

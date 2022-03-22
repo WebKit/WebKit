@@ -1,3 +1,16 @@
+2022-03-22  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Pass along timeout to ASA and ignore timeout for conditional mediation requests
+        https://bugs.webkit.org/show_bug.cgi?id=238147
+        rdar://90509464
+
+        Reviewed by Brent Fulgham.
+
+        Modify API test to use new SPI.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2022-03-21  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Add ValidateCommitterAndReviewer
