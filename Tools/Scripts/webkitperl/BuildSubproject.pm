@@ -37,7 +37,7 @@ use webkitperl::FeatureList qw(getFeatureOptionList);
 use POSIX;
 use Text::ParseWords;
 
-sub writeCongrats();
+sub writeCongrats;
 
 prohibitUnknownPort();
 

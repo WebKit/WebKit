@@ -1,3 +1,14 @@
+2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Squelch warning message from output of build-jsc
+        https://bugs.webkit.org/show_bug.cgi?id=238177
+
+        Reviewed by Saam Barati.
+
+        There was a "prototype mismatch" error.
+
+        * Scripts/webkitperl/BuildSubproject.pm:
+
 2022-03-22  Youenn Fablet  <youenn@apple.com>
 
         Website policies are not respected when doing COOP based process swap
