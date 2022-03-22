@@ -72,7 +72,7 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, const G
     auto& state = context.state();
     Cairo::drawGlyphs(*context.platformContext(), Cairo::FillSource(state), Cairo::StrokeSource(state),
         Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, cairoGlyphs, xOffset,
-        state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor,
+        state.textDrawingMode, state.strokeThickness, state.dropShadow.offset, state.dropShadow.color,
         fontSmoothingMode);
 }
 

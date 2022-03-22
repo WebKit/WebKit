@@ -50,7 +50,7 @@ public:
     bool hasPlatformContext() const final;
     GraphicsContextCairo* platformContext() const final;
 
-    void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
+    void didUpdateState(GraphicsContextState&);
 
     void setLineCap(LineCap) final;
     void setLineDash(const DashArray&, float) final;

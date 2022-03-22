@@ -1572,6 +1572,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/RenderingMode.h
     platform/graphics/RoundedRect.h
     platform/graphics/ShouldLocalizeAxisNames.h
+    platform/graphics/SourceBrush.h
     platform/graphics/SourceBufferPrivate.h
     platform/graphics/SourceBufferPrivateClient.h
     platform/graphics/SourceImage.h

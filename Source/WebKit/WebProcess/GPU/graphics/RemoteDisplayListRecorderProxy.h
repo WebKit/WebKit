@@ -74,7 +74,7 @@ private:
     void recordSetInlineFillColor(WebCore::SRGBA<uint8_t>) final;
     void recordSetInlineStrokeColor(WebCore::SRGBA<uint8_t>) final;
     void recordSetStrokeThickness(float) final;
-    void recordSetState(const WebCore::GraphicsContextState&, WebCore::GraphicsContextState::StateChangeFlags) final;
+    void recordSetState(const WebCore::GraphicsContextState&) final;
     void recordSetLineCap(WebCore::LineCap) final;
     void recordSetLineDash(const WebCore::DashArray&, float dashOffset) final;
     void recordSetLineJoin(WebCore::LineJoin) final;

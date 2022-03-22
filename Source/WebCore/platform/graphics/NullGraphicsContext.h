@@ -55,7 +55,7 @@ private:
     bool invalidatingImagesWithAsyncDecodes() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes; }
     bool detectingContentfulPaint() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::DetectingContentfulPaint; }
 
-    void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final { }
+    void didUpdateState(GraphicsContextState&) final { }
 
 #if USE(CG)
     void setIsAcceleratedContext(bool) final { }

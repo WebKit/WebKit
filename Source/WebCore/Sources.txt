@@ -2084,6 +2084,7 @@ platform/graphics/PlatformTimeRanges.cpp
 platform/graphics/Region.cpp
 platform/graphics/RoundedRect.cpp
 platform/graphics/ShadowBlur.cpp
+platform/graphics/SourceBrush.cpp
 platform/graphics/SourceBufferPrivate.cpp
 platform/graphics/SourceImage.cpp
 platform/graphics/StringTruncator.cpp

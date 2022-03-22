@@ -8,9 +8,10 @@
   (composite-operation source-over)
   (blend-mode normal) extent at (0,0) size 104x104)
 (set-state
-  (change-flags 32960)
-  (fill-color #0000FF)
-  (stroke-style 0)
+  (change-flags [fill-brush, stroke-style, should-antialias])
+  (fill-brush
+    (color #0000FF))
+  (stroke-style no-stroke)
   (should-antialias 0))
 (draw-rect
   (rect at (0,0) size 104x2)

@@ -41,7 +41,7 @@ private:
     bool hasPlatformContext() const override { return false; }
     PlatformGraphicsContext* platformContext() const override { return nullptr; }
 
-    void didUpdateState(const WebCore::GraphicsContextState&, WebCore::GraphicsContextState::StateChangeFlags) override;
+    void didUpdateState(WebCore::GraphicsContextState&) override;
 
     void setLineCap(WebCore::LineCap) override;
     void setLineDash(const WebCore::DashArray&, float) override;

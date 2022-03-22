@@ -1,3 +1,290 @@
+2022-03-21  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make GraphicsContextState keep track of changes till they are applied
+        https://bugs.webkit.org/show_bug.cgi?id=238066
+        rdar://90585183
+
+        Reviewed by Simon Fraser.
+
+        A member of type GraphicsContextState::ChangeFlags will be added to
+        GraphicsContextState to keep track of what has changes since it was last
+        applied. So we can eliminate the struct GraphicsContextStateChange.
+
+        We will have to have a single member for every GraphicsContextState::Change. 
+
+        1. So we will combine the color, the pattern, the gradient and the gradient
+           space transform in one class called 'SourceBrush'.
+
+        2. We will combine the shadow offset, the shadow blurRadius, the shadow
+           color and the radius mode in one struct called 'DropShadow'
+
+        3. And we will combine the CompositeOperator and the BledMode in one struct 
+          called 'CompositeMode'.
+
+        GraphicsContextState will handle setting its members, its encoding and
+        decoding and its streaming to text.
+
+        Adding a transparency layer in CG sets the global alpha to 1. We need to
+        sync the member GraphicsContextState.alpha with the platform alpha when
+        we beginTransparencyLayer() and when we endTransparencyLayer().
+
+        DisplayList::Recorder will keep its stack of GraphicsContextState. The
+        difference between the state of GraphicsContext and the state of the 
+        Recorder is we eagerly apply the former to the platform context but we
+        lazily record the changes of the later. Recorder::didUpdateState()
+        overrides the base class method to just merge the changes from the base
+        class GraphicsContext::m_state to Recorder::currentState().state.
+        Recorder::appendStateChangeItem() records the accumulated changes in the
+        currentState() since the last drawing.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/BifurcatedGraphicsContext.cpp:
+        (WebCore::BifurcatedGraphicsContext::beginTransparencyLayer):
+        (WebCore::BifurcatedGraphicsContext::endTransparencyLayer):
+        (WebCore::BifurcatedGraphicsContext::didUpdateState):
+        * platform/graphics/BifurcatedGraphicsContext.h:
+        * platform/graphics/DrawGlyphsRecorder.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::updateState):
+        (WebCore::GraphicsContext::getShadow const):
+        (WebCore::GraphicsContext::setStrokeColor): Deleted.
+        (WebCore::GraphicsContext::setShadow): Deleted.
+        (WebCore::GraphicsContext::clearShadow): Deleted.
+        (WebCore::GraphicsContext::setFillColor): Deleted.
+        (WebCore::GraphicsContext::setStrokePattern): Deleted.
+        (WebCore::GraphicsContext::setFillPattern): Deleted.
+        (WebCore::GraphicsContext::setStrokeGradient): Deleted.
+        (WebCore::GraphicsContext::setFillGradient): Deleted.
+        (WebCore::GraphicsContext::setCompositeOperation): Deleted.
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::fillColor const):
+        (WebCore::GraphicsContext::fillGradient const):
+        (WebCore::GraphicsContext::fillGradientSpaceTransform const):
+        (WebCore::GraphicsContext::fillPattern const):
+        (WebCore::GraphicsContext::setFillBrush):
+        (WebCore::GraphicsContext::setFillColor):
+        (WebCore::GraphicsContext::setFillGradient):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::fillRule const):
+        (WebCore::GraphicsContext::setFillRule):
+        (WebCore::GraphicsContext::strokeColor const):
+        (WebCore::GraphicsContext::strokeGradient const):
+        (WebCore::GraphicsContext::strokeGradientSpaceTransform const):
+        (WebCore::GraphicsContext::strokePattern const):
+        (WebCore::GraphicsContext::setStrokeBrush):
+        (WebCore::GraphicsContext::setStrokeColor):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::strokeThickness const):
+        (WebCore::GraphicsContext::setStrokeThickness):
+        (WebCore::GraphicsContext::strokeStyle const):
+        (WebCore::GraphicsContext::setStrokeStyle):
+        (WebCore::GraphicsContext::dropShadow const):
+        (WebCore::GraphicsContext::shadowOffset const):
+        (WebCore::GraphicsContext::shadowBlur const):
+        (WebCore::GraphicsContext::shadowColor const):
+        (WebCore::GraphicsContext::setDropShadow):
+        (WebCore::GraphicsContext::setShadow):
+        (WebCore::GraphicsContext::clearShadow):
+        (WebCore::GraphicsContext::hasVisibleShadow const):
+        (WebCore::GraphicsContext::hasBlurredShadow const):
+        (WebCore::GraphicsContext::hasShadow const):
+        (WebCore::GraphicsContext::compositeMode const):
+        (WebCore::GraphicsContext::compositeOperation const):
+        (WebCore::GraphicsContext::blendMode const):
+        (WebCore::GraphicsContext::setCompositeMode):
+        (WebCore::GraphicsContext::setCompositeOperation):
+        (WebCore::GraphicsContext::alpha const):
+        (WebCore::GraphicsContext::setAlpha):
+        (WebCore::GraphicsContext::textDrawingMode const):
+        (WebCore::GraphicsContext::setTextDrawingMode):
+        (WebCore::GraphicsContext::imageInterpolationQuality const):
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+        (WebCore::GraphicsContext::setShouldAntialias):
+        (WebCore::GraphicsContext::setShouldSmoothFonts):
+        (WebCore::GraphicsContext::setShouldSubpixelQuantizeFonts):
+        (WebCore::GraphicsContext::shadowsIgnoreTransforms const):
+        (WebCore::GraphicsContext::setShadowsIgnoreTransforms):
+        (WebCore::GraphicsContext::setDrawLuminanceMask):
+        (WebCore::GraphicsContext::setUseDarkAppearance):
+        (WebCore::GraphicsContext::blendModeOperation const): Deleted.
+        * platform/graphics/GraphicsContextState.cpp:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContextState::hasOnlyPrimitiveChanges const):
+        (WebCore::GraphicsContextState::mergeChanges):
+        (WebCore::GraphicsContextState::didBeginTransparencyLayer):
+        (WebCore::GraphicsContextState::didEndTransparencyLayer):
+        (WebCore::stateChangeName):
+        (WebCore::GraphicsContextState::dump const):
+        (WebCore::operator<<):
+        (WebCore::GraphicsContextStateChange::changesFromState const): Deleted.
+        (WebCore::GraphicsContextStateChange::accumulate): Deleted.
+        (WebCore::GraphicsContextStateChange::apply const): Deleted.
+        (WebCore::GraphicsContextStateChange::dump const): Deleted.
+        * platform/graphics/GraphicsContextState.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContextState::changes const):
+        (WebCore::GraphicsContextState::didApplyChanges):
+        (WebCore::GraphicsContextState::setFillBrush):
+        (WebCore::GraphicsContextState::setFillColor):
+        (WebCore::GraphicsContextState::setFillGradient):
+        (WebCore::GraphicsContextState::setFillPattern):
+        (WebCore::GraphicsContextState::setFillRule):
+        (WebCore::GraphicsContextState::setStrokeBrush):
+        (WebCore::GraphicsContextState::setStrokeColor):
+        (WebCore::GraphicsContextState::setStrokeGradient):
+        (WebCore::GraphicsContextState::setStrokePattern):
+        (WebCore::GraphicsContextState::setStrokeThickness):
+        (WebCore::GraphicsContextState::setStrokeStyle):
+        (WebCore::GraphicsContextState::setCompositeMode):
+        (WebCore::GraphicsContextState::setDropShadow):
+        (WebCore::GraphicsContextState::setAlpha):
+        (WebCore::GraphicsContextState::setImageInterpolationQuality):
+        (WebCore::GraphicsContextState::setTextDrawingMode):
+        (WebCore::GraphicsContextState::setShouldAntialias):
+        (WebCore::GraphicsContextState::setShouldSmoothFonts):
+        (WebCore::GraphicsContextState::setShouldSubpixelQuantizeFonts):
+        (WebCore::GraphicsContextState::setShadowsIgnoreTransforms):
+        (WebCore::GraphicsContextState::setDrawLuminanceMask):
+        (WebCore::GraphicsContextState::setUseDarkAppearance):
+        (WebCore::GraphicsContextState::setProperty):
+        (WebCore::GraphicsContextState::encode const):
+        (WebCore::GraphicsContextState::decode):
+        (WebCore::GraphicsContextStateChange::GraphicsContextStateChange): Deleted.
+        * platform/graphics/GraphicsTypes.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/GraphicsTypes.h:
+        (WebCore::CompositeMode::operator==):
+        (WebCore::CompositeMode::encode const):
+        (WebCore::CompositeMode::decode):
+        (WebCore::DropShadow::isVisible const):
+        (WebCore::DropShadow::isBlurred const):
+        (WebCore::DropShadow::hasOutsets const):
+        (WebCore::operator==):
+        (WebCore::DropShadow::encode const):
+        (WebCore::DropShadow::decode):
+        * platform/graphics/NullGraphicsContext.h:
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::ShadowBlur):
+        * platform/graphics/ShadowBlur.h:
+        * platform/graphics/SourceBrush.cpp: Added.
+        (WebCore::SourceBrush::SourceBrush):
+        (WebCore::SourceBrush::gradientSpaceTransform const):
+        (WebCore::SourceBrush::gradient const):
+        (WebCore::SourceBrush::pattern const):
+        (WebCore::SourceBrush::setGradient):
+        (WebCore::SourceBrush::setPattern):
+        (WebCore::operator<<):
+        * platform/graphics/SourceBrush.h: Added.
+        (WebCore::SourceBrush::color const):
+        (WebCore::SourceBrush::setColor):
+        (WebCore::SourceBrush::brush const):
+        (WebCore::SourceBrush::setGradient):
+        (WebCore::SourceBrush::isPrimitive const):
+        (WebCore::operator==):
+        (WebCore::SourceBrush::Brush::LogicalGradient::encode const):
+        (WebCore::SourceBrush::Brush::LogicalGradient::decode):
+        (WebCore::SourceBrush::Brush::encode const):
+        (WebCore::SourceBrush::Brush::decode):
+        (WebCore::SourceBrush::encode const):
+        (WebCore::SourceBrush::decode):
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::FillSource::FillSource):
+        (WebCore::Cairo::StrokeSource::StrokeSource):
+        (WebCore::Cairo::ShadowState::ShadowState):
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/cairo/GradientCairo.cpp:
+        (WebCore::Gradient::fill):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextCairo::drawRect):
+        (WebCore::GraphicsContextCairo::drawLine):
+        (WebCore::GraphicsContextCairo::drawEllipse):
+        (WebCore::GraphicsContextCairo::fillRect):
+        (WebCore::GraphicsContextCairo::drawLinesForText):
+        (WebCore::GraphicsContextCairo::didUpdateState):
+        (WebCore::GraphicsContextCairo::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContextCG::GraphicsContextCG):
+        (WebCore::GraphicsContextCG::drawNativeImage):
+        (WebCore::GraphicsContextCG::applyStrokePattern):
+        (WebCore::GraphicsContextCG::applyFillPattern):
+        (WebCore::calculateDrawingMode):
+        (WebCore::GraphicsContextCG::drawPath):
+        (WebCore::GraphicsContextCG::fillPath):
+        (WebCore::GraphicsContextCG::strokePath):
+        (WebCore::GraphicsContextCG::fillRect):
+        (WebCore::GraphicsContextCG::fillRoundedRectImpl):
+        (WebCore::GraphicsContextCG::fillRectWithRoundedHole):
+        (WebCore::GraphicsContextCG::beginTransparencyLayer):
+        (WebCore::applyShadowOffsetWorkaroundIfNeeded):
+        (WebCore::setCGShadow):
+        (WebCore::GraphicsContextCG::didUpdateState):
+        (WebCore::GraphicsContextCG::strokeRect):
+        (WebCore::GraphicsContextCG::fillEllipse):
+        (WebCore::GraphicsContextCG::strokeEllipse):
+        * platform/graphics/cg/GraphicsContextCG.h:
+        * platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DrawGlyphsRecorder::populateInternalState):
+        (WebCore::DrawGlyphsRecorder::populateInternalContext):
+        (WebCore::DrawGlyphsRecorder::concludeInternalContext):
+        (WebCore::DrawGlyphsRecorder::updateFillBrush):
+        (WebCore::DrawGlyphsRecorder::updateStrokeBrush):
+        (WebCore::DrawGlyphsRecorder::updateCTM):
+        (WebCore::DrawGlyphsRecorder::updateShadow):
+        (WebCore::DrawGlyphsRecorder::recordDrawGlyphs):
+        (WebCore::DrawGlyphsRecorder::updateFillColor): Deleted.
+        (WebCore::DrawGlyphsRecorder::updateStrokeColor): Deleted.
+        (WebCore::shadowIsCleared): Deleted.
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::shouldDumpForFlags):
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::SetState::SetState):
+        (WebCore::DisplayList::SetState::apply):
+        (WebCore::DisplayList::operator<<):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::SetState::state const):
+        (WebCore::DisplayList::SetState::encode const):
+        (WebCore::DisplayList::SetState::decode):
+        (WebCore::DisplayList::SetState::stateChange const): Deleted.
+        (WebCore::DisplayList::SetState::stateChange): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::appendStateChangeItem):
+        (WebCore::DisplayList::Recorder::appendStateChangeItemIfNecessary):
+        (WebCore::DisplayList::Recorder::state const):
+        (WebCore::DisplayList::Recorder::didUpdateState):
+        (WebCore::DisplayList::Recorder::save):
+        (WebCore::DisplayList::Recorder::restore):
+        (WebCore::DisplayList::Recorder::beginTransparencyLayer):
+        (WebCore::DisplayList::Recorder::endTransparencyLayer):
+        (WebCore::DisplayList::containsOnlyInlineStateChanges): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        (WebCore::DisplayList::Recorder::ContextState::ContextState):
+        (WebCore::DisplayList::Recorder::ContextState::cloneForTransparencyLayer const):
+        (WebCore::DisplayList::Recorder::ContextState::cloneForSave const): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorderImpl.cpp:
+        (WebCore::DisplayList::RecorderImpl::recordSetState):
+        * platform/graphics/displaylists/DisplayListRecorderImpl.h:
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::applySetStateItem):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::didUpdateState):
+        (Nicosia::CairoOperationRecorder::fillRect):
+        (Nicosia::CairoOperationRecorder::fillRoundedRect):
+        (Nicosia::CairoOperationRecorder::drawGlyphs):
+        (Nicosia::CairoOperationRecorder::drawRect):
+        (Nicosia::CairoOperationRecorder::drawLine):
+        (Nicosia::CairoOperationRecorder::drawLinesForText):
+        (Nicosia::CairoOperationRecorder::drawEllipse):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h:
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::useStrokeStyleToFill):
+
 2022-03-21  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: AccessibilityObject::visibleCharacterRange is extremely slow when called on objects with lots of text

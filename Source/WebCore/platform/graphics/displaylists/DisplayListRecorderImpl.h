@@ -55,7 +55,7 @@ private:
     void recordSetInlineFillColor(SRGBA<uint8_t>) final;
     void recordSetInlineStrokeColor(SRGBA<uint8_t>) final;
     void recordSetStrokeThickness(float) final;
-    void recordSetState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
+    void recordSetState(const GraphicsContextState&) final;
     void recordSetLineCap(LineCap) final;
     void recordSetLineDash(const DashArray&, float dashOffset) final;
     void recordSetLineJoin(LineJoin) final;

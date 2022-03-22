@@ -104,9 +104,9 @@ void RecorderImpl::recordSetStrokeThickness(float thickness)
     append<SetStrokeThickness>(thickness);
 }
 
-void RecorderImpl::recordSetState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags changeFlags)
+void RecorderImpl::recordSetState(const GraphicsContextState& state)
 {
-    append<SetState>(state, changeFlags);
+    append<SetState>(state);
 }
 
 void RecorderImpl::recordSetLineCap(LineCap lineCap)

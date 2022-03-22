@@ -96,52 +96,24 @@ DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, DeconstructDrawGl
 
 void DrawGlyphsRecorder::populateInternalState(const GraphicsContextState& contextState)
 {
-    m_originalState.fillStyle.color = contextState.fillColor;
-    m_originalState.fillStyle.gradient = contextState.fillGradient;
-    m_originalState.fillStyle.gradientSpaceTransform = contextState.fillGradientSpaceTransform;
-    m_originalState.fillStyle.pattern = contextState.fillPattern;
-
-    m_originalState.strokeStyle.color = contextState.strokeColor;
-    m_originalState.strokeStyle.gradient = contextState.strokeGradient;
-    m_originalState.strokeStyle.gradientSpaceTransform = contextState.strokeGradientSpaceTransform;
-    m_originalState.strokeStyle.pattern = contextState.strokePattern;
+    m_originalState.fillBrush = contextState.fillBrush;
+    m_originalState.strokeBrush = contextState.strokeBrush;
 
     m_originalState.ctm = m_owner.getCTM(); // FIXME: Deal with base CTM.
 
-    m_originalState.shadow.offset = contextState.shadowOffset;
-    m_originalState.shadow.blur = contextState.shadowBlur;
-    m_originalState.shadow.color = contextState.shadowColor;
-    m_originalState.shadow.ignoreTransforms = contextState.shadowsIgnoreTransforms;
-
-    m_currentState = m_originalState;
+    m_originalState.dropShadow = contextState.dropShadow;
+    m_originalState.ignoreTransforms = contextState.shadowsIgnoreTransforms;
 }
 
 void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& contextState)
 {
-    if (m_originalState.fillStyle.color.isValid())
-        m_internalContext->setFillColor(m_originalState.fillStyle.color);
-    else if (m_originalState.fillStyle.gradient)
-        m_internalContext->setFillGradient(*m_originalState.fillStyle.gradient, m_originalState.fillStyle.gradientSpaceTransform);
-    else {
-        ASSERT(m_originalState.fillStyle.pattern);
-        if (m_originalState.fillStyle.pattern)
-            m_internalContext->setFillPattern(*m_originalState.fillStyle.pattern);
-    }
-
-    if (m_originalState.strokeStyle.color.isValid())
-        m_internalContext->setStrokeColor(m_originalState.strokeStyle.color);
-    else if (m_originalState.strokeStyle.gradient)
-        m_internalContext->setStrokeGradient(*m_originalState.strokeStyle.gradient, m_originalState.strokeStyle.gradientSpaceTransform);
-    else {
-        ASSERT(m_originalState.strokeStyle.pattern);
-        if (m_originalState.strokeStyle.pattern)
-            m_internalContext->setStrokePattern(*m_originalState.strokeStyle.pattern);
-    }
+    m_internalContext->setFillBrush(m_originalState.fillBrush);
+    m_internalContext->setStrokeBrush(m_originalState.strokeBrush);
 
     m_internalContext->setCTM(m_originalState.ctm);
 
-    m_internalContext->setShadowsIgnoreTransforms(m_originalState.shadow.ignoreTransforms);
-    m_internalContext->setShadow(m_originalState.shadow.offset, m_originalState.shadow.blur, m_originalState.shadow.color, contextState.shadowRadiusMode);
+    m_internalContext->setShadowsIgnoreTransforms(m_originalState.ignoreTransforms);
+    m_internalContext->setDropShadow(m_originalState.dropShadow);
 
     m_internalContext->setTextDrawingMode(contextState.textDrawingMode);
 }
@@ -165,95 +137,39 @@ void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingM
 void DrawGlyphsRecorder::concludeInternalContext()
 {
     updateCTM(m_originalState.ctm);
-    updateFillColor(m_originalState.fillStyle.color, m_originalState.fillStyle.gradient.get(), m_originalState.fillStyle.pattern.get());
-    updateStrokeColor(m_originalState.strokeStyle.color, m_originalState.strokeStyle.gradient.get(), m_originalState.strokeStyle.pattern.get());
-    updateShadow(m_originalState.shadow.offset, m_originalState.shadow.blur, m_originalState.shadow.color, m_originalState.shadow.ignoreTransforms ? ShadowsIgnoreTransforms::Yes : ShadowsIgnoreTransforms::No);
+    updateFillBrush(m_originalState.fillBrush);
+    updateStrokeBrush(m_originalState.strokeBrush);
+    updateShadow(m_originalState.dropShadow, m_originalState.ignoreTransforms ? ShadowsIgnoreTransforms::Yes : ShadowsIgnoreTransforms::No);
 }
 
-void DrawGlyphsRecorder::updateFillColor(const Color& newColor, Gradient* newGradient, Pattern* newPattern)
+void DrawGlyphsRecorder::updateFillBrush(const SourceBrush& newBrush)
 {
-    // This check looks wrong but it actually isn't, for our limited use.
-    // CT will only ever set this to a solid color, which this is the correct check for.
-    // In concludeInternalContext() we set it back to what it was originally, which this check works correctly for too.
-    if (newColor == m_currentState.fillStyle.color)
-        return;
-
-    GraphicsContextState newState;
-    newState.fillColor = newColor;
-    if (newGradient)
-        newState.fillGradient = newGradient;
-    if (newPattern)
-        newState.fillPattern = newPattern;
-    m_owner.didUpdateState(newState, { GraphicsContextState::FillColorChange });
-    m_currentState.fillStyle.color = newColor;
+    m_owner.setFillBrush(newBrush);
 }
 
-void DrawGlyphsRecorder::updateStrokeColor(const Color& newColor, Gradient* newGradient, Pattern* newPattern)
+void DrawGlyphsRecorder::updateStrokeBrush(const SourceBrush& newBrush)
 {
-    // This check looks wrong but it actually isn't, for our limited use.
-    // CT will only ever set this to a solid color, which this is the correct check for.
-    // In concludeInternalContext() we set it back to what it was originally, which this check works correctly for too.
-    if (newColor == m_currentState.strokeStyle.color)
-        return;
-
-    GraphicsContextState newState;
-    newState.strokeColor = newColor;
-    if (newGradient)
-        newState.strokeGradient = newGradient;
-    if (newPattern)
-        newState.strokePattern = newPattern;
-    m_owner.didUpdateState(newState, { GraphicsContextState::StrokeColorChange });
-    m_currentState.strokeStyle.color = newColor;
+    m_owner.setStrokeBrush(newBrush);
 }
 
 void DrawGlyphsRecorder::updateCTM(const AffineTransform& ctm)
 {
-    if (ctm == m_currentState.ctm)
+    if (m_owner.getCTM() == ctm)
         return;
-
     m_owner.setCTM(ctm);
-    m_currentState.ctm = ctm;
 }
 
-static bool shadowIsCleared(const FloatSize& shadowOffset, float shadowBlur)
+void DrawGlyphsRecorder::updateShadow(const DropShadow& dropShadow, ShadowsIgnoreTransforms shadowsIgnoreTransforms)
 {
-    return shadowOffset == FloatSize() && !shadowBlur;
-}
-
-void DrawGlyphsRecorder::updateShadow(const FloatSize& shadowOffset, float shadowBlur, const Color& shadowColor, ShadowsIgnoreTransforms shadowsIgnoreTransforms)
-{
-    // We don't need to consider shadowsIgnoreTransforms if nobody has any shadows.
-    if (shadowIsCleared(shadowOffset, shadowBlur) && shadowIsCleared(m_currentState.shadow.offset, m_currentState.shadow.blur))
-        return;
-
-    GraphicsContextState newState;
-    GraphicsContextState::StateChangeFlags stateChangeFlags;
-
-    if (shadowOffset != m_currentState.shadow.offset || shadowBlur != m_currentState.shadow.blur || shadowColor != m_currentState.shadow.color) {
-        newState.shadowOffset = shadowOffset;
-        newState.shadowBlur = shadowBlur;
-        newState.shadowColor = shadowColor;
-        stateChangeFlags.add(GraphicsContextState::ShadowChange);
-    }
-    if (shadowsIgnoreTransforms != ShadowsIgnoreTransforms::Unspecified && (shadowsIgnoreTransforms == ShadowsIgnoreTransforms::Yes) != m_currentState.shadow.ignoreTransforms) {
-        newState.shadowsIgnoreTransforms = (shadowsIgnoreTransforms == ShadowsIgnoreTransforms::Yes);
-        stateChangeFlags.add(GraphicsContextState::ShadowsIgnoreTransformsChange);
-    }
-    if (stateChangeFlags.isEmpty())
-        return;
-    m_owner.didUpdateState(newState, stateChangeFlags);
-
-    m_currentState.shadow.offset = shadowOffset;
-    m_currentState.shadow.blur = shadowBlur;
-    m_currentState.shadow.color = shadowColor;
-    m_currentState.shadow.ignoreTransforms = (shadowsIgnoreTransforms == ShadowsIgnoreTransforms::Yes);
+    m_owner.setDropShadow(dropShadow);
+    m_owner.setShadowsIgnoreTransforms(shadowsIgnoreTransforms == ShadowsIgnoreTransforms::Yes);
 }
 
 void DrawGlyphsRecorder::updateShadow(CGStyleRef style)
 {
     if (CGStyleGetType(style) != kCGStyleShadow) {
         // FIXME: Support more kinds of CGStyles.
-        updateShadow({0, 0}, 0, Color(), ShadowsIgnoreTransforms::Unspecified);
+        updateShadow({ }, ShadowsIgnoreTransforms::Unspecified);
         return;
     }
 
@@ -261,7 +177,7 @@ void DrawGlyphsRecorder::updateShadow(CGStyleRef style)
     auto rad = deg2rad(shadowStyle.azimuth - 180);
     auto shadowOffset = FloatSize(std::cos(rad), std::sin(rad)) * shadowStyle.height;
     auto shadowColor = CGStyleGetColor(style);
-    updateShadow(shadowOffset, shadowStyle.radius, Color::createAndPreserveColorSpace(shadowColor), ShadowsIgnoreTransforms::Yes);
+    updateShadow({ shadowOffset, static_cast<float>(shadowStyle.radius), Color::createAndPreserveColorSpace(shadowColor) }, ShadowsIgnoreTransforms::Yes);
 }
 
 void DrawGlyphsRecorder::recordBeginLayer(CGRenderingStateRef, CGGStateRef gstate, CGRect)
@@ -328,8 +244,8 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
 
     auto fillColor = CGGStateGetFillColor(gstate);
     auto strokeColor = CGGStateGetStrokeColor(gstate);
-    updateFillColor(Color::createAndPreserveColorSpace(fillColor));
-    updateStrokeColor(Color::createAndPreserveColorSpace(strokeColor));
+    updateFillBrush(Color::createAndPreserveColorSpace(fillColor));
+    updateStrokeBrush(Color::createAndPreserveColorSpace(strokeColor));
     updateShadow(CGGStateGetStyle(gstate));
 
     auto fontSize = CGGStateGetFontSize(gstate);

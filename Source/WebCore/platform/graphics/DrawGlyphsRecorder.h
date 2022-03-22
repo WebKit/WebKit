@@ -84,15 +84,15 @@ private:
     void prepareInternalContext(const Font&, FontSmoothingMode);
     void concludeInternalContext();
 
-    void updateFillColor(const Color&, Gradient* = nullptr, Pattern* = nullptr);
-    void updateStrokeColor(const Color&, Gradient* = nullptr, Pattern* = nullptr);
+    void updateFillBrush(const SourceBrush&);
+    void updateStrokeBrush(const SourceBrush&);
     void updateCTM(const AffineTransform&);
     enum class ShadowsIgnoreTransforms {
         Unspecified,
         Yes,
         No
     };
-    void updateShadow(const FloatSize& shadowOffset, float shadowBlur, const Color& shadowColor, ShadowsIgnoreTransforms);
+    void updateShadow(const DropShadow&, ShadowsIgnoreTransforms);
 
 #if USE(CORE_TEXT) && !PLATFORM(WIN)
     void updateShadow(CGStyleRef);
@@ -111,27 +111,13 @@ private:
     AffineTransform m_originalTextMatrix;
 
     struct State {
-        struct Style {
-            Color color;
-            RefPtr<Gradient> gradient;
-            AffineTransform gradientSpaceTransform;
-            RefPtr<Pattern> pattern;
-        };
-        Style fillStyle;
-        Style strokeStyle;
-
+        SourceBrush fillBrush;
+        SourceBrush strokeBrush;
         AffineTransform ctm;
-
-        struct ShadowState {
-            FloatSize offset;
-            float blur { 0 };
-            Color color;
-            bool ignoreTransforms { false };
-        };
-        ShadowState shadow;
+        DropShadow dropShadow;
+        bool ignoreTransforms { false };
     };
     State m_originalState;
-    State m_currentState;
 };
 
 } // namespace WebCore

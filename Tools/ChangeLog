@@ -1,3 +1,14 @@
+2022-03-21  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make GraphicsContextState keep track of changes till they are applied
+        https://bugs.webkit.org/show_bug.cgi?id=238066
+        rdar://90585183
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/WebCore/cg/GraphicsContextTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+
 2022-03-21  Brent Fulgham  <bfulgham@apple.com>
 
         Disable the <model> element in Captive Portal mode.

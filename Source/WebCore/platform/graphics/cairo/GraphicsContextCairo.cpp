@@ -138,8 +138,7 @@ void GraphicsContextCairo::restore()
 void GraphicsContextCairo::drawRect(const FloatRect& rect, float borderThickness)
 {
     ASSERT(!rect.isEmpty());
-    auto& state = this->state();
-    Cairo::drawRect(*this, rect, borderThickness, state.fillColor, state.strokeStyle, state.strokeColor);
+    Cairo::drawRect(*this, rect, borderThickness, fillColor(), strokeStyle(), strokeColor());
 }
 
 void GraphicsContextCairo::drawNativeImage(NativeImage& nativeImage, const FloatSize&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
@@ -154,15 +153,13 @@ void GraphicsContextCairo::drawLine(const FloatPoint& point1, const FloatPoint& 
     if (strokeStyle() == NoStroke)
         return;
 
-    auto& state = this->state();
-    Cairo::drawLine(*this, point1, point2, state.strokeStyle, state.strokeColor, state.strokeThickness, state.shouldAntialias);
+    Cairo::drawLine(*this, point1, point2, strokeStyle(), strokeColor(), strokeThickness(), shouldAntialias());
 }
 
 // This method is only used to draw the little circles used in lists.
 void GraphicsContextCairo::drawEllipse(const FloatRect& rect)
 {
-    auto& state = this->state();
-    Cairo::drawEllipse(*this, rect, state.fillColor, state.strokeStyle, state.strokeColor, state.strokeThickness);
+    Cairo::drawEllipse(*this, rect, fillColor(), strokeStyle(), strokeColor(), strokeThickness());
 }
 
 void GraphicsContextCairo::fillPath(const Path& path)
@@ -196,8 +193,7 @@ void GraphicsContextCairo::fillRect(const FloatRect& rect, const Color& color)
 
 void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient)
 {
-    auto& state = this->state();
-    auto pattern = gradient.createPattern(1.0, state.fillGradientSpaceTransform);
+    auto pattern = gradient.createPattern(1.0, fillGradientSpaceTransform());
     if (!pattern)
         return;
 
@@ -209,7 +205,7 @@ void GraphicsContextCairo::fillRect(const FloatRect& rect, Gradient& gradient)
 void GraphicsContextCairo::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)
 {
     auto& state = this->state();
-    CompositeOperator previousOperator = state.compositeOperator;
+    CompositeOperator previousOperator = compositeOperation();
 
     Cairo::State::setCompositeOperation(*this, compositeOperator, blendMode);
     Cairo::fillRect(*this, rect, color, Cairo::ShadowState(state));
@@ -265,7 +261,7 @@ void GraphicsContextCairo::drawLinesForText(const FloatPoint& point, float thick
 {
     if (widths.isEmpty())
         return;
-    Cairo::drawLinesForText(*this, point, thickness, widths, printing, doubleUnderlines, m_state.strokeColor);
+    Cairo::drawLinesForText(*this, point, thickness, widths, printing, doubleUnderlines, strokeColor());
 }
 
 void GraphicsContextCairo::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
@@ -284,28 +280,31 @@ void GraphicsContextCairo::translate(float x, float y)
     Cairo::translate(*this, x, y);
 }
 
-void GraphicsContextCairo::didUpdateState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+void GraphicsContextCairo::didUpdateState(GraphicsContextState& state)
 {
-    if (flags & GraphicsContextState::StrokeThicknessChange)
+    if (state.changes().contains(GraphicsContextState::Change::StrokeThickness))
         Cairo::State::setStrokeThickness(*this, state.strokeThickness);
 
-    if (flags & GraphicsContextState::StrokeStyleChange)
+    if (state.changes().contains(GraphicsContextState::Change::StrokeStyle))
         Cairo::State::setStrokeStyle(*this, state.strokeStyle);
 
-    if (flags & GraphicsContextState::ShadowChange) {
+    // FIXME: m_state should not be changed to flip the shadow offset. This can happen when the shadow is applied to the platform context.
+    if (state.changes().contains(GraphicsContextState::Change::DropShadow)) {
         if (state.shadowsIgnoreTransforms) {
             // Meaning that this graphics context is associated with a CanvasRenderingContext
             // We flip the height since CG and HTML5 Canvas have opposite Y axis
-            auto& shadowOffset = state.shadowOffset;
-            m_state.shadowOffset = { shadowOffset.width(), -shadowOffset.height() };
+            auto& shadowOffset = state.dropShadow.offset;
+            m_state.dropShadow.offset = { shadowOffset.width(), -shadowOffset.height() };
         }
     }
 
-    if (flags & GraphicsContextState::CompositeOperationChange)
-        Cairo::State::setCompositeOperation(*this, state.compositeOperator, state.blendMode);
+    if (state.changes().contains(GraphicsContextState::Change::CompositeMode))
+        Cairo::State::setCompositeOperation(*this, state.compositeMode.operation, state.compositeMode.blendMode);
 
-    if (flags & GraphicsContextState::ShouldAntialiasChange)
+    if (state.changes().contains(GraphicsContextState::Change::ShouldAntialias))
         Cairo::State::setShouldAntialias(*this, state.shouldAntialias);
+
+    state.didApplyChanges();
 }
 
 void GraphicsContextCairo::concatCTM(const AffineTransform& transform)
@@ -434,7 +433,7 @@ void GraphicsContextCairo::drawGlyphs(const Font& font, const GlyphBufferGlyph* 
     auto& state = this->state();
     Cairo::drawGlyphs(*this, Cairo::FillSource(state), Cairo::StrokeSource(state),
         Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, cairoGlyphs, xOffset,
-        state.textDrawingMode, state.strokeThickness, state.shadowOffset, state.shadowColor,
+        state.textDrawingMode, state.strokeThickness, state.dropShadow.offset, state.dropShadow.color,
         fontSmoothing);
 }
 

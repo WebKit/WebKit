@@ -148,24 +148,19 @@ static TextStream& operator<<(TextStream& ts, const SetStrokeThickness& state)
     return ts;
 }
 
-SetState::SetState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
-    : m_stateChange(state, flags)
-{
-}
-
-SetState::SetState(const GraphicsContextStateChange& stateChange)
-    : m_stateChange(stateChange)
+SetState::SetState(const GraphicsContextState& state)
+    : m_state(state)
 {
 }
 
 void SetState::apply(GraphicsContext& context)
 {
-    m_stateChange.apply(context);
+    context.updateState(m_state);
 }
 
-static TextStream& operator<<(TextStream& ts, const SetState& state)
+static TextStream& operator<<(TextStream& ts, const SetState& item)
 {
-    ts << state.stateChange();
+    ts << item.state();
     return ts;
 }
 

@@ -117,9 +117,9 @@ void RemoteDisplayListRecorderProxy::recordSetStrokeThickness(float thickness)
     send(Messages::RemoteDisplayListRecorder::SetStrokeThickness(thickness));
 }
 
-void RemoteDisplayListRecorderProxy::recordSetState(const GraphicsContextState& state, GraphicsContextState::StateChangeFlags flags)
+void RemoteDisplayListRecorderProxy::recordSetState(const GraphicsContextState& state)
 {
-    send(Messages::RemoteDisplayListRecorder::SetState(DisplayList::SetState { state, flags }));
+    send(Messages::RemoteDisplayListRecorder::SetState(DisplayList::SetState { state }));
 }
 
 void RemoteDisplayListRecorderProxy::recordSetLineCap(LineCap lineCap)

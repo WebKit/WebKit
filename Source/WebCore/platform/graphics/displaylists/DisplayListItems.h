@@ -247,10 +247,9 @@ public:
     static constexpr bool isInlineItem = false;
     static constexpr bool isDrawingItem = false;
 
-    WEBCORE_EXPORT SetState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags);
+    WEBCORE_EXPORT SetState(const GraphicsContextState&);
 
-    const GraphicsContextStateChange& stateChange() const { return m_stateChange; }
-    GraphicsContextStateChange& stateChange() { return m_stateChange; }
+    const GraphicsContextState& state() const { return m_state; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<SetState> decode(Decoder&);
@@ -258,288 +257,24 @@ public:
     WEBCORE_EXPORT void apply(GraphicsContext&);
 
 private:
-    WEBCORE_EXPORT SetState(const GraphicsContextStateChange&);
-
-    GraphicsContextStateChange m_stateChange;
+    GraphicsContextState m_state;
 };
 
 template<class Encoder>
 void SetState::encode(Encoder& encoder) const
 {
-    auto changeFlags = m_stateChange.m_changeFlags;
-    encoder << changeFlags;
-
-    auto& state = m_stateChange.m_state;
-
-    if (changeFlags.contains(GraphicsContextState::StrokeGradientChange)) {
-        ASSERT(state.strokeGradient);
-        encoder << *state.strokeGradient;
-    }
-
-    if (changeFlags.contains(GraphicsContextState::StrokePatternChange)) {
-        ASSERT(state.strokePattern);
-        encoder << *state.strokePattern;
-    }
-
-    if (changeFlags.contains(GraphicsContextState::FillGradientChange)) {
-        ASSERT(state.fillGradient);
-        encoder << *state.fillGradient;
-    }
-
-    if (changeFlags.contains(GraphicsContextState::FillPatternChange)) {
-        ASSERT(state.fillPattern);
-        encoder << *state.fillPattern;
-    }
-
-    if (changeFlags.contains(GraphicsContextState::ShadowChange)) {
-        encoder << state.shadowOffset;
-        encoder << state.shadowBlur;
-        encoder << state.shadowColor;
-        encoder << state.shadowRadiusMode;
-    }
-
-    if (changeFlags.contains(GraphicsContextState::StrokeThicknessChange))
-        encoder << state.strokeThickness;
-
-    if (changeFlags.contains(GraphicsContextState::TextDrawingModeChange))
-        encoder << state.textDrawingMode;
-
-    if (changeFlags.contains(GraphicsContextState::StrokeColorChange))
-        encoder << state.strokeColor;
-
-    if (changeFlags.contains(GraphicsContextState::FillColorChange))
-        encoder << state.fillColor;
-
-    if (changeFlags.contains(GraphicsContextState::StrokeStyleChange))
-        encoder << state.strokeStyle;
-
-    if (changeFlags.contains(GraphicsContextState::FillRuleChange))
-        encoder << state.fillRule;
-
-    if (changeFlags.contains(GraphicsContextState::CompositeOperationChange))
-        encoder << state.compositeOperator;
-
-    if (changeFlags.contains(GraphicsContextState::BlendModeChange))
-        encoder << state.blendMode;
-
-    if (changeFlags.contains(GraphicsContextState::ImageInterpolationQualityChange))
-        encoder << state.imageInterpolationQuality;
-
-    if (changeFlags.contains(GraphicsContextState::AlphaChange))
-        encoder << state.alpha;
-
-    if (changeFlags.contains(GraphicsContextState::ShouldAntialiasChange))
-        encoder << state.shouldAntialias;
-
-    if (changeFlags.contains(GraphicsContextState::ShouldSmoothFontsChange))
-        encoder << state.shouldSmoothFonts;
-
-    if (changeFlags.contains(GraphicsContextState::ShouldSubpixelQuantizeFontsChange))
-        encoder << state.shouldSubpixelQuantizeFonts;
-
-    if (changeFlags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange))
-        encoder << state.shadowsIgnoreTransforms;
+    encoder << m_state;
 }
 
 template<class Decoder>
 std::optional<SetState> SetState::decode(Decoder& decoder)
 {
-    std::optional<GraphicsContextState::StateChangeFlags> changeFlags;
-    decoder >> changeFlags;
-    if (!changeFlags)
+    std::optional<GraphicsContextState> state;
+    decoder >> state;
+    if (!state)
         return std::nullopt;
 
-    GraphicsContextStateChange stateChange;
-    stateChange.m_changeFlags = *changeFlags;
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeGradientChange)) {
-        auto strokeGradient = Gradient::decode(decoder);
-        if (!strokeGradient)
-            return std::nullopt;
-
-        stateChange.m_state.strokeGradient = WTFMove(*strokeGradient);
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokePatternChange)) {
-        auto strokePattern = Pattern::decode(decoder);
-        if (!strokePattern)
-            return std::nullopt;
-
-        stateChange.m_state.strokePattern = WTFMove(*strokePattern);
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::FillGradientChange)) {
-        auto fillGradient = Gradient::decode(decoder);
-        if (!fillGradient)
-            return std::nullopt;
-
-        stateChange.m_state.fillGradient = WTFMove(*fillGradient);
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::FillPatternChange)) {
-        auto fillPattern = Pattern::decode(decoder);
-        if (!fillPattern)
-            return std::nullopt;
-
-        stateChange.m_state.fillPattern = WTFMove(*fillPattern);
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::ShadowChange)) {
-        std::optional<FloatSize> shadowOffset;
-        decoder >> shadowOffset;
-        if (!shadowOffset)
-            return std::nullopt;
-
-        stateChange.m_state.shadowOffset = *shadowOffset;
-
-        std::optional<float> shadowBlur;
-        decoder >> shadowBlur;
-        if (!shadowBlur)
-            return std::nullopt;
-
-        stateChange.m_state.shadowBlur = *shadowBlur;
-
-        std::optional<Color> shadowColor;
-        decoder >> shadowColor;
-        if (!shadowColor)
-            return std::nullopt;
-
-        stateChange.m_state.shadowColor = *shadowColor;
-
-        std::optional<ShadowRadiusMode> shadowRadiusMode;
-        decoder >> shadowRadiusMode;
-        if (!shadowRadiusMode)
-            return std::nullopt;
-
-        stateChange.m_state.shadowRadiusMode = WTFMove(*shadowRadiusMode);
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeThicknessChange)) {
-        std::optional<float> strokeThickness;
-        decoder >> strokeThickness;
-        if (!strokeThickness)
-            return std::nullopt;
-
-        stateChange.m_state.strokeThickness = *strokeThickness;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::TextDrawingModeChange)) {
-        std::optional<TextDrawingModeFlags> textDrawingMode;
-        decoder >> textDrawingMode;
-        if (!textDrawingMode)
-            return std::nullopt;
-
-        stateChange.m_state.textDrawingMode = WTFMove(*textDrawingMode);
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeColorChange)) {
-        std::optional<Color> strokeColor;
-        decoder >> strokeColor;
-        if (!strokeColor)
-            return std::nullopt;
-
-        stateChange.m_state.strokeColor = *strokeColor;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::FillColorChange)) {
-        std::optional<Color> fillColor;
-        decoder >> fillColor;
-        if (!fillColor)
-            return std::nullopt;
-
-        stateChange.m_state.fillColor = *fillColor;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeStyleChange)) {
-        StrokeStyle strokeStyle;
-        if (!decoder.decode(strokeStyle))
-            return std::nullopt;
-
-        stateChange.m_state.strokeStyle = strokeStyle;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::FillRuleChange)) {
-        std::optional<WindRule> fillRule;
-        decoder >> fillRule;
-        if (!fillRule)
-            return std::nullopt;
-
-        stateChange.m_state.fillRule = *fillRule;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::CompositeOperationChange)) {
-        std::optional<CompositeOperator> compositeOperator;
-        decoder >> compositeOperator;
-        if (!compositeOperator)
-            return std::nullopt;
-
-        stateChange.m_state.compositeOperator = *compositeOperator;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::BlendModeChange)) {
-        std::optional<BlendMode> blendMode;
-        decoder >> blendMode;
-        if (!blendMode)
-            return std::nullopt;
-
-        stateChange.m_state.blendMode = *blendMode;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::ImageInterpolationQualityChange)) {
-        std::optional<InterpolationQuality> imageInterpolationQuality;
-        decoder >> imageInterpolationQuality;
-        if (!imageInterpolationQuality)
-            return std::nullopt;
-
-        stateChange.m_state.imageInterpolationQuality = *imageInterpolationQuality;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::AlphaChange)) {
-        std::optional<float> alpha;
-        decoder >> alpha;
-        if (!alpha)
-            return std::nullopt;
-
-        stateChange.m_state.alpha = *alpha;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::ShouldAntialiasChange)) {
-        std::optional<bool> shouldAntialias;
-        decoder >> shouldAntialias;
-        if (!shouldAntialias)
-            return std::nullopt;
-
-        stateChange.m_state.shouldAntialias = *shouldAntialias;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::ShouldSmoothFontsChange)) {
-        std::optional<bool> shouldSmoothFonts;
-        decoder >> shouldSmoothFonts;
-        if (!shouldSmoothFonts)
-            return std::nullopt;
-
-        stateChange.m_state.shouldSmoothFonts = *shouldSmoothFonts;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::ShouldSubpixelQuantizeFontsChange)) {
-        std::optional<bool> shouldSubpixelQuantizeFonts;
-        decoder >> shouldSubpixelQuantizeFonts;
-        if (!shouldSubpixelQuantizeFonts)
-            return std::nullopt;
-
-        stateChange.m_state.shouldSubpixelQuantizeFonts = *shouldSubpixelQuantizeFonts;
-    }
-
-    if (stateChange.m_changeFlags.contains(GraphicsContextState::ShadowsIgnoreTransformsChange)) {
-        std::optional<bool> shadowsIgnoreTransforms;
-        decoder >> shadowsIgnoreTransforms;
-        if (!shadowsIgnoreTransforms)
-            return std::nullopt;
-
-        stateChange.m_state.shadowsIgnoreTransforms = *shadowsIgnoreTransforms;
-    }
-
-    return { { stateChange } };
+    return SetState(*state);
 }
 
 class SetLineCap {

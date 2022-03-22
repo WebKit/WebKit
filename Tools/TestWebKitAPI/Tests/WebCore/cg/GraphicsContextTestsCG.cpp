@@ -52,7 +52,7 @@ TEST(GraphicsContextTests, DrawNativeImageDoesNotLeakCompositeOperator)
     GraphicsContextCG ctx(cgContext.get());
 
     EXPECT_EQ(ctx.compositeOperation(), CompositeOperator::SourceOver);
-    EXPECT_EQ(ctx.blendModeOperation(), BlendMode::Normal);
+    EXPECT_EQ(ctx.blendMode(), BlendMode::Normal);
 
     auto greenPixelCG = greenImage();
     auto greenPixelNative = NativeImage::create(greenPixelCG.get());
@@ -71,7 +71,7 @@ TEST(GraphicsContextTests, DrawNativeImageDoesNotLeakCompositeOperator)
     EXPECT_EQ(primaryData[2], 0);
 
     EXPECT_EQ(ctx.compositeOperation(), CompositeOperator::SourceOver);
-    EXPECT_EQ(ctx.blendModeOperation(), BlendMode::Normal);
+    EXPECT_EQ(ctx.blendMode(), BlendMode::Normal);
 }
 
 } // namespace TestWebKitAPI

@@ -127,7 +127,7 @@ public:
 
     bool supportsInternalLinks() const final;
 
-    void didUpdateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) final;
+    void didUpdateState(GraphicsContextState&) final;
 
     virtual bool canUseShadowBlur() const;
 
