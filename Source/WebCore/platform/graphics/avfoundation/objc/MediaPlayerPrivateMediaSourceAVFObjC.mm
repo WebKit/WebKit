@@ -314,11 +314,7 @@ PlatformLayer* MediaPlayerPrivateMediaSourceAVFObjC::platformLayer() const
 void MediaPlayerPrivateMediaSourceAVFObjC::play()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    callOnMainThread([weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        weakThis.get()->playInternal();
-    });
+    playInternal();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicTime>&& hostTime)
@@ -352,18 +348,12 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicT
     UNUSED_PARAM(hostTime);
     [m_synchronizer setRate:m_rate];
 #endif
-
-    m_player->playbackStateChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pause()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    callOnMainThread([weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        weakThis.get()->pauseInternal();
-    });
+    pauseInternal();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal(std::optional<MonotonicTime>&& hostTime)
@@ -384,8 +374,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal(std::optional<Monotonic
     UNUSED_PARAM(hostTime);
     [m_synchronizer setRate:0];
 #endif
-
-    m_player->playbackStateChanged();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
@@ -479,22 +467,14 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback(Media
 bool MediaPlayerPrivateMediaSourceAVFObjC::playAtHostTime(const MonotonicTime& time)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    callOnMainThread([weakThis = WeakPtr { *this }, time = time] {
-        if (!weakThis)
-            return;
-        weakThis.get()->playInternal(time);
-    });
+    playInternal(time);
     return true;
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::pauseAtHostTime(const MonotonicTime& time)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    callOnMainThread([weakThis = WeakPtr { *this }, time = time] {
-        if (!weakThis)
-            return;
-        weakThis.get()->pauseInternal(time);
-    });
+    pauseInternal(time);
     return true;
 }
 #endif

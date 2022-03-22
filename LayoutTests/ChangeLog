@@ -1,3 +1,14 @@
+2022-03-22  Jer Noble  <jer.noble@apple.com>
+
+        YouTube.com - Clicking anywhere on the progress bar pauses the video
+        https://bugs.webkit.org/show_bug.cgi?id=237750
+        <rdar://problem/90364846>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-unexpected-pause-expected.txt: Added.
+        * media/media-source/media-source-unexpected-pause.html: Added.
+
 2022-03-22  Ricky Mondello  <rmondello@apple.com>
 
         It should be possible to copy text out of "AutoFilledAndViewable" password fields
