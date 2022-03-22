@@ -1,5 +1,40 @@
 2022-03-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291009. rdar://problem/89952347
+
+    AX: Speech Synthesis no longer returning list of voices in macOS 12.3
+    https://bugs.webkit.org/show_bug.cgi?id=237584
+    <rdar://problem/89952347>
+    
+    Reviewed by Andres Gonzalez.
+    
+    Source/WTF:
+    
+    The minimum macOS version was meant to be 13 and above, but we started including 12.x releases inadvertently.
+    
+    * wtf/PlatformHave.h:
+    
+    LayoutTests:
+    
+    * fast/speechsynthesis/voices-non-mock-expected.txt: Added.
+    * fast/speechsynthesis/voices-non-mock.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291009 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-08  Chris Fleizach  <cfleizach@apple.com>
+
+            AX: Speech Synthesis no longer returning list of voices in macOS 12.3
+            https://bugs.webkit.org/show_bug.cgi?id=237584
+            <rdar://problem/89952347>
+
+            Reviewed by Andres Gonzalez.
+
+            * fast/speechsynthesis/voices-non-mock-expected.txt: Added.
+            * fast/speechsynthesis/voices-non-mock.html: Added.
+
+2022-03-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r290830. rdar://problem/89081463
 
     CSP report does not get sent to the document in the case of a detached element
