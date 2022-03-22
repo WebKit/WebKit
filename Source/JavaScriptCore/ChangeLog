@@ -1,3 +1,21 @@
+2022-03-21  Saam Barati  <sbarati@apple.com>
+
+        AirFixObviousSpills needs to consider a PreIndex and PostIndex as clobbering the Reg used for indexing
+        https://bugs.webkit.org/show_bug.cgi?id=238178
+        <rdar://87345895>
+
+        Reviewed by Mark Lam.
+
+        Inside AirFixObviousSpills, we run a basic alias analysis for StackSlots and
+        registers. For example, when we overwrite a register, we clear anything
+        it's aliased with. However, the way we were doing this was by looking at
+        each Arg that was Defd. However, this iteration was missing that
+        PostIndex/PreIndex mutate the register that feeds into the address Arg.
+        This patch fixes the issue by walking the instruction in such a way that
+        we visit all the Defs we care about, both Regs and StackSlots.
+
+        * b3/air/AirFixObviousSpills.cpp:
+
 2022-03-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] ReferenceError when using extra parens in class fields

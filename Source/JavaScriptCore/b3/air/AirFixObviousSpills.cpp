@@ -188,14 +188,20 @@ private:
         if (AirFixObviousSpillsInternal::verbose)
             dataLog("    Executing ", inst, ": ", m_state, "\n");
 
-        Inst::forEachDefWithExtraClobberedRegs<Arg>(
-            &inst, &inst,
-            [&] (const Arg& arg, Arg::Role, Bank, Width) {
+        Inst::forEachDefWithExtraClobberedRegs<Reg>(&inst, &inst,
+            [&] (const Reg& reg, Arg::Role, Bank, Width) {
                 if (AirFixObviousSpillsInternal::verbose)
-                    dataLog("        Clobbering ", arg, "\n");
-                m_state.clobber(arg);
+                    dataLog("        Clobbering ", reg, "\n");
+                m_state.clobber(reg);
             });
-        
+
+        Inst::forEachDef<StackSlot*>(&inst, &inst,
+            [&] (StackSlot* slot, Arg::Role, Bank, Width) {
+                if (AirFixObviousSpillsInternal::verbose)
+                    dataLog("        Clobbering ", *slot, "\n");
+                m_state.clobber(slot);
+            });
+
         forAllAliases(
             [&] (const auto& alias) {
                 m_state.addAlias(alias);
@@ -558,29 +564,28 @@ private:
             return std::nullopt;
         }
 
-        void clobber(const Arg& arg)
+        void clobber(const Reg& reg)
         {
-            if (arg.isReg()) {
-                regConst.removeAllMatching(
-                    [&] (const RegConst& alias) -> bool {
-                        return alias.reg == arg.reg();
-                    });
-                regSlot.removeAllMatching(
-                    [&] (const RegSlot& alias) -> bool {
-                        return alias.reg == arg.reg();
-                    });
-                return;
-            }
-            if (arg.isStack()) {
-                slotConst.removeAllMatching(
-                    [&] (const SlotConst& alias) -> bool {
-                        return alias.slot == arg.stackSlot();
-                    });
-                regSlot.removeAllMatching(
-                    [&] (const RegSlot& alias) -> bool {
-                        return alias.slot == arg.stackSlot();
-                    });
-            }
+            regConst.removeAllMatching(
+                [&] (const RegConst& alias) -> bool {
+                    return alias.reg == reg;
+                });
+            regSlot.removeAllMatching(
+                [&] (const RegSlot& alias) -> bool {
+                    return alias.reg == reg;
+                });
+        }
+
+        void clobber(StackSlot* slot)
+        {
+            slotConst.removeAllMatching(
+                [&] (const SlotConst& alias) -> bool {
+                    return alias.slot == slot;
+                });
+            regSlot.removeAllMatching(
+                [&] (const RegSlot& alias) -> bool {
+                    return alias.slot == slot;
+                });
         }
 
         void sort()
