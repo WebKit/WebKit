@@ -858,7 +858,10 @@ editing/spelling/spellcheck-async.html [ Failure ]
 editing/spelling/spelling-unified-emulation.html [ Failure ]
 
 # Skip due to lack of DumpRenderTree `AccessibilityUIElement::stringDescriptionOfAttributeValue` implementation.
-accessibility/visible-character-range.html [ Skip ]
+accessibility/visible-character-range-basic.html [ Skip ]
+accessibility/visible-character-range-height-changes.html [ Skip ]
+accessibility/visible-character-range-scrolling.html [ Skip ]
+accessibility/visible-character-range-width-changes.html [ Skip ]
 accessibility/model-element-attributes.html [ Skip ]
 
 # <rdar://problem/26050923> The result is probably still a pass, but we don't have a way

@@ -346,6 +346,12 @@ accessibility/table-search-traversal.html [ Skip ]
 accessibility/dynamically-changing-iframe-remains-accessible.html [ Skip ]
 accessibility/ignore-modals-without-any-content.html [ Skip ]
 
+# Missing `AccessibilityUIElement::stringDescriptionOfAttributeValue` implementation.
+accessibility/visible-character-range-basic.html [ Skip ]
+accessibility/visible-character-range-height-changes.html [ Skip ]
+accessibility/visible-character-range-scrolling.html [ Skip ]
+accessibility/visible-character-range-width-changes.html [ Skip ]
+
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
 # Added in r263823. Both tests are timing out.

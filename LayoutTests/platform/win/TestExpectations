@@ -465,8 +465,12 @@ accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
 accessibility/listbox-clear-selection.html [ Skip ]
 accessibility/embedded-image-description.html [ Skip ]
 accessibility/img-no-alt-not-ignored-with-title.html [ Skip ]
-accessibility/visible-character-range.html [ Skip ]
 accessibility/model-element-attributes.html [ Skip ]
+
+accessibility/visible-character-range-basic.html [ Skip ]
+accessibility/visible-character-range-height-changes.html [ Skip ]
+accessibility/visible-character-range-scrolling.html [ Skip ]
+accessibility/visible-character-range-width-changes.html [ Skip ]
 
 # Need to implement AccessibilityUIElement::hasDocumentRoleAncestor(), AccessibilityUIElement::hasWebApplicationAncestor(),
 # AccessibilityUIElement::isInDescriptionListDetail(), AccessibilityUIElement::isInDescriptionListTerm(), and

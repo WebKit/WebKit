@@ -111,4 +111,13 @@ PartialOrdering treeOrderForTesting(TreeType type, const BoundaryPoint& a, const
     return PartialOrdering::unordered;
 }
 
+TextStream& operator<<(TextStream& stream, const BoundaryPoint& boundaryPoint)
+{
+    TextStream::GroupScope scope(stream);
+    stream << "BoundaryPoint ";
+    stream.dumpProperty("node", boundaryPoint.container->debugDescription());
+    stream.dumpProperty("offset", boundaryPoint.offset);
+    return stream;
+}
+
 }

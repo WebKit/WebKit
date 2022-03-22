@@ -1,11 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
+<script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
-<div id="group">
+<div id="text-div">
 test test test test test test test test test test test test test test test test test test test test test test test test test test test test
 test test test test test test test test test test test test test test test test test test test test test test test test test test test test
 test test test test test test test test test test test test test test test test test test test test test test test test test test test test
@@ -50,23 +51,17 @@ test test test test test test test test test test test test test test test test 
 </div>
 
 <script>
-
-    description("This tests that visibleCharacterRange returns expected visible ranges while modifying obscured content.");
+    var testOutput = "This tests that visibleCharacterRange returns expected visible ranges with various view height values.\n\n";
 
     if (window.accessibilityController) {
-        var text = accessibilityController.accessibleElementById("group").childAtIndex(0);
-        debug("Visible range: " + text.stringDescriptionOfAttributeValue("AXVisibleCharacterRange"));
+        const text = accessibilityController.accessibleElementById("text-div").childAtIndex(0);
+        testOutput += "\nTesting view height values 100 to 1300.\n";
+        for (let i = 0; i < 13; i++)
+            testOutput += visibleRange(text, {width: 500, height: (i + 1) * 100, scrollTop: 500});
 
-        testRunner.setViewSize(500, 200);
-        debug("Visible range (500, 200): " + text.stringDescriptionOfAttributeValue("AXVisibleCharacterRange"));
-
-        document.body.scrollTop = 200;
-        testRunner.setViewSize(200, 500);
-        debug("Visible range, offset: 200 (200, 500): " + text.stringDescriptionOfAttributeValue("AXVisibleCharacterRange"));
-
-        document.getElementById("group").style.visibility = "hidden";
+        debug(testOutput);
+        document.getElementById("text-div").style.visibility = "hidden";
     }
-
 </script>
 
 </body>

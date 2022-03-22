@@ -1,3 +1,35 @@
+2022-03-21  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: AccessibilityObject::visibleCharacterRange is extremely slow when called on objects with lots of text
+        https://bugs.webkit.org/show_bug.cgi?id=237678
+
+        Reviewed by Andres Gonzalez.
+
+        Add many new visible character range testcases split across four new tests.
+
+        * accessibility/visible-character-range-basic.html: Added.
+        * accessibility/visible-character-range-height-changes.html: Added.
+        * accessibility/visible-character-range-scrolling.html: Added.
+        * accessibility/visible-character-range-width-changes.html: Added.
+        * platform/glib/TestExpectations: Skip new tests.
+        * platform/ios-simulator-wk2/TestExpectations:
+        Mark new tests as crashing since the old test was crashing in `main`.
+        * platform/ios/TestExpectations: Enable new tests.
+        * platform/ios/accessibility/visible-character-range-basic-expected.txt: Added.
+        * platform/ios/accessibility/visible-character-range-expected.txt: Removed.
+        * platform/ios/accessibility/visible-character-range-height-changes-expected.txt: Added.
+        * platform/ios/accessibility/visible-character-range-scrolling-expected.txt: Added.
+        * platform/ios/accessibility/visible-character-range-width-changes-expected.txt: Added.
+        * platform/mac-wk1/TestExpectations: Skip new tests.
+        * platform/mac/accessibility/visible-character-range-basic-expected.txt: Added.
+        * platform/mac/accessibility/visible-character-range-expected.txt: Removed.
+        * platform/mac/accessibility/visible-character-range-height-changes-expected.txt: Added.
+        * platform/mac/accessibility/visible-character-range-scrolling-expected.txt: Added.
+        * platform/mac/accessibility/visible-character-range-width-changes-expected.txt: Added.
+        * platform/win/TestExpectations: Skip new tests.
+        * resources/accessibility-helper.js:
+        (visibleRange): Added.
+
 2022-03-21  Matteo Flores  <matteo_flores@apple.com>
 
         [ iOS iPhone 12 ] fast/hidpi & fast/layers/hidpi tests are flaky text/image failing

@@ -1,3 +1,55 @@
+2022-03-21  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: AccessibilityObject::visibleCharacterRange is extremely slow when called on objects with lots of text
+        https://bugs.webkit.org/show_bug.cgi?id=237678
+
+        Reviewed by Andres Gonzalez.
+
+        AccessibilityObject::visibleCharacterRange is extremely slow when
+        called on objects with lots of text. For example, trying to enter a
+        large contenteditable element with VoiceOver causes "Safari not
+        responding" because WebKit is so slow to return this data.
+
+        This patch fixes this in two ways. First, we optimize computation of
+        the end boundary point by grabbing previous line start positions in
+        batches and binary searching within each batch to find the correct
+        value.
+
+        I tried to apply this algorithm to the computation of the start
+        boundary, but that regressed performance for small and medium text
+        objects, and didn't yield any noticeable improvement for large text
+        objects. Keeping start boundary computation as-is while changing the
+        end boundary computation provided the best performance at all text
+        sizes.
+
+        Second, this patch caches visibleCharacterRange results, as the same
+        inputs to this function will always yield the same output. It's common
+        for this data to be requested multiple times without any change in
+        page state (e.g. scrolling), so caching further improves performance
+        by a lot.
+
+        Additional testcases added to accessibility/visible-character-range.html to
+        ensure behavior is correct.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::previousLineStartBoundaryPoints const): Added.
+        (WebCore::AccessibilityObject::lastBoundaryPointContainedInRect const): Added.
+        (WebCore::AccessibilityObject::boundaryPointsContainedInRect const): Added.
+        (WebCore::AccessibilityObject::visibleCharacterRange const):
+        Wraps visibleCharacterRangeInternal to handle caching.
+        (WebCore::AccessibilityObject::visibleCharacterRangeInternal const):
+        (WebCore::AccessibilityObject::previousLineStartPositionInternal const): Added.
+        (WebCore::AccessibilityObject::previousLineStartPosition const):
+        Wraps previousLineStartPositionInternal to return default
+        VisualPosition if it returns std::nullopt (existing callers expect this behavior)
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::lastBoundaryPointContainedInRect const): Added.
+
+        * dom/BoundaryPoint.cpp:
+        (WebCore::operator<<):
+        * dom/BoundaryPoint.h:
+        Added implementation of operator<< to make debugging boundary points easier.
+
 2022-03-21  Alex Christensen  <achristensen@webkit.org>
 
         Implement CSSNumericValue.mul, div, add, sub, max, and min

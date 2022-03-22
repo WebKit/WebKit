@@ -51,6 +51,12 @@ function touchAccessibilityTree(accessibilityObject) {
     return true;
 }
 
+function visibleRange(axElement, {width, height, scrollTop}) {
+    document.body.scrollTop = scrollTop;
+    testRunner.setViewSize(width, height);
+    return `Range with view ${width}x${height}, scrollTop ${scrollTop}: ${axElement.stringDescriptionOfAttributeValue("AXVisibleCharacterRange")}\n`;
+}
+
 function platformValueForW3CName(accessibilityObject, includeSource=false) {
     var result;
     if (accessibilityController.platformName == "atspi")
