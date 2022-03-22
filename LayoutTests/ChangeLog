@@ -1,5 +1,14 @@
 2022-03-22  Robert Jenner  <Jenner@apple.com>
 
+        imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html fails (221819)
+        https://bugs.webkit.org/show_bug.cgi?id=221819
+
+        Unreviewed test gardening. Re-baseline for wk1.
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest-expected.txt: Added.
+
+2022-03-22  Robert Jenner  <Jenner@apple.com>
+
         [ macOS Debug ] inspector/console/queryInstances.html is a flaky failure (215814)
         https://bugs.webkit.org/show_bug.cgi?id=215814
 
