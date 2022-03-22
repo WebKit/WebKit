@@ -2546,7 +2546,7 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
 
 
 # Enum declaration allowlist
-_ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType', 'Meridiem']
+_ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType', 'Meridiem', 'NSType']
 
 
 def check_enum_casing(clean_lines, line_number, enum_state, error):
