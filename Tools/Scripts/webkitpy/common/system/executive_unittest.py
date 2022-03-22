@@ -107,8 +107,8 @@ class ExecutiveTest(unittest.TestCase):
     def test_run_command_with_bad_command(self):
         self.assertRaises(OSError, lambda: Executive().run_command(["foo_bar_command_blah"], ignore_errors=True, return_exit_code=True))
         self.assertRaises(OSError, lambda: Executive().run_and_throw_if_fail(["foo_bar_command_blah"], quiet=True))
-        self.assertRaises(ScriptError, lambda: Executive().run_command(['python', '-c', 'import sys; sys.exit(1)']))
-        self.assertRaises(ScriptError, lambda: Executive().run_and_throw_if_fail(['python', '-c', 'import sys; sys.exit(1)'], quiet=True))
+        self.assertRaises(ScriptError, lambda: Executive().run_command([sys.executable, '-c', 'import sys; sys.exit(1)']))
+        self.assertRaises(ScriptError, lambda: Executive().run_and_throw_if_fail([sys.executable, '-c', 'import sys; sys.exit(1)'], quiet=True))
 
     def test_run_command_args_type(self):
         executive = Executive()
