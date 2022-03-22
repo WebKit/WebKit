@@ -3243,7 +3243,10 @@ bool Element::dispatchMouseForceWillBegin()
 void Element::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)
 {
     document().eventLoop().queueTask(TaskSource::DOMManipulation, [this, protectedThis = Ref { *this }, event = SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, WTFMove(eventInit), Event::IsTrusted::Yes)] {
-        dispatchEvent(event);
+        if (!isConnected())
+            document().dispatchEvent(event);
+        else
+            dispatchEvent(event);
     });
 }
 
