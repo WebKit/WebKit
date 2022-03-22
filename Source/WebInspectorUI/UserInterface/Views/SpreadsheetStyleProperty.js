@@ -52,6 +52,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._selected = false;
         this._hasInvalidVariableValue = false;
         this._cssDocumentationPopover = null;
+        this._activeInlineSwatch = null;
 
         this.update();
         property.addEventListener(WI.CSSProperty.Event.OverriddenStatusChanged, this.updateStatus, this);
@@ -134,6 +135,12 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         if (this._valueTextField)
             this._valueTextField.detached();
+
+        this._activeInlineSwatch?.dismissPopover();
+        this._activeInlineSwatch = null;
+
+        this._cssDocumentationPopover?.dismiss();
+        this._cssDocumentationPopover = null;
     }
 
     remove(replacement = null)
@@ -386,6 +393,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._renderValue(this._property.rawValue);
 
         this._cssDocumentationPopover?.dismiss();
+        this._cssDocumentationPopover = null;
 
         if (direction === "forward") {
             if (isEditingName && !willRemoveProperty) {
@@ -482,6 +490,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     _renderValue(value)
     {
         this._hasInvalidVariableValue = false;
+        this._activeInlineSwatch = null;
 
         const maxValueLength = 150;
         let tokens = WI.tokenizeCSSValue(value);
@@ -603,11 +612,10 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             };
         }
 
-        if (this._delegate && typeof this._delegate.stylePropertyInlineSwatchActivated === "function") {
-            swatch.addEventListener(WI.InlineSwatch.Event.Activated, function(event) {
-                this._delegate.stylePropertyInlineSwatchActivated();
-            }, this);
-        }
+        swatch.addEventListener(WI.InlineSwatch.Event.Activated, function(event) {
+            this._activeInlineSwatch = swatch;
+            this._delegate?.stylePropertyInlineSwatchActivated();
+        }, this);
 
         if (this._delegate && typeof this._delegate.stylePropertyInlineSwatchDeactivated === "function") {
             swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, function(event) {

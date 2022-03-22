@@ -1,3 +1,22 @@
+2022-03-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Inline swatch popovers should hide when inline swatches are removed
+        https://bugs.webkit.org/show_bug.cgi?id=235047
+        <rdar://problem/87687975>
+
+        Reviewed by Patrick Angle.
+
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+        (WI.InlineSwatch.prototype.dismissPopover):
+        (WI.InlineSwatch.prototype._presentPopover):
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.detached):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+        (WI.SpreadsheetStyleProperty.prototype._renderValue):
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+
 2022-03-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: REGRESSION(r287753): Settings: checkboxes are smaller and no longer vertically align with related text
