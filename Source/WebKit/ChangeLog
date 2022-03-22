@@ -1,3 +1,64 @@
+2022-03-21  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r288662. rdar://problem/89582442
+
+    [WP] Avoid calling IOSurfaceAlignProperty
+    https://bugs.webkit.org/show_bug.cgi?id=235659
+    
+    Reviewed by Simon Fraser.
+    
+    Source/WebCore:
+    
+    Add information about alignment of bytes per row to IOSurface class.
+    
+    * platform/graphics/cocoa/IOSurface.h:
+    * platform/graphics/cocoa/IOSurface.mm:
+    (WebCore::surfaceBytesPerRowAlignment):
+    (WebCore::IOSurface::bytesPerRowAlignment):
+    (WebCore::IOSurface::setBytesPerRowAlignment):
+    
+    Source/WebKit:
+    
+    Avoid calling IOSurfaceAlignProperty in the WebContent process, since it requires IOKit access.
+    Information about the alignment of bytes per row of IOSurface will be retrieved in the UI process,
+    and sent to the WebContent process, where it will be stored.
+    
+    * Shared/WebProcessCreationParameters.cpp:
+    (WebKit::WebProcessCreationParameters::encode const):
+    (WebKit::WebProcessCreationParameters::decode):
+    * Shared/WebProcessCreationParameters.h:
+    * Shared/cg/ShareableBitmapCG.cpp:
+    (WebKit::ShareableBitmap::calculateBytesPerRow):
+    * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+    (WebKit::WebProcessPool::platformInitializeWebProcess):
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::WebProcess::platformInitializeWebProcess):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288662 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-26  Per Arne Vollan  <pvollan@apple.com>
+
+            [WP] Avoid calling IOSurfaceAlignProperty
+            https://bugs.webkit.org/show_bug.cgi?id=235659
+
+            Reviewed by Simon Fraser.
+
+            Avoid calling IOSurfaceAlignProperty in the WebContent process, since it requires IOKit access.
+            Information about the alignment of bytes per row of IOSurface will be retrieved in the UI process,
+            and sent to the WebContent process, where it will be stored.
+
+            * Shared/WebProcessCreationParameters.cpp:
+            (WebKit::WebProcessCreationParameters::encode const):
+            (WebKit::WebProcessCreationParameters::decode):
+            * Shared/WebProcessCreationParameters.h:
+            * Shared/cg/ShareableBitmapCG.cpp:
+            (WebKit::ShareableBitmap::calculateBytesPerRow):
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::platformInitializeWebProcess):
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::WebProcess::platformInitializeWebProcess):
+
 2022-03-17  Alan Coon  <alancoon@apple.com>
 
         Revert r290967. rdar://problem/90331977

@@ -456,6 +456,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     if (!parameters.maximumIOSurfaceSize.isEmpty())
         WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
 
+    WebCore::IOSurface::setBytesPerRowAlignment(parameters.bytesPerRowIOSurfaceAlignment);
+
     accessibilityPreferencesDidChange(parameters.accessibilityPreferences);
 }
 
