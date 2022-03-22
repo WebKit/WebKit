@@ -56,13 +56,9 @@ void RemoteGraphicsContextGL::copyTextureFromVideoFrame(WebKit::RemoteVideoFrame
         completionHandler(false);
         return;
     }
-    // Note: This extra casting is needed since VideoFrames are still MediaSamples.
-    RefPtr<WebCore::VideoFrameCV> videoFrameCV;
-    if (is<WebCore::VideoFrameCV>(*videoFrame))
-        videoFrameCV = &downcast<WebCore::VideoFrameCV>(*videoFrame);
-    else if (is<WebCore::MediaSampleAVFObjC>(*videoFrame))
-        videoFrameCV = downcast<WebCore::MediaSampleAVFObjC>(*videoFrame).videoFrame();
-    else {
+
+    auto videoFrameCV = videoFrame->asVideoFrameCV();
+    if (!videoFrameCV) {
         ASSERT_NOT_REACHED(); // Programming error, not a IPC attack.
         completionHandler(false);
         return;

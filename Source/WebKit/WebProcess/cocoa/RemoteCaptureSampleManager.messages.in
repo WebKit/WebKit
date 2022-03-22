@@ -26,7 +26,7 @@
 messages -> RemoteCaptureSampleManager NotRefCounted {
     AudioStorageChanged(WebCore::RealtimeMediaSourceIdentifier id, WebKit::SharedMemory::IPCHandle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames, IPC::Semaphore captureSemaphore, MediaTime mediaTime, size_t frameChunkSize);
     VideoFrameAvailable(WebCore::RealtimeMediaSourceIdentifier id, WebKit::RemoteVideoFrameProxy::Properties sample, struct WebCore::VideoFrameTimeMetadata metadata)
-    VideoFrameAvailableCV(WebCore::RealtimeMediaSourceIdentifier id, RetainPtr<CVPixelBufferRef> pixelBuffer, WebCore::MediaSample::VideoRotation rotation, bool mirrored, MediaTime presentationTime, struct WebCore::VideoFrameTimeMetadata metadata)
+    VideoFrameAvailableCV(WebCore::RealtimeMediaSourceIdentifier id, RetainPtr<CVPixelBufferRef> pixelBuffer, WebCore::VideoFrame::Rotation rotation, bool mirrored, MediaTime presentationTime, struct WebCore::VideoFrameTimeMetadata metadata)
 
 }
 

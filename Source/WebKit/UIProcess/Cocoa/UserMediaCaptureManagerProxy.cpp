@@ -55,7 +55,7 @@ using namespace WebCore;
 class UserMediaCaptureManagerProxy::SourceProxy
     : private RealtimeMediaSource::Observer
     , private RealtimeMediaSource::AudioSampleObserver
-    , private RealtimeMediaSource::VideoSampleObserver {
+    , private RealtimeMediaSource::VideoFrameObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     SourceProxy(RealtimeMediaSourceIdentifier id, Ref<IPC::Connection>&& connection, ProcessIdentity&& resourceOwner, Ref<RealtimeMediaSource>&& source, RefPtr<RemoteVideoFrameObjectHeap>&& videoFrameObjectHeap)
@@ -74,7 +74,7 @@ public:
         case RealtimeMediaSource::Type::Video:
         case RealtimeMediaSource::Type::Screen:
         case RealtimeMediaSource::Type::Window:
-            m_source->addVideoSampleObserver(*this);
+            m_source->addVideoFrameObserver(*this);
             break;
         case RealtimeMediaSource::Type::None:
             ASSERT_NOT_REACHED();
@@ -91,7 +91,7 @@ public:
         case RealtimeMediaSource::Type::Video:
         case RealtimeMediaSource::Type::Screen:
         case RealtimeMediaSource::Type::Window:
-            m_source->removeVideoSampleObserver(*this);
+            m_source->removeVideoFrameObserver(*this);
             break;
         case RealtimeMediaSource::Type::None:
             ASSERT_NOT_REACHED();
@@ -178,16 +178,16 @@ private:
             m_captureSemaphore->signal();
     }
 
-    RefPtr<MediaSample> rotateVideoFrameIfNeeded(MediaSample& sample)
+    RefPtr<VideoFrame> rotateVideoFrameIfNeeded(VideoFrame& frame)
     {
-        if (m_shouldApplyRotation && sample.videoRotation() != MediaSample::VideoRotation::None) {
-            auto pixelBuffer = rotatePixelBuffer(sample);
-            return VideoFrameCV::create(sample.presentationTime(), sample.videoMirrored(), MediaSample::VideoRotation::None, WTFMove(pixelBuffer));
+        if (m_shouldApplyRotation && frame.rotation() != VideoFrame::Rotation::None) {
+            auto pixelBuffer = rotatePixelBuffer(frame);
+            return VideoFrameCV::create(frame.presentationTime(), frame.isMirrored(), VideoFrame::Rotation::None, WTFMove(pixelBuffer));
         }
-        return &sample;
+        return &frame;
     }
 
-    void videoSampleAvailable(MediaSample& frame, VideoFrameTimeMetadata metadata) final
+    void videoFrameAvailable(VideoFrame& frame, VideoFrameTimeMetadata metadata) final
     {
         auto videoFrame = rotateVideoFrameIfNeeded(frame);
         if (!videoFrame)
@@ -195,35 +195,35 @@ private:
         if (m_resourceOwner)
             videoFrame->setOwnershipIdentity(m_resourceOwner);
         if (!m_videoFrameObjectHeap) {
-            m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailableCV(m_id, videoFrame->pixelBuffer(), videoFrame->videoRotation(), videoFrame->videoMirrored(), videoFrame->presentationTime(), metadata), 0);
+            m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailableCV(m_id, videoFrame->pixelBuffer(), videoFrame->rotation(), videoFrame->isMirrored(), videoFrame->presentationTime(), metadata), 0);
             return;
         }
         auto properties = m_videoFrameObjectHeap->add(*videoFrame);
         m_connection->send(Messages::RemoteCaptureSampleManager::VideoFrameAvailable(m_id, properties, metadata), 0);
     }
 
-    RetainPtr<CVPixelBufferRef> rotatePixelBuffer(MediaSample& sample)
+    RetainPtr<CVPixelBufferRef> rotatePixelBuffer(VideoFrame& videoFrame)
     {
         if (!m_rotationSession)
             m_rotationSession = makeUnique<ImageRotationSessionVT>();
 
         ImageRotationSessionVT::RotationProperties rotation;
-        switch (sample.videoRotation()) {
-        case MediaSample::VideoRotation::None:
+        switch (videoFrame.rotation()) {
+        case VideoFrame::Rotation::None:
             ASSERT_NOT_REACHED();
             rotation.angle = 0;
             break;
-        case MediaSample::VideoRotation::UpsideDown:
+        case VideoFrame::Rotation::UpsideDown:
             rotation.angle = 180;
             break;
-        case MediaSample::VideoRotation::Right:
+        case VideoFrame::Rotation::Right:
             rotation.angle = 90;
             break;
-        case MediaSample::VideoRotation::Left:
+        case VideoFrame::Rotation::Left:
             rotation.angle = 270;
             break;
         }
-        return m_rotationSession->rotate(sample, rotation, ImageRotationSessionVT::IsCGImageCompatible::No);
+        return m_rotationSession->rotate(videoFrame, rotation, ImageRotationSessionVT::IsCGImageCompatible::No);
     }
 
     void storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& format, size_t frameCount)

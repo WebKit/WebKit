@@ -28,7 +28,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ImageBuffer.h"
-#include "MediaSample.h"
 #include "RealtimeMediaSource.h"
 #include "VideoPreset.h"
 #include <wtf/Lock.h>
@@ -46,7 +45,7 @@ public:
 
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) override;
     virtual void generatePresets() = 0;
-    virtual MediaSample::VideoRotation sampleRotation() const { return MediaSample::VideoRotation::None; }
+    virtual VideoFrame::Rotation videoFrameRotation() const { return VideoFrame::Rotation::None; }
 
     double observedFrameRate() const { return m_observedFrameRate; }
     Vector<VideoPresetData> presetsData();
@@ -73,7 +72,7 @@ protected:
 
     void updateCapabilities(RealtimeMediaSourceCapabilities&);
 
-    void dispatchMediaSampleToObservers(MediaSample&, WebCore::VideoFrameTimeMetadata);
+    void dispatchVideoFrameToObservers(VideoFrame&, VideoFrameTimeMetadata);
 
     static Span<const IntSize> standardVideoSizes();
 

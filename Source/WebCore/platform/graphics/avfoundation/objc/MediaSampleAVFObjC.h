@@ -65,9 +65,9 @@ public:
     WEBCORE_EXPORT std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime, UseEndTime) override;
     WEBCORE_EXPORT Ref<MediaSample> createNonDisplayingCopy() const override;
 
-    VideoRotation videoRotation() const override { return m_rotation; }
-    bool videoMirrored() const override { return m_mirrored; }
-    WEBCORE_EXPORT uint32_t videoPixelFormat() const final;
+    VideoRotation rotation() const override { return m_rotation; }
+    bool isMirrored() const override { return m_mirrored; }
+    WEBCORE_EXPORT uint32_t pixelFormat() const final;
     WEBCORE_EXPORT CVPixelBufferRef pixelBuffer() const final;
     WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&) final;
 

@@ -36,7 +36,7 @@ class ImageTransferSessionVT;
 class RealtimeVideoSource final
     : public RealtimeMediaSource
     , public RealtimeMediaSource::Observer
-    , public RealtimeMediaSource::VideoSampleObserver {
+    , public RealtimeMediaSource::VideoFrameObserver {
 public:
     static Ref<RealtimeVideoSource> create(Ref<RealtimeVideoCaptureSource>&& source, bool shouldUseIOSurface = true) { return adoptRef(*new RealtimeVideoSource(WTFMove(source), shouldUseIOSurface)); }
 
@@ -71,11 +71,11 @@ private:
     void sourceStopped() final;
     bool preventSourceFromStopping() final;
 
-    // RealtimeMediaSource::VideoSampleObserver
-    void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) final;
+    // RealtimeMediaSource::VideoFrameObserver
+    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
 
 #if PLATFORM(COCOA)
-    RefPtr<MediaSample> adaptVideoFrame(MediaSample&);
+    RefPtr<VideoFrame> adaptVideoFrame(VideoFrame&);
 #endif
 
 #if !RELEASE_LOG_DISABLED

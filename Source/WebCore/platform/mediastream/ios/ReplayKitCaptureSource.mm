@@ -156,7 +156,7 @@ bool ReplayKitCaptureSource::start()
     });
 
     auto completionHandler = makeBlockPtr([this, weakThis = WeakPtr { *this }, identifier](NSError * _Nullable error) {
-        // FIXME: It should be safe to call `videoSampleAvailable` from any thread. Test this and get rid of this main thread hop.
+        // FIXME: It should be safe to call `videoFrameAvailable` from any thread. Test this and get rid of this main thread hop.
         RunLoop::main().dispatch([this, weakThis, error = retainPtr(error), identifier]() mutable {
             if (!weakThis || !error)
                 return;

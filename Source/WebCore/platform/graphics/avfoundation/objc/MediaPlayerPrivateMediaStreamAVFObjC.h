@@ -28,9 +28,9 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "MediaPlayerPrivate.h"
-#include "MediaSample.h"
 #include "MediaStreamPrivate.h"
 #include "SampleBufferDisplayLayer.h"
+#include "VideoFrame.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
@@ -52,7 +52,7 @@ class MediaPlayerPrivateMediaStreamAVFObjC final
     : public MediaPlayerPrivateInterface
     , private MediaStreamPrivate::Observer
     , public MediaStreamTrackPrivate::Observer
-    , public RealtimeMediaSource::VideoSampleObserver
+    , public RealtimeMediaSource::VideoFrameObserver
     , public SampleBufferDisplayLayer::Client
     , private LoggerHelper
 {
@@ -136,9 +136,9 @@ private:
 
     void flushRenderers();
 
-    void processNewVideoSample(MediaSample&, VideoFrameTimeMetadata, Seconds);
-    void enqueueVideoSample(MediaSample&);
-    void reenqueueCurrentVideoSampleIfNeeded();
+    void processNewVideoFrame(VideoFrame&, VideoFrameTimeMetadata, Seconds);
+    void enqueueVideoFrame(VideoFrame&);
+    void reenqueueCurrentVideoFrameIfNeeded();
     void requestNotificationWhenReadyForVideoData();
 
     void paint(GraphicsContext&, const FloatRect&) override;
@@ -211,8 +211,8 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) override { };
     void readyStateChanged(MediaStreamTrackPrivate&) override;
 
-    // RealtimeMediaSouce::VideoSampleObserver
-    void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) final;
+    // RealtimeMediaSouce::VideoFrameObserver
+    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
 
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) override;
@@ -238,7 +238,7 @@ private:
         void reset();
 
         RefPtr<NativeImage> cgImage;
-        RefPtr<MediaSample> mediaSample;
+        RefPtr<VideoFrame> videoFrame;
         std::unique_ptr<PixelBufferConformerCV> pixelBufferConformer;
     };
     CurrentFramePainter m_imagePainter;
@@ -260,7 +260,7 @@ private:
     // Written on main thread, read on sample thread.
     bool m_canEnqueueDisplayLayer { false };
     // Used on sample thread.
-    MediaSample::VideoRotation m_videoRotation { MediaSample::VideoRotation::None };
+    VideoFrame::Rotation m_videoRotation { VideoFrame::Rotation::None };
     bool m_videoMirrored { false };
 
     Ref<const Logger> m_logger;
@@ -272,8 +272,8 @@ private:
 
     RetainPtr<WebRootSampleBufferBoundsChangeListener> m_boundsChangeListener;
 
-    Lock m_currentVideoSampleLock;
-    RefPtr<MediaSample> m_currentVideoSample WTF_GUARDED_BY_LOCK(m_currentVideoSampleLock);
+    Lock m_currentVideoFrameLock;
+    RefPtr<VideoFrame> m_currentVideoFrame WTF_GUARDED_BY_LOCK(m_currentVideoFrameLock);
 
     bool m_playing { false };
     bool m_muted { false };

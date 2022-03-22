@@ -33,12 +33,12 @@
 
 namespace WebCore {
 
-Ref<VideoFrameLibWebRTC> VideoFrameLibWebRTC::create(MediaTime presentationTime, bool isMirrored, VideoRotation rotation, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)
+Ref<VideoFrameLibWebRTC> VideoFrameLibWebRTC::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)
 {
     return adoptRef(*new VideoFrameLibWebRTC(presentationTime, isMirrored, rotation, WTFMove(buffer), WTFMove(conversionCallback)));
 }
 
-VideoFrameLibWebRTC::VideoFrameLibWebRTC(MediaTime presentationTime, bool isMirrored, VideoRotation rotation, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)
+VideoFrameLibWebRTC::VideoFrameLibWebRTC(MediaTime presentationTime, bool isMirrored, Rotation rotation, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer, ConversionCallback&& conversionCallback)
     : VideoFrame(presentationTime, isMirrored, rotation)
     , m_buffer(WTFMove(buffer))
     , m_size(m_buffer->width(),  m_buffer->height())

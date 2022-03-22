@@ -28,7 +28,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ImageBuffer.h"
-#include "MediaSample.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>

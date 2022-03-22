@@ -45,12 +45,12 @@ public:
         return std::unique_ptr<ImageTransferSessionVT>(new ImageTransferSessionVT(pixelFormat, shouldUseIOSurface));
     }
 
-    RefPtr<MediaSample> convertVideoFrame(MediaSample&, const IntSize&);
-    RefPtr<MediaSample> createMediaSample(CGImageRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
-    RefPtr<MediaSample> createMediaSample(CMSampleBufferRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
+    RefPtr<VideoFrame> convertVideoFrame(VideoFrame&, const IntSize&);
+    RefPtr<VideoFrame> createVideoFrame(CGImageRef, const MediaTime&, const IntSize&, VideoFrame::Rotation = VideoFrame::Rotation::None, bool mirrored = false);
+    RefPtr<VideoFrame> createVideoFrame(CMSampleBufferRef, const MediaTime&, const IntSize&, VideoFrame::Rotation = VideoFrame::Rotation::None, bool mirrored = false);
 
 #if !PLATFORM(MACCATALYST)
-    WEBCORE_EXPORT RefPtr<MediaSample> createMediaSample(IOSurfaceRef, const MediaTime&, const IntSize&, MediaSample::VideoRotation = MediaSample::VideoRotation::None, bool mirrored = false);
+    WEBCORE_EXPORT RefPtr<VideoFrame> createVideoFrame(IOSurfaceRef, const MediaTime&, const IntSize&, VideoFrame::Rotation = VideoFrame::Rotation::None, bool mirrored = false);
 #endif
 
     uint32_t pixelFormat() const { return m_pixelFormat; }

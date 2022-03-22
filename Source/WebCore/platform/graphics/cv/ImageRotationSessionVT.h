@@ -34,7 +34,7 @@ typedef struct __CVPixelBufferPool* CVPixelBufferPoolRef;
 
 namespace WebCore {
 
-class MediaSample;
+class VideoFrame;
 
 class ImageRotationSessionVT final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -60,7 +60,7 @@ public:
     const FloatSize& rotatedSize() { return m_rotatedSize; }
 
     RetainPtr<CVPixelBufferRef> rotate(CVPixelBufferRef);
-    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> rotate(MediaSample&, const RotationProperties&, IsCGImageCompatible);
+    WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> rotate(VideoFrame&, const RotationProperties&, IsCGImageCompatible);
 
 private:
     void initialize(const RotationProperties&, FloatSize, IsCGImageCompatible);

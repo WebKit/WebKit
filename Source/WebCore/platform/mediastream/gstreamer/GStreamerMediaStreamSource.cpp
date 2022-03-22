@@ -128,7 +128,7 @@ static void webkitMediaStreamSrcEnsureStreamCollectionPosted(WebKitMediaStreamSr
 
 class InternalSource final : public MediaStreamTrackPrivate::Observer,
     public RealtimeMediaSource::AudioSampleObserver,
-    public RealtimeMediaSource::VideoSampleObserver {
+    public RealtimeMediaSource::VideoFrameObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InternalSource(GstElement* parent, MediaStreamTrackPrivate& track, const String& padName)
@@ -181,7 +181,7 @@ public:
         if (m_track.hasAudio())
             m_track.source().addAudioSampleObserver(*this);
         else if (m_track.hasVideo())
-            m_track.source().addVideoSampleObserver(*this);
+            m_track.source().addVideoFrameObserver(*this);
         m_isObserving = true;
     }
 
@@ -196,7 +196,7 @@ public:
         if (m_track.hasAudio())
             m_track.source().removeAudioSampleObserver(*this);
         else if (m_track.hasVideo())
-            m_track.source().removeVideoSampleObserver(*this);
+            m_track.source().removeVideoFrameObserver(*this);
         m_track.removeObserver(*this);
     }
 
@@ -272,13 +272,13 @@ public:
         }
     }
 
-    void videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata) final
+    void videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata) final
     {
         if (!m_parent || !m_isObserving)
             return;
 
-        auto sampleSize = sample.presentationSize();
-        IntSize captureSize(sampleSize.width(), sampleSize.height());
+        auto videoFrameSize = videoFrame.presentationSize();
+        IntSize captureSize(videoFrameSize.width(), videoFrameSize.height());
 
         auto settings = m_track.settings();
         m_configuredSize.setWidth(settings.width());
@@ -289,8 +289,8 @@ public:
         if (!m_configuredSize.height())
             m_configuredSize.setHeight(captureSize.height());
 
-        auto videoRotation = sample.videoRotation();
-        bool videoMirrored = sample.videoMirrored();
+        auto videoRotation = videoFrame.rotation();
+        bool videoMirrored = videoFrame.isMirrored();
         if (m_videoRotation != videoRotation || m_videoMirrored != videoMirrored) {
             m_videoRotation = videoRotation;
             m_videoMirrored = videoMirrored;
@@ -301,8 +301,7 @@ public:
             gst_pad_push_event(pad.get(), gst_event_new_tag(gst_tag_list_new(GST_TAG_IMAGE_ORIENTATION, orientation.utf8().data(), nullptr)));
         }
 
-        auto* videoFrame = static_cast<VideoFrameGStreamer*>(&sample);
-        auto* gstSample = videoFrame->sample();
+        auto* gstSample = static_cast<VideoFrameGStreamer*>(&videoFrame)->sample();
         if (!m_configuredSize.isEmpty() && m_lastKnownSize != m_configuredSize) {
             m_lastKnownSize = m_configuredSize;
             updateBlackFrame(gst_sample_get_caps(gstSample));
@@ -384,7 +383,7 @@ private:
     IntSize m_configuredSize;
     IntSize m_lastKnownSize;
     GRefPtr<GstSample> m_blackFrame;
-    MediaSample::VideoRotation m_videoRotation { MediaSample::VideoRotation::None };
+    VideoFrame::Rotation m_videoRotation { VideoFrame::Rotation::None };
     bool m_videoMirrored { false };
 };
 

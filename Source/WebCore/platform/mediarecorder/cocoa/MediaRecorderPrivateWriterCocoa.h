@@ -132,7 +132,7 @@ private:
     bool m_hasEncodedVideoSamples { false };
 
     RetainPtr<WebAVAssetWriterDelegate> m_writerDelegate;
-    Deque<RetainPtr<CMSampleBufferRef>> m_pendingVideoSampleQueue;
+    Deque<RetainPtr<CMSampleBufferRef>> m_pendingVideoFrameQueue;
     Deque<RetainPtr<CMSampleBufferRef>> m_pendingAudioSampleQueue;
 
     bool m_isFlushingSamples { false };

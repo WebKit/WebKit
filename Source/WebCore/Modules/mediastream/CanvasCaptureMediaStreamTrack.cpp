@@ -199,7 +199,7 @@ void CanvasCaptureMediaStreamTrack::Source::captureCanvas()
 
     VideoFrameTimeMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
-    videoSampleAvailable(*videoFrame, metadata);
+    videoFrameAvailable(*videoFrame, metadata);
 }
 
 RefPtr<MediaStreamTrack> CanvasCaptureMediaStreamTrack::clone()

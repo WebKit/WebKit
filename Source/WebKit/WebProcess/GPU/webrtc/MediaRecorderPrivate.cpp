@@ -92,25 +92,25 @@ MediaRecorderPrivate::~MediaRecorderPrivate()
     WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
 }
 
-void MediaRecorderPrivate::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata)
+void MediaRecorderPrivate::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
 {
     if (shouldMuteVideo()) {
         if (!m_blackFrameSize) {
-            auto size = sample.presentationSize();
+            auto size = videoFrame.presentationSize();
             m_blackFrameSize = WebCore::IntSize { static_cast<int>(size.width()), static_cast<int>(size.height()) };
         }
-        SharedVideoFrame sharedVideoFrame { sample.presentationTime(), sample.videoMirrored(), sample.videoRotation(), *m_blackFrameSize };
-        m_connection->send(Messages::RemoteMediaRecorder::VideoSampleAvailable { sharedVideoFrame }, m_identifier);
+        SharedVideoFrame sharedVideoFrame { videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), *m_blackFrameSize };
+        m_connection->send(Messages::RemoteMediaRecorder::VideoFrameAvailable { sharedVideoFrame }, m_identifier);
         return;
     }
 
     m_blackFrameSize = { };
-    auto sharedVideoFrame = m_sharedVideoFrameWriter.write(sample,
+    auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame,
         [this](auto& semaphore) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameSemaphore { semaphore }, m_identifier); },
         [this](auto& handle) { m_connection->send(Messages::RemoteMediaRecorder::SetSharedVideoFrameMemory { handle }, m_identifier); }
     );
     if (sharedVideoFrame)
-        m_connection->send(Messages::RemoteMediaRecorder::VideoSampleAvailable { WTFMove(*sharedVideoFrame) }, m_identifier);
+        m_connection->send(Messages::RemoteMediaRecorder::VideoFrameAvailable { WTFMove(*sharedVideoFrame) }, m_identifier);
 }
 
 void MediaRecorderPrivate::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)

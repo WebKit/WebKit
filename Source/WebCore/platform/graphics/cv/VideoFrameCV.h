@@ -31,7 +31,7 @@
 #include "VideoFrame.h"
 #include <wtf/RetainPtr.h>
 
-using CVPixelBufferRef = struct __CVBuffer*;
+using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
 
 namespace WebCore {
 
@@ -39,8 +39,8 @@ class PixelBuffer;
 
 class VideoFrameCV : public VideoFrame {
 public:
-    WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, VideoRotation, RetainPtr<CVPixelBufferRef>&&);
-    WEBCORE_EXPORT static Ref<VideoFrameCV> create(CMSampleBufferRef, bool isMirrored, VideoRotation);
+    WEBCORE_EXPORT static Ref<VideoFrameCV> create(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&);
+    WEBCORE_EXPORT static Ref<VideoFrameCV> create(CMSampleBufferRef, bool isMirrored, Rotation);
     static RefPtr<VideoFrameCV> createFromPixelBuffer(PixelBuffer&&);
     WEBCORE_EXPORT ~VideoFrameCV();
 
@@ -52,27 +52,26 @@ public:
 
     // VideoFrame overrides.
     WEBCORE_EXPORT WebCore::FloatSize presentationSize() const final;
-    WEBCORE_EXPORT uint32_t videoPixelFormat() const final;
+    WEBCORE_EXPORT uint32_t pixelFormat() const final;
     WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&) final;
     bool isCV() const final { return true; }
-    WEBCORE_EXPORT RefPtr<WebCore::VideoFrameCV> asVideoFrameCV() final;
 
 private:
-    WEBCORE_EXPORT VideoFrameCV(MediaTime presentationTime, bool isMirrored, VideoRotation, RetainPtr<CVPixelBufferRef>&&);
+    WEBCORE_EXPORT VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation, RetainPtr<CVPixelBufferRef>&&);
 
     const RetainPtr<CVPixelBufferRef> m_pixelBuffer;
 };
 
 template<typename Encoder> void VideoFrameCV::encode(Encoder& encoder) const
 {
-    encoder << m_presentationTime << m_isMirrored << m_rotation << m_pixelBuffer;
+    encoder << presentationTime() << isMirrored() << rotation() << m_pixelBuffer;
 }
 
 template<typename Decoder> std::optional<RefPtr<VideoFrameCV>> VideoFrameCV::decode(Decoder& decoder)
 {
     auto presentationTime = decoder.template decode<MediaTime>();
     auto isMirrored = decoder.template decode<bool>();
-    auto rotation = decoder.template decode<VideoRotation>();
+    auto rotation = decoder.template decode<Rotation>();
     auto pixelBuffer = decoder.template decode<RetainPtr<CVPixelBufferRef>>();
     if (!decoder.isValid() || !*pixelBuffer)
         return std::nullopt;
@@ -83,7 +82,6 @@ template<typename Decoder> std::optional<RefPtr<VideoFrameCV>> VideoFrameCV::dec
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoFrameCV)
     static bool isType(const WebCore::VideoFrame& videoFrame) { return videoFrame.isCV(); }
-    static bool isType(const WebCore::MediaSample& mediaSample) { return is<WebCore::VideoFrame>(mediaSample) && is<WebCore::VideoFrameCV>(downcast<WebCore::VideoFrame>(mediaSample)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

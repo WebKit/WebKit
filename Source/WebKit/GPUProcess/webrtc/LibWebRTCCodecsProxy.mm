@@ -97,7 +97,7 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(RTCDecoderIdentifier identifier
     if (useRemoteFrames)
         videoFrameObjectHeap = m_videoFrameObjectHeap.ptr();
     return [identifier, connection = m_connection, resourceOwner = m_resourceOwner, videoFrameObjectHeap = WTFMove(videoFrameObjectHeap)] (CVPixelBufferRef pixelBuffer, uint32_t timeStampNs, uint32_t timeStamp) mutable {
-        auto videoFrame = WebCore::VideoFrameCV::create(MediaTime(timeStampNs, 1), false, WebCore::MediaSample::VideoRotation::None, pixelBuffer);
+        auto videoFrame = WebCore::VideoFrameCV::create(MediaTime(timeStampNs, 1), false, WebCore::VideoFrame::Rotation::None, pixelBuffer);
         if (resourceOwner)
             videoFrame->setOwnershipIdentity(resourceOwner);
         if (videoFrameObjectHeap) {
@@ -215,16 +215,16 @@ LibWebRTCCodecsProxy::Encoder* LibWebRTCCodecsProxy::findEncoder(RTCEncoderIdent
     return &iterator->value;
 }
 
-static inline webrtc::VideoRotation toWebRTCVideoRotation(WebCore::MediaSample::VideoRotation rotation)
+static inline webrtc::VideoRotation toWebRTCVideoRotation(WebCore::VideoFrame::Rotation rotation)
 {
     switch (rotation) {
-    case WebCore::MediaSample::VideoRotation::None:
+    case WebCore::VideoFrame::Rotation::None:
         return webrtc::kVideoRotation_0;
-    case WebCore::MediaSample::VideoRotation::UpsideDown:
+    case WebCore::VideoFrame::Rotation::UpsideDown:
         return webrtc::kVideoRotation_180;
-    case WebCore::MediaSample::VideoRotation::Right:
+    case WebCore::VideoFrame::Rotation::Right:
         return webrtc::kVideoRotation_90;
-    case WebCore::MediaSample::VideoRotation::Left:
+    case WebCore::VideoFrame::Rotation::Left:
         return webrtc::kVideoRotation_270;
     }
     ASSERT_NOT_REACHED();

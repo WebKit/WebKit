@@ -180,7 +180,7 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
     settings.setFrameRate(frameRate());
     auto size = this->size();
     if (mockCamera()) {
-        if (m_deviceOrientation == MediaSample::VideoRotation::Left || m_deviceOrientation == MediaSample::VideoRotation::Right)
+        if (m_deviceOrientation == VideoFrame::Rotation::Left || m_deviceOrientation == VideoFrame::Rotation::Right)
             size = size.transposedSize();
     }
     settings.setWidth(size.width());
@@ -496,16 +496,16 @@ void MockRealtimeVideoSource::orientationChanged(int orientation)
     auto deviceOrientation = m_deviceOrientation;
     switch (orientation) {
     case 0:
-        m_deviceOrientation = MediaSample::VideoRotation::None;
+        m_deviceOrientation = VideoFrame::Rotation::None;
         break;
     case 90:
-        m_deviceOrientation = MediaSample::VideoRotation::Right;
+        m_deviceOrientation = VideoFrame::Rotation::Right;
         break;
     case -90:
-        m_deviceOrientation = MediaSample::VideoRotation::Left;
+        m_deviceOrientation = VideoFrame::Rotation::Left;
         break;
     case 180:
-        m_deviceOrientation = MediaSample::VideoRotation::UpsideDown;
+        m_deviceOrientation = VideoFrame::Rotation::UpsideDown;
         break;
     default:
         ASSERT_NOT_REACHED();

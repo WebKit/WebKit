@@ -75,18 +75,18 @@ void RealtimeMediaSource::removeAudioSampleObserver(AudioSampleObserver& observe
     m_audioSampleObservers.remove(&observer);
 }
 
-void RealtimeMediaSource::addVideoSampleObserver(VideoSampleObserver& observer)
+void RealtimeMediaSource::addVideoFrameObserver(VideoFrameObserver& observer)
 {
     ASSERT(isMainThread());
-    Locker locker { m_videoSampleObserversLock };
-    m_videoSampleObservers.add(&observer);
+    Locker locker { m_VideoFrameObserversLock };
+    m_VideoFrameObservers.add(&observer);
 }
 
-void RealtimeMediaSource::removeVideoSampleObserver(VideoSampleObserver& observer)
+void RealtimeMediaSource::removeVideoFrameObserver(VideoFrameObserver& observer)
 {
     ASSERT(isMainThread());
-    Locker locker { m_videoSampleObserversLock };
-    m_videoSampleObservers.remove(&observer);
+    Locker locker { m_VideoFrameObserversLock };
+    m_VideoFrameObservers.remove(&observer);
 }
 
 void RealtimeMediaSource::addObserver(Observer& observer)
@@ -192,7 +192,7 @@ void RealtimeMediaSource::updateHasStartedProducingData()
     });
 }
 
-void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample, VideoFrameTimeMetadata metadata)
+void RealtimeMediaSource::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata metadata)
 {
 #if !RELEASE_LOG_DISABLED
     ++m_frameCount;
@@ -210,9 +210,9 @@ void RealtimeMediaSource::videoSampleAvailable(MediaSample& mediaSample, VideoFr
 
     updateHasStartedProducingData();
 
-    Locker locker { m_videoSampleObserversLock };
-    for (auto* observer : m_videoSampleObservers)
-        observer->videoSampleAvailable(mediaSample, metadata);
+    Locker locker { m_VideoFrameObserversLock };
+    for (auto* observer : m_VideoFrameObservers)
+        observer->videoFrameAvailable(videoFrame, metadata);
 }
 
 void RealtimeMediaSource::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames)

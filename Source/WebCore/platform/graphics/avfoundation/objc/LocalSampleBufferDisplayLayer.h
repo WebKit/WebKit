@@ -47,6 +47,8 @@ public:
     LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&&, Client&);
     ~LocalSampleBufferDisplayLayer();
 
+    void enqueueBuffer(CVPixelBufferRef, MediaTime);
+
     // API used by WebAVSampleBufferStatusChangeListener
     void layerStatusDidChange();
     void layerErrorDidChange();
@@ -56,12 +58,12 @@ public:
 
     PlatformLayer* displayLayer();
 
-    PlatformLayer* rootLayer() final;
-
     enum class ShouldUpdateRootLayer { No, Yes };
-    void updateRootLayerBoundsAndPosition(CGRect, MediaSample::VideoRotation, ShouldUpdateRootLayer);
+    void updateRootLayerBoundsAndPosition(CGRect, VideoFrame::Rotation, ShouldUpdateRootLayer);
     void updateRootLayerAffineTransform(CGAffineTransform);
 
+    // SampleBufferDisplayLayer.
+    PlatformLayer* rootLayer() final;
     void initialize(bool hideRootLayer, IntSize, CompletionHandler<void(bool didSucceed)>&&) final;
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(String&& logIdentifier) final { m_logIdentifier = WTFMove(logIdentifier); }
@@ -71,7 +73,7 @@ public:
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
 
     void updateAffineTransform(CGAffineTransform)  final;
-    void updateBoundsAndPosition(CGRect, MediaSample::VideoRotation) final;
+    void updateBoundsAndPosition(CGRect, VideoFrame::Rotation) final;
 
     void flush() final;
     void flushAndRemoveImage() final;
@@ -79,17 +81,16 @@ public:
     void play() final;
     void pause() final;
 
-    void enqueue(CVPixelBufferRef, MediaTime);
-    void enqueueSample(MediaSample&) final;
-    void clearEnqueuedSamples() final;
+    void enqueueVideoFrame(VideoFrame&) final;
+    void clearVideoFrames() final;
     void setRenderPolicy(RenderPolicy) final;
 
 private:
-    void removeOldSamplesFromPendingQueue();
-    void addSampleToPendingQueue(MediaSample&);
+
+    void removeOldVideoFramesFromPendingQueue();
+    void addVideoFrameToPendingQueue(Ref<VideoFrame>&&);
     void requestNotificationWhenReadyForVideoData();
-    void enqueueSampleBuffer(MediaSample&);
-    void setRootLayerBoundsAndPositions(CGRect, MediaSample::VideoRotation);
+    void setRootLayerBoundsAndPositions(CGRect, VideoFrame::Rotation);
 
 #if !RELEASE_LOG_DISABLED
     void onIrregularFrameRateNotification(MonotonicTime frameTime, MonotonicTime lastFrameTime);
@@ -104,8 +105,8 @@ private:
     RefPtr<WorkQueue> m_processingQueue;
 
     // Only accessed through m_processingQueue or if m_processingQueue is null.
-    using PendingSampleQueue = Deque<Ref<MediaSample>>;
-    PendingSampleQueue m_pendingVideoSampleQueue;
+    using PendingSampleQueue = Deque<Ref<VideoFrame>>;
+    PendingSampleQueue m_pendingVideoFrameQueue;
     
     bool m_paused { false };
 

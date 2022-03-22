@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "MediaSample.h"
 #include "PlatformLayer.h"
+#include "VideoFrame.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/WeakPtr.h>
 
@@ -36,7 +36,7 @@ class MediaTime;
 
 namespace WebCore {
 class IntSize;
-class MediaSample;
+class VideoFrame;
 
 class SampleBufferDisplayLayer {
 public:
@@ -61,7 +61,7 @@ public:
     virtual void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) = 0;
 
     virtual void updateAffineTransform(CGAffineTransform) = 0;
-    virtual void updateBoundsAndPosition(CGRect, MediaSample::VideoRotation) = 0;
+    virtual void updateBoundsAndPosition(CGRect, VideoFrame::Rotation) = 0;
 
     virtual void flush() = 0;
     virtual void flushAndRemoveImage() = 0;
@@ -69,8 +69,8 @@ public:
     virtual void play() = 0;
     virtual void pause() = 0;
 
-    virtual void enqueueSample(MediaSample&) = 0;
-    virtual void clearEnqueuedSamples() = 0;
+    virtual void enqueueVideoFrame(VideoFrame&) = 0;
+    virtual void clearVideoFrames() = 0;
 
     virtual PlatformLayer* rootLayer() = 0;
 

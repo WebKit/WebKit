@@ -5525,7 +5525,7 @@ void Internals::stopObservingRealtimeMediaSource()
     case RealtimeMediaSource::Type::Video:
     case RealtimeMediaSource::Type::Screen:
     case RealtimeMediaSource::Type::Window:
-        m_trackSource->removeVideoSampleObserver(*this);
+        m_trackSource->removeVideoFrameObserver(*this);
         break;
     case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();
@@ -5552,7 +5552,7 @@ void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
     case RealtimeMediaSource::Type::Video:
     case RealtimeMediaSource::Type::Screen:
     case RealtimeMediaSource::Type::Window:
-        m_trackSource->addVideoSampleObserver(*this);
+        m_trackSource->addVideoFrameObserver(*this);
         break;
     case RealtimeMediaSource::Type::None:
         ASSERT_NOT_REACHED();
@@ -5569,13 +5569,13 @@ void Internals::mediaStreamTrackVideoFrameRotation(DOMPromiseDeferred<IDLShort>&
     promise.resolve(m_trackVideoRotation);
 }
 
-void Internals::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata)
+void Internals::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
 {
-    callOnMainThread([this, weakThis = WeakPtr { *this }, sample = Ref { sample }] {
+    callOnMainThread([this, weakThis = WeakPtr { *this }, videoFrame = Ref { videoFrame }] {
         if (!weakThis)
             return;
         m_trackVideoSampleCount++;
-        m_trackVideoRotation = static_cast<int>(sample->videoRotation());
+        m_trackVideoRotation = static_cast<int>(videoFrame->rotation());
         if (!m_nextTrackFramePromise)
             return;
 
@@ -5583,7 +5583,7 @@ void Internals::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata
         if (!videoSettings.width() || !videoSettings.height())
             return;
 
-        auto rgba = sample->getRGBAImageData();
+        auto rgba = videoFrame->getRGBAImageData();
         if (!rgba)
             return;
 

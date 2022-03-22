@@ -31,7 +31,6 @@
 #import "AffineTransform.h"
 #import "ImageRotationSessionVT.h"
 #import "Logging.h"
-#import "MediaSample.h"
 #import "PixelBufferConformerCV.h"
 #import "RealtimeVideoUtilities.h"
 #import <pal/cf/CoreMediaSoftLink.h>

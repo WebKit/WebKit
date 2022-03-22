@@ -110,7 +110,7 @@ PlatformSample MediaSampleAVFObjC::platformSample() const
     return sample;
 }
 
-uint32_t MediaSampleAVFObjC::videoPixelFormat() const
+uint32_t MediaSampleAVFObjC::pixelFormat() const
 {
     auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
     return CVPixelBufferGetPixelFormatType(pixelBuffer);

@@ -29,6 +29,7 @@
 
 #include "CaptureDevice.h"
 #include "RealtimeMediaSource.h"
+#include "RealtimeMediaSourceSettings.h"
 #include <wtf/Observer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -36,10 +37,10 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
-
-typedef struct CGImage *CGImageRef;
-typedef struct __CVBuffer *CVPixelBufferRef;
-typedef struct __IOSurface *IOSurfaceRef;
+using CGImageRef = CGImage*;
+using CVPixelBufferRef = struct __CVBuffer*;
+using IOSurfaceRef = struct __IOSurface*;
+using CMSampleBufferRef = struct opaqueCMSampleBuffer*;
 
 namespace WTF {
 class MediaTime;

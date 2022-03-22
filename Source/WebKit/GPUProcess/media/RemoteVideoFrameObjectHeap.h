@@ -29,7 +29,7 @@
 #include "Connection.h"
 #include "RemoteVideoFrameProxy.h"
 #include "ThreadSafeObjectHeap.h"
-#include <WebCore/MediaSample.h>
+#include <WebCore/VideoFrame.h>
 
 #if PLATFORM(COCOA)
 #include "SharedVideoFrame.h"
@@ -44,8 +44,8 @@ public:
     ~RemoteVideoFrameObjectHeap();
 
     void close();
-    RemoteVideoFrameProxy::Properties add(Ref<WebCore::MediaSample>&&);
-    RefPtr<WebCore::MediaSample> get(RemoteVideoFrameReadReference&& read) { return m_heap.retire(WTFMove(read), 0_s); }
+    RemoteVideoFrameProxy::Properties add(Ref<WebCore::VideoFrame>&&);
+    RefPtr<WebCore::VideoFrame> get(RemoteVideoFrameReadReference&& read) { return m_heap.retire(WTFMove(read), 0_s); }
 
     void stopListeningForIPC(Ref<RemoteVideoFrameObjectHeap>&&) { close(); }
 
@@ -64,7 +64,7 @@ private:
 #endif
 
     const Ref<IPC::Connection> m_connection;
-    ThreadSafeObjectHeap<RemoteVideoFrameIdentifier, RefPtr<WebCore::MediaSample>> m_heap;
+    ThreadSafeObjectHeap<RemoteVideoFrameIdentifier, RefPtr<WebCore::VideoFrame>> m_heap;
 #if PLATFORM(COCOA)
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif

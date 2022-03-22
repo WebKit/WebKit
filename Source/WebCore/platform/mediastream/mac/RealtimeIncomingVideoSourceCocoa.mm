@@ -91,12 +91,12 @@ CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t wi
     return m_pixelBufferPool.get();
 }
 
-Ref<VideoFrame> RealtimeIncomingVideoSourceCocoa::createVideoSampleFromCVPixelBuffer(CVPixelBufferRef pixelBuffer, MediaSample::VideoRotation rotation, int64_t timeStamp)
+Ref<VideoFrame> RealtimeIncomingVideoSourceCocoa::createVideoSampleFromCVPixelBuffer(CVPixelBufferRef pixelBuffer, VideoFrame::Rotation rotation, int64_t timeStamp)
 {
     return VideoFrameCV::create(MediaTime(timeStamp, 1000000), false, rotation, pixelBuffer);
 }
 
-RefPtr<VideoFrame> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::VideoFrame& frame, MediaSample::VideoRotation rotation)
+RefPtr<VideoFrame> RealtimeIncomingVideoSourceCocoa::toVideoFrame(const webrtc::VideoFrame& frame, VideoFrame::Rotation rotation)
 {
     if (muted()) {
         if (!m_blackFrame || m_blackFrameWidth != frame.width() || m_blackFrameHeight != frame.height()) {
@@ -144,20 +144,20 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& webrtcV
     unsigned width = webrtcVideoFrame.width();
     unsigned height = webrtcVideoFrame.height();
 
-    MediaSample::VideoRotation rotation;
+    VideoFrame::Rotation rotation;
     switch (webrtcVideoFrame.rotation()) {
     case webrtc::kVideoRotation_0:
-        rotation = MediaSample::VideoRotation::None;
+        rotation = VideoFrame::Rotation::None;
         break;
     case webrtc::kVideoRotation_180:
-        rotation = MediaSample::VideoRotation::UpsideDown;
+        rotation = VideoFrame::Rotation::UpsideDown;
         break;
     case webrtc::kVideoRotation_90:
-        rotation = MediaSample::VideoRotation::Right;
+        rotation = VideoFrame::Rotation::Right;
         std::swap(width, height);
         break;
     case webrtc::kVideoRotation_270:
-        rotation = MediaSample::VideoRotation::Left;
+        rotation = VideoFrame::Rotation::Left;
         std::swap(width, height);
         break;
     }
@@ -171,7 +171,7 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& webrtcV
         return;
 
     setIntrinsicSize(IntSize(width, height));
-    videoSampleAvailable(*videoFrame, metadataFromVideoFrame(webrtcVideoFrame));
+    videoFrameAvailable(*videoFrame, metadataFromVideoFrame(webrtcVideoFrame));
 }
 
 } // namespace WebCore

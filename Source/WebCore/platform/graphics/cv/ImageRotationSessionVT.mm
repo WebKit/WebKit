@@ -29,7 +29,7 @@
 #import "AffineTransform.h"
 #import "CVUtilities.h"
 #import "Logging.h"
-#import "MediaSample.h"
+#import "VideoFrame.h"
 
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
@@ -127,7 +127,7 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixe
     return result;
 }
 
-RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(MediaSample& videoFrame, const RotationProperties& rotation, IsCGImageCompatible cgImageCompatible)
+RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(VideoFrame& videoFrame, const RotationProperties& rotation, IsCGImageCompatible cgImageCompatible)
 {
     auto pixelBuffer = videoFrame.pixelBuffer();
     ASSERT(pixelBuffer);

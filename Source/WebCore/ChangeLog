@@ -1,3 +1,83 @@
+2022-03-22  Youenn Fablet  <youenn@apple.com>
+
+        Move RealtimeMediaSource::VideoSampleObserver::videoSampleAvailable to VideoFrame
+        https://bugs.webkit.org/show_bug.cgi?id=237884
+
+        Reviewed by Eric Carlson.
+
+        Refactoring to do the following:
+        - Renaming of VideoSampleObserver to VideoFrameObserver, videoSampleAvailable to videoFrameAvailable...
+        - videoFrameAvailable takes a VideoFrame instead of a MediaSample
+        - Use VideoFrame::rotation and VideoFrame::isMirrored.
+        - Use VideoFrame::Rotation instead of MediaSample::VideoRotation
+        Update code according this renaming.
+        Move from using MediaSample to VideoFrame where it makes sense.
+
+        Prepare for removal of MediaSample as parent class of VideoFrame.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * platform/MediaSample.h:
+        * platform/VideoFrame.cpp:
+        * platform/VideoFrame.h:
+        * platform/graphics/avfoundation/SampleBufferDisplayLayer.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.h:
+        * platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+        * platform/graphics/cv/ImageRotationSessionVT.h:
+        * platform/graphics/cv/ImageRotationSessionVT.mm:
+        * platform/graphics/cv/ImageTransferSessionVT.h:
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+        * platform/graphics/cv/VideoFrameCV.h:
+        * platform/graphics/cv/VideoFrameCV.mm:
+        * platform/graphics/gstreamer/VideoFrameGStreamer.cpp:
+        * platform/graphics/gstreamer/VideoFrameGStreamer.h:
+        * platform/mediarecorder/MediaRecorderPrivate.h:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp:
+        * platform/mediarecorder/MediaRecorderPrivateAVFImpl.h:
+        * platform/mediarecorder/MediaRecorderPrivateMock.cpp:
+        * platform/mediarecorder/MediaRecorderPrivateMock.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.cpp:
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+        * platform/mediastream/RealtimeVideoCaptureSource.cpp:
+        * platform/mediastream/RealtimeVideoCaptureSource.h:
+        * platform/mediastream/RealtimeVideoSource.cpp:
+        * platform/mediastream/RealtimeVideoSource.h:
+        * platform/mediastream/VideoPreset.h:
+        * platform/mediastream/cocoa/DisplayCaptureSourceCocoa.cpp:
+        * platform/mediastream/cocoa/DisplayCaptureSourceCocoa.h:
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.h:
+        * platform/mediastream/ios/ReplayKitCaptureSource.mm:
+        * platform/mediastream/libwebrtc/VideoFrameLibWebRTC.cpp:
+        * platform/mediastream/libwebrtc/VideoFrameLibWebRTC.h:
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp:
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp:
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        * platform/mediastream/mac/MockRealtimeVideoSourceMac.mm:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.cpp:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSourceCocoa.mm:
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        * platform/mock/MockRealtimeVideoSource.h:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+
 2022-03-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [TextureMapper] Split GraphicsContextGLTextureMapper into two classes

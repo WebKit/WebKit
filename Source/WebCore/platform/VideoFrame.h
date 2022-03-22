@@ -42,10 +42,12 @@ class VideoFrame : public MediaSample {
 public:
     WEBCORE_EXPORT ~VideoFrame();
 
+    using Rotation = MediaSample::VideoRotation;
+
     // WebCore::MediaSample overrides.
     WEBCORE_EXPORT MediaTime presentationTime() const final;
-    WEBCORE_EXPORT VideoRotation videoRotation() const final;
-    WEBCORE_EXPORT bool videoMirrored() const final;
+    WEBCORE_EXPORT Rotation rotation() const final;
+    WEBCORE_EXPORT bool isMirrored() const final;
     // FIXME: When VideoFrame is not MediaSample, these will not be needed.
     WEBCORE_EXPORT WebCore::PlatformSample platformSample() const final;
     WEBCORE_EXPORT PlatformSample::Type platformSampleType() const final;

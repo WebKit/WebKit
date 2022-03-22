@@ -132,7 +132,7 @@ MediaRecorderPrivateWriter::MediaRecorderPrivateWriter(bool hasAudio, bool hasVi
 MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
 {
     m_pendingAudioSampleQueue.clear();
-    m_pendingVideoSampleQueue.clear();
+    m_pendingVideoFrameQueue.clear();
     if (m_writer) {
         [m_writer cancelWriting];
         m_writer.clear();
@@ -283,15 +283,15 @@ bool MediaRecorderPrivateWriter::appendCompressedVideoSampleBufferIfPossible()
         return false;
 
     if (m_isFlushingSamples) {
-        m_pendingVideoSampleQueue.append(WTFMove(buffer));
+        m_pendingVideoFrameQueue.append(WTFMove(buffer));
         return true;
     }
 
-    while (!m_pendingVideoSampleQueue.isEmpty() && [m_videoAssetWriterInput isReadyForMoreMediaData])
-        appendCompressedVideoSampleBuffer(m_pendingVideoSampleQueue.takeFirst().get());
+    while (!m_pendingVideoFrameQueue.isEmpty() && [m_videoAssetWriterInput isReadyForMoreMediaData])
+        appendCompressedVideoSampleBuffer(m_pendingVideoFrameQueue.takeFirst().get());
 
     if (![m_videoAssetWriterInput isReadyForMoreMediaData]) {
-        m_pendingVideoSampleQueue.append(WTFMove(buffer));
+        m_pendingVideoFrameQueue.append(WTFMove(buffer));
         return true;
     }
 
@@ -334,7 +334,7 @@ static inline void appendEndsPreviousSampleDurationMarker(AVAssetWriterInput *as
 void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&& callback)
 {
     bool hasPendingAudioSamples = !m_pendingAudioSampleQueue.isEmpty();
-    bool hasPendingVideoSamples = !m_pendingVideoSampleQueue.isEmpty();
+    bool hasPendingVideoSamples = !m_pendingVideoFrameQueue.isEmpty();
 
     if (m_hasEncodedVideoSamples) {
         hasPendingVideoSamples |= ![m_videoAssetWriterInput isReadyForMoreMediaData];
@@ -349,7 +349,7 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
 
     ASSERT(!m_isFlushingSamples);
     m_isFlushingSamples = true;
-    auto block = makeBlockPtr([this, weakThis = WeakPtr { *this }, hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoSampleQueue), callback = WTFMove(callback)]() mutable {
+    auto block = makeBlockPtr([this, weakThis = WeakPtr { *this }, hasPendingAudioSamples, hasPendingVideoSamples, audioSampleQueue = WTFMove(m_pendingAudioSampleQueue), videoSampleQueue = WTFMove(m_pendingVideoFrameQueue), callback = WTFMove(callback)]() mutable {
         if (!weakThis) {
             callback();
             return;
@@ -386,9 +386,9 @@ void MediaRecorderPrivateWriter::appendVideoFrame(VideoFrame& frame)
     if (!m_firstVideoFrame) {
         m_firstVideoFrame = true;
         m_resumedVideoTime = PAL::CMClockGetTime(PAL::CMClockGetHostTimeClock());
-        if (frame.videoRotation() != MediaSample::VideoRotation::None || frame.videoMirrored()) {
-            m_videoTransform = CGAffineTransformMakeRotation(static_cast<int>(frame.videoRotation()) * M_PI / 180);
-            if (frame.videoMirrored())
+        if (frame.rotation() != VideoFrame::Rotation::None || frame.isMirrored()) {
+            m_videoTransform = CGAffineTransformMakeRotation(static_cast<int>(frame.rotation()) * M_PI / 180);
+            if (frame.isMirrored())
                 m_videoTransform = CGAffineTransformScale(*m_videoTransform, -1, 1);
         }
     }

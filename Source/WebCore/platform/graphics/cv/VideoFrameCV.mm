@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMirrored, VideoRotation rotation)
+Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMirrored, Rotation rotation)
 {
     auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(sampleBuffer));
     auto timeStamp = PAL::CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer);
@@ -44,7 +44,7 @@ Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMi
     return VideoFrameCV::create(PAL::toMediaTime(timeStamp), isMirrored, rotation, pixelBuffer);
 }
 
-Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirrored, VideoRotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
+Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
 {
     ASSERT(pixelBuffer);
     return adoptRef(*new VideoFrameCV(presentationTime, isMirrored, rotation, WTFMove(pixelBuffer)));
@@ -73,10 +73,10 @@ RefPtr<VideoFrameCV> VideoFrameCV::createFromPixelBuffer(PixelBuffer&& pixelBuff
         return nullptr;
     }
     ASSERT_UNUSED(status, !status);
-    return create({ }, false, VideoRotation::None, WTFMove(cvPixelBuffer));
+    return create({ }, false, Rotation::None, WTFMove(cvPixelBuffer));
 }
 
-VideoFrameCV::VideoFrameCV(MediaTime presentationTime, bool isMirrored, VideoRotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
+VideoFrameCV::VideoFrameCV(MediaTime presentationTime, bool isMirrored, Rotation rotation, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
     : VideoFrame(presentationTime, isMirrored, rotation)
     , m_pixelBuffer(WTFMove(pixelBuffer))
 {
@@ -89,7 +89,7 @@ WebCore::FloatSize VideoFrameCV::presentationSize() const
     return { static_cast<float>(CVPixelBufferGetWidth(m_pixelBuffer.get())), static_cast<float>(CVPixelBufferGetHeight(m_pixelBuffer.get())) };
 }
 
-uint32_t VideoFrameCV::videoPixelFormat() const
+uint32_t VideoFrameCV::pixelFormat() const
 {
     return CVPixelBufferGetPixelFormatType(m_pixelBuffer.get());
 }
@@ -102,23 +102,18 @@ void VideoFrameCV::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
     setOwnershipIdentityForCVPixelBuffer(buffer, resourceOwner);
 }
 
-RefPtr<WebCore::VideoFrameCV> VideoFrameCV::asVideoFrameCV()
-{
-    return this;
-}
-
 ImageOrientation VideoFrameCV::orientation() const
 {
     // Sample transform first flips x-coordinates, then rotates.
-    switch (m_rotation) {
-    case MediaSample::VideoRotation::None:
-        return m_isMirrored ? ImageOrientation::OriginTopRight : ImageOrientation::OriginTopLeft;
-    case MediaSample::VideoRotation::Right:
-        return m_isMirrored ? ImageOrientation::OriginRightBottom : ImageOrientation::OriginRightTop;
-    case MediaSample::VideoRotation::UpsideDown:
-        return m_isMirrored ? ImageOrientation::OriginBottomLeft : ImageOrientation::OriginBottomRight;
-    case MediaSample::VideoRotation::Left:
-        return m_isMirrored ? ImageOrientation::OriginLeftTop : ImageOrientation::OriginLeftBottom;
+    switch (rotation()) {
+    case VideoFrame::Rotation::None:
+        return isMirrored() ? ImageOrientation::OriginTopRight : ImageOrientation::OriginTopLeft;
+    case VideoFrame::Rotation::Right:
+        return isMirrored() ? ImageOrientation::OriginRightBottom : ImageOrientation::OriginRightTop;
+    case VideoFrame::Rotation::UpsideDown:
+        return isMirrored() ? ImageOrientation::OriginBottomLeft : ImageOrientation::OriginBottomRight;
+    case VideoFrame::Rotation::Left:
+        return isMirrored() ? ImageOrientation::OriginLeftTop : ImageOrientation::OriginLeftBottom;
     }
 }
 

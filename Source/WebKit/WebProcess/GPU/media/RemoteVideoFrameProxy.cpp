@@ -42,15 +42,15 @@
 
 namespace WebKit {
 
-RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::RemoteVideoFrameReference&& reference, const WebCore::MediaSample& mediaSample)
+RemoteVideoFrameProxy::Properties RemoteVideoFrameProxy::properties(WebKit::RemoteVideoFrameReference&& reference, const WebCore::VideoFrame& videoFrame)
 {
     return {
         WTFMove(reference),
-        mediaSample.presentationTime(),
-        mediaSample.videoMirrored(),
-        mediaSample.videoRotation(),
-        expandedIntSize(mediaSample.presentationSize()),
-        mediaSample.videoPixelFormat()
+        videoFrame.presentationTime(),
+        videoFrame.isMirrored(),
+        videoFrame.rotation(),
+        expandedIntSize(videoFrame.presentationSize()),
+        videoFrame.pixelFormat()
     };
 }
 
@@ -94,7 +94,7 @@ RemoteVideoFrameReadReference RemoteVideoFrameProxy::newReadReference() const
     return m_referenceTracker.read();
 }
 
-uint32_t RemoteVideoFrameProxy::videoPixelFormat() const
+uint32_t RemoteVideoFrameProxy::pixelFormat() const
 {
     return m_pixelFormat;
 }

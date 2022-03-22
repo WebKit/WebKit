@@ -40,7 +40,7 @@ private:
     bool canResizeVideoFrames() const final { return true; }
 };
 
-class MockDisplayCaptureSourceGStreamer final : public RealtimeMediaSource, RealtimeMediaSource::VideoSampleObserver {
+class MockDisplayCaptureSourceGStreamer final : public RealtimeMediaSource, RealtimeMediaSource::VideoFrameObserver {
 public:
     static CaptureSourceOrError create(const CaptureDevice&, String&&, const MediaConstraints*);
 
@@ -49,8 +49,8 @@ public:
     void setMuted(bool isMuted) final;
 
 protected:
-    // RealtimeMediaSource::VideoSampleObserver
-    void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) final;
+    // RealtimeMediaSource::VideoFrameObserver
+    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
 
 private:
     MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type, Ref<MockRealtimeVideoSourceGStreamer>&&, String&&, CaptureDevice::DeviceType);

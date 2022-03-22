@@ -70,13 +70,13 @@ private:
 #endif
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer);
     void updateAffineTransform(CGAffineTransform);
-    void updateBoundsAndPosition(CGRect, WebCore::MediaSample::VideoRotation);
+    void updateBoundsAndPosition(CGRect, WebCore::VideoFrame::Rotation);
     void flush();
     void flushAndRemoveImage();
     void play();
     void pause();
-    void enqueue(SharedVideoFrame&&);
-    void clearEnqueuedSamples();
+    void enqueueVideoFrame(SharedVideoFrame&&);
+    void clearVideoFrames();
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(const SharedMemory::IPCHandle&);
 

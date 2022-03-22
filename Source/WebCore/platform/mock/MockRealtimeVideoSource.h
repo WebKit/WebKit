@@ -62,7 +62,7 @@ protected:
 
     Seconds elapsedTime();
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;
-    MediaSample::VideoRotation sampleRotation() const final { return m_deviceOrientation; }
+    VideoFrame::Rotation videoFrameRotation() const final { return m_deviceOrientation; }
     void generatePresets() override;
 
     IntSize captureSize() const;
@@ -122,7 +122,7 @@ private:
     Color m_fillColor { Color::black };
     MockMediaDevice m_device;
     RefPtr<VideoPreset> m_preset;
-    MediaSample::VideoRotation m_deviceOrientation { MediaSample::VideoRotation::None };
+    VideoFrame::Rotation m_deviceOrientation { VideoFrame::Rotation::None };
 };
 
 } // namespace WebCore

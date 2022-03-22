@@ -100,7 +100,7 @@ void RealtimeIncomingVideoSourceGStreamer::settingsDidChange(OptionSet<RealtimeM
 void RealtimeIncomingVideoSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& gstSample)
 {
     auto* buffer = gst_sample_get_buffer(gstSample.get());
-    videoSampleAvailable(VideoFrameGStreamer::createWrappedSample(gstSample, fromGstClockTime(GST_BUFFER_PTS(buffer))), { });
+    videoFrameAvailable(VideoFrameGStreamer::createWrappedSample(gstSample, fromGstClockTime(GST_BUFFER_PTS(buffer))), { });
 }
 
 } // namespace WebCore

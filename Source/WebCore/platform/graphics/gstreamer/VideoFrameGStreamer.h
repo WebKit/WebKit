@@ -30,26 +30,27 @@ class PixelBuffer;
 
 class VideoFrameGStreamer final : public VideoFrame {
 public:
-    static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), VideoRotation videoRotation = VideoRotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt)
+    static Ref<VideoFrameGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation videoRotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt)
     {
         return adoptRef(*new VideoFrameGStreamer(WTFMove(sample), presentationSize, presentationTime, videoRotation, videoMirrored, WTFMove(metadata)));
     }
 
-    static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>& sample, const MediaTime& presentationTime, VideoRotation videoRotation = VideoRotation::None)
+    static Ref<VideoFrameGStreamer> createWrappedSample(const GRefPtr<GstSample>& sample, const MediaTime& presentationTime, Rotation videoRotation = Rotation::None)
     {
         return adoptRef(*new VideoFrameGStreamer(sample, presentationTime, videoRotation));
     }
 
-    static Ref<VideoFrameGStreamer> createFromPixelBuffer(PixelBuffer&&, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, VideoRotation videoRotation = VideoRotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt);
+    static Ref<VideoFrameGStreamer> createFromPixelBuffer(PixelBuffer&&, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, Rotation videoRotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt);
 
     GstSample* sample() const { return m_sample.get(); }
 
 private:
-    VideoFrameGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), VideoRotation = VideoRotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& = std::nullopt);
-    VideoFrameGStreamer(const GRefPtr<GstSample>&, const MediaTime& presentationTime, VideoRotation = VideoRotation::None);
+    VideoFrameGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& = std::nullopt);
+    VideoFrameGStreamer(const GRefPtr<GstSample>&, const MediaTime& presentationTime, Rotation = Rotation::None);
 
     FloatSize presentationSize() const final { return m_presentationSize; }
     RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const final;
+    uint32_t pixelFormat() const final { return 0; }
 
     GRefPtr<GstSample> m_sample;
     FloatSize m_presentationSize;

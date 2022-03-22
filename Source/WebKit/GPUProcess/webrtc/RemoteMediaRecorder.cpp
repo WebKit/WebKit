@@ -86,7 +86,7 @@ void RemoteMediaRecorder::audioSamplesAvailable(MediaTime time, uint64_t numberO
     m_writer->appendAudioSampleBuffer(*m_audioBufferList, m_description, time, numberOfFrames);
 }
 
-void RemoteMediaRecorder::videoSampleAvailable(SharedVideoFrame&& sharedVideoFrame)
+void RemoteMediaRecorder::videoFrameAvailable(SharedVideoFrame&& sharedVideoFrame)
 {
     if (auto frame = m_sharedVideoFrameReader.read(WTFMove(sharedVideoFrame)))
         m_writer->appendVideoFrame(*frame);

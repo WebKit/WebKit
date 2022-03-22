@@ -51,7 +51,7 @@ protected:
     bool preparePipeline();
 
 private:
-    void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) final { };
+    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final { };
     void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final { };
 
     void fetchData(FetchDataCallback&&) final;

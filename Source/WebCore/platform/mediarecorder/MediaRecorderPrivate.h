@@ -49,7 +49,7 @@ struct MediaRecorderPrivateOptions;
 
 class MediaRecorderPrivate
     : public RealtimeMediaSource::AudioSampleObserver
-    , public RealtimeMediaSource::VideoSampleObserver {
+    , public RealtimeMediaSource::VideoFrameObserver {
 public:
     ~MediaRecorderPrivate();
 
@@ -116,12 +116,12 @@ inline void MediaRecorderPrivate::setAudioSource(RefPtr<RealtimeMediaSource>&& a
 inline void MediaRecorderPrivate::setVideoSource(RefPtr<RealtimeMediaSource>&& videoSource)
 {
     if (m_videoSource)
-        m_videoSource->removeVideoSampleObserver(*this);
+        m_videoSource->removeVideoFrameObserver(*this);
 
     m_videoSource = WTFMove(videoSource);
 
     if (m_videoSource)
-        m_videoSource->addVideoSampleObserver(*this);
+        m_videoSource->addVideoFrameObserver(*this);
 }
 
 inline MediaRecorderPrivate::~MediaRecorderPrivate()
@@ -132,7 +132,7 @@ inline MediaRecorderPrivate::~MediaRecorderPrivate()
     if (m_audioSource)
         m_audioSource->removeAudioSampleObserver(*this);
     if (m_videoSource)
-        m_videoSource->removeVideoSampleObserver(*this);
+        m_videoSource->removeVideoFrameObserver(*this);
 }
 
 } // namespace WebCore

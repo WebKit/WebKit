@@ -62,13 +62,13 @@ private:
     bool didFail() const final;
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer) final;
     void updateAffineTransform(CGAffineTransform) final;
-    void updateBoundsAndPosition(CGRect, WebCore::MediaSample::VideoRotation) final;
+    void updateBoundsAndPosition(CGRect, WebCore::VideoFrame::Rotation) final;
     void flush() final;
     void flushAndRemoveImage() final;
     void play() final;
     void pause() final;
-    void enqueueSample(WebCore::MediaSample&) final;
-    void clearEnqueuedSamples() final;
+    void enqueueVideoFrame(WebCore::VideoFrame&) final;
+    void clearVideoFrames() final;
     PlatformLayer* rootLayer() final;
 
     // GPUProcessConnection::Client

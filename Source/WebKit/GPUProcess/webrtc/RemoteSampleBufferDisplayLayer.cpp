@@ -91,7 +91,7 @@ void RemoteSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform tra
     m_sampleBufferDisplayLayer->updateRootLayerAffineTransform(transform);
 }
 
-void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, WebCore::MediaSample::VideoRotation rotation)
+void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, WebCore::VideoFrame::Rotation rotation)
 {
     m_sampleBufferDisplayLayer->updateRootLayerBoundsAndPosition(bounds, rotation, LocalSampleBufferDisplayLayer::ShouldUpdateRootLayer::Yes);
 }
@@ -116,15 +116,15 @@ void RemoteSampleBufferDisplayLayer::pause()
     m_sampleBufferDisplayLayer->pause();
 }
 
-void RemoteSampleBufferDisplayLayer::enqueue(SharedVideoFrame&& frame)
+void RemoteSampleBufferDisplayLayer::enqueueVideoFrame(SharedVideoFrame&& frame)
 {
     if (auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(frame)))
-        m_sampleBufferDisplayLayer->enqueue(videoFrame->pixelBuffer(), videoFrame->presentationTime());
+        m_sampleBufferDisplayLayer->enqueueBuffer(videoFrame->pixelBuffer(), videoFrame->presentationTime());
 }
 
-void RemoteSampleBufferDisplayLayer::clearEnqueuedSamples()
+void RemoteSampleBufferDisplayLayer::clearVideoFrames()
 {
-    m_sampleBufferDisplayLayer->clearEnqueuedSamples();
+    m_sampleBufferDisplayLayer->clearVideoFrames();
 }
 
 IPC::Connection* RemoteSampleBufferDisplayLayer::messageSenderConnection() const

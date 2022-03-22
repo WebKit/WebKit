@@ -48,12 +48,12 @@ MediaTime VideoFrame::presentationTime() const
     return m_presentationTime;
 }
 
-MediaSample::VideoRotation VideoFrame::videoRotation() const
+VideoFrame::Rotation VideoFrame::rotation() const
 {
     return m_rotation;
 }
 
-bool VideoFrame::videoMirrored() const
+bool VideoFrame::isMirrored() const
 {
     return m_isMirrored;
 }
@@ -130,7 +130,7 @@ RefPtr<VideoFrameCV> VideoFrame::asVideoFrameCV()
     if (!buffer)
         return nullptr;
 
-    return VideoFrameCV::create(presentationTime(), videoMirrored(), videoRotation(), buffer);
+    return VideoFrameCV::create(presentationTime(), isMirrored(), rotation(), buffer);
 }
 #endif
 

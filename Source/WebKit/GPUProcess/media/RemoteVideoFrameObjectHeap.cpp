@@ -33,7 +33,6 @@
 #include <wtf/WorkQueue.h>
 
 #if PLATFORM(COCOA)
-#include <WebCore/MediaSampleAVFObjC.h>
 #include <WebCore/VideoFrameCV.h>
 #include <pal/cf/CoreMediaSoftLink.h>
 #endif
@@ -84,7 +83,7 @@ void RemoteVideoFrameObjectHeap::close()
     // TODO: add can happen after stopping.
 }
 
-RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::MediaSample>&& frame)
+RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::VideoFrame>&& frame)
 {
     auto write = RemoteVideoFrameWriteReference::generateForAdd();
     auto newFrameReference = write.retiredReference();

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(PixelBuffer&& pixelBuffer, const MediaTime& presentationTime, const IntSize& destinationSize, double frameRate, VideoRotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
+Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(PixelBuffer&& pixelBuffer, const MediaTime& presentationTime, const IntSize& destinationSize, double frameRate, Rotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
 {
     ensureGStreamerInitialized();
 
@@ -85,7 +85,7 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(PixelBuffer&
     return adoptRef(*new VideoFrameGStreamer(WTFMove(sample), FloatSize(width, height), presentationTime, videoRotation, videoMirrored, WTFMove(metadata)));
 }
 
-VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const MediaTime& presentationTime, VideoRotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
+VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const MediaTime& presentationTime, Rotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
     : VideoFrame(presentationTime, videoMirrored, videoRotation)
     , m_sample(WTFMove(sample))
     , m_presentationSize(presentationSize)
@@ -98,7 +98,7 @@ VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const Floa
         buffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer, WTFMove(metadata));
 }
 
-VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const MediaTime& presentationTime, VideoRotation videoRotation)
+VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const MediaTime& presentationTime, Rotation videoRotation)
     : VideoFrame(presentationTime, false, videoRotation)
     , m_sample(sample)
 {

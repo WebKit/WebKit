@@ -137,10 +137,6 @@
 #include "OffscreenCanvas.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-#include "MediaSample.h"
-#endif
-
 #if !USE(ANGLE)
 #include "GraphicsContextGLOpenGL.h"
 #if USE(OPENGL_ES)

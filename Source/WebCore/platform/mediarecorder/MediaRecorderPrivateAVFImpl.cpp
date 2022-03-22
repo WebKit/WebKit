@@ -83,19 +83,19 @@ void MediaRecorderPrivateAVFImpl::startRecording(StartRecordingCallback&& callba
     callback(String(m_writer->mimeType()), m_writer->audioBitRate(), m_writer->videoBitRate());
 }
 
-void MediaRecorderPrivateAVFImpl::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata)
+void MediaRecorderPrivateAVFImpl::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata)
 {
     if (shouldMuteVideo()) {
         if (!m_blackFrame) {
-            auto size = sample.presentationSize();
-            m_blackFrame = VideoFrameCV::create(sample.presentationTime(), sample.videoMirrored(), sample.videoRotation(), createBlackPixelBuffer(size.width(), size.height()));
+            auto size = videoFrame.presentationSize();
+            m_blackFrame = VideoFrameCV::create(videoFrame.presentationTime(), videoFrame.isMirrored(), videoFrame.rotation(), createBlackPixelBuffer(size.width(), size.height()));
         }
         m_writer->appendVideoFrame(*m_blackFrame);
         return;
     }
 
     m_blackFrame = nullptr;
-    m_writer->appendVideoFrame(VideoFrameCV::create(sample.presentationTime(), sample.videoMirrored(), sample.videoRotation(), sample.pixelBuffer()));
+    m_writer->appendVideoFrame(videoFrame);
 }
 
 void MediaRecorderPrivateAVFImpl::audioSamplesAvailable(const MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)

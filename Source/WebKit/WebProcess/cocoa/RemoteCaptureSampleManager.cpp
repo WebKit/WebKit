@@ -159,11 +159,10 @@ void RemoteCaptureSampleManager::videoFrameAvailable(RealtimeMediaSourceIdentifi
         RELEASE_LOG_ERROR(WebRTC, "Unable to find source %llu for videoFrameAvailable", identifier.toUInt64());
         return;
     }
-    auto videoFrameSize = videoFrame->size();
-    iterator->value->videoFrameAvailable(WTFMove(videoFrame), videoFrameSize, metadata);
+    iterator->value->remoteVideoFrameAvailable(WTFMove(videoFrame), metadata);
 }
 
-void RemoteCaptureSampleManager::videoFrameAvailableCV(RealtimeMediaSourceIdentifier identifier, RetainPtr<CVPixelBufferRef>&& pixelBuffer, WebCore::MediaSample::VideoRotation rotation, bool mirrored, MediaTime presentationTime, WebCore::VideoFrameTimeMetadata metadata)
+void RemoteCaptureSampleManager::videoFrameAvailableCV(RealtimeMediaSourceIdentifier identifier, RetainPtr<CVPixelBufferRef>&& pixelBuffer, WebCore::VideoFrame::Rotation rotation, bool mirrored, MediaTime presentationTime, WebCore::VideoFrameTimeMetadata metadata)
 {
     ASSERT(!WTF::isMainRunLoop());
     auto iterator = m_videoSources.find(identifier);
@@ -173,8 +172,7 @@ void RemoteCaptureSampleManager::videoFrameAvailableCV(RealtimeMediaSourceIdenti
     }
 
     auto videoFrame = VideoFrameCV::create(presentationTime, mirrored, rotation, WTFMove(pixelBuffer));
-    auto size = videoFrame->presentationSize();
-    iterator->value->videoFrameAvailable(videoFrame.get(), { static_cast<int>(size.width()), static_cast<int>(size.height()) }, metadata);
+    iterator->value->remoteVideoFrameAvailable(videoFrame.get(), metadata);
 }
 
 RemoteCaptureSampleManager::RemoteAudio::RemoteAudio(Ref<RemoteRealtimeAudioSource>&& source)

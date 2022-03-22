@@ -42,16 +42,16 @@ namespace WebCore {
 class VideoFrameLibWebRTC final : public VideoFrame {
 public:
     using ConversionCallback = Function<RetainPtr<CVPixelBufferRef>(webrtc::VideoFrameBuffer&)>;
-    static Ref<VideoFrameLibWebRTC> create(MediaTime, bool isMirrored, VideoRotation, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);
+    static Ref<VideoFrameLibWebRTC> create(MediaTime, bool isMirrored, Rotation, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);
 
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> buffer() { return m_buffer; }
 
 private:
-    VideoFrameLibWebRTC(MediaTime, bool isMirrored, VideoRotation, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);
+    VideoFrameLibWebRTC(MediaTime, bool isMirrored, Rotation, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);
 
     // VideoFrame
     FloatSize presentationSize() const final { return m_size; }
-    uint32_t videoPixelFormat() const final { return m_videoPixelFormat; }
+    uint32_t pixelFormat() const final { return m_videoPixelFormat; }
     CVPixelBufferRef pixelBuffer() const final;
 
     const rtc::scoped_refptr<webrtc::VideoFrameBuffer> m_buffer;
@@ -67,7 +67,6 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoFrameLibWebRTC)
     static bool isType(const WebCore::VideoFrame& videoFrame) { return videoFrame.isLibWebRTC(); }
-    static bool isType(const WebCore::MediaSample& mediaSample) { return is<WebCore::VideoFrame>(mediaSample) && is<WebCore::VideoFrameLibWebRTC>(downcast<WebCore::VideoFrame>(mediaSample)); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // PLATFORM(COCOA) && USE(LIBWEBRTC)

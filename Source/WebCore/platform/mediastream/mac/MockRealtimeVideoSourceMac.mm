@@ -93,16 +93,16 @@ void MockRealtimeVideoSourceMac::updateSampleBuffer()
     if (auto nativeImage = imageBuffer->copyImage()->nativeImage())
         platformImage = nativeImage->platformImage();
 
-    auto sampleTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
-    auto sampleBuffer = m_imageTransferSession->createMediaSample(platformImage.get(), sampleTime, size(), sampleRotation());
-    if (!sampleBuffer)
+    auto presentationTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
+    auto videoFrame = m_imageTransferSession->createVideoFrame(platformImage.get(), presentationTime, size(), videoFrameRotation());
+    if (!videoFrame)
         return;
 
     auto captureTime = MonotonicTime::now().secondsSinceEpoch();
-    m_workQueue->dispatch([this, protectedThis = Ref { *this }, sampleBuffer = WTFMove(sampleBuffer), captureTime]() mutable {
+    m_workQueue->dispatch([this, protectedThis = Ref { *this }, videoFrame = WTFMove(videoFrame), captureTime]() mutable {
         VideoFrameTimeMetadata metadata;
         metadata.captureTime = captureTime;
-        dispatchMediaSampleToObservers(*sampleBuffer, metadata);
+        dispatchVideoFrameToObservers(*videoFrame, metadata);
     });
 }
 

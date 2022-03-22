@@ -38,10 +38,10 @@
 #include "CaptureDevice.h"
 #include "Image.h"
 #include "MediaConstraints.h"
-#include "MediaSample.h"
 #include "PlatformLayer.h"
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
+#include "VideoFrame.h"
 #include "VideoFrameTimeMetadata.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
@@ -98,12 +98,12 @@ public:
         // May be called on a background thread.
         virtual void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t /*numberOfFrames*/) = 0;
     };
-    class VideoSampleObserver {
+    class VideoFrameObserver {
     public:
-        virtual ~VideoSampleObserver() = default;
+        virtual ~VideoFrameObserver() = default;
 
         // May be called on a background thread.
-        virtual void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata) = 0;
+        virtual void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) = 0;
     };
 
     virtual ~RealtimeMediaSource() = default;
@@ -147,8 +147,8 @@ public:
     WEBCORE_EXPORT void addAudioSampleObserver(AudioSampleObserver&);
     WEBCORE_EXPORT void removeAudioSampleObserver(AudioSampleObserver&);
 
-    WEBCORE_EXPORT void addVideoSampleObserver(VideoSampleObserver&);
-    WEBCORE_EXPORT void removeVideoSampleObserver(VideoSampleObserver&);
+    WEBCORE_EXPORT void addVideoFrameObserver(VideoFrameObserver&);
+    WEBCORE_EXPORT void removeVideoFrameObserver(VideoFrameObserver&);
 
     const IntSize size() const;
     void setSize(const IntSize&);
@@ -250,7 +250,7 @@ protected:
     void initializeSampleRate(int sampleRate) { m_sampleRate = sampleRate; }
     void initializeEchoCancellation(bool echoCancellation) { m_echoCancellation = echoCancellation; }
 
-    void videoSampleAvailable(MediaSample&, VideoFrameTimeMetadata);
+    void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata);
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
     void forEachObserver(const Function<void(Observer&)>&);
@@ -289,8 +289,8 @@ private:
     mutable Lock m_audioSampleObserversLock;
     HashSet<AudioSampleObserver*> m_audioSampleObservers WTF_GUARDED_BY_LOCK(m_audioSampleObserversLock);
 
-    mutable Lock m_videoSampleObserversLock;
-    HashSet<VideoSampleObserver*> m_videoSampleObservers WTF_GUARDED_BY_LOCK(m_videoSampleObserversLock);
+    mutable Lock m_VideoFrameObserversLock;
+    HashSet<VideoFrameObserver*> m_VideoFrameObservers WTF_GUARDED_BY_LOCK(m_VideoFrameObserversLock);
 
     // Set on the main thread from constraints.
     IntSize m_size;

@@ -91,7 +91,7 @@ private:
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Camera; }
     bool interrupted() const final;
 
-    MediaSample::VideoRotation sampleRotation() const final { return m_sampleRotation; }
+    VideoFrame::Rotation videoFrameRotation() const final { return m_videoFrameRotation; }
     void setFrameRateWithPreset(double, RefPtr<VideoPreset>) final;
     bool prefersPreset(VideoPreset&) final;
     void generatePresets() final;
@@ -99,7 +99,7 @@ private:
 
     void setSessionSizeAndFrameRate();
     bool setPreset(NSString*);
-    void computeSampleRotation();
+    void computeVideoFrameRotation();
     AVFrameRateRange* frameDurationForFrameRate(double);
 
     // OrientationNotifier::Observer API
@@ -118,13 +118,13 @@ private:
     void updateVerifyCapturingTimer();
     void verifyIsCapturing();
 
-    RefPtr<MediaSample> m_buffer;
+    RefPtr<VideoFrame> m_buffer;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
     std::unique_ptr<ImageTransferSessionVT> m_imageTransferSession;
 
     int m_sensorOrientation { 0 };
     int m_deviceOrientation { 0 };
-    MediaSample::VideoRotation m_sampleRotation { MediaSample::VideoRotation::None };
+    VideoFrame::Rotation m_videoFrameRotation { VideoFrame::Rotation::None };
 
     std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     std::optional<RealtimeMediaSourceCapabilities> m_capabilities;

@@ -69,24 +69,24 @@ MockDisplayCaptureSourceGStreamer::MockDisplayCaptureSourceGStreamer(RealtimeMed
     , m_source(WTFMove(source))
     , m_deviceType(deviceType)
 {
-    m_source->addVideoSampleObserver(*this);
+    m_source->addVideoFrameObserver(*this);
 }
 
 MockDisplayCaptureSourceGStreamer::~MockDisplayCaptureSourceGStreamer()
 {
-    m_source->removeVideoSampleObserver(*this);
+    m_source->removeVideoFrameObserver(*this);
 }
 
 void MockDisplayCaptureSourceGStreamer::stopProducingData()
 {
-    m_source->removeVideoSampleObserver(*this);
+    m_source->removeVideoFrameObserver(*this);
     m_source->stop();
 }
 
 void MockDisplayCaptureSourceGStreamer::requestToEnd(Observer& callingObserver)
 {
     RealtimeMediaSource::requestToEnd(callingObserver);
-    m_source->removeVideoSampleObserver(*this);
+    m_source->removeVideoFrameObserver(*this);
     m_source->requestToEnd(callingObserver);
 }
 
@@ -96,9 +96,9 @@ void MockDisplayCaptureSourceGStreamer::setMuted(bool isMuted)
     m_source->setMuted(isMuted);
 }
 
-void MockDisplayCaptureSourceGStreamer::videoSampleAvailable(MediaSample& sample, VideoFrameTimeMetadata metadata)
+void MockDisplayCaptureSourceGStreamer::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata metadata)
 {
-    RealtimeMediaSource::videoSampleAvailable(sample, metadata);
+    RealtimeMediaSource::videoFrameAvailable(videoFrame, metadata);
 }
 
 const RealtimeMediaSourceCapabilities& MockDisplayCaptureSourceGStreamer::capabilities()
@@ -165,8 +165,8 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     std::optional<VideoFrameTimeMetadata> metadata;
     metadata->captureTime = MonotonicTime::now().secondsSinceEpoch();
     auto presentationTime = MediaTime::createWithDouble((elapsedTime() + 100_ms).seconds());
-    auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer), presentationTime, size(), frameRate(), sampleRotation(), false, WTFMove(metadata));
-    dispatchMediaSampleToObservers(videoFrame.get(), { });
+    auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(WTFMove(*pixelBuffer), presentationTime, size(), frameRate(), videoFrameRotation(), false, WTFMove(metadata));
+    dispatchVideoFrameToObservers(videoFrame.get(), { });
 }
 
 } // namespace WebCore

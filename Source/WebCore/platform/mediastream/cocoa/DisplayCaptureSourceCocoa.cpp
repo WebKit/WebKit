@@ -293,35 +293,35 @@ void DisplayCaptureSourceCocoa::emitFrame()
         updateFrameSize();
     }
 
-    auto sample = WTF::switchOn(frame,
-        [this, sampleTime](RetainPtr<IOSurfaceRef>& surface) -> RefPtr<MediaSample> {
+    auto videoFrame = WTF::switchOn(frame,
+        [this, sampleTime](RetainPtr<IOSurfaceRef>& surface) -> RefPtr<VideoFrame> {
             if (!surface)
                 return nullptr;
 
-            return m_imageTransferSession->createMediaSample(surface.get(), sampleTime, size());
+            return m_imageTransferSession->createVideoFrame(surface.get(), sampleTime, size());
         },
-        [this, sampleTime](RefPtr<NativeImage>& image) -> RefPtr<MediaSample> {
+        [this, sampleTime](RefPtr<NativeImage>& image) -> RefPtr<VideoFrame> {
             if (!image)
                 return nullptr;
 
-            return m_imageTransferSession->createMediaSample(image->platformImage().get(), sampleTime, size());
+            return m_imageTransferSession->createVideoFrame(image->platformImage().get(), sampleTime, size());
         },
-        [this, sampleTime](RetainPtr<CMSampleBufferRef>& sample) -> RefPtr<MediaSample> {
+        [this, sampleTime](RetainPtr<CMSampleBufferRef>& sample) -> RefPtr<VideoFrame> {
             if (!sample)
                 return nullptr;
 
-            return m_imageTransferSession->createMediaSample(sample.get(), sampleTime, size());
+            return m_imageTransferSession->createVideoFrame(sample.get(), sampleTime, size());
         }
     );
 
-    if (!sample) {
+    if (!videoFrame) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     VideoFrameTimeMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
-    videoSampleAvailable(*sample.get(), metadata);
+    videoFrameAvailable(*videoFrame.get(), metadata);
 }
 
 void DisplayCaptureSourceCocoa::capturerConfigurationChanged()

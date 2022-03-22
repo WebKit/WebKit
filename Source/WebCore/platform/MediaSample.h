@@ -117,9 +117,9 @@ public:
         Right = 90,
         Left = 270,
     };
-    virtual VideoRotation videoRotation() const { return VideoRotation::None; }
-    virtual bool videoMirrored() const { return false; }
-    virtual uint32_t videoPixelFormat() const { return 0; }
+    virtual VideoRotation rotation() const { return VideoRotation::None; }
+    virtual bool isMirrored() const { return false; }
+    virtual uint32_t pixelFormat() const { return 0; }
 #if PLATFORM(COCOA)
     virtual CVPixelBufferRef pixelBuffer() const { return nullptr; };
 #endif

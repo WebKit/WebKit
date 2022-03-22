@@ -31,7 +31,6 @@
 #import "Color.h"
 #import "IntSize.h"
 #import "Logging.h"
-#import "MediaSampleAVFObjC.h"
 #import "MediaUtilities.h"
 
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
@@ -42,8 +41,9 @@
 #import <wtf/MonotonicTime.h>
 #import <wtf/cf/TypeCastsCF.h>
 
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
-
+#import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
 using namespace WebCore;
@@ -198,7 +198,7 @@ LocalSampleBufferDisplayLayer::~LocalSampleBufferDisplayLayer()
 
     [m_statusChangeListener stop];
 
-    m_pendingVideoSampleQueue.clear();
+    m_pendingVideoFrameQueue.clear();
 
     [m_sampleBufferDisplayLayer stopRequestingMediaData];
     [m_sampleBufferDisplayLayer flush];
@@ -265,28 +265,28 @@ void LocalSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform tran
     });
 }
 
-void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, MediaSample::VideoRotation rotation)
+void LocalSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, VideoFrame::Rotation rotation)
 {
     updateRootLayerBoundsAndPosition(bounds, rotation, ShouldUpdateRootLayer::No);
 }
 
-void LocalSampleBufferDisplayLayer::setRootLayerBoundsAndPositions(CGRect bounds, MediaSample::VideoRotation rotation)
+void LocalSampleBufferDisplayLayer::setRootLayerBoundsAndPositions(CGRect bounds, VideoFrame::Rotation rotation)
 {
     CGPoint position = { bounds.size.width / 2, bounds.size.height / 2};
-    if (rotation == MediaSample::VideoRotation::Right || rotation == MediaSample::VideoRotation::Left)
+    if (rotation == VideoFrame::Rotation::Right || rotation == VideoFrame::Rotation::Left)
         std::swap(bounds.size.width, bounds.size.height);
 
     m_rootLayer.get().position = position;
     m_rootLayer.get().bounds = bounds;
 }
 
-void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect bounds, MediaSample::VideoRotation rotation, ShouldUpdateRootLayer shouldUpdateRootLayer)
+void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect bounds, VideoFrame::Rotation rotation, ShouldUpdateRootLayer shouldUpdateRootLayer)
 {
     runWithoutAnimations([&] {
         if (shouldUpdateRootLayer == ShouldUpdateRootLayer::Yes)
             setRootLayerBoundsAndPositions(bounds, rotation);
 
-        if (rotation == MediaSample::VideoRotation::Right || rotation == MediaSample::VideoRotation::Left)
+        if (rotation == VideoFrame::Rotation::Right || rotation == VideoFrame::Rotation::Left)
             std::swap(bounds.size.width, bounds.size.height);
 
         CGPoint position = { bounds.size.width / 2, bounds.size.height / 2};
@@ -312,7 +312,7 @@ void LocalSampleBufferDisplayLayer::flushAndRemoveImage()
 
 static const double rendererLatency = 0.02;
 
-void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
+void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
 {
     if (m_paused) {
 #if !RELEASE_LOG_DISABLED
@@ -321,20 +321,15 @@ void LocalSampleBufferDisplayLayer::enqueueSample(MediaSample& sample)
         return;
     }
 
-    m_processingQueue->dispatch([this, sample = Ref { sample }] {
+    m_processingQueue->dispatch([this, videoFrame = Ref { videoFrame }]() mutable {
         if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
             RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueSample (%{public}s) not ready for more media data", m_logIdentifier.utf8().data());
-            addSampleToPendingQueue(sample);
+            addVideoFrameToPendingQueue(WTFMove(videoFrame));
             requestNotificationWhenReadyForVideoData();
             return;
         }
-        enqueueSampleBuffer(sample);
+        enqueueBuffer(videoFrame->pixelBuffer(), videoFrame->presentationTime());
     });
-}
-
-void LocalSampleBufferDisplayLayer::enqueueSampleBuffer(MediaSample& sample)
-{
-    enqueue(sample.pixelBuffer(), sample.presentationTime());
 }
 
 static void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
@@ -346,7 +341,7 @@ static void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
     }
 }
 
-void LocalSampleBufferDisplayLayer::enqueue(CVPixelBufferRef pixelBuffer, MediaTime presentationTime)
+void LocalSampleBufferDisplayLayer::enqueueBuffer(CVPixelBufferRef pixelBuffer, MediaTime presentationTime)
 {
     ASSERT(!isMainThread());
 
@@ -361,7 +356,7 @@ void LocalSampleBufferDisplayLayer::enqueue(CVPixelBufferRef pixelBuffer, MediaT
     constexpr size_t frameCountPerLog = 1800; // log every minute at 30 fps
     if (!(m_frameRateMonitor.frameCount() % frameCountPerLog)) {
         if (auto* metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics])
-            RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer (%{public}s) metrics, total=%lu, dropped=%lu, corrupted=%lu, display-composited=%lu, non-display-composited=%lu (pending=%lu)", m_logIdentifier.utf8().data(), metrics.totalNumberOfVideoFrames, metrics.numberOfDroppedVideoFrames, metrics.numberOfCorruptedVideoFrames, metrics.numberOfDisplayCompositedVideoFrames, metrics.numberOfNonDisplayCompositedVideoFrames, m_pendingVideoSampleQueue.size());
+            RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer (%{public}s) metrics, total=%lu, dropped=%lu, corrupted=%lu, display-composited=%lu, non-display-composited=%lu (pending=%lu)", m_logIdentifier.utf8().data(), metrics.totalNumberOfVideoFrames, metrics.numberOfDroppedVideoFrames, metrics.numberOfCorruptedVideoFrames, metrics.numberOfDisplayCompositedVideoFrames, metrics.numberOfNonDisplayCompositedVideoFrames, m_pendingVideoFrameQueue.size());
     }
     m_frameRateMonitor.update();
 #endif
@@ -373,44 +368,44 @@ void LocalSampleBufferDisplayLayer::onIrregularFrameRateNotification(MonotonicTi
     callOnMainThread([frameTime = frameTime.secondsSinceEpoch().value(), lastFrameTime = lastFrameTime.secondsSinceEpoch().value(), observedFrameRate = m_frameRateMonitor.observedFrameRate(), frameCount = m_frameRateMonitor.frameCount(), weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
-        RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueSampleBuffer (%{public}s) at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", weakThis->m_logIdentifier.utf8().data(), frameTime, lastFrameTime, observedFrameRate, (frameTime - lastFrameTime) * 1000, frameCount);
+        RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueVideoFrame (%{public}s) at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", weakThis->m_logIdentifier.utf8().data(), frameTime, lastFrameTime, observedFrameRate, (frameTime - lastFrameTime) * 1000, frameCount);
     });
 }
 #endif
 
-void LocalSampleBufferDisplayLayer::removeOldSamplesFromPendingQueue()
+void LocalSampleBufferDisplayLayer::removeOldVideoFramesFromPendingQueue()
 {
     ASSERT(!isMainThread());
 
-    if (m_pendingVideoSampleQueue.isEmpty())
+    if (m_pendingVideoFrameQueue.isEmpty())
         return;
 
     if (m_renderPolicy == RenderPolicy::Immediately) {
-        m_pendingVideoSampleQueue.clear();
+        m_pendingVideoFrameQueue.clear();
         return;
     }
 
     auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value());
-    while (!m_pendingVideoSampleQueue.isEmpty()) {
-        auto presentationTime = m_pendingVideoSampleQueue.first()->presentationTime();
+    while (!m_pendingVideoFrameQueue.isEmpty()) {
+        auto presentationTime = m_pendingVideoFrameQueue.first()->presentationTime();
         if (presentationTime.isValid() && presentationTime > now)
             break;
-        m_pendingVideoSampleQueue.removeFirst();
+        m_pendingVideoFrameQueue.removeFirst();
     }
 }
 
-void LocalSampleBufferDisplayLayer::addSampleToPendingQueue(MediaSample& sample)
+void LocalSampleBufferDisplayLayer::addVideoFrameToPendingQueue(Ref<VideoFrame>&& videoFrame)
 {
     ASSERT(!isMainThread());
 
-    removeOldSamplesFromPendingQueue();
-    m_pendingVideoSampleQueue.append(sample);
+    removeOldVideoFramesFromPendingQueue();
+    m_pendingVideoFrameQueue.append(WTFMove(videoFrame));
 }
 
-void LocalSampleBufferDisplayLayer::clearEnqueuedSamples()
+void LocalSampleBufferDisplayLayer::clearVideoFrames()
 {
     m_processingQueue->dispatch([this] {
-        m_pendingVideoSampleQueue.clear();
+        m_pendingVideoFrameQueue.clear();
     });
 }
 
@@ -424,13 +419,13 @@ void LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData()
         m_processingQueue->dispatch([this] {
             [m_sampleBufferDisplayLayer stopRequestingMediaData];
 
-            while (!m_pendingVideoSampleQueue.isEmpty()) {
+            while (!m_pendingVideoFrameQueue.isEmpty()) {
                 if (![m_sampleBufferDisplayLayer isReadyForMoreMediaData]) {
                     requestNotificationWhenReadyForVideoData();
                     return;
                 }
-                auto sample = m_pendingVideoSampleQueue.takeFirst();
-                enqueueSampleBuffer(sample);
+                auto videoFrame = m_pendingVideoFrameQueue.takeFirst();
+                enqueueBuffer(videoFrame->pixelBuffer(), videoFrame->presentationTime());
             }
         });
     }];

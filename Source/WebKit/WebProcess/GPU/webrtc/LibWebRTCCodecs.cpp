@@ -102,20 +102,20 @@ static int32_t initializeVideoEncoder(webrtc::WebKitVideoEncoder encoder, const 
     return WebProcess::singleton().libWebRTCCodecs().initializeEncoder(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), codec.width, codec.height, codec.startBitrate, codec.maxBitrate, codec.minBitrate, codec.maxFramerate);
 }
 
-static inline MediaSample::VideoRotation toMediaSampleVideoRotation(webrtc::VideoRotation rotation)
+static inline VideoFrame::Rotation toVideoRotation(webrtc::VideoRotation rotation)
 {
     switch (rotation) {
     case webrtc::kVideoRotation_0:
-        return MediaSample::VideoRotation::None;
+        return VideoFrame::Rotation::None;
     case webrtc::kVideoRotation_180:
-        return MediaSample::VideoRotation::UpsideDown;
+        return VideoFrame::Rotation::UpsideDown;
     case webrtc::kVideoRotation_90:
-        return MediaSample::VideoRotation::Right;
+        return VideoFrame::Rotation::Right;
     case webrtc::kVideoRotation_270:
-        return MediaSample::VideoRotation::Left;
+        return VideoFrame::Rotation::Left;
     }
     ASSERT_NOT_REACHED();
-    return MediaSample::VideoRotation::None;
+    return VideoFrame::Rotation::None;
 }
 
 static inline String formatNameFromWebRTCCodecType(webrtc::VideoCodecType type)
@@ -494,7 +494,7 @@ int32_t LibWebRTCCodecs::encodeFrame(Encoder& encoder, const webrtc::VideoFrame&
     if (!buffer)
         return WEBRTC_VIDEO_CODEC_ERROR;
 
-    SharedVideoFrame sharedVideoFrame { MediaTime(frame.timestamp_us() * 1000, 1000000), false, toMediaSampleVideoRotation(frame.rotation()), WTFMove(*buffer) };
+    SharedVideoFrame sharedVideoFrame { MediaTime(frame.timestamp_us() * 1000, 1000000), false, toVideoRotation(frame.rotation()), WTFMove(*buffer) };
     encoder.connection->send(Messages::LibWebRTCCodecsProxy::EncodeFrame { encoder.identifier, sharedVideoFrame, frame.timestamp(), shouldEncodeAsKeyFrame }, 0);
     return WEBRTC_VIDEO_CODEC_OK;
 }

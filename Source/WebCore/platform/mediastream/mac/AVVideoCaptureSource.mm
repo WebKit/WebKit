@@ -251,7 +251,7 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
     settings.setFrameRate(frameRate());
 
     auto size = this->size();
-    if (m_sampleRotation == MediaSample::VideoRotation::Left || m_sampleRotation == MediaSample::VideoRotation::Right)
+    if (m_videoFrameRotation == VideoFrame::Rotation::Left || m_videoFrameRotation == VideoFrame::Rotation::Right)
         size = size.transposedSize();
     
     settings.setWidth(size.width());
@@ -496,7 +496,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
     setSessionSizeAndFrameRate();
 
     m_sensorOrientation = sensorOrientationFromVideoOutput(m_videoOutput.get());
-    computeSampleRotation();
+    computeVideoFrameRotation();
 
     return true;
 }
@@ -521,38 +521,38 @@ void AVVideoCaptureSource::orientationChanged(int orientation)
 {
     ASSERT(orientation == 0 || orientation == 90 || orientation == -90 || orientation == 180);
     m_deviceOrientation = orientation;
-    computeSampleRotation();
-    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "rotation = ", m_sampleRotation, ", orientation = ", m_deviceOrientation);
+    computeVideoFrameRotation();
+    ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "rotation = ", m_videoFrameRotation, ", orientation = ", m_deviceOrientation);
 }
 
-void AVVideoCaptureSource::computeSampleRotation()
+void AVVideoCaptureSource::computeVideoFrameRotation()
 {
     bool frontCamera = [device() position] == AVCaptureDevicePositionFront;
-    MediaSample::VideoRotation sampleRotation;
+    VideoFrame::Rotation videoFrameRotation;
     switch (m_sensorOrientation - m_deviceOrientation) {
     case 0:
-        sampleRotation = MediaSample::VideoRotation::None;
+        videoFrameRotation = VideoFrame::Rotation::None;
         break;
     case 180:
     case -180:
-        sampleRotation = MediaSample::VideoRotation::UpsideDown;
+        videoFrameRotation = VideoFrame::Rotation::UpsideDown;
         break;
     case 90:
     case -270:
-        sampleRotation = frontCamera ? MediaSample::VideoRotation::Left : MediaSample::VideoRotation::Right;
+        videoFrameRotation = frontCamera ? VideoFrame::Rotation::Left : VideoFrame::Rotation::Right;
         break;
     case -90:
     case 270:
-        sampleRotation = frontCamera ? MediaSample::VideoRotation::Right : MediaSample::VideoRotation::Left;
+        videoFrameRotation = frontCamera ? VideoFrame::Rotation::Right : VideoFrame::Rotation::Left;
         break;
     default:
         ASSERT_NOT_REACHED();
-        sampleRotation = MediaSample::VideoRotation::None;
+        videoFrameRotation = VideoFrame::Rotation::None;
     }
-    if (sampleRotation == m_sampleRotation)
+    if (videoFrameRotation == m_videoFrameRotation)
         return;
 
-    m_sampleRotation = sampleRotation;
+    m_videoFrameRotation = videoFrameRotation;
     notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
 }
 
@@ -561,12 +561,12 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
     if (++m_framesCount <= framesToDropWhenStarting)
         return;
 
-    auto videoFrame = VideoFrameCV::create(sampleBuffer, [captureConnection isVideoMirrored], m_sampleRotation);
+    auto videoFrame = VideoFrameCV::create(sampleBuffer, [captureConnection isVideoMirrored], m_videoFrameRotation);
     m_buffer = &videoFrame.get();
     setIntrinsicSize(expandedIntSize(videoFrame->presentationSize()));
     VideoFrameTimeMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
-    dispatchMediaSampleToObservers(WTFMove(videoFrame), metadata);
+    dispatchVideoFrameToObservers(WTFMove(videoFrame), metadata);
 }
 
 void AVVideoCaptureSource::captureSessionIsRunningDidChange(bool state)
