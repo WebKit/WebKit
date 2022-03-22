@@ -1,3 +1,12 @@
+2022-03-22  Matteo Flores  <matteo_flores@apple.com>
+
+        [ iOS EWS ] fast/text/text-shadow-ink-overflow-missing.html is a flaky image failure
+        https://bugs.webkit.org/show_bug.cgi?id=238211
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2022-03-22  Jer Noble  <jer.noble@apple.com>
 
         YouTube.com - Clicking anywhere on the progress bar pauses the video

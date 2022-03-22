@@ -1780,6 +1780,8 @@ fast/layers/hidpi-floor-negative-coordinate-values-to-maintain-rounding-directio
 fast/layers/hidpi-nested-layers-with-subpixel-accumulation.html [ Pass Failure ]
 fast/layers/hidpi-transform-on-child-content-is-mispositioned.html [ Pass Failure ]
 
+webkit.org/b/238211 fast/text/text-shadow-ink-overflow-missing.html [ Pass Failure ]
+
 # LayoutTests/fast tests that timeout:
 fast/events/reveal-link-when-focused.html
 fast/forms/validation-message-appearance.html
