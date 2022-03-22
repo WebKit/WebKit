@@ -244,7 +244,6 @@ void AuthenticatorPresenterCoordinator::dimissPresenter(WebAuthenticationResult 
         // FIXME(219767): Replace the ASCAppleIDCredential with the upcoming WebAuthn credentials one.
         // This is just a place holder to tell the UI that the ceremony succeeds.
         m_credentialRequestHandler(adoptNS([WebKit::allocASCAppleIDCredentialInstance() initWithUser:@"" identityToken:adoptNS([[NSData alloc] init]).get() state:nil]).get(), nil);
-        return;
     }
 
     [m_presenter dismissWithError:nil];
