@@ -1,3 +1,14 @@
+2022-03-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Make radar conditional on authentication (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=238051
+        <rdar://problem/90384655>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/libraries/webkitbugspy/webkitbugspy/radar.py:
+        (Tracker.__init__): Only check for authentication if library exists.
+
 2022-03-21  Jonathan Bedard  <jbedard@apple.com>
 
         [Python 3] Use sys.executable instead of Python

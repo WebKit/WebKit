@@ -102,8 +102,8 @@ class Tracker(GenericTracker):
         self._projects = [project] if project else (projects or [])
 
         self.library = self.radarclient()
-        authentication = authentication or self.authentication()
-        if authentication and self.library:
+        authentication = authentication or (self.authentication() if self.library else None)
+        if authentication:
             self.client = self.library.RadarClient(
                 authentication, self.library.ClientSystemIdentifier(library_name, str(library_version)),
             )
