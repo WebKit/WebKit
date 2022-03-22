@@ -51,6 +51,7 @@ public:
         , m_hasAnnotationsAfter(false)
         , m_isFirstAfterPageBreak(false)
         , m_isForTrailingFloats(false)
+        , m_hasSelfPaintInlineBox(false)
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         , m_hasBadChildList(false)
 #endif
@@ -286,6 +287,8 @@ public:
 
     void computeReplacedAndTextLineTopAndBottom(LayoutUnit& lineTop, LayoutUnit& lineBottom) const;
 
+    bool hasSelfPaintInlineBox() const { return m_hasSelfPaintInlineBox; }
+
 private:
     bool isInlineFlowBox() const final { return true; }
     void boxModelObject() const = delete;
@@ -320,6 +323,7 @@ protected:
 
     unsigned m_isFirstAfterPageBreak : 1;
     unsigned m_isForTrailingFloats : 1;
+    unsigned m_hasSelfPaintInlineBox : 1;
 
     // End of RootInlineBox-specific members.
 
