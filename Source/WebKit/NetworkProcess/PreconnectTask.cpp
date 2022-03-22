@@ -39,10 +39,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
-PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParameters&& parameters, CompletionHandler<void(const ResourceError&)>&& completionHandler)
+PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const WebCore::NetworkLoadMetrics&)>&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
     , m_timeout(60_s)
-    , m_timeoutTimer([this] { didFinish(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_s, ResourceError::Type::Timeout }); })
+    , m_timeoutTimer([this] { didFinish(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), "Preconnection timed out"_s, ResourceError::Type::Timeout }, { }); })
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
 
@@ -84,16 +84,16 @@ void PreconnectTask::didReceiveBuffer(const FragmentedSharedBuffer&, int reporte
     ASSERT_NOT_REACHED();
 }
 
-void PreconnectTask::didFinishLoading(const NetworkLoadMetrics&)
+void PreconnectTask::didFinishLoading(const NetworkLoadMetrics& metrics)
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::didFinishLoading", this);
-    didFinish({ });
+    didFinish({ }, metrics);
 }
 
 void PreconnectTask::didFailLoading(const ResourceError& error)
 {
     RELEASE_LOG(Network, "%p - PreconnectTask::didFailLoading, error_code=%d", this, error.errorCode());
-    didFinish(error);
+    didFinish(error, NetworkLoadMetrics::emptyMetrics());
 }
 
 void PreconnectTask::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
@@ -101,10 +101,10 @@ void PreconnectTask::didSendData(unsigned long long bytesSent, unsigned long lon
     ASSERT_NOT_REACHED();
 }
 
-void PreconnectTask::didFinish(const ResourceError& error)
+void PreconnectTask::didFinish(const ResourceError& error, const NetworkLoadMetrics& metrics)
 {
     if (m_completionHandler)
-        m_completionHandler(error);
+        m_completionHandler(error, metrics);
     delete this;
 }
 
