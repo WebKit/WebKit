@@ -1,5 +1,54 @@
 2022-03-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r290981. rdar://problem/83326232
+
+    Remove invalid ASSERT in LocaleIDBuilder::overrideLanguageScriptRegion().
+    https://bugs.webkit.org/show_bug.cgi?id=237573
+    <rdar://problem/83326232>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/handle-empty-localeID-in-localeIDBufferForLanguageTagWithNullTerminator.js: Added.
+    
+    Source/JavaScriptCore:
+    
+    The ASSERT(length) in LocaleIDBuilder::overrideLanguageScriptRegion() is simply
+    incorrect.  The length can be 0 if uloc_forLanguageTag returns a 0 length in
+    localeIDBufferForLanguageTagWithNullTerminator().  LocaleIDBuilder::overrideLanguageScriptRegion()
+    already handles this scenario correctly.  We just need to remove this incorrect ASSERT.
+    
+    Also verified that we're producing the same result on the attached test case as
+    Chrome and Firefox produces.
+    
+    * runtime/IntlObject.cpp:
+    (JSC::localeIDBufferForLanguageTagWithNullTerminator):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290981 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-08  Mark Lam  <mark.lam@apple.com>
+
+            Remove invalid ASSERT in LocaleIDBuilder::overrideLanguageScriptRegion().
+            https://bugs.webkit.org/show_bug.cgi?id=237573
+            <rdar://problem/83326232>
+
+            Reviewed by Yusuke Suzuki.
+
+            The ASSERT(length) in LocaleIDBuilder::overrideLanguageScriptRegion() is simply
+            incorrect.  The length can be 0 if uloc_forLanguageTag returns a 0 length in
+            localeIDBufferForLanguageTagWithNullTerminator().  LocaleIDBuilder::overrideLanguageScriptRegion()
+            already handles this scenario correctly.  We just need to remove this incorrect ASSERT.
+
+            Also verified that we're producing the same result on the attached test case as
+            Chrome and Firefox produces.
+
+            * runtime/IntlObject.cpp:
+            (JSC::localeIDBufferForLanguageTagWithNullTerminator):
+
+2022-03-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r290873. rdar://problem/89770507
 
     Fix JITOperationList::addPointers() to support JIT_OPERATION_VALIDATION_ASSERT_ENABLED.
