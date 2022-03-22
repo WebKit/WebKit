@@ -707,12 +707,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!to)
         return NSOrderedSame;
 
-    NSInteger offset = from.index - to.index;
-
-    if (offset < 0)
+    if (from.index < to.index)
         return NSOrderedAscending;
 
-    if (offset > 0)
+    if (from.index > to.index)
         return NSOrderedDescending;
 
     return NSOrderedSame;

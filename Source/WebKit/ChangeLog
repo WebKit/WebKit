@@ -1,3 +1,13 @@
+2022-03-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        Unreviewed, address post-landing feedback on r291445
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView compareFoundRange:toRange:inDocument:]):
+
+        Subtraction to determine ordering is an anti-pattern, due to the
+        possibility of overflow. Use comparison operators.
+
 2022-03-21  Chris Dumez  <cdumez@apple.com>
 
         BroadcastChannel instances in distinct opaque origins can communicate
