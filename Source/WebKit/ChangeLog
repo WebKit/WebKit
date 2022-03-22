@@ -1,3 +1,36 @@
+2022-03-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix build on safari-613-branch
+
+        Most of this is just merging most of https://github.com/WebKit/WebKit/commit/ecdbbe0b667c3231bbbf93ab3a5d4df29a6df985
+        for rdar://problem/89972004
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::createSocketChannel):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::transferToNewWebProcess):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::createWebSocketTask):
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/NetworkSocketChannel.cpp:
+        (WebKit::NetworkSocketChannel::create):
+        (WebKit::NetworkSocketChannel::NetworkSocketChannel):
+        * NetworkProcess/NetworkSocketChannel.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+        * NetworkProcess/soup/NetworkSessionSoup.cpp:
+        (WebKit::NetworkSessionSoup::createWebSocketTask):
+        * NetworkProcess/soup/NetworkSessionSoup.h:
+        * Shared/Cocoa/AuxiliaryProcessCocoa.mm:
+        (WebKit::handleAXPreferenceChange):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::connect):
+
 2022-03-22  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r291598. rdar://problem/89972004

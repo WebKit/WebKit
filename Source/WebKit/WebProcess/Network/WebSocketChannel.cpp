@@ -118,7 +118,7 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
 
     m_inspector.didCreateWebSocket(url);
     m_url = request->url();
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier, m_webPageProxyID, m_document->clientOrigin() });
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier, m_webPageProxyID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed() });
     return ConnectStatus::OK;
 }
 

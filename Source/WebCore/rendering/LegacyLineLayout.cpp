@@ -1316,7 +1316,7 @@ static void repaintSelfPaintInlineBoxes(const LegacyRootInlineBox& firstRootInli
     for (auto* rootInlineBox = &firstRootInlineBox; rootInlineBox; rootInlineBox = rootInlineBox->nextRootBox()) {
         if (rootInlineBox->hasSelfPaintInlineBox()) {
             for (auto* inlineBox = rootInlineBox->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
-                if (auto* renderer = dynamicDowncast<RenderLayerModelObject>(inlineBox->renderer()); renderer && renderer->hasSelfPaintingLayer())
+                if (auto* renderer = is<RenderLayerModelObject>(inlineBox->renderer()) ? &downcast<RenderLayerModelObject>(inlineBox->renderer()) : nullptr; renderer && renderer->hasSelfPaintingLayer())
                     renderer->repaint();
             }
         }

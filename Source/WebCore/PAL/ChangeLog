@@ -1,3 +1,10 @@
+2022-03-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix build on safari-613-branch
+
+        * pal/spi/cf/CFNetworkSPI.h:
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289018. rdar://problem/87358372

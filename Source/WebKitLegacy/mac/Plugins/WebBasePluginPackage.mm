@@ -319,6 +319,7 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
     if (!archs || !numArchs)
         return NO;
     
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN;
     const NXArchInfo* localArch = NXGetLocalArchInfo();
     if (!localArch)
         return NO;
@@ -333,6 +334,7 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
 #endif
     
     return NXFindBestFatArch(cputype, cpusubtype, archs, numArchs) != 0;
+    ALLOW_DEPRECATED_DECLARATIONS_END;
 }
 
 - (UInt32)versionNumber

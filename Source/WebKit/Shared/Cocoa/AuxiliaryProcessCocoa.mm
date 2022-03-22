@@ -200,7 +200,7 @@ static const WTF::String& increaseContrastPreferenceKey()
 static void handleAXPreferenceChange(const String& domain, const String& key, id value)
 {
 #if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS)
-    if (!liblibAccessibility())
+    if (!libAccessibilityLibrary())
         return;
 #endif
 

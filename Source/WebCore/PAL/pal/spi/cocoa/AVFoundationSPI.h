@@ -223,7 +223,7 @@ NS_ASSUME_NONNULL_END
 
 #import <AVFoundation/AVPlayerLayer.h>
 
-#if HAVE(AVCONTENTKEYSESSION)
+#if HAVE(AVCONTENTKEYSESSION) && !USE(APPLE_INTERNAL_SDK)
 @interface AVContentKeyReportGroup : NSObject
 @property (readonly, nullable) NSData *contentProtectionSessionIdentifier;
 - (void)expire;

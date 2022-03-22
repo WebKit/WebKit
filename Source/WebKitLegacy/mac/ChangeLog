@@ -1,3 +1,10 @@
+2022-03-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix build on safari-613-branch
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage isNativeLibraryData:]):
+
 2022-03-09  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r290646. rdar://problem/88911184

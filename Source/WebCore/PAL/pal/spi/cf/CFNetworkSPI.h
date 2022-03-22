@@ -202,9 +202,6 @@ typedef enum {
 - (BOOL)_schemeWasUpgradedDueToDynamicHSTS;
 - (BOOL)_preventHSTSStorage;
 - (BOOL)_ignoreHSTS;
-#if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
-@property (setter=_setPrivacyProxyFailClosed:) BOOL _privacyProxyFailClosed;
-#endif
 @end
 
 @interface NSURLResponse ()
@@ -504,6 +501,10 @@ WTF_EXTERN_C_END
 
 @interface NSURLSessionWebSocketTask (SPI)
 - (void)_sendCloseCode:(NSURLSessionWebSocketCloseCode)closeCode reason:(NSData *)reason;
+@end
+
+@interface NSMutableURLRequest (Staging_88972294)
+@property (setter=_setPrivacyProxyFailClosedForUnreachableNonMainHosts:) BOOL _privacyProxyFailClosedForUnreachableNonMainHosts;
 @end
 
 #endif // defined(__OBJC__)
