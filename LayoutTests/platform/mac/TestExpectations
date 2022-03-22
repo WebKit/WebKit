@@ -2193,9 +2193,6 @@ webkit.org/b/226050 imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-
 
 webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timing-resourcetimingbufferfull-crash.html [ Pass Failure ]
 
-# rdar://77527575 (REGRESSION: [ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.scaledefault.html is a constant text failure 77527575)
-[ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.scaledefault.html [ Pass Failure ]
-
 # rdar://78477744 (REGRESSION: [ Monterey ] 3 imported/w3c/web-platform-tests/css/css-text-decor (layout-tests) are constant ImageOnlyFailures)
 [ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-from-font-variable.html [ Pass ImageOnlyFailure ]
 [ Monterey ] imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-variable.html [ Pass ImageOnlyFailure ]

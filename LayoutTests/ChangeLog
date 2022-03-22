@@ -1,3 +1,12 @@
+2022-03-21  Robert Jenner  <Jenner@apple.com>
+
+        REGRESSION: [ Monterey ] imported/w3c/web-platform-tests/html/canvas/element/line-styles/2d.line.width.scaledefault.html is a constant text failure
+        <rdar://problem/77527575?
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Removing no longer needed test expectation. 
+
 2022-03-21  Kate Cheney  <katherine_cheney@apple.com>
 
         nj.gov: Background color incorrect for 'State Vehicles' section
