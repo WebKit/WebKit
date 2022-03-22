@@ -1,3 +1,18 @@
+2022-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        -[WKWebView _spellCheckerDocumentTag] is inconsistent with the document tag passed into NSSpellChecker
+        https://bugs.webkit.org/show_bug.cgi?id=238186
+        rdar://90591883
+
+        Reviewed by Tim Horton.
+
+        Add a test to verify that the spell checking document tag passed into NSSpellChecker API is consistent with the
+        document tag reported by WKWebView.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/SpellCheckerDocumentTag.mm: Added.
+        (TestWebKitAPI::TEST):
+
 2022-03-22  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Make radar conditional on authentication (Follow-up fix)

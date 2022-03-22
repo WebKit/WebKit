@@ -1,3 +1,27 @@
+2022-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        -[WKWebView _spellCheckerDocumentTag] is inconsistent with the document tag passed into NSSpellChecker
+        https://bugs.webkit.org/show_bug.cgi?id=238186
+        rdar://90591883
+
+        Reviewed by Tim Horton.
+
+        Currently, WebViewImpl and WebPageProxy both maintain separate spellchecking document tag values, both of which
+        are derived from `-[NSSpellChecker uniqueSpellDocumentTag]`. While the former is used for autocorrection as well
+        as the WKWebView SPI `-_spellCheckerDocumentTag`, the latter is passed into NSSpellChecker API when performing
+        spellchecking.
+
+        For various reasons, Mail compose (using WebKit2) requires `-_spellCheckerDocumentTag` to be consistent with the
+        value of the spell checker document tag passed into `-checkString:range:…:inSpellDocumentWithTag:orthography:`.
+        Address this by simply having WebViewImpl call through into WebPageProxy's `spellDocumentTag`, such that the two
+        now share the same value.
+
+        Test: SpellCheckerDocumentTag.SpellCheckerDocumentTagWhenCheckingString
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::spellCheckerDocumentTag):
+
 2022-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Remove the ATK implementation

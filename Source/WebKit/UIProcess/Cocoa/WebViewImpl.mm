@@ -2828,9 +2828,7 @@ void WebViewImpl::handleAcceptedAlternativeText(const String& acceptedAlternativ
 
 NSInteger WebViewImpl::spellCheckerDocumentTag()
 {
-    if (!m_spellCheckerDocumentTag)
-        m_spellCheckerDocumentTag = [NSSpellChecker uniqueSpellDocumentTag];
-    return m_spellCheckerDocumentTag.value();
+    return m_page->spellDocumentTag();
 }
 
 void WebViewImpl::pressureChangeWithEvent(NSEvent *event)

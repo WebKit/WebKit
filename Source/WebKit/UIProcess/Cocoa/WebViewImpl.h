@@ -846,8 +846,6 @@ private:
     String m_promisedFilename;
     String m_promisedURL;
 
-    std::optional<NSInteger> m_spellCheckerDocumentTag;
-
     CGFloat m_totalHeightOfBanners { 0 };
 
     RetainPtr<NSView> m_inspectorAttachmentView;
