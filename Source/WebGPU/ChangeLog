@@ -1,5 +1,33 @@
 2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Allocating a buffer of size 0 crashes
+        https://bugs.webkit.org/show_bug.cgi?id=238165
+
+        Reviewed by Kimmo Kinnunen.
+
+        Metal requires buffer sizes to be > 0, but WebGPU allows for = 0.
+        This patch simply clamps all buffer sizes to 1. In the future, if this
+        causes performance problems, we could consider some more invasive change
+        where the MTLBuffer member of a WebGPU::Buffer is nil. But, for now,
+        just clamping the size to 1 is enough to get the test to stop crashing.
+
+        Test: api/validation/buffer/mapping.spec.ts. (We can't actually enable the test
+        until WebCore links with WebGPU.)
+
+        * WebGPU/BindGroup.mm:
+        (WebGPU::Device::createBindGroup):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Device::safeCreateBuffer const):
+        (WebGPU::Device::createBuffer):
+        * WebGPU/ComputePipeline.mm:
+        * WebGPU/Device.h:
+        * WebGPU/Instance.mm:
+        (wgpuGetProcAddress):
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::ShaderModule::createLibrary):
+
+2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement Queue::writeBuffer()
         https://bugs.webkit.org/show_bug.cgi?id=238194
 

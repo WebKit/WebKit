@@ -36,7 +36,7 @@ namespace WebGPU {
 
 struct LibraryCreationResult {
     id<MTLLibrary> library;
-    WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME: This is big. Don't copy this around.
+    WGSL::Reflection::EntryPointInformation entryPointInformation; // FIXME(PERFORMANCE): This is big. Don't copy this around.
 };
 
 static std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout& pipelineLayout, const String& entryPoint, NSString *label)

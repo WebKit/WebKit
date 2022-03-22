@@ -97,6 +97,14 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFl
     return MTLStorageModePrivate;
 }
 
+id<MTLBuffer> Device::safeCreateBuffer(NSUInteger length, MTLStorageMode storageMode, MTLCPUCacheMode cpuCacheMode, MTLHazardTrackingMode hazardTrackingMode) const
+{
+    MTLResourceOptions resourceOptions = (cpuCacheMode << MTLResourceCPUCacheModeShift) | (storageMode << MTLResourceStorageModeShift) | (hazardTrackingMode << MTLResourceHazardTrackingModeShift);
+    // FIXME(PERFORMANCE): Consider returning nil instead of clamping to 1.
+    // FIXME(PERFORMANCE): Suballocate multiple Buffers either from MTLHeaps or from larger MTLBuffers.
+    return [m_device newBufferWithLength:std::max(static_cast<NSUInteger>(1), length) options:resourceOptions];
+}
+
 RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
@@ -108,12 +116,10 @@ RefPtr<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
     if (!validateCreateBuffer(*this, descriptor))
         return nullptr;
 
-    // FIXME: Use heap allocation to make this faster.
-    // If/when we do that, we have to make sure that "new" buffers get cleared to 0.
-    // FIXME: Consider write-combining CPU cache mode.
-    // FIXME: Consider implementing hazard tracking ourself.
+    // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
+    // FIXME(PERFORMANCE): Consider implementing hazard tracking ourself.
     MTLStorageMode storageMode = WebGPU::storageMode(hasUnifiedMemory(), descriptor.usage, descriptor.mappedAtCreation);
-    id<MTLBuffer> buffer = [m_device newBufferWithLength:static_cast<NSUInteger>(descriptor.size) options:storageMode];
+    auto buffer = safeCreateBuffer(static_cast<NSUInteger>(descriptor.size), storageMode);
     if (!buffer)
         return nullptr;
 

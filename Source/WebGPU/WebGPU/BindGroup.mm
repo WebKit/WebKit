@@ -57,11 +57,11 @@ RefPtr<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descrip
 
     const BindGroupLayout& bindGroupLayout = WebGPU::fromAPI(descriptor.layout);
 
-    // FIXME: Don't allocate 3 new buffers for every bind group.
+    // FIXME(PERFORMANCE): Don't allocate 3 new buffers for every bind group.
     // In fact, don't even allocate a single new buffer for every bind group.
-    id<MTLBuffer> vertexArgumentBuffer = [m_device newBufferWithLength:bindGroupLayout.encodedLength() options:MTLResourceStorageModeShared];
-    id<MTLBuffer> fragmentArgumentBuffer = [m_device newBufferWithLength:bindGroupLayout.encodedLength() options:MTLResourceStorageModeShared];
-    id<MTLBuffer> computeArgumentBuffer = [m_device newBufferWithLength:bindGroupLayout.encodedLength() options:MTLResourceStorageModeShared];
+    id<MTLBuffer> vertexArgumentBuffer = safeCreateBuffer(bindGroupLayout.encodedLength(), MTLStorageModeShared);
+    id<MTLBuffer> fragmentArgumentBuffer = safeCreateBuffer(bindGroupLayout.encodedLength(), MTLStorageModeShared);
+    id<MTLBuffer> computeArgumentBuffer = safeCreateBuffer(bindGroupLayout.encodedLength(), MTLStorageModeShared);
     if (!vertexArgumentBuffer || !fragmentArgumentBuffer || !computeArgumentBuffer)
         return nullptr;
 

@@ -185,7 +185,7 @@ WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor* descriptor)
 
 WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
 {
-    // FIXME: Use gperf to make this faster.
+    // FIXME(PERFORMANCE): Use gperf to make this faster.
     // FIXME: Generate this at build time
     if (!strcmp(procName, "wgpuAdapterEnumerateFeatures"))
         return reinterpret_cast<WGPUProc>(&wgpuAdapterEnumerateFeatures);

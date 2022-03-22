@@ -72,7 +72,7 @@ id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& m
     auto options = [MTLCompileOptions new];
     options.fastMathEnabled = YES;
     NSError *error = nil;
-    // FIXME: Run the asynchronous version of this
+    // FIXME(PERFORMANCE): Run the asynchronous version of this
     id<MTLLibrary> library = [device newLibraryWithSource:msl options:options error:&error];
     if (error)
         WTFLogAlways("MSL compilation error: %@", error);

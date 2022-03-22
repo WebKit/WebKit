@@ -102,6 +102,7 @@ private:
     struct ErrorScope;
     ErrorScope* currentErrorScope(WGPUErrorFilter);
     bool validatePopErrorScope() const;
+    id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
 
     struct Error {
         WGPUErrorType type;
