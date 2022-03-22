@@ -1,3 +1,12 @@
+2022-03-22  Per Arne Vollan  <pvollan@apple.com>
+
+        REGRESSION(r291587): Unintentionally removed contributors change
+        https://bugs.webkit.org/show_bug.cgi?id=238204
+
+        Unreviewed, partial revert of r291587.
+
+        * metadata/contributors.json:
+
 2022-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Remove the ATK implementation
