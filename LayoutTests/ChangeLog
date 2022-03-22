@@ -1,3 +1,13 @@
+2022-03-22  Jer Noble  <jer.noble@apple.com>
+
+        Fetching a Blob URL with an unbounded Range header do not generate a Content-Range response header
+        https://bugs.webkit.org/show_bug.cgi?id=238170
+
+        Reviewed by Eric Carlson.
+
+        * fetch/fetch-blob-unbounded-range-expected.txt: Added.
+        * fetch/fetch-blob-unbounded-range.html: Added.
+
 2022-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Remove the ATK implementation

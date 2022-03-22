@@ -1,3 +1,18 @@
+2022-03-22  Jer Noble  <jer.noble@apple.com>
+
+        Fetching a Blob URL with an unbounded Range header do not generate a Content-Range response header
+        https://bugs.webkit.org/show_bug.cgi?id=238170
+
+        Reviewed by Eric Carlson.
+
+        Test: fetch/fetch-blob-unbounded-range.html
+
+        Handle the case where the request contains an unbounded range, and property calculate the rangeEnd
+        to pass into ParsedContentRange.
+
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+
 2022-03-22  Zan Dobersek  <zdobersek@igalia.com>
 
         Move TextureMapper member variables, types and code out of GraphicsContextGLANGLE

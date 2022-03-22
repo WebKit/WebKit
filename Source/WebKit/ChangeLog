@@ -1,3 +1,16 @@
+2022-03-22  Jer Noble  <jer.noble@apple.com>
+
+        Fetching a Blob URL with an unbounded Range header do not generate a Content-Range response header
+        https://bugs.webkit.org/show_bug.cgi?id=238170
+
+        Reviewed by Eric Carlson.
+
+        Handle the case where the request contains an unbounded range, and property calculate the rangeEnd
+        to pass into ParsedContentRange.
+
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+
 2022-03-22  Miguel Gomez  <magomez@igalia.com>
 
         Ensure that proxies are invalidated before destroying them.
