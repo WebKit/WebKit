@@ -2949,9 +2949,9 @@ fast/forms/auto-fill-button/caps-lock-indicator-should-be-visible-after-hiding-a
 fast/forms/auto-fill-button/caps-lock-indicator-should-not-be-visible-when-auto-fill-strong-password-button-is-visible.html [ Pass ]
 fast/forms/password-scrolled-after-caps-lock-toggled.html [ Pass ]
 
-# <rdar://problem/48781098> HEIF and HEICS images are supported only on iOS 13
-fast/images/animated-heics-draw.html [ Pass ]
-fast/images/animated-heics-verify.html [ Pass ]
+# <rdar://problem/88980849>
+fast/images/animated-heics-draw.html [ Skip ]
+fast/images/animated-heics-verify.html [ Skip ]
 
 # <rdar://problem/45056204> REGRESSION (iOS 13): Three cookie layout tests failing
 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]

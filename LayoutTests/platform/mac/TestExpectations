@@ -1473,9 +1473,9 @@ webaudio/oscillator-sine.html [ Skip ]
 
 webkit.org/b/190882 animations/change-one-anim.html [ Pass Failure ]
 
-# <rdar://problem/48781098>
-[ Catalina+ ] fast/images/animated-heics-draw.html [ Pass ]
-[ Catalina+ ] fast/images/animated-heics-verify.html [ Pass ]
+# <rdar://problem/88980849>
+[ Catalina+ ] fast/images/animated-heics-draw.html [ Skip ]
+[ Catalina+ ] fast/images/animated-heics-verify.html [ Skip ]
 
 # <rdar://problem/40172428>
 webkit.org/b/212172 [ Catalina ] fast/text/font-collection.html [ ImageOnlyFailure ]
