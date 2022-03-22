@@ -1,3 +1,21 @@
+2022-03-22  Sihui Liu  <sihui_liu@apple.com>
+
+        Check if origin can access storage in Storage API
+        https://bugs.webkit.org/show_bug.cgi?id=238158
+
+        Reviewed by Chris Dumez.
+
+        According to spec https://storage.spec.whatwg.org/#obtain-a-storage-key, origin should not access Storage API if
+        it's opaque. Also, origin should not access storage if it's blocked by storage policy, so we use 
+        SecurityOrigin::canAccessStorage to perform the origin check, like what we do for the other storage APIs.
+
+        Updated expectation for imported tests.
+
+        * Modules/storage/StorageManager.cpp:
+        (WebCore::connectionInfo):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::canAccessStorageManager const):
+
 2022-03-22  Alan Bujtas  <zalan@apple.com>
 
         [IFC][Integration] Rename InlineIteratorLine.cpp to InlineIteratorLineBox.cpp

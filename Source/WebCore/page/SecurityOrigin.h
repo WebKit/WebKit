@@ -149,6 +149,7 @@ public:
     bool canAccessDatabase(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin); };
     bool canAccessSessionStorage(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin, AlwaysAllowFromThirdParty); }
     bool canAccessLocalStorage(const SecurityOrigin* topOrigin) const { return canAccessStorage(topOrigin); };
+    bool canAccessStorageManager() const { return canAccessStorage(nullptr); }
     bool canAccessPluginStorage(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin); }
     bool canAccessApplicationCache(const SecurityOrigin& topOrigin) const { return canAccessStorage(&topOrigin); }
     bool canAccessCookies() const { return !isUnique(); }
