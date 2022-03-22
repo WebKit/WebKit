@@ -1,3 +1,28 @@
+2022-03-22  Alan Bujtas  <zalan@apple.com>
+
+        [IFC][Integration] Rename InlineIteratorLine.cpp to InlineIteratorLineBox.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=238219
+
+        Unreviewed.
+
+        r291548 should have included this rename.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/integration/InlineIteratorLineBox.cpp: Renamed from Source/WebCore/layout/integration/InlineIteratorLine.cpp.
+        (WebCore::InlineIterator::LineBoxIterator::LineBoxIterator):
+        (WebCore::InlineIterator::LineBoxIterator::atEnd const):
+        (WebCore::InlineIterator::LineBoxIterator::traverseNext):
+        (WebCore::InlineIterator::LineBoxIterator::traversePrevious):
+        (WebCore::InlineIterator::LineBoxIterator::operator== const):
+        (WebCore::InlineIterator::firstLineBoxFor):
+        (WebCore::InlineIterator::lastLineBoxFor):
+        (WebCore::InlineIterator::LineBox::next const):
+        (WebCore::InlineIterator::LineBox::previous const):
+        (WebCore::InlineIterator::LineBox::firstLeafBox const):
+        (WebCore::InlineIterator::LineBox::lastLeafBox const):
+        (WebCore::InlineIterator::closestBoxForHorizontalPosition):
+
 2022-03-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] RemoteGraphicsContextGL.h(78): error C2027: use of undefined type 'WebCore::GraphicsContextGL'
