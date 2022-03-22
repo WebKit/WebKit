@@ -556,10 +556,10 @@ bool isAcceleratedContext(GraphicsContextCairo& platformContext)
 } // namespace State
 
 FillSource::FillSource(const GraphicsContextState& state)
-    : globalAlpha(state.alpha)
-    , fillRule(state.fillRule)
+    : globalAlpha(state.alpha())
+    , fillRule(state.fillRule())
 {
-    if (auto fillPattern = state.fillBrush.pattern()) {
+    if (auto fillPattern = state.fillBrush().pattern()) {
         pattern.object = adoptRef(fillPattern->createPlatformPattern(AffineTransform()));
 
         auto& patternImage = fillPattern->tileImage();
@@ -567,34 +567,34 @@ FillSource::FillSource(const GraphicsContextState& state)
         pattern.transform = fillPattern->patternSpaceTransform();
         pattern.repeatX = fillPattern->repeatX();
         pattern.repeatY = fillPattern->repeatY();
-    } else if (auto fillGradient = state.fillBrush.gradient()) {
-        gradient.base = fillGradient->createPattern(1, state.fillBrush.gradientSpaceTransform());
-        if (state.alpha != 1)
-            gradient.alphaAdjusted = fillGradient->createPattern(state.alpha, state.fillBrush.gradientSpaceTransform());
+    } else if (auto fillGradient = state.fillBrush().gradient()) {
+        gradient.base = fillGradient->createPattern(1, state.fillBrush().gradientSpaceTransform());
+        if (state.alpha() != 1)
+            gradient.alphaAdjusted = fillGradient->createPattern(state.alpha(), state.fillBrush().gradientSpaceTransform());
     } else
-        color = state.fillBrush.color();
+        color = state.fillBrush().color();
 }
 
 StrokeSource::StrokeSource(const GraphicsContextState& state)
-    : globalAlpha(state.alpha)
+    : globalAlpha(state.alpha())
 {
-    if (auto strokePattern = state.strokeBrush.pattern())
+    if (auto strokePattern = state.strokeBrush().pattern())
         pattern = adoptRef(strokePattern->createPlatformPattern(AffineTransform()));
-    else if (auto strokeGradient = state.strokeBrush.gradient()) {
-        gradient.base = strokeGradient->createPattern(1, state.strokeBrush.gradientSpaceTransform());
-        if (state.alpha != 1)
-            gradient.alphaAdjusted = strokeGradient->createPattern(state.alpha, state.strokeBrush.gradientSpaceTransform());
+    else if (auto strokeGradient = state.strokeBrush().gradient()) {
+        gradient.base = strokeGradient->createPattern(1, state.strokeBrush().gradientSpaceTransform());
+        if (state.alpha() != 1)
+            gradient.alphaAdjusted = strokeGradient->createPattern(state.alpha(), state.strokeBrush().gradientSpaceTransform());
     } else
-        color = state.strokeBrush.color();
+        color = state.strokeBrush().color();
 }
 
 ShadowState::ShadowState(const GraphicsContextState& state)
-    : offset(state.dropShadow.offset)
-    , blur(state.dropShadow.blurRadius)
-    , color(state.dropShadow.color)
-    , ignoreTransforms(state.shadowsIgnoreTransforms)
-    , globalAlpha(state.alpha)
-    , globalCompositeOperator(state.compositeMode.operation)
+    : offset(state.dropShadow().offset)
+    , blur(state.dropShadow().blurRadius)
+    , color(state.dropShadow().color)
+    , ignoreTransforms(state.shadowsIgnoreTransforms())
+    , globalAlpha(state.alpha())
+    , globalCompositeOperator(state.compositeMode().operation)
 {
 }
 

@@ -65,7 +65,7 @@ struct GraphicsContextStateChange;
 class GraphicsContext {
     WTF_MAKE_NONCOPYABLE(GraphicsContext); WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT GraphicsContext(const GraphicsContextState::ChangeFlags& = { });
+    WEBCORE_EXPORT GraphicsContext(const GraphicsContextState::ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
     WEBCORE_EXPORT virtual ~GraphicsContext();
 
     virtual bool hasPlatformContext() const { return false; }
@@ -79,36 +79,36 @@ public:
 
     // Context State
 
-    const SourceBrush& fillBrush() const { return m_state.fillBrush; }
-    const Color& fillColor() const { return m_state.fillBrush.color(); }
-    Gradient* fillGradient() const { return m_state.fillBrush.gradient(); }
-    const AffineTransform& fillGradientSpaceTransform() const { return m_state.fillBrush.gradientSpaceTransform(); }
-    Pattern* fillPattern() const { return m_state.fillBrush.pattern(); }
+    const SourceBrush& fillBrush() const { return m_state.fillBrush(); }
+    const Color& fillColor() const { return fillBrush().color(); }
+    Gradient* fillGradient() const { return fillBrush().gradient(); }
+    const AffineTransform& fillGradientSpaceTransform() const { return fillBrush().gradientSpaceTransform(); }
+    Pattern* fillPattern() const { return fillBrush().pattern(); }
     void setFillBrush(const SourceBrush& brush) { m_state.setFillBrush(brush); didUpdateState(m_state); }
     void setFillColor(const Color& color) { m_state.setFillColor(color); didUpdateState(m_state); }
     void setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform = { }) { m_state.setFillGradient(WTFMove(gradient), spaceTransform); didUpdateState(m_state); }
     void setFillPattern(Ref<Pattern>&& pattern) { m_state.setFillPattern(WTFMove(pattern)); didUpdateState(m_state); }
 
-    WindRule fillRule() const { return m_state.fillRule; }
+    WindRule fillRule() const { return m_state.fillRule(); }
     void setFillRule(WindRule fillRule) { m_state.setFillRule(fillRule); didUpdateState(m_state); }
 
-    const SourceBrush& strokeBrush() const { return m_state.strokeBrush; }
-    const Color& strokeColor() const { return m_state.strokeBrush.color(); }
-    Gradient* strokeGradient() const { return m_state.strokeBrush.gradient(); }
-    const AffineTransform& strokeGradientSpaceTransform() const { return m_state.strokeBrush.gradientSpaceTransform(); }
-    Pattern* strokePattern() const { return m_state.strokeBrush.pattern(); }
+    const SourceBrush& strokeBrush() const { return m_state.strokeBrush(); }
+    const Color& strokeColor() const { return strokeBrush().color(); }
+    Gradient* strokeGradient() const { return strokeBrush().gradient(); }
+    const AffineTransform& strokeGradientSpaceTransform() const { return strokeBrush().gradientSpaceTransform(); }
+    Pattern* strokePattern() const { return strokeBrush().pattern(); }
     void setStrokeBrush(const SourceBrush& brush) { m_state.setStrokeBrush(brush); didUpdateState(m_state); }
     void setStrokeColor(const Color& color) { m_state.setStrokeColor(color); didUpdateState(m_state); }
     void setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform = { }) { m_state.setStrokeGradient(WTFMove(gradient), spaceTransform); didUpdateState(m_state); }
     void setStrokePattern(Ref<Pattern>&& pattern) { m_state.setStrokePattern(WTFMove(pattern)); didUpdateState(m_state); }
 
-    float strokeThickness() const { return m_state.strokeThickness; }
+    float strokeThickness() const { return m_state.strokeThickness(); }
     void setStrokeThickness(float thickness) { m_state.setStrokeThickness(thickness); didUpdateState(m_state); }
 
-    StrokeStyle strokeStyle() const { return m_state.strokeStyle; }
+    StrokeStyle strokeStyle() const { return m_state.strokeStyle(); }
     void setStrokeStyle(StrokeStyle style) { m_state.setStrokeStyle(style); didUpdateState(m_state); }
 
-    const DropShadow& dropShadow() const { return m_state.dropShadow; }
+    const DropShadow& dropShadow() const { return m_state.dropShadow(); }
     FloatSize shadowOffset() const { return dropShadow().offset; }
     float shadowBlur() const { return dropShadow().blurRadius; }
     const Color& shadowColor() const { return dropShadow().color; }
@@ -123,40 +123,40 @@ public:
     bool hasBlurredShadow() const { return dropShadow().isBlurred(); }
     bool hasShadow() const { return dropShadow().hasOutsets(); }
 
-    CompositeMode compositeMode() const { return m_state.compositeMode; }
+    CompositeMode compositeMode() const { return m_state.compositeMode(); }
     CompositeOperator compositeOperation() const { return compositeMode().operation; }
     BlendMode blendMode() const { return compositeMode().blendMode; }
     void setCompositeMode(CompositeMode compositeMode) { m_state.setCompositeMode(compositeMode); didUpdateState(m_state); }
     void setCompositeOperation(CompositeOperator operation, BlendMode blendMode = BlendMode::Normal) { setCompositeMode({ operation, blendMode }); }
 
-    float alpha() const { return m_state.alpha; }
+    float alpha() const { return m_state.alpha(); }
     void setAlpha(float alpha) { m_state.setAlpha(alpha); didUpdateState(m_state); }
 
-    TextDrawingModeFlags textDrawingMode() const { return m_state.textDrawingMode; }
+    TextDrawingModeFlags textDrawingMode() const { return m_state.textDrawingMode(); }
     void setTextDrawingMode(TextDrawingModeFlags textDrawingMode) { m_state.setTextDrawingMode(textDrawingMode); didUpdateState(m_state); }
     
-    InterpolationQuality imageInterpolationQuality() const { return m_state.imageInterpolationQuality; }
+    InterpolationQuality imageInterpolationQuality() const { return m_state.imageInterpolationQuality(); }
     void setImageInterpolationQuality(InterpolationQuality imageInterpolationQuality) { m_state.setImageInterpolationQuality(imageInterpolationQuality); didUpdateState(m_state); }
 
-    bool shouldAntialias() const { return m_state.shouldAntialias; }
+    bool shouldAntialias() const { return m_state.shouldAntialias(); }
     void setShouldAntialias(bool shouldAntialias) { m_state.setShouldAntialias(shouldAntialias); didUpdateState(m_state); }
 
-    bool shouldSmoothFonts() const { return m_state.shouldSmoothFonts; }
+    bool shouldSmoothFonts() const { return m_state.shouldSmoothFonts(); }
     void setShouldSmoothFonts(bool shouldSmoothFonts) { m_state.setShouldSmoothFonts(shouldSmoothFonts); didUpdateState(m_state); }
 
     // Normally CG enables subpixel-quantization because it improves the performance of aligning glyphs.
     // In some cases we have to disable to to ensure a high-quality output of the glyphs.
-    bool shouldSubpixelQuantizeFonts() const { return m_state.shouldSubpixelQuantizeFonts; }
+    bool shouldSubpixelQuantizeFonts() const { return m_state.shouldSubpixelQuantizeFonts(); }
     void setShouldSubpixelQuantizeFonts(bool shouldSubpixelQuantizeFonts) { m_state.setShouldSubpixelQuantizeFonts(shouldSubpixelQuantizeFonts); didUpdateState(m_state); }
 
-    bool shadowsIgnoreTransforms() const { return m_state.shadowsIgnoreTransforms; }
+    bool shadowsIgnoreTransforms() const { return m_state.shadowsIgnoreTransforms(); }
     void setShadowsIgnoreTransforms(bool shadowsIgnoreTransforms) { m_state.setShadowsIgnoreTransforms(shadowsIgnoreTransforms); didUpdateState(m_state); }
 
-    bool drawLuminanceMask() const { return m_state.drawLuminanceMask; }
+    bool drawLuminanceMask() const { return m_state.drawLuminanceMask(); }
     void setDrawLuminanceMask(bool drawLuminanceMask) { m_state.setDrawLuminanceMask(drawLuminanceMask); didUpdateState(m_state); }
 
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    bool useDarkAppearance() const { return m_state.useDarkAppearance; }
+    bool useDarkAppearance() const { return m_state.useDarkAppearance(); }
     void setUseDarkAppearance(bool useDarkAppearance) { m_state.setUseDarkAppearance(useDarkAppearance); didUpdateState(m_state); }
 #endif
 

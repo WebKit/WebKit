@@ -90,7 +90,7 @@ bool DisplayList::shouldDumpForFlags(AsTextFlags flags, ItemHandle item)
         if (!(flags & AsTextFlag::IncludesPlatformOperations)) {
             const auto& stateItem = item.get<SetState>();
             // FIXME: for now, only drop the item if the only state-change flags are platform-specific.
-            if (stateItem.state().changeFlags == GraphicsContextState::Change::ShouldSubpixelQuantizeFonts)
+            if (stateItem.state().changes() == GraphicsContextState::Change::ShouldSubpixelQuantizeFonts)
                 return false;
         }
         break;

@@ -1,3 +1,132 @@
+2022-03-22  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make GraphicsContextState a class
+        https://bugs.webkit.org/show_bug.cgi?id=238192
+
+        Reviewed by Simon Fraser.
+
+        This will make the members be private so we have to provide getters for
+        all of them. This change will prevent changing the members without going
+        through the setters.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::fillBrush const):
+        (WebCore::GraphicsContext::fillColor const):
+        (WebCore::GraphicsContext::fillGradient const):
+        (WebCore::GraphicsContext::fillGradientSpaceTransform const):
+        (WebCore::GraphicsContext::fillPattern const):
+        (WebCore::GraphicsContext::fillRule const):
+        (WebCore::GraphicsContext::strokeBrush const):
+        (WebCore::GraphicsContext::strokeColor const):
+        (WebCore::GraphicsContext::strokeGradient const):
+        (WebCore::GraphicsContext::strokeGradientSpaceTransform const):
+        (WebCore::GraphicsContext::strokePattern const):
+        (WebCore::GraphicsContext::strokeThickness const):
+        (WebCore::GraphicsContext::strokeStyle const):
+        (WebCore::GraphicsContext::dropShadow const):
+        (WebCore::GraphicsContext::compositeMode const):
+        (WebCore::GraphicsContext::alpha const):
+        (WebCore::GraphicsContext::textDrawingMode const):
+        (WebCore::GraphicsContext::imageInterpolationQuality const):
+        (WebCore::GraphicsContext::shouldAntialias const):
+        (WebCore::GraphicsContext::shouldSmoothFonts const):
+        (WebCore::GraphicsContext::shouldSubpixelQuantizeFonts const):
+        (WebCore::GraphicsContext::shadowsIgnoreTransforms const):
+        (WebCore::GraphicsContext::drawLuminanceMask const):
+        (WebCore::GraphicsContext::useDarkAppearance const):
+        * platform/graphics/GraphicsContextState.cpp:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContextState::containsOnlyInlineChanges const):
+        (WebCore::GraphicsContextState::mergeChanges):
+        (WebCore::GraphicsContextState::didBeginTransparencyLayer):
+        (WebCore::GraphicsContextState::didEndTransparencyLayer):
+        (WebCore::GraphicsContextState::dump const):
+        * platform/graphics/GraphicsContextState.h:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContextState::changes const):
+        (WebCore::GraphicsContextState::didApplyChanges):
+        (WebCore::GraphicsContextState::fillBrush const):
+        (WebCore::GraphicsContextState::setFillBrush):
+        (WebCore::GraphicsContextState::setFillColor):
+        (WebCore::GraphicsContextState::setFillGradient):
+        (WebCore::GraphicsContextState::setFillPattern):
+        (WebCore::GraphicsContextState::fillRule const):
+        (WebCore::GraphicsContextState::setFillRule):
+        (WebCore::GraphicsContextState::strokeBrush const):
+        (WebCore::GraphicsContextState::setStrokeBrush):
+        (WebCore::GraphicsContextState::setStrokeColor):
+        (WebCore::GraphicsContextState::setStrokeGradient):
+        (WebCore::GraphicsContextState::setStrokePattern):
+        (WebCore::GraphicsContextState::strokeThickness const):
+        (WebCore::GraphicsContextState::setStrokeThickness):
+        (WebCore::GraphicsContextState::strokeStyle const):
+        (WebCore::GraphicsContextState::setStrokeStyle):
+        (WebCore::GraphicsContextState::compositeMode const):
+        (WebCore::GraphicsContextState::setCompositeMode):
+        (WebCore::GraphicsContextState::dropShadow const):
+        (WebCore::GraphicsContextState::setDropShadow):
+        (WebCore::GraphicsContextState::alpha const):
+        (WebCore::GraphicsContextState::setAlpha):
+        (WebCore::GraphicsContextState::imageInterpolationQuality const):
+        (WebCore::GraphicsContextState::setImageInterpolationQuality):
+        (WebCore::GraphicsContextState::textDrawingMode const):
+        (WebCore::GraphicsContextState::setTextDrawingMode):
+        (WebCore::GraphicsContextState::shouldAntialias const):
+        (WebCore::GraphicsContextState::setShouldAntialias):
+        (WebCore::GraphicsContextState::shouldSmoothFonts const):
+        (WebCore::GraphicsContextState::setShouldSmoothFonts):
+        (WebCore::GraphicsContextState::shouldSubpixelQuantizeFonts const):
+        (WebCore::GraphicsContextState::setShouldSubpixelQuantizeFonts):
+        (WebCore::GraphicsContextState::shadowsIgnoreTransforms const):
+        (WebCore::GraphicsContextState::setShadowsIgnoreTransforms):
+        (WebCore::GraphicsContextState::drawLuminanceMask const):
+        (WebCore::GraphicsContextState::setDrawLuminanceMask):
+        (WebCore::GraphicsContextState::useDarkAppearance const):
+        (WebCore::GraphicsContextState::setUseDarkAppearance):
+        (WebCore::GraphicsContextState::setProperty):
+        (WebCore::GraphicsContextState::encode const):
+        (WebCore::GraphicsContextState::decode):
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::FillSource::FillSource):
+        (WebCore::Cairo::StrokeSource::StrokeSource):
+        (WebCore::Cairo::ShadowState::ShadowState):
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextCairo::drawNativeImage):
+        (WebCore::GraphicsContextCairo::didUpdateState):
+        (WebCore::GraphicsContextCairo::drawGlyphs):
+        * platform/graphics/cairo/ImageBufferCairoBackend.cpp:
+        (WebCore::ImageBufferCairoBackend::draw):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::coreInterpolationQuality):
+        (WebCore::GraphicsContextCG::GraphicsContextCG):
+        (WebCore::GraphicsContextCG::didUpdateState):
+        (WebCore::GraphicsContextCG::strokeRect):
+        (WebCore::GraphicsContextCG::canUseShadowBlur const):
+        * platform/graphics/coretext/DrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DrawGlyphsRecorder::populateInternalState):
+        (WebCore::DrawGlyphsRecorder::populateInternalContext):
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::shouldDumpForFlags):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::endTransparencyLayer):
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::applySetStateItem):
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        (Nicosia::CairoOperationRecorder::didUpdateState):
+        (Nicosia::CairoOperationRecorder::fillRect):
+        (Nicosia::CairoOperationRecorder::fillRoundedRect):
+        (Nicosia::CairoOperationRecorder::drawGlyphs):
+        (Nicosia::CairoOperationRecorder::drawNativeImage):
+        (Nicosia::CairoOperationRecorder::drawRect):
+        (Nicosia::CairoOperationRecorder::drawLine):
+        (Nicosia::CairoOperationRecorder::drawLinesForText):
+        (Nicosia::CairoOperationRecorder::drawEllipse):
+
 2022-03-22  Alexey Shvayka  <ashvayka@apple.com>
 
         REGRESSION(r288307): instanceof value wrong in MutationObserver callback for Safari extensions

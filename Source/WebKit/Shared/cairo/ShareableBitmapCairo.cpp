@@ -78,7 +78,7 @@ void ShareableBitmap::paint(GraphicsContext& context, float scaleFactor, const I
 
     ASSERT(context.hasPlatformContext());
     auto& state = context.state();
-    Cairo::drawSurface(*context.platformContext(), surface.get(), destRect, srcRect, state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state));
+    Cairo::drawSurface(*context.platformContext(), surface.get(), destRect, srcRect, state.imageInterpolationQuality(), state.alpha(), Cairo::ShadowState(state));
 }
 
 RefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()

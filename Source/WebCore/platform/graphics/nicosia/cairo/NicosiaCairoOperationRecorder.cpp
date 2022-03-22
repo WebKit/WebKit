@@ -99,7 +99,7 @@ void CairoOperationRecorder::didUpdateState(GraphicsContextState& state)
             }
         };
 
-        append(createCommand<StrokeThicknessChange>(state.strokeThickness));
+        append(createCommand<StrokeThicknessChange>(state.strokeThickness()));
     }
 
     if (state.changes().contains(GraphicsContextState::Change::StrokeStyle)) {
@@ -117,7 +117,7 @@ void CairoOperationRecorder::didUpdateState(GraphicsContextState& state)
             }
         };
 
-        append(createCommand<StrokeStyleChange>(state.strokeStyle));
+        append(createCommand<StrokeStyleChange>(state.strokeStyle()));
     }
 
     if (state.changes().contains(GraphicsContextState::Change::CompositeMode)) {
@@ -135,7 +135,7 @@ void CairoOperationRecorder::didUpdateState(GraphicsContextState& state)
             }
         };
 
-        append(createCommand<CompositeOperationChange>(state.compositeMode.operation, state.compositeMode.blendMode));
+        append(createCommand<CompositeOperationChange>(state.compositeMode().operation, state.compositeMode().blendMode));
     }
 
     if (state.changes().contains(GraphicsContextState::Change::ShouldAntialias)) {
@@ -153,7 +153,7 @@ void CairoOperationRecorder::didUpdateState(GraphicsContextState& state)
             }
         };
 
-        append(createCommand<ShouldAntialiasChange>(state.shouldAntialias));
+        append(createCommand<ShouldAntialiasChange>(state.shouldAntialias()));
     }
 
     state.didApplyChanges();
@@ -294,7 +294,7 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient)
     };
 
     auto& state = this->state();
-    append(createCommand<FillRect>(rect, gradient.createPattern(1.0, state.fillBrush.gradientSpaceTransform())));
+    append(createCommand<FillRect>(rect, gradient.createPattern(1.0, state.fillBrush().gradientSpaceTransform())));
 }
 
 void CairoOperationRecorder::fillRect(const FloatRect& rect, const Color& color, CompositeOperator compositeOperator, BlendMode blendMode)
@@ -318,7 +318,7 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, const Color& color,
     };
 
     auto& state = this->state();
-    append(createCommand<FillRect>(rect, color, compositeOperator, blendMode, Cairo::ShadowState(state), state.compositeMode.operation));
+    append(createCommand<FillRect>(rect, color, compositeOperator, blendMode, Cairo::ShadowState(state), state.compositeMode().operation));
 }
 
 void CairoOperationRecorder::fillRoundedRect(const FloatRoundedRect& roundedRect, const Color& color, BlendMode blendMode)
@@ -348,7 +348,7 @@ void CairoOperationRecorder::fillRoundedRect(const FloatRoundedRect& roundedRect
     };
 
     auto& state = this->state();
-    append(createCommand<FillRoundedRect>(roundedRect, color, state.compositeMode.operation, blendMode, Cairo::ShadowState(state)));
+    append(createCommand<FillRoundedRect>(roundedRect, color, state.compositeMode().operation, blendMode, Cairo::ShadowState(state)));
 }
 
 void CairoOperationRecorder::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
@@ -534,8 +534,8 @@ void CairoOperationRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph
     append(createCommand<DrawGlyphs>(Cairo::FillSource(state), Cairo::StrokeSource(state),
         Cairo::ShadowState(state), point,
         RefPtr<cairo_scaled_font_t>(font.platformData().scaledFont()),
-        font.syntheticBoldOffset(), WTFMove(cairoGlyphs), xOffset, state.textDrawingMode,
-        state.strokeThickness, state.dropShadow.offset, state.dropShadow.color, fontSmoothing));
+        font.syntheticBoldOffset(), WTFMove(cairoGlyphs), xOffset, state.textDrawingMode(),
+        state.strokeThickness(), state.dropShadow().offset, state.dropShadow().color, fontSmoothing));
 }
 
 void CairoOperationRecorder::drawImageBuffer(ImageBuffer&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&)
@@ -561,7 +561,7 @@ void CairoOperationRecorder::drawNativeImage(NativeImage& nativeImage, const Flo
 
     UNUSED_PARAM(imageSize);
     auto& state = this->state();
-    append(createCommand<DrawNativeImage>(nativeImage.platformImage(), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality), state.alpha, Cairo::ShadowState(state)));
+    append(createCommand<DrawNativeImage>(nativeImage.platformImage(), destRect, srcRect, ImagePaintingOptions(options, state.imageInterpolationQuality()), state.alpha(), Cairo::ShadowState(state)));
 }
 
 void CairoOperationRecorder::drawPattern(NativeImage& nativeImage, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions& options)
@@ -601,7 +601,7 @@ void CairoOperationRecorder::drawRect(const FloatRect& rect, float borderThickne
     };
 
     auto& state = this->state();
-    append(createCommand<DrawRect>(rect, borderThickness, state.fillBrush.color(), state.strokeStyle, state.strokeBrush.color()));
+    append(createCommand<DrawRect>(rect, borderThickness, state.fillBrush().color(), state.strokeStyle(), state.strokeBrush().color()));
 }
 
 void CairoOperationRecorder::drawLine(const FloatPoint& point1, const FloatPoint& point2)
@@ -624,7 +624,7 @@ void CairoOperationRecorder::drawLine(const FloatPoint& point1, const FloatPoint
         return;
 
     auto& state = this->state();
-    append(createCommand<DrawLine>(point1, point2, state.strokeStyle, state.strokeBrush.color(), state.strokeThickness, state.shouldAntialias));
+    append(createCommand<DrawLine>(point1, point2, state.strokeStyle(), state.strokeBrush().color(), state.strokeThickness(), state.shouldAntialias()));
 }
 
 void CairoOperationRecorder::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleUnderlines, StrokeStyle)
@@ -647,7 +647,7 @@ void CairoOperationRecorder::drawLinesForText(const FloatPoint& point, float thi
         return;
 
     auto& state = this->state();
-    append(createCommand<DrawLinesForText>(point, thickness, widths, printing, doubleUnderlines, state.strokeBrush.color()));
+    append(createCommand<DrawLinesForText>(point, thickness, widths, printing, doubleUnderlines, state.strokeBrush().color()));
 }
 
 void CairoOperationRecorder::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
@@ -686,7 +686,7 @@ void CairoOperationRecorder::drawEllipse(const FloatRect& rect)
     };
 
     auto& state = this->state();
-    append(createCommand<DrawEllipse>(rect, state.fillBrush.color(), state.strokeStyle, state.strokeBrush.color(), state.strokeThickness));
+    append(createCommand<DrawEllipse>(rect, state.fillBrush().color(), state.strokeStyle(), state.strokeBrush().color(), state.strokeThickness()));
 }
 
 void CairoOperationRecorder::drawFocusRing(const Path& path, float width, float offset, const Color& color)

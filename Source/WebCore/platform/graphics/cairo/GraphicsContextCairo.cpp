@@ -144,7 +144,7 @@ void GraphicsContextCairo::drawRect(const FloatRect& rect, float borderThickness
 void GraphicsContextCairo::drawNativeImage(NativeImage& nativeImage, const FloatSize&, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions& options)
 {
     auto& state = this->state();
-    Cairo::drawPlatformImage(*this, nativeImage.platformImage().get(), destRect, srcRect, { options, state.imageInterpolationQuality }, state.alpha, Cairo::ShadowState(state));
+    Cairo::drawPlatformImage(*this, nativeImage.platformImage().get(), destRect, srcRect, { options, state.imageInterpolationQuality() }, state.alpha(), Cairo::ShadowState(state));
 }
 
 // This is only used to draw borders, so we should not draw shadows.
@@ -283,26 +283,26 @@ void GraphicsContextCairo::translate(float x, float y)
 void GraphicsContextCairo::didUpdateState(GraphicsContextState& state)
 {
     if (state.changes().contains(GraphicsContextState::Change::StrokeThickness))
-        Cairo::State::setStrokeThickness(*this, state.strokeThickness);
+        Cairo::State::setStrokeThickness(*this, state.strokeThickness());
 
     if (state.changes().contains(GraphicsContextState::Change::StrokeStyle))
-        Cairo::State::setStrokeStyle(*this, state.strokeStyle);
+        Cairo::State::setStrokeStyle(*this, state.strokeStyle());
 
     // FIXME: m_state should not be changed to flip the shadow offset. This can happen when the shadow is applied to the platform context.
     if (state.changes().contains(GraphicsContextState::Change::DropShadow)) {
-        if (state.shadowsIgnoreTransforms) {
+        if (state.shadowsIgnoreTransforms()) {
             // Meaning that this graphics context is associated with a CanvasRenderingContext
             // We flip the height since CG and HTML5 Canvas have opposite Y axis
-            auto& shadowOffset = state.dropShadow.offset;
-            m_state.dropShadow.offset = { shadowOffset.width(), -shadowOffset.height() };
+            auto& shadowOffset = state.dropShadow().offset;
+            m_state.m_dropShadow.offset = { shadowOffset.width(), -shadowOffset.height() };
         }
     }
 
     if (state.changes().contains(GraphicsContextState::Change::CompositeMode))
-        Cairo::State::setCompositeOperation(*this, state.compositeMode.operation, state.compositeMode.blendMode);
+        Cairo::State::setCompositeOperation(*this, state.compositeMode().operation, state.compositeMode().blendMode);
 
     if (state.changes().contains(GraphicsContextState::Change::ShouldAntialias))
-        Cairo::State::setShouldAntialias(*this, state.shouldAntialias);
+        Cairo::State::setShouldAntialias(*this, state.shouldAntialias());
 
     state.didApplyChanges();
 }
@@ -433,7 +433,7 @@ void GraphicsContextCairo::drawGlyphs(const Font& font, const GlyphBufferGlyph* 
     auto& state = this->state();
     Cairo::drawGlyphs(*this, Cairo::FillSource(state), Cairo::StrokeSource(state),
         Cairo::ShadowState(state), point, scaledFont, syntheticBoldOffset, cairoGlyphs, xOffset,
-        state.textDrawingMode, state.strokeThickness, state.dropShadow.offset, state.dropShadow.color,
+        state.textDrawingMode(), state.strokeThickness(), state.dropShadow().offset, state.dropShadow().color,
         fontSmoothing);
 }
 

@@ -96,13 +96,13 @@ DrawGlyphsRecorder::DrawGlyphsRecorder(GraphicsContext& owner, DeconstructDrawGl
 
 void DrawGlyphsRecorder::populateInternalState(const GraphicsContextState& contextState)
 {
-    m_originalState.fillBrush = contextState.fillBrush;
-    m_originalState.strokeBrush = contextState.strokeBrush;
+    m_originalState.fillBrush = contextState.fillBrush();
+    m_originalState.strokeBrush = contextState.strokeBrush();
 
     m_originalState.ctm = m_owner.getCTM(); // FIXME: Deal with base CTM.
 
-    m_originalState.dropShadow = contextState.dropShadow;
-    m_originalState.ignoreTransforms = contextState.shadowsIgnoreTransforms;
+    m_originalState.dropShadow = contextState.dropShadow();
+    m_originalState.ignoreTransforms = contextState.shadowsIgnoreTransforms();
 }
 
 void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& contextState)
@@ -115,7 +115,7 @@ void DrawGlyphsRecorder::populateInternalContext(const GraphicsContextState& con
     m_internalContext->setShadowsIgnoreTransforms(m_originalState.ignoreTransforms);
     m_internalContext->setDropShadow(m_originalState.dropShadow);
 
-    m_internalContext->setTextDrawingMode(contextState.textDrawingMode);
+    m_internalContext->setTextDrawingMode(contextState.textDrawingMode());
 }
 
 void DrawGlyphsRecorder::prepareInternalContext(const Font& font, FontSmoothingMode smoothingMode)

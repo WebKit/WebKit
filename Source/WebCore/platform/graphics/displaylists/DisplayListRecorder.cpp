@@ -284,7 +284,7 @@ void Recorder::endTransparencyLayer()
     recordEndTransparencyLayer();
     m_stateStack.removeLast();
 
-    m_state.didEndTransparencyLayer(currentState().state.alpha);
+    m_state.didEndTransparencyLayer(currentState().state.alpha());
 }
 
 void Recorder::drawRect(const FloatRect& rect, float borderThickness)

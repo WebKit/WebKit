@@ -30,22 +30,21 @@
 
 namespace WebCore {
 
-GraphicsContextState::GraphicsContextState(const ChangeFlags& changeFlags)
-    : changeFlags(changeFlags)
+GraphicsContextState::GraphicsContextState(const ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality)
+    : m_changeFlags(changeFlags)
+    , m_imageInterpolationQuality(imageInterpolationQuality)
 {
 }
 
 bool GraphicsContextState::containsOnlyInlineChanges() const
 {
-    static constexpr ChangeFlags inlineChangeFlags { Change::StrokeThickness, Change::StrokeBrush, Change::FillBrush };
-
-    if (changeFlags != (changeFlags & inlineChangeFlags))
+    if (m_changeFlags != (m_changeFlags & basicChangeFlags))
         return false;
 
-    if (changeFlags.contains(Change::StrokeBrush) && !strokeBrush.isInlineColor())
+    if (m_changeFlags.contains(Change::StrokeBrush) && !m_strokeBrush.isInlineColor())
         return false;
 
-    if (changeFlags.contains(Change::FillBrush) && !fillBrush.isInlineColor())
+    if (m_changeFlags.contains(Change::FillBrush) && !m_fillBrush.isInlineColor())
         return false;
 
     return true;
@@ -54,33 +53,33 @@ bool GraphicsContextState::containsOnlyInlineChanges() const
 void GraphicsContextState::mergeChanges(const GraphicsContextState& state, const std::optional<GraphicsContextState>& lastDrawingState)
 {
     auto mergeChange = [&](Change change, auto GraphicsContextState::*property) {
-        if (!state.changeFlags.contains(change) || this->*property == state.*property)
+        if (!state.changes().contains(change) || this->*property == state.*property)
             return;
         this->*property = state.*property;
-        changeFlags.set(change, !lastDrawingState || (*lastDrawingState).*property != this->*property);
+        m_changeFlags.set(change, !lastDrawingState || (*lastDrawingState).*property != this->*property);
     };
 
-    mergeChange(Change::FillBrush,                      &GraphicsContextState::fillBrush);
-    mergeChange(Change::FillRule,                       &GraphicsContextState::fillRule);
+    mergeChange(Change::FillBrush,                      &GraphicsContextState::m_fillBrush);
+    mergeChange(Change::FillRule,                       &GraphicsContextState::m_fillRule);
 
-    mergeChange(Change::StrokeBrush,                    &GraphicsContextState::strokeBrush);
-    mergeChange(Change::StrokeThickness,                &GraphicsContextState::strokeThickness);
-    mergeChange(Change::StrokeStyle,                    &GraphicsContextState::strokeStyle);
+    mergeChange(Change::StrokeBrush,                    &GraphicsContextState::m_strokeBrush);
+    mergeChange(Change::StrokeThickness,                &GraphicsContextState::m_strokeThickness);
+    mergeChange(Change::StrokeStyle,                    &GraphicsContextState::m_strokeStyle);
 
-    mergeChange(Change::CompositeMode,                  &GraphicsContextState::compositeMode);
-    mergeChange(Change::DropShadow,                     &GraphicsContextState::dropShadow);
+    mergeChange(Change::CompositeMode,                  &GraphicsContextState::m_compositeMode);
+    mergeChange(Change::DropShadow,                     &GraphicsContextState::m_dropShadow);
 
-    mergeChange(Change::Alpha,                          &GraphicsContextState::alpha);
-    mergeChange(Change::ImageInterpolationQuality,      &GraphicsContextState::imageInterpolationQuality);
-    mergeChange(Change::TextDrawingMode,                &GraphicsContextState::textDrawingMode);
+    mergeChange(Change::Alpha,                          &GraphicsContextState::m_alpha);
+    mergeChange(Change::ImageInterpolationQuality,      &GraphicsContextState::m_imageInterpolationQuality);
+    mergeChange(Change::TextDrawingMode,                &GraphicsContextState::m_textDrawingMode);
 
-    mergeChange(Change::ShouldAntialias,                &GraphicsContextState::shouldAntialias);
-    mergeChange(Change::ShouldSmoothFonts,              &GraphicsContextState::shouldSmoothFonts);
-    mergeChange(Change::ShouldSubpixelQuantizeFonts,    &GraphicsContextState::shouldSubpixelQuantizeFonts);
-    mergeChange(Change::ShadowsIgnoreTransforms,        &GraphicsContextState::shadowsIgnoreTransforms);
-    mergeChange(Change::DrawLuminanceMask,              &GraphicsContextState::drawLuminanceMask);
+    mergeChange(Change::ShouldAntialias,                &GraphicsContextState::m_shouldAntialias);
+    mergeChange(Change::ShouldSmoothFonts,              &GraphicsContextState::m_shouldSmoothFonts);
+    mergeChange(Change::ShouldSubpixelQuantizeFonts,    &GraphicsContextState::m_shouldSubpixelQuantizeFonts);
+    mergeChange(Change::ShadowsIgnoreTransforms,        &GraphicsContextState::m_shadowsIgnoreTransforms);
+    mergeChange(Change::DrawLuminanceMask,              &GraphicsContextState::m_drawLuminanceMask);
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    mergeChange(Change::UseDarkAppearance,              &GraphicsContextState::useDarkAppearance);
+    mergeChange(Change::UseDarkAppearance,              &GraphicsContextState::m_useDarkAppearance);
 #endif
 }
 
@@ -88,7 +87,7 @@ void GraphicsContextState::didBeginTransparencyLayer()
 {
 #if USE(CG)
     // CGContextBeginTransparencyLayer() sets the CG global alpha to 1. Keep our alpha in sync.
-    alpha = 1;
+    m_alpha = 1;
 #endif
 }
 
@@ -96,7 +95,7 @@ void GraphicsContextState::didEndTransparencyLayer(float originalOpacity)
 {
 #if USE(CG)
     // CGContextBeginTransparencyLayer() sets the CG global alpha to 1. Resore our alpha now.
-    alpha = originalOpacity;
+    m_alpha = originalOpacity;
 #else
     UNUSED_PARAM(originalOpacity);
 #endif
@@ -160,33 +159,33 @@ static const char* stateChangeName(GraphicsContextState::Change change)
 TextStream& GraphicsContextState::dump(TextStream& ts) const
 {
     auto dump = [&](Change change, auto GraphicsContextState::*property) {
-        if (changeFlags.contains(change))
+        if (m_changeFlags.contains(change))
             ts.dumpProperty(stateChangeName(change), this->*property);
     };
 
-    ts.dumpProperty("change-flags", changeFlags);
+    ts.dumpProperty("change-flags", m_changeFlags);
 
-    dump(Change::FillBrush,                     &GraphicsContextState::fillBrush);
-    dump(Change::FillRule,                      &GraphicsContextState::fillRule);
+    dump(Change::FillBrush,                     &GraphicsContextState::m_fillBrush);
+    dump(Change::FillRule,                      &GraphicsContextState::m_fillRule);
 
-    dump(Change::StrokeBrush,                   &GraphicsContextState::strokeBrush);
-    dump(Change::StrokeThickness,               &GraphicsContextState::strokeThickness);
-    dump(Change::StrokeStyle,                   &GraphicsContextState::strokeStyle);
+    dump(Change::StrokeBrush,                   &GraphicsContextState::m_strokeBrush);
+    dump(Change::StrokeThickness,               &GraphicsContextState::m_strokeThickness);
+    dump(Change::StrokeStyle,                   &GraphicsContextState::m_strokeStyle);
 
-    dump(Change::CompositeMode,                 &GraphicsContextState::compositeMode);
-    dump(Change::DropShadow,                    &GraphicsContextState::dropShadow);
+    dump(Change::CompositeMode,                 &GraphicsContextState::m_compositeMode);
+    dump(Change::DropShadow,                    &GraphicsContextState::m_dropShadow);
 
-    dump(Change::Alpha,                         &GraphicsContextState::alpha);
-    dump(Change::ImageInterpolationQuality,     &GraphicsContextState::imageInterpolationQuality);
-    dump(Change::TextDrawingMode,               &GraphicsContextState::textDrawingMode);
+    dump(Change::Alpha,                         &GraphicsContextState::m_alpha);
+    dump(Change::ImageInterpolationQuality,     &GraphicsContextState::m_imageInterpolationQuality);
+    dump(Change::TextDrawingMode,               &GraphicsContextState::m_textDrawingMode);
 
-    dump(Change::ShouldAntialias,               &GraphicsContextState::shouldAntialias);
-    dump(Change::ShouldSmoothFonts,             &GraphicsContextState::shouldSmoothFonts);
-    dump(Change::ShouldSubpixelQuantizeFonts,   &GraphicsContextState::shouldSubpixelQuantizeFonts);
-    dump(Change::ShadowsIgnoreTransforms,       &GraphicsContextState::shadowsIgnoreTransforms);
-    dump(Change::DrawLuminanceMask,             &GraphicsContextState::drawLuminanceMask);
+    dump(Change::ShouldAntialias,               &GraphicsContextState::m_shouldAntialias);
+    dump(Change::ShouldSmoothFonts,             &GraphicsContextState::m_shouldSmoothFonts);
+    dump(Change::ShouldSubpixelQuantizeFonts,   &GraphicsContextState::m_shouldSubpixelQuantizeFonts);
+    dump(Change::ShadowsIgnoreTransforms,       &GraphicsContextState::m_shadowsIgnoreTransforms);
+    dump(Change::DrawLuminanceMask,             &GraphicsContextState::m_drawLuminanceMask);
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    dump(Change::UseDarkAppearance,             &GraphicsContextState::useDarkAppearance);
+    dump(Change::UseDarkAppearance,             &GraphicsContextState::m_useDarkAppearance);
 #endif
     return ts;
 }

@@ -97,10 +97,10 @@ inline static std::optional<RenderingResourceIdentifier> applySetStateItem(Graph
         return std::nullopt;
     };
 
-    if (auto imageIdentifier = fixPatternTileImage(setStateItem.state().strokeBrush.pattern()))
+    if (auto imageIdentifier = fixPatternTileImage(setStateItem.state().strokeBrush().pattern()))
         return *imageIdentifier;
 
-    if (auto imageIdentifier = fixPatternTileImage(setStateItem.state().fillBrush.pattern()))
+    if (auto imageIdentifier = fixPatternTileImage(setStateItem.state().fillBrush().pattern()))
         return *imageIdentifier;
 
     setStateItem.apply(context);

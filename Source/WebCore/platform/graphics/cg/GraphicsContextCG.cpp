@@ -60,9 +60,9 @@ inline CGAffineTransform getUserToBaseCTM(CGContextRef context)
     return CGAffineTransformConcat(CGContextGetCTM(context), CGAffineTransformInvert(CGContextGetBaseCTM(context)));
 }
 
-static InterpolationQuality coreInterpolationQuality(CGInterpolationQuality quality)
+static InterpolationQuality coreInterpolationQuality(CGContextRef context)
 {
-    switch (quality) {
+    switch (CGContextGetInterpolationQuality(context)) {
     case kCGInterpolationDefault:
         return InterpolationQuality::Default;
     case kCGInterpolationNone:
@@ -185,7 +185,7 @@ static void setCGBlendMode(CGContextRef context, CompositeOperator op, BlendMode
 }
 
 GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext)
-    : GraphicsContext({ GraphicsContextState::Change::FillBrush, GraphicsContextState::Change::StrokeBrush, GraphicsContextState::Change::StrokeThickness })
+    : GraphicsContext(GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext))
 {
     if (!cgContext)
         return;
@@ -193,7 +193,6 @@ GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext)
     m_data = new GraphicsContextPlatformPrivate(cgContext);
     // Make sure the context starts in sync with our state.
     didUpdateState(m_state);
-    m_state.imageInterpolationQuality = coreInterpolationQuality(CGContextGetInterpolationQuality(platformContext()));
 }
 
 GraphicsContextCG::~GraphicsContextCG()
@@ -1084,43 +1083,43 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
     for (auto change : state.changes()) {
         switch (change) {
         case GraphicsContextState::Change::FillBrush:
-            setCGFillColor(context, state.fillBrush.color());
+            setCGFillColor(context, state.fillBrush().color());
             break;
 
         case GraphicsContextState::Change::StrokeThickness:
-            CGContextSetLineWidth(context, std::max(state.strokeThickness, 0.f));
+            CGContextSetLineWidth(context, std::max(state.strokeThickness(), 0.f));
             break;
 
         case GraphicsContextState::Change::StrokeBrush:
-            CGContextSetStrokeColorWithColor(context, cachedCGColor(state.strokeBrush.color()).get());
+            CGContextSetStrokeColorWithColor(context, cachedCGColor(state.strokeBrush().color()).get());
             break;
 
         case GraphicsContextState::Change::CompositeMode:
-            setCGBlendMode(context, state.compositeMode.operation, state.compositeMode.blendMode);
+            setCGBlendMode(context, state.compositeMode().operation, state.compositeMode().blendMode);
             break;
 
         case GraphicsContextState::Change::DropShadow:
-            setCGShadow(context, renderingMode(), state.dropShadow.offset, state.dropShadow.blurRadius, state.dropShadow.color, state.shadowsIgnoreTransforms);
+            setCGShadow(context, renderingMode(), state.dropShadow().offset, state.dropShadow().blurRadius, state.dropShadow().color, state.shadowsIgnoreTransforms());
             break;
 
         case GraphicsContextState::Change::Alpha:
-            CGContextSetAlpha(context, state.alpha);
+            CGContextSetAlpha(context, state.alpha());
             break;
 
         case GraphicsContextState::Change::ImageInterpolationQuality:
-            CGContextSetInterpolationQuality(context, cgInterpolationQuality(state.imageInterpolationQuality));
+            CGContextSetInterpolationQuality(context, cgInterpolationQuality(state.imageInterpolationQuality()));
             break;
 
         case GraphicsContextState::Change::TextDrawingMode:
-            CGContextSetTextDrawingMode(context, cgTextDrawingMode(state.textDrawingMode));
+            CGContextSetTextDrawingMode(context, cgTextDrawingMode(state.textDrawingMode()));
             break;
 
         case GraphicsContextState::Change::ShouldAntialias:
-            CGContextSetShouldAntialias(context, state.shouldAntialias);
+            CGContextSetShouldAntialias(context, state.shouldAntialias());
             break;
 
         case GraphicsContextState::Change::ShouldSmoothFonts:
-            CGContextSetShouldSmoothFonts(context, state.shouldSmoothFonts);
+            CGContextSetShouldSmoothFonts(context, state.shouldSmoothFonts());
             break;
 
         default:
@@ -1155,7 +1154,6 @@ void GraphicsContextCG::strokeRect(const FloatRect& rect, float lineWidth)
             auto layer = adoptCF(CGLayerCreateWithContext(context, layerSize, 0));
 
             CGContextRef layerContext = CGLayerGetContext(layer.get());
-            m_state.strokeThickness = lineWidth;
             CGContextSetLineWidth(layerContext, lineWidth);
 
             // Compensate for the line width, otherwise the layer's top-left corner would be
@@ -1488,7 +1486,7 @@ void GraphicsContextCG::addDestinationAtPoint(const String& name, const FloatPoi
 
 bool GraphicsContextCG::canUseShadowBlur() const
 {
-    return (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredShadow() && !m_state.shadowsIgnoreTransforms;
+    return (renderingMode() == RenderingMode::Unaccelerated) && hasBlurredShadow() && !m_state.shadowsIgnoreTransforms();
 }
 
 }

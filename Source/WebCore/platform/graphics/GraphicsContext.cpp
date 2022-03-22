@@ -43,8 +43,8 @@
 
 namespace WebCore {
 
-GraphicsContext::GraphicsContext(const GraphicsContextState::ChangeFlags& changeFlags)
-    : m_state(changeFlags)
+GraphicsContext::GraphicsContext(const GraphicsContextState::ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality)
+    : m_state(changeFlags, imageInterpolationQuality)
 {
 }
 

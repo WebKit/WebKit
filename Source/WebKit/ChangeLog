@@ -1,3 +1,17 @@
+2022-03-22  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make GraphicsContextState a class
+        https://bugs.webkit.org/show_bug.cgi?id=238192
+
+        Reviewed by Simon Fraser.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::setState):
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint):
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::convertCairoSurfaceToShareableBitmap):
+
 2022-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Prefer WK_EXTERN to WK_EXPORT in Cocoa API headers

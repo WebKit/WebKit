@@ -128,10 +128,10 @@ void RemoteDisplayListRecorder::setState(DisplayList::SetState&& item)
         return true;
     };
 
-    if (!fixPatternTileImage(item.state().fillBrush.pattern()))
+    if (!fixPatternTileImage(item.state().fillBrush().pattern()))
         return;
 
-    if (!fixPatternTileImage(item.state().strokeBrush.pattern()))
+    if (!fixPatternTileImage(item.state().strokeBrush().pattern()))
         return;
 
     handleItem(WTFMove(item));
