@@ -1,5 +1,14 @@
 2022-03-22  Matteo Flores  <matteo_flores@apple.com>
 
+        [ EWS iOS ] fast/text/emoji-num-glyphs.html is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=238233
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2022-03-22  Matteo Flores  <matteo_flores@apple.com>
+
         [ EWS iOS ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html is a flaky crash
         https://bugs.webkit.org/show_bug.cgi?id=238229
 

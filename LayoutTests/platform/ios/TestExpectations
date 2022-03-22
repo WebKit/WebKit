@@ -3457,8 +3457,6 @@ webkit.org/b/237987 imported/w3c/web-platform-tests/html/semantics/forms/textfie
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-blocked.sub.html [ Pass Failure ]
 
-webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Pass ]
-
 # WPT css/css-pseudo import (webkit.org/b/235197)
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-originating-decoration-color.html [ ImageOnlyFailure ]
@@ -3549,6 +3547,8 @@ webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
 webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
 
 webkit.org/b/238229 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html [ Pass Crash ]
+
+webkit.org/b/238223 fast/text/emoji-num-glyphs.html [ Pass Failure ]
 
 webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash ]
 
