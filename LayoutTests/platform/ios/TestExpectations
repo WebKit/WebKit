@@ -3546,6 +3546,8 @@ imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Fa
 [ Release ] perf/nested-combined-selectors.html [ Failure ]
 webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
 
+webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
+
 webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Pass Crash ]
 
 webkit.org/b/236930 accessibility/ios-simulator/aria-details.html [ Crash Pass ]
