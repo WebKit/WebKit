@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import requests
 import sys
@@ -92,7 +93,8 @@ class Setup(Command):
             email = Terminal.input('Enter git user email for this repository: ')
 
         if run(
-            [local.Git.executable(), 'config', 'user.email', email], capture_output=True, cwd=repository.root_path,
+            [local.Git.executable(), 'config', 'user.email', email],
+            capture_output=log.getEffectiveLevel() > logging.DEBUG, cwd=repository.root_path,
         ).returncode:
             sys.stderr.write('Failed to set the git user email to {} for this repository\n'.format(email))
             result += 1
@@ -111,7 +113,8 @@ class Setup(Command):
         ) == 'No'):
             name = Terminal.input('Enter git user name for this repository: ')
         if run(
-            [local.Git.executable(), 'config', 'user.name', name], capture_output=True, cwd=repository.root_path,
+            [local.Git.executable(), 'config', 'user.name', name],
+            capture_output=log.getEffectiveLevel() > logging.DEBUG, cwd=repository.root_path,
         ).returncode:
             sys.stderr.write('Failed to set the git user name to {} for this repository\n'.format(name))
             result += 1
@@ -131,11 +134,11 @@ class Setup(Command):
         log.info('Setting better Objective-C diffing behavior for this repository...')
         result += run(
             [local.Git.executable(), 'config', 'diff.objcpp.xfuncname', '^[-+@a-zA-Z_].*$'],
-            capture_output=True, cwd=repository.root_path,
+            capture_output=log.getEffectiveLevel() > logging.DEBUG, cwd=repository.root_path,
         ).returncode
         result += run(
             [local.Git.executable(), 'config', 'diff.objcppheader.xfuncname', '^[@a-zA-Z_].*$'],
-            capture_output=True, cwd=repository.root_path,
+            capture_output=log.getEffectiveLevel() > logging.DEBUG, cwd=repository.root_path,
         ).returncode
         log.info('Set better Objective-C diffing behavior for this repository!')
 
@@ -146,7 +149,7 @@ class Setup(Command):
             for command in ('status', 'diff', 'branch'):
                 result += run(
                     [local.Git.executable(), 'config', 'color.{}'.format(command), 'auto'],
-                    capture_output=True, cwd=repository.root_path,
+                    capture_output=log.getEffectiveLevel() > logging.DEBUG, cwd=repository.root_path,
                 ).returncode
 
         if args.merge is None:
@@ -154,7 +157,7 @@ class Setup(Command):
         log.info('Using {} merge strategy for this repository'.format('merge commits as a' if args.merge else 'a rebase'))
         if run(
             [local.Git.executable(), 'config', 'pull.rebase', 'false' if args.merge else 'true'],
-            capture_output=True, cwd=repository.root_path,
+            capture_output=log.getEffectiveLevel() > logging.DEBUG, cwd=repository.root_path,
         ).returncode:
             sys.stderr.write('Failed to use {} as the merge strategy for this repository\n'.format('merge commits' if args.merge else 'rebase'))
             result += 1
@@ -211,7 +214,7 @@ class Setup(Command):
             log.info('Using the default git editor for this repository')
         elif run(
             [local.Git.executable(), 'config', 'core.editor', ' '.join([arg.replace(' ', '\\ ') for arg in Editor.by_name(editor_name).wait])],
-            capture_output=True,
+            capture_output=log.getEffectiveLevel() > logging.DEBUG,
             cwd=repository.root_path,
         ).returncode:
             sys.stderr.write('Failed to set the git editor to {} for this repository\n'.format(editor_name))
@@ -228,7 +231,7 @@ class Setup(Command):
             if run([
                 local.Git.executable(), 'config', 'remote.origin.url',
                 'git@{}:{}.git'.format(http_remote.group('host'), http_remote.group('path')),
-            ], capture_output=True, cwd=repository.root_path).returncode:
+            ], capture_output=log.getEffectiveLevel() > logging.DEBUG, cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to change remote to ssh remote '{}'\n".format(
                     'git@{}:{}.git'.format(http_remote.group('host'), http_remote.group('path'))
                 ))
@@ -266,12 +269,12 @@ class Setup(Command):
         for name in [username, 'fork']:
             returncode = run(
                 [repository.executable(), 'remote', 'add', name, fork_remote],
-                capture_output=True, cwd=repository.root_path,
+                capture_output=log.getEffectiveLevel() > logging.DEBUG, cwd=repository.root_path,
             ).returncode
             if returncode == 3:
                 returncode = run(
                     [repository.executable(), 'remote', 'set-url', name, fork_remote],
-                    capture_output=True, cwd=repository.root_path,
+                    capture_output=log.getEffectiveLevel() > logging.DEBUG, cwd=repository.root_path,
                 ).returncode
             if returncode:
                 sys.stderr.write("Failed to add remote '{}'\n".format(name))
@@ -285,7 +288,7 @@ class Setup(Command):
         log.info("Fetching '{}'".format(fork_remote))
         return run(
             [repository.executable(), 'fetch', 'fork'],
-            capture_output=True, cwd=repository.root_path,
+            capture_output=log.getEffectiveLevel() > logging.DEBUG, cwd=repository.root_path,
         ).returncode
 
     @classmethod
