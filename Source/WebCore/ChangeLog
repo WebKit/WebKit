@@ -1,3 +1,22 @@
+2022-03-22  Frédéric Wang  <fwang@igalia.com>
+
+        Adjust anchor/focus nodes after removal when LiveRangeSelection is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=238004
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch ensures that FrameSelection::nodeWillBeRemoved adjusts m_anchor and m_focus
+        when corresponding nodes are removed from the DOM tree. There are no behavior changes
+        when live range is disabled.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::nodeWillBeRemoved): When live range is enabled,
+        Ensure that anchor nodes are updated even when the selection is none and pass information
+        about whether anchor or focus are removed by the node removal.
+        (WebCore::FrameSelection::respondToNodeModification): Adjust anchor and focus if they
+        are removed, when live range is enabled.
+        * editing/FrameSelection.h: Add arguments for anchor and focus.
+
 2022-03-21  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Make GraphicsContextState keep track of changes till they are applied

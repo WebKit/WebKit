@@ -553,19 +553,34 @@ void FrameSelection::nodeWillBeRemoved(Node& node)
 {
     // There can't be a selection inside a fragment, so if a fragment's node is being removed,
     // the selection in the document that created the fragment needs no adjustment.
-    if (isNone() || !node.isConnected())
+    if ((isNone() && !m_document->settings().liveRangeSelectionEnabled()) || !node.isConnected())
         return;
 
-    respondToNodeModification(node, removingNodeRemovesPosition(node, m_selection.base()), removingNodeRemovesPosition(node, m_selection.extent()),
+    respondToNodeModification(node, removingNodeRemovesPosition(node, m_selection.anchor()), removingNodeRemovesPosition(node, m_selection.focus()),
+        removingNodeRemovesPosition(node, m_selection.base()), removingNodeRemovesPosition(node, m_selection.extent()),
         removingNodeRemovesPosition(node, m_selection.start()), removingNodeRemovesPosition(node, m_selection.end()));
 }
 
-void FrameSelection::respondToNodeModification(Node& node, bool baseRemoved, bool extentRemoved, bool startRemoved, bool endRemoved)
+void FrameSelection::respondToNodeModification(Node& node, bool anchorRemoved, bool focusRemoved, bool baseRemoved, bool extentRemoved, bool startRemoved, bool endRemoved)
 {
     bool clearRenderTreeSelection = false;
     bool clearDOMTreeSelection = false;
 
-    if (startRemoved || endRemoved) {
+    if (m_document->settings().liveRangeSelectionEnabled() && (anchorRemoved || focusRemoved)) {
+        Position anchor = m_selection.anchor();
+        Position focus = m_selection.focus();
+        if (anchorRemoved)
+            updatePositionForNodeRemoval(anchor, node);
+        if (focusRemoved)
+            updatePositionForNodeRemoval(focus, node);
+
+        if (anchor.isNotNull() && focus.isNotNull())
+            m_selection.setWithoutValidation(anchor, focus);
+        else
+            clearDOMTreeSelection = true;
+
+        clearRenderTreeSelection = true;
+    } if (startRemoved || endRemoved) {
         Position start = m_selection.start();
         Position end = m_selection.end();
         if (startRemoved)
