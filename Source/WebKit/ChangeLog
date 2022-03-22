@@ -1,3 +1,17 @@
+2022-03-22  Per Arne Vollan  <pvollan@apple.com>
+
+        Ensure there is a Network process after launching the WebContent process
+        https://bugs.webkit.org/show_bug.cgi?id=238080
+        <rdar://88933565>
+
+        Reviewed by Chris Dumez.
+
+        After the WebContent process has finished launching, ensure there is a Network process
+        which will provide the WebContent process with the Launch Services database.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching):
+
 2022-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         -[WKWebView _spellCheckerDocumentTag] is inconsistent with the document tag passed into NSSpellChecker

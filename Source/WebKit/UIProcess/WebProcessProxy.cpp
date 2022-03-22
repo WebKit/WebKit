@@ -1046,6 +1046,13 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #if PLATFORM(COCOA)
     if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess())
         networkProcess->sendXPCEndpointToProcess(*this);
+    else {
+        RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
+            if (!weakThis)
+                return;
+            NetworkProcessProxy::ensureDefaultNetworkProcess()->sendXPCEndpointToProcess(*weakThis);
+        });
+    }
 #endif
 
     RELEASE_ASSERT(!m_webConnection);
