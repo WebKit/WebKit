@@ -1,3 +1,16 @@
+2022-03-21  Alex Christensen  <achristensen@webkit.org>
+
+        Adjust when _setPrivacyProxyFailClosedForUnreachableNonMainHosts is called
+        https://bugs.webkit.org/show_bug.cgi?id=237735
+
+        Reviewed by Geoff Garen.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::createWebSocketTask):
+
 2022-03-21  Aditya Keerthi  <akeerthi@apple.com>
 
         Unreviewed, address post-landing feedback on r291445
