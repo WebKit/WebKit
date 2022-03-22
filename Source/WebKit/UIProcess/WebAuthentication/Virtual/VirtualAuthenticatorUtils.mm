@@ -32,6 +32,8 @@
 #include <WebCore/WebAuthenticationConstants.h>
 #include <WebCore/WebAuthenticationUtils.h>
 #include <pal/crypto/CryptoDigest.h>
+#include <wtf/cocoa/TypeCastsCocoa.h>
+#include <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -107,6 +109,39 @@ String base64PrivateKey(RetainPtr<SecKeyRef> privateKey)
     NSData *nsPrivateKeyRep = (NSData *)privateKeyRep.get();
 
     return String([nsPrivateKeyRep base64EncodedStringWithOptions:0]);
+}
+
+RetainPtr<SecKeyRef> privateKeyFromBase64(const String& base64PrivateKey)
+{
+    NSDictionary* options = @{
+        (id)kSecAttrKeyType: (id)kSecAttrKeyTypeECSECPrimeRandom,
+        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
+        (id)kSecAttrKeySizeInBits: @256,
+    };
+    RetainPtr<NSData> privateKey = adoptNS([[NSData alloc] initWithBase64EncodedString:base64PrivateKey options:0]);
+    CFErrorRef errorRef = nullptr;
+    auto key = adoptCF(SecKeyCreateWithData(
+        bridge_cast(privateKey.get()),
+        bridge_cast(options),
+        &errorRef
+    ));
+    ASSERT(!errorRef);
+    return key;
+}
+
+Vector<uint8_t> signatureForPrivateKey(RetainPtr<SecKeyRef> privateKey, const Vector<uint8_t>& authData, const Vector<uint8_t>& clientDataHash)
+{
+    NSMutableData *dataToSign = [NSMutableData dataWithBytes:authData.data() length:authData.size()];
+    [dataToSign appendBytes:clientDataHash.data() length:clientDataHash.size()];
+    RetainPtr<CFDataRef> signature;
+    {
+        CFErrorRef errorRef = nullptr;
+        signature = adoptCF(SecKeyCreateSignature((__bridge SecKeyRef)((id)privateKey.get()), kSecKeyAlgorithmECDSASignatureMessageX962SHA256, (__bridge CFDataRef)dataToSign, &errorRef));
+        auto retainError = adoptCF(errorRef);
+        ASSERT(!errorRef);
+    }
+
+    return vectorFromNSData((NSData *)signature.get());
 }
 
 } // namespace WebKit

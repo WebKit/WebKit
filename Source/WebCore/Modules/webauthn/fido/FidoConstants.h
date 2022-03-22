@@ -266,7 +266,14 @@ const int64_t kCtapMakeCredentialPubKeyCredParamsKey = 4;
 const int64_t kCtapMakeCredentialExcludeListKey = 5;
 const int64_t kCtapMakeCredentialExtensionsKey = 6;
 const int64_t kCtapMakeCredentialRequestOptionsKey = 7;
+
+const int64_t kCtapGetAssertionRpIdKey = 1;
+const int64_t kCtapGetAssertionClientDataHashKey = 2;
+const int64_t kCtapGetAssertionAllowListKey = 3;
+const int64_t kCtapGetAssertionExtensionsKey = 4;
 const int64_t kCtapGetAssertionRequestOptionsKey = 5;
+const int64_t kCtapGetAssertionPinUvAuthParamKey = 6;
+const int64_t kCtapGetAssertionPinUvAuthProtocolKey = 7;
 
 } // namespace fido
 

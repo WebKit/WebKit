@@ -29,6 +29,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "CBORWriter.h"
+#include "FidoConstants.h"
 #include "WebAuthenticationConstants.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/JSONValues.h>
@@ -85,6 +86,22 @@ Vector<uint8_t> buildAttestedCredentialData(const Vector<uint8_t>& aaguid, const
     attestedCredentialData.appendVector(coseKey);
 
     return attestedCredentialData;
+}
+
+cbor::CBORValue::MapValue buildUserEntityMap(const Vector<uint8_t>& userId, const String& name, const String& displayName)
+{
+    cbor::CBORValue::MapValue userEntityMap;
+    userEntityMap[cbor::CBORValue(fido::kEntityIdMapKey)] = cbor::CBORValue(userId);
+    userEntityMap[cbor::CBORValue(fido::kEntityNameMapKey)] = cbor::CBORValue(name);
+    userEntityMap[cbor::CBORValue(fido::kDisplayNameMapKey)] = cbor::CBORValue(displayName);
+    return userEntityMap;
+}
+
+cbor::CBORValue::MapValue buildCredentialDescriptor(const Vector<uint8_t>& credentialId)
+{
+    cbor::CBORValue::MapValue credential;
+    credential[cbor::CBORValue("id")] = cbor::CBORValue(credentialId);
+    return credential;
 }
 
 Vector<uint8_t> buildAuthData(const String& rpId, const uint8_t flags, const uint32_t counter, const Vector<uint8_t>& optionalAttestedCredentialData)

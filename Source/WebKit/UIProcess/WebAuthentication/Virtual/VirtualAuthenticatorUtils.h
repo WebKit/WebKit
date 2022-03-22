@@ -35,6 +35,8 @@ uint8_t flagsForConfig(const VirtualAuthenticatorConfiguration&);
 RetainPtr<SecKeyRef> createPrivateKey();
 std::pair<Vector<uint8_t>, Vector<uint8_t>> credentialIdAndCosePubKeyForPrivateKey(RetainPtr<SecKeyRef> privateKey);
 String base64PrivateKey(RetainPtr<SecKeyRef> privateKey);
+RetainPtr<SecKeyRef> privateKeyFromBase64(const String& base64PrivateKey);
+Vector<uint8_t> signatureForPrivateKey(RetainPtr<SecKeyRef> privateKey, const Vector<uint8_t>& authData, const Vector<uint8_t>& clientDataHash);
 
 } // namespace WebKit
 

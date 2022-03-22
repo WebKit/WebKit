@@ -44,7 +44,8 @@ public:
 
     bool isVirtual() const final { return true; }
 
-    void addCredential(const String&, const VirtualCredential&);
+    void addCredential(const String&, VirtualCredential&);
+    Vector<VirtualCredential> credentialsMatchingList(const String& authenticatorId, const String& rpId, const Vector<Vector<uint8_t>>& credentialIds);
 
 protected:
     void decidePolicyForLocalAuthenticator(CompletionHandler<void(LocalAuthenticatorPolicy)>&&) override;

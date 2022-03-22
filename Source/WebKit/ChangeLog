@@ -1,3 +1,29 @@
+2022-03-22  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Support getAssertion for virtual HID authenticators
+        https://bugs.webkit.org/show_bug.cgi?id=238154
+        rdar://problem/90593150
+
+        Reviewed by Brent Fulgham.
+
+        Virtual authenticators for WebAuthn support different transports: nfc, usb, internal,
+        and ble. Currently, we only fully support the internal transport and makeCredential for
+        usb-transport. The default transport for web-platform-tests is usb. This patch implements
+        getAssertion for hid-based virtual authneticators.
+
+        Tested via manually creating virtual authenticator and performing create / get.
+
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.cpp:
+        (WebKit::VirtualAuthenticatorManager::addCredential):
+        (WebKit::VirtualAuthenticatorManager::credentialsMatchingList):
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorUtils.h:
+        * UIProcess/WebAuthentication/Virtual/VirtualAuthenticatorUtils.mm:
+        (WebKit::privateKeyFromBase64):
+        (WebKit::signatureForPrivateKey):
+        * UIProcess/WebAuthentication/Virtual/VirtualHidConnection.cpp:
+        (WebKit::VirtualHidConnection::parseRequest):
+
 2022-03-22  Jer Noble  <jer.noble@apple.com>
 
         Fetching a Blob URL with an unbounded Range header do not generate a Content-Range response header

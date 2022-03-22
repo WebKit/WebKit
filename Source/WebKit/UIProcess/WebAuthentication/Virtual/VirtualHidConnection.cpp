@@ -212,20 +212,105 @@ void VirtualHidConnection::parseRequest()
                 return;
             }
             credential.userHandle = it->second.getByteString();
-
-            manager->addCredential(m_authenticatorId, credential);
             auto credentialIdAndCosePubKey = credentialIdAndCosePubKeyForPrivateKey(privateKey);
+            credential.credentialId = credentialIdAndCosePubKey.first;
+            manager->addCredential(m_authenticatorId, credential);
 
             auto attestedCredentialData = buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialIdAndCosePubKey.first, credentialIdAndCosePubKey.second);
 
             auto authenticatorData = buildAuthData(credential.rpId, flagsForConfig(m_configuration), credential.signCount, attestedCredentialData);
             CBORValue::MapValue response;
-            response[CBORValue(2)] = CBORValue(authenticatorData);
-
-            auto attObj = buildAttestationMap(WTFMove(authenticatorData), "", { }, AttestationConveyancePreference::None);
-
             response[CBORValue(1)] = CBORValue("none");
+            response[CBORValue(2)] = CBORValue(authenticatorData);
+            auto attObj = buildAttestationMap(WTFMove(authenticatorData), "", { }, AttestationConveyancePreference::None);
             response[CBORValue(3)] = CBORValue(attObj);
+            auto payload = CBORWriter::write(CBORValue(response));
+            Vector<uint8_t> buffer;
+            buffer.reserveCapacity(payload->size() + 1);
+            buffer.append(static_cast<uint8_t>(fido::CtapDeviceResponseCode::kSuccess));
+            buffer.appendVector(*payload);
+
+            auto message = FidoHidMessage::create(m_requestMessage->channelId(), FidoHidDeviceCommand::kCbor, WTFMove(buffer));
+            receiveHidMessage(WTFMove(*message));
+        } else if (cmd == CtapRequestCommand::kAuthenticatorGetAssertion) {
+            auto it = requestMap->getMap().find(CBORValue(kCtapGetAssertionRpIdKey));
+            if (it == requestMap->getMap().end()) {
+                recieveResponseCode(CtapDeviceResponseCode::kCtap2ErrMissingParameter);
+                return;
+            }
+            auto rpId = it->second.getString();
+            (void)rpId;
+            it = requestMap->getMap().find(CBORValue(kCtapGetAssertionClientDataHashKey));
+            if (it == requestMap->getMap().end()) {
+                recieveResponseCode(CtapDeviceResponseCode::kCtap2ErrMissingParameter);
+                return;
+            }
+            auto clientDataHash = it->second.getByteString();
+            (void)clientDataHash;
+            Vector<Vector<uint8_t>> allowList;
+            it = requestMap->getMap().find(CBORValue(kCtapGetAssertionAllowListKey));
+            if (it != requestMap->getMap().end()) {
+                const auto& cborAllowList = it->second.getArray();
+                if (cborAllowList.isEmpty()) {
+                    recieveResponseCode(CtapDeviceResponseCode::kCtap2ErrInvalidOption);
+                    return;
+                }
+
+                for (const auto& cborCredential : cborAllowList) {
+                    auto& credMap = cborCredential.getMap();
+                    auto itr = credMap.find(CBORValue(fido::kEntityIdMapKey));
+                    if (itr == credMap.end() || !itr->second.isByteString()) {
+                        recieveResponseCode(CtapDeviceResponseCode::kCtap2ErrInvalidOption);
+                        return;
+                    }
+                    allowList.append(itr->second.getByteString());
+                }
+            }
+
+            it = requestMap->getMap().find(CBORValue(kCtapGetAssertionRequestOptionsKey));
+            if (it != requestMap->getMap().end()) {
+                auto& optionMap = it->second.getMap();
+
+                auto itr = optionMap.find(CBORValue(kUserVerificationMapKey));
+                if (itr != optionMap.end()) {
+                    auto requireUserVerification = itr->second.getBool();
+                    if (requireUserVerification && !m_configuration.hasUserVerification) {
+                        recieveResponseCode(CtapDeviceResponseCode::kCtap2ErrInvalidOption);
+                        return;
+                    }
+                    if (requireUserVerification && !m_configuration.isUserVerified) {
+                        recieveResponseCode(CtapDeviceResponseCode::kCtap2ErrOperationDenied);
+                        return;
+                    }
+                }
+
+                itr = optionMap.find(CBORValue(kUserPresenceMapKey));
+                if (itr != optionMap.end()) {
+                    auto requireUserPresence = itr->second.getBool();
+                    if (requireUserPresence && !m_configuration.isUserConsenting) {
+                        recieveResponseCode(CtapDeviceResponseCode::kCtap2ErrOperationDenied);
+                        return;
+                    }
+                }
+            }
+            auto matchingCredentials = m_manager->credentialsMatchingList(m_authenticatorId, rpId, allowList);
+            if (matchingCredentials.isEmpty()) {
+                recieveResponseCode(CtapDeviceResponseCode::kCtap2ErrNoCredentials);
+                return;
+            }
+            auto& credential = matchingCredentials[0];
+            CBORValue::MapValue response;
+
+            response[CBORValue(1)] = CBORValue(buildCredentialDescriptor(credential.credentialId));
+            auto key = privateKeyFromBase64(credential.privateKey);
+            auto credentialIdAndCosePubKey = credentialIdAndCosePubKeyForPrivateKey(key);
+            auto attestedCredentialData = buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialIdAndCosePubKey.first, credentialIdAndCosePubKey.second);
+            auto authData = buildAuthData(rpId, flagsForConfig(m_configuration), credential.signCount, attestedCredentialData);
+            response[CBORValue(2)] = CBORValue(authData);
+            response[CBORValue(3)] = CBORValue(signatureForPrivateKey(key, authData, clientDataHash));
+            if (credential.userHandle)
+                response[CBORValue(4)] = CBORValue(buildUserEntityMap(*credential.userHandle, "", ""));
+            response[CBORValue(5)] = CBORValue((int64_t)matchingCredentials.size());
             auto payload = CBORWriter::write(CBORValue(response));
             Vector<uint8_t> buffer;
             buffer.reserveCapacity(payload->size() + 1);

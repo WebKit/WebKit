@@ -1,3 +1,22 @@
+2022-03-22  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Support getAssertion for virtual HID authenticators
+        https://bugs.webkit.org/show_bug.cgi?id=238154
+        rdar://problem/90593150
+
+        Reviewed by Brent Fulgham.
+
+        Virtual authenticators for WebAuthn support different transprots: nfc, usb, internal,
+        and ble. Currently, we only fully support the internal transport and makeCredential for
+        usb-transport. The default transport for web-platform-tests is usb. This patch implements
+        getAssertion for hid-based virtual authneticators.
+
+        * Modules/webauthn/WebAuthenticationUtils.cpp:
+        (WebCore::buildUserEntityMap):
+        (WebCore::buildCredentialDescriptor):
+        * Modules/webauthn/WebAuthenticationUtils.h:
+        * Modules/webauthn/fido/FidoConstants.h:
+
 2022-03-22  Ricky Mondello  <rmondello@apple.com>
 
         It should be possible to copy text out of "AutoFilledAndViewable" password fields

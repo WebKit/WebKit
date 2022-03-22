@@ -57,9 +57,20 @@ bool VirtualAuthenticatorManager::removeAuthenticator(const String& id)
     return m_virtualAuthenticators.remove(id);
 }
 
-void VirtualAuthenticatorManager::addCredential(const String& authenticatorId, const VirtualCredential& credential)
+void VirtualAuthenticatorManager::addCredential(const String& authenticatorId, VirtualCredential& credential)
 {
-    m_credentialsByAuthenticator.get(authenticatorId).append(credential);
+    m_credentialsByAuthenticator.find(authenticatorId)->value.append(WTFMove(credential));
+}
+
+Vector<VirtualCredential> VirtualAuthenticatorManager::credentialsMatchingList(const String& authenticatorId, const String& rpId, const Vector<Vector<uint8_t>>& credentialIds)
+{
+    Vector<VirtualCredential> matching;
+    auto it = m_credentialsByAuthenticator.find(authenticatorId);
+    for (auto& credential : it->value) {
+        if (credential.rpId == rpId && ((credentialIds.isEmpty() && credential.isResidentCredential) || credentialIds.contains(credential.credentialId)))
+            matching.append(credential);
+    }
+    return matching;
 }
 
 UniqueRef<AuthenticatorTransportService> VirtualAuthenticatorManager::createService(WebCore::AuthenticatorTransport transport, AuthenticatorTransportService::Observer& observer) const
