@@ -3409,6 +3409,8 @@ editing/selection/ios/persist-selection-after-tapping-on-element-with-mousedown-
 
 webkit.org/b/238211 fast/text/text-shadow-ink-overflow-missing.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/237812 editing/spelling/spellcheck-api-crash.html [ Pass Crash ]
+
 webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure ]
 
 # rdar://82190832 ([ iOS15 ] editing/caret/ios/caret-in-overflow-area.html is failing)
