@@ -1,5 +1,46 @@
 2022-03-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291330. rdar://problem/90320701
+
+    REGRESSION (r282737): `text-shadow` is clipped
+    https://bugs.webkit.org/show_bug.cgi?id=237898
+    <rdar://problem/90320701>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Inflate the ink overflow rect with the text shadow values (note that here, in the display builder we work with physical coordinates).
+    
+    Test: fast/text/text-shadow-ink-overflow-missing.html
+    
+    * layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp:
+    (WebCore::Layout::InlineDisplayContentBuilder::appendTextDisplayBox):
+    * rendering/style/RenderStyle.h:
+    (WebCore::RenderStyle::getTextShadowHorizontalExtent const):
+    (WebCore::RenderStyle::getTextShadowVerticalExtent const):
+    
+    LayoutTests:
+    
+    * fast/text/text-shadow-ink-overflow-missing-expected.html: Added.
+    * fast/text/text-shadow-ink-overflow-missing.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291330 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-15  Alan Bujtas  <zalan@apple.com>
+
+            REGRESSION (r282737): `text-shadow` is clipped
+            https://bugs.webkit.org/show_bug.cgi?id=237898
+            <rdar://problem/90320701>
+
+            Reviewed by Darin Adler.
+
+            * fast/text/text-shadow-ink-overflow-missing-expected.html: Added.
+            * fast/text/text-shadow-ink-overflow-missing.html: Added.
+
+2022-03-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291141. rdar://problem/90035071
 
     Main document is leaking on haaretz.co.il due to lazy image loading
