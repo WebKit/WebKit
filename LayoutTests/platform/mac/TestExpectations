@@ -2381,8 +2381,6 @@ platform/mac/plugins/convert-point.html [ Skip ]
 
 webkit.org/b/226826 [ Monterey ] http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
 
-webkit.org/b/221230 [ BigSur+ ] imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Pass Failure ]
-
 webkit.org/b/235660 [ Debug ] fast/replaced/encrypted-pdf-as-object-and-embed.html [ Skip ]
 
 # <model> tests involving the ready promise can only work on Monterey and up
