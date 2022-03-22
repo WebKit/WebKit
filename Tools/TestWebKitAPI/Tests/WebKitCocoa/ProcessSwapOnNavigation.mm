@@ -8306,3 +8306,152 @@ TEST(ProcessSwap, CaptivePortalModeSystemSettingChangeDoesNotReloadViewsWhenMode
 }
 
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+TEST(ProcessSwap, ContentModeInCaseOfCoopProcessSwap)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/source.html", { "foo" } },
+        { "/destination.html", { { { "Content-Type", "text/html" }, { "Cross-Origin-Opener-Policy", "same-origin" } }, "bar" } },
+    }, HTTPServer::Protocol::Https);
+
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto webpagePreferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [webpagePreferences setPreferredContentMode:WKContentModeDesktop];
+    [webViewConfiguration setDefaultWebpagePreferences:webpagePreferences.get()];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    done = false;
+    [webView loadRequest:server.request("/source.html")];
+    Util::run(&done);
+    done = false;
+
+    [webView evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+        done = true;
+
+        ASSERT_TRUE(!error);
+        NSString *userAgent = (NSString *)response;
+        ASSERT_TRUE([userAgent containsString:@"Macintosh; Intel Mac"]);
+    }];
+    Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    [webView loadRequest:server.request("/destination.html")];
+    Util::run(&done);
+    done = false;
+
+    [webView evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+        done = true;
+
+        ASSERT_TRUE(!error);
+        NSString *userAgent = (NSString *)response;
+        ASSERT_TRUE([userAgent containsString:@"Macintosh; Intel Mac"]);
+    }];
+    Util::run(&done);
+    done = false;
+
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_NE(pid1, pid2);
+
+    [webView goBack]; // Back to source.html.
+    Util::run(&done);
+    done = false;
+
+    [webView evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+        done = true;
+
+        ASSERT_TRUE(!error);
+        NSString *userAgent = (NSString *)response;
+        ASSERT_TRUE([userAgent containsString:@"Macintosh; Intel Mac"]);
+    }];
+    Util::run(&done);
+    done = false;
+}
+
+TEST(ProcessSwap, ContentModeInCaseOfPSONThenCoopProcessSwap)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server1({
+        { "/source.html", { "foo" } },
+    }, HTTPServer::Protocol::Https);
+
+    HTTPServer server2({
+        { "/destination.html", { { { "Content-Type", "text/html" }, { "Cross-Origin-Opener-Policy", "same-origin" } }, "bar" } },
+    }, HTTPServer::Protocol::Http);
+
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto webpagePreferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [webpagePreferences setPreferredContentMode:WKContentModeDesktop];
+    [webViewConfiguration setDefaultWebpagePreferences:webpagePreferences.get()];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    done = false;
+    [webView loadRequest:server1.request("/source.html")];
+    Util::run(&done);
+    done = false;
+
+    [webView evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+        done = true;
+
+        ASSERT_TRUE(!error);
+        NSString *userAgent = (NSString *)response;
+        ASSERT_TRUE([userAgent containsString:@"Macintosh; Intel Mac"]);
+    }];
+    Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    [webView loadRequest:server2.request("/destination.html")];
+    Util::run(&done);
+    done = false;
+
+    [webView evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+        done = true;
+
+        ASSERT_TRUE(!error);
+        NSString *userAgent = (NSString *)response;
+        ASSERT_TRUE([userAgent containsString:@"Macintosh; Intel Mac"]);
+    }];
+    Util::run(&done);
+    done = false;
+
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_NE(pid1, pid2);
+
+    [webView goBack]; // Back to source.html.
+    Util::run(&done);
+    done = false;
+
+    [webView evaluateJavaScript:@"navigator.userAgent;" completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+        done = true;
+
+        ASSERT_TRUE(!error);
+        NSString *userAgent = (NSString *)response;
+        ASSERT_TRUE([userAgent containsString:@"Macintosh; Intel Mac"]);
+    }];
+    Util::run(&done);
+    done = false;
+}
+#endif // PLATFORM(IOS_FAMILY)

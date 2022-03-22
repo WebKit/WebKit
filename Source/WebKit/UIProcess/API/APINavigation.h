@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "APIWebsitePolicies.h"
 #include "DataReference.h"
 #include "FrameInfoData.h"
 #include "NavigationActionData.h"
@@ -171,6 +172,9 @@ public:
     void setIsLoadedWithNavigationShared(bool value) { m_isLoadedWithNavigationShared = value; }
     bool isLoadedWithNavigationShared() const { return m_isLoadedWithNavigationShared; }
 
+    void setWebsitePolicies(RefPtr<API::WebsitePolicies>&& policies) { m_websitePolicies = WTFMove(policies); }
+    API::WebsitePolicies* websitePolicies() { return m_websitePolicies.get(); }
+
 private:
     explicit Navigation(WebKit::WebNavigationState&);
     Navigation(WebKit::WebNavigationState&, WebKit::WebBackForwardListItem*);
@@ -197,6 +201,7 @@ private:
     WebKit::WebContentMode m_effectiveContentMode { WebKit::WebContentMode::Recommended };
     WebKit::ProcessThrottler::TimedActivity m_clientNavigationActivity;
     bool m_isLoadedWithNavigationShared { false };
+    RefPtr<API::WebsitePolicies> m_websitePolicies;
 };
 
 } // namespace API
