@@ -55,6 +55,11 @@ void pas_assertion_failed(const char* filename, int line, const char* function, 
 }
 #endif /* PAS_ENABLE_TESTING */
 
+void pas_assertion_failed_no_inline(const char* filename, int line, const char* function, const char* expression)
+{
+    pas_panic("%s:%d: %s: assertion %s failed.\n", filename, line, function, expression);
+}
+
 void pas_panic_on_out_of_memory_error()
 {
     __builtin_trap();

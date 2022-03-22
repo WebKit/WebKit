@@ -99,8 +99,8 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
     if (!result->root)
         goto fail;
 
-    PAS_ASSERT(result->root->magic == PAS_ROOT_MAGIC);
-    PAS_ASSERT(result->root->num_heap_configs == pas_heap_config_kind_num_kinds);
+    PAS_ASSERT_WITH_DETAIL(result->root->magic == PAS_ROOT_MAGIC);
+    PAS_ASSERT_WITH_DETAIL(result->root->num_heap_configs == pas_heap_config_kind_num_kinds);
 
     compact_heap_base = reader(
         result, result->root->compact_heap_reservation_base, sizeof(uintptr_t), reader_arg);
@@ -157,13 +157,13 @@ pas_enumerator* pas_enumerator_create(pas_root* remote_root_address,
 
         config = pas_heap_config_kind_get_config(config_kind);
 
-        PAS_ASSERT(config);
+        PAS_ASSERT_WITH_DETAIL(config);
 
         remote_config = reader(result, configs[config->kind], sizeof(pas_heap_config), reader_arg);
         if (!remote_config)
             goto fail;
 
-        PAS_ASSERT(remote_config->kind == config->kind);
+        PAS_ASSERT_WITH_DETAIL(remote_config->kind == config->kind);
 
         if (!config->prepare_to_enumerate)
             continue;
@@ -197,9 +197,9 @@ void* pas_enumerator_read_compact(pas_enumerator* enumerator,
     if ((uintptr_t)remote_address < (uintptr_t)PAS_INTERNAL_MIN_ALIGN)
         return remote_address;
     
-    PAS_ASSERT(remote_address >= (void*)((uintptr_t)enumerator->compact_heap_remote_base +
+    PAS_ASSERT_WITH_DETAIL(remote_address >= (void*)((uintptr_t)enumerator->compact_heap_remote_base +
                                          enumerator->compact_heap_guard_size));
-    PAS_ASSERT(remote_address < (void*)((uintptr_t)enumerator->compact_heap_remote_base +
+    PAS_ASSERT_WITH_DETAIL(remote_address < (void*)((uintptr_t)enumerator->compact_heap_remote_base +
                                         enumerator->compact_heap_size));
     return (void*)(
         (uintptr_t)enumerator->compact_heap_copy_base
@@ -212,14 +212,14 @@ void* pas_enumerator_read(pas_enumerator* enumerator,
 {
     void* compact_heap_end;
 
-    PAS_ASSERT(remote_address);
+    PAS_ASSERT_WITH_DETAIL(remote_address);
 
     compact_heap_end = (void*)(
         (uintptr_t)enumerator->compact_heap_remote_base + enumerator->compact_heap_size);
     
     if (remote_address >= enumerator->compact_heap_remote_base
         && remote_address < compact_heap_end) {
-        PAS_ASSERT((uintptr_t)remote_address + size <= (uintptr_t)compact_heap_end);
+        PAS_ASSERT_WITH_DETAIL((uintptr_t)remote_address + size <= (uintptr_t)compact_heap_end);
         return pas_enumerator_read_compact(enumerator, remote_address);
     }
 
@@ -235,11 +235,11 @@ void pas_enumerator_add_unaccounted_pages(pas_enumerator* enumerator,
 {
     size_t offset;
 
-    PAS_ASSERT(pas_is_aligned((uintptr_t)remote_address, enumerator->root->page_malloc_alignment));
-    PAS_ASSERT(pas_is_aligned(size, enumerator->root->page_malloc_alignment));
+    PAS_ASSERT_WITH_DETAIL(pas_is_aligned((uintptr_t)remote_address, enumerator->root->page_malloc_alignment));
+    PAS_ASSERT_WITH_DETAIL(pas_is_aligned(size, enumerator->root->page_malloc_alignment));
 
     /* Catch bogus sizes, in case we did some overflow or weird subtraction. */
-    PAS_ASSERT((uint64_t)size < ((uint64_t)1 << PAS_ADDRESS_BITS));
+    PAS_ASSERT_WITH_DETAIL((uint64_t)size < ((uint64_t)1 << PAS_ADDRESS_BITS));
 
     for (offset = 0; offset < size; offset += enumerator->root->page_malloc_alignment) {
         pas_ptr_hash_set_set(enumerator->unaccounted_pages,
@@ -253,7 +253,7 @@ bool pas_enumerator_exclude_accounted_page(pas_enumerator* enumerator,
 {
     static const bool verbose = false;
     bool result;
-    PAS_ASSERT(pas_is_aligned((uintptr_t)remote_address, enumerator->root->page_malloc_alignment));
+    PAS_ASSERT_WITH_DETAIL(pas_is_aligned((uintptr_t)remote_address, enumerator->root->page_malloc_alignment));
     result = pas_ptr_hash_set_remove(
         enumerator->unaccounted_pages, remote_address, NULL, &enumerator->allocation_config);
     if (verbose) {
@@ -271,11 +271,11 @@ void pas_enumerator_exclude_accounted_pages(pas_enumerator* enumerator,
 {
     size_t offset;
 
-    PAS_ASSERT(pas_is_aligned((uintptr_t)remote_address, enumerator->root->page_malloc_alignment));
-    PAS_ASSERT(pas_is_aligned(size, enumerator->root->page_malloc_alignment));
+    PAS_ASSERT_WITH_DETAIL(pas_is_aligned((uintptr_t)remote_address, enumerator->root->page_malloc_alignment));
+    PAS_ASSERT_WITH_DETAIL(pas_is_aligned(size, enumerator->root->page_malloc_alignment));
 
     /* Catch bogus sizes, in case we did some overflow or weird subtraction. */
-    PAS_ASSERT((uint64_t)size < ((uint64_t)1 << PAS_ADDRESS_BITS));
+    PAS_ASSERT_WITH_DETAIL((uint64_t)size < ((uint64_t)1 << PAS_ADDRESS_BITS));
 
     for (offset = 0; offset < size; offset += enumerator->root->page_malloc_alignment)
         pas_enumerator_exclude_accounted_page(enumerator, (void*)((uintptr_t)remote_address + offset));
@@ -290,7 +290,7 @@ void pas_enumerator_record(pas_enumerator* enumerator,
         return;
 
     /* Catch bogus sizes, in case we did some overflow or weird subtraction. */
-    PAS_ASSERT((uint64_t)size < ((uint64_t)1 << PAS_ADDRESS_BITS));
+    PAS_ASSERT_WITH_DETAIL((uint64_t)size < ((uint64_t)1 << PAS_ADDRESS_BITS));
     
     switch (kind) {
     case pas_enumerator_meta_record:
@@ -328,9 +328,9 @@ void pas_enumerator_record_page_payload_and_meta(pas_enumerator* enumerator,
                                                  uintptr_t payload_begin,
                                                  uintptr_t payload_end)
 {
-    PAS_ASSERT(payload_begin < page_size);
-    PAS_ASSERT(payload_end <= page_size);
-    PAS_ASSERT(payload_begin < payload_end);
+    PAS_ASSERT_WITH_DETAIL(payload_begin < page_size);
+    PAS_ASSERT_WITH_DETAIL(payload_end <= page_size);
+    PAS_ASSERT_WITH_DETAIL(payload_begin < payload_end);
 
     /* We assume, correctly for now, that non-payload areas of the page are always committed if the page
        is committed. */
@@ -345,7 +345,7 @@ void pas_enumerator_record_page_payload_and_meta(pas_enumerator* enumerator,
 
     if (enumerator->record_payload) {
         if (page_size == granule_size) {
-            PAS_ASSERT(!use_counts);
+            PAS_ASSERT_WITH_DETAIL(!use_counts);
             pas_enumerator_record(enumerator,
                                   (void*)(page_boundary + payload_begin),
                                   payload_end - payload_begin,
@@ -354,8 +354,8 @@ void pas_enumerator_record_page_payload_and_meta(pas_enumerator* enumerator,
             uintptr_t granule_index;
             pas_range span;
 
-            PAS_ASSERT(page_size > granule_size);
-            PAS_ASSERT(use_counts);
+            PAS_ASSERT_WITH_DETAIL(page_size > granule_size);
+            PAS_ASSERT_WITH_DETAIL(use_counts);
 
             span = pas_range_create(payload_begin, payload_begin);
             

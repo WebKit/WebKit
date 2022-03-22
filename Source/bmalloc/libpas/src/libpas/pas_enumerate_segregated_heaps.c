@@ -86,7 +86,7 @@ static inline local_allocator_map_entry local_allocator_map_entry_create_deleted
 static inline bool local_allocator_map_entry_is_empty_or_deleted(local_allocator_map_entry entry)
 {
     if (entry.page_boundary <= 1) {
-        PAS_ASSERT(!entry.head);
+        PAS_ASSERT_WITH_DETAIL(!entry.head);
         return true;
     }
     return false;
@@ -95,7 +95,7 @@ static inline bool local_allocator_map_entry_is_empty_or_deleted(local_allocator
 static inline bool local_allocator_map_entry_is_empty(local_allocator_map_entry entry)
 {
     if (!entry.page_boundary) {
-        PAS_ASSERT(!entry.head);
+        PAS_ASSERT_WITH_DETAIL(!entry.head);
         return true;
     }
     return false;
@@ -104,7 +104,7 @@ static inline bool local_allocator_map_entry_is_empty(local_allocator_map_entry 
 static inline bool local_allocator_map_entry_is_deleted(local_allocator_map_entry entry)
 {
     if (entry.page_boundary == 1) {
-        PAS_ASSERT(!entry.head);
+        PAS_ASSERT_WITH_DETAIL(!entry.head);
         return true;
     }
     return false;
@@ -197,7 +197,7 @@ static bool collect_shared_page_directories_heap_callback(
     context = arg;
 
     config = pas_heap_config_kind_get_config(heap->config_kind);
-    PAS_ASSERT(config);
+    PAS_ASSERT_WITH_DETAIL(config);
 
     return config->for_each_shared_page_directory_remote(
         enumerator, &heap->segregated_heap,
@@ -342,7 +342,7 @@ static bool enumerate_exclusive_view(pas_enumerator* enumerator,
 
     page = (pas_segregated_page*)page_config->base.page_header_for_boundary_remote(
         enumerator, (void*)page_boundary);
-    PAS_ASSERT(page);
+    PAS_ASSERT_WITH_DETAIL(page);
 
     page = pas_enumerator_read(
         enumerator, page, pas_segregated_page_header_size(*page_config, pas_segregated_page_exclusive_role));
@@ -354,9 +354,9 @@ static bool enumerate_exclusive_view(pas_enumerator* enumerator,
         allocator = NULL;
     else {
         /* Exclusives can only have one allocator allocating in them at a time. */
-        PAS_ASSERT(!allocator_node->next);
+        PAS_ASSERT_WITH_DETAIL(!allocator_node->next);
         allocator = allocator_node->allocator;
-        PAS_ASSERT(allocator);
+        PAS_ASSERT_WITH_DETAIL(allocator);
     }
 
     if (verbose)
@@ -403,7 +403,7 @@ static bool enumerate_shared_view(pas_enumerator* enumerator,
         if (view->is_owned) {
             page = (pas_segregated_page*)page_config->base.page_header_for_boundary_remote(
                 enumerator, (void*)page_boundary);
-            PAS_ASSERT(page);
+            PAS_ASSERT_WITH_DETAIL(page);
             
             page = pas_enumerator_read(
                 enumerator, page,
@@ -417,7 +417,7 @@ static bool enumerate_shared_view(pas_enumerator* enumerator,
     }
 
     if (!page_boundary) {
-        PAS_ASSERT(!view->is_owned);
+        PAS_ASSERT_WITH_DETAIL(!view->is_owned);
         return true;
     }
 
@@ -431,7 +431,7 @@ static bool enumerate_shared_view(pas_enumerator* enumerator,
         uintptr_t payload_begin;
         uintptr_t payload_end;
         
-        PAS_ASSERT(page);
+        PAS_ASSERT_WITH_DETAIL(page);
         
         payload_begin = pas_round_up_to_power_of_2(page_config->shared_payload_offset,
                                                    pas_segregated_page_config_min_align(*page_config));
@@ -471,7 +471,7 @@ static bool enumerate_partial_view(pas_enumerator* enumerator,
     page_config = pas_segregated_page_config_kind_get_config(directory->base.page_config_kind);
 
     shared_view = pas_compact_segregated_shared_view_ptr_load_remote(enumerator, &view->shared_view);
-    PAS_ASSERT(shared_view);
+    PAS_ASSERT_WITH_DETAIL(shared_view);
     if (!shared_view->is_owned)
         return true;
 
@@ -483,7 +483,7 @@ static bool enumerate_partial_view(pas_enumerator* enumerator,
 
     page = (pas_segregated_page*)page_config->base.page_header_for_boundary_remote(
         enumerator, (void*)page_boundary);
-    PAS_ASSERT(page);
+    PAS_ASSERT_WITH_DETAIL(page);
     
     page = pas_enumerator_read(
         enumerator, page, pas_segregated_page_header_size(*page_config, pas_segregated_page_shared_role));
@@ -541,7 +541,7 @@ static bool shared_page_directory_view_callback(pas_enumerator* enumerator,
 
     data = arg;
 
-    PAS_ASSERT(pas_segregated_view_get_kind(view) == pas_segregated_shared_view_kind);
+    PAS_ASSERT_WITH_DETAIL(pas_segregated_view_get_kind(view) == pas_segregated_shared_view_kind);
 
     return enumerate_shared_view(
         enumerator, pas_segregated_view_get_ptr(view), data->directory, data->context);
@@ -566,7 +566,7 @@ static bool size_directory_view_callback(pas_enumerator* enumerator,
     default:
         pas_log("Invalid view kind in size directory: %s\n",
                 pas_segregated_view_kind_get_string(pas_segregated_view_get_kind(view)));
-        PAS_ASSERT(!"Should not be reached");
+        PAS_ASSERT_WITH_DETAIL(!"Should not be reached");
         return true;
     }
 }
@@ -590,9 +590,7 @@ static bool enumerate_segregated_heap_callback(pas_enumerator* enumerator,
     return true;
 }
 
-static void consider_allocator(pas_enumerator* enumerator,
-                               enumeration_context* context,
-                               pas_local_allocator* allocator)
+static PAS_NEVER_INLINE void consider_allocator(pas_enumerator* enumerator, enumeration_context* context, pas_local_allocator* allocator)
 {
     local_allocator_map_add_result add_result;
     pas_segregated_page_config* page_config;
@@ -605,7 +603,7 @@ static void consider_allocator(pas_enumerator* enumerator,
     if (verbose)
         pas_log("Have allocator %p in page_ish = %p\n", allocator, (void*)allocator->page_ish);
     
-    PAS_ASSERT(!pas_local_allocator_config_kind_is_bitfit(allocator->config_kind));
+    PAS_ASSERT_WITH_DETAIL(!pas_local_allocator_config_kind_is_bitfit(allocator->config_kind));
     
     page_config = pas_segregated_page_config_kind_get_config(
         pas_local_allocator_config_kind_get_segregated_page_config_kind(allocator->config_kind));
@@ -732,7 +730,7 @@ bool pas_enumerate_segregated_heaps(pas_enumerator* enumerator)
                 } else {
                     pas_segregated_size_directory* directory;
                     
-                    PAS_ASSERT(pas_is_wrapped_local_view_cache_node(layout_node));
+                    PAS_ASSERT_WITH_DETAIL(pas_is_wrapped_local_view_cache_node(layout_node));
 
                     directory = pas_unwrap_local_view_cache_node(layout_node);
 

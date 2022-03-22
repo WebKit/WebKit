@@ -38,7 +38,7 @@ static bool range_list_iterate_add_unaccounted_callback(pas_enumerator* enumerat
                                                         pas_range range,
                                                         void* arg)
 {
-    PAS_ASSERT(!arg);
+    PAS_ASSERT_WITH_DETAIL(!arg);
     pas_enumerator_add_unaccounted_pages(enumerator, (void*)range.begin, pas_range_size(range));
     return true;
 }
@@ -47,7 +47,7 @@ static bool range_list_iterate_exclude_accounted_callback(pas_enumerator* enumer
                                                           pas_range range,
                                                           void* arg)
 {
-    PAS_ASSERT(!arg);
+    PAS_ASSERT_WITH_DETAIL(!arg);
     pas_enumerator_exclude_accounted_pages(enumerator, (void*)range.begin, pas_range_size(range));
     return true;
 }
