@@ -1,3 +1,81 @@
+2022-03-22  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291629. rdar://problem/89495774
+
+    YouTube.com - Clicking anywhere on the progress bar pauses the video
+    https://bugs.webkit.org/show_bug.cgi?id=237750
+    <rdar://problem/90364846>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: media/media-source/media-source-unexpected-pause.html
+    
+    When calling play() or pause() on a MediaPlayerPrivateMediaSourceAVFObjC, the object will
+    respond by calling m_player->playbackStateChanged(), which will in turn call
+    HTMLMediaElement::mediaPlayerPlaybackStateChanged() with the new state. However, HTMLMediaElement
+    expects this to be called only for unanticipated state changes, not expected state changes. And
+    when that method is called and the reported state does not match the element's own expected state,
+    the element calls its own play() or pause() function to update its own state to match the player's.
+    And because MediaPlayerPrivateMediaSourceAVFObjC calls this method on the next run loop, there is
+    an opportunity for those states to get out of sync, which happens when YouTube responds to a tap
+    in its timeline.
+    
+    Remove the unnecessary "call on next run loop" behavior of MediaPlayerPrivateMediaSourceAVFObjC::
+    play() and ::pause(). Also, remove the unnecessary notification that the play state has changed. In
+    the future, this can be accomplished by adding a callback parameter to MediaPlayer::play() rather than
+    relying on a state change notification.
+    
+    * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::play):
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal):
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pause):
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal):
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playAtHostTime):
+    (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pauseAtHostTime):
+    
+    LayoutTests:
+    
+    * media/media-source/media-source-unexpected-pause-expected.txt: Added.
+    * media/media-source/media-source-unexpected-pause.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291629 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-22  Jer Noble  <jer.noble@apple.com>
+
+            YouTube.com - Clicking anywhere on the progress bar pauses the video
+            https://bugs.webkit.org/show_bug.cgi?id=237750
+            <rdar://problem/90364846>
+
+            Reviewed by Eric Carlson.
+
+            Test: media/media-source/media-source-unexpected-pause.html
+
+            When calling play() or pause() on a MediaPlayerPrivateMediaSourceAVFObjC, the object will
+            respond by calling m_player->playbackStateChanged(), which will in turn call
+            HTMLMediaElement::mediaPlayerPlaybackStateChanged() with the new state. However, HTMLMediaElement
+            expects this to be called only for unanticipated state changes, not expected state changes. And
+            when that method is called and the reported state does not match the element's own expected state,
+            the element calls its own play() or pause() function to update its own state to match the player's.
+            And because MediaPlayerPrivateMediaSourceAVFObjC calls this method on the next run loop, there is
+            an opportunity for those states to get out of sync, which happens when YouTube responds to a tap
+            in its timeline.
+
+            Remove the unnecessary "call on next run loop" behavior of MediaPlayerPrivateMediaSourceAVFObjC::
+            play() and ::pause(). Also, remove the unnecessary notification that the play state has changed. In
+            the future, this can be accomplished by adding a callback parameter to MediaPlayer::play() rather than
+            relying on a state change notification.
+
+            * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::play):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playInternal):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pause):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::playAtHostTime):
+            (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::pauseAtHostTime):
+
 2022-03-21  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r291564. rdar://problem/90463946
