@@ -1,5 +1,44 @@
 2022-03-21  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r290615. rdar://problem/87919197
+
+    Handle widow relayout differently
+    https://bugs.webkit.org/show_bug.cgi?id=235519
+    
+    Patch by Rob Buis <rbuis@igalia.com> on 2022-02-28
+    Reviewed by Alan Bujtas.
+    
+    Source/WebCore:
+    
+    Handle widow relayout differently to prevent function call recursion.
+    
+    Test: fast/multicol/widow-many-relayouts-crash.html
+    
+    * rendering/RenderBlockFlow.cpp:
+    (WebCore::RenderBlockFlow::layoutBlock):
+    (WebCore::RenderBlockFlow::relayoutToAvoidWidows): Deleted.
+    * rendering/RenderBlockFlow.h:
+    (WebCore::RenderBlockFlow::didBreakAtLineToAvoidWidow const):
+    
+    LayoutTests:
+    
+    * fast/multicol/widow-many-relayouts-crash-expected.txt: Added.
+    * fast/multicol/widow-many-relayouts-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290615 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-28  Rob Buis  <rbuis@igalia.com>
+
+            Handle widow relayout differently
+            https://bugs.webkit.org/show_bug.cgi?id=235519
+
+            Reviewed by Alan Bujtas.
+
+            * fast/multicol/widow-many-relayouts-crash-expected.txt: Added.
+            * fast/multicol/widow-many-relayouts-crash.html: Added.
+
+2022-03-21  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r290519. rdar://problem/89148022
 
     Re-add YouTubePluginReplacement, removed in r285252
