@@ -505,6 +505,7 @@ void MediaPlayerPrivateAVFoundation::updateStates()
 
     MediaPlayer::NetworkState newNetworkState = m_networkState;
     MediaPlayer::ReadyState newReadyState = m_readyState;
+    bool firstVideoFrameBecomeAvailable = false;
 
     if (m_loadingMetadata)
         newNetworkState = MediaPlayer::NetworkState::Loading;
@@ -533,7 +534,14 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                 newNetworkState = MediaPlayer::NetworkState::FormatError;
             }
         }
-        
+
+        if (!hasAvailableVideoFrame())
+            m_haveReportedFirstVideoFrame = false;
+        else if (!m_haveReportedFirstVideoFrame && m_cachedHasVideo) {
+            m_haveReportedFirstVideoFrame = true;
+            firstVideoFrameBecomeAvailable = true;
+        }
+
         if (assetStatus >= MediaPlayerAVAssetStatusLoaded && itemStatus > MediaPlayerAVPlayerItemStatusUnknown) {
             switch (itemStatus) {
             case MediaPlayerAVPlayerItemStatusDoesNotExist:
@@ -544,13 +552,13 @@ void MediaPlayerPrivateAVFoundation::updateStates()
             case MediaPlayerAVPlayerItemStatusPlaybackLikelyToKeepUp:
             case MediaPlayerAVPlayerItemStatusPlaybackBufferFull:
                 // If the status becomes PlaybackBufferFull, loading stops and the status will not
-                // progress to LikelyToKeepUp. Set the readyState to  HAVE_ENOUGH_DATA, on the
+                // progress to LikelyToKeepUp. Set the readyState to HAVE_ENOUGH_DATA, on the
                 // presumption that if the playback buffer is full, playback will probably not stall.
                 newReadyState = MediaPlayer::ReadyState::HaveEnoughData;
                 break;
 
             case MediaPlayerAVPlayerItemStatusReadyToPlay:
-                if (m_readyState != MediaPlayer::ReadyState::HaveEnoughData && maxTimeLoaded() > currentMediaTime())
+                if (m_readyState != MediaPlayer::ReadyState::HaveEnoughData && (!m_cachedHasVideo || m_haveReportedFirstVideoFrame) && maxTimeLoaded() > currentMediaTime())
                     newReadyState = MediaPlayer::ReadyState::HaveFutureData;
                 break;
 
@@ -571,13 +579,11 @@ void MediaPlayerPrivateAVFoundation::updateStates()
     if (isReadyForVideoSetup() && currentRenderingMode() != preferredRenderingMode())
         setUpVideoRendering();
 
-    if (!m_haveReportedFirstVideoFrame && m_cachedHasVideo && hasAvailableVideoFrame()) {
+    if (firstVideoFrameBecomeAvailable) {
         if (m_readyState < MediaPlayer::ReadyState::HaveCurrentData)
             newReadyState = MediaPlayer::ReadyState::HaveCurrentData;
-        m_haveReportedFirstVideoFrame = true;
         m_player->firstVideoFrameAvailable();
-    } else if (!hasAvailableVideoFrame())
-        m_haveReportedFirstVideoFrame = false;
+    }
 
     if (m_networkState != newNetworkState)
         ALWAYS_LOG(LOGIDENTIFIER, "entered with networkState ", m_networkState, ", exiting with ", newNetworkState);
