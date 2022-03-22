@@ -67,7 +67,7 @@ public:
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
     std::optional<NetworkActivityTracker> networkActivityTracker;
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
-    bool mainResourceWasPrivateRelayed { false };
+    bool hadMainFrameMainResourcePrivateRelayed { false };
 };
 
 } // namespace WebKit

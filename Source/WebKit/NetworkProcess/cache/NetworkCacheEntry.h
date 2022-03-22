@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkCacheEntry_h
-#define NetworkCacheEntry_h
+#pragma once
 
 #include "NetworkCacheStorage.h"
+#include "PrivateRelayed.h"
 #include "ShareableResource.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -38,13 +38,12 @@ namespace WebCore {
 class FragmentedSharedBuffer;
 }
 
-namespace WebKit {
-namespace NetworkCache {
+namespace WebKit::NetworkCache {
 
 class Entry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Entry(const Key&, const WebCore::ResourceResponse&, RefPtr<WebCore::FragmentedSharedBuffer>&&, const Vector<std::pair<String, String>>& varyingRequestHeaders);
+    Entry(const Key&, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&, const Vector<std::pair<String, String>>& varyingRequestHeaders);
     Entry(const Key&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest, const Vector<std::pair<String, String>>& varyingRequestHeaders);
     explicit Entry(const Storage::Record&);
     Entry(const Entry&);
@@ -52,6 +51,7 @@ public:
     Storage::Record encodeAsStorageRecord() const;
     static std::unique_ptr<Entry> decodeStorageRecord(const Storage::Record&);
 
+    PrivateRelayed privateRelayed() const { return m_privateRelayed; }
     const Key& key() const { return m_key; }
     WallTime timeStamp() const { return m_timeStamp; }
     const WebCore::ResourceResponse& response() const { return m_response; }
@@ -96,9 +96,7 @@ private:
     Storage::Record m_sourceStorageRecord { };
     
     std::optional<Seconds> m_maxAgeCap;
+    PrivateRelayed m_privateRelayed { PrivateRelayed::No };
 };
 
 }
-}
-
-#endif

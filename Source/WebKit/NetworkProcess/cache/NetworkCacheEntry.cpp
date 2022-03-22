@@ -37,12 +37,13 @@
 namespace WebKit {
 namespace NetworkCache {
 
-Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer, const Vector<std::pair<String, String>>& varyingRequestHeaders)
+Entry::Entry(const Key& key, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& buffer, const Vector<std::pair<String, String>>& varyingRequestHeaders)
     : m_key(key)
     , m_timeStamp(WallTime::now())
     , m_response(response)
     , m_varyingRequestHeaders(varyingRequestHeaders)
     , m_buffer(WTFMove(buffer))
+    , m_privateRelayed(privateRelayed)
 {
     ASSERT(m_key.type() == "Resource");
 }
@@ -90,8 +91,9 @@ Storage::Record Entry::encodeAsStorageRecord() const
     if (hasVaryingRequestHeaders)
         encoder << m_varyingRequestHeaders;
 
-    bool isRedirect = !!m_redirectRequest;
-    encoder << isRedirect;
+    uint8_t isRedirect = !!m_redirectRequest;
+    uint8_t privateRelayed = m_privateRelayed == PrivateRelayed::Yes;
+    encoder << static_cast<uint8_t>((isRedirect << 0) | (privateRelayed << 1));
     if (isRedirect)
         m_redirectRequest->encodeWithoutPlatformData(encoder);
 
@@ -133,12 +135,15 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
         entry->m_varyingRequestHeaders = WTFMove(*varyingRequestHeaders);
     }
 
-    std::optional<bool> isRedirect;
-    decoder >> isRedirect;
-    if (!isRedirect)
+    std::optional<uint8_t> isRedirectAndPrivateRelayed;
+    decoder >> isRedirectAndPrivateRelayed;
+    if (!isRedirectAndPrivateRelayed)
         return nullptr;
 
-    if (*isRedirect) {
+    bool isRedirect = *isRedirectAndPrivateRelayed & 0x1;
+    entry->m_privateRelayed = *isRedirectAndPrivateRelayed & 0x2 ? PrivateRelayed::Yes : PrivateRelayed::No;
+    
+    if (isRedirect) {
         entry->m_redirectRequest.emplace();
         if (!entry->m_redirectRequest->decodeWithoutPlatformData(decoder))
             return nullptr;

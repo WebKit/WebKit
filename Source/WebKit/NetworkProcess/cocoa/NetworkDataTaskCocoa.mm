@@ -345,7 +345,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #endif
 
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
-    if (parameters.mainResourceWasPrivateRelayed)
+    if (parameters.hadMainFrameMainResourcePrivateRelayed)
         [mutableRequest _setPrivacyProxyFailClosed:YES];
 #endif
     

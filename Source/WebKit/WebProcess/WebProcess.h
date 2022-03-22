@@ -405,6 +405,9 @@ public:
 
     bool isCaptivePortalModeEnabled() const { return m_isCaptivePortalModeEnabled; }
 
+    void setHadMainFrameMainResourcePrivateRelayed() { m_hadMainFrameMainResourcePrivateRelayed = true; }
+    bool hadMainFrameMainResourcePrivateRelayed() const { return m_hadMainFrameMainResourcePrivateRelayed; }
+
 private:
     WebProcess();
     ~WebProcess();
@@ -782,6 +785,7 @@ private:
 #if USE(ATSPI)
     std::unique_ptr<WebCore::AccessibilityAtspi> m_accessibility;
 #endif
+    bool m_hadMainFrameMainResourcePrivateRelayed { false };
 };
 
 } // namespace WebKit
