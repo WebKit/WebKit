@@ -439,7 +439,7 @@ private:
     Ref<NetworkSchemeRegistry> m_schemeRegistry;
         
     HashSet<URL> m_blobURLs;
-    HashSet<URL> m_blobURLHandles;
+    HashCountedSet<URL> m_blobURLHandles;
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
 #endif

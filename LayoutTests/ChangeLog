@@ -1,3 +1,16 @@
+2022-03-22  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (iOS 15.1 / r280824) QuickLook - model not loading when passing extra parameters
+        https://bugs.webkit.org/show_bug.cgi?id=236069
+        <rdar://problem/88461772>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * fast/files/blob-with-fragment-as-frame-url-expected.txt: Added.
+        * fast/files/blob-with-fragment-as-frame-url.html: Added.
+
 2022-03-22  Matteo Flores  <matteo_flores@apple.com>
 
         [ iOS EWS ] fast/text/text-shadow-ink-overflow-missing.html is a flaky image failure

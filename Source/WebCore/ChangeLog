@@ -1,3 +1,29 @@
+2022-03-22  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (iOS 15.1 / r280824) QuickLook - model not loading when passing extra parameters
+        https://bugs.webkit.org/show_bug.cgi?id=236069
+        <rdar://problem/88461772>
+
+        Reviewed by Darin Adler.
+
+        To extend the lifetime of Blob objects while loading/downloading is pending, we rely to
+        BlobURLHandle objects, which tell the NetworkProcess that we still need this blob data,
+        even if the corresponding Blob object gets GC'd by JS. The issue here is that the load
+        was not using the vanilla blob URL but was intead appending a fragment to the URL. As
+        a result, BlobRegistryImpl::registerBlobURLHandle() would fail to look up the
+        corresponding blob data and would fail to extend its lifetime.
+
+        To address the issue, BlobRegistryImpl::registerBlobURLHandle() / unregisterBlobURLHandle()
+        now strip fragments from the blob URL, similarly to what was already done inside
+        BlobRegistryImpl::getBlobDataFromURL().
+
+        Test: fast/files/blob-with-fragment-as-frame-url.html
+
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::blobURLWithoutFragment):
+        (WebCore::BlobRegistryImpl::registerBlobURLHandle):
+        (WebCore::BlobRegistryImpl::unregisterBlobURLHandle):
+
 2022-03-22  Per Arne Vollan  <pvollan@apple.com>
 
         Enable content filtering in the Network process

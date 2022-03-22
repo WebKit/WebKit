@@ -1,3 +1,27 @@
+2022-03-22  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (iOS 15.1 / r280824) QuickLook - model not loading when passing extra parameters
+        https://bugs.webkit.org/show_bug.cgi?id=236069
+        <rdar://problem/88461772>
+
+        Reviewed by Darin Adler.
+
+        Fix theoretical blob data leak. A WebContent process could create several BlobURLHandles for
+        the same blob URL. This would result in several calls to NetworkConnectionToWebProcess::registerBlobURLHandle()
+        for the same URL and several calls to to BlobRegistryImpl::registerBlobURLHandle() for the
+        same URL as well. BlobRegistryImpl is using a HashCountedSet for m_blobReferences in order
+        to deal with this fact. However, NetworkConnectionToWebProcess was using a simple HashSet
+        for m_blobURLHandles. As a result, if the WebContent process would exit and didClose()
+        would get called, the NetworkConnectionToWebProcess may call BlobRegistryImpl::unregisterBlobURLHandle()
+        only once even though the WebContent process had several handles for this URL, which would
+        not fully remove the URL from BlobRegistryImpl's HashCountedSet. To address the issue,
+        NetworkConnectionToWebProcess::m_blobURLHandles is now a HashCountedSet too and we call
+        BlobRegistryImpl::unregisterBlobURLHandle() as many times as needed in didClose().
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+
 2022-03-22  Youenn Fablet  <youenn@apple.com>
 
         LibWebRTCCodecsProxy.mm and SharedVideoFrame.cpp do not need to be built as part of WebContent executable

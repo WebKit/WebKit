@@ -436,8 +436,10 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
         networkSession->broadcastChannelRegistry().removeConnection(connection);
         for (auto& url : m_blobURLs)
             networkSession->blobRegistry().unregisterBlobURL(url);
-        for (auto& url : m_blobURLHandles)
-            networkSession->blobRegistry().unregisterBlobURLHandle(url);
+        for (auto& [url, count] : m_blobURLHandles) {
+            for (unsigned i = 0; i < count; ++i)
+                networkSession->blobRegistry().unregisterBlobURLHandle(url);
+        }
     }
 
     // All trackers of resources that were in the middle of being loaded were

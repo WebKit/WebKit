@@ -50,6 +50,11 @@
 
 namespace WebCore {
 
+static String blobURLWithoutFragment(const URL& url)
+{
+    return url.hasFragmentIdentifier() ? url.stringWithoutFragmentIdentifier().toString() : url.string();
+}
+
 BlobRegistryImpl::~BlobRegistryImpl() = default;
 
 static Ref<ResourceHandle> createBlobResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
@@ -375,14 +380,16 @@ void BlobRegistryImpl::addBlobData(const String& url, RefPtr<BlobData>&& blobDat
 
 void BlobRegistryImpl::registerBlobURLHandle(const URL& url)
 {
-    if (m_blobs.contains(url.string()))
-        m_blobReferences.add(url.string());
+    auto urlKey = blobURLWithoutFragment(url);
+    if (m_blobs.contains(urlKey))
+        m_blobReferences.add(urlKey);
 }
 
 void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url)
 {
-    if (m_blobReferences.remove(url.string()))
-        m_blobs.remove(url.string());
+    auto urlKey = blobURLWithoutFragment(url);
+    if (m_blobReferences.remove(urlKey))
+        m_blobs.remove(urlKey);
 }
 
 } // namespace WebCore
