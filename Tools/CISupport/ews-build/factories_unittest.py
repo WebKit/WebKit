@@ -637,7 +637,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'show-identifier',
             'verify-github-integrity',
             'update-working-directory',
-            'checkout-pull-request'
+            'checkout-pull-request',
+            'validate-squashed',
         ],
     }
 

@@ -4582,3 +4582,44 @@ class VerifyGitHubIntegrity(shell.ShellCommand):
             send_email_to_github_admin(email_subject, email_text)
         except Exception as e:
             print('Error in sending email for github issue: {}'.format(e))
+
+
+class ValidateSquashed(shell.ShellCommand):
+    name = 'validate-squashed'
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(ValidateSquashed, self).__init__(logEnviron=False, **kwargs)
+
+    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        head_ref = self.getProperty('github.head.ref', DEFAULT_BRANCH)
+        self.command = ['git', 'log', '--oneline', head_ref, f'^{base_ref}', '--max-count=2']
+
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        return shell.ShellCommand.start(self)
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'Patches are always squashed'}
+        elif self.results == SUCCESS:
+            return {'step': 'Verified branch is squashed'}
+        return {'step': 'Can only land squashed branches'}
+
+    def evaluateCommand(self, cmd):
+        rc = shell.ShellCommand.evaluateCommand(self, cmd)
+        if rc != SUCCESS:
+            return rc
+
+        log_text = self.log_observer.getStdout()
+        if len(log_text.splitlines()) == 1:
+            return SUCCESS
+        return FAILURE
+
+    def doStepIf(self, step):
+        return self.getProperty('github.number')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)

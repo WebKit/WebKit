@@ -33,7 +33,7 @@ from steps import (ApplyPatch, ApplyWatchList, CheckOutPullRequest, CheckOutSour
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory,
                    ValidateChange, ValidateChangeLogAndReviewer, ValidateCommitterAndReviewer, WaitForCrashCollection,
-                   InstallBuiltProduct, VerifyGitHubIntegrity)
+                   InstallBuiltProduct, VerifyGitHubIntegrity, ValidateSquashed)
 
 
 class Factory(factory.BuildFactory):
@@ -330,3 +330,4 @@ class MergeQueueFactory(factory.BuildFactory):
         self.addStep(VerifyGitHubIntegrity())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(CheckOutPullRequest())
+        self.addStep(ValidateSquashed())

@@ -1,3 +1,25 @@
+2022-03-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Add ValidateSquashed
+        https://bugs.webkit.org/show_bug.cgi?id=238172
+        <rdar://problem/90602594>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory.__init__): Add ValidateSquashed.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Ditto.
+        * CISupport/ews-build/steps.py:
+        (VerifyGitHubIntegrity.send_email_for_github_issue):
+        (ValidateSquashed): Ensure that a pull request only has a single commit.
+        (ValidateSquashed.__init__): Do not log environment variables.
+        (ValidateSquashed.start): Log commits between the HEAD branch and base branch.
+        (ValidateSquashed.getResultSummary):
+        (ValidateSquashed.evaluateCommand): Check number of commits between HEAD and base branch.
+        (ValidateSquashed.doStepIf): Only run step for pull requests.
+        (ValidateSquashed.hideStepIf): Hide step if we aren't running it.
+
 2022-03-22  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Pass along timeout to ASA and ignore timeout for conditional mediation requests
