@@ -1,3 +1,57 @@
+2022-03-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TextureMapper] Split GraphicsContextGLTextureMapper into two classes
+        https://bugs.webkit.org/show_bug.cgi?id=238141
+
+        Reviewed by Alejandro G. Castro.
+
+        Split GraphicsContextGLTextureMapper into two distinct classes. The
+        current class unconditionally inherits from GraphicsContextGLOpenGL, and
+        the new GraphicsContextGLTextureMapperANGLE inherits from
+        GraphicsContextGLANGLE. This reduces complexity and avoids the
+        implementation to span across two separate files. The two classes can
+        also be developed independently, with more changes and cleanups already
+        planned for the ANGLE variant.
+
+        No new tests due to no actual change in behavior.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp:
+        (WebCore::createWebProcessGraphicsContextGL):
+        (WebCore::GraphicsContextGLTextureMapper::create):
+        (WebCore::GraphicsContextGLTextureMapper::GraphicsContextGLTextureMapper):
+        (WebCore::GraphicsContextGLTextureMapper::layerContentsDisplayDelegate):
+        (WebCore::GraphicsContextGLTextureMapper::copyTextureFromMedia):
+        (WebCore::GraphicsContextGLTextureMapper::paintCompositedResultsToVideoFrame):
+        (WebCore::GraphicsContextGLTextureMapper::platformInitialize):
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::~GraphicsContextGLANGLE):
+        (WebCore::GraphicsContextGLANGLE::platformDisplay const):
+        (WebCore::GraphicsContextGLANGLE::platformConfig const):
+        (WebCore::GraphicsContextGLANGLE::makeContextCurrent):
+        (WebCore::GraphicsContextGLANGLE::checkGPUStatus):
+        (WebCore::GraphicsContextGLANGLE::platformReleaseThreadResources):
+        (WebCore::GraphicsContextGLANGLE::readCompositedResults):
+        (WebCore::createWebProcessGraphicsContextGL):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::create):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::GraphicsContextGLTextureMapperANGLE):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::~GraphicsContextGLTextureMapperANGLE):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::layerContentsDisplayDelegate):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::copyTextureFromMedia):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::paintCompositedResultsToVideoFrame):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::platformInitializeContext):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::platformInitialize):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::setContextVisibility):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::reshapeDisplayBufferBacking):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::prepareForDisplay):
+        (WebCore::GraphicsContextGLTextureMapper::platformInitializeContext): Deleted.
+        (WebCore::GraphicsContextGLTextureMapper::platformInitialize): Deleted.
+        (WebCore::GraphicsContextGLTextureMapper::setContextVisibility): Deleted.
+        (WebCore::GraphicsContextGLTextureMapper::prepareForDisplay): Deleted.
+        (WebCore::GraphicsContextGLTextureMapper::reshapeDisplayBufferBacking): Deleted.
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h: Copied from Source/WebCore/platform/graphics/texmap/GraphicsContextGLTextureMapper.h.
+
 2022-03-22  Ziran Sun  <zsun@igalia.com>
 
         [selection] Change form's selection attribute to unsigned long
