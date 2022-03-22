@@ -132,7 +132,7 @@ void Adapter::requestDevice(const WGPUDeviceDescriptor& descriptor, CompletionHa
 
 void wgpuAdapterRelease(WGPUAdapter adapter)
 {
-    delete adapter;
+    WebGPU::fromAPI(adapter).deref();
 }
 
 size_t wgpuAdapterEnumerateFeatures(WGPUAdapter adapter, WGPUFeatureName* features)
@@ -158,21 +158,13 @@ bool wgpuAdapterHasFeature(WGPUAdapter adapter, WGPUFeatureName feature)
 void wgpuAdapterRequestDevice(WGPUAdapter adapter, const WGPUDeviceDescriptor* descriptor, WGPURequestDeviceCallback callback, void* userdata)
 {
     WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback, userdata](WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, String&& message) {
-        if (device) {
-            auto& queue = device->getQueue();
-            callback(status, new WGPUDeviceImpl { device.releaseNonNull(), { queue } }, message.utf8().data(), userdata);
-        } else
-            callback(status, nullptr, message.utf8().data(), userdata);
+        callback(status, WebGPU::releaseToAPI(WTFMove(device)), message.utf8().data(), userdata);
     });
 }
 
 void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDeviceDescriptor const * descriptor, WGPURequestDeviceBlockCallback callback)
 {
     WebGPU::fromAPI(adapter).requestDevice(*descriptor, [callback = WTFMove(callback)](WGPURequestDeviceStatus status, RefPtr<WebGPU::Device>&& device, String&& message) {
-        if (device) {
-            auto& queue = device->getQueue();
-            callback(status, new WGPUDeviceImpl { device.releaseNonNull(), { queue } }, message.utf8().data());
-        } else
-            callback(status, nullptr, message.utf8().data());
+        callback(status, WebGPU::releaseToAPI(WTFMove(device)), message.utf8().data());
     });
 }

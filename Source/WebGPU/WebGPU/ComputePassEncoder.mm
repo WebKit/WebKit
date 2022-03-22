@@ -144,7 +144,7 @@ void ComputePassEncoder::setLabel(String&& label)
 
 void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder)
 {
-    delete computePassEncoder;
+    WebGPU::fromAPI(computePassEncoder).deref();
 }
 
 void wgpuComputePassEncoderBeginPipelineStatisticsQuery(WGPUComputePassEncoder computePassEncoder, WGPUQuerySet querySet, uint32_t queryIndex)

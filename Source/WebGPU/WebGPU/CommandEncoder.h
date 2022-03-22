@@ -30,6 +30,9 @@
 #import <wtf/Ref.h>
 #import <wtf/RefPtr.h>
 
+struct WGPUCommandEncoderImpl {
+};
+
 namespace WebGPU {
 
 class Buffer;
@@ -39,7 +42,7 @@ class Device;
 class QuerySet;
 class RenderPassEncoder;
 
-class CommandEncoder : public RefCounted<CommandEncoder>, public CommandsMixin {
+class CommandEncoder : public WGPUCommandEncoderImpl, public RefCounted<CommandEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<CommandEncoder> create(id<MTLCommandBuffer> commandBuffer, Device& device)
@@ -82,9 +85,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUCommandEncoderImpl {
-    Ref<WebGPU::CommandEncoder> commandEncoder;
-};

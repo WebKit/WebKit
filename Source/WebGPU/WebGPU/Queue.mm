@@ -134,7 +134,7 @@ void Queue::scheduleWork(Instance::WorkItem&& workItem)
 
 void wgpuQueueRelease(WGPUQueue queue)
 {
-    delete queue;
+    WebGPU::fromAPI(queue).deref();
 }
 
 void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, uint64_t signalValue, WGPUQueueWorkDoneCallback callback, void* userdata)

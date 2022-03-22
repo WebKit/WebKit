@@ -30,11 +30,14 @@
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
 
+struct WGPUPipelineLayoutImpl {
+};
+
 namespace WebGPU {
 
 class BindGroupLayout;
 
-class PipelineLayout : public RefCounted<PipelineLayout> {
+class PipelineLayout : public WGPUPipelineLayoutImpl, public RefCounted<PipelineLayout> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<PipelineLayout> create(Vector<Ref<BindGroupLayout>>&& bindGroupLayouts)
@@ -59,9 +62,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUPipelineLayoutImpl {
-    Ref<WebGPU::PipelineLayout> pipelineLayout;
-};

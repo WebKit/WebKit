@@ -52,124 +52,132 @@
 
 namespace WebGPU {
 
+// FIXME: It would be cool if we didn't have to list all these overloads, but instead could do something like bridge_cast() in WTF.
+
 inline Adapter& fromAPI(WGPUAdapter adapter)
 {
-    return adapter->adapter;
+    return static_cast<Adapter&>(*adapter);
 }
 
 inline BindGroup& fromAPI(WGPUBindGroup bindGroup)
 {
-    return bindGroup->bindGroup;
+    return static_cast<BindGroup&>(*bindGroup);
 }
 
 inline BindGroupLayout& fromAPI(WGPUBindGroupLayout bindGroupLayout)
 {
-    return bindGroupLayout->bindGroupLayout;
+    return static_cast<BindGroupLayout&>(*bindGroupLayout);
 }
 
 inline Buffer& fromAPI(WGPUBuffer buffer)
 {
-    return buffer->buffer;
+    return static_cast<Buffer&>(*buffer);
 }
 
 inline CommandBuffer& fromAPI(WGPUCommandBuffer commandBuffer)
 {
-    return commandBuffer->commandBuffer;
+    return static_cast<CommandBuffer&>(*commandBuffer);
 }
 
 inline CommandEncoder& fromAPI(WGPUCommandEncoder commandEncoder)
 {
-    return commandEncoder->commandEncoder;
+    return static_cast<CommandEncoder&>(*commandEncoder);
 }
 
 inline ComputePassEncoder& fromAPI(WGPUComputePassEncoder computePassEncoder)
 {
-    return computePassEncoder->computePassEncoder;
+    return static_cast<ComputePassEncoder&>(*computePassEncoder);
 }
 
 inline ComputePipeline& fromAPI(WGPUComputePipeline computePipeline)
 {
-    return computePipeline->computePipeline;
+    return static_cast<ComputePipeline&>(*computePipeline);
 }
 
 inline Device& fromAPI(WGPUDevice device)
 {
-    return device->device;
+    return static_cast<Device&>(*device);
 }
 
 inline Instance& fromAPI(WGPUInstance instance)
 {
-    return instance->instance;
+    return static_cast<Instance&>(*instance);
 }
 
 inline PipelineLayout& fromAPI(WGPUPipelineLayout pipelineLayout)
 {
-    return pipelineLayout->pipelineLayout;
+    return static_cast<PipelineLayout&>(*pipelineLayout);
 }
 
 inline QuerySet& fromAPI(WGPUQuerySet querySet)
 {
-    return querySet->querySet;
+    return static_cast<QuerySet&>(*querySet);
 }
 
 inline Queue& fromAPI(WGPUQueue queue)
 {
-    return queue->queue;
+    return static_cast<Queue&>(*queue);
 }
 
 inline RenderBundle& fromAPI(WGPURenderBundle renderBundle)
 {
-    return renderBundle->renderBundle;
+    return static_cast<RenderBundle&>(*renderBundle);
 }
 
 inline RenderBundleEncoder& fromAPI(WGPURenderBundleEncoder renderBundleEncoder)
 {
-    return renderBundleEncoder->renderBundleEncoder;
+    return static_cast<RenderBundleEncoder&>(*renderBundleEncoder);
 }
 
 inline RenderPassEncoder& fromAPI(WGPURenderPassEncoder renderPassEncoder)
 {
-    return renderPassEncoder->renderPassEncoder;
+    return static_cast<RenderPassEncoder&>(*renderPassEncoder);
 }
 
 inline RenderPipeline& fromAPI(WGPURenderPipeline renderPipeline)
 {
-    return renderPipeline->renderPipeline;
+    return static_cast<RenderPipeline&>(*renderPipeline);
 }
 
 inline Sampler& fromAPI(WGPUSampler sampler)
 {
-    return sampler->sampler;
+    return static_cast<Sampler&>(*sampler);
 }
 
 inline ShaderModule& fromAPI(WGPUShaderModule shaderModule)
 {
-    return shaderModule->shaderModule;
+    return static_cast<ShaderModule&>(*shaderModule);
 }
 
 inline Surface& fromAPI(WGPUSurface surface)
 {
-    return surface->surface;
+    return static_cast<Surface&>(*surface);
 }
 
 inline SwapChain& fromAPI(WGPUSwapChain swapChain)
 {
-    return swapChain->swapChain;
+    return static_cast<SwapChain&>(*swapChain);
 }
 
 inline Texture& fromAPI(WGPUTexture texture)
 {
-    return texture->texture;
+    return static_cast<Texture&>(*texture);
 }
 
 inline TextureView& fromAPI(WGPUTextureView textureView)
 {
-    return textureView->textureView;
+    return static_cast<TextureView&>(*textureView);
 }
 
 inline String fromAPI(const char* string)
 {
     return String(string);
+}
+
+template <typename T>
+inline T* releaseToAPI(RefPtr<T>&& pointer)
+{
+    return pointer.leakRef();
 }
 
 } // namespace WebGPU

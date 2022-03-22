@@ -175,13 +175,12 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
 
 void wgpuInstanceRelease(WGPUInstance instance)
 {
-    delete instance;
+    WebGPU::fromAPI(instance).deref();
 }
 
 WGPUInstance wgpuCreateInstance(const WGPUInstanceDescriptor* descriptor)
 {
-    auto result = WebGPU::Instance::create(*descriptor);
-    return result ? new WGPUInstanceImpl { result.releaseNonNull() } : nullptr;
+    return WebGPU::releaseToAPI(WebGPU::Instance::create(*descriptor));
 }
 
 WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
@@ -435,8 +434,7 @@ WGPUProc wgpuGetProcAddress(WGPUDevice, const char* procName)
 
 WGPUSurface wgpuInstanceCreateSurface(WGPUInstance instance, const WGPUSurfaceDescriptor* descriptor)
 {
-    auto result = WebGPU::fromAPI(instance).createSurface(*descriptor);
-    return result ? new WGPUSurfaceImpl { result.releaseNonNull() } : nullptr;
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(instance).createSurface(*descriptor));
 }
 
 void wgpuInstanceProcessEvents(WGPUInstance instance)
@@ -447,13 +445,13 @@ void wgpuInstanceProcessEvents(WGPUInstance instance)
 void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
 {
     WebGPU::fromAPI(instance).requestAdapter(*options, [callback, userdata](WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, String&& message) {
-        callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message.utf8().data(), userdata);
+        callback(status, WebGPU::releaseToAPI(WTFMove(adapter)), message.utf8().data(), userdata);
     });
 }
 
 void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback)
 {
     WebGPU::fromAPI(instance).requestAdapter(*options, [callback = WTFMove(callback)](WGPURequestAdapterStatus status, RefPtr<WebGPU::Adapter>&& adapter, String&& message) {
-        callback(status, adapter ? new WGPUAdapterImpl { adapter.releaseNonNull() } : nullptr, message.utf8().data());
+        callback(status, WebGPU::releaseToAPI(WTFMove(adapter)), message.utf8().data());
     });
 }

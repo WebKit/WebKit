@@ -137,7 +137,7 @@ void BindGroup::setLabel(String&& label)
 
 void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
 {
-    delete bindGroup;
+    WebGPU::fromAPI(bindGroup).deref();
 }
 
 void wgpuBindGroupSetLabel(WGPUBindGroup bindGroup, const char* label)

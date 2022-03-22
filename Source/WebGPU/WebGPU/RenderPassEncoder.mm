@@ -222,7 +222,7 @@ void RenderPassEncoder::setLabel(String&& label)
 
 void wgpuRenderPassEncoderRelease(WGPURenderPassEncoder renderPassEncoder)
 {
-    delete renderPassEncoder;
+    WebGPU::fromAPI(renderPassEncoder).deref();
 }
 
 void wgpuRenderPassEncoderBeginOcclusionQuery(WGPURenderPassEncoder renderPassEncoder, uint32_t queryIndex)

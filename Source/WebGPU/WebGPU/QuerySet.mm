@@ -59,7 +59,7 @@ void QuerySet::setLabel(String&&)
 
 void wgpuQuerySetRelease(WGPUQuerySet querySet)
 {
-    delete querySet;
+    WebGPU::fromAPI(querySet).deref();
 }
 
 void wgpuQuerySetDestroy(WGPUQuerySet querySet)

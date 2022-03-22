@@ -29,11 +29,14 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
+struct WGPUSurfaceImpl {
+};
+
 namespace WebGPU {
 
 class Adapter;
 
-class Surface : public RefCounted<Surface> {
+class Surface : public WGPUSurfaceImpl, public RefCounted<Surface> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<Surface> create()
@@ -50,9 +53,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUSurfaceImpl {
-    Ref<WebGPU::Surface> surface;
-};

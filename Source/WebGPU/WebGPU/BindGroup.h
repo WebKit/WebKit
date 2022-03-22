@@ -29,9 +29,12 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
+struct WGPUBindGroupImpl {
+};
+
 namespace WebGPU {
 
-class BindGroup : public RefCounted<BindGroup> {
+class BindGroup : public WGPUBindGroupImpl, public RefCounted<BindGroup> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<BindGroup> create(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer)
@@ -56,9 +59,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUBindGroupImpl {
-    Ref<WebGPU::BindGroup> bindGroup;
-};

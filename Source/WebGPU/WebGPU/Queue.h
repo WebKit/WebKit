@@ -33,13 +33,16 @@
 #import <wtf/ThreadSafeRefCounted.h>
 #import <wtf/Vector.h>
 
+struct WGPUQueueImpl {
+};
+
 namespace WebGPU {
 
 class Buffer;
 class CommandBuffer;
 class Device;
 
-class Queue : public ThreadSafeRefCounted<Queue> {
+class Queue : public WGPUQueueImpl, public ThreadSafeRefCounted<Queue> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<Queue> create(id<MTLCommandQueue> commandQueue, Device& device)
@@ -75,9 +78,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUQueueImpl {
-    Ref<WebGPU::Queue> queue;
-};

@@ -48,7 +48,7 @@ void RenderBundle::setLabel(String&& label)
 
 void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
 {
-    delete renderBundle;
+    WebGPU::fromAPI(renderBundle).deref();
 }
 
 void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, const char* label)

@@ -245,7 +245,7 @@ NSUInteger BindGroupLayout::encodedLength() const
 
 void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout bindGroupLayout)
 {
-    delete bindGroupLayout;
+    WebGPU::fromAPI(bindGroupLayout).deref();
 }
 
 void wgpuBindGroupLayoutSetLabel(WGPUBindGroupLayout bindGroupLayout, const char* label)

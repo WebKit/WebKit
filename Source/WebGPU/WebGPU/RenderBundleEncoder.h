@@ -31,6 +31,9 @@
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 
+struct WGPURenderBundleEncoderImpl {
+};
+
 namespace WebGPU {
 
 class BindGroup;
@@ -38,7 +41,7 @@ class Buffer;
 class RenderBundle;
 class RenderPipeline;
 
-class RenderBundleEncoder : public RefCounted<RenderBundleEncoder>, public CommandsMixin {
+class RenderBundleEncoder : public WGPURenderBundleEncoderImpl, public RefCounted<RenderBundleEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RenderBundleEncoder> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer)
@@ -73,9 +76,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPURenderBundleEncoderImpl {
-    Ref<WebGPU::RenderBundleEncoder> renderBundleEncoder;
-};

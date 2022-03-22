@@ -33,12 +33,15 @@
 #import <wtf/RefPtr.h>
 #import <wtf/ThreadSafeRefCounted.h>
 
+struct WGPUInstanceImpl {
+};
+
 namespace WebGPU {
 
 class Adapter;
 class Surface;
 
-class Instance : public ThreadSafeRefCounted<Instance> {
+class Instance : public WGPUInstanceImpl, public ThreadSafeRefCounted<Instance> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<Instance> create(const WGPUInstanceDescriptor&);
@@ -66,9 +69,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUInstanceImpl {
-    Ref<WebGPU::Instance> instance;
-};

@@ -31,12 +31,15 @@
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 
+struct WGPUAdapterImpl {
+};
+
 namespace WebGPU {
 
 class Device;
 class Instance;
 
-class Adapter : public RefCounted<Adapter> {
+class Adapter : public WGPUAdapterImpl, public RefCounted<Adapter> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<Adapter> create(id<MTLDevice> device, Instance& instance)
@@ -60,9 +63,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUAdapterImpl {
-    Ref<WebGPU::Adapter> adapter;
-};

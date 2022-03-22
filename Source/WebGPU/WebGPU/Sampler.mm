@@ -224,7 +224,7 @@ void Sampler::setLabel(String&&)
 
 void wgpuSamplerRelease(WGPUSampler sampler)
 {
-    delete sampler;
+    WebGPU::fromAPI(sampler).deref();
 }
 
 void wgpuSamplerSetLabel(WGPUSampler sampler, const char* label)

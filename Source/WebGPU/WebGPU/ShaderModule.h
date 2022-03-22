@@ -32,11 +32,14 @@
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
+struct WGPUShaderModuleImpl {
+};
+
 namespace WebGPU {
 
 class PipelineLayout;
 
-class ShaderModule : public RefCounted<ShaderModule> {
+class ShaderModule : public WGPUShaderModuleImpl, public RefCounted<ShaderModule> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ShaderModule> create(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&& checkResult, HashMap<String, Ref<PipelineLayout>>&& pipelineLayoutHints, HashMap<String, WGSL::Reflection::EntryPointInformation>&& entryPointInformation, id<MTLLibrary> library)
@@ -68,9 +71,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUShaderModuleImpl {
-    Ref<WebGPU::ShaderModule> shaderModule;
-};

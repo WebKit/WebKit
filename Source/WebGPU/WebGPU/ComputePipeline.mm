@@ -182,10 +182,10 @@ ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineStat
 
 ComputePipeline::~ComputePipeline() = default;
 
-Ref<BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
+BindGroupLayout* ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     UNUSED_PARAM(groupIndex);
-    return BindGroupLayout::create(nil, nil, nil);
+    return nullptr;
 }
 
 void ComputePipeline::setLabel(String&&)
@@ -199,12 +199,12 @@ void ComputePipeline::setLabel(String&&)
 
 void wgpuComputePipelineRelease(WGPUComputePipeline computePipeline)
 {
-    delete computePipeline;
+    WebGPU::fromAPI(computePipeline).deref();
 }
 
 WGPUBindGroupLayout wgpuComputePipelineGetBindGroupLayout(WGPUComputePipeline computePipeline, uint32_t groupIndex)
 {
-    return new WGPUBindGroupLayoutImpl { WebGPU::fromAPI(computePipeline).getBindGroupLayout(groupIndex) };
+    return WebGPU::fromAPI(computePipeline).getBindGroupLayout(groupIndex);
 }
 
 void wgpuComputePipelineSetLabel(WGPUComputePipeline computePipeline, const char* label)

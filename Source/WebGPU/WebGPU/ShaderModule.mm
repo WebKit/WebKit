@@ -88,8 +88,8 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(id<MTLDevice> device, std::
         const auto& hint = suppliedHints.hints[i];
         if (hint.nextInChain)
             return nullptr;
-        hints.add(hint.key, hint.hint.layout->pipelineLayout);
-        auto convertedPipelineLayout = ShaderModule::convertPipelineLayout(hint.hint.layout->pipelineLayout);
+        hints.add(hint.key, WebGPU::fromAPI(hint.hint.layout));
+        auto convertedPipelineLayout = ShaderModule::convertPipelineLayout(WebGPU::fromAPI(hint.hint.layout));
         wgslHints.add(hint.key, WTFMove(convertedPipelineLayout));
     }
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
@@ -250,7 +250,7 @@ const WGSL::Reflection::EntryPointInformation* ShaderModule::entryPointInformati
 
 void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 {
-    delete shaderModule;
+    WebGPU::fromAPI(shaderModule).deref();
 }
 
 void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallback callback, void * userdata)

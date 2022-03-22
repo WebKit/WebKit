@@ -365,19 +365,17 @@ void CommandEncoder::setLabel(String&& label)
 
 void wgpuCommandEncoderRelease(WGPUCommandEncoder commandEncoder)
 {
-    delete commandEncoder;
+    WebGPU::fromAPI(commandEncoder).deref();
 }
 
 WGPUComputePassEncoder wgpuCommandEncoderBeginComputePass(WGPUCommandEncoder commandEncoder, const WGPUComputePassDescriptor* descriptor)
 {
-    auto result = WebGPU::fromAPI(commandEncoder).beginComputePass(*descriptor);
-    return result ? new WGPUComputePassEncoderImpl { result.releaseNonNull() } : nullptr;
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(commandEncoder).beginComputePass(*descriptor));
 }
 
 WGPURenderPassEncoder wgpuCommandEncoderBeginRenderPass(WGPUCommandEncoder commandEncoder, const WGPURenderPassDescriptor* descriptor)
 {
-    auto result = WebGPU::fromAPI(commandEncoder).beginRenderPass(*descriptor);
-    return result ? new WGPURenderPassEncoderImpl { result.releaseNonNull() } : nullptr;
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(commandEncoder).beginRenderPass(*descriptor));
 }
 
 void wgpuCommandEncoderCopyBufferToBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer source, uint64_t sourceOffset, WGPUBuffer destination, uint64_t destinationOffset, uint64_t size)
@@ -407,8 +405,7 @@ void wgpuCommandEncoderClearBuffer(WGPUCommandEncoder commandEncoder, WGPUBuffer
 
 WGPUCommandBuffer wgpuCommandEncoderFinish(WGPUCommandEncoder commandEncoder, const WGPUCommandBufferDescriptor* descriptor)
 {
-    auto result = WebGPU::fromAPI(commandEncoder).finish(*descriptor);
-    return result ? new WGPUCommandBufferImpl { result.releaseNonNull() } : nullptr;
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(commandEncoder).finish(*descriptor));
 }
 
 void wgpuCommandEncoderInsertDebugMarker(WGPUCommandEncoder commandEncoder, const char* markerLabel)

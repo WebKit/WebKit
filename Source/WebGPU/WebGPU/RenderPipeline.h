@@ -29,11 +29,14 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
+struct WGPURenderPipelineImpl {
+};
+
 namespace WebGPU {
 
 class BindGroupLayout;
 
-class RenderPipeline : public RefCounted<RenderPipeline> {
+class RenderPipeline : public WGPURenderPipelineImpl, public RefCounted<RenderPipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RenderPipeline> create(id<MTLRenderPipelineState> renderPipelineState)
@@ -43,7 +46,7 @@ public:
 
     ~RenderPipeline();
 
-    Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
+    BindGroupLayout* getBindGroupLayout(uint32_t groupIndex);
     void setLabel(String&&);
 
     id<MTLRenderPipelineState> renderPipelineState() const { return m_renderPipelineState; }
@@ -55,9 +58,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPURenderPipelineImpl {
-    Ref<WebGPU::RenderPipeline> renderPipeline;
-};

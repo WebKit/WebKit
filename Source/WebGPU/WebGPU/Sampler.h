@@ -29,11 +29,14 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
+struct WGPUSamplerImpl {
+};
+
 namespace WebGPU {
 
 class Device;
 
-class Sampler : public RefCounted<Sampler> {
+class Sampler : public WGPUSamplerImpl, public RefCounted<Sampler> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<Sampler> create(id<MTLSamplerState> samplerState, const WGPUSamplerDescriptor& descriptor, Device& device)
@@ -65,9 +68,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUSamplerImpl {
-    Ref<WebGPU::Sampler> sampler;
-};

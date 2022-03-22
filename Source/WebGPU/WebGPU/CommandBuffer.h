@@ -29,9 +29,12 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
+struct WGPUCommandBufferImpl {
+};
+
 namespace WebGPU {
 
-class CommandBuffer : public RefCounted<CommandBuffer> {
+class CommandBuffer : public WGPUCommandBufferImpl, public RefCounted<CommandBuffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<CommandBuffer> create(id<MTLCommandBuffer> commandBuffer)
@@ -52,9 +55,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUCommandBufferImpl {
-    Ref<WebGPU::CommandBuffer> commandBuffer;
-};

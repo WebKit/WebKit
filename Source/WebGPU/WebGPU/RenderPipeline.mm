@@ -51,10 +51,10 @@ RenderPipeline::RenderPipeline(id<MTLRenderPipelineState> renderPipelineState)
 
 RenderPipeline::~RenderPipeline() = default;
 
-Ref<BindGroupLayout> RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
+BindGroupLayout* RenderPipeline::getBindGroupLayout(uint32_t groupIndex)
 {
     UNUSED_PARAM(groupIndex);
-    return BindGroupLayout::create(nil, nil, nil);
+    return nullptr;
 }
 
 void RenderPipeline::setLabel(String&&)
@@ -68,12 +68,12 @@ void RenderPipeline::setLabel(String&&)
 
 void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 {
-    delete renderPipeline;
+    WebGPU::fromAPI(renderPipeline).deref();
 }
 
 WGPUBindGroupLayout wgpuRenderPipelineGetBindGroupLayout(WGPURenderPipeline renderPipeline, uint32_t groupIndex)
 {
-    return new WGPUBindGroupLayoutImpl { WebGPU::fromAPI(renderPipeline).getBindGroupLayout(groupIndex) };
+    return WebGPU::fromAPI(renderPipeline).getBindGroupLayout(groupIndex);
 }
 
 void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, const char* label)

@@ -35,6 +35,9 @@
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
 
+struct WGPUDeviceImpl {
+};
+
 namespace WebGPU {
 
 class BindGroup;
@@ -53,7 +56,7 @@ class Surface;
 class SwapChain;
 class Texture;
 
-class Device : public RefCounted<Device> {
+class Device : public WGPUDeviceImpl, public RefCounted<Device> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<Device> create(id<MTLDevice>, String&& deviceLabel, Instance&);
@@ -116,10 +119,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUDeviceImpl {
-    Ref<WebGPU::Device> device;
-    WGPUQueueImpl defaultQueue;
-};

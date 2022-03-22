@@ -29,9 +29,12 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
+struct WGPUQuerySetImpl {
+};
+
 namespace WebGPU {
 
-class QuerySet : public RefCounted<QuerySet> {
+class QuerySet : public WGPUQuerySetImpl, public RefCounted<QuerySet> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<QuerySet> create(id<MTLCounterSampleBuffer> counterSampleBuffer)
@@ -53,9 +56,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUQuerySetImpl {
-    Ref<WebGPU::QuerySet> querySet;
-};

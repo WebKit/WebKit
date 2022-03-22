@@ -408,7 +408,7 @@ void Buffer::setLabel(String&& label)
 
 void wgpuBufferRelease(WGPUBuffer buffer)
 {
-    delete buffer;
+    WebGPU::fromAPI(buffer).deref();
 }
 
 void wgpuBufferDestroy(WGPUBuffer buffer)

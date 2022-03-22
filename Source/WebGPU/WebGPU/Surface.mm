@@ -47,7 +47,7 @@ WGPUTextureFormat Surface::getPreferredFormat(const Adapter& adapter)
 
 void wgpuSurfaceRelease(WGPUSurface surface)
 {
-    delete surface;
+    WebGPU::fromAPI(surface).deref();
 }
 
 WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter adapter)

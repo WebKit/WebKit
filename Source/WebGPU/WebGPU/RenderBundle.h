@@ -29,9 +29,12 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
+struct WGPURenderBundleImpl {
+};
+
 namespace WebGPU {
 
-class RenderBundle : public RefCounted<RenderBundle> {
+class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer)
@@ -52,9 +55,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPURenderBundleImpl {
-    Ref<WebGPU::RenderBundle> renderBundle;
-};

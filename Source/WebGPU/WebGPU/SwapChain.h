@@ -29,11 +29,14 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
+struct WGPUSwapChainImpl {
+};
+
 namespace WebGPU {
 
 class TextureView;
 
-class SwapChain : public RefCounted<SwapChain> {
+class SwapChain : public WGPUSwapChainImpl, public RefCounted<SwapChain> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<SwapChain> create()
@@ -43,7 +46,7 @@ public:
 
     ~SwapChain();
 
-    Ref<TextureView> getCurrentTextureView();
+    TextureView* getCurrentTextureView();
     void present();
 
 private:
@@ -51,9 +54,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUSwapChainImpl {
-    Ref<WebGPU::SwapChain> swapChain;
-};

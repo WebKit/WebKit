@@ -30,11 +30,14 @@
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 
+struct WGPUTextureImpl {
+};
+
 namespace WebGPU {
 
 class TextureView;
 
-class Texture : public RefCounted<Texture> {
+class Texture : public WGPUTextureImpl, public RefCounted<Texture> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<Texture> create(id<MTLTexture> texture)
@@ -57,9 +60,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUTextureImpl {
-    Ref<WebGPU::Texture> texture;
-};

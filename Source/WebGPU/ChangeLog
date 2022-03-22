@@ -1,5 +1,140 @@
 2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Remove the double pointer indirection in front of all objects
+        https://bugs.webkit.org/show_bug.cgi?id=238001
+
+        Reviewed by Kimmo Kinnunen.
+
+        Instead of doing
+
+        class Buffer {
+            ...
+        };
+        struct WGPUBufferImpl {
+            Ref<Buffer> buffer;
+        }
+
+        we can instead do
+
+        struct WGPUBufferImpl {
+        };
+        struct Buffer : public WGPUBufferImpl  {
+            ...
+        };
+
+        so we don't have to do pointer chasing to interact with objects.
+
+        * WebGPU/APIConversions.h:
+        (WebGPU::fromAPI):
+        (WebGPU::releaseToAPI):
+        * WebGPU/Adapter.h:
+        * WebGPU/Adapter.mm:
+        (wgpuAdapterRelease):
+        (wgpuAdapterRequestDevice):
+        (wgpuAdapterRequestDeviceWithBlock):
+        * WebGPU/BindGroup.h:
+        * WebGPU/BindGroup.mm:
+        (wgpuBindGroupRelease):
+        * WebGPU/BindGroupLayout.h:
+        * WebGPU/BindGroupLayout.mm:
+        (wgpuBindGroupLayoutRelease):
+        * WebGPU/Buffer.h:
+        * WebGPU/Buffer.mm:
+        (wgpuBufferRelease):
+        * WebGPU/CommandBuffer.h:
+        * WebGPU/CommandBuffer.mm:
+        (wgpuCommandBufferRelease):
+        * WebGPU/CommandEncoder.h:
+        * WebGPU/CommandEncoder.mm:
+        (wgpuCommandEncoderRelease):
+        (wgpuCommandEncoderBeginComputePass):
+        (wgpuCommandEncoderBeginRenderPass):
+        (wgpuCommandEncoderFinish):
+        * WebGPU/ComputePassEncoder.h:
+        * WebGPU/ComputePassEncoder.mm:
+        (wgpuComputePassEncoderRelease):
+        * WebGPU/ComputePipeline.h:
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::ComputePipeline::getBindGroupLayout):
+        (wgpuComputePipelineRelease):
+        (wgpuComputePipelineGetBindGroupLayout):
+        * WebGPU/Device.h:
+        * WebGPU/Device.mm:
+        (wgpuDeviceRelease):
+        (wgpuDeviceCreateBindGroup):
+        (wgpuDeviceCreateBindGroupLayout):
+        (wgpuDeviceCreateBuffer):
+        (wgpuDeviceCreateCommandEncoder):
+        (wgpuDeviceCreateComputePipeline):
+        (wgpuDeviceCreateComputePipelineAsync):
+        (wgpuDeviceCreateComputePipelineAsyncWithBlock):
+        (wgpuDeviceCreatePipelineLayout):
+        (wgpuDeviceCreateQuerySet):
+        (wgpuDeviceCreateRenderBundleEncoder):
+        (wgpuDeviceCreateRenderPipeline):
+        (wgpuDeviceCreateRenderPipelineAsync):
+        (wgpuDeviceCreateRenderPipelineAsyncWithBlock):
+        (wgpuDeviceCreateSampler):
+        (wgpuDeviceCreateShaderModule):
+        (wgpuDeviceCreateSwapChain):
+        (wgpuDeviceCreateTexture):
+        (wgpuDeviceGetQueue):
+        * WebGPU/Instance.h:
+        * WebGPU/Instance.mm:
+        (wgpuInstanceRelease):
+        (wgpuCreateInstance):
+        (wgpuInstanceCreateSurface):
+        (wgpuInstanceRequestAdapter):
+        (wgpuInstanceRequestAdapterWithBlock):
+        * WebGPU/PipelineLayout.h:
+        * WebGPU/PipelineLayout.mm:
+        (wgpuPipelineLayoutRelease):
+        * WebGPU/QuerySet.h:
+        * WebGPU/QuerySet.mm:
+        (wgpuQuerySetRelease):
+        * WebGPU/Queue.h:
+        * WebGPU/Queue.mm:
+        (wgpuQueueRelease):
+        * WebGPU/RenderBundle.h:
+        * WebGPU/RenderBundle.mm:
+        (wgpuRenderBundleRelease):
+        * WebGPU/RenderBundleEncoder.h:
+        * WebGPU/RenderBundleEncoder.mm:
+        (wgpuRenderBundleEncoderRelease):
+        (wgpuRenderBundleEncoderFinish):
+        * WebGPU/RenderPassEncoder.h:
+        * WebGPU/RenderPassEncoder.mm:
+        (wgpuRenderPassEncoderRelease):
+        * WebGPU/RenderPipeline.h:
+        * WebGPU/RenderPipeline.mm:
+        (WebGPU::RenderPipeline::getBindGroupLayout):
+        (wgpuRenderPipelineRelease):
+        (wgpuRenderPipelineGetBindGroupLayout):
+        * WebGPU/Sampler.h:
+        * WebGPU/Sampler.mm:
+        (wgpuSamplerRelease):
+        * WebGPU/ShaderModule.h:
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::earlyCompileShaderModule):
+        (wgpuShaderModuleRelease):
+        * WebGPU/Surface.h:
+        * WebGPU/Surface.mm:
+        (wgpuSurfaceRelease):
+        * WebGPU/SwapChain.h:
+        * WebGPU/SwapChain.mm:
+        (WebGPU::SwapChain::getCurrentTextureView):
+        (wgpuSwapChainRelease):
+        (wgpuSwapChainGetCurrentTextureView):
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        (wgpuTextureRelease):
+        (wgpuTextureCreateView):
+        * WebGPU/TextureView.h:
+        * WebGPU/TextureView.mm:
+        (wgpuTextureViewRelease):
+
+2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement GPUBufferDescriptor.mappedAtCreation
         https://bugs.webkit.org/show_bug.cgi?id=238190
 

@@ -33,11 +33,14 @@
 #import <wtf/Ref.h>
 #import <wtf/ThreadSafeRefCounted.h>
 
+struct WGPUBufferImpl {
+};
+
 namespace WebGPU {
 
 class Device;
 
-class Buffer : public ThreadSafeRefCounted<Buffer> {
+class Buffer : public WGPUBufferImpl, public ThreadSafeRefCounted<Buffer> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class State : uint8_t;
@@ -98,9 +101,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUBufferImpl {
-    Ref<WebGPU::Buffer> buffer;
-};

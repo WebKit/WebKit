@@ -76,7 +76,7 @@ bool PipelineLayout::operator!=(const PipelineLayout& other) const
 
 void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
 {
-    delete pipelineLayout;
+    WebGPU::fromAPI(pipelineLayout).deref();
 }
 
 void wgpuPipelineLayoutSetLabel(WGPUPipelineLayout pipelineLayout, const char* label)

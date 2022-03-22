@@ -48,7 +48,7 @@ void CommandBuffer::setLabel(String&& label)
 
 void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
 {
-    delete commandBuffer;
+    WebGPU::fromAPI(commandBuffer).deref();
 }
 
 void wgpuCommandBufferSetLabel(WGPUCommandBuffer commandBuffer, const char* label)

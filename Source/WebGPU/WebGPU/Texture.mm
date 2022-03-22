@@ -66,13 +66,12 @@ void Texture::setLabel(String&& label)
 
 void wgpuTextureRelease(WGPUTexture texture)
 {
-    delete texture;
+    WebGPU::fromAPI(texture).deref();
 }
 
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
 {
-    auto result = WebGPU::fromAPI(texture).createView(*descriptor);
-    return result ? new WGPUTextureViewImpl { result.releaseNonNull() } : nullptr;
+    return WebGPU::releaseToAPI(WebGPU::fromAPI(texture).createView(*descriptor));
 }
 
 void wgpuTextureDestroy(WGPUTexture texture)

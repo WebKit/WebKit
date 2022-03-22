@@ -29,11 +29,14 @@
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 
+struct WGPUComputePipelineImpl {
+};
+
 namespace WebGPU {
 
 class BindGroupLayout;
 
-class ComputePipeline : public RefCounted<ComputePipeline> {
+class ComputePipeline : public WGPUComputePipelineImpl, public RefCounted<ComputePipeline> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<ComputePipeline> create(id<MTLComputePipelineState> computePipelineState)
@@ -43,7 +46,7 @@ public:
 
     ~ComputePipeline();
 
-    Ref<BindGroupLayout> getBindGroupLayout(uint32_t groupIndex);
+    BindGroupLayout* getBindGroupLayout(uint32_t groupIndex);
     void setLabel(String&&);
 
     id<MTLComputePipelineState> computePipelineState() const { return m_computePipelineState; }
@@ -55,9 +58,3 @@ private:
 };
 
 } // namespace WebGPU
-
-#pragma mark WGPU Wrapper
-
-struct WGPUComputePipelineImpl {
-    Ref<WebGPU::ComputePipeline> computePipeline;
-};

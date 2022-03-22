@@ -48,7 +48,7 @@ void TextureView::setLabel(String&& label)
 
 void wgpuTextureViewRelease(WGPUTextureView textureView)
 {
-    UNUSED_PARAM(textureView);
+    WebGPU::fromAPI(textureView).deref();
 }
 
 void wgpuTextureViewSetLabel(WGPUTextureView textureView, const char* label)
