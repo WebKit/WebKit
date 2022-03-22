@@ -183,11 +183,28 @@ class GitHubMixin(object):
             self._addToLog('stdio', 'Unable to fetch pull request {}.\n'.format(pr_number))
             if attempt > retry:
                 return None
-            wait_for = (index + 1) * 15
+            wait_for = (attempt + 1) * 15
             self._addToLog('stdio', 'Backing off for {} seconds before retrying.\n'.format(wait_for))
             time.sleep(wait_for)
 
         return None
+
+    def get_reviewers(self, pr_number, repository_url=None):
+        api_url = GitHub.api_url(repository_url)
+        if not api_url:
+            return []
+
+        reviews_url = f'{api_url}/pulls/{pr_number}/reviews'
+        content = self.fetch_data_from_url_with_authentication(reviews_url)
+        if not content:
+            return []
+
+        result = []
+        for review in (content.json() or []):
+            reviewer = review.get('user', {}).get('login')
+            if reviewer and review.get('state') == 'APPROVED':
+                result.append(reviewer)
+        return result
 
     def _is_pr_closed(self, pr_json):
         if not pr_json or not pr_json.get('state'):
@@ -1445,12 +1462,12 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         return True
 
 
-class ValidateCommiterAndReviewer(buildstep.BuildStep):
+class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin):
     name = 'validate-commiter-and-reviewer'
     descriptionDone = ['Validated commiter and reviewer']
 
     def __init__(self, *args, **kwargs):
-        super(ValidateCommiterAndReviewer, self).__init__(*args, **kwargs)
+        super(ValidateCommitterAndReviewer, self).__init__(*args, **kwargs)
         self.contributors = {}
 
     @defer.inlineCallbacks
@@ -1466,15 +1483,21 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             return {'step': self.descriptionDone}
         return buildstep.BuildStep.getResultSummary(self)
 
-    def fail_build(self, email, status):
-        reason = '{} does not have {} permissions'.format(email, status)
-        comment = '{} does not have {} permissions according to {}.'.format(email, status, Contributors.url)
-        comment += '\n\nRejecting attachment {} from commit queue.'.format(self.getProperty('patch_id', ''))
+    def fail_build(self, email_or_username, status):
+        patch_id = self.getProperty('patch_id', '')
+        pr_number = self.getProperty('github.number', '')
+
+        reason = f'{email_or_username} does not have {status} permissions'
+        comment = f'{"@" if pr_number else ""}{email_or_username} does not have {status} permissions according to {Contributors.url}.'
+        if patch_id:
+            comment += f'\n\nRejecting attachment {patch_id} from commit queue.'
+        elif pr_number:
+            comment += f'\n\nRejecting {self.getProperty("github.head.sha", f"#{pr_number}")} from merge queue.'
         self.setProperty('comment_text', comment)
 
         self._addToLog('stdio', reason)
         self.setProperty('build_finish_summary', reason)
-        self.build.addStepsAfterCurrentStep([LeaveComment(), SetCommitQueueMinusFlagOnPatch()])
+        self.build.addStepsAfterCurrentStep([LeaveComment(), BlockPullRequest(), SetCommitQueueMinusFlagOnPatch()])
         self.finished(FAILURE)
         self.descriptionDone = reason
 
@@ -1503,24 +1526,40 @@ class ValidateCommiterAndReviewer(buildstep.BuildStep):
             self.descriptionDone = 'Failed to get contributors information'
             self.build.buildFinished(['Failed to get contributors information'], FAILURE)
             return None
-        patch_committer = self.getProperty('patch_committer', '').lower()
-        if not self.is_committer(patch_committer):
-            self.fail_build(patch_committer, 'committer')
-            return None
-        self._addToLog('stdio', '{} is a valid commiter.\n'.format(patch_committer))
 
-        reviewer = self.getProperty('reviewer', '').lower()
-        if not reviewer:
-            # Patch does not have r+ flag. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
+        pr_number = self.getProperty('github.number', '')
+
+        if pr_number:
+            committer = (self.getProperty('owners', []) or [''])[0]
+        else:
+            committer = self.getProperty('patch_committer', '').lower()
+
+        if not self.is_committer(committer):
+            self.fail_build(committer, 'committer')
+            return None
+        self._addToLog('stdio', f'{committer} is a valid commiter.\n')
+
+        if pr_number:
+            reviewers = self.get_reviewers(pr_number, self.getProperty('repository', ''))
+            if any([self.is_reviewer(reviewer) for reviewer in reviewers]):
+                reviewers = list(filter(self.is_reviewer, reviewers))
+        else:
+            reviewer = self.getProperty('reviewer', '').lower()
+            reviewers = [reviewer] if reviewer else []
+
+        if not reviewers:
+            # Change has not been reviewed in bug tracker. This is acceptable, since the ChangeLog might have 'Reviewed by' in it.
             self.descriptionDone = 'Validated committer'
             self.finished(SUCCESS)
             return None
 
-        self.setProperty('reviewers_full_names', [self.full_name_from_email(reviewer)])
-        if not self.is_reviewer(reviewer):
-            self.fail_build(reviewer, 'reviewer')
-            return None
-        self._addToLog('stdio', '{} is a valid reviewer.\n'.format(reviewer))
+        for reviewer in reviewers:
+            if not self.is_reviewer(reviewer):
+                self.fail_build(reviewer, 'reviewer')
+                return None
+            self._addToLog('stdio', f'{reviewer} is a valid reviewer.\n')
+        self.setProperty('reviewers_full_names', [self.full_name_from_email(reviewer) for reviewer in reviewers])
+
         self.finished(SUCCESS)
         return None
 

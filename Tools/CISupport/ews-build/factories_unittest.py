@@ -629,6 +629,15 @@ class TestExpectedBuildSteps(unittest.TestCase):
         'Merge-Queue': [
             'configure-build',
             'validate-change',
+            'validate-commiter-and-reviewer',
+            'configuration',
+            'clean-up-git-repo',
+            'clean-and-update-working-directory',
+            'fetch-branch-references',
+            'show-identifier',
+            'verify-github-integrity',
+            'update-working-directory',
+            'checkout-pull-request'
         ],
     }
 

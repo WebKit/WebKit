@@ -32,7 +32,7 @@ from steps import (ApplyPatch, ApplyWatchList, CheckOutPullRequest, CheckOutSour
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory,
-                   ValidateChange, ValidateChangeLogAndReviewer, ValidateCommiterAndReviewer, WaitForCrashCollection,
+                   ValidateChange, ValidateChangeLogAndReviewer, ValidateCommitterAndReviewer, WaitForCrashCollection,
                    InstallBuiltProduct, VerifyGitHubIntegrity)
 
 
@@ -289,7 +289,7 @@ class CommitQueueFactory(factory.BuildFactory):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
         self.addStep(ValidateChange(verifycqplus=True))
-        self.addStep(ValidateCommiterAndReviewer())
+        self.addStep(ValidateCommitterAndReviewer())
         self.addStep(PrintConfiguration())
         self.addStep(CleanGitRepo(default_branch='master'))
         self.addStep(CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'))
@@ -321,3 +321,12 @@ class MergeQueueFactory(factory.BuildFactory):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architectures=architectures, buildOnly=False, triggers=None, remotes=None, additionalArguments=additionalArguments))
         self.addStep(ValidateChange(verifyMergeQueue=True, verifyNoDraftForMergeQueue=True))
+        self.addStep(ValidateCommitterAndReviewer())
+        self.addStep(PrintConfiguration())
+        self.addStep(CleanGitRepo())
+        self.addStep(CheckOutSource())
+        self.addStep(FetchBranches())
+        self.addStep(ShowIdentifier())
+        self.addStep(VerifyGitHubIntegrity())
+        self.addStep(UpdateWorkingDirectory())
+        self.addStep(CheckOutPullRequest())

@@ -1,3 +1,29 @@
+2022-03-21  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Add ValidateCommitterAndReviewer
+        https://bugs.webkit.org/show_bug.cgi?id=238150
+        <rdar://problem/90587620>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/factories.py:
+        (CommitQueueFactory.__init__): Rename ValidateCommiterAndReviewer to ValidateCommiterAndReviewer.
+        (MergeQueueFactory.__init__): Add ValidateCommitterAndReviewer, PrintConfiguration, CleanGitRepo,
+        CheckOutSource, FetchBranches, ShowIdentifier, VerifyGitHubIntegrity, UpdateWorkingDirectory
+        and CheckOutPullRequest.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Add Merge-Queue step names.
+        * CISupport/ews-build/steps.py:
+        (GitHubMixin.get_pr_json): Retry tied to attempt not index.
+        (GitHubMixin.get_reviewers): Get list of reviewers for pull-request in repository.
+        (ValidateCommitterAndReviewer): Renamed from ValidateCommiterAndReviewer, inherit from GitHubMixin.
+        (ValidateCommitterAndReviewer.__init__): Rename ValidateCommiterAndReviewer.
+        (ValidateCommitterAndReviewer.fail_build): Block pull request, differentiate comment for pull
+        request and patch.
+        (ValidateCommitterAndReviewer.start): Support pull requests.
+        (ValidateCommiterAndReviewer): Renamed to ValidateCommitterAndReviewer.
+        * CISupport/ews-build/steps_unittest.py:
+
 2022-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         -[WKWebView _spellCheckerDocumentTag] is inconsistent with the document tag passed into NSSpellChecker
