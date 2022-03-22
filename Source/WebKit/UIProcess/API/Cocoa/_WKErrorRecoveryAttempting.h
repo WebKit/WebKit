@@ -26,9 +26,8 @@
 #import <WebKit/WKFoundation.h>
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WKDeclarationSpecifiers.h>
 
-WK_EXPORT extern NSString * const _WKRecoveryAttempterErrorKey;
+WK_EXTERN NSString * const _WKRecoveryAttempterErrorKey;
 
 @protocol _WKErrorRecoveryAttempting <NSObject>
 

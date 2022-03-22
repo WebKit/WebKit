@@ -1,3 +1,19 @@
+2022-03-22  Tim Horton  <timothy_horton@apple.com>
+
+        Prefer WK_EXTERN to WK_EXPORT in Cocoa API headers
+        https://bugs.webkit.org/show_bug.cgi?id=238129
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextPolicyDelegate.h:
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h:
+        * UIProcess/API/Cocoa/_WKElementAction.h:
+        * UIProcess/API/Cocoa/_WKErrorRecoveryAttempting.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanel.h:
+        WK_EXPORT comes from WKDeclarationSpecifiers.h, which is a legacy C SPI header.
+        WK_EXTERN comes from WKFoundation.h, part of the modern public API.
+        We should prefer the modern version in Cocoa-only headers (even in private headers).
+
 2022-03-22  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (iOS 15.1 / r280824) QuickLook - model not loading when passing extra parameters

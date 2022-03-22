@@ -24,20 +24,19 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WKDeclarationSpecifiers.h>
 
 @class WKBrowsingContextController;
 
 /* Constants for policy action dictionaries */
-WK_EXPORT extern NSString * const WKActionIsMainFrameKey;         // NSNumber (BOOL)
-WK_EXPORT extern NSString * const WKActionMouseButtonKey;         // NSNumber (0 for left button, 1 for middle button, 2 for right button)
-WK_EXPORT extern NSString * const WKActionModifierFlagsKey;       // NSNumber (unsigned)
-WK_EXPORT extern NSString * const WKActionOriginalURLRequestKey;  // NSURLRequest
-WK_EXPORT extern NSString * const WKActionURLRequestKey;          // NSURLRequest
-WK_EXPORT extern NSString * const WKActionURLResponseKey;         // NSURLResponse
-WK_EXPORT extern NSString * const WKActionFrameNameKey;           // NSString
-WK_EXPORT extern NSString * const WKActionOriginatingFrameURLKey; // NSURL
-WK_EXPORT extern NSString * const WKActionCanShowMIMETypeKey;     // NSNumber (BOOL)
+WK_EXTERN NSString * const WKActionIsMainFrameKey;         // NSNumber (BOOL)
+WK_EXTERN NSString * const WKActionMouseButtonKey;         // NSNumber (0 for left button, 1 for middle button, 2 for right button)
+WK_EXTERN NSString * const WKActionModifierFlagsKey;       // NSNumber (unsigned)
+WK_EXTERN NSString * const WKActionOriginalURLRequestKey;  // NSURLRequest
+WK_EXTERN NSString * const WKActionURLRequestKey;          // NSURLRequest
+WK_EXTERN NSString * const WKActionURLResponseKey;         // NSURLResponse
+WK_EXTERN NSString * const WKActionFrameNameKey;           // NSString
+WK_EXTERN NSString * const WKActionOriginatingFrameURLKey; // NSURL
+WK_EXTERN NSString * const WKActionCanShowMIMETypeKey;     // NSNumber (BOOL)
 
 typedef NS_ENUM(NSUInteger, WKPolicyDecision) {
     WKPolicyDecisionCancel,
