@@ -1,3 +1,23 @@
+2022-03-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        ITM: Lazy caching of HelpText property that results in a call to textUnderElement().
+        https://bugs.webkit.org/show_bug.cgi?id=237923
+        <rdar://problem/90332779>
+
+        Reviewed by Chris Fleizach.
+
+        Caching HelpText in the initialization of an IsolatedObject properties
+        for all objects often results in a call to AXRenderObject::textUnderElement,
+        which can be expensive and makes the creation and update of the isolated
+        tree costly. With this patch we cache HelpText on first request.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::getOrRetrievePropertyValue):
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm:
+        (WebCore::AXIsolatedObject::initializePlatformProperties):
+        (WebCore::AXIsolatedObject::helpTextAttributeValue const):
+
 2022-03-23  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] MSE-backed videos fail to play in Captive Portal mode

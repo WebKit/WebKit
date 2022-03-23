@@ -983,6 +983,9 @@ T AXIsolatedObject::getOrRetrievePropertyValue(AXPropertyName propertyName)
         case AXPropertyName::Description:
             value = axObject->descriptionAttributeValue().isolatedCopy();
             break;
+        case AXPropertyName::HelpText:
+            value = axObject->helpTextAttributeValue().isolatedCopy();
+            break;
         case AXPropertyName::TitleAttributeValue:
             value = axObject->titleAttributeValue().isolatedCopy();
             break;

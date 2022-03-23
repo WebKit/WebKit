@@ -35,7 +35,6 @@ namespace WebCore {
 void AXIsolatedObject::initializePlatformProperties(const AXCoreObject& object, bool isRoot)
 {
     setProperty(AXPropertyName::HasApplePDFAnnotationAttribute, object.hasApplePDFAnnotationAttribute());
-    setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::SpeechHint, object.speechHintAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::CaretBrowsingEnabled, object.caretBrowsingEnabled());
 
@@ -106,6 +105,11 @@ void AXIsolatedObject::setPreventKeyboardDOMEventDispatch(bool value)
 String AXIsolatedObject::descriptionAttributeValue() const
 {
     return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::Description);
+}
+
+String AXIsolatedObject::helpTextAttributeValue() const
+{
+    return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::HelpText);
 }
 
 String AXIsolatedObject::titleAttributeValue() const

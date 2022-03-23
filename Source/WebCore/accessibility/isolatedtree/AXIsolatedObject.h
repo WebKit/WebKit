@@ -338,7 +338,7 @@ private:
     bool fileUploadButtonReturnsValueInTitle() const override { return boolAttributeValue(AXPropertyName::FileUploadButtonReturnsValueInTitle); }
     String speechHintAttributeValue() const override { return stringAttributeValue(AXPropertyName::SpeechHint); }
     String descriptionAttributeValue() const override;
-    String helpTextAttributeValue() const override { return stringAttributeValue(AXPropertyName::HelpText); }
+    String helpTextAttributeValue() const override;
     String titleAttributeValue() const override;
 #endif
 #if PLATFORM(MAC)
