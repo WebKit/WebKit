@@ -395,7 +395,86 @@ bool HTMLAnchorElement::isSystemPreviewLink()
 }
 #endif
 
-std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasurement() const
+std::optional<URL> HTMLAnchorElement::attributionDestinationURLForPCM() const
+{
+    URL destinationURL { attributeWithoutSynchronization(attributiondestinationAttr) };
+    if (destinationURL.isValid() && destinationURL.protocolIsInHTTPFamily())
+        return destinationURL;
+
+    document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
+    return std::nullopt;
+}
+
+std::optional<RegistrableDomain> HTMLAnchorElement::mainDocumentRegistrableDomainForPCM() const
+{
+    if (auto frame = document().frame()) {
+        if (auto mainDocument = frame->mainFrame().document()) {
+            if (auto mainDocumentRegistrableDomain = RegistrableDomain { mainDocument->url() }; !mainDocumentRegistrableDomain.isEmpty())
+                return mainDocumentRegistrableDomain;
+        }
+    }
+
+    document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Could not find a main document to use as source site for Private Click Measurement."_s);
+    return std::nullopt;
+}
+
+std::optional<PrivateClickMeasurement::EphemeralNonce> HTMLAnchorElement::attributionSourceNonceForPCM() const
+{
+    auto attributionSourceNonceAttr = attributeWithoutSynchronization(attributionsourcenonceAttr);
+    if (attributionSourceNonceAttr.isEmpty())
+        return std::nullopt;
+
+    auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { attributionSourceNonceAttr };
+    if (!ephemeralNonce.isValid()) {
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
+        return std::nullopt;
+    }
+
+    return ephemeralNonce;
+}
+
+std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasurementForSKAdNetwork(const URL& hrefURL) const
+{
+    using SourceID = PrivateClickMeasurement::SourceID;
+    using SourceSite = PrivateClickMeasurement::SourceSite;
+    using AttributionDestinationSite = PrivateClickMeasurement::AttributionDestinationSite;
+
+    auto adamID = PrivateClickMeasurement::appStoreURLAdamID(hrefURL);
+    if (!adamID)
+        return std::nullopt;
+
+    auto attributionDestinationDomain = attributionDestinationURLForPCM();
+    if (!attributionDestinationDomain)
+        return std::nullopt;
+
+    auto mainDocumentRegistrableDomain = mainDocumentRegistrableDomainForPCM();
+    if (!mainDocumentRegistrableDomain)
+        return std::nullopt;
+
+    auto attributionSourceNonce = attributionSourceNonceForPCM();
+    if (!attributionSourceNonce)
+        return std::nullopt;
+
+#if PLATFORM(COCOA)
+    auto bundleID = applicationBundleIdentifier();
+#else
+    String bundleID;
+#endif
+
+    auto privateClickMeasurement = PrivateClickMeasurement {
+        SourceID(0),
+        SourceSite(WTFMove(*mainDocumentRegistrableDomain)),
+        AttributionDestinationSite(*attributionDestinationDomain),
+        bundleID,
+        WallTime::now(),
+        PrivateClickMeasurement::AttributionEphemeral::No
+    };
+    privateClickMeasurement.setEphemeralSourceNonce(WTFMove(*attributionSourceNonce));
+    privateClickMeasurement.setAdamID(*adamID);
+    return privateClickMeasurement;
+}
+
+std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasurement(const URL& hrefURL) const
 {
     using SourceID = PrivateClickMeasurement::SourceID;
     using SourceSite = PrivateClickMeasurement::SourceSite;
@@ -403,10 +482,13 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
 
     RefPtr<Frame> frame = document().frame();
     auto* page = document().page();
-    if (!frame ||!page || page->sessionID().isEphemeral()
+    if (!frame || !page || page->sessionID().isEphemeral()
         || !document().settings().privateClickMeasurementEnabled()
         || !UserGestureIndicator::processingUserGesture())
         return std::nullopt;
+
+    if (auto pcm = parsePrivateClickMeasurementForSKAdNetwork(hrefURL))
+        return pcm;
 
     auto hasAttributionSourceIDAttr = hasAttributeWithoutSynchronization(attributionsourceidAttr);
     auto hasAttributionDestinationAttr = hasAttributeWithoutSynchronization(attributiondestinationAttr);
@@ -458,15 +540,8 @@ std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasu
 #endif
     auto privateClickMeasurement = PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(WTFMove(mainDocumentRegistrableDomain)), AttributionDestinationSite(destinationURL), bundleID, WallTime::now(), PrivateClickMeasurement::AttributionEphemeral::No };
 
-    auto attributionSourceNonceAttr = attributeWithoutSynchronization(attributionsourcenonceAttr);
-    if (!attributionSourceNonceAttr.isEmpty()) {
-        auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { attributionSourceNonceAttr };
-        if (!ephemeralNonce.isValid()) {
-            document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourcenonce was not valid."_s);
-            return std::nullopt;
-        }
-        privateClickMeasurement.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
-    }
+    if (auto ephemeralNonce = attributionSourceNonceForPCM())
+        privateClickMeasurement.setEphemeralSourceNonce(WTFMove(*ephemeralNonce));
 
     return privateClickMeasurement;
 }
@@ -528,7 +603,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     if (hasRel(Relation::NoOpener) || hasRel(Relation::NoReferrer) || (!hasRel(Relation::Opener) && document().settings().blankAnchorTargetImpliesNoOpenerEnabled() && isBlankTargetFrameName(effectiveTarget) && !completedURL.protocolIsJavaScript()))
         newFrameOpenerPolicy = NewFrameOpenerPolicy::Suppress;
 
-    auto privateClickMeasurement = parsePrivateClickMeasurement();
+    auto privateClickMeasurement = parsePrivateClickMeasurement(completedURL);
     // A matching triggering event needs to happen before an attribution report can be sent.
     // Thus, URLs should be empty for now.
     ASSERT(!privateClickMeasurement || (privateClickMeasurement->attributionReportClickSourceURL().isNull() && privateClickMeasurement->attributionReportClickDestinationURL().isNull()));

@@ -215,6 +215,9 @@
     (allow mach-lookup
            (global-name "com.apple.nehelper"))
 
+    (allow mach-lookup
+           (global-name "com.apple.appstored.xpc.request"))
+
     ;; <rdar://89031731>
     (allow mach-lookup
         (global-name "com.apple.networkserviceproxy.fetch-token"))

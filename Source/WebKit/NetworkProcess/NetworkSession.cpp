@@ -373,6 +373,10 @@ void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasureme
         m_ephemeralMeasurement = WTFMove(unattributedPrivateClickMeasurement);
         return;
     }
+
+    if (unattributedPrivateClickMeasurement.isSKAdNetworkAttribution())
+        return donateToSKAdNetwork(WTFMove(unattributedPrivateClickMeasurement));
+
     privateClickMeasurement().storeUnattributed(WTFMove(unattributedPrivateClickMeasurement), [] { });
 }
 

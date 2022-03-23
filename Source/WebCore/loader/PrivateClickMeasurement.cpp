@@ -42,6 +42,7 @@ static const char privateClickMeasurementTriggerAttributionPath[] = "/.well-know
 static const char privateClickMeasurementTokenSignaturePath[] = "/.well-known/private-click-measurement/sign-unlinkable-token/";
 static const char privateClickMeasurementTokenPublicKeyPath[] = "/.well-known/private-click-measurement/get-token-public-key/";
 static const char privateClickMeasurementReportAttributionPath[] = "/.well-known/private-click-measurement/report-attribution/";
+static const char privateClickMeasurementToSKAdNetworkURLPrefix[] = "https://apps.apple.com/app/apple-store/id";
 const size_t privateClickMeasurementAttributionTriggerDataPathSegmentSize = 2;
 const size_t privateClickMeasurementPriorityPathSegmentSize = 2;
 const uint8_t privateClickMeasurementVersion = 3;
@@ -414,6 +415,14 @@ void PrivateClickMeasurement::setDestinationSecretToken(DestinationSecretToken&&
     if (!token.isValid() || !m_attributionTriggerData)
         return;
     m_attributionTriggerData->destinationSecretToken = WTFMove(token);
+}
+
+std::optional<uint64_t> PrivateClickMeasurement::appStoreURLAdamID(const URL& url)
+{
+    StringView stringView { url.string() };
+    if (!stringView.startsWith(privateClickMeasurementToSKAdNetworkURLPrefix))
+        return std::nullopt;
+    return parseInteger<uint64_t>(stringView.substring(strlen(privateClickMeasurementToSKAdNetworkURLPrefix)));
 }
 
 } // namespace WebCore

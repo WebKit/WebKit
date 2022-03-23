@@ -4891,6 +4891,7 @@
 		5C121E882410290D00486F9B /* _WKFrameTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKFrameTreeNode.h; sourceTree = "<group>"; };
 		5C121E8B2410306600486F9B /* APIFrameTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIFrameTreeNode.cpp; sourceTree = "<group>"; };
 		5C13024A1FE341A7000D9B31 /* WebsitePoliciesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsitePoliciesData.h; sourceTree = "<group>"; };
+		5C13559E27E250030022B527 /* AppStoreDaemonSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppStoreDaemonSPI.h; path = AppStoreDaemonSPI.h; sourceTree = "<group>"; };
 		5C1426E21C23F80500D41183 /* NetworkProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		5C1426E31C23F80500D41183 /* NetworkProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessCreationParameters.h; sourceTree = "<group>"; };
 		5C1426E41C23F80500D41183 /* NetworkProcessSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessSupplement.h; sourceTree = "<group>"; };
@@ -10500,6 +10501,7 @@
 		7EC4F0F818E4A922008056AF /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				5C13559E27E250030022B527 /* AppStoreDaemonSPI.h */,
 				2D0C56FB229F1DEA00BD33E7 /* DeviceManagementSoftLink.h */,
 				2D0C56FC229F1DEA00BD33E7 /* DeviceManagementSoftLink.mm */,
 				C1710CF524AA634500D7C112 /* LaunchServicesDatabaseObserver.h */,

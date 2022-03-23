@@ -1,3 +1,29 @@
+2022-03-22  Alex Christensen  <achristensen@webkit.org>
+
+        Implement PCM to SKAdNetwork bridge
+        https://bugs.webkit.org/show_bug.cgi?id=237969
+        <rdar://82988054>
+
+        Reviewed by John Wilander.
+
+        The WebKit parts of this just introduce a new information flow to SKAdNetwork to send the app purchase attribution
+        kind of like WebKit sends a PCM attribution report 24-48 hours after a non-app-purchase click with attribution.
+
+        * Configurations/WebKit.xcconfig:
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::storePrivateClickMeasurement):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::donateToSKAdNetwork):
+        * NetworkProcess/cocoa/AppStoreDaemonSPI.h: Added.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::donateToSKAdNetwork):
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Scripts/process-entitlements.sh:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-22  Simon Fraser  <simon.fraser@apple.com>
 
         Swap all RemoteLayerBackingStore buffers in a single IPC

@@ -154,6 +154,8 @@ private:
     SessionWrapper& appBoundSession(WebPageProxyIdentifier, WebCore::StoredCredentialsPolicy);
 #endif
 
+    void donateToSKAdNetwork(WebCore::PrivateClickMeasurement&&) final;
+
     Vector<WebCore::SecurityOriginData> hostNamesWithAlternativeServices() const override;
     void deleteAlternativeServicesForHostNames(const Vector<String>&) override;
     void clearAlternativeServices(WallTime) override;

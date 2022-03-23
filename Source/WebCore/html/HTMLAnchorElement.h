@@ -26,13 +26,13 @@
 #include "Document.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "PrivateClickMeasurement.h"
 #include "SharedStringHash.h"
 #include "URLDecomposition.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
 
-class PrivateClickMeasurement;
 class DOMTokenList;
 
 enum class ReferrerPolicy : uint8_t;
@@ -102,7 +102,11 @@ private:
 
     void sendPings(const URL& destinationURL);
 
-    std::optional<PrivateClickMeasurement> parsePrivateClickMeasurement() const;
+    std::optional<URL> attributionDestinationURLForPCM() const;
+    std::optional<RegistrableDomain> mainDocumentRegistrableDomainForPCM() const;
+    std::optional<PrivateClickMeasurement::EphemeralNonce> attributionSourceNonceForPCM() const;
+    std::optional<PrivateClickMeasurement> parsePrivateClickMeasurementForSKAdNetwork(const URL&) const;
+    std::optional<PrivateClickMeasurement> parsePrivateClickMeasurement(const URL&) const;
 
     void handleClick(Event&);
 

@@ -559,6 +559,46 @@ TEST(PrivateClickMeasurement, DaemonDebugMode)
     cleanUpDaemon(tempDir);
 }
 
+TEST(PrivateClickMeasurement, SKAdNetwork)
+{
+    HTTPServer server({ { "/app/apple-store/id1234567890", { "hello" } } }, HTTPServer::Protocol::HttpsProxy);
+
+    auto storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [storeConfiguration setProxyConfiguration:@{
+        (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
+        (NSString *)kCFStreamPropertyHTTPSProxyPort: @(server.port())
+    }];
+
+    WKWebViewConfiguration *viewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
+    viewConfiguration.websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get();
+    auto webView = webViewWithOpenInspector(viewConfiguration);
+
+    Vector<String> consoleMessages;
+    setInjectedBundleClient(webView.get(), consoleMessages);
+    [viewConfiguration.websiteDataStore _setPrivateClickMeasurementDebugModeEnabledForTesting:YES];
+
+    [webView synchronouslyLoadHTMLString:@"<body>"
+        "<a href='https://apps.apple.com/app/apple-store/id1234567890' id='anchorid' attributiondestination='https://destination/' attributionSourceNonce='MTIzNDU2Nzg5MDEyMzQ1Ng'>anchor</a>"
+        "</body>" baseURL:[NSURL URLWithString:@"https://example.com/"]];
+
+    while (consoleMessages.isEmpty())
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(consoleMessages[0], "[Private Click Measurement] Turned Debug Mode on.");
+
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+    webView.get().navigationDelegate = delegate.get();
+
+    [webView clickOnElementID:@"anchorid"];
+
+    while (consoleMessages.size() < 2)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(consoleMessages[1], "Submitting potential install attribution for AdamId: 1234567890, adNetworkRegistrableDomain: destination, impressionId: MTIzNDU2Nzg5MDEyMzQ1Ng, sourceWebRegistrableDomain: example.com, version: 3");
+}
+
 TEST(PrivateClickMeasurement, NetworkProcessDebugMode)
 {
     auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
