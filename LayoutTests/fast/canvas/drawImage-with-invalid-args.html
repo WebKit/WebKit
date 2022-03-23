@@ -72,21 +72,21 @@
         }
         try{
             ctx.drawImage(myImage, 20, 20, -20, 0, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: image argument plus 8 numbers, negative size of source, zero size");
         } catch (e) {
-            print("PASS: image argument plus 8 numbers, negative size of source, zero size, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 0, 0, 20, 0, 20, 20, -20, -20);
-            print("FAIL");
+            print("PASS: image argument plus 8 numbers, negative size of destination, zero size");
         } catch (e) {
-            print("PASS: image argument plus 8 numbers, negative size of destination, zero size, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 20, 20, -20, 0, 20, 20, -20, -20);
-            print("FAIL");
+            print("PASS: image argument plus 8 numbers, negative size of source and destination, zero size");
         } catch (e) {
-            print("PASS: image argument plus 8 numbers, negative size of source and destination, zero size, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(null);

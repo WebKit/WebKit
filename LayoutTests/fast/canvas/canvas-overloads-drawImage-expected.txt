@@ -9,6 +9,7 @@ PASS ctx.drawImage(imageElement, 0) threw exception TypeError: Not enough argume
 PASS ctx.drawImage(imageElement, 0, 0) is undefined
 PASS ctx.drawImage(imageElement, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0) is undefined
+PASS ctx.drawImage(imageElement, 0, 0, 700, 677) is undefined
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(imageElement, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
@@ -23,9 +24,9 @@ PASS ctx.drawImage(canvasElement, 0, 0, 0, 0) is undefined
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
 PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0) threw exception TypeError: Type error.
-PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0) threw exception IndexSizeError: The index is not in the allowed range..
-PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception IndexSizeError: The index is not in the allowed range..
-PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) threw exception IndexSizeError: The index is not in the allowed range..
+PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0) is undefined
+PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0) is undefined
+PASS ctx.drawImage(canvasElement, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

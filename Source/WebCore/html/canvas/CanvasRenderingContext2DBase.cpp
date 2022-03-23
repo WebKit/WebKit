@@ -1500,14 +1500,14 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
         || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
         return { };
 
+    if (!srcRect.width() || !srcRect.height())
+        return { };
+
     if (!dstRect.width() || !dstRect.height())
         return { };
 
     FloatRect normalizedSrcRect = normalizeRect(srcRect);
     FloatRect normalizedDstRect = normalizeRect(dstRect);
-
-    if (!srcRect.width() || !srcRect.height())
-        return Exception { IndexSizeError };
 
     // When the source rectangle is outside the source image, the source rectangle must be clipped
     // to the source image and the destination rectangle must be clipped in the same proportion.
@@ -1582,7 +1582,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
         return Exception { InvalidStateError };
 
     if (!srcRect.width() || !srcRect.height())
-        return Exception { IndexSizeError };
+        return { };
 
     if (!srcCanvasRect.contains(normalizeRect(srcRect)) || !dstRect.width() || !dstRect.height())
         return { };
@@ -1638,7 +1638,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
 
     FloatRect videoRect = FloatRect(FloatPoint(), size(video));
     if (!srcRect.width() || !srcRect.height())
-        return Exception { IndexSizeError };
+        return { };
 
     if (!videoRect.contains(normalizeRect(srcRect)) || !dstRect.width() || !dstRect.height())
         return { };

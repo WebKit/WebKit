@@ -8,9 +8,9 @@ PASS: image argument plus 4 numbers
 PASS: image argument plus 8 numbers
 PASS: image argument plus zero size
 PASS: image argument plus 8 numbers, zero size
-PASS: image argument plus 8 numbers, negative size of source, zero size, got exception as expected
-PASS: image argument plus 8 numbers, negative size of destination, zero size, got exception as expected
-PASS: image argument plus 8 numbers, negative size of source and destination, zero size, got exception as expected
+PASS: image argument plus 8 numbers, negative size of source, zero size
+PASS: image argument plus 8 numbers, negative size of destination, zero size
+PASS: image argument plus 8 numbers, negative size of source and destination, zero size
 PASS: null image, got exception as expected
 PASS: null image, got exception as expected
 PASS: null image, got exception as expected
