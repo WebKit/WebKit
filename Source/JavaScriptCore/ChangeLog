@@ -1,3 +1,31 @@
+2022-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC][MSVC] custom getter creation needs to include classInfo since MSVC ICF is not "safe" variant
+        https://bugs.webkit.org/show_bug.cgi?id=238030
+
+        Reviewed by Alexey Shvayka.
+
+        MSVC performs very aggressive ICF (identical code folding) and it even merges the identical two functions
+        into one even though a pointer to this function is used. This means MSVC's ICF is not "safe"[1], and custom
+        function weakmap is broken on MSVC since it is assuming function pointers are different for different functions.
+        Unfortunately, it seems that there is no attribute / annotation to prevent this behavior, so we need to workaround it.
+        Since JSCustomGetterFunction does separate thing based on attached DOMAttribute, we need to include const ClassInfo*
+        into a key of JSCustomGetterFunction weakmap to ensure that two identical functions with different const ClassInfo*
+        do not get the same JSCustomGetterFunction.
+
+        [1]: https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36912.pdf
+
+        * runtime/JSCustomGetterFunction.h:
+        * runtime/JSCustomSetterFunction.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash):
+        * runtime/JSObject.cpp:
+        (JSC::WeakCustomGetterOrSetterHashTranslator::hash):
+        (JSC::WeakCustomGetterOrSetterHashTranslator::equal):
+        (JSC::createCustomGetterFunction):
+        (JSC::createCustomSetterFunction):
+
 2022-03-23  Chris Dumez  <cdumez@apple.com>
 
         Avoid unnecessary String constructor under FunctionExecutable::toStringSlow()

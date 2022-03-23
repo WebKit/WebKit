@@ -34,6 +34,7 @@
 #include "JSFunction.h"
 #include "LinkTimeConstant.h"
 #include "ObjectPrototype.h"
+#include <wtf/Hasher.h>
 
 namespace JSC {
 
@@ -153,7 +154,7 @@ inline unsigned JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash(const Weak
 {
     if (!value)
         return 0;
-    return hash(value->propertyName(), value->customFunctionPointer());
+    return hash(value->propertyName(), value->customFunctionPointer(), value->slotBaseClassInfoIfExists());
 }
 
 template<typename T>
@@ -165,12 +166,11 @@ inline bool JSGlobalObject::WeakCustomGetterOrSetterHash<T>::equal(const Weak<T>
 }
 
 template<typename T>
-inline unsigned JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash(const PropertyName& propertyName, typename T::CustomFunctionPointer functionPointer)
+inline unsigned JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash(const PropertyName& propertyName, typename T::CustomFunctionPointer functionPointer, const ClassInfo* classInfo)
 {
-    unsigned hash = DefaultHash<typename T::CustomFunctionPointer>::hash(functionPointer);
     if (!propertyName.isNull())
-        hash = WTF::pairIntHash(hash, propertyName.uid()->existingSymbolAwareHash());
-    return hash;
+        return WTF::computeHash(functionPointer, propertyName.uid()->existingSymbolAwareHash(), classInfo);
+    return WTF::computeHash(functionPointer, classInfo);
 }
 
 } // namespace JSC

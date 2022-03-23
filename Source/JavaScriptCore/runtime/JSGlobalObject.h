@@ -599,7 +599,7 @@ public:
     struct WeakCustomGetterOrSetterHash {
         static unsigned hash(const Weak<T>&);
         static bool equal(const Weak<T>&, const Weak<T>&);
-        static unsigned hash(const PropertyName&, typename T::CustomFunctionPointer);
+        static unsigned hash(const PropertyName&, typename T::CustomFunctionPointer, const ClassInfo*);
 
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
     };

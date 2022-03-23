@@ -58,6 +58,7 @@ public:
     const Identifier& propertyName() const { return m_propertyName; }
     CustomFunctionPointer setter() const { return m_setter; };
     CustomFunctionPointer customFunctionPointer() const { return m_setter; };
+    const ClassInfo* slotBaseClassInfoIfExists() const { return nullptr; }
 
 private:
     JSCustomSetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, CustomFunctionPointer);

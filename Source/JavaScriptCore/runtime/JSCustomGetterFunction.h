@@ -59,6 +59,12 @@ public:
     CustomFunctionPointer getter() const { return m_getter; };
     CustomFunctionPointer customFunctionPointer() const { return m_getter; };
     std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; };
+    const ClassInfo* slotBaseClassInfoIfExists() const
+    {
+        if (m_domAttribute)
+            return m_domAttribute->classInfo;
+        return nullptr;
+    }
 
 private:
     JSCustomGetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, CustomFunctionPointer, std::optional<DOMAttributeAnnotation>);
