@@ -1,3 +1,52 @@
+2022-03-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Swap all RemoteLayerBackingStore buffers in a single IPC
+        https://bugs.webkit.org/show_bug.cgi?id=238210
+
+        Reviewed by Tim Horton.
+
+        PrepareBuffersForDisplay is a sync IPC (since we need the result before painting), and sync
+        IPC per-layer has performance impact. So group all the swapping into a single IPC with the
+        GPU Process.
+
+        The PrepareBuffersForDisplay message now takes a vector of
+        PrepareBackingStoreBuffersInputData, and returns a vector of
+        PrepareBackingStoreBuffersOutputData. Swapped buffers are applied to the
+        RemoteLayerBackingStore as before, with a minor change in the place that setNeedsDisplay()
+        is called in the case where we need a full display.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::prepareBuffersForDisplay):
+        (WebKit::RemoteRenderingBackend::prepareLayerBuffersForDisplay):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.messages.in:
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::applySwappedBuffers):
+        (WebKit::RemoteLayerBackingStore::performDelegatedLayerDisplay):
+        (WebKit::RemoteLayerBackingStore::prepareToDisplay):
+        (WebKit::RemoteLayerBackingStore::ensureFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::prepareBuffers):
+        (WebKit::operator<<): Deleted.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::prepareBackingStoreBuffers): Deleted.
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm:
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresForDisplay):
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoreBuffers): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.h: Added.
+        (WebKit::PrepareBackingStoreBuffersInputData::encode const):
+        (WebKit::PrepareBackingStoreBuffersInputData::decode):
+        (WebKit::PrepareBackingStoreBuffersOutputData::encode const):
+        (WebKit::PrepareBackingStoreBuffersOutputData::decode):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::prepareBuffersForDisplay):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
 2022-03-22  Sihui Liu  <sihui_liu@apple.com>
 
         REGRESSION (248499@main): [iOS] ASSERTION FAILED: Completion handler should always be called under WebKit::NetworkProcess::prepareToSuspend()

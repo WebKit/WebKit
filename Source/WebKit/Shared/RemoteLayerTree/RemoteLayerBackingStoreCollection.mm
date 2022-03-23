@@ -163,11 +163,6 @@ bool RemoteLayerBackingStoreCollection::backingStoreWillBeDisplayed(RemoteLayerB
     return true;
 }
 
-SwapBuffersDisplayRequirement RemoteLayerBackingStoreCollection::prepareBackingStoreBuffers(RemoteLayerBackingStore& backingStore)
-{
-    return backingStore.prepareBuffers(backingStore.hasEmptyDirtyRegion());
-}
-
 bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBackingStore& backingStore, OptionSet<VolatilityMarkingBehavior> markingBehavior, MonotonicTime now)
 {
     ASSERT(!m_inLayerFlush);

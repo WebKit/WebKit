@@ -68,6 +68,8 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 class RemoteDisplayListRecorder;
 struct BufferIdentifierSet;
+struct PrepareBackingStoreBuffersInputData;
+struct PrepareBackingStoreBuffersOutputData;
 struct RemoteRenderingBackendCreationParameters;
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
@@ -120,8 +122,7 @@ private:
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void finalizeRenderingUpdate(RenderingUpdateID);
     void markSurfacesVolatile(const Vector<WebCore::RenderingResourceIdentifier>&, CompletionHandler<void(const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers)>&&);
-
-    void prepareBuffersForDisplay(const BufferIdentifierSet& bufferSet, bool supportsPartialRepaint, bool hasEmptyDirtyRegion, CompletionHandler<void(const BufferIdentifierSet& swappedBufferSet, std::optional<ImageBufferBackendHandle>&& frontBufferHandle, SwapBuffersDisplayRequirement prepareResult)>&&);
+    void prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&&);
 
     // Received messages translated to use QualifiedRenderingResourceIdentifier.
     void createImageBufferWithQualifiedIdentifier(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, QualifiedRenderingResourceIdentifier);
@@ -132,6 +133,8 @@ private:
     void didCreateSharedDisplayListHandleWithQualifiedIdentifier(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, QualifiedRenderingResourceIdentifier destinationBufferIdentifier);
     void releaseRemoteResourceWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier);
     void cacheFontWithQualifiedIdentifier(Ref<WebCore::Font>&&, QualifiedRenderingResourceIdentifier);
+
+    void prepareLayerBuffersForDisplay(const PrepareBackingStoreBuffersInputData&, PrepareBackingStoreBuffersOutputData&);
 
     Ref<IPC::StreamConnectionWorkQueue> m_workQueue;
     Ref<IPC::StreamServerConnection> m_streamConnection;

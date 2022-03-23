@@ -101,11 +101,18 @@ public:
         RefPtr<WebCore::ImageBuffer> secondaryBack;
     };
     
+    struct LayerPrepareBuffersData {
+        BufferSet buffers;
+        bool supportsPartialRepaint { true };
+        bool hasEmptyDirtyRegion { false };
+    };
+    
     struct SwapBuffersResult {
         BufferSet buffers;
         SwapBuffersDisplayRequirement displayRequirement;
     };
-    SwapBuffersResult prepareBuffersForDisplay(const BufferSet&, bool supportsPartialRepaint, bool hasEmptyDirtyRegion);
+
+    Vector<SwapBuffersResult> prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>&);
 
     void finalizeRenderingUpdate();
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }

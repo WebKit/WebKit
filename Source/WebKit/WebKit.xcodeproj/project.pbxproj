@@ -2621,6 +2621,7 @@
 		0F5E200118E77051003EC3E5 /* PlatformCAAnimationRemote.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCAAnimationRemote.mm; sourceTree = "<group>"; };
 		0F5E200218E77051003EC3E5 /* PlatformCAAnimationRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCAAnimationRemote.h; sourceTree = "<group>"; };
 		0F65956727DB1D5800EE874B /* SwapBuffersDisplayRequirement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwapBuffersDisplayRequirement.h; sourceTree = "<group>"; };
+		0F65956C27E10C2C00EE874B /* PrepareBackingStoreBuffersData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrepareBackingStoreBuffersData.h; sourceTree = "<group>"; };
 		0F707C771A1FEE8300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeScrollingPerformanceData.mm; sourceTree = "<group>"; };
 		0F707C791A1FEEA300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeScrollingPerformanceData.h; sourceTree = "<group>"; };
 		0F73B767222B38C600805316 /* ScrollingTreeOverflowScrollingNodeRemoteMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeOverflowScrollingNodeRemoteMac.cpp; sourceTree = "<group>"; };
@@ -9900,6 +9901,7 @@
 				727A7F36240788F0004D2931 /* ImageBufferShareableBitmapBackend.h */,
 				727A7F38240788F0004D2931 /* PlatformImageBufferShareableBackend.h */,
 				7227800B2408BD7D007D376B /* PlatformRemoteImageBufferProxy.h */,
+				0F65956C27E10C2C00EE874B /* PrepareBackingStoreBuffersData.h */,
 				F48BB8DE26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.cpp */,
 				F48BB8DD26F9635D001C1C40 /* RemoteDisplayListRecorderProxy.h */,
 				7B904165254AFDEA006EEB8C /* RemoteGraphicsContextGLProxy.cpp */,

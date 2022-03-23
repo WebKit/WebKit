@@ -64,20 +64,43 @@ bool RemoteLayerWithRemoteRenderingBackingStoreCollection::backingStoreNeedsDisp
     return !backingStore.hasEmptyDirtyRegion();
 }
 
-SwapBuffersDisplayRequirement RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoreBuffers(RemoteLayerBackingStore& backingStore)
+void RemoteLayerWithRemoteRenderingBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLayerTreeTransaction& transaction)
 {
+    Vector<RemoteRenderingBackendProxy::LayerPrepareBuffersData> prepareBuffersData;
+    prepareBuffersData.reserveInitialCapacity(m_backingStoresNeedingDisplay.size());
+
+    Vector<RemoteLayerBackingStore*> backingStoreList;
+    backingStoreList.reserveInitialCapacity(m_backingStoresNeedingDisplay.size());
+
+    for (auto* backingStore : m_backingStoresNeedingDisplay) {
+        backingStore->layer()->properties().notePropertiesChanged(RemoteLayerTreeTransaction::BackingStoreChanged);
+        transaction.layerPropertiesChanged(*backingStore->layer());
+
+        if (backingStore->performDelegatedLayerDisplay())
+            continue;
+
+        prepareBuffersData.uncheckedAppend({
+            {
+                backingStore->bufferForType(RemoteLayerBackingStore::BufferType::Front),
+                backingStore->bufferForType(RemoteLayerBackingStore::BufferType::Back),
+                backingStore->bufferForType(RemoteLayerBackingStore::BufferType::SecondaryBack)
+            },
+            backingStore->supportsPartialRepaint(),
+            backingStore->hasEmptyDirtyRegion(),
+        });
+        
+        backingStoreList.uncheckedAppend(backingStore);
+    }
+
     auto& remoteRenderingBackend = layerTreeContext().ensureRemoteRenderingBackendProxy();
+    auto swapResult = remoteRenderingBackend.prepareBuffersForDisplay(WTFMove(prepareBuffersData));
 
-    auto identifiers = RemoteRenderingBackendProxy::BufferSet {
-        backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front),
-        backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Back),
-        backingStore.bufferForType(RemoteLayerBackingStore::BufferType::SecondaryBack)
-    };
-
-    auto swapResult = remoteRenderingBackend.prepareBuffersForDisplay(WTFMove(identifiers), backingStore.supportsPartialRepaint(), backingStore.hasEmptyDirtyRegion());
-
-    backingStore.applySwappedBuffers(WTFMove(swapResult.buffers.front), WTFMove(swapResult.buffers.back), WTFMove(swapResult.buffers.secondaryBack));
-    return swapResult.displayRequirement;
+    RELEASE_ASSERT(swapResult.size() == backingStoreList.size());
+    for (unsigned i = 0; i < swapResult.size(); ++i) {
+        auto& backingStoreSwapResult = swapResult[i];
+        auto* backingStore = backingStoreList[i];
+        backingStore->applySwappedBuffers(WTFMove(backingStoreSwapResult.buffers.front), WTFMove(backingStoreSwapResult.buffers.back), WTFMove(backingStoreSwapResult.buffers.secondaryBack), backingStoreSwapResult.displayRequirement);
+    }
 }
 
 RefPtr<WebCore::ImageBuffer> RemoteLayerWithRemoteRenderingBackingStoreCollection::allocateBufferForBackingStore(const RemoteLayerBackingStore& backingStore)

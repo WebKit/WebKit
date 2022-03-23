@@ -61,9 +61,7 @@ public:
 
     virtual bool backingStoreNeedsDisplay(const RemoteLayerBackingStore&);
 
-    virtual SwapBuffersDisplayRequirement prepareBackingStoreBuffers(RemoteLayerBackingStore&);
-
-    void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
+    virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
     void paintReachableBackingStoreContents();
 
     void willFlushLayers();

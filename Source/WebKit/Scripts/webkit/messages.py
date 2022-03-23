@@ -889,6 +889,8 @@ def headers_for_type(type):
         'WebKit::PageState': ['"SessionState.h"'],
         'WebKit::PaymentSetupConfiguration': ['"PaymentSetupConfigurationWebKit.h"'],
         'WebKit::PaymentSetupFeatures': ['"ApplePayPaymentSetupFeaturesWebKit.h"'],
+        'WebKit::PrepareBackingStoreBuffersInputData': ['"PrepareBackingStoreBuffersData.h"'],
+        'WebKit::PrepareBackingStoreBuffersOutputData': ['"PrepareBackingStoreBuffersData.h"'],
         'WebKit::RespectSelectionAnchor': ['"GestureTypes.h"'],
         'WebKit::RemoteVideoFrameReadReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RemoteVideoFrameWriteReference': ['"RemoteVideoFrameIdentifier.h"'],

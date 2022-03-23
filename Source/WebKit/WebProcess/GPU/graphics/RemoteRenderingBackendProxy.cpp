@@ -267,7 +267,7 @@ void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentif
     sendToStream(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier));
 }
 
-auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const BufferSet& buffers, bool supportsPartialRepaint, bool hasEmptyDirtyRegion) -> SwapBuffersResult
+auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>& prepareBuffersInput) -> Vector<SwapBuffersResult>
 {
     auto bufferIdentifier = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
         if (!buffer)
@@ -286,26 +286,30 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const BufferSet& buff
         }
     };
 
-    // Clear all the buffer's MachSendRights to avoid all the surfaces appearing to be in-use.
-    // We get back the new front buffer's MachSendRight in the reply.
-    clearBackendHandle(buffers.front.get());
-    clearBackendHandle(buffers.back.get());
-    clearBackendHandle(buffers.secondaryBack.get());
+    Vector<PrepareBackingStoreBuffersInputData> inputData;
+    inputData.reserveInitialCapacity(prepareBuffersInput.size());
 
-    auto bufferSet = BufferIdentifierSet {
-        bufferIdentifier(buffers.front.get()),
-        bufferIdentifier(buffers.back.get()),
-        bufferIdentifier(buffers.secondaryBack.get())
-    };
+    for (const auto& perLayerData : prepareBuffersInput) {
+        // Clear all the buffer's MachSendRights to avoid all the surfaces appearing to be in-use.
+        // We get back the new front buffer's MachSendRight in the reply.
+        clearBackendHandle(perLayerData.buffers.front.get());
+        clearBackendHandle(perLayerData.buffers.back.get());
+        clearBackendHandle(perLayerData.buffers.secondaryBack.get());
 
-    BufferIdentifierSet swappedBufferSet;
-    std::optional<ImageBufferBackendHandle> frontBufferHandle;
-    auto displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
+        inputData.uncheckedAppend({
+            {
+                bufferIdentifier(perLayerData.buffers.front.get()),
+                bufferIdentifier(perLayerData.buffers.back.get()),
+                bufferIdentifier(perLayerData.buffers.secondaryBack.get())
+            },
+            perLayerData.supportsPartialRepaint,
+            perLayerData.hasEmptyDirtyRegion
+        });
+    }
 
-    sendSyncToStream(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(bufferSet, supportsPartialRepaint, hasEmptyDirtyRegion),
-        Messages::RemoteRenderingBackend::PrepareBuffersForDisplay::Reply(swappedBufferSet, frontBufferHandle, displayRequirement));
-
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteRenderingBackendProxy::prepareBuffersForDisplay swapped to " << swappedBufferSet.front << " " << swappedBufferSet.back << " " << swappedBufferSet.secondaryBack);
+    Vector<PrepareBackingStoreBuffersOutputData> outputData;
+    sendSyncToStream(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData), Messages::RemoteRenderingBackend::PrepareBuffersForDisplay::Reply(outputData));
+    RELEASE_ASSERT(inputData.size() == outputData.size());
 
     auto fetchBufferWithIdentifier = [&](std::optional<RenderingResourceIdentifier> identifier, std::optional<ImageBufferBackendHandle>&& handle = std::nullopt, bool isFrontBuffer = false) -> RefPtr<ImageBuffer> {
         if (!identifier)
@@ -331,14 +335,21 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const BufferSet& buff
         return buffer;
     };
 
-    return {
-        {
-            fetchBufferWithIdentifier(swappedBufferSet.front, WTFMove(frontBufferHandle), true),
-            fetchBufferWithIdentifier(swappedBufferSet.back),
-            fetchBufferWithIdentifier(swappedBufferSet.secondaryBack)
-        },
-        displayRequirement
-    };
+    Vector<SwapBuffersResult> result;
+    result.reserveInitialCapacity(outputData.size());
+
+    for (auto& perLayerOutputData : outputData) {
+        result.uncheckedAppend({
+            {
+                fetchBufferWithIdentifier(perLayerOutputData.bufferSet.front, WTFMove(perLayerOutputData.frontBufferHandle), true),
+                fetchBufferWithIdentifier(perLayerOutputData.bufferSet.back),
+                fetchBufferWithIdentifier(perLayerOutputData.bufferSet.secondaryBack)
+            },
+            perLayerOutputData.displayRequirement
+        });
+    }
+
+    return result;
 }
 
 void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&& identifiers, CompletionHandler<void(bool)>&& completionHandler)
