@@ -1,3 +1,22 @@
+2022-03-23  Youenn Fablet  <youenn@apple.com>
+
+        Computation of Document siteForCookies is buggy in case document is created by window.open
+        https://bugs.webkit.org/show_bug.cgi?id=238202
+        <rdar://88979099>
+
+        Reviewed by John Wilander.
+
+        For top level navigations, we need to use the security origin to compute siteForCookies as the document
+        may have the opener security origin.
+        Add a Document routine to handle this case.
+
+        Tests: http/tests/cookies/same-site/popup-from-iframe-same-site-with-post-form.html
+               http/tests/cookies/same-site/popup-same-site-with-post-form.html
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * loader/FrameLoader.cpp:
+
 2022-03-22  Ben Nham  <nham@apple.com>
 
         Only show notification permission prompt on transient activation

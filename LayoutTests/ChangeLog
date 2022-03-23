@@ -1,3 +1,18 @@
+2022-03-23  Youenn Fablet  <youenn@apple.com>
+
+        Computation of Document siteForCookies is buggy in case document is created by window.open
+        https://bugs.webkit.org/show_bug.cgi?id=238202
+        <rdar://88979099>
+
+        Reviewed by John Wilander.
+
+        * http/tests/cookies/resources/testharness-helpers.js:
+        * http/tests/cookies/same-site/popup-from-iframe-same-site-with-post-form-expected.txt: Added.
+        * http/tests/cookies/same-site/popup-from-iframe-same-site-with-post-form.html: Added.
+        * http/tests/cookies/same-site/popup-same-site-with-post-form-expected.txt: Added.
+        * http/tests/cookies/same-site/popup-same-site-with-post-form.html: Added.
+        * http/tests/cookies/same-site/resources/popup-iframe.html: Added.
+
 2022-03-23  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Styles panel: Unwanted extra dash when autocompleting CSS variable names
