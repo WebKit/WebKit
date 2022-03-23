@@ -1046,7 +1046,7 @@ void WebGLRenderingContextBase::registerWithWebGLStateTracker()
 
 void WebGLRenderingContextBase::initializeNewContext()
 {
-    ASSERT(!m_contextLost);
+    ASSERT(!isContextLost());
     m_needsUpdate = true;
     m_markedCanvasDirty = false;
     m_activeTextureUnit = 0;
@@ -3166,7 +3166,13 @@ std::optional<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttri
 
 GCGLenum WebGLRenderingContextBase::getError()
 {
-    if (!m_context || m_isPendingPolicyResolution)
+    if (isContextLost()) {
+        auto& errors = m_contextLostState->errors;
+        if (!errors.isEmpty())
+            return errors.takeFirst();
+        return GraphicsContextGL::NO_ERROR;
+    }
+    if (m_isPendingPolicyResolution)
         return GraphicsContextGL::NO_ERROR;
     return m_context->getError();
 }
@@ -4055,7 +4061,7 @@ GCGLboolean WebGLRenderingContextBase::isBuffer(WebGLBuffer* buffer)
 
 bool WebGLRenderingContextBase::isContextLost() const
 {
-    return m_contextLost;
+    return m_contextLostState.has_value();
 }
 
 bool WebGLRenderingContextBase::isContextLostOrPending()
@@ -4076,7 +4082,7 @@ bool WebGLRenderingContextBase::isContextLostOrPending()
         m_hasRequestedPolicyResolution = true;
     }
 
-    return m_contextLost || m_isPendingPolicyResolution;
+    return isContextLost() || m_isPendingPolicyResolution;
 }
 
 GCGLboolean WebGLRenderingContextBase::isEnabled(GCGLenum cap)
@@ -6433,7 +6439,7 @@ void WebGLRenderingContextBase::viewport(GCGLint x, GCGLint y, GCGLsizei width, 
 void WebGLRenderingContextBase::forceLostContext(WebGLRenderingContextBase::LostContextMode mode)
 {
     if (isContextLostOrPending()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "loseContext", "context already lost");
+        synthesizeLostContextGLError(GraphicsContextGL::INVALID_OPERATION, "loseContext", "context already lost");
         return;
     }
 
@@ -6444,9 +6450,11 @@ void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostC
 {
     if (isContextLost())
         return;
+    if (mode == RealLostContext)
+        printToConsole(MessageLevel::Error, "WebGL: context lost.");
 
-    m_contextLost = true;
-    m_contextLostMode = mode;
+    m_contextLostState = ContextLostState { mode };
+    m_contextLostState->errors.add(GraphicsContextGL::CONTEXT_LOST_WEBGL);
 
     detachAndRemoveAllObjects();
     loseExtensions(mode);
@@ -6459,12 +6467,6 @@ void WebGLRenderingContextBase::loseContextImpl(WebGLRenderingContextBase::LostC
         if (m_context->getError() == GraphicsContextGL::NO_ERROR)
             break;
     }
-    ConsoleDisplayPreference display = (mode == RealLostContext) ? DisplayInConsole: DontDisplayInConsole;
-    synthesizeGLError(GraphicsContextGL::CONTEXT_LOST_WEBGL, "loseContext", "context lost", display);
-
-    // Don't allow restoration unless the context lost event has both been
-    // dispatched and its default behavior prevented.
-    m_restoreAllowed = false;
 
     // Always defer the dispatch of the context lost event, to implement
     // the spec behavior of queueing a task.
@@ -6477,10 +6479,9 @@ void WebGLRenderingContextBase::forceRestoreContext()
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "restoreContext", "context not lost");
         return;
     }
-
-    if (!m_restoreAllowed) {
-        if (m_contextLostMode == SyntheticLostContext)
-            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "restoreContext", "context restoration not allowed");
+    if (!m_contextLostState->restoreRequested) {
+        if (m_contextLostState->mode == SyntheticLostContext)
+            synthesizeLostContextGLError(GraphicsContextGL::INVALID_OPERATION, "restoreContext", "context restoration not allowed");
         return;
     }
 
@@ -6490,7 +6491,7 @@ void WebGLRenderingContextBase::forceRestoreContext()
 
 bool WebGLRenderingContextBase::isContextUnrecoverablyLost() const
 {
-    return m_contextLost && !m_restoreAllowed;
+    return isContextLost() && !m_contextLostState->restoreRequested;
 }
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> WebGLRenderingContextBase::layerContentsDisplayDelegate()
@@ -7732,11 +7733,12 @@ void WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent()
     queueTaskKeepingObjectAlive(*canvas, TaskSource::WebGL, [this, canvas] {
         if (isContextStopped())
             return;
-
+        if (!isContextLost())
+            return;
         auto event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString());
         canvas->dispatchEvent(event);
-        m_restoreAllowed = event->defaultPrevented();
-        if (m_contextLostMode == RealLostContext && m_restoreAllowed)
+        m_contextLostState->restoreRequested = event->defaultPrevented();
+        if (m_contextLostState->mode == RealLostContext && m_contextLostState->restoreRequested)
             m_restoreTimer.startOneShot(0_s);
     });
 }
@@ -7744,18 +7746,10 @@ void WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent()
 void WebGLRenderingContextBase::maybeRestoreContext()
 {
     RELEASE_ASSERT(!m_isSuspended);
-    ASSERT(m_contextLost);
-    if (!m_contextLost)
+    if (!isContextLost() || !m_contextLostState->restoreRequested) {
+        ASSERT_NOT_REACHED();
         return;
-
-    // The rendering context is not restored unless the default behavior of the
-    // webglcontextlost event was prevented earlier.
-    //
-    // Because of the way m_restoreTimer is set up for real vs. synthetic lost
-    // context events, we don't have to worry about this test short-circuiting
-    // the retry loop for real context lost events.
-    if (!m_restoreAllowed)
-        return;
+    }
 
     auto* canvas = htmlCanvas();
     if (!canvas)
@@ -7780,17 +7774,16 @@ void WebGLRenderingContextBase::maybeRestoreContext()
 
     RefPtr<GraphicsContextGL> context = hostWindow->createGraphicsContextGL(m_attributes);
     if (!context) {
-        if (m_contextLostMode == RealLostContext)
+        if (m_contextLostState->mode == RealLostContext)
             m_restoreTimer.startOneShot(secondsBetweenRestoreAttempts);
         else
-            // This likely shouldn't happen but is the best way to report it to the WebGL app.
-            synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "", "error restoring context");
+            printToConsole(MessageLevel::Error, "WebGL: error restoring lost context.");
         return;
     }
 
     setGraphicsContextGL(context.releaseNonNull());
     addActivityStateChangeObserverIfNecessary();
-    m_contextLost = false;
+    m_contextLostState = std::nullopt;
     setupFlags();
     initializeNewContext();
     canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextrestoredEvent, Event::CanBubble::No, Event::IsCancelable::Yes, emptyString()));
@@ -7872,14 +7865,17 @@ namespace {
 
 } // namespace anonymous
 
-void WebGLRenderingContextBase::synthesizeGLError(GCGLenum error, const char* functionName, const char* description, ConsoleDisplayPreference display)
+void WebGLRenderingContextBase::synthesizeGLError(GCGLenum error, const char* functionName, const char* description)
 {
-    if (m_synthesizedErrorsToConsole && display == DisplayInConsole) {
-        String str = "WebGL: " + GetErrorString(error) +  ": " + String(functionName) + ": " + String(description);
-        printToConsole(MessageLevel::Error, str);
-    }
+    printToConsole(MessageLevel::Error, makeString("WebGL: ", GetErrorString(error), ": ", functionName, ": ", description));
     if (m_context)
         m_context->synthesizeGLError(error);
+}
+
+void WebGLRenderingContextBase::synthesizeLostContextGLError(GCGLenum error, const char* functionName, const char* description)
+{
+    printToConsole(MessageLevel::Error, makeString("WebGL: ", GetErrorString(error), ": ", functionName, ": ", description));
+    m_contextLostState->errors.add(error);
 }
 
 void WebGLRenderingContextBase::applyStencilTest()

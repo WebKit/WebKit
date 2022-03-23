@@ -1,3 +1,18 @@
+2022-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        After losing context due to too many contexts, getError() does not return CONTEXT_LOST_WEBGL
+        https://bugs.webkit.org/show_bug.cgi?id=236965
+
+        Reviewed by Kenneth Russell.
+
+        Remove recording of synthetic webgl context lost error from the proxy.
+        This is now recorded in the WebGLRenderingContextBase.
+
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::synthesizeGLError):
+        (WebKit::RemoteGraphicsContextGLProxy::getError):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.h:
+
 2022-03-23  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed build fix after r291733

@@ -215,7 +215,6 @@ void RemoteGraphicsContextGLProxy::synthesizeGLError(GCGLenum error)
             markContextLost();
         return;
     }
-    m_errorWhenContextIsLost = error;
 }
 
 GCGLenum RemoteGraphicsContextGLProxy::getError()
@@ -227,7 +226,7 @@ GCGLenum RemoteGraphicsContextGLProxy::getError()
             markContextLost();
         return static_cast<GCGLenum>(returnValue);
     }
-    return std::exchange(m_errorWhenContextIsLost, NO_ERROR);
+    return NO_ERROR;
 }
 
 void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTesting event)

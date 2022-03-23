@@ -1,5 +1,53 @@
 2022-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        After losing context due to too many contexts, getError() does not return CONTEXT_LOST_WEBGL
+        https://bugs.webkit.org/show_bug.cgi?id=236965
+
+        Reviewed by Kenneth Russell.
+
+        After generating context lost, getError() is specified to return:
+         - CONTEXT_LOST_WEBGL for first call
+         - NO_ERROR for all the next calls.
+
+        WEBGL_lose_context is specified to add INVALID_OPERATION errors
+        even after context lost.
+
+        Change the code so that CONTEXT_LOST_WEBGL and WEBGL_lose_context induced
+        INVALID_OPERATION errors go to error vector in context lost -specific state.
+
+        Previously, these errors went into the m_context error vector. This is problematic
+        especially in the case where context loss happens where the m_context gets destroyed --
+        the error vector would be gone. This kind of loss happens for example when contexts
+        get lost due to the process having too many active contexts (least active context is "recycled").
+
+        Previously, any synthetized error was potentially obtainable after context lost. This is problematic
+        as it is not as specified. As mentioned above, only errors allowed after context lost is
+         - CONTEXT_LOST_WEBGL first after context lost
+         - WEBGL_lose_context.loseContext() and WEBGL_lose_context.restoreContext() induced INVALID_OPERATIONs
+
+        Changes the behavior to not report INVALID_OPERATION error in the theoretical case where we fail to
+        instantiate a new context. This is not allowed by the spec. Instead, just print an error to the console.
+
+        No new tests, updates the expectations of old ones with less failures.
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::initializeNewContext):
+        (WebCore::WebGLRenderingContextBase::getError):
+        (WebCore::WebGLRenderingContextBase::isContextLost const):
+        (WebCore::WebGLRenderingContextBase::isContextLostOrPending):
+        (WebCore::WebGLRenderingContextBase::forceLostContext):
+        (WebCore::WebGLRenderingContextBase::loseContextImpl):
+        (WebCore::WebGLRenderingContextBase::forceRestoreContext):
+        (WebCore::WebGLRenderingContextBase::isContextUnrecoverablyLost const):
+        (WebCore::WebGLRenderingContextBase::scheduleTaskToDispatchContextLostEvent):
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+        (WebCore::WebGLRenderingContextBase::synthesizeGLError):
+        (WebCore::WebGLRenderingContextBase::synthesizeLostContextGLError):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::ContextLostState::ContextLostState):
+
+2022-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         Context2D drawImage(img, x, y, w, h) should not throw IndexSizeError when width == 0 or height == 0
         https://bugs.webkit.org/show_bug.cgi?id=238195
 

@@ -1,5 +1,16 @@
 2022-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        After losing context due to too many contexts, getError() does not return CONTEXT_LOST_WEBGL
+        https://bugs.webkit.org/show_bug.cgi?id=236965
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/lose-context-on-status-failure-expected.txt:
+        * webgl/lose-context-after-context-lost-expected.txt:
+        * webgl/max-active-contexts-webglcontextlost-prevent-default-expected.txt:
+
+2022-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         Context2D drawImage(img, x, y, w, h) should not throw IndexSizeError when width == 0 or height == 0
         https://bugs.webkit.org/show_bug.cgi?id=238195
 

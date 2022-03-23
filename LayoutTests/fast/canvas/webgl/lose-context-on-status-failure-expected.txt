@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
-CONSOLE MESSAGE: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
-CONSOLE MESSAGE: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
-CONSOLE MESSAGE: WebGL: CONTEXT_LOST_WEBGL: loseContext: context lost
+CONSOLE MESSAGE: WebGL: context lost.
+CONSOLE MESSAGE: WebGL: context lost.
+CONSOLE MESSAGE: WebGL: context lost.
+CONSOLE MESSAGE: WebGL: context lost.
 Checks that a GPU status check failure will lose the context.
 NOTE: This only passes in the test harness because it requires Internals.
 

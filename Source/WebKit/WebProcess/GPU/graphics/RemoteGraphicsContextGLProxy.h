@@ -366,7 +366,6 @@ private:
     HashSet<String> m_requestableExtensions;
 
     HashSet<String> m_enabledExtensions;
-    GCGLenum m_errorWhenContextIsLost = NO_ERROR;
     IPC::StreamClientConnection m_streamConnection;
 };
 
