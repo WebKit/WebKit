@@ -1,3 +1,12 @@
+2022-03-23  Robert Jenner  <Jenner@apple.com>
+
+        [ iOS EWS ] editing/deleting/insert-in-orphaned-selection-crash.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=238282
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-03-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make fast/text/emoji-num-glyphs.html more robust
