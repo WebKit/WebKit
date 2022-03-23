@@ -61,9 +61,9 @@ private:
 
 // HTMLCollection subclasses NodeList to maintain legacy ObjC API compatibility.
 class HTMLCollection : public NodeList {
-    WTF_MAKE_ISO_ALLOCATED(HTMLCollection);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(HTMLCollection, WEBCORE_EXPORT);
 public:
-    virtual ~HTMLCollection();
+    WEBCORE_EXPORT virtual ~HTMLCollection();
 
     // DOM API
     Element* item(unsigned index) const override = 0; // Tighten return type from NodeList::item().
@@ -81,7 +81,7 @@ public:
     ContainerNode& ownerNode() const;
     ContainerNode& rootNode() const;
     void invalidateCacheForAttribute(const QualifiedName& attributeName);
-    virtual void invalidateCacheForDocument(Document&);
+    WEBCORE_EXPORT virtual void invalidateCacheForDocument(Document&);
     void invalidateCache() { invalidateCacheForDocument(document()); }
 
     bool hasNamedElementCache() const;
@@ -89,7 +89,7 @@ public:
 protected:
     HTMLCollection(ContainerNode& base, CollectionType);
 
-    virtual void updateNamedElementCache() const;
+    WEBCORE_EXPORT virtual void updateNamedElementCache() const;
     WEBCORE_EXPORT Element* namedItemSlow(const AtomString& name) const;
 
     void setNamedItemCache(std::unique_ptr<CollectionNamedElementCache>) const;

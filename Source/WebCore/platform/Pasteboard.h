@@ -252,7 +252,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForDragAndDrop(std::unique_ptr<PasteboardContext>&&);
     WEBCORE_EXPORT static std::unique_ptr<Pasteboard> create(const DragData&);
 
-    virtual void setDragImage(DragImage, const IntPoint& hotSpot);
+    WEBCORE_EXPORT virtual void setDragImage(DragImage, const IntPoint& hotSpot);
 #endif
 
 #if PLATFORM(WIN)

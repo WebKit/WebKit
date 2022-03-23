@@ -1,3 +1,18 @@
+2022-03-22  Alex Christensen  <achristensen@webkit.org>
+
+        Add a few more WEBCORE_EXPORT macros
+        https://bugs.webkit.org/show_bug.cgi?id=238214
+
+        Reviewed by Eric Carlson.
+
+        These are needed to successfully link when building with -fsanitize=fuzzer,address
+
+        * dom/Document.h:
+        * html/HTMLCollection.h:
+        * html/HTMLOptionsCollection.h:
+        * platform/Pasteboard.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
 2022-03-22  Chris Dumez  <cdumez@apple.com>
 
         Use ASCIILiteral in a few more places where it is useful
