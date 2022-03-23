@@ -1,3 +1,8 @@
+function axDebug(msg)
+{
+    getOrCreate("console", "div").innerText += `${msg}\n`;
+};
+
 // This function is necessary when printing AX attributes that are stringified with angle brackets:
 //    AXChildren: <array of size 0>
 // `debug` outputs to the `innerHTML` of a generated element, so these brackets must be escaped to be printed.

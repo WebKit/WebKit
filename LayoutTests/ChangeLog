@@ -1,3 +1,30 @@
+2022-03-23  Andres Gonzalez  <andresg_22@apple.com>
+
+        ITM: Fix for accessibility/table-attributes.html in isolated tree mode.
+        https://bugs.webkit.org/show_bug.cgi?id=238258
+        <rdar://problem/90707533>
+
+        Reviewed by Chris Fleizach.
+
+        - Modified this test to build the output in memory and log it at the end
+        in one call. This makes the test to run faster and not timeout in
+        isolated tree mode. In addition, we now retrieve the table element by
+        ID instead of setting focus to the body and getting the first child of
+        the focused element, which is not ITM friendly.
+        - Added the axDebug helper function which unlike debug causes minimum
+        side effects by modifying the innerText of the console element instead
+        of adding span children to it. Adding children to the console element
+        causes event notifications that affect the behavior of the test in both
+        ITM on and off.
+
+        * accessibility/table-attributes-expected.txt:
+        * accessibility/table-attributes.html:
+        * platform/glib/accessibility/table-attributes-expected.txt:
+        * resources/accessibility-helper.js:
+        (axDebug): Added.
+        * resources/js-test.js:
+        (getOrCreate): Exposes this function.
+
 2022-03-23  Jon Lee  <jonlee@apple.com>
 
         Unreviewed fuzzy gardening.
