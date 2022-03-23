@@ -88,7 +88,12 @@ class TestGit(testing.PathTestCase):
             mock.tags['tag-2'] = mock.commits['branch-b'][-1]
 
             self.assertEqual(
-                local.Git(self.path).tags,
+                local.Git(self.path).tags(),
+                ['tag-1', 'tag-2'],
+            )
+
+            self.assertEqual(
+                local.Git(self.path).tags(remote='origin'),
                 ['tag-1', 'tag-2'],
             )
 
@@ -526,7 +531,7 @@ class TestGitHub(testing.TestCase):
             mock.tags['tag-2'] = mock.commits['branch-b'][-1]
 
             self.assertEqual(
-                remote.GitHub(self.remote).tags,
+                remote.GitHub(self.remote).tags(),
                 ['tag-1', 'tag-2'],
             )
 
@@ -687,7 +692,7 @@ class TestBitBucket(testing.TestCase):
             mock.tags['tag-2'] = mock.commits['branch-b'][-1]
 
             self.assertEqual(
-                remote.BitBucket(self.remote).tags,
+                remote.BitBucket(self.remote).tags(),
                 ['tag-1', 'tag-2'],
             )
 

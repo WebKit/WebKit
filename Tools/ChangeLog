@@ -1,3 +1,47 @@
+2022-03-22  Jonathan Bedard  <jbedard@apple.com>
+
+        [commits.webkit.org] Sync tags
+        https://bugs.webkit.org/show_bug.cgi?id=238144
+        <rdar://problem/90594915>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/reporelaypy/reporelaypy/__init__.py: Bump version.
+        * Scripts/libraries/reporelaypy/reporelaypy/checkout.py:
+        (Checkout): Make 'origin' a global variable.
+        (Checkout.__init__): Ditto.
+        (Checkout.is_updated): Ditto.
+        (Checkout.push_update): Support pushing a tag.
+        (Checkout.fetch): Fetch a specific remote.
+        (Checkout.update_for): Make 'origin' a global variable.
+        (Checkout.update_all): Add tag syncing.
+        * Scripts/libraries/reporelaypy/reporelaypy/hooks.py:
+        (HookProcessor):
+        (HookProcessor.process_worker_hook): Update tags as well as branches.
+        * Scripts/libraries/reporelaypy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/setup.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/git.py:
+        (Git.tags): List tags for remote.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn.tags): Remove @property tag.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git.__init__): List tags for remote. 
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/bitbucket.py:
+        (BitBucket.tags): Remove @property tag.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/git_hub.py:
+        (GitHub.tags): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn.tags): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/scm_base.py:
+        (ScmBase.tags): Ditto.
+        (ScmBase.find): tags is a function instead of a property.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/git_unittest.py:
+        (TestGit.test_tags):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestLocalSvn.test_tags):
+        (TestRemoteSvn.test_tags):
+
 2022-03-23  Jon Lee  <jonlee@apple.com>
 
         Turn DOM in GPU Process on by default on iOS layout tests

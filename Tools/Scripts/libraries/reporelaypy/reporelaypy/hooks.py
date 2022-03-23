@@ -37,6 +37,8 @@ class HookProcessor(object):
     INBOUND_KEY = 'inbound-hooks'
     WORKER_HOOKS = 'worker-hooks'
     TYPES = ('pull_request', 'push')
+    BRANCH_PREFIX = 'refs/heads/'
+    TAG_PREFIX = 'refs/tags/'
 
     @classmethod
     def is_valid(cls, type, data):
@@ -68,10 +70,16 @@ class HookProcessor(object):
         branch = data.get('ref')
         if type == 'push' and branch:
             try:
-                if branch.startswith('refs/heads/'):
-                    branch = branch[len('refs/heads/'):]
-                self.checkout.update_for(branch, track=True)
-                [self.checkout.push_update(branch=branch, remote=remote, track=True) for remote in self.checkout.remotes.keys()]
+                if branch.startswith(self.BRANCH_PREFIX):
+                    branch = branch[len(self.BRANCH_PREFIX):]
+                    self.checkout.update_for(branch, track=True)
+                    [self.checkout.push_update(branch=branch, remote=remote, track=True) for remote in self.checkout.remotes.keys()]
+
+                if branch.startswith(self.TAG_PREFIX):
+                    tag = branch[len(self.TAG_PREFIX):]
+                    self.checkout.fetch()
+                    [self.checkout.push_update(tag=tag, remote=remote) for remote in self.checkout.remotes.keys()]
+
             except BaseException as e:
                 sys.stderr.write('{}\n'.format(e))
 

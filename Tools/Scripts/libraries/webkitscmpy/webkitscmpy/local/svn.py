@@ -277,7 +277,6 @@ class Svn(Scm):
     def branches(self):
         return ['trunk'] + self.list('branches')
 
-    @property
     def tags(self):
         return self.list('tags')
 

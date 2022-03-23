@@ -397,7 +397,6 @@ class GitHub(Scm):
             return [self.default_branch]
         return sorted([details.get('name') for details in response if details.get('name')])
 
-    @property
     def tags(self):
         response = self.request('tags')
         if not response:

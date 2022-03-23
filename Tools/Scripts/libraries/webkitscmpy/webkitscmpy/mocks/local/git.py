@@ -233,6 +233,15 @@ nothing to commit, working tree clean
                     stdout='\n'.join(sorted(self.tags.keys())) + '\n',
                 ),
             ), mocks.Subprocess.Route(
+                self.executable, 'ls-remote', '--tags', re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='\n'.join([
+                        '{hash}\trefs/tags/{tag}\n{hash}\trefs/tags/{tag}^{{}}'.format(hash=commit.hash, tag=tag) for tag, commit in sorted(self.tags.items())
+                    ]) + '\n',
+                ),
+            ), mocks.Subprocess.Route(
                 self.executable, 'rev-parse', '--abbrev-ref', 'origin/HEAD',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: mocks.ProcessCompletion(

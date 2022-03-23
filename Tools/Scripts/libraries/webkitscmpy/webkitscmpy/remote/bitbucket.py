@@ -366,7 +366,6 @@ class BitBucket(Scm):
             return [self.default_branch]
         return sorted([details.get('displayId') for details in response if details.get('displayId')])
 
-    @property
     def tags(self):
         response = self.request('tags')
         if not response:

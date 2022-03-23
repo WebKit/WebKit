@@ -31,6 +31,8 @@ from webkitscmpy import local, remote
 
 
 class Checkout(object):
+    REMOTE = 'origin'
+
     class Exception(RuntimeError):
         pass
 
@@ -129,10 +131,10 @@ class Checkout(object):
         try:
             if self.repository:
                 if not self.url:
-                    self.url = self.repository.url(name='origin')
-                if self.url and self.repository.url(name='origin') != self.url:
+                    self.url = self.repository.url(name=self.REMOTE)
+                if self.url and self.repository.url(name=self.REMOTE) != self.url:
                     sys.stderr.write("Specified '{}' as the URL, but the specified path is from '{}'\n".format(
-                        self.url, self.repository.url(name='origin'),
+                        self.url, self.repository.url(name=self.REMOTE),
                     ))
                 if primary:
                     Checkout.add_remotes(self.repository, remotes)
@@ -177,7 +179,7 @@ class Checkout(object):
             return self._repository
         return None
 
-    def is_updated(self, branch, remote='origin'):
+    def is_updated(self, branch, remote=REMOTE):
         if not self.repository:
             sys.stderr.write('Cannot query checkout, clone still pending...\n')
             return None
@@ -202,9 +204,15 @@ class Checkout(object):
                 return ref == line.split()[0]
         return False
 
-    def push_update(self, branch=None, remote=None, track=False):
-        if not remote or remote in ('origin', 'fork'):
+    def push_update(self, branch=None, tag=None, remote=None, track=False):
+        if not remote or remote in (self.REMOTE, 'fork'):
             return False
+
+        if tag:
+            return not run(
+                [self.repository.executable(), 'push', remote, tag],
+                cwd=self.repository.root_path,
+            ).returncode
 
         branch = branch or self.repository.default_branch
         if not track and self.is_updated(branch, remote=remote):
@@ -215,7 +223,13 @@ class Checkout(object):
             cwd=self.repository.root_path,
         ).returncode
 
-    def update_for(self, branch=None, remote='origin', track=False):
+    def fetch(self, remote=REMOTE):
+        return not run(
+            [self.repository.executable(), 'fetch', remote],
+            cwd=self.repository.root_path,
+        ).returncode
+
+    def update_for(self, branch=None, remote=REMOTE, track=False):
         if not self.repository:
             sys.stderr.write("Cannot update '{}', clone still pending...\n".format(branch))
             return False
@@ -244,7 +258,7 @@ class Checkout(object):
         self.repository.cache.populate(branch=branch)
         return True
 
-    def update_all(self, remote='origin'):
+    def update_all(self, remote=REMOTE):
         if not self.repository:
             sys.stderr.write("Cannot update checkout, clone still pending...\n")
             return None
@@ -253,6 +267,7 @@ class Checkout(object):
         self.repository.cache.populate(branch=self.repository.default_branch)
 
         # First, update all branches we're already tracking
+        print('Updating branches...')
         all_branches = set(self.repository.branches_for(remote=remote))
         for branch in self.repository.branches_for(remote=False):
             if branch in all_branches:
@@ -261,6 +276,7 @@ class Checkout(object):
             [self.push_update(branch=branch, remote=remote) for remote in self.remotes.keys()]
 
         # Then, track all untracked branches
+        print('Tracking new branches...')
         for branch in all_branches:
             run(
                 [self.repository.executable(), 'branch', '--track', branch, 'remotes/{}/{}'.format(remote, branch)],
@@ -268,3 +284,15 @@ class Checkout(object):
             )
             [self.push_update(branch=branch, remote=remote) for remote in self.remotes.keys()]
             self.repository.cache.populate(branch=branch)
+
+        # Sync all tags
+        print('Syncing tags...')
+        origin_tags = set(self.repository.tags(remote=remote))
+        for target_remote in self.remotes.keys():
+            print('Syncing tags for {}...'.format(target_remote))
+            if target_remote == remote:
+                continue
+            remote_tags = set(self.repository.tags(remote=target_remote))
+            for tag in origin_tags - remote_tags:
+                print(f'    {tag}')
+                self.push_update(tag=tag, remote=target_remote)

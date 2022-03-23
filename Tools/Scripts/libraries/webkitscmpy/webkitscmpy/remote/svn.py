@@ -200,7 +200,6 @@ class Svn(Scm):
     def branches(self):
         return [self.default_branch] + self.list('branches')
 
-    @property
     def tags(self):
         return self.list('tags')
 

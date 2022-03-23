@@ -452,12 +452,22 @@ class Git(Scm):
     def branches(self):
         return self.branches_for()
 
-    @property
-    def tags(self):
-        tags = run([self.executable(), 'tag'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+    def tags(self, remote=None):
+        if not remote:
+            tags = run([self.executable(), 'tag'], cwd=self.root_path, capture_output=True, encoding='utf-8')
+            if tags.returncode:
+                raise self.Exception('Failed to retrieve tag list for {}'.format(self.root_path))
+            return tags.stdout.splitlines()
+
+        tags = run([self.executable(), 'ls-remote', '--tags', remote], cwd=self.root_path, capture_output=True, encoding='utf-8')
         if tags.returncode:
-            raise self.Exception('Failed to retrieve tag list for {}'.format(self.root_path))
-        return tags.stdout.splitlines()
+            raise self.Exception('Failed to retrieve tag list for {} in {}'.format(remote, self.root_path))
+        result = []
+        for line in tags.stdout.splitlines():
+            if line.endswith('^{}'):
+                continue
+            result.append('/'.join(line.split('/')[2:]))
+        return result
 
     def url(self, name=None, cached=None):
         return self.config(cached=cached).get('remote.{}.url'.format(name or 'origin'))

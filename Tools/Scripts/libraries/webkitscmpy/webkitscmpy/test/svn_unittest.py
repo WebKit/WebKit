@@ -68,7 +68,7 @@ class TestLocalSvn(testing.PathTestCase):
     def test_tags(self):
         with mocks.local.Svn(self.path):
             self.assertEqual(
-                local.Svn(self.path).tags,
+                local.Svn(self.path).tags(),
                 ['tag-1', 'tag-2'],
             )
 
@@ -283,7 +283,7 @@ class TestRemoteSvn(testing.TestCase):
     def test_tags(self):
         with mocks.remote.Svn():
             self.assertEqual(
-                remote.Svn(self.remote).tags,
+                remote.Svn(self.remote).tags(),
                 ['tag-1', 'tag-2'],
             )
 
