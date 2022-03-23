@@ -1,3 +1,24 @@
+2022-03-23  Youenn Fablet  <youenn@apple.com>
+
+        VideoFrame does not need to inherit from MediaSample
+        https://bugs.webkit.org/show_bug.cgi?id=238071
+
+        Reviewed by Eric Carlson.
+
+        Update MediaSample, MediaSampleAVFObjC and VideoFrame according the separation.
+        This is a refactoring, covered by existing tests.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/MediaSample.h:
+        * platform/VideoFrame.cpp:
+        * platform/VideoFrame.h:
+        * platform/VideoFrame.mm: Added.
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        * platform/graphics/gstreamer/VideoFrameGStreamer.cpp:
+        * platform/graphics/gstreamer/VideoFrameGStreamer.h:
+
 2022-03-23  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         REGRESSION(r291611): Fix GTK/WPE build

@@ -26,114 +26,40 @@
 #include "config.h"
 #include "VideoFrame.h"
 
-#if PLATFORM(COCOA)
-#include "VideoFrameCV.h"
-#endif
-
 #if ENABLE(VIDEO)
+
+#if USE(GSTREAMER)
+#include "VideoFrameGStreamer.h"
+#endif
 
 namespace WebCore {
 
-VideoFrame::VideoFrame(MediaTime presentationTime, bool isMirrored, VideoRotation rotation)
+VideoFrame::VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation rotation)
     : m_presentationTime(presentationTime)
     , m_isMirrored(isMirrored)
     , m_rotation(rotation)
 {
 }
 
-VideoFrame::~VideoFrame() = default;
-
-MediaTime VideoFrame::presentationTime() const
-{
-    return m_presentationTime;
-}
-
-VideoFrame::Rotation VideoFrame::rotation() const
-{
-    return m_rotation;
-}
-
-bool VideoFrame::isMirrored() const
-{
-    return m_isMirrored;
-}
-
-WebCore::PlatformSample VideoFrame::platformSample() const
-{
-    return { WebCore::PlatformSample::VideoFrameType, { } };
-}
-
-PlatformSample::Type VideoFrame::platformSampleType() const
-{
-    return WebCore::PlatformSample::VideoFrameType;
-}
-
-MediaTime VideoFrame::decodeTime() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-MediaTime VideoFrame::duration() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-AtomString VideoFrame::trackID() const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-size_t VideoFrame::sizeInBytes() const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-void VideoFrame::offsetTimestampsBy(const MediaTime&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void VideoFrame::setTimestamps(const MediaTime&, const MediaTime&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-Ref<WebCore::MediaSample> VideoFrame::createNonDisplayingCopy() const
-{
-    CRASH();
-}
-
-MediaSample::SampleFlags VideoFrame::flags() const
-{
-    return MediaSample::SampleFlags::None;
-}
-
-void VideoFrame::dump(PrintStream&) const
-{
-}
-
-void VideoFrame::initializeCharacteristics(MediaTime presentationTime, bool isMirrored, VideoRotation rotation)
+void VideoFrame::initializeCharacteristics(MediaTime presentationTime, bool isMirrored, Rotation rotation)
 {
     const_cast<MediaTime&>(m_presentationTime) = presentationTime;
     const_cast<bool&>(m_isMirrored) = isMirrored;
-    const_cast<VideoRotation&>(m_rotation) = rotation;
+    const_cast<Rotation&>(m_rotation) = rotation;
 }
 
-#if PLATFORM(COCOA)
-RefPtr<VideoFrameCV> VideoFrame::asVideoFrameCV()
+#if !PLATFORM(COCOA)
+RefPtr<JSC::Uint8ClampedArray> VideoFrame::getRGBAImageData() const
 {
-    auto buffer = pixelBuffer();
-    if (!buffer)
-        return nullptr;
-
-    return VideoFrameCV::create(presentationTime(), isMirrored(), rotation(), buffer);
+#if USE(GSTREAMER)
+    if (isGStreamer())
+        return static_cast<const VideoFrameGStreamer*>(this)->computeRGBAImageData();
+#endif
+    // FIXME: Add support.
+    return nullptr;
 }
 #endif
 
 }
 
-#endif
+#endif // ENABLE(VIDEO)

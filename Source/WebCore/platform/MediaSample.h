@@ -29,10 +29,10 @@
 #include "FourCC.h"
 #include "PlatformVideoColorSpace.h"
 #include "SharedBuffer.h"
-#include <JavaScriptCore/TypedArrays.h>
 #include <functional>
 #include <wtf/EnumTraits.h>
 #include <wtf/MediaTime.h>
+#include <wtf/PrintStream.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/AtomString.h>
 
@@ -56,8 +56,7 @@ struct PlatformSample {
         MockSampleBoxType,
         CMSampleBufferType,
         GStreamerSampleType,
-        ByteRangeSampleType,
-        VideoFrameType, // FIXME: To be removed when VideoFrame is not MediaSample.
+        ByteRangeSampleType
     } type;
     union {
         const MockSampleBox* mockSampleBox;
@@ -92,8 +91,6 @@ public:
     }
     virtual Ref<MediaSample> createNonDisplayingCopy() const = 0;
 
-    virtual RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const { return nullptr; }
-
     enum SampleFlags {
         None = 0,
         IsSync = 1 << 0,
@@ -110,20 +107,6 @@ public:
         size_t byteLength { 0 };
     };
     virtual std::optional<ByteRange> byteRange() const { return std::nullopt; }
-
-    enum class VideoRotation {
-        None = 0,
-        UpsideDown = 180,
-        Right = 90,
-        Left = 270,
-    };
-    virtual VideoRotation rotation() const { return VideoRotation::None; }
-    virtual bool isMirrored() const { return false; }
-    virtual uint32_t pixelFormat() const { return 0; }
-#if PLATFORM(COCOA)
-    virtual CVPixelBufferRef pixelBuffer() const { return nullptr; };
-#endif
-    virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
     bool isSync() const { return flags() & IsSync; }
     bool isNonDisplaying() const { return flags() & IsNonDisplaying; }
@@ -191,7 +174,6 @@ struct VideoInfo : public TrackInfo {
     FloatSize displaySize;
     uint8_t bitDepth { 8 };
     PlatformVideoColorSpace colorSpace;
-    MediaSample::VideoRotation rotation { MediaSample::VideoRotation::None };
 
     RefPtr<SharedBuffer> atomData;
 
@@ -201,7 +183,7 @@ private:
     bool equalTo(const TrackInfo& otherVideoInfo) const final
     {
         auto& other = downcast<const VideoInfo>(otherVideoInfo);
-        return size == other.size && displaySize == other.displaySize && bitDepth == other.bitDepth && colorSpace == other.colorSpace && rotation == other.rotation && ((!atomData && !other.atomData) || (atomData && other.atomData && *atomData == *other.atomData));
+        return size == other.size && displaySize == other.displaySize && bitDepth == other.bitDepth && colorSpace == other.colorSpace && ((!atomData && !other.atomData) || (atomData && other.atomData && *atomData == *other.atomData));
     }
 };
 
@@ -275,16 +257,6 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AudioInfo)
 SPECIALIZE_TYPE_TRAITS_END()
 
 namespace WTF {
-
-template<> struct EnumTraits<WebCore::MediaSample::VideoRotation> {
-    using values = EnumValues<
-        WebCore::MediaSample::VideoRotation,
-        WebCore::MediaSample::VideoRotation::None,
-        WebCore::MediaSample::VideoRotation::UpsideDown,
-        WebCore::MediaSample::VideoRotation::Right,
-        WebCore::MediaSample::VideoRotation::Left
-    >;
-};
 
 template<typename Type> struct LogArgument;
 template <>

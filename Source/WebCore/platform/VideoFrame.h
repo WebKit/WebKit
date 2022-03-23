@@ -27,65 +27,80 @@
 
 #if ENABLE(VIDEO)
 
-#include "MediaSample.h"
+#include "FloatSize.h"
+#include <JavaScriptCore/TypedArrays.h>
+#include <wtf/MediaTime.h>
+#include <wtf/ThreadSafeRefCounted.h>
+
+typedef struct __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 
+class ProcessIdentity;
 #if USE(AVFOUNDATION) && PLATFORM(COCOA)
 class VideoFrameCV;
 #endif
 
 // A class representing a video frame from a decoder, capture source, or similar.
-// FIXME: Currently for implementation purposes inherts from MediaSample until capture code
-// stops referring to MediaSample
-class VideoFrame : public MediaSample {
+class VideoFrame : public ThreadSafeRefCounted<VideoFrame> {
 public:
-    WEBCORE_EXPORT ~VideoFrame();
+    virtual ~VideoFrame() = default;
 
-    using Rotation = MediaSample::VideoRotation;
+    enum class Rotation {
+        None = 0,
+        UpsideDown = 180,
+        Right = 90,
+        Left = 270,
+    };
 
-    // WebCore::MediaSample overrides.
-    WEBCORE_EXPORT MediaTime presentationTime() const final;
-    WEBCORE_EXPORT Rotation rotation() const final;
-    WEBCORE_EXPORT bool isMirrored() const final;
-    // FIXME: When VideoFrame is not MediaSample, these will not be needed.
-    WEBCORE_EXPORT WebCore::PlatformSample platformSample() const final;
-    WEBCORE_EXPORT PlatformSample::Type platformSampleType() const final;
+    MediaTime presentationTime() const { return m_presentationTime; }
+    Rotation rotation() const { return m_rotation; }
+    bool isMirrored() const { return m_isMirrored; }
+
+#if PLATFORM(COCOA) && USE(AVFOUNDATION)
+    WEBCORE_EXPORT RefPtr<VideoFrameCV> asVideoFrameCV();
+#endif
+    WEBCORE_EXPORT RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const;
+
+    virtual FloatSize presentationSize() const = 0;
+    virtual uint32_t pixelFormat() const = 0;
 
     virtual bool isRemoteProxy() const { return false; }
     virtual bool isLibWebRTC() const { return false; }
-#if USE(AVFOUNDATION)
     virtual bool isCV() const { return false; }
+#if USE(GSTREAMER)
+    virtual bool isGStreamer() const { return false; }
+#endif
 #if PLATFORM(COCOA)
-    WEBCORE_EXPORT virtual RefPtr<VideoFrameCV> asVideoFrameCV();
+    virtual CVPixelBufferRef pixelBuffer() const { return nullptr; };
 #endif
-#endif
+    WEBCORE_EXPORT virtual void setOwnershipIdentity(const ProcessIdentity&) { }
 
-    void initializeCharacteristics(MediaTime presentationTime, bool isMirrored, VideoRotation);
+    void initializeCharacteristics(MediaTime presentationTime, bool isMirrored, Rotation);
 
 protected:
-    WEBCORE_EXPORT VideoFrame(MediaTime presentationTime, bool isMirrored, VideoRotation);
-    const MediaTime m_presentationTime;
-    const bool m_isMirrored;
-    const VideoRotation m_rotation;
+    WEBCORE_EXPORT VideoFrame(MediaTime presentationTime, bool isMirrored, Rotation);
 
 private:
-    // FIXME: These are not intended to be used for these objects.
-    // WebCore::MediaSample overrides.
-    WEBCORE_EXPORT MediaTime decodeTime() const final;
-    WEBCORE_EXPORT MediaTime duration() const final;
-    WEBCORE_EXPORT AtomString trackID() const final;
-    WEBCORE_EXPORT size_t sizeInBytes() const final;
-    WEBCORE_EXPORT void offsetTimestampsBy(const MediaTime&) final;
-    WEBCORE_EXPORT void setTimestamps(const MediaTime&, const MediaTime&) final;
-    WEBCORE_EXPORT Ref<WebCore::MediaSample> createNonDisplayingCopy() const final;
-    WEBCORE_EXPORT SampleFlags flags() const final;
-    WEBCORE_EXPORT void dump(PrintStream&) const final;
+    const MediaTime m_presentationTime;
+    const bool m_isMirrored;
+    const Rotation m_rotation;
 };
 
 }
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::VideoFrame)
-    static bool isType(const WebCore::MediaSample& mediaSample) { return mediaSample.platformSampleType() == WebCore::PlatformSample::VideoFrameType; }
-SPECIALIZE_TYPE_TRAITS_END()
-#endif
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::VideoFrame::Rotation> {
+    using values = EnumValues<
+        WebCore::VideoFrame::Rotation,
+        WebCore::VideoFrame::Rotation::None,
+        WebCore::VideoFrame::Rotation::UpsideDown,
+        WebCore::VideoFrame::Rotation::Right,
+        WebCore::VideoFrame::Rotation::Left
+    >;
+};
+
+}
+
+#endif // ENABLE(VIDEO)

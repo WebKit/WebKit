@@ -23,6 +23,9 @@
 
 #include "VideoFrame.h"
 #include "VideoFrameMetadataGStreamer.h"
+#include <wtf/glib/GRefPtr.h>
+
+typedef struct _GstSample GstSample;
 
 namespace WebCore {
 
@@ -43,14 +46,15 @@ public:
     static Ref<VideoFrameGStreamer> createFromPixelBuffer(PixelBuffer&&, const MediaTime& presentationTime = MediaTime::invalidTime(), const IntSize& destinationSize = { }, double frameRate = 1, Rotation videoRotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& metadata = std::nullopt);
 
     GstSample* sample() const { return m_sample.get(); }
+    RefPtr<JSC::Uint8ClampedArray> computeRGBAImageData() const;
 
 private:
     VideoFrameGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, const MediaTime& presentationTime = MediaTime::invalidTime(), Rotation = Rotation::None, bool videoMirrored = false, std::optional<VideoFrameTimeMetadata>&& = std::nullopt);
     VideoFrameGStreamer(const GRefPtr<GstSample>&, const MediaTime& presentationTime, Rotation = Rotation::None);
 
     FloatSize presentationSize() const final { return m_presentationSize; }
-    RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const final;
     uint32_t pixelFormat() const final { return 0; }
+    bool isGStreamer() const final { return true; }
 
     GRefPtr<GstSample> m_sample;
     FloatSize m_presentationSize;

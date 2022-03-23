@@ -232,6 +232,7 @@ page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeMac.mm
 page/scrolling/mac/ScrollingTreeOverflowScrollingNodeMac.mm
 page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm
+platform/VideoFrame.mm
 platform/audio/AudioSession.cpp
 platform/audio/cocoa/AudioDestinationCocoa.cpp
 platform/audio/cocoa/AudioFileReaderCocoa.cpp

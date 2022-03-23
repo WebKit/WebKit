@@ -104,7 +104,7 @@ VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const
 {
 }
 
-RefPtr<JSC::Uint8ClampedArray> VideoFrameGStreamer::getRGBAImageData() const
+RefPtr<JSC::Uint8ClampedArray> VideoFrameGStreamer::computeRGBAImageData() const
 {
     auto* caps = gst_sample_get_caps(m_sample.get());
     GstVideoInfo inputInfo;

@@ -66,12 +66,6 @@ MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, uint64_t trackI
     , m_id(AtomString::number(trackID))
 {
 }
-MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, VideoRotation rotation, bool mirrored)
-    : m_sample(sample)
-    , m_rotation(rotation)
-    , m_mirrored(mirrored)
-{
-}
 
 MediaSampleAVFObjC::~MediaSampleAVFObjC() = default;
 
@@ -108,22 +102,6 @@ PlatformSample MediaSampleAVFObjC::platformSample() const
 {
     PlatformSample sample = { PlatformSample::CMSampleBufferType, { .cmSampleBuffer = m_sample.get() } };
     return sample;
-}
-
-uint32_t MediaSampleAVFObjC::pixelFormat() const
-{
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
-    return CVPixelBufferGetPixelFormatType(pixelBuffer);
-}
-
-RefPtr<VideoFrameCV> MediaSampleAVFObjC::videoFrame() const
-{
-    if (!m_sample)
-        return nullptr;
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
-    if (!pixelBuffer)
-        return nullptr;
-    return VideoFrameCV::create(presentationTime(), m_mirrored, m_rotation, RetainPtr { pixelBuffer });
 }
 
 static bool isCMSampleBufferAttachmentRandomAccess(CFDictionaryRef attachmentDict)
@@ -312,39 +290,6 @@ Ref<MediaSample> MediaSampleAVFObjC::createNonDisplayingCopy() const
     return MediaSampleAVFObjC::create(adoptCF(newSampleBuffer).get(), m_id);
 }
 
-RefPtr<JSC::Uint8ClampedArray> MediaSampleAVFObjC::getRGBAImageData() const
-{
-    const OSType imageFormat = kCVPixelFormatType_32RGBA;
-    RetainPtr<CFNumberRef> imageFormatNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &imageFormat));
-
-    RetainPtr<CFMutableDictionaryRef> conformerOptions = adoptCF(CFDictionaryCreateMutable(0, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    CFDictionarySetValue(conformerOptions.get(), kCVPixelBufferPixelFormatTypeKey, imageFormatNumber.get());
-    PixelBufferConformerCV pixelBufferConformer(conformerOptions.get());
-
-    auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
-    auto rgbaPixelBuffer = pixelBufferConformer.convert(pixelBuffer);
-    auto status = CVPixelBufferLockBaseAddress(rgbaPixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
-    ASSERT_UNUSED(status, status == noErr);
-
-    void* data = CVPixelBufferGetBaseAddressOfPlane(rgbaPixelBuffer.get(), 0);
-    size_t byteLength = CVPixelBufferGetHeight(pixelBuffer) * CVPixelBufferGetWidth(pixelBuffer) * 4;
-    auto result = JSC::Uint8ClampedArray::tryCreate(JSC::ArrayBuffer::create(data, byteLength), 0, byteLength);
-
-    status = CVPixelBufferUnlockBaseAddress(rgbaPixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
-    ASSERT(status == noErr);
-
-    return result;
-}
-
-static inline void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
-{
-    CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
-    for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
-        CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
-        CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
-    }
-}
-
 bool MediaSampleAVFObjC::isHomogeneous() const
 {
     CFArrayRef attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(m_sample.get(), true);
@@ -413,19 +358,6 @@ Vector<Ref<MediaSampleAVFObjC>> MediaSampleAVFObjC::divideIntoHomogeneousSamples
         samples.uncheckedAppend(MediaSampleAVFObjC::create(adoptCF(rawSample).get(), m_id));
     }
     return samples;
-}
-
-CVPixelBufferRef MediaSampleAVFObjC::pixelBuffer() const
-{
-    return static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(m_sample.get()));
-}
-
-void MediaSampleAVFObjC::setOwnershipIdentity(const ProcessIdentity& resourceOwner)
-{
-    ASSERT(resourceOwner);
-    auto buffer = pixelBuffer();
-    ASSERT(buffer);
-    setOwnershipIdentityForCVPixelBuffer(buffer, resourceOwner);
 }
 
 }

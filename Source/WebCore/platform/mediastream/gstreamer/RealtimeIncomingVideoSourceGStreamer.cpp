@@ -22,6 +22,7 @@
 #if USE(GSTREAMER_WEBRTC)
 #include "RealtimeIncomingVideoSourceGStreamer.h"
 
+#include "GStreamerCommon.h"
 #include "VideoFrameGStreamer.h"
 #include "VideoFrameMetadataGStreamer.h"
 #include <gst/rtp/rtp.h>

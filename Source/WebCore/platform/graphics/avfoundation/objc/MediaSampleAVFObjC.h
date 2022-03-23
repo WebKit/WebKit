@@ -43,9 +43,6 @@ class MediaSampleAVFObjC : public MediaSample {
 public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, uint64_t trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
-    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, VideoRotation rotation = VideoRotation::None, bool mirrored = false) { return adoptRef(*new MediaSampleAVFObjC(sample, rotation, mirrored)); }
-
-    WEBCORE_EXPORT RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const override;
 
     MediaTime presentationTime() const override;
     MediaTime decodeTime() const override;
@@ -65,12 +62,6 @@ public:
     WEBCORE_EXPORT std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime, UseEndTime) override;
     WEBCORE_EXPORT Ref<MediaSample> createNonDisplayingCopy() const override;
 
-    VideoRotation rotation() const override { return m_rotation; }
-    bool isMirrored() const override { return m_mirrored; }
-    WEBCORE_EXPORT uint32_t pixelFormat() const final;
-    WEBCORE_EXPORT CVPixelBufferRef pixelBuffer() const final;
-    WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&) final;
-
     CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
 
     bool isHomogeneous() const;
@@ -83,20 +74,15 @@ public:
     KeyIDs& keyIDs() { return m_keyIDs; }
 #endif
 
-    // FIXME: To be removed once VideoFrame is not a MediaSample.
-    WEBCORE_EXPORT RefPtr<VideoFrameCV> videoFrame() const;
 protected:
     WEBCORE_EXPORT MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&&);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, AtomString trackID);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, uint64_t trackID);
-    WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, VideoRotation, bool mirrored);
     WEBCORE_EXPORT virtual ~MediaSampleAVFObjC();
 
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomString m_id;
-    VideoRotation m_rotation { VideoRotation::None };
-    bool m_mirrored { false };
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     Vector<Ref<FragmentedSharedBuffer>> m_keyIDs;
