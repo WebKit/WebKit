@@ -148,12 +148,12 @@ GPRReg SpeculativeJIT::fillJSValue(Edge edge)
     }
 }
 
-void SpeculativeJIT::cachedGetById(CodeOrigin origin, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR, CacheableIdentifier identifier, JITCompiler::Jump slowPathTarget , SpillRegistersMode mode, AccessType type)
+void SpeculativeJIT::cachedGetById(CodeOrigin origin, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier identifier, JITCompiler::Jump slowPathTarget , SpillRegistersMode mode, AccessType type)
 {
-    cachedGetById(origin, base.gpr(), result.gpr(), stubInfoGPR, identifier, slowPathTarget, mode, type);
+    cachedGetById(origin, base.gpr(), result.gpr(), stubInfoGPR, scratchGPR, identifier, slowPathTarget, mode, type);
 }
 
-void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg stubInfoGPR, CacheableIdentifier identifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode, AccessType type)
+void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier identifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode spillMode, AccessType type)
 {
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     RegisterSet usedRegisters = this->usedRegisters();
@@ -163,15 +163,18 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
         usedRegisters.set(resultGPR, false);
         if (stubInfoGPR != InvalidGPRReg)
             usedRegisters.set(stubInfoGPR, false);
+        if (scratchGPR != InvalidGPRReg)
+            usedRegisters.set(scratchGPR, false);
     }
     JITGetByIdGenerator gen(
         m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(baseGPR), JSValueRegs(resultGPR), stubInfoGPR, type);
-    gen.generateFastPath(m_jit);
+    gen.generateFastPath(m_jit, scratchGPR);
     
     JITCompiler::JumpList slowCases;
     slowCases.append(slowPathTarget);
-    slowCases.append(gen.slowPathJump());
+    if (!JITCode::useDataIC(JITType::DFGJIT))
+        slowCases.append(gen.slowPathJump());
 
     std::unique_ptr<SlowPathGenerator> slowPath;
     if (JITCode::useDataIC(JITType::DFGJIT)) {
@@ -190,7 +193,7 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     addSlowPathGenerator(WTFMove(slowPath));
 }
 
-void SpeculativeJIT::cachedGetByIdWithThis(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg thisGPR, GPRReg resultGPR, GPRReg stubInfoGPR, CacheableIdentifier identifier, const JITCompiler::JumpList& slowPathTarget)
+void SpeculativeJIT::cachedGetByIdWithThis(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg thisGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier identifier, const JITCompiler::JumpList& slowPathTarget)
 {
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
     RegisterSet usedRegisters = this->usedRegisters();
@@ -200,15 +203,18 @@ void SpeculativeJIT::cachedGetByIdWithThis(CodeOrigin codeOrigin, GPRReg baseGPR
     usedRegisters.set(resultGPR, false);
     if (stubInfoGPR != InvalidGPRReg)
         usedRegisters.set(stubInfoGPR, false);
+    if (scratchGPR != InvalidGPRReg)
+        usedRegisters.set(scratchGPR, false);
     
     JITGetByIdWithThisGenerator gen(
         m_jit.codeBlock(), &m_jit.jitCode()->common.m_stubInfos, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs(resultGPR), JSValueRegs(baseGPR), JSValueRegs(thisGPR), stubInfoGPR);
-    gen.generateFastPath(m_jit);
+    gen.generateFastPath(m_jit, scratchGPR);
     
     JITCompiler::JumpList slowCases;
     slowCases.append(slowPathTarget);
-    slowCases.append(gen.slowPathJump());
+    if (!JITCode::useDataIC(JITType::DFGJIT))
+        slowCases.append(gen.slowPathJump());
     
     std::unique_ptr<SlowPathGenerator> slowPath;
     if (JITCode::useDataIC(JITType::DFGJIT)) {
@@ -4242,42 +4248,52 @@ void SpeculativeJIT::compile(Node* node)
 
     case GetByIdWithThis: {
         if (node->child1().useKind() == CellUse && node->child2().useKind() == CellUse) {
-            std::optional<GPRTemporary> stubInfo;
             SpeculateCellOperand base(this, node->child1());
             SpeculateCellOperand thisValue(this, node->child2());
 
-            GPRReg stubInfoGPR = InvalidGPRReg;
-            if (JITCode::useDataIC(JITType::DFGJIT)) {
-                stubInfo.emplace(this);
-                stubInfoGPR = stubInfo->gpr();
-            }
             GPRReg baseGPR = base.gpr();
             GPRReg thisValueGPR = thisValue.gpr();
             
             GPRFlushedCallResult result(this);
             GPRReg resultGPR = result.gpr();
+
+            std::optional<GPRTemporary> stubInfo;
+            std::optional<GPRTemporary> scratch;
+            GPRReg stubInfoGPR = InvalidGPRReg;
+            GPRReg scratchGPR = InvalidGPRReg;
+            if (JITCode::useDataIC(JITType::DFGJIT)) {
+                stubInfo.emplace(this);
+                scratch.emplace(this);
+                stubInfoGPR = stubInfo->gpr();
+                scratchGPR = scratch->gpr();
+            }
             
             flushRegisters();
             
-            cachedGetByIdWithThis(node->origin.semantic, baseGPR, thisValueGPR, resultGPR, stubInfoGPR, node->cacheableIdentifier(), JITCompiler::JumpList());
+            cachedGetByIdWithThis(node->origin.semantic, baseGPR, thisValueGPR, resultGPR, stubInfoGPR, scratchGPR, node->cacheableIdentifier(), JITCompiler::JumpList());
             
             jsValueResult(resultGPR, node);
             
         } else {
-            std::optional<GPRTemporary> stubInfo;
             JSValueOperand base(this, node->child1());
             JSValueOperand thisValue(this, node->child2());
 
-            GPRReg stubInfoGPR = InvalidGPRReg;
-            if (JITCode::useDataIC(JITType::DFGJIT)) {
-                stubInfo.emplace(this);
-                stubInfoGPR = stubInfo->gpr();
-            }
             GPRReg baseGPR = base.gpr();
             GPRReg thisValueGPR = thisValue.gpr();
             
             GPRFlushedCallResult result(this);
             GPRReg resultGPR = result.gpr();
+
+            std::optional<GPRTemporary> stubInfo;
+            std::optional<GPRTemporary> scratch;
+            GPRReg stubInfoGPR = InvalidGPRReg;
+            GPRReg scratchGPR = InvalidGPRReg;
+            if (JITCode::useDataIC(JITType::DFGJIT)) {
+                stubInfo.emplace(this);
+                scratch.emplace(this);
+                stubInfoGPR = stubInfo->gpr();
+                scratchGPR = scratch->gpr();
+            }
             
             flushRegisters();
             
@@ -4285,7 +4301,7 @@ void SpeculativeJIT::compile(Node* node)
             notCellList.append(m_jit.branchIfNotCell(JSValueRegs(baseGPR)));
             notCellList.append(m_jit.branchIfNotCell(JSValueRegs(thisValueGPR)));
             
-            cachedGetByIdWithThis(node->origin.semantic, baseGPR, thisValueGPR, resultGPR, stubInfoGPR, node->cacheableIdentifier(), notCellList);
+            cachedGetByIdWithThis(node->origin.semantic, baseGPR, thisValueGPR, resultGPR, stubInfoGPR, scratchGPR, node->cacheableIdentifier(), notCellList);
             
             jsValueResult(resultGPR, node);
         }

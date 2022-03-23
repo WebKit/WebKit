@@ -434,9 +434,6 @@ void Options::recomputeDependentOptions()
     Options::useConcurrentGC() = false;
 #endif
 
-    if (!Options::useDataIC())
-        Options::useDataICInOptimizingJIT() = false;
-
     // At initialization time, we may decide that useJIT should be false for any
     // number of reasons (including failing to allocate JIT memory), and therefore,
     // will / should not be able to enable any JIT related services.

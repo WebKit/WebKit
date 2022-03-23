@@ -1,3 +1,63 @@
+2022-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Test DFG / FTL DataIC
+        https://bugs.webkit.org/show_bug.cgi?id=231224
+
+        Reviewed by Saam Barati.
+
+        This patch revives DataIC in DFG and FTL, and re-enable testing to make it usable
+        for unlinked DFG. Currently, only x64 / ARM64 are supported.
+
+        * bytecode/InlineAccess.cpp:
+        (JSC::InlineAccess::isCacheableArrayLength):
+        (JSC::InlineAccess::isCacheableStringLength):
+        (JSC::InlineAccess::rewireStubAsJumpInAccess):
+        (JSC::InlineAccess::resetStubAsJumpInAccess):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetById):
+        (JSC::DFG::SpeculativeJIT::compileGetByIdFlush):
+        (JSC::DFG::SpeculativeJIT::compileInById):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::cachedPutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/JITCode.h:
+        (JSC::JITCode::useDataIC):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITByIdGenerator::generateFastCommon):
+        (JSC::generateGetByIdInlineAccess):
+        (JSC::JITGetByIdGenerator::generateFastPath):
+        (JSC::JITGetByIdWithThisGenerator::generateFastPath):
+        (JSC::generatePutByIdInlineAccess):
+        (JSC::JITPutByIdGenerator::generateBaselineDataICFastPath):
+        (JSC::JITPutByIdGenerator::generateFastPath):
+        (JSC::JITDelByValGenerator::generateFastPath):
+        (JSC::JITDelByIdGenerator::generateFastPath):
+        (JSC::JITInByValGenerator::generateFastPath):
+        (JSC::generateInByIdInlineAccess):
+        (JSC::JITInByIdGenerator::generateFastPath):
+        (JSC::JITInByIdGenerator::generateBaselineDataICFastPath):
+        (JSC::JITInstanceOfGenerator::generateFastPath):
+        (JSC::JITGetByValGenerator::generateFastPath):
+        (JSC::JITPutByValGenerator::generateFastPath):
+        (JSC::JITPrivateBrandAccessGenerator::generateFastPath):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITInlineCacheGenerator::reportSlowPathCall):
+        (JSC::JITInlineCacheGenerator::slowPathBegin const):
+        (JSC::JITByIdGenerator::slowPathJump const):
+        (JSC::JITInByValGenerator::slowPathJump const):
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+
 2022-03-22  Chris Dumez  <cdumez@apple.com>
 
         Use ASCIILiteral in a few more places where it is useful

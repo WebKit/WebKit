@@ -531,7 +531,6 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, dumpBaselineJITSizeStatistics, false, Normal, nullptr) \
     v(Bool, dumpDFGJITSizeStatistics, false, Normal, nullptr) \
     v(Bool, verboseExecutablePoolAllocation, false, Normal, nullptr) \
-    v(Bool, useDataIC, false, Normal, nullptr) \
     v(Bool, useDataICInOptimizingJIT, false, Normal, nullptr) \
     v(Bool, useDataICSharing, false, Normal, nullptr) \
     v(Bool, useBaselineJITCodeSharing, is64Bit(), Normal, nullptr) \

@@ -165,9 +165,11 @@ public:
     {
         if (JITCode::isBaselineCode(jitType))
             return true;
-        if (!Options::useDataIC())
-            return false;
+#if CPU(X86_64) || CPU(ARM64) || CPU(RISCV64)
         return Options::useDataICInOptimizingJIT();
+#else
+        return false;
+#endif
     }
 
     virtual const DOMJIT::Signature* signature() const { return nullptr; }

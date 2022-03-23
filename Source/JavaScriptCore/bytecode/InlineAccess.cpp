@@ -299,7 +299,7 @@ bool InlineAccess::isCacheableArrayLength(CodeBlock* codeBlock, StructureStubInf
     if (!stubInfo.hasConstantIdentifier)
         return false;
 
-    if (codeBlock->jitType() == JITType::BaselineJIT)
+    if (codeBlock->useDataIC())
         return false;
 
     if (!hasFreeRegister(stubInfo))
@@ -340,7 +340,7 @@ bool InlineAccess::isCacheableStringLength(CodeBlock* codeBlock, StructureStubIn
     if (!stubInfo.hasConstantIdentifier)
         return false;
 
-    if (codeBlock->jitType() == JITType::BaselineJIT)
+    if (codeBlock->useDataIC())
         return false;
 
     return hasFreeRegister(stubInfo);
@@ -428,24 +428,6 @@ void InlineAccess::rewireStubAsJumpInAccessNotUsingInlineAccess(CodeBlock* codeB
 void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo, CodeLocationLabel<JITStubRoutinePtrTag> target)
 {
     if (codeBlock->useDataIC()) {
-        // If it is not GetById-like-thing, we do not emit nop sled (e.g. GetByVal).
-        // The code is already an indirect jump, and only thing we should do is replacing m_codePtr.
-        if (codeBlock->jitType() != JITType::BaselineJIT && stubInfo.hasConstantIdentifier) {
-            // If m_codePtr is pointing to stubInfo.slowPathStartLocation, this means that InlineAccess code is not a stub one.
-            // We rewrite this with the stub-based dispatching code once, and continue using it until we reset the code.
-            if (stubInfo.m_codePtr.executableAddress() == stubInfo.slowPathStartLocation.executableAddress()) {
-                CCallHelpers::emitJITCodeOver(stubInfo.start.retagged<JSInternalPtrTag>(), scopedLambda<void(CCallHelpers&)>([&](CCallHelpers& jit) {
-                    jit.move(CCallHelpers::TrustedImmPtr(&stubInfo), stubInfo.m_stubInfoGPR);
-                    jit.farJump(CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfCodePtr()), JITStubRoutinePtrTag);
-                    auto jump = jit.jump();
-                    auto doneLocation = stubInfo.doneLocation;
-                    jit.addLinkTask([=](LinkBuffer& linkBuffer) {
-                        linkBuffer.link(jump, doneLocation);
-                    });
-                }), "InlineAccess: linking stub call");
-            }
-        }
-
         stubInfo.m_codePtr = target;
         stubInfo.m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
         return;
@@ -462,7 +444,7 @@ void InlineAccess::rewireStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubI
 
 void InlineAccess::resetStubAsJumpInAccess(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 {
-    if (codeBlock->useDataIC() && codeBlock->jitType() == JITType::BaselineJIT) {
+    if (codeBlock->useDataIC()) {
         stubInfo.m_codePtr = stubInfo.slowPathStartLocation;
         stubInfo.m_inlineAccessBaseStructureID.clear(); // Clear out the inline access code.
         return;

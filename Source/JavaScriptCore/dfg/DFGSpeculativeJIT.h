@@ -723,16 +723,16 @@ public:
 
     void compileCheckDetached(Node*);
 
-    void cachedGetById(CodeOrigin, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedPutById(CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, PutKind, ECMAMode, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
+    void cachedGetById(CodeOrigin, JSValueRegs base, JSValueRegs result, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
+    void cachedPutById(CodeOrigin, GPRReg baseGPR, JSValueRegs valueRegs, GPRReg stubInfoGPR, GPRReg scratchGPR, GPRReg scratch2GPR, CacheableIdentifier, PutKind, ECMAMode, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), SpillRegistersMode = NeedToSpill);
     void cachedGetByVal(CodeOrigin, JSValueRegs base, JSValueRegs property, JSValueRegs result, JITCompiler::Jump slowPathTarget);
 
 #if USE(JSVALUE64)
-    void cachedGetById(CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg stubInfoGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedGetByIdWithThis(CodeOrigin, GPRReg baseGPR, GPRReg thisGPR, GPRReg resultGPR, GPRReg stubInfoGPR, CacheableIdentifier, const JITCompiler::JumpList& slowPathTarget = JITCompiler::JumpList());
+    void cachedGetById(CodeOrigin, GPRReg baseGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
+    void cachedGetByIdWithThis(CodeOrigin, GPRReg baseGPR, GPRReg thisGPR, GPRReg resultGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, const JITCompiler::JumpList& slowPathTarget = JITCompiler::JumpList());
 #elif USE(JSVALUE32_64)
-    void cachedGetById(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg stubInfoGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
-    void cachedGetByIdWithThis(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg thisTagGPROrNone, GPRReg thisPayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg stubInfoGPR, CacheableIdentifier, const JITCompiler::JumpList& slowPathTarget = JITCompiler::JumpList());
+    void cachedGetById(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, JITCompiler::Jump slowPathTarget, SpillRegistersMode, AccessType);
+    void cachedGetByIdWithThis(CodeOrigin, GPRReg baseTagGPROrNone, GPRReg basePayloadGPR, GPRReg thisTagGPROrNone, GPRReg thisPayloadGPR, GPRReg resultTagGPR, GPRReg resultPayloadGPR, GPRReg stubInfoGPR, GPRReg scratchGPR, CacheableIdentifier, const JITCompiler::JumpList& slowPathTarget = JITCompiler::JumpList());
 #endif
 
     void compileDeleteById(Node*);

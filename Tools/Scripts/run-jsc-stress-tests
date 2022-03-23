@@ -1091,7 +1091,7 @@ BASE_MODES = [
         "FTLNoCJIT",
         "misc-ftl-no-cjit",
         [
-            "--useDataIC=true",
+            "--useDataICInOptimizingJIT=true",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS
@@ -1117,7 +1117,7 @@ BASE_MODES = [
             "--validateBCE=true",
             "--useSamplingProfiler=true",
             "--airForceIRCAllocator=true",
-            "--useDataIC=true",
+            "--useDataICInOptimizingJIT=true",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS
@@ -1178,7 +1178,7 @@ BASE_MODES = [
             "--airForceBriggsAllocator=true",
             "--useRandomizingExecutableIslandAllocation=true",
             "--forcePolyProto=true",
-            "--useDataIC=true",
+            "--useDataICInOptimizingJIT=true",
         ] +
         FTL_OPTIONS +
         EAGER_OPTIONS +
