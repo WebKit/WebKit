@@ -65,6 +65,7 @@ inspector/page/overrideSetting-MockCaptureDevicesEnabled.html [ Skip ]
 http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Skip ]
 http/tests/navigation/page-cache-mediastream.html [ Skip ]
 media/audio-session-category.html [ Skip ]
+media/audio-session-category-at-most-recent-playback.html [ Skip ]
 
 # Shared workers are only implemented for WebKit2.
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Skip ]

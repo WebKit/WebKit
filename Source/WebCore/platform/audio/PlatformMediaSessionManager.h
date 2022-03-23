@@ -168,6 +168,7 @@ public:
     WEBCORE_EXPORT void processSystemDidWake();
 
     virtual void resetHaveEverRegisteredAsNowPlayingApplicationForTesting() { };
+    virtual void resetSessionState() { };
 
     bool isApplicationInBackground() const { return m_isApplicationInBackground; }
 

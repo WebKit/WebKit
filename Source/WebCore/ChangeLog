@@ -1,3 +1,64 @@
+2022-03-23  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] WebKit app is sometimes not "Now Playing" during initial playback
+        https://bugs.webkit.org/show_bug.cgi?id=236993
+        <rdar://88827167>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/audio-session-category-at-most-recent-playback.html
+
+        Recently, we have added the concept of "preparingToPlay" to PlatformMediaSession to allow
+        the correct category to be set if updateSessionState() is called after playback is allowed
+        by the MediaSessionManager, but before playback is actually started by the media element.
+        However, this depends on updateSessionState() being called synchronously during playback.
+        We disabled this synchronous update in r269077 due to the large runtime cost when a large
+        number of media elements are created (but not used) at once.
+
+        Relax this asynchronous update in the case where the state is moving to "Playing", which
+        ensures that the correct AudioSessionCategory is set before playback starts, rather than
+        immediately afterward.
+
+        To support testing that the category was correctly set before playback started, add an
+        ivar to HTMLMediaElement that is set to the current AudioSessionCategory immediately before
+        the media element instructs the MediaPlayer to start playback. Expose this ivar to Internals.
+
+        Drive-by fixes: AudioSession::CategoryType cannot be forward declared, as it is a public
+        member of a class. Allow the enum to be forward declared by moving the declaration outside
+        the class, but allow current uses of the enum to continue by typedefing it inside the class
+        to the original enum name. Add an IDL enumeration matching the AudioSession one in Interals.idl
+        and convert the existing audioSessionCategory() call to use the new enumeration.
+
+        (Unforunately in the case where USE_AUDIO_SESSION is not set, the enumeration must be re-
+        declared. This can be removed and the entire implementation wrapped in a USE() check, once
+        the bindings generator is extended to allow "Conditional="-style attributes for USE checks.)
+
+        The added test is flakey due to a previous change which would keep the MediaSession category
+        in "MediaPlayback" for up to 2s after playback ends. To counteract this flakiness, reset the
+        state of the PlatformMediaSessionManager between tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::m_categoryAtMostRecentPlayback):
+        (WebCore::HTMLMediaElement::playPlayer):
+        (WebCore::m_logIdentifier): Deleted.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::categoryAtMostRecentPlayback const):
+        * platform/audio/AudioSession.h:
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::sessionStateChanged):
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::resetSessionState):
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::resetSessionState):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        * testing/Internals.cpp:
+        (WebCore::Internals::audioSessionCategory const):
+        (WebCore::Internals::categoryAtMostRecentPlayback const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2022-03-22  Brandon Stewart  <brandonstewart@apple.com>
 
         WBR element should set Clear property to None

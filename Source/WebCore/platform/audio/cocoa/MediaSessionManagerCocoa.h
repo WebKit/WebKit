@@ -99,6 +99,7 @@ protected:
     RemoteCommandListener::RemoteCommandsSet supportedCommands() const final;
 
     void resetHaveEverRegisteredAsNowPlayingApplicationForTesting() final { m_haveEverRegisteredAsNowPlayingApplication = false; };
+    void resetSessionState() final;
 
 private:
 #if !RELEASE_LOG_DISABLED

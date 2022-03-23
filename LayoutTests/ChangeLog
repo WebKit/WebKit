@@ -1,3 +1,22 @@
+2022-03-23  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] WebKit app is sometimes not "Now Playing" during initial playback
+        https://bugs.webkit.org/show_bug.cgi?id=236993
+        <rdar://88827167>
+
+        Reviewed by Eric Carlson.
+
+        Fix the audio-session-category test. Creating the oscilator actually does change the
+        AudioSession category to "Ambient", but (previously) only in the next run loop, so a
+        synchronous test that the AudioSession category is "None" succeeds. Now that starting
+        playback (as happens when creating an audio node) changes the AudioSession synchronously,
+        the test begins failing.
+
+        * media/audio-session-category-at-most-recent-playback-expected.txt: Added.
+        * media/audio-session-category-at-most-recent-playback.html: Added.
+        * media/audio-session-category-expected.txt:
+        * media/audio-session-category.html:
+
 2022-03-23  Matteo Flores  <matteo_flores@apple.com>
 
         Unreviewed, reverting r291721.

@@ -47,6 +47,10 @@
 #include "MediaUniqueIdentifier.h"
 #endif
 
+#if USE(AUDIO_SESSION)
+#include "AudioSession.h"
+#endif
+
 OBJC_CLASS DDScannerResult;
 OBJC_CLASS VKCImageAnalysis;
 
@@ -889,8 +893,26 @@ public:
     bool shouldAudioTrackPlay(const AudioTrack&);
 #endif
 
+
+#if USE(AUDIO_SESSION)
+    using AudioSessionCategory = WebCore::AudioSessionCategory;
+#else
+    enum class AudioSessionCategory : uint8_t {
+        None,
+        AmbientSound,
+        SoloAmbientSound,
+        MediaPlayback,
+        RecordAudio,
+        PlayAndRecord,
+        AudioProcessing,
+    };
+#endif
+
     bool supportsAudioSession() const;
-    String audioSessionCategory() const;
+    AudioSessionCategory audioSessionCategory() const;
+#if ENABLE(VIDEO)
+    AudioSessionCategory categoryAtMostRecentPlayback(HTMLMediaElement&) const;
+#endif
     double preferredAudioBufferSize() const;
     double currentAudioBufferSize() const;
     bool audioSessionActive() const;

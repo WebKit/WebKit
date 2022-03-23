@@ -1876,6 +1876,7 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.
 
 # Tests behavior specific to MediaSessionManagerCocoa
 media/audio-session-category.html [ Skip ]
+media/audio-session-category-at-most-recent-playback.html [ Skip ]
 
 # This test assumes we cannot play RTSP, but we can.
 media/unsupported-rtsp.html [ WontFix Skip ]

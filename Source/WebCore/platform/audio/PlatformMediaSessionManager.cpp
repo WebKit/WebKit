@@ -290,9 +290,14 @@ void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& s
     ALWAYS_LOG(LOGIDENTIFIER, "session moved from index ", pausingSessionIndex, " to ", lastPlayingSessionIndex);
 }
 
-void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession&)
+void PlatformMediaSessionManager::sessionStateChanged(PlatformMediaSession& session)
 {
-    scheduleUpdateSessionState();
+    // Call updateSessionState() synchronously if the new state is Playing to ensure
+    // the audio session is active and has the correct category before playback starts.
+    if (session.state() == PlatformMediaSession::Playing)
+        updateSessionState();
+    else
+        scheduleUpdateSessionState();
 }
 
 void PlatformMediaSessionManager::setCurrentSession(PlatformMediaSession& session)

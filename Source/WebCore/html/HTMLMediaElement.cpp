@@ -130,6 +130,10 @@
 #include <wtf/Ref.h>
 #include <wtf/text/CString.h>
 
+#if USE(AUDIO_SESSION)
+#include "AudioSession.h"
+#endif
+
 #if ENABLE(WEB_AUDIO)
 #include "AudioSourceProvider.h"
 #include "MediaElementAudioSourceNode.h"
@@ -457,6 +461,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
 #if !RELEASE_LOG_DISABLED
     , m_logger(&document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
+#endif
+#if USE(AUDIO_SESSION)
+    , m_categoryAtMostRecentPlayback(AudioSessionCategory::None)
 #endif
 {
     allMediaElements().add(this);
@@ -5693,6 +5700,10 @@ void HTMLMediaElement::playPlayer()
     ASSERT(m_player);
     if (!m_player)
         return;
+
+#if USE(AUDIO_SESSION)
+    m_categoryAtMostRecentPlayback = AudioSession::sharedSession().category();
+#endif
 
 #if ENABLE(MEDIA_SESSION) && ENABLE(MEDIA_SESSION_COORDINATOR)
     do {

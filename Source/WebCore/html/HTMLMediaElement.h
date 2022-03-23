@@ -605,6 +605,10 @@ public:
 
     WEBCORE_EXPORT bool mediaPlayerRenderingCanBeAccelerated() final;
 
+#if USE(AUDIO_SESSION)
+    WEBCORE_EXPORT AudioSessionCategory categoryAtMostRecentPlayback() const { return m_categoryAtMostRecentPlayback; }
+#endif
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -1239,6 +1243,10 @@ private:
     String m_audioOutputHashedDeviceId;
 #endif
     String m_id;
+
+#if USE(AUDIO_SESSION)
+    AudioSessionCategory m_categoryAtMostRecentPlayback;
+#endif
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);
