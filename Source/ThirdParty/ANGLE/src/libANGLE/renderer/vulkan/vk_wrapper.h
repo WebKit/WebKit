@@ -412,7 +412,6 @@ class Semaphore final : public WrappedObject<Semaphore, VkSemaphore>
     void destroy(VkDevice device);
 
     VkResult init(VkDevice device);
-    VkResult init(VkDevice device, const VkSemaphoreCreateInfo &createInfo);
     VkResult importFd(VkDevice device, const VkImportSemaphoreFdInfoKHR &importFdInfo) const;
 };
 
@@ -1271,12 +1270,6 @@ ANGLE_INLINE VkResult Semaphore::init(VkDevice device)
     semaphoreInfo.flags                 = 0;
 
     return vkCreateSemaphore(device, &semaphoreInfo, nullptr, &mHandle);
-}
-
-ANGLE_INLINE VkResult Semaphore::init(VkDevice device, const VkSemaphoreCreateInfo &createInfo)
-{
-    ASSERT(valid());
-    return vkCreateSemaphore(device, &createInfo, nullptr, &mHandle);
 }
 
 ANGLE_INLINE VkResult Semaphore::importFd(VkDevice device,

@@ -311,6 +311,9 @@ struct Extensions
     // GL_KHR_parallel_shader_compile
     bool parallelShaderCompileKHR = false;
 
+    // GL_AMD_performance_monitor
+    bool performanceMonitorAMD = false;
+
     // GL_NV_pixel_buffer_object
     bool pixelBufferObjectNV = false;
 

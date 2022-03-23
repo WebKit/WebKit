@@ -36,6 +36,8 @@ class DisplayVkXcb : public DisplayVkLinux
     const char *getWSIExtension() const override;
     angle::Result waitNativeImpl() override;
 
+    bool isX11() const override { return true; }
+
   private:
     xcb_connection_t *mXcbConnection;
     // If there is no X Display, obviously it's impossible to connect to it with Xcb,

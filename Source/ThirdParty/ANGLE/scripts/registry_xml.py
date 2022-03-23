@@ -220,6 +220,7 @@ angle_es_only_extensions = [
 ]
 
 gles_es_only_extensions = [
+    "GL_AMD_performance_monitor",
     "GL_ANDROID_extension_pack_es31a",
     "GL_ANGLE_depth_texture",
     "GL_ANGLE_translated_shader_source",
@@ -312,6 +313,8 @@ supported_egl_extensions = [
     "EGL_EXT_gl_colorspace_display_p3_passthrough",
     "EGL_EXT_gl_colorspace_scrgb",
     "EGL_EXT_gl_colorspace_scrgb_linear",
+    "EGL_EXT_image_dma_buf_import",
+    "EGL_EXT_image_dma_buf_import_modifiers",
     "EGL_EXT_image_gl_colorspace",
     "EGL_EXT_pixel_format_float",
     "EGL_EXT_platform_base",
@@ -360,7 +363,8 @@ supported_cl_extensions = [
 ]
 
 # Strip these suffixes from Context entry point names. NV is excluded (for now).
-strip_suffixes = ["ANGLE", "EXT", "KHR", "OES", "CHROMIUM"]
+strip_suffixes = ["AMD", "ANDROID", "ANGLE", "CHROMIUM", "EXT", "KHR", "OES", "OVR"]
+check_sorted('strip_suffixes', strip_suffixes)
 
 # The EGL_ANGLE_explicit_context extension is generated differently from other extensions.
 # Toggle generation here.

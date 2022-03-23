@@ -37,7 +37,7 @@ angle::Result WindowSurfaceVkMac::createSurfaceVk(vk::Context *context, gl::Exte
     CALayer *layer = reinterpret_cast<CALayer *>(mNativeWindowType);
 
     mMetalLayer        = [[CAMetalLayer alloc] init];
-    mMetalLayer.frame  = layer.frame;
+    mMetalLayer.frame  = CGRectMake(0, 0, layer.frame.size.width, layer.frame.size.height);
     mMetalLayer.device = mMetalDevice;
     mMetalLayer.drawableSize =
         CGSizeMake(mMetalLayer.bounds.size.width * mMetalLayer.contentsScale,

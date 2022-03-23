@@ -119,13 +119,17 @@ struct ANGLEPlatformDisplay
           deviceIdLow(deviceIdLow)
     {}
 
-    auto tie() const { return std::tie(nativeDisplayType, powerPreference, platformANGLEType, deviceIdHigh, deviceIdLow); }
+    auto tie() const
+    {
+        return std::tie(nativeDisplayType, powerPreference, platformANGLEType, deviceIdHigh,
+                        deviceIdLow);
+    }
 
-    EGLNativeDisplayType nativeDisplayType { EGL_DEFAULT_DISPLAY };
-    EGLAttrib powerPreference { EGL_LOW_POWER_ANGLE };
-    EGLAttrib platformANGLEType { EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE };
-    EGLAttrib deviceIdHigh { 0 };
-    EGLAttrib deviceIdLow { 0 };
+    EGLNativeDisplayType nativeDisplayType{EGL_DEFAULT_DISPLAY};
+    EGLAttrib powerPreference{EGL_LOW_POWER_ANGLE};
+    EGLAttrib platformANGLEType{EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE};
+    EGLAttrib deviceIdHigh{0};
+    EGLAttrib deviceIdLow{0};
 };
 
 inline bool operator<(const ANGLEPlatformDisplay &a, const ANGLEPlatformDisplay &b)
@@ -693,7 +697,8 @@ Display *Display::GetDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay
     EGLAttrib deviceIdHigh = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0);
     EGLAttrib deviceIdLow  = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0);
     ANGLEPlatformDisplayMap *displays = GetANGLEPlatformDisplayMap();
-    ANGLEPlatformDisplay displayKey(nativeDisplay, powerPreference, platformANGLEType, deviceIdHigh, deviceIdLow);
+    ANGLEPlatformDisplay displayKey(nativeDisplay, powerPreference, platformANGLEType, deviceIdHigh,
+                                    deviceIdLow);
     const auto &iter = displays->find(displayKey);
     if (iter != displays->end())
     {
@@ -860,8 +865,7 @@ Display::~Display()
         ANGLEPlatformDisplayMap *displays      = GetANGLEPlatformDisplayMap();
         ANGLEPlatformDisplayMap::iterator iter = displays->find(ANGLEPlatformDisplay(
             mState.displayId, mAttributeMap.get(EGL_POWER_PREFERENCE_ANGLE, EGL_LOW_POWER_ANGLE),
-            mAttributeMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE,
-                              EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE),
+            mAttributeMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE),
             mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0),
             mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0)));
         if (iter != displays->end())
@@ -2365,6 +2369,35 @@ Error Display::handleGPUSwitch()
 {
     ANGLE_TRY(mImplementation->handleGPUSwitch());
     initVendorString();
+    return NoError();
+}
+
+Error Display::forceGPUSwitch(EGLint gpuIDHigh, EGLint gpuIDLow)
+{
+    ANGLE_TRY(mImplementation->forceGPUSwitch(gpuIDHigh, gpuIDLow));
+    initVendorString();
+    return NoError();
+}
+
+bool Display::supportsDmaBufFormat(EGLint format) const
+{
+    return mImplementation->supportsDmaBufFormat(format);
+}
+
+Error Display::queryDmaBufFormats(EGLint max_formats, EGLint *formats, EGLint *num_formats)
+{
+    ANGLE_TRY(mImplementation->queryDmaBufFormats(max_formats, formats, num_formats));
+    return NoError();
+}
+
+Error Display::queryDmaBufModifiers(EGLint format,
+                                    EGLint max_modifiers,
+                                    EGLuint64KHR *modifiers,
+                                    EGLBoolean *external_only,
+                                    EGLint *num_modifiers)
+{
+    ANGLE_TRY(mImplementation->queryDmaBufModifiers(format, max_modifiers, modifiers, external_only,
+                                                    num_modifiers));
     return NoError();
 }
 

@@ -138,6 +138,11 @@ void main()
     void step(float dt, double totalTime) override
     {
         mAngle += kDegreesPerSecond * dt;
+        if (mLastFullSecond != static_cast<uint32_t>(totalTime))
+        {
+            mLastFullSecond = static_cast<uint32_t>(totalTime);
+            regenerateTorus();
+        }
         updateHues(totalTime);
     }
 
@@ -152,6 +157,15 @@ void main()
 
         glUniformMatrix4fv(mMVMatrixLoc, 1, GL_FALSE, modelMatrix.data);
         glUniformMatrix4fv(mMVPMatrixLoc, 1, GL_FALSE, mvpMatrix.data);
+
+        glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+        glVertexAttribPointer(mPositionLoc, 3, GL_FLOAT, false, 6 * sizeof(GLfloat), nullptr);
+        glVertexAttribPointer(mNormalLoc, 3, GL_FLOAT, false, 6 * sizeof(GLfloat),
+                              reinterpret_cast<const void *>(3 * sizeof(GLfloat)));
+        glBindBuffer(GL_ARRAY_BUFFER, mHueBuffer);
+        glVertexAttribPointer(mHueLoc, 1, GL_FLOAT, false, sizeof(GLfloat), nullptr);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
+        glVertexAttribPointer(mHueLoc, 1, GL_FLOAT, false, sizeof(GLfloat), nullptr);
 
         glDrawElements(GL_TRIANGLES, mIndexCount, GL_UNSIGNED_SHORT, 0);
 
@@ -191,6 +205,35 @@ void main()
         ASSERT(static_cast<GLenum>(GL_NO_ERROR) == glGetError());
     }
 
+    void regenerateTorus()
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, mHueBuffer);
+        glDisableVertexAttribArray(mHueLoc);
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+        glDeleteBuffers(1, &mHueBuffer);
+
+        std::vector<GLfloat> hues(kHuesSize, 0.0f);
+
+        glGenBuffers(1, &mHueBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, mHueBuffer);
+        glBufferStorageEXT(GL_ARRAY_BUFFER, kHuesSize * sizeof(GLfloat), hues.data(),
+                           GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT);
+
+        mHueMapPtr = static_cast<float *>(
+            glMapBufferRange(GL_ARRAY_BUFFER, 0, kHuesSize * sizeof(GLfloat),
+                             GL_MAP_WRITE_BIT | GL_MAP_UNSYNCHRONIZED_BIT |
+                                 GL_MAP_PERSISTENT_BIT_EXT | GL_MAP_COHERENT_BIT_EXT));
+
+        ASSERT(mHueMapPtr != nullptr);
+        ASSERT(static_cast<GLenum>(GL_NO_ERROR) == glGetError());
+
+        glEnableVertexAttribArray(mHueLoc);
+
+        GLsync sync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+        glClientWaitSync(sync, 0, 0);
+        glDeleteSync(sync);
+    }
+
   private:
     GLuint mProgram = 0;
 
@@ -215,6 +258,8 @@ void main()
     float *mHueMapPtr = nullptr;
 
     float mAngle = 0;
+
+    uint32_t mLastFullSecond = 0;
 };
 
 int main(int argc, char **argv)

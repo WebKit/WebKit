@@ -429,6 +429,10 @@ class TestBatch():
             'ANGLE_CAPTURE_OUT_DIR': self.trace_folder_path,
         }
 
+        if args.expose_nonconformant_features:
+            extra_env[
+                'ANGLE_FEATURE_OVERRIDES_ENABLED'] += ':exposeNonConformantExtensionsAndVersions'
+
         env = {**os.environ.copy(), **extra_env}
 
         if not self.args.keep_temp_files:
@@ -491,11 +495,17 @@ class TestBatch():
             return False
         return True
 
-    def RunReplay(self, replay_build_dir, replay_exe_path, child_processes_manager, tests):
+    def RunReplay(self, replay_build_dir, replay_exe_path, child_processes_manager, tests,
+                  expose_nonconformant_features):
         extra_env = {
             'ANGLE_CAPTURE_ENABLED': '0',
             'ANGLE_FEATURE_OVERRIDES_ENABLED': 'enable_capture_limits',
         }
+
+        if expose_nonconformant_features:
+            extra_env[
+                'ANGLE_FEATURE_OVERRIDES_ENABLED'] += ':exposeNonConformantExtensionsAndVersions'
+
         env = {**os.environ.copy(), **extra_env}
 
         run_cmd = GetRunCommand(self.args, replay_exe_path)
@@ -748,7 +758,7 @@ def RunTests(args, worker_id, job_queue, result_list, message_queue, logger, nin
                 logger.info(str(test_batch.GetResults()))
                 continue
             test_batch.RunReplay(replay_build_dir, replay_exec_path, child_processes_manager,
-                                 continued_tests)
+                                 continued_tests, args.expose_nonconformant_features)
             result_list.append(test_batch.GetResults())
             logger.info(str(test_batch.GetResults()))
         except KeyboardInterrupt:
@@ -1107,6 +1117,11 @@ if __name__ == '__main__':
         help='Maximum number of concurrent ninja jobs to run at once.')
     parser.add_argument('--xvfb', action='store_true', help='Run with xvfb.')
     parser.add_argument('--asan', action='store_true', help='Build with ASAN.')
+    parser.add_argument(
+        '-E',
+        '--expose-nonconformant-features',
+        action='store_true',
+        help='Expose non-conformant features to advertise GLES 3.2')
     parser.add_argument(
         '--show-capture-stdout', action='store_true', help='Print test stdout during capture.')
     parser.add_argument('--debug', action='store_true', help='Debug builds (default is Release).')

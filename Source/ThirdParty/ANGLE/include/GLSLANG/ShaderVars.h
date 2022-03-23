@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-// This type is defined here to simplify ANGLE's integration with glslang for SPIRv.
+// This type is defined here to simplify ANGLE's integration with glslang for SPIR-V.
 using ShCompileOptions = uint64_t;
 
 namespace sh
@@ -219,7 +219,7 @@ struct ShaderVariable
     bool readonly;
     bool writeonly;
 
-    // From EXT_shader_framebuffer_fetch
+    // From EXT_shader_framebuffer_fetch / KHR_blend_equation_advanced
     bool isFragmentInOut;
 
     // OutputVariable

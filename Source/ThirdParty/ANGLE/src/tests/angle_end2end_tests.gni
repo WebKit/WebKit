@@ -150,6 +150,7 @@ angle_end2end_tests_sources = [
   "gl_tests/UnpackRowLength.cpp",
   "gl_tests/VertexAttributeTest.cpp",
   "gl_tests/ViewportTest.cpp",
+  "gl_tests/VulkanPerformanceCounterTest.cpp",
   "gl_tests/WEBGLVideoTextureTest.cpp",
   "gl_tests/WebGLCompatibilityTest.cpp",
   "gl_tests/WebGLCompressedTextureAvailabilityTest.cpp",
@@ -187,10 +188,13 @@ angle_end2end_tests_sources = [
   "test_utils/ANGLETest.h",
   "test_utils/MultiviewTest.cpp",
   "test_utils/MultiviewTest.h",
+  "test_utils/system_info_util.cpp",
+  "test_utils/system_info_util.h",
 ]
 angle_end2end_tests_mac_sources = [
   "egl_tests/EGLDeviceCGLTest.cpp",
   "egl_tests/EGLIOSurfaceClientBufferTest.cpp",
+  "egl_tests/EGLPowerPreferenceTest.cpp",
   "egl_tests/EGLSurfaceTestMac.mm",
   "gl_tests/ImageTestMetal.mm",
 ]

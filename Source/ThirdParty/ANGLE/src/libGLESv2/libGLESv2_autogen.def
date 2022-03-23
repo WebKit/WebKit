@@ -460,6 +460,19 @@ EXPORTS
     glTranslatex
     glVertexPointer
 
+    ; GL_AMD_performance_monitor
+    glBeginPerfMonitorAMD
+    glDeletePerfMonitorsAMD
+    glEndPerfMonitorAMD
+    glGenPerfMonitorsAMD
+    glGetPerfMonitorCounterDataAMD
+    glGetPerfMonitorCounterInfoAMD
+    glGetPerfMonitorCounterStringAMD
+    glGetPerfMonitorCountersAMD
+    glGetPerfMonitorGroupStringAMD
+    glGetPerfMonitorGroupsAMD
+    glSelectPerfMonitorCountersAMD
+
     ; GL_ANDROID_extension_pack_es31a
 
     ; GL_ANGLE_base_vertex_base_instance
@@ -1222,6 +1235,7 @@ EXPORTS
     EGL_QueryStringiANGLE
 
     ; EGL_ANGLE_power_preference
+    EGL_ForceGPUSwitchANGLE
     EGL_HandleGPUSwitchANGLE
     EGL_ReacquireHighPowerGPUANGLE
     EGL_ReleaseHighPowerGPUANGLE
@@ -1258,6 +1272,10 @@ EXPORTS
     EGL_QueryDeviceAttribEXT
     EGL_QueryDeviceStringEXT
     EGL_QueryDisplayAttribEXT
+
+    ; EGL_EXT_image_dma_buf_import_modifiers
+    EGL_QueryDmaBufFormatsEXT
+    EGL_QueryDmaBufModifiersEXT
 
     ; EGL_EXT_platform_base
     EGL_CreatePlatformPixmapSurfaceEXT

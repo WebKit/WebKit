@@ -150,6 +150,7 @@
 6643 MAC AMD OPENGL : TransformFeedbackTest.TransformFeedbackQueryPausedDrawThenResume/* = SKIP
 6643 MAC AMD OPENGL : TransformFeedbackTest.TransformFeedbackPausedDrawThenResume/* = SKIP
 6738 MAC AMD OPENGL : Texture3DTestES3.PixelUnpackStateTex* = SKIP
+1296467 MAC OPENGL : VertexAttributeTestES3.emptyBuffer/* = SKIP
 
 // Failures from Transform Feedback Enablement. Passes on BigSur
 6407 MAC NVIDIA METAL : TransformFeedbackTest.OptimizedVaryings/ES3_Metal = SKIP
@@ -192,6 +193,11 @@
 6418 MAC APPLE METAL : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsMatrixAndInstanced/ES3_Metal = SKIP
 6418 MAC APPLE METAL : UniformBlockWithOneLargeArrayMemberTest.MemberTypeIsStructAndInstancedArray/ES3_Metal = SKIP
 
+7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD32FS8F4Samples/ES3_Metal = SKIP
+7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD24S8Samples/ES3_Metal = SKIP
+7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD32FSamples/ES3_Metal = SKIP
+7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD24Samples/ES3_Metal = SKIP
+7079 MAC METAL INTEL : MultisampleResolveTest.ResolveD16Samples/ES3_Metal = SKIP
 
 4908 MAC METAL INTEL : BlitFramebufferTest.MultisampleDepth/* = SKIP
 4908 MAC METAL AMD : BlitFramebufferTest.MultisampleDepth/* = SKIP
@@ -251,11 +257,21 @@
 3841 WIN D3D11 : GLSLTest_ES31.BoolInInterfaceBlocks/* = SKIP
 // Mistranslation
 6216 WIN D3D11 : GLSLTest_ES31.StorageBufferBoolVectorPassedToFunctions/* = SKIP
+// D3D does not support compressed textures where the base mip level is not a multiple of 4
+4841 WIN D3D9 : DXT1CompressedTextureTest.NonBlockSizesMipLevels/* = SKIP
+4841 WIN D3D11 : DXT1CompressedTextureTest.NonBlockSizesMipLevels/* = SKIP
+7109 WIN D3D11 : ClearTestRGB_ES3.*/* = SKIP
+7113 WIN D3D9 : GLSLTest.LoopBodyEndingInBranch*/* = SKIP
 
 // Android
 6095 ANDROID GLES : GLSLTest_ES3.InitGlobalComplexConstant/* = SKIP
 6116 ANDROID GLES : GLSLTestLoops.ForNoCondition/* = SKIP
 6237 ANDROID GLES : BufferDataTestES3.DrawWithNotCallingBufferData/* = SKIP
+7059 ANDROID VULKAN : EGLSurfaceTest.ResizeWindowWithDraw/* = SKIP
+7059 ANDROID : EGLReadinessCheckTest.IsRunningOnANGLE/* = SKIP
+7059 ANDROID : EGLReadinessCheckTest.GetProcAddressNegativeTest/* = SKIP
+7059 ANDROID : EGLReadinessCheckTest.HasGetPlatformDisplayEXT/* = SKIP
+7059 ANDROID : EGLContextSharingTestNoSyncTextureUploads.NoSync/* = SKIP
 
 // Reading back the contents of an RGBX image initialized with non-255 alpha returns the original alpha (instead of 255)
 6472 ANDROID GLES : ImageTestES3.RGBXAHBImportThenUpload/* = SKIP
@@ -377,6 +393,7 @@
 6167 PIXEL4ORXL GLES : DepthStencilTestES3.FramebufferClearThenStencilAttachedThenStencilTestState/* = SKIP
 6167 PIXEL4ORXL GLES : DepthStencilTestES3.FramebufferClearThenStencilTestStateThenStencilAttached/* = SKIP
 6167 PIXEL4ORXL GLES : DepthStencilTestES3.StencilTestStateThenFramebufferClearThenStencilAttached/* = SKIP
+1296467 PIXEL4ORXL GLES : VertexAttributeTestES3.emptyBuffer/* = SKIP
 
 // Internal driver failures on both GLES and Vulkan
 3839 NEXUS5X : GLSLTest_ES31.TypesUsedInDifferentBlockStorages/* = SKIP
@@ -419,6 +436,9 @@
 6931 PIXEL6 VULKAN : TransformFeedbackTestIOBlocks.Separate/* = SKIP
 6931 PIXEL6 VULKAN : WebGLCompatibilityTest.FramebufferFloatColorAttachmentMRT/* = SKIP
 7004 PIXEL6 VULKAN : EGLContextSharingTestNoSyncTextureUploads.NoSync/* = SKIP
+7096 PIXEL6 VULKAN : VulkanPerformanceCounterTest.MappingGpuReadOnlyBufferGhostsBuffer/* = SKIP
+7096 PIXEL6 VULKAN : VulkanPerformanceCounterTest.ClearThenScissoredDraw/* = SKIP
+7096 PIXEL6 VULKAN : VulkanPerformanceCounterTest.ReadOnlyDepthStencilFeedbackLoopUsesSingleRenderPass/* = SKIP
 
 // AMD windows failures.  The GPU and driver on our bots are very old and buggy.
 // http://crbug.com/1224996
@@ -476,8 +496,11 @@
 // Indexed indirect draw offset bug
 6751 METAL : MultiDrawIndirectTest.MultiDrawElementsIndirect* = SKIP
 6751 D3D11 : MultiDrawIndirectTest.MultiDrawElementsIndirect* = SKIP
-6751 METAL : DrawBaseVertexBaseInstanceTest.MultiDrawElementsInstancedBaseVertexBaseInstance/* = SKIP
 6751 D3D11 : DrawBaseVertexBaseInstanceTest.MultiDrawElementsInstancedBaseVertexBaseInstance/* = SKIP
+
+// Non-static draw bug
+6963 METAL : DrawBaseVertexVariantsTest.DrawElementsInstancedBaseVertexBaseInstance/ES3_Metal__DYNAMIC_DRAW = SKIP
+6963 METAL : DrawBaseVertexVariantsTest.DrawElementsInstancedBaseVertexBaseInstance/ES3_Metal__STREAM_DRAW = SKIP
 
 // ASAN flakes with Vulkan / SwiftShader / AsyncQueue
 6875 ASAN VULKAN SWIFTSHADER : ComputeShaderTest.*/ES3_1_Vulkan_SwiftShader_AsyncQueue = SKIP
@@ -517,3 +540,5 @@
 // NVidia fails new SwizzledChainedAssignIncrement test on GL and GLES.
 7029 NVIDIA OPENGL : GLSLTest.SwizzledChainedAssignIncrement/* = SKIP
 7029 NVIDIA GLES : GLSLTest.SwizzledChainedAssignIncrement/* = SKIP
+
+7085 : VulkanPerformanceCounterTest.InvalidateDrawDisable/* = SKIP

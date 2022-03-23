@@ -135,6 +135,29 @@ const TFunction &sh::CloneFunctionAndPrependParam(TSymbolTable &symbolTable,
     return newFunc;
 }
 
+const TFunction &sh::CloneFunctionAndPrependTwoParams(TSymbolTable &symbolTable,
+                                                      IdGen *idGen,
+                                                      const TFunction &oldFunc,
+                                                      const TVariable &newParam1,
+                                                      const TVariable &newParam2)
+{
+    ASSERT(oldFunc.symbolType() == SymbolType::UserDefined ||
+           oldFunc.symbolType() == SymbolType::AngleInternal);
+
+    Name newName = idGen ? idGen->createNewName(Name(oldFunc)) : Name(oldFunc);
+
+    TFunction &newFunc =
+        *new TFunction(&symbolTable, newName.rawName(), newName.symbolType(),
+                       &oldFunc.getReturnType(), oldFunc.isKnownToNotHaveSideEffects());
+
+    AcquireFunctionExtras(newFunc, oldFunc);
+    newFunc.addParameter(&newParam1);
+    newFunc.addParameter(&newParam2);
+    AddParametersFrom(newFunc, oldFunc);
+
+    return newFunc;
+}
+
 const TFunction &sh::CloneFunctionAndAppendParams(TSymbolTable &symbolTable,
                                                   IdGen *idGen,
                                                   const TFunction &oldFunc,

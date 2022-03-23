@@ -72,6 +72,7 @@ third_party/r8/*.jar
 /third_party/VK-GL-CTS/src
 /third_party/vulkan-deps
 /third_party/vulkan_memory_allocator
+/third_party/wayland
 /third_party/zlib
 /tools/android/errorprone_plugin
 /tools/clang

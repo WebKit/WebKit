@@ -29,6 +29,7 @@ bool gEnableAllTraceTests      = false;
 bool gRetraceMode              = false;
 bool gMinimizeGPUWork          = false;
 bool gTraceTestValidation      = false;
+const char *gPerfCounters      = nullptr;
 
 // Default to three warmup loops. There's no science to this. More than two loops was experimentally
 // helpful on a Windows NVIDIA setup when testing with Vulkan and native trace tests.
@@ -170,6 +171,11 @@ void ANGLEProcessPerfTestArgs(int *argc, char **argv)
             gWarmupLoops         = 0;
             gTestTrials          = 1;
             gMaxTrialTimeSeconds = 600.0;
+        }
+        else if (strcmp("--perf-counters", argv[argIndex]) == 0 && argIndex < *argc - 1)
+        {
+            gPerfCounters = argv[argIndex + 1];
+            argIndex++;
         }
     }
 }

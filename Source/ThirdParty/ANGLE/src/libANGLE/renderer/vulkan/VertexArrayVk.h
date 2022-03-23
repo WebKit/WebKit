@@ -82,6 +82,9 @@ class VertexArrayVk : public VertexArrayImpl
         return mCurrentArrayBuffers;
     }
 
+    // Update mCurrentElementArrayBuffer based on the vertex array state
+    void updateCurrentElementArrayBuffer();
+
     vk::BufferHelper *getCurrentElementArrayBuffer() const { return mCurrentElementArrayBuffer; }
 
     angle::Result convertIndexBufferGPU(ContextVk *contextVk,

@@ -225,7 +225,7 @@ void VulkanHelper::initialize(bool useSwiftshader, bool enableValidationLayers)
         /* .applicationVersion = */ 1,
         /* .pEngineName = */ nullptr,
         /* .engineVersion = */ 0,
-        /* .apiVersion = */ VK_API_VERSION_1_0,
+        /* .apiVersion = */ VK_API_VERSION_1_1,
     };
 
     uint32_t enabledInstanceExtensionCount =

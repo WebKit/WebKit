@@ -134,6 +134,18 @@ EGLBoolean QueryDisplayAttribEXT(Thread *thread,
                                  egl::Display *dpyPacked,
                                  EGLint attribute,
                                  EGLAttrib *value);
+EGLBoolean QueryDmaBufFormatsEXT(Thread *thread,
+                                 egl::Display *dpyPacked,
+                                 EGLint max_formats,
+                                 EGLint *formats,
+                                 EGLint *num_formats);
+EGLBoolean QueryDmaBufModifiersEXT(Thread *thread,
+                                   egl::Display *dpyPacked,
+                                   EGLint format,
+                                   EGLint max_modifiers,
+                                   EGLuint64KHR *modifiers,
+                                   EGLBoolean *external_only,
+                                   EGLint *num_modifiers);
 EGLBoolean QueryStreamKHR(Thread *thread,
                           egl::Display *dpyPacked,
                           Stream *streamPacked,
@@ -234,6 +246,10 @@ EGLBoolean PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface surface);
 void ReleaseHighPowerGPUANGLE(Thread *thread, egl::Display *dpyPacked, gl::Context *ctxPacked);
 void ReacquireHighPowerGPUANGLE(Thread *thread, egl::Display *dpyPacked, gl::Context *ctxPacked);
 void HandleGPUSwitchANGLE(Thread *thread, egl::Display *dpyPacked);
+void ForceGPUSwitchANGLE(Thread *thread,
+                         egl::Display *dpyPacked,
+                         EGLint gpuIDHigh,
+                         EGLint gpuIDLow);
 EGLBoolean QueryDisplayAttribANGLE(Thread *thread,
                                    egl::Display *dpyPacked,
                                    EGLint attribute,

@@ -691,6 +691,26 @@ void CaptureTexImage2D_pixels(const State &glState,
         return;
     }
 
+    // Because GL_HALF_FLOAT and GL_HALF_FLOAT_OES have different values, and the
+    // format table created by BuildInternalFormatInfoMap() and queried here
+    // uses GL_HALF_FLOAT_OES for legacy formats, we have to override the type here.
+    //
+    // BuildInternalFormatInfoMap() can't have entries of the same format for
+    // GL_HALF_FLOAT and GL_ALPHA_FLOAT_OES, and formats like R16F use GL_HALF_FLOAT,
+    // but legacy formats like ALPHA16F use GL_HALF_FLOAT_OES, so overriding
+    // GL_HALF_FLOAT only based on the GLES version, like it is done in
+    // getReadPixelsType, will not work, we also have to check the format when doing so.
+    //
+    // Better would be to actually use the (sized) internal format to do the lookup,
+    // but this doesn't work when calling this function from CaptureTexSubImage2D_pixels,
+    // because there the internal format is not known.
+
+    if (type == GL_HALF_FLOAT &&
+        (format == GL_ALPHA || format == GL_LUMINANCE || format == GL_LUMINANCE_ALPHA))
+    {
+        type = GL_HALF_FLOAT_OES;
+    }
+
     const gl::InternalFormat &internalFormatInfo = gl::GetInternalFormatInfo(format, type);
     const gl::PixelUnpackState &unpack           = glState.getUnpackState();
 

@@ -786,6 +786,9 @@ void GenerateCaps(IDirect3D9 *d3d9,
 
     // D3D9 does not support vertex attribute aliasing
     limitations->noVertexAttributeAliasing = true;
+
+    // D3D9 does not support compressed textures where the base mip level is not a multiple of 4
+    limitations->compressedBaseMipLevelMultipleOfFour = true;
 }
 
 }  // namespace d3d9_gl

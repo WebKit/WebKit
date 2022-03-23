@@ -1703,6 +1703,9 @@ void GenerateCaps(ID3D11Device *device,
     // D3D11 does not support vertex attribute aliasing
     limitations->noVertexAttributeAliasing = true;
 
+    // D3D11 does not support compressed textures where the base mip level is not a multiple of 4
+    limitations->compressedBaseMipLevelMultipleOfFour = true;
+
 #ifdef ANGLE_ENABLE_WINDOWS_UWP
     // Setting a non-zero divisor on attribute zero doesn't work on certain Windows Phone 8-era
     // devices. We should prevent developers from doing this on ALL Windows Store devices. This will

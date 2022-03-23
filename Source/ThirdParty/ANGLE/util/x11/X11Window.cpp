@@ -396,6 +396,12 @@ EGLNativeWindowType X11Window::getNativeWindow() const
     return mWindow;
 }
 
+void *X11Window::getPlatformExtension()
+{
+    // X11 native window for eglCreateSurfacePlatformEXT is Window*
+    return &mWindow;
+}
+
 EGLNativeDisplayType X11Window::getNativeDisplay() const
 {
     return reinterpret_cast<EGLNativeDisplayType>(mDisplay);

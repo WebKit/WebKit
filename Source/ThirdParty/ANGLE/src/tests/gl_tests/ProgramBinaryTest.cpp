@@ -519,6 +519,10 @@ TEST_P(ProgramBinaryES3Test, TestArrayOfStructUniform)
 // drawing works.
 TEST_P(ProgramBinaryES3Test, SaveAndLoadDetachedShaders)
 {
+    GLint binaryFormatCount = 0;
+    glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &binaryFormatCount);
+    ANGLE_SKIP_TEST_IF(binaryFormatCount == 0);
+
     // We use shaders with the "flat" qualifier, to ensure that "flat" behaves
     // across save/load. This is primarily to catch possible bugs in the Metal
     // backend, where it needs to detect "flat" at shader link time and
@@ -934,7 +938,8 @@ TEST_P(ProgramBinaryTest, SRGBDecodeWithSamplerAndTexelFetchTest)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryES3Test);
-ANGLE_INSTANTIATE_TEST_ES3(ProgramBinaryES3Test);
+ANGLE_INSTANTIATE_TEST_ES3_AND(ProgramBinaryES3Test,
+                               WithCreateVulkanPipelineDuringLink(ES3_VULKAN()));
 
 class ProgramBinaryES31Test : public ANGLETest
 {
@@ -1169,7 +1174,8 @@ TEST_P(ProgramBinaryES31Test, ImageTextureBinding)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryES31Test);
-ANGLE_INSTANTIATE_TEST_ES31(ProgramBinaryES31Test);
+ANGLE_INSTANTIATE_TEST_ES31_AND(ProgramBinaryES31Test,
+                                WithCreateVulkanPipelineDuringLink(ES31_VULKAN()));
 
 class ProgramBinaryTransformFeedbackTest : public ANGLETest
 {
@@ -1281,7 +1287,8 @@ TEST_P(ProgramBinaryTransformFeedbackTest, GetTransformFeedbackVarying)
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProgramBinaryTransformFeedbackTest);
-ANGLE_INSTANTIATE_TEST_ES3(ProgramBinaryTransformFeedbackTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(ProgramBinaryTransformFeedbackTest,
+                               WithCreateVulkanPipelineDuringLink(ES3_VULKAN()));
 
 // For the ProgramBinariesAcrossPlatforms tests, we need two sets of params:
 // - a set to save the program binary
@@ -1518,6 +1525,11 @@ ANGLE_INSTANTIATE_TEST(ProgramBinariesAcrossPlatforms,
                        PlatformsWithLinkResult(ES2_D3D11(),         ES2_D3D9(),             false        ), // Switching from D3D11 to D3D9 shouldn't work
                        PlatformsWithLinkResult(ES2_D3D9(),          ES2_D3D11(),            false        ), // Switching from D3D9 to D3D11 shouldn't work
                        PlatformsWithLinkResult(ES2_D3D11(),         ES3_D3D11(),            false        ), // Switching to newer client version shouldn't work
+                       PlatformsWithLinkResult(ES2_VULKAN(),        ES2_VULKAN(),           true         ), // Loading + reloading binary should work
+                       PlatformsWithLinkResult(ES3_VULKAN(),        ES3_VULKAN(),           true         ), // Loading + reloading binary should work
+                       PlatformsWithLinkResult(ES31_VULKAN(),       ES31_VULKAN(),          true         ), // Loading + reloading binary should work
                        PlatformsWithLinkResult(ES3_VULKAN(),        ES31_VULKAN(),          false        ), // Switching to newer client version shouldn't work with Vulkan
+                       PlatformsWithLinkResult(WithCreateVulkanPipelineDuringLink(ES2_VULKAN()),        WithCreateVulkanPipelineDuringLink(ES2_VULKAN()),           true         ), // Loading + reloading binary with compiling shaders at link time should work
+                       PlatformsWithLinkResult(WithCreateVulkanPipelineDuringLink(ES3_VULKAN()),        WithCreateVulkanPipelineDuringLink(ES3_VULKAN()),           true         ), // Loading + reloading binary with compiling shaders at link time should work
                        );
 // clang-format on

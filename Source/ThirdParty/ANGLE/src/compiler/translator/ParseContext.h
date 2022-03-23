@@ -192,6 +192,12 @@ class TParseContext : angle::NonCopyable
                                         const TSourceLoc &qualifierLocation);
     void checkLocalVariableConstStorageQualifier(const TQualifierWrapperBase &qualifier);
     void checkTCSOutVarIndexIsValid(TIntermBinary *binaryExpression, const TSourceLoc &location);
+
+    void checkAdvancedBlendEquationsNotSpecified(
+        const TSourceLoc &location,
+        const AdvancedBlendEquations &advancedBlendEquations,
+        const TQualifier &qualifier);
+
     const TPragma &pragma() const { return mDirectiveHandler.pragma(); }
     const TExtensionBehavior &extensionBehavior() const
     {
@@ -495,6 +501,7 @@ class TParseContext : angle::NonCopyable
 
     void markShaderHasPrecise() { mHasAnyPreciseType = true; }
     bool hasAnyPreciseType() const { return mHasAnyPreciseType; }
+    AdvancedBlendEquations getAdvancedBlendEquations() const { return mAdvancedBlendEquations; }
 
     ShShaderOutput getOutputType() const { return mOutputType; }
 
@@ -734,6 +741,8 @@ class TParseContext : angle::NonCopyable
     TVector<TType *> mTessControlDeferredArrayTypesToSize;
     // Whether the |precise| keyword has been seen in the shader.
     bool mHasAnyPreciseType;
+
+    AdvancedBlendEquations mAdvancedBlendEquations;
 
     // Track when we add new scope for func body in ESSL 1.00 spec
     bool mFunctionBodyNewScope;

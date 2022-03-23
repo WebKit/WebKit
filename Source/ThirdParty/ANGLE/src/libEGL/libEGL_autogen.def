@@ -92,6 +92,7 @@ EXPORTS
     eglQueryStringiANGLE
 
     ; EGL_ANGLE_power_preference
+    eglForceGPUSwitchANGLE
     eglHandleGPUSwitchANGLE
     eglReacquireHighPowerGPUANGLE
     eglReleaseHighPowerGPUANGLE
@@ -128,6 +129,10 @@ EXPORTS
     eglQueryDeviceAttribEXT
     eglQueryDeviceStringEXT
     eglQueryDisplayAttribEXT
+
+    ; EGL_EXT_image_dma_buf_import_modifiers
+    eglQueryDmaBufFormatsEXT
+    eglQueryDmaBufModifiersEXT
 
     ; EGL_EXT_platform_base
     eglCreatePlatformPixmapSurfaceEXT

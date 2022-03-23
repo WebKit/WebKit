@@ -330,12 +330,13 @@ void Shader::compile(const Context *context)
     mState.mGeometryShaderInputPrimitiveType.reset();
     mState.mGeometryShaderOutputPrimitiveType.reset();
     mState.mGeometryShaderMaxVertices.reset();
-    mState.mGeometryShaderInvocations      = 1;
-    mState.mTessControlShaderVertices      = 0;
-    mState.mTessGenMode                    = 0;
-    mState.mTessGenSpacing                 = 0;
-    mState.mTessGenVertexOrder             = 0;
-    mState.mTessGenPointMode               = 0;
+    mState.mGeometryShaderInvocations = 1;
+    mState.mTessControlShaderVertices = 0;
+    mState.mTessGenMode               = 0;
+    mState.mTessGenSpacing            = 0;
+    mState.mTessGenVertexOrder        = 0;
+    mState.mTessGenPointMode          = 0;
+    mState.mAdvancedBlendEquations.reset();
     mState.mEarlyFragmentTestsOptimization = false;
     mState.mSpecConstUsageBits.reset();
 
@@ -536,6 +537,8 @@ void Shader::resolveCompile()
                 GetActiveShaderVariables(sh::GetOutputVariables(compilerHandle));
             mState.mEarlyFragmentTestsOptimization =
                 sh::HasEarlyFragmentTestsOptimization(compilerHandle);
+            mState.mAdvancedBlendEquations =
+                BlendEquationBitSet(sh::GetAdvancedBlendEquations(compilerHandle));
             break;
         }
         case ShaderType::Geometry:

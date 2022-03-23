@@ -50,7 +50,7 @@ TEST(BlendStateExt, Init)
         ASSERT_EQ(blendStateExt.mMaxDrawBuffers, 1u);
         ASSERT_EQ(blendStateExt.mMaxEnabledMask.to_ulong(), 1u);
         ASSERT_EQ(blendStateExt.mMaxColorMask, is64Bit ? 0xFFu : 0xFu);
-        ASSERT_EQ(blendStateExt.mMaxEquationMask, is64Bit ? 0xFFu : 0xFu);
+        ASSERT_EQ(blendStateExt.mMaxEquationMask, 0xFFu);
         ASSERT_EQ(blendStateExt.mMaxFactorMask, 0xFFu);
         checkInitState(blendStateExt);
     }
@@ -60,7 +60,7 @@ TEST(BlendStateExt, Init)
         ASSERT_EQ(blendStateExt.mMaxDrawBuffers, 4u);
         ASSERT_EQ(blendStateExt.mMaxEnabledMask.to_ulong(), 0xFu);
         ASSERT_EQ(blendStateExt.mMaxColorMask, is64Bit ? 0xFFFFFFFFu : 0xFFFFu);
-        ASSERT_EQ(blendStateExt.mMaxEquationMask, is64Bit ? 0xFFFFFFFFu : 0xFFFFu);
+        ASSERT_EQ(blendStateExt.mMaxEquationMask, 0xFFFFFFFFu);
         ASSERT_EQ(blendStateExt.mMaxFactorMask, 0xFFFFFFFFu);
         checkInitState(blendStateExt);
     }
@@ -70,7 +70,7 @@ TEST(BlendStateExt, Init)
         ASSERT_EQ(blendStateExt.mMaxDrawBuffers, 8u);
         ASSERT_EQ(blendStateExt.mMaxEnabledMask.to_ulong(), 0xFFu);
         ASSERT_EQ(blendStateExt.mMaxColorMask, is64Bit ? 0xFFFFFFFFFFFFFFFFu : 0xFFFFFFFFu);
-        ASSERT_EQ(blendStateExt.mMaxEquationMask, is64Bit ? 0xFFFFFFFFFFFFFFFFu : 0xFFFFFFFFu);
+        ASSERT_EQ(blendStateExt.mMaxEquationMask, 0xFFFFFFFFFFFFFFFFu);
         ASSERT_EQ(blendStateExt.mMaxFactorMask, 0xFFFFFFFFFFFFFFFFu);
         checkInitState(blendStateExt);
     }
@@ -126,13 +126,13 @@ TEST(BlendStateExt, BlendEquations)
     gl::BlendStateExt blendStateExt = gl::BlendStateExt(7);
 
     blendStateExt.setEquations(GL_MIN, GL_FUNC_SUBTRACT);
-    ASSERT_EQ(blendStateExt.mEquationColor, is64Bit ? 0x01010101010101u : 0x1111111u);
-    ASSERT_EQ(blendStateExt.mEquationAlpha, is64Bit ? 0x04040404040404u : 0x4444444u);
+    ASSERT_EQ(blendStateExt.mEquationColor, 0x01010101010101u);
+    ASSERT_EQ(blendStateExt.mEquationAlpha, 0x04040404040404u);
 
     blendStateExt.setEquationsIndexed(3, GL_MAX, GL_FUNC_SUBTRACT);
     blendStateExt.setEquationsIndexed(5, GL_MIN, GL_FUNC_ADD);
-    ASSERT_EQ(blendStateExt.mEquationColor, is64Bit ? 0x01010102010101u : 0x1112111u);
-    ASSERT_EQ(blendStateExt.mEquationAlpha, is64Bit ? 0x04000404040404u : 0x4044444u);
+    ASSERT_EQ(blendStateExt.mEquationColor, 0x01010102010101u);
+    ASSERT_EQ(blendStateExt.mEquationAlpha, 0x04000404040404u);
     ASSERT_EQ(blendStateExt.getEquationColorIndexed(3), static_cast<GLenum>(GL_MAX));
     ASSERT_EQ(blendStateExt.getEquationAlphaIndexed(5), static_cast<GLenum>(GL_FUNC_ADD));
 
@@ -141,8 +141,8 @@ TEST(BlendStateExt, BlendEquations)
     gl::BlendStateExt::EquationStorage::Type otherEquationAlpha =
         blendStateExt.expandEquationAlphaIndexed(0);
 
-    ASSERT_EQ(otherEquationColor, is64Bit ? 0x01010101010101u : 0x1111111u);
-    ASSERT_EQ(otherEquationAlpha, is64Bit ? 0x04040404040404u : 0x4444444u);
+    ASSERT_EQ(otherEquationColor, 0x01010101010101u);
+    ASSERT_EQ(otherEquationAlpha, 0x04040404040404u);
 
     const gl::DrawBufferMask diff =
         blendStateExt.compareEquations(otherEquationColor, otherEquationAlpha);

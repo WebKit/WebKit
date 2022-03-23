@@ -485,7 +485,8 @@
       {
         "args": [
           "--log=debug",
-          "--smoke-test-mode"
+          "--smoke-test-mode",
+          "--show-test-stdout"
         ],
         "isolate_name": "angle_perftests",
         "merge": {
@@ -567,7 +568,8 @@
     "isolated_scripts": [
       {
         "args": [
-          "--log=debug"
+          "--log=debug",
+          "--show-test-stdout"
         ],
         "isolate_name": "angle_perftests",
         "merge": {
@@ -1092,7 +1094,8 @@
       {
         "args": [
           "--log=debug",
-          "--smoke-test-mode"
+          "--smoke-test-mode",
+          "--show-test-stdout"
         ],
         "isolate_name": "angle_perftests",
         "merge": {
@@ -1155,7 +1158,8 @@
     "isolated_scripts": [
       {
         "args": [
-          "--log=debug"
+          "--log=debug",
+          "--show-test-stdout"
         ],
         "isolate_name": "angle_perftests",
         "merge": {
@@ -1740,7 +1744,8 @@
       {
         "args": [
           "--log=debug",
-          "--smoke-test-mode"
+          "--smoke-test-mode",
+          "--show-test-stdout"
         ],
         "isolate_name": "angle_perftests",
         "merge": {
@@ -1802,7 +1807,8 @@
     "isolated_scripts": [
       {
         "args": [
-          "--log=debug"
+          "--log=debug",
+          "--show-test-stdout"
         ],
         "isolate_name": "angle_perftests",
         "merge": {
@@ -2248,6 +2254,36 @@
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "angle_white_box_tests",
+          "--bot-mode",
+          "--gtest_filter=*Vulkan_SwiftShader*",
+          "--xvfb"
+        ],
+        "merge": {
+          "args": [],
+          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
+        },
+        "swarming": {
+          "can_use_on_swarming_builders": true,
+          "containment_type": "AUTO",
+          "dimension_sets": [
+            {
+              "cpu": "x86-64",
+              "gpu": "none",
+              "os": "Ubuntu-18.04",
+              "pool": "chromium.tests.gpu"
+            }
+          ],
+          "hard_timeout": 900,
+          "io_timeout": 900,
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_white_box_tests",
+        "test_id_prefix": "ninja://src/tests:angle_white_box_tests/",
         "use_isolated_scripts_api": true
       }
     ],
@@ -2715,6 +2751,36 @@
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
         "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "angle_white_box_tests",
+          "--bot-mode",
+          "--gtest_filter=*Vulkan_SwiftShader*",
+          "--xvfb"
+        ],
+        "merge": {
+          "args": [],
+          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
+        },
+        "swarming": {
+          "can_use_on_swarming_builders": true,
+          "containment_type": "AUTO",
+          "dimension_sets": [
+            {
+              "cpu": "x86-64",
+              "gpu": "none",
+              "os": "Ubuntu-18.04",
+              "pool": "chromium.tests.gpu"
+            }
+          ],
+          "hard_timeout": 900,
+          "io_timeout": 900,
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_white_box_tests",
+        "test_id_prefix": "ninja://src/tests:angle_white_box_tests/",
+        "use_isolated_scripts_api": true
       }
     ]
   },
@@ -3144,6 +3210,36 @@
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
         "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "angle_white_box_tests",
+          "--bot-mode",
+          "--gtest_filter=*Vulkan_SwiftShader*",
+          "--xvfb"
+        ],
+        "merge": {
+          "args": [],
+          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
+        },
+        "swarming": {
+          "can_use_on_swarming_builders": true,
+          "containment_type": "AUTO",
+          "dimension_sets": [
+            {
+              "cpu": "x86-64",
+              "gpu": "none",
+              "os": "Ubuntu-18.04",
+              "pool": "chromium.tests.gpu"
+            }
+          ],
+          "hard_timeout": 900,
+          "io_timeout": 900,
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_white_box_tests",
+        "test_id_prefix": "ninja://src/tests:angle_white_box_tests/",
+        "use_isolated_scripts_api": true
       }
     ]
   },
@@ -3569,6 +3665,36 @@
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "angle_white_box_tests",
+          "--bot-mode",
+          "--gtest_filter=*Vulkan_SwiftShader*",
+          "--xvfb"
+        ],
+        "merge": {
+          "args": [],
+          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
+        },
+        "swarming": {
+          "can_use_on_swarming_builders": true,
+          "containment_type": "AUTO",
+          "dimension_sets": [
+            {
+              "cpu": "x86-64",
+              "gpu": "none",
+              "os": "Ubuntu-18.04",
+              "pool": "chromium.tests.gpu"
+            }
+          ],
+          "hard_timeout": 900,
+          "io_timeout": 900,
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_white_box_tests",
+        "test_id_prefix": "ninja://src/tests:angle_white_box_tests/",
         "use_isolated_scripts_api": true
       }
     ]
@@ -4476,7 +4602,8 @@
       {
         "args": [
           "--log=debug",
-          "--smoke-test-mode"
+          "--smoke-test-mode",
+          "--show-test-stdout"
         ],
         "isolate_name": "angle_perftests",
         "merge": {
@@ -5228,7 +5355,8 @@
       {
         "args": [
           "--log=debug",
-          "--smoke-test-mode"
+          "--smoke-test-mode",
+          "--show-test-stdout"
         ],
         "isolate_name": "angle_perftests",
         "merge": {
@@ -5290,7 +5418,8 @@
     "isolated_scripts": [
       {
         "args": [
-          "--log=debug"
+          "--log=debug",
+          "--show-test-stdout"
         ],
         "isolate_name": "angle_perftests",
         "merge": {
@@ -5723,6 +5852,35 @@
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
         "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "angle_white_box_tests",
+          "--bot-mode",
+          "--gtest_filter=*Vulkan_SwiftShader*"
+        ],
+        "merge": {
+          "args": [],
+          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
+        },
+        "swarming": {
+          "can_use_on_swarming_builders": true,
+          "containment_type": "AUTO",
+          "dimension_sets": [
+            {
+              "cpu": "x86-64",
+              "gpu": "none",
+              "os": "Windows-10",
+              "pool": "chromium.tests.gpu"
+            }
+          ],
+          "hard_timeout": 900,
+          "io_timeout": 900,
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_white_box_tests",
+        "test_id_prefix": "ninja://src/tests:angle_white_box_tests/",
+        "use_isolated_scripts_api": true
       }
     ],
     "isolated_scripts": [
@@ -5794,6 +5952,35 @@
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "angle_white_box_tests",
+          "--bot-mode",
+          "--gtest_filter=*Vulkan_SwiftShader*"
+        ],
+        "merge": {
+          "args": [],
+          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
+        },
+        "swarming": {
+          "can_use_on_swarming_builders": true,
+          "containment_type": "AUTO",
+          "dimension_sets": [
+            {
+              "cpu": "x86-64",
+              "gpu": "none",
+              "os": "Windows-10",
+              "pool": "chromium.tests.gpu"
+            }
+          ],
+          "hard_timeout": 900,
+          "io_timeout": 900,
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_white_box_tests",
+        "test_id_prefix": "ninja://src/tests:angle_white_box_tests/",
         "use_isolated_scripts_api": true
       }
     ]
@@ -6206,6 +6393,35 @@
         },
         "test": "angle_end2end_tests",
         "test_id_prefix": "ninja://src/tests:angle_end2end_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "angle_white_box_tests",
+          "--bot-mode",
+          "--gtest_filter=*Vulkan_SwiftShader*"
+        ],
+        "merge": {
+          "args": [],
+          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
+        },
+        "swarming": {
+          "can_use_on_swarming_builders": true,
+          "containment_type": "AUTO",
+          "dimension_sets": [
+            {
+              "cpu": "x86-64",
+              "gpu": "none",
+              "os": "Windows-10",
+              "pool": "chromium.tests.gpu"
+            }
+          ],
+          "hard_timeout": 900,
+          "io_timeout": 900,
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_white_box_tests",
+        "test_id_prefix": "ninja://src/tests:angle_white_box_tests/",
         "use_isolated_scripts_api": true
       }
     ]

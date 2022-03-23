@@ -887,6 +887,21 @@ void MaybeResetResources(ResourceIDType resourceIDType,
                          ResourceTracker *resourceTracker,
                          std::vector<uint8_t> *binaryData)
 {
+    // Local helper to get well structured blocks in Delete calls, i.e.
+    // const GLuint deleteTextures[] = {
+    //    gTextureMap[1], gTextureMap[2], gTextureMap[3], gTextureMap[4],
+    //    gTextureMap[5], gTextureMap[6], gTextureMap[7], gTextureMap[8]};
+    auto formatResourceIndex = [](std::stringstream &out, size_t i) {
+        if (i > 0)
+        {
+            out << ", ";
+        }
+        if ((i % 4) == 0)
+        {
+            out << "\n        ";
+        }
+    };
+
     switch (resourceIDType)
     {
         case ResourceIDType::Buffer:
@@ -894,35 +909,41 @@ void MaybeResetResources(ResourceIDType resourceIDType,
             TrackedResource &trackedBuffers =
                 resourceTracker->getTrackedResource(ResourceIDType::Buffer);
             ResourceSet &newBuffers           = trackedBuffers.getNewResources();
+            ResourceSet &buffersToRegen       = trackedBuffers.getResourcesToRegen();
             ResourceCalls &bufferRegenCalls   = trackedBuffers.getResourceRegenCalls();
             ResourceCalls &bufferRestoreCalls = trackedBuffers.getResourceRestoreCalls();
 
             BufferCalls &bufferMapCalls   = resourceTracker->getBufferMapCalls();
             BufferCalls &bufferUnmapCalls = resourceTracker->getBufferUnmapCalls();
 
-            // If we have any new buffers generated and not deleted during the run, delete them now
-            if (!newBuffers.empty())
+            // If we have any new buffers generated and not deleted during the run, or any buffers
+            // that we need to regen, delete them now
+            if (!newBuffers.empty() || !buffersToRegen.empty())
             {
+                size_t count = 0;
+
                 out << "    const GLuint deleteBuffers[] = {";
-                ResourceSet::iterator bufferIter = newBuffers.begin();
-                for (size_t i = 0; bufferIter != newBuffers.end(); ++i, ++bufferIter)
+
+                for (auto &oldBuffer : buffersToRegen)
                 {
-                    if (i > 0)
-                    {
-                        out << ", ";
-                    }
-                    if ((i % 4) == 0)
-                    {
-                        out << "\n        ";
-                    }
-                    out << "gBufferMap[" << *bufferIter << "]";
+                    formatResourceIndex(out, count);
+                    out << "gBufferMap[" << oldBuffer << "]";
+                    ++count;
                 }
+
+                for (auto &newBuffer : newBuffers)
+                {
+                    formatResourceIndex(out, count);
+                    out << "gBufferMap[" << newBuffer << "]";
+                    ++count;
+                }
+
+                // Delete all the new and old buffers at once
                 out << "};\n";
-                out << "    glDeleteBuffers(" << newBuffers.size() << ", deleteBuffers);\n";
+                out << "    glDeleteBuffers(" << count << ", deleteBuffers);\n";
             }
 
             // If any of our starting buffers were deleted during the run, recreate them
-            ResourceSet &buffersToRegen = trackedBuffers.getResourcesToRegen();
             for (GLuint id : buffersToRegen)
             {
                 // Emit their regen calls
@@ -1008,34 +1029,37 @@ void MaybeResetResources(ResourceIDType resourceIDType,
             TrackedResource &trackedFramebuffers =
                 resourceTracker->getTrackedResource(ResourceIDType::Framebuffer);
             ResourceSet &newFramebuffers           = trackedFramebuffers.getNewResources();
+            ResourceSet &framebuffersToRegen       = trackedFramebuffers.getResourcesToRegen();
             ResourceCalls &framebufferRegenCalls   = trackedFramebuffers.getResourceRegenCalls();
             ResourceCalls &framebufferRestoreCalls = trackedFramebuffers.getResourceRestoreCalls();
 
-            // If we have any new framebuffers generated and not deleted during the run, delete them
-            // now
-            if (!newFramebuffers.empty())
+            // If we have any new framebuffers generated and not deleted during the run, or any
+            // framebuffers that we need to regen, delete them now
+            if (!newFramebuffers.empty() || !framebuffersToRegen.empty())
             {
+                size_t count = 0;
+
                 out << "    const GLuint deleteFramebuffers[] = {";
-                ResourceSet::iterator framebufferIter = newFramebuffers.begin();
-                for (size_t i = 0; framebufferIter != newFramebuffers.end(); ++i, ++framebufferIter)
+
+                for (auto &oldFb : framebuffersToRegen)
                 {
-                    if (i > 0)
-                    {
-                        out << ", ";
-                    }
-                    if ((i % 4) == 0)
-                    {
-                        out << "\n        ";
-                    }
-                    out << "gFramebufferMap[" << *framebufferIter << "]";
+                    formatResourceIndex(out, count);
+                    out << "gFramebufferMap[" << oldFb << "]";
+                    ++count;
                 }
+
+                for (auto &newFb : newFramebuffers)
+                {
+                    formatResourceIndex(out, count);
+                    out << "gFramebufferMap[" << newFb << "]";
+                    ++count;
+                }
+
+                // Delete all the new and old framebuffers at once
                 out << "};\n";
-                out << "    glDeleteFramebuffers(" << newFramebuffers.size()
-                    << ", deleteFramebuffers);\n";
+                out << "    glDeleteFramebuffers(" << count << ", deleteFramebuffers);\n";
             }
 
-            // If any of our starting framebuffers were deleted during the run, regen them
-            ResourceSet &framebuffersToRegen = trackedFramebuffers.getResourcesToRegen();
             for (GLuint id : framebuffersToRegen)
             {
                 // Emit their regen calls
@@ -1067,28 +1091,22 @@ void MaybeResetResources(ResourceIDType resourceIDType,
             ResourceSet &newRenderbuffers =
                 resourceTracker->getTrackedResource(ResourceIDType::Renderbuffer).getNewResources();
 
-            // If we have any new renderbuffers generated and not deleted during the run, delete
-            // them now
+            // Delete any new renderbuffers generated and not deleted during the run
             if (!newRenderbuffers.empty())
             {
+                size_t count = 0;
+
                 out << "    const GLuint deleteRenderbuffers[] = {";
-                ResourceSet::iterator renderbufferIter = newRenderbuffers.begin();
-                for (size_t i = 0; renderbufferIter != newRenderbuffers.end();
-                     ++i, ++renderbufferIter)
+
+                for (auto &newRb : newRenderbuffers)
                 {
-                    if (i > 0)
-                    {
-                        out << ", ";
-                    }
-                    if ((i % 4) == 0)
-                    {
-                        out << "\n        ";
-                    }
-                    out << "gRenderbufferMap[" << *renderbufferIter << "]";
+                    formatResourceIndex(out, count);
+                    out << "gRenderbufferMap[" << newRb << "]";
+                    ++count;
                 }
+
                 out << "};\n";
-                out << "    glDeleteRenderbuffers(" << newRenderbuffers.size()
-                    << ", deleteRenderbuffers);\n";
+                out << "    glDeleteRenderbuffers(" << count << ", deleteRenderbuffers);\n";
             }
 
             // TODO (http://anglebug.com/4599): Handle renderbuffers that need regen
@@ -1122,32 +1140,37 @@ void MaybeResetResources(ResourceIDType resourceIDType,
             TrackedResource &trackedTextures =
                 resourceTracker->getTrackedResource(ResourceIDType::Texture);
             ResourceSet &newTextures           = trackedTextures.getNewResources();
+            ResourceSet &texturesToRegen       = trackedTextures.getResourcesToRegen();
             ResourceCalls &textureRegenCalls   = trackedTextures.getResourceRegenCalls();
             ResourceCalls &textureRestoreCalls = trackedTextures.getResourceRestoreCalls();
 
-            // If we have any new textures generated and not deleted during the run, delete them now
-            if (!newTextures.empty())
+            // If we have any new textures generated and not deleted during the run, or any textures
+            // modified during the run that we need to regen, delete them now
+            if (!newTextures.empty() || !texturesToRegen.empty())
             {
+                size_t count = 0;
+
                 out << "    const GLuint deleteTextures[] = {";
-                ResourceSet::iterator textureIter = newTextures.begin();
-                for (size_t i = 0; textureIter != newTextures.end(); ++i, ++textureIter)
+
+                for (auto &oldTex : texturesToRegen)
                 {
-                    if (i > 0)
-                    {
-                        out << ", ";
-                    }
-                    if ((i % 4) == 0)
-                    {
-                        out << "\n        ";
-                    }
-                    out << "gTextureMap[" << *textureIter << "]";
+                    formatResourceIndex(out, count);
+                    out << "gTextureMap[" << oldTex << "]";
+                    ++count;
                 }
+
+                for (auto &newTex : newTextures)
+                {
+                    formatResourceIndex(out, count);
+                    out << "gTextureMap[" << newTex << "]";
+                    ++count;
+                }
+
                 out << "};\n";
-                out << "    glDeleteTextures(" << newTextures.size() << ", deleteTextures);\n";
+                out << "    glDeleteTextures(" << count << ", deleteTextures);\n";
             }
 
-            // If any of our starting textures were deleted during the run, regen them
-            ResourceSet &texturesToRegen = trackedTextures.getResourcesToRegen();
+            // If any of our starting textures were deleted, regen them
             for (GLuint id : texturesToRegen)
             {
                 // Emit their regen calls
@@ -1182,24 +1205,19 @@ void MaybeResetResources(ResourceIDType resourceIDType,
             // them now
             if (!newVertextArrays.empty())
             {
+                size_t count = 0;
+
                 out << "    const GLuint deleteVertexArrays[] = {";
-                ResourceSet::iterator vertexArrayIter = newVertextArrays.begin();
-                for (size_t i = 0; vertexArrayIter != newVertextArrays.end();
-                     ++i, ++vertexArrayIter)
+
+                for (auto &newVA : newVertextArrays)
                 {
-                    if (i > 0)
-                    {
-                        out << ", ";
-                    }
-                    if ((i % 4) == 0)
-                    {
-                        out << "\n        ";
-                    }
-                    out << "gVertexArrayMap[" << *vertexArrayIter << "]";
+                    formatResourceIndex(out, count);
+                    out << "gVertexArrayMap[" << newVA << "]";
+                    ++count;
                 }
+
                 out << "};\n";
-                out << "    glDeleteVertexArrays(" << newVertextArrays.size()
-                    << ", deleteVertexArrays);\n";
+                out << "    glDeleteVertexArrays(" << count << ", deleteVertexArrays);\n";
             }
 
             // TODO (http://anglebug.com/4599): Handle vertex arrays that need regen
@@ -2166,9 +2184,15 @@ void CaptureVertexArrayState(std::vector<CallCapture> *setupCalls,
             }
         }
 
-        if (attrib.format != defaultAttrib.format || attrib.pointer != defaultAttrib.pointer ||
-            binding.getStride() != defaultBinding.getStride() ||
-            binding.getBuffer().get() != nullptr)
+        // Don't capture CaptureVertexAttribPointer calls when a non-default VAO is bound, the array
+        // buffer is null and a non-null attrib pointer is used.
+        bool skipInvalidAttrib = vertexArray->id().value != 0 &&
+                                 binding.getBuffer().get() == nullptr && attrib.pointer != nullptr;
+
+        if (!skipInvalidAttrib &&
+            (attrib.format != defaultAttrib.format || attrib.pointer != defaultAttrib.pointer ||
+             binding.getStride() != defaultBinding.getStride() ||
+             binding.getBuffer().get() != nullptr))
         {
             // Each attribute can pull from a separate buffer, so check the binding
             gl::Buffer *buffer = binding.getBuffer().get();
@@ -2587,7 +2611,6 @@ void CaptureBufferResetCalls(const gl::State &replayState,
 
     // Track calls to regenerate a given buffer
     ResourceCalls &bufferRegenCalls = trackedBuffers.getResourceRegenCalls();
-    Capture(&bufferRegenCalls[bufferID], CaptureDeleteBuffers(replayState, true, 1, id));
     Capture(&bufferRegenCalls[bufferID], CaptureGenBuffers(replayState, true, 1, id));
     MaybeCaptureUpdateResourceIDs(resourceTracker, &bufferRegenCalls[bufferID]);
 
@@ -2884,9 +2907,6 @@ void CaptureShareGroupMidExecutionSetup(const gl::Context *context,
         // For the initial texture creation calls, track in the generate list
         ResourceCalls &textureRegenCalls = trackedTextures.getResourceRegenCalls();
         CallVector texGenCalls({setupCalls, &textureRegenCalls[id.value]});
-
-        // For reset only, delete the texture before genning
-        Capture(&textureRegenCalls[id.value], CaptureDeleteTextures(replayState, true, 1, &id));
 
         // Gen the Texture.
         for (std::vector<CallCapture> *calls : texGenCalls)
@@ -3547,11 +3567,6 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         // Create two lists of calls for initial setup
         ResourceCalls &framebufferRegenCalls = trackedFramebuffers.getResourceRegenCalls();
         CallVector framebufferGenCalls({setupCalls, &framebufferRegenCalls[id.value]});
-
-        // For reset only, delete the framebuffer before genning.  This is okay even if the
-        // framebuffer has already been deleted.
-        Capture(&framebufferRegenCalls[id.value],
-                CaptureDeleteFramebuffers(replayState, true, 1, &id));
 
         // Gen the framebuffer
         for (std::vector<CallCapture> *calls : framebufferGenCalls)
@@ -4302,6 +4317,28 @@ std::string GetBaseName(const std::string &nameWithPath)
     ASSERT(!result.empty());
     return result.back();
 }
+
+template <>
+struct ParamValueTrait<gl::BufferID>
+{
+    static constexpr const char *name = "bufferPacked";
+    static const ParamType typeID     = ParamType::TBufferID;
+};
+
+template <>
+struct ParamValueTrait<gl::RenderbufferID>
+{
+    static constexpr const char *name = "renderbufferPacked";
+    static const ParamType typeID     = ParamType::TRenderbufferID;
+};
+
+template <>
+struct ParamValueTrait<gl::TextureID>
+{
+    static constexpr const char *name = "texturePacked";
+    static const ParamType typeID     = ParamType::TTextureID;
+};
+
 }  // namespace
 
 ParamCapture::ParamCapture() : type(ParamType::TGLenum), enumGroup(gl::GLenumGroup::DefaultGroup) {}
@@ -5652,6 +5689,25 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             maybeGenResourceOnBind<gl::FramebufferID>(call);
             break;
 
+        case EntryPoint::GLGenRenderbuffers:
+        case EntryPoint::GLGenRenderbuffersOES:
+        {
+            GLsizei count = call.params.getParam("n", ParamType::TGLsizei, 0).value.GLsizeiVal;
+            const gl::RenderbufferID *renderbufferIDs =
+                call.params.getParam("renderbuffersPacked", ParamType::TRenderbufferIDPointer, 1)
+                    .value.RenderbufferIDPointerVal;
+            for (GLsizei i = 0; i < count; i++)
+            {
+                handleGennedResource(renderbufferIDs[i]);
+            }
+            break;
+        }
+
+        case EntryPoint::GLBindRenderbuffer:
+        case EntryPoint::GLBindRenderbufferOES:
+            maybeGenResourceOnBind<gl::RenderbufferID>(call);
+            break;
+
         case EntryPoint::GLGenTextures:
         {
             GLsizei count = call.params.getParam("n", ParamType::TGLsizei, 0).value.GLsizeiVal;
@@ -5665,6 +5721,10 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             }
             break;
         }
+
+        case EntryPoint::GLBindTexture:
+            maybeGenResourceOnBind<gl::TextureID>(call);
+            break;
 
         case EntryPoint::GLDeleteBuffers:
         {
@@ -5698,6 +5758,10 @@ void FrameCaptureShared::maybeCapturePreCallUpdates(
             }
             break;
         }
+
+        case EntryPoint::GLBindBuffer:
+            maybeGenResourceOnBind<gl::BufferID>(call);
+            break;
 
         case EntryPoint::GLDeleteProgramPipelines:
         case EntryPoint::GLDeleteProgramPipelinesEXT:
@@ -7691,6 +7755,38 @@ void WriteParamValueReplay<ParamType::TGLfloatConstPointer>(std::ostream &os,
     {
         os << "reinterpret_cast<const GLfloat *>("
            << static_cast<int>(reinterpret_cast<uintptr_t>(value)) << ")";
+    }
+}
+
+template <>
+void WriteParamValueReplay<ParamType::TGLintConstPointer>(std::ostream &os,
+                                                          const CallCapture &call,
+                                                          const GLint *value)
+{
+    if (value == 0)
+    {
+        os << "nullptr";
+    }
+    else
+    {
+        os << "reinterpret_cast<const GLint *>("
+           << static_cast<int>(reinterpret_cast<intptr_t>(value)) << ")";
+    }
+}
+
+template <>
+void WriteParamValueReplay<ParamType::TGLsizeiPointer>(std::ostream &os,
+                                                       const CallCapture &call,
+                                                       GLsizei *value)
+{
+    if (value == 0)
+    {
+        os << "nullptr";
+    }
+    else
+    {
+        os << "reinterpret_cast<GLsizei *>(" << static_cast<int>(reinterpret_cast<intptr_t>(value))
+           << ")";
     }
 }
 

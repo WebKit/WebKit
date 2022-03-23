@@ -59,7 +59,7 @@ class Overlay : angle::NonCopyable
     Overlay(rx::GLImplFactory *implFactory);
     ~Overlay();
 
-    angle::Result init(const Context *context);
+    void init();
     void destroy(const gl::Context *context);
 
     void onSwap() const;
@@ -113,7 +113,7 @@ class MockOverlay
     MockOverlay(rx::GLImplFactory *implFactory);
     ~MockOverlay();
 
-    angle::Result init(const Context *context) { return angle::Result::Continue; }
+    void init() {}
     void destroy(const Context *context) {}
 
     void onSwap() const {}

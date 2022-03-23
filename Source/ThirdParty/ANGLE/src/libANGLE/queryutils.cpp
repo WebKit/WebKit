@@ -4233,7 +4233,7 @@ void QueryContextAttrib(const gl::Context *context, EGLint attribute, EGLint *va
 
 egl::Error QuerySurfaceAttrib(const Display *display,
                               const gl::Context *context,
-                              const Surface *surface,
+                              Surface *surface,
                               EGLint attribute,
                               EGLint *value)
 {

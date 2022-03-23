@@ -310,7 +310,12 @@ class RendererVk : angle::NonCopyable
         if (!sharedGarbage.empty())
         {
             vk::SharedGarbage garbage(std::move(use), std::move(sharedGarbage));
-            if (!garbage.destroyIfComplete(this, getLastCompletedQueueSerial()))
+            if (garbage.usedInRecordedCommands())
+            {
+                std::lock_guard<std::mutex> lock(mGarbageMutex);
+                mPendingSubmissionGarbage.push(std::move(garbage));
+            }
+            else if (!garbage.destroyIfComplete(this, getLastCompletedQueueSerial()))
             {
                 std::lock_guard<std::mutex> lock(mGarbageMutex);
                 mSharedGarbage.push(std::move(garbage));
@@ -322,7 +327,15 @@ class RendererVk : angle::NonCopyable
                                      vk::BufferSuballocation &&suballocation)
     {
         std::lock_guard<std::mutex> lock(mGarbageMutex);
-        mSuballocationGarbage.emplace(std::move(use), std::move(suballocation));
+        if (use.usedInRecordedCommands())
+        {
+            mPendingSubmissionSuballocationGarbage.emplace(std::move(use),
+                                                           std::move(suballocation));
+        }
+        else
+        {
+            mSuballocationGarbage.emplace(std::move(use), std::move(suballocation));
+        }
     }
 
     angle::Result getPipelineCache(vk::PipelineCache **pipelineCache);
@@ -406,6 +419,7 @@ class RendererVk : angle::NonCopyable
 
     angle::Result cleanupGarbage(Serial lastCompletedQueueSerial);
     void cleanupCompletedCommandsGarbage();
+    void cleanupPendingSubmissionGarbage();
 
     angle::Result submitFrame(vk::Context *context,
                               bool hasProtectedContent,
@@ -413,7 +427,6 @@ class RendererVk : angle::NonCopyable
                               std::vector<VkSemaphore> &&waitSemaphores,
                               std::vector<VkPipelineStageFlags> &&waitSemaphoreStageMasks,
                               const vk::Semaphore *signalSemaphore,
-                              std::vector<vk::ResourceUseList> &&resourceUseLists,
                               vk::GarbageList &&currentGarbage,
                               vk::SecondaryCommandPools *commandPools,
                               Serial *submitSerialOut);
@@ -593,8 +606,8 @@ class RendererVk : angle::NonCopyable
     VkPhysicalDeviceProtectedMemoryProperties mProtectedMemoryProperties;
     VkPhysicalDeviceHostQueryResetFeaturesEXT mHostQueryResetFeatures;
     VkPhysicalDeviceDepthClipControlFeaturesEXT mDepthClipControlFeatures;
-    VkExternalFenceProperties mExternalFenceProperties;
-    VkExternalSemaphoreProperties mExternalSemaphoreProperties;
+    VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT mBlendOperationAdvancedFeatures;
+    VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT mBlendOperationAdvancedProperties;
     VkPhysicalDeviceSamplerYcbcrConversionFeatures mSamplerYcbcrConversionFeatures;
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
     uint32_t mMaxVertexAttribDivisor;
@@ -608,9 +621,16 @@ class RendererVk : angle::NonCopyable
 
     bool mDeviceLost;
 
+    // We group garbage into four categories: mSharedGarbage is the garbage that has already
+    // submitted to vulkan, we expect them to finish in finite time. mPendingSubmissionGarbage is
+    // the garbage that is still referenced in the recorded commands. suballocations have its own
+    // dedicated garbage list for performance optimization since they tend to be the most common
+    // garbage objects. All these four groups of garbage share the same mutex lock.
     std::mutex mGarbageMutex;
     vk::SharedGarbageList mSharedGarbage;
+    vk::SharedGarbageList mPendingSubmissionGarbage;
     vk::SharedBufferSuballocationGarbageList mSuballocationGarbage;
+    vk::SharedBufferSuballocationGarbageList mPendingSubmissionSuballocationGarbage;
 
     vk::MemoryProperties mMemoryProperties;
     vk::FormatTable mFormatTable;

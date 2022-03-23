@@ -347,6 +347,51 @@ std::ostream &operator<<(std::ostream &os, BlendEquationType value)
         case BlendEquationType::ReverseSubtract:
             os << "GL_FUNC_REVERSE_SUBTRACT";
             break;
+        case BlendEquationType::Multiply:
+            os << "GL_MULTIPLY_KHR";
+            break;
+        case BlendEquationType::Screen:
+            os << "GL_SCREEN_KHR";
+            break;
+        case BlendEquationType::Overlay:
+            os << "GL_OVERLAY_KHR";
+            break;
+        case BlendEquationType::Darken:
+            os << "GL_DARKEN_KHR";
+            break;
+        case BlendEquationType::Lighten:
+            os << "GL_LIGHTEN_KHR";
+            break;
+        case BlendEquationType::Colordodge:
+            os << "GL_COLORDODGE_KHR";
+            break;
+        case BlendEquationType::Colorburn:
+            os << "GL_COLORBURN_KHR";
+            break;
+        case BlendEquationType::Hardlight:
+            os << "GL_HARDLIGHT_KHR";
+            break;
+        case BlendEquationType::Softlight:
+            os << "GL_SOFTLIGHT_KHR";
+            break;
+        case BlendEquationType::Difference:
+            os << "GL_DIFFERENCE_KHR";
+            break;
+        case BlendEquationType::Exclusion:
+            os << "GL_EXCLUSION_KHR";
+            break;
+        case BlendEquationType::HslHue:
+            os << "GL_HSL_HUE_KHR";
+            break;
+        case BlendEquationType::HslSaturation:
+            os << "GL_HSL_SATURATION_KHR";
+            break;
+        case BlendEquationType::HslColor:
+            os << "GL_HSL_COLOR_KHR";
+            break;
+        case BlendEquationType::HslLuminosity:
+            os << "GL_HSL_LUMINOSITY_KHR";
+            break;
         default:
             os << "GL_INVALID_ENUM";
             break;

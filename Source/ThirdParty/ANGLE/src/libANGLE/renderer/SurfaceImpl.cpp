@@ -121,8 +121,8 @@ egl::Error SurfaceImpl::getUserHeight(const egl::Display *display, EGLint *value
 
 egl::Error SurfaceImpl::getBufferAge(const gl::Context *context, EGLint *age)
 {
-    UNREACHABLE();
-    return egl::EglBadMatch();
+    *age = 0;
+    return egl::NoError();
 }
 
 egl::Error SurfaceImpl::lockSurface(const egl::Display *display,

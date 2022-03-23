@@ -1210,7 +1210,7 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
                 contextVk->flushCommandsAndEndRenderPass(RenderPassClosureReason::PrepareForBlit));
 
             const vk::ImageView *copyImageView = nullptr;
-            ANGLE_TRY(readRenderTarget->getAndRetainCopyImageView(contextVk, &copyImageView));
+            ANGLE_TRY(readRenderTarget->getCopyImageView(contextVk, &copyImageView));
             ANGLE_TRY(utilsVk.colorBlitResolve(
                 contextVk, this, &readRenderTarget->getImageForCopy(), copyImageView, params));
         }
@@ -1459,7 +1459,7 @@ angle::Result FramebufferVk::resolveColorWithCommand(ContextVk *contextVk,
     resolveRegion.extent.height                 = params.blitArea.height;
     resolveRegion.extent.depth                  = 1;
 
-    vk::PerfCounters &perfCounters = contextVk->getPerfCounters();
+    angle::VulkanPerfCounters &perfCounters = contextVk->getPerfCounters();
     for (size_t colorIndexGL : mState.getEnabledDrawBuffers())
     {
         RenderTargetVk *drawRenderTarget = mRenderTargetCache.getColors()[colorIndexGL];

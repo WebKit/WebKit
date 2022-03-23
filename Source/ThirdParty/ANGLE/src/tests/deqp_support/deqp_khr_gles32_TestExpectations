@@ -9,7 +9,6 @@
 // Geometry shader support (conditioned to windows as that's our only bot capable of running these
 // tests)
 // API validation bugs
-5579 VULKAN WIN : KHR-GLES32.core.geometry_shader.qualifiers.flat_interpolation = FAIL
 // Wrong results
 5579 VULKAN WIN : KHR-GLES32.core.geometry_shader.adjacency.adjacency_indiced_triangle_strip = FAIL
 5579 VULKAN WIN : KHR-GLES32.core.geometry_shader.adjacency.adjacency_non_indiced_triangle_strip = FAIL
@@ -87,60 +86,16 @@
 3577 VULKAN : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP
 3577 VULKAN : KHR-GLES32.core.gpu_shader5.*clamp*_edge = SKIP
 
-// Validation error from EXT_gpu_shader5
-5361 VULKAN : KHR-GLES32.core.gpu_shader5.precise_qualifier = FAIL
-
 // No known implementation supports STORAGE_TEXEL_BUFFER support for RGB32 formats
 3573 VULKAN : KHR-GLES32.core.texture_buffer.texture_buffer_texture_buffer_range = SKIP
-
-// Incorrect dependency to VK_EXT_shader_atomic_float
-5342 VULKAN : KHR-GLES32.core.texture_buffer.texture_buffer_atomic_functions = FAIL
 
 // Desktop cards without native etc support
 5276 AMD VULKAN LINUX : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
 5276 AMD VULKAN WIN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
 5276 NVIDIA VULKAN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
 
-// New failures with latest dEQP roll (2021-03-05)
-5722 VULKAN : KHR-GLES32.core.framebuffer_completeness.rbo_and_texture_expect_zero_numsamples = FAIL
-
 // Newly-added dEQP tests that are failing (2021-09-27)
 6441 VULKAN : KHR-GLES32.core.compressed* = SKIP
-
-// Android failures
-
-// Dynamic indexing features not supported on Qualcomm
-5435 VULKAN ANDROID : KHR-GLES32.core.gpu_shader5.images_array_indexing = FAIL
-
-// Texture buffer failures
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_active_uniform_validation_compute_shader = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_active_uniform_validation_fragment_shader = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_conv_int_to_float = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_errors = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_max_size = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_operations_buffer_load = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_operations_cpu_writes = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_operations_framebuffer_readback = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_operations_image_store = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_operations_ssbo_writes = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_operations_transform_feedback = FAIL
-5392 VULKAN ANDROID : KHR-GLES32.core.texture_buffer.texture_buffer_parameters = FAIL
-
-// Cube map array failures
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.generate_mip_map_filterable_internalformat_immutable = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.generate_mip_map_filterable_internalformat_mutable = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.generate_mip_map_non_filterable_immutable_storage = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.generate_mip_map_non_filterable_mutable_storage = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.getter_calls = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.image_op_compute_sh = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.stencil_attachments_immutable_nonlayered = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.stencil_attachments_mutable_nonlayered = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.subimage3D = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.tex3D_validation = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.texture_size_compute_sh = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.texture_size_fragment_sh = FAIL
-5393 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.texture_size_vertex_sh = FAIL
 
 // Pixel 4 expectations.
 5990 PIXEL4ORXL VULKAN : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP

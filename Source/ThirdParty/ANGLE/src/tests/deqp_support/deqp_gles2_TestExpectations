@@ -212,12 +212,6 @@
 5172 MAC OPENGL AMD : dEQP-GLES2.functional.shaders.fragdata.* = FAIL
 5172 MAC OPENGL AMD : dEQP-GLES2.functional.fragment_ops.blend.equation_src_func_dst_func.* = FAIL
 
-// Android GLES backend only failures
-2631 GLES ANDROID : dEQP-GLES2.functional.shaders.operator.sequence.side_effects.affect_* = FAIL
-// TODO: uncomment this when anglebug.com/5665 is fixed
-//2630 GLES ANDROID : dEQP-GLES2.functional.shaders.struct.uniform.sampler_in_array_function_arg_* = FAIL
-//2630 GLES ANDROID : dEQP-GLES2.functional.shaders.struct.uniform.sampler_in_function_arg_* = FAIL
-
 // D3D11 AMD already covered by Line 148
 3243 D3D11 INTEL : dEQP-GLES2.functional.texture.mipmap.cube.basic.linear_nearest = FAIL
 3243 D3D11 INTEL : dEQP-GLES2.functional.texture.mipmap.cube.basic.linear_linear = FAIL
@@ -243,11 +237,6 @@
 3240 D3D11 : dEQP-GLES2.functional.texture.vertex.cube.wrap.mirror_clamp = FAIL
 3240 D3D11 : dEQP-GLES2.functional.texture.vertex.cube.wrap.mirror_repeat = FAIL
 3240 D3D11 : dEQP-GLES2.functional.texture.vertex.cube.wrap.mirror_mirror = FAIL
-
-// Adreno line rasterization is not conformant.
-2830 VULKAN ANDROID : dEQP-GLES2.functional.rasterization.primitives.line_loop = FAIL
-2830 VULKAN ANDROID : dEQP-GLES2.functional.rasterization.primitives.line_strip = FAIL
-2830 VULKAN ANDROID : dEQP-GLES2.functional.rasterization.primitives.lines = FAIL
 
 // These tests also fail on AMD windows driver as it is not allowed to use emulation due to errors.
 3243 VULKAN WIN AMD : dEQP-GLES2.functional.shaders.texture_functions.vertex.texturecubelod = FAIL
@@ -363,16 +352,6 @@
 
 // Test bug - fails in ASAN.
 6678 ASAN : dEQP-GLES2.functional.negative_api.texture.compressedtexsubimage2d* = SKIP
-
-// Vulkan
-4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.rebind_rbo_rgba4 = FAIL
-4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.rebind_rbo_rgba4_stencil_index8 = FAIL
-4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.no_rebind_rbo_rgba4 = FAIL
-4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_colorbuffer.no_rebind_rbo_rgba4_stencil_index8 = FAIL
-4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_depthbuffer.rebind_rbo_rgba4_depth_component16 = FAIL
-4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_depthbuffer.no_rebind_rbo_rgba4_depth_component16 = FAIL
-4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_stencilbuffer.rebind_rbo_rgba4_stencil_index8 = FAIL
-4944 VULKAN ANDROID : dEQP-GLES2.functional.fbo.render.recreate_stencilbuffer.no_rebind_rbo_rgba4_stencil_index8 = FAIL
 
 // Pixel 4 test expectations.
 5990 PIXEL4ORXL VULKAN : dEQP-GLES2.functional.attribute_location.bind.float = SKIP
