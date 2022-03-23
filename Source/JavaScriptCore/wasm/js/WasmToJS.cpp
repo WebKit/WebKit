@@ -328,9 +328,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             done.append(jit.jump());
 
             isDouble.link(&jit);
-            jit.move(JIT::TrustedImm64(JSValue::NumberTag), GPRInfo::returnValueGPR2);
-            jit.add64(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
-            jit.move64ToDouble(GPRInfo::returnValueGPR, dest);
+            jit.unboxDouble(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2, dest, DoNotHaveTagRegisters);
             jit.convertDoubleToFloat(dest, dest);
             done.append(jit.jump());
 
@@ -359,9 +357,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
             done.append(jit.jump());
 
             isDouble.link(&jit);
-            jit.move(JIT::TrustedImm64(JSValue::NumberTag), GPRInfo::returnValueGPR2);
-            jit.add64(GPRInfo::returnValueGPR2, GPRInfo::returnValueGPR);
-            jit.move64ToDouble(GPRInfo::returnValueGPR, dest);
+            jit.unboxDouble(GPRInfo::returnValueGPR, GPRInfo::returnValueGPR2, dest, DoNotHaveTagRegisters);
             done.append(jit.jump());
 
             notANumber.link(&jit);

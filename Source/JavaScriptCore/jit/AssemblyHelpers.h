@@ -1378,16 +1378,19 @@ public:
         }
         return gpr;
     }
-    FPRReg unboxDoubleWithoutAssertions(GPRReg gpr, GPRReg resultGPR, FPRReg fpr)
+    FPRReg unboxDoubleWithoutAssertions(GPRReg gpr, GPRReg resultGPR, FPRReg fpr, TagRegistersMode mode = HaveTagRegisters)
     {
-        add64(GPRInfo::numberTagRegister, gpr, resultGPR);
+        if (mode == DoNotHaveTagRegisters)
+            add64(TrustedImm64(JSValue::NumberTag), gpr, resultGPR);
+        else
+            add64(GPRInfo::numberTagRegister, gpr, resultGPR);
         move64ToDouble(resultGPR, fpr);
         return fpr;
     }
-    FPRReg unboxDouble(GPRReg gpr, GPRReg resultGPR, FPRReg fpr)
+    FPRReg unboxDouble(GPRReg gpr, GPRReg resultGPR, FPRReg fpr, TagRegistersMode mode = HaveTagRegisters)
     {
         jitAssertIsJSDouble(gpr);
-        return unboxDoubleWithoutAssertions(gpr, resultGPR, fpr);
+        return unboxDoubleWithoutAssertions(gpr, resultGPR, fpr, mode);
     }
     
     void boxDouble(FPRReg fpr, JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
