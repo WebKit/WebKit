@@ -646,7 +646,7 @@ void NetworkStorageManager::suspend(CompletionHandler<void()>&& completionHandle
     ASSERT(RunLoop::isMain());
 
     if (m_sessionID.isEphemeral())
-        return;
+        return completionHandler();
 
     m_queue->suspend([this, protectedThis = Ref { *this }] {
         for (auto& manager : m_localOriginStorageManagers.values()) {

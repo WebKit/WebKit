@@ -1,3 +1,16 @@
+2022-03-22  Sihui Liu  <sihui_liu@apple.com>
+
+        REGRESSION (248499@main): [iOS] ASSERTION FAILED: Completion handler should always be called under WebKit::NetworkProcess::prepareToSuspend()
+        https://bugs.webkit.org/show_bug.cgi?id=238234
+        <rdar://problem/90665237>
+
+        Reviewed by Chris Dumez.
+
+        Invoke completion handler on early return.
+
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::suspend):
+
 2022-03-22  Megan Gardner  <megan_gardner@apple.com>
 
         Expand autocorrect context for more accurate results. 
