@@ -1,3 +1,18 @@
+2022-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Add URL::stringWithoutFragmentIdentifier() overload which returns a String instead of a StringView
+        https://bugs.webkit.org/show_bug.cgi?id=238221
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/URL.cpp:
+        (WTF::URL::viewWithoutQueryOrFragmentIdentifier const):
+        (WTF::URL::viewWithoutFragmentIdentifier const):
+        (WTF::URL::stringWithoutFragmentIdentifier const):
+        (WTF::equalIgnoringFragmentIdentifier):
+        (WTF::URL::stringWithoutQueryOrFragmentIdentifier const): Deleted.
+        * wtf/URL.h:
+
 2022-03-22  Per Arne Vollan  <pvollan@apple.com>
 
         Enable content filtering in the Network process

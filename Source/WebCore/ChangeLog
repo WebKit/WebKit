@@ -1,3 +1,18 @@
+2022-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Add URL::stringWithoutFragmentIdentifier() overload which returns a String instead of a StringView
+        https://bugs.webkit.org/show_bug.cgi?id=238221
+
+        Reviewed by Geoffrey Garen.
+
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::getBlobDataFromURL const):
+        (WebCore::BlobRegistryImpl::registerBlobURLHandle):
+        (WebCore::BlobRegistryImpl::unregisterBlobURLHandle):
+        (WebCore::blobURLWithoutFragment): Deleted.
+
 2022-03-22  Sihui Liu  <sihui_liu@apple.com>
 
         Check if origin can access storage in Storage API

@@ -708,7 +708,7 @@ void URL::setPath(StringView path)
     ));
 }
 
-StringView URL::stringWithoutQueryOrFragmentIdentifier() const
+StringView URL::viewWithoutQueryOrFragmentIdentifier() const
 {
     if (!m_isValid)
         return m_string;
@@ -716,7 +716,7 @@ StringView URL::stringWithoutQueryOrFragmentIdentifier() const
     return StringView(m_string).left(pathEnd());
 }
 
-StringView URL::stringWithoutFragmentIdentifier() const
+StringView URL::viewWithoutFragmentIdentifier() const
 {
     if (!m_isValid)
         return m_string;
@@ -724,9 +724,17 @@ StringView URL::stringWithoutFragmentIdentifier() const
     return StringView(m_string).left(m_queryEnd);
 }
 
+String URL::stringWithoutFragmentIdentifier() const
+{
+    if (!m_isValid)
+        return m_string;
+
+    return m_string.left(m_queryEnd);
+}
+
 bool equalIgnoringFragmentIdentifier(const URL& a, const URL& b)
 {
-    return a.stringWithoutFragmentIdentifier() == b.stringWithoutFragmentIdentifier();
+    return a.viewWithoutFragmentIdentifier() == b.viewWithoutFragmentIdentifier();
 }
 
 bool protocolHostAndPortAreEqual(const URL& a, const URL& b)

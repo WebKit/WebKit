@@ -50,11 +50,6 @@
 
 namespace WebCore {
 
-static String blobURLWithoutFragment(const URL& url)
-{
-    return url.hasFragmentIdentifier() ? url.stringWithoutFragmentIdentifier().toString() : url.string();
-}
-
 BlobRegistryImpl::~BlobRegistryImpl() = default;
 
 static Ref<ResourceHandle> createBlobResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
@@ -235,7 +230,7 @@ BlobData* BlobRegistryImpl::getBlobDataFromURL(const URL& url) const
 {
     ASSERT(isMainThread());
     if (url.hasFragmentIdentifier())
-        return m_blobs.get(url.stringWithoutFragmentIdentifier().toStringWithoutCopying());
+        return m_blobs.get(url.viewWithoutFragmentIdentifier().toStringWithoutCopying());
     return m_blobs.get(url.string());
 }
 
@@ -380,14 +375,14 @@ void BlobRegistryImpl::addBlobData(const String& url, RefPtr<BlobData>&& blobDat
 
 void BlobRegistryImpl::registerBlobURLHandle(const URL& url)
 {
-    auto urlKey = blobURLWithoutFragment(url);
+    auto urlKey = url.stringWithoutFragmentIdentifier();
     if (m_blobs.contains(urlKey))
         m_blobReferences.add(urlKey);
 }
 
 void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url)
 {
-    auto urlKey = blobURLWithoutFragment(url);
+    auto urlKey = url.stringWithoutFragmentIdentifier();
     if (m_blobReferences.remove(urlKey))
         m_blobs.remove(urlKey);
 }
