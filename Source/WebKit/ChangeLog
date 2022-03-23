@@ -1,3 +1,9 @@
+2022-03-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed build fix after r291733
+
+        * WebProcess/GPU/graphics/PrepareBackingStoreBuffersData.h:
+
 2022-03-22  Alex Christensen  <achristensen@webkit.org>
 
         Implement PCM to SKAdNetwork bridge

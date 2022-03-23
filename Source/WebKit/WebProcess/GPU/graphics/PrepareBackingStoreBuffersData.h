@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "BufferIdentifierSet.h"
+#include "ImageBufferBackendHandle.h"
 #include "SwapBuffersDisplayRequirement.h"
 #include <WebCore/RenderingResourceIdentifier.h>
 
