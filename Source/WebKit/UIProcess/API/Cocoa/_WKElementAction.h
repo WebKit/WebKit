@@ -27,14 +27,13 @@
 
 #if TARGET_OS_IPHONE
 
-#import <WebKit/WKBase.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 
 @class UIAction;
 @class UIImage;
 
 typedef NSString *UIActionIdentifier;
-WK_EXPORT extern UIActionIdentifier const WKElementActionTypeToggleShowLinkPreviewsIdentifier;
+WK_EXTERN UIActionIdentifier const WKElementActionTypeToggleShowLinkPreviewsIdentifier;
 
 typedef void (^WKElementActionHandler)(_WKActivatedElementInfo *);
 typedef BOOL (^WKElementActionDismissalHandler)(void);

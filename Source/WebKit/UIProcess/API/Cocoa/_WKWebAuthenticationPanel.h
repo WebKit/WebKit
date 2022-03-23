@@ -24,7 +24,6 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WebKit/WKDeclarationSpecifiers.h>
 #import <WebKit/WKFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -86,15 +85,15 @@ typedef NS_ENUM(NSInteger, _WKWebAuthenticationUserVerificationAvailability) {
     _WKWebAuthenticationUserVerificationAvailabilityNotSupported,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialNameKey;
-WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialDisplayNameKey;
-WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialIDKey;
-WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey;
-WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialLastModificationDateKey;
-WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialCreationDateKey;
-WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialGroupKey;
-WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialSynchronizableKey;
-WK_EXPORT extern NSString * const _WKLocalAuthenticatorCredentialUserHandleKey;
+WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialNameKey;
+WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialDisplayNameKey;
+WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialIDKey;
+WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialRelyingPartyIDKey;
+WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialLastModificationDateKey;
+WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialCreationDateKey;
+WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialGroupKey;
+WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialSynchronizableKey;
+WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialUserHandleKey;
 
 @protocol _WKWebAuthenticationPanelDelegate <NSObject>
 
