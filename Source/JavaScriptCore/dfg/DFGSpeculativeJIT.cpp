@@ -1365,7 +1365,8 @@ void SpeculativeJIT::compileInById(Node* node)
     gen.generateFastPath(m_jit, scratchGPR);
 
     JITCompiler::JumpList slowCases;
-    slowCases.append(gen.slowPathJump());
+    if (!JITCode::useDataIC(JITType::DFGJIT))
+        slowCases.append(gen.slowPathJump());
 
     std::unique_ptr<SlowPathGenerator> slowPath;
     if (JITCode::useDataIC(JITType::DFGJIT)) {
@@ -15847,7 +15848,8 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
     JITCompiler::JumpList slowCases;
     if (slowPathTarget.isSet())
         slowCases.append(slowPathTarget);
-    slowCases.append(gen.slowPathJump());
+    if (!JITCode::useDataIC(JITType::DFGJIT))
+        slowCases.append(gen.slowPathJump());
 
     std::unique_ptr<SlowPathGenerator> slowPath;
     if (JITCode::useDataIC(JITType::DFGJIT)) {
