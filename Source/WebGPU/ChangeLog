@@ -1,3 +1,19 @@
+2022-03-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Clean up implementation of Device::createSampler()
+        https://bugs.webkit.org/show_bug.cgi?id=238250
+
+        Reviewed by Darin Adler.
+
+        Refactor repeated code into reusable functions.
+
+        * WebGPU/Sampler.mm:
+        (WebGPU::addressMode):
+        (WebGPU::minMagFilter):
+        (WebGPU::mipFilter):
+        (WebGPU::compareFunction):
+        (WebGPU::Device::createSampler):
+
 2022-03-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Allocating a buffer of size 0 crashes
