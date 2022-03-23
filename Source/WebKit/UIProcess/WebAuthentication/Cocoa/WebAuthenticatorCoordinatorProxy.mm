@@ -255,10 +255,10 @@ static inline RetainPtr<ASCPublicKeyCredentialAssertionOptions> configureAsserti
     auto assertionOptions = adoptNS(allocASCPublicKeyCredentialAssertionOptionsInstance());
     if ([assertionOptions respondsToSelector:@selector(initWithKind:relyingPartyIdentifier:clientDataHash:userVerificationPreference:allowedCredentials:)]) {
         auto nsHash = toNSData(hash);
-        [assertionOptions initWithKind:ASCPublicKeyCredentialKindPlatform relyingPartyIdentifier:options.rpId clientDataHash:nsHash.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()];
+        [assertionOptions initWithKind:kind relyingPartyIdentifier:options.rpId clientDataHash:nsHash.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()];
     } else {
         auto challenge = WebCore::toNSData(options.challenge);
-        [assertionOptions initWithKind:ASCPublicKeyCredentialKindPlatform relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()];
+        [assertionOptions initWithKind:kind relyingPartyIdentifier:options.rpId challenge:challenge.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()];
     }
     if (options.extensions)
         [assertionOptions setExtensions:toASCExtensions(*options.extensions).get()];

@@ -1,3 +1,17 @@
+2022-03-23  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Specify correct ASCPublicKeyCredentialKind in configureAssertionOptions
+        https://bugs.webkit.org/show_bug.cgi?id=238272
+        rdar://problem/90710080
+
+        Reviewed by Brent Fulgham.
+
+        There was a typo when refactoring code into this method. The kind passed to the function
+        should be used, instead of always ASCPublicKeyCredentialKindPlatform.
+
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::configureAssertionOptions):
+
 2022-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         After losing context due to too many contexts, getError() does not return CONTEXT_LOST_WEBGL
