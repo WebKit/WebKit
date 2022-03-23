@@ -1165,6 +1165,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         _interactionViewsContainerView = nil;
     }
 
+    _waitingForKeyboardToStartAnimatingInAfterElementFocus = NO;
     _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
 
     [_touchEventGestureRecognizer setDelegate:nil];
@@ -2372,6 +2373,11 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     return boundingRect;
 }
 
+- (void)_keyboardWillShow
+{
+    _waitingForKeyboardToStartAnimatingInAfterElementFocus = NO;
+}
+
 - (void)_keyboardDidShow
 {
     if (!_shouldZoomToFocusRectAfterShowingKeyboard)
@@ -2396,7 +2402,8 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     if (_suppressSelectionAssistantReasons || _activeTextInteractionCount)
         return;
 
-    if (!self._scroller.firstResponderKeyboardAvoidanceEnabled && _page->isKeyboardAnimatingIn()) {
+    if (!self._scroller.firstResponderKeyboardAvoidanceEnabled
+        && (_page->isKeyboardAnimatingIn() || _waitingForKeyboardToStartAnimatingInAfterElementFocus)) {
         _shouldZoomToFocusRectAfterShowingKeyboard = YES;
         return;
     }
@@ -6773,15 +6780,15 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (delegateImplementsWillStartInputSession)
         [inputDelegate _webView:self.webView willStartInputSession:_formInputSession.get()];
 
-    BOOL isSelectable = mayContainSelectableText(information.elementType);
-    BOOL editableChanged = [self setIsEditable:isSelectable];
+    BOOL requiresKeyboard = mayContainSelectableText(information.elementType);
+    BOOL editableChanged = [self setIsEditable:requiresKeyboard];
     _focusedElementInformation = information;
     _traits = nil;
 
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
-    if (!_suppressSelectionAssistantReasons && isSelectable && activityStateChanges.contains(WebCore::ActivityState::IsFocused)) {
+    if (!_suppressSelectionAssistantReasons && requiresKeyboard && activityStateChanges.contains(WebCore::ActivityState::IsFocused)) {
         _treatAsContentEditableUntilNextEditorStateUpdate = YES;
         [_textInteractionAssistant activateSelection];
         _page->restoreSelectionInFocusedEditableElement();
@@ -6789,6 +6796,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     }
 
     _inputPeripheral = createInputPeripheralWithView(_focusedElementInformation.elementType, self);
+    _waitingForKeyboardToStartAnimatingInAfterElementFocus = requiresKeyboard;
 
 #if HAVE(PEPPER_UI_CORE)
     [self addFocusedFormControlOverlay];
@@ -6798,7 +6806,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     [self reloadInputViews];
 #endif
 
-    if (isSelectable) {
+    if (requiresKeyboard) {
         [self _showKeyboard];
         if (!self.window.keyWindow)
             [self.window makeKeyWindow];
@@ -6811,8 +6819,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     // For elements that have selectable content (e.g. text field) we need to wait for the web process to send an up-to-date
     // selection rect before we can zoom and reveal the selection. Non-selectable elements (e.g. <select>) can be zoomed
     // immediately because they have no selection to reveal.
-    BOOL needsEditorStateUpdate = mayContainSelectableText(_focusedElementInformation.elementType);
-    if (needsEditorStateUpdate)
+    if (requiresKeyboard)
         _page->setWaitingForPostLayoutEditorStateUpdateAfterFocusingElement(true);
     else
         [self _zoomToRevealFocusedElement];
@@ -6860,6 +6867,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     _focusRequiresStrongPasswordAssistance = NO;
     _autocorrectionContextNeedsUpdate = YES;
     _additionalContextForStrongPasswordAssistance = nil;
+    _waitingForKeyboardToStartAnimatingInAfterElementFocus = NO;
 
     [self resetShouldZoomToFocusRectAfterShowingKeyboard];
 

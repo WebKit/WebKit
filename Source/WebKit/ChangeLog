@@ -1,3 +1,36 @@
+2022-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Mail compose web view no longer scrolls to reveal selection upon showing the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=238271
+        rdar://89821087
+
+        Reviewed by Tim Horton.
+
+        When a certain UIKit feature is enabled on certain builds of iOS, Mail compose no longer scrolls to reveal the
+        selection range or caret. This is because we have logic to defer scrolling/zooming to reveal the selection after
+        focusing the body element, for reasons outlined in trac.webkit.org/r288178. However, when the feature flag is
+        enabled, UIKeyboardWillShowNotification is no longer fired synchronously underneath the call to
+        `-reloadInputViews`, which means that `isKeyboardAnimatingIn()` will (most of the time) return false upon
+        calling `-_zoomToRevealFocusedElement` when receiving the next post-layout editor state update.
+
+        To mitigate this, add a new boolean flag, `_waitingForKeyboardToStartAnimatingInAfterElementFocus`, that's set
+        right before we reload input views when focusing an element that requires the keyboard (either software or
+        hardware), and unset when we observe the "WillShow" notification. In addition to checking
+        `_page->isKeyboardAnimatingIn()` when determining whether to defer zooming, we check this new flag as well.
+
+        Covered by an existing layout test (which currently fails when the aforementioned UIKit feature is enabled):
+        editing/selection/ios/scroll-to-reveal-selection-with-keyboard-avoidance-disabled.html
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _keyboardWillShow:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView _keyboardWillShow]):
+        (-[WKContentView _zoomToRevealFocusedElement]):
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        (-[WKContentView _elementDidBlur]):
+
 2022-03-23  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Specify correct ASCPublicKeyCredentialKind in configureAssertionOptions

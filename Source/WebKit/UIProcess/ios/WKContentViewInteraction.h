@@ -465,6 +465,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
     BOOL _isRelinquishingFirstResponderToFocusedElement;
     BOOL _unsuppressSoftwareKeyboardAfterNextAutocorrectionContextUpdate;
     BOOL _isUnsuppressingSoftwareKeyboardUsingLastAutocorrectionContext;
+    BOOL _waitingForKeyboardToStartAnimatingInAfterElementFocus;
     BOOL _shouldZoomToFocusRectAfterShowingKeyboard;
 
     BOOL _focusRequiresStrongPasswordAssistance;
@@ -610,6 +611,7 @@ using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIden
 - (BOOL)_hasFocusedElement;
 - (void)_zoomToRevealFocusedElement;
 
+- (void)_keyboardWillShow;
 - (void)_keyboardDidShow;
 
 - (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer;

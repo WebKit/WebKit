@@ -1,3 +1,17 @@
+2022-03-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Mail compose web view no longer scrolls to reveal selection upon showing the keyboard
+        https://bugs.webkit.org/show_bug.cgi?id=238271
+        rdar://89821087
+
+        Reviewed by Tim Horton.
+
+        While I'm here, adjust the test to ensure that the keyboard is hidden afterwards. When running this test back to
+        back with the relevant UIKit feature flag enabled, it sometimes fails without this adjustment, due to keyboard
+        disappearance notifications triggered from prior test invocations being fired in subsequent test invocations.
+
+        * editing/selection/ios/scroll-to-reveal-selection-with-keyboard-avoidance-disabled.html:
+
 2022-03-23  Andres Gonzalez  <andresg_22@apple.com>
 
         ITM: Fix for accessibility/table-attributes.html in isolated tree mode.
