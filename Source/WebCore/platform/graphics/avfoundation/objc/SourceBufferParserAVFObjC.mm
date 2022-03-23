@@ -177,7 +177,7 @@ public:
         // which is presumably on the main thread.
         ASSERT(isMainThread());
         if (!m_codec)
-            m_codec = AtomString(reinterpret_cast<const LChar*>(&m_originalCodec), 4);
+            m_codec = AtomString(m_originalCodec.string().data());
         return *m_codec;
     }
 
@@ -193,11 +193,11 @@ private:
             m_originalCodec = PAL::softLink_CoreMedia_CMFormatDescriptionGetMediaSubType(description);
             CFStringRef originalFormatKey = PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() ? PAL::get_CoreMedia_kCMFormatDescriptionExtension_ProtectedContentOriginalFormat() : CFSTR("CommonEncryptionOriginalFormat");
             if (auto originalFormat = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(description, originalFormatKey)))
-                CFNumberGetValue(originalFormat, kCFNumberSInt32Type, &m_originalCodec);
+                CFNumberGetValue(originalFormat, kCFNumberSInt32Type, &m_originalCodec.value);
         }
     }
 
-    FourCharCode m_originalCodec;
+    FourCC m_originalCodec;
     mutable std::optional<AtomString> m_codec;
     bool m_isVideo;
     bool m_isAudio;

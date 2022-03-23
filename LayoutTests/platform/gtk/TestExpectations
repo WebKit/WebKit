@@ -1860,6 +1860,7 @@ accessibility/native-text-control-attributed-string.html [ Skip ]
 # These tests require platform support.
 media/media-allowed-codecs.html
 media/media-allowed-containers.html
+media/media-source/media-source-allowed-codecs.html
 
 # These failures occur on GTK only (moved from LayoutTests/TestExpectations)
 webkit.org/b/200208 imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ ImageOnlyFailure ]

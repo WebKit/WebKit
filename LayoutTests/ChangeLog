@@ -1,5 +1,16 @@
 2022-03-23  Jer Noble  <jer.noble@apple.com>
 
+        [Cocoa] MSE-backed videos fail to play in Captive Portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=237787
+        <rdar://89318047>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-allowed-codecs-expected.txt:
+        * media/media-source/media-source-allowed-codecs.html:
+
+2022-03-23  Jer Noble  <jer.noble@apple.com>
+
         [iOS] WebKit app is sometimes not "Now Playing" during initial playback
         https://bugs.webkit.org/show_bug.cgi?id=236993
         <rdar://88827167>

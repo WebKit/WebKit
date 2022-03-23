@@ -1,5 +1,24 @@
 2022-03-23  Jer Noble  <jer.noble@apple.com>
 
+        [Cocoa] MSE-backed videos fail to play in Captive Portal mode
+        https://bugs.webkit.org/show_bug.cgi?id=237787
+        <rdar://89318047>
+
+        Reviewed by Eric Carlson.
+
+        Updated test: media/media-source/media-source-allowed-codecs.html
+
+        When generating the "codecs" string for a given MSE track, we were previously casting
+        the FourCC code (a uint32) to a string, and passing that across the GPU process boundary,
+        and reconstituting the string on the WebContent process side. This caused the codec entry
+        to be "reversed", (e.g., 'aac ' turned into ' caa'), and fail codec validation.
+
+        Instead, use the FourCharCode class to properly create a string from the codec ID.
+
+        * platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm:
+
+2022-03-23  Jer Noble  <jer.noble@apple.com>
+
         [iOS] WebKit app is sometimes not "Now Playing" during initial playback
         https://bugs.webkit.org/show_bug.cgi?id=236993
         <rdar://88827167>
