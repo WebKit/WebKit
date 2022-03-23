@@ -187,6 +187,12 @@
 
         * platform/ios/TestExpectations:
 
+2022-03-22  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed gardening.
+
+        * gpu-process/TestExpectations:
+
 2022-03-22  Jer Noble  <jer.noble@apple.com>
 
         YouTube.com - Clicking anywhere on the progress bar pauses the video
