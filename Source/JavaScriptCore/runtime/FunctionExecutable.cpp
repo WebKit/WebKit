@@ -141,7 +141,7 @@ JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
     if (isClass())
         return cache(jsString(vm, classSource().view().toString()));
 
-    String functionHeader;
+    ASCIILiteral functionHeader = ""_s;
     switch (parseMode()) {
     case SourceParseMode::GeneratorWrapperFunctionMode:
     case SourceParseMode::GeneratorWrapperMethodMode:
@@ -164,7 +164,6 @@ JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
 
     case SourceParseMode::ArrowFunctionMode:
     case SourceParseMode::ClassFieldInitializerMode:
-        functionHeader = "";
         break;
 
     case SourceParseMode::AsyncFunctionMode:

@@ -1,3 +1,13 @@
+2022-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Avoid unnecessary String constructor under FunctionExecutable::toStringSlow()
+        https://bugs.webkit.org/show_bug.cgi?id=238263
+
+        Reviewed by Darin Adler.
+
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::toStringSlow):
+
 2022-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, fix DataIC's slowPathJump handling
