@@ -1,3 +1,13 @@
+2022-03-22  Chris Dumez  <cdumez@apple.com>
+
+        Use ASCIILiteral in a few more places where it is useful
+        https://bugs.webkit.org/show_bug.cgi?id=238235
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::toStringSlow):
+
 2022-03-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Change Date.parse to stop returning numbers with fractional part

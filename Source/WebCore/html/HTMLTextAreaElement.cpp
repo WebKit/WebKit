@@ -395,7 +395,7 @@ void HTMLTextAreaElement::setValueCommon(const String& newValue, TextFieldEventB
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
     // We normalize line endings coming from JavaScript here.
     String normalizedValue = newValue.isNull() ? emptyString() : newValue;
-    normalizedValue.replace("\r\n", "\n");
+    normalizedValue.replace("\r\n"_s, "\n"_s);
     normalizedValue.replace('\r', '\n');
 
     // Return early because we don't want to move the caret or trigger other side effects

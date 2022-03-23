@@ -145,7 +145,7 @@ JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
     switch (parseMode()) {
     case SourceParseMode::GeneratorWrapperFunctionMode:
     case SourceParseMode::GeneratorWrapperMethodMode:
-        functionHeader = "function* ";
+        functionHeader = "function* "_s;
         break;
 
     case SourceParseMode::NormalFunctionMode:
@@ -159,7 +159,7 @@ JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
     case SourceParseMode::AsyncGeneratorBodyMode:
     case SourceParseMode::AsyncFunctionBodyMode:
     case SourceParseMode::AsyncArrowFunctionBodyMode:
-        functionHeader = "function ";
+        functionHeader = "function "_s;
         break;
 
     case SourceParseMode::ArrowFunctionMode:
@@ -169,16 +169,16 @@ JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
 
     case SourceParseMode::AsyncFunctionMode:
     case SourceParseMode::AsyncMethodMode:
-        functionHeader = "async function ";
+        functionHeader = "async function "_s;
         break;
 
     case SourceParseMode::AsyncArrowFunctionMode:
-        functionHeader = "async ";
+        functionHeader = "async "_s;
         break;
 
     case SourceParseMode::AsyncGeneratorWrapperFunctionMode:
     case SourceParseMode::AsyncGeneratorWrapperMethodMode:
-        functionHeader = "async function* ";
+        functionHeader = "async function* "_s;
         break;
     }
 
