@@ -1788,6 +1788,7 @@ webkit.org/b/236530 fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
 http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html [ Skip ]
 http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Skip ]
 http/tests/push-api/subscribe-default-permissions.html [ Skip ]
+http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Failure ]
 http/tests/push-api/subscribe-deny-permissions.html [ Skip ]
 http/tests/push-api/subscribe-grant-permissions.html [ Skip ]
 

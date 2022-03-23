@@ -376,6 +376,7 @@ public:
 
     bool grantNotificationPermission(WKStringRef origin);
     bool denyNotificationPermission(WKStringRef origin);
+    bool denyNotificationPermissionOnPrompt(WKStringRef origin);
 
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
@@ -575,6 +576,7 @@ private:
     WKRetainPtr<WKStringRef> m_testPluginDirectory;
 
     WebNotificationProvider m_webNotificationProvider;
+    HashSet<String> m_notificationOriginsToDenyOnPrompt;
 
     std::unique_ptr<PlatformWebView> m_mainWebView;
     Vector<UniqueRef<PlatformWebView>> m_auxiliaryWebViews;

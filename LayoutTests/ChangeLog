@@ -1,3 +1,28 @@
+2022-03-22  Ben Nham  <nham@apple.com>
+
+        Only show notification permission prompt on transient activation
+        https://bugs.webkit.org/show_bug.cgi?id=238188
+
+        Reviewed by Youenn Fablet.
+
+        Add test cases to make sure that showing a permission prompt consumes a user gesture.
+
+        * http/tests/notifications/notification-request-permission-no-callback.html:
+        * http/tests/notifications/notification-request-permission.html:
+        * http/tests/notifications/request-consumes-activation-expected.txt: Added.
+        * http/tests/notifications/request-consumes-activation.html: Added.
+        * http/tests/push-api/resources/subscribe-tests.js:
+        (async testDocumentSubscribeWithUserGesture):
+        (async testDocumentSubscribeWithoutUserGesture):
+        (async testDocumentSubscribeImpl):
+        * http/tests/push-api/subscribe-deny-permissions-expected.txt:
+        * http/tests/push-api/subscribe-deny-permissions-on-prompt-expected.txt:
+        * http/tests/push-api/subscribe-deny-permissions-on-prompt.html: Added.
+        * http/tests/push-api/subscribe-deny-permissions.html:
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
 2022-03-22  Tyler Wilcock  <tyler_w@apple.com>
 
         Expose the AX tree of PDFs loaded via iframes on the Mac

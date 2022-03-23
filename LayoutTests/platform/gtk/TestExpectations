@@ -1873,6 +1873,7 @@ imported/w3c/web-platform-tests/xhr/preserve-ua-header-on-redirect.htm [ Failure
 http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html [ Failure ]
 http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Failure ]
 http/tests/push-api/subscribe-default-permissions.html [ Failure ]
+http/tests/push-api/subscribe-deny-permissions-on-prompt.html [ Failure ]
 http/tests/push-api/subscribe-deny-permissions.html [ Failure ]
 http/tests/push-api/subscribe-grant-permissions.html [ Failure ]
 

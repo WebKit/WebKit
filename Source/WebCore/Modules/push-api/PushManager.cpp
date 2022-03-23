@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "DOMWindow.h"
 #include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "Exception.h"
@@ -37,7 +38,6 @@
 #include "PushCrypto.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorkerRegistration.h"
-#include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/Base64.h>
@@ -72,7 +72,7 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
 {
     RELEASE_ASSERT(context.isSecureContext());
 
-    context.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, context = Ref { context }, options = WTFMove(options), promise = WTFMove(promise), processingUserGesture = UserGestureIndicator::processingUserGesture()]() mutable {
+    context.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, context = Ref { context }, options = WTFMove(options), promise = WTFMove(promise)]() mutable {
         if (!options || !options->userVisibleOnly) {
             promise.reject(Exception { NotAllowedError, "Subscribing for push requires userVisibleOnly to be true"_s });
             return;
@@ -131,12 +131,14 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
             RELEASE_ASSERT(client);
             RELEASE_ASSERT(context->isDocument());
 
-            if (!downcast<Document>(context.get()).isSameOriginAsTopDocument()) {
+            auto& document = downcast<Document>(context.get());
+            if (!document.isSameOriginAsTopDocument()) {
                 promise.reject(Exception { NotAllowedError, "Cannot request permission from cross-origin iframe"_s });
                 return;
             }
 
-            if (!processingUserGesture) {
+            auto* window = document.frame() ? document.frame()->window() : nullptr;
+            if (!window || !window->consumeTransientActivation()) {
                 promise.reject(Exception { NotAllowedError, "Push notification prompting can only be done from a user gesture"_s });
                 return;
             }

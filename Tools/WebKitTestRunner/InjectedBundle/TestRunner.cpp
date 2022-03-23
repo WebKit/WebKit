@@ -876,6 +876,11 @@ void TestRunner::denyWebNotificationPermission(JSStringRef origin)
     postSynchronousPageMessageWithReturnValue("DenyNotificationPermission", toWK(origin));
 }
 
+void TestRunner::denyWebNotificationPermissionOnPrompt(JSStringRef origin)
+{
+    postSynchronousPageMessageWithReturnValue("DenyNotificationPermissionOnPrompt", toWK(origin));
+}
+
 void TestRunner::removeAllWebNotificationPermissions()
 {
     WKBundleRemoveAllWebNotificationPermissions(InjectedBundle::singleton().bundle(), page());

@@ -14,7 +14,7 @@ navigator.serviceWorker.register("resources/subscribe-worker.js", { }).then(asyn
         await testServiceWorkerPermissionState(registration, 'denied');
         await testDocumentPermissionState(registration, 'denied');
         await testServiceWorkerSubscribe(registration, 'NotAllowedError');
-        await testDocumentSubscribeWithoutUserGesture(registration, 'NotAllowedError');
+        await testDocumentSubscribeWithoutUserGesture(registration, 'NotAllowedError', 'User denied push permission');
         await testDocumentSubscribeWithUserGesture(registration, 'NotAllowedError');
     } catch (e) {
         log(`FAIL: unexpected exception ${e}`);

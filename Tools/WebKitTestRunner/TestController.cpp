@@ -719,6 +719,23 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
     return pageConfiguration;
 }
 
+static String originUserVisibleName(WKSecurityOriginRef origin)
+{
+    if (!origin)
+        return emptyString();
+
+    auto host = toWTFString(adoptWK(WKSecurityOriginCopyHost(origin)));
+    auto protocol = toWTFString(adoptWK(WKSecurityOriginCopyProtocol(origin)));
+
+    if (host.isEmpty() || protocol.isEmpty())
+        return emptyString();
+
+    if (int port = WKSecurityOriginGetPort(origin))
+        return makeString(protocol, "://", host, ':', port);
+
+    return makeString(protocol, "://", host);
+}
+
 bool TestController::grantNotificationPermission(WKStringRef originString)
 {
     m_webNotificationProvider.setPermission(toWTFString(originString), true);
@@ -734,6 +751,14 @@ bool TestController::denyNotificationPermission(WKStringRef originString)
 
     auto origin = adoptWK(WKSecurityOriginCreateFromString(originString));
     WKNotificationManagerProviderDidUpdateNotificationPolicy(WKNotificationManagerGetSharedServiceWorkerNotificationManager(), origin.get(), false);
+    return true;
+}
+
+bool TestController::denyNotificationPermissionOnPrompt(WKStringRef originString)
+{
+    auto origin = adoptWK(WKSecurityOriginCreateFromString(originString));
+    auto originName = originUserVisibleName(origin.get());
+    m_notificationOriginsToDenyOnPrompt.add(originName);
     return true;
 }
 
@@ -1046,6 +1071,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     // Reset notification permissions
     m_webNotificationProvider.reset();
+    m_notificationOriginsToDenyOnPrompt.clear();
 
     // Reset Geolocation permissions.
     m_geolocationPermissionRequests.clear();
@@ -2412,23 +2438,6 @@ bool TestController::isGeolocationProviderActive() const
     return m_geolocationProvider->isActive();
 }
 
-static String originUserVisibleName(WKSecurityOriginRef origin)
-{
-    if (!origin)
-        return emptyString();
-
-    auto host = toWTFString(adoptWK(WKSecurityOriginCopyHost(origin)));
-    auto protocol = toWTFString(adoptWK(WKSecurityOriginCopyProtocol(origin)));
-
-    if (host.isEmpty() || protocol.isEmpty())
-        return emptyString();
-
-    if (int port = WKSecurityOriginGetPort(origin))
-        return makeString(protocol, "://", host, ':', port);
-
-    return makeString(protocol, "://", host);
-}
-
 static String userMediaOriginHash(WKSecurityOriginRef userMediaDocumentOrigin, WKSecurityOriginRef topLevelDocumentOrigin)
 {
     String userMediaDocumentOriginString = originUserVisibleName(userMediaDocumentOrigin);
@@ -2651,8 +2660,14 @@ void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef page
     TestController::singleton().decidePolicyForNotificationPermissionRequest(page, origin, request);
 }
 
-void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef, WKSecurityOriginRef, WKNotificationPermissionRequestRef request)
+void TestController::decidePolicyForNotificationPermissionRequest(WKPageRef, WKSecurityOriginRef origin, WKNotificationPermissionRequestRef request)
 {
+    auto originName = originUserVisibleName(origin);
+    if (m_notificationOriginsToDenyOnPrompt.contains(originName)) {
+        WKNotificationPermissionRequestDeny(request);
+        return;
+    }
+
     WKNotificationPermissionRequestAllow(request);
 }
 

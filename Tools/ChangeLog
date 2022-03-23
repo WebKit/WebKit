@@ -1,3 +1,29 @@
+2022-03-22  Ben Nham  <nham@apple.com>
+
+        Only show notification permission prompt on transient activation
+        https://bugs.webkit.org/show_bug.cgi?id=238188
+
+        Reviewed by Youenn Fablet.
+
+        Add an internal API denyWebNotificationPermissionOnPrompt to WebKitTestRunner that allows a
+        notification permission prompt to first be displayed and then rejected. This differs from
+        the existing denyNotificationPermission call, which denied notification permissions before
+        prompting.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::denyWebNotificationPermission):
+        (WTR::TestRunner::denyWebNotificationPermissionOnPrompt):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::originUserVisibleName):
+        (WTR::TestController::denyNotificationPermissionOnPrompt):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::decidePolicyForNotificationPermissionRequest):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2022-03-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Test DFG / FTL DataIC

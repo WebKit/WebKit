@@ -15,11 +15,15 @@ if (!window.internals)
 internals.withUserGesture(() => {
     window.Notification.requestPermission();
     testPassed("Notification.requestPermission does not crash.");
+});
 
+internals.withUserGesture(() => {
     testRunner.grantWebNotificationPermission(testURL);
     window.Notification.requestPermission();
     testPassed("Notification.requestPermission does not crash.");
+});
 
+internals.withUserGesture(() => {
     testRunner.denyWebNotificationPermission(testURL);
     window.Notification.requestPermission();
     testPassed("Notification.requestPermission does not crash.");
