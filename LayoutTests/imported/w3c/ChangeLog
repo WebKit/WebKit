@@ -1,3 +1,19 @@
+2022-03-23  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Import calc() infinite/nan tests
+        https://bugs.webkit.org/show_bug.cgi?id=238237
+
+        Unreviewed, test import.
+
+        * web-platform-tests/css/css-values/calc-catch-divide-by-0-expected.txt: Added.
+        * web-platform-tests/css/css-values/calc-catch-divide-by-0.html: Added.
+        * web-platform-tests/css/css-values/calc-infinity-nan-serialize-angle-expected.txt: Added.
+        * web-platform-tests/css/css-values/calc-infinity-nan-serialize-angle.html: Added.
+        * web-platform-tests/css/css-values/calc-infinity-nan-serialize-length-expected.txt: Added.
+        * web-platform-tests/css/css-values/calc-infinity-nan-serialize-length.html: Added.
+        * web-platform-tests/css/css-values/calc-infinity-nan-serialize-time-expected.txt: Added.
+        * web-platform-tests/css/css-values/calc-infinity-nan-serialize-time.html: Added.
+
 2022-03-22  Sihui Liu  <sihui_liu@apple.com>
 
         Check if origin can access storage in Storage API
