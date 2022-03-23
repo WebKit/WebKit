@@ -11,6 +11,15 @@
         * fast/text/emoji-num-glyphs-expected.txt:
         * fast/text/emoji-num-glyphs.html:
 
+2022-03-23  Matteo Flores  <matteo_flores@apple.com>
+
+        [ EWS iOS ] editing/spelling/spellcheck-async-remove-frame.html is a crash
+        https://bugs.webkit.org/show_bug.cgi?id=238284
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2022-03-23  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] MSE-backed videos fail to play in Captive Portal mode
