@@ -1,5 +1,18 @@
 2022-03-22  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Elements tab: selection variable not displayed after losing focus
+        https://bugs.webkit.org/show_bug.cgi?id=238226
+
+        Reviewed by Devin Rousso.
+
+        When rebuilding the underlying `DOMTreeElements`, we should make sure the inspected node is marked as such,
+        otherwise we won't update this until a different element becomes the inspected node.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype.update):
+
+2022-03-22  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: `console.log` format strings containing invalid specifiers results in `[Object object]` replacing the specifier instead of ignoring the invalid specifier
         https://bugs.webkit.org/show_bug.cgi?id=235061
 

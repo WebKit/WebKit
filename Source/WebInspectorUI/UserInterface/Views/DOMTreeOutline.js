@@ -189,6 +189,14 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             }
         }
 
+        if (WI.domManager.inspectedNode) {
+            let inspectedNodeTreeElement = this.findTreeElement(WI.domManager.inspectedNode);
+            if (inspectedNodeTreeElement) {
+                inspectedNodeTreeElement.reveal();
+                inspectedNodeTreeElement.listItemElement.classList.add("inspected-node");
+            }
+        }
+
         if (!selectedTreeElements.length)
             return;
 
