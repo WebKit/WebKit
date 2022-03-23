@@ -67,8 +67,7 @@ void RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable(VideoFrame& video
         break;
     }
 
-    auto& videoFrame = static_cast<VideoFrameGStreamer&>(sample);
-    auto frameBuffer = GStreamerVideoFrameLibWebRTC::create(videoFrame.sample());
+    auto frameBuffer = GStreamerVideoFrameLibWebRTC::create(static_cast<VideoFrameGStreamer&>(videoFrame).sample());
 
     sendFrame(WTFMove(frameBuffer));
 }

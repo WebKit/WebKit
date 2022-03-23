@@ -1,3 +1,15 @@
+2022-03-23  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        REGRESSION(r291611): Fix GTK/WPE build
+        https://bugs.webkit.org/show_bug.cgi?id=238248
+
+        Unreviewed build fix.
+
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeIncomingVideoSourceLibWebRTC.cpp:
+        (WebCore::RealtimeIncomingVideoSourceLibWebRTC::OnFrame):
+        * platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingVideoSourceLibWebRTC::videoFrameAvailable):
+
 2022-03-23  Ziran Sun  <zsun@igalia.com>
 
         [InputElement] Add HTMLInputElement::showPicker() method
