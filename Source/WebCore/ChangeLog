@@ -1,3 +1,31 @@
+2022-03-23  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Ensure DisplayList::Recorder and its base class are initialized with the same GraphicsContextState
+        https://bugs.webkit.org/show_bug.cgi?id=238278
+        rdar://84602660
+
+        Reviewed by Simon Fraser.
+
+        DisplayList::RecorderImpl passes the initial GraphicsContextState to its
+        base class DisplayList::Recorder which pushes it on its stack. But 
+        DisplayList::Recorder does not pass this initial GraphicsContextState to
+        its base class which is GraphicsContext. So DisplayList::Recorder ends up
+        having the initial state but the GraphicsContext ends up having the default
+        state.
+
+        DisplayList::Recorder::drawGlyphs() calls DrawGlyphsRecorder::drawGlyphs()
+        which stores the original fillBrush, strokeBrush and dropShadow. It uses
+        these original values to restore the owner GraphicsContext when it finishes.
+        The problem is DrawGlyphsRecorder::drawGlyphs() stores the values in the
+        state of the GraphicsContext which are the default. So in some cases we
+        may restore the default state to the drawing GraphicsContext.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::Recorder):
+
 2022-03-23  Andres Gonzalez  <andresg_22@apple.com>
 
         ITM: Lazy caching of HelpText property that results in a call to textUnderElement().

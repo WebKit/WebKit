@@ -48,6 +48,11 @@ GraphicsContext::GraphicsContext(const GraphicsContextState::ChangeFlags& change
 {
 }
 
+GraphicsContext::GraphicsContext(const GraphicsContextState& state)
+    : m_state(state)
+{
+}
+
 GraphicsContext::~GraphicsContext()
 {
     ASSERT(m_stack.isEmpty());
