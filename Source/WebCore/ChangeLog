@@ -1,3 +1,16 @@
+2022-03-22  Brandon Stewart  <brandonstewart@apple.com>
+
+        WBR element should set Clear property to None
+        https://bugs.webkit.org/show_bug.cgi?id=238275
+
+        Reviewed by Alan Bujtas.
+
+        WBR elements need to have their Clear property automatically set to None.
+        BR elements do not need this change.
+
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::BoxTree::buildTree):
+
 2022-03-23  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         After losing context due to too many contexts, getError() does not return CONTEXT_LOST_WEBGL

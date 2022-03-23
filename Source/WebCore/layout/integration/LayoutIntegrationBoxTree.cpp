@@ -109,6 +109,12 @@ void BoxTree::buildTree()
                 styleToAdjust.setDisplay(DisplayType::Inline);
                 styleToAdjust.setFloating(Float::None);
                 styleToAdjust.setPosition(PositionType::Static);
+
+                // Clear property should only apply on block elements, however,
+                // it appears that browsers seem to ignore it on <br> inline elements.
+                // https://drafts.csswg.org/css2/#propdef-clear
+                if (downcast<RenderLineBreak>(childRenderer).isWBR())
+                    styleToAdjust.setClear(Clear::None);
             };
             adjustStyle(style);
             if (firstLineStyle)
