@@ -66,6 +66,8 @@ private:
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
     void attributeChanged(const QualifiedName&) final;
     void handleDOMActivateEvent(Event&) final;
+    void showPicker() final;
+    bool allowsShowPickerAcrossFrames() final;
     void detach() final;
     void elementDidBlur() final;
     bool shouldRespectListAttribute() final;

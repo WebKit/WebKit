@@ -361,6 +361,8 @@ public:
 
     void updateUserAgentShadowTree() final;
 
+    ExceptionOr<void> showPicker();
+
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
 

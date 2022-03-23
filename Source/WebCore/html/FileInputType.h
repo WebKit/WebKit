@@ -70,6 +70,8 @@ private:
     bool canSetValue(const String&) final;
     bool getTypeSpecificValue(String&) final; // Checked first, before internal storage or the value attribute.
     void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection) final;
+    void showPicker() final;
+    bool allowsShowPickerAcrossFrames() final;
 
 #if ENABLE(DRAG_SUPPORT)
     bool receiveDroppedFilesWithImageTranscoding(const Vector<String>& paths);

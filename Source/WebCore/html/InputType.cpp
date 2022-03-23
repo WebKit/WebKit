@@ -517,6 +517,15 @@ void InputType::handleDOMActivateEvent(Event&)
 {
 }
 
+bool InputType::allowsShowPickerAcrossFrames()
+{
+    return false;
+}
+
+void InputType::showPicker()
+{
+}
+
 auto InputType::handleKeydownEvent(KeyboardEvent&) -> ShouldCallBaseEventHandler
 {
     return ShouldCallBaseEventHandler::Yes;

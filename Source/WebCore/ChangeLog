@@ -1,3 +1,44 @@
+2022-03-23  Ziran Sun  <zsun@igalia.com>
+
+        [InputElement] Add HTMLInputElement::showPicker() method
+        https://bugs.webkit.org/show_bug.cgi?id=237192
+
+        Reviewed by  Darin Adler.
+
+        At https://github.com/whatwg/html/issues/6909, it proposes to add a
+        new HTMLInputElement::showPicker() method to show a brower picker for
+        temporal, color and file input elements.
+
+        Chromium has introduced this feature at
+        https://bugs.chromium.org/p/chromium/issues/detail?id=939561.
+
+        This CL imports the changes from Chromium CLs at
+        https://chromium-review.googlesource.com/c/chromium/src/+/3056920
+        and        
+        https://chromium-review.googlesource.com/c/chromium/src/+/3310677
+
+        The support for temporal input element is not included in this CL. We might
+        need a bit more investigation on it and hopefully will addess at a later stage.
+
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::handleDOMActivateEvent):
+        (WebCore::ColorInputType::showPicker):
+        (WebCore::ColorInputType::allowsShowPickerAcrossFrames):
+        * html/ColorInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        (WebCore::FileInputType::showPicker):
+        (WebCore::FileInputType::allowsShowPickerAcrossFrames):
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::showPicker):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * html/InputType.cpp:
+        (WebCore::InputType::allowsShowPickerAcrossFrames):
+        (WebCore::InputType::showPicker):
+        * html/InputType.h:
+
 2022-03-23  Youenn Fablet  <youenn@apple.com>
 
         Computation of Document siteForCookies is buggy in case document is created by window.open

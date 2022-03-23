@@ -1978,7 +1978,7 @@ PASS HTMLInputElement interface: attribute selectionDirection
 PASS HTMLInputElement interface: operation setRangeText(DOMString)
 PASS HTMLInputElement interface: operation setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode)
 PASS HTMLInputElement interface: operation setSelectionRange(unsigned long, unsigned long, optional DOMString)
-FAIL HTMLInputElement interface: operation showPicker() assert_own_property: interface prototype object missing non-static operation expected property "showPicker" missing
+PASS HTMLInputElement interface: operation showPicker()
 PASS HTMLInputElement interface: attribute align
 PASS HTMLInputElement interface: attribute useMap
 PASS HTMLInputElement must be primary interface of document.createElement("input")
@@ -2041,7 +2041,7 @@ PASS HTMLInputElement interface: document.createElement("input") must inherit pr
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on document.createElement("input") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on document.createElement("input") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: document.createElement("input") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: document.createElement("input") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: document.createElement("input") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("text")
@@ -2104,7 +2104,7 @@ PASS HTMLInputElement interface: createInput("text") must inherit property "setR
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("text") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("text") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("text") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("text") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("text") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("text") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("text") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("hidden")
@@ -2167,7 +2167,7 @@ PASS HTMLInputElement interface: createInput("hidden") must inherit property "se
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("hidden") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("hidden") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("hidden") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("hidden") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("hidden") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("search")
@@ -2230,7 +2230,7 @@ PASS HTMLInputElement interface: createInput("search") must inherit property "se
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("search") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("search") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("search") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("search") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("search") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("search") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("search") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("tel")
@@ -2293,7 +2293,7 @@ PASS HTMLInputElement interface: createInput("tel") must inherit property "setRa
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("tel") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("tel") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("tel") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("tel") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("tel") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("tel") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("tel") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("url")
@@ -2356,7 +2356,7 @@ PASS HTMLInputElement interface: createInput("url") must inherit property "setRa
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("url") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("url") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("url") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("url") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("url") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("url") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("url") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("email")
@@ -2419,7 +2419,7 @@ PASS HTMLInputElement interface: createInput("email") must inherit property "set
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("email") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("email") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("email") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("email") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("email") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("email") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("email") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("password")
@@ -2482,7 +2482,7 @@ PASS HTMLInputElement interface: createInput("password") must inherit property "
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("password") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("password") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("password") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("password") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("password") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("password") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("password") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("date")
@@ -2545,7 +2545,7 @@ PASS HTMLInputElement interface: createInput("date") must inherit property "setR
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("date") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("date") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("date") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("date") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("date") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("date") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("date") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("month")
@@ -2608,7 +2608,7 @@ PASS HTMLInputElement interface: createInput("month") must inherit property "set
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("month") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("month") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("month") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("month") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("month") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("month") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("month") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("week")
@@ -2671,7 +2671,7 @@ PASS HTMLInputElement interface: createInput("week") must inherit property "setR
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("week") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("week") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("week") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("week") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("week") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("week") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("week") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("time")
@@ -2734,7 +2734,7 @@ PASS HTMLInputElement interface: createInput("time") must inherit property "setR
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("time") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("time") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("time") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("time") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("time") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("time") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("time") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("datetime-local")
@@ -2797,7 +2797,7 @@ PASS HTMLInputElement interface: createInput("datetime-local") must inherit prop
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("datetime-local") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("datetime-local") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("datetime-local") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("datetime-local") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("number")
@@ -2860,7 +2860,7 @@ PASS HTMLInputElement interface: createInput("number") must inherit property "se
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("number") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("number") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("number") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("number") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("number") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("number") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("number") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("range")
@@ -2923,7 +2923,7 @@ PASS HTMLInputElement interface: createInput("range") must inherit property "set
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("range") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("range") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("range") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("range") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("range") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("range") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("range") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("color")
@@ -2986,7 +2986,7 @@ PASS HTMLInputElement interface: createInput("color") must inherit property "set
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("color") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("color") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("color") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("color") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("color") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("color") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("color") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("checkbox")
@@ -3049,7 +3049,7 @@ PASS HTMLInputElement interface: createInput("checkbox") must inherit property "
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("checkbox") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("checkbox") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("checkbox") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("checkbox") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("checkbox") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("radio")
@@ -3112,7 +3112,7 @@ PASS HTMLInputElement interface: createInput("radio") must inherit property "set
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("radio") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("radio") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("radio") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("radio") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("radio") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("radio") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("radio") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("file")
@@ -3175,7 +3175,7 @@ PASS HTMLInputElement interface: createInput("file") must inherit property "setR
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("file") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("file") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("file") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("file") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("file") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("file") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("file") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("submit")
@@ -3238,7 +3238,7 @@ PASS HTMLInputElement interface: createInput("submit") must inherit property "se
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("submit") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("submit") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("submit") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("submit") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("submit") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("submit") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("submit") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("image")
@@ -3301,7 +3301,7 @@ PASS HTMLInputElement interface: createInput("image") must inherit property "set
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("image") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("image") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("image") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("image") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("image") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("image") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("image") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("reset")
@@ -3364,7 +3364,7 @@ PASS HTMLInputElement interface: createInput("reset") must inherit property "set
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("reset") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("reset") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("reset") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("reset") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("reset") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("reset") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("reset") must inherit property "useMap" with the proper type
 PASS HTMLInputElement must be primary interface of createInput("button")
@@ -3427,7 +3427,7 @@ PASS HTMLInputElement interface: createInput("button") must inherit property "se
 PASS HTMLInputElement interface: calling setRangeText(DOMString, unsigned long, unsigned long, optional SelectionMode) on createInput("button") with too few arguments must throw TypeError
 PASS HTMLInputElement interface: createInput("button") must inherit property "setSelectionRange(unsigned long, unsigned long, optional DOMString)" with the proper type
 PASS HTMLInputElement interface: calling setSelectionRange(unsigned long, unsigned long, optional DOMString) on createInput("button") with too few arguments must throw TypeError
-FAIL HTMLInputElement interface: createInput("button") must inherit property "showPicker()" with the proper type assert_inherits: property "showPicker" not found in prototype chain
+PASS HTMLInputElement interface: createInput("button") must inherit property "showPicker()" with the proper type
 PASS HTMLInputElement interface: createInput("button") must inherit property "align" with the proper type
 PASS HTMLInputElement interface: createInput("button") must inherit property "useMap" with the proper type
 PASS HTMLButtonElement interface: existence and properties of interface object

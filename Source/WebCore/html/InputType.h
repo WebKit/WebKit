@@ -273,6 +273,9 @@ public:
     virtual void didDispatchClick(Event&, const InputElementClickState&);
     virtual void handleDOMActivateEvent(Event&);
 
+    virtual bool allowsShowPickerAcrossFrames();
+    virtual void showPicker();
+
     enum ShouldCallBaseEventHandler { No, Yes };
     virtual ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&);
 

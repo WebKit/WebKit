@@ -86,6 +86,8 @@
 
     [ImplementedAs=setSelectionRangeForBindings] undefined setSelectionRange(unsigned long start, unsigned long end, optional DOMString direction);
 
+    undefined showPicker();
+
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
     [CEReactions=NotNeeded, Reflect] attribute boolean incremental;

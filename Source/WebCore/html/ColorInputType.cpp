@@ -182,14 +182,23 @@ void ColorInputType::handleDOMActivateEvent(Event& event)
     if (!UserGestureIndicator::processingUserGesture())
         return;
 
+    showPicker();
+    event.setDefaultHandled();
+}
+
+void ColorInputType::showPicker() 
+{
     if (Chrome* chrome = this->chrome()) {
         if (!m_chooser)
             m_chooser = chrome->createColorChooser(*this, valueAsColor());
         else
             m_chooser->reattachColorChooser(valueAsColor());
     }
+}
 
-    event.setDefaultHandled();
+bool ColorInputType::allowsShowPickerAcrossFrames()
+{
+    return true;
 }
 
 void ColorInputType::detach()

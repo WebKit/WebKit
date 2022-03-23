@@ -1282,6 +1282,28 @@ bool HTMLInputElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == srcAttr || attribute.name() == formactionAttr || HTMLTextFormControlElement::isURLAttribute(attribute);
 }
 
+ExceptionOr<void> HTMLInputElement::showPicker()
+{
+    auto* frame = document().frame();
+    if (!frame)
+        return { };
+    
+    // In cross-origin iframes it should throw a "SecurityError" DOMException except on file and color. In same-origin iframes it should work fine.
+    // https://github.com/whatwg/html/issues/6909#issuecomment-917138991
+    if (!m_inputType->allowsShowPickerAcrossFrames()) {
+        Frame& topFrame = frame->tree().top();
+        if (!frame->document()->securityOrigin().isSameOriginAs(topFrame.document()->securityOrigin()))
+            return Exception { SecurityError, "Input showPicker() called from cross-origin iframe." };
+    }
+
+    auto* window = frame->window();
+    if (!window || !window->hasTransientActivation())
+        return Exception { NotAllowedError, "Input showPicker() requires a user gesture." };
+
+    m_inputType->showPicker();
+    return { };
+}
+
 String HTMLInputElement::defaultValue() const
 {
     return attributeWithoutSynchronization(valueAttr);

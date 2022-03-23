@@ -1,3 +1,15 @@
+2022-03-23  Ziran Sun  <zsun@igalia.com>
+
+        [InputElement] Add HTMLInputElement::showPicker() method
+        https://bugs.webkit.org/show_bug.cgi?id=237192
+
+        Reviewed by Darin Adler .
+
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker-cross-origin-iframe-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/show-picker-cross-origin-iframe-expected.txt.
+
 2022-03-23  Youenn Fablet  <youenn@apple.com>
 
         Computation of Document siteForCookies is buggy in case document is created by window.open

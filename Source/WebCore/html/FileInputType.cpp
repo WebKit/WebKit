@@ -203,12 +203,24 @@ void FileInputType::handleDOMActivateEvent(Event& event)
     if (!UserGestureIndicator::processingUserGesture())
         return;
 
+    showPicker();
+    event.setDefaultHandled();
+}
+
+void FileInputType::showPicker()
+{
+    ASSERT(element());
+    auto& input = *element();
+
     if (auto* chrome = this->chrome()) {
         applyFileChooserSettings();
         chrome->runOpenPanel(*input.document().frame(), *m_fileChooser);
     }
+}
 
-    event.setDefaultHandled();
+bool FileInputType::allowsShowPickerAcrossFrames()
+{
+    return true;
 }
 
 RenderPtr<RenderElement> FileInputType::createInputRenderer(RenderStyle&& style)
