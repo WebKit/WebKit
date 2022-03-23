@@ -1,3 +1,39 @@
+2022-03-23  Tyler Wilcock  <tyler_w@apple.com>
+
+        AccessibilityRenderObject::nextSibling should allow parent differences in the presence of display: contents
+        https://bugs.webkit.org/show_bug.cgi?id=238184
+
+        Reviewed by Andres Gonzalez.
+
+        AccessibilityRenderObject::nextSibling currently has this logic to
+        return nullptr if the computed sibling has a parent different from `this`:
+
+            auto* nextObject = objectCache->getOrCreate(nextSibling);
+            if (nextObject && nextObject->parentObject() != this->parentObject())
+                return nullptr;
+
+        This is problematic in the presence of display: contents since we expect
+        parent object differences due to the way this property affects the render tree.
+
+        Concretely, this breaks the firstChild(), nextSibling() iteration we do throughout
+        WebKit (e.g. in AccessibilityRenderObject::addChildren), as when we get to an element
+        with display: contents we get a parent mismatch and iteration stops unnecessarily.
+
+        This patch fixes the issue by allowing a parent mismatch when either
+        object has display: contents, as we account for this difference in the
+        appropriate places (e.g. AccessibilityObject::insertChild).
+
+        Test: accessibility/display-contents-search-traversal.html
+
+        * accessibility/AXLogger.cpp:
+        (WebCore::operator<<):
+        Log when an object has display: contents. This property affects the
+        render tree and AX tree, so it's useful to log.
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::hasDisplayContents const): Added.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::nextSibling const):
+
 2022-03-23  Youenn Fablet  <youenn@apple.com>
 
         VideoFrame does not need to inherit from MediaSample

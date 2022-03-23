@@ -342,6 +342,7 @@ accessibility/ancestor-computation.html [ Skip ]
 accessibility/focusable-div.html [ Skip ]
 
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
+accessibility/display-contents-search-traversal.html [ Skip ]
 accessibility/table-search-traversal.html [ Skip ]
 accessibility/dynamically-changing-iframe-remains-accessible.html [ Skip ]
 accessibility/ignore-modals-without-any-content.html [ Skip ]

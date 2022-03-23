@@ -421,11 +421,17 @@ AccessibilityObject* AccessibilityRenderObject::nextSibling() const
     if (!objectCache)
         return nullptr;
 
-    // Make sure next sibling has the same parent.
     auto* nextObject = objectCache->getOrCreate(nextSibling);
-    if (nextObject && nextObject->parentObject() != this->parentObject())
+    auto* nextObjectParent = nextObject ? nextObject->parentObject() : nullptr;
+    auto* thisParent = parentObject();
+    // Make sure next sibling has the same parent.
+    if (nextObjectParent && nextObjectParent != thisParent) {
+        // Unless either object has a parent with display: contents, as display: contents can cause parent differences
+        // that we properly account for elsewhere.
+        if (nextObjectParent->hasDisplayContents() || (thisParent && thisParent->hasDisplayContents()))
+            return nextObject;
         return nullptr;
-
+    }
     return nextObject;
 }
 

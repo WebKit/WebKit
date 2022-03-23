@@ -1,0 +1,68 @@
+This test ensures we can traverse through basic webpages with multiple display: contents elements via search.
+
+AXRole: AXGroup
+
+AXRole: AXStaticText
+AXValue: Content before main.
+
+AXRole: AXGroup
+
+AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: No style changes
+
+AXRole: AXToolbar
+
+AXRole: AXGroup
+
+AXRole: AXButton
+
+AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: display: contents; on the toolbar
+
+AXRole: AXToolbar
+
+AXRole: AXGroup
+
+AXRole: AXButton
+
+AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: display: contents; on the generic div
+
+AXRole: AXToolbar
+
+AXRole: AXGroup
+
+AXRole: AXButton
+
+AXRole: AXHeading
+
+AXRole: AXStaticText
+AXValue: display: contents; on the button
+
+AXRole: AXToolbar
+
+AXRole: AXGroup
+
+AXRole: AXButton
+
+AXRole: AXGroup
+
+AXRole: AXStaticText
+AXValue: Content after main.
+
+Traversed 25 elements.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+
+
+
+

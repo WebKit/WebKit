@@ -532,6 +532,8 @@ TextStream& operator<<(TextStream& stream, const AXCoreObject& object)
     if (objectWithInterestingHTML)
         stream.dumpProperty("outerHTML", objectWithInterestingHTML->outerHTML());
 
+    if (auto* axObject = dynamicDowncast<AccessibilityObject>(&object); axObject && axObject->hasDisplayContents())
+        stream.dumpProperty("hasDisplayContents", true);
     stream.dumpProperty("address", &object);
     stream.dumpProperty("wrapper", object.wrapper());
 

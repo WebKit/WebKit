@@ -544,6 +544,7 @@ public:
     int getIntegralAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const override;
     String tagName() const override;
+    bool hasDisplayContents() const;
 
     VisiblePositionRange visiblePositionRange() const override { return VisiblePositionRange(); }
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override { return VisiblePositionRange(); }
@@ -859,6 +860,11 @@ protected: // FIXME: Make the data members private.
 };
 
 #if ENABLE(ACCESSIBILITY)
+inline bool AccessibilityObject::hasDisplayContents() const
+{
+    return is<Element>(node()) && downcast<Element>(node())->hasDisplayContents();
+}
+
 inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundaryPoint, const FloatRect& targetRect) const
 {
     return lastBoundaryPointContainedInRect(boundaryPoints, startBoundaryPoint, targetRect, 0, boundaryPoints.size() - 1);
@@ -869,6 +875,7 @@ inline VisiblePosition AccessibilityObject::previousLineStartPosition(const Visi
     return previousLineStartPositionInternal(position).value_or(VisiblePosition());
 }
 #else
+inline bool AccessibilityObject::hasDisplayContents() const { return false; }
 inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>&, const BoundaryPoint&, const FloatRect&) const { return std::nullopt; }
 inline VisiblePosition AccessibilityObject::previousLineStartPosition(const VisiblePosition& position) const { return { }; }
 #endif

@@ -1,3 +1,17 @@
+2022-03-23  Tyler Wilcock  <tyler_w@apple.com>
+
+        AccessibilityRenderObject::nextSibling should allow parent differences in the presence of display: contents
+        https://bugs.webkit.org/show_bug.cgi?id=238184
+
+        Reviewed by Andres Gonzalez.
+
+        * accessibility/display-contents-search-traversal-expected.txt: Added.
+        * accessibility/display-contents-search-traversal.html: Added.
+        * platform/glib/TestExpectations: Skip new test.
+        * platform/ios/TestExpectations: Enable new test.
+        * platform/ios/accessibility/display-contents-search-traversal-expected.txt: Added.
+        * platform/win/TestExpectations: Skip new test.
+
 2022-03-23  Patrick Angle  <pangle@apple.com>
 
         No breakpoints hit on github.com, and some are invalid
