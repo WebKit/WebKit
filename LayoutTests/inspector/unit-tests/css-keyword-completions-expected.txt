@@ -71,6 +71,26 @@ PASS: All expected completions were present.
 PASS: Expected result prefix to be "--o"
 PASS: All expected completions were present.
 
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.InvalidVariableName
+PASS: Expected result prefix to be "-x"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.IncompleteVariableName
+PASS: Expected result prefix to be "--"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.DashedEnvironmentVariableName
+PASS: Expected result prefix to be "--"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.VendorPrefixedValue
+PASS: Expected result prefix to be "-webkit"
+PASS: All expected completions were present.
+
+-- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.SubtractionCalc
+PASS: Expected result prefix to be ""
+PASS: All expected completions were present.
+
 -- Running test case: WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunctionInCalc
 PASS: Expected result prefix to be ""
 PASS: All expected completions were present.

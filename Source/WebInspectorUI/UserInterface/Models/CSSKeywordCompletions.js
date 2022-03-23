@@ -101,6 +101,11 @@ WI.CSSKeywordCompletions.forPartialPropertyValue = function(text, propertyName, 
     if (currentTokenValue === ")" || tokenBeforeCaret?.value === ")")
         return {prefix: "", completions: []};
 
+    // The CodeMirror CSS-mode tokenizer splits a string like `-name` into two tokens: `-` and `name`.
+    if (currentTokenValue.length && tokenBeforeCaret?.value === "-") {
+        currentTokenValue = tokenBeforeCaret.value + currentTokenValue;
+    }
+
     let functionName = null;
     let preceedingFunctionDepth = 0;
     for (let i = indexOfTokenAtCaret; i >= 0; --i) {

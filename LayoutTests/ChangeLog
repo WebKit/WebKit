@@ -1,3 +1,15 @@
+2022-03-23  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Styles panel: Unwanted extra dash when autocompleting CSS variable names
+        https://bugs.webkit.org/show_bug.cgi?id=237676
+
+        Reviewed by Patrick Angle.
+
+        Add tests for special cases of matching incomplete CSS variable names in autocompletion.
+
+        * inspector/unit-tests/css-keyword-completions-expected.txt:
+        * inspector/unit-tests/css-keyword-completions.html:
+
 2022-03-22  Ben Nham  <nham@apple.com>
 
         Only show notification permission prompt on transient activation

@@ -231,6 +231,52 @@ function test()
         additionalFunctionValueCompletionsProvider: () => ["--one", "--two"],
     });
 
+    // `var(-x|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.InvalidVariableName",
+        description: "Test that an invalid variable name is still used as a prefix",
+        text: "var(-x",
+        expectedPrefix: "-x",
+        expectedCompletions: [],
+    });
+
+    // `var(--|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.IncompleteVariableName",
+        description: "Test that an incomplete variable name is still used as a prefix",
+        text: "var(--",
+        expectedPrefix: "--",
+        expectedCompletions: [],
+    });
+
+    // `env(--|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.DashedEnvironmentVariableName",
+        description: "Test that a dashed name used within env() is entirely used as a prefix",
+        text: "env(--",
+        expectedPrefix: "--",
+        expectedCompletions: [],
+    });
+
+    // `-webkit|`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.VendorPrefixedValue",
+        description: "Test that a value that looks vendor-prefixed is entirely used as a prefix",
+        propertyName: "display",
+        text: "-webkit",
+        expectedPrefix: "-webkit",
+        expectedCompletions: ["-webkit-flex"],
+    });
+
+    // `calc(1 - |`
+    addTestForPartialPropertyValue({
+        name: "WI.CSSKeywordCompletions.forPartialPropertyValue.SubtractionCalc",
+        description: "Test that a whitespace-separated minus sign in calc() isn't included in the prefix",
+        text: "calc(1 - ",
+        expectedPrefix: "",
+        expectedCompletions: [],
+    });
+
     // `calc(1 + var(|))`
     addTestForPartialPropertyValue({
         name: "WI.CSSKeywordCompletions.forPartialPropertyValue.VariableFunctionInCalc",

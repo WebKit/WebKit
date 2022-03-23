@@ -1,3 +1,26 @@
+2022-03-23  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Styles panel: Unwanted extra dash when autocompleting CSS variable names
+        https://bugs.webkit.org/show_bug.cgi?id=237676
+
+        Reviewed by Patrick Angle.
+
+        The CSS-mode tokenizer provided by CodeMirror and used in Web Inspector matches strictly conforming
+        CSS variable names, i.e. prefixed with two dahses, `--`.
+
+        An identifier like `-name` gets split into two tokens `-` and `name`.
+        The token at the cursor position becomes just `name`.
+        This token's value is used as a query string for autocompletion.
+
+        When a completion suggestion is picked, the query string gets replaced with the suggestion text in
+        `WI.SpreadsheetTextField._updatePendingValueWithCompletionText()`.
+        But because it was split from the query, the dash ends up prepended to the replaced string.
+
+        This patch adds a special case in `WI.CSSKeywordCompletions.forPartialPropertyValue()`
+        to account for this aspect of the tokenizer.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+
 2022-03-22  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Elements tab: selection variable not displayed after losing focus
