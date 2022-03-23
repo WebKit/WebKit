@@ -2202,9 +2202,126 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Pass Failure ]
 http/wpt/html/semantics/text-level-semantics/the-a-element/a-download-click-404.html [ Pass Failure ]
 
+######################################################
 # Test failures from turning GPU Process on by default
 webkit.org/b/234536 webxr/high-performance.html [ Failure ]
-webkit.org/b/234536 webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Timeout ]
+
+# There is text in/near the box
+webkit.org/b/236907 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-test1.html [ ImageOnlyFailure ]
+
+# Misplaced text
+webkit.org/b/236908 fast/text/cjk-multi-codepoint-cluster-vertical.html [ ImageOnlyFailure ]
+webkit.org/b/236908 fast/text/multiple-codeunit-vertical-upright-2.html [ ImageOnlyFailure ]
+webkit.org/b/236908 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
+
+# Text decoration failures
+webkit.org/b/236909 fast/css3-text/css3-text-decoration/text-decoration-dashed.html [ ImageOnlyFailure ]
+webkit.org/b/236909 fast/css3-text/css3-text-decoration/text-decoration-dotted-dashed.html [ ImageOnlyFailure ]
+webkit.org/b/236909 fast/css3-text/css3-text-decoration/text-decoration-dotted.html [ ImageOnlyFailure ]
+webkit.org/b/236909 fast/css3-text/css3-text-decoration/text-underline-style.html [ ImageOnlyFailure ]
+
+# Red text pokes out
+webkit.org/b/236911 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
+
+# Not sure if the orange line diff is negligible or important
+webkit.org/b/236912 http/wpt/css/css-highlight-api/highlight-text-decorations.html [ ImageOnlyFailure ]
+
+# Wrong text color
+webkit.org/b/236913 fast/css/variables/test-suite/005.html [ ImageOnlyFailure Pass ]
+webkit.org/b/236913 imported/blink/fast/multicol/vertical-lr/float-content-break.html [ ImageOnlyFailure ]
+
+# There are small rectangles or characters below main character
+webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
+webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-002.html [ ImageOnlyFailure ]
+webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-003.html [ ImageOnlyFailure ]
+webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-009.html [ ImageOnlyFailure ]
+webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-010.html [ ImageOnlyFailure ]
+webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-011.html [ ImageOnlyFailure ]
+webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-012.html [ ImageOnlyFailure ]
+
+# CSS Shapes failures
+webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-002.html [ ImageOnlyFailure ]
+webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-003.html [ ImageOnlyFailure ]
+webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-005.html [ ImageOnlyFailure ]
+webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-007.html [ ImageOnlyFailure ]
+webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-014.html [ ImageOnlyFailure ]
+webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-017.html [ ImageOnlyFailure ]
+
+# Writing mode failures
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-002.xht [ ImageOnlyFailure ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-004.xht [ ImageOnlyFailure ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vlr-005.xht [ ImageOnlyFailure ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-orthogonal-vrl-004.xht [ ImageOnlyFailure ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-table-alignment-004.xht [ ImageOnlyFailure ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-vlr-005.xht [ ImageOnlyFailure ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-vrl-004.xht [ ImageOnlyFailure ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001.html [ ImageOnlyFailure ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-023.xht [ ImageOnlyFailure ]
+webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-022.xht [ ImageOnlyFailure ]
+
+# Colors are significantly different enough
+webkit.org/b/236922 system-preview/badge.html [ ImageOnlyFailure ]
+
+# No/bad colored boxes
+webkit.org/b/236923 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/236923 imported/blink/svg/text/obb-paintserver.html [ ImageOnlyFailure ]
+webkit.org/b/236923 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html [ ImageOnlyFailure ]
+
+# No/bad gradient/pattern
+webkit.org/b/236924 svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]
+
+# Media failures
+webkit.org/b/237295 fast/mediastream/video-rotation-gpu-process-crash.html [ Crash Pass ]
+# x86_64 only
+webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass ]
+# arm64 only
+webkit.org/b/236926 media/video-src-blob-using-open-panel.html [ Timeout Pass ]
+webkit.org/b/236926 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-biquadfilternode-interface/no-dezippering.html [ Failure Pass ]
+webkit.org/b/236926 media/video-src-blob-replay.html [ Timeout Pass ]
+webkit.org/b/236926 webrtc/vp9-profile2.html [ Timeout ]
+
+# Forms failures
+webkit.org/b/236927 fast/forms/ios/choose-select-option.html [ Timeout Pass ]
+webkit.org/b/236927 fast/forms/autofocus-readonly-attribute.html [ Failure Pass ]
+webkit.org/b/236927 fast/forms/input-text-autofocus.html [ Pass Failure ]
+
+# Flaky failure
+webkit.org/b/237684 css3/filters/backdrop/dynamic-with-clip-path.html [ Pass ImageOnlyFailure ]
+
+# Flaky crash
+webkit.org/b/237674 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener.html [ Crash Pass ]
+webkit.org/b/237674 imported/w3c/web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements/target_blank_implicit_noopener_base.html [ Crash Pass ]
+http/tests/in-app-browser-privacy/sub-frame-redirect-to-non-app-bound-domain-blocked.html [ Crash Pass ]
+
+# arm64 only
+webkit.org/b/236928 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
+webkit.org/b/236928 fast/canvas/webgl/premultiplyalpha-test.html [ Failure Pass ]
+webkit.org/b/236928 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure Pass ]
+webkit.org/b/236928 webgl/1.0.3/conformance/textures/gl-teximage.html [ Failure Pass ]
+webkit.org/b/236928 imported/w3c/web-platform-tests/xhr/event-timeout-order.any.worker.html [ Failure Pass ]
+
+#####
+# Progressions with GPU Process (when turned on, need to find other citations of these tests and update expectations)
+webkit.org/b/190032 animations/stop-animation-on-suspend.html [ Pass ]
+imported/w3c/web-platform-tests/html/rendering/replaced-elements/embedded-content/change-src-while-not-displayed.html [ Pass ]
+webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Pass ]
+svg/clip-path/clip-path-line-use-before-defined.svg [ Pass ]
+
+# arm64 only
+compositing/overlap-blending/nested-overlap.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/adopt-from-image-document.html [ Pass ImageOnlyFailure ]
+
+# iPhone simulator
+webkit.org/b/232090 fast/canvas/canvas-createPattern-video-loading.html [ Pass ]
+webkit.org/b/232090 fast/canvas/canvas-createPattern-video-modify.html [ Pass ]
+webkit.org/b/178588 fast/css/button-height.html [ Pass ]
+webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-002.html [ Pass ]
+webkit.org/b/232090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Pass ]
+webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Pass ]
+webkit.org/b/292090 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Pass ]
+webkit.org/b/292090 media/video-canvas-createPattern.html [ Pass ]
+
+############ end of test failures related to GPU Process on by default
 
 # webkit.org/b/237346 REGRESSION(r290539): [ iOS ] 2X http/wpt/webauthn/public-key-credential-create-failure-local (layout-tests) are constant text failures
 http/wpt/webauthn/public-key-credential-create-failure-local.https.html [ Pass Failure ]

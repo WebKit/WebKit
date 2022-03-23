@@ -1,3 +1,14 @@
+2022-03-23  Jon Lee  <jonlee@apple.com>
+
+        Turn DOM in GPU Process on by default on iOS layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=236547
+        rdar://88863036
+
+        Reviewed by Geoffrey Garen.
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2022-03-22  Ben Nham  <nham@apple.com>
 
         Only show notification permission prompt on transient activation
