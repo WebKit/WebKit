@@ -1,3 +1,10 @@
+2022-03-23  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed fuzzy gardening.
+
+        * svg/filters/feImage-1.svg:
+        * svg/text/simple-fill-gradient.svg:
+
 2022-02-19  Jon Lee  <jonlee@apple.com>
 
         Test gardening for [CSS Blending] Non-separable blend modes don't work

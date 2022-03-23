@@ -1,3 +1,17 @@
+2022-03-23  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed fuzzy gardening.
+
+        * web-platform-tests/css/css-backgrounds/background-gradient-subpixel-fills-area.html:
+        * web-platform-tests/css/css-backgrounds/background-repeat-space-6.html:
+        * web-platform-tests/css/css-backgrounds/background-rounded-image-clip.html:
+        * web-platform-tests/css/css-backgrounds/border-bottom-right-radius-005.xht:
+        * web-platform-tests/css/css-backgrounds/border-top-left-radius-005.xht:
+        * web-platform-tests/css/css-backgrounds/border-top-right-radius-005.xht:
+        * web-platform-tests/css/css-backgrounds/css-box-shadow-001.html:
+        * web-platform-tests/css/css-transforms/2d-rotate-001.html:
+        * web-platform-tests/css/css-transforms/css-skew-002.html:
+
 2022-03-23  Ziran Sun  <zsun@igalia.com>
 
         [InputElement] Add HTMLInputElement::showPicker() method

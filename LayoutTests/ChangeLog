@@ -1,3 +1,13 @@
+2022-03-23  Jon Lee  <jonlee@apple.com>
+
+        Unreviewed fuzzy gardening.
+
+        * fast/multicol/columns-on-body.html:
+        * http/tests/images/draw-pattern-slow-load-large-image.html:
+        * imported/blink/fast/gradients/gradient-transparency.html:
+        * imported/blink/fast/text/international/rtl-space-in-ltr-element.html:
+        * svg/custom/hidpi-masking-clipping.svg:
+
 2022-03-23  Robert Jenner  <Jenner@apple.com>
 
         [ iOS EWS ] editing/deleting/insert-in-orphaned-selection-crash.html is a constant text failure
