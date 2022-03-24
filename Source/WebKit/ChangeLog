@@ -1,3 +1,43 @@
+2022-03-23  Sihui Liu  <sihui_liu@apple.com>
+
+        [ BigSur+ Debug wk2 EWS ] imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/quirks.window.html is a flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=237165
+        <rdar://problem/89443602>
+
+        Reviewed by Chris Dumez.
+
+        The test is hitting an assertion in StorageAreaBase::addListener. The assertion is used to verify that one
+        connection will not be added to a StorageArea twice, i.e. one web process will not have two StorageAreaMaps
+        pointing to the same StorageArea in network process. With our current implementation, there is an edge case that 
+        we load a.com, navigate to b.com and go back to a.com. In this case, we would create a StorageAreaMap for a.com, 
+        destroy it on navigation, and create another StorageAreaMap for a.com on going back. Because we don't remove 
+        listener during destruction of StorageAreaMap (we do it when web process receives reply from network process), 
+        the assertion is hit for two StorageAreaMaps from one connection pointing to the same StorageArea. We can fix
+        it by sending a cancelConnectToStorage message to remove listener during destruction.
+
+        The edge case is a bit hard to reproduce with auto test since we need to ensure web process sends the second 
+        ConnectionToStorageArea message before receiving the reply of the first ConnectionToStorageArea message, so I 
+        manually tested it by adding delay in NetworkStorageManager::connectToStorageArea.
+
+        * NetworkProcess/storage/LocalStorageManager.cpp:
+        (WebKit::LocalStorageManager::cancelConnectToLocalStorageArea):
+        (WebKit::LocalStorageManager::cancelConnectToTransientLocalStorageArea):
+        * NetworkProcess/storage/LocalStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::cancelConnectToStorageArea):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/NetworkStorageManager.messages.in:
+        * NetworkProcess/storage/SessionStorageManager.cpp:
+        (WebKit::SessionStorageManager::cancelConnectToSessionStorageArea):
+        * NetworkProcess/storage/SessionStorageManager.h:
+        * WebProcess/WebStorage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::computeStorageType const):
+        (WebKit::StorageAreaMap::clientOrigin const):
+        (WebKit::StorageAreaMap::sendConnectMessage):
+        (WebKit::StorageAreaMap::didConnect):
+        (WebKit::StorageAreaMap::disconnect):
+        * WebProcess/WebStorage/StorageAreaMap.h:
+
 2022-03-23  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Adopt new AVCapture SPI

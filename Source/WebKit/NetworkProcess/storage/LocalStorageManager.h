@@ -60,6 +60,8 @@ public:
 
     StorageAreaIdentifier connectToLocalStorageArea(IPC::Connection::UniqueID, StorageAreaMapIdentifier, const WebCore::ClientOrigin&, Ref<WorkQueue>&&);
     StorageAreaIdentifier connectToTransientLocalStorageArea(IPC::Connection::UniqueID, StorageAreaMapIdentifier, const WebCore::ClientOrigin&);
+    void cancelConnectToLocalStorageArea(IPC::Connection::UniqueID);
+    void cancelConnectToTransientLocalStorageArea(IPC::Connection::UniqueID);
     void disconnectFromStorageArea(IPC::Connection::UniqueID, StorageAreaIdentifier);
 
 private:

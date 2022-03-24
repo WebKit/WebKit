@@ -89,6 +89,19 @@ StorageAreaIdentifier SessionStorageManager::connectToSessionStorageArea(IPC::Co
     return identifier;
 }
 
+void SessionStorageManager::cancelConnectToSessionStorageArea(IPC::Connection::UniqueID connection, StorageNamespaceIdentifier namespaceIdentifier)
+{
+    auto identifier = m_storageAreasByNamespace.get(namespaceIdentifier);
+    if (!identifier.isValid())
+        return;
+
+    auto* storageArea = m_storageAreas.get(identifier);
+    if (!storageArea)
+        return;
+
+    storageArea->removeListener(connection);
+}
+
 void SessionStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID connection, StorageAreaIdentifier identifier)
 {
     if (auto* storageArea = m_storageAreas.get(identifier))

@@ -202,6 +202,16 @@ StorageAreaIdentifier LocalStorageManager::connectToTransientLocalStorageArea(IP
     return m_transientStorageArea->identifier();
 }
 
+void LocalStorageManager::cancelConnectToLocalStorageArea(IPC::Connection::UniqueID connection)
+{
+    connectionClosedForLocalStorageArea(connection);
+}
+
+void LocalStorageManager::cancelConnectToTransientLocalStorageArea(IPC::Connection::UniqueID connection)
+{
+    connectionClosedForLocalStorageArea(connection);
+}
+
 void LocalStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID connection, StorageAreaIdentifier identifier)
 {
     if (m_localStorageArea && m_localStorageArea->identifier() == identifier) {

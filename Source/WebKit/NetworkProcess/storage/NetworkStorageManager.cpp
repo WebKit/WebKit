@@ -781,6 +781,28 @@ void NetworkStorageManager::connectToStorageAreaSync(IPC::Connection& connection
     connectToStorageArea(connection, type, sourceIdentifier, namespaceIdentifier, origin, WTFMove(completionHandler));
 }
 
+void NetworkStorageManager::cancelConnectToStorageArea(IPC::Connection& connection, WebCore::StorageType type, StorageNamespaceIdentifier namespaceIdentifier, const WebCore::ClientOrigin& origin)
+{
+    auto iterator = m_localOriginStorageManagers.find(origin);
+    if (iterator == m_localOriginStorageManagers.end())
+        return;
+
+    auto connectionIdentifier = connection.uniqueID();
+    switch (type) {
+    case WebCore::StorageType::Local:
+        if (auto localStorageManager = iterator->value->existingLocalStorageManager())
+            localStorageManager->cancelConnectToLocalStorageArea(connectionIdentifier);
+        break;
+    case WebCore::StorageType::TransientLocal:
+        if (auto localStorageManager = iterator->value->existingLocalStorageManager())
+            localStorageManager->cancelConnectToTransientLocalStorageArea(connectionIdentifier);
+        break;
+    case WebCore::StorageType::Session:
+        if (auto sessionStorageManager = iterator->value->existingSessionStorageManager())
+            sessionStorageManager->cancelConnectToSessionStorageArea(connectionIdentifier, namespaceIdentifier);
+    }
+}
+
 void NetworkStorageManager::disconnectFromStorageArea(IPC::Connection& connection, StorageAreaIdentifier identifier)
 {
     ASSERT(!RunLoop::isMain());
