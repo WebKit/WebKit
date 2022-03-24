@@ -1,3 +1,12 @@
+2022-03-23  Cameron McCormack  <heycam@apple.com>
+
+        Bump up fuzzy tolerance on css-backgrounds/background-gradient-subpixel-fills-area.html
+        https://bugs.webkit.org/show_bug.cgi?id=238307
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/css/css-backgrounds/background-gradient-subpixel-fills-area.html:
+
 2022-03-23  Jon Lee  <jonlee@apple.com>
 
         Unreviewed fuzzy gardening.
