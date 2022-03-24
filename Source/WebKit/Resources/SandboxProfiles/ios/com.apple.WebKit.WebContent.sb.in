@@ -1109,6 +1109,7 @@
         (extension "com.apple.webkit.extension.mach")
         (global-name
             "com.apple.iconservices"
+            "com.apple.lsd.open"
         )
     )
 )
