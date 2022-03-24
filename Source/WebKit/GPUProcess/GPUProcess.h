@@ -95,6 +95,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     WorkQueue& videoMediaStreamTrackRendererQueue();
+    void sandboxWasUpatedForCapture();
 #endif
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
     WorkQueue& libWebRTCCodecsQueue();

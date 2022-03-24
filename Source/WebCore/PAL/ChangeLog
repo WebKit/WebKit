@@ -1,3 +1,13 @@
+2022-03-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Adopt new AVCapture SPI
+        https://bugs.webkit.org/show_bug.cgi?id=238289
+        rdar://90576101
+
+        Reviewed by Jer Noble.
+
+        * pal/spi/cocoa/AVFoundationSPI.h:
+
 2022-03-21  Alex Christensen  <achristensen@webkit.org>
 
         Dust off Mac CMake build

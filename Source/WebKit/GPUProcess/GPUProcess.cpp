@@ -329,6 +329,10 @@ void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& ext
 {
     for (auto& extension : extensions)
         SandboxExtension::consumePermanently(extension);
+
+#if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
+    sandboxWasUpatedForCapture();
+#endif
 }
 
 void GPUProcess::addMockMediaDevice(const WebCore::MockMediaDevice& device)

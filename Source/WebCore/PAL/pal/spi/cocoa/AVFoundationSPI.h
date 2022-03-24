@@ -473,6 +473,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithAssumedIdentity:(tcc_identity_t)tccIdentity SPI_AVAILABLE(ios(15.0)) API_UNAVAILABLE(macos, macCatalyst, watchos, tvos);
 @end
 
+@interface AVCaptureDevice (AVCaptureServerConnection)
++ (void)ensureServerConnection;
+@end
+
 NS_ASSUME_NONNULL_END
 
 #endif // HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
