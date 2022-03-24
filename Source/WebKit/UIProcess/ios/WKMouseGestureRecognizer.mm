@@ -29,7 +29,6 @@
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
 
 #import "NativeWebMouseEvent.h"
-#import "UIKitSPI.h"
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/Compiler.h>
 #import <wtf/MonotonicTime.h>
