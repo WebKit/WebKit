@@ -1,3 +1,10 @@
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update outdated comment after r291787.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::TEST):
+
 2022-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         Have MiniBrowser shows the GPU Process pid in its title bar

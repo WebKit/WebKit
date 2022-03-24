@@ -35,7 +35,7 @@ namespace TestWebKitAPI {
 
 TEST(WTF, StringImplCreationFromLiteral)
 {
-    // Constructor using the template to determine the size.
+    // Constructor taking an ASCIILiteral.
     auto stringWithTemplate = StringImpl::createFromLiteral("Template Literal"_s);
     ASSERT_EQ(strlen("Template Literal"), stringWithTemplate->length());
     ASSERT_TRUE(equal(stringWithTemplate.get(), "Template Literal"));
