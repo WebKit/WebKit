@@ -107,62 +107,170 @@ FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at
 FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (0.6) should be [20px] assert_true: 'from' value should be supported expected true got false
 FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (1) should be [20px] assert_true: 'from' value should be supported expected true got false
 FAIL Web Animations: property <contain-intrinsic-size> from [unset] to [20px] at (1.5) should be [20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto] to [20px 20px] at (-0.3) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.3) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.6) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto] to [20px 20px] at (1) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [auto] to [20px 20px] at (1.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto] to [20px 20px] at (-0.3) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.3) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.6) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto] to [20px 20px] at (1) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto] to [20px 20px] at (1.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.6) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (1) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (1.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (0.6) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (1) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [auto] to [20px 20px] at (1.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [auto] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [auto] at (-0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.3) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (-0.3) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.3) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (-0.3) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.3) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.5) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (0.6) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (1) should be [auto] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [auto] at (1.5) should be [auto] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none] to [20px 20px] at (-0.3) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none] to [20px 20px] at (0) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.3) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.6) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none] to [20px 20px] at (1) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none] to [20px 20px] at (1.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none] to [20px 20px] at (-0.3) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none] to [20px 20px] at (0) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.3) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.6) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none] to [20px 20px] at (1) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none] to [20px 20px] at (1.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.6) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (0.6) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none] to [20px 20px] at (1.5) should be [20px 20px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [none] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [none] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.5) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.6) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [10px 15px] to [none] at (1.5) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [none] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [none] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.5) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.6) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [10px 15px] to [none] at (1.5) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (-0.3) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.3) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.5) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.6) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1.5) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (-0.3) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.3) should be [10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.5) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (0.6) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [10px 15px] to [none] at (1.5) should be [none] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1) should be [auto 10px 10px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1) should be [auto 10px 10px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1) should be [auto 10px 10px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (-0.3) should be [auto 0px 0px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0) should be [auto 0px 0px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.3) should be [auto 3px 3px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (0.6) should be [auto 6px 6px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1) should be [auto 10px 10px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 0px 0px] to [auto 10px 10px] at (1.5) should be [auto 15px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (-0.3) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.3) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (-0.3) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.3) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (-0.3) should be [auto 10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0) should be [auto 10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.3) should be [auto 10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (-0.3) should be [auto 10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0) should be [auto 10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.3) should be [auto 10px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [auto 10px 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (-0.3) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.3) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (-0.3) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.3) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (-0.3) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.3) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (-0.3) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.3) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (0.6) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [20px 15px] at (1.5) should be [20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (-0.3) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.3) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.5) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.6) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1.5) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (-0.3) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.3) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.5) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.6) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions with transition: all: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1.5) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (-0.3) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.3) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.5) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.6) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1.5) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (-0.3) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.3) should be [none 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.5) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (0.6) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
+FAIL Web Animations: property <contain-intrinsic-size> from [none 15px] to [auto 20px 15px] at (1.5) should be [auto 20px 15px] assert_true: 'from' value should be supported expected true got false
 FAIL CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (-0.3) should be [0px 0px] assert_true: 'from' value should be supported expected true got false
 FAIL CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0) should be [0px 0px] assert_true: 'from' value should be supported expected true got false
 FAIL CSS Transitions: property <contain-intrinsic-size> from [0px 0px] to [10px] at (0.3) should be [3px 3px] assert_true: 'from' value should be supported expected true got false
