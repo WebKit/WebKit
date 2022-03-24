@@ -1246,6 +1246,18 @@ ResolutionMediaFeatureEnabled:
     WebCore:
       default: true
 
+SKAttributionEnabled:
+  type: bool
+  humanReadableName: "SKAttribution"
+  humanReadableDescription: "SKAttribution"
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 SampleBufferContentKeySessionSupportEnabled:
   type: bool
   humanReadableName: "ContentKeySession support for SampleBuffer Renderers"

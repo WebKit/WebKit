@@ -43,6 +43,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKExperimentalFeature.h>
 #import <WebKit/_WKInspector.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -572,6 +573,13 @@ TEST(PrivateClickMeasurement, SKAdNetwork)
     WKWebViewConfiguration *viewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundlePageConsoleMessage"];
     viewConfiguration.websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get();
     auto webView = webViewWithOpenInspector(viewConfiguration);
+
+    for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
+        if ([feature.key isEqualToString:@"SKAttributionEnabled"]) {
+            [[viewConfiguration preferences] _setEnabled:YES forExperimentalFeature:feature];
+            break;
+        }
+    }
 
     Vector<String> consoleMessages;
     setInjectedBundleClient(webView.get(), consoleMessages);

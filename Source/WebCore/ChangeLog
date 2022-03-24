@@ -1,3 +1,16 @@
+2022-03-23  Alex Christensen  <achristensen@webkit.org>
+
+        Add off-by-default experimental feature for app store attribution
+        https://bugs.webkit.org/show_bug.cgi?id=238294
+
+        Reviewed by John Wilander.
+
+        In r291735 I landed a way to give SKAdNetwork a way to private report app purchase attribution
+        which isn't implemented yet.  Turn it off in WebKit until the time is right.
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parsePrivateClickMeasurementForSKAdNetwork const):
+
 2022-03-23  Chris Dumez  <cdumez@apple.com>
 
         Prepare JSC for making the String(const char*) constructor explicit

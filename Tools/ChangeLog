@@ -1,3 +1,13 @@
+2022-03-23  Alex Christensen  <achristensen@webkit.org>
+
+        Add off-by-default experimental feature for app store attribution
+        https://bugs.webkit.org/show_bug.cgi?id=238294
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+
 2022-03-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Implement Device::createTexture() according to the spec

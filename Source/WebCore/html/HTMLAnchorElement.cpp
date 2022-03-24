@@ -435,6 +435,9 @@ std::optional<PrivateClickMeasurement::EphemeralNonce> HTMLAnchorElement::attrib
 
 std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasurementForSKAdNetwork(const URL& hrefURL) const
 {
+    if (!document().settings().sKAttributionEnabled())
+        return std::nullopt;
+
     using SourceID = PrivateClickMeasurement::SourceID;
     using SourceSite = PrivateClickMeasurement::SourceSite;
     using AttributionDestinationSite = PrivateClickMeasurement::AttributionDestinationSite;
