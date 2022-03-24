@@ -151,7 +151,6 @@ public:
     WEBCORE_EXPORT void clear();
     void willBeRemovedFromFrame();
 
-    void updateAppearanceIfRevealingSelectionIsNeeded();
     void updateAppearanceAfterLayout();
     void scheduleAppearanceUpdateAfterStyleChange();
 
@@ -268,7 +267,6 @@ public:
     void updateFromAssociatedLiveRange();
 
 private:
-    void updateSelectionAppearanceNow();
     void updateAndRevealSelection(const AXTextStateChangeIntent&, ScrollBehavior = ScrollBehavior::Instant, RevealExtentOption = RevealExtentOption::RevealExtent);
     void updateDataDetectorsForSelection();
 

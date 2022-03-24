@@ -1,3 +1,16 @@
+2022-03-24  Matteo Flores  <matteo_flores@apple.com>
+
+        Unreviewed, reverting r291789.
+
+        This revision caused 65+ new API failures on iOS debug
+
+        Reverted changeset:
+
+        "Release assert in Document::updateLayout() via
+        HTMLTextAreaElement::childrenChanged"
+        https://bugs.webkit.org/show_bug.cgi?id=224471
+        https://commits.webkit.org/r291789
+
 2022-03-24  Ben Nham  <nham@apple.com>
 
         PushAPI.firePushEventWithNoPagesTimeout fails in debug builds

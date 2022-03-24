@@ -162,31 +162,20 @@
         var addedNotification = webArea.addNotificationListener(notificationCallback);
         shouldBe("addedNotification", "true");
 
-        function waitForAnimationFrame() {
-            return new Promise(function(resolve, reject) {
-                requestAnimationFrame(resolve);
-            });
-        }
+        textbox = document.getElementById("textbox");
+        textbox.focus();
 
-        function focusElement(elementId) {
-            element = document.getElementById(elementId);
-            element.focus();
-            return waitForAnimationFrame();
-        }
+        move(true);
 
-        function moveAsync(isVertical) {
-            move(isVertical);
-            return waitForAnimationFrame();
-        }
+        textbox = document.getElementById("input");
+        textbox.focus();
 
-        (async function () {
-            await focusElement("textbox");
-            await moveAsync(true);
-            await focusElement("input");
-            await moveAsync(false);
-            await focusElement("textarea");
-            await moveAsync(true);
-        })();
+        move(false);
+
+        textbox = document.getElementById("textarea");
+        textbox.focus();
+
+        move(true);
     }
 
 </script>

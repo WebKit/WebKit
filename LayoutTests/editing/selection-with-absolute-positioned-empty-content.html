@@ -14,17 +14,13 @@ span {
 <script>
 if (window.internals)
   internals.startTrackingRepaints();
-if (window.testRunner) {
+if (window.testRunner)
   testRunner.dumpAsText();
-  testRunner.waitUntilDone();
-}
+
 window.getSelection().selectAllChildren(foobar);
-setTimeout(() => {
-  if (window.internals) {
-    result.innerText = internals.repaintRectsAsText();
-    internals.stopTrackingRepaints();
-  }
-  if (window.testRunner)
-  testRunner.notifyDone();
-}, 0);
+
+if (window.internals) {
+  result.innerText = internals.repaintRectsAsText();
+  internals.stopTrackingRepaints();
+}
 </script>

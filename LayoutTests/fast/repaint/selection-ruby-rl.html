@@ -3,15 +3,7 @@
 <head>
 <script src="resources/text-based-repaint.js"></script>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText(false);
-    testRunner.waitUntilDone();
-}
-
-function runRepaintTest() {
-    if (window.internals)
-        internals.startTrackingRepaints();
-
+function repaintTest() {
     if (eventSender) {
         eventSender.mouseMoveTo(790, 40);
         eventSender.mouseDown();
@@ -19,17 +11,6 @@ function runRepaintTest() {
         eventSender.mouseMoveTo(790, 120);
         eventSender.mouseUp();
     }
-
-    // requestAnimationFrame produces flacky results.
-    setTimeout(function() {
-        if (window.internals) {
-            document.querySelector('#repaints').innerHTML = window.internals.repaintRectsAsText();
-            internals.stopTrackingRepaints();
-        }
-
-        if (window.testRunner)
-            testRunner.notifyDone();
-    }, 0);
 }
 </script>
 
@@ -45,5 +26,4 @@ Testing both hit testing and painting of selection.<br>
 Testing both hit testing and painting of selection.<br>
 Testing both hit testing and painting of selection.<br>
 Testing both hit testing and painting of selection.<br>
-<div id="repaints"></div>
 </body>
