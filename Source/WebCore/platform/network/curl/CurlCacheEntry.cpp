@@ -166,7 +166,7 @@ bool CurlCacheEntry::loadResponseHeaders()
     Vector<String>::const_iterator it = headerFields.begin();
     Vector<String>::const_iterator end = headerFields.end();
     while (it != end) {
-        size_t splitPosition = it->find(":");
+        size_t splitPosition = it->find(':');
         if (splitPosition != notFound)
             m_cachedResponse.setHTTPHeaderField(it->left(splitPosition), it->substring(splitPosition+1).stripWhiteSpace());
         ++it;

@@ -334,13 +334,13 @@ TEST(WTF, StringImplFindIgnoringASCIICaseWithInvalidOffset)
 TEST(WTF, StringImplFindIgnoringASCIICaseOnNull)
 {
     auto reference = stringFromUTF8("ABCÉEFG");
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, 0));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, 3));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, 7));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, 8));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, 42));
-    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(nullptr, std::numeric_limits<unsigned>::max()));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(StringView { }));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(StringView { }, 0));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(StringView { }, 3));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(StringView { }, 7));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(StringView { }, 8));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(StringView { }, 42));
+    EXPECT_EQ(static_cast<size_t>(WTF::notFound), reference->findIgnoringASCIICase(StringView { }, std::numeric_limits<unsigned>::max()));
 }
 
 TEST(WTF, StringImplFindIgnoringASCIICaseOnEmpty)

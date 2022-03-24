@@ -52,7 +52,7 @@ public:
     {
         static NeverDestroyed<String> airPods(MAKE_STATIC_STRING_IMPL("AirPods"));
 
-        if ((m_type == DeviceType::Microphone || m_type == DeviceType::Speaker) && m_label.contains(airPods))
+        if ((m_type == DeviceType::Microphone || m_type == DeviceType::Speaker) && m_label.contains(airPods.get()))
             return airPods;
 
         return m_label;

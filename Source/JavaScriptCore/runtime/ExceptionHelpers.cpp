@@ -161,7 +161,7 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
-    auto notAFunctionIndex = originalMessage.reverseFind("is not a function"_s);
+    auto notAFunctionIndex = originalMessage.reverseFind("is not a function");
     RELEASE_ASSERT(notAFunctionIndex != notFound);
     StringView displayValue;
     if (originalMessage.is8Bit()) 
@@ -197,7 +197,7 @@ static String invalidParameterInSourceAppender(const String& originalMessage, co
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
-    auto inIndex = sourceText.reverseFind("in"_s);
+    auto inIndex = sourceText.reverseFind("in");
     if (inIndex == notFound) {
         // This should basically never happen, since JS code must use the literal
         // text "in" for the `in` operation. However, if we fail to find "in"
@@ -218,7 +218,7 @@ inline String invalidParameterInstanceofSourceAppender(const String& content, co
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
-    auto instanceofIndex = sourceText.reverseFind("instanceof"_s);
+    auto instanceofIndex = sourceText.reverseFind("instanceof");
     // This can happen when Symbol.hasInstance function is directly called.
     if (instanceofIndex == notFound)
         return originalMessage;
@@ -246,7 +246,7 @@ static String invalidPrototypeSourceAppender(const String& originalMessage, cons
     if (occurrence == ErrorInstance::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
 
-    auto extendsIndex = sourceText.reverseFind("extends"_s);
+    auto extendsIndex = sourceText.reverseFind("extends");
     if (extendsIndex == notFound || sourceText.find("extends") != extendsIndex)
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 

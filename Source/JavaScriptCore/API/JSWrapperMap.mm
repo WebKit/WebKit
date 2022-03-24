@@ -451,7 +451,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
         forEachMethodInClass(currentClass, ^(Method method) {
             SEL selector = method_getName(method);
             const char* name = sel_getName(selector);
-            auto iter = initTable.find(String { name });
+            auto iter = initTable.find(name);
 
             if (iter == initTable.end())
                 return;

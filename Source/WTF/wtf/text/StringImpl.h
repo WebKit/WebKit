@@ -428,18 +428,15 @@ public:
     size_t find(LChar character, unsigned start = 0);
     size_t find(char character, unsigned start = 0);
     size_t find(UChar character, unsigned start = 0);
-    WTF_EXPORT_PRIVATE size_t find(CodeUnitMatchFunction, unsigned index = 0);
-    WTF_EXPORT_PRIVATE size_t find(const LChar*, unsigned index = 0);
-    ALWAYS_INLINE size_t find(const char* string, unsigned index = 0) { return find(reinterpret_cast<const LChar*>(string), index); }
-    WTF_EXPORT_PRIVATE size_t find(StringImpl*);
-    WTF_EXPORT_PRIVATE size_t find(StringImpl*, unsigned index);
-    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl&) const;
-    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl&, unsigned startOffset) const;
-    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl*) const;
-    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(const StringImpl*, unsigned startOffset) const;
+    WTF_EXPORT_PRIVATE size_t find(CodeUnitMatchFunction, unsigned start = 0);
+    WTF_EXPORT_PRIVATE size_t find(const LChar*, unsigned start = 0);
+    WTF_EXPORT_PRIVATE size_t find(StringView);
+    WTF_EXPORT_PRIVATE size_t find(StringView, unsigned start);
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView) const;
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView, unsigned start) const;
 
-    WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned index = MaxLength);
-    WTF_EXPORT_PRIVATE size_t reverseFind(StringImpl*, unsigned index = MaxLength);
+    WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned start = MaxLength);
+    WTF_EXPORT_PRIVATE size_t reverseFind(StringView, unsigned start = MaxLength);
 
     WTF_EXPORT_PRIVATE bool startsWith(const StringImpl*) const;
     WTF_EXPORT_PRIVATE bool startsWith(const StringImpl&) const;
@@ -448,7 +445,7 @@ public:
     WTF_EXPORT_PRIVATE bool startsWith(UChar) const;
     WTF_EXPORT_PRIVATE bool startsWith(const char*, unsigned matchLength) const;
     template<unsigned matchLength> bool startsWith(const char (&prefix)[matchLength]) const { return startsWith(prefix, matchLength - 1); }
-    WTF_EXPORT_PRIVATE bool hasInfixStartingAt(const StringImpl&, unsigned startOffset) const;
+    WTF_EXPORT_PRIVATE bool hasInfixStartingAt(const StringImpl&, unsigned start) const;
 
     WTF_EXPORT_PRIVATE bool endsWith(StringImpl*);
     WTF_EXPORT_PRIVATE bool endsWith(StringImpl&);
@@ -464,8 +461,8 @@ public:
     ALWAYS_INLINE Ref<StringImpl> replace(UChar pattern, const char* replacement, unsigned replacementLength) { return replace(pattern, reinterpret_cast<const LChar*>(replacement), replacementLength); }
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, const LChar*, unsigned replacementLength);
     Ref<StringImpl> replace(UChar, const UChar*, unsigned replacementLength);
-    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(StringImpl*, StringImpl*);
-    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(unsigned index, unsigned length, StringImpl*);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(StringView, StringView);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(unsigned start, unsigned length, StringImpl*);
 
     WTF_EXPORT_PRIVATE UCharDirection defaultWritingDirection(bool* hasStrongDirectionality = nullptr);
 
@@ -592,12 +589,12 @@ template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl&, 
 template<unsigned length> bool equalLettersIgnoringASCIICase(const StringImpl*, const char (&lowercaseLetters)[length]);
 
 template<typename CodeUnit, typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, CodeUnit>>* = nullptr>
-size_t find(const CodeUnit*, unsigned length, CodeUnitMatchFunction&&, unsigned index = 0);
+size_t find(const CodeUnit*, unsigned length, CodeUnitMatchFunction&&, unsigned start = 0);
 
-template<typename CharacterType> size_t reverseFindLineTerminator(const CharacterType*, unsigned length, unsigned index = StringImpl::MaxLength);
-template<typename CharacterType> size_t reverseFind(const CharacterType*, unsigned length, CharacterType matchCharacter, unsigned index = StringImpl::MaxLength);
-size_t reverseFind(const UChar*, unsigned length, LChar matchCharacter, unsigned index = StringImpl::MaxLength);
-size_t reverseFind(const LChar*, unsigned length, UChar matchCharacter, unsigned index = StringImpl::MaxLength);
+template<typename CharacterType> size_t reverseFindLineTerminator(const CharacterType*, unsigned length, unsigned start = StringImpl::MaxLength);
+template<typename CharacterType> size_t reverseFind(const CharacterType*, unsigned length, CharacterType matchCharacter, unsigned start = StringImpl::MaxLength);
+size_t reverseFind(const UChar*, unsigned length, LChar matchCharacter, unsigned start = StringImpl::MaxLength);
+size_t reverseFind(const LChar*, unsigned length, UChar matchCharacter, unsigned start = StringImpl::MaxLength);
 
 template<size_t inlineCapacity> bool equalIgnoringNullity(const Vector<UChar, inlineCapacity>&, StringImpl*);
 
@@ -642,54 +639,54 @@ template<> ALWAYS_INLINE const UChar* StringImpl::characters<UChar>() const
 }
 
 template<typename CodeUnit, typename CodeUnitMatchFunction, std::enable_if_t<std::is_invocable_r_v<bool, CodeUnitMatchFunction, CodeUnit>>*>
-inline size_t find(const CodeUnit* characters, unsigned length, CodeUnitMatchFunction&& matchFunction, unsigned index)
+inline size_t find(const CodeUnit* characters, unsigned length, CodeUnitMatchFunction&& matchFunction, unsigned start)
 {
-    while (index < length) {
-        if (matchFunction(characters[index]))
-            return index;
-        ++index;
+    while (start < length) {
+        if (matchFunction(characters[start]))
+            return start;
+        ++start;
     }
     return notFound;
 }
 
-template<typename CharacterType> inline size_t reverseFindLineTerminator(const CharacterType* characters, unsigned length, unsigned index)
+template<typename CharacterType> inline size_t reverseFindLineTerminator(const CharacterType* characters, unsigned length, unsigned start)
 {
     if (!length)
         return notFound;
-    if (index >= length)
-        index = length - 1;
-    auto character = characters[index];
+    if (start >= length)
+        start = length - 1;
+    auto character = characters[start];
     while (character != '\n' && character != '\r') {
-        if (!index--)
+        if (!start--)
             return notFound;
-        character = characters[index];
+        character = characters[start];
     }
-    return index;
+    return start;
 }
 
-template<typename CharacterType> inline size_t reverseFind(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index)
+template<typename CharacterType> inline size_t reverseFind(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned start)
 {
     if (!length)
         return notFound;
-    if (index >= length)
-        index = length - 1;
-    while (characters[index] != matchCharacter) {
-        if (!index--)
+    if (start >= length)
+        start = length - 1;
+    while (characters[start] != matchCharacter) {
+        if (!start--)
             return notFound;
     }
-    return index;
+    return start;
 }
 
-ALWAYS_INLINE size_t reverseFind(const UChar* characters, unsigned length, LChar matchCharacter, unsigned index)
+ALWAYS_INLINE size_t reverseFind(const UChar* characters, unsigned length, LChar matchCharacter, unsigned start)
 {
-    return reverseFind(characters, length, static_cast<UChar>(matchCharacter), index);
+    return reverseFind(characters, length, static_cast<UChar>(matchCharacter), start);
 }
 
-inline size_t reverseFind(const LChar* characters, unsigned length, UChar matchCharacter, unsigned index)
+inline size_t reverseFind(const LChar* characters, unsigned length, UChar matchCharacter, unsigned start)
 {
     if (!isLatin1(matchCharacter))
         return notFound;
-    return reverseFind(characters, length, static_cast<LChar>(matchCharacter), index);
+    return reverseFind(characters, length, static_cast<LChar>(matchCharacter), start);
 }
 
 inline size_t StringImpl::find(LChar character, unsigned start)

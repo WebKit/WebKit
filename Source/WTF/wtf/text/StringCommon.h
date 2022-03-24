@@ -480,33 +480,6 @@ inline size_t findIgnoringASCIICaseWithoutLength(const char* source, const char*
     return matchLength < searchLength ? findIgnoringASCIICase(source, matchCharacters, 0, searchLength, matchLength) : notFound;
 }
 
-template<typename StringClassA, typename StringClassB>
-size_t findIgnoringASCIICase(const StringClassA& source, const StringClassB& stringToFind, unsigned startOffset)
-{
-    unsigned sourceStringLength = source.length();
-    unsigned matchLength = stringToFind.length();
-    if (!matchLength)
-        return std::min(startOffset, sourceStringLength);
-
-    // Check startOffset & matchLength are in range.
-    if (startOffset > sourceStringLength)
-        return notFound;
-    unsigned searchLength = sourceStringLength - startOffset;
-    if (matchLength > searchLength)
-        return notFound;
-
-    if (source.is8Bit()) {
-        if (stringToFind.is8Bit())
-            return findIgnoringASCIICase(source.characters8(), stringToFind.characters8(), startOffset, searchLength, matchLength);
-        return findIgnoringASCIICase(source.characters8(), stringToFind.characters16(), startOffset, searchLength, matchLength);
-    }
-
-    if (stringToFind.is8Bit())
-        return findIgnoringASCIICase(source.characters16(), stringToFind.characters8(), startOffset, searchLength, matchLength);
-
-    return findIgnoringASCIICase(source.characters16(), stringToFind.characters16(), startOffset, searchLength, matchLength);
-}
-
 template <typename SearchCharacterType, typename MatchCharacterType>
 ALWAYS_INLINE static size_t findInner(const SearchCharacterType* searchCharacters, const MatchCharacterType* matchCharacters, unsigned index, unsigned searchLength, unsigned matchLength)
 {
@@ -557,39 +530,6 @@ inline size_t find(const LChar* characters, unsigned length, UChar matchCharacte
     if (!isLatin1(matchCharacter))
         return notFound;
     return find(characters, length, static_cast<LChar>(matchCharacter), index);
-}
-
-template<typename StringClass>
-size_t findCommon(const StringClass& haystack, const StringClass& needle, unsigned start)
-{
-    unsigned needleLength = needle.length();
-
-    if (needleLength == 1) {
-        if (haystack.is8Bit())
-            return WTF::find(haystack.characters8(), haystack.length(), needle[0], start);
-        return WTF::find(haystack.characters16(), haystack.length(), needle[0], start);
-    }
-
-    if (start > haystack.length())
-        return notFound;
-
-    if (!needleLength)
-        return start;
-
-    unsigned searchLength = haystack.length() - start;
-    if (needleLength > searchLength)
-        return notFound;
-
-    if (haystack.is8Bit()) {
-        if (needle.is8Bit())
-            return findInner(haystack.characters8() + start, needle.characters8(), start, searchLength, needleLength);
-        return findInner(haystack.characters8() + start, needle.characters16(), start, searchLength, needleLength);
-    }
-
-    if (needle.is8Bit())
-        return findInner(haystack.characters16() + start, needle.characters8(), start, searchLength, needleLength);
-
-    return findInner(haystack.characters16() + start, needle.characters16(), start, searchLength, needleLength);
 }
 
 // This is marked inline since it's mostly used in non-inline functions for each string type.

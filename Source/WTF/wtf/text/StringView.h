@@ -145,7 +145,7 @@ public:
     size_t reverseFind(UChar, unsigned index = std::numeric_limits<unsigned>::max()) const;
 
     WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView) const;
-    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView, unsigned startOffset) const;
+    WTF_EXPORT_PRIVATE size_t findIgnoringASCIICase(StringView, unsigned start) const;
 
     WTF_EXPORT_PRIVATE String convertToASCIILowercase() const;
     WTF_EXPORT_PRIVATE String convertToASCIIUppercase() const;
@@ -158,7 +158,7 @@ public:
     WTF_EXPORT_PRIVATE bool contains(const char*) const;
 
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(StringView) const;
-    WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(StringView, unsigned startOffset) const;
+    WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(StringView, unsigned start) const;
 
     template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const;
 
@@ -606,11 +606,11 @@ inline size_t StringView::find(CodeUnitMatchFunction&& matchFunction, unsigned s
     return WTF::find(characters16(), m_length, std::forward<CodeUnitMatchFunction>(matchFunction), start);
 }
 
-inline size_t StringView::reverseFind(UChar character, unsigned index) const
+inline size_t StringView::reverseFind(UChar character, unsigned start) const
 {
     if (is8Bit())
-        return WTF::reverseFind(characters8(), m_length, character, index);
-    return WTF::reverseFind(characters16(), m_length, character, index);
+        return WTF::reverseFind(characters8(), m_length, character, start);
+    return WTF::reverseFind(characters16(), m_length, character, start);
 }
 
 #if !CHECK_STRINGVIEW_LIFETIME
@@ -1097,6 +1097,142 @@ inline bool hasUnpairedSurrogate(StringView string)
             return true;
     }
     return false;
+}
+
+inline size_t findCommon(StringView haystack, StringView needle, unsigned start)
+{
+    unsigned needleLength = needle.length();
+
+    if (needleLength == 1) {
+        if (haystack.is8Bit())
+            return WTF::find(haystack.characters8(), haystack.length(), needle[0], start);
+        return WTF::find(haystack.characters16(), haystack.length(), needle[0], start);
+    }
+
+    if (start > haystack.length())
+        return notFound;
+
+    if (!needleLength)
+        return start;
+
+    unsigned searchLength = haystack.length() - start;
+    if (needleLength > searchLength)
+        return notFound;
+
+    if (haystack.is8Bit()) {
+        if (needle.is8Bit())
+            return findInner(haystack.characters8() + start, needle.characters8(), start, searchLength, needleLength);
+        return findInner(haystack.characters8() + start, needle.characters16(), start, searchLength, needleLength);
+    }
+
+    if (needle.is8Bit())
+        return findInner(haystack.characters16() + start, needle.characters8(), start, searchLength, needleLength);
+
+    return findInner(haystack.characters16() + start, needle.characters16(), start, searchLength, needleLength);
+}
+
+inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, unsigned start)
+{
+    unsigned sourceStringLength = source.length();
+    unsigned matchLength = stringToFind.length();
+    if (!matchLength)
+        return std::min(start, sourceStringLength);
+
+    // Check start & matchLength are in range.
+    if (start > sourceStringLength)
+        return notFound;
+    unsigned searchLength = sourceStringLength - start;
+    if (matchLength > searchLength)
+        return notFound;
+
+    if (source.is8Bit()) {
+        if (stringToFind.is8Bit())
+            return findIgnoringASCIICase(source.characters8(), stringToFind.characters8(), start, searchLength, matchLength);
+        return findIgnoringASCIICase(source.characters8(), stringToFind.characters16(), start, searchLength, matchLength);
+    }
+
+    if (stringToFind.is8Bit())
+        return findIgnoringASCIICase(source.characters16(), stringToFind.characters8(), start, searchLength, matchLength);
+
+    return findIgnoringASCIICase(source.characters16(), stringToFind.characters16(), start, searchLength, matchLength);
+}
+
+inline size_t String::find(StringView string) const
+{
+    return m_impl ? m_impl->find(string) : notFound;
+}
+inline size_t String::find(StringView string, unsigned start) const
+{
+    return m_impl ? m_impl->find(string, start) : notFound;
+}
+
+inline size_t String::findIgnoringASCIICase(StringView string) const
+{
+    return m_impl ? m_impl->findIgnoringASCIICase(string) : notFound;
+}
+
+inline size_t String::findIgnoringASCIICase(StringView string, unsigned start) const
+{
+    return m_impl ? m_impl->findIgnoringASCIICase(string, start) : notFound;
+}
+
+inline size_t String::reverseFind(StringView string, unsigned start) const
+{
+    return m_impl ? m_impl->reverseFind(string, start) : notFound;
+}
+
+inline bool String::contains(StringView string) const
+{
+    return find(string) != notFound;
+}
+
+inline bool String::containsIgnoringASCIICase(StringView string) const
+{
+    return findIgnoringASCIICase(string) != notFound;
+}
+
+inline bool String::containsIgnoringASCIICase(StringView string, unsigned start) const
+{
+    return findIgnoringASCIICase(string, start) != notFound;
+}
+
+inline String& String::replace(StringView target, StringView replacement)
+{
+    if (m_impl)
+        m_impl = m_impl->replace(target, replacement);
+    return *this;
+}
+
+inline String& String::replace(unsigned start, unsigned length, const String& replacement)
+{
+    if (m_impl)
+        m_impl = m_impl->replace(start, length, replacement.impl());
+    return *this;
+}
+
+inline size_t AtomString::find(StringView string, unsigned start) const
+{
+    return m_string.find(string, start);
+}
+
+inline size_t AtomString::findIgnoringASCIICase(StringView string) const
+{
+    return m_string.findIgnoringASCIICase(string);
+}
+
+inline size_t AtomString::findIgnoringASCIICase(StringView string, unsigned start) const
+{
+    return m_string.findIgnoringASCIICase(string, start);
+}
+
+inline bool AtomString::contains(StringView string) const
+{
+    return m_string.contains(string);
+}
+
+inline bool AtomString::containsIgnoringASCIICase(StringView string) const
+{
+    return m_string.containsIgnoringASCIICase(string);
 }
 
 } // namespace WTF

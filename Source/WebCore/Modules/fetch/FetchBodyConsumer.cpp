@@ -176,7 +176,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
         if (!mimeType)
             return std::nullopt;
         if (equalIgnoringASCIICase(mimeType->type, "multipart") && equalIgnoringASCIICase(mimeType->subtype, "form-data")) {
-            auto iterator = mimeType->parameters.find("boundary"_s);
+            auto iterator = mimeType->parameters.find("boundary");
             if (iterator != mimeType->parameters.end())
                 return iterator->value;
         }

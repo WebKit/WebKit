@@ -116,7 +116,7 @@ int WebDriverService::run(int argc, char** argv)
 
 #if USE(INSPECTOR_SOCKET_SERVER)
     if (!targetString.isEmpty()) {
-        auto position = targetString.reverseFind(":"_s);
+        auto position = targetString.reverseFind(':');
         if (position != notFound) {
             m_targetAddress = targetString.left(position);
             m_targetPort = parseIntegerAllowingTrailingJunk<uint16_t>(StringView { targetString }.substring(position + 1)).value_or(0);
@@ -617,7 +617,7 @@ RefPtr<JSON::Object> WebDriverService::validatedCapabilities(const JSON::Object&
             if (!unhandledPromptBehavior || !deserializeUnhandledPromptBehavior(unhandledPromptBehavior))
                 return nullptr;
             result->setString(it->key, unhandledPromptBehavior);
-        } else if (it->key.find(":") != notFound) {
+        } else if (it->key.find(':') != notFound) {
             if (!platformValidateCapability(it->key, it->value))
                 return nullptr;
             result->setValue(it->key, it->value.copyRef());

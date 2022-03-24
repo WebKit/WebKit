@@ -55,7 +55,7 @@ static CString buildAcceptLanguages(const Vector<String>& languages)
     size_t languagesCount = languages.size();
 
     // Ignore "C" locale.
-    size_t cLocalePosition = languages.find("c");
+    size_t cLocalePosition = languages.find("c"_s);
     if (cLocalePosition != notFound)
         languagesCount--;
 

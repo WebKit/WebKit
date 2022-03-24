@@ -536,7 +536,7 @@ int CurlRequest::didReceiveDebugInfo(curl_infotype type, char* data, size_t size
             headerFields.remove(0);
 
         for (auto& header : headerFields) {
-            auto pos = header.find(":");
+            auto pos = header.find(':');
             if (pos != notFound) {
                 auto key = header.left(pos).stripWhiteSpace();
                 auto value = header.substring(pos + 1).stripWhiteSpace();

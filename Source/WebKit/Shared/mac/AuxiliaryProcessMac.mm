@@ -645,7 +645,7 @@ static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParamet
     auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
     if (userDirectorySuffix != parameters.extraInitializationData.end()) {
         String suffix = userDirectorySuffix->value;
-        auto firstPathSeparator = suffix.find("/");
+        auto firstPathSeparator = suffix.find('/');
         if (firstPathSeparator != notFound)
             suffix.truncate(firstPathSeparator);
         return suffix;

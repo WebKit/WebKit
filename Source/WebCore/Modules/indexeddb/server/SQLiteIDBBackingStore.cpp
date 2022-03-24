@@ -928,7 +928,7 @@ String SQLiteIDBBackingStore::decodeDatabaseName(const String& encodedName)
         return emptyString();
 
     String name = encodedName;
-    name.replace("%2E"_s, "."_s);
+    name.replace("%2E", ".");
 
     return FileSystem::decodeFromFilename(name);
 }

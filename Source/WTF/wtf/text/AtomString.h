@@ -114,14 +114,14 @@ public:
 
     bool contains(UChar character) const { return m_string.contains(character); }
     bool contains(const LChar* string) const { return m_string.contains(string); }
-    bool contains(const String& string) const { return m_string.contains(string); }
-    bool containsIgnoringASCIICase(const String& string) const { return m_string.containsIgnoringASCIICase(string); }
+    bool contains(StringView) const;
+    bool containsIgnoringASCIICase(StringView) const;
 
     size_t find(UChar character, unsigned start = 0) const { return m_string.find(character, start); }
     size_t find(const LChar* string, unsigned start = 0) const { return m_string.find(string, start); }
-    size_t find(const String& string, unsigned start = 0) const { return m_string.find(string, start); }
-    size_t findIgnoringASCIICase(const String& string) const { return m_string.findIgnoringASCIICase(string); }
-    size_t findIgnoringASCIICase(const String& string, unsigned startOffset) const { return m_string.findIgnoringASCIICase(string, startOffset); }
+    size_t find(StringView, unsigned start = 0) const;
+    size_t findIgnoringASCIICase(StringView) const;
+    size_t findIgnoringASCIICase(StringView, unsigned start) const;
     size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_string.find(matchFunction, start); }
 
     bool startsWith(const String& string) const { return m_string.startsWith(string); }

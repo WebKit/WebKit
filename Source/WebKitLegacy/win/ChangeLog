@@ -1,3 +1,13 @@
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
+        String's find() / reverseFind() / replace() should take in a StringView instead of a String
+        https://bugs.webkit.org/show_bug.cgi?id=238287
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle):
+
 2022-03-04  Chris Dumez  <cdumez@apple.com>
 
         Home link on weather.gov is not working

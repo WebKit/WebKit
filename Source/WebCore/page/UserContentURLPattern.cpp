@@ -63,15 +63,15 @@ bool UserContentURLPattern::matchesPatterns(const URL& url, const Vector<String>
 
 bool UserContentURLPattern::parse(const String& pattern)
 {
-    static NeverDestroyed<const String> schemeSeparator(MAKE_STATIC_STRING_IMPL("://"));
+    static constexpr ASCIILiteral schemeSeparator = "://"_s;
 
-    size_t schemeEndPos = pattern.find(schemeSeparator);
+    size_t schemeEndPos = pattern.find(StringView { schemeSeparator });
     if (schemeEndPos == notFound)
         return false;
 
     m_scheme = pattern.left(schemeEndPos);
 
-    unsigned hostStartPos = schemeEndPos + schemeSeparator.get().length();
+    unsigned hostStartPos = schemeEndPos + schemeSeparator.length();
     if (hostStartPos >= pattern.length())
         return false;
 

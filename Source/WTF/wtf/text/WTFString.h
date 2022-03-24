@@ -159,18 +159,17 @@ public:
     // Find a single character or string, also with match function & latin1 forms.
     size_t find(UChar character, unsigned start = 0) const { return m_impl ? m_impl->find(character, start) : notFound; }
 
-    size_t find(const String& string) const { return m_impl ? m_impl->find(string.impl()) : notFound; }
-    size_t find(const String& string, unsigned start) const { return m_impl ? m_impl->find(string.impl(), start) : notFound; }
-    size_t findIgnoringASCIICase(const String& string) const { return m_impl ? m_impl->findIgnoringASCIICase(string.impl()) : notFound; }
-    size_t findIgnoringASCIICase(const String& string, unsigned startOffset) const { return m_impl ? m_impl->findIgnoringASCIICase(string.impl(), startOffset) : notFound; }
+    size_t find(StringView) const;
+    size_t find(StringView, unsigned start) const;
+    size_t findIgnoringASCIICase(StringView) const;
+    size_t findIgnoringASCIICase(StringView, unsigned start) const;
 
     size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
     size_t find(const LChar* string, unsigned start = 0) const { return m_impl ? m_impl->find(string, start) : notFound; }
-    size_t find(const char* string, unsigned start = 0) const { return m_impl ? m_impl->find(string, start) : notFound; }
 
     // Find the last instance of a single character or string.
     size_t reverseFind(UChar character, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(character, start) : notFound; }
-    size_t reverseFind(const String& string, unsigned start = MaxLength) const { return m_impl ? m_impl->reverseFind(string.impl(), start) : notFound; }
+    size_t reverseFind(StringView, unsigned start = MaxLength) const;
 
     WTF_EXPORT_PRIVATE Vector<UChar> charactersWithNullTermination() const;
     WTF_EXPORT_PRIVATE Vector<UChar> charactersWithoutNullTermination() const;
@@ -179,15 +178,15 @@ public:
 
     bool contains(UChar character) const { return find(character) != notFound; }
     bool contains(const LChar* string) const { return find(string) != notFound; }
-    bool contains(const String& string) const { return find(string) != notFound; }
-    bool containsIgnoringASCIICase(const String& string) const { return findIgnoringASCIICase(string) != notFound; }
-    bool containsIgnoringASCIICase(const String& string, unsigned startOffset) const { return findIgnoringASCIICase(string, startOffset) != notFound; }
+    bool contains(StringView) const;
+    bool containsIgnoringASCIICase(StringView) const;
+    bool containsIgnoringASCIICase(StringView, unsigned start) const;
 
     bool startsWith(const String& string) const { return m_impl ? m_impl->startsWith(string.impl()) : string.isEmpty(); }
     bool startsWithIgnoringASCIICase(const String& string) const { return m_impl ? m_impl->startsWithIgnoringASCIICase(string.impl()) : string.isEmpty(); }
     bool startsWith(UChar character) const { return m_impl && m_impl->startsWith(character); }
     template<unsigned matchLength> bool startsWith(const char (&prefix)[matchLength]) const { return m_impl ? m_impl->startsWith<matchLength>(prefix) : !matchLength; }
-    bool hasInfixStartingAt(const String& prefix, unsigned startOffset) const { return m_impl && prefix.impl() && m_impl->hasInfixStartingAt(*prefix.impl(), startOffset); }
+    bool hasInfixStartingAt(const String& prefix, unsigned start) const { return m_impl && prefix.impl() && m_impl->hasInfixStartingAt(*prefix.impl(), start); }
 
     bool endsWith(const String& string) const { return m_impl ? m_impl->endsWith(string.impl()) : string.isEmpty(); }
     bool endsWithIgnoringASCIICase(const String& string) const { return m_impl ? m_impl->endsWithIgnoringASCIICase(string.impl()) : string.isEmpty(); }
@@ -206,7 +205,7 @@ public:
 
     String& replace(UChar target, UChar replacement);
     String& replace(UChar target, const String& replacement);
-    String& replace(const String& target, const String& replacement);
+    String& replace(StringView target, StringView replacement);
     String& replace(unsigned start, unsigned length, const String& replacement);
     template<unsigned characterCount> String& replaceWithLiteral(UChar target, const char (&replacement)[characterCount]);
 
@@ -504,20 +503,6 @@ inline String& String::replace(UChar target, const String& replacement)
 {
     if (m_impl)
         m_impl = m_impl->replace(target, replacement.impl());
-    return *this;
-}
-
-inline String& String::replace(const String& target, const String& replacement)
-{
-    if (m_impl)
-        m_impl = m_impl->replace(target.impl(), replacement.impl());
-    return *this;
-}
-
-inline String& String::replace(unsigned start, unsigned length, const String& replacement)
-{
-    if (m_impl)
-        m_impl = m_impl->replace(start, length, replacement.impl());
     return *this;
 }
 

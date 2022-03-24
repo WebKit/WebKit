@@ -1,3 +1,19 @@
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
+        String's find() / reverseFind() / replace() should take in a StringView instead of a String
+        https://bugs.webkit.org/show_bug.cgi?id=238287
+
+        Reviewed by Darin Adler.
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::decodeDatabaseName):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::setValueCommon):
+        * page/UserContentURLPattern.cpp:
+        (WebCore::UserContentURLPattern::parse):
+        * platform/mediastream/CaptureDevice.h:
+        (WebCore::CaptureDevice::label const):
+
 2022-03-24  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Do not construct a TextRun for measuring a single whitespace when simplified content measuring can be used

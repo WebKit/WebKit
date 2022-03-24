@@ -1,3 +1,39 @@
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
+        String's find() / reverseFind() / replace() should take in a StringView instead of a String
+        https://bugs.webkit.org/show_bug.cgi?id=238287
+
+        Reviewed by Darin Adler.
+
+        String's find() / reverseFind() / replace() should take in a StringView instead of a String
+        to avoid unnecessary String construction in many cases. We should probably do the same for
+        more String functions where we don't really need a String parameter, but those will be
+        addressed separately.
+
+        * wtf/text/AtomString.h:
+        * wtf/text/StringCommon.h:
+        (WTF::findCommon): Deleted.
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::find):
+        (WTF::StringImpl::findIgnoringASCIICase const):
+        (WTF::StringImpl::reverseFind):
+        (WTF::StringImpl::replace):
+        * wtf/text/StringImpl.h:
+        * wtf/text/StringView.h:
+        (WTF::findCommon):
+        (WTF::findIgnoringASCIICase):
+        (WTF::String::find const):
+        (WTF::String::findIgnoringASCIICase const):
+        (WTF::String::reverseFind const):
+        (WTF::String::contains const):
+        (WTF::String::containsIgnoringASCIICase const):
+        (WTF::String::replace):
+        (WTF::AtomString::find const):
+        (WTF::AtomString::findIgnoringASCIICase const):
+        (WTF::AtomString::contains const):
+        (WTF::AtomString::containsIgnoringASCIICase const):
+        * wtf/text/WTFString.h:
+
 2022-03-23  Chris Dumez  <cdumez@apple.com>
 
         Inline String(ASCIILiteral) constructor so the compiler can optimize out strlen()

@@ -52,15 +52,15 @@ std::unique_ptr<CurlMultipartHandle> CurlMultipartHandle::createIfNeeded(CurlMul
 std::optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& response)
 {
     for (auto header : response.headers) {
-        auto splitPosistion = header.find(":");
-        if (splitPosistion == notFound)
+        auto splitPosition = header.find(':');
+        if (splitPosition == notFound)
             continue;
 
-        auto key = header.left(splitPosistion).stripWhiteSpace();
+        auto key = header.left(splitPosition).stripWhiteSpace();
         if (!equalIgnoringASCIICase(key, "Content-Type"))
             continue;
 
-        auto contentType = header.substring(splitPosistion + 1).stripWhiteSpace();
+        auto contentType = header.substring(splitPosition + 1).stripWhiteSpace();
         auto mimeType = extractMIMETypeFromMediaType(contentType);
         if (!equalIgnoringASCIICase(mimeType, "multipart/x-mixed-replace"))
             continue;

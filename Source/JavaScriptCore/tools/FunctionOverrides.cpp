@@ -130,7 +130,7 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     FunctionOverridesAssertScope assertScope;
     String origProviderStr = origCode.provider()->source().toString();
     unsigned origStart = origCode.startOffset();
-    unsigned origFunctionStart = origProviderStr.reverseFind("function"_s, origStart);
+    unsigned origFunctionStart = origProviderStr.reverseFind("function", origStart);
     unsigned origBraceStart = origProviderStr.find('{', origStart);
     unsigned headerLength = origBraceStart - origFunctionStart;
     String origHeader = origProviderStr.substring(origFunctionStart, headerLength);
@@ -147,8 +147,8 @@ static void initializeOverrideInfo(const SourceCode& origCode, const String& new
     info.lineCount = 1; // Faking it. This doesn't really matter for now.
     info.startColumn = 1;
     info.endColumn = 1; // Faking it. This doesn't really matter for now.
-    info.parametersStartOffset = newProviderStr.find("(");
-    info.typeProfilingStartOffset = newProviderStr.find("{");
+    info.parametersStartOffset = newProviderStr.find('(');
+    info.typeProfilingStartOffset = newProviderStr.find('{');
     info.typeProfilingEndOffset = newProviderStr.length() - 1;
 
     info.sourceCode =

@@ -105,7 +105,7 @@ LanguageManager::LanguageManager()
             i = codePageCharsets().set(cpInfo.uiCodePage, name).iterator;
         }
         if (i != codePageCharsets().end()) {
-            HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(String(i->value.data(), i->value.length()));
+            HashMap<String, CharsetInfo>::iterator j = knownCharsets().find(StringView { i->value.data(), i->value.length() });
             ASSERT(j != knownCharsets().end());
             CharsetInfo& info = j->value;
             info.m_name = i->value.data();

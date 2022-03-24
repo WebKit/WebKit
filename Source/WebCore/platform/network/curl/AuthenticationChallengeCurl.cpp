@@ -117,7 +117,7 @@ String AuthenticationChallenge::parseRealm(const ResourceResponse& response)
 
     String realm;
     auto authHeader = response.httpHeaderField(response.isUnauthorized() ? wwwAuthenticate : proxyAuthenticate);
-    auto realmPos = authHeader.findIgnoringASCIICase(realmString);
+    auto realmPos = authHeader.findIgnoringASCIICase(realmString.get());
     if (realmPos != notFound) {
         realm = authHeader.substring(realmPos + realmString.get().length());
         realm = realm.left(realm.find(','));
