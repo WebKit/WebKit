@@ -99,8 +99,7 @@ void BoxTree::buildTree()
             auto& textRenderer = downcast<RenderText>(childRenderer);
             auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);
             auto text = style.textSecurity() == TextSecurity::None ? textRenderer.text() : RenderBlock::updateSecurityDiscCharacters(style, textRenderer.text());
-            auto useSimplifiedTextMeasuring = textRenderer.canUseSimplifiedTextMeasuring() && (!firstLineStyle || firstLineStyle->fontCascade() == style.fontCascade());
-            return makeUnique<Layout::InlineTextBox>(text, useSimplifiedTextMeasuring, textRenderer.canUseSimpleFontCodePath(), WTFMove(style), WTFMove(firstLineStyle));
+            return makeUnique<Layout::InlineTextBox>(text, textRenderer.canUseSimplifiedTextMeasuring(), textRenderer.canUseSimpleFontCodePath(), WTFMove(style), WTFMove(firstLineStyle));
         }
 
         auto style = RenderStyle::clone(childRenderer.style());

@@ -1446,6 +1446,9 @@ bool RenderText::computeCanUseSimplifiedTextMeasuring() const
     if (fontCascade.codePath(run) != FontCascade::CodePath::Simple)
         return false;
 
+    if (&style != &firstLineStyle() && fontCascade != firstLineStyle().fontCascade())
+        return false;
+
     auto& primaryFont = fontCascade.primaryFont();
     if (primaryFont.syntheticBoldOffset())
         return false;

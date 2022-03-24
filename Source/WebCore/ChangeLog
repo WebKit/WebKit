@@ -1,5 +1,19 @@
 2022-03-24  Alan Bujtas  <zalan@apple.com>
 
+        [IFC][Integration] RenderText::computeCanUseSimplifiedTextMeasuring should take first-line style into account
+        https://bugs.webkit.org/show_bug.cgi?id=238243
+
+        Reviewed by Antti Koivisto.
+
+        This is in preparation for using the fast text measuring codepath for legacy line layout content.
+
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::BoxTree::buildTree):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::computeCanUseSimplifiedTextMeasuring const):
+
+2022-03-24  Alan Bujtas  <zalan@apple.com>
+
         Devirtualize RenderText::width
         https://bugs.webkit.org/show_bug.cgi?id=238285
 
