@@ -117,7 +117,7 @@ public:
     struct TrackBuffer {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
         MediaTime lastDecodeTimestamp;
-        MediaTime greatestDecodeDuration;
+        MediaTime greatestFrameDuration;
         MediaTime lastFrameDuration;
         MediaTime highestPresentationTimestamp;
         MediaTime highestEnqueuedPresentationTime;
