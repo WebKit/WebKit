@@ -47,12 +47,6 @@ TEST(WTF, StringCreationFromLiteral)
     EXPECT_EQ("String Literal", stringFromLiteral);
     EXPECT_TRUE(stringFromLiteral.is8Bit());
     EXPECT_EQ(String("String Literal"), stringFromLiteral);
-
-    String stringWithTemplate("Template Literal", String::ConstructFromLiteral);
-    EXPECT_EQ(strlen("Template Literal"), stringWithTemplate.length());
-    EXPECT_EQ("Template Literal", stringWithTemplate);
-    EXPECT_TRUE(stringWithTemplate.is8Bit());
-    EXPECT_EQ(String("Template Literal"), stringWithTemplate);
 }
 
 TEST(WTF, StringASCII)

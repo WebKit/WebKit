@@ -840,7 +840,7 @@ TEST_F(FileSystemTest, readEntireFile)
 TEST_F(FileSystemTest, makeSafeToUseMemoryMapForPath)
 {
     EXPECT_TRUE(FileSystem::makeSafeToUseMemoryMapForPath(tempFilePath()));
-    auto result = FileSystem::makeSafeToUseMemoryMapForPath(String("Thisisnotarealfile", String::ConstructFromLiteral));
+    auto result = FileSystem::makeSafeToUseMemoryMapForPath("Thisisnotarealfile"_str);
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     // NSFileProtectionKey only actually means anything on-device.
     EXPECT_FALSE(result);

@@ -99,11 +99,6 @@ public:
     // Construct a string from a constant string literal.
     WTF_EXPORT_PRIVATE String(ASCIILiteral);
 
-    // Construct a string from a constant string literal.
-    // This is the "big" version: puts the length in the function call and generates bigger code.
-    enum ConstructFromLiteralTag { ConstructFromLiteral };
-    template<unsigned characterCount> String(const char (&characters)[characterCount], ConstructFromLiteralTag) : m_impl(StringImpl::createFromLiteral<characterCount>(characters)) { }
-
     String(const String&) = default;
     String(String&&) = default;
     String& operator=(const String&) = default;
@@ -468,6 +463,11 @@ inline String::String(StaticStringImpl& string)
 
 inline String::String(StaticStringImpl* string)
     : m_impl(reinterpret_cast<StringImpl*>(string))
+{
+}
+
+inline String::String(ASCIILiteral characters)
+    : m_impl(characters.isNull() ? nullptr : RefPtr<StringImpl> { StringImpl::createFromLiteral(characters) })
 {
 }
 

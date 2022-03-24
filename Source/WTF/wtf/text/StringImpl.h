@@ -245,12 +245,10 @@ public:
 
     static Ref<StringImpl> createSubstringSharingImpl(StringImpl&, unsigned offset, unsigned length);
 
-    template<unsigned characterCount> static Ref<StringImpl> createFromLiteral(const char (&)[characterCount]);
-
     // FIXME: Replace calls to these overloads of createFromLiteral to createWithoutCopying instead.
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(const char*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(const char*);
-    WTF_EXPORT_PRIVATE static Ref<StringImpl> createFromLiteral(ASCIILiteral);
+    static Ref<StringImpl> createFromLiteral(ASCIILiteral);
 
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopying(const UChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopying(const LChar*, unsigned length);
@@ -982,12 +980,9 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::createSubstringSharingImpl(StringImpl&
     return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data16 + offset, length, *ownerRep));
 }
 
-template<unsigned characterCount> ALWAYS_INLINE Ref<StringImpl> StringImpl::createFromLiteral(const char (&characters)[characterCount])
+inline Ref<StringImpl> StringImpl::createFromLiteral(ASCIILiteral literal)
 {
-    COMPILE_ASSERT(characterCount > 1, StringImplFromLiteralNotEmpty);
-    COMPILE_ASSERT((characterCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), StringImplFromLiteralCannotOverflow);
-
-    return createWithoutCopying(reinterpret_cast<const LChar*>(characters), characterCount - 1);
+    return createFromLiteral(literal.characters(), literal.length());
 }
 
 template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tryCreateUninitialized(unsigned length, CharacterType*& output)

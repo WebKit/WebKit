@@ -1,3 +1,20 @@
+2022-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Inline String(ASCIILiteral) constructor so the compiler can optimize out strlen()
+        https://bugs.webkit.org/show_bug.cgi?id=238162
+
+        Reviewed by Geoffrey Garen.
+
+        I have verified using a profiler that strlen() is no longer called under String::String(WTF::ASCIILiteral)
+        or StringImpl::createFromLiteral(WTF::ASCIILiteral) when running Speedometer.
+
+        * wtf/text/StringImpl.cpp:
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::createFromLiteral):
+        * wtf/text/WTFString.cpp:
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+
 2022-03-23  Alex Christensen  <achristensen@webkit.org>
 
         Add off-by-default experimental feature for app store attribution

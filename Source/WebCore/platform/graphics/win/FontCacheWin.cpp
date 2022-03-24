@@ -378,11 +378,11 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
         // Sorted by most to least glyphs according to http://en.wikipedia.org/wiki/Unicode_typefaces
         // Start with Times New Roman also since it is the default if the user doesn't change prefs.
         static NeverDestroyed<const String> fallbackFonts[] = {
-            String("Times New Roman", String::ConstructFromLiteral),
-            String("Microsoft Sans Serif", String::ConstructFromLiteral),
-            String("Tahoma", String::ConstructFromLiteral),
-            String("Lucida Sans Unicode", String::ConstructFromLiteral),
-            String("Arial", String::ConstructFromLiteral)
+            "Times New Roman"_str,
+            "Microsoft Sans Serif"_str,
+            "Tahoma"_str,
+            "Lucida Sans Unicode"_str,
+            "Arial"_str
         };
         for (size_t i = 0; i < WTF_ARRAY_LENGTH(fallbackFonts); ++i) {
             if (fontForFamily(fontDescription, fallbackFonts[i])) {

@@ -79,11 +79,6 @@ String::String(const char* nullTerminatedString)
         m_impl = StringImpl::create(reinterpret_cast<const LChar*>(nullTerminatedString));
 }
 
-String::String(ASCIILiteral characters)
-    : m_impl(characters.isNull() ? nullptr : RefPtr<StringImpl> { StringImpl::createFromLiteral(characters) })
-{
-}
-
 void String::append(const String& otherString)
 {
     // FIXME: This is extremely inefficient. So much so that we might want to take this out of String's API.

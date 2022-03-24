@@ -335,13 +335,13 @@ TEST(WTF, StringViewEqualBasic)
 
 TEST(WTF, StringViewEqualIgnoringASCIICaseBasic)
 {
-    RefPtr<StringImpl> a = StringImpl::createFromLiteral("aBcDeFG");
-    RefPtr<StringImpl> b = StringImpl::createFromLiteral("ABCDEFG");
-    RefPtr<StringImpl> c = StringImpl::createFromLiteral("abcdefg");
+    RefPtr<StringImpl> a = StringImpl::createFromLiteral("aBcDeFG"_s);
+    RefPtr<StringImpl> b = StringImpl::createFromLiteral("ABCDEFG"_s);
+    RefPtr<StringImpl> c = StringImpl::createFromLiteral("abcdefg"_s);
     const char d[] = "aBcDeFG";
     RefPtr<StringImpl> empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
-    RefPtr<StringImpl> shorter = StringImpl::createFromLiteral("abcdef");
-    RefPtr<StringImpl> different = StringImpl::createFromLiteral("abcrefg");
+    RefPtr<StringImpl> shorter = StringImpl::createFromLiteral("abcdef"_s);
+    RefPtr<StringImpl> different = StringImpl::createFromLiteral("abcrefg"_s);
 
     StringView stringViewA(*a.get());
     StringView stringViewB(*b.get());
