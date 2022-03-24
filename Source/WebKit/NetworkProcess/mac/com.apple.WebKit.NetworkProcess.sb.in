@@ -306,11 +306,11 @@
 (allow mach-lookup (global-name "com.apple.webkit.webpushd.service"))
 (allow mach-lookup (global-name "org.webkit.webpushtestdaemon.service"))
 
+(deny mach-lookup (with no-log)
+    (global-name "com.apple.DiskArbitration.diskarbitrationd"))
 (with-filter (uid 0)
     (allow mach-lookup 
-        (global-name "com.apple.DiskArbitration.diskarbitrationd")
-    )
-)
+        (global-name "com.apple.DiskArbitration.diskarbitrationd")))
 
 (deny mach-lookup 
    (global-name "com.apple.ctkd.token-client")
@@ -449,6 +449,11 @@
 ;; Needed for TCC.
 (allow mach-lookup
     (global-name "com.apple.tccd"))
+
+(deny mach-lookup (with no-log)
+    (global-name "com.apple.tccd.system")
+    (global-name "com.apple.CoreServices.coreservicesd")
+    (global-name-prefix "com.apple.distributed_notifications"))
 
 ;; <rdar://89031731>
 (allow mach-lookup
@@ -604,6 +609,7 @@
             MSC__kernelrpc_mach_port_extract_member_trap
             MSC__kernelrpc_mach_port_guard_trap
             MSC__kernelrpc_mach_port_insert_member_trap
+            MSC__kernelrpc_mach_port_insert_right_trap
             MSC__kernelrpc_mach_port_mod_refs_trap
             MSC__kernelrpc_mach_port_request_notification_trap
             MSC__kernelrpc_mach_port_type_trap

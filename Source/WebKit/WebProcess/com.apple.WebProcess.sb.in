@@ -961,8 +961,10 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
 (allow mach-lookup
-    (xpc-service-name "com.apple.audio.SandboxHelper")
-)
+    (xpc-service-name "com.apple.audio.SandboxHelper"))
+#else
+(deny mach-lookup (with no-log)
+    (xpc-service-name "com.apple.audio.SandboxHelper"))
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 110000
@@ -1390,8 +1392,10 @@
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
 (allow mach-lookup
-    (global-name "com.apple.tccd.system")
-)
+    (global-name "com.apple.tccd.system"))
+#else
+(deny mach-lookup (with no-log)
+    (global-name "com.apple.tccd.system"))
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 110000
@@ -1510,13 +1514,11 @@
 #endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-(deny mach-lookup
-    (global-name-prefix "com.apple.distributed_notifications")
-)
+(deny mach-lookup (with no-log)
+    (global-name-prefix "com.apple.distributed_notifications"))
 #else
 (allow mach-lookup
-    (global-name-prefix "com.apple.distributed_notifications")
-)
+    (global-name-prefix "com.apple.distributed_notifications"))
 #endif
 
 (allow file-read-data
@@ -1788,6 +1790,9 @@
     (require-all
         (require-not (extension "com.apple.webkit.extension.mach"))
         (global-name "com.apple.audio.AudioComponentRegistrar")))
+#else
+(deny mach-lookup (with no-log)
+    (global-name "com.apple.audio.AudioComponentRegistrar"))
 #endif
 
 ;; Caches for LaunchServices data needs to be able to mark the directory as 'hot'.

@@ -1,3 +1,16 @@
+2022-03-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [macOS] Remove reports for some sandbox violations on process launch
+        https://bugs.webkit.org/show_bug.cgi?id=238324
+
+        Reviewed by Geoffrey Garen.
+
+        Remove reports for some sandbox violations on process launch on macOS. These violations are not critical,
+        and are slowing down process launch. This patch also adds access to a mach syscall observed being in use.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2022-03-24  Chris Dumez  <cdumez@apple.com>
 
         String's find() / reverseFind() / replace() should take in a StringView instead of a String
