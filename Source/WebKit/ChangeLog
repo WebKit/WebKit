@@ -1,3 +1,19 @@
+2022-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Disable RTCRtpScriptTransform in CaptivePortal mode
+        https://bugs.webkit.org/show_bug.cgi?id=238340
+        <rdar://87821636>
+
+        Reviewed by Chris Dumez.
+
+        When displaying content in a captive portal, we should make sure we disable
+        WebRTCEncodedTransform.
+
+        Tests: TestWebKitAPI
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::adjustSettingsForCaptivePortal): Disable WebRTCEncodedTransform.
+
 2022-03-24  Antoine Quint  <graouts@webkit.org>
 
         DOM GPUP: paintSystemPreviewBadge (AR QuickLook element badge)

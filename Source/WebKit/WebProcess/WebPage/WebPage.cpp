@@ -4002,6 +4002,7 @@ static void adjustSettingsForCaptivePortal(Settings& settings, const WebPreferen
     settings.setDownloadableBinaryFontsEnabled(false);
 #if ENABLE(WEB_RTC)
     settings.setPeerConnectionEnabled(false);
+    settings.setWebRTCEncodedTransformEnabled(false);
 #endif
 #if ENABLE(MATHML)
     settings.setMathMLEnabled(false);

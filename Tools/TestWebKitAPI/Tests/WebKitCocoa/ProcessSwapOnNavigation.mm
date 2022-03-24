@@ -7829,6 +7829,7 @@ static void checkSettingsControlledByCaptivePortalMode(WKWebView *webView, Shoul
     EXPECT_EQ(runJSCheck("!!window.WebXRSystem"_s), false); // WebXR (currently always disabled).
     EXPECT_EQ(runJSCheck("!!window.AudioContext"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebAudio.
     EXPECT_EQ(runJSCheck("!!window.RTCPeerConnection"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Peer Connection.
+    EXPECT_EQ(runJSCheck("!!window.RTCRtpScriptTransform"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // WebRTC Script Transform
     EXPECT_EQ(runJSCheck("!!navigator.mediaDevices"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // GetUserMedia (Media Capture).
     EXPECT_EQ(runJSCheck("!!navigator.getUserMedia"_s), false); // Legacy GetUserMedia (currently always disabled).
     EXPECT_EQ(runJSCheck("!!window.MathMLElement"_s), shouldBeEnabled == ShouldBeEnabled::Yes); // MathML.
@@ -7860,8 +7861,9 @@ void configureCaptivePortalWKWebViewConfiguration(WKWebViewConfiguration *config
     [config.preferences _setNotificationsEnabled:YES];
 
     for (_WKExperimentalFeature *feature in [WKPreferences _experimentalFeatures]) {
-        if ([feature.key isEqualToString:@"PushAPIEnabled"]
-            || [feature.key isEqualToString:@"ModelElementEnabled"]) {
+        if ([feature.key isEqualToString:@"ModelElementEnabled"]
+            || [feature.key isEqualToString:@"PushAPIEnabled"]
+            || [feature.key isEqualToString:@"WebRTCEncodedTransformEnabled"]) {
             [config.preferences _setEnabled:YES forFeature:feature];
         }
     }
