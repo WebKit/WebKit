@@ -1526,6 +1526,9 @@ void InspectorStyleSheet::collectFlatRules(RefPtr<CSSRuleList>&& ruleList, CSSSt
 
     for (unsigned i = 0, size = ruleList->length(); i < size; ++i) {
         CSSRule* rule = ruleList->item(i);
+        if (!rule)
+            continue;
+        
         CSSStyleRule* styleRule = InspectorCSSAgent::asCSSStyleRule(*rule);
         if (styleRule)
             result->append(styleRule);

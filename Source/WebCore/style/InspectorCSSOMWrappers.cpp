@@ -59,6 +59,9 @@ void InspectorCSSOMWrappers::collect(ListType* listType)
     unsigned size = listType->length();
     for (unsigned i = 0; i < size; ++i) {
         CSSRule* cssRule = listType->item(i);
+        if (!cssRule)
+            continue;
+        
         switch (cssRule->styleRuleType()) {
         case StyleRuleType::Import:
             collect(downcast<CSSImportRule>(*cssRule).styleSheet());

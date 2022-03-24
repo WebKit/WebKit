@@ -1,3 +1,23 @@
+2022-03-24  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Blank inspector in a page with container queries
+        https://bugs.webkit.org/show_bug.cgi?id=238338
+
+        Reviewed by Devin Rousso.
+
+        Because there is no CSSOM implementation for container queries, we are unable to inspect them currently.
+        However, we should be resilient to the absence of that implementation and expect that not all rules have a
+        matching CSSOM implementation, instead of just crashing when it happens. This patch only resolves crashes as the
+        result of the presence of container queries, and followup work will be done to actually plumb the correct
+        information to Web Inspector to show these rules.
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::collectFlatRules):
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::collectStyleSheets):
+        * style/InspectorCSSOMWrappers.cpp:
+        (WebCore::Style::InspectorCSSOMWrappers::collect):
+
 2022-03-24  Antoine Quint  <graouts@webkit.org>
 
         DOM GPUP: paintSystemPreviewBadge (AR QuickLook element badge)

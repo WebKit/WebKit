@@ -648,9 +648,8 @@ void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, Vector<CSS
     result.append(styleSheet);
 
     for (unsigned i = 0, size = styleSheet->length(); i < size; ++i) {
-        CSSRule* rule = styleSheet->item(i);
-        if (is<CSSImportRule>(*rule)) {
-            if (CSSStyleSheet* importedStyleSheet = downcast<CSSImportRule>(*rule).styleSheet())
+        if (auto* rule = dynamicDowncast<CSSImportRule>(styleSheet->item(i))) {
+            if (CSSStyleSheet* importedStyleSheet = rule->styleSheet())
                 collectStyleSheets(importedStyleSheet, result);
         }
     }
