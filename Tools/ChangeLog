@@ -1,3 +1,40 @@
+2022-03-24  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Install git-lfs
+        https://bugs.webkit.org/show_bug.cgi?id=238270
+        <rdar://problem/90708032>
+
+        Reviewed by Aakash Jain and Wenson Hsieh.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/mocks/requests_.py:
+        (Response.__init__): Accept binary content or text.
+        (Response.text): Decode binary content.
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/local/git.py:
+        (Git): Add git lfs mocks.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/mocks/remote/git_hub.py:
+        (GitHub.__init__): Mock project release binaries.
+        (GitHub.request): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py: Add InstallGitLFS.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/install_git_lfs.py: Added.
+        (InstallGitLFS):
+        (InstallGitLFS.url): Return URL specific to the current platform.
+        (InstallGitLFS.install): Install `git lfs` globally on this machine.
+        (InstallGitLFS.parser): Install `git lfs` even if it is already installed.
+        (InstallGitLFS.main): Check `git lfs` version, install it if needed, and then run `git lfs install`.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/install_git_lfs_unittest.py: Added.
+        (TestInstallGitLFS):
+        (TestInstallGitLFS.setUp):
+        (TestInstallGitLFS.test_svn):
+        (TestInstallGitLFS.test_remote_git):
+        (TestInstallGitLFS.test_url):
+        (TestInstallGitLFS.test_install):
+        (TestInstallGitLFS.test_configure):
+        (TestInstallGitLFS.test_no_op):
+
 2022-03-24  Ben Nham  <nham@apple.com>
 
         PushAPI.firePushEventWithNoPagesTimeout fails in debug builds

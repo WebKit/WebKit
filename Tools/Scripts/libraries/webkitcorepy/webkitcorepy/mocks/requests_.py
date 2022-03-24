@@ -46,21 +46,32 @@ class Response(object):
     def create404(url=None, headers=None):
         return Response(status_code=404, url=url, headers=headers)
 
-    def __init__(self, status_code=None, text=None, url=None, headers=None):
+    def __init__(self, status_code=None, text=None, content=None, url=None, headers=None):
         if status_code is not None:
             self.status_code = status_code
         elif text is not None:
             self.status_code = 200
         else:
             self.status_code = 204  # No content
-        self.text = text
+
+        if text and content:
+            raise ValueError("Cannot define both 'text' and 'content'")
+        elif text:
+            self.content = string_utils.encode(text)
+        else:
+            self.content = content or b''
+
         self.url = url
         self.headers = headers or {}
 
         if 'Content-Type' not in self.headers:
             self.headers['Content-Type'] = 'text'
         if 'Content-Length' not in self.headers:
-            self.headers['Content-Length'] = len(self.text) if self.text else 0
+            self.headers['Content-Length'] = len(self.content) if self.content else 0
+
+    @property
+    def text(self):
+        return string_utils.decode(self.content)
 
     def json(self):
         return json.loads(self.text)

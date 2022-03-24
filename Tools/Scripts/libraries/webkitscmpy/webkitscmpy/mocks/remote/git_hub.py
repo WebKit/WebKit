@@ -35,6 +35,7 @@ class GitHub(bmocks.GitHub):
     def __init__(
         self, remote='github.example.com/WebKit/WebKit', datafile=None,
         default_branch='main', git_svn=False, environment=None,
+        releases=None,
     ):
         if not scmremote.GitHub.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid GitHub remote'.format(remote))
@@ -56,6 +57,7 @@ class GitHub(bmocks.GitHub):
         self.head = self.commits[self.default_branch][-1]
         self.tags = {}
         self.pull_requests = []
+        self.releases = releases or dict()
 
     def commit(self, ref):
         if ref in self.commits:
@@ -411,5 +413,10 @@ class GitHub(bmocks.GitHub):
                 description=self.pull_requests[existing]['body'],
             ))
             return mocks.Response.fromJson(self.pull_requests[existing], url=url)
+
+        # Releases
+        download_base = '{}/releases/download/'.format(self.remote)
+        if method == 'GET' and stripped_url.startswith(download_base):
+            return self.releases.get(stripped_url[len(download_base):], mocks.Response.create404(url))
 
         return super(GitHub, self).request(method, url, data=data, params=params, auth=auth, json=json, **kwargs)

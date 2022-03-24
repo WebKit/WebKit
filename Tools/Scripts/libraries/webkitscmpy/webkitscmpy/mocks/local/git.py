@@ -79,6 +79,8 @@ class Git(mocks.Subprocess):
         self.staged = {}
         self.modified = {}
 
+        self.has_git_lfs = False
+
         # If the directory provided actually exists, populate it
         if self.path != '/' and os.path.isdir(self.path):
             if not os.path.isdir(os.path.join(self.path, '.git')):
@@ -536,6 +538,22 @@ nothing to commit, working tree clean
                     returncode=128,
                     stderr='fatal: not a git repository (or any parent up to mount point)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).\n',
                 ),
+            ), mocks.Subprocess.Route(
+                'sudo', 'sh', re.compile(r'.+/install.sh'),
+                generator=lambda *args, **kwargs: self._install_git_lfs(),
+            ), mocks.Subprocess.Route(
+                self.executable, 'lfs', '--version',
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(
+                        returncode=0,
+                        stdout='git-lfs/3.1.2 (???)\n',
+                    ) if self.has_git_lfs else mocks.ProcessCompletion(
+                        returncode=1,
+                        stderr='usage: git [--version] [--help]...\n',
+                    ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'lfs', 'install',
+                generator=lambda *args, **kwargs: self._configure_git_lfs(),
             ), *git_svn_routes
         )
 
@@ -924,7 +942,25 @@ nothing to commit, working tree clean
             stdout='Committed r{}\n\tM\tFiles/Changed.txt\n'.format(self.commits[branch][-1].revision),
         )
 
-
     def reset(self, index):
         self.head = self.commits[self.head.branch][-(index + 1)]
         return mocks.ProcessCompletion(returncode=0)
+
+    def _install_git_lfs(self):
+        self.has_git_lfs = True
+        return mocks.ProcessCompletion(
+            returncode=0,
+            stdout='Git LFS initialized.\n',
+        )
+
+    def _configure_git_lfs(self):
+        if not self.has_git_lfs:
+            return mocks.ProcessCompletion(
+                returncode=1,
+                stderr='usage: git [--version] [--help]...\n',
+            )
+        self.edit_config('lfs.repositoryformatversion', '0')
+        return mocks.ProcessCompletion(
+            returncode=0,
+            stdout='Updated Git hooks.\nGit LFS initialized.\n',
+        )
