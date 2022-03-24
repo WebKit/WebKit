@@ -1,3 +1,19 @@
+2022-03-24  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (Safari 15.4): Nonce from link isn't used when loading style sheet
+        https://bugs.webkit.org/show_bug.cgi?id=238014
+        <rdar://problem/90599352>
+
+        Reviewed by Brent Fulgham.
+
+        In https://bugs.webkit.org/show_bug.cgi?id=179728 we implemented
+        nonce hiding from the DOM. It seems we missed once location
+        where we need to reference the element.nonce() instead of the
+        nonce attribute.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+
 2022-03-24  Jean-Yves Avenard  <jya@apple.com>
 
         Safari can't play video completely at bilibili.com
