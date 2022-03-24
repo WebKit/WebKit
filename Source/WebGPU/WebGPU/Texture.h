@@ -40,9 +40,9 @@ class TextureView;
 class Texture : public WGPUTextureImpl, public RefCounted<Texture> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<Texture> create(id<MTLTexture> texture)
+    static Ref<Texture> create(id<MTLTexture> texture, const WGPUTextureDescriptor& descriptor)
     {
-        return adoptRef(*new Texture(texture));
+        return adoptRef(*new Texture(texture, descriptor));
     }
 
     ~Texture();
@@ -52,11 +52,14 @@ public:
     void setLabel(String&&);
 
     id<MTLTexture> texture() const { return m_texture; }
+    const WGPUTextureDescriptor& descriptor() const { return m_descriptor; }
 
 private:
-    Texture(id<MTLTexture>);
+    Texture(id<MTLTexture>, const WGPUTextureDescriptor&);
 
     const id<MTLTexture> m_texture { nil };
+
+    const WGPUTextureDescriptor m_descriptor { }; // "The GPUTextureDescriptor describing this texture."
 };
 
 } // namespace WebGPU

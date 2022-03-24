@@ -1,5 +1,17 @@
 2022-03-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement Device::createTexture() according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=238251
+
+        Reviewed by Darin Adler.
+
+        Document the behavior of fastLog2().
+
+        * TestWebKitAPI/Tests/WTF/MathExtras.cpp:
+        (TestWebKitAPI::TEST):
+
+2022-03-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [Cocoa] Make IPCTestingAPI.CGColorInNSSecureCoding more robust
         https://bugs.webkit.org/show_bug.cgi?id=238300
         <rdar://problem/90124325>

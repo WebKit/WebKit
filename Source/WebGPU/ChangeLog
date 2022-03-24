@@ -1,5 +1,38 @@
 2022-03-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Implement Device::createTexture() according to the spec
+        https://bugs.webkit.org/show_bug.cgi?id=238251
+
+        Reviewed by Darin Adler.
+
+        Simply type in the spec into the computer, in C++ form.
+        All functionality has links to the spec to describe its origins.
+
+        Test: api/validation/createTexture.spec.ts
+
+        * WebGPU/Device.h:
+        * WebGPU/Texture.h:
+        (WebGPU::Texture::create):
+        (WebGPU::Texture::descriptor const):
+        * WebGPU/Texture.mm:
+        (WebGPU::featureRequirementForFormat):
+        (WebGPU::isCompressedFormat):
+        (WebGPU::isDepthOrStencilFormat):
+        (WebGPU::texelBlockWidth):
+        (WebGPU::texelBlockHeight):
+        (WebGPU::isRenderableFormat):
+        (WebGPU::supportsMultisampling):
+        (WebGPU::maximumMiplevelCount):
+        (WebGPU::hasStorageBindingCapability):
+        (WebGPU::Device::validateCreateTexture):
+        (WebGPU::usage):
+        (WebGPU::pixelFormat):
+        (WebGPU::storageMode):
+        (WebGPU::Device::createTexture):
+        (WebGPU::Texture::Texture):
+
+2022-03-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Clean up implementation of Device::createSampler()
         https://bugs.webkit.org/show_bug.cgi?id=238250
 

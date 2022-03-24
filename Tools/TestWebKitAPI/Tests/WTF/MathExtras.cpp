@@ -618,4 +618,26 @@ TEST(WTF, getMSBSetConstexpr)
     EXPECT_EQ(WTF::getMSBSetConstexpr<uint64_t>(42), 5U);
 }
 
+TEST(WTF, fastLog2)
+{
+    EXPECT_EQ(WTF::fastLog2(0u), 0u);
+    EXPECT_EQ(WTF::fastLog2(1u), 0u);
+    EXPECT_EQ(WTF::fastLog2(2u), 1u);
+    EXPECT_EQ(WTF::fastLog2(3u), 2u);
+    EXPECT_EQ(WTF::fastLog2(4u), 2u);
+    EXPECT_EQ(WTF::fastLog2(5u), 3u);
+    EXPECT_EQ(WTF::fastLog2(6u), 3u);
+    EXPECT_EQ(WTF::fastLog2(7u), 3u);
+    EXPECT_EQ(WTF::fastLog2(8u), 3u);
+    EXPECT_EQ(WTF::fastLog2(9u), 4u);
+    EXPECT_EQ(WTF::fastLog2((1u << 20u) - 2u), 20u);
+    EXPECT_EQ(WTF::fastLog2((1u << 20u) - 1u), 20u);
+    EXPECT_EQ(WTF::fastLog2((1u << 20u)), 20u);
+    EXPECT_EQ(WTF::fastLog2((1u << 20u) + 1u), 21u);
+    EXPECT_EQ(WTF::fastLog2((1u << 20u) + 2u), 21u);
+    EXPECT_EQ(WTF::fastLog2(std::numeric_limits<uint32_t>::max() - 2u), 32u);
+    EXPECT_EQ(WTF::fastLog2(std::numeric_limits<uint32_t>::max() - 1u), 32u);
+    EXPECT_EQ(WTF::fastLog2(std::numeric_limits<uint32_t>::max()), 32u);
+}
+
 } // namespace TestWebKitAPI
