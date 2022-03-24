@@ -107,6 +107,7 @@ static const int testFooterBannerHeight = 58;
     [_webView addObserver:self forKeyPath:@"title" options:0 context:keyValueObservingContext];
     [_webView addObserver:self forKeyPath:@"URL" options:0 context:keyValueObservingContext];
     [_webView addObserver:self forKeyPath:@"hasOnlySecureContent" options:0 context:keyValueObservingContext];
+    [_webView addObserver:self forKeyPath:@"_gpuProcessIdentifier" options:0 context:keyValueObservingContext];
 
     _webView.navigationDelegate = self;
     _webView.UIDelegate = self;
@@ -166,6 +167,7 @@ static const int testFooterBannerHeight = 58;
     [_webView removeObserver:self forKeyPath:@"title"];
     [_webView removeObserver:self forKeyPath:@"URL"];
     [_webView removeObserver:self forKeyPath:@"hasOnlySecureContent"];
+    [_webView removeObserver:self forKeyPath:@"_gpuProcessIdentifier"];
     
     [progressIndicator unbind:NSHiddenBinding];
     [progressIndicator unbind:NSValueBinding];
@@ -528,14 +530,18 @@ static BOOL areEssentiallyEqual(double a, double b)
 
 - (void)updateTitle:(NSString *)title
 {
-    if (!title) {
+    if (!title.length) {
         NSURL *url = _webView.URL;
         title = url.lastPathComponent ?: url._web_userVisibleString;
     }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
     self.window.title = title;
-    self.window.subtitle = [NSString stringWithFormat:@"[WK2 %d]%@%@", _webView._webProcessIdentifier, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
+    pid_t gpuProcessIdentifer = _webView._gpuProcessIdentifier;
+    if (gpuProcessIdentifer)
+        self.window.subtitle = [NSString stringWithFormat:@"[WK2 wp %d gpup %d]%@%@", _webView._webProcessIdentifier, gpuProcessIdentifer, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
+    else
+        self.window.subtitle = [NSString stringWithFormat:@"[WK2 %d]%@%@", _webView._webProcessIdentifier, _isPrivateBrowsingWindow ? @" 🙈" : @"", _webView._editable ? @" ✏️" : @""];
 #else
     self.window.title = [NSString stringWithFormat:@"%@%@ [WK2 %d]%@", _isPrivateBrowsingWindow ? @"🙈 " : @"", title, _webView._webProcessIdentifier, _webView._editable ? @" [Editable]" : @""];
 #endif
@@ -552,6 +558,8 @@ static BOOL areEssentiallyEqual(double a, double b)
         [self updateTextFieldFromURL:_webView.URL];
     else if ([keyPath isEqualToString:@"hasOnlySecureContent"])
         [self updateLockButtonIcon:_webView.hasOnlySecureContent];
+    else if ([keyPath isEqualToString:@"_gpuProcessIdentifier"])
+        [self updateTitle:_webView.title];
 }
 
 - (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures

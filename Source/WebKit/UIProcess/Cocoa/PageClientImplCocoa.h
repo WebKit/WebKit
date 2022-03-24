@@ -52,6 +52,11 @@ public:
 
     void pageClosed() override;
 
+#if ENABLE(GPU_PROCESS)
+    void gpuProcessDidFinishLaunching() override;
+    void gpuProcessDidExit() override;
+#endif
+
     void themeColorWillChange() final;
     void themeColorDidChange() final;
     void underPageBackgroundColorWillChange() final;

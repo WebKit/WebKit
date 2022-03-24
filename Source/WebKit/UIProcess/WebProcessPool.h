@@ -360,6 +360,7 @@ public:
     void textCheckerStateChanged();
 
 #if ENABLE(GPU_PROCESS)
+    void gpuProcessDidFinishLaunching(ProcessID);
     void gpuProcessExited(ProcessID, GPUProcessTerminationReason);
 
     void getGPUProcessConnection(WebProcessProxy&, GPUProcessConnectionParameters&&, Messages::WebProcessProxy::GetGPUProcessConnectionDelayedReply&&);

@@ -2609,6 +2609,14 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     return provisionalPage->process().processIdentifier();
 }
 
+- (pid_t)_gpuProcessIdentifier
+{
+    if (![self _isValid])
+        return 0;
+
+    return _page->gpuProcessIdentifier();
+}
+
 - (BOOL)_webProcessIsResponsive
 {
     return _page->process().isResponsive();

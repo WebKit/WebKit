@@ -463,6 +463,14 @@ GPUProcessProxy& WebProcessPool::ensureGPUProcess()
     return *m_gpuProcess;
 }
 
+
+void WebProcessPool::gpuProcessDidFinishLaunching(ProcessID)
+{
+    auto processes = m_processes;
+    for (auto& process : processes)
+        process->gpuProcessDidFinishLaunching();
+}
+
 void WebProcessPool::gpuProcessExited(ProcessID identifier, GPUProcessTerminationReason reason)
 {
     WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=%u", identifier, static_cast<unsigned>(reason));

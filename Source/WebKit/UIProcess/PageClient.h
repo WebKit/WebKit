@@ -357,6 +357,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
+    virtual void gpuProcessDidFinishLaunching() { }
     virtual void gpuProcessDidExit() { }
 #endif
 

@@ -381,6 +381,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
+    void gpuProcessDidFinishLaunching();
     void gpuProcessExited(GPUProcessTerminationReason);
 #endif
 

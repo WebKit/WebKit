@@ -1324,6 +1324,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
+    void gpuProcessDidFinishLaunching();
     void gpuProcessExited(GPUProcessTerminationReason);
 #endif
 
@@ -1347,6 +1348,8 @@ public:
     WebProcessProxy& ensureRunningProcess();
     WebProcessProxy& process() const { return m_process; }
     ProcessID processIdentifier() const;
+
+    ProcessID gpuProcessIdentifier() const;
 
     WebBackForwardCache& backForwardCache() const;
 

@@ -218,6 +218,7 @@ void PageClientImpl::didCreateContextInGPUProcessForVisibilityPropagation(LayerH
 void PageClientImpl::gpuProcessDidExit()
 {
     [m_contentView _gpuProcessDidExit];
+    PageClientImplCocoa::gpuProcessDidExit();
 }
 #endif
 

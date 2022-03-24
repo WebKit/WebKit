@@ -1,5 +1,41 @@
 2022-03-23  Simon Fraser  <simon.fraser@apple.com>
 
+        Have MiniBrowser shows the GPU Process pid in its title bar
+        https://bugs.webkit.org/show_bug.cgi?id=238286
+
+        Reviewed by Tim Horton.
+
+        Expose _gpuProcessIdentifier on WKWebView as SPI. In order to support KVO for this, we need
+        to pass gpuProcessDidFinishLaunching() all the way from
+        GPUProcessProxy::didFinishLaunching() to PageClientImplCocoa. This KVO isn't accurate (the
+        "willChange" fires after the new pid is available) but for SPI it's good enough.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _gpuProcessIdentifier]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::gpuProcessDidFinishLaunching):
+        (WebKit::PageClientImplCocoa::gpuProcessDidExit):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::didFinishLaunching):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::gpuProcessDidFinishLaunching):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::gpuProcessIdentifier const):
+        (WebKit::WebPageProxy::gpuProcessDidFinishLaunching):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gpuProcessDidFinishLaunching):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::gpuProcessDidFinishLaunching):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::gpuProcessDidExit):
+
+2022-03-23  Simon Fraser  <simon.fraser@apple.com>
+
         REGRESSION (248692@main?): [iOS] ASSERTION FAILED: m_layer->owner()->platformCALayerDelegatesDisplay(m_layer) in WebKit::RemoteLayerBackingStore::paintContents()
         https://bugs.webkit.org/show_bug.cgi?id=238277
         <rdar://problem/90715046>

@@ -1,3 +1,19 @@
+2022-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Have MiniBrowser shows the GPU Process pid in its title bar
+        https://bugs.webkit.org/show_bug.cgi?id=238286
+
+        Reviewed by Tim Horton.
+
+        KVO-observe the WKWebView's _gpuProcessIdentifier property and include it in the
+        window title.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        (-[WK2BrowserWindowController dealloc]):
+        (-[WK2BrowserWindowController updateTitle:]):
+        (-[WK2BrowserWindowController observeValueForKeyPath:ofObject:change:context:]):
+
 2022-03-23  Alex Christensen  <achristensen@webkit.org>
 
         Add off-by-default experimental feature for app store attribution

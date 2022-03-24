@@ -495,6 +495,9 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #endif
 
     beginResponsivenessChecks();
+
+    for (auto& processPool : WebProcessPool::allProcessPools())
+        processPool->gpuProcessDidFinishLaunching(processIdentifier());
 }
 
 void GPUProcessProxy::updateProcessAssertion()

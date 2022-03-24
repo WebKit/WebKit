@@ -824,6 +824,12 @@ void WebProcessProxy::getGPUProcessConnection(GPUProcessConnectionParameters&& p
     m_processPool->getGPUProcessConnection(*this, WTFMove(parameters), WTFMove(reply));
 }
 
+void WebProcessProxy::gpuProcessDidFinishLaunching()
+{
+    for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
+        page->gpuProcessDidFinishLaunching();
+}
+
 void WebProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
 {
     if (reason == GPUProcessTerminationReason::IdleExit)

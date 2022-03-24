@@ -666,6 +666,19 @@ const API::PageConfiguration& WebPageProxy::configuration() const
     return m_configuration.get();
 }
 
+ProcessID WebPageProxy::gpuProcessIdentifier() const
+{
+    if (m_isClosed)
+        return 0;
+
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcess = process().processPool().gpuProcess())
+        return gpuProcess->processIdentifier();
+#endif
+
+    return 0;
+}
+
 ProcessID WebPageProxy::processIdentifier() const
 {
     if (m_isClosed)
@@ -10937,6 +10950,11 @@ void WebPageProxy::clearLoadedSubresourceDomains()
 #endif
 
 #if ENABLE(GPU_PROCESS)
+void WebPageProxy::gpuProcessDidFinishLaunching()
+{
+    pageClient().gpuProcessDidFinishLaunching();
+}
+
 void WebPageProxy::gpuProcessExited(GPUProcessTerminationReason)
 {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)

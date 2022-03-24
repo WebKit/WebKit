@@ -153,6 +153,20 @@ void PageClientImplCocoa::pageClosed()
     m_alternativeTextUIController->clear();
 }
 
+#if ENABLE(GPU_PROCESS)
+void PageClientImplCocoa::gpuProcessDidFinishLaunching()
+{
+    [m_webView willChangeValueForKey:@"_gpuProcessIdentifier"];
+    [m_webView didChangeValueForKey:@"_gpuProcessIdentifier"];
+}
+
+void PageClientImplCocoa::gpuProcessDidExit()
+{
+    [m_webView willChangeValueForKey:@"_gpuProcessIdentifier"];
+    [m_webView didChangeValueForKey:@"_gpuProcessIdentifier"];
+}
+#endif
+
 WebCore::DictationContext PageClientImplCocoa::addDictationAlternatives(NSTextAlternatives *alternatives)
 {
     return m_alternativeTextUIController->addAlternatives(alternatives);
