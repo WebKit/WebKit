@@ -185,8 +185,25 @@ SECTORDER_FLAGS = $(SECTORDER_FLAGS_$(CONFIGURATION));
 SECTORDER_FLAGS_Production[sdk=iphoneos*] = -Wl,-order_file,$(SDKROOT)/AppleInternal/OrderFiles/WebKit.order;
 SECTORDER_FLAGS_Production[sdk=macosx*] = -Wl,-order_file,mac/WebKit2.order;
 
+EXCLUDED_SOURCE_FILE_NAMES = libWebKitAdditions.a $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_WHICH_BUILD_SYSTEM)) $(EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH));
 EXCLUDED_IOS_RESOURCE_FILE_NAMES = Resources/ios/*;
 EXCLUDED_IOS_RESOURCE_FILE_NAMES[sdk=iphone*] = ;
+// The legacy build system does not install headers.
+EXCLUDED_SOURCE_FILE_NAMES_legacy = *.h;
+EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_YES = WebDashboardRegion.h WebDynamicScrollBarsView.h WebEventRegion.h WebIconDatabase.h WebJavaScriptTextInputPanel.h WebNSEventExtras.h WebNSPasteboardExtras.h WebNSWindowExtras.h WebPanelAuthenticationHandler.h WebStringTruncator.h;
+EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_NO = AbstractPasteboard.h DOMHTMLTextAreaElementPrivate.h DOMUIKitExtensions.h KeyEventCodesIOS.h WAKAppKitStubs.h WAKResponder.h WAKView.h WAKWindow.h WebCaretChangeListener.h WebCoreThread.h WebCoreThreadMessage.h WebCoreThreadRun.h WebEvent.h WebEventRegion.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationCoreLocationProvider.h WebGeolocationPrivate.h WebGeolocationProviderIOS.h WebItemProviderPasteboard.h WebMIMETypeRegistry.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h WebSelectionRect.h WebUIKitDelegate.h WebUIKitSupport.h WebVisiblePosition.h WKContentObservation.h WKGraphics.h WKTypes.h;
+
+INCLUDED_SOURCE_FILE_NAMES = $(INCLUDED_MIGRATED_HEADERS_$(WK_WHICH_BUILD_SYSTEM));
+INCLUDED_MIGRATED_HEADERS_not_legacy = $(INCLUDED_MIGRATED_HEADERS_$(USE_INTERNAL_SDK)_$(WK_COCOA_TOUCH)) $(INCLUDED_MIGRATED_HEADERS_$(ENABLE_IOS_TOUCH_EVENTS));
+// WebEventRegion.h is migrated when building for an iOS family target with an internal SDK…
+INCLUDED_MIGRATED_HEADERS_YES_cocoatouch = WebEventRegion.h;
+// …or when --ios-touch-events was passed to build-webkit manually.
+INCLUDED_MIGRATED_HEADERS_ENABLE_IOS_TOUCH_EVENTS = WebEventRegion.h;
+
+WK_MIGRATED_HEADER_OUTPUT_DIR = $(WK_MIGRATED_HEADER_OUTPUT_DIR_$(WK_COCOA_TOUCH));
+WK_MIGRATED_HEADER_OUTPUT_DIR_ = $(HEADER_OUTPUT_DIR);
+// On non-Mac platforms, all migrated headers go to PrivateHeaders.
+WK_MIGRATED_HEADER_OUTPUT_DIR_cocoatouch = $(HEADER_OUTPUT_DIR:dir)PrivateHeaders;
 
 EXCLUDED_MACOS_PLUGIN_FILE_NAMES[sdk=iphone*] = SecItemShim.dylib WebProcessShim.dylib *.pdf Resources/mac/* com.apple.WebKit.NetworkProcess.sb com.apple.WebKit.GPUProcess.sb com.apple.WebKit.WebAuthnProcess.sb com.apple.WebKit.webpushd.sb com.apple.WebProcess.sb;
 
@@ -212,5 +229,4 @@ WK_HAVE_URL_FORMATTING_appletvsimulator = NO;
 WK_HAVE_URL_FORMATTING_macosx = $(WK_HAVE_URL_FORMATTING$(WK_MACOS_1014));
 WK_HAVE_URL_FORMATTING_MACOS_SINCE_1014 = YES;
 
-EXCLUDED_SOURCE_FILE_NAMES = libWebKitAdditions.a $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES)
 SWIFT_INSTALL_OBJC_HEADER = NO

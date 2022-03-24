@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (C) 2019 Apple Inc. All rights reserved.
 #
@@ -66,50 +66,35 @@ def main(argv=None):
     if not argv:
         argv = sys.argv
 
-    if len(argv) != 4:
-        print("Usage: replace-webkit-additions-includes.py <header_path> <built_products_directory> <sdk_root_directory>")
+    if len(argv) != 3:
+        print("Usage: replace-webkit-additions-includes.py <built_products_directory> <sdk_root_directory>", file=sys.stderr)
         return 1
 
-    header_path = argv[1]
-    built_products_directory = argv[2]
-    sdk_root_directory = argv[3]
-    if not len(header_path):
-        print("(%s): header path unspecified" % argv[0])
-        return 1
+    built_products_directory = argv[1]
+    sdk_root_directory = argv[2]
 
     if not len(built_products_directory):
-        print("(%s): built products directory unspecified" % argv[0])
+        print("(%s): built products directory unspecified" % argv[0], file=sys.stderr)
         return 1
 
     if not len(sdk_root_directory):
-        print("(%s): SDK root directory unspecified" % argv[0])
+        print("(%s): SDK root directory unspecified" % argv[0], file=sys.stderr)
         return 1
 
     # We currently only support WebKitAdditions in Framework headers on macOS 13+ and iOS 16+.
     should_do_replacement = is_supported_os()
 
     additions_import_pattern = re.compile(r"\#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT\n#import <WebKitAdditions/(.*)>\n#endif")
-    try:
-        with open(header_path, "r") as header:
-            header_contents = header.read()
-            match = additions_import_pattern.search(header_contents)
-            while match:
-                if should_do_replacement:
-                    header_contents = header_contents[:match.start()] + read_content_from_webkit_additions(built_products_directory, sdk_root_directory, match.groups()[0]) + header_contents[match.end():]
-                else:
-                    header_contents = header_contents[:match.start()] + header_contents[match.end():]
-                match = additions_import_pattern.search(header_contents)
-            try:
-                with open(header_path, "w") as header:
-                    header.write(header_contents)
-            except Exception as ex:
-                print("(%s): failed to write to file: %s" % (argv[0], header_path))
-                return 1
-        return 0
-    except Exception as ex:
-        print("(%s): failed to read file: %s" % (argv[0], header_path))
-        return 1
-
+    header_contents = sys.stdin.read()
+    match = additions_import_pattern.search(header_contents)
+    while match:
+        if should_do_replacement:
+            header_contents = header_contents[:match.start()] + read_content_from_webkit_additions(built_products_directory, sdk_root_directory, match.groups()[0]) + header_contents[match.end():]
+        else:
+            header_contents = header_contents[:match.start()] + header_contents[match.end():]
+        match = additions_import_pattern.search(header_contents)
+    sys.stdout.write(header_contents)
+    return 0
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))

@@ -1,3 +1,41 @@
+2022-03-24  Elliott Williams  <emw@apple.com>
+
+        [XCBuild] WebKit: Use native headers + build rules for migrated headers
+        https://bugs.webkit.org/show_bug.cgi?id=238213
+        <rdar://problem/90172142>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Replace the Make-based header migration script phase with a native project-based
+        representation in WebKit.xcodeproj.
+
+        The project now contains a 'Migrated Headers' group which lists the headers from
+        WebKitLegacy and WebCore that are copied to WebKit.framework during the build process. This
+        group must be kept in sync with the actual headers in WebKitLegacy, but since new headers
+        shouldn't really be added to WebKitLegacy this will be low-friction.
+
+        The preexisting postprocess-header-rule build rule is refactored to handle the
+        transformations needed for Migrated headers, which previous came from WebKitLegacy's
+        `postprocess-header-rule` script or from one of the MigrateHeaders*.make files.
+
+        * Configurations/WebKit.xcconfig: Use EXCLUDED_SOURCE_FILE_NAMES to customize migrated
+        headers on mac vs. non-mac platforms.
+        * Scripts/postprocess-header-rule: Refactored to incorporate WebKitLegacy's postprocessing
+        steps, and to do less disk I/O, now that it's always invoked as a build rule and can do less
+        in-place editing. Local testing shows a ~15% speedup.
+        * Shared/API/Cocoa/WebKitLegacy.h: Added. Xcode's header maps forbid a header's name from
+        changing during the copy process, so we have to duplicate WebKitLegacy's umbrella header
+        instead of renaming it WebKit.h -> WebKitLegacy.h during the build.
+        * WebKit.xcodeproj/project.pbxproj: Added 'Migrated Headers' group and build rule.
+        Configured headers to always copy using XCBuild. Removed legacy-only header script phases.
+        * WebProcess/WebCoreSupport/ios/WebFrameLoaderClientIOS.mm: This file used unqualified
+        <HEADER.h> imports, which are not supported by Xcode's headermaps. Replaced with "HEADER.h".
+        * mac/MigrateHeadersFromWebKitLegacy.make: Removed, logic now lives in
+        mingrate-headers-rule.sh.
+        * mac/postprocess-framework-headers.sh: Removed.
+        * mac/replace-webkit-additions-includes.py: Refactored to use stdin and stdout rather than
+        editing in-place. Corresponds to refactors in postprocess-header-rule.
+
 2022-03-24  Per Arne Vollan  <pvollan@apple.com>
 
         [macOS] Remove reports for some sandbox violations on process launch
