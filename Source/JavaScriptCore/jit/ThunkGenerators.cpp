@@ -1502,8 +1502,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
 
         jit.storePtr(GPRInfo::regT1, jit.addressFor(loopIndex));
 
-        jit.prepareCallOperation(vm);
         jit.setupArguments<decltype(operationGetWrappedValueForTarget)>(GPRInfo::regT0, valueRegs);
+        jit.prepareCallOperation(vm);
         jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationGetWrappedValueForTarget)), GPRInfo::nonArgGPR0);
         emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
         jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
@@ -1524,27 +1524,41 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSRemoteFunction::offsetOfTargetFunction()), GPRInfo::regT2);
     jit.storeCell(GPRInfo::regT2, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
 
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT2, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT0);
-    auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT0, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), GPRInfo::regT0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT2, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT1);
+    auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT1, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT1, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), GPRInfo::regT1);
     hasExecutable.link(&jit);
 
     jit.loadPtr(
         CCallHelpers::Address(
-            GPRInfo::regT0, ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)),
-        GPRInfo::regT0);
+            GPRInfo::regT1, ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)),
+        GPRInfo::regT1);
+    auto codeExists = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT1);
 
+    // The calls to operationGetWrappedValueForTarget above may GC, and any GC can potentially jettison the JIT code in the target JSFunction.
+    // If we find that the JIT code is null (i.e. has been jettisoned), then we need to re-materialize it for the call below. Note that we know
+    // that operationMaterializeRemoteFunctionTargetCode should be able to re-materialize the JIT code (except for any OOME) because we only
+    // went down this code path after we found a non-null JIT code (in the noCode check) above i.e. it should be possible to materialize the JIT code.
+    jit.setupArguments<decltype(operationMaterializeRemoteFunctionTargetCode)>(GPRInfo::regT0);
+    jit.prepareCallOperation(vm);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationMaterializeRemoteFunctionTargetCode)), GPRInfo::nonArgGPR0);
+    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+    exceptionChecks.append(jit.emitJumpIfException(vm));
+    jit.move(GPRInfo::returnValueGPR, GPRInfo::regT1);
+
+    codeExists.link(&jit);
     // Based on the check above, we should be good with this. On ARM64, emitPointerValidation will do this.
 #if ASSERT_ENABLED && !CPU(ARM64E)
     {
-        CCallHelpers::Jump checkNotNull = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT0);
+        CCallHelpers::Jump checkNotNull = jit.branchTestPtr(CCallHelpers::NonZero, GPRInfo::regT1);
         jit.abortWithReason(TGInvalidPointer);
         checkNotNull.link(&jit);
     }
 #endif
 
-    emitPointerValidation(jit, GPRInfo::regT0, JSEntryPtrTag);
-    jit.call(GPRInfo::regT0, JSEntryPtrTag);
+    emitPointerValidation(jit, GPRInfo::regT1, JSEntryPtrTag);
+    jit.call(GPRInfo::regT1, JSEntryPtrTag);
 
     // Wrap return value
 #if USE(JSVALUE64)
@@ -1557,12 +1571,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     resultIsPrimitive.append(jit.branchIfNotCell(resultRegs));
     resultIsPrimitive.append(jit.branchIfNotObject(resultRegs.payloadGPR()));
 
-    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationGetWrappedValueForCaller)), GPRInfo::nonArgGPR0);
-    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
-
     jit.loadCell(CCallHelpers::addressFor(CallFrameSlot::callee), GPRInfo::regT2);
     jit.setupArguments<decltype(operationGetWrappedValueForCaller)>(GPRInfo::regT2, resultRegs);
     jit.prepareCallOperation(vm);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationGetWrappedValueForCaller)), GPRInfo::nonArgGPR0);
+    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
     jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
     exceptionChecks.append(jit.emitJumpIfException(vm));
 

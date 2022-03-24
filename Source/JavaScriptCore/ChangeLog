@@ -1,3 +1,26 @@
+2022-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] JSRemoteFunction thunk should materialize code-pointer
+        https://bugs.webkit.org/show_bug.cgi?id=238313
+
+        Reviewed by Mark Lam.
+
+        When invoking a JSRemoteFunction, we must first wrap the arguments passed to it.
+        The wrapping operation may trigger a GC, and GC can jettison JIT code. As a result,
+        even though we know that the target JSFunction has JIT code that we want to execute,
+        the JIT code may be jettisoned (while wrapping the arguments for it) before we get
+        to the call. This resulted in occasional crashes on the JSTests/stress/shadow-realm-evaluate.js test.
+
+        This patch fixes this by doing a null check on the JIT code just before calling it,
+        and if null (i.e. the JIT code has been jettisoned), re-materializing the JIT code
+        first before making the call.
+
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::remoteFunctionCallGenerator):
+
 2022-03-23  Geza Lore  <glore@igalia.com>
 
         [JSC] Fix remoteFunctionCallGenerator on MIPS
