@@ -1984,9 +1984,8 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refres
 
 webkit.org/b/229743 [ Release ] svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Pass Failure ]
 
-webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Slow Failure Crash ]
-
-webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Slow Failure ]
+webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Slow ]
+webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-peerconnection.https.html [ Slow ]
 
 webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-stop.html [ Pass Failure Slow ]
 
@@ -2239,14 +2238,6 @@ webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-010.h
 webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-011.html [ ImageOnlyFailure ]
 webkit.org/b/236916 imported/w3c/web-platform-tests/css/css-values/ic-unit-012.html [ ImageOnlyFailure ]
 
-# CSS Shapes failures
-webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-002.html [ ImageOnlyFailure ]
-webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-003.html [ ImageOnlyFailure ]
-webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-005.html [ ImageOnlyFailure ]
-webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-007.html [ ImageOnlyFailure ]
-webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-014.html [ ImageOnlyFailure ]
-webkit.org/b/236920 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-017.html [ ImageOnlyFailure ]
-
 # Writing mode failures
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/central-baseline-alignment-002.xht [ ImageOnlyFailure ]
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/inline-block-alignment-004.xht [ ImageOnlyFailure ]
@@ -2265,7 +2256,6 @@ webkit.org/b/236922 system-preview/badge.html [ ImageOnlyFailure ]
 # No/bad colored boxes
 webkit.org/b/236923 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/236923 imported/blink/svg/text/obb-paintserver.html [ ImageOnlyFailure ]
-webkit.org/b/236923 imported/w3c/web-platform-tests/css/css-position/sticky/position-sticky-writing-modes.html [ ImageOnlyFailure ]
 
 # No/bad gradient/pattern
 webkit.org/b/236924 svg/transforms/transformed-text-fill-pattern.html [ ImageOnlyFailure ]

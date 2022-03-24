@@ -3545,7 +3545,6 @@ webkit.org/b/233284 http/wpt/cross-origin-opener-policy/single-request-to-server
 pointerevents/mouse/pointer-event-basic-properties.html [ Timeout ]
 imported/w3c/web-platform-tests/workers/semantics/multiple-workers/004.html [ Failure Pass ]
 [ Release ] perf/nested-combined-selectors.html [ Failure ]
-webkit.org/b/236496 fast/mediastream/captureStream/canvas3d.html [ Timeout ]
 
 webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
 
