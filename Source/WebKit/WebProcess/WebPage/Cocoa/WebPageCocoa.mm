@@ -84,8 +84,6 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     consumeNetworkExtensionSandboxExtensions(parameters.networkExtensionSandboxExtensionHandles);
-#endif
-
 #if PLATFORM(IOS)
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
@@ -93,7 +91,8 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 
     if (parameters.frontboardServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.frontboardServiceExtensionHandle);
-#endif
+#endif // PLATFORM(IOS)
+#endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 }
 
 void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&& completionHandler)

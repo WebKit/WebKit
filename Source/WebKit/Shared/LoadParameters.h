@@ -87,11 +87,11 @@ struct LoadParameters {
     RetainPtr<NSDictionary> dataDetectionContext;
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     Vector<SandboxExtension::Handle> networkExtensionSandboxExtensionHandles;
-#endif
-#endif
 #if PLATFORM(IOS)
     std::optional<SandboxExtension::Handle> contentFilterExtensionHandle;
     std::optional<SandboxExtension::Handle> frontboardServiceExtensionHandle;
+#endif // PLATFORM(IOS)
+#endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 #endif
 };
 

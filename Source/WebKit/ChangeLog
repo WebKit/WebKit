@@ -1,3 +1,20 @@
+2022-03-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Disable unneeded code when content filtering is running in the Network process
+        https://bugs.webkit.org/show_bug.cgi?id=238332
+
+        Reviewed by Geoffrey Garen.
+
+        * Shared/Cocoa/LoadParametersCocoa.mm:
+        (WebKit::LoadParameters::platformEncode const):
+        (WebKit::LoadParameters::platformDecode):
+        * Shared/LoadParameters.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::addPlatformLoadParameters):
+        * UIProcess/WebProcessProxy.h:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters):
+
 2022-03-24  Elliott Williams  <emw@apple.com>
 
         [XCBuild] WebKit: Use native headers + build rules for migrated headers

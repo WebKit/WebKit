@@ -200,7 +200,6 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 
 #if !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     loadParameters.networkExtensionSandboxExtensionHandles = createNetworkExtensionsSandboxExtensions(process);
-#endif
 #if PLATFORM(IOS)
     if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {
         if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, std::nullopt))
@@ -211,7 +210,8 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 
         process.markHasManagedSessionSandboxAccess();
     }
-#endif
+#endif // PLATFORM(IOS)
+#endif // !ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 }
 
 void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtension::Handle& fileReadHandle, Vector<SandboxExtension::Handle>& fileUploadHandles)
