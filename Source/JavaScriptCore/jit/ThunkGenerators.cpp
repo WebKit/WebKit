@@ -1502,11 +1502,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
 
         jit.storePtr(GPRInfo::regT1, jit.addressFor(loopIndex));
 
+        jit.prepareCallOperation(vm);
+        jit.setupArguments<decltype(operationGetWrappedValueForTarget)>(GPRInfo::regT0, valueRegs);
         jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationGetWrappedValueForTarget)), GPRInfo::nonArgGPR0);
         emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
-
-        jit.setupArguments<decltype(operationGetWrappedValueForTarget)>(GPRInfo::regT0, valueRegs);
-        jit.prepareCallOperation(vm);
         jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
         exceptionChecks.append(jit.emitJumpIfException(vm));
 
