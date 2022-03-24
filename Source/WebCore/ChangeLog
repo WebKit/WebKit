@@ -1,3 +1,23 @@
+2022-03-24  Gabriel Nava Marino  <gnavamarino@apple.com>
+
+        FormDataConsumer callback happens more than once with an exception
+        https://bugs.webkit.org/show_bug.cgi?id=238091
+
+        In case of an error, it is not expected for the FormDataConsumer callback to happen
+        more than once with an exception. To avoid this, we introduce FormDataConsumer::didFail
+        which cancels/clears everything after reporting an error.
+
+        Reviewed by Youenn Fablet.
+
+        * Modules/fetch/FormDataConsumer.cpp:
+        (WebCore::FormDataConsumer::read):
+        (WebCore::FormDataConsumer::consumeFile):
+        (WebCore::FormDataConsumer::consumeBlob):
+        (WebCore::FormDataConsumer::didFail):
+        (WebCore::FormDataConsumer::cancel):
+        * Modules/fetch/FormDataConsumer.h:
+        (WebCore::FormDataConsumer::isCancelled):
+
 2022-03-24  Matteo Flores  <matteo_flores@apple.com>
 
         Unreviewed, reverting r291789.
