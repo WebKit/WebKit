@@ -91,10 +91,13 @@ bool SQLiteFileSystem::deleteDatabaseFile(const String& filePath)
     return !fileExists;
 }
 
-void SQLiteFileSystem::moveDatabaseFile(const String& oldFilePath, const String& newFilePath)
+bool SQLiteFileSystem::moveDatabaseFile(const String& oldFilePath, const String& newFilePath)
 {
+    bool allMoved = true;
     for (const auto* suffix : databaseFileSuffixes)
-        FileSystem::moveFile(makeString(oldFilePath, suffix), makeString(newFilePath, suffix));
+        allMoved &= FileSystem::moveFile(makeString(oldFilePath, suffix), makeString(newFilePath, suffix));
+
+    return allMoved;
 }
 
 #if PLATFORM(IOS_FAMILY)

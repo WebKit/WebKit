@@ -1,3 +1,18 @@
+2022-03-23  Sihui Liu  <sihui_liu@apple.com>
+
+        Add logging for LocalStorage and IndexedDB data migration
+        https://bugs.webkit.org/show_bug.cgi?id=238169
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/storage/IDBStorageManager.cpp:
+        (WebKit::migrateOriginDataImpl):
+        (WebKit::IDBStorageManager::migrateOriginData):
+        * NetworkProcess/storage/IDBStorageManager.h:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::resolvedLocalStoragePath):
+        (WebKit::OriginStorageManager::StorageBucket::resolvedIDBStoragePath):
+
 2022-03-23  Simon Fraser  <simon.fraser@apple.com>
 
         Have MiniBrowser shows the GPU Process pid in its title bar

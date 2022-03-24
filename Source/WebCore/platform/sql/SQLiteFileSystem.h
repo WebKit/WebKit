@@ -81,7 +81,7 @@ public:
     WEBCORE_EXPORT static bool deleteDatabaseFile(const String& filePath);
 
     // Moves a database file to a new place.
-    WEBCORE_EXPORT static void moveDatabaseFile(const String& oldFilePath, const String& newFilePath);
+    WEBCORE_EXPORT static bool moveDatabaseFile(const String& oldFilePath, const String& newFilePath);
     WEBCORE_EXPORT static String computeHashForFileName(const String& filePath);
 
 #if PLATFORM(IOS_FAMILY)

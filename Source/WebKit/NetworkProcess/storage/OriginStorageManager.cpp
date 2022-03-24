@@ -32,6 +32,7 @@
 #include "IDBStorageManager.h"
 #include "IDBStorageRegistry.h"
 #include "LocalStorageManager.h"
+#include "Logging.h"
 #include "MemoryStorageArea.h"
 #include "SessionStorageManager.h"
 #include "StorageAreaRegistry.h"
@@ -353,8 +354,12 @@ String OriginStorageManager::StorageBucket::resolvedLocalStoragePath()
         auto localStorageDirectory = typeStoragePath(StorageType::LocalStorage);
         FileSystem::makeAllDirectories(localStorageDirectory);
         auto localStoragePath = LocalStorageManager::localStorageFilePath(localStorageDirectory);
-        if (!m_customLocalStoragePath.isEmpty() && !FileSystem::fileExists(localStoragePath) && FileSystem::fileExists(m_customLocalStoragePath))
-            WebCore::SQLiteFileSystem::moveDatabaseFile(m_customLocalStoragePath, localStoragePath);
+        if (!m_customLocalStoragePath.isEmpty() && !FileSystem::fileExists(localStoragePath) && FileSystem::fileExists(m_customLocalStoragePath)) {
+            RELEASE_LOG(Storage, "%p - StorageBucket::resolvedLocalStoragePath New path '%{public}s'", this, localStoragePath.utf8().data());
+            auto moved = WebCore::SQLiteFileSystem::moveDatabaseFile(m_customLocalStoragePath, localStoragePath);
+            if (!moved && !FileSystem::fileExists(localStoragePath))
+                RELEASE_LOG_ERROR(Storage, "%p - StorageBucket::resolvedLocalStoragePath Fails to migrate file to new path", this);
+        }
 
         m_resolvedLocalStoragePath = localStoragePath;
     } else
@@ -381,7 +386,13 @@ String OriginStorageManager::StorageBucket::resolvedIDBStoragePath()
         m_resolvedIDBStoragePath = m_customIDBStoragePath;
     } else {
         auto idbStoragePath = typeStoragePath(StorageType::IndexedDB);
-        IDBStorageManager::migrateOriginData(m_customIDBStoragePath, idbStoragePath);
+        RELEASE_LOG(Storage, "%p - StorageBucket::resolvedIDBStoragePath New path '%{public}s'", this, idbStoragePath.utf8().data());
+        auto moved = IDBStorageManager::migrateOriginData(m_customIDBStoragePath, idbStoragePath);
+        if (!moved && FileSystem::fileExists(idbStoragePath)) {
+            auto fileNames = FileSystem::listDirectory(m_customIDBStoragePath);
+            auto newFileNames = FileSystem::listDirectory(idbStoragePath);
+            RELEASE_LOG_ERROR(Storage, "%p - StorageBucket::resolvedLocalStoragePath Fails to migrate all databases to new path: %zu migrated, %zu left", this, newFileNames.size(), fileNames.size());
+        }
         m_resolvedIDBStoragePath = idbStoragePath;
     }
     

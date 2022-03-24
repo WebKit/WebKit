@@ -35,18 +35,19 @@
 
 namespace WebKit {
 
-static void migrateOriginDataImpl(const String& oldOriginDirectory, const String& newOriginDirectory, Function<String(const String&)>&& createFileNameFunction)
+static bool migrateOriginDataImpl(const String& oldOriginDirectory, const String& newOriginDirectory, Function<String(const String&)>&& createFileNameFunction)
 {
     if (oldOriginDirectory.isEmpty() || !FileSystem::fileExists(oldOriginDirectory))
-        return;
+        return true;
 
     auto fileNames = FileSystem::listDirectory(oldOriginDirectory);
     if (fileNames.isEmpty()) {
         FileSystem::deleteEmptyDirectory(oldOriginDirectory);
-        return;
+        return true;
     }
 
     FileSystem::makeAllDirectories(newOriginDirectory);
+    bool allMoved = true;
     for (auto& name : fileNames) {
         // This is an origin directory for third-party data.
         if (auto origin = WebCore::SecurityOriginData::fromDatabaseIdentifier(name))
@@ -58,10 +59,11 @@ static void migrateOriginDataImpl(const String& oldOriginDirectory, const String
             continue;
 
         auto oldPath = FileSystem::pathByAppendingComponent(oldOriginDirectory, name);
-        FileSystem::moveFile(oldPath, newPath);
+        allMoved &= FileSystem::moveFile(oldPath, newPath);
     }
 
     FileSystem::deleteEmptyDirectory(oldOriginDirectory);
+    return allMoved;
 }
 
 String IDBStorageManager::idbStorageOriginDirectory(const String& rootDirectory, const WebCore::ClientOrigin& origin)
@@ -126,9 +128,9 @@ HashSet<WebCore::ClientOrigin> IDBStorageManager::originsOfIDBStorageData(const 
     return origins;
 }
 
-void IDBStorageManager::migrateOriginData(const String& oldOriginDirectory, const String& newOriginDirectory)
+bool IDBStorageManager::migrateOriginData(const String& oldOriginDirectory, const String& newOriginDirectory)
 {
-    migrateOriginDataImpl(oldOriginDirectory, newOriginDirectory, [](const String& name) {
+    return migrateOriginDataImpl(oldOriginDirectory, newOriginDirectory, [](const String& name) {
         return name;
     });
 }
