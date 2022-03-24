@@ -1109,15 +1109,10 @@ public:
 
     virtual AXCoreObject* focusedUIElement() const = 0;
 
-    virtual AXCoreObject* firstChild() const = 0;
-    virtual AXCoreObject* lastChild() const = 0;
-    virtual AXCoreObject* previousSibling() const = 0;
-    virtual AXCoreObject* nextSibling() const = 0;
-    virtual AXCoreObject* nextSiblingUnignored(int limit) const = 0;
-    virtual AXCoreObject* previousSiblingUnignored(int limit) const = 0;
     virtual AXCoreObject* parentObject() const = 0;
     virtual AXCoreObject* parentObjectUnignored() const = 0;
     virtual AXCoreObject* parentObjectIfExists() const = 0;
+
     virtual void findMatchingObjects(AccessibilitySearchCriteria*, AccessibilityChildrenVector&) = 0;
     virtual bool isDescendantOfBarrenParent() const = 0;
     virtual bool isDescendantOfRole(AccessibilityRole) const = 0;

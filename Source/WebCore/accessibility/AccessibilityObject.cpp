@@ -4263,9 +4263,15 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
             startObject = parentObject;
             parentObject = parentObject->parentObject();
         }
+
+        // We should only ever hit this case with a live object (not an isolated object), as it would require startObject to be ignored,
+        // and we should never have created an isolated object from an ignored live object.
+        ASSERT(is<AccessibilityObject>(startObject));
+        auto* newStartObject = dynamicDowncast<AccessibilityObject>(startObject.get());
         // Get the un-ignored sibling based on the search direction, and update the searchPosition.
-        while (startObject && startObject->accessibilityIsIgnored())
-            startObject = isForward ? startObject->previousSibling() : startObject->nextSibling();
+        while (newStartObject && newStartObject->accessibilityIsIgnored())
+            newStartObject = isForward ? newStartObject->previousSibling() : newStartObject->nextSibling();
+        startObject = newStartObject;
     }
 
     size_t searchPosition = startObject ? searchChildren.find(startObject) : notFound;

@@ -213,7 +213,8 @@ private:
     bool canSetSelectedAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetSelectedAttribute); }
     bool canSetSelectedChildren() const override { return boolAttributeValue(AXPropertyName::CanSetSelectedChildren); }
     bool canSetExpandedAttribute() const override { return boolAttributeValue(AXPropertyName::CanSetExpandedAttribute); }
-    bool accessibilityIsIgnored() const override { return boolAttributeValue(AXPropertyName::IsAccessibilityIgnored); }
+    // We should never create an isolated object from an ignored live object, so we can hardcode this to false.
+    bool accessibilityIsIgnored() const override { return false; }
     bool isShowingValidationMessage() const override { return boolAttributeValue(AXPropertyName::IsShowingValidationMessage); }
     String validationMessage() const override { return stringAttributeValue(AXPropertyName::ValidationMessage); }
     unsigned blockquoteLevel() const override { return unsignedAttributeValue(AXPropertyName::BlockquoteLevel); }
@@ -561,12 +562,6 @@ private:
     bool isModalDescendant(Node*) const override;
     bool isModalNode() const override;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
-    AXCoreObject* firstChild() const override;
-    AXCoreObject* lastChild() const override;
-    AXCoreObject* previousSibling() const override { return objectAttributeValue(AXPropertyName::PreviousSibling); }
-    AXCoreObject* nextSibling() const override { return objectAttributeValue(AXPropertyName::NextSibling); }
-    AXCoreObject* nextSiblingUnignored(int limit) const override;
-    AXCoreObject* previousSiblingUnignored(int limit) const override;
     AXCoreObject* parentObjectIfExists() const override;
     bool isDescendantOfBarrenParent() const override;
     bool isDescendantOfRole(AccessibilityRole) const override;

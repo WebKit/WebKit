@@ -1,3 +1,40 @@
+2022-03-24  Tyler Wilcock  <tyler_w@apple.com>
+
+        AX: Remove firstChild, lastChild, previousSibling, nextSibling, nextSiblingUnignored, and previousSiblingUnignored from the AXCoreObject interface
+        https://bugs.webkit.org/show_bug.cgi?id=238267
+
+        Reviewed by Andres Gonzalez.
+
+        All of these except nextSibling and previousSibling are ASSERT_NOT_REACHED no-ops
+        in AXIsolatedObject. We do compute next and previous sibling for isolated objects,
+        but they're only used in one place (appendChildrenToArray). Usage of these functions
+        in appendChildrenToArray doesn't make sense for isolated objects, as it would require
+        the isolated object to be ignored for them to be called, and we should never have created an
+        isolated object from an ignored live object.
+
+        Dovetailing from that, this patch also removes AXPropertyName::IsAccessibilityIgnored,
+        since this should always be false for isolated objects. ASSERTs have been added in a
+        few places to assure this is the case.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::Accessibility::appendChildrenToArray):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::firstChild const):
+        (WebCore::AccessibilityObject::lastChild const):
+        (WebCore::AccessibilityObject::previousSibling const):
+        (WebCore::AccessibilityObject::nextSibling const):
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::firstChild const): Deleted.
+        (WebCore::AXIsolatedObject::lastChild const): Deleted.
+        (WebCore::AXIsolatedObject::nextSiblingUnignored const): Deleted.
+        (WebCore::AXIsolatedObject::previousSiblingUnignored const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        Remove AXPropertyName::NextSibling, AXPropertyName::PreviousSibling,
+        AXPropertyName::IsAccessibilityIgnored.
+
 2022-03-24  Antti Koivisto  <antti@apple.com>
 
         MatchedDeclarationCache key is already hashed

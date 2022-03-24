@@ -362,12 +362,12 @@ public:
 
     AXCoreObject* focusedUIElement() const override;
 
-    AccessibilityObject* firstChild() const override { return nullptr; }
-    AccessibilityObject* lastChild() const override { return nullptr; }
-    AccessibilityObject* previousSibling() const override { return nullptr; }
-    AccessibilityObject* nextSibling() const override { return nullptr; }
-    AccessibilityObject* nextSiblingUnignored(int limit) const override;
-    AccessibilityObject* previousSiblingUnignored(int limit) const override;
+    virtual AccessibilityObject* firstChild() const { return nullptr; }
+    virtual AccessibilityObject* lastChild() const { return nullptr; }
+    virtual AccessibilityObject* previousSibling() const { return nullptr; }
+    virtual AccessibilityObject* nextSibling() const { return nullptr; }
+    virtual AccessibilityObject* nextSiblingUnignored(int limit) const;
+    virtual AccessibilityObject* previousSiblingUnignored(int limit) const;
     AccessibilityObject* parentObject() const override { return nullptr; }
     AccessibilityObject* displayContentsParent() const;
     AXCoreObject* parentObjectUnignored() const override;
