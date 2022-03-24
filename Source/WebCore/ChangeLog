@@ -1,3 +1,33 @@
+2022-03-24  Antti Koivisto  <antti@apple.com>
+
+        Allow styles with appearance in matched declaration cache
+        https://bugs.webkit.org/show_bug.cgi?id=238247
+
+        Reviewed by Antoine Quint.
+
+        Improve cache efficiency by allowing styles with appearance (typically form controls) to be cached.
+
+        In Speedometer this improves the cache hit rate ~75% -> 94%.
+
+        * style/MatchedDeclarationsCache.cpp:
+        (WebCore::Style::MatchedDeclarationsCache::isCacheable):
+
+        Remove appearance check.
+
+        (WebCore::Style::MatchedDeclarationsCache::add):
+
+        Also cache the UA style for styles with appearance.
+
+        (WebCore::Style::MatchedDeclarationsCache::remove):
+        * style/MatchedDeclarationsCache.h:
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::applyMatchedProperties):
+
+        Also simplify the case where inherited properties affect resolution of other properties by
+        kicking out the existing entry. This also makes the second attempt cacheable.
+
+        * style/StyleResolver.h:
+
 2022-03-09  Sergio Villar Senin  <svillar@igalia.com>
 
         Release assert in Document::updateLayout() via HTMLTextAreaElement::childrenChanged

@@ -571,9 +571,9 @@ void Resolver::clearCachedDeclarationsAffectedByViewportUnits()
     m_matchedDeclarationsCache.clearEntriesAffectedByViewportUnits();
 }
 
-void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResult, UseMatchedDeclarationsCache useMatchedDeclarationsCache)
+void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResult)
 {
-    unsigned cacheHash = useMatchedDeclarationsCache == UseMatchedDeclarationsCache::Yes ? MatchedDeclarationsCache::computeHash(matchResult) : 0;
+    unsigned cacheHash = MatchedDeclarationsCache::computeHash(matchResult);
     auto includedProperties = PropertyCascade::IncludedProperties::All;
 
     auto& style = *state.style();
@@ -595,9 +595,13 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
 
             // Unfortunately the link status is treated like an inherited property. We need to explicitly restore it.
             style.setInsideLink(linkStatus);
+
+            if (cacheEntry->userAgentAppearanceStyle && elementTypeHasAppearanceFromUAStyle(element))
+                state.setUserAgentAppearanceStyle(RenderStyle::clonePtr(*cacheEntry->userAgentAppearanceStyle));
+
             return;
         }
-        
+
         includedProperties = PropertyCascade::IncludedProperties::InheritedOnly;
     }
 
@@ -618,8 +622,9 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
     builder.applyHighPriorityProperties();
 
     if (cacheEntry && !cacheEntry->isUsableAfterHighPriorityProperties(style)) {
-        // We need to resolve all properties without caching.
-        applyMatchedProperties(state, matchResult, UseMatchedDeclarationsCache::No);
+        // High-priority properties may affect resolution of other properties. Kick out the existing cache entry and try again.
+        m_matchedDeclarationsCache.remove(cacheHash);
+        applyMatchedProperties(state, matchResult);
         return;
     }
 
@@ -632,7 +637,7 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
         return;
 
     if (MatchedDeclarationsCache::isCacheable(element, style, parentStyle))
-        m_matchedDeclarationsCache.add(style, parentStyle, cacheHash, matchResult);
+        m_matchedDeclarationsCache.add(style, parentStyle, state.userAgentAppearanceStyle(), cacheHash, matchResult);
 }
 
 bool Resolver::hasViewportDependentMediaQueries() const
