@@ -577,6 +577,8 @@ TEST(IPCTestingAPI, CanInterceptFindString)
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
+#endif
+
 TEST(IPCTestingAPI, CGColorInNSSecureCoding)
 {
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
@@ -584,7 +586,9 @@ TEST(IPCTestingAPI, CGColorInNSSecureCoding)
     RetainPtr<id<NSKeyedArchiverDelegate, NSKeyedUnarchiverDelegate>> delegate = adoptNS([[NSClassFromString(@"WKSecureCodingArchivingDelegate") alloc] init]);
     archiver.get().delegate = delegate.get();
 
-    auto payload = @{ @"SomeString" : static_cast<id>(adoptCF(CGColorCreateSRGB(0.2, 0.3, 0.4, 0.5)).get()) };
+    NSString *key = @"SomeString";
+    auto value = adoptCF(CGColorCreateSRGB(0.2, 0.3, 0.4, 0.5));
+    auto payload = @{ key : static_cast<id>(value.get()) };
     [archiver encodeObject:payload forKey:NSKeyedArchiveRootObjectKey];
     [archiver finishEncoding];
     [archiver setDelegate:nil];
@@ -600,10 +604,19 @@ TEST(IPCTestingAPI, CGColorInNSSecureCoding)
     [allowedClassSet addObject:NSString.class];
     [allowedClassSet addObject:NSClassFromString(@"WKSecureCodingCGColorWrapper")];
 
-    id result = [unarchiver decodeObjectOfClasses:allowedClassSet.get() forKey:NSKeyedArchiveRootObjectKey];
-    EXPECT_TRUE([payload isEqual:result]);
+    NSDictionary *result = [unarchiver decodeObjectOfClasses:allowedClassSet.get() forKey:NSKeyedArchiveRootObjectKey];
+    // Round-tripping the color can slightly change the representation, causing [payload isEqual:result] to report NO.
+    EXPECT_EQ(result.count, static_cast<NSUInteger>(1));
+    NSString *resultKey = result.allKeys[0];
+    EXPECT_TRUE([key isEqual:resultKey]);
+    CGColorRef resultValue = static_cast<CGColorRef>(result.allValues[0]);
+    ASSERT_EQ(CFGetTypeID(resultValue), CGColorGetTypeID());
+    auto resultValueColorSpace = adoptCF(CGColorGetColorSpace(resultValue));
+    auto resultValueColorSpaceName = adoptCF(CGColorSpaceCopyName(resultValueColorSpace.get()));
+    EXPECT_NE(CFStringFind(resultValueColorSpaceName.get(), CFSTR("SRGB"), 0).location, kCFNotFound);
+    ASSERT_EQ(CGColorGetNumberOfComponents(resultValue), CGColorGetNumberOfComponents(value.get()));
+    for (size_t i = 0; i < CGColorGetNumberOfComponents(resultValue); ++i)
+        EXPECT_EQ(CGColorGetComponents(resultValue)[i], CGColorGetComponents(value.get())[i]);
     [unarchiver finishDecoding];
     unarchiver.get().delegate = nil;
 }
-
-#endif
