@@ -164,3 +164,13 @@
 ;; Needed for CFNetworkAgent, see 33386291
 (allow mach-lookup
     (global-name "com.apple.cfnetwork.cfnetworkagent"))
+    
+#if USE(SYSTEM_CONTENT_PATH)
+#include <WebKitAdditions/SystemContentSandbox-ios.defs>
+
+(allow file-read* file-test-existence
+    (apply subpath file-read-existence-secondary-paths))
+
+(allow file-map-executable
+    (apply subpath secondary-framework-and-dylib-paths))
+#endif

@@ -32,6 +32,10 @@
 
 #include "Shared/Sandbox/preferences.sb"
 
+#if USE(SYSTEM_CONTENT_PATH)
+#include <WebKitAdditions/SystemContentSandbox-macos.defs>
+#endif
+ 
 ;;;
 ;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
