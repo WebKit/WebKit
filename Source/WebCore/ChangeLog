@@ -1,3 +1,22 @@
+2022-03-24  Alan Bujtas  <zalan@apple.com>
+
+        Devirtualize RenderText::width
+        https://bugs.webkit.org/show_bug.cgi?id=238285
+
+        Reviewed by Antti Koivisto.
+
+        RenderCombineText handling is moved to RenderText (we already handle combine text in RenderText::widthFromCache).
+
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::combineTextIfNeeded): These are all non-text-combine callsites.
+        (WebCore::RenderCombineText::width const): Deleted.
+        * rendering/RenderCombineText.h:
+        * rendering/RenderText.cpp:
+        (WebCore::combineTextWidth): RenderCombineText::combinedTextWidth returns the same value as RenderCombineText::width.
+        (WebCore::RenderText::widthFromCache const):
+        (WebCore::RenderText::width const):
+        * rendering/RenderText.h:
+
 2022-03-24  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         REGRESSION (r287807): WEBGL_multi_draw validation rejecting valid arguments

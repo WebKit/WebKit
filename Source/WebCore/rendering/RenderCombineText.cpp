@@ -68,14 +68,6 @@ void RenderCombineText::setRenderedText(const String& text)
     combineTextIfNeeded();
 }
 
-float RenderCombineText::width(unsigned from, unsigned length, const FontCascade& font, float xPosition, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
-{
-    if (m_isCombined)
-        return !length ? 0 : font.size();
-
-    return RenderText::width(from, length, font, xPosition, fallbackFonts, glyphOverflow);
-}
-
 std::optional<FloatPoint> RenderCombineText::computeTextOrigin(const FloatRect& boxRect) const
 {
     if (!m_isCombined)
@@ -148,7 +140,7 @@ void RenderCombineText::combineTextIfNeeded()
             compressedFont.update(fontSelector);
             
             glyphOverflow.left = glyphOverflow.top = glyphOverflow.right = glyphOverflow.bottom = 0;
-            float runWidth = RenderText::width(0, text().length(), compressedFont, 0, nullptr, &glyphOverflow);
+            float runWidth = width(0, text().length(), compressedFont, 0, nullptr, &glyphOverflow);
             if (runWidth <= emWidth) {
                 combinedTextWidth = runWidth;
                 m_isCombined = true;
@@ -178,7 +170,7 @@ void RenderCombineText::combineTextIfNeeded()
             compressedFont.update(fontSelector);
             
             glyphOverflow.left = glyphOverflow.top = glyphOverflow.right = glyphOverflow.bottom = 0;
-            float runWidth = RenderText::width(0, text().length(), compressedFont, 0, nullptr, &glyphOverflow);
+            float runWidth = width(0, text().length(), compressedFont, 0, nullptr, &glyphOverflow);
             if (runWidth <= emWidth) {
                 combinedTextWidth = runWidth;
                 m_isCombined = true;
