@@ -81,8 +81,7 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
         else {
             ASSERT(attrName == SVGNames::xAttr || attrName == SVGNames::yAttr);
             updateRelativeLengthsInformation();
-            if (auto renderer = this->renderer())
-                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+            setSVGResourcesInAncestorChainAreDirty();
         }
         return;
     }

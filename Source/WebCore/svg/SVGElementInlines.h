@@ -38,7 +38,6 @@ inline void SVGElement::setAnimatedSVGAttributesAreDirty()
 inline void SVGElement::setPresentationalHintStyleIsDirty()
 {
     ensureUniqueElementData().setPresentationalHintStyleIsDirty(true);
-    // Trigger style recalculation for "elements as resource" (e.g. referenced by feImage).
     invalidateStyle();
 }
 

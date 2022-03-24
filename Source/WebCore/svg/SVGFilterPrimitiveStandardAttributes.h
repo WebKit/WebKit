@@ -55,6 +55,8 @@ public:
     virtual Vector<AtomString> filterEffectInputsNames() const { return { }; }
     virtual RefPtr<FilterEffect> filterEffect(const SVGFilterBuilder&, const FilterEffectVector&) const = 0;
 
+    static void invalidateFilterPrimitiveParent(SVGElement*);
+
 protected:
     SVGFilterPrimitiveStandardAttributes(const QualifiedName&, Document&);
 
@@ -62,7 +64,6 @@ protected:
     void svgAttributeChanged(const QualifiedName&) override;
     void childrenChanged(const ChildChange&) override;
 
-    void invalidate();
     void primitiveAttributeChanged(const QualifiedName& attributeName);
 
 private:
@@ -80,14 +81,6 @@ private:
     Ref<SVGAnimatedLength> m_height { SVGAnimatedLength::create(this, SVGLengthMode::Height, "100%") };
     Ref<SVGAnimatedString> m_result { SVGAnimatedString::create(this) };
 };
-
-void invalidateFilterPrimitiveParent(SVGElement*);
-
-inline void SVGFilterPrimitiveStandardAttributes::invalidate()
-{
-    if (auto* primitiveRenderer = renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(*primitiveRenderer);
-}
 
 inline void SVGFilterPrimitiveStandardAttributes::primitiveAttributeChanged(const QualifiedName& attribute)
 {

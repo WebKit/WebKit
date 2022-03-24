@@ -99,15 +99,15 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
             updateRelativeLengthsInformation();
 
             if (auto* renderer = this->renderer()) {
-                if (downcast<RenderSVGImage>(*renderer).updateImageViewport())
-                    RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+                if (!downcast<RenderSVGImage>(*renderer).updateImageViewport())
+                    return;
+                setSVGResourcesInAncestorChainAreDirty();
             }
         } else if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr)
             setPresentationalHintStyleIsDirty();
         else {
             ASSERT(attrName == SVGNames::preserveAspectRatioAttr);
-            if (auto* renderer = this->renderer())
-                RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
+            setSVGResourcesInAncestorChainAreDirty();
         }
         return;
     }

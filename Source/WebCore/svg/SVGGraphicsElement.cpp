@@ -136,10 +136,9 @@ void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
         ASSERT(attrName == SVGNames::transformAttr);
         InstanceInvalidationGuard guard(*this);
 
-        if (auto renderer = this->renderer()) {
+        if (auto renderer = this->renderer())
             renderer->setNeedsTransformUpdate();
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        }
+        setSVGResourcesInAncestorChainAreDirty();
 
         return;
     }

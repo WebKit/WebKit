@@ -87,7 +87,7 @@ void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         if (attrName == SVGNames::inAttr)
-            invalidate();
+            setSVGResourcesInAncestorChainAreDirty();
         else {
             ASSERT(attrName == SVGNames::typeAttr || attrName == SVGNames::valuesAttr);
             primitiveAttributeChanged(attrName);

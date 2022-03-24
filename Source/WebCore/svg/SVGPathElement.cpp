@@ -70,10 +70,9 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
         InstanceInvalidationGuard guard(*this);
         invalidateMPathDependencies();
 
-        if (auto* renderer = downcast<RenderSVGPath>(this->renderer())) {
-            renderer->setNeedsShapeUpdate();
-            RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
-        }
+        if (auto* renderer = this->renderer())
+            static_cast<RenderSVGPath*>(renderer)->setNeedsShapeUpdate();
+        setSVGResourcesInAncestorChainAreDirty();
 
         return;
     }

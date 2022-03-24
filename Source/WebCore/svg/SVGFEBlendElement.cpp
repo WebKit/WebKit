@@ -89,7 +89,7 @@ void SVGFEBlendElement::svgAttributeChanged(const QualifiedName& attrName)
             primitiveAttributeChanged(attrName);
         else {
             ASSERT(attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr);
-            invalidate();
+            setSVGResourcesInAncestorChainAreDirty();
         }
         return;
     }

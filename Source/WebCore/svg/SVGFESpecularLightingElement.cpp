@@ -138,7 +138,7 @@ void SVGFESpecularLightingElement::svgAttributeChanged(const QualifiedName& attr
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         if (attrName == SVGNames::inAttr)
-            invalidate();
+            setSVGResourcesInAncestorChainAreDirty();
         else {
             ASSERT(attrName == SVGNames::specularConstantAttr || attrName == SVGNames::specularExponentAttr || attrName == SVGNames::surfaceScaleAttr || attrName == SVGNames::kernelUnitLengthAttr);
             primitiveAttributeChanged(attrName);

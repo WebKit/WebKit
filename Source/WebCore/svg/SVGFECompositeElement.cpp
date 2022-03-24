@@ -118,7 +118,7 @@ void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
         if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr)
-            invalidate();
+            setSVGResourcesInAncestorChainAreDirty();
         else {
             ASSERT(attrName == SVGNames::k1Attr || attrName == SVGNames::k2Attr || attrName == SVGNames::k3Attr || attrName == SVGNames::k4Attr || attrName == SVGNames::operatorAttr);
             primitiveAttributeChanged(attrName);

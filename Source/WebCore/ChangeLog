@@ -1,3 +1,129 @@
+2022-03-23  Rob Buis  <rbuis@igalia.com>
+
+        setNeedsLayout() should not be called when changing the SVG properties
+        https://bugs.webkit.org/show_bug.cgi?id=230296
+
+        Reviewed by Said Abou-Hallawa.
+
+        Make SVG not call setNeedsLayout() from outside RenderTreeUpdater::updateRenderTree() when an attribute changes.
+        This ensures there will not be a dirty rendering tree immediately after updating it.
+
+        The patch also tries to avoid invalidate wording since this is quite generic.
+
+        Based on the initial patch by Said Abou-Hallawa.
+
+        * dom/ElementData.h:
+        (WebCore::ElementData::svgResourcesInAncestorChainAreDirty const):
+        (WebCore::ElementData::setSVGResourcesInAncestorChainAreDirty const):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::applyResultsToTarget):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::svgAttributeChanged):
+        (WebCore::SVGClipPathElement::childrenChanged):
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::svgAttributeChanged):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::setSVGResourcesInAncestorChainAreDirty):
+        (WebCore::SVGElement::invalidateSVGResourcesInAncestorChainIfNeeded):
+        * svg/SVGElement.h:
+        * svg/SVGElementInlines.h:
+        (WebCore::SVGElement::setPresentationalHintStyleIsDirty):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::svgAttributeChanged):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::svgAttributeChanged):
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::svgAttributeChanged):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::setOrder):
+        (WebCore::SVGFEConvolveMatrixElement::setKernelUnitLength):
+        (WebCore::SVGFEConvolveMatrixElement::svgAttributeChanged):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::svgAttributeChanged):
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::svgAttributeChanged):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::setStdDeviation):
+        (WebCore::SVGFEDropShadowElement::svgAttributeChanged):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::setStdDeviation):
+        (WebCore::SVGFEGaussianBlurElement::svgAttributeChanged):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::buildPendingResource):
+        (WebCore::SVGFEImageElement::svgAttributeChanged):
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::childrenChanged):
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::svgAttributeChanged):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::setRadius):
+        (WebCore::SVGFEMorphologyElement::svgAttributeChanged):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::svgAttributeChanged):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::svgAttributeChanged):
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::svgAttributeChanged):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::svgAttributeChanged):
+        (WebCore::SVGFilterElement::childrenChanged):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::svgAttributeChanged):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::childrenChanged):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::invalidateFilterPrimitiveParent):
+        (WebCore::invalidateFilterPrimitiveParent): Deleted.
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::invalidate): Deleted.
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        * svg/SVGGeometryElement.cpp:
+        (WebCore::SVGGeometryElement::svgAttributeChanged):
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::svgAttributeChanged):
+        (WebCore::SVGGradientElement::childrenChanged):
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::svgAttributeChanged):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::svgAttributeChanged):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::svgAttributeChanged):
+        (WebCore::SVGMarkerElement::childrenChanged):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::childrenChanged):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        (WebCore::SVGPatternElement::childrenChanged):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::updateCurrentTranslate):
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::svgAttributeChanged):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::svgAttributeChanged):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::svgAttributeChanged):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::svgAttributeChanged):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::svgAttributeChanged):
+
 2022-03-23  Sihui Liu  <sihui_liu@apple.com>
 
         Add logging for LocalStorage and IndexedDB data migration
