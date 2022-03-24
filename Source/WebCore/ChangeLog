@@ -1,3 +1,16 @@
+2022-03-24  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Remove slow codepath matching arithmetics in FontCascade::widthForSimpleText
+        https://bugs.webkit.org/show_bug.cgi?id=238306
+
+        Reviewed by Antti Koivisto.
+
+        By now if we measure some text using the fast codepath, we usually stay on this codepath for the rest
+        of the layout (i.e. preferred width computation uses the same fast codepath, and we also don't dynamically switch between modern and legacy).
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthForSimpleText const):
+
 2022-03-24  Gabriel Nava Marino  <gnavamarino@apple.com>
 
         FormDataConsumer callback happens more than once with an exception

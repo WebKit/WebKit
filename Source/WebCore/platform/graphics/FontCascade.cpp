@@ -312,30 +312,22 @@ float FontCascade::widthForSimpleText(StringView text, TextDirection textDirecti
         return *cacheEntry;
 
     GlyphBuffer glyphBuffer;
-    float beforeWidth = 0;
     auto& font = primaryFont();
-    for (unsigned i = 0; i < text.length(); ++i) {
+    ASSERT(!font.syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
+    for (size_t i = 0; i < text.length(); ++i) {
         auto glyph = glyphDataForCharacter(text[i], false).glyph;
-        ASSERT(!font.syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
-        auto glyphWidth = font.widthForGlyph(glyph);
-        beforeWidth += glyphWidth;
-        glyphBuffer.add(glyph, font, glyphWidth, i);
+        glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
     }
 
     auto initialAdvance = font.applyTransforms(glyphBuffer, 0, 0, enableKerning(), requiresShaping(), fontDescription().computedLocale(), text, textDirection);
-    // This is needed only to match the result of the slow path.
-    // Same glyph widths but different floating point arithmetic can produce different run width.
-    float afterWidth = 0;
+    auto width = 0.f;
     for (size_t i = 0; i < glyphBuffer.size(); ++i)
-        afterWidth += WebCore::width(glyphBuffer.advanceAt(i));
-    auto additionalAdvance = afterWidth - beforeWidth;
-
-    auto finalWidth = beforeWidth + additionalAdvance;
-    finalWidth += WebCore::width(initialAdvance);
+        width += WebCore::width(glyphBuffer.advanceAt(i));
+    width += WebCore::width(initialAdvance);
 
     if (cacheEntry)
-        *cacheEntry = finalWidth;
-    return finalWidth;
+        *cacheEntry = width;
+    return width;
 }
 
 GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant variant) const
