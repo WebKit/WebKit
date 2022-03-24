@@ -57,12 +57,15 @@ void WCTileGrid::setSize(const WebCore::IntSize& size)
     m_tiles.clear();
 }
 
-WebCore::IntRect WCTileGrid::tileRectFromPixelRect(const WebCore::IntRect& rect)
+WebCore::IntRect WCTileGrid::tileRectFromPixelRect(const WebCore::IntRect& pixelRect)
 {
-    int x = std::max(rect.x(), 0);
-    int y = std::max(rect.y(), 0);
-    int maxX = std::max(rect.maxX(), 0);
-    int maxY = std::max(rect.maxY(), 0);
+    auto rect = WebCore::intersection(pixelRect, { { }, m_size });
+    if (rect.isEmpty())
+        return { };
+    int x = rect.x();
+    int y = rect.y();
+    int maxX = rect.maxX();
+    int maxY = rect.maxY();
     x /= tilePixelSize().width();
     y /= tilePixelSize().height();
     maxX = (maxX + tilePixelSize().width() - 1) / tilePixelSize().width();

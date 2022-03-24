@@ -1,3 +1,19 @@
+2022-03-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] WCTileGrid should create tiles only for the inside of layer area
+        https://bugs.webkit.org/show_bug.cgi?id=238317
+
+        Reviewed by Don Olmstead.
+
+        The coverage rect returned by computeVisibleAndCoverageRect may be
+        bigger than the layer rect. Tiles should be paved only for the
+        intersection of the coverage rect and the layer rect.
+
+        * WebProcess/WebPage/wc/WCTileGrid.cpp:
+        (WebKit::WCTileGrid::tileRectFromPixelRect): Take the intersection
+        with the layer rect. Return an empty rect if the intersection is
+        empty.
+
 2022-03-24  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Disable unneeded code when content filtering is running in the Network process
