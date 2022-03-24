@@ -1175,11 +1175,11 @@ class BugzillaMixin(object):
             return -1
 
         bug_title = bug_json.get('summary')
-        self.setProperty('bug_title', bug_title)
         sensitive = bug_json.get('product') == 'Security'
         if sensitive:
             self.setProperty('sensitive', True)
             bug_title = ''
+        self.setProperty('bug_title', bug_title)
         if self.addURLs:
             self.addURL('Bug {} {}'.format(bug_id, bug_title), Bugzilla.bug_url(bug_id))
         if bug_json.get('status') in self.bug_closed_statuses:

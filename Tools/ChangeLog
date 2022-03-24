@@ -1,3 +1,13 @@
+2022-03-24  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Set bug_title property appropriately
+        https://bugs.webkit.org/show_bug.cgi?id=238342
+
+        Reviewed by Ryan Haddad.
+
+        * CISupport/ews-build/steps.py:
+        (BugzillaMixin._is_bug_closed):
+
 2022-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         Disable RTCRtpScriptTransform in CaptivePortal mode
