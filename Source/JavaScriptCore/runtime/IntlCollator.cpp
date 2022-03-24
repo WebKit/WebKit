@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlCollator::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlCollator) };
+const ClassInfo IntlCollator::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlCollator) };
 
 namespace IntlCollatorInternal {
 constexpr bool verbose = false;
@@ -172,7 +172,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     RETURN_IF_EXCEPTION(scope, void());
 
     {
-        String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, nullptr, nullptr);
+        String collation = intlStringOption(globalObject, options, vm.propertyNames->collation, { }, ASCIILiteral::null(), ASCIILiteral::null());
         RETURN_IF_EXCEPTION(scope, void());
         if (!collation.isNull()) {
             if (!isUnicodeLocaleIdentifierType(collation)) {
@@ -188,7 +188,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     if (numeric != TriState::Indeterminate)
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Kn)] = String(numeric == TriState::True ? "true"_s : "false"_s);
 
-    String caseFirstOption = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\"", nullptr);
+    String caseFirstOption = intlStringOption(globalObject, options, vm.propertyNames->caseFirst, { "upper", "lower", "false" }, "caseFirst must be either \"upper\", \"lower\", or \"false\""_s, ASCIILiteral::null());
     RETURN_IF_EXCEPTION(scope, void());
     if (!caseFirstOption.isNull())
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Kf)] = caseFirstOption;

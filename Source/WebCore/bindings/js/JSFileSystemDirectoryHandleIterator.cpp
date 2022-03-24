@@ -43,11 +43,11 @@ static JSC_DECLARE_HOST_FUNCTION(jsFileSystemDirectoryHandleIterator_onPromiseRe
 JSC_ANNOTATE_HOST_FUNCTION(JSFileSystemDirectoryHandleIteratorPrototypeNext, JSFileSystemDirectoryHandleIteratorPrototype::next);
 
 template<>
-const JSC::ClassInfo JSFileSystemDirectoryHandleIteratorBase::s_info = { "Directory Handle Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIteratorBase) };
-const JSC::ClassInfo JSFileSystemDirectoryHandleIterator::s_info = { "Directory Handle Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIterator) };
+const JSC::ClassInfo JSFileSystemDirectoryHandleIteratorBase::s_info = { "Directory Handle Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIteratorBase) };
+const JSC::ClassInfo JSFileSystemDirectoryHandleIterator::s_info = { "Directory Handle Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIterator) };
 
 template<>
-const JSC::ClassInfo JSFileSystemDirectoryHandleIteratorPrototype::s_info = { "Directory Handle Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIteratorPrototype) };
+const JSC::ClassInfo JSFileSystemDirectoryHandleIteratorPrototype::s_info = { "Directory Handle Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileSystemDirectoryHandleIteratorPrototype) };
 
 GCClient::IsoSubspace* JSFileSystemDirectoryHandleIterator::subspaceForImpl(VM& vm)
 {

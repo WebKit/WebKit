@@ -60,7 +60,7 @@ public:
 
     static RefPtr<JSC::Breakpoint> debuggerBreakpointFromPayload(Protocol::ErrorString&, RefPtr<JSON::Object>&& options);
 
-    static const char* const backtraceObjectGroup;
+    static const ASCIILiteral backtraceObjectGroup;
 
     // InspectorAgentBase
     void didCreateFrontendAndBackend(FrontendRouter*, BackendDispatcher*) final;

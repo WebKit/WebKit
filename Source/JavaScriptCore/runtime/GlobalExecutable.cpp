@@ -30,6 +30,6 @@
 
 namespace JSC {
 
-const ClassInfo GlobalExecutable::s_info = { "GlobalExecutable", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalExecutable) };
+const ClassInfo GlobalExecutable::s_info = { "GlobalExecutable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalExecutable) };
 
 } // namespace JSC

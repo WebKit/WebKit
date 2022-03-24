@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyTableConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyTable, nullptr, CREATE_METHOD_TABLE(WebAssemblyTableConstructor) };
+const ClassInfo WebAssemblyTableConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyTable, nullptr, CREATE_METHOD_TABLE(WebAssemblyTableConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyTable);
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyTable);
@@ -89,7 +89,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
     JSValue minSizeValue = memoryDescriptor->get(globalObject, minimumIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (!initialSizeValue.isUndefined() && !minSizeValue.isUndefined())
-        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table 'initial' and 'minimum' options are specified at the same time");
+        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table 'initial' and 'minimum' options are specified at the same time"_s);
 
     if (!minSizeValue.isUndefined())
         initialSizeValue = minSizeValue;

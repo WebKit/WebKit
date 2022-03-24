@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-const ClassInfo FinalizationRegistryConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryConstructor) };
+const ClassInfo FinalizationRegistryConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryConstructor) };
 
 void FinalizationRegistryConstructor::finishCreation(VM& vm, FinalizationRegistryPrototype* prototype)
 {

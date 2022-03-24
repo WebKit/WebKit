@@ -43,13 +43,13 @@ int testJSONParse()
     JSLockHolder locker(vm.get());
     JSGlobalObject* globalObject = JSGlobalObject::create(*vm, JSGlobalObject::createStructure(*vm, jsNull()));
     
-    JSValue v0 = JSONParse(globalObject, "");
-    JSValue v1 = JSONParse(globalObject, "#$%^");
+    JSValue v0 = JSONParse(globalObject, ""_s);
+    JSValue v1 = JSONParse(globalObject, "#$%^"_s);
     JSValue v2 = JSONParse(globalObject, String());
     UChar emptyUCharArray[1] = { '\0' };
     JSValue v3 = JSONParse(globalObject, String(emptyUCharArray, 0));
     JSValue v4;
-    JSValue v5 = JSONParse(globalObject, "123");
+    JSValue v5 = JSONParse(globalObject, "123"_s);
     
     failed = failed || (v0 != v1);
     failed = failed || (v1 != v2);

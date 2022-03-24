@@ -48,7 +48,7 @@ namespace JSC {
 @end
 */
 
-const ClassInfo TemporalNow::s_info = { "Temporal.Now", &Base::s_info, &temporalNowTable, nullptr, CREATE_METHOD_TABLE(TemporalNow) };
+const ClassInfo TemporalNow::s_info = { "Temporal.Now"_s, &Base::s_info, &temporalNowTable, nullptr, CREATE_METHOD_TABLE(TemporalNow) };
 
 TemporalNow::TemporalNow(VM& vm, Structure* structure)
     : Base(vm, structure)

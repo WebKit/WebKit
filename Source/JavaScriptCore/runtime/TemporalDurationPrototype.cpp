@@ -62,7 +62,7 @@ static JSC_DECLARE_CUSTOM_GETTER(temporalDurationPrototypeGetterBlank);
 
 namespace JSC {
 
-const ClassInfo TemporalDurationPrototype::s_info = { "Temporal.Duration", &Base::s_info, &durationPrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalDurationPrototype) };
+const ClassInfo TemporalDurationPrototype::s_info = { "Temporal.Duration"_s, &Base::s_info, &durationPrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalDurationPrototype) };
 
 /* Source for TemporalDurationPrototype.lut.h
 @begin durationPrototypeTable

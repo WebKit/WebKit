@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyExceptionConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyException, nullptr, CREATE_METHOD_TABLE(WebAssemblyExceptionConstructor) };
+const ClassInfo WebAssemblyExceptionConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyException, nullptr, CREATE_METHOD_TABLE(WebAssemblyExceptionConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyException);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyException);
@@ -58,7 +58,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
 
     auto tag = jsDynamicCast<JSWebAssemblyTag*>(vm, tagValue);
     if (!tag)
-        return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects the first argument to be a WebAssembly.Tag");
+        return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects the first argument to be a WebAssembly.Tag"_s);
 
     MarkedArgumentBuffer values;
     forEachInIterable(globalObject, tagParameters, [&] (VM&, JSGlobalObject*, JSValue nextValue) {
@@ -67,7 +67,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     RETURN_IF_EXCEPTION(scope, { });
 
     if (values.size() != tag->signature().argumentCount())
-        return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects the number of paremeters in WebAssembly.Tag to match the tags parameter count.");
+        return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects the number of paremeters in WebAssembly.Tag to match the tags parameter count."_s);
 
     // Any GC'd values in here will be marked by the MarkedArugementBuffer until stored in the Exception.
     FixedVector<uint64_t> payload(values.size());

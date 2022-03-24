@@ -31,7 +31,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(GetterSetter);
 
-const ClassInfo GetterSetter::s_info = { "GetterSetter", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(GetterSetter) };
+const ClassInfo GetterSetter::s_info = { "GetterSetter"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(GetterSetter) };
 
 template<typename Visitor>
 void GetterSetter::visitChildrenImpl(JSCell* cell, Visitor& visitor)

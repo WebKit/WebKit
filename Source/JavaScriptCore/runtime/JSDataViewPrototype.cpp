@@ -94,7 +94,7 @@ static JSC_DECLARE_CUSTOM_GETTER(dataViewProtoGetterByteOffset);
 namespace JSC {
 
 const ClassInfo JSDataViewPrototype::s_info = {
-    "DataView", &Base::s_info, &dataViewTable, nullptr,
+    "DataView"_s, &Base::s_info, &dataViewTable, nullptr,
     CREATE_METHOD_TABLE(JSDataViewPrototype)
 };
 
@@ -230,7 +230,7 @@ JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterBuffer, (JSGlobalObject* globalObjec
 
     JSDataView* view = jsDynamicCast<JSDataView*>(vm, JSValue::decode(thisValue));
     if (!view)
-        return throwVMTypeError(globalObject, scope, "DataView.prototype.buffer expects |this| to be a DataView object");
+        return throwVMTypeError(globalObject, scope, "DataView.prototype.buffer expects |this| to be a DataView object"_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(view->possiblySharedJSBuffer(globalObject)));
 }
@@ -242,7 +242,7 @@ JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterByteLength, (JSGlobalObject* globalO
 
     JSDataView* view = jsDynamicCast<JSDataView*>(vm, JSValue::decode(thisValue));
     if (!view)
-        return throwVMTypeError(globalObject, scope, "DataView.prototype.byteLength expects |this| to be a DataView object");
+        return throwVMTypeError(globalObject, scope, "DataView.prototype.byteLength expects |this| to be a DataView object"_s);
     if (view->isDetached())
         return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 
@@ -256,7 +256,7 @@ JSC_DEFINE_CUSTOM_GETTER(dataViewProtoGetterByteOffset, (JSGlobalObject* globalO
 
     JSDataView* view = jsDynamicCast<JSDataView*>(vm, JSValue::decode(thisValue));
     if (!view)
-        return throwVMTypeError(globalObject, scope, "DataView.prototype.byteOffset expects |this| to be a DataView object");
+        return throwVMTypeError(globalObject, scope, "DataView.prototype.byteOffset expects |this| to be a DataView object"_s);
     if (view->isDetached())
         return throwVMTypeError(globalObject, scope, "Underlying ArrayBuffer has been detached from the view"_s);
 

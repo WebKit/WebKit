@@ -49,7 +49,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlListFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlListFormat) };
+const ClassInfo IntlListFormat::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlListFormat) };
 
 // We do not use ICUDeleter<ulistfmt_close> because we do not want to include ulistformatter.h in IntlListFormat.h.
 // ulistformatter.h needs to be included with #undef U_HIDE_DRAFT_API, and we would like to minimize this effect in IntlListFormat.cpp.

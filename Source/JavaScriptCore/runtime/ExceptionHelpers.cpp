@@ -161,7 +161,7 @@ static String notAFunctionSourceAppender(const String& originalMessage, const St
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
-    auto notAFunctionIndex = originalMessage.reverseFind("is not a function");
+    auto notAFunctionIndex = originalMessage.reverseFind("is not a function"_s);
     RELEASE_ASSERT(notAFunctionIndex != notFound);
     StringView displayValue;
     if (originalMessage.is8Bit()) 
@@ -197,7 +197,7 @@ static String invalidParameterInSourceAppender(const String& originalMessage, co
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
-    auto inIndex = sourceText.reverseFind("in");
+    auto inIndex = sourceText.reverseFind("in"_s);
     if (inIndex == notFound) {
         // This should basically never happen, since JS code must use the literal
         // text "in" for the `in` operation. However, if we fail to find "in"
@@ -218,7 +218,7 @@ inline String invalidParameterInstanceofSourceAppender(const String& content, co
         return defaultApproximateSourceError(originalMessage, sourceText);
 
     ASSERT(occurrence == ErrorInstance::FoundExactSource);
-    auto instanceofIndex = sourceText.reverseFind("instanceof");
+    auto instanceofIndex = sourceText.reverseFind("instanceof"_s);
     // This can happen when Symbol.hasInstance function is directly called.
     if (instanceofIndex == notFound)
         return originalMessage;
@@ -246,7 +246,7 @@ static String invalidPrototypeSourceAppender(const String& originalMessage, cons
     if (occurrence == ErrorInstance::FoundApproximateSource)
         return defaultApproximateSourceError(originalMessage, sourceText);
 
-    auto extendsIndex = sourceText.reverseFind("extends");
+    auto extendsIndex = sourceText.reverseFind("extends"_s);
     if (extendsIndex == notFound || sourceText.find("extends") != extendsIndex)
         return makeString(originalMessage, " (evaluating '", sourceText, "')");
 
@@ -324,27 +324,27 @@ JSObject* createErrorForInvalidGlobalAssignment(JSGlobalObject* globalObject, co
 
 JSObject* createTDZError(JSGlobalObject* globalObject)
 {
-    return createReferenceError(globalObject, "Cannot access uninitialized variable.");
+    return createReferenceError(globalObject, "Cannot access uninitialized variable."_s);
 }
 
 JSObject* createInvalidPrivateNameError(JSGlobalObject* globalObject)
 {
-    return createTypeError(globalObject, makeString("Cannot access invalid private field"), defaultSourceAppender, TypeNothing);
+    return createTypeError(globalObject, "Cannot access invalid private field"_s, defaultSourceAppender, TypeNothing);
 }
 
 JSObject* createRedefinedPrivateNameError(JSGlobalObject* globalObject)
 {
-    return createTypeError(globalObject, makeString("Cannot redefine existing private field"), defaultSourceAppender, TypeNothing);
+    return createTypeError(globalObject, "Cannot redefine existing private field"_s, defaultSourceAppender, TypeNothing);
 }
 
 JSObject* createPrivateMethodAccessError(JSGlobalObject* globalObject)
 {
-    return createTypeError(globalObject, makeString("Cannot access private method or acessor"_s), defaultSourceAppender, TypeNothing);
+    return createTypeError(globalObject, "Cannot access private method or acessor"_s, defaultSourceAppender, TypeNothing);
 }
 
 JSObject* createReinstallPrivateMethodError(JSGlobalObject* globalObject)
 {
-    return createTypeError(globalObject, makeString("Cannot install same private methods on object more than once"_s), defaultSourceAppender, TypeNothing);
+    return createTypeError(globalObject, "Cannot install same private methods on object more than once"_s, defaultSourceAppender, TypeNothing);
 }
 
 Exception* throwOutOfMemoryError(JSGlobalObject* globalObject, ThrowScope& scope)

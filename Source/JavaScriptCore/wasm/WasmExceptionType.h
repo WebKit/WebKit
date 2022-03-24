@@ -32,18 +32,18 @@ namespace JSC {
 namespace Wasm {
 
 #define FOR_EACH_EXCEPTION(macro) \
-    macro(OutOfBoundsMemoryAccess,  "Out of bounds memory access") \
-    macro(OutOfBoundsTableAccess, "Out of bounds table access") \
-    macro(OutOfBoundsCallIndirect, "Out of bounds call_indirect") \
-    macro(NullTableEntry,  "call_indirect to a null table entry") \
-    macro(NullReference,  "call_ref to a null reference") \
-    macro(BadSignature, "call_indirect to a signature that does not match") \
-    macro(OutOfBoundsTrunc, "Out of bounds Trunc operation") \
-    macro(Unreachable, "Unreachable code should not be executed") \
-    macro(DivisionByZero, "Division by zero") \
-    macro(IntegerOverflow, "Integer overflow") \
-    macro(StackOverflow, "Stack overflow") \
-    macro(FuncrefNotWasm, "Funcref must be an exported wasm function")
+    macro(OutOfBoundsMemoryAccess,  "Out of bounds memory access"_s) \
+    macro(OutOfBoundsTableAccess, "Out of bounds table access"_s) \
+    macro(OutOfBoundsCallIndirect, "Out of bounds call_indirect"_s) \
+    macro(NullTableEntry,  "call_indirect to a null table entry"_s) \
+    macro(NullReference,  "call_ref to a null reference"_s) \
+    macro(BadSignature, "call_indirect to a signature that does not match"_s) \
+    macro(OutOfBoundsTrunc, "Out of bounds Trunc operation"_s) \
+    macro(Unreachable, "Unreachable code should not be executed"_s) \
+    macro(DivisionByZero, "Division by zero"_s) \
+    macro(IntegerOverflow, "Integer overflow"_s) \
+    macro(StackOverflow, "Stack overflow"_s) \
+    macro(FuncrefNotWasm, "Funcref must be an exported wasm function"_s)
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,
@@ -51,7 +51,7 @@ enum class ExceptionType : uint32_t {
 #undef MAKE_ENUM
 };
 
-ALWAYS_INLINE const char* errorMessageForExceptionType(ExceptionType type)
+ALWAYS_INLINE ASCIILiteral errorMessageForExceptionType(ExceptionType type)
 {
     switch (type) {
 #define SWITCH_CASE(enumName, error) \
@@ -61,7 +61,7 @@ ALWAYS_INLINE const char* errorMessageForExceptionType(ExceptionType type)
 #undef SWITCH_CASE
     }
     ASSERT_NOT_REACHED();
-    return "";
+    return ""_s;
 }
 
 } } // namespace JSC::Wasm

@@ -55,7 +55,7 @@ enum class RootMarkReason : uint8_t {
 
 #undef DECLARE_ROOT_MARK_REASON
 
-const char* rootMarkReasonDescription(RootMarkReason);
+ASCIILiteral rootMarkReasonDescription(RootMarkReason);
 
 } // namespace JSC
 

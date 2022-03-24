@@ -33,7 +33,7 @@ namespace JSC {
 
 const ASCIILiteral WeakMapNonObjectKeyError { "Attempted to set a non-object key in a WeakMap"_s };
 
-const ClassInfo WeakMapPrototype::s_info = { "WeakMap", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakMapPrototype) };
+const ClassInfo WeakMapPrototype::s_info = { "WeakMap"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakMapPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakMapDelete);
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakMapGet);

@@ -28,7 +28,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(NumberObject);
 
-const ClassInfo NumberObject::s_info = { "Number", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NumberObject) };
+const ClassInfo NumberObject::s_info = { "Number"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NumberObject) };
 
 NumberObject::NumberObject(VM& vm, Structure* structure)
     : Base(vm, structure)

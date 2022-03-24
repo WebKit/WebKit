@@ -41,7 +41,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlListFormatPrototypeFuncResolvedOptions);
 
 namespace JSC {
 
-const ClassInfo IntlListFormatPrototype::s_info = { "Intl.ListFormat", &Base::s_info, &listFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlListFormatPrototype) };
+const ClassInfo IntlListFormatPrototype::s_info = { "Intl.ListFormat"_s, &Base::s_info, &listFormatPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlListFormatPrototype) };
 
 /* Source for IntlListFormatPrototype.lut.h
 @begin listFormatPrototypeTable

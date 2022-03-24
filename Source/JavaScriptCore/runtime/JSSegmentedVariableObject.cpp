@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo JSSegmentedVariableObject::s_info = { "SegmentedVariableObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSegmentedVariableObject) };
+const ClassInfo JSSegmentedVariableObject::s_info = { "SegmentedVariableObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSegmentedVariableObject) };
 
 ScopeOffset JSSegmentedVariableObject::findVariableIndex(void* variableAddress)
 {

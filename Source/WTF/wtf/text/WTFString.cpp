@@ -80,7 +80,7 @@ String::String(const char* nullTerminatedString)
 }
 
 String::String(ASCIILiteral characters)
-    : m_impl(StringImpl::createFromLiteral(characters))
+    : m_impl(characters.isNull() ? nullptr : RefPtr<StringImpl> { StringImpl::createFromLiteral(characters) })
 {
 }
 
@@ -465,31 +465,31 @@ String String::number(unsigned long long number)
 String String::numberToStringFixedPrecision(float number, unsigned precision, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy)
 {
     NumberToStringBuffer buffer;
-    return numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros);
+    return String { numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros) };
 }
 
 String String::numberToStringFixedPrecision(double number, unsigned precision, TrailingZerosTruncatingPolicy trailingZerosTruncatingPolicy)
 {
     NumberToStringBuffer buffer;
-    return numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros);
+    return String { numberToFixedPrecisionString(number, precision, buffer, trailingZerosTruncatingPolicy == TruncateTrailingZeros) };
 }
 
 String String::number(float number)
 {
     NumberToStringBuffer buffer;
-    return numberToString(number, buffer);
+    return String { numberToString(number, buffer) };
 }
 
 String String::number(double number)
 {
     NumberToStringBuffer buffer;
-    return numberToString(number, buffer);
+    return String { numberToString(number, buffer) };
 }
 
 String String::numberToStringFixedWidth(double number, unsigned decimalPlaces)
 {
     NumberToStringBuffer buffer;
-    return numberToFixedWidthString(number, decimalPlaces, buffer);
+    return String { numberToFixedWidthString(number, decimalPlaces, buffer) };
 }
 
 double String::toDouble(bool* ok) const

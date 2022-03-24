@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo JSWeakObjectRef::s_info = { "WeakRef", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWeakObjectRef) };
+const ClassInfo JSWeakObjectRef::s_info = { "WeakRef"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWeakObjectRef) };
 
 void JSWeakObjectRef::finishCreation(VM& vm, JSObject* value)
 {

@@ -42,7 +42,7 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyExceptionProtoFuncIs);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyExceptionPrototype::s_info = { "WebAssembly.Exception", &Base::s_info, &prototypeTableWebAssemblyException, nullptr, CREATE_METHOD_TABLE(WebAssemblyExceptionPrototype) };
+const ClassInfo WebAssemblyExceptionPrototype::s_info = { "WebAssembly.Exception"_s, &Base::s_info, &prototypeTableWebAssemblyException, nullptr, CREATE_METHOD_TABLE(WebAssemblyExceptionPrototype) };
 
 /* Source for WebAssemblyExceptionPrototype.lut.h
  @begin prototypeTableWebAssemblyException
@@ -143,7 +143,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyExceptionProtoFuncIs, (JSGlobalObject* globa
 
     JSWebAssemblyTag* tag = getTag(vm, callFrame->argument(0));
     if (!tag)
-        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Exception.is(): First argument must be a WebAssembly.Tag");
+        return throwVMTypeError(globalObject, throwScope, "WebAssembly.Exception.is(): First argument must be a WebAssembly.Tag"_s);
 
     RELEASE_AND_RETURN(throwScope, JSValue::encode(jsBoolean(jsException->tag() == tag->tag())));
 }

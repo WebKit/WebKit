@@ -95,7 +95,7 @@ static const HashTableValue JSTestNamespaceObjectConstructorTableValues[] =
 #endif
 };
 
-template<> const ClassInfo JSTestNamespaceObjectDOMConstructor::s_info = { "TestInterfaceName", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceObjectDOMConstructor) };
+template<> const ClassInfo JSTestNamespaceObjectDOMConstructor::s_info = { "TestInterfaceName"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceObjectDOMConstructor) };
 
 template<> JSValue JSTestNamespaceObjectDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -131,7 +131,7 @@ template<> void JSTestNamespaceObjectDOMConstructor::initializeProperties(VM& vm
 #endif
 }
 
-const ClassInfo JSTestNamespaceObject::s_info = { "TestInterfaceName", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceObject) };
+const ClassInfo JSTestNamespaceObject::s_info = { "TestInterfaceName"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamespaceObject) };
 
 JSTestNamespaceObject::JSTestNamespaceObject(Structure* structure, JSDOMGlobalObject& globalObject)
     : JSDOMObject(structure, globalObject) { }

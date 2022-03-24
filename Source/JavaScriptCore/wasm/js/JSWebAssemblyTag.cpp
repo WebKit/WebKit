@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo JSWebAssemblyTag::s_info = { "WebAssembly.Tag", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyTag) };
+const ClassInfo JSWebAssemblyTag::s_info = { "WebAssembly.Tag"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyTag) };
 
 JSWebAssemblyTag* JSWebAssemblyTag::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, const Wasm::Tag& tag)
 {

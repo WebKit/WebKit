@@ -27,7 +27,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(RegExpObject);
 
-const ClassInfo RegExpObject::s_info = { "RegExp", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpObject) };
+const ClassInfo RegExpObject::s_info = { "RegExp"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpObject) };
 
 static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexStrict);
 static JSC_DECLARE_CUSTOM_SETTER(regExpObjectSetLastIndexNonStrict);

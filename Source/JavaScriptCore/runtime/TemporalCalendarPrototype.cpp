@@ -46,7 +46,7 @@ static JSC_DECLARE_CUSTOM_GETTER(temporalCalendarPrototypeGetterId);
 
 namespace JSC {
 
-const ClassInfo TemporalCalendarPrototype::s_info = { "Temporal.Calendar", &Base::s_info, &temporalCalendarPrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalCalendarPrototype) };
+const ClassInfo TemporalCalendarPrototype::s_info = { "Temporal.Calendar"_s, &Base::s_info, &temporalCalendarPrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalCalendarPrototype) };
 
 /* Source for TemporalCalendarPrototype.lut.h
 @begin temporalCalendarPrototypeTable

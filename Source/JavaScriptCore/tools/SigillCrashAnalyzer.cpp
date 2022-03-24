@@ -277,7 +277,7 @@ auto SigillCrashAnalyzer::analyze(SignalContext& context) -> CrashSource
             break;
         }
 
-        log("pc %p belongs to CodeBlock %p of type %s", pc, codeBlock, JITCode::typeName(codeBlock->jitType()));
+        log("pc %p belongs to CodeBlock %p of type %s", pc, codeBlock, JITCode::typeName(codeBlock->jitType()).characters());
 
         dumpCodeBlock(codeBlock, pc);
     } while (false);

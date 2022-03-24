@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyGlobalConstructor::s_info = { "Function", &Base::s_info, &constructorGlobalWebAssemblyGlobal, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalConstructor) };
+const ClassInfo WebAssemblyGlobalConstructor::s_info = { "Function"_s, &Base::s_info, &constructorGlobalWebAssemblyGlobal, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyGlobal);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyGlobal);
@@ -142,7 +142,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyGlobal, (JSGlobalObject* globalOb
             if (argument.isUndefined())
                 argument = defaultValueForReferenceType(type);
             if (!isWebAssemblyHostFunction(vm, argument) && !argument.isNull()) {
-                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
+                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
                 return { };
             }
             initialValue = JSValue::encode(argument);

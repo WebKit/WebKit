@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo ExecutableToCodeBlockEdge::s_info = { "ExecutableToCodeBlockEdge", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(ExecutableToCodeBlockEdge) };
+const ClassInfo ExecutableToCodeBlockEdge::s_info = { "ExecutableToCodeBlockEdge"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(ExecutableToCodeBlockEdge) };
 
 Structure* ExecutableToCodeBlockEdge::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {

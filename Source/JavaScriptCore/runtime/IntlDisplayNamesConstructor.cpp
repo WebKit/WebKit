@@ -42,7 +42,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlDisplayNamesConstructorSupportedLocalesOf);
 
 namespace JSC {
 
-const ClassInfo IntlDisplayNamesConstructor::s_info = { "Function", &Base::s_info, &displayNamesConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlDisplayNamesConstructor) };
+const ClassInfo IntlDisplayNamesConstructor::s_info = { "Function"_s, &Base::s_info, &displayNamesConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlDisplayNamesConstructor) };
 
 /* Source for IntlDisplayNamesConstructor.lut.h
 @begin displayNamesConstructorTable

@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlDisplayNames::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDisplayNames) };
+const ClassInfo IntlDisplayNames::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDisplayNames) };
 
 IntlDisplayNames* IntlDisplayNames::create(VM& vm, Structure* structure)
 {

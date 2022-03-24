@@ -35,8 +35,8 @@ namespace JSC {
 class JSObject;
 
 // Convenience wrapper so you don't need to deal with CallData unless you are going to use it.
-JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue functionObject, const ArgList&, const char* errorMessage);
-JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue functionObject, JSValue newTarget, const ArgList&, const char* errorMessage);
+JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue functionObject, const ArgList&, ASCIILiteral errorMessage);
+JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue functionObject, JSValue newTarget, const ArgList&, ASCIILiteral errorMessage);
 
 JS_EXPORT_PRIVATE JSObject* construct(JSGlobalObject*, JSValue constructor, const CallData&, const ArgList&, JSValue newTarget);
 

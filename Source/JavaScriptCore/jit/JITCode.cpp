@@ -44,24 +44,24 @@ JITCode::~JITCode()
 {
 }
 
-const char* JITCode::typeName(JITType jitType)
+ASCIILiteral JITCode::typeName(JITType jitType)
 {
     switch (jitType) {
     case JITType::None:
-        return "None";
+        return "None"_s;
     case JITType::HostCallThunk:
-        return "Host";
+        return "Host"_s;
     case JITType::InterpreterThunk:
-        return "LLInt";
+        return "LLInt"_s;
     case JITType::BaselineJIT:
-        return "Baseline";
+        return "Baseline"_s;
     case JITType::DFGJIT:
-        return "DFG";
+        return "DFG"_s;
     case JITType::FTLJIT:
-        return "FTL";
+        return "FTL"_s;
     default:
         CRASH();
-        return "";
+        return ""_s;
     }
 }
 

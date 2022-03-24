@@ -109,7 +109,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONInheritPrototype, JSTestD
 
 using JSTestDefaultToJSONInheritDOMConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONInherit>;
 
-template<> const ClassInfo JSTestDefaultToJSONInheritDOMConstructor::s_info = { "TestDefaultToJSONInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritDOMConstructor) };
+template<> const ClassInfo JSTestDefaultToJSONInheritDOMConstructor::s_info = { "TestDefaultToJSONInherit"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritDOMConstructor) };
 
 template<> JSValue JSTestDefaultToJSONInheritDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -134,7 +134,7 @@ static const HashTableValue JSTestDefaultToJSONInheritPrototypeTableValues[] =
     { "toJSON", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestDefaultToJSONInheritPrototypeFunction_toJSON), (intptr_t) (0) } },
 };
 
-const ClassInfo JSTestDefaultToJSONInheritPrototype::s_info = { "TestDefaultToJSONInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritPrototype) };
+const ClassInfo JSTestDefaultToJSONInheritPrototype::s_info = { "TestDefaultToJSONInherit"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritPrototype) };
 
 void JSTestDefaultToJSONInheritPrototype::finishCreation(VM& vm)
 {
@@ -143,7 +143,7 @@ void JSTestDefaultToJSONInheritPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestDefaultToJSONInherit::s_info = { "TestDefaultToJSONInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInherit) };
+const ClassInfo JSTestDefaultToJSONInherit::s_info = { "TestDefaultToJSONInherit"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInherit) };
 
 JSTestDefaultToJSONInherit::JSTestDefaultToJSONInherit(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONInherit>&& impl)
     : JSTestDefaultToJSON(structure, globalObject, WTFMove(impl))

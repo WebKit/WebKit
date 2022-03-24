@@ -32,7 +32,7 @@
 
 namespace JSC {
     
-const ClassInfo JSString::s_info = { "string", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSString) };
+const ClassInfo JSString::s_info = { "string"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSString) };
 
 Structure* JSString::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
 {
@@ -67,7 +67,7 @@ void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
 {
     VM& vm = cell->vm();
     const JSString* thisObject = jsCast<const JSString*>(cell);
-    out.printf("<%p, %s, [%u], ", thisObject, thisObject->className(vm), thisObject->length());
+    out.printf("<%p, %s, [%u], ", thisObject, thisObject->className(vm).characters(), thisObject->length());
     uintptr_t pointer = thisObject->fiberConcurrently();
     if (pointer & isRopeInPointer) {
         if (pointer & JSRopeString::isSubstringInPointer)

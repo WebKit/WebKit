@@ -42,7 +42,7 @@ static JSC_DECLARE_CUSTOM_GETTER(webAssemblyInstanceProtoGetterExports);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance", &Base::s_info, &prototypeTableWebAssemblyInstance, nullptr, CREATE_METHOD_TABLE(WebAssemblyInstancePrototype) };
+const ClassInfo WebAssemblyInstancePrototype::s_info = { "WebAssembly.Instance"_s, &Base::s_info, &prototypeTableWebAssemblyInstance, nullptr, CREATE_METHOD_TABLE(WebAssemblyInstancePrototype) };
 
 /* Source for WebAssemblyInstancePrototype.lut.h
  @begin prototypeTableWebAssemblyInstance

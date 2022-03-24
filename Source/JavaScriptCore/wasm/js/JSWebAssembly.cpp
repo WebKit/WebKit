@@ -73,7 +73,7 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyValidateFunc);
 
 namespace JSC {
 
-const ClassInfo JSWebAssembly::s_info = { "WebAssembly", &Base::s_info, &webAssemblyTable, nullptr, CREATE_METHOD_TABLE(JSWebAssembly) };
+const ClassInfo JSWebAssembly::s_info = { "WebAssembly"_s, &Base::s_info, &webAssemblyTable, nullptr, CREATE_METHOD_TABLE(JSWebAssembly) };
 
 /* Source for JSWebAssembly.lut.h
 @begin webAssemblyTable

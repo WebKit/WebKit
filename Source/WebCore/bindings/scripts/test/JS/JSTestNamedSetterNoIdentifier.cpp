@@ -85,7 +85,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedSetterNoIdentifierPrototype, JSTe
 
 using JSTestNamedSetterNoIdentifierDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterNoIdentifier>;
 
-template<> const ClassInfo JSTestNamedSetterNoIdentifierDOMConstructor::s_info = { "TestNamedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierDOMConstructor) };
+template<> const ClassInfo JSTestNamedSetterNoIdentifierDOMConstructor::s_info = { "TestNamedSetterNoIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierDOMConstructor) };
 
 template<> JSValue JSTestNamedSetterNoIdentifierDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -109,7 +109,7 @@ static const HashTableValue JSTestNamedSetterNoIdentifierPrototypeTableValues[] 
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestNamedSetterNoIdentifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestNamedSetterNoIdentifierPrototype::s_info = { "TestNamedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierPrototype) };
+const ClassInfo JSTestNamedSetterNoIdentifierPrototype::s_info = { "TestNamedSetterNoIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifierPrototype) };
 
 void JSTestNamedSetterNoIdentifierPrototype::finishCreation(VM& vm)
 {
@@ -118,7 +118,7 @@ void JSTestNamedSetterNoIdentifierPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestNamedSetterNoIdentifier::s_info = { "TestNamedSetterNoIdentifier", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifier) };
+const ClassInfo JSTestNamedSetterNoIdentifier::s_info = { "TestNamedSetterNoIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterNoIdentifier) };
 
 JSTestNamedSetterNoIdentifier::JSTestNamedSetterNoIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterNoIdentifier>&& impl)
     : JSDOMWrapper<TestNamedSetterNoIdentifier>(structure, globalObject, WTFMove(impl))

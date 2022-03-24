@@ -450,14 +450,14 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         break;
     case ConstructorKind::Naked:
         if (!isConstructor()) {
-            emitThrowTypeError("Cannot call a constructor without |new|");
+            emitThrowTypeError("Cannot call a constructor without |new|"_s);
             return;
         }
         break;
     case ConstructorKind::Base:
     case ConstructorKind::Extends:
         if (!isConstructor()) {
-            emitThrowTypeError("Cannot call a class constructor without |new|");
+            emitThrowTypeError("Cannot call a class constructor without |new|"_s);
             return;
         }
         break;
@@ -2871,7 +2871,7 @@ RegisterID* BytecodeGenerator::emitHasPrivateBrand(RegisterID* dst, RegisterID* 
     if (isStatic) {
         Ref<Label> isObjectLabel = newLabel();
         emitJumpIfTrue(emitIsObject(newTemporary(), base), isObjectLabel.get());
-        emitThrowTypeError("Cannot access static private method or accessor of a non-Object");
+        emitThrowTypeError("Cannot access static private method or accessor of a non-Object"_s);
         emitLabel(isObjectLabel.get());
         emitEqualityOp<OpStricteq>(dst, base, brand);
     } else
@@ -2884,7 +2884,7 @@ void BytecodeGenerator::emitCheckPrivateBrand(RegisterID* base, RegisterID* bran
     if (isStatic) {
         Ref<Label> brandCheckOkLabel = newLabel();
         emitJumpIfTrue(emitEqualityOp<OpStricteq>(newTemporary(), base, brand), brandCheckOkLabel.get());
-        emitThrowTypeError("Cannot access static private method or accessor");
+        emitThrowTypeError("Cannot access static private method or accessor"_s);
         emitLabel(brandCheckOkLabel.get());
         return;
     
@@ -3656,7 +3656,7 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src, ReturnFrom from)
             if (isDerived) {
                 Ref<Label> isUndefinedLabel = newLabel();
                 emitJumpIfTrue(emitIsUndefined(newTemporary(), src), isUndefinedLabel.get());
-                emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class.");
+                emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class."_s);
                 emitLabel(isUndefinedLabel.get());
                 emitTDZCheck(&m_thisRegister);
             }

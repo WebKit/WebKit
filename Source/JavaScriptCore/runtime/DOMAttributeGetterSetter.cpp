@@ -32,6 +32,6 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DOMAttributeGetterSetter);
 
-const ClassInfo DOMAttributeGetterSetter::s_info = { "DOMAttributeGetterSetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMAttributeGetterSetter) };
+const ClassInfo DOMAttributeGetterSetter::s_info = { "DOMAttributeGetterSetter"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMAttributeGetterSetter) };
 
 } // namespace JSC

@@ -130,7 +130,7 @@ void LLIntPlan::didCompleteCompilation()
 
         LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Wasm, JITCompilationCanFail);
         if (UNLIKELY(linkBuffer.didFailToAllocate())) {
-            Base::fail("Out of executable memory in Wasm LLInt entry thunks");
+            Base::fail("Out of executable memory in Wasm LLInt entry thunks"_s);
             return;
         }
 

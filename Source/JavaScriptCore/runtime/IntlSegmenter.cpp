@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo IntlSegmenter::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlSegmenter) };
+const ClassInfo IntlSegmenter::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlSegmenter) };
 
 IntlSegmenter* IntlSegmenter::create(VM& vm, Structure* structure)
 {

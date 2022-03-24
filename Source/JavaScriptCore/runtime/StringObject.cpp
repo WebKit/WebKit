@@ -29,7 +29,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StringObject);
 
-const ClassInfo StringObject::s_info = { "String", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StringObject) };
+const ClassInfo StringObject::s_info = { "String"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StringObject) };
 
 StringObject::StringObject(VM& vm, Structure* structure)
     : Base(vm, structure)

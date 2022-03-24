@@ -45,7 +45,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BigIntConstructor);
 
-const ClassInfo BigIntConstructor::s_info = { "Function", &Base::s_info, &bigIntConstructorTable, nullptr, CREATE_METHOD_TABLE(BigIntConstructor) };
+const ClassInfo BigIntConstructor::s_info = { "Function"_s, &Base::s_info, &bigIntConstructorTable, nullptr, CREATE_METHOD_TABLE(BigIntConstructor) };
 
 /* Source for BigIntConstructor.lut.h
 @begin bigIntConstructorTable

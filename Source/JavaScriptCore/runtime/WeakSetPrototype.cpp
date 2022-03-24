@@ -35,7 +35,7 @@ namespace JSC {
 
 const ASCIILiteral WeakSetNonObjectValueError { "Attempted to add a non-object value to a WeakSet"_s };
 
-const ClassInfo WeakSetPrototype::s_info = { "WeakSet", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakSetPrototype) };
+const ClassInfo WeakSetPrototype::s_info = { "WeakSet"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakSetPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetDelete);
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetHas);

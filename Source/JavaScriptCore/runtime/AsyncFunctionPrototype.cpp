@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo AsyncFunctionPrototype::s_info = { "AsyncFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncFunctionPrototype) };
+const ClassInfo AsyncFunctionPrototype::s_info = { "AsyncFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncFunctionPrototype) };
 
 AsyncFunctionPrototype::AsyncFunctionPrototype(VM& vm, Structure* structure)
     : JSC::JSNonFinalObject(vm, structure)

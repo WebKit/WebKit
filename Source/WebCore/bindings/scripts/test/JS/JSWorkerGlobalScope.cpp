@@ -99,7 +99,7 @@ static const HashTableValue JSWorkerGlobalScopeTableValues[] =
 };
 
 static const HashTable JSWorkerGlobalScopeTable = { 6, 15, true, JSWorkerGlobalScope::info(), JSWorkerGlobalScopeTableValues, JSWorkerGlobalScopeTableIndex };
-template<> const ClassInfo JSWorkerGlobalScopeDOMConstructor::s_info = { "WorkerGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScopeDOMConstructor) };
+template<> const ClassInfo JSWorkerGlobalScopeDOMConstructor::s_info = { "WorkerGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScopeDOMConstructor) };
 
 template<> JSValue JSWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -129,7 +129,7 @@ static const HashTableValue JSWorkerGlobalScopePrototypeTableValues[] =
 };
 
 static const HashTable JSWorkerGlobalScopePrototypeTable = { 1, 1, true, JSWorkerGlobalScope::info(), JSWorkerGlobalScopePrototypeTableValues, JSWorkerGlobalScopePrototypeTableIndex };
-const ClassInfo JSWorkerGlobalScopePrototype::s_info = { "WorkerGlobalScope", &Base::s_info, &JSWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScopePrototype) };
+const ClassInfo JSWorkerGlobalScopePrototype::s_info = { "WorkerGlobalScope"_s, &Base::s_info, &JSWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScopePrototype) };
 
 void JSWorkerGlobalScopePrototype::finishCreation(VM& vm)
 {
@@ -138,7 +138,7 @@ void JSWorkerGlobalScopePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSWorkerGlobalScope::s_info = { "WorkerGlobalScope", &Base::s_info, &JSWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScope) };
+const ClassInfo JSWorkerGlobalScope::s_info = { "WorkerGlobalScope"_s, &Base::s_info, &JSWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScope) };
 
 JSWorkerGlobalScope::JSWorkerGlobalScope(VM& vm, Structure* structure, Ref<WorkerGlobalScope>&& impl)
     : JSEventTarget(vm, structure, WTFMove(impl))

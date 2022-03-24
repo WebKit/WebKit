@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo RegExpStringIteratorPrototype::s_info = { "RegExp String Iterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpStringIteratorPrototype) };
+const ClassInfo RegExpStringIteratorPrototype::s_info = { "RegExp String Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpStringIteratorPrototype) };
 
 void RegExpStringIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {

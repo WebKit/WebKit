@@ -254,7 +254,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorHeapAgent
 
     auto object = injectedScript.wrapObject(cell, objectGroup, true);
     if (!object)
-        return makeUnexpected("Internal error: unable to cast Object");
+        return makeUnexpected("Internal error: unable to cast Object"_s);
 
     return object.releaseNonNull();
 }

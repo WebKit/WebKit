@@ -348,7 +348,7 @@ String StructureShape::propertyHash()
     builder.append(':');
     for (auto& key : m_fields) {
         String property = key.get();
-        property.replace(":", "\\:"); // Ensure that hash({"foo:", "bar"}) != hash({"foo", ":bar"}) because we're using colons as a separator and colons are legal characters in field names in JS.
+        property.replace(":"_s, "\\:"_s); // Ensure that hash({"foo:", "bar"}) != hash({"foo", ":bar"}) because we're using colons as a separator and colons are legal characters in field names in JS.
         builder.append(property);
     }
 

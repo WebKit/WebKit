@@ -1161,7 +1161,7 @@ ALWAYS_INLINE JSValue LiteralParser<CharType>::parsePrimitiveValue(VM& vm)
             if (token->stringLength > shortLength)
                 errorString = tryMakeErrorString(shortLength);
             if (!errorString)
-                errorString = "Unexpected identifier";
+                errorString = "Unexpected identifier"_s;
         }
 
         m_parseErrorMessage = errorString;

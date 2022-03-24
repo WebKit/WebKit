@@ -40,7 +40,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlSegmenterPrototypeFuncResolvedOptions);
 
 namespace JSC {
 
-const ClassInfo IntlSegmenterPrototype::s_info = { "Intl.Segmenter", &Base::s_info, &segmenterPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlSegmenterPrototype) };
+const ClassInfo IntlSegmenterPrototype::s_info = { "Intl.Segmenter"_s, &Base::s_info, &segmenterPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlSegmenterPrototype) };
 
 /* Source for IntlSegmenterPrototype.lut.h
 @begin segmenterPrototypeTable

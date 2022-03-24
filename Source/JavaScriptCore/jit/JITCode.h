@@ -70,7 +70,7 @@ public:
     template<PtrTag tag> using CodePtr = MacroAssemblerCodePtr<tag>;
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
-    static const char* typeName(JITType);
+    static ASCIILiteral typeName(JITType);
 
     static JITType bottomTierJIT()
     {

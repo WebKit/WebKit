@@ -37,7 +37,7 @@ bool BytecodeCacheError::StandardError::isValid() const
 
 String BytecodeCacheError::StandardError::message() const
 {
-    return safeStrerror(m_errno).data();
+    return String { safeStrerror(m_errno).data() };
 }
 
 bool BytecodeCacheError::WriteError::isValid() const

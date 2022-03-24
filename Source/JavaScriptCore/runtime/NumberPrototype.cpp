@@ -51,7 +51,7 @@ static JSC_DECLARE_HOST_FUNCTION(numberProtoFuncToPrecision);
 
 namespace JSC {
 
-const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, &numberPrototypeTable, nullptr, CREATE_METHOD_TABLE(NumberPrototype) };
+const ClassInfo NumberPrototype::s_info = { "Number"_s, &NumberObject::s_info, &numberPrototypeTable, nullptr, CREATE_METHOD_TABLE(NumberPrototype) };
 
 /* Source for NumberPrototype.lut.h
 @begin numberPrototypeTable
@@ -375,7 +375,7 @@ String toStringWithRadix(double doubleValue, int32_t radix)
         return String::number(doubleValue);
 
     RadixBuffer buffer;
-    return toStringWithRadixInternal(buffer, doubleValue, radix);
+    return String { toStringWithRadixInternal(buffer, doubleValue, radix) };
 }
 
 // toExponential converts a number to a string, always formatting as an exponential.
@@ -412,7 +412,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToExponential, (JSGlobalObject* globalOb
         converter.ToExponential(x, -1, &builder);
     else
         converter.ToExponential(x, decimalPlaces, &builder);
-    return JSValue::encode(jsString(vm, builder.Finalize()));
+    return JSValue::encode(jsString(vm, String { builder.Finalize() }));
 }
 
 // toFixed converts a number to a string, always formatting as an a decimal fraction.
@@ -513,7 +513,7 @@ static ALWAYS_INLINE JSString* numberToStringInternal(VM& vm, double doubleValue
         return jsNontrivialString(vm, String::number(doubleValue));
 
     RadixBuffer buffer;
-    return jsString(vm, toStringWithRadixInternal(buffer, doubleValue, radix));
+    return jsString(vm, String { toStringWithRadixInternal(buffer, doubleValue, radix) });
 }
 
 JSString* int32ToString(VM& vm, int32_t value, int32_t radix)
@@ -541,7 +541,7 @@ JSString* int52ToString(VM& vm, int64_t value, int32_t radix)
     char* startOfResultString = decimalPoint;
     *decimalPoint = '\0';
 
-    return jsNontrivialString(vm, int52ToStringWithRadix(startOfResultString, value, radix));
+    return jsNontrivialString(vm, String { int52ToStringWithRadix(startOfResultString, value, radix) });
 }
 
 JSString* numberToString(VM& vm, double doubleValue, int32_t radix)

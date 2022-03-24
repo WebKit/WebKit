@@ -106,11 +106,11 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(
     size_t elementSize = sizeof(typename Adaptor::Type);
     ASSERT(buffer);
     if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length, elementSize)) {
-        throwException(globalObject, scope, createRangeError(globalObject, "Length out of range of buffer"));
+        throwException(globalObject, scope, createRangeError(globalObject, "Length out of range of buffer"_s));
         return nullptr;
     }
     if (!ArrayBufferView::verifyByteOffsetAlignment(byteOffset, elementSize)) {
-        throwException(globalObject, scope, createRangeError(globalObject, "Byte offset is not aligned"));
+        throwException(globalObject, scope, createRangeError(globalObject, "Byte offset is not aligned"_s));
         return nullptr;
     }
     ConstructionContext context(vm, structure, WTFMove(buffer), byteOffset, length);
@@ -152,7 +152,7 @@ bool JSGenericTypedArrayView<Adaptor>::validateRange(
     if (canAccessRangeQuickly(offset, length))
         return true;
     
-    throwException(globalObject, scope, createRangeError(globalObject, "Range consisting of offset and length are out of bounds"));
+    throwException(globalObject, scope, createRangeError(globalObject, "Range consisting of offset and length are out of bounds"_s));
     return false;
 }
 

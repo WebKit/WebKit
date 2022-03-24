@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSTemplateObjectDescriptor::s_info = { "TemplateObjectDescriptor", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSTemplateObjectDescriptor) };
+const ClassInfo JSTemplateObjectDescriptor::s_info = { "TemplateObjectDescriptor"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSTemplateObjectDescriptor) };
 
 
 JSTemplateObjectDescriptor::JSTemplateObjectDescriptor(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor, int endOffset)

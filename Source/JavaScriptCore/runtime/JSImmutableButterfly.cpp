@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo JSImmutableButterfly::s_info = { "Immutable Butterfly", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSImmutableButterfly) };
+const ClassInfo JSImmutableButterfly::s_info = { "Immutable Butterfly"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSImmutableButterfly) };
 
 template<typename Visitor>
 void JSImmutableButterfly::visitChildrenImpl(JSCell* cell, Visitor& visitor)

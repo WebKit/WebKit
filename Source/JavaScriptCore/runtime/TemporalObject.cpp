@@ -116,7 +116,7 @@ namespace JSC {
 @end
 */
 
-const ClassInfo TemporalObject::s_info = { "Temporal", &Base::s_info, &temporalObjectTable, nullptr, CREATE_METHOD_TABLE(TemporalObject) };
+const ClassInfo TemporalObject::s_info = { "Temporal"_s, &Base::s_info, &temporalObjectTable, nullptr, CREATE_METHOD_TABLE(TemporalObject) };
 
 TemporalObject::TemporalObject(VM& vm, Structure* structure)
     : Base(vm, structure)
@@ -230,7 +230,7 @@ std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject* globalObject, JS
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String largestUnit = intlStringOption(globalObject, options, vm.propertyNames->largestUnit, { }, nullptr, nullptr);
+    String largestUnit = intlStringOption(globalObject, options, vm.propertyNames->largestUnit, { }, ASCIILiteral::null(), ASCIILiteral::null());
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     if (!largestUnit)
@@ -260,7 +260,7 @@ std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject* globalObject, J
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    String smallestUnit = intlStringOption(globalObject, options, vm.propertyNames->smallestUnit, { }, nullptr, nullptr);
+    String smallestUnit = intlStringOption(globalObject, options, vm.propertyNames->smallestUnit, { }, ASCIILiteral::null(), ASCIILiteral::null());
     RETURN_IF_EXCEPTION(scope, std::nullopt);
 
     if (!smallestUnit)

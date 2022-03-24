@@ -36,7 +36,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyRuntimeErrorConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyRuntimeError, nullptr, CREATE_METHOD_TABLE(WebAssemblyRuntimeErrorConstructor) };
+const ClassInfo WebAssemblyRuntimeErrorConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyRuntimeError, nullptr, CREATE_METHOD_TABLE(WebAssemblyRuntimeErrorConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyRuntimeError);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyRuntimeError);

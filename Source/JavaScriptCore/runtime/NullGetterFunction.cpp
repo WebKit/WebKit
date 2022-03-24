@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo NullGetterFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NullGetterFunction) };
+const ClassInfo NullGetterFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NullGetterFunction) };
 
 namespace NullGetterFunctionInternal {
 

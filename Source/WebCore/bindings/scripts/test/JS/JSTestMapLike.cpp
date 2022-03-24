@@ -102,7 +102,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestMapLikePrototype, JSTestMapLikePrototy
 
 using JSTestMapLikeDOMConstructor = JSDOMConstructorNotConstructable<JSTestMapLike>;
 
-template<> const ClassInfo JSTestMapLikeDOMConstructor::s_info = { "TestMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeDOMConstructor) };
+template<> const ClassInfo JSTestMapLikeDOMConstructor::s_info = { "TestMapLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeDOMConstructor) };
 
 template<> JSValue JSTestMapLikeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -136,7 +136,7 @@ static const HashTableValue JSTestMapLikePrototypeTableValues[] =
     { "delete", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestMapLikePrototypeFunction_delete), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestMapLikePrototype::s_info = { "TestMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikePrototype) };
+const ClassInfo JSTestMapLikePrototype::s_info = { "TestMapLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikePrototype) };
 
 void JSTestMapLikePrototype::finishCreation(VM& vm)
 {
@@ -146,7 +146,7 @@ void JSTestMapLikePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestMapLike::s_info = { "TestMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLike) };
+const ClassInfo JSTestMapLike::s_info = { "TestMapLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLike) };
 
 JSTestMapLike::JSTestMapLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestMapLike>&& impl)
     : JSDOMWrapper<TestMapLike>(structure, globalObject, WTFMove(impl))

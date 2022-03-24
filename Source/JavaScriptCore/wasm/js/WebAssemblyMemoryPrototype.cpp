@@ -48,7 +48,7 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyMemoryProtoFuncType);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyMemoryPrototype::s_info = { "WebAssembly.Memory", &Base::s_info, &prototypeTableWebAssemblyMemory, nullptr, CREATE_METHOD_TABLE(WebAssemblyMemoryPrototype) };
+const ClassInfo WebAssemblyMemoryPrototype::s_info = { "WebAssembly.Memory"_s, &Base::s_info, &prototypeTableWebAssemblyMemory, nullptr, CREATE_METHOD_TABLE(WebAssemblyMemoryPrototype) };
 
 /* Source for WebAssemblyMemoryPrototype.lut.h
 @begin prototypeTableWebAssemblyMemory

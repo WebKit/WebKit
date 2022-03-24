@@ -1,3 +1,484 @@
+2022-03-23  Chris Dumez  <cdumez@apple.com>
+
+        Prepare JSC for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238264
+
+        Reviewed by Geoff Garen.
+
+        Prepare JSC for making the String(const char*) constructor explicit. Making this constructor
+        explicit helps catch many instances where we're constructing a String from a literal but we
+        are missing the ""_s suffix.
+
+        * API/JSAPIGlobalObject.cpp:
+        * API/JSAPIGlobalObject.mm:
+        (JSC::computeValidImportSpecifier):
+        (JSC::JSAPIGlobalObject::moduleLoaderFetch):
+        * API/JSAPIValueWrapper.cpp:
+        * API/JSAPIWrapperObject.mm:
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackObject.cpp:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnPropertySlot):
+        * API/JSScript.mm:
+        (-[JSScript readCache]):
+        * API/JSTypedArray.cpp:
+        (JSObjectMakeTypedArrayWithArrayBuffer):
+        (JSObjectMakeTypedArrayWithArrayBufferAndOffset):
+        * API/JSValue.mm:
+        (createStructHandlerMap):
+        (handerForStructTag):
+        * API/JSWrapperMap.mm:
+        (allocateConstructorForCustomClass):
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunctionImpl::name):
+        * API/glib/JSAPIWrapperGlobalObject.cpp:
+        * API/glib/JSAPIWrapperObjectGLib.cpp:
+        * API/glib/JSCCallbackFunction.cpp:
+        * API/tests/JSONParseTest.cpp:
+        (testJSONParse):
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptCallArgumentHandler::appendArgument):
+        * bytecode/CodeBlock.cpp:
+        * bytecode/EvalCodeBlock.cpp:
+        * bytecode/ExecutableToCodeBlockEdge.cpp:
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * bytecode/FunctionCodeBlock.cpp:
+        * bytecode/ModuleProgramCodeBlock.cpp:
+        * bytecode/ProgramCodeBlock.cpp:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        * bytecode/UnlinkedEvalCodeBlock.cpp:
+        * bytecode/UnlinkedFunctionCodeBlock.cpp:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        * bytecode/UnlinkedModuleProgramCodeBlock.cpp:
+        * bytecode/UnlinkedProgramCodeBlock.cpp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitHasPrivateBrand):
+        (JSC::BytecodeGenerator::emitCheckPrivateBrand):
+        (JSC::BytecodeGenerator::emitReturn):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitSaveComputedFieldName):
+        (JSC::BaseDotNode::emitGetPropertyValue):
+        (JSC::BaseDotNode::emitPutProperty):
+        (JSC::PostfixNode::emitDot):
+        (JSC::DeleteBracketNode::emitBytecode):
+        (JSC::DeleteDotNode::emitBytecode):
+        (JSC::PrefixNode::emitDot):
+        (JSC::InstanceOfNode::emitBytecode):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::functionName const):
+        * debugger/DebuggerScope.cpp:
+        * heap/HeapSnapshotBuilder.cpp:
+        (JSC::HeapSnapshotBuilder::json):
+        * heap/RootMarkReason.cpp:
+        (JSC::rootMarkReasonDescription):
+        * heap/RootMarkReason.h:
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::appendAPIBacktrace):
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        * inspector/JSJavaScriptCallFrame.cpp:
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        * inspector/agents/InspectorAuditAgent.cpp:
+        (Inspector::InspectorAuditAgent::run):
+        * inspector/agents/InspectorDebuggerAgent.cpp:
+        (Inspector::InspectorDebuggerAgent::getScriptSource):
+        * inspector/agents/InspectorDebuggerAgent.h:
+        * inspector/agents/InspectorHeapAgent.cpp:
+        (Inspector::InspectorHeapAgent::getRemoteObject):
+        * jit/ExecutableAllocator.cpp:
+        (JSC::dumpJITMemory):
+        * jit/JITCode.cpp:
+        (JSC::JITCode::typeName):
+        * jit/JITCode.h:
+        * jit/JITOperations.cpp:
+        (JSC::getWrappedValue):
+        * jsc.cpp:
+        (toCString):
+        (JSC_DEFINE_HOST_FUNCTION):
+        (runWithOptions):
+        (CommandLine::parseArguments):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::handleVarargsCheckpoint):
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::scanRegExp):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        * runtime/AbstractModuleRecord.cpp:
+        * runtime/AggregateErrorConstructor.cpp:
+        * runtime/ArrayConstructor.cpp:
+        * runtime/ArrayIteratorPrototype.cpp:
+        * runtime/ArrayPrototype.cpp:
+        * runtime/AsyncFromSyncIteratorPrototype.cpp:
+        * runtime/AsyncFunctionConstructor.cpp:
+        * runtime/AsyncFunctionPrototype.cpp:
+        * runtime/AsyncGeneratorFunctionConstructor.cpp:
+        * runtime/AsyncGeneratorFunctionPrototype.cpp:
+        * runtime/AsyncGeneratorPrototype.cpp:
+        * runtime/AsyncIteratorPrototype.cpp:
+        * runtime/AtomicsObject.cpp:
+        * runtime/BigIntConstructor.cpp:
+        * runtime/BigIntObject.cpp:
+        * runtime/BigIntPrototype.cpp:
+        * runtime/BooleanConstructor.cpp:
+        * runtime/BooleanObject.cpp:
+        * runtime/BooleanPrototype.cpp:
+        * runtime/BytecodeCacheError.cpp:
+        (JSC::BytecodeCacheError::StandardError::message const):
+        * runtime/CallData.cpp:
+        (JSC::call):
+        * runtime/CallData.h:
+        * runtime/ClassInfo.h:
+        * runtime/ClonedArguments.cpp:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getUnlinkedGlobalFunctionExecutable):
+        * runtime/Completion.cpp:
+        (JSC::checkModuleSyntax):
+        (JSC::createSymbolForEntryPointModule):
+        * runtime/ConsoleObject.cpp:
+        * runtime/ConstructData.cpp:
+        (JSC::construct):
+        * runtime/ConstructData.h:
+        * runtime/CustomGetterSetter.cpp:
+        * runtime/DOMAttributeGetterSetter.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/DateInstance.cpp:
+        * runtime/DatePrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/DirectArguments.cpp:
+        * runtime/Error.h:
+        (JSC::throwVMError):
+        * runtime/ErrorConstructor.cpp:
+        * runtime/ErrorInstance.cpp:
+        * runtime/ErrorPrototype.cpp:
+        * runtime/EvalExecutable.cpp:
+        * runtime/Exception.cpp:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::notAFunctionSourceAppender):
+        (JSC::invalidParameterInSourceAppender):
+        (JSC::invalidParameterInstanceofSourceAppender):
+        (JSC::invalidPrototypeSourceAppender):
+        (JSC::createTDZError):
+        (JSC::createInvalidPrivateNameError):
+        (JSC::createRedefinedPrivateNameError):
+        (JSC::createPrivateMethodAccessError):
+        (JSC::createReinstallPrivateMethodError):
+        * runtime/ExecutableBase.cpp:
+        * runtime/FinalizationRegistryConstructor.cpp:
+        * runtime/FinalizationRegistryPrototype.cpp:
+        * runtime/FunctionConstructor.cpp:
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::toStringSlow):
+        * runtime/FunctionPrototype.cpp:
+        * runtime/FunctionRareData.cpp:
+        * runtime/GeneratorFunctionConstructor.cpp:
+        * runtime/GeneratorFunctionPrototype.cpp:
+        * runtime/GeneratorPrototype.cpp:
+        * runtime/GetterSetter.cpp:
+        * runtime/GlobalExecutable.cpp:
+        * runtime/HashMapImpl.cpp:
+        * runtime/InternalFunction.cpp:
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlCollatorConstructor.cpp:
+        * runtime/IntlCollatorPrototype.cpp:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        * runtime/IntlDisplayNames.cpp:
+        * runtime/IntlDisplayNamesConstructor.cpp:
+        * runtime/IntlDisplayNamesPrototype.cpp:
+        * runtime/IntlListFormat.cpp:
+        * runtime/IntlListFormatConstructor.cpp:
+        * runtime/IntlListFormatPrototype.cpp:
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::initializeLocale):
+        * runtime/IntlLocaleConstructor.cpp:
+        * runtime/IntlLocalePrototype.cpp:
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        * runtime/IntlNumberFormatPrototype.cpp:
+        * runtime/IntlObject.cpp:
+        (JSC::intlStringOption):
+        * runtime/IntlObject.h:
+        * runtime/IntlPluralRules.cpp:
+        * runtime/IntlPluralRulesConstructor.cpp:
+        * runtime/IntlPluralRulesPrototype.cpp:
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::initializeRelativeTimeFormat):
+        * runtime/IntlRelativeTimeFormatConstructor.cpp:
+        * runtime/IntlRelativeTimeFormatPrototype.cpp:
+        * runtime/IntlSegmentIterator.cpp:
+        * runtime/IntlSegmentIteratorPrototype.cpp:
+        * runtime/IntlSegmenter.cpp:
+        * runtime/IntlSegmenterConstructor.cpp:
+        * runtime/IntlSegmenterPrototype.cpp:
+        * runtime/IntlSegments.cpp:
+        * runtime/IntlSegmentsPrototype.cpp:
+        * runtime/IteratorPrototype.cpp:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        * runtime/JSArrayBuffer.cpp:
+        * runtime/JSArrayBufferConstructor.cpp:
+        * runtime/JSArrayBufferPrototype.cpp:
+        * runtime/JSArrayBufferView.cpp:
+        * runtime/JSArrayIterator.cpp:
+        * runtime/JSAsyncFunction.cpp:
+        * runtime/JSAsyncGenerator.cpp:
+        * runtime/JSAsyncGeneratorFunction.cpp:
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::parseInt):
+        * runtime/JSBoundFunction.cpp:
+        * runtime/JSCallee.cpp:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::dumpToStream):
+        (JSC::JSCell::className const):
+        * runtime/JSCell.h:
+        * runtime/JSCustomGetterFunction.cpp:
+        * runtime/JSCustomSetterFunction.cpp:
+        * runtime/JSDataView.cpp:
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSC_DEFINE_CUSTOM_GETTER):
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::runFinalizationCleanup):
+        * runtime/JSFunction.cpp:
+        * runtime/JSGenerator.cpp:
+        * runtime/JSGeneratorFunction.cpp:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::create):
+        (JSC::JSGenericTypedArrayView<Adaptor>::validateRange):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::speciesConstruct):
+        (JSC::genericTypedArrayViewProtoFuncSet):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalLexicalEnvironment.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSImmutableButterfly.cpp:
+        * runtime/JSInternalPromise.cpp:
+        * runtime/JSInternalPromiseConstructor.cpp:
+        * runtime/JSInternalPromisePrototype.cpp:
+        * runtime/JSLexicalEnvironment.cpp:
+        * runtime/JSMap.cpp:
+        * runtime/JSMapIterator.cpp:
+        * runtime/JSModuleEnvironment.cpp:
+        * runtime/JSModuleLoader.cpp:
+        * runtime/JSModuleNamespaceObject.cpp:
+        * runtime/JSModuleRecord.cpp:
+        * runtime/JSNativeStdFunction.cpp:
+        * runtime/JSONObject.cpp:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::markAuxiliaryAndVisitOutOfLineProperties):
+        * runtime/JSPromise.cpp:
+        * runtime/JSPromiseConstructor.cpp:
+        * runtime/JSPromisePrototype.cpp:
+        * runtime/JSPropertyNameEnumerator.cpp:
+        * runtime/JSProxy.cpp:
+        * runtime/JSRemoteFunction.cpp:
+        (JSC::wrapArgument):
+        (JSC::wrapReturnValue):
+        (JSC::JSRemoteFunction::finishCreation):
+        * runtime/JSScope.cpp:
+        * runtime/JSScriptFetchParameters.cpp:
+        * runtime/JSScriptFetcher.cpp:
+        * runtime/JSSegmentedVariableObject.cpp:
+        * runtime/JSSet.cpp:
+        * runtime/JSSetIterator.cpp:
+        * runtime/JSSourceCode.cpp:
+        * runtime/JSString.cpp:
+        (JSC::JSString::dumpToStream):
+        * runtime/JSStringIterator.cpp:
+        * runtime/JSSymbolTableObject.cpp:
+        * runtime/JSTemplateObjectDescriptor.cpp:
+        * runtime/JSTypedArrayConstructors.cpp:
+        * runtime/JSTypedArrayPrototypes.cpp:
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSTypedArrays.cpp:
+        * runtime/JSWeakMap.cpp:
+        * runtime/JSWeakObjectRef.cpp:
+        * runtime/JSWeakSet.cpp:
+        * runtime/JSWithScope.cpp:
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::parsePrimitiveValue):
+        * runtime/MapConstructor.cpp:
+        * runtime/MapIteratorPrototype.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/MathObject.cpp:
+        * runtime/ModuleProgramExecutable.cpp:
+        * runtime/NativeErrorConstructor.cpp:
+        * runtime/NativeExecutable.cpp:
+        * runtime/NullGetterFunction.cpp:
+        * runtime/NullSetterFunction.cpp:
+        * runtime/NumberConstructor.cpp:
+        * runtime/NumberObject.cpp:
+        * runtime/NumberPrototype.cpp:
+        (JSC::toStringWithRadix):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::numberToStringInternal):
+        (JSC::int52ToString):
+        * runtime/ObjectConstructor.cpp:
+        * runtime/ObjectPrototype.cpp:
+        * runtime/Operations.h:
+        (JSC::arithmeticBinaryOp):
+        (JSC::shift):
+        (JSC::bitwiseBinaryOp):
+        * runtime/ProgramExecutable.cpp:
+        * runtime/PropertyTable.cpp:
+        * runtime/ProxyConstructor.cpp:
+        (JSC::ProxyConstructor::finishCreation):
+        * runtime/ProxyObject.cpp:
+        * runtime/ProxyRevoke.cpp:
+        * runtime/ReflectObject.cpp:
+        * runtime/RegExp.cpp:
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::ensureEmptyRegExpSlow):
+        * runtime/RegExpConstructor.cpp:
+        * runtime/RegExpObject.cpp:
+        * runtime/RegExpPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/RegExpStringIteratorPrototype.cpp:
+        * runtime/ScopedArguments.cpp:
+        * runtime/ScopedArgumentsTable.cpp:
+        * runtime/ScriptExecutable.cpp:
+        * runtime/SetConstructor.cpp:
+        * runtime/SetIteratorPrototype.cpp:
+        * runtime/SetPrototype.cpp:
+        * runtime/ShadowRealmConstructor.cpp:
+        * runtime/ShadowRealmObject.cpp:
+        * runtime/ShadowRealmPrototype.cpp:
+        * runtime/SparseArrayValueMap.cpp:
+        * runtime/StrictEvalActivation.cpp:
+        * runtime/StringConstructor.cpp:
+        * runtime/StringIteratorPrototype.cpp:
+        * runtime/StringObject.cpp:
+        * runtime/StringPrototype.cpp:
+        (JSC::toLocaleCase):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/Structure.cpp:
+        * runtime/StructureChain.cpp:
+        * runtime/StructureRareData.cpp:
+        * runtime/Symbol.cpp:
+        * runtime/SymbolConstructor.cpp:
+        * runtime/SymbolObject.cpp:
+        * runtime/SymbolPrototype.cpp:
+        * runtime/SymbolTable.cpp:
+        * runtime/TemporalCalendar.cpp:
+        * runtime/TemporalCalendarConstructor.cpp:
+        * runtime/TemporalCalendarPrototype.cpp:
+        * runtime/TemporalDuration.cpp:
+        (JSC::TemporalDuration::total const):
+        * runtime/TemporalDurationConstructor.cpp:
+        * runtime/TemporalDurationPrototype.cpp:
+        * runtime/TemporalInstant.cpp:
+        * runtime/TemporalInstantConstructor.cpp:
+        * runtime/TemporalInstantPrototype.cpp:
+        * runtime/TemporalNow.cpp:
+        * runtime/TemporalObject.cpp:
+        (JSC::temporalLargestUnit):
+        (JSC::temporalSmallestUnit):
+        * runtime/TemporalPlainDate.cpp:
+        * runtime/TemporalPlainDateConstructor.cpp:
+        * runtime/TemporalPlainDatePrototype.cpp:
+        * runtime/TemporalPlainTime.cpp:
+        * runtime/TemporalPlainTimeConstructor.cpp:
+        * runtime/TemporalPlainTimePrototype.cpp:
+        * runtime/TemporalTimeZone.cpp:
+        * runtime/TemporalTimeZoneConstructor.cpp:
+        * runtime/TemporalTimeZonePrototype.cpp:
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::logTypesForTypeLocation):
+        * runtime/TypeSet.cpp:
+        (JSC::StructureShape::propertyHash):
+        * runtime/WeakMapConstructor.cpp:
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        * runtime/WeakObjectRefConstructor.cpp:
+        * runtime/WeakObjectRefPrototype.cpp:
+        * runtime/WeakSetConstructor.cpp:
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+        * testRegExp.cpp:
+        * tools/FunctionAllowlist.cpp:
+        (JSC::FunctionAllowlist::FunctionAllowlist):
+        * tools/FunctionOverrides.cpp:
+        (JSC::initializeOverrideInfo):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES):
+        * tools/SigillCrashAnalyzer.cpp:
+        (JSC::SigillCrashAnalyzer::analyze):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::dumpRegisters):
+        (JSC::VMInspector::dumpCellMemoryToStream):
+        * wasm/WasmExceptionType.h:
+        (JSC::Wasm::errorMessageForExceptionType):
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::typeToString):
+        * wasm/WasmGlobal.cpp:
+        (JSC::Wasm::Global::set):
+        * wasm/WasmLLIntPlan.cpp:
+        (JSC::Wasm::LLIntPlan::didCompleteCompilation):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/js/JSToWasmICCallee.cpp:
+        * wasm/js/JSWebAssembly.cpp:
+        * wasm/js/JSWebAssemblyException.cpp:
+        * wasm/js/JSWebAssemblyGlobal.cpp:
+        (JSC::JSWebAssemblyGlobal::type):
+        * wasm/js/JSWebAssemblyHelpers.h:
+        (JSC::fromJSValue):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::createPrivateModuleKey):
+        (JSC::JSWebAssemblyInstance::tryCreate):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        * wasm/js/JSWebAssemblyModule.cpp:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::type):
+        * wasm/js/JSWebAssemblyTag.cpp:
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        * wasm/js/WebAssemblyCompileErrorPrototype.cpp:
+        * wasm/js/WebAssemblyExceptionConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyExceptionPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyFunction.cpp:
+        * wasm/js/WebAssemblyFunctionBase.cpp:
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyGlobalPrototype.cpp:
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        * wasm/js/WebAssemblyInstancePrototype.cpp:
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        * wasm/js/WebAssemblyLinkErrorPrototype.cpp:
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        * wasm/js/WebAssemblyModulePrototype.cpp:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::initializeExports):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        * wasm/js/WebAssemblyRuntimeErrorPrototype.cpp:
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        * wasm/js/WebAssemblyTagConstructor.cpp:
+        * wasm/js/WebAssemblyTagPrototype.cpp:
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::create):
+        * yarr/RegularExpression.cpp:
+        (JSC::Yarr::RegularExpression::Private::compile):
+        * yarr/YarrErrorCode.cpp:
+        (JSC::Yarr::errorMessage):
+        * yarr/YarrErrorCode.h:
+
 2022-03-23  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC][MSVC] custom getter creation needs to include classInfo since MSVC ICF is not "safe" variant

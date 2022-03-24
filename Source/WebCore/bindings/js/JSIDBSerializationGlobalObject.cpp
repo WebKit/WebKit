@@ -32,7 +32,7 @@ namespace WebCore {
 
 using namespace JSC;
 
-const ClassInfo JSIDBSerializationGlobalObject::s_info = { "JSIDBSerializationGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIDBSerializationGlobalObject) };
+const ClassInfo JSIDBSerializationGlobalObject::s_info = { "JSIDBSerializationGlobalObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSIDBSerializationGlobalObject) };
 
 inline JSIDBSerializationGlobalObject::JSIDBSerializationGlobalObject(VM& vm, Structure* structure, Ref<DOMWrapperWorld>&& impl)
     : Base(vm, structure, WTFMove(impl))

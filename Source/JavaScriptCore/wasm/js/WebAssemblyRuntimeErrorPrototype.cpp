@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyRuntimeErrorPrototype::s_info = { "WebAssembly.RuntimeError", &Base::s_info, &prototypeTableWebAssemblyRuntimeError, nullptr, CREATE_METHOD_TABLE(WebAssemblyRuntimeErrorPrototype) };
+const ClassInfo WebAssemblyRuntimeErrorPrototype::s_info = { "WebAssembly.RuntimeError"_s, &Base::s_info, &prototypeTableWebAssemblyRuntimeError, nullptr, CREATE_METHOD_TABLE(WebAssemblyRuntimeErrorPrototype) };
 
 /* Source for WebAssemblyRuntimeErrorPrototype.lut.h
  @begin prototypeTableWebAssemblyRuntimeError

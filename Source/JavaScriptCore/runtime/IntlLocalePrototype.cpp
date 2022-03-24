@@ -59,7 +59,7 @@ static JSC_DECLARE_CUSTOM_GETTER(intlLocalePrototypeGetterWeekInfo);
 
 namespace JSC {
 
-const ClassInfo IntlLocalePrototype::s_info = { "Intl.Locale", &Base::s_info, &localePrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlLocalePrototype) };
+const ClassInfo IntlLocalePrototype::s_info = { "Intl.Locale"_s, &Base::s_info, &localePrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlLocalePrototype) };
 
 /* Source for IntlLocalePrototype.lut.h
 @begin localePrototypeTable

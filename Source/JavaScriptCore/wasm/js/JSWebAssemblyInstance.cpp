@@ -40,7 +40,7 @@
 
 namespace JSC {
 
-const ClassInfo JSWebAssemblyInstance::s_info = { "WebAssembly.Instance", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyInstance) };
+const ClassInfo JSWebAssemblyInstance::s_info = { "WebAssembly.Instance"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyInstance) };
 
 Structure* JSWebAssemblyInstance::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
@@ -155,7 +155,7 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, JSGlobalObject* globalObjec
 
 Identifier JSWebAssemblyInstance::createPrivateModuleKey()
 {
-    return Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"));
+    return Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyInstance"_s));
 }
 
 JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* globalObject, const Identifier& moduleKey, JSWebAssemblyModule* jsModule, JSObject* importObject, Structure* instanceStructure, Ref<Wasm::Module>&& module, Wasm::CreationMode creationMode)
@@ -201,7 +201,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::tryCreate(VM& vm, JSGlobalObject* 
             WebAssemblyModuleRecord::ImportEntryType::Single,
             moduleName,
             fieldName,
-            Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyImportName")),
+            Identifier::fromUid(PrivateName(PrivateName::Description, "WebAssemblyImportName"_s)),
         });
     }
     ASSERT(moduleRecord->importEntries().size() == moduleInformation.imports.size());

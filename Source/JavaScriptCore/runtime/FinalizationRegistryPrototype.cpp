@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo FinalizationRegistryPrototype::s_info = { "FinalizationRegistry", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryPrototype) };
+const ClassInfo FinalizationRegistryPrototype::s_info = { "FinalizationRegistry"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(protoFuncFinalizationRegistryRegister);
 static JSC_DECLARE_HOST_FUNCTION(protoFuncFinalizationRegistryUnregister);

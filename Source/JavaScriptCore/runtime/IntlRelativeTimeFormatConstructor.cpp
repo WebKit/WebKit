@@ -44,7 +44,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlRelativeTimeFormatConstructorFuncSupportedL
 
 namespace JSC {
 
-const ClassInfo IntlRelativeTimeFormatConstructor::s_info = { "Function", &InternalFunction::s_info, &relativeTimeFormatConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlRelativeTimeFormatConstructor) };
+const ClassInfo IntlRelativeTimeFormatConstructor::s_info = { "Function"_s, &InternalFunction::s_info, &relativeTimeFormatConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlRelativeTimeFormatConstructor) };
 
 /* Source for IntlRelativeTimeFormatConstructor.lut.h
 @begin relativeTimeFormatConstructorTable

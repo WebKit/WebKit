@@ -91,7 +91,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSExposedStarPrototype, JSExposedStarPrototy
 
 using JSExposedStarDOMConstructor = JSDOMConstructorNotConstructable<JSExposedStar>;
 
-template<> const ClassInfo JSExposedStarDOMConstructor::s_info = { "ExposedStar", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedStarDOMConstructor) };
+template<> const ClassInfo JSExposedStarDOMConstructor::s_info = { "ExposedStar"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedStarDOMConstructor) };
 
 template<> JSValue JSExposedStarDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -117,7 +117,7 @@ static const HashTableValue JSExposedStarPrototypeTableValues[] =
     { "operationJustForWorkerContexts", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsExposedStarPrototypeFunction_operationJustForWorkerContexts), (intptr_t) (0) } },
 };
 
-const ClassInfo JSExposedStarPrototype::s_info = { "ExposedStar", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedStarPrototype) };
+const ClassInfo JSExposedStarPrototype::s_info = { "ExposedStar"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedStarPrototype) };
 
 void JSExposedStarPrototype::finishCreation(VM& vm)
 {
@@ -143,7 +143,7 @@ void JSExposedStarPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSExposedStar::s_info = { "ExposedStar", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedStar) };
+const ClassInfo JSExposedStar::s_info = { "ExposedStar"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedStar) };
 
 JSExposedStar::JSExposedStar(Structure* structure, JSDOMGlobalObject& globalObject, Ref<ExposedStar>&& impl)
     : JSEventTarget(structure, globalObject, WTFMove(impl))

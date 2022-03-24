@@ -50,7 +50,7 @@ static JSObjectRef callAsConstructor(JSContextRef callerContext, JSObjectRef con
     return static_cast<JSCCallbackFunction*>(toJS(constructor))->construct(callerContext, argumentCount, arguments, exception);
 }
 
-const ClassInfo JSCCallbackFunction::s_info = { "CallbackFunction", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCCallbackFunction) };
+const ClassInfo JSCCallbackFunction::s_info = { "CallbackFunction"_s, &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCCallbackFunction) };
 
 static JSC_DECLARE_HOST_FUNCTION(callJSCCallbackFunction);
 static JSC_DECLARE_HOST_FUNCTION(constructJSCCallbackFunction);

@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSToWasmICCallee::s_info = { "JSToWasmICCallee", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSToWasmICCallee) };
+const ClassInfo JSToWasmICCallee::s_info = { "JSToWasmICCallee"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSToWasmICCallee) };
 
 JSToWasmICCallee* JSToWasmICCallee::create(VM& vm, JSGlobalObject* globalObject, WebAssemblyFunction* function)
 {

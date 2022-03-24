@@ -43,7 +43,7 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyTagProtoFuncType);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyTagPrototype::s_info = { "WebAssembly.Tag", &Base::s_info, &prototypeTableWebAssemblyTag, nullptr, CREATE_METHOD_TABLE(WebAssemblyTagPrototype) };
+const ClassInfo WebAssemblyTagPrototype::s_info = { "WebAssembly.Tag"_s, &Base::s_info, &prototypeTableWebAssemblyTag, nullptr, CREATE_METHOD_TABLE(WebAssemblyTagPrototype) };
 
 /* Source for WebAssemblyTagPrototype.lut.h
  @begin prototypeTableWebAssemblyTag

@@ -41,13 +41,13 @@ static JSC_DECLARE_HOST_FUNCTION(constructSharedArrayBuffer);
 
 template<>
 const ClassInfo JSArrayBufferConstructor::s_info = {
-    "Function", &Base::s_info, nullptr, nullptr,
+    "Function"_s, &Base::s_info, nullptr, nullptr,
     CREATE_METHOD_TABLE(JSArrayBufferConstructor)
 };
 
 template<>
 const ClassInfo JSSharedArrayBufferConstructor::s_info = {
-    "Function", &Base::s_info, nullptr, nullptr,
+    "Function"_s, &Base::s_info, nullptr, nullptr,
     CREATE_METHOD_TABLE(JSSharedArrayBufferConstructor)
 };
 

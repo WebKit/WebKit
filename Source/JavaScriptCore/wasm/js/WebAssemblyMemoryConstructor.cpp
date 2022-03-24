@@ -42,7 +42,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyMemoryConstructor::s_info = { "Function", &Base::s_info, &constructorTableWebAssemblyMemory, nullptr, CREATE_METHOD_TABLE(WebAssemblyMemoryConstructor) };
+const ClassInfo WebAssemblyMemoryConstructor::s_info = { "Function"_s, &Base::s_info, &constructorTableWebAssemblyMemory, nullptr, CREATE_METHOD_TABLE(WebAssemblyMemoryConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(constructJSWebAssemblyMemory);
 static JSC_DECLARE_HOST_FUNCTION(callJSWebAssemblyMemory);
@@ -79,7 +79,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (!minSizeValue.isUndefined() && !initSizeValue.isUndefined()) {
             // Error because both specified.
-            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Memory 'initial' and 'minimum' options are specified at the same time");
+            return throwVMTypeError(globalObject, throwScope, "WebAssembly.Memory 'initial' and 'minimum' options are specified at the same time"_s);
         }
         if (!initSizeValue.isUndefined())
             minSizeValue = initSizeValue;

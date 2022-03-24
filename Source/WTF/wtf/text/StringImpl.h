@@ -431,7 +431,7 @@ public:
     size_t find(char character, unsigned start = 0);
     size_t find(UChar character, unsigned start = 0);
     WTF_EXPORT_PRIVATE size_t find(CodeUnitMatchFunction, unsigned index = 0);
-    size_t find(const LChar*, unsigned index = 0);
+    WTF_EXPORT_PRIVATE size_t find(const LChar*, unsigned index = 0);
     ALWAYS_INLINE size_t find(const char* string, unsigned index = 0) { return find(reinterpret_cast<const LChar*>(string), index); }
     WTF_EXPORT_PRIVATE size_t find(StringImpl*);
     WTF_EXPORT_PRIVATE size_t find(StringImpl*, unsigned index);

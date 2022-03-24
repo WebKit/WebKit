@@ -191,17 +191,17 @@ ALWAYS_INLINE uint64_t fromJSValue(JSGlobalObject* globalObject, const Wasm::Typ
     default: {
         if (Wasm::isExternref(type)) {
             if (!type.isNullable() && value.isNull())
-                return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"));
+                return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"_s));
         } else if (Wasm::isFuncref(type) || isRefWithTypeIndex(type)) {
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
             if (!isWebAssemblyHostFunction(vm, value, wasmFunction, wasmWrapperFunction) && (!type.isNullable() || !value.isNull()))
-                return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
+                return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
             if (isRefWithTypeIndex(type) && !value.isNull()) {
                 Wasm::SignatureIndex paramIndex = type.index;
                 Wasm::SignatureIndex argIndex = wasmFunction ? wasmFunction->signatureIndex() : wasmWrapperFunction->signatureIndex();
                 if (paramIndex != argIndex)
-                    return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"));
+                    return throwVMException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"_s));
             }
         } else
             RELEASE_ASSERT_NOT_REACHED();

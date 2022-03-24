@@ -99,7 +99,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestReadOnlyMapLikePrototype, JSTestReadOn
 
 using JSTestReadOnlyMapLikeDOMConstructor = JSDOMConstructorNotConstructable<JSTestReadOnlyMapLike>;
 
-template<> const ClassInfo JSTestReadOnlyMapLikeDOMConstructor::s_info = { "TestReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLikeDOMConstructor) };
+template<> const ClassInfo JSTestReadOnlyMapLikeDOMConstructor::s_info = { "TestReadOnlyMapLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLikeDOMConstructor) };
 
 template<> JSValue JSTestReadOnlyMapLikeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -130,7 +130,7 @@ static const HashTableValue JSTestReadOnlyMapLikePrototypeTableValues[] =
     { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestReadOnlyMapLikePrototypeFunction_forEach), (intptr_t) (1) } },
 };
 
-const ClassInfo JSTestReadOnlyMapLikePrototype::s_info = { "TestReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLikePrototype) };
+const ClassInfo JSTestReadOnlyMapLikePrototype::s_info = { "TestReadOnlyMapLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLikePrototype) };
 
 void JSTestReadOnlyMapLikePrototype::finishCreation(VM& vm)
 {
@@ -140,7 +140,7 @@ void JSTestReadOnlyMapLikePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestReadOnlyMapLike::s_info = { "TestReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLike) };
+const ClassInfo JSTestReadOnlyMapLike::s_info = { "TestReadOnlyMapLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLike) };
 
 JSTestReadOnlyMapLike::JSTestReadOnlyMapLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestReadOnlyMapLike>&& impl)
     : JSDOMWrapper<TestReadOnlyMapLike>(structure, globalObject, WTFMove(impl))

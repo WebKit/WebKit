@@ -63,7 +63,7 @@ static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncTan);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncTanh);
 static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncIMul);
 
-const ClassInfo MathObject::s_info = { "Math", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MathObject) };
+const ClassInfo MathObject::s_info = { "Math"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MathObject) };
 
 MathObject::MathObject(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)

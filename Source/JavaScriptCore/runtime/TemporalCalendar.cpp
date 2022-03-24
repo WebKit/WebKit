@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo TemporalCalendar::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalCalendar) };
+const ClassInfo TemporalCalendar::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalCalendar) };
 
 namespace TemporalCalendarInternal {
 static constexpr bool verbose = false;

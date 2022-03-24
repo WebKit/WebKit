@@ -48,7 +48,7 @@ static JSC_DECLARE_HOST_FUNCTION(jsJavaScriptCallFrameAttributeThisObject);
 static JSC_DECLARE_HOST_FUNCTION(jsJavaScriptCallFrameAttributeType);
 static JSC_DECLARE_HOST_FUNCTION(jsJavaScriptCallFrameIsTailDeleted);
 
-const ClassInfo JSJavaScriptCallFramePrototype::s_info = { "JavaScriptCallFrame", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSJavaScriptCallFramePrototype) };
+const ClassInfo JSJavaScriptCallFramePrototype::s_info = { "JavaScriptCallFrame"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSJavaScriptCallFramePrototype) };
 
 void JSJavaScriptCallFramePrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {

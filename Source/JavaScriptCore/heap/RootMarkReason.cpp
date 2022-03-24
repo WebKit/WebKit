@@ -30,11 +30,11 @@
 
 namespace JSC {
 
-const char* rootMarkReasonDescription(RootMarkReason reason)
+ASCIILiteral rootMarkReasonDescription(RootMarkReason reason)
 {
 #define CASE_ROOT_MARK_REASON(reason) \
     case JSC::RootMarkReason::reason: \
-        return #reason; \
+        return #reason""_s; \
 
     switch (reason) {
         FOR_EACH_ROOT_MARK_REASON(CASE_ROOT_MARK_REASON)
@@ -42,7 +42,7 @@ const char* rootMarkReasonDescription(RootMarkReason reason)
 #undef CASE_ROOT_MARK_REASON
 
     ASSERT_NOT_REACHED();
-    return "None";
+    return "None"_s;
 }
 
 } // namespace JSC

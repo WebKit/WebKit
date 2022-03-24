@@ -42,7 +42,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlListFormatConstructorSupportedLocalesOf);
 
 namespace JSC {
 
-const ClassInfo IntlListFormatConstructor::s_info = { "Function", &Base::s_info, &listFormatConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlListFormatConstructor) };
+const ClassInfo IntlListFormatConstructor::s_info = { "Function"_s, &Base::s_info, &listFormatConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlListFormatConstructor) };
 
 /* Source for IntlListFormatConstructor.lut.h
 @begin listFormatConstructorTable

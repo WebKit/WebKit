@@ -90,7 +90,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
         if (isExternref(m_type)) {
             RELEASE_ASSERT(m_owner);
             if (!m_type.isNullable() && argument.isNull()) {
-                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"));
+                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Non-null Externref cannot be null"_s));
                 return;
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
@@ -99,7 +99,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
             WebAssemblyFunction* wasmFunction = nullptr;
             WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
             if (!isWebAssemblyHostFunction(vm, argument, wasmFunction, wasmWrapperFunction) && (!m_type.isNullable() || !argument.isNull())) {
-                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"));
+                throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Funcref must be an exported wasm function"_s));
                 return;
             }
 
@@ -107,7 +107,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
                 Wasm::SignatureIndex paramIndex = m_type.index;
                 Wasm::SignatureIndex argIndex = wasmFunction ? wasmFunction->signatureIndex() : wasmWrapperFunction->signatureIndex();
                 if (paramIndex != argIndex) {
-                    throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"));
+                    throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Argument function did not match the reference type"_s));
                     return;
                 }
             }

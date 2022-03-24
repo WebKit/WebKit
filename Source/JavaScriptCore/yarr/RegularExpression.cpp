@@ -64,7 +64,7 @@ private:
 
         JSC::Yarr::YarrPattern pattern(patternString, flags, m_constructionErrorCode);
         if (JSC::Yarr::hasError(m_constructionErrorCode)) {
-            LOG_ERROR("RegularExpression: YARR compile failed with '%s'", JSC::Yarr::errorMessage(m_constructionErrorCode));
+            LOG_ERROR("RegularExpression: YARR compile failed with '%s'", JSC::Yarr::errorMessage(m_constructionErrorCode).characters());
             return nullptr;
         }
 

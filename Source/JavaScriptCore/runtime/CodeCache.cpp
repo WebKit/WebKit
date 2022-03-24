@@ -233,7 +233,7 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     StatementNode* funcDecl = program->singleStatement();
     if (UNLIKELY(!funcDecl)) {
         JSToken token;
-        error = ParserError(ParserError::SyntaxError, ParserError::SyntaxErrorIrrecoverable, token, "Parser error", -1);
+        error = ParserError(ParserError::SyntaxError, ParserError::SyntaxErrorIrrecoverable, token, "Parser error"_s, -1);
         return nullptr;
     }
     ASSERT(funcDecl->isFuncDeclNode());

@@ -80,7 +80,7 @@ bool checkModuleSyntax(JSGlobalObject* globalObject, const SourceCode& source, P
     if (!moduleProgramNode)
         return false;
 
-    PrivateName privateName(PrivateName::Description, "EntryPointModule");
+    PrivateName privateName(PrivateName::Description, "EntryPointModule"_s);
     ModuleAnalyzer moduleAnalyzer(globalObject, Identifier::fromUid(privateName), source, moduleProgramNode->varDeclarations(), moduleProgramNode->lexicalVariables());
     moduleAnalyzer.analyze(*moduleProgramNode);
     return true;
@@ -172,7 +172,7 @@ JSValue evaluateWithScopeExtension(JSGlobalObject* globalObject, const SourceCod
 static Symbol* createSymbolForEntryPointModule(VM& vm)
 {
     // Generate the unique key for the source-provided module.
-    PrivateName privateName(PrivateName::Description, "EntryPointModule");
+    PrivateName privateName(PrivateName::Description, "EntryPointModule"_s);
     return Symbol::create(vm, privateName.uid());
 }
 

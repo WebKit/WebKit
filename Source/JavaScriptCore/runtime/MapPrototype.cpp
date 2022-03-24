@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo MapPrototype::s_info = { "Map", &Base::s_info, &mapPrototypeTable, nullptr, CREATE_METHOD_TABLE(MapPrototype) };
+const ClassInfo MapPrototype::s_info = { "Map"_s, &Base::s_info, &mapPrototypeTable, nullptr, CREATE_METHOD_TABLE(MapPrototype) };
 
 /* Source for MapPrototype.lut.h
 @begin mapPrototypeTable

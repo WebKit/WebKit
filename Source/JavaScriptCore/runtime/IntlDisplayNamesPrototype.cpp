@@ -40,7 +40,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlDisplayNamesPrototypeFuncResolvedOptions);
 
 namespace JSC {
 
-const ClassInfo IntlDisplayNamesPrototype::s_info = { "Intl.DisplayNames", &Base::s_info, &displayNamesPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlDisplayNamesPrototype) };
+const ClassInfo IntlDisplayNamesPrototype::s_info = { "Intl.DisplayNames"_s, &Base::s_info, &displayNamesPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlDisplayNamesPrototype) };
 
 /* Source for IntlDisplayNamesPrototype.lut.h
 @begin displayNamesPrototypeTable

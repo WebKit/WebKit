@@ -50,7 +50,7 @@
 
 namespace JSC {
 
-const ClassInfo JSAPIGlobalObject::s_info = { "GlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAPIGlobalObject) };
+const ClassInfo JSAPIGlobalObject::s_info = { "GlobalObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAPIGlobalObject) };
 
 const GlobalObjectMethodTable JSAPIGlobalObject::s_globalObjectMethodTable = {
     &supportsRichSourceInfo,
@@ -90,7 +90,7 @@ static Expected<URL, String> computeValidImportSpecifier(const URL& base, const 
         return makeUnexpected(makeString("Module specifier: "_s, specifier, " does not start with \"/\", \"./\", or \"../\". Referenced from: "_s, base.string()));
 
     if (specifier.startsWith('/')) {
-        absoluteURL = URL(URL({ }, "file://"), specifier);
+        absoluteURL = URL(URL("file://"_s), specifier);
         if (absoluteURL.isValid())
             return absoluteURL;
     }
@@ -177,12 +177,12 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
 
     if (UNLIKELY(![context moduleLoaderDelegate])) {
         scope.release();
-        promise->reject(globalObject, createError(globalObject, "No module loader provided."));
+        promise->reject(globalObject, createError(globalObject, "No module loader provided."_s));
         return promise;
     }
 
     auto strongPromise = Strong<JSInternalPromise>(vm, promise);
-    auto* resolve = JSNativeStdFunction::create(vm, globalObject, 1, "resolve", [=] (JSGlobalObject* globalObject, CallFrame* callFrame) {
+    auto* resolve = JSNativeStdFunction::create(vm, globalObject, 1, "resolve"_s, [=] (JSGlobalObject* globalObject, CallFrame* callFrame) {
         // This captures the globalObject but that's ok because our structure keeps it alive anyway.
         VM& vm = globalObject->vm();
         JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject)];
@@ -213,7 +213,7 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
         return encodedJSUndefined();
     });
 
-    auto* reject = JSNativeStdFunction::create(vm, globalObject, 1, "reject", [=] (JSGlobalObject*, CallFrame* callFrame) {
+    auto* reject = JSNativeStdFunction::create(vm, globalObject, 1, "reject"_s, [=] (JSGlobalObject*, CallFrame* callFrame) {
         strongPromise.get()->reject(globalObject, callFrame->argument(0));
         return encodedJSUndefined();
     });

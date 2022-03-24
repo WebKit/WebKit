@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo ScopedArgumentsTable::s_info = { "ScopedArgumentsTable", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(ScopedArgumentsTable) };
+const ClassInfo ScopedArgumentsTable::s_info = { "ScopedArgumentsTable"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(ScopedArgumentsTable) };
 
 ScopedArgumentsTable::ScopedArgumentsTable(VM& vm)
     : Base(vm, vm.scopedArgumentsTableStructure.get())

@@ -34,7 +34,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(AsyncGeneratorFunctionConstructor);
 
-const ClassInfo AsyncGeneratorFunctionConstructor::s_info = { "AsyncGeneratorFunction", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorFunctionConstructor) };
+const ClassInfo AsyncGeneratorFunctionConstructor::s_info = { "AsyncGeneratorFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorFunctionConstructor) };
 
 static JSC_DECLARE_HOST_FUNCTION(callAsyncGeneratorFunctionConstructor);
 static JSC_DECLARE_HOST_FUNCTION(constructAsyncGeneratorFunctionConstructor);

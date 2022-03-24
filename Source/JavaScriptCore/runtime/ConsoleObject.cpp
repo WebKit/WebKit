@@ -74,7 +74,7 @@ static JSC_DECLARE_HOST_FUNCTION(consoleProtoFuncRecord);
 static JSC_DECLARE_HOST_FUNCTION(consoleProtoFuncRecordEnd);
 static JSC_DECLARE_HOST_FUNCTION(consoleProtoFuncScreenshot);
 
-const ClassInfo ConsoleObject::s_info = { "console", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ConsoleObject) };
+const ClassInfo ConsoleObject::s_info = { "console"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ConsoleObject) };
 
 ConsoleObject::ConsoleObject(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)

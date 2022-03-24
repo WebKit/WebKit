@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo AsyncGeneratorPrototype::s_info = { "AsyncGenerator", &Base::s_info, &asyncGeneratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorPrototype) };
+const ClassInfo AsyncGeneratorPrototype::s_info = { "AsyncGenerator"_s, &Base::s_info, &asyncGeneratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorPrototype) };
 
 /* Source for AsyncGeneratorPrototype.lut.h
 @begin asyncGeneratorPrototypeTable

@@ -127,7 +127,7 @@ static JSValue getWrappedValue(JSGlobalObject* globalObject, JSGlobalObject* tar
     if (value.isCallable(vm))
         RELEASE_AND_RETURN(scope, JSRemoteFunction::tryCreate(targetGlobalObject, vm, static_cast<JSObject*>(value.asCell())));
 
-    throwTypeError(globalObject, scope, "value passing between realms must be callable or primitive");
+    throwTypeError(globalObject, scope, "value passing between realms must be callable or primitive"_s);
     return jsUndefined();
 }
 

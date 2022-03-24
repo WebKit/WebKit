@@ -39,7 +39,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlSegmentIteratorPrototypeFuncNext);
 
 namespace JSC {
 
-const ClassInfo IntlSegmentIteratorPrototype::s_info = { "Segment String Iterator", &Base::s_info, &segmentIteratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlSegmentIteratorPrototype) };
+const ClassInfo IntlSegmentIteratorPrototype::s_info = { "Segment String Iterator"_s, &Base::s_info, &segmentIteratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlSegmentIteratorPrototype) };
 
 /* Source for IntlSegmentIteratorPrototype.lut.h
 @begin segmentIteratorPrototypeTable

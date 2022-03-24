@@ -37,7 +37,7 @@ namespace JSC {
 
 static constexpr double nanosecondsPerDay = 24.0 * 60 * 60 * 1000 * 1000 * 1000;
 
-const ClassInfo TemporalDuration::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalDuration) };
+const ClassInfo TemporalDuration::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalDuration) };
 
 TemporalDuration* TemporalDuration::create(VM& vm, Structure* structure, ISO8601::Duration&& duration)
 {
@@ -515,7 +515,7 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
     JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, 0);
 
-    String unitString = intlStringOption(globalObject, options, vm.propertyNames->unit, { }, nullptr, nullptr);
+    String unitString = intlStringOption(globalObject, options, vm.propertyNames->unit, { }, ASCIILiteral::null(), ASCIILiteral::null());
     RETURN_IF_EXCEPTION(scope, 0);
 
     auto unitType = temporalUnitType(unitString);

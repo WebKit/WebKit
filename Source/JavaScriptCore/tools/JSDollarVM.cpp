@@ -203,7 +203,7 @@ private:
     }
 };
 
-const ClassInfo JSDollarVMCallFrame::s_info = { "CallFrame", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVMCallFrame) };
+const ClassInfo JSDollarVMCallFrame::s_info = { "CallFrame"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVMCallFrame) };
 
 class ElementHandleOwner;
 class Root;
@@ -1780,32 +1780,32 @@ void JSTestCustomGetterSetter::finishCreation(VM& vm)
 
 }
 
-const ClassInfo Element::s_info = { "Element", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(Element) };
-const ClassInfo Root::s_info = { "Root", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(Root) };
-const ClassInfo SimpleObject::s_info = { "SimpleObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(SimpleObject) };
-const ClassInfo ImpureGetter::s_info = { "ImpureGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ImpureGetter) };
-const ClassInfo CustomGetter::s_info = { "CustomGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(CustomGetter) };
-const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeArray) };
+const ClassInfo Element::s_info = { "Element"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(Element) };
+const ClassInfo Root::s_info = { "Root"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(Root) };
+const ClassInfo SimpleObject::s_info = { "SimpleObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(SimpleObject) };
+const ClassInfo ImpureGetter::s_info = { "ImpureGetter"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ImpureGetter) };
+const ClassInfo CustomGetter::s_info = { "CustomGetter"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(CustomGetter) };
+const ClassInfo RuntimeArray::s_info = { "RuntimeArray"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeArray) };
 #if ENABLE(JIT)
-const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, &DOMJITNode::checkSubClassSnippet, CREATE_METHOD_TABLE(DOMJITNode) };
+const ClassInfo DOMJITNode::s_info = { "DOMJITNode"_s, &Base::s_info, nullptr, &DOMJITNode::checkSubClassSnippet, CREATE_METHOD_TABLE(DOMJITNode) };
 #else
-const ClassInfo DOMJITNode::s_info = { "DOMJITNode", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITNode) };
+const ClassInfo DOMJITNode::s_info = { "DOMJITNode"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITNode) };
 #endif
-const ClassInfo DOMJITGetter::s_info = { "DOMJITGetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetter) };
-const ClassInfo DOMJITGetterNoEffects::s_info = { "DOMJITGetterNoEffects", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterNoEffects) };
-const ClassInfo DOMJITGetterComplex::s_info = { "DOMJITGetterComplex", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterComplex) };
-const ClassInfo DOMJITGetterBaseJSObject::s_info = { "DOMJITGetterBaseJSObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterBaseJSObject) };
+const ClassInfo DOMJITGetter::s_info = { "DOMJITGetter"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetter) };
+const ClassInfo DOMJITGetterNoEffects::s_info = { "DOMJITGetterNoEffects"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterNoEffects) };
+const ClassInfo DOMJITGetterComplex::s_info = { "DOMJITGetterComplex"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterComplex) };
+const ClassInfo DOMJITGetterBaseJSObject::s_info = { "DOMJITGetterBaseJSObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITGetterBaseJSObject) };
 #if ENABLE(JIT)
-const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, &DOMJITFunctionObject::checkSubClassSnippet, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
+const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject"_s, &Base::s_info, nullptr, &DOMJITFunctionObject::checkSubClassSnippet, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
 #else
-const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
+const ClassInfo DOMJITFunctionObject::s_info = { "DOMJITFunctionObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITFunctionObject) };
 #endif
-const ClassInfo DOMJITCheckJSCastObject::s_info = { "DOMJITCheckJSCastObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITCheckJSCastObject) };
-const ClassInfo JSTestCustomGetterSetter::s_info = { "JSTestCustomGetterSetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCustomGetterSetter) };
+const ClassInfo DOMJITCheckJSCastObject::s_info = { "DOMJITCheckJSCastObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMJITCheckJSCastObject) };
+const ClassInfo JSTestCustomGetterSetter::s_info = { "JSTestCustomGetterSetter"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCustomGetterSetter) };
 
-const ClassInfo StaticCustomAccessor::s_info = { "StaticCustomAccessor", &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(StaticCustomAccessor) };
-const ClassInfo StaticCustomValue::s_info = { "StaticCustomValue", &Base::s_info, &staticCustomValueTable, nullptr, CREATE_METHOD_TABLE(StaticCustomValue) };
-const ClassInfo ObjectDoingSideEffectPutWithoutCorrectSlotStatus::s_info = { "ObjectDoingSideEffectPutWithoutCorrectSlotStatus", &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(ObjectDoingSideEffectPutWithoutCorrectSlotStatus) };
+const ClassInfo StaticCustomAccessor::s_info = { "StaticCustomAccessor"_s, &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(StaticCustomAccessor) };
+const ClassInfo StaticCustomValue::s_info = { "StaticCustomValue"_s, &Base::s_info, &staticCustomValueTable, nullptr, CREATE_METHOD_TABLE(StaticCustomValue) };
+const ClassInfo ObjectDoingSideEffectPutWithoutCorrectSlotStatus::s_info = { "ObjectDoingSideEffectPutWithoutCorrectSlotStatus"_s, &Base::s_info, &staticCustomAccessorTable, nullptr, CREATE_METHOD_TABLE(ObjectDoingSideEffectPutWithoutCorrectSlotStatus) };
 
 ElementHandleOwner* Element::handleOwner()
 {
@@ -1895,7 +1895,7 @@ public:
     Wasm::StreamingParser m_streamingParser;
 };
 
-const ClassInfo WasmStreamingParser::s_info = { "WasmStreamingParser", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WasmStreamingParser) };
+const ClassInfo WasmStreamingParser::s_info = { "WasmStreamingParser"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WasmStreamingParser) };
 
 JSC_DEFINE_HOST_FUNCTION(functionWasmStreamingParserAddBytes, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -1996,7 +1996,7 @@ void WasmStreamingCompiler::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(WasmStreamingCompiler);
 
-const ClassInfo WasmStreamingCompiler::s_info = { "WasmStreamingCompiler", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WasmStreamingCompiler) };
+const ClassInfo WasmStreamingCompiler::s_info = { "WasmStreamingCompiler"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WasmStreamingCompiler) };
 
 JSC_DEFINE_HOST_FUNCTION(functionWasmStreamingCompilerAddBytes, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -2143,7 +2143,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionResetJITSizeStatistics);
 
 static JSC_DECLARE_HOST_FUNCTION(functionEnsureArrayStorage);
 
-const ClassInfo JSDollarVM::s_info = { "DollarVM", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
+const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
 static EncodedJSValue doPrint(JSGlobalObject* globalObject, CallFrame* callFrame, bool addLineFeed)
 {
@@ -2730,7 +2730,7 @@ JSC_DEFINE_HOST_FUNCTION(functionHaveABadTime, (JSGlobalObject* globalObject, Ca
     if (!callFrame->argument(0).isUndefined()) {
         JSObject* obj = callFrame->argument(0).getObject();
         if (!obj)
-            return throwVMTypeError(globalObject, scope, "haveABadTime expects first argument to be an object if provided");
+            return throwVMTypeError(globalObject, scope, "haveABadTime expects first argument to be an object if provided"_s);
         target = obj->globalObject();
     }
 
@@ -2749,7 +2749,7 @@ JSC_DEFINE_HOST_FUNCTION(functionIsHavingABadTime, (JSGlobalObject* globalObject
     if (!callFrame->argument(0).isUndefined()) {
         JSObject* obj = callFrame->argument(0).getObject();
         if (!obj)
-            return throwVMTypeError(globalObject, scope, "isHavingABadTime expects first argument to be an object if provided");
+            return throwVMTypeError(globalObject, scope, "isHavingABadTime expects first argument to be an object if provided"_s);
         target = obj->globalObject();
     }
 
@@ -2798,20 +2798,20 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
 #endif
 
     if (!isSupportedByPlatform)
-        return throwVMError(globalObject, throwScope, "Not supported for this platform");
+        return throwVMError(globalObject, throwScope, "Not supported for this platform"_s);
 
 #if ENABLE(ASSEMBLER)
     if (g_jscConfig.isPermanentlyFrozen() || !g_jscConfig.disabledFreezingForTesting)
-        return throwVMError(globalObject, throwScope, "Options are frozen");
+        return throwVMError(globalObject, throwScope, "Options are frozen"_s);
 
     if (callFrame->argumentCount() < 2)
-        return throwVMError(globalObject, throwScope, "Invalid number of arguments");
+        return throwVMError(globalObject, throwScope, "Invalid number of arguments"_s);
     JSValue arg0 = callFrame->argument(0);
     JSValue arg1 = callFrame->argument(1);
     if (!arg0.isCallable(vm))
-        return throwVMError(globalObject, throwScope, "arg0 should be a function");
+        return throwVMError(globalObject, throwScope, "arg0 should be a function"_s);
     if (!arg1.isNumber())
-        return throwVMError(globalObject, throwScope, "arg1 should be a number");
+        return throwVMError(globalObject, throwScope, "arg1 should be a number"_s);
 
     JSFunction* function = jsCast<JSFunction*>(arg0);
     size_t desiredStackSize = arg1.asNumber();
@@ -2821,7 +2821,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
     uint8_t* end = bitwise_cast<uint8_t*>(bounds.end());
     uint8_t* desiredStart = end + desiredStackSize;
     if (desiredStart >= currentStackPosition)
-        return throwVMError(globalObject, throwScope, "Unable to setup desired stack size");
+        return throwVMError(globalObject, throwScope, "Unable to setup desired stack size"_s);
 
     JSDollarVMHelper helper(vm);
 
@@ -3035,7 +3035,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForCompile, (JSGloba
     auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::Validation, nullptr);
     MarkedArgumentBuffer args;
     args.append(compiler);
-    call(globalObject, callback, jsUndefined(), args, "You shouldn't see this...");
+    call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
     if (UNLIKELY(scope.exception()))
         scope.clearException();
     compiler->streamingCompiler().finalize(globalObject);
@@ -3062,7 +3062,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiate, (JSG
     auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::FullCompile, importObject);
     MarkedArgumentBuffer args;
     args.append(compiler);
-    call(globalObject, callback, jsUndefined(), args, "You shouldn't see this...");
+    call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
     if (UNLIKELY(scope.exception()))
         scope.clearException();
     compiler->streamingCompiler().finalize(globalObject);
@@ -3170,7 +3170,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGetPrivateProperty, (JSGlobalObject* globalObje
 
     SymbolImpl* symbol = vm.propertyNames->builtinNames().lookUpPrivateName(str);
     if (!symbol)
-        return throwVMError(globalObject, scope, "Unknown private name.");
+        return throwVMError(globalObject, scope, "Unknown private name."_s);
 
     RELEASE_AND_RETURN(scope, JSValue::encode(callFrame->argument(0).get(globalObject, symbol)));
 }

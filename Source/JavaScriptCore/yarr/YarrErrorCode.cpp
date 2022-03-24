@@ -30,38 +30,38 @@
 
 namespace JSC { namespace Yarr {
 
-const char* errorMessage(ErrorCode error)
+ASCIILiteral errorMessage(ErrorCode error)
 {
 #define REGEXP_ERROR_PREFIX "Invalid regular expression: "
     // The order of this array must match the ErrorCode enum.
-    static const char* const errorMessages[] = {
-        nullptr,                                                                    // NoError
-        REGEXP_ERROR_PREFIX "regular expression too large",                         // PatternTooLarge
-        REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier",                // QuantifierOutOfOrder
-        REGEXP_ERROR_PREFIX "nothing to repeat",                                    // QuantifierWithoutAtom
-        REGEXP_ERROR_PREFIX "number too large in {} quantifier",                    // QuantifierTooLarge
-        REGEXP_ERROR_PREFIX "incomplete {} quantifier for Unicode pattern",         // QuantifierIncomplete
-        REGEXP_ERROR_PREFIX "missing )",                                            // MissingParentheses
-        REGEXP_ERROR_PREFIX "unmatched ] or } bracket for Unicode pattern",         // BracketUnmatched
-        REGEXP_ERROR_PREFIX "unmatched parentheses",                                // ParenthesesUnmatched
-        REGEXP_ERROR_PREFIX "unrecognized character after (?",                      // ParenthesesTypeInvalid
-        REGEXP_ERROR_PREFIX "invalid group specifier name",                         // InvalidGroupName
-        REGEXP_ERROR_PREFIX "duplicate group specifier name",                       // DuplicateGroupName
-        REGEXP_ERROR_PREFIX "missing terminating ] for character class",            // CharacterClassUnmatched
-        REGEXP_ERROR_PREFIX "range out of order in character class",                // CharacterClassRangeOutOfOrder
-        REGEXP_ERROR_PREFIX "invalid range in character class for Unicode pattern", // CharacterClassRangeInvalid
-        REGEXP_ERROR_PREFIX "\\ at end of pattern",                                 // EscapeUnterminated
-        REGEXP_ERROR_PREFIX "invalid Unicode \\u escape",                           // InvalidUnicodeEscape
-        REGEXP_ERROR_PREFIX "invalid Unicode code point \\u{} escape",              // InvalidUnicodeCodePointEscape
-        REGEXP_ERROR_PREFIX "invalid backreference for Unicode pattern",            // InvalidBackreference
-        REGEXP_ERROR_PREFIX "invalid \\k<> named backreference",                    // InvalidNamedBackReference
-        REGEXP_ERROR_PREFIX "invalid escaped character for Unicode pattern",        // InvalidIdentityEscape
-        REGEXP_ERROR_PREFIX "invalid octal escape for Unicode pattern",             // InvalidOctalEscape
-        REGEXP_ERROR_PREFIX "invalid \\c escape for Unicode pattern",               // InvalidControlLetterEscape
-        REGEXP_ERROR_PREFIX "invalid property expression",                          // InvalidUnicodePropertyExpression
-        REGEXP_ERROR_PREFIX "too many nested disjunctions",                         // TooManyDisjunctions
-        REGEXP_ERROR_PREFIX "pattern exceeds string length limits",                 // OffsetTooLarge
-        REGEXP_ERROR_PREFIX "invalid flags"                                         // InvalidRegularExpressionFlags
+    static const ASCIILiteral errorMessages[] = {
+        ASCIILiteral::null(),                                                         // NoError
+        REGEXP_ERROR_PREFIX "regular expression too large"_s,                         // PatternTooLarge
+        REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier"_s,                // QuantifierOutOfOrder
+        REGEXP_ERROR_PREFIX "nothing to repeat"_s,                                    // QuantifierWithoutAtom
+        REGEXP_ERROR_PREFIX "number too large in {} quantifier"_s,                    // QuantifierTooLarge
+        REGEXP_ERROR_PREFIX "incomplete {} quantifier for Unicode pattern"_s,         // QuantifierIncomplete
+        REGEXP_ERROR_PREFIX "missing )"_s,                                            // MissingParentheses
+        REGEXP_ERROR_PREFIX "unmatched ] or } bracket for Unicode pattern"_s,         // BracketUnmatched
+        REGEXP_ERROR_PREFIX "unmatched parentheses"_s,                                // ParenthesesUnmatched
+        REGEXP_ERROR_PREFIX "unrecognized character after (?"_s,                      // ParenthesesTypeInvalid
+        REGEXP_ERROR_PREFIX "invalid group specifier name"_s,                         // InvalidGroupName
+        REGEXP_ERROR_PREFIX "duplicate group specifier name"_s,                       // DuplicateGroupName
+        REGEXP_ERROR_PREFIX "missing terminating ] for character class"_s,            // CharacterClassUnmatched
+        REGEXP_ERROR_PREFIX "range out of order in character class"_s,                // CharacterClassRangeOutOfOrder
+        REGEXP_ERROR_PREFIX "invalid range in character class for Unicode pattern"_s, // CharacterClassRangeInvalid
+        REGEXP_ERROR_PREFIX "\\ at end of pattern"_s,                                 // EscapeUnterminated
+        REGEXP_ERROR_PREFIX "invalid Unicode \\u escape"_s,                           // InvalidUnicodeEscape
+        REGEXP_ERROR_PREFIX "invalid Unicode code point \\u{} escape"_s,              // InvalidUnicodeCodePointEscape
+        REGEXP_ERROR_PREFIX "invalid backreference for Unicode pattern"_s,            // InvalidBackreference
+        REGEXP_ERROR_PREFIX "invalid \\k<> named backreference"_s,                    // InvalidNamedBackReference
+        REGEXP_ERROR_PREFIX "invalid escaped character for Unicode pattern"_s,        // InvalidIdentityEscape
+        REGEXP_ERROR_PREFIX "invalid octal escape for Unicode pattern"_s,             // InvalidOctalEscape
+        REGEXP_ERROR_PREFIX "invalid \\c escape for Unicode pattern"_s,               // InvalidControlLetterEscape
+        REGEXP_ERROR_PREFIX "invalid property expression"_s,                          // InvalidUnicodePropertyExpression
+        REGEXP_ERROR_PREFIX "too many nested disjunctions"_s,                         // TooManyDisjunctions
+        REGEXP_ERROR_PREFIX "pattern exceeds string length limits"_s,                 // OffsetTooLarge
+        REGEXP_ERROR_PREFIX "invalid flags"_s                                         // InvalidRegularExpressionFlags
     };
 
     return errorMessages[static_cast<unsigned>(error)];

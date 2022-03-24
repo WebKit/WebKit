@@ -66,7 +66,7 @@ inline JSArrayBufferView* speciesConstruct(JSGlobalObject* globalObject, JSObjec
         RELEASE_AND_RETURN(scope, defaultConstructor());
 
 
-    JSValue result = construct(globalObject, species, args, "species is not a constructor");
+    JSValue result = construct(globalObject, species, args, "species is not a constructor"_s);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(vm, result)) {
@@ -115,7 +115,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSet(VM& vm, JSGlobalO
         double offsetNumber = callFrame->uncheckedArgument(1).toIntegerOrInfinity(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (UNLIKELY(offsetNumber < 0))
-            return throwVMRangeError(globalObject, scope, "Offset should not be negative");
+            return throwVMRangeError(globalObject, scope, "Offset should not be negative"_s);
         if (offsetNumber <= maxSafeInteger() && offsetNumber <= static_cast<double>(std::numeric_limits<size_t>::max()))
             offset = offsetNumber;
         else
@@ -625,7 +625,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewPrivateFuncSubarrayCreate(VM& 
     args.append(jsNumber(length));
     ASSERT(!args.hasOverflowed());
 
-    JSObject* result = construct(globalObject, species, args, "species is not a constructor");
+    JSObject* result = construct(globalObject, species, args, "species is not a constructor"_s);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSArrayBufferView* validated = validateTypedArray(globalObject, result);

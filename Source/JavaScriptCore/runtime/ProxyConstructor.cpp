@@ -35,7 +35,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ProxyConstructor);
 
-const ClassInfo ProxyConstructor::s_info = { "Proxy", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyConstructor) };
+const ClassInfo ProxyConstructor::s_info = { "Proxy"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyConstructor) };
 
 ProxyConstructor* ProxyConstructor::create(VM& vm, Structure* structure)
 {
@@ -76,7 +76,7 @@ JSC_DEFINE_HOST_FUNCTION(makeRevocableProxy, (JSGlobalObject* globalObject, Call
 
 void ProxyConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
-    Base::finishCreation(vm, 2, "Proxy", PropertyAdditionMode::WithoutStructureTransition);
+    Base::finishCreation(vm, 2, "Proxy"_s, PropertyAdditionMode::WithoutStructureTransition);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("revocable", makeRevocableProxy, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
 }
 

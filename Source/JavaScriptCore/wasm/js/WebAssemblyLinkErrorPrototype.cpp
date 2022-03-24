@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo WebAssemblyLinkErrorPrototype::s_info = { "WebAssembly.LinkError", &Base::s_info, &prototypeTableWebAssemblyLinkError, nullptr, CREATE_METHOD_TABLE(WebAssemblyLinkErrorPrototype) };
+const ClassInfo WebAssemblyLinkErrorPrototype::s_info = { "WebAssembly.LinkError"_s, &Base::s_info, &prototypeTableWebAssemblyLinkError, nullptr, CREATE_METHOD_TABLE(WebAssemblyLinkErrorPrototype) };
 
 /* Source for WebAssemblyLinkErrorPrototype.lut.h
  @begin prototypeTableWebAssemblyLinkError

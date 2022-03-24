@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSAsyncFunction::s_info = { "AsyncFunction",  &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncFunction) };
+const ClassInfo JSAsyncFunction::s_info = { "AsyncFunction"_s,  &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncFunction) };
 
 JSAsyncFunction::JSAsyncFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
     : Base(vm, executable, scope, structure)

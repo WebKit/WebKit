@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo FunctionRareData::s_info = { "FunctionRareData", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionRareData) };
+const ClassInfo FunctionRareData::s_info = { "FunctionRareData"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionRareData) };
 
 FunctionRareData* FunctionRareData::create(VM& vm, ExecutableBase* executable)
 {

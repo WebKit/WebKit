@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-const ClassInfo WeakObjectRefConstructor::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakObjectRefConstructor) };
+const ClassInfo WeakObjectRefConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakObjectRefConstructor) };
 
 void WeakObjectRefConstructor::finishCreation(VM& vm, WeakObjectRefPrototype* prototype)
 {

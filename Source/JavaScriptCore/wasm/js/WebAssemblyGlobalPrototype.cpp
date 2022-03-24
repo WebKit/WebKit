@@ -45,7 +45,7 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyGlobalProtoFuncType);
 
 namespace JSC {
 
-const ClassInfo WebAssemblyGlobalPrototype::s_info = { "WebAssembly.Global", &Base::s_info, &prototypeGlobalWebAssemblyGlobal, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalPrototype) };
+const ClassInfo WebAssemblyGlobalPrototype::s_info = { "WebAssembly.Global"_s, &Base::s_info, &prototypeGlobalWebAssemblyGlobal, nullptr, CREATE_METHOD_TABLE(WebAssemblyGlobalPrototype) };
 
 /* Source for WebAssemblyGlobalPrototype.lut.h
  @begin prototypeGlobalWebAssemblyGlobal

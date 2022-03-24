@@ -41,7 +41,7 @@ namespace JSC {
 
 using namespace Bindings;
 
-WEBCORE_EXPORT const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeMethod) };
+WEBCORE_EXPORT const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod"_s, &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeMethod) };
 
 static JSC_DECLARE_HOST_FUNCTION(callRuntimeMethod);
 static JSC_DECLARE_CUSTOM_GETTER(methodLengthGetter);

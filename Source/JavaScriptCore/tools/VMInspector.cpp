@@ -411,7 +411,7 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
             JSValue v = it->jsValue();
             int registerNumber = it - callFrame->registers();
             String name = (it > endOfCalleeSaves)
-                ? "CalleeSaveReg"
+                ? "CalleeSaveReg"_s
                 : codeBlock->nameForRegister(VirtualRegister(registerNumber));
             dataLogF("[r% 3d %14s]      | %10p | 0x%-16llx %s\n", registerNumber, name.ascii().data(), it, (long long)JSValue::encode(v), valueAsString(v).data());
             --it;
@@ -519,7 +519,7 @@ void VMInspector::dumpCellMemoryToStream(JSCell* cell, PrintStream& out)
         out.print("\n");
     };
 
-    out.printf("<%p, %s>\n", cell, cell->className(vm));
+    out.printf("<%p, %s>\n", cell, cell->className(vm).characters());
     IndentationScope scope(indentation);
 
     INDENT dumpSlot(slots, 0, "header");

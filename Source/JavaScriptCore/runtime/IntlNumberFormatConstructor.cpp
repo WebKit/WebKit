@@ -44,7 +44,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlNumberFormatConstructorFuncSupportedLocales
 
 namespace JSC {
 
-const ClassInfo IntlNumberFormatConstructor::s_info = { "Function", &Base::s_info, &numberFormatConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlNumberFormatConstructor) };
+const ClassInfo IntlNumberFormatConstructor::s_info = { "Function"_s, &Base::s_info, &numberFormatConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlNumberFormatConstructor) };
 
 /* Source for IntlNumberFormatConstructor.lut.h
 @begin numberFormatConstructorTable

@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo WeakObjectRefPrototype::s_info = { "WeakRef", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakObjectRefPrototype) };
+const ClassInfo WeakObjectRefPrototype::s_info = { "WeakRef"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakObjectRefPrototype) };
 
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakRefDeref);
 

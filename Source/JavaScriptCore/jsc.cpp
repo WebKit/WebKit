@@ -741,7 +741,7 @@ static bool shellSupportsRichSourceInfo(const JSGlobalObject*)
     return supportsRichSourceInfo;
 }
 
-const ClassInfo GlobalObject::s_info = { "global", &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
+const ClassInfo GlobalObject::s_info = { "global"_s, &JSGlobalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GlobalObject) };
 const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     &shellSupportsRichSourceInfo,
     &shouldInterruptScript,
@@ -1093,10 +1093,10 @@ private:
     String cachePath() const
     {
         if (!cacheEnabled())
-            return static_cast<const char*>(nullptr);
+            return { };
         const char* cachePath = Options::diskCachePath();
         String filename = FileSystem::encodeForFileName(FileSystem::lastComponentOfPathIgnoringTrailingSlash(sourceOrigin().url().fileSystemPath()));
-        return FileSystem::pathByAppendingComponent(cachePath, makeString(source().toString().hash(), '-', filename, ".bytecode-cache"));
+        return FileSystem::pathByAppendingComponent(String { cachePath }, makeString(source().toString().hash(), '-', filename, ".bytecode-cache"));
     }
 
     void loadBytecode() const
@@ -1259,10 +1259,10 @@ static CString toCString(JSGlobalObject* globalObject, ThrowScope& scope, T& str
         throwOutOfMemoryError(globalObject, scope);
         break;
     case UTF8ConversionError::IllegalSource:
-        scope.throwException(globalObject, createError(globalObject, "Illegal source encountered during UTF8 conversion"));
+        scope.throwException(globalObject, createError(globalObject, "Illegal source encountered during UTF8 conversion"_s));
         break;
     case UTF8ConversionError::SourceExhausted:
-        scope.throwException(globalObject, createError(globalObject, "Source exhausted during UTF8 conversion"));
+        scope.throwException(globalObject, createError(globalObject, "Source exhausted during UTF8 conversion"_s));
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -1477,7 +1477,7 @@ private:
     }
 };
 
-const ClassInfo JSCMemoryFootprint::s_info = { "MemoryFootprint", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCMemoryFootprint) };
+const ClassInfo JSCMemoryFootprint::s_info = { "MemoryFootprint"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCMemoryFootprint) };
 
 JSC_DEFINE_HOST_FUNCTION(functionMemoryUsageStatistics, (JSGlobalObject* globalObject, CallFrame*))
 {
@@ -1662,13 +1662,13 @@ JSC_DEFINE_HOST_FUNCTION(functionReadFile, (JSGlobalObject* globalObject, CallFr
         String type = callFrame->argument(1).toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (type != "binary")
-            return throwVMError(globalObject, scope, "Expected 'binary' as second argument.");
+            return throwVMError(globalObject, scope, "Expected 'binary' as second argument."_s);
         isBinary = true;
     }
 
     RefPtr<Uint8Array> content = fillBufferWithContentsOfFile(fileName);
     if (!content)
-        return throwVMError(globalObject, scope, "Could not open file.");
+        return throwVMError(globalObject, scope, "Could not open file."_s);
 
     if (!isBinary)
         return JSValue::encode(jsString(vm, String::fromUTF8WithLatin1Fallback(content->data(), content->length())));
@@ -1812,7 +1812,7 @@ private:
     FILE* m_descriptor;
 };
 
-const ClassInfo JSFileDescriptor::s_info = { "FileDescriptor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileDescriptor) };
+const ClassInfo JSFileDescriptor::s_info = { "FileDescriptor"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFileDescriptor) };
 
 JSC_DEFINE_HOST_FUNCTION(functionOpenFile, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
@@ -1847,7 +1847,7 @@ JSC_DEFINE_HOST_FUNCTION(functionReadline, (JSGlobalObject* globalObject, CallFr
         line.append(c);
     }
     line.append('\0');
-    return JSValue::encode(jsString(globalObject->vm(), line.data()));
+    return JSValue::encode(jsString(globalObject->vm(), String { line.data() }));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionPreciseTime, (JSGlobalObject*, CallFrame*))
@@ -1901,7 +1901,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCallerIsBBQOrOMGCompiled, (JSGlobalObject* glob
     CallerFunctor wasmToJSFrame;
     StackVisitor::visit(callFrame, vm, wasmToJSFrame);
     if (!wasmToJSFrame.callerFrame() || !wasmToJSFrame.callerFrame()->isAnyWasmCallee())
-        return throwVMError(globalObject, scope, "caller is not a wasm->js import function");
+        return throwVMError(globalObject, scope, "caller is not a wasm->js import function"_s);
 
     // We have a wrapper frame that we generate for imports. If we ever can direct call from wasm we would need to change this.
     ASSERT(!wasmToJSFrame.callerFrame()->callee().isWasm());
@@ -2524,7 +2524,7 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
     vm.deferredWorkTimer->scheduleWorkSoon(ticket, [callback](DeferredWorkTimer::Ticket) {
         JSGlobalObject* globalObject = callback->globalObject();
         MarkedArgumentBuffer args;
-        call(globalObject, callback, jsUndefined(), args, "You shouldn't see this...");
+        call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
     });
     return JSValue::encode(jsUndefined());
 }
@@ -2813,9 +2813,9 @@ JSC_DEFINE_HOST_FUNCTION(functionWebAssemblyMemoryMode, (JSGlobalObject* globalO
 
     if (JSObject* object = callFrame->argument(0).getObject()) {
         if (auto* memory = jsDynamicCast<JSWebAssemblyMemory*>(vm, object))
-            return JSValue::encode(jsString(vm, makeString(memory->memory().mode())));
+            return JSValue::encode(jsString(vm, String { makeString(memory->memory().mode()) }));
         if (auto* instance = jsDynamicCast<JSWebAssemblyInstance*>(vm, object))
-            return JSValue::encode(jsString(vm, makeString(instance->memoryMode())));
+            return JSValue::encode(jsString(vm, String { makeString(instance->memoryMode()) }));
     }
 
     return throwVMTypeError(globalObject, scope, "WebAssemblyMemoryMode expects either a WebAssembly.Memory or WebAssembly.Instance"_s);
@@ -3183,7 +3183,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
         JSInternalPromise* promise = nullptr;
         bool isModule = options.m_module || scripts[i].scriptType == Script::ScriptType::Module;
         if (scripts[i].codeSource == Script::CodeSource::File) {
-            fileName = scripts[i].argument;
+            fileName = String { scripts[i].argument };
             if (scripts[i].strictMode == Script::StrictMode::Strict)
                 scriptBuffer.append("\"use strict\";\n", strlen("\"use strict\";\n"));
 
@@ -3430,7 +3430,7 @@ void CommandLine::parseArguments(int argc, char** argv)
             if (++i == argc)
                 printUsageStatement();
             Options::setOption("useProfiler=1");
-            m_profilerOutput = argv[i];
+            m_profilerOutput = String { argv[i] };
             continue;
         }
         if (!strcmp(arg, "-m")) {

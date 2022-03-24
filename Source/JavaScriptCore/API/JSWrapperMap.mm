@@ -438,7 +438,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
                 const char* name = sel_getName(selector);
                 if (!isInitFamilyMethod(@(name)))
                     return;
-                initTable.set(name, (__bridge CFTypeRef)protocol);
+                initTable.set(String { name }, (__bridge CFTypeRef)protocol);
             });
         });
     }
@@ -451,7 +451,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
         forEachMethodInClass(currentClass, ^(Method method) {
             SEL selector = method_getName(method);
             const char* name = sel_getName(selector);
-            auto iter = initTable.find(name);
+            auto iter = initTable.find(String { name });
 
             if (iter == initTable.end())
                 return;

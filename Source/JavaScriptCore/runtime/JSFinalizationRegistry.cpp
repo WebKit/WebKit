@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSFinalizationRegistry::s_info = { "FinalizationRegistry", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFinalizationRegistry) };
+const ClassInfo JSFinalizationRegistry::s_info = { "FinalizationRegistry"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSFinalizationRegistry) };
 
 Structure* JSFinalizationRegistry::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
@@ -169,7 +169,7 @@ void JSFinalizationRegistry::runFinalizationCleanup(JSGlobalObject* globalObject
     while (JSValue value = takeDeadHoldingsValue()) {
         MarkedArgumentBuffer args;
         args.append(value);
-        call(globalObject, callback(), args, "This should not be visible: please report a bug to bugs.webkit.org");
+        call(globalObject, callback(), args, "This should not be visible: please report a bug to bugs.webkit.org"_s);
         RETURN_IF_EXCEPTION(scope, void());
     }
 }

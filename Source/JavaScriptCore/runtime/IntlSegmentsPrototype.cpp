@@ -40,7 +40,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlSegmentsPrototypeFuncIterator);
 
 namespace JSC {
 
-const ClassInfo IntlSegmentsPrototype::s_info = { "%Segments%", &Base::s_info, &segmentsPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlSegmentsPrototype) };
+const ClassInfo IntlSegmentsPrototype::s_info = { "%Segments%"_s, &Base::s_info, &segmentsPrototypeTable, nullptr, CREATE_METHOD_TABLE(IntlSegmentsPrototype) };
 
 /* Source for IntlSegmentsPrototype.lut.h
 @begin segmentsPrototypeTable

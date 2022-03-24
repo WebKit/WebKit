@@ -575,7 +575,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
             json.append(snapshotNode.value().identifier);
 
             // Maybe we should just always encode the root names.
-            const char* rootName = rootMarkReasonDescription(it.value.markReason);
+            auto rootName = rootMarkReasonDescription(it.value.markReason);
             auto result = labelIndexes.add(rootName, nextLabelIndex);
             if (result.isNewEntry)
                 nextLabelIndex++;
@@ -583,7 +583,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
 
             unsigned reachabilityReasonIndex = 0;
             if (it.value.reachabilityFromOpaqueRootReasons) {
-                auto result = labelIndexes.add(it.value.reachabilityFromOpaqueRootReasons, nextLabelIndex);
+                auto result = labelIndexes.add(String { it.value.reachabilityFromOpaqueRootReasons }, nextLabelIndex);
                 if (result.isNewEntry)
                     nextLabelIndex++;
                 reachabilityReasonIndex = result.iterator->value;

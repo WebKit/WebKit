@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const ClassInfo JSMap::s_info = { "Map", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMap) };
+const ClassInfo JSMap::s_info = { "Map"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMap) };
 
 JSMap* JSMap::clone(JSGlobalObject* globalObject, VM& vm, Structure* structure)
 {

@@ -42,7 +42,7 @@ static JSC_DECLARE_HOST_FUNCTION(temporalTimeZoneConstructorFuncFrom);
 
 namespace JSC {
 
-const ClassInfo TemporalTimeZoneConstructor::s_info = { "Function", &InternalFunction::s_info, &temporalTimeZoneConstructorTable, nullptr, CREATE_METHOD_TABLE(TemporalTimeZoneConstructor) };
+const ClassInfo TemporalTimeZoneConstructor::s_info = { "Function"_s, &InternalFunction::s_info, &temporalTimeZoneConstructorTable, nullptr, CREATE_METHOD_TABLE(TemporalTimeZoneConstructor) };
 
 /* Source for TemporalTimeZoneConstructor.lut.h
 @begin temporalTimeZoneConstructorTable

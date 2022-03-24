@@ -39,7 +39,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSScope);
 
-const ClassInfo JSScope::s_info = { "Scope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSScope) };
+const ClassInfo JSScope::s_info = { "Scope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSScope) };
 
 template<typename Visitor>
 void JSScope::visitChildrenImpl(JSCell* cell, Visitor& visitor)

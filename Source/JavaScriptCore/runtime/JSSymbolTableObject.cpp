@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo JSSymbolTableObject::s_info = { "SymbolTableObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSymbolTableObject) };
+const ClassInfo JSSymbolTableObject::s_info = { "SymbolTableObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSymbolTableObject) };
 
 template<typename Visitor>
 void JSSymbolTableObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)

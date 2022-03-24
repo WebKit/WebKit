@@ -156,7 +156,7 @@ ImageDrawResult CustomPaintImage::doCustomPaint(GraphicsContext& destContext, co
 
     auto& lexicalGlobalObject = globalObject;
     JSC::ArgList noArgs;
-    JSC::JSValue thisObject = { JSC::construct(&lexicalGlobalObject, paintConstructor, noArgs, "Failed to construct paint class") };
+    JSC::JSValue thisObject = { JSC::construct(&lexicalGlobalObject, paintConstructor, noArgs, "Failed to construct paint class"_s) };
 
     if (UNLIKELY(scope.exception())) {
         reportException(&lexicalGlobalObject, scope.exception());

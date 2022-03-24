@@ -210,7 +210,7 @@ static bool fillStructuresUsingDateArgs(JSGlobalObject* globalObject, CallFrame*
     return ok;
 }
 
-const ClassInfo DatePrototype::s_info = {"Object", &Base::s_info, &datePrototypeTable, nullptr, CREATE_METHOD_TABLE(DatePrototype)};
+const ClassInfo DatePrototype::s_info = { "Object"_s, &Base::s_info, &datePrototypeTable, nullptr, CREATE_METHOD_TABLE(DatePrototype) };
 
 /* Source for DatePrototype.lut.h
 @begin datePrototypeTable
@@ -358,12 +358,12 @@ JSC_DEFINE_HOST_FUNCTION(dateProtoFuncToPrimitiveSymbol, (JSGlobalObject* global
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
     if (!thisValue.isObject())
-        return throwVMTypeError(globalObject, scope, "Date.prototype[Symbol.toPrimitive] expected |this| to be an object.");
+        return throwVMTypeError(globalObject, scope, "Date.prototype[Symbol.toPrimitive] expected |this| to be an object."_s);
     JSObject* thisObject = jsCast<JSObject*>(thisValue);
     Integrity::auditStructureID(thisObject->structureID());
 
     if (!callFrame->argumentCount())
-        return throwVMTypeError(globalObject, scope, "Date.prototype[Symbol.toPrimitive] expected a first argument.");
+        return throwVMTypeError(globalObject, scope, "Date.prototype[Symbol.toPrimitive] expected a first argument."_s);
 
     JSValue hintValue = callFrame->uncheckedArgument(0);
     PreferredPrimitiveType type = toPreferredPrimitiveType(globalObject, hintValue);

@@ -44,7 +44,7 @@ static JSC_DECLARE_HOST_FUNCTION(intlPluralRulesConstructorFuncSupportedLocalesO
 
 namespace JSC {
 
-const ClassInfo IntlPluralRulesConstructor::s_info = { "Function", &InternalFunction::s_info, &pluralRulesConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlPluralRulesConstructor) };
+const ClassInfo IntlPluralRulesConstructor::s_info = { "Function"_s, &InternalFunction::s_info, &pluralRulesConstructorTable, nullptr, CREATE_METHOD_TABLE(IntlPluralRulesConstructor) };
 
 /* Source for IntlPluralRulesConstructor.lut.h
 @begin pluralRulesConstructorTable

@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-const ClassInfo JSWebAssemblyGlobal::s_info = { "WebAssembly.Global", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyGlobal) };
+const ClassInfo JSWebAssemblyGlobal::s_info = { "WebAssembly.Global"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyGlobal) };
 
 JSWebAssemblyGlobal* JSWebAssemblyGlobal::tryCreate(JSGlobalObject* globalObject, VM& vm, Structure* structure, Ref<Wasm::Global>&& global)
 {
@@ -94,22 +94,22 @@ JSObject* JSWebAssemblyGlobal::type(JSGlobalObject* globalObject)
     JSString* valueString = nullptr;
     switch (valueType.kind) {
     case Wasm::TypeKind::I32:
-        valueString = jsNontrivialString(vm, "i32");
+        valueString = jsNontrivialString(vm, "i32"_s);
         break;
     case Wasm::TypeKind::I64:
-        valueString = jsNontrivialString(vm, "i64");
+        valueString = jsNontrivialString(vm, "i64"_s);
         break;
     case Wasm::TypeKind::F32:
-        valueString = jsNontrivialString(vm, "f32");
+        valueString = jsNontrivialString(vm, "f32"_s);
         break;
     case Wasm::TypeKind::F64:
-        valueString = jsNontrivialString(vm, "f64");
+        valueString = jsNontrivialString(vm, "f64"_s);
         break;
     default: {
         if (Wasm::isFuncref(valueType))
-            valueString = jsNontrivialString(vm, "anyfunc");
+            valueString = jsNontrivialString(vm, "anyfunc"_s);
         else if (Wasm::isExternref(valueType))
-            valueString = jsNontrivialString(vm, "externref");
+            valueString = jsNontrivialString(vm, "externref"_s);
         else
             RELEASE_ASSERT_NOT_REACHED();
     }

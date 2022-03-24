@@ -44,7 +44,7 @@ static JSC_DECLARE_CUSTOM_GETTER(temporalPlainDatePrototypeGetterDay);
 
 namespace JSC {
 
-const ClassInfo TemporalPlainDatePrototype::s_info = { "Temporal.PlainDate", &Base::s_info, &plainDatePrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalPlainDatePrototype) };
+const ClassInfo TemporalPlainDatePrototype::s_info = { "Temporal.PlainDate"_s, &Base::s_info, &plainDatePrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalPlainDatePrototype) };
 
 /* Source for TemporalPlainDatePrototype.lut.h
 @begin plainDatePrototypeTable

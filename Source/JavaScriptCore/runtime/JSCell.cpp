@@ -48,7 +48,7 @@ void JSCell::dump(PrintStream& out) const
 
 void JSCell::dumpToStream(const JSCell* cell, PrintStream& out)
 {
-    out.printf("<%p, %s>", cell, cell->className(cell->vm()));
+    out.printf("<%p, %s>", cell, cell->className(cell->vm()).characters());
 }
 
 size_t JSCell::estimatedSizeInBytes(VM& vm) const
@@ -210,7 +210,7 @@ void JSCell::getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyName
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-const char* JSCell::className(VM& vm) const
+ASCIILiteral JSCell::className(VM& vm) const
 {
     return classInfo(vm)->className;
 }

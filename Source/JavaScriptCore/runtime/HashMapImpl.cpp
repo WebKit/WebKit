@@ -36,11 +36,11 @@ DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<>, HashMapBucket<HashMapBucketDataK
 
 template<>
 const ClassInfo HashMapBucket<HashMapBucketDataKey>::s_info =
-    { "HashMapBucket", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(HashMapBucket<HashMapBucketDataKey>) };
+    { "HashMapBucket"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(HashMapBucket<HashMapBucketDataKey>) };
 
 template<>
 const ClassInfo HashMapBucket<HashMapBucketDataKeyValue>::s_info =
-    { "HashMapBucket", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(HashMapBucket<HashMapBucketDataKeyValue>) };
+    { "HashMapBucket"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(HashMapBucket<HashMapBucketDataKeyValue>) };
 
 template<typename Data>
 template<typename Visitor>

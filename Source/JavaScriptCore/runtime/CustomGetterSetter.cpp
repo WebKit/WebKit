@@ -32,6 +32,6 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(CustomGetterSetter);
 
-const ClassInfo CustomGetterSetter::s_info = { "CustomGetterSetter", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(CustomGetterSetter) };
+const ClassInfo CustomGetterSetter::s_info = { "CustomGetterSetter"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(CustomGetterSetter) };
 
 } // namespace JSC

@@ -27,7 +27,7 @@
 
 namespace JSC {
 
-const ClassInfo DateInstance::s_info = {"Date", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DateInstance)};
+const ClassInfo DateInstance::s_info = { "Date"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DateInstance) };
 
 DateInstance::DateInstance(VM& vm, Structure* structure)
     : Base(vm, structure)

@@ -537,12 +537,12 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
     RETURN_IF_EXCEPTION(scope, void());
 
     if (buffer.hasOverflowed()) {
-        throwOutOfMemoryError(globalObject, scope, "JS results to Wasm are too large");
+        throwOutOfMemoryError(globalObject, scope, "JS results to Wasm are too large"_s);
         return;
     }
 
     if (iterationCount != signature->returnCount()) {
-        throwVMTypeError(globalObject, scope, "Incorrect number of values returned to Wasm from JS");
+        throwVMTypeError(globalObject, scope, "Incorrect number of values returned to Wasm from JS"_s);
         return;
     }
 

@@ -35,7 +35,7 @@
 
 namespace JSC {
 
-const ClassInfo JSRemoteFunction::s_info = { "Function", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSRemoteFunction) };
+const ClassInfo JSRemoteFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSRemoteFunction) };
 
 JSRemoteFunction::JSRemoteFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction)
     : Base(vm, executable, globalObject, structure)
@@ -66,7 +66,7 @@ static inline JSValue wrapArgument(JSGlobalObject* globalObject, JSGlobalObject*
     JSValue result = wrapValue(globalObject, targetGlobalObject, value);
     RETURN_IF_EXCEPTION(scope, { });
     if (!result)
-        throwTypeError(globalObject, scope, "value passing between realms must be callable or primitive");
+        throwTypeError(globalObject, scope, "value passing between realms must be callable or primitive"_s);
     RELEASE_AND_RETURN(scope, result);
 }
 
@@ -77,7 +77,7 @@ static inline JSValue wrapReturnValue(JSGlobalObject* globalObject, JSGlobalObje
     JSValue result = wrapValue(globalObject, targetGlobalObject, value);
     RETURN_IF_EXCEPTION(scope, { });
     if (!result)
-        throwTypeError(globalObject, scope, "value passing between realms must be callable or primitive");
+        throwTypeError(globalObject, scope, "value passing between realms must be callable or primitive"_s);
     RELEASE_AND_RETURN(scope, result);
 }
 
@@ -228,7 +228,7 @@ void JSRemoteFunction::finishCreation(JSGlobalObject* globalObject, VM& vm)
     auto* exception = scope.exception();
     if (UNLIKELY(exception && !vm.isTerminationException(exception))) {
         scope.clearException();
-        throwTypeError(globalObject, scope, "wrapping returned function throws an error");
+        throwTypeError(globalObject, scope, "wrapping returned function throws an error"_s);
     }
 }
 

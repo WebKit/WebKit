@@ -32,7 +32,7 @@ namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyTable);
 
-const ClassInfo PropertyTable::s_info = { "PropertyTable", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(PropertyTable) };
+const ClassInfo PropertyTable::s_info = { "PropertyTable"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(PropertyTable) };
 
 PropertyTable* PropertyTable::create(VM& vm, unsigned initialCapacity)
 {

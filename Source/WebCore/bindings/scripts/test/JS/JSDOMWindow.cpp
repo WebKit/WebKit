@@ -147,7 +147,7 @@ static const HashTableValue JSDOMWindowTableValues[] =
 };
 
 static const HashTable JSDOMWindowTable = { 12, 31, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
-template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
+template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
 
 template<> JSValue JSDOMWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -177,7 +177,7 @@ static const HashTableValue JSDOMWindowPrototypeTableValues[] =
 };
 
 static const HashTable JSDOMWindowPrototypeTable = { 1, 1, true, JSDOMWindow::info(), JSDOMWindowPrototypeTableValues, JSDOMWindowPrototypeTableIndex };
-const ClassInfo JSDOMWindowPrototype::s_info = { "DOMWindow", &Base::s_info, &JSDOMWindowPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSDOMWindowPrototype) };
+const ClassInfo JSDOMWindowPrototype::s_info = { "DOMWindow"_s, &Base::s_info, &JSDOMWindowPrototypeTable, nullptr, CREATE_METHOD_TABLE(JSDOMWindowPrototype) };
 
 void JSDOMWindowPrototype::finishCreation(VM& vm)
 {
@@ -186,7 +186,7 @@ void JSDOMWindowPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSDOMWindow::s_info = { "DOMWindow", &Base::s_info, &JSDOMWindowTable, nullptr, CREATE_METHOD_TABLE(JSDOMWindow) };
+const ClassInfo JSDOMWindow::s_info = { "DOMWindow"_s, &Base::s_info, &JSDOMWindowTable, nullptr, CREATE_METHOD_TABLE(JSDOMWindow) };
 
 JSDOMWindow::JSDOMWindow(VM& vm, Structure* structure, Ref<DOMWindow>&& impl, JSWindowProxy* proxy)
     : JSEventTarget(vm, structure, WTFMove(impl), proxy)

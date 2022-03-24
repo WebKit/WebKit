@@ -73,7 +73,7 @@ static const HashTableValue JSServiceWorkerGlobalScopeTableValues[] =
 };
 
 static const HashTable JSServiceWorkerGlobalScopeTable = { 2, 3, true, JSServiceWorkerGlobalScope::info(), JSServiceWorkerGlobalScopeTableValues, JSServiceWorkerGlobalScopeTableIndex };
-template<> const ClassInfo JSServiceWorkerGlobalScopeDOMConstructor::s_info = { "ServiceWorkerGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSServiceWorkerGlobalScopeDOMConstructor) };
+template<> const ClassInfo JSServiceWorkerGlobalScopeDOMConstructor::s_info = { "ServiceWorkerGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSServiceWorkerGlobalScopeDOMConstructor) };
 
 template<> JSValue JSServiceWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -103,7 +103,7 @@ static const HashTableValue JSServiceWorkerGlobalScopePrototypeTableValues[] =
 };
 
 static const HashTable JSServiceWorkerGlobalScopePrototypeTable = { 1, 1, true, JSServiceWorkerGlobalScope::info(), JSServiceWorkerGlobalScopePrototypeTableValues, JSServiceWorkerGlobalScopePrototypeTableIndex };
-const ClassInfo JSServiceWorkerGlobalScopePrototype::s_info = { "ServiceWorkerGlobalScope", &Base::s_info, &JSServiceWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSServiceWorkerGlobalScopePrototype) };
+const ClassInfo JSServiceWorkerGlobalScopePrototype::s_info = { "ServiceWorkerGlobalScope"_s, &Base::s_info, &JSServiceWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSServiceWorkerGlobalScopePrototype) };
 
 void JSServiceWorkerGlobalScopePrototype::finishCreation(VM& vm)
 {
@@ -112,7 +112,7 @@ void JSServiceWorkerGlobalScopePrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSServiceWorkerGlobalScope::s_info = { "ServiceWorkerGlobalScope", &Base::s_info, &JSServiceWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSServiceWorkerGlobalScope) };
+const ClassInfo JSServiceWorkerGlobalScope::s_info = { "ServiceWorkerGlobalScope"_s, &Base::s_info, &JSServiceWorkerGlobalScopeTable, nullptr, CREATE_METHOD_TABLE(JSServiceWorkerGlobalScope) };
 
 JSServiceWorkerGlobalScope::JSServiceWorkerGlobalScope(VM& vm, Structure* structure, Ref<ServiceWorkerGlobalScope>&& impl)
     : JSWorkerGlobalScope(vm, structure, WTFMove(impl))

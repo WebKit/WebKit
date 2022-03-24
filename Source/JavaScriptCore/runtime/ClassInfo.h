@@ -176,7 +176,7 @@ struct ClassInfo {
     using CheckJSCastSnippetFunctionPtr = Ref<Snippet> (*)(void);
 
     // A string denoting the class name. Example: "Window".
-    const char* className;
+    ASCIILiteral className;
     // Pointer to the class information of the base class.
     // nullptrif there is none.
     const ClassInfo* parentClass;

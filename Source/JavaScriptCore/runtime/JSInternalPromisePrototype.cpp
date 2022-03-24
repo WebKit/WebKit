@@ -32,7 +32,7 @@ namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSInternalPromisePrototype);
 
-const ClassInfo JSInternalPromisePrototype::s_info = { "InternalPromisePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInternalPromisePrototype) };
+const ClassInfo JSInternalPromisePrototype::s_info = { "InternalPromisePrototype"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInternalPromisePrototype) };
 
 JSInternalPromisePrototype* JSInternalPromisePrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)
 {

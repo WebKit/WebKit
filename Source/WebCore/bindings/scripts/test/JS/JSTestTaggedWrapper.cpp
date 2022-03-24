@@ -83,7 +83,7 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestTaggedWrapperPrototype, JSTestTaggedWr
 
 using JSTestTaggedWrapperDOMConstructor = JSDOMConstructorNotConstructable<JSTestTaggedWrapper>;
 
-template<> const ClassInfo JSTestTaggedWrapperDOMConstructor::s_info = { "TestTaggedWrapper", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapperDOMConstructor) };
+template<> const ClassInfo JSTestTaggedWrapperDOMConstructor::s_info = { "TestTaggedWrapper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapperDOMConstructor) };
 
 template<> JSValue JSTestTaggedWrapperDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -107,7 +107,7 @@ static const HashTableValue JSTestTaggedWrapperPrototypeTableValues[] =
     { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestTaggedWrapperConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 };
 
-const ClassInfo JSTestTaggedWrapperPrototype::s_info = { "TestTaggedWrapper", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapperPrototype) };
+const ClassInfo JSTestTaggedWrapperPrototype::s_info = { "TestTaggedWrapper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapperPrototype) };
 
 void JSTestTaggedWrapperPrototype::finishCreation(VM& vm)
 {
@@ -116,7 +116,7 @@ void JSTestTaggedWrapperPrototype::finishCreation(VM& vm)
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 
-const ClassInfo JSTestTaggedWrapper::s_info = { "TestTaggedWrapper", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapper) };
+const ClassInfo JSTestTaggedWrapper::s_info = { "TestTaggedWrapper"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestTaggedWrapper) };
 
 JSTestTaggedWrapper::JSTestTaggedWrapper(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestTaggedWrapper>&& impl)
     : JSDOMWrapper<TestTaggedWrapper, SignedPtrTraits<TestTaggedWrapper, TestTaggedWrapperPtrTag>>(structure, globalObject, WTFMove(impl))

@@ -49,7 +49,7 @@
 
 namespace Inspector {
 
-const char* const InspectorDebuggerAgent::backtraceObjectGroup = "backtrace";
+const ASCIILiteral InspectorDebuggerAgent::backtraceObjectGroup = "backtrace"_s;
 
 // Objects created and retained by evaluating breakpoint actions are put into object groups
 // according to the breakpoint action identifier assigned by the frontend. A breakpoint may
@@ -741,7 +741,7 @@ Protocol::ErrorStringOr<String> InspectorDebuggerAgent::getScriptSource(const Pr
 {
     auto it = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).value_or(0));
     if (it == m_scripts.end())
-        return makeUnexpected("Missing script for given scriptId");
+        return makeUnexpected("Missing script for given scriptId"_s);
 
     return it->value.source;
 }

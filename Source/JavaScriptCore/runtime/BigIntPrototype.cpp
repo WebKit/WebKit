@@ -48,7 +48,7 @@ static JSC_DECLARE_HOST_FUNCTION(bigIntProtoFuncValueOf);
 
 namespace JSC {
 
-const ClassInfo BigIntPrototype::s_info = { "BigInt", &Base::s_info, &bigIntPrototypeTable, nullptr, CREATE_METHOD_TABLE(BigIntPrototype) };
+const ClassInfo BigIntPrototype::s_info = { "BigInt"_s, &Base::s_info, &bigIntPrototypeTable, nullptr, CREATE_METHOD_TABLE(BigIntPrototype) };
 
 /* Source for BigIntPrototype.lut.h
 @begin bigIntPrototypeTable

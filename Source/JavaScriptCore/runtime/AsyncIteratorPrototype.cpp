@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const ClassInfo AsyncIteratorPrototype::s_info = { "AsyncIterator", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncIteratorPrototype) };
+const ClassInfo AsyncIteratorPrototype::s_info = { "AsyncIterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncIteratorPrototype) };
 
 void AsyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {

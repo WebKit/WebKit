@@ -43,7 +43,7 @@ static JSC_DECLARE_CUSTOM_GETTER(temporalTimeZonePrototypeGetterId);
 
 namespace JSC {
 
-const ClassInfo TemporalTimeZonePrototype::s_info = { "Temporal.TimeZone", &Base::s_info, &temporalTimeZonePrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalTimeZonePrototype) };
+const ClassInfo TemporalTimeZonePrototype::s_info = { "Temporal.TimeZone"_s, &Base::s_info, &temporalTimeZonePrototypeTable, nullptr, CREATE_METHOD_TABLE(TemporalTimeZonePrototype) };
 
 /* Source for TemporalTimeZonePrototype.lut.h
 @begin temporalTimeZonePrototypeTable

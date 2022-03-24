@@ -154,8 +154,7 @@ static bool validateBytecodeCachePath(NSURL* cachePath, NSError** error)
     if (!m_cachePath)
         return;
 
-    NSString *cachePathString = [m_cachePath path];
-    const char* cacheFilename = cachePathString.UTF8String;
+    String cacheFilename = [m_cachePath path];
 
     auto fd = FileSystem::openAndLockFile(cacheFilename, FileSystem::FileOpenMode::Read, {FileSystem::FileLockMode::Exclusive, FileSystem::FileLockMode::Nonblocking});
     if (!FileSystem::isHandleValid(fd))

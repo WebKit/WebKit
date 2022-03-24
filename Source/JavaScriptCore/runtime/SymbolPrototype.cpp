@@ -43,7 +43,7 @@ static JSC_DECLARE_HOST_FUNCTION(symbolProtoFuncValueOf);
 
 namespace JSC {
 
-const ClassInfo SymbolPrototype::s_info = { "Symbol", &Base::s_info, &symbolPrototypeTable, nullptr, CREATE_METHOD_TABLE(SymbolPrototype) };
+const ClassInfo SymbolPrototype::s_info = { "Symbol"_s, &Base::s_info, &symbolPrototypeTable, nullptr, CREATE_METHOD_TABLE(SymbolPrototype) };
 
 /* Source for SymbolPrototype.lut.h
 @begin symbolPrototypeTable

@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-const ClassInfo JSWebAssemblyTable::s_info = { "WebAssembly.Table", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyTable) };
+const ClassInfo JSWebAssemblyTable::s_info = { "WebAssembly.Table"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyTable) };
 
 JSWebAssemblyTable* JSWebAssemblyTable::tryCreate(JSGlobalObject* globalObject, VM& vm, Structure* structure, Ref<Wasm::Table>&& table)
 {
@@ -127,10 +127,10 @@ JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
     JSString* elementString = nullptr;
     switch (element) {
     case Wasm::TableElementType::Funcref:
-        elementString = jsNontrivialString(vm, "anyfunc");
+        elementString = jsNontrivialString(vm, "anyfunc"_s);
         break;
     case Wasm::TableElementType::Externref:
-        elementString = jsNontrivialString(vm, "externref");
+        elementString = jsNontrivialString(vm, "externref"_s);
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
