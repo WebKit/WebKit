@@ -31,6 +31,7 @@
 #include "StreamConnectionEncoder.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
+#include <WebCore/ARKitBadgeSystemImage.h>
 #include <WebCore/ApplePayButtonSystemImage.h>
 #include <WebCore/ApplePayLogoSystemImage.h>
 #include <WebCore/AuthenticationChallenge.h>
@@ -3173,6 +3174,11 @@ void ArgumentCoder<Ref<SystemImage>>::encode(Encoder& encoder, const Ref<SystemI
         downcast<ApplePayLogoSystemImage>(systemImage.get()).encode(encoder);
         return;
 #endif
+#if USE(SYSTEM_PREVIEW)
+    case SystemImageType::ARKitBadge:
+        downcast<ARKitBadgeSystemImage>(systemImage.get()).encode(encoder);
+        return;
+#endif
     }
 
     ASSERT_NOT_REACHED();
@@ -3197,6 +3203,10 @@ std::optional<Ref<SystemImage>> ArgumentCoder<Ref<SystemImage>>::decode(Decoder&
 
     case SystemImageType::ApplePayLogo:
         return ApplePayLogoSystemImage::decode(decoder);
+#endif
+#if USE(SYSTEM_PREVIEW)
+    case SystemImageType::ARKitBadge:
+        return ARKitBadgeSystemImage::decode(decoder);
 #endif
     }
 

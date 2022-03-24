@@ -39,6 +39,10 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
+#if USE(SYSTEM_PREVIEW)
+#include "ARKitBadgeSystemImage.h"
+#endif
+
 namespace WebCore {
 namespace DisplayList {
 
@@ -188,6 +192,12 @@ void Recorder::drawNativeImage(NativeImage& image, const FloatSize& imageSize, c
 
 void Recorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (is<ARKitBadgeSystemImage>(systemImage)) {
+        if (auto image = downcast<ARKitBadgeSystemImage>(systemImage).image())
+            recordResourceUse(*image->nativeImage());
+    }
+#endif
     recordDrawSystemImage(systemImage, destinationRect);
 }
 

@@ -37,6 +37,9 @@ enum class SystemImageType : uint8_t {
     ApplePayButton,
     ApplePayLogo,
 #endif
+#if USE(SYSTEM_PREVIEW)
+    ARKitBadge,
+#endif
 };
 
 class WEBCORE_EXPORT SystemImage : public RefCounted<SystemImage> {
@@ -68,6 +71,9 @@ template<> struct EnumTraits<WebCore::SystemImageType> {
 #if ENABLE(APPLE_PAY)
         , WebCore::SystemImageType::ApplePayButton,
         WebCore::SystemImageType::ApplePayLogo
+#endif
+#if USE(SYSTEM_PREVIEW)
+        , WebCore::SystemImageType::ARKitBadge
 #endif
     >;
 };

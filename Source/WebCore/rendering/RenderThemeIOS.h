@@ -30,12 +30,6 @@
 #include "CSSValueKey.h"
 #include "RenderThemeCocoa.h"
 
-#if USE(SYSTEM_PREVIEW)
-#include "IOSurface.h"
-#include <wtf/RetainPtr.h>
-#endif
-
-OBJC_CLASS CIContext;
 OBJC_CLASS UIImage;
 
 namespace WebCore {
@@ -216,12 +210,6 @@ private:
     Color controlTintColor(const RenderStyle&, OptionSet<StyleColorOptions>) const;
 
     void adjustStyleForAlternateFormControlDesignTransition(RenderStyle&, const Element*) const;
-
-#if USE(SYSTEM_PREVIEW)
-    RetainPtr<CIContext> m_ciContext;
-    std::unique_ptr<IOSurface> m_largeBadgeSurface;
-    std::unique_ptr<IOSurface> m_smallBadgeSurface;
-#endif
 
     bool m_shouldMockBoldSystemFontForAccessibility { false };
 };

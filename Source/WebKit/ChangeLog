@@ -1,3 +1,19 @@
+2022-03-24  Antoine Quint  <graouts@webkit.org>
+
+        DOM GPUP: paintSystemPreviewBadge (AR QuickLook element badge)
+        https://bugs.webkit.org/show_bug.cgi?id=238295
+        rdar://83580608
+
+        Reviewed by Dean Jackson.
+
+        Make sure we restore the Image on the ARKitBadgeSystemImage before we attempt to draw it.
+
+        * GPUProcess/graphics/RemoteDisplayListRecorder.cpp:
+        (WebKit::RemoteDisplayListRecorder::drawSystemImage):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<Ref<SystemImage>>::encode):
+        (IPC::ArgumentCoder<Ref<SystemImage>>::decode):
+
 2022-03-24  Michael Saboff  <msaboff@apple.com>
 
         Update Sandbox profiles for system content path

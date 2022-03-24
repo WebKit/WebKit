@@ -1,3 +1,55 @@
+2022-03-24  Antoine Quint  <graouts@webkit.org>
+
+        DOM GPUP: paintSystemPreviewBadge (AR QuickLook element badge)
+        https://bugs.webkit.org/show_bug.cgi?id=238295
+        rdar://83580608
+
+        Reviewed by Dean Jackson.
+
+        Add a new SystemImage subclass to deal with the ARKit badge, moving the custom drawing code under
+        RenderThemeIOS::paintSystemPreviewBadge() to ARKitBadgeSystemImage::draw().
+
+        To facilitate this, we must also have ARKitBadgeSystemImage wrap the input Image provided to
+        RenderThemeIOS::paintSystemPreviewBadge() so that the CoreImage filters are applied correctly.
+
+        Finally, we remove some use of `using namespace WebCore` in WebSpeechRecognizerTask and
+        WebSpeechRecognizerTaskMock since it caused some unified build failures.
+
+        * Headers.cmake:
+        * Modules/speech/cocoa/WebSpeechRecognizerTask.mm:
+        (-[WebSpeechRecognizerTaskImpl initWithIdentifier:locale:doMultipleRecognitions:reportInterimResults:maxAlternatives:delegateCallback:]):
+        (-[WebSpeechRecognizerTaskImpl callbackWithTranscriptions:isFinal:]):
+        (-[WebSpeechRecognizerTaskImpl sendSpeechStartIfNeeded]):
+        (-[WebSpeechRecognizerTaskImpl sendSpeechEndIfNeeded]):
+        (-[WebSpeechRecognizerTaskImpl sendEndIfNeeded]):
+        (-[WebSpeechRecognizerTaskImpl speechRecognizer:availabilityDidChange:]):
+        (-[WebSpeechRecognizerTaskImpl speechRecognitionTask:didFinishSuccessfully:]):
+        (-[WebSpeechRecognizerTask initWithIdentifier:locale:doMultipleRecognitions:reportInterimResults:maxAlternatives:delegateCallback:]):
+        * Modules/speech/cocoa/WebSpeechRecognizerTaskMock.mm:
+        (-[WebSpeechRecognizerTaskMock initWithIdentifier:locale:doMultipleRecognitions:reportInterimResults:maxAlternatives:delegateCallback:]):
+        (-[WebSpeechRecognizerTaskMock audioSamplesAvailable:]):
+        (-[WebSpeechRecognizerTaskMock abort]):
+        * Modules/system-preview/ARKitBadgeSystemImage.h: Added.
+        (WebCore::ARKitBadgeSystemImage::encode const):
+        (WebCore::ARKitBadgeSystemImage::decode):
+        (isType):
+        * Modules/system-preview/ARKitBadgeSystemImage.mm: Added.
+        (WebCore::arKitBundle):
+        (WebCore::loadARKitPDFPage):
+        (WebCore::systemPreviewLogo):
+        (WebCore::ARKitBadgeSystemImage::draw const):
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/SystemImage.h:
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawSystemImage):
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintSystemPreviewBadge):
+        (WebCore::arKitBundle): Deleted.
+        (WebCore::loadARKitPDFPage): Deleted.
+        (WebCore::systemPreviewLogo): Deleted.
+
 2022-03-24  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (Safari 15.4): Nonce from link isn't used when loading style sheet

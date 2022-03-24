@@ -1,3 +1,16 @@
+2022-03-24  Antoine Quint  <graouts@webkit.org>
+
+        DOM GPUP: paintSystemPreviewBadge (AR QuickLook element badge)
+        https://bugs.webkit.org/show_bug.cgi?id=238295
+        rdar://83580608
+
+        Reviewed by Dean Jackson.
+
+        The system-preview/badge.html test now passes reliably with DOM GPUP enabled,
+        which incidentally fixes bug 236922.
+
+        * platform/ios-wk2/TestExpectations:
+
 2022-03-24  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (Safari 15.4): Nonce from link isn't used when loading style sheet

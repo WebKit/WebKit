@@ -32,6 +32,10 @@
 #include <WebCore/BitmapImage.h>
 #include <WebCore/FilterResults.h>
 
+#if USE(SYSTEM_PREVIEW)
+#include <WebCore/ARKitBadgeSystemImage.h>
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -285,6 +289,17 @@ void RemoteDisplayListRecorder::drawNativeImageWithQualifiedIdentifier(Qualified
 
 void RemoteDisplayListRecorder::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
 {
+#if USE(SYSTEM_PREVIEW)
+    if (is<ARKitBadgeSystemImage>(systemImage)) {
+        ARKitBadgeSystemImage& badge = downcast<ARKitBadgeSystemImage>(systemImage);
+        RefPtr nativeImage = resourceCache().cachedNativeImage({ badge.imageIdentifier(), m_webProcessIdentifier });
+        if (!nativeImage) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        badge.setImage(BitmapImage::create(WTFMove(nativeImage)));
+    }
+#endif
     handleItem(DisplayList::DrawSystemImage(systemImage, destinationRect));
 }
 

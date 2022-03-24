@@ -2250,9 +2250,6 @@ webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/text-s
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-023.xht [ ImageOnlyFailure ]
 webkit.org/b/236921 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-022.xht [ ImageOnlyFailure ]
 
-# Colors are significantly different enough
-webkit.org/b/236922 system-preview/badge.html [ ImageOnlyFailure ]
-
 # No/bad colored boxes
 webkit.org/b/236923 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/236923 imported/blink/svg/text/obb-paintserver.html [ ImageOnlyFailure ]

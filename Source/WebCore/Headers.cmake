@@ -331,6 +331,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/streams/ReadableStreamSink.h
     Modules/streams/ReadableStreamSource.h
 
+    Modules/system-preview/ARKitBadgeSystemImage.h
+
     Modules/web-locks/WebLockIdentifier.h
     Modules/web-locks/WebLockManagerSnapshot.h
     Modules/web-locks/WebLockMode.h
