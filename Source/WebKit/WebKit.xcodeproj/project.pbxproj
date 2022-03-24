@@ -16685,7 +16685,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "DST_DIR=\"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH/atoms\"\nmkdir -p \"$DST_DIR\"\n\nfor ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n    eval WEBDRIVER_ATOM=\\${SCRIPT_INPUT_FILE_${i}}\n    ditto \"${WEBDRIVER_ATOM}\" \"${DST_DIR}/${WEBDRIVER_ATOM##*/}\"\ndone\n";
+			shellScript = "DST_DIR=\"$TARGET_BUILD_DIR/$PRIVATE_HEADERS_FOLDER_PATH/atoms\"\nmkdir -p \"$DST_DIR\"\n\nfor ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n    eval WEBDRIVER_ATOM=\\${SCRIPT_INPUT_FILE_${i}}\n    python3 ${SRCROOT}/Scripts/generate-automation-atom.py \"${WEBDRIVER_ATOM}\" \"${DST_DIR}/${WEBDRIVER_ATOM##*/}\"\ndone\n";
 		};
 		A55DEAA61670402E003DB841 /* Check For Inappropriate Macros in External Headers */ = {
 			isa = PBXShellScriptBuildPhase;

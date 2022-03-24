@@ -1,3 +1,16 @@
+2022-03-24  Patrick Angle  <pangle@apple.com>
+
+        REGRESSION(STP142): "A JavaScript exception occured: Can't find variable: utils" from SafariDriver
+        https://bugs.webkit.org/show_bug.cgi?id=238335
+
+        Reviewed by Devin Rousso.
+
+        Following r289467, we can't just copy the WebDriver atom scripts to the build products, since they now need to
+        have `utils.js` in any script that uses the `utils` namespace. The `WebKit.framework` copy of these scripts are
+        later used while building safaridriver, so they need to include the scripts as well.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-24  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION(r286590): Links with URL schemes are not clickable in Mail
