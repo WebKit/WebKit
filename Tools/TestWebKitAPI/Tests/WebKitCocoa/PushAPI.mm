@@ -31,6 +31,7 @@
 #import "Test.h"
 #import "TestNotificationProvider.h"
 #import "TestWKWebView.h"
+#import <WebCore/RegistrationDatabase.h>
 #import <WebKit/WKNotificationProvider.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -212,7 +213,8 @@ static void terminateNetworkProcessWhileRegistrationIsStored(WKWebViewConfigurat
 {
     auto path = configuration.websiteDataStore._configuration._serviceWorkerRegistrationDirectory.path;
     NSURL* directory = [NSURL fileURLWithPath:path isDirectory:YES];
-    NSURL *swDBPath = [directory URLByAppendingPathComponent:@"ServiceWorkerRegistrations-7.sqlite3"];
+    auto filename = makeString("ServiceWorkerRegistrations-"_s, WebCore::RegistrationDatabase::schemaVersion, ".sqlite3");
+    NSURL *swDBPath = [directory URLByAppendingPathComponent:filename];
     unsigned timeout = 0;
     while (![[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path] && ++timeout < 100)
         TestWebKitAPI::Util::sleep(0.1);
@@ -327,6 +329,7 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
 
     // Disable service worker delay for the purpose of testing, push event should timeout after 1 second.
     auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
     auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -343,10 +346,6 @@ TEST(PushAPI, firePushEventWithNoPagesTimeout)
         [webView loadRequest:server.request()];
         TestWebKitAPI::Util::run(&done);
     }
-
-    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
-    dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
-    configuration.get().websiteDataStore = dataStore.get();
 
     terminateNetworkProcessWhileRegistrationIsStored(configuration.get());
 

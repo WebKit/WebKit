@@ -46,6 +46,8 @@ WEBCORE_EXPORT String serviceWorkerRegistrationDatabaseFilename(const String& da
 class RegistrationDatabase : public ThreadSafeRefCounted<RegistrationDatabase, WTF::DestructionThread::Main> {
 WTF_MAKE_FAST_ALLOCATED;
 public:
+    static constexpr uint64_t schemaVersion = 8;
+
     static Ref<RegistrationDatabase> create(RegistrationStore& store, String&& databaseDirectory)
     {
         return adoptRef(*new RegistrationDatabase(store, WTFMove(databaseDirectory)));

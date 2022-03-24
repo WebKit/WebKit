@@ -50,8 +50,6 @@
 
 namespace WebCore {
 
-static const uint64_t schemaVersion = 8;
-
 #define RECORDS_TABLE_SCHEMA_PREFIX "CREATE TABLE "
 #define RECORDS_TABLE_SCHEMA_SUFFIX "(" \
     "key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE" \
@@ -88,7 +86,7 @@ static inline String databaseFilenameFromVersion(uint64_t version)
 static const String& databaseFilename()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<String> filename = databaseFilenameFromVersion(schemaVersion);
+    static NeverDestroyed<String> filename = databaseFilenameFromVersion(RegistrationDatabase::schemaVersion);
     return filename;
 }
 
@@ -99,7 +97,7 @@ String serviceWorkerRegistrationDatabaseFilename(const String& databaseDirectory
 
 static inline void cleanOldDatabases(const String& databaseDirectory)
 {
-    for (uint64_t version = 1; version < schemaVersion; ++version)
+    for (uint64_t version = 1; version < RegistrationDatabase::schemaVersion; ++version)
         SQLiteFileSystem::deleteDatabaseFile(FileSystem::pathByAppendingComponent(databaseDirectory, databaseFilenameFromVersion(version)));
 }
 

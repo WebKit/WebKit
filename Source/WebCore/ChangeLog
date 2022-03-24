@@ -1,3 +1,17 @@
+2022-03-24  Ben Nham  <nham@apple.com>
+
+        PushAPI.firePushEventWithNoPagesTimeout fails in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=238309
+
+        Reviewed by Youenn Fablet.
+
+        Export RegistrationDatabase::schemaVersion for tests to use.
+
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::databaseFilename):
+        (WebCore::cleanOldDatabases):
+        * workers/service/server/RegistrationDatabase.h:
+
 2022-03-24  Chris Dumez  <cdumez@apple.com>
 
         String's find() / reverseFind() / replace() should take in a StringView instead of a String
