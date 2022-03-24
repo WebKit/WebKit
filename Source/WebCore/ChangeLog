@@ -1,3 +1,17 @@
+2022-03-24  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Fix serialization of nan, infinity, -infinity for calc()
+        https://bugs.webkit.org/show_bug.cgi?id=238288
+
+        Reviewed by Simon Fraser.
+
+        Update serializing of nan, infinity, -infinity to be in line with step 2 of:
+        https://drafts.csswg.org/css-values/#calc-serialize.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberValue const):
+        (WebCore::CSSPrimitiveValue::formatIntegerValue const):
+
 2022-03-24  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Blank inspector in a page with container queries

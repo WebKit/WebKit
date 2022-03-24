@@ -255,6 +255,7 @@ private:
     ALWAYS_INLINE String formatNumberForCustomCSSText() const;
     NEVER_INLINE String formatNumberValue(StringView) const;
     NEVER_INLINE String formatIntegerValue(StringView) const;
+    NEVER_INLINE String formatInfiniteOrNanValue(StringView suffix) const;
     static constexpr bool isFontIndependentLength(CSSUnitType);
     static constexpr bool isFontRelativeLength(CSSUnitType);
     static constexpr bool isResolution(CSSUnitType);

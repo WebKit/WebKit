@@ -1213,17 +1213,29 @@ String CSSPrimitiveValue::stringValue() const
     }
 }
 
+NEVER_INLINE String CSSPrimitiveValue::formatInfiniteOrNanValue(StringView suffix) const
+{
+    if (m_value.num == std::numeric_limits<double>::infinity())
+        return makeString("infinity", suffix.isEmpty() ? "" : " * 1" , suffix);
+    if (m_value.num == -std::numeric_limits<double>::infinity())
+        return makeString("-infinity", suffix.isEmpty() ? "" : " * 1", suffix);
+    if (std::isnan(m_value.num))
+        return makeString(m_value.num, suffix.isEmpty() ? "" : " * 1", suffix);
+    ASSERT_NOT_REACHED();
+    return emptyString();
+}
+
 NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(StringView suffix) const
 {
+    if (std::isnan(m_value.num) || std::isinf(m_value.num))
+        return formatInfiniteOrNanValue(suffix);
     return makeString(FormattedCSSNumber::create(m_value.num), suffix);
 }
 
 NEVER_INLINE String CSSPrimitiveValue::formatIntegerValue(StringView suffix) const
 {
-    if (m_value.num == std::numeric_limits<double>::infinity())
-        return makeString("infinity", suffix);
-    if (m_value.num == -1 * std::numeric_limits<double>::infinity())
-        return makeString("-infinity", suffix);
+    if (std::isnan(m_value.num) || std::isinf(m_value.num))
+        return formatInfiniteOrNanValue(suffix);
     return makeString(m_value.num, suffix);
 }
 
