@@ -1,3 +1,52 @@
+2022-03-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        Release assert in Document::updateLayout() via HTMLTextAreaElement::childrenChanged
+        https://bugs.webkit.org/show_bug.cgi?id=224471
+
+        Reviewed by Ryosuke Niwa.
+
+        Executing some editing commands in a text area might force the recomputation of things
+        like caret or the visible selection position and extent. Under some circumstances (like
+        when the text area has no content and children) we might end up trying to update layout
+        when it is not safe as a side effect of updating the caret.
+
+        In order to fix that, we can switch to a model in which we update the selection asynchronously
+        in the case of having a non-user triggered change. That way we don't do it inside
+        a restricted layout scope.
+
+        The App Highlight restoration code had to be tuned as well (when restoring and scrolling to reveal
+        a Quick Note on iOS MacOS). It uses TemporarySelectionChange to select and scroll to reveal the highlight
+        range; the code assumed that this scrolling happens synchronously, since it reverts the selection to
+        the original range at the end of `AppHighlightStorage::attemptToRestoreHighlightAndScroll` when the
+        TemporarySelectionChange falls out of scope. That is however no longer the case. Actually no scrolling
+        happened after this patch because we end up only scheduling the appearance update timer before setting
+        the selection back to the original state with `SelectionRevealMode::DoNotReveal`. Since this only happens
+        when the user interacts in the Notes app, it seems sensible to consider it as a user triggered event.
+
+        * Modules/highlight/AppHighlightStorage.cpp:
+        (WebCore::AppHighlightStorage::attemptToRestoreHighlightAndScroll): Consider the selection change
+        as user triggered so scrolling actually happens.
+        * editing/Editor.cpp:
+        (WebCore::TemporarySelectionChange::setSelection): Check the UserTriggered flags for default options.
+        * editing/Editor.h: Added a new UserTriggered flag.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection): Call scheduleAppearanceUpdateAfterStyleChange() for
+        !IsUserTriggered changes.
+        (WebCore::FrameSelection::updateSelectionAppearanceNow): Renamed from updateSelectionByUpdatingLayoutOrStyle.
+        It does not need the Document& attribute because it was always called with m_document.
+        (WebCore::FrameSelection::absoluteCaretBounds): Replaced updateSelectionByUpdatingLayoutOrStyle with
+        updateSelectionAppearanceNow().
+        (WebCore::FrameSelection::setCaretVisibility): Ditto.
+        (WebCore::FrameSelection::selectionBounds const): Ditto.
+        (WebCore::FrameSelection::revealSelection): Call updateSelectionAppearanceNow().
+         (WebCore::FrameSelection::updateAppearanceIfRevealingSelectionIsNeeded): New method.
+        (WebCore::updateSelectionByUpdatingLayoutOrStyle): Deleted.
+        * editing/FrameSelection.h:
+        * page/EventHandler.cpp:
+        (WebCore::setSelectionIfNeeded): Set the UserTriggered flag for calling setSelection().
+        * page/Page.cpp:
+        (WebCore::Page::doAfterUpdateRendering): Call updateAppearanceAfterLayout().
+
 2022-03-23  Rob Buis  <rbuis@igalia.com>
 
         setNeedsLayout() should not be called when changing the SVG properties

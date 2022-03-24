@@ -1712,6 +1712,10 @@ void Page::doAfterUpdateRendering()
     });
 
     forEachDocument([] (Document& document) {
+        document.selection().updateAppearanceAfterLayout();
+    });
+
+    forEachDocument([] (Document& document) {
         document.updateHighlightPositions();
     });
 #if ENABLE(APP_HIGHLIGHTS)

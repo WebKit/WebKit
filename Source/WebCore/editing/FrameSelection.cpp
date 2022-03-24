@@ -454,6 +454,11 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     if (frameView && frameView->layoutContext().isLayoutPending())
         return;
 
+    if (!(options & IsUserTriggered)) {
+        scheduleAppearanceUpdateAfterStyleChange();
+        return;
+    }
+
     updateAndRevealSelection(intent, options.contains(SmoothScroll) ? ScrollBehavior::Smooth : ScrollBehavior::Instant, options.contains(RevealSelectionBounds) ? RevealExtentOption::DoNotRevealExtent : RevealExtentOption::RevealExtent);
 
     if (options & IsUserTriggered) {
@@ -462,13 +467,16 @@ void FrameSelection::setSelection(const VisibleSelection& selection, OptionSet<S
     }
 }
 
-static void updateSelectionByUpdatingLayoutOrStyle(Document& document)
+void FrameSelection::updateSelectionAppearanceNow()
 {
+    Ref document = *m_document;
 #if ENABLE(TEXT_CARET)
-    document.updateLayoutIgnorePendingStylesheets();
+    document->updateLayoutIgnorePendingStylesheets();
 #else
-    document.updateStyleIfNeeded();
+    document->updateStyleIfNeeded();
 #endif
+    if (m_pendingSelectionUpdate)
+        updateAppearance();
 }
 
 void FrameSelection::setNeedsSelectionUpdate(RevealSelectionAfterUpdate revealMode)
@@ -1701,7 +1709,7 @@ IntRect FrameSelection::absoluteCaretBounds(bool* insideFixed)
 {
     if (!m_document)
         return IntRect();
-    updateSelectionByUpdatingLayoutOrStyle(*m_document);
+    updateSelectionAppearanceNow();
     recomputeCaretRect();
     if (insideFixed)
         *insideFixed = m_caretInsidePositionFixed;
@@ -2259,7 +2267,7 @@ void FrameSelection::setCaretVisibility(CaretVisibility visibility, ShouldUpdate
 
     // FIXME: We shouldn't trigger a synchronous layout here.
     if (doAppearanceUpdate == ShouldUpdateAppearance::Yes && m_document)
-        updateSelectionByUpdatingLayoutOrStyle(*m_document);
+        updateSelectionAppearanceNow();
 
 #if ENABLE(TEXT_CARET)
     if (m_caretPaint) {
@@ -2367,7 +2375,7 @@ FloatRect FrameSelection::selectionBounds(ClipToVisibleContent clipToVisibleCont
     if (!m_document)
         return LayoutRect();
 
-    updateSelectionByUpdatingLayoutOrStyle(*m_document);
+    const_cast<FrameSelection&>(*this).updateSelectionAppearanceNow();
     auto* renderView = m_document->renderView();
     if (!renderView)
         return LayoutRect();
@@ -2463,6 +2471,8 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
     if (isNone())
         return;
 
+    updateSelectionAppearanceNow();
+
     LayoutRect rect;
     bool insideFixed = false;
     if (isCaret())
@@ -2532,6 +2542,13 @@ void FrameSelection::setShouldShowBlockCursor(bool shouldShowBlockCursor)
     m_document->updateLayoutIgnorePendingStylesheets();
 
     updateAppearance();
+}
+
+void FrameSelection::updateAppearanceIfRevealingSelectionIsNeeded()
+{
+    if (!m_pendingSelectionUpdate || m_selectionRevealMode == SelectionRevealMode::DoNotReveal)
+        return;
+    updateSelectionAppearanceNow();
 }
 
 void FrameSelection::updateAppearanceAfterLayout()
