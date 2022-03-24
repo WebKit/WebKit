@@ -296,7 +296,7 @@ bool RemoteLayerBackingStore::needsDisplay() const
     }
 
     bool needsDisplay = collection->backingStoreNeedsDisplay(*this);
-    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " needsDisplay() - needsDisplay " << needsDisplay);
+    LOG_WITH_STREAM(RemoteRenderingBufferVolatility, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " size " << size() << " needsDisplay() - needsDisplay " << needsDisplay);
     return needsDisplay;
 }
 

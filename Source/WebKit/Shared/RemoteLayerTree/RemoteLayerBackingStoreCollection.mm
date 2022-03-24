@@ -49,6 +49,9 @@ RemoteLayerBackingStoreCollection::~RemoteLayerBackingStoreCollection() = defaul
 
 bool RemoteLayerBackingStoreCollection::backingStoreNeedsDisplay(const RemoteLayerBackingStore& backingStore)
 {
+    if (backingStore.size().isEmpty())
+        return false;
+
     auto frontBuffer = backingStore.bufferForType(RemoteLayerBackingStore::BufferType::Front);
     if (!frontBuffer)
         return true;

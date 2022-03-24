@@ -1,3 +1,21 @@
+2022-03-23  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (248692@main?): [iOS] ASSERTION FAILED: m_layer->owner()->platformCALayerDelegatesDisplay(m_layer) in WebKit::RemoteLayerBackingStore::paintContents()
+        https://bugs.webkit.org/show_bug.cgi?id=238277
+        <rdar://problem/90715046>
+
+        Reviewed by Tim Horton.
+
+        Empty backing store (height or width of zero) never need display; ImageBuffer allocation
+        with empty sizes always returns null anyway.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::needsDisplay const):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::backingStoreNeedsDisplay):
+        * Shared/RemoteLayerTree/RemoteLayerWithRemoteRenderingBackingStoreCollection.mm:
+        (WebKit::RemoteLayerWithRemoteRenderingBackingStoreCollection::backingStoreNeedsDisplay):
+
 2022-03-23  Sihui Liu  <sihui_liu@apple.com>
 
         [ BigSur+ Debug wk2 EWS ] imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/quirks.window.html is a flaky crash
