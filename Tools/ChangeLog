@@ -1,3 +1,16 @@
+2022-03-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Make IPCTestingAPI.CGColorInNSSecureCoding more robust
+        https://bugs.webkit.org/show_bug.cgi?id=238300
+        <rdar://problem/90124325>
+
+        Unreviewed test gardening.
+
+        Round-tripping a CGColor through CFData on iOS can turn extended sRGB color spaces
+        into regular sRGB color spaces, if the color is common to both.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm:
+
 2022-03-22  Jonathan Bedard  <jbedard@apple.com>
 
         [commits.webkit.org] Sync tags
