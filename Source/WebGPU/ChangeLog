@@ -1,5 +1,17 @@
 2022-03-23  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [WebGPU] Fix the non-macOS build
+        https://bugs.webkit.org/show_bug.cgi?id=238304
+
+        Unreviewed.
+
+        Some texture formats are only available on macOS.
+
+        * WebGPU/Texture.mm:
+        (WebGPU::pixelFormat):
+
+2022-03-23  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WebGPU] Implement Device::createTexture() according to the spec
         https://bugs.webkit.org/show_bug.cgi?id=238251
 

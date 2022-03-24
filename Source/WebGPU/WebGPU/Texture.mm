@@ -1165,40 +1165,10 @@ static std::optional<MTLPixelFormat> pixelFormat(WGPUTextureFormat textureFormat
         return MTLPixelFormatDepth32Float;
     case WGPUTextureFormat_Depth24PlusStencil8:
         return MTLPixelFormatDepth32Float_Stencil8;
-    case WGPUTextureFormat_Depth24UnormStencil8:
-        return MTLPixelFormatDepth24Unorm_Stencil8;
     case WGPUTextureFormat_Depth32Float:
         return MTLPixelFormatDepth32Float;
     case WGPUTextureFormat_Depth32FloatStencil8:
         return MTLPixelFormatDepth32Float_Stencil8;
-    case WGPUTextureFormat_BC1RGBAUnorm:
-        return MTLPixelFormatBC1_RGBA;
-    case WGPUTextureFormat_BC1RGBAUnormSrgb:
-        return MTLPixelFormatBC1_RGBA_sRGB;
-    case WGPUTextureFormat_BC2RGBAUnorm:
-        return MTLPixelFormatBC2_RGBA;
-    case WGPUTextureFormat_BC2RGBAUnormSrgb:
-        return MTLPixelFormatBC2_RGBA_sRGB;
-    case WGPUTextureFormat_BC3RGBAUnorm:
-        return MTLPixelFormatBC3_RGBA;
-    case WGPUTextureFormat_BC3RGBAUnormSrgb:
-        return MTLPixelFormatBC3_RGBA_sRGB;
-    case WGPUTextureFormat_BC4RUnorm:
-        return MTLPixelFormatBC4_RUnorm;
-    case WGPUTextureFormat_BC4RSnorm:
-        return MTLPixelFormatBC4_RSnorm;
-    case WGPUTextureFormat_BC5RGUnorm:
-        return MTLPixelFormatBC5_RGUnorm;
-    case WGPUTextureFormat_BC5RGSnorm:
-        return MTLPixelFormatBC5_RGSnorm;
-    case WGPUTextureFormat_BC6HRGBUfloat:
-        return MTLPixelFormatBC6H_RGBUfloat;
-    case WGPUTextureFormat_BC6HRGBFloat:
-        return MTLPixelFormatBC6H_RGBFloat;
-    case WGPUTextureFormat_BC7RGBAUnorm:
-        return MTLPixelFormatBC7_RGBAUnorm;
-    case WGPUTextureFormat_BC7RGBAUnormSrgb:
-        return MTLPixelFormatBC7_RGBAUnorm_sRGB;
     case WGPUTextureFormat_ETC2RGB8Unorm:
         return MTLPixelFormatETC2_RGB8;
     case WGPUTextureFormat_ETC2RGB8UnormSrgb:
@@ -1275,6 +1245,55 @@ static std::optional<MTLPixelFormat> pixelFormat(WGPUTextureFormat textureFormat
         return MTLPixelFormatASTC_12x12_LDR;
     case WGPUTextureFormat_ASTC12x12UnormSrgb:
         return MTLPixelFormatASTC_12x12_sRGB;
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+    case WGPUTextureFormat_Depth24UnormStencil8:
+        return MTLPixelFormatDepth24Unorm_Stencil8;
+    case WGPUTextureFormat_BC1RGBAUnorm:
+        return MTLPixelFormatBC1_RGBA;
+    case WGPUTextureFormat_BC1RGBAUnormSrgb:
+        return MTLPixelFormatBC1_RGBA_sRGB;
+    case WGPUTextureFormat_BC2RGBAUnorm:
+        return MTLPixelFormatBC2_RGBA;
+    case WGPUTextureFormat_BC2RGBAUnormSrgb:
+        return MTLPixelFormatBC2_RGBA_sRGB;
+    case WGPUTextureFormat_BC3RGBAUnorm:
+        return MTLPixelFormatBC3_RGBA;
+    case WGPUTextureFormat_BC3RGBAUnormSrgb:
+        return MTLPixelFormatBC3_RGBA_sRGB;
+    case WGPUTextureFormat_BC4RUnorm:
+        return MTLPixelFormatBC4_RUnorm;
+    case WGPUTextureFormat_BC4RSnorm:
+        return MTLPixelFormatBC4_RSnorm;
+    case WGPUTextureFormat_BC5RGUnorm:
+        return MTLPixelFormatBC5_RGUnorm;
+    case WGPUTextureFormat_BC5RGSnorm:
+        return MTLPixelFormatBC5_RGSnorm;
+    case WGPUTextureFormat_BC6HRGBUfloat:
+        return MTLPixelFormatBC6H_RGBUfloat;
+    case WGPUTextureFormat_BC6HRGBFloat:
+        return MTLPixelFormatBC6H_RGBFloat;
+    case WGPUTextureFormat_BC7RGBAUnorm:
+        return MTLPixelFormatBC7_RGBAUnorm;
+    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+        return MTLPixelFormatBC7_RGBAUnorm_sRGB;
+#else
+    case WGPUTextureFormat_Depth24UnormStencil8:
+    case WGPUTextureFormat_BC1RGBAUnorm:
+    case WGPUTextureFormat_BC1RGBAUnormSrgb:
+    case WGPUTextureFormat_BC2RGBAUnorm:
+    case WGPUTextureFormat_BC2RGBAUnormSrgb:
+    case WGPUTextureFormat_BC3RGBAUnorm:
+    case WGPUTextureFormat_BC3RGBAUnormSrgb:
+    case WGPUTextureFormat_BC4RUnorm:
+    case WGPUTextureFormat_BC4RSnorm:
+    case WGPUTextureFormat_BC5RGUnorm:
+    case WGPUTextureFormat_BC5RGSnorm:
+    case WGPUTextureFormat_BC6HRGBUfloat:
+    case WGPUTextureFormat_BC6HRGBFloat:
+    case WGPUTextureFormat_BC7RGBAUnorm:
+    case WGPUTextureFormat_BC7RGBAUnormSrgb:
+        return std::nullopt;
+#endif
     case WGPUTextureFormat_Force32:
         return std::nullopt;
     }
