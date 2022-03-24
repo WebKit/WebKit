@@ -1,3 +1,18 @@
+2022-03-24  Michael Saboff  <msaboff@apple.com>
+
+        After r291814, we need to create the INSTALL_PATH for the iOS sandbox files
+        https://bugs.webkit.org/show_bug.cgi?id=238351
+
+        Reviewed by Saam Barati.
+
+        We need to create the $(INSTALL_PATH) for the preprocessed iOS sandbox files.
+        Before r291814, the built-in Xcode copy step used ditto when copying the .sb
+        files thus creating $(INSTALL_PATH) and its intermediate directories.
+        That change set made it so that all WebKit iOS sandbox profile files are preprocessed
+        thus eliminating the Xcode copy step.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-24  Patrick Angle  <pangle@apple.com>
 
         REGRESSION(STP142): "A JavaScript exception occured: Can't find variable: utils" from SafariDriver
