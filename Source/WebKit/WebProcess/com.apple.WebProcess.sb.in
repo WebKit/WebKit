@@ -32,6 +32,10 @@
  
 #include "Shared/Sandbox/preferences.sb"
 
+#if USE(SYSTEM_CONTENT_PATH)
+#include <WebKitAdditions/SystemContentSandbox-macos.defs>
+#endif
+ 
 ;;;
 ;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
@@ -1095,6 +1099,11 @@
 ;; Allow issuing extensions to system libraries that the Network process can already read.
 ;; This is to avoid warnings attempting to create extensions for these resources.
 (allow-read-directory-and-issue-read-extensions "/System/Library/PrivateFrameworks/WebInspectorUI.framework")
+
+#if USE(SYSTEM_CONTENT_PATH)
+(map allow-read-directory-and-issue-read-extensions
+    read-directory-and-issue-read-extension-secondary-paths)
+#endif
 
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)

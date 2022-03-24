@@ -1651,3 +1651,23 @@
         "com.apple.accessibility.wob.status"
         "com.apple.automation.stringlookupinfoenabled"
         "com.apple.webinspectord.availability_check"))
+
+#if USE(SYSTEM_CONTENT_PATH)
+#include <WebKitAdditions/SystemContentSandbox-ios.defs>
+
+(allow file-read* file-test-existence
+    (apply subpath file-read-existence-secondary-paths))
+
+(allow file-map-executable
+    (apply subpath "secondary-framework-and-dylib-paths))
+
+(allow-read-and-issue-generic-extensions
+    (apply subpath issue-extension-secondary-paths))
+    
+(allow file-issue-extension
+    (require-all
+        (extension-class "com.apple.mediaserverd.read")
+        (require-any
+            (apply subpath issue-extension-secondary-paths)
+        )))
+#endif

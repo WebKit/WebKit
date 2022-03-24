@@ -852,3 +852,21 @@
             MSC_task_name_for_pid
             MSC_task_self_trap
             MSC_thread_get_special_reply_port)))
+
+#if USE(SYSTEM_CONTENT_PATH)
+#include <WebKitAdditions/SystemContentSandbox-ios.defs>
+
+(allow file-read* file-test-existence
+    (apply subpath file-read-existence-secondary-paths))
+
+(allow file-map-executable
+    (apply subpath secondary-framework-and-dylib-paths))
+
+(allow-read-and-issue-generic-extensions
+    (apply subpath issue-extension-secondary-paths))
+
+(allow file-issue-extension
+    (require-all
+        (extension-class "com.apple.mediaserverd.read")
+        (apply subpath issue-extension-secondary-paths)))
+#endif
