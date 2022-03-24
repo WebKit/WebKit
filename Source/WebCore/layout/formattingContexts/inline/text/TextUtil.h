@@ -47,10 +47,6 @@ public:
     static InlineLayoutUnit width(const InlineTextItem&, const FontCascade&, InlineLayoutUnit contentLogicalLeft);
     static InlineLayoutUnit width(const InlineTextItem&, const FontCascade&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft);
 
-    enum class UseTrailingWhitespaceMeasuringOptimization : uint8_t { Yes, No };
-    static InlineLayoutUnit width(const InlineTextBox&, const FontCascade&, unsigned from, unsigned to, InlineLayoutUnit contentLogicalLeft, UseTrailingWhitespaceMeasuringOptimization = UseTrailingWhitespaceMeasuringOptimization::Yes);
-    static InlineLayoutUnit spaceWidth(const FontCascade&);
-
     static InlineLayoutUnit trailingWhitespaceWidth(const InlineTextBox&, const FontCascade&, size_t startPosition, size_t endPosition);
 
     using FallbackFontList = HashSet<const Font*>;

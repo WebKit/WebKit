@@ -1,3 +1,18 @@
+2022-03-24  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Do not construct a TextRun for measuring a single whitespace when simplified content measuring can be used
+        https://bugs.webkit.org/show_bug.cgi?id=238228
+
+        Reviewed by Antti Koivisto.
+
+        * layout/formattingContexts/inline/InlineItemsBuilder.cpp:
+        (WebCore::Layout::InlineItemsBuilder::computeInlineTextItemWidths): Just simply call TextUtil::width
+        * layout/formattingContexts/inline/text/TextUtil.cpp:
+        (WebCore::Layout::spaceWidth):
+        (WebCore::Layout::TextUtil::width):
+        (WebCore::Layout::TextUtil::spaceWidth): Deleted.
+        * layout/formattingContexts/inline/text/TextUtil.h:
+
 2022-03-24  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Remove firstChild, lastChild, previousSibling, nextSibling, nextSiblingUnignored, and previousSiblingUnignored from the AXCoreObject interface

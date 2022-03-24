@@ -463,19 +463,10 @@ void InlineItemsBuilder::computeInlineTextItemWidths(InlineItems& inlineItems)
         auto& inlineTextBox = inlineTextItem.inlineTextBox();
         auto start = inlineTextItem.start();
         auto length = inlineTextItem.length();
-        if (!canCacheMeasuredWidthOnInlineTextItem(inlineTextBox, start, length, inlineTextItem.isWhitespace()))
+        auto needsMeasuring = length && !inlineTextItem.isZeroWidthSpaceSeparator();
+        if (!needsMeasuring || !canCacheMeasuredWidthOnInlineTextItem(inlineTextBox, start, length, inlineTextItem.isWhitespace()))
             continue;
-
-        auto width = [&]() -> std::optional<InlineLayoutUnit> {
-            auto singleWhiteSpace = inlineTextItem.isWhitespace() && (!TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox) || (length == 1 && inlineTextBox.canUseSimplifiedContentMeasuring()));
-            if (singleWhiteSpace)
-                return TextUtil::spaceWidth(inlineTextItem.style().fontCascade());
-            if (length && !inlineTextItem.isZeroWidthSpaceSeparator())
-                return TextUtil::width(inlineTextBox, inlineTextItem.style().fontCascade(), start, start + length, { });
-            return { };
-        }();
-        if (width)
-            inlineTextItem.setWidth(*width);
+        inlineTextItem.setWidth(TextUtil::width(inlineTextItem, inlineTextItem.style().fontCascade(), start, start + length, { }));
     }
 }
 
