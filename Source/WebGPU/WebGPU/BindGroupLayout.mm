@@ -53,7 +53,8 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     case WGPUBufferBindingType_Storage:
         descriptor.access = MTLArgumentAccessReadWrite;
         break;
-    default:
+    case WGPUBufferBindingType_Undefined:
+    case WGPUBufferBindingType_Force32:
         return nil;
     }
     return descriptor;

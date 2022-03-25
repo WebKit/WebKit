@@ -1,3 +1,21 @@
+2022-03-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Remove default: from switch statements, in favor of exhaustively listing all cases
+        https://bugs.webkit.org/show_bug.cgi?id=238305
+
+        Reviewed by Darin Adler.
+
+        This will indicate places that need fixing when new values are added.
+
+        * WebGPU/BindGroupLayout.mm:
+        (WebGPU::createArgumentDescriptor):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Buffer::mapAsync):
+        * WebGPU/Instance.mm:
+        (WebGPU::sortedDevices):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::writeBuffer):
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Start preparing WebCore for making the String(const char*) constructor explicit

@@ -340,7 +340,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
         case WGPUQueueWorkDoneStatus_DeviceLost:
             callback(WGPUBufferMapAsyncStatus_DeviceLost);
             return;
-        default:
+        case WGPUQueueWorkDoneStatus_Force32:
             callback(WGPUBufferMapAsyncStatus_Error);
             return;
         }

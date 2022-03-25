@@ -122,7 +122,7 @@ static NSArray<id<MTLDevice>> *sortedDevices(NSArray<id<MTLDevice>> *devices, WG
 #else
         return devices;
 #endif
-    default:
+    case WGPUPowerPreference_Force32:
         return nil;
     }
 }
