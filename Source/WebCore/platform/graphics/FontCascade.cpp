@@ -315,7 +315,7 @@ float FontCascade::widthForSimpleText(StringView text, TextDirection textDirecti
     auto& font = primaryFont();
     ASSERT(!font.syntheticBoldOffset()); // This function should only be called when RenderText::computeCanUseSimplifiedTextMeasuring() returns true, and that function requires no synthetic bold.
     for (size_t i = 0; i < text.length(); ++i) {
-        auto glyph = glyphDataForCharacter(text[i], false).glyph;
+        auto glyph = font.glyphForCharacter(text[i]);
         glyphBuffer.add(glyph, font, font.widthForGlyph(glyph), i);
     }
 

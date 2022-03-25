@@ -1,3 +1,18 @@
+2022-03-25  Alan Bujtas  <zalan@apple.com>
+
+        FontCascade::widthForSimpleText needs the glyph only
+        https://bugs.webkit.org/show_bug.cgi?id=238385
+
+        Reviewed by Antti Koivisto.
+
+        widthForSimpleText operates on primary font only so let's just call PrimaryFont.glyphForCharacter() directly.
+        (This should provide a slight perf gain on text heavy pages. e.g. wikipedia over 50 page loads ->
+         w/o: widthForSimpleText: 266286 calls, mean duration: 0.000201ms, total duration: 53.403753ms, max duration 0.016750ms
+           w: widthForSimpleText: 266274 calls, mean duration: 0.000176ms, total duration: 46.949579ms, max duration 0.016917ms)
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::widthForSimpleText const):
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, update DerivedSources-output.xcfilelist to fix build.
