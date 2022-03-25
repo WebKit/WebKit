@@ -1,3 +1,26 @@
+2022-03-25  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291869. rdar://problem/90848250
+
+    Unreviewed, fix the internal iOS build after r291814
+    rdar://90848250
+    
+    Removed extraneous double quote (") in com.apple.WebKit.WebContent.sb.in.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291869 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-25  Michael Saboff  <msaboff@apple.com>
+
+            Unreviewed, fix the internal iOS build after r291814
+            rdar://90848250
+
+            Removed extraneous double quote (") in com.apple.WebKit.WebContent.sb.in.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2022-03-24  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r291828. rdar://problem/90794287
