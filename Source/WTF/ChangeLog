@@ -1,3 +1,18 @@
+2022-03-24  Don Olmstead  <don.olmstead@sony.com>
+
+        [GLib] Add user directories to WTF::FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=238348
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add FileSystem::userCacheDirectory and FileSystem::userDataDirectory which call into
+        g_get_user_cache_dir and g_get_user_data_dir respectively.
+
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::userCacheDirectory):
+        (WTF::FileSystemImpl::userDataDirectory):
+
 2022-03-24  Devin Rousso  <drousso@apple.com>
 
         [iOS] make `WKMouseGestureRecognizer` officially conform to `_UIHoverEventRespondable`

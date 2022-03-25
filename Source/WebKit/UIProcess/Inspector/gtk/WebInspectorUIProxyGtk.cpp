@@ -141,8 +141,8 @@ static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef propose
 static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
 {
     static const char* versionedDirectory = "webkitgtk-" WEBKITGTK_API_VERSION_STRING G_DIR_SEPARATOR_S "WebInspector" G_DIR_SEPARATOR_S;
-    String baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_cache_dir()), versionedDirectory);
-    String baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_data_dir()), versionedDirectory);
+    String baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), versionedDirectory);
+    String baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), versionedDirectory);
 
     auto configuration = WebsiteDataStoreConfiguration::create(IsPersistent::Yes, WillCopyPathsFromExistingConfiguration::Yes);
     configuration->setNetworkCacheDirectory(FileSystem::pathByAppendingComponent(baseCacheDirectory, "WebKitCache"));

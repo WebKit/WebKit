@@ -101,12 +101,12 @@ WTF::String WebsiteDataStore::defaultResourceLoadStatisticsDirectory()
 
 WTF::String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const WTF::String& directoryName, ShouldCreateDirectory)
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_cache_dir()), directoryName);
+    return FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), directoryName);
 }
 
 WTF::String WebsiteDataStore::websiteDataDirectoryFileSystemRepresentation(const WTF::String& directoryName)
 {
-    return FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_data_dir()), directoryName);
+    return FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), directoryName);
 }
 
 void WebsiteDataStore::platformRemoveRecentSearches(WallTime)

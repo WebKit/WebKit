@@ -192,6 +192,8 @@ WTF_EXPORT_PRIVATE RetainPtr<CFURLRef> pathAsURL(const String&);
 WTF_EXPORT_PRIVATE String filenameForDisplay(const String&);
 WTF_EXPORT_PRIVATE CString currentExecutablePath();
 WTF_EXPORT_PRIVATE CString currentExecutableName();
+WTF_EXPORT_PRIVATE String userCacheDirectory();
+WTF_EXPORT_PRIVATE String userDataDirectory();
 #endif
 
 #if OS(WINDOWS)

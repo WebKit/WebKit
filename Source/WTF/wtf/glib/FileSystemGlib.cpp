@@ -328,5 +328,15 @@ CString currentExecutableName()
     return g_get_prgname();
 }
 
+String userCacheDirectory()
+{
+    return stringFromFileSystemRepresentation(g_get_user_cache_dir());
+}
+
+String userDataDirectory()
+{
+    return stringFromFileSystemRepresentation(g_get_user_data_dir());
+}
+
 } // namespace FileSystemImpl
 } // namespace WTF
