@@ -3436,7 +3436,7 @@ fast/hidpi/image-srcset-simple-1x.html [ Pass Failure ]
 fast/hidpi/image-srcset-simple-in-variable-1x.html [ Pass Failure ]
 fast/hidpi/pdf-image-scaled.html [ Pass Failure ]
 
-webkit.org/b/201982 These are flaky failures on iOS
+# webkit.org/b/201982 These are flaky failures on iOS
 fast/images/exif-orientation-svg-feimage.html [ Pass Failure ]
 fast/images/exif-orientation-background-image-repeat.html [ Pass Failure ]
 fast/images/image-orientation-dynamic-from-image.html [ Pass Failure ]
@@ -3489,7 +3489,6 @@ webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/mq-gamut-00
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ Pass ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ Pass ]
 fast/replaced/border-radius-clip.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-001.htm [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-001.html [ Pass ]

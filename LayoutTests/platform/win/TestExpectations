@@ -3978,10 +3978,6 @@ imported/w3c/web-platform-tests/worklets/animation-worklet-service-worker-interc
 imported/w3c/web-platform-tests/worklets/audio-worklet-service-worker-interception.https.html [ Skip ]
 imported/w3c/web-platform-tests/worklets/layout-worklet-service-worker-interception.https.html [ Skip ]
 imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Skip ]
-imported/w3c/web-platform-tests/worklets/animation-worklet-service-worker-interception.https.html [ Skip ]
-imported/w3c/web-platform-tests/worklets/audio-worklet-service-worker-interception.https.html [ Skip ]
-imported/w3c/web-platform-tests/worklets/layout-worklet-service-worker-interception.https.html [ Skip ]
-imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Skip ]
 
 # No Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy in WK1.
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy [ Skip ]

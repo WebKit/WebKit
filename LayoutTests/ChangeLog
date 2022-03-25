@@ -1,3 +1,12 @@
+2022-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Unreviewed cleanup.
+
+        Fix some errors found by lint-test-expectations (which add noise to every test run).
+
+        * platform/ios/TestExpectations:
+        * platform/win/TestExpectations:
+
 2022-03-25  Frederic Wang  <fred.wang@free.fr>
 
         Improve rebuilding of ruby subtrees
