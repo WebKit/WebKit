@@ -1427,18 +1427,30 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
     case CalcOperator::Up: {
         if (children.size() != 2)
             return std::numeric_limits<double>::quiet_NaN();
+        if (!isinf(children[0]) && std::isinf(children[1])) {
+            if (!children[0])
+                return children[0];
+            return signbit(children[0]) ? -0.0 : std::numeric_limits<double>::infinity();
+        }
         auto ret = getNearestMultiples(children[0], children[1]);
         return ret.second;
     }
     case CalcOperator::Down: {
         if (children.size() != 2)
             return std::numeric_limits<double>::quiet_NaN();
+        if (!isinf(children[0]) && isinf(children[1])) {
+            if (!children[0])
+                return children[0];
+            return signbit(children[0]) ? -std::numeric_limits<double>::infinity() : +0.0;
+        }
         auto ret = getNearestMultiples(children[0], children[1]);
         return ret.first;
     }
     case CalcOperator::Nearest: {
         if (children.size() != 2)
             return std::numeric_limits<double>::quiet_NaN();
+        if (!isinf(children[0]) && isinf(children[1]))
+            return signbit(children[0]) ? -0.0 : +0.0;
         auto ret = getNearestMultiples(children[0], children[1]);
         auto upperB = ret.second;
         auto lowerB = ret.first;
@@ -1447,6 +1459,8 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
     case CalcOperator::ToZero: {
         if (children.size() != 2)
             return std::numeric_limits<double>::quiet_NaN();
+        if (!isinf(children[0]) && isinf(children[1]))
+            return signbit(children[0]) ? -0.0 : +0.0;
         auto ret = getNearestMultiples(children[0], children[1]);
         auto upperB = ret.second;
         auto lowerB = ret.first;

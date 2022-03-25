@@ -1,5 +1,14 @@
 2022-03-24  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
+        calc(): Handle finite value with infinite step in round()
+        https://bugs.webkit.org/show_bug.cgi?id=238231
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-values/round-function-expected.txt:
+
+2022-03-24  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
         Fix serialization of nan, infinity, -infinity for calc()
         https://bugs.webkit.org/show_bug.cgi?id=238288
 
