@@ -1,3 +1,14 @@
+2022-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal iOS build after r291842
+        https://bugs.webkit.org/show_bug.cgi?id=238344
+
+        Apply a similar adjustment to `WKModelView.mm`, as in `ARKitInlinePreviewModelPlayerMac.mm`, when generating a
+        usdz file path.
+
+        * UIProcess/ios/WKModelView.mm:
+        (-[WKModelView createFileForModel:]):
+
 2022-03-25  Sihui Liu  <sihui_liu@apple.com>
 
         Introduce an SPI to get website data directory for origin and use it in API tests
