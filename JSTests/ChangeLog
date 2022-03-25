@@ -1,3 +1,17 @@
+2022-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add additional reported regression tests to ensure multiline token's column offset is reset
+        https://bugs.webkit.org/show_bug.cgi?id=221548
+
+        Reviewed by Alexey Shvayka.
+
+        The bug is fixed and tested in https://github.com/WebKit/WebKit/commit/6d1e5d9498f24805988ad81ca3228588dd000a51.
+        But let's add reported regression tests to ensure that they will not reproduce.
+
+        * stress/multiline-token-error-column.js: Added.
+        (shouldBe):
+        (throw.new.Error):
+
 2022-03-23  Geza Lore  <glore@igalia.com>
 
         [JSC] Fix remoteFunctionCallGenerator on MIPS
