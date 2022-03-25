@@ -427,6 +427,11 @@ void NetworkProcessProxy::renameOriginInWebsiteData(PAL::SessionID sessionID, co
     sendWithAsyncReply(Messages::NetworkProcess::RenameOriginInWebsiteData(sessionID, oldName, newName, dataTypes), WTFMove(completionHandler));
 }
 
+void NetworkProcessProxy::websiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, URL&& origin, URL&& topOrigin, WebsiteDataType type, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::WebsiteDataOriginDirectoryForTesting(sessionID, WTFMove(origin), WTFMove(topOrigin), type), WTFMove(completionHandler));
+}
+
 void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
 {
     Ref protectedThis { *this };

@@ -77,8 +77,8 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     processPoolConfiguration.get().prewarmsProcessesAutomatically = shouldEnableProcessPrewarming == ShouldEnableProcessPrewarming::Yes ? YES : NO;
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
-    RetainPtr<WebsiteDataStoreCustomPathsMessageHandler> handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
 
     NSURL *sqlPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/WebSQL/" stringByExpandingTildeInPath] isDirectory:YES];
@@ -86,7 +86,6 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     NSURL *localStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/LocalStorage/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *cookieStorageFile = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/CookieStorage/Cookie.File" stringByExpandingTildeInPath] isDirectory:NO];
     NSURL *resourceLoadStatisticsPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/ResourceLoadStatistics/" stringByExpandingTildeInPath] isDirectory:YES];
-
     NSURL *defaultSQLPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/WebSQL/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *defaultIDBPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
     NSURL *defaultLocalStoragePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/LocalStorage/" stringByExpandingTildeInPath] isDirectory:YES];
@@ -112,7 +111,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultLocalStoragePath.path]);
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsPath.path]);
 
-    RetainPtr<_WKWebsiteDataStoreConfiguration> websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     websiteDataStoreConfiguration.get()._webSQLDatabaseDirectory = sqlPath;
     websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbPath;
     websiteDataStoreConfiguration.get()._webStorageDirectory = localStoragePath;
@@ -122,7 +121,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     configuration.get().websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get();
     configuration.get().processPool = processPool.get();
 
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:handler.get()];
 
     auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
@@ -144,6 +143,17 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
         flushed = true;
     }];
     TestWebKitAPI::Util::run(&flushed);
+
+    // Get the IndexedDB database path in use.
+    NSURL *fileURL = [NSURL URLWithString:@"file://"];
+    __block NSString *fileIDBPathString = nil;
+    done = false;
+    [configuration.get().websiteDataStore _originDirectoryForTesting:fileURL topOrigin:fileURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+        fileIDBPathString = result;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    NSURL *fileIDBPath = [NSURL fileURLWithPath:fileIDBPathString isDirectory:YES];
 
     // Forcibly shut down everything of WebKit that we can.
     auto pid = [webView _webProcessIdentifier];
@@ -184,31 +194,45 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
 
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:idbPath.path]);
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultIDBPath.path]);
-    RetainPtr<NSURL> fileIDBPath = [[idbPath URLByAppendingPathComponent:@"v1"] URLByAppendingPathComponent:@"file__0"];
-    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:fileIDBPath.get().path]);
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:fileIDBPath.path]);
 
     @autoreleasepool {
         auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
-        RetainPtr<NSSet> types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
+        auto types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
+        
+        NSURL *appleURL = [NSURL URLWithString:@"https://apple.com"];
+        __block NSString *idbPathString = nil;
+        done = false;
+        [dataStore _originDirectoryForTesting:appleURL topOrigin:fileURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+            idbPathString = result;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        NSURL *fileAppleIDBPath = [NSURL fileURLWithPath:idbPathString isDirectory:YES];
+
+        NSURL *webkitURL = [NSURL URLWithString:@"https://webkit.org"];
+        done = false;
+        [dataStore _originDirectoryForTesting:webkitURL topOrigin:fileURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+            idbPathString = result;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        NSURL *fileWebKitIDBPath = [NSURL fileURLWithPath:idbPathString isDirectory:YES];
 
         // Subframe of different origins may also create IndexedDB files.
         RetainPtr<NSURL> url1 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
         RetainPtr<NSURL> url2 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3-shm" subdirectory:@"TestWebKitAPI.resources"];
         RetainPtr<NSURL> url3 = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3-wal" subdirectory:@"TestWebKitAPI.resources"];
 
-        RetainPtr<NSURL> frameIDBPath = [[fileIDBPath URLByAppendingPathComponent:@"https_apple.com_0"] URLByAppendingPathComponent:@"WebsiteDataStoreCustomPaths"];
-        [[NSFileManager defaultManager] createDirectoryAtURL:frameIDBPath.get() withIntermediateDirectories:YES attributes:nil error:nil];
+        [[NSFileManager defaultManager] createDirectoryAtURL:fileAppleIDBPath withIntermediateDirectories:YES attributes:nil error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url1.get() toURL:[fileAppleIDBPath URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url2.get() toURL:[fileAppleIDBPath URLByAppendingPathComponent:@"IndexedDB.sqlite3-shm"] error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url3.get() toURL:[fileAppleIDBPath URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"] error:nil];
 
-        [[NSFileManager defaultManager] copyItemAtURL:url1.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
-        [[NSFileManager defaultManager] copyItemAtURL:url2.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-shm"] error:nil];
-        [[NSFileManager defaultManager] copyItemAtURL:url3.get() toURL:[frameIDBPath.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"] error:nil];
-
-        RetainPtr<NSURL> frameIDBPath2 = [[fileIDBPath URLByAppendingPathComponent:@"https_webkit.org_0"] URLByAppendingPathComponent:@"WebsiteDataStoreCustomPaths"];
-        [[NSFileManager defaultManager] createDirectoryAtURL:frameIDBPath2.get() withIntermediateDirectories:YES attributes:nil error:nil];
-
-        [[NSFileManager defaultManager] copyItemAtURL:url1.get() toURL:[frameIDBPath2.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
-        [[NSFileManager defaultManager] copyItemAtURL:url2.get() toURL:[frameIDBPath2.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-shm"] error:nil];
-        [[NSFileManager defaultManager] copyItemAtURL:url3.get() toURL:[frameIDBPath2.get() URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"] error:nil];
+        [[NSFileManager defaultManager] createDirectoryAtURL:fileWebKitIDBPath withIntermediateDirectories:YES attributes:nil error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url1.get() toURL:[fileWebKitIDBPath URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url2.get() toURL:[fileWebKitIDBPath URLByAppendingPathComponent:@"IndexedDB.sqlite3-shm"] error:nil];
+        [[NSFileManager defaultManager] copyItemAtURL:url3.get() toURL:[fileWebKitIDBPath URLByAppendingPathComponent:@"IndexedDB.sqlite3-wal"] error:nil];
 
         [dataStore fetchDataRecordsOfTypes:types.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
             EXPECT_EQ([records count], (unsigned long)3);
@@ -216,7 +240,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
                 if ([[record displayName] isEqual: @"apple.com"]) {
                     [dataStore removeDataOfTypes:types.get() forDataRecords:@[record] completionHandler:^() {
                         receivedScriptMessage = true;
-                        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:frameIDBPath.get().path]);
+                        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fileAppleIDBPath.path]);
                     }];
                 }
             }
@@ -230,7 +254,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
         receivedScriptMessage = false;
         TestWebKitAPI::Util::run(&receivedScriptMessage);
 
-        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fileIDBPath.get().path]);
+        EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fileWebKitIDBPath.path]);
 
         // Now, with brand new WKWebsiteDataStores pointing at the same custom cookie storage location,
         // in newly fired up NetworkProcesses, verify that the fetch and delete APIs work as expected.

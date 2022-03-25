@@ -1,3 +1,43 @@
+2022-03-25  Sihui Liu  <sihui_liu@apple.com>
+
+        Introduce an SPI to get website data directory for origin and use it in API tests
+        https://bugs.webkit.org/show_bug.cgi?id=238269
+
+        Reviewed by Alex Christensen.
+
+        There are a few tests using hardcoded website data paths to check if files are correcly modified by API.
+        Everytime we migrate website data (for example, if we start using general storage directory for IndexedDB 
+        storage), we need to update these tests with new paths, otherwise the tests will check the wrong paths. Let's 
+        just add an SPI so these tests can get the paths in use dynamically, which would avoid test breakage when
+        we do website data migration.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::websiteDataOriginDirectoryForTesting):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/storage/NetworkStorageManager.cpp:
+        (WebKit::NetworkStorageManager::moveData):
+        (WebKit::NetworkStorageManager::getOriginDirectory):
+        * NetworkProcess/storage/NetworkStorageManager.h:
+        * NetworkProcess/storage/OriginStorageManager.cpp:
+        (WebKit::OriginStorageManager::StorageBucket::toStorageType const):
+        (WebKit::OriginStorageManager::StorageBucket::resolvedLocalStoragePath):
+        (WebKit::OriginStorageManager::StorageBucket::resolvedIDBStoragePath):
+        (WebKit::OriginStorageManager::StorageBucket::resolvedPath):
+        (WebKit::OriginStorageManager::resolvedPath):
+        (WebKit::OriginStorageManager::resolvedLocalStoragePath): Deleted.
+        (WebKit::OriginStorageManager::resolvedIDBStoragePath): Deleted.
+        * NetworkProcess/storage/OriginStorageManager.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _originDirectoryForTesting:topOrigin:type:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::websiteDataOriginDirectoryForTesting):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::originDirectoryForTesting):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2022-03-24  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, late March 2022 edition

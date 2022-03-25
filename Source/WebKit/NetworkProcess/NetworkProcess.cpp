@@ -2259,6 +2259,16 @@ void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const U
         session->storageManager().moveData(dataTypes, WTFMove(oldOrigin), WTFMove(newOrigin), [aggregator] { });
 }
 
+void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID sessionID, const URL& origin, const URL& topOrigin, WebsiteDataType dataType, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    auto* session = networkSession(sessionID);
+    if (!session)
+        return completionHandler({ });
+
+    auto clientOrigin = WebCore::ClientOrigin { WebCore::SecurityOriginData::fromURL(topOrigin), WebCore::SecurityOriginData::fromURL(origin) };
+    session->storageManager().getOriginDirectory(WTFMove(clientOrigin), dataType, WTFMove(completionHandler));
+}
+
 #if ENABLE(SERVICE_WORKER)
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
 

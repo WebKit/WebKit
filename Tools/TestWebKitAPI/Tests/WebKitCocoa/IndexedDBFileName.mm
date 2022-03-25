@@ -31,6 +31,7 @@
 #import <WebCore/SQLiteFileSystem.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/WebKit.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
 @interface IndexedDBFileNameMessageHandler : NSObject <WKScriptMessageHandler>
@@ -50,6 +51,12 @@ static void runTest()
 {
     auto handler = adoptNS([[IndexedDBFileNameMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    // We need to create custom WebsiteDataStore that uses custom IndexedDB paths to test old migration code.
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = true;
+    // Custom WebsiteDataStore must have a different general storage directory than default WebsiteDataStore.
+    websiteDataStoreConfiguration.get().generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     
@@ -79,7 +86,7 @@ static void runTest()
     NSString *existingDatbaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(existingDatabaseName);
     NSString *createdDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(createdDatabaseName);
     NSString *unusedDatabaseHash = WebCore::SQLiteFileSystem::computeHashForFileName(createdDatabaseName);
-    NSURL *idbRootURL = [[WKWebsiteDataStore defaultDataStore] _indexedDBDatabaseDirectory];
+    NSURL *idbRootURL = [websiteDataStoreConfiguration.get() _indexedDBDatabaseDirectory];
     NSURL *oldVersionDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"v0"];
     NSURL *newVersionDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"v1"];
     NSURL *oldVersionOriginDirectoryURL = [oldVersionDirectoryURL URLByAppendingPathComponent: @"file__0"];
@@ -173,15 +180,20 @@ TEST(IndexedDB, IndexedDBFileNameAPI)
 {
     createDirectories("API");
     
-    RetainPtr<NSSet> types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
-    [[WKWebsiteDataStore defaultDataStore] fetchDataRecordsOfTypes:types.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+    auto types = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil]);
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get().shouldUseCustomStoragePaths = true;
+    websiteDataStoreConfiguration.get().generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    [dataStore fetchDataRecordsOfTypes:types.get() completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
         EXPECT_EQ(3U, [records count]);
         readyToContinue = true;
     }];
     readyToContinue = false;
     TestWebKitAPI::Util::run(&readyToContinue);
 
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [dataStore removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
         readyToContinue = true;
     }];
     readyToContinue = false;

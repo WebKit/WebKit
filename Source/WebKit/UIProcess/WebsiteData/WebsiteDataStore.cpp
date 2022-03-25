@@ -1988,6 +1988,11 @@ void WebsiteDataStore::renameOriginInWebsiteData(URL&& oldName, URL&& newName, O
     networkProcess().renameOriginInWebsiteData(m_sessionID, oldName, newName, dataTypes, WTFMove(completionHandler));
 }
 
+void WebsiteDataStore::originDirectoryForTesting(URL&& origin, URL&& topOrigin, WebsiteDataType type, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    networkProcess().websiteDataOriginDirectoryForTesting(m_sessionID, WTFMove(origin), WTFMove(topOrigin), type, WTFMove(completionHandler));
+}
+
 #if ENABLE(APP_BOUND_DOMAINS)
 void WebsiteDataStore::hasAppBoundSession(CompletionHandler<void(bool)>&& completionHandler) const
 {

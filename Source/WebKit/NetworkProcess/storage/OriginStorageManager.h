@@ -59,8 +59,7 @@ public:
     SessionStorageManager* existingSessionStorageManager();
     IDBStorageManager& idbStorageManager(IDBStorageRegistry&);
     IDBStorageManager* existingIDBStorageManager();
-    String resolvedLocalStoragePath();
-    String resolvedIDBStoragePath();
+    String resolvedPath(WebsiteDataType);
     bool isActive();
     bool isEmpty();
     OptionSet<WebsiteDataType> fetchDataTypesInList(OptionSet<WebsiteDataType>);

@@ -292,6 +292,7 @@ public:
     void clearStorage(PAL::SessionID, CompletionHandler<void()>&&);
     void didIncreaseQuota(PAL::SessionID, WebCore::ClientOrigin&&, QuotaIncreaseRequestIdentifier, std::optional<uint64_t> newQuota);
     void renameOriginInWebsiteData(PAL::SessionID, const URL&, const URL&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
+    void websiteDataOriginDirectoryForTesting(PAL::SessionID, const URL&, const URL&, WebsiteDataType, CompletionHandler<void(const String&)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     bool parentProcessHasServiceWorkerEntitlement() const;

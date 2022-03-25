@@ -632,12 +632,25 @@ void NetworkStorageManager::moveData(OptionSet<WebsiteDataType> types, WebCore::
         localOriginStorageManager(targetOrigin).deleteData(types, -WallTime::infinity());
 
         // Move data from source origin to target origin.
-        localOriginStorageManager(sourceOrigin).moveData(types, localOriginStorageManager(targetOrigin).resolvedLocalStoragePath(), localOriginStorageManager(targetOrigin).resolvedIDBStoragePath());
+        localOriginStorageManager(sourceOrigin).moveData(types, localOriginStorageManager(targetOrigin).resolvedPath(WebsiteDataType::LocalStorage), localOriginStorageManager(targetOrigin).resolvedPath(WebsiteDataType::IndexedDBDatabases));
 
         removeOriginStorageManagerIfPossible(targetOrigin);
         removeOriginStorageManagerIfPossible(sourceOrigin);
 
         RunLoop::main().dispatch(WTFMove(completionHandler));
+    });
+}
+
+void NetworkStorageManager::getOriginDirectory(WebCore::ClientOrigin&& origin, WebsiteDataType type, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
+
+    m_queue->dispatch([this, protectedThis = Ref { *this }, type, origin = crossThreadCopy(WTFMove(origin)), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), directory = crossThreadCopy(localOriginStorageManager(origin).resolvedPath(type))]() mutable {
+            completionHandler(WTFMove(directory));
+        });
+        removeOriginStorageManagerIfPossible(origin);
     });
 }
 

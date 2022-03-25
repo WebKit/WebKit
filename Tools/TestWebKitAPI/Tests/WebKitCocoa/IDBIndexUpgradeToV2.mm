@@ -85,28 +85,28 @@ TEST(IndexedDB, IndexUpgradeToV2)
 
 static void runMultipleIndicesTestWithDatabase(NSString* databaseName)
 {
-    RetainPtr<IDBIndexUpgradeToV2MessageHandler> handler = adoptNS([[IDBIndexUpgradeToV2MessageHandler alloc] init]);
-    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto handler = adoptNS([[IDBIndexUpgradeToV2MessageHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
-
     [configuration.get().websiteDataStore _terminateNetworkProcess];
 
     NSURL *url = [[NSBundle mainBundle] URLForResource:databaseName withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
-
     NSString *hash = WebCore::SQLiteFileSystem::computeHashForFileName("index-upgrade-test");
-    NSString *originDirectory = @"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/WebsiteData/IndexedDB/v1/file__0/";
-    NSString *databaseDirectory = [[originDirectory stringByAppendingString:hash] stringByExpandingTildeInPath];
-    NSURL *targetURL = [NSURL fileURLWithPath:databaseDirectory];
-    [[NSFileManager defaultManager] removeItemAtURL:targetURL error:nil];
-    [[NSFileManager defaultManager] createDirectoryAtURL:targetURL withIntermediateDirectories:YES attributes:nil error:nil];
+    NSURL *originURL = [NSURL URLWithString:@"file://"];
+    __block NSString *originDirectoryString = nil;
+    [configuration.get().websiteDataStore _originDirectoryForTesting:originURL topOrigin:originURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+        originDirectoryString = result;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    NSURL *databaseDirectory = [[NSURL fileURLWithPath:originDirectoryString isDirectory:YES] URLByAppendingPathComponent:hash];
+    [[NSFileManager defaultManager] removeItemAtURL:databaseDirectory error:nil];
+    [[NSFileManager defaultManager] createDirectoryAtURL:databaseDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [[NSFileManager defaultManager] copyItemAtURL:url toURL:[databaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
 
-    [[NSFileManager defaultManager] copyItemAtURL:url toURL:[targetURL URLByAppendingPathComponent:@"IndexedDB.sqlite3"] error:nil];
-
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IDBIndexUpgradeToV2WithMultipleIndices" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 
     EXPECT_WK_STREQ(@"Get object: {\"name\":\"apple\",\"color\":\"red\"}", [lastScriptMessage body]);

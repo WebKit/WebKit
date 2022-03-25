@@ -326,25 +326,33 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
 
 TEST(IndexedDB, IndexedDBThirdPartyStorageLayout)
 {
-    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
-    NSURL *generalStorageDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/Default" stringByExpandingTildeInPath] isDirectory:YES];
-    NSURL *webkitOriginFile = [generalStorageDirectory URLByAppendingPathComponent:@"EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/origin"];
-    NSURL *webkitIframeOriginFile = [generalStorageDirectory URLByAppendingPathComponent:@"EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/vudvbMlKXj1m6RibnVvc8PdAdcXZsNE6ON_Al7yqOsg/origin"];
-    NSURL *iframeWebKitOriginFile = [generalStorageDirectory URLByAppendingPathComponent:@"vudvbMlKXj1m6RibnVvc8PdAdcXZsNE6ON_Al7yqOsg/EAO66s8JvCWNn4D3YQut5pXfiGF_UXNZGvMGN6aKILg/origin"];
-    NSURL *idbDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebsiteData/IndexedDB" stringByExpandingTildeInPath] isDirectory:YES];
-    NSString *hashedDatabaseName = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBThirdPartyFrameHasAccess");
-    NSURL *webkitIframeDatabaseFile = [NSURL fileURLWithPath:[NSString pathWithComponents:@[idbDirectory.path, @"v1/http_webkit.org_0/iframe__0/", hashedDatabaseName, @"IndexedDB.sqlite3"]]];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager removeItemAtURL:generalStorageDirectory error:nil];
-    [fileManager createDirectoryAtURL:generalStorageDirectory withIntermediateDirectories:YES attributes:nil error:nil];
-    [fileManager copyItemAtURL:resourceSalt toURL:[generalStorageDirectory URLByAppendingPathComponent:@"salt"] error:nil];
-    [fileManager removeItemAtURL:idbDirectory error:nil];
-
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    websiteDataStoreConfiguration.get()._indexedDBDatabaseDirectory = idbDirectory;
-    websiteDataStoreConfiguration.get().generalStorageDirectory = generalStorageDirectory;
-    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
+    NSString *databaseHash = WebCore::SQLiteFileSystem::computeHashForFileName("IndexedDBThirdPartyFrameHasAccess");
+    NSURL *webkitURL = [NSURL URLWithString:@"http://webkit.org"];
+    NSURL *iframeURL = [NSURL URLWithString:@"iframe://"];
+    __block NSString *directoryString = nil;
+    done = false;
+    [configuration.get().websiteDataStore _originDirectoryForTesting:iframeURL topOrigin:webkitURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+        directoryString = result;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    NSURL *webkitIframeRootDirectory = [NSURL fileURLWithPath:directoryString isDirectory:YES];
+    NSURL *webkitIframeDatabaseDirectory = [webkitIframeRootDirectory URLByAppendingPathComponent:databaseHash];
+    NSURL *webkitIframeDatabaseFile = [webkitIframeDatabaseDirectory URLByAppendingPathComponent:@"IndexedDB.sqlite3"];
+
+    done = false;
+    [configuration.get().websiteDataStore _originDirectoryForTesting:webkitURL topOrigin:iframeURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+        directoryString = result;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    NSURL *iframeWebKitRootDirectory = [NSURL fileURLWithPath:directoryString isDirectory:YES];
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:webkitIframeRootDirectory error:nil];
+    [fileManager removeItemAtURL:iframeWebKitRootDirectory error:nil];
+
     auto handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
     auto schemeHandler = adoptNS([[TestURLSchemeHandler alloc] init]);
@@ -360,10 +368,9 @@ TEST(IndexedDB, IndexedDBThirdPartyStorageLayout)
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     loadThirdPartyPageInWebView(webView.get(), @"database is created - put item success");
-    EXPECT_TRUE([fileManager fileExistsAtPath:webkitOriginFile.path]);
-    EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeOriginFile.path]);
-    EXPECT_FALSE([fileManager fileExistsAtPath:iframeWebKitOriginFile.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeRootDirectory.path]);
     EXPECT_TRUE([fileManager fileExistsAtPath:webkitIframeDatabaseFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:iframeWebKitRootDirectory.path]);
 }
 
 TEST(IndexedDB, MigrateThirdPartyDataToGeneralStorageDirectory)
@@ -584,11 +591,35 @@ TEST(IndexedDB, IndexedDBGetDatabases)
     EXPECT_WK_STREQ(@"main frame databases: []", [getNextMessage() body]);
 
     // Getting databases should not create files on disk.
-    NSURL *idbDirectoryURL = [[WKWebsiteDataStore defaultDataStore] _indexedDBDatabaseDirectory];
-    NSURL *versionDirectoryURL = [idbDirectoryURL URLByAppendingPathComponent:@"v1"];
-    NSURL *appleDirectoryURL = [versionDirectoryURL URLByAppendingPathComponent: @"http_apple.com_0"];
-    NSURL *appleWebkitDirectoryURL = [appleDirectoryURL URLByAppendingPathComponent: @"webkit__0"];
-    NSURL *webkitDirectoryURL = [versionDirectoryURL URLByAppendingPathComponent: @"webkit__0"];
+    NSURL *appleURL = [NSURL URLWithString:@"http://apple.com"];
+    NSURL *webkitURL = [NSURL URLWithString:@"webkit://"];
+    __block NSString *appleDirectoryString = nil;
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:appleURL topOrigin:appleURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+        appleDirectoryString = result;
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+    NSURL *appleDirectoryURL = [NSURL fileURLWithPath:appleDirectoryString isDirectory:YES];
+
+    readyToContinue = false;
+    __block NSString *webkitDirectoryString = nil;
+    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:webkitURL topOrigin:webkitURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+        webkitDirectoryString = result;
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+    NSURL *webkitDirectoryURL = [NSURL fileURLWithPath:webkitDirectoryString isDirectory:YES];
+
+    __block NSString *appleWebkitDirectoryString = nil;
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] _originDirectoryForTesting:webkitURL topOrigin:appleURL type:WKWebsiteDataTypeIndexedDBDatabases completionHandler:^(NSString *result) {
+        appleWebkitDirectoryString = result;
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+    NSURL *appleWebkitDirectoryURL = [NSURL fileURLWithPath:appleWebkitDirectoryString isDirectory:YES];
+
     auto defaultFileManager = [NSFileManager defaultManager];
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:appleDirectoryURL.path]);
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:appleWebkitDirectoryURL.path]);
