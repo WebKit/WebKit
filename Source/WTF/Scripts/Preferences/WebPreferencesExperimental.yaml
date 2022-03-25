@@ -1606,19 +1606,17 @@ WebAnimationsCustomFrameRateEnabled:
     WebCore:
       default: false
 
-# FIXME: This is enabled when ENABLE(EXPERIMENTAL_FEATURES) is true in WebKit2. Perhaps we should consider using that for WebKitLegacy as well.
 WebAnimationsMutableTimelinesEnabled:
   type: bool
   humanReadableName: "Web Animations mutable timelines"
   humanReadableDescription: "Support for setting the timeline property of an Animation object"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES)" : true
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 WebAssemblyESMIntegrationEnabled:
   type: bool

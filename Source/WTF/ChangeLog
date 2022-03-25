@@ -1,3 +1,16 @@
+2022-03-25  Antoine Quint  <graouts@webkit.org>
+
+        [web-animations] enable support for mutable timelines by default
+        https://bugs.webkit.org/show_bug.cgi?id=237958
+        <rdar://problem/90370794>
+
+        Reviewed by Dean Jackson.
+
+        Both Chrome and Firefox have been shipping this feature for quite some time.
+        Our support for it is complete, we just need to turn it on by default.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Start preparing WebCore for making the String(const char*) constructor explicit
