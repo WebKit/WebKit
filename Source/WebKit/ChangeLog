@@ -1,3 +1,12 @@
+2022-03-25  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, fix the internal iOS build after r291814
+        rdar://90848250
+
+        Removed extraneous double quote (") in com.apple.WebKit.WebContent.sb.in.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Start preparing WebCore for making the String(const char*) constructor explicit
