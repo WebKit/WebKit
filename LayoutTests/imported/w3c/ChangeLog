@@ -1,3 +1,15 @@
+2022-03-25  Devin Rousso  <drousso@apple.com>
+
+        `PointerEvent.movementX` always 0 (breaks https://noisecraft.app/)
+        https://bugs.webkit.org/show_bug.cgi?id=220194
+        <rdar://problem/72814440>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy_with_pointerlock-expected.txt:
+        This change causes the test to progress further than before, but there still appear to be
+        other issues elsewhere, so adjust the expected output to reflect that.
+
 2022-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Add css-typed-om color IDL skeletons

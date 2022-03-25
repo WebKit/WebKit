@@ -93,7 +93,7 @@ protected:
         EventTarget* relatedTarget, double force, unsigned short syntheticClickType, IsSimulated, IsTrusted);
 
     MouseEvent(const AtomString& type, CanBubble, IsCancelable, IsComposed, RefPtr<WindowProxy>&&, int detail,
-        const IntPoint& screenLocation, const IntPoint& clientLocation, OptionSet<Modifier>, short button, unsigned short buttons,
+        const IntPoint& screenLocation, const IntPoint& clientLocation, const IntPoint& movementDelta, OptionSet<Modifier>, short button, unsigned short buttons,
         unsigned short syntheticClickType, EventTarget* relatedTarget);
 
     MouseEvent(const AtomString& type, const MouseEventInit&);

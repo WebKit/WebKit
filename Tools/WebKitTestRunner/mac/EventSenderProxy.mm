@@ -601,7 +601,7 @@ void EventSenderProxy::mouseMoveTo(double x, double y, WKStringRef pointerType)
 
     CGEventRef cgEvent = event.CGEvent;
     CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaX, newMousePosition.x - m_position.x);
-    CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaY, newMousePosition.y - m_position.y);
+    CGEventSetIntegerValueField(cgEvent, kCGMouseEventDeltaY, -1 * (newMousePosition.y - m_position.y));
     event = [NSEvent eventWithCGEvent:cgEvent];
     m_position.x = newMousePosition.x;
     m_position.y = newMousePosition.y;

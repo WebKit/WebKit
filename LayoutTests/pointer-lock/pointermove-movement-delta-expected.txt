@@ -1,0 +1,3 @@
+
+PASS Testing the movementX and movementY properties of a pointer event triggered by a mouse.
+

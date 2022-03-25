@@ -56,12 +56,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, RefPtr<WindowPro
     auto isComposed = !isMouseEnterOrLeave ? IsComposed::Yes : IsComposed::No;
 
     return MouseEvent::create(eventType, canBubble, isCancelable, isComposed, event.timestamp().approximateMonotonicTime(), WTFMove(view), detail,
-        event.globalPosition(), event.position(),
-#if ENABLE(POINTER_LOCK)
-        event.movementDelta(),
-#else
-        { },
-#endif
+        event.globalPosition(), event.position(), event.movementDelta(),
         event.modifiers(), event.button(), event.buttons(), relatedTarget, event.force(), event.syntheticClickType());
 }
 
@@ -77,7 +72,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomString& eventType, CanBubble canBub
     int screenX, int screenY, int clientX, int clientY, OptionSet<Modifier> modifiers, short button, unsigned short buttons,
     unsigned short syntheticClickType, EventTarget* relatedTarget)
 {
-    return adoptRef(*new MouseEvent(eventType, canBubble, isCancelable, isComposed, WTFMove(view), detail, { screenX, screenY }, { clientX, clientY }, modifiers, button, buttons, syntheticClickType, relatedTarget));
+    return adoptRef(*new MouseEvent(eventType, canBubble, isCancelable, isComposed, WTFMove(view), detail, { screenX, screenY }, { clientX, clientY }, { }, modifiers, button, buttons, syntheticClickType, relatedTarget));
 }
 
 MouseEvent::MouseEvent() = default;
@@ -97,9 +92,9 @@ MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCance
 }
 
 MouseEvent::MouseEvent(const AtomString& eventType, CanBubble canBubble, IsCancelable isCancelable, IsComposed isComposed,
-    RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation,
+    RefPtr<WindowProxy>&& view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, const IntPoint& movementDelta,
     OptionSet<Modifier> modifiers, short button, unsigned short buttons, unsigned short syntheticClickType, EventTarget* relatedTarget)
-    : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, MonotonicTime::now(), WTFMove(view), detail, screenLocation, { }, { }, modifiers, IsSimulated::No)
+    : MouseRelatedEvent(eventType, canBubble, isCancelable, isComposed, MonotonicTime::now(), WTFMove(view), detail, screenLocation, { }, movementDelta, modifiers, IsSimulated::No)
     , m_button(button == -2 ? 0 : button)
     , m_buttons(buttons)
     , m_syntheticClickType(button == -2 ? 0 : syntheticClickType)

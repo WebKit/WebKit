@@ -41,14 +41,9 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomString& eventType, CanBubble canB
     const IntPoint& screenLocation, const IntPoint& windowLocation, const IntPoint& movementDelta, OptionSet<Modifier> modifiers, IsSimulated isSimulated, IsTrusted isTrusted)
     : UIEventWithKeyState(eventType, canBubble, isCancelable, isComposed, timestamp, WTFMove(view), detail, modifiers, isTrusted)
     , m_screenLocation(screenLocation)
-#if ENABLE(POINTER_LOCK)
     , m_movementDelta(movementDelta)
-#endif
     , m_isSimulated(isSimulated == IsSimulated::Yes)
 {
-#if !ENABLE(POINTER_LOCK)
-    UNUSED_PARAM(movementDelta);
-#endif
     init(m_isSimulated, windowLocation);
 }
 
@@ -61,9 +56,7 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomString& type, IsCancelable isCanc
 MouseRelatedEvent::MouseRelatedEvent(const AtomString& eventType, const MouseRelatedEventInit& initializer, IsTrusted isTrusted)
     : UIEventWithKeyState(eventType, initializer)
     , m_screenLocation(IntPoint(initializer.screenX, initializer.screenY))
-#if ENABLE(POINTER_LOCK)
     , m_movementDelta(IntPoint(0, 0))
-#endif
 {
     ASSERT_UNUSED(isTrusted, isTrusted == IsTrusted::No);
     init(false, IntPoint(0, 0));

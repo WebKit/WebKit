@@ -1,3 +1,33 @@
+2022-03-25  Devin Rousso  <drousso@apple.com>
+
+        `PointerEvent.movementX` always 0 (breaks https://noisecraft.app/)
+        https://bugs.webkit.org/show_bug.cgi?id=220194
+        <rdar://problem/72814440>
+
+        Reviewed by Simon Fraser.
+
+        Test: pointer-lock/pointermove-movement-delta.html
+
+        * dom/PointerEvent.cpp:
+        (WebCore::PointerEvent::PointerEvent):
+        Also pass along the movement delta in the constructor that takes a `MouseEvent`.
+
+        * dom/MouseEvent.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        Require that all constructors that aren't invoked from JS always provide a movement delta.
+
+        * dom/MouseRelatedEvent.h:
+        (WebCore::MouseRelatedEvent::movementX const):
+        (WebCore::MouseRelatedEvent::movementY const):
+        Expose these methods even when `!ENABLE(POINTER_LOCK)` so that they can be called without
+        the callsite having to also have a `#if`.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        Pass along the movement delta even when `!ENABLE(POINTER_LOCK)`.
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Drop duplicate isFiringEventListeners check in Node wrappers' isReachableFromOpaqueRoots()

@@ -48,10 +48,9 @@ public:
     const IntPoint& screenLocation() const { return m_screenLocation; }
     int clientX() const { return m_clientLocation.x(); }
     int clientY() const { return m_clientLocation.y(); }
-#if ENABLE(POINTER_LOCK)
     int movementX() const { return m_movementDelta.x(); }
     int movementY() const { return m_movementDelta.y(); }
-#endif
+
     const LayoutPoint& clientLocation() const { return m_clientLocation; }
     int layerX() override;
     int layerY() override;
@@ -95,9 +94,7 @@ protected:
     // Expose these so MouseEvent::initMouseEvent can set them.
     IntPoint m_screenLocation;
     LayoutPoint m_clientLocation;
-#if ENABLE(POINTER_LOCK)
     LayoutPoint m_movementDelta;
-#endif
 
 private:
     void init(bool isSimulated, const IntPoint&);
