@@ -28,6 +28,7 @@
 
 #include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 

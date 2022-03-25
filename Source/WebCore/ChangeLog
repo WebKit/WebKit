@@ -1,3 +1,12 @@
+2022-03-24  Don Olmstead  <don.olmstead@sony.com>
+
+        Non-unified build fixes, late March 2022 edition
+        https://bugs.webkit.org/show_bug.cgi?id=238358
+
+        Unreviewed non-unified build fixes.
+
+        * html/HTMLInputElement.cpp:
+
 2022-03-24  Chris Dumez  <cdumez@apple.com>
 
         String::split() should take in a StringView instead of a String

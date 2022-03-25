@@ -29,6 +29,7 @@
 #pragma once
 
 #include "NativeFunction.h"
+#include <wtf/Forward.h>
 #include <wtf/NakedPtr.h>
 
 namespace JSC {

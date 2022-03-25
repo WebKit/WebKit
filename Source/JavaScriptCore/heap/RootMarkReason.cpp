@@ -27,6 +27,7 @@
 #include "RootMarkReason.h"
 
 #include <wtf/PrintStream.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace JSC {
 
