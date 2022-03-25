@@ -1,3 +1,22 @@
+2022-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] REGRESSION(r281291): When accessibility bold is enabled, font-family:system-ui is supposed to be bold
+        https://bugs.webkit.org/show_bug.cgi?id=237817
+        <rdar://problem/88249241>
+
+        Reviewed by Alan Bujtas.
+
+        This test has <!-- webkit-test-runner [ runSingly=true ] --> so the testing
+        infrastructure for accessibility bold can be web-process-global.
+
+        * fast/text/accessibility-bold-expected-mismatch.html: Added.
+        * fast/text/accessibility-bold.html: Added.
+        * platform/mac/TestExpectations: Because this test relies on a webkit-test-runner
+              header, skip it on WK1.
+        * platform/ios/TestExpectations: Ditto.
+        * platform/mac-wk2/TestExpectations: Mark as PASS.
+        * platform/ios-wk2/TestExpectations: Ditto.
+
 2022-03-24  Antoine Quint  <graouts@webkit.org>
 
         DOM GPUP: paintSystemPreviewBadge (AR QuickLook element badge)

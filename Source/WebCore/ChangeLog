@@ -1,3 +1,49 @@
+2022-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] REGRESSION(r281291): When accessibility bold is enabled, font-family:system-ui is supposed to be bold
+        https://bugs.webkit.org/show_bug.cgi?id=237817
+        <rdar://problem/88249241>
+
+        Reviewed by Alan Bujtas.
+
+        Accessibility bold is supposed to cause the system font to be rendered as bold, even if the
+        value of the font-weight property is normal.
+
+        The way this is originally supposed to work is that, when accessibility bold is enabled and
+        software asks for the system font, the font reports to not be bold, but the metrics/contours
+        end up visually bold to the user. Font variations, however, are a lower-level interface to
+        the font, and don't abide by the facade. So, before r281291, we weren't applying font variations
+        to the system font, so the facade was maintained, but r281291 started applying variations to the
+        system font, thereby breaking this accessibility bold setting.
+
+        The solution is to re-implement accessibility bold when we apply font variations. At the point
+        where we apply the weight variation, we should determine if accessibility bold is in effect, and
+        if it is, artificially increase the weight of the created font according to the platform's
+        inflation amount. There are a few SPI functions which aid in this endeavor.
+
+        Test: fast/text/accessibility-bold.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::fontIsSystemFont):
+        (WebCore::normalizeGXWeight):
+        (WebCore::normalizeCTWeight):
+        (WebCore::denormalizeGXWeight):
+        (WebCore::denormalizeCTWeight):
+        (WebCore::overrideEnhanceTextLegibility):
+        (WebCore::setOverrideEnhanceTextLegibility):
+        (WebCore::shouldEnhanceTextLegibility):
+        (WebCore::preparePlatformFont):
+        (WebCore::fontCacheRegisteredFontsChangedNotificationCallback):
+        (WebCore::FontCache::platformInit):
+        (WebCore::variationCapabilitiesForFontDescriptor):
+        (WebCore::normalizeWeight): Deleted.
+        (WebCore::denormalizeWeight): Deleted.
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setOverrideEnhanceTextLegibility):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2022-03-24  Chris Dumez  <cdumez@apple.com>
 
         FileSystem::pathByAppendingComponent() should take in StringViews instead of Strings
