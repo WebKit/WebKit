@@ -490,13 +490,13 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(AXID objectID, AXCoreObject* axPar
     ASSERT(isMainThread());
 
     if (!m_nodeMap.contains(objectID)) {
-        AXLOG("Tried to remove AXID that is no longer in m_nodeMap.");
+        AXLOG(makeString("Tried to remove AXID ", objectID.loggingString(), " that is no longer in m_nodeMap."));
         return;
     }
 
     AXID axParentID = axParent ? axParent->objectID() : AXID();
     if (axParentID != m_nodeMap.get(objectID).parentID) {
-        AXLOG(makeString("Tried to remove object from a different parent ", axParentID.loggingString(), ", actual parent ", m_nodeMap.get(objectID).parentID.loggingString(), ", bailing out."));
+        AXLOG(makeString("Tried to remove object ID ", objectID.loggingString(), " from a different parent ", axParentID.loggingString(), ", actual parent ", m_nodeMap.get(objectID).parentID.loggingString(), ", bailing out."));
         return;
     }
 

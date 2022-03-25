@@ -1,3 +1,17 @@
+2022-03-25  Tyler Wilcock  <tyler_w@apple.com>
+
+        Include object IDs in logs and assert in AXIsolatedTree and WebAccessibilityObjectWrapperBase
+        https://bugs.webkit.org/show_bug.cgi?id=238352
+
+        Reviewed by Chris Fleizach.
+
+        I've found this additional information to be useful in other branches I'm working on.
+
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::removeSubtreeFromNodeMap):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase detachIsolatedObject:]):
+
 2022-03-25  Youenn Fablet  <youenn@apple.com>
 
         media/auto-play-web-audio-in-about-blank-iframe.html is failing on EWS MacOS Debug bot
