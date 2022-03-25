@@ -41,8 +41,11 @@ namespace WebCore {
 
 Ref<ServiceWorkerClient> ServiceWorkerClient::getOrCreate(ServiceWorkerGlobalScope& context, ServiceWorkerClientData&& data)
 {
-    if (auto* client = context.serviceWorkerClient(data.identifier))
+    if (auto* client = context.serviceWorkerClient(data.identifier)) {
+        // Temporary fix until we remove reusing of same ServiceWorkerClient objects.
+        client->m_data = WTFMove(data);
         return *client;
+    }
 
     if (data.type == ServiceWorkerClientType::Window)
         return ServiceWorkerWindowClient::create(context, WTFMove(data));

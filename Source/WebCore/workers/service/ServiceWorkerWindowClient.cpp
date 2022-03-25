@@ -37,16 +37,6 @@ ServiceWorkerWindowClient::ServiceWorkerWindowClient(ServiceWorkerGlobalScope& c
 {
 }
 
-VisibilityState ServiceWorkerWindowClient::visibilityState() const
-{
-    return VisibilityState::Visible;
-}
-
-bool ServiceWorkerWindowClient::isFocused() const
-{
-    return true;
-}
-
 void ServiceWorkerWindowClient::focus(Ref<DeferredPromise>&& promise)
 {
     promise->reject(Exception { NotSupportedError, "windowClient.focus() is not yet supported"_s });

@@ -65,9 +65,12 @@ public:
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
 
+    const ServiceWorkerClientData& data() const { return m_data; }
+
 protected:
     ServiceWorkerClient(ServiceWorkerGlobalScope&, ServiceWorkerClientData&&);
 
+private:
     ServiceWorkerClientData m_data;
 };
 

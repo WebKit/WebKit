@@ -46,6 +46,9 @@ struct ServiceWorkerClientData {
     ServiceWorkerClientFrameType frameType;
     URL url;
     LastNavigationWasAppInitiated lastNavigationWasAppInitiated;
+    bool isVisible { false };
+    bool isFocused { false };
+    uint64_t focusOrder { 0 };
 
     ServiceWorkerClientData isolatedCopy() const &;
     ServiceWorkerClientData isolatedCopy() &&;
@@ -59,7 +62,7 @@ struct ServiceWorkerClientData {
 template<class Encoder>
 void ServiceWorkerClientData::encode(Encoder& encoder) const
 {
-    encoder << identifier << type << frameType << url << lastNavigationWasAppInitiated;
+    encoder << identifier << type << frameType << url << lastNavigationWasAppInitiated << isVisible << isFocused << focusOrder;
 }
 
 template<class Decoder>
@@ -90,7 +93,22 @@ std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& 
     if (!lastNavigationWasAppInitiated)
         return std::nullopt;
 
-    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*lastNavigationWasAppInitiated) } };
+    std::optional<bool> isVisible;
+    decoder >> isVisible;
+    if (!isVisible)
+        return std::nullopt;
+
+    std::optional<bool> isFocused;
+    decoder >> isFocused;
+    if (!isFocused)
+        return std::nullopt;
+
+    std::optional<uint64_t> focusOrder;
+    decoder >> focusOrder;
+    if (!focusOrder)
+        return std::nullopt;
+
+    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*lastNavigationWasAppInitiated), WTFMove(*isVisible), WTFMove(*isFocused), WTFMove(*focusOrder) } };
 }
 
 using ServiceWorkerClientsMatchAllCallback = CompletionHandler<void(Vector<ServiceWorkerClientData>&&)>;

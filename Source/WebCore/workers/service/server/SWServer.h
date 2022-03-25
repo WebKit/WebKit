@@ -305,6 +305,7 @@ private:
     bool m_hasServiceWorkerEntitlement { false };
     bool m_hasReceivedAppBoundDomains { false };
     unsigned m_uniqueRegistrationCount { 0 };
+    uint64_t m_focusOrder { 0 };
 };
 
 } // namespace WebCore

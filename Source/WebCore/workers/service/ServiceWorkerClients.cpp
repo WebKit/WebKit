@@ -72,6 +72,9 @@ static inline void matchAllCompleted(ServiceWorkerGlobalScope& scope, DeferredPr
     auto clients = WTF::map(clientsData, [&] (auto&& clientData) {
         return ServiceWorkerClient::getOrCreate(scope, WTFMove(clientData));
     });
+    std::sort(clients.begin(), clients.end(), [&] (auto& a, auto& b) {
+        return a->data().focusOrder > b->data().focusOrder;
+    });
     promise.resolve<IDLSequence<IDLInterface<ServiceWorkerClient>>>(WTFMove(clients));
 }
 

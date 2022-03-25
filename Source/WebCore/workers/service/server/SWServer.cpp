@@ -965,6 +965,8 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
     if (!addResult.isNewEntry) {
         ASSERT(m_visibleClientIdToInternalClientIdMap.get(data.identifier.object().toString()) == clientIdentifier);
         ASSERT(m_clientsById.contains(clientIdentifier));
+        if (data.isFocused)
+            data.focusOrder = ++m_focusOrder;
         m_clientsById.set(clientIdentifier, WTFMove(data));
         return;
     }

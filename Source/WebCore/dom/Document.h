@@ -708,6 +708,8 @@ public:
     void setURL(const URL&);
     const URL& urlForBindings() const { return m_url.isEmpty() ? aboutBlankURL() : m_url; }
 
+    const URL& creationURL() const { return m_creationURL; }
+
     // To understand how these concepts relate to one another, please see the
     // comments surrounding their declaration.
     const URL& baseURL() const { return m_baseURL; }
@@ -1565,6 +1567,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void setServiceWorkerConnection(SWClientConnection*);
+    void updateServiceWorkerClientData();
 #endif
 
 #if ENABLE(VIDEO)
@@ -1816,6 +1819,7 @@ private:
 
     // Document URLs.
     URL m_url; // Document.URL: The URL from which this document was retrieved.
+    URL m_creationURL; // https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-creation-url.
     URL m_baseURL; // Node.baseURI: The URL to use when resolving relative URLs.
     URL m_baseURLOverride; // An alternative base URL that takes precedence over m_baseURL (but not m_baseElementURL).
     URL m_baseElementURL; // The URL set by the <base> element.

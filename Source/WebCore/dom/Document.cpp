@@ -562,6 +562,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_settings(settings)
     , m_quirks(makeUniqueRef<Quirks>(*this))
     , m_cachedResourceLoader(createCachedResourceLoader(frame))
+    , m_creationURL(url)
     , m_domTreeVersion(++s_globalTreeVersion)
     , m_styleScope(makeUnique<Style::Scope>(*this))
     , m_extensionStyleSheets(makeUnique<ExtensionStyleSheets>(*this))
@@ -1863,6 +1864,9 @@ void Document::visibilityStateChanged()
         for (auto& callback : callbacks)
             callback();
     }
+#if ENABLE(SERVICE_WORKER)
+    updateServiceWorkerClientData();
+#endif
 }
 
 VisibilityState Document::visibilityState() const
@@ -8766,7 +8770,11 @@ void Document::setServiceWorkerConnection(SWClientConnection* serviceWorkerConne
         m_serviceWorkerConnection->unregisterServiceWorkerClient(identifier());
 
     m_serviceWorkerConnection = serviceWorkerConnection;
+    updateServiceWorkerClientData();
+}
 
+void Document::updateServiceWorkerClientData()
+{
     if (!m_serviceWorkerConnection)
         return;
 

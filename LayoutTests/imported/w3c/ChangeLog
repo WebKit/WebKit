@@ -1,3 +1,16 @@
+2022-03-25  Youenn Fablet  <youenn@apple.com>
+
+        Add support for focused and visible ServiceWorkerWindowClient states
+        https://bugs.webkit.org/show_bug.cgi?id=238372
+
+        Reviewed by Brady Eidson.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-get.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-exact-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall.https-expected.txt:
+
 2022-03-25  Devin Rousso  <drousso@apple.com>
 
         `PointerEvent.movementX` always 0 (breaks https://noisecraft.app/)
