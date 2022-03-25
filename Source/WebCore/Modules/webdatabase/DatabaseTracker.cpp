@@ -91,7 +91,7 @@ DatabaseTracker::DatabaseTracker(const String& databasePath)
 
 String DatabaseTracker::trackerDatabasePath() const
 {
-    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath.isolatedCopy(), "Databases.db");
+    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath.isolatedCopy(), "Databases.db"_s);
 }
 
 void DatabaseTracker::openTrackerDatabase(TrackerCreationAction createAction)
@@ -118,14 +118,14 @@ void DatabaseTracker::openTrackerDatabase(TrackerCreationAction createAction)
     }
     m_database.disableThreadingChecks();
 
-    if (!m_database.tableExists("Origins")) {
+    if (!m_database.tableExists("Origins"_s)) {
         if (!m_database.executeCommand("CREATE TABLE Origins (origin TEXT UNIQUE ON CONFLICT REPLACE, quota INTEGER NOT NULL ON CONFLICT FAIL);"_s)) {
             // FIXME: and here
             LOG_ERROR("Failed to create Origins table");
         }
     }
 
-    if (!m_database.tableExists("Databases")) {
+    if (!m_database.tableExists("Databases"_s)) {
         if (!m_database.executeCommand("CREATE TABLE Databases (guid INTEGER PRIMARY KEY AUTOINCREMENT, origin TEXT, name TEXT, displayName TEXT, estimatedSize INTEGER, path TEXT);"_s)) {
             // FIXME: and here
             LOG_ERROR("Failed to create Databases table");

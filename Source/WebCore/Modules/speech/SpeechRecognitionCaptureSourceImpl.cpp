@@ -92,7 +92,7 @@ bool SpeechRecognitionCaptureSourceImpl::updateDataSource(const CAAudioStreamDes
     if (dataSource->setInputFormat(audioDescription)) {
         callOnMainThread([this, weakThis = WeakPtr { *this }] {
             if (weakThis)
-                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set input format" }));
+                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set input format"_s }));
         });
         return false;
     }
@@ -100,7 +100,7 @@ bool SpeechRecognitionCaptureSourceImpl::updateDataSource(const CAAudioStreamDes
     if (dataSource->setOutputFormat(audioDescription)) {
         callOnMainThread([this, weakThis = WeakPtr { *this }] {
             if (weakThis)
-                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set output format" }));
+                m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Unable to set output format"_s }));
         });
         return false;
     }
@@ -157,13 +157,13 @@ void SpeechRecognitionCaptureSourceImpl::sourceStopped()
 {
     ASSERT(isMainThread());
     ASSERT(m_source->captureDidFail());
-    m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Source is stopped" }));
+    m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Source is stopped"_s }));
 }
 
 void SpeechRecognitionCaptureSourceImpl::sourceMutedChanged()
 {
     ASSERT(isMainThread());
-    m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Source is muted" }));
+    m_stateUpdateCallback(SpeechRecognitionUpdate::createError(m_clientIdentifier, SpeechRecognitionError { SpeechRecognitionErrorType::AudioCapture, "Source is muted"_s }));
 }
 
 void SpeechRecognitionCaptureSourceImpl::mute()

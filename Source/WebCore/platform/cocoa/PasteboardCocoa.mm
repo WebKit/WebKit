@@ -104,25 +104,25 @@ static const char* imageTypeToMIMEType(ImageType type)
     }
 }
 
-static const char* imageTypeToFakeFilename(ImageType type)
+static ASCIILiteral imageTypeToFakeFilename(ImageType type)
 {
     switch (type) {
     case ImageType::Invalid:
         ASSERT_NOT_REACHED();
-        return nullptr;
+        return ASCIILiteral::null();
     case ImageType::TIFF:
 #if PLATFORM(MAC)
-        return "image.png"; // For Web compatibility, we pretend to have PNG instead.
+        return "image.png"_s; // For Web compatibility, we pretend to have PNG instead.
 #else
         ASSERT_NOT_REACHED();
-        return nullptr;
+        return ASCIILiteral::null();
 #endif
     case ImageType::PNG:
-        return "image.png";
+        return "image.png"_s;
     case ImageType::JPEG:
-        return "image.jpeg";
+        return "image.jpeg"_s;
     case ImageType::GIF:
-        return "image.gif";
+        return "image.gif"_s;
     }
 }
 
@@ -234,7 +234,7 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
         for (auto cocoaType : info.platformTypesByFidelity) {
             auto imageType = cocoaTypeToImageType(cocoaType);
             auto* mimeType = imageTypeToMIMEType(imageType);
-            if (!mimeType || !reader.shouldReadBuffer(mimeType))
+            if (!mimeType || !reader.shouldReadBuffer(String { mimeType }))
                 continue;
             auto buffer = readBuffer(itemIndex, cocoaType);
 #if PLATFORM(MAC)
@@ -242,7 +242,7 @@ void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIn
                 buffer = convertTIFFToPNG(buffer.releaseNonNull());
 #endif
             if (buffer) {
-                reader.readBuffer(imageTypeToFakeFilename(imageType), mimeType, buffer.releaseNonNull());
+                reader.readBuffer(imageTypeToFakeFilename(imageType), String { mimeType }, buffer.releaseNonNull());
                 break;
             }
         }

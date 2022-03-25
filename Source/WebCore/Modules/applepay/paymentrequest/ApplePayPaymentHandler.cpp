@@ -89,7 +89,7 @@ static inline PaymentCoordinator& paymentCoordinator(Document& document)
 static ExceptionOr<ApplePayRequest> convertAndValidateApplePayRequest(Document& document, JSC::JSValue data)
 {
     if (data.isEmpty())
-        return Exception { TypeError, "Missing payment method data." };
+        return Exception { TypeError, "Missing payment method data."_s };
 
     auto throwScope = DECLARE_THROW_SCOPE(document.vm());
     auto applePayRequest = convertDictionary<ApplePayRequest>(*document.globalObject(), data);

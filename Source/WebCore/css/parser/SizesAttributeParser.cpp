@@ -112,7 +112,7 @@ bool SizesAttributeParser::mediaConditionMatches(const MediaQuerySet& mediaCondi
     if (!renderer)
         return false;
     auto& style = renderer->style();
-    return MediaQueryEvaluator { "screen", m_document, &style }.evaluate(mediaCondition, m_mediaQueryDynamicResults);
+    return MediaQueryEvaluator { "screen"_s, m_document, &style }.evaluate(mediaCondition, m_mediaQueryDynamicResults);
 }
 
 bool SizesAttributeParser::parse(CSSParserTokenRange range)

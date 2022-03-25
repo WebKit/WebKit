@@ -153,7 +153,7 @@ void DataDetectorHighlight::fadeIn()
     [animation setToValue:@1];
 
     auto platformAnimation = PlatformCAAnimationCocoa::create(animation.get());
-    downcast<GraphicsLayerCA>(layer()).platformCALayer()->addAnimationForKey("FadeHighlightIn", platformAnimation.get());
+    downcast<GraphicsLayerCA>(layer()).platformCALayer()->addAnimationForKey("FadeHighlightIn"_s, platformAnimation.get());
 }
 
 void DataDetectorHighlight::fadeOut()
@@ -170,7 +170,7 @@ void DataDetectorHighlight::fadeOut()
     }];
 
     auto platformAnimation = PlatformCAAnimationCocoa::create(animation.get());
-    downcast<GraphicsLayerCA>(layer()).platformCALayer()->addAnimationForKey("FadeHighlightOut", platformAnimation.get());
+    downcast<GraphicsLayerCA>(layer()).platformCALayer()->addAnimationForKey("FadeHighlightOut"_s, platformAnimation.get());
     [CATransaction commit];
 }
 

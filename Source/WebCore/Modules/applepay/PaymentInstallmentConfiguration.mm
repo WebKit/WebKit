@@ -207,7 +207,7 @@ ExceptionOr<PaymentInstallmentConfiguration> PaymentInstallmentConfiguration::cr
         NSData *applicationMetadata = [configuration.applicationMetadata dataUsingEncoding:NSUTF8StringEncoding];
         applicationMetadataDictionary = dynamic_objc_cast<NSDictionary>([NSJSONSerialization JSONObjectWithData:applicationMetadata options:0 error:nil]);
         if (!applicationMetadataDictionary)
-            return Exception { TypeError, "applicationMetadata must be a JSON object" };
+            return Exception { TypeError, "applicationMetadata must be a JSON object"_s };
     }
 
     return PaymentInstallmentConfiguration(configuration, applicationMetadataDictionary);

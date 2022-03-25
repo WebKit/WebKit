@@ -43,64 +43,64 @@ class CSSNumericFactory final : public Supplement<DOMCSSNamespace> {
 public:
     explicit CSSNumericFactory(DOMCSSNamespace&) { }
 
-    static Ref<CSSUnitValue> number(double value) { return CSSUnitValue::create(value, "number"); }
-    static Ref<CSSUnitValue> percent(double value) { return CSSUnitValue::create(value, "percent"); }
+    static Ref<CSSUnitValue> number(double value) { return CSSUnitValue::create(value, "number"_s); }
+    static Ref<CSSUnitValue> percent(double value) { return CSSUnitValue::create(value, "percent"_s); }
 
 
     // <length>
-    static Ref<CSSUnitValue> em(double value) { return CSSUnitValue::create(value, "em"); }
-    static Ref<CSSUnitValue> ex(double value) { return CSSUnitValue::create(value, "ex"); }
-    static Ref<CSSUnitValue> ch(double value) { return CSSUnitValue::create(value, "ch"); }
-    static Ref<CSSUnitValue> ic(double value) { return CSSUnitValue::create(value, "ic"); }
-    static Ref<CSSUnitValue> rem(double value) { return CSSUnitValue::create(value, "rem"); }
-    static Ref<CSSUnitValue> lh(double value) { return CSSUnitValue::create(value, "lh"); }
-    static Ref<CSSUnitValue> rlh(double value) { return CSSUnitValue::create(value, "rlh"); }
-    static Ref<CSSUnitValue> vw(double value) { return CSSUnitValue::create(value, "vw"); }
-    static Ref<CSSUnitValue> vh(double value) { return CSSUnitValue::create(value, "vh"); }
-    static Ref<CSSUnitValue> vi(double value) { return CSSUnitValue::create(value, "vi"); }
-    static Ref<CSSUnitValue> vb(double value) { return CSSUnitValue::create(value, "vb"); }
-    static Ref<CSSUnitValue> vmin(double value) { return CSSUnitValue::create(value, "vmin"); }
-    static Ref<CSSUnitValue> vmax(double value) { return CSSUnitValue::create(value, "vmax"); }
-    static Ref<CSSUnitValue> cm(double value) { return CSSUnitValue::create(value, "cm"); }
-    static Ref<CSSUnitValue> mm(double value) { return CSSUnitValue::create(value, "mm"); }
-    static Ref<CSSUnitValue> q(double value) { return CSSUnitValue::create(value, "q"); }
-    static Ref<CSSUnitValue> in(double value) { return CSSUnitValue::create(value, "in"); }
-    static Ref<CSSUnitValue> pt(double value) { return CSSUnitValue::create(value, "pt"); }
-    static Ref<CSSUnitValue> pc(double value) { return CSSUnitValue::create(value, "pc"); }
-    static Ref<CSSUnitValue> px(double value) { return CSSUnitValue::create(value, "px"); }
-    static Ref<CSSUnitValue> cqw(double value) { return CSSUnitValue::create(value, "cqw"); }
-    static Ref<CSSUnitValue> cqh(double value) { return CSSUnitValue::create(value, "cqh"); }
-    static Ref<CSSUnitValue> cqi(double value) { return CSSUnitValue::create(value, "cqi"); }
-    static Ref<CSSUnitValue> cqb(double value) { return CSSUnitValue::create(value, "cqb"); }
-    static Ref<CSSUnitValue> cqmin(double value) { return CSSUnitValue::create(value, "cqmin"); }
-    static Ref<CSSUnitValue> cqmax(double value) { return CSSUnitValue::create(value, "cqmax"); }
+    static Ref<CSSUnitValue> em(double value) { return CSSUnitValue::create(value, "em"_s); }
+    static Ref<CSSUnitValue> ex(double value) { return CSSUnitValue::create(value, "ex"_s); }
+    static Ref<CSSUnitValue> ch(double value) { return CSSUnitValue::create(value, "ch"_s); }
+    static Ref<CSSUnitValue> ic(double value) { return CSSUnitValue::create(value, "ic"_s); }
+    static Ref<CSSUnitValue> rem(double value) { return CSSUnitValue::create(value, "rem"_s); }
+    static Ref<CSSUnitValue> lh(double value) { return CSSUnitValue::create(value, "lh"_s); }
+    static Ref<CSSUnitValue> rlh(double value) { return CSSUnitValue::create(value, "rlh"_s); }
+    static Ref<CSSUnitValue> vw(double value) { return CSSUnitValue::create(value, "vw"_s); }
+    static Ref<CSSUnitValue> vh(double value) { return CSSUnitValue::create(value, "vh"_s); }
+    static Ref<CSSUnitValue> vi(double value) { return CSSUnitValue::create(value, "vi"_s); }
+    static Ref<CSSUnitValue> vb(double value) { return CSSUnitValue::create(value, "vb"_s); }
+    static Ref<CSSUnitValue> vmin(double value) { return CSSUnitValue::create(value, "vmin"_s); }
+    static Ref<CSSUnitValue> vmax(double value) { return CSSUnitValue::create(value, "vmax"_s); }
+    static Ref<CSSUnitValue> cm(double value) { return CSSUnitValue::create(value, "cm"_s); }
+    static Ref<CSSUnitValue> mm(double value) { return CSSUnitValue::create(value, "mm"_s); }
+    static Ref<CSSUnitValue> q(double value) { return CSSUnitValue::create(value, "q"_s); }
+    static Ref<CSSUnitValue> in(double value) { return CSSUnitValue::create(value, "in"_s); }
+    static Ref<CSSUnitValue> pt(double value) { return CSSUnitValue::create(value, "pt"_s); }
+    static Ref<CSSUnitValue> pc(double value) { return CSSUnitValue::create(value, "pc"_s); }
+    static Ref<CSSUnitValue> px(double value) { return CSSUnitValue::create(value, "px"_s); }
+    static Ref<CSSUnitValue> cqw(double value) { return CSSUnitValue::create(value, "cqw"_s); }
+    static Ref<CSSUnitValue> cqh(double value) { return CSSUnitValue::create(value, "cqh"_s); }
+    static Ref<CSSUnitValue> cqi(double value) { return CSSUnitValue::create(value, "cqi"_s); }
+    static Ref<CSSUnitValue> cqb(double value) { return CSSUnitValue::create(value, "cqb"_s); }
+    static Ref<CSSUnitValue> cqmin(double value) { return CSSUnitValue::create(value, "cqmin"_s); }
+    static Ref<CSSUnitValue> cqmax(double value) { return CSSUnitValue::create(value, "cqmax"_s); }
 
 
     // <angle>
-    static Ref<CSSUnitValue> deg(double value) { return CSSUnitValue::create(value, "deg"); }
-    static Ref<CSSUnitValue> grad(double value) { return CSSUnitValue::create(value, "grad"); }
-    static Ref<CSSUnitValue> rad(double value) { return CSSUnitValue::create(value, "rad"); }
-    static Ref<CSSUnitValue> turn(double value) { return CSSUnitValue::create(value, "turn"); }
+    static Ref<CSSUnitValue> deg(double value) { return CSSUnitValue::create(value, "deg"_s); }
+    static Ref<CSSUnitValue> grad(double value) { return CSSUnitValue::create(value, "grad"_s); }
+    static Ref<CSSUnitValue> rad(double value) { return CSSUnitValue::create(value, "rad"_s); }
+    static Ref<CSSUnitValue> turn(double value) { return CSSUnitValue::create(value, "turn"_s); }
 
 
     // <time>
-    static Ref<CSSUnitValue> s(double value) { return CSSUnitValue::create(value, "s"); }
-    static Ref<CSSUnitValue> ms(double value) { return CSSUnitValue::create(value, "ms"); }
+    static Ref<CSSUnitValue> s(double value) { return CSSUnitValue::create(value, "s"_s); }
+    static Ref<CSSUnitValue> ms(double value) { return CSSUnitValue::create(value, "ms"_s); }
 
 
     // <frequency>
-    static Ref<CSSUnitValue> hz(double value) { return CSSUnitValue::create(value, "hz"); }
-    static Ref<CSSUnitValue> kHz(double value) { return CSSUnitValue::create(value, "khz"); }
+    static Ref<CSSUnitValue> hz(double value) { return CSSUnitValue::create(value, "hz"_s); }
+    static Ref<CSSUnitValue> kHz(double value) { return CSSUnitValue::create(value, "khz"_s); }
 
 
     // <resolution>
-    static Ref<CSSUnitValue> dpi(double value) { return CSSUnitValue::create(value, "dpi"); }
-    static Ref<CSSUnitValue> dpcm(double value) { return CSSUnitValue::create(value, "dpcm"); }
-    static Ref<CSSUnitValue> dppx(double value) { return CSSUnitValue::create(value, "dppx"); }
+    static Ref<CSSUnitValue> dpi(double value) { return CSSUnitValue::create(value, "dpi"_s); }
+    static Ref<CSSUnitValue> dpcm(double value) { return CSSUnitValue::create(value, "dpcm"_s); }
+    static Ref<CSSUnitValue> dppx(double value) { return CSSUnitValue::create(value, "dppx"_s); }
 
 
     // <flex>
-    static Ref<CSSUnitValue> fr(double value) { return CSSUnitValue::create(value, "fr"); }
+    static Ref<CSSUnitValue> fr(double value) { return CSSUnitValue::create(value, "fr"_s); }
 
 
 private:

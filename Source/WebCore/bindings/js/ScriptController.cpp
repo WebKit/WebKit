@@ -633,7 +633,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
         auto scope = DECLARE_CATCH_SCOPE(globalObject.vm());
         auto jsArgument = serializedArgument->deserialize(globalObject, &globalObject);
         if (UNLIKELY(scope.exception())) {
-            errorMessage = "Unable to deserialize argument to execute asynchronous JavaScript function";
+            errorMessage = "Unable to deserialize argument to execute asynchronous JavaScript function"_s;
             break;
         }
 

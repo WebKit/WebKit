@@ -176,7 +176,7 @@ bool ObjcArray::setValueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
     }
 
     if (index > [_array count]) {
-        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."));
+        throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."_s));
         return false;
     }
     
@@ -188,7 +188,7 @@ bool ObjcArray::setValueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
         [_array insertObject:(__bridge id)oValue.objectValue atIndex:index];
         return true;
     } @catch(NSException* localException) {
-        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."));
+        throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."_s));
         return false;
     }
 }
@@ -199,13 +199,13 @@ JSValue ObjcArray::valueAt(JSGlobalObject* lexicalGlobalObject, unsigned int ind
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (index > [_array count])
-        return throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."));
+        return throwException(lexicalGlobalObject, scope, createRangeError(lexicalGlobalObject, "Index exceeds array size."_s));
     @try {
         id obj = [_array objectAtIndex:index];
         if (obj)
             return convertObjcValueToValue (lexicalGlobalObject, &obj, ObjcObjectType, m_rootObject.get());
     } @catch(NSException* localException) {
-        return throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."));
+        return throwException(lexicalGlobalObject, scope, createError(lexicalGlobalObject, "Objective-C exception."_s));
     }
     return jsUndefined();
 }

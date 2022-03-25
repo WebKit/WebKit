@@ -375,7 +375,7 @@ String FontFace::unicodeRange() const
     m_backing->updateStyleIfNeeded();
     const auto& rangesWrapped = m_backing->ranges();
     if (!rangesWrapped)
-        return "U+0-10FFFF";
+        return "U+0-10FFFF"_s;
     auto ranges = rangesWrapped.value();
     if (!ranges.size())
         return "U+0-10FFFF"_s;

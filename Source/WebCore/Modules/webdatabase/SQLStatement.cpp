@@ -126,7 +126,7 @@ bool SQLStatement::execute(Database& db)
     // If this is the case, they might be trying to do something fishy or malicious
     if (statement->bindParameterCount() != m_arguments.size()) {
         LOG(StorageAPI, "Bind parameter count doesn't match number of question marks");
-        m_error = SQLError::create(SQLError::SYNTAX_ERR, "number of '?'s in statement string does not match argument count");
+        m_error = SQLError::create(SQLError::SYNTAX_ERR, "number of '?'s in statement string does not match argument count"_s);
         return false;
     }
 
@@ -234,19 +234,19 @@ bool SQLStatement::performCallback(SQLTransaction& transaction)
 void SQLStatement::setDatabaseDeletedError()
 {
     ASSERT(!m_error && !m_resultSet);
-    m_error = SQLError::create(SQLError::UNKNOWN_ERR, "unable to execute statement, because the user deleted the database");
+    m_error = SQLError::create(SQLError::UNKNOWN_ERR, "unable to execute statement, because the user deleted the database"_s);
 }
 
 void SQLStatement::setVersionMismatchedError()
 {
     ASSERT(!m_error && !m_resultSet);
-    m_error = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match");
+    m_error = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match"_s);
 }
 
 void SQLStatement::setFailureDueToQuota()
 {
     ASSERT(!m_error && !m_resultSet);
-    m_error = SQLError::create(SQLError::QUOTA_ERR, "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space");
+    m_error = SQLError::create(SQLError::QUOTA_ERR, "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space"_s);
 }
 
 void SQLStatement::clearFailureDueToQuota()

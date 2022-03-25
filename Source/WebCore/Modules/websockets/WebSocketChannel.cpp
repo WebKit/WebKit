@@ -287,7 +287,7 @@ void WebSocketChannel::didOpenSocketStream(SocketStreamHandle& handle)
         cookieRequestHeaderFieldProxy = CookieJar::cookieRequestHeaderFieldProxy(*m_document, m_handshake->httpURLForAuthenticationAndCookies());
     handle.sendHandshake(WTFMove(handshakeMessage), WTFMove(cookieRequestHeaderFieldProxy), [this, protectedThis = Ref { *this }] (bool success, bool didAccessSecureCookies) {
         if (!success)
-            fail("Failed to send WebSocket handshake.");
+            fail("Failed to send WebSocket handshake."_s);
 
         if (didAccessSecureCookies && m_document)
             m_document->setSecureCookiesAccessed();
@@ -340,7 +340,7 @@ void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle& handle, co
         return;
     if (!appendToBuffer(data, length)) {
         m_shouldDiscardReceivedData = true;
-        fail("Ran out of memory while receiving WebSocket data.");
+        fail("Ran out of memory while receiving WebSocket data."_s);
         return;
     }
     while (!m_suspended && m_client && !m_buffer.isEmpty()) {
@@ -571,7 +571,7 @@ bool WebSocketChannel::processFrame()
     }
 
     if (frame.masked) {
-        fail("A server must not mask any frames that it sends to the client.");
+        fail("A server must not mask any frames that it sends to the client."_s);
         return false;
     }
 
@@ -591,7 +591,7 @@ bool WebSocketChannel::processFrame()
     // A new data frame is received before the previous continuous frame finishes.
     // Note that control frames are allowed to come in the middle of continuous frames.
     if (m_hasContinuousFrame && frame.opCode != WebSocketFrame::OpCodeContinuation && !WebSocketFrame::isControlOpCode(frame.opCode)) {
-        fail("Received new data frame but previous continuous frame is unfinished.");
+        fail("Received new data frame but previous continuous frame is unfinished."_s);
         return false;
     }
 
@@ -601,7 +601,7 @@ bool WebSocketChannel::processFrame()
     case WebSocketFrame::OpCodeContinuation:
         // An unexpected continuation frame is received without any leading frame.
         if (!m_hasContinuousFrame) {
-            fail("Received unexpected continuation frame.");
+            fail("Received unexpected continuation frame."_s);
             return false;
         }
         m_continuousFrameData.append(frame.payload, frame.payloadLength);
@@ -620,7 +620,7 @@ bool WebSocketChannel::processFrame()
                 else
                     message = emptyString();
                 if (message.isNull())
-                    fail("Could not decode a text frame as UTF-8.");
+                    fail("Could not decode a text frame as UTF-8."_s);
                 else
                     m_client->didReceiveMessage(WTFMove(message));
             } else if (m_continuousFrameOpCode == WebSocketFrame::OpCodeBinary)
@@ -637,7 +637,7 @@ bool WebSocketChannel::processFrame()
                 message = emptyString();
             skipBuffer(frameEnd - m_buffer.data());
             if (message.isNull())
-                fail("Could not decode a text frame as UTF-8.");
+                fail("Could not decode a text frame as UTF-8."_s);
             else
                 m_client->didReceiveMessage(WTFMove(message));
         } else {
@@ -669,13 +669,13 @@ bool WebSocketChannel::processFrame()
             m_closeEventCode = CloseEventCodeNoStatusRcvd;
         else if (frame.payloadLength == 1) {
             m_closeEventCode = CloseEventCodeAbnormalClosure;
-            fail("Received a broken close frame containing an invalid size body.");
+            fail("Received a broken close frame containing an invalid size body."_s);
             return false;
         } else {
             m_closeEventCode = frame.payload[0] << 8 | frame.payload[1];
             if (m_closeEventCode == CloseEventCodeNoStatusRcvd || m_closeEventCode == CloseEventCodeAbnormalClosure || m_closeEventCode == CloseEventCodeTLSHandshake) {
                 m_closeEventCode = CloseEventCodeAbnormalClosure;
-                fail("Received a broken close frame containing a reserved status code.");
+                fail("Received a broken close frame containing a reserved status code."_s);
                 return false;
             }
         }
@@ -761,7 +761,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
         case QueuedFrameTypeString: {
             sendFrame(frame->opCode, frame->stringData.dataAsUInt8Ptr(), frame->stringData.length(), [this, protectedThis = Ref { *this }] (bool success) {
                 if (!success)
-                    fail("Failed to send WebSocket frame.");
+                    fail("Failed to send WebSocket frame."_s);
             });
             break;
         }
@@ -769,7 +769,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
         case QueuedFrameTypeVector:
             sendFrame(frame->opCode, frame->vectorData.data(), frame->vectorData.size(), [this, protectedThis = Ref { *this }] (bool success) {
                 if (!success)
-                    fail("Failed to send WebSocket frame.");
+                    fail("Failed to send WebSocket frame."_s);
             });
             break;
 
@@ -796,7 +796,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
                 m_blobLoaderStatus = BlobLoaderNotStarted;
                 sendFrame(frame->opCode, static_cast<const uint8_t*>(result->data()), result->byteLength(), [this, protectedThis = Ref { *this }] (bool success) {
                     if (!success)
-                        fail("Failed to send WebSocket frame.");
+                        fail("Failed to send WebSocket frame."_s);
                 });
                 break;
             }

@@ -1179,7 +1179,7 @@ static StructHandlers* createStructHandlerMap()
             return;
         // Try to find a matching valueWith<Foo>:context: method.
         auto type = adoptSystem<char[]>(method_copyReturnType(method));
-        StructHandlers::iterator iter = structHandlers->find(type.get());
+        StructHandlers::iterator iter = structHandlers->find(String { type.get() });
         if (iter == structHandlers->end())
             return;
         StructTagHandler& handler = iter->value;
@@ -1217,7 +1217,7 @@ static StructTagHandler* handerForStructTag(const char* encodedType)
 
     static StructHandlers* structHandlers = createStructHandlerMap();
 
-    StructHandlers::iterator iter = structHandlers->find(encodedType);
+    StructHandlers::iterator iter = structHandlers->find(String { encodedType });
     if (iter == structHandlers->end())
         return 0;
     return &iter->value;

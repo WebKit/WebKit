@@ -84,16 +84,16 @@ auto YouTubePluginReplacement::installReplacement(ShadowRoot& root) -> InstallRe
     root.appendChild(*m_embedShadowElement);
 
     auto iframeElement = HTMLIFrameElement::create(HTMLNames::iframeTag, m_parentElement->document());
-    if (m_attributes.contains("width"))
+    if (m_attributes.contains("width"_s))
         iframeElement->setAttributeWithoutSynchronization(HTMLNames::widthAttr, AtomString("100%", AtomString::ConstructFromLiteral));
 
-    const auto& heightValue = m_attributes.find("height");
+    const auto& heightValue = m_attributes.find("height"_s);
     if (heightValue != m_attributes.end()) {
         iframeElement->setAttribute(HTMLNames::styleAttr, AtomString("max-height: 100%", AtomString::ConstructFromLiteral));
         iframeElement->setAttributeWithoutSynchronization(HTMLNames::heightAttr, heightValue->value);
     }
 
-    iframeElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, youTubeURL(m_attributes.get("src")));
+    iframeElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, youTubeURL(m_attributes.get("src"_s)));
     iframeElement->setAttributeWithoutSynchronization(HTMLNames::frameborderAttr, AtomString("0", AtomString::ConstructFromLiteral));
     
     // Disable frame flattening for this iframe.
@@ -231,11 +231,11 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
     if (equalLettersIgnoringASCIICase(path, "/watch")) {
         if (!query.isEmpty()) {
             const auto& queryDictionary = queryKeysAndValues(query);
-            String videoID = valueForKey(queryDictionary, "v");
+            String videoID = valueForKey(queryDictionary, "v"_s);
             
             if (!videoID.isEmpty()) {
                 const auto& fragmentDictionary = queryKeysAndValues(url.fragmentIdentifier());
-                String timeID = valueForKey(fragmentDictionary, "t");
+                String timeID = valueForKey(fragmentDictionary, "t"_s);
                 return createYouTubeURL(videoID, timeID);
             }
         }
@@ -246,10 +246,10 @@ static URL processAndCreateYouTubeURL(const URL& url, bool& isYouTubeShortenedUR
             
             if (!query.isEmpty()) {
                 const auto& queryDictionary = queryKeysAndValues(query);
-                String videoID = valueForKey(queryDictionary, "v");
+                String videoID = valueForKey(queryDictionary, "v"_s);
                 
                 if (!videoID.isEmpty()) {
-                    String timeID = valueForKey(queryDictionary, "t");
+                    String timeID = valueForKey(queryDictionary, "t"_s);
                     return createYouTubeURL(videoID, timeID);
                 }
             }

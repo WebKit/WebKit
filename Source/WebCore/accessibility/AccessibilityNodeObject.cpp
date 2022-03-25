@@ -237,7 +237,7 @@ Document* AccessibilityNodeObject::document() const
 
 AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
 {
-    AXTRACE("AccessibilityNodeObject::determineAccessibilityRole");
+    AXTRACE("AccessibilityNodeObject::determineAccessibilityRole"_s);
     if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
         return m_ariaRole;
 

@@ -1,3 +1,511 @@
+2022-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Start preparing WebCore for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238336
+
+        Reviewed by Geoffrey Garen.
+
+        Start preparing WebCore for making the String(const char*) constructor explicit.
+        Making this constructor explicit helps catch at compile time cases where the ""_s
+        prefix is missing on String literals.
+
+        * Modules/applepay-ams-ui/ApplePayAMSUIPaymentHandler.cpp:
+        (WebCore::convertAndValidateApplePayAMSUIRequest):
+        * Modules/applepay/ApplePayContactField.cpp:
+        (WebCore::convertAndValidate):
+        * Modules/applepay/ApplePayMerchantCapability.cpp:
+        (WebCore::convertAndValidate):
+        * Modules/applepay/ApplePayRequestBase.cpp:
+        (WebCore::convertAndValidate):
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::create):
+        (WebCore::ApplePaySession::openPaymentSetup):
+        (WebCore::ApplePaySession::begin):
+        * Modules/applepay/ApplePaySetup.cpp:
+        (WebCore::ApplePaySetup::begin):
+        * Modules/applepay/PaymentInstallmentConfiguration.mm:
+        (WebCore::PaymentInstallmentConfiguration::create):
+        * Modules/applepay/PaymentRequestValidator.mm:
+        (WebCore::PaymentRequestValidator::validateTotal):
+        (WebCore::validateCountryCode):
+        (WebCore::validateCurrencyCode):
+        (WebCore::validateMerchantCapabilities):
+        (WebCore::validateSupportedNetworks):
+        (WebCore::validateShippingMethod):
+        * Modules/applepay/PaymentSession.cpp:
+        (WebCore::PaymentSession::canCreateSession):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::convertAndValidateApplePayRequest):
+        * Modules/applicationmanifest/ApplicationManifestParser.cpp:
+        (WebCore::ApplicationManifestParser::parseIcons):
+        (WebCore::ApplicationManifestParser::parseScope):
+        * Modules/cache/WindowOrWorkerGlobalScopeCaches.cpp:
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::sanitizeKeyids):
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::listDirectoryWithMetadata):
+        (WebCore::validatePathIsExpectedType):
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::packageFormData):
+        * Modules/fetch/FetchHeaders.cpp:
+        (WebCore::fillHeaderMap):
+        * Modules/fetch/FetchLoader.cpp:
+        (WebCore::FetchLoader::startLoadingBlobURL):
+        * Modules/filesystemaccess/FileSystemFileHandle.cpp:
+        (WebCore::FileSystemFileHandle::getFile):
+        (WebCore::FileSystemFileHandle::createSyncAccessHandle):
+        * Modules/filesystemaccess/FileSystemHandle.cpp:
+        (WebCore::FileSystemHandle::isSameEntry const):
+        (WebCore::FileSystemHandle::move):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::encode const):
+        (WebCore::IDBKeyData::decode):
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::includes):
+        * Modules/indexeddb/server/IDBSerialization.cpp:
+        (WebCore::serializeIDBKeyPath):
+        (WebCore::deserializeIDBKeyPath):
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::getAllDatabaseNamesAndVersions):
+        (WebCore::IDBServer::IDBServer::getOrigins const):
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebCore::IDBServer::removeAllDatabasesForFullOriginPath):
+        (WebCore::IDBServer::IDBServer::renameOrigin):
+        (WebCore::IDBServer::IDBServer::upgradeFilesIfNecessary):
+        (WebCore::IDBServer::IDBServer::upgradedDatabaseDirectory):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::generateKeyNumber):
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::updateIndexesForPutRecord):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::v1RecordsTableSchema):
+        (WebCore::IDBServer::v1RecordsTableSchemaAlternate):
+        (WebCore::IDBServer::v2RecordsTableSchema):
+        (WebCore::IDBServer::v2RecordsTableSchemaAlternate):
+        (WebCore::IDBServer::v1IndexRecordsTableSchema):
+        (WebCore::IDBServer::v1IndexRecordsTableSchemaAlternate):
+        (WebCore::IDBServer::v2IndexRecordsTableSchema):
+        (WebCore::IDBServer::v2IndexRecordsTableSchemaAlternate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::encodeDatabaseName):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::fullDatabasePathForDirectory):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedSetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::generateKeyNumber):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::createObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::clearObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::createIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAddAfterSpaceCheck):
+        (WebCore::IDBServer::UniqueIDBDatabase::getRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::getAllRecords):
+        (WebCore::IDBServer::UniqueIDBDatabase::getCount):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteRecord):
+        (WebCore::IDBServer::UniqueIDBDatabase::openCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::iterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        * Modules/indexeddb/shared/IDBIndexInfo.cpp:
+        (WebCore::IDBIndexInfo::loggingString const):
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::layoutTraitsClassName const):
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::MediaRecorder::create):
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::addVP9FullRangeVideoFlagToContentType):
+        (WebCore::MediaSource::isTypeSupported):
+        * Modules/mediastream/MediaTrackConstraints.cpp:
+        (WebCore::set):
+        (WebCore::convertToInternalForm):
+        * Modules/mediastream/RTCIceCandidate.cpp:
+        (WebCore::RTCIceCandidate::create):
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::setLocalDescription):
+        (WebCore::RTCPeerConnection::addIceCandidate):
+        (WebCore::RTCPeerConnection::iceServersFromConfiguration):
+        (WebCore::RTCPeerConnection::certificatesFromConfiguration):
+        (WebCore::RTCPeerConnection::initializeConfiguration):
+        (WebCore::RTCPeerConnection::setConfiguration):
+        (WebCore::RTCPeerConnection::chainOperation):
+        * Modules/mediastream/RTCRtpSFrameTransformer.cpp:
+        (WebCore::RTCRtpSFrameTransformer::transform):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::doCreateAnswer):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransceiverBackend.cpp:
+        (WebCore::toRtpCodecCapability):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::toException):
+        (WebCore::toRTCError):
+        * Modules/model-element/scenekit/SceneKitModelLoaderUSD.mm:
+        (WebCore::writeToTemporaryFile):
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::checkAndCanonicalizeDetails):
+        (WebCore::PaymentRequest::show):
+        * Modules/pictureinpicture/HTMLVideoElementPictureInPicture.cpp:
+        (WebCore::HTMLVideoElementPictureInPicture::requestPictureInPicture):
+        * Modules/plugins/YouTubePluginReplacement.cpp:
+        (WebCore::YouTubePluginReplacement::installReplacement):
+        (WebCore::processAndCreateYouTubeURL):
+        * Modules/speech/SpeechRecognitionCaptureSourceImpl.cpp:
+        (WebCore::SpeechRecognitionCaptureSourceImpl::updateDataSource):
+        (WebCore::SpeechRecognitionCaptureSourceImpl::sourceStopped):
+        (WebCore::SpeechRecognitionCaptureSourceImpl::sourceMutedChanged):
+        * Modules/speech/cocoa/WebSpeechRecognizerTaskMock.mm:
+        (-[WebSpeechRecognizerTaskMock audioSamplesAvailable:]):
+        * Modules/storage/StorageManager.cpp:
+        (WebCore::connectionInfo):
+        * Modules/web-locks/WebLockManager.cpp:
+        (WebCore::WebLockManager::signalToAbortTheRequest):
+        * Modules/webaudio/AudioListener.cpp:
+        (WebCore::AudioListener::AudioListener):
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::setAutomationRate):
+        * Modules/webaudio/AudioParamTimeline.cpp:
+        (WebCore::AudioParamTimeline::insertEvent):
+        * Modules/webaudio/BiquadFilterNode.cpp:
+        (WebCore::BiquadFilterNode::getFrequencyResponse):
+        * Modules/webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::BiquadProcessor):
+        * Modules/webaudio/DelayProcessor.cpp:
+        (WebCore::DelayProcessor::DelayProcessor):
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::create):
+        (WebCore::WaveShaperNode::setCurveForBindings):
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinatorInternal::needsAppIdQuirks):
+        * Modules/webauthn/WebAuthenticationUtils.cpp:
+        (WebCore::buildAttestationMap):
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp:
+        (fido::readCTAPMakeCredentialResponse):
+        * Modules/webauthn/fido/Pin.cpp:
+        (fido::pin::KeyAgreementResponse::parseFromCOSE):
+        (fido::pin::TokenRequest::tryCreate):
+        * Modules/webauthn/fido/U2fResponseConverter.cpp:
+        (fido::readU2fRegisterResponse):
+        * Modules/webdatabase/ChangeVersionWrapper.cpp:
+        (WebCore::ChangeVersionWrapper::performPreflight):
+        * Modules/webdatabase/DOMWindowWebDatabase.cpp:
+        (WebCore::DOMWindowWebDatabase::openDatabase):
+        * Modules/webdatabase/Database.cpp:
+        (WebCore::Database::Database):
+        (WebCore::Database::runTransaction):
+        * Modules/webdatabase/DatabaseAuthorizer.cpp:
+        (WebCore::DatabaseAuthorizer::addAllowedFunctions):
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::trackerDatabasePath const):
+        (WebCore::DatabaseTracker::openTrackerDatabase):
+        * Modules/webdatabase/SQLStatement.cpp:
+        (WebCore::SQLStatement::execute):
+        (WebCore::SQLStatement::setDatabaseDeletedError):
+        (WebCore::SQLStatement::setVersionMismatchedError):
+        (WebCore::SQLStatement::setFailureDueToQuota):
+        * Modules/webdatabase/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::callErrorCallbackDueToInterruption):
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::deliverTransactionCallback):
+        (WebCore::SQLTransaction::deliverStatementCallback):
+        (WebCore::SQLTransaction::handleCurrentStatementError):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::subprotocolSeparator):
+        (WebCore::WebSocket::close):
+        (WebCore::WebSocket::suspend):
+        * Modules/websockets/WebSocket.h:
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didOpenSocketStream):
+        (WebCore::WebSocketChannel::didReceiveSocketStreamData):
+        (WebCore::WebSocketChannel::processFrame):
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue):
+        * Modules/websockets/WebSocketDeflateFramer.cpp:
+        (WebCore::WebSocketExtensionDeflateFrame::processResponse):
+        (WebCore::WebSocketDeflateFramer::deflate):
+        (WebCore::WebSocketDeflateFramer::inflate):
+        * Modules/websockets/WebSocketExtensionDispatcher.cpp:
+        (WebCore::WebSocketExtensionDispatcher::processHeaderValue):
+        * Modules/websockets/WebSocketFrame.cpp:
+        (WebCore::WebSocketFrame::parseFrame):
+        * Modules/webxr/WebXRWebGLLayer.cpp:
+        (WebCore::createOpaqueFramebuffer):
+        (WebCore::WebXRWebGLLayer::create):
+        * accessibility/AXImage.cpp:
+        (WebCore::AXImage::imageOverlayElements):
+        * accessibility/AXLogger.cpp:
+        (WebCore::AXLogger::AXLogger):
+        (WebCore::AXLogger::log):
+        (WebCore::operator<<):
+        * accessibility/AXLogger.h:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::isModalElement const):
+        (WebCore::createFromRenderer):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::textChanged):
+        (WebCore::AXObjectCache::handleMenuOpened):
+        (WebCore::AXObjectCache::notificationPostTimerFired):
+        (WebCore::AXObjectCache::passwordNotificationPostTimerFired):
+        (WebCore::AXObjectCache::postNotification):
+        (WebCore::AXObjectCache::handleMenuItemSelected):
+        (WebCore::AXObjectCache::selectedStateChanged):
+        (WebCore::AXObjectCache::postTextStateChangeNotification):
+        (WebCore::AXObjectCache::handleModalChange):
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        (WebCore::AXObjectCache::updateIsolatedTree):
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::determineAccessibilityRole):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::readOnlyValue const):
+        (WebCore::AccessibilityObject::autoCompleteValue const):
+        (WebCore::AccessibilityObject::currentValue const):
+        (WebCore::AccessibilityObject::replaceTextInRange):
+        (WebCore::AccessibilityObject::computedRoleString const):
+        (WebCore::nodeHasPresentationRole):
+        (WebCore::AccessibilityObject::resolvedEditingStyles const):
+        (WebCore::Accessibility::isRadioButtonInDifferentAdhocGroup):
+        (WebCore::Accessibility::findMatchingObjects):
+        * accessibility/AccessibilityObjectInterface.h:
+        (WebCore::accessibilityRoleToString):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::renderObjectIsObservable const):
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        (WebCore::AccessibilityRenderObject::updateRoleAfterChildrenCreation):
+        (WebCore::AccessibilityRenderObject::liveRegionRelevant const):
+        * accessibility/AccessibilityTableCell.cpp:
+        (WebCore::AccessibilityTableCell::computeAccessibilityIsIgnored const):
+        * accessibility/AccessibilityTree.cpp:
+        (WebCore::AccessibilityTree::nodeHasTreeItemChild const):
+        (WebCore::AccessibilityTree::isTreeValid const):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        (WebCore::AXIsolatedObject::classList const):
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::AXIsolatedTree):
+        (WebCore::AXIsolatedTree::~AXIsolatedTree):
+        (WebCore::AXIsolatedTree::clear):
+        (WebCore::AXIsolatedTree::treeForID):
+        (WebCore::AXIsolatedTree::create):
+        (WebCore::AXIsolatedTree::removeTreeForPageID):
+        (WebCore::AXIsolatedTree::objectsForIDs const):
+        (WebCore::AXIsolatedTree::generateSubtree):
+        (WebCore::AXIsolatedTree::collectNodeChangesForSubtree):
+        (WebCore::AXIsolatedTree::updateNode):
+        (WebCore::AXIsolatedTree::updateNodeProperty):
+        (WebCore::AXIsolatedTree::updateChildren):
+        (WebCore::AXIsolatedTree::focusedNode):
+        (WebCore::AXIsolatedTree::rootNode):
+        (WebCore::AXIsolatedTree::setRootNode):
+        (WebCore::AXIsolatedTree::setFocusedNodeID):
+        (WebCore::AXIsolatedTree::updateLoadingProgress):
+        (WebCore::AXIsolatedTree::removeNode):
+        (WebCore::AXIsolatedTree::removeSubtreeFromNodeMap):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        * accessibility/mac/AccessibilityObjectMac.mm:
+        (WebCore::AccessibilityObject::subrolePlatformString const):
+        (WebCore::AccessibilityObject::rolePlatformDescription const):
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::getTiming const):
+        * animation/DocumentTimeline.cpp:
+        (WebCore::DocumentTimeline::animate):
+        * animation/EffectTiming.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::CSSPropertyIDToIDLAttributeName):
+        (WebCore::KeyframeEffect::getKeyframes):
+        * bindings/js/GCController.cpp:
+        (WebCore::GCController::GCController):
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::upgradeElement):
+        * bindings/js/JSDOMConvertNumbers.h:
+        (WebCore::Converter<IDLFloat>::convert):
+        * bindings/js/JSExecStateInstrumentation.h:
+        (WebCore::JSExecState::instrumentFunction):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::callInWorld):
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcArray::setValueAt const):
+        (JSC::Bindings::ObjcArray::valueAt const):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::put):
+        (JSC::RuntimeArray::putByIndex):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::throwRuntimeObjectInvalidAccessError):
+        * contentextensions/ContentExtensionActions.cpp:
+        (WebCore::ContentExtensions::ModifyHeadersAction::ModifyHeaderInfo::parse):
+        (WebCore::ContentExtensions::RedirectAction::parse):
+        (WebCore::ContentExtensions::RedirectAction::URLTransformAction::parse):
+        (WebCore::ContentExtensions::RedirectAction::URLTransformAction::QueryTransform::parse):
+        (WebCore::ContentExtensions::RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::parse):
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::compileRuleList):
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::getDomainList):
+        (WebCore::ContentExtensions::loadTrigger):
+        (WebCore::ContentExtensions::loadAction):
+        * contentextensions/SerializedNFA.cpp:
+        (WebCore::ContentExtensions::SerializedNFA::serialize):
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::URLFilterParser::statusString):
+        * contentextensions/URLFilterParser.h:
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::addAuthenticatedEncryptionWarningIfNecessary):
+        * crypto/algorithms/CryptoAlgorithmAES_CBC.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CFB.h:
+        * crypto/algorithms/CryptoAlgorithmAES_CTR.h:
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.h:
+        * crypto/algorithms/CryptoAlgorithmAES_KW.h:
+        * crypto/algorithms/CryptoAlgorithmECDH.h:
+        * crypto/algorithms/CryptoAlgorithmECDSA.h:
+        * crypto/algorithms/CryptoAlgorithmHKDF.h:
+        * crypto/algorithms/CryptoAlgorithmHMAC.h:
+        * crypto/algorithms/CryptoAlgorithmPBKDF2.h:
+        * crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_OAEP.h:
+        * crypto/algorithms/CryptoAlgorithmRSA_PSS.h:
+        * crypto/algorithms/CryptoAlgorithmSHA1.h:
+        * crypto/algorithms/CryptoAlgorithmSHA224.h:
+        * crypto/algorithms/CryptoAlgorithmSHA256.h:
+        * crypto/algorithms/CryptoAlgorithmSHA384.h:
+        * crypto/algorithms/CryptoAlgorithmSHA512.h:
+        * crypto/keys/CryptoKeyAES.cpp:
+        (WebCore::CryptoKeyAES::exportJwk const):
+        * crypto/keys/CryptoKeyEC.cpp:
+        (WebCore::CryptoKeyEC::exportJwk const):
+        * crypto/keys/CryptoKeyHMAC.cpp:
+        (WebCore::CryptoKeyHMAC::exportJwk const):
+        * crypto/keys/CryptoKeyRSA.cpp:
+        (WebCore::CryptoKeyRSA::exportJwk const):
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::isSupportedFormat const):
+        * css/CSSGridTemplateAreasValue.cpp:
+        (WebCore::stringForPosition):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::unitTypeString):
+        * css/CSSSubgridValue.cpp:
+        (WebCore::CSSSubgridValue::customCSSText const):
+        * css/DOMCSSNamespace.cpp:
+        (WebCore::valueWithoutImportant):
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        (WebCore::DOMCSSRegisterCustomProperty::registerProperty):
+        * css/DeprecatedCSSOMValue.cpp:
+        (WebCore::DeprecatedCSSOMValue::cssText const):
+        * css/FontFace.cpp:
+        (WebCore::FontFace::unicodeRange const):
+        * css/MediaQueryExpression.cpp:
+        (WebCore::MediaQueryExpression::serialize const):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getLayeredShorthandValue const):
+        (WebCore::MutableStyleProperties::setCustomProperty):
+        * css/makevalues.pl:
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::skipUntilComma):
+        (WebCore::MediaQueryParser::parseInternal):
+        * css/parser/SizesAttributeParser.cpp:
+        (WebCore::SizesAttributeParser::mediaConditionMatches):
+        * css/typedom/CSSNumericFactory.h:
+        * css/typedom/CSSNumericValue.cpp:
+        (WebCore::CSSNumericValue::multiplyInternal):
+        (WebCore::CSSNumericValue::to):
+        (WebCore::CSSNumericValue::parse):
+        * css/typedom/CSSStyleValueFactory.cpp:
+        (WebCore::CSSStyleValueFactory::reifyValue):
+        * editing/cocoa/HTMLConverter.mm:
+        (HTMLConverterCaches::propertyValueForNode):
+        (HTMLConverter::_processElement):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::attachmentForData):
+        * loader/cocoa/BundleResourceLoader.mm:
+        (WebCore::BundleResourceLoader::loadResourceFromBundle):
+        * loader/mac/LoaderNSURLExtras.mm:
+        (suggestedFilenameWithMIMEType):
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::HistoricResourceUsageData::HistoricResourceUsageData):
+        (WebCore::drawCpuHistory):
+        (WebCore::drawGCHistory):
+        (WebCore::drawMemHistory):
+        * page/cocoa/SettingsBaseCocoa.mm:
+        (WebCore::SettingsBase::initializeDefaultFontFamilies):
+        * page/mac/PageMac.mm:
+        (WebCore::Page::platformInitialize):
+        * platform/LocalizedStrings.cpp:
+        (WebCore::AXARIAContentGroupText):
+        * platform/LocalizedStrings.h:
+        * platform/Pasteboard.h:
+        * platform/PasteboardCustomData.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::updateNowPlayingInfo):
+        * platform/cocoa/KeyEventCocoa.mm:
+        (WebCore::keyIdentifierForCharCode):
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::imageTypeToFakeFilename):
+        (WebCore::Pasteboard::read):
+        * platform/cocoa/PasteboardCustomDataCocoa.mm:
+        (WebCore::PasteboardCustomData::cocoaType):
+        * platform/graphics/FourCC.h:
+        (WTF::LogArgument<WebCore::FourCC>::toString):
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::validateDepthStencil):
+        * platform/graphics/avfoundation/CDMPrivateMediaSourceAVFObjC.mm:
+        (WebCore::CDMPrivateMediaSourceAVFObjC::parseKeySystem):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests):
+        * platform/graphics/avfoundation/objc/CDMSessionMediaSourceAVFObjC.mm:
+        (WebCore::CDMSessionMediaSourceAVFObjC::storagePath const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::streamSession):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataForTrackID):
+        * platform/mac/DataDetectorHighlight.mm:
+        (WebCore::DataDetectorHighlight::fadeIn):
+        (WebCore::DataDetectorHighlight::fadeOut):
+        * platform/mac/PasteboardMac.mm:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::keyIdentifierForKeyEvent):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        (WebCore::PlatformPasteboard::write):
+        (WebCore::createPasteboardItem):
+        * platform/mac/StringUtilities.mm:
+        (WebCore::wildcardRegexPatternString):
+        * platform/mac/ThreadCheck.mm:
+        (WebCoreReportThreadViolation):
+        * platform/mac/UserAgentMac.mm:
+        (WebCore::standardUserAgentWithApplicationName):
+        * platform/network/ResourceErrorBase.cpp:
+        * platform/network/ResourceErrorBase.h:
+        * platform/network/cocoa/RangeResponseGenerator.mm:
+        (WebCore::synthesizedResponseForRange):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::iconForAttachment):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.h:
+        * svg/SVGPathSegImpl.h:
+        * svg/SVGRadialGradientElement.h:
+        * svg/properties/SVGPropertyTraits.h:
+        (WebCore::SVGPropertyTraits<bool>::toString):
+        * testing/MockContentFilterSettings.h:
+        (WebCore::MockContentFilterSettings::unblockURLHost):
+        * xml/XPathValue.h:
+        (WebCore::XPath::Value::Value):
+        * xml/XSLStyleSheet.h:
+
 2022-03-25  Tyler Wilcock  <tyler_w@apple.com>
 
         Include object IDs in logs and assert in AXIsolatedTree and WebAccessibilityObjectWrapperBase

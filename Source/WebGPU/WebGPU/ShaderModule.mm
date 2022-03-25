@@ -88,9 +88,10 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(id<MTLDevice> device, std::
         const auto& hint = suppliedHints.hints[i];
         if (hint.nextInChain)
             return nullptr;
-        hints.add(hint.key, WebGPU::fromAPI(hint.hint.layout));
+        String hintKey { hint.key };
+        hints.add(hintKey, WebGPU::fromAPI(hint.hint.layout));
         auto convertedPipelineLayout = ShaderModule::convertPipelineLayout(WebGPU::fromAPI(hint.hint.layout));
-        wgslHints.add(hint.key, WTFMove(convertedPipelineLayout));
+        wgslHints.add(hintKey, WTFMove(convertedPipelineLayout));
     }
     auto prepareResult = WGSL::prepare(std::get<WGSL::SuccessfulCheck>(checkResult).ast, wgslHints);
     auto library = ShaderModule::createLibrary(device, prepareResult.msl, WTFMove(label));

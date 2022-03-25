@@ -260,7 +260,7 @@ void LibWebRTCPeerConnectionBackend::doCreateOffer(RTCOfferOptions&& options)
 void LibWebRTCPeerConnectionBackend::doCreateAnswer(RTCAnswerOptions&&)
 {
     if (!m_isRemoteDescriptionSet) {
-        createAnswerFailed(Exception { InvalidStateError, "No remote description set" });
+        createAnswerFailed(Exception { InvalidStateError, "No remote description set"_s });
         return;
     }
     m_endpoint->doCreateAnswer();

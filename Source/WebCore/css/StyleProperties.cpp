@@ -768,7 +768,7 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
 
                         auto maskId = downcast<CSSPrimitiveValue>(*value).valueID();
                         auto originId = downcast<CSSPrimitiveValue>(*originValue).valueID();
-                        return maskId == originId && (!isCSSWideValueKeyword(getValueName(maskId)) || value->isImplicitInitialValue());
+                        return maskId == originId && (!isCSSWideValueKeyword(StringView { getValueName(maskId) }) || value->isImplicitInitialValue());
                     }
                     if (property == CSSPropertyMaskOrigin) {
                         // We can skip serializing mask-origin if it's the initial value, but only if we're also going to skip serializing
@@ -1154,7 +1154,7 @@ bool MutableStyleProperties::setCustomProperty(const Document* document, const S
 
     parserContext.mode = cssParserMode();
 
-    String syntax = "*";
+    String syntax = "*"_s;
     auto* registered = document ? document->getCSSRegisteredCustomPropertySet().get(propertyName) : nullptr;
 
     if (registered)

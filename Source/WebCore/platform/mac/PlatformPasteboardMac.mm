@@ -217,7 +217,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& origin) const
 {
     ListHashSet<String> domPasteboardTypes;
-    if (NSData *serializedCustomData = [m_pasteboard dataForType:@(PasteboardCustomData::cocoaType())]) {
+    if (NSData *serializedCustomData = [m_pasteboard dataForType:@(PasteboardCustomData::cocoaType().characters())]) {
         auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());
         if (data.origin() == origin) {
             for (auto& type : data.orderedTypes())
@@ -227,7 +227,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
 
     NSArray<NSString *> *allTypes = [m_pasteboard types];
     for (NSString *type in allTypes) {
-        if ([type isEqualToString:@(PasteboardCustomData::cocoaType())])
+        if ([type isEqualToString:@(PasteboardCustomData::cocoaType().characters())])
             continue;
 
         if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type))
@@ -254,7 +254,7 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
 
     bool shouldWriteCustomData = data.hasSameOriginCustomData() || !data.origin().isEmpty();
     if (shouldWriteCustomData)
-        [types addObject:@(PasteboardCustomData::cocoaType())];
+        [types addObject:@(PasteboardCustomData::cocoaType().characters())];
 
     [m_pasteboard declareTypes:types owner:nil];
 
@@ -275,7 +275,7 @@ int64_t PlatformPasteboard::write(const PasteboardCustomData& data)
 
     if (shouldWriteCustomData) {
         if (auto serializedCustomData = data.createSharedBuffer()->createNSData())
-            [m_pasteboard setData:serializedCustomData.get() forType:@(PasteboardCustomData::cocoaType())];
+            [m_pasteboard setData:serializedCustomData.get() forType:@(PasteboardCustomData::cocoaType().characters())];
     }
 
     return changeCount();
@@ -499,7 +499,7 @@ static RetainPtr<NSPasteboardItem> createPasteboardItem(const PasteboardCustomDa
 
     if (data.hasSameOriginCustomData() || !data.origin().isEmpty()) {
         if (auto serializedCustomData = data.createSharedBuffer()->createNSData())
-            [item setData:serializedCustomData.get() forType:@(PasteboardCustomData::cocoaType())];
+            [item setData:serializedCustomData.get() forType:@(PasteboardCustomData::cocoaType().characters())];
     }
 
     data.forEachPlatformStringOrBuffer([&] (auto& type, auto& stringOrBuffer) {

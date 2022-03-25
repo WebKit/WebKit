@@ -52,7 +52,7 @@ bool writeAllToFile(FileSystem::PlatformFileHandle file, const T& container)
 std::optional<SerializedNFA> SerializedNFA::serialize(NFA&& nfa)
 {
     auto file = FileSystem::invalidPlatformFileHandle;
-    auto filename = FileSystem::openTemporaryFile("SerializedNFA", file);
+    auto filename = FileSystem::openTemporaryFile("SerializedNFA"_s, file);
     if (!FileSystem::isHandleValid(file))
         return std::nullopt;
 

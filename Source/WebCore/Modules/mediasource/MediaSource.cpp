@@ -650,7 +650,7 @@ static ContentType addVP9FullRangeVideoFlagToContentType(const ContentType& type
         if (position == notFound)
             continue;
 
-        rawType.insert(".00", position + codec.length());
+        rawType.insert(".00"_s, position + codec.length());
         return ContentType(rawType);
     }
     return type;
@@ -895,7 +895,7 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     if (context.isDocument() && downcast<Document>(context).quirks().needsVP9FullRangeFlagQuirk())
         contentType = addVP9FullRangeVideoFlagToContentType(contentType);
 
-    String codecs = contentType.parameter("codecs");
+    String codecs = contentType.parameter("codecs"_s);
 
     // 2. If type does not contain a valid MIME type string, then return false.
     if (contentType.containerType().isEmpty())

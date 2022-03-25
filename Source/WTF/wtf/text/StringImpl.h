@@ -973,7 +973,8 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::createSubstringSharingImpl(StringImpl&
 
 inline Ref<StringImpl> StringImpl::createFromLiteral(ASCIILiteral literal)
 {
-    return createFromLiteral(literal.characters(), literal.length());
+    auto length = literal.length();
+    return length ? createFromLiteral(literal.characters(), length) : Ref { *StringImpl::empty() };
 }
 
 template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tryCreateUninitialized(unsigned length, CharacterType*& output)

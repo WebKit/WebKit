@@ -310,7 +310,7 @@ void RuntimeObject::getOwnPropertyNames(JSObject* object, JSGlobalObject* lexica
 
 Exception* throwRuntimeObjectInvalidAccessError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope)
 {
-    return throwException(lexicalGlobalObject, scope, createReferenceError(lexicalGlobalObject, "Trying to access object from destroyed plug-in."));
+    return throwException(lexicalGlobalObject, scope, createReferenceError(lexicalGlobalObject, "Trying to access object from destroyed plug-in."_s));
 }
 
 JSC::GCClient::IsoSubspace* RuntimeObject::subspaceForImpl(JSC::VM& vm)

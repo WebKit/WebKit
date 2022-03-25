@@ -201,15 +201,15 @@ auto ModifyHeadersAction::ModifyHeaderInfo::parse(const JSON::Value& infoValue) 
     if (!object)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersInfoNotADictionary);
 
-    String operation = object->getString("operation");
+    String operation = object->getString("operation"_s);
     if (!operation)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingOperation);
 
-    String header = object->getString("header");
+    String header = object->getString("header"_s);
     if (!header)
         return makeUnexpected(ContentExtensionError::JSONModifyHeadersMissingHeader);
 
-    String value = object->getString("value");
+    String value = object->getString("value"_s);
 
     if (operation == "set") {
         if (!value)
@@ -289,27 +289,27 @@ size_t ModifyHeadersAction::ModifyHeaderInfo::serializedLength(Span<const uint8_
 
 Expected<RedirectAction, std::error_code> RedirectAction::parse(const JSON::Object& redirectObject, const String& urlFilter)
 {
-    auto redirect = redirectObject.getObject("redirect");
+    auto redirect = redirectObject.getObject("redirect"_s);
     if (!redirect)
         return makeUnexpected(ContentExtensionError::JSONRedirectMissing);
 
-    if (auto extensionPath = redirect->getString("extension-path"); !!extensionPath) {
+    if (auto extensionPath = redirect->getString("extension-path"_s); !!extensionPath) {
         if (!extensionPath.startsWith('/'))
             return makeUnexpected(ContentExtensionError::JSONRedirectExtensionPathDoesNotStartWithSlash);
         return RedirectAction { ExtensionPathAction { WTFMove(extensionPath) } };
     }
 
-    if (auto regexSubstitution = redirect->getString("regex-substitution"); !!regexSubstitution)
+    if (auto regexSubstitution = redirect->getString("regex-substitution"_s); !!regexSubstitution)
         return RedirectAction { RegexSubstitutionAction { WTFMove(regexSubstitution), urlFilter } };
 
-    if (auto transform = redirect->getObject("transform")) {
+    if (auto transform = redirect->getObject("transform"_s)) {
         auto parsedTransform = URLTransformAction::parse(*transform);
         if (!parsedTransform)
             return makeUnexpected(parsedTransform.error());
         return RedirectAction { WTFMove(*parsedTransform) };
     }
 
-    if (auto urlString = redirect->getString("url"); !!urlString) {
+    if (auto urlString = redirect->getString("url"_s); !!urlString) {
         URL url { urlString };
         if (!url.isValid())
             return makeUnexpected(ContentExtensionError::JSONRedirectURLInvalid);
@@ -483,15 +483,15 @@ void RedirectAction::RegexSubstitutionAction::applyToURL(URL& url) const
 auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) -> Expected<URLTransformAction, std::error_code>
 {
     URLTransformAction action;
-    if (auto fragment = transform.getString("fragment"); !!fragment) {
+    if (auto fragment = transform.getString("fragment"_s); !!fragment) {
         if (!fragment.isEmpty() && !fragment.startsWith('#'))
             return makeUnexpected(ContentExtensionError::JSONRedirectInvalidFragment);
         action.fragment = WTFMove(fragment);
     }
-    action.host = transform.getString("host");
-    action.password = transform.getString("password");
-    action.path = transform.getString("path");
-    auto port = transform.getString("port");
+    action.host = transform.getString("host"_s);
+    action.password = transform.getString("password"_s);
+    action.path = transform.getString("path"_s);
+    auto port = transform.getString("port"_s);
     if (!!port) {
         if (port.isEmpty())
             action.port = { std::optional<uint16_t> { } };
@@ -503,7 +503,7 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
         }
     }
 
-    if (auto uncanonicalizedScheme = transform.getString("scheme"); !!uncanonicalizedScheme) {
+    if (auto uncanonicalizedScheme = transform.getString("scheme"_s); !!uncanonicalizedScheme) {
         auto scheme = WTF::URLParser::maybeCanonicalizeScheme(uncanonicalizedScheme);
         if (!scheme)
             return makeUnexpected(ContentExtensionError::JSONRedirectURLSchemeInvalid);
@@ -511,14 +511,14 @@ auto RedirectAction::URLTransformAction::parse(const JSON::Object& transform) ->
             return makeUnexpected(ContentExtensionError::JSONRedirectToJavaScriptURL);
         action.scheme = WTFMove(*scheme);
     }
-    action.username = transform.getString("username");
-    if (auto queryTransform = transform.getObject("query-transform")) {
+    action.username = transform.getString("username"_s);
+    if (auto queryTransform = transform.getObject("query-transform"_s)) {
         auto parsedQueryTransform = QueryTransform::parse(*queryTransform);
         if (!parsedQueryTransform)
             return makeUnexpected(parsedQueryTransform.error());
         action.queryTransform = *parsedQueryTransform;
     } else {
-        auto query = transform.getString("query");
+        auto query = transform.getString("query"_s);
         if (!query.isEmpty() && !query.startsWith('?'))
             return makeUnexpected(ContentExtensionError::JSONRedirectInvalidQuery);
         action.queryTransform = WTFMove(query);
@@ -699,7 +699,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
 {
     QueryTransform parsedQueryTransform;
 
-    if (auto removeParametersValue = queryTransform.getValue("remove-parameters")) {
+    if (auto removeParametersValue = queryTransform.getValue("remove-parameters"_s)) {
         auto removeParametersArray = removeParametersValue->asArray();
         if (!removeParametersArray)
             return makeUnexpected(ContentExtensionError::JSONRemoveParametersNotStringArray);
@@ -713,7 +713,7 @@ auto RedirectAction::URLTransformAction::QueryTransform::parse(const JSON::Objec
         parsedQueryTransform.removeParams = WTFMove(removeParametersVector);
     }
 
-    if (auto addOrReplaceParametersValue = queryTransform.getValue("add-or-replace-parameters")) {
+    if (auto addOrReplaceParametersValue = queryTransform.getValue("add-or-replace-parameters"_s)) {
         auto addOrReplaceParametersArray = addOrReplaceParametersValue->asArray();
         if (!addOrReplaceParametersArray)
             return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersNotArray);
@@ -858,16 +858,16 @@ auto RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::parse(co
     if (!keyValue)
         return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersKeyValueNotADictionary);
 
-    String key = keyValue->getString("key");
+    String key = keyValue->getString("key"_s);
     if (!key)
         return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingKeyString);
 
-    String value = keyValue->getString("value");
+    String value = keyValue->getString("value"_s);
     if (!value)
         return makeUnexpected(ContentExtensionError::JSONAddOrReplaceParametersKeyValueMissingValueString);
 
     bool replaceOnly { false };
-    if (auto boolean = keyValue->getBoolean("replace-only"))
+    if (auto boolean = keyValue->getBoolean("replace-only"_s))
         replaceOnly = *boolean;
 
     return { { WTFMove(key), replaceOnly, WTFMove(value) } };

@@ -510,8 +510,9 @@ void GraphicsContextGLANGLE::validateDepthStencil(const char* packedDepthStencil
     // FIXME: Since the constructors of various platforms are not shared, we initialize this here.
     // Upon constructing the context, always initialize the extensions that the WebGLRenderingContext* will
     // use to turn on feature flags.
-    if (supportsExtension(packedDepthStencilExtension)) {
-        ensureExtensionEnabled(packedDepthStencilExtension);
+    String packedDepthStencilExtensionString { packedDepthStencilExtension };
+    if (supportsExtension(packedDepthStencilExtensionString)) {
+        ensureExtensionEnabled(packedDepthStencilExtensionString);
         m_internalDepthStencilFormat = GL_DEPTH24_STENCIL8_OES;
     } else
         m_internalDepthStencilFormat = GL_DEPTH_COMPONENT16;
@@ -528,17 +529,17 @@ void GraphicsContextGLANGLE::validateDepthStencil(const char* packedDepthStencil
 
     if (attrs.antialias) {
         // FIXME: must adjust this when upgrading to WebGL 2.0 / OpenGL ES 3.0 support.
-        if (!supportsExtension("GL_ANGLE_framebuffer_multisample") || !supportsExtension("GL_ANGLE_framebuffer_blit") || !supportsExtension("GL_OES_rgb8_rgba8")) {
+        if (!supportsExtension("GL_ANGLE_framebuffer_multisample"_s) || !supportsExtension("GL_ANGLE_framebuffer_blit"_s) || !supportsExtension("GL_OES_rgb8_rgba8"_s)) {
             attrs.antialias = false;
             setContextAttributes(attrs);
         } else {
-            ensureExtensionEnabled("GL_ANGLE_framebuffer_multisample");
-            ensureExtensionEnabled("GL_ANGLE_framebuffer_blit");
-            ensureExtensionEnabled("GL_OES_rgb8_rgba8");
+            ensureExtensionEnabled("GL_ANGLE_framebuffer_multisample"_s);
+            ensureExtensionEnabled("GL_ANGLE_framebuffer_blit"_s);
+            ensureExtensionEnabled("GL_OES_rgb8_rgba8"_s);
         }
     } else if (attrs.preserveDrawingBuffer) {
         // Needed for preserveDrawingBuffer:true support without antialiasing.
-        ensureExtensionEnabled("GL_ANGLE_framebuffer_blit");
+        ensureExtensionEnabled("GL_ANGLE_framebuffer_blit"_s);
     }
 }
 

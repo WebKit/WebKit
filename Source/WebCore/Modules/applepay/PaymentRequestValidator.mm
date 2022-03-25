@@ -95,18 +95,18 @@ ExceptionOr<void> PaymentRequestValidator::validate(const ApplePaySessionPayment
 ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePayLineItem& total)
 {
     if (!total.label)
-        return Exception { TypeError, "Missing total label." };
+        return Exception { TypeError, "Missing total label."_s };
 
     if (!total.amount)
-        return Exception { TypeError, "Missing total amount." };
+        return Exception { TypeError, "Missing total amount."_s };
 
     double amount = [NSDecimalNumber decimalNumberWithString:total.amount locale:@{ NSLocaleDecimalSeparator : @"." }].doubleValue;
 
     if (amount < 0)
-        return Exception { TypeError, "Total amount must not be negative." };
+        return Exception { TypeError, "Total amount must not be negative."_s };
 
     if (amount > 100000000)
-        return Exception { TypeError, "Total amount is too big." };
+        return Exception { TypeError, "Total amount is too big."_s };
 
     return { };
 }
@@ -114,7 +114,7 @@ ExceptionOr<void> PaymentRequestValidator::validateTotal(const ApplePayLineItem&
 static ExceptionOr<void> validateCountryCode(const String& countryCode)
 {
     if (!countryCode)
-        return Exception { TypeError, "Missing country code." };
+        return Exception { TypeError, "Missing country code."_s };
 
     for (auto *countryCodePtr = uloc_getISOCountries(); *countryCodePtr; ++countryCodePtr) {
         if (countryCode == *countryCodePtr)
@@ -127,7 +127,7 @@ static ExceptionOr<void> validateCountryCode(const String& countryCode)
 static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
 {
     if (!currencyCode)
-        return Exception { TypeError, "Missing currency code." };
+        return Exception { TypeError, "Missing currency code."_s };
 
     UErrorCode errorCode = U_ZERO_ERROR;
     auto currencyCodes = std::unique_ptr<UEnumeration, ICUDeleter<uenum_close>>(ucurr_openISOCurrencies(UCURR_ALL, &errorCode));
@@ -144,7 +144,7 @@ static ExceptionOr<void> validateCurrencyCode(const String& currencyCode)
 static ExceptionOr<void> validateMerchantCapabilities(const ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     if (!merchantCapabilities.supports3DS && !merchantCapabilities.supportsEMV && !merchantCapabilities.supportsCredit && !merchantCapabilities.supportsDebit)
-        return Exception { TypeError, "Missing merchant capabilities." };
+        return Exception { TypeError, "Missing merchant capabilities."_s };
 
     return { };
 }
@@ -152,7 +152,7 @@ static ExceptionOr<void> validateMerchantCapabilities(const ApplePaySessionPayme
 static ExceptionOr<void> validateSupportedNetworks(const Vector<String>& supportedNetworks)
 {
     if (supportedNetworks.isEmpty())
-        return Exception { TypeError, "Missing supported networks." };
+        return Exception { TypeError, "Missing supported networks."_s };
 
     return { };
 }
@@ -161,7 +161,7 @@ static ExceptionOr<void> validateShippingMethod(const ApplePayShippingMethod& sh
 {
     NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:shippingMethod.amount locale:@{ NSLocaleDecimalSeparator : @"." }];
     if (amount.integerValue < 0)
-        return Exception { TypeError, "Shipping method amount must be greater than or equal to zero." };
+        return Exception { TypeError, "Shipping method amount must be greater than or equal to zero."_s };
 
     return { };
 }

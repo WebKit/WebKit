@@ -891,7 +891,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             if (!object)
                 return false;
 
-            auto keyIDString = object->getString("keyID");
+            auto keyIDString = object->getString("keyID"_s);
             if (!keyIDString)
                 return false;
 
@@ -911,8 +911,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
 
             auto& request = m_currentRequest.value().requests[foundIndex];
 
-            auto payloadFindResults = object->find("payload");
-            auto errorFindResults = object->find("error");
+            auto payloadFindResults = object->find("payload"_s);
+            auto errorFindResults = object->find("error"_s);
             bool hasPayload = payloadFindResults != object->end();
             bool hasError = errorFindResults != object->end();
 
@@ -1253,8 +1253,8 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRequests(Vector<Retai
             auto entry = JSON::Object::create();
             auto& keyID = requestData.first;
             auto& payload = requestData.second;
-            entry->setString("keyID", base64EncodeToString(keyID->makeContiguous()->data(), keyID->size()));
-            entry->setString("payload", base64EncodeToString(payload.get().bytes, payload.get().length));
+            entry->setString("keyID"_s, base64EncodeToString(keyID->makeContiguous()->data(), keyID->size()));
+            entry->setString("payload"_s, base64EncodeToString(payload.get().bytes, payload.get().length));
             requestJSON->pushObject(WTFMove(entry));
         }
         auto requestBuffer = utf8Buffer(requestJSON->toJSONString());

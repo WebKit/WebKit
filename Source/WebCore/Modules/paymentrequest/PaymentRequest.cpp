@@ -216,7 +216,7 @@ static ExceptionOr<std::tuple<String, Vector<String>>> checkAndCanonicalizeDetai
 
                 auto addResult = seenShippingOptionIDs.add(shippingOption.id);
                 if (!addResult.isNewEntry)
-                    return Exception { TypeError, "Shipping option IDs must be unique." };
+                    return Exception { TypeError, "Shipping option IDs must be unique."_s };
 
 #if ENABLE(PAYMENT_REQUEST_SELECTED_SHIPPING_OPTION)
                 if (shippingOption.selected)
@@ -375,7 +375,7 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
 
     auto* window = document.frame()->window();
     if (!window || !window->consumeTransientActivation()) {
-        promise.reject(Exception { SecurityError, "show() must be triggered by user activation." });
+        promise.reject(Exception { SecurityError, "show() must be triggered by user activation."_s });
         return;
     }
 

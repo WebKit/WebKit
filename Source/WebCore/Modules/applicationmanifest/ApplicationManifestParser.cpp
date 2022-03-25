@@ -282,9 +282,9 @@ static bool isInScope(const URL& scopeURL, const URL& targetURL)
 
 URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const URL& documentURL, const URL& startURL)
 {
-    URL defaultScope { startURL, "./" };
+    URL defaultScope { startURL, "./"_s };
 
-    auto value = manifest.getValue("scope");
+    auto value = manifest.getValue("scope"_s);
     if (!value)
         return defaultScope;
 

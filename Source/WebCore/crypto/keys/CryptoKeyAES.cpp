@@ -106,7 +106,7 @@ RefPtr<CryptoKeyAES> CryptoKeyAES::importJwk(CryptoAlgorithmIdentifier algorithm
 JsonWebKey CryptoKeyAES::exportJwk() const
 {
     JsonWebKey result;
-    result.kty = "oct";
+    result.kty = "oct"_s;
     result.k = base64URLEncodeToString(m_key);
     result.key_ops = usages();
     result.ext = extractable();

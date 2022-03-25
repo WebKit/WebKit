@@ -158,7 +158,7 @@ RefPtr<AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& r
     if (fidoAttestationStatement.empty())
         return nullptr;
 
-    auto attestationObject = buildAttestationObject(WTFMove(authData), "fido-u2f", WTFMove(fidoAttestationStatement), attestation);
+    auto attestationObject = buildAttestationObject(WTFMove(authData), "fido-u2f"_s, WTFMove(fidoAttestationStatement), attestation);
 
     return AuthenticatorAttestationResponse::create(credentialId, attestationObject, attachment);
 }

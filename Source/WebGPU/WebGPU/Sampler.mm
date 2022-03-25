@@ -136,7 +136,7 @@ RefPtr<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
     // "If validating GPUSamplerDescriptor(this, descriptor) returns false:"
     if (!validateCreateSampler(*this, descriptor)) {
         // "Generate a validation error."
-        generateAValidationError("Validation failure.");
+        generateAValidationError("Validation failure."_s);
 
         // "Create a new invalid GPUSampler and return the result."
         return nullptr;

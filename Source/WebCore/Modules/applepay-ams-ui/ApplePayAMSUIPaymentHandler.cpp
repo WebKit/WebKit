@@ -39,7 +39,7 @@ namespace WebCore {
 static ExceptionOr<ApplePayAMSUIRequest> convertAndValidateApplePayAMSUIRequest(Document& document, JSC::JSValue data)
 {
     if (data.isEmpty())
-        return Exception { TypeError, "Missing payment method data." };
+        return Exception { TypeError, "Missing payment method data."_s };
 
     auto throwScope = DECLARE_THROW_SCOPE(document.vm());
     auto applePayAMSUIRequest = convertDictionary<ApplePayAMSUIRequest>(*document.globalObject(), data);

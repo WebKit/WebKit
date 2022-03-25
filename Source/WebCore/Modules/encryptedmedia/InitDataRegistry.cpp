@@ -105,7 +105,7 @@ static RefPtr<FragmentedSharedBuffer> sanitizeKeyids(const FragmentedSharedBuffe
     auto kidsArray = JSON::Array::create();
     for (auto& buffer : keyIDBuffer.value())
         kidsArray->pushString(base64URLEncodeToString(buffer->makeContiguous()->data(), buffer->size()));
-    object->setArray("kids", WTFMove(kidsArray));
+    object->setArray("kids"_s, WTFMove(kidsArray));
 
     CString jsonData = object->toJSONString().utf8();
     return SharedBuffer::create(jsonData.data(), jsonData.length());

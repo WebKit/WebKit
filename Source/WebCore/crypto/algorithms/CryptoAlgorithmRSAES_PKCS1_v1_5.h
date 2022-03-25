@@ -35,7 +35,7 @@ class CryptoKeyRSA;
 
 class CryptoAlgorithmRSAES_PKCS1_v1_5 final : public CryptoAlgorithm {
 public:
-    static constexpr const char* s_name = "RSAES-PKCS1-v1_5";
+    static constexpr ASCIILiteral s_name = "RSAES-PKCS1-v1_5"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSAES_PKCS1_v1_5;
     static Ref<CryptoAlgorithm> create();
 

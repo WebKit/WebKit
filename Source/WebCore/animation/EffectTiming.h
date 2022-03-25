@@ -33,12 +33,12 @@
 namespace WebCore {
 
 struct EffectTiming {
-    std::variant<double, String> duration { "auto" };
+    std::variant<double, String> duration { "auto"_s };
     double delay { 0 };
     double endDelay { 0 };
     double iterationStart { 0 };
     double iterations { 1 };
-    String easing { "linear" };
+    String easing { "linear"_s };
     FillMode fill { FillMode::Auto };
     PlaybackDirection direction { PlaybackDirection::Normal };
 };

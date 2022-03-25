@@ -36,7 +36,7 @@ class CryptoKeyRaw;
 
 class CryptoAlgorithmHKDF final : public CryptoAlgorithm {
 public:
-    static constexpr const char* s_name = "HKDF";
+    static constexpr ASCIILiteral s_name = "HKDF"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::HKDF;
     static Ref<CryptoAlgorithm> create();
 

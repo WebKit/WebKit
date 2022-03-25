@@ -72,7 +72,7 @@ static ExceptionOr<ConnectionInfo> connectionInfo(NavigatorBase* navigator)
         return Exception { InvalidStateError, "Origin is invalid"_s };
 
     if (!origin->canAccessStorageManager())
-        return Exception { TypeError, "Origin should not access storage" };
+        return Exception { TypeError, "Origin should not access storage"_s };
 
     if (is<Document>(context)) {
         if (auto* connection = downcast<Document>(context)->storageConnection())

@@ -2619,7 +2619,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return icon;
     }
 
-    return Icon::createIconForUTI("public.data");
+    return Icon::createIconForUTI("public.data"_s);
 }
 
 RetainPtr<NSImage> RenderThemeMac::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)

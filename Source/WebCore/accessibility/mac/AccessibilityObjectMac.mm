@@ -222,20 +222,20 @@ String AccessibilityObject::subrolePlatformString() const
     }
 
     if (isMeter())
-        return "AXMeter";
+        return "AXMeter"_s;
 
 #if ENABLE(MODEL_ELEMENT)
     if (isModel())
-        return "AXModel";
+        return "AXModel"_s;
 #endif
 
     AccessibilityRole role = roleValue();
     if (role == AccessibilityRole::HorizontalRule)
-        return "AXContentSeparator";
+        return "AXContentSeparator"_s;
     if (role == AccessibilityRole::ToggleButton)
         return NSAccessibilityToggleSubrole;
     if (role == AccessibilityRole::Footer)
-        return "AXFooter";
+        return "AXFooter"_s;
     if (role == AccessibilityRole::SpinButtonPart) {
         if (isIncrementor())
             return NSAccessibilityIncrementArrowSubrole;
@@ -243,79 +243,79 @@ String AccessibilityObject::subrolePlatformString() const
     }
 
     if (isFileUploadButton())
-        return "AXFileUploadButton";
+        return "AXFileUploadButton"_s;
 
     if (isTreeItem())
         return NSAccessibilityOutlineRowSubrole;
 
     if (isFieldset())
-        return "AXFieldset";
+        return "AXFieldset"_s;
 
     if (isList()) {
         if (isUnorderedList() || isOrderedList())
-            return "AXContentList";
+            return "AXContentList"_s;
         if (isDescriptionList())
-            return "AXDescriptionList";
+            return "AXDescriptionList"_s;
     }
 
     // ARIA content subroles.
     switch (role) {
     case AccessibilityRole::LandmarkBanner:
-        return "AXLandmarkBanner";
+        return "AXLandmarkBanner"_s;
     case AccessibilityRole::LandmarkComplementary:
-        return "AXLandmarkComplementary";
+        return "AXLandmarkComplementary"_s;
     case AccessibilityRole::LandmarkContentInfo:
-        return "AXLandmarkContentInfo";
+        return "AXLandmarkContentInfo"_s;
     case AccessibilityRole::LandmarkMain:
-        return "AXLandmarkMain";
+        return "AXLandmarkMain"_s;
     case AccessibilityRole::LandmarkNavigation:
-        return "AXLandmarkNavigation";
+        return "AXLandmarkNavigation"_s;
     case AccessibilityRole::LandmarkDocRegion:
     case AccessibilityRole::LandmarkRegion:
-        return "AXLandmarkRegion";
+        return "AXLandmarkRegion"_s;
     case AccessibilityRole::LandmarkSearch:
-        return "AXLandmarkSearch";
+        return "AXLandmarkSearch"_s;
     case AccessibilityRole::ApplicationAlert:
-        return "AXApplicationAlert";
+        return "AXApplicationAlert"_s;
     case AccessibilityRole::ApplicationAlertDialog:
-        return "AXApplicationAlertDialog";
+        return "AXApplicationAlertDialog"_s;
     case AccessibilityRole::ApplicationDialog:
-        return "AXApplicationDialog";
+        return "AXApplicationDialog"_s;
     case AccessibilityRole::ApplicationGroup:
     case AccessibilityRole::ApplicationTextGroup:
     case AccessibilityRole::Feed:
     case AccessibilityRole::Footnote:
-        return "AXApplicationGroup";
+        return "AXApplicationGroup"_s;
     case AccessibilityRole::ApplicationLog:
-        return "AXApplicationLog";
+        return "AXApplicationLog"_s;
     case AccessibilityRole::ApplicationMarquee:
-        return "AXApplicationMarquee";
+        return "AXApplicationMarquee"_s;
     case AccessibilityRole::ApplicationStatus:
-        return "AXApplicationStatus";
+        return "AXApplicationStatus"_s;
     case AccessibilityRole::ApplicationTimer:
-        return "AXApplicationTimer";
+        return "AXApplicationTimer"_s;
     case AccessibilityRole::Document:
     case AccessibilityRole::GraphicsDocument:
-        return "AXDocument";
+        return "AXDocument"_s;
     case AccessibilityRole::DocumentArticle:
-        return "AXDocumentArticle";
+        return "AXDocumentArticle"_s;
     case AccessibilityRole::DocumentMath:
-        return "AXDocumentMath";
+        return "AXDocumentMath"_s;
     case AccessibilityRole::DocumentNote:
-        return "AXDocumentNote";
+        return "AXDocumentNote"_s;
     case AccessibilityRole::UserInterfaceTooltip:
-        return "AXUserInterfaceTooltip";
+        return "AXUserInterfaceTooltip"_s;
     case AccessibilityRole::TabPanel:
-        return "AXTabPanel";
+        return "AXTabPanel"_s;
     case AccessibilityRole::Definition:
-        return "AXDefinition";
+        return "AXDefinition"_s;
     case AccessibilityRole::DescriptionListTerm:
     case AccessibilityRole::Term:
-        return "AXTerm";
+        return "AXTerm"_s;
     case AccessibilityRole::DescriptionListDetail:
-        return "AXDescription";
+        return "AXDescription"_s;
     case AccessibilityRole::WebApplication:
-        return "AXWebApplication";
+        return "AXWebApplication"_s;
         // Default doesn't return anything, so roles defined below can be chosen.
     default:
         break;
@@ -323,51 +323,51 @@ String AccessibilityObject::subrolePlatformString() const
 
     if (role == AccessibilityRole::MathElement) {
         if (isMathFraction())
-            return "AXMathFraction";
+            return "AXMathFraction"_s;
         if (isMathFenced())
-            return "AXMathFenced";
+            return "AXMathFenced"_s;
         if (isMathSubscriptSuperscript())
-            return "AXMathSubscriptSuperscript";
+            return "AXMathSubscriptSuperscript"_s;
         if (isMathRow())
-            return "AXMathRow";
+            return "AXMathRow"_s;
         if (isMathUnderOver())
-            return "AXMathUnderOver";
+            return "AXMathUnderOver"_s;
         if (isMathSquareRoot())
-            return "AXMathSquareRoot";
+            return "AXMathSquareRoot"_s;
         if (isMathRoot())
-            return "AXMathRoot";
+            return "AXMathRoot"_s;
         if (isMathText())
-            return "AXMathText";
+            return "AXMathText"_s;
         if (isMathNumber())
-            return "AXMathNumber";
+            return "AXMathNumber"_s;
         if (isMathIdentifier())
-            return "AXMathIdentifier";
+            return "AXMathIdentifier"_s;
         if (isMathTable())
-            return "AXMathTable";
+            return "AXMathTable"_s;
         if (isMathTableRow())
-            return "AXMathTableRow";
+            return "AXMathTableRow"_s;
         if (isMathTableCell())
-            return "AXMathTableCell";
+            return "AXMathTableCell"_s;
         if (isMathFenceOperator())
-            return "AXMathFenceOperator";
+            return "AXMathFenceOperator"_s;
         if (isMathSeparatorOperator())
-            return "AXMathSeparatorOperator";
+            return "AXMathSeparatorOperator"_s;
         if (isMathOperator())
-            return "AXMathOperator";
+            return "AXMathOperator"_s;
         if (isMathMultiscript())
-            return "AXMathMultiscript";
+            return "AXMathMultiscript"_s;
     }
 
     if (role == AccessibilityRole::Video)
-        return "AXVideo";
+        return "AXVideo"_s;
     if (role == AccessibilityRole::Audio)
-        return "AXAudio";
+        return "AXAudio"_s;
     if (role == AccessibilityRole::Details)
-        return "AXDetails";
+        return "AXDetails"_s;
     if (role == AccessibilityRole::Summary)
-        return "AXSummary";
+        return "AXSummary"_s;
     if (role == AccessibilityRole::Time)
-        return "AXTimeGroup";
+        return "AXTimeGroup"_s;
 
     if (isMediaTimeline())
         return NSAccessibilityTimelineSubrole;
@@ -376,25 +376,25 @@ String AccessibilityObject::subrolePlatformString() const
         return NSAccessibilitySwitchSubrole;
 
     if (role == AccessibilityRole::Insertion)
-        return "AXInsertStyleGroup";
+        return "AXInsertStyleGroup"_s;
     if (role == AccessibilityRole::Deletion)
-        return "AXDeleteStyleGroup";
+        return "AXDeleteStyleGroup"_s;
     if (role == AccessibilityRole::Superscript)
-        return "AXSuperscriptStyleGroup";
+        return "AXSuperscriptStyleGroup"_s;
     if (role == AccessibilityRole::Subscript)
-        return "AXSubscriptStyleGroup";
+        return "AXSubscriptStyleGroup"_s;
 
     switch (role) {
     case AccessibilityRole::RubyBase:
-        return "AXRubyBase";
+        return "AXRubyBase"_s;
     case AccessibilityRole::RubyBlock:
-        return "AXRubyBlock";
+        return "AXRubyBlock"_s;
     case AccessibilityRole::RubyInline:
-        return "AXRubyInline";
+        return "AXRubyInline"_s;
     case AccessibilityRole::RubyRun:
-        return "AXRubyRun";
+        return "AXRubyRun"_s;
     case AccessibilityRole::RubyText:
-        return "AXRubyText";
+        return "AXRubyText"_s;
     default:
         break;
     }
@@ -403,17 +403,17 @@ String AccessibilityObject::subrolePlatformString() const
         using namespace HTMLNames;
         auto tag = tagName();
         if (tag == kbdTag)
-            return @"AXKeyboardInputStyleGroup";
+            return "AXKeyboardInputStyleGroup"_s;
         if (tag == codeTag)
-            return @"AXCodeStyleGroup";
+            return "AXCodeStyleGroup"_s;
         if (tag == preTag)
-            return @"AXPreformattedStyleGroup";
+            return "AXPreformattedStyleGroup"_s;
         if (tag == sampTag)
-            return @"AXSampleStyleGroup";
+            return "AXSampleStyleGroup"_s;
         if (tag == varTag)
-            return @"AXVariableStyleGroup";
+            return "AXVariableStyleGroup"_s;
         if (tag == citeTag)
-            return @"AXCiteStyleGroup";
+            return "AXCiteStyleGroup"_s;
         ASSERT_NOT_REACHED();
         return String();
     }
@@ -436,7 +436,7 @@ String AccessibilityObject::rolePlatformDescription() const
 
         switch (role) {
         case AccessibilityRole::Audio:
-            return localizedMediaControlElementString("AudioElement");
+            return localizedMediaControlElementString("AudioElement"_s);
         case AccessibilityRole::Definition:
             return AXDefinitionText();
         case AccessibilityRole::DescriptionListTerm:
@@ -453,9 +453,9 @@ String AccessibilityObject::rolePlatformDescription() const
         case AccessibilityRole::Mark:
             return AXMarkText();
         case AccessibilityRole::Video:
-            return localizedMediaControlElementString("VideoElement");
+            return localizedMediaControlElementString("VideoElement"_s);
         case AccessibilityRole::GraphicsDocument:
-            return AXARIAContentGroupText(@"ARIADocument");
+            return AXARIAContentGroupText("ARIADocument");
         default:
             return String();
         }

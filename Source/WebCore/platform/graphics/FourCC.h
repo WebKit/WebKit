@@ -85,7 +85,7 @@ namespace WTF {
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<WebCore::FourCC> {
-    static String toString(const WebCore::FourCC& code) { return code.string().data(); }
+    static String toString(const WebCore::FourCC& code) { return String { code.string().data() }; }
 };
 
 } // namespace WTF

@@ -149,35 +149,35 @@ void IDBKeyData::isolatedCopy(const IDBKeyData& source, IDBKeyData& destination)
 
 void IDBKeyData::encode(KeyedEncoder& encoder) const
 {
-    encoder.encodeBool("null", m_isNull);
+    encoder.encodeBool("null"_s, m_isNull);
     if (m_isNull)
         return;
 
-    encoder.encodeEnum("type", m_type);
+    encoder.encodeEnum("type"_s, m_type);
 
     switch (m_type) {
     case IndexedDB::KeyType::Invalid:
         return;
     case IndexedDB::KeyType::Array: {
         auto& array = std::get<Vector<IDBKeyData>>(m_value);
-        encoder.encodeObjects("array", array.begin(), array.end(), [](KeyedEncoder& encoder, const IDBKeyData& key) {
+        encoder.encodeObjects("array"_s, array.begin(), array.end(), [](KeyedEncoder& encoder, const IDBKeyData& key) {
             key.encode(encoder);
         });
         return;
     }
     case IndexedDB::KeyType::Binary: {
         auto* data = std::get<ThreadSafeDataBuffer>(m_value).data();
-        encoder.encodeBool("hasBinary", !!data);
+        encoder.encodeBool("hasBinary"_s, !!data);
         if (data)
-            encoder.encodeBytes("binary", data->data(), data->size());
+            encoder.encodeBytes("binary"_s, data->data(), data->size());
         return;
     }
     case IndexedDB::KeyType::String:
-        encoder.encodeString("string", std::get<String>(m_value));
+        encoder.encodeString("string"_s, std::get<String>(m_value));
         return;
     case IndexedDB::KeyType::Date:
     case IndexedDB::KeyType::Number:
-        encoder.encodeDouble("number", std::get<double>(m_value));
+        encoder.encodeDouble("number"_s, std::get<double>(m_value));
         return;
     case IndexedDB::KeyType::Max:
     case IndexedDB::KeyType::Min:
@@ -189,7 +189,7 @@ void IDBKeyData::encode(KeyedEncoder& encoder) const
 
 bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
 {
-    if (!decoder.decodeBool("null", result.m_isNull))
+    if (!decoder.decodeBool("null"_s, result.m_isNull))
         return false;
 
     if (result.m_isNull)
@@ -205,7 +205,7 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
             || value == IndexedDB::KeyType::Number
             || value == IndexedDB::KeyType::Min;
     };
-    if (!decoder.decodeEnum("type", result.m_type, enumFunction))
+    if (!decoder.decodeEnum("type"_s, result.m_type, enumFunction))
         return false;
 
     if (result.m_type == IndexedDB::KeyType::Invalid)
@@ -219,26 +219,26 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
 
     if (result.m_type == IndexedDB::KeyType::String) {
         result.m_value = String();
-        return decoder.decodeString("string", std::get<String>(result.m_value));
+        return decoder.decodeString("string"_s, std::get<String>(result.m_value));
     }
 
     if (result.m_type == IndexedDB::KeyType::Number || result.m_type == IndexedDB::KeyType::Date) {
         result.m_value = 0.0;
-        return decoder.decodeDouble("number", std::get<double>(result.m_value));
+        return decoder.decodeDouble("number"_s, std::get<double>(result.m_value));
     }
 
     if (result.m_type == IndexedDB::KeyType::Binary) {
         result.m_value = ThreadSafeDataBuffer();
 
         bool hasBinaryData;
-        if (!decoder.decodeBool("hasBinary", hasBinaryData))
+        if (!decoder.decodeBool("hasBinary"_s, hasBinaryData))
             return false;
 
         if (!hasBinaryData)
             return true;
 
         Vector<uint8_t> bytes;
-        if (!decoder.decodeBytes("binary", bytes))
+        if (!decoder.decodeBytes("binary"_s, bytes))
             return false;
 
         result.m_value = ThreadSafeDataBuffer::create(WTFMove(bytes));
@@ -252,7 +252,7 @@ bool IDBKeyData::decode(KeyedDecoder& decoder, IDBKeyData& result)
     };
     
     result.m_value = Vector<IDBKeyData>();
-    return decoder.decodeObjects("array", std::get<Vector<IDBKeyData>>(result.m_value), arrayFunction);
+    return decoder.decodeObjects("array"_s, std::get<Vector<IDBKeyData>>(result.m_value), arrayFunction);
 }
 
 int IDBKeyData::compare(const IDBKeyData& other) const

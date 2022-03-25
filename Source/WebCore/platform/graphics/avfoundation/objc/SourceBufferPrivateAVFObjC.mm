@@ -600,7 +600,7 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
     }
 
     m_keyIDs = WTFMove(keyIDs.value());
-    player->initializationDataEncountered("sinf", m_initData->tryCreateArrayBuffer());
+    player->initializationDataEncountered("sinf"_s, m_initData->tryCreateArrayBuffer());
 
     m_waitingForKey = true;
     player->waitingForKeyChanged();

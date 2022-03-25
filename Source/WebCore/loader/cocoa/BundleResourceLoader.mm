@@ -65,13 +65,13 @@ void loadResourceFromBundle(ResourceLoader& loader, const String& subdirectory)
 
         RunLoop::main().dispatch([protectedLoader = WTFMove(protectedLoader), url = WTFMove(url).isolatedCopy(), buffer = SharedBuffer::create(data)]() mutable {
             auto mimeType = MIMETypeRegistry::mimeTypeForPath(url.path());
-            ResourceResponse response { url, mimeType, static_cast<long long>(buffer->size()), MIMETypeRegistry::isTextMIMEType(mimeType) ? "UTF-8"_s : nullptr };
+            ResourceResponse response { url, mimeType, static_cast<long long>(buffer->size()), MIMETypeRegistry::isTextMIMEType(mimeType) ? "UTF-8"_s : String() };
             response.setHTTPStatusCode(200);
             response.setHTTPStatusText("OK"_s);
             response.setSource(ResourceResponse::Source::Network);
 
             // Allow images to load.
-            response.addHTTPHeaderField(HTTPHeaderName::AccessControlAllowOrigin, "*");
+            response.addHTTPHeaderField(HTTPHeaderName::AccessControlAllowOrigin, "*"_s);
 
             protectedLoader->deliverResponseAndData(response, WTFMove(buffer));
         });

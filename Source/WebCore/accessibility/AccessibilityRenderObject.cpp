@@ -2787,11 +2787,11 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer)
     if (!node)
         return false;
     
-    if (nodeHasRole(node, "listbox") || (is<RenderBoxModelObject>(renderer) && downcast<RenderBoxModelObject>(renderer).isListBox()))
+    if (nodeHasRole(node, "listbox"_s) || (is<RenderBoxModelObject>(renderer) && downcast<RenderBoxModelObject>(renderer).isListBox()))
         return true;
 
     // Textboxes should send out notifications.
-    if (nodeHasRole(node, "textbox") || (is<Element>(*node) && contentEditableAttributeIsEnabled(downcast<Element>(node))))
+    if (nodeHasRole(node, "textbox"_s) || (is<Element>(*node) && contentEditableAttributeIsEnabled(downcast<Element>(node))))
         return true;
     
     return false;
@@ -2840,7 +2840,7 @@ bool AccessibilityRenderObject::shouldIgnoreAttributeRole() const
 
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 {
-    AXTRACE("AccessibilityRenderObject::determineAccessibilityRole");
+    AXTRACE("AccessibilityRenderObject::determineAccessibilityRole"_s);
     if (!m_renderer)
         return AccessibilityRole::Unknown;
 
@@ -3280,7 +3280,7 @@ void AccessibilityRenderObject::addListItemMarker()
 
 void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
 {
-    AXTRACE("AccessibilityRenderObject::updateRoleAfterChildrenCreation");
+    AXTRACE("AccessibilityRenderObject::updateRoleAfterChildrenCreation"_s);
     // If a menu does not have valid menuitem children, it should not be exposed as a menu.
     auto role = roleValue();
     if (role == AccessibilityRole::Menu) {
@@ -3364,7 +3364,7 @@ const String AccessibilityRenderObject::liveRegionRelevant() const
 
     // Default aria-relevant = "additions text".
     if (relevant.isEmpty())
-        return "additions text";
+        return "additions text"_s;
     
     return relevant;
 }

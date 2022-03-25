@@ -1,3 +1,17 @@
+2022-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Start preparing WebCore for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238336
+
+        Reviewed by Geoffrey Garen.
+
+        Start preparing WebCore for making the String(const char*) constructor explicit.
+        Making this constructor explicit helps catch at compile time cases where the ""_s
+        prefix is missing on String literals.
+
+        * wtf/text/TextStream.h:
+        (WTF::TextStream::dumpProperty):
+
 2022-03-24  Chris Dumez  <cdumez@apple.com>
 
         String::split() should take in a StringView instead of a String

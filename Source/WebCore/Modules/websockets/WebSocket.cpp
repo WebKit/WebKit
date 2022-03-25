@@ -137,9 +137,9 @@ static unsigned saturateAdd(unsigned a, unsigned b)
     return a + b;
 }
 
-const char* WebSocket::subprotocolSeparator()
+ASCIILiteral WebSocket::subprotocolSeparator()
 {
-    return ", ";
+    return ", "_s;
 }
 
 WebSocket::WebSocket(ScriptExecutionContext& context)
@@ -430,7 +430,7 @@ ExceptionOr<void> WebSocket::close(std::optional<unsigned short> optionalCode, c
         return { };
     if (m_state == CONNECTING) {
         m_state = CLOSING;
-        m_channel->fail("WebSocket is closed before the connection is established.");
+        m_channel->fail("WebSocket is closed before the connection is established."_s);
         return { };
     }
     m_state = CLOSING;
@@ -520,7 +520,7 @@ void WebSocket::suspend(ReasonForSuspension reason)
 
     if (reason == ReasonForSuspension::BackForwardCache) {
         // This will cause didClose() to be called.
-        m_channel->fail("WebSocket is closed due to suspension.");
+        m_channel->fail("WebSocket is closed due to suspension."_s);
         return;
     }
 

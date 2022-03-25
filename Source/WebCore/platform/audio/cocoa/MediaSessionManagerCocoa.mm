@@ -452,8 +452,8 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
     if (m_nowPlayingManager->setNowPlayingInfo(*nowPlayingInfo)) {
 #ifdef LOG_DISABLED
-        String src = "src";
-        String title = "title";
+        String src = "src"_s;
+        String title = "title"_s;
 #else
         String src = nowPlayingInfo->artwork ? nowPlayingInfo->artwork->src : String();
         String title = nowPlayingInfo->title;

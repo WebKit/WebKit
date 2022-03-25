@@ -62,64 +62,64 @@ void DatabaseAuthorizer::addAllowedFunctions()
 {
     // SQLite functions used to help implement some operations
     // ALTER TABLE helpers
-    m_allowedFunctions.add("sqlite_rename_table");
-    m_allowedFunctions.add("sqlite_rename_trigger");
+    m_allowedFunctions.add("sqlite_rename_table"_s);
+    m_allowedFunctions.add("sqlite_rename_trigger"_s);
     // GLOB helpers
-    m_allowedFunctions.add("glob");
+    m_allowedFunctions.add("glob"_s);
 
     // SQLite core functions
-    m_allowedFunctions.add("abs");
-    m_allowedFunctions.add("changes");
-    m_allowedFunctions.add("coalesce");
-    m_allowedFunctions.add("glob");
-    m_allowedFunctions.add("ifnull");
-    m_allowedFunctions.add("hex");
-    m_allowedFunctions.add("last_insert_rowid");
-    m_allowedFunctions.add("length");
-    m_allowedFunctions.add("like");
-    m_allowedFunctions.add("lower");
-    m_allowedFunctions.add("ltrim");
-    m_allowedFunctions.add("max");
-    m_allowedFunctions.add("min");
-    m_allowedFunctions.add("nullif");
-    m_allowedFunctions.add("quote");
-    m_allowedFunctions.add("replace");
-    m_allowedFunctions.add("round");
-    m_allowedFunctions.add("rtrim");
-    m_allowedFunctions.add("soundex");
-    m_allowedFunctions.add("sqlite_source_id");
-    m_allowedFunctions.add("sqlite_version");
-    m_allowedFunctions.add("substr");
-    m_allowedFunctions.add("total_changes");
-    m_allowedFunctions.add("trim");
-    m_allowedFunctions.add("typeof");
-    m_allowedFunctions.add("upper");
-    m_allowedFunctions.add("zeroblob");
+    m_allowedFunctions.add("abs"_s);
+    m_allowedFunctions.add("changes"_s);
+    m_allowedFunctions.add("coalesce"_s);
+    m_allowedFunctions.add("glob"_s);
+    m_allowedFunctions.add("ifnull"_s);
+    m_allowedFunctions.add("hex"_s);
+    m_allowedFunctions.add("last_insert_rowid"_s);
+    m_allowedFunctions.add("length"_s);
+    m_allowedFunctions.add("like"_s);
+    m_allowedFunctions.add("lower"_s);
+    m_allowedFunctions.add("ltrim"_s);
+    m_allowedFunctions.add("max"_s);
+    m_allowedFunctions.add("min"_s);
+    m_allowedFunctions.add("nullif"_s);
+    m_allowedFunctions.add("quote"_s);
+    m_allowedFunctions.add("replace"_s);
+    m_allowedFunctions.add("round"_s);
+    m_allowedFunctions.add("rtrim"_s);
+    m_allowedFunctions.add("soundex"_s);
+    m_allowedFunctions.add("sqlite_source_id"_s);
+    m_allowedFunctions.add("sqlite_version"_s);
+    m_allowedFunctions.add("substr"_s);
+    m_allowedFunctions.add("total_changes"_s);
+    m_allowedFunctions.add("trim"_s);
+    m_allowedFunctions.add("typeof"_s);
+    m_allowedFunctions.add("upper"_s);
+    m_allowedFunctions.add("zeroblob"_s);
 
     // SQLite date and time functions
-    m_allowedFunctions.add("date");
-    m_allowedFunctions.add("time");
-    m_allowedFunctions.add("datetime");
-    m_allowedFunctions.add("julianday");
-    m_allowedFunctions.add("strftime");
+    m_allowedFunctions.add("date"_s);
+    m_allowedFunctions.add("time"_s);
+    m_allowedFunctions.add("datetime"_s);
+    m_allowedFunctions.add("julianday"_s);
+    m_allowedFunctions.add("strftime"_s);
 
     // SQLite aggregate functions
     // max() and min() are already in the list
-    m_allowedFunctions.add("avg");
-    m_allowedFunctions.add("count");
-    m_allowedFunctions.add("group_concat");
-    m_allowedFunctions.add("sum");
-    m_allowedFunctions.add("total");
+    m_allowedFunctions.add("avg"_s);
+    m_allowedFunctions.add("count"_s);
+    m_allowedFunctions.add("group_concat"_s);
+    m_allowedFunctions.add("sum"_s);
+    m_allowedFunctions.add("total"_s);
 
     // SQLite FTS functions
-    m_allowedFunctions.add("match");
-    m_allowedFunctions.add("snippet");
-    m_allowedFunctions.add("offsets");
-    m_allowedFunctions.add("optimize");
+    m_allowedFunctions.add("match"_s);
+    m_allowedFunctions.add("snippet"_s);
+    m_allowedFunctions.add("offsets"_s);
+    m_allowedFunctions.add("optimize"_s);
 
     // SQLite ICU functions
     // like(), lower() and upper() are already in the list
-    m_allowedFunctions.add("regexp");
+    m_allowedFunctions.add("regexp"_s);
 }
 
 int DatabaseAuthorizer::createTable(const String& tableName)

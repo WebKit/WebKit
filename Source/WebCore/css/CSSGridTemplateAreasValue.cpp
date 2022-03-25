@@ -63,7 +63,7 @@ static String stringForPosition(const NamedGridAreaMap& gridAreaMap, size_t row,
             return it.key;
     }
 
-    return ".";
+    return "."_s;
 }
 
 String CSSGridTemplateAreasValue::customCSSText() const

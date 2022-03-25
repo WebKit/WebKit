@@ -1,3 +1,18 @@
+2022-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Start preparing WebCore for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238336
+
+        Reviewed by Geoffrey Garen.
+
+        Start preparing WebCore for making the String(const char*) constructor explicit.
+        Making this constructor explicit helps catch at compile time cases where the ""_s
+        prefix is missing on String literals.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setPromisedDataForImage):
+        (WebKit::WebViewImpl::requestDOMPasteAccess):
+
 2022-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal iOS build after r291842

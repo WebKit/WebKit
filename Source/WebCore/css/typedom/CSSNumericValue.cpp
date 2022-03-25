@@ -157,7 +157,7 @@ Ref<CSSNumericValue> CSSNumericValue::multiplyInternal(Vector<Ref<CSSNumericValu
             double product = 1;
             for (const Ref<CSSNumericValue>& value : values)
                 product *= downcast<CSSUnitValue>(value.get()).value();
-            String unit = nonNumberUnitIndex ? downcast<CSSUnitValue>(values[*nonNumberUnitIndex].get()).unit() : "number";
+            String unit = nonNumberUnitIndex ? downcast<CSSUnitValue>(values[*nonNumberUnitIndex].get()).unit() : "number"_s;
             return CSSUnitValue::create(product, unit);
         }
     }
@@ -235,7 +235,7 @@ Ref<CSSUnitValue> CSSNumericValue::to(String&& unit)
     UNUSED_PARAM(unit);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-to
     // FIXME: add impl.
-    return CSSUnitValue::create(1.0, "number");
+    return CSSUnitValue::create(1.0, "number"_s);
 }
 
 Ref<CSSMathSum> CSSNumericValue::toSum(FixedVector<String>&& units)
@@ -258,7 +258,7 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(String&& cssText)
     UNUSED_PARAM(cssText);
     // https://drafts.css-houdini.org/css-typed-om/#dom-cssnumericvalue-parse
     // FIXME: add impl.
-    return Exception { NotSupportedError, "Not implemented Error" };
+    return Exception { NotSupportedError, "Not implemented Error"_s };
 }
 
 } // namespace WebCore

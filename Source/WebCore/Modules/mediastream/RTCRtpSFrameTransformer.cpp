@@ -346,7 +346,7 @@ RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::encryptFrame(S
 RTCRtpSFrameTransformer::TransformResult RTCRtpSFrameTransformer::transform(Span<const uint8_t> data)
 {
     if (!m_hasKey)
-        return makeUnexpected(ErrorInformation { Error::KeyID,  "Key is not initialized", 0 });
+        return makeUnexpected(ErrorInformation { Error::KeyID,  "Key is not initialized"_s, 0 });
 
     return m_isEncrypting ? encryptFrame(data) : decryptFrame(data);
 }

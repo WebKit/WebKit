@@ -338,7 +338,7 @@ void WebLockManager::signalToAbortTheRequest(WebLockIdentifier lockIdentifier)
         if (wasAborted && weakThis)
             weakThis->m_pendingRequests.remove(lockIdentifier);
     });
-    settleReleasePromise(lockIdentifier, Exception { AbortError, "Lock request was aborted via AbortSignal" });
+    settleReleasePromise(lockIdentifier, Exception { AbortError, "Lock request was aborted via AbortSignal"_s });
 }
 
 void WebLockManager::settleReleasePromise(WebLockIdentifier lockIdentifier, ExceptionOr<JSC::JSValue>&& result)

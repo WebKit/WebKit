@@ -51,7 +51,7 @@ class ThreadableWebSocketChannel;
 class WebSocket final : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, private WebSocketChannelClient {
     WTF_MAKE_ISO_ALLOCATED(WebSocket);
 public:
-    static const char* subprotocolSeparator();
+    static ASCIILiteral subprotocolSeparator();
 
     static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url);
     static ExceptionOr<Ref<WebSocket>> create(ScriptExecutionContext&, const String& url, const String& protocol);

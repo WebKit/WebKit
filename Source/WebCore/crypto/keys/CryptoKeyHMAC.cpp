@@ -121,7 +121,7 @@ RefPtr<CryptoKeyHMAC> CryptoKeyHMAC::importJwk(size_t lengthBits, CryptoAlgorith
 JsonWebKey CryptoKeyHMAC::exportJwk() const
 {
     JsonWebKey result;
-    result.kty = "oct";
+    result.kty = "oct"_s;
     result.k = base64URLEncodeToString(m_key);
     result.key_ops = usages();
     result.ext = extractable();

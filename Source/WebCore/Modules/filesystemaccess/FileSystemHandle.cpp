@@ -60,7 +60,7 @@ void FileSystemHandle::close()
 void FileSystemHandle::isSameEntry(FileSystemHandle& handle, DOMPromiseDeferred<IDLBoolean>&& promise) const
 {
     if (isClosed())
-        return promise.reject(Exception { InvalidStateError, "Handle is closed" });
+        return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
 
     if (m_kind != handle.kind() || m_name != handle.name())
         return promise.resolve(false);
@@ -73,7 +73,7 @@ void FileSystemHandle::isSameEntry(FileSystemHandle& handle, DOMPromiseDeferred<
 void FileSystemHandle::move(FileSystemHandle& destinationHandle, const String& newName, DOMPromiseDeferred<void>&& promise)
 {
     if (isClosed())
-        return promise.reject(Exception { InvalidStateError, "Handle is closed" });
+        return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
 
     if (destinationHandle.kind() != Kind::Directory)
         return promise.reject(Exception { TypeMismatchError });

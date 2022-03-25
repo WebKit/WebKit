@@ -73,7 +73,7 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(Document& document
     result.setMerchantCapabilities(merchantCapabilities.releaseReturnValue());
 
     if (requiresSupportedNetworks(version, request) && request.supportedNetworks.isEmpty())
-        return Exception { TypeError, "At least one supported network must be provided." };
+        return Exception { TypeError, "At least one supported network must be provided."_s };
 
     auto supportedNetworks = convertAndValidate(document, version, request.supportedNetworks, paymentCoordinator);
     if (supportedNetworks.hasException())

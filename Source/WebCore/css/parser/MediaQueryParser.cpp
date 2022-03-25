@@ -247,7 +247,7 @@ void MediaQueryParser::skipUntilComma(CSSParserTokenType type, const CSSParserTo
     if ((type == CommaToken && !m_blockWatcher.blockLevel()) || type == EOFToken) {
         m_state = ReadRestrictor;
         m_mediaQueryData.clear();
-        MediaQuery query = MediaQuery(MediaQuery::Not, "all", Vector<MediaQueryExpression>());
+        MediaQuery query = MediaQuery(MediaQuery::Not, "all"_s, Vector<MediaQueryExpression>());
         m_querySet->addMediaQuery(WTFMove(query));
     }
 }
@@ -309,7 +309,7 @@ RefPtr<MediaQuerySet> MediaQueryParser::parseInternal(CSSParserTokenRange& range
         processToken(CSSParserToken(EOFToken), range);
 
     if (m_state != ReadAnd && m_state != ReadRestrictor && m_state != Done && m_state != ReadMediaNot) {
-        MediaQuery query = MediaQuery(MediaQuery::Not, "all", Vector<MediaQueryExpression>());
+        MediaQuery query = MediaQuery(MediaQuery::Not, "all"_s, Vector<MediaQueryExpression>());
         m_querySet->addMediaQuery(WTFMove(query));
     } else if (m_mediaQueryData.currentMediaQueryChanged())
         commitMediaQuery();

@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-const char* const errorDomainWebKitInternal = "WebKitInternal";
-const char* const errorDomainWebKitServiceWorker = "WebKitServiceWorker";
+const ASCIILiteral errorDomainWebKitInternal = "WebKitInternal"_s;
+const ASCIILiteral errorDomainWebKitServiceWorker = "WebKitServiceWorker"_s;
 
 inline const ResourceError& ResourceErrorBase::asResourceError() const
 {

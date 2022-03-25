@@ -111,16 +111,16 @@ for my $i (0 .. $#names) {
 
 print GPERF << "EOF";
 %%
-static const char* const valueList[] = {
-    "",
+static constexpr ASCIILiteral valueList[] = {
+    ""_s,
 EOF
 
 foreach my $name (@names) {
-  print GPERF "    \"" . $name . "\",\n";
+  print GPERF "    \"" . $name . "\"_s,\n";
 }
 
 print GPERF << "EOF";
-    0
+    ASCIILiteral::null()
 };
 
 const Value* findValue(const char* str, unsigned int len)
@@ -128,10 +128,10 @@ const Value* findValue(const char* str, unsigned int len)
     return CSSValueKeywordsHash::findValueImpl(str, len);
 }
 
-const char* getValueName(unsigned short id)
+ASCIILiteral getValueName(unsigned short id)
 {
     if (id > lastCSSValueKeyword)
-        return 0;
+        return ASCIILiteral::null();
     return valueList[id];
 }
 
@@ -203,7 +203,7 @@ print HEADER "const int lastCSSValueKeyword = $last;\n";
 print HEADER "const size_t maxCSSValueKeywordLength = " . $maxLen . ";\n";
 print HEADER << "EOF";
 
-const char* getValueName(unsigned short id);
+ASCIILiteral getValueName(unsigned short id);
 const AtomString& getValueNameAtomString(CSSValueID id);
 String getValueNameString(CSSValueID id);
 

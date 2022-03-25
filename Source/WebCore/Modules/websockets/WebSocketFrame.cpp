@@ -82,11 +82,11 @@ WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(uint8_t* data, size_
             payloadLength64 |= static_cast<uint8_t>(*p++);
         }
         if (extendedPayloadLengthSize == 2 && payloadLength64 <= maxPayloadLengthWithoutExtendedLengthField) {
-            errorString = "The minimal number of bytes MUST be used to encode the length";
+            errorString = "The minimal number of bytes MUST be used to encode the length"_s;
             return FrameError;
         }
         if (extendedPayloadLengthSize == 8 && payloadLength64 <= 0xFFFF) {
-            errorString = "The minimal number of bytes MUST be used to encode the length";
+            errorString = "The minimal number of bytes MUST be used to encode the length"_s;
             return FrameError;
         }
     }

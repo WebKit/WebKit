@@ -36,7 +36,7 @@ class CryptoKeyRSA;
 
 class CryptoAlgorithmRSA_PSS final : public CryptoAlgorithm {
 public:
-    static constexpr const char* s_name = "RSA-PSS";
+    static constexpr ASCIILiteral s_name = "RSA-PSS"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::RSA_PSS;
     static Ref<CryptoAlgorithm> create();
 

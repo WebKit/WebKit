@@ -69,7 +69,7 @@ void FetchLoader::startLoadingBlobURL(ScriptExecutionContext& context, const URL
 
     ResourceRequest request(m_urlForReading);
     request.setInitiatorIdentifier(context.resourceRequestIdentifier());
-    request.setHTTPMethod("GET");
+    request.setHTTPMethod("GET"_s);
 
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;

@@ -61,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // Fake some recognition results.
-    WebCore::SpeechRecognitionAlternativeData alternative { "Test", 1.0 };
+    WebCore::SpeechRecognitionAlternativeData alternative { "Test"_s, 1.0 };
     _delegateCallback(WebCore::SpeechRecognitionUpdate::createResult(_identifier, { WebCore::SpeechRecognitionResultData { { WTFMove(alternative) }, true } }));
 
     if (!_doMultipleRecognitions)

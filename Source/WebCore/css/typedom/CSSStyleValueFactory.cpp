@@ -264,7 +264,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(Ref<CSSValue>&&
         // Refer to LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/get.html
         auto valueList = downcast<CSSValueList>(cssValue.ptr());
         if (!valueList->length())
-            return Exception { TypeError, "The CSSValueList should not be empty." };
+            return Exception { TypeError, "The CSSValueList should not be empty."_s };
         
         return reifyValue(WTFMove(*valueList->begin()), document);
     }

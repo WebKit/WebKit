@@ -30,9 +30,9 @@
 
 namespace WebCore {
 
-const char* PasteboardCustomData::cocoaType()
+ASCIILiteral PasteboardCustomData::cocoaType()
 {
-    return "com.apple.WebKit.custom-pasteboard-data";
+    return "com.apple.WebKit.custom-pasteboard-data"_s;
 }
 
 } // namespace WebCore

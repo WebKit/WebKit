@@ -150,10 +150,10 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
             contentDispositionParametersBegin++;
 
         auto parameters = parseParameters(StringView(header).substring(contentDispositionParametersBegin, contentDispositionEnd - contentDispositionParametersBegin), 0);
-        String name = parameters.get("name");
+        String name = parameters.get("name"_s);
         if (!name)
             return false;
-        String filename = parameters.get("filename");
+        String filename = parameters.get("filename"_s);
         if (!filename)
             form.append(name, String::fromUTF8(bodyBegin, bodyLength));
         else {
@@ -176,7 +176,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
         if (!mimeType)
             return std::nullopt;
         if (equalIgnoringASCIICase(mimeType->type, "multipart") && equalIgnoringASCIICase(mimeType->subtype, "form-data")) {
-            auto iterator = mimeType->parameters.find("boundary");
+            auto iterator = mimeType->parameters.find("boundary"_s);
             if (iterator != mimeType->parameters.end())
                 return iterator->value;
         }

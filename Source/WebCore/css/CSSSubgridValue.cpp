@@ -36,7 +36,7 @@ namespace WebCore {
 String CSSSubgridValue::customCSSText() const
 {
     if (!length())
-        return "subgrid";
+        return "subgrid"_s;
     return "subgrid " + CSSValueList::customCSSText();
 }
 

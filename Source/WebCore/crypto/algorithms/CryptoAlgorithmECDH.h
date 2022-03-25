@@ -35,7 +35,7 @@ class CryptoKeyEC;
 
 class CryptoAlgorithmECDH final : public CryptoAlgorithm {
 public:
-    static constexpr const char* s_name = "ECDH";
+    static constexpr ASCIILiteral s_name = "ECDH"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::ECDH;
     static Ref<CryptoAlgorithm> create();
 

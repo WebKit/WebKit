@@ -55,7 +55,7 @@ static bool shouldLog()
 AXLogger::AXLogger(const String& methodName)
     : m_methodName(methodName)
 {
-    if (auto* channel = getLogChannel("Accessibility"))
+    if (auto* channel = getLogChannel("Accessibility"_s))
         channel->level = WTFLogLevel::Debug;
 
     if (shouldLog()) {
@@ -76,6 +76,12 @@ void AXLogger::log(const String& message)
 {
     if (shouldLog())
         LOG(Accessibility, "%s", message.utf8().data());
+}
+
+void AXLogger::log(const char* message)
+{
+    if (shouldLog())
+        LOG(Accessibility, "%s", message);
 }
 
 void AXLogger::log(RefPtr<AXCoreObject> object)
@@ -328,15 +334,15 @@ TextStream& operator<<(TextStream& stream, AccessibilitySearchKey searchKey)
 TextStream& operator<<(TextStream& stream, const AccessibilitySearchCriteria& criteria)
 {
     TextStream::GroupScope groupScope(stream);
-    auto streamCriteriaObject = [&stream] (String objectLabel, auto* axObject) {
+    auto streamCriteriaObject = [&stream] (ASCIILiteral objectLabel, auto* axObject) {
         stream.startGroup();
-        stream << objectLabel << " " << axObject << ", ID " << (axObject ? axObject->objectID() : AXID());
+        stream << objectLabel.characters() << " " << axObject << ", ID " << (axObject ? axObject->objectID() : AXID());
         stream.endGroup();
     };
 
     stream << "SearchCriteria " << &criteria;
-    streamCriteriaObject("anchorObject", criteria.anchorObject);
-    streamCriteriaObject("startObject", criteria.startObject);
+    streamCriteriaObject("anchorObject"_s, criteria.anchorObject);
+    streamCriteriaObject("startObject"_s, criteria.startObject);
     stream.dumpProperty("searchDirection", criteria.searchDirection);
 
     stream.nextLine();

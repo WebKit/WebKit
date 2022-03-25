@@ -252,7 +252,7 @@ AXObjectCache::~AXObjectCache()
 
 bool AXObjectCache::isModalElement(Element& element) const
 {
-    bool hasDialogRole = nodeHasRole(&element, "dialog") || nodeHasRole(&element, "alertdialog");
+    bool hasDialogRole = nodeHasRole(&element, "dialog"_s) || nodeHasRole(&element, "alertdialog"_s);
     bool isAriaModal = equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(aria_modalAttr), "true");
 
     return (hasDialogRole && isAriaModal) || (is<HTMLDialogElement>(element) && downcast<HTMLDialogElement>(element).isModal());
@@ -560,22 +560,22 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
 
     // If the node is aria role="list" or the aria role is empty and its a
     // ul/ol/dl type (it shouldn't be a list if aria says otherwise).
-    if (node && ((nodeHasRole(node, "list") || nodeHasRole(node, "directory"))
+    if (node && ((nodeHasRole(node, "list"_s) || nodeHasRole(node, "directory"_s))
                       || (nodeHasRole(node, nullAtom()) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))))
         return AccessibilityList::create(renderer);
 
     // aria tables
-    if (nodeHasRole(node, "grid") || nodeHasRole(node, "treegrid") || nodeHasRole(node, "table"))
+    if (nodeHasRole(node, "grid"_s) || nodeHasRole(node, "treegrid"_s) || nodeHasRole(node, "table"_s))
         return AccessibilityARIAGrid::create(renderer);
-    if (nodeHasRole(node, "row"))
+    if (nodeHasRole(node, "row"_s))
         return AccessibilityARIAGridRow::create(renderer);
-    if (nodeHasRole(node, "gridcell") || nodeHasRole(node, "cell") || nodeHasRole(node, "columnheader") || nodeHasRole(node, "rowheader"))
+    if (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s) || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s))
         return AccessibilityARIAGridCell::create(renderer);
 
     // aria tree
-    if (nodeHasRole(node, "tree"))
+    if (nodeHasRole(node, "tree"_s))
         return AccessibilityTree::create(renderer);
-    if (nodeHasRole(node, "treeitem"))
+    if (nodeHasRole(node, "treeitem"_s))
         return AccessibilityTreeItem::create(renderer);
 
     if (node && is<HTMLLabelElement>(node) && nodeHasRole(node, nullAtom()))
@@ -865,7 +865,7 @@ AccessibilityObject* AXObjectCache::create(AccessibilityRole role)
 
 void AXObjectCache::remove(AXID axID)
 {
-    AXTRACE("AXObjectCache::remove");
+    AXTRACE("AXObjectCache::remove"_s);
     AXLOG(makeString("AXID ", axID.loggingString()));
 
     if (!axID)
@@ -977,7 +977,7 @@ void AXObjectCache::textChanged(Node* node)
 
 void AXObjectCache::textChanged(AccessibilityObject* object)
 {
-    AXTRACE("AXObjectCache::textChanged");
+    AXTRACE("AXObjectCache::textChanged"_s);
     AXLOG(object);
 
     if (!object)
@@ -1082,7 +1082,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
 
 void AXObjectCache::handleMenuOpened(Node* node)
 {
-    if (!node || !node->renderer() || !nodeHasRole(node, "menu"))
+    if (!node || !node->renderer() || !nodeHasRole(node, "menu"_s))
         return;
     
     postNotification(getOrCreate(node), &document(), AXMenuOpened);
@@ -1134,7 +1134,7 @@ void AXObjectCache::childrenChanged(AccessibilityObject* object)
 
 void AXObjectCache::notificationPostTimerFired()
 {
-    AXTRACE("AXObjectCache::notificationPostTimerFired");
+    AXTRACE("AXObjectCache::notificationPostTimerFired"_s);
     // During LayoutTests, accessibility may be disabled between the time the notifications are queued and the timer fires.
     // Thus check here and return if accessibility is disabled.
     if (!accessibilityEnabled())
@@ -1195,7 +1195,7 @@ void AXObjectCache::passwordNotificationPostTimerFired()
     auto notifications = std::exchange(m_passwordNotificationsToPost, { });
 
     for (auto& notification : notifications)
-        postTextStateChangePlatformNotification(notification.get(), AXTextEditTypeInsert, " ", VisiblePosition());
+        postTextStateChangePlatformNotification(notification.get(), AXTextEditTypeInsert, " "_s, VisiblePosition());
 #endif
 }
 
@@ -1243,7 +1243,7 @@ void AXObjectCache::postNotification(Node* node, AXNotification notification, Po
 
 void AXObjectCache::postNotification(AXCoreObject* object, Document* document, AXNotification notification, PostTarget postTarget)
 {
-    AXTRACE("AXObjectCache::postNotification");
+    AXTRACE("AXObjectCache::postNotification"_s);
     AXLOG(std::make_pair(object, notification));
     ASSERT(isMainThread());
 
@@ -1273,7 +1273,7 @@ void AXObjectCache::handleMenuItemSelected(Node* node)
     if (!node)
         return;
     
-    if (!nodeHasRole(node, "menuitem") && !nodeHasRole(node, "menuitemradio") && !nodeHasRole(node, "menuitemcheckbox"))
+    if (!nodeHasRole(node, "menuitem"_s) && !nodeHasRole(node, "menuitemradio"_s) && !nodeHasRole(node, "menuitemcheckbox"_s))
         return;
     
     if (!downcast<Element>(*node).focused() && !equalLettersIgnoringASCIICase(downcast<Element>(*node).attributeWithoutSynchronization(aria_selectedAttr), "true"))
@@ -1347,8 +1347,8 @@ void AXObjectCache::selectedStateChanged(Node* node)
 {
     // For a table cell, post AXSelectedStateChanged on the cell itself.
     // For any other element, post AXSelectedChildrenChanged on the parent.
-    if (nodeHasRole(node, "gridcell") || nodeHasRole(node, "cell")
-        || nodeHasRole(node, "columnheader") || nodeHasRole(node, "rowheader"))
+    if (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s)
+        || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s))
         postNotification(node, AXSelectedStateChanged);
     else
         selectedChildrenChanged(node);
@@ -1542,7 +1542,7 @@ void AXObjectCache::postTextStateChangeNotification(const Position& position, co
 
 void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object, const AXTextStateChangeIntent& intent, const VisibleSelection& selection)
 {
-    AXTRACE("AXObjectCache::postTextStateChangeNotification");
+    AXTRACE("AXObjectCache::postTextStateChangeNotification"_s);
     stopCachingComputedObjectAttributes();
 
 #if PLATFORM(COCOA) || USE(ATSPI)
@@ -1574,7 +1574,7 @@ void AXObjectCache::postTextStateChangeNotification(AccessibilityObject* object,
 
 void AXObjectCache::postTextStateChangeNotification(Node* node, AXTextEditType type, const String& text, const VisiblePosition& position)
 {
-    AXTRACE("AXObjectCache::postTextStateChangeNotification");
+    AXTRACE("AXObjectCache::postTextStateChangeNotification"_s);
     if (!node || type == AXTextEditTypeUnknown)
         return;
 
@@ -1912,7 +1912,7 @@ void AXObjectCache::handleAttributeChange(const QualifiedName& attrName, Element
 
 void AXObjectCache::handleModalChange(Element& element)
 {
-    if (!is<HTMLDialogElement>(element) && !nodeHasRole(&element, "dialog") && !nodeHasRole(&element, "alertdialog"))
+    if (!is<HTMLDialogElement>(element) && !nodeHasRole(&element, "dialog"_s) && !nodeHasRole(&element, "alertdialog"_s))
         return;
 
     stopCachingComputedObjectAttributes();
@@ -3277,7 +3277,7 @@ void AXObjectCache::processDeferredChildrenChangedList()
 
 void AXObjectCache::performDeferredCacheUpdate()
 {
-    AXTRACE("AXObjectCache::performDeferredCacheUpdate");
+    AXTRACE("AXObjectCache::performDeferredCacheUpdate"_s);
     if (m_performingDeferredCacheUpdate)
         return;
     SetForScope performingDeferredCacheUpdate(m_performingDeferredCacheUpdate, true);
@@ -3373,7 +3373,7 @@ void AXObjectCache::updateIsolatedTree(AXCoreObject& object, AXNotification noti
 
 void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<AXCoreObject>, AXNotification>>& notifications)
 {
-    AXTRACE("AXObjectCache::updateIsolatedTree");
+    AXTRACE("AXObjectCache::updateIsolatedTree"_s);
     AXLOG(*this);
 
     if (!m_pageID) {

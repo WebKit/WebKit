@@ -305,7 +305,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
         setProperty(AXPropertyName::TextLength, object.textLength());
 
     if (object.isRadioButton()) {
-        if (auto nameAttribute = object.attributeValue("name"))
+        if (auto nameAttribute = object.attributeValue("name"_s))
             setProperty(AXPropertyName::NameAttribute, nameAttribute->isolatedCopy());
     }
 
@@ -362,7 +362,7 @@ void AXIsolatedObject::initializeAttributeData(AXCoreObject& coreObject, bool is
     String combinedClassList;
     for (auto it = classList.begin(), end = classList.end(); it != end; ++it) {
         combinedClassList.append(*it);
-        combinedClassList.append(" ");
+        combinedClassList.append(" "_s);
     }
     setProperty(AXPropertyName::ClassList, combinedClassList);
 

@@ -596,7 +596,7 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
     switch (propertyId) {
     case CSSPropertyDisplay:
         if (element.hasTagName(headTag) || element.hasTagName(scriptTag) || element.hasTagName(appletTag) || element.hasTagName(noframesTag))
-            return "none";
+            return "none"_s;
         else if (element.hasTagName(addressTag) || element.hasTagName(blockquoteTag) || element.hasTagName(bodyTag) || element.hasTagName(centerTag)
              || element.hasTagName(ddTag) || element.hasTagName(dirTag) || element.hasTagName(divTag) || element.hasTagName(dlTag)
              || element.hasTagName(dtTag) || element.hasTagName(fieldsetTag) || element.hasTagName(formTag) || element.hasTagName(frameTag)
@@ -604,62 +604,62 @@ String HTMLConverterCaches::propertyValueForNode(Node& node, CSSPropertyID prope
              || element.hasTagName(h2Tag) || element.hasTagName(h3Tag) || element.hasTagName(h4Tag) || element.hasTagName(h5Tag)
              || element.hasTagName(h6Tag) || element.hasTagName(iframeTag) || element.hasTagName(menuTag) || element.hasTagName(noscriptTag)
              || element.hasTagName(olTag) || element.hasTagName(pTag) || element.hasTagName(preTag) || element.hasTagName(ulTag))
-            return "block";
+            return "block"_s;
         else if (element.hasTagName(liTag))
-            return "list-item";
+            return "list-item"_s;
         else if (element.hasTagName(tableTag))
-            return "table";
+            return "table"_s;
         else if (element.hasTagName(trTag))
-            return "table-row";
+            return "table-row"_s;
         else if (element.hasTagName(thTag) || element.hasTagName(tdTag))
-            return "table-cell";
+            return "table-cell"_s;
         else if (element.hasTagName(theadTag))
-            return "table-header-group";
+            return "table-header-group"_s;
         else if (element.hasTagName(tbodyTag))
-            return "table-row-group";
+            return "table-row-group"_s;
         else if (element.hasTagName(tfootTag))
-            return "table-footer-group";
+            return "table-footer-group"_s;
         else if (element.hasTagName(colTag))
-            return "table-column";
+            return "table-column"_s;
         else if (element.hasTagName(colgroupTag))
-            return "table-column-group";
+            return "table-column-group"_s;
         else if (element.hasTagName(captionTag))
-            return "table-caption";
+            return "table-caption"_s;
         break;
     case CSSPropertyWhiteSpace:
         if (element.hasTagName(preTag))
-            return "pre";
+            return "pre"_s;
         inherit = true;
         break;
     case CSSPropertyFontStyle:
         if (element.hasTagName(iTag) || element.hasTagName(citeTag) || element.hasTagName(emTag) || element.hasTagName(varTag) || element.hasTagName(addressTag))
-            return "italic";
+            return "italic"_s;
         inherit = true;
         break;
     case CSSPropertyFontWeight:
         if (element.hasTagName(bTag) || element.hasTagName(strongTag) || element.hasTagName(thTag))
-            return "bolder";
+            return "bolder"_s;
         inherit = true;
         break;
     case CSSPropertyTextDecorationLine:
         if (element.hasTagName(uTag) || element.hasTagName(insTag))
-            return "underline";
+            return "underline"_s;
         else if (element.hasTagName(sTag) || element.hasTagName(strikeTag) || element.hasTagName(delTag))
-            return "line-through";
+            return "line-through"_s;
         inherit = true; // FIXME: This is not strictly correct
         break;
     case CSSPropertyTextAlign:
         if (element.hasTagName(centerTag) || element.hasTagName(captionTag) || element.hasTagName(thTag))
-            return "center";
+            return "center"_s;
         inherit = true;
         break;
     case CSSPropertyVerticalAlign:
         if (element.hasTagName(supTag))
-            return "super";
+            return "super"_s;
         else if (element.hasTagName(subTag))
-            return "sub";
+            return "sub"_s;
         else if (element.hasTagName(theadTag) || element.hasTagName(tbodyTag) || element.hasTagName(tfootTag))
-            return "middle";
+            return "middle"_s;
         else if (element.hasTagName(trTag) || element.hasTagName(thTag) || element.hasTagName(tdTag))
             inherit = true;
         break;
@@ -1852,7 +1852,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         RetainPtr<NSTextList> list;
         String listStyleType = _caches->propertyValueForNode(element, CSSPropertyListStyleType);
         if (!listStyleType.length())
-            listStyleType = "decimal";
+            listStyleType = "decimal"_s;
         list = adoptNS([[PlatformNSTextList alloc] initWithMarkerFormat:String("{" + listStyleType + "}") options:0]);
         if (is<HTMLOListElement>(element)) {
             NSInteger startingItemNumber = downcast<HTMLOListElement>(element).start();

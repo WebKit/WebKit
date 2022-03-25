@@ -4478,7 +4478,7 @@ void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filen
 
     RetainPtr<NSData> customDataBuffer;
     if (originIdentifier.length) {
-        [types addObject:@(WebCore::PasteboardCustomData::cocoaType())];
+        [types addObject:@(WebCore::PasteboardCustomData::cocoaType().characters())];
         WebCore::PasteboardCustomData customData;
         customData.setOrigin(originIdentifier);
         customDataBuffer = customData.createSharedBuffer()->createNSData();
@@ -4497,7 +4497,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (customDataBuffer)
-        [pasteboard setData:customDataBuffer.get() forType:@(WebCore::PasteboardCustomData::cocoaType())];
+        [pasteboard setData:customDataBuffer.get() forType:@(WebCore::PasteboardCustomData::cocoaType().characters())];
 
     m_promisedImage = image;
 }
@@ -4624,7 +4624,7 @@ void WebViewImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAcc
     ASSERT(!m_domPasteRequestHandler);
     hideDOMPasteMenuWithResult(WebCore::DOMPasteAccessResponse::DeniedForGesture);
 
-    NSData *data = [pasteboardForAccessCategory(pasteAccessCategory) dataForType:@(WebCore::PasteboardCustomData::cocoaType())];
+    NSData *data = [pasteboardForAccessCategory(pasteAccessCategory) dataForType:@(WebCore::PasteboardCustomData::cocoaType().characters())];
     auto buffer = WebCore::SharedBuffer::create(data);
     if (WebCore::PasteboardCustomData::fromSharedBuffer(buffer.get()).origin() == originIdentifier) {
         m_page->grantAccessToCurrentPasteboardData(pasteboardNameForAccessCategory(pasteAccessCategory));

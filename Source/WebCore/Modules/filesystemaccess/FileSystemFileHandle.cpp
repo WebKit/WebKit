@@ -55,7 +55,7 @@ FileSystemFileHandle::FileSystemFileHandle(ScriptExecutionContext& context, Stri
 void FileSystemFileHandle::getFile(DOMPromiseDeferred<IDLInterface<File>>&& promise)
 {
     if (isClosed())
-        return promise.reject(Exception { InvalidStateError, "Handle is closed" });
+        return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
 
     connection().getFile(identifier(), [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())
@@ -72,7 +72,7 @@ void FileSystemFileHandle::getFile(DOMPromiseDeferred<IDLInterface<File>>&& prom
 void FileSystemFileHandle::createSyncAccessHandle(DOMPromiseDeferred<IDLInterface<FileSystemSyncAccessHandle>>&& promise)
 {
     if (isClosed())
-        return promise.reject(Exception { InvalidStateError, "Handle is closed" });
+        return promise.reject(Exception { InvalidStateError, "Handle is closed"_s });
 
     connection().createSyncAccessHandle(identifier(), [protectedThis = Ref { *this }, promise = WTFMove(promise)](auto result) mutable {
         if (result.hasException())

@@ -310,10 +310,10 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, un
         return canCall.releaseException();
 
     if (!UserGestureIndicator::processingUserGesture())
-        return Exception { InvalidAccessError, "Must create a new ApplePaySession from a user gesture handler." };
+        return Exception { InvalidAccessError, "Must create a new ApplePaySession from a user gesture handler."_s };
 
     if (!document.page())
-        return Exception { InvalidAccessError, "Frame is detached" };
+        return Exception { InvalidAccessError, "Frame is detached"_s };
 
     auto convertedPaymentRequest = convertAndValidate(document, version, WTFMove(paymentRequest), document.page()->paymentCoordinator());
     if (convertedPaymentRequest.hasException())
@@ -412,7 +412,7 @@ ExceptionOr<void> ApplePaySession::openPaymentSetup(Document& document, const St
         return canCall.releaseException();
 
     if (!UserGestureIndicator::processingUserGesture())
-        return Exception { InvalidAccessError, "Must call ApplePaySession.openPaymentSetup from a user gesture handler." };
+        return Exception { InvalidAccessError, "Must call ApplePaySession.openPaymentSetup from a user gesture handler."_s };
 
     auto* page = document.page();
     if (!page)
@@ -431,13 +431,13 @@ ExceptionOr<void> ApplePaySession::openPaymentSetup(Document& document, const St
 ExceptionOr<void> ApplePaySession::begin(Document& document)
 {
     if (!canBegin())
-        return Exception { InvalidAccessError, "Payment session is already active." };
+        return Exception { InvalidAccessError, "Payment session is already active."_s };
 
     if (paymentCoordinator().hasActiveSession())
-        return Exception { InvalidAccessError, "Page already has an active payment session." };
+        return Exception { InvalidAccessError, "Page already has an active payment session."_s };
 
     if (!paymentCoordinator().beginPaymentSession(document, *this, m_paymentRequest))
-        return Exception { InvalidAccessError, "There is already has an active payment session." };
+        return Exception { InvalidAccessError, "There is already has an active payment session."_s };
 
     m_state = State::Active;
 

@@ -82,11 +82,11 @@ String KeyframeEffect::CSSPropertyIDToIDLAttributeName(CSSPropertyID cssProperty
 
     // 2. If property refers to the CSS float property, return the string "cssFloat".
     if (cssPropertyId == CSSPropertyFloat)
-        return "cssFloat";
+        return "cssFloat"_s;
 
     // 3. If property refers to the CSS offset property, return the string "cssOffset".
     if (cssPropertyId == CSSPropertyOffset)
-        return "cssOffset";
+        return "cssOffset"_s;
 
     // 4. Otherwise, return the result of applying the CSS property to IDL attribute algorithm [CSSOM] to property.
     return getJSPropertyName(cssPropertyId);
@@ -660,7 +660,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
         computedKeyframe.offset = keyframe.key();
         computedKeyframe.computedOffset = keyframe.key();
         // For CSS transitions, all keyframes should return "linear" since the effect's global timing function applies.
-        computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear" : timingFunctionForBlendingKeyframe(keyframe)->cssText();
+        computedKeyframe.easing = is<CSSTransition>(animation()) ? "linear"_s : timingFunctionForBlendingKeyframe(keyframe)->cssText();
 
         if (document.settings().webAnimationsCompositeOperationsEnabled()) {
             if (auto compositeOperation = keyframe.compositeOperation())

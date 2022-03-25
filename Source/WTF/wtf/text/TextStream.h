@@ -100,6 +100,15 @@ public:
         ts.endGroup();
     }
 
+    template<typename T>
+    void dumpProperty(const char* name, const T& value)
+    {
+        TextStream& ts = *this;
+        ts.startGroup();
+        ts << name << " " << value;
+        ts.endGroup();
+    }
+
     WTF_EXPORT_PRIVATE String release();
     
     WTF_EXPORT_PRIVATE void startGroup();

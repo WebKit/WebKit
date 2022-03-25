@@ -195,7 +195,7 @@ namespace WebCore {
     String AXMonthFieldText();
     String AXNumberFieldText();
     String AXWeekFieldText();
-    String AXARIAContentGroupText(const String& ariaType);
+    String AXARIAContentGroupText(StringView ariaType);
     String AXHorizontalRuleDescriptionText();
     String AXMarkText();
 

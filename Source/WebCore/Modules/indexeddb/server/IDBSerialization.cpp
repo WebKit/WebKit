@@ -45,17 +45,17 @@ RefPtr<SharedBuffer> serializeIDBKeyPath(const std::optional<IDBKeyPath>& keyPat
 
     if (keyPath) {
         auto visitor = WTF::makeVisitor([&](const String& string) {
-            encoder->encodeEnum("type", KeyPathType::String);
-            encoder->encodeString("string", string);
+            encoder->encodeEnum("type"_s, KeyPathType::String);
+            encoder->encodeString("string"_s, string);
         }, [&](const Vector<String>& vector) {
-            encoder->encodeEnum("type", KeyPathType::Array);
-            encoder->encodeObjects("array", vector.begin(), vector.end(), [](WebCore::KeyedEncoder& encoder, const String& string) {
-                encoder.encodeString("string", string);
+            encoder->encodeEnum("type"_s, KeyPathType::Array);
+            encoder->encodeObjects("array"_s, vector.begin(), vector.end(), [](WebCore::KeyedEncoder& encoder, const String& string) {
+                encoder.encodeString("string"_s, string);
             });
         });
         std::visit(visitor, keyPath.value());
     } else
-        encoder->encodeEnum("type", KeyPathType::Null);
+        encoder->encodeEnum("type"_s, KeyPathType::Null);
 
     return encoder->finishEncoding();
 }
@@ -68,7 +68,7 @@ bool deserializeIDBKeyPath(const uint8_t* data, size_t size, std::optional<IDBKe
     auto decoder = KeyedDecoder::decoder(data, size);
 
     KeyPathType type;
-    bool succeeded = decoder->decodeEnum("type", type, [](KeyPathType value) {
+    bool succeeded = decoder->decodeEnum("type"_s, type, [](KeyPathType value) {
         return value == KeyPathType::Null || value == KeyPathType::String || value == KeyPathType::Array;
     });
     if (!succeeded)
@@ -79,15 +79,15 @@ bool deserializeIDBKeyPath(const uint8_t* data, size_t size, std::optional<IDBKe
         break;
     case KeyPathType::String: {
         String string;
-        if (!decoder->decodeString("string", string))
+        if (!decoder->decodeString("string"_s, string))
             return false;
         result = IDBKeyPath(WTFMove(string));
         break;
     }
     case KeyPathType::Array: {
         Vector<String> vector;
-        succeeded = decoder->decodeObjects("array", vector, [](KeyedDecoder& decoder, String& result) {
-            return decoder.decodeString("string", result);
+        succeeded = decoder->decodeObjects("array"_s, vector, [](KeyedDecoder& decoder, String& result) {
+            return decoder.decodeString("string"_s, result);
         });
         if (!succeeded)
             return false;

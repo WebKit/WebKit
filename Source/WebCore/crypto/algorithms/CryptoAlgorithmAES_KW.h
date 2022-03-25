@@ -35,7 +35,7 @@ class CryptoKeyAES;
 
 class CryptoAlgorithmAES_KW final : public CryptoAlgorithm {
 public:
-    static constexpr const char* s_name = "AES-KW";
+    static constexpr ASCIILiteral s_name = "AES-KW"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_KW;
     static Ref<CryptoAlgorithm> create();
 

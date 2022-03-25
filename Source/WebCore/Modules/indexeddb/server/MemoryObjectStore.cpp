@@ -310,7 +310,7 @@ IDBError MemoryObjectStore::updateIndexesForPutRecord(const IDBKeyData& key, con
         auto* index = m_indexesByIdentifier.get(indexID);
         ASSERT(index);
         if (!index) {
-            error = IDBError { InvalidStateError, "Missing index metadata" };
+            error = IDBError { InvalidStateError, "Missing index metadata"_s };
             break;
         }
 

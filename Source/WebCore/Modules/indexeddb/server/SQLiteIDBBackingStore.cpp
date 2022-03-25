@@ -98,37 +98,37 @@ static int idbKeyCollate(int aLength, const void* aBuffer, int bLength, const vo
     return a.compare(b);
 }
 
-static const String v1RecordsTableSchema(const String& tableName)
+static const String v1RecordsTableSchema(ASCIILiteral tableName)
 {
     return makeString("CREATE TABLE ", tableName, " (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, value NOT NULL ON CONFLICT FAIL)");
 }
 
 static const String& v1RecordsTableSchema()
 {
-    static NeverDestroyed<String> v1RecordsTableSchemaString(v1RecordsTableSchema("Records"));
+    static NeverDestroyed<String> v1RecordsTableSchemaString(v1RecordsTableSchema("Records"_s));
     return v1RecordsTableSchemaString;
 }
 
 static const String& v1RecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<String> v1RecordsTableSchemaString(v1RecordsTableSchema("\"Records\""));
+    static NeverDestroyed<String> v1RecordsTableSchemaString(v1RecordsTableSchema("\"Records\""_s));
     return v1RecordsTableSchemaString;
 }
 
-static const String v2RecordsTableSchema(const String& tableName)
+static const String v2RecordsTableSchema(ASCIILiteral tableName)
 {
     return makeString("CREATE TABLE ", tableName, " (objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL)");
 }
 
 static const String& v2RecordsTableSchema()
 {
-    static NeverDestroyed<String> v2RecordsTableSchemaString(v2RecordsTableSchema("Records"));
+    static NeverDestroyed<String> v2RecordsTableSchemaString(v2RecordsTableSchema("Records"_s));
     return v2RecordsTableSchemaString;
 }
 
 static const String& v2RecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<String> v2RecordsTableSchemaString(v2RecordsTableSchema("\"Records\""));
+    static NeverDestroyed<String> v2RecordsTableSchemaString(v2RecordsTableSchema("\"Records\""_s));
     return v2RecordsTableSchemaString;
 }
 
@@ -147,37 +147,37 @@ static ASCIILiteral v3RecordsTableSchemaTemp()
     return TABLE_SCHEMA_PREFIX "_Temp_Records" V3_RECORDS_TABLE_SCHEMA_SUFFIX;
 }
 
-static const String v1IndexRecordsTableSchema(const String& tableName)
+static const String v1IndexRecordsTableSchema(ASCIILiteral tableName)
 {
     return makeString("CREATE TABLE ", tableName, " (indexID INTEGER NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value NOT NULL ON CONFLICT FAIL)");
 }
 
 static const String& v1IndexRecordsTableSchema()
 {
-    static NeverDestroyed<String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("IndexRecords"));
+    static NeverDestroyed<String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("IndexRecords"_s));
     return v1IndexRecordsTableSchemaString;
 }
 
 static const String& v1IndexRecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("\"IndexRecords\""));
+    static NeverDestroyed<String> v1IndexRecordsTableSchemaString(v1IndexRecordsTableSchema("\"IndexRecords\""_s));
     return v1IndexRecordsTableSchemaString;
 }
 
-static const String v2IndexRecordsTableSchema(const String& tableName)
+static const String v2IndexRecordsTableSchema(ASCIILiteral tableName)
 {
     return makeString("CREATE TABLE ", tableName, " (indexID INTEGER NOT NULL ON CONFLICT FAIL, objectStoreID INTEGER NOT NULL ON CONFLICT FAIL, key TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL, value TEXT COLLATE IDBKEY NOT NULL ON CONFLICT FAIL)");
 }
 
 static const String& v2IndexRecordsTableSchema()
 {
-    static NeverDestroyed<String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("IndexRecords"));
+    static NeverDestroyed<String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("IndexRecords"_s));
     return v2IndexRecordsTableSchemaString;
 }
 
 static const String& v2IndexRecordsTableSchemaAlternate()
 {
-    static NeverDestroyed<String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("\"IndexRecords\""));
+    static NeverDestroyed<String> v2IndexRecordsTableSchemaString(v2IndexRecordsTableSchema("\"IndexRecords\""_s));
     return v2IndexRecordsTableSchemaString;
 }
 
@@ -914,7 +914,7 @@ String SQLiteIDBBackingStore::encodeDatabaseName(const String& databaseName)
 {
     ASSERT(!databaseName.isEmpty());
     if (databaseName.isEmpty())
-        return "%00";
+        return "%00"_s;
 
     String filename = FileSystem::encodeForFileName(databaseName);
     filename.replaceWithLiteral('.', "%2E");
@@ -996,7 +996,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     m_sqliteDB->disableThreadingChecks();
     m_sqliteDB->enableAutomaticWALTruncation();
 
-    m_sqliteDB->setCollationFunction("IDBKEY", [](int aLength, const void* a, int bLength, const void* b) {
+    m_sqliteDB->setCollationFunction("IDBKEY"_s, [](int aLength, const void* a, int bLength, const void* b) {
         return idbKeyCollate(aLength, a, bLength, b);
     });
 
@@ -1909,7 +1909,7 @@ IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStor
         ASSERT(indexIterator != indexMap.end());
 
         if (indexIterator == indexMap.end()) {
-            error = IDBError { InvalidStateError, "Missing index metadata" };
+            error = IDBError { InvalidStateError, "Missing index metadata"_s };
             break;
         }
 
@@ -2573,7 +2573,7 @@ IDBError SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue(int64_t objectStor
 
     int64_t value = sql->columnInt64(0);
     if (value < 0)
-        return IDBError { ConstraintError, "Current key generator value from database is invalid" };
+        return IDBError { ConstraintError, "Current key generator value from database is invalid"_s };
 
     outValue = value;
     return IDBError { };
@@ -2587,7 +2587,7 @@ IDBError SQLiteIDBBackingStore::uncheckedSetKeyGeneratorValue(int64_t objectStor
         || sql->bindInt64(2, value) != SQLITE_OK
         || sql->step() != SQLITE_DONE) {
         LOG_ERROR("Could not update key generator value (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return IDBError { ConstraintError, "Error storing new key generator value in database" };
+        return IDBError { ConstraintError, "Error storing new key generator value in database"_s };
     }
 
     return IDBError { };
@@ -2615,7 +2615,7 @@ IDBError SQLiteIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
         return error;
 
     if (currentValue + 1 > maxGeneratorValue)
-        return IDBError { ConstraintError, "Cannot generate new key value over 2^53 for object store operation" };
+        return IDBError { ConstraintError, "Cannot generate new key value over 2^53 for object store operation"_s };
 
     generatedKey = currentValue + 1;
     return uncheckedSetKeyGeneratorValue(objectStoreID, generatedKey);

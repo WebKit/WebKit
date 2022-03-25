@@ -106,7 +106,7 @@ void WebCoreReportThreadViolation(const char* function, WebCore::ThreadViolation
         case NoThreadCheck:
             break;
         case LogOnFirstThreadViolation:
-            if (loggedFunctions.get().add(function).isNewEntry) {
+            if (loggedFunctions.get().add(String { function }).isNewEntry) {
                 NSLog(@"WebKit Threading Violation - %s called from secondary thread", function);
                 NSLog(@"Additional threading violations for this function will not be logged.");
             }

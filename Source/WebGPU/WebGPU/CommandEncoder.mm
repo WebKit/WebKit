@@ -149,7 +149,7 @@ void CommandEncoder::copyBufferToBuffer(const Buffer& source, uint64_t sourceOff
     // "If any of the following conditions are unsatisfied
     if (!validateCopyBufferToBuffer(source, sourceOffset, destination, destinationOffset, size)) {
         // "generate a validation error and stop."
-        m_device->generateAValidationError("Validation failure.");
+        m_device->generateAValidationError("Validation failure."_s);
         return;
     }
 
@@ -220,7 +220,7 @@ void CommandEncoder::clearBuffer(const Buffer& buffer, uint64_t offset, uint64_t
     // "If any of the following conditions are unsatisfied"
     if (!validateClearBuffer(buffer, offset, size)) {
         // "generate a validation error and stop."
-        m_device->generateAValidationError("Validation failure.");
+        m_device->generateAValidationError("Validation failure."_s);
         return;
     }
 
@@ -262,7 +262,7 @@ RefPtr<CommandBuffer> CommandEncoder::finish(const WGPUCommandBufferDescriptor& 
     // "If validationSucceeded is false, then:"
     if (validationFailed) {
         // "Generate a validation error."
-        m_device->generateAValidationError("Validation failure.");
+        m_device->generateAValidationError("Validation failure."_s);
 
         // FIXME: "Return a new invalid GPUCommandBuffer."
         return nullptr;

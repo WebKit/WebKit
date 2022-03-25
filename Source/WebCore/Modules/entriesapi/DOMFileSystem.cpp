@@ -59,7 +59,7 @@ static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& 
 {
     ASSERT(!isMainThread());
     if (FileSystem::fileType(fullPath) != FileSystem::FileType::Directory)
-        return Exception { NotFoundError, "Path no longer exists or is no longer a directory" };
+        return Exception { NotFoundError, "Path no longer exists or is no longer a directory"_s };
 
     auto childNames = FileSystem::listDirectory(fullPath);
     Vector<ListedChild> listedChildren;
@@ -183,7 +183,7 @@ static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, St
         return Exception { NotFoundError, "Path does not exist"_s };
 
     if (*fileType != expectedType)
-        return Exception { TypeMismatchError, "Entry at path does not have expected type" };
+        return Exception { TypeMismatchError, "Entry at path does not have expected type"_s };
 
     return WTFMove(virtualPath);
 }

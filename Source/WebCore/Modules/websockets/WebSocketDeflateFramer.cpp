@@ -76,7 +76,7 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
 
     unsigned expectedNumParameters = 0;
     int windowBits = 15;
-    auto parameter = serverParameters.find("max_window_bits");
+    auto parameter = serverParameters.find("max_window_bits"_s);
     if (parameter != serverParameters.end()) {
         windowBits = parseIntegerAllowingTrailingJunk<int>(parameter->value).value_or(0);
         if (windowBits < 8 || windowBits > 15) {
@@ -87,7 +87,7 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
     }
 
     WebSocketDeflater::ContextTakeOverMode mode = WebSocketDeflater::TakeOverContext;
-    parameter = serverParameters.find("no_context_takeover");
+    parameter = serverParameters.find("no_context_takeover"_s);
     if (parameter != serverParameters.end()) {
         if (!parameter->value.isNull()) {
             m_failureReason = "Received invalid no_context_takeover parameter"_s;
@@ -161,7 +161,7 @@ std::unique_ptr<DeflateResultHolder> WebSocketDeflateFramer::deflate(WebSocketFr
     if (!enabled() || !WebSocketFrame::isNonControlOpCode(frame.opCode) || !frame.payloadLength)
         return result;
     if (!m_deflater->addBytes(frame.payload, frame.payloadLength) || !m_deflater->finish()) {
-        result->fail("Failed to compress frame");
+        result->fail("Failed to compress frame"_s);
         return result;
     }
     frame.compress = true;
@@ -180,17 +180,17 @@ std::unique_ptr<InflateResultHolder> WebSocketDeflateFramer::inflate(WebSocketFr
 {
     auto result = makeUnique<InflateResultHolder>(*this);
     if (!enabled() && frame.compress) {
-        result->fail("Compressed bit must be 0 if no negotiated deflate-frame extension");
+        result->fail("Compressed bit must be 0 if no negotiated deflate-frame extension"_s);
         return result;
     }
     if (!frame.compress)
         return result;
     if (!WebSocketFrame::isNonControlOpCode(frame.opCode)) {
-        result->fail("Received unexpected compressed frame");
+        result->fail("Received unexpected compressed frame"_s);
         return result;
     }
     if (!m_inflater->addBytes(frame.payload, frame.payloadLength) || !m_inflater->finish()) {
-        result->fail("Failed to decompress frame");
+        result->fail("Failed to decompress frame"_s);
         return result;
     }
     frame.compress = false;

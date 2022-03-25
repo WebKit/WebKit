@@ -36,7 +36,7 @@ class CryptoKeyAES;
 
 class CryptoAlgorithmAES_CFB final : public CryptoAlgorithm {
 public:
-    static constexpr const char* s_name = "AES-CFB-8";
+    static constexpr ASCIILiteral s_name = "AES-CFB-8"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CFB;
     static Ref<CryptoAlgorithm> create();
 

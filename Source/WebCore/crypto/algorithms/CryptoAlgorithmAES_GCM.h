@@ -36,7 +36,7 @@ class CryptoKeyAES;
 
 class CryptoAlgorithmAES_GCM final : public CryptoAlgorithm {
 public:
-    static constexpr const char* s_name = "AES-GCM";
+    static constexpr ASCIILiteral s_name = "AES-GCM"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_GCM;
     static Ref<CryptoAlgorithm> create();
 

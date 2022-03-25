@@ -78,7 +78,7 @@ IDBError MemoryIDBBackingStore::beginTransaction(const IDBTransactionInfo& info)
     LOG(IndexedDB, "MemoryIDBBackingStore::beginTransaction");
 
     if (m_transactions.contains(info.identifier()))
-        return IDBError { InvalidStateError, "Backing store asked to create transaction it already has a record of" };
+        return IDBError { InvalidStateError, "Backing store asked to create transaction it already has a record of"_s };
 
     auto transaction = MemoryBackingStoreTransaction::create(*this, info);
 
@@ -104,7 +104,7 @@ IDBError MemoryIDBBackingStore::abortTransaction(const IDBResourceIdentifier& tr
 
     auto transaction = m_transactions.take(transactionIdentifier);
     if (!transaction)
-        return IDBError { InvalidStateError, "Backing store asked to abort transaction it didn't have record of" };
+        return IDBError { InvalidStateError, "Backing store asked to abort transaction it didn't have record of"_s };
 
     transaction->abort();
 
@@ -117,7 +117,7 @@ IDBError MemoryIDBBackingStore::commitTransaction(const IDBResourceIdentifier& t
 
     auto transaction = m_transactions.take(transactionIdentifier);
     if (!transaction)
-        return IDBError { InvalidStateError, "Backing store asked to commit transaction it didn't have record of" };
+        return IDBError { InvalidStateError, "Backing store asked to commit transaction it didn't have record of"_s };
 
     transaction->commit();
 
@@ -473,7 +473,7 @@ IDBError MemoryIDBBackingStore::generateKeyNumber(const IDBResourceIdentifier& t
 
     keyNumber = objectStore->currentKeyGeneratorValue();
     if (keyNumber > maxGeneratedKeyValue)
-        return IDBError { ConstraintError, "Cannot generate new key value over 2^53 for object store operation" };
+        return IDBError { ConstraintError, "Cannot generate new key value over 2^53 for object store operation"_s };
 
     objectStore->setKeyGeneratorValue(keyNumber + 1);
 

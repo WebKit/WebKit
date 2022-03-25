@@ -536,7 +536,7 @@ bool WebSocketHandshake::checkResponseHeaders()
             m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch"_s;
             return false;
         }
-        Vector<String> result = m_clientProtocol.split(WebSocket::subprotocolSeparator());
+        Vector<String> result = m_clientProtocol.split(StringView { WebSocket::subprotocolSeparator() });
         if (!result.contains(serverWebSocketProtocol)) {
             m_failureReason = "Error during WebSocket handshake: Sec-WebSocket-Protocol mismatch"_s;
             return false;

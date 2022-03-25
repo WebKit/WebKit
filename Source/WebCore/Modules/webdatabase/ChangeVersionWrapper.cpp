@@ -53,7 +53,7 @@ bool ChangeVersionWrapper::performPreflight(SQLTransaction& transaction)
     }
 
     if (actualVersion != m_oldVersion) {
-        m_sqlError = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match");
+        m_sqlError = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match"_s);
         return false;
     }
 

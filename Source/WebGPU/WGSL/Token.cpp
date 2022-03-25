@@ -32,89 +32,89 @@ String toString(TokenType type)
 {
     switch (type) {
     case TokenType::Invalid:
-        return "Invalid";
+        return "Invalid"_s;
     case TokenType::EndOfFile:
-        return "EOF";
+        return "EOF"_s;
     case TokenType::IntegerLiteral:
-        return "IntegerLiteral";
+        return "IntegerLiteral"_s;
     case TokenType::IntegerLiteralSigned:
-        return "IntegerLiteralSigned";
+        return "IntegerLiteralSigned"_s;
     case TokenType::IntegerLiteralUnsigned:
-        return "IntegerLiteralUnsigned";
+        return "IntegerLiteralUnsigned"_s;
     case TokenType::DecimalFloatLiteral:
-        return "DecimalFloatLiteral";
+        return "DecimalFloatLiteral"_s;
     case TokenType::HexFloatLiteral:
-        return "HexFloatLiteral";
+        return "HexFloatLiteral"_s;
     case TokenType::Identifier:
-        return "Identifier";
+        return "Identifier"_s;
     case TokenType::ReservedWord:
-        return "ReservedWord";
+        return "ReservedWord"_s;
     case TokenType::KeywordStruct:
-        return "struct";
+        return "struct"_s;
     case TokenType::KeywordFn:
-        return "fn";
+        return "fn"_s;
     case TokenType::KeywordFunction:
-        return "function";
+        return "function"_s;
     case TokenType::KeywordPrivate:
-        return "private";
+        return "private"_s;
     case TokenType::KeywordRead:
-        return "read";
+        return "read"_s;
     case TokenType::KeywordReadWrite:
-        return "read_write";
+        return "read_write"_s;
     case TokenType::KeywordReturn:
-        return "return";
+        return "return"_s;
     case TokenType::KeywordStorage:
-        return "storage";
+        return "storage"_s;
     case TokenType::KeywordUniform:
-        return "uniform";
+        return "uniform"_s;
     case TokenType::KeywordVar:
-        return "var";
+        return "var"_s;
     case TokenType::KeywordWorkgroup:
-        return "workgroup";
+        return "workgroup"_s;
     case TokenType::KeywordWrite:
-        return "write";
+        return "write"_s;
     case TokenType::KeywordI32:
-        return "i32";
+        return "i32"_s;
     case TokenType::KeywordU32:
-        return "u32";
+        return "u32"_s;
     case TokenType::KeywordF32:
-        return "f32";
+        return "f32"_s;
     case TokenType::KeywordBool:
-        return "bool";
+        return "bool"_s;
     case TokenType::LiteralTrue:
-        return "true";
+        return "true"_s;
     case TokenType::LiteralFalse:
-        return "false";
+        return "false"_s;
     case TokenType::Arrow:
-        return "->";
+        return "->"_s;
     case TokenType::Attribute:
-        return "@";
+        return "@"_s;
     case TokenType::BracketLeft:
-        return "[";
+        return "["_s;
     case TokenType::BracketRight:
-        return "]";
+        return "]"_s;
     case TokenType::BraceLeft:
-        return "{";
+        return "{"_s;
     case TokenType::BraceRight:
-        return "}";
+        return "}"_s;
     case TokenType::Colon:
-        return ":";
+        return ":"_s;
     case TokenType::Comma:
-        return ",";
+        return ","_s;
     case TokenType::Equal:
-        return "=";
+        return "="_s;
     case TokenType::GT:
-        return ">";
+        return ">"_s;
     case TokenType::LT:
-        return "<";
+        return "<"_s;
     case TokenType::Period:
-        return ".";
+        return "."_s;
     case TokenType::ParenLeft:
-        return "(";
+        return "("_s;
     case TokenType::ParenRight:
-        return ")";
+        return ")"_s;
     case TokenType::Semicolon:
-        return ";";
+        return ";"_s;
     }
 }
 

@@ -311,7 +311,7 @@ protected:
     MediaPlayer* player() { return m_player; }
     const MediaPlayer* player() const { return m_player; }
 
-    String engineDescription() const override { return "AVFoundation"; }
+    String engineDescription() const override { return "AVFoundation"_s; }
     long platformErrorCode() const override { return assetErrorCode(); }
 
     void trackModeChanged() override;

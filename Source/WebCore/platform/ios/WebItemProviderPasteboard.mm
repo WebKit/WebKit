@@ -761,7 +761,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
     // For compatibility with DataTransfer APIs, additionally load web-exposed types. Since this is the only chance to
     // fault in any data at all, we need to load up front any information that the page may ask for later down the line.
-    NSString *customPasteboardDataUTI = @(PasteboardCustomData::cocoaType());
+    NSString *customPasteboardDataUTI = @(PasteboardCustomData::cocoaType().characters());
     for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
         if ([registeredTypeIdentifier isEqualToString:highestFidelityContentType]
             || [registeredTypeIdentifier isEqualToString:highestFidelitySupportedType]

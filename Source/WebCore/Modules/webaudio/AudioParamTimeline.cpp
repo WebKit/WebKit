@@ -172,7 +172,7 @@ ExceptionOr<void> AudioParamTimeline::insertEvent(ParamEvent&& event)
             // Otherwise, make sure this event doesn't overlap any existing SetValueCurve event.
             auto parentEventEndTime = paramEvent.time() + paramEvent.duration();
             if (event.time() >= paramEvent.time() && event.time() < parentEventEndTime)
-                return Exception { NotSupportedError, "Events are overlapping" };
+                return Exception { NotSupportedError, "Events are overlapping"_s };
         }
 
         if (paramEvent.time() > insertTime)

@@ -61,7 +61,7 @@ String IDBIndexInfo::loggingString(int indent) const
 {
     String indentString;
     for (int i = 0; i < indent; ++i)
-        indentString.append(" ");
+        indentString.append(' ');
     return makeString(indentString, "Index: ", m_name, " (", m_identifier, ") keyPath: ", WebCore::loggingString(m_keyPath), '\n');
 }
 

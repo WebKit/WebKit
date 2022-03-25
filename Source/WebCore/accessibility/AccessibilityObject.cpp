@@ -1729,7 +1729,7 @@ bool AccessibilityObject::supportsReadOnly() const
 String AccessibilityObject::readOnlyValue() const
 {
     if (!hasAttribute(aria_readonlyAttr))
-        return ariaRoleAttribute() != AccessibilityRole::Unknown && supportsReadOnly() ? "false" : String();
+        return ariaRoleAttribute() != AccessibilityRole::Unknown && supportsReadOnly() ? "false"_s : String();
 
     return getAttribute(aria_readonlyAttr).string().convertToASCIILowercase();
 }
@@ -1757,7 +1757,7 @@ String AccessibilityObject::autoCompleteValue() const
         || equalLettersIgnoringASCIICase(autoComplete, "both"))
         return autoComplete;
 
-    return "none";
+    return "none"_s;
 }
 
 bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
@@ -2233,20 +2233,20 @@ String AccessibilityObject::currentValue() const
 {
     switch (currentState()) {
     case AccessibilityCurrentState::False:
-        return "false";
+        return "false"_s;
     case AccessibilityCurrentState::Page:
-        return "page";
+        return "page"_s;
     case AccessibilityCurrentState::Step:
-        return "step";
+        return "step"_s;
     case AccessibilityCurrentState::Location:
-        return "location";
+        return "location"_s;
     case AccessibilityCurrentState::Time:
-        return "time";
+        return "time"_s;
     case AccessibilityCurrentState::Date:
-        return "date";
+        return "date"_s;
     default:
     case AccessibilityCurrentState::True:
-        return "true";
+        return "true"_s;
     }
 }
 
@@ -2355,11 +2355,11 @@ bool AccessibilityObject::replaceTextInRange(const String& replacementString, co
     }
     
     if (is<HTMLInputElement>(element)) {
-        downcast<HTMLInputElement>(element).setRangeText(replacementString, range.start, range.length, "");
+        downcast<HTMLInputElement>(element).setRangeText(replacementString, range.start, range.length, emptyString());
         return true;
     }
     if (is<HTMLTextAreaElement>(element)) {
-        downcast<HTMLTextAreaElement>(element).setRangeText(replacementString, range.start, range.length, "");
+        downcast<HTMLTextAreaElement>(element).setRangeText(replacementString, range.start, range.length, emptyString());
         return true;
     }
 
@@ -2594,7 +2594,7 @@ String AccessibilityObject::computedRoleString() const
 
     // We do not compute a role string for generic block elements with user-agent assigned roles.
     if (role == AccessibilityRole::Group || role == AccessibilityRole::TextGroup)
-        return "";
+        return emptyString();
 
     // We do compute a role string for block elements with author-provided roles.
     if (role == AccessibilityRole::ApplicationTextGroup
@@ -2725,7 +2725,7 @@ String AccessibilityObject::roleDescription() const
 
 bool nodeHasPresentationRole(Node* node)
 {
-    return nodeHasRole(node, "presentation") || nodeHasRole(node, "none");
+    return nodeHasRole(node, "presentation"_s) || nodeHasRole(node, "none"_s);
 }
     
 bool AccessibilityObject::supportsPressAction() const
@@ -3210,10 +3210,10 @@ HashMap<String, AXEditingStyleValueVariant> AccessibilityObject::resolvedEditing
         return { };
 
     HashMap<String, AXEditingStyleValueVariant> styles;
-    styles.add("bold", selectionStyle->hasStyle(CSSPropertyFontWeight, "bold"));
-    styles.add("italic", selectionStyle->hasStyle(CSSPropertyFontStyle, "italic"));
-    styles.add("underline", selectionStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"));
-    styles.add("fontsize", selectionStyle->legacyFontSize(*document));
+    styles.add("bold"_s, selectionStyle->hasStyle(CSSPropertyFontWeight, "bold"_s));
+    styles.add("italic"_s, selectionStyle->hasStyle(CSSPropertyFontStyle, "italic"_s));
+    styles.add("underline"_s, selectionStyle->hasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s));
+    styles.add("fontsize"_s, selectionStyle->legacyFontSize(*document));
     return styles;
 }
 
@@ -4088,7 +4088,7 @@ static bool isRadioButtonInDifferentAdhocGroup(RefPtr<AXCoreObject> axObject, AX
     if (!referenceObject || !referenceObject->isRadioButton())
         return true;
 
-    return axObject->attributeValue("name") != referenceObject->attributeValue("name");
+    return axObject->attributeValue("name"_s) != referenceObject->attributeValue("name"_s);
 }
 
 static bool isAccessibilityObjectSearchMatchAtIndex(RefPtr<AXCoreObject> axObject, AccessibilitySearchCriteria const& criteria, size_t index)
@@ -4295,7 +4295,7 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
 
 void findMatchingObjects(AccessibilitySearchCriteria const& criteria, AXCoreObject::AccessibilityChildrenVector& results)
 {
-    AXTRACE("Accessibility::findMatchingObjects");
+    AXTRACE("Accessibility::findMatchingObjects"_s);
     AXLOG(criteria);
 
     // This search algorithm only searches the elements before/after the starting object.

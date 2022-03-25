@@ -148,7 +148,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyEC::exportRaw() const
 ExceptionOr<JsonWebKey> CryptoKeyEC::exportJwk() const
 {
     JsonWebKey result;
-    result.kty = "EC";
+    result.kty = "EC"_s;
     switch (m_curve) {
     case NamedCurve::P256:
         result.crv = P256;

@@ -264,312 +264,312 @@ ALWAYS_INLINE String accessibilityRoleToString(AccessibilityRole role)
 {
     switch (role) {
     case AccessibilityRole::Annotation:
-        return "Annotation";
+        return "Annotation"_s;
     case AccessibilityRole::Application:
-        return "Application";
+        return "Application"_s;
     case AccessibilityRole::ApplicationAlert:
-        return "ApplicationAlert";
+        return "ApplicationAlert"_s;
     case AccessibilityRole::ApplicationAlertDialog:
-        return "ApplicationAlertDialog";
+        return "ApplicationAlertDialog"_s;
     case AccessibilityRole::ApplicationDialog:
-        return "ApplicationDialog";
+        return "ApplicationDialog"_s;
     case AccessibilityRole::ApplicationGroup:
-        return "ApplicationGroup";
+        return "ApplicationGroup"_s;
     case AccessibilityRole::ApplicationLog:
-        return "ApplicationLog";
+        return "ApplicationLog"_s;
     case AccessibilityRole::ApplicationMarquee:
-        return "ApplicationMarquee";
+        return "ApplicationMarquee"_s;
     case AccessibilityRole::ApplicationStatus:
-        return "ApplicationStatus";
+        return "ApplicationStatus"_s;
     case AccessibilityRole::ApplicationTextGroup:
-        return "ApplicationTextGroup";
+        return "ApplicationTextGroup"_s;
     case AccessibilityRole::ApplicationTimer:
-        return "ApplicationTimer";
+        return "ApplicationTimer"_s;
     case AccessibilityRole::Audio:
-        return "Audio";
+        return "Audio"_s;
     case AccessibilityRole::Blockquote:
-        return "Blockquote";
+        return "Blockquote"_s;
     case AccessibilityRole::Browser:
-        return "Browser";
+        return "Browser"_s;
     case AccessibilityRole::BusyIndicator:
-        return "BusyIndicator";
+        return "BusyIndicator"_s;
     case AccessibilityRole::Button:
-        return "Button";
+        return "Button"_s;
     case AccessibilityRole::Canvas:
-        return "Canvas";
+        return "Canvas"_s;
     case AccessibilityRole::Caption:
-        return "Caption";
+        return "Caption"_s;
     case AccessibilityRole::Cell:
-        return "Cell";
+        return "Cell"_s;
     case AccessibilityRole::CheckBox:
-        return "CheckBox";
+        return "CheckBox"_s;
     case AccessibilityRole::ColorWell:
-        return "ColorWell";
+        return "ColorWell"_s;
     case AccessibilityRole::Column:
-        return "Column";
+        return "Column"_s;
     case AccessibilityRole::ColumnHeader:
-        return "ColumnHeader";
+        return "ColumnHeader"_s;
     case AccessibilityRole::ComboBox:
-        return "ComboBox";
+        return "ComboBox"_s;
     case AccessibilityRole::Definition:
-        return "Definition";
+        return "Definition"_s;
     case AccessibilityRole::Deletion:
-        return "Deletion";
+        return "Deletion"_s;
     case AccessibilityRole::DescriptionList:
-        return "DescriptionList";
+        return "DescriptionList"_s;
     case AccessibilityRole::DescriptionListTerm:
-        return "DescriptionListTerm";
+        return "DescriptionListTerm"_s;
     case AccessibilityRole::DescriptionListDetail:
-        return "DescriptionListDetail";
+        return "DescriptionListDetail"_s;
     case AccessibilityRole::Details:
-        return "Details";
+        return "Details"_s;
     case AccessibilityRole::Directory:
-        return "Directory";
+        return "Directory"_s;
     case AccessibilityRole::DisclosureTriangle:
-        return "DisclosureTriangle";
+        return "DisclosureTriangle"_s;
     case AccessibilityRole::Div:
-        return "Div";
+        return "Div"_s;
     case AccessibilityRole::Document:
-        return "Document";
+        return "Document"_s;
     case AccessibilityRole::DocumentArticle:
-        return "DocumentArticle";
+        return "DocumentArticle"_s;
     case AccessibilityRole::DocumentMath:
-        return "DocumentMath";
+        return "DocumentMath"_s;
     case AccessibilityRole::DocumentNote:
-        return "DocumentNote";
+        return "DocumentNote"_s;
     case AccessibilityRole::Drawer:
-        return "Drawer";
+        return "Drawer"_s;
     case AccessibilityRole::EditableText:
-        return "EditableText";
+        return "EditableText"_s;
     case AccessibilityRole::Feed:
-        return "Feed";
+        return "Feed"_s;
     case AccessibilityRole::Figure:
-        return "Figure";
+        return "Figure"_s;
     case AccessibilityRole::Footer:
-        return "Footer";
+        return "Footer"_s;
     case AccessibilityRole::Footnote:
-        return "Footnote";
+        return "Footnote"_s;
     case AccessibilityRole::Form:
-        return "Form";
+        return "Form"_s;
     case AccessibilityRole::GraphicsDocument:
-        return "GraphicsDocument";
+        return "GraphicsDocument"_s;
     case AccessibilityRole::GraphicsObject:
-        return "GraphicsObject";
+        return "GraphicsObject"_s;
     case AccessibilityRole::GraphicsSymbol:
-        return "GraphicsSymbol";
+        return "GraphicsSymbol"_s;
     case AccessibilityRole::Grid:
-        return "Grid";
+        return "Grid"_s;
     case AccessibilityRole::GridCell:
-        return "GridCell";
+        return "GridCell"_s;
     case AccessibilityRole::Group:
-        return "Group";
+        return "Group"_s;
     case AccessibilityRole::GrowArea:
-        return "GrowArea";
+        return "GrowArea"_s;
     case AccessibilityRole::Heading:
-        return "Heading";
+        return "Heading"_s;
     case AccessibilityRole::HelpTag:
-        return "HelpTag";
+        return "HelpTag"_s;
     case AccessibilityRole::HorizontalRule:
-        return "HorizontalRule";
+        return "HorizontalRule"_s;
     case AccessibilityRole::Ignored:
-        return "Ignored";
+        return "Ignored"_s;
     case AccessibilityRole::Inline:
-        return "Inline";
+        return "Inline"_s;
     case AccessibilityRole::Image:
-        return "Image";
+        return "Image"_s;
     case AccessibilityRole::ImageMap:
-        return "ImageMap";
+        return "ImageMap"_s;
     case AccessibilityRole::ImageMapLink:
-        return "ImageMapLink";
+        return "ImageMapLink"_s;
     case AccessibilityRole::Incrementor:
-        return "Incrementor";
+        return "Incrementor"_s;
     case AccessibilityRole::Insertion:
-        return "Insertion";
+        return "Insertion"_s;
     case AccessibilityRole::Label:
-        return "Label";
+        return "Label"_s;
     case AccessibilityRole::LandmarkBanner:
-        return "LandmarkBanner";
+        return "LandmarkBanner"_s;
     case AccessibilityRole::LandmarkComplementary:
-        return "LandmarkComplementary";
+        return "LandmarkComplementary"_s;
     case AccessibilityRole::LandmarkContentInfo:
-        return "LandmarkContentInfo";
+        return "LandmarkContentInfo"_s;
     case AccessibilityRole::LandmarkDocRegion:
-        return "LandmarkDocRegion";
+        return "LandmarkDocRegion"_s;
     case AccessibilityRole::LandmarkMain:
-        return "LandmarkMain";
+        return "LandmarkMain"_s;
     case AccessibilityRole::LandmarkNavigation:
-        return "LandmarkNavigation";
+        return "LandmarkNavigation"_s;
     case AccessibilityRole::LandmarkRegion:
-        return "LandmarkRegion";
+        return "LandmarkRegion"_s;
     case AccessibilityRole::LandmarkSearch:
-        return "LandmarkSearch";
+        return "LandmarkSearch"_s;
     case AccessibilityRole::Legend:
-        return "Legend";
+        return "Legend"_s;
     case AccessibilityRole::Link:
-        return "Link";
+        return "Link"_s;
     case AccessibilityRole::List:
-        return "List";
+        return "List"_s;
     case AccessibilityRole::ListBox:
-        return "ListBox";
+        return "ListBox"_s;
     case AccessibilityRole::ListBoxOption:
-        return "ListBoxOption";
+        return "ListBoxOption"_s;
     case AccessibilityRole::ListItem:
-        return "ListItem";
+        return "ListItem"_s;
     case AccessibilityRole::ListMarker:
-        return "ListMarker";
+        return "ListMarker"_s;
     case AccessibilityRole::Mark:
-        return "Mark";
+        return "Mark"_s;
     case AccessibilityRole::MathElement:
-        return "MathElement";
+        return "MathElement"_s;
     case AccessibilityRole::Matte:
-        return "Matte";
+        return "Matte"_s;
     case AccessibilityRole::Menu:
-        return "Menu";
+        return "Menu"_s;
     case AccessibilityRole::MenuBar:
-        return "MenuBar";
+        return "MenuBar"_s;
     case AccessibilityRole::MenuButton:
-        return "MenuButton";
+        return "MenuButton"_s;
     case AccessibilityRole::MenuItem:
-        return "MenuItem";
+        return "MenuItem"_s;
     case AccessibilityRole::MenuItemCheckbox:
-        return "MenuItemCheckbox";
+        return "MenuItemCheckbox"_s;
     case AccessibilityRole::MenuItemRadio:
-        return "MenuItemRadio";
+        return "MenuItemRadio"_s;
     case AccessibilityRole::MenuListPopup:
-        return "MenuListPopup";
+        return "MenuListPopup"_s;
     case AccessibilityRole::MenuListOption:
-        return "MenuListOption";
+        return "MenuListOption"_s;
     case AccessibilityRole::Meter:
-        return "Meter";
+        return "Meter"_s;
     case AccessibilityRole::Model:
-        return "Model";
+        return "Model"_s;
     case AccessibilityRole::Outline:
-        return "Outline";
+        return "Outline"_s;
     case AccessibilityRole::Paragraph:
-        return "Paragraph";
+        return "Paragraph"_s;
     case AccessibilityRole::PopUpButton:
-        return "PopUpButton";
+        return "PopUpButton"_s;
     case AccessibilityRole::Pre:
-        return "Pre";
+        return "Pre"_s;
     case AccessibilityRole::Presentational:
-        return "Presentational";
+        return "Presentational"_s;
     case AccessibilityRole::ProgressIndicator:
-        return "ProgressIndicator";
+        return "ProgressIndicator"_s;
     case AccessibilityRole::RadioButton:
-        return "RadioButton";
+        return "RadioButton"_s;
     case AccessibilityRole::RadioGroup:
-        return "RadioGroup";
+        return "RadioGroup"_s;
     case AccessibilityRole::RowHeader:
-        return "RowHeader";
+        return "RowHeader"_s;
     case AccessibilityRole::Row:
-        return "Row";
+        return "Row"_s;
     case AccessibilityRole::RowGroup:
-        return "RowGroup";
+        return "RowGroup"_s;
     case AccessibilityRole::RubyBase:
-        return "RubyBase";
+        return "RubyBase"_s;
     case AccessibilityRole::RubyBlock:
-        return "RubyBlock";
+        return "RubyBlock"_s;
     case AccessibilityRole::RubyInline:
-        return "RubyInline";
+        return "RubyInline"_s;
     case AccessibilityRole::RubyRun:
-        return "RubyRun";
+        return "RubyRun"_s;
     case AccessibilityRole::RubyText:
-        return "RubyText";
+        return "RubyText"_s;
     case AccessibilityRole::Ruler:
-        return "Ruler";
+        return "Ruler"_s;
     case AccessibilityRole::RulerMarker:
-        return "RulerMarker";
+        return "RulerMarker"_s;
     case AccessibilityRole::ScrollArea:
-        return "ScrollArea";
+        return "ScrollArea"_s;
     case AccessibilityRole::ScrollBar:
-        return "ScrollBar";
+        return "ScrollBar"_s;
     case AccessibilityRole::SearchField:
-        return "SearchField";
+        return "SearchField"_s;
     case AccessibilityRole::Sheet:
-        return "Sheet";
+        return "Sheet"_s;
     case AccessibilityRole::Slider:
-        return "Slider";
+        return "Slider"_s;
     case AccessibilityRole::SliderThumb:
-        return "SliderThumb";
+        return "SliderThumb"_s;
     case AccessibilityRole::SpinButton:
-        return "SpinButton";
+        return "SpinButton"_s;
     case AccessibilityRole::SpinButtonPart:
-        return "SpinButtonPart";
+        return "SpinButtonPart"_s;
     case AccessibilityRole::SplitGroup:
-        return "SplitGroup";
+        return "SplitGroup"_s;
     case AccessibilityRole::Splitter:
-        return "Splitter";
+        return "Splitter"_s;
     case AccessibilityRole::StaticText:
-        return "StaticText";
+        return "StaticText"_s;
     case AccessibilityRole::Subscript:
-        return "Subscript";
+        return "Subscript"_s;
     case AccessibilityRole::Summary:
-        return "Summary";
+        return "Summary"_s;
     case AccessibilityRole::Superscript:
-        return "Superscript";
+        return "Superscript"_s;
     case AccessibilityRole::Switch:
-        return "Switch";
+        return "Switch"_s;
     case AccessibilityRole::SystemWide:
-        return "SystemWide";
+        return "SystemWide"_s;
     case AccessibilityRole::SVGRoot:
-        return "SVGRoot";
+        return "SVGRoot"_s;
     case AccessibilityRole::SVGText:
-        return "SVGText";
+        return "SVGText"_s;
     case AccessibilityRole::SVGTSpan:
-        return "SVGTSpan";
+        return "SVGTSpan"_s;
     case AccessibilityRole::SVGTextPath:
-        return "SVGTextPath";
+        return "SVGTextPath"_s;
     case AccessibilityRole::TabGroup:
-        return "TabGroup";
+        return "TabGroup"_s;
     case AccessibilityRole::TabList:
-        return "TabList";
+        return "TabList"_s;
     case AccessibilityRole::TabPanel:
-        return "TabPanel";
+        return "TabPanel"_s;
     case AccessibilityRole::Tab:
-        return "Tab";
+        return "Tab"_s;
     case AccessibilityRole::Table:
-        return "Table";
+        return "Table"_s;
     case AccessibilityRole::TableHeaderContainer:
-        return "TableHeaderContainer";
+        return "TableHeaderContainer"_s;
     case AccessibilityRole::Term:
-        return "Term";
+        return "Term"_s;
     case AccessibilityRole::TextArea:
-        return "TextArea";
+        return "TextArea"_s;
     case AccessibilityRole::TextField:
-        return "TextField";
+        return "TextField"_s;
     case AccessibilityRole::TextGroup:
-        return "TextGroup";
+        return "TextGroup"_s;
     case AccessibilityRole::Time:
-        return "Time";
+        return "Time"_s;
     case AccessibilityRole::Tree:
-        return "Tree";
+        return "Tree"_s;
     case AccessibilityRole::TreeGrid:
-        return "TreeGrid";
+        return "TreeGrid"_s;
     case AccessibilityRole::TreeItem:
-        return "TreeItem";
+        return "TreeItem"_s;
     case AccessibilityRole::ToggleButton:
-        return "ToggleButton";
+        return "ToggleButton"_s;
     case AccessibilityRole::Toolbar:
-        return "Toolbar";
+        return "Toolbar"_s;
     case AccessibilityRole::Unknown:
-        return "Unknown";
+        return "Unknown"_s;
     case AccessibilityRole::UserInterfaceTooltip:
-        return "UserInterfaceTooltip";
+        return "UserInterfaceTooltip"_s;
     case AccessibilityRole::ValueIndicator:
-        return "ValueIndicator";
+        return "ValueIndicator"_s;
     case AccessibilityRole::Video:
-        return "Video";
+        return "Video"_s;
     case AccessibilityRole::WebApplication:
-        return "WebApplication";
+        return "WebApplication"_s;
     case AccessibilityRole::WebArea:
-        return "WebArea";
+        return "WebArea"_s;
     case AccessibilityRole::WebCoreLink:
-        return "WebCoreLink";
+        return "WebCoreLink"_s;
     case AccessibilityRole::Window:
-        return "Window";
+        return "Window"_s;
     }
     UNREACHABLE();
-    return "";
+    return ""_s;
 }
 
 enum class AccessibilityDetachmentType { CacheDestroyed, ElementDestroyed, ElementChanged };

@@ -41,7 +41,7 @@ public:
         No
     };
 
-    static constexpr const char* s_name = "AES-CBC";
+    static constexpr ASCIILiteral s_name = "AES-CBC"_s;
     static constexpr CryptoAlgorithmIdentifier s_identifier = CryptoAlgorithmIdentifier::AES_CBC;
     static Ref<CryptoAlgorithm> create();
 

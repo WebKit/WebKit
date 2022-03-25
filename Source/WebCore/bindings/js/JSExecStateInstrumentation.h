@@ -45,7 +45,7 @@ inline void JSExecState::instrumentFunction(ScriptExecutionContext* context, con
         lineNumber = callData.js.functionExecutable->firstLine();
         columnNumber = callData.js.functionExecutable->startColumn();
     } else
-        resourceName = "undefined";
+        resourceName = "undefined"_s;
     InspectorInstrumentation::willCallFunction(context, resourceName, lineNumber, columnNumber);
 }
 

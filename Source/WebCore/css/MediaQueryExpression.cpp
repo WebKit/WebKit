@@ -274,7 +274,7 @@ MediaQueryExpression::MediaQueryExpression(const String& feature, CSSParserToken
 String MediaQueryExpression::serialize() const
 {
     if (m_serializationCache.isNull())
-        m_serializationCache = makeString('(', m_mediaFeature.convertToASCIILowercase(), m_value ? ": " : "", m_value ? m_value->cssText() : "", ')');
+        m_serializationCache = makeString('(', m_mediaFeature.convertToASCIILowercase(), m_value ? ": " : "", m_value ? m_value->cssText() : emptyString(), ')');
     return m_serializationCache;
 }
 

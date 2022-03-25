@@ -159,7 +159,7 @@ static Vector<String> webSafeTypes(NSArray<NSString *> *platformTypes, PlatformP
 {
     ListHashSet<String> domPasteboardTypes;
     for (NSString *type in platformTypes) {
-        if ([type isEqualToString:@(PasteboardCustomData::cocoaType())])
+        if ([type isEqualToString:@(PasteboardCustomData::cocoaType().characters())])
             continue;
 
         if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type)) {
@@ -501,7 +501,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     PasteboardCustomData customData;
     customData.setOrigin(content.contentOrigin);
-    [representationsToRegister addData:customData.createSharedBuffer()->createNSData().get() forType:@(PasteboardCustomData::cocoaType())];
+    [representationsToRegister addData:customData.createSharedBuffer()->createNSData().get() forType:@(PasteboardCustomData::cocoaType().characters())];
 
     registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
 }
@@ -608,7 +608,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
     }
 #endif // PASTEBOARD_SUPPORTS_PRESENTATION_STYLE_AND_TEAM_DATA
 
-    if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType())]) {
+    if (NSData *serializedCustomData = [m_pasteboard dataForPasteboardType:@(PasteboardCustomData::cocoaType().characters())]) {
         auto data = PasteboardCustomData::fromSharedBuffer(SharedBuffer::create(serializedCustomData).get());
         if (data.origin() == origin) {
             for (auto& type : data.orderedTypes())
@@ -645,7 +645,7 @@ static RetainPtr<WebItemProviderRegistrationInfoList> createItemProviderRegistra
             NSDictionary *teamDataDictionary = @{ @(originKeyForTeamData) : data.origin(), @(customTypesKeyForTeamData) : createNSArray(data.orderedTypes()).get() };
             if (NSData *teamData = [NSKeyedArchiver archivedDataWithRootObject:teamDataDictionary requiringSecureCoding:YES error:nullptr]) {
                 [representationsToRegister setTeamData:teamData];
-                [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
+                [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType().characters())];
             }
         }
     }

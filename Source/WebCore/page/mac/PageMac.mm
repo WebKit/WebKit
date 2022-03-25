@@ -57,15 +57,15 @@ void Page::platformInitialize()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
 #if ENABLE(TREE_DEBUGGING)
-        PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
-        PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree", printLayerTreeForLiveDocuments);
-        PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree", printGraphicsLayerTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showRenderTree"_s, printRenderTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showLayerTree"_s, printLayerTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showGraphicsLayerTree"_s, printGraphicsLayerTreeForLiveDocuments);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
-        PAL::registerNotifyCallback("com.apple.WebKit.showLayoutTree", Layout::printLayoutTreeForLiveDocuments);
+        PAL::registerNotifyCallback("com.apple.WebKit.showLayoutTree"_s, Layout::printLayoutTreeForLiveDocuments);
 #endif
 #endif // ENABLE(TREE_DEBUGGING)
 
-        PAL::registerNotifyCallback("com.apple.WebKit.showAllDocuments", [] {
+        PAL::registerNotifyCallback("com.apple.WebKit.showAllDocuments"_s, [] {
             unsigned numPages = 0;
             Page::forEachPage([&numPages](Page&) {
                 ++numPages;

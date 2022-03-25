@@ -35,7 +35,7 @@ public:
 private:
     using SVGPathSeg::SVGPathSeg;
     unsigned short pathSegType() const final { return PATHSEG_CLOSEPATH; }
-    String pathSegTypeAsLetter() const final { return "Z"; }
+    String pathSegTypeAsLetter() const final { return "Z"_s; }
     Ref<SVGPathSeg> clone() const final { return adoptRef(*new SVGPathSegClosePath()); }
 };
 
@@ -45,7 +45,7 @@ public:
 private:
     using SVGPathSegLinetoHorizontal::SVGPathSegLinetoHorizontal;
     unsigned short pathSegType() const final { return PATHSEG_LINETO_HORIZONTAL_ABS; }
-    String pathSegTypeAsLetter() const final { return "H"; }
+    String pathSegTypeAsLetter() const final { return "H"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegLinetoHorizontalAbs>(); }
 };
 
@@ -55,7 +55,7 @@ public:
 private:
     using SVGPathSegLinetoHorizontal::SVGPathSegLinetoHorizontal;
     unsigned short pathSegType() const final { return PATHSEG_LINETO_HORIZONTAL_REL; }
-    String pathSegTypeAsLetter() const final { return "h"; }
+    String pathSegTypeAsLetter() const final { return "h"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegLinetoHorizontalRel>(); }
 };
 
@@ -65,7 +65,7 @@ public:
 private:
     using SVGPathSegLinetoVertical::SVGPathSegLinetoVertical;
     unsigned short pathSegType() const final { return PATHSEG_LINETO_VERTICAL_ABS; }
-    String pathSegTypeAsLetter() const final { return "V"; }
+    String pathSegTypeAsLetter() const final { return "V"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegLinetoVerticalAbs>(); }
 };
 
@@ -75,7 +75,7 @@ public:
 private:
     using SVGPathSegLinetoVertical::SVGPathSegLinetoVertical;
     unsigned short pathSegType() const final { return PATHSEG_LINETO_VERTICAL_REL; }
-    String pathSegTypeAsLetter() const final { return "v"; }
+    String pathSegTypeAsLetter() const final { return "v"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegLinetoVerticalRel>(); }
 };
 
@@ -85,7 +85,7 @@ public:
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     unsigned short pathSegType() const final { return PATHSEG_MOVETO_ABS; }
-    String pathSegTypeAsLetter() const final { return "M"; }
+    String pathSegTypeAsLetter() const final { return "M"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegMovetoAbs>(); }
 };
 
@@ -95,7 +95,7 @@ public:
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     unsigned short pathSegType() const final { return PATHSEG_MOVETO_REL; }
-    String pathSegTypeAsLetter() const final { return "m"; }
+    String pathSegTypeAsLetter() const final { return "m"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegMovetoRel>(); }
 };
 
@@ -105,7 +105,7 @@ public:
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     unsigned short pathSegType() const final { return PATHSEG_LINETO_ABS; }
-    String pathSegTypeAsLetter() const final { return "L"; }
+    String pathSegTypeAsLetter() const final { return "L"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegLinetoAbs>(); }
 };
 
@@ -115,7 +115,7 @@ public:
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     unsigned short pathSegType() const final { return PATHSEG_LINETO_REL; }
-    String pathSegTypeAsLetter() const final { return "l"; }
+    String pathSegTypeAsLetter() const final { return "l"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegLinetoRel>(); }
 };
 
@@ -125,7 +125,7 @@ public:
 private:
     using SVGPathSegCurvetoQuadratic::SVGPathSegCurvetoQuadratic;
     unsigned short pathSegType() const final { return PATHSEG_CURVETO_QUADRATIC_ABS; }
-    String pathSegTypeAsLetter() const final { return "Q"; }
+    String pathSegTypeAsLetter() const final { return "Q"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegCurvetoQuadraticAbs>(); }
 };
 
@@ -135,7 +135,7 @@ public:
 private:
     using SVGPathSegCurvetoQuadratic::SVGPathSegCurvetoQuadratic;
     unsigned short pathSegType() const final { return PATHSEG_CURVETO_QUADRATIC_REL; }
-    String pathSegTypeAsLetter() const final { return "q"; }
+    String pathSegTypeAsLetter() const final { return "q"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegCurvetoQuadraticRel>(); }
 };
 
@@ -145,7 +145,7 @@ public:
 private:
     using SVGPathSegCurvetoCubic::SVGPathSegCurvetoCubic;
     unsigned short pathSegType() const final { return PATHSEG_CURVETO_CUBIC_ABS; }
-    String pathSegTypeAsLetter() const final { return "C"; }
+    String pathSegTypeAsLetter() const final { return "C"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegCurvetoCubicAbs>(); }
 };
 
@@ -155,7 +155,7 @@ public:
 private:
     using SVGPathSegCurvetoCubic::SVGPathSegCurvetoCubic;
     unsigned short pathSegType() const final { return PATHSEG_CURVETO_CUBIC_REL; }
-    String pathSegTypeAsLetter() const final { return "c"; }
+    String pathSegTypeAsLetter() const final { return "c"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegCurvetoCubicRel>(); }
 };
 
@@ -165,7 +165,7 @@ public:
 private:
     using SVGPathSegArc::SVGPathSegArc;
     unsigned short pathSegType() const final { return PATHSEG_ARC_ABS; }
-    String pathSegTypeAsLetter() const final { return "A"; }
+    String pathSegTypeAsLetter() const final { return "A"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegArcAbs>(); }
 };
 
@@ -175,7 +175,7 @@ public:
 private:
     using SVGPathSegArc::SVGPathSegArc;
     unsigned short pathSegType() const final { return PATHSEG_ARC_REL; }
-    String pathSegTypeAsLetter() const final { return "a"; }
+    String pathSegTypeAsLetter() const final { return "a"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegArcRel>(); }
 };
 
@@ -185,7 +185,7 @@ public:
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     unsigned short pathSegType() const final { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS; }
-    String pathSegTypeAsLetter() const final { return "T"; }
+    String pathSegTypeAsLetter() const final { return "T"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegCurvetoQuadraticSmoothAbs>(); }
 };
 
@@ -195,7 +195,7 @@ public:
 private:
     using SVGPathSegSingleCoordinate::SVGPathSegSingleCoordinate;
     unsigned short pathSegType() const final { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL; }
-    String pathSegTypeAsLetter() const final { return "t"; }
+    String pathSegTypeAsLetter() const final { return "t"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegCurvetoQuadraticSmoothRel>(); }
 };
 
@@ -205,7 +205,7 @@ public:
 private:
     using SVGPathSegCurvetoCubicSmooth::SVGPathSegCurvetoCubicSmooth;
     unsigned short pathSegType() const final { return PATHSEG_CURVETO_CUBIC_SMOOTH_ABS; }
-    String pathSegTypeAsLetter() const final { return "S"; }
+    String pathSegTypeAsLetter() const final { return "S"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegCurvetoCubicSmoothAbs>(); }
 };
 
@@ -215,7 +215,7 @@ public:
 private:
     using SVGPathSegCurvetoCubicSmooth::SVGPathSegCurvetoCubicSmooth;
     unsigned short pathSegType() const final { return PATHSEG_CURVETO_CUBIC_SMOOTH_REL; }
-    String pathSegTypeAsLetter() const final { return "s"; }
+    String pathSegTypeAsLetter() const final { return "s"_s; }
     Ref<SVGPathSeg> clone() const final { return SVGPathSegValue::clone<SVGPathSegCurvetoCubicSmoothRel>(); }
 };
 

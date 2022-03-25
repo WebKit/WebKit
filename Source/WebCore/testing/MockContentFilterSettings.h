@@ -48,7 +48,7 @@ public:
 
     WEBCORE_TESTSUPPORT_EXPORT static MockContentFilterSettings& singleton();
     WEBCORE_TESTSUPPORT_EXPORT static void reset();
-    static const char* unblockURLHost() { return "mock-unblock"; }
+    static ASCIILiteral unblockURLHost() { return "mock-unblock"_s; }
 
     // Trick the generated bindings into thinking we're RefCounted.
     void ref() { }

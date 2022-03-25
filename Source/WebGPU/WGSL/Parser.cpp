@@ -234,7 +234,7 @@ Expected<UniqueRef<AST::GlobalDecl>, Error> Parser<Lexer>::parseGlobalDecl()
         return { makeUniqueRef<AST::FunctionDecl>(WTFMove(fn)) };
     }
     default:
-        FAIL("Trying to parse a GlobalDecl, expected 'var', 'fn', or 'struct'.");
+        FAIL("Trying to parse a GlobalDecl, expected 'var', 'fn', or 'struct'."_s);
     }
 }
 
@@ -282,7 +282,7 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
             RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Vertex);
         if (stage.m_ident == "fragment")
             RETURN_NODE_REF(StageAttribute, AST::StageAttribute::Stage::Fragment);
-        FAIL("Invalid stage attribute, the only options are 'compute', 'vertex', 'fragment'.");
+        FAIL("Invalid stage attribute, the only options are 'compute', 'vertex', 'fragment'."_s);
     }
     if (ident.m_ident == "location") {
         CONSUME_TYPE(ParenLeft);
@@ -297,7 +297,7 @@ Expected<UniqueRef<AST::Attribute>, Error> Parser<Lexer>::parseAttribute()
         CONSUME_TYPE(ParenRight);
         RETURN_NODE_REF(BuiltinAttribute, name.m_ident);
     }
-    FAIL("Unknown attribute, the only supported attributes are 'group', 'binding', 'stage'.");
+    FAIL("Unknown attribute, the only supported attributes are 'group', 'binding', 'stage'."_s);
 }
 
 template<typename Lexer>
@@ -360,7 +360,7 @@ Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDecl()
         return parseTypeDeclAfterIdentifier(WTFMove(name.m_ident), _startOfElementPosition);
     }
 
-    FAIL("Tried parsing a type and it did not start with an identifier");
+    FAIL("Tried parsing a type and it did not start with an identifier"_s);
 }
 
 template<typename Lexer>
@@ -450,7 +450,7 @@ Expected<AST::StorageClass, Error> Parser<Lexer>::parseStorageClass()
         return { AST::StorageClass::Storage };
     }
 
-    FAIL("Expected one of 'function'/'private'/'storage'/'uniform'/'workgroup'");
+    FAIL("Expected one of 'function'/'private'/'storage'/'uniform'/'workgroup'"_s);
 }
 
 template<typename Lexer>
@@ -471,7 +471,7 @@ Expected<AST::AccessMode, Error> Parser<Lexer>::parseAccessMode()
         return { AST::AccessMode::ReadWrite };
     }
 
-    FAIL("Expected one of 'read'/'write'/'read_write'");
+    FAIL("Expected one of 'read'/'write'/'read_write'"_s);
 }
 
 template<typename Lexer>
@@ -547,7 +547,7 @@ Expected<UniqueRef<AST::Statement>, Error> Parser<Lexer>::parseStatement()
         RETURN_NODE_REF(AssignmentStatement, lhs.moveToUniquePtr(), WTFMove(rhs));
     }
     default:
-        FAIL("Not a valid statement");
+        FAIL("Not a valid statement"_s);
     }
 }
 
@@ -694,7 +694,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
     default:
         break;
     }
-    FAIL("Expected one of '(', a literal, or an identifier");
+    FAIL("Expected one of '(', a literal, or an identifier"_s);
 }
 
 template<typename Lexer>
@@ -734,7 +734,7 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parseCoreLHSExpressio
         break;
     }
 
-    FAIL("Tried to parse the left-hand side of an assignment and failed");
+    FAIL("Tried to parse the left-hand side of an assignment and failed"_s);
 }
 
 template<typename Lexer>

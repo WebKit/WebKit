@@ -76,7 +76,7 @@ String DeprecatedCSSOMValue::cssText() const
         return downcast<DeprecatedCSSOMValueList>(*this).cssText();
     }
     ASSERT_NOT_REACHED();
-    return "";
+    return emptyString();
 }
 
 }

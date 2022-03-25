@@ -66,7 +66,7 @@ ExceptionOr<Ref<MediaRecorder>> MediaRecorder::create(Document& document, Ref<Me
         return Exception { InvalidStateError };
 
     if (!isTypeSupported(document, options.mimeType))
-        return Exception { NotSupportedError, "mimeType is not supported" };
+        return Exception { NotSupportedError, "mimeType is not supported"_s };
 
     auto recorder = adoptRef(*new MediaRecorder(document, WTFMove(stream), WTFMove(options)));
     recorder->suspendIfNeeded();

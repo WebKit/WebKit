@@ -588,8 +588,8 @@ void IDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime)
     m_uniqueIDBDatabaseMap.clear();
 
     if (!m_databaseDirectoryPath.isEmpty()) {
-        removeDatabasesModifiedSinceForVersion(modificationTime, "v0");
-        removeDatabasesModifiedSinceForVersion(modificationTime, "v1");
+        removeDatabasesModifiedSinceForVersion(modificationTime, "v0"_s);
+        removeDatabasesModifiedSinceForVersion(modificationTime, "v1"_s);
     }
 }
 
@@ -624,8 +624,8 @@ void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginDat
     });
 
     if (!m_databaseDirectoryPath.isEmpty()) {
-        removeDatabasesWithOriginsForVersion(origins, "v0");
-        removeDatabasesWithOriginsForVersion(origins, "v1");
+        removeDatabasesWithOriginsForVersion(origins, "v0"_s);
+        removeDatabasesWithOriginsForVersion(origins, "v1"_s);
     }
 }
 

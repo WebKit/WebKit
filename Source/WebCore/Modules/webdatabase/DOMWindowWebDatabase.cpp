@@ -45,7 +45,7 @@ ExceptionOr<RefPtr<Database>> DOMWindowWebDatabase::openDatabase(DOMWindow& wind
     auto* document = window.document();
     if (!document)
         return Exception { SecurityError };
-    document->addConsoleMessage(MessageSource::Storage, MessageLevel::Warning, "Web SQL is deprecated. Please use IndexedDB instead.");
+    document->addConsoleMessage(MessageSource::Storage, MessageLevel::Warning, "Web SQL is deprecated. Please use IndexedDB instead."_s);
 
     auto& securityOrigin = document->securityOrigin();
     if (!securityOrigin.canAccessDatabase(&document->topOrigin()))

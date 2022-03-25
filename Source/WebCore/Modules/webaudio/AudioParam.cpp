@@ -109,7 +109,7 @@ ExceptionOr<void> AudioParam::setValueForBindings(float value)
 ExceptionOr<void> AudioParam::setAutomationRate(AutomationRate automationRate)
 {
     if (m_automationRateMode == AutomationRateMode::Fixed)
-        return Exception { InvalidStateError, "automationRate cannot be changed for this node" };
+        return Exception { InvalidStateError, "automationRate cannot be changed for this node"_s };
 
     m_automationRate = automationRate;
     return { };

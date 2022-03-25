@@ -655,7 +655,7 @@ String AXWeekFieldText()
     return WEB_UI_STRING("week and year field", "accessibility role description for a time field.");
 }
 
-String AXARIAContentGroupText(const String& ariaType)
+String AXARIAContentGroupText(StringView ariaType)
 {
     if (ariaType == "ARIAApplicationAlert")
         return WEB_UI_STRING("alert", "An ARIA accessibility group that acts as an alert.");

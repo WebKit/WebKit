@@ -452,7 +452,7 @@ ExceptionOr<Ref<WebAnimation>> DocumentTimeline::animate(Ref<CustomEffectCallbac
     if (!m_document)
         return Exception { InvalidStateError };
 
-    String id = "";
+    String id = emptyString();
     std::variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;
     std::optional<std::variant<double, EffectTiming>> customEffectOptions;
 

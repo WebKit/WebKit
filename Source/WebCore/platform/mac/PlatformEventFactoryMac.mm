@@ -502,7 +502,7 @@ String keyIdentifierForKeyEvent(NSEvent* event)
     NSString *s = [event charactersIgnoringModifiers];
     if ([s length] != 1) {
         LOG(Events, "received an unexpected number of characters in key event: %u", [s length]);
-        return "Unidentified";
+        return "Unidentified"_s;
     }
     return keyIdentifierForCharCode([s characterAtIndex:0]);
 }
@@ -809,20 +809,20 @@ public:
 
         // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
         if (m_windowsVirtualKeyCode == VK_RETURN) {
-            m_text = "\r";
-            m_unmodifiedText = "\r";
+            m_text = "\r"_s;
+            m_unmodifiedText = m_text;
         }
 
         // AppKit sets text to "\x7F" for backspace, but the correct KeyboardEvent character code is 8.
         if (m_windowsVirtualKeyCode == VK_BACK) {
-            m_text = "\x8";
-            m_unmodifiedText = "\x8";
+            m_text = "\x8"_s;
+            m_unmodifiedText = m_text;
         }
 
         // Always use 9 for Tab -- we don't want to use AppKit's different character for shift-tab.
         if (m_windowsVirtualKeyCode == VK_TAB) {
-            m_text = "\x9";
-            m_unmodifiedText = "\x9";
+            m_text = "\x9"_s;
+            m_unmodifiedText = m_text;
         }
 
         // Mac specific.

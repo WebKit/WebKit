@@ -118,14 +118,14 @@ MediaControlsHost::~MediaControlsHost()
 String MediaControlsHost::layoutTraitsClassName() const
 {
 #if defined(MEDIA_CONTROLS_HOST_LAYOUT_TRAITS_CLASS_NAME_OVERRIDE)
-    return MEDIA_CONTROLS_HOST_LAYOUT_TRAITS_CLASS_NAME_OVERRIDE;
+    return MEDIA_CONTROLS_HOST_LAYOUT_TRAITS_CLASS_NAME_OVERRIDE""_s;
 #else
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    return "MacOSLayoutTraits";
+    return "MacOSLayoutTraits"_s;
 #elif PLATFORM(IOS)
-    return "IOSLayoutTraits";
+    return "IOSLayoutTraits"_s;
 #elif PLATFORM(WATCHOS)
-    return "WatchOSLayoutTraits";
+    return "WatchOSLayoutTraits"_s;
 #else
     ASSERT_NOT_REACHED();
     return nullString();

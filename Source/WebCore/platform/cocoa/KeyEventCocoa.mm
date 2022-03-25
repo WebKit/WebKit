@@ -220,7 +220,7 @@ String keyIdentifierForCharCode(unichar charCode)
 
         // "Alt"
         case NSMenuFunctionKey:
-            return "Alt";
+            return "Alt"_s;
 
         // "Apps"
         // "BrowserBack"
@@ -233,7 +233,7 @@ String keyIdentifierForCharCode(unichar charCode)
 
         // "Clear"
         case NSClearLineFunctionKey:
-            return "Clear";
+            return "Clear"_s;
 
         // "CodeInput"
         // "Compose"
@@ -245,100 +245,100 @@ String keyIdentifierForCharCode(unichar charCode)
 
         // "Down"
         case NSDownArrowFunctionKey:
-            return "Down";
+            return "Down"_s;
         // "End"
         case NSEndFunctionKey:
-            return "End";
+            return "End"_s;
         // "Enter"
         case 0x3: case 0xA: case 0xD: // Macintosh calls the one on the main keyboard Return, but Windows calls it Enter, so we'll do the same for the DOM
-            return "Enter";
+            return "Enter"_s;
 
         // "EraseEof"
 
         // "Execute"
         case NSExecuteFunctionKey:
-            return "Execute";
+            return "Execute"_s;
 
         // "Exsel"
 
         // "F1"
         case NSF1FunctionKey:
-            return "F1";
+            return "F1"_s;
         // "F2"
         case NSF2FunctionKey:
-            return "F2";
+            return "F2"_s;
         // "F3"
         case NSF3FunctionKey:
-            return "F3";
+            return "F3"_s;
         // "F4"
         case NSF4FunctionKey:
-            return "F4";
+            return "F4"_s;
         // "F5"
         case NSF5FunctionKey:
-            return "F5";
+            return "F5"_s;
         // "F6"
         case NSF6FunctionKey:
-            return "F6";
+            return "F6"_s;
         // "F7"
         case NSF7FunctionKey:
-            return "F7";
+            return "F7"_s;
         // "F8"
         case NSF8FunctionKey:
-            return "F8";
+            return "F8"_s;
         // "F9"
         case NSF9FunctionKey:
-            return "F9";
+            return "F9"_s;
         // "F10"
         case NSF10FunctionKey:
-            return "F10";
+            return "F10"_s;
         // "F11"
         case NSF11FunctionKey:
-            return "F11";
+            return "F11"_s;
         // "F12"
         case NSF12FunctionKey:
-            return "F12";
+            return "F12"_s;
         // "F13"
         case NSF13FunctionKey:
-            return "F13";
+            return "F13"_s;
         // "F14"
         case NSF14FunctionKey:
-            return "F14";
+            return "F14"_s;
         // "F15"
         case NSF15FunctionKey:
-            return "F15";
+            return "F15"_s;
         // "F16"
         case NSF16FunctionKey:
-            return "F16";
+            return "F16"_s;
         // "F17"
         case NSF17FunctionKey:
-            return "F17";
+            return "F17"_s;
         // "F18"
         case NSF18FunctionKey:
-            return "F18";
+            return "F18"_s;
         // "F19"
         case NSF19FunctionKey:
-            return "F19";
+            return "F19"_s;
         // "F20"
         case NSF20FunctionKey:
-            return "F20";
+            return "F20"_s;
         // "F21"
         case NSF21FunctionKey:
-            return "F21";
+            return "F21"_s;
         // "F22"
         case NSF22FunctionKey:
-            return "F22";
+            return "F22"_s;
         // "F23"
         case NSF23FunctionKey:
-            return "F23";
+            return "F23"_s;
         // "F24"
         case NSF24FunctionKey:
-            return "F24";
+            return "F24"_s;
 
         // "FinalMode"
 
         // "Find"
         case NSFindFunctionKey:
-            return "Find";
+            return "Find"_s;
 
         // "FullWidth"
         // "HalfWidth"
@@ -347,16 +347,16 @@ String keyIdentifierForCharCode(unichar charCode)
 
         // "Help"
         case NSHelpFunctionKey:
-            return "Help";
+            return "Help"_s;
 
         // "Hiragana"
 
         // "Home"
         case NSHomeFunctionKey:
-            return "Home";
+            return "Home"_s;
         // "Insert"
         case NSInsertFunctionKey:
-            return "Insert";
+            return "Insert"_s;
 
         // "JapaneseHiragana"
         // "JapaneseKatakana"
@@ -371,7 +371,7 @@ String keyIdentifierForCharCode(unichar charCode)
 
         // "Left"
         case NSLeftArrowFunctionKey:
-            return "Left";
+            return "Left"_s;
 
         // "Meta"
         // "MediaNextTrack"
@@ -381,59 +381,59 @@ String keyIdentifierForCharCode(unichar charCode)
 
         // "ModeChange"
         case NSModeSwitchFunctionKey:
-            return "ModeChange";
+            return "ModeChange"_s;
 
         // "Nonconvert"
         // "NumLock"
 
         // "PageDown"
         case NSPageDownFunctionKey:
-            return "PageDown";
+            return "PageDown"_s;
         // "PageUp"
         case NSPageUpFunctionKey:
-            return "PageUp";
+            return "PageUp"_s;
 
         // "Paste"
 
         // "Pause"
         case NSPauseFunctionKey:
-            return "Pause";
+            return "Pause"_s;
 
         // "Play"
         // "PreviousCandidate"
 
         // "PrintScreen"
         case NSPrintScreenFunctionKey:
-            return "PrintScreen";
+            return "PrintScreen"_s;
 
         // "Process"
         // "Props"
 
         // "Right"
         case NSRightArrowFunctionKey:
-            return "Right";
+            return "Right"_s;
 
         // "RomanCharacters"
 
         // "Scroll"
         case NSScrollLockFunctionKey:
-            return "Scroll";
+            return "Scroll"_s;
         // "Select"
         case NSSelectFunctionKey:
-            return "Select";
+            return "Select"_s;
 
         // "SelectMedia"
         // "Shift"
 
         // "Stop"
         case NSStopFunctionKey:
-            return "Stop";
+            return "Stop"_s;
         // "Up"
         case NSUpArrowFunctionKey:
-            return "Up";
+            return "Up"_s;
         // "Undo"
         case NSUndoFunctionKey:
-            return "Undo";
+            return "Undo"_s;
 
         // "VolumeDown"
         // "VolumeMute"
@@ -443,38 +443,38 @@ String keyIdentifierForCharCode(unichar charCode)
 
         // More function keys, not in the key identifier specification.
         case NSF25FunctionKey:
-            return "F25";
+            return "F25"_s;
         case NSF26FunctionKey:
-            return "F26";
+            return "F26"_s;
         case NSF27FunctionKey:
-            return "F27";
+            return "F27"_s;
         case NSF28FunctionKey:
-            return "F28";
+            return "F28"_s;
         case NSF29FunctionKey:
-            return "F29";
+            return "F29"_s;
         case NSF30FunctionKey:
-            return "F30";
+            return "F30"_s;
         case NSF31FunctionKey:
-            return "F31";
+            return "F31"_s;
         case NSF32FunctionKey:
-            return "F32";
+            return "F32"_s;
         case NSF33FunctionKey:
-            return "F33";
+            return "F33"_s;
         case NSF34FunctionKey:
-            return "F34";
+            return "F34"_s;
         case NSF35FunctionKey:
-            return "F35";
+            return "F35"_s;
 
         // Turn 0x7F into 0x08, because backspace needs to always be 0x08.
         case 0x7F:
-            return "U+0008";
+            return "U+0008"_s;
         // Standard says that DEL becomes U+007F.
         case NSDeleteFunctionKey:
-            return "U+007F";
+            return "U+007F"_s;
 
         // Always use 0x09 for tab instead of AppKit's backtab character.
         case NSBackTabCharacter:
-            return "U+0009";
+            return "U+0009"_s;
 
         case NSBeginFunctionKey:
         case NSBreakFunctionKey:

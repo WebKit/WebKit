@@ -1,3 +1,44 @@
+2022-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Start preparing WebCore for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238336
+
+        Reviewed by Geoffrey Garen.
+
+        Start preparing WebCore for making the String(const char*) constructor explicit.
+        Making this constructor explicit helps catch at compile time cases where the ""_s
+        prefix is missing on String literals.
+
+        * WGSL/Parser.cpp:
+        (WGSL::Parser<Lexer>::parseGlobalDecl):
+        (WGSL::Parser<Lexer>::parseAttribute):
+        (WGSL::Parser<Lexer>::parseTypeDecl):
+        (WGSL::Parser<Lexer>::parseStorageClass):
+        (WGSL::Parser<Lexer>::parseAccessMode):
+        (WGSL::Parser<Lexer>::parseStatement):
+        (WGSL::Parser<Lexer>::parsePrimaryExpression):
+        (WGSL::Parser<Lexer>::parseCoreLHSExpression):
+        * WGSL/Token.cpp:
+        (WGSL::toString):
+        * WebGPU/Adapter.mm:
+        (WebGPU::Adapter::requestDevice):
+        * WebGPU/Buffer.mm:
+        (WebGPU::Buffer::mapAsync):
+        (WebGPU::Buffer::unmap):
+        * WebGPU/CommandEncoder.mm:
+        (WebGPU::CommandEncoder::copyBufferToBuffer):
+        (WebGPU::CommandEncoder::clearBuffer):
+        (WebGPU::CommandEncoder::finish):
+        * WebGPU/ComputePipeline.mm:
+        (WebGPU::createConstantValues):
+        (WebGPU::Device::createComputePipeline):
+        * WebGPU/Queue.mm:
+        (WebGPU::Queue::submit):
+        * WebGPU/Sampler.mm:
+        (WebGPU::Device::createSampler):
+        * WebGPU/ShaderModule.mm:
+        (WebGPU::earlyCompileShaderModule):
+
 2022-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Fix the watchOS build

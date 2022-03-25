@@ -369,39 +369,39 @@ URLFilterParser::ParseStatus URLFilterParser::addPattern(const String& pattern, 
     return status;
 }
 
-String URLFilterParser::statusString(ParseStatus status)
+ASCIILiteral URLFilterParser::statusString(ParseStatus status)
 {
     switch (status) {
     case Ok:
-        return "Ok";
+        return "Ok"_s;
     case MatchesEverything:
-        return "Matches everything.";
+        return "Matches everything."_s;
     case NonASCII:
-        return "Only ASCII characters are supported in pattern.";
+        return "Only ASCII characters are supported in pattern."_s;
     case UnsupportedCharacterClass:
-        return "Character class is not supported.";
+        return "Character class is not supported."_s;
     case BackReference:
-        return "Patterns cannot contain backreferences.";
+        return "Patterns cannot contain backreferences."_s;
     case ForwardReference:
-        return "Patterns cannot contain forward references.";
+        return "Patterns cannot contain forward references."_s;
     case MisplacedStartOfLine:
-        return "Start of line assertion can only appear as the first term in a filter.";
+        return "Start of line assertion can only appear as the first term in a filter."_s;
     case WordBoundary:
-        return "Word boundaries assertions are not supported yet.";
+        return "Word boundaries assertions are not supported yet."_s;
     case AtomCharacter:
-        return "Builtins character class atoms are not supported yet.";
+        return "Builtins character class atoms are not supported yet."_s;
     case Group:
-        return "Groups are not supported yet.";
+        return "Groups are not supported yet."_s;
     case Disjunction:
-        return "Disjunctions are not supported yet.";
+        return "Disjunctions are not supported yet."_s;
     case MisplacedEndOfLine:
-        return "The end of line assertion must be the last term in an expression.";
+        return "The end of line assertion must be the last term in an expression."_s;
     case EmptyPattern:
-        return "Empty pattern.";
+        return "Empty pattern."_s;
     case YarrError:
-        return "Internal error in YARR.";
+        return "Internal error in YARR."_s;
     case InvalidQuantifier:
-        return "Arbitrary atom repetitions are not supported.";
+        return "Arbitrary atom repetitions are not supported."_s;
     }
 
     RELEASE_ASSERT_NOT_REACHED();

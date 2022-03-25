@@ -762,7 +762,7 @@ static Ref<HTMLElement> attachmentForData(Frame& frame, FragmentedSharedBuffer& 
     auto attachmentType = typeForAttachmentElement(contentType);
 
     // FIXME: We should instead ask CoreServices for a preferred name corresponding to the given content type.
-    static const char* defaultAttachmentName = "file";
+    static constexpr ASCIILiteral defaultAttachmentName = "file"_s;
 
     String fileName;
     if (name.isEmpty())
