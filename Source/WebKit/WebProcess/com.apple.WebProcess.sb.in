@@ -1192,38 +1192,6 @@
     )
 )
 
-(if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "RootDomainUserClient") ;; Needed by Media playback
-        )
-        (apply-message-filter
-            (deny (with telemetry) (with message "RootDomainUserClient")
-                iokit-external-method
-            )
-            (allow iokit-external-method
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 120000
-                (iokit-method-number
-                    3
-                )
-#endif
-            )
-            (deny (with telemetry)
-                iokit-async-external-method
-                iokit-external-trap
-            )
-        )
-    )
-    ; else
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "RootDomainUserClient") ;; Needed by Media playback
-        )
-    )
-)
-
 ;; <rdar://problem/10427451> && <rdar://problem/10808817>
 (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
     (allow iokit-open
