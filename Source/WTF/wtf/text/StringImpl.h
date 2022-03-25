@@ -438,31 +438,25 @@ public:
     WTF_EXPORT_PRIVATE size_t reverseFind(UChar, unsigned start = MaxLength);
     WTF_EXPORT_PRIVATE size_t reverseFind(StringView, unsigned start = MaxLength);
 
-    WTF_EXPORT_PRIVATE bool startsWith(const StringImpl*) const;
-    WTF_EXPORT_PRIVATE bool startsWith(const StringImpl&) const;
-    WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(const StringImpl*) const;
-    WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(const StringImpl&) const;
+    WTF_EXPORT_PRIVATE bool startsWith(StringView) const;
+    WTF_EXPORT_PRIVATE bool startsWithIgnoringASCIICase(StringView) const;
     WTF_EXPORT_PRIVATE bool startsWith(UChar) const;
     WTF_EXPORT_PRIVATE bool startsWith(const char*, unsigned matchLength) const;
-    template<unsigned matchLength> bool startsWith(const char (&prefix)[matchLength]) const { return startsWith(prefix, matchLength - 1); }
-    WTF_EXPORT_PRIVATE bool hasInfixStartingAt(const StringImpl&, unsigned start) const;
+    WTF_EXPORT_PRIVATE bool hasInfixStartingAt(StringView, unsigned start) const;
 
-    WTF_EXPORT_PRIVATE bool endsWith(StringImpl*);
-    WTF_EXPORT_PRIVATE bool endsWith(StringImpl&);
-    WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(const StringImpl*) const;
-    WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(const StringImpl&) const;
+    WTF_EXPORT_PRIVATE bool endsWith(StringView);
+    WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(StringView) const;
     WTF_EXPORT_PRIVATE bool endsWith(UChar) const;
     WTF_EXPORT_PRIVATE bool endsWith(const char*, unsigned matchLength) const;
-    template<unsigned matchLength> bool endsWith(const char (&prefix)[matchLength]) const { return endsWith(prefix, matchLength - 1); }
-    WTF_EXPORT_PRIVATE bool hasInfixEndingAt(const StringImpl&, unsigned endOffset) const;
+    WTF_EXPORT_PRIVATE bool hasInfixEndingAt(StringView, unsigned end) const;
 
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, UChar);
-    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, StringImpl*);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, StringView);
     ALWAYS_INLINE Ref<StringImpl> replace(UChar pattern, const char* replacement, unsigned replacementLength) { return replace(pattern, reinterpret_cast<const LChar*>(replacement), replacementLength); }
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(UChar, const LChar*, unsigned replacementLength);
     Ref<StringImpl> replace(UChar, const UChar*, unsigned replacementLength);
     WTF_EXPORT_PRIVATE Ref<StringImpl> replace(StringView, StringView);
-    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(unsigned start, unsigned length, StringImpl*);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> replace(unsigned start, unsigned length, StringView);
 
     WTF_EXPORT_PRIVATE UCharDirection defaultWritingDirection(bool* hasStrongDirectionality = nullptr);
 

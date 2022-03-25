@@ -1157,6 +1157,76 @@ inline size_t findIgnoringASCIICase(StringView source, StringView stringToFind, 
     return findIgnoringASCIICase(source.characters16(), stringToFind.characters16(), start, searchLength, matchLength);
 }
 
+inline bool startsWith(StringView reference, StringView prefix)
+{
+    unsigned prefixLength = prefix.length();
+    if (prefixLength > reference.length())
+        return false;
+
+    if (reference.is8Bit()) {
+        if (prefix.is8Bit())
+            return equal(reference.characters8(), prefix.characters8(), prefixLength);
+        return equal(reference.characters8(), prefix.characters16(), prefixLength);
+    }
+    if (prefix.is8Bit())
+        return equal(reference.characters16(), prefix.characters8(), prefixLength);
+    return equal(reference.characters16(), prefix.characters16(), prefixLength);
+}
+
+inline bool startsWithIgnoringASCIICase(StringView reference, StringView prefix)
+{
+    unsigned prefixLength = prefix.length();
+    if (prefixLength > reference.length())
+        return false;
+
+    if (reference.is8Bit()) {
+        if (prefix.is8Bit())
+            return equalIgnoringASCIICase(reference.characters8(), prefix.characters8(), prefixLength);
+        return equalIgnoringASCIICase(reference.characters8(), prefix.characters16(), prefixLength);
+    }
+    if (prefix.is8Bit())
+        return equalIgnoringASCIICase(reference.characters16(), prefix.characters8(), prefixLength);
+    return equalIgnoringASCIICase(reference.characters16(), prefix.characters16(), prefixLength);
+}
+
+inline bool endsWith(StringView reference, StringView suffix)
+{
+    unsigned suffixLength = suffix.length();
+    unsigned referenceLength = reference.length();
+    if (suffixLength > referenceLength)
+        return false;
+
+    unsigned startOffset = referenceLength - suffixLength;
+
+    if (reference.is8Bit()) {
+        if (suffix.is8Bit())
+            return equal(reference.characters8() + startOffset, suffix.characters8(), suffixLength);
+        return equal(reference.characters8() + startOffset, suffix.characters16(), suffixLength);
+    }
+    if (suffix.is8Bit())
+        return equal(reference.characters16() + startOffset, suffix.characters8(), suffixLength);
+    return equal(reference.characters16() + startOffset, suffix.characters16(), suffixLength);
+}
+
+inline bool endsWithIgnoringASCIICase(StringView reference, StringView suffix)
+{
+    unsigned suffixLength = suffix.length();
+    unsigned referenceLength = reference.length();
+    if (suffixLength > referenceLength)
+        return false;
+
+    unsigned startOffset = referenceLength - suffixLength;
+
+    if (reference.is8Bit()) {
+        if (suffix.is8Bit())
+            return equalIgnoringASCIICase(reference.characters8() + startOffset, suffix.characters8(), suffixLength);
+        return equalIgnoringASCIICase(reference.characters8() + startOffset, suffix.characters16(), suffixLength);
+    }
+    if (suffix.is8Bit())
+        return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.characters8(), suffixLength);
+    return equalIgnoringASCIICase(reference.characters16() + startOffset, suffix.characters16(), suffixLength);
+}
+
 inline size_t String::find(StringView string) const
 {
     return m_impl ? m_impl->find(string) : notFound;
@@ -1203,11 +1273,48 @@ inline String& String::replace(StringView target, StringView replacement)
     return *this;
 }
 
-inline String& String::replace(unsigned start, unsigned length, const String& replacement)
+inline String& String::replace(unsigned start, unsigned length, StringView replacement)
 {
     if (m_impl)
-        m_impl = m_impl->replace(start, length, replacement.impl());
+        m_impl = m_impl->replace(start, length, replacement);
     return *this;
+}
+
+inline String& String::replace(UChar target, StringView replacement)
+{
+    if (m_impl)
+        m_impl = m_impl->replace(target, replacement);
+    return *this;
+}
+
+inline bool String::startsWith(StringView string) const
+{
+    return m_impl ? m_impl->startsWith(string) : string.isEmpty();
+}
+
+inline bool String::startsWithIgnoringASCIICase(StringView string) const
+{
+    return m_impl ? m_impl->startsWithIgnoringASCIICase(string) : string.isEmpty();
+}
+
+inline bool String::endsWith(StringView string) const
+{
+    return m_impl ? m_impl->endsWith(string) : string.isEmpty();
+}
+
+inline bool String::endsWithIgnoringASCIICase(StringView string) const
+{
+    return m_impl ? m_impl->endsWithIgnoringASCIICase(string) : string.isEmpty();
+}
+
+inline bool String::hasInfixStartingAt(StringView prefix, unsigned start) const
+{
+    return m_impl && prefix && m_impl->hasInfixStartingAt(prefix, start);
+}
+
+inline bool String::hasInfixEndingAt(StringView suffix, unsigned end) const
+{
+    return m_impl && suffix && m_impl->hasInfixEndingAt(suffix, end);
 }
 
 inline size_t AtomString::find(StringView string, unsigned start) const
@@ -1233,6 +1340,26 @@ inline bool AtomString::contains(StringView string) const
 inline bool AtomString::containsIgnoringASCIICase(StringView string) const
 {
     return m_string.containsIgnoringASCIICase(string);
+}
+
+inline bool AtomString::startsWith(StringView string) const
+{
+    return m_string.startsWith(string);
+}
+
+inline bool AtomString::startsWithIgnoringASCIICase(StringView string) const
+{
+    return m_string.startsWithIgnoringASCIICase(string);
+}
+
+inline bool AtomString::endsWith(StringView string) const
+{
+    return m_string.endsWith(string);
+}
+
+inline bool AtomString::endsWithIgnoringASCIICase(StringView string) const
+{
+    return m_string.endsWithIgnoringASCIICase(string);
 }
 
 } // namespace WTF

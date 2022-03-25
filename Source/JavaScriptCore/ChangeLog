@@ -1,3 +1,17 @@
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
+        String's startsWith() / endsWith() / replace() should take in a StringView instead of a String
+        https://bugs.webkit.org/show_bug.cgi?id=238333
+
+        Reviewed by Geoff Garen.
+
+        * runtime/FileBasedFuzzerAgent.cpp:
+        (JSC::FileBasedFuzzerAgent::getPredictionInternal):
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::singularUnit):
+        * runtime/TemporalObject.cpp:
+        (JSC::singularUnit):
+
 2022-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] JSRemoteFunction thunk should materialize code-pointer

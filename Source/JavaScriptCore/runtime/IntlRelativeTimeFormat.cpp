@@ -203,7 +203,7 @@ JSObject* IntlRelativeTimeFormat::resolvedOptions(JSGlobalObject* globalObject) 
 static StringView singularUnit(StringView unit)
 {
     // Plurals are allowed, but thankfully they're all just a simple -s.
-    return unit.endsWith("s") ? unit.left(unit.length() - 1) : unit;
+    return unit.endsWith('s') ? unit.left(unit.length() - 1) : unit;
 }
 
 // https://tc39.es/ecma402/#sec-singularrelativetimeunit

@@ -78,7 +78,7 @@ SpeculatedType FileBasedFuzzerAgent::getPredictionInternal(CodeBlock* codeBlock,
                 return original;
             if (sourceAfterDivot.containsIgnoringASCIICase("yield"))
                 return original;
-            if (sourceAfterDivot.startsWith('[') && sourceAfterDivot.endsWith("]"))
+            if (sourceAfterDivot.startsWith('[') && sourceAfterDivot.endsWith(']'))
                 return original;
             if (sourceUpToDivot.containsIgnoringASCIICase("yield"))
                 return original;

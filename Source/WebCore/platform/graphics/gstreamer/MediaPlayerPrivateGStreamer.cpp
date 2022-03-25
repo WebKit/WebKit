@@ -2582,7 +2582,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamer::supportsType(const MediaE
         return result;
 
     // This player doesn't support pictures rendering.
-    if (parameters.type.raw().startsWith("image"_s))
+    if (parameters.type.raw().startsWith("image"))
         return result;
 
     auto& gstRegistryScanner = GStreamerRegistryScanner::singleton();

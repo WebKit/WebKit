@@ -43,7 +43,7 @@ static bool operator==(const ResolvedURL& a, const ResolvedURL& b)
 // https://drafts.csswg.org/css-values/#url-local-url-flag
 bool ResolvedURL::isLocalURL() const
 {
-    return specifiedURLString.startsWith("#");
+    return specifiedURLString.startsWith('#');
 }
 
 static ResolvedURL makeResolvedURL(URL&& resolvedURL)

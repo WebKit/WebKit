@@ -42,7 +42,7 @@ constexpr auto fileName = "localstorage.sqlite3"_s;
 // We should not include origin in file name.
 static std::optional<WebCore::SecurityOriginData> fileNameToOrigin(const String& fileName)
 {
-    if (!fileName.endsWith(fileSuffix))
+    if (!fileName.endsWith(StringView { fileSuffix }))
         return std::nullopt;
 
     auto suffixLength = strlen(fileSuffix);

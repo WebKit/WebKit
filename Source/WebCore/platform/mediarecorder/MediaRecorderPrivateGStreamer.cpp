@@ -173,7 +173,7 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateGStreamer::containerPro
 
     const char* containerCapsDescription = "";
     auto containerType = contentType.containerType();
-    if (containerType.endsWith("mp4"_s))
+    if (containerType.endsWith("mp4"))
         containerCapsDescription = "video/quicktime, variant=iso";
     else
         containerCapsDescription = containerType.utf8().data();
@@ -181,7 +181,7 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateGStreamer::containerPro
     auto containerCaps = adoptGRef(gst_caps_from_string(containerCapsDescription));
     auto profile = adoptGRef(gst_encoding_container_profile_new(nullptr, nullptr, containerCaps.get(), nullptr));
 
-    if (containerType.endsWith("mp4"_s))
+    if (containerType.endsWith("mp4"))
         gst_encoding_profile_set_element_properties(GST_ENCODING_PROFILE(profile.get()), gst_structure_from_string("element-properties-map, map={[mp4mux,fragment-duration=1000,fragment-mode=0,streamable=0,force-create-timecode-trak=1]}", nullptr));
 
     auto codecs = contentType.codecs();
@@ -194,11 +194,11 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateGStreamer::containerPro
             videoCapsName = "video/x-vp9"_s;
         else if (codecs.contains("av1"_s))
             videoCapsName = "video/x-av1"_s;
-        else if (codecs.findIf([](auto& codec) { return codec.startsWith("avc1"_s); }) != notFound)
+        else if (codecs.findIf([](auto& codec) { return codec.startsWith("avc1"); }) != notFound)
             videoCapsName = "video/x-h264"_s;
-        else if (containerType.endsWith("webm"_s))
+        else if (containerType.endsWith("webm"))
             videoCapsName = "video/x-vp8"_s;
-        else if (containerType.endsWith("mp4"_s))
+        else if (containerType.endsWith("mp4"))
             videoCapsName = "video/x-h264"_s;
         else {
             GST_WARNING("Video codec for %s not supported", contentType.raw().utf8().data());
@@ -218,11 +218,11 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateGStreamer::containerPro
             audioCapsName = "audio/x-vorbis"_s;
         else if (codecs.contains("opus"_s))
             audioCapsName = "audio/x-opus";
-        else if (codecs.findIf([](auto& codec) { return codec.startsWith("mp4a"_s); }) != notFound)
+        else if (codecs.findIf([](auto& codec) { return codec.startsWith("mp4a"); }) != notFound)
             audioCapsName = "audio/mpeg, mpegversion=4"_s;
-        else if (containerType.endsWith("webm"_s))
+        else if (containerType.endsWith("webm"))
             audioCapsName = "audio/x-vorbis"_s;
-        else if (containerType.endsWith("mp4"_s))
+        else if (containerType.endsWith("mp4"))
             audioCapsName = "audio/mpeg, mpegversion=4"_s;
         else {
             GST_WARNING("Audio codec for %s not supported", contentType.raw().utf8().data());

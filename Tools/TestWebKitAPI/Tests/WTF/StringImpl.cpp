@@ -420,10 +420,10 @@ TEST(WTF, StringImplStartsWithIgnoringASCIICaseBasic)
 TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithNull)
 {
     auto reference = StringImpl::createFromLiteral("aBcDeFG"_s);
-    ASSERT_FALSE(reference->startsWithIgnoringASCIICase(nullptr));
+    ASSERT_FALSE(reference->startsWithIgnoringASCIICase(StringView { }));
 
     auto empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
-    ASSERT_FALSE(empty->startsWithIgnoringASCIICase(nullptr));
+    ASSERT_FALSE(empty->startsWithIgnoringASCIICase(StringView { }));
 }
 
 TEST(WTF, StringImplStartsWithIgnoringASCIICaseWithEmpty)
@@ -509,10 +509,10 @@ TEST(WTF, StringImplEndsWithIgnoringASCIICaseBasic)
 TEST(WTF, StringImplEndsWithIgnoringASCIICaseWithNull)
 {
     auto reference = StringImpl::createFromLiteral("aBcDeFG"_s);
-    ASSERT_FALSE(reference->endsWithIgnoringASCIICase(nullptr));
+    ASSERT_FALSE(reference->endsWithIgnoringASCIICase(StringView { }));
 
     auto empty = StringImpl::create(reinterpret_cast<const LChar*>(""));
-    ASSERT_FALSE(empty->endsWithIgnoringASCIICase(nullptr));
+    ASSERT_FALSE(empty->endsWithIgnoringASCIICase(StringView { }));
 }
 
 TEST(WTF, StringImplEndsWithIgnoringASCIICaseWithEmpty)

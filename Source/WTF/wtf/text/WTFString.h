@@ -182,18 +182,16 @@ public:
     bool containsIgnoringASCIICase(StringView) const;
     bool containsIgnoringASCIICase(StringView, unsigned start) const;
 
-    bool startsWith(const String& string) const { return m_impl ? m_impl->startsWith(string.impl()) : string.isEmpty(); }
-    bool startsWithIgnoringASCIICase(const String& string) const { return m_impl ? m_impl->startsWithIgnoringASCIICase(string.impl()) : string.isEmpty(); }
+    bool startsWith(StringView) const;
+    bool startsWithIgnoringASCIICase(StringView) const;
     bool startsWith(UChar character) const { return m_impl && m_impl->startsWith(character); }
-    template<unsigned matchLength> bool startsWith(const char (&prefix)[matchLength]) const { return m_impl ? m_impl->startsWith<matchLength>(prefix) : !matchLength; }
-    bool hasInfixStartingAt(const String& prefix, unsigned start) const { return m_impl && prefix.impl() && m_impl->hasInfixStartingAt(*prefix.impl(), start); }
+    bool hasInfixStartingAt(StringView prefix, unsigned start) const;
 
-    bool endsWith(const String& string) const { return m_impl ? m_impl->endsWith(string.impl()) : string.isEmpty(); }
-    bool endsWithIgnoringASCIICase(const String& string) const { return m_impl ? m_impl->endsWithIgnoringASCIICase(string.impl()) : string.isEmpty(); }
+    bool endsWith(StringView) const;
+    bool endsWithIgnoringASCIICase(StringView) const;
     bool endsWith(UChar character) const { return m_impl && m_impl->endsWith(character); }
     bool endsWith(char character) const { return endsWith(static_cast<UChar>(character)); }
-    template<unsigned matchLength> bool endsWith(const char (&prefix)[matchLength]) const { return m_impl ? m_impl->endsWith<matchLength>(prefix) : !matchLength; }
-    bool hasInfixEndingAt(const String& suffix, unsigned endOffset) const { return m_impl && suffix.impl() && m_impl->hasInfixEndingAt(*suffix.impl(), endOffset); }
+    bool hasInfixEndingAt(StringView suffix, unsigned end) const;
 
     WTF_EXPORT_PRIVATE void append(const String&);
     WTF_EXPORT_PRIVATE void append(LChar);
@@ -204,9 +202,9 @@ public:
     WTF_EXPORT_PRIVATE void insert(const String&, unsigned position);
 
     String& replace(UChar target, UChar replacement);
-    String& replace(UChar target, const String& replacement);
+    String& replace(UChar target, StringView replacement);
     String& replace(StringView target, StringView replacement);
-    String& replace(unsigned start, unsigned length, const String& replacement);
+    String& replace(unsigned start, unsigned length, StringView replacement);
     template<unsigned characterCount> String& replaceWithLiteral(UChar target, const char (&replacement)[characterCount]);
 
     WTF_EXPORT_PRIVATE void truncate(unsigned length);
@@ -496,13 +494,6 @@ inline String& String::replace(UChar target, UChar replacement)
 {
     if (m_impl)
         m_impl = m_impl->replace(target, replacement);
-    return *this;
-}
-
-inline String& String::replace(UChar target, const String& replacement)
-{
-    if (m_impl)
-        m_impl = m_impl->replace(target, replacement.impl());
     return *this;
 }
 

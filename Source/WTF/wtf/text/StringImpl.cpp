@@ -1053,7 +1053,7 @@ ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, c
     return equal(string.characters16() + start, reinterpret_cast<const LChar*>(matchString), matchLength);
 }
 
-ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, const StringImpl& matchString)
+ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, StringView matchString)
 {
     if (start > string.length())
         return false;
@@ -1072,24 +1072,14 @@ ALWAYS_INLINE static bool equalInner(const StringImpl& string, unsigned start, c
     return equal(string.characters16() + start, matchString.characters16(), matchString.length());
 }
 
-bool StringImpl::startsWith(const StringImpl* string) const
+bool StringImpl::startsWith(StringView string) const
 {
-    return !string || ::WTF::startsWith(*this, *string);
+    return !string || ::WTF::startsWith(*this, string);
 }
 
-bool StringImpl::startsWith(const StringImpl& string) const
+bool StringImpl::startsWithIgnoringASCIICase(StringView prefix) const
 {
-    return ::WTF::startsWith(*this, string);
-}
-
-bool StringImpl::startsWithIgnoringASCIICase(const StringImpl* prefix) const
-{
-    return prefix && ::WTF::startsWithIgnoringASCIICase(*this, *prefix);
-}
-
-bool StringImpl::startsWithIgnoringASCIICase(const StringImpl& prefix) const
-{
-    return ::WTF::startsWithIgnoringASCIICase(*this, prefix);
+    return prefix && ::WTF::startsWithIgnoringASCIICase(*this, prefix);
 }
 
 bool StringImpl::startsWith(UChar character) const
@@ -1102,29 +1092,19 @@ bool StringImpl::startsWith(const char* matchString, unsigned matchLength) const
     return matchLength <= length() && equalInner(*this, 0, matchString, matchLength);
 }
 
-bool StringImpl::hasInfixStartingAt(const StringImpl& matchString, unsigned start) const
+bool StringImpl::hasInfixStartingAt(StringView matchString, unsigned start) const
 {
     return equalInner(*this, start, matchString);
 }
 
-bool StringImpl::endsWith(StringImpl* suffix)
+bool StringImpl::endsWith(StringView suffix)
 {
-    return suffix && ::WTF::endsWith(*this, *suffix);
+    return suffix && ::WTF::endsWith(*this, suffix);
 }
 
-bool StringImpl::endsWith(StringImpl& suffix)
+bool StringImpl::endsWithIgnoringASCIICase(StringView suffix) const
 {
-    return ::WTF::endsWith(*this, suffix);
-}
-
-bool StringImpl::endsWithIgnoringASCIICase(const StringImpl* suffix) const
-{
-    return suffix && ::WTF::endsWithIgnoringASCIICase(*this, *suffix);
-}
-
-bool StringImpl::endsWithIgnoringASCIICase(const StringImpl& suffix) const
-{
-    return ::WTF::endsWithIgnoringASCIICase(*this, suffix);
+    return suffix && ::WTF::endsWithIgnoringASCIICase(*this, suffix);
 }
 
 bool StringImpl::endsWith(UChar character) const
@@ -1137,9 +1117,9 @@ bool StringImpl::endsWith(const char* matchString, unsigned matchLength) const
     return matchLength <= length() && equalInner(*this, length() - matchLength, matchString, matchLength);
 }
 
-bool StringImpl::hasInfixEndingAt(const StringImpl& matchString, unsigned endOffset) const
+bool StringImpl::hasInfixEndingAt(StringView matchString, unsigned end) const
 {
-    return endOffset >= matchString.length() && equalInner(*this, endOffset - matchString.length(), matchString);
+    return end >= matchString.length() && equalInner(*this, end - matchString.length(), matchString);
 }
 
 Ref<StringImpl> StringImpl::replace(UChar target, UChar replacement)
@@ -1203,23 +1183,23 @@ Ref<StringImpl> StringImpl::replace(UChar target, UChar replacement)
     return newImpl;
 }
 
-Ref<StringImpl> StringImpl::replace(unsigned position, unsigned lengthToReplace, StringImpl* string)
+Ref<StringImpl> StringImpl::replace(unsigned position, unsigned lengthToReplace, StringView string)
 {
     position = std::min(position, length());
     lengthToReplace = std::min(lengthToReplace, length() - position);
-    unsigned lengthToInsert = string ? string->length() : 0;
+    unsigned lengthToInsert = string.length();
     if (!lengthToReplace && !lengthToInsert)
         return *this;
 
     if ((length() - lengthToReplace) >= (MaxLength - lengthToInsert))
         CRASH();
 
-    if (is8Bit() && (!string || string->is8Bit())) {
+    if (is8Bit() && (!string || string.is8Bit())) {
         LChar* data;
         auto newImpl = createUninitialized(length() - lengthToReplace + lengthToInsert, data);
         copyCharacters(data, m_data8, position);
         if (string)
-            copyCharacters(data + position, string->m_data8, lengthToInsert);
+            copyCharacters(data + position, string.characters8(), lengthToInsert);
         copyCharacters(data + position + lengthToInsert, m_data8 + position + lengthToReplace, length() - position - lengthToReplace);
         return newImpl;
     }
@@ -1230,10 +1210,10 @@ Ref<StringImpl> StringImpl::replace(unsigned position, unsigned lengthToReplace,
     else
         copyCharacters(data, m_data16, position);
     if (string) {
-        if (string->is8Bit())
-            copyCharacters(data + position, string->m_data8, lengthToInsert);
+        if (string.is8Bit())
+            copyCharacters(data + position, string.characters8(), lengthToInsert);
         else
-            copyCharacters(data + position, string->m_data16, lengthToInsert);
+            copyCharacters(data + position, string.characters16(), lengthToInsert);
     }
     if (is8Bit())
         copyCharacters(data + position + lengthToInsert, m_data8 + position + lengthToReplace, length() - position - lengthToReplace);
@@ -1242,13 +1222,13 @@ Ref<StringImpl> StringImpl::replace(unsigned position, unsigned lengthToReplace,
     return newImpl;
 }
 
-Ref<StringImpl> StringImpl::replace(UChar pattern, StringImpl* replacement)
+Ref<StringImpl> StringImpl::replace(UChar pattern, StringView replacement)
 {
     if (!replacement)
         return *this;
-    if (replacement->is8Bit())
-        return replace(pattern, replacement->m_data8, replacement->length());
-    return replace(pattern, replacement->m_data16, replacement->length());
+    if (replacement.is8Bit())
+        return replace(pattern, replacement.characters8(), replacement.length());
+    return replace(pattern, replacement.characters16(), replacement.length());
 }
 
 Ref<StringImpl> StringImpl::replace(UChar pattern, const LChar* replacement, unsigned repStrLength)

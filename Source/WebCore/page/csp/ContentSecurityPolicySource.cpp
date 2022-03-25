@@ -87,7 +87,7 @@ bool ContentSecurityPolicySource::pathMatches(const URL& url) const
 
     auto path = PAL::decodeURLEscapeSequences(url.path());
 
-    if (m_path.endsWith("/"))
+    if (m_path.endsWith('/'))
         return path.startsWith(m_path);
 
     return path == m_path;

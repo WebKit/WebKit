@@ -250,7 +250,7 @@ bool CDMFactoryFairPlayStreaming::supportsKeySystem(const String& keySystem)
 {
     // https://w3c.github.io/encrypted-media/#key-system
     // "Key System strings are compared using case-sensitive matching."
-    return keySystem == "com.apple.fps" || keySystem.startsWith("com.apple.fps."_s);
+    return keySystem == "com.apple.fps" || keySystem.startsWith("com.apple.fps.");
 }
 
 CDMPrivateFairPlayStreaming::CDMPrivateFairPlayStreaming(const CDMPrivateClient& client)

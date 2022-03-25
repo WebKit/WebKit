@@ -1,3 +1,49 @@
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
+        String's startsWith() / endsWith() / replace() should take in a StringView instead of a String
+        https://bugs.webkit.org/show_bug.cgi?id=238333
+
+        Reviewed by Geoff Garen.
+
+        String's startsWith() / endsWith() / replace() should take in a StringView instead of a String,
+        to avoid unnecessary String creation in many instances.
+
+        * wtf/text/AtomString.h:
+        * wtf/text/StringCommon.h:
+        (WTF::startsWith): Deleted.
+        (WTF::startsWithIgnoringASCIICase): Deleted.
+        (WTF::endsWith): Deleted.
+        (WTF::endsWithIgnoringASCIICase): Deleted.
+        * wtf/text/StringImpl.cpp:
+        (WTF::equalInner):
+        (WTF::StringImpl::startsWith const):
+        (WTF::StringImpl::startsWithIgnoringASCIICase const):
+        (WTF::StringImpl::hasInfixStartingAt const):
+        (WTF::StringImpl::endsWith):
+        (WTF::StringImpl::endsWithIgnoringASCIICase const):
+        (WTF::StringImpl::hasInfixEndingAt const):
+        (WTF::StringImpl::replace):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::startsWith const): Deleted.
+        (WTF::StringImpl::endsWith const): Deleted.
+        * wtf/text/StringView.h:
+        (WTF::startsWith):
+        (WTF::startsWithIgnoringASCIICase):
+        (WTF::endsWith):
+        (WTF::endsWithIgnoringASCIICase):
+        (WTF::String::replace):
+        (WTF::String::startsWith const):
+        (WTF::String::startsWithIgnoringASCIICase const):
+        (WTF::String::endsWith const):
+        (WTF::String::endsWithIgnoringASCIICase const):
+        (WTF::String::hasInfixStartingAt const):
+        (WTF::String::hasInfixEndingAt const):
+        (WTF::AtomString::startsWith const):
+        (WTF::AtomString::startsWithIgnoringASCIICase const):
+        (WTF::AtomString::endsWith const):
+        (WTF::AtomString::endsWithIgnoringASCIICase const):
+        * wtf/text/WTFString.h:
+
 2022-03-24  Don Olmstead  <don.olmstead@sony.com>
 
         [GLib] Add user directories to WTF::FileSystem

@@ -528,7 +528,7 @@ bool GraphicsContextGLOpenGL::checkVaryingsPacking(PlatformGLObject vertexShader
         const String& symbolName = vertexSymbol.key;
         // The varying map includes variables for each index of an array variable.
         // We only want a single variable to represent the array.
-        if (symbolName.endsWith("]"))
+        if (symbolName.endsWith(']'))
             continue;
 
         // Don't count built in varyings.
@@ -1974,8 +1974,8 @@ String GraphicsContextGLOpenGL::getUnmangledInfoLog(PlatformGLObject shaders[2],
     // causes a warning in some compilers. There is no point showing
     // this warning to the user since they didn't write the code that
     // is causing it.
-    static const NeverDestroyed<String> angleWarning { "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n"_s };
-    int startFrom = log.startsWith(angleWarning) ? angleWarning.get().length() : 0;
+    static constexpr char angleWarning[] = "WARNING: 0:1: extension 'GL_ARB_gpu_shader5' is not supported\n";
+    int startFrom = log.startsWith(angleWarning) ? strlen(angleWarning) : 0;
     int matchedLength = 0;
 
     do {

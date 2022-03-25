@@ -124,15 +124,13 @@ public:
     size_t findIgnoringASCIICase(StringView, unsigned start) const;
     size_t find(CodeUnitMatchFunction matchFunction, unsigned start = 0) const { return m_string.find(matchFunction, start); }
 
-    bool startsWith(const String& string) const { return m_string.startsWith(string); }
-    bool startsWithIgnoringASCIICase(const String& string) const { return m_string.startsWithIgnoringASCIICase(string); }
+    bool startsWith(StringView) const;
+    bool startsWithIgnoringASCIICase(StringView) const;
     bool startsWith(UChar character) const { return m_string.startsWith(character); }
-    template<unsigned matchLength> bool startsWith(const char (&prefix)[matchLength]) const { return m_string.startsWith<matchLength>(prefix); }
 
-    bool endsWith(const String& string) const { return m_string.endsWith(string); }
-    bool endsWithIgnoringASCIICase(const String& string) const { return m_string.endsWithIgnoringASCIICase(string); }
+    bool endsWith(StringView) const;
+    bool endsWithIgnoringASCIICase(StringView) const;
     bool endsWith(UChar character) const { return m_string.endsWith(character); }
-    template<unsigned matchLength> bool endsWith(const char (&prefix)[matchLength]) const { return m_string.endsWith<matchLength>(prefix); }
 
     WTF_EXPORT_PRIVATE AtomString convertToASCIILowercase() const;
     WTF_EXPORT_PRIVATE AtomString convertToASCIIUppercase() const;

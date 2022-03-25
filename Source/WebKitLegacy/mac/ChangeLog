@@ -1,3 +1,13 @@
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
+        String's startsWith() / endsWith() / replace() should take in a StringView instead of a String
+        https://bugs.webkit.org/show_bug.cgi?id=238333
+
+        Reviewed by Geoff Garen.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleAcceptedCandidateWithSoftSpaces):
+
 2022-03-18  Jonathan Bedard  <jbedard@apple.com>
 
         [iOS 15.4] Fix unused variables

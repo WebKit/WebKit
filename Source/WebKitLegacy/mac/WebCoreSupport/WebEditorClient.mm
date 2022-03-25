@@ -1175,7 +1175,7 @@ void WebEditorClient::handleAcceptedCandidateWithSoftSpaces(TextCheckingResult a
         if (replacementLength > 0) {
             NSRange replacedRange = NSMakeRange(acceptedCandidate.range.location, replacementLength);
             NSRange softSpaceRange = NSMakeRange(NSMaxRange(replacedRange) - 1, 1);
-            if (acceptedCandidate.replacement.endsWith(" "))
+            if (acceptedCandidate.replacement.endsWith(' '))
                 [(WebHTMLView *)view _setSoftSpaceRange:softSpaceRange];
         }
     }

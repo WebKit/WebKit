@@ -145,7 +145,7 @@ void TemporalObject::finishCreation(VM& vm)
 static StringView singularUnit(StringView unit)
 {
     // Plurals are allowed, but thankfully they're all just a simple -s.
-    return unit.endsWith("s") ? unit.left(unit.length() - 1) : unit;
+    return unit.endsWith('s') ? unit.left(unit.length() - 1) : unit;
 }
 
 // For use in error messages where a string value is potentially unbounded
