@@ -1,3 +1,16 @@
+2022-03-25  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Dist/distcheck targets fail due to Python error
+        https://bugs.webkit.org/show_bug.cgi?id=238394
+
+        Unreviewed build fix.
+
+        * Scripts/make-dist:
+        (Directory.list_files_in_version_control): Ensure that data read from pipes is converted to
+        strings by specifying text="ascii", as it seems safe to assume that files listed by Git will
+        not contain non-ASCII characters. While at it, make the function return a set to speed up
+        lookups.
+
 2022-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Do not add new modules under ThirdParty to the tarball

@@ -105,11 +105,11 @@ class Directory(object):
 
     def list_files_in_version_control(self):
         # FIXME: Only git is supported for now.
-        p = subprocess.Popen(['git', 'ls-tree', '-r', '--name-only', 'HEAD', self.source_root], stdout=subprocess.PIPE)
+        p = subprocess.Popen(['git', 'ls-tree', '-r', '--name-only', 'HEAD', self.source_root], stdout=subprocess.PIPE, text="ascii")
         out = p.communicate()[0]
         if not out:
             return []
-        return out.rstrip('\n').split('\n')
+        return frozenset(out.splitlines())
 
     def should_skip_file(self, path):
         return path not in self.files_in_version_control
