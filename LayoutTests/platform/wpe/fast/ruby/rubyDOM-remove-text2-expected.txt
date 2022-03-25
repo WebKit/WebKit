@@ -20,6 +20,7 @@ layer at (0,0) size 800x600
             RenderRubyText {RT} at (0,-10) size 114x10
               RenderText {#text} at (0,0) size 114x10
                 text run at (0,0) width 114: "Hyper-text Markup Language"
+            RenderRubyBase (anonymous) at (0,0) size 114x0
           RenderRubyRun (anonymous) at (269,0) size 8x18
             RenderRubyBase (anonymous) at (0,0) size 8x18
               RenderText {#text} at (0,0) size 8x17

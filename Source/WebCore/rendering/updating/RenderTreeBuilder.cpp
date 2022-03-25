@@ -865,7 +865,7 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     }
 
     auto isAnonymousAndSafeToDelete = [] (const auto& renderer) {
-        return renderer.isAnonymous() && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow();
+        return renderer.isAnonymous() && !is<RenderRubyBase>(renderer) && !renderer.isRenderView() && !renderer.isRenderFragmentedFlow();
     };
 
     auto destroyRootIncludingAnonymous = [&] () -> RenderObject& {
