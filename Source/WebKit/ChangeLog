@@ -1,3 +1,13 @@
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
+        String::split() should take in a StringView instead of a String
+        https://bugs.webkit.org/show_bug.cgi?id=238355
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/Inspector/socket/RemoteInspectorProtocolHandler.cpp:
+        Optimize by calling StringView::split() instead of String::split().
+
 2022-03-24  Brent Fulgham  <bfulgham@apple.com>
 
         Require click-to-play for media in Captive Portals 

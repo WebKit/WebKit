@@ -532,7 +532,7 @@ bool String::isSafeToSendToAnotherThread() const
 }
 
 template<bool allowEmptyEntries>
-inline Vector<String> String::splitInternal(const String& separator) const
+inline Vector<String> String::splitInternal(StringView separator) const
 {
     Vector<String> result;
 
@@ -586,7 +586,7 @@ Vector<String> String::split(UChar separator) const
     return splitInternal<false>(separator);
 }
 
-Vector<String> String::split(const String& separator) const
+Vector<String> String::split(StringView separator) const
 {
     return splitInternal<false>(separator);
 }
@@ -601,7 +601,7 @@ Vector<String> String::splitAllowingEmptyEntries(UChar separator) const
     return splitInternal<true>(separator);
 }
 
-Vector<String> String::splitAllowingEmptyEntries(const String& separator) const
+Vector<String> String::splitAllowingEmptyEntries(StringView separator) const
 {
     return splitInternal<true>(separator);
 }

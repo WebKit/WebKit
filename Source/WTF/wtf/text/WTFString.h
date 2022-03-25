@@ -243,11 +243,11 @@ public:
 
     WTF_EXPORT_PRIVATE void split(UChar separator, const SplitFunctor&) const;
     WTF_EXPORT_PRIVATE Vector<String> split(UChar separator) const;
-    WTF_EXPORT_PRIVATE Vector<String> split(const String& separator) const;
+    WTF_EXPORT_PRIVATE Vector<String> split(StringView separator) const;
 
     WTF_EXPORT_PRIVATE void splitAllowingEmptyEntries(UChar separator, const SplitFunctor&) const;
     WTF_EXPORT_PRIVATE Vector<String> splitAllowingEmptyEntries(UChar separator) const;
-    WTF_EXPORT_PRIVATE Vector<String> splitAllowingEmptyEntries(const String& separator) const;
+    WTF_EXPORT_PRIVATE Vector<String> splitAllowingEmptyEntries(StringView separator) const;
 
     WTF_EXPORT_PRIVATE double toDouble(bool* ok = nullptr) const;
     WTF_EXPORT_PRIVATE float toFloat(bool* ok = nullptr) const;
@@ -343,7 +343,7 @@ private:
 
     template<bool allowEmptyEntries> void splitInternal(UChar separator, const SplitFunctor&) const;
     template<bool allowEmptyEntries> Vector<String> splitInternal(UChar separator) const;
-    template<bool allowEmptyEntries> Vector<String> splitInternal(const String& separator) const;
+    template<bool allowEmptyEntries> Vector<String> splitInternal(StringView separator) const;
 
     RefPtr<StringImpl> m_impl;
 };

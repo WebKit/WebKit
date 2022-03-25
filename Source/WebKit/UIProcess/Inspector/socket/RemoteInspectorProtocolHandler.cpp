@@ -55,12 +55,28 @@ public:
 
     void didPostMessage(WebPageProxy& page, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
-        auto tokens = serializedScriptValue.toString().split(":");
-        if (tokens.size() != 3)
+        auto valueAsString = serializedScriptValue.toString();
+        auto tokens = StringView { valueAsString }.split(':');
+        uint32_t connectionID = 0;
+        uint32_t targetID = 0;
+        String type;
+        int i = 0;
+        for (auto token : tokens) {
+            if (!i)
+                connectionID = parseInteger<uint32_t>(token).value_or(0);
+            else if (i == 1)
+                targetID = parseInteger<uint32_t>(token).value_or(0);
+            else if (i == 2)
+                type = token.toString();
+            else
+                return;
+            ++i;
+        }
+        if (i != 3)
             return;
 
         URL requestURL { page.pageLoadState().url() };
-        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), parseInteger<uint32_t>(tokens[0]).value_or(0), parseInteger<uint32_t>(tokens[1]).value_or(0), tokens[2]);
+        m_inspectorProtocolHandler.inspect(requestURL.hostAndPort(), connectionID, targetID, type);
     }
     
     bool supportsAsyncReply() override

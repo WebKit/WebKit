@@ -1,5 +1,21 @@
 2022-03-24  Chris Dumez  <cdumez@apple.com>
 
+        String::split() should take in a StringView instead of a String
+        https://bugs.webkit.org/show_bug.cgi?id=238355
+
+        Reviewed by Geoffrey Garen.
+
+        String::split() should take in a StringView instead of a String, to avoid unnecessary construction
+        of Strings in some instances.
+
+        * wtf/text/WTFString.cpp:
+        (WTF::String::splitInternal const):
+        (WTF::String::split const):
+        (WTF::String::splitAllowingEmptyEntries const):
+        * wtf/text/WTFString.h:
+
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
         FileSystem::pathByAppendingComponent() should take in StringViews instead of Strings
         https://bugs.webkit.org/show_bug.cgi?id=238344
 

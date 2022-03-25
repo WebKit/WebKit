@@ -600,7 +600,7 @@ void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
 void AXIsolatedObject::classList(Vector<String>& list) const
 {
     String classList = stringAttributeValue(AXPropertyName::ClassList);
-    list.appendVector(classList.split(" "));
+    list.appendVector(classList.split(' '));
 }
 
 PAL::SessionID AXIsolatedObject::sessionID() const
