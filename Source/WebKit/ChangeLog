@@ -1,3 +1,13 @@
+2022-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        Cherry pick r289026
+        rdar://90860743
+
+        http://trac.webkit.org/r289026 wasn't merged to the safari-613-branch, which caused excessive unnecessary logging.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+
 2022-03-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix build on safari-613-branch
