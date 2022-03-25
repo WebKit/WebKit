@@ -1,3 +1,14 @@
+2022-03-25  Don Olmstead  <don.olmstead@sony.com>
+
+        Mismatched forward declaration of GraphicsContextState
+        https://bugs.webkit.org/show_bug.cgi?id=238359
+
+        Reviewed by Darin Adler.
+
+        Forward declaration should be for a class not a struct. Fixes a warning.
+
+        * platform/graphics/cairo/CairoOperations.h:
+
 2022-03-24  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, late March 2022 edition
