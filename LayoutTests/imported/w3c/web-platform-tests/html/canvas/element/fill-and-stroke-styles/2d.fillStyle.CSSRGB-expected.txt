@@ -4,5 +4,5 @@ Actual output:
 Expected output:
 
 
-FAIL CSSRGB works as color input Can't find variable: CSSRGB
+FAIL CSSRGB works as color input assert_equals: ctx.fillStyle === '#ff00ff' (got #000000[string], expected #ff00ff[string]) expected "#ff00ff" but got "#000000"
 

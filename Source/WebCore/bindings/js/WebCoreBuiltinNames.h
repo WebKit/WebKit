@@ -89,8 +89,14 @@ namespace WebCore {
     macro(CryptoKey) \
     macro(CSSAnimation) \
     macro(CSSCounterStyleRule) \
+    macro(CSSColor) \
+    macro(CSSColorValue) \
+    macro(CSSHSL) \
+    macro(CSSHWB) \
     macro(CSSImageValue) \
     macro(CSSKeywordValue) \
+    macro(CSSLCH) \
+    macro(CSSLab) \
     macro(CSSMathInvert) \
     macro(CSSMathMax) \
     macro(CSSMathMin) \
@@ -101,8 +107,11 @@ namespace WebCore {
     macro(CSSMatrixComponent) \
     macro(CSSNumericArray) \
     macro(CSSNumericValue) \
+    macro(CSSOKLCH) \
+    macro(CSSOKLab) \
     macro(CSSPaintSize) \
     macro(CSSPerspective) \
+    macro(CSSRGB) \
     macro(CSSRotate) \
     macro(CSSScale) \
     macro(CSSSkew) \

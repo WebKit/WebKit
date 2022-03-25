@@ -40,10 +40,11 @@ struct CSSNumericType;
 
 template<typename> class ExceptionOr;
 
+using CSSNumberish = std::variant<double, RefPtr<CSSNumericValue>>;
+
 class CSSNumericValue : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSNumericValue);
 public:
-    using CSSNumberish = std::variant<double, RefPtr<CSSNumericValue>>;
 
     Ref<CSSNumericValue> add(FixedVector<CSSNumberish>&&);
     Ref<CSSNumericValue> sub(FixedVector<CSSNumberish>&&);
@@ -70,8 +71,6 @@ protected:
 
     CSSNumericValue() = default;
 };
-
-using CSSNumberish = CSSNumericValue::CSSNumberish;
 
 } // namespace WebCore
 

@@ -23,8 +23,9 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://drafts.css-houdini.org/css-typed-om/#cssskew
 [
-    EnabledAtRuntime=CSSTypedOMEnabled,
+    EnabledBySetting=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet)
 ] interface CSSSkew : CSSTransformComponent {

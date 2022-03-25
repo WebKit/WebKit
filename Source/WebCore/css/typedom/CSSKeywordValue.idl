@@ -23,10 +23,12 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://drafts.css-houdini.org/css-typed-om/#csskeywordvalue
 [
-    EnabledAtRuntime=CSSTypedOMEnabled,
+    EnabledBySetting=CSSTypedOMEnabled,
     Conditional=CSS_TYPED_OM,
     Exposed=(Window,Worker,PaintWorklet),
+    JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface CSSKeywordValue : CSSStyleValue {
     constructor(USVString value);

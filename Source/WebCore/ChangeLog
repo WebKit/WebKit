@@ -1,3 +1,125 @@
+2022-03-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add css-typed-om color IDL skeletons
+        https://bugs.webkit.org/show_bug.cgi?id=238208
+
+        Reviewed by Sam Weinig.
+
+        This is an off-by-default experimental feature.
+        Covered by wpt tests.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * css/typedom/CSSKeywordValue.idl:
+        * css/typedom/CSSNumericValue.h:
+        * css/typedom/color/CSSColor.cpp: Added.
+        (WebCore::CSSColor::setColorSpace):
+        (WebCore::CSSColor::CSSColor):
+        * css/typedom/color/CSSColor.h: Added.
+        (WebCore::CSSColor::create):
+        (WebCore::CSSColor::alpha const):
+        (WebCore::CSSColor::setAlpha):
+        * css/typedom/color/CSSColor.idl:
+        * css/typedom/color/CSSColorValue.h: Added.
+        (WebCore::CSSColorValue::colorSpace):
+        (WebCore::CSSColorValue::to):
+        (WebCore::CSSColorValue::parse):
+        * css/typedom/color/CSSColorValue.idl:
+        * css/typedom/color/CSSHSL.cpp: Added.
+        (WebCore::CSSHSL::CSSHSL):
+        * css/typedom/color/CSSHSL.h: Added.
+        (WebCore::CSSHSL::create):
+        (WebCore::CSSHSL::h const):
+        (WebCore::CSSHSL::setH):
+        (WebCore::CSSHSL::s const):
+        (WebCore::CSSHSL::setS):
+        (WebCore::CSSHSL::l const):
+        (WebCore::CSSHSL::setL):
+        (WebCore::CSSHSL::alpha const):
+        (WebCore::CSSHSL::setAlpha):
+        * css/typedom/color/CSSHSL.idl:
+        * css/typedom/color/CSSHWB.cpp: Added.
+        (WebCore::CSSHWB::CSSHWB):
+        * css/typedom/color/CSSHWB.h: Added.
+        (WebCore::CSSHWB::create):
+        (WebCore::CSSHWB::h const):
+        (WebCore::CSSHWB::setH):
+        (WebCore::CSSHWB::w const):
+        (WebCore::CSSHWB::setW):
+        (WebCore::CSSHWB::b const):
+        (WebCore::CSSHWB::setB):
+        (WebCore::CSSHWB::alpha const):
+        (WebCore::CSSHWB::setAlpha):
+        * css/typedom/color/CSSHWB.idl:
+        * css/typedom/color/CSSLCH.cpp: Added.
+        (WebCore::CSSLCH::CSSLCH):
+        * css/typedom/color/CSSLCH.h: Added.
+        (WebCore::CSSLCH::create):
+        (WebCore::CSSLCH::l const):
+        (WebCore::CSSLCH::setL):
+        (WebCore::CSSLCH::c const):
+        (WebCore::CSSLCH::setC):
+        (WebCore::CSSLCH::h const):
+        (WebCore::CSSLCH::setH):
+        (WebCore::CSSLCH::alpha const):
+        (WebCore::CSSLCH::setAlpha):
+        * css/typedom/color/CSSLCH.idl:
+        * css/typedom/color/CSSLab.cpp: Added.
+        (WebCore::CSSLab::CSSLab):
+        * css/typedom/color/CSSLab.h: Added.
+        (WebCore::CSSLab::create):
+        (WebCore::CSSLab::l const):
+        (WebCore::CSSLab::setL):
+        (WebCore::CSSLab::a const):
+        (WebCore::CSSLab::setA):
+        (WebCore::CSSLab::b const):
+        (WebCore::CSSLab::setB):
+        (WebCore::CSSLab::alpha const):
+        (WebCore::CSSLab::setAlpha):
+        * css/typedom/color/CSSLab.idl:
+        * css/typedom/color/CSSOKLCH.cpp: Added.
+        (WebCore::CSSOKLCH::CSSOKLCH):
+        * css/typedom/color/CSSOKLCH.h: Added.
+        (WebCore::CSSOKLCH::create):
+        (WebCore::CSSOKLCH::l const):
+        (WebCore::CSSOKLCH::setL):
+        (WebCore::CSSOKLCH::c const):
+        (WebCore::CSSOKLCH::setC):
+        (WebCore::CSSOKLCH::h const):
+        (WebCore::CSSOKLCH::setH):
+        (WebCore::CSSOKLCH::alpha const):
+        (WebCore::CSSOKLCH::setAlpha):
+        * css/typedom/color/CSSOKLCH.idl:
+        * css/typedom/color/CSSOKLab.cpp: Added.
+        (WebCore::CSSOKLab::CSSOKLab):
+        * css/typedom/color/CSSOKLab.h: Added.
+        (WebCore::CSSOKLab::create):
+        (WebCore::CSSOKLab::l const):
+        (WebCore::CSSOKLab::setL):
+        (WebCore::CSSOKLab::a const):
+        (WebCore::CSSOKLab::setA):
+        (WebCore::CSSOKLab::b const):
+        (WebCore::CSSOKLab::setB):
+        (WebCore::CSSOKLab::alpha const):
+        (WebCore::CSSOKLab::setAlpha):
+        * css/typedom/color/CSSOKLab.idl:
+        * css/typedom/color/CSSRGB.cpp: Added.
+        (WebCore::CSSRGB::CSSRGB):
+        * css/typedom/color/CSSRGB.h: Added.
+        (WebCore::CSSRGB::create):
+        (WebCore::CSSRGB::r const):
+        (WebCore::CSSRGB::setR):
+        (WebCore::CSSRGB::g const):
+        (WebCore::CSSRGB::setG):
+        (WebCore::CSSRGB::b const):
+        (WebCore::CSSRGB::setB):
+        (WebCore::CSSRGB::alpha const):
+        (WebCore::CSSRGB::setAlpha):
+        * css/typedom/color/CSSRGB.idl:
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Reduce EventListenerVector's minimum capacity from 16 to 2

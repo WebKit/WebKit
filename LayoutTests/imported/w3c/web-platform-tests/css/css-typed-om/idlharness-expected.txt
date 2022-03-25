@@ -391,71 +391,71 @@ PASS CSSImageValue interface object name
 PASS CSSImageValue interface: existence and properties of interface prototype object
 PASS CSSImageValue interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSImageValue interface: existence and properties of interface prototype object's @@unscopables property
-FAIL CSSColorValue interface: existence and properties of interface object assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
-FAIL CSSColorValue interface object length assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
-FAIL CSSColorValue interface object name assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
-FAIL CSSColorValue interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
-FAIL CSSColorValue interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
-FAIL CSSColorValue interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
-FAIL CSSColorValue interface: attribute colorSpace assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
-FAIL CSSColorValue interface: operation to(CSSKeywordish) assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
-FAIL CSSColorValue interface: operation parse(USVString) assert_own_property: self does not have own property "CSSColorValue" expected property "CSSColorValue" missing
-FAIL CSSRGB interface: existence and properties of interface object assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
-FAIL CSSRGB interface object length assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
-FAIL CSSRGB interface object name assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
-FAIL CSSRGB interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
-FAIL CSSRGB interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
-FAIL CSSRGB interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
-FAIL CSSRGB interface: attribute r assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
-FAIL CSSRGB interface: attribute g assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
-FAIL CSSRGB interface: attribute b assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
-FAIL CSSRGB interface: attribute alpha assert_own_property: self does not have own property "CSSRGB" expected property "CSSRGB" missing
-FAIL CSSHSL interface: existence and properties of interface object assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
-FAIL CSSHSL interface object length assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
-FAIL CSSHSL interface object name assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
-FAIL CSSHSL interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
-FAIL CSSHSL interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
-FAIL CSSHSL interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
-FAIL CSSHSL interface: attribute h assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
-FAIL CSSHSL interface: attribute s assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
-FAIL CSSHSL interface: attribute l assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
-FAIL CSSHSL interface: attribute alpha assert_own_property: self does not have own property "CSSHSL" expected property "CSSHSL" missing
-FAIL CSSHWB interface: existence and properties of interface object assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
-FAIL CSSHWB interface object length assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
-FAIL CSSHWB interface object name assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
-FAIL CSSHWB interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
-FAIL CSSHWB interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
-FAIL CSSHWB interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
-FAIL CSSHWB interface: attribute h assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
-FAIL CSSHWB interface: attribute w assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
-FAIL CSSHWB interface: attribute b assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
-FAIL CSSHWB interface: attribute alpha assert_own_property: self does not have own property "CSSHWB" expected property "CSSHWB" missing
-FAIL CSSLCH interface: existence and properties of interface object assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
-FAIL CSSLCH interface object length assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
-FAIL CSSLCH interface object name assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
-FAIL CSSLCH interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
-FAIL CSSLCH interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
-FAIL CSSLCH interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
-FAIL CSSLCH interface: attribute l assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
-FAIL CSSLCH interface: attribute c assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
-FAIL CSSLCH interface: attribute h assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
-FAIL CSSLCH interface: attribute alpha assert_own_property: self does not have own property "CSSLCH" expected property "CSSLCH" missing
-FAIL CSSLab interface: existence and properties of interface object assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
-FAIL CSSLab interface object length assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
-FAIL CSSLab interface object name assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
-FAIL CSSLab interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
-FAIL CSSLab interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
-FAIL CSSLab interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
-FAIL CSSLab interface: attribute l assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
-FAIL CSSLab interface: attribute a assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
-FAIL CSSLab interface: attribute b assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
-FAIL CSSLab interface: attribute alpha assert_own_property: self does not have own property "CSSLab" expected property "CSSLab" missing
-FAIL CSSColor interface: existence and properties of interface object assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
-FAIL CSSColor interface object length assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
-FAIL CSSColor interface object name assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
-FAIL CSSColor interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
-FAIL CSSColor interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
-FAIL CSSColor interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSColor" expected property "CSSColor" missing
+PASS CSSColorValue interface: existence and properties of interface object
+PASS CSSColorValue interface object length
+PASS CSSColorValue interface object name
+PASS CSSColorValue interface: existence and properties of interface prototype object
+PASS CSSColorValue interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSColorValue interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSColorValue interface: attribute colorSpace
+PASS CSSColorValue interface: operation to(CSSKeywordish)
+PASS CSSColorValue interface: operation parse(USVString)
+PASS CSSRGB interface: existence and properties of interface object
+PASS CSSRGB interface object length
+PASS CSSRGB interface object name
+PASS CSSRGB interface: existence and properties of interface prototype object
+PASS CSSRGB interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSRGB interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSRGB interface: attribute r
+PASS CSSRGB interface: attribute g
+PASS CSSRGB interface: attribute b
+PASS CSSRGB interface: attribute alpha
+PASS CSSHSL interface: existence and properties of interface object
+PASS CSSHSL interface object length
+PASS CSSHSL interface object name
+PASS CSSHSL interface: existence and properties of interface prototype object
+PASS CSSHSL interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSHSL interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSHSL interface: attribute h
+PASS CSSHSL interface: attribute s
+PASS CSSHSL interface: attribute l
+PASS CSSHSL interface: attribute alpha
+PASS CSSHWB interface: existence and properties of interface object
+PASS CSSHWB interface object length
+PASS CSSHWB interface object name
+PASS CSSHWB interface: existence and properties of interface prototype object
+PASS CSSHWB interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSHWB interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSHWB interface: attribute h
+PASS CSSHWB interface: attribute w
+PASS CSSHWB interface: attribute b
+PASS CSSHWB interface: attribute alpha
+PASS CSSLCH interface: existence and properties of interface object
+PASS CSSLCH interface object length
+PASS CSSLCH interface object name
+PASS CSSLCH interface: existence and properties of interface prototype object
+PASS CSSLCH interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSLCH interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSLCH interface: attribute l
+PASS CSSLCH interface: attribute c
+PASS CSSLCH interface: attribute h
+PASS CSSLCH interface: attribute alpha
+PASS CSSLab interface: existence and properties of interface object
+PASS CSSLab interface object length
+PASS CSSLab interface object name
+PASS CSSLab interface: existence and properties of interface prototype object
+PASS CSSLab interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSLab interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSLab interface: attribute l
+PASS CSSLab interface: attribute a
+PASS CSSLab interface: attribute b
+PASS CSSLab interface: attribute alpha
+PASS CSSColor interface: existence and properties of interface object
+FAIL CSSColor interface object length assert_equals: wrong value for CSSColor.length expected 1 but got 2
+PASS CSSColor interface object name
+PASS CSSColor interface: existence and properties of interface prototype object
+PASS CSSColor interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSColor interface: existence and properties of interface prototype object's @@unscopables property
 FAIL CSSDeviceCMYK interface: existence and properties of interface object assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
 FAIL CSSDeviceCMYK interface object length assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
 FAIL CSSDeviceCMYK interface object name assert_own_property: self does not have own property "CSSDeviceCMYK" expected property "CSSDeviceCMYK" missing
