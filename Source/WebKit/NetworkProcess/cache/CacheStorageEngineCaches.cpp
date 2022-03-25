@@ -43,17 +43,17 @@ using namespace NetworkCache;
 
 static inline String cachesListFilename(const String& cachesRootPath)
 {
-    return FileSystem::pathByAppendingComponent(cachesRootPath, "cacheslist"_s);
+    return FileSystem::pathByAppendingComponent(cachesRootPath, "cacheslist");
 }
 
 static inline String cachesOriginFilename(const String& cachesRootPath)
 {
-    return FileSystem::pathByAppendingComponent(cachesRootPath, "origin"_s);
+    return FileSystem::pathByAppendingComponent(cachesRootPath, "origin");
 }
 
 String Caches::cachesSizeFilename(const String& cachesRootsPath)
 {
-    return FileSystem::pathByAppendingComponent(cachesRootsPath, "estimatedsize"_s);
+    return FileSystem::pathByAppendingComponent(cachesRootsPath, "estimatedsize");
 }
 
 Ref<Caches> Caches::create(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath)

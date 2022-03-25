@@ -1,5 +1,21 @@
 2022-03-24  Chris Dumez  <cdumez@apple.com>
 
+        FileSystem::pathByAppendingComponent() should take in StringViews instead of Strings
+        https://bugs.webkit.org/show_bug.cgi?id=238344
+
+        Reviewed by Geoff Garen.
+
+        FileSystem::pathByAppendingComponent() should take in StringViews instead of Strings, to avoid
+        unnecessary String constructor in many instances.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::pathByAppendingComponent):
+        * wtf/FileSystem.h:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::pathByAppendingComponent):
+
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
         String's startsWith() / endsWith() / replace() should take in a StringView instead of a String
         https://bugs.webkit.org/show_bug.cgi?id=238333
 

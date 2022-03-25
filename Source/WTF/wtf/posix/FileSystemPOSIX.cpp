@@ -298,11 +298,11 @@ bool makeAllDirectories(const String& path)
     return true;
 }
 
-String pathByAppendingComponent(const String& path, const String& component)
+String pathByAppendingComponent(StringView path, StringView component)
 {
     if (path.endsWith('/'))
-        return path + component;
-    return path + "/" + component;
+        return makeString(path, component);
+    return makeString(path, '/', component);
 }
 
 String pathByAppendingComponents(StringView path, const Vector<StringView>& components)

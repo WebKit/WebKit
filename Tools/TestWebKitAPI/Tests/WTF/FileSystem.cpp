@@ -264,13 +264,13 @@ TEST_F(FileSystemTest, fileExists)
     EXPECT_TRUE(FileSystem::fileExists(tempFileSymlinkPath()));
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFilePath()));
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
-    EXPECT_FALSE(FileSystem::fileExists(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s)));
+    EXPECT_FALSE(FileSystem::fileExists(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist")));
 }
 
 TEST_F(FileSystemTest, fileExistsBrokenSymlink)
 {
-    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
-    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist-symlink"_s);
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist-symlink");
     EXPECT_TRUE(FileSystem::createSymbolicLink(doesNotExistPath, symlinkPath));
     EXPECT_FALSE(FileSystem::fileExists(doesNotExistPath));
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath)); // fileExists() follows symlinks.
@@ -281,7 +281,7 @@ TEST_F(FileSystemTest, fileExistsBrokenSymlink)
 TEST_F(FileSystemTest, fileExistsSymlinkToSymlink)
 {
     // Create a valid symlink to a symlink to a regular file.
-    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlink"_s);
+    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "symlink");
     EXPECT_TRUE(FileSystem::createSymbolicLink(tempFileSymlinkPath(), symlinkPath));
     EXPECT_TRUE(FileSystem::fileExists(symlinkPath));
     EXPECT_EQ(FileSystem::fileType(symlinkPath), FileSystem::FileType::SymbolicLink);
@@ -468,7 +468,7 @@ TEST_F(FileSystemTest, fileSize)
     ASSERT_TRUE(fileSize);
     EXPECT_EQ(*fileSize, 0U);
 
-    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
+    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
     fileSize = FileSystem::fileSize(fileThatDoesNotExist);
     EXPECT_TRUE(!fileSize);
 }
@@ -498,7 +498,7 @@ TEST_F(FileSystemTest, volumeFreeSpace)
     ASSERT_TRUE(freeSpace);
     EXPECT_GT(*freeSpace, 0U);
 
-    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
+    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
     EXPECT_FALSE(FileSystem::volumeFreeSpace(fileThatDoesNotExist));
 }
 
@@ -533,10 +533,10 @@ TEST_F(FileSystemTest, createSymbolicLinkFolder)
 
 TEST_F(FileSystemTest, createSymbolicLinkFileDoesNotExist)
 {
-    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
+    String fileThatDoesNotExist = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
     EXPECT_FALSE(FileSystem::fileExists(fileThatDoesNotExist));
 
-    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist-symlink"_s);
+    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist-symlink");
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath));
     EXPECT_TRUE(FileSystem::createSymbolicLink(fileThatDoesNotExist, symlinkPath));
     EXPECT_FALSE(FileSystem::fileExists(symlinkPath));

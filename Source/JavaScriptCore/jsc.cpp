@@ -1096,7 +1096,7 @@ private:
             return { };
         const char* cachePath = Options::diskCachePath();
         String filename = FileSystem::encodeForFileName(FileSystem::lastComponentOfPathIgnoringTrailingSlash(sourceOrigin().url().fileSystemPath()));
-        return FileSystem::pathByAppendingComponent(String { cachePath }, makeString(source().toString().hash(), '-', filename, ".bytecode-cache"));
+        return FileSystem::pathByAppendingComponent(cachePath, makeString(source().toString().hash(), '-', filename, ".bytecode-cache"));
     }
 
     void loadBytecode() const

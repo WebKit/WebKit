@@ -1,3 +1,30 @@
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
+        FileSystem::pathByAppendingComponent() should take in StringViews instead of Strings
+        https://bugs.webkit.org/show_bug.cgi?id=238344
+
+        Reviewed by Geoff Garen.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore):
+        * NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp:
+        (WebKit::PCM::Database::Database):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::storagePath):
+        (WebKit::CacheStorage::Engine::initialize):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::cachesListFilename):
+        (WebKit::CacheStorage::cachesOriginFilename):
+        (WebKit::CacheStorage::Caches::cachesSizeFilename):
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        (WebKit::NetworkCache::BlobStorage::blobPathForHash const):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::makeCachePath):
+        * NetworkProcess/storage/IDBStorageManager.cpp:
+        (WebKit::IDBStorageManager::idbStorageOriginDirectory):
+        * UIProcess/Inspector/win/InspectorResourceURLSchemeHandler.cpp:
+        (WebKit::InspectorResourceURLSchemeHandler::platformStartTask):
+
 2022-03-24  Don Olmstead  <don.olmstead@sony.com>
 
         [GLib] Add user directories to WTF::FileSystem

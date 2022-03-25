@@ -60,14 +60,14 @@ IDBDatabaseIdentifier IDBDatabaseIdentifier::isolatedCopy() &&
     return identifier;
 }
 
-String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const String& rootDirectory, const String& versionString) const
+String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const String& rootDirectory, ASCIILiteral versionString) const
 {
     return databaseDirectoryRelativeToRoot(m_origin, rootDirectory, versionString);
 }
 
-String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const ClientOrigin& origin, const String& rootDirectory, const String& versionString)
+String IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(const ClientOrigin& origin, const String& rootDirectory, ASCIILiteral versionString)
 {
-    String versionDirectory = FileSystem::pathByAppendingComponent(rootDirectory, versionString);
+    String versionDirectory = FileSystem::pathByAppendingComponent(rootDirectory, StringView { versionString });
     String mainFrameDirectory = FileSystem::pathByAppendingComponent(versionDirectory, origin.topOrigin.databaseIdentifier());
 
     // If the opening origin and main frame origins are the same, there is no partitioning.

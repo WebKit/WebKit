@@ -101,7 +101,7 @@ void CurlCacheManager::loadIndex()
     if (m_disabled)
         return;
 
-    String indexFilePath = FileSystem::pathByAppendingComponent(m_cacheDir, "index.dat"_s);
+    String indexFilePath = FileSystem::pathByAppendingComponent(m_cacheDir, "index.dat");
     auto buffer = FileSystem::readEntireFile(indexFilePath);
     if (!buffer) {
         LOG(Network, "Cache Error: Could not read %s\n", indexFilePath.latin1().data());

@@ -79,7 +79,7 @@ void BlobStorage::synchronize()
 String BlobStorage::blobPathForHash(const SHA1::Digest& hash) const
 {
     auto hashAsString = SHA1::hexDigest(hash);
-    return FileSystem::pathByAppendingComponent(blobDirectoryPathIsolatedCopy(), String::fromUTF8(hashAsString));
+    return FileSystem::pathByAppendingComponent(blobDirectoryPathIsolatedCopy(), hashAsString.data());
 }
 
 BlobStorage::Blob BlobStorage::add(const String& path, const Data& data)

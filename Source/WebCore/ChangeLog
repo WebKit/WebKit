@@ -1,3 +1,25 @@
+2022-03-24  Chris Dumez  <cdumez@apple.com>
+
+        FileSystem::pathByAppendingComponent() should take in StringViews instead of Strings
+        https://bugs.webkit.org/show_bug.cgi?id=238344
+
+        Reviewed by Geoff Garen.
+
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot const):
+        (WebCore::IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::getAllDatabaseNamesAndVersions):
+        (WebCore::IDBServer::IDBServer::diskUsage):
+        (WebCore::IDBServer::IDBServer::upgradedDatabaseDirectory):
+        * Modules/webdatabase/OriginLock.cpp:
+        (WebCore::lockFileNameForPath):
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::setStorageDirectory):
+        * platform/network/curl/CurlCacheManager.cpp:
+        (WebCore::CurlCacheManager::loadIndex):
+
 2022-03-24  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         calc(): Handle finite value with infinite step in round()

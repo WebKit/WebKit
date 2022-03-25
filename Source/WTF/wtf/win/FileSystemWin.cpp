@@ -169,7 +169,7 @@ static String storageDirectory(DWORD pathIdentifier)
     buffer.shrink(wcslen(wcharFrom(buffer.data())));
     String directory = String::adopt(WTFMove(buffer));
 
-    directory = pathByAppendingComponent(directory, "Apple Computer\\" + bundleName());
+    directory = pathByAppendingComponent(directory, makeString("Apple Computer\\", bundleName()));
     if (!makeAllDirectories(directory))
         return String();
 
@@ -211,7 +211,7 @@ static String generateTemporaryPath(const Function<bool(const String&)>& action)
 
         ASSERT(wcslen(tempFile) == WTF_ARRAY_LENGTH(tempFile) - 1);
 
-        proposedPath = pathByAppendingComponent(tempPath, tempFile);
+        proposedPath = pathByAppendingComponent(String(tempPath), String(tempFile));
         if (proposedPath.isEmpty())
             break;
     } while (!action(proposedPath));

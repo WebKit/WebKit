@@ -30,7 +30,7 @@ namespace WebCore {
 
 static String lockFileNameForPath(const String& originPath)
 {
-    return FileSystem::pathByAppendingComponent(originPath, ".lock"_s);
+    return FileSystem::pathByAppendingComponent(originPath, ".lock");
 }
 
 OriginLock::OriginLock(const String& originPath)

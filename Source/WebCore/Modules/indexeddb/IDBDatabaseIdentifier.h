@@ -70,8 +70,8 @@ public:
     const ClientOrigin& origin() const { return m_origin; }
     bool isTransient() const { return m_isTransient; }
 
-    String databaseDirectoryRelativeToRoot(const String& rootDirectory, const String& versionString="v1") const;
-    WEBCORE_EXPORT static String databaseDirectoryRelativeToRoot(const ClientOrigin&, const String& rootDirectory, const String& versionString);
+    String databaseDirectoryRelativeToRoot(const String& rootDirectory, ASCIILiteral versionString = "v1"_s) const;
+    WEBCORE_EXPORT static String databaseDirectoryRelativeToRoot(const ClientOrigin&, const String& rootDirectory, ASCIILiteral versionString);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<IDBDatabaseIdentifier> decode(Decoder&);

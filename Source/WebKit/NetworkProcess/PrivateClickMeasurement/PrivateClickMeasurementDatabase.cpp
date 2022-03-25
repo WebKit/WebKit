@@ -82,7 +82,7 @@ static HashSet<Database*>& allDatabases()
 }
 
 Database::Database(const String& storageDirectory)
-    : DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectory, "pcm.db"_s))
+    : DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectory, "pcm.db"))
 {
     ASSERT(!RunLoop::isMain());
     openDatabaseAndCreateSchemaIfNecessary();

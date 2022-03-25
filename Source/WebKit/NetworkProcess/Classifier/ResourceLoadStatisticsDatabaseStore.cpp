@@ -314,7 +314,7 @@ static HashSet<ResourceLoadStatisticsDatabaseStore*>& allStores()
 
 ResourceLoadStatisticsDatabaseStore::ResourceLoadStatisticsDatabaseStore(WebResourceLoadStatisticsStore& store, SuspendableWorkQueue& workQueue, ShouldIncludeLocalhost shouldIncludeLocalhost, const String& storageDirectoryPath, PAL::SessionID sessionID)
     : ResourceLoadStatisticsStore(store, workQueue, shouldIncludeLocalhost)
-    , DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectoryPath, "observations.db"_s))
+    , DatabaseUtilities(FileSystem::pathByAppendingComponent(storageDirectoryPath, "observations.db"))
     , m_sessionID(sessionID)
 {
     ASSERT(!RunLoop::isMain());

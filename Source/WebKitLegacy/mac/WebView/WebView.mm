@@ -1534,7 +1534,7 @@ static Ref<WebCore::LocalWebLockRegistry> getOrCreateWebLockRegistry(bool isPriv
 #endif
 
 #if ENABLE(VIDEO)
-        WebCore::HTMLMediaElement::setMediaCacheDirectory(FileSystem::pathByAppendingComponent(NSTemporaryDirectory(), "MediaCache/"_s));
+        WebCore::HTMLMediaElement::setMediaCacheDirectory(FileSystem::pathByAppendingComponent(String(NSTemporaryDirectory()), "MediaCache/"));
 #endif
         didOneTimeInitialization = true;
     }
