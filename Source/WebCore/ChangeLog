@@ -1,3 +1,17 @@
+2022-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Drop duplicate isFiringEventListeners check in Node wrappers' isReachableFromOpaqueRoots()
+        https://bugs.webkit.org/show_bug.cgi?id=238376
+
+        Reviewed by Geoffrey Garen.
+
+        Drop duplicate isFiringEventListeners check in Node wrappers' isReachableFromOpaqueRoots().
+        Those wrappers already call JSNodeOwner::isReachableFromOpaqueRoots() which already takes care
+        of checking the isFiringEventListeners flag.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+
 2022-03-25  J Pascoe  <j_pascoe@apple.com>
 
         [WebAuthn] Maintain last modification time separate from last used time for platform credentials
