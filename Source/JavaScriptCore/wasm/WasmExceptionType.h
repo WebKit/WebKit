@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/text/ASCIILiteral.h>
+
 #if ENABLE(WEBASSEMBLY)
 
 namespace JSC {

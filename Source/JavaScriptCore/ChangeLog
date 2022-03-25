@@ -1,3 +1,9 @@
+2022-03-25  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix non-unified build after r291779
+
+        * wasm/WasmExceptionType.h:
+
 2022-03-24  Don Olmstead  <don.olmstead@sony.com>
 
         Non-unified build fixes, late March 2022 edition
