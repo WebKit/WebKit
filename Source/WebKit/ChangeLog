@@ -1,5 +1,40 @@
 2022-03-24  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r291828. rdar://problem/90794287
+
+    After r291814, we need to create the INSTALL_PATH for the iOS sandbox files
+    https://bugs.webkit.org/show_bug.cgi?id=238351
+    
+    Reviewed by Saam Barati.
+    
+    We need to create the $(INSTALL_PATH) for the preprocessed iOS sandbox files.
+    Before r291814, the built-in Xcode copy step used ditto when copying the .sb
+    files thus creating $(INSTALL_PATH) and its intermediate directories.
+    That change set made it so that all WebKit iOS sandbox profile files are preprocessed
+    thus eliminating the Xcode copy step.
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291828 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-24  Michael Saboff  <msaboff@apple.com>
+
+            After r291814, we need to create the INSTALL_PATH for the iOS sandbox files
+            https://bugs.webkit.org/show_bug.cgi?id=238351
+
+            Reviewed by Saam Barati.
+
+            We need to create the $(INSTALL_PATH) for the preprocessed iOS sandbox files.
+            Before r291814, the built-in Xcode copy step used ditto when copying the .sb
+            files thus creating $(INSTALL_PATH) and its intermediate directories.
+            That change set made it so that all WebKit iOS sandbox profile files are preprocessed
+            thus eliminating the Xcode copy step.
+
+            * WebKit.xcodeproj/project.pbxproj:
+
+2022-03-24  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r291814. rdar://problem/90343926
 
     Update Sandbox profiles for system content path
