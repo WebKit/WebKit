@@ -1,3 +1,15 @@
+2022-03-24  Brent Fulgham  <bfulgham@apple.com>
+
+        Require click-to-play for media in Captive Portals 
+        https://bugs.webkit.org/show_bug.cgi?id=238353
+        <rdar://90575996>
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::adjustSettingsForCaptivePortal): Disable auto-play for media for
+        Captive Portals.
+
 2022-03-24  Chris Dumez  <cdumez@apple.com>
 
         FileSystem::pathByAppendingComponent() should take in StringViews instead of Strings

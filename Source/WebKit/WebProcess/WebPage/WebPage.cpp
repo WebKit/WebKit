@@ -4016,6 +4016,9 @@ static void adjustSettingsForCaptivePortal(Settings& settings, const WebPreferen
     settings.setAllowedMediaVideoCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaVideoCodecIDsAllowedInCaptivePortalModeKey()));
     settings.setAllowedMediaAudioCodecIDs(store.getStringValueForKey(WebPreferencesKey::mediaAudioCodecIDsAllowedInCaptivePortalModeKey()));
     settings.setAllowedMediaCaptionFormatTypes(store.getStringValueForKey(WebPreferencesKey::mediaCaptionFormatTypesAllowedInCaptivePortalModeKey()));
+
+    settings.setVideoPlaybackRequiresUserGesture(true);
+    settings.setAudioPlaybackRequiresUserGesture(true);
 }
 
 void WebPage::updatePreferences(const WebPreferencesStore& store)
