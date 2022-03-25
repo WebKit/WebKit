@@ -101,6 +101,7 @@ WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialCreationDateKey;
 WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialGroupKey;
 WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialSynchronizableKey;
 WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialUserHandleKey;
+WK_EXTERN NSString * const _WKLocalAuthenticatorCredentialLastUsedDateKey;
 
 @protocol _WKWebAuthenticationPanelDelegate <NSObject>
 

@@ -1,3 +1,24 @@
+2022-03-25  J Pascoe  <j_pascoe@apple.com>
+
+        [WebAuthn] Maintain last modification time separate from last used time for platform credentials
+        https://bugs.webkit.org/show_bug.cgi?id=238293
+        rdar://90655676
+
+        Reviewed by Brent Fulgham.
+
+        This patch splits a key returned from [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentials...],
+        _WKLocalAuthenticatorCredentialLastModificationDateKey, which previously signified the last time a
+        credential was modified or used in an assertion, to just the last time the credential was modified.
+
+        A new key, _WKLocalAuthenticatorCredentialLastUsedDateKey represents the old definition, the last
+        time a key was used or modified.
+
+        Updated API test to verify differences between _WKLocalAuthenticatorCredentialLastModificationDateKey
+        and _WKLocalAuthenticatorCredentialLastModificationDateKey.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2022-03-25  Jonathan Bedard  <jbedard@apple.com>
 
         [git-webkit] Handle no repository case

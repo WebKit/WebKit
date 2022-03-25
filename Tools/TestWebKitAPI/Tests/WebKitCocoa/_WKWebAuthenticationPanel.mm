@@ -2042,8 +2042,17 @@ TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
 TEST(WebAuthenticationPanel, GetAssertionLA)
 {
     reset();
+    auto beforeTime = adoptNS([[NSDate alloc] init]);
 
     ASSERT_TRUE(addKeyToKeychain(testES256PrivateKeyBase64, "example.com", testUserEntityBundleBase64));
+    
+    auto *credentialsBefore = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+    EXPECT_NOT_NULL(credentialsBefore);
+    EXPECT_EQ([credentialsBefore count], 1lu);
+    EXPECT_NOT_NULL([credentialsBefore firstObject]);
+    EXPECT_EQ([[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialCreationDateKey]], 0);
+    EXPECT_EQ([[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialLastUsedDateKey]], 0);
+    EXPECT_GE([[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:beforeTime.get()], 0);
 
     uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
     NSData *nsHash = [NSData dataWithBytes:hash length:sizeof(hash)];
@@ -2058,6 +2067,14 @@ TEST(WebAuthenticationPanel, GetAssertionLA)
 
     [panel getAssertionWithChallenge:nsHash origin:@"https://example.com" options:options.get() completionHandler:^(_WKAuthenticatorAssertionResponse *response, NSError *error) {
         webAuthenticationPanelRan = true;
+
+        auto *credentialsAfter = [_WKWebAuthenticationPanel getAllLocalAuthenticatorCredentialsWithAccessGroup:@"com.apple.TestWebKitAPI"];
+        EXPECT_NOT_NULL(credentialsAfter);
+        EXPECT_EQ([credentialsAfter count], 1lu);
+        EXPECT_NOT_NULL([credentialsAfter firstObject]);
+        EXPECT_EQ([[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialCreationDateKey]], 0);
+        EXPECT_LE([[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialLastModificationDateKey] compare:[credentialsAfter firstObject][_WKLocalAuthenticatorCredentialLastUsedDateKey]], 0);
+        EXPECT_GE([[credentialsBefore firstObject][_WKLocalAuthenticatorCredentialLastUsedDateKey] compare:beforeTime.get()], 0);
         cleanUpKeychain("example.com");
 
         EXPECT_NULL(error);

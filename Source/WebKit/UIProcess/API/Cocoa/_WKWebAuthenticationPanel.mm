@@ -116,6 +116,7 @@ NSString * const _WKLocalAuthenticatorCredentialCreationDateKey = @"_WKLocalAuth
 NSString * const _WKLocalAuthenticatorCredentialGroupKey = @"_WKLocalAuthenticatorCredentialGroupKey";
 NSString * const _WKLocalAuthenticatorCredentialSynchronizableKey = @"_WKLocalAuthenticatorCredentialSynchronizableKey";
 NSString * const _WKLocalAuthenticatorCredentialUserHandleKey = @"_WKLocalAuthenticatorCredentialUserHandleKey";
+NSString * const _WKLocalAuthenticatorCredentialLastUsedDateKey = @"_WKLocalAuthenticatorCredentialLastUsedDateKey";
 
 @implementation _WKWebAuthenticationPanel {
 #if ENABLE(WEB_AUTHN)
@@ -281,7 +282,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
             username, _WKLocalAuthenticatorCredentialNameKey,
             attributes[bridge_cast(kSecAttrApplicationLabel)], _WKLocalAuthenticatorCredentialIDKey,
             attributes[bridge_cast(kSecAttrLabel)], _WKLocalAuthenticatorCredentialRelyingPartyIDKey,
-            attributes[bridge_cast(kSecAttrModificationDate)], _WKLocalAuthenticatorCredentialLastModificationDateKey,
+            attributes[bridge_cast(kSecAttrModificationDate)], _WKLocalAuthenticatorCredentialLastUsedDateKey,
             attributes[bridge_cast(kSecAttrCreationDate)], _WKLocalAuthenticatorCredentialCreationDateKey,
             nil
         ]);
@@ -291,6 +292,12 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
             [credential setObject:adoptNS([[NSData alloc] initWithBytes:userHandle.data() length:userHandle.size()]).get() forKey:_WKLocalAuthenticatorCredentialUserHandleKey];
         } else
             [credential setObject:[NSNull null] forKey:_WKLocalAuthenticatorCredentialUserHandleKey];
+
+        it = responseMap.find(cbor::CBORValue(WebCore::userEntityLastModifiedKey));
+        if (it != responseMap.end() && it->second.isUnsigned())
+            [credential setObject:[NSDate dateWithTimeIntervalSince1970:it->second.getUnsigned()] forKey:_WKLocalAuthenticatorCredentialLastModificationDateKey];
+        else
+            [credential setObject:attributes[bridge_cast(kSecAttrCreationDate)] forKey:_WKLocalAuthenticatorCredentialLastModificationDateKey];
 
         updateCredentialIfNecessary(credential.get(), attributes);
 
@@ -397,6 +404,7 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
         ASSERT_NOT_REACHED();
         return;
     }
+    updatedUserMap[cbor::CBORValue(WebCore::userEntityLastModifiedKey)] = cbor::CBORValue((int64_t)WallTime::now().secondsSinceEpoch().value());
     auto updatedTag = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(updatedUserMap)));
 
     auto secAttrApplicationTag = adoptNS([[NSData alloc] initWithBytes:updatedTag->data() length:updatedTag->size()]);

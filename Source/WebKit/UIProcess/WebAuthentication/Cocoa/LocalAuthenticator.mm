@@ -374,6 +374,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     userEntityMap[cbor::CBORValue(fido::kEntityIdMapKey)] = cbor::CBORValue(creationOptions.user.id);
     userEntityMap[cbor::CBORValue(fido::kEntityNameMapKey)] = cbor::CBORValue(creationOptions.user.name);
     userEntityMap[cbor::CBORValue(fido::kDisplayNameMapKey)] = cbor::CBORValue(creationOptions.user.displayName);
+    userEntityMap[cbor::CBORValue(userEntityLastModifiedKey)] = cbor::CBORValue((int64_t)WallTime::now().secondsSinceEpoch().value());
     auto userEntity = cbor::CBORWriter::write(cbor::CBORValue(WTFMove(userEntityMap)));
     ASSERT(userEntity);
     auto secAttrApplicationTag = toNSData(*userEntity);

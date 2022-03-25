@@ -83,6 +83,9 @@ const char LocalAuthenticatiorAccessGroup[] = "com.apple.webkit.webauthn";
 
 constexpr const char LocalAuthenticatorAccessGroup[] = "com.apple.webkit.webauthn";
 
+// User entity extension
+constexpr const char userEntityLastModifiedKey[] = "last_modified";
+
 // Credential serialization
 constexpr const char privateKeyKey[] = "priv";
 constexpr const char keyTypeKey[] = "key_type";
