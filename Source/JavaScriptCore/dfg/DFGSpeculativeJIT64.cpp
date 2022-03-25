@@ -696,6 +696,7 @@ void SpeculativeJIT::emitCall(Node* node)
     }
 
     GPRReg calleeGPR = InvalidGPRReg;
+    GPRReg callLinkInfoGPR = InvalidGPRReg;
     CallFrameShuffleData shuffleData;
     
     JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
@@ -708,6 +709,8 @@ void SpeculativeJIT::emitCall(Node* node)
     
     unsigned numPassedArgs = 0;
     unsigned numAllocatedArgs = 0;
+
+    auto* callLinkInfo = m_jit.jitCode()->common.addCallLinkInfo(m_currentNode->origin.semantic, JITCode::useDataIC(JITType::DFGJIT) ? CallLinkInfo::UseDataIC::Yes : CallLinkInfo::UseDataIC::No);
     
     // Gotta load the arguments somehow. Varargs is trickier.
     if (isVarargs || isForwardVarargs) {
@@ -825,6 +828,17 @@ void SpeculativeJIT::emitCall(Node* node)
             Edge calleeEdge = m_jit.graph().child(node, 0);
             JSValueOperand callee(this, calleeEdge);
             calleeGPR = callee.gpr();
+
+            // callLinkInfoGPR must be non callee-save register. Otherwise, tail-call preparation will fill it
+            // with saved callee-save. Also, it should not be the same to calleeGPR and regT0 since both will
+            // be used later differently.
+            // We also do not keep GPRTemporary (it is immediately destroyed) because
+            // 1. We do not want to keep the register locked in the following sequence of the Call.
+            // 2. This must be the last register allocation from DFG register bank, so it is OK (otherwise, callee.use() is wrong).
+            if (callLinkInfo->isDataIC()) {
+                GPRTemporary callLinkInfoTemp(this, JITCompiler::selectScratchGPR(calleeGPR, GPRInfo::regT0));
+                callLinkInfoGPR = callLinkInfoTemp.gpr();
+            }
             if (!isDirect)
                 callee.use();
 
@@ -846,6 +860,8 @@ void SpeculativeJIT::emitCall(Node* node)
             for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)
                 shuffleData.args[i] = ValueRecovery::constant(jsUndefined());
 
+            if (callLinkInfo->isDataIC())
+                shuffleData.registers[callLinkInfoGPR] = ValueRecovery::inGPR(callLinkInfoGPR, DataFormatJS);
             shuffleData.setupCalleeSaveRegisters(&RegisterAtOffsetList::dfgCalleeSaveRegisters());
         } else {
             m_jit.store32(MacroAssembler::TrustedImm32(numPassedArgs), JITCompiler::calleeFramePayloadSlot(CallFrameSlot::argumentCountIncludingThis));
@@ -868,6 +884,18 @@ void SpeculativeJIT::emitCall(Node* node)
         Edge calleeEdge = m_jit.graph().child(node, 0);
         JSValueOperand callee(this, calleeEdge);
         calleeGPR = callee.gpr();
+
+        // callLinkInfoGPR must be non callee-save register. Otherwise, tail-call preparation will fill it
+        // with saved callee-save. Also, it should not be the same to calleeGPR and regT0 since both will
+        // be used later differently.
+        // We also do not keep GPRTemporary (it is immediately destroyed) because
+        // 1. We do not want to keep the register locked in the following sequence of the Call.
+        // 2. This must be the last register allocation from DFG register bank, so it is OK (otherwise, callee.use() is wrong).
+        if (callLinkInfo->isDataIC()) {
+            GPRTemporary callLinkInfoTemp(this, JITCompiler::selectScratchGPR(calleeGPR, GPRInfo::regT0));
+            callLinkInfoGPR = callLinkInfoTemp.gpr();
+        }
+
         callee.use();
         m_jit.store64(calleeGPR, JITCompiler::calleeFrameSlot(CallFrameSlot::callee));
 
@@ -896,7 +924,6 @@ void SpeculativeJIT::emitCall(Node* node)
         m_jit.addPtr(TrustedImm32(m_jit.graph().stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, JITCompiler::stackPointerRegister);
     };
     
-    auto* callLinkInfo = m_jit.jitCode()->common.addCallLinkInfo(m_currentNode->origin.semantic);
     callLinkInfo->setUpCall(callType, calleeGPR);
 
     if (node->op() == CallEval) {
@@ -925,7 +952,10 @@ void SpeculativeJIT::emitCall(Node* node)
         // This is the part where we meant to make a normal call. Oops.
         m_jit.addPtr(TrustedImm32(requiredBytes), JITCompiler::stackPointerRegister);
         m_jit.load64(JITCompiler::calleeFrameSlot(CallFrameSlot::callee), GPRInfo::regT0);
-        m_jit.emitVirtualCall(vm(), globalObject, callLinkInfo);
+        m_jit.move(TrustedImmPtr(callLinkInfo), GPRInfo::regT2);
+        m_jit.move(TrustedImmPtr::weakPointer(m_graph, globalObject), GPRInfo::regT3);
+        m_jit.emitVirtualCallWithoutMovingGlobalObject(vm(), GPRInfo::regT2, CallMode::Regular);
+        ASSERT(callLinkInfo->callMode() == CallMode::Regular);
         
         done.link(&m_jit);
         setResultAndResetStack();
@@ -985,17 +1015,17 @@ void SpeculativeJIT::emitCall(Node* node)
     
     CCallHelpers::JumpList slowCases;
     if (isTail) {
-        slowCases = callLinkInfo->emitTailCallFastPath(m_jit, calleeGPR, scopedLambda<void()>([&]{
+        slowCases = callLinkInfo->emitTailCallFastPath(m_jit, calleeGPR, callLinkInfoGPR, scopedLambda<void()>([&]{
             if (node->op() == TailCall) {
                 callLinkInfo->setFrameShuffleData(shuffleData);
                 CallFrameShuffler(m_jit, shuffleData).prepareForTailCall();
             } else {
                 m_jit.emitRestoreCalleeSaves();
-                m_jit.prepareForTailCallSlow();
+                m_jit.prepareForTailCallSlow(callLinkInfoGPR);
             }
         }));
     } else
-        slowCases = callLinkInfo->emitFastPath(m_jit, calleeGPR, InvalidGPRReg, CallLinkInfo::UseDataIC::No);
+        slowCases = callLinkInfo->emitFastPath(m_jit, calleeGPR, callLinkInfoGPR);
     JITCompiler::Jump done = m_jit.jump();
 
     slowCases.link(&m_jit);

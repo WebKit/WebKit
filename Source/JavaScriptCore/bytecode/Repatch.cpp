@@ -1861,14 +1861,32 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     } else {
         // FIXME: We are not doing a real tail-call in this case. We leave stack entries in the caller, and we are not running prepareForTailCall, thus,
         // we will return to the caller after the callee finishes. We should make it a real tail-call for this slow path case.
-        if (callLinkInfo.isTailCall()) {
+        switch (callLinkInfo.type()) {
+        case CallLinkInfo::Type::Baseline: {
 #if ASSERT_ENABLED
             // It needs to be LLInt or Baseline since we are using returnFromBaselineGenerator.
             if (!isWebAssembly)
                 ASSERT(!JITCode::isOptimizingJIT(callerCodeBlock->jitType()));
 #endif
-            stubJit.move(CCallHelpers::TrustedImmPtr(vm.getCTIStub(JIT::returnFromBaselineGenerator).code().untaggedExecutableAddress()), GPRInfo::regT4);
+            if (callLinkInfo.isTailCall()) {
+                stubJit.move(CCallHelpers::TrustedImmPtr(vm.getCTIStub(JIT::returnFromBaselineGenerator).code().untaggedExecutableAddress()), GPRInfo::regT4);
+                stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
+            }
+            break;
+        }
+        case CallLinkInfo::Type::Optimizing: {
+            // While Baseline / LLInt shares BaselineCallLinkInfo, OptimizingCallLinkInfo is exclusively used for one JIT code.
+            // Thus, we can safely use doneLocation.
+            if (!callLinkInfo.isTailCall()) {
+                // We were called from the fast path, get rid of any remnants of that
+                // which may exist. This really only matters for x86, which adjusts
+                // SP for calls.
+                stubJit.preserveReturnAddressAfterCall(GPRInfo::regT4);
+            }
+            stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.doneLocation().untaggedExecutableAddress()), GPRInfo::regT4);
             stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
+            break;
+        }
         }
     }
 

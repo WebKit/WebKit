@@ -744,11 +744,11 @@ public:
         farJump(GPRInfo::regT1, ExceptionHandlerPtrTag);
     }
 
-    void prepareForTailCallSlow(GPRReg calleeGPR = InvalidGPRReg)
+    void prepareForTailCallSlow(GPRReg preservedGPR = InvalidGPRReg)
     {
-        GPRReg temp1 = calleeGPR == GPRInfo::regT0 ? GPRInfo::regT3 : GPRInfo::regT0;
-        GPRReg temp2 = calleeGPR == GPRInfo::regT1 ? GPRInfo::regT3 : GPRInfo::regT1;
-        GPRReg temp3 = calleeGPR == GPRInfo::regT2 ? GPRInfo::regT3 : GPRInfo::regT2;
+        GPRReg temp1 = preservedGPR == GPRInfo::regT0 ? GPRInfo::regT3 : GPRInfo::regT0;
+        GPRReg temp2 = preservedGPR == GPRInfo::regT1 ? GPRInfo::regT3 : GPRInfo::regT1;
+        GPRReg temp3 = preservedGPR == GPRInfo::regT2 ? GPRInfo::regT3 : GPRInfo::regT2;
 
         GPRReg newFramePointer = temp1;
         GPRReg newFrameSizeGPR = temp2;

@@ -1,3 +1,54 @@
+2022-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use Data CallIC in unlinked DFG
+        https://bugs.webkit.org/show_bug.cgi?id=238176
+
+        Reviewed by Saam Barati.
+
+        This patch enables Data CallIC when Options::useDataICInOptimizingJIT() is true
+        to pave the way to introducing unlinked DFG.
+
+        The most complicated part is DFG tail call handling. We load CallLinkInfo in one
+        non-callee-save register, and we set up CallFrameShuffleData to keep this value
+        in the same register even after call frame shuffling for the tail call. This must
+        be non-callee-save register since callee-save registers are restored to values
+        of the one-level upper caller for the tail-call.
+
+        We also clean up CallLinkInfo code so that many functions work well with DataIC.
+        Currently, direct calls are not supported, and we will not emit direct calls when
+        unlinked DFG is used.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::BaselineCallLinkInfo::initialize):
+        (JSC::OptimizingCallLinkInfo::emitFastPath):
+        (JSC::OptimizingCallLinkInfo::emitTailCallFastPath):
+        (JSC::OptimizingCallLinkInfo::slowPathStart):
+        (JSC::OptimizingCallLinkInfo::emitDirectFastPath):
+        (JSC::OptimizingCallLinkInfo::emitDirectTailCallFastPath):
+        * bytecode/CallLinkInfo.h:
+        (JSC::CallLinkInfo::isDataIC const):
+        (JSC::CallLinkInfo::useDataIC const):
+        (JSC::CallLinkInfo::CallLinkInfo):
+        (JSC::CallLinkInfo::setUsesDataICs): Deleted.
+        * bytecode/Repatch.cpp:
+        (JSC::linkPolymorphicCall):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::addCallLinkInfo):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::prepareForTailCallSlow):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+
 2022-03-25  Keith Miller  <keith_miller@apple.com>
 
         Remove unused JITOperation, operationTryOSREnterAtCatch.

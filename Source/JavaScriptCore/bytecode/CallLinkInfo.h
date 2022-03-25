@@ -187,8 +187,8 @@ public:
 
     void revertCallToStub();
 
-    bool isDataIC() const { return static_cast<UseDataIC>(m_useDataIC) == UseDataIC::Yes; }
-    void setUsesDataICs(UseDataIC useDataIC) { m_useDataIC = static_cast<unsigned>(useDataIC); }
+    bool isDataIC() const { return useDataIC() == UseDataIC::Yes; }
+    UseDataIC useDataIC() const { return static_cast<UseDataIC>(m_useDataIC); }
 
     bool allowStubs() const { return m_allowStubs; }
 
@@ -376,7 +376,7 @@ public:
     Type type() const { return static_cast<Type>(m_type); }
 
 protected:
-    CallLinkInfo(Type type, CodeOrigin codeOrigin)
+    CallLinkInfo(Type type, CodeOrigin codeOrigin, UseDataIC useDataIC)
         : m_codeOrigin(codeOrigin)
         , m_hasSeenShouldRepatch(false)
         , m_hasSeenClosure(false)
@@ -385,15 +385,11 @@ protected:
         , m_allowStubs(true)
         , m_clearedByJettison(false)
         , m_callType(None)
-        , m_useDataIC(static_cast<unsigned>(UseDataIC::Yes))
+        , m_useDataIC(static_cast<unsigned>(useDataIC))
         , m_type(static_cast<unsigned>(type))
     {
         ASSERT(type == this->type());
-    }
-
-    CallLinkInfo(Type type)
-        : CallLinkInfo(type, CodeOrigin { })
-    {
+        ASSERT(useDataIC == this->useDataIC());
     }
 
 #if ENABLE(JIT)
@@ -443,7 +439,7 @@ protected:
 class BaselineCallLinkInfo final : public CallLinkInfo {
 public:
     BaselineCallLinkInfo()
-        : CallLinkInfo(Type::Baseline)
+        : CallLinkInfo(Type::Baseline, CodeOrigin { }, UseDataIC::Yes)
     {
     }
 
@@ -477,8 +473,8 @@ class OptimizingCallLinkInfo final : public CallLinkInfo {
 public:
     friend class CallLinkInfo;
 
-    OptimizingCallLinkInfo(CodeOrigin codeOrigin)
-        : CallLinkInfo(Type::Optimizing, codeOrigin)
+    OptimizingCallLinkInfo(CodeOrigin codeOrigin, UseDataIC useDataIC)
+        : CallLinkInfo(Type::Optimizing, codeOrigin, useDataIC)
     {
     }
 
@@ -510,8 +506,8 @@ public:
     void setDirectCallTarget(CodeLocationLabel<JSEntryPtrTag>);
     void emitSlowPath(VM&, CCallHelpers&);
 
-    MacroAssembler::JumpList emitFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, UseDataIC) WARN_UNUSED_RETURN;
-    MacroAssembler::JumpList emitTailCallFastPath(CCallHelpers&, GPRReg calleeGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
+    MacroAssembler::JumpList emitFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR) WARN_UNUSED_RETURN;
+    MacroAssembler::JumpList emitTailCallFastPath(CCallHelpers&, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall) WARN_UNUSED_RETURN;
 
 private:
     CodeLocationNearCall<JSInternalPtrTag> m_callLocation;
