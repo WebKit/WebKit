@@ -1543,12 +1543,21 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     return false;
 }
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKWebViewAdditions.mm>
+#else
+- (void)_presentCaptivePortalModeAlertIfNeeded
+{
+}
+#endif
+
 - (void)didMoveToWindow
 {
     if (!_overridesInterfaceOrientation)
         [self _dispatchSetDeviceOrientation:[self _deviceOrientation]];
     _page->activityStateDidChange(WebCore::ActivityState::allFlags());
     _page->webViewDidMoveToWindow();
+    [self _presentCaptivePortalModeAlertIfNeeded];
 }
 
 - (void)_setOpaqueInternal:(BOOL)opaque

@@ -1,3 +1,17 @@
+2022-03-25  C Lopez  <clopez1@apple.com>
+
+        Add Captive Portal alert to WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=238326
+
+        Reviewed by Geoffrey Garen.
+
+        When WkWebView on iOS is initialized, we call `_presentCaptivePortalModeAlertIfNeeded` which checks whether an alert needs to be presented or not.
+
+        * UIProcess/API/ios/WKWebViewIOS.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _presentCaptivePortalModeAlertIfNeeded]):
+        (-[WKWebView didMoveToWindow]):
+
 2022-03-25  J Pascoe  <j_pascoe@apple.com>
         [WebAuthn] Maintain last modification time separate from last used time for platform credentials
         https://bugs.webkit.org/show_bug.cgi?id=238293
