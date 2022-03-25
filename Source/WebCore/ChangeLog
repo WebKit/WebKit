@@ -1,3 +1,9 @@
+2022-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, update DerivedSources-output.xcfilelist to fix build.
+
+        * DerivedSources-output.xcfilelist:
+
 2022-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable PGO when building for release and production
