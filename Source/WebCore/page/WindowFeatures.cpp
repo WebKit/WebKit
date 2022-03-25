@@ -37,7 +37,7 @@ typedef HashMap<String, String, ASCIICaseInsensitiveHash> DialogFeaturesMap;
 
 static void setWindowFeature(WindowFeatures&, StringView key, StringView value);
 
-static DialogFeaturesMap parseDialogFeaturesMap(const String&);
+static DialogFeaturesMap parseDialogFeaturesMap(StringView);
 static std::optional<bool> boolFeature(const DialogFeaturesMap&, const char* key);
 static std::optional<float> floatFeature(const DialogFeaturesMap&, const char* key, float min, float max);
 
@@ -115,12 +115,12 @@ void processFeaturesString(StringView features, FeatureMode mode, const Function
     }
 }
 
-OptionSet<DisabledAdaptations> parseDisabledAdaptations(const String& disabledAdaptationsString)
+OptionSet<DisabledAdaptations> parseDisabledAdaptations(StringView disabledAdaptationsString)
 {
     OptionSet<DisabledAdaptations> disabledAdaptations;
-    for (auto& name : disabledAdaptationsString.split(',')) {
-        auto normalizedName = name.stripWhiteSpace().convertToASCIILowercase();
-        if (normalizedName == watchAdaptationName())
+    for (auto name : disabledAdaptationsString.split(',')) {
+        auto trimmedName = name.stripWhiteSpace();
+        if (equalIgnoringASCIICase(trimmedName, watchAdaptationName()))
             disabledAdaptations.add(DisabledAdaptations::Watch);
     }
     return disabledAdaptations;
@@ -166,7 +166,7 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
         features.additionalFeatures.append(key.toString());
 }
 
-WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const FloatRect& screenAvailableRect)
+WindowFeatures parseDialogFeatures(StringView dialogFeaturesString, const FloatRect& screenAvailableRect)
 {
     auto featuresMap = parseDialogFeaturesMap(dialogFeaturesString);
 
@@ -242,14 +242,14 @@ static std::optional<float> floatFeature(const DialogFeaturesMap& features, cons
     return static_cast<int>(parsedNumber);
 }
 
-static DialogFeaturesMap parseDialogFeaturesMap(const String& string)
+static DialogFeaturesMap parseDialogFeaturesMap(StringView string)
 {
     // FIXME: Not clear why we take such a different approach to parsing dialog features
     // as opposed to window features (using a map, different parsing quirks).
 
     DialogFeaturesMap features;
 
-    for (auto& featureString : string.split(';')) {
+    for (auto featureString : string.split(';')) {
         size_t separatorPosition = featureString.find('=');
         size_t colonPosition = featureString.find(':');
         if (separatorPosition != notFound && colonPosition != notFound)
@@ -257,16 +257,16 @@ static DialogFeaturesMap parseDialogFeaturesMap(const String& string)
         if (separatorPosition == notFound)
             separatorPosition = colonPosition;
 
-        String key = featureString.left(separatorPosition).stripWhiteSpace();
+        auto key = featureString.left(separatorPosition).stripWhiteSpace().toString();
 
         // Null string for value indicates key without value.
         String value;
         if (separatorPosition != notFound) {
-            value = featureString.substring(separatorPosition + 1).stripWhiteSpace();
-            value = value.left(value.find(' '));
+            auto valueView = featureString.substring(separatorPosition + 1).stripWhiteSpace();
+            value = valueView.left(valueView.find(' ')).toString();
         }
 
-        features.set(key, value);
+        features.set(WTFMove(key), WTFMove(value));
     }
 
     return features;

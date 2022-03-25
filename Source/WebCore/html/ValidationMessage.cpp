@@ -131,15 +131,18 @@ void ValidationMessage::setMessageDOMAndStartTimer()
     ASSERT(m_messageBody);
     m_messageHeading->removeChildren();
     m_messageBody->removeChildren();
-    Vector<String> lines = m_message.split('\n');
-    Document& document = m_messageHeading->document();
-    for (unsigned i = 0; i < lines.size(); ++i) {
-        if (i) {
-            m_messageBody->appendChild(Text::create(document, lines[i]));
-            if (i < lines.size() - 1)
+
+    auto& document = m_messageHeading->document();
+    auto lines = StringView(m_message).split('\n');
+    auto it = lines.begin();
+    if (it != lines.end()) {
+        m_messageHeading->setInnerText((*it).toString());
+        auto firstBodyLineIterator = ++it;
+        for (; it != lines.end(); ++it) {
+            if (it != firstBodyLineIterator)
                 m_messageBody->appendChild(HTMLBRElement::create(document));
-        } else
-            m_messageHeading->setInnerText(lines[i]);
+            m_messageBody->appendChild(Text::create(document, (*it).toString()));
+        }
     }
 
     int magnification = document.page() ? document.page()->settings().validationMessageTimerMagnification() : -1;

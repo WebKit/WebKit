@@ -87,8 +87,8 @@ public:
 
     void reset();
 
-    static SMILTime parseClockValue(const String&);
-    static SMILTime parseOffsetValue(const String&);
+    static SMILTime parseClockValue(StringView);
+    static SMILTime parseOffsetValue(StringView);
 
     bool isContributing(SMILTime elapsed) const;
     bool isInactive() const;
@@ -160,8 +160,8 @@ private:
         RefPtr<Element> m_syncbase;
         RefPtr<ConditionEventListener> m_eventListener;
     };
-    bool parseCondition(const String&, BeginOrEnd beginOrEnd);
-    void parseBeginOrEnd(const String&, BeginOrEnd beginOrEnd);
+    bool parseCondition(StringView, BeginOrEnd);
+    void parseBeginOrEnd(StringView, BeginOrEnd);
     Element* eventBaseFor(const Condition&);
 
     void disconnectConditions();

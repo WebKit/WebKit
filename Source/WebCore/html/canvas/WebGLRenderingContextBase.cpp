@@ -1984,7 +1984,8 @@ void WebGLRenderingContextBase::compileShader(WebGLShader& shader)
     if (canvas && m_synthesizedErrorsToConsole && !value) {
         Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSExecState::currentState());
 
-        for (auto& error : getShaderInfoLog(shader).split('\n'))
+        auto errors = getShaderInfoLog(shader);
+        for (auto error : StringView(errors).split('\n'))
             canvas->document().addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, "WebGL: " + error, stackTrace.copyRef()));
     }
 }

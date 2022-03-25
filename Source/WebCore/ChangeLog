@@ -1,3 +1,47 @@
+2022-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Use StringView::split() instead of String::split() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=238362
+
+        Reviewed by Geoffrey Garen.
+
+        Use StringView::split() instead of String::split() where suitable and more efficient.
+
+        * Modules/applepay/cocoa/PaymentContactCocoa.mm:
+        (WebCore::convert):
+        * html/HTMLInputElement.cpp:
+        (WebCore::isValidMIMEType):
+        (WebCore::isValidFileExtension):
+        (WebCore::parseAcceptAttribute):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::compileShader):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::nodeForPath):
+        * page/WindowFeatures.cpp:
+        (WebCore::parseDisabledAdaptations):
+        (WebCore::parseDialogFeatures):
+        (WebCore::parseDialogFeaturesMap):
+        * page/WindowFeatures.h:
+        * platform/network/CacheValidation.cpp:
+        (WebCore::collectVaryingRequestHeadersInternal):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::filenameFromHTTPContentDisposition):
+        (WebCore::parseXFrameOptionsHeader):
+        * platform/network/HTTPParsers.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::isAttachmentWithFilename const):
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendOS2Table):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::parseOffsetValue):
+        (WebCore::SVGSMILElement::parseClockValue):
+        (WebCore::SVGSMILElement::parseCondition):
+        (WebCore::SVGSMILElement::parseBeginOrEnd):
+        (WebCore::SVGSMILElement::parseAttribute):
+        * svg/animation/SVGSMILElement.h:
+
 2022-03-25  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK][WPE] Update widget style to match libadwaita

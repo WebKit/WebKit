@@ -366,10 +366,13 @@ static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(co
     auto varyValue = response.httpHeaderField(HTTPHeaderName::Vary);
     if (varyValue.isEmpty())
         return { };
-    return varyValue.split(',').map([&](auto& varyHeaderName) {
-        auto headerName = varyHeaderName.stripWhiteSpace();
-        return std::make_pair(headerName, headerValueForVaryFunction(headerName));
-    });
+
+    Vector<std::pair<String, String>> headers;
+    for (auto varyHeaderName : StringView(varyValue).split(',')) {
+        auto headerName = varyHeaderName.stripWhiteSpace().toString();
+        headers.append(std::pair { headerName, headerValueForVaryFunction(headerName) });
+    }
+    return headers;
 }
 
 Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession* storageSession, const ResourceRequest& request, const ResourceResponse& response)

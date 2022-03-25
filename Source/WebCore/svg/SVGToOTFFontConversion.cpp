@@ -519,12 +519,14 @@ void SVGToOTFFontConverter::appendOS2Table()
     const unsigned panoseSize = 10;
     char panoseBytes[panoseSize];
     if (m_fontFaceElement) {
-        Vector<String> segments = m_fontFaceElement->attributeWithoutSynchronization(SVGNames::panose_1Attr).string().split(' ');
-        if (segments.size() == panoseSize) {
-            for (auto& segment : segments) {
-                if (auto value = parseIntegerAllowingTrailingJunk<uint8_t>(segment))
-                    panoseBytes[numPanoseBytes++] = *value;
+        auto segments = StringView(m_fontFaceElement->attributeWithoutSynchronization(SVGNames::panose_1Attr)).split(' ');
+        for (auto segment : segments) {
+            if (numPanoseBytes == panoseSize) {
+                ++numPanoseBytes;
+                break;
             }
+            if (auto value = parseIntegerAllowingTrailingJunk<uint8_t>(segment))
+                panoseBytes[numPanoseBytes++] = *value;
         }
     }
     if (numPanoseBytes != panoseSize)

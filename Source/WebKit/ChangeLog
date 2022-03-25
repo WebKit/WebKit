@@ -1,3 +1,20 @@
+2022-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Use StringView::split() instead of String::split() in more places
+        https://bugs.webkit.org/show_bug.cgi?id=238362
+
+        Reviewed by Geoffrey Garen.
+
+        Use StringView::split() instead of String::split() where suitable and more efficient.
+
+        * Shared/mac/AuxiliaryProcessMac.mm:
+        (WebKit::parseOSVersion):
+        (WebKit::populateSandboxInitializationParameters):
+        * UIProcess/Launcher/cocoa/ProcessLauncherCocoa.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy.cpp:
+        (WebKit::RemoteGraphicsContextGLProxy::initialize):
+
 2022-03-25  Elliott Williams  <emw@apple.com>
 
         [Big Sur] WK2 failing to build with `error: reference to 'WebDocumentView' is ambiguous`

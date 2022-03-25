@@ -1320,7 +1320,7 @@ static inline bool isRFC2616TokenCharacter(UChar ch)
     return isASCII(ch) && ch > ' ' && ch != '"' && ch != '(' && ch != ')' && ch != ',' && ch != '/' && (ch < ':' || ch > '@') && (ch < '[' || ch > ']') && ch != '{' && ch != '}' && ch != 0x7f;
 }
 
-static bool isValidMIMEType(const String& type)
+static bool isValidMIMEType(StringView type)
 {
     size_t slashPosition = type.find('/');
     if (slashPosition == notFound || !slashPosition || slashPosition == type.length() - 1)
@@ -1332,21 +1332,21 @@ static bool isValidMIMEType(const String& type)
     return true;
 }
 
-static bool isValidFileExtension(const String& type)
+static bool isValidFileExtension(StringView type)
 {
     if (type.length() < 2)
         return false;
     return type[0] == '.';
 }
 
-static Vector<String> parseAcceptAttribute(const String& acceptString, bool (*predicate)(const String&))
+static Vector<String> parseAcceptAttribute(StringView acceptString, bool (*predicate)(StringView))
 {
     Vector<String> types;
     if (acceptString.isEmpty())
         return types;
 
-    for (auto& splitType : acceptString.split(',')) {
-        String trimmedType = stripLeadingAndTrailingHTMLSpaces(splitType);
+    for (auto splitType : acceptString.split(',')) {
+        auto trimmedType = splitType.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
         if (trimmedType.isEmpty())
             continue;
         if (!predicate(trimmedType))

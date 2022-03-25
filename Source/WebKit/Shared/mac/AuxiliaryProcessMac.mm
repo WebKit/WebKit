@@ -657,17 +657,27 @@ static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParamet
     return makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier);
 }
 
+static StringView parseOSVersion(StringView osSystemMarketingVersion)
+{
+    auto firstDotIndex = osSystemMarketingVersion.find('.');
+    if (firstDotIndex == notFound)
+        return { };
+    auto secondDotIndex = osSystemMarketingVersion.find('.', firstDotIndex + 1);
+    if (secondDotIndex == notFound)
+        return osSystemMarketingVersion;
+    return osSystemMarketingVersion.left(secondDotIndex);
+}
+
 static void populateSandboxInitializationParameters(SandboxInitializationParameters& sandboxParameters)
 {
     RELEASE_ASSERT(!sandboxParameters.userDirectorySuffix().isNull());
 
     String osSystemMarketingVersion = systemMarketingVersion();
-    Vector<String> osVersionParts = osSystemMarketingVersion.split('.');
-    if (osVersionParts.size() < 2) {
+    auto osVersion = parseOSVersion(osSystemMarketingVersion);
+    if (osVersion.isNull()) {
         WTFLogAlways("%s: Couldn't find OS Version\n", getprogname());
         exit(EX_NOPERM);
     }
-    String osVersion = osVersionParts[0] + '.' + osVersionParts[1];
     sandboxParameters.addParameter("_OS_VERSION", osVersion.utf8().data());
 
     // Use private temporary and cache directories.

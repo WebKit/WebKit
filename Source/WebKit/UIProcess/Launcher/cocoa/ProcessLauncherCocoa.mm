@@ -158,7 +158,7 @@ void ProcessLauncher::launchProcess()
     if (languagesIterator != m_launchOptions.extraInitializationData.end()) {
         LOG_WITH_STREAM(Language, stream << "Process Launcher is copying OverrideLanguages into initialization message: " << languagesIterator->value);
         auto languages = adoptOSObject(xpc_array_create(nullptr, 0));
-        for (auto& language : languagesIterator->value.split(','))
+        for (auto language : StringView(languagesIterator->value).split(','))
             xpc_array_set_string(languages.get(), XPC_ARRAY_APPEND, language.utf8().data());
         xpc_dictionary_set_value(initializationMessage.get(), "OverrideLanguages", languages.get());
     }

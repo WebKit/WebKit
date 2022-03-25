@@ -783,10 +783,11 @@ bool ResourceResponseBase::isAttachmentWithFilename() const
     if (contentDisposition.isNull())
         return false;
 
-    if (!equalLettersIgnoringASCIICase(contentDisposition.left(contentDisposition.find(';')).stripWhiteSpace(), "attachment"))
+    StringView contentDispositionView { contentDisposition };
+    if (!equalLettersIgnoringASCIICase(contentDispositionView.left(contentDispositionView.find(';')).stripWhiteSpace(), "attachment"))
         return false;
 
-    String filename = filenameFromHTTPContentDisposition(contentDisposition);
+    String filename = filenameFromHTTPContentDisposition(contentDispositionView);
     return !filename.isNull();
 }
 

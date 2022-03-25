@@ -548,9 +548,13 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
     }
 #endif
 
-    for (auto& logLevelComponent : String(logLevel).split(',')) {
-        Vector<String> componentInfo = logLevelComponent.split('=');
-        String component = componentInfo[0].stripWhiteSpace();
+    for (auto logLevelComponent : StringView(logLevel).split(',')) {
+        auto componentInfo = logLevelComponent.split('=');
+        auto it = componentInfo.begin();
+        if (it == componentInfo.end())
+            continue;
+
+        auto component = (*it).stripWhiteSpace();
 
         WTFLogChannelState logChannelState = WTFLogChannelState::On;
         if (component.startsWith('-')) {
@@ -564,8 +568,8 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
         }
 
         WTFLogLevel logChannelLevel = WTFLogLevel::Error;
-        if (componentInfo.size() > 1) {
-            String level = componentInfo[1].stripWhiteSpace();
+        if (++it != componentInfo.end()) {
+            auto level = (*it).stripWhiteSpace();
             if (equalLettersIgnoringASCIICase(level, "error"))
                 logChannelLevel = WTFLogLevel::Error;
             else if (equalLettersIgnoringASCIICase(level, "warning"))

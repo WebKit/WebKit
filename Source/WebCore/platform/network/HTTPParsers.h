@@ -79,12 +79,12 @@ WEBCORE_EXPORT bool isValidUserAgentHeaderValue(const String&);
 bool isValidHTTPToken(const String&);
 bool isValidHTTPToken(StringView);
 std::optional<WallTime> parseHTTPDate(const String&);
-String filenameFromHTTPContentDisposition(const String&);
+String filenameFromHTTPContentDisposition(StringView);
 WEBCORE_EXPORT String extractMIMETypeFromMediaType(const String&);
 String extractCharsetFromMediaType(const String&);
 XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL);
 AtomString extractReasonPhraseFromHTTPStatusLine(const String&);
-WEBCORE_EXPORT XFrameOptionsDisposition parseXFrameOptionsHeader(const String&);
+WEBCORE_EXPORT XFrameOptionsDisposition parseXFrameOptionsHeader(StringView);
 std::optional<std::pair<StringView, HashMap<String, String>>> parseStructuredFieldValue(StringView header);
 
 // -1 could be set to one of the return parameters to indicate the value is not specified.

@@ -137,10 +137,8 @@ static ApplePayPaymentContact convert(unsigned version, PKContact *contact)
     }
 
     CNPostalAddress *postalAddress = contact.postalAddress;
-    if (postalAddress.street.length) {
-        Vector<String> addressLines = String(postalAddress.street).split('\n');
-        result.addressLines = WTFMove(addressLines);
-    }
+    if (postalAddress.street.length)
+        result.addressLines = String(postalAddress.street).split('\n');
     result.subLocality = postalAddress.subLocality;
     result.locality = postalAddress.city;
     result.postalCode = postalAddress.postalCode;

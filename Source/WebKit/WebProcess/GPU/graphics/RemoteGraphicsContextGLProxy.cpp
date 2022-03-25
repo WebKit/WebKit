@@ -119,10 +119,10 @@ bool RemoteGraphicsContextGLProxy::isExtensionEnabled(const String& name)
 
 void RemoteGraphicsContextGLProxy::initialize(const String& availableExtensions, const String& requestableExtensions)
 {
-    for (auto& extension : availableExtensions.split(' '))
-        m_availableExtensions.add(extension);
-    for (auto& extension : requestableExtensions.split(' '))
-        m_requestableExtensions.add(extension);
+    for (auto extension : StringView(availableExtensions).split(' '))
+        m_availableExtensions.add(extension.toString());
+    for (auto extension : StringView(requestableExtensions).split(' '))
+        m_requestableExtensions.add(extension.toString());
 }
 
 void RemoteGraphicsContextGLProxy::reshape(int width, int height)

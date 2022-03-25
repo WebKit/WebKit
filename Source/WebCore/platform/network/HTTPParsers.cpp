@@ -335,25 +335,25 @@ std::optional<WallTime> parseHTTPDate(const String& value)
 // that arises from quoted-string, nor does this function properly unquote
 // attribute values. Further this function appears to process parameter names
 // in a case-sensitive manner. (There are likely other bugs as well.)
-String filenameFromHTTPContentDisposition(const String& value)
+String filenameFromHTTPContentDisposition(StringView value)
 {
-    for (auto& keyValuePair : value.split(';')) {
+    for (auto keyValuePair : value.split(';')) {
         size_t valueStartPos = keyValuePair.find('=');
         if (valueStartPos == notFound)
             continue;
 
-        String key = keyValuePair.left(valueStartPos).stripWhiteSpace();
+        auto key = keyValuePair.left(valueStartPos).stripWhiteSpace();
 
         if (key.isEmpty() || key != "filename")
             continue;
         
-        String value = keyValuePair.substring(valueStartPos + 1).stripWhiteSpace();
+        auto value = keyValuePair.substring(valueStartPos + 1).stripWhiteSpace();
 
         // Remove quotes if there are any
-        if (value[0] == '\"')
+        if (value.length() > 1 && value[0] == '\"')
             value = value.substring(1, value.length() - 2);
 
-        return value;
+        return value.toString();
     }
 
     return String();
@@ -552,14 +552,14 @@ AtomString extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
     return view.substring(spacePos + 1).toAtomString();
 }
 
-XFrameOptionsDisposition parseXFrameOptionsHeader(const String& header)
+XFrameOptionsDisposition parseXFrameOptionsHeader(StringView header)
 {
     XFrameOptionsDisposition result = XFrameOptionsDisposition::None;
 
     if (header.isEmpty())
         return result;
 
-    for (auto& currentHeader : header.split(',')) {
+    for (auto currentHeader : header.split(',')) {
         currentHeader = currentHeader.stripWhiteSpace();
         XFrameOptionsDisposition currentValue = XFrameOptionsDisposition::None;
         if (equalLettersIgnoringASCIICase(currentHeader, "deny"))

@@ -354,6 +354,11 @@ bool StringView::contains(const char* string) const
     return find(string) != notFound;
 }
 
+StringView StringView::stripWhiteSpace() const
+{
+    return stripLeadingAndTrailingMatchedCharacters(isASCIISpace<UChar>);
+}
+
 int codePointCompare(StringView lhs, StringView rhs)
 {
     bool lhsIs8Bit = lhs.is8Bit();

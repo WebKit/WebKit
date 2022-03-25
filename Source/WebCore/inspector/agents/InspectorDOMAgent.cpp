@@ -2895,12 +2895,16 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
         return nullptr;
 
     Node* node = m_document.get();
-    Vector<String> pathTokens = path.split(',');
-    if (!pathTokens.size())
+    auto pathTokens = StringView(path).split(',');
+    auto it = pathTokens.begin();
+    if (it == pathTokens.end())
         return nullptr;
 
-    for (size_t i = 0; i < pathTokens.size() - 1; i += 2) {
-        auto childNumber = parseIntegerAllowingTrailingJunk<unsigned>(pathTokens[i]);
+    for (; it != pathTokens.end(); ++it) {
+        auto childNumberView = *it;
+        if (++it == pathTokens.end())
+            break;
+        auto childNumber = parseIntegerAllowingTrailingJunk<unsigned>(childNumberView);
         if (!childNumber)
             return nullptr;
 
@@ -2917,11 +2921,12 @@ Node* InspectorDOMAgent::nodeForPath(const String& path)
                 child = innerNextSibling(child);
         }
 
-        const auto& childName = pathTokens[i + 1];
+        auto childName = *it;
         if (!child || child->nodeName() != childName)
             return nullptr;
         node = child;
     }
+
     return node;
 }
 

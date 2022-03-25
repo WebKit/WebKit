@@ -131,7 +131,8 @@ public:
     StringView right(unsigned length) const { return substring(this->length() - length, length); }
 
     template<typename MatchedCharacterPredicate>
-    StringView stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate&);
+    StringView stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate&) const;
+    WTF_EXPORT_PRIVATE StringView stripWhiteSpace() const;
 
     class SplitResult;
     SplitResult split(UChar) const;
@@ -171,6 +172,7 @@ public:
     WTF_EXPORT_PRIVATE bool endsWithIgnoringASCIICase(StringView) const;
 
     float toFloat(bool& isValid) const;
+    double toDouble(bool& isValid) const;
 
     static void invalidate(const StringImpl&);
 
@@ -184,7 +186,7 @@ private:
     void initialize(const UChar*, unsigned length);
 
     template<typename CharacterType, typename MatchedCharacterPredicate>
-    StringView stripLeadingAndTrailingMatchedCharacters(const CharacterType*, const MatchedCharacterPredicate&);
+    StringView stripLeadingAndTrailingMatchedCharacters(const CharacterType*, const MatchedCharacterPredicate&) const;
 
 #if CHECK_STRINGVIEW_LIFETIME
     WTF_EXPORT_PRIVATE bool underlyingStringIsValid() const;
@@ -582,6 +584,13 @@ inline float StringView::toFloat(bool& isValid) const
     if (is8Bit())
         return charactersToFloat(characters8(), m_length, &isValid);
     return charactersToFloat(characters16(), m_length, &isValid);
+}
+
+inline double StringView::toDouble(bool& isValid) const
+{
+    if (is8Bit())
+        return charactersToDouble(characters8(), m_length, &isValid);
+    return charactersToDouble(characters16(), m_length, &isValid);
 }
 
 inline String StringView::toStringWithoutCopying() const
@@ -1036,7 +1045,7 @@ inline bool StringView::SplitResult::Iterator::operator!=(const Iterator& other)
 }
 
 template<typename CharacterType, typename MatchedCharacterPredicate>
-inline StringView StringView::stripLeadingAndTrailingMatchedCharacters(const CharacterType* characters, const MatchedCharacterPredicate& predicate)
+inline StringView StringView::stripLeadingAndTrailingMatchedCharacters(const CharacterType* characters, const MatchedCharacterPredicate& predicate) const
 {
     if (!m_length)
         return *this;
@@ -1062,7 +1071,7 @@ inline StringView StringView::stripLeadingAndTrailingMatchedCharacters(const Cha
 }
 
 template<typename MatchedCharacterPredicate>
-StringView StringView::stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate& predicate)
+StringView StringView::stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate& predicate) const
 {
     if (is8Bit())
         return stripLeadingAndTrailingMatchedCharacters<LChar>(characters8(), predicate);
