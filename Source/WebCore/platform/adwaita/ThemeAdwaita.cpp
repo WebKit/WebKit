@@ -44,66 +44,41 @@ static constexpr auto arrowColorDark = SRGBA<uint8_t> { 238, 238, 236 };
 static const int buttonFocusOffset = -3;
 static const unsigned buttonPadding = 5;
 static const int buttonBorderSize = 1; // Keep in sync with menuListButtonBorderSize in RenderThemeAdwaita.
+static const double disabledOpacity = 0.5;
 
-static constexpr auto buttonBorderColorLight = SRGBA<uint8_t> { 205, 199, 194 };
-static constexpr auto buttonBackgroundColorLight = SRGBA<uint8_t> { 244, 242, 241 };
-static constexpr auto buttonBackgroundPressedColorLight = SRGBA<uint8_t> { 214, 209, 205 };
-static constexpr auto buttonBackgroundHoveredColorLight = SRGBA<uint8_t> { 248, 248, 247 };
-static constexpr auto buttonBackgroundDisabledColorLight = SRGBA<uint8_t> { 250, 249, 248 };
+static constexpr auto buttonBorderColorLight = SRGBA<uint8_t> { 0, 0, 0, 50 };
+static constexpr auto buttonBackgroundColorLight = SRGBA<uint8_t> { 244, 244, 244 };
+static constexpr auto buttonBackgroundPressedColorLight = SRGBA<uint8_t> { 214, 214, 214 };
+static constexpr auto buttonBackgroundHoveredColorLight = SRGBA<uint8_t> { 248, 248, 248 };
 static constexpr auto toggleBackgroundColorLight = Color::white;
-static constexpr auto toggleBackgroundHoveredColorLight = SRGBA<uint8_t> { 214, 209, 205 };
-static constexpr auto toggleBackgroundDisabledColorLight = SRGBA<uint8_t> { 250, 249, 248 };
+static constexpr auto toggleBackgroundHoveredColorLight = SRGBA<uint8_t> { 214, 214, 214 };
 
-static constexpr auto buttonBorderColorDark = SRGBA<uint8_t> { 27, 27, 27 };
+static constexpr auto buttonBorderColorDark = SRGBA<uint8_t> { 255, 255, 255, 50 };
 static constexpr auto buttonBackgroundColorDark = SRGBA<uint8_t> { 52, 52, 52 };
 static constexpr auto buttonBackgroundPressedColorDark = SRGBA<uint8_t> { 30, 30, 30 };
-static constexpr auto buttonBackgroundHoveredColorDark = SRGBA<uint8_t> { 55, 55, 55 };
-static constexpr auto buttonBackgroundDisabledColorDark = SRGBA<uint8_t> { 50, 50, 50 };
+static constexpr auto buttonBackgroundHoveredColorDark = SRGBA<uint8_t> { 60, 60, 60 };
 static constexpr auto toggleBackgroundColorDark = SRGBA<uint8_t> { 45, 45, 45 };
-static constexpr auto toggleBackgroundHoveredColorDark = SRGBA<uint8_t> { 30, 30, 30 };
-static constexpr auto toggleBackgroundDisabledColorDark = SRGBA<uint8_t> { 50, 50, 50 };
+static constexpr auto toggleBackgroundHoveredColorDark = SRGBA<uint8_t> { 60, 60, 60 };
 
 static const double toggleSize = 14.;
 static const int toggleFocusOffset = 2;
 
-static constexpr auto toggleColorLight = SRGBA<uint8_t> { 46, 52, 54 };
-static constexpr auto toggleDisabledColorLight = SRGBA<uint8_t> { 146, 149, 149 };
-static constexpr auto spinButtonBorderColorLight = SRGBA<uint8_t> { 240, 238, 237 };
+static constexpr auto toggleColorLight = SRGBA<uint8_t> { 0, 0, 0, 200 };
+static constexpr auto spinButtonBorderColorLight = SRGBA<uint8_t> { 0, 0, 0, 25 };
 static constexpr auto spinButtonBackgroundColorLight = Color::white;
-static constexpr auto spinButtonBackgroundHoveredColorLight = SRGBA<uint8_t> { 46, 52, 54, 50 };
-static constexpr auto spinButtonBackgroundPressedColorLight = SRGBA<uint8_t> { 46, 52, 54, 70 };
+static constexpr auto spinButtonBackgroundHoveredColorLight = SRGBA<uint8_t> { 0, 0, 0, 50 };
+static constexpr auto spinButtonBackgroundPressedColorLight = SRGBA<uint8_t> { 0, 0, 0, 70 };
 
-static constexpr auto toggleColorDark = SRGBA<uint8_t> { 238, 238, 236 };
-static constexpr auto toggleDisabledColorDark = SRGBA<uint8_t> { 145, 145, 144 };
-static constexpr auto spinButtonBorderColorDark = SRGBA<uint8_t> { 40, 40, 40 };
+static constexpr auto toggleColorDark = SRGBA<uint8_t> { 255, 255, 255, 200 };
+static constexpr auto spinButtonBorderColorDark = SRGBA<uint8_t> { 255, 255, 255, 25 };
 static constexpr auto spinButtonBackgroundColorDark = SRGBA<uint8_t> { 45, 45, 45 };
-static constexpr auto spinButtonBackgroundHoveredColorDark = SRGBA<uint8_t> { 238, 238, 236, 50 };
-static constexpr auto spinButtonBackgroundPressedColorDark = SRGBA<uint8_t> { 238, 238, 236, 70 };
+static constexpr auto spinButtonBackgroundHoveredColorDark = SRGBA<uint8_t> { 255, 255, 255, 50 };
+static constexpr auto spinButtonBackgroundPressedColorDark = SRGBA<uint8_t> { 255, 255, 255, 70 };
 
 Theme& Theme::singleton()
 {
     static NeverDestroyed<ThemeAdwaita> theme;
     return theme;
-}
-
-Color ThemeAdwaita::activeSelectionForegroundColor() const
-{
-    return activeSelectionBackgroundColor().luminance() > 0.5 ? Color::black : Color::white;
-}
-
-Color ThemeAdwaita::activeSelectionBackgroundColor() const
-{
-    return m_accentColor.isValid() ? m_accentColor : SRGBA<uint8_t> { 52, 132, 228 };
-}
-
-Color ThemeAdwaita::inactiveSelectionForegroundColor() const
-{
-    return activeSelectionForegroundColor().colorWithAlpha(0.75);
-}
-
-Color ThemeAdwaita::inactiveSelectionBackgroundColor() const
-{
-    return activeSelectionBackgroundColor();
 }
 
 Color ThemeAdwaita::focusColor(bool useDarkAppearance)
@@ -266,25 +241,22 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
     SRGBA<uint8_t> buttonBorderColor;
     SRGBA<uint8_t> toggleBackgroundColor;
     SRGBA<uint8_t> toggleBackgroundHoveredColor;
-    SRGBA<uint8_t> toggleBackgroundDisabledColor;
     SRGBA<uint8_t> toggleColor;
-    SRGBA<uint8_t> toggleDisabledColor;
 
     if (useDarkAppearance) {
         buttonBorderColor = buttonBorderColorDark;
         toggleBackgroundColor = toggleBackgroundColorDark;
         toggleBackgroundHoveredColor = toggleBackgroundHoveredColorDark;
-        toggleBackgroundDisabledColor = toggleBackgroundDisabledColorDark;
         toggleColor = toggleColorDark;
-        toggleDisabledColor = toggleDisabledColorDark;
     } else {
         buttonBorderColor = buttonBorderColorLight;
         toggleBackgroundColor = toggleBackgroundColorLight;
         toggleBackgroundHoveredColor = toggleBackgroundHoveredColorLight;
-        toggleBackgroundDisabledColor = toggleBackgroundDisabledColorLight;
-        toggleDisabledColor = toggleDisabledColorLight;
         toggleColor = toggleColorLight;
     }
+
+    if (!states.states().contains(ControlStates::States::Enabled))
+        graphicsContext.beginTransparencyLayer(disabledOpacity);
 
     FloatSize corner(2, 2);
     Path path;
@@ -299,9 +271,8 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
 
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::NonZero);
-    if (!states.states().contains(ControlStates::States::Enabled))
-        graphicsContext.setFillColor(toggleBackgroundDisabledColor);
-    else if (states.states().contains(ControlStates::States::Hovered))
+    if (states.states().contains(ControlStates::States::Hovered)
+        && states.states().contains(ControlStates::States::Enabled))
         graphicsContext.setFillColor(toggleBackgroundHoveredColor);
     else
         graphicsContext.setFillColor(toggleBackgroundColor);
@@ -323,10 +294,7 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
         } else
             path.addRoundedRect(FloatRect(2, 5, 10, 4), corner);
 
-        if (!states.states().contains(ControlStates::States::Enabled))
-            graphicsContext.setFillColor(toggleDisabledColor);
-        else
-            graphicsContext.setFillColor(toggleColor);
+        graphicsContext.setFillColor(toggleColor);
 
         graphicsContext.fillPath(path);
         path.clear();
@@ -334,6 +302,9 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
 
     if (states.states().contains(ControlStates::States::Focused))
         paintFocus(graphicsContext, zoomedRect, toggleFocusOffset, useDarkAppearance);
+
+    if (!states.states().contains(ControlStates::States::Enabled))
+        graphicsContext.endTransparencyLayer();
 }
 
 void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance)
@@ -352,25 +323,22 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
     SRGBA<uint8_t> buttonBorderColor;
     SRGBA<uint8_t> toggleBackgroundColor;
     SRGBA<uint8_t> toggleBackgroundHoveredColor;
-    SRGBA<uint8_t> toggleBackgroundDisabledColor;
     SRGBA<uint8_t> toggleColor;
-    SRGBA<uint8_t> toggleDisabledColor;
 
     if (useDarkAppearance) {
         buttonBorderColor = buttonBorderColorDark;
         toggleBackgroundColor = toggleBackgroundColorDark;
         toggleBackgroundHoveredColor = toggleBackgroundHoveredColorDark;
-        toggleBackgroundDisabledColor = toggleBackgroundDisabledColorDark;
         toggleColor = toggleColorDark;
-        toggleDisabledColor = toggleDisabledColorDark;
     } else {
         buttonBorderColor = buttonBorderColorLight;
         toggleBackgroundColor = toggleBackgroundColorLight;
         toggleBackgroundHoveredColor = toggleBackgroundHoveredColorLight;
-        toggleBackgroundDisabledColor = toggleBackgroundDisabledColorLight;
-        toggleDisabledColor = toggleDisabledColorLight;
         toggleColor = toggleColorLight;
     }
+
+    if (!states.states().contains(ControlStates::States::Enabled))
+        graphicsContext.beginTransparencyLayer(disabledOpacity);
 
     Path path;
     path.addEllipse(fieldRect);
@@ -383,9 +351,8 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
 
     path.addEllipse(fieldRect);
     graphicsContext.setFillRule(WindRule::NonZero);
-    if (!states.states().contains(ControlStates::States::Enabled))
-        graphicsContext.setFillColor(toggleBackgroundDisabledColor);
-    else if (states.states().contains(ControlStates::States::Hovered))
+    if (states.states().contains(ControlStates::States::Hovered)
+        && states.states().contains(ControlStates::States::Enabled))
         graphicsContext.setFillColor(toggleBackgroundHoveredColor);
     else
         graphicsContext.setFillColor(toggleBackgroundColor);
@@ -395,15 +362,15 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
     if (states.states().contains(ControlStates::States::Checked)) {
         fieldRect.inflate(-(fieldRect.width() - fieldRect.width() * 0.70));
         path.addEllipse(fieldRect);
-        if (!states.states().contains(ControlStates::States::Enabled))
-            graphicsContext.setFillColor(toggleDisabledColor);
-        else
-            graphicsContext.setFillColor(toggleColor);
+        graphicsContext.setFillColor(toggleColor);
         graphicsContext.fillPath(path);
     }
 
     if (states.states().contains(ControlStates::States::Focused))
         paintFocus(graphicsContext, zoomedRect, toggleFocusOffset, useDarkAppearance);
+
+    if (!states.states().contains(ControlStates::States::Enabled))
+        graphicsContext.endTransparencyLayer();
 }
 
 void ThemeAdwaita::paintButton(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance)
@@ -414,21 +381,21 @@ void ThemeAdwaita::paintButton(ControlStates& states, GraphicsContext& graphicsC
     SRGBA<uint8_t> buttonBackgroundColor;
     SRGBA<uint8_t> buttonBackgroundHoveredColor;
     SRGBA<uint8_t> buttonBackgroundPressedColor;
-    SRGBA<uint8_t> buttonBackgroundDisabledColor;
 
     if (useDarkAppearance) {
         buttonBorderColor = buttonBorderColorDark;
         buttonBackgroundColor = buttonBackgroundColorDark;
         buttonBackgroundHoveredColor = buttonBackgroundHoveredColorDark;
         buttonBackgroundPressedColor = buttonBackgroundPressedColorDark;
-        buttonBackgroundDisabledColor = buttonBackgroundDisabledColorDark;
     } else {
         buttonBorderColor = buttonBorderColorLight;
         buttonBackgroundColor = buttonBackgroundColorLight;
         buttonBackgroundHoveredColor = buttonBackgroundHoveredColorLight;
         buttonBackgroundPressedColor = buttonBackgroundPressedColorLight;
-        buttonBackgroundDisabledColor = buttonBackgroundDisabledColorLight;
     }
+
+    if (!states.states().contains(ControlStates::States::Enabled))
+        graphicsContext.beginTransparencyLayer(disabledOpacity);
 
     FloatRect fieldRect = zoomedRect;
     FloatSize corner(5, 5);
@@ -444,11 +411,10 @@ void ThemeAdwaita::paintButton(ControlStates& states, GraphicsContext& graphicsC
 
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::NonZero);
-    if (!states.states().contains(ControlStates::States::Enabled))
-        graphicsContext.setFillColor(buttonBackgroundDisabledColor);
-    else if (states.states().contains(ControlStates::States::Pressed))
+    if (states.states().contains(ControlStates::States::Pressed))
         graphicsContext.setFillColor(buttonBackgroundPressedColor);
-    else if (states.states().contains(ControlStates::States::Hovered))
+    else if (states.states().contains(ControlStates::States::Enabled)
+        && states.states().contains(ControlStates::States::Hovered))
         graphicsContext.setFillColor(buttonBackgroundHoveredColor);
     else
         graphicsContext.setFillColor(buttonBackgroundColor);
@@ -456,6 +422,9 @@ void ThemeAdwaita::paintButton(ControlStates& states, GraphicsContext& graphicsC
 
     if (states.states().contains(ControlStates::States::Focused))
         paintFocus(graphicsContext, zoomedRect, buttonFocusOffset, useDarkAppearance);
+
+    if (!states.states().contains(ControlStates::States::Enabled))
+        graphicsContext.endTransparencyLayer();
 }
 
 void ThemeAdwaita::paintSpinButton(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance)
@@ -551,6 +520,11 @@ void ThemeAdwaita::setAccentColor(const Color& color)
     m_accentColor = color;
 
     platformColorsDidChange();
+}
+
+Color ThemeAdwaita::accentColor()
+{
+    return m_accentColor.isValid() ? m_accentColor : SRGBA<uint8_t> { 52, 132, 228 };
 }
 
 } // namespace WebCore

@@ -44,6 +44,8 @@ private:
 
     bool supportsHover(const RenderStyle&) const final { return true; }
     bool supportsFocusRing(const RenderStyle&) const final;
+    bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return false; }
+    bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return true; }
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
 
     void updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const override { };

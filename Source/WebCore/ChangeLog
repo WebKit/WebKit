@@ -1,3 +1,56 @@
+2022-03-25  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK][WPE] Update widget style to match libadwaita
+        https://bugs.webkit.org/show_bug.cgi?id=235884
+
+        Reviewed by Adrian Perez de Castro.
+
+        Update Adwaita widgets style to be closer to their Libadwaita versions instead of GTK3.
+        - Use new colors
+        - Opacity for disabled states instead of separate colors
+        - Translucent text selection, grey for inactive state
+        - Translucent borders, so the widgets don't get blurry depending on the page background
+        - Light borders for dark variant for visibility
+        - Update sliders and progress bars, as they can't really work with translucent borders as is
+        - Use grey selection for listboxes
+
+        Since text selection and accent are different colors now, move activeSelectionBackgroundColor()
+        etc out of ThemeAdwaita and expose a function for getting the accent color instead.
+
+        Update scrollbars to closely match libadwaita - update colors and dimensions, have a visible
+        trough in overlay mode. Reverse how borders are done - make sure the trough in regular and
+        overlay mode has the same size and draw borders around it rather than making borders a part
+        of the trough size.
+
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        (WebCore::ScrollbarThemeAdwaita::paint):
+        (WebCore::ScrollbarThemeAdwaita::paintScrollCorner):
+        * platform/adwaita/ThemeAdwaita.cpp:
+        (WebCore::ThemeAdwaita::paintCheckbox):
+        (WebCore::ThemeAdwaita::paintRadio):
+        (WebCore::ThemeAdwaita::paintButton):
+        (WebCore::ThemeAdwaita::accentColor):
+        (WebCore::ThemeAdwaita::activeSelectionForegroundColor const): Deleted.
+        (WebCore::ThemeAdwaita::activeSelectionBackgroundColor const): Deleted.
+        (WebCore::ThemeAdwaita::inactiveSelectionForegroundColor const): Deleted.
+        (WebCore::ThemeAdwaita::inactiveSelectionBackgroundColor const): Deleted.
+        * platform/adwaita/ThemeAdwaita.h:
+        * rendering/RenderThemeAdwaita.cpp:
+        (WebCore::getAccentColor):
+        (WebCore::RenderThemeAdwaita::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeAdwaita::platformInactiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeAdwaita::platformActiveSelectionForegroundColor const):
+        (WebCore::RenderThemeAdwaita::platformInactiveSelectionForegroundColor const):
+        (WebCore::RenderThemeAdwaita::platformActiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeAdwaita::platformInactiveListBoxSelectionBackgroundColor const):
+        (WebCore::RenderThemeAdwaita::platformActiveListBoxSelectionForegroundColor const):
+        (WebCore::RenderThemeAdwaita::platformInactiveListBoxSelectionForegroundColor const):
+        (WebCore::RenderThemeAdwaita::paintTextField):
+        (WebCore::RenderThemeAdwaita::paintProgressBar):
+        (WebCore::RenderThemeAdwaita::paintSliderTrack):
+        (WebCore::RenderThemeAdwaita::paintSliderThumb):
+        * rendering/RenderThemeAdwaita.h:
+
 2022-03-25  Alan Bujtas  <zalan@apple.com>
 
         FontCascade::widthForSimpleText needs the glyph only

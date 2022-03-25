@@ -18,9 +18,9 @@ layer at (0,0) size 800x258
         RenderText {#text} at (0,0) size 79x17
           text run at (0,0) width 79: "Simple case."
         RenderBR {BR} at (79,0) size 0x17
-        RenderButton {BUTTON} at (2,28) size 16x9 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {BUTTON} at (2,28) size 16x9 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBR {BR} at (20,18) size 0x17
-        RenderButton {INPUT} at (2,41) size 16x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {INPUT} at (2,41) size 16x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderBR {BR} at (20,49) size 0x17
       RenderBlock {HR} at (0,132) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,142) size 784x100
@@ -30,6 +30,6 @@ layer at (0,0) size 800x258
         RenderBR {BR} at (35,18) size 0x17
         RenderBR {BR} at (35,64) size 0x17
 layer at (10,178) size 31x24 clip at (12,180) size 12x5
-  RenderButton {BUTTON} at (2,28) size 31x24 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+  RenderButton {BUTTON} at (2,28) size 31x24 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
 layer at (10,206) size 31x42 clip at (12,208) size 12x23
-  RenderButton {INPUT} at (2,56) size 31x42 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+  RenderButton {INPUT} at (2,56) size 31x42 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]

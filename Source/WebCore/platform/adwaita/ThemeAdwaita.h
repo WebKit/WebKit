@@ -42,13 +42,10 @@ public:
     enum class ArrowDirection { Up, Down };
     static void paintArrow(GraphicsContext&, ArrowDirection, bool);
 
-    virtual Color activeSelectionForegroundColor() const;
-    virtual Color activeSelectionBackgroundColor() const;
-    virtual Color inactiveSelectionForegroundColor() const;
-    virtual Color inactiveSelectionBackgroundColor() const;
     virtual void platformColorsDidChange() { };
 
     void setAccentColor(const Color&);
+    Color accentColor();
 private:
     LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize&, float) const final;
     LengthSize minimumControlSize(ControlPart, const FontCascade&, const LengthSize&, float) const final;
