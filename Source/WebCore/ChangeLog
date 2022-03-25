@@ -1,5 +1,18 @@
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
+        Reduce EventListenerVector's minimum capacity from 16 to 2
+        https://bugs.webkit.org/show_bug.cgi?id=238374
+
+        Reviewed by Geoffrey Garen.
+
+        Reduce EventListenerVector's minimum capacity from 16 to 2 to save memory and get a small speedup on Speedometer.
+        Very few event listeners are registered for a given type in the common case so eagerly allocating enough memory for 16 is wasteful.
+        This is a confirmed 0.4% progression on Speedometer according to A/B bots.
+
+        * dom/EventListenerMap.h:
+
+2022-03-25  Chris Dumez  <cdumez@apple.com>
+
         Start preparing WebCore for making the String(const char*) constructor explicit
         https://bugs.webkit.org/show_bug.cgi?id=238336
 
