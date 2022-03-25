@@ -2433,3 +2433,6 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 fast/text/install-font-style-recalc.html [ Pass ]
 
 webkit.org/b/231298 accessibility/mac/selection-sync.html [ Skip ] # Timeout
+
+# fast/text/accessibility-bold.html requires WK2. The ***-wk2/TestExpectation files mark it as PASS.
+fast/text/accessibility-bold.html [ Skip ]

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -343,6 +343,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "FontCacheCoreText.h"
 #include "SystemBattery.h"
 #include "VP9UtilitiesCocoa.h"
 #include <pal/spi/cf/CoreTextSPI.h>
@@ -1873,6 +1874,15 @@ void Internals::invalidateFontCache()
 void Internals::setFontSmoothingEnabled(bool enabled)
 {
     FontCascade::setShouldUseSmoothing(enabled);
+}
+
+void Internals::setOverrideEnhanceTextLegibility(bool enhance)
+{
+#if PLATFORM(COCOA)
+    WebCore::setOverrideEnhanceTextLegibility(enhance);
+#else
+    UNUSED_PARAM(enhance);
+#endif
 }
 
 ExceptionOr<void> Internals::setLowPowerModeEnabled(bool isEnabled)
