@@ -1,3 +1,16 @@
+2022-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable PGO when building for release and production
+        https://bugs.webkit.org/show_bug.cgi?id=238119
+        rdar://90182309
+
+        Reviewed by Alexey Proskuryakov and Geoff Garen.
+
+        Add an empty profiling data file that can be used as a fallback only for release (non-production) builds, when
+        the JavaScriptCore, WebCore or WebKit profiling data hasn't been locally downloaded.
+
+        * Profiling/Empty.profdata: Added.
+
 2022-03-25  Devin Rousso  <drousso@apple.com>
 
         `PointerEvent.movementX` always 0 (breaks https://noisecraft.app/)

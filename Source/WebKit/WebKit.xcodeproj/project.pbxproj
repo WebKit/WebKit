@@ -15697,6 +15697,7 @@
 				99CA3862207286DB00BAD578 /* Copy WebDriver Atoms to Framework Private Headers */,
 				37E531011B2391090074F0DF /* Copy iOS Sandbox Profiles for Manual Sandboxing */,
 				1A07D2F71919B36500ECDA16 /* Copy Message Generation Scripts */,
+				F4CDF3CC27E918D900191928 /* Copy Profiling Data */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
 				5DF408C5131DD46700130071 /* Check For Weak VTables and Externals */,
@@ -16833,6 +16834,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "echo \"Preprocessing sandbox\"\nScripts/generate-derived-sources.sh sandbox-profiles-ios\nmkdir -p ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.adattributiond.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.GPU.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.Networking.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.WebAuth.sb ${DSTROOT}/${INSTALL_PATH}\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/com.apple.WebKit.WebContent.sb ${DSTROOT}/${INSTALL_PATH}\n";
+		};
+		F4CDF3CC27E918D900191928 /* Copy Profiling Data */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/Profiling/WebKit.profdata.compressed",
+				"$(SRCROOT)/../../Tools/Profiling/Empty.profdata",
+				"$(SDK_DIR)/usr/local/include/WebKitAdditions/Profiling/WebKit.profdata.compressed",
+			);
+			name = "Copy Profiling Data";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKit.profdata",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -z \"${PROFILE_DATA_FLAGS}\" ]; then\n    exit 0;\nfi\n\nRELATIVE_PROFILE_DATA_PATH=\"usr/local/include/WebKitAdditions/Profiling/WebKit.profdata.compressed\";\nABSOLUTE_PROFILE_DATA_PATH=\"${BUILT_PRODUCTS_DIR}/${RELATIVE_PROFILE_DATA_PATH}\";\n\nif [ ! -f \"${ABSOLUTE_PROFILE_DATA_PATH}\" ]; then\n    ABSOLUTE_PROFILE_DATA_PATH=\"${SDK_DIR}/${RELATIVE_PROFILE_DATA_PATH}\";\nfi\n\nif [ ! -f \"${ABSOLUTE_PROFILE_DATA_PATH}\" ] || [ $(wc -c <${ABSOLUTE_PROFILE_DATA_PATH}) -lt 4096 ]; then\n    if [ \"${CONFIGURATION}\" = \"Production\" ]; then\n        echo \"Error: production build missing profiling data at both ${ABSOLUTE_PROFILE_DATA_PATH} and ${BUILT_PRODUCTS_DIR}/${RELATIVE_PROFILE_DATA_PATH}\";\n        exit 1;\n    fi\n    echo \"Missing or invalid profiling data at both ${ABSOLUTE_PROFILE_DATA_PATH} and ${BUILT_PRODUCTS_DIR}/${RELATIVE_PROFILE_DATA_PATH} - falling back to empty file\";\n    cp ${SRCROOT}/../../Tools/Profiling/Empty.profdata ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.profdata;\nelse\n    echo \"Copying profiling data at ${ABSOLUTE_PROFILE_DATA_PATH}\";\n    compression_tool -decode -i ${ABSOLUTE_PROFILE_DATA_PATH} -o ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKit.profdata -a lzfse;\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

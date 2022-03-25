@@ -11600,6 +11600,7 @@
 			buildPhases = (
 				5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */,
 				A53F1ABF18C90F8B0072EB6D /* Resources */,
+				F4CDF3C927E9147500191928 /* Copy Profiling Data */,
 				932F5B3F0822A1C700736975 /* Headers */,
 				3732811A17FCD235004AD519 /* Postprocess Headers */,
 				932F5B910822A1C700736975 /* Sources */,
@@ -12118,6 +12119,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/process-entitlements.sh\n";
+		};
+		F4CDF3C927E9147500191928 /* Copy Profiling Data */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/Profiling/JavaScriptCore.profdata.compressed",
+				"$(SRCROOT)/../../Tools/Profiling/Empty.profdata",
+				"$(SDK_DIR)/usr/local/include/WebKitAdditions/Profiling/JavaScriptCore.profdata.compressed",
+			);
+			name = "Copy Profiling Data";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.profdata",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" -o \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -z \"${PROFILE_DATA_FLAGS}\" ]; then\n    exit 0;\nfi\n\nRELATIVE_PROFILE_DATA_PATH=\"usr/local/include/WebKitAdditions/Profiling/JavaScriptCore.profdata.compressed\";\nABSOLUTE_PROFILE_DATA_PATH=\"${BUILT_PRODUCTS_DIR}/${RELATIVE_PROFILE_DATA_PATH}\";\n\nif [ ! -f \"${ABSOLUTE_PROFILE_DATA_PATH}\" ]; then\n    ABSOLUTE_PROFILE_DATA_PATH=\"${SDK_DIR}/${RELATIVE_PROFILE_DATA_PATH}\";\nfi\n\nif [ ! -f \"${ABSOLUTE_PROFILE_DATA_PATH}\" ] || [ $(wc -c <${ABSOLUTE_PROFILE_DATA_PATH}) -lt 4096 ]; then\n    if [ \"${CONFIGURATION}\" = \"Production\" ]; then\n        echo \"Error: production build missing profiling data at both ${ABSOLUTE_PROFILE_DATA_PATH} and ${BUILT_PRODUCTS_DIR}/${RELATIVE_PROFILE_DATA_PATH}\";\n        exit 1;\n    fi\n    echo \"Missing or invalid profiling data at both ${ABSOLUTE_PROFILE_DATA_PATH} and ${BUILT_PRODUCTS_DIR}/${RELATIVE_PROFILE_DATA_PATH} - falling back to empty file\";\n    cp ${SRCROOT}/../../Tools/Profiling/Empty.profdata ${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/JavaScriptCore.profdata;\nelse\n    echo \"Copying profiling data at ${ABSOLUTE_PROFILE_DATA_PATH}\";\n    compression_tool -decode -i ${ABSOLUTE_PROFILE_DATA_PATH} -o ${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/JavaScriptCore.profdata -a lzfse;\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

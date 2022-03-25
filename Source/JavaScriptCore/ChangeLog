@@ -1,3 +1,17 @@
+2022-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable PGO when building for release and production
+        https://bugs.webkit.org/show_bug.cgi?id=238119
+        rdar://90182309
+
+        Reviewed by Alexey Proskuryakov and Geoff Garen.
+
+        See WebCore/ChangeLog for more information.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/JavaScriptCore.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2022-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use Data CallIC in unlinked DFG

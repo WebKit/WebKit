@@ -1,3 +1,39 @@
+2022-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Enable PGO when building for release and production
+        https://bugs.webkit.org/show_bug.cgi?id=238119
+        rdar://90182309
+
+        Reviewed by Alexey Proskuryakov and Geoff Garen.
+
+        Attempt to re-land support for compiling against profiling data, after it was reverted due to the profiling data
+        files being too large. We mitigate this by instead storing sparse profdata files as compressed files in
+        WebKitAdditions through `git lfs`, such that they don't cause the repo to grow significantly each time we update
+        profiling data.
+
+        At build time, we then introduce new build phase scripts to the JavaScriptCore, WebCore and WebKit builds to
+        decompress their respective `.profdata.compressed` files into `.profdata` files in the build, using
+        `compression_tool`. We compile against these `profdata` files when building for release and production
+        configurations, via the `-fprofile-instr-use` flag.
+
+        In the case where the *.profdata.compressed files are non-existent or haven't been downloaded yet, we instead
+        fall back to using an empty profiling data file, but only on non-production builds; this allows us to continue
+        passing in the `-fprofile-instr-use` flag, without running into build failures.
+
+        Note that we intentionally require production builds to use the (real) profiling data, and explicitly fail the
+        build with a specific error message in the case where the profiles are missing.
+
+        Additionally, note that in order to check for and deal with the case where the *.profdata.compressed files are
+        only undownloaded `git-lfs` stubs, we not only check whether or not the `profdata.compressed` file exists, but
+        also whether or not the file size is at least an arbitrary cutoff of 4 KB (which should already be an order of
+        magnitude larger than the `git-lfs` stub). While mostly arbitrary, I chose this cutoff due to the fact that it's
+        very close to the size of the `Empty.profdata` placeholder file in Tools; in practice, we should expect the
+        profiles for WebKit, WebCore and JavaScriptCore to be much, much larger than this empty file.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2022-03-25  Youenn Fablet  <youenn@apple.com>
 
         Add support for focused and visible ServiceWorkerWindowClient states
