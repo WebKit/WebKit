@@ -1,3 +1,18 @@
+2022-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Add some generated sources to the WebKit project
+        https://bugs.webkit.org/show_bug.cgi?id=238363
+
+        Reviewed by Alexey Proskuryakov.
+
+        There are many generated files which haven't been added to the project (they get built via
+        Sources.txt). Here, I add a few that I like to be able to find code in, particularly
+        MessageNames.h.
+
+        com.apple.WebKit.plugin-common.sb was deleted so is removed from the project.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-25  C Lopez  <clopez1@apple.com>
 
         Add Captive Portal alert to WKWebView

@@ -2877,6 +2877,19 @@
 		0F45A33C239D8CC400294ABF /* WKWebViewTesting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewTesting.mm; sourceTree = "<group>"; };
 		0F5403002531006E00082BB9 /* WebWheelEventCoalescer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebWheelEventCoalescer.cpp; sourceTree = "<group>"; };
 		0F5403012531006E00082BB9 /* WebWheelEventCoalescer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebWheelEventCoalescer.h; sourceTree = "<group>"; };
+		0F5562DE27EE28D000953585 /* GPUProcessMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessMessages.h; sourceTree = "<group>"; };
+		0F5562DF27EE28D000953585 /* GPUProcessConnectionMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessConnectionMessagesReplies.h; sourceTree = "<group>"; };
+		0F5562E027EE28D100953585 /* GPUProcessMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProcessMessageReceiver.cpp; sourceTree = "<group>"; };
+		0F5562E127EE28D100953585 /* GPUProcessProxyMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessProxyMessagesReplies.h; sourceTree = "<group>"; };
+		0F5562E227EE28D100953585 /* MessageNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MessageNames.h; sourceTree = "<group>"; };
+		0F5562E327EE28D100953585 /* GPUProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProcessConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
+		0F5562E427EE28D100953585 /* GPUProcessProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessProxyMessages.h; sourceTree = "<group>"; };
+		0F5562E527EE28D200953585 /* GPUConnectionToWebProcessMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUConnectionToWebProcessMessages.h; sourceTree = "<group>"; };
+		0F5562E627EE28D200953585 /* GPUConnectionToWebProcessMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUConnectionToWebProcessMessageReceiver.cpp; sourceTree = "<group>"; };
+		0F5562E727EE28D200953585 /* GPUConnectionToWebProcessMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUConnectionToWebProcessMessagesReplies.h; sourceTree = "<group>"; };
+		0F5562E827EE28D200953585 /* GPUProcessProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GPUProcessProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		0F5562E927EE28D200953585 /* MessageNames.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MessageNames.cpp; sourceTree = "<group>"; };
+		0F5562EA27EE28D200953585 /* GPUProcessConnectionMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessConnectionMessages.h; sourceTree = "<group>"; };
 		0F59478D187B3B3A00437857 /* RemoteScrollingCoordinator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingCoordinator.h; sourceTree = "<group>"; };
 		0F59478E187B3B3A00437857 /* RemoteScrollingCoordinator.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteScrollingCoordinator.messages.in; sourceTree = "<group>"; };
 		0F59478F187B3B3A00437857 /* RemoteScrollingCoordinator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteScrollingCoordinator.mm; sourceTree = "<group>"; };
@@ -5416,7 +5429,6 @@
 		762B7484120BBA2D00819339 /* WKPreferencesRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesRefPrivate.h; sourceTree = "<group>"; };
 		7A0D7861220791EC00EBCF54 /* ResourceLoadStatisticsDatabaseStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceLoadStatisticsDatabaseStore.h; path = Classifier/ResourceLoadStatisticsDatabaseStore.h; sourceTree = "<group>"; };
 		7A0D7862220791ED00EBCF54 /* ResourceLoadStatisticsDatabaseStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceLoadStatisticsDatabaseStore.cpp; path = Classifier/ResourceLoadStatisticsDatabaseStore.cpp; sourceTree = "<group>"; };
-		7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "com.apple.WebKit.plugin-common.sb"; path = "DerivedSources/WebKit/com.apple.WebKit.plugin-common.sb"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A1E2A841EEFE88A0037A0E0 /* APINotificationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APINotificationProvider.h; sourceTree = "<group>"; };
 		7A3ACE1A1EEEF78C00A864A4 /* APIInjectedBundlePageLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIInjectedBundlePageLoaderClient.h; sourceTree = "<group>"; };
 		7A3FECA121F7C09700F267CD /* StorageAccessStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageAccessStatus.h; path = Classifier/StorageAccessStatus.h; sourceTree = "<group>"; };
@@ -12773,7 +12785,6 @@
 				517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */,
 				E17AE2C216B9C63A001C42F2 /* com.apple.WebKit.GPUProcess.sb */,
 				E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */,
-				7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */,
 				572EBBC32536AB84000552B3 /* com.apple.WebKit.WebAuthnProcess.sb */,
 				E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */,
 				EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.sb */,
@@ -12786,6 +12797,17 @@
 				1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */,
 				1AA575FF1496B7C000A4EE06 /* EventDispatcherMessageReceiver.cpp */,
 				1AA576001496B7C000A4EE06 /* EventDispatcherMessages.h */,
+				0F5562E627EE28D200953585 /* GPUConnectionToWebProcessMessageReceiver.cpp */,
+				0F5562E527EE28D200953585 /* GPUConnectionToWebProcessMessages.h */,
+				0F5562E727EE28D200953585 /* GPUConnectionToWebProcessMessagesReplies.h */,
+				0F5562E327EE28D100953585 /* GPUProcessConnectionMessageReceiver.cpp */,
+				0F5562EA27EE28D200953585 /* GPUProcessConnectionMessages.h */,
+				0F5562DF27EE28D000953585 /* GPUProcessConnectionMessagesReplies.h */,
+				0F5562E027EE28D100953585 /* GPUProcessMessageReceiver.cpp */,
+				0F5562DE27EE28D000953585 /* GPUProcessMessages.h */,
+				0F5562E827EE28D200953585 /* GPUProcessProxyMessageReceiver.cpp */,
+				0F5562E427EE28D100953585 /* GPUProcessProxyMessages.h */,
+				0F5562E127EE28D100953585 /* GPUProcessProxyMessagesReplies.h */,
 				2984F586164BA095004BC0C6 /* LegacyCustomProtocolManagerMessageReceiver.cpp */,
 				2984F587164BA095004BC0C6 /* LegacyCustomProtocolManagerMessages.h */,
 				2984F57A164B915F004BC0C6 /* LegacyCustomProtocolManagerProxyMessageReceiver.cpp */,
@@ -12798,6 +12820,8 @@
 				1DF29E63257F3795003C28AF /* MediaSourcePrivateRemoteMessages.h */,
 				1DF29E62257F3795003C28AF /* MediaSourcePrivateRemoteMessagesReplies.h */,
 				9B4790902531563200EC11AB /* MessageArgumentDescriptions.cpp */,
+				0F5562E927EE28D200953585 /* MessageNames.cpp */,
+				0F5562E227EE28D100953585 /* MessageNames.h */,
 				51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */,
 				51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */,
 				52F060DD1654317500F3281B /* NetworkContentRuleListManagerMessageReceiver.cpp */,
