@@ -1659,7 +1659,7 @@
     (apply subpath file-read-existence-secondary-paths))
 
 (allow file-map-executable
-    (apply subpath "secondary-framework-and-dylib-paths))
+    (apply subpath secondary-framework-and-dylib-paths))
 
 (allow-read-and-issue-generic-extensions
     (apply subpath issue-extension-secondary-paths))
