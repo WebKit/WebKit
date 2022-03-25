@@ -2084,30 +2084,6 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
     return encodeResult(nullptr, nullptr);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationTryOSREnterAtCatch, char*, (VM* vmPointer, uint32_t bytecodeIndexBits))
-{
-    VM& vm = *vmPointer;
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    BytecodeIndex bytecodeIndex = BytecodeIndex::fromBits(bytecodeIndexBits);
-
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    CodeBlock* optimizedReplacement = codeBlock->replacement();
-    if (UNLIKELY(!optimizedReplacement))
-        return nullptr;
-
-    switch (optimizedReplacement->jitType()) {
-    case JITType::DFGJIT:
-    case JITType::FTLJIT: {
-        MacroAssemblerCodePtr<ExceptionHandlerPtrTag> entry = DFG::prepareCatchOSREntry(vm, callFrame, codeBlock, optimizedReplacement, bytecodeIndex);
-        return entry.executableAddress<char*>();
-    }
-    default:
-        break;
-    }
-    return nullptr;
-}
-
 JSC_DEFINE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, char*, (VM* vmPointer, uint32_t bytecodeIndexBits))
 {
     VM& vm = *vmPointer;

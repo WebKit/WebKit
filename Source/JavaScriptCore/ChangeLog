@@ -1,3 +1,13 @@
+2022-03-25  Keith Miller  <keith_miller@apple.com>
+
+        Remove unused JITOperation, operationTryOSREnterAtCatch.
+        https://bugs.webkit.org/show_bug.cgi?id=238379
+
+        Reviewed by Mark Lam.
+
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Start preparing WebCore for making the String(const char*) constructor explicit
