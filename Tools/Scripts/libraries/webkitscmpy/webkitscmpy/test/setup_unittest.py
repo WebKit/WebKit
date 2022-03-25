@@ -45,6 +45,14 @@ class TestSetup(testing.PathTestCase):
             ))
         self.assertEqual(captured.stderr.getvalue(), 'No setup required for {}\n'.format(self.path))
 
+    def test_none(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn():
+            self.assertEqual(1, program.main(
+                args=('setup', '-v'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stderr.getvalue(), 'No setup required for ?\n')
+
     def test_github(self):
         with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y'), mocks.remote.GitHub() as remote:
             self.assertEqual(0, program.main(

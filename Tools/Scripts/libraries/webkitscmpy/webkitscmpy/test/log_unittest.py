@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -212,3 +212,12 @@ r1 (1@trunk) | jbedard@apple.com | 2020-10-02 17:35:00 0000 (Fri, 02 Oct 2020) |
 
 ''',
         )
+
+    def test_none(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(), MockTime, Terminal.override_atty(sys.stdin, isatty=False):
+            self.assertEqual(1, program.main(
+                args=('log',),
+                path=self.path,
+            ))
+
+        self.assertEqual(captured.stderr.getvalue(), 'No repository provided\n')

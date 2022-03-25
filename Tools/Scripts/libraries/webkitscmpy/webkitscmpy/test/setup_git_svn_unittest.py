@@ -1,4 +1,4 @@
-# Copyright (C) 2021, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -45,6 +45,15 @@ class TestSetupGitSvn(testing.PathTestCase):
                 subversion=self.svn_remote,
             ))
         self.assertEqual(captured.stderr.getvalue(), 'Cannot setup git-svn on Subversion repository\n')
+
+    def test_none(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(), MockTime:
+            self.assertEqual(1, program.main(
+                args=('setup-git-svn',),
+                path=self.path,
+                subversion=self.svn_remote,
+            ))
+        self.assertEqual(captured.stderr.getvalue(), 'No repository provided\n')
 
     def test_empty(self):
         with OutputCapture() as captured, mocks.local.Git(self.path, remote=self.git_remote), mocks.local.Svn(), mocks.remote.Svn(remote=self.svn_remote.split('://')[1]), MockTime:

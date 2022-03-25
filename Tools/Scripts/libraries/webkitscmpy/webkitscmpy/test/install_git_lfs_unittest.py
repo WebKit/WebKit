@@ -132,3 +132,20 @@ class TestInstallGitLFS(testing.PathTestCase):
             '`git lfs` version 3.1.2 is already installed\n'
             "`git lfs` is already configured for '{}'\n".format(self.path),
         )
+
+    def test_no_repo(self):
+        with OutputCapture() as captured, mocks.remote.GitHub('github.com/git-lfs/git-lfs', releases={
+            'v3.1.2/git-lfs-darwin-arm64-v3.1.2.zip': wkmocks.Response(status_code=200, content=self.ZIP_CONTENTS),
+            'v3.1.2/git-lfs-darwin-amd64-v3.1.2.zip': wkmocks.Response(status_code=200, content=self.ZIP_CONTENTS),
+        }), mocks.local.Git(), mocks.local.Svn():
+            self.assertEqual(0, program.main(
+                args=('install-git-lfs',),
+                path=self.path,
+            ))
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Installing `git lfs` version 3.1.2\n'
+            'Git LFS initialized.\n'
+            "No repository provided, skipping configuring `git lfs`\n",
+        )

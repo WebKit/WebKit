@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,12 +35,23 @@ class TestCanonicalize(testing.PathTestCase):
         os.mkdir(os.path.join(self.path, '.git'))
         os.mkdir(os.path.join(self.path, '.svn'))
 
-    def test_invalid(self):
-        with OutputCapture(), mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
+    def test_invalid_svn(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(self.path), MockTime:
             self.assertEqual(1, program.main(
                 args=('canonicalize',),
                 path=self.path,
             ))
+
+        self.assertEqual(captured.stderr.getvalue(), 'Commits can only be canonicalized on a Git repository\n')
+
+    def test_invalid_None(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(), MockTime:
+            self.assertEqual(1, program.main(
+                args=('canonicalize',),
+                path=self.path,
+            ))
+
+        self.assertEqual(captured.stderr.getvalue(), 'No repository provided\n')
 
     def test_no_commits(self):
         with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:

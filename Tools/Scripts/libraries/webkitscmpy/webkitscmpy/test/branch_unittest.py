@@ -47,6 +47,14 @@ class TestBranch(testing.PathTestCase):
             ))
         self.assertEqual(captured.stderr.getvalue(), "Can only 'branch' on a native Git repository\n")
 
+    def test_basic_none(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            self.assertEqual(1, program.main(
+                args=('branch', '-i', '1234'),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stderr.getvalue(), "Can only 'branch' on a native Git repository\n")
+
     def test_basic_git(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []), MockTime:
             self.assertEqual(0, program.main(

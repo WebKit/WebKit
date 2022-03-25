@@ -60,6 +60,9 @@ class Canonicalize(Command):
 
     @classmethod
     def main(cls, args, repository, identifier_template=None, **kwargs):
+        if not repository:
+            sys.stderr.write('No repository provided\n')
+            return 1
         if not repository.path:
             sys.stderr.write('Cannot canonicalize commits on a remote repository\n')
             return 1

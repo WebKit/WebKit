@@ -268,6 +268,14 @@ class TestDoPullRequest(testing.PathTestCase):
         self.assertEqual(captured.root.log.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), "Can only 'pull-request' on a native Git repository\n")
 
+    def test_none(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(), mocks.local.Svn():
+            self.assertEqual(1, program.main(
+                args=('pull-request',),
+                path=self.path,
+            ))
+        self.assertEqual(captured.stderr.getvalue(), "Can only 'pull-request' on a native Git repository\n")
+
     def test_no_modified(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), mocks.local.Svn():
             self.assertEqual(1, program.main(

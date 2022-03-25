@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -105,6 +105,9 @@ class FilteredCommand(Command):
     def pager(cls, args, repository, file=None, **kwargs):
         from whichcraft import which
 
+        if not repository:
+            sys.stderr.write('No repository provided\n')
+            return 1
         if not repository.path:
             sys.stderr.write("Cannot run '{}' on remote repository\n".format(cls.name))
             return 1
@@ -137,14 +140,16 @@ class FilteredCommand(Command):
                 child_error = child.stderr.read()
                 if child_error:
                     (sys.stderr.buffer if sys.version_info > (3, 0) else sys.stderr).write(b'\n' + child_error)
-
-            return child.returncode
+                return child.returncode
 
         with Terminal.override_atty(sys.stdout, isatty=kwargs.get('isatty')), Terminal.override_atty(sys.stderr, isatty=kwargs.get('isatty')):
             return FilteredCommand.main(args, repository, command=cls.name, **kwargs)
 
     @classmethod
     def main(cls, args, repository, command=None, representation=None, **kwargs):
+        if not repository:
+            sys.stderr.write('No repository provided\n')
+            return 1
         if not repository.path:
             sys.stderr.write("Cannot run '{}' on remote repository\n".format(command))
             return 1

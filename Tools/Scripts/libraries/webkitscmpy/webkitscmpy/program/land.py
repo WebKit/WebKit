@@ -76,6 +76,10 @@ class Land(Command):
 
     @classmethod
     def main(cls, args, repository, identifier_template=None, canonical_svn=False, **kwargs):
+        if not repository:
+            sys.stderr.write('No repository provided\n')
+            return 1
+
         if not repository.path:
             sys.stderr.write("Cannot 'land' change in remote repository\n")
             return 1

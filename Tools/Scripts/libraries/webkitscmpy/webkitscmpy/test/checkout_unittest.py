@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -35,6 +35,15 @@ class TestCheckout(testing.PathTestCase):
         super(TestCheckout, self).setUp()
         os.mkdir(os.path.join(self.path, '.git'))
         os.mkdir(os.path.join(self.path, '.svn'))
+
+    def test_checkout_none(self):
+        with OutputCapture() as captured, mocks.local.Git(), mocks.local.Svn(), MockTime:
+            self.assertEqual(1, program.main(
+                args=('checkout', '2@main'),
+                path=self.path,
+            ))
+
+        self.assertEqual(captured.stderr.getvalue(), 'No repository provided\n')
 
     def test_checkout_git(self):
         with OutputCapture(), mocks.local.Git(self.path), mocks.local.Svn(), MockTime:

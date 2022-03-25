@@ -1,4 +1,4 @@
-# Copyright (C) 2020, 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -47,7 +47,7 @@ from webkitscmpy import local, log, remote
 def main(
     args=None, path=None, loggers=None, contributors=None,
     identifier_template=None, subversion=None, additional_setup=None, hooks=None,
-    canonical_svn=False,
+    canonical_svn=None,
 ):
     logging.basicConfig(level=logging.WARNING)
 
@@ -107,16 +107,20 @@ def main(
     if parsed.repository.startswith(('https://', 'http://')):
         repository = remote.Scm.from_url(parsed.repository, contributors=None if callable(contributors) else contributors)
     else:
-        repository = local.Scm.from_path(path=parsed.repository, contributors=None if callable(contributors) else contributors)
+        try:
+            repository = local.Scm.from_path(path=parsed.repository, contributors=None if callable(contributors) else contributors)
+        except OSError:
+            log.warning("No repository found at '{}'".format(parsed.repository))
+            repository = None
 
-    if callable(contributors):
+    if repository and callable(contributors):
         repository.contributors = contributors(repository) or repository.contributors
     if callable(identifier_template):
-        identifier_template = identifier_template(repository)
+        identifier_template = identifier_template(repository) if repository else None
     if callable(subversion):
-        subversion = subversion(repository)
+        subversion = subversion(repository) if repository else None
     if callable(hooks):
-        hooks = hooks(repository)
+        hooks = hooks(repository) if repository else None
 
     if sys.version_info > (3, 0):
         import inspect
@@ -126,7 +130,7 @@ def main(
         additional_setup = additional_setup(repository)
 
     if callable(canonical_svn):
-        canonical_svn = canonical_svn(repository)
+        canonical_svn = canonical_svn(repository) if repository else repository
 
     if not getattr(parsed, 'main', None):
         parser.print_help()

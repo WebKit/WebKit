@@ -1,3 +1,54 @@
+2022-03-25  Jonathan Bedard  <jbedard@apple.com>
+
+        [git-webkit] Handle no repository case
+        https://bugs.webkit.org/show_bug.cgi?id=238383
+        <rdar://problem/90842476>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/__init__.py:
+        (main): Set repository to 'None' instead of raising an OSError.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/canonicalize/__init__.py:
+        (Canonicalize.main): If no repository is provided, exit the program.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/checkout.py:
+        (Checkout.main): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/command.py:
+        (FilteredCommand.pager): Ditto.
+        (FilteredCommand.main): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/find.py:
+        (Info.main): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/install_git_lfs.py:
+        (InstallGitLFS.parser): configure depends on if a repository is provided.
+        (InstallGitLFS.main): Install `git lfs` when no repository is provided.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/land.py:
+        (Land.main): If no repository is provided, exit the program.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/pull.py:
+        (Pull.main): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/setup_git_svn.py:
+        (SetupGitSvn.main): Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/branch_unittest.py:
+        (TestBranch.test_basic_none):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/canonicalize_unittest.py:
+        (TestCanonicalize.test_invalid_svn): Renamed from test_invalid.
+        (TestCanonicalize.test_invalid_None):
+        (TestCanonicalize.test_invalid): Renamed to test_invalid_svn.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/checkout_unittest.py:
+        (TestCheckout.test_checkout_none):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/find_unittest.py:
+        (TestFind.test_none):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/install_git_lfs_unittest.py:
+        (TestInstallGitLFS.test_no_repo):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/land_unittest.py:
+        (TestLand.test_none):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/log_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/pull_request_unittest.py:
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_git_svn_unittest.py:
+        (TestSetupGitSvn.test_none):
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/setup_unittest.py:
+        (TestSetup.test_none):
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Start preparing WebCore for making the String(const char*) constructor explicit

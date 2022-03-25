@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright (C) 2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -121,21 +119,25 @@ class InstallGitLFS(Command):
             help='Explicitly opt out of configuring this checkout for `git lfs`',
             action=arguments.NoAction,
             dest='configure',
-            default=True,
+            default=None,
         )
 
     @classmethod
     def main(cls, args, repository, **kwargs):
-        if not repository.path:
+        if repository and not repository.path:
             sys.stderr.write("Cannot install `git lfs` from a remote repository\n")
             return 1
 
-        if not isinstance(repository, local.Git):
+        if repository and not isinstance(repository, local.Git):
             sys.stderr.write("`git lfs` only supported from git repositories\n")
             return 1
 
+        if args.configure and not repository:
+            sys.stderr.write('Cannot configure `git lfs` without a repository\n')
+            return 1
+
         log.info('Checking `git lfs` version')
-        ran = run([repository.executable(), 'lfs', '--version'], capture_output=True, encoding='utf-8')
+        ran = run([local.Git.executable(), 'lfs', '--version'], capture_output=True, encoding='utf-8')
         match = cls.VERSION_RE.match(ran.stdout)
         version = Version.from_string(match.group('version')) if match else None
 
@@ -147,7 +149,10 @@ class InstallGitLFS(Command):
         else:
             print("`git lfs` version {} is already installed".format(version))
 
-        if not args.configure:
+        if not repository:
+            print("No repository provided, skipping configuring `git lfs`")
+            return 0
+        if args.configure is False:
             print("Skipping configuring `git lfs` for '{}', as requested".format(repository.path))
             return 0
 
