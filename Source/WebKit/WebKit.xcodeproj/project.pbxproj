@@ -2377,18 +2377,37 @@
 		DDA0A38427E56213005E086E /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*/WebKitLegacy/*.h */WebCore/*.h";
+			filePatterns = "*/WebKitLegacy/*.h";
 			fileType = pattern.proxy;
 			inputFiles = (
 				"$(SRCROOT)/Scripts/postprocess-header-rule",
 			);
 			isEditable = 1;
-			name = "Migrate Headers from WebCore and WebKitLegacy";
+			name = "Migrate Headers from WebKitLegacy";
 			outputFiles = (
 				"$(WK_MIGRATED_HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
+				"$(DERIVED_FILE_DIR)/WebKitLegacy/$(INPUT_FILE_NAME)",
 			);
 			runOncePerArchitecture = 0;
-			script = "if [ \"${WK_PLATFORM_NAME}\" != macosx ]; then\n    echo \"#import <WebKitLegacy/${INPUT_FILE_NAME}>\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\"\nfi\n";
+			script = "set -e\nif [ \"${WK_PLATFORM_NAME}\" != macosx ]; then\n    echo \"#import <WebKitLegacy/${INPUT_FILE_NAME}>\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\"\nfi\necho \"#import <WebKit/${INPUT_FILE_NAME}>\" > \"${SCRIPT_OUTPUT_FILE_1}\"\n";
+		};
+		DDF74C7827EE20C90011F633 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*/WebCore/*.h";
+			fileType = pattern.proxy;
+			inputFiles = (
+				"$(SRCROOT)/Scripts/postprocess-header-rule",
+			);
+			isEditable = 1;
+			name = "Migrate Headers from WebCore";
+			outputFiles = (
+				"$(WK_MIGRATED_HEADER_OUTPUT_DIR)/$(INPUT_FILE_NAME)",
+				"$(DERIVED_FILE_DIR)/WebKitLegacy/$(INPUT_FILE_NAME)",
+				"$(DERIVED_FILE_DIR)/WebCore/$(INPUT_FILE_NAME)",
+			);
+			runOncePerArchitecture = 0;
+			script = "set -e\nif [ \"${WK_PLATFORM_NAME}\" != macosx ]; then\n    echo \"#import <WebKitLegacy/${INPUT_FILE_NAME}>\" > \"${SCRIPT_OUTPUT_FILE_0}\"\nelse\n    \"${SCRIPT_INPUT_FILE_0}\"\nfi\necho \"#import <WebKit/${INPUT_FILE_NAME}>\" > \"${SCRIPT_OUTPUT_FILE_1}\"\necho \"#import <WebKit/${INPUT_FILE_NAME}>\" > \"${SCRIPT_OUTPUT_FILE_2}\"\n";
 		};
 /* End PBXBuildRule section */
 
@@ -2998,8 +3017,6 @@
 		1A1B0EB318A424950038481A /* WKNavigationResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNavigationResponse.mm; sourceTree = "<group>"; };
 		1A1B0EB418A424950038481A /* WKNavigationResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationResponse.h; sourceTree = "<group>"; };
 		1A1B0EB718A424CD0038481A /* WKNavigationResponseInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationResponseInternal.h; sourceTree = "<group>"; };
-		1A1D2116191D995C0001619F /* postprocess-framework-headers.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = "postprocess-framework-headers.sh"; path = "mac/postprocess-framework-headers.sh"; sourceTree = "<group>"; };
-		1A1D2117191D996C0001619F /* MigrateHeadersFromWebKitLegacy.make */ = {isa = PBXFileReference; lastKnownFileType = text; name = MigrateHeadersFromWebKitLegacy.make; path = mac/MigrateHeadersFromWebKitLegacy.make; sourceTree = "<group>"; };
 		1A1E093118861D3800D2DC49 /* WebProgressTrackerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProgressTrackerClient.cpp; sourceTree = "<group>"; };
 		1A1E093218861D3800D2DC49 /* WebProgressTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProgressTrackerClient.h; sourceTree = "<group>"; };
 		1A1EC69D1872092100B951F0 /* ImportanceAssertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportanceAssertion.h; sourceTree = "<group>"; };
@@ -7561,8 +7578,6 @@
 				2D7DEBE121269D5F00B9F73C /* SourcesCocoa.txt */,
 				32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */,
 				C0CE72DB1247E8F700BC0EC4 /* DerivedSources.make */,
-				1A1D2117191D996C0001619F /* MigrateHeadersFromWebKitLegacy.make */,
-				1A1D2116191D995C0001619F /* postprocess-framework-headers.sh */,
 				A16E66012581930800EE1749 /* MediaFormatReaderPlugIn */,
 				BC2E6E74114196F000A63B1E /* Platform */,
 				1AADDF4B10D82AF000D3D63D /* Shared */,
@@ -15716,6 +15731,7 @@
 				6517571927C9B43A00D9FE40 /* Copy Frameworks to Secondary Path */,
 			);
 			buildRules = (
+				DDF74C7827EE20C90011F633 /* PBXBuildRule */,
 				DDA0A38427E56213005E086E /* PBXBuildRule */,
 				535E08C422545B7200DF00CA /* PBXBuildRule */,
 			);

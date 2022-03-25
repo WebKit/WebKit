@@ -1,3 +1,24 @@
+2022-03-25  Elliott Williams  <emw@apple.com>
+
+        [Big Sur] WK2 failing to build with `error: reference to 'WebDocumentView' is ambiguous`
+        https://bugs.webkit.org/show_bug.cgi?id=238384
+
+        Reviewed by Alexey Proskuryakov.
+
+        Build fix, see rdar://90844690.
+
+        Create forwarding headers in WebKit's temporary directory which cause imports of any
+        migrated header to be imported using WebKit's header map. For example,
+
+            #import <WebKit/WebDocument.h>
+            #import <WebKitLegacy/WebDocument.h>
+
+        ...both resolve to the same header.
+
+        Also, clean up project file references to files which were deleted in r291809.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Enable PGO when building for release and production
