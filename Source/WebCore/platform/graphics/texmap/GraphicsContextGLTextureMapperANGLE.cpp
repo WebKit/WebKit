@@ -346,7 +346,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     return GraphicsContextGLANGLE::platformInitialize();
 }
 
-void GraphicsContextGLTextureMapperANGLE::prepareTextureImpl()
+void GraphicsContextGLTextureMapperANGLE::prepareTexture()
 {
     ASSERT(!m_layerComposited);
 
@@ -423,6 +423,11 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDisplayBufferBacking()
 
 void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
 {
+    if (m_layerComposited || !makeContextCurrent())
+        return;
+
+    prepareTexture();
+    markLayerComposited();
 }
 
 #if USE(NICOSIA)

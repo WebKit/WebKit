@@ -1,3 +1,56 @@
+2022-03-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [TextureMapper] Implement GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
+        https://bugs.webkit.org/show_bug.cgi?id=238322
+
+        Reviewed by Darin Adler.
+
+        Use GraphicsContextGLTextureMapperANGLE::prepareForDisplay() to handle
+        buffer/texture preparation during the composition state flush instead of
+        doing it in the platform layer integration class.
+
+        The virtual GraphicsContextGL::prepareForDisplay() method is called
+        during the composition state flush on every context-backed canvas that
+        was changed since the previous flush. It's the most optimal location to
+        handle content display preparation, and it simplifies the actual display
+        through the TextureMapper facilities. It's a simple matter of ensuring
+        a current context and invoking texture preparation.
+
+        In Nicosia::GCGLANGLELayer::swapBuffersIfNeeded(), there's no need to
+        bother with the state of layer composition, everything is already set
+        to be wrapped into a buffer and pushed into the composition engine.
+
+        Similarly in TextureMapperGCGLPlatformLayer::paintToTextureMapper(),
+        the texture is already prepared and can be painted immediately, with
+        no further need for GL context switching.
+
+        GraphicsContextGLANGLE::prepareTexture() is not really used anymore
+        so it can be removed, and prepareTextureImpl() can use that name.
+        The method is still virtual so that GraphicsContextGLTextureMapperANGLE
+        can provide a more focused override, but GraphicsContextGLCocoa should
+        at some point also use its own implementation, at which point the
+        method could just be rolled into each class's prepareForDisplay().
+
+        No new tests, covered by existing tests.
+
+        * platform/graphics/angle/GraphicsContextGLANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::prepareTexture):
+        (WebCore::GraphicsContextGLANGLE::prepareTextureImpl): Deleted.
+        * platform/graphics/angle/GraphicsContextGLANGLE.h:
+        * platform/graphics/cocoa/GraphicsContextGLCocoa.mm:
+        (WebCore::GraphicsContextGLCocoa::prepareForDisplay):
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.cpp:
+        (Nicosia::GCGLANGLELayer::swapBuffersIfNeeded):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        Remove unused prepareTextureImpl() method declaration.
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLTextureMapperANGLE::prepareTexture):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::prepareForDisplay):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::prepareTextureImpl): Deleted.
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h:
+        * platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp:
+        (WebCore::TextureMapperGCGLPlatformLayer::paintToTextureMapper):
+
 2022-03-25  Alex Christensen  <achristensen@webkit.org>
 
         Add css-typed-om color IDL skeletons

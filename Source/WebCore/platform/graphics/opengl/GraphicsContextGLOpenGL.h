@@ -446,7 +446,6 @@ protected:
     std::optional<PixelBuffer> readPixelsForPaintResults();
 
     bool reshapeFBOs(const IntSize&);
-    void prepareTextureImpl();
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GCGLuint internalDepthStencilFormat, int width, int height);
 

@@ -545,17 +545,6 @@ void GraphicsContextGLANGLE::validateDepthStencil(const char* packedDepthStencil
 
 void GraphicsContextGLANGLE::prepareTexture()
 {
-    if (m_layerComposited)
-        return;
-
-    if (!makeContextCurrent())
-        return;
-
-    prepareTextureImpl();
-}
-
-void GraphicsContextGLANGLE::prepareTextureImpl()
-{
     ASSERT(!m_layerComposited);
 
     if (contextAttributes().antialias)

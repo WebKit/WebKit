@@ -69,7 +69,7 @@ private:
     bool platformInitializeContext() final;
     bool platformInitialize() final;
 
-    void prepareTextureImpl() final;
+    void prepareTexture() final;
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 

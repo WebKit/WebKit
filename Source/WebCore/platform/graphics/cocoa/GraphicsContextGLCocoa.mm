@@ -707,7 +707,7 @@ void GraphicsContextGLCocoa::prepareForDisplay()
         return;
     if (!makeContextCurrent())
         return;
-    prepareTextureImpl();
+    prepareTexture();
 
     // The IOSurface will be used from other graphics subsystem, so flush GL commands.
     GL_Flush();

@@ -62,9 +62,6 @@ public:
     };
     static bool releaseThreadResources(ReleaseThreadResourceBehavior);
 
-    // With multisampling on, blit from multisampleFBO to regular FBO.
-    void prepareTexture();
-
     // Get an attribute location without checking the name -> mangledname mapping.
     int getAttribLocationDirect(PlatformGLObject program, const String& name);
 
@@ -369,7 +366,7 @@ protected:
     std::optional<PixelBuffer> readPixelsForPaintResults();
 
     bool reshapeFBOs(const IntSize&);
-    virtual void prepareTextureImpl();
+    virtual void prepareTexture();
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GCGLuint internalDepthStencilFormat, int width, int height);
 #if PLATFORM(COCOA)
