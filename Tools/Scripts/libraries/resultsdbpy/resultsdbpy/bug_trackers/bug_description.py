@@ -51,7 +51,11 @@ def translate_selected_dots_to_bug_title_and_description(commit_context, selecte
     for failed_scope in failed_scopes:
         result, init_failure_type, init_failure_number, last_sucess, config = failed_scope
         version_name = config['version_name'] if 'version_name' in config else Configuration.integer_to_version(config['version'])
-        title_components.add('{} on {}({})'.format(init_failure_type, version_name, config['model']))
+        if version_name and config['model']:
+            title_components.add('{} on {}({})'.format(init_failure_type, version_name, config['model']))
+        else:
+            title_components.add('{} on {}'.format(init_failure_type, (version_name if version_name else config['model'])))
+
         if init_failure_number is not None:
             description_components.append('{} {}'.format(init_failure_number, init_failure_type))
         description_components.append('Hardware:     \t{}'.format(config['model']))
@@ -85,4 +89,4 @@ def translate_selected_dots_to_bug_title_and_description(commit_context, selecte
                 map(lambda commit: '{}: {}'.format(commit.identifier, commit_context.url(commit)),
                     last_sucess_commits)
             )
-        return title_components, description_components
+    return title_components, description_components
