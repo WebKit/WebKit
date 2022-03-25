@@ -153,7 +153,6 @@ public:
     using MacroAssemblerBase::xor32;
 
 #if CPU(ARM64) || CPU(X86_64) || CPU(RISCV64)
-    using MacroAssemblerBase::add64;
     using MacroAssemblerBase::and64;
     using MacroAssemblerBase::convertInt32ToDouble;
     using MacroAssemblerBase::store64;
@@ -1461,12 +1460,6 @@ public:
             and64(imm.asTrustedImm32(), dest);
     }
 
-    void add64(TrustedImm64 imm, RegisterID src, RegisterID dest)
-    {
-        RegisterID scratch = scratchRegister();
-        move(imm, scratch);
-        add64(scratch, src, dest);
-    }
 #endif // USE(JSVALUE64)
 
 #if !CPU(X86) && !CPU(X86_64) && !CPU(ARM64)
