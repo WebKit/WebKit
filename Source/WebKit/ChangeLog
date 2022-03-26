@@ -1,3 +1,16 @@
+2022-03-26  David Quesada  <david_quesada@apple.com>
+
+        REGRESSION(r291814): WebAuthn sandbox profile is missing
+        https://bugs.webkit.org/show_bug.cgi?id=238418
+        rdar://90878872
+
+        Reviewed by Per Arne Vollan.
+
+        Fix a typo in the script phase that copies the embedded sandbox profiles. We want to copy
+        com.apple.WebKit.WebAuthn.sb, not com.apple.WebKit.WebAuth.sb.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-26  Sihui Liu  <sihui_liu@apple.com>
 
         Unreviewed, reverting r291909.
