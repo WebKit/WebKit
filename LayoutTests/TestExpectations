@@ -1354,6 +1354,9 @@ imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-d
 imported/w3c/web-platform-tests/css/css-grid/abspos/orthogonal-positioned-grid-descendants-015.html [ Pass Failure ]
 webkit.org/b/216146 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-baseline-align-001.html [ ImageOnlyFailure ]
 webkit.org/b/216146 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-baseline-justify-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-007.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/alignment/replaced-alignment-with-aspect-ratio-008.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-dynamic-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-repeat-max-width-001.html [ ImageOnlyFailure ]
@@ -4250,6 +4253,8 @@ webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descenda
 webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-002.html [ ImageOnlyFailure ]
 webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-003.html [ ImageOnlyFailure ]
 webkit.org/b/212201 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-limits-001.html [ Skip ]
+webkit.org/b/227900 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-3.html [ ImageOnlyFailure ]
+webkit.org/b/227900 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-4.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-baseline-align-cycles-001.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-baseline.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-content-baseline-001.html [ ImageOnlyFailure ]

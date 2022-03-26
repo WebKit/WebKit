@@ -1,5 +1,9 @@
 2022-03-23  Alan Coon  <alancoon@apple.com>
 
+        Revert r285998. rdar://problem/85612240
+
+2022-03-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r290985. rdar://problem/78421282
 
     Add a preference to mute video capture in case audio capture gets interrupted

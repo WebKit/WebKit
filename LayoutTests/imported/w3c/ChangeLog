@@ -1,5 +1,9 @@
 2022-03-23  Alan Coon  <alancoon@apple.com>
 
+        Revert r285998. rdar://problem/85612240
+
+2022-03-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r290564. rdar://problem/89524668
 
     Force -webkit-user-modify used style to readonly for inert nodes
