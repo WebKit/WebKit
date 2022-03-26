@@ -41,8 +41,8 @@ ParseHash::ParseHash(const SourceCode& sourceCode)
 
     if (hash == 0 || hash == 1)
         hash += 0x2d5a93d0; // Ensures a non-zero hash, and gets us #Azero0 for CodeForCall and #Azero1 for CodeForConstruct.
-    static_assert(static_cast<unsigned>(CodeForCall) == 0, "");
-    static_assert(static_cast<unsigned>(CodeForConstruct) == 1, "");
+    static_assert(static_cast<unsigned>(CodeForCall) == 0);
+    static_assert(static_cast<unsigned>(CodeForConstruct) == 1);
     unsigned hashForCall = hash ^ static_cast<unsigned>(CodeForCall);
     unsigned hashForConstruct = hash ^ static_cast<unsigned>(CodeForConstruct);
 

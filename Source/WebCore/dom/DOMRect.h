@@ -55,6 +55,6 @@ private:
 
     DOMRect() = default;
 };
-static_assert(sizeof(DOMRect) == sizeof(DOMRectReadOnly), "");
+static_assert(sizeof(DOMRect) == sizeof(DOMRectReadOnly));
 
 }

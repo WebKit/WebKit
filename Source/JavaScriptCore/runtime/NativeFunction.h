@@ -101,8 +101,8 @@ struct TaggedNativeFunctionHash {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-static_assert(sizeof(NativeFunction) == sizeof(void*), "");
-static_assert(sizeof(TaggedNativeFunction) == sizeof(void*), "");
+static_assert(sizeof(NativeFunction) == sizeof(void*));
+static_assert(sizeof(TaggedNativeFunction) == sizeof(void*));
 
 } // namespace JSC
 

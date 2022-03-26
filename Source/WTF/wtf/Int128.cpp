@@ -89,7 +89,7 @@ static inline void DivModImpl(UInt128Impl dividend, UInt128Impl divisor, UInt128
 
 template <typename T>
 static UInt128Impl MakeUInt128FromFloat(T v) {
-  static_assert(std::is_floating_point<T>::value, "");
+  static_assert(std::is_floating_point<T>::value);
 
   // Rounding behavior is towards zero, same as for built-in types.
 
@@ -113,8 +113,8 @@ static UInt128Impl MakeUInt128FromFloat(T v) {
 // It is more work, so only use when we need the workaround.
 static UInt128Impl MakeUInt128FromFloat(long double v) {
   // Go 50 bits at a time, that fits in a double
-  static_assert(std::numeric_limits<double>::digits >= 50, "");
-  static_assert(std::numeric_limits<long double>::digits <= 150, "");
+  static_assert(std::numeric_limits<double>::digits >= 50);
+  static_assert(std::numeric_limits<long double>::digits <= 150);
   // Undefined behavior if v is not finite or cannot fit into UInt128Impl.
   assert(std::isfinite(v) && v > -1 && v < std::ldexp(1.0L, 128));
 

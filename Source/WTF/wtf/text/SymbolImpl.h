@@ -122,7 +122,7 @@ protected:
     unsigned m_hashForSymbolShiftedWithFlagCount;
     Flags m_flags { s_flagDefault };
 };
-static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl), "");
+static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl));
 
 class PrivateSymbolImpl final : public SymbolImpl {
 public:

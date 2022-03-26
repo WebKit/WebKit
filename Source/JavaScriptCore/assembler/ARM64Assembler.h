@@ -3123,7 +3123,7 @@ protected:
     template<BranchType type, CopyFunction copy = performJITMemcpy>
     static void linkJumpOrCall(int* from, const int* fromInstruction, void* to)
     {
-        static_assert(type == BranchType_JMP || type == BranchType_CALL, "");
+        static_assert(type == BranchType_JMP || type == BranchType_CALL);
 
         bool link;
         int imm26;
@@ -3240,7 +3240,7 @@ protected:
     template<BranchType type>
     static void relinkJumpOrCall(int* from, const int* fromInstruction, void* to)
     {
-        static_assert(type == BranchType_JMP || type == BranchType_CALL, "");
+        static_assert(type == BranchType_JMP || type == BranchType_CALL);
         if ((type == BranchType_JMP) && disassembleNop(from)) {
             unsigned op01;
             int imm19;

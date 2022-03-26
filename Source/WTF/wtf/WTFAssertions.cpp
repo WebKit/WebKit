@@ -40,11 +40,11 @@ namespace {
 struct DummyStruct { };
 }
 
-static_assert(sizeof(Bag<DummyStruct>) == sizeof(void*), "");
+static_assert(sizeof(Bag<DummyStruct>) == sizeof(void*));
 
-static_assert(sizeof(Ref<DummyStruct>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(Ref<DummyStruct>) == sizeof(DummyStruct*));
 
-static_assert(sizeof(RefPtr<DummyStruct>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(RefPtr<DummyStruct>) == sizeof(DummyStruct*));
 
 #if OS(DARWIN) && CPU(ADDRESS64)
 // NaN boxing encoding relies on this.

@@ -36,6 +36,6 @@ private:
     DirectEvalExecutable(JSGlobalObject*, const SourceCode&, bool inStrictContext, DerivedContextType, NeedsClassFieldInitializer, PrivateBrandRequirement, bool isArrowFunctionContext, bool isInsideOrdinaryFunction, EvalContextType);
 };
 
-static_assert(sizeof(DirectEvalExecutable) == sizeof(EvalExecutable), "");
+static_assert(sizeof(DirectEvalExecutable) == sizeof(EvalExecutable));
 
 } // namespace JSC

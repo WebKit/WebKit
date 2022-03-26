@@ -433,7 +433,7 @@ inline void stringTypeAdapterAccumulator(ResultType* result, Adapter adapter, Ad
 template<typename StringTypeAdapter, typename... StringTypeAdapters>
 String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters ...adapters)
 {
-    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max(), "");
+    static_assert(String::MaxLength == std::numeric_limits<int32_t>::max());
     auto sum = checkedSum<int32_t>(adapter.length(), adapters.length()...);
     if (sum.hasOverflowed())
         return String();

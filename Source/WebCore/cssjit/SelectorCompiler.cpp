@@ -2529,8 +2529,8 @@ void SelectorCodeGenerator::generateAddStyleRelation(Assembler::RegisterID check
     auto getLastRelationPointer = [&] (Assembler::RegisterID sizeAndTarget) {
         m_assembler.sub32(Assembler::TrustedImm32(1), sizeAndTarget);
 #if CPU(ADDRESS64)
-        static_assert(sizeof(Style::Relation) == 16, "");
-        static_assert(1 << 4 == 16, "");
+        static_assert(sizeof(Style::Relation) == 16);
+        static_assert(1 << 4 == 16);
         m_assembler.lshiftPtr(Assembler::TrustedImm32(4), sizeAndTarget);
 #else
         m_assembler.mul32(Assembler::TrustedImm32(sizeof(Style::Relation)), sizeAndTarget, sizeAndTarget);

@@ -41,9 +41,9 @@ typedef unsigned ArrayModes;
 
 // The possible IndexingTypes are limited within (0 - 16, 21, 23, 25).
 // This is because CoW types only appear for JSArrays.
-static_assert(CopyOnWriteArrayWithInt32 == 21, "");
-static_assert(CopyOnWriteArrayWithDouble == 23, "");
-static_assert(CopyOnWriteArrayWithContiguous == 25, "");
+static_assert(CopyOnWriteArrayWithInt32 == 21);
+static_assert(CopyOnWriteArrayWithDouble == 23);
+static_assert(CopyOnWriteArrayWithContiguous == 25);
 const ArrayModes CopyOnWriteArrayWithInt32ArrayMode = 1 << CopyOnWriteArrayWithInt32;
 const ArrayModes CopyOnWriteArrayWithDoubleArrayMode = 1 << CopyOnWriteArrayWithDouble;
 const ArrayModes CopyOnWriteArrayWithContiguousArrayMode = 1 << CopyOnWriteArrayWithContiguous;

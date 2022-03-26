@@ -1,5 +1,71 @@
 2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Use unary static_assert
+        https://bugs.webkit.org/show_bug.cgi?id=238412
+
+        Reviewed by Mark Lam.
+
+        Replace `static_assert(..., "");` with `static_assert(...);`
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::linkJumpOrCall):
+        (JSC::ARM64Assembler::relinkJumpOrCall):
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::putIntegralUnchecked):
+        * assembler/MacroAssemblerCodeRef.h:
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.h:
+        * bytecode/ArrayProfile.h:
+        * bytecode/CodeBlockHash.cpp:
+        (JSC::CodeBlockHash::CodeBlockHash):
+        * bytecode/ParseHash.cpp:
+        (JSC::ParseHash::ParseHash):
+        * bytecode/Watchpoint.h:
+        * dfg/DFGNode.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT.cpp:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::llintBaselineCalleeSaveRegisters):
+        (JSC::RegisterSet::dfgCalleeSaveRegisters):
+        (JSC::RegisterSet::ftlCalleeSaveRegisters):
+        * runtime/CachedBytecode.cpp:
+        (JSC::CachedBytecode::commitUpdates const):
+        * runtime/ClonedArguments.h:
+        * runtime/DirectArguments.h:
+        * runtime/DirectEvalExecutable.h:
+        * runtime/ErrorConstructor.h:
+        * runtime/IndirectEvalExecutable.h:
+        * runtime/JSArrayBufferView.cpp:
+        * runtime/JSBoundFunction.h:
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::subspaceFor):
+        * runtime/JSString.cpp:
+        (JSC::JSRopeString::RopeBuilder<RecordOverflow>::expand):
+        * runtime/JSString.h:
+        * runtime/NativeFunction.h:
+        * runtime/Operations.h:
+        (JSC::jsString):
+        * runtime/RegExpObject.h:
+        * runtime/ScopedArguments.h:
+        * runtime/ScopedArgumentsTable.cpp:
+        * runtime/TypedArrayAdaptors.h:
+        (JSC::IntegralTypedArrayAdaptor::toJSValue):
+        * runtime/TypedArrayType.h:
+        * runtime/WeakMapImpl.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        (JSC::Wasm::AirIRGenerator::emitChecksForModOrDiv):
+        (JSC::Wasm::AirIRGenerator::emitModOrDiv):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::DisjunctionContext::allocationSize):
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::allocationSize):
+
+2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Include argumentRegisters in identity of SlowPathCallKey when clobberAllRegsInFTLICSlowPath is enabled
         https://bugs.webkit.org/show_bug.cgi?id=238411
 

@@ -201,15 +201,15 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
 #if !OS(WINDOWS)
     result.set(GPRInfo::regCS1);
     result.set(GPRInfo::regCS2);
-    static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister, "");
-    static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister, "");
+    static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister);
     result.set(GPRInfo::regCS3);
     result.set(GPRInfo::regCS4);
 #else
     result.set(GPRInfo::regCS3);
     result.set(GPRInfo::regCS4);
-    static_assert(GPRInfo::regCS5 == GPRInfo::numberTagRegister, "");
-    static_assert(GPRInfo::regCS6 == GPRInfo::notCellMaskRegister, "");
+    static_assert(GPRInfo::regCS5 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS6 == GPRInfo::notCellMaskRegister);
     result.set(GPRInfo::regCS5);
     result.set(GPRInfo::regCS6);
 #endif
@@ -219,8 +219,8 @@ RegisterSet RegisterSet::llintBaselineCalleeSaveRegisters()
 #elif CPU(ARM64) || CPU(RISCV64)
     result.set(GPRInfo::regCS6);
     result.set(GPRInfo::regCS7);
-    static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister, "");
-    static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister, "");
+    static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
     result.set(GPRInfo::regCS8);
     result.set(GPRInfo::regCS9);
 #else
@@ -238,15 +238,15 @@ RegisterSet RegisterSet::dfgCalleeSaveRegisters()
     result.set(GPRInfo::regCS1);
     result.set(GPRInfo::regCS2);
 #if !OS(WINDOWS)
-    static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister, "");
-    static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister, "");
+    static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister);
     result.set(GPRInfo::regCS3);
     result.set(GPRInfo::regCS4);
 #else
     result.set(GPRInfo::regCS3);
     result.set(GPRInfo::regCS4);
-    static_assert(GPRInfo::regCS5 == GPRInfo::numberTagRegister, "");
-    static_assert(GPRInfo::regCS6 == GPRInfo::notCellMaskRegister, "");
+    static_assert(GPRInfo::regCS5 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS6 == GPRInfo::notCellMaskRegister);
     result.set(GPRInfo::regCS5);
     result.set(GPRInfo::regCS6);
 #endif
@@ -254,8 +254,8 @@ RegisterSet RegisterSet::dfgCalleeSaveRegisters()
     result.set(GPRInfo::regCS0);
     result.set(GPRInfo::regCS1);
 #elif CPU(ARM64) || CPU(RISCV64)
-    static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister, "");
-    static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister, "");
+    static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
     result.set(GPRInfo::regCS8);
     result.set(GPRInfo::regCS9);
 #else
@@ -272,8 +272,8 @@ RegisterSet RegisterSet::ftlCalleeSaveRegisters()
     result.set(GPRInfo::regCS0);
     result.set(GPRInfo::regCS1);
     result.set(GPRInfo::regCS2);
-    static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister, "");
-    static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister, "");
+    static_assert(GPRInfo::regCS3 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS4 == GPRInfo::notCellMaskRegister);
     result.set(GPRInfo::regCS3);
     result.set(GPRInfo::regCS4);
 #elif CPU(ARM64)
@@ -286,8 +286,8 @@ RegisterSet RegisterSet::ftlCalleeSaveRegisters()
     result.set(GPRInfo::regCS5);
     result.set(GPRInfo::regCS6);
     result.set(GPRInfo::regCS7);
-    static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister, "");
-    static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister, "");
+    static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
     result.set(GPRInfo::regCS8);
     result.set(GPRInfo::regCS9);
     result.set(FPRInfo::fpRegCS0);
@@ -307,8 +307,8 @@ RegisterSet RegisterSet::ftlCalleeSaveRegisters()
     result.set(GPRInfo::regCS5);
     result.set(GPRInfo::regCS6);
     result.set(GPRInfo::regCS7);
-    static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister, "");
-    static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister, "");
+    static_assert(GPRInfo::regCS8 == GPRInfo::numberTagRegister);
+    static_assert(GPRInfo::regCS9 == GPRInfo::notCellMaskRegister);
     result.set(GPRInfo::regCS8);
     result.set(GPRInfo::regCS9);
     result.set(GPRInfo::regCS10);

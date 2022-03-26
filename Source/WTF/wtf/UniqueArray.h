@@ -38,7 +38,7 @@ template<bool isTriviallyDestructible, typename T> struct UniqueArrayMaker;
 
 template<typename T>
 struct UniqueArrayFree {
-    static_assert(std::is_trivially_destructible<T>::value, "");
+    static_assert(std::is_trivially_destructible<T>::value);
 
     void operator()(T* pointer) const
     {
@@ -48,7 +48,7 @@ struct UniqueArrayFree {
 
 template<typename T>
 struct UniqueArrayFree<T[]> {
-    static_assert(std::is_trivially_destructible<T>::value, "");
+    static_assert(std::is_trivially_destructible<T>::value);
 
     void operator()(T* pointer) const
     {
@@ -68,7 +68,7 @@ struct UniqueArrayMaker<true, T> {
         // If it is acceptable, we can just use Vector<T> instead. So this UniqueArray<T> only
         // accepts the type T which has a trivial destructor. This allows us to skip calling
         // destructors for N elements. And this allows UniqueArray<T> not to store its N size.
-        static_assert(std::is_trivially_destructible<T>::value, "");
+        static_assert(std::is_trivially_destructible<T>::value);
 
         // Do not use placement new like `new (storage) T[size]()`. `new T[size]()` requires
         // larger storage than the `sizeof(T) * size` storage since it want to store `size`
@@ -99,7 +99,7 @@ struct UniqueArrayMaker<false, T> {
 
         T value { };
     };
-    static_assert(sizeof(T) == sizeof(UniqueArrayElement), "");
+    static_assert(sizeof(T) == sizeof(UniqueArrayElement));
 
     using ResultType = typename std::unique_ptr<T[], typename UniqueArrayElement::Deleter>;
 
@@ -115,7 +115,7 @@ using UniqueArray = typename UniqueArrayMaker<std::is_trivially_destructible<T>:
 template<typename T>
 UniqueArray<T> makeUniqueArray(size_t size)
 {
-    static_assert(std::is_same<typename std::remove_extent<T>::type, T>::value, "");
+    static_assert(std::is_same<typename std::remove_extent<T>::type, T>::value);
     return UniqueArrayMaker<std::is_trivially_destructible<T>::value, T>::make(size);
 }
 

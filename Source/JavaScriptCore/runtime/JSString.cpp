@@ -51,7 +51,7 @@ void JSRopeString::RopeBuilder<RecordOverflow>::expand()
 {
     RELEASE_ASSERT(!this->hasOverflowed());
     ASSERT(m_strings.size() == JSRopeString::s_maxInternalRopeLength);
-    static_assert(3 == JSRopeString::s_maxInternalRopeLength, "");
+    static_assert(3 == JSRopeString::s_maxInternalRopeLength);
     ASSERT(m_length);
     ASSERT(asString(m_strings.at(0))->length());
     ASSERT(asString(m_strings.at(1))->length());

@@ -93,7 +93,7 @@ private:
     DOMMatrix(const TransformationMatrix&, Is2D);
     DOMMatrix(TransformationMatrix&&, Is2D);
 };
-static_assert(sizeof(DOMMatrix) == sizeof(DOMMatrixReadOnly), "");
+static_assert(sizeof(DOMMatrix) == sizeof(DOMMatrixReadOnly));
 
 inline void DOMMatrix::setM13(double f)
 {

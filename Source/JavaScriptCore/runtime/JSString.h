@@ -118,7 +118,7 @@ public:
     // is INT_MAX. Hence, it cannot be changed into another length value without
     // breaking all the bounds and overflow checks that assume this.
     static constexpr unsigned MaxLength = std::numeric_limits<int32_t>::max();
-    static_assert(MaxLength == String::MaxLength, "");
+    static_assert(MaxLength == String::MaxLength);
 
     static constexpr uintptr_t isRopeInPointer = 0x1;
 
@@ -280,12 +280,12 @@ public:
     // We use lower 3bits of fiber0 for flags. These bits are usable due to alignment, and it is OK even in 32bit architecture.
     static constexpr uintptr_t is8BitInPointer = static_cast<uintptr_t>(StringImpl::flagIs8Bit());
     static constexpr uintptr_t isSubstringInPointer = 0x2;
-    static_assert(is8BitInPointer == 0b100, "");
-    static_assert(isSubstringInPointer == 0b010, "");
-    static_assert(isRopeInPointer == 0b001, "");
+    static_assert(is8BitInPointer == 0b100);
+    static_assert(isSubstringInPointer == 0b010);
+    static_assert(isRopeInPointer == 0b001);
     static constexpr uintptr_t stringMask = ~(isRopeInPointer | is8BitInPointer | isSubstringInPointer);
 #if CPU(ADDRESS64)
-    static_assert(sizeof(uintptr_t) == sizeof(uint64_t), "");
+    static_assert(sizeof(uintptr_t) == sizeof(uint64_t));
     class CompactFibers {
     public:
         static constexpr uintptr_t addressMask = (1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1;
@@ -339,7 +339,7 @@ public:
         uint16_t m_fiber2Lower { 0 };
         uint32_t m_fiber2Upper { 0 };
     };
-    static_assert(sizeof(CompactFibers) == sizeof(void*) * 2, "");
+    static_assert(sizeof(CompactFibers) == sizeof(void*) * 2);
 #else
     class CompactFibers {
     public:
@@ -398,7 +398,7 @@ public:
             if (m_strings.size() == JSRopeString::s_maxInternalRopeLength)
                 expand();
 
-            static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max(), "");
+            static_assert(JSString::MaxLength == std::numeric_limits<int32_t>::max());
             auto sum = checkedSum<int32_t>(m_length, jsString->length());
             if (sum.hasOverflowed()) {
                 this->overflowed();
@@ -678,7 +678,7 @@ private:
         return static_cast<unsigned>(bitwise_cast<uintptr_t>(fiber2()));
     }
 
-    static_assert(s_maxInternalRopeLength >= 2, "");
+    static_assert(s_maxInternalRopeLength >= 2);
     mutable CompactFibers m_compactFibers;
 
     friend JSString* jsString(JSGlobalObject*, JSString*, JSString*);

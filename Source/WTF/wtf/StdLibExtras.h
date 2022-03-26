@@ -193,7 +193,7 @@ template<size_t divisor> constexpr size_t roundUpToMultipleOf(size_t x)
 
 template<size_t divisor, typename T> inline T* roundUpToMultipleOf(T* x)
 {
-    static_assert(sizeof(T*) == sizeof(size_t), "");
+    static_assert(sizeof(T*) == sizeof(size_t));
     return reinterpret_cast<T*>(roundUpToMultipleOf<divisor>(reinterpret_cast<size_t>(x)));
 }
 

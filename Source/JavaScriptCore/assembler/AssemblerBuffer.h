@@ -456,7 +456,7 @@ namespace JSC {
         void putIntegralUnchecked(IntegralType value)
         {
 #if CPU(ARM64)
-            static_assert(sizeof(value) == 4, "");
+            static_assert(sizeof(value) == 4);
 #if CPU(ARM64E)
             uint32_t hash = m_hash.update(value, m_index / sizeof(IntegralType));
             WTF::unalignedStore<uint32_t>(m_hashes.buffer() + m_index, hash);

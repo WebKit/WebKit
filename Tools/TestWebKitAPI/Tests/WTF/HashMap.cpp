@@ -1048,7 +1048,7 @@ TEST(WTF_HashMap, RefMappedToNonZeroEmptyValue)
         static Ref<Key> create() { return adoptRef(*new Key); }
     };
 
-    static_assert(!WTF::HashTraits<Value>::emptyValueIsZero, "");
+    static_assert(!WTF::HashTraits<Value>::emptyValueIsZero);
 
     HashMap<Ref<Key>, Value> map;
     Vector<std::pair<Ref<Key>, int32_t>> vectorMap;

@@ -47,7 +47,7 @@ template<
     typename EnumType,
     typename std::underlying_type<EnumType>::type constant = std::numeric_limits<typename std::underlying_type<EnumType>::type>::max()>
 struct EnumMarkableTraits {
-    static_assert(std::is_enum<EnumType>::value, "");
+    static_assert(std::is_enum<EnumType>::value);
     using UnderlyingType = typename std::underlying_type<EnumType>::type;
 
     constexpr static bool isEmptyValue(EnumType value)
@@ -63,7 +63,7 @@ struct EnumMarkableTraits {
 
 template<typename IntegralType, IntegralType constant = 0>
 struct IntegralMarkableTraits {
-    static_assert(std::is_integral<IntegralType>::value, "");
+    static_assert(std::is_integral<IntegralType>::value);
     constexpr static bool isEmptyValue(IntegralType value)
     {
         return value == constant;

@@ -205,7 +205,7 @@ private:
     template<typename Type>
     HistoryEntryDataEncoder& encodeArithmeticType(Type value)
     {
-        static_assert(std::is_arithmetic<Type>::value, "");
+        static_assert(std::is_arithmetic<Type>::value);
 
         encodeFixedLengthData(reinterpret_cast<uint8_t*>(&value), sizeof(value), sizeof(value));
         return *this;
@@ -738,7 +738,7 @@ private:
     template<typename Type>
     HistoryEntryDataDecoder& decodeArithmeticType(Type& value)
     {
-        static_assert(std::is_arithmetic<Type>::value, "");
+        static_assert(std::is_arithmetic<Type>::value);
         value = Type();
 
         decodeFixedLengthData(reinterpret_cast<uint8_t*>(&value), sizeof(value), sizeof(value));

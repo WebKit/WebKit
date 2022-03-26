@@ -35,7 +35,7 @@ public:
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        static_assert(!CellType::needsDestruction, "");
+        static_assert(!CellType::needsDestruction);
         return &vm.regExpObjectSpace();
     }
 

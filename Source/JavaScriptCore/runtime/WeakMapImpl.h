@@ -38,7 +38,7 @@ struct WeakMapBucketDataKey {
     static const HashTableType Type = HashTableType::Key;
     WriteBarrier<JSObject> key;
 };
-static_assert(sizeof(WeakMapBucketDataKey) == sizeof(void*), "");
+static_assert(sizeof(WeakMapBucketDataKey) == sizeof(void*));
 
 struct WeakMapBucketDataKeyValue {
     static const HashTableType Type = HashTableType::KeyValue;
@@ -48,7 +48,7 @@ struct WeakMapBucketDataKeyValue {
 #endif
     WriteBarrier<Unknown> value;
 };
-static_assert(sizeof(WeakMapBucketDataKeyValue) == 16, "");
+static_assert(sizeof(WeakMapBucketDataKeyValue) == 16);
 
 ALWAYS_INLINE uint32_t jsWeakMapHash(JSObject* key);
 ALWAYS_INLINE uint32_t nextCapacityAfterBatchRemoval(uint32_t capacity, uint32_t keyCount);

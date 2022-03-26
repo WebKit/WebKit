@@ -40,6 +40,6 @@ private:
     IndirectEvalExecutable(JSGlobalObject*, const SourceCode&, DerivedContextType, bool isArrowFunctionContext, EvalContextType);
 };
 
-static_assert(sizeof(IndirectEvalExecutable) == sizeof(EvalExecutable), "");
+static_assert(sizeof(IndirectEvalExecutable) == sizeof(EvalExecutable));
 
 } // namespace JSC

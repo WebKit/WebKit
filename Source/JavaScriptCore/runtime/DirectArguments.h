@@ -49,7 +49,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static CompleteSubspace* subspaceFor(VM& vm)
     {
-        static_assert(!CellType::needsDestruction, "");
+        static_assert(!CellType::needsDestruction);
         return &vm.variableSizedCellSpace();
     }
 

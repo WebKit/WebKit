@@ -3770,7 +3770,7 @@ auto AirIRGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
         append(Move, Arg::addr(calleeSignatureIndex, WasmToWasmImportableFunction::offsetOfSignatureIndex()), calleeSignatureIndex);
 
         emitCheck([&] {
-            static_assert(Signature::invalidIndex == 0, "");
+            static_assert(Signature::invalidIndex == 0);
             return Inst(BranchTest64, nullptr, Arg::resCond(MacroAssembler::Zero), calleeSignatureIndex, calleeSignatureIndex);
         }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitThrowException(jit, ExceptionType::NullTableEntry);
@@ -3998,7 +3998,7 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileAir(Compilati
 template <typename IntType>
 void AirIRGenerator::emitChecksForModOrDiv(bool isSignedDiv, ExpressionType left, ExpressionType right)
 {
-    static_assert(sizeof(IntType) == 4 || sizeof(IntType) == 8, "");
+    static_assert(sizeof(IntType) == 4 || sizeof(IntType) == 8);
 
     emitCheck([&] {
         return Inst(sizeof(IntType) == 4 ? BranchTest32 : BranchTest64, nullptr, Arg::resCond(MacroAssembler::Zero), right, right);
@@ -4034,7 +4034,7 @@ void AirIRGenerator::emitChecksForModOrDiv(bool isSignedDiv, ExpressionType left
 template <typename IntType>
 void AirIRGenerator::emitModOrDiv(bool isDiv, ExpressionType lhs, ExpressionType rhs, ExpressionType& result)
 {
-    static_assert(sizeof(IntType) == 4 || sizeof(IntType) == 8, "");
+    static_assert(sizeof(IntType) == 4 || sizeof(IntType) == 8);
 
     result = sizeof(IntType) == 4 ? g32() : g64();
 

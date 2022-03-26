@@ -82,10 +82,10 @@ constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacag
 #endif
 
 
-static_assert(bmalloc::isPowerOfTwo(primitiveGigacageSize), "");
-static_assert(bmalloc::isPowerOfTwo(jsValueGigacageSize), "");
-static_assert(primitiveGigacageSize > maximumCageSizeReductionForSlide, "");
-static_assert(jsValueGigacageSize > maximumCageSizeReductionForSlide, "");
+static_assert(bmalloc::isPowerOfTwo(primitiveGigacageSize));
+static_assert(bmalloc::isPowerOfTwo(jsValueGigacageSize));
+static_assert(primitiveGigacageSize > maximumCageSizeReductionForSlide);
+static_assert(jsValueGigacageSize > maximumCageSizeReductionForSlide);
 
 constexpr size_t gigacageSizeToMask(size_t size) { return size - 1; }
 

@@ -223,9 +223,9 @@ private:
     template<PtrTag> friend class FunctionPtr;
 };
 
-static_assert(sizeof(FunctionPtr<CFunctionPtrTag>) == sizeof(void*), "");
+static_assert(sizeof(FunctionPtr<CFunctionPtrTag>) == sizeof(void*));
 #if COMPILER_SUPPORTS(BUILTIN_IS_TRIVIALLY_COPYABLE)
-static_assert(__is_trivially_copyable(FunctionPtr<CFunctionPtrTag>), "");
+static_assert(__is_trivially_copyable(FunctionPtr<CFunctionPtrTag>));
 #endif
 
 // ReturnAddressPtr:

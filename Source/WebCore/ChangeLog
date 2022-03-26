@@ -1,3 +1,26 @@
+2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use unary static_assert
+        https://bugs.webkit.org/show_bug.cgi?id=238412
+
+        Reviewed by Mark Lam.
+
+        * Modules/entriesapi/FileSystemDirectoryEntry.h:
+        * Modules/entriesapi/FileSystemFileEntry.h:
+        * css/DOMMatrix.h:
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateAddStyleRelation):
+        * dom/DOMPoint.h:
+        * dom/DOMRect.h:
+        * html/HTMLAllCollection.h:
+        * html/track/AudioTrackList.h:
+        * html/track/VideoTrackList.h:
+        * layout/formattingContexts/inline/InlineItem.cpp:
+        * layout/formattingContexts/inline/InlineTextItem.cpp:
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedDecoder::decodeBytes):
+        * xml/XMLHttpRequestEventTarget.h:
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Simplify / Optimize JSNodeOwner::isReachableFromOpaqueRoots()

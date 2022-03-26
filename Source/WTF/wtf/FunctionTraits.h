@@ -38,7 +38,7 @@ template<typename T>
 static constexpr unsigned slotsForCCallArgument()
 {
     static_assert(!std::is_class<T>::value || sizeof(T) <= sizeof(void*), "This doesn't support complex structs.");
-    static_assert(sizeof(T) == 8 || sizeof(T) <= 4, "");
+    static_assert(sizeof(T) == 8 || sizeof(T) <= 4);
     // This assumes that all integral values are passed on the stack.
     if (sizeof(T) == 8)
         return 2;

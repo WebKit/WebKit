@@ -1050,7 +1050,7 @@ TEST(WTF_RobinHoodHashMap, RefMappedToNonZeroEmptyValue)
         static Ref<Key> create() { return adoptRef(*new Key); }
     };
 
-    static_assert(!WTF::HashTraits<Value>::emptyValueIsZero, "");
+    static_assert(!WTF::HashTraits<Value>::emptyValueIsZero);
 
     MemoryCompactLookupOnlyRobinHoodHashMap<Ref<Key>, Value, RobinHoodHash<Ref<Key>>> map;
     Vector<std::pair<Ref<Key>, int32_t>> vectorMap;

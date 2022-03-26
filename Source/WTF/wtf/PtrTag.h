@@ -128,10 +128,10 @@ constexpr uintptr_t makePtrTagHash(const char (&str)[N])
 
 #define WTF_DECLARE_PTRTAG(tag) \
     constexpr PtrTag tag = static_cast<PtrTag>(WTF_PTRTAG_HASH(#tag)); \
-    static_assert(tag != NoPtrTag && tag != CFunctionPtrTag, "");
+    static_assert(tag != NoPtrTag && tag != CFunctionPtrTag);
 
-static_assert(static_cast<uintptr_t>(NoPtrTag) == static_cast<uintptr_t>(0), "");
-static_assert(static_cast<uintptr_t>(CFunctionPtrTag) == static_cast<uintptr_t>(1), "");
+static_assert(static_cast<uintptr_t>(NoPtrTag) == static_cast<uintptr_t>(0));
+static_assert(static_cast<uintptr_t>(CFunctionPtrTag) == static_cast<uintptr_t>(1));
 
 #if COMPILER(MSVC)
 #pragma warning(push)
@@ -532,7 +532,7 @@ inline T* retagArrayPtr(T* ptr, size_t, size_t)
 template <PtrTag, typename IntType>
 inline IntType tagInt(IntType ptrInt)
 {
-    static_assert(sizeof(IntType) == sizeof(uintptr_t), "");
+    static_assert(sizeof(IntType) == sizeof(uintptr_t));
     return ptrInt;
 }
 

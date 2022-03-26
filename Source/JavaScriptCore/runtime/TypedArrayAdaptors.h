@@ -49,7 +49,7 @@ struct IntegralTypedArrayAdaptor {
 
     static JSValue toJSValue(JSGlobalObject*, Type value)
     {
-        static_assert(!std::is_floating_point<Type>::value, "");
+        static_assert(!std::is_floating_point<Type>::value);
         return jsNumber(value);
     }
     

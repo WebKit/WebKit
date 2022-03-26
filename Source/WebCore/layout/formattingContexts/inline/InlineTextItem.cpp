@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
-static_assert(sizeof(InlineItem) == sizeof(InlineTextItem), "");
+static_assert(sizeof(InlineItem) == sizeof(InlineTextItem));
 
 InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsigned start, unsigned length, UBiDiLevel bidiLevel, bool hasTrailingSoftHyphen, bool isWordSeparator, std::optional<InlineLayoutUnit> width, TextItemType textItemType)
     : InlineItem(inlineTextBox, Type::Text, bidiLevel)

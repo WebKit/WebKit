@@ -44,9 +44,9 @@ template<typename PointerType, typename Type>
 class CompactPointerTuple final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static_assert(sizeof(Type) <= 2, "");
-    static_assert(std::is_pointer<PointerType>::value, "");
-    static_assert(std::is_integral<Type>::value || std::is_enum<Type>::value, "");
+    static_assert(sizeof(Type) <= 2);
+    static_assert(std::is_pointer<PointerType>::value);
+    static_assert(std::is_integral<Type>::value || std::is_enum<Type>::value);
     using UnsignedType = std::make_unsigned_t<std::conditional_t<std::is_same_v<Type, bool>, uint8_t, Type>>;
     static_assert(sizeof(UnsignedType) == sizeof(Type));
 

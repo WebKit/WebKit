@@ -39,7 +39,7 @@ public:
 private:
     HTMLAllCollection(Document&, CollectionType);
 };
-static_assert(sizeof(HTMLAllCollection) == sizeof(AllDescendantsCollection), "");
+static_assert(sizeof(HTMLAllCollection) == sizeof(AllDescendantsCollection));
 
 class HTMLAllNamedSubCollection final : public CachedHTMLCollection<HTMLAllNamedSubCollection, CollectionTraversalType::Descendants> {
     WTF_MAKE_ISO_ALLOCATED(HTMLAllNamedSubCollection);

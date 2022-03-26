@@ -15288,13 +15288,13 @@ void SpeculativeJIT::compileWeakMapGet(Node* node)
     MacroAssembler::Label loop = m_jit.label();
     m_jit.and32(maskGPR, indexGPR);
     if (node->child1().useKind() == WeakSetObjectUse) {
-        static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKey>) == sizeof(void*), "");
+        static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKey>) == sizeof(void*));
         m_jit.zeroExtend32ToWord(indexGPR, bucketGPR);
         m_jit.lshiftPtr(MacroAssembler::Imm32(sizeof(void*) == 4 ? 2 : 3), bucketGPR);
         m_jit.addPtr(bufferGPR, bucketGPR);
     } else {
         ASSERT(node->child1().useKind() == WeakMapObjectUse);
-        static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKeyValue>) == 16, "");
+        static_assert(sizeof(WeakMapBucket<WeakMapBucketDataKeyValue>) == 16);
         m_jit.zeroExtend32ToWord(indexGPR, bucketGPR);
         m_jit.lshiftPtr(MacroAssembler::Imm32(4), bucketGPR);
         m_jit.addPtr(bufferGPR, bucketGPR);
@@ -16139,7 +16139,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
         ok.link(&m_jit);
     }
 
-    static_assert(StringImpl::flagIs8Bit() == JSRopeString::is8BitInPointer, "");
+    static_assert(StringImpl::flagIs8Bit() == JSRopeString::is8BitInPointer);
     m_jit.and32(TrustedImm32(StringImpl::flagIs8Bit()), scratchGPR);
     m_jit.orPtr(opGPRs[0], scratchGPR);
     m_jit.orPtr(TrustedImmPtr(JSString::isRopeInPointer), scratchGPR);

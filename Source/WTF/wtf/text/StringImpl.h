@@ -525,7 +525,7 @@ public:
 
 using StaticStringImpl = StringImpl::StaticStringImpl;
 
-static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl), "");
+static_assert(sizeof(StringImpl) == sizeof(StaticStringImpl));
 
 template<typename CharacterType>
 struct HashTranslatorCharBuffer {

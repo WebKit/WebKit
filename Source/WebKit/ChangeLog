@@ -1,3 +1,15 @@
+2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use unary static_assert
+        https://bugs.webkit.org/show_bug.cgi?id=238412
+
+        Reviewed by Mark Lam.
+
+        * Shared/API/c/WKContextMenuItem.cpp:
+        * UIProcess/mac/LegacySessionStateCoding.cpp:
+        (WebKit::HistoryEntryDataEncoder::encodeArithmeticType):
+        (WebKit::HistoryEntryDataDecoder::decodeArithmeticType):
+
 2022-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Temporarily disable assertion in MessageReceiveQueueMap::addImpl()

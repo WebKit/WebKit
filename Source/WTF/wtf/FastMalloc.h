@@ -254,7 +254,7 @@ struct FastMalloc {
 
 template<typename T>
 struct FastFree {
-    static_assert(std::is_trivially_destructible<T>::value, "");
+    static_assert(std::is_trivially_destructible<T>::value);
 
     void operator()(T* pointer) const
     {
@@ -264,7 +264,7 @@ struct FastFree {
 
 template<typename T>
 struct FastFree<T[]> {
-    static_assert(std::is_trivially_destructible<T>::value, "");
+    static_assert(std::is_trivially_destructible<T>::value);
 
     void operator()(T* pointer) const
     {

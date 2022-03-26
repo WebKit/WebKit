@@ -170,8 +170,8 @@ void WKContextMenuItemSetUserData(WKContextMenuItemRef itemRef, WKTypeRef userDa
 #if PLATFORM(COCOA)
 
 #define STATIC_ASSERT_EQUALS(a, b, c) \
-    static_assert(a == b, ""); \
-    static_assert(a == WebCore::c, "");
+    static_assert(a == b); \
+    static_assert(a == WebCore::c);
 
 // These values must remain equal to retain binary compatibility.
 STATIC_ASSERT_EQUALS(0, kWKContextMenuItemTagNoAction, ContextMenuItemTagNoAction);

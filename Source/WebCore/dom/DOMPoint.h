@@ -51,6 +51,6 @@ private:
     {
     }
 };
-static_assert(sizeof(DOMPoint) == sizeof(DOMPointReadOnly), "");
+static_assert(sizeof(DOMPoint) == sizeof(DOMPointReadOnly));
 
 } // namespace WebCore

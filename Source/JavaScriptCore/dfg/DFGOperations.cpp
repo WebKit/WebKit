@@ -2550,7 +2550,7 @@ JSC_DEFINE_JIT_OPERATION(operationStringSlice, JSCell*, (JSGlobalObject* globalO
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
     JSString* string = asString(cell);
-    static_assert(static_cast<uint64_t>(JSString::MaxLength) <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()), "");
+    static_assert(static_cast<uint64_t>(JSString::MaxLength) <= static_cast<uint64_t>(std::numeric_limits<int32_t>::max()));
     return stringSlice(globalObject, vm, string, string->length(), start, end);
 }
 

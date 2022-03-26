@@ -1,3 +1,35 @@
+2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use unary static_assert
+        https://bugs.webkit.org/show_bug.cgi?id=238412
+
+        Reviewed by Mark Lam.
+
+        * wtf/CompactPointerTuple.h:
+        * wtf/FastMalloc.h:
+        * wtf/FunctionTraits.h:
+        (WTF::slotsForCCallArgument):
+        * wtf/Int128.cpp:
+        * wtf/MallocPtr.h:
+        * wtf/Markable.h:
+        (WTF::std::underlying_type<EnumType>::type>::max):
+        * wtf/PtrTag.h:
+        (WTF::tagInt):
+        * wtf/Seconds.h:
+        * wtf/StdLibExtras.h:
+        (WTF::roundUpToMultipleOf):
+        * wtf/SystemFree.h:
+        * wtf/UnalignedAccess.h:
+        (WTF::unalignedLoad):
+        (WTF::unalignedStore):
+        * wtf/UniqueArray.h:
+        (WTF::makeUniqueArray):
+        * wtf/WTFAssertions.cpp:
+        * wtf/text/StringConcatenate.h:
+        (WTF::tryMakeStringFromAdapters):
+        * wtf/text/StringImpl.h:
+        * wtf/text/SymbolImpl.h:
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Use StringView::split() instead of String::split() in more places

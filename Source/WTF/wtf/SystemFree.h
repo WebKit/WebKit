@@ -31,7 +31,7 @@ namespace WTF {
 
 template<typename T>
 struct SystemFree {
-    static_assert(std::is_trivially_destructible<T>::value, "");
+    static_assert(std::is_trivially_destructible<T>::value);
 
     void operator()(T* pointer) const
     {
@@ -41,7 +41,7 @@ struct SystemFree {
 
 template<typename T>
 struct SystemFree<T[]> {
-    static_assert(std::is_trivially_destructible<T>::value, "");
+    static_assert(std::is_trivially_destructible<T>::value);
 
     void operator()(T* pointer) const
     {

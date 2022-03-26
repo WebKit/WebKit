@@ -227,7 +227,7 @@ static const constexpr size_t ElementSizeData[] = {
     1, // DataViewType
 };
 
-#define FACTORY(type) static_assert(std::is_final<JS ## type ## Array>::value, "");
+#define FACTORY(type) static_assert(std::is_final<JS ## type ## Array>::value);
 FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(FACTORY)
 #undef FACTORY
 

@@ -58,7 +58,7 @@ private:
 
     const char* activeDOMObjectName() const final;
 };
-static_assert(sizeof(AudioTrackList) == sizeof(TrackListBase), "");
+static_assert(sizeof(AudioTrackList) == sizeof(TrackListBase));
 
 } // namespace WebCore
 

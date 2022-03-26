@@ -45,7 +45,7 @@ struct SameSizeAsInlineItem {
     unsigned length;
 };
 
-static_assert(sizeof(InlineItem) == sizeof(SameSizeAsInlineItem), "");
+static_assert(sizeof(InlineItem) == sizeof(SameSizeAsInlineItem));
 
 }
 }

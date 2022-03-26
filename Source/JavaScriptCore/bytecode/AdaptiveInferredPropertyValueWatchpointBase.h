@@ -58,7 +58,7 @@ public:
         void fireInternal(VM&, const FireDetail&);
     };
     // Own destructor may not be called. Keep members trivially destructible.
-    static_assert(sizeof(StructureWatchpoint) == sizeof(Watchpoint), "");
+    static_assert(sizeof(StructureWatchpoint) == sizeof(Watchpoint));
 
     class PropertyWatchpoint final : public Watchpoint {
     public:
@@ -69,7 +69,7 @@ public:
         void fireInternal(VM&, const FireDetail&);
     };
     // Own destructor may not be called. Keep members trivially destructible.
-    static_assert(sizeof(PropertyWatchpoint) == sizeof(Watchpoint), "");
+    static_assert(sizeof(PropertyWatchpoint) == sizeof(Watchpoint));
 
 protected:
     virtual bool isValid() const;

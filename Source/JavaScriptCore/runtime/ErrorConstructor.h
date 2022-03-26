@@ -55,6 +55,6 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ErrorConstructor, InternalFunction);
 
-static_assert(sizeof(ErrorConstructor) == sizeof(InternalFunction), "");
+static_assert(sizeof(ErrorConstructor) == sizeof(InternalFunction));
 
 } // namespace JSC
