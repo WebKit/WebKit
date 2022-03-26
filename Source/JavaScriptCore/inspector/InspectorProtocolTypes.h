@@ -55,7 +55,7 @@ template<typename T> struct BindingTraits<JSON::ArrayOf<T>> {
     {
         auto array = value->asArray();
         BindingTraits<JSON::ArrayOf<T>>::assertValueHasExpectedType(array.get());
-        COMPILE_ASSERT(sizeof(JSON::ArrayOf<T>) == sizeof(JSON::Array), type_cast_problem);
+        static_assert(sizeof(JSON::ArrayOf<T>) == sizeof(JSON::Array), "type cast problem");
         return static_reference_cast<JSON::ArrayOf<T>>(static_reference_cast<JSON::ArrayBase>(array.releaseNonNull()));
     }
 

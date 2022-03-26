@@ -55,7 +55,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(StyledElement);
 
-COMPILE_ASSERT(sizeof(StyledElement) == sizeof(Element), styledelement_should_remain_same_size_as_element);
+static_assert(sizeof(StyledElement) == sizeof(Element), "styledelement should remain same size as element");
 
 using namespace HTMLNames;
 

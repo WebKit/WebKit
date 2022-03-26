@@ -1,3 +1,14 @@
+2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use static_assert instead of COMPILE_ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=238417
+
+        Reviewed by Mark Lam.
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage isNativeLibraryData:]):
+        * WebView/WebDynamicScrollBarsView.mm:
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Start preparing WebCore for making the String(const char*) constructor explicit

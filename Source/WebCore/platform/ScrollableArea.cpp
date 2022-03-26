@@ -55,7 +55,7 @@ struct SameSizeAsScrollableArea {
     bool bytes[9];
 };
 
-COMPILE_ASSERT(sizeof(ScrollableArea) == sizeof(SameSizeAsScrollableArea), ScrollableArea_should_stay_small);
+static_assert(sizeof(ScrollableArea) == sizeof(SameSizeAsScrollableArea), "ScrollableArea should stay small");
 
 ScrollableArea::ScrollableArea() = default;
 ScrollableArea::~ScrollableArea() = default;

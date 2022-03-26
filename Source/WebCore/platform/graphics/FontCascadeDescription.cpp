@@ -49,7 +49,7 @@ struct SameSizeAsFontCascadeDescription {
     unsigned bitfields3 : 10;
 };
 
-COMPILE_ASSERT(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), FontCascadeDescription_should_stay_small);
+static_assert(sizeof(FontCascadeDescription) == sizeof(SameSizeAsFontCascadeDescription), "FontCascadeDescription should stay small");
 
 FontCascadeDescription::FontCascadeDescription()
     : m_families(RefCountedFixedVector<AtomString>::create(1))

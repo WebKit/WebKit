@@ -192,7 +192,7 @@ private:
 template<typename T>
 bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions)
 {
-    COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
+    static_assert(!T::isSync, "Async message expected");
 
     auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
     encoder.get() << message.arguments();
@@ -203,7 +203,7 @@ bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<
 template<typename U> 
 AuxiliaryProcessProxy::SendSyncResult AuxiliaryProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_t destinationID, IPC::Timeout timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions)
 {
-    COMPILE_ASSERT(U::isSync, SyncMessageExpected);
+    static_assert(U::isSync, "Sync message expected");
 
     if (!m_connection)
         return { };
@@ -216,7 +216,7 @@ AuxiliaryProcessProxy::SendSyncResult AuxiliaryProcessProxy::sendSync(U&& messag
 template<typename T, typename C>
 uint64_t AuxiliaryProcessProxy::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
-    COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
+    static_assert(!T::isSync, "Async message expected");
 
     auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
     uint64_t listenerID = IPC::nextAsyncReplyHandlerID();

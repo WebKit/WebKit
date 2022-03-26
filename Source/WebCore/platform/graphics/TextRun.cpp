@@ -37,6 +37,6 @@ struct ExpectedTextRunSize {
     unsigned bitfields : 9;
 };
 
-COMPILE_ASSERT(sizeof(TextRun) == sizeof(ExpectedTextRunSize), TextRun_is_not_of_expected_size);
+static_assert(sizeof(TextRun) == sizeof(ExpectedTextRunSize), "TextRun is not of expected size");
 
 }

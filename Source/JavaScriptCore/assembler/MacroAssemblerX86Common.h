@@ -101,9 +101,9 @@ public:
         DoubleLessThanOrUnordered = X86Assembler::ConditionB,
         DoubleLessThanOrEqualOrUnordered = X86Assembler::ConditionBE,
     };
-    COMPILE_ASSERT(
+    static_assert(
         !((X86Assembler::ConditionE | X86Assembler::ConditionNE | X86Assembler::ConditionA | X86Assembler::ConditionAE | X86Assembler::ConditionB | X86Assembler::ConditionBE) & DoubleConditionBits),
-        DoubleConditionBits_should_not_interfere_with_X86Assembler_Condition_codes);
+        "DoubleConditionBits should not interfere with X86Assembler Condition codes");
 
     static constexpr RegisterID stackPointerRegister = X86Registers::esp;
     static constexpr RegisterID framePointerRegister = X86Registers::ebp;

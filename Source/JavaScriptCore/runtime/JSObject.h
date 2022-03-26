@@ -1666,7 +1666,7 @@ inline size_t maxOffsetRelativeToBase(PropertyOffset offset)
     return static_cast<size_t>(addressOffset);
 }
 
-COMPILE_ASSERT(!(sizeof(JSObject) % sizeof(WriteBarrierBase<Unknown>)), JSObject_inline_storage_has_correct_alignment);
+static_assert(!(sizeof(JSObject) % sizeof(WriteBarrierBase<Unknown>)), "JSObject inline storage has correct alignment");
 
 template<unsigned charactersCount>
 ALWAYS_INLINE Identifier makeIdentifier(VM& vm, const char (&characters)[charactersCount])

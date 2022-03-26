@@ -46,7 +46,7 @@ struct SameSizeAsStyleRuleBase : public WTF::RefCountedBase {
     unsigned bitfields : 5;
 };
 
-COMPILE_ASSERT(sizeof(StyleRuleBase) == sizeof(SameSizeAsStyleRuleBase), StyleRuleBase_should_stay_small);
+static_assert(sizeof(StyleRuleBase) == sizeof(SameSizeAsStyleRuleBase), "StyleRuleBase should stay small");
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleBase);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRule);

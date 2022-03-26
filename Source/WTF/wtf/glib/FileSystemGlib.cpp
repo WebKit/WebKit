@@ -265,9 +265,9 @@ std::optional<uint32_t> volumeFileBlockSize(const String&)
 #if USE(FILE_LOCK)
 bool lockFile(PlatformFileHandle handle, OptionSet<FileLockMode> lockMode)
 {
-    COMPILE_ASSERT(LOCK_SH == WTF::enumToUnderlyingType(FileLockMode::Shared), LockSharedEncodingIsAsExpected);
-    COMPILE_ASSERT(LOCK_EX == WTF::enumToUnderlyingType(FileLockMode::Exclusive), LockExclusiveEncodingIsAsExpected);
-    COMPILE_ASSERT(LOCK_NB == WTF::enumToUnderlyingType(FileLockMode::Nonblocking), LockNonblockingEncodingIsAsExpected);
+    static_assert(LOCK_SH == WTF::enumToUnderlyingType(FileLockMode::Shared), "LockSharedEncoding is as expected");
+    static_assert(LOCK_EX == WTF::enumToUnderlyingType(FileLockMode::Exclusive), "LockExclusiveEncoding is as expected");
+    static_assert(LOCK_NB == WTF::enumToUnderlyingType(FileLockMode::Nonblocking), "LockNonblockingEncoding is as expected");
     auto* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(handle));
     int result = flock(g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream)), lockMode.toRaw());
     return result != -1;

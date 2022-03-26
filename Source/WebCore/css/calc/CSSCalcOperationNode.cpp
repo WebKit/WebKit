@@ -202,7 +202,7 @@ static SortingCategory sortingCategoryForType(CSSUnitType unitType)
         SortingCategory::Other,         // UOther
     };
 
-    COMPILE_ASSERT(ARRAY_SIZE(sortOrder) == static_cast<unsigned>(CalculationCategory::Other) + 1, sortOrder_size_should_match_UnitCategory);
+    static_assert(ARRAY_SIZE(sortOrder) == static_cast<unsigned>(CalculationCategory::Other) + 1, "sortOrder size should match UnitCategory");
     return sortOrder[static_cast<unsigned>(calcUnitCategory(unitType))];
 }
 

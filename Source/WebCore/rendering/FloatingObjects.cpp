@@ -42,10 +42,10 @@ struct SameSizeAsFloatingObject {
     uint32_t bitfields : 8;
 };
 
-COMPILE_ASSERT(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), FloatingObject_should_stay_small);
+static_assert(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), "FloatingObject should stay small");
 #if !ASSERT_ENABLED
-COMPILE_ASSERT(sizeof(WeakPtr<RenderBox>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
-COMPILE_ASSERT(sizeof(WeakPtr<LegacyRootInlineBox>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
+static_assert(sizeof(WeakPtr<RenderBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
+static_assert(sizeof(WeakPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
 FloatingObject::FloatingObject(RenderBox& renderer)

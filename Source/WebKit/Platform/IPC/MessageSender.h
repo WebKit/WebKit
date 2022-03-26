@@ -89,7 +89,7 @@ public:
     template<typename T, typename C>
     uint64_t sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions = { })
     {
-        COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
+        static_assert(!T::isSync, "Async message expected");
 
         auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
         uint64_t listenerID = IPC::nextAsyncReplyHandlerID();

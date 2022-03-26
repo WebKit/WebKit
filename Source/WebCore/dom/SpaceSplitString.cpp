@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-COMPILE_ASSERT(!(sizeof(SpaceSplitStringData) % sizeof(uintptr_t)), SpaceSplitStringDataTailIsAlignedToWordSize);
+static_assert(!(sizeof(SpaceSplitStringData) % sizeof(uintptr_t)), "SpaceSplitStringDataTail is aligned to WordSize");
 
 template <typename CharacterType, typename TokenProcessor>
 static inline void tokenizeSpaceSplitString(TokenProcessor& tokenProcessor, const CharacterType* characters, unsigned length)

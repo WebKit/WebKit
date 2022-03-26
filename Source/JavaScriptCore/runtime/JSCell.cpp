@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-COMPILE_ASSERT(sizeof(JSCell) == sizeof(uint64_t), jscell_is_eight_bytes);
+static_assert(sizeof(JSCell) == sizeof(uint64_t), "jscell is eight bytes");
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSCell);
 
 void JSCell::destroy(JSCell* cell)

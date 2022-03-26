@@ -1,3 +1,22 @@
+2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use static_assert instead of COMPILE_ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=238417
+
+        Reviewed by Mark Lam.
+
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::send):
+        (IPC::Connection::sendWithAsyncReply):
+        (IPC::Connection::sendSync):
+        * Platform/IPC/MessageSender.h:
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::sendOutgoingMessage):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        (WebKit::AuxiliaryProcessProxy::send):
+        (WebKit::AuxiliaryProcessProxy::sendSync):
+        (WebKit::AuxiliaryProcessProxy::sendWithAsyncReply):
+
 2022-03-26  David Quesada  <david_quesada@apple.com>
 
         Update the check in the sandbox profiles to guard the system content path rules

@@ -176,7 +176,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
 
 IGNORE_WARNINGS_BEGIN("type-limits")
 
-#define VERIFY_OPCODE_ID(id, size) COMPILE_ASSERT(id <= numOpcodeIDs, ASSERT_THAT_JS_OPCODE_IDS_ARE_VALID);
+#define VERIFY_OPCODE_ID(id, size) static_assert(id <= numOpcodeIDs, "ASSERT that JS Opcode ID is valid");
     FOR_EACH_OPCODE_ID(VERIFY_OPCODE_ID);
 #undef VERIFY_OPCODE_ID
 

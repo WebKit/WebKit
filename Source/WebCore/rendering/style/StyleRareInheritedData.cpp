@@ -71,7 +71,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
 #endif
 };
 
-COMPILE_ASSERT(sizeof(StyleRareInheritedData) <= sizeof(GreaterThanOrSameSizeAsStyleRareInheritedData), StyleRareInheritedData_should_bit_pack);
+static_assert(sizeof(StyleRareInheritedData) <= sizeof(GreaterThanOrSameSizeAsStyleRareInheritedData), "StyleRareInheritedData should bit pack");
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRareInheritedData);
 

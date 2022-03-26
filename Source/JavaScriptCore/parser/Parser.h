@@ -66,7 +66,7 @@ struct DebuggerParseData;
 #define TreePropertyList typename TreeBuilder::PropertyList
 #define TreeDestructuringPattern typename TreeBuilder::DestructuringPattern
 
-COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
+static_assert(LastUntaggedToken < 64, "Less than 64 untagged tokens");
 
 enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
 enum FunctionBodyType { ArrowFunctionBodyExpression, ArrowFunctionBodyBlock, StandardFunctionBodyBlock };

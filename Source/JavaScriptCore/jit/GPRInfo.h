@@ -685,22 +685,22 @@ public:
 
     // GPRReg mapping is direct, the machine register numbers can
     // be used directly as indices into the GPR RegisterBank.
-    COMPILE_ASSERT(ARM64Registers::q0 == 0, q0_is_0);
-    COMPILE_ASSERT(ARM64Registers::q1 == 1, q1_is_1);
-    COMPILE_ASSERT(ARM64Registers::q2 == 2, q2_is_2);
-    COMPILE_ASSERT(ARM64Registers::q3 == 3, q3_is_3);
-    COMPILE_ASSERT(ARM64Registers::q4 == 4, q4_is_4);
-    COMPILE_ASSERT(ARM64Registers::q5 == 5, q5_is_5);
-    COMPILE_ASSERT(ARM64Registers::q6 == 6, q6_is_6);
-    COMPILE_ASSERT(ARM64Registers::q7 == 7, q7_is_7);
-    COMPILE_ASSERT(ARM64Registers::q8 == 8, q8_is_8);
-    COMPILE_ASSERT(ARM64Registers::q9 == 9, q9_is_9);
-    COMPILE_ASSERT(ARM64Registers::q10 == 10, q10_is_10);
-    COMPILE_ASSERT(ARM64Registers::q11 == 11, q11_is_11);
-    COMPILE_ASSERT(ARM64Registers::q12 == 12, q12_is_12);
-    COMPILE_ASSERT(ARM64Registers::q13 == 13, q13_is_13);
-    COMPILE_ASSERT(ARM64Registers::q14 == 14, q14_is_14);
-    COMPILE_ASSERT(ARM64Registers::q15 == 15, q15_is_15);
+    static_assert(ARM64Registers::q0 == 0);
+    static_assert(ARM64Registers::q1 == 1);
+    static_assert(ARM64Registers::q2 == 2);
+    static_assert(ARM64Registers::q3 == 3);
+    static_assert(ARM64Registers::q4 == 4);
+    static_assert(ARM64Registers::q5 == 5);
+    static_assert(ARM64Registers::q6 == 6);
+    static_assert(ARM64Registers::q7 == 7);
+    static_assert(ARM64Registers::q8 == 8);
+    static_assert(ARM64Registers::q9 == 9);
+    static_assert(ARM64Registers::q10 == 10);
+    static_assert(ARM64Registers::q11 == 11);
+    static_assert(ARM64Registers::q12 == 12);
+    static_assert(ARM64Registers::q13 == 13);
+    static_assert(ARM64Registers::q14 == 14);
+    static_assert(ARM64Registers::q15 == 15);
     static GPRReg toRegister(unsigned index)
     {
         return (GPRReg)index;

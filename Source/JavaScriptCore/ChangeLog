@@ -1,5 +1,46 @@
 2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Use static_assert instead of COMPILE_ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=238417
+
+        Reviewed by Mark Lam.
+
+        * assembler/ARM64Assembler.h:
+        * assembler/ARMv7Assembler.h:
+        * assembler/MacroAssemblerX86Common.h:
+        * bytecode/Opcode.h:
+        * bytecode/VirtualRegister.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::compileToBooleanObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        * inspector/InspectorProtocolTypes.h:
+        (Inspector::Protocol::BindingTraits<JSON::ArrayOf<T>>::runtimeCast):
+        * inspector/scripts/codegen/cpp_generator_templates.py:
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        * inspector/scripts/tests/expected/commands-with-async-attribute.json-result:
+        * inspector/scripts/tests/expected/commands-with-optional-call-return-parameters.json-result:
+        * inspector/scripts/tests/expected/definitions-with-mac-platform.json-result:
+        * inspector/scripts/tests/expected/events-with-optional-parameters.json-result:
+        * inspector/scripts/tests/expected/generate-domains-with-feature-guards.json-result:
+        * inspector/scripts/tests/expected/shadowed-optional-type-setters.json-result:
+        * inspector/scripts/tests/expected/type-declaration-object-type.json-result:
+        * inspector/scripts/tests/expected/type-requiring-runtime-casts.json-result:
+        * inspector/scripts/tests/expected/type-with-open-parameters.json-result:
+        * jit/FPRInfo.h:
+        * jit/GPRInfo.h:
+        * parser/Parser.h:
+        * runtime/JSCell.cpp:
+        * runtime/JSObject.h:
+        * runtime/SmallStrings.cpp:
+        (JSC::SmallStrings::SmallStrings):
+        * runtime/Structure.h:
+        (JSC::Structure::outOfLineCapacity):
+        * yarr/YarrInterpreter.cpp:
+
+2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
         Use unary static_assert
         https://bugs.webkit.org/show_bug.cgi?id=238412
 

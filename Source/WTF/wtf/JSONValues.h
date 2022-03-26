@@ -404,7 +404,7 @@ private:
 
     Array& castedArray()
     {
-        COMPILE_ASSERT(sizeof(Array) == sizeof(ArrayOf<T>), cannot_cast);
+        static_assert(sizeof(Array) == sizeof(ArrayOf<T>), "cannot cast");
         return *static_cast<Array*>(static_cast<ArrayBase*>(this));
     }
 

@@ -52,7 +52,7 @@ struct SameSizeAsLegacyInlineBox {
 #endif
 };
 
-COMPILE_ASSERT(sizeof(LegacyInlineBox) == sizeof(SameSizeAsLegacyInlineBox), LegacyInlineBox_size_guard);
+static_assert(sizeof(LegacyInlineBox) == sizeof(SameSizeAsLegacyInlineBox), "LegacyInlineBox size guard");
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 

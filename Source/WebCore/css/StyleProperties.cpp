@@ -1842,7 +1842,7 @@ unsigned StyleProperties::averageSizeInBytes()
 struct SameSizeAsStyleProperties : public RefCounted<SameSizeAsStyleProperties> {
     unsigned bitfield;
 };
-COMPILE_ASSERT(sizeof(StyleProperties) == sizeof(SameSizeAsStyleProperties), style_property_set_should_stay_small);
+static_assert(sizeof(StyleProperties) == sizeof(SameSizeAsStyleProperties), "style property set should stay small");
 
 #ifndef NDEBUG
 void StyleProperties::showStyle()

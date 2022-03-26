@@ -98,7 +98,7 @@ struct SameSizeAsRenderBox : public RenderBoxModelObject {
     void* pointers[2];
 };
 
-COMPILE_ASSERT(sizeof(RenderBox) == sizeof(SameSizeAsRenderBox), RenderBox_should_stay_small);
+static_assert(sizeof(RenderBox) == sizeof(SameSizeAsRenderBox), "RenderBox should stay small");
 
 using namespace HTMLNames;
 

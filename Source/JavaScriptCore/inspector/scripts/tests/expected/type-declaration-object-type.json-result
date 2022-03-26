@@ -373,29 +373,29 @@ public:
         Builder(Ref</*Error*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class Error;
     public:
 
         Builder<STATE | MessageSet>& setMessage(const String& in_message)
         {
-            COMPILE_ASSERT(!(STATE & MessageSet), property_message_already_set);
+            static_assert(!(STATE & MessageSet), "property message already set");
             m_result->setString("message"_s, in_message);
             return castState<MessageSet>();
         }
 
         Builder<STATE | CodeSet>& setCode(int in_code)
         {
-            COMPILE_ASSERT(!(STATE & CodeSet), property_code_already_set);
+            static_assert(!(STATE & CodeSet), "property code already set");
             m_result->setInteger("code"_s, in_code);
             return castState<CodeSet>();
         }
 
         Ref<Error> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(Error) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(Error) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<Error>*>(&jsonResult));
@@ -450,15 +450,15 @@ public:
         Builder(Ref</*OptionalParameterBundle*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class OptionalParameterBundle;
     public:
 
         Ref<OptionalParameterBundle> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(OptionalParameterBundle) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(OptionalParameterBundle) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<OptionalParameterBundle>*>(&jsonResult));
@@ -557,78 +557,78 @@ public:
         Builder(Ref</*ParameterBundle*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class ParameterBundle;
     public:
 
         Builder<STATE | ColumnNamesSet>& setColumnNames(Ref<JSON::ArrayOf<String>>&& in_columnNames)
         {
-            COMPILE_ASSERT(!(STATE & ColumnNamesSet), property_columnNames_already_set);
+            static_assert(!(STATE & ColumnNamesSet), "property columnNames already set");
             m_result->setArray("columnNames"_s, WTFMove(in_columnNames));
             return castState<ColumnNamesSet>();
         }
 
         Builder<STATE | ButtonsSet>& setButtons(Ref<JSON::ArrayOf<Protocol::Database::MouseButton>>&& in_buttons)
         {
-            COMPILE_ASSERT(!(STATE & ButtonsSet), property_buttons_already_set);
+            static_assert(!(STATE & ButtonsSet), "property buttons already set");
             m_result->setArray("buttons"_s, WTFMove(in_buttons));
             return castState<ButtonsSet>();
         }
 
         Builder<STATE | DirectionalitySet>& setDirectionality(Directionality in_directionality)
         {
-            COMPILE_ASSERT(!(STATE & DirectionalitySet), property_directionality_already_set);
+            static_assert(!(STATE & DirectionalitySet), "property directionality already set");
             m_result->setString("directionality"_s, Protocol::TestHelpers::getEnumConstantValue(in_directionality));
             return castState<DirectionalitySet>();
         }
 
         Builder<STATE | NotesSet>& setNotes(const String& in_notes)
         {
-            COMPILE_ASSERT(!(STATE & NotesSet), property_notes_already_set);
+            static_assert(!(STATE & NotesSet), "property notes already set");
             m_result->setString("notes"_s, in_notes);
             return castState<NotesSet>();
         }
 
         Builder<STATE | TimestampSet>& setTimestamp(double in_timestamp)
         {
-            COMPILE_ASSERT(!(STATE & TimestampSet), property_timestamp_already_set);
+            static_assert(!(STATE & TimestampSet), "property timestamp already set");
             m_result->setDouble("timestamp"_s, in_timestamp);
             return castState<TimestampSet>();
         }
 
         Builder<STATE | ValuesSet>& setValues(Ref<JSON::Object>&& in_values)
         {
-            COMPILE_ASSERT(!(STATE & ValuesSet), property_values_already_set);
+            static_assert(!(STATE & ValuesSet), "property values already set");
             m_result->setObject("values"_s, WTFMove(in_values));
             return castState<ValuesSet>();
         }
 
         Builder<STATE | PayloadSet>& setPayload(Ref<JSON::Value>&& in_payload)
         {
-            COMPILE_ASSERT(!(STATE & PayloadSet), property_payload_already_set);
+            static_assert(!(STATE & PayloadSet), "property payload already set");
             m_result->setValue("payload"_s, WTFMove(in_payload));
             return castState<PayloadSet>();
         }
 
         Builder<STATE | ErrorSet>& setError(Ref<Protocol::Database::Error>&& in_error)
         {
-            COMPILE_ASSERT(!(STATE & ErrorSet), property_error_already_set);
+            static_assert(!(STATE & ErrorSet), "property error already set");
             m_result->setObject("error"_s, WTFMove(in_error));
             return castState<ErrorSet>();
         }
 
         Builder<STATE | ErrorListSet>& setErrorList(Ref<Protocol::Database::ErrorList>&& in_errorList)
         {
-            COMPILE_ASSERT(!(STATE & ErrorListSet), property_errorList_already_set);
+            static_assert(!(STATE & ErrorListSet), "property errorList already set");
             m_result->setArray("errorList"_s, WTFMove(in_errorList));
             return castState<ErrorListSet>();
         }
 
         Ref<ParameterBundle> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(ParameterBundle) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(ParameterBundle) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<ParameterBundle>*>(&jsonResult));
@@ -682,50 +682,50 @@ public:
         Builder(Ref</*ObjectWithPropertyNameConflicts*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class ObjectWithPropertyNameConflicts;
     public:
 
         Builder<STATE | IntegerSet>& setInteger(const String& in_integer)
         {
-            COMPILE_ASSERT(!(STATE & IntegerSet), property_integer_already_set);
+            static_assert(!(STATE & IntegerSet), "property integer already set");
             m_result->setString("integer"_s, in_integer);
             return castState<IntegerSet>();
         }
 
         Builder<STATE | ArraySet>& setArray(const String& in_array)
         {
-            COMPILE_ASSERT(!(STATE & ArraySet), property_array_already_set);
+            static_assert(!(STATE & ArraySet), "property array already set");
             m_result->setString("array"_s, in_array);
             return castState<ArraySet>();
         }
 
         Builder<STATE | StringSet>& setString(const String& in_string)
         {
-            COMPILE_ASSERT(!(STATE & StringSet), property_string_already_set);
+            static_assert(!(STATE & StringSet), "property string already set");
             m_result->setString("string"_s, in_string);
             return castState<StringSet>();
         }
 
         Builder<STATE | ValueSet>& setValue(const String& in_value)
         {
-            COMPILE_ASSERT(!(STATE & ValueSet), property_value_already_set);
+            static_assert(!(STATE & ValueSet), "property value already set");
             m_result->setString("value"_s, in_value);
             return castState<ValueSet>();
         }
 
         Builder<STATE | ObjectSet>& setObject(const String& in_object)
         {
-            COMPILE_ASSERT(!(STATE & ObjectSet), property_object_already_set);
+            static_assert(!(STATE & ObjectSet), "property object already set");
             m_result->setString("object"_s, in_object);
             return castState<ObjectSet>();
         }
 
         Ref<ObjectWithPropertyNameConflicts> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(ObjectWithPropertyNameConflicts) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(ObjectWithPropertyNameConflicts) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<ObjectWithPropertyNameConflicts>*>(&jsonResult));
@@ -770,15 +770,15 @@ public:
         Builder(Ref</*DummyObject*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class DummyObject;
     public:
 
         Ref<DummyObject> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(DummyObject) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(DummyObject) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<DummyObject>*>(&jsonResult));
@@ -835,71 +835,71 @@ public:
         Builder(Ref</*ParameterBundle*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class ParameterBundle;
     public:
 
         Builder<STATE | DirectionalitySet>& setDirectionality(Directionality in_directionality)
         {
-            COMPILE_ASSERT(!(STATE & DirectionalitySet), property_directionality_already_set);
+            static_assert(!(STATE & DirectionalitySet), "property directionality already set");
             m_result->setString("directionality"_s, Protocol::TestHelpers::getEnumConstantValue(in_directionality));
             return castState<DirectionalitySet>();
         }
 
         Builder<STATE | ButtonsSet>& setButtons(Ref<JSON::ArrayOf<Protocol::Database::MouseButton>>&& in_buttons)
         {
-            COMPILE_ASSERT(!(STATE & ButtonsSet), property_buttons_already_set);
+            static_assert(!(STATE & ButtonsSet), "property buttons already set");
             m_result->setArray("buttons"_s, WTFMove(in_buttons));
             return castState<ButtonsSet>();
         }
 
         Builder<STATE | ColumnNamesSet>& setColumnNames(Ref<JSON::ArrayOf<String>>&& in_columnNames)
         {
-            COMPILE_ASSERT(!(STATE & ColumnNamesSet), property_columnNames_already_set);
+            static_assert(!(STATE & ColumnNamesSet), "property columnNames already set");
             m_result->setArray("columnNames"_s, WTFMove(in_columnNames));
             return castState<ColumnNamesSet>();
         }
 
         Builder<STATE | NotesSet>& setNotes(const String& in_notes)
         {
-            COMPILE_ASSERT(!(STATE & NotesSet), property_notes_already_set);
+            static_assert(!(STATE & NotesSet), "property notes already set");
             m_result->setString("notes"_s, in_notes);
             return castState<NotesSet>();
         }
 
         Builder<STATE | TimestampSet>& setTimestamp(double in_timestamp)
         {
-            COMPILE_ASSERT(!(STATE & TimestampSet), property_timestamp_already_set);
+            static_assert(!(STATE & TimestampSet), "property timestamp already set");
             m_result->setDouble("timestamp"_s, in_timestamp);
             return castState<TimestampSet>();
         }
 
         Builder<STATE | ValuesSet>& setValues(Ref<JSON::Object>&& in_values)
         {
-            COMPILE_ASSERT(!(STATE & ValuesSet), property_values_already_set);
+            static_assert(!(STATE & ValuesSet), "property values already set");
             m_result->setObject("values"_s, WTFMove(in_values));
             return castState<ValuesSet>();
         }
 
         Builder<STATE | PayloadSet>& setPayload(Ref<JSON::Value>&& in_payload)
         {
-            COMPILE_ASSERT(!(STATE & PayloadSet), property_payload_already_set);
+            static_assert(!(STATE & PayloadSet), "property payload already set");
             m_result->setValue("payload"_s, WTFMove(in_payload));
             return castState<PayloadSet>();
         }
 
         Builder<STATE | ErrorSet>& setError(Ref<Protocol::Database::Error>&& in_error)
         {
-            COMPILE_ASSERT(!(STATE & ErrorSet), property_error_already_set);
+            static_assert(!(STATE & ErrorSet), "property error already set");
             m_result->setObject("error"_s, WTFMove(in_error));
             return castState<ErrorSet>();
         }
 
         Ref<ParameterBundle> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(ParameterBundle) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(ParameterBundle) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<ParameterBundle>*>(&jsonResult));

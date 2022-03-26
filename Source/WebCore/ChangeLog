@@ -1,3 +1,65 @@
+2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use static_assert instead of COMPILE_ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=238417
+
+        Reviewed by Mark Lam.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * contentextensions/DFANode.h:
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildPolygonString):
+        * css/CSSProperty.cpp:
+        * css/CSSRule.cpp:
+        * css/CSSValue.cpp:
+        * css/StyleProperties.cpp:
+        * css/StyleRule.cpp:
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::sortingCategoryForType):
+        * dom/ElementData.cpp:
+        * dom/NodeRareData.cpp:
+        * dom/ShadowRoot.cpp:
+        * dom/SpaceSplitString.cpp:
+        * dom/StyledElement.cpp:
+        * dom/TreeScope.cpp:
+        * editing/HTMLInterchange.cpp:
+        (WebCore::convertHTMLTextToInterchangeFormat):
+        * html/HTMLTrackElement.cpp:
+        * html/track/VTTCue.cpp:
+        * platform/Length.cpp:
+        * platform/ScrollableArea.cpp:
+        * platform/UserAgentQuirks.h:
+        (WebCore::UserAgentQuirks::UserAgentQuirks):
+        * platform/graphics/FontCascadeDescription.cpp:
+        * platform/graphics/Region.cpp:
+        (WebCore::Region::Shape::shapeOperation):
+        * platform/graphics/TextRun.cpp:
+        * platform/text/BidiContext.cpp:
+        * platform/text/TextFlags.h:
+        * platform/win/ImportedFunctionsEnumerator.cpp:
+        (WebCore::ImportedFunctionsEnumerator::addressOfCurrentFunctionPointer const):
+        * rendering/BreakLines.cpp:
+        * rendering/FloatingObjects.cpp:
+        * rendering/LegacyInlineBox.cpp:
+        * rendering/LegacyInlineFlowBox.cpp:
+        * rendering/LegacyInlineTextBox.cpp:
+        * rendering/LegacyRootInlineBox.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlockFlow.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderText.cpp:
+        * rendering/style/FillLayer.cpp:
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/StyleBoxData.cpp:
+        * rendering/style/StyleRareInheritedData.cpp:
+        * rendering/style/WillChangeData.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        * style/RuleData.cpp:
+        * svg/GradientAttributes.h:
+
 2022-03-26  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorkerWindowClient.focus

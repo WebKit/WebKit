@@ -207,7 +207,7 @@ private:
         Builder(Ref</*${objectType}*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class ${objectType};
     public:""")
@@ -216,8 +216,8 @@ private:
 """
         Ref<${objectType}> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(${objectType}) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(${objectType}) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<${objectType}>*>(&jsonResult));
@@ -239,7 +239,7 @@ ${constructorExample}
 {
     auto result = value->asObject();
     BindingTraits<${objectType}>::assertValueHasExpectedType(result.get());
-    COMPILE_ASSERT(sizeof(${objectType}) == sizeof(JSON::ObjectBase), type_cast_problem);
+    static_assert(sizeof(${objectType}) == sizeof(JSON::ObjectBase), "type cast problem");
     return static_reference_cast<${objectType}>(static_reference_cast<JSON::ObjectBase>(result.releaseNonNull()));
 }
 """)

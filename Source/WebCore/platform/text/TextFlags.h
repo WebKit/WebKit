@@ -577,7 +577,7 @@ enum class FontWidthVariant : uint8_t {
 
 const unsigned FontWidthVariantWidth = 2;
 
-COMPILE_ASSERT(!(static_cast<unsigned>(FontWidthVariant::LastFontWidthVariant) >> FontWidthVariantWidth), FontWidthVariantWidth_is_correct);
+static_assert(!(static_cast<unsigned>(FontWidthVariant::LastFontWidthVariant) >> FontWidthVariantWidth), "FontWidthVariantWidth is correct");
 
 enum class FontSmallCaps : uint8_t {
     Off = 0,

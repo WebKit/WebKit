@@ -33,7 +33,7 @@ namespace JSC {
 
 SmallStrings::SmallStrings()
 {
-    COMPILE_ASSERT(singleCharacterStringCount == sizeof(m_singleCharacterStrings) / sizeof(m_singleCharacterStrings[0]), IsNumCharactersConstInSyncWithClassUsage);
+    static_assert(singleCharacterStringCount == sizeof(m_singleCharacterStrings) / sizeof(m_singleCharacterStrings[0]), "characters count is in sync with class usage");
 
     for (unsigned i = 0; i < singleCharacterStringCount; ++i)
         m_singleCharacterStrings[i] = nullptr;

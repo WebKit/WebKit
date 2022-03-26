@@ -413,29 +413,29 @@ public:
         Builder(Ref</*Error*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class Error;
     public:
 
         Builder<STATE | MessageSet>& setMessage(const String& in_message)
         {
-            COMPILE_ASSERT(!(STATE & MessageSet), property_message_already_set);
+            static_assert(!(STATE & MessageSet), "property message already set");
             m_result->setString("message"_s, in_message);
             return castState<MessageSet>();
         }
 
         Builder<STATE | CodeSet>& setCode(int in_code)
         {
-            COMPILE_ASSERT(!(STATE & CodeSet), property_code_already_set);
+            static_assert(!(STATE & CodeSet), "property code already set");
             m_result->setInteger("code"_s, in_code);
             return castState<CodeSet>();
         }
 
         Ref<Error> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(Error) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(Error) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<Error>*>(&jsonResult));

@@ -88,7 +88,7 @@ struct SameSizeAsRenderText : public RenderObject {
     String text;
 };
 
-COMPILE_ASSERT(sizeof(RenderText) == sizeof(SameSizeAsRenderText), RenderText_should_stay_small);
+static_assert(sizeof(RenderText) == sizeof(SameSizeAsRenderText), "RenderText should stay small");
 
 class SecureTextTimer final : private TimerBase {
     WTF_MAKE_FAST_ALLOCATED;

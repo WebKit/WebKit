@@ -359,22 +359,22 @@ public:
         Builder(Ref</*KeyPath*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class KeyPath;
     public:
 
         Builder<STATE | TypeSet>& setType(Type in_type)
         {
-            COMPILE_ASSERT(!(STATE & TypeSet), property_type_already_set);
+            static_assert(!(STATE & TypeSet), "property type already set");
             m_result->setString("type"_s, Protocol::TestHelpers::getEnumConstantValue(in_type));
             return castState<TypeSet>();
         }
 
         Ref<KeyPath> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(KeyPath) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(KeyPath) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<KeyPath>*>(&jsonResult));

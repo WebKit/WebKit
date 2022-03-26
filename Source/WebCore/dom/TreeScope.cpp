@@ -56,7 +56,7 @@ struct SameSizeAsTreeScope {
     void* pointers[10];
 };
 
-COMPILE_ASSERT(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), treescope_should_stay_small);
+static_assert(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), "treescope should stay small");
 
 using namespace HTMLNames;
 

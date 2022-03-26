@@ -34,7 +34,7 @@ struct SameSizeAsCSSRule : public RefCounted<SameSizeAsCSSRule> {
     void* pointerUnion;
 };
 
-COMPILE_ASSERT(sizeof(CSSRule) == sizeof(SameSizeAsCSSRule), CSSRule_should_stay_small);
+static_assert(sizeof(CSSRule) == sizeof(SameSizeAsCSSRule), "CSSRule should stay small");
 
 ExceptionOr<void> CSSRule::setCssText(const String&)
 {

@@ -74,7 +74,7 @@ struct SameSizeAsLegacyInlineTextBox : public LegacyInlineBox {
     unsigned short variables2;
 };
 
-COMPILE_ASSERT(sizeof(LegacyInlineTextBox) == sizeof(SameSizeAsLegacyInlineTextBox), LegacyInlineTextBox_should_stay_small);
+static_assert(sizeof(LegacyInlineTextBox) == sizeof(SameSizeAsLegacyInlineTextBox), "LegacyInlineTextBox should stay small");
 
 typedef HashMap<const LegacyInlineTextBox*, LayoutRect> LegacyInlineTextBoxOverflowMap;
 static LegacyInlineTextBoxOverflowMap* gTextBoxesWithOverflow;

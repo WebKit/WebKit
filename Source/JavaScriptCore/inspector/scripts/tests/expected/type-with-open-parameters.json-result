@@ -342,29 +342,29 @@ public:
         Builder(Ref</*NoOpenParameters*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class NoOpenParameters;
     public:
 
         Builder<STATE | OneSet>& setOne(double in_one)
         {
-            COMPILE_ASSERT(!(STATE & OneSet), property_one_already_set);
+            static_assert(!(STATE & OneSet), "property one already set");
             m_result->setDouble("one"_s, in_one);
             return castState<OneSet>();
         }
 
         Builder<STATE | TwoSet>& setTwo(double in_two)
         {
-            COMPILE_ASSERT(!(STATE & TwoSet), property_two_already_set);
+            static_assert(!(STATE & TwoSet), "property two already set");
             m_result->setDouble("two"_s, in_two);
             return castState<TwoSet>();
         }
 
         Ref<NoOpenParameters> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(NoOpenParameters) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(NoOpenParameters) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<NoOpenParameters>*>(&jsonResult));
@@ -407,29 +407,29 @@ public:
         Builder(Ref</*OpenParameters*/JSON::Object>&& object)
             : m_result(WTFMove(object))
         {
-            COMPILE_ASSERT(STATE == NoFieldsSet, builder_created_in_non_init_state);
+            static_assert(STATE == NoFieldsSet, "builder created in non init state");
         }
         friend class OpenParameters;
     public:
 
         Builder<STATE | AlphaSet>& setAlpha(double in_alpha)
         {
-            COMPILE_ASSERT(!(STATE & AlphaSet), property_alpha_already_set);
+            static_assert(!(STATE & AlphaSet), "property alpha already set");
             m_result->setDouble("alpha"_s, in_alpha);
             return castState<AlphaSet>();
         }
 
         Builder<STATE | BetaSet>& setBeta(double in_beta)
         {
-            COMPILE_ASSERT(!(STATE & BetaSet), property_beta_already_set);
+            static_assert(!(STATE & BetaSet), "property beta already set");
             m_result->setDouble("beta"_s, in_beta);
             return castState<BetaSet>();
         }
 
         Ref<OpenParameters> release()
         {
-            COMPILE_ASSERT(STATE == AllFieldsSet, result_is_not_ready);
-            COMPILE_ASSERT(sizeof(OpenParameters) == sizeof(JSON::Object), cannot_cast);
+            static_assert(STATE == AllFieldsSet, "result is not ready");
+            static_assert(sizeof(OpenParameters) == sizeof(JSON::Object), "cannot cast");
 
             Ref<JSON::Object> jsonResult = m_result.releaseNonNull();
             auto result = WTFMove(*reinterpret_cast<Ref<OpenParameters>*>(&jsonResult));

@@ -44,7 +44,7 @@ public:
     UserAgentQuirks()
         : m_quirks(0)
     {
-        COMPILE_ASSERT(sizeof(m_quirks) * 8 >= NumUserAgentQuirks, not_enough_room_for_quirks);
+        static_assert(sizeof(m_quirks) * 8 >= NumUserAgentQuirks, "not enough room for quirks");
     }
 
     void add(UserAgentQuirk quirk)

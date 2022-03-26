@@ -67,12 +67,12 @@ public:
 
     // FPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the FPR RegisterBank.
-    COMPILE_ASSERT(X86Registers::xmm0 == 0, xmm0_is_0);
-    COMPILE_ASSERT(X86Registers::xmm1 == 1, xmm1_is_1);
-    COMPILE_ASSERT(X86Registers::xmm2 == 2, xmm2_is_2);
-    COMPILE_ASSERT(X86Registers::xmm3 == 3, xmm3_is_3);
-    COMPILE_ASSERT(X86Registers::xmm4 == 4, xmm4_is_4);
-    COMPILE_ASSERT(X86Registers::xmm5 == 5, xmm5_is_5);
+    static_assert(X86Registers::xmm0 == 0);
+    static_assert(X86Registers::xmm1 == 1);
+    static_assert(X86Registers::xmm2 == 2);
+    static_assert(X86Registers::xmm3 == 3);
+    static_assert(X86Registers::xmm4 == 4);
+    static_assert(X86Registers::xmm5 == 5);
     static FPRReg toRegister(unsigned index)
     {
         return (FPRReg)index;
@@ -134,12 +134,12 @@ public:
 
     // FPRReg mapping is direct, the machine regsiter numbers can
     // be used directly as indices into the FPR RegisterBank.
-    COMPILE_ASSERT(ARMRegisters::d0 == 0, d0_is_0);
-    COMPILE_ASSERT(ARMRegisters::d1 == 1, d1_is_1);
-    COMPILE_ASSERT(ARMRegisters::d2 == 2, d2_is_2);
-    COMPILE_ASSERT(ARMRegisters::d3 == 3, d3_is_3);
-    COMPILE_ASSERT(ARMRegisters::d4 == 4, d4_is_4);
-    COMPILE_ASSERT(ARMRegisters::d5 == 5, d5_is_5);
+    static_assert(ARMRegisters::d0 == 0);
+    static_assert(ARMRegisters::d1 == 1);
+    static_assert(ARMRegisters::d2 == 2);
+    static_assert(ARMRegisters::d3 == 3);
+    static_assert(ARMRegisters::d4 == 4);
+    static_assert(ARMRegisters::d5 == 5);
     static FPRReg toRegister(unsigned index)
     {
         return (FPRReg)index;

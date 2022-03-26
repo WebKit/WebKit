@@ -68,7 +68,7 @@ struct SameSizeAsBorderValue {
     int m_restBits;
 };
 
-COMPILE_ASSERT(sizeof(BorderValue) == sizeof(SameSizeAsBorderValue), BorderValue_should_not_grow);
+static_assert(sizeof(BorderValue) == sizeof(SameSizeAsBorderValue), "BorderValue should not grow");
 
 struct SameSizeAsRenderStyle {
     void* dataRefs[7];

@@ -87,6 +87,6 @@ struct SameSizeAsGradientAttributes {
     unsigned c : 7;
 };
 
-COMPILE_ASSERT(sizeof(GradientAttributes) == sizeof(SameSizeAsGradientAttributes), GradientAttributes_size_guard);
+static_assert(sizeof(GradientAttributes) == sizeof(SameSizeAsGradientAttributes));
 
 } // namespace WebCore

@@ -91,7 +91,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderBlock);
 struct SameSizeAsRenderBlock : public RenderBox {
 };
 
-COMPILE_ASSERT(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), RenderBlock_should_stay_small);
+static_assert(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), "RenderBlock should stay small");
 
 typedef HashMap<const RenderBlock*, std::unique_ptr<TrackedRendererListHashSet>> TrackedDescendantsMap;
 typedef HashMap<const RenderBox*, std::unique_ptr<HashSet<const RenderBlock*>>> TrackedContainerMap;

@@ -434,7 +434,7 @@ bool Connection::platformCanSendOutgoingMessages() const
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
-    COMPILE_ASSERT(sizeof(MessageInfo) + attachmentMaxAmount * sizeof(size_t) <= messageMaxSize, AttachmentsFitToMessageInline);
+    static_assert(sizeof(MessageInfo) + attachmentMaxAmount * sizeof(size_t) <= messageMaxSize, "Attachments fit to message inline");
 
     UnixMessage outputMessage(encoder.get());
     if (outputMessage.attachments().size() > (attachmentMaxAmount - 1)) {

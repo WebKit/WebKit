@@ -95,6 +95,6 @@ const unsigned char lineBreakTable[][lineBreakTableColumnCount] = {
 #undef DI
 #undef AL
 
-COMPILE_ASSERT(WTF_ARRAY_LENGTH(lineBreakTable) == lineBreakTableLastCharacter - lineBreakTableFirstCharacter + 1, TestLineBreakTableConsistency);
+static_assert(WTF_ARRAY_LENGTH(lineBreakTable) == lineBreakTableLastCharacter - lineBreakTableFirstCharacter + 1, "Test LineBreakTable consistency");
 
 } // namespace WebCore

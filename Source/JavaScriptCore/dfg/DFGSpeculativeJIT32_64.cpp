@@ -314,7 +314,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operan
         
         notCell.link(&m_jit);
         // null or undefined?
-        COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
+        static_assert((JSValue::UndefinedTag | 1) == JSValue::NullTag, "UndefinedTag OR 1 equals to NullTag");
         m_jit.or32(TrustedImm32(1), argTagGPR, resultPayloadGPR);
         m_jit.compare32(JITCompiler::Equal, resultPayloadGPR, TrustedImm32(JSValue::NullTag), resultPayloadGPR);
 
@@ -378,7 +378,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, N
         
         notCell.link(&m_jit);
         // null or undefined?
-        COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
+        static_assert((JSValue::UndefinedTag | 1) == JSValue::NullTag, "UndefinedTag OR 1 equals to NullTag");
         m_jit.or32(TrustedImm32(1), argTagGPR, resultGPR);
         branch32(invert ? JITCompiler::NotEqual : JITCompiler::Equal, resultGPR, JITCompiler::TrustedImm32(JSValue::NullTag), taken);
     }
@@ -1514,7 +1514,7 @@ void SpeculativeJIT::compileToBooleanObjectOrOther(Edge nodeUse, bool invert)
     
     notCell.link(&m_jit);
  
-    COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
+    static_assert((JSValue::UndefinedTag | 1) == JSValue::NullTag, "UndefinedTag OR 1 equals to NullTag");
     if (needsTypeCheck(nodeUse, SpecCell | SpecOther)) {
         m_jit.or32(TrustedImm32(1), valueTagGPR, resultPayloadGPR);
         typeCheck(
@@ -1638,7 +1638,7 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BasicBlock* taken, Ba
     
     notCell.link(&m_jit);
     
-    COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
+    static_assert((JSValue::UndefinedTag | 1) == JSValue::NullTag, "UndefinedTag OR 1 equals to NullTag");
     if (needsTypeCheck(nodeUse, SpecCell | SpecOther)) {
         m_jit.or32(TrustedImm32(1), valueTagGPR, scratchGPR);
         typeCheck(

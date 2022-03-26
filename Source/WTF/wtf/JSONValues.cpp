@@ -662,13 +662,13 @@ ObjectBase::~ObjectBase()
 
 RefPtr<Object> ObjectBase::asObject()
 {
-    COMPILE_ASSERT(sizeof(Object) == sizeof(ObjectBase), cannot_cast);
+    static_assert(sizeof(Object) == sizeof(ObjectBase), "cannot cast");
     return static_cast<Object*>(this);
 }
 
 RefPtr<const Object> ObjectBase::asObject() const
 {
-    COMPILE_ASSERT(sizeof(Object) == sizeof(ObjectBase), cannot_cast);
+    static_assert(sizeof(Object) == sizeof(ObjectBase), "cannot cast");
     return static_cast<const Object*>(this);
 }
 
@@ -768,7 +768,7 @@ ArrayBase::~ArrayBase()
 
 RefPtr<Array> ArrayBase::asArray()
 {
-    COMPILE_ASSERT(sizeof(ArrayBase) == sizeof(Array), cannot_cast);
+    static_assert(sizeof(ArrayBase) == sizeof(Array), "cannot cast");
     return static_cast<Array*>(this);
 }
 

@@ -520,7 +520,7 @@ private:
 template<typename T>
 bool Connection::send(T&& message, uint64_t destinationID, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
-    COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
+    static_assert(!T::isSync, "Async message expected");
 
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     encoder.get() << message.arguments();
@@ -545,7 +545,7 @@ CompletionHandler<void(Decoder*)> takeAsyncReplyHandler(Connection&, uint64_t);
 template<typename T, typename C>
 uint64_t Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> sendOptions)
 {
-    COMPILE_ASSERT(!T::isSync, AsyncMessageExpected);
+    static_assert(!T::isSync, "Async message expected");
 
     if (!isValid()) {
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
@@ -589,7 +589,7 @@ void moveTuple(std::tuple<A...>&& a, std::tuple<B...>& b)
 
 template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message, typename T::Reply&& reply, uint64_t destinationID, Timeout timeout, OptionSet<SendSyncOption> sendSyncOptions)
 {
-    COMPILE_ASSERT(T::isSync, SyncMessageExpected);
+    static_assert(T::isSync, "Sync message expected");
     RELEASE_ASSERT(RunLoop::isMain());
 
     SyncRequestID syncRequestID;

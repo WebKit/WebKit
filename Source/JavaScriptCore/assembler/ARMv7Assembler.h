@@ -477,7 +477,7 @@ public:
             struct CopyTypes {
                 uint32_t content[3];
             } copyTypes;
-            COMPILE_ASSERT(sizeof(RealTypes) == sizeof(CopyTypes), LinkRecordCopyStructSizeEqualsRealStruct);
+            static_assert(sizeof(RealTypes) == sizeof(CopyTypes), "LinkRecord's CopyStruct size equals to RealStruct");
         } data;
     };
 

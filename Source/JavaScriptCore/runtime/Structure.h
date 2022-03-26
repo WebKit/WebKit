@@ -444,7 +444,7 @@ public:
             return initialOutOfLineCapacity;
 
         ASSERT(outOfLineSize > initialOutOfLineCapacity);
-        COMPILE_ASSERT(outOfLineGrowthFactor == 2, outOfLineGrowthFactor_is_two);
+        static_assert(outOfLineGrowthFactor == 2);
         return WTF::roundUpToPowerOfTwo(outOfLineSize);
     }
     
@@ -888,7 +888,7 @@ private:
 
     mutable InlineWatchpointSet m_transitionWatchpointSet;
 
-    COMPILE_ASSERT(firstOutOfLineOffset < 256, firstOutOfLineOffset_fits);
+    static_assert(firstOutOfLineOffset < 256);
 
     uint16_t m_transitionOffset;
     uint16_t m_maxOffset;

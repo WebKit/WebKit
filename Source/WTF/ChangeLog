@@ -1,3 +1,25 @@
+2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use static_assert instead of COMPILE_ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=238417
+
+        Reviewed by Mark Lam.
+
+        Use C++ static_assert instead of COMPILE_ASSERT.
+        Currently keeping it since it was also used in Internal code too.
+
+        * wtf/CrossThreadCopier.cpp:
+        * wtf/JSONValues.cpp:
+        (WTF::JSONImpl::ObjectBase::asObject):
+        (WTF::JSONImpl::ObjectBase::asObject const):
+        (WTF::JSONImpl::ArrayBase::asArray):
+        * wtf/JSONValues.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::lockFile):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::lockFile):
+        * wtf/text/AtomString.h:
+
 2022-03-26  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorkerWindowClient.focus

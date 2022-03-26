@@ -347,7 +347,7 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         lines.append('')
         lines.append('        Builder<STATE | %(camelName)sSet>& set%(camelName)s(%(memberType)s %(memberName)s)' % setter_args)
         lines.append('        {')
-        lines.append('            COMPILE_ASSERT(!(STATE & %(camelName)sSet), property_%(memberKey)s_already_set);' % setter_args)
+        lines.append('            static_assert(!(STATE & %(camelName)sSet), "property %(memberKey)s already set");' % setter_args)
         lines.append('            m_result->%(setter)s("%(memberKey)s"_s, %(memberValue)s);' % setter_args)
         lines.append('            return castState<%(camelName)sSet>();' % setter_args)
         lines.append('        }')

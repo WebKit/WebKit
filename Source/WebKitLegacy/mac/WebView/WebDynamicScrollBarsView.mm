@@ -38,7 +38,7 @@ using namespace WebCore;
 
 #ifndef __OBJC2__
 // In <rdar://problem/7814899> we saw crashes because WebDynamicScrollBarsView increased in size, breaking ABI compatiblity.
-COMPILE_ASSERT(sizeof(WebDynamicScrollBarsView) == 0x8c, WebDynamicScrollBarsView_is_expected_size);
+static_assert(sizeof(WebDynamicScrollBarsView) == 0x8c, "WebDynamicScrollBarsView is expected size");
 #endif
 
 @interface NSScrollView(WebNSScrollViewDetails)

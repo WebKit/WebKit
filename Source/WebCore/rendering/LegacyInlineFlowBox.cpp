@@ -55,7 +55,7 @@ struct SameSizeAsLegacyInlineFlowBox : public LegacyInlineBox {
     void* pointers[5];
 };
 
-COMPILE_ASSERT(sizeof(LegacyInlineFlowBox) == sizeof(SameSizeAsLegacyInlineFlowBox), LegacyInlineFlowBox_should_stay_small);
+static_assert(sizeof(LegacyInlineFlowBox) == sizeof(SameSizeAsLegacyInlineFlowBox), "LegacyInlineFlowBox should stay small");
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 

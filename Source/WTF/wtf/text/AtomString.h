@@ -69,8 +69,8 @@ public:
     template<unsigned characterCount> ALWAYS_INLINE AtomString(const char (&characters)[characterCount], ConstructFromLiteralTag)
         : m_string(AtomStringImpl::addLiteral(characters, characterCount - 1))
     {
-        COMPILE_ASSERT(characterCount > 1, AtomStringFromLiteralNotEmpty);
-        COMPILE_ASSERT((characterCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), AtomStringFromLiteralCannotOverflow);
+        static_assert(characterCount > 1, "AtomStringFromLiteral is not empty");
+        static_assert((characterCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), "AtomStringFromLiteral cannot overflow");
     }
 
     AtomString(ASCIILiteral literal)
