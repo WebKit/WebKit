@@ -20,9 +20,10 @@
 
 // https://html.spec.whatwg.org/multipage/embedded-content.html#htmlimageelement
 [
+    ActiveDOMObject,
     ExportMacro=WEBCORE_EXPORT,
-    JSGenerateToNativeObject,
     Exposed=Window,
+    JSGenerateToNativeObject,
     LegacyFactoryFunctionCallWith=CurrentDocument,
     LegacyFactoryFunction=Image(optional unsigned long width, optional unsigned long height)
 ] interface HTMLImageElement : HTMLElement {

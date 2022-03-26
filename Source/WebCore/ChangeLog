@@ -1,3 +1,36 @@
+2022-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Simplify / Optimize JSNodeOwner::isReachableFromOpaqueRoots()
+        https://bugs.webkit.org/show_bug.cgi?id=238380
+
+        Reviewed by Geoffrey Garen.
+
+        Drop checks specific to HTMLAudioElement and HTMLImageElement from
+        JSNodeOwner::isReachableFromOpaqueRoots() so that other Node wrappers
+        that are not audio or image elements do not have to pay the cost.
+
+        In the HTMLAudioElement case, HTMLAudioElement already subclasses HTMLMediaElement which
+        is an ActiveDOMObject and HTMLMediaElement::virtualHasPendingActivity() already takes
+        care of keeping the JS wrapper alive is there is audio playing.
+
+        For HTMLImageElement, I made it subclass ActiveDOMObject so that the JSHTMLImageElement
+        wrapper is now calling HTMLImageElement::hasPendingActivity() instead of every JS Node
+        wrapper via JSNodeOwner::isReachableFromOpaqueRoots().
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::isReachableFromDOM):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::HTMLImageElement):
+        (WebCore::HTMLImageElement::create):
+        (WebCore::HTMLImageElement::createForLegacyFactoryFunction):
+        (WebCore::HTMLImageElement::activeDOMObjectName const):
+        (WebCore::HTMLImageElement::virtualHasPendingActivity const):
+        (WebCore::HTMLImageElement::hasPendingActivity const): Deleted.
+        * html/HTMLImageElement.h:
+        * html/HTMLImageElement.idl:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentElement::create):
+
 2022-03-25  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Incorrect handling of NaN inside calc() for top-level calculation

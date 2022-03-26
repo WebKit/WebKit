@@ -116,7 +116,9 @@ private:
 
 inline Ref<ImageDocumentElement> ImageDocumentElement::create(ImageDocument& document)
 {
-    return adoptRef(*new ImageDocumentElement(document));
+    auto image = adoptRef(*new ImageDocumentElement(document));
+    image->suspendIfNeeded();
+    return image;
 }
 
 // --------

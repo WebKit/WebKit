@@ -73,6 +73,7 @@ using namespace HTMLNames;
 
 HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
+    , ActiveDOMObject(document)
     , m_imageLoader(makeUnique<HTMLImageLoader>(*this))
     , m_form(nullptr)
     , m_formSetByParser(form)
@@ -85,12 +86,16 @@ HTMLImageElement::HTMLImageElement(const QualifiedName& tagName, Document& docum
 
 Ref<HTMLImageElement> HTMLImageElement::create(Document& document)
 {
-    return adoptRef(*new HTMLImageElement(imgTag, document));
+    auto image = adoptRef(*new HTMLImageElement(imgTag, document));
+    image->suspendIfNeeded();
+    return image;
 }
 
 Ref<HTMLImageElement> HTMLImageElement::create(const QualifiedName& tagName, Document& document, HTMLFormElement* form)
 {
-    return adoptRef(*new HTMLImageElement(tagName, document, form));
+    auto image = adoptRef(*new HTMLImageElement(tagName, document, form));
+    image->suspendIfNeeded();
+    return image;
 }
 
 HTMLImageElement::~HTMLImageElement()
@@ -108,6 +113,7 @@ Ref<HTMLImageElement> HTMLImageElement::createForLegacyFactoryFunction(Document&
         image->setWidth(width.value());
     if (height)
         image->setHeight(height.value());
+    image->suspendIfNeeded();
     return image;
 }
 
@@ -866,7 +872,12 @@ void HTMLImageElement::setLoadManually(bool loadManually)
     m_imageLoader->setLoadManually(loadManually);
 }
 
-bool HTMLImageElement::hasPendingActivity() const
+const char* HTMLImageElement::activeDOMObjectName() const
+{
+    return "HTMLImageElement";
+}
+
+bool HTMLImageElement::virtualHasPendingActivity() const
 {
     return m_imageLoader->hasPendingActivity();
 }
