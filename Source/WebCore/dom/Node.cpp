@@ -766,7 +766,8 @@ static Node::Editability computeEditabilityFromComputedStyle(const Node& startNo
         // therefore non editable.
         if (treatment == Node::UserSelectAllIsAlwaysNonEditable && style->effectiveUserSelect() == UserSelect::All)
             return Node::Editability::ReadOnly;
-        switch (style->userModify()) {
+
+        switch (style->effectiveUserModify()) {
         case UserModify::ReadOnly:
             return Node::Editability::ReadOnly;
         case UserModify::ReadWrite:
