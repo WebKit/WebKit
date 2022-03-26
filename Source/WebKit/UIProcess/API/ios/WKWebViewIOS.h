@@ -25,9 +25,6 @@
 
 #import "WKWebViewInternal.h"
 #import "_WKTapHandlingResult.h"
-#if USE(APPLE_INTERNAL_SDK) && PLATFORM(IOS_FAMILY)
-#import <WebKitAdditions/WKWebViewAdditions.h>
-#endif
 
 @class UIScrollEvent;
 

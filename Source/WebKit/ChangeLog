@@ -1,3 +1,16 @@
+2022-03-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r291884.
+        https://bugs.webkit.org/show_bug.cgi?id=238405
+
+        Broke the internal iOS build
+
+        Reverted changeset:
+
+        "Add Captive Portal alert to WKWebView"
+        https://bugs.webkit.org/show_bug.cgi?id=238326
+        https://commits.webkit.org/r291884
+
 2022-03-25  Simon Fraser  <simon.fraser@apple.com>
 
         Temporarily disable assertion in MessageReceiveQueueMap::addImpl()
