@@ -34,14 +34,16 @@
 #include "PushSubscriptionData.h"
 #include "SWContextManager.h"
 #include "ServiceWorkerClient.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerRegistration.h"
 #include <wtf/ProcessID.h>
 
 namespace WebCore {
 
-ServiceWorkerInternals::ServiceWorkerInternals(ServiceWorkerIdentifier identifier)
+ServiceWorkerInternals::ServiceWorkerInternals(ServiceWorkerGlobalScope& globalScope, ServiceWorkerIdentifier identifier)
     : m_identifier(identifier)
 {
+    globalScope.setIsProcessingUserGestureForTesting(true);
 }
 
 ServiceWorkerInternals::~ServiceWorkerInternals() = default;

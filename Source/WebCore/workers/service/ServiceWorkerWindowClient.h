@@ -45,8 +45,8 @@ public:
     VisibilityState visibilityState() const { return data().isVisible ? VisibilityState::Visible : VisibilityState::Hidden; }
     bool isFocused() const { return data().isFocused; }
 
-    void focus(Ref<DeferredPromise>&&);
-    void navigate(const String& url, Ref<DeferredPromise>&&);
+    void focus(ScriptExecutionContext&, Ref<DeferredPromise>&&);
+    void navigate(ScriptExecutionContext&, const String& url, Ref<DeferredPromise>&&);
 
 private:
     ServiceWorkerWindowClient(ServiceWorkerGlobalScope&, ServiceWorkerClientData&&);

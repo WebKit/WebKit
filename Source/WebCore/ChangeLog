@@ -1,3 +1,39 @@
+2022-03-26  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorkerWindowClient.focus
+        https://bugs.webkit.org/show_bug.cgi?id=238319
+        <rdar://90616490>
+
+        Reviewed by Brady Eidson.
+
+        Add support for service worker focus:
+        - Implement user gesture requirement by introducing a flag in ServiceWorkerGlobalScope that is turned on for some time
+          when receiving specific events like notification click event. The max time is currently set to 2 seconds.
+          We might want to improve handling of user activation in non-document contexts but this is a fuzzy area right now so a service worker
+          solution seems good for now.
+        - Remove the map of service worker client since we need to create new ones every time.
+        - focus will go its context manager that will send an IPC message to the network process to actually trigger focus.
+        We are missing focused check at promise resolution, this will be done in a follow-up.
+
+        Covered by API test.
+
+        * testing/ServiceWorkerInternals.cpp:
+        * testing/ServiceWorkerInternals.h:
+        * testing/js/WebCoreTestSupport.cpp:
+        * workers/service/ServiceWorkerClient.cpp:
+        * workers/service/ServiceWorkerClient.h:
+        * workers/service/ServiceWorkerClientData.h:
+        * workers/service/ServiceWorkerClients.cpp:
+        * workers/service/ServiceWorkerClients.h:
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/ServiceWorkerWindowClient.cpp:
+        * workers/service/ServiceWorkerWindowClient.h:
+        * workers/service/ServiceWorkerWindowClient.idl:
+        * workers/service/context/SWContextManager.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        * workers/service/server/SWServer.h:
+
 2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use unary static_assert

@@ -1,3 +1,19 @@
+2022-03-26  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorkerWindowClient.focus
+        https://bugs.webkit.org/show_bug.cgi?id=238319
+        <rdar://90616490>
+
+        Reviewed by Brady Eidson.
+
+        Update tests to cover the fact we no longer reuse Client objects.
+
+        * http/tests/workers/service/resources/postmessage-echo-worker.js:
+        * http/tests/workers/service/resources/serviceworkerclients-get-worker.js:
+        * http/tests/workers/service/serviceworkerclients-matchAll-worker.js:
+        * http/tests/workers/service/serviceworkerclients-matchAll.https-expected.txt:
+        * http/tests/workers/service/serviceworkerclients-matchAll.https.html:
+
 2022-03-25  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK][WPE] Update widget style to match libadwaita

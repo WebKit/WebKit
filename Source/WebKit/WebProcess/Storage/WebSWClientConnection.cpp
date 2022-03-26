@@ -41,6 +41,8 @@
 #include "WebSWServerConnectionMessages.h"
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/FocusController.h>
+#include <WebCore/Frame.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SerializedScriptValue.h>
@@ -298,6 +300,28 @@ void WebSWClientConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
         if (!result.has_value())
             return callback(result.error().toException());
         callback(WTFMove(*result));
+    });
+}
+
+void WebSWClientConnection::focusServiceWorkerClient(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
+{
+    auto* client = Document::allDocumentsMap().get(clientIdentifier);
+    auto* page = client ? client->page() : nullptr;
+    if (!page) {
+        callback({ });
+        return;
+    }
+
+    WebPage::fromCorePage(*page).sendWithAsyncReply(Messages::WebPageProxy::FocusFromServiceWorker { }, [clientIdentifier, callback = WTFMove(callback)]() mutable {
+        auto* client = Document::allDocumentsMap().get(clientIdentifier);
+        auto* frame = client ? client->frame() : nullptr;
+        auto* page = frame ? frame->page() : nullptr;
+        if (!page) {
+            callback({ });
+            return;
+        }
+        page->focusController().setFocusedFrame(frame);
+        callback(ServiceWorkerClientData::from(*client));
     });
 }
 

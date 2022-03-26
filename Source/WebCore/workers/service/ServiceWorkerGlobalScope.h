@@ -67,10 +67,6 @@ public:
 
     ServiceWorkerThread& thread();
 
-    ServiceWorkerClient* serviceWorkerClient(ScriptExecutionContextIdentifier);
-    void addServiceWorkerClient(ServiceWorkerClient&);
-    void removeServiceWorkerClient(ServiceWorkerClient&);
-
     void updateExtendedEventsSet(ExtendableEvent* newEvent = nullptr);
 
     const ServiceWorkerContextData::ImportedScript* scriptResource(const URL&) const;
@@ -92,6 +88,11 @@ public:
     bool hasPendingSilentPushEvent() const { return m_hasPendingSilentPushEvent; }
     void setHasPendingSilentPushEvent(bool value) { m_hasPendingSilentPushEvent = value; }
 
+    constexpr static Seconds userGestureLifetime  { 2_s };
+    bool isProcessingUserGesture() const { return m_isProcessingUserGesture; }
+    void recordUserGesture();
+    void setIsProcessingUserGestureForTesting(bool value) { m_isProcessingUserGesture = value; }
+
 private:
     ServiceWorkerGlobalScope(ServiceWorkerContextData&&, ServiceWorkerData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, std::unique_ptr<NotificationClient>&&, PAL::SessionID);
     void notifyServiceWorkerPageOfCreationIfNecessary();
@@ -103,11 +104,12 @@ private:
 
     std::optional<PAL::SessionID> sessionID() const final { return m_sessionID; }
 
+    void resetUserGesture() { m_isProcessingUserGesture = false; }
+
     ServiceWorkerContextData m_contextData;
     Ref<ServiceWorkerRegistration> m_registration;
     Ref<ServiceWorker> m_serviceWorker;
     Ref<ServiceWorkerClients> m_clients;
-    HashMap<ScriptExecutionContextIdentifier, ServiceWorkerClient*> m_clientMap;
     Vector<Ref<ExtendableEvent>> m_extendedEvents;
 
     uint64_t m_lastRequestIdentifier { 0 };
@@ -115,6 +117,8 @@ private:
     PAL::SessionID m_sessionID;
     std::unique_ptr<NotificationClient> m_notificationClient;
     bool m_hasPendingSilentPushEvent { false };
+    bool m_isProcessingUserGesture { false };
+    Timer m_userGestureTimer;
 };
 
 } // namespace WebCore

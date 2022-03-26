@@ -19,8 +19,8 @@ self.addEventListener("message", async (event) => {
             return;
         }
 
-        if (retrievedClient !== client) {
-            event.source.postMessage("FAIL: client is different from the one retrieved through self.clients.get");
+        if (retrievedClient === client) {
+            event.source.postMessage("FAIL: reusing same client object in different self.clients.get calls");
             return;
         }
 

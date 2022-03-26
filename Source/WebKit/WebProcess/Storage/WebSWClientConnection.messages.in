@@ -39,6 +39,8 @@ messages -> WebSWClientConnection {
     PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destinationContextIdentifier, struct WebCore::MessageWithMessagePorts message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
 
     SetDocumentIsControlled(WebCore::ScriptExecutionContextIdentifier temporaryDocumentIdentifier, struct WebCore::ServiceWorkerRegistrationData data) -> (bool isSuccess)
+
+    FocusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier) -> (std::optional<WebCore::ServiceWorkerClientData> result)
 }
 
 #endif // ENABLE(SERVICE_WORKER)

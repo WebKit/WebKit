@@ -53,7 +53,7 @@ struct ServiceWorkerClientData {
     ServiceWorkerClientData isolatedCopy() const &;
     ServiceWorkerClientData isolatedCopy() &&;
 
-    static ServiceWorkerClientData from(ScriptExecutionContext&);
+    WEBCORE_EXPORT static ServiceWorkerClientData from(ScriptExecutionContext&);
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerClientData> decode(Decoder&);

@@ -54,10 +54,16 @@ public:
     void openWindow(ScriptExecutionContext&, const String& url, Ref<DeferredPromise>&&);
     void claim(ScriptExecutionContext&, Ref<DeferredPromise>&&);
 
+    enum PromiseIdentifierType { };
+    using PromiseIdentifier = ObjectIdentifier<PromiseIdentifierType>;
+
+    PromiseIdentifier addPendingPromise(Ref<DeferredPromise>&&);
+    RefPtr<DeferredPromise> takePendingPromise(PromiseIdentifier);
+
 private:
     ServiceWorkerClients() = default;
 
-    HashMap<DeferredPromise*, Ref<DeferredPromise>> m_pendingPromises;
+    HashMap<PromiseIdentifier, Ref<DeferredPromise>> m_pendingPromises;
 };
 
 } // namespace WebCore

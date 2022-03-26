@@ -101,6 +101,7 @@ public:
     virtual bool takeFocus(WebKit::WebPageProxy*, WKFocusDirection) { return false; }
     virtual void focus(WebKit::WebPageProxy*) { }
     virtual void unfocus(WebKit::WebPageProxy*) { }
+    virtual bool focusFromServiceWorker(WebKit::WebPageProxy&) { return false; }
 
     virtual void runJavaScriptAlert(WebKit::WebPageProxy&, const WTF::String&, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void()>&& completionHandler) { completionHandler(); }
     virtual void runJavaScriptConfirm(WebKit::WebPageProxy&, const WTF::String&, WebKit::WebFrameProxy*, WebKit::FrameInfoData&&, Function<void(bool)>&& completionHandler) { completionHandler(false); }

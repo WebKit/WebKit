@@ -1692,6 +1692,7 @@ public:
 
     void getLoadDecisionForIcon(const WebCore::LinkIcon&, WebKit::CallbackID);
 
+    void focusFromServiceWorker(CompletionHandler<void()>&&);
     void setFocus(bool focused);
     void setWindowFrame(const WebCore::FloatRect&);
     void getWindowFrame(Messages::WebPageProxy::GetWindowFrameDelayedReply&&);

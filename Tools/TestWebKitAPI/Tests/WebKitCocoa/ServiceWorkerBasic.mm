@@ -46,6 +46,7 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKExperimentalFeature.h>
+#import <WebKit/_WKInternalDebugFeature.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
@@ -2800,5 +2801,168 @@ TEST(ServiceWorker, ExtensionServiceWorkerFailureViewDestroyed)
             done = true;
         }];
     }
+    TestWebKitAPI::Util::run(&done);
+}
+
+static const char* ServiceWorkerWindowClientFocusMain =
+"<div>test page</div>"
+"<script>"
+"let worker;"
+"async function test() {"
+"    try {"
+"        const registration = await navigator.serviceWorker.register('/sw.js');"
+"        if (registration.active) {"
+"            worker = registration.active;"
+"            alert('already active');"
+"            return;"
+"        }"
+"        worker = registration.installing;"
+"        worker.addEventListener('statechange', () => {"
+"            if (worker.state == 'activated')"
+"                alert('successfully registered');"
+"        });"
+"    } catch(e) {"
+"        alert('Exception: ' + e);"
+"    }"
+"}"
+"window.onload = test;"
+""
+"function focusClient() {"
+"    worker.postMessage('start');"
+"    navigator.serviceWorker.onmessage = (event) => {"
+"        window.webkit.messageHandlers.sw.postMessage(event.data);"
+"    }"
+"}"
+""
+"function checkFocusValue(value, name) {"
+"    window.webkit.messageHandlers.sw.postMessage(document.hasFocus() === value ? 'PASS' : 'FAIL: expected ' + value + ' for ' + name);"
+"}"
+"</script>";
+static const char* ServiceWorkerWindowClientFocusJS =
+"self.addEventListener('message', (event) => {"
+"   event.source.focus().then((client) => {"
+"       event.source.postMessage('focused');"
+"   }, (error) => {"
+"       event.source.postMessage('not focused');"
+"   });"
+"});";
+
+TEST(ServiceWorker, ServiceWorkerWindowClientFocus)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
+            [preferences _setEnabled:NO forInternalDebugFeature:feature];
+    }
+
+    auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/", { ServiceWorkerWindowClientFocusMain } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, ServiceWorkerWindowClientFocusJS } }
+    });
+
+    [webView1 loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView1 _test_waitForAlert], "successfully registered");
+
+    [webView2 loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView2 _test_waitForAlert], "already active");
+
+#if PLATFORM(MAC)
+    [[webView1 hostWindow] miniaturize:[webView1 hostWindow]];
+    [[webView2 hostWindow] miniaturize:[webView2 hostWindow]];
+    EXPECT_FALSE([webView1 hostWindow].isVisible);
+    EXPECT_FALSE([webView2 hostWindow].isVisible);
+#endif
+
+    done = false;
+    expectedMessage = "focused";
+    [webView1 evaluateJavaScript:@"focusClient()" completionHandler: nil];
+    TestWebKitAPI::Util::run(&done);
+#if PLATFORM(MAC)
+    EXPECT_TRUE([webView1 hostWindow].isVisible);
+    EXPECT_FALSE([webView2 hostWindow].isVisible);
+    EXPECT_FALSE([webView1 hostWindow].isMiniaturized);
+    EXPECT_TRUE([webView2 hostWindow].isMiniaturized);
+
+    // FIXME: We should be able to run these tests in iOS once pages are actually visible.
+    done = false;
+    expectedMessage = "PASS";
+    [webView1 evaluateJavaScript:@"checkFocusValue(true, 'webView1')" completionHandler:nil];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    expectedMessage = "PASS";
+    [webView2 evaluateJavaScript:@"checkFocusValue(false, 'webView2')" completionHandler:nil];
+    TestWebKitAPI::Util::run(&done);
+#endif
+
+    done = false;
+    expectedMessage = "focused";
+    [webView2 evaluateJavaScript:@"focusClient()" completionHandler: nil];
+    TestWebKitAPI::Util::run(&done);
+#if PLATFORM(MAC)
+    EXPECT_TRUE([webView2 hostWindow].isVisible);
+    EXPECT_FALSE([webView1 hostWindow].isMiniaturized);
+    EXPECT_FALSE([webView2 hostWindow].isMiniaturized);
+
+    // FIXME: We should be able to run these tests in iOS once pages are actually visible.
+    done = false;
+    expectedMessage = "PASS";
+    [webView2 evaluateJavaScript:@"checkFocusValue(true, 'webView2')" completionHandler:nil];
+    TestWebKitAPI::Util::run(&done);
+#endif
+}
+
+TEST(ServiceWorker, ServiceWorkerWindowClientFocusRequiresUserGesture)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"ServiceWorkersUserGestureEnabled"])
+            [preferences _setEnabled:YES forInternalDebugFeature:feature];
+    }
+
+    auto messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/", { ServiceWorkerWindowClientFocusMain } },
+        { "/sw.js", { {{ "Content-Type", "application/javascript" }}, ServiceWorkerWindowClientFocusJS } }
+    });
+
+    [webView loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully registered");
+
+    done = false;
+    expectedMessage = "not focused";
+    [webView evaluateJavaScript:@"focusClient()" completionHandler: nil];
     TestWebKitAPI::Util::run(&done);
 }

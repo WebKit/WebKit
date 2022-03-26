@@ -7415,6 +7415,25 @@ void WebPageProxy::didCancelCheckingText(TextCheckerRequestID requestID)
 {
     send(Messages::WebPage::DidCancelCheckingText(requestID));
 }
+
+void WebPageProxy::focusFromServiceWorker(CompletionHandler<void()>&& callback)
+{
+    if (!m_uiClient->focusFromServiceWorker(*this)) {
+        callback();
+        return;
+    }
+
+#if PLATFORM(COCOA)
+    makeFirstResponder();
+#endif
+
+    if (m_activityState.contains(ActivityState::IsVisible)) {
+        callback();
+        return;
+    }
+    installActivityStateChangeCompletionHandler(WTFMove(callback));
+}
+
 // Other
 
 void WebPageProxy::setFocus(bool focused)

@@ -32,6 +32,6 @@
     readonly attribute VisibilityState visibilityState;
     [ImplementedAs=isFocused] readonly attribute boolean focused;
 
-    [NewObject] Promise<ServiceWorkerWindowClient> focus();
-    [NewObject] Promise<ServiceWorkerWindowClient> navigate(USVString url);
+    [NewObject, CallWith=CurrentScriptExecutionContext] Promise<ServiceWorkerWindowClient> focus();
+    [NewObject, CallWith=CurrentScriptExecutionContext] Promise<ServiceWorkerWindowClient> navigate(USVString url);
 };

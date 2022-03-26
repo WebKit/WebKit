@@ -659,6 +659,11 @@ void WebSWServerConnection::getNavigationPreloadState(WebCore::ServiceWorkerRegi
     callback(registration->navigationPreloadState());
 }
 
+void WebSWServerConnection::focusServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<ServiceWorkerClientData>&&)>&& callback)
+{
+    sendWithAsyncReply(Messages::WebSWClientConnection::FocusServiceWorkerClient { clientIdentifier }, WTFMove(callback));
+}
+
 } // namespace WebKit
 
 #undef CONNECTION_MESSAGE_CHECK_COMPLETION

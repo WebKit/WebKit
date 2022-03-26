@@ -41,6 +41,7 @@ messages -> WebPageProxy {
     SetStatusText(String statusText)
     SetFocus(bool focused)
     TakeFocus(uint8_t direction)
+    FocusFromServiceWorker() -> ()
     FocusedFrameChanged(std::optional<WebCore::FrameIdentifier> frameID)
     SetRenderTreeSize(uint64_t treeSize)
     SetToolbarsAreVisible(bool toolbarsAreVisible)

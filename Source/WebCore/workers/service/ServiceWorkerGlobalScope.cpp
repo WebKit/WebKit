@@ -68,6 +68,7 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(ServiceWorkerContextData&& co
     , m_clients(ServiceWorkerClients::create())
     , m_sessionID(sessionID)
     , m_notificationClient(WTFMove(notificationClient))
+    , m_userGestureTimer(*this, &ServiceWorkerGlobalScope::resetUserGesture)
 {
 }
 
@@ -132,23 +133,6 @@ EventTargetInterface ServiceWorkerGlobalScope::eventTargetInterface() const
 ServiceWorkerThread& ServiceWorkerGlobalScope::thread()
 {
     return static_cast<ServiceWorkerThread&>(WorkerGlobalScope::thread());
-}
-
-ServiceWorkerClient* ServiceWorkerGlobalScope::serviceWorkerClient(ScriptExecutionContextIdentifier identifier)
-{
-    return m_clientMap.get(identifier);
-}
-
-void ServiceWorkerGlobalScope::addServiceWorkerClient(ServiceWorkerClient& client)
-{
-    auto result = m_clientMap.add(client.identifier(), &client);
-    ASSERT_UNUSED(result, result.isNewEntry);
-}
-
-void ServiceWorkerGlobalScope::removeServiceWorkerClient(ServiceWorkerClient& client)
-{
-    auto isRemoved = m_clientMap.remove(client.identifier());
-    ASSERT_UNUSED(isRemoved, isRemoved);
 }
 
 // https://w3c.github.io/ServiceWorker/#update-service-worker-extended-events-set-algorithm
@@ -224,6 +208,7 @@ void ServiceWorkerGlobalScope::postTaskToFireNotificationEvent(NotificationEvent
             switch (eventType) {
             case NotificationEventType::Click:
                 eventName = eventNames().notificationclickEvent;
+                downcast<ServiceWorkerGlobalScope>(scope).recordUserGesture();
                 break;
             case NotificationEventType::Close:
                 eventName = eventNames().notificationcloseEvent;
@@ -236,6 +221,12 @@ void ServiceWorkerGlobalScope::postTaskToFireNotificationEvent(NotificationEvent
     }, WorkerRunLoop::defaultMode());
 }
 #endif
+
+void ServiceWorkerGlobalScope::recordUserGesture()
+{
+    m_isProcessingUserGesture = true;
+    m_userGestureTimer.startOneShot(userGestureLifetime);
+}
 
 } // namespace WebCore
 

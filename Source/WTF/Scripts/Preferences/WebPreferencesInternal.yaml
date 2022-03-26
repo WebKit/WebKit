@@ -843,6 +843,19 @@ ServiceWorkersEnabled:
     WebCore:
       default: false
 
+ServiceWorkersUserGestureEnabled:
+  type: bool
+  humanReadableName: "Validate UserGesture requirements in Service Workers"
+  humanReadableDescription: "Validate UserGesture requirements in Service Workers"
+  condition: ENABLE(SERVICE_WORKER)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 SimpleLineLayoutEnabled:
   type: bool
   webcoreOnChange: setNeedsRecalcStyleInAllFrames

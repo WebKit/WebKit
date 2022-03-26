@@ -29,6 +29,10 @@
 #include "ServiceWorkerWindowClient.h"
 
 #include "JSDOMPromiseDeferred.h"
+#include "JSServiceWorkerWindowClient.h"
+#include "SWContextManager.h"
+#include "ServiceWorkerClients.h"
+#include "ServiceWorkerThread.h"
 
 namespace WebCore {
 
@@ -37,12 +41,36 @@ ServiceWorkerWindowClient::ServiceWorkerWindowClient(ServiceWorkerGlobalScope& c
 {
 }
 
-void ServiceWorkerWindowClient::focus(Ref<DeferredPromise>&& promise)
+void ServiceWorkerWindowClient::focus(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(Exception { NotSupportedError, "windowClient.focus() is not yet supported"_s });
+    auto& serviceWorkerContext = downcast<ServiceWorkerGlobalScope>(context);
+
+    if (context.settingsValues().serviceWorkersUserGestureEnabled && !serviceWorkerContext.isProcessingUserGesture()) {
+        promise->reject(Exception { InvalidAccessError, "WindowClient focus requires a user gesture"_s });
+        return;
+    }
+
+    auto promiseIdentifier = serviceWorkerContext.clients().addPendingPromise(WTFMove(promise));
+    callOnMainThread([clientIdentifier = identifier(), promiseIdentifier, serviceWorkerIdentifier = serviceWorkerContext.thread().identifier()]() mutable {
+        SWContextManager::singleton().connection()->focus(clientIdentifier, [promiseIdentifier, serviceWorkerIdentifier](auto result) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, result = crossThreadCopy(WTFMove(result))](auto& serviceWorkerContext) mutable {
+                auto promise = serviceWorkerContext.clients().takePendingPromise(promiseIdentifier);
+                if (!promise)
+                    return;
+
+                // FIXME: Check isFocused state and reject if not focused.
+                if (!result) {
+                    promise->reject(Exception { TypeError, "WindowClient focus failed"_s });
+                    return;
+                }
+
+                promise->template resolve<IDLInterface<ServiceWorkerWindowClient>>(ServiceWorkerWindowClient::create(serviceWorkerContext, WTFMove(*result)));
+            });
+        });
+    });
 }
 
-void ServiceWorkerWindowClient::navigate(const String& url, Ref<DeferredPromise>&& promise)
+void ServiceWorkerWindowClient::navigate(ScriptExecutionContext&, const String& url, Ref<DeferredPromise>&& promise)
 {
     UNUSED_PARAM(url);
     promise->reject(Exception { NotSupportedError, "windowClient.navigate() is not yet supported"_s });

@@ -116,6 +116,8 @@ private:
         void showPage(WebPageProxy*) final;
         void focus(WebPageProxy*) final;
         void unfocus(WebPageProxy*) final;
+        bool focusFromServiceWorker(WebKit::WebPageProxy&) final;
+
         bool canRunModal() const final;
         void runModal(WebPageProxy&) final;
         void pageDidScroll(WebPageProxy*) final;
@@ -209,6 +211,7 @@ private:
 #if PLATFORM(MAC)
         bool showWebView : 1;
         bool focusWebView : 1;
+        bool focusWebViewFromServiceWorker : 1;
         bool unfocusWebView : 1;
         bool webViewRunModal : 1;
         bool webViewDidScroll : 1;

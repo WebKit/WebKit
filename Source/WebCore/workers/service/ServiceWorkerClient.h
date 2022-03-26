@@ -52,7 +52,7 @@ public:
     using Type = ServiceWorkerClientType;
     using FrameType = ServiceWorkerClientFrameType;
 
-    static Ref<ServiceWorkerClient> getOrCreate(ServiceWorkerGlobalScope&, ServiceWorkerClientData&&);
+    static Ref<ServiceWorkerClient> create(ServiceWorkerGlobalScope&, ServiceWorkerClientData&&);
 
     ~ServiceWorkerClient();
 

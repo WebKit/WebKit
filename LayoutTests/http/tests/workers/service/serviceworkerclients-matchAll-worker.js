@@ -41,6 +41,25 @@ function checkClientInUncontrolledClients(clientIdentifier)
 async function doTestAfterMessage(event)
 {
     try {
+        if (event.data.test === "checkNewClientObject") {
+            const clients1 = await self.clients.matchAll({ includeUncontrolled : true });
+            const clients2 = await self.clients.matchAll({ includeUncontrolled : true });
+            if (!clients1.length || !clients2.length) {
+                event.source.postMessage("no clients");
+                return;
+            }
+            for (let client1 of clients1) {
+                for (let client2 of clients2) {
+                    if (client1 === client2) {
+                        event.source.postMessage("FAIL: reusing client objects");
+                        return;
+                    }
+                }
+            }
+            event.source.postMessage("PASS");
+            return;
+        }
+
         if (event.data.test !== "checkClientIsUncontrolled") {
             event.source.postMessage("FAIL: received unexpected message from client");
             return;

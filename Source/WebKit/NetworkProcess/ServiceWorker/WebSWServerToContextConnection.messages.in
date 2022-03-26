@@ -35,6 +35,7 @@ messages -> WebSWServerToContextConnection NotRefCounted {
     FindClientByVisibleIdentifier(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, String clientIdentifier) -> (std::optional<WebCore::ServiceWorkerClientData> data)
     MatchAll(uint64_t matchAllRequestIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, struct WebCore::ServiceWorkerClientQueryOptions options);
     Claim(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier) -> (std::optional<WebCore::ExceptionData> result)
+    Focus(WebCore::ScriptExecutionContextIdentifier serviceWorkerClientIdentifier) -> (std::optional<WebCore::ServiceWorkerClientData> result)
     SetScriptResource(WebCore::ServiceWorkerIdentifier identifier, URL scriptURL, WebCore::ServiceWorkerContextData::ImportedScript script)
     PostMessageToServiceWorkerClient(WebCore::ScriptExecutionContextIdentifier destination, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier source, String sourceOrigin)
     DidFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier identifier)

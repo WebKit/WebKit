@@ -1,3 +1,36 @@
+2022-03-26  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorkerWindowClient.focus
+        https://bugs.webkit.org/show_bug.cgi?id=238319
+        <rdar://90616490>
+
+        Reviewed by Brady Eidson.
+
+        Support new IPC message flow to focus from a service worker to network process to service worker client process to UIProcess.
+        Introduce a new delegate _focusWebViewFromServiceWorker as the scope is specific to service worker and usage is different from existing _focusWebView and other delegates.
+
+        The overall flow is like this:
+        - ServiceWorker process to NetworkProcess to Client WebProcess process to UIProcess (do the actual focus) to NetworkProcess to ServiceWorker process
+        We might want to directly go from NetworkProcess to UIProcess but we need to handle potential race conditions in that case.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messages.in:
+        * UIProcess/API/APIUIClient.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+
 2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use unary static_assert

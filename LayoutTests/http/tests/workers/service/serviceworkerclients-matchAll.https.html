@@ -27,6 +27,18 @@ promise_test(async (test) => {
 }, "Setup worker");
 
 promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", test.step_func((event) => {
+            assert_equals(event.data, "PASS");
+            resolve();
+        }));
+    });
+
+    activeWorker.postMessage({test: "checkNewClientObject"});
+    await promise;
+}, "Test self.clients.matchAll create new client object every time");
+
+promise_test(async (test) => {
     const serviceWorkerClientIdentifier = internals.serviceWorkerClientInternalIdentifier(document);
     var promise = new Promise((resolve, reject) => {
         navigator.serviceWorker.addEventListener("message", test.step_func((event) => {

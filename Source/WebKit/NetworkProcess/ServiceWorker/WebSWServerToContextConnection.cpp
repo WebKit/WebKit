@@ -217,6 +217,17 @@ WebCore::ProcessIdentifier WebSWServerToContextConnection::webProcessIdentifier(
     return m_connection.webProcessIdentifier();
 }
 
+void WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
+{
+    auto* server = this->server();
+    auto* connection = server ? server->connection(clientIdentifier.processIdentifier()) : nullptr;
+    if (!connection) {
+        callback({ });
+        return;
+    }
+    connection->focusServiceWorkerClient(clientIdentifier, WTFMove(callback));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(SERVICE_WORKER)
