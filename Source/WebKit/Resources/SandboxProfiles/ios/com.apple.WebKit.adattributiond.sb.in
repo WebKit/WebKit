@@ -192,7 +192,7 @@
 (allow mach-lookup
     (global-name "com.apple.cfnetwork.cfnetworkagent"))
     
-#if USE(SYSTEM_CONTENT_PATH)
+#if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
 #include <WebKitAdditions/SystemContentSandbox-ios.defs>
 
 (allow file-read* file-test-existence
