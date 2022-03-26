@@ -6,6 +6,13 @@
 <meta http-equiv="Content-Security-Policy" content="media-src http://127.0.0.1:8000/resources/redirect.py">
 </head>
 <body>
-<video src="http://127.0.0.1:8000/resources/redirect.py?code=307&url=http%3A%2F%2Flocalhost%3A8000/resources/test.mp4" onloadedmetadata="alertAndDone('FAIL')" onerror="alertAndDone('PASS')"></video>
+<script>
+    // Expect the blocked URI to be the requested origin, not the redirect target.
+    document.addEventListener('securitypolicyviolation', e => {
+        document.body.innerHTML = `blockedURI = <b>${e.blockedURI}</b><br/><br/>`;
+        window.testRunner.notifyDone();
+    });
+</script>
+<video src="http://127.0.0.1:8000/resources/redirect.py?code=307&url=http%3A//127.0.0.1%3A8000/resources/redirect.py%3Furl=http%3A//localhost%3A8000/resources/test.mp4"></video>
 </body>
 </html>
