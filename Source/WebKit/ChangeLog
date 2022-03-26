@@ -1,3 +1,16 @@
+2022-03-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Temporarily disable assertion in MessageReceiveQueueMap::addImpl()
+        https://bugs.webkit.org/show_bug.cgi?id=238397
+
+        Reviewed by Wenson Hsieh.
+
+        Enabling DOM Rendering in the GPU Process has exposed an issue (webkit.org/b/237674, webkit.org/b/238391).
+        Temporarily convert this assertion to logging to reduce test failures.
+
+        * Platform/IPC/MessageReceiveQueueMap.cpp:
+        (IPC::MessageReceiveQueueMap::addImpl):
+
 2022-03-25  Sihui Liu  <sihui_liu@apple.com>
 
         Disable custom storage paths for IndexedDB and LocalStorage by default
