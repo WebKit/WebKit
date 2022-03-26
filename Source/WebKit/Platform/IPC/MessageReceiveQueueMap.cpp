@@ -25,13 +25,17 @@
 
 #include "config.h"
 #include "MessageReceiveQueueMap.h"
+#include <wtf/text/TextStream.h>
 
 namespace IPC {
 
 void MessageReceiveQueueMap::addImpl(StoreType&& queue, ReceiverName receiverName, uint64_t destinationID)
 {
     auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-    ASSERT(!m_queues.contains(key));
+    if (m_queues.contains(key)) {
+        // FIXME: This should be an assertion. See webkit.org/b/237674 and webkit.org/b/238391.
+        ALWAYS_LOG_WITH_STREAM(stream << "MessageReceiveQueueMap::addImpl - adding duplicate receiver " << static_cast<uint8_t>(receiverName) << " for destination " << destinationID);
+    }
     m_queues.add(key, WTFMove(queue));
 }
 
