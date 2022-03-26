@@ -60,11 +60,13 @@ IPC::Connection* RemoteRealtimeMediaSourceProxy::connection()
 
 void RemoteRealtimeMediaSourceProxy::startProducingData()
 {
+    m_interrupted = false;
     connection()->send(Messages::UserMediaCaptureManagerProxy::StartProducingData { m_identifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::stopProducingData()
 {
+    m_interrupted = false;
     connection()->send(Messages::UserMediaCaptureManagerProxy::StopProducingData { m_identifier }, 0);
 }
 

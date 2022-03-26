@@ -315,9 +315,10 @@ void MockRealtimeMediaSourceCenter::resetDevices()
     RealtimeMediaSourceCenter::singleton().captureDevicesChanged();
 }
 
-void MockRealtimeMediaSourceCenter::setMockCameraIsInterrupted(bool isInterrupted)
+void MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted)
 {
-    MockRealtimeVideoSource::setIsInterrupted(isInterrupted);
+    MockRealtimeVideoSource::setIsInterrupted(isCameraInterrupted);
+    MockRealtimeAudioSource::setIsInterrupted(isMicrophoneInterrupted);
 }
 
 void MockRealtimeMediaSourceCenter::setDevices(Vector<MockMediaDevice>&& newMockDevices)

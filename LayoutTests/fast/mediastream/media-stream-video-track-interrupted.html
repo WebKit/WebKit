@@ -15,13 +15,13 @@
             return;
 
         let promise = new Promise((resolve, reject) => { track.onmute = resolve; setTimeout(() => reject("no mute"), 5000) });
-        testRunner.setMockCameraIsInterrupted(true);
+        testRunner.setMockCaptureDevicesInterrupted(true, false);
         await promise;
 
         assert_true(track.muted, "track is muted");
 
         promise = new Promise((resolve, reject) => { track.onunmute = resolve; setTimeout(() => reject("no unmute"), 5000) });
-        testRunner.setMockCameraIsInterrupted(false);
+        testRunner.setMockCaptureDevicesInterrupted(false, false);
         await promise;
 
         assert_false(track.muted, "track is not muted");
@@ -45,7 +45,7 @@
 
         // getting an interruption, track should be muted.
         let promise = new Promise((resolve, reject) => { track.onmute = resolve; setTimeout(() => reject("no mute"), 5000) });
-        testRunner.setMockCameraIsInterrupted(true);
+        testRunner.setMockCaptureDevicesInterrupted(true, false);
         await promise;
 
         assert_true(track.muted, "track is muted");

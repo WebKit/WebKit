@@ -1,5 +1,106 @@
 2022-03-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r290985. rdar://problem/78421282
+
+    Add a preference to mute video capture in case audio capture gets interrupted
+    https://bugs.webkit.org/show_bug.cgi?id=237524
+    <rdar://78421282>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    In case we detect that a microphone track source gets muted due to interruption, we mute
+    capture video tracks based if allowed by the new MuteCameraOnMicrophoneInterruptionEnabled setting.
+    
+    Add support for mock microphone interruption and remove previous in process internals API.
+    
+    Test: fast/mediastream/media-stream-video-track-interrupted-from-audio.html
+    
+    * Modules/mediastream/MediaStreamTrack.cpp:
+    * Modules/mediastream/MediaStreamTrack.h:
+    * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+    * platform/mediastream/mac/CoreAudioCaptureSource.h:
+    * platform/mock/MockRealtimeAudioSource.cpp:
+    (WebCore::MockRealtimeAudioSource::setIsInterrupted):
+    * platform/mock/MockRealtimeAudioSource.h:
+    * platform/mock/MockRealtimeMediaSourceCenter.cpp:
+    (WebCore::MockRealtimeMediaSourceCenter::setMockCaptureDevicesInterrupted):
+    (WebCore::MockRealtimeMediaSourceCenter::setMockCameraIsInterrupted): Deleted.
+    * platform/mock/MockRealtimeMediaSourceCenter.h:
+    
+    Source/WebKit:
+    
+    Add support for interrupt mock microphone devices.
+    Send to WebProcess sources whether sources are interrupted each time the source muted value changes.
+    Store that value in remote sources.
+    
+    * GPUProcess/GPUProcess.cpp:
+    * GPUProcess/GPUProcess.h:
+    * GPUProcess/GPUProcess.messages.in:
+    * UIProcess/API/C/WKPage.cpp:
+    * UIProcess/API/C/WKPagePrivate.h:
+    * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+    * UIProcess/GPU/GPUProcessProxy.cpp:
+    * UIProcess/GPU/GPUProcessProxy.h:
+    * UIProcess/WebPageProxy.cpp:
+    * UIProcess/WebPageProxy.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.messages.in:
+    * WebProcess/cocoa/RemoteRealtimeAudioSource.h:
+    * WebProcess/cocoa/RemoteRealtimeDisplaySource.h:
+    * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.cpp:
+    * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.h:
+    * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+    * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+    * WebProcess/cocoa/UserMediaCaptureManager.h:
+    * WebProcess/cocoa/UserMediaCaptureManager.messages.in:
+    
+    Source/WTF:
+    
+    * Scripts/Preferences/WebPreferencesInternal.yaml:
+    
+    Tools:
+    
+    Add support for interrupt mock microphone devices.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    
+    LayoutTests:
+    
+    * fast/mediastream/media-stream-video-track-interrupted-from-audio-expected.txt: Added.
+    * fast/mediastream/media-stream-video-track-interrupted-from-audio.html: Added.
+    * fast/mediastream/media-stream-video-track-interrupted.html: Migrated to testRunner API.
+    * fast/mediastream/track-ended-while-muted.html:
+    * platform/glib/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290985 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-08  Youenn Fablet  <youenn@apple.com>
+
+            Add a preference to mute video capture in case audio capture gets interrupted
+            https://bugs.webkit.org/show_bug.cgi?id=237524
+            <rdar://78421282>
+
+            Reviewed by Eric Carlson.
+
+            Add support for interrupt mock microphone devices.
+
+            * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+            * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+            * WebKitTestRunner/InjectedBundle/TestRunner.h:
+            * WebKitTestRunner/TestController.cpp:
+            * WebKitTestRunner/TestController.h:
+            * WebKitTestRunner/TestInvocation.cpp:
+
+2022-03-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r290978. rdar://problem/89901536
 
     Add early return for empty path in makeAllDirectories

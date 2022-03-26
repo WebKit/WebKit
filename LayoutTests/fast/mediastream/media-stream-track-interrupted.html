@@ -1,5 +1,4 @@
-<!DOCTYPE html><!-- webkit-test-runner [ CaptureAudioInGPUProcessEnabled=false CaptureAudioInUIProcessEnabled=false ] -->
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ CaptureAudioInGPUProcessEnabled=true CaptureVideoInGPUProcessEnabled=true MuteCameraOnMicrophoneInterruptionEnabled=false ] -->
 <html>
 <head>
     <meta charset="utf-8">
@@ -12,18 +11,18 @@
     promise_test(async (test) => {
         const stream = await navigator.mediaDevices.getUserMedia({audio: true});
         const track = stream.getAudioTracks()[0];
-        if (!window.internals)
+        if (!window.testRunner)
             return;
 
         let promise = new Promise((resolve, reject) => { track.onmute = resolve; setTimeout(() => reject("no mute"), 5000) });
-        internals.setMediaStreamSourceInterrupted(track, true);
+        testRunner.setMockCaptureDevicesInterrupted(false, true);
         await promise;
 
         assert_true(track.muted, "track is muted");
         assert_true(internals.isMediaStreamSourceInterrupted(track), "source is interrupted");
 
         promise = new Promise((resolve, reject) => { track.onunmute = resolve; setTimeout(() => reject("no unmute"), 5000) });
-        internals.setMediaStreamSourceInterrupted(track, false);
+        testRunner.setMockCaptureDevicesInterrupted(false, false);
         await promise;
 
         assert_false(track.muted, "track is no longer muted");
@@ -74,14 +73,14 @@
                             assert_true(pageMediaState.includes(isVideo ? 'HasActiveAudioCaptureDevice' : 'HasActiveVideoCaptureDevice'));
                             assert_false(pageMediaState.includes(isVideo ? 'HasActiveVideoCaptureDevice' : 'HasActiveAudioCaptureDevice'));
                             pageState = internals.pageMediaState();
-                            internals.setMediaStreamSourceInterrupted(track, false)
+                            testRunner.setMockCaptureDevicesInterrupted(false, false);
                         }
                     })
                 }
 
-                if (window.internals) {
+                if (window.testRunner) {
                     pageState = internals.pageMediaState();
-                    internals.setMediaStreamSourceInterrupted(track, true);
+                    testRunner.setMockCaptureDevicesInterrupted(isVideo, !isVideo);
                 }
                 setTimeout(() => reject("Muted state did not change in 1 second"), 1000);
             });

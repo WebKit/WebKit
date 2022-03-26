@@ -62,7 +62,7 @@ public:
     void captureFailed() final;
 
     void remoteVideoSampleAvailable(WebCore::MediaSample& sample, WebCore::VideoSampleMetadata metadata) { videoSampleAvailable(sample, metadata); }
-    void sourceMutedChanged(bool value) { notifyMutedChange(value); }
+    void sourceMutedChanged(bool value, bool interrupted);
 
 private:
     RemoteRealtimeDisplaySource(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice&, const WebCore::MediaConstraints*, String&& hashSalt, UserMediaCaptureManager&, bool shouldCaptureInGPUProcess);
@@ -79,6 +79,7 @@ private:
     const WebCore::RealtimeMediaSourceCapabilities& capabilities() final { return m_capabilities; }
     void whenReady(CompletionHandler<void(String)>&& callback) final { m_proxy.whenReady(WTFMove(callback)); }
     WebCore::CaptureDevice::DeviceType deviceType() const final { return m_proxy.deviceType(); }
+    bool interrupted() const final { return m_proxy.interrupted(); }
 
 #if ENABLE(GPU_PROCESS)
     // GPUProcessConnection::Client
@@ -94,6 +95,12 @@ private:
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
     WebCore::RealtimeMediaSourceSettings m_settings;
 };
+
+inline void RemoteRealtimeDisplaySource::sourceMutedChanged(bool muted, bool interrupted)
+{
+    m_proxy.setInterrupted(interrupted);
+    notifyMutedChange(muted);
+}
 
 } // namespace WebKit
 

@@ -11,13 +11,13 @@
 promise_test(async (test) => {
     const stream = await navigator.mediaDevices.getUserMedia({audio: true});
     const track = stream.getAudioTracks()[0];
-    if (!window.internals)
+    if (!window.testRunner)
         return;
 
     const clone = track.clone();
 
     let promise = new Promise((resolve, reject) => { track.onmute = resolve; setTimeout(() => reject("no mute"), 5000) });
-    internals.setMediaStreamSourceInterrupted(track, true);
+    testRunner.setMockCaptureDevicesInterrupted(false, true);
     await promise;
 
     track.stop();

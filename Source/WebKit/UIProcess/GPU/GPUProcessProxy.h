@@ -83,7 +83,7 @@ public:
     void clearMockMediaDevices();
     void removeMockMediaDevice(const String&);
     void resetMockMediaDevices();
-    void setMockCameraIsInterrupted(bool);
+    void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
 #endif
 
     void removeSession(PAL::SessionID);
