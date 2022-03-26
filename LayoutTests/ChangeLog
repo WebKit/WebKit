@@ -1,5 +1,57 @@
 2022-03-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r290550. rdar://problem/88675827
+
+    Update CSP handling of javascript URLs
+    https://bugs.webkit.org/show_bug.cgi?id=236351
+    <rdar://problem/88675827>
+    
+    Reviewed by Brent Fulgham.
+    
+    LayoutTests/imported/w3c:
+    
+    * web-platform-tests/content-security-policy/navigation/to-javascript-parent-initiated-parent-csp-disallow-expected.txt:
+    * web-platform-tests/content-security-policy/navigation/to-javascript-url-script-src-expected.txt:
+    
+    Source/WebCore:
+    
+    * bindings/js/ScriptController.cpp:
+    (WebCore::ScriptController::executeJavaScriptURL):
+    * loader/FrameLoader.cpp:
+    (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+    (WebCore::createWindow):
+    * loader/SubframeLoader.cpp:
+    (WebCore::FrameLoader::SubframeLoader::requestFrame):
+    * page/DOMWindow.cpp:
+    (WebCore::DOMWindow::setLocation):
+    * page/csp/ContentSecurityPolicy.cpp:
+    (WebCore::ContentSecurityPolicy::allowJavaScriptURLs const):
+    * page/csp/ContentSecurityPolicy.h:
+    
+    LayoutTests:
+    
+    * TestExpectations:
+    * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+    * http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star-expected.txt:
+    * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290550 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-26  Kate Cheney  <katherine_cheney@apple.com>
+
+            Update CSP handling of javascript URLs
+            https://bugs.webkit.org/show_bug.cgi?id=236351
+            <rdar://problem/88675827>
+
+            Reviewed by Brent Fulgham.
+
+            * TestExpectations:
+            * http/tests/security/contentSecurityPolicy/inline-script-blocked-javascript-url-expected.txt:
+            * http/tests/security/contentSecurityPolicy/javascript-url-blocked-by-default-src-star-expected.txt:
+            * http/tests/security/contentSecurityPolicy/javascript-url-blocked-expected.txt:
+
+2022-03-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r290443. rdar://problem/89322580
 
     Update CSP console logging
