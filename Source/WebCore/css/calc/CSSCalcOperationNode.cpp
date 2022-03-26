@@ -623,7 +623,8 @@ void CSSCalcOperationNode::combineChildren()
 {
     if (isIdentity() || !m_children.size())
         return;
-
+    m_isRoot = IsRoot::No;
+    
     if (m_children.size() < 2) {
         if (m_children.size() == 1 && isTrigNode()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType());

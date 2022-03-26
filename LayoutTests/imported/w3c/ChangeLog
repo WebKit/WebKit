@@ -1,3 +1,15 @@
+2022-03-25  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Incorrect handling of NaN inside calc() for top-level calculation
+        https://bugs.webkit.org/show_bug.cgi?id=234176
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-values/calc-infinity-nan-computed-expected.txt: Added.
+        * web-platform-tests/css/css-values/calc-infinity-nan-computed.html: Added.
+        * web-platform-tests/css/css-values/round-function-expected.txt:
+        * web-platform-tests/css/css-values/round-function.html:
+
 2022-03-25  Youenn Fablet  <youenn@apple.com>
 
         Add support for focused and visible ServiceWorkerWindowClient states

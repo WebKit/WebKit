@@ -1,3 +1,21 @@
+2022-03-25  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
+
+        Incorrect handling of NaN inside calc() for top-level calculation
+        https://bugs.webkit.org/show_bug.cgi?id=234176
+
+        Reviewed by Simon Fraser.
+
+        Add function to convert any top level NaN values to infinity values as per the spec.
+        This only affects the computed value of the calc expression, not its serialization.
+
+        Test: imported/w3c/web-platform-tests/css/css-values/calc-infinity-nan-computed.html
+
+        * css/calc/CSSCalcOperationNode.cpp:
+        (WebCore::CSSCalcOperationNode::combineChildren):
+        (WebCore::convertToTopLevelValue):
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        * css/calc/CSSCalcOperationNode.h:
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Use StringView::split() instead of String::split() in more places
