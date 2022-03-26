@@ -1,3 +1,34 @@
+2022-03-26  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291941. rdar://problem/90878872
+
+    REGRESSION(r291814): WebAuthn sandbox profile is missing
+    https://bugs.webkit.org/show_bug.cgi?id=238418
+    rdar://90878872
+    
+    Reviewed by Per Arne Vollan.
+    
+    Fix a typo in the script phase that copies the embedded sandbox profiles. We want to copy
+    com.apple.WebKit.WebAuthn.sb, not com.apple.WebKit.WebAuth.sb.
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291941 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-26  David Quesada  <david_quesada@apple.com>
+
+            REGRESSION(r291814): WebAuthn sandbox profile is missing
+            https://bugs.webkit.org/show_bug.cgi?id=238418
+            rdar://90878872
+
+            Reviewed by Per Arne Vollan.
+
+            Fix a typo in the script phase that copies the embedded sandbox profiles. We want to copy
+            com.apple.WebKit.WebAuthn.sb, not com.apple.WebKit.WebAuth.sb.
+
+            * WebKit.xcodeproj/project.pbxproj:
+
 2022-03-25  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r291869. rdar://problem/90848250
