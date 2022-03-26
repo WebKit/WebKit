@@ -1,5 +1,41 @@
 2022-03-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r290745. rdar://problem/80335706
+
+    [Cocoa] The behavior of navigator-language-ru changed in Monterey / iOS 15
+    https://bugs.webkit.org/show_bug.cgi?id=237384
+    <rdar://problem/80335706>
+    
+    Unreviewed test gardening.
+    
+    Add a new test for the new behavior, but keep the old one too for older OSes.
+    
+    * fast/text/international/system-language/navigator-language/navigator-language-ru-2-expected.txt: Added.
+    * fast/text/international/system-language/navigator-language/navigator-language-ru-2.html: Added.
+    * platform/ios-14/TestExpectations:
+    * platform/ios/TestExpectations:
+    * platform/mac-wk2/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290745 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Cocoa] The behavior of navigator-language-ru changed in Monterey / iOS 15
+            https://bugs.webkit.org/show_bug.cgi?id=237384
+            <rdar://problem/80335706>
+
+            Unreviewed test gardening.
+
+            Add a new test for the new behavior, but keep the old one too for older OSes.
+
+            * fast/text/international/system-language/navigator-language/navigator-language-ru-2-expected.txt: Added.
+            * fast/text/international/system-language/navigator-language/navigator-language-ru-2.html: Added.
+            * platform/ios-14/TestExpectations:
+            * platform/ios/TestExpectations:
+            * platform/mac-wk2/TestExpectations:
+
+2022-03-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r290550. rdar://problem/88675827
 
     Update CSP handling of javascript URLs
