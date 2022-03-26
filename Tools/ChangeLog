@@ -1,3 +1,36 @@
+2022-03-23  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r290978. rdar://problem/89901536
+
+    Add early return for empty path in makeAllDirectories
+    https://bugs.webkit.org/show_bug.cgi?id=237540
+    rdar://89901536
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WTF:
+    
+    * wtf/posix/FileSystemPOSIX.cpp:
+    (WTF::FileSystemImpl::makeAllDirectories):
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+    (TestWebKitAPI::TEST_F):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290978 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-08  Sihui Liu  <sihui_liu@apple.com>
+
+            Add early return for empty path in makeAllDirectories
+            https://bugs.webkit.org/show_bug.cgi?id=237540
+            rdar://89901536
+
+            Reviewed by Chris Dumez.
+
+            * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+            (TestWebKitAPI::TEST_F):
+
 2022-03-22  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r290367. rdar://problem/88567612
