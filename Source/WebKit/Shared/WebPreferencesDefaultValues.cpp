@@ -175,7 +175,13 @@ bool defaultUseGPUProcessForDOMRenderingEnabled()
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
     return false;
 #else
-    return isFeatureFlagEnabled("gpu_process_dom_rendering", false);
+#if ENABLE(GPU_PROCESS_BY_DEFAULT) && PLATFORM(IOS_FAMILY)
+    bool defaultValue = true;
+#else
+    bool defaultValue = false;
+#endif
+    
+    return isFeatureFlagEnabled("gpu_process_dom_rendering", defaultValue);
 #endif
 }
 

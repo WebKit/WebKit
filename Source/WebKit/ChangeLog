@@ -1,3 +1,17 @@
+2022-03-25  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] [iOS] Enable GPU Process for DOM rendering on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=236508
+        rdar://83437844
+
+        Reviewed by Jon Lee.
+
+        * FeatureFlags/WebKit-appletvos.plist:
+        * FeatureFlags/WebKit-ios.plist:
+        * FeatureFlags/WebKit-watchos.plist:
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultUseGPUProcessForDOMRenderingEnabled):
+
 2022-03-25  Chris Dumez  <cdumez@apple.com>
 
         Use StringView::split() instead of String::split() in more places
