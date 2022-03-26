@@ -1877,14 +1877,10 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
         case CallLinkInfo::Type::Optimizing: {
             // While Baseline / LLInt shares BaselineCallLinkInfo, OptimizingCallLinkInfo is exclusively used for one JIT code.
             // Thus, we can safely use doneLocation.
-            if (!callLinkInfo.isTailCall()) {
-                // We were called from the fast path, get rid of any remnants of that
-                // which may exist. This really only matters for x86, which adjusts
-                // SP for calls.
-                stubJit.preserveReturnAddressAfterCall(GPRInfo::regT4);
+            if (callLinkInfo.isTailCall()) {
+                stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.doneLocation().untaggedExecutableAddress()), GPRInfo::regT4);
+                stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
             }
-            stubJit.move(CCallHelpers::TrustedImmPtr(callLinkInfo.doneLocation().untaggedExecutableAddress()), GPRInfo::regT4);
-            stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
             break;
         }
         }
