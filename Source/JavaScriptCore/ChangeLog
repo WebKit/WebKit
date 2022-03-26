@@ -1,3 +1,36 @@
+2022-03-25  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r291891. rdar://problem/90838071
+
+    AI should not set the structure for ObjectCreate
+    https://bugs.webkit.org/show_bug.cgi?id=238349
+    
+    Patch by Justin Michaud <justin_michaud@apple.com> on 2022-03-24
+    Reviewed by Saam Barati and Yusuke Suzuki.
+    
+    The AbstractInterpreter should not set the structure for ObjectCreate because it might change by
+    the time the constant folding phase runs if the structure cache is cleared.
+    
+    * dfg/DFGAbstractInterpreterInlines.h:
+    (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291891 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-24  Justin Michaud  <justin_michaud@apple.com>
+
+            AI should not set the structure for ObjectCreate
+            https://bugs.webkit.org/show_bug.cgi?id=238349
+
+            Reviewed by Saam Barati and Yusuke Suzuki.
+
+            The AbstractInterpreter should not set the structure for ObjectCreate because it might change by
+            the time the constant folding phase runs if the structure cache is cleared.
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+
 2022-03-21  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r290981. rdar://problem/83326232
