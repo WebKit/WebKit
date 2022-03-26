@@ -163,9 +163,6 @@
 // Cannot create 2D (array) view of 3D texture.  These fail with validation errors, and cause a crash in syncval.
 3886 VULKAN : dEQP-GLES31.functional.image_load_store.3d.*single_layer = SKIP
 
-// Geometry shader support:
-5430 VULKAN : dEQP-GLES31.functional.geometry_shading.query.primitives_generated_* = FAIL
-
 // Framebuffer fetch implementation bug
 6909 VULKAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.basic.framebuffer_texture_layer = SKIP
 
@@ -195,8 +192,6 @@
 4080 ANDROID VULKAN : dEQP-GLES31.functional.stencil_texturing.misc.base_level = SKIP
 
 // Fail on tests that use an unsupported extension!
-4371 VULKAN ANDROID : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.add.int_to_vec3_vertex = FAIL
-4371 VULKAN ANDROID : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.add.int_to_uvec3_vertex = FAIL
 4371 SWIFTSHADER : dEQP-GLES31.functional.shaders.implicit_conversions.* = FAIL
 
 // Desktop cards without native etc support, angle emulated format fails
@@ -211,13 +206,7 @@
 5277 VULKAN ANDROID : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb10_a2* = FAIL
 5277 VULKAN ANDROID : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb9_e5* = FAIL
 
-// Cannot support a seperate set of fragment shader input when per-sample shading:
-3588 VULKAN ANDROID : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.correctness.multisample_*_1 = FAIL
-3588 VULKAN ANDROID : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.correctness.multisample_*_2 = FAIL
-3588 VULKAN ANDROID : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.correctness.multisample_*_4 = FAIL
-
 // When ANGLE allows non-conformant features, imageAtomicExchange with r32f fails
-5503 VULKAN ANDROID : dEQP-GLES31.functional.image_load_store.*.atomic.exchange_r32f* = FAIL
 5503 SWIFTSHADER : dEQP-GLES31.functional.image_load_store.*.atomic.exchange_r32f* = SKIP
 
 // NVIDIA failures on older drivers

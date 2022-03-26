@@ -28,6 +28,8 @@
 #define DRM_FORMAT_R16 FOURCC('R', '1', '6', ' ')
 #define DRM_FORMAT_GR88 FOURCC('G', 'R', '8', '8')
 #define DRM_FORMAT_RGB565 FOURCC('R', 'G', '1', '6')
+#define DRM_FORMAT_RGB888 FOURCC('R', 'G', '2', '4')
+#define DRM_FORMAT_BGR888 FOURCC('B', 'G', '2', '4')
 #define DRM_FORMAT_ARGB8888 FOURCC('A', 'R', '2', '4')
 #define DRM_FORMAT_ABGR8888 FOURCC('A', 'B', '2', '4')
 #define DRM_FORMAT_XRGB8888 FOURCC('X', 'R', '2', '4')
@@ -77,5 +79,75 @@ GLenum DrmFourCCFormatToGLInternalFormat(int fourccFormat, bool *isYUV)
             return GL_RGB8;
     }
 }
+
+#if defined(ANGLE_ENABLE_VULKAN)
+std::vector<int> VkFormatToDrmFourCCFormat(VkFormat format)
+{
+    switch (format)
+    {
+        case VK_FORMAT_R8_UNORM:
+        case VK_FORMAT_R8_SRGB:
+            return {DRM_FORMAT_R8};
+        case VK_FORMAT_R16_UNORM:
+            return {DRM_FORMAT_R16};
+        case VK_FORMAT_R8G8_UNORM:
+        case VK_FORMAT_R8G8_SRGB:
+            return {DRM_FORMAT_GR88};
+        case VK_FORMAT_R8G8B8_UNORM:
+        case VK_FORMAT_R8G8B8_SRGB:
+            return {DRM_FORMAT_BGR888};
+        case VK_FORMAT_B8G8R8_UNORM:
+        case VK_FORMAT_B8G8R8_SRGB:
+            return {DRM_FORMAT_RGB888};
+        case VK_FORMAT_R8G8B8A8_UNORM:
+        case VK_FORMAT_R8G8B8A8_SRGB:
+            return {DRM_FORMAT_ABGR8888, DRM_FORMAT_XBGR8888};
+        case VK_FORMAT_B8G8R8A8_UNORM:
+        case VK_FORMAT_B8G8R8A8_SRGB:
+            return {DRM_FORMAT_ARGB8888, DRM_FORMAT_XRGB8888};
+        case VK_FORMAT_A2B10G10R10_UNORM_PACK32:
+            return {DRM_FORMAT_ARGB2101010};
+        case VK_FORMAT_A2R10G10B10_UNORM_PACK32:
+            return {DRM_FORMAT_ABGR2101010};
+        case VK_FORMAT_B5G6R5_UNORM_PACK16:
+            return {DRM_FORMAT_RGB565};
+        default:
+            return {};
+    }
+}
+
+std::vector<VkFormat> DrmFourCCFormatToVkFormats(int fourccFormat)
+{
+    switch (fourccFormat)
+    {
+        case DRM_FORMAT_R8:
+            return {VK_FORMAT_R8_SRGB, VK_FORMAT_R8_UNORM};
+        case DRM_FORMAT_R16:
+            return {VK_FORMAT_R16_UNORM};
+        case DRM_FORMAT_GR88:
+            return {VK_FORMAT_R8G8_SRGB, VK_FORMAT_R8G8_UNORM};
+        case DRM_FORMAT_BGR888:
+            return {VK_FORMAT_R8G8B8_SRGB, VK_FORMAT_R8G8B8_UNORM};
+        case DRM_FORMAT_RGB888:
+            return {VK_FORMAT_B8G8R8_SRGB, VK_FORMAT_B8G8R8_UNORM};
+        case DRM_FORMAT_ABGR8888:
+        case DRM_FORMAT_XBGR8888:
+            return {VK_FORMAT_R8G8B8A8_SRGB, VK_FORMAT_R8G8B8A8_UNORM};
+        case DRM_FORMAT_ARGB8888:
+        case DRM_FORMAT_XRGB8888:
+            return {VK_FORMAT_B8G8R8A8_SRGB, VK_FORMAT_B8G8R8A8_UNORM};
+        case DRM_FORMAT_ABGR2101010:
+            return {VK_FORMAT_A2R10G10B10_UNORM_PACK32};
+        case DRM_FORMAT_ARGB2101010:
+            return {VK_FORMAT_A2B10G10R10_UNORM_PACK32};
+        case DRM_FORMAT_RGB565:
+            return {VK_FORMAT_B5G6R5_UNORM_PACK16};
+        default:
+            WARN() << "Unknown dma_buf format " << fourccFormat
+                   << " used to initialize an EGL image.";
+            return {};
+    }
+}
+#endif  // ANGLE_ENABLE_VULKAN
 
 }  // namespace angle

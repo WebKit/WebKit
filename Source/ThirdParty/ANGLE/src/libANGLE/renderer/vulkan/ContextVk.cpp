@@ -607,9 +607,17 @@ constexpr angle::PackedEnumMap<RenderPassClosureReason, const char *> kRenderPas
      "Temporary render pass used for image copy closed"},
     {RenderPassClosureReason::TemporaryForOverlayDraw,
      "Temporary render pass used for overlay draw closed"},
-    {RenderPassClosureReason::OverlayFontCreation,
-     "Render pass closed due to creating Overlay font"},
 }};
+
+VkDependencyFlags GetLocalDependencyFlags(ContextVk *contextVk)
+{
+    VkDependencyFlags dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+    if (contextVk->getCurrentViewCount() > 0)
+    {
+        dependencyFlags |= VK_DEPENDENCY_VIEW_LOCAL_BIT;
+    }
+    return dependencyFlags;
+}
 }  // anonymous namespace
 
 // Not necessary once upgraded to C++17.
@@ -622,18 +630,8 @@ constexpr ContextVk::DirtyBits ContextVk::kDriverUniformsAndBindingDirtyBits;
 
 void ContextVk::flushDescriptorSetUpdates()
 {
-    if (mWriteDescriptorSets.empty())
-    {
-        ASSERT(mDescriptorBufferInfos.empty());
-        ASSERT(mDescriptorImageInfos.empty());
-        return;
-    }
-
-    vkUpdateDescriptorSets(getDevice(), static_cast<uint32_t>(mWriteDescriptorSets.size()),
-                           mWriteDescriptorSets.data(), 0, nullptr);
-    mWriteDescriptorSets.clear();
-    mDescriptorBufferInfos.clear();
-    mDescriptorImageInfos.clear();
+    mPerfCounters.writeDescriptorSets +=
+        mUpdateDescriptorSetsBuilder.flushDescriptorSetUpdates(getDevice());
 }
 
 ANGLE_INLINE void ContextVk::onRenderPassFinished(RenderPassClosureReason reason)
@@ -714,7 +712,6 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
       mLastProgramUsesFramebufferFetch(false),
       mGpuClockSync{std::numeric_limits<double>::max(), std::numeric_limits<double>::max()},
       mGpuEventTimestampOrigin(0),
-      mPerfCounters{},
       mContextPerfCounters{},
       mCumulativeContextPerfCounters{},
       mContextPriority(renderer->getDriverPriority(GetContextPriority(state))),
@@ -778,6 +775,8 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
         &ContextVk::handleDirtyGraphicsShaderResources;
     mGraphicsDirtyBitHandlers[DIRTY_BIT_FRAMEBUFFER_FETCH_BARRIER] =
         &ContextVk::handleDirtyGraphicsFramebufferFetchBarrier;
+    mGraphicsDirtyBitHandlers[DIRTY_BIT_BLEND_BARRIER] =
+        &ContextVk::handleDirtyGraphicsBlendBarrier;
     if (getFeatures().supportsTransformFeedbackExtension.enabled)
     {
         mGraphicsDirtyBitHandlers[DIRTY_BIT_TRANSFORM_FEEDBACK_BUFFERS] =
@@ -846,10 +845,22 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
     mPipelineDirtyBitsMask.reset(gl::State::DIRTY_BIT_SHADER_STORAGE_BUFFER_BINDING);
     mPipelineDirtyBitsMask.reset(gl::State::DIRTY_BIT_ATOMIC_COUNTER_BUFFER_BINDING);
 
-    // Reserve reasonable amount of spaces so that for majority of apps we don't need to grow at all
-    mDescriptorBufferInfos.reserve(kDescriptorBufferInfosInitialSize);
-    mDescriptorImageInfos.reserve(kDescriptorImageInfosInitialSize);
-    mWriteDescriptorSets.reserve(kDescriptorWriteInfosInitialSize);
+    angle::PerfMonitorCounterGroup vulkanGroup;
+    vulkanGroup.name = "vulkan";
+
+#define ANGLE_ADD_PERF_MONITOR_COUNTER_GROUP(COUNTER) \
+    {                                                 \
+        angle::PerfMonitorCounter counter;            \
+        counter.name  = #COUNTER;                     \
+        counter.value = 0;                            \
+        vulkanGroup.counters.push_back(counter);      \
+    }
+
+    ANGLE_VK_PERF_COUNTERS_X(ANGLE_ADD_PERF_MONITOR_COUNTER_GROUP)
+
+#undef ANGLE_ADD_PERF_MONITOR_COUNTER_GROUP
+
+    mPerfMonitorCounters.push_back(vulkanGroup);
 }
 
 ContextVk::~ContextVk() = default;
@@ -1151,8 +1162,12 @@ angle::Result ContextVk::setupDraw(const gl::Context *context,
     ProgramExecutableVk *programExecutableVk = getExecutable();
     if (programExecutableVk->hasDirtyUniforms())
     {
-        ANGLE_TRY(programExecutableVk->updateUniforms(this, *mState.getProgramExecutable(),
-                                                      &mDefaultUniformStorage));
+        TransformFeedbackVk *transformFeedbackVk =
+            vk::SafeGetImpl(mState.getCurrentTransformFeedback());
+        ANGLE_TRY(programExecutableVk->updateUniforms(
+            this, &mUpdateDescriptorSetsBuilder, &mResourceUseList, &mEmptyBuffer,
+            *mState.getProgramExecutable(), &mDefaultUniformStorage,
+            mState.isTransformFeedbackActiveUnpaused(), transformFeedbackVk));
         mGraphicsDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
     }
 
@@ -1231,6 +1246,17 @@ angle::Result ContextVk::setupIndexedDraw(const gl::Context *context,
             mGraphicsDirtyBits.set(DIRTY_BIT_INDEX_BUFFER);
             mLastIndexBufferOffset = indices;
         }
+
+        // When you draw with LineLoop mode or GL_UNSIGNED_BYTE type, we may allocate its own
+        // element buffer and modify mCurrentElementArrayBuffer. When we switch out of that draw
+        // mode, we must reset mCurrentElementArrayBuffer back to the vertexArray's element buffer.
+        // Since in either case we set DIRTY_BIT_INDEX_BUFFER dirty bit, we use this bit to re-sync
+        // mCurrentElementArrayBuffer.
+        if (mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
+        {
+            vertexArrayVk->updateCurrentElementArrayBuffer();
+        }
+
         if (shouldConvertUint8VkIndexType(indexType) && mGraphicsDirtyBits[DIRTY_BIT_INDEX_BUFFER])
         {
             ANGLE_VK_PERF_WARNING(this, GL_DEBUG_SEVERITY_LOW,
@@ -1392,8 +1418,12 @@ angle::Result ContextVk::setupDispatch(const gl::Context *context)
     ProgramExecutableVk *programExecutableVk = getExecutable();
     if (programExecutableVk->hasDirtyUniforms())
     {
-        ANGLE_TRY(programExecutableVk->updateUniforms(this, *mState.getProgramExecutable(),
-                                                      &mDefaultUniformStorage));
+        TransformFeedbackVk *transformFeedbackVk =
+            vk::SafeGetImpl(mState.getCurrentTransformFeedback());
+        ANGLE_TRY(programExecutableVk->updateUniforms(
+            this, &mUpdateDescriptorSetsBuilder, &mResourceUseList, &mEmptyBuffer,
+            *mState.getProgramExecutable(), &mDefaultUniformStorage,
+            mState.isTransformFeedbackActiveUnpaused(), transformFeedbackVk));
         mComputeDirtyBits.set(DIRTY_BIT_DESCRIPTOR_SETS);
     }
 
@@ -1645,7 +1675,9 @@ angle::Result ContextVk::handleDirtyGraphicsPipelineDesc(DirtyBits::Iterator *di
                                             ? mCurrentGraphicsPipeline->getPipeline().getHandle()
                                             : VK_NULL_HANDLE;
 
-    ProgramExecutableVk *executableVk = getExecutable();
+    ASSERT(mState.getProgramExecutable() != nullptr);
+    const gl::ProgramExecutable &glExecutable = *mState.getProgramExecutable();
+    ProgramExecutableVk *executableVk         = getExecutable();
     ASSERT(executableVk);
 
     if (!mCurrentGraphicsPipeline)
@@ -1659,7 +1691,8 @@ angle::Result ContextVk::handleDirtyGraphicsPipelineDesc(DirtyBits::Iterator *di
 
         // Draw call shader patching, shader compilation, and pipeline cache query.
         ANGLE_TRY(executableVk->getGraphicsPipeline(this, mCurrentDrawMode, *mGraphicsPipelineDesc,
-                                                    &descPtr, &mCurrentGraphicsPipeline));
+                                                    glExecutable, &descPtr,
+                                                    &mCurrentGraphicsPipeline));
         mGraphicsPipelineTransition.reset();
     }
     else if (mGraphicsPipelineTransition.any())
@@ -1672,8 +1705,8 @@ angle::Result ContextVk::handleDirtyGraphicsPipelineDesc(DirtyBits::Iterator *di
             const vk::GraphicsPipelineDesc *descPtr;
 
             ANGLE_TRY(executableVk->getGraphicsPipeline(this, mCurrentDrawMode,
-                                                        *mGraphicsPipelineDesc, &descPtr,
-                                                        &mCurrentGraphicsPipeline));
+                                                        *mGraphicsPipelineDesc, glExecutable,
+                                                        &descPtr, &mCurrentGraphicsPipeline));
 
             oldPipeline->addTransition(mGraphicsPipelineTransition, descPtr,
                                        mCurrentGraphicsPipeline);
@@ -1816,14 +1849,14 @@ ANGLE_INLINE angle::Result ContextVk::handleDirtyTexturesImpl(
 
         // Ensure the image is in the desired layout
         commandBufferHelper->imageRead(this, image.getAspectFlags(), imageLayout, &image);
-
-        textureVk->retainImageViews(&mResourceUseList);
     }
 
     if (executable->hasTextures())
     {
         ProgramExecutableVk *executableVk = getExecutable();
-        ANGLE_TRY(executableVk->updateTexturesDescriptorSet(this, mActiveTexturesDesc));
+        ANGLE_TRY(executableVk->updateTexturesDescriptorSet(
+            this, &mUpdateDescriptorSetsBuilder, &mResourceUseList, *executable, mActiveTextures,
+            mActiveTexturesDesc, mEmulateSeamfulCubeMapSampling));
     }
 
     return angle::Result::Continue;
@@ -1900,7 +1933,23 @@ angle::Result ContextVk::handleDirtyGraphicsFramebufferFetchBarrier(
 
     mRenderPassCommandBuffer->pipelineBarrier(
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-        VK_DEPENDENCY_BY_REGION_BIT, 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+        GetLocalDependencyFlags(this), 1, &memoryBarrier, 0, nullptr, 0, nullptr);
+
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::handleDirtyGraphicsBlendBarrier(DirtyBits::Iterator *dirtyBitsIterator,
+                                                         DirtyBits dirtyBitMask)
+{
+    VkMemoryBarrier memoryBarrier = {};
+    memoryBarrier.sType           = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+    memoryBarrier.srcAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    memoryBarrier.dstAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT;
+
+    mRenderPassCommandBuffer->pipelineBarrier(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                              VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                                              GetLocalDependencyFlags(this), 1, &memoryBarrier, 0,
+                                              nullptr, 0, nullptr);
 
     return angle::Result::Continue;
 }
@@ -1934,8 +1983,9 @@ angle::Result ContextVk::handleDirtyShaderResourcesImpl(CommandBufferHelperT *co
 
     ProgramExecutableVk *executableVk = getExecutable();
     FramebufferVk *drawFramebufferVk  = getDrawFramebuffer();
-    ANGLE_TRY(executableVk->updateShaderResourcesDescriptorSet(this, drawFramebufferVk,
-                                                               mShaderBuffersDescriptorDesc));
+    ANGLE_TRY(executableVk->updateShaderResourcesDescriptorSet(
+        this, executable, &mUpdateDescriptorSetsBuilder, &mEmptyBuffer, &mResourceUseList,
+        drawFramebufferVk, mShaderBuffersDescriptorDesc));
 
     // Record usage of storage buffers and images in the command buffer to aid handling of
     // glMemoryBarrier.
@@ -2076,8 +2126,10 @@ angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersEmulation(
                                                            : vk::kInvalidBufferSerial);
 
     ProgramVk *programVk = getProgram();
-    return programVk->getExecutable().updateTransformFeedbackDescriptorSet(
-        this, *executable, uniformBuffer, xfbBufferDesc);
+    return programVk->getExecutable().updateUniformsAndXfbDescriptorSet(
+        this, &mUpdateDescriptorSetsBuilder, &mResourceUseList, &mEmptyBuffer, *executable,
+        uniformBuffer, xfbBufferDesc, mState.isTransformFeedbackActiveUnpaused(),
+        transformFeedbackVk);
 }
 
 angle::Result ContextVk::handleDirtyGraphicsTransformFeedbackBuffersExtension(
@@ -2224,13 +2276,14 @@ angle::Result ContextVk::handleDirtyDescriptorSetsImpl(CommandBufferT *commandBu
     }
 
     ProgramExecutableVk *executableVk = getExecutable();
-    return executableVk->updateDescriptorSets(this, commandBuffer, pipelineType);
+    return executableVk->updateDescriptorSets(this, &mResourceUseList, commandBuffer, pipelineType);
 }
 
 void ContextVk::syncObjectPerfCounters()
 {
     mPerfCounters.descriptorSetAllocations                  = 0;
     mPerfCounters.descriptorSetCacheTotalSize               = 0;
+    mPerfCounters.descriptorSetCacheKeySizeBytes            = 0;
     mPerfCounters.uniformsAndXfbDescriptorSetCacheHits      = 0;
     mPerfCounters.uniformsAndXfbDescriptorSetCacheMisses    = 0;
     mPerfCounters.uniformsAndXfbDescriptorSetCacheTotalSize = 0;
@@ -2240,6 +2293,7 @@ void ContextVk::syncObjectPerfCounters()
     mPerfCounters.shaderBuffersDescriptorSetCacheHits       = 0;
     mPerfCounters.shaderBuffersDescriptorSetCacheMisses     = 0;
     mPerfCounters.shaderBuffersDescriptorSetCacheTotalSize  = 0;
+    mPerfCounters.dynamicBufferAllocations                  = 0;
 
     // ContextVk's descriptor set allocations
     ContextVkPerfCounters contextCounters = getAndResetObjectPerfCounters();
@@ -2289,6 +2343,11 @@ void ContextVk::syncObjectPerfCounters()
             progPerfCounters.descriptorSetCacheMisses[DescriptorSetIndex::ShaderResource];
         mPerfCounters.shaderBuffersDescriptorSetCacheTotalSize +=
             progPerfCounters.descriptorSetCacheSizes[DescriptorSetIndex::ShaderResource];
+
+        for (uint32_t keySizeBytes : progPerfCounters.descriptorSetCacheKeySizesBytes)
+        {
+            mPerfCounters.descriptorSetCacheKeySizeBytes += keySizeBytes;
+        }
     }
 
     mPerfCounters.descriptorSetCacheTotalSize +=
@@ -2355,6 +2414,19 @@ void ContextVk::updateOverlayOnPresent()
             overlay->getRunningGraphWidget(gl::WidgetId::VulkanDynamicBufferAllocations);
         dynamicBufferAllocations->next();
     }
+
+    {
+        gl::CountWidget *cacheKeySize =
+            overlay->getCountWidget(gl::WidgetId::VulkanDescriptorCacheKeySize);
+        cacheKeySize->reset();
+        cacheKeySize->add(mPerfCounters.descriptorSetCacheKeySizeBytes);
+    }
+
+    {
+        gl::RunningGraphWidget *dynamicBufferAllocations =
+            overlay->getRunningGraphWidget(gl::WidgetId::VulkanDynamicBufferAllocations);
+        dynamicBufferAllocations->add(mPerfCounters.dynamicBufferAllocations);
+    }
 }
 
 void ContextVk::addOverlayUsedBuffersCount(vk::CommandBufferHelperCommon *commandBuffer)
@@ -2398,6 +2470,19 @@ void ContextVk::addOverlayUsedBuffersCount(vk::CommandBufferHelperCommon *comman
 
 angle::Result ContextVk::submitFrame(const vk::Semaphore *signalSemaphore, Serial *submitSerialOut)
 {
+    return submitFrameImpl(signalSemaphore, submitSerialOut, SubmitFrameType::OutsideAndRPCommands);
+}
+
+angle::Result ContextVk::submitFrameOutsideCommandBufferOnly(Serial *submitSerialOut)
+{
+    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::submitFrameOutsideCommandBufferOnly");
+    return submitFrameImpl(nullptr, submitSerialOut, SubmitFrameType::OutsideRPCommandsOnly);
+}
+
+angle::Result ContextVk::submitFrameImpl(const vk::Semaphore *signalSemaphore,
+                                         Serial *submitSerialOut,
+                                         SubmitFrameType submitFrameType)
+{
     if (mCurrentWindowSurface)
     {
         const vk::Semaphore *waitSemaphore =
@@ -2414,14 +2499,29 @@ angle::Result ContextVk::submitFrame(const vk::Semaphore *signalSemaphore, Seria
         dumpCommandStreamDiagnostics();
     }
 
-    getShareGroupVk()->acquireResourceUseList(std::move(mResourceUseList));
+    if (submitFrameType == SubmitFrameType::OutsideAndRPCommands)
+    {
+        getShareGroupVk()->acquireResourceUseList(std::move(mResourceUseList));
+    }
+    else
+    {
+        getShareGroupVk()->copyResourceUseList(mResourceUseList);
+    }
+
     ANGLE_TRY(mRenderer->submitFrame(this, hasProtectedContent(), mContextPriority,
                                      std::move(mWaitSemaphores),
                                      std::move(mWaitSemaphoreStageMasks), signalSemaphore,
-                                     getShareGroupVk()->releaseResourceUseLists(),
                                      std::move(mCurrentGarbage), &mCommandPools, submitSerialOut));
 
-    onRenderPassFinished(RenderPassClosureReason::AlreadySpecifiedElsewhere);
+    if (submitFrameType == SubmitFrameType::OutsideAndRPCommands)
+    {
+        getShareGroupVk()->releaseResourceUseLists(*submitSerialOut);
+        // Now that we have processed resourceUseList, some of pending garbage may no longer pending
+        // and should be moved to garbage list.
+        mRenderer->cleanupPendingSubmissionGarbage();
+        onRenderPassFinished(RenderPassClosureReason::AlreadySpecifiedElsewhere);
+    }
+
     mComputeDirtyBits |= mNewComputeCommandBufferDirtyBits;
 
     if (mGpuEventsEnabled)
@@ -2429,6 +2529,22 @@ angle::Result ContextVk::submitFrame(const vk::Semaphore *signalSemaphore, Seria
         ANGLE_TRY(checkCompletedGpuEvents());
     }
 
+    mPerfCounters.submittedFrames++;
+    resetTotalBufferToImageCopySize();
+
+    return angle::Result::Continue;
+}
+
+angle::Result ContextVk::onCopyUpdate(VkDeviceSize size)
+{
+    mTotalBufferToImageCopySize += size;
+    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::onCopyUpdate");
+    // If the copy size exceeds the specified threshold, submit the outside command buffer.
+    VkDeviceSize copySize = getTotalBufferToImageCopySize();
+    if (copySize >= kMaxBufferToImageCopySize)
+    {
+        ANGLE_TRY(submitOutsideRenderPassCommandsImpl());
+    }
     return angle::Result::Continue;
 }
 
@@ -5061,6 +5177,11 @@ void ContextVk::framebufferFetchBarrier()
     mGraphicsDirtyBits.set(DIRTY_BIT_FRAMEBUFFER_FETCH_BARRIER);
 }
 
+void ContextVk::blendBarrier()
+{
+    mGraphicsDirtyBits.set(DIRTY_BIT_BLEND_BARRIER);
+}
+
 angle::Result ContextVk::acquireTextures(const gl::Context *context,
                                          const gl::TextureBarrierVector &textureBarriers)
 {
@@ -5424,8 +5545,8 @@ angle::Result ContextVk::updateDriverUniformsDescriptorSet(bool newBuffer,
     // Allocate a new descriptor set.
     bool newPoolAllocated;
     ANGLE_TRY(mDriverUniformsDescriptorPools[pipelineType].allocateSetsAndGetInfo(
-        this, driverUniforms.descriptorSetLayout.get(), 1, &driverUniforms.descriptorPoolBinding,
-        &driverUniforms.descriptorSet, &newPoolAllocated));
+        this, &mResourceUseList, driverUniforms.descriptorSetLayout.get(), 1,
+        &driverUniforms.descriptorPoolBinding, &driverUniforms.descriptorSet, &newPoolAllocated));
     mContextPerfCounters.descriptorSetsAllocated[pipelineType]++;
 
     // Clear descriptor set cache. It may no longer be valid.
@@ -5435,12 +5556,12 @@ angle::Result ContextVk::updateDriverUniformsDescriptorSet(bool newBuffer,
     }
 
     // Update the driver uniform descriptor set.
-    VkDescriptorBufferInfo &bufferInfo = allocDescriptorBufferInfo();
+    VkDescriptorBufferInfo &bufferInfo = mUpdateDescriptorSetsBuilder.allocDescriptorBufferInfo();
     bufferInfo.buffer                  = driverUniforms.currentBuffer->getBuffer().getHandle();
     bufferInfo.offset                  = 0;
     bufferInfo.range                   = driverUniformsSize;
 
-    VkWriteDescriptorSet &writeInfo = allocWriteDescriptorSet();
+    VkWriteDescriptorSet &writeInfo = mUpdateDescriptorSetsBuilder.allocWriteDescriptorSet();
     writeInfo.sType                 = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     writeInfo.dstSet                = driverUniforms.descriptorSet;
     writeInfo.dstBinding            = 0;
@@ -6282,6 +6403,15 @@ bool ContextVk::shouldConvertUint8VkIndexType(gl::DrawElementsType glIndexType) 
             !mRenderer->getFeatures().supportsIndexTypeUint8.enabled);
 }
 
+angle::Result ContextVk::submitOutsideRenderPassCommandsImpl()
+{
+    ANGLE_TRACE_EVENT0("gpu.angle", "ContextVk::submitOutsideRenderPassCommandsImpl");
+    ANGLE_TRY(flushOutsideRenderPassCommands());
+    Serial unusedSerial;
+    ANGLE_TRY(submitFrameOutsideCommandBufferOnly(&unusedSerial));
+    return angle::Result::Continue;
+}
+
 angle::Result ContextVk::flushOutsideRenderPassCommands()
 {
     if (mOutsideRenderPassCommands->empty())
@@ -6455,64 +6585,6 @@ QueryVk *ContextVk::getActiveRenderPassQuery(gl::QueryType queryType) const
 bool ContextVk::isRobustResourceInitEnabled() const
 {
     return mState.isRobustResourceInitEnabled();
-}
-
-template <typename T, const T *VkWriteDescriptorSet::*pInfo>
-void ContextVk::growDesciptorCapacity(std::vector<T> *descriptorVector, size_t newSize)
-{
-    const T *const oldInfoStart = descriptorVector->empty() ? nullptr : &(*descriptorVector)[0];
-    size_t newCapacity          = std::max(descriptorVector->capacity() << 1, newSize);
-    descriptorVector->reserve(newCapacity);
-
-    if (oldInfoStart)
-    {
-        // patch mWriteInfo with new BufferInfo/ImageInfo pointers
-        for (VkWriteDescriptorSet &set : mWriteDescriptorSets)
-        {
-            if (set.*pInfo)
-            {
-                size_t index = set.*pInfo - oldInfoStart;
-                set.*pInfo   = &(*descriptorVector)[index];
-            }
-        }
-    }
-}
-
-template <typename T, const T *VkWriteDescriptorSet::*pInfo>
-T *ContextVk::allocDescriptorInfos(std::vector<T> *descriptorVector, size_t count)
-{
-    size_t oldSize = descriptorVector->size();
-    size_t newSize = oldSize + count;
-    if (newSize > descriptorVector->capacity())
-    {
-        // If we have reached capacity, grow the storage and patch the descriptor set with new
-        // buffer info pointer
-        growDesciptorCapacity<T, pInfo>(descriptorVector, newSize);
-    }
-    descriptorVector->resize(newSize);
-    return &(*descriptorVector)[oldSize];
-}
-
-VkDescriptorBufferInfo *ContextVk::allocDescriptorBufferInfos(size_t count)
-{
-    return allocDescriptorInfos<VkDescriptorBufferInfo, &VkWriteDescriptorSet::pBufferInfo>(
-        &mDescriptorBufferInfos, count);
-}
-
-VkDescriptorImageInfo *ContextVk::allocDescriptorImageInfos(size_t count)
-{
-    return allocDescriptorInfos<VkDescriptorImageInfo, &VkWriteDescriptorSet::pImageInfo>(
-        &mDescriptorImageInfos, count);
-}
-
-VkWriteDescriptorSet *ContextVk::allocWriteDescriptorSets(size_t count)
-{
-    mPerfCounters.writeDescriptorSets += count;
-
-    size_t oldSize = mWriteDescriptorSets.size();
-    size_t newSize = oldSize + count;
-    mWriteDescriptorSets.resize(newSize);
-    return &mWriteDescriptorSets[oldSize];
 }
 
 void ContextVk::setDefaultUniformBlocksMinSizeForTesting(size_t minSize)
@@ -6855,5 +6927,110 @@ ProgramExecutableVk *ContextVk::getExecutable() const
         }
     }
     return nullptr;
+}
+
+const angle::PerfMonitorCounterGroups &ContextVk::getPerfMonitorCounters()
+{
+    syncObjectPerfCounters();
+
+    angle::PerfMonitorCounters &counters =
+        angle::GetPerfMonitorCounterGroup(mPerfMonitorCounters, "vulkan").counters;
+
+#define ANGLE_UPDATE_PERF_MAP(COUNTER) \
+    angle::GetPerfMonitorCounter(counters, #COUNTER).value = mPerfCounters.COUNTER;
+
+    ANGLE_VK_PERF_COUNTERS_X(ANGLE_UPDATE_PERF_MAP)
+
+#undef ANGLE_UPDATE_PERF_MAP
+    return mPerfMonitorCounters;
+}
+
+// UpdateDescriptorSetsBuilder implementation.
+UpdateDescriptorSetsBuilder::UpdateDescriptorSetsBuilder()
+{
+    // Reserve reasonable amount of spaces so that for majority of apps we don't need to grow at all
+    mDescriptorBufferInfos.reserve(kDescriptorBufferInfosInitialSize);
+    mDescriptorImageInfos.reserve(kDescriptorImageInfosInitialSize);
+    mWriteDescriptorSets.reserve(kDescriptorWriteInfosInitialSize);
+}
+
+UpdateDescriptorSetsBuilder::~UpdateDescriptorSetsBuilder() = default;
+
+template <typename T, const T *VkWriteDescriptorSet::*pInfo>
+void UpdateDescriptorSetsBuilder::growDescriptorCapacity(std::vector<T> *descriptorVector,
+                                                         size_t newSize)
+{
+    const T *const oldInfoStart = descriptorVector->empty() ? nullptr : &(*descriptorVector)[0];
+    size_t newCapacity          = std::max(descriptorVector->capacity() << 1, newSize);
+    descriptorVector->reserve(newCapacity);
+
+    if (oldInfoStart)
+    {
+        // patch mWriteInfo with new BufferInfo/ImageInfo pointers
+        for (VkWriteDescriptorSet &set : mWriteDescriptorSets)
+        {
+            if (set.*pInfo)
+            {
+                size_t index = set.*pInfo - oldInfoStart;
+                set.*pInfo   = &(*descriptorVector)[index];
+            }
+        }
+    }
+}
+
+template <typename T, const T *VkWriteDescriptorSet::*pInfo>
+T *UpdateDescriptorSetsBuilder::allocDescriptorInfos(std::vector<T> *descriptorVector, size_t count)
+{
+    size_t oldSize = descriptorVector->size();
+    size_t newSize = oldSize + count;
+    if (newSize > descriptorVector->capacity())
+    {
+        // If we have reached capacity, grow the storage and patch the descriptor set with new
+        // buffer info pointer
+        growDescriptorCapacity<T, pInfo>(descriptorVector, newSize);
+    }
+    descriptorVector->resize(newSize);
+    return &(*descriptorVector)[oldSize];
+}
+
+VkDescriptorBufferInfo *UpdateDescriptorSetsBuilder::allocDescriptorBufferInfos(size_t count)
+{
+    return allocDescriptorInfos<VkDescriptorBufferInfo, &VkWriteDescriptorSet::pBufferInfo>(
+        &mDescriptorBufferInfos, count);
+}
+
+VkDescriptorImageInfo *UpdateDescriptorSetsBuilder::allocDescriptorImageInfos(size_t count)
+{
+    return allocDescriptorInfos<VkDescriptorImageInfo, &VkWriteDescriptorSet::pImageInfo>(
+        &mDescriptorImageInfos, count);
+}
+
+VkWriteDescriptorSet *UpdateDescriptorSetsBuilder::allocWriteDescriptorSets(size_t count)
+{
+    size_t oldSize = mWriteDescriptorSets.size();
+    size_t newSize = oldSize + count;
+    mWriteDescriptorSets.resize(newSize);
+    return &mWriteDescriptorSets[oldSize];
+}
+
+uint32_t UpdateDescriptorSetsBuilder::flushDescriptorSetUpdates(VkDevice device)
+{
+    if (mWriteDescriptorSets.empty())
+    {
+        ASSERT(mDescriptorBufferInfos.empty());
+        ASSERT(mDescriptorImageInfos.empty());
+        return 0;
+    }
+
+    vkUpdateDescriptorSets(device, static_cast<uint32_t>(mWriteDescriptorSets.size()),
+                           mWriteDescriptorSets.data(), 0, nullptr);
+
+    uint32_t retVal = static_cast<uint32_t>(mDescriptorImageInfos.size());
+
+    mWriteDescriptorSets.clear();
+    mDescriptorBufferInfos.clear();
+    mDescriptorImageInfos.clear();
+
+    return retVal;
 }
 }  // namespace rx

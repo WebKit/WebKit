@@ -78,6 +78,9 @@ ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribANGLE(EGLDisplay dpy,
 ANGLE_EXPORT void EGLAPIENTRY EGL_ReleaseHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx);
 ANGLE_EXPORT void EGLAPIENTRY EGL_ReacquireHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx);
 ANGLE_EXPORT void EGLAPIENTRY EGL_HandleGPUSwitchANGLE(EGLDisplay dpy);
+ANGLE_EXPORT void EGLAPIENTRY EGL_ForceGPUSwitchANGLE(EGLDisplay dpy,
+                                                      EGLint gpuIDHigh,
+                                                      EGLint gpuIDLow);
 
 // EGL_ANGLE_prepare_swap_buffers
 ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface surface);
@@ -148,6 +151,18 @@ ANGLE_EXPORT const char *EGLAPIENTRY EGL_QueryDeviceStringEXT(EGLDeviceEXT devic
 ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribEXT(EGLDisplay dpy,
                                                               EGLint attribute,
                                                               EGLAttrib *value);
+
+// EGL_EXT_image_dma_buf_import_modifiers
+ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_QueryDmaBufFormatsEXT(EGLDisplay dpy,
+                                                              EGLint max_formats,
+                                                              EGLint *formats,
+                                                              EGLint *num_formats);
+ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_QueryDmaBufModifiersEXT(EGLDisplay dpy,
+                                                                EGLint format,
+                                                                EGLint max_modifiers,
+                                                                EGLuint64KHR *modifiers,
+                                                                EGLBoolean *external_only,
+                                                                EGLint *num_modifiers);
 
 // EGL_EXT_platform_base
 ANGLE_EXPORT EGLSurface EGLAPIENTRY EGL_CreatePlatformPixmapSurfaceEXT(EGLDisplay dpy,

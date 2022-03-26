@@ -19,6 +19,65 @@ namespace gl
 
 // Method Captures
 
+// GL_AMD_performance_monitor
+angle::CallCapture CaptureBeginPerfMonitorAMD(const State &glState,
+                                              bool isCallValid,
+                                              GLuint monitor);
+angle::CallCapture CaptureDeletePerfMonitorsAMD(const State &glState,
+                                                bool isCallValid,
+                                                GLsizei n,
+                                                GLuint *monitors);
+angle::CallCapture CaptureEndPerfMonitorAMD(const State &glState, bool isCallValid, GLuint monitor);
+angle::CallCapture CaptureGenPerfMonitorsAMD(const State &glState,
+                                             bool isCallValid,
+                                             GLsizei n,
+                                             GLuint *monitors);
+angle::CallCapture CaptureGetPerfMonitorCounterDataAMD(const State &glState,
+                                                       bool isCallValid,
+                                                       GLuint monitor,
+                                                       GLenum pname,
+                                                       GLsizei dataSize,
+                                                       GLuint *data,
+                                                       GLint *bytesWritten);
+angle::CallCapture CaptureGetPerfMonitorCounterInfoAMD(const State &glState,
+                                                       bool isCallValid,
+                                                       GLuint group,
+                                                       GLuint counter,
+                                                       GLenum pname,
+                                                       void *data);
+angle::CallCapture CaptureGetPerfMonitorCounterStringAMD(const State &glState,
+                                                         bool isCallValid,
+                                                         GLuint group,
+                                                         GLuint counter,
+                                                         GLsizei bufSize,
+                                                         GLsizei *length,
+                                                         GLchar *counterString);
+angle::CallCapture CaptureGetPerfMonitorCountersAMD(const State &glState,
+                                                    bool isCallValid,
+                                                    GLuint group,
+                                                    GLint *numCounters,
+                                                    GLint *maxActiveCounters,
+                                                    GLsizei counterSize,
+                                                    GLuint *counters);
+angle::CallCapture CaptureGetPerfMonitorGroupStringAMD(const State &glState,
+                                                       bool isCallValid,
+                                                       GLuint group,
+                                                       GLsizei bufSize,
+                                                       GLsizei *length,
+                                                       GLchar *groupString);
+angle::CallCapture CaptureGetPerfMonitorGroupsAMD(const State &glState,
+                                                  bool isCallValid,
+                                                  GLint *numGroups,
+                                                  GLsizei groupsSize,
+                                                  GLuint *groups);
+angle::CallCapture CaptureSelectPerfMonitorCountersAMD(const State &glState,
+                                                       bool isCallValid,
+                                                       GLuint monitor,
+                                                       GLboolean enable,
+                                                       GLuint group,
+                                                       GLint numCounters,
+                                                       GLuint *counterList);
+
 // GL_ANDROID_extension_pack_es31a
 
 // GL_ANGLE_base_vertex_base_instance
@@ -36,7 +95,7 @@ angle::CallCapture CaptureDrawElementsInstancedBaseVertexBaseInstanceANGLE(
     GLsizei count,
     DrawElementsType typePacked,
     const GLvoid *indices,
-    GLsizei instanceCounts,
+    GLsizei instanceCount,
     GLint baseVertex,
     GLuint baseInstance);
 angle::CallCapture CaptureMultiDrawArraysInstancedBaseInstanceANGLE(const State &glState,
@@ -2549,6 +2608,113 @@ angle::CallCapture CaptureFramebufferTextureMultiviewOVR(const State &glState,
 
 // Parameter Captures
 
+void CaptureDeletePerfMonitorsAMD_monitors(const State &glState,
+                                           bool isCallValid,
+                                           GLsizei n,
+                                           GLuint *monitors,
+                                           angle::ParamCapture *paramCapture);
+void CaptureGenPerfMonitorsAMD_monitors(const State &glState,
+                                        bool isCallValid,
+                                        GLsizei n,
+                                        GLuint *monitors,
+                                        angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorCounterDataAMD_data(const State &glState,
+                                              bool isCallValid,
+                                              GLuint monitor,
+                                              GLenum pname,
+                                              GLsizei dataSize,
+                                              GLuint *data,
+                                              GLint *bytesWritten,
+                                              angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorCounterDataAMD_bytesWritten(const State &glState,
+                                                      bool isCallValid,
+                                                      GLuint monitor,
+                                                      GLenum pname,
+                                                      GLsizei dataSize,
+                                                      GLuint *data,
+                                                      GLint *bytesWritten,
+                                                      angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorCounterInfoAMD_data(const State &glState,
+                                              bool isCallValid,
+                                              GLuint group,
+                                              GLuint counter,
+                                              GLenum pname,
+                                              void *data,
+                                              angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorCounterStringAMD_length(const State &glState,
+                                                  bool isCallValid,
+                                                  GLuint group,
+                                                  GLuint counter,
+                                                  GLsizei bufSize,
+                                                  GLsizei *length,
+                                                  GLchar *counterString,
+                                                  angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorCounterStringAMD_counterString(const State &glState,
+                                                         bool isCallValid,
+                                                         GLuint group,
+                                                         GLuint counter,
+                                                         GLsizei bufSize,
+                                                         GLsizei *length,
+                                                         GLchar *counterString,
+                                                         angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorCountersAMD_numCounters(const State &glState,
+                                                  bool isCallValid,
+                                                  GLuint group,
+                                                  GLint *numCounters,
+                                                  GLint *maxActiveCounters,
+                                                  GLsizei counterSize,
+                                                  GLuint *counters,
+                                                  angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorCountersAMD_maxActiveCounters(const State &glState,
+                                                        bool isCallValid,
+                                                        GLuint group,
+                                                        GLint *numCounters,
+                                                        GLint *maxActiveCounters,
+                                                        GLsizei counterSize,
+                                                        GLuint *counters,
+                                                        angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorCountersAMD_counters(const State &glState,
+                                               bool isCallValid,
+                                               GLuint group,
+                                               GLint *numCounters,
+                                               GLint *maxActiveCounters,
+                                               GLsizei counterSize,
+                                               GLuint *counters,
+                                               angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorGroupStringAMD_length(const State &glState,
+                                                bool isCallValid,
+                                                GLuint group,
+                                                GLsizei bufSize,
+                                                GLsizei *length,
+                                                GLchar *groupString,
+                                                angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorGroupStringAMD_groupString(const State &glState,
+                                                     bool isCallValid,
+                                                     GLuint group,
+                                                     GLsizei bufSize,
+                                                     GLsizei *length,
+                                                     GLchar *groupString,
+                                                     angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorGroupsAMD_numGroups(const State &glState,
+                                              bool isCallValid,
+                                              GLint *numGroups,
+                                              GLsizei groupsSize,
+                                              GLuint *groups,
+                                              angle::ParamCapture *paramCapture);
+void CaptureGetPerfMonitorGroupsAMD_groups(const State &glState,
+                                           bool isCallValid,
+                                           GLint *numGroups,
+                                           GLsizei groupsSize,
+                                           GLuint *groups,
+                                           angle::ParamCapture *paramCapture);
+void CaptureSelectPerfMonitorCountersAMD_counterList(const State &glState,
+                                                     bool isCallValid,
+                                                     GLuint monitor,
+                                                     GLboolean enable,
+                                                     GLuint group,
+                                                     GLint numCounters,
+                                                     GLuint *counterList,
+                                                     angle::ParamCapture *paramCapture);
 void CaptureDrawElementsInstancedBaseVertexBaseInstanceANGLE_indices(
     const State &glState,
     bool isCallValid,
@@ -2556,7 +2722,7 @@ void CaptureDrawElementsInstancedBaseVertexBaseInstanceANGLE_indices(
     GLsizei count,
     DrawElementsType typePacked,
     const GLvoid *indices,
-    GLsizei instanceCounts,
+    GLsizei instanceCount,
     GLint baseVertex,
     GLuint baseInstance,
     angle::ParamCapture *paramCapture);

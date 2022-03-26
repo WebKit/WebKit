@@ -346,6 +346,7 @@ TCompiler::TCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
       mTessEvaluationShaderInputOrderingType(EtetUndefined),
       mTessEvaluationShaderInputPointType(EtetUndefined),
       mHasAnyPreciseType(false),
+      mAdvancedBlendEquations(0),
       mCompileOptions(0)
 {}
 
@@ -560,6 +561,10 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
 
     mHasAnyPreciseType = parseContext.hasAnyPreciseType();
 
+    if (mShaderType == GL_FRAGMENT_SHADER)
+    {
+        mAdvancedBlendEquations = parseContext.getAdvancedBlendEquations();
+    }
     if (mShaderType == GL_GEOMETRY_SHADER_EXT)
     {
         mGeometryShaderInputPrimitiveType  = parseContext.getGeometryShaderInputPrimitiveType();

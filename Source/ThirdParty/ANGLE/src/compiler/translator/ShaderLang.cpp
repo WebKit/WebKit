@@ -233,6 +233,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->EXT_texture_buffer                             = 0;
     resources->OES_sample_variables                           = 0;
     resources->EXT_clip_cull_distance                         = 0;
+    resources->KHR_blend_equation_advanced                    = 0;
 
     resources->MaxClipDistances                = 8;
     resources->MaxCullDistances                = 8;
@@ -923,6 +924,14 @@ unsigned int GetShaderSharedMemorySize(const ShHandle handle)
 
     unsigned int sharedMemorySize = compiler->getSharedMemorySize();
     return sharedMemorySize;
+}
+
+uint32_t GetAdvancedBlendEquations(const ShHandle handle)
+{
+    TCompiler *compiler = GetCompilerFromHandle(handle);
+    ASSERT(compiler);
+
+    return compiler->getAdvancedBlendEquations().bits();
 }
 
 void InitializeGlslang()

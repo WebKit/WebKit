@@ -1727,6 +1727,78 @@ void main()
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::yellow);
 }
 
+// Tests that we do not generate a SIGBUS error on arm when translating unaligned data.
+// GL_RG32_SNORM_ANGLEX is used when using glVertexAttribPointer with certain parameters.
+TEST_P(VertexAttributeTestES3, DrawWithUnalignedData)
+{
+    // http://anglebug.com/7068
+    ANGLE_SKIP_TEST_IF(IsOSX());
+
+    constexpr char kVS[] = R"(#version 300 es
+precision highp float;
+in highp vec4 a_position;
+in highp ivec2 a_ColorTest;
+out highp vec2 v_colorTest;
+
+void main() {
+    v_colorTest = vec2(a_ColorTest);
+    gl_Position = a_position;
+})";
+
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+in highp vec2 v_colorTest;
+out vec4 fragColor;
+
+void main() {
+    if(v_colorTest.x > 0.5) {
+        fragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    } else {
+        fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "a_position");
+    glBindAttribLocation(program, 1, "a_ColorTest");
+    glLinkProgram(program);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr size_t kDataSize = 12;
+
+    // Initialize vertex attribute data with 1u32s, but shifted right by a variable number of bytes
+    GLubyte colorTestData[(kDataSize + 1) * sizeof(GLuint)];
+
+    for (size_t offset = 0; offset < sizeof(GLuint); offset++)
+    {
+        for (size_t dataIndex = 0; dataIndex < kDataSize * sizeof(GLuint); dataIndex++)
+        {
+            if (dataIndex % sizeof(GLuint) == sizeof(GLuint) - 1)
+            {
+                colorTestData[dataIndex + offset] = 1;
+            }
+            else
+            {
+
+                colorTestData[dataIndex + offset] = 0;
+            }
+        }
+
+        GLubyte *offsetPtr = &colorTestData[offset];
+        glVertexAttribPointer(1, 2, GL_INT, GL_TRUE, sizeof(GLuint), offsetPtr);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glEnableVertexAttribArray(1);
+
+        drawIndexedQuad(program, "a_position", 0.5f, 1.0f, false, true);
+
+        // Verify green was drawn.
+        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() - 1, getWindowHeight() - 1, GLColor::green);
+        ASSERT_GL_NO_ERROR();
+    }
+}
+
 // Tests that rendering is fine if GL_ANGLE_relaxed_vertex_attribute_type is enabled
 // and mismatched integer signedness between the program's attribute type and the
 // attribute type specified by VertexAttribIPointer are used.
@@ -3971,6 +4043,85 @@ TEST_P(VertexAttributeTestES3, EmptyArrayBuffer)
     EXPECT_GL_NO_ERROR();
 
     // Swap a frame for MEC
+    swapBuffers();
+}
+
+// Set an attrib pointer and delete it's buffer after usage, while keeping the vertex array.
+// This will cause MEC to capture an invalid attribute pointer and also trigger
+// "Client data cannot be used with a non-default vertex array object."
+TEST_P(VertexAttributeTestES3, InvalidAttribPointer)
+{
+    GLVertexArray vertexArray;
+    glBindVertexArray(vertexArray);
+
+    std::array<GLbyte, 12> vertexData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+
+    {
+        GLBuffer toBeDeletedArrayBuffer;
+        glBindBuffer(GL_ARRAY_BUFFER, toBeDeletedArrayBuffer);
+
+        glBufferData(GL_ARRAY_BUFFER, vertexData.size(), vertexData.data(), GL_DYNAMIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6, nullptr);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6, reinterpret_cast<const void *>(6));
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+
+        EXPECT_GL_NO_ERROR();
+    }
+
+    // Set an attrib pointer that will be actually picked up by MEC, since the buffer will be kept.
+    glEnableVertexAttribArray(0);
+
+    GLBuffer arrayBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
+
+    glBufferData(GL_ARRAY_BUFFER, vertexData.size(), vertexData.data(), GL_DYNAMIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3, reinterpret_cast<const void *>(3));
+
+    EXPECT_GL_NO_ERROR();
+
+    // Swap a frame for MEC
+    swapBuffers();
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray(0);
+}
+
+// Test bind an empty buffer for vertex attribute does not crash
+TEST_P(VertexAttributeTestES3, emptyBuffer)
+{
+    constexpr char vs2[] =
+        R"(#version 300 es
+            in uvec4 attr0;
+            void main()
+            {
+                gl_Position = vec4(attr0.x, 0.0, 0.0, 0.0);
+            })";
+    constexpr char fs[] =
+        R"(#version 300 es
+            precision highp float;
+            out vec4 color;
+            void main()
+            {
+                color = vec4(1.0, 0.0, 0.0, 1.0);
+            })";
+    GLuint program2 = CompileProgram(vs2, fs);
+    GLuint buf;
+    glGenBuffers(1, &buf);
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    glEnableVertexAttribArray(0);
+    glVertexAttribIPointer(0, 4, GL_UNSIGNED_BYTE, 0, 0);
+    glVertexAttribDivisor(0, 2);
+    glUseProgram(program2);
+    glDrawArrays(GL_POINTS, 0, 1);
+
     swapBuffers();
 }
 

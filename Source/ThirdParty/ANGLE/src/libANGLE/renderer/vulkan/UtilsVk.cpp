@@ -3509,8 +3509,9 @@ angle::Result UtilsVk::allocateDescriptorSet(ContextVk *contextVk,
                                              VkDescriptorSet *descriptorSetOut)
 {
     ANGLE_TRY(mDescriptorPools[function].allocateDescriptorSets(
-        contextVk, mDescriptorSetLayouts[function][DescriptorSetIndex::Internal].get(), 1,
-        bindingOut, descriptorSetOut));
+        contextVk, &contextVk->getResourceUseList(),
+        mDescriptorSetLayouts[function][DescriptorSetIndex::Internal].get(), 1, bindingOut,
+        descriptorSetOut));
 
     mPerfCounters.descriptorSetsAllocated++;
 

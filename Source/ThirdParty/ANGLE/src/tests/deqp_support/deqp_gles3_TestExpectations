@@ -511,18 +511,11 @@
 // General Vulkan failures
 
 // Tests failing due to the "flat" qualifier in the shader:
-3677 VULKAN NOSAN : dEQP-GLES3.functional.fragment_out.basic.int.* = FAIL
-3677 VULKAN NOSAN : dEQP-GLES3.functional.fragment_out.basic.uint.* = FAIL
-3677 VULKAN NOSAN : dEQP-GLES3.functional.fragment_out.array.int* = FAIL
-3677 VULKAN NOSAN : dEQP-GLES3.functional.fragment_out.array.uint* = FAIL
-3677 VULKAN NOSAN : dEQP-GLES3.functional.fragment_out.random.* = FAIL
-
-// NVIDIA Depth/Stencil textures:
-// Fails on Quadro P400, driver 418.56, Linux
-3970 VULKAN NVIDIA LINUX : dEQP-GLES3.functional.fbo.depth.depth_write_clamp.depth_component32f = FAIL
-3970 VULKAN NVIDIA LINUX : dEQP-GLES3.functional.fbo.depth.depth_write_clamp.depth32f_stencil8 = FAIL
-3970 VULKAN NVIDIA LINUX : dEQP-GLES3.functional.fbo.depth.depth_test_clamp.depth_component32f = FAIL
-3970 VULKAN NVIDIA LINUX : dEQP-GLES3.functional.fbo.depth.depth_test_clamp.depth32f_stencil8 = FAIL
+3677 VULKAN NVIDIA NOSAN : dEQP-GLES3.functional.fragment_out.basic.int.* = FAIL
+3677 VULKAN NVIDIA NOSAN : dEQP-GLES3.functional.fragment_out.basic.uint.* = FAIL
+3677 VULKAN NVIDIA NOSAN : dEQP-GLES3.functional.fragment_out.array.int* = FAIL
+3677 VULKAN NVIDIA NOSAN : dEQP-GLES3.functional.fragment_out.array.uint* = FAIL
+3677 VULKAN NVIDIA NOSAN : dEQP-GLES3.functional.fragment_out.random.* = FAIL
 
 // Transform Feedback
 4666 VULKAN NVIDIA : dEQP-GLES3.functional.transform_feedback.array_element.interleaved.* = SKIP
@@ -530,7 +523,7 @@
 4666 VULKAN NVIDIA : dEQP-GLES3.functional.transform_feedback.random.* = SKIP
 
 // Flat shading:
-3430 VULKAN : dEQP-GLES3.functional.rasterization.flatshading.* = FAIL
+3430 VULKAN NVIDIA : dEQP-GLES3.functional.rasterization.flatshading.* = FAIL
 
 // Misc unimplemented:
 
@@ -539,17 +532,7 @@
 // Fails on 431.02 NVIDIA driver
 3748 VULKAN WIN NVIDIA : dEQP-GLES3.functional.fbo.color.repeated_clear.sample.tex2d.* = FAIL
 
-// Android Vulkan failures
-3306 ANDROID VULKAN : dEQP-GLES3.functional.polygon_offset.* = FAIL
-2830 ANDROID VULKAN : dEQP-GLES3.functional.rasterization.fbo.rbo_singlesample.primitives.lines = FAIL
-2830 ANDROID VULKAN : dEQP-GLES3.functional.rasterization.fbo.texture_2d.primitives.lines = FAIL
-2830 ANDROID VULKAN : dEQP-GLES3.functional.rasterization.primitives.line* = FAIL
-2808 ANDROID VULKAN : dEQP-GLES3.functional.shaders.builtin_variable.fragcoord_w = FAIL
-
-// Fixed in later driver versions.
-2727 VULKAN ANDROID : dEQP-GLES3.functional.shaders.builtin_variable.pointcoord = FAIL
-
-// Fails only with SwiftShader:
+//Fails only with SwiftShader:
 
 // These only fail for a 565 config
 4016 SWIFTSHADER : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.27 = FAIL

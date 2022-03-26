@@ -331,6 +331,11 @@ std::ostream &operator<<(std::ostream &stream, const PlatformParameters &pp)
         stream << "_VulkanForceSubmitImmutableTextureUpdates";
     }
 
+    if (pp.eglParameters.createPipelineDuringLink == EGL_TRUE)
+    {
+        stream << "_CreatePipelineDuringLink";
+    }
+
     return stream;
 }
 

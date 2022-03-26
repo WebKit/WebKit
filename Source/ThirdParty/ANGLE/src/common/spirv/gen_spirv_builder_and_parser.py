@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Copyright 2021 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
@@ -163,7 +163,7 @@ def load_grammar(grammar_file):
 
 
 def remove_chars(string, chars):
-    return filter(lambda c: c not in chars, string)
+    return ''.join(list(filter(lambda c: c not in chars, string)))
 
 
 def make_camel_case(name):
@@ -309,6 +309,7 @@ class Writer:
 
         # Otherwise, remove invalid characters and make the first letter lower case.
         name = remove_chars(name, " .,+\n~")
+
         name = make_camel_case(name)
 
         # Make sure the name is not a C++ keyword

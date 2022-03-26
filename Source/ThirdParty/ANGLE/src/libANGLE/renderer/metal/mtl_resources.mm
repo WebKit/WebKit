@@ -337,6 +337,15 @@ angle::Result Texture::MakeTexture(ContextMtl *context,
     return angle::Result::Continue;
 }
 
+bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLTextureDescriptor *desc)
+{
+    return desc.sampleCount > 1 &&
+           context->getDisplay()
+               ->getFeatures()
+               .multisampleColorFormatShaderReadWorkaround.enabled &&
+           context->getNativeFormatCaps(desc.pixelFormat).colorRenderable;
+}
+
 /** static */
 TextureRef Texture::MakeFromMetal(id<MTLTexture> metalTexture)
 {
@@ -397,7 +406,7 @@ Texture::Texture(ContextMtl *context,
             desc.resourceOptions = MTLResourceStorageModePrivate;
         }
 
-        if (!renderTargetOnly)
+        if (!renderTargetOnly || needMultisampleColorFormatShaderReadWorkaround(context, desc))
         {
             desc.usage = desc.usage | MTLTextureUsageShaderRead;
             if (context->getNativeFormatCaps(desc.pixelFormat).writable)

@@ -105,6 +105,7 @@ class DisplayCGL : public DisplayGL
     egl::Error referenceDiscreteGPU();
     egl::Error unreferenceDiscreteGPU();
     egl::Error handleGPUSwitch() override;
+    egl::Error forceGPUSwitch(EGLint gpuIDHigh, EGLint gpuIDLow) override;
 
   private:
     egl::Error makeCurrentSurfaceless(gl::Context *context) override;
@@ -113,6 +114,7 @@ class DisplayCGL : public DisplayGL
     void generateCaps(egl::Caps *outCaps) const override;
 
     void checkDiscreteGPUStatus();
+    void setContextToGPU(uint64_t gpuID, GLint virtualScreen);
 
     std::shared_ptr<RendererGL> mRenderer;
 

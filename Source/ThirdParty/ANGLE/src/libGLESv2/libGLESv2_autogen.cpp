@@ -2713,6 +2713,85 @@ void GL_APIENTRY glVertexPointer(GLint size, GLenum type, GLsizei stride, const 
     return GL_VertexPointer(size, type, stride, pointer);
 }
 
+// GL_AMD_performance_monitor
+void GL_APIENTRY glBeginPerfMonitorAMD(GLuint monitor)
+{
+    return GL_BeginPerfMonitorAMD(monitor);
+}
+
+void GL_APIENTRY glDeletePerfMonitorsAMD(GLsizei n, GLuint *monitors)
+{
+    return GL_DeletePerfMonitorsAMD(n, monitors);
+}
+
+void GL_APIENTRY glEndPerfMonitorAMD(GLuint monitor)
+{
+    return GL_EndPerfMonitorAMD(monitor);
+}
+
+void GL_APIENTRY glGenPerfMonitorsAMD(GLsizei n, GLuint *monitors)
+{
+    return GL_GenPerfMonitorsAMD(n, monitors);
+}
+
+void GL_APIENTRY glGetPerfMonitorCounterDataAMD(GLuint monitor,
+                                                GLenum pname,
+                                                GLsizei dataSize,
+                                                GLuint *data,
+                                                GLint *bytesWritten)
+{
+    return GL_GetPerfMonitorCounterDataAMD(monitor, pname, dataSize, data, bytesWritten);
+}
+
+void GL_APIENTRY glGetPerfMonitorCounterInfoAMD(GLuint group,
+                                                GLuint counter,
+                                                GLenum pname,
+                                                void *data)
+{
+    return GL_GetPerfMonitorCounterInfoAMD(group, counter, pname, data);
+}
+
+void GL_APIENTRY glGetPerfMonitorCounterStringAMD(GLuint group,
+                                                  GLuint counter,
+                                                  GLsizei bufSize,
+                                                  GLsizei *length,
+                                                  GLchar *counterString)
+{
+    return GL_GetPerfMonitorCounterStringAMD(group, counter, bufSize, length, counterString);
+}
+
+void GL_APIENTRY glGetPerfMonitorCountersAMD(GLuint group,
+                                             GLint *numCounters,
+                                             GLint *maxActiveCounters,
+                                             GLsizei counterSize,
+                                             GLuint *counters)
+{
+    return GL_GetPerfMonitorCountersAMD(group, numCounters, maxActiveCounters, counterSize,
+                                        counters);
+}
+
+void GL_APIENTRY glGetPerfMonitorGroupStringAMD(GLuint group,
+                                                GLsizei bufSize,
+                                                GLsizei *length,
+                                                GLchar *groupString)
+{
+    return GL_GetPerfMonitorGroupStringAMD(group, bufSize, length, groupString);
+}
+
+void GL_APIENTRY glGetPerfMonitorGroupsAMD(GLint *numGroups, GLsizei groupsSize, GLuint *groups)
+{
+    return GL_GetPerfMonitorGroupsAMD(numGroups, groupsSize, groups);
+}
+
+void GL_APIENTRY glSelectPerfMonitorCountersAMD(GLuint monitor,
+                                                GLboolean enable,
+                                                GLuint group,
+                                                GLint numCounters,
+                                                GLuint *counterList)
+{
+    return GL_SelectPerfMonitorCountersAMD(monitor, enable, group, numCounters, counterList);
+}
+
 // GL_ANDROID_extension_pack_es31a
 
 // GL_ANGLE_base_vertex_base_instance
@@ -2729,12 +2808,12 @@ void GL_APIENTRY glDrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
                                                                     GLsizei count,
                                                                     GLenum type,
                                                                     const GLvoid *indices,
-                                                                    GLsizei instanceCounts,
+                                                                    GLsizei instanceCount,
                                                                     GLint baseVertex,
                                                                     GLuint baseInstance)
 {
     return GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE(
-        mode, count, type, indices, instanceCounts, baseVertex, baseInstance);
+        mode, count, type, indices, instanceCount, baseVertex, baseInstance);
 }
 
 void GL_APIENTRY glMultiDrawArraysInstancedBaseInstanceANGLE(GLenum mode,

@@ -456,6 +456,18 @@ ANGLE_TRACE_LOADER_EXPORT PFNGLGETSAMPLERPARAMETERIUIVPROC t_glGetSamplerParamet
 ANGLE_TRACE_LOADER_EXPORT PFNGLTEXBUFFERPROC t_glTexBuffer;
 ANGLE_TRACE_LOADER_EXPORT PFNGLTEXBUFFERRANGEPROC t_glTexBufferRange;
 ANGLE_TRACE_LOADER_EXPORT PFNGLTEXSTORAGE3DMULTISAMPLEPROC t_glTexStorage3DMultisample;
+ANGLE_TRACE_LOADER_EXPORT PFNGLBEGINPERFMONITORAMDPROC t_glBeginPerfMonitorAMD;
+ANGLE_TRACE_LOADER_EXPORT PFNGLDELETEPERFMONITORSAMDPROC t_glDeletePerfMonitorsAMD;
+ANGLE_TRACE_LOADER_EXPORT PFNGLENDPERFMONITORAMDPROC t_glEndPerfMonitorAMD;
+ANGLE_TRACE_LOADER_EXPORT PFNGLGENPERFMONITORSAMDPROC t_glGenPerfMonitorsAMD;
+ANGLE_TRACE_LOADER_EXPORT PFNGLGETPERFMONITORCOUNTERDATAAMDPROC t_glGetPerfMonitorCounterDataAMD;
+ANGLE_TRACE_LOADER_EXPORT PFNGLGETPERFMONITORCOUNTERINFOAMDPROC t_glGetPerfMonitorCounterInfoAMD;
+ANGLE_TRACE_LOADER_EXPORT PFNGLGETPERFMONITORCOUNTERSTRINGAMDPROC
+    t_glGetPerfMonitorCounterStringAMD;
+ANGLE_TRACE_LOADER_EXPORT PFNGLGETPERFMONITORCOUNTERSAMDPROC t_glGetPerfMonitorCountersAMD;
+ANGLE_TRACE_LOADER_EXPORT PFNGLGETPERFMONITORGROUPSTRINGAMDPROC t_glGetPerfMonitorGroupStringAMD;
+ANGLE_TRACE_LOADER_EXPORT PFNGLGETPERFMONITORGROUPSAMDPROC t_glGetPerfMonitorGroupsAMD;
+ANGLE_TRACE_LOADER_EXPORT PFNGLSELECTPERFMONITORCOUNTERSAMDPROC t_glSelectPerfMonitorCountersAMD;
 ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWARRAYSINSTANCEDBASEINSTANCEANGLEPROC
     t_glDrawArraysInstancedBaseInstanceANGLE;
 ANGLE_TRACE_LOADER_EXPORT PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEANGLEPROC
@@ -1491,6 +1503,28 @@ void LoadGLES(LoadProc loadProc)
     t_glTexBufferRange = reinterpret_cast<PFNGLTEXBUFFERRANGEPROC>(loadProc("glTexBufferRange"));
     t_glTexStorage3DMultisample =
         reinterpret_cast<PFNGLTEXSTORAGE3DMULTISAMPLEPROC>(loadProc("glTexStorage3DMultisample"));
+    t_glBeginPerfMonitorAMD =
+        reinterpret_cast<PFNGLBEGINPERFMONITORAMDPROC>(loadProc("glBeginPerfMonitorAMD"));
+    t_glDeletePerfMonitorsAMD =
+        reinterpret_cast<PFNGLDELETEPERFMONITORSAMDPROC>(loadProc("glDeletePerfMonitorsAMD"));
+    t_glEndPerfMonitorAMD =
+        reinterpret_cast<PFNGLENDPERFMONITORAMDPROC>(loadProc("glEndPerfMonitorAMD"));
+    t_glGenPerfMonitorsAMD =
+        reinterpret_cast<PFNGLGENPERFMONITORSAMDPROC>(loadProc("glGenPerfMonitorsAMD"));
+    t_glGetPerfMonitorCounterDataAMD = reinterpret_cast<PFNGLGETPERFMONITORCOUNTERDATAAMDPROC>(
+        loadProc("glGetPerfMonitorCounterDataAMD"));
+    t_glGetPerfMonitorCounterInfoAMD = reinterpret_cast<PFNGLGETPERFMONITORCOUNTERINFOAMDPROC>(
+        loadProc("glGetPerfMonitorCounterInfoAMD"));
+    t_glGetPerfMonitorCounterStringAMD = reinterpret_cast<PFNGLGETPERFMONITORCOUNTERSTRINGAMDPROC>(
+        loadProc("glGetPerfMonitorCounterStringAMD"));
+    t_glGetPerfMonitorCountersAMD = reinterpret_cast<PFNGLGETPERFMONITORCOUNTERSAMDPROC>(
+        loadProc("glGetPerfMonitorCountersAMD"));
+    t_glGetPerfMonitorGroupStringAMD = reinterpret_cast<PFNGLGETPERFMONITORGROUPSTRINGAMDPROC>(
+        loadProc("glGetPerfMonitorGroupStringAMD"));
+    t_glGetPerfMonitorGroupsAMD =
+        reinterpret_cast<PFNGLGETPERFMONITORGROUPSAMDPROC>(loadProc("glGetPerfMonitorGroupsAMD"));
+    t_glSelectPerfMonitorCountersAMD = reinterpret_cast<PFNGLSELECTPERFMONITORCOUNTERSAMDPROC>(
+        loadProc("glSelectPerfMonitorCountersAMD"));
     t_glDrawArraysInstancedBaseInstanceANGLE =
         reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDBASEINSTANCEANGLEPROC>(
             loadProc("glDrawArraysInstancedBaseInstanceANGLE"));

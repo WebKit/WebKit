@@ -126,6 +126,7 @@ void VkImageImageSiblingVk::release(RendererVk *renderer)
     {
         // TODO: Handle the case where the EGLImage is used in two contexts not in the same share
         // group.  https://issuetracker.google.com/169868803
+        mImage->releaseImageAndViewGarbage(renderer);
         mImage->resetImageWeakReference();
         mImage->destroy(renderer);
         SafeDelete(mImage);

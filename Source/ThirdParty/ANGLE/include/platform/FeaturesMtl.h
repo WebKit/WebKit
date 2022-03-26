@@ -128,6 +128,11 @@ struct FeaturesMtl : FeatureSetBase
     Feature intelDisableFastMath = {
         "intel_disable_fast_math", FeatureCategory::MetalWorkarounds,
         "Disable fast math in atan and invariance cases when running below macOS 12.0", &members};
+
+    Feature multisampleColorFormatShaderReadWorkaround = {
+        "multisample_color_format_shader_read_workaround", FeatureCategory::MetalWorkarounds,
+        "Add shaderRead usage to some multisampled texture formats", &members,
+        "http://anglebug.com/7049"};
 };
 
 }  // namespace angle

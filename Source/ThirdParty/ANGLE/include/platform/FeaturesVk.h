@@ -103,15 +103,15 @@ struct FeaturesVk : FeatureSetBase
         "supportsFilteringPrecision", FeatureCategory::VulkanFeatures,
         "VkDevice supports the VK_GOOGLE_sampler_filtering_precision extension", &members};
 
-    // Whether the VkDevice supports the VK_KHR_external_fence_capabilities extension.
+    // Whether the VkInstance supports the VK_KHR_external_fence_capabilities extension.
     Feature supportsExternalFenceCapabilities = {
         "supportsExternalFenceCapabilities", FeatureCategory::VulkanFeatures,
-        "VkDevice supports the VK_KHR_external_fence_capabilities extension", &members};
+        "VkInstance supports the VK_KHR_external_fence_capabilities extension", &members};
 
-    // Whether the VkDevice supports the VK_KHR_external_semaphore_capabilities extension.
+    // Whether the VkInstance supports the VK_KHR_external_semaphore_capabilities extension.
     Feature supportsExternalSemaphoreCapabilities = {
         "supportsExternalSemaphoreCapabilities", FeatureCategory::VulkanFeatures,
-        "VkDevice supports the VK_KHR_external_semaphore_capabilities extension", &members};
+        "VkInstance supports the VK_KHR_external_semaphore_capabilities extension", &members};
 
     // Whether the VkDevice supports the VK_KHR_external_semaphore_fd extension, on which the
     // GL_EXT_semaphore_fd extension can be layered.
@@ -404,6 +404,13 @@ struct FeaturesVk : FeatureSetBase
                                         "VkDevice supports VK_EXT_depth_clip_control extension.",
                                         &members, "http://anglebug.com/5421"};
 
+    // Whether the VkDevice supports the VK_EXT_blend_operation_advanced extension
+    // http://anglebug.com/3586
+    Feature supportsBlendOperationAdvanced = {
+        "supportsBlendOperationAdvanced", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_blend_operation_advanced extension.", &members,
+        "http://anglebug.com/3586"};
+
     // Force maxUniformBufferSize to 16K on Qualcomm's Adreno 540. Pixel2's Adreno540 reports
     // maxUniformBufferSize 64k but various tests failed with that size. For that specific
     // device, we set to 16k for now which is known to pass all tests.
@@ -578,6 +585,11 @@ struct FeaturesVk : FeatureSetBase
         "supportsSurfaceProtectedCapabilitiesExtension", FeatureCategory::VulkanFeatures,
         "VkInstance supports the VK_KHR_surface_protected_capabilities extension", &members};
 
+    // Whether the VkInstance supports the VK_GOOGLE_surfaceless_query extension.
+    Feature supportsSurfacelessQueryExtension = {
+        "supportsSurfacelessQueryExtension", FeatureCategory::VulkanFeatures,
+        "VkInstance supports the VK_GOOGLE_surfaceless_query extension", &members};
+
     // Whether the VkSurface supports protected swapchains from
     // supportsSurfaceProtectedCapabilitiesExtension.
     Feature supportsSurfaceProtectedSwapchains = {
@@ -640,6 +652,11 @@ struct FeaturesVk : FeatureSetBase
     Feature retainSpirvDebugInfo = {"retainSpirvDebugInfo", FeatureCategory::VulkanFeatures,
                                     "Retain debug info in SPIR-V blob.", &members,
                                     "http://anglebug.com/5901"};
+
+    // Whether we create a Vulkan pipeline with "default" state during glLinkProgram
+    Feature createPipelineDuringLink = {"createPipelineDuringLink", FeatureCategory::VulkanFeatures,
+                                        "Create pipeline with default state during glLinkProgram",
+                                        &members, "http://anglebug.com/7046"};
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

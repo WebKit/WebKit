@@ -96,6 +96,8 @@ Surface::Surface(EGLint surfaceType,
       mIsCurrentOnAnyContext(false),
       mLockBufferPtr(nullptr),
       mLockBufferPitch(0),
+      mBufferAgeQueriedSinceLastSwap(false),
+      mIsDamageRegionSet(false),
       mInitState(gl::InitState::Initialized),
       mImplObserverBinding(this, kSurfaceImplSubjectIndex)
 {
@@ -175,6 +177,10 @@ void Surface::postSwap(const gl::Context *context)
         mInitState = gl::InitState::MayNeedInit;
         onStateChange(angle::SubjectMessage::SubjectChanged);
     }
+
+    mBufferAgeQueriedSinceLastSwap = false;
+
+    mIsDamageRegionSet = false;
 }
 
 Error Surface::initialize(const Display *display)
@@ -609,7 +615,7 @@ GLuint Surface::getId() const
     return 0;
 }
 
-Error Surface::getBufferAge(const gl::Context *context, EGLint *age) const
+Error Surface::getBufferAgeImpl(const gl::Context *context, EGLint *age) const
 {
     // When EGL_BUFFER_PRESERVED, the previous frame contents are copied to
     // current frame, so the buffer age is always 1.
@@ -624,10 +630,20 @@ Error Surface::getBufferAge(const gl::Context *context, EGLint *age) const
     return mImplementation->getBufferAge(context, age);
 }
 
-gl::Framebuffer *Surface::createDefaultFramebuffer(const gl::Context *context,
-                                                   egl::Surface *readSurface)
+Error Surface::getBufferAge(const gl::Context *context, EGLint *age)
 {
-    return new gl::Framebuffer(context, this, readSurface);
+    Error err = getBufferAgeImpl(context, age);
+    if (!err.isError())
+    {
+        mBufferAgeQueriedSinceLastSwap = true;
+    }
+    return err;
+}
+
+std::unique_ptr<gl::Framebuffer> Surface::createDefaultFramebuffer(const gl::Context *context,
+                                                                   egl::Surface *readSurface)
+{
+    return std::make_unique<gl::Framebuffer>(context, this, readSurface);
 }
 
 gl::InitState Surface::initState(const gl::ImageIndex & /*imageIndex*/) const
@@ -819,6 +835,11 @@ WindowSurface::WindowSurface(rx::EGLImplFactory *implFactory,
     : Surface(EGL_WINDOW_BIT, config, attribs, robustResourceInit)
 {
     mImplementation = implFactory->createWindowSurface(mState, window, attribs);
+}
+
+void Surface::setDamageRegion(const EGLint *rects, EGLint n_rects)
+{
+    mIsDamageRegionSet = true;
 }
 
 WindowSurface::~WindowSurface() {}

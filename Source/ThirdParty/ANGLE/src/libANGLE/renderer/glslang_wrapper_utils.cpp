@@ -3437,6 +3437,9 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
                 mXfbCodeGenerator.addMemberDecorate(*info, id, mSpirvBlobOut);
             }
             break;
+        case spv::DecorationInvariant:
+            spirv::WriteDecorate(mSpirvBlobOut, id, spv::DecorationInvariant, {});
+            return TransformationState::Transformed;
         default:
             break;
     }

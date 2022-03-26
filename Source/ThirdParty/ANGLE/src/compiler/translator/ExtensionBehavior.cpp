@@ -40,6 +40,7 @@
     OP(EXT_texture_buffer)                             \
     OP(EXT_texture_cube_map_array)                     \
     OP(EXT_YUV_target)                                 \
+    OP(KHR_blend_equation_advanced)                    \
     OP(NV_EGL_stream_consumer_external)                \
     OP(NV_shader_framebuffer_fetch)                    \
     OP(NV_shader_noperspective_interpolation)          \

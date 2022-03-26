@@ -434,11 +434,19 @@ class PipelineFunctionEnv
             }
             else if (isMain && mPipeline.type == Pipeline::Type::InstanceId)
             {
-                Name name = mPipeline.getStructInstanceName(Pipeline::Variant::Modified);
-                auto *var = new TVariable(&mSymbolTable, name.rawName(),
-                                          new TType(TBasicType::EbtUInt), name.symbolType());
-                newFunc   = &CloneFunctionAndPrependParam(mSymbolTable, nullptr, func, *var);
-                mPipelineMainLocalVar.external = var;
+                Name instanceIdName = mPipeline.getStructInstanceName(Pipeline::Variant::Modified);
+                auto *instanceIdVar =
+                    new TVariable(&mSymbolTable, instanceIdName.rawName(),
+                                  new TType(TBasicType::EbtUInt), instanceIdName.symbolType());
+
+                auto *baseInstanceVar =
+                    new TVariable(&mSymbolTable, kBaseInstanceName.rawName(),
+                                  new TType(TBasicType::EbtUInt), kBaseInstanceName.symbolType());
+
+                newFunc = &CloneFunctionAndPrependTwoParams(mSymbolTable, nullptr, func,
+                                                            *instanceIdVar, *baseInstanceVar);
+                mPipelineMainLocalVar.external      = instanceIdVar;
+                mPipelineMainLocalVar.externalExtra = baseInstanceVar;
             }
             else if (isMain && mPipeline.alwaysRequiresLocalVariableDeclarationInMain())
             {
@@ -630,6 +638,20 @@ class UpdatePipelineFunctions : private TIntermRebuild
         }
     }
 
+    const TVariable &getExternalExtraPipelineVariable(const TFunction &mainFunc)
+    {
+        ASSERT(mainFunc.isMain());
+        if (mPipelineMainLocalVar.externalExtra)
+        {
+            return *mPipelineMainLocalVar.externalExtra;
+        }
+        else
+        {
+            ASSERT(mainFunc.getParamCount() > 1);
+            return *mainFunc.getParam(1);
+        }
+    }
+
     PostResult visitAggregatePost(TIntermAggregate &callNode) override
     {
         if (callNode.isConstructor())
@@ -811,11 +833,15 @@ class UpdatePipelineFunctions : private TIntermRebuild
             }
             else if (mPipeline.type == Pipeline::Type::InstanceId)
             {
+                auto varInstanceId   = new TIntermSymbol(&getExternalPipelineVariable(func));
+                auto varBaseInstance = new TIntermSymbol(&getExternalExtraPipelineVariable(func));
+
                 newBody->appendStatement(new TIntermBinary(
                     TOperator::EOpAssign,
                     &AccessFieldByIndex(*new TIntermSymbol(&getInternalPipelineVariable(func)), 0),
-                    &AsType(mSymbolEnv, *new TType(TBasicType::EbtInt),
-                            *new TIntermSymbol(&getExternalPipelineVariable(func)))));
+                    &AsType(
+                        mSymbolEnv, *new TType(TBasicType::EbtInt),
+                        *new TIntermBinary(TOperator::EOpSub, varInstanceId, varBaseInstance))));
             }
             else if (!mPipelineMainLocalVar.isUniform())
             {

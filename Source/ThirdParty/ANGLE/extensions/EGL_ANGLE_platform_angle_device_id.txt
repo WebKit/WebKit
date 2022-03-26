@@ -9,6 +9,7 @@ Name Strings
 Contributors
 
     Jonah Ryan-Davis, Google
+    Kimmo Kinnunen, Apple
 
 Contacts
 
@@ -20,7 +21,7 @@ Status
 
 Version
 
-    Version 1, 2021-12-14
+    Version 2, 2022-04-09
 
 Number
 
@@ -33,6 +34,8 @@ Extension Type
 Dependencies
 
     Requires ANGLE_platform_angle.
+
+    EGL_ANGLE_display_power_preference interacts with this extension.
 
 Overview
 
@@ -71,14 +74,18 @@ New Behavior
     If the high part and low part combined is zero, an EGL_BAD_ATTRIBUTE error
     is generated and EGL_NO_DISPLAY is returned.
 
-    If the ID specified doesn't match any devices on the system, the default
-    device is used.
+    If the ID specified doesn't match any devices on the system, the device
+    is selected as described in the EGL_ANGLE_display_power_preference extension.
 
 Issues
 
     None
 
 Revision History
+
+    Version 2, 2022-04-09 (Kimmo Kinnunen)
+      - Describe interaction with EGL_ANGLE_display_power_preference,
+        EGL_ANGLE_platform_angle_device_id takes precedence.
 
     Version 1, 2021-12-14 (Jonah Ryan-Davis)
       - Initial draft, based on EGL_ANGLE_platform_angle_d3d_luid

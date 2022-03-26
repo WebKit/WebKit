@@ -120,6 +120,17 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
     const egl::DisplayState &getState() const { return mState; }
 
     virtual egl::Error handleGPUSwitch();
+    virtual egl::Error forceGPUSwitch(EGLint gpuIDHigh, EGLint gpuIDLow);
+
+    virtual bool isX11() const;
+
+    virtual bool supportsDmaBufFormat(EGLint format) const;
+    virtual egl::Error queryDmaBufFormats(EGLint max_formats, EGLint *formats, EGLint *num_formats);
+    virtual egl::Error queryDmaBufModifiers(EGLint format,
+                                            EGLint max_modifiers,
+                                            EGLuint64KHR *modifiers,
+                                            EGLBoolean *external_only,
+                                            EGLint *num_modifiers);
 
   protected:
     const egl::DisplayState &mState;

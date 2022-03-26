@@ -47,6 +47,23 @@
                                                                                                    \
     /* GLES2+ Extensions */                                                                        \
                                                                                                    \
+    /* GL_AMD_performance_monitor */                                                               \
+    void beginPerfMonitor(GLuint monitor);                                                         \
+    void deletePerfMonitors(GLsizei n, GLuint *monitors);                                          \
+    void endPerfMonitor(GLuint monitor);                                                           \
+    void genPerfMonitors(GLsizei n, GLuint *monitors);                                             \
+    void getPerfMonitorCounterData(GLuint monitor, GLenum pname, GLsizei dataSize, GLuint *data,   \
+                                   GLint *bytesWritten);                                           \
+    void getPerfMonitorCounterInfo(GLuint group, GLuint counter, GLenum pname, void *data);        \
+    void getPerfMonitorCounterString(GLuint group, GLuint counter, GLsizei bufSize,                \
+                                     GLsizei *length, GLchar *counterString);                      \
+    void getPerfMonitorCounters(GLuint group, GLint *numCounters, GLint *maxActiveCounters,        \
+                                GLsizei counterSize, GLuint *counters);                            \
+    void getPerfMonitorGroupString(GLuint group, GLsizei bufSize, GLsizei *length,                 \
+                                   GLchar *groupString);                                           \
+    void getPerfMonitorGroups(GLint *numGroups, GLsizei groupsSize, GLuint *groups);               \
+    void selectPerfMonitorCounters(GLuint monitor, GLboolean enable, GLuint group,                 \
+                                   GLint numCounters, GLuint *counterList);                        \
     /* GL_ANDROID_extension_pack_es31a */                                                          \
     /* GL_ANGLE_depth_texture */                                                                   \
     /* GL_ANGLE_framebuffer_blit */                                                                \
@@ -310,7 +327,7 @@
                                          GLsizei instanceCount, GLuint baseInstance);              \
     void drawElementsInstancedBaseVertexBaseInstance(                                              \
         PrimitiveMode modePacked, GLsizei count, DrawElementsType typePacked,                      \
-        const GLvoid *indices, GLsizei instanceCounts, GLint baseVertex, GLuint baseInstance);     \
+        const GLvoid *indices, GLsizei instanceCount, GLint baseVertex, GLuint baseInstance);      \
     void multiDrawArraysInstancedBaseInstance(                                                     \
         PrimitiveMode modePacked, const GLint *firsts, const GLsizei *counts,                      \
         const GLsizei *instanceCounts, const GLuint *baseInstances, GLsizei drawcount);            \

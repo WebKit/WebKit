@@ -15,6 +15,7 @@
 #include "libANGLE/Thread.h"
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/queryutils.h"
+#include "libANGLE/renderer/DisplayImpl.h"
 #include "libANGLE/validationEGL.h"
 #include "libANGLE/validationEGL_autogen.h"
 #include "libGLESv2/global_state.h"
@@ -88,9 +89,21 @@ EGLSurface CreatePlatformWindowSurfaceEXT(Thread *thread,
 {
     ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCreatePlatformWindowSurfaceEXT",
                          GetDisplayIfValid(display), EGL_NO_SURFACE);
-    thread->setError(EGL_BAD_DISPLAY, "eglCreatePlatformWindowSurfaceEXT",
-                     GetDisplayIfValid(display), "CreatePlatformWindowSurfaceEXT unimplemented.");
-    return EGL_NO_SURFACE;
+    Surface *surface = nullptr;
+
+    // In X11, eglCreatePlatformWindowSurfaceEXT expects the native_window argument to be a pointer
+    // to a Window while the EGLNativeWindowType for X11 is its actual value.
+    // https://www.khronos.org/registry/EGL/extensions/KHR/EGL_KHR_platform_x11.txt
+    void *actualNativeWindow = display->getImplementation()->isX11()
+                                   ? *reinterpret_cast<void **>(native_window)
+                                   : native_window;
+    EGLNativeWindowType nativeWindow = reinterpret_cast<EGLNativeWindowType>(actualNativeWindow);
+
+    ANGLE_EGL_TRY_RETURN(
+        thread, display->createWindowSurface(configPacked, nativeWindow, attributes, &surface),
+        "eglPlatformCreateWindowSurfaceEXT", GetDisplayIfValid(display), EGL_NO_SURFACE);
+
+    return static_cast<EGLSurface>(surface);
 }
 
 EGLStreamKHR CreateStreamKHR(Thread *thread, Display *display, const AttributeMap &attributes)
@@ -811,6 +824,16 @@ void HandleGPUSwitchANGLE(Thread *thread, Display *display)
     thread->setSuccess();
 }
 
+void ForceGPUSwitchANGLE(Thread *thread, Display *display, EGLint gpuIDHigh, EGLint gpuIDLow)
+{
+    ANGLE_EGL_TRY(thread, display->prepareForCall(), "eglForceGPUSwitchANGLE",
+                  GetDisplayIfValid(display));
+    ANGLE_EGL_TRY(thread, display->forceGPUSwitch(gpuIDHigh, gpuIDLow), "eglForceGPUSwitchANGLE",
+                  GetDisplayIfValid(display));
+
+    thread->setSuccess();
+}
+
 EGLBoolean QueryDisplayAttribANGLE(Thread *thread,
                                    Display *display,
                                    EGLint attribute,
@@ -884,7 +907,40 @@ EGLBoolean SetDamageRegionKHR(Thread *thread,
 {
     ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglSetDamageRegionKHR",
                          GetDisplayIfValid(display), EGL_FALSE);
+    surface->setDamageRegion(rects, n_rects);
 
+    thread->setSuccess();
+    return EGL_TRUE;
+}
+
+EGLBoolean QueryDmaBufFormatsEXT(Thread *thread,
+                                 egl::Display *display,
+                                 EGLint max_formats,
+                                 EGLint *formats,
+                                 EGLint *num_formats)
+{
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglQueryDmaBufFormatsEXT",
+                         GetDisplayIfValid(display), EGL_FALSE);
+    ANGLE_EGL_TRY_RETURN(thread, display->queryDmaBufFormats(max_formats, formats, num_formats),
+                         "eglQueryDmaBufFormatsEXT", GetDisplayIfValid(display), EGL_FALSE);
+    thread->setSuccess();
+    return EGL_TRUE;
+}
+
+EGLBoolean QueryDmaBufModifiersEXT(Thread *thread,
+                                   egl::Display *display,
+                                   EGLint format,
+                                   EGLint max_modifiers,
+                                   EGLuint64KHR *modifiers,
+                                   EGLBoolean *external_only,
+                                   EGLint *num_modifiers)
+{
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglQueryDmaBufModifiersEXT",
+                         GetDisplayIfValid(display), EGL_FALSE);
+    ANGLE_EGL_TRY_RETURN(thread,
+                         display->queryDmaBufModifiers(format, max_modifiers, modifiers,
+                                                       external_only, num_modifiers),
+                         "eglQueryDmaBufModifiersEXT", GetDisplayIfValid(display), EGL_FALSE);
     thread->setSuccess();
     return EGL_TRUE;
 }

@@ -34,11 +34,67 @@ namespace angle
 {
 namespace
 {
-std::string GetUnitAndDirection(proto::UnitAndDirection unit)
+std::string UnitAndDirectionToString(proto::UnitAndDirection unit)
 {
-    ASSERT(unit.improvement_direction() == proto::SMALLER_IS_BETTER);
-    ASSERT(unit.unit() == proto::MS_BEST_FIT_FORMAT);
-    return "msBestFitFormat_smallerIsBetter";
+    std::stringstream strstr;
+
+    switch (unit.unit())
+    {
+        case proto::MS_BEST_FIT_FORMAT:
+            strstr << "msBestFitFormat";
+            break;
+        case proto::COUNT:
+            strstr << "count";
+            break;
+        case proto::SIZE_IN_BYTES:
+            strstr << "sizeInBytes";
+            break;
+        default:
+            UNREACHABLE();
+            strstr << "error";
+            break;
+    }
+
+    switch (unit.improvement_direction())
+    {
+        case proto::NOT_SPECIFIED:
+            break;
+        case proto::SMALLER_IS_BETTER:
+            strstr << "_smallerIsBetter";
+            break;
+        default:
+            UNREACHABLE();
+            break;
+    }
+
+    return strstr.str();
+}
+
+proto::UnitAndDirection StringToUnitAndDirection(const std::string &str)
+{
+    proto::UnitAndDirection unitAndDirection;
+
+    if (str == "count")
+    {
+        unitAndDirection.set_improvement_direction(proto::NOT_SPECIFIED);
+        unitAndDirection.set_unit(proto::COUNT);
+    }
+    else if (str == "msBestFitFormat_smallerIsBetter")
+    {
+        unitAndDirection.set_improvement_direction(proto::SMALLER_IS_BETTER);
+        unitAndDirection.set_unit(proto::MS_BEST_FIT_FORMAT);
+    }
+    else if (str == "sizeInBytes_smallerIsBetter")
+    {
+        unitAndDirection.set_improvement_direction(proto::SMALLER_IS_BETTER);
+        unitAndDirection.set_unit(proto::SIZE_IN_BYTES);
+    }
+    else
+    {
+        UNREACHABLE();
+    }
+
+    return unitAndDirection;
 }
 }  // namespace
 
@@ -54,9 +110,7 @@ void HistogramWriter::addSample(const std::string &measurement,
     std::string measurementAndStory = measurement + story;
     if (mHistograms.count(measurementAndStory) == 0)
     {
-        proto::UnitAndDirection unitAndDirection;
-        unitAndDirection.set_improvement_direction(proto::SMALLER_IS_BETTER);
-        unitAndDirection.set_unit(proto::MS_BEST_FIT_FORMAT);
+        proto::UnitAndDirection unitAndDirection = StringToUnitAndDirection(units);
 
         std::unique_ptr<catapult::HistogramBuilder> builder =
             std::make_unique<catapult::HistogramBuilder>(measurement, unitAndDirection);
@@ -102,7 +156,7 @@ void HistogramWriter::getAsJSON(js::Document *doc) const
         js::Value description(histogram.description(), allocator);
         obj.AddMember("description", description, allocator);
 
-        js::Value unitAndDirection(GetUnitAndDirection(histogram.unit()), allocator);
+        js::Value unitAndDirection(UnitAndDirectionToString(histogram.unit()), allocator);
         obj.AddMember("unit", unitAndDirection, allocator);
 
         if (histogram.has_diagnostics())

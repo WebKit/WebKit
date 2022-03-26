@@ -13,6 +13,8 @@
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
 
+#include <fcntl.h>
+
 namespace rx
 {
 namespace
@@ -188,15 +190,16 @@ bool IsFormatSupported(RendererVk *renderer,
                        uint64_t drmModifier,
                        VkImageUsageFlags usageFlags,
                        VkImageCreateFlags createFlags,
+                       VkImageFormatListCreateInfoKHR imageFormatListInfo,
                        VkImageFormatProperties2 *imageFormatPropertiesOut)
 {
-    VkExternalMemoryImageCreateInfo externalMemoryImageCreateInfo = {};
-    externalMemoryImageCreateInfo.sType       = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
-    externalMemoryImageCreateInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
+    VkPhysicalDeviceExternalImageFormatInfo externalImageFormatInfo = {};
+    externalImageFormatInfo.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
+    externalImageFormatInfo.handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
 
     VkPhysicalDeviceImageFormatInfo2 imageFormatInfo = {};
     imageFormatInfo.sType  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
-    imageFormatInfo.pNext  = &externalMemoryImageCreateInfo;
+    imageFormatInfo.pNext  = &externalImageFormatInfo;
     imageFormatInfo.format = vkFormat;
     imageFormatInfo.type   = VK_IMAGE_TYPE_2D;
     imageFormatInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
@@ -206,13 +209,14 @@ bool IsFormatSupported(RendererVk *renderer,
     VkPhysicalDeviceImageDrmFormatModifierInfoEXT drmFormatModifierInfo = {};
     drmFormatModifierInfo.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT;
-    drmFormatModifierInfo.pNext             = &externalMemoryImageCreateInfo;
     drmFormatModifierInfo.drmFormatModifier = drmModifier;
     drmFormatModifierInfo.sharingMode       = VK_SHARING_MODE_EXCLUSIVE;
     if (drmModifier != 0)
     {
-        imageFormatInfo.pNext  = &drmFormatModifierInfo;
-        imageFormatInfo.tiling = VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT;
+        externalImageFormatInfo.pNext = &drmFormatModifierInfo;
+        imageFormatListInfo.pNext     = &externalImageFormatInfo;
+        imageFormatInfo.pNext         = &imageFormatListInfo;
+        imageFormatInfo.tiling        = VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT;
     }
 
     return vkGetPhysicalDeviceImageFormatProperties2(renderer->getPhysicalDevice(),
@@ -251,11 +255,12 @@ VkSamplerYcbcrRange GetYcbcrRange(const egl::AttributeMap &attribs)
                : VK_SAMPLER_YCBCR_RANGE_ITU_NARROW;
 }
 
-uint32_t GetAllocateInfo(const egl::AttributeMap &attribs,
-                         VkImage image,
-                         uint32_t planeCount,
-                         const VkDrmFormatModifierPropertiesEXT &properties,
-                         AllocateInfo *infoOut)
+angle::Result GetAllocateInfo(const egl::AttributeMap &attribs,
+                              VkImage image,
+                              uint32_t planeCount,
+                              const VkDrmFormatModifierPropertiesEXT &properties,
+                              AllocateInfo *infoOut,
+                              uint32_t *infoCountOut)
 {
     // There are a number of situations:
     //
@@ -290,21 +295,29 @@ uint32_t GetAllocateInfo(const egl::AttributeMap &attribs,
     }
 
     // Fill in allocateInfo, importFdInfo, bindInfo and bindPlaneInfo first.
-    const uint32_t planesToAllocate = isDisjoint ? planeCount : 1;
-    for (uint32_t plane = 0; plane < planesToAllocate; ++plane)
+    *infoCountOut = isDisjoint ? planeCount : 1;
+    for (uint32_t plane = 0; plane < *infoCountOut; ++plane)
     {
         infoOut->allocateInfo[plane].sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
         infoOut->allocateInfo[plane].pNext = &infoOut->importFdInfo[plane];
         infoOut->allocateInfo[plane].image = image;
 
         infoOut->importFdInfo[plane].sType      = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR;
-        infoOut->importFdInfo[plane].handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT;
-        infoOut->importFdInfo[plane].fd         = attribs.getAsInt(kFds[plane]);
+        infoOut->importFdInfo[plane].handleType = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
+
+        // Vulkan takes ownership of the FD, closed on vkFreeMemory.
+        int dfd = fcntl(attribs.getAsInt(kFds[plane]), F_DUPFD_CLOEXEC, 0);
+        if (dfd < 0)
+        {
+            ERR() << "failed to duplicate fd for dma_buf import" << std::endl;
+            return angle::Result::Stop;
+        }
+        infoOut->importFdInfo[plane].fd = dfd;
 
         infoOut->allocateInfoPtr[plane] = &infoOut->allocateInfo[plane];
     }
 
-    return planesToAllocate;
+    return angle::Result::Continue;
 }
 }  // anonymous namespace
 
@@ -335,6 +348,59 @@ egl::Error DmaBufImageSiblingVkLinux::initialize(const egl::Display *display)
 {
     DisplayVk *displayVk = vk::GetImpl(display);
     return angle::ToEGL(initImpl(displayVk), displayVk, EGL_BAD_PARAMETER);
+}
+
+VkImageUsageFlags FindSupportedUsageFlagsForFormat(
+    RendererVk *renderer,
+    VkFormat format,
+    uint64_t drmModifier,
+    VkImageFormatListCreateInfo imageFormatListCreateInfo,
+    VkImageUsageFlags usageFlags,
+    VkImageCreateFlags createFlags,
+    VkImageFormatProperties2 *outImageFormatProperties)
+{
+    if (!IsFormatSupported(renderer, format, drmModifier, usageFlags, createFlags,
+                           imageFormatListCreateInfo, outImageFormatProperties))
+    {
+        usageFlags &= ~kRenderUsage;
+        if (!IsFormatSupported(renderer, format, drmModifier, usageFlags, createFlags,
+                               imageFormatListCreateInfo, outImageFormatProperties))
+        {
+            usageFlags &= ~kTextureUsage;
+            if (!IsFormatSupported(renderer, format, drmModifier, usageFlags, createFlags,
+                                   imageFormatListCreateInfo, outImageFormatProperties))
+            {
+                // Can not find supported usage flags for this image.
+                return 0;
+            }
+        }
+    }
+
+    return usageFlags;
+}
+
+bool FindSupportedFlagsForFormat(RendererVk *renderer,
+                                 VkFormat format,
+                                 uint64_t drmModifier,
+                                 VkImageFormatListCreateInfo imageFormatListCreateInfo,
+                                 VkImageUsageFlags *outUsageFlags,
+                                 VkImageCreateFlags *outCreateFlags,
+                                 VkImageFormatProperties2 *outImageFormatProperties)
+{
+    VkImageUsageFlags supportedUsageFlags =
+        FindSupportedUsageFlagsForFormat(renderer, format, drmModifier, imageFormatListCreateInfo,
+                                         *outUsageFlags, *outCreateFlags, outImageFormatProperties);
+    if (supportedUsageFlags == 0)
+    {
+        // Remove mutable format bit and try again.
+        *outCreateFlags &= ~VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT;
+        supportedUsageFlags = FindSupportedUsageFlagsForFormat(
+            renderer, format, drmModifier, imageFormatListCreateInfo, *outUsageFlags,
+            *outCreateFlags, outImageFormatProperties);
+    }
+
+    *outUsageFlags = supportedUsageFlags;
+    return supportedUsageFlags != 0;
 }
 
 angle::Result DmaBufImageSiblingVkLinux::initImpl(DisplayVk *displayVk)
@@ -387,40 +453,6 @@ angle::Result DmaBufImageSiblingVkLinux::initImpl(DisplayVk *displayVk)
     imageFormatProperties.sType                    = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
     imageFormatProperties.pNext                    = &externalFormatProperties;
 
-    if (!IsFormatSupported(renderer, vulkanFormat, plane0Modifier, usageFlags, createFlags,
-                           &imageFormatProperties))
-    {
-        mRenderable = false;
-        usageFlags &= ~kRenderUsage;
-        if (!IsFormatSupported(renderer, vulkanFormat, plane0Modifier, usageFlags, createFlags,
-                               &imageFormatProperties))
-        {
-            mTextureable = false;
-            usageFlags &= ~kTextureUsage;
-
-            if (!IsFormatSupported(renderer, vulkanFormat, plane0Modifier, usageFlags, createFlags,
-                                   &imageFormatProperties))
-            {
-                // The image is completely unusable.
-                ANGLE_VK_CHECK(displayVk, false, VK_ERROR_FORMAT_NOT_SUPPORTED);
-            }
-        }
-    }
-
-    // Make sure image width/height/samples are within allowed range and the image is importable.
-    const bool isWidthValid = static_cast<uint32_t>(mSize.width) <=
-                              imageFormatProperties.imageFormatProperties.maxExtent.width;
-    const bool isHeightValid = static_cast<uint32_t>(mSize.height) <=
-                               imageFormatProperties.imageFormatProperties.maxExtent.height;
-    const bool isSampleCountValid =
-        (imageFormatProperties.imageFormatProperties.sampleCounts & VK_SAMPLE_COUNT_1_BIT) != 0;
-    const bool isMemoryImportable =
-        (externalFormatProperties.externalMemoryProperties.externalMemoryFeatures &
-         VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT) == 0;
-    ANGLE_VK_CHECK(displayVk,
-                   isWidthValid && isHeightValid && isSampleCountValid && isMemoryImportable,
-                   VK_ERROR_INCOMPATIBLE_DRIVER);
-
     std::vector<VkSubresourceLayout> planes(planeCount, VkSubresourceLayout{});
     for (uint32_t plane = 0; plane < planeCount; ++plane)
     {
@@ -440,11 +472,35 @@ angle::Result DmaBufImageSiblingVkLinux::initImpl(DisplayVk *displayVk)
     externalMemoryImageCreateInfo.pNext       = &imageDrmModifierCreateInfo;
     externalMemoryImageCreateInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT;
 
-    VkImageFormatListCreateInfoKHR imageFormatListInfoStorage;
+    VkImageFormatListCreateInfoKHR imageFormatListCreateInfo;
     vk::ImageHelper::ImageListFormats imageListFormatsStorage;
     const void *imageCreateInfoPNext = vk::ImageHelper::DeriveCreateInfoPNext(
-        displayVk, actualImageFormatID, &externalMemoryImageCreateInfo, &imageFormatListInfoStorage,
+        displayVk, actualImageFormatID, &externalMemoryImageCreateInfo, &imageFormatListCreateInfo,
         &imageListFormatsStorage, &createFlags);
+
+    if (!FindSupportedFlagsForFormat(renderer, vulkanFormat, plane0Modifier,
+                                     imageFormatListCreateInfo, &usageFlags, &createFlags,
+                                     &imageFormatProperties))
+    {
+        // The image is completely unusable.
+        ANGLE_VK_CHECK(displayVk, false, VK_ERROR_FORMAT_NOT_SUPPORTED);
+    }
+    mRenderable  = usageFlags & kRenderUsage;
+    mTextureable = usageFlags & kTextureUsage;
+
+    // Make sure image width/height/samples are within allowed range and the image is importable.
+    const bool isWidthValid = static_cast<uint32_t>(mSize.width) <=
+                              imageFormatProperties.imageFormatProperties.maxExtent.width;
+    const bool isHeightValid = static_cast<uint32_t>(mSize.height) <=
+                               imageFormatProperties.imageFormatProperties.maxExtent.height;
+    const bool isSampleCountValid =
+        (imageFormatProperties.imageFormatProperties.sampleCounts & VK_SAMPLE_COUNT_1_BIT) != 0;
+    const bool isMemoryImportable =
+        (externalFormatProperties.externalMemoryProperties.externalMemoryFeatures &
+         VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT) != 0;
+    ANGLE_VK_CHECK(displayVk,
+                   isWidthValid && isHeightValid && isSampleCountValid && isMemoryImportable,
+                   VK_ERROR_INCOMPATIBLE_DRIVER);
 
     // Create the image
     mImage = new vk::ImageHelper();
@@ -489,8 +545,9 @@ angle::Result DmaBufImageSiblingVkLinux::initImpl(DisplayVk *displayVk)
     }
 
     AllocateInfo allocateInfo;
-    const uint32_t allocateInfoCount = GetAllocateInfo(
-        mAttribs, mImage->getImage().getHandle(), planeCount, modifierProperties, &allocateInfo);
+    uint32_t allocateInfoCount;
+    ANGLE_TRY(GetAllocateInfo(mAttribs, mImage->getImage().getHandle(), planeCount,
+                              modifierProperties, &allocateInfo, &allocateInfoCount));
 
     return mImage->initExternalMemory(
         displayVk, renderer->getMemoryProperties(), externalMemoryRequirements, allocateInfoCount,

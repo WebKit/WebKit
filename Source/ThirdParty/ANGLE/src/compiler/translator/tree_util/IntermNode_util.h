@@ -105,6 +105,12 @@ TIntermSwizzle *CreateSwizzle(TIntermTyped *reference, ArgsT... args)
     return new TIntermSwizzle(reference, swizzleIndex);
 }
 
+// Returns true if a block ends in a branch (break, continue, return, etc).  This is only correct
+// after PruneNoOps, because it expects empty blocks after a branch to have been already pruned,
+// i.e. a block can only end in a branch if its last statement is a branch or is a block ending in
+// branch.
+bool EndsInBranch(TIntermBlock *block);
+
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_INTERMNODEUTIL_H_

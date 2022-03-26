@@ -139,7 +139,6 @@ bool PruneNoOpsTraverser::visitBlock(Visit visit, TIntermBlock *node)
     ASSERT(visit == PreVisit);
 
     TIntermSequence &statements = *node->getSequence();
-    TIntermSequence emptyReplacement;
 
     // Visit each statement in the block one by one.  Once a branch is visited (break, continue,
     // return or discard), drop the rest of the statements.
@@ -156,6 +155,7 @@ bool PruneNoOpsTraverser::visitBlock(Visit visit, TIntermBlock *node)
         // If a branch is visited, prune the statement.  If the statement is a no-op, also prune it.
         if (mIsBranchVisited || IsNoOp(statement))
         {
+            TIntermSequence emptyReplacement;
             mMultiReplacements.emplace_back(node, statement, std::move(emptyReplacement));
             continue;
         }

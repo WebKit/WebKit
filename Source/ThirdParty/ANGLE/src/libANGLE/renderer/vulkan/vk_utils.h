@@ -196,8 +196,12 @@ class Context : angle::NonCopyable
     VkDevice getDevice() const;
     RendererVk *getRenderer() const { return mRenderer; }
 
+    const angle::VulkanPerfCounters &getPerfCounters() const { return mPerfCounters; }
+    angle::VulkanPerfCounters &getPerfCounters() { return mPerfCounters; }
+
   protected:
     RendererVk *const mRenderer;
+    angle::VulkanPerfCounters mPerfCounters;
 };
 
 class RenderPassDesc;
@@ -773,6 +777,7 @@ class Recycler final : angle::NonCopyable
         {
             object.destroy(device);
         }
+        mObjectFreeList.clear();
     }
 
     bool empty() const { return mObjectFreeList.empty(); }
@@ -1245,41 +1250,6 @@ struct RenderPassPerfCounters
     uint8_t readOnlyDepthStencil;
 };
 
-struct PerfCounters
-{
-    uint32_t primaryBuffers;
-    uint32_t renderPasses;
-    uint32_t writeDescriptorSets;
-    uint32_t flushedOutsideRenderPassCommandBuffers;
-    uint32_t resolveImageCommands;
-    uint32_t depthClears;
-    uint32_t depthLoads;
-    uint32_t depthStores;
-    uint32_t stencilClears;
-    uint32_t stencilLoads;
-    uint32_t stencilStores;
-    uint32_t colorAttachmentUnresolves;
-    uint32_t depthAttachmentUnresolves;
-    uint32_t stencilAttachmentUnresolves;
-    uint32_t colorAttachmentResolves;
-    uint32_t depthAttachmentResolves;
-    uint32_t stencilAttachmentResolves;
-    uint32_t readOnlyDepthStencilRenderPasses;
-    uint32_t descriptorSetAllocations;
-    uint32_t descriptorSetCacheTotalSize;
-    uint32_t uniformsAndXfbDescriptorSetCacheHits;
-    uint32_t uniformsAndXfbDescriptorSetCacheMisses;
-    uint32_t uniformsAndXfbDescriptorSetCacheTotalSize;
-    uint32_t textureDescriptorSetCacheHits;
-    uint32_t textureDescriptorSetCacheMisses;
-    uint32_t textureDescriptorSetCacheTotalSize;
-    uint32_t shaderBuffersDescriptorSetCacheHits;
-    uint32_t shaderBuffersDescriptorSetCacheMisses;
-    uint32_t shaderBuffersDescriptorSetCacheTotalSize;
-    uint32_t buffersGhosted;
-    uint32_t vertexArraySyncStateCalls;
-};
-
 // A Vulkan image level index.
 using LevelIndex = gl::LevelIndexWrapper<uint32_t>;
 
@@ -1487,9 +1457,6 @@ enum class RenderPassClosureReason
     TemporaryForImageClear,
     TemporaryForImageCopy,
     TemporaryForOverlayDraw,
-
-    // Misc
-    OverlayFontCreation,
 
     InvalidEnum,
     EnumCount = InvalidEnum,

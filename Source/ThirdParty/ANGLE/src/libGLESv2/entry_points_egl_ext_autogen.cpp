@@ -364,6 +364,23 @@ void EGLAPIENTRY EGL_HandleGPUSwitchANGLE(EGLDisplay dpy)
     HandleGPUSwitchANGLE(thread, dpyPacked);
 }
 
+void EGLAPIENTRY EGL_ForceGPUSwitchANGLE(EGLDisplay dpy, EGLint gpuIDHigh, EGLint gpuIDLow)
+{
+
+    ANGLE_SCOPED_GLOBAL_LOCK();
+    EGL_EVENT(ForceGPUSwitchANGLE, "dpy = 0x%016" PRIxPTR ", gpuIDHigh = %d, gpuIDLow = %d",
+              (uintptr_t)dpy, gpuIDHigh, gpuIDLow);
+
+    Thread *thread = egl::GetCurrentThread();
+
+    egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
+
+    ANGLE_EGL_VALIDATE_VOID(thread, ForceGPUSwitchANGLE, GetDisplayIfValid(dpyPacked), dpyPacked,
+                            gpuIDHigh, gpuIDLow);
+
+    ForceGPUSwitchANGLE(thread, dpyPacked, gpuIDHigh, gpuIDLow);
+}
+
 // EGL_ANGLE_prepare_swap_buffers
 EGLBoolean EGLAPIENTRY EGL_PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface surface)
 {
@@ -679,6 +696,55 @@ EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribEXT(EGLDisplay dpy, EGLint attribut
                        dpyPacked, attribute, value);
 
     return QueryDisplayAttribEXT(thread, dpyPacked, attribute, value);
+}
+
+// EGL_EXT_image_dma_buf_import_modifiers
+EGLBoolean EGLAPIENTRY EGL_QueryDmaBufFormatsEXT(EGLDisplay dpy,
+                                                 EGLint max_formats,
+                                                 EGLint *formats,
+                                                 EGLint *num_formats)
+{
+
+    ANGLE_SCOPED_GLOBAL_LOCK();
+    EGL_EVENT(QueryDmaBufFormatsEXT,
+              "dpy = 0x%016" PRIxPTR ", max_formats = %d, formats = 0x%016" PRIxPTR
+              ", num_formats = 0x%016" PRIxPTR "",
+              (uintptr_t)dpy, max_formats, (uintptr_t)formats, (uintptr_t)num_formats);
+
+    Thread *thread = egl::GetCurrentThread();
+
+    egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
+
+    ANGLE_EGL_VALIDATE(thread, QueryDmaBufFormatsEXT, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                       dpyPacked, max_formats, formats, num_formats);
+
+    return QueryDmaBufFormatsEXT(thread, dpyPacked, max_formats, formats, num_formats);
+}
+
+EGLBoolean EGLAPIENTRY EGL_QueryDmaBufModifiersEXT(EGLDisplay dpy,
+                                                   EGLint format,
+                                                   EGLint max_modifiers,
+                                                   EGLuint64KHR *modifiers,
+                                                   EGLBoolean *external_only,
+                                                   EGLint *num_modifiers)
+{
+
+    ANGLE_SCOPED_GLOBAL_LOCK();
+    EGL_EVENT(QueryDmaBufModifiersEXT,
+              "dpy = 0x%016" PRIxPTR ", format = %d, max_modifiers = %d, modifiers = 0x%016" PRIxPTR
+              ", external_only = 0x%016" PRIxPTR ", num_modifiers = 0x%016" PRIxPTR "",
+              (uintptr_t)dpy, format, max_modifiers, (uintptr_t)modifiers, (uintptr_t)external_only,
+              (uintptr_t)num_modifiers);
+
+    Thread *thread = egl::GetCurrentThread();
+
+    egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
+
+    ANGLE_EGL_VALIDATE(thread, QueryDmaBufModifiersEXT, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                       dpyPacked, format, max_modifiers, modifiers, external_only, num_modifiers);
+
+    return QueryDmaBufModifiersEXT(thread, dpyPacked, format, max_modifiers, modifiers,
+                                   external_only, num_modifiers);
 }
 
 // EGL_EXT_platform_base

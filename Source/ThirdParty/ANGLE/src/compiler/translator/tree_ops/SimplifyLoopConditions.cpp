@@ -161,6 +161,20 @@ bool SimplifyLoopConditionsTraverser::visitBranch(Visit visit, TIntermBranch *no
     return true;
 }
 
+TIntermBlock *CreateFromBody(TIntermLoop *node, bool *bodyEndsInBranchOut)
+{
+    TIntermBlock *newBody = new TIntermBlock();
+    *bodyEndsInBranchOut  = false;
+
+    TIntermBlock *nodeBody = node->getBody();
+    if (nodeBody != nullptr)
+    {
+        newBody->getSequence()->push_back(nodeBody);
+        *bodyEndsInBranchOut = EndsInBranch(nodeBody);
+    }
+    return newBody;
+}
+
 void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
 {
     // Mark that we're inside a loop condition or expression, and determine if the loop needs to be
@@ -238,13 +252,13 @@ void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
                     CreateTempInitDeclarationNode(mLoop.conditionVariable, mLoop.condition);
                 insertStatementInParentBlock(tempInitDeclaration);
 
-                TIntermBlock *newBody = new TIntermBlock();
-                if (node->getBody())
+                bool bodyEndsInBranch;
+                TIntermBlock *newBody = CreateFromBody(node, &bodyEndsInBranch);
+                if (!bodyEndsInBranch)
                 {
-                    newBody->getSequence()->push_back(node->getBody());
+                    newBody->getSequence()->push_back(CreateTempAssignmentNode(
+                        mLoop.conditionVariable, mLoop.condition->deepCopy()));
                 }
-                newBody->getSequence()->push_back(
-                    CreateTempAssignmentNode(mLoop.conditionVariable, mLoop.condition->deepCopy()));
 
                 // Can't use queueReplacement to replace old body, since it may have been nullptr.
                 // It's safe to do the replacements in place here - the new body will still be
@@ -300,13 +314,13 @@ void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
                     CreateTempDeclarationNode(mLoop.conditionVariable);
                 insertStatementInParentBlock(tempInitDeclaration);
 
-                TIntermBlock *newBody = new TIntermBlock();
-                if (node->getBody())
+                bool bodyEndsInBranch;
+                TIntermBlock *newBody = CreateFromBody(node, &bodyEndsInBranch);
+                if (!bodyEndsInBranch)
                 {
-                    newBody->getSequence()->push_back(node->getBody());
+                    newBody->getSequence()->push_back(
+                        CreateTempAssignmentNode(mLoop.conditionVariable, mLoop.condition));
                 }
-                newBody->getSequence()->push_back(
-                    CreateTempAssignmentNode(mLoop.conditionVariable, mLoop.condition));
 
                 // Can't use queueReplacement to replace old body, since it may have been nullptr.
                 // It's safe to do the replacements in place here - the new body will still be
@@ -350,13 +364,10 @@ void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
                 //   exprB; continue;
 
                 // Insert "{ body; }" in the while loop
-                TIntermBlock *whileLoopBody = new TIntermBlock();
-                if (node->getBody())
-                {
-                    whileLoopBody->getSequence()->push_back(node->getBody());
-                }
+                bool bodyEndsInBranch;
+                TIntermBlock *whileLoopBody = CreateFromBody(node, &bodyEndsInBranch);
                 // Insert "exprB;" in the while loop
-                if (node->getExpression())
+                if (!bodyEndsInBranch && node->getExpression())
                 {
                     whileLoopBody->getSequence()->push_back(node->getExpression());
                 }
@@ -389,13 +400,10 @@ void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
                 loopScopeSequence->push_back(
                     CreateTempInitDeclarationNode(mLoop.conditionVariable, mLoop.condition));
                 // Insert "{ body; }" in the while loop
-                TIntermBlock *whileLoopBody = new TIntermBlock();
-                if (node->getBody())
-                {
-                    whileLoopBody->getSequence()->push_back(node->getBody());
-                }
+                bool bodyEndsInBranch;
+                TIntermBlock *whileLoopBody = CreateFromBody(node, &bodyEndsInBranch);
                 // Insert "exprB;" in the while loop
-                if (node->getExpression())
+                if (!bodyEndsInBranch && node->getExpression())
                 {
                     whileLoopBody->getSequence()->push_back(node->getExpression());
                 }
@@ -430,19 +438,19 @@ void SimplifyLoopConditionsTraverser::traverseLoop(TIntermLoop *node)
                 loopScopeSequence->push_back(
                     CreateTempInitDeclarationNode(mLoop.conditionVariable, mLoop.condition));
                 // Insert "{ body; }" in the while loop
-                TIntermBlock *whileLoopBody = new TIntermBlock();
-                if (node->getBody())
-                {
-                    whileLoopBody->getSequence()->push_back(node->getBody());
-                }
+                bool bodyEndsInBranch;
+                TIntermBlock *whileLoopBody = CreateFromBody(node, &bodyEndsInBranch);
                 // Insert "exprB;" in the while loop
-                if (node->getExpression())
+                if (!bodyEndsInBranch && node->getExpression())
                 {
                     whileLoopBody->getSequence()->push_back(node->getExpression());
                 }
                 // Insert "s0 = expr;" in the while loop
-                whileLoopBody->getSequence()->push_back(
-                    CreateTempAssignmentNode(mLoop.conditionVariable, mLoop.condition->deepCopy()));
+                if (!bodyEndsInBranch)
+                {
+                    whileLoopBody->getSequence()->push_back(CreateTempAssignmentNode(
+                        mLoop.conditionVariable, mLoop.condition->deepCopy()));
+                }
                 // Create "while(s0) { whileLoopBody }"
                 whileLoop = new TIntermLoop(ELoopWhile, nullptr,
                                             CreateTempSymbolNode(mLoop.conditionVariable), nullptr,

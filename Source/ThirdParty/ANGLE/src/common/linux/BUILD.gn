@@ -11,4 +11,9 @@ angle_source_set("angle_dma_buf") {
   ]
 
   deps = [ "$angle_root:angle_common" ]
+
+  if (angle_enable_vulkan) {
+    defines = [ "ANGLE_ENABLE_VULKAN" ]
+    public_deps = [ "$angle_vulkan_headers_dir:vulkan_headers" ]
+  }
 }

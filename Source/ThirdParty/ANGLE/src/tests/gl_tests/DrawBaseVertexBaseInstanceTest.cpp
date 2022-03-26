@@ -689,10 +689,7 @@ TEST_P(DrawBaseVertexBaseInstanceTest, MultiDrawElementsInstancedBaseVertexBaseI
 }
 
 const angle::PlatformParameters platforms[] = {
-    ES3_D3D11(),
-    ES3_OPENGL(),
-    ES3_OPENGLES(),
-    ES3_VULKAN(),
+    ES3_D3D11(), ES3_METAL(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN(),
 };
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexBaseInstanceTest);

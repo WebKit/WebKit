@@ -36,6 +36,322 @@ using namespace gl;
 
 extern "C" {
 
+// GL_AMD_performance_monitor
+void GL_APIENTRY GL_BeginPerfMonitorAMD(GLuint monitor)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLBeginPerfMonitorAMD, "context = %d, monitor = %u", CID(context), monitor);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateBeginPerfMonitorAMD(
+                                context, angle::EntryPoint::GLBeginPerfMonitorAMD, monitor));
+        if (isCallValid)
+        {
+            context->beginPerfMonitor(monitor);
+        }
+        ANGLE_CAPTURE(BeginPerfMonitorAMD, isCallValid, context, monitor);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_DeletePerfMonitorsAMD(GLsizei n, GLuint *monitors)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLDeletePerfMonitorsAMD, "context = %d, n = %d, monitors = 0x%016" PRIxPTR "",
+          CID(context), n, (uintptr_t)monitors);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateDeletePerfMonitorsAMD(
+                                context, angle::EntryPoint::GLDeletePerfMonitorsAMD, n, monitors));
+        if (isCallValid)
+        {
+            context->deletePerfMonitors(n, monitors);
+        }
+        ANGLE_CAPTURE(DeletePerfMonitorsAMD, isCallValid, context, n, monitors);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_EndPerfMonitorAMD(GLuint monitor)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLEndPerfMonitorAMD, "context = %d, monitor = %u", CID(context), monitor);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateEndPerfMonitorAMD(context, angle::EntryPoint::GLEndPerfMonitorAMD, monitor));
+        if (isCallValid)
+        {
+            context->endPerfMonitor(monitor);
+        }
+        ANGLE_CAPTURE(EndPerfMonitorAMD, isCallValid, context, monitor);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_GenPerfMonitorsAMD(GLsizei n, GLuint *monitors)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGenPerfMonitorsAMD, "context = %d, n = %d, monitors = 0x%016" PRIxPTR "",
+          CID(context), n, (uintptr_t)monitors);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateGenPerfMonitorsAMD(
+                                context, angle::EntryPoint::GLGenPerfMonitorsAMD, n, monitors));
+        if (isCallValid)
+        {
+            context->genPerfMonitors(n, monitors);
+        }
+        ANGLE_CAPTURE(GenPerfMonitorsAMD, isCallValid, context, n, monitors);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_GetPerfMonitorCounterDataAMD(GLuint monitor,
+                                                 GLenum pname,
+                                                 GLsizei dataSize,
+                                                 GLuint *data,
+                                                 GLint *bytesWritten)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetPerfMonitorCounterDataAMD,
+          "context = %d, monitor = %u, pname = %s, dataSize = %d, data = 0x%016" PRIxPTR
+          ", bytesWritten = 0x%016" PRIxPTR "",
+          CID(context), monitor, GLenumToString(GLenumGroup::DefaultGroup, pname), dataSize,
+          (uintptr_t)data, (uintptr_t)bytesWritten);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateGetPerfMonitorCounterDataAMD(
+                                context, angle::EntryPoint::GLGetPerfMonitorCounterDataAMD, monitor,
+                                pname, dataSize, data, bytesWritten));
+        if (isCallValid)
+        {
+            context->getPerfMonitorCounterData(monitor, pname, dataSize, data, bytesWritten);
+        }
+        ANGLE_CAPTURE(GetPerfMonitorCounterDataAMD, isCallValid, context, monitor, pname, dataSize,
+                      data, bytesWritten);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_GetPerfMonitorCounterInfoAMD(GLuint group,
+                                                 GLuint counter,
+                                                 GLenum pname,
+                                                 void *data)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetPerfMonitorCounterInfoAMD,
+          "context = %d, group = %u, counter = %u, pname = %s, data = 0x%016" PRIxPTR "",
+          CID(context), group, counter, GLenumToString(GLenumGroup::DefaultGroup, pname),
+          (uintptr_t)data);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateGetPerfMonitorCounterInfoAMD(
+                                context, angle::EntryPoint::GLGetPerfMonitorCounterInfoAMD, group,
+                                counter, pname, data));
+        if (isCallValid)
+        {
+            context->getPerfMonitorCounterInfo(group, counter, pname, data);
+        }
+        ANGLE_CAPTURE(GetPerfMonitorCounterInfoAMD, isCallValid, context, group, counter, pname,
+                      data);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_GetPerfMonitorCounterStringAMD(GLuint group,
+                                                   GLuint counter,
+                                                   GLsizei bufSize,
+                                                   GLsizei *length,
+                                                   GLchar *counterString)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetPerfMonitorCounterStringAMD,
+          "context = %d, group = %u, counter = %u, bufSize = %d, length = 0x%016" PRIxPTR
+          ", counterString = 0x%016" PRIxPTR "",
+          CID(context), group, counter, bufSize, (uintptr_t)length, (uintptr_t)counterString);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateGetPerfMonitorCounterStringAMD(
+                                context, angle::EntryPoint::GLGetPerfMonitorCounterStringAMD, group,
+                                counter, bufSize, length, counterString));
+        if (isCallValid)
+        {
+            context->getPerfMonitorCounterString(group, counter, bufSize, length, counterString);
+        }
+        ANGLE_CAPTURE(GetPerfMonitorCounterStringAMD, isCallValid, context, group, counter, bufSize,
+                      length, counterString);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_GetPerfMonitorCountersAMD(GLuint group,
+                                              GLint *numCounters,
+                                              GLint *maxActiveCounters,
+                                              GLsizei counterSize,
+                                              GLuint *counters)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetPerfMonitorCountersAMD,
+          "context = %d, group = %u, numCounters = 0x%016" PRIxPTR
+          ", maxActiveCounters = 0x%016" PRIxPTR ", counterSize = %d, counters = 0x%016" PRIxPTR "",
+          CID(context), group, (uintptr_t)numCounters, (uintptr_t)maxActiveCounters, counterSize,
+          (uintptr_t)counters);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateGetPerfMonitorCountersAMD(
+                                context, angle::EntryPoint::GLGetPerfMonitorCountersAMD, group,
+                                numCounters, maxActiveCounters, counterSize, counters));
+        if (isCallValid)
+        {
+            context->getPerfMonitorCounters(group, numCounters, maxActiveCounters, counterSize,
+                                            counters);
+        }
+        ANGLE_CAPTURE(GetPerfMonitorCountersAMD, isCallValid, context, group, numCounters,
+                      maxActiveCounters, counterSize, counters);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_GetPerfMonitorGroupStringAMD(GLuint group,
+                                                 GLsizei bufSize,
+                                                 GLsizei *length,
+                                                 GLchar *groupString)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetPerfMonitorGroupStringAMD,
+          "context = %d, group = %u, bufSize = %d, length = 0x%016" PRIxPTR
+          ", groupString = 0x%016" PRIxPTR "",
+          CID(context), group, bufSize, (uintptr_t)length, (uintptr_t)groupString);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateGetPerfMonitorGroupStringAMD(
+                                context, angle::EntryPoint::GLGetPerfMonitorGroupStringAMD, group,
+                                bufSize, length, groupString));
+        if (isCallValid)
+        {
+            context->getPerfMonitorGroupString(group, bufSize, length, groupString);
+        }
+        ANGLE_CAPTURE(GetPerfMonitorGroupStringAMD, isCallValid, context, group, bufSize, length,
+                      groupString);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_GetPerfMonitorGroupsAMD(GLint *numGroups, GLsizei groupsSize, GLuint *groups)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLGetPerfMonitorGroupsAMD,
+          "context = %d, numGroups = 0x%016" PRIxPTR ", groupsSize = %d, groups = 0x%016" PRIxPTR
+          "",
+          CID(context), (uintptr_t)numGroups, groupsSize, (uintptr_t)groups);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateGetPerfMonitorGroupsAMD(context, angle::EntryPoint::GLGetPerfMonitorGroupsAMD,
+                                             numGroups, groupsSize, groups));
+        if (isCallValid)
+        {
+            context->getPerfMonitorGroups(numGroups, groupsSize, groups);
+        }
+        ANGLE_CAPTURE(GetPerfMonitorGroupsAMD, isCallValid, context, numGroups, groupsSize, groups);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_SelectPerfMonitorCountersAMD(GLuint monitor,
+                                                 GLboolean enable,
+                                                 GLuint group,
+                                                 GLint numCounters,
+                                                 GLuint *counterList)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLSelectPerfMonitorCountersAMD,
+          "context = %d, monitor = %u, enable = %s, group = %u, numCounters = %d, counterList = "
+          "0x%016" PRIxPTR "",
+          CID(context), monitor, GLbooleanToString(enable), group, numCounters,
+          (uintptr_t)counterList);
+
+    if (context)
+    {
+        std::unique_lock<angle::GlobalMutex> shareContextLock = GetContextLock(context);
+        bool isCallValid                                      = (context->skipValidation() ||
+                            ValidateSelectPerfMonitorCountersAMD(
+                                context, angle::EntryPoint::GLSelectPerfMonitorCountersAMD, monitor,
+                                enable, group, numCounters, counterList));
+        if (isCallValid)
+        {
+            context->selectPerfMonitorCounters(monitor, enable, group, numCounters, counterList);
+        }
+        ANGLE_CAPTURE(SelectPerfMonitorCountersAMD, isCallValid, context, monitor, enable, group,
+                      numCounters, counterList);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
 // GL_ANDROID_extension_pack_es31a
 
 // GL_ANGLE_base_vertex_base_instance
@@ -77,16 +393,16 @@ void GL_APIENTRY GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode
                                                                      GLsizei count,
                                                                      GLenum type,
                                                                      const GLvoid *indices,
-                                                                     GLsizei instanceCounts,
+                                                                     GLsizei instanceCount,
                                                                      GLint baseVertex,
                                                                      GLuint baseInstance)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLDrawElementsInstancedBaseVertexBaseInstanceANGLE,
           "context = %d, mode = %s, count = %d, type = %s, indices = 0x%016" PRIxPTR
-          ", instanceCounts = %d, baseVertex = %d, baseInstance = %u",
+          ", instanceCount = %d, baseVertex = %d, baseInstance = %u",
           CID(context), GLenumToString(GLenumGroup::PrimitiveType, mode), count,
-          GLenumToString(GLenumGroup::DrawElementsType, type), (uintptr_t)indices, instanceCounts,
+          GLenumToString(GLenumGroup::DrawElementsType, type), (uintptr_t)indices, instanceCount,
           baseVertex, baseInstance);
 
     if (context)
@@ -98,14 +414,14 @@ void GL_APIENTRY GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode
             (context->skipValidation() ||
              ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(
                  context, angle::EntryPoint::GLDrawElementsInstancedBaseVertexBaseInstanceANGLE,
-                 modePacked, count, typePacked, indices, instanceCounts, baseVertex, baseInstance));
+                 modePacked, count, typePacked, indices, instanceCount, baseVertex, baseInstance));
         if (isCallValid)
         {
             context->drawElementsInstancedBaseVertexBaseInstance(
-                modePacked, count, typePacked, indices, instanceCounts, baseVertex, baseInstance);
+                modePacked, count, typePacked, indices, instanceCount, baseVertex, baseInstance);
         }
         ANGLE_CAPTURE(DrawElementsInstancedBaseVertexBaseInstanceANGLE, isCallValid, context,
-                      modePacked, count, typePacked, indices, instanceCounts, baseVertex,
+                      modePacked, count, typePacked, indices, instanceCount, baseVertex,
                       baseInstance);
     }
     else

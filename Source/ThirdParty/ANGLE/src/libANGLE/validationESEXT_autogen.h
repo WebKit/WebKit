@@ -18,6 +18,67 @@ namespace gl
 {
 class Context;
 
+// GL_AMD_performance_monitor
+bool ValidateBeginPerfMonitorAMD(const Context *context,
+                                 angle::EntryPoint entryPoint,
+                                 GLuint monitor);
+bool ValidateDeletePerfMonitorsAMD(const Context *context,
+                                   angle::EntryPoint entryPoint,
+                                   GLsizei n,
+                                   const GLuint *monitors);
+bool ValidateEndPerfMonitorAMD(const Context *context,
+                               angle::EntryPoint entryPoint,
+                               GLuint monitor);
+bool ValidateGenPerfMonitorsAMD(const Context *context,
+                                angle::EntryPoint entryPoint,
+                                GLsizei n,
+                                const GLuint *monitors);
+bool ValidateGetPerfMonitorCounterDataAMD(const Context *context,
+                                          angle::EntryPoint entryPoint,
+                                          GLuint monitor,
+                                          GLenum pname,
+                                          GLsizei dataSize,
+                                          const GLuint *data,
+                                          const GLint *bytesWritten);
+bool ValidateGetPerfMonitorCounterInfoAMD(const Context *context,
+                                          angle::EntryPoint entryPoint,
+                                          GLuint group,
+                                          GLuint counter,
+                                          GLenum pname,
+                                          const void *data);
+bool ValidateGetPerfMonitorCounterStringAMD(const Context *context,
+                                            angle::EntryPoint entryPoint,
+                                            GLuint group,
+                                            GLuint counter,
+                                            GLsizei bufSize,
+                                            const GLsizei *length,
+                                            const GLchar *counterString);
+bool ValidateGetPerfMonitorCountersAMD(const Context *context,
+                                       angle::EntryPoint entryPoint,
+                                       GLuint group,
+                                       const GLint *numCounters,
+                                       const GLint *maxActiveCounters,
+                                       GLsizei counterSize,
+                                       const GLuint *counters);
+bool ValidateGetPerfMonitorGroupStringAMD(const Context *context,
+                                          angle::EntryPoint entryPoint,
+                                          GLuint group,
+                                          GLsizei bufSize,
+                                          const GLsizei *length,
+                                          const GLchar *groupString);
+bool ValidateGetPerfMonitorGroupsAMD(const Context *context,
+                                     angle::EntryPoint entryPoint,
+                                     const GLint *numGroups,
+                                     GLsizei groupsSize,
+                                     const GLuint *groups);
+bool ValidateSelectPerfMonitorCountersAMD(const Context *context,
+                                          angle::EntryPoint entryPoint,
+                                          GLuint monitor,
+                                          GLboolean enable,
+                                          GLuint group,
+                                          GLint numCounters,
+                                          const GLuint *counterList);
+
 // GL_ANDROID_extension_pack_es31a
 
 // GL_ANGLE_base_vertex_base_instance
@@ -34,7 +95,7 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *con
                                                               GLsizei count,
                                                               DrawElementsType typePacked,
                                                               const GLvoid *indices,
-                                                              GLsizei instanceCounts,
+                                                              GLsizei instanceCount,
                                                               GLint baseVertex,
                                                               GLuint baseInstance);
 bool ValidateMultiDrawArraysInstancedBaseInstanceANGLE(const Context *context,

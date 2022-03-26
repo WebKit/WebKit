@@ -136,6 +136,11 @@ bool GetBackwardCompatibleContext(const egl::AttributeMap &attribs)
     return attribs.get(EGL_CONTEXT_OPENGL_BACKWARDS_COMPATIBLE_ANGLE, EGL_TRUE) == EGL_TRUE;
 }
 
+bool GetWebGLContext(const egl::AttributeMap &attribs)
+{
+    return (attribs.get(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE, EGL_FALSE) == EGL_TRUE);
+}
+
 Version GetClientVersion(egl::Display *display, const egl::AttributeMap &attribs)
 {
     Version requestedVersion =
@@ -151,8 +156,11 @@ Version GetClientVersion(egl::Display *display, const egl::AttributeMap &attribs
         {
             // Always up the version to at least the max conformant version this display supports.
             // Only return a higher client version if requested.
-            return std::max(display->getImplementation()->getMaxConformantESVersion(),
-                            requestedVersion);
+            const Version conformantVersion = std::max(
+                display->getImplementation()->getMaxConformantESVersion(), requestedVersion);
+            // Limit the WebGL context to at most version 3.1
+            const bool isWebGL = GetWebGLContext(attribs);
+            return isWebGL ? std::min(conformantVersion, Version(3, 1)) : conformantVersion;
         }
     }
     else
@@ -201,11 +209,6 @@ bool GetDebug(const egl::AttributeMap &attribs)
 bool GetNoError(const egl::AttributeMap &attribs)
 {
     return (attribs.get(EGL_CONTEXT_OPENGL_NO_ERROR_KHR, EGL_FALSE) == EGL_TRUE);
-}
-
-bool GetWebGLContext(const egl::AttributeMap &attribs)
-{
-    return (attribs.get(EGL_CONTEXT_WEBGL_COMPATIBILITY_ANGLE, EGL_FALSE) == EGL_TRUE);
 }
 
 bool GetExtensionsEnabled(const egl::AttributeMap &attribs, bool webGLContext)
@@ -327,6 +330,33 @@ bool GetIsExternal(const egl::AttributeMap &attribs)
 bool GetSaveAndRestoreState(const egl::AttributeMap &attribs)
 {
     return (attribs.get(EGL_EXTERNAL_CONTEXT_SAVE_STATE_ANGLE, EGL_FALSE) == EGL_TRUE);
+}
+
+void GetPerfMonitorString(const std::string &name,
+                          GLsizei bufSize,
+                          GLsizei *length,
+                          GLchar *stringOut)
+{
+    GLsizei numCharsWritten = std::min(bufSize, static_cast<GLsizei>(name.size()));
+
+    if (length)
+    {
+        if (bufSize == 0)
+        {
+            *length = static_cast<GLsizei>(name.size());
+        }
+        else
+        {
+            // Excludes null terminator.
+            ASSERT(numCharsWritten > 0);
+            *length = numCharsWritten - 1;
+        }
+    }
+
+    if (stringOut)
+    {
+        memcpy(stringOut, name.c_str(), numCharsWritten);
+    }
 }
 }  // anonymous namespace
 
@@ -660,8 +690,7 @@ void Context::initializeDefaultResources()
     mReadInvalidateDirtyBits.set(State::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
     mDrawInvalidateDirtyBits.set(State::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
 
-    // Initialize overlay after implementation is initialized.
-    ANGLE_CONTEXT_TRY(mOverlay.init(this));
+    mOverlay.init();
 }
 
 egl::Error Context::onDestroy(const egl::Display *display)
@@ -1214,8 +1243,6 @@ GLboolean Context::isSampler(SamplerID samplerName) const
 
 void Context::bindTexture(TextureType target, TextureID handle)
 {
-    Texture *texture = nullptr;
-
     // Some apps enable KHR_create_context_no_error but pass in an invalid texture type.
     // Workaround this by silently returning in such situations.
     if (target == TextureType::InvalidEnum)
@@ -1223,6 +1250,7 @@ void Context::bindTexture(TextureType target, TextureID handle)
         return;
     }
 
+    Texture *texture = nullptr;
     if (handle.value == 0)
     {
         texture = mZeroTextures[target].get();
@@ -1234,6 +1262,12 @@ void Context::bindTexture(TextureType target, TextureID handle)
     }
 
     ASSERT(texture);
+    // Early return if rebinding the same texture
+    if (texture == mState.getTargetTexture(target))
+    {
+        return;
+    }
+
     mState.setSamplerTexture(this, target, texture);
     mStateCache.onActiveTextureChange(this);
 }
@@ -1279,6 +1313,13 @@ void Context::bindSampler(GLuint textureUnit, SamplerID samplerHandle)
     ASSERT(textureUnit < static_cast<GLuint>(mState.mCaps.maxCombinedTextureImageUnits));
     Sampler *sampler =
         mState.mSamplerManager->checkSamplerAllocation(mImplementation.get(), samplerHandle);
+
+    // Early return if rebinding the same sampler
+    if (sampler == mState.getSampler(textureUnit))
+    {
+        return;
+    }
+
     mState.setSamplerBinding(this, textureUnit, sampler);
     mSamplerObserverBindings[textureUnit].bind(sampler);
     mStateCache.onActiveTextureChange(this);
@@ -3703,6 +3744,9 @@ Extensions Context::generateSupportedExtensions() const
     // Always enabled. Will return a default string if capture is not enabled.
     supportedExtensions.getSerializedContextStringANGLE = true;
 
+    // Performance counter queries are always supported. Different groups exist on each back-end.
+    supportedExtensions.performanceMonitorAMD = true;
+
     return supportedExtensions;
 }
 
@@ -3997,6 +4041,11 @@ void Context::initCaps()
                << maxAtomicCounterBufferBindings;
         ANGLE_LIMIT_CAP(mState.mCaps.maxAtomicCounterBufferBindings,
                         maxAtomicCounterBufferBindings);
+        for (gl::ShaderType shaderType : gl::AllShaderTypes())
+        {
+            ANGLE_LIMIT_CAP(mState.mCaps.maxShaderAtomicCounterBuffers[shaderType],
+                            maxAtomicCounterBufferBindings);
+        }
 
         // SwiftShader only supports 12 shader storage buffer bindings.
         constexpr GLint maxShaderStorageBufferBindings = 12;
@@ -5493,7 +5542,7 @@ void Context::activeTexture(GLenum texture)
 
 void Context::blendBarrier()
 {
-    UNIMPLEMENTED();
+    mImplementation->blendBarrier();
 }
 
 void Context::blendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha)
@@ -5504,11 +5553,15 @@ void Context::blendColor(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha
 void Context::blendEquation(GLenum mode)
 {
     mState.setBlendEquation(mode, mode);
+
+    mStateCache.onBlendEquationChange(this);
 }
 
 void Context::blendEquationi(GLuint buf, GLenum mode)
 {
     mState.setBlendEquationIndexed(mode, mode, buf);
+
+    mStateCache.onBlendEquationChange(this);
 }
 
 void Context::blendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
@@ -6611,7 +6664,7 @@ void Context::drawArraysInstancedBaseInstance(PrimitiveMode mode,
                                               GLsizei instanceCount,
                                               GLuint baseInstance)
 {
-    if (noopDraw(mode, count))
+    if (noopDrawInstanced(mode, count, instanceCount))
     {
         ANGLE_CONTEXT_TRY(mImplementation->handleNoopDrawEvent());
         return;
@@ -6640,11 +6693,11 @@ void Context::drawElementsInstancedBaseVertexBaseInstance(PrimitiveMode mode,
                                                           GLsizei count,
                                                           DrawElementsType type,
                                                           const GLvoid *indices,
-                                                          GLsizei instanceCounts,
+                                                          GLsizei instanceCount,
                                                           GLint baseVertex,
                                                           GLuint baseInstance)
 {
-    if (noopDraw(mode, count))
+    if (noopDrawInstanced(mode, count, instanceCount))
     {
         ANGLE_CONTEXT_TRY(mImplementation->handleNoopDrawEvent());
         return;
@@ -6668,7 +6721,7 @@ void Context::drawElementsInstancedBaseVertexBaseInstance(PrimitiveMode mode,
     rx::ResetBaseVertexBaseInstance resetUniforms(programObject, hasBaseVertex, hasBaseInstance);
 
     ANGLE_CONTEXT_TRY(mImplementation->drawElementsInstancedBaseVertexBaseInstance(
-        this, mode, count, type, indices, instanceCounts, baseVertex, baseInstance));
+        this, mode, count, type, indices, instanceCount, baseVertex, baseInstance));
 }
 
 void Context::multiDrawArraysInstancedBaseInstance(PrimitiveMode mode,
@@ -9207,7 +9260,7 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
     ASSERT(mCurrentDrawSurface == nullptr);
     ASSERT(mCurrentReadSurface == nullptr);
 
-    Framebuffer *newDefaultFramebuffer = nullptr;
+    std::unique_ptr<gl::Framebuffer> newDefaultFramebuffer;
 
     mCurrentDrawSurface = drawSurface;
     mCurrentReadSurface = readSurface;
@@ -9219,7 +9272,7 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
     }
     else
     {
-        newDefaultFramebuffer = new Framebuffer(this, mImplementation.get(), readSurface);
+        newDefaultFramebuffer = std::make_unique<gl::Framebuffer>(this, mImplementation.get(), readSurface);
     }
     ASSERT(newDefaultFramebuffer);
 
@@ -9230,14 +9283,14 @@ egl::Error Context::setDefaultFramebuffer(egl::Surface *drawSurface, egl::Surfac
 
     // Update default framebuffer, the binding of the previous default
     // framebuffer (or lack of) will have a nullptr.
-    mState.mFramebufferManager->setDefaultFramebuffer(newDefaultFramebuffer);
+    mState.mFramebufferManager->setDefaultFramebuffer(newDefaultFramebuffer.release());
     if (mState.getDrawFramebuffer() == nullptr)
     {
-        bindDrawFramebuffer(newDefaultFramebuffer->id());
+        bindDrawFramebuffer(mState.mFramebufferManager->getDefaultFramebuffer()->id());
     }
     if (mState.getReadFramebuffer() == nullptr)
     {
-        bindReadFramebuffer(newDefaultFramebuffer->id());
+        bindReadFramebuffer(mState.mFramebufferManager->getDefaultFramebuffer()->id());
     }
 
     return egl::NoError();
@@ -9358,6 +9411,195 @@ void Context::dirtyAllState()
 void Context::finishImmutable() const
 {
     ANGLE_CONTEXT_TRY(mImplementation->finish(this));
+}
+
+void Context::beginPerfMonitor(GLuint monitor) {}
+
+void Context::deletePerfMonitors(GLsizei n, GLuint *monitors) {}
+
+void Context::endPerfMonitor(GLuint monitor) {}
+
+void Context::genPerfMonitors(GLsizei n, GLuint *monitors)
+{
+    for (GLsizei monitorIndex = 0; monitorIndex < n; ++monitorIndex)
+    {
+        monitors[n] = static_cast<GLuint>(monitorIndex);
+    }
+}
+
+void Context::getPerfMonitorCounterData(GLuint monitor,
+                                        GLenum pname,
+                                        GLsizei dataSize,
+                                        GLuint *data,
+                                        GLint *bytesWritten)
+{
+    using namespace angle;
+    const PerfMonitorCounterGroups &perfMonitorGroups = mImplementation->getPerfMonitorCounters();
+    GLint byteCount                                   = 0;
+    switch (pname)
+    {
+        case GL_PERFMON_RESULT_AVAILABLE_AMD:
+        {
+            *data = GL_TRUE;
+            byteCount += sizeof(GLuint);
+            break;
+        }
+        case GL_PERFMON_RESULT_SIZE_AMD:
+        {
+            GLuint resultSize = 0;
+            for (const PerfMonitorCounterGroup &group : perfMonitorGroups)
+            {
+                resultSize += sizeof(PerfMonitorTriplet) * group.counters.size();
+            }
+            *data = resultSize;
+            byteCount += sizeof(GLuint);
+            break;
+        }
+        case GL_PERFMON_RESULT_AMD:
+        {
+            PerfMonitorTriplet *resultsOut = reinterpret_cast<PerfMonitorTriplet *>(data);
+            GLsizei maxResults             = dataSize / (3 * sizeof(GLuint));
+            GLsizei resultCount            = 0;
+            for (size_t groupIndex = 0;
+                 groupIndex < perfMonitorGroups.size() && resultCount < maxResults; ++groupIndex)
+            {
+                const PerfMonitorCounterGroup &group = perfMonitorGroups[groupIndex];
+                for (size_t counterIndex = 0;
+                     counterIndex < group.counters.size() && resultCount < maxResults;
+                     ++counterIndex)
+                {
+                    const PerfMonitorCounter &counter = group.counters[counterIndex];
+                    PerfMonitorTriplet &triplet       = resultsOut[resultCount++];
+                    triplet.counter                   = static_cast<GLuint>(counterIndex);
+                    triplet.group                     = static_cast<GLuint>(groupIndex);
+                    triplet.value                     = counter.value;
+                }
+            }
+            byteCount += sizeof(PerfMonitorTriplet) * resultCount;
+            break;
+        }
+        default:
+            UNREACHABLE();
+    }
+
+    if (bytesWritten)
+    {
+        *bytesWritten = byteCount;
+    }
+}
+
+void Context::getPerfMonitorCounterInfo(GLuint group, GLuint counter, GLenum pname, void *data)
+{
+    using namespace angle;
+    const PerfMonitorCounterGroups &perfMonitorGroups = mImplementation->getPerfMonitorCounters();
+    ASSERT(group < perfMonitorGroups.size());
+    const PerfMonitorCounters &counters = perfMonitorGroups[group].counters;
+    ASSERT(counter < counters.size());
+
+    switch (pname)
+    {
+        case GL_COUNTER_TYPE_AMD:
+        {
+            GLenum *dataOut = reinterpret_cast<GLenum *>(data);
+            *dataOut        = GL_UNSIGNED_INT;
+            break;
+        }
+        case GL_COUNTER_RANGE_AMD:
+        {
+            GLuint *dataOut = reinterpret_cast<GLuint *>(data);
+            dataOut[0]      = 0;
+            dataOut[1]      = std::numeric_limits<GLuint>::max();
+            break;
+        }
+        default:
+            UNREACHABLE();
+    }
+}
+
+void Context::getPerfMonitorCounterString(GLuint group,
+                                          GLuint counter,
+                                          GLsizei bufSize,
+                                          GLsizei *length,
+                                          GLchar *counterString)
+{
+    using namespace angle;
+    const PerfMonitorCounterGroups &perfMonitorGroups = mImplementation->getPerfMonitorCounters();
+    ASSERT(group < perfMonitorGroups.size());
+    const PerfMonitorCounters &counters = perfMonitorGroups[group].counters;
+    ASSERT(counter < counters.size());
+    GetPerfMonitorString(counters[counter].name, bufSize, length, counterString);
+}
+
+void Context::getPerfMonitorCounters(GLuint group,
+                                     GLint *numCounters,
+                                     GLint *maxActiveCounters,
+                                     GLsizei counterSize,
+                                     GLuint *counters)
+{
+    using namespace angle;
+    const PerfMonitorCounterGroups &perfMonitorGroups = mImplementation->getPerfMonitorCounters();
+    ASSERT(group < perfMonitorGroups.size());
+    const PerfMonitorCounters &groupCounters = perfMonitorGroups[group].counters;
+
+    if (numCounters)
+    {
+        *numCounters = static_cast<GLint>(groupCounters.size());
+    }
+
+    if (maxActiveCounters)
+    {
+        *maxActiveCounters = static_cast<GLint>(groupCounters.size());
+    }
+
+    if (counters)
+    {
+        GLsizei maxCounterIndex = std::min(counterSize, static_cast<GLsizei>(groupCounters.size()));
+        for (GLsizei counterIndex = 0; counterIndex < maxCounterIndex; ++counterIndex)
+        {
+            counters[counterIndex] = static_cast<GLuint>(counterIndex);
+        }
+    }
+}
+
+void Context::getPerfMonitorGroupString(GLuint group,
+                                        GLsizei bufSize,
+                                        GLsizei *length,
+                                        GLchar *groupString)
+{
+    using namespace angle;
+    const PerfMonitorCounterGroups &perfMonitorGroups = mImplementation->getPerfMonitorCounters();
+    ASSERT(group < perfMonitorGroups.size());
+    GetPerfMonitorString(perfMonitorGroups[group].name, bufSize, length, groupString);
+}
+
+void Context::getPerfMonitorGroups(GLint *numGroups, GLsizei groupsSize, GLuint *groups)
+{
+    using namespace angle;
+    const PerfMonitorCounterGroups &perfMonitorGroups = mImplementation->getPerfMonitorCounters();
+
+    if (numGroups)
+    {
+        *numGroups = static_cast<GLint>(perfMonitorGroups.size());
+    }
+
+    GLuint maxGroupIndex =
+        std::min<GLuint>(groupsSize, static_cast<GLuint>(perfMonitorGroups.size()));
+    for (GLuint groupIndex = 0; groupIndex < maxGroupIndex; ++groupIndex)
+    {
+        groups[groupIndex] = groupIndex;
+    }
+}
+
+void Context::selectPerfMonitorCounters(GLuint monitor,
+                                        GLboolean enable,
+                                        GLuint group,
+                                        GLint numCounters,
+                                        GLuint *counterList)
+{}
+
+const angle::PerfMonitorCounterGroups &Context::getPerfMonitorCounterGroups() const
+{
+    return mImplementation->getPerfMonitorCounters();
 }
 
 // ErrorSet implementation.
@@ -9653,6 +9895,11 @@ void StateCache::onColorMaskChange(Context *context)
 }
 
 void StateCache::onBlendFuncIndexedChange(Context *context)
+{
+    updateBasicDrawStatesError();
+}
+
+void StateCache::onBlendEquationChange(Context *context)
 {
     updateBasicDrawStatesError();
 }

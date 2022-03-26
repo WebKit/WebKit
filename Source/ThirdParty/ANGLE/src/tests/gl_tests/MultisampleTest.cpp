@@ -486,6 +486,616 @@ TEST_P(MultisampleTestES3, ResolveToFBO)
     EXPECT_PIXEL_COLOR_NEAR(kWindowWidth / 2, kWindowHeight / 2, kResult, 1);
 }
 
+class MultisampleResolveTest : public ANGLETest
+{
+  protected:
+    static const GLColor kEXPECTED_R8;
+    static const GLColor kEXPECTED_RG8;
+    static const GLColor kEXPECTED_RGB8;
+    static const GLColor kEXPECTED_RGBA8;
+    static const GLColor32F kEXPECTED_RF;
+    static const GLColor32F kEXPECTED_RGF;
+    static const GLColor32F kEXPECTED_RGBF;
+    static const GLColor32F kEXPECTED_RGBAF;
+    static constexpr GLint kWidth  = 13;
+    static constexpr GLint kHeight = 11;
+
+    MultisampleResolveTest() {}
+
+    struct GLResources
+    {
+        GLFramebuffer fb;
+        GLRenderbuffer rb;
+    };
+
+    void resolveToFBO(GLenum format,
+                      GLint samples,
+                      GLint width,
+                      GLint height,
+                      GLResources &resources)
+    {
+        constexpr char kVS[] = R"(#version 300 es
+        layout(location = 0) in vec4 position;
+        void main() {
+           gl_Position = position;
+        }
+        )";
+
+        constexpr char kFS[] = R"(#version 300 es
+        precision highp float;
+        out vec4 color;
+        void main() {
+           color = vec4(0.5, 0.6, 0.7, 0.8);
+        }
+        )";
+
+        ANGLE_GL_PROGRAM(program, kVS, kFS);
+
+        // Make samples = 4 multi-sample framebuffer.
+        GLFramebuffer fb0;
+        glBindFramebuffer(GL_FRAMEBUFFER, fb0);
+
+        GLRenderbuffer rb0;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb0);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, format, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Make samples = 0 multi-sample framebuffer.
+        glBindFramebuffer(GL_FRAMEBUFFER, resources.fb);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, resources.rb);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, 0, format, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                  resources.rb);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Draw quad to fb0.
+        glBindFramebuffer(GL_FRAMEBUFFER, fb0);
+        glViewport(0, 0, width, height);
+        glUseProgram(program);
+        GLBuffer buf;
+        glBindBuffer(GL_ARRAY_BUFFER, buf);
+
+        constexpr float vertices[] = {
+            -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f,
+        };
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        // Blit fb0 to fb1.
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resources.fb);
+        glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        // Prep for read pixels.
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, resources.fb);
+    }
+
+    void testResolveToUNormFBO(GLenum format,
+                               const GLColor &expected_color,
+                               GLint samples,
+                               GLint width,
+                               GLint height)
+    {
+        GLResources resources;
+        resolveToFBO(format, samples, width, height, resources);
+
+        // Check the results
+        for (GLint y = 0; y < kHeight; ++y)
+        {
+            for (GLint x = 0; x < kWidth; ++x)
+            {
+                EXPECT_PIXEL_COLOR_NEAR(x, y, expected_color, 2);
+            }
+        }
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void testResolveToHalfFBO(GLenum format,
+                              const GLColor32F &expected_color,
+                              GLint samples,
+                              GLint width,
+                              GLint height)
+    {
+        if (!IsGLExtensionEnabled("GL_EXT_color_buffer_half_float"))
+        {
+            return;
+        }
+
+        GLResources resources;
+        resolveToFBO(format, samples, width, height, resources);
+
+        // Check the results
+        for (GLint y = 0; y < kHeight; ++y)
+        {
+            for (GLint x = 0; x < kWidth; ++x)
+            {
+                EXPECT_PIXEL_COLOR32F_NEAR(x, y, expected_color, 2.0f / 255.0f);
+            }
+        }
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void testResolveToFloatFBO(GLenum format,
+                               const GLColor32F &expected_color,
+                               GLint samples,
+                               GLint width,
+                               GLint height)
+    {
+        if (!IsGLExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgba"))
+        {
+            return;
+        }
+
+        GLResources resources;
+        resolveToFBO(format, samples, width, height, resources);
+
+        // Check the results
+        for (GLint y = 0; y < kHeight; ++y)
+        {
+            for (GLint x = 0; x < kWidth; ++x)
+            {
+                EXPECT_PIXEL_COLOR32F_NEAR(x, y, expected_color, 2.0f / 255.0f);
+            }
+        }
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void testResolveToRGBFloatFBO(GLenum format,
+                                  const GLColor32F &expected_color,
+                                  GLint samples,
+                                  GLint width,
+                                  GLint height)
+    {
+        if (!IsGLExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgb"))
+        {
+            return;
+        }
+
+        GLResources resources;
+        resolveToFBO(format, samples, width, height, resources);
+
+        // Check the results
+        for (GLint y = 0; y < kHeight; ++y)
+        {
+            for (GLint x = 0; x < kWidth; ++x)
+            {
+                EXPECT_PIXEL_COLOR32F_NEAR(x, y, expected_color, 2.0f / 255.0f);
+            }
+        }
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void peelDepth(GLint colorLoc)
+    {
+        // Draw full quads from front to back and increasing depths
+        // with depth test = less.
+        glDepthMask(GL_FALSE);
+        constexpr int steps = 64;
+        for (int i = 0; i < steps; ++i)
+        {
+            float l = float(i) / float(steps);
+            float c = l;
+            float z = c * 2.0f - 1.0f;
+            glVertexAttrib4f(1, 0, 0, z, 0);
+            glUniform4f(colorLoc, c, c, c, c);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+        glDepthMask(GL_TRUE);
+    }
+
+    void testResolveDepthToFBO(GLenum format,
+                               GLenum attachment,
+                               GLint samples,
+                               GLint width,
+                               GLint height)
+    {
+        constexpr char kVS[] = R"(#version 300 es
+        layout(location = 0) in vec4 position;
+        void main() {
+           gl_Position = position;
+        }
+        )";
+
+        constexpr char kFS[] = R"(#version 300 es
+        precision highp float;
+        out vec4 color;
+        void main() {
+           color = vec4(0.5, 0.6, 0.7, 0.8);
+        }
+        )";
+
+        constexpr char kDepthVS[] = R"(#version 300 es
+        layout(location = 0) in vec4 position;
+        layout(location = 1) in vec4 offset;
+        void main() {
+           gl_Position = position + offset;
+        }
+        )";
+
+        constexpr char kDepthFS[] = R"(#version 300 es
+        precision highp float;
+        uniform vec4 color;
+        out vec4 outColor;
+        void main() {
+           outColor = color;
+        }
+        )";
+
+        ANGLE_GL_PROGRAM(program, kVS, kFS);
+        ANGLE_GL_PROGRAM(depthProgram, kDepthVS, kDepthFS);
+
+        // Make samples = 4 multi-sample framebuffer.
+        GLFramebuffer fb0;
+        glBindFramebuffer(GL_FRAMEBUFFER, fb0);
+
+        GLRenderbuffer rb0;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb0);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_RGBA8, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb0);
+
+        GLRenderbuffer db0;
+        glBindRenderbuffer(GL_RENDERBUFFER, db0);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, format, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, db0);
+
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Make samples = 0 multi-sample framebuffer.
+        GLFramebuffer fb1;
+        glBindFramebuffer(GL_FRAMEBUFFER, fb1);
+
+        GLRenderbuffer rb1;
+        glBindRenderbuffer(GL_RENDERBUFFER, rb1);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rb1);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        GLRenderbuffer db1;
+        glBindRenderbuffer(GL_RENDERBUFFER, db1);
+        glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, db1);
+
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        // Draw quad to fb0.
+        glBindFramebuffer(GL_FRAMEBUFFER, fb0);
+        glViewport(0, 0, width, height);
+        glClearColor(1, 1, 1, 1);
+        glUseProgram(program);
+
+        GLVertexArray va0;
+        glBindVertexArray(va0);
+
+        GLBuffer buf0;
+        glBindBuffer(GL_ARRAY_BUFFER, buf0);
+
+        // clang-format off
+        constexpr float vertices[] = {
+            -1.0f, -1.0f, -1.0,
+             1.0f, -1.0f,  0.0,
+            -1.0f,  1.0f,  0.0,
+            -1.0f,  1.0f,  0.0,
+             1.0f, -1.0f,  0.0,
+             1.0f,  1.0f,  1.0,
+        };
+        // clang-format on
+
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_ALWAYS);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        // Blit fb0 to fb1.
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fb0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb1);
+        glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT,
+                          GL_NEAREST);
+        ASSERT_GL_NO_ERROR();
+
+        GLVertexArray va1;
+        glBindVertexArray(va1);
+
+        // clang-format off
+        constexpr float depthVertices[] = {
+            -1.0f, -1.0f,
+             1.0f, -1.0f,
+            -1.0f,  1.0f,
+            -1.0f,  1.0f,
+             1.0f, -1.0f,
+             1.0f,  1.0f,
+        };
+        // clang-format on
+
+        GLBuffer buf1;
+        glBindBuffer(GL_ARRAY_BUFFER, buf1);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(depthVertices), depthVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+        glUseProgram(depthProgram);
+        GLint colorLoc = glGetUniformLocation(depthProgram, "color");
+
+        // Extract the depth results.
+        glBindFramebuffer(GL_FRAMEBUFFER, fb1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDepthFunc(GL_LESS);
+        peelDepth(colorLoc);
+        std::vector<GLColor> actual(width * height);
+        glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, actual.data());
+
+        // Render what should be a similar result to the non-multi-sampled fb
+        glBindVertexArray(va0);
+        glDepthFunc(GL_ALWAYS);
+        glUseProgram(program);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        // Extract the expected depth results.
+        glBindVertexArray(va1);
+        glUseProgram(depthProgram);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDepthFunc(GL_LESS);
+        peelDepth(colorLoc);
+        std::vector<GLColor> expected(width * height);
+        glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, expected.data());
+
+        for (size_t i = 0; i < expected.size(); ++i)
+        {
+            EXPECT_NEAR(expected[i].R, actual[i].R, 8)
+                << "at " << (i % width) << "," << (i / width);
+        }
+
+        // Verify we read the depth buffer.
+        const GLint minDimension = std::min(width, height);
+        for (GLint i = 1; i < minDimension; ++i)
+        {
+            const GLColor &c1 = expected[i - 1];
+            const GLColor &c2 = expected[i * width + i];
+            EXPECT_LT(c1.R, c2.R);
+        }
+        ASSERT_GL_NO_ERROR();
+    }
+};
+
+// These colors match the shader in resolveToFBO which returns (0.5, 0.6, 0.7, 0.8).
+const GLColor MultisampleResolveTest::kEXPECTED_R8(128, 0, 0, 255);
+const GLColor MultisampleResolveTest::kEXPECTED_RG8(128, 153, 0, 255);
+const GLColor MultisampleResolveTest::kEXPECTED_RGB8(128, 153, 178, 255);
+const GLColor MultisampleResolveTest::kEXPECTED_RGBA8(128, 153, 178, 204);
+const GLColor32F MultisampleResolveTest::kEXPECTED_RF(0.5f, 0.0f, 0.0f, 1.0f);
+const GLColor32F MultisampleResolveTest::kEXPECTED_RGF(0.5f, 0.6f, 0.0f, 1.0f);
+const GLColor32F MultisampleResolveTest::kEXPECTED_RGBF(0.5f, 0.6f, 0.7f, 1.0f);
+const GLColor32F MultisampleResolveTest::kEXPECTED_RGBAF(0.5f, 0.6f, 0.7f, 0.8f);
+
+// Test we can render to and resolve an RGBA8 renderbuffer
+TEST_P(MultisampleResolveTest, ResolveRGBA8ToFBO4Samples)
+{
+    testResolveToUNormFBO(GL_RGBA8, kEXPECTED_RGBA8, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an RGB8 renderbuffer
+TEST_P(MultisampleResolveTest, ResolveRGB8ToFBO4Samples)
+{
+    testResolveToUNormFBO(GL_RGB8, kEXPECTED_RGB8, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an RG8 renderbuffer
+TEST_P(MultisampleResolveTest, ResolveRG8ToFBO4Samples)
+{
+    testResolveToUNormFBO(GL_RG8, kEXPECTED_RG8, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an R8 renderbuffer
+TEST_P(MultisampleResolveTest, ResolveR8ToFBO4Samples)
+{
+    testResolveToUNormFBO(GL_R8, kEXPECTED_R8, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an R16F renderbuffer
+TEST_P(MultisampleResolveTest, ResolveR16FToFBO4Samples)
+{
+    testResolveToHalfFBO(GL_R16F, kEXPECTED_RF, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an RG16F renderbuffer
+TEST_P(MultisampleResolveTest, ResolveRG16FToFBO4Samples)
+{
+    testResolveToHalfFBO(GL_RG16F, kEXPECTED_RGF, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an RGB16F renderbuffer
+TEST_P(MultisampleResolveTest, ResolveRGB16FToFBO4Samples)
+{
+    testResolveToHalfFBO(GL_RGB16F, kEXPECTED_RGBF, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an RGBA16F renderbuffer
+TEST_P(MultisampleResolveTest, ResolveRGBA16FToFBO4Samples)
+{
+    testResolveToHalfFBO(GL_RGBA16F, kEXPECTED_RGBAF, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an R32F renderbuffer
+TEST_P(MultisampleResolveTest, ResolveR32FToFBO4Samples)
+{
+    testResolveToFloatFBO(GL_R32F, kEXPECTED_RF, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an RG32F renderbuffer
+TEST_P(MultisampleResolveTest, ResolveRG32FToFBO4Samples)
+{
+    testResolveToFloatFBO(GL_RG32F, kEXPECTED_RGF, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an RGB32F renderbuffer
+TEST_P(MultisampleResolveTest, ResolveRGB32FToFBO4Samples)
+{
+    testResolveToRGBFloatFBO(GL_RGB32F, kEXPECTED_RGBF, 4, kWidth, kHeight);
+}
+
+// Test we can render to and resolve an RGBA32F renderbuffer
+TEST_P(MultisampleResolveTest, ResolveRGBA32FToFBO4Samples)
+{
+    testResolveToFloatFBO(GL_RGBA32F, kEXPECTED_RGBAF, 4, kWidth, kHeight);
+}
+
+TEST_P(MultisampleResolveTest, ResolveD32FS8F4Samples)
+{
+    testResolveDepthToFBO(GL_DEPTH32F_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, 4, kWidth, kHeight);
+}
+
+TEST_P(MultisampleResolveTest, ResolveD24S8Samples)
+{
+    testResolveDepthToFBO(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, 4, kWidth, kHeight);
+}
+
+TEST_P(MultisampleResolveTest, ResolveD32FSamples)
+{
+    testResolveDepthToFBO(GL_DEPTH_COMPONENT32F, GL_DEPTH_ATTACHMENT, 4, kWidth, kHeight);
+}
+
+TEST_P(MultisampleResolveTest, ResolveD24Samples)
+{
+    testResolveDepthToFBO(GL_DEPTH_COMPONENT24, GL_DEPTH_ATTACHMENT, 4, kWidth, kHeight);
+}
+
+TEST_P(MultisampleResolveTest, ResolveD16Samples)
+{
+    testResolveDepthToFBO(GL_DEPTH_COMPONENT16, GL_DEPTH_ATTACHMENT, 4, kWidth, kHeight);
+}
+
+void drawRectAndBlit(GLuint msFramebuffer,
+                     GLuint resolveFramebuffer,
+                     GLint width,
+                     GLint height,
+                     GLint matLoc,
+                     GLint colorLoc,
+                     float x,
+                     float y,
+                     float w,
+                     float h,
+                     const GLColor &color)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, msFramebuffer);
+    float matrix[16] = {
+        w, 0, 0, 0, 0, h, 0, 0, 0, 0, 1, 0, x, y, 0, 1,
+    };
+    glUniformMatrix4fv(matLoc, 1, false, matrix);
+    angle::Vector4 c(color.toNormalizedVector());
+    glUniform4f(colorLoc, c[0], c[1], c[2], c[3]);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFramebuffer);
+    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+}
+
+// Tests if we resolve(blit) a multisample renderbuffer that it
+// does not lose its contents.
+TEST_P(MultisampleResolveTest, DrawAndResolveMultipleTimes)
+{
+    constexpr GLint samples = 4;
+    constexpr GLenum format = GL_RGBA8;
+    constexpr GLint width   = 16;
+    constexpr GLint height  = 16;
+
+    constexpr char kVS[] = R"(#version 300 es
+    layout(location = 0) in vec4 position;
+    uniform mat4 mat;
+    void main() {
+       gl_Position = mat * position;
+    }
+    )";
+
+    constexpr char kFS[] = R"(#version 300 es
+    precision highp float;
+    uniform vec4 color;
+    out vec4 outColor;
+    void main() {
+       outColor = color;
+    }
+    )";
+
+    glViewport(0, 0, width, height);
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    GLint matLoc   = glGetUniformLocation(program, "mat");
+    GLint colorLoc = glGetUniformLocation(program, "color");
+    glUseProgram(program);
+
+    GLBuffer buf;
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+
+    constexpr float vertices[] = {
+        0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    // Make samples = 4 multi-sample framebuffer.
+    GLFramebuffer msFB;
+    glBindFramebuffer(GL_FRAMEBUFFER, msFB);
+
+    GLRenderbuffer msRB;
+    glBindRenderbuffer(GL_RENDERBUFFER, msRB);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, format, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, msRB);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Make non-multi-sample framebuffer.
+    GLFramebuffer drawFB;
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFB);
+
+    GLRenderbuffer drawRB;
+    glBindRenderbuffer(GL_RENDERBUFFER, drawRB);
+    glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, drawRB);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawRectAndBlit(msFB, drawFB, width, height, matLoc, colorLoc, -1, -1, 2, 2, GLColor::red);
+    drawRectAndBlit(msFB, drawFB, width, height, matLoc, colorLoc, 0, -1, 1, 1, GLColor::green);
+    drawRectAndBlit(msFB, drawFB, width, height, matLoc, colorLoc, -1, 0, 1, 1, GLColor::blue);
+    drawRectAndBlit(msFB, drawFB, width, height, matLoc, colorLoc, 0, 0, 1, 1, GLColor::yellow);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    drawRectAndBlit(msFB, drawFB, width, height, matLoc, colorLoc, -0.5, -0.5, 1, 1,
+                    GLColor(0x80, 0x80, 0x80, 0x80));
+    glDisable(GL_BLEND);
+    ASSERT_GL_NO_ERROR();
+
+    /*
+       expected
+       +-------------+--------------+
+       | blue        |       yellow |
+       |   +---------+----------+   |
+       |   |.5,.5,1,1| 1,1,.5,1 |   |
+       +---+---------+----------+---+
+       |   |1,.5,.5,1| .5,1,.5,1|   |
+       |   +---------+----------+   |
+       | red         |        green |
+       +-------------+--------------+
+      0,0
+    */
+
+    glBindFramebuffer(GL_FRAMEBUFFER, drawFB);
+    EXPECT_PIXEL_RECT_EQ(0, 0, width / 2, height / 4, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(width / 2, 0, width / 2, height / 4, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(0, height * 3 / 4, width / 2, height / 4, GLColor::blue);
+    EXPECT_PIXEL_RECT_EQ(width / 2, height * 3 / 4, width / 2, height / 4, GLColor::yellow);
+
+    EXPECT_PIXEL_RECT_EQ(width / 4, height / 4, width / 4, height / 4, GLColor(255, 128, 128, 255));
+    EXPECT_PIXEL_RECT_EQ(width / 2, height / 4, width / 4, height / 4, GLColor(128, 255, 128, 255));
+    EXPECT_PIXEL_RECT_EQ(width / 4, height / 2, width / 4, height / 4, GLColor(128, 128, 255, 255));
+    EXPECT_PIXEL_RECT_EQ(width / 2, height / 2, width / 4, height / 4, GLColor(255, 255, 128, 255));
+}
+
 ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampleTest,
                                  PrintToStringParamName,
                                  testing::Values(false),
@@ -525,4 +1135,7 @@ ANGLE_INSTANTIATE_TEST_COMBINE_1(MultisampleTestES3,
                                  WithNoFixture(ES3_VULKAN()),
                                  WithNoFixture(ES31_VULKAN()),
                                  WithNoFixture(ES3_METAL()));
+
+ANGLE_INSTANTIATE_TEST_ES3(MultisampleResolveTest);
+
 }  // anonymous namespace

@@ -275,6 +275,16 @@ void RenderbufferVk::releaseAndDeleteImage(ContextVk *contextVk)
 void RenderbufferVk::releaseImage(ContextVk *contextVk)
 {
     RendererVk *renderer = contextVk->getRenderer();
+    if (mImage == nullptr)
+    {
+        ASSERT(mImageViews.isImageViewGarbageEmpty() &&
+               mMultisampledImageViews.isImageViewGarbageEmpty());
+    }
+    else
+    {
+        mImage->collectViewGarbage(renderer, &mImageViews);
+        mImage->collectViewGarbage(renderer, &mMultisampledImageViews);
+    }
 
     if (mImage && mOwnsImage)
     {
@@ -287,13 +297,10 @@ void RenderbufferVk::releaseImage(ContextVk *contextVk)
         mImageObserverBinding.bind(nullptr);
     }
 
-    mImageViews.release(renderer);
-
     if (mMultisampledImage.valid())
     {
         mMultisampledImage.releaseImageFromShareContexts(renderer, contextVk);
     }
-    mMultisampledImageViews.release(renderer);
 }
 
 const gl::InternalFormat &RenderbufferVk::getImplementationSizedFormat() const

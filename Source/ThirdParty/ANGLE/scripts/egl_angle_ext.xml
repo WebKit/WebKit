@@ -114,6 +114,12 @@
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
         </command>
         <command>
+            <proto><pytpe>void</pytpe> <name>eglForceGPUSwitchANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLint</ptype> <name>gpuIDHigh</name></param>
+            <param><ptype>EGLint</ptype> <name>gpuIDLow</name></param>
+        </command>
+        <command>
             <proto><ptype>EGLBoolean</ptype> <name>eglQueryDisplayAttribANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLint</ptype> <name>attribute</name></param>
@@ -180,6 +186,7 @@
                 <command name="eglReleaseHighPowerGPUANGLE"/>
                 <command name="eglReacquireHighPowerGPUANGLE"/>
                 <command name="eglHandleGPUSwitchANGLE"/>
+                <command name="eglForceGPUSwitchANGLE"/>
             </require>
         </extension>
         <extension name="EGL_ANGLE_display_semaphore_share_group" supported="egl">

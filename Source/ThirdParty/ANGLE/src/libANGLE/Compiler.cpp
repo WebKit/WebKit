@@ -189,6 +189,9 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     // ANDROID_extension_pack_es31a
     mResources.ANDROID_extension_pack_es31a = extensions.extensionPackEs31aANDROID;
 
+    // KHR_blend_equation_advanced
+    mResources.KHR_blend_equation_advanced = extensions.blendEquationAdvancedKHR;
+
     // GLSL ES 3.1 constants
     mResources.MaxProgramTextureGatherOffset    = caps.maxProgramTextureGatherOffset;
     mResources.MinProgramTextureGatherOffset    = caps.minProgramTextureGatherOffset;

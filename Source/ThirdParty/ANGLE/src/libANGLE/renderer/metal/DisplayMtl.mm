@@ -989,6 +989,10 @@ void DisplayMtl::initializeExtensions() const
 
     // GL_KHR_parallel_shader_compile
     mNativeExtensions.parallelShaderCompileKHR = true;
+
+    mNativeExtensions.baseVertexBaseInstanceANGLE = mFeatures.hasBaseVertexInstancedDraw.enabled;
+    mNativeExtensions.baseVertexBaseInstanceShaderBuiltinANGLE =
+        mFeatures.hasBaseVertexInstancedDraw.enabled;
 }
 
 void DisplayMtl::initializeTextureCaps() const
@@ -1105,6 +1109,8 @@ void DisplayMtl::initializeFeatures()
                             isIntel() && GetMacOSVersion() < OSVersion(11, 0, 0));
     ANGLE_FEATURE_CONDITION((&mFeatures), intelDisableFastMath,
                             isIntel() && GetMacOSVersion() < OSVersion(12, 0, 0));
+
+    ANGLE_FEATURE_CONDITION((&mFeatures), multisampleColorFormatShaderReadWorkaround, isAMD());
 
     ANGLE_FEATURE_CONDITION((&mFeatures), forceNonCSBaseMipmapGeneration, isIntel());
 

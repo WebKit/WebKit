@@ -11,9 +11,20 @@
 
 #include <angle_gl.h>
 
+#if defined(ANGLE_ENABLE_VULKAN)
+#    include <vulkan/vulkan_core.h>
+#    include <vector>
+#endif
+
 namespace angle
 {
 GLenum DrmFourCCFormatToGLInternalFormat(int format, bool *isYUV);
+
+#if defined(ANGLE_ENABLE_VULKAN)
+std::vector<int> VkFormatToDrmFourCCFormat(VkFormat format);
+std::vector<VkFormat> DrmFourCCFormatToVkFormats(int fourccFormat);
+#endif
+
 }  // namespace angle
 
 #endif  // COMMON_LINUX_DMA_BUF_UTILS_H_

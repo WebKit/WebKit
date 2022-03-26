@@ -355,6 +355,7 @@
 		31CDFFFD249184B000486F27 /* imageformats.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD598B2284FC400018F2D8 /* imageformats.h */; };
 		31CDFFFE249184B000486F27 /* copyimage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59862284FC400018F2D8 /* copyimage.h */; };
 		31CDFFFF249184B000486F27 /* generatemip.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD598C2284FC400018F2D8 /* generatemip.h */; };
+		6E27925927EA43F500B1BA86 /* BaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E27925827EA43F500B1BA86 /* BaseTypes.cpp */; };
 		7B19599326C3C22000C09322 /* android_util.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079F230625C6002DA972 /* android_util.h */; };
 		7B19599426C3C22000C09322 /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
 		7B19599526C3C64E00C09322 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD594E2284ECD10018F2D8 /* xxhash.c */; };
@@ -1373,6 +1374,7 @@
 		5CCD819F1DBFEA5C006066B8 /* QualifierTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QualifierTypes.h; sourceTree = "<group>"; };
 		5D7C59C61208C68B001C873E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		6E27925827EA43F500B1BA86 /* BaseTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseTypes.cpp; sourceTree = "<group>"; };
 		6E31A0A1234EEED400C84784 /* DeviceCGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceCGL.cpp; sourceTree = "<group>"; };
 		6E31A0A2234EEED400C84784 /* DeviceCGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceCGL.h; sourceTree = "<group>"; };
 		6E33E8E724D0D196002309AC /* BufferImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BufferImpl.cpp; sourceTree = "<group>"; };
@@ -1786,6 +1788,7 @@
 				5C55D6EA22826C9800B5BA2C /* treeutil */,
 				5C1DBBFB1B04375F00235552 /* ASTMetadataHLSL.cpp */,
 				5C1DBBFC1B04375F00235552 /* ASTMetadataHLSL.h */,
+				6E27925827EA43F500B1BA86 /* BaseTypes.cpp */,
 				31012DA018B97B9B0039062F /* BaseTypes.h */,
 				5C1DBBFD1B04375F00235552 /* blocklayout.cpp */,
 				5C1DBBFE1B04375F00235552 /* blocklayout.h */,
@@ -3633,6 +3636,7 @@
 				DF83E2242639FC74000825EF /* angleutils.cpp in Sources */,
 				DF83E2372639FCD5000825EF /* AstHelpers.cpp in Sources */,
 				DF83E3332639FE18000825EF /* AttributeMap.cpp in Sources */,
+				6E27925927EA43F500B1BA86 /* BaseTypes.cpp in Sources */,
 				DF83E3592639FE92000825EF /* BlitGL.cpp in Sources */,
 				DF83E2EA2639FE17000825EF /* BlobCache.cpp in Sources */,
 				DF83E2BC2639FD83000825EF /* blocklayout.cpp in Sources */,

@@ -308,7 +308,7 @@ class TrackedResource final : angle::NonCopyable
     ResourceCalls &getResourceRestoreCalls() { return mResourceRestoreCalls; }
 
   private:
-    // Resource regen calls will delete and gen a resource
+    // Resource regen calls will gen a resource
     ResourceCalls mResourceRegenCalls;
     // Resource restore calls will restore the contents of a resource
     ResourceCalls mResourceRestoreCalls;
@@ -919,6 +919,16 @@ template <>
 void WriteParamValueReplay<ParamType::TGLfloatConstPointer>(std::ostream &os,
                                                             const CallCapture &call,
                                                             const GLfloat *value);
+
+template <>
+void WriteParamValueReplay<ParamType::TGLintConstPointer>(std::ostream &os,
+                                                          const CallCapture &call,
+                                                          const GLint *value);
+
+template <>
+void WriteParamValueReplay<ParamType::TGLsizeiPointer>(std::ostream &os,
+                                                       const CallCapture &call,
+                                                       GLsizei *value);
 
 template <>
 void WriteParamValueReplay<ParamType::TGLuintConstPointer>(std::ostream &os,

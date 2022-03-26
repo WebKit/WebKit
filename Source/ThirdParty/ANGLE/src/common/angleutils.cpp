@@ -45,6 +45,70 @@ void SaveFileHelper::write(const uint8_t *data, size_t size)
     mOfs.write(reinterpret_cast<const char *>(data), size);
 }
 
+// AMD_performance_monitor helpers.
+
+PerfMonitorCounter::PerfMonitorCounter() = default;
+
+PerfMonitorCounter::~PerfMonitorCounter() = default;
+
+PerfMonitorCounterGroup::PerfMonitorCounterGroup() = default;
+
+PerfMonitorCounterGroup::~PerfMonitorCounterGroup() = default;
+
+uint32_t GetPerfMonitorCounterIndex(const PerfMonitorCounters &counters, const std::string &name)
+{
+    for (uint32_t counterIndex = 0; counterIndex < static_cast<uint32_t>(counters.size());
+         ++counterIndex)
+    {
+        if (counters[counterIndex].name == name)
+        {
+            return counterIndex;
+        }
+    }
+
+    return std::numeric_limits<uint32_t>::max();
+}
+
+uint32_t GetPerfMonitorCounterGroupIndex(const PerfMonitorCounterGroups &groups,
+                                         const std::string &name)
+{
+    for (uint32_t groupIndex = 0; groupIndex < static_cast<uint32_t>(groups.size()); ++groupIndex)
+    {
+        if (groups[groupIndex].name == name)
+        {
+            return groupIndex;
+        }
+    }
+
+    return std::numeric_limits<uint32_t>::max();
+}
+
+const PerfMonitorCounter &GetPerfMonitorCounter(const PerfMonitorCounters &counters,
+                                                const std::string &name)
+{
+    return GetPerfMonitorCounter(const_cast<PerfMonitorCounters &>(counters), name);
+}
+
+PerfMonitorCounter &GetPerfMonitorCounter(PerfMonitorCounters &counters, const std::string &name)
+{
+    uint32_t counterIndex = GetPerfMonitorCounterIndex(counters, name);
+    ASSERT(counterIndex < static_cast<uint32_t>(counters.size()));
+    return counters[counterIndex];
+}
+
+const PerfMonitorCounterGroup &GetPerfMonitorCounterGroup(const PerfMonitorCounterGroups &groups,
+                                                          const std::string &name)
+{
+    return GetPerfMonitorCounterGroup(const_cast<PerfMonitorCounterGroups &>(groups), name);
+}
+
+PerfMonitorCounterGroup &GetPerfMonitorCounterGroup(PerfMonitorCounterGroups &groups,
+                                                    const std::string &name)
+{
+    uint32_t groupIndex = GetPerfMonitorCounterGroupIndex(groups, name);
+    ASSERT(groupIndex < static_cast<uint32_t>(groups.size()));
+    return groups[groupIndex];
+}
 }  // namespace angle
 
 std::string ArrayString(unsigned int i)

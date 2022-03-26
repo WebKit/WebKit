@@ -191,7 +191,7 @@ void GetIORegistryDevices(std::vector<GPUDeviceInfo> *devices)
     }
 }
 
-void SetActiveGPUIndex(SystemInfo *info)
+void ForceGPUSwitchIndex(SystemInfo *info)
 {
     VendorID activeVendor = 0;
     DeviceID activeDevice = 0;
@@ -373,7 +373,7 @@ bool GetSystemInfo_mac(SystemInfo *info)
     // GPU instead of the non-intel GPU
     if (@available(macOS 10.13, *))
     {
-        SetActiveGPUIndex(info);
+        ForceGPUSwitchIndex(info);
     }
 
     // Figure out whether this is a dual-GPU system.

@@ -20,7 +20,6 @@
   ##############################################################################
   'WATCHLISTS': {
     'vulkan': ['cclao+angleWatchVk@google.com',
-               'jmadill+watch@chromium.org',
-               'timvp+angleWatchVk@google.com'],
+               'jmadill+watch@chromium.org'],
   },
 }

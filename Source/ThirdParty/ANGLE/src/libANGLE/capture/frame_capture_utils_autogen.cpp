@@ -65,6 +65,9 @@ void WriteParamCaptureReplay(std::ostream &os, const CallCapture &call, const Pa
         case ParamType::TEGLAttribKHR:
             WriteParamValueReplay<ParamType::TEGLAttribKHR>(os, call, param.value.EGLAttribKHRVal);
             break;
+        case ParamType::TEGLBoolean:
+            WriteParamValueReplay<ParamType::TEGLBoolean>(os, call, param.value.EGLBooleanVal);
+            break;
         case ParamType::TEGLClientBuffer:
             WriteParamValueReplay<ParamType::TEGLClientBuffer>(os, call,
                                                                param.value.EGLClientBufferVal);
@@ -611,6 +614,8 @@ const char *ParamTypeToString(ParamType paramType)
         case ParamType::TEGLAttrib:
             return "GLenum";
         case ParamType::TEGLAttribKHR:
+            return "GLenum";
+        case ParamType::TEGLBoolean:
             return "GLenum";
         case ParamType::TEGLClientBuffer:
             return "GLenum";

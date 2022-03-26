@@ -2978,17 +2978,10 @@ bool ValidateBeginTransformFeedback(const Context *context,
         return false;
     }
 
-    size_t programXfbCount = programExecutable->getTransformFeedbackBufferCount();
-    for (size_t programXfbIndex = 0; programXfbIndex < programXfbCount; ++programXfbIndex)
+    if (!ValidateProgramExecutableXFBBuffersPresent(context, programExecutable))
     {
-        const OffsetBindingPointer<Buffer> &buffer =
-            transformFeedback->getIndexedBuffer(programXfbIndex);
-        if (!buffer.get())
-        {
-            context->validationError(entryPoint, GL_INVALID_OPERATION,
-                                     kTransformFeedbackBufferMissing);
-            return false;
-        }
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kTransformFeedbackBufferMissing);
+        return false;
     }
 
     return true;
@@ -3792,7 +3785,7 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *con
                                                               GLsizei count,
                                                               DrawElementsType type,
                                                               const GLvoid *indices,
-                                                              GLsizei instanceCounts,
+                                                              GLsizei instanceCount,
                                                               GLint baseVertex,
                                                               GLuint baseInstance)
 {
@@ -3802,7 +3795,7 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *con
         return false;
     }
     if (!ValidateDrawElementsInstancedBase(context, entryPoint, mode, count, type, indices,
-                                           instanceCounts))
+                                           instanceCount))
     {
         return false;
     }

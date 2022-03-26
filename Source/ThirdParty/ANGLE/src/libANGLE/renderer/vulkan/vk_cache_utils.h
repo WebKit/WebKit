@@ -634,6 +634,8 @@ class GraphicsPipelineDesc final
     void setRenderPassDesc(const RenderPassDesc &renderPassDesc);
     void updateRenderPassDesc(GraphicsPipelineTransitionBits *transition,
                               const RenderPassDesc &renderPassDesc);
+    void setRenderPassSampleCount(GLint samples);
+    void setRenderPassColorAttachmentFormat(size_t colorIndexGL, angle::FormatID formatID);
 
     // Blend states
     void setSingleBlend(uint32_t colorIndexGL,
@@ -1141,6 +1143,8 @@ class DescriptorSetDesc
     size_t hash() const;
 
     void reset() { mPayload.clear(); }
+
+    size_t getKeySizeBytes() const { return mPayload.size() * sizeof(uint32_t); }
 
     bool operator==(const DescriptorSetDesc &other) const
     {
@@ -1789,8 +1793,8 @@ class DriverUniformsDescriptorSetCache final
     size_t getSize() const { return mPayload.size(); }
 
   private:
-    static constexpr uint32_t kFastMapSize = 16;
-    angle::FastUnorderedMap<uint32_t, VkDescriptorSet, kFastMapSize> mPayload;
+    static constexpr uint32_t kFlatMapSize = 16;
+    angle::FlatUnorderedMap<uint32_t, VkDescriptorSet, kFlatMapSize> mPayload;
 };
 
 // Templated Descriptors Cache
@@ -1825,6 +1829,17 @@ class DescriptorSetCache final : angle::NonCopyable
     void accumulateCacheStats(VulkanCacheType cacheType, Accumulator *accumulator)
     {
         accumulator->accumulateCacheStats(cacheType, mCacheStats);
+    }
+
+    size_t getTotalCacheKeySizeBytes() const
+    {
+        size_t totalSize = 0;
+        for (const auto &iter : mPayload)
+        {
+            const vk::DescriptorSetDesc &desc = iter.first;
+            totalSize += desc.getKeySizeBytes();
+        }
+        return totalSize;
     }
 
   private:

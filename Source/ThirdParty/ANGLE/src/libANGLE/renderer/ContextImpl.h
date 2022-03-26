@@ -194,6 +194,9 @@ class ContextImpl : public GLImplFactory
     // EXT_shader_framebuffer_fetch_non_coherent
     virtual void framebufferFetchBarrier() {}
 
+    // KHR_blend_equation_advanced
+    virtual void blendBarrier() {}
+
     // State sync with dirty bits.
     virtual angle::Result syncState(const gl::Context *context,
                                     const gl::State::DirtyBits &dirtyBits,
@@ -255,6 +258,9 @@ class ContextImpl : public GLImplFactory
                                           const gl::TextureBarrierVector &textureBarriers);
     virtual angle::Result releaseTextures(const gl::Context *context,
                                           gl::TextureBarrierVector *textureBarriers);
+
+    // AMD_performance_monitor
+    virtual const angle::PerfMonitorCounterGroups &getPerfMonitorCounters();
 
   protected:
     const gl::State &mState;

@@ -118,6 +118,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_ANGLE_pack_reverse_row_order"] = enableableExtension(&Extensions::packReverseRowOrderANGLE);
         map["GL_NV_pack_subimage"] = enableableExtension(&Extensions::packSubimageNV);
         map["GL_KHR_parallel_shader_compile"] = enableableExtension(&Extensions::parallelShaderCompileKHR);
+        map["GL_AMD_performance_monitor"] = esOnlyExtension(&Extensions::performanceMonitorAMD);
         map["GL_NV_pixel_buffer_object"] = enableableExtension(&Extensions::pixelBufferObjectNV);
         map["GL_EXT_primitive_bounding_box"] = esOnlyExtension(&Extensions::primitiveBoundingBoxEXT);
         map["GL_OES_primitive_bounding_box"] = esOnlyExtension(&Extensions::primitiveBoundingBoxOES);
