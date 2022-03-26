@@ -1,5 +1,27 @@
 2022-03-26  David Quesada  <david_quesada@apple.com>
 
+        Update the check in the sandbox profiles to guard the system content path rules
+        https://bugs.webkit.org/show_bug.cgi?id=238419
+        rdar://90878560
+
+        Reviewed by Per Arne Vollan.
+
+        Replace `USE(SYSTEM_CONTENT_PATH)` in the sandbox profiles with a different feature flag
+        so that we can enable these rules independently even if WebKit itself isn't using the
+        system content path.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb.in:
+        * WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2022-03-26  David Quesada  <david_quesada@apple.com>
+
         REGRESSION(r291814): WebAuthn sandbox profile is missing
         https://bugs.webkit.org/show_bug.cgi?id=238418
         rdar://90878872
