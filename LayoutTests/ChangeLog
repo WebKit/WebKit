@@ -1,5 +1,59 @@
 2022-03-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r288792. rdar://problem/88227274
+
+    CSP: Properly block image content in object elements
+    https://bugs.webkit.org/show_bug.cgi?id=235837
+    
+    Reviewed by Kate Cheney.
+    
+    LayoutTests/imported/w3c:
+    
+    Update expectations with more passes.
+    
+    * web-platform-tests/content-security-policy/object-src/object-src-url-blocked-expected.txt:
+    * web-platform-tests/content-security-policy/object-src/object-src-url-embed-blocked-expected.txt:
+    * web-platform-tests/content-security-policy/object-src/object-src-url-redirect-blocked.sub-expected.txt:
+    
+    Source/WebCore:
+    
+    When an image is loaded through an object element it now passes through
+    the object-src directive check as the spec documents:
+    https://www.w3.org/TR/CSP3/#directive-object-src
+    
+    * loader/ImageLoader.cpp:
+    (WebCore::ImageLoader::updateFromElement):
+    * loader/ResourceLoaderOptions.h:
+    (WebCore::ResourceLoaderOptions::loadedFromPluginElement):
+    (WebCore::ResourceLoaderOptions::ResourceLoaderOptions):
+    (WebCore::ResourceLoaderOptions::loadedFromOpaqueSource): Deleted.
+    * loader/cache/CachedResourceLoader.cpp:
+    (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy const):
+    * page/csp/ContentSecurityPolicy.cpp:
+    (WebCore::ContentSecurityPolicy::allowObjectFromSource const):
+    * page/csp/ContentSecurityPolicy.h:
+    
+    LayoutTests:
+    
+    * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked-expected.txt:
+    * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked2-expected.txt:
+    * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked3-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288792 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-01-29  Patrick Griffis  <pgriffis@igalia.com>
+
+            CSP: Properly block image content in object elements
+            https://bugs.webkit.org/show_bug.cgi?id=235837
+
+            Reviewed by Kate Cheney.
+
+            * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked-expected.txt:
+            * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked2-expected.txt:
+            * http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked3-expected.txt:
+
+2022-03-22  Alan Coon  <alancoon@apple.com>
+
         Revert r290708. rdar://problem/90113314
 
 2022-03-21  Alan Coon  <alancoon@apple.com>

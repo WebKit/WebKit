@@ -496,6 +496,11 @@ bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type t
     ASSERT(m_document);
     ASSERT(m_document->contentSecurityPolicy());
 
+    // All content loaded through embed or object elements goes through object-src: https://www.w3.org/TR/CSP3/#directive-object-src.
+    if (options.loadedFromPluginElement == LoadedFromPluginElement::Yes
+        && !m_document->contentSecurityPolicy()->allowObjectFromSource(url, redirectResponseReceived, preRedirectURL))
+        return false;
+
     switch (type) {
 #if ENABLE(XSLT)
     case CachedResource::Type::XSLStyleSheet:
