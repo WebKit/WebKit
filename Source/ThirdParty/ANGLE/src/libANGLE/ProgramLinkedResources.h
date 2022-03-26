@@ -48,11 +48,13 @@ struct UnusedUniform;
 struct VariableLocation;
 
 using AtomicCounterBuffer = ShaderVariableBuffer;
+using ShaderUniform       = std::pair<ShaderType, const sh::ShaderVariable *>;
 
 class UniformLinker final : angle::NonCopyable
 {
   public:
-    UniformLinker(const ProgramState &state);
+    UniformLinker(const ShaderBitSet &activeShaderStages,
+                  const ShaderMap<std::vector<sh::ShaderVariable>> &shaderUniforms);
     ~UniformLinker();
 
     bool link(const Caps &caps,
@@ -60,13 +62,16 @@ class UniformLinker final : angle::NonCopyable
               const ProgramAliasedBindings &uniformLocationBindings);
 
     void getResults(std::vector<LinkedUniform> *uniforms,
-                    std::vector<UnusedUniform> *unusedUniforms,
-                    std::vector<VariableLocation> *uniformLocations);
+                    std::vector<UnusedUniform> *unusedUniformsOutOrNull,
+                    std::vector<VariableLocation> *uniformLocationsOutOrNull);
 
   private:
     bool validateGraphicsUniforms(InfoLog &infoLog) const;
-
-    bool flattenUniformsAndCheckCapsForShader(Shader *shader,
+    bool validateGraphicsUniformsPerShader(ShaderType shaderToLink,
+                                           bool extendLinkedUniforms,
+                                           std::map<std::string, ShaderUniform> *linkedUniforms,
+                                           InfoLog &infoLog) const;
+    bool flattenUniformsAndCheckCapsForShader(ShaderType shaderType,
                                               const Caps &caps,
                                               std::vector<LinkedUniform> &samplerUniforms,
                                               std::vector<LinkedUniform> &imageUniforms,
@@ -86,7 +91,8 @@ class UniformLinker final : angle::NonCopyable
         int *maxUniformLocation);
     void pruneUnusedUniforms();
 
-    const ProgramState &mState;
+    ShaderBitSet mActiveShaderStages;
+    const ShaderMap<std::vector<sh::ShaderVariable>> &mShaderUniforms;
     std::vector<LinkedUniform> mUniforms;
     std::vector<UnusedUniform> mUnusedUniforms;
     std::vector<VariableLocation> mUniformLocations;
@@ -112,6 +118,12 @@ class InterfaceBlockLinker : angle::NonCopyable
     // This is called once during a link operation, after all shader blocks are added.
     void linkBlocks(const GetBlockSizeFunc &getBlockSize,
                     const GetBlockMemberInfoFunc &getMemberInfo) const;
+
+    const std::vector<sh::InterfaceBlock> &getShaderBlocks(ShaderType shaderType) const
+    {
+        ASSERT(mShaderBlocks[shaderType]);
+        return *mShaderBlocks[shaderType];
+    }
 
   protected:
     InterfaceBlockLinker();
@@ -277,6 +289,9 @@ class ProgramLinkedResourcesLinker final : angle::NonCopyable
     CustomBlockLayoutEncoderFactory *mCustomEncoderFactory;
 };
 
+using ShaderInterfaceBlock = std::pair<ShaderType, const sh::InterfaceBlock *>;
+using InterfaceBlockMap    = std::map<std::string, ShaderInterfaceBlock>;
+
 bool LinkValidateProgramGlobalNames(InfoLog &infoLog,
                                     const ProgramExecutable &executable,
                                     const LinkingVariables &linkingVariables);
@@ -307,6 +322,11 @@ LinkMismatchError LinkValidateProgramVariables(const sh::ShaderVariable &variabl
                                                std::string *mismatchedStructOrBlockMemberName);
 void AddProgramVariableParentPrefix(const std::string &parentName,
                                     std::string *mismatchedFieldName);
+bool LinkValidateProgramInterfaceBlocks(const Context *context,
+                                        ShaderBitSet activeProgramStages,
+                                        const ProgramLinkedResources &resources,
+                                        InfoLog &infoLog,
+                                        GLuint *combinedShaderStorageBlocksCountOut);
 }  // namespace gl
 
 #endif  // LIBANGLE_UNIFORMLINKER_H_

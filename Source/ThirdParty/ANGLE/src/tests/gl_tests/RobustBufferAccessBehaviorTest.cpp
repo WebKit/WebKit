@@ -10,6 +10,7 @@
 #include "test_utils/ANGLETest.h"
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
+#include "util/OSWindow.h"
 
 #include <array>
 
@@ -21,30 +22,66 @@ namespace
 class RobustBufferAccessBehaviorTest : public ANGLETest
 {
   protected:
-    RobustBufferAccessBehaviorTest() : mProgram(0), mTestAttrib(-1)
+    RobustBufferAccessBehaviorTest()
     {
         setWindowWidth(128);
         setWindowHeight(128);
-        setConfigRedBits(8);
-        setConfigGreenBits(8);
-        setConfigBlueBits(8);
-        setConfigAlphaBits(8);
-
-        // Test flakiness was noticed when reusing displays.
-        forceNewDisplay();
     }
 
-    void testTearDown() override { glDeleteProgram(mProgram); }
+    void testTearDown() override
+    {
+        glDeleteProgram(mProgram);
+        EGLWindow::Delete(&mEGLWindow);
+        OSWindow::Delete(&mOSWindow);
+    }
 
     bool initExtension()
     {
-        EGLWindow *window  = getEGLWindow();
-        EGLDisplay display = window->getDisplay();
+        mOSWindow = OSWindow::New();
+        if (!mOSWindow->initialize("RobustBufferAccessBehaviorTest", getWindowWidth(),
+                                   getWindowHeight()))
+        {
+            return false;
+        }
+
+        Library *driverLib = ANGLETestEnvironment::GetDriverLibrary(GLESDriverType::AngleEGL);
+
+        mEGLWindow = EGLWindow::New(GetParam().majorVersion, GetParam().minorVersion);
+        if (!mEGLWindow->initializeDisplay(mOSWindow, driverLib, GLESDriverType::AngleEGL,
+                                           GetParam().eglParameters))
+        {
+            return false;
+        }
+
+        EGLDisplay display = mEGLWindow->getDisplay();
         if (!IsEGLDisplayExtensionEnabled(display, "EGL_EXT_create_context_robustness"))
         {
             return false;
         }
-        setRobustAccess(true);
+
+        ConfigParameters configParams;
+        configParams.redBits      = 8;
+        configParams.greenBits    = 8;
+        configParams.blueBits     = 8;
+        configParams.alphaBits    = 8;
+        configParams.robustAccess = true;
+
+        if (mEGLWindow->initializeSurface(mOSWindow, driverLib, configParams) !=
+            GLWindowResult::NoError)
+        {
+            return false;
+        }
+
+        if (!mEGLWindow->initializeContext())
+        {
+            return false;
+        }
+
+        if (!mEGLWindow->makeCurrent())
+        {
+            return false;
+        }
+
         if (!IsGLExtensionEnabled("GL_KHR_robust_buffer_access_behavior"))
         {
             return false;
@@ -138,8 +175,10 @@ class RobustBufferAccessBehaviorTest : public ANGLETest
         }
     }
 
-    GLuint mProgram;
-    GLint mTestAttrib;
+    OSWindow *mOSWindow   = nullptr;
+    EGLWindow *mEGLWindow = nullptr;
+    GLuint mProgram       = 0;
+    GLint mTestAttrib     = 0;
 };
 
 // Test that static draw with out-of-bounds reads will not read outside of the data store of the
@@ -147,9 +186,6 @@ class RobustBufferAccessBehaviorTest : public ANGLETest
 // GL_KHR_robust_buffer_access_behavior is supported.
 TEST_P(RobustBufferAccessBehaviorTest, DrawElementsIndexOutOfRangeWithStaticDraw)
 {
-    // Failing on NV after changing shard count of angle_end2end_tests. http://anglebug.com/2799
-    ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsWindows() && IsOpenGL());
-
     ANGLE_SKIP_TEST_IF(!initExtension());
 
     runIndexOutOfRangeTests(GL_STATIC_DRAW);
@@ -160,7 +196,6 @@ TEST_P(RobustBufferAccessBehaviorTest, DrawElementsIndexOutOfRangeWithStaticDraw
 // GL_KHR_robust_buffer_access_behavior is supported.
 TEST_P(RobustBufferAccessBehaviorTest, DrawElementsIndexOutOfRangeWithDynamicDraw)
 {
-    ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsWindows() && IsOpenGL());
     ANGLE_SKIP_TEST_IF(!initExtension());
 
     runIndexOutOfRangeTests(GL_DYNAMIC_DRAW);
@@ -300,10 +335,6 @@ TEST_P(RobustBufferAccessBehaviorTest, VeryLargeVertexCountWithDynamicVertexData
 // Test that robust access works even if there's no data uploaded to the vertex buffer at all.
 TEST_P(RobustBufferAccessBehaviorTest, NoBufferData)
 {
-    // http://crbug.com/889303: Possible driver bug on NVIDIA Shield TV.
-    // http://anglebug.com/2861: Fails abnormally on Android
-    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
-
     ANGLE_SKIP_TEST_IF(!initExtension());
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
     glUseProgram(program);
@@ -430,12 +461,6 @@ TEST_P(RobustBufferAccessBehaviorTest, EmptyBuffer)
 {
     ANGLE_SKIP_TEST_IF(!initExtension());
 
-    // AMD GL does not support robustness. http://anglebug.com/3099
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
-
-    // http://anglebug.com/2861: Fails abnormally on Android
-    ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
-
     ANGLE_GL_PROGRAM(program, kWebGLVS, kWebGLFS);
     glUseProgram(program);
 
@@ -561,6 +586,103 @@ TEST_P(RobustBufferAccessBehaviorTest, DynamicBuffer)
     }
 }
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND_ES31(RobustBufferAccessBehaviorTest);
+// Tests out of bounds read by divisor emulation due to a user-provided offset.
+// Adapted from https://crbug.com/1285885.
+TEST_P(RobustBufferAccessBehaviorTest, IndexOutOfBounds)
+{
+    ANGLE_SKIP_TEST_IF(!initExtension());
+
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec4 a_position;
+void main(void) {
+   gl_Position = a_position;
+})";
+
+    constexpr char kFS[] = R"(precision highp float;
+uniform sampler2D oTexture;
+uniform float oColor[3];
+void main(void) {
+   gl_FragData[0] = texture2DProj(oTexture, vec3(0.1,0.1,0.1));
+})";
+
+    GLfloat singleFloat = 1.0f;
+
+    GLBuffer buf;
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    glBufferData(GL_ARRAY_BUFFER, 4, &singleFloat, GL_STATIC_DRAW);
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "a_position");
+    glLinkProgram(program);
+    ASSERT_TRUE(CheckLinkStatusAndReturnProgram(program, true));
+
+    glEnableVertexAttribArray(0);
+
+    // Trying to exceed renderer->getMaxVertexAttribDivisor()
+    GLuint constexpr kDivisor = 4096;
+    glVertexAttribDivisor(0, kDivisor);
+
+    size_t outOfBoundsOffset = 0x50000000;
+    glVertexAttribPointer(0, 1, GL_FLOAT, false, 8, reinterpret_cast<void *>(outOfBoundsOffset));
+
+    glUseProgram(program);
+
+    glDrawArrays(GL_TRIANGLES, 0, 32);
+
+    // No assertions, just checking for crashes.
+}
+
+// Similar to the test above but index is first within bounds then goes out of bounds.
+TEST_P(RobustBufferAccessBehaviorTest, IndexGoingOutOfBounds)
+{
+    ANGLE_SKIP_TEST_IF(!initExtension());
+
+    constexpr char kVS[] = R"(precision highp float;
+attribute vec4 a_position;
+void main(void) {
+   gl_Position = a_position;
+})";
+
+    constexpr char kFS[] = R"(precision highp float;
+uniform sampler2D oTexture;
+uniform float oColor[3];
+void main(void) {
+   gl_FragData[0] = texture2DProj(oTexture, vec3(0.1,0.1,0.1));
+})";
+
+    GLBuffer buf;
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    std::array<GLfloat, 2> buffer = {{0.2f, 0.2f}};
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * buffer.size(), buffer.data(), GL_STATIC_DRAW);
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "a_position");
+    glLinkProgram(program);
+    ASSERT_TRUE(CheckLinkStatusAndReturnProgram(program, true));
+
+    glEnableVertexAttribArray(0);
+
+    // Trying to exceed renderer->getMaxVertexAttribDivisor()
+    GLuint constexpr kDivisor = 4096;
+    glVertexAttribDivisor(0, kDivisor);
+
+    // 6 bytes remaining in the buffer from offset so only a single vertex can be read
+    glVertexAttribPointer(0, 1, GL_FLOAT, false, 8, reinterpret_cast<void *>(2));
+
+    glUseProgram(program);
+
+    // Each vertex is read `kDivisor` times so the last read goes out of bounds
+    GLsizei instanceCount = kDivisor + 1;
+    glDrawArraysInstanced(GL_TRIANGLES, 0, 32, instanceCount);
+
+    // No assertions, just checking for crashes.
+}
+
+ANGLE_INSTANTIATE_TEST(RobustBufferAccessBehaviorTest,
+                       WithNoFixture(ES3_VULKAN()),
+                       WithNoFixture(ES3_OPENGL()),
+                       WithNoFixture(ES3_OPENGLES()),
+                       WithNoFixture(ES3_D3D11()),
+                       WithNoFixture(ES3_METAL()));
 
 }  // namespace

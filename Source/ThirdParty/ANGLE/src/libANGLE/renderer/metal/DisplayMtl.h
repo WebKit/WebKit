@@ -49,7 +49,7 @@ class DisplayMtl : public DisplayImpl
 
     std::string getRendererDescription() override;
     std::string getVendorString() override;
-    std::string getVersionString() override;
+    std::string getVersionString(bool includeFullVersion) override;
 
     DeviceImpl *createDevice() override;
 
@@ -130,6 +130,7 @@ class DisplayMtl : public DisplayImpl
     bool isAMD() const;
     bool isIntel() const;
     bool isNVIDIA() const;
+    bool isSimulator() const;
 
     id<MTLDevice> getMetalDevice() const { return mMetalDevice; }
 

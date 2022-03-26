@@ -167,10 +167,10 @@ class TIntermTyped : public TIntermNode
     TQualifier getQualifier() const { return getType().getQualifier(); }
     TPrecision getPrecision() const { return getType().getPrecision(); }
     TMemoryQualifier getMemoryQualifier() const { return getType().getMemoryQualifier(); }
-    int getCols() const { return getType().getCols(); }
-    int getRows() const { return getType().getRows(); }
-    int getNominalSize() const { return getType().getNominalSize(); }
-    int getSecondarySize() const { return getType().getSecondarySize(); }
+    uint8_t getCols() const { return getType().getCols(); }
+    uint8_t getRows() const { return getType().getRows(); }
+    uint8_t getNominalSize() const { return getType().getNominalSize(); }
+    uint8_t getSecondarySize() const { return getType().getSecondarySize(); }
 
     bool isInterfaceBlock() const { return getType().isInterfaceBlock(); }
     bool isMatrix() const { return getType().isMatrix(); }

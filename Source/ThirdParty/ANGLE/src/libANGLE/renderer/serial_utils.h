@@ -90,8 +90,9 @@ class SerialFactoryBase final : angle::NonCopyable
 
     Serial generate()
     {
-        ASSERT(mSerial + 1 > mSerial);
-        return Serial(mSerial++);
+        uint64_t current = mSerial++;
+        ASSERT(mSerial > current);  // Integer overflow
+        return Serial(current);
     }
 
   private:

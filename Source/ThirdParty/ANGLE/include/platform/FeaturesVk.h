@@ -188,8 +188,8 @@ struct FeaturesVk : FeatureSetBase
 
     // Whether the VkDevice supports the VK_EXT_custom_border_color extension
     // http://anglebug.com/3577
-    Feature supportsCustomBorderColorEXT = {
-        "supports_custom_border_color", FeatureCategory::VulkanFeatures,
+    Feature supportsCustomBorderColor = {
+        "supportsCustomBorderColor", FeatureCategory::VulkanFeatures,
         "VkDevice supports the VK_EXT_custom_border_color extension", &members,
         "http://anglebug.com/3577"};
 
@@ -398,6 +398,12 @@ struct FeaturesVk : FeatureSetBase
         "VkDevice supports VK_EXT_load_store_op_none extension.", &members,
         "http://anglebug.com/5371"};
 
+    // Whether the VkDevice supports the VK_EXT_depth_clip_control extension
+    // http://anglebug.com/5421
+    Feature supportsDepthClipControl = {"supportsDepthClipControl", FeatureCategory::VulkanFeatures,
+                                        "VkDevice supports VK_EXT_depth_clip_control extension.",
+                                        &members, "http://anglebug.com/5421"};
+
     // Force maxUniformBufferSize to 16K on Qualcomm's Adreno 540. Pixel2's Adreno540 reports
     // maxUniformBufferSize 64k but various tests failed with that size. For that specific
     // device, we set to 16k for now which is known to pass all tests.
@@ -421,13 +427,6 @@ struct FeaturesVk : FeatureSetBase
     Feature enableMultisampledRenderToTexture = {
         "enableMultisampledRenderToTexture", FeatureCategory::VulkanWorkarounds,
         "Expose EXT_multisampled_render_to_texture", &members, "http://anglebug.com/4937"};
-
-    // Qualcomm fails some tests when reducing the preferred block size to 4M.
-    // http://anglebug.com/4995
-    Feature preferredLargeHeapBlockSize4MB = {
-        "preferredLargeHeapBlockSize4MB", FeatureCategory::VulkanWorkarounds,
-        "Use 4 MB preferred large heap block size with AMD allocator", &members,
-        "http://anglebug.com/4995"};
 
     // Manhattan is calling glFlush in the middle of renderpass which breaks renderpass and hurts
     // performance on tile based GPU. When this is enabled, we will defer the glFlush call made in
@@ -559,7 +558,7 @@ struct FeaturesVk : FeatureSetBase
         "http://anglebug.com/6141"};
 
     // Whether the VkDevice can support Protected Memory.
-    Feature supportsProtectedMemory = {"supports_protected_memory", FeatureCategory::VulkanFeatures,
+    Feature supportsProtectedMemory = {"supportsProtectedMemory", FeatureCategory::VulkanFeatures,
                                        "VkDevice supports protected memory", &members,
                                        "http://anglebug.com/3965"};
 
@@ -594,6 +593,53 @@ struct FeaturesVk : FeatureSetBase
     Feature supportsSharedPresentableImageExtension = {
         "supportsSharedPresentableImageExtension", FeatureCategory::VulkanFeatures,
         "VkSurface supports the VK_KHR_shared_presentable_images extension", &members};
+
+    // Feature to control whether the Vulkan backend can support
+    // GL_EXT_shader_framebuffer_fetch
+    Feature supportsShaderFramebufferFetch = {
+        "supportsShaderFramebufferFetch", FeatureCategory::VulkanFeatures,
+        "Whether the Vulkan backend supports coherent framebuffer fetch", &members};
+
+    // Feature to control whether the Vulkan backend can support
+    // GL_EXT_shader_framebuffer_fetch_non_coherent
+    Feature supportsShaderFramebufferFetchNonCoherent = {
+        "supportsShaderFramebufferFetchNonCoherent", FeatureCategory::VulkanFeatures,
+        "Whether the Vulkan backend supports non-coherent framebuffer fetch", &members};
+
+    // Whether the Surface supports EGL_KHR_lock_surface3.
+    Feature supportsLockSurfaceExtension = {
+        "supportsLockSurfaceExtension", FeatureCategory::VulkanFeatures,
+        "Surface supports the EGL_KHR_lock_surface3 extension", &members};
+
+    // When mutable_render_buffer goes into SINGLE_BUFFER mode, need to call swapbuffers at
+    // flush and finish so that the image is updated and presented to the display.
+    Feature swapbuffersOnFlushOrFinishWithSingleBuffer = {
+        "swapbuffersOnFlushOrFinishWithSingleBuffer", FeatureCategory::VulkanFeatures,
+        "Bypass deferredFlush with calling swapbuffers on flush or finish when in Shared Present "
+        "mode",
+        &members, "http://anglebug.com/6878"};
+
+    // Whether dithering should be emulated.
+    Feature emulateDithering = {"emulateDithering", FeatureCategory::VulkanFeatures,
+                                "Emulate OpenGL dithering", &members, "http://anglebug.com/6755"};
+
+    // Android bug workaround which assumes VkPresentRegionsKHR to have a bottom-left origin
+    // instead of top-left as specified by VK_KHR_incremental_present
+    Feature bottomLeftOriginPresentRegionRectangles = {
+        "bottomLeftOriginPresentRegionRectangles", FeatureCategory::VulkanWorkarounds,
+        "On some platforms present region rectangles are expected to have a bottom-left origin, "
+        "instead of top-left origin as from spec",
+        &members};
+
+    // Whether we force submit updates to immutable textures.
+    Feature forceSubmitImmutableTextureUpdates = {
+        "forceSubmitImmutableTextureUpdates", FeatureCategory::AppWorkarounds,
+        "Force submit updates to immutable textures", &members, "http://anglebug.com/6929"};
+
+    // Whether we retain SPIR-V debug information to aid in analyzing shader code.
+    Feature retainSpirvDebugInfo = {"retainSpirvDebugInfo", FeatureCategory::VulkanFeatures,
+                                    "Retain debug info in SPIR-V blob.", &members,
+                                    "http://anglebug.com/5901"};
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

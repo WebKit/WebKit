@@ -87,6 +87,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_NV_EGL_stream_consumer_external"] = enableableExtension(&Extensions::EGLStreamConsumerExternalNV);
         map["GL_OES_EGL_sync"] = esOnlyExtension(&Extensions::EGLSyncOES);
         map["GL_OES_element_index_uint"] = enableableExtension(&Extensions::elementIndexUintOES);
+        map["GL_ANDROID_extension_pack_es31a"] = esOnlyExtension(&Extensions::extensionPackEs31aANDROID);
         map["GL_EXT_external_buffer"] = enableableExtension(&Extensions::externalBufferEXT);
         map["GL_OES_fbo_render_mipmap"] = enableableExtension(&Extensions::fboRenderMipmapOES);
         map["GL_NV_fence"] = esOnlyExtension(&Extensions::fenceNV);
@@ -119,6 +120,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_KHR_parallel_shader_compile"] = enableableExtension(&Extensions::parallelShaderCompileKHR);
         map["GL_NV_pixel_buffer_object"] = enableableExtension(&Extensions::pixelBufferObjectNV);
         map["GL_EXT_primitive_bounding_box"] = esOnlyExtension(&Extensions::primitiveBoundingBoxEXT);
+        map["GL_OES_primitive_bounding_box"] = esOnlyExtension(&Extensions::primitiveBoundingBoxOES);
         map["GL_EXT_protected_textures"] = enableableExtension(&Extensions::protectedTexturesEXT);
         map["GL_EXT_pvrtc_sRGB"] = enableableExtension(&Extensions::pvrtcSRGBEXT);
         map["GL_NV_read_depth"] = enableableExtension(&Extensions::readDepthNV);
@@ -133,6 +135,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_EXT_semaphore"] = enableableExtension(&Extensions::semaphoreEXT);
         map["GL_EXT_semaphore_fd"] = enableableExtension(&Extensions::semaphoreFdEXT);
         map["GL_EXT_separate_shader_objects"] = enableableExtension(&Extensions::separateShaderObjectsEXT);
+        map["GL_EXT_shader_framebuffer_fetch"] = enableableExtension(&Extensions::shaderFramebufferFetchEXT);
         map["GL_EXT_shader_framebuffer_fetch_non_coherent"] = enableableExtension(&Extensions::shaderFramebufferFetchNonCoherentEXT);
         map["GL_OES_shader_image_atomic"] = enableableExtension(&Extensions::shaderImageAtomicOES);
         map["GL_EXT_shader_io_blocks"] = enableableExtension(&Extensions::shaderIoBlocksEXT);

@@ -228,6 +228,7 @@ bool ValidateCopyTexture3DCommon(const Context *context,
         case GL_RG32UI:
         case GL_RG32I:
         case GL_RGB8:
+        case GL_RGBX8_ANGLE:
         case GL_SRGB8:
         case GL_RGB565:
         case GL_RGB8_SNORM:
@@ -1959,8 +1960,11 @@ bool ValidateCompressedTexImage3D(const Context *context,
     // 3D texture target validation
     if (target != TextureTarget::_3D && target != TextureTarget::_2DArray)
     {
-        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidTextureTarget);
-        return false;
+        if (context->getClientVersion() < ES_3_2 || target != TextureTarget::CubeMapArray)
+        {
+            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidTextureTarget);
+            return false;
+        }
     }
 
     // validateES3TexImageFormat sets the error code if there is an error

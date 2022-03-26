@@ -308,6 +308,7 @@ struct alignas(4) ProvokingVertexComputePipelineDesc
     gl::PrimitiveMode primitiveMode;
     uint8_t elementType;
     bool primitiveRestartEnabled;
+    bool generateIndices;
 };
 
 struct RenderPassAttachmentDesc

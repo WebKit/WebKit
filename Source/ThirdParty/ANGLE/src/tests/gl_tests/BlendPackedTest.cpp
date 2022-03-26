@@ -81,8 +81,6 @@ TEST_P(BlendPackedTest, RGBA4)
 
 TEST_P(BlendPackedTest, RGB5_A1)
 {
-    // RGB5_A1 is not color-renderable on NVIDIA Mac, see https://crbug.com/676209.
-    ANGLE_SKIP_TEST_IF(IsNVIDIA() && IsOSX() && IsOpenGL());
     runTest<GL_RGB5_A1, 4>();
 }
 

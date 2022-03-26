@@ -20,7 +20,7 @@
         "           <mode> is one of:",
         "            - 'align': the requested value is used",
         "            - 'adjacent': the value is calculated such that two widgets become adjacent",
-        " - font: for Text widgets, one of 'large', 'medium' and 'small'",
+        " - font: for Text widgets, one of 'large' or 'small'",
         " - length: for Text widgets, maximum number of characters for this widget",
         " - bar_width: for Graph widgets, size of each graph bar.",
         " - height: for Graph widgets, the height of the graph.",
@@ -34,7 +34,7 @@
             "type": "PerSecond",
             "color": [127, 191, 255, 255],
             "coords": [10, 10],
-            "font": "medium",
+            "font": "large",
             "length": 12
         },
         {
@@ -122,7 +122,7 @@
             "comment": "Descriptor Set Allocations.",
             "type": "RunningGraph(60)",
             "color": [255, 0, 75, 200],
-            "coords": [-50, 250],
+            "coords": [0, 250],
             "bar_width": 6,
             "height": 100,
             "description": {
@@ -163,6 +163,54 @@
                            "VulkanDynamicBufferAllocations.top.adjacent"],
                 "font": "small",
                 "length": 40
+            }
+        },
+        {
+            "name": "VulkanDescriptorCacheSize",
+            "comment": "Total size of all descriptor set caches",
+            "type": "RunningGraph(60)",
+            "color": [0, 200, 185, 200],
+            "coords": [0, 450],
+            "bar_width": 5,
+            "height": 100,
+            "description": {
+                "color": [0, 200, 75, 255],
+                "coords": ["VulkanDescriptorCacheSize.left.align",
+                           "VulkanDescriptorCacheSize.top.adjacent"],
+                "font": "small",
+                "length": 90
+            }
+        },
+        {
+            "name": "VulkanTextureDescriptorCacheSize",
+            "comment": "Number of cached Texture descriptor sets",
+            "type": "RunningGraph(60)",
+            "color": [0, 200, 75, 200],
+            "coords": [0, 450],
+            "bar_width": 5,
+            "height": 100,
+            "description": {
+                "color": [0, 200, 75, 255],
+                "coords": ["VulkanTextureDescriptorCacheSize.left.align",
+                           "VulkanTextureDescriptorCacheSize.top.adjacent"],
+                "font": "small",
+                "length": 90
+            }
+        },
+        {
+            "name": "VulkanUniformDescriptorCacheSize",
+            "comment": "Number of cached default uniform descriptor sets",
+            "type": "RunningGraph(60)",
+            "color": [0, 200, 300, 200],
+            "coords": [0, 450],
+            "bar_width": 5,
+            "height": 100,
+            "description": {
+                "color": [0, 200, 75, 255],
+                "coords": ["VulkanUniformDescriptorCacheSize.left.align",
+                           "VulkanUniformDescriptorCacheSize.top.adjacent"],
+                "font": "small",
+                "length": 90
             }
         }
     ]

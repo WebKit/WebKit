@@ -71,6 +71,8 @@ bool GetDevicesFromDXGI(std::vector<GPUDeviceInfo> *devices)
         device.vendorId      = desc.VendorId;
         device.deviceId      = desc.DeviceId;
         device.driverVersion = o.str();
+        device.systemDeviceId =
+            GetSystemDeviceIdFromParts(desc.AdapterLuid.HighPart, desc.AdapterLuid.LowPart);
 
         devices->push_back(device);
 

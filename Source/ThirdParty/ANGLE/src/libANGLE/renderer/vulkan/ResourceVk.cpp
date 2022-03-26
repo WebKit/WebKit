@@ -93,14 +93,20 @@ ReadWriteResource::ReadWriteResource()
 
 ReadWriteResource::ReadWriteResource(ReadWriteResource &&other) : ReadWriteResource()
 {
-    mReadOnlyUse  = std::move(other.mReadOnlyUse);
-    mReadWriteUse = std::move(other.mReadWriteUse);
+    *this = std::move(other);
 }
 
 ReadWriteResource::~ReadWriteResource()
 {
     mReadOnlyUse.release();
     mReadWriteUse.release();
+}
+
+ReadWriteResource &ReadWriteResource::operator=(ReadWriteResource &&other)
+{
+    mReadOnlyUse  = std::move(other.mReadOnlyUse);
+    mReadWriteUse = std::move(other.mReadWriteUse);
+    return *this;
 }
 
 angle::Result ReadWriteResource::finishRunningCommands(ContextVk *contextVk)
@@ -120,6 +126,20 @@ angle::Result ReadWriteResource::waitForIdle(ContextVk *contextVk,
                                              RenderPassClosureReason reason)
 {
     return WaitForIdle(contextVk, this, debugMessage, reason);
+}
+
+// SharedBufferSuballocationGarbage implementation.
+bool SharedBufferSuballocationGarbage::destroyIfComplete(RendererVk *renderer,
+                                                         Serial completedSerial)
+{
+    if (mLifetime.isCurrentlyInUse(completedSerial))
+    {
+        return false;
+    }
+
+    mGarbage.destroy(renderer);
+    mLifetime.release();
+    return true;
 }
 
 // SharedGarbage implementation.

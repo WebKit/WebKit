@@ -424,7 +424,7 @@ bool ValidateGetnUniformfv(const Context *context,
                            GLsizei bufSize,
                            const GLfloat *params)
 {
-    return true;
+    return ValidateSizedGetUniform(context, entryPoint, program, location, bufSize, nullptr);
 }
 
 bool ValidateGetnUniformiv(const Context *context,
@@ -434,7 +434,7 @@ bool ValidateGetnUniformiv(const Context *context,
                            GLsizei bufSize,
                            const GLint *params)
 {
-    return true;
+    return ValidateSizedGetUniform(context, entryPoint, program, location, bufSize, nullptr);
 }
 
 bool ValidateGetnUniformuiv(const Context *context,
@@ -444,7 +444,7 @@ bool ValidateGetnUniformuiv(const Context *context,
                             GLsizei bufSize,
                             const GLuint *params)
 {
-    return true;
+    return ValidateSizedGetUniform(context, entryPoint, program, location, bufSize, nullptr);
 }
 
 bool ValidateIsEnabledi(const Context *context,

@@ -8,7 +8,6 @@ import("../../../gni/angle.gni")
 
 angle_shared_library("angle_restricted_trace_loader") {
   sources = [
-    "restricted_traces_autogen.h",
     "restricted_traces_export.h",
     "trace_egl_loader_autogen.cpp",
     "trace_egl_loader_autogen.h",
@@ -28,45 +27,25 @@ angle_trace_fixture("angle_restricted_trace_fixture") {
   public_configs = [ "$angle_root:no_gl_prototypes" ]
 }
 
-# Imports "angle_restricted_traces"
-import("restricted_traces_autogen.gni")
-_traces = []
-_trace_headers = []
-
-foreach(_trace_data, angle_restricted_traces) {
-  _trace = _trace_data[0]
-  _trace_ctx = _trace_data[1]
-  _target = "angle_restricted_trace_${_trace}"
-
-  angle_trace(_target) {
-    sources = _trace_data[2]
-    data = _trace_data[3]
-    trace_prefix = _trace_data[4]
-    fixture = ":angle_restricted_trace_fixture"
-  }
-
-  _traces += [ ":${_target}" ]
-  _trace_headers += [ ":${_target}_headers" ]
+angle_trace_library("angle_restricted_trace") {
+  json_path = "restricted_traces.json"
+  trace_fixture = ":angle_restricted_trace_fixture"
 }
 
 angle_shared_library("angle_restricted_traces") {
   testonly = true
 
-  sources = [
-    "restricted_traces_autogen.cpp",
-    "restricted_traces_autogen.h",
-    "restricted_traces_export.h",
-  ]
+  sources = [ "restricted_traces_export.h" ]
 
   data = [ "restricted_traces.json" ]
 
-  data_deps = _traces
+  data_deps = [ ":angle_restricted_trace" ]
   defines = [ "ANGLE_TRACE_IMPLEMENTATION" ]
 
   deps = [
-           "$angle_root:angle_common",
-           "$angle_root/util:angle_util",
-         ] + _trace_headers
+    "$angle_root:angle_common",
+    "$angle_root/util:angle_util",
+  ]
 
   public_deps = [ ":angle_restricted_trace_loader" ]
 }
@@ -80,7 +59,10 @@ group("goldctl") {
   if (is_win) {
     data += [ "//tools/skia_goldctl/win/goldctl.exe" ]
   } else if (is_mac) {
-    data += [ "//tools/skia_goldctl/mac/goldctl" ]
+    data += [
+      "//tools/skia_goldctl/mac_amd64/goldctl",
+      "//tools/skia_goldctl/mac_arm64/goldctl",
+    ]
   } else {
     data += [ "//tools/skia_goldctl/linux/goldctl" ]
   }

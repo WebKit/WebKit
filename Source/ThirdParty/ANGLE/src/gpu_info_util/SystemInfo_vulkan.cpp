@@ -37,6 +37,8 @@ class VulkanLibrary final : NonCopyable
                 pfnDestroyInstance(mInstance, nullptr);
             }
         }
+
+        CloseSystemLibrary(mLibVulkan);
     }
 
     VkInstance getVulkanInstance()
@@ -93,12 +95,12 @@ class VulkanLibrary final : NonCopyable
     template <typename Func>
     Func getProc(const char *fn) const
     {
-        return reinterpret_cast<Func>(mLibVulkan->getSymbol(fn));
+        return reinterpret_cast<Func>(angle::GetLibrarySymbol(mLibVulkan, fn));
     }
 
   private:
-    std::unique_ptr<Library> mLibVulkan = nullptr;
-    VkInstance mInstance                = VK_NULL_HANDLE;
+    void *mLibVulkan     = nullptr;
+    VkInstance mInstance = VK_NULL_HANDLE;
 };
 
 ANGLE_FORMAT_PRINTF(1, 2)

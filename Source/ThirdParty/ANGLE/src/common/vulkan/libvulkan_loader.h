@@ -14,11 +14,9 @@
 
 namespace angle
 {
-class Library;
-
 namespace vk
 {
-std::unique_ptr<Library> OpenLibVulkan();
+void *OpenLibVulkan();
 }
 }  // namespace angle
 

@@ -441,6 +441,7 @@ Renderer11::Renderer11(egl::Display *display)
     mCreatedWithDeviceEXT = false;
 
     mDevice         = nullptr;
+    mDevice1        = nullptr;
     mDeviceContext  = nullptr;
     mDeviceContext1 = nullptr;
     mDeviceContext3 = nullptr;
@@ -699,10 +700,16 @@ HRESULT Renderer11::callD3D11CreateDevice(PFN_D3D11_CREATE_DEVICE createDevice, 
     angle::ComPtr<IDXGIAdapter> adapter;
 
     const egl::AttributeMap &attributes = mDisplay->getAttributeMap();
+    // Check EGL_ANGLE_platform_angle_d3d_luid
     long high = static_cast<long>(attributes.get(EGL_PLATFORM_ANGLE_D3D_LUID_HIGH_ANGLE, 0));
     unsigned long low =
         static_cast<unsigned long>(attributes.get(EGL_PLATFORM_ANGLE_D3D_LUID_LOW_ANGLE, 0));
-
+    // Check EGL_ANGLE_platform_angle_device_id
+    if (high == 0 && low == 0)
+    {
+        high = static_cast<long>(attributes.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0));
+        low = static_cast<unsigned long>(attributes.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0));
+    }
     if (high != 0 || low != 0)
     {
         angle::ComPtr<IDXGIFactory1> factory;
@@ -958,6 +965,8 @@ egl::Error Renderer11::initializeD3DDevice()
 
     mAnnotator.initialize(mDeviceContext);
     gl::InitializeDebugAnnotations(&mAnnotator);
+
+    mDevice->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void **>(&mDevice1));
 
     return egl::NoError();
 }
@@ -1636,6 +1645,12 @@ egl::Error Renderer11::validateShareHandle(const egl::Config *config,
     ID3D11Resource *tempResource11 = nullptr;
     HRESULT result = mDevice->OpenSharedResource(shareHandle, __uuidof(ID3D11Resource),
                                                  (void **)&tempResource11);
+    if (FAILED(result) && mDevice1)
+    {
+        result = mDevice1->OpenSharedResource1(shareHandle, __uuidof(ID3D11Resource),
+                                               (void **)&tempResource11);
+    }
+
     if (FAILED(result))
     {
         return egl::EglBadParameter() << "Failed to open share handle, " << gl::FmtHR(result);
@@ -2217,6 +2232,7 @@ void Renderer11::release()
     }
 
     SafeRelease(mDevice);
+    SafeRelease(mDevice1);
     SafeRelease(mDebug);
 
     if (mD3d11Module)
@@ -4330,13 +4346,13 @@ std::string Renderer11::getVendorString() const
     return GetVendorString(mAdapterDescription.VendorId);
 }
 
-std::string Renderer11::getVersionString() const
+std::string Renderer11::getVersionString(bool includeFullVersion) const
 {
     std::ostringstream versionString;
-    versionString << "D3D11-";
-    if (mRenderer11DeviceCaps.driverVersion.valid())
+    versionString << "D3D11";
+    if (includeFullVersion && mRenderer11DeviceCaps.driverVersion.valid())
     {
-        versionString << GetDriverVersionString(mRenderer11DeviceCaps.driverVersion.value());
+        versionString << "-" << GetDriverVersionString(mRenderer11DeviceCaps.driverVersion.value());
     }
     return versionString.str();
 }

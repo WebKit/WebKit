@@ -111,6 +111,9 @@ class FunctionsEGL
     FunctionsEGL(const FunctionsEGL &) = delete;
     void operator=(const FunctionsEGL &) = delete;
 
+    // Fallback mechanism for creating a display from a native device object.
+    EGLDisplay getNativeDisplay(int *major, int *minor);
+
     struct EGLDispatchTable;
     EGLDispatchTable *mFnPtrs;
     EGLDisplay mEGLDisplay;

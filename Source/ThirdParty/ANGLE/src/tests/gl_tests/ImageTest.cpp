@@ -565,6 +565,7 @@ class ImageTest : public ANGLETest
     };
 
     constexpr static uint32_t kDefaultAHBUsage = kAHBUsageGPUSampledImage | kAHBUsageGPUFramebuffer;
+    constexpr static uint32_t kDefaultAHBYUVUsage = kAHBUsageGPUSampledImage;
 
     AHardwareBuffer *createAndroidHardwareBuffer(size_t width,
                                                  size_t height,
@@ -599,8 +600,9 @@ class ImageTest : public ANGLETest
 
         if (!data.empty())
         {
-            writeAHBData(aHardwareBuffer, width, height, depth,
-                         androidFormat == AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420, data);
+            const bool isYUV = androidFormat == AHARDWAREBUFFER_FORMAT_Y8Cb8Cr8_420 ||
+                               androidFormat == AHARDWAREBUFFER_FORMAT_YV12;
+            writeAHBData(aHardwareBuffer, width, height, depth, isYUV, data);
         }
 
         return aHardwareBuffer;
@@ -2556,6 +2558,80 @@ TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSample)
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
     destroyAndroidHardwareBuffer(source);
+#endif
+}
+
+TEST_P(ImageTestES3, SourceYUVAHBTargetExternalYUVSampleLinearFiltering)
+{
+#ifndef ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT
+    std::cout << "Test skipped: !ANGLE_AHARDWARE_BUFFER_LOCK_PLANES_SUPPORT." << std::endl;
+    return;
+#else
+    EGLWindow *window = getEGLWindow();
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    // [  Red,   Red]
+    // [  Red,   Red]
+    // [Black, Black]
+    // [Black, Black]
+
+    // clang-format off
+    GLubyte dataY[]  = {
+        76, 76,
+        76, 76,
+        16, 16,
+        16, 16,
+    };
+    GLubyte dataCb[] = {
+        84,
+        128,
+    };
+    GLubyte dataCr[] = {
+        255,
+        128,
+    };
+    // clang-format on
+
+    // Create the Image
+    AHardwareBuffer *ahbSource;
+    EGLImageKHR ahbImage;
+    createEGLImageAndroidHardwareBufferSource(
+        2, 4, 1, AHARDWAREBUFFER_FORMAT_YV12, kDefaultAHBYUVUsage, kDefaultAttribs,
+        {{dataY, 1}, {dataCb, 1}, {dataCr, 1}}, &ahbSource, &ahbImage);
+
+    ASSERT_GL_NO_ERROR();
+
+    // Create a texture target to bind the egl image
+    GLTexture ahbTexture;
+    createEGLImageTargetTextureExternal(ahbImage, ahbTexture);
+
+    // Configure linear filtering
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, ahbTexture);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Draw fullscreen sampling from ahbTexture.
+    glUseProgram(mTextureExternalProgram);
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, ahbTexture);
+    glUniform1i(mTextureExternalUniformLocation, 0);
+    drawQuad(mTextureExternalProgram, "position", 0.5f);
+
+    // Framebuffer needs to be bigger than the AHB so there is an area in between that will result
+    // in half-red.
+    const int windowHeight = getWindowHeight();
+    ASSERT_GE(windowHeight, 8);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::black);
+    EXPECT_PIXEL_COLOR_EQ(0, windowHeight - 1, GLColor::red);
+
+    // Approximately half-red:
+    EXPECT_PIXEL_COLOR_NEAR(0, windowHeight / 2, GLColor(127, 0, 0, 255), 15.0);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), ahbImage);
+    destroyAndroidHardwareBuffer(ahbSource);
 #endif
 }
 

@@ -41,7 +41,7 @@
 5822 : ExternalWrapTest.NoWrap/* = CRASH
 5822 : ExternalWrapTest.Repeat/* = CRASH
 
-6267 : FramebufferTest.MultiContextNoRenderingFeedbackLoops/* = COMPILE_FAIL
+6267 : FramebufferTest.MultiContextNoRenderingFeedbackLoops/* = SKIP_FOR_CAPTURE
 
 6286 : ImageTest.Deletion/* = FAIL
 6286 : ImageTest.MipLevels/* = FAIL
@@ -91,6 +91,8 @@
 6373 : WebGLCompatibilityTest.DrawArraysBufferOutOfBoundsNonInstanced/* = FLAKY
 6180 : WebGLCompatibilityTest.DrawElementsBufferOutOfBoundsInVertexBuffer/* = FLAKY
 
+# Skipped in end2end tests
+6336 : GetImageTest.InconsistentTexture2D/* = NOT_RUN
 
 # ES3
 6180 : BlitFramebufferTest.BlitDepthStencilPixelByPixel/* = NOT_RUN
@@ -122,7 +124,6 @@
 6314 : FramebufferTest_ES3.RenderAndInvalidateImmutableTextureWithBeyondMaxLevel/* = CRASH
 6180 : ImageTestES3.SourceCubeTargetExternalESSL3/* = FAIL
 6334 : MipmapTestES3.GenerateMipmapBaseLevelOutOfRangeImmutableTexture/* = CRASH
-6324 : OcclusionQueriesTestES3.UnresolveNotCounted/* = CRASH
 6333 : Texture2DFloatTestES3.TextureHalfFloatLinearLegacyTest/* = CRASH
 6333 : Texture2DFloatTestES3.TextureHalfFloatSampleLegacyTest/* = CRASH
 6334 : Texture2DTestES3.ImmutableTextureBaseLevelOutOfRange/* = CRASH
@@ -169,23 +170,11 @@
 6631 WIN : MultithreadingTestES3.MultithreadFenceTexImage/* = CRASH
 6631 : MultithreadingTest.MultiContextDrawWithSwapBuffers/* = CRASH
 
+# Marking this as NOT_RUN because we don't want it to run as it uses multiple contexts
+6752 : OcclusionQueriesNoSurfaceTestES3.SwitchingContextsWithQuery/* = NOT_RUN
+
 # ES3_1
-6180 : ProgramPipelineTest31.DifferentTextureTypes/* = FAIL
-6180 : ProgramPipelineTest31.DrawWith2DTexture/* = FAIL
-6180 : ProgramPipelineTest31.FragmentStageUniformTest/* = FAIL
-6180 : ProgramPipelineTest31.ImageUniforms/* = FAIL
-6180 : ProgramPipelineTest31.MaxFragmentShaderStorageBufferObjects/* = FAIL
-6180 : ProgramPipelineTest31.MaxFragmentUniformBufferObjects/* = FAIL
-6180 : ProgramPipelineTest31.PipelineWithoutVertexShader/* = FAIL
-6180 : ProgramPipelineTest31.ProgramPipelineVaryings/* = FAIL
-6180 : ProgramPipelineTest31.SampleTextureAThenTextureB/* = FAIL
-6180 : ProgramPipelineTest31.UseCreateShaderProgramv/* = FAIL
-6180 : ProgramPipelineTest31.VaryingIOBlockSeparableProgram/* = FAIL
-6180 : ProgramPipelineTest31.VaryingLocationMismatch/* = FAIL
 6180 : ProgramPipelineTest31.VerifyPpoLinkErrorSignalledCorrectly/* = FAIL
-6180 : SimpleStateChangeTestComputeES31PPO.DeleteImageTextureInUse/* = FAIL
-6180 : Texture2DTestES31PPO.TexStorage/* = FAIL
-6180 : Texture2DTestES31PPO.SingleTextureMultipleSamplers/* = FAIL
 
 # ES3_1 Crashed
 6180 : EGLMultiContextTest.ComputeShaderOkayWithRendering/* = CRASH
@@ -202,6 +191,7 @@
 6611 : TextureMultisampleTest.ResolveToDefaultFramebuffer/ES3_1* = CRASH
 6611 : TextureMultisampleTest.ValidateTextureStorageMultisampleParameters/ES3_1* = CRASH
 6605 : TextureBufferTestES31.MapTextureBufferInvalidateThenWrite/* = FAIL
+6895 : AtomicCounterBufferTest31.AtomicCounterBufferRepeatedBindUnbind/* = CRASH
 
 # ES3_1 gtest skips
 6180 : GLSLTest_ES31.InterpolateAtWithSwizzle/* = NOT_RUN
@@ -216,3 +206,17 @@
 6663 : Texture2DTest.UploadThenFSThenVSThenNewRPThenFS/*  = NOT_RUN
 
 6741 : VulkanImageTest.* = SKIP_FOR_CAPTURE
+
+6941 : Texture2DTestES3RobustInit.TextureCOMPRESSEDRGB8A1ETC2/* = NOT_RUN
+6941 : Texture2DTestES3RobustInit.TextureCOMPRESSEDSRGB8A1ETC2/* = NOT_RUN
+
+6926 : Texture2DTestES3.TextureRGBUpdateWithPBO/ES3_Vulkan* = NOT_RUN
+
+6875 : TransformFeedbackTest.SpanMultipleRenderPasses/* = NOT_RUN
+
+# Skip crashing tests after enabling ANGLE_texture_multisample
+3565 : TextureMultisampleTest.ResolveToDefaultFramebuffer/* = CRASH
+3565 : TextureMultisampleTest.GetTexLevelParameter/* = CRASH
+3565 : TextureMultisampleTest.MultisampleTargetFramebufferTexture2D/* = CRASH
+3565 : TextureMultisampleTest.SimpleTexelFetch/* = CRASH
+3565 : TextureMultisampleTest.ValidateTextureStorageMultisampleParameters/* = CRASH

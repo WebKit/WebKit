@@ -302,6 +302,12 @@ EGLint Surface::getType() const
     return mType;
 }
 
+Error Surface::prepareSwap(const gl::Context *context)
+{
+    ANGLE_TRACE_EVENT0("gpu.angle", "egl::Surface::prepareSwap");
+    return mImplementation->prepareSwap(context);
+}
+
 Error Surface::swap(const gl::Context *context)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "egl::Surface::swap");

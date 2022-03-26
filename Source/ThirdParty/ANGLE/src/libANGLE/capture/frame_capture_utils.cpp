@@ -344,6 +344,7 @@ Result SerializeFramebufferState(const gl::Context *context,
     json->addScalar("DefaultFixedSampleLocation",
                     framebufferState.getDefaultFixedSampleLocations());
     json->addScalar("DefaultLayers", framebufferState.getDefaultLayers());
+    json->addScalar("FlipY", framebufferState.getFlipY());
 
     {
         GroupScope attachmentsGroup(json, "Attachments");
@@ -603,7 +604,24 @@ void SerializeContextState(JsonSerializer *json, const gl::State &state)
     }
     json->addScalar("TexturesIncompatibleWithSamplers",
                     state.getTexturesIncompatibleWithSamplers().to_ulong());
-    SerializeBindingPointerVector<gl::Sampler>(json, state.getSamplers());
+
+    {
+        GroupScope texturesCacheGroup(json, "ActiveTexturesCache");
+
+        const gl::ActiveTexturesCache &texturesCache = state.getActiveTexturesCache();
+        for (GLuint textureIndex = 0; textureIndex < texturesCache.size(); ++textureIndex)
+        {
+            const gl::Texture *tex = texturesCache[textureIndex];
+            std::stringstream strstr;
+            strstr << "Tex " << std::setfill('0') << std::setw(2) << textureIndex;
+            json->addScalar(strstr.str(), tex ? tex->id().value : 0);
+        }
+    }
+
+    {
+        GroupScope samplersGroupScope(json, "Samplers");
+        SerializeBindingPointerVector<gl::Sampler>(json, state.getSamplers());
+    }
 
     {
         GroupScope imageUnitsGroup(json, "BoundImageUnits");
@@ -782,8 +800,18 @@ Result SerializeRenderbuffer(const gl::Context *context,
 
     if (renderbuffer->initState(gl::ImageIndex()) == gl::InitState::Initialized)
     {
-
-        if (renderbuffer->getWidth() * renderbuffer->getHeight() > 0)
+        if (renderbuffer->getSamples() > 1 && renderbuffer->getFormat().info->depthBits > 0)
+        {
+            // Vulkan can't do resolve blits for multisampled depth attachemnts and
+            // we don't implement an emulation, therefore we can't read back any useful
+            // data here.
+            json->addCString("Pixels", "multisampled depth buffer");
+        }
+        else if (renderbuffer->getWidth() * renderbuffer->getHeight() <= 0)
+        {
+            json->addCString("Pixels", "no pixels");
+        }
+        else
         {
             const gl::InternalFormat &format = *renderbuffer->getFormat().info;
 
@@ -806,10 +834,6 @@ Result SerializeRenderbuffer(const gl::Context *context,
             ANGLE_TRY(renderbuffer->getImplementation()->getRenderbufferImage(
                 context, packState, nullptr, readFormat, readType, pixelsPtr->data()));
             json->addBlob("Pixels", pixelsPtr->data(), pixelsPtr->size());
-        }
-        else
-        {
-            json->addCString("Pixels", "no pixels");
         }
     }
     else

@@ -457,6 +457,10 @@ def main():
         args.shard_count = int(env.pop('GTEST_TOTAL_SHARDS'))
         args.shard_index = int(env.pop('GTEST_SHARD_INDEX'))
 
+    # The harness currently uploads all traces in a batch, which is very slow.
+    # TODO: Reduce lag from trace uploads and remove this. http://anglebug.com/6854
+    env['DEVICE_TIMEOUT_MULTIPLIER'] = '20'
+
     results = {
         'tests': {},
         'interrupted': False,

@@ -20,9 +20,11 @@
 #define MtlFixIndexBufferKeyModeShift 4U
 #define MtlFixIndexBufferKeyPoints 0x00U
 #define MtlFixIndexBufferKeyLines 0x01U
+#define MtlFixIndexBufferKeyLineLoop 0x02U
 #define MtlFixIndexBufferKeyLineStrip 0x03U
 #define MtlFixIndexBufferKeyTriangles 0x04U
 #define MtlFixIndexBufferKeyTriangleStrip 0x05U
+#define MtlFixIndexBufferKeyTriangleFan 0x06U
 #define MtlFixIndexBufferKeyPrimRestart 0x00100U
 #define MtlFixIndexBufferKeyProvokingVertexLast 0x00200U
 #endif /* rewrite_indices_shared_h */

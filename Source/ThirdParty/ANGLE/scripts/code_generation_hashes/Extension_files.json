@@ -1,38 +1,38 @@
 {
   "doc/ExtensionSupport.md":
-    "23b3eee41ecb931f736e9a78e03c9741",
+    "c11608e3a5c7be9d85afdb61c04e78df",
   "scripts/cl.xml":
     "f923201d4ea3e1130763b19fa7faa7a2",
   "scripts/egl.xml":
     "013c552e6c523abdcf268268ea47e9fe",
   "scripts/egl_angle_ext.xml":
-    "bd57943b71217a962e6049a74bb64e0e",
+    "72bf10ed3d23d5cdfa49934a0393b30d",
   "scripts/extension_data/intel_630_linux.json":
-    "dbcae14638684f9c094c216110fd4fa3",
+    "513dabe561b92b577ec8433d263f8ba6",
   "scripts/extension_data/intel_630_win10.json":
-    "4cf6bfad658bb2f0a818bed648042c23",
-  "scripts/extension_data/nvidia_p400_linux.json":
-    "b9e39094658cf0378b0b6ca1fd69b32a",
-  "scripts/extension_data/nvidia_p400_win10.json":
-    "476eca14731550002205aef95c8ce3f6",
+    "2354046e6ff686fe76b4ef17f66b828b",
+  "scripts/extension_data/nvidia_1660_linux.json":
+    "bfc36f66492c756b1dbaf0f3e7f1275a",
+  "scripts/extension_data/nvidia_1660_win10.json":
+    "c1c2bca14bf14b8c620230ed511b6794",
   "scripts/extension_data/pixel_4_android_11.json":
-    "3e482d5647efe6e938101584885a1994",
+    "131fef2b47370087081b96bc909d335c",
   "scripts/extension_data/swiftshader_win10.json":
-    "6eac00fc10d4130e73323a048c92fca7",
+    "e772ccd83cf144a2931294523b0069a9",
   "scripts/extension_data/swiftshader_win10_gles1.json":
     "fbf1c3dc83570c1e3fffdbee313bca30",
   "scripts/gl.xml":
-    "467556b6f73fd024b08b703d0be83999",
+    "d93e1d49519c217082679836982b8eee",
   "scripts/gl_angle_ext.xml":
     "474989440f980a079935dff3ab4d7b24",
   "scripts/registry_xml.py":
-    "b1893c003352dec25d4cd54e2b385925",
+    "2d6924d398a790f4ef80473c0279eda5",
   "scripts/wgl.xml":
     "c36001431919e1c435f1215a85f7e1db",
   "src/libANGLE/gen_extensions.py":
-    "db7ed1c2245bba536e074a1cf2bb2590",
+    "186e7b22cb560bf4f32e2b1b8a025dd8",
   "src/libANGLE/gles_extensions_autogen.cpp":
-    "6c765b092edffcda3a114e3fb587df3a",
+    "91d3215b329463893d24aeac1f17a57d",
   "src/libANGLE/gles_extensions_autogen.h":
-    "8ca4513c8c187b2baa2872c7653c5086"
+    "8f81a1449d9e5dcb4313b2832b51fe5f"
 }

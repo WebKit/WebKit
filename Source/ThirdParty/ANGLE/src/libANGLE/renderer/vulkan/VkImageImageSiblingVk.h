@@ -43,6 +43,7 @@ class VkImageImageSiblingVk final : public ExternalImageSiblingVk
 
     vk::Image mVkImage;
     VkImageCreateInfo mVkImageInfo;
+    GLenum mInternalFormat = GL_NONE;
     gl::Format mFormat{GL_NONE};
     vk::ImageHelper *mImage = nullptr;
 };

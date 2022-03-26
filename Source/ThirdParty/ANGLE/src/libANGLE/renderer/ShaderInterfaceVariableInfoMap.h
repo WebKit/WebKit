@@ -4,9 +4,10 @@
 // found in the LICENSE file.
 //
 // Header for the shared ShaderInterfaceVariableInfoMap class, used by both the
-// Metal and Direct Metal backends.
-#ifndef ShaderInterfaceVariableInfoMap_hpp
-#define ShaderInterfaceVariableInfoMap_hpp
+// Direct-to-Metal and Metal-SPIRV backends
+
+#ifndef LIBANGLE_RENDERER_SHADERINTERFACEVARIABLEINFOMAP_H_
+#define LIBANGLE_RENDERER_SHADERINTERFACEVARIABLEINFOMAP_H_
 
 #include <functional>
 
@@ -60,4 +61,4 @@ class ShaderInterfaceVariableInfoMap final : angle::NonCopyable
 };
 
 }  // namespace rx
-#endif /* ShaderInterfaceVariableInfoMap_hpp */
+#endif  // LIBANGLE_RENDERER_SHADERINTERFACEVARIABLEINFOMAP_H_

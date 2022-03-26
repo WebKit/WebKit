@@ -41,8 +41,8 @@ struct StaticMangledName
 constexpr StaticMangledName BuildStaticMangledName(TBasicType basicType,
                                                    TPrecision precision,
                                                    TQualifier qualifier,
-                                                   unsigned char primarySize,
-                                                   unsigned char secondarySize)
+                                                   uint8_t primarySize,
+                                                   uint8_t secondarySize)
 {
     StaticMangledName name = {};
     name.name[0]           = TType::GetSizeMangledName(primarySize, secondarySize);
@@ -65,8 +65,8 @@ struct StaticArrayMangledName
 constexpr StaticArrayMangledName BuildStaticArrayMangledName(TBasicType basicType,
                                                              TPrecision precision,
                                                              TQualifier qualifier,
-                                                             unsigned char primarySize,
-                                                             unsigned char secondarySize,
+                                                             uint8_t primarySize,
+                                                             uint8_t secondarySize,
                                                              const unsigned int *arraySizes,
                                                              size_t numArraySizes)
 {
@@ -91,8 +91,8 @@ constexpr StaticArrayMangledName BuildStaticArrayMangledName(TBasicType basicTyp
 template <TBasicType basicType,
           TPrecision precision,
           TQualifier qualifier,
-          unsigned char primarySize,
-          unsigned char secondarySize>
+          uint8_t primarySize,
+          uint8_t secondarySize>
 static constexpr StaticMangledName kMangledNameInstance =
     BuildStaticMangledName(basicType, precision, qualifier, primarySize, secondarySize);
 
@@ -100,8 +100,8 @@ static constexpr StaticMangledName kMangledNameInstance =
 template <TBasicType basicType,
           TPrecision precision,
           TQualifier qualifier,
-          unsigned char primarySize,
-          unsigned char secondarySize,
+          uint8_t primarySize,
+          uint8_t secondarySize,
           const unsigned int *arraySizes,
           size_t numArraySizes>
 static constexpr StaticArrayMangledName kMangledNameArrayInstance =
@@ -127,8 +127,8 @@ static constexpr StaticArrayMangledName kMangledNameArrayInstance =
 template <TBasicType basicType,
           TPrecision precision,
           TQualifier qualifier,
-          unsigned char primarySize,
-          unsigned char secondarySize>
+          uint8_t primarySize,
+          uint8_t secondarySize>
 static constexpr TType instance =
     TType(basicType,
           precision,
@@ -142,8 +142,8 @@ static constexpr TType instance =
 template <TBasicType basicType,
           TPrecision precision,
           TQualifier qualifier,
-          unsigned char primarySize,
-          unsigned char secondarySize,
+          uint8_t primarySize,
+          uint8_t secondarySize,
           const unsigned int *arraySizes,
           size_t numArraySizes>
 static constexpr TType arrayInstance =
@@ -164,8 +164,8 @@ static constexpr TType arrayInstance =
 template <TBasicType basicType,
           TPrecision precision,
           TQualifier qualifier,
-          unsigned char primarySize,
-          unsigned char secondarySize>
+          uint8_t primarySize,
+          uint8_t secondarySize>
 constexpr const TType *Get()
 {
     static_assert(1 <= primarySize && primarySize <= 4, "primarySize out of bounds");
@@ -176,8 +176,8 @@ constexpr const TType *Get()
 template <TBasicType basicType,
           TPrecision precision,
           TQualifier qualifier,
-          unsigned char primarySize,
-          unsigned char secondarySize,
+          uint8_t primarySize,
+          uint8_t secondarySize,
           const unsigned int *arraySizes,
           size_t numArraySizes>
 constexpr const TType *GetArray()
@@ -196,8 +196,8 @@ constexpr const TType *GetArray()
 
 template <TBasicType basicType,
           TPrecision precision,
-          unsigned char primarySize   = 1,
-          unsigned char secondarySize = 1>
+          uint8_t primarySize   = 1,
+          uint8_t secondarySize = 1>
 constexpr const TType *GetBasic()
 {
     return Get<basicType, precision, EvqGlobal, primarySize, secondarySize>();
@@ -205,8 +205,8 @@ constexpr const TType *GetBasic()
 
 template <TBasicType basicType,
           TPrecision precision,
-          unsigned char primarySize   = 1,
-          unsigned char secondarySize = 1>
+          uint8_t primarySize   = 1,
+          uint8_t secondarySize = 1>
 constexpr const TType *GetTemporary()
 {
     return Get<basicType, precision, EvqTemporary, primarySize, secondarySize>();
@@ -215,8 +215,8 @@ constexpr const TType *GetTemporary()
 template <TBasicType basicType,
           TPrecision precision,
           TQualifier qualifier,
-          unsigned char primarySize   = 1,
-          unsigned char secondarySize = 1>
+          uint8_t primarySize   = 1,
+          uint8_t secondarySize = 1>
 const TType *GetQualified()
 {
     return Get<basicType, precision, qualifier, primarySize, secondarySize>();
@@ -228,11 +228,8 @@ namespace Helpers
 {
 
 // Helper which takes secondarySize statically but primarySize dynamically.
-template <TBasicType basicType,
-          TPrecision precision,
-          TQualifier qualifier,
-          unsigned char secondarySize>
-constexpr const TType *GetForVecMatHelper(unsigned char primarySize)
+template <TBasicType basicType, TPrecision precision, TQualifier qualifier, uint8_t secondarySize>
+constexpr const TType *GetForVecMatHelper(uint8_t primarySize)
 {
     static_assert(basicType == EbtFloat || basicType == EbtInt || basicType == EbtUInt ||
                       basicType == EbtBool,
@@ -256,7 +253,7 @@ constexpr const TType *GetForVecMatHelper(unsigned char primarySize)
 }  // namespace Helpers
 
 template <TBasicType basicType, TPrecision precision, TQualifier qualifier = EvqGlobal>
-constexpr const TType *GetForVecMat(unsigned char primarySize, unsigned char secondarySize = 1)
+constexpr const TType *GetForVecMat(uint8_t primarySize, uint8_t secondarySize = 1)
 {
     static_assert(basicType == EbtFloat || basicType == EbtInt || basicType == EbtUInt ||
                       basicType == EbtBool,
@@ -278,7 +275,7 @@ constexpr const TType *GetForVecMat(unsigned char primarySize, unsigned char sec
 }
 
 template <TBasicType basicType, TPrecision precision>
-constexpr const TType *GetForVec(TQualifier qualifier, unsigned char size)
+constexpr const TType *GetForVec(TQualifier qualifier, uint8_t size)
 {
     switch (qualifier)
     {

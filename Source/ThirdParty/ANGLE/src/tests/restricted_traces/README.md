@@ -223,7 +223,7 @@ adb pull /sdcard/Android/data/$PACKAGE_NAME/angle_capture/. $LABEL/
 The list of traces is tracked in [restricted_traces.json](restricted_traces.json). Manually add your
 new trace to this list. Use version "1" for the trace version.
 
-You can also use a tool called `jq` to update the list. This ensures we get them in
+On Linux, you can also use a tool called `jq` to update the list. This ensures we get them in
 alphabetical order with no duplicates. It can also be done by hand if you are unable to install it,
 for some reason.
 ```
@@ -243,12 +243,15 @@ code generation run the following from the angle root folder:
 ```
 python ./scripts/run_code_generation.py
 ```
-After this you should be able to `git diff` and see your new trace added to the harness files:
-```
-TODO: Redo this. http://anglebug.com/5133
-```
-Note the absence of the traces themselves listed above.  They are automatically .gitignored since
-they won't be checked in directly to the repo.
+After this you should be able to `git diff` and see changes in the following files:
+
+ * `DEPS`
+ * `scripts/code_generation_hashes/restricted_traces.json`
+ * `src/tests/restricted_traces/restricted_traces.json` (this is the file you originally modified)
+
+Note the absence of the traces themselves listed above. They are automatically
+ignored by [`.gitignore`](.gitignore) since they won't be checked in directly
+to the repo.
 
 ## Upload your trace to CIPD
 
@@ -426,4 +429,87 @@ trace upgrade!
 
 # Diagnosing and fixing tracer errors
 
-TODO: http://anglebug.com/5133
+## Debugging a crash or GLES error
+
+Ensure you're building ANGLE in Debug. Then look in the retrace script output
+to find the exact command line and environment variables the script uses to
+produce the failure. For example:
+
+```
+INFO:root:ANGLE_CAPTURE_LABEL=trex_200 ANGLE_CAPTURE_OUT_DIR=C:\src\angle\retrace-wip\trex_200 ANGLE_CAPTURE_FRAME_START=2 ANGLE_CAPTURE_FRAME_END=4 ANGLE_CAPTURE_VALIDATION=1 ANGLE_FEATURE_OVERRIDES_ENABLED=allocateNonZeroMemory:forceInitShaderVariables ANGLE_CAPTURE_TRIM_ENABLED=1 out/Debug\angle_perftests.exe --gtest_filter=TracePerfTest.Run/vulkan_swiftshader_trex_200 --max-steps-performed 3 --retrace-mode --enable-all-trace-tests
+```
+
+Once you can reproduce the issue you can use a debugger or other standard
+debugging processes to find the root cause and a fix.
+
+## Debugging a serialization difference
+
+If you encouter a serialization mismatch in the retrace, you can find the
+complete serialization output by looking in the retrace script output. ANGLE
+saves the complete serialization file contents on any mismatch. You can
+inspect and diff these files in a text editor to help diagnose what objects
+are faulty.
+
+If the mismatch is with a Buffer or Texture object content, you can manually
+edit the `frame_capture_utils.cpp` file to force some or all of the objects
+to serialize their entire contents. This can help show what kind of pixel or
+data differences might be causing the issue. For example, change this line:
+
+```
+json->addBlob("data", dataPtr->data(), dataPtr->size());
+```
+
+to
+
+```
+json->addBlobWithMax("data", dataPtr->data(), dataPtr->size(), 1000000);
+```
+
+Note: in the future, we might make this option exposed via an envioronment
+variable, or even allow serialization of entire data blocks in text-encoded
+form that could be decoded to separate files.
+
+If you still can't determine what code might be causing the state difference,
+we can insert finer-grained serialization checkpoints to "bisect" where the
+coding mismatch is happening. It is not possible to force checkpoints after
+every GLES call, because serialization and validation is so prohibitively
+expensive. ANGLE instead has feature in the tracer that allows us to
+precisely control where the tracer inserts and validates the checkpoints, by
+using a boolean expression language.
+
+The retrace script command `--validation-expr` allows us to specify a C-like
+expression that determines when to add serialization checkpoints. For
+example, we can specify this validation expression:
+
+```
+((frame == 2) && (call < 1189) && (call > 1100) && ((call % 5) == 0))
+```
+
+Using this expression will insert a serialization checkpoint in the second
+frame, on every 5th captured call, and when the captured call count is
+between 1101 and 1188. Here the `call` keyword denotes the call counter,
+which resets to 1 every frame, and increments by 1 with every captured GLES
+API call. The `frame` keyword denotes the frame counter, which starts at 1
+and increments by 1 every captured frame. The expression syntax supports all
+common C boolean operators.
+
+By finding a starting and ending frame range, and narrowing this range through
+experimentation, you can pinpoint the exact call that triggers the
+serialization mismatch, and then diagnose and fix the root cause. In some
+cases you can use RenderDoc or other frame debugging tools to inspect
+resource states before/after the bad call once you have found it.
+
+See also: [`http://crrev.com/c/3136094`](http://crrev.com/c/3136094)
+
+## Debugging a pixel test failure without a serialization mismatch
+
+Sometimes you manage to complete validation and upload, just to find a golden
+image pixel difference that manifests in some trace configurations. These
+problems can be harder to root cause. For instance, some configurations may
+render undefined pixels that are in practice well-defined on most GLES
+implementations.
+
+The pixel differences can also be a product of mismatched state even if the
+trace validation says all states are matched. Because ANGLE's GLES state
+serialization is incomplete, it can help to check the state serialization
+logic and add missing features as necessary.

@@ -449,9 +449,13 @@ EGLBoolean Initialize(Thread *thread, Display *display, EGLint *major, EGLint *m
                          EGL_FALSE);
 
     if (major)
-        *major = 1;
+    {
+        *major = kEglMajorVersion;
+    }
     if (minor)
-        *minor = 5;
+    {
+        *minor = kEglMinorVersion;
+    }
 
     thread->setSuccess();
     return EGL_TRUE;

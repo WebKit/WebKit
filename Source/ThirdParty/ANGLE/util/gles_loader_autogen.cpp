@@ -761,6 +761,7 @@ ANGLE_UTIL_EXPORT PFNGLPROGRAMBINARYOESPROC l_glProgramBinaryOES;
 ANGLE_UTIL_EXPORT PFNGLGETBUFFERPOINTERVOESPROC l_glGetBufferPointervOES;
 ANGLE_UTIL_EXPORT PFNGLMAPBUFFEROESPROC l_glMapBufferOES;
 ANGLE_UTIL_EXPORT PFNGLUNMAPBUFFEROESPROC l_glUnmapBufferOES;
+ANGLE_UTIL_EXPORT PFNGLPRIMITIVEBOUNDINGBOXOESPROC l_glPrimitiveBoundingBoxOES;
 ANGLE_UTIL_EXPORT PFNGLMINSAMPLESHADINGOESPROC l_glMinSampleShadingOES;
 ANGLE_UTIL_EXPORT PFNGLCOMPRESSEDTEXIMAGE3DOESPROC l_glCompressedTexImage3DOES;
 ANGLE_UTIL_EXPORT PFNGLCOMPRESSEDTEXSUBIMAGE3DOESPROC l_glCompressedTexSubImage3DOES;
@@ -2033,6 +2034,8 @@ void LoadGLES(LoadProc loadProc)
         reinterpret_cast<PFNGLGETBUFFERPOINTERVOESPROC>(loadProc("glGetBufferPointervOES"));
     l_glMapBufferOES   = reinterpret_cast<PFNGLMAPBUFFEROESPROC>(loadProc("glMapBufferOES"));
     l_glUnmapBufferOES = reinterpret_cast<PFNGLUNMAPBUFFEROESPROC>(loadProc("glUnmapBufferOES"));
+    l_glPrimitiveBoundingBoxOES =
+        reinterpret_cast<PFNGLPRIMITIVEBOUNDINGBOXOESPROC>(loadProc("glPrimitiveBoundingBoxOES"));
     l_glMinSampleShadingOES =
         reinterpret_cast<PFNGLMINSAMPLESHADINGOESPROC>(loadProc("glMinSampleShadingOES"));
     l_glCompressedTexImage3DOES =

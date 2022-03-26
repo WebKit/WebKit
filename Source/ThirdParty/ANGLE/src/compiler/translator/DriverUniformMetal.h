@@ -22,11 +22,11 @@ class DriverUniformMetal : public DriverUniform
     DriverUniformMetal() : DriverUniform(DriverUniformMode::InterfaceBlock) {}
     ~DriverUniformMetal() override {}
 
-    TIntermBinary *getHalfRenderAreaRef() const override;
-    TIntermBinary *getFlipXYRef() const override;
-    TIntermBinary *getNegFlipXYRef() const override;
-    TIntermSwizzle *getNegFlipYRef() const override;
-    TIntermBinary *getCoverageMaskFieldRef() const;
+    TIntermTyped *getHalfRenderAreaRef() const override;
+    TIntermTyped *getFlipXYRef() const override;
+    TIntermTyped *getNegFlipXYRef() const override;
+    TIntermTyped *getNegFlipYRef() const override;
+    TIntermTyped *getCoverageMaskFieldRef() const;
 
   protected:
     TFieldList *createUniformFields(TSymbolTable *symbolTable) override;

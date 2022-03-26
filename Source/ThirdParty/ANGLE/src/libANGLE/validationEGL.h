@@ -23,6 +23,8 @@ class Context;
 
 namespace egl
 {
+constexpr EGLint kEglMajorVersion = 1;
+constexpr EGLint kEglMinorVersion = 5;
 
 class AttributeMap;
 struct ClientExtensions;
@@ -184,6 +186,16 @@ typename std::remove_reference<PackedT>::type PackParam(FromT attribs)
             THREAD->setError(ANGLE_LOCAL_VAR, FUNCNAME, LABELOBJECT);     \
             return RETVAL;                                                \
         }                                                                 \
+    } while (0)
+
+#define ANGLE_EGLBOOLEAN_TRY(EXPR)           \
+    do                                       \
+    {                                        \
+        EGLBoolean ANGLE_LOCAL_VAR = (EXPR); \
+        if (ANGLE_LOCAL_VAR != EGL_TRUE)     \
+        {                                    \
+            return ANGLE_LOCAL_VAR;          \
+        }                                    \
     } while (0)
 
 #endif  // LIBANGLE_VALIDATIONEGL_H_

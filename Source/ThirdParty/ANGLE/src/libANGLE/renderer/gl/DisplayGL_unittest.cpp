@@ -13,7 +13,9 @@ namespace rx
 {
 
 extern std::string SanitizeRendererString(std::string rendererString);
-extern std::string SanitizeVersionString(std::string versionString, bool isES);
+extern std::string SanitizeVersionString(std::string versionString,
+                                         bool isES,
+                                         bool includeFullVersion);
 
 namespace testing
 {
@@ -61,7 +63,7 @@ TEST(DisplayGLTest, SanitizeVersionStringOpenGLMissing)
 {
     std::string testString      = "4.6.0 NVIDIA 391.76";
     std::string testExpectation = "OpenGL 4.6.0 NVIDIA 391.76";
-    EXPECT_EQ(SanitizeVersionString(testString, false), testExpectation);
+    EXPECT_EQ(SanitizeVersionString(testString, false, true), testExpectation);
 }
 
 // Note: OpenGL renderers with this prefix don't actually seem to be present in the wild
@@ -69,21 +71,50 @@ TEST(DisplayGLTest, SanitizeVersionStringOpenGLPresent)
 {
     std::string testString      = "OpenGL 4.5.0 - Build 22.20.16.4749";
     std::string testExpectation = "OpenGL 4.5.0 - Build 22.20.16.4749";
-    EXPECT_EQ(SanitizeVersionString(testString, false), testExpectation);
+    EXPECT_EQ(SanitizeVersionString(testString, false, true), testExpectation);
 }
 
 TEST(DisplayGLTest, SanitizeVersionStringOpenGLESMissing)
 {
     std::string testString      = "4.6.0 NVIDIA 419.67";
     std::string testExpectation = "OpenGL ES 4.6.0 NVIDIA 419.67";
-    EXPECT_EQ(SanitizeVersionString(testString, true), testExpectation);
+    EXPECT_EQ(SanitizeVersionString(testString, true, true), testExpectation);
 }
 
 TEST(DisplayGLTest, SanitizeVersionStringOpenGLESPresent)
 {
     std::string testString      = "OpenGL ES 3.2 v1.r12p0-04rel0.44f2946824bb8739781564bffe2110c9";
     std::string testExpectation = "OpenGL ES 3.2 v1.r12p0-04rel0.44f2946824bb8739781564bffe2110c9";
-    EXPECT_EQ(SanitizeVersionString(testString, true), testExpectation);
+    EXPECT_EQ(SanitizeVersionString(testString, true, true), testExpectation);
+}
+
+TEST(DisplayGLTest, SanitizeVersionStringOpenGLMissingLimited)
+{
+    std::string testString      = "4.6.0 NVIDIA 391.76";
+    std::string testExpectation = "OpenGL 4.6.0";
+    EXPECT_EQ(SanitizeVersionString(testString, false, false), testExpectation);
+}
+
+// Note: OpenGL renderers with this prefix don't actually seem to be present in the wild
+TEST(DisplayGLTest, SanitizeVersionStringOpenGLPresentLimited)
+{
+    std::string testString      = "OpenGL 4.5.0 - Build 22.20.16.4749";
+    std::string testExpectation = "OpenGL 4.5.0";
+    EXPECT_EQ(SanitizeVersionString(testString, false, false), testExpectation);
+}
+
+TEST(DisplayGLTest, SanitizeVersionStringOpenGLESMissingLimited)
+{
+    std::string testString      = "4.6.0 NVIDIA 419.67";
+    std::string testExpectation = "OpenGL ES 4.6.0";
+    EXPECT_EQ(SanitizeVersionString(testString, true, false), testExpectation);
+}
+
+TEST(DisplayGLTest, SanitizeVersionStringOpenGLESPresentLimited)
+{
+    std::string testString      = "OpenGL ES 3.2 v1.r12p0-04rel0.44f2946824bb8739781564bffe2110c9";
+    std::string testExpectation = "OpenGL ES 3.2";
+    EXPECT_EQ(SanitizeVersionString(testString, true, false), testExpectation);
 }
 
 }  // anonymous namespace

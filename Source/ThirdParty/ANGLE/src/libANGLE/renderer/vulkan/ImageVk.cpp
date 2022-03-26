@@ -37,7 +37,7 @@ void ImageVk::onDestroy(const egl::Display *display)
         // TODO: We need to handle the case that EGLImage used in two context that aren't shared.
         // https://issuetracker.google.com/169868803
         mImage->releaseImage(renderer);
-        mImage->releaseStagingBuffer(renderer);
+        mImage->releaseStagedUpdates(renderer);
         SafeDelete(mImage);
     }
     else if (egl::IsExternalImageTarget(mState.target))
@@ -82,7 +82,6 @@ egl::Error ImageVk::initialize(const egl::Display *display)
     }
     else
     {
-        RendererVk *renderer = nullptr;
         if (egl::IsRenderbufferTarget(mState.target))
         {
             RenderbufferVk *renderbufferVk =
@@ -90,7 +89,6 @@ egl::Error ImageVk::initialize(const egl::Display *display)
             mImage = renderbufferVk->getImage();
 
             ASSERT(mContext != nullptr);
-            renderer = vk::GetImpl(mContext)->getRenderer();
         }
         else if (egl::IsExternalImageTarget(mState.target))
         {
@@ -99,7 +97,6 @@ egl::Error ImageVk::initialize(const egl::Display *display)
             mImage = externalImageSibling->getImage();
 
             ASSERT(mContext == nullptr);
-            renderer = vk::GetImpl(display)->getRenderer();
         }
         else
         {
@@ -107,17 +104,7 @@ egl::Error ImageVk::initialize(const egl::Display *display)
             return egl::EglBadAccess();
         }
 
-        // start with some reasonable alignment that's safe for the case where intendedFormatID is
-        // FormatID::NONE
-        size_t alignment = vk::GetValidImageCopyBufferAlignment(mImage->getIntendedFormatID(),
-                                                                mImage->getActualFormatID());
-
-        // Make sure a staging buffer is ready to use to upload data
-        mImage->initStagingBuffer(renderer, alignment, vk::kStagingBufferFlags,
-                                  vk::kStagingBufferSize);
-
-        mOwnsImage = false;
-
+        mOwnsImage        = false;
         mImageTextureType = gl::TextureType::_2D;
         mImageLevel       = gl::LevelIndex(0);
         mImageLayer       = 0;

@@ -426,7 +426,7 @@ TIntermTyped &sh::CoerceSimple(TBasicType toBasicType,
                 case TBasicType::EbtUInt:
                 {
                     TIntermSequence *argsSequence = new TIntermSequence();
-                    for (int i = 0; i < fromType.getNominalSize(); i++)
+                    for (uint8_t i = 0; i < fromType.getNominalSize(); i++)
                     {
                         TIntermTyped &fromTypeSwizzle     = SubVector(fromNode, i, i + 1);
                         TIntermAggregate *boolConstructor = TIntermAggregate::CreateConstructor(
@@ -479,7 +479,7 @@ TIntermTyped &sh::CoerceSimple(const TType &toType,
                 case TBasicType::EbtUInt:
                 {
                     TIntermSequence *argsSequence = new TIntermSequence();
-                    for (int i = 0; i < fromType.getNominalSize(); i++)
+                    for (uint8_t i = 0; i < fromType.getNominalSize(); i++)
                     {
                         TIntermTyped &fromTypeSwizzle     = SubVector(fromNode, i, i + 1);
                         TIntermAggregate *boolConstructor = TIntermAggregate::CreateConstructor(

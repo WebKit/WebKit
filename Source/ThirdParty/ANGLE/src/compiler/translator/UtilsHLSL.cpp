@@ -906,8 +906,8 @@ TString TypeString(const TType &type)
     }
     else if (type.isMatrix())
     {
-        int cols = type.getCols();
-        int rows = type.getRows();
+        uint8_t cols = type.getCols();
+        uint8_t rows = type.getRows();
         return "float" + str(cols) + "x" + str(rows);
     }
     else

@@ -17,6 +17,9 @@
 // Times out shader compilation because it uses so many resources.
 3445 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer.48 = SKIP
 
+// Slow tests.
+6021 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer.36 = TIMEOUT
+
 // D3D11 Failing Tests
 // Below cases are failed due to binding multi-UAVs to a single buffer is not supported in D3D backend.
 // http://anglebug.com/3032
@@ -68,12 +71,6 @@
 3865 D3D11 : dEQP-GLES31.functional.compute.basic.copy_image_to_ssbo_large = FAIL
 3865 D3D11 : dEQP-GLES31.functional.compute.basic.copy_ssbo_to_image_large = FAIL
 
-// Simultaneous use of GL_CONSTANT_ALPHA/GL_ONE_MINUS_CONSTANT_ALPHA and GL_CONSTANT_COLOR/GL_ONE_MINUS_CONSTANT_COLOR as color factors
-4394 D3D11 : dEQP-GLES31.functional.draw_buffers_indexed.random.max_required_draw_buffers.4 = FAIL
-4394 D3D11 : dEQP-GLES31.functional.draw_buffers_indexed.random.max_required_draw_buffers.7 = FAIL
-4394 D3D11 : dEQP-GLES31.functional.draw_buffers_indexed.random.max_implementation_draw_buffers.9 = FAIL
-4394 D3D11 : dEQP-GLES31.functional.draw_buffers_indexed.random.max_implementation_draw_buffers.15 = FAIL
-
 // Failing with dEQP roll
 3447 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_per_block_buffers.22 = FAIL
 3447 D3D11 : dEQP-GLES31.functional.ssbo.layout.random.all_per_block_buffers.41 = FAIL
@@ -85,7 +82,10 @@
 4234 D3D11 : dEQP-GLES31.functional.debug.negative_coverage.callbacks.compute.program_not_active = SKIP
 4234 OPENGL : dEQP-GLES31.functional.debug.negative_coverage.callbacks.compute.program_not_active = SKIP
 
-// OPENGL Failing Tests
+// OpenGL Passing tests.
+3584 OPENGL : dEQP-GLES31.functional.shaders.opaque_type_indexing.sampler.*samplercubearray* = PASS
+
+// OpenGL Failing Tests
 1442 NVIDIA OPENGL : dEQP-GLES31.functional.fbo.no_attachments.maximums.all = FAIL
 1442 OPENGL : dEQP-GLES31.functional.program_interface_query.atomic_counter_buffer.referenced_by* = FAIL
 1442 OPENGL : dEQP-GLES31.functional.program_interface_query.buffer_limited_query.resource_query = FAIL
@@ -106,6 +106,7 @@
 5197 LINUX OPENGL : dEQP-GLES31.functional.compute.indirect_dispatch.gen_in_compute.large_offset_multiple_invocations = TIMEOUT
 
 // OpenGL/D3D11 Failing Tests
+1951 D3D11 : dEQP-GLES31.functional.shaders.opaque_type_indexing.ssbo.* = SKIP
 1442 OPENGL : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
 1442 D3D11 : dEQP-GLES31.functional.shaders.opaque_type_indexing.* = FAIL
 1442 OPENGL : dEQP-GLES31.functional.separate_shader.* = SKIP
@@ -115,8 +116,6 @@
 1442 OPENGL : dEQP-GLES31.functional.state_query.program_pipeline.* = SKIP
 1442 D3D11 : dEQP-GLES31.functional.state_query.program_pipeline.* = SKIP
 
-3584 OPENGL : dEQP-GLES31.functional.shaders.opaque_type_indexing.sampler.*samplercubearray* = PASS
-
 // These tests are failing because of compile errors with SSBOs in compute shaders.
 
 1442 D3D11 : dEQP-GLES31.functional.stencil_texturing.* = SKIP
@@ -125,7 +124,6 @@
 
 1729 D3D11 : dEQP-GLES31.functional.atomic_counter.* = SKIP
 1951 D3D11 : dEQP-GLES31.functional.layout_binding.ssbo.* = SKIP
-1951 D3D11 : dEQP-GLES31.functional.shaders.opaque_type_indexing.ssbo.* = SKIP
 4330 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.referenced_by.separable_vertex.* = SKIP
 4329 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.referenced_by.separable_fragment.* = SKIP
 4329 D3D11 : dEQP-GLES31.functional.program_interface_query.buffer_variable.random.* = SKIP
@@ -138,10 +136,6 @@
 1442 D3D11 : dEQP-GLES31.functional.layout_binding.image.* = SKIP
 // This case is skipped since it uses atomic counter builtin functions which haven't been implemented.
 1729 D3D11 : dEQP-GLES31.functional.state_query.program.active_atomic_counter_buffers_get_programiv = SKIP
-
-// The D3D backend does not expect missing shader stages
-1588 D3D11 : dEQP-GLES31.functional.separate_shader.validation.es31.varying.* = SKIP
-
 
 ////
 //// Failures blocking an official GLES 3.1 conformance run on SwiftShader
@@ -172,6 +166,9 @@
 // Geometry shader support:
 5430 VULKAN : dEQP-GLES31.functional.geometry_shading.query.primitives_generated_* = FAIL
 
+// Framebuffer fetch implementation bug
+6909 VULKAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.basic.framebuffer_texture_layer = SKIP
+
 ////
 //// AMD Vulkan expectations
 ////
@@ -201,16 +198,6 @@
 4371 VULKAN ANDROID : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.add.int_to_vec3_vertex = FAIL
 4371 VULKAN ANDROID : dEQP-GLES31.functional.shaders.implicit_conversions.es31.arithmetic.input_before_literal.add.int_to_uvec3_vertex = FAIL
 4371 SWIFTSHADER : dEQP-GLES31.functional.shaders.implicit_conversions.* = FAIL
-
-// Swiftshader fails to create a correct source/destination srgb8_alpha8_astc image before copy, however 5x4 is correct
-5275 SWIFTSHADER NOSAN : dEQP-GLES31.functional.copy_image.*rgba*srgb8_alpha8_astc_*_khr.*_to_texture2d* = FAIL
-5275 SWIFTSHADER NOSAN : dEQP-GLES31.functional.copy_image.*rgba*srgb8_alpha8_astc_*_khr.*_to_cubemap* = FAIL
-5275 SWIFTSHADER NOSAN : dEQP-GLES31.functional.copy_image.*srgb8_alpha8_astc_*_khr_rgba*.*cubemap_to* = FAIL
-5275 SWIFTSHADER NOSAN : dEQP-GLES31.functional.copy_image.*srgb8_alpha8_astc_*_khr_rgba*.*texture2d*_to* = FAIL
-5275 SWIFTSHADER NOSAN : dEQP-GLES31.functional.copy_image.*srgb8_alpha8_astc_5x4_khr.*texture2d*_to_texture2d* = PASS
-5275 SWIFTSHADER NOSAN : dEQP-GLES31.functional.copy_image.*srgb8_alpha8_astc_5x4_khr.*texture2d*_to_cubemap = PASS
-5275 SWIFTSHADER NOSAN : dEQP-GLES31.functional.copy_image.*srgb8_alpha8_astc_5x4_khr.*cubemap*_to_texture2d* = PASS
-5275 SWIFTSHADER NOSAN : dEQP-GLES31.functional.copy_image.*srgb8_alpha8_astc_5x4_khr.*cubemap_to_cubemap = PASS
 
 // Desktop cards without native etc support, angle emulated format fails
 5276 AMD VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_eac* = FAIL
@@ -275,17 +262,6 @@
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.android_extension_pack.extensions.oes_sample_variables = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es31.extension_directive.oes_texture_storage_multisample_2d_array = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_directive.ext_shader_io_blocks = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.get_dec.1_counter_100_calls_10_threads = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.get_dec.4_counters_5_calls_10_threads = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.get_inc_dec.8_counters_5_calls_10_threads = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.inc.4_counters_100_calls_1_thread = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.inc_branch.8_counters_5_calls_1_thread = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.inc_dec_branch.8_counters_5_calls_1_thread = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.layout.default_offset_set.get_dec.8_counters_5_calls_1_thread = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.layout.default_offset_set.get_inc.8_counters_1_call_1000_threads = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.layout.reset_default_offset.inc_dec.8_counters_1_call_1000_threads = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.layout.reverse_offset.get_dec.8_counters_1_call_1000_threads = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.atomic_counter.layout.reverse_offset.inc_dec.8_counters_5_calls_1_thread = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.coherent.hsl_hue = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.colordodge = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.screen = SKIP
@@ -605,8 +581,6 @@
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rg16ui.texture2d_to_renderbuffer = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rg16ui.texture3d_to_cubemap = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rg16ui.texture3d_to_renderbuffer = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb10_a2.texture2d_to_cubemap = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb9_e5.cubemap_to_cubemap = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgba8i.texture3d_to_cubemap = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgba8ui.texture2d_array_to_texture2d_array = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8i_r32ui.texture2d_array_to_cubemap = SKIP
@@ -693,8 +667,6 @@
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.negative_coverage.callbacks.texture.compressedteximage3d_invalid_border = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.negative_coverage.callbacks.texture.compressedtexsubimage3d_neg_level = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.negative_coverage.get_error.buffer.clear_bufferfv = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.negative_coverage.get_error.buffer.framebuffer_texture = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.negative_coverage.get_error.framebuffer_fetch.invalid_vertex_inout = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.negative_coverage.get_error.shader.bind_transform_feedback = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.negative_coverage.get_error.shader.sampler_parameteri = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.negative_coverage.get_error.shader.shader_source = SKIP
@@ -724,19 +696,12 @@
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.draw_base_vertex.draw_elements_base_vertex.base_vertex.index_neg_byte = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.draw_base_vertex.draw_elements_base_vertex.lines.single_attribute = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.draw_base_vertex.draw_range_elements_base_vertex.line_loop.default_attribute = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.draw_buffers_indexed.overwrite_indexed.common_separate_blend_eq_buffer_separate_blend_eq = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.draw_buffers_indexed.random.max_implementation_draw_buffers.1 = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.draw_buffers_indexed.random.max_required_draw_buffers.1 = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.draw_indirect.compute_interop.large.drawelements_combined_grid_100x100_drawcount_8 = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.draw_indirect.compute_interop.large.drawelements_separate_grid_500x500_drawcount_1 = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.draw_indirect.draw_arrays_indirect.triangles.single_attribute = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.color.texcubearray.r11f_g11f_b10f = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.color.texcubearray.r16f = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.color.texcubearray.rgba4 = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.no_attachments.npot_size.1025x1025 = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.no_attachments.npot_size.31x31 = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.no_attachments.size.1024x1024 = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.no_attachments.size.256x1024 = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.geometry_shading.basic.output_max = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.geometry_shading.basic.primitive_id = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.geometry_shading.input.basic_primitive.line_strip = SKIP
@@ -757,7 +722,6 @@
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.image_load_store.3d.atomic.max_r32ui_return_value = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.image_load_store.3d.atomic.xor_r32ui_result = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.image_load_store.3d.format_reinterpret.rgba16i_rgba16f = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.image_load_store.3d.store.rgba32i_single_layer = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.image_load_store.3d.store.rgba8_snorm = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.image_load_store.buffer.atomic.add_r32i_result = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.image_load_store.buffer.atomic.max_r32ui_result = SKIP
@@ -1227,7 +1191,6 @@
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.ssbo.layout.unsized_nested_struct_array.single_buffer.shared_instance_array = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.ssbo.layout.unsized_struct_array.single_buffer.shared_instance_array = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.state_query.indexed.atomic_counter_buffer_binding_getinteger64i_v = SKIP
-5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.state_query.indexed.color_mask_getintegeri_v = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.state_query.indexed.image_binding_level_getintegeri_v = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.state_query.integer.atomic_counter_buffer_binding_getfloat = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.state_query.integer.max_atomic_counter_buffer_size_getboolean = SKIP
@@ -1381,8 +1344,12 @@
 // Fails when the expression being interpolated as an indexed varying array.
 6194 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_offset.array_element.* = FAIL
 
-// Slow tests.
-6021 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer.36 = TIMEOUT
+// Pixel 6 expectations
+6908 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.linkage.es31.tessellation.varying.rules.internal_different_precision = SKIP
+
+6910 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.layered.layer_provoking_vertex_* = FAIL
+6910 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.query.max_geometry_input_components = FAIL
+6910 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.linkage.es31.tessellation_geometry.varying.rules.different_precision = FAIL
 
 // ASAN Test bugs
 6678 ASAN : dEQP-GLES31.functional.ssbo.array_length.* = SKIP
@@ -1391,13 +1358,17 @@
 6678 ASAN : dEQP-GLES31.functional.debug.error_filters.case_18 = SKIP
 6678 ASAN : dEQP-GLES31.functional.debug.error_groups.case_11 = SKIP
 
-6705 TSAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_astc* = SKIP
-
 6678 UBSAN : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_* = SKIP
 6678 UBSAN : dEQP-GLES31.functional.texture.multisample.samples_* = SKIP
 6678 UBSAN : dEQP-GLES31.functional.shaders.builtin_functions.precision.* = SKIP
 6678 UBSAN : dEQP-GLES31.functional.shaders.builtin_functions.common.* = SKIP
 6678 UBSAN : dEQP-GLES31.functional.draw_indirect.random.* = SKIP
-6678 UBSAN : dEQP-GLES31.functional.draw_buffers_indexed.random.*  = SKIP
 6678 UBSAN : dEQP-GLES31.functional.shaders.builtin_functions.integer.bitfield* = SKIP
 6678 UBSAN : dEQP-GLES31.functional.shaders.sample_variables.sample_pos.distribution.* = SKIP
+
+6678 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.r8 = SKIP
+6678 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rg32i = SKIP
+6678 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rg8 = SKIP
+6678 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rgb565 = SKIP
+6678 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rgb8 = SKIP
+6678 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rgba32i = SKIP

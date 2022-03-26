@@ -22,7 +22,7 @@ Metal and MacOS, Chrome OS, and Fuchsia support.
 | Windows      |    complete    |    complete    |   complete    |   complete  |   complete  |             |
 | Linux        |                |                |   complete    |             |   complete  |             |
 | Mac OS X     |                |                |   complete    |             |             | in progress |
-| iOS          |                |                |               |             |             |   planned   |
+| iOS          |                |                |               |             |             | in progress |
 | Chrome OS    |                |                |               |   complete  |   planned   |             |
 | Android      |                |                |               |   complete  |   complete  |             |
 | GGP (Stadia) |                |                |               |             |   complete  |             |

@@ -130,6 +130,12 @@
 #define EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE 0x34A3
 #endif /* EGL_ANGLE_platform_angle_device_context_volatile_cgl */
 
+#ifndef EGL_ANGLE_platform_angle_device_id
+#define EGL_ANGLE_platform_angle_device_id
+#define EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE 0x34D6
+#define EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE 0x34D7
+#endif /* EGL_ANGLE_platform_angle_device_id */
+
 #ifndef EGL_ANGLE_x11_visual
 #define EGL_ANGLE_x11_visual
 #define EGL_X11_VISUAL_ID_ANGLE 0x33A3
@@ -332,6 +338,14 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLSWAPBUFFERSWITHFRAMETOKENANGLEPROC)(EGLDi
 EGLAPI EGLBoolean EGLAPIENTRY eglSwapBuffersWithFrameTokenANGLE(EGLDisplay dpy, EGLSurface surface, EGLFrameTokenANGLE frametoken);
 #endif
 #endif /* EGL_ANGLE_swap_with_frame_token */
+
+#ifndef EGL_ANGLE_prepare_swap_buffers
+#define EGL_ANGLE_prepare_swap_buffers 1
+typedef EGLBoolean (EGLAPIENTRYP PFNEGLPREPARESWAPBUFFERSANGLEPROC)(EGLDisplay dpy, EGLSurface surface);
+#ifdef EGL_EGLEXT_PROTOTYPES
+EGLAPI EGLBoolean EGLAPIENTRY eglPrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface surface);
+#endif
+#endif /* EGL_ANGLE_prepare_swap_buffers */
 
 #ifndef EGL_ANGLE_device_eagl
 #define EGL_ANGLE_device_eagl 1

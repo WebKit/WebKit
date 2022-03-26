@@ -8,8 +8,6 @@
 
 // Geometry shader support (conditioned to windows as that's our only bot capable of running these
 // tests)
-// Translator's lack of support for redefining gl_PerVertex
-5579 VULKAN WIN : KHR-GLES32.core.geometry_shader.api.getProgramiv3 = FAIL
 // API validation bugs
 5579 VULKAN WIN : KHR-GLES32.core.geometry_shader.qualifiers.flat_interpolation = FAIL
 // Wrong results
@@ -30,7 +28,6 @@
 // Vulkan Validation error regarding buffer usage bits for transform feedback:
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.vertex.vertex_spacing = FAIL
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.single.program_object_properties = FAIL
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_MaxPatchVertices_Position_PointSize = FAIL
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_PatchVerticesIn = FAIL
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = FAIL
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.TCS_TES = FAIL
@@ -38,10 +35,7 @@
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_triangles_tessellation.degenerate_triangle = FAIL
 // Missing names in mVariableInfo map (fail on ASSERT in SPIR-V transformer)
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.single.xfb_captures_data_from_correct_stage = SKIP
-// Translator validation bugs
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.single.max_patch_vertices = FAIL
 // Bug in front-end where builtins are not correctly marked active in every stage
-5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.data_pass_through = FAIL
 // Test failures
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_quads_tessellation.* = FAIL
 5557 VULKAN WIN : KHR-GLES32.core.tessellation_shader.tessellation_shader_triangles_tessellation.identical_triangles = FAIL
@@ -96,10 +90,6 @@
 // Validation error from EXT_gpu_shader5
 5361 VULKAN : KHR-GLES32.core.gpu_shader5.precise_qualifier = FAIL
 
-// Validation error from EXT_copy_image
-5363 VULKAN : KHR-GLES32.core.copy_image.r32i_texture = FAIL
-5363 VULKAN : KHR-GLES32.core.copy_image.r32ui_texture = FAIL
-
 // No known implementation supports STORAGE_TEXEL_BUFFER support for RGB32 formats
 3573 VULKAN : KHR-GLES32.core.texture_buffer.texture_buffer_texture_buffer_range = SKIP
 
@@ -107,7 +97,8 @@
 5342 VULKAN : KHR-GLES32.core.texture_buffer.texture_buffer_atomic_functions = FAIL
 
 // Desktop cards without native etc support
-5276 AMD VULKAN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
+5276 AMD VULKAN LINUX : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
+5276 AMD VULKAN WIN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
 5276 NVIDIA VULKAN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
 
 // New failures with latest dEQP roll (2021-03-05)

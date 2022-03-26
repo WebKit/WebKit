@@ -3346,14 +3346,6 @@ void Context::getnUniformdv(ShaderProgramID program,
     UNIMPLEMENTED();
 }
 
-void Context::getnUniformuiv(ShaderProgramID program,
-                             UniformLocation location,
-                             GLsizei bufSize,
-                             GLuint *params)
-{
-    UNIMPLEMENTED();
-}
-
 void Context::invalidateNamedFramebufferData(FramebufferID framebuffer,
                                              GLsizei numAttachments,
                                              const GLenum *attachments)

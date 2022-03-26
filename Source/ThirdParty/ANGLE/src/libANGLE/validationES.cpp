@@ -1765,6 +1765,97 @@ bool ValidateBindRenderbufferBase(const Context *context,
     return true;
 }
 
+bool ValidateFramebufferParameteriBase(const Context *context,
+                                       angle::EntryPoint entryPoint,
+                                       GLenum target,
+                                       GLenum pname,
+                                       GLint param)
+{
+    if (!ValidFramebufferTarget(context, target))
+    {
+        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidFramebufferTarget);
+        return false;
+    }
+
+    switch (pname)
+    {
+        case GL_FRAMEBUFFER_DEFAULT_WIDTH:
+        {
+            GLint maxWidth = context->getCaps().maxFramebufferWidth;
+            if (param < 0 || param > maxWidth)
+            {
+                context->validationError(entryPoint, GL_INVALID_VALUE, kExceedsFramebufferWidth);
+                return false;
+            }
+            break;
+        }
+        case GL_FRAMEBUFFER_DEFAULT_HEIGHT:
+        {
+            GLint maxHeight = context->getCaps().maxFramebufferHeight;
+            if (param < 0 || param > maxHeight)
+            {
+                context->validationError(entryPoint, GL_INVALID_VALUE, kExceedsFramebufferHeight);
+                return false;
+            }
+            break;
+        }
+        case GL_FRAMEBUFFER_DEFAULT_SAMPLES:
+        {
+            GLint maxSamples = context->getCaps().maxFramebufferSamples;
+            if (param < 0 || param > maxSamples)
+            {
+                context->validationError(entryPoint, GL_INVALID_VALUE, kExceedsFramebufferSamples);
+                return false;
+            }
+            break;
+        }
+        case GL_FRAMEBUFFER_DEFAULT_FIXED_SAMPLE_LOCATIONS:
+        {
+            break;
+        }
+        case GL_FRAMEBUFFER_DEFAULT_LAYERS_EXT:
+        {
+            if (!context->getExtensions().geometryShaderAny() &&
+                context->getClientVersion() < ES_3_2)
+            {
+                context->validationError(entryPoint, GL_INVALID_ENUM,
+                                         kGeometryShaderExtensionNotEnabled);
+                return false;
+            }
+            GLint maxLayers = context->getCaps().maxFramebufferLayers;
+            if (param < 0 || param > maxLayers)
+            {
+                context->validationError(entryPoint, GL_INVALID_VALUE, kInvalidFramebufferLayer);
+                return false;
+            }
+            break;
+        }
+        case GL_FRAMEBUFFER_FLIP_Y_MESA:
+        {
+            if (!context->getExtensions().framebufferFlipYMESA)
+            {
+                context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPname);
+                return false;
+            }
+            break;
+        }
+        default:
+        {
+            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPname);
+            return false;
+        }
+    }
+
+    const Framebuffer *framebuffer = context->getState().getTargetFramebuffer(target);
+    ASSERT(framebuffer);
+    if (framebuffer->isDefault())
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kDefaultFramebuffer);
+        return false;
+    }
+    return true;
+}
+
 bool ValidateFramebufferRenderbufferBase(const Context *context,
                                          angle::EntryPoint entryPoint,
                                          GLenum target,
@@ -1872,6 +1963,14 @@ bool ValidateFramebufferTextureBase(const Context *context,
             tex->getType() == TextureType::Buffer)
         {
             context->validationError(entryPoint, GL_INVALID_OPERATION, kInvalidTextureTarget);
+            return false;
+        }
+
+        if (tex->getState().hasProtectedContent() != context->getState().hasProtectedContent())
+        {
+            context->validationError(
+                entryPoint, GL_INVALID_OPERATION,
+                "Mismatch between Texture and Context Protected Content state");
             return false;
         }
     }
@@ -2878,7 +2977,7 @@ bool ValidateStateQuery(const Context *context,
         break;
 
         case GL_PRIMITIVE_BOUNDING_BOX:
-            if (!context->getExtensions().primitiveBoundingBoxEXT)
+            if (!context->getExtensions().primitiveBoundingBoxAny())
             {
                 context->validationError(entryPoint, GL_INVALID_ENUM, kExtensionNotEnabled);
                 return false;
@@ -3133,9 +3232,9 @@ bool ValidateCopyImageSubDataTargetRegion(const Context *context,
 
         // INVALID_OPERATION is generated if either object is a texture and the texture is not
         // complete
-        // This will handle the texture completeness check. Note that this is missing
-        // completeness validation that ignores format-based compleness rules.
-        if (!texture->isSamplerComplete(context, nullptr))
+        // This will handle the texture completeness check. Note that this ignores format-based
+        // compleness rules.
+        if (!texture->isSamplerCompleteForCopyImage(context, nullptr))
         {
             context->validationError(entryPoint, GL_INVALID_OPERATION, kNotTextureComplete);
             return false;
@@ -4412,12 +4511,12 @@ bool ValidateGetUniformBase(const Context *context,
     return true;
 }
 
-static bool ValidateSizedGetUniform(const Context *context,
-                                    angle::EntryPoint entryPoint,
-                                    ShaderProgramID program,
-                                    UniformLocation location,
-                                    GLsizei bufSize,
-                                    GLsizei *length)
+bool ValidateSizedGetUniform(const Context *context,
+                             angle::EntryPoint entryPoint,
+                             ShaderProgramID program,
+                             UniformLocation location,
+                             GLsizei bufSize,
+                             GLsizei *length)
 {
     if (length)
     {
@@ -4431,7 +4530,7 @@ static bool ValidateSizedGetUniform(const Context *context,
 
     if (bufSize < 0)
     {
-        context->validationError(entryPoint, GL_INVALID_VALUE, kNegativeBufferSize);
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kNegativeBufferSize);
         return false;
     }
 
@@ -4790,7 +4889,7 @@ bool ValidateEGLImageTargetTexture2DOES(const Context *context,
         return false;
     }
 
-    if (imageObject->hasProtectedContent() != context->getState().hasProtectedContent())
+    if (imageObject->hasProtectedContent() && !context->getState().hasProtectedContent())
     {
         context->validationError(entryPoint, GL_INVALID_OPERATION,
                                  "Mismatch between Image and Context Protected Content state");
@@ -5530,6 +5629,57 @@ bool ValidateGetFramebufferAttachmentParameterivBase(const Context *context,
         *numParams = 1;
     }
 
+    return true;
+}
+
+bool ValidateGetFramebufferParameterivBase(const Context *context,
+                                           angle::EntryPoint entryPoint,
+                                           GLenum target,
+                                           GLenum pname,
+                                           const GLint *params)
+{
+    if (!ValidFramebufferTarget(context, target))
+    {
+        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidFramebufferTarget);
+        return false;
+    }
+
+    switch (pname)
+    {
+        case GL_FRAMEBUFFER_DEFAULT_WIDTH:
+        case GL_FRAMEBUFFER_DEFAULT_HEIGHT:
+        case GL_FRAMEBUFFER_DEFAULT_SAMPLES:
+        case GL_FRAMEBUFFER_DEFAULT_FIXED_SAMPLE_LOCATIONS:
+            break;
+        case GL_FRAMEBUFFER_DEFAULT_LAYERS_EXT:
+            if (!context->getExtensions().geometryShaderAny() &&
+                context->getClientVersion() < ES_3_2)
+            {
+                context->validationError(entryPoint, GL_INVALID_ENUM,
+                                         kGeometryShaderExtensionNotEnabled);
+                return false;
+            }
+            break;
+        case GL_FRAMEBUFFER_FLIP_Y_MESA:
+            if (!context->getExtensions().framebufferFlipYMESA)
+            {
+                context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPname);
+                return false;
+            }
+            break;
+        default:
+            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPname);
+            return false;
+    }
+
+    const Framebuffer *framebuffer = context->getState().getTargetFramebuffer(target);
+    ASSERT(framebuffer);
+
+    if (framebuffer->isDefault())
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kDefaultFramebuffer);
+        return false;
+    }
     return true;
 }
 
