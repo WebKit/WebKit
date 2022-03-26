@@ -1,3 +1,11 @@
+2022-03-26  Aakash Jain  <aakash_jain@apple.com>
+
+        Update my github username.
+
+        Unreviewed.
+
+        * metadata/contributors.json:
+
 2022-03-22  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION(r291587): Unintentionally removed contributors change
