@@ -74,7 +74,7 @@ private:
     size_t m_offsetToSavingArea;
     size_t m_stackBytesNeeded;
     RegisterSet m_thunkSaveSet;
-    ptrdiff_t m_offset;
+    size_t m_offset;
 };
 
 template<typename... ArgumentTypes>

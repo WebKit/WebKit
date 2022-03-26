@@ -68,8 +68,8 @@ class CFunctionPtr {
 public:
     using Ptr = void(*)();
 
-    CFunctionPtr() { }
-    CFunctionPtr(std::nullptr_t) { }
+    constexpr CFunctionPtr() = default;
+    constexpr CFunctionPtr(std::nullptr_t) { }
 
     template<typename ReturnType, typename... Arguments>
     constexpr CFunctionPtr(ReturnType(&ptr)(Arguments...))
@@ -135,8 +135,8 @@ private:
 template<PtrTag tag = CFunctionPtrTag>
 class FunctionPtr {
 public:
-    FunctionPtr() { }
-    FunctionPtr(std::nullptr_t) { }
+    constexpr FunctionPtr() = default;
+    constexpr FunctionPtr(std::nullptr_t) { }
 
     template<typename ReturnType, typename... Arguments>
     FunctionPtr(ReturnType(*value)(Arguments...))

@@ -202,6 +202,19 @@ private:
     RegisterBitmap m_bits;
 };
 
+struct RegisterSetHash {
+    static unsigned hash(const RegisterSet& set) { return set.hash(); }
+    static bool equal(const RegisterSet& a, const RegisterSet& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
+};
+
 } // namespace JSC
+
+namespace WTF {
+
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<JSC::RegisterSet> : JSC::RegisterSetHash { };
+
+} // namespace WTF
 
 #endif // !ENABLE(C_LOOP)

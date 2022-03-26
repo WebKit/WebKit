@@ -1,3 +1,50 @@
+2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Include argumentRegisters in identity of SlowPathCallKey when clobberAllRegsInFTLICSlowPath is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=238411
+
+        Reviewed by Mark Lam.
+
+        While SlowPathCallKey includes argumentRegisters, it is not used for its identity check. But this argumentRegisters
+        is effectual on the resulting code in FTLThunks if Options::clobberAllRegsInFTLICSlowPath is set. This causes
+        x64 Debug JSC test failures after enabling DataIC because the same FTLThunks should not be picked for different
+        argument registers when Options::clobberAllRegsInFTLICSlowPath is true.
+
+        However, always including argumentRegisters in the identity check will cause a code size regression since we will
+        lose a chance to duplicate thunks when argumentRegisters is ineffectual. Note that Options::clobberAllRegsInFTLICSlowPath
+        is only set for debugging use cases. Hence, argumentRegisters is normally not effectual.
+
+        In this patch, we include argumentRegisters in SlowPathCallKey's identity check only when Options::clobberAllRegsInFTLICSlowPath
+        is set.  And we also refactor SlowPathCallKey to reduce size of it from 40 to 24.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::CFunctionPtr::CFunctionPtr):
+        (JSC::FunctionPtr::FunctionPtr):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::SlowPathCallContext::keyWithTarget const):
+        * ftl/FTLSlowPathCallKey.cpp:
+        (JSC::FTL::SlowPathCallKey::dump const):
+        * ftl/FTLSlowPathCallKey.h:
+        (JSC::FTL::SlowPathCallKey::SlowPathCallKey):
+        (JSC::FTL::SlowPathCallKey::callTarget const):
+        (JSC::FTL::SlowPathCallKey::usedRegisters const):
+        (JSC::FTL::SlowPathCallKey::argumentRegistersIfClobberingCheckIsEnabled const):
+        (JSC::FTL::SlowPathCallKey::indirectOffset const):
+        (JSC::FTL::SlowPathCallKey::withCallTarget):
+        (JSC::FTL::SlowPathCallKey::isEmptyValue const):
+        (JSC::FTL::SlowPathCallKey::isDeletedValue const):
+        (JSC::FTL::SlowPathCallKey::operator== const):
+        (JSC::FTL::SlowPathCallKey::hash const):
+        (JSC::FTL::SlowPathCallKey::argumentRegisters const): Deleted.
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::registerClobberCheck):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/HashableRegisterSet.h: Removed.
+        * jit/RegisterSet.h:
+        (JSC::RegisterSetHash::hash):
+        (JSC::RegisterSetHash::equal):
+
 2022-03-25  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Clean up DataIC polymorphic call code for OptimizingCallLinkInfo
