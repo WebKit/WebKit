@@ -1,5 +1,41 @@
 2022-03-22  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r290367. rdar://problem/88567612
+
+    Fix GPUP WebGL generator script wrt uninitialised sized span
+    https://bugs.webkit.org/show_bug.cgi?id=235889
+    
+    Patch by Kimmo Kinnunen <kkinnunen@apple.com> on 2022-02-23
+    Reviewed by Antti Koivisto.
+    Source/WebKit:
+    
+    Regenerated.
+    
+    * WebProcess/GPU/graphics/RemoteGraphicsContextGLProxyFunctionsGenerated.cpp:
+    (WebKit::RemoteGraphicsContextGLProxy::getShaderPrecisionFormat):
+    
+    Tools:
+    
+    Fix the generator. The r290328 only edited the generated files.
+    Add a other hunk missing from r290175.
+    
+    * Scripts/generate-gpup-webgl:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290367 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-02-23  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+            Fix GPUP WebGL generator script wrt uninitialised sized span
+            https://bugs.webkit.org/show_bug.cgi?id=235889
+
+            Reviewed by Antti Koivisto.
+            Fix the generator. The r290328 only edited the generated files.
+            Add a other hunk missing from r290175.
+
+            * Scripts/generate-gpup-webgl:
+
+2022-03-22  Alan Coon  <alancoon@apple.com>
+
         Revert r290708. rdar://problem/90113314
 
 2022-03-23  Alan Coon  <alancoon@apple.com>
