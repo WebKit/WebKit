@@ -1,3 +1,16 @@
+2022-03-26  Sihui Liu  <sihui_liu@apple.com>
+
+        Unreviewed, reverting r291909.
+
+        Found a better way to eanble the feature
+
+        Reverted changeset:
+
+        "Disable custom storage paths for IndexedDB and LocalStorage
+        by default"
+        https://bugs.webkit.org/show_bug.cgi?id=236977
+        https://commits.webkit.org/r291909
+
 2022-03-26  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorkerWindowClient.focus

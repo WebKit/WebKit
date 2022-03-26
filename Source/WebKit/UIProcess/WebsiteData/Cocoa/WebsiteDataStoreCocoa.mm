@@ -619,7 +619,7 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& enti
 
 bool WebsiteDataStore::defaultShouldUseCustomStoragePaths()
 {
-    static const bool useGeneralStorageDirectory = isFeatureFlagEnabled("general_directory_for_storage"_s, true);
+    static const bool useGeneralStorageDirectory = isFeatureFlagEnabled("general_directory_for_storage"_s);
     return !useGeneralStorageDirectory;
 }
 
