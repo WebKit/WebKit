@@ -104,24 +104,28 @@ struct ANGLEPlatformDisplay
     ANGLEPlatformDisplay() = default;
 
     ANGLEPlatformDisplay(EGLNativeDisplayType nativeDisplayType)
-        : nativeDisplayType(nativeDisplayType),
-          powerPreference(EGL_LOW_POWER_ANGLE),
-          platformANGLEType(EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE)
+        : nativeDisplayType(nativeDisplayType)
     {}
 
     ANGLEPlatformDisplay(EGLNativeDisplayType nativeDisplayType,
                          EGLAttrib powerPreference,
-                         EGLAttrib platformANGLEType)
+                         EGLAttrib platformANGLEType,
+                         EGLAttrib deviceIdHigh,
+                         EGLAttrib deviceIdLow)
         : nativeDisplayType(nativeDisplayType),
           powerPreference(powerPreference),
-          platformANGLEType(platformANGLEType)
+          platformANGLEType(platformANGLEType),
+          deviceIdHigh(deviceIdHigh),
+          deviceIdLow(deviceIdLow)
     {}
 
-    auto tie() const { return std::tie(nativeDisplayType, powerPreference, platformANGLEType); }
+    auto tie() const { return std::tie(nativeDisplayType, powerPreference, platformANGLEType, deviceIdHigh, deviceIdLow); }
 
-    EGLNativeDisplayType nativeDisplayType;
-    EGLAttrib powerPreference;
-    EGLAttrib platformANGLEType;
+    EGLNativeDisplayType nativeDisplayType { EGL_DEFAULT_DISPLAY };
+    EGLAttrib powerPreference { EGL_LOW_POWER_ANGLE };
+    EGLAttrib platformANGLEType { EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE };
+    EGLAttrib deviceIdHigh { 0 };
+    EGLAttrib deviceIdLow { 0 };
 };
 
 inline bool operator<(const ANGLEPlatformDisplay &a, const ANGLEPlatformDisplay &b)
@@ -686,9 +690,11 @@ Display *Display::GetDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay
         updatedAttribMap.get(EGL_POWER_PREFERENCE_ANGLE, EGL_LOW_POWER_ANGLE);
     EGLAttrib platformANGLEType =
         updatedAttribMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE);
+    EGLAttrib deviceIdHigh = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0);
+    EGLAttrib deviceIdLow  = updatedAttribMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0);
     ANGLEPlatformDisplayMap *displays = GetANGLEPlatformDisplayMap();
-    const auto &iter =
-        displays->find(ANGLEPlatformDisplay(nativeDisplay, powerPreference, platformANGLEType));
+    ANGLEPlatformDisplay displayKey(nativeDisplay, powerPreference, platformANGLEType, deviceIdHigh, deviceIdLow);
+    const auto &iter = displays->find(displayKey);
     if (iter != displays->end())
     {
         display = iter->second;
@@ -703,8 +709,7 @@ Display *Display::GetDisplayFromNativeDisplay(EGLNativeDisplayType nativeDisplay
         }
 
         display = new Display(EGL_PLATFORM_ANGLE_ANGLE, nativeDisplay, nullptr);
-        displays->insert(std::make_pair(
-            ANGLEPlatformDisplay(nativeDisplay, powerPreference, platformANGLEType), display));
+        displays->insert(std::make_pair(displayKey, display));
     }
     // Apply new attributes if the display is not initialized yet.
     if (!display->isInitialized())
@@ -856,7 +861,9 @@ Display::~Display()
         ANGLEPlatformDisplayMap::iterator iter = displays->find(ANGLEPlatformDisplay(
             mState.displayId, mAttributeMap.get(EGL_POWER_PREFERENCE_ANGLE, EGL_LOW_POWER_ANGLE),
             mAttributeMap.get(EGL_PLATFORM_ANGLE_TYPE_ANGLE,
-                              EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE)));
+                              EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE),
+            mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0),
+            mAttributeMap.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0)));
         if (iter != displays->end())
         {
             displays->erase(iter);
