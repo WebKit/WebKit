@@ -3567,3 +3567,6 @@ webkit.org/b/237955 imported/w3c/web-platform-tests/css/css-contain/content-visi
 
 # fast/text/accessibility-bold.html requires WK2. The ***-wk2/TestExpectation files mark it as PASS.
 fast/text/accessibility-bold.html [ Skip ]
+
+# iOS has a WebGPU implementation.
+http/tests/webgpu [ Pass ]

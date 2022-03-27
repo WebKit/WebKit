@@ -1,3 +1,12 @@
+2022-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Import WebGPU Conformance Test Suite
+        https://bugs.webkit.org/show_bug.cgi?id=238123
+
+        Reviewed by Dean Jackson.
+
+        * Scripts/import-webgpu-cts: Added.
+
 2022-03-26  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorkerWindowClient.focus

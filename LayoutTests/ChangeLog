@@ -1,3 +1,1870 @@
+2022-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Import WebGPU Conformance Test Suite
+        https://bugs.webkit.org/show_bug.cgi?id=238123
+
+        Reviewed by Dean Jackson.
+
+        This patch imports the WebGPU Conformance Test Suite, from https://github.com/gpuweb/cts, as of
+        git commit 09f024e50e84f191ee4546ef4021707faa376096. Rather than the CTS having a bunch of HTML
+        files, one for each test, the CTS instead has a single HTML file which takes a query parameter
+        which describes the name of a test to run. Therefore, in order to make it work with our test
+        infrastructure (which requires a bunch of HTML files), we create a bunch of HTML files which just
+        redirect to the CTS test runner, accompanied by the relevant query parameter. There is a script
+        in Tools/Scripts which copies the contents of the CTS and generates these HTML files.
+
+        The WebGPU Conformance Test Suite:
+        1. Is disabled by default
+        2. Is enabled on macOS and iOS
+        3. Is disabled on macOS-WK2 and iOS-WK2 (because of https://bugs.webkit.org/show_bug.cgi?id=233621)
+        4. Each test individually fails, because we're still implementing our WebGPU implementation, so each test
+               is individually marked as [ Pass Failure ImageOnlyFailure Timeout ].
+
+        * TestExpectations:
+        * http/tests/webgpu/common/framework/fixture.js: Added.
+        (export.SkipTestCase):
+        (export.UnexpectedPassError):
+        (export.Fixture):
+        (export.Fixture.prototype.get params):
+        (export.Fixture.prototype.async init):
+        (export.Fixture.prototype.async finalize):
+        (export.Fixture.prototype.doInit):
+        (export.Fixture.prototype.doFinalize):
+        (export.Fixture.prototype.trackForCleanup):
+        (export.Fixture.prototype.tryTrackForCleanup):
+        (export.Fixture.prototype.debug):
+        (export.Fixture.prototype.skip):
+        (export.Fixture.prototype.warn):
+        (export.Fixture.prototype.fail):
+        (export.Fixture.prototype.async immediateAsyncExpectation):
+        (export.Fixture.prototype.eventualAsyncExpectation):
+        (export.Fixture.prototype.expectErrorValue):
+        (export.Fixture.prototype.shouldResolve):
+        (export.Fixture.prototype.async shouldReject):
+        (export.Fixture.prototype.async shouldThrow):
+        (export.Fixture.prototype.expect):
+        (export.Fixture.prototype.expectOK):
+        * http/tests/webgpu/common/framework/fixture.js.map: Added.
+        * http/tests/webgpu/common/framework/params_builder.js: Added.
+        (export.ParamsBuilderBase):
+        (export.builderIterateCasesWithSubcases):
+        (export.CaseParamsBuilder.prototype.iterateCasesWithSubcases):
+        (export.CaseParamsBuilder.prototype.Symbol.iterator):
+        (export.CaseParamsBuilder.prototype.expandWithParams):
+        (export.CaseParamsBuilder.prototype.expand):
+        (export.CaseParamsBuilder.prototype.combineWithParams):
+        (export.CaseParamsBuilder.prototype.combine):
+        (export.CaseParamsBuilder.prototype.filter):
+        (export.CaseParamsBuilder.prototype.unless):
+        (export.CaseParamsBuilder.prototype.beginSubcases):
+        (export.CaseParamsBuilder):
+        (export.const.kUnitCaseParamsBuilder.new.CaseParamsBuilder):
+        (export.SubcaseParamsBuilder):
+        (export.SubcaseParamsBuilder.prototype.iterateCasesWithSubcases):
+        (export.SubcaseParamsBuilder.prototype.expandWithParams):
+        (export.SubcaseParamsBuilder.prototype.expand):
+        (export.SubcaseParamsBuilder.prototype.combineWithParams):
+        (export.SubcaseParamsBuilder.prototype.combine):
+        (export.SubcaseParamsBuilder.prototype.filter):
+        (export.SubcaseParamsBuilder.prototype.unless):
+        (filterGenerator):
+        * http/tests/webgpu/common/framework/params_builder.js.map: Added.
+        * http/tests/webgpu/common/framework/resources.js: Added.
+        (export.getResourcePath):
+        (export.setBaseResourcePath):
+        * http/tests/webgpu/common/framework/resources.js.map: Added.
+        * http/tests/webgpu/common/framework/test_group.js: Added.
+        * http/tests/webgpu/common/framework/test_group.js.map: Added.
+        * http/tests/webgpu/common/internal/file_loader.js: Added.
+        (export.TestFileLoader.prototype.importSpecFile):
+        (export.TestFileLoader.prototype.async loadTree):
+        (export.TestFileLoader.prototype.async loadCases):
+        (export.TestFileLoader):
+        (export.DefaultTestFileLoader.prototype.async listing):
+        (export.DefaultTestFileLoader.prototype.import):
+        (export.DefaultTestFileLoader):
+        * http/tests/webgpu/common/internal/file_loader.js.map: Added.
+        * http/tests/webgpu/common/internal/logging/log_message.js: Added.
+        (export.LogMessageWithStack):
+        (export.LogMessageWithStack.prototype.setStackHidden):
+        (export.LogMessageWithStack.prototype.toJSON):
+        (export.prettyPrintLog):
+        * http/tests/webgpu/common/internal/logging/log_message.js.map: Added.
+        * http/tests/webgpu/common/internal/logging/logger.js: Added.
+        (export.Logger):
+        (export.Logger.prototype.record):
+        (export.Logger.prototype.asJSON):
+        * http/tests/webgpu/common/internal/logging/logger.js.map: Added.
+        * http/tests/webgpu/common/internal/logging/result.js: Added.
+        * http/tests/webgpu/common/internal/logging/result.js.map: Added.
+        * http/tests/webgpu/common/internal/logging/test_case_recorder.js: Added.
+        (export.TestCaseRecorder):
+        (export.TestCaseRecorder.prototype.start):
+        (export.TestCaseRecorder.prototype.finish):
+        (export.TestCaseRecorder.prototype.beginSubCase):
+        (export.TestCaseRecorder.prototype.endSubCase):
+        (export.TestCaseRecorder.prototype.injectResult):
+        (export.TestCaseRecorder.prototype.debug):
+        (export.TestCaseRecorder.prototype.info):
+        (export.TestCaseRecorder.prototype.skipped):
+        (export.TestCaseRecorder.prototype.warn):
+        (export.TestCaseRecorder.prototype.expectationFailed):
+        (export.TestCaseRecorder.prototype.validationFailed):
+        (export.TestCaseRecorder.prototype.threw):
+        (export.TestCaseRecorder.prototype.logImpl):
+        * http/tests/webgpu/common/internal/logging/test_case_recorder.js.map: Added.
+        * http/tests/webgpu/common/internal/params_utils.js: Added.
+        (export.paramKeyIsPublic):
+        (export.extractPublicParams):
+        (export.publicParamsEquals):
+        (typeAssert):
+        (export.mergeParams):
+        * http/tests/webgpu/common/internal/params_utils.js.map: Added.
+        * http/tests/webgpu/common/internal/query/compare.js: Added.
+        (export.compareQueries):
+        (compareOneLevel):
+        (comparePaths):
+        (export.comparePublicParamsPaths):
+        * http/tests/webgpu/common/internal/query/compare.js.map: Added.
+        * http/tests/webgpu/common/internal/query/encode_selectively.js: Added.
+        (export.encodeURIComponentSelectively):
+        * http/tests/webgpu/common/internal/query/encode_selectively.js.map: Added.
+        * http/tests/webgpu/common/internal/query/json_param_value.js: Added.
+        (stringifyFilter):
+        (export.stringifyParamValue):
+        (export.stringifyParamValueUniquely):
+        (export.parseParamValue):
+        * http/tests/webgpu/common/internal/query/json_param_value.js.map: Added.
+        * http/tests/webgpu/common/internal/query/parseQuery.js: Added.
+        (export.parseQuery):
+        (parseQueryImpl):
+        (parseBigPart):
+        (parseSingleParam):
+        (parseSingleParamValue):
+        * http/tests/webgpu/common/internal/query/parseQuery.js.map: Added.
+        * http/tests/webgpu/common/internal/query/query.js: Added.
+        (export.TestQueryMultiFile):
+        (export.TestQueryMultiFile.prototype.get depthInLevel):
+        (export.TestQueryMultiFile.prototype.toString):
+        (export.TestQueryMultiFile.prototype.toStringHelper):
+        (export.TestQueryMultiTest):
+        (export.TestQueryMultiTest.prototype.get depthInLevel):
+        (export.TestQueryMultiTest.prototype.toStringHelper):
+        (export.TestQueryMultiCase):
+        (export.TestQueryMultiCase.prototype.get depthInLevel):
+        (export.TestQueryMultiCase.prototype.toStringHelper):
+        (export.TestQuerySingleCase.prototype.get depthInLevel):
+        (export.TestQuerySingleCase.prototype.toStringHelper):
+        (export.TestQuerySingleCase):
+        (export.parseExpectationsForTestQuery):
+        (export.relativeQueryString):
+        * http/tests/webgpu/common/internal/query/query.js.map: Added.
+        * http/tests/webgpu/common/internal/query/separators.js: Added.
+        * http/tests/webgpu/common/internal/query/separators.js.map: Added.
+        * http/tests/webgpu/common/internal/query/stringify_params.js: Added.
+        (export.stringifyPublicParams):
+        (export.stringifyPublicParamsUniquely):
+        (export.stringifySingleParam):
+        (stringifySingleParamUniquely):
+        (stringifySingleParamValue):
+        * http/tests/webgpu/common/internal/query/stringify_params.js.map: Added.
+        * http/tests/webgpu/common/internal/query/validQueryPart.js: Added.
+        * http/tests/webgpu/common/internal/query/validQueryPart.js.map: Added.
+        * http/tests/webgpu/common/internal/stack.js: Added.
+        (export.extractImportantStackTrace):
+        * http/tests/webgpu/common/internal/stack.js.map: Added.
+        * http/tests/webgpu/common/internal/test_group.js: Added.
+        (export.makeTestGroup):
+        (export.makeTestGroupForUnitTesting):
+        (export.TestGroup):
+        (export.TestGroup.prototype.iterate):
+        (export.TestGroup.prototype.checkName):
+        (export.TestGroup.prototype.test):
+        (export.TestGroup.prototype.validate):
+        (TestBuilder):
+        (TestBuilder.prototype.desc):
+        (TestBuilder.prototype.uniqueId):
+        (TestBuilder.prototype.specURL):
+        (TestBuilder.prototype.fn):
+        (TestBuilder.prototype.batch):
+        (TestBuilder.prototype.unimplemented):
+        (TestBuilder.prototype.validate):
+        (TestBuilder.prototype.params):
+        (TestBuilder.prototype.paramsSimple):
+        (TestBuilder.prototype.paramsSubcasesOnly):
+        (TestBuilder.prototype.iterate):
+        (prototype.async runTest):
+        (prototype.async run):
+        * http/tests/webgpu/common/internal/test_group.js.map: Added.
+        * http/tests/webgpu/common/internal/test_suite_listing.js: Added.
+        * http/tests/webgpu/common/internal/test_suite_listing.js.map: Added.
+        * http/tests/webgpu/common/internal/tree.js: Added.
+        (export.TestTree):
+        (export.TestTree.prototype.iterateCollapsedNodes):
+        (export.TestTree.prototype.iterateLeaves):
+        (export.TestTree.prototype.dissolveSingleChildTrees):
+        (export.TestTree.prototype.toString):
+        (export.TestTree.iterateSubtreeNodes):
+        (export.TestTree.iterateSubtreeLeaves):
+        (export.TestTree.propagateCounts):
+        (export.TestTree.countsToString):
+        (export.TestTree.subtreeToString):
+        (export.async loadTreeForQuery):
+        (setSubtreeDescriptionAndCountTODOs):
+        (makeTreeForSuite):
+        (addSubtreeForDirPath):
+        (addSubtreeForFilePath):
+        (addSubtreeForTestPath):
+        (getOrInsertSubtree):
+        (insertLeaf):
+        (dissolveSingleChildTrees):
+        (readableNameForCase):
+        * http/tests/webgpu/common/internal/tree.js.map: Added.
+        * http/tests/webgpu/common/internal/util.js: Added.
+        (export.StacklessError):
+        * http/tests/webgpu/common/internal/util.js.map: Added.
+        * http/tests/webgpu/common/internal/version.js: Added.
+        * http/tests/webgpu/common/runtime/cmdline.js: Added.
+        (usage):
+        (i.a.startsWith):
+        * http/tests/webgpu/common/runtime/cmdline.js.map: Added.
+        * http/tests/webgpu/common/runtime/helper/options.js: Added.
+        (getWindowURL):
+        (export.optionEnabled):
+        * http/tests/webgpu/common/runtime/helper/options.js.map: Added.
+        * http/tests/webgpu/common/runtime/helper/sys.js: Added.
+        (node):
+        (deno.existsSync):
+        (deno):
+        * http/tests/webgpu/common/runtime/helper/sys.js.map: Added.
+        * http/tests/webgpu/common/runtime/helper/test_worker-worker.js: Added.
+        (self.onmessage.async ev):
+        * http/tests/webgpu/common/runtime/helper/test_worker-worker.js.map: Added.
+        * http/tests/webgpu/common/runtime/helper/test_worker.js: Added.
+        (export.TestWorker):
+        (export.TestWorker.prototype.async run):
+        * http/tests/webgpu/common/runtime/helper/test_worker.js.map: Added.
+        * http/tests/webgpu/common/runtime/server.js: Added.
+        (usage):
+        * http/tests/webgpu/common/runtime/server.js.map: Added.
+        * http/tests/webgpu/common/runtime/standalone.js: Added.
+        (window.onbeforeunload):
+        (emptySubtreeResult):
+        (mergeSubtreeResults):
+        (memoize):
+        (makeTreeNodeHTML):
+        (makeCaseHTML.const.runSubtree.async if):
+        (makeCaseHTML):
+        (const.runMySubtree.async if):
+        (makeSubtreeHTML):
+        (const.runMySubtree.async const):
+        (makeSubtreeChildrenHTML):
+        (consoleLogError):
+        (async appendTo):
+        (makeTreeNodeHeaderHTML):
+        (async const):
+        (qs.push):
+        * http/tests/webgpu/common/runtime/standalone.js.map: Added.
+        * http/tests/webgpu/common/runtime/wpt.js: Added.
+        (const.wpt_fn.async const):
+        (async const):
+        * http/tests/webgpu/common/runtime/wpt.js.map: Added.
+        * http/tests/webgpu/common/tools/checklist.js: Added.
+        (usage):
+        (async loadQueryListFromTextFile):
+        (checkForOverlappingQueries):
+        (async console):
+        (catch):
+        * http/tests/webgpu/common/tools/checklist.js.map: Added.
+        * http/tests/webgpu/common/tools/crawl.js: Added.
+        (async crawlFilesRecursively.async const):
+        (async crawlFilesRecursively):
+        (async export.async crawl):
+        (export.makeListing):
+        * http/tests/webgpu/common/tools/crawl.js.map: Added.
+        * http/tests/webgpu/common/tools/dev_server.js: Added.
+        (const.babelConfig.string_appeared_here):
+        (dirtyCompileCache):
+        (dirtyListingAndCompileCache):
+        (app.use):
+        (async req):
+        (port.const.iface.of.Object.values.os.networkInterfaces):
+        * http/tests/webgpu/common/tools/dev_server.js.map: Added.
+        * http/tests/webgpu/common/tools/gen_listings.js: Added.
+        (usage):
+        (argv.indexOf):
+        (async for):
+        * http/tests/webgpu/common/tools/gen_listings.js.map: Added.
+        * http/tests/webgpu/common/tools/gen_wpt_cts_html.js: Added.
+        (printUsageAndExit):
+        (async let):
+        (expLoop):
+        (const.prefix.of.argsPrefixes.of.tree.iterateCollapsedNodes):
+        (catch):
+        (async generateFile):
+        * http/tests/webgpu/common/tools/gen_wpt_cts_html.js.map: Added.
+        * http/tests/webgpu/common/tools/version.js: Added.
+        * http/tests/webgpu/common/tools/version.js.map: Added.
+        * http/tests/webgpu/common/util/collect_garbage.js: Added.
+        (export.async attemptGarbageCollection.gcRec):
+        (export.async attemptGarbageCollection):
+        * http/tests/webgpu/common/util/collect_garbage.js.map: Added.
+        * http/tests/webgpu/common/util/colors.js: Added.
+        * http/tests/webgpu/common/util/colors.js.map: Added.
+        * http/tests/webgpu/common/util/data_tables.js: Added.
+        (export.keysOf):
+        (export.numericKeysOf):
+        (export.makeTable):
+        * http/tests/webgpu/common/util/data_tables.js.map: Added.
+        * http/tests/webgpu/common/util/navigator_gpu.js: Added.
+        (defaultGPUProvider):
+        (export.setGPUProvider):
+        (export.getGPU):
+        * http/tests/webgpu/common/util/navigator_gpu.js.map: Added.
+        * http/tests/webgpu/common/util/preprocessor.js: Added.
+        (prototype.checkDepth):
+        (prototype.applyTo):
+        (Else.prototype.applyTo):
+        (Else):
+        (export.pp):
+        * http/tests/webgpu/common/util/preprocessor.js.map: Added.
+        * http/tests/webgpu/common/util/timeout.js: Added.
+        * http/tests/webgpu/common/util/timeout.js.map: Added.
+        * http/tests/webgpu/common/util/types.js: Added.
+        (export.assertTypeTrue):
+        * http/tests/webgpu/common/util/types.js.map: Added.
+        * http/tests/webgpu/common/util/util.js: Added.
+        (export.ErrorWithExtra):
+        (export.assert):
+        (export.assertOK):
+        (export.async assertReject):
+        (export.unreachable):
+        (export.now):
+        (export.resolveOnTimeout):
+        (export.PromiseTimeoutError):
+        (export.rejectOnTimeout):
+        (export.raceWithRejectOnTimeout):
+        (export.sortObjectByKey):
+        (export.objectEquals):
+        (export.range):
+        (export.iterRange):
+        (subarrayAsU8):
+        * http/tests/webgpu/common/util/util.js.map: Added.
+        * http/tests/webgpu/cts.https-expected.txt: Added.
+        * http/tests/webgpu/cts.https.html: Added.
+        * http/tests/webgpu/resources/Di-3d.png: Added.
+        * http/tests/webgpu/resources/README.md: Added.
+        * http/tests/webgpu/resources/red-green.bt601.vp9.webm: Added.
+        * http/tests/webgpu/resources/red-green.mp4: Added.
+        * http/tests/webgpu/resources/red-green.theora.ogv: Added.
+        * http/tests/webgpu/resources/red-green.webmvp8.webm: Added.
+        * http/tests/webgpu/webgpu/api/operation/adapter/requestDevice-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/adapter/requestDevice.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/adapter/requestDevice.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/adapter/requestDevice_limits-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/adapter/requestDevice_limits.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/adapter/requestDevice_limits.spec.js: Added.
+        (g.test.string_appeared_here.desc.Test.that.specifying.limits.that.aren.requestDevice.to.reject.fn.async t):
+        (string_appeared_here.fn.async t):
+        (65535.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/buffers/map-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/buffers/map.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/buffers/map.spec.js: Added.
+        (and.the.contents.of.buffers.returned.by.getMappedRange.on.buffers.are.mapped.read.mapped.write.mappedAtCreation.range.used.getMappedRange.mapRegion.used.mapAsync.mapRegionBoundModes.is.used.to.get mapRegion):
+        (getRegionForMap):
+        * http/tests/webgpu/webgpu/api/operation/buffers/map_ArrayBuffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/buffers/map_ArrayBuffer.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/buffers/map_ArrayBuffer.spec.js: Added.
+        (string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/buffers/map_detach-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/buffers/map_detach.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/buffers/map_detach.spec.js: Added.
+        (unless.p.p.mappedAtCreation.false.p.mapMode.undefined.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/buffers/map_oom-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/buffers/map_oom.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/buffers/map_oom.spec.js: Added.
+        (true.fn.async t):
+        (kBufferUsages.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/buffers/mapping_test.js: Added.
+        (export.MappingTest.prototype.checkMapWrite):
+        (export.MappingTest.prototype.checkMapWriteZeroed):
+        (export.MappingTest.prototype.expectZero):
+        (export.MappingTest):
+        * http/tests/webgpu/webgpu/api/operation/buffers/threading-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/buffers/threading.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/buffers/threading.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/basic-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/basic.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/basic.spec.js: Added.
+        (g.test.string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/clearBuffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/clearBuffer.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/clearBuffer.spec.js: Added.
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/copyBufferToBuffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/copyBufferToBuffer.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/copyBufferToBuffer.spec.js: Added.
+        (p.dstOffset.p.copySize.8.fn.async t):
+        (and.check.contents.of.both.fn.async t):
+        (then.checks.the.dst.buffer.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/copyTextureToTexture-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/copyTextureToTexture.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/copyTextureToTexture.spec.js: Added.
+        (F.prototype.GetInitialData):
+        (F.prototype.GetInitialDataPerMipLevel):
+        (F.prototype.GetInitialStencilDataPerMipLevel):
+        (F.prototype.DoCopyTextureToTextureTest):
+        (F.prototype.InitializeStencilAspect):
+        (F.prototype.VerifyStencilAspect):
+        (F.prototype.GetRenderPipelineForT2TCopyWithDepthTests):
+        (F.prototype.GetBindGroupLayoutForT2TCopyWithDepthTests):
+        (F.prototype.GetBindGroupForT2TCopyWithDepthTests):
+        (F.prototype.InitializeDepthAspect):
+        (F.prototype.VerifyDepthAspect):
+        (F):
+        (kRegularTextureFormats.filter):
+        (3.unless.p.p.dimension.string_appeared_here.p.srcCopyLevel.0.p.dstCopyLevel.0.fn.async t):
+        (kCompressedTextureFormats.filter):
+        (2.fn.async t):
+        (3.fn.async t):
+        (g.test.string_appeared_here.desc.Validate.the.correctness.of.copyTextureToTexture.with.depth.and.stencil.aspect.For.all.the.texture.formats.with.stencil.aspect.Initialize.the.stencil.aspect.of.the.source.texture.with.writeTexture.Copy.the.stencil.aspect.from.the.source.texture.into.the.destination.texture.Copy.the.stencil.aspect.of.the.destination.texture.into.another.staging.buffer.and.check.its.content.Test.the.copies.from.into.zero.non.zero.array.layer.mipmap.levels.Test.copying.multiple.array.layers.For.all.the.texture.formats.with.depth.aspect.Initialize.the.depth.aspect.of.the.source.texture.with.a.draw.call.Copy.the.depth.aspect.from.the.source.texture.into.the.destination.texture.Validate.the.content.in.the.destination.texture.with.the.depth.comparison.string_appeared_here):
+        (async fn):
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/image_copy-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/image_copy.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/image_copy.spec.js: Added.
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.number.instead.of.GPUExtent3DDict.copy_various_mip_levels.test.that.copying.various.mip.levels.works.all.formats.Also.covers.special.code.paths.the.physical.size.of.the.subresource.is.not.equal.to.the.logical.size.bufferSize.offset.bytesPerImage.copyExtent.depthOrArrayLayers.and.copyExtent.needs.to.be.clamped.copy_with_no_image_or_slice_padding_and_undefined_values.test.that.when.copying.a.single.row.we.can.set any.bytesPerRow.value.and.when.copying.a.single.slice.we.can.set rowsPerImage):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.number.instead.of.GPUExtent3DDict.copy_various_mip_levels.test.that.copying.various.mip.levels.works.all.formats.Also.covers.special.code.paths.the.physical.size.of.the.subresource.is.not.equal.to.the.logical.size.bufferSize.offset.bytesPerImage.copyExtent.depthOrArrayLayers.and.copyExtent.needs.to.be.clamped.copy_with_no_image_or_slice_padding_and_undefined_values.test.that.when.copying.a.single.row.we.can.set any):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.getTexelOffsetInBytes):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.iterateBlockRows):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.generateData):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.undefDataLayoutIfNeeded):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.undefOrArrayCopyViewIfNeeded):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.arrayCopySizeIfNeeded):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.copyTextureToBufferWithAppliedArguments):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.uploadLinearTextureDataToTextureSubBox):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.copyPartialTextureToBufferAndCheckContents):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.copyWholeTextureToNewBuffer):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.updateLinearTextureDataSubBox):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.copyWholeTextureToBufferAndCheckContentsWithUpdatedData):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.async uploadTextureAndVerifyCopy):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.async DoUploadToStencilTest):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.async DoCopyFromStencilTest):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.async checkStencilTextureContent):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.initializeDepthAspectWithRendering):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest.prototype.DoCopyTextureToBufferWithDepthAspectTest):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.ImageCopyTest):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including.formatCanBeTested):
+        (0.and.is.isnstring_appeared_heret.power.of.2.values.also.including):
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/programmable/programmable_state_test.js: Added.
+        (export.ProgrammableStateTest.prototype.getBindGroupLayout):
+        (export.ProgrammableStateTest.prototype.getBindGroupLayouts):
+        (export.ProgrammableStateTest.prototype.createBindGroup):
+        (export.ProgrammableStateTest.prototype.setBindGroup):
+        (export.ProgrammableStateTest.prototype.createBindingStatePipeline):
+        (export.ProgrammableStateTest.prototype.setPipeline):
+        (export.ProgrammableStateTest.prototype.dispatchOrDraw):
+        (export.ProgrammableStateTest):
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/programmable/state_tracking.spec.js: Added.
+        (export.const.description.Ensure.state.is.set correctly):
+        (fn.async t):
+        (g.test.string_appeared_here.desc.Test.that.the.order.in.you.set the):
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/render/dynamic_state-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/render/dynamic_state.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/render/dynamic_state.spec.js: Added.
+        (Set.the.state.in.different.ways.to.make.sure.it.gets.the.correct.value.in.the.end.state.unset.default.state.explicitly.set once):
+        (set import):
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/render/state_tracking-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/render/state_tracking.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/command_buffer/render/state_tracking.spec.js: Added.
+        (export.const.description.Ensure.state.is.set correctly):
+        (VertexAndIndexStateTrackingTest.prototype.GetRenderPipelineForTest):
+        (VertexAndIndexStateTrackingTest):
+        (size.multiple.times.in.different.orders.still.keeps.the.correctness.of.each.draw.call.fn.async t):
+        (and.check.they.were.drawn.correctly.fn.async t):
+        (the.vertex.buffer.stride.is.part.of.SetVertexBuffer.instead.of.the.pipeline.fn.async t):
+        (The.test.verifies.both.of.these.two.draw.calls.work.correctly.fn.async t):
+        (g.test.string_appeared_here.desc.Test.that.setting.not.setting.the.index.buffer.does.not.impact.a.non.indexed.draw.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/compute/basic-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/compute/basic.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/compute/basic.spec.js: Added.
+        (g.test.string_appeared_here.fn.async t):
+        (kMaxComputeWorkgroupSize.p.largeDimension.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/compute_pipeline/entry_point_name-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/compute_pipeline/entry_point_name.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/compute_pipeline/entry_point_name.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/device/lost-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/device/lost.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/device/lost.spec.js: Added.
+        (DeviceLostTests.prototype.getDeviceLostWithTimeout):
+        (DeviceLostTests.prototype.expectDeviceDestroyed):
+        (DeviceLostTests):
+        (async export):
+        * http/tests/webgpu/webgpu/api/operation/labels-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/labels.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/labels.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/buffer_sync_test.js: Added.
+        (export.BufferSyncTest.prototype.async createBufferWithValue):
+        (export.BufferSyncTest.prototype.async createTextureWithValue):
+        (export.BufferSyncTest.prototype.createBindGroup):
+        (export.BufferSyncTest.prototype.createStorageWriteComputePipeline):
+        (export.BufferSyncTest.prototype.createStorageWriteRenderPipeline):
+        (export.BufferSyncTest.prototype.beginSimpleRenderPass):
+        (export.BufferSyncTest.prototype.encodeWriteAsStorageBufferInRenderPass):
+        (export.BufferSyncTest.prototype.encodeWriteAsStorageBufferInComputePass):
+        (export.BufferSyncTest.prototype.async encodeWriteByB2BCopy):
+        (export.BufferSyncTest.prototype.async encodeWriteByT2BCopy):
+        (export.BufferSyncTest.prototype.writeByWriteBuffer):
+        (export.BufferSyncTest.prototype.async encodeWriteOp):
+        (export.BufferSyncTest.prototype.async createCommandBufferWithWriteOp):
+        (export.BufferSyncTest.prototype.async submitWriteOp):
+        (export.BufferSyncTest.prototype.verifyData):
+        (export.BufferSyncTest.prototype.verifyDataTwoValidValues):
+        (export.BufferSyncTest):
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/rw_and_wr-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/rw_and_wr.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/rw_and_wr.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/ww-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/ww.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/ww.spec.js: Added.
+        (kAllWriteOps.fn.async t):
+        (true.fn.async t):
+        (g.test.string_appeared_here.desc.Test.write.after.write.operations.in.the.same.render.bundle.The.first.write.will.write.1.into.a.storage.buffer.The.second.write.will.write.2.into.the.same.buffer.in.the.same.pass.Expected.data.in.buffer.is.either.1.or.2.fn.async t):
+        (g.test.string_appeared_here.desc.Test.write.after.write.operations.in.the.same.compute.pass.The.first.write.will.write.1.into.a.storage.buffer.The.second.write.will.write.2.into.the.same.buffer.in.the.same.pass.Expected.data.in.buffer.is.2.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/texture/same_subresource-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/texture/same_subresource.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/texture/same_subresource.spec.js: Added.
+        (TextureSyncTestHelper):
+        (TextureSyncTestHelper.prototype.performReadOp):
+        (TextureSyncTestHelper.prototype.performWriteOp):
+        (TextureSyncTestHelper.prototype.ensureSubmit):
+        (TextureSyncTestHelper.prototype.popContext):
+        (TextureSyncTestHelper.prototype.makeDummyAttachment):
+        (TextureSyncTestHelper.prototype.ensureContext):
+        (TextureSyncTestHelper.prototype.flushRenderBundles):
+        (TextureSyncTestHelper.prototype.flushCommandBuffers):
+        (TextureSyncTestHelper.prototype.ensureBoundary):
+        (p.kBoundaryInfo.p.boundary.contexts.expandWithParams):
+        * http/tests/webgpu/webgpu/api/operation/memory_sync/texture/texture_sync_test.js: Added.
+        (combineContexts):
+        (export.checkOpsValidForContext):
+        * http/tests/webgpu/webgpu/api/operation/onSubmittedWorkDone-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/onSubmittedWorkDone.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/onSubmittedWorkDone.spec.js: Added.
+        (g.test.string_appeared_here.desc.Await.onSubmittedWorkDone.once.without.having.submitted.any.work.fn.async t):
+        (g.test.string_appeared_here.desc.Await.onSubmittedWorkDone.once.after.submitting.some.work.writeBuffer.fn.async t):
+        (g.test.string_appeared_here.desc.Await.1000.onSubmittedWorkDone.calls.in.serial.fn.async t):
+        (g.test.string_appeared_here.desc.Await.1000.onSubmittedWorkDone.calls.in.parallel.with.Promise.all.fn.async t):
+        (g.test.string_appeared_here.desc.Issue.200.onSubmittedWorkDone.calls.and.make.sure.they.resolve.in.the.right.order.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/pipeline/default_layout-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/pipeline/default_layout.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/pipeline/default_layout.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/queue/writeBuffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/queue/writeBuffer.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/queue/writeBuffer.spec.js: Added.
+        (F.prototype.calculateRequiredBufferSize):
+        (F.prototype.testWriteBuffer):
+        (F):
+        * http/tests/webgpu/webgpu/api/operation/render_pass/clear_value-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pass/clear_value.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pass/clear_value.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pass/resolve-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pass/resolve.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pass/resolve.spec.js: Added.
+        (some.with.and.some.without.a.resolveTarget.renderPass.storeOp.set to):
+        (1.fn.t.i.t.params.slotsToResolve.includes):
+        * http/tests/webgpu/webgpu/api/operation/render_pass/storeOp-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pass/storeOp.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pass/storeOp.spec.js: Added.
+        (work.correctly.a.render.pass.with.a.color.attachment.All.renderable.color.formats.mip.level.set to):
+        (array.layer.set to):
+        (2D.textures.TODO.depth.slice.set to):
+        (work.correctly.a.render.pass.with.a.depth.stencil.attachment.All.renderable.depth.stencil.formats.mip.level.set to):
+        (2D.textures.TODO.test.depth24plus.and.depth24plus.stencil8.formats.TODO.test.that.depth.and.stencil.aspects.are.set separately.TODO.depth.slice.set to):
+        (2D.textures.TODO.test.depth24plus.and.depth24plus.stencil8.formats.TODO.test.that.depth.and.stencil.aspects.are.set separately):
+        (kStoreOps.fn.t.else):
+        (kEncodableTextureFormats.filter):
+        (kArrayLayers.fn.t.else):
+        (kNumColorAttachments.fn.t.i.else):
+        * http/tests/webgpu/webgpu/api/operation/render_pass/storeop2-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pass/storeop2.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pass/storeop2.spec.js: Added.
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/alpha_to_coverage-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/alpha_to_coverage.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/alpha_to_coverage.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/culling_tests-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/culling_tests.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/culling_tests.spec.js: Added.
+        (faceIsCulled):
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/entry_point_name-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/entry_point_name.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/entry_point_name.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/pipeline_output_targets-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/pipeline_output_targets.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/pipeline_output_targets.spec.js: Added.
+        (F.prototype.getFragmentShaderCode):
+        (F):
+        (4.filter.x.x.componentCount.kTexelRepresentationInfo.x.format.componentOrder.length.fn.async t):
+        (filter.x.x.output.length.kTexelRepresentationInfo.x.format.componentOrder.length.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/primitive_topology-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/primitive_topology.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/primitive_topology.spec.js: Added.
+        (v1.v3.v5.Topology.triangle.strip.4.triangles.v2.v4.v6.Triangle.list.locations.None.Center.of.two.triangle):
+        (Point2D):
+        (Point2D.prototype.toNDC):
+        (Point2D.getMidpoint):
+        (Point2D.getCentroid):
+        (getPointTestLocations):
+        (getLineTestLocations):
+        (getPrimitiveRestartLineTestLocations):
+        (getLineStripTestLocations):
+        (getTriangleListTestLocations):
+        (getTriangleStripTestLocations):
+        (getDefaultTestLocations):
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/sample_mask-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/sample_mask.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/sample_mask.spec.js: Added.
+        (fragment.shader.output.mask):
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/vertex_only_render_pipeline-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/vertex_only_render_pipeline.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/render_pipeline/vertex_only_render_pipeline.spec.js: Added.
+        (F):
+        * http/tests/webgpu/webgpu/api/operation/rendering/basic-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/basic.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/basic.spec.js: Added.
+        (g.test.string_appeared_here.fn.async t):
+        (false.fn.async t.async const):
+        (false.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/rendering/blending-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/blending.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/blending.spec.js: Added.
+        (mapColor):
+        (computeBlendFactor):
+        (computeBlendOperation):
+        (fn.t.switch):
+        * http/tests/webgpu/webgpu/api/operation/rendering/depth-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/depth.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/depth.spec.js: Added.
+        (g.test.string_appeared_here.desc.Tests.each.depth.compare.works):
+        * http/tests/webgpu/webgpu/api/operation/rendering/depth_clip_clamp-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/depth_clip_clamp.spec.js: Added.
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/rendering/draw-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/draw.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/draw.spec.js: Added.
+        (and.base_vertex.is.used.to.select.the.second.set The):
+        (9.undefined.fn.async t):
+        (string_appeared_here.unless.p.p.vertex_attribute_count.p.vertex_buffer_count.unless.p.p.step_mode.string_appeared_here.p.vertex_buffer_count.1.fn.t.switch):
+        (string_appeared_here.unless.p.p.vertex_attribute_count.p.vertex_buffer_count.unless.p.p.step_mode.string_appeared_here.p.vertex_buffer_count.1.fn.t.b.switch):
+        (string_appeared_here.unless.p.p.vertex_attribute_count.p.vertex_buffer_count.unless.p.p.step_mode.string_appeared_here.p.vertex_buffer_count.1.fn.t.vertexIndex.instanceIndex.bufferLayouts.forEach):
+        (string_appeared_here.unless.p.p.vertex_attribute_count.p.vertex_buffer_count.unless.p.p.step_mode.string_appeared_here.p.vertex_buffer_count.1.fn.t.const.pipeline.t.device.createRenderPipeline.vertex.module.t.device.createShaderModule.stage.vertex.fn.main.input.Inputs.Outputs.join):
+        (string_appeared_here.unless.p.p.vertex_attribute_count.p.vertex_buffer_count.unless.p.p.step_mode.string_appeared_here.p.vertex_buffer_count.1.fn.t.const.pipeline.t.device.createRenderPipeline.fragment.module.t.device.createShaderModule.stage.fragment.fn.main):
+        * http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/indirect_draw.spec.js: Added.
+        (F.prototype.MakeIndexBuffer):
+        (F.prototype.MakeVertexBuffer):
+        (F.prototype.MakeIndirectBuffer):
+        (F):
+        * http/tests/webgpu/webgpu/api/operation/rendering/robust_access_index-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/robust_access_index.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/rendering/robust_access_index.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/resource_init/buffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/resource_init/buffer.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/resource_init/buffer.spec.js: Added.
+        (F.prototype.GetBufferUsageFromMapMode):
+        (F.prototype.async CheckGPUBufferContent):
+        (F.prototype.TestBufferZeroInitInBindGroup):
+        (F.prototype.CreateRenderPipelineForTest):
+        (F.prototype.RecordInitializeTextureColor):
+        (F.prototype.CheckBufferAndOutputTexture):
+        (F):
+        (12.fn.async t):
+        (kMapModeOptions.fn.async t):
+        (16.fn.async t):
+        (kBufferUsagesForMappedAtCreationTests.fn.async t):
+        (the.contents.of.the.GPUBuffer.have.already.been.initialized.to.0.fn.async t):
+        (8.fn.async t):
+        (fn.async t):
+        (g.test.string_appeared_here.desc.Verify.when.we.resolve.a.query.set into):
+        * http/tests/webgpu/webgpu/api/operation/resource_init/check_texture/by_copy.js: Added.
+        (export.const.checkContentsByBufferCopy):
+        (export.const.checkContentsByTextureCopy):
+        * http/tests/webgpu/webgpu/api/operation/resource_init/check_texture/by_ds_test.js: Added.
+        (makeFullscreenVertexModule):
+        (const.checkContents):
+        * http/tests/webgpu/webgpu/api/operation/resource_init/check_texture/by_sampling.js: Added.
+        (export.const.checkContentsBySampling):
+        * http/tests/webgpu/webgpu/api/operation/resource_init/texture_zero-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/resource_init/texture_zero.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/resource_init/texture_zero.spec.js: Added.
+        (initializedStateAsColor):
+        (getRequiredTextureUsage):
+        (export.TextureZeroInitTest):
+        (export.TextureZeroInitTest.prototype.get textureWidth):
+        (export.TextureZeroInitTest.prototype.get textureHeight):
+        (export.TextureZeroInitTest.prototype.get textureDepth):
+        (export.TextureZeroInitTest.prototype.get textureDepthOrArrayLayers):
+        (export.TextureZeroInitTest.prototype.iterateUninitializedSubresources):
+        (export.TextureZeroInitTest.prototype.iterateInitializedSubresources):
+        (export.TextureZeroInitTest.prototype.generateTextureViewDescriptorsForRendering):
+        (export.TextureZeroInitTest.prototype.initializeWithStoreOp):
+        (export.TextureZeroInitTest.prototype.initializeWithCopy):
+        (export.TextureZeroInitTest.prototype.initializeTexture):
+        (export.TextureZeroInitTest.prototype.discardTexture):
+        (kTextureAspects.unless):
+        (kUninitializeMethods.unless):
+        (expandWithParams):
+        (sampleCount.1.layerCount.1.unless):
+        (true.filter):
+        (g.test.string_appeared_here.params.kTestParams.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/sampling/anisotropy-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/sampling/anisotropy.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/sampling/anisotropy.spec.js: Added.
+        (by.testing.how.many.unique.sample.values.come.out.of.the.sample.operation.Check.anisotropy.is.done.in.the.correct.direction.by.having.a.2D.gradient.and.checking.we.get more):
+        (SamplerAnisotropicFilteringSlantedPlaneTest.prototype.copyRenderTargetToBuffer):
+        (SamplerAnisotropicFilteringSlantedPlaneTest.prototype.async init):
+        (SamplerAnisotropicFilteringSlantedPlaneTest.prototype.drawSlantedPlane):
+        (SamplerAnisotropicFilteringSlantedPlaneTest):
+        (as.the.sampling.rate.is.different.We.will.also.check.those.large.maxAnisotropy.values.are.clamped.so.that.rendering.is.the.same.as.the.supported.upper.limit.say.16.A.similar.webgl.demo.is.at.https.fn.async t):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/sampling/filter_mode-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/sampling/filter_mode.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/sampling/filter_mode.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/sampling/lod_clamp.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/shader_module/compilation_info-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/shader_module/compilation_info.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/shader_module/compilation_info.spec.js: Added.
+        (return.vec4.f32):
+        (return.unknown):
+        (g.test.string_appeared_here.desc.Test.that.compilationInfo.can.be.called.on.any.ShaderModule.Test.both.valid.and.invalid.shader.modules.Test.shader.modules.containing.only.ASCII.and.those.containing.unicode.characters.Test.that.the.compilation.info.valid.shader.modules.contains.no.errors.Test.that.the.compilation.info.invalid.shader.modules.contains.at.least.one.error.paramsSimple.kAllShaderSources.fn.async t):
+        (indicating.an.unknown.position.Test.invalid.shader.modules.containing.containing.at.least.one.error.Test.shader.modules.containing.only.ASCII.and.those.containing.unicode.characters.paramsSimple.kInvalidShaderSources.fn.async t):
+        (g.test.string_appeared_here.desc.Test.that.message.offsets.and.lengths.are.valid.and.align.with.any.reported.lineNum.and.linePos.Test.valid.and.invalid.shader.modules.Test.shader.modules.containing.only.ASCII.and.those.containing.unicode.characters.paramsSimple.kAllShaderSources.fn.async t):
+        * http/tests/webgpu/webgpu/api/operation/texture_view/read-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/texture_view/read.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/texture_view/read.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/texture_view/write-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/texture_view/write.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/texture_view/write.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/uncapturederror-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/uncapturederror.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/uncapturederror.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/operation/vertex_state/correctness-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/vertex_state/correctness.spec.js: Added.
+        (mapBufferAttribs):
+        (mapStateAttribs):
+        (prototype.makeTestWGSL):
+        (prototype.makeTestPipeline):
+        (prototype.submitRenderPass):
+        (prototype.generateTestData):
+        (prototype.expandTestData):
+        (prototype.interleaveVertexDataInto):
+        (prototype.createTestAndPipelineData):
+        (prototype.createExpectedBG):
+        (prototype.createVertexBuffers):
+        (prototype.runTest):
+        (fn.t.i):
+        * http/tests/webgpu/webgpu/api/operation/vertex_state/index_format-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/operation/vertex_state/index_format.html: Added.
+        * http/tests/webgpu/webgpu/api/operation/vertex_state/index_format.spec.js: Added.
+        (IndexFormatTest.prototype.MakeRenderPipeline):
+        (IndexFormatTest.prototype.CreateIndexBuffer):
+        (IndexFormatTest.prototype.run):
+        (IndexFormatTest.prototype.CreateExpectedUint8Array):
+        (IndexFormatTest):
+        (in.the.case.of.incorrect.results.This.shows.the.expected.result.marked.string_appeared_here.is.different.from.what.you.would.get if):
+        * http/tests/webgpu/webgpu/api/validation/attachment_compatibility-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/attachment_compatibility.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/attachment_compatibility.spec.js: Added.
+        (F.prototype.createAttachmentTextureView):
+        (F.prototype.createColorAttachment):
+        (F.prototype.createDepthAttachment):
+        (F.prototype.createRenderPipeline):
+        (F):
+        (kDepthStencilAttachmentFormats.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/buffer/create-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/buffer/create.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/buffer/create.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/buffer/destroy-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/buffer/destroy.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/buffer/destroy.spec.js: Added.
+        (kBufferUsages.fn.async t):
+        (g.test.string_appeared_here.desc.string_appeared_here.fn.async t):
+        (fn.async t):
+        (unless.p.p.mappedAtCreation.false.p.mapMode.undefined.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/buffer/mapping-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/buffer/mapping.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/buffer/mapping.spec.js: Added.
+        (F.prototype.async testMapAsyncCall):
+        (F.prototype.testGetMappedRangeCall):
+        (F.prototype.createMappableBuffer):
+        (F):
+        (kBufferUsages.fn.async t):
+        (kMapModeOptions.fn.async t):
+        (fn.async t):
+        (kSizeAlignment.2.fn.async t):
+        (validation.can.be.performed.asynchronously.in.the.GPU.process.so.the.Content.process.doesn.fn.async t):
+        (after.a.mapAsync.call.or.after.being.created.mapped.fn.async t):
+        (g.test.string_appeared_here.desc.Test.that.old.getMappedRange.returned.arraybuffer.does.not.exist.after.unmap.and.newly.returned.arraybuffer.after.new.map.has.correct.subrange.fn.async t):
+        (g.test.string_appeared_here.desc.string_appeared_here.fn.async t):
+        (or.after.mappedAtCreation.or.mapAsync.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/buffer/threading-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/buffer/threading.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/buffer/threading.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/capability_checks/features/depth_clip_control-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/capability_checks/features/depth_clip_control.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/capability_checks/features/depth_clip_control.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/capability_checks/features/query_types-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/capability_checks/features/query_types.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/capability_checks/features/query_types.spec.js: Added.
+        (g.test.string_appeared_here.desc.Tests.that.creating.query.set shouldn):
+        (true.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/capability_checks/features/texture_formats-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/capability_checks/features/texture_formats.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/capability_checks/features/texture_formats.spec.js: Added.
+        (false.fn.async t):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/createBindGroup-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/createBindGroup.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/createBindGroup.spec.js: Added.
+        (clone):
+        (3.fn.async t):
+        (2.fn.async t):
+        (allBindingEntries.false.fn.t.switch):
+        (allBindingEntries.false.fn.t.t.expectValidationError):
+        (kTextureUsages.unless):
+        (fn.async t):
+        (string_appeared_here.fn.async t):
+        (kTextureViewDimensions.fn.async t):
+        (256.fn.t.t.expectValidationError):
+        (bufferBindingEntries.true.fn.t.t.expectValidationError):
+        (string_appeared_here.fn.t.t.expectValidationError):
+        (false.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/createBindGroupLayout-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/createBindGroupLayout.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/createBindGroupLayout.spec.js: Added.
+        (clone):
+        (fn.async t):
+        (allBindingEntries.false.fn.async t):
+        (kTextureViewDimensions.fn.async t):
+        (1.fn.async t):
+        (prototype.async g):
+        * http/tests/webgpu/webgpu/api/validation/createComputePipeline-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/createComputePipeline.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/createComputePipeline.spec.js: Added.
+        (F.prototype.getShaderModule):
+        (F.prototype.getInvalidShaderModule):
+        (F.prototype.doCreateComputePipelineTest):
+        (F):
+        (fn.async t):
+        (making.sure.that.the.test.working):
+        * http/tests/webgpu/webgpu/api/validation/createPipelineLayout-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/createPipelineLayout.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/createPipelineLayout.spec.js: Added.
+        (clone):
+        (kBufferBindingTypes.fn.async t):
+        (g.test.string_appeared_here.fn.async t):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/createRenderPipeline-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/createRenderPipeline.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/createRenderPipeline.spec.js: Added.
+        (F.prototype.getFragmentShaderCode):
+        (F.prototype.getDescriptor):
+        (F.prototype.getPipelineLayout):
+        (F.prototype.createTexture):
+        (F.prototype.doCreateRenderPipelineTest):
+        (F):
+        (true.fn.async t):
+        (kTextureFormats.fn.async t):
+        (kCompareFunctions.fn.async t):
+        (kStencilOperations.fn.async t):
+        (fn.async t):
+        (4.fn.async t):
+        (kRenderableColorTextureFormats.fn.async t):
+        (kBlendOperations.fn.async t):
+        (false.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/createSampler-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/createSampler.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/createSampler.spec.js: Added.
+        (4e30.fn.async t):
+        (g.test.string_appeared_here.desc.string_appeared_here.params.u.u.beginSubcases.combineWithParams.u.combine):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/createTexture-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/createTexture.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/createTexture.spec.js: Added.
+        (format.fn.async t):
+        (kTextureFormats.fn.async t):
+        (dimension.string_appeared_here.largestDimension.0.fn.async t):
+        (format.string_appeared_here.dimension.string_appeared_here.dimension.string_appeared_here.size.0.kTextureFormatInfo.format.blockWidth.0.size.1.kTextureFormatInfo.format.blockHeight.0.fn.async t):
+        (g.test.string_appeared_here.desc.Test.mip.level.count.bound.check.when.mipLevelCount.is.bigger.than.integer.bit.width.fn.async t):
+        (format.unless):
+        (fn.async t):
+        (2.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/createView-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/createView.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/createView.spec.js: Added.
+        (kTextureFormats.fn.async t):
+        (undefined.fn.t.t.expectValidationError):
+        (kTextureAspects.fn.async t):
+        (validateCreateViewLayersLevels):
+        (const.lastArrayLayer.of.new.Set):
+        (fn.t.t.expectValidationError):
+        (const.lastMipLevel.of.new.Set):
+        (fn.async t):
+        (kResourceStates.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/create_pipeline-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/create_pipeline.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/create_pipeline.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/beginRenderPass-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/beginRenderPass.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/beginRenderPass.spec.js: Added.
+        (fn.async t):
+        (false.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/buffer_texture_copies-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/buffer_texture_copies.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/buffer_texture_copies.spec.js: Added.
+        (ImageCopyTest.prototype.testCopyBufferToTexture):
+        (ImageCopyTest.prototype.testCopyTextureToBuffer):
+        (ImageCopyTest.prototype.testWriteTexture):
+        (ImageCopyTest):
+        (string_appeared_here.fn.async t):
+        (fn.async t):
+        (8.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/clearBuffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/clearBuffer.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/clearBuffer.spec.js: Added.
+        (F.prototype.TestClearBuffer):
+        (F):
+        (g.test.string_appeared_here.desc.Test.that.clearing.an.error.buffer.fails.fn.async t):
+        (fn.async t):
+        (kBufferUsages.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/compute_pass-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/compute_pass.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/compute_pass.spec.js: Added.
+        (F.prototype.createComputePipeline):
+        (F.prototype.createIndirectBuffer):
+        (F):
+        (1.fn.t.else):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/copyBufferToBuffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/copyBufferToBuffer.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/copyBufferToBuffer.spec.js: Added.
+        (F.prototype.TestCopyBufferToBuffer):
+        (F):
+        (g.test.string_appeared_here.fn.async t):
+        (kBufferUsages.fn.async t):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/copyTextureToTexture-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/copyTextureToTexture.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/copyTextureToTexture.spec.js: Added.
+        (F.prototype.TestCopyTextureToTexture):
+        (F.prototype.GetPhysicalSubresourceSize):
+        (F):
+        (kResourceStates.fn.async t):
+        (unless.p.p.dimension.string_appeared_here.p.srcLevelCount.1.p.dstLevelCount.1.fn.async t):
+        (kTextureUsages.fn.async t):
+        (4.fn.async t):
+        (8.fn.async t):
+        (kTextureFormats.fn.async t):
+        (1.fn.async t):
+        (3.unless.p.p.dimension.string_appeared_here.p.srcCopyLevel.0.p.dstCopyLevel.0.fn.async t):
+        (3.fn.async t):
+        (string_appeared_here.fn.async t):
+        (2.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/debug-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/debug.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/debug.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/index_access-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/index_access.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/index_access.spec.js: Added.
+        (F.prototype.createIndexBuffer):
+        (F.prototype.createRenderPipeline):
+        (F.prototype.beginRenderPass):
+        (F.prototype.drawIndexed):
+        (F):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/draw-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/draw.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/draw.spec.js: Added.
+        (callDrawIndexed):
+        (and.test.that.draw.and.drawIndexed.will.success.error.as.expected.Such.set of):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/dynamic_state-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/dynamic_state.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/dynamic_state.spec.js: Added.
+        (out.of.range.used.with.a.simple.pipeline.that.used.with.a.simple.pipeline.that.F.prototype.testViewportCall):
+        (out.of.range.used.with.a.simple.pipeline.that.used.with.a.simple.pipeline.that.F.prototype.testScissorCall):
+        (out.of.range.used.with.a.simple.pipeline.that.used.with.a.simple.pipeline.that.F.prototype.createDummyRenderPassEncoder):
+        (out.of.range.used.with.a.simple.pipeline.that.used.with.a.simple.pipeline.that.F):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/indirect_draw-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/indirect_draw.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/indirect_draw.spec.js: Added.
+        (F.prototype.makeIndexBuffer):
+        (F):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/render.js: Added.
+        (export.buildBufferOffsetAndSizeOOBTestParams):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/setIndexBuffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/setIndexBuffer.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/setIndexBuffer.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/setPipeline-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/setPipeline.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/setPipeline.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/setVertexBuffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/setVertexBuffer.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/setVertexBuffer.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/state_tracking-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/state_tracking.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render/state_tracking.spec.js: Added.
+        (F.prototype.getVertexBuffer):
+        (F.prototype.createRenderPipeline):
+        (F.prototype.beginRenderPass):
+        (F):
+        (g.test.string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render_pass-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render_pass.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/render_pass.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/setBindGroup-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/setBindGroup.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/cmds/setBindGroup.spec.js: Added.
+        (F.prototype.encoderTypeToStageFlag):
+        (F.prototype.createBindingResourceWithState):
+        (F.prototype.createBindGroup):
+        (F):
+        (string_appeared_here.fn.async t.async runTest):
+        (string_appeared_here.fn.async t):
+        (kProgrammableEncoderTypes.fn.async t):
+        (true.fn.async t):
+        (fn.t.const.doSetBindGroup):
+        * http/tests/webgpu/webgpu/api/validation/encoding/createRenderBundleEncoder-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/createRenderBundleEncoder.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/createRenderBundleEncoder.spec.js: Added.
+        (string_appeared_here.filter):
+        (fn.async t):
+        (string_appeared_here.fn.async t):
+        (true.fn.async t):
+        (g.test.string_appeared_here.desc.Tests.that.createRenderBundleEncoder.validation.of.depthReadOnly.and.stencilReadOnly.is.ignored.there.is.no.depthStencilFormat.set params):
+        * http/tests/webgpu/webgpu/api/validation/encoding/encoder_state-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/encoder_state.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/encoder_state.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/programmable/pipeline_bind_group_compat.spec.js: Added.
+        (getTestCmds):
+        (F.prototype.getIndexBuffer):
+        (F.prototype.getIndirectBuffer):
+        (F.prototype.getBindingResourceType):
+        (F.prototype.createRenderPipelineWithLayout):
+        (F.prototype.createComputePipelineWithLayout):
+        (F.prototype.createBindGroupWithLayout):
+        (F.prototype.doCompute):
+        (F.prototype.doRender):
+        (F.prototype.createBindGroupLayoutEntry):
+        (F.prototype.runTest):
+        (F):
+        (g.test.string_appeared_here.desc.Tests.the.bind.groups.must.match.the.requirements.of.the.pipeline.layout.bind.groups.required.by.the.pipeline.layout.are.required.bind.groups.unused.by.the.pipeline.layout.can.be.set or):
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/begin_end-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/begin_end.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/begin_end.spec.js: Added.
+        (fn.async t):
+        (true.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/common.js: Added.
+        (export.createQuerySetWithType):
+        (export.beginRenderPassWithQuerySet):
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/general-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/general.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/general.spec.js: Added.
+        (g.test.string_appeared_here.desc.Tests.that.set occlusion.query.set with):
+        (g.test.string_appeared_here.desc.Tests.that.set occlusion):
+        (fn.async t):
+        (g.test.string_appeared_here.desc.Tests.that.begin.occlusion.query.with.a.invalid.query.set that):
+        (occlusion.query.set in):
+        (g.test.string_appeared_here.desc.Tests.that.write.timestamp.to.all.types.of.query.set on):
+        (2.0.fn.async t):
+        (g.test.string_appeared_here.desc.Tests.that.write.timestamp.to.a.invalid.query.set that):
+        (string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/pipeline_statistics-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/pipeline_statistics.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/pipeline_statistics.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/resolveQuerySet-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/resolveQuerySet.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/queries/resolveQuerySet.spec.js: Added.
+        (g.test.string_appeared_here.desc.Tests.that.resolve.query.set with):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/encoding/render_bundle-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/render_bundle.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/encoding/render_bundle.spec.js: Added.
+        (g.test.string_appeared_here.desc.Test.that.it.is.valid.to.execute.an.empty.list.of.render.bundles.fn.async t):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/error_scope-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/error_scope.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/error_scope.spec.js: Added.
+        (F.prototype.get device):
+        (F.prototype.async init):
+        (F.prototype.createErrorBuffer):
+        (F.prototype.async expectUncapturedError):
+        (F):
+        (g.test.string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/image_copy/buffer_related-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/image_copy/buffer_related.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/image_copy/buffer_related.spec.js: Added.
+        (kResourceStates.fn.async t):
+        (fn.async t):
+        (bytesPerRow.undefined.copyHeightInBlocks.1.bytesPerRow.undefined.bytesPerRow.kTextureFormatInfo.format.bytesPerBlock.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/image_copy/image_copy.js: Added.
+        (export.ImageCopyTest.prototype.testRun):
+        (export.ImageCopyTest.prototype.createAlignedTexture):
+        (export.ImageCopyTest.prototype.testBuffer):
+        (export.ImageCopyTest):
+        (valuesToTestDivisibilityBy):
+        (export.texelBlockAlignmentTestExpanderForOffset):
+        * http/tests/webgpu/webgpu/api/validation/image_copy/layout_related-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/image_copy/layout_related.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/image_copy/layout_related.spec.js: Added.
+        (3.unless.p.p.dimension.string_appeared_here.p.copyHeightInBlocks.1.unless.p.p.copyDepth.p.size.2.fn.async t):
+        (fn.async t):
+        (filter):
+        (unless.p.p.dimension.string_appeared_here.p.copyHeightInBlocks.1.p.copyDepth.1.fn.async t):
+        (rowsPerImage.kTextureFormatInfo.format.blockHeight.fn.async t):
+        (texelBlockAlignmentTestExpanderForOffset.fn.async t):
+        (2.unless.p.p.dimension.string_appeared_here.p.copyHeightInBlocks.1.p.copyDepth.1.expandWithParams.p._success):
+        (2.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/image_copy/texture_related-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/image_copy/texture_related.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/image_copy/texture_related.spec.js: Added.
+        (fn.async t):
+        (4.fn.async t):
+        (1.0.fn.async t):
+        (texelBlockAlignmentTestExpanderForValueToCoordinate.fn.async t):
+        (2.unless.p.p.dimension.string_appeared_here.p.coordinateToTest.0.p.mipLevel.0.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/initialization/requestDevice-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/initialization/requestDevice.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/initialization/requestDevice.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/layout_shader_compat-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/layout_shader_compat.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/layout_shader_compat.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/query_set/create-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/query_set/create.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/query_set/create.spec.js: Added.
+        (g.test.string_appeared_here.desc.Tests.that.create.query.set with):
+        (kMaxQueryCount.1.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/query_set/destroy-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/query_set/destroy.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/query_set/destroy.spec.js: Added.
+        (export.const.description.Destroying.a.query.set more):
+        (g.test.string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/queue/buffer_mapped-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/buffer_mapped.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/buffer_mapped.spec.js: Added.
+        (F.prototype.async runBufferDependencyTest):
+        (F):
+        (g.test.string_appeared_here.desc.Test.that.an.outstanding.mapping.will.prevent.writeBuffer.calls.fn.async t):
+        (both.when.used.as.the.source.and.destination.fn.async t):
+        (g.test.string_appeared_here.desc.Test.that.an.outstanding.mapping.will.prevent.copyBufferToTexture.commands.from.submitting.fn.async t):
+        (g.test.string_appeared_here.desc.Test.that.an.outstanding.mapping.will.prevent.copyTextureToBuffer.commands.from.submitting.fn.async t):
+        (fn.async t.const.steps.submit.async t):
+        * http/tests/webgpu/webgpu/api/validation/queue/copyToTexture/CopyExternalImageToTexture-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/copyToTexture/CopyExternalImageToTexture.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/copyToTexture/CopyExternalImageToTexture.spec.js: Added.
+        (computeMipMapSize):
+        (generateCopySizeForSrcOOB):
+        * http/tests/webgpu/webgpu/api/validation/queue/destroyed/buffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/destroyed/buffer.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/destroyed/buffer.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/destroyed/query_set-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/destroyed/query_set.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/destroyed/query_set.spec.js: Added.
+        (export.const.description.Tests.using.a.destroyed.query.set on):
+        (g.test.string_appeared_here.desc.Tests.that.use.a.destroyed.query.set in):
+        (string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/queue/submit-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/submit.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/submit.spec.js: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/writeBuffer-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/writeBuffer.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/queue/writeBuffer.spec.js: Added.
+        (g.test.string_appeared_here.desc.Tests.that.the.data.ranges.given.to.GPUQueue.writeBuffer.are.properly.validated.Tests.calling.writeBuffer.with.both.TypedArrays.and.ArrayBuffers.and.checks.that.the.data.offset.and.size.is.interpreted.correctly.both.When.passing.a.TypedArray.the.data.offset.and.size.is.given.in.elements.When.passing.an.ArrayBuffer.the.data.offset.and.size.is.given.in.bytes.Also.verifies.that.the.specified.data.range.Describes.a.valid.range.of.the.destination.buffer.and.source.buffer.Fits.fully.within.the.destination.buffer.Has.a.byte.size.is.a.multiple.of.4.fn.async t.runTest):
+        (g.test.string_appeared_here.desc.Tests.that.the.data.ranges.given.to.GPUQueue.writeBuffer.are.properly.validated.Tests.calling.writeBuffer.with.both.TypedArrays.and.ArrayBuffers.and.checks.that.the.data.offset.and.size.is.interpreted.correctly.both.When.passing.a.TypedArray.the.data.offset.and.size.is.given.in.elements.When.passing.an.ArrayBuffer.the.data.offset.and.size.is.given.in.bytes.Also.verifies.that.the.specified.data.range.Describes.a.valid.range.of.the.destination.buffer.and.source.buffer.Fits.fully.within.the.destination.buffer.Has.a.byte.size.is.a.multiple.of.4.fn.async t):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/render_pass/resolve-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/render_pass/resolve.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/render_pass/resolve.spec.js: Added.
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/render_pass/storeOp-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/render_pass/storeOp.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/render_pass/storeOp.spec.js: Added.
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/render_pass_descriptor-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/render_pass_descriptor.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/render_pass_descriptor.spec.js: Added.
+        (F.prototype.createTexture):
+        (F.prototype.getColorAttachment):
+        (F.prototype.getDepthStencilAttachment):
+        (F.prototype.async tryRenderPass):
+        (F):
+        (fn.async t):
+        (g.test.string_appeared_here.fn.async t):
+        (kRenderableColorTextureFormats.filter.t.kTextureFormatInfo.t.format.multisample.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_pass_encoder-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_pass_encoder.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_pass_encoder.spec.js: Added.
+        (TextureUsageTracking.prototype.createTexture):
+        (TextureUsageTracking.prototype.createBindGroupLayout):
+        (TextureUsageTracking.prototype.createBindGroup):
+        (TextureUsageTracking.prototype.createAndExecuteBundle):
+        (TextureUsageTracking.prototype.beginSimpleRenderPass):
+        (TextureUsageTracking.prototype.testValidationScope):
+        (TextureUsageTracking.prototype.setPipeline):
+        (TextureUsageTracking.prototype.issueDrawOrDispatch):
+        (TextureUsageTracking.prototype.setComputePipelineAndCallDispatch):
+        (TextureUsageTracking):
+        (unless.p.p.type0.string_appeared_here.p.levelCount0.1.p.layerCount0.1.p.type1.string_appeared_here.p.levelCount1.1.p.layerCount1.1.p.type0.string_appeared_here.p.type1.string_appeared_here.p.baseLevel1.BASE_LEVEL.fn.async t):
+        (unless.p.kTextureFormatInfo.p.format.depth.kTextureFormatInfo.p.format.stencil.p.aspect0.string_appeared_here.p.type0.string_appeared_here.p.aspect1.string_appeared_here.p.type1.string_appeared_here.unless.p.p.binding1InBundle.p.type1.string_appeared_here.unless.p.p.compute.p.binding0InBundle.p.binding1InBundle.p.type1.string_appeared_here.fn.async t):
+        (kShaderStages.unless.p.p.compute.Boolean.p.writeVisibility.GPUConst.ShaderStage.VERTEX.fn.async t):
+        (fn.async t):
+        (true.expandWithParams):
+        (unless.p.p.binding0InBundle.p.type0.string_appeared_here.p.binding1InBundle.p.type1.string_appeared_here.p.binding0InBundle.p.binding1InBundle.p._sampleCount.undefined.p._sampleCount.1.p._usage0.string_appeared_here.p._usage1.string_appeared_here.p.type0.string_appeared_here.p.type1.string_appeared_here.p.type0.string_appeared_here.p.type1.string_appeared_here.fn.async t):
+        (true.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_render_common.spec.js: Added.
+        (F.prototype.getColorAttachment):
+        (F):
+        (false.unless.t.t.inSamePass.t.baseLevel0.t.baseLevel1.fn.async t):
+        (false.fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/resource_usages/texture/in_render_misc.spec.js: Added.
+        (or.different.subresources.of.the.same.texture.texture.usages.in.copies.and.in.render.pass.consecutively.set bind):
+        * http/tests/webgpu/webgpu/api/validation/texture/destroy-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/texture/destroy.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/texture/destroy.spec.js: Added.
+        (fn.async t):
+        * http/tests/webgpu/webgpu/api/validation/validation_test.js: Added.
+        (export.ValidationTest.prototype.createTextureWithState):
+        (export.ValidationTest.prototype.createBufferWithState):
+        (export.ValidationTest.prototype.createQuerySetWithState):
+        (export.ValidationTest.prototype.getStorageBuffer):
+        (export.ValidationTest.prototype.getUniformBuffer):
+        (export.ValidationTest.prototype.getErrorBuffer):
+        (export.ValidationTest.prototype.getErrorSampler):
+        (export.ValidationTest.prototype.getSampledTexture):
+        (export.ValidationTest.prototype.getStorageTexture):
+        (export.ValidationTest.prototype.getRenderTexture):
+        (export.ValidationTest.prototype.getErrorTexture):
+        (export.ValidationTest.prototype.getErrorTextureView):
+        (export.ValidationTest.prototype.getBindingResource):
+        (export.ValidationTest.prototype.getDeviceMismatchedStorageBuffer):
+        (export.ValidationTest.prototype.getDeviceMismatchedUniformBuffer):
+        (export.ValidationTest.prototype.getDeviceMismatchedTexture):
+        (export.ValidationTest.prototype.getDeviceMismatchedSampledTexture):
+        (export.ValidationTest.prototype.getDeviceMismatchedStorageTexture):
+        (export.ValidationTest.prototype.getDeviceMismatchedRenderTexture):
+        (export.ValidationTest.prototype.getDeviceMismatchedBindingResource):
+        (export.ValidationTest.prototype.createRenderPipelineWithState):
+        (export.ValidationTest.prototype.createNoOpRenderPipeline):
+        (export.ValidationTest.prototype.createErrorRenderPipeline):
+        (export.ValidationTest.prototype.createNoOpComputePipeline):
+        (export.ValidationTest.prototype.createErrorComputePipeline):
+        (export.ValidationTest):
+        * http/tests/webgpu/webgpu/api/validation/vertex_state-expected.txt: Added.
+        * http/tests/webgpu/webgpu/api/validation/vertex_state.html: Added.
+        * http/tests/webgpu/webgpu/api/validation/vertex_state.spec.js: Added.
+        (addTestAttributes):
+        * http/tests/webgpu/webgpu/capability_info.js: Added.
+        (export.depthStencilFormatCopyableAspects):
+        (export.depthStencilBufferTextureCopySupported):
+        (export.depthStencilFormatAspectSize):
+        (export.textureDimensionAndFormatCompatible):
+        (export.bufferBindingTypeInfo):
+        (export.samplerBindingTypeInfo):
+        (export.sampledTextureBindingTypeInfo):
+        (export.storageTextureBindingTypeInfo):
+        (export.texBindingTypeInfo):
+        (export.bindingTypeInfo):
+        (export.bufferBindingEntries):
+        (export.samplerBindingEntries):
+        (export.textureBindingEntries):
+        (export.storageTextureBindingEntries):
+        (export.sampledAndStorageBindingEntries):
+        (export.allBindingEntries):
+        * http/tests/webgpu/webgpu/constants.js: Added.
+        (checkType):
+        * http/tests/webgpu/webgpu/examples-expected.txt: Added.
+        * http/tests/webgpu/webgpu/examples.html: Added.
+        * http/tests/webgpu/webgpu/examples.spec.js: Added.
+        (g.test.string_appeared_here.fn.async t):
+        (async g):
+        * http/tests/webgpu/webgpu/gpu_test.js: Added.
+        (export.initUncanonicalizedDeviceDescriptor):
+        (export.GPUTest.prototype.get device):
+        (export.GPUTest.prototype.get mismatchedDevice):
+        (export.GPUTest.prototype.async selectMismatchedDeviceOrSkipTestCase):
+        (export.GPUTest.prototype.get queue):
+        (export.GPUTest.prototype.async init):
+        (export.GPUTest.prototype.async finalize):
+        (export.GPUTest.prototype.async selectDeviceOrSkipTestCase):
+        (export.GPUTest.prototype.async selectDeviceForTextureFormatOrSkipTestCase):
+        (export.GPUTest.prototype.async selectDeviceForQueryTypeOrSkipTestCase):
+        (export.GPUTest.prototype.createCopyForMapRead):
+        (export.GPUTest.prototype.createAlignedCopyForMapRead):
+        (export.GPUTest.prototype.async readGPUBufferRangeTyped):
+        (export.GPUTest.prototype.expectGPUBufferValuesPassCheck):
+        (export.GPUTest.prototype.async expectGPUBufferValuesEqual):
+        (export.GPUTest.prototype.expectGPUBufferRepeatsSingleValue):
+        (export.GPUTest.prototype.expectSingleColor):
+        (export.GPUTest.prototype.readSinglePixelFrom2DTexture):
+        (export.GPUTest.prototype.expectSinglePixelIn2DTexture):
+        (export.GPUTest.prototype.expectSinglePixelBetweenTwoValuesFloat16In2DTexture):
+        (export.GPUTest.prototype.expectGPUError.async return):
+        (export.GPUTest.prototype.expectGPUError):
+        (export.GPUTest.prototype.async makeBufferWithContents):
+        (export.GPUTest.prototype.createTexture2DWithMipmaps):
+        (export.GPUTest.prototype.createEncoder):
+        (export.GPUTest):
+        * http/tests/webgpu/webgpu/idl/constants/flags-expected.txt: Added.
+        * http/tests/webgpu/webgpu/idl/constants/flags.html: Added.
+        * http/tests/webgpu/webgpu/idl/constants/flags.spec.js: Added.
+        * http/tests/webgpu/webgpu/idl/exposed.html.js: Added.
+        * http/tests/webgpu/webgpu/idl/exposed.http-expected.txt: Added.
+        * http/tests/webgpu/webgpu/idl/exposed.http.html: Added.
+        * http/tests/webgpu/webgpu/idl/exposed.https-expected.txt: Added.
+        * http/tests/webgpu/webgpu/idl/exposed.https.html: Added.
+        * http/tests/webgpu/webgpu/idl/idl_test.js: Added.
+        (export.IDLTest.prototype.async init):
+        (export.IDLTest.prototype.assertMember):
+        (export.IDLTest.prototype.assertMemberCount):
+        (export.IDLTest):
+        * http/tests/webgpu/webgpu/listing.js: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/binary/binary.js: Added.
+        (export.binary):
+        * http/tests/webgpu/webgpu/shader/execution/expression/binary/bitwise-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/binary/bitwise.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/binary/bitwise.spec.js: Added.
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_arithmetic-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_arithmetic.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/binary/f32_arithmetic.spec.js: Added.
+        (fullNumericRange):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/abs-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/abs.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/abs.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/all-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/all.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/all.spec.js: Added.
+        (import):
+        (string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/any-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/any.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/any.spec.js: Added.
+        (import):
+        (string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/atan-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/atan.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/atan.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/atan2-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/atan2.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/atan2.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/builtin.js: Added.
+        (export.builtin):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/ceil-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/ceil.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/ceil.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/clamp-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/clamp.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/clamp.spec.js: Added.
+        (import):
+        (generateTestCases):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/cos-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/cos.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/cos.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/countLeadingZeros-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/countLeadingZeros.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/countLeadingZeros.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/countOneBits-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/countOneBits.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/countOneBits.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/countTrailingZeros-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/countTrailingZeros.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/countTrailingZeros.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/extractBits-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/extractBits.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/extractBits.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/firstLeadingBit-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/firstLeadingBit.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/firstLeadingBit.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/firstTrailingBit-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/firstTrailingBit.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/firstTrailingBit.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/float_built_functions-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/float_built_functions.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/float_built_functions.spec.js: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/floor-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/floor.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/floor.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/fract-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/fract.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/fract.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/insertBits-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/insertBits.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/insertBits.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/inversesqrt-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/inversesqrt.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/inversesqrt.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/ldexp-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/ldexp.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/ldexp.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/log-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/log.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/log.spec.js: Added.
+        (import):
+        (string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/log2-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/log2.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/log2.spec.js: Added.
+        (import):
+        (string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/logical_built_in_functions-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/logical_built_in_functions.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/logical_built_in_functions.spec.js: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/max-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/max.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/max.spec.js: Added.
+        (import):
+        (generateTestCases):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/min-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/min.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/min.spec.js: Added.
+        (import):
+        (generateTestCases):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/reverseBits-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/reverseBits.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/reverseBits.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/select-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/select.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/select.spec.js: Added.
+        (makeBool):
+        (string_appeared_here.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/sin-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/sin.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/sin.spec.js: Added.
+        (import):
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/value_testing_built_in_functions-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/value_testing_built_in_functions.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/value_testing_built_in_functions.spec.js: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/expression.js: Added.
+        (toComparator):
+        (storageType):
+        (fromStorage):
+        (toStorage):
+        (export.run):
+        * http/tests/webgpu/webgpu/shader/execution/expression/unary/f32_arithmetic-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/unary/f32_arithmetic.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/expression/unary/f32_arithmetic.spec.js: Added.
+        (4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/expression/unary/unary.js: Added.
+        (export.unary):
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/atomicity-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/atomicity.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/atomicity.spec.js: Added.
+        (const.resultCode):
+        (else):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/barrier-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/barrier.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/barrier.spec.js: Added.
+        (fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/coherence-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/coherence.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/coherence.spec.js: Added.
+        (fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/memory_model_setup.js: Added.
+        (export.MemoryModelTester):
+        (export.MemoryModelTester.prototype.async run):
+        (export.MemoryModelTester.prototype.checkWeakIndex):
+        (export.MemoryModelTester.prototype.checkResult):
+        (export.MemoryModelTester.prototype.resultPrinter):
+        (export.MemoryModelTester.prototype.copyBufferToBuffer):
+        (export.MemoryModelTester.prototype.getRandomInt):
+        (export.MemoryModelTester.prototype.getRandomInRange):
+        (export.MemoryModelTester.prototype.shuffleArray):
+        (export.MemoryModelTester.prototype.async setShuffledWorkgroups):
+        (export.MemoryModelTester.prototype.async setScratchLocations):
+        (export.MemoryModelTester.prototype.async setStressParams):
+        (const.testShaderFunctions.fn.spin):
+        (fn.do_stress):
+        (builtin):
+        (export.buildTestShader):
+        (export.buildResultShader):
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/weak-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/weak.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/memory_model/weak.spec.js: Added.
+        (fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/robust_access-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/robust_access.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/robust_access.spec.js: Added.
+        (runShaderTest):
+        (testFillArrayBuffer):
+        * http/tests/webgpu/webgpu/shader/execution/robust_access_vertex-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/robust_access_vertex.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/robust_access_vertex.spec.js: Added.
+        (DrawCall.prototype.this.vertexBuffers.vertexArrays.map):
+        (DrawCall.prototype.insertInto):
+        (DrawCall.prototype.draw):
+        (DrawCall.prototype.drawIndexed):
+        (DrawCall.prototype.drawIndirect):
+        (DrawCall.prototype.drawIndexedIndirect):
+        (DrawCall.prototype.bindVertexBuffers):
+        (DrawCall.prototype.generateVertexBuffer):
+        (DrawCall.prototype.generateIndirectBuffer):
+        (DrawCall.prototype.generateIndexedIndirectBuffer):
+        (DrawCall):
+        (F.prototype.generateBufferContents):
+        (F.prototype.generateVertexBufferDescriptors):
+        (F.prototype.generateVertexShaderCode):
+        (F.prototype.createRenderPipeline):
+        (F.prototype.doTest):
+        (F):
+        (else):
+        (10.6.unless.p.p.drawCallTestParameter.string_appeared_here.p.errorScale.10.4.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/sampling/gradients_in_varying_loop-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/sampling/gradients_in_varying_loop.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/sampling/gradients_in_varying_loop.spec.js: Added.
+        (DerivativesTest.prototype.copyRenderTargetToBuffer):
+        (DerivativesTest.prototype.async init):
+        (DerivativesTest.prototype.drawQuad):
+        (DerivativesTest):
+        (3.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/shader_io/compute_builtins-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/shader_io/compute_builtins.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/shader_io/compute_builtins.spec.js: Added.
+        (beginSubcases.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/shader_io/shared_structs-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/shader_io/shared_structs.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/shader_io/shared_structs.spec.js: Added.
+        (and.the.layout.attributes.should.be.ignored.when.used.as.an.entry.point.IO.parameter.fn.async t):
+        (and.uses.it.as.both.the.output.of.a.vertex.shader.and.the.input.to.a.fragment.shader.fn.async t):
+        (and.uses.those.structures.as.parameter.and.return.types.entry.point.functions.and.regular.functions.fn.async t):
+        * http/tests/webgpu/webgpu/shader/execution/zero_init-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/execution/zero_init.html: Added.
+        * http/tests/webgpu/webgpu/shader/execution/zero_init.spec.js: Added.
+        (prettyPrint):
+        (and.storage):
+        * http/tests/webgpu/webgpu/shader/types.js: Added.
+        (export.generateTypes):
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/builtins-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/builtins.html: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/builtins.spec.js: Added.
+        (string_appeared_here.beginSubcases.fn.t.stage.vertex.fn.main):
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/generic-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/generic.html: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/generic.spec.js: Added.
+        (string_appeared_here.beginSubcases.fn.t.location):
+        (string_appeared_here.beginSubcases.fn.t.builtin):
+        (string_appeared_here.beginSubcases.fn.t.stage.fragment.fn.frag_main):
+        (string_appeared_here.beginSubcases.fn.t.stage.compute.workgroup_size.1.fn.comp_main):
+        (string_appeared_here.beginSubcases.fn.t.const.code.stage.vertex.fn.vert_main):
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/interpolate-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/interpolate.html: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/interpolate.spec.js: Added.
+        (false.beginSubcases.fn.t.t.params.stage.string_appeared_here.t.params.use_struct.false.t.params.attribute.includes):
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/invariant-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/invariant.html: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/invariant.spec.js: Added.
+        (false.beginSubcases.fn.t.const.code.struct.VertexOut.location):
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/locations-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/locations.html: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/locations.spec.js: Added.
+        * http/tests/webgpu/webgpu/shader/validation/shader_io/util.js: Added.
+        (export.generateShader):
+        * http/tests/webgpu/webgpu/shader/validation/shader_validation_test.js: Added.
+        (export.ShaderValidationTest.prototype.expectCompileResult):
+        (export.ShaderValidationTest):
+        * http/tests/webgpu/webgpu/shader/validation/variable_and_const-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/validation/variable_and_const.html: Added.
+        * http/tests/webgpu/webgpu/shader/validation/variable_and_const.spec.js: Added.
+        (kTestTypes.fn.t.const.code.stage.fragment.fn.main):
+        (fn.t.prototype.stage.fn.main):
+        (fn.t.prototype.else):
+        (fn.t.else.prototype.stage.fn.main):
+        (so.no.cts.this.struct.with.bool.component.struct.with.runtime.array.Control.case.string_appeared_here.is.used.to.make.sure.when.only.the.storage.changes):
+        * http/tests/webgpu/webgpu/shader/validation/wgsl/basic-expected.txt: Added.
+        * http/tests/webgpu/webgpu/shader/validation/wgsl/basic.html: Added.
+        * http/tests/webgpu/webgpu/shader/validation/wgsl/basic.spec.js: Added.
+        (g.test.string_appeared_here.desc.A.trivial.correct.and.incorrect.shader.fn.t.stage.vertex.stage.fragment.fn.main):
+        * http/tests/webgpu/webgpu/shader/values.js: Added.
+        (export.subnormalF32Examples):
+        (export.normalF32Examples):
+        (export.nanF32BitsExamples):
+        * http/tests/webgpu/webgpu/util/buffer.js: Added.
+        (export.makeBufferWithContents):
+        * http/tests/webgpu/webgpu/util/check_contents.js: Added.
+        (export.checkElementsEqual):
+        (export.checkElementsBetween):
+        (export.checkElementsFloat16Between):
+        (export.checkElementsEqualEither):
+        (export.checkElementsEqualGenerated):
+        (export.checkElementsPassPredicate):
+        (export.checkElementsPassPredicate.):
+        * http/tests/webgpu/webgpu/util/color_space_conversion.js: Added.
+        (lin_sRGB):
+        (XYZ_to_lin_sRGB):
+        (lin_P3):
+        (gam_P3):
+        (lin_P3_to_XYZ):
+        (XYZ_to_lin_P3):
+        (export.displayP3ToSrgb):
+        (export.srgbToDisplayP3):
+        * http/tests/webgpu/webgpu/util/command_buffer_maker.js: Added.
+        (export.CommandBufferMaker):
+        * http/tests/webgpu/webgpu/util/compare.js: Added.
+        (export.absThreshold):
+        (export.ulpThreshold):
+        (export.correctlyRoundedThreshold):
+        (export.compare):
+        * http/tests/webgpu/webgpu/util/constants.js: Added.
+        (hexToF32):
+        * http/tests/webgpu/webgpu/util/conversion.js: Added.
+        (export.floatAsNormalizedInteger):
+        (export.normalizedIntegerAsFloat):
+        (export.float32ToFloatBits):
+        (export.float32ToFloat16Bits):
+        (export.float16BitsToFloat32):
+        (export.float32BitsToNumber):
+        (export.numberToFloat32Bits):
+        (export.floatBitsToNumber):
+        (export.floatBitsToNormalULPFromZero):
+        (export.packRGB9E5UFloat):
+        (export.assertInIntegerRange):
+        (export.gammaCompress):
+        (export.gammaDecompress):
+        (export.float32ToUint32):
+        (export.uint32ToFloat32):
+        (export.float32ToInt32):
+        (export.uint32ToInt32):
+        (export.ScalarType):
+        (export.ScalarType.prototype.toString):
+        (export.VectorType):
+        (export.VectorType.prototype.read):
+        (export.VectorType.prototype.toString):
+        (export.TypeVec):
+        (export.scalarType):
+        (export.numElementsOf):
+        (export.scalarTypeOf):
+        (export.Scalar):
+        (export.Scalar.prototype.copyTo):
+        (export.Scalar.prototype.toString):
+        (export.f32):
+        (export.f32Bits):
+        (export.f16Bits):
+        (export.i32):
+        (export.i16):
+        (export.i8):
+        (export.i32Bits):
+        (export.i16Bits):
+        (export.i8Bits):
+        (export.u32):
+        (export.u16):
+        (export.u8):
+        (export.u32Bits):
+        (export.u16Bits):
+        (export.u8Bits):
+        (export.bool):
+        (export.Vector):
+        (export.Vector.prototype.copyTo):
+        (export.Vector.prototype.toString):
+        (export.Vector.prototype.get x):
+        (export.Vector.prototype.get y):
+        (export.Vector.prototype.get z):
+        (export.Vector.prototype.get w):
+        (export.vec2):
+        (export.vec3):
+        (export.vec4):
+        * http/tests/webgpu/webgpu/util/copy_to_texture.js: Added.
+        (isFp16Format):
+        (isFp32Format):
+        (isUnormFormat):
+        (export.CopyToTextureUtils.prototype.doFlipY):
+        (export.CopyToTextureUtils.prototype.formatForExpectedPixels):
+        (export.CopyToTextureUtils.prototype.getSourceImageBitmapPixels):
+        (export.CopyToTextureUtils.prototype.getExpectedPixels):
+        (export.CopyToTextureUtils.prototype.checkCopyExternalImageResult):
+        (export.CopyToTextureUtils.prototype.async checkBufferWithRowPitch):
+        (export.CopyToTextureUtils.prototype.doTestAndCheckResult):
+        (export.CopyToTextureUtils):
+        * http/tests/webgpu/webgpu/util/create_elements.js: Added.
+        (export.createCanvas):
+        (export.createOnscreenCanvas):
+        (export.createOffscreenCanvas):
+        * http/tests/webgpu/webgpu/util/device_pool.js: Added.
+        (TestFailedButDeviceReusable):
+        (FeaturesNotSupported):
+        (export.TestOOMedShouldAttemptGC):
+        (export.DevicePool.prototype.async reserve):
+        (export.DevicePool.prototype.async release):
+        (export.DevicePool):
+        (DescriptorToHolderMap.prototype.deleteByDevice):
+        (DescriptorToHolderMap.prototype.async getOrCreate):
+        (DescriptorToHolderMap.prototype.insertAndCleanUp):
+        (DescriptorToHolderMap):
+        (canonicalizeDescriptor):
+        (supportsFeature):
+        (DeviceHolder.async create):
+        (DeviceHolder):
+        (DeviceHolder.prototype.acquire):
+        (DeviceHolder.prototype.async ensureRelease):
+        (DeviceHolder.prototype.async release):
+        * http/tests/webgpu/webgpu/util/math.js: Added.
+        (export.align):
+        (export.roundDown):
+        (export.clamp):
+        * http/tests/webgpu/webgpu/util/memory.js: Added.
+        (export.async exhaustVramUntilUnder64MB.async const):
+        (export.async exhaustVramUntilUnder64MB):
+        * http/tests/webgpu/webgpu/util/pretty_diff_tables.js: Added.
+        (export.generatePrettyTable):
+        * http/tests/webgpu/webgpu/util/texture/base.js: Added.
+        (export.maxMipLevelCount):
+        * http/tests/webgpu/webgpu/util/texture/layout.js: Added.
+        (export.getTextureCopyLayout):
+        * http/tests/webgpu/webgpu/util/texture/subresource.js: Added.
+        (endOfRange):
+        (rangeAsIterator):
+        (export.SubresourceRange):
+        (export.SubresourceRange.prototype.each):
+        (export.SubresourceRange.prototype.mipLevels):
+        * http/tests/webgpu/webgpu/util/texture/texel_data-expected.txt: Added.
+        * http/tests/webgpu/webgpu/util/texture/texel_data.html: Added.
+        * http/tests/webgpu/webgpu/util/texture/texel_data.js: Added.
+        (applyEach):
+        (packComponents):
+        (makeNormalizedInfo):
+        (makeIntegerInfo):
+        (makeFloatInfo):
+        (export.const.kTexelRepresentationInfo.rgba32float.makeFloatInfo):
+        (export.getSingleDataType):
+        (export.getComponentReadbackTraits):
+        * http/tests/webgpu/webgpu/util/texture/texel_data.spec.js: Added.
+        (doTest):
+        (kEncodableTextureFormats.filter):
+        * http/tests/webgpu/webgpu/util/unions.js: Added.
+        (export.reifyOrigin3D):
+        (export.reifyExtent3D):
+        * http/tests/webgpu/webgpu/web_platform/canvas/configure-expected.txt: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/configure.html: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/configure.spec.js: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/context_creation-expected.txt: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/context_creation.html: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/context_creation.spec.js: Added.
+        (fn.async t):
+        * http/tests/webgpu/webgpu/web_platform/canvas/getCurrentTexture-expected.txt: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/getCurrentTexture.html: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/getCurrentTexture.spec.js: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/getPreferredFormat-expected.txt: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/getPreferredFormat.html: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/getPreferredFormat.spec.js: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/readbackFromWebGPUCanvas-expected.txt: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/readbackFromWebGPUCanvas.html: Added.
+        * http/tests/webgpu/webgpu/web_platform/canvas/readbackFromWebGPUCanvas.spec.js: Added.
+        (async initCanvasContent):
+        (checkImageResult):
+        (readPixelsFrom2DCanvasAndCompare):
+        (string_appeared_here.fn.async t):
+        (allCanvasTypes.fn.async t):
+        * http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap-expected.txt: Added.
+        * http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.html: Added.
+        * http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js: Added.
+        (F.prototype.generatePixel):
+        (F.prototype.getImagePixels):
+        (F):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/web_platform/copyToTexture/canvas-expected.txt: Added.
+        * http/tests/webgpu/webgpu/web_platform/copyToTexture/canvas.html: Added.
+        * http/tests/webgpu/webgpu/web_platform/copyToTexture/canvas.spec.js: Added.
+        (F.prototype.init2DCanvasContentWithColorSpace):
+        (F.prototype.init2DCanvasContent):
+        (F.prototype.paint2DCanvas):
+        (F.prototype.initGLCanvasContent):
+        (F.prototype.getInitGPUCanvasData):
+        (F.prototype.initGPUCanvasContent):
+        (F.prototype.getSourceCanvas2DContent):
+        (F.prototype.getSourceCanvasGLContent):
+        (F.prototype.calculateSourceContentOnCPU):
+        (F.prototype.getTestImageURLByColorSpace):
+        (F):
+        (fn.async t):
+        * http/tests/webgpu/webgpu/web_platform/copyToTexture/video-expected.txt: Added.
+        * http/tests/webgpu/webgpu/web_platform/copyToTexture/video.html: Added.
+        * http/tests/webgpu/webgpu/web_platform/copyToTexture/video.spec.js: Added.
+        * http/tests/webgpu/webgpu/web_platform/external_texture/video-expected.txt: Added.
+        * http/tests/webgpu/webgpu/web_platform/external_texture/video.html: Added.
+        * http/tests/webgpu/webgpu/web_platform/external_texture/video.spec.js: Added.
+        (createExternalTextureSamplingTestPipeline):
+        (createExternalTextureSamplingTestBindGroup):
+        (kVideoSources.fn.async t):
+        (g.test.string_appeared_here.desc.Tests.that.a.GPUExternalTexture.is.destroyed.by.a.microtask.and.that.using.it.after.it.has.been.destroyed.results.in.an.error.fn.async t):
+        (async g):
+        * http/tests/webgpu/webgpu/web_platform/util.js: Added.
+        (export.startPlayingAndWaitForVideo):
+        * http/tests/webgpu/webgpu/web_platform/worker/worker-expected.txt: Added.
+        * http/tests/webgpu/webgpu/web_platform/worker/worker.html: Added.
+        * http/tests/webgpu/webgpu/web_platform/worker/worker.js: Added.
+        (async basicTest):
+        (self.onmessage.async ev):
+        * http/tests/webgpu/webgpu/web_platform/worker/worker.spec.js: Added.
+        (isNode):
+        (g.test.string_appeared_here.desc.test.WebGPU.is.available.in.DedicatedWorkers.and.check.basic.functionality.fn.async t):
+        * http/tests/webgpu/webgpu/web_platform/worker/worker_launcher.js: Added.
+        (export.async launchWorker):
+        * platform/ios-device-wk1/TestExpectations:
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2022-03-26  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, mark streams/readable-stream-lock-after-worker-terminates-crash.html as flaky on Windows.

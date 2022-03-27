@@ -2412,3 +2412,6 @@ webkit.org/b/237166 [ BigSur+ ] webgl/pending/conformance/textures/misc/tex-imag
 
 # fast/text/accessibility-bold.html requires WK2. The ***-wk2/TestExpectation files mark it as PASS.
 fast/text/accessibility-bold.html [ Skip ]
+
+# macOS has a WebGPU implementation.
+http/tests/webgpu [ Pass ]
