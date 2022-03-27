@@ -27,6 +27,7 @@
 #include "ThemeAdwaita.h"
 
 #include "Color.h"
+#include "ColorBlending.h"
 #include "ControlStates.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
@@ -50,26 +51,25 @@ static constexpr auto buttonBorderColorLight = SRGBA<uint8_t> { 0, 0, 0, 50 };
 static constexpr auto buttonBackgroundColorLight = SRGBA<uint8_t> { 244, 244, 244 };
 static constexpr auto buttonBackgroundPressedColorLight = SRGBA<uint8_t> { 214, 214, 214 };
 static constexpr auto buttonBackgroundHoveredColorLight = SRGBA<uint8_t> { 248, 248, 248 };
-static constexpr auto toggleBackgroundColorLight = Color::white;
-static constexpr auto toggleBackgroundHoveredColorLight = SRGBA<uint8_t> { 214, 214, 214 };
+static constexpr auto toggleBorderColorLight = SRGBA<uint8_t> { 0, 0, 0, 50 };
+static constexpr auto toggleBorderHoveredColorLight = SRGBA<uint8_t> { 0, 0, 0, 80 };
 
 static constexpr auto buttonBorderColorDark = SRGBA<uint8_t> { 255, 255, 255, 50 };
 static constexpr auto buttonBackgroundColorDark = SRGBA<uint8_t> { 52, 52, 52 };
 static constexpr auto buttonBackgroundPressedColorDark = SRGBA<uint8_t> { 30, 30, 30 };
 static constexpr auto buttonBackgroundHoveredColorDark = SRGBA<uint8_t> { 60, 60, 60 };
-static constexpr auto toggleBackgroundColorDark = SRGBA<uint8_t> { 45, 45, 45 };
-static constexpr auto toggleBackgroundHoveredColorDark = SRGBA<uint8_t> { 60, 60, 60 };
+static constexpr auto toggleBorderColorDark = SRGBA<uint8_t> { 255, 255, 255, 50 };
+static constexpr auto toggleBorderHoveredColorDark = SRGBA<uint8_t> { 255, 255, 255, 80 };
 
 static const double toggleSize = 14.;
+static const int toggleBorderSize = 2;
 static const int toggleFocusOffset = 2;
 
-static constexpr auto toggleColorLight = SRGBA<uint8_t> { 0, 0, 0, 200 };
 static constexpr auto spinButtonBorderColorLight = SRGBA<uint8_t> { 0, 0, 0, 25 };
 static constexpr auto spinButtonBackgroundColorLight = Color::white;
 static constexpr auto spinButtonBackgroundHoveredColorLight = SRGBA<uint8_t> { 0, 0, 0, 50 };
 static constexpr auto spinButtonBackgroundPressedColorLight = SRGBA<uint8_t> { 0, 0, 0, 70 };
 
-static constexpr auto toggleColorDark = SRGBA<uint8_t> { 255, 255, 255, 200 };
 static constexpr auto spinButtonBorderColorDark = SRGBA<uint8_t> { 255, 255, 255, 25 };
 static constexpr auto spinButtonBackgroundColorDark = SRGBA<uint8_t> { 45, 45, 45 };
 static constexpr auto spinButtonBackgroundHoveredColorDark = SRGBA<uint8_t> { 255, 255, 255, 50 };
@@ -201,14 +201,14 @@ LengthBox ThemeAdwaita::controlBorder(ControlPart part, const FontCascade& font,
     return Theme::controlBorder(part, font, zoomedBox, zoomFactor);
 }
 
-void ThemeAdwaita::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float, ScrollView*, float, float, bool, bool useDarkAppearance, const Color&)
+void ThemeAdwaita::paint(ControlPart part, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, float, ScrollView*, float, float, bool, bool useDarkAppearance, const Color& effectiveAccentColor)
 {
     switch (part) {
     case CheckboxPart:
-        paintCheckbox(states, context, zoomedRect, useDarkAppearance);
+        paintCheckbox(states, context, zoomedRect, useDarkAppearance, effectiveAccentColor);
         break;
     case RadioPart:
-        paintRadio(states, context, zoomedRect, useDarkAppearance);
+        paintRadio(states, context, zoomedRect, useDarkAppearance, effectiveAccentColor);
         break;
     case PushButtonPart:
     case DefaultButtonPart:
@@ -224,7 +224,7 @@ void ThemeAdwaita::paint(ControlPart part, ControlStates& states, GraphicsContex
     }
 }
 
-void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance)
+void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
@@ -238,48 +238,37 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
             fieldRect.move(0, (zoomedRect.height() - fieldRect.height()) / 2.0);
     }
 
-    SRGBA<uint8_t> buttonBorderColor;
-    SRGBA<uint8_t> toggleBackgroundColor;
-    SRGBA<uint8_t> toggleBackgroundHoveredColor;
-    SRGBA<uint8_t> toggleColor;
+    SRGBA<uint8_t> toggleBorderColor;
+    SRGBA<uint8_t> toggleBorderHoverColor;
 
     if (useDarkAppearance) {
-        buttonBorderColor = buttonBorderColorDark;
-        toggleBackgroundColor = toggleBackgroundColorDark;
-        toggleBackgroundHoveredColor = toggleBackgroundHoveredColorDark;
-        toggleColor = toggleColorDark;
+        toggleBorderColor = toggleBorderColorDark;
+        toggleBorderHoverColor = toggleBorderHoveredColorDark;
     } else {
-        buttonBorderColor = buttonBorderColorLight;
-        toggleBackgroundColor = toggleBackgroundColorLight;
-        toggleBackgroundHoveredColor = toggleBackgroundHoveredColorLight;
-        toggleColor = toggleColorLight;
+        toggleBorderColor = toggleBorderColorLight;
+        toggleBorderHoverColor = toggleBorderHoveredColorLight;
     }
+
+    Color accentColor = effectiveAccentColor.isValid() ? effectiveAccentColor : m_accentColor;
+    Color foregroundColor = accentColor.luminance() > 0.5 ? Color(SRGBA<uint8_t> { 0, 0, 0, 204 }) : Color::white;
+    Color accentHoverColor = blendSourceOver(accentColor, foregroundColor.colorWithAlphaMultipliedBy(0.1));
 
     if (!states.states().contains(ControlStates::States::Enabled))
         graphicsContext.beginTransparencyLayer(disabledOpacity);
 
     FloatSize corner(2, 2);
     Path path;
-    path.addRoundedRect(fieldRect, corner);
-    fieldRect.inflate(-buttonBorderSize);
-    corner.expand(-buttonBorderSize, -buttonBorderSize);
-    path.addRoundedRect(fieldRect, corner);
-    graphicsContext.setFillRule(WindRule::EvenOdd);
-    graphicsContext.setFillColor(buttonBorderColor);
-    graphicsContext.fillPath(path);
-    path.clear();
-
-    path.addRoundedRect(fieldRect, corner);
-    graphicsContext.setFillRule(WindRule::NonZero);
-    if (states.states().contains(ControlStates::States::Hovered)
-        && states.states().contains(ControlStates::States::Enabled))
-        graphicsContext.setFillColor(toggleBackgroundHoveredColor);
-    else
-        graphicsContext.setFillColor(toggleBackgroundColor);
-    graphicsContext.fillPath(path);
-    path.clear();
 
     if (states.states().containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate })) {
+        path.addRoundedRect(fieldRect, corner);
+        graphicsContext.setFillRule(WindRule::NonZero);
+        if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
+            graphicsContext.setFillColor(accentHoverColor);
+        else
+            graphicsContext.setFillColor(accentColor);
+        graphicsContext.fillPath(path);
+        path.clear();
+
         GraphicsContextStateSaver checkedStateSaver(graphicsContext);
         graphicsContext.translate(fieldRect.x(), fieldRect.y());
         graphicsContext.scale(FloatSize::narrowPrecision(fieldRect.width() / toggleSize, fieldRect.height() / toggleSize));
@@ -294,8 +283,20 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
         } else
             path.addRoundedRect(FloatRect(2, 5, 10, 4), corner);
 
-        graphicsContext.setFillColor(toggleColor);
+        graphicsContext.setFillColor(foregroundColor);
 
+        graphicsContext.fillPath(path);
+        path.clear();
+    } else {
+        path.addRoundedRect(fieldRect, corner);
+        fieldRect.inflate(-toggleBorderSize);
+        corner.expand(-buttonBorderSize, -buttonBorderSize);
+        path.addRoundedRect(fieldRect, corner);
+        graphicsContext.setFillRule(WindRule::EvenOdd);
+        if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
+            graphicsContext.setFillColor(toggleBorderHoverColor);
+        else
+            graphicsContext.setFillColor(toggleBorderColor);
         graphicsContext.fillPath(path);
         path.clear();
     }
@@ -307,7 +308,7 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
         graphicsContext.endTransparencyLayer();
 }
 
-void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance)
+void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
     FloatRect fieldRect = zoomedRect;
@@ -320,50 +321,51 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
             fieldRect.move(0, (zoomedRect.height() - fieldRect.height()) / 2.0);
     }
 
-    SRGBA<uint8_t> buttonBorderColor;
-    SRGBA<uint8_t> toggleBackgroundColor;
-    SRGBA<uint8_t> toggleBackgroundHoveredColor;
-    SRGBA<uint8_t> toggleColor;
+    SRGBA<uint8_t> toggleBorderColor;
+    SRGBA<uint8_t> toggleBorderHoverColor;
 
     if (useDarkAppearance) {
-        buttonBorderColor = buttonBorderColorDark;
-        toggleBackgroundColor = toggleBackgroundColorDark;
-        toggleBackgroundHoveredColor = toggleBackgroundHoveredColorDark;
-        toggleColor = toggleColorDark;
+        toggleBorderColor = toggleBorderColorDark;
+        toggleBorderHoverColor = toggleBorderHoveredColorDark;
     } else {
-        buttonBorderColor = buttonBorderColorLight;
-        toggleBackgroundColor = toggleBackgroundColorLight;
-        toggleBackgroundHoveredColor = toggleBackgroundHoveredColorLight;
-        toggleColor = toggleColorLight;
+        toggleBorderColor = toggleBorderColorLight;
+        toggleBorderHoverColor = toggleBorderHoveredColorLight;
     }
+
+    Color accentColor = effectiveAccentColor.isValid() ? effectiveAccentColor : m_accentColor;
+    Color foregroundColor = accentColor.luminance() > 0.5 ? Color(SRGBA<uint8_t> { 0, 0, 0, 204 }) : Color::white;
+    Color accentHoverColor = blendSourceOver(accentColor, foregroundColor.colorWithAlphaMultipliedBy(0.1));
 
     if (!states.states().contains(ControlStates::States::Enabled))
         graphicsContext.beginTransparencyLayer(disabledOpacity);
 
     Path path;
-    path.addEllipse(fieldRect);
-    fieldRect.inflate(-buttonBorderSize);
-    path.addEllipse(fieldRect);
-    graphicsContext.setFillRule(WindRule::EvenOdd);
-    graphicsContext.setFillColor(buttonBorderColor);
-    graphicsContext.fillPath(path);
-    path.clear();
 
-    path.addEllipse(fieldRect);
-    graphicsContext.setFillRule(WindRule::NonZero);
-    if (states.states().contains(ControlStates::States::Hovered)
-        && states.states().contains(ControlStates::States::Enabled))
-        graphicsContext.setFillColor(toggleBackgroundHoveredColor);
-    else
-        graphicsContext.setFillColor(toggleBackgroundColor);
-    graphicsContext.fillPath(path);
-    path.clear();
+    if (states.states().containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate })) {
+        path.addEllipse(fieldRect);
+        graphicsContext.setFillRule(WindRule::NonZero);
+        if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
+            graphicsContext.setFillColor(accentHoverColor);
+        else
+            graphicsContext.setFillColor(accentColor);
+        graphicsContext.fillPath(path);
+        path.clear();
 
-    if (states.states().contains(ControlStates::States::Checked)) {
         fieldRect.inflate(-(fieldRect.width() - fieldRect.width() * 0.70));
         path.addEllipse(fieldRect);
-        graphicsContext.setFillColor(toggleColor);
+        graphicsContext.setFillColor(foregroundColor);
         graphicsContext.fillPath(path);
+    } else {
+        path.addEllipse(fieldRect);
+        fieldRect.inflate(-toggleBorderSize);
+        path.addEllipse(fieldRect);
+        graphicsContext.setFillRule(WindRule::EvenOdd);
+        if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
+            graphicsContext.setFillColor(toggleBorderHoverColor);
+        else
+            graphicsContext.setFillColor(toggleBorderColor);
+        graphicsContext.fillPath(path);
+        path.clear();
     }
 
     if (states.states().contains(ControlStates::States::Focused))

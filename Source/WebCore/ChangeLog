@@ -1,3 +1,27 @@
+2022-03-27  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK][WPE] Support CSS accent-color
+        https://bugs.webkit.org/show_bug.cgi?id=238398
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add accent-color support for progress, range and entries.
+        Update check and radio styles so that they can use accent color as well.
+
+        * platform/adwaita/ThemeAdwaita.cpp:
+        (WebCore::ThemeAdwaita::paint):
+        (WebCore::ThemeAdwaita::paintCheckbox):
+        (WebCore::ThemeAdwaita::paintRadio):
+        * platform/adwaita/ThemeAdwaita.h:
+        * rendering/RenderThemeAdwaita.cpp:
+        (WebCore::getSystemAccentColor):
+        (WebCore::getAccentColor):
+        (WebCore::RenderThemeAdwaita::platformActiveSelectionBackgroundColor const):
+        (WebCore::RenderThemeAdwaita::paintTextField):
+        (WebCore::RenderThemeAdwaita::paintProgressBar):
+        (WebCore::RenderThemeAdwaita::paintSliderTrack):
+        (WebCore::RenderThemeAdwaita::paintSliderThumb):
+
 2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use static_assert instead of COMPILE_ASSERT

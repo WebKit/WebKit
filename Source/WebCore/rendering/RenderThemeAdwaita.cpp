@@ -93,9 +93,18 @@ static constexpr auto buttonTextDisabledColorLight = SRGBA<uint8_t> { 0, 0, 0, 1
 static constexpr auto buttonTextColorDark = SRGBA<uint8_t> { 255, 255, 255 };
 static constexpr auto buttonTextDisabledColorDark = SRGBA<uint8_t> { 255, 255, 255, 127 };
 
-static inline Color getAccentColor()
+static inline Color getSystemAccentColor()
 {
     return static_cast<ThemeAdwaita&>(Theme::singleton()).accentColor();
+}
+
+static inline Color getAccentColor(const RenderObject& renderObject)
+{
+    auto accentColor = renderObject.style().effectiveAccentColor();
+    if (accentColor.isValid())
+        return accentColor;
+
+    return getSystemAccentColor();
 }
 
 #if !PLATFORM(GTK)
@@ -134,7 +143,7 @@ bool RenderThemeAdwaita::shouldHaveCapsLockIndicator(const HTMLInputElement& ele
 
 Color RenderThemeAdwaita::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
 {
-    return getAccentColor().colorWithAlphaMultipliedBy(0.3);
+    return getSystemAccentColor().colorWithAlphaMultipliedBy(0.3);
 }
 
 Color RenderThemeAdwaita::platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
@@ -284,7 +293,7 @@ bool RenderThemeAdwaita::paintTextField(const RenderObject& renderObject, const 
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::EvenOdd);
     if (enabled && isFocused(renderObject))
-        graphicsContext.setFillColor(getAccentColor());
+        graphicsContext.setFillColor(getAccentColor(renderObject));
     else
         graphicsContext.setFillColor(textFieldBorderColor);
     graphicsContext.fillPath(path);
@@ -471,7 +480,8 @@ bool RenderThemeAdwaita::paintProgressBar(const RenderObject& renderObject, cons
 
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::NonZero);
-    graphicsContext.setFillColor(getAccentColor());
+
+    graphicsContext.setFillColor(getAccentColor(renderObject));
     graphicsContext.fillPath(path);
 
     return false;
@@ -540,7 +550,7 @@ bool RenderThemeAdwaita::paintSliderTrack(const RenderObject& renderObject, cons
 
     path.addRoundedRect(FloatRoundedRect(rangeRect, corners));
     graphicsContext.setFillRule(WindRule::NonZero);
-    graphicsContext.setFillColor(getAccentColor());
+    graphicsContext.setFillColor(getAccentColor(renderObject));
     graphicsContext.fillPath(path);
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -597,7 +607,7 @@ bool RenderThemeAdwaita::paintSliderThumb(const RenderObject& renderObject, cons
     path.addEllipse(fieldRect);
     graphicsContext.setFillRule(WindRule::EvenOdd);
     if (isEnabled(renderObject) && isPressed(renderObject))
-        graphicsContext.setFillColor(getAccentColor());
+        graphicsContext.setFillColor(getAccentColor(renderObject));
     else
         graphicsContext.setFillColor(sliderThumbBorderColor);
     graphicsContext.fillPath(path);
