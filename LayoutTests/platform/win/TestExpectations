@@ -5008,6 +5008,9 @@ http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-
 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked2.html [ Failure ]
 http/tests/security/contentSecurityPolicy/userAgentShadowDOM/default-src-object-data-url-blocked3.html [ Failure ]
 
+# Test is flaky on Window EWS and leads to false positives.
+streams/readable-stream-lock-after-worker-terminates-crash.html [ Timeout Pass ]
+
 # Push subscription tests fail without platform-specific PushCrypto implementations.
 http/tests/push-api/subscribe-default-permissions-iframe-cross-origin.html [ Failure ]
 http/tests/push-api/subscribe-default-permissions-iframe-same-origin.html [ Failure ]

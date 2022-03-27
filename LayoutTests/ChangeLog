@@ -1,3 +1,12 @@
+2022-03-26  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, mark streams/readable-stream-lock-after-worker-terminates-crash.html as flaky on Windows.
+
+        This test has been a flaky Timeout on Windows EWS for months and keeps leading to false positives.
+        Mark it as flaky to silence the noise.
+
+        * platform/win/TestExpectations:
+
 2022-03-26  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorkerWindowClient.focus
