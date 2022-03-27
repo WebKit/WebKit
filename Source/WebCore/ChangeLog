@@ -1,3 +1,37 @@
+2022-03-27  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] ASSERTs in BoxGeometry when loading Twitter page
+        https://bugs.webkit.org/show_bug.cgi?id=238421
+        <rdar://89980547>
+
+        Reviewed by Antti Koivisto.
+
+        Ensure that we set size/position on trailing, empty inline box(es) in bidi context.
+        e.g. 
+        <div>some content<span> <-line breaks here</span></div>
+
+        where the first line has the following runs:
+          [some content]
+          [inline box start]
+
+        second line has:
+          [spanning inline box start]
+          [<-line breaks here]
+          [inline box end]
+
+        The first line's trailing (and empty, due to trailing whitespace trimming) [inline box start] run
+        needs computed geometry/display box so that when on the subsequent line we see the [spanning inline box start] run
+        we can properly compute the enclosing geometry for the <span> element.
+        (and that's where we currently assert as we don't find the associated box geometry for the inline box on the first line.)
+
+        See the comment in InlineDisplayContentBuilder::processBidiContent for details.
+        (Note that this change has no visual impact as these trailing inline boxes are always empty.) 
+
+        Test: fast/inline/trailing-empty-bidi-inline-box.html
+
+        * layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp:
+        (WebCore::Layout::InlineDisplayContentBuilder::processBidiContent):
+
 2022-03-27  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK][WPE] Support CSS accent-color
