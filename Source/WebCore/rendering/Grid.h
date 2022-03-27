@@ -59,7 +59,7 @@ public:
 
     GridSpan gridItemSpan(const RenderBox&, GridTrackSizingDirection) const;
 
-    const GridCell& cell(unsigned row, unsigned column) const { return m_grid[row][column]; }
+    const GridCell& cell(unsigned row, unsigned column) const;
 
     unsigned explicitGridStart(GridTrackSizingDirection) const;
     void setExplicitGridStart(unsigned rowStart, unsigned columnStart);
@@ -86,7 +86,7 @@ public:
     bool needsItemsPlacement() const { return m_needsItemsPlacement; };
 
 private:
-    friend class GridIterator;
+    void ensureStorageForRow(unsigned row);
 
     OrderIterator m_orderIterator;
 
@@ -128,7 +128,7 @@ public:
     }
 
 private:
-    const GridAsMatrix& m_grid;
+    const Grid& m_grid;
     GridTrackSizingDirection m_direction;
     unsigned m_rowIndex;
     unsigned m_columnIndex;

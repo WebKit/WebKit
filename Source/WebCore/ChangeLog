@@ -1,3 +1,32 @@
+2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Lazily allocate backing store for grid columns.
+        https://bugs.webkit.org/show_bug.cgi?id=212201
+
+        Reviewed by Dean Jackson.
+
+        Existing WPT test grid-limits-001.html marked as passing.
+
+        * rendering/Grid.cpp:
+        (WebCore::Grid::ensureGridSize):
+        (WebCore::Grid::ensureStorageForRow):
+        (WebCore::Grid::insert):
+        (WebCore::Grid::cell const):
+
+        Only grow the first row's column storage (since we use this
+        to remember the column count) and lazily grow the others when
+        we try write to them.
+
+        (WebCore::GridIterator::GridIterator):
+        (WebCore::GridIterator::nextGridItem):
+        (WebCore::GridIterator::isEmptyAreaEnough const):
+        (WebCore::GridIterator::nextEmptyGridArea):
+        * rendering/Grid.h:
+
+        Changes GridIterator to use the Grid API rather than directly
+        accessing the inner Vector using 'friend'. This makes it easier to
+        ensure that we never access areas outside of our lazy allocations.
+
 2022-03-27  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] ASSERTs in BoxGeometry when loading Twitter page

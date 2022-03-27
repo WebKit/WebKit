@@ -4250,7 +4250,6 @@ webkit.org/b/204580 imported/w3c/web-platform-tests/css/css-grid/animation/grid-
 webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-001.html [ ImageOnlyFailure ]
 webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-002.html [ ImageOnlyFailure ]
 webkit.org/b/209460 imported/w3c/web-platform-tests/css/css-grid/abspos/descendant-static-position-003.html [ ImageOnlyFailure ]
-webkit.org/b/212201 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-limits-001.html [ Skip ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-baseline-align-cycles-001.html [ ImageOnlyFailure ]
 webkit.org/b/231021 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-inline-baseline.html [ ImageOnlyFailure ]
 webkit.org/b/212246 imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-content-baseline-001.html [ ImageOnlyFailure ]

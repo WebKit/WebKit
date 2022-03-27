@@ -1,3 +1,14 @@
+2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Lazily allocate backing store for grid columns.
+        https://bugs.webkit.org/show_bug.cgi?id=212201
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-grid/grid-definition/grid-limits-001-expected.txt: Added.
+
+        Add passing expectations file for previously skipped test.
+
 2022-03-26  Noam Rosenthal  <noam@webkit.org>
 
         Import clip-path W3C tests

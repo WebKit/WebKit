@@ -51,14 +51,18 @@ void Grid::ensureGridSize(unsigned maximumRowSize, unsigned maximumColumnSize)
     const size_t oldRowSize = numTracks(ForRows);
     if (maximumRowSize > oldRowSize) {
         m_grid.grow(maximumRowSize);
-        for (size_t row = oldRowSize; row < maximumRowSize; ++row)
-            m_grid[row].grow(oldColumnSize);
     }
 
-    if (maximumColumnSize > oldColumnSize) {
-        for (size_t row = 0; row < numTracks(ForRows); ++row)
-            m_grid[row].grow(maximumColumnSize);
+    // Just grow the first row for now so that we know the requested size,
+    // and we'll lazily allocate the others when they get used.
+    if (maximumColumnSize > oldColumnSize && maximumRowSize) {
+        m_grid[0].grow(maximumColumnSize);
     }
+}
+
+void Grid::ensureStorageForRow(unsigned row)
+{
+    m_grid[row].grow(m_grid[0].size());
 }
 
 GridArea Grid::insert(RenderBox& child, const GridArea& area)
@@ -73,12 +77,25 @@ GridArea Grid::insert(RenderBox& child, const GridArea& area)
     ensureGridSize(clampedArea.rows.endLine(), clampedArea.columns.endLine());
 
     for (auto row : clampedArea.rows) {
+        ensureStorageForRow(row);
         for (auto column : clampedArea.columns)
             m_grid[row][column].append(child);
     }
 
     setGridItemArea(child, clampedArea);
     return clampedArea;
+}
+
+const GridCell& Grid::cell(unsigned row, unsigned column) const
+{
+    // Storage for rows other than the first is lazily allocated. We can
+    // just return a fake entry if the request is outside the allocated area,
+    // since it must be empty.
+    static const NeverDestroyed<GridCell> emptyCell;
+    if (row && m_grid[row].size() <= column)
+        return emptyCell;
+
+    return m_grid[row][column];
 }
 
 void Grid::setExplicitGridStart(unsigned rowStart, unsigned columnStart)
@@ -191,27 +208,27 @@ void Grid::setNeedsItemsPlacement(bool needsItemsPlacement)
 }
 
 GridIterator::GridIterator(const Grid& grid, GridTrackSizingDirection direction, unsigned fixedTrackIndex, unsigned varyingTrackIndex)
-    : m_grid(grid.m_grid)
+    : m_grid(grid)
     , m_direction(direction)
     , m_rowIndex((direction == ForColumns) ? varyingTrackIndex : fixedTrackIndex)
     , m_columnIndex((direction == ForColumns) ? fixedTrackIndex : varyingTrackIndex)
     , m_childIndex(0)
 {
-    ASSERT(!m_grid.isEmpty());
-    ASSERT(!m_grid[0].isEmpty());
-    ASSERT(m_rowIndex < m_grid.size());
-    ASSERT(m_columnIndex < m_grid[0].size());
+    ASSERT(m_grid.numTracks(ForRows));
+    ASSERT(m_grid.numTracks(ForColumns));
+    ASSERT(m_rowIndex < m_grid.numTracks(ForRows));
+    ASSERT(m_columnIndex < m_grid.numTracks(ForColumns));
 }
 
 RenderBox* GridIterator::nextGridItem()
 {
-    ASSERT(!m_grid.isEmpty());
-    ASSERT(!m_grid[0].isEmpty());
+    ASSERT(m_grid.numTracks(ForRows));
+    ASSERT(m_grid.numTracks(ForColumns));
 
     unsigned& varyingTrackIndex = (m_direction == ForColumns) ? m_rowIndex : m_columnIndex;
-    const unsigned endOfVaryingTrackIndex = (m_direction == ForColumns) ? m_grid.size() : m_grid[0].size();
+    const unsigned endOfVaryingTrackIndex = (m_direction == ForColumns) ? m_grid.numTracks(ForRows) : m_grid.numTracks(ForColumns);
     for (; varyingTrackIndex < endOfVaryingTrackIndex; ++varyingTrackIndex) {
-        const auto& children = m_grid[m_rowIndex][m_columnIndex];
+        const auto& children = m_grid.cell(m_rowIndex, m_columnIndex);
         if (m_childIndex < children.size())
             return children[m_childIndex++].get();
 
@@ -222,17 +239,17 @@ RenderBox* GridIterator::nextGridItem()
 
 bool GridIterator::isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) const
 {
-    ASSERT(!m_grid.isEmpty());
-    ASSERT(!m_grid[0].isEmpty());
+    ASSERT(m_grid.numTracks(ForRows));
+    ASSERT(m_grid.numTracks(ForColumns));
 
     // Ignore cells outside current grid as we will grow it later if needed.
-    unsigned maxRows = std::min<unsigned>(m_rowIndex + rowSpan, m_grid.size());
-    unsigned maxColumns = std::min<unsigned>(m_columnIndex + columnSpan, m_grid[0].size());
+    unsigned maxRows = std::min<unsigned>(m_rowIndex + rowSpan, m_grid.numTracks(ForRows));
+    unsigned maxColumns = std::min<unsigned>(m_columnIndex + columnSpan, m_grid.numTracks(ForColumns));
 
     // This adds a O(N^2) behavior that shouldn't be a big deal as we expect spanning areas to be small.
     for (unsigned row = m_rowIndex; row < maxRows; ++row) {
         for (unsigned column = m_columnIndex; column < maxColumns; ++column) {
-            auto& children = m_grid[row][column];
+            auto& children = m_grid.cell(row, column);
             if (!children.isEmpty())
                 return false;
         }
@@ -243,19 +260,19 @@ bool GridIterator::isEmptyAreaEnough(unsigned rowSpan, unsigned columnSpan) cons
 
 std::unique_ptr<GridArea> GridIterator::nextEmptyGridArea(unsigned fixedTrackSpan, unsigned varyingTrackSpan)
 {
-    ASSERT(!m_grid.isEmpty());
-    ASSERT(!m_grid[0].isEmpty());
+    ASSERT(m_grid.numTracks(ForRows));
+    ASSERT(m_grid.numTracks(ForColumns));
     ASSERT(fixedTrackSpan >= 1);
     ASSERT(varyingTrackSpan >= 1);
 
-    if (m_grid.isEmpty())
+    if (!m_grid.hasGridItems())
         return nullptr;
 
     unsigned rowSpan = (m_direction == ForColumns) ? varyingTrackSpan : fixedTrackSpan;
     unsigned columnSpan = (m_direction == ForColumns) ? fixedTrackSpan : varyingTrackSpan;
 
     unsigned& varyingTrackIndex = (m_direction == ForColumns) ? m_rowIndex : m_columnIndex;
-    const unsigned endOfVaryingTrackIndex = (m_direction == ForColumns) ? m_grid.size() : m_grid[0].size();
+    const unsigned endOfVaryingTrackIndex = (m_direction == ForColumns) ? m_grid.numTracks(ForRows) : m_grid.numTracks(ForColumns);
     for (; varyingTrackIndex < endOfVaryingTrackIndex; ++varyingTrackIndex) {
         if (isEmptyAreaEnough(rowSpan, columnSpan)) {
             std::unique_ptr<GridArea> result = makeUnique<GridArea>(GridSpan::translatedDefiniteGridSpan(m_rowIndex, m_rowIndex + rowSpan), GridSpan::translatedDefiniteGridSpan(m_columnIndex, m_columnIndex + columnSpan));

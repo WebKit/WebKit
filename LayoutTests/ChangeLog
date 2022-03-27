@@ -1,3 +1,14 @@
+2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Lazily allocate backing store for grid columns.
+        https://bugs.webkit.org/show_bug.cgi?id=212201
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+
+        Remove skip annotation for test grid-limits-001 that now passes.
+
 2022-03-27  Alan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] ASSERTs in BoxGeometry when loading Twitter page
