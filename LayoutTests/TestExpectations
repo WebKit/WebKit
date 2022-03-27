@@ -1416,7 +1416,6 @@ imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-0
 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/masonry-subgrid-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/236959 imported/w3c/web-platform-tests/css/css-grid/subgrid/baseline-001.html [ ImageOnlyFailure ]
-webkit.org/b/236956 imported/w3c/web-platform-tests/css/css-grid/subgrid/grid-gap-003.html [ ImageOnlyFailure ]
 webkit.org/b/236958 imported/w3c/web-platform-tests/css/css-grid/subgrid/repeat-auto-fill-003.html [ ImageOnlyFailure ]
 webkit.org/b/236949 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-001.html [ ImageOnlyFailure ]
 webkit.org/b/236949 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-mbp-overflow-002.html [ ImageOnlyFailure ]

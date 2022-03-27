@@ -1,5 +1,22 @@
 2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
 
+        Use the sizing algorithm's available size to compute grid gap.
+        https://bugs.webkit.org/show_bug.cgi?id=236956
+
+        Reviewed by Tim Nguyen.
+
+        Computing the grid gap for subgridded tracks happens during the sizing algorithm
+        (as part of copying the sizes from the parent, instead of computing new sizes). At
+        this point we should always have a definite size available (the size of the tracks in
+        the parent that the subgrid spans), but it may not yet be set on the subgrid's RenderElement.
+        This retreives the size from the track sizing algorithm instead, where it should always be
+        available by this point.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid):
+
+2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
+
         Lazily allocate backing store for grid columns.
         https://bugs.webkit.org/show_bug.cgi?id=212201
 

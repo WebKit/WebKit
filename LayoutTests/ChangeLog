@@ -1,5 +1,16 @@
 2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
 
+        Use the sizing algorithm's available size to compute grid gap.
+        https://bugs.webkit.org/show_bug.cgi?id=236956
+
+        Reviewed by Tim Nguyen.
+
+        * TestExpectations:
+
+        Existing subgrid tests marked as passing.
+
+2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
+
         Lazily allocate backing store for grid columns.
         https://bugs.webkit.org/show_bug.cgi?id=212201
 

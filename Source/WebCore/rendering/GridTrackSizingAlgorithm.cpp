@@ -1543,7 +1543,7 @@ bool GridTrackSizingAlgorithm::copyUsedTrackSizesForSubgrid()
     LayoutUnit endMBP = (m_direction == ForColumns) ? m_renderGrid->marginAndBorderAndPaddingEnd() : m_renderGrid->marginAndBorderAndPaddingAfter();
     removeSubgridMarginBorderPaddingFromTracks(allTracks, endMBP, false);
 
-    LayoutUnit gapDifference = (m_renderGrid->gridGap(m_direction) - outer->gridGap(direction)) / 2;
+    LayoutUnit gapDifference = (m_renderGrid->gridGap(m_direction, availableSpace(m_direction)) - outer->gridGap(direction)) / 2;
     for (int i = 0; i < numTracks; i++) {
         LayoutUnit size = allTracks[i].baseSize();
         if (i)
