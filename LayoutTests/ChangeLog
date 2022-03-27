@@ -1,3 +1,14 @@
+2022-03-26  Noam Rosenthal  <noam@webkit.org>
+
+        Import clip-path W3C tests
+        https://bugs.webkit.org/show_bug.cgi?id=238373
+
+        Reviewed by Tim Nguyen.
+
+        Updated expectations for newly imported failing clip-path tests.
+
+        * TestExpectations:
+
 2022-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Import WebGPU Conformance Test Suite

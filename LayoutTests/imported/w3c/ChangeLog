@@ -1,3 +1,100 @@
+2022-03-26  Noam Rosenthal  <noam@webkit.org>
+
+        Import clip-path W3C tests
+        https://bugs.webkit.org/show_bug.cgi?id=238373
+
+        Reviewed by Tim Nguyen.
+
+        Imported css/css-masking/clip-path and css/css-masking/parsing
+        Upstream rev: f987e7440879b5446f135dca82239feacc9a9caf
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-filter-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes1-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-incompatible-shapes2-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-overflow-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes1-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-animation-three-keyframes2-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/animations/clip-path-transition-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/animations/w3c-import.log:
+        * web-platform-tests/css/css-masking/clip-path/clip-path-blending-offset-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1a-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1a.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1b-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1b.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1c-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1c.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-contentBox-1a-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-contentBox-1a.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-contentBox-1b-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-contentBox-1b.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-contentBox-1c-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-contentBox-1c.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-fillBox-1a-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-fillBox-1a.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-filter-order-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-fixed-nested-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-fixed-scroll-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-geometryBox-1-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-geometryBox-2-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-geometryBox-2-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-geometryBox-2.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-inset-round-percent-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-localRef-1-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-localRef-1-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-localRef-1.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-marginBox-1a-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-marginBox-1a.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-mix-blend-mode-1-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-mix-blend-mode-1-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-mix-blend-mode-1.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-paddingBox-1a-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-paddingBox-1a.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-paddingBox-1b-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-paddingBox-1b.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-paddingBox-1c-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-paddingBox-1c.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-rotated-will-change-transform-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-001-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-001.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-002-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-002-units-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-002-units.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-002.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-003-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-003.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-004-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-004.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-interpolation-001-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-interpolation-001.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-interpolation-002-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-shape-interpolation-002.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1a-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1a.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1b-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-strokeBox-1b.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-svg-invalidate-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-svg-text-backdrop-filter-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1a-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1a.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1b-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1b.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1c-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/clip-path-viewBox-1c.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/svg-clip-path-circle-offset-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/svg-clip-path-circle-offset-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/svg-clip-path-circle-offset.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/svg-clip-path-ellipse-offset-expected.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/svg-clip-path-ellipse-offset-ref.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/svg-clip-path-ellipse-offset.html: Added.
+        * web-platform-tests/css/css-masking/clip-path/w3c-import.log:
+        * web-platform-tests/css/css-masking/parsing/clip-path-shape-parsing-expected.txt: Added.
+        * web-platform-tests/css/css-masking/parsing/clip-path-shape-parsing.html: Added.
+        * web-platform-tests/css/css-masking/parsing/support/parsing-testcommon.js: Added.
+        (test_valid_value):
+        * web-platform-tests/css/css-masking/parsing/w3c-import.log:
+
 2022-03-25  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Incorrect handling of NaN inside calc() for top-level calculation
