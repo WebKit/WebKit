@@ -1,3 +1,18 @@
+2022-03-28  Ziran Sun  <zsun@igalia.com>
+
+        [Forms] Alias appearance <compat-auto> keywords to 'auto' for button
+        https://bugs.webkit.org/show_bug.cgi?id=238252
+
+        Reviewed by Darin Adler.
+
+        We need to alias appearance <compat-auto> keywords to 'auto'. This is to
+        handle some button related cases including button, push-button and square-button.
+        Also the slider-horizontal case has been addressed. We still have menulist and
+        textfield cases left to look into.
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustAppearanceForElement const):
+
 2022-03-28  Cameron McCormack  <heycam@apple.com>
 
         Remove pending UA shadow tree state when an input element is removed from the document

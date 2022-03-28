@@ -1,3 +1,17 @@
+2022-03-28  Ziran Sun  <zsun@igalia.com>
+
+        [Forms] Alias appearance <compat-auto> keywords to 'auto' for button
+        https://bugs.webkit.org/show_bug.cgi?id=238252
+
+        Reviewed by Darin Adler.
+
+        Unskip the tests that are now passing.
+        -webkit-appearance: square-button doesnt work for ::-webkit-file-upload-button any more.
+        Replace it with -webkit-appearance: none in fast/forms/file/file-style-inheritance.html.
+        This is also in line with the change in Chromium.
+        * TestExpectations:
+        * fast/forms/file/file-style-inheritance.html:
+
 2022-03-28  Cameron McCormack  <heycam@apple.com>
 
         Remove pending UA shadow tree state when an input element is removed from the document

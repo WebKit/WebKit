@@ -95,16 +95,26 @@ ControlPart RenderTheme::adjustAppearanceForElement(RenderStyle& style, const El
 
     // Aliases of 'auto'.
     // https://drafts.csswg.org/css-ui-4/#typedef-appearance-compat-auto
-    if (part == AutoPart || part == SearchFieldPart || part == TextAreaPart || part == CheckboxPart || part == RadioPart || part == ListboxPart || part == MeterPart || part == ProgressBarPart) {
+    if (part == AutoPart || part == SearchFieldPart || part == TextAreaPart || part == CheckboxPart || part == RadioPart || part == ListboxPart || part == MeterPart || part == ProgressBarPart
+        || part == SquareButtonPart || part == PushButtonPart || part == SliderHorizontalPart) {
         style.setEffectiveAppearance(autoAppearance);
         return autoAppearance;
     }
 
     // The following keywords should work well for some element types
     // even if their default appearances are different from the keywords.
-    if (part == MenulistButtonPart && autoAppearance != MenulistPart) {
+    if (part == ButtonPart) {
+        if (autoAppearance == PushButtonPart || autoAppearance == SquareButtonPart)
+            return part;
         style.setEffectiveAppearance(autoAppearance);
-        part = autoAppearance;
+        return autoAppearance;
+    }
+
+    if (part == MenulistButtonPart) {
+        if (autoAppearance == MenulistPart)
+            return part;
+        style.setEffectiveAppearance(autoAppearance);
+        return autoAppearance;
     }
 
     return part;
