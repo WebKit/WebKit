@@ -1,3 +1,27 @@
+2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Fix serialization of grid-template
+        https://bugs.webkit.org/show_bug.cgi?id=237868
+
+        Reviewed by Dean Jackson.
+
+        Existing WPT tests marked as passing.
+
+        * css/CSSGridTemplateAreasValue.cpp:
+        (WebCore::CSSGridTemplateAreasValue::stringForRow):
+        * css/CSSGridTemplateAreasValue.h:
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::getPropertyValue const):
+        (WebCore::isNoneValue):
+        (WebCore::isValueID):
+        (WebCore::StyleProperties::getGridTemplateValue const):
+        (WebCore::StyleProperties::getGridValue const):
+        * css/StyleProperties.h:
+
+        Creates custom serialization for grid-template that handles the case
+        where no areas were specified (and omits trailing 'none' value), as well as handling
+        the case where areas are interleaved within the tracks definitions.
+
 2022-03-27  Daniel Adams  <msub2official@gmail.com>
 
         Sort IDL extended attributes alphabetically

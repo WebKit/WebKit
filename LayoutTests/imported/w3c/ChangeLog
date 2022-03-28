@@ -1,5 +1,17 @@
 2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
 
+        Fix serialization of grid-template
+        https://bugs.webkit.org/show_bug.cgi?id=237868
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-grid/parsing/grid-shorthand-valid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-shorthand-valid-expected.txt:
+
+        Update expectation files for newly passing tests.
+
+2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
+
         Lazily allocate backing store for grid columns.
         https://bugs.webkit.org/show_bug.cgi?id=212201
 

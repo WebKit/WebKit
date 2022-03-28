@@ -26,6 +26,8 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSDeferredParser.h"
+#include "CSSGridLineNamesValue.h"
+#include "CSSGridTemplateAreasValue.h"
 #include "CSSOffsetRotateValue.h"
 #include "CSSParser.h"
 #include "CSSPendingSubstitutionValue.h"
@@ -255,9 +257,9 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyGridArea:
         return getGridShorthandValue(gridAreaShorthand());
     case CSSPropertyGridTemplate:
-        return getGridShorthandValue(gridTemplateShorthand());
+        return getGridTemplateValue();
     case CSSPropertyGrid:
-        return getGridShorthandValue(gridShorthand());
+        return getGridValue();
     case CSSPropertyGridColumn:
         return getGridShorthandValue(gridColumnShorthand());
     case CSSPropertyGridRow:
@@ -834,6 +836,102 @@ String StyleProperties::getLayeredShorthandValue(const StylePropertyShorthand& s
         return commonValue;
 
     return result.isEmpty() ? String() : result.toString();
+}
+
+static bool isNoneValue(const RefPtr<CSSValue>& value)
+{
+    return value && value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get())->isValueID() && downcast<CSSPrimitiveValue>(value.get())->valueID() == CSSValueNone;
+}
+
+static bool isValueID(const Ref<CSSValue>& value, CSSValueID id)
+{
+    return value->isPrimitiveValue() && downcast<CSSPrimitiveValue>(value.get()).isValueID() && downcast<CSSPrimitiveValue>(value.get()).valueID() == id;
+}
+
+static bool isValueID(const RefPtr<CSSValue>& value, CSSValueID id)
+{
+    return value && isValueID(*value, id);
+}
+
+String StyleProperties::getGridTemplateValue() const
+{
+    StringBuilder result;
+    int areasIndex = findPropertyIndex(CSSPropertyGridTemplateAreas);
+    if (areasIndex == -1)
+        return String();
+    auto rows = getPropertyCSSValue(CSSPropertyGridTemplateRows);
+    if (!rows)
+        return String();
+    auto columns = getPropertyCSSValue(CSSPropertyGridTemplateColumns);
+    if (!columns)
+        return String();
+
+    auto areas = propertyAt(areasIndex);
+    if (isValueID(areas.value(), CSSValueNone) || areas.value()->isInitialValue()) {
+        String rowsText = rows->cssText();
+        result.append(rowsText);
+
+        String columnsText = columns->cssText();
+        // If the values are identical, and either a css wide keyword
+        // or 'none', then we can just output it once.
+        if (columnsText != rowsText || (!isCSSWideValueKeyword(columnsText) && !isValueID(columns, CSSValueNone))) {
+            result.append(" / ");
+            result.append(columnsText);
+        }
+        return result.toString();
+    }
+    // We only want to try serializing the interleaved areas/templates
+    // format if it was set from this shorthand, since that automatically
+    // excludes values that can't be represented in this format (subgrid,
+    // and the repeat() function).
+    if (!areas.toCSSProperty().isSetFromShorthand())
+        return String();
+
+    ASSERT(is<CSSValueList>(rows));
+    ASSERT(is<CSSGridTemplateAreasValue>(areas.value()));
+    auto& areasValue = downcast<CSSGridTemplateAreasValue>(*areas.value());
+    bool first = true;
+    unsigned row = 0;
+    for (auto& currentValue : downcast<CSSValueList>(*rows)) {
+        if (!first)
+            result.append(" ");
+        first = false;
+
+        if (is<CSSGridLineNamesValue>(currentValue))
+            result.append(currentValue->cssText());
+        else {
+            result.append("\"");
+            result.append(areasValue.stringForRow(row));
+            result.append("\"");
+
+            if (!isValueID(currentValue, CSSValueAuto)) {
+                result.append(" ");
+                result.append(currentValue->cssText());
+            }
+            row++;
+        }
+    }
+
+    String columnsText = columns->cssText();
+    if (!isNoneValue(columns)) {
+        result.append(" / ");
+        result.append(columnsText);
+    }
+
+    return result.toString();
+}
+
+String StyleProperties::getGridValue() const
+{
+    // If none of the implicit track properties have been set, then
+    // this shorthand can be represented using the grid-template shorthand
+    // format.
+    if (isValueID(getPropertyCSSValue(CSSPropertyGridAutoColumns), CSSValueAuto)
+        && isValueID(getPropertyCSSValue(CSSPropertyGridAutoRows), CSSValueAuto)
+        && isValueID(getPropertyCSSValue(CSSPropertyGridAutoFlow), CSSValueRow)) {
+        return getGridTemplateValue();
+    }
+    return getGridShorthandValue(gridShorthand());
 }
 
 String StyleProperties::getGridShorthandValue(const StylePropertyShorthand& shorthand) const

@@ -53,6 +53,8 @@ public:
 
     bool equals(const CSSGridTemplateAreasValue&) const;
 
+    String stringForRow(size_t row);
+
 private:
     CSSGridTemplateAreasValue(const NamedGridAreaMap&, size_t rowCount, size_t columnCount);
 
