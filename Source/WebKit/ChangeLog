@@ -1,3 +1,19 @@
+2022-03-28  J Pascoe  <j_pascoe@apple.com>
+
+        Adopt ASCPublicKeyCredentialCreationOptions's residentKeyPreference 
+        https://bugs.webkit.org/show_bug.cgi?id=238387
+        rdar://problem/90845393
+
+        Reviewed by Brent Fulgham.
+
+        This patch passes along the residentKeyPreference to ASA, so it can  be passed
+        back via _WKAuthenticatorSelectionCriteria.residentKey.
+
+        * Platform/spi/Cocoa/AuthenticationServicesCoreSPI.h:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticatorCoordinatorProxy.mm:
+        (WebKit::toASCResidentKeyPreference):
+        (WebKit::configureRegistrationRequestContext):
+
 2022-03-28  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Fix sandbox violation related to Network content filtering

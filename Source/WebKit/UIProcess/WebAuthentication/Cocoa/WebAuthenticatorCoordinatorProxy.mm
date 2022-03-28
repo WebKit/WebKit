@@ -182,12 +182,29 @@ static inline void setGlobalFrameIDForContext(RetainPtr<ASCCredentialRequestCont
     }
 }
 
+static inline ASPublicKeyCredentialResidentKeyPreference toASCResidentKeyPreference(std::optional<ResidentKeyRequirement> requirement, bool requireResidentKey)
+{
+    if (!requirement)
+        return requireResidentKey ? ASPublicKeyCredentialResidentKeyPreferenceRequired : ASPublicKeyCredentialResidentKeyPreferenceNotPresent;
+    switch (*requirement) {
+    case ResidentKeyRequirement::Discouraged:
+        return ASPublicKeyCredentialResidentKeyPreferenceDiscouraged;
+    case ResidentKeyRequirement::Preferred:
+        return ASPublicKeyCredentialResidentKeyPreferencePreferred;
+    case ResidentKeyRequirement::Required:
+        return ASPublicKeyCredentialResidentKeyPreferenceRequired;
+    }
+    ASSERT_NOT_REACHED();
+    return ASPublicKeyCredentialResidentKeyPreferenceNotPresent;
+}
+
 static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContext(const PublicKeyCredentialCreationOptions& options, const Vector<uint8_t>& hash, std::optional<WebCore::GlobalFrameIdentifier> globalFrameID)
 {
     ASCCredentialRequestTypes requestTypes = ASCCredentialRequestTypePlatformPublicKeyRegistration | ASCCredentialRequestTypeSecurityKeyPublicKeyRegistration;
 
     RetainPtr<NSString> userVerification;
     bool shouldRequireResidentKey = false;
+    std::optional<ResidentKeyRequirement> residentKeyRequirement;
     std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> authenticatorSelection = options.authenticatorSelection;
     if (authenticatorSelection) {
         std::optional<AuthenticatorAttachment> attachment = authenticatorSelection->authenticatorAttachment;
@@ -199,6 +216,7 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
         userVerification = toNSString(authenticatorSelection->userVerification);
 
         shouldRequireResidentKey = authenticatorSelection->requireResidentKey;
+        residentKeyRequirement = authenticatorSelection->residentKey;
     }
 
     auto requestContext = adoptNS([allocASCCredentialRequestContextInstance() initWithRequestTypes:requestTypes]);
@@ -216,7 +234,10 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
     [credentialCreationOptions setUserIdentifier:WebCore::toNSData(options.user.id).get()];
     [credentialCreationOptions setUserDisplayName:options.user.displayName];
     [credentialCreationOptions setUserVerificationPreference:userVerification.get()];
-    [credentialCreationOptions setShouldRequireResidentKey:shouldRequireResidentKey];
+    if ([credentialCreationOptions respondsToSelector:@selector(setResidentKeyPreference:)])
+        [credentialCreationOptions setResidentKeyPreference:toASCResidentKeyPreference(residentKeyRequirement, shouldRequireResidentKey)];
+    else
+        [credentialCreationOptions setShouldRequireResidentKey:shouldRequireResidentKey];
     [credentialCreationOptions setAttestationPreference:toNSString(options.attestation).get()];
 
     RetainPtr<NSMutableArray<NSNumber *>> supportedAlgorithmIdentifiers = adoptNS([[NSMutableArray alloc] initWithCapacity:options.pubKeyCredParams.size()]);
