@@ -54,7 +54,7 @@ class FilteredCommand(Command):
     HASH = 'hash'
     REVISION = 'revision'
 
-    GIT_HEADER_RE = re.compile(r'^commit (?P<hash>[a-f0-9A-F]+)')
+    GIT_HEADER_RE = re.compile(r'^(commit )?(?P<hash>[a-f0-9A-F]+)')
     SVN_HEADER_RE = re.compile(r'^(?P<revision>r/d+) | ')
 
     REVISION_RES = (re.compile(r'^(?P<revision>\d+)\s'), re.compile(r'(?P<revision>[rR]\d+)'))
@@ -211,9 +211,9 @@ class FilteredCommand(Command):
                 if representation == 'hash':
                     reference = reference[:Commit.HASH_LABEL_SIZE]
                 if mode == cls.APPEND_MODE:
-                    reference = '{} ({})'.format(match.group(1), reference)
+                    reference = '{} ({})'.format(match.groups()[-1], reference)
                 if mode == cls.HEADER_MODE:
-                    alternates = [] if match.group(1).startswith(reference) else [match.group(1)]
+                    alternates = [] if match.groups()[-1].startswith(reference) else [match.groups()[-1]]
                     for repr in {'revision', 'hash', 'identifier'} - {'hash' if repository.is_git else 'revision', representation}:
                         if repr in kwargs:
                             continue
@@ -224,7 +224,7 @@ class FilteredCommand(Command):
                             other = other[:Commit.HASH_LABEL_SIZE]
                         alternates.append('r{}'.format(other) if isinstance(other, int) else other)
                     reference = '{} ({})'.format(reference, ', '.join(alternates))
-                return match.group(0).replace(match.group(1), reference)
+                return match.group(0).replace(match.groups()[-1], reference)
             return match.group(0)
 
         res = {}
@@ -241,23 +241,40 @@ class FilteredCommand(Command):
             line = log_output.stdout.readline()
             while line:
                 header = header_re.sub(
-                    lambda match: replace_line(match, mode=cls.HEADER_MODE, **{'hash' if repository.is_git else 'revision': match.group(1)}),
+                    lambda match: replace_line(match, mode=cls.HEADER_MODE, **{'hash' if repository.is_git else 'revision': match.groups()[-1]}),
                     line,
                 )
                 if header != line:
+                    index = 2 if header.startswith('commit') else 1
+                    header = header.split(' ')
                     with Terminal.Style(color=Terminal.Text.yellow, style=Terminal.Text.bold).apply(sys.stdout):
-                        sys.stdout.write(' '.join(header.split(' ')[:2]))
+                        sys.stdout.write(' '.join(header[:index]))
 
-                    sys.stdout.write(' ')
+                    if index < len(header):
+                        sys.stdout.write(' ')
+                    in_red = index
+                    while in_red < len(header):
+                        if len(header[in_red]) < 2:
+                            break
+                        if header[in_red][-1] == ',':
+                            in_red += 1
+                            continue
+                        if header[in_red][-1] == ')' or header[in_red][-2] == ')':
+                            in_red += 1
+                        break
                     with Terminal.Style(color=Terminal.Text.red).apply(sys.stdout):
-                        sys.stdout.write(' '.join(header.split(' ')[2:]))
+                        sys.stdout.write(' '.join(header[index:in_red]))
+
+                    if in_red < len(header):
+                        sys.stdout.write(' ')
+                    sys.stdout.write(' '.join(header[in_red:]))
 
                     line = log_output.stdout.readline()
                     continue
 
                 for repr, regexs in res.items():
                     line = regexs[0].sub(
-                        lambda match: replace_line(match, mode=cls.REPLACE_MODE, **{repr: match.group(1)}),
+                        lambda match: replace_line(match, mode=cls.REPLACE_MODE, **{repr: match.group()[-1]}),
                         line,
                     )
 
