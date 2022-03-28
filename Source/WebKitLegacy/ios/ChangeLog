@@ -1,3 +1,16 @@
+2022-03-28  Ian Anderson  <iana@apple.com>
+
+        Some Apple internal clients fail to build due to redeclared AppKit types in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=238368
+
+        Reviewed by Jonathan Bedard.
+
+        WebKitLegacy can't always define NSView to WAKView in Mac Catalyst, but
+        views are always WAKView in Mac Catalyst. Switch on TARGET_OS_IPHONE to
+        declare WAKView explicitly.
+
+        * WebView/WebUIKitDelegate.h:
+
 2022-03-16  Youenn Fablet  <youenn@apple.com>
 
         Make MIMETypeRegistry::mimeTypeForPath take a StringView

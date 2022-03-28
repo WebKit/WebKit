@@ -114,7 +114,7 @@ WEBCORE_EXPORT @interface WAKWindow : WAKResponder
 - (BOOL)isVisible;
 - (void)setVisible:(BOOL)visible;
 - (NSSelectionDirection)keyViewSelectionDirection;
-- (BOOL)makeFirstResponder:(NSResponder *)responder;
+- (BOOL)makeFirstResponder:(WAKResponder *)responder;
 - (WAKView *)_newFirstResponderAfterResigning NS_RETURNS_NOT_RETAINED;
 - (void)setFrame:(NSRect)frameRect display:(BOOL)flag;
 - (CGRect)frame;

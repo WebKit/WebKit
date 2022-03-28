@@ -1,3 +1,22 @@
+2022-03-28  Ian Anderson  <iana@apple.com>
+
+        Some Apple internal clients fail to build due to redeclared AppKit types in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=238368
+
+        Reviewed by Jonathan Bedard.
+
+        Some Apple internal Mac Catalyst clients need to use both AppKit and
+        WebKitLegacy. WebKitLegacy's redeclaration of AppKit types causes errors
+        for those clients. Copy AppKit's Apple internal logic for identifying
+        the special Mac Catalyst clients that are allowed to use the AppKit
+        types, and when such clients use WebKitLegacy, don't redeclare the
+        AppKit types.
+
+        * platform/ios/KeyEventCodesIOS.h:
+        * platform/ios/wak/WAKAppKitStubs.h:
+        * platform/ios/wak/WAKView.h:
+        * platform/ios/wak/WAKWindow.h:
+
 2022-03-28  Chris Dumez  <cdumez@apple.com>
 
         Use StringView for Yarr / RegularExpression parsing

@@ -44,7 +44,9 @@
 #import <WebKitLegacy/WAKAppKitStubs.h>
 #endif
 
+#if !TARGET_OS_IPHONE
 @class NSWindow;
+#endif
 @class WebDownloadInternal;
 
 /*!
@@ -78,7 +80,11 @@ WEBKIT_DEPRECATED_MAC(10_4, 10_14)
 /*!
     @method downloadWindowForAuthenticationSheet:
 */
+#if TARGET_OS_IPHONE
+- (WAKWindow *)downloadWindowForAuthenticationSheet:(WebDownload *)download;
+#else
 - (NSWindow *)downloadWindowForAuthenticationSheet:(WebDownload *)download;
+#endif
 
 @end
 

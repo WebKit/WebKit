@@ -46,7 +46,11 @@
     @class WebFrameView
 */
 WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14)
+#if TARGET_OS_IPHONE
+@interface WebFrameView : WAKView
+#else
 @interface WebFrameView : NSView
+#endif
 {
 @package
     WebFrameViewPrivate *_private;
@@ -63,7 +67,11 @@ WEBKIT_CLASS_DEPRECATED_MAC(10_3, 10_14)
     @abstract The WebFrameView's document subview
     @discussion The subview that renders the WebFrameView's contents
 */
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly, strong) WAKView<WebDocumentView> *documentView;
+#else
 @property (nonatomic, readonly, strong) NSView<WebDocumentView> *documentView;
+#endif
 
 /*!
     @property allowsScrolling

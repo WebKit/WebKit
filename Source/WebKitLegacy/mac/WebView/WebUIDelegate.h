@@ -247,7 +247,11 @@ WEBKIT_DEPRECATED_MAC(10_3, 10_14)
     on the real NSWindow would. It's OK to return either nil or the
     real first responder if some control not in the window has focus.
 */
+#if TARGET_OS_IPHONE
+- (WAKResponder *)webViewFirstResponder:(WebView *)sender;
+#else
 - (NSResponder *)webViewFirstResponder:(WebView *)sender;
+#endif
 
 /*!
     @method webView:makeFirstResponder:
@@ -260,7 +264,11 @@ WEBKIT_DEPRECATED_MAC(10_3, 10_14)
     hierarchy, it may be desirable to save the first responder
     elsewhere, or possibly ignore this call.
 */
+#if TARGET_OS_IPHONE
+- (void)webView:(WebView *)sender makeFirstResponder:(WAKResponder *)responder;
+#else
 - (void)webView:(WebView *)sender makeFirstResponder:(NSResponder *)responder;
+#endif
 
 /*!
     @method webView:setStatusText:
