@@ -738,6 +738,10 @@ private:
     void addAttributeInternal(const QualifiedName&, const AtomString& value, SynchronizationOfLazyAttribute);
     void removeAttributeInternal(unsigned index, SynchronizationOfLazyAttribute);
 
+    void setSavedLayerScrollPositionSlow(const IntPoint&);
+    void clearBeforePseudoElementSlow();
+    void clearAfterPseudoElementSlow();
+
     LayoutRect absoluteEventBounds(bool& boundsIncludeAllDescendantElements, bool& includesFixedPositionElements);
     LayoutRect absoluteEventBoundsOfElementAndDescendants(bool& includesFixedPositionElements);
 
@@ -784,6 +788,25 @@ private:
 
     bool m_hasDuplicateAttribute { false };
 };
+
+inline void Element::setSavedLayerScrollPosition(const IntPoint& position)
+{
+    if (position.isZero() && !hasRareData())
+        return;
+    setSavedLayerScrollPositionSlow(position);
+}
+
+inline void Element::clearBeforePseudoElement()
+{
+    if (hasRareData())
+        clearBeforePseudoElementSlow();
+}
+
+inline void Element::clearAfterPseudoElement()
+{
+    if (hasRareData())
+        clearAfterPseudoElementSlow();
+}
 
 void invalidateForSiblingCombinators(Element* sibling);
 

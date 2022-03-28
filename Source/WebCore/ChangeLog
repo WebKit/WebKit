@@ -1,3 +1,36 @@
+2022-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Speed up Element::removedFromAncestor()
+        https://bugs.webkit.org/show_bug.cgi?id=238404
+
+        Reviewed by Geoffrey Garen.
+
+        Speed up Element::removedFromAncestor() by inlining some of the functions it is calling.
+        This is a confirmed 1.5-2% progression on Speedometer on iMac 20,1.
+
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        (WebCore::Element::clearBeforePseudoElementSlow):
+        (WebCore::Element::clearAfterPseudoElementSlow):
+        (WebCore::Element::setSavedLayerScrollPositionSlow):
+        (WebCore::Element::clearBeforePseudoElement): Deleted.
+        (WebCore::Element::clearAfterPseudoElement): Deleted.
+        (WebCore::Element::setSavedLayerScrollPosition): Deleted.
+        * dom/Element.h:
+        (WebCore::Element::setSavedLayerScrollPosition):
+        (WebCore::Element::clearBeforePseudoElement):
+        (WebCore::Element::clearAfterPseudoElement):
+        * page/PointerCaptureController.cpp:
+        (WebCore::PointerCaptureController::elementWasRemovedSlow):
+        (WebCore::PointerCaptureController::elementWasRemoved): Deleted.
+        * page/PointerCaptureController.h:
+        (WebCore::PointerCaptureController::elementWasRemoved):
+        * page/PointerLockController.cpp:
+        (WebCore::PointerLockController::elementWasRemovedInternal):
+        (WebCore::PointerLockController::elementWasRemoved): Deleted.
+        * page/PointerLockController.h:
+        (WebCore::PointerLockController::elementWasRemoved):
+
 2022-03-28  Devin Rousso  <drousso@apple.com>
 
         [iOS] Add `WKWebView` API to control CSS "small viewport" `sv*` and "large viewport" `lv*` units
