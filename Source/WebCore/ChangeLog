@@ -1,3 +1,20 @@
+2022-03-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Fix build error 'not match operator !=' in Ubuntu LTS after r291696
+        https://bugs.webkit.org/show_bug.cgi?id=238443
+
+        Reviewed by Adrian Perez de Castro.
+
+        The error was also happening in build bots using GCC 8.3 like Debian
+        Stable.
+
+        * platform/graphics/GraphicsTypes.h:
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::CompositeMode::operator==): Deleted.
+        * platform/graphics/SourceBrush.h:
+        (WebCore::operator!=):
+
 2022-03-28  Youenn Fablet  <youenn@apple.com>
 
         ImageTransferSessionVT::setSize should properly create its buffer pool

@@ -79,6 +79,11 @@ inline bool operator==(const SourceBrush::Brush::LogicalGradient& a, const Sourc
     return a.gradient.ptr() == b.gradient.ptr() && a.spaceTransform == b.spaceTransform;
 }
 
+inline bool operator!=(const SourceBrush::Brush::LogicalGradient& a, const SourceBrush::Brush::LogicalGradient& b)
+{
+    return !(a == b);
+}
+
 inline bool operator==(const SourceBrush::Brush& a, const SourceBrush::Brush& b)
 {
     return WTF::switchOn(a.brush,
@@ -95,9 +100,19 @@ inline bool operator==(const SourceBrush::Brush& a, const SourceBrush::Brush& b)
     );
 }
 
+inline bool operator!=(const SourceBrush::Brush& a, const SourceBrush::Brush& b)
+{
+    return !(a == b);
+}
+
 inline bool operator==(const SourceBrush& a, const SourceBrush& b)
 {
     return a.color() == b.color() && a.brush() == b.brush();
+}
+
+inline bool operator!=(const SourceBrush& a, const SourceBrush& b)
+{
+    return !(a == b);
 }
 
 template<typename Encoder>
