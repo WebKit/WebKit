@@ -37,7 +37,7 @@ public:
     virtual ~RenderSVGEllipse();
 
 private:
-    const char* renderName() const override { return "RenderSVGEllipse"; }
+    ASCIILiteral renderName() const override { return "RenderSVGEllipse"_s; }
 
     void updateShapeFromElement() override;
     bool isEmpty() const override { return m_usePathFallback ? LegacyRenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); }

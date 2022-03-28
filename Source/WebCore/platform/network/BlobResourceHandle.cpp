@@ -59,13 +59,13 @@ static const int httpPartialContent = 206;
 static const int httpNotAllowed = 403;
 static const int httpRequestedRangeNotSatisfiable = 416;
 static const int httpInternalError = 500;
-static const char* httpOKText = "OK";
-static const char* httpPartialContentText = "Partial Content";
-static const char* httpNotAllowedText = "Not Allowed";
-static const char* httpRequestedRangeNotSatisfiableText = "Requested Range Not Satisfiable";
-static const char* httpInternalErrorText = "Internal Server Error";
+static constexpr auto httpOKText = "OK"_s;
+static constexpr auto httpPartialContentText = "Partial Content"_s;
+static constexpr auto httpNotAllowedText = "Not Allowed"_s;
+static constexpr auto httpRequestedRangeNotSatisfiableText = "Requested Range Not Satisfiable"_s;
+static constexpr auto httpInternalErrorText = "Internal Server Error"_s;
 
-static const char* const webKitBlobResourceDomain = "WebKitBlobResource";
+static constexpr auto webKitBlobResourceDomain = "WebKitBlobResource"_s;
 
 ///////////////////////////////////////////////////////////////////////////////
 // BlobResourceSynchronousLoader
@@ -114,7 +114,7 @@ void BlobResourceSynchronousLoader::didReceiveResponseAsync(ResourceHandle* hand
 {
     // We cannot handle the size that is more than maximum integer.
     if (response.expectedContentLength() > INT_MAX) {
-        m_error = ResourceError(webKitBlobResourceDomain, static_cast<int>(BlobResourceHandle::Error::NotReadableError), response.url(), "File is too large");
+        m_error = ResourceError(webKitBlobResourceDomain, static_cast<int>(BlobResourceHandle::Error::NotReadableError), response.url(), "File is too large"_s);
         completionHandler();
         return;
     }
@@ -145,7 +145,7 @@ Ref<BlobResourceHandle> BlobResourceHandle::createAsync(BlobData* blobData, cons
 void BlobResourceHandle::loadResourceSynchronously(BlobData* blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
     if (!equalLettersIgnoringASCIICase(request.httpMethod(), "get")) {
-        error = ResourceError(webKitBlobResourceDomain, static_cast<int>(Error::MethodNotAllowed), response.url(), "Request method must be GET");
+        error = ResourceError(webKitBlobResourceDomain, static_cast<int>(Error::MethodNotAllowed), response.url(), "Request method must be GET"_s);
         return;
     }
 
@@ -600,7 +600,7 @@ void BlobResourceHandle::notifyResponseOnError()
 {
     ASSERT(m_errorCode != Error::NoError);
 
-    ResourceResponse response(firstRequest().url(), "text/plain", 0, String());
+    ResourceResponse response(firstRequest().url(), "text/plain"_s, 0, String());
     switch (m_errorCode) {
     case Error::RangeError:
         response.setHTTPStatusCode(httpRequestedRangeNotSatisfiable);

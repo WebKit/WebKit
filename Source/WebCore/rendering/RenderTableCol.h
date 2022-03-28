@@ -66,7 +66,7 @@ public:
     void updateFromElement() override;
 
 private:
-    const char* renderName() const override { return "RenderTableCol"; }
+    ASCIILiteral renderName() const override { return "RenderTableCol"_s; }
     bool isRenderTableCol() const override { return true; }
     void computePreferredLogicalWidths() override { ASSERT_NOT_REACHED(); }
 

@@ -399,7 +399,7 @@ std::optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesFo
         // 3.8. If the user agent does not recognize one or more parameters, continue to the next iteration.
         // 3.9. Let media types be the set of codecs and codec constraints specified by parameters. The case-sensitivity
         //      of string comparisons is determined by the appropriate RFC or other specification.
-        String codecs = contentType->parameterValueForName("codecs");
+        String codecs = contentType->parameterValueForName("codecs"_s);
         if (contentType->parameterCount() > (codecs.isEmpty() ? 0 : 1))
             continue;
 

@@ -329,7 +329,7 @@ static inline bool shouldPrependBOM(const unsigned char* data, unsigned length)
 // https://encoding.spec.whatwg.org/#utf-8-decode
 String TextResourceDecoder::textFromUTF8(const unsigned char* data, unsigned length)
 {
-    auto decoder = TextResourceDecoder::create("text/plain", "UTF-8");
+    auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8");
     if (shouldPrependBOM(data, length))
         decoder->decode("\xef\xbb\xbf", 3);
     return decoder->decodeAndFlush(data, length);

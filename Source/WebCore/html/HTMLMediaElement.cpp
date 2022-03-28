@@ -3682,7 +3682,7 @@ void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
 
     if (m_error && m_error->code() == MediaError::MEDIA_ERR_SRC_NOT_SUPPORTED) {
         ERROR_LOG(LOGIDENTIFIER, "rejecting promise because of error");
-        promise.reject(NotSupportedError, "The operation is not supported.");
+        promise.reject(NotSupportedError, "The operation is not supported."_s);
         return;
     }
 
@@ -4894,7 +4894,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
                 INFO_LOG(LOGIDENTIFIER, "'media' is ", source->attributeWithoutSynchronization(mediaAttr));
             auto* renderer = this->renderer();
             LOG(MediaQueries, "HTMLMediaElement %p selectNextSourceChild evaluating media queries", this);
-            if (!MediaQueryEvaluator { "screen", document(), renderer ? &renderer->style() : nullptr }.evaluate(*media))
+            if (!MediaQueryEvaluator { "screen"_s, document(), renderer ? &renderer->style() : nullptr }.evaluate(*media))
                 goto CheckAgain;
         }
 
@@ -7158,7 +7158,7 @@ void HTMLMediaElement::updateSleepDisabling()
     else if (shouldDisableSleep != SleepType::None) {
         auto type = shouldDisableSleep == SleepType::Display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System;
         if (!m_sleepDisabler || m_sleepDisabler->type() != type)
-            m_sleepDisabler = makeUnique<SleepDisabler>("com.apple.WebCore: HTMLMediaElement playback", type);
+            m_sleepDisabler = makeUnique<SleepDisabler>("com.apple.WebCore: HTMLMediaElement playback"_s, type);
     }
 
     if (m_player)

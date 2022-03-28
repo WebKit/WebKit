@@ -80,7 +80,7 @@ String serializeForNumberType(const Decimal& number)
 {
     if (number.isZero()) {
         // Decimal::toString appends exponent, e.g. "0e-18"
-        return number.isNegative() ? "-0" : "0";
+        return number.isNegative() ? "-0"_s : "0"_s;
     }
     return number.toString();
 }

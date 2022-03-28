@@ -95,9 +95,9 @@ void EventSource::connect()
     ASSERT(!m_requestInFlight);
 
     ResourceRequest request { m_url };
-    request.setHTTPMethod("GET");
-    request.setHTTPHeaderField(HTTPHeaderName::Accept, "text/event-stream");
-    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache");
+    request.setHTTPMethod("GET"_s);
+    request.setHTTPHeaderField(HTTPHeaderName::Accept, "text/event-stream"_s);
+    request.setHTTPHeaderField(HTTPHeaderName::CacheControl, "no-cache"_s);
     if (!m_lastEventId.isEmpty())
         request.setHTTPHeaderField(HTTPHeaderName::LastEventID, m_lastEventId);
 

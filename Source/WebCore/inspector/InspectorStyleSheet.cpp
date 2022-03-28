@@ -554,8 +554,8 @@ Ref<Protocol::CSS::CSSStyle> InspectorStyle::buildObjectForStyle() const
     if (auto styleId = m_styleId.asProtocolValue<Protocol::CSS::CSSStyleId>())
         result->setStyleId(styleId.releaseNonNull());
 
-    result->setWidth(m_style->getPropertyValue("width"));
-    result->setHeight(m_style->getPropertyValue("height"));
+    result->setWidth(m_style->getPropertyValue("width"_s));
+    result->setHeight(m_style->getPropertyValue("height"_s));
 
     if (auto sourceData = extractSourceData()) {
         if (auto range = buildSourceRangeObject(sourceData->ruleBodyRange, m_parentStyleSheet->lineEndings()))
@@ -686,7 +686,7 @@ Ref<Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() const
 
         // Default "priority" == "".
         if (propertyEntry.important)
-            property->setPriority("important");
+            property->setPriority("important"_s);
 
         if (it->hasSource) {
             // The property range is relative to the style body start.

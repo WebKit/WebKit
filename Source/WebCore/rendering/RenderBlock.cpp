@@ -3046,28 +3046,28 @@ bool RenderBlock::hasMarginAfterQuirk(const RenderBox& child) const
     return false;
 }
 
-const char* RenderBlock::renderName() const
+ASCIILiteral RenderBlock::renderName() const
 {
     if (isBody())
-        return "RenderBody"; // FIXME: Temporary hack until we know that the regression tests pass.
+        return "RenderBody"_s; // FIXME: Temporary hack until we know that the regression tests pass.
     if (isFieldset())
-        return "RenderFieldSet"; // FIXME: Remove eventually, but done to keep tests from breaking.
+        return "RenderFieldSet"_s; // FIXME: Remove eventually, but done to keep tests from breaking.
     if (isFloating())
-        return "RenderBlock (floating)";
+        return "RenderBlock (floating)"_s;
     if (isOutOfFlowPositioned())
-        return "RenderBlock (positioned)";
+        return "RenderBlock (positioned)"_s;
     if (isAnonymousBlock())
-        return "RenderBlock (anonymous)";
+        return "RenderBlock (anonymous)"_s;
     // FIXME: Temporary hack while the new generated content system is being implemented.
     if (isPseudoElement())
-        return "RenderBlock (generated)";
+        return "RenderBlock (generated)"_s;
     if (isAnonymous())
-        return "RenderBlock (generated)";
+        return "RenderBlock (generated)"_s;
     if (isRelativelyPositioned())
-        return "RenderBlock (relative positioned)";
+        return "RenderBlock (relative positioned)"_s;
     if (isStickilyPositioned())
-        return "RenderBlock (sticky positioned)";
-    return "RenderBlock";
+        return "RenderBlock (sticky positioned)"_s;
+    return "RenderBlock"_s;
 }
 
 TextRun RenderBlock::constructTextRun(StringView stringView, const RenderStyle& style, ExpansionBehavior expansion, TextRunFlags flags)

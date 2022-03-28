@@ -53,7 +53,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<ContentFilter> create(ContentFilterClient&);
     WEBCORE_EXPORT ~ContentFilter();
 
-    static const char* urlScheme() { return "x-apple-content-filter"; }
+    static constexpr ASCIILiteral urlScheme() { return "x-apple-content-filter"_s; }
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     WEBCORE_EXPORT void startFilteringMainResource(const URL&);

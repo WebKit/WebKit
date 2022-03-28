@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-SleepDisabler::SleepDisabler(const char* reason, PAL::SleepDisabler::Type type)
+SleepDisabler::SleepDisabler(const String& reason, PAL::SleepDisabler::Type type)
     : m_type(type)
 {
     if (sleepDisablerClient()) {

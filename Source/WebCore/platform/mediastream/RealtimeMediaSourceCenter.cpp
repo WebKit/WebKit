@@ -161,7 +161,7 @@ String RealtimeMediaSourceCenter::hashStringWithSalt(const String& id, const Str
     SHA1::Digest digest;
     sha1.computeHash(digest);
     
-    return SHA1::hexDigest(digest).data();
+    return String { SHA1::hexDigest(digest).data() };
 }
 
 void RealtimeMediaSourceCenter::addDevicesChangedObserver(Observer& observer)

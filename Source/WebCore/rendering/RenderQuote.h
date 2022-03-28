@@ -35,7 +35,7 @@ public:
     void updateRenderer(RenderTreeBuilder&, RenderQuote* previousQuote);
 
 private:
-    const char* renderName() const override { return "RenderQuote"; }
+    ASCIILiteral renderName() const override { return "RenderQuote"_s; }
     bool isQuote() const override { return true; }
     bool isOpen() const;
     void styleDidChange(StyleDifference, const RenderStyle*) override;

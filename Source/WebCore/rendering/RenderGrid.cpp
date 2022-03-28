@@ -1987,17 +1987,17 @@ void RenderGrid::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOff
         paintChild(*child, paintInfo, paintOffset, forChild, usePrintRect, PaintAsInlineBlock);
 }
 
-const char* RenderGrid::renderName() const
+ASCIILiteral RenderGrid::renderName() const
 {
     if (isFloating())
-        return "RenderGrid (floating)";
+        return "RenderGrid (floating)"_s;
     if (isOutOfFlowPositioned())
-        return "RenderGrid (positioned)";
+        return "RenderGrid (positioned)"_s;
     if (isAnonymous())
-        return "RenderGrid (generated)";
+        return "RenderGrid (generated)"_s;
     if (isRelativelyPositioned())
-        return "RenderGrid (relative positioned)";
-    return "RenderGrid";
+        return "RenderGrid (relative positioned)"_s;
+    return "RenderGrid"_s;
 }
 
 bool RenderGrid::hasAutoSizeInColumnAxis(const RenderBox& child) const

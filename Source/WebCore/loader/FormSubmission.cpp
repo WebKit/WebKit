@@ -203,7 +203,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
     if (copiedAttributes.method() == Method::Post) {
         isMultiPartForm = copiedAttributes.isMultiPartForm();
         if (isMultiPartForm && isMailtoForm) {
-            encodingType = "application/x-www-form-urlencoded";
+            encodingType = "application/x-www-form-urlencoded"_s;
             isMultiPartForm = false;
         }
     }
@@ -221,7 +221,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, HTMLFormContro
 
     if (isMultiPartForm) {
         formData = FormData::createMultiPart(domFormData);
-        boundary = formData->boundary().data();
+        boundary = String { formData->boundary().data() };
     } else {
         formData = FormData::create(domFormData, attributes.method() == Method::Get ? FormData::FormURLEncoded : FormData::parseEncodingType(encodingType));
         if (copiedAttributes.method() == Method::Post && isMailtoForm) {
@@ -262,7 +262,7 @@ void FormSubmission::populateFrameLoadRequest(FrameLoadRequest& frameRequest)
         frameRequest.resourceRequest().setHTTPReferrer(m_referrer);
 
     if (m_method == Method::Post) {
-        frameRequest.resourceRequest().setHTTPMethod("POST");
+        frameRequest.resourceRequest().setHTTPMethod("POST"_s);
         frameRequest.resourceRequest().setHTTPBody(m_formData.copyRef());
 
         // construct some user headers if necessary

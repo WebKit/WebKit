@@ -206,10 +206,10 @@ void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderElement& re
 
         auto initialLayoutLocation = flooredLayoutPoint(renderer.objectBoundingBox().minXMinYCorner());
         if (expectedLayoutLocation == initialLayoutLocation) {
-            LOG_WITH_STREAM(SVG, stream << "--> SVGContainerLayout renderer " << &renderer << " (" << renderer.renderName() << ")"
+            LOG_WITH_STREAM(SVG, stream << "--> SVGContainerLayout renderer " << &renderer << " (" << renderer.renderName().characters() << ")"
                 << " - verifyLayoutLocationConsistency() objectBoundingBox / layoutLocation are in sync.");
         } else {
-            LOG_WITH_STREAM(SVG, stream << "--> SVGContainerLayout renderer " << &renderer << " (" << renderer.renderName() << ")"
+            LOG_WITH_STREAM(SVG, stream << "--> SVGContainerLayout renderer " << &renderer << " (" << renderer.renderName().characters() << ")"
                 << " - verifyLayoutLocationConsistency() objectBoundingBox / layoutLocation invariant violated -- out of sync due to partial layout?"
                 << " currentLayoutLocation=" << currentLayoutLocation
                 << "  (expectedLayoutLocation=" << expectedLayoutLocation
@@ -231,7 +231,7 @@ void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderElement& re
 
 #if !defined(NDEBUG)
     if (renderer.isSVGRoot()) {
-        LOG_WITH_STREAM(SVG, stream << "--> SVGContainerLayout renderer " << &renderer << " (" << renderer.renderName() << ")"
+        LOG_WITH_STREAM(SVG, stream << "--> SVGContainerLayout renderer " << &renderer << " (" << renderer.renderName().characters() << ")"
             << " - verifyLayoutLocationConsistency() end");
     }
 #endif

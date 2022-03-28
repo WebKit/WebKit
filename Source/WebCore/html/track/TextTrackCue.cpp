@@ -182,7 +182,7 @@ static void removePseudoAttributes(Node& node)
 ExceptionOr<Ref<TextTrackCue>> TextTrackCue::create(Document& document, double start, double end, DocumentFragment& cueFragment)
 {
     if (!cueFragment.firstChild())
-        return Exception { InvalidNodeTypeError, "Empty cue fragment" };
+        return Exception { InvalidNodeTypeError, "Empty cue fragment"_s };
 
     for (Node* node = cueFragment.firstChild(); node; node = node->nextSibling()) {
         auto result = checkForInvalidNodeTypes(*node);

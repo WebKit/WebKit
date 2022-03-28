@@ -35,42 +35,42 @@
 
 namespace WebCore {
 
-static const char* const compositeOperatorNames[] = {
-    "clear",
-    "copy",
-    "source-over",
-    "source-in",
-    "source-out",
-    "source-atop",
-    "destination-over",
-    "destination-in",
-    "destination-out",
-    "destination-atop",
-    "xor",
-    "darker",
-    "lighter",
-    "difference"
+static constexpr ASCIILiteral compositeOperatorNames[] = {
+    "clear"_s,
+    "copy"_s,
+    "source-over"_s,
+    "source-in"_s,
+    "source-out"_s,
+    "source-atop"_s,
+    "destination-over"_s,
+    "destination-in"_s,
+    "destination-out"_s,
+    "destination-atop"_s,
+    "xor"_s,
+    "darker"_s,
+    "lighter"_s,
+    "difference"_s
 };
 
-static const char* const blendOperatorNames[] = {
-    "normal",
-    "multiply",
-    "screen",
-    "darken",
-    "lighten",
-    "overlay",
-    "color-dodge",
-    "color-burn",
-    "hard-light",
-    "soft-light",
-    "difference",
-    "exclusion",
-    "hue",
-    "saturation",
-    "color",
-    "luminosity",
-    "plus-darker",
-    "plus-lighter"
+static constexpr ASCIILiteral blendOperatorNames[] = {
+    "normal"_s,
+    "multiply"_s,
+    "screen"_s,
+    "darken"_s,
+    "lighten"_s,
+    "overlay"_s,
+    "color-dodge"_s,
+    "color-burn"_s,
+    "hard-light"_s,
+    "soft-light"_s,
+    "difference"_s,
+    "exclusion"_s,
+    "hue"_s,
+    "saturation"_s,
+    "color"_s,
+    "luminosity"_s,
+    "plus-darker"_s,
+    "plus-lighter"_s
 };
 const uint8_t numCompositeOperatorNames = WTF_ARRAY_LENGTH(compositeOperatorNames);
 const uint8_t numBlendOperatorNames = WTF_ARRAY_LENGTH(blendOperatorNames);

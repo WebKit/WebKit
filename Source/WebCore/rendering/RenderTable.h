@@ -280,7 +280,7 @@ protected:
 private:
     static RenderPtr<RenderTable> createTableWithStyle(Document&, const RenderStyle&);
 
-    const char* renderName() const override { return "RenderTable"; }
+    ASCIILiteral renderName() const override { return "RenderTable"_s; }
 
     bool isTable() const final { return true; }
 

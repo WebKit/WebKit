@@ -41,6 +41,6 @@ WEBCORE_EXPORT RetainPtr<NSURLRequest> registerQLPreviewConverterIfNeeded(NSURL 
 WEBCORE_EXPORT bool isQuickLookPreviewURL(const URL&);
 WEBCORE_EXPORT NSString *createTemporaryFileForQuickLook(NSString *fileName);
 
-extern const char* QLPreviewProtocol;
+static constexpr auto QLPreviewProtocol = "x-apple-ql-id"_s;
 
 } // namespace WebCore

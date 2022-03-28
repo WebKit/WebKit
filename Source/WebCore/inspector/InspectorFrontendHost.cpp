@@ -111,7 +111,7 @@ private:
             UserGestureIndicator gestureIndicator(ProcessingUserGesture, dynamicDowncast<Document>(executionContext(m_frontendApiObject.globalObject())));
             int itemNumber = action - ContextMenuItemBaseCustomTag;
 
-            Deprecated::ScriptFunctionCall function(m_frontendApiObject, "contextMenuItemSelected", WebCore::functionCallHandlerFromAnyThread);
+            Deprecated::ScriptFunctionCall function(m_frontendApiObject, "contextMenuItemSelected"_s, WebCore::functionCallHandlerFromAnyThread);
             function.appendArgument(itemNumber);
             function.call();
         }
@@ -120,7 +120,7 @@ private:
     void contextMenuCleared() override
     {
         if (m_frontendHost) {
-            Deprecated::ScriptFunctionCall function(m_frontendApiObject, "contextMenuCleared", WebCore::functionCallHandlerFromAnyThread);
+            Deprecated::ScriptFunctionCall function(m_frontendApiObject, "contextMenuCleared"_s, WebCore::functionCallHandlerFromAnyThread);
             function.call();
 
             m_frontendHost->m_menuProvider = nullptr;

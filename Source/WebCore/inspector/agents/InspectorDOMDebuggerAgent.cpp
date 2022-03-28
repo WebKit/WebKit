@@ -172,7 +172,7 @@ Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setEventBreakpoint(Prot
     }
 
     ASSERT_NOT_REACHED();
-    return makeUnexpected("Not supported");
+    return makeUnexpected("Not supported"_s);
 }
 
 Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeEventBreakpoint(Protocol::DOMDebugger::EventBreakpointType breakpointType, const String& eventName)
@@ -215,7 +215,7 @@ Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeEventBreakpoint(P
     }
 
     ASSERT_NOT_REACHED();
-    return makeUnexpected("Not supported");
+    return makeUnexpected("Not supported"_s);
 }
 
 void InspectorDOMDebuggerAgent::willHandleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event, const RegisteredEventListener& registeredEventListener)
@@ -410,8 +410,8 @@ void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url, URLBreakpo
     }
 
     Ref<JSON::Object> eventData = JSON::Object::create();
-    eventData->setString("breakpointURL", breakpointURL);
-    eventData->setString("url", url);
+    eventData->setString("breakpointURL"_s, breakpointURL);
+    eventData->setString("url"_s, url);
     m_debuggerAgent->breakProgram(breakReason, WTFMove(eventData), WTFMove(breakpoint));
 }
 

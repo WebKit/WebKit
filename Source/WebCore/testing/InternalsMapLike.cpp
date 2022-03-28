@@ -34,7 +34,7 @@ namespace WebCore {
 
 InternalsMapLike::InternalsMapLike()
 {
-    m_values.add("init", 0);
+    m_values.add("init"_s, 0);
 }
 
 void InternalsMapLike::initializeMapLike(DOMMapAdapter& map)

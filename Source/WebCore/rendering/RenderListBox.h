@@ -71,7 +71,7 @@ private:
 
     void element() const = delete;
 
-    const char* renderName() const override { return "RenderListBox"; }
+    ASCIILiteral renderName() const override { return "RenderListBox"_s; }
 
     bool isListBox() const override { return true; }
 

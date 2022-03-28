@@ -38,7 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureETC1);
 WebGLCompressedTextureETC1::WebGLCompressedTextureETC1(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_compressed_ETC1_RGB8_texture");
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_compressed_ETC1_RGB8_texture"_s);
 
     context.addCompressedTextureFormat(GraphicsContextGL::ETC1_RGB8_OES);
 }
@@ -52,7 +52,7 @@ WebGLExtension::ExtensionName WebGLCompressedTextureETC1::getName() const
 
 bool WebGLCompressedTextureETC1::supported(GraphicsContextGL& context)
 {
-    return context.supportsExtension("GL_OES_compressed_ETC1_RGB8_texture");
+    return context.supportsExtension("GL_OES_compressed_ETC1_RGB8_texture"_s);
 }
 
 } // namespace WebCore

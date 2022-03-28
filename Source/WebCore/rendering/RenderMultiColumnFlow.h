@@ -100,7 +100,7 @@ public:
 
 private:
     bool isRenderMultiColumnFlow() const override { return true; }
-    const char* renderName() const override;
+    ASCIILiteral renderName() const override;
     void addFragmentToThread(RenderFragmentContainer*) override;
     void willBeRemovedFromTree(IsInternalMove) override;
     void fragmentedFlowDescendantBoxLaidOut(RenderBox*) override;

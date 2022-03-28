@@ -196,7 +196,7 @@ protected:
 private:
     RenderText(Node&, const String&);
 
-    const char* renderName() const override;
+    ASCIILiteral renderName() const override;
 
     bool canHaveChildren() const final { return false; }
 

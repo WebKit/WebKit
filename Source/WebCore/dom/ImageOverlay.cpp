@@ -531,7 +531,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
 
             FloatSize targetSize { horizontalExtent - horizontalOffset, lineBounds.size.height() };
             if (targetSize.isEmpty()) {
-                textContainer->setInlineStyleProperty(CSSPropertyTransform, "scale(0, 0)");
+                textContainer->setInlineStyleProperty(CSSPropertyTransform, "scale(0, 0)"_s);
                 continue;
             }
 
@@ -546,7 +546,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
             }
 
             if (sizeBeforeTransform.isEmpty()) {
-                textContainer->setInlineStyleProperty(CSSPropertyTransform, "scale(0, 0)");
+                textContainer->setInlineStyleProperty(CSSPropertyTransform, "scale(0, 0)"_s);
                 continue;
             }
 

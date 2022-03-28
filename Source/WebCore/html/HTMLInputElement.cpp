@@ -1294,12 +1294,12 @@ ExceptionOr<void> HTMLInputElement::showPicker()
     if (!m_inputType->allowsShowPickerAcrossFrames()) {
         Frame& topFrame = frame->tree().top();
         if (!frame->document()->securityOrigin().isSameOriginAs(topFrame.document()->securityOrigin()))
-            return Exception { SecurityError, "Input showPicker() called from cross-origin iframe." };
+            return Exception { SecurityError, "Input showPicker() called from cross-origin iframe."_s };
     }
 
     auto* window = frame->window();
     if (!window || !window->hasTransientActivation())
-        return Exception { NotAllowedError, "Input showPicker() requires a user gesture." };
+        return Exception { NotAllowedError, "Input showPicker() requires a user gesture."_s };
 
     m_inputType->showPicker();
     return { };

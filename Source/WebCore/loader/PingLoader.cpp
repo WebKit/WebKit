@@ -134,8 +134,8 @@ void PingLoader::sendPing(Frame& frame, const URL& pingURL, const URL& destinati
     auto& document = *frame.document();
     document.contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(request, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    request.setHTTPMethod("POST");
-    request.setHTTPContentType("text/ping");
+    request.setHTTPMethod("POST"_s);
+    request.setHTTPContentType("text/ping"_s);
     request.setHTTPBody(FormData::create("PING"));
     request.setHTTPHeaderField(HTTPHeaderName::CacheControl, HTTPHeaderValues::maxAge0());
 

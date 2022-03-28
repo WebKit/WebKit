@@ -70,7 +70,7 @@ private:
     void layout() final;
     void willBeDestroyed() final;
 
-    const char* renderName() const final { return "RenderEmbeddedObject"; }
+    ASCIILiteral renderName() const final { return "RenderEmbeddedObject"_s; }
     bool isEmbeddedObject() const final { return true; }
 
     bool showsUnavailablePluginIndicator() const { return isPluginUnavailable() && m_isUnavailablePluginIndicatorState != UnavailablePluginIndicatorState::Hidden; }

@@ -197,13 +197,13 @@ RefPtr<StorageArea> InspectorDOMStorageAgent::findStorageArea(Protocol::ErrorStr
 {
     auto securityOrigin = storageId->getString(Protocol::DOMStorage::StorageId::securityOriginKey);
     if (!securityOrigin) {
-        errorString = "Missing securityOrigin in given storageId";
+        errorString = "Missing securityOrigin in given storageId"_s;
         return nullptr;
     }
 
     auto isLocalStorage = storageId->getBoolean(Protocol::DOMStorage::StorageId::isLocalStorageKey);
     if (!isLocalStorage) {
-        errorString = "Missing isLocalStorage in given storageId";
+        errorString = "Missing isLocalStorage in given storageId"_s;
         return nullptr;
     }
 

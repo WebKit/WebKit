@@ -70,19 +70,19 @@ void ScrollbarsControllerMock::willRemoveHorizontalScrollbar(Scrollbar* scrollba
 
 void ScrollbarsControllerMock::mouseEnteredContentArea()
 {
-    m_logger("mouseEnteredContentArea");
+    m_logger("mouseEnteredContentArea"_s);
     ScrollbarsController::mouseEnteredContentArea();
 }
 
 void ScrollbarsControllerMock::mouseMovedInContentArea()
 {
-    m_logger("mouseMovedInContentArea");
+    m_logger("mouseMovedInContentArea"_s);
     ScrollbarsController::mouseMovedInContentArea();
 }
 
 void ScrollbarsControllerMock::mouseExitedContentArea()
 {
-    m_logger("mouseExitedContentArea");
+    m_logger("mouseExitedContentArea"_s);
     ScrollbarsController::mouseExitedContentArea();
 }
 

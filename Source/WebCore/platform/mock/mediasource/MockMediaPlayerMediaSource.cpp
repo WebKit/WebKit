@@ -64,8 +64,8 @@ void MockMediaPlayerMediaSource::registerMediaEngine(MediaEngineRegistrar regist
 static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
 {
     static NeverDestroyed cache = HashSet<String, ASCIICaseInsensitiveHash> {
-        "video/mock",
-        "audio/mock",
+        "video/mock"_s,
+        "audio/mock"_s,
     };
     return cache;
 }

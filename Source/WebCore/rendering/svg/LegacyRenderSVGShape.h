@@ -102,7 +102,7 @@ private:
 
     bool isLegacySVGShape() const final { return true; }
     bool canHaveChildren() const final { return false; }
-    const char* renderName() const override { return "RenderSVGShape"; }
+    ASCIILiteral renderName() const override { return "RenderSVGShape"_s; }
 
     void layout() final;
     void paint(PaintInfo&, const LayoutPoint&) final;

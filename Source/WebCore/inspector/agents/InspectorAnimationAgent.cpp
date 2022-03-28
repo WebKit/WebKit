@@ -333,7 +333,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorAnimation
 
     auto object = injectedScript.wrapObject(value, objectGroup);
     if (!object)
-        return makeUnexpected("Internal error: unable to cast Animation");
+        return makeUnexpected("Internal error: unable to cast Animation"_s);
 
     return object.releaseNonNull();
 }

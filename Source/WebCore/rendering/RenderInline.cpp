@@ -402,18 +402,18 @@ LayoutUnit RenderInline::marginAfter(const RenderStyle* otherStyle) const
     return computeMargin(this, style().marginAfterUsing(otherStyle ? otherStyle : &style()));
 }
 
-const char* RenderInline::renderName() const
+ASCIILiteral RenderInline::renderName() const
 {
     if (isRelativelyPositioned())
-        return "RenderInline (relative positioned)";
+        return "RenderInline (relative positioned)"_s;
     if (isStickilyPositioned())
-        return "RenderInline (sticky positioned)";
+        return "RenderInline (sticky positioned)"_s;
     // FIXME: Temporary hack while the new generated content system is being implemented.
     if (isPseudoElement())
-        return "RenderInline (generated)";
+        return "RenderInline (generated)"_s;
     if (isAnonymous())
-        return "RenderInline (generated)";
-    return "RenderInline";
+        return "RenderInline (generated)"_s;
+    return "RenderInline"_s;
 }
 
 bool RenderInline::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,

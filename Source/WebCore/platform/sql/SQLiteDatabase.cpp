@@ -537,69 +537,71 @@ int SQLiteDatabase::authorizerFunction(void* userData, int actionCode, const cha
     DatabaseAuthorizer* auth = static_cast<DatabaseAuthorizer*>(userData);
     ASSERT(auth);
 
+    String parameter1String { parameter1 };
+    String parameter2String { parameter2 };
     switch (actionCode) {
         case SQLITE_CREATE_INDEX:
-            return auth->createIndex(parameter1, parameter2);
+            return auth->createIndex(parameter1String, parameter2String);
         case SQLITE_CREATE_TABLE:
-            return auth->createTable(parameter1);
+            return auth->createTable(parameter1String);
         case SQLITE_CREATE_TEMP_INDEX:
-            return auth->createTempIndex(parameter1, parameter2);
+            return auth->createTempIndex(parameter1String, parameter2String);
         case SQLITE_CREATE_TEMP_TABLE:
-            return auth->createTempTable(parameter1);
+            return auth->createTempTable(parameter1String);
         case SQLITE_CREATE_TEMP_TRIGGER:
-            return auth->createTempTrigger(parameter1, parameter2);
+            return auth->createTempTrigger(parameter1String, parameter2String);
         case SQLITE_CREATE_TEMP_VIEW:
-            return auth->createTempView(parameter1);
+            return auth->createTempView(parameter1String);
         case SQLITE_CREATE_TRIGGER:
-            return auth->createTrigger(parameter1, parameter2);
+            return auth->createTrigger(parameter1String, parameter2String);
         case SQLITE_CREATE_VIEW:
-            return auth->createView(parameter1);
+            return auth->createView(parameter1String);
         case SQLITE_DELETE:
-            return auth->allowDelete(parameter1);
+            return auth->allowDelete(parameter1String);
         case SQLITE_DROP_INDEX:
-            return auth->dropIndex(parameter1, parameter2);
+            return auth->dropIndex(parameter1String, parameter2String);
         case SQLITE_DROP_TABLE:
-            return auth->dropTable(parameter1);
+            return auth->dropTable(parameter1String);
         case SQLITE_DROP_TEMP_INDEX:
-            return auth->dropTempIndex(parameter1, parameter2);
+            return auth->dropTempIndex(parameter1String, parameter2String);
         case SQLITE_DROP_TEMP_TABLE:
-            return auth->dropTempTable(parameter1);
+            return auth->dropTempTable(parameter1String);
         case SQLITE_DROP_TEMP_TRIGGER:
-            return auth->dropTempTrigger(parameter1, parameter2);
+            return auth->dropTempTrigger(parameter1String, parameter2String);
         case SQLITE_DROP_TEMP_VIEW:
-            return auth->dropTempView(parameter1);
+            return auth->dropTempView(parameter1String);
         case SQLITE_DROP_TRIGGER:
-            return auth->dropTrigger(parameter1, parameter2);
+            return auth->dropTrigger(parameter1String, parameter2String);
         case SQLITE_DROP_VIEW:
-            return auth->dropView(parameter1);
+            return auth->dropView(parameter1String);
         case SQLITE_INSERT:
-            return auth->allowInsert(parameter1);
+            return auth->allowInsert(parameter1String);
         case SQLITE_PRAGMA:
-            return auth->allowPragma(parameter1, parameter2);
+            return auth->allowPragma(parameter1String, parameter2String);
         case SQLITE_READ:
-            return auth->allowRead(parameter1, parameter2);
+            return auth->allowRead(parameter1String, parameter2String);
         case SQLITE_SELECT:
             return auth->allowSelect();
         case SQLITE_TRANSACTION:
             return auth->allowTransaction();
         case SQLITE_UPDATE:
-            return auth->allowUpdate(parameter1, parameter2);
+            return auth->allowUpdate(parameter1String, parameter2String);
         case SQLITE_ATTACH:
-            return auth->allowAttach(parameter1);
+            return auth->allowAttach(parameter1String);
         case SQLITE_DETACH:
-            return auth->allowDetach(parameter1);
+            return auth->allowDetach(parameter1String);
         case SQLITE_ALTER_TABLE:
-            return auth->allowAlterTable(parameter1, parameter2);
+            return auth->allowAlterTable(parameter1String, parameter2String);
         case SQLITE_REINDEX:
-            return auth->allowReindex(parameter1);
+            return auth->allowReindex(parameter1String);
         case SQLITE_ANALYZE:
-            return auth->allowAnalyze(parameter1);
+            return auth->allowAnalyze(parameter1String);
         case SQLITE_CREATE_VTABLE:
-            return auth->createVTable(parameter1, parameter2);
+            return auth->createVTable(parameter1String, parameter2String);
         case SQLITE_DROP_VTABLE:
-            return auth->dropVTable(parameter1, parameter2);
+            return auth->dropVTable(parameter1String, parameter2String);
         case SQLITE_FUNCTION:
-            return auth->allowFunction(parameter2);
+            return auth->allowFunction(parameter2String);
         default:
             ASSERT_NOT_REACHED();
             return SQLAuthDeny;

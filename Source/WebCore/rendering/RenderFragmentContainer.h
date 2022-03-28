@@ -144,7 +144,7 @@ protected:
 
 private:
     bool isRenderFragmentContainer() const final { return true; }
-    const char* renderName() const override { return "RenderFragmentContainer"; }
+    ASCIILiteral renderName() const override { return "RenderFragmentContainer"_s; }
 
     void insertedIntoTree(IsInternalMove) override;
     void willBeRemovedFromTree(IsInternalMove) override;

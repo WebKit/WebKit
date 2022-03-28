@@ -130,9 +130,9 @@ static void printBorderStyle(TextStream& ts, const BorderStyle borderStyle)
 static String getTagName(Node* n)
 {
     if (n->isDocumentNode())
-        return "";
+        return ""_s;
     if (n->nodeType() == Node::COMMENT_NODE)
-        return "COMMENT";
+        return "COMMENT"_s;
     return n->nodeName();
 }
 
@@ -214,7 +214,7 @@ static inline bool hasNonEmptySibling(const RenderInline& inlineRenderer)
 
 void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> behavior)
 {
-    ts << o.renderName();
+    ts << o.renderName().characters();
 
     if (behavior.contains(RenderAsTextFlag::ShowAddresses))
         ts << " " << &o;
@@ -451,13 +451,13 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
             else {
                 switch (text[0]) {
                     case bullet:
-                        text = "bullet";
+                        text = "bullet"_s;
                         break;
                     case blackSquare:
-                        text = "black square";
+                        text = "black square"_s;
                         break;
                     case whiteBullet:
-                        text = "white bullet";
+                        text = "white bullet"_s;
                         break;
                     default:
                         text = quoteAndEscapeNonPrintables(text);

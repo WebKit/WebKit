@@ -123,13 +123,13 @@ template<typename CharacterType> std::optional<FloatRect> SVGFitToViewBox::parse
 
         // Check that width is positive.
         if (*width < 0.0) {
-            document.accessSVGExtensions().reportError("A negative value for ViewBox width is not allowed");
+            document.accessSVGExtensions().reportError("A negative value for ViewBox width is not allowed"_s);
             return std::nullopt;
         }
 
         // Check that height is positive.
         if (*height < 0.0) {
-            document.accessSVGExtensions().reportError("A negative value for ViewBox height is not allowed");
+            document.accessSVGExtensions().reportError("A negative value for ViewBox height is not allowed"_s);
             return std::nullopt;
         }
 

@@ -77,7 +77,7 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVe
     return TagId::Unknown;
 }
 
-String TokenPreloadScanner::initiatorFor(TagId tagId)
+ASCIILiteral TokenPreloadScanner::initiatorFor(TagId tagId)
 {
     switch (tagId) {
     case TagId::Source:
@@ -238,7 +238,7 @@ private:
                 auto mediaSet = MediaQuerySet::create(attributeValue, MediaQueryParserContext(m_document));
                 RefPtr documentElement = m_document.documentElement();
                 LOG(MediaQueries, "HTMLPreloadScanner %p processAttribute evaluating media queries", this);
-                m_mediaMatched = MediaQueryEvaluator { m_document.printing() ? "print" : "screen", m_document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());
+                m_mediaMatched = MediaQueryEvaluator { m_document.printing() ? "print"_s : "screen"_s, m_document, documentElement ? documentElement->computedStyle() : nullptr }.evaluate(mediaSet.get());
             }
             if (match(attributeName, typeAttr) && m_typeAttribute.isNull()) {
                 // when multiple type attributes present: first value wins, ignore subsequent (to match ImageElement parser and Blink behaviours)

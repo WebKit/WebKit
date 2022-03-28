@@ -51,7 +51,7 @@ static std::optional<Vector<RefPtr<KeyHandle>>> parseLicenseFormat(const JSON::O
 {
     // If the 'keys' key is present in the root object, parse the JSON further
     // according to the specified 'license' format.
-    auto it = root.find("keys");
+    auto it = root.find("keys"_s);
     if (it == root.end())
         return std::nullopt;
 
@@ -67,15 +67,15 @@ static std::optional<Vector<RefPtr<KeyHandle>>> parseLicenseFormat(const JSON::O
             if (!keyObject)
                 return false;
 
-            auto keyType = keyObject->getString("kty");
+            auto keyType = keyObject->getString("kty"_s);
             if (!keyType || !equalLettersIgnoringASCIICase(keyType, "oct"))
                 return false;
 
-            auto keyID = keyObject->getString("kid");
+            auto keyID = keyObject->getString("kid"_s);
             if (!keyID)
                 return false;
 
-            auto keyValue = keyObject->getString("k");
+            auto keyValue = keyObject->getString("k"_s);
             if (!keyValue)
                 return false;
 
@@ -99,7 +99,7 @@ static bool parseLicenseReleaseAcknowledgementFormat(const JSON::Object& root)
 {
     // If the 'kids' key is present in the root object, parse the JSON further
     // according to the specified 'license release acknowledgement' format.
-    auto it = root.find("kids");
+    auto it = root.find("kids"_s);
     if (it == root.end())
         return false;
 
@@ -224,7 +224,7 @@ static Ref<FragmentedSharedBuffer> extractKeyidsFromCencInitData(const Fragmente
         index += ClearKey::KeyIDSizeInBytes;
     }
 
-    object->setArray("kids", WTFMove(keyIdsArray));
+    object->setArray("kids"_s, WTFMove(keyIdsArray));
     CString jsonData = object->toJSONString().utf8();
     keyIds.append(jsonData.data(), jsonData.length());
     return keyIds.take();
@@ -249,7 +249,7 @@ static Ref<FragmentedSharedBuffer> extractKeyIdFromWebMInitData(const Fragmented
     // An array of key IDs. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.
     keyIdsArray->pushString(base64URLEncodeToString(initData.makeContiguous()->data(), initData.size()));
 
-    object->setArray("kids", WTFMove(keyIdsArray));
+    object->setArray("kids"_s, WTFMove(keyIdsArray));
     CString jsonData = object->toJSONString().utf8();
     keyIds.append(jsonData.data(), jsonData.length());
     return keyIds.take();
@@ -592,7 +592,7 @@ void CDMInstanceSessionClearKey::removeSessionData(const String& sessionId, Lice
                 ASSERT(key->id().size() <= std::numeric_limits<unsigned>::max());
                 array->pushString(base64URLEncodeToString(key->id().data(), key->id().size()));
             }
-            rootObject->setArray("kids", WTFMove(array));
+            rootObject->setArray("kids"_s, WTFMove(array));
         }
 
         // Copy the JSON data into a FragmentedSharedBuffer object.

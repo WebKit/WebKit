@@ -280,7 +280,7 @@ void InspectorDatabaseAgent::executeSQL(const Protocol::Database::DatabaseId& da
 
     auto* database = databaseForId(databaseId);
     if (!database) {
-        requestCallback->sendFailure("Missing database for given databaseId");
+        requestCallback->sendFailure("Missing database for given databaseId"_s);
         return;
     }
 

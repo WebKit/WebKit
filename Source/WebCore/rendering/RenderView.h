@@ -44,7 +44,7 @@ public:
     RenderView(Document&, RenderStyle&&);
     virtual ~RenderView();
 
-    const char* renderName() const override { return "RenderView"; }
+    ASCIILiteral renderName() const override { return "RenderView"_s; }
 
     bool requiresLayer() const override { return true; }
 

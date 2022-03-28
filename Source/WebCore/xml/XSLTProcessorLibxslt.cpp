@@ -83,7 +83,7 @@ void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
     }
 
     // xmlError->int2 is the column number of the error or 0 if N/A.
-    console->addMessage(MessageSource::XML, level, error->message, error->file, error->line, error->int2);
+    console->addMessage(MessageSource::XML, level, String { error->message }, String { error->file }, error->line, error->int2);
 }
 
 // FIXME: There seems to be no way to control the ctxt pointer for loading here, thus we have globals.
@@ -102,7 +102,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
     case XSLT_LOAD_DOCUMENT: {
         xsltTransformContextPtr context = (xsltTransformContextPtr)ctxt;
         xmlChar* base = xmlNodeGetBase(context->document->doc, context->node);
-        URL url(URL({ }, reinterpret_cast<const char*>(base)), reinterpret_cast<const char*>(uri));
+        URL url(URL({ }, String { reinterpret_cast<const char*>(base) }), String { reinterpret_cast<const char*>(uri) });
         xmlFree(base);
         ResourceError error;
         ResourceResponse response;
@@ -300,11 +300,11 @@ static inline String resultMIMEType(xmlDocPtr resultDoc, xsltStylesheetPtr sheet
         resultType = (const xmlChar*)"html";
 
     if (xmlStrEqual(resultType, (const xmlChar*)"html"))
-        return "text/html";
+        return "text/html"_s;
     if (xmlStrEqual(resultType, (const xmlChar*)"text"))
-        return "text/plain";
+        return "text/plain"_s;
 
-    return "application/xml";
+    return "application/xml"_s;
 }
 
 bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String& resultString, String& resultEncoding)
@@ -374,7 +374,7 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
 
         if ((success = saveResultToString(resultDoc, sheet, resultString))) {
             mimeType = resultMIMEType(resultDoc, sheet);
-            resultEncoding = reinterpret_cast<const char*>(resultDoc->encoding);
+            resultEncoding = String { reinterpret_cast<const char*>(resultDoc->encoding) };
         }
         xmlFreeDoc(resultDoc);
     }

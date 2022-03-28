@@ -293,7 +293,7 @@ String RegistrationDatabase::ensureValidRecordsTable()
         }
 
         if (sqliteResult != SQLITE_ROW)
-            return "Error executing statement to fetch schema for the Records table.";
+            return "Error executing statement to fetch schema for the Records table."_s;
 
         currentSchema = statement->columnText(1);
     }
@@ -306,15 +306,15 @@ String RegistrationDatabase::ensureValidRecordsTable()
     return makeString("Unexpected schema: ", currentSchema);
 }
 
-static String updateViaCacheToString(ServiceWorkerUpdateViaCache update)
+static ASCIILiteral updateViaCacheToString(ServiceWorkerUpdateViaCache update)
 {
     switch (update) {
     case ServiceWorkerUpdateViaCache::Imports:
-        return "Imports";
+        return "Imports"_s;
     case ServiceWorkerUpdateViaCache::All:
-        return "All";
+        return "All"_s;
     case ServiceWorkerUpdateViaCache::None:
-        return "None";
+        return "None"_s;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -332,13 +332,13 @@ static std::optional<ServiceWorkerUpdateViaCache> stringToUpdateViaCache(const S
     return std::nullopt;
 }
 
-static String workerTypeToString(WorkerType workerType)
+static ASCIILiteral workerTypeToString(WorkerType workerType)
 {
     switch (workerType) {
     case WorkerType::Classic:
-        return "Classic";
+        return "Classic"_s;
     case WorkerType::Module:
-        return "Module";
+        return "Module"_s;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -462,9 +462,9 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
             || insertStatement->bindText(3, data.registration.scopeURL.path().toString()) != SQLITE_OK
             || insertStatement->bindText(4, data.registration.key.topOrigin().databaseIdentifier()) != SQLITE_OK
             || insertStatement->bindDouble(5, data.registration.lastUpdateTime.secondsSinceEpoch().value()) != SQLITE_OK
-            || insertStatement->bindText(6, updateViaCacheToString(data.registration.updateViaCache)) != SQLITE_OK
+            || insertStatement->bindText(6, StringView { updateViaCacheToString(data.registration.updateViaCache) }) != SQLITE_OK
             || insertStatement->bindText(7, data.scriptURL.string()) != SQLITE_OK
-            || insertStatement->bindText(8, workerTypeToString(data.workerType)) != SQLITE_OK
+            || insertStatement->bindText(8, StringView { workerTypeToString(data.workerType) }) != SQLITE_OK
             || insertStatement->bindBlob(9, Span { cspEncoder.buffer(), cspEncoder.bufferSize() }) != SQLITE_OK
             || insertStatement->bindBlob(10, Span { coepEncoder.buffer(), coepEncoder.bufferSize() }) != SQLITE_OK
             || insertStatement->bindText(11, data.referrerPolicy) != SQLITE_OK

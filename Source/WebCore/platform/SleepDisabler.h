@@ -33,7 +33,7 @@ namespace WebCore {
 class SleepDisabler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT SleepDisabler(const char*, PAL::SleepDisabler::Type);
+    WEBCORE_EXPORT SleepDisabler(const String&, PAL::SleepDisabler::Type);
     WEBCORE_EXPORT ~SleepDisabler();
 
     PAL::SleepDisabler::Type type() const { return m_type; }

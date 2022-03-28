@@ -36,7 +36,7 @@ public:
 private:
     void element() const = delete;
 
-    const char* renderName() const override { return "RenderSVGInline"; }
+    ASCIILiteral renderName() const override { return "RenderSVGInline"_s; }
     bool requiresLayer() const final { return false; }
     bool isSVGInline() const final { return true; }
 

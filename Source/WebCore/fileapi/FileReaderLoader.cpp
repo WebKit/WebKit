@@ -93,7 +93,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, con
 
     // Construct and load the request.
     ResourceRequest request(m_urlForReading);
-    request.setHTTPMethod("GET");
+    request.setHTTPMethod("GET"_s);
 
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
@@ -340,7 +340,7 @@ void FileReaderLoader::convertToText()
     // provided encoding.     
     // FIXME: consider supporting incremental decoding to improve the perf.
     if (!m_decoder)
-        m_decoder = TextResourceDecoder::create("text/plain", m_encoding.isValid() ? m_encoding : PAL::UTF8Encoding());
+        m_decoder = TextResourceDecoder::create("text/plain"_s, m_encoding.isValid() ? m_encoding : PAL::UTF8Encoding());
     if (isCompleted())
         m_stringResult = m_decoder->decodeAndFlush(static_cast<const char*>(m_rawData->data()), m_bytesLoaded);
     else
@@ -354,7 +354,7 @@ void FileReaderLoader::convertToDataURL()
         return;
     }
 
-    m_stringResult = makeString("data:", m_dataType.isEmpty() ? "application/octet-stream" : m_dataType, ";base64,", base64Encoded(m_rawData->data(), m_bytesLoaded));
+    m_stringResult = makeString("data:", m_dataType.isEmpty() ? "application/octet-stream"_s : m_dataType, ";base64,", base64Encoded(m_rawData->data(), m_bytesLoaded));
 }
 
 bool FileReaderLoader::isCompleted() const

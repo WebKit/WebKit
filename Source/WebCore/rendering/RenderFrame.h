@@ -42,7 +42,7 @@ public:
 private:
     void frameOwnerElement() const = delete;
 
-    const char* renderName() const final { return "RenderFrame"; }
+    ASCIILiteral renderName() const final { return "RenderFrame"_s; }
     bool isFrame() const final { return true; }
 };
 

@@ -42,7 +42,7 @@ public:
     double valueRatio() const;
 
 private:
-    const char* renderName() const override { return "RenderSlider"; }
+    ASCIILiteral renderName() const override { return "RenderSlider"_s; }
     bool isSlider() const override { return true; }
 
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;

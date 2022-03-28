@@ -110,7 +110,7 @@ public:
 
     RenderTheme& theme() const;
 
-    virtual const char* renderName() const = 0;
+    virtual ASCIILiteral renderName() const = 0;
 
     RenderElement* parent() const { return m_parent; }
     bool isDescendantOf(const RenderObject*) const;

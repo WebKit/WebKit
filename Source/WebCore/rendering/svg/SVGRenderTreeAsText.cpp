@@ -75,7 +75,7 @@ namespace WebCore {
  */
 class TextStreamSeparator {
 public:
-    TextStreamSeparator(const String& s)
+    TextStreamSeparator(UChar s)
         : m_separator(s)
         , m_needToSeparate(false)
     {
@@ -84,7 +84,7 @@ public:
 private:
     friend TextStream& operator<<(TextStream&, TextStreamSeparator&);
 
-    String m_separator;
+    UChar m_separator;
     bool m_needToSeparate;
 };
 
@@ -175,7 +175,7 @@ static void writeSVGPaintingResource(TextStream& ts, const RenderSVGResource& re
 
 static void writeSVGFillPaintingResource(TextStream& ts, const RenderElement& renderer, const RenderSVGResource& fillPaintingResource)
 {
-    TextStreamSeparator s(" ");
+    TextStreamSeparator s(' ');
     ts << " [fill={" << s;
     writeSVGPaintingResource(ts, fillPaintingResource);
 
@@ -187,7 +187,7 @@ static void writeSVGFillPaintingResource(TextStream& ts, const RenderElement& re
 
 static void writeSVGStrokePaintingResource(TextStream& ts, const RenderElement& renderer, const RenderSVGResource& strokePaintingResource, const SVGGraphicsElement& shape)
 {
-    TextStreamSeparator s(" ");
+    TextStreamSeparator s(' ');
     ts << " [stroke={" << s;
     writeSVGPaintingResource(ts, strokePaintingResource);
 
@@ -422,7 +422,7 @@ static void writeStandardPrefix(TextStream& ts, const RenderObject& object, Opti
     if (writeIndent == WriteIndentOrNot::Yes)
         ts << indent;
 
-    ts << object.renderName();
+    ts << object.renderName().characters();
 
     if (behavior.contains(RenderAsTextFlag::ShowAddresses))
         ts << " " << &object;

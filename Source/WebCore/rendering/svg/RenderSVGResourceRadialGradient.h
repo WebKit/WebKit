@@ -49,7 +49,7 @@ private:
 
     void gradientElement() const = delete;
 
-    const char* renderName() const final { return "RenderSVGResourceRadialGradient"; }
+    ASCIILiteral renderName() const final { return "RenderSVGResourceRadialGradient"_s; }
     bool collectGradientAttributes() final;
 
     RadialGradientAttributes m_attributes;

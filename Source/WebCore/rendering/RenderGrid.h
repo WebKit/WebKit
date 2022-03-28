@@ -129,7 +129,7 @@ private:
         return child->isRenderReplaced() ? ItemPosition::Start : ItemPosition::Stretch;
     }
 
-    const char* renderName() const override;
+    ASCIILiteral renderName() const override;
     bool isRenderGrid() const override { return true; }
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 

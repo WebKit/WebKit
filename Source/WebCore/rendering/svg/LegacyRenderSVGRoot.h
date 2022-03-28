@@ -69,7 +69,7 @@ private:
     bool isLegacySVGRoot() const override { return true; }
 
     // Intentially left 'RenderSVGRoot' instead of 'LegacyRenderSVGRoot', to avoid breaking layout tests.
-    const char* renderName() const override { return "RenderSVGRoot"; }
+    ASCIILiteral renderName() const override { return "RenderSVGRoot"_s; }
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const override;
     LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const override;

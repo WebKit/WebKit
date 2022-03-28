@@ -55,8 +55,8 @@ void DNSResolveQueueCFNet::updateIsUsingProxy()
         return;
     }
 
-    RetainPtr<CFURLRef> httpCFURL = URL({ }, "http://example.com/").createCFURL();
-    RetainPtr<CFURLRef> httpsCFURL = URL({ }, "https://example.com/").createCFURL();
+    RetainPtr<CFURLRef> httpCFURL = URL({ }, "http://example.com/"_s).createCFURL();
+    RetainPtr<CFURLRef> httpsCFURL = URL({ }, "https://example.com/"_s).createCFURL();
 
     RetainPtr<CFArrayRef> httpProxyArray = adoptCF(CFNetworkCopyProxiesForURL(httpCFURL.get(), proxySettings.get()));
     RetainPtr<CFArrayRef> httpsProxyArray = adoptCF(CFNetworkCopyProxiesForURL(httpsCFURL.get(), proxySettings.get()));

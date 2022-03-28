@@ -366,11 +366,11 @@ void GraphicsContextGLOpenGL::validateDepthStencil(const char* packedDepthStenci
         setContextAttributes(attrs);
     }
     if (attrs.antialias && !m_isForWebGL2) {
-        if (!supportsExtension("GL_ANGLE_framebuffer_multisample")) {
+        if (!supportsExtension("GL_ANGLE_framebuffer_multisample"_s)) {
             attrs.antialias = false;
             setContextAttributes(attrs);
         } else
-            ensureExtensionEnabled("GL_ANGLE_framebuffer_multisample");
+            ensureExtensionEnabled("GL_ANGLE_framebuffer_multisample"_s);
     }
 }
 

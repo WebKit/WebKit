@@ -50,22 +50,22 @@ String InbandGenericCue::toJSONString() const
     object->setDouble("start"_s, m_cueData.m_startTime.toDouble());
     object->setDouble("end"_s, m_cueData.m_endTime.toDouble());
 
-    const char* status = "";
+    ASCIILiteral status = ""_s;
     switch (m_cueData.m_status) {
     case GenericCueData::Status::Uninitialized:
-        status = "Uninitialized";
+        status = "Uninitialized"_s;
         break;
     case GenericCueData::Status::Partial:
-        status = "Partial";
+        status = "Partial"_s;
         break;
     case GenericCueData::Status::Complete:
-        status = "Complete";
+        status = "Complete"_s;
         break;
     }
-    object->setString("status", status);
+    object->setString("status"_s, status);
 
     if (!m_cueData.m_id.isEmpty())
-        object->setString("id", m_cueData.m_id);
+        object->setString("id"_s, m_cueData.m_id);
 
     if (m_cueData.m_line > 0)
         object->setDouble("line"_s, m_cueData.m_line);
@@ -77,19 +77,19 @@ String InbandGenericCue::toJSONString() const
         object->setDouble("position"_s, m_cueData.m_position);
 
     if (m_cueData.m_align != GenericCueData::Alignment::None) {
-        const char* align = "";
+        ASCIILiteral align = ""_s;
         switch (m_cueData.m_align) {
         case GenericCueData::Alignment::Start:
-            align = "Start";
+            align = "Start"_s;
             break;
         case GenericCueData::Alignment::Middle:
-            align = "Middle";
+            align = "Middle"_s;
             break;
         case GenericCueData::Alignment::End:
-            align = "End";
+            align = "End"_s;
             break;
         case GenericCueData::Alignment::None:
-            align = "None";
+            align = "None"_s;
             break;
         }
         object->setString("align"_s, align);

@@ -406,9 +406,9 @@ void RenderCounter::willBeDestroyed()
     RenderText::willBeDestroyed();
 }
 
-const char* RenderCounter::renderName() const
+ASCIILiteral RenderCounter::renderName() const
 {
-    return "RenderCounter";
+    return "RenderCounter"_s;
 }
 
 bool RenderCounter::isCounter() const

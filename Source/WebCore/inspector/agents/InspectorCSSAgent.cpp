@@ -605,7 +605,7 @@ Protocol::ErrorStringOr<Ref<Protocol::CSS::Font>> InspectorCSSAgent::getFontData
     
     auto* computedStyle = node->computedStyle();
     if (!computedStyle)
-        return makeUnexpected("No computed style for node.");
+        return makeUnexpected("No computed style for node."_s);
     
     return buildObjectForFont(computedStyle->fontCascade().primaryFont());
 }
@@ -665,7 +665,7 @@ Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSStyleSheetBody>> InspectorCSSAgent
 
     auto styleSheet = inspectorStyleSheet->buildObjectForStyleSheet();
     if (!styleSheet)
-        return makeUnexpected("Internal error: missing style sheet");
+        return makeUnexpected("Internal error: missing style sheet"_s);
 
     return styleSheet.releaseNonNull();
 }
@@ -747,7 +747,7 @@ Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSRule>> InspectorCSSAgent::setRuleS
 
     auto rule = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
     if (!rule)
-        return makeUnexpected("Internal error: missing style sheet");
+        return makeUnexpected("Internal error: missing style sheet"_s);
 
     return rule.releaseNonNull();
 }
@@ -836,7 +836,7 @@ Protocol::ErrorStringOr<Ref<Protocol::CSS::CSSRule>> InspectorCSSAgent::addRule(
 
     auto rule = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(rawAction.newRuleId()));
     if (!rule)
-        return makeUnexpected("Internal error: missing style sheet");
+        return makeUnexpected("Internal error: missing style sheet"_s);
 
     return rule.releaseNonNull();
 }

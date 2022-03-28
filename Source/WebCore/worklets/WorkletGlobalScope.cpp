@@ -105,7 +105,7 @@ void WorkletGlobalScope::prepareForDestruction()
 String WorkletGlobalScope::userAgent(const URL& url) const
 {
     if (!m_document)
-        return "";
+        return emptyString();
     return m_document->userAgent(url);
 }
 

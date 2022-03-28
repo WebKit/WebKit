@@ -38,7 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureS3TCsRGB);
 WebGLCompressedTextureS3TCsRGB::WebGLCompressedTextureS3TCsRGB(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_compression_s3tc_srgb");
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_compression_s3tc_srgb"_s);
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB_S3TC_DXT1_EXT);
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT);
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT);
@@ -54,7 +54,7 @@ WebGLExtension::ExtensionName WebGLCompressedTextureS3TCsRGB::getName() const
 
 bool WebGLCompressedTextureS3TCsRGB::supported(GraphicsContextGL& context)
 {
-    return context.supportsExtension("GL_EXT_texture_compression_s3tc_srgb");
+    return context.supportsExtension("GL_EXT_texture_compression_s3tc_srgb"_s);
 }
 
 } // namespace WebCore

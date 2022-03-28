@@ -51,7 +51,7 @@ protected:
 
 private:
     bool isRenderMathMLRow() const final { return true; }
-    const char* renderName() const override { return "RenderMathMLRow"; }
+    ASCIILiteral renderName() const override { return "RenderMathMLRow"_s; }
 };
 
 } // namespace WebCore

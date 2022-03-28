@@ -218,7 +218,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
         }
 
         RefPtr documentElement = document().documentElement();
-        MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
+        MediaQueryEvaluator evaluator { document().printing() ? "print"_s : "screen"_s, document(), documentElement ? documentElement->computedStyle() : nullptr };
         auto* queries = source.parsedMediaAttribute(document());
         LOG(MediaQueries, "HTMLImageElement %p bestFitSourceFromPictureElement evaluating media queries", this);
 
@@ -242,7 +242,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
 void HTMLImageElement::evaluateDynamicMediaQueryDependencies()
 {
     RefPtr documentElement = document().documentElement();
-    MediaQueryEvaluator evaluator { document().printing() ? "print" : "screen", document(), documentElement ? documentElement->computedStyle() : nullptr };
+    MediaQueryEvaluator evaluator { document().printing() ? "print"_s : "screen"_s, document(), documentElement ? documentElement->computedStyle() : nullptr };
 
     if (!evaluator.evaluateForChanges(m_mediaQueryDynamicResults))
         return;

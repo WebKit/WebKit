@@ -1,3 +1,17 @@
+2022-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Prepare WebCore for making the String(const char*) constructor explicit
+        https://bugs.webkit.org/show_bug.cgi?id=238408
+
+        Reviewed by Geoff Garen.
+
+        Prepare WebCore for making the String(const char*) constructor explicit.
+        Making this constructor explicit helps findings cases where a String is constructed
+        from a literal without the ""_s suffix.
+
+        * wtf/text/WTFString.h:
+        (WTF::equalIgnoringASCIICase):
+
 2022-03-28  Brady Eidson  <beidson@apple.com>
 
         Support ServiceWorkerClients.openWindow.

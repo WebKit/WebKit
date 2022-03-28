@@ -73,7 +73,7 @@ public:
 
 private:
     bool isRubyRun() const override { return true; }
-    const char* renderName() const override { return "RenderRubyRun (anonymous)"; }
+    ASCIILiteral renderName() const override { return "RenderRubyRun (anonymous)"_s; }
     bool createsAnonymousWrapper() const override { return true; }
     bool canDropAnonymousBlockChild() const override { return false; }
 

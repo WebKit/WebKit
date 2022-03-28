@@ -53,19 +53,19 @@ String attributeValueForEnterKeyHint(EnterKeyHint hint)
     case EnterKeyHint::Unspecified:
         return emptyAtom();
     case EnterKeyHint::Enter:
-        return "enter";
+        return "enter"_s;
     case EnterKeyHint::Done:
-        return "done";
+        return "done"_s;
     case EnterKeyHint::Go:
-        return "go";
+        return "go"_s;
     case EnterKeyHint::Next:
-        return "next";
+        return "next"_s;
     case EnterKeyHint::Previous:
-        return "previous";
+        return "previous"_s;
     case EnterKeyHint::Search:
-        return "search";
+        return "search"_s;
     case EnterKeyHint::Send:
-        return "send";
+        return "send"_s;
     }
     ASSERT_NOT_REACHED();
     return nullAtom();

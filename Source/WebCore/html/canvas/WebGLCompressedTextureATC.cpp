@@ -38,7 +38,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLCompressedTextureATC);
 WebGLCompressedTextureATC::WebGLCompressedTextureATC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_AMD_compressed_ATC_texture");
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_AMD_compressed_ATC_texture"_s);
 
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_ATC_RGB_AMD);
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_ATC_RGBA_EXPLICIT_ALPHA_AMD);
@@ -54,7 +54,7 @@ WebGLExtension::ExtensionName WebGLCompressedTextureATC::getName() const
 
 bool WebGLCompressedTextureATC::supported(GraphicsContextGL& context)
 {
-    return context.supportsExtension("GL_AMD_compressed_ATC_texture");
+    return context.supportsExtension("GL_AMD_compressed_ATC_texture"_s);
 }
 
 } // namespace WebCore

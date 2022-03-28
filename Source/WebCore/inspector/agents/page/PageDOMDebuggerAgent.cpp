@@ -102,7 +102,7 @@ Protocol::ErrorStringOr<void> PageDOMDebuggerAgent::setDOMBreakpoint(Protocol::D
     }
 
     ASSERT_NOT_REACHED();
-    return makeUnexpected("Not supported");
+    return makeUnexpected("Not supported"_s);
 }
 
 Protocol::ErrorStringOr<void> PageDOMDebuggerAgent::removeDOMBreakpoint(Protocol::DOM::NodeId nodeId, Protocol::DOMDebugger::DOMBreakpointType type)
@@ -135,7 +135,7 @@ Protocol::ErrorStringOr<void> PageDOMDebuggerAgent::removeDOMBreakpoint(Protocol
     }
 
     ASSERT_NOT_REACHED();
-    return makeUnexpected("Not supported");
+    return makeUnexpected("Not supported"_s);
 }
 
 void PageDOMDebuggerAgent::mainFrameNavigated()
@@ -203,7 +203,7 @@ void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
     ASSERT(closestBreakpointOwner);
 
     auto pauseData = buildPauseDataForDOMBreakpoint(Protocol::DOMDebugger::DOMBreakpointType::SubtreeModified, *closestBreakpointOwner);
-    pauseData->setBoolean("insertion", true);
+    pauseData->setBoolean("insertion"_s, true);
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
     // Include the new child node ID so the frontend can show the node that's about to be inserted.
     m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(pauseData), WTFMove(closestBreakpoint));
@@ -260,7 +260,7 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
     if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
         if (&node != closestBreakpointOwner) {
             if (auto targetNodeId = domAgent->pushNodeToFrontend(&node))
-                pauseData->setInteger("targetNodeId", targetNodeId);
+                pauseData->setInteger("targetNodeId"_s, targetNodeId);
         }
     }
     m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::DOM, WTFMove(pauseData), WTFMove(closestBreakpoint));
@@ -350,10 +350,10 @@ Ref<JSON::Object> PageDOMDebuggerAgent::buildPauseDataForDOMBreakpoint(Protocol:
     ASSERT(m_domSubtreeModifiedBreakpoints.contains(&breakpointOwner) || m_domAttributeModifiedBreakpoints.contains(&breakpointOwner) || m_domNodeRemovedBreakpoints.contains(&breakpointOwner));
 
     auto pauseData = JSON::Object::create();
-    pauseData->setString("type", Protocol::Helpers::getEnumConstantValue(breakpointType));
+    pauseData->setString("type"_s, Protocol::Helpers::getEnumConstantValue(breakpointType));
     if (auto* domAgent = m_instrumentingAgents.persistentDOMAgent()) {
         if (auto breakpointOwnerNodeId = domAgent->pushNodeToFrontend(&breakpointOwner))
-            pauseData->setInteger("nodeId", breakpointOwnerNodeId);
+            pauseData->setInteger("nodeId"_s, breakpointOwnerNodeId);
     }
     return pauseData;
 }

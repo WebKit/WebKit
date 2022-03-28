@@ -37,7 +37,7 @@ protected:
 
 private:
     bool isSVGHiddenContainer() const final { return true; }
-    const char* renderName() const override { return "RenderSVGHiddenContainer"; }
+    ASCIILiteral renderName() const override { return "RenderSVGHiddenContainer"_s; }
 
     void paint(PaintInfo&, const LayoutPoint&) final;
 

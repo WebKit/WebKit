@@ -122,10 +122,10 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
         maxSize = 100.0 - textPosition;
 
     if (cue->getWritingDirection() == VTTCue::Horizontal) {
-        setInlineStyleProperty(CSSPropertyMinWidth, "min-content");
+        setInlineStyleProperty(CSSPropertyMinWidth, "min-content"_s);
         setInlineStyleProperty(CSSPropertyMaxWidth, maxSize, CSSUnitType::CSS_PERCENTAGE);
     } else {
-        setInlineStyleProperty(CSSPropertyMinHeight, "min-content");
+        setInlineStyleProperty(CSSPropertyMinHeight, "min-content"_s);
         setInlineStyleProperty(CSSPropertyMaxHeight, maxSize, CSSUnitType::CSS_PERCENTAGE);
     }
 

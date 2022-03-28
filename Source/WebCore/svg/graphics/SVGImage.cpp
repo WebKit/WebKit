@@ -457,7 +457,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         frame.view()->setTransparent(true); // SVG Images are transparent.
 
         ASSERT(loader.activeDocumentLoader()); // DocumentLoader should have been created by frame->init().
-        loader.activeDocumentLoader()->writer().setMIMEType("image/svg+xml");
+        loader.activeDocumentLoader()->writer().setMIMEType("image/svg+xml"_s);
         loader.activeDocumentLoader()->writer().begin(URL()); // create the empty document
         data()->forEachSegmentAsSharedBuffer([&](auto&& buffer) {
             loader.activeDocumentLoader()->writer().addData(buffer);

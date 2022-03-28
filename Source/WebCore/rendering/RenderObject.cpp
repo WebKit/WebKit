@@ -1226,13 +1226,14 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     if (node())
         stream << node()->nodeName().utf8().data() << " ";
 
-    String name = renderName();
+    ASCIILiteral name = renderName();
+    StringView nameView { name };
     // FIXME: Renderer's name should not include property value listing.
-    int pos = name.find('(');
+    int pos = nameView.find('(');
     if (pos > 0)
-        stream << name.left(pos - 1).utf8().data();
+        stream << nameView.left(pos - 1).characters8();
     else
-        stream << name.utf8().data();
+        stream << nameView;
 
     if (is<RenderBox>(*this)) {
         auto& renderBox = downcast<RenderBox>(*this);

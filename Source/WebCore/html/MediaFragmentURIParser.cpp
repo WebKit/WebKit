@@ -134,11 +134,11 @@ void MediaFragmentURIParser::parseFragments()
         //     name or value are not valid UTF-8 strings, then remove the name-value pair from the list.
         bool validUTF8 = false;
         if (!name.isEmpty() && !value.isEmpty()) {
-            name = name.utf8(StrictConversion).data();
+            name = String { name.utf8(StrictConversion).data() };
             validUTF8 = !name.isEmpty();
 
             if (validUTF8) {
-                value = value.utf8(StrictConversion).data();
+                value = String { value.utf8(StrictConversion).data() };
                 validUTF8 = !value.isEmpty();
             }
         }

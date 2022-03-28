@@ -931,7 +931,7 @@ void Document::setCompatibilityMode(DocumentCompatibilityMode mode)
 
 String Document::compatMode() const
 {
-    return inQuirksMode() ? "BackCompat" : "CSS1Compat";
+    return inQuirksMode() ? "BackCompat"_s : "CSS1Compat"_s;
 }
 
 const Color& Document::themeColor()
@@ -1493,7 +1493,7 @@ String Document::characterSetWithUTF8Fallback() const
     AtomString name = encoding();
     if (!name.isNull())
         return name;
-    return PAL::UTF8Encoding().domName();
+    return String { PAL::UTF8Encoding().domName() };
 }
 
 String Document::defaultCharsetForLegacyBindings() const
@@ -3819,19 +3819,19 @@ void Document::processMetaHttpEquiv(const String& equiv, const String& content, 
 
     HttpEquivPolicy policy = httpEquivPolicy();
     if (policy != HttpEquivPolicy::Enabled) {
-        String reason;
+        ASCIILiteral reason = ""_s;
         switch (policy) {
         case HttpEquivPolicy::Enabled:
             ASSERT_NOT_REACHED();
             break;
         case HttpEquivPolicy::DisabledBySettings:
-            reason = "by the embedder.";
+            reason = "by the embedder."_s;
             break;
         case HttpEquivPolicy::DisabledByContentDispositionAttachmentSandbox:
-            reason = "for documents with Content-Disposition: attachment.";
+            reason = "for documents with Content-Disposition: attachment."_s;
             break;
         }
-        String message = "http-equiv '" + equiv + "' is disabled " + reason;
+        String message = makeString("http-equiv '", equiv, "' is disabled ", reason);
         addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
         return;
     }
@@ -5403,10 +5403,10 @@ String Document::domain() const
 ExceptionOr<void> Document::setDomain(const String& newDomain)
 {
     if (!frame())
-        return Exception { SecurityError, "A browsing context is required to set a domain." };
+        return Exception { SecurityError, "A browsing context is required to set a domain."_s };
 
     if (isSandboxed(SandboxDocumentDomain))
-        return Exception { SecurityError, "Assignment is forbidden for sandboxed iframes." };
+        return Exception { SecurityError, "Assignment is forbidden for sandboxed iframes."_s };
 
     if (LegacySchemeRegistry::isDomainRelaxationForbiddenForURLScheme(securityOrigin().protocol()))
         return Exception { SecurityError };
@@ -5415,10 +5415,10 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
 
     const String& effectiveDomain = domain();
     if (effectiveDomain.isEmpty())
-        return Exception { SecurityError, "The document has a null effectiveDomain." };
+        return Exception { SecurityError, "The document has a null effectiveDomain."_s };
 
     if (!securityOrigin().isMatchingRegistrableDomainSuffix(newDomain, settings().treatIPAddressAsDomain()))
-        return Exception { SecurityError, "Attempted to use a non-registrable domain." };
+        return Exception { SecurityError, "Attempted to use a non-registrable domain."_s };
 
     securityOrigin().setDomainFromDOM(newDomain);
     return { };
@@ -5877,7 +5877,7 @@ static Editor::Command command(Document* document, const String& commandName, bo
 ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInterface, const String& value)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "execCommand is only supported on HTML documents." };
+        return Exception { InvalidStateError, "execCommand is only supported on HTML documents."_s };
 
     EventQueueScope eventQueueScope;
     return command(this, commandName, userInterface).execute(value);
@@ -5886,35 +5886,35 @@ ExceptionOr<bool> Document::execCommand(const String& commandName, bool userInte
 ExceptionOr<bool> Document::queryCommandEnabled(const String& commandName)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "queryCommandEnabled is only supported on HTML documents." };
+        return Exception { InvalidStateError, "queryCommandEnabled is only supported on HTML documents."_s };
     return command(this, commandName).isEnabled();
 }
 
 ExceptionOr<bool> Document::queryCommandIndeterm(const String& commandName)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "queryCommandIndeterm is only supported on HTML documents." };
+        return Exception { InvalidStateError, "queryCommandIndeterm is only supported on HTML documents."_s };
     return command(this, commandName).state() == TriState::Indeterminate;
 }
 
 ExceptionOr<bool> Document::queryCommandState(const String& commandName)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "queryCommandState is only supported on HTML documents." };
+        return Exception { InvalidStateError, "queryCommandState is only supported on HTML documents."_s };
     return command(this, commandName).state() == TriState::True;
 }
 
 ExceptionOr<bool> Document::queryCommandSupported(const String& commandName)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "queryCommandSupported is only supported on HTML documents." };
+        return Exception { InvalidStateError, "queryCommandSupported is only supported on HTML documents."_s };
     return command(this, commandName).isSupported();
 }
 
 ExceptionOr<String> Document::queryCommandValue(const String& commandName)
 {
     if (UNLIKELY(!isHTMLDocument() && !isXHTMLDocument()))
-        return Exception { InvalidStateError, "queryCommandValue is only supported on HTML documents." };
+        return Exception { InvalidStateError, "queryCommandValue is only supported on HTML documents."_s };
     return command(this, commandName).value();
 }
 
@@ -8259,7 +8259,7 @@ void Document::updateResizeObservations(Page& page)
         unsigned line = 0;
         unsigned column = 0;
         getParserLocation(url, line, column);
-        reportException("ResizeObserver loop completed with undelivered notifications.", line, column, url, nullptr, nullptr);
+        reportException("ResizeObserver loop completed with undelivered notifications."_s, line, column, url, nullptr, nullptr);
         // Starting a new schedule the next round of notify.
         scheduleRenderingUpdate(RenderingUpdateStep::ResizeObservations);
     }

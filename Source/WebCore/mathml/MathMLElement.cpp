@@ -117,11 +117,11 @@ bool MathMLElement::hasPresentationalHintsForAttribute(const QualifiedName& name
 static String convertMathSizeIfNeeded(const AtomString& value)
 {
     if (value == "small")
-        return "0.75em";
+        return "0.75em"_s;
     if (value == "normal")
-        return "1em";
+        return "1em"_s;
     if (value == "big")
-        return "1.5em";
+        return "1.5em"_s;
 
     // FIXME: mathsize accepts any MathML length, including named spaces (see parseMathMLLength).
     // FIXME: Might be better to use double than float.

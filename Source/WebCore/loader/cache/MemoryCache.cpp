@@ -68,7 +68,7 @@ MemoryCache::MemoryCache()
 
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        PAL::registerNotifyCallback("com.apple.WebKit.showMemoryCache", [] {
+        PAL::registerNotifyCallback("com.apple.WebKit.showMemoryCache"_s, [] {
             MemoryCache::singleton().dumpStats();
             MemoryCache::singleton().dumpLRULists(true);
         });
@@ -558,7 +558,7 @@ HashSet<RefPtr<SecurityOrigin>> MemoryCache::originsWithCache(PAL::SessionID ses
             auto& resource = *keyValue.value;
             auto& partitionName = keyValue.key.second;
             if (!partitionName.isEmpty())
-                origins.add(SecurityOrigin::create("http", partitionName, 0));
+                origins.add(SecurityOrigin::create("http"_s, partitionName, 0));
             else
                 origins.add(SecurityOrigin::create(resource.url()));
         }

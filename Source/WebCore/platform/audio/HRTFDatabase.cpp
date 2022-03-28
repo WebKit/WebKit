@@ -41,7 +41,7 @@ HRTFDatabase::HRTFDatabase(float sampleRate)
 {
     unsigned elevationIndex = 0;
     for (int elevation = MinElevation; elevation <= MaxElevation; elevation += RawElevationAngleSpacing) {
-        std::unique_ptr<HRTFElevation> hrtfElevation = HRTFElevation::createForSubject("Composite", elevation, sampleRate);
+        std::unique_ptr<HRTFElevation> hrtfElevation = HRTFElevation::createForSubject("Composite"_s, elevation, sampleRate);
         ASSERT(hrtfElevation.get());
         if (!hrtfElevation.get())
             return;

@@ -37,7 +37,7 @@ public:
 
 private:
     bool isSVGPath() const override { return true; }
-    const char* renderName() const override { return "RenderSVGPath"; }
+    ASCIILiteral renderName() const override { return "RenderSVGPath"_s; }
 
     void updateShapeFromElement() override;
     FloatRect calculateUpdatedStrokeBoundingBox() const;

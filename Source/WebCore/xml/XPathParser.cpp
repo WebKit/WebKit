@@ -308,7 +308,7 @@ inline Parser::Token Parser::nextTokenInternal()
         if (isBinaryOperatorContext())
             return makeTokenAndAdvance(MULOP, NumericOp::OP_Mul);
         ++m_nextPos;
-        return Token(NAMETEST, "*");
+        return Token(NAMETEST, "*"_s);
     case '$': { // $ QName
         m_nextPos++;
         String name;

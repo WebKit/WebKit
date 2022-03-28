@@ -56,7 +56,7 @@ private:
 
     void element() const = delete;
 
-    const char* renderName() const override { return "RenderSVGImage"; }
+    ASCIILiteral renderName() const override { return "RenderSVGImage"_s; }
     bool isSVGImage() const override { return true; }
     bool canHaveChildren() const override { return false; }
 

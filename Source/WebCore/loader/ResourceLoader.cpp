@@ -241,7 +241,7 @@ void ResourceLoader::start()
 
 #if PLATFORM(COCOA)
     if (isPDFJSResourceLoad()) {
-        BundleResourceLoader::loadResourceFromBundle(*this, "pdfjs/");
+        BundleResourceLoader::loadResourceFromBundle(*this, "pdfjs/"_s);
         return;
     }
 #endif
@@ -301,7 +301,7 @@ void ResourceLoader::loadDataURL()
             return;
         if (!decodeResult) {
             RESOURCELOADER_RELEASE_LOG("loadDataURL: decoding of data failed");
-            protectedThis->didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Data URL decoding failed"));
+            protectedThis->didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Data URL decoding failed"_s));
             return;
         }
         if (this->wasCancelled()) {

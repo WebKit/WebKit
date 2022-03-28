@@ -582,7 +582,7 @@ void HTMLAnchorElement::handleClick(Event& event)
         if (isSameOrigin)
             downloadAttribute = ResourceResponse::sanitizeSuggestedFilename(attributeWithoutSynchronization(downloadAttr));
         else if (hasAttributeWithoutSynchronization(downloadAttr))
-            document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin.");
+            document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin."_s);
     }
 #endif
 

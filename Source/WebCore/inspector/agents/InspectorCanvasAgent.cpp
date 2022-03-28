@@ -242,7 +242,7 @@ Protocol::ErrorStringOr<Ref<Protocol::Runtime::RemoteObject>> InspectorCanvasAge
 
     auto result = injectedScript.wrapObject(value, objectGroup);
     if (!result)
-        return makeUnexpected("Internal error: unable to cast Context");
+        return makeUnexpected("Internal error: unable to cast Context"_s);
 
     return result.releaseNonNull();
 }

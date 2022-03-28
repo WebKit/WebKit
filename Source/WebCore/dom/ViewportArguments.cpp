@@ -396,13 +396,13 @@ static ViewportFit parseViewportFitValue(StringView key, StringView value, const
     return ViewportFit::Auto;
 }
 
-static const char* viewportErrorMessageTemplate(ViewportErrorCode errorCode)
+static ASCIILiteral viewportErrorMessageTemplate(ViewportErrorCode errorCode)
 {
-    static const char* const errors[] = {
-        "Viewport argument key \"%replacement1\" not recognized and ignored.",
-        "Viewport argument value \"%replacement1\" for key \"%replacement2\" is invalid, and has been ignored.",
-        "Viewport argument value \"%replacement1\" for key \"%replacement2\" was truncated to its numeric prefix.",
-        "Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0."
+    static constexpr ASCIILiteral errors[] = {
+        "Viewport argument key \"%replacement1\" not recognized and ignored."_s,
+        "Viewport argument value \"%replacement1\" for key \"%replacement2\" is invalid, and has been ignored."_s,
+        "Viewport argument value \"%replacement1\" for key \"%replacement2\" was truncated to its numeric prefix."_s,
+        "Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0."_s
     };
 
     return errors[errorCode];
@@ -433,7 +433,7 @@ static String viewportErrorMessage(ViewportErrorCode errorCode, StringView repla
         message.replace("%replacement2", replacement2.toStringWithoutCopying());
 
     if ((errorCode == UnrecognizedViewportArgumentValueError || errorCode == TruncatedViewportArgumentValueError) && replacement1.contains(';'))
-        message.append(" Note that ';' is not a separator in viewport values. The list should be comma-separated.");
+        message.append(" Note that ';' is not a separator in viewport values. The list should be comma-separated."_s);
 
     return message;
 }

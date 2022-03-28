@@ -25,36 +25,38 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 
 namespace ContentSecurityPolicyDirectiveNames {
 
-extern const char* const baseURI;
-extern const char* const childSrc;
-extern const char* const connectSrc;
-extern const char* const defaultSrc;
-extern const char* const fontSrc;
-extern const char* const formAction;
-extern const char* const frameAncestors;
-extern const char* const frameSrc;
-extern const char* const imgSrc;
+extern ASCIILiteral baseURI;
+extern ASCIILiteral childSrc;
+extern ASCIILiteral connectSrc;
+extern ASCIILiteral defaultSrc;
+extern ASCIILiteral fontSrc;
+extern ASCIILiteral formAction;
+extern ASCIILiteral frameAncestors;
+extern ASCIILiteral frameSrc;
+extern ASCIILiteral imgSrc;
 #if ENABLE(APPLICATION_MANIFEST)
-extern const char* const manifestSrc;
+extern ASCIILiteral manifestSrc;
 #endif
-extern const char* const mediaSrc;
-extern const char* const objectSrc;
-extern const char* const pluginTypes;
-extern const char* const reportURI;
-extern const char* const sandbox;
-extern const char* const scriptSrc;
-extern const char* const scriptSrcElem;
-extern const char* const scriptSrcAttr;
-extern const char* const styleSrc;
-extern const char* const styleSrcAttr;
-extern const char* const styleSrcElem;
-extern const char* const upgradeInsecureRequests;
-extern const char* const blockAllMixedContent;
-extern const char* const workerSrc;
+extern ASCIILiteral mediaSrc;
+extern ASCIILiteral objectSrc;
+extern ASCIILiteral pluginTypes;
+extern ASCIILiteral reportURI;
+extern ASCIILiteral sandbox;
+extern ASCIILiteral scriptSrc;
+extern ASCIILiteral scriptSrcElem;
+extern ASCIILiteral scriptSrcAttr;
+extern ASCIILiteral styleSrc;
+extern ASCIILiteral styleSrcAttr;
+extern ASCIILiteral styleSrcElem;
+extern ASCIILiteral upgradeInsecureRequests;
+extern ASCIILiteral blockAllMixedContent;
+extern ASCIILiteral workerSrc;
 
 } // namespace ContentSecurityPolicyDirectiveNames
 

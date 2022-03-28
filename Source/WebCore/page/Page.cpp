@@ -2042,7 +2042,7 @@ const String& Page::userStyleSheet() const
     if (!data)
         return m_userStyleSheet;
 
-    m_userStyleSheet = TextResourceDecoder::create("text/css")->decodeAndFlush(data->data(), data->size());
+    m_userStyleSheet = TextResourceDecoder::create("text/css"_s)->decodeAndFlush(data->data(), data->size());
 
     return m_userStyleSheet;
 }

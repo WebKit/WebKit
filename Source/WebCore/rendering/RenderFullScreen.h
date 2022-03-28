@@ -37,7 +37,7 @@ public:
     RenderFullScreen(Document&, RenderStyle&&);
     virtual ~RenderFullScreen();
 
-    const char* renderName() const override { return "RenderFullScreen"; }
+    ASCIILiteral renderName() const override { return "RenderFullScreen"_s; }
 
     RenderBlock* placeholder() { return m_placeholder.get(); }
     void setPlaceholder(RenderBlock& placeholder) { m_placeholder = placeholder; }

@@ -1930,7 +1930,7 @@ void Node::showTreeForThisAcrossFrame() const
     Node* rootNode = const_cast<Node*>(this);
     while (parentOrShadowHostOrFrameOwner(rootNode))
         rootNode = parentOrShadowHostOrFrameOwner(rootNode);
-    showSubTreeAcrossFrame(rootNode, this, "");
+    showSubTreeAcrossFrame(rootNode, this, emptyString());
 }
 
 #endif // ENABLE(TREE_DEBUGGING)

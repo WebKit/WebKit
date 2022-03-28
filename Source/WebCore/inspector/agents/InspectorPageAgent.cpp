@@ -570,31 +570,31 @@ static std::optional<Cookie> parseCookieObject(Protocol::ErrorString& errorStrin
 
     cookie.name = cookieObject->getString(Protocol::Page::Cookie::nameKey);
     if (!cookie.name) {
-        errorString = "Invalid value for key name in given cookie";
+        errorString = "Invalid value for key name in given cookie"_s;
         return std::nullopt;
     }
 
     cookie.value = cookieObject->getString(Protocol::Page::Cookie::valueKey);
     if (!cookie.value) {
-        errorString = "Invalid value for key value in given cookie";
+        errorString = "Invalid value for key value in given cookie"_s;
         return std::nullopt;
     }
 
     cookie.domain = cookieObject->getString(Protocol::Page::Cookie::domainKey);
     if (!cookie.domain) {
-        errorString = "Invalid value for key domain in given cookie";
+        errorString = "Invalid value for key domain in given cookie"_s;
         return std::nullopt;
     }
 
     cookie.path = cookieObject->getString(Protocol::Page::Cookie::pathKey);
     if (!cookie.path) {
-        errorString = "Invalid value for key path in given cookie";
+        errorString = "Invalid value for key path in given cookie"_s;
         return std::nullopt;
     }
 
     auto httpOnly = cookieObject->getBoolean(Protocol::Page::Cookie::httpOnlyKey);
     if (!httpOnly) {
-        errorString = "Invalid value for key httpOnly in given cookie";
+        errorString = "Invalid value for key httpOnly in given cookie"_s;
         return std::nullopt;
     }
 
@@ -602,7 +602,7 @@ static std::optional<Cookie> parseCookieObject(Protocol::ErrorString& errorStrin
 
     auto secure = cookieObject->getBoolean(Protocol::Page::Cookie::secureKey);
     if (!secure) {
-        errorString = "Invalid value for key secure in given cookie";
+        errorString = "Invalid value for key secure in given cookie"_s;
         return std::nullopt;
     }
 
@@ -611,7 +611,7 @@ static std::optional<Cookie> parseCookieObject(Protocol::ErrorString& errorStrin
     auto session = cookieObject->getBoolean(Protocol::Page::Cookie::sessionKey);
     cookie.expires = cookieObject->getDouble(Protocol::Page::Cookie::expiresKey);
     if (!session && !cookie.expires) {
-        errorString = "Invalid value for key expires in given cookie";
+        errorString = "Invalid value for key expires in given cookie"_s;
         return std::nullopt;
     }
 
@@ -619,13 +619,13 @@ static std::optional<Cookie> parseCookieObject(Protocol::ErrorString& errorStrin
 
     auto sameSiteString = cookieObject->getString(Protocol::Page::Cookie::sameSiteKey);
     if (!sameSiteString) {
-        errorString = "Invalid value for key sameSite in given cookie";
+        errorString = "Invalid value for key sameSite in given cookie"_s;
         return std::nullopt;
     }
 
     auto sameSite = Protocol::Helpers::parseEnumValueFromString<Protocol::Page::CookieSameSitePolicy>(sameSiteString);
     if (!sameSite) {
-        errorString = "Invalid value for key sameSite in given cookie";
+        errorString = "Invalid value for key sameSite in given cookie"_s;
         return std::nullopt;
     }
 

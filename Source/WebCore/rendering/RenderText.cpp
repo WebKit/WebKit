@@ -221,9 +221,9 @@ RenderText::~RenderText()
     ASSERT(!originalTextMap().contains(this));
 }
 
-const char* RenderText::renderName() const
+ASCIILiteral RenderText::renderName() const
 {
-    return "RenderText";
+    return "RenderText"_s;
 }
 
 Text* RenderText::textNode() const

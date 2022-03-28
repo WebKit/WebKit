@@ -506,7 +506,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
 
         if (content.isReplacedContent) {
             if (!unitsInCurrentParagraph.isEmpty())
-                unitsInCurrentParagraph.append(ManipulationUnit { *contentNode, { ManipulationToken { m_tokenIdentifier.generate(), "[]", tokenInfo(content.node.get()), true } } });
+                unitsInCurrentParagraph.append(ManipulationUnit { *contentNode, { ManipulationToken { m_tokenIdentifier.generate(), "[]"_s, tokenInfo(content.node.get()), true } } });
             continue;
         }
 

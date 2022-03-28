@@ -248,7 +248,7 @@ Position InsertTextCommand::insertTab(const Position& pos)
     // keep tabs coalesced in tab span
     if (isTabSpanTextNode(node)) {
         Ref<Text> textNode = downcast<Text>(*node);
-        insertTextIntoNode(textNode, offset, "\t");
+        insertTextIntoNode(textNode, offset, "\t"_s);
         return Position(textNode.ptr(), offset + 1);
     }
     

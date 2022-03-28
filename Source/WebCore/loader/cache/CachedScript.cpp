@@ -51,7 +51,7 @@ void CachedScript::setEncoding(const String& chs)
 
 String CachedScript::encoding() const
 {
-    return m_decoder->encoding().name();
+    return String { m_decoder->encoding().name() };
 }
 
 StringView CachedScript::script()

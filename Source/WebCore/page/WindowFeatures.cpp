@@ -38,8 +38,8 @@ typedef HashMap<String, String, ASCIICaseInsensitiveHash> DialogFeaturesMap;
 static void setWindowFeature(WindowFeatures&, StringView key, StringView value);
 
 static DialogFeaturesMap parseDialogFeaturesMap(StringView);
-static std::optional<bool> boolFeature(const DialogFeaturesMap&, const char* key);
-static std::optional<float> floatFeature(const DialogFeaturesMap&, const char* key, float min, float max);
+static std::optional<bool> boolFeature(const DialogFeaturesMap&, ASCIILiteral key);
+static std::optional<float> floatFeature(const DialogFeaturesMap&, ASCIILiteral key, float min, float max);
 
 // https://html.spec.whatwg.org/#feature-separator
 static bool isSeparator(UChar character, FeatureMode mode)
@@ -185,30 +185,30 @@ WindowFeatures parseDialogFeatures(StringView dialogFeaturesString, const FloatR
     features.locationBarVisible = false;
     features.dialog = true;
 
-    float width = floatFeature(featuresMap, "dialogwidth", 100, screenAvailableRect.width()).value_or(620); // default here came from frame size of dialog in MacIE
-    float height = floatFeature(featuresMap, "dialogheight", 100, screenAvailableRect.height()).value_or(450); // default here came from frame size of dialog in MacIE
+    float width = floatFeature(featuresMap, "dialogwidth"_s, 100, screenAvailableRect.width()).value_or(620); // default here came from frame size of dialog in MacIE
+    float height = floatFeature(featuresMap, "dialogheight"_s, 100, screenAvailableRect.height()).value_or(450); // default here came from frame size of dialog in MacIE
 
     features.width = width;
     features.height = height;
 
-    features.x = floatFeature(featuresMap, "dialogleft", screenAvailableRect.x(), screenAvailableRect.maxX() - width);
-    features.y = floatFeature(featuresMap, "dialogtop", screenAvailableRect.y(), screenAvailableRect.maxY() - height);
+    features.x = floatFeature(featuresMap, "dialogleft"_s, screenAvailableRect.x(), screenAvailableRect.maxX() - width);
+    features.y = floatFeature(featuresMap, "dialogtop"_s, screenAvailableRect.y(), screenAvailableRect.maxY() - height);
 
-    if (boolFeature(featuresMap, "center").value_or(true)) {
+    if (boolFeature(featuresMap, "center"_s).value_or(true)) {
         if (!features.x)
             features.x = screenAvailableRect.x() + (screenAvailableRect.width() - width) / 2;
         if (!features.y)
             features.y = screenAvailableRect.y() + (screenAvailableRect.height() - height) / 2;
     }
 
-    features.resizable = boolFeature(featuresMap, "resizable").value_or(false);
-    features.scrollbarsVisible = boolFeature(featuresMap, "scroll").value_or(true);
-    features.statusBarVisible = boolFeature(featuresMap, "status").value_or(false);
+    features.resizable = boolFeature(featuresMap, "resizable"_s).value_or(false);
+    features.scrollbarsVisible = boolFeature(featuresMap, "scroll"_s).value_or(true);
+    features.statusBarVisible = boolFeature(featuresMap, "status"_s).value_or(false);
 
     return features;
 }
 
-static std::optional<bool> boolFeature(const DialogFeaturesMap& features, const char* key)
+static std::optional<bool> boolFeature(const DialogFeaturesMap& features, ASCIILiteral key)
 {
     auto it = features.find(key);
     if (it == features.end())
@@ -221,7 +221,7 @@ static std::optional<bool> boolFeature(const DialogFeaturesMap& features, const 
         || equalLettersIgnoringASCIICase(value, "on");
 }
 
-static std::optional<float> floatFeature(const DialogFeaturesMap& features, const char* key, float min, float max)
+static std::optional<float> floatFeature(const DialogFeaturesMap& features, ASCIILiteral key, float min, float max)
 {
     auto it = features.find(key);
     if (it == features.end())

@@ -70,9 +70,9 @@ static String consoleMessageForViolation(const ContentSecurityPolicyDirective& v
 {
     bool isDefaultSrc = violatedDirective.isDefaultSrc();
     String name = violatedDirective.nameForReporting();
-    if (violatedDirective.nameForReporting().startsWith(ContentSecurityPolicyDirectiveNames::scriptSrc))
+    if (violatedDirective.nameForReporting().startsWith(StringView { ContentSecurityPolicyDirectiveNames::scriptSrc }))
         name = ContentSecurityPolicyDirectiveNames::scriptSrc;
-    else if (violatedDirective.nameForReporting().startsWith(ContentSecurityPolicyDirectiveNames::styleSrc))
+    else if (violatedDirective.nameForReporting().startsWith(StringView { ContentSecurityPolicyDirectiveNames::styleSrc }))
         name = ContentSecurityPolicyDirectiveNames::styleSrc;
 
     return makeString(violatedDirective.directiveList().isReportOnly() ? "[Report Only] " : "",
@@ -493,7 +493,7 @@ bool ContentSecurityPolicy::allowEval(JSC::JSGlobalObject* state, LogToConsole s
     bool didNotifyInspector = false;
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
         String consoleMessage = shouldLogToConsole == LogToConsole::Yes ? consoleMessageForViolation(violatedDirective, URL(), "Refused to execute a script", "'unsafe-eval'") : String();
-        reportViolation(violatedDirective, "eval", consoleMessage, state, codeContent);
+        reportViolation(violatedDirective, "eval"_s, consoleMessage, state, codeContent);
         if (!didNotifyInspector && !violatedDirective.directiveList().isReportOnly()) {
             reportBlockedScriptExecutionToInspector(violatedDirective.text());
             didNotifyInspector = true;
@@ -900,7 +900,7 @@ void ContentSecurityPolicy::reportInvalidPluginTypes(const String& pluginType) c
 {
     String message;
     if (pluginType.isNull())
-        message = "'plugin-types' Content Security Policy directive is empty; all plugins will be blocked.\n";
+        message = "'plugin-types' Content Security Policy directive is empty; all plugins will be blocked.\n"_s;
     else
         message = makeString("Invalid plugin type in 'plugin-types' Content Security Policy directive: '", pluginType, "'.\n");
     logToConsole(message);

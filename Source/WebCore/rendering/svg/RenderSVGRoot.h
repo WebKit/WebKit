@@ -78,7 +78,7 @@ private:
     void element() const = delete;
 
     bool isSVGRoot() const override { return true; }
-    const char* renderName() const override { return "RenderSVGRoot"; }
+    ASCIILiteral renderName() const override { return "RenderSVGRoot"_s; }
     bool requiresLayer() const override { return true; }
 
     // To prevent certain legacy code paths to hit assertions in debug builds, when switching off LBSE (during the teardown of the LBSE tree).

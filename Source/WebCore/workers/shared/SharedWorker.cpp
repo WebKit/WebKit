@@ -68,7 +68,7 @@ static inline SharedWorkerObjectConnection* mainThreadConnection()
 ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, String&& scriptURLString, std::optional<std::variant<String, WorkerOptions>>&& maybeOptions)
 {
     if (!mainThreadConnection())
-        return Exception { NotSupportedError, "Shared workers are not supported" };
+        return Exception { NotSupportedError, "Shared workers are not supported"_s };
 
     auto url = document.completeURL(scriptURLString);
     if (!url.isValid())

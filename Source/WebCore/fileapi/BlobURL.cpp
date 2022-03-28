@@ -51,7 +51,7 @@ URL BlobURL::createPublicURL(SecurityOrigin* securityOrigin)
 
 URL BlobURL::createInternalURL()
 {
-    return createBlobURL("blobinternal://");
+    return createBlobURL("blobinternal://"_s);
 }
 
 static const Document* blobOwner(const SecurityOrigin& blobOrigin)

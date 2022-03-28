@@ -125,7 +125,7 @@ RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node& sourceNode, Do
 
     // If the output document is HTML, default to HTML method.
     if (outputDocument.isHTMLDocument())
-        resultMIMEType = "text/html";
+        resultMIMEType = "text/html"_s;
 
     if (!transformToString(sourceNode, resultMIMEType, resultString, resultEncoding))
         return nullptr;

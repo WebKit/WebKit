@@ -38,7 +38,7 @@ namespace WebCore {
 
 CachedXSLStyleSheet::CachedXSLStyleSheet(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
     : CachedResource(WTFMove(request), Type::XSLStyleSheet, sessionID, cookieJar)
-    , m_decoder(TextResourceDecoder::create("text/xsl"))
+    , m_decoder(TextResourceDecoder::create("text/xsl"_s))
 {
 }
 
@@ -58,7 +58,7 @@ void CachedXSLStyleSheet::setEncoding(const String& chs)
 
 String CachedXSLStyleSheet::encoding() const
 {
-    return m_decoder->encoding().name();
+    return String { m_decoder->encoding().name() };
 }
 
 void CachedXSLStyleSheet::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)

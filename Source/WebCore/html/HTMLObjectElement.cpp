@@ -182,7 +182,7 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     // else our Java plugin will misinterpret it. [4004531]
     String codebase;
     if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType)) {
-        codebase = "codebase";
+        codebase = "codebase"_s;
         uniqueParamNames.add(codebase.impl()); // pretend we found it in a PARAM already
     }
     

@@ -64,7 +64,7 @@ PDFDocumentImage::~PDFDocumentImage() = default;
 
 String PDFDocumentImage::filenameExtension() const
 {
-    return "pdf";
+    return "pdf"_s;
 }
 
 FloatSize PDFDocumentImage::size(ImageOrientation) const

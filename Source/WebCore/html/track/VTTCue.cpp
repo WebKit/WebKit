@@ -218,14 +218,14 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     if (cue->vertical() == horizontalKeyword()) {
         setInlineStyleProperty(CSSPropertyWidth, newCueSize, CSSUnitType::CSS_PERCENTAGE);
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
-        setInlineStyleProperty(CSSPropertyMinWidth, "min-content");
+        setInlineStyleProperty(CSSPropertyMinWidth, "min-content"_s);
         setInlineStyleProperty(CSSPropertyMaxWidth, maxSize, CSSUnitType::CSS_PERCENTAGE);
         if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0 && position.first)
             setInlineStyleProperty(CSSPropertyLeft, static_cast<double>(*position.first - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);
     } else {
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
         setInlineStyleProperty(CSSPropertyHeight, newCueSize, CSSUnitType::CSS_PERCENTAGE);
-        setInlineStyleProperty(CSSPropertyMinHeight, "min-content");
+        setInlineStyleProperty(CSSPropertyMinHeight, "min-content"_s);
         setInlineStyleProperty(CSSPropertyMaxHeight, maxSize, CSSUnitType::CSS_PERCENTAGE);
         if ((alignment == CSSValueMiddle || alignment == CSSValueCenter) && multiplier != 1.0 && position.second)
             setInlineStyleProperty(CSSPropertyTop, static_cast<double>(*position.second - (newCueSize - cue->getCSSSize()) / 2), CSSUnitType::CSS_PERCENTAGE);

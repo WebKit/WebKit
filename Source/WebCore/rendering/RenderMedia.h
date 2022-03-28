@@ -51,7 +51,7 @@ private:
 
     bool canHaveChildren() const final { return true; }
 
-    const char* renderName() const override { return "RenderMedia"; }
+    ASCIILiteral renderName() const override { return "RenderMedia"_s; }
     bool isMedia() const final { return true; }
     bool isImage() const final { return false; }
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;

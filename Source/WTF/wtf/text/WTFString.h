@@ -371,6 +371,7 @@ template<size_t inlineCapacity> inline bool operator!=(const Vector<char, inline
 template<size_t inlineCapacity> inline bool operator!=(const String& a, const Vector<char, inlineCapacity>& b) { return b != a; }
 
 bool equalIgnoringASCIICase(const String&, const String&);
+bool equalIgnoringASCIICase(const String&, ASCIILiteral);
 bool equalIgnoringASCIICase(const String&, const char*);
 
 template<unsigned length> bool equalLettersIgnoringASCIICase(const String&, const char (&lowercaseLetters)[length]);
@@ -596,6 +597,11 @@ inline bool equalIgnoringASCIICase(const String& a, const String& b)
 inline bool equalIgnoringASCIICase(const String& a, const char* b)
 {
     return equalIgnoringASCIICase(a.impl(), b);
+}
+
+inline bool equalIgnoringASCIICase(const String& a, ASCIILiteral b)
+{
+    return equalIgnoringASCIICase(a.impl(), b.characters());
 }
 
 template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const String& string, const char (&lowercaseLetters)[length])

@@ -40,9 +40,9 @@ WebGLCompressedTextureS3TC::WebGLCompressedTextureS3TC(WebGLRenderingContextBase
     : WebGLExtension(context)
 {
     auto* gcgl = context.graphicsContextGL();
-    gcgl->ensureExtensionEnabled("GL_EXT_texture_compression_dxt1");
-    gcgl->ensureExtensionEnabled("GL_ANGLE_texture_compression_dxt3");
-    gcgl->ensureExtensionEnabled("GL_ANGLE_texture_compression_dxt5");
+    gcgl->ensureExtensionEnabled("GL_EXT_texture_compression_dxt1"_s);
+    gcgl->ensureExtensionEnabled("GL_ANGLE_texture_compression_dxt3"_s);
+    gcgl->ensureExtensionEnabled("GL_ANGLE_texture_compression_dxt5"_s);
 
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGB_S3TC_DXT1_EXT);
     context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RGBA_S3TC_DXT1_EXT);
@@ -60,12 +60,12 @@ WebGLExtension::ExtensionName WebGLCompressedTextureS3TC::getName() const
 bool WebGLCompressedTextureS3TC::supported(GraphicsContextGL& context)
 {
 #if USE(ANGLE)
-    return context.supportsExtension("GL_EXT_texture_compression_dxt1")
-        && context.supportsExtension("GL_ANGLE_texture_compression_dxt3")
-        && context.supportsExtension("GL_ANGLE_texture_compression_dxt5");
+    return context.supportsExtension("GL_EXT_texture_compression_dxt1"_s)
+        && context.supportsExtension("GL_ANGLE_texture_compression_dxt3"_s)
+        && context.supportsExtension("GL_ANGLE_texture_compression_dxt5"_s);
 #else
-    return context.supportsExtension("GL_EXT_texture_compression_s3tc")
-        || context.supportsExtension("GL_EXT_texture_compression_dxt1");
+    return context.supportsExtension("GL_EXT_texture_compression_s3tc"_s)
+        || context.supportsExtension("GL_EXT_texture_compression_dxt1"_s);
 #endif
 }
 

@@ -620,7 +620,7 @@ std::optional<std::pair<StringView, HashMap<String, String>>> parseStructuredFie
             ++index;
         }
         String key = header.substring(keyStart, index - keyStart).toString();
-        String value = "true";
+        String value = "true"_s;
         if (index < header.length() && header[index] == '=') {
             ++index; // Consume '='.
             if (isASCIIAlpha(header[index]) || header[index] == '*') {
@@ -785,7 +785,7 @@ size_t parseHTTPHeader(const uint8_t* start, size_t length, String& failureReaso
         default:
             if (!isValidHeaderNameCharacter(*p)) {
                 if (name.size() < 1)
-                    failureReason = "Unexpected start character in header name";
+                    failureReason = "Unexpected start character in header name"_s;
                 else
                     failureReason = makeString("Unexpected character in header name at ", trimInputSample(name.data(), name.size()));
                 return 0;

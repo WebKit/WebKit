@@ -347,7 +347,7 @@ ParsedContentType::ParsedContentType(const String& contentType)
 
 String ParsedContentType::charset() const
 {
-    return parameterValueForName("charset");
+    return parameterValueForName("charset"_s);
 }
 
 void ParsedContentType::setCharset(String&& charset)

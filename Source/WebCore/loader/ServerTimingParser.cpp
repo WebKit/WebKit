@@ -58,7 +58,7 @@ Vector<ServerTiming> parseServerTiming(const String& headerValue)
             if (parameterName.isNull())
                 break;
 
-            String value = "";
+            String value = emptyString();
             if (tokenizer.consume('=')) {
                 value = tokenizer.consumeTokenOrQuotedString();
                 tokenizer.consumeBeforeAnyCharMatch({',', ';'});

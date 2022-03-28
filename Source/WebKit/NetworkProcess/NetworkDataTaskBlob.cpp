@@ -67,7 +67,7 @@ static const char* httpNotAllowedText = "Not Allowed";
 static const char* httpRequestedRangeNotSatisfiableText = "Requested Range Not Satisfiable";
 static const char* httpInternalErrorText = "Internal Server Error";
 
-static const char* const webKitBlobResourceDomain = "WebKitBlobResource";
+static constexpr auto webKitBlobResourceDomain = "WebKitBlobResource"_s;
 
 NetworkDataTaskBlob::NetworkDataTaskBlob(NetworkSession& session, BlobRegistryImpl& blobRegistry, NetworkDataTaskClient& client, const ResourceRequest& request, ContentSniffingPolicy shouldContentSniff, const Vector<RefPtr<WebCore::BlobDataFileReference>>& fileReferences)
     : NetworkDataTask(session, client, request, StoredCredentialsPolicy::DoNotUse, false, false)

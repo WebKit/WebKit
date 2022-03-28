@@ -53,7 +53,7 @@ public:
 private:
     bool isSVGForeignObject() const override { return true; }
     void graphicsElement() const = delete;
-    const char* renderName() const override { return "RenderSVGForeignObject"; }
+    ASCIILiteral renderName() const override { return "RenderSVGForeignObject"_s; }
 
     void updateLogicalWidth() override;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;

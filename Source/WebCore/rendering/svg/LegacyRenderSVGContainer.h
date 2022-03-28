@@ -42,7 +42,7 @@ public:
 protected:
     LegacyRenderSVGContainer(SVGElement&, RenderStyle&&);
 
-    const char* renderName() const override { return "RenderSVGContainer"; }
+    ASCIILiteral renderName() const override { return "RenderSVGContainer"_s; }
 
     bool canHaveChildren() const final { return true; }
 

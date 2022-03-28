@@ -63,11 +63,11 @@ void XMLErrors::handleError(ErrorType type, const char* message, TextPosition po
     if (type == fatal || (m_errorCount < maxErrors && (!m_lastErrorPosition || (m_lastErrorPosition->m_line != position.m_line && m_lastErrorPosition->m_column != position.m_column)))) {
         switch (type) {
         case warning:
-            appendErrorMessage("warning", position, message);
+            appendErrorMessage("warning"_s, position, message);
             break;
         case fatal:
         case nonFatal:
-            appendErrorMessage("error", position, message);
+            appendErrorMessage("error"_s, position, message);
         }
 
         m_lastErrorPosition = position;
@@ -75,7 +75,7 @@ void XMLErrors::handleError(ErrorType type, const char* message, TextPosition po
     }
 }
 
-void XMLErrors::appendErrorMessage(const String& typeString, TextPosition position, const char* message)
+void XMLErrors::appendErrorMessage(ASCIILiteral typeString, TextPosition position, const char* message)
 {
     // <typeString> on line <lineNumber> at column <columnNumber>: <message>
     m_errorMessages.append(typeString, " on line ", position.m_line.oneBasedInt(), " at column ", position.m_column.oneBasedInt(), ": ", message);

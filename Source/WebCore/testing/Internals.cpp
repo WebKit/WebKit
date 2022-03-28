@@ -765,16 +765,16 @@ static String styleValidityToToString(Style::Validity validity)
 {
     switch (validity) {
     case Style::Validity::Valid:
-        return "NoStyleChange";
+        return "NoStyleChange"_s;
     case Style::Validity::ElementInvalid:
-        return "InlineStyleChange";
+        return "InlineStyleChange"_s;
     case Style::Validity::SubtreeInvalid:
-        return "FullStyleChange";
+        return "FullStyleChange"_s;
     case Style::Validity::SubtreeAndRenderersInvalid:
-        return "ReconstructRenderTree";
+        return "ReconstructRenderTree"_s;
     }
     ASSERT_NOT_REACHED();
-    return "";
+    return emptyString();
 }
 
 String Internals::styleChangeType(Node& node)
@@ -815,31 +815,31 @@ bool Internals::isLoadingFromMemoryCache(const String& url)
 static String responseSourceToString(const ResourceResponse& response)
 {
     if (response.isNull())
-        return "Null response";
+        return "Null response"_s;
     switch (response.source()) {
     case ResourceResponse::Source::Unknown:
-        return "Unknown";
+        return "Unknown"_s;
     case ResourceResponse::Source::Network:
-        return "Network";
+        return "Network"_s;
     case ResourceResponse::Source::ServiceWorker:
-        return "Service worker";
+        return "Service worker"_s;
     case ResourceResponse::Source::DiskCache:
-        return "Disk cache";
+        return "Disk cache"_s;
     case ResourceResponse::Source::DiskCacheAfterValidation:
-        return "Disk cache after validation";
+        return "Disk cache after validation"_s;
     case ResourceResponse::Source::MemoryCache:
-        return "Memory cache";
+        return "Memory cache"_s;
     case ResourceResponse::Source::MemoryCacheAfterValidation:
-        return "Memory cache after validation";
+        return "Memory cache after validation"_s;
     case ResourceResponse::Source::ApplicationCache:
-        return "Application cache";
+        return "Application cache"_s;
     case ResourceResponse::Source::DOMCache:
-        return "DOM cache";
+        return "DOM cache"_s;
     case ResourceResponse::Source::InspectorOverride:
-        return "Inspector override";
+        return "Inspector override"_s;
     }
     ASSERT_NOT_REACHED();
-    return "Error";
+    return "Error"_s;
 }
 
 String Internals::xhrResponseSource(XMLHttpRequest& request)
@@ -2866,7 +2866,7 @@ RefPtr<WindowProxy> Internals::openDummyInspectorFrontend(const String& url)
 {
     auto* inspectedPage = contextDocument()->frame()->page();
     auto* window = inspectedPage->mainFrame().document()->domWindow();
-    auto frontendWindowProxy = window->open(*window, *window, url, "", "").releaseReturnValue();
+    auto frontendWindowProxy = window->open(*window, *window, url, emptyString(), emptyString()).releaseReturnValue();
     m_inspectorFrontend = makeUnique<InspectorStubFrontend>(*inspectedPage, downcast<DOMWindow>(frontendWindowProxy->window()));
     return frontendWindowProxy;
 }
@@ -4064,17 +4064,17 @@ String Internals::elementBufferingPolicy(HTMLMediaElement& element)
 {
     switch (element.bufferingPolicy()) {
     case MediaPlayer::BufferingPolicy::Default:
-        return "Default";
+        return "Default"_s;
     case MediaPlayer::BufferingPolicy::LimitReadAhead:
-        return "LimitReadAhead";
+        return "LimitReadAhead"_s;
     case MediaPlayer::BufferingPolicy::MakeResourcesPurgeable:
-        return "MakeResourcesPurgeable";
+        return "MakeResourcesPurgeable"_s;
     case MediaPlayer::BufferingPolicy::PurgeResources:
-        return "PurgeResources";
+        return "PurgeResources"_s;
     }
 
     ASSERT_NOT_REACHED();
-    return "UNKNOWN";
+    return "UNKNOWN"_s;
 }
 
 ExceptionOr<void> Internals::setOverridePreferredDynamicRangeMode(HTMLMediaElement& element, const String& modeString)
@@ -6470,7 +6470,7 @@ String Internals::focusRingColor()
 unsigned Internals::createSleepDisabler(const String& reason, bool display)
 {
     static unsigned lastUsedIdentifier = 0;
-    auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason.utf8().data(), display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System);
+    auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason, display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System);
     m_sleepDisablers.add(++lastUsedIdentifier, WTFMove(sleepDisabler));
     return lastUsedIdentifier;
 }
@@ -6577,11 +6577,11 @@ ExceptionOr<void> Internals::sendMediaSessionAction(MediaSession& session, const
 void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
 {
     if (!contextDocument()) {
-        promise.reject(Exception { InvalidStateError, "No document." });
+        promise.reject(Exception { InvalidStateError, "No document."_s });
         return;
     }
     if (m_artworkImagePromise) {
-        promise.reject(Exception { InvalidStateError, "Another download is currently pending." });
+        promise.reject(Exception { InvalidStateError, "Another download is currently pending."_s });
         return;
     }
     m_artworkImagePromise = makeUnique<ArtworkImagePromise>(WTFMove(promise));
@@ -6593,7 +6593,7 @@ void Internals::loadArtworkImage(String&& url, ArtworkImagePromise&& promise)
             else
                 m_artworkImagePromise->reject(imageData.exception().code());
         } else
-            m_artworkImagePromise->reject(Exception { InvalidAccessError, "No image retrieved."  });
+            m_artworkImagePromise->reject(Exception { InvalidAccessError, "No image retrieved."_s });
         m_artworkImagePromise = nullptr;
     });
     m_artworkLoader->requestImageResource();

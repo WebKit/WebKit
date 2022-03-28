@@ -37,7 +37,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDrawBuffers);
 WebGLDrawBuffers::WebGLDrawBuffers(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_draw_buffers");
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_draw_buffers"_s);
 }
 
 WebGLDrawBuffers::~WebGLDrawBuffers() = default;
@@ -50,9 +50,9 @@ WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
 bool WebGLDrawBuffers::supported(WebGLRenderingContextBase& context)
 {
 #if USE(ANGLE)
-    return context.graphicsContextGL()->supportsExtension("GL_EXT_draw_buffers");
+    return context.graphicsContextGL()->supportsExtension("GL_EXT_draw_buffers"_s);
 #else
-    return context.graphicsContextGL()->supportsExtension("GL_EXT_draw_buffers")
+    return context.graphicsContextGL()->supportsExtension("GL_EXT_draw_buffers"_s)
         && satisfiesWebGLRequirements(context);
 #endif
 }
@@ -106,10 +106,10 @@ bool WebGLDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContextBase& web
     context->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, fbo);
 
     const unsigned char buffer[4] = { 0, 0, 0, 0 }; // textures are required to be initialized for other ports.
-    bool supportsDepth = context->supportsExtension("GL_OES_depth_texture")
-        || context->supportsExtension("GL_ARB_depth_texture");
-    bool supportsDepthStencil = (context->supportsExtension("GL_EXT_packed_depth_stencil")
-        || context->supportsExtension("GL_OES_packed_depth_stencil"));
+    bool supportsDepth = context->supportsExtension("GL_OES_depth_texture"_s)
+        || context->supportsExtension("GL_ARB_depth_texture"_s);
+    bool supportsDepthStencil = (context->supportsExtension("GL_EXT_packed_depth_stencil"_s)
+        || context->supportsExtension("GL_OES_packed_depth_stencil"_s));
     PlatformGLObject depthStencil = 0;
     if (supportsDepthStencil) {
         depthStencil = context->createTexture();

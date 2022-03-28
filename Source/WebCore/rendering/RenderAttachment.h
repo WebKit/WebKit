@@ -47,7 +47,7 @@ public:
 private:
     void element() const = delete;
     bool isAttachment() const override { return true; }
-    const char* renderName() const override { return "RenderAttachment"; }
+    ASCIILiteral renderName() const override { return "RenderAttachment"_s; }
 
     bool shouldDrawSelectionTint() const override { return false; }
     void paintReplaced(PaintInfo&, const LayoutPoint& offset) final;

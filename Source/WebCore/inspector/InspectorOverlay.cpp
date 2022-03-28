@@ -613,7 +613,7 @@ ErrorStringOr<void> InspectorOverlay::setGridOverlayForNode(Node& node, const In
 {
     RenderObject* renderer = node.renderer();
     if (!is<RenderGrid>(renderer))
-        return makeUnexpected("Node does not initiate a grid context");
+        return makeUnexpected("Node does not initiate a grid context"_s);
 
     removeGridOverlayForNode(node);
 
@@ -627,7 +627,7 @@ ErrorStringOr<void> InspectorOverlay::setGridOverlayForNode(Node& node, const In
 ErrorStringOr<void> InspectorOverlay::clearGridOverlayForNode(Node& node)
 {
     if (!removeGridOverlayForNode(node))
-        return makeUnexpected("No grid overlay exists for the node, so cannot clear.");
+        return makeUnexpected("No grid overlay exists for the node, so cannot clear."_s);
 
     update();
 
@@ -652,7 +652,7 @@ bool InspectorOverlay::removeFlexOverlayForNode(Node& node)
 ErrorStringOr<void> InspectorOverlay::setFlexOverlayForNode(Node& node, const InspectorOverlay::Flex::Config& flexOverlayConfig)
 {
     if (!is<RenderFlexibleBox>(node.renderer()))
-        return makeUnexpected("Node does not initiate a flex context");
+        return makeUnexpected("Node does not initiate a flex context"_s);
 
     removeFlexOverlayForNode(node);
 
@@ -666,7 +666,7 @@ ErrorStringOr<void> InspectorOverlay::setFlexOverlayForNode(Node& node, const In
 ErrorStringOr<void> InspectorOverlay::clearFlexOverlayForNode(Node& node)
 {
     if (!removeFlexOverlayForNode(node))
-        return makeUnexpected("No flex overlay exists for the node, so cannot clear.");
+        return makeUnexpected("No flex overlay exists for the node, so cannot clear."_s);
 
     update();
 

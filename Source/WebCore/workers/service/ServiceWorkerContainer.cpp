@@ -183,7 +183,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     if (!options.scope.isEmpty())
         jobData.scopeURL = context->completeURL(options.scope);
     else
-        jobData.scopeURL = URL(jobData.scriptURL, "./");
+        jobData.scopeURL = URL(jobData.scriptURL, "./"_s);
 
     if (!jobData.scopeURL.isNull() && !jobData.scopeURL.protocolIsInHTTPFamily() && !jobData.isFromServiceWorkerPage) {
         CONTAINER_RELEASE_LOG_ERROR("addRegistration: scopeURL scheme is not HTTP or HTTPS");

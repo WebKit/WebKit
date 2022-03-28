@@ -167,14 +167,14 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
 static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBox& renderer, const Box& layoutBox)
 {
     bool firstMismatchingRect = true;
-    auto outputRect = [&] (const String& prefix, const LayoutRect& rendererRect, const LayoutRect& layoutRect) {
+    auto outputRect = [&] (ASCIILiteral prefix, const LayoutRect& rendererRect, const LayoutRect& layoutRect) {
         if (firstMismatchingRect) {
-            stream << (renderer.element() ? renderer.element()->nodeName().utf8().data() : "") << " " << renderer.renderName() << "(" << &renderer << ") layoutBox(" << &layoutBox << ")";
+            stream << (renderer.element() ? renderer.element()->nodeName().utf8().data() : "") << " " << renderer.renderName().characters() << "(" << &renderer << ") layoutBox(" << &layoutBox << ")";
             stream.nextLine();
             firstMismatchingRect = false;
         }
 
-        stream  << prefix.utf8().data() << "\trenderer->(" << rendererRect.x() << "," << rendererRect.y() << ") (" << rendererRect.width() << "x" << rendererRect.height() << ")"
+        stream  << prefix.characters() << "\trenderer->(" << rendererRect.x() << "," << rendererRect.y() << ") (" << rendererRect.width() << "x" << rendererRect.height() << ")"
             << "\tlayout->(" << layoutRect.x() << "," << layoutRect.y() << ") (" << layoutRect.width() << "x" << layoutRect.height() << ")"; 
         stream.nextLine();
     };
@@ -237,19 +237,19 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
             return false;
     }
     if (!areEssentiallyEqual(frameRect, BoxGeometry::borderBoxRect(boxGeometry))) {
-        outputRect("frameBox", renderer.frameRect(), BoxGeometry::borderBoxRect(boxGeometry));
+        outputRect("frameBox"_s, renderer.frameRect(), BoxGeometry::borderBoxRect(boxGeometry));
         return true;
     }
 
     if (!areEssentiallyEqual(renderer.borderBoxRect(), boxGeometry.borderBox())) {
-        outputRect("borderBox", renderer.borderBoxRect(), boxGeometry.borderBox());
+        outputRect("borderBox"_s, renderer.borderBoxRect(), boxGeometry.borderBox());
         return true;
     }
 
     // When the table row border overflows the row, padding box becomes negative and content box is incorrect.
     auto shouldCheckPaddingAndContentBox = !is<RenderTableRow>(renderer) || renderer.paddingBoxRect().width() >= 0;
     if (shouldCheckPaddingAndContentBox && !areEssentiallyEqual(renderer.paddingBoxRect(), boxGeometry.paddingBox())) {
-        outputRect("paddingBox", renderer.paddingBoxRect(), boxGeometry.paddingBox());
+        outputRect("paddingBox"_s, renderer.paddingBoxRect(), boxGeometry.paddingBox());
         return true;
     }
 
@@ -263,7 +263,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
         return !is<RenderTable>(renderer) || !downcast<RenderTable>(renderer).collapseBorders();
     }();
     if (shouldCheckContentBox && !areEssentiallyEqual(renderer.contentBoxRect(), boxGeometry.contentBox())) {
-        outputRect("contentBox", renderer.contentBoxRect(), boxGeometry.contentBox());
+        outputRect("contentBox"_s, renderer.contentBoxRect(), boxGeometry.contentBox());
         return true;
     }
 
@@ -276,7 +276,7 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
             && boxGeometry.marginEnd() == renderer.marginEnd();
 
         if (!marginsMatch) {
-            outputRect("marginBox", renderer.marginBoxRect(), renderBoxLikeMarginBox(boxGeometry));
+            outputRect("marginBox"_s, renderer.marginBoxRect(), renderBoxLikeMarginBox(boxGeometry));
             return true;
         }
     }

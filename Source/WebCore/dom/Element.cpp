@@ -3284,8 +3284,8 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
     RefPtr parent = parentElement();
     if (UNLIKELY(!parent)) {
         if (!parentNode())
-            return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because it doesn't have a parent" };
-        return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because its parent is not an Element" };
+            return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because it doesn't have a parent"_s };
+        return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because its parent is not an Element"_s };
     }
 
     RefPtr<Node> prev = previousSibling();
@@ -4693,7 +4693,7 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
 
 ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlobalObject, JSC::Strong<JSC::JSObject>&& keyframes, std::optional<std::variant<double, KeyframeAnimationOptions>>&& options)
 {
-    String id = "";
+    String id = emptyString();
     std::optional<RefPtr<AnimationTimeline>> timeline;
     std::variant<FramesPerSecond, AnimationFrameRatePreset> frameRate = AnimationFrameRatePreset::Auto;
     std::optional<std::variant<double, KeyframeEffectOptions>> keyframeEffectOptions;

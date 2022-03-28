@@ -114,7 +114,7 @@ public:
     void play() final { }
     void pause() final { }
 
-    String engineDescription() const final { return "NullMediaPlayer"; }
+    String engineDescription() const final { return "NullMediaPlayer"_s; }
 
     PlatformLayer* platformLayer() const final { return nullptr; }
 

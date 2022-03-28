@@ -953,7 +953,7 @@ bool MediaQueryEvaluator::mediaAttributeMatches(Document& document, const String
 {
     ASSERT(document.renderView());
     auto mediaQueries = MediaQuerySet::create(attributeValue, MediaQueryParserContext(document));
-    return MediaQueryEvaluator { "screen", document, &document.renderView()->style() }.evaluate(mediaQueries.get());
+    return MediaQueryEvaluator { "screen"_s, document, &document.renderView()->style() }.evaluate(mediaQueries.get());
 }
 
 } // WebCore

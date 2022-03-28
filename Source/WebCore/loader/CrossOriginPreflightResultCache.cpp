@@ -85,12 +85,12 @@ std::optional<String> CrossOriginPreflightResultCacheItem::validateMethodAndHead
 
 bool CrossOriginPreflightResultCacheItem::allowsCrossOriginMethod(const String& method, StoredCredentialsPolicy storedCredentialsPolicy) const
 {
-    return m_methods.contains(method) || (m_methods.contains("*") && storedCredentialsPolicy != StoredCredentialsPolicy::Use) || isOnAccessControlSimpleRequestMethodAllowlist(method);
+    return m_methods.contains(method) || (m_methods.contains("*"_s) && storedCredentialsPolicy != StoredCredentialsPolicy::Use) || isOnAccessControlSimpleRequestMethodAllowlist(method);
 }
 
 std::optional<String> CrossOriginPreflightResultCacheItem::validateCrossOriginHeaders(const HTTPHeaderMap& requestHeaders, StoredCredentialsPolicy storedCredentialsPolicy) const
 {
-    bool validWildcard = m_headers.contains("*") && storedCredentialsPolicy != StoredCredentialsPolicy::Use;
+    bool validWildcard = m_headers.contains("*"_s) && storedCredentialsPolicy != StoredCredentialsPolicy::Use;
     for (const auto& header : requestHeaders) {
         if (header.keyAsHTTPHeaderName && isCrossOriginSafeRequestHeader(header.keyAsHTTPHeaderName.value(), header.value))
             continue;

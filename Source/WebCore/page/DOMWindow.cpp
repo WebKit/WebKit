@@ -1094,7 +1094,7 @@ void DOMWindow::print()
         return;
 
     if (!page->arePromptsAllowed()) {
-        printErrorMessage("Use of window.print is not allowed while unloading a page.");
+        printErrorMessage("Use of window.print is not allowed while unloading a page."_s);
         return;
     }
 
@@ -1128,7 +1128,7 @@ void DOMWindow::alert(const String& message)
 
     RefPtr document = this->document();
     if (document->isSandboxed(SandboxModals)) {
-        printErrorMessage("Use of window.alert is not allowed in a sandboxed frame when the allow-modals flag is not set.");
+        printErrorMessage("Use of window.alert is not allowed in a sandboxed frame when the allow-modals flag is not set."_s);
         return;
     }
 
@@ -1137,7 +1137,7 @@ void DOMWindow::alert(const String& message)
         return;
 
     if (!page->arePromptsAllowed()) {
-        printErrorMessage("Use of window.alert is not allowed while unloading a page.");
+        printErrorMessage("Use of window.alert is not allowed while unloading a page."_s);
         return;
     }
 
@@ -1157,7 +1157,7 @@ bool DOMWindow::confirmForBindings(const String& message)
 
     RefPtr document = this->document();
     if (document->isSandboxed(SandboxModals)) {
-        printErrorMessage("Use of window.confirm is not allowed in a sandboxed frame when the allow-modals flag is not set.");
+        printErrorMessage("Use of window.confirm is not allowed in a sandboxed frame when the allow-modals flag is not set."_s);
         return false;
     }
 
@@ -1166,7 +1166,7 @@ bool DOMWindow::confirmForBindings(const String& message)
         return false;
 
     if (!page->arePromptsAllowed()) {
-        printErrorMessage("Use of window.confirm is not allowed while unloading a page.");
+        printErrorMessage("Use of window.confirm is not allowed while unloading a page."_s);
         return false;
     }
 
@@ -1186,7 +1186,7 @@ String DOMWindow::prompt(const String& message, const String& defaultValue)
 
     RefPtr document = this->document();
     if (document->isSandboxed(SandboxModals)) {
-        printErrorMessage("Use of window.prompt is not allowed in a sandboxed frame when the allow-modals flag is not set.");
+        printErrorMessage("Use of window.prompt is not allowed in a sandboxed frame when the allow-modals flag is not set."_s);
         return String();
     }
 
@@ -1195,7 +1195,7 @@ String DOMWindow::prompt(const String& message, const String& defaultValue)
         return String();
 
     if (!page->arePromptsAllowed()) {
-        printErrorMessage("Use of window.prompt is not allowed while unloading a page.");
+        printErrorMessage("Use of window.prompt is not allowed while unloading a page."_s);
         return String();
     }
 
@@ -2690,7 +2690,7 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
         return;
 
     if (!page->arePromptsAllowed()) {
-        printErrorMessage("Use of window.showModalDialog is not allowed while unloading a page.");
+        printErrorMessage("Use of window.showModalDialog is not allowed while unloading a page."_s);
         return;
     }
 

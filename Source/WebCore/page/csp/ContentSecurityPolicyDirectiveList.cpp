@@ -671,9 +671,9 @@ bool ContentSecurityPolicyDirectiveList::strictDynamicIncluded()
 bool ContentSecurityPolicyDirectiveList::shouldReportSample(const String& violatedDirective) const
 {
     ContentSecurityPolicySourceListDirective* directive = nullptr;
-    if (violatedDirective.startsWith(ContentSecurityPolicyDirectiveNames::styleSrc))
+    if (violatedDirective.startsWith(StringView { ContentSecurityPolicyDirectiveNames::styleSrc }))
         directive = m_styleSrc.get();
-    else if (violatedDirective.startsWith(ContentSecurityPolicyDirectiveNames::scriptSrc))
+    else if (violatedDirective.startsWith(StringView { ContentSecurityPolicyDirectiveNames::scriptSrc }))
         directive = m_scriptSrc.get();
 
     return directive && directive->shouldReportSample();

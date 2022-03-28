@@ -62,7 +62,7 @@ public:
     bool isInReversedOrderedList() const;
 
 private:
-    const char* renderName() const final { return "RenderListItem"; }
+    ASCIILiteral renderName() const final { return "RenderListItem"_s; }
 
     bool isListItem() const final { return true; }
     

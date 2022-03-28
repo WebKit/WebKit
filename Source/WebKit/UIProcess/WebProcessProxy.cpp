@@ -2079,7 +2079,7 @@ void WebProcessProxy::enableRemoteWorkers(RemoteWorkerType workerType, const Use
 void WebProcessProxy::didCreateSleepDisabler(SleepDisablerIdentifier identifier, const String& reason, bool display)
 {
     MESSAGE_CHECK(!reason.isNull());
-    auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason.utf8().data(), display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System);
+    auto sleepDisabler = makeUnique<WebCore::SleepDisabler>(reason, display ? PAL::SleepDisabler::Type::Display : PAL::SleepDisabler::Type::System);
     m_sleepDisablers.add(identifier, WTFMove(sleepDisabler));
 }
 

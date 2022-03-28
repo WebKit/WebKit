@@ -315,10 +315,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->loader().reload();
         break;
     case ContextMenuItemTagCut:
-        frame->editor().command("Cut").execute();
+        frame->editor().command("Cut"_s).execute();
         break;
     case ContextMenuItemTagPaste:
-        frame->editor().command("Paste").execute();
+        frame->editor().command("Paste"_s).execute();
         break;
 #if PLATFORM(GTK)
     case ContextMenuItemTagPasteAsPlainText:
@@ -412,10 +412,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
             openNewWindow(m_context.hitTestResult().absoluteLinkURL(), *frame, ShouldOpenExternalURLsPolicy::ShouldAllow);
         break;
     case ContextMenuItemTagBold:
-        frame->editor().command("ToggleBold").execute();
+        frame->editor().command("ToggleBold"_s).execute();
         break;
     case ContextMenuItemTagItalic:
-        frame->editor().command("ToggleItalic").execute();
+        frame->editor().command("ToggleItalic"_s).execute();
         break;
     case ContextMenuItemTagUnderline:
         frame->editor().toggleUnderline();
@@ -444,13 +444,13 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().setBaseWritingDirection(WritingDirection::RightToLeft);
         break;
     case ContextMenuItemTagTextDirectionDefault:
-        frame->editor().command("MakeTextWritingDirectionNatural").execute();
+        frame->editor().command("MakeTextWritingDirectionNatural"_s).execute();
         break;
     case ContextMenuItemTagTextDirectionLeftToRight:
-        frame->editor().command("MakeTextWritingDirectionLeftToRight").execute();
+        frame->editor().command("MakeTextWritingDirectionLeftToRight"_s).execute();
         break;
     case ContextMenuItemTagTextDirectionRightToLeft:
-        frame->editor().command("MakeTextWritingDirectionRightToLeft").execute();
+        frame->editor().command("MakeTextWritingDirectionRightToLeft"_s).execute();
         break;
 #if PLATFORM(COCOA)
     case ContextMenuItemTagSearchInSpotlight:
@@ -1248,25 +1248,25 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagLeftToRight:
         case ContextMenuItemTagRightToLeft: {
-            String direction = item.action() == ContextMenuItemTagLeftToRight ? "ltr" : "rtl";
+            String direction = item.action() == ContextMenuItemTagLeftToRight ? "ltr"_s : "rtl"_s;
             shouldCheck = frame->editor().selectionHasStyle(CSSPropertyDirection, direction) != TriState::False;
             shouldEnable = true;
             break;
         }
         case ContextMenuItemTagTextDirectionDefault: {
-            Editor::Command command = frame->editor().command("MakeTextWritingDirectionNatural");
+            Editor::Command command = frame->editor().command("MakeTextWritingDirectionNatural"_s);
             shouldCheck = command.state() == TriState::True;
             shouldEnable = command.isEnabled();
             break;
         }
         case ContextMenuItemTagTextDirectionLeftToRight: {
-            Editor::Command command = frame->editor().command("MakeTextWritingDirectionLeftToRight");
+            Editor::Command command = frame->editor().command("MakeTextWritingDirectionLeftToRight"_s);
             shouldCheck = command.state() == TriState::True;
             shouldEnable = command.isEnabled();
             break;
         }
         case ContextMenuItemTagTextDirectionRightToLeft: {
-            Editor::Command command = frame->editor().command("MakeTextWritingDirectionRightToLeft");
+            Editor::Command command = frame->editor().command("MakeTextWritingDirectionRightToLeft"_s);
             shouldCheck = command.state() == TriState::True;
             shouldEnable = command.isEnabled();
             break;
@@ -1311,7 +1311,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
 #endif
         case ContextMenuItemTagUnderline: {
-            shouldCheck = frame->editor().selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline") != TriState::False;
+            shouldCheck = frame->editor().selectionHasStyle(CSSPropertyWebkitTextDecorationsInEffect, "underline"_s) != TriState::False;
             shouldEnable = frame->editor().canEditRichly();
             break;
         }
@@ -1324,12 +1324,12 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = true;
             break;
         case ContextMenuItemTagItalic: {
-            shouldCheck = frame->editor().selectionHasStyle(CSSPropertyFontStyle, "italic") != TriState::False;
+            shouldCheck = frame->editor().selectionHasStyle(CSSPropertyFontStyle, "italic"_s) != TriState::False;
             shouldEnable = frame->editor().canEditRichly();
             break;
         }
         case ContextMenuItemTagBold: {
-            shouldCheck = frame->editor().selectionHasStyle(CSSPropertyFontWeight, "bold") != TriState::False;
+            shouldCheck = frame->editor().selectionHasStyle(CSSPropertyFontWeight, "bold"_s) != TriState::False;
             shouldEnable = frame->editor().canEditRichly();
             break;
         }

@@ -40,7 +40,7 @@ public:
 
 private:
     bool isRenderMathMLMath() const final { return true; }
-    const char* renderName() const final { return "RenderMathMLMath"; }
+    ASCIILiteral renderName() const final { return "RenderMathMLMath"_s; }
 
     void centerChildren(LayoutUnit contentWidth);
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;

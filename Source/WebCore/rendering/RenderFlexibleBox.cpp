@@ -89,9 +89,9 @@ RenderFlexibleBox::~RenderFlexibleBox()
         InspectorInstrumentation::nodeLayoutContextChanged(nodeForNonAnonymous(), nullptr);
 }
 
-const char* RenderFlexibleBox::renderName() const
+ASCIILiteral RenderFlexibleBox::renderName() const
 {
-    return "RenderFlexibleBox";
+    return "RenderFlexibleBox"_s;
 }
 
 void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const

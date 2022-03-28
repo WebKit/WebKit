@@ -70,7 +70,7 @@ protected:
 private:
     void element() const = delete;
 
-    const char* renderName() const override { return "RenderTextControl"; }
+    ASCIILiteral renderName() const override { return "RenderTextControl"_s; }
     bool isTextControl() const final { return true; }
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     void computePreferredLogicalWidths() override;

@@ -3792,11 +3792,11 @@ static void handleKeyboardSelectionMovement(Frame& frame, KeyboardEvent& event)
 {
     FrameSelection& selection = frame.selection();
 
-    bool isCommanded = event.getModifierState("Meta");
-    bool isOptioned = event.getModifierState("Alt");
+    bool isCommanded = event.getModifierState("Meta"_s);
+    bool isOptioned = event.getModifierState("Alt"_s);
     bool isSelection = !selection.isNone();
 
-    FrameSelection::EAlteration alternation = event.getModifierState("Shift") ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove;
+    FrameSelection::EAlteration alternation = event.getModifierState("Shift"_s) ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove;
     SelectionDirection direction = SelectionDirection::Forward;
     TextGranularity granularity = TextGranularity::CharacterGranularity;
 

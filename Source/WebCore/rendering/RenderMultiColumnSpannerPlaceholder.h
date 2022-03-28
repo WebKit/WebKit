@@ -50,7 +50,7 @@ private:
 
     bool canHaveChildren() const override { return false; }
     void paint(PaintInfo&, const LayoutPoint&) override { }
-    const char* renderName() const override;
+    ASCIILiteral renderName() const override;
 
     WeakPtr<RenderBox> m_spanner;
     WeakPtr<RenderMultiColumnFlow> m_fragmentedFlow;

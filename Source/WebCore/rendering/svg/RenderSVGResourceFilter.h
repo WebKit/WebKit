@@ -86,7 +86,7 @@ public:
 private:
     void element() const = delete;
 
-    const char* renderName() const override { return "RenderSVGResourceFilter"; }
+    ASCIILiteral renderName() const override { return "RenderSVGResourceFilter"_s; }
     bool isSVGResourceFilter() const override { return true; }
 
     HashMap<RenderObject*, std::unique_ptr<FilterData>> m_rendererFilterDataMap;

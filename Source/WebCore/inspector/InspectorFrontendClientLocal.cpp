@@ -62,7 +62,7 @@ namespace WebCore {
 
 using namespace Inspector;
 
-static const char* inspectorAttachedHeightSetting = "inspectorAttachedHeight";
+static constexpr ASCIILiteral inspectorAttachedHeightSetting = "inspectorAttachedHeight"_s;
 static const unsigned defaultAttachedHeight = 300;
 static const float minimumAttachedHeight = 250.0f;
 static const float maximumAttachedHeightRatio = 0.75f;

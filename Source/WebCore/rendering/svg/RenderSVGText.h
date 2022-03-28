@@ -64,7 +64,7 @@ public:
 private:
     void graphicsElement() const = delete;
 
-    const char* renderName() const override { return "RenderSVGText"; }
+    ASCIILiteral renderName() const override { return "RenderSVGText"_s; }
     bool isSVGText() const override { return true; }
 
     void paint(PaintInfo&, const LayoutPoint&) override;

@@ -92,7 +92,7 @@ void ProcessingInstruction::checkStyleSheet()
         auto attributes = parseAttributes(data());
         if (!attributes)
             return;
-        String type = attributes->get("type");
+        String type = attributes->get("type"_s);
 
         m_isCSS = type.isEmpty() || type == "text/css";
 #if ENABLE(XSLT)
@@ -103,11 +103,11 @@ void ProcessingInstruction::checkStyleSheet()
 #endif
             return;
 
-        String href = attributes->get("href");
-        String alternate = attributes->get("alternate");
+        String href = attributes->get("href"_s);
+        String alternate = attributes->get("alternate"_s);
         m_alternate = alternate == "yes";
-        m_title = attributes->get("title");
-        m_media = attributes->get("media");
+        m_title = attributes->get("title"_s);
+        m_media = attributes->get("media"_s);
 
         if (m_alternate && m_title.isEmpty())
             return;
@@ -156,7 +156,7 @@ void ProcessingInstruction::checkStyleSheet()
             } else
 #endif
             {
-                String charset = attributes->get("charset");
+                String charset = attributes->get("charset"_s);
                 CachedResourceRequest request(document().completeURL(href), CachedResourceLoader::defaultCachedResourceOptions(), std::nullopt, charset.isEmpty() ? document().charset() : WTFMove(charset));
 
                 m_cachedSheet = document().cachedResourceLoader().requestCSSStyleSheet(WTFMove(request)).value_or(nullptr);

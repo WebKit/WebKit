@@ -186,7 +186,7 @@ void PDFDocument::sendPDFArrayBuffer()
 
     auto* frame = m_iframe->contentFrame();
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=236668 - Use postMessage
-    auto openFunction = frame->script().executeScriptIgnoringException("PDFJSContentScript.open").getObject();
+    auto openFunction = frame->script().executeScriptIgnoringException("PDFJSContentScript.open"_s).getObject();
 
     auto globalObject = this->globalObject();
     auto& vm = globalObject->vm();

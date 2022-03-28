@@ -267,7 +267,7 @@ void WorkerScriptLoader::notifyError()
 {
     m_failed = true;
     if (m_error.isNull())
-        m_error = { errorDomainWebKitInternal, 0, url(), "Failed to load script", ResourceError::Type::General };
+        m_error = { errorDomainWebKitInternal, 0, url(), "Failed to load script"_s, ResourceError::Type::General };
     notifyFinished();
 }
 

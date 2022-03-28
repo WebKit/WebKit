@@ -36,7 +36,7 @@
 namespace WebCore {
 
 // From https://html.spec.whatwg.org/#valid-e-mail-address.
-static const char emailPattern[] = "^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
+static constexpr ASCIILiteral emailPattern = "^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"_s;
 
 static bool isValidEmailAddress(const String& address)
 {
@@ -44,7 +44,7 @@ static bool isValidEmailAddress(const String& address)
     if (!addressLength)
         return false;
 
-    static NeverDestroyed<const JSC::Yarr::RegularExpression> regExp(emailPattern, JSC::Yarr::TextCaseInsensitive);
+    static NeverDestroyed<const JSC::Yarr::RegularExpression> regExp(StringView { emailPattern }, JSC::Yarr::TextCaseInsensitive);
 
     int matchLength;
     int matchOffset = regExp.get().match(address, 0, &matchLength);

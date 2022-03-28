@@ -30,32 +30,32 @@ namespace WebCore {
 
 namespace ContentSecurityPolicyDirectiveNames {
 
-const char* const baseURI = "base-uri";
-const char* const childSrc = "child-src";
-const char* const connectSrc = "connect-src";
-const char* const defaultSrc = "default-src";
-const char* const fontSrc = "font-src";
-const char* const formAction = "form-action";
-const char* const frameAncestors = "frame-ancestors";
-const char* const frameSrc = "frame-src";
+ASCIILiteral baseURI = "base-uri"_s;
+ASCIILiteral childSrc = "child-src"_s;
+ASCIILiteral connectSrc = "connect-src"_s;
+ASCIILiteral defaultSrc = "default-src"_s;
+ASCIILiteral fontSrc = "font-src"_s;
+ASCIILiteral formAction = "form-action"_s;
+ASCIILiteral frameAncestors = "frame-ancestors"_s;
+ASCIILiteral frameSrc = "frame-src"_s;
 #if ENABLE(APPLICATION_MANIFEST)
-const char* const manifestSrc = "manifest-src";
+ASCIILiteral manifestSrc = "manifest-src"_s;
 #endif
-const char* const imgSrc = "img-src";
-const char* const mediaSrc = "media-src";
-const char* const objectSrc = "object-src";
-const char* const pluginTypes = "plugin-types";
-const char* const reportURI = "report-uri";
-const char* const sandbox = "sandbox";
-const char* const scriptSrc = "script-src";
-const char* const scriptSrcAttr = "script-src-attr";
-const char* const scriptSrcElem = "script-src-elem";
-const char* const styleSrc = "style-src";
-const char* const styleSrcAttr = "style-src-attr";
-const char* const styleSrcElem = "style-src-elem";
-const char* const upgradeInsecureRequests = "upgrade-insecure-requests";
-const char* const blockAllMixedContent = "block-all-mixed-content";
-const char* const workerSrc = "worker-src";
+ASCIILiteral imgSrc = "img-src"_s;
+ASCIILiteral mediaSrc = "media-src"_s;
+ASCIILiteral objectSrc = "object-src"_s;
+ASCIILiteral pluginTypes = "plugin-types"_s;
+ASCIILiteral reportURI = "report-uri"_s;
+ASCIILiteral sandbox = "sandbox"_s;
+ASCIILiteral scriptSrc = "script-src"_s;
+ASCIILiteral scriptSrcAttr = "script-src-attr"_s;
+ASCIILiteral scriptSrcElem = "script-src-elem"_s;
+ASCIILiteral styleSrc = "style-src"_s;
+ASCIILiteral styleSrcAttr = "style-src-attr"_s;
+ASCIILiteral styleSrcElem = "style-src-elem"_s;
+ASCIILiteral upgradeInsecureRequests = "upgrade-insecure-requests"_s;
+ASCIILiteral blockAllMixedContent = "block-all-mixed-content"_s;
+ASCIILiteral workerSrc = "worker-src"_s;
 
 } // namespace ContentSecurityPolicyDirectiveNames
 

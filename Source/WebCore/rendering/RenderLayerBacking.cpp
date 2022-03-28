@@ -517,12 +517,12 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     const unsigned maxLayerNameLength = 100;
     if (layerName.length() > maxLayerNameLength) {
         layerName.truncate(maxLayerNameLength);
-        layerName.append("...");
+        layerName.append("..."_s);
     }
     m_graphicsLayer = createGraphicsLayer(layerName, m_isFrameLayerWithTiledBacking ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::Normal);
 
     if (m_isFrameLayerWithTiledBacking) {
-        m_childContainmentLayer = createGraphicsLayer("Page TiledBacking containment");
+        m_childContainmentLayer = createGraphicsLayer("Page TiledBacking containment"_s);
         m_graphicsLayer->addChild(*m_childContainmentLayer);
     }
 
@@ -1937,7 +1937,7 @@ void RenderLayerBacking::ensureClippingStackLayers(LayerAncestorClippingStack& c
 {
     for (auto& entry : clippingStack.stack()) {
         if (!entry.clippingLayer) {
-            entry.clippingLayer = createGraphicsLayer(entry.clipData.isOverflowScroll ? "clip for scroller" : "ancestor clipping");
+            entry.clippingLayer = createGraphicsLayer(entry.clipData.isOverflowScroll ? "clip for scroller"_s : "ancestor clipping"_s);
             entry.clippingLayer->setMasksToBounds(true);
             entry.clippingLayer->setPaintingPhase({ });
         }
@@ -2026,7 +2026,7 @@ bool RenderLayerBacking::updateDescendantClippingLayer(bool needsDescendantClip)
 
     if (needsDescendantClip) {
         if (!m_childContainmentLayer && !m_isFrameLayerWithTiledBacking) {
-            m_childContainmentLayer = createGraphicsLayer("child clipping");
+            m_childContainmentLayer = createGraphicsLayer("child clipping"_s);
             m_childContainmentLayer->setMasksToBounds(true);
             layersChanged = true;
         }
@@ -2118,7 +2118,7 @@ bool RenderLayerBacking::requiresScrollCornerLayer() const
 
 bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer)
 {
-    auto createOrDestroyLayer = [&](RefPtr<GraphicsLayer>& layer, bool needLayer, bool drawsContent, const char* layerName) {
+    auto createOrDestroyLayer = [&](RefPtr<GraphicsLayer>& layer, bool needLayer, bool drawsContent, ASCIILiteral layerName) {
         if (needLayer == !!layer)
             return false;
 
@@ -2138,15 +2138,15 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
         return true;
     };
 
-    bool layersChanged = createOrDestroyLayer(m_overflowControlsContainer, needsHorizontalScrollbarLayer || needsVerticalScrollbarLayer || needsScrollCornerLayer, false, "overflow controls container");
+    bool layersChanged = createOrDestroyLayer(m_overflowControlsContainer, needsHorizontalScrollbarLayer || needsVerticalScrollbarLayer || needsScrollCornerLayer, false, "overflow controls container"_s);
 
-    bool horizontalScrollbarLayerChanged = createOrDestroyLayer(m_layerForHorizontalScrollbar, needsHorizontalScrollbarLayer, true, "horizontal scrollbar");
+    bool horizontalScrollbarLayerChanged = createOrDestroyLayer(m_layerForHorizontalScrollbar, needsHorizontalScrollbarLayer, true, "horizontal scrollbar"_s);
     layersChanged |= horizontalScrollbarLayerChanged;
 
-    bool verticalScrollbarLayerChanged = createOrDestroyLayer(m_layerForVerticalScrollbar, needsVerticalScrollbarLayer, true, "vertical scrollbar");
+    bool verticalScrollbarLayerChanged = createOrDestroyLayer(m_layerForVerticalScrollbar, needsVerticalScrollbarLayer, true, "vertical scrollbar"_s);
     layersChanged |= verticalScrollbarLayerChanged;
 
-    layersChanged |= createOrDestroyLayer(m_layerForScrollCorner, needsScrollCornerLayer, true, "scroll corner");
+    layersChanged |= createOrDestroyLayer(m_layerForScrollCorner, needsScrollCornerLayer, true, "scroll corner"_s);
 
     if (auto* scrollingCoordinator = m_owningLayer.page().scrollingCoordinator()) {
         if (auto* scrollableArea = m_owningLayer.scrollableArea()) {
@@ -2282,7 +2282,7 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         }
 
         if (!m_maskLayer) {
-            m_maskLayer = createGraphicsLayer("mask", requiredLayerType);
+            m_maskLayer = createGraphicsLayer("mask"_s, requiredLayerType);
             layerChanged = true;
             m_graphicsLayer->setMaskLayer(m_maskLayer.copyRef());
             // We need a geometry update to size the new mask layer.
@@ -2308,7 +2308,7 @@ void RenderLayerBacking::updateChildClippingStrategy(bool needsDescendantsClippi
 
     auto* clippingLayer = this->clippingLayer();
     if (needsClipMaskLayer()) {
-        m_childClippingMaskLayer = createGraphicsLayer("child clipping mask");
+        m_childClippingMaskLayer = createGraphicsLayer("child clipping mask"_s);
         m_childClippingMaskLayer->setDrawsContent(true);
         m_childClippingMaskLayer->setPaintingPhase({ GraphicsLayerPaintingPhase::ChildClippingMask });
         if (clippingLayer)
@@ -2327,13 +2327,13 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
 
     if (!m_scrollContainerLayer) {
         // Outer layer which corresponds with the scroll view. This never paints content.
-        m_scrollContainerLayer = createGraphicsLayer("scroll container", GraphicsLayer::Type::ScrollContainer);
+        m_scrollContainerLayer = createGraphicsLayer("scroll container"_s, GraphicsLayer::Type::ScrollContainer);
         m_scrollContainerLayer->setPaintingPhase({ });
         m_scrollContainerLayer->setDrawsContent(false);
         m_scrollContainerLayer->setMasksToBounds(true);
 
         // Inner layer which renders the content that scrolls.
-        m_scrolledContentsLayer = createGraphicsLayer("scrolled contents", GraphicsLayer::Type::ScrolledContents);
+        m_scrolledContentsLayer = createGraphicsLayer("scrolled contents"_s, GraphicsLayer::Type::ScrolledContents);
         m_scrolledContentsLayer->setDrawsContent(true);
         m_scrolledContentsLayer->setAnchorPoint({ });
         m_scrollContainerLayer->addChild(*m_scrolledContentsLayer);

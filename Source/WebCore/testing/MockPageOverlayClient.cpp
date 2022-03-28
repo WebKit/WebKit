@@ -72,8 +72,8 @@ String MockPageOverlayClient::layerTreeAsText(Page& page, OptionSet<LayerTreeAsT
     GraphicsLayer* viewOverlayRoot = page.pageOverlayController().viewOverlayRootLayer();
     GraphicsLayer* documentOverlayRoot = page.pageOverlayController().documentOverlayRootLayer();
     
-    return "View-relative:\n" + (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no view-relative overlay root)")
-        + "\n\nDocument-relative:\n" + (documentOverlayRoot ? documentOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no document-relative overlay root)");
+    return "View-relative:\n" + (viewOverlayRoot ? viewOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no view-relative overlay root)"_s)
+        + "\n\nDocument-relative:\n" + (documentOverlayRoot ? documentOverlayRoot->layerTreeAsText(options | LayerTreeAsTextOptions::IncludePageOverlayLayers) : "(no document-relative overlay root)"_s);
 }
 
 void MockPageOverlayClient::willMoveToPage(PageOverlay&, Page*)

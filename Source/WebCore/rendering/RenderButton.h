@@ -66,7 +66,7 @@ public:
 private:
     void element() const = delete;
 
-    const char* renderName() const override { return "RenderButton"; }
+    ASCIILiteral renderName() const override { return "RenderButton"_s; }
     bool isRenderButton() const override { return true; }
 
     bool hasLineIfEmpty() const override;

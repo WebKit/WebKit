@@ -36,7 +36,7 @@ public:
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    const char* renderName() const override;
+    ASCIILiteral renderName() const override;
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
 

@@ -954,7 +954,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<String>>> InspectorDOMAgent::getSuppor
 {
     auto eventNames = JSON::ArrayOf<String>::create();
 
-#define DOM_EVENT_NAMES_ADD(name) eventNames->addItem(#name);
+#define DOM_EVENT_NAMES_ADD(name) eventNames->addItem(#name""_s);
     DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_ADD)
 #undef DOM_EVENT_NAMES_ADD
 
@@ -1529,7 +1529,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Insp
 
     auto parsedColor = parseColor(WTFMove(gridColor));
     if (!parsedColor)
-        return makeUnexpected("Invalid color could not be parsed.");
+        return makeUnexpected("Invalid color could not be parsed."_s);
 
     InspectorOverlay::Grid::Config config;
     config.gridColor = *parsedColor;
@@ -1569,7 +1569,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showFlexOverlay(Insp
 
     auto parsedColor = parseColor(WTFMove(flexColor));
     if (!parsedColor)
-        return makeUnexpected("Invalid color could not be parsed.");
+        return makeUnexpected("Invalid color could not be parsed."_s);
 
     InspectorOverlay::Flex::Config config;
     config.flexColor = *parsedColor;

@@ -116,7 +116,7 @@ static bool applyCommandToFrame(Frame& frame, EditorCommandSource source, EditAc
     return false;
 }
 
-static bool isStylePresent(Editor& editor, CSSPropertyID propertyID, const char* onValue)
+static bool isStylePresent(Editor& editor, CSSPropertyID propertyID, ASCIILiteral onValue)
 {
     // Style is considered present when
     // Mac: present at the beginning of selection
@@ -136,7 +136,7 @@ static bool executeApplyStyle(Frame& frame, EditorCommandSource source, EditActi
     return applyCommandToFrame(frame, source, action, EditingStyle::create(propertyID, propertyValue));
 }
 
-static bool executeToggleStyle(Frame& frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, const char* offValue, const char* onValue)
+static bool executeToggleStyle(Frame& frame, EditorCommandSource source, EditAction action, CSSPropertyID propertyID, ASCIILiteral offValue, ASCIILiteral onValue)
 {
     bool styleIsPresent = isStylePresent(frame.editor(), propertyID, onValue);
     return applyCommandToFrame(frame, source, action, EditingStyle::create(propertyID, styleIsPresent ? offValue : onValue));
@@ -191,7 +191,7 @@ static bool expandSelectionToGranularity(Frame& frame, TextGranularity granulari
     return true;
 }
 
-static TriState stateStyle(Frame& frame, CSSPropertyID propertyID, const char* desiredValue)
+static TriState stateStyle(Frame& frame, CSSPropertyID propertyID, ASCIILiteral desiredValue)
 {
     if (frame.editor().behavior().shouldToggleStyleBasedOnStartOfSelection())
         return frame.editor().selectionStartHasStyle(propertyID, desiredValue) ? TriState::True : TriState::False;
@@ -1085,7 +1085,7 @@ static bool executeSetMark(Frame& frame, Event*, EditorCommandSource, const Stri
     return true;
 }
 
-static TextDecorationChange textDecorationChangeForToggling(Editor& editor, CSSPropertyID propertyID, const char* onValue)
+static TextDecorationChange textDecorationChangeForToggling(Editor& editor, CSSPropertyID propertyID, ASCIILiteral onValue)
 {
     return isStylePresent(editor, propertyID, onValue) ? TextDecorationChange::Remove : TextDecorationChange::Add;
 }

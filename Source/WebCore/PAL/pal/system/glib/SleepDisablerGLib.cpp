@@ -32,12 +32,12 @@
 
 namespace PAL {
 
-std::unique_ptr<SleepDisabler> SleepDisabler::create(const char* reason, Type type)
+std::unique_ptr<SleepDisabler> SleepDisabler::create(const String& reason, Type type)
 {
     return std::unique_ptr<SleepDisabler>(new SleepDisablerGLib(reason, type));
 }
 
-SleepDisablerGLib::SleepDisablerGLib(const char* reason, Type type)
+SleepDisablerGLib::SleepDisablerGLib(const String& reason, Type type)
     : SleepDisabler(reason, type)
     , m_cancellable(adoptGRef(g_cancellable_new()))
     , m_reason(reason)
@@ -89,10 +89,10 @@ void SleepDisablerGLib::acquireInhibitor()
     if (shouldUsePortal()) {
         GVariantBuilder builder;
         g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-        g_variant_builder_add(&builder, "{sv}", "reason", g_variant_new_string(m_reason.data()));
+        g_variant_builder_add(&builder, "{sv}", "reason", g_variant_new_string(m_reason.utf8().data()));
         parameters = g_variant_new("(su@a{sv})", "" /* no window */, 8 /* idle */, g_variant_builder_end(&builder));
     } else
-        parameters = g_variant_new("(ss)", g_get_prgname(), m_reason.data());
+        parameters = g_variant_new("(ss)", g_get_prgname(), m_reason.utf8().data());
 
     g_dbus_proxy_call(m_screenSaverProxy.get(), "Inhibit", parameters, G_DBUS_CALL_FLAGS_NONE, -1, m_cancellable.get(), [](GObject* proxy, GAsyncResult* result, gpointer userData) {
         GUniqueOutPtr<GError> error;

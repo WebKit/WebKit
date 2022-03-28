@@ -102,14 +102,14 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
         {
             auto sampleExtensionsDict = static_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()));
             if (!sampleExtensionsDict)
-                return "avc1";
+                return "avc1"_s;
             auto sampleExtensions = static_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("avcC")));
             if (!sampleExtensions)
-                return "avc1";
+                return "avc1"_s;
             auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions);
             auto parameters = parseAVCDecoderConfigurationRecord(configurationRecordBuffer);
             if (!parameters)
-                return "avc1";
+                return "avc1"_s;
             return createAVCCodecParametersString(*parameters);
         }
     case kCMVideoCodecType_HEVC:
@@ -118,14 +118,14 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
         {
             auto sampleExtensionsDict = static_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()));
             if (!sampleExtensionsDict)
-                return "hvc1";
+                return "hvc1"_s;
             auto sampleExtensions = static_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("hvcC")));
             if (!sampleExtensions)
-                return "hvc1";
+                return "hvc1"_s;
             auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions);
             auto parameters = parseHEVCDecoderConfigurationRecord(kCMVideoCodecType_HEVC, configurationRecordBuffer);
             if (!parameters)
-                return "hvc1";
+                return "hvc1"_s;
             return createHEVCCodecParametersString(*parameters);
         }
     case kCMVideoCodecType_DolbyVisionHEVC:
@@ -133,43 +133,43 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
         {
             auto sampleExtensionsDict = static_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()));
             if (!sampleExtensionsDict)
-                return "dvh1";
+                return "dvh1"_s;
             auto sampleExtensions = static_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("dvcC")));
             if (!sampleExtensions)
-                return "dvh1";
+                return "dvh1"_s;
             auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions);
             auto parameters = parseDoViDecoderConfigurationRecord(configurationRecordBuffer);
             if (!parameters)
-                return "dvh1";
+                return "dvh1"_s;
             return createDoViCodecParametersString(*parameters);
         }
     case kCMVideoCodecType_MPEG4Video:
-        return "mp4v";
+        return "mp4v"_s;
     case kCMVideoCodecType_VP9:
-        return "vp09";
+        return "vp09"_s;
     case kAudioFormatAC3:
-        return "ac-3";
+        return "ac-3"_s;
     case kAudioFormatMPEG4AAC:
-        return "mp4a.40.2";
+        return "mp4a.40.2"_s;
     case kAudioFormatMPEG4AAC_HE:
-        return "mp4a.40.5";
+        return "mp4a.40.5"_s;
     case kAudioFormatMPEG4AAC_HE_V2:
-        return "mp4a.40.29";
+        return "mp4a.40.29"_s;
     case kAudioFormatMPEG4AAC_LD:
-        return "mp4a.40.23";
+        return "mp4a.40.23"_s;
     case kAudioFormatMPEG4AAC_ELD:
-        return "mp4a.40.39";
+        return "mp4a.40.39"_s;
     case kAudioFormatFLAC:
-        return "flac";
+        return "flac"_s;
     case kAudioFormatOpus:
-        return "opus";
+        return "opus"_s;
     case kAudioFormatEnhancedAC3:
     case 'ec+3':
     case 'qec3':
     case 'ce-3':
-        return "ec-3";
+        return "ec-3"_s;
     case 'dts ':
-        return "dts";
+        return "dts"_s;
     }
 
     return emptyString();

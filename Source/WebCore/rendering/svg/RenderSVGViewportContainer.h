@@ -49,7 +49,7 @@ private:
     void element() const = delete;
 
     bool isSVGViewportContainer() const override { return true; }
-    const char* renderName() const override { return "RenderSVGViewportContainer"; }
+    ASCIILiteral renderName() const override { return "RenderSVGViewportContainer"_s; }
 
     AffineTransform viewportTransform() const;
     const AffineTransform& localToParentTransform() const override { return m_localToParentTransform; }

@@ -196,12 +196,12 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     frame.init();
 
     FrameLoader& loader = frame.loader();
-    static char markup[] = "<!DOCTYPE html><html><body></body></html>";
+    static constexpr ASCIILiteral markup = "<!DOCTYPE html><html><body></body></html>"_s;
     ASSERT(loader.activeDocumentLoader());
     auto& writer = loader.activeDocumentLoader()->writer();
-    writer.setMIMEType("text/html");
+    writer.setMIMEType("text/html"_s);
     writer.begin();
-    writer.insertDataSynchronously(String(markup));
+    writer.insertDataSynchronously(markup);
     writer.end();
     RELEASE_ASSERT(page->mainFrame().document()->body());
 

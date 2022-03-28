@@ -98,7 +98,7 @@ RemoteDataChannelNotifier::RemoteDataChannelNotifier(RTCPeerConnectionHandlerCli
 
 void RemoteDataChannelNotifier::fire()
 {
-    m_client->didAddRemoteDataChannel(makeUnique<RTCDataChannelHandlerMock>("RTCDataChannelHandlerMock", RTCDataChannelInit()));
+    m_client->didAddRemoteDataChannel(makeUnique<RTCDataChannelHandlerMock>("RTCDataChannelHandlerMock"_s, RTCDataChannelInit()));
 }
 
 DataChannelStateNotifier::DataChannelStateNotifier(RTCDataChannelHandlerClient* client, RTCDataChannelState state)

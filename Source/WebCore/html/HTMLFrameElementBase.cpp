@@ -114,7 +114,7 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const AtomS
             if (!srcValue.isNull())
                 setLocation(stripLeadingAndTrailingHTMLSpaces(srcValue));
         } else
-            setLocation("about:srcdoc");
+            setLocation("about:srcdoc"_s);
     } else if (name == srcAttr && !hasAttributeWithoutSynchronization(srcdocAttr))
         setLocation(stripLeadingAndTrailingHTMLSpaces(value));
     else

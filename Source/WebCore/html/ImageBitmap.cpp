@@ -122,7 +122,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // 1. If either the sw or sh arguments are specified but zero, return a promise
     //    rejected with an "RangeError" DOMException and abort these steps.
     if (!sw || !sh) {
-        promise.reject(RangeError, "Cannot create ImageBitmap with a width or height of 0");
+        promise.reject(RangeError, "Cannot create ImageBitmap with a width or height of 0"_s);
         return;
     }
 
@@ -180,7 +180,7 @@ static ExceptionOr<IntRect> croppedSourceRectangleWithFormatting(IntSize inputSi
     //    than or equal to 0, then return a promise rejected with "InvalidStateError"
     //    DOMException and abort these steps.
     if ((options.resizeWidth && options.resizeWidth.value() <= 0) || (options.resizeHeight && options.resizeHeight.value() <= 0))
-        return Exception { InvalidStateError, "Invalid resize dimensions" };
+        return Exception { InvalidStateError, "Invalid resize dimensions"_s };
 
     // 3. If sx, sy, sw and sh are specified, let sourceRectangle be a rectangle whose
     //    corners are the four points (sx, sy), (sx+sw, sy),(sx+sw, sy+sh), (sx,sy+sh).
@@ -314,7 +314,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     auto* cachedImage = imageElement->cachedImage();
     if (!cachedImage || !imageElement->complete()) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap that is not completely available");
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap that is not completely available"_s);
         return;
     }
 
@@ -325,7 +325,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     auto imageSize = cachedImage->imageSizeForRenderer(imageElement->renderer(), 1.0f);
     if ((!imageSize.width() || !imageSize.height()) && (!options.resizeWidth || !options.resizeHeight)) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions");
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing resize dimensions"_s);
         return;
     }
 
@@ -349,7 +349,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // width and height for the image.
 
     if (!rect && (!imageSize.width() || !imageSize.height())) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing dimensions");
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a source with no intrinsic size without providing dimensions"_s);
         return;
     }
 
@@ -367,7 +367,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     auto imageForRenderer = cachedImage->imageForRenderer(imageElement->renderer());
     if (!imageForRenderer) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered");
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from image that can't be rendered"_s);
         return;
     }
 
@@ -423,7 +423,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     //    DOMException and abort these steps.
     auto size = canvas.size();
     if (!size.width() || !size.height()) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a canvas that has zero width or height");
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a canvas that has zero width or height"_s);
         return;
     }
 
@@ -438,7 +438,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 
     auto imageForRender = canvas.copiedImage();
     if (!imageForRender) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered");
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from canvas that can't be rendered"_s);
         return;
     }
 
@@ -483,14 +483,14 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     //    or returns bad, then return p rejected with an "InvalidStateError"
     //    DOMException.
     if (video->readyState() == HTMLMediaElement::HAVE_NOTHING || video->readyState() == HTMLMediaElement::HAVE_METADATA) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data");
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_s);
         return;
     }
 
     // 6.1. If image's networkState attribute is NETWORK_EMPTY, then return p
     //      rejected with an "InvalidStateError" DOMException.
     if (video->networkState() == HTMLMediaElement::NETWORK_EMPTY) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data");
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data"_s);
         return;
     }
 
@@ -556,7 +556,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
 #if ENABLE(CSS_TYPED_OM)
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<CSSStyleImageValue>&, ImageBitmapOptions&&, std::optional<IntRect>, ImageBitmap::Promise&& promise)
 {
-    promise.reject(InvalidStateError, "Not implemented");
+    promise.reject(InvalidStateError, "Not implemented"_s);
 }
 #endif
 
@@ -565,7 +565,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // 2. If image's [[Detached]] internal slot value is true, return a promise
     //    rejected with an "InvalidStateError" DOMException and abort these steps.
     if (existingImageBitmap->isDetached() || !existingImageBitmap->buffer()) {
-        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a detached ImageBitmap");
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a detached ImageBitmap"_s);
         return;
     }
 
@@ -722,7 +722,7 @@ private:
         });
 
         if (!m_arrayBufferToProcess) {
-            m_promise.reject(InvalidStateError, "An error occured reading the Blob argument to createImageBitmap");
+            m_promise.reject(InvalidStateError, "An error occured reading the Blob argument to createImageBitmap"_s);
             return;
         }
 
@@ -741,7 +741,7 @@ private:
 void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContext, Ref<ArrayBuffer>&& arrayBuffer, String mimeType, long long expectedContentLength, const URL& sourceURL, ImageBitmapOptions&& options, std::optional<IntRect> rect, Promise&& promise)
 {
     if (!arrayBuffer->byteLength()) {
-        promise.reject(InvalidStateError, "Cannot create an ImageBitmap from an empty buffer");
+        promise.reject(InvalidStateError, "Cannot create an ImageBitmap from an empty buffer"_s);
         return;
     }
 
@@ -750,7 +750,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     auto image = BitmapImage::create(observer.ptr());
     auto result = image->setData(sharedBuffer.copyRef(), true);
     if (result != EncodedDataStatus::Complete || image->isNull()) {
-        promise.reject(InvalidStateError, "Cannot decode the data in the argument to createImageBitmap");
+        promise.reject(InvalidStateError, "Cannot decode the data in the argument to createImageBitmap"_s);
         return;
     }
 
@@ -763,7 +763,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
     auto bitmapData = createImageBuffer(scriptExecutionContext, outputSize, bufferRenderingMode, image->colorSpace());
     if (!bitmapData) {
-        promise.reject(InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap");
+        promise.reject(InvalidStateError, "Cannot create an image buffer from the argument to createImageBitmap"_s);
         return;
     }
 
@@ -792,7 +792,7 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
     // 6.2. If IsDetachedBuffer(buffer) is true, then return p rejected with an
     //      "InvalidStateError" DOMException.
     if (imageData->data().isDetached()) {
-        promise.reject(InvalidStateError, "ImageData's viewed buffer has been detached");
+        promise.reject(InvalidStateError, "ImageData's viewed buffer has been detached"_s);
         return;
     }
 

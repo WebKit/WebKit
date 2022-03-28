@@ -1183,20 +1183,20 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
     return 0;
 }
 
-const char* RenderDeprecatedFlexibleBox::renderName() const
+ASCIILiteral RenderDeprecatedFlexibleBox::renderName() const
 {
     if (isFloating())
-        return "RenderDeprecatedFlexibleBox (floating)";
+        return "RenderDeprecatedFlexibleBox (floating)"_s;
     if (isOutOfFlowPositioned())
-        return "RenderDeprecatedFlexibleBox (positioned)";
+        return "RenderDeprecatedFlexibleBox (positioned)"_s;
     // FIXME: Temporary hack while the new generated content system is being implemented.
     if (isPseudoElement())
-        return "RenderDeprecatedFlexibleBox (generated)";
+        return "RenderDeprecatedFlexibleBox (generated)"_s;
     if (isAnonymous())
-        return "RenderDeprecatedFlexibleBox (generated)";
+        return "RenderDeprecatedFlexibleBox (generated)"_s;
     if (isRelativelyPositioned())
-        return "RenderDeprecatedFlexibleBox (relative positioned)";
-    return "RenderDeprecatedFlexibleBox";
+        return "RenderDeprecatedFlexibleBox (relative positioned)"_s;
+    return "RenderDeprecatedFlexibleBox"_s;
 }
 
 } // namespace WebCore

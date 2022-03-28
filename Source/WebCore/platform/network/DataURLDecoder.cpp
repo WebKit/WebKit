@@ -118,7 +118,7 @@ public:
         auto mediaType = (isBase64 ? header.substring(0, mediaTypeEnd) : header).toString();
         mediaType = stripLeadingAndTrailingHTTPSpaces(mediaType);
         if (mediaType.startsWith(';'))
-            mediaType.insert("text/plain", 0);
+            mediaType.insert("text/plain"_s, 0);
 
         if (shouldRemoveFragmentIdentifier(mediaType))
             url.removeFragmentIdentifier();

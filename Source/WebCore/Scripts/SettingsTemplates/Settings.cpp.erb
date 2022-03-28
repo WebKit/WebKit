@@ -38,7 +38,11 @@
 #if <%= @setting.condition %>
 <%-   end -%>
 <%-   if @setting.defaultValues.size() == 1 -%>
+<%-     if @setting.type == "String" and @setting.defaultValues['default'][-1] == "\"" -%>
+#define SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %> <%= @setting.defaultValues['default'] %>_s
+<%-     else -%>
 #define SETTING_DEFAULT_VALUE_FOR_<%= @setting.name %> <%= @setting.defaultValues['default'] %>
+<%-     end -%>
 <%-   else -%>
 <%-     @setting.defaultValues.each_with_index do |(key, value), index| -%>
 <%-       if index == 0 -%>

@@ -523,7 +523,7 @@ bool Font::isProbablyOnlyUsedToRenderIcons() const
 String Font::description() const
 {
     if (origin() == Origin::Remote)
-        return "[custom font]";
+        return "[custom font]"_s;
 
     return platformData().description();
 }

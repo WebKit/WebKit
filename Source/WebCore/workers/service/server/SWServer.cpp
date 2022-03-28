@@ -415,7 +415,7 @@ void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
             if (jobQueue.size() == 1)
                 jobQueue.runNextJob();
         } else
-            rejectJob(jobData, { TypeError, "Job rejected for non app-bound domain" });
+            rejectJob(jobData, { TypeError, "Job rejected for non app-bound domain"_s });
     });
 }
 

@@ -159,7 +159,7 @@ private:
         DoNotIncludeAllIntersectingCells
     };
 
-    const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableSection (anonymous)" : "RenderTableSection"; }
+    ASCIILiteral renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableSection (anonymous)"_s : "RenderTableSection"_s; }
 
     bool canHaveChildren() const override { return true; }
 

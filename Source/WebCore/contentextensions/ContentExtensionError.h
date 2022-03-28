@@ -84,7 +84,7 @@ enum class ContentExtensionError {
     ErrorWritingSerializedNFA,
 };
 
-extern const char* WebKitContentBlockerDomain;
+extern ASCIILiteral WebKitContentBlockerDomain;
     
 WEBCORE_EXPORT const std::error_category& contentExtensionErrorCategory();
 

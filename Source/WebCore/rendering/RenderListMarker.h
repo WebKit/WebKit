@@ -50,7 +50,7 @@ public:
 
 private:
     void willBeDestroyed() final;
-    const char* renderName() const final { return "RenderListMarker"; }
+    ASCIILiteral renderName() const final { return "RenderListMarker"_s; }
     void computePreferredLogicalWidths() final;
     bool isListMarker() const final { return true; }
     bool canHaveChildren() const final { return false; }

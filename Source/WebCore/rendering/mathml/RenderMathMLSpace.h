@@ -39,7 +39,7 @@ public:
     MathMLSpaceElement& element() const { return static_cast<MathMLSpaceElement&>(nodeForNonAnonymous()); }
 
 private:
-    const char* renderName() const final { return "RenderMathMLSpace"; }
+    ASCIILiteral renderName() const final { return "RenderMathMLSpace"_s; }
     bool isRenderMathMLSpace() const final { return true; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const final { return false; }
     void computePreferredLogicalWidths() final;

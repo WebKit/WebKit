@@ -55,15 +55,15 @@ namespace WebCore {
 MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
     : m_page { page }
 {
-    m_availablePaymentNetworks.add("amex");
-    m_availablePaymentNetworks.add("carteBancaire");
-    m_availablePaymentNetworks.add("chinaUnionPay");
-    m_availablePaymentNetworks.add("discover");
-    m_availablePaymentNetworks.add("interac");
-    m_availablePaymentNetworks.add("jcb");
-    m_availablePaymentNetworks.add("masterCard");
-    m_availablePaymentNetworks.add("privateLabel");
-    m_availablePaymentNetworks.add("visa");
+    m_availablePaymentNetworks.add("amex"_s);
+    m_availablePaymentNetworks.add("carteBancaire"_s);
+    m_availablePaymentNetworks.add("chinaUnionPay"_s);
+    m_availablePaymentNetworks.add("discover"_s);
+    m_availablePaymentNetworks.add("interac"_s);
+    m_availablePaymentNetworks.add("jcb"_s);
+    m_availablePaymentNetworks.add("masterCard"_s);
+    m_availablePaymentNetworks.add("privateLabel"_s);
+    m_availablePaymentNetworks.add("visa"_s);
 }
 
 std::optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)

@@ -52,7 +52,7 @@ private:
     bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint&, HitTestAction) override { return false; }
 
     bool isSVGGradientStop() const override { return true; }
-    const char* renderName() const override { return "RenderSVGGradientStop"; }
+    ASCIILiteral renderName() const override { return "RenderSVGGradientStop"_s; }
 
     bool canHaveChildren() const override { return false; }
     void paint(PaintInfo&, const LayoutPoint&) override { }

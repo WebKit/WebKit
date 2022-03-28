@@ -239,10 +239,10 @@ void WebGL2RenderingContext::initializeVertexArrayObjects()
 void WebGL2RenderingContext::initializeShaderExtensions()
 {
     // FIXME: these are in the WebGL 2.0 core API and should be removed.
-    m_context->ensureExtensionEnabled("GL_OES_standard_derivatives");
-    m_context->ensureExtensionEnabled("GL_EXT_draw_buffers");
-    m_context->ensureExtensionEnabled("GL_EXT_shader_texture_lod");
-    m_context->ensureExtensionEnabled("GL_EXT_frag_depth");
+    m_context->ensureExtensionEnabled("GL_OES_standard_derivatives"_s);
+    m_context->ensureExtensionEnabled("GL_EXT_draw_buffers"_s);
+    m_context->ensureExtensionEnabled("GL_EXT_shader_texture_lod"_s);
+    m_context->ensureExtensionEnabled("GL_EXT_frag_depth"_s);
 }
 
 bool WebGL2RenderingContext::validateBufferTarget(const char* functionName, GCGLenum target)

@@ -104,7 +104,7 @@ protected:
     }
 
 private:
-    const char* renderName() const override { return "RenderImage"; }
+    ASCIILiteral renderName() const override { return "RenderImage"_s; }
 
     bool canHaveChildren() const override;
 

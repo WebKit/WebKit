@@ -88,7 +88,7 @@ void InsertLineBreakCommand::doApply()
     if (shouldUseBreakElement(position))
         nodeToInsert = HTMLBRElement::create(document());
     else
-        nodeToInsert = document().createTextNode("\n");
+        nodeToInsert = document().createTextNode("\n"_s);
     
     // FIXME: Need to merge text nodes when inserting just after or before text.
     

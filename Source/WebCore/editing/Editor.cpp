@@ -1903,12 +1903,12 @@ void Editor::didWriteSelectionToPasteboard()
 
 void Editor::toggleBold()
 {
-    command("ToggleBold").execute();
+    command("ToggleBold"_s).execute();
 }
 
 void Editor::toggleUnderline()
 {
-    command("ToggleUnderline").execute();
+    command("ToggleUnderline"_s).execute();
 }
 
 void Editor::setBaseWritingDirection(WritingDirection direction)
@@ -1925,7 +1925,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
             return;
 
         auto& focusedFormElement = downcast<HTMLTextFormControlElement>(*focusedElement);
-        auto directionValue = direction == WritingDirection::LeftToRight ? "ltr" : "rtl";
+        auto directionValue = direction == WritingDirection::LeftToRight ? "ltr"_s : "rtl"_s;
         auto writingDirectionInputTypeName = inputTypeNameForEditingAction(EditAction::SetBlockWritingDirection);
         if (!dispatchBeforeInputEvent(focusedFormElement, writingDirectionInputTypeName, directionValue))
             return;
@@ -1937,7 +1937,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
     }
 
     auto style = MutableStyleProperties::create();
-    style->setProperty(CSSPropertyDirection, direction == WritingDirection::LeftToRight ? "ltr" : direction == WritingDirection::RightToLeft ? "rtl" : "inherit", false);
+    style->setProperty(CSSPropertyDirection, direction == WritingDirection::LeftToRight ? "ltr"_s : direction == WritingDirection::RightToLeft ? "rtl"_s : "inherit"_s, false);
     applyParagraphStyleToSelection(style.ptr(), EditAction::SetBlockWritingDirection);
 }
 

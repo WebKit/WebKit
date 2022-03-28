@@ -597,7 +597,7 @@ Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderPar
 {
     VPCodecConfigurationRecord record;
 
-    record.codecName = "vp09";
+    record.codecName = "vp09"_s;
     record.profile = parser.profile();
     // CoreMedia does nat care about the VP9 codec level; hard-code to Level 1.0 here:
     record.level = 10;
@@ -693,7 +693,7 @@ std::optional<VP8FrameHeader> parseVP8FrameHeader(const uint8_t* frameData, size
 Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const webm::Element<Colour>& color)
 {
     VPCodecConfigurationRecord record;
-    record.codecName = "vp08";
+    record.codecName = "vp08"_s;
     record.profile = 0;
     record.level = 10;
     record.bitDepth = 8;

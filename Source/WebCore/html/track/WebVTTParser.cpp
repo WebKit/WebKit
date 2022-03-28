@@ -92,7 +92,7 @@ bool WebVTTParser::parseFloatPercentageValuePair(VTTScanner& valueScanner, char 
 
 WebVTTParser::WebVTTParser(WebVTTParserClient& client, Document& document)
     : m_document(document)
-    , m_decoder(TextResourceDecoder::create("text/plain", PAL::UTF8Encoding()))
+    , m_decoder(TextResourceDecoder::create("text/plain"_s, PAL::UTF8Encoding()))
     , m_client(client)
 {
 }
@@ -708,7 +708,7 @@ void WebVTTTreeBuilder::constructTreeFromToken(Document& document)
         String charactersString = m_token.characters();
         MediaTime parsedTimeStamp;
         if (WebVTTParser::collectTimeStamp(charactersString, parsedTimeStamp))
-            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp", charactersString));
+            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp"_s, charactersString));
         break;
     }
     default:

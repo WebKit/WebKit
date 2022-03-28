@@ -90,7 +90,7 @@ protected:
 
 private:
     bool isRenderMathMLBlock() const final { return true; }
-    const char* renderName() const override { return "RenderMathMLBlock"; }
+    ASCIILiteral renderName() const override { return "RenderMathMLBlock"_s; }
     bool avoidsFloats() const final { return true; }
     bool canDropAnonymousBlockChild() const final { return false; }
     void layoutItems(bool relayoutChildren);
@@ -112,7 +112,7 @@ public:
 
 private:
     bool isRenderMathMLTable() const final { return true; }
-    const char* renderName() const final { return "RenderMathMLTable"; }
+    ASCIILiteral renderName() const final { return "RenderMathMLTable"_s; }
     std::optional<LayoutUnit> firstLineBaseline() const final;
 
     Ref<MathMLStyle> m_mathMLStyle;

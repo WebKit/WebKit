@@ -30,18 +30,19 @@
 
 #include <pal/spi/cocoa/IOPMLibSPI.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace PAL {
 
-std::unique_ptr<SleepDisabler> SleepDisabler::create(const char* reason, Type type)
+std::unique_ptr<SleepDisabler> SleepDisabler::create(const String& reason, Type type)
 {
     return std::unique_ptr<SleepDisabler>(new SleepDisablerCocoa(reason, type));
 }
 
-SleepDisablerCocoa::SleepDisablerCocoa(const char* reason, Type type)
+SleepDisablerCocoa::SleepDisablerCocoa(const String& reason, Type type)
     : SleepDisabler(reason, type)
 {
-    RetainPtr<CFStringRef> reasonCF = adoptCF(CFStringCreateWithCString(kCFAllocatorDefault, reason, kCFStringEncodingUTF8));
+    auto reasonCF = reason.createCFString();
 
     CFStringRef assertionType;
     switch (type) {

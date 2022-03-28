@@ -485,7 +485,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         });
         memoryPressureHandler.install();
 
-        PAL::registerNotifyCallback("com.apple.WebKit.logMemStats", [] {
+        PAL::registerNotifyCallback("com.apple.WebKit.logMemStats"_s, [] {
             WebCore::logMemoryStatistics(LogMemoryStatisticsReason::DebugNotification);
         });
     }

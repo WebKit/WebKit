@@ -193,7 +193,7 @@ ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response, 
     filteredResponse.setType(Type::Cors);
 
     auto accessControlExposeHeaderSet = valueOrDefault(parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)));
-    if (performCheck == PerformExposeAllHeadersCheck::Yes && accessControlExposeHeaderSet.contains("*"))
+    if (performCheck == PerformExposeAllHeadersCheck::Yes && accessControlExposeHeaderSet.contains("*"_s))
         return filteredResponse;
 
     filteredResponse.m_httpHeaderFields.uncommonHeaders().removeAllMatching([&](auto& entry) {

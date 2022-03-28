@@ -74,7 +74,7 @@ private:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     void paint(PaintInfo&, const LayoutPoint&) final;
 
-    const char* renderName() const final { return isAnonymous() ? "RenderMathMLOperator (anonymous)" : "RenderMathMLOperator"; }
+    ASCIILiteral renderName() const final { return isAnonymous() ? "RenderMathMLOperator (anonymous)"_s : "RenderMathMLOperator"_s; }
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) final;
     bool isRenderMathMLOperator() const final { return true; }
     bool isInvisibleOperator() const;

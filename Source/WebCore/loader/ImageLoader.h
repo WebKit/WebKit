@@ -113,7 +113,7 @@ private:
 
     bool hasPendingDecodePromises() const { return !m_decodingPromises.isEmpty(); }
     void resolveDecodePromises();
-    void rejectDecodePromises(const char* message);
+    void rejectDecodePromises(ASCIILiteral message);
     void decode();
     
     void timerFired();

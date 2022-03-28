@@ -58,7 +58,7 @@ public:
 
 private:
     void element() const = delete;
-    const char* renderName() const override { return "RenderSVGResourcePattern"; }
+    ASCIILiteral renderName() const override { return "RenderSVGResourcePattern"_s; }
 
     bool buildTileImageTransform(RenderElement&, const PatternAttributes&, const SVGPatternElement&, FloatRect& patternBoundaries, AffineTransform& tileImageTransform) const;
 

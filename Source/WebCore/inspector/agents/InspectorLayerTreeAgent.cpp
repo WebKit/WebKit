@@ -192,9 +192,9 @@ Ref<Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(Ren
         layerObject->setIsGeneratedContent(true);
         layerObject->setPseudoElementId(bindPseudoElement(downcast<PseudoElement>(renderer->node())));
         if (renderer->isBeforeContent())
-            layerObject->setPseudoElement("before");
+            layerObject->setPseudoElement("before"_s);
         else if (renderer->isAfterContent())
-            layerObject->setPseudoElement("after");
+            layerObject->setPseudoElement("after"_s);
     }
 
     // FIXME: RenderView is now really anonymous but don't tell about it to the frontend before making sure it can handle it.
@@ -202,9 +202,9 @@ Ref<Protocol::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(Ren
         layerObject->setIsAnonymous(true);
         const RenderStyle& style = renderer->style();
         if (style.styleType() == PseudoId::FirstLetter)
-            layerObject->setPseudoElement("first-letter");
+            layerObject->setPseudoElement("first-letter"_s);
         else if (style.styleType() == PseudoId::FirstLine)
-            layerObject->setPseudoElement("first-line");
+            layerObject->setPseudoElement("first-line"_s);
     }
 
     return layerObject;

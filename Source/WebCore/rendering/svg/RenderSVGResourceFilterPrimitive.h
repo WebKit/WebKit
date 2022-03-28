@@ -41,7 +41,7 @@ public:
 
     void styleDidChange(StyleDifference, const RenderStyle*) override;
 
-    const char* renderName() const override { return "RenderSVGResourceFilterPrimitive"; }
+    ASCIILiteral renderName() const override { return "RenderSVGResourceFilterPrimitive"_s; }
 
     inline void primitiveAttributeChanged(const QualifiedName& attribute)
     {

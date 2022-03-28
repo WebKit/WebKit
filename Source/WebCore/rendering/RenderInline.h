@@ -93,7 +93,7 @@ protected:
     void updateFromStyle() override;
 
 private:
-    const char* renderName() const override;
+    ASCIILiteral renderName() const override;
 
     bool canHaveChildren() const final { return true; }
 

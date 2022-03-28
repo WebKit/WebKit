@@ -3102,7 +3102,7 @@ void GraphicsLayerCA::updateAnimations()
     auto currentTime = Seconds(CACurrentMediaTime());
 
     auto addAnimationGroup = [&](AnimatedPropertyID property, const Vector<RefPtr<PlatformCAAnimation>>& animations) {
-        auto caAnimationGroup = createPlatformCAAnimation(PlatformCAAnimation::Group, "");
+        auto caAnimationGroup = createPlatformCAAnimation(PlatformCAAnimation::Group, emptyString());
         caAnimationGroup->setDuration(infiniteDuration);
         caAnimationGroup->setAnimations(animations);
 
@@ -4820,22 +4820,22 @@ static String animatedPropertyIDAsString(AnimatedPropertyID property)
     case AnimatedPropertyScale:
     case AnimatedPropertyRotate:
     case AnimatedPropertyTransform:
-        return "transform";
+        return "transform"_s;
     case AnimatedPropertyOpacity:
-        return "opacity";
+        return "opacity"_s;
     case AnimatedPropertyBackgroundColor:
-        return "background-color";
+        return "background-color"_s;
     case AnimatedPropertyFilter:
-        return "filter";
+        return "filter"_s;
 #if ENABLE(FILTERS_LEVEL_2)
     case AnimatedPropertyWebkitBackdropFilter:
-        return "backdrop-filter";
+        return "backdrop-filter"_s;
 #endif
     case AnimatedPropertyInvalid:
-        return "invalid";
+        return "invalid"_s;
     }
     ASSERT_NOT_REACHED();
-    return "";
+    return ""_s;
 }
 
 Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesting() const

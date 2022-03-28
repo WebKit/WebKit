@@ -33,7 +33,7 @@ namespace PAL {
 
 class SleepDisablerCocoa : public SleepDisabler {
 public:
-    explicit SleepDisablerCocoa(const char*, Type);
+    explicit SleepDisablerCocoa(const String&, Type);
     virtual ~SleepDisablerCocoa();
 
 private:

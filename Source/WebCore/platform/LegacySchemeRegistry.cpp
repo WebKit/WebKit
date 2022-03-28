@@ -79,10 +79,10 @@ static const URLSchemesMap& allBuiltinSchemes()
         };
 
         // Other misc schemes that the LegacySchemeRegistry doesn't know about.
-        static const char* const otherSchemes[] = {
-            "webkit-fake-url",
+        static constexpr ASCIILiteral otherSchemes[] = {
+            "webkit-fake-url"_s,
 #if PLATFORM(MAC)
-            "safari-extension",
+            "safari-extension"_s,
 #endif
 #if USE(QUICK_LOOK)
             QLPreviewProtocol,
