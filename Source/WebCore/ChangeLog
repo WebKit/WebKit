@@ -1,3 +1,25 @@
+2022-03-28  Ziran Sun  <zsun@igalia.com>
+
+        [selection] Fire Select event when selection extent or direction changes
+        https://bugs.webkit.org/show_bug.cgi?id=238142
+
+        Reviewed by Chris Dumez.
+
+        As per step 6 at [1], if either extent or direction of the text control to be modified,
+        we need to queue an element task on the user interaction task source given the element
+        to fire an select event with the bubbles attribute initialized to true.
+        
+        [1] https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#set-the-selection-range
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setSelectionRange):
+        (WebCore::HTMLTextFormControlElement::cacheSelection):
+        (WebCore::HTMLTextFormControlElement::restoreCachedSelection):
+        (WebCore::HTMLTextFormControlElement::scheduleSelectEvent):
+        * html/HTMLTextFormControlElement.h:
+        (WebCore::HTMLTextFormControlElement::cacheSelection): Deleted.
+
+
 2022-03-28  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Accessing WebGL content crashes in macOS Recovery OS, workaround 2

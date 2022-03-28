@@ -33,6 +33,7 @@
 #include "Editor.h"
 #include "ElementAncestorIterator.h"
 #include "Event.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -292,13 +293,14 @@ void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
     else if (directionString == "backward")
         direction = SelectionHasBackwardDirection;
 
-    return setSelectionRange(start, end, direction, SelectionRevealMode::DoNotReveal, intent);
+    if (setSelectionRange(start, end, direction, SelectionRevealMode::DoNotReveal, intent))
+        scheduleSelectEvent();
 }
 
-void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, TextFieldSelectionDirection direction, SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
+bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end, TextFieldSelectionDirection direction, SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
 {
     if (!isTextField())
-        return;
+        return false;
 
     // Clamps to the current value length.
     unsigned innerTextValueLength = innerTextValue().length();
@@ -311,22 +313,21 @@ void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
     RefPtr frame = document().frame();
     if (direction == SelectionHasNoDirection && frame && frame->editor().behavior().shouldConsiderSelectionAsDirectional())
         direction = SelectionHasForwardDirection;
+
     if (!hasFocus && innerText) {
         if (!isConnected()) {
-            cacheSelection(start, end, direction);
-            return;
+            return cacheSelection(start, end, direction);
         }
 
         // FIXME: Removing this synchronous layout requires fixing setSelectionWithoutUpdatingAppearance not needing up-to-date style.
         document().updateLayoutIgnorePendingStylesheets();
 
         if (!isTextField())
-            return;
+            return false;
 
         // Double-check our connected state after the layout update.
         if (!isConnected()) {
-            cacheSelection(start, end, direction);
-            return;
+            return cacheSelection(start, end, direction);
         }
 
         // Double-check the state of innerTextElement after the layout.
@@ -335,12 +336,12 @@ void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
 
         if (innerText && rendererTextControl) {
             if (rendererTextControl->style().visibility() == Visibility::Hidden || !innerText->renderBox() || !innerText->renderBox()->height()) {
-                cacheSelection(start, end, direction);
-                return;
+                return cacheSelection(start, end, direction);
             }
         }
     }
 
+    bool didChange = cacheSelection(start, end, direction);
     Position startPosition = positionForIndex(innerText.get(), start);
     Position endPosition;
     if (start == end)
@@ -355,6 +356,18 @@ void HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
 
     if (RefPtr<Frame> frame = document().frame())
         frame->selection().moveWithoutValidationTo(startPosition, endPosition, direction != SelectionHasNoDirection, !hasFocus, revealMode, intent);
+
+    return didChange;
+}
+
+bool HTMLTextFormControlElement::cacheSelection(unsigned start, unsigned end, TextFieldSelectionDirection direction)
+{
+    bool didChange = m_cachedSelectionStart != start || m_cachedSelectionEnd != end || m_cachedSelectionDirection != direction;
+    m_cachedSelectionStart = start;
+    m_cachedSelectionEnd = end;
+    m_cachedSelectionDirection = direction;
+    m_hasCachedSelection = true;
+    return didChange;
 }
 
 int HTMLTextFormControlElement::indexForVisiblePosition(const VisiblePosition& position) const
@@ -509,7 +522,8 @@ std::optional<SimpleRange> HTMLTextFormControlElement::selection() const
 
 void HTMLTextFormControlElement::restoreCachedSelection(SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
 {
-    setSelectionRange(m_cachedSelectionStart, m_cachedSelectionEnd, cachedSelectionDirection(), revealMode, intent);
+    if (setSelectionRange(m_cachedSelectionStart, m_cachedSelectionEnd, cachedSelectionDirection(), revealMode, intent))
+        scheduleSelectEvent();
 }
 
 void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
@@ -524,6 +538,13 @@ void HTMLTextFormControlElement::selectionChanged(bool shouldFireSelectEvent)
     if (shouldFireSelectEvent && m_cachedSelectionStart != m_cachedSelectionEnd)
         dispatchEvent(Event::create(eventNames().selectEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 }
+
+void HTMLTextFormControlElement::scheduleSelectEvent()
+{
+    document().eventLoop().queueTask(TaskSource::UserInteraction, [protectedThis = GCReachableRef { *this }] {
+        protectedThis->dispatchEvent(Event::create(eventNames().selectEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+    });
+} 
 
 void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {

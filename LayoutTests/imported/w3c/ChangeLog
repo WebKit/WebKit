@@ -1,3 +1,15 @@
+2022-03-28  Ziran Sun  <zsun@igalia.com>
+
+        [selection] Fire Select event when selection extent or direction changes
+        https://bugs.webkit.org/show_bug.cgi?id=238142
+
+        Reviewed by Chris Dumez.
+
+        Update test expectations as more sub-tests are now passing.
+        * web-platform-tests/html/semantics/forms/textfieldselection/selection-start-end-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setRangeText-expected.txt:
+        * web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange-expected.txt:
+
 2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
 
         Preserve repeat() notation for grid-templates

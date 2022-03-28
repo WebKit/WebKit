@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS text setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
 PASS text selectionMode missing
 PASS text selectionMode 'select'
@@ -10,8 +8,8 @@ PASS text selectionMode 'preserve'
 PASS text setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
 PASS text setRangeText without argument throws a type error
 PASS text setRangeText fires a select event
-TIMEOUT text setRangeText fires a select event when fully selected Test timed out
-NOTRUN text setRangeText fires a select event after select()
+PASS text setRangeText fires a select event when fully selected
+PASS text setRangeText fires a select event after select()
 PASS search setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
 PASS search selectionMode missing
 PASS search selectionMode 'select'
@@ -20,9 +18,9 @@ PASS search selectionMode 'end'
 PASS search selectionMode 'preserve'
 PASS search setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
 PASS search setRangeText without argument throws a type error
-NOTRUN search setRangeText fires a select event
-NOTRUN search setRangeText fires a select event when fully selected
-NOTRUN search setRangeText fires a select event after select()
+PASS search setRangeText fires a select event
+PASS search setRangeText fires a select event when fully selected
+PASS search setRangeText fires a select event after select()
 PASS tel setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
 PASS tel selectionMode missing
 PASS tel selectionMode 'select'
@@ -31,9 +29,9 @@ PASS tel selectionMode 'end'
 PASS tel selectionMode 'preserve'
 PASS tel setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
 PASS tel setRangeText without argument throws a type error
-NOTRUN tel setRangeText fires a select event
-NOTRUN tel setRangeText fires a select event when fully selected
-NOTRUN tel setRangeText fires a select event after select()
+PASS tel setRangeText fires a select event
+PASS tel setRangeText fires a select event when fully selected
+PASS tel setRangeText fires a select event after select()
 PASS url setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
 PASS url selectionMode missing
 PASS url selectionMode 'select'
@@ -42,9 +40,9 @@ PASS url selectionMode 'end'
 PASS url selectionMode 'preserve'
 PASS url setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
 PASS url setRangeText without argument throws a type error
-NOTRUN url setRangeText fires a select event
-NOTRUN url setRangeText fires a select event when fully selected
-NOTRUN url setRangeText fires a select event after select()
+PASS url setRangeText fires a select event
+PASS url setRangeText fires a select event when fully selected
+PASS url setRangeText fires a select event after select()
 PASS password setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
 PASS password selectionMode missing
 PASS password selectionMode 'select'
@@ -53,9 +51,9 @@ PASS password selectionMode 'end'
 PASS password selectionMode 'preserve'
 PASS password setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
 PASS password setRangeText without argument throws a type error
-NOTRUN password setRangeText fires a select event
-NOTRUN password setRangeText fires a select event when fully selected
-NOTRUN password setRangeText fires a select event after select()
+PASS password setRangeText fires a select event
+PASS password setRangeText fires a select event when fully selected
+PASS password setRangeText fires a select event after select()
 PASS display_none setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
 PASS display_none selectionMode missing
 PASS display_none selectionMode 'select'
@@ -64,9 +62,9 @@ PASS display_none selectionMode 'end'
 PASS display_none selectionMode 'preserve'
 PASS display_none setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
 PASS display_none setRangeText without argument throws a type error
-NOTRUN display_none setRangeText fires a select event
-NOTRUN display_none setRangeText fires a select event when fully selected
-NOTRUN display_none setRangeText fires a select event after select()
+PASS display_none setRangeText fires a select event
+PASS display_none setRangeText fires a select event when fully selected
+PASS display_none setRangeText fires a select event after select()
 PASS textarea setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
 PASS textarea selectionMode missing
 PASS textarea selectionMode 'select'
@@ -75,9 +73,9 @@ PASS textarea selectionMode 'end'
 PASS textarea selectionMode 'preserve'
 PASS textarea setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
 PASS textarea setRangeText without argument throws a type error
-NOTRUN textarea setRangeText fires a select event
-NOTRUN textarea setRangeText fires a select event when fully selected
-NOTRUN textarea setRangeText fires a select event after select()
+PASS textarea setRangeText fires a select event
+PASS textarea setRangeText fires a select event when fully selected
+PASS textarea setRangeText fires a select event after select()
 PASS input_not_in_doc setRangeText with only one argument replaces the value between selectionStart and selectionEnd, otherwise replaces the value between 2nd and 3rd arguments
 PASS input_not_in_doc selectionMode missing
 PASS input_not_in_doc selectionMode 'select'
@@ -86,7 +84,7 @@ PASS input_not_in_doc selectionMode 'end'
 PASS input_not_in_doc selectionMode 'preserve'
 PASS input_not_in_doc setRangeText with 3rd argument greater than 2nd argument throws an IndexSizeError exception
 PASS input_not_in_doc setRangeText without argument throws a type error
-NOTRUN input_not_in_doc setRangeText fires a select event
-NOTRUN input_not_in_doc setRangeText fires a select event when fully selected
-NOTRUN input_not_in_doc setRangeText fires a select event after select()
+PASS input_not_in_doc setRangeText fires a select event
+PASS input_not_in_doc setRangeText fires a select event when fully selected
+PASS input_not_in_doc setRangeText fires a select event after select()
 
