@@ -1,3 +1,33 @@
+2022-03-28  Devin Rousso  <drousso@apple.com>
+
+        [iOS] Add `WKWebView` API to control CSS "small viewport" `sv*` and "large viewport" `lv*` units
+        https://bugs.webkit.org/show_bug.cgi?id=237979
+        <rdar://problem/89434696>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/CSSViewportUnits.mm:
+        (TEST.CSSViewportUnits.NegativeMinimumViewportInset): Added.
+        (TEST.CSSViewportUnits.NegativeMaximumViewportInset): Added.
+        (TEST.CSSViewportUnits.MinimumViewportInsetLargerThanMaximumViewportInset): Added.
+        (TEST.CSSViewportUnits.MinimumViewportInsetLargerThanFrame): Added.
+        (TEST.CSSViewportUnits.MaximumViewportInsetLargerThanFrame): Added.
+        (TEST.CSSViewportUnits.MinimumViewportInset): Added.
+        (TEST.CSSViewportUnits.MaximumViewportInset): Added.
+        (TEST.CSSViewportUnits.MinimumViewportInsetWithZoom): Added.
+        (TEST.CSSViewportUnits.MaximumViewportInsetWithZoom): Added.
+        (TEST.CSSViewportUnits.MinimumViewportInsetWithWritingMode): Added.
+        (TEST.CSSViewportUnits.MaximumViewportInsetWithWritingMode): Added.
+        (TEST.CSSViewportUnits.MinimumViewportInsetWithFrame): Added.
+        (TEST.CSSViewportUnits.MaximumViewportInsetWithFrame): Added.
+        (TEST.CSSViewportUnits.MinimumViewportInsetWithBounds): Added.
+        (TEST.CSSViewportUnits.MaximumViewportInsetWithBounds): Added.
+        (TEST.CSSViewportUnits.MinimumViewportInsetWithContentInset): Added.
+        (TEST.CSSViewportUnits.MaximumViewportInsetWithContentInset): Added.
+        (TEST.CSSViewportUnits.MinimumViewportInsetWithSafeAreaInsets): Added.
+        (TEST.CSSViewportUnits.MaximumViewportInsetWithSafeAreaInsets): Added.
+        (TEST.CSSViewportUnits.UnobscuredSizeOverridesIgnoreMaximumViewportInsetAPI): Added.
+
 2022-03-28  Brady Eidson  <beidson@apple.com>
 
         Support ServiceWorkerClients.openWindow.

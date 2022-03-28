@@ -3624,6 +3624,7 @@ void FrameView::performSizeToContentAutoSize()
         document.updateLayout();
     };
 
+    resetOverriddenWidthForCSSDefaultViewportUnits();
     resetOverriddenWidthForCSSSmallViewportUnits();
     resetOverriddenWidthForCSSLargeViewportUnits();
 
@@ -3686,6 +3687,7 @@ void FrameView::performSizeToContentAutoSize()
         resize(newSize.width(), i ? newSize.height() : minAutoSize.height());
         // Protect the content from evergrowing layout.
         auto preferredViewportWidth = std::min(newSize.width(), m_autoSizeConstraint.width());
+        overrideWidthForCSSDefaultViewportUnits(preferredViewportWidth);
         overrideWidthForCSSSmallViewportUnits(preferredViewportWidth);
         overrideWidthForCSSLargeViewportUnits(preferredViewportWidth);
         // Force the scrollbar state to avoid the scrollbar code adding them and causing them to be needed. For example,
@@ -4767,11 +4769,13 @@ void FrameView::enableAutoSizeMode(bool enable, const IntSize& viewSize, AutoSiz
     setNeedsLayoutAfterViewConfigurationChange();
     layoutContext().scheduleLayout();
     if (m_shouldAutoSize) {
+        overrideWidthForCSSDefaultViewportUnits(m_autoSizeConstraint.width());
         overrideWidthForCSSSmallViewportUnits(m_autoSizeConstraint.width());
         overrideWidthForCSSLargeViewportUnits(m_autoSizeConstraint.width());
         return;
     }
 
+    clearSizeOverrideForCSSDefaultViewportUnits();
     clearSizeOverrideForCSSSmallViewportUnits();
     clearSizeOverrideForCSSLargeViewportUnits();
     // Since autosize mode forces the scrollbar mode, change them to being auto.
@@ -5602,6 +5606,47 @@ void FrameView::setViewExposedRect(std::optional<FloatRect> viewExposedRect)
     }
 }
 
+void FrameView::clearSizeOverrideForCSSDefaultViewportUnits()
+{
+    if (!m_defaultViewportSizeOverride)
+        return;
+
+    m_defaultViewportSizeOverride = std::nullopt;
+    if (auto* document = frame().document())
+        document->styleScope().didChangeStyleSheetEnvironment();
+}
+
+void FrameView::setSizeForCSSDefaultViewportUnits(FloatSize size)
+{
+    overrideSizeForCSSDefaultViewportUnits({ size.width(), size.height() });
+}
+
+void FrameView::overrideWidthForCSSDefaultViewportUnits(float width)
+{
+    overrideSizeForCSSDefaultViewportUnits({ width, m_defaultViewportSizeOverride ? m_defaultViewportSizeOverride->height : std::nullopt });
+}
+
+void FrameView::resetOverriddenWidthForCSSDefaultViewportUnits()
+{
+    overrideSizeForCSSDefaultViewportUnits({ { }, m_defaultViewportSizeOverride ? m_defaultViewportSizeOverride->height : std::nullopt });
+}
+
+void FrameView::overrideSizeForCSSDefaultViewportUnits(OverrideViewportSize size)
+{
+    if (m_defaultViewportSizeOverride == size)
+        return;
+
+    m_defaultViewportSizeOverride = size;
+
+    if (auto* document = frame().document())
+        document->styleScope().didChangeStyleSheetEnvironment();
+}
+
+FloatSize FrameView::sizeForCSSDefaultViewportUnits() const
+{
+    return calculateSizeForCSSViewportUnitsOverride(m_defaultViewportSizeOverride);
+}
+
 void FrameView::clearSizeOverrideForCSSSmallViewportUnits()
 {
     if (!m_smallViewportSizeOverride)
@@ -5716,9 +5761,11 @@ FloatSize FrameView::sizeForCSSDynamicViewportUnits() const
     return rectForFixedPositionLayout().size();
 }
 
-FloatSize FrameView::sizeForCSSDefaultViewportUnits() const
+void FrameView::copyCSSViewportSizeOverrides(FrameView& view)
 {
-    return sizeForCSSLargeViewportUnits();
+    m_defaultViewportSizeOverride = view.m_defaultViewportSizeOverride;
+    m_smallViewportSizeOverride = view.m_smallViewportSizeOverride;
+    m_largeViewportSizeOverride = view.m_largeViewportSizeOverride;
 }
 
 bool FrameView::shouldPlaceVerticalScrollbarOnLeft() const

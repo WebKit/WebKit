@@ -3570,18 +3570,6 @@ void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, doub
     viewportConfigurationChanged(zoomToInitialScale);
 }
 
-void WebPage::setMinimumUnobscuredSize(const FloatSize& minimumUnobscuredSize)
-{
-    m_minimumUnobscuredSize = minimumUnobscuredSize;
-    updateViewportSizeForCSSViewportUnits();
-}
-
-void WebPage::setMaximumUnobscuredSize(const FloatSize& maximumUnobscuredSize)
-{
-    m_maximumUnobscuredSize = maximumUnobscuredSize;
-    updateViewportSizeForCSSViewportUnits();
-}
-
 void WebPage::setDeviceOrientation(int32_t deviceOrientation)
 {
     if (deviceOrientation == m_deviceOrientation)
@@ -3643,6 +3631,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
     if (setFixedLayoutSize(newLayoutSize))
         resetTextAutosizing();
 
+    setDefaultUnobscuredSize(maximumUnobscuredSize);
     setMinimumUnobscuredSize(minimumUnobscuredSize);
     setMaximumUnobscuredSize(maximumUnobscuredSize);
     m_page->setUnobscuredSafeAreaInsets(targetUnobscuredSafeAreaInsets);
@@ -3962,7 +3951,9 @@ void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale
 
     m_page->setZoomedOutPageScaleFactor(m_viewportConfiguration.minimumScale());
 
-    updateViewportSizeForCSSViewportUnits();
+    updateSizeForCSSDefaultViewportUnits();
+    updateSizeForCSSSmallViewportUnits();
+    updateSizeForCSSLargeViewportUnits();
 
     FrameView& frameView = *mainFrameView();
     IntPoint scrollPosition = frameView.scrollPosition();
@@ -3986,23 +3977,6 @@ void WebPage::viewportConfigurationChanged(ZoomToInitialScale zoomToInitialScale
 
         frameView.setCustomSizeForResizeEvent(expandedIntSize(m_viewportConfiguration.minimumLayoutSize()));
     }
-}
-
-void WebPage::updateViewportSizeForCSSViewportUnits()
-{
-    FloatSize smallestUnobscuredSize = m_minimumUnobscuredSize;
-    if (smallestUnobscuredSize.isEmpty())
-        smallestUnobscuredSize = m_viewportConfiguration.viewLayoutSize();
-
-    FloatSize largestUnobscuredSize = m_maximumUnobscuredSize;
-    if (largestUnobscuredSize.isEmpty())
-        largestUnobscuredSize = m_viewportConfiguration.viewLayoutSize();
-
-    FrameView& frameView = *mainFrameView();
-    smallestUnobscuredSize.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
-    largestUnobscuredSize.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
-    frameView.setSizeForCSSSmallViewportUnits(smallestUnobscuredSize);
-    frameView.setSizeForCSSLargeViewportUnits(largestUnobscuredSize);
 }
 
 void WebPage::applicationWillResignActive()
