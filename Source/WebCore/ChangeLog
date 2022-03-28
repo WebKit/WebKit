@@ -1,5 +1,22 @@
 2022-03-28  Chris Dumez  <cdumez@apple.com>
 
+        Optimize toJS() for HTMLElements
+        https://bugs.webkit.org/show_bug.cgi?id=238426
+
+        Reviewed by Yusuke Suzuki.
+
+        Optimize toJS() for HTMLElements. Previously, the more generic Element's toJS() would be called,
+        which would have to do more checks.
+
+        This is a 0.6% progression on Speedometer 2.0 on MacBook Air 10,1 (AS).
+
+        * bindings/js/JSHTMLElementCustom.cpp:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+        * html/HTMLElement.idl:
+
+2022-03-28  Chris Dumez  <cdumez@apple.com>
+
         Drop unnecessary isReachableFromDOM() function in JSNodeCustom.cpp
         https://bugs.webkit.org/show_bug.cgi?id=238422
 
