@@ -54,7 +54,7 @@ public:
     void resetForReparsing() { }
 };
 
-ErrorCode checkSyntax(const String& pattern, const String& flags)
+ErrorCode checkSyntax(StringView pattern, StringView flags)
 {
     SyntaxChecker syntaxChecker;
 

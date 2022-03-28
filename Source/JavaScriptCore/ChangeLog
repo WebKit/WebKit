@@ -1,3 +1,42 @@
+2022-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Use StringView for Yarr / RegularExpression parsing
+        https://bugs.webkit.org/show_bug.cgi?id=238420
+
+        Reviewed by Sam Weinig.
+
+        Use StringView for Yarr / RegularExpression parsing, to avoid unnecessary String construction
+        in some cases. It is not uncommon for the pattern to be a string literal.
+
+        * yarr/RegularExpression.cpp:
+        (JSC::Yarr::RegularExpression::Private::create):
+        (JSC::Yarr::RegularExpression::Private::Private):
+        (JSC::Yarr::RegularExpression::Private::compile):
+        (JSC::Yarr::RegularExpression::RegularExpression):
+        (JSC::Yarr::RegularExpression::match const):
+        (JSC::Yarr::RegularExpression::searchRev const):
+        (JSC::Yarr::replace):
+        * yarr/RegularExpression.h:
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::interpret):
+        * yarr/YarrInterpreter.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::jitCompile):
+        (JSC::Yarr::jitCompileInlinedTest):
+        * yarr/YarrJIT.h:
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::Parser):
+        (JSC::Yarr::parse):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        (JSC::Yarr::YarrPattern::dumpPatternString):
+        (JSC::Yarr::YarrPattern::dumpPattern):
+        * yarr/YarrPattern.h:
+        * yarr/YarrSyntaxChecker.cpp:
+        (JSC::Yarr::checkSyntax):
+        * yarr/YarrSyntaxChecker.h:
+
 2022-03-27  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified buildfix

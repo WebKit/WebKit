@@ -2456,7 +2456,7 @@ std::unique_ptr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAl
     return ByteCompiler(pattern).compile(allocator, lock, errorCode);
 }
 
-unsigned interpret(BytecodePattern* bytecode, const String& input, unsigned start, unsigned* output)
+unsigned interpret(BytecodePattern* bytecode, StringView input, unsigned start, unsigned* output)
 {
     SuperSamplerScope superSamplerScope(false);
     if (input.is8Bit())

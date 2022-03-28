@@ -393,7 +393,7 @@ private:
 };
 
 JS_EXPORT_PRIVATE std::unique_ptr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*, ErrorCode&, ConcurrentJSLock* = nullptr);
-JS_EXPORT_PRIVATE unsigned interpret(BytecodePattern*, const String& input, unsigned start, unsigned* output);
+JS_EXPORT_PRIVATE unsigned interpret(BytecodePattern*, StringView input, unsigned start, unsigned* output);
 unsigned interpret(BytecodePattern*, const LChar* input, unsigned length, unsigned start, unsigned* output);
 unsigned interpret(BytecodePattern*, const UChar* input, unsigned length, unsigned start, unsigned* output);
 

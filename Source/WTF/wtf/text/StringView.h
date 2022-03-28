@@ -94,6 +94,9 @@ public:
     const LChar* characters8() const;
     const UChar* characters16() const;
 
+    // Return characters8() or characters16() depending on CharacterType.
+    template<typename CharacterType> const CharacterType* characters() const;
+
     bool isAllASCII() const;
 
     String toString() const;
@@ -426,6 +429,16 @@ inline const UChar* StringView::characters16() const
     ASSERT(!is8Bit());
     ASSERT(underlyingStringIsValid());
     return static_cast<const UChar*>(m_characters);
+}
+
+template<> ALWAYS_INLINE const LChar* StringView::characters<LChar>() const
+{
+    return characters8();
+}
+
+template<> ALWAYS_INLINE const UChar* StringView::characters<UChar>() const
+{
+    return characters16();
 }
 
 inline bool StringView::isAllASCII() const

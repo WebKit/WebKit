@@ -41,7 +41,7 @@ template<class Delegate, typename CharType>
 class Parser {
 private:
     template<class FriendDelegate>
-    friend ErrorCode parse(FriendDelegate&, const String& pattern, bool isUnicode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed);
+    friend ErrorCode parse(FriendDelegate&, StringView pattern, bool isUnicode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed);
 
     enum class UnicodeParseContext : uint8_t { PatternCodePoint, GroupName };
 
@@ -219,7 +219,7 @@ private:
         UChar32 m_character;
     };
 
-    Parser(Delegate& delegate, const String& pattern, bool isUnicode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed)
+    Parser(Delegate& delegate, StringView pattern, bool isUnicode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed)
         : m_delegate(delegate)
         , m_data(pattern.characters<CharType>())
         , m_size(pattern.length())
@@ -1287,7 +1287,7 @@ private:
  */
 
 template<class Delegate>
-ErrorCode parse(Delegate& delegate, const String& pattern, bool isUnicode, unsigned backReferenceLimit = quantifyInfinite, bool isNamedForwardReferenceAllowed = true)
+ErrorCode parse(Delegate& delegate, const StringView pattern, bool isUnicode, unsigned backReferenceLimit = quantifyInfinite, bool isNamedForwardReferenceAllowed = true)
 {
     if (pattern.is8Bit())
         return Parser<Delegate, LChar>(delegate, pattern, isUnicode, backReferenceLimit, isNamedForwardReferenceAllowed).parse();

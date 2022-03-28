@@ -38,18 +38,18 @@ namespace JSC { namespace Yarr {
 
 class RegularExpression::Private : public RefCounted<RegularExpression::Private> {
 public:
-    static Ref<Private> create(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+    static Ref<Private> create(StringView pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
     {
         return adoptRef(*new Private(pattern, caseSensitivity, multilineMode, unicodeMode));
     }
 
 private:
-    Private(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+    Private(StringView pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
         : m_regExpByteCode(compile(pattern, caseSensitivity, multilineMode, unicodeMode))
     {
     }
 
-    std::unique_ptr<JSC::Yarr::BytecodePattern> compile(const String& patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+    std::unique_ptr<JSC::Yarr::BytecodePattern> compile(StringView patternString, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
     {
         OptionSet<JSC::Yarr::Flags> flags;
 
@@ -82,7 +82,7 @@ public:
     std::unique_ptr<JSC::Yarr::BytecodePattern> m_regExpByteCode;
 };
 
-RegularExpression::RegularExpression(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
+RegularExpression::RegularExpression(StringView pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode, UnicodeMode unicodeMode)
     : d(Private::create(pattern, caseSensitivity, multilineMode, unicodeMode))
 {
 }
@@ -102,7 +102,7 @@ RegularExpression& RegularExpression::operator=(const RegularExpression& re)
     return *this;
 }
 
-int RegularExpression::match(const String& str, int startFrom, int* matchLength) const
+int RegularExpression::match(StringView str, int startFrom, int* matchLength) const
 {
     if (!d->m_regExpByteCode)
         return -1;
@@ -142,7 +142,7 @@ int RegularExpression::match(const String& str, int startFrom, int* matchLength)
     return offsetVector[0];
 }
 
-int RegularExpression::searchRev(const String& str) const
+int RegularExpression::searchRev(StringView str) const
 {
     // FIXME: This could be faster if it actually searched backwards.
     // Instead, it just searches forwards, multiple times until it finds the last match.
@@ -172,7 +172,7 @@ int RegularExpression::matchedLength() const
     return d->lastMatchLength;
 }
 
-void replace(String& string, const RegularExpression& target, const String& replacement)
+void replace(String& string, const RegularExpression& target, StringView replacement)
 {
     int index = 0;
     while (index < static_cast<int>(string.length())) {

@@ -433,14 +433,14 @@ enum class JITCompileMode : uint8_t {
     IncludeSubpatterns,
     InlineTest
 };
-void jitCompile(YarrPattern&, String& patternString, CharSize, VM*, YarrCodeBlock& jitObject, JITCompileMode);
+void jitCompile(YarrPattern&, StringView patternString, CharSize, VM*, YarrCodeBlock& jitObject, JITCompileMode);
 
 #if ENABLE(YARR_JIT_REGEXP_TEST_INLINE)
 
 
 class YarrJITRegisters;
 
-void jitCompileInlinedTest(StackCheck*, const String&, OptionSet<Yarr::Flags>, CharSize, const VM*, YarrBoyerMoyerData&, CCallHelpers&, YarrJITRegisters&);
+void jitCompileInlinedTest(StackCheck*, StringView, OptionSet<Yarr::Flags>, CharSize, const VM*, YarrBoyerMoyerData&, CCallHelpers&, YarrJITRegisters&);
 #endif
 
 } } // namespace JSC::Yarr

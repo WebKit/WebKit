@@ -387,7 +387,7 @@ struct TermChain {
 
 
 struct YarrPattern {
-    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, OptionSet<Flags>, ErrorCode&);
+    JS_EXPORT_PRIVATE YarrPattern(StringView pattern, OptionSet<Flags>, ErrorCode&);
 
     void resetForReparsing()
     {
@@ -518,9 +518,9 @@ struct YarrPattern {
         return unicodePropertiesCached.get(classID);
     }
 
-    void dumpPatternString(PrintStream& out, const String& patternString);
-    void dumpPattern(const String& pattern);
-    void dumpPattern(PrintStream& out, const String& pattern);
+    void dumpPatternString(PrintStream& out, StringView patternString);
+    void dumpPattern(StringView pattern);
+    void dumpPattern(PrintStream& out, StringView pattern);
 
     bool global() const { return m_flags.contains(Flags::Global); }
     bool ignoreCase() const { return m_flags.contains(Flags::IgnoreCase); }
@@ -545,7 +545,7 @@ struct YarrPattern {
     HashMap<String, unsigned> m_namedGroupToParenIndex;
 
 private:
-    ErrorCode compile(const String& patternString);
+    ErrorCode compile(StringView patternString);
 
     CharacterClass* anycharCached { nullptr };
     CharacterClass* newlineCached { nullptr };
