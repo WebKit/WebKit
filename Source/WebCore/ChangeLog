@@ -1,3 +1,16 @@
+2022-03-28  Chris Dumez  <cdumez@apple.com>
+
+        Drop unnecessary isReachableFromDOM() function in JSNodeCustom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=238422
+
+        Reviewed by Peng Liu.
+
+        Drop unnecessary isReachableFromDOM() function in JSNodeCustom.cpp and inline its implementation in the only caller instead.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNodeOwner::isReachableFromOpaqueRoots):
+        (WebCore::isReachableFromDOM): Deleted.
+
 2022-03-28  Ziran Sun  <zsun@igalia.com>
 
         [Forms] Alias appearance <compat-auto> keywords to 'auto' for button
