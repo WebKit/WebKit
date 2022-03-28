@@ -1,3 +1,20 @@
+2022-03-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        REGRESSION (r291587): [ iOS ] editing/deleting/insert-in-orphaned-selection-crash.html is a constant text failure (238282)
+        https://bugs.webkit.org/show_bug.cgi?id=238282
+        <rdar://problem/90720306>
+
+        Reviewed by Aditya Keerthi.
+
+        In r291587 we started dropping native appearance for non-form control elements with
+        specified author style. This is the correct behavior, but requires adjusting this
+        test which relies on the appearance of a table element in order to reproduce a
+        non-appearance related crash. This patch updates the test to add table data tags which
+        ensure the table element gets included in the selectAll() command to keep the test passing.
+
+        * editing/deleting/insert-in-orphaned-selection-crash.html:
+        * platform/ios-wk2/TestExpectations:
+
 2022-03-28  Brady Eidson  <beidson@apple.com>
 
         Support ServiceWorkerClients.openWindow.
