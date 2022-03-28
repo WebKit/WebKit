@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2015-2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,13 +60,6 @@ void Symbol::finishCreation(VM& vm)
     vm.symbolImplToSymbolMap.set(&m_privateName.uid(), this);
 }
 
-inline SymbolObject* SymbolObject::create(VM& vm, JSGlobalObject* globalObject, Symbol* symbol)
-{
-    SymbolObject* object = new (NotNull, allocateCell<SymbolObject>(vm)) SymbolObject(vm, globalObject->symbolObjectStructure());
-    object->finishCreation(vm, symbol);
-    return object;
-}
-
 JSValue Symbol::toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const
 {
     return const_cast<Symbol*>(this);
@@ -74,7 +67,7 @@ JSValue Symbol::toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const
 
 JSObject* Symbol::toObject(JSGlobalObject* globalObject) const
 {
-    return SymbolObject::create(globalObject->vm(), globalObject, const_cast<Symbol*>(this));
+    return SymbolObject::create(globalObject->vm(), globalObject->symbolObjectStructure(), const_cast<Symbol*>(this));
 }
 
 double Symbol::toNumber(JSGlobalObject* globalObject) const
