@@ -1,3 +1,21 @@
+2022-03-28  Devin Rousso  <drousso@apple.com>
+
+        [macOS] Add `WKWebView` API to control CSS "small viewport" `sv*` and "large viewport" `lv*` units
+        https://bugs.webkit.org/show_bug.cgi?id=238173
+        <rdar://problem/90602918>
+
+        Reviewed by Wenson Hsieh.
+
+        See <https://webkit.org/b/237979> for information about this API. This change just also
+        enables it on macOS (the other change was iOS-only).
+
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView setFrameSize:]):
+        Remove the `#if PLATFORM(IOS_FAMILY)` around all things related to `-[WKWebview setMinimumViewportInset:maximumViewportInset:]`.
+
 2022-03-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r290794): [ iOS Debug ] 4 editing/selection/* tests are constant timeouts

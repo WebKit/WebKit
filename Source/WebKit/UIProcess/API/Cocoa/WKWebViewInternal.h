@@ -140,10 +140,8 @@ class ViewGestureController;
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
     BOOL _usePlatformFindUI;
 
-#if PLATFORM(IOS_FAMILY)
     CocoaEdgeInsets _minimumViewportInset;
     CocoaEdgeInsets _maximumViewportInset;
-#endif
 
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
