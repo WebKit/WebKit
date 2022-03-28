@@ -1,3 +1,20 @@
+2022-03-28  Cameron McCormack  <heycam@apple.com>
+
+        Remove the 1ms minimum for setTimeout
+        https://bugs.webkit.org/show_bug.cgi?id=221124
+        <rdar://problem/73852354>
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Disable console output in some worker tests where
+        the reduced timeout would cause intemittent failures due to the
+        console message sometimes not making it to the test output in time.
+        * js/script-tests/weakref-finalizationregistry.js:
+        (turnEventLoop): Use a timeout of 1ms instead of 0ms so that
+        the deferred work task that calls the JS FinalizationRegistry
+        callback gets a chance to run before we continue on to the
+        assertion that it was run.
+
 2022-03-28  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Another WPT import

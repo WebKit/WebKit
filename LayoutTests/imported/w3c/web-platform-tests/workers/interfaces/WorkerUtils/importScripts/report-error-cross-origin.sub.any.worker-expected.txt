@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Error: Script error.
 
 FAIL WorkerGlobalScope error event: error assert_equals: e.error should be a DOMException expected function "function DOMException() {
     [native code]

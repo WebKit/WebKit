@@ -4912,6 +4912,11 @@ imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_ctr.https.any.h
 webkit.org/b/228176 fast/text/variable-system-font.html [ Pass ImageOnlyFailure ]
 webkit.org/b/228176 fast/text/variable-system-font-2.html [ Pass ImageOnlyFailure ]
 
+# Console message from workers sometimes don't make their way to test output, so disable them to avoid flakiness.
+imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/ [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/FileAPI/file/File-constructor.any.worker.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any.worker.html [ DumpJSConsoleLogInStdErr ]
+
 # It passes in legacy line layout by sheer luck. Fails with FF and Chrome too (it expects "random" code points to be computed to zero width).
 fast/text/zero-width-characters-complex-script.html [ Failure ]
 

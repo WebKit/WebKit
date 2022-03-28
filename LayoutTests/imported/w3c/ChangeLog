@@ -1,3 +1,32 @@
+2022-03-28  Cameron McCormack  <heycam@apple.com>
+
+        Remove the 1ms minimum for setTimeout
+        https://bugs.webkit.org/show_bug.cgi?id=221124
+        <rdar://problem/73852354>
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/html/webappapis/timers/zero-settimeout.any-expected.txt:
+        * web-platform-tests/html/webappapis/timers/zero-settimeout.any.html:
+        * web-platform-tests/html/webappapis/timers/zero-settimeout.any.js:
+        (async_test):
+        * web-platform-tests/html/webappapis/timers/zero-settimeout.any.worker-expected.txt:
+        * web-platform-tests/html/webappapis/timers/zero-settimeout.any.worker.html:
+        New test checking that 0ms and 1ms timeouts are called in the right
+        order.
+
+        * web-platform-tests/FileAPI/file/File-constructor.any.worker-expected.txt:
+        * web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any.worker-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-cross-origin.sub.any.worker-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-redirect-to-cross-origin.sub.any.worker-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-same-origin.sub.any.worker-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-setTimeout-cross-origin.sub.any.worker-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-setTimeout-redirect-to-cross-origin.sub.any.worker-expected.txt:
+        * web-platform-tests/workers/interfaces/WorkerUtils/importScripts/report-error-setTimeout-same-origin.sub.any.worker-expected.txt:
+        Disable console output in some worker tests where the reduced timeout
+        would cause intemittent failures due to the console message sometimes
+        not making it to the test output in time.
+
 2022-03-28  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Another WPT import

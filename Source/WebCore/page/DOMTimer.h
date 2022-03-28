@@ -92,6 +92,7 @@ private:
     Function<void(ScriptExecutionContext&)> m_action;
     Seconds m_originalInterval;
     TimerThrottleState m_throttleState;
+    bool m_oneShot;
     Seconds m_currentTimerInterval;
     RefPtr<UserGestureToken> m_userGestureTokenToForward;
 };

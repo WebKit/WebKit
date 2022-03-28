@@ -1,3 +1,52 @@
+2022-03-28  Cameron McCormack  <heycam@apple.com>
+
+        Remove the 1ms minimum for setTimeout
+        https://bugs.webkit.org/show_bug.cgi?id=221124
+        <rdar://problem/73852354>
+
+        Reviewed by Sam Weinig.
+
+        This patch removes the 1ms minimum for setTimeout. The HTML spec makes
+        no mention of such a minimum, and Firefox and Chrome do not enforce
+        this minimum. Removing this for setTimeout results in a 0.7-2.1%
+        improvement on Speedometer, depending on platform and hardware.
+
+        The WPT added here demonstrates how this change can affect pages: if a
+        page schedules a 1ms and then a 0ms timeout in the same turn of the
+        event loop, then with this patch they will now be fired in the reverse
+        order. Since Firefox and Chrome do not impose a 1ms minimum, this
+        reduces the risk of this being a compatbility problem.
+
+        Scheduling a 0ms timeout will cause its callback to be called the next
+        time around the event loop. Other, non-timer queued tasks, will be
+        pre-empted. This behavior is permitted by the HTML spec, since the
+        event loop processing model[1] states that the implementation can
+        choose which task source to service, and timer callbacks are
+        dispatched using their own task source. Due to the way the SharedTimer
+        is called, we don't need to literally dispatch a task with a new
+        TaskSource::Timer source. (If we decided later to make a different
+        about whether to service timer callbacks before tasks from all other
+        task sources, we might need to.)
+
+        Not addressing the setTimeout 1ms minimum here, which should likely also
+        be removed.
+
+        While we're here, settle on "one shot" rather rather than "single
+        shot" as the term for timers that fire once.
+
+        [1] https://html.spec.whatwg.org/#event-loop-processing-model
+
+        Tests: imported/w3c/web-platform-tests/html/webappapis/timers/zero-settimeout.any.html
+               imported/w3c/web-platform-tests/html/webappapis/timers/zero-settimeout.any.worker.html
+
+        * page/DOMTimer.h:
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::DOMTimer):
+        (WebCore::DOMTimer::install):
+        (WebCore::DOMTimer::fired):
+        (WebCore::DOMTimer::updateTimerIntervalIfNecessary):
+        (WebCore::DOMTimer::intervalClampedToMinimum const):
+
 2022-03-28  Chris Dumez  <cdumez@apple.com>
 
         Prepare WebCore for making the String(const char*) constructor explicit
