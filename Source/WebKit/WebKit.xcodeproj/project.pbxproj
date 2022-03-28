@@ -4412,6 +4412,8 @@
 		411B89E527B5D58300F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteVideoFrameObjectHeapProxyProcessor.h; sourceTree = "<group>"; };
 		411B89E627B5D58400F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteVideoFrameObjectHeapProxyProcessor.cpp; sourceTree = "<group>"; };
 		411B89F527B6B4C700F9EBD3 /* RemoteVideoFrameObjectHeapProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteVideoFrameObjectHeapProxy.h; sourceTree = "<group>"; };
+		412827A527DA0D7B005ADDE2 /* RemoteRealtimeMediaSource.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRealtimeMediaSource.cpp; sourceTree = "<group>"; };
+		412827A627DA0D7F005ADDE2 /* RemoteRealtimeMediaSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeMediaSource.h; sourceTree = "<group>"; };
 		41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSocketTaskCocoa.mm; sourceTree = "<group>"; };
 		41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTaskCocoa.h; sourceTree = "<group>"; };
 		41287D4D225C161F009A3E26 /* WebSocketTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketTask.h; sourceTree = "<group>"; };
@@ -11055,6 +11057,8 @@
 				41684C4D24643BFA001CE8ED /* RemoteCaptureSampleManager.messages.in */,
 				41E67A8D25D2CFD0007B0A4C /* RemoteRealtimeAudioSource.cpp */,
 				41E67A8C25D2CFD0007B0A4C /* RemoteRealtimeAudioSource.h */,
+				412827A527DA0D7B005ADDE2 /* RemoteRealtimeMediaSource.cpp */,
+				412827A627DA0D7F005ADDE2 /* RemoteRealtimeMediaSource.h */,
 				416008B225DA895B00E892FE /* RemoteRealtimeMediaSourceProxy.cpp */,
 				416008B125DA86B900E892FE /* RemoteRealtimeMediaSourceProxy.h */,
 				418FCBE3271049DB00F96ECA /* RemoteRealtimeVideoSource.cpp */,

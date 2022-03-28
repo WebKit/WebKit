@@ -822,15 +822,21 @@ enum class TrackState {
     Configure
 };
 
+enum class TrackKind {
+    Audio,
+    Video
+};
+
 template <typename RefT>
-void updateTracksOfType(HashMap<String, RefT>& trackMap, RealtimeMediaSource::Type trackType, MediaStreamTrackPrivateVector& currentTracks, RefT (*itemFactory)(MediaStreamTrackPrivate&), const Function<void(std::reference_wrapper<typename std::remove_pointer<typename RefT::PtrTraits::StorageType>::type>, int, TrackState)>& configureTrack)
+void updateTracksOfKind(HashMap<String, RefT>& trackMap, TrackKind trackKind, MediaStreamTrackPrivateVector& currentTracks, RefT (*itemFactory)(MediaStreamTrackPrivate&), const Function<void(std::reference_wrapper<typename std::remove_pointer<typename RefT::PtrTraits::StorageType>::type>, int, TrackState)>& configureTrack)
 {
     Vector<RefT> removedTracks;
     Vector<RefT> addedTracks;
     Vector<Ref<MediaStreamTrackPrivate>> addedPrivateTracks;
 
+    bool wantsVideo = trackKind == TrackKind::Video;
     for (const auto& track : currentTracks) {
-        if (track->type() != trackType)
+        if (wantsVideo != track->hasVideo())
             continue;
 
         if (!trackMap.contains(track->id()))
@@ -941,7 +947,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
             break;
         }
     };
-    updateTracksOfType(m_audioTrackMap, RealtimeMediaSource::Type::Audio, currentTracks, &AudioTrackPrivateMediaStream::create, WTFMove(setAudioTrackState));
+    updateTracksOfKind(m_audioTrackMap, TrackKind::Audio, currentTracks, &AudioTrackPrivateMediaStream::create, WTFMove(setAudioTrackState));
 
     if (!m_player->isVideoPlayer())
         return;
@@ -966,7 +972,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
             break;
         }
     };
-    updateTracksOfType(m_videoTrackMap, RealtimeMediaSource::Type::Video, currentTracks, &VideoTrackPrivateMediaStream::create, WTFMove(setVideoTrackState));
+    updateTracksOfKind(m_videoTrackMap, TrackKind::Video, currentTracks, &VideoTrackPrivateMediaStream::create, WTFMove(setVideoTrackState));
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateMediaStreamAVFObjC::seekable() const

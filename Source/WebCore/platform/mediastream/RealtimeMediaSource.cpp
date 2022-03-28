@@ -280,7 +280,7 @@ void RealtimeMediaSource::end(Observer* callingObserver)
 
     endProducingData();
     m_isEnded = true;
-    hasEnded();
+    didEnd();
 
     forEachObserver([&callingObserver](auto& observer) {
         if (&observer != callingObserver)

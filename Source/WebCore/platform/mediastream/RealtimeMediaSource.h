@@ -267,7 +267,7 @@ private:
 
     virtual void stopBeingObserved() { stop(); }
 
-    virtual void hasEnded() { }
+    virtual void didEnd() { }
 
     void updateHasStartedProducingData();
 

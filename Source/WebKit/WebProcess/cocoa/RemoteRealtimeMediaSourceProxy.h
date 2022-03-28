@@ -52,6 +52,7 @@ public:
 
     IPC::Connection* connection();
     WebCore::RealtimeMediaSourceIdentifier identifier() const { return m_identifier; }
+    WebCore::PageIdentifier pageIdentifier() const { return m_pageIdentifier; }
     WebCore::CaptureDevice::DeviceType deviceType() const { return m_device.type(); }
     const WebCore::CaptureDevice& device() const { return m_device; }
     bool shouldCaptureInGPUProcess() const { return m_shouldCaptureInGPUProcess; }

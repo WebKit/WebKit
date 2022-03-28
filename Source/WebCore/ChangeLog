@@ -1,3 +1,19 @@
+2022-03-28  Youenn Fablet  <youenn@apple.com>
+
+        Share more code between RemoteRealtimeAudioSource and RemoteRealtimeVideoSource
+        https://bugs.webkit.org/show_bug.cgi?id=237704
+        <rdar://problem/90424679>
+
+        Reviewed by Eric Carlson.
+
+        The remote video source is now correctly exposing whether it is camera, screen...
+        This was not well handled before in some places, we replace type == Video by hasVideo to handle all video types appropriately.
+
+        Covered by existing tests.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        * platform/mediastream/MediaStreamPrivate.cpp:
+
 2022-03-28  Chris Dumez  <cdumez@apple.com>
 
         Optimize toJS() for HTMLElements

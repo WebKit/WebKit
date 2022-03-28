@@ -1,3 +1,23 @@
+2022-03-28  Youenn Fablet  <youenn@apple.com>
+
+        Share more code between RemoteRealtimeAudioSource and RemoteRealtimeVideoSource
+        https://bugs.webkit.org/show_bug.cgi?id=237704
+        <rdar://problem/90424679>
+
+        Reviewed by Eric Carlson.
+
+        Introduce RemoteRealtimeMediaSource as a common class for RemoteRealtimeAudioSource and RemoteRealtimeVideoSource.
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp:
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.h:
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.cpp: Added.
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.h: Added.
+        * WebProcess/cocoa/RemoteRealtimeMediaSourceProxy.h:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.h:
+
 2022-03-27  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified buildfix
