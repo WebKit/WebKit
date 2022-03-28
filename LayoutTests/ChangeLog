@@ -1,3 +1,12 @@
+2022-03-28  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Another WPT import
+        https://bugs.webkit.org/show_bug.cgi?id=238459
+
+        Reviewed by Tim Nguyen.
+
+        * TestExpectations:
+
 2022-03-28  Kate Cheney  <katherine_cheney@apple.com>
 
         REGRESSION (r291587): [ iOS ] editing/deleting/insert-in-orphaned-selection-crash.html is a constant text failure (238282)

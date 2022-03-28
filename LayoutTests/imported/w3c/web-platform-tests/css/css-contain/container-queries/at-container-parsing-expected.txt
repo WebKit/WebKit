@@ -52,4 +52,6 @@ PASS Container selector: name(foo)
 PASS Container selector: type(inline-size)
 PASS Container selector: "foo"
 PASS Container selector: "inherit"
+PASS Container selector: none
+PASS Container selector: None
 

@@ -5,4 +5,8 @@ PASS Property container-name value 'foo'
 PASS Property container-name value 'FoO'
 PASS Property container-name value 'foo bar'
 PASS Property container-name value 'bar foo'
+FAIL Property container-name value 'foo foo bar' assert_equals: expected "foo bar" but got "foo foo bar"
+FAIL Property container-name value 'foo bar foo' assert_equals: expected "foo bar" but got "foo bar foo"
+FAIL Property container-name value 'bar foo foo' assert_equals: expected "bar foo" but got "bar foo foo"
+PASS Property container-name value '\!escaped'
 
