@@ -1,5 +1,327 @@
 2022-03-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r291980. rdar://problem/89434696
+
+    [iOS] Add `WKWebView` API to control CSS "small viewport" `sv*` and "large viewport" `lv*` units
+    https://bugs.webkit.org/show_bug.cgi?id=237979
+    <rdar://problem/89434696>
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Tests: CSSViewportUnits.NegativeMinimumViewportInset
+           CSSViewportUnits.NegativeMaximumViewportInset
+           CSSViewportUnits.MinimumViewportInsetLargerThanMaximumViewportInset
+           CSSViewportUnits.MinimumViewportInsetLargerThanFrame
+           CSSViewportUnits.MaximumViewportInsetLargerThanFrame
+           CSSViewportUnits.MinimumViewportInset
+           CSSViewportUnits.MaximumViewportInset
+           CSSViewportUnits.MinimumViewportInsetWithZoom
+           CSSViewportUnits.MaximumViewportInsetWithZoom
+           CSSViewportUnits.MinimumViewportInsetWithWritingMode
+           CSSViewportUnits.MaximumViewportInsetWithWritingMode
+           CSSViewportUnits.MinimumViewportInsetWithFrame
+           CSSViewportUnits.MaximumViewportInsetWithFrame
+           CSSViewportUnits.MinimumViewportInsetWithBounds
+           CSSViewportUnits.MaximumViewportInsetWithBounds
+           CSSViewportUnits.MinimumViewportInsetWithContentInset
+           CSSViewportUnits.MaximumViewportInsetWithContentInset
+           CSSViewportUnits.MinimumViewportInsetWithSafeAreaInsets
+           CSSViewportUnits.MaximumViewportInsetWithSafeAreaInsets
+           CSSViewportUnits.UnobscuredSizeOverridesIgnoreMaximumViewportInsetAPI
+    
+    * page/FrameView.h:
+    * page/FrameView.cpp:
+    (WebCore::FrameView::performSizeToContentAutoSize):
+    (WebCore::FrameView::enableAutoSizeMode):
+    (WebCore::FrameView::clearSizeOverrideForCSSDefaultViewportUnits): Added.
+    (WebCore::FrameView::setSizeForCSSDefaultViewportUnits): Added.
+    (WebCore::FrameView::overrideWidthForCSSDefaultViewportUnits): Added.
+    (WebCore::FrameView::resetOverriddenWidthForCSSDefaultViewportUnits): Added.
+    (WebCore::FrameView::overrideSizeForCSSDefaultViewportUnits): Added.
+    (WebCore::FrameView::sizeForCSSDefaultViewportUnits const): Renamed from `sizeForCSSDefaultViewportUnits`.
+    (WebCore::FrameView::copyCSSViewportUnits const): Added.
+    Add all the various methods for getting/setting/overriding/clearing an override value for
+    CSS "default viewport" `v*` units. This allows for `WKWebView` clients to preserve existing
+    behavior (where CSS "default viewport" `v*` units match the size of the `WKWebView`) while
+    adding supporting CSS "small viewport" `sv*` units and CSS "large viewport" `lv*` units.
+    
+    Source/WebKit:
+    
+    Recently the W3C CSS working group added [some new unit types to CSS](https://drafts.csswg.org/css-values-4/#viewport-variants)
+    with the goal of helping web developers better deal with browsers that have dynamic UI
+    elements that change apperance/size/etc. based on user actions (e.g. the URL bar
+    collapsing/"squishing" and expanding/"unsquishing" depending on whether the user has most
+    recently scrolled/swiped down the page).
+    
+    These new units come in three categories:
+    - the "large viewport" units (`lvw`, `lvh`, etc.) each represent 1% of one dimension of the
+      size of the visual area of the page when all browser UI elements are in their smallest
+      state (e.g. when the URL bar is collapsed/"squished")
+    - the "small viewport" units (`svw`, `svh`, etc.) each represent 1% of one dimension of the
+      size of the visual area of the page when all browser UI elements are in their largest
+      state (e.g. when the URL bar is expanded/"unsquished")
+    - the "dynamic viewport" units (`dvw`, `dvh`, etc.) each represent 1% of one dimension of
+      the size of the current visual area of the page, which depends on the current state of all
+      browser UI elements
+    
+    This way, developer could use `100svh` to ensure that no matter what state the browser UI
+    elements are in the entire element will always be visible on the screen, or use `100dvh` to
+    respond to browser UI element changes by automatically resizing various elements to always
+    fully take advantage of the available space.
+    
+    Nothing needs to be added to support "dynamic viewport" `dv*` units as there already exists
+    other methods to adjust the visual area of the `WKWebView` without adjusting its `frame`
+    (e.g. `-[WKWebView setBounds:]`, `-[UIScrollView setContentInset:]`, etc.).
+    
+    But for "small viewport" `sv*` units and "large viewport" `lv*` units, however, there is
+    unfortunately no way to tell a `WKWebView` anything like "this is the smallest/largest that
+    this `WKWebView` will ever be", so there's no way to know ahead of time what the size of the
+    visual area would be when all browser UI elements are in their smallest/largest state. As
+    such, this patch adds a new API to allow for `WKWebView` clients to tell WebKit this
+    information ahead of time.
+    
+    Note that there already exists the concept of "default viewport" units (`vw`, `vh`, etc.)
+    that each represent 1% of one dimension of the size of the visual area of the page when all
+    browser UI elements are in their default state. The behavior of these units remain the same,
+    and the value can be changed via the existing `-[WKWebView setFrame:]`.
+    
+    Tests: CSSViewportUnits.NegativeMinimumViewportInset
+           CSSViewportUnits.NegativeMaximumViewportInset
+           CSSViewportUnits.MinimumViewportInsetLargerThanMaximumViewportInset
+           CSSViewportUnits.MinimumViewportInsetLargerThanFrame
+           CSSViewportUnits.MaximumViewportInsetLargerThanFrame
+           CSSViewportUnits.MinimumViewportInset
+           CSSViewportUnits.MaximumViewportInset
+           CSSViewportUnits.MinimumViewportInsetWithZoom
+           CSSViewportUnits.MaximumViewportInsetWithZoom
+           CSSViewportUnits.MinimumViewportInsetWithWritingMode
+           CSSViewportUnits.MaximumViewportInsetWithWritingMode
+           CSSViewportUnits.MinimumViewportInsetWithFrame
+           CSSViewportUnits.MaximumViewportInsetWithFrame
+           CSSViewportUnits.MinimumViewportInsetWithBounds
+           CSSViewportUnits.MaximumViewportInsetWithBounds
+           CSSViewportUnits.MinimumViewportInsetWithContentInset
+           CSSViewportUnits.MaximumViewportInsetWithContentInset
+           CSSViewportUnits.MinimumViewportInsetWithSafeAreaInsets
+           CSSViewportUnits.MaximumViewportInsetWithSafeAreaInsets
+           CSSViewportUnits.UnobscuredSizeOverridesIgnoreMaximumViewportInsetAPI
+    
+    * UIProcess/API/Cocoa/WKWebViewInternal.h:
+    * UIProcess/API/Cocoa/WKWebView.h:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _recalculateViewportSizesWithMinimumViewportInset:maximumViewportInset:throwOnInvalidInput:]): Added.
+    (-[WKWebView setMinimumViewportInset:maximumViewportInset:]): Added.
+    * UIProcess/API/ios/WKWebViewIOS.mm:
+    (-[WKWebView _processWillSwapOrDidExit]):
+    (-[WKWebView _frameOrBoundsChanged]):
+    (-[WKWebView _didCompleteAnimatedResize]):
+    (-[WKWebView _setMinimumUnobscuredSizeOverride:]):
+    (-[WKWebView _setMaximumUnobscuredSizeOverride:]):
+    (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+    (-[WKWebView _dispatchSetMinimumUnobscuredSize:]): Deleted.
+    (-[WKWebView _dispatchSetMaximumUnobscuredSize:]): Deleted.
+    Recalculate the size for CSS "small viewport" `sv*` units whenever the `frame` changes. Also
+    move the deduplication logic that prevents the same value from being sent to the WebProcess
+    more than once to the setter methods on `WebPageProxy` so that it can be used by more than
+    just iOS-only codepaths.
+    
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::setDefaultUnobscuredSize): Added.
+    (WebKit::WebPageProxy::setMinimumUnobscuredSize): Added.
+    (WebKit::WebPageProxy::setMaximumUnobscuredSize): Added.
+    (WebKit::WebPageProxy::creationParameters):
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+    (WebKit::WebPageProxy::setMinimumUnobscuredSize): Deleted.
+    (WebKit::WebPageProxy::setMaximumUnobscuredSize): Deleted.
+    * Shared/WebPageCreationParameters.h:
+    * Shared/WebPageCreationParameters.cpp:
+    (WebKit::WebPageCreationParameters::encode const):
+    (WebKit::WebPageCreationParameters::decode):
+    * WebProcess/WebPage/WebPage.messages.in:
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::WebPage):
+    (WebKit::WebPage::setViewportSizeForCSSViewportUnits):
+    (WebKit::WebPage::setDefaultUnobscuredSize): Added.
+    (WebKit::WebPage::setMinimumUnobscuredSize): Added.
+    (WebKit::WebPage::setMaximumUnobscuredSize): Added.
+    (WebKit::WebPage::updateSizeForCSSDefaultViewportUnits): Added.
+    (WebKit::WebPage::updateSizeForCSSSmallViewportUnits): Added.
+    (WebKit::WebPage::updateSizeForCSSLargeViewportUnits): Added.
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::WebPage::viewportConfigurationChanged):
+    (WebKit::WebPage::setMinimumUnobscuredSize): Deleted.
+    (WebKit::WebPage::setMaximumUnobscuredSize): Deleted.
+    (WebKit::WebPage::updateViewportSizeForCSSViewportUnits): Deleted.
+    Add all the various methods for getting/setting/overriding/clearing an override value for
+    CSS "default viewport" `v*` units. This allows for `WKWebView` clients to preserve existing
+    behavior (where CSS "default viewport" `v*` units match the size of the `WKWebView`) while
+    adding supporting CSS "small viewport" `sv*` units and CSS "large viewport" `lv*` units.
+    Move iOS-only code to be for all platforms.
+    
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+    Propagate all viewport size overrides when a new `FrameView` is created.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/CSSViewportUnits.mm:
+    (TEST.CSSViewportUnits.NegativeMinimumViewportInset): Added.
+    (TEST.CSSViewportUnits.NegativeMaximumViewportInset): Added.
+    (TEST.CSSViewportUnits.MinimumViewportInsetLargerThanMaximumViewportInset): Added.
+    (TEST.CSSViewportUnits.MinimumViewportInsetLargerThanFrame): Added.
+    (TEST.CSSViewportUnits.MaximumViewportInsetLargerThanFrame): Added.
+    (TEST.CSSViewportUnits.MinimumViewportInset): Added.
+    (TEST.CSSViewportUnits.MaximumViewportInset): Added.
+    (TEST.CSSViewportUnits.MinimumViewportInsetWithZoom): Added.
+    (TEST.CSSViewportUnits.MaximumViewportInsetWithZoom): Added.
+    (TEST.CSSViewportUnits.MinimumViewportInsetWithWritingMode): Added.
+    (TEST.CSSViewportUnits.MaximumViewportInsetWithWritingMode): Added.
+    (TEST.CSSViewportUnits.MinimumViewportInsetWithFrame): Added.
+    (TEST.CSSViewportUnits.MaximumViewportInsetWithFrame): Added.
+    (TEST.CSSViewportUnits.MinimumViewportInsetWithBounds): Added.
+    (TEST.CSSViewportUnits.MaximumViewportInsetWithBounds): Added.
+    (TEST.CSSViewportUnits.MinimumViewportInsetWithContentInset): Added.
+    (TEST.CSSViewportUnits.MaximumViewportInsetWithContentInset): Added.
+    (TEST.CSSViewportUnits.MinimumViewportInsetWithSafeAreaInsets): Added.
+    (TEST.CSSViewportUnits.MaximumViewportInsetWithSafeAreaInsets): Added.
+    (TEST.CSSViewportUnits.UnobscuredSizeOverridesIgnoreMaximumViewportInsetAPI): Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291980 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-28  Devin Rousso  <drousso@apple.com>
+
+            [iOS] Add `WKWebView` API to control CSS "small viewport" `sv*` and "large viewport" `lv*` units
+            https://bugs.webkit.org/show_bug.cgi?id=237979
+            <rdar://problem/89434696>
+
+            Reviewed by Tim Horton.
+
+            Recently the W3C CSS working group added [some new unit types to CSS](https://drafts.csswg.org/css-values-4/#viewport-variants)
+            with the goal of helping web developers better deal with browsers that have dynamic UI
+            elements that change apperance/size/etc. based on user actions (e.g. the URL bar
+            collapsing/"squishing" and expanding/"unsquishing" depending on whether the user has most
+            recently scrolled/swiped down the page).
+
+            These new units come in three categories:
+            - the "large viewport" units (`lvw`, `lvh`, etc.) each represent 1% of one dimension of the
+              size of the visual area of the page when all browser UI elements are in their smallest
+              state (e.g. when the URL bar is collapsed/"squished")
+            - the "small viewport" units (`svw`, `svh`, etc.) each represent 1% of one dimension of the
+              size of the visual area of the page when all browser UI elements are in their largest
+              state (e.g. when the URL bar is expanded/"unsquished")
+            - the "dynamic viewport" units (`dvw`, `dvh`, etc.) each represent 1% of one dimension of
+              the size of the current visual area of the page, which depends on the current state of all
+              browser UI elements
+
+            This way, developer could use `100svh` to ensure that no matter what state the browser UI
+            elements are in the entire element will always be visible on the screen, or use `100dvh` to
+            respond to browser UI element changes by automatically resizing various elements to always
+            fully take advantage of the available space.
+
+            Nothing needs to be added to support "dynamic viewport" `dv*` units as there already exists
+            other methods to adjust the visual area of the `WKWebView` without adjusting its `frame`
+            (e.g. `-[WKWebView setBounds:]`, `-[UIScrollView setContentInset:]`, etc.).
+
+            But for "small viewport" `sv*` units and "large viewport" `lv*` units, however, there is
+            unfortunately no way to tell a `WKWebView` anything like "this is the smallest/largest that
+            this `WKWebView` will ever be", so there's no way to know ahead of time what the size of the
+            visual area would be when all browser UI elements are in their smallest/largest state. As
+            such, this patch adds a new API to allow for `WKWebView` clients to tell WebKit this
+            information ahead of time.
+
+            Note that there already exists the concept of "default viewport" units (`vw`, `vh`, etc.)
+            that each represent 1% of one dimension of the size of the visual area of the page when all
+            browser UI elements are in their default state. The behavior of these units remain the same,
+            and the value can be changed via the existing `-[WKWebView setFrame:]`.
+
+            Tests: CSSViewportUnits.NegativeMinimumViewportInset
+                   CSSViewportUnits.NegativeMaximumViewportInset
+                   CSSViewportUnits.MinimumViewportInsetLargerThanMaximumViewportInset
+                   CSSViewportUnits.MinimumViewportInsetLargerThanFrame
+                   CSSViewportUnits.MaximumViewportInsetLargerThanFrame
+                   CSSViewportUnits.MinimumViewportInset
+                   CSSViewportUnits.MaximumViewportInset
+                   CSSViewportUnits.MinimumViewportInsetWithZoom
+                   CSSViewportUnits.MaximumViewportInsetWithZoom
+                   CSSViewportUnits.MinimumViewportInsetWithWritingMode
+                   CSSViewportUnits.MaximumViewportInsetWithWritingMode
+                   CSSViewportUnits.MinimumViewportInsetWithFrame
+                   CSSViewportUnits.MaximumViewportInsetWithFrame
+                   CSSViewportUnits.MinimumViewportInsetWithBounds
+                   CSSViewportUnits.MaximumViewportInsetWithBounds
+                   CSSViewportUnits.MinimumViewportInsetWithContentInset
+                   CSSViewportUnits.MaximumViewportInsetWithContentInset
+                   CSSViewportUnits.MinimumViewportInsetWithSafeAreaInsets
+                   CSSViewportUnits.MaximumViewportInsetWithSafeAreaInsets
+                   CSSViewportUnits.UnobscuredSizeOverridesIgnoreMaximumViewportInsetAPI
+
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            * UIProcess/API/Cocoa/WKWebView.h:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _recalculateViewportSizesWithMinimumViewportInset:maximumViewportInset:throwOnInvalidInput:]): Added.
+            (-[WKWebView setMinimumViewportInset:maximumViewportInset:]): Added.
+            * UIProcess/API/ios/WKWebViewIOS.mm:
+            (-[WKWebView _processWillSwapOrDidExit]):
+            (-[WKWebView _frameOrBoundsChanged]):
+            (-[WKWebView _didCompleteAnimatedResize]):
+            (-[WKWebView _setMinimumUnobscuredSizeOverride:]):
+            (-[WKWebView _setMaximumUnobscuredSizeOverride:]):
+            (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+            (-[WKWebView _dispatchSetMinimumUnobscuredSize:]): Deleted.
+            (-[WKWebView _dispatchSetMaximumUnobscuredSize:]): Deleted.
+            Recalculate the size for CSS "small viewport" `sv*` units whenever the `frame` changes. Also
+            move the deduplication logic that prevents the same value from being sent to the WebProcess
+            more than once to the setter methods on `WebPageProxy` so that it can be used by more than
+            just iOS-only codepaths.
+
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::setDefaultUnobscuredSize): Added.
+            (WebKit::WebPageProxy::setMinimumUnobscuredSize): Added.
+            (WebKit::WebPageProxy::setMaximumUnobscuredSize): Added.
+            (WebKit::WebPageProxy::creationParameters):
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+            (WebKit::WebPageProxy::setMinimumUnobscuredSize): Deleted.
+            (WebKit::WebPageProxy::setMaximumUnobscuredSize): Deleted.
+            * Shared/WebPageCreationParameters.h:
+            * Shared/WebPageCreationParameters.cpp:
+            (WebKit::WebPageCreationParameters::encode const):
+            (WebKit::WebPageCreationParameters::decode):
+            * WebProcess/WebPage/WebPage.messages.in:
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::WebPage):
+            (WebKit::WebPage::setViewportSizeForCSSViewportUnits):
+            (WebKit::WebPage::setDefaultUnobscuredSize): Added.
+            (WebKit::WebPage::setMinimumUnobscuredSize): Added.
+            (WebKit::WebPage::setMaximumUnobscuredSize): Added.
+            (WebKit::WebPage::updateSizeForCSSDefaultViewportUnits): Added.
+            (WebKit::WebPage::updateSizeForCSSSmallViewportUnits): Added.
+            (WebKit::WebPage::updateSizeForCSSLargeViewportUnits): Added.
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::WebPage::viewportConfigurationChanged):
+            (WebKit::WebPage::setMinimumUnobscuredSize): Deleted.
+            (WebKit::WebPage::setMaximumUnobscuredSize): Deleted.
+            (WebKit::WebPage::updateViewportSizeForCSSViewportUnits): Deleted.
+            Add all the various methods for getting/setting/overriding/clearing an override value for
+            CSS "default viewport" `v*` units. This allows for `WKWebView` clients to preserve existing
+            behavior (where CSS "default viewport" `v*` units match the size of the `WKWebView`) while
+            adding supporting CSS "small viewport" `sv*` units and CSS "large viewport" `lv*` units.
+            Move iOS-only code to be for all platforms.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+            Propagate all viewport size overrides when a new `FrameView` is created.
+
+2022-03-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r291979. rdar://problem/90616651
 
     Support ServiceWorkerClients.openWindow.
