@@ -1,3 +1,10 @@
+2022-03-27  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified buildfix
+        https://bugs.webkit.org/show_bug.cgi?id=238436
+
+        * workers/service/ServiceWorkerWindowClient.cpp:
+
 2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
 
         Preserve repeat() notation for grid-templates

@@ -32,6 +32,7 @@
 #include "JSServiceWorkerWindowClient.h"
 #include "SWContextManager.h"
 #include "ServiceWorkerClients.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerThread.h"
 
 namespace WebCore {

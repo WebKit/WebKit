@@ -35,6 +35,8 @@
 #include "NetworkProcessConnection.h"
 #include "NetworkProcessMessages.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebPage.h"
+#include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include "WebProcessPoolMessages.h"
 #include "WebSWOriginTable.h"

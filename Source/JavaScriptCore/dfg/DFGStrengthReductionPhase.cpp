@@ -33,6 +33,7 @@
 #include "DFGClobberize.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
+#include "DFGJITCode.h"
 #include "DFGPhase.h"
 #include "MathCommon.h"
 #include "RegExpObject.h"

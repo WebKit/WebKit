@@ -1,3 +1,10 @@
+2022-03-27  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified buildfix
+        https://bugs.webkit.org/show_bug.cgi?id=238436
+
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+
 2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use static_assert instead of COMPILE_ASSERT
