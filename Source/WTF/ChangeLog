@@ -1,3 +1,14 @@
+2022-03-28  Brady Eidson  <beidson@apple.com>
+
+        Support ServiceWorkerClients.openWindow.
+        <rdar://90616651> and https://bugs.webkit.org/show_bug.cgi?id=238400
+
+        Reviewed by Youenn Fablet.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup): Relax this value size requirement for now.
+        The required refactoring is best left as a seperate task with a seperate patch.
+
 2022-03-28  Chris Dumez  <cdumez@apple.com>
 
         Use StringView for Yarr / RegularExpression parsing

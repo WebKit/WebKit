@@ -379,6 +379,8 @@ public:
     void clearServiceWorkerNotification(const UUID& notificationID);
     void didDestroyServiceWorkerNotification(const UUID& notificationID);
 
+    void openWindowFromServiceWorker(const String& urlString, const WebCore::SecurityOriginData& serviceWorkerOrigin, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)

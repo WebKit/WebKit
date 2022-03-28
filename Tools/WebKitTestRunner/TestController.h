@@ -378,6 +378,8 @@ public:
     bool denyNotificationPermission(WKStringRef origin);
     bool denyNotificationPermissionOnPrompt(WKStringRef origin);
 
+    PlatformWebView* createOtherPlatformWebView(PlatformWebView* parentView, WKPageConfigurationRef, WKNavigationActionRef, WKWindowFeaturesRef);
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;

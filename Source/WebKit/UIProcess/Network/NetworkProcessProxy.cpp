@@ -1798,6 +1798,16 @@ void NetworkProcessProxy::terminateRemoteWorkerContextConnectionWhenPossible(Rem
     send(Messages::NetworkProcess::TerminateRemoteWorkerContextConnectionWhenPossible(workerType, sessionID, registrableDomain, processIdentifier), 0);
 }
 
+void NetworkProcessProxy::openWindowFromServiceWorker(PAL::SessionID sessionID, const String& urlString, const WebCore::SecurityOriginData& serviceWorkerOrigin, CompletionHandler<void(std::optional<WebCore::PageIdentifier>&&)>&& callback)
+{
+    if (auto* store = websiteDataStoreFromSessionID(sessionID)) {
+        store->openWindowFromServiceWorker(urlString, serviceWorkerOrigin, WTFMove(callback));
+        return;
+    }
+
+    callback(std::nullopt);
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

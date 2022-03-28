@@ -102,6 +102,7 @@ private:
 
     void connectionIsNoLongerNeeded() final;
     void terminateDueToUnresponsiveness() final;
+    void openWindow(WebCore::ServiceWorkerIdentifier, const String& urlString, CompletionHandler<void(std::optional<WebCore::PageIdentifier>&&)>&&) final;
 
     void connectionClosed();
 

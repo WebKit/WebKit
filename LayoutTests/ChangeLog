@@ -1,3 +1,30 @@
+2022-03-28  Brady Eidson  <beidson@apple.com>
+
+        Support ServiceWorkerClients.openWindow.
+        <rdar://90616651> and https://bugs.webkit.org/show_bug.cgi?id=238400
+
+        Reviewed by Youenn Fablet.
+
+        WKTR knows how to openWindow() now.
+        
+        So test:
+        - The success case
+        - Failure due to a disallowed URL
+        - Failure due to a lack of a related user gesture.
+        
+        * http/tests/workers/service/openwindow-from-notification-click-expected.txt: Added.
+        * http/tests/workers/service/openwindow-from-notification-click.html: Added.
+        * http/tests/workers/service/resources/openwindow-client.html: Added.
+        * http/tests/workers/service/resources/shownotification-openwindow-worker.js: Added.
+        (async const):
+        (let.messageClients):
+        (clients.openWindow.string_appeared_here.then.async client):
+        (catch.async error):
+        (async event):
+        (async tryShow):
+        (async getNotes):
+        * platform/gtk/TestExpectations:
+
 2022-03-28  Ziran Sun  <zsun@igalia.com>
 
         [Forms] Alias appearance <compat-auto> keywords to 'auto' for button

@@ -332,6 +332,11 @@ void WebSWContextManagerConnection::matchAllCompleted(uint64_t requestIdentifier
         callback(WTFMove(clientsData));
 }
 
+void WebSWContextManagerConnection::openWindow(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, const String& url, CompletionHandler<void(std::optional<WebCore::PageIdentifier>&&)>&& callback)
+{
+    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::WebSWServerToContextConnection::OpenWindow { serviceWorkerIdentifier, url }, WTFMove(callback));
+}
+
 void WebSWContextManagerConnection::claim(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&& callback)
 {
     m_connectionToNetworkProcess->sendWithAsyncReply(Messages::WebSWServerToContextConnection::Claim { serviceWorkerIdentifier }, [callback = WTFMove(callback)](auto&& result) mutable {

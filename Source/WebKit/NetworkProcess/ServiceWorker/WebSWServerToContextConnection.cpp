@@ -157,6 +157,27 @@ void WebSWServerToContextConnection::terminateDueToUnresponsiveness()
     m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateUnresponsiveServiceWorkerProcesses { webProcessIdentifier() }, 0);
 }
 
+void WebSWServerToContextConnection::openWindow(WebCore::ServiceWorkerIdentifier identifier, const String& urlString, CompletionHandler<void(std::optional<WebCore::PageIdentifier>&&)>&& callback)
+{
+    auto* server = this->server();
+    if (!server) {
+        callback(std::nullopt);
+        return;
+    }
+
+    auto* worker = server->workerByID(identifier);
+    if (!worker) {
+        callback(std::nullopt);
+        return;
+    }
+
+    auto innerCallback = [callback = WTFMove(callback)](std::optional<WebCore::PageIdentifier>&& pageIdentifier) mutable {
+        callback(WTFMove(pageIdentifier));
+    };
+
+    m_connection.networkProcess().parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::OpenWindowFromServiceWorker { server->sessionID(), urlString, worker->origin().clientOrigin }, WTFMove(innerCallback));
+}
+
 void WebSWServerToContextConnection::matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>& clientsData)
 {
     send(Messages::WebSWContextManagerConnection::MatchAllCompleted { requestIdentifier, clientsData });

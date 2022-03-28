@@ -2081,6 +2081,14 @@ public:
 
     void interactableRegionsInRootViewCoordinates(WebCore::FloatRect, CompletionHandler<void(Vector<WebCore::FloatRect>)>&&);
 
+#if ENABLE(SERVICE_WORKER)
+    void setServiceWorkerOpenWindowCompletionCallback(CompletionHandler<void(bool)>&& completionCallback)
+    {
+        ASSERT(!m_serviceWorkerOpenWindowCompletionCallback);
+        m_serviceWorkerOpenWindowCompletionCallback = WTFMove(completionCallback);
+    }
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2607,7 +2615,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     void didFinishServiceWorkerPageRegistration(bool success);
 #endif
-    void callServiceWorkerLaunchCompletionHandlerIfNecessary();
+    void callLoadCompletionHandlersIfNecessary(bool success);
 
 #if PLATFORM(IOS_FAMILY)
     static bool isInHardwareKeyboardMode();
@@ -3119,6 +3127,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     bool m_isServiceWorkerPage { false };
     CompletionHandler<void(bool)> m_serviceWorkerLaunchCompletionHandler;
+    CompletionHandler<void(bool)> m_serviceWorkerOpenWindowCompletionCallback;
 #endif
 
     RunLoop::Timer<WebPageProxy> m_tryCloseTimeoutTimer;

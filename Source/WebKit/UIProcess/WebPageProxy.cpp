@@ -4870,7 +4870,7 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
         if (navigation)
             navigation->setClientNavigationActivity(nullptr);
 
-        callServiceWorkerLaunchCompletionHandlerIfNecessary();
+        callLoadCompletionHandlersIfNecessary(false);
     }
 
     frame.didFailProvisionalLoad();
@@ -4905,12 +4905,15 @@ void WebPageProxy::didFinishServiceWorkerPageRegistration(bool success)
 }
 #endif
 
-void WebPageProxy::callServiceWorkerLaunchCompletionHandlerIfNecessary()
+void WebPageProxy::callLoadCompletionHandlersIfNecessary(bool success)
 {
 #if ENABLE(SERVICE_WORKER)
-    if (m_isServiceWorkerPage && m_serviceWorkerLaunchCompletionHandler)
+    if (m_isServiceWorkerPage && m_serviceWorkerLaunchCompletionHandler && !success)
         m_serviceWorkerLaunchCompletionHandler(false);
 #endif
+
+    if (m_serviceWorkerOpenWindowCompletionCallback)
+        m_serviceWorkerOpenWindowCompletionCallback(success);
 }
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
@@ -5134,6 +5137,8 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
         resetRecentCrashCountSoon();
 
         notifyProcessPoolToPrewarm();
+
+        callLoadCompletionHandlersIfNecessary(true);
     }
 
     m_isLoadingAlternateHTMLStringForFailingProvisionalLoad = false;
@@ -5182,7 +5187,7 @@ void WebPageProxy::didFailLoadForFrame(FrameIdentifier frameID, FrameInfoData&& 
         if (navigation)
             navigation->setClientNavigationActivity(nullptr);
 
-        callServiceWorkerLaunchCompletionHandlerIfNecessary();
+        callLoadCompletionHandlersIfNecessary(false);
     }
 }
 
@@ -8018,7 +8023,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
     if (resetStateReason != ResetStateReason::NavigationSwap)
-        callServiceWorkerLaunchCompletionHandlerIfNecessary();
+        callLoadCompletionHandlersIfNecessary(false);
 
     if (m_openPanelResultListener) {
         m_openPanelResultListener->invalidate();

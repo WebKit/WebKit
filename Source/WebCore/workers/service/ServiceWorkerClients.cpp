@@ -90,10 +90,76 @@ void ServiceWorkerClients::matchAll(ScriptExecutionContext& context, const Clien
     });
 }
 
-void ServiceWorkerClients::openWindow(ScriptExecutionContext&, const String& url, Ref<DeferredPromise>&& promise)
+static void matchWindowWithPageIdentifier(ServiceWorkerIdentifier serviceWorkerIdentifier, PageIdentifier pageIdentifier, CompletionHandler<void(ServiceWorkerGlobalScope&, std::optional<ServiceWorkerClientData>)>&& callback)
 {
-    UNUSED_PARAM(url);
-    promise->reject(Exception { NotSupportedError, "clients.openWindow() is not yet supported"_s });
+    callOnMainThread([serviceWorkerIdentifier, pageIdentifier, callback = WTFMove(callback)] () mutable {
+        auto connection = SWContextManager::singleton().connection();
+        auto options = ServiceWorkerClientQueryOptions { true, ServiceWorkerClientType::Window };
+        connection->matchAll(serviceWorkerIdentifier, options, [serviceWorkerIdentifier, pageIdentifier, callback = WTFMove(callback)] (Vector<ServiceWorkerClientData>&& clientsData) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [pageIdentifier, callback = WTFMove(callback), clientsData = crossThreadCopy(WTFMove(clientsData))] (auto& scope) mutable {
+                for (auto& data : clientsData) {
+                    if (data.pageIdentifier == pageIdentifier) {
+                        callback(scope, data);
+                        return;
+                    }
+                }
+
+                callback(scope, std::nullopt);
+            });
+        });
+    });
+}
+
+void ServiceWorkerClients::openWindow(ScriptExecutionContext& context, const String& urlString, Ref<DeferredPromise>&& promise)
+{
+    LOG(ServiceWorker, "WebProcess %i service worker calling openWindow to URL %s", getpid(), urlString.utf8().data());
+
+    auto serviceWorkerIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
+    auto url = context.completeURL(urlString);
+
+    if (context.settingsValues().serviceWorkersUserGestureEnabled && !downcast<ServiceWorkerGlobalScope>(context).isProcessingUserGesture()) {
+        promise->reject(Exception { InvalidAccessError, "ServiceWorkerClients.openWindow() requires a user gesture"_s });
+        return;
+    }
+
+    if (!url.isValid()) {
+        promise->reject(Exception { TypeError, makeString("URL string ", urlString, " cannot successfully be parsed"_s) });
+        return;
+    }
+
+    if (url.protocolIsAbout()) {
+        promise->reject(Exception { TypeError, makeString("ServiceWorkerClients.openWindow() cannot be called with URL "_s, url.string()) });
+        return;
+    }
+
+    callOnMainThread([promiseIdentifier = addPendingPromise(WTFMove(promise)), serviceWorkerIdentifier, url = url.isolatedCopy()] () mutable {
+        auto connection = SWContextManager::singleton().connection();
+        connection->openWindow(serviceWorkerIdentifier, url.string(), [promiseIdentifier, serviceWorkerIdentifier] (std::optional<PageIdentifier>&& pageIdentifier) mutable {
+            SWContextManager::singleton().postTaskToServiceWorker(serviceWorkerIdentifier, [promiseIdentifier, pageIdentifier = WTFMove(pageIdentifier), serviceWorkerIdentifier] (ServiceWorkerGlobalScope& scope) mutable {
+                LOG(ServiceWorker, "WebProcess %i finished ServiceWorkerClients::openWindow call. Resulting page identifier is %s", getpid(), pageIdentifier ? pageIdentifier->loggingString().utf8().data() : "<NONE>");
+
+                if (!pageIdentifier) {
+                    if (auto promise = scope.clients().takePendingPromise(promiseIdentifier))
+                        promise->resolveWithJSValue(JSC::jsNull());
+                    return;
+                }
+
+                matchWindowWithPageIdentifier(serviceWorkerIdentifier, *pageIdentifier, [promiseIdentifier] (auto& scope, std::optional<ServiceWorkerClientData> clientData) mutable {
+                    auto promise = scope.clients().takePendingPromise(promiseIdentifier);
+                    if (!promise)
+                        return;
+
+                    if (!clientData) {
+                        promise->resolveWithJSValue(JSC::jsNull());
+                        return;
+                    }
+
+                    auto client = ServiceWorkerClient::create(scope, WTFMove(*clientData));
+                    promise->template resolve<IDLInterface<ServiceWorkerClient>>(WTFMove(client));
+                });
+            });
+        });
+    });
 }
 
 void ServiceWorkerClients::claim(ScriptExecutionContext& context, Ref<DeferredPromise>&& promise)

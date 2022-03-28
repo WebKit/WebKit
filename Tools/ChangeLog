@@ -1,3 +1,22 @@
+2022-03-28  Brady Eidson  <beidson@apple.com>
+
+        Support ServiceWorkerClients.openWindow.
+        <rdar://90616651> and https://bugs.webkit.org/show_bug.cgi?id=238400
+
+        Reviewed by Youenn Fablet.
+
+        Implement the new delegate to create the new view.
+        
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createOtherPlatformWebView):
+        * WebKitTestRunner/TestController.h:
+        
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::platformCreateOtherPage):
+        * WebKitTestRunner/cocoa/TestWebsiteDataStoreDelegate.mm:
+        (-[TestWebsiteDataStoreDelegate websiteDataStore:openWindow:fromServiceWorkerOrigin:completionHandler:]):
+
 2022-03-28  Noam Rosenthal  <noam@webkit.org>
 
         Issues with WPT exporter

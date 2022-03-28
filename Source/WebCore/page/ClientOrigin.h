@@ -50,6 +50,8 @@ struct ClientOrigin {
 
     SecurityOriginData topOrigin;
     SecurityOriginData clientOrigin;
+
+    String loggingString() const { return makeString(topOrigin.toString(), "-", clientOrigin.toString()); }
 };
 
 inline void add(Hasher& hasher, const ClientOrigin& origin)
