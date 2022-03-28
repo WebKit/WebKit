@@ -1,5 +1,11 @@
 2022-03-28  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, address post-landing review comment from Darin after r291972.
+
+        * yarr/YarrJIT.cpp:
+
+2022-03-28  Chris Dumez  <cdumez@apple.com>
+
         Use StringView for Yarr / RegularExpression parsing
         https://bugs.webkit.org/show_bug.cgi?id=238420
 

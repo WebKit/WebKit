@@ -4652,7 +4652,7 @@ private:
 
     StackCheck* m_compilationThreadStackChecker { nullptr };
     YarrPattern& m_pattern;
-    StringView m_patternString;
+    const StringView m_patternString;
 
     CharSize m_charSize;
     JITCompileMode m_compileMode;
