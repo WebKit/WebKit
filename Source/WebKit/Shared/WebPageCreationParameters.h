@@ -88,6 +88,10 @@ struct WebPageCreationParameters {
     bool useFixedLayout;
     WebCore::IntSize fixedLayoutSize;
 
+    WebCore::FloatSize defaultUnobscuredSize;
+    WebCore::FloatSize minimumUnobscuredSize;
+    WebCore::FloatSize maximumUnobscuredSize;
+
     std::optional<WebCore::FloatRect> viewExposedRect;
 
     bool alwaysShowsHorizontalScroller;
@@ -169,8 +173,6 @@ struct WebPageCreationParameters {
     WebCore::FloatSize availableScreenSize;
     WebCore::FloatSize overrideScreenSize;
     float textAutosizingWidth;
-    WebCore::FloatSize minimumUnobscuredSize;
-    WebCore::FloatSize maximumUnobscuredSize;
     int32_t deviceOrientation { 0 };
     bool keyboardIsAttached { false };
     bool canShowWhileLocked { false };

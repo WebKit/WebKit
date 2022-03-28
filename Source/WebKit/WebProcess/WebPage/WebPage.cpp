@@ -748,6 +748,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     setUseFixedLayout(parameters.useFixedLayout);
 
+    setDefaultUnobscuredSize(parameters.defaultUnobscuredSize);
+    setMinimumUnobscuredSize(parameters.minimumUnobscuredSize);
+    setMaximumUnobscuredSize(parameters.maximumUnobscuredSize);
+
     setUnderlayColor(parameters.underlayColor);
 
     setPaginationMode(parameters.paginationMode);
@@ -874,8 +878,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
 #if PLATFORM(IOS_FAMILY)
     setViewportConfigurationViewLayoutSize(parameters.viewportConfigurationViewLayoutSize, parameters.viewportConfigurationLayoutSizeScaleFactor, parameters.viewportConfigurationMinimumEffectiveDeviceWidth);
-    setMinimumUnobscuredSize(parameters.minimumUnobscuredSize);
-    setMaximumUnobscuredSize(parameters.maximumUnobscuredSize);
 #endif
 
 #if USE(AUDIO_SESSION)
@@ -2375,6 +2377,81 @@ IntSize WebPage::fixedLayoutSize() const
     if (!view)
         return IntSize();
     return view->fixedLayoutSize();
+}
+
+void WebPage::setDefaultUnobscuredSize(const FloatSize& defaultUnobscuredSize)
+{
+    if (defaultUnobscuredSize == m_defaultUnobscuredSize)
+        return;
+
+    m_defaultUnobscuredSize = defaultUnobscuredSize;
+
+    updateSizeForCSSDefaultViewportUnits();
+}
+
+void WebPage::updateSizeForCSSDefaultViewportUnits()
+{
+    auto* mainFrameView = this->mainFrameView();
+    if (!mainFrameView)
+        return;
+
+    auto defaultUnobscuredSize = m_defaultUnobscuredSize;
+#if ENABLE(META_VIEWPORT)
+    if (defaultUnobscuredSize.isEmpty())
+        defaultUnobscuredSize = m_viewportConfiguration.viewLayoutSize();
+    defaultUnobscuredSize.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
+#endif
+    mainFrameView->setSizeForCSSDefaultViewportUnits(defaultUnobscuredSize);
+}
+
+void WebPage::setMinimumUnobscuredSize(const FloatSize& minimumUnobscuredSize)
+{
+    if (minimumUnobscuredSize == m_minimumUnobscuredSize)
+        return;
+
+    m_minimumUnobscuredSize = minimumUnobscuredSize;
+
+    updateSizeForCSSSmallViewportUnits();
+}
+
+void WebPage::updateSizeForCSSSmallViewportUnits()
+{
+    auto* mainFrameView = this->mainFrameView();
+    if (!mainFrameView)
+        return;
+
+    auto minimumUnobscuredSize = m_minimumUnobscuredSize;
+#if ENABLE(META_VIEWPORT)
+    if (minimumUnobscuredSize.isEmpty())
+        minimumUnobscuredSize = m_viewportConfiguration.viewLayoutSize();
+    minimumUnobscuredSize.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
+#endif
+    mainFrameView->setSizeForCSSSmallViewportUnits(minimumUnobscuredSize);
+}
+
+void WebPage::setMaximumUnobscuredSize(const FloatSize& maximumUnobscuredSize)
+{
+    if (maximumUnobscuredSize == m_maximumUnobscuredSize)
+        return;
+
+    m_maximumUnobscuredSize = maximumUnobscuredSize;
+
+    updateSizeForCSSLargeViewportUnits();
+}
+
+void WebPage::updateSizeForCSSLargeViewportUnits()
+{
+    auto* mainFrameView = this->mainFrameView();
+    if (!mainFrameView)
+        return;
+
+    auto maximumUnobscuredSize = m_maximumUnobscuredSize;
+#if ENABLE(META_VIEWPORT)
+    if (maximumUnobscuredSize.isEmpty())
+        maximumUnobscuredSize = m_viewportConfiguration.viewLayoutSize();
+    maximumUnobscuredSize.scale(1 / m_viewportConfiguration.initialScaleIgnoringContentSize());
+#endif
+    mainFrameView->setSizeForCSSLargeViewportUnits(maximumUnobscuredSize);
 }
 
 void WebPage::disabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>& disabledAdaptations)
@@ -6284,7 +6361,7 @@ void WebPage::setViewportSizeForCSSViewportUnits(std::optional<WebCore::FloatSiz
 
     m_viewportSizeForCSSViewportUnits = viewportSize;
     if (m_viewportSizeForCSSViewportUnits)
-        corePage()->mainFrame().view()->setSizeForCSSLargeViewportUnits(*m_viewportSizeForCSSViewportUnits);
+        corePage()->mainFrame().view()->setSizeForCSSDefaultViewportUnits(*m_viewportSizeForCSSViewportUnits);
 }
 
 bool WebPage::isSmartInsertDeleteEnabled()

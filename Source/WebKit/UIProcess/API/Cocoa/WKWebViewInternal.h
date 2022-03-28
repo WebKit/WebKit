@@ -59,6 +59,14 @@
 #define WK_WEB_VIEW_PROTOCOLS
 #endif
 
+#if USE(APPKIT)
+using CocoaEdgeInsets = NSEdgeInsets;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+using CocoaEdgeInsets = UIEdgeInsets;
+#endif
+
 typedef const struct OpaqueWKPage* WKPageRef;
 
 namespace API {
@@ -132,6 +140,11 @@ class ViewGestureController;
     _WKRenderingProgressEvents _observedRenderingProgressEvents;
     BOOL _usePlatformFindUI;
 
+#if PLATFORM(IOS_FAMILY)
+    CocoaEdgeInsets _minimumViewportInset;
+    CocoaEdgeInsets _maximumViewportInset;
+#endif
+
 #if PLATFORM(MAC)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
@@ -161,9 +174,7 @@ class ViewGestureController;
     std::optional<CGSize> _viewLayoutSizeOverride;
     std::optional<WebCore::FloatSize> _lastSentViewLayoutSize;
     std::optional<CGSize> _minimumUnobscuredSizeOverride;
-    std::optional<WebCore::FloatSize> _lastSentMinimumUnobscuredSize;
     std::optional<CGSize> _maximumUnobscuredSizeOverride;
-    std::optional<WebCore::FloatSize> _lastSentMaximumUnobscuredSize;
     CGRect _inputViewBoundsInWindow;
 
     CGFloat _viewportMetaTagWidth;
@@ -278,6 +289,8 @@ class ViewGestureController;
 #endif
 
 - (void)_internalDoAfterNextPresentationUpdate:(void (^)(void))updateBlock withoutWaitingForPainting:(BOOL)withoutWaitingForPainting withoutWaitingForAnimatedResize:(BOOL)withoutWaitingForAnimatedResize;
+
+- (void)_recalculateViewportSizesWithMinimumViewportInset:(CocoaEdgeInsets)minimumViewportInset maximumViewportInset:(CocoaEdgeInsets)maximumViewportInset throwOnInvalidInput:(BOOL)throwOnInvalidInput;
 
 - (void)_showSafeBrowsingWarning:(const WebKit::SafeBrowsingWarning&)warning completionHandler:(CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&&)completionHandler;
 - (void)_clearSafeBrowsingWarning;

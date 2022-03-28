@@ -272,6 +272,9 @@ void WebPageProxy::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, co
     hideValidationMessage();
 
     m_viewportConfigurationViewLayoutSize = viewLayoutSize;
+    m_defaultUnobscuredSize = maximumUnobscuredSize;
+    m_minimumUnobscuredSize = minimumUnobscuredSize;
+    m_maximumUnobscuredSize = maximumUnobscuredSize;
     m_process->send(Messages::WebPage::DynamicViewportSizeUpdate(viewLayoutSize,
         minimumUnobscuredSize, maximumUnobscuredSize, targetExposedContentRect, targetUnobscuredRect,
         targetUnobscuredRectInScrollViewCoordinates, unobscuredSafeAreaInsets,
@@ -298,22 +301,6 @@ void WebPageProxy::setForceAlwaysUserScalable(bool userScalable)
 
     if (hasRunningProcess())
         m_process->send(Messages::WebPage::SetForceAlwaysUserScalable(userScalable), m_webPageID);
-}
-
-void WebPageProxy::setMinimumUnobscuredSize(const WebCore::FloatSize& size)
-{
-    m_minimumUnobscuredSize = size;
-
-    if (hasRunningProcess())
-        m_process->send(Messages::WebPage::SetMinimumUnobscuredSize(size), m_webPageID);
-}
-
-void WebPageProxy::setMaximumUnobscuredSize(const WebCore::FloatSize& size)
-{
-    m_maximumUnobscuredSize = size;
-
-    if (hasRunningProcess())
-        m_process->send(Messages::WebPage::SetMaximumUnobscuredSize(size), m_webPageID);
 }
 
 void WebPageProxy::setDeviceOrientation(int32_t deviceOrientation)
