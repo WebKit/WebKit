@@ -46,6 +46,9 @@ class Tracker(GenericTracker):
         r'\Aapi.github.{}/repos/{}/{}/issues/(?P<id>\d+)\Z',
     ]
     REFRESH_TOKEN_PROMPT = "Is your API token out of date? Run 'git-webkit setup' to refresh credentials\n"
+    DEFAULT_COMPONENT_COLOR = 'FFFFFF'
+    DEFAULT_VERSION_COLOR = 'EEEEEE'
+
 
     class Encoder(GenericTracker.Encoder):
         @webkitcorepy.decorators.hybridmethod
@@ -63,8 +66,11 @@ class Tracker(GenericTracker):
             return super(Tracker.Encoder, context).default(obj)
 
 
-    def __init__(self, url, users=None, res=None):
+    def __init__(self, url, users=None, res=None, component_color=DEFAULT_COMPONENT_COLOR, version_color=DEFAULT_VERSION_COLOR):
         super(Tracker, self).__init__(users=users)
+
+        self.component_color = component_color
+        self.version_color = version_color
 
         match = self.ROOT_RE.match(url)
         if not match:
@@ -379,14 +385,70 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
     @property
     def projects(self):
-        # FIXME: Should be implemented via tags in GitHub, come up with a standard technique for parsing
-        return dict()
+        result = dict(
+            versions=[],
+            components=dict(),
+        )
+        for name, details in self.labels.items():
+            if details.get('color') == self.component_color:
+                result['components'][name] = details
+            elif details.get('color') == self.version_color:
+                result['versions'].append(name)
 
-    def create(self, title, description, labels=None, assign=True):
+        result['versions'] = list(sorted(result['versions']))
+        if result['versions'] or result['components']:
+            return {self.name: result}
+        return {}
+
+    def create(
+        self, title, description,
+        project=None, component=None, version=None,
+        labels=None, assign=True,
+    ):
         if not title:
             raise ValueError('Must define title to create issue')
         if not description:
             raise ValueError('Must define description to create issue')
+
+        if self.projects:
+            if not project and len(self.projects.keys()) == 1:
+                project = list(self.projects.keys())[0]
+            if project not in self.projects:
+                raise ValueError("'{}' is not a recognized product on {}".format(project, self.url))
+
+            if not component and len(self.projects[project]['components'].keys()) == 1:
+                component = list(self.projects[project]['components'].keys())[0]
+            elif not component:
+                component = webkitcorepy.Terminal.choose(
+                    "What component in '{}' should the bug be associated with?".format(project),
+                    options=sorted(self.projects[project]['components'].keys()), numbered=True,
+                )
+            if component not in self.projects[project]['components']:
+                raise ValueError("'{}' is not a recognized component in '{}'".format(component, project))
+
+            if not version and len(self.projects[project]['versions']) == 1:
+                version = self.projects[project]['versions'][0]
+            elif not version:
+                version = webkitcorepy.Terminal.choose(
+                    "What version of '{}' should the bug be associated with?".format(project),
+                    options=self.projects[project]['versions'], numbered=True,
+                )
+            if version not in self.projects[project]['versions']:
+                raise ValueError("'{}' is not a recognized version for '{}'".format(version, project))
+
+        else:
+            if project:
+                raise ValueError("No 'projects' defined, cannot specify 'project'")
+            if component:
+                raise ValueError("No 'projects' defined, cannot specify 'component'")
+            if version:
+                raise ValueError("No 'projects' defined, cannot specify 'version'")
+
+        labels = labels or []
+        if component:
+            labels.append(component)
+        if version:
+            labels.append(version)
 
         for label in labels or []:
             if label not in self.labels:

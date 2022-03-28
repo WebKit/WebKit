@@ -25,7 +25,7 @@ import json
 import unittest
 
 from webkitbugspy import Issue, Tracker, User, github, mocks
-from webkitcorepy import mocks as wkmocks
+from webkitcorepy import OutputCapture, mocks as wkmocks
 
 
 class TestGitHub(unittest.TestCase):
@@ -268,8 +268,36 @@ class TestGitHub(unittest.TestCase):
             self.assertDictEqual(github.Tracker(self.URL).labels, mocked.DEFAULT_LABELS)
 
     def test_projects(self):
-        with mocks.GitHub(self.URL.split('://')[1]):
-            self.assertDictEqual(github.Tracker(self.URL).projects, dict())
+        self.maxDiff = None
+        with mocks.GitHub(self.URL.split('://')[1], projects=mocks.PROJECTS):
+            self.assertDictEqual(
+                dict(
+                    WebKit=dict(
+                        versions=['All', 'Other', 'Safari 15', 'Safari Technology Preview', 'WebKit Local Build'],
+                        components=dict(
+                            IPv4=dict(
+                                description='Bugs involving IPv4 networking',
+                                color='FFFFFF',
+                            ), IPv6=dict(
+                                description='Bugs involving IPv6 networking',
+                                color='FFFFFF',
+                            ), Scrolling=dict(
+                                description='Bugs related to main thread and off-main thread scrolling',
+                                color='FFFFFF',
+                            ), SVG=dict(
+                                description='For bugs in the SVG implementation.',
+                                color='FFFFFF',
+                            ), Tables=dict(
+                                description='For bugs specific to tables (both the DOM and rendering issues).',
+                                color='FFFFFF',
+                            ), Text=dict(
+                                description='For bugs in text layout and rendering, including international text support.',
+                                color='FFFFFF',
+                            ),
+                        ),
+                    ),
+                ), github.Tracker(self.URL).projects,
+            )
 
     def test_create(self):
         with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, environment=wkmocks.Environment(
@@ -289,3 +317,42 @@ class TestGitHub(unittest.TestCase):
                 User.Encoder().default(created.assignee),
                 dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
             )
+
+    def test_create_projects(self):
+        with mocks.GitHub(self.URL.split('://')[1], issues=mocks.ISSUES, projects=mocks.PROJECTS, environment=wkmocks.Environment(
+            GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+            GITHUB_EXAMPLE_COM_TOKEN='token',
+        )), wkmocks.Terminal.input('3', '2'), OutputCapture() as captured:
+            created = github.Tracker(self.URL).create('New bug', 'Creating new bug')
+            self.assertEqual(created.id, 4)
+            self.assertEqual(created.title, 'New bug')
+            self.assertEqual(created.description, 'Creating new bug')
+            self.assertTrue(created.opened)
+            self.assertEqual(
+                User.Encoder().default(created.creator),
+                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
+            )
+            self.assertEqual(
+                User.Encoder().default(created.assignee),
+                dict(name='Tim Contributor', username='tcontributor', emails=['tcontributor@example.com']),
+            )
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            '''What component in 'WebKit' should the bug be associated with?:
+    1) IPv4
+    2) IPv6
+    3) SVG
+    4) Scrolling
+    5) Tables
+    6) Text
+: 
+What version of 'WebKit' should the bug be associated with?:
+    1) All
+    2) Other
+    3) Safari 15
+    4) Safari Technology Preview
+    5) WebKit Local Build
+: 
+''',
+        )

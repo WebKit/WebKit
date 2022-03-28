@@ -26,7 +26,7 @@ import time
 
 from .base import Base
 
-from webkitbugspy import User, Issue
+from webkitbugspy import User, Issue, github
 from webkitcorepy import mocks
 
 
@@ -41,7 +41,7 @@ class GitHub(Base, mocks.Requests):
         'help wanted': dict(color='008672', description='Extra attention is needed'),
         'invalid': dict(color='e4e669', description="This doesn't seem right"),
         'question': dict(color='d876e3', description='Further information is requested'),
-        'wontfix': dict(color='ffffff', description='This will not be worked on'),
+        'wontfix': dict(color='fefefe', description='This will not be worked on'),
     }
 
     @classmethod
@@ -57,11 +57,11 @@ class GitHub(Base, mocks.Requests):
         from datetime import datetime, timedelta
         return datetime.utcfromtimestamp(timestamp - timedelta(hours=7).seconds).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-    def __init__(self, hostname='github.example.com/WebKit/WebKit', users=None, issues=None, environment=None, labels=None):
+    def __init__(self, hostname='github.example.com/WebKit/WebKit', users=None, issues=None, environment=None, projects=None, labels=None):
         hostname, repo = hostname.split('/', 1)
         self.api_remote = 'api.{hostname}/repos/{repo}'.format(hostname=hostname, repo=repo)
 
-        Base.__init__(self, users=users, issues=issues)
+        Base.__init__(self, users=users, issues=issues, projects=projects)
         mocks.Requests.__init__(self, hostname, 'api.{}'.format(hostname))
 
         prefix = self.hosts[0].replace('.', '_').upper()
@@ -185,13 +185,26 @@ class GitHub(Base, mocks.Requests):
         ], url=url)
 
     def _labels(self, url):
-        return mocks.Response.fromJson([
-            dict(
-                name=name,
-                color=details['color'],
-                description=details['description'],
-            ) for name, details in self.labels.items()
-        ], url=url)
+        result = [dict(
+            name=name,
+            color=details['color'],
+            description=details['description'],
+        ) for name, details in self.labels.items()]
+
+        for project in self.projects.values():
+            for name in project.get('versions', []):
+                result.append(dict(
+                    name=name,
+                    color=github.Tracker.DEFAULT_VERSION_COLOR,
+                ))
+            for name, details in project.get('components', {}).items():
+                result.append(dict(
+                    name=name,
+                    description=details['description'],
+                    color=github.Tracker.DEFAULT_COMPONENT_COLOR,
+                ))
+
+        return mocks.Response.fromJson(list(sorted(result, key=lambda v: v['name'])), url=url)
 
     def _create(self, url, credentials, data):
         user = self.users.get(credentials.username) if credentials else None

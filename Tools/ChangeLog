@@ -1,5 +1,29 @@
 2022-03-28  Jonathan Bedard  <jbedard@apple.com>
 
+        [webkitbugspy] Support component and version in GitHub
+        https://bugs.webkit.org/show_bug.cgi?id=238086
+        <rdar://problem/90495776>
+
+        Reviewed by Dewei Zhu.
+
+        GitHub issues do not have the concept of "component" and "version." However,
+        we can use label colors to divide labels into types.
+
+        * Scripts/libraries/webkitbugspy/setup.py: Bump version.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/__init__.py: Ditto.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/github.py:
+        (Tracker):
+        (Tracker.__init__): Add concept of color groups for version and components.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/mocks/github.py:
+        (GitHub):
+        (GitHub.__init__):
+        (GitHub._labels): Sort labels and output project details as labels.
+        * Scripts/libraries/webkitbugspy/webkitbugspy/tests/github_unittest.py:
+        (TestGitHub.test_create):
+        (TestGitHub.test_create_projects):
+
+2022-03-28  Jonathan Bedard  <jbedard@apple.com>
+
         [git-webkit] Support —oneline in log command
         https://bugs.webkit.org/show_bug.cgi?id=238209
         <rdar://problem/90660142>
