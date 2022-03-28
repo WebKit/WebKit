@@ -1830,7 +1830,8 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItem clearProvisionalItem, Stop
 
 void FrameLoader::stopForBackForwardCache()
 {
-    m_inStopForBackForwardCache = true;
+    ASSERT(!m_inStopForBackForwardCache);
+    SetForScope<bool> inStopForBackForwardCache { m_inStopForBackForwardCache, true };
     // Stop provisional loads in subframes (The one in the main frame is about to be committed).
     if (!m_frame.isMainFrame()) {
         if (m_provisionalDocumentLoader)
@@ -1850,7 +1851,6 @@ void FrameLoader::stopForBackForwardCache()
     // running script, which could schedule new navigations.
     policyChecker().stopCheck();
     m_frame.navigationScheduler().cancel();
-    m_inStopForBackForwardCache = false;
 }
 
 void FrameLoader::stopAllLoadersAndCheckCompleteness()
