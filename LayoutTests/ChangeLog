@@ -1,3 +1,15 @@
+2022-03-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r290794): [ iOS Debug ] 4 editing/selection/* tests are constant timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=238155
+        rdar://90593957
+
+        Reviewed by Aditya Keerthi.
+
+        Unmark several tests that no longer need to be marked as [ Slow ].
+
+        * platform/ios/TestExpectations:
+
 2022-03-28  Cameron McCormack  <heycam@apple.com>
 
         Remove the 1ms minimum for setTimeout

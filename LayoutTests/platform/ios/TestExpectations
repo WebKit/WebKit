@@ -2676,13 +2676,6 @@ webkit.org/b/177401 webrtc/captureCanvas-webrtc.html [ Pass Timeout Failure ]
 
 webkit.org/b/210173 webrtc/h265.html [ Skip ]
 
-# webkit.org/b/238155 [ Debug ] These 5 tests are timing out on iOS Debug Specifically.
-[ Debug ] editing/selection/move-by-word-visually-single-space-one-element.html [ Slow ]
-[ Debug ] editing/selection/move-by-word-visually-single-space-inline-element.html [ Slow ]
-[ Debug ] editing/selection/move-by-word-visually-multi-line.html [ Slow ]
-[ Debug ] editing/selection/move-by-word-visually-mac.html [ Slow ]
-[ Debug ] editing/selection/move-by-word-visually-inline-block-positioned-element.html [ Slow ]
-
 webkit.org/b/209878  [ Debug ] webrtc/datachannel/multiple-connections.html [ Slow ]
 
 webkit.org/b/177323 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Failure ]

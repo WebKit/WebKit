@@ -6297,6 +6297,9 @@ void WebPage::elementDidFocus(Element& element, const FocusOptions& options)
     }
 
     if (is<HTMLSelectElement>(element) || isTextFormControlOrEditableContent(element)) {
+#if PLATFORM(IOS_FAMILY)
+        bool isChangingFocusedElement = m_focusedElement != &element;
+#endif
         m_focusedElement = &element;
         m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement = false;
 
@@ -6306,7 +6309,7 @@ void WebPage::elementDidFocus(Element& element, const FocusOptions& options)
         if (element.document().fullscreenManager().isFullscreen())
             element.document().fullscreenManager().cancelFullscreen();
 #endif
-        if (m_userIsInteracting || m_keyboardIsAttached)
+        if (isChangingFocusedElement && (m_userIsInteracting || m_keyboardIsAttached))
             m_sendAutocorrectionContextAfterFocusingElement = true;
 
         auto information = focusedElementInformation();
