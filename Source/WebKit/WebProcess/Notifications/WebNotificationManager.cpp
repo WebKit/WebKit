@@ -150,10 +150,10 @@ template<typename U> bool WebNotificationManager::sendNotificationMessage(U&& me
 
 bool WebNotificationManager::show(Notification& notification, WebPage* page)
 {
+#if ENABLE(NOTIFICATIONS)
     LOG(Notifications, "WebProcess %i going to show notification %s", getpid(), notification.identifier().toString().utf8().data());
 
     ASSERT(isMainRunLoop());
-#if ENABLE(NOTIFICATIONS)
     if (page && !page->corePage()->settings().notificationsEnabled())
         return false;
 

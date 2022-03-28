@@ -1,3 +1,13 @@
+2022-03-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unreviewed build fix after 291979 for WinCairo and PlayStation Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=238400
+
+        > WebNotificationManager.cpp(153): error C2027: use of undefined type 'WebCore::Notification'
+
+        * WebProcess/Notifications/WebNotificationManager.cpp:
+        (WebKit::WebNotificationManager::show): Guarded the LOG with ENABLE(NOTIFICATIONS).
+
 2022-03-28  Chris Dumez  <cdumez@apple.com>
 
         Prepare WebCore for making the String(const char*) constructor explicit
