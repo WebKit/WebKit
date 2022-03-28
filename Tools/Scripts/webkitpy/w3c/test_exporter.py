@@ -52,7 +52,7 @@ WEBKIT_WPT_DIR = 'LayoutTests/imported/w3c/web-platform-tests'
 WPT_PR_URL = "%s/pull/" % WPT_GH_URL
 WEBKIT_EXPORT_PR_LABEL = 'webkit-export'
 
-EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '.worker.html', '.any.html', '.any.worker.html', 'w3c-import.log']
+EXCLUDED_FILE_SUFFIXES = ['-expected.txt', '-expected.html', '.worker.html', '.any.html', '.any.worker.html', 'w3c-import.log']
 
 
 class WebPlatformTestExporter(object):
@@ -179,7 +179,7 @@ class WebPlatformTestExporter(object):
             if include_file:
                 new_lines.append(line)
 
-        return b'\n'.join(new_lines)
+        return b'\n'.join(new_lines) + b'\n'
 
     def write_git_patch_file(self):
         _, patch_file = self._filesystem.open_binary_tempfile('wpt_export_patch')
@@ -304,7 +304,7 @@ class WebPlatformTestExporter(object):
             self._git.delete_branch(self._branch_name)
             self._git.checkout_new_branch(self._branch_name)
         try:
-            self._git.apply_mail_patch([patch])
+            self._git.apply_mail_patch([patch, '-3'])
         except Exception as e:
             _log.warning(e)
             return False
