@@ -5012,7 +5012,7 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
 
     def get_patch(self, title='Patch', obsolete=0):
         return json.loads('''{{"bug_id": 224460,
-                     "creator":"aakash_jain@apple.com",
+                     "creator":"reviewer@apple.com",
                      "data": "patch-contents",
                      "file_name":"bug-224460-20210412192105.patch",
                      "flags": [{{"creation_date" : "2021-04-12T23:21:06Z", "id": 445872, "modification_date": "2021-04-12T23:55:36Z", "name": "review", "setter": "ap@webkit.org", "status": "+", "type_id": 1}}],
@@ -5163,8 +5163,8 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
 
         def mock_load_contributors(*args, **kwargs):
             return {
-                'aakash_jain@apple.com': {'name': 'Aakash Jain', 'status': 'reviewer'},
-                'jain-aakash': {'name': 'Aakash Jain', 'status': 'reviewer'},
+                'reviewer@apple.com': {'name': 'WebKit Reviewer', 'status': 'reviewer'},
+                'webkit-reviewer': {'name': 'WebKit Reviewer', 'status': 'reviewer'},
                 'committer@webkit.org': {'name': 'WebKit Committer', 'status': 'committer'},
                 'webkit-commit-queue': {'name': 'WebKit Committer', 'status': 'committer'},
             }, []
@@ -5179,7 +5179,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setupStep(ValidateCommitterAndReviewer())
         self.setProperty('patch_id', '1234')
         self.setProperty('patch_committer', 'committer@webkit.org')
-        self.setProperty('reviewer', 'aakash_jain@apple.com')
+        self.setProperty('reviewer', 'reviewer@apple.com')
         self.expectHidden(False)
         self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
         self.expectOutcome(result=SUCCESS, state_string='Validated commiter and reviewer')
@@ -5187,7 +5187,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
 
     def test_success_pr(self):
         self.setupStep(ValidateCommitterAndReviewer())
-        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['jain-aakash']
+        ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-reviewer']
         self.setProperty('github.number', '1234')
         self.setProperty('owners', ['webkit-commit-queue'])
         self.expectHidden(False)
@@ -5198,7 +5198,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
     def test_success_no_reviewer_patch(self):
         self.setupStep(ValidateCommitterAndReviewer())
         self.setProperty('patch_id', '1234')
-        self.setProperty('patch_committer', 'aakash_jain@apple.com')
+        self.setProperty('patch_committer', 'reviewer@apple.com')
         self.expectHidden(False)
         self.expectOutcome(result=SUCCESS, state_string='Validated committer')
         return self.runStep()
@@ -5207,7 +5207,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setupStep(ValidateCommitterAndReviewer())
         ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: []
         self.setProperty('github.number', '1234')
-        self.setProperty('owners', ['jain-aakash'])
+        self.setProperty('owners', ['webkit-reviewer'])
         self.expectHidden(False)
         self.expectOutcome(result=SUCCESS, state_string='Validated committer')
         return self.runStep()
@@ -5249,7 +5249,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
     def test_failure_invalid_reviewer_patch(self):
         self.setupStep(ValidateCommitterAndReviewer())
         self.setProperty('patch_id', '1234')
-        self.setProperty('patch_committer', 'aakash_jain@apple.com')
+        self.setProperty('patch_committer', 'reviewer@apple.com')
         self.setProperty('reviewer', 'committer@webkit.org')
         self.expectHidden(False)
         self.expectOutcome(result=FAILURE, state_string='committer@webkit.org does not have reviewer permissions')
@@ -5259,7 +5259,7 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.setupStep(ValidateCommitterAndReviewer())
         ValidateCommitterAndReviewer.get_reviewers = lambda x, pull_request, repository_url=None: ['webkit-commit-queue']
         self.setProperty('github.number', '1234')
-        self.setProperty('owners', ['jain-aakash'])
+        self.setProperty('owners', ['webkit-reviewer'])
         self.expectHidden(False)
         self.expectOutcome(result=FAILURE, state_string='webkit-commit-queue does not have reviewer permissions')
         return self.runStep()

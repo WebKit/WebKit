@@ -1,3 +1,12 @@
+2022-03-28  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Update contributors in ews unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=238416
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps_unittest.py: Use mocked info in unit-tests.
+
 2022-03-26  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Import WebGPU Conformance Test Suite
