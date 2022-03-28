@@ -609,6 +609,11 @@ static inline OffsetRotation blendFunc(const OffsetRotation& from, const OffsetR
     return OffsetRotation(from.hasAuto(), clampTo<float>(blend(from.angle(), to.angle(), context)));
 }
 
+static inline GridTrackList blendFunc(const GridTrackList& from, const GridTrackList& to, const CSSPropertyBlendingContext& context)
+{
+    return context.progress < 0.5 ? from : to;
+}
+
 class AnimationPropertyWrapperBase {
     WTF_MAKE_NONCOPYABLE(AnimationPropertyWrapperBase);
     WTF_MAKE_FAST_ALLOCATED;
@@ -751,73 +756,25 @@ private:
     void (RenderStyle::*m_setter)(T);
 };
 
-template <GridTrackSizingDirection>
-class GridTemplateTracksWrapper : public AnimationPropertyWrapperBase {
+class GridTemplatePropertyWrapper final : public PropertyWrapper<const GridTrackList&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GridTemplateTracksWrapper();
+    GridTemplatePropertyWrapper(CSSPropertyID property, const GridTrackList& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const GridTrackList&))
+        : PropertyWrapper<const GridTrackList&>(property, getter, setter)
+    {
+    }
 
 private:
-    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final { return false; }
-
-    bool equals(const RenderStyle& a, const RenderStyle& b) const override
-    {
-        return m_gridTracksWrapper.equals(a, b) && m_autoRepeatTracksWrapper.equals(a, b) && m_gridAutoRepeatTypeTracksWrapper.equals(a, b) && m_gridAutoRepeatInsertionPointTracksWrapper.equals(a, b) && m_orderedNamedGridLinesTracksWrapper.equals(a, b) && m_autoRepeatOrderedNamedGridLinesTracksWrapper.equals(a, b);
-    }
-
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        m_gridTracksWrapper.blend(destination, from, to, context);
-        m_autoRepeatTracksWrapper.blend(destination, from, to, context);
-        m_gridAutoRepeatTypeTracksWrapper.blend(destination, from, to, context);
-        m_gridAutoRepeatInsertionPointTracksWrapper.blend(destination, from, to, context);
-        m_orderedNamedGridLinesTracksWrapper.blend(destination, from, to, context);
-        m_autoRepeatOrderedNamedGridLinesTracksWrapper.blend(destination, from, to, context);
+        (destination.*m_setter)(blendFunc(this->value(from), this->value(to), context));
     }
 
-#if !LOG_DISABLED
-    void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
+    bool canInterpolate(const RenderStyle&, const RenderStyle&, CompositeOperation) const final
     {
-        m_gridTracksWrapper.logBlend(from, to, destination, progress);
-        m_autoRepeatTracksWrapper.logBlend(from, to, destination, progress);
-        m_gridAutoRepeatTypeTracksWrapper.logBlend(from, to, destination, progress);
-        m_gridAutoRepeatInsertionPointTracksWrapper.logBlend(from, to, destination, progress);
-        m_orderedNamedGridLinesTracksWrapper.logBlend(from, to, destination, progress);
-        m_autoRepeatOrderedNamedGridLinesTracksWrapper.logBlend(from, to, destination, progress);
+        return false;
     }
-#endif
-
-    DiscretePropertyWrapper<const Vector<GridTrackSize>&> m_gridTracksWrapper;
-    DiscretePropertyWrapper<const Vector<GridTrackSize>&> m_autoRepeatTracksWrapper;
-    DiscretePropertyWrapper<AutoRepeatType> m_gridAutoRepeatTypeTracksWrapper;
-    DiscretePropertyWrapper<unsigned> m_gridAutoRepeatInsertionPointTracksWrapper;
-    DiscretePropertyWrapper<const OrderedNamedGridLinesMap&> m_orderedNamedGridLinesTracksWrapper;
-    DiscretePropertyWrapper<const OrderedNamedGridLinesMap&> m_autoRepeatOrderedNamedGridLinesTracksWrapper;
 };
-
-template <>
-GridTemplateTracksWrapper<ForColumns>::GridTemplateTracksWrapper()
-    : AnimationPropertyWrapperBase(CSSPropertyGridTemplateColumns)
-    , m_gridTracksWrapper(DiscretePropertyWrapper<const Vector<GridTrackSize>&>(CSSPropertyGridTemplateColumns, &RenderStyle::gridColumns, &RenderStyle::setGridColumns))
-    , m_autoRepeatTracksWrapper(DiscretePropertyWrapper<const Vector<GridTrackSize>&>(CSSPropertyGridTemplateColumns, &RenderStyle::gridAutoRepeatColumns, &RenderStyle::setGridAutoRepeatColumns))
-    , m_gridAutoRepeatTypeTracksWrapper(DiscretePropertyWrapper<AutoRepeatType>(CSSPropertyGridTemplateColumns, &RenderStyle::gridAutoRepeatColumnsType, &RenderStyle::setGridAutoRepeatColumnsType))
-    , m_gridAutoRepeatInsertionPointTracksWrapper(DiscretePropertyWrapper<unsigned>(CSSPropertyGridTemplateColumns, &RenderStyle::gridAutoRepeatColumnsInsertionPoint, &RenderStyle::setGridAutoRepeatColumnsInsertionPoint))
-    , m_orderedNamedGridLinesTracksWrapper(DiscretePropertyWrapper<const OrderedNamedGridLinesMap&>(CSSPropertyGridTemplateColumns, &RenderStyle::orderedNamedGridColumnLines, &RenderStyle::setOrderedNamedGridColumnLines))
-    , m_autoRepeatOrderedNamedGridLinesTracksWrapper(DiscretePropertyWrapper<const OrderedNamedGridLinesMap&>(CSSPropertyGridTemplateColumns, &RenderStyle::autoRepeatOrderedNamedGridColumnLines, &RenderStyle::setAutoRepeatOrderedNamedGridColumnLines))
-{
-}
-
-template <>
-GridTemplateTracksWrapper<ForRows>::GridTemplateTracksWrapper()
-    : AnimationPropertyWrapperBase(CSSPropertyGridTemplateRows)
-    , m_gridTracksWrapper(DiscretePropertyWrapper<const Vector<GridTrackSize>&>(CSSPropertyGridTemplateRows, &RenderStyle::gridRows, &RenderStyle::setGridRows))
-    , m_autoRepeatTracksWrapper(DiscretePropertyWrapper<const Vector<GridTrackSize>&>(CSSPropertyGridTemplateRows, &RenderStyle::gridAutoRepeatRows, &RenderStyle::setGridAutoRepeatRows))
-    , m_gridAutoRepeatTypeTracksWrapper(DiscretePropertyWrapper<AutoRepeatType>(CSSPropertyGridTemplateRows, &RenderStyle::gridAutoRepeatRowsType, &RenderStyle::setGridAutoRepeatRowsType))
-    , m_gridAutoRepeatInsertionPointTracksWrapper(DiscretePropertyWrapper<unsigned>(CSSPropertyGridTemplateRows, &RenderStyle::gridAutoRepeatRowsInsertionPoint, &RenderStyle::setGridAutoRepeatRowsInsertionPoint))
-    , m_orderedNamedGridLinesTracksWrapper(DiscretePropertyWrapper<const OrderedNamedGridLinesMap&>(CSSPropertyGridTemplateRows, &RenderStyle::orderedNamedGridRowLines, &RenderStyle::setOrderedNamedGridRowLines))
-    , m_autoRepeatOrderedNamedGridLinesTracksWrapper(DiscretePropertyWrapper<const OrderedNamedGridLinesMap&>(CSSPropertyGridTemplateRows, &RenderStyle::autoRepeatOrderedNamedGridRowLines, &RenderStyle::setAutoRepeatOrderedNamedGridRowLines))
-{
-}
 
 class BorderImageRepeatWrapper final : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
@@ -3179,8 +3136,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<const Vector<GridTrackSize>&>(CSSPropertyGridAutoColumns, &RenderStyle::gridAutoColumns, &RenderStyle::setGridAutoColumns),
         new DiscretePropertyWrapper<GridAutoFlow>(CSSPropertyGridAutoFlow, &RenderStyle::gridAutoFlow, &RenderStyle::setGridAutoFlow),
         new DiscretePropertyWrapper<const Vector<GridTrackSize>&>(CSSPropertyGridAutoRows, &RenderStyle::gridAutoRows, &RenderStyle::setGridAutoRows),
-        new GridTemplateTracksWrapper<ForColumns>,
-        new GridTemplateTracksWrapper<ForRows>,
+        new GridTemplatePropertyWrapper(CSSPropertyGridTemplateRows, &RenderStyle::gridRowList, &RenderStyle::setGridRowList),
+        new GridTemplatePropertyWrapper(CSSPropertyGridTemplateColumns, &RenderStyle::gridColumnList, &RenderStyle::setGridColumnList),
         new DiscretePropertyWrapper<const GridPosition&>(CSSPropertyGridColumnEnd, &RenderStyle::gridItemColumnEnd, &RenderStyle::setGridItemColumnEnd),
         new DiscretePropertyWrapper<const GridPosition&>(CSSPropertyGridColumnStart, &RenderStyle::gridItemColumnStart, &RenderStyle::setGridItemColumnStart),
         new DiscretePropertyWrapper<const GridPosition&>(CSSPropertyGridRowEnd, &RenderStyle::gridItemRowEnd, &RenderStyle::setGridItemRowEnd),

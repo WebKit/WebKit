@@ -1924,32 +1924,24 @@ inline void BuilderCustom::applyValueGridTemplateAreas(BuilderState& builderStat
     builderState.style().setNamedGridAreaColumnCount(gridTemplateAreasValue.columnCount());
 }
 
-#define SET_TRACKS_DATA_INTERNAL(tracksData, style, parentStyle, TrackType) \
-    ASSERT(tracksData || parentStyle); \
-    style.setGrid##TrackType##s(tracksData ? tracksData->m_trackSizes : parentStyle->grid##TrackType##s()); \
-    style.setNamedGrid##TrackType##Lines(tracksData ? tracksData->m_namedGridLines : parentStyle->namedGrid##TrackType##Lines()); \
-    style.setOrderedNamedGrid##TrackType##Lines(tracksData ? tracksData->m_orderedNamedGridLines : parentStyle->orderedNamedGrid##TrackType##Lines()); \
-    style.setGridAutoRepeat##TrackType##s(tracksData ? tracksData->m_autoRepeatTrackSizes : parentStyle->gridAutoRepeat##TrackType##s()); \
-    style.setGridAutoRepeat##TrackType##sInsertionPoint(tracksData ? tracksData->m_autoRepeatInsertionPoint : parentStyle->gridAutoRepeat##TrackType##sInsertionPoint()); \
-    style.setAutoRepeatNamedGrid##TrackType##Lines(tracksData ? tracksData->m_autoRepeatNamedGridLines : parentStyle->autoRepeatNamedGrid##TrackType##Lines()); \
-    style.setAutoRepeatOrderedNamedGrid##TrackType##Lines(tracksData ? tracksData->m_autoRepeatOrderedNamedGridLines : parentStyle->autoRepeatOrderedNamedGrid##TrackType##Lines()); \
-    style.setGridAutoRepeat##TrackType##sType(tracksData ? tracksData->m_autoRepeatType : parentStyle->gridAutoRepeat##TrackType##sType()); \
-    style.setGridSubgrid##TrackType##s(tracksData ? tracksData->isSubgrid : parentStyle->gridSubgrid##TrackType##s());
+#define SET_TRACKS_DATA_INTERNAL(trackList, style, parentStyle, TrackType) \
+    ASSERT(trackList || parentStyle); \
+    style.setGrid##TrackType##List(trackList ? *trackList : parentStyle->grid##TrackType##List()); \
 
 #define SET_INHERIT_TRACKS_DATA(style, parentStyle, TrackType) \
-    BuilderConverter::TracksData* tracksData = nullptr; \
+    GridTrackList* trackList = nullptr; \
     const RenderStyle* parentStylePointer = &parentStyle; \
-    SET_TRACKS_DATA_INTERNAL(tracksData, style, parentStylePointer, TrackType)
+    SET_TRACKS_DATA_INTERNAL(trackList, style, parentStylePointer, TrackType)
 
-#define SET_TRACKS_DATA(tracksData, style, TrackType) \
-    BuilderConverter::TracksData* tracksDataPointer = &tracksData; \
+#define SET_TRACKS_DATA(trackList, style, TrackType) \
+    GridTrackList* trackListPointer = &trackList; \
     const RenderStyle* parentStyle = nullptr; \
-    SET_TRACKS_DATA_INTERNAL(tracksDataPointer, style, parentStyle, TrackType)
+    SET_TRACKS_DATA_INTERNAL(trackListPointer, style, parentStyle, TrackType)
 
 inline void BuilderCustom::applyInitialGridTemplateColumns(BuilderState& builderState)
 {
-    BuilderConverter::TracksData initialTracksData;
-    SET_TRACKS_DATA(initialTracksData, builderState.style(), Column);
+    GridTrackList initialTrackList;
+    SET_TRACKS_DATA(initialTrackList, builderState.style(), Column);
 }
 
 inline void BuilderCustom::applyInheritGridTemplateColumns(BuilderState& builderState)
@@ -1959,16 +1951,16 @@ inline void BuilderCustom::applyInheritGridTemplateColumns(BuilderState& builder
 
 inline void BuilderCustom::applyValueGridTemplateColumns(BuilderState& builderState, CSSValue& value)
 {
-    BuilderConverter::TracksData tracksData;
-    if (!BuilderConverter::createGridTrackList(value, tracksData, builderState))
+    GridTrackList trackList;
+    if (!BuilderConverter::createGridTrackList(value, trackList, builderState))
         return;
-    SET_TRACKS_DATA(tracksData, builderState.style(), Column);
+    SET_TRACKS_DATA(trackList, builderState.style(), Column);
 }
 
 inline void BuilderCustom::applyInitialGridTemplateRows(BuilderState& builderState)
 {
-    BuilderConverter::TracksData initialTracksData;
-    SET_TRACKS_DATA(initialTracksData, builderState.style(), Row);
+    GridTrackList initialTrackList;
+    SET_TRACKS_DATA(initialTrackList, builderState.style(), Row);
 }
 
 inline void BuilderCustom::applyInheritGridTemplateRows(BuilderState& builderState)
@@ -1978,11 +1970,11 @@ inline void BuilderCustom::applyInheritGridTemplateRows(BuilderState& builderSta
 
 inline void BuilderCustom::applyValueGridTemplateRows(BuilderState& builderState, CSSValue& value)
 {
-    BuilderConverter::TracksData tracksData;
-    if (!BuilderConverter::createGridTrackList(value, tracksData, builderState))
+    GridTrackList trackList;
+    if (!BuilderConverter::createGridTrackList(value, trackList, builderState))
         return;
 
-    SET_TRACKS_DATA(tracksData, builderState.style(), Row);
+    SET_TRACKS_DATA(trackList, builderState.style(), Row);
 }
 
 void BuilderCustom::applyValueAlt(BuilderState& builderState, CSSValue& value)

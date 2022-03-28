@@ -11,7 +11,7 @@ var testDiv = document.getElementById("testDiv");
 shouldBeEmptyString("testDiv.style['grid-template-rows']");
 evalAndLog("testDiv.style['grid-template-rows'] = 'repeat(calc(1 + 1), 18px)'");
 shouldBeEqualToString("testDiv.style['grid-template-rows']", "repeat(2, 18px)");
-shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows')", "18px 18px");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('grid-template-rows')", "repeat(2, 18px)");
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

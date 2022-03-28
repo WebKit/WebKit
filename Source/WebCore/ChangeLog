@@ -1,5 +1,125 @@
 2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
 
+        Preserve repeat() notation for grid-templates
+        https://bugs.webkit.org/show_bug.cgi?id=202259
+
+        Reviewed by Dean Jackson.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        (WebCore::GridTemplateTracksWrapper<ForColumns>::GridTemplateTracksWrapper): Deleted.
+        (WebCore::GridTemplateTracksWrapper<ForRows>::GridTemplateTracksWrapper): Deleted.
+
+        Replaces GridTemplateTracksWrapper with a simpler GridTemplatePropertyWrapper that just compares the
+        track lists. In the future we can iterate the two tracks lists in parallel and interpolate per-item,
+        in order to get animation correct per-spec.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::populateGridTrackList):
+        (WebCore::populateSubgridLineNameList):
+        (WebCore::valueForGridTrackList):
+        (WebCore::OrderedNamedLinesCollectorInsideRepeat::OrderedNamedLinesCollectorInsideRepeat): Deleted.
+        (WebCore::OrderedNamedLinesCollector::collectLineNamesForIndex const): Deleted.
+        (WebCore::OrderedNamedLinesCollectorInsideRepeat::collectLineNamesForIndex const): Deleted.
+
+        Implements getComputedStyle by iterating the track list and doing a 1:1 conversion to CSSValues, instead
+        of reconstructing from the processed hashtables.
+        This correctly preserves repeat() instances in the track list, which weren't retreivable from the processed
+        data.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::gridColumns const):
+        (WebCore::RenderStyle::gridRows const):
+        (WebCore::RenderStyle::gridColumnList const):
+        (WebCore::RenderStyle::gridRowList const):
+        (WebCore::RenderStyle::gridAutoRepeatColumns const):
+        (WebCore::RenderStyle::gridAutoRepeatRows const):
+        (WebCore::RenderStyle::gridAutoRepeatColumnsInsertionPoint const):
+        (WebCore::RenderStyle::gridAutoRepeatRowsInsertionPoint const):
+        (WebCore::RenderStyle::gridAutoRepeatColumnsType const):
+        (WebCore::RenderStyle::gridAutoRepeatRowsType const):
+        (WebCore::RenderStyle::namedGridColumnLines const):
+        (WebCore::RenderStyle::namedGridRowLines const):
+        (WebCore::RenderStyle::orderedNamedGridColumnLines const):
+        (WebCore::RenderStyle::orderedNamedGridRowLines const):
+        (WebCore::RenderStyle::autoRepeatNamedGridColumnLines const):
+        (WebCore::RenderStyle::autoRepeatNamedGridRowLines const):
+        (WebCore::RenderStyle::autoRepeatOrderedNamedGridColumnLines const):
+        (WebCore::RenderStyle::autoRepeatOrderedNamedGridRowLines const):
+        (WebCore::RenderStyle::gridSubgridRows const):
+        (WebCore::RenderStyle::gridSubgridColumns const):
+        (WebCore::RenderStyle::setGridColumnList):
+        (WebCore::RenderStyle::setGridRowList):
+        (WebCore::RenderStyle::setGridAutoRows):
+        (WebCore::RenderStyle::setGridAutoFlow):
+        (WebCore::RenderStyle::setGridColumns): Deleted.
+        (WebCore::RenderStyle::setGridRows): Deleted.
+        (WebCore::RenderStyle::setGridAutoRepeatColumns): Deleted.
+        (WebCore::RenderStyle::setGridAutoRepeatRows): Deleted.
+        (WebCore::RenderStyle::setGridAutoRepeatColumnsInsertionPoint): Deleted.
+        (WebCore::RenderStyle::setGridAutoRepeatRowsInsertionPoint): Deleted.
+        (WebCore::RenderStyle::setGridAutoRepeatColumnsType): Deleted.
+        (WebCore::RenderStyle::setGridAutoRepeatRowsType): Deleted.
+        (WebCore::RenderStyle::setNamedGridColumnLines): Deleted.
+        (WebCore::RenderStyle::setNamedGridRowLines): Deleted.
+        (WebCore::RenderStyle::setOrderedNamedGridColumnLines): Deleted.
+        (WebCore::RenderStyle::setOrderedNamedGridRowLines): Deleted.
+        (WebCore::RenderStyle::setAutoRepeatNamedGridColumnLines): Deleted.
+        (WebCore::RenderStyle::setAutoRepeatNamedGridRowLines): Deleted.
+        (WebCore::RenderStyle::setAutoRepeatOrderedNamedGridColumnLines): Deleted.
+        (WebCore::RenderStyle::setAutoRepeatOrderedNamedGridRowLines): Deleted.
+        (WebCore::RenderStyle::setGridSubgridRows): Deleted.
+        (WebCore::RenderStyle::setGridSubgridColumns): Deleted.
+        * rendering/style/StyleGridData.cpp:
+        (WebCore::StyleGridData::StyleGridData):
+        (WebCore::StyleGridData::setRows):
+        (WebCore::StyleGridData::setColumns):
+        (WebCore::createGridLineNamesList):
+        (WebCore::StyleGridData::computeCachedTrackData):
+        (WebCore::operator<<):
+        * rendering/style/StyleGridData.h:
+        (WebCore::StyleGridData::operator== const):
+        (WebCore::StyleGridData::gridColumns const):
+        (WebCore::StyleGridData::gridRows const):
+        (WebCore::StyleGridData::namedGridColumnLines const):
+        (WebCore::StyleGridData::namedGridRowLines const):
+        (WebCore::StyleGridData::orderedNamedGridColumnLines const):
+        (WebCore::StyleGridData::orderedNamedGridRowLines const):
+        (WebCore::StyleGridData::autoRepeatNamedGridColumnLines const):
+        (WebCore::StyleGridData::autoRepeatNamedGridRowLines const):
+        (WebCore::StyleGridData::autoRepeatOrderedNamedGridColumnLines const):
+        (WebCore::StyleGridData::autoRepeatOrderedNamedGridRowLines const):
+        (WebCore::StyleGridData::gridAutoRepeatColumns const):
+        (WebCore::StyleGridData::gridAutoRepeatRows const):
+        (WebCore::StyleGridData::autoRepeatColumnsInsertionPoint const):
+        (WebCore::StyleGridData::autoRepeatRowsInsertionPoint const):
+        (WebCore::StyleGridData::autoRepeatColumnsType const):
+        (WebCore::StyleGridData::autoRepeatRowsType const):
+        (WebCore::StyleGridData::subgridRows const):
+        (WebCore::StyleGridData::subgridColumns const):
+        (WebCore::StyleGridData::columns const):
+        (WebCore::StyleGridData::rows const):
+
+        Stores the computed track lists directly on RenderGrid, while retaining storage of the processed data.
+        computeCachedTrackData should be logically identical to the old BuilderConverter::createGridTrackList, but
+        happens when we modify the StyleGridData so that we can run it during animations.
+
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::createGridTrackList):
+        (WebCore::Style::createGridLineNamesList): Deleted.
+        (): Deleted.
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInitialGridTemplateColumns):
+        (WebCore::Style::BuilderCustom::applyValueGridTemplateColumns):
+        (WebCore::Style::BuilderCustom::applyInitialGridTemplateRows):
+        (WebCore::Style::BuilderCustom::applyValueGridTemplateRows):
+
+        Rather than converting the track list into processed hashtables, just copies the data in the track list
+        format so that the StyleGridData can access the original data.
+
+2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
+
         Fix serialization of grid-template
         https://bugs.webkit.org/show_bug.cgi?id=237868
 

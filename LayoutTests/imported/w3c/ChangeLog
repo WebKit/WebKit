@@ -1,5 +1,20 @@
 2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
 
+        Preserve repeat() notation for grid-templates
+        https://bugs.webkit.org/show_bug.cgi?id=202259
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-grid/animation/grid-template-columns-interpolation-expected.txt:
+        * web-platform-tests/css/css-grid/animation/grid-template-rows-interpolation-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-columns-computed-nogrid-expected.txt:
+        * web-platform-tests/css/css-grid/parsing/grid-template-rows-computed-nogrid-expected.txt:
+
+        Update expectations for existing WPT tests, now that we get the correct computed value for
+        grid-template-rows/columns.
+
+2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
+
         Fix serialization of grid-template
         https://bugs.webkit.org/show_bug.cgi?id=237868
 
