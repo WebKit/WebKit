@@ -454,28 +454,16 @@
     )
 
     ;; QuartzCore
-    (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
-        (allow iokit-open
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AGPMClient")
-            )
-            (apply-message-filter
-                (deny (with telemetry)
-                    iokit-async-external-method
-                    iokit-external-trap
-                    iokit-external-method
-                )
-            )
-        )
-        ; else
-        (allow iokit-open
-            (require-all
-                (extension "com.apple.webkit.extension.iokit")
-                (iokit-registry-entry-class "AGPMClient")
-            )
-        )
-    )
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+    (deny iokit-open (with no-log)
+        (iokit-registry-entry-class "AGPMClient"))
+#else
+    (allow iokit-open
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
+            (iokit-registry-entry-class "AGPMClient")))
+#endif
+
     (if (equal? (param "ENABLE_SANDBOX_MESSAGE_FILTER") "YES")
         (allow iokit-open
             (require-all
