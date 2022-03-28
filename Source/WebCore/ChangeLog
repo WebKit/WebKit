@@ -1,3 +1,24 @@
+2022-03-28  Cameron McCormack  <heycam@apple.com>
+
+        Remove pending UA shadow tree state when an input element is removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=238429
+        <rdar://90682918>
+
+        Reviewed by Antti Koivisto.
+
+        If an <input> element has a pending UA shadow tree, and the element is
+        removed from the document, we don't currently remove the element from
+        Document::m_elementsWithPendingUserAgentShadowTreeUpdates. Not only
+        does that means we may wastefully create the shadow tree if the
+        element is not inserted into the document again, but if the element is
+        then inserted into a different document, flushing style in the new
+        document won't correctly create the shadow tree.
+
+        Test: fast/forms/lazy-shadow-tree-creation-move-document-crash.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::removedFromAncestor):
+
 2022-03-27  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified buildfix

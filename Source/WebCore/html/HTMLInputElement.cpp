@@ -1637,6 +1637,10 @@ void HTMLInputElement::removedFromAncestor(RemovalType removalType, ContainerNod
         oldParentOfRemovedTree.treeScope().radioButtonGroups().removeButton(*this);
     if (removalType.disconnectedFromDocument && !form())
         removeFromRadioButtonGroup();
+    if (removalType.disconnectedFromDocument && m_hasPendingUserAgentShadowTreeUpdate) {
+        document().removeElementWithPendingUserAgentShadowTreeUpdate(*this);
+        m_hasPendingUserAgentShadowTreeUpdate = false;
+    }
     HTMLTextFormControlElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     ASSERT(!isConnected());
     if (removalType.disconnectedFromDocument && !form() && isRadioButton())

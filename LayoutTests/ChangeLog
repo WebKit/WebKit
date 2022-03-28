@@ -1,3 +1,14 @@
+2022-03-28  Cameron McCormack  <heycam@apple.com>
+
+        Remove pending UA shadow tree state when an input element is removed from the document
+        https://bugs.webkit.org/show_bug.cgi?id=238429
+        <rdar://90682918>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/lazy-shadow-tree-creation-move-document-crash-expected.txt: Added.
+        * fast/forms/lazy-shadow-tree-creation-move-document-crash.html: Added.
+
 2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
 
         Preserve repeat() notation for grid-templates
