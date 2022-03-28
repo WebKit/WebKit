@@ -31,8 +31,8 @@ typedef (WebGLRenderingContext) WebXRWebGLRenderingContext;
 
 // https://immersive-web.github.io/webxr/#xrwebgllayer
 [
-    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    EnabledBySetting=WebXREnabled,
     SecureContext,
     Exposed=Window,
     JSGenerateToJSObject,

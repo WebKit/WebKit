@@ -24,8 +24,8 @@
  */
 
 [
-    EnabledBySetting=WebXREnabled&WebXRHandInputModuleEnabled,
     Conditional=WEBXR_HANDS,
+    EnabledBySetting=WebXREnabled&WebXRHandInputModuleEnabled,
     GenerateIsReachable=ImplWebXRSessionRoot,
     SecureContext,
     Exposed=Window,

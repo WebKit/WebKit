@@ -24,8 +24,8 @@
  */
 
 [
-    EnabledBySetting=GamepadsEnabled,
     Conditional=GAMEPAD,
+    EnabledBySetting=GamepadsEnabled,
     Exposed=Window
 ] interface GamepadButton {
     readonly attribute boolean pressed;

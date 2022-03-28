@@ -26,8 +26,8 @@
 // This represents the native resolution of the device, but may not reflect the viewport exposed to the page.
 // https://immersive-web.github.io/webxr/#xrviewport
 [
-    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    EnabledBySetting=WebXREnabled,
 ] dictionary FakeXRDeviceResolution {
     required long width;
     required long height;

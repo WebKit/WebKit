@@ -27,8 +27,8 @@
 // should fulfill the role of validating any state from FakeXRButtonStateInit
 // the primary button is not present in this enum.
 [
-    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    EnabledBySetting=WebXREnabled,
 ] enum FakeXRButtonType {
     "grip",
     "touchpad",

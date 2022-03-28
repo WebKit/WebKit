@@ -26,8 +26,8 @@
 // https://immersive-web.github.io/webxr/#xrinputsourcearray
 [
     GenerateIsReachable=ImplWebXRSessionRoot,
-    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    EnabledBySetting=WebXREnabled,
     SecureContext,
     Exposed=Window,
     InterfaceName=XRInputSourceArray

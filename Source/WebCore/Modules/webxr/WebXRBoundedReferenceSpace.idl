@@ -25,8 +25,8 @@
 
 // https://immersive-web.github.io/webxr/#xrboundedreferencespace
 [
-    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    EnabledBySetting=WebXREnabled,
     SecureContext,
     CustomToJSObject,
     JSGenerateToNativeObject,

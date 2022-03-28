@@ -25,8 +25,8 @@
 
 // https://immersive-web.github.io/webxr/#navigator-xr-attribute
 [
-    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    EnabledBySetting=WebXREnabled,
     ImplementedBy=NavigatorWebXR
 ] partial interface Navigator {
     [SecureContext, SameObject] readonly attribute WebXRSystem xr;

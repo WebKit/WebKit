@@ -1,3 +1,63 @@
+2022-03-27  Daniel Adams  <msub2official@gmail.com>
+
+        Sort IDL extended attributes alphabetically
+        https://bugs.webkit.org/show_bug.cgi?id=235531
+        <rdar://problem/88284366>
+
+        Reviewed by Sam Weinig.
+
+        This just goes through and corrects the ordering of "Conditional" and
+        "EnabledBySetting" in all of the files mentioned in the report.
+
+        Test: Trivial change, no test changes required.
+
+        * Modules/gamepad/Gamepad.idl:
+        * Modules/gamepad/GamepadButton.idl:
+        * Modules/webxr/Navigator+WebXR.idl:
+        * Modules/webxr/WebXRBoundedReferenceSpace.idl:
+        * Modules/webxr/WebXRFrame+HandInput.idl:
+        * Modules/webxr/WebXRFrame.idl:
+        * Modules/webxr/WebXRHand.idl:
+        * Modules/webxr/WebXRInputSource+HandInput.idl:
+        * Modules/webxr/WebXRInputSource.idl:
+        * Modules/webxr/WebXRInputSourceArray.idl:
+        * Modules/webxr/WebXRJointPose.idl:
+        * Modules/webxr/WebXRJointSpace.idl:
+        * Modules/webxr/WebXRLayer.idl:
+        * Modules/webxr/WebXRPose.idl:
+        * Modules/webxr/WebXRReferenceSpace.idl:
+        * Modules/webxr/WebXRRenderState.idl:
+        * Modules/webxr/WebXRRigidTransform.idl:
+        * Modules/webxr/WebXRSession.idl:
+        * Modules/webxr/WebXRSpace.idl:
+        * Modules/webxr/WebXRView.idl:
+        * Modules/webxr/WebXRViewerPose.idl:
+        * Modules/webxr/WebXRViewport.idl:
+        * Modules/webxr/WebXRWebGLLayer.idl:
+        * Modules/webxr/XREnvironmentBlendMode.idl:
+        * Modules/webxr/XREye.idl:
+        * Modules/webxr/XRHandedness.idl:
+        * Modules/webxr/XRInputSourceEvent.idl:
+        * Modules/webxr/XRInputSourcesChangeEvent.idl:
+        * Modules/webxr/XRInteractionMode.idl:
+        * Modules/webxr/XRReferenceSpaceEvent.idl:
+        * Modules/webxr/XRReferenceSpaceType.idl:
+        * Modules/webxr/XRRenderStateInit.idl:
+        * Modules/webxr/XRSessionEvent.idl:
+        * Modules/webxr/XRSessionInit.idl:
+        * Modules/webxr/XRSessionMode.idl:
+        * Modules/webxr/XRTargetRayMode.idl:
+        * Modules/webxr/XRVisibilityState.idl:
+        * Modules/webxr/XRWebGLLayerInit.idl:
+        * testing/FakeXRBoundsPoint.idl:
+        * testing/FakeXRButtonStateInit.idl:
+        * testing/FakeXRInputSourceInit.idl:
+        * testing/FakeXRRigidTransformInit.idl:
+        * testing/FakeXRViewInit.idl:
+        * testing/WebFakeXRDevice.idl:
+        * testing/WebFakeXRInputController.idl:
+        * testing/WebXRTest.idl:
+
 2022-03-27  Matt Woodrow  <mattwoodrow@apple.com>
 
         Use the sizing algorithm's available size to compute grid gap.

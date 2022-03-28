@@ -25,8 +25,8 @@
 
 // https://immersive-web.github.io/webxr/#enumdef-xrvisibilitystate
 [
-    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    EnabledBySetting=WebXREnabled,
     ExportMacro=WEBCORE_EXPORT
 ] enum XRVisibilityState {
     "visible",

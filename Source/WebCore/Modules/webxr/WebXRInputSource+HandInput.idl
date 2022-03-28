@@ -25,8 +25,8 @@
 
 // https://immersive-web.github.io/webxr-hand-input/#xrinputsource-interface
 [
+    Conditional=WEBXR_HANDS,
     EnabledBySetting=WebXREnabled&WebXRHandInputModuleEnabled,
-    Conditional=WEBXR_HANDS
 ] partial interface WebXRInputSource {
     [SameObject] readonly attribute WebXRHand? hand;
 };

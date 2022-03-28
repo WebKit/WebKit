@@ -25,8 +25,8 @@
 
 // https://immersive-web.github.io/webxr/#xrsession
 [
-    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    EnabledBySetting=WebXREnabled,
     ActiveDOMObject,
     SecureContext,
     Exposed=Window,

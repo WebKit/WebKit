@@ -25,8 +25,8 @@
 
 // https://immersive-web.github.io/webxr/#dictdef-xrreferencespaceeventinit
 [
-    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    EnabledBySetting=WebXREnabled,
 ] dictionary XRReferenceSpaceEventInit : EventInit {
     required WebXRReferenceSpace referenceSpace;
     WebXRRigidTransform? transform;

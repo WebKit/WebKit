@@ -24,8 +24,8 @@
  */
 
 [
-    EnabledBySetting=WebXREnabled,
     Conditional=WEBXR,
+    EnabledBySetting=WebXREnabled,
     InterfaceName=FakeXRDevice,
     LegacyNoInterfaceObject,
 ] interface WebFakeXRDevice {

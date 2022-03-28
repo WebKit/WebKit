@@ -25,8 +25,8 @@
 
 // https://immersive-web.github.io/webxr-ar-module/#enumdef-xrinteractionmode
 [
+    Conditional=WEBXR,
     EnabledBySetting=WebXREnabled&WebXRAugmentedRealityModuleEnabled,
-    Conditional=WEBXR
 ] enum XRInteractionMode {
     "screen-space",
     "world-space"
