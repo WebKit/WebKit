@@ -2087,4 +2087,34 @@ void WebsiteDataStore::didDestroyServiceWorkerNotification(const UUID& notificat
     WebNotificationManagerProxy::sharedServiceWorkerManager().didDestroyNotification(nullptr, notificationID);
 }
 
+void WebsiteDataStore::openWindowFromServiceWorker(const String& urlString, const WebCore::SecurityOriginData& serviceWorkerOrigin, CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&& callback)
+{
+    auto innerCallback = [callback = WTFMove(callback)] (WebPageProxy* newPage) mutable {
+        if (!newPage) {
+            callback(std::nullopt);
+            return;
+        }
+
+        if (!newPage->pageLoadState().isLoading()) {
+            RELEASE_LOG(Loading, "The WKWebView provided in response to a ServiceWorker openWindow request was not in the loading state");
+            callback(std::nullopt);
+            return;
+        }
+
+        auto innerCallback = [pageID = newPage->identifier(), callback = WTFMove(callback)] (bool success) mutable {
+            auto* newPage = WebProcessProxy::webPage(pageID);
+            if (!newPage || !success) {
+                callback(std::nullopt);
+                return;
+            }
+
+            callback(newPage->webPageID());
+        };
+
+        newPage->setServiceWorkerOpenWindowCompletionCallback(WTFMove(innerCallback));
+    };
+
+    m_client->openWindowFromServiceWorker(urlString, serviceWorkerOrigin, WTFMove(innerCallback));
+}
+
 }

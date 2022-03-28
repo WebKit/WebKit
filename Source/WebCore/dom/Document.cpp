@@ -8408,7 +8408,7 @@ Logger& Document::logger()
     
 std::optional<PageIdentifier> Document::pageID() const
 {
-    return m_frame->loader().pageID();
+    return m_frame ? m_frame->loader().pageID() : std::nullopt;
 }
 
 std::optional<FrameIdentifier> Document::frameID() const

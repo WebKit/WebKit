@@ -381,6 +381,17 @@ WKPageRef TestController::createOtherPage(WKPageRef, WKPageConfigurationRef conf
 
 WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageConfigurationRef configuration, WKNavigationActionRef navigationAction, WKWindowFeaturesRef windowFeatures)
 {
+    auto* platformWebView = createOtherPlatformWebView(parentView, configuration, navigationAction, windowFeatures);
+    if (!platformWebView)
+        return nullptr;
+
+    auto* page = platformWebView->page();
+    WKRetain(page);
+    return page;
+}
+
+PlatformWebView* TestController::createOtherPlatformWebView(PlatformWebView* parentView, WKPageConfigurationRef configuration, WKNavigationActionRef, WKWindowFeaturesRef)
+{
     m_currentInvocation->willCreateNewPage();
 
     // The test called testRunner.preventPopupWindows() to prevent opening new windows.
@@ -389,7 +400,8 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
 
     m_createdOtherPage = true;
 
-    auto view = platformCreateOtherPage(parentView, configuration, parentView->options());
+    auto options = parentView ? parentView->options() : m_mainWebView->options();
+    auto view = platformCreateOtherPage(parentView, configuration, options);
     WKPageRef newPage = view->page();
 
     view->resizeTo(800, 600);
@@ -509,9 +521,9 @@ WKPageRef TestController::createOtherPage(PlatformWebView* parentView, WKPageCon
 
     TestController::singleton().updateWindowScaleForTest(view.ptr(), *TestController::singleton().m_currentInvocation);
 
+    PlatformWebView* viewToReturn = view.ptr();
     m_auxiliaryWebViews.append(WTFMove(view));
-    WKRetain(newPage);
-    return newPage;
+    return viewToReturn;
 }
 
 const char* TestController::libraryPathForTesting()

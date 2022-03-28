@@ -67,8 +67,8 @@ public:
         virtual void findClientByVisibleIdentifier(ServiceWorkerIdentifier, const String&, FindClientByIdentifierCallback&&) = 0;
         virtual void matchAll(ServiceWorkerIdentifier, const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&) = 0;
         virtual void claim(ServiceWorkerIdentifier, CompletionHandler<void(ExceptionOr<void>&&)>&&) = 0;
-
         virtual void focus(ScriptExecutionContextIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&&) = 0;
+        virtual void openWindow(ServiceWorkerIdentifier, const String& url, CompletionHandler<void(std::optional<PageIdentifier>&&)>&&) = 0;
 
         virtual void didFailHeartBeatCheck(ServiceWorkerIdentifier) = 0;
         virtual void setAsInspected(ServiceWorkerIdentifier, bool) = 0;

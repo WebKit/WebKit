@@ -117,7 +117,7 @@ public:
     const ServiceWorkerData& data() const { return m_data; }
     ServiceWorkerContextData contextData() const;
 
-    const ClientOrigin& origin() const;
+    WEBCORE_EXPORT const ClientOrigin& origin() const;
     const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
     WEBCORE_EXPORT std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const;
 

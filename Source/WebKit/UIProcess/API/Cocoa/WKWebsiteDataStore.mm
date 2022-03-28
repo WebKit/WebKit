@@ -48,6 +48,7 @@
 #import "_WKWebsiteDataStoreDelegate.h"
 #import <WebCore/Credential.h>
 #import <WebCore/RegistrationDatabase.h>
+#import <WebCore/ServiceWorkerClientData.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/URL.h>
@@ -56,10 +57,12 @@
 
 class WebsiteDataStoreClient final : public WebKit::WebsiteDataStoreClient {
 public:
-    explicit WebsiteDataStoreClient(id <_WKWebsiteDataStoreDelegate> delegate)
-        : m_delegate(delegate)
+    explicit WebsiteDataStoreClient(WKWebsiteDataStore *dataStore, id<_WKWebsiteDataStoreDelegate> delegate)
+        : m_dataStore(dataStore)
+        , m_delegate(delegate)
         , m_hasRequestStorageSpaceSelector([m_delegate.get() respondsToSelector:@selector(requestStorageSpace: frameOrigin: quota: currentSize: spaceRequired: decisionHandler:)])
         , m_hasAuthenticationChallengeSelector([m_delegate.get() respondsToSelector:@selector(didReceiveAuthenticationChallenge: completionHandler:)])
+        , m_hasOpenWindowSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:openWindow:fromServiceWorkerOrigin:completionHandler:)])
     {
     }
 
@@ -104,9 +107,32 @@ private:
         [m_delegate.getAutoreleased() didReceiveAuthenticationChallenge:nsURLChallenge completionHandler:completionHandler.get()];
     }
 
+    void openWindowFromServiceWorker(const String& url, const WebCore::SecurityOriginData& serviceWorkerOrigin, CompletionHandler<void(WebKit::WebPageProxy*)>&& callback)
+    {
+        if (!m_hasOpenWindowSelector || !m_delegate || !m_dataStore) {
+            callback({ });
+            return;
+        }
+
+        auto checker = WebKit::CompletionHandlerCallChecker::create(m_delegate.getAutoreleased(), @selector(websiteDataStore:openWindow:fromServiceWorkerOrigin:completionHandler:));
+        auto completionHandler = makeBlockPtr([callback = WTFMove(callback), checker = WTFMove(checker)](WKWebView *newWebView) mutable {
+            if (checker->completionHandlerHasBeenCalled())
+                return;
+            checker->didCallCompletionHandler();
+
+            callback(newWebView._page.get());
+        });
+
+        auto nsURL = (NSURL *)URL { url };
+        auto apiOrigin = API::SecurityOrigin::create(serviceWorkerOrigin);
+        [m_delegate.getAutoreleased() websiteDataStore:m_dataStore.getAutoreleased() openWindow:nsURL fromServiceWorkerOrigin:wrapper(apiOrigin.get()) completionHandler:completionHandler.get()];
+    }
+
+    WeakObjCPtr<WKWebsiteDataStore> m_dataStore;
     WeakObjCPtr<id <_WKWebsiteDataStoreDelegate> > m_delegate;
     bool m_hasRequestStorageSpaceSelector { false };
     bool m_hasAuthenticationChallengeSelector { false };
+    bool m_hasOpenWindowSelector { false };
 };
 
 @implementation WKWebsiteDataStore
@@ -652,7 +678,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (void)set_delegate:(id <_WKWebsiteDataStoreDelegate>)delegate
 {
     _delegate = delegate;
-    _websiteDataStore->setClient(makeUniqueRef<WebsiteDataStoreClient>(delegate));
+    _websiteDataStore->setClient(makeUniqueRef<WebsiteDataStoreClient>(self, delegate));
 }
 
 - (_WKWebsiteDataStoreConfiguration *)_configuration

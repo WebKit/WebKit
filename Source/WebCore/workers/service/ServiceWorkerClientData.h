@@ -27,6 +27,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "PageIdentifier.h"
 #include "ProcessQualified.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientType.h"
@@ -45,6 +46,7 @@ struct ServiceWorkerClientData {
     ServiceWorkerClientType type;
     ServiceWorkerClientFrameType frameType;
     URL url;
+    std::optional<PageIdentifier> pageIdentifier;
     LastNavigationWasAppInitiated lastNavigationWasAppInitiated;
     bool isVisible { false };
     bool isFocused { false };
@@ -62,7 +64,7 @@ struct ServiceWorkerClientData {
 template<class Encoder>
 void ServiceWorkerClientData::encode(Encoder& encoder) const
 {
-    encoder << identifier << type << frameType << url << lastNavigationWasAppInitiated << isVisible << isFocused << focusOrder;
+    encoder << identifier << type << frameType << url << pageIdentifier << lastNavigationWasAppInitiated << isVisible << isFocused << focusOrder;
 }
 
 template<class Decoder>
@@ -88,6 +90,11 @@ std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& 
     if (!url)
         return std::nullopt;
 
+    std::optional<std::optional<PageIdentifier>> pageIdentifier;
+    decoder >> pageIdentifier;
+    if (!pageIdentifier)
+        return std::nullopt;
+
     std::optional<LastNavigationWasAppInitiated> lastNavigationWasAppInitiated;
     decoder >> lastNavigationWasAppInitiated;
     if (!lastNavigationWasAppInitiated)
@@ -108,7 +115,7 @@ std::optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& 
     if (!focusOrder)
         return std::nullopt;
 
-    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*lastNavigationWasAppInitiated), WTFMove(*isVisible), WTFMove(*isFocused), WTFMove(*focusOrder) } };
+    return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*pageIdentifier), WTFMove(*lastNavigationWasAppInitiated), WTFMove(*isVisible), WTFMove(*isFocused), WTFMove(*focusOrder) } };
 }
 
 using ServiceWorkerClientsMatchAllCallback = CompletionHandler<void(Vector<ServiceWorkerClientData>&&)>;

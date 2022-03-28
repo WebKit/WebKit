@@ -150,6 +150,8 @@ template<typename U> bool WebNotificationManager::sendNotificationMessage(U&& me
 
 bool WebNotificationManager::show(Notification& notification, WebPage* page)
 {
+    LOG(Notifications, "WebProcess %i going to show notification %s", getpid(), notification.identifier().toString().utf8().data());
+
     ASSERT(isMainRunLoop());
 #if ENABLE(NOTIFICATIONS)
     if (page && !page->corePage()->settings().notificationsEnabled())
@@ -208,6 +210,8 @@ void WebNotificationManager::didShowNotification(const UUID& notificationID)
 {
     ASSERT(isMainRunLoop());
 
+    LOG(Notifications, "WebProcess %i DID SHOW notification %s", getpid(), notificationID.toString().utf8().data());
+
 #if ENABLE(NOTIFICATIONS)
     RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
     if (!notification)
@@ -223,10 +227,14 @@ void WebNotificationManager::didClickNotification(const UUID& notificationID)
 {
     ASSERT(isMainRunLoop());
 
+    LOG(Notifications, "WebProcess %i DID CLICK notification %s", getpid(), notificationID.toString().utf8().data());
+
 #if ENABLE(NOTIFICATIONS)
     RefPtr<Notification> notification = m_notificationIDMap.get(notificationID);
     if (!notification)
         return;
+
+    LOG(Notifications, "WebProcess %i handling click event for notification %s", getpid(), notificationID.toString().utf8().data());
 
     // Indicate that this event is being dispatched in reaction to a user's interaction with a platform notification.
     UserGestureIndicator indicator(ProcessingUserGesture);

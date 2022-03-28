@@ -214,7 +214,8 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
 UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions& options)
 {
     auto newConfiguration = adoptNS([globalWebViewConfiguration() copy]);
-    [newConfiguration _setRelatedWebView:static_cast<WKWebView*>(parentView->platformView())];
+    if (parentView)
+        [newConfiguration _setRelatedWebView:static_cast<WKWebView*>(parentView->platformView())];
     if ([newConfiguration _relatedWebView])
         [newConfiguration setWebsiteDataStore:[newConfiguration _relatedWebView].configuration.websiteDataStore];
     auto view = makeUniqueRef<PlatformWebView>(newConfiguration.get(), options);

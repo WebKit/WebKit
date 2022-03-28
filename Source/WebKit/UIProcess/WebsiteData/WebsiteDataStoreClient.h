@@ -36,6 +36,8 @@ struct SecurityOriginData;
 
 namespace WebKit {
 
+class WebPageProxy;
+
 class WebsiteDataStoreClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -49,6 +51,11 @@ public:
     virtual void didReceiveAuthenticationChallenge(Ref<AuthenticationChallengeProxy>&& challenge)
     {
         challenge->listener().completeChallenge(AuthenticationChallengeDisposition::PerformDefaultHandling);
+    }
+
+    virtual void openWindowFromServiceWorker(const String&, const WebCore::SecurityOriginData&, CompletionHandler<void(WebPageProxy*)>&& completionHandler)
+    {
+        completionHandler(nullptr);
     }
 };
 

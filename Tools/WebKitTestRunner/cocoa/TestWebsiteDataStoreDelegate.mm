@@ -26,6 +26,12 @@
 #import "config.h"
 #import "TestWebsiteDataStoreDelegate.h"
 
+#import "PlatformWebView.h"
+#import "TestController.h"
+#import "TestRunnerWKWebView.h"
+#import <WebKit/WKWebView.h>
+#import <wtf/UniqueRef.h>
+
 @implementation TestWebsiteDataStoreDelegate { }
 - (instancetype)init
 {
@@ -59,6 +65,17 @@
 - (void)setAllowAnySSLCertificate:(BOOL)shouldAllowAnySSLCertificate
 {
     _shouldAllowAnySSLCertificate = shouldAllowAnySSLCertificate;
+}
+
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore openWindow:(NSURL *)url fromServiceWorkerOrigin:(WKSecurityOrigin *)serviceWorkerOrigin completionHandler:(void (^)(WKWebView *newWebView))completionHandler
+{
+    auto* newView = WTR::TestController::singleton().createOtherPlatformWebView(nullptr, nullptr, nullptr, nullptr);
+    WKWebView *webView = newView->platformView();
+
+    ASSERT(webView.configuration.websiteDataStore == dataStore);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    completionHandler(webView);
 }
 
 @end

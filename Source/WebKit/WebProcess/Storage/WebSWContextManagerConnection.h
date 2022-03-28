@@ -87,6 +87,7 @@ private:
     bool isThrottleable() const final;
     void didFailHeartBeatCheck(WebCore::ServiceWorkerIdentifier) final;
     void setAsInspected(WebCore::ServiceWorkerIdentifier, bool) final;
+    void openWindow(WebCore::ServiceWorkerIdentifier, const String& url, CompletionHandler<void(std::optional<WebCore::PageIdentifier>&&)>&&) final;
 
     // IPC messages.
     void serviceWorkerStarted(std::optional<WebCore::ServiceWorkerJobDataIdentifier>, WebCore::ServiceWorkerIdentifier, bool doesHandleFetch) final;
