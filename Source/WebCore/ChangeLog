@@ -1,3 +1,16 @@
+2022-03-28  Youenn Fablet  <youenn@apple.com>
+
+        ImageTransferSessionVT::setSize should properly create its buffer pool
+        https://bugs.webkit.org/show_bug.cgi?id=238455
+
+        Reviewed by Eric Carlson.
+
+        Covered by existing tests.
+
+        * platform/graphics/cv/ImageTransferSessionVT.mm:
+        (WebCore::ImageTransferSessionVT::setSize):
+        We check the Expected, then move the RetainPtr if available.
+
 2022-03-28  Tyler Wilcock  <tyler_w@apple.com>
 
         AccessibilityObject::listMarkerTextForNodeAndPosition should check for presence of list item before anything else

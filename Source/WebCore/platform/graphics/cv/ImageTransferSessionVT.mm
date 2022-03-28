@@ -77,10 +77,10 @@ bool ImageTransferSessionVT::setSize(const IntSize& size)
 {
     if (m_size == size && m_outputBufferPool)
         return true;
-    auto bufferPool = createCVPixelBufferPool(size.width(), size.height(), m_pixelFormat, 6, false, m_shouldUseIOSurface).value_or(nullptr);
+    auto bufferPool = createCVPixelBufferPool(size.width(), size.height(), m_pixelFormat, 6, false, m_shouldUseIOSurface);
     if (!bufferPool)
         return false;
-    m_outputBufferPool = WTFMove(bufferPool);
+    m_outputBufferPool = WTFMove(*bufferPool);
     m_size = size;
     return true;
 }
