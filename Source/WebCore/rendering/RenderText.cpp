@@ -1560,6 +1560,9 @@ float RenderText::width(unsigned from, unsigned length, const FontCascade& fontC
     if (auto width = combineTextWidth(*this, fontCascade, style))
         return *width;
 
+    if (length == 1 && (characterAt(from) == space))
+        return canUseSimplifiedTextMeasuring() ? fontCascade.primaryFont().spaceWidth() : fontCascade.widthOfSpaceString();
+
     float width = 0.f;
     if (&fontCascade == &style.fontCascade()) {
         if (!style.preserveNewline() && !from && length == text().length() && (!glyphOverflow || !glyphOverflow->computeBounds)) {
