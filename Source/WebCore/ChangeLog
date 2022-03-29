@@ -1,3 +1,17 @@
+2022-03-29  Alan Bujtas  <zalan@apple.com>
+
+        WebCore::LegacyRootInlineBox::lineSnapAdjustment should bail out on grid line height < 1
+        https://bugs.webkit.org/show_bug.cgi?id=238465
+        <rdar://80630664>
+
+        Reviewed by Antti Koivisto.
+
+        The !gridLineHeight check was added to avoid division by zero but the integral roundToInt() may also produce a 0 value for
+        gridLineHeight.
+
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::lineSnapAdjustment const):
+
 2022-03-29  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Muted video is sometimes paused when entering fullscreen
