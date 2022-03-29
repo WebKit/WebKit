@@ -54,7 +54,8 @@ static Box<NetworkLoadMetrics> packageTimingData(MonotonicTime redirectStart, NS
         timing->secureConnectionStart = dateToMonotonicTime(secureConnectionStart);
     timing->connectEnd = dateToMonotonicTime(connectEnd);
     timing->requestStart = dateToMonotonicTime(requestStart);
-    timing->responseStart = dateToMonotonicTime(responseStart);
+    // Sometimes, likely because of <rdar://90997689>, responseStart is before requestStart. If this happens, use the later of the two.
+    timing->responseStart = std::max(timing->requestStart, dateToMonotonicTime(responseStart));
     timing->redirectCount = redirectCount;
     timing->failsTAOCheck = failsTAOCheck;
     timing->hasCrossOriginRedirect = hasCrossOriginRedirect;

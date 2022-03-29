@@ -835,7 +835,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             networkLoadMetrics.secureConnectionStart = dateToMonotonicTime(m.secureConnectionStartDate);
         networkLoadMetrics.connectEnd = dateToMonotonicTime(m.connectEndDate);
         networkLoadMetrics.requestStart = dateToMonotonicTime(m.requestStartDate);
-        networkLoadMetrics.responseStart = dateToMonotonicTime(m.responseStartDate);
+        // Sometimes, likely because of <rdar://90997689>, responseStart is before requestStart. If this happens, use the later of the two.
+        networkLoadMetrics.responseStart = std::max(networkLoadMetrics.requestStart, dateToMonotonicTime(m.responseStartDate));
         networkLoadMetrics.responseEnd = dateToMonotonicTime(m.responseEndDate);
         networkLoadMetrics.markComplete();
         networkLoadMetrics.redirectCount = metrics.redirectCount;
