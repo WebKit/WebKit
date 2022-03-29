@@ -1,3 +1,23 @@
+2022-03-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use spoolers in FTL OSR exit thunk
+        https://bugs.webkit.org/show_bug.cgi?id=238444
+
+        Reviewed by Mark Lam.
+
+        We deploy spoolers in FTL OSR exit thunk to reduce generated code size.
+        This change reduces FTLOSRExit code size in JetStream2 by 35%.
+
+        Before:
+            FTLOSRExit: 803564 (784.730469 KB) count 363 avg size 2213
+        After:
+            FTLOSRExit: 516432 (504.328125 KB) count 362 avg size 1426
+
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::compileExit):
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileStub):
+
 2022-03-29  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Add check for null `entryScope` in JSC::Debugger::detach

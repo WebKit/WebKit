@@ -430,10 +430,11 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
                 // We also use the notCellMaskRegister as the scratch register, for the same reason.
                 // FIXME: find a less gross way of doing this, maybe through delaying these operations until we actually have some spare registers around?
                 profile.emitReportValue(jit, JSValueRegs(GPRInfo::numberTagRegister), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
-                jit.move(AssemblyHelpers::TrustedImm64(JSValue::NumberTag), GPRInfo::numberTagRegister);
-            } else
+                jit.emitMaterializeTagCheckRegisters();
+            } else {
                 profile.emitReportValue(jit, JSValueRegs(exit.m_jsValueSource.gpr()), GPRInfo::notCellMaskRegister, DoNotHaveTagRegisters);
-            jit.move(AssemblyHelpers::TrustedImm64(JSValue::NotCellMask), GPRInfo::notCellMaskRegister);
+                jit.move(AssemblyHelpers::TrustedImm64(JSValue::NotCellMask), GPRInfo::notCellMaskRegister);
+            }
 #else // not USE(JSVALUE64)
             if (exit.m_jsValueSource.isAddress()) {
                 // Save a register so we can use it.
@@ -778,7 +779,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 #if USE(JSVALUE64)
             EncodedJSValue currentConstant = JSValue::encode(recovery.constant());
             if (currentConstant == encodedJSUndefined()) {
-                if (!undefinedGPRIsInitialized) {
+                if (UNLIKELY(!undefinedGPRIsInitialized)) {
                     jit.move(CCallHelpers::TrustedImm64(encodedJSUndefined()), undefinedGPR);
                     undefinedGPRIsInitialized = true;
                 }
