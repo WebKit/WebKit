@@ -325,6 +325,8 @@ bool CSSCalcValue::equals(const CSSCalcValue& other) const
 
 inline double CSSCalcValue::clampToPermittedRange(double value) const
 {
+    if (primitiveType() == CSSUnitType::CSS_DEG && (isnan(value) || isinf(value)))
+        return 0;
     return m_shouldClampToNonNegative && value < 0 ? 0 : value;
 }
 
