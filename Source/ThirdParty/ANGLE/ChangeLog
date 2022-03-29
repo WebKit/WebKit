@@ -1,3 +1,19 @@
+2022-03-29  Kenneth Russell  <kbr@chromium.org>
+
+        Handle pkg_config and declare_args statements in gni-to-cmake.py
+        https://bugs.webkit.org/show_bug.cgi?id=238490
+
+        Remove these statements, since they currently must be deleted from
+        the resulting CMake files by hand.
+
+        Regenerate the CMake files from current ANGLE sources, to minimize
+        changes during the next roll.
+
+        Reviewed by Dean Jackson.
+
+        * GL.cmake:
+        * gni-to-cmake.py:
+
 2022-03-23  Kenneth Russell  <kbr@chromium.org>
 
         Roll ANGLE to 2022-03-22 (e7f29440f02514126f30350dcd7132b68f7954d7)

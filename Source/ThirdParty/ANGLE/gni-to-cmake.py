@@ -36,6 +36,15 @@ with open(args.gni, 'r', encoding="utf-8") as gni:
         file,
         flags=re.MULTILINE | re.DOTALL)
 
+    # Remove pkg_config and declare_args statements after removing import statements.
+    # Import statements can refer to pkg_config, necessating handling this separately,
+    # and the regexps are slightly different.
+    file = re.sub(
+        r'(^\s*(pkg_config|declare_args)\([^)]*\)\s+{.*?}$)*',
+        r'',
+        file,
+        flags=re.MULTILINE | re.DOTALL)
+
     # Translate gn single line list declaration:
     file = re.sub(r'\[ ((?:"[^"]*",? )*)\]$', r' \1)', file, flags=re.MULTILINE)
 
