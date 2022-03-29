@@ -49,25 +49,23 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
 
 class TextPainter {
 public:
-    TextPainter(GraphicsContext&);
+    TextPainter(GraphicsContext&, const FontCascade&);
 
     void setStyle(const TextPaintStyle& textPaintStyle) { m_style = textPaintStyle; }
     void setShadow(const ShadowData* shadow) { m_shadow = shadow; }
     void setShadowColorFilter(const FilterOperations* colorFilter) { m_shadowColorFilter = colorFilter; }
-    void setFont(const FontCascade& font) { m_font = &font; }
     void setIsHorizontal(bool isHorizontal) { m_textBoxIsHorizontal = isHorizontal; }
     void setEmphasisMark(const AtomString& mark, float offset, const RenderCombineText*);
 
-    void paint(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin);
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
 
     template<typename LayoutRun>
-    void setGlyphDisplayListIfNeeded(const LayoutRun& run, const PaintInfo& paintInfo, const FontCascade& font, GraphicsContext& context, const TextRun& textRun)
+    void setGlyphDisplayListIfNeeded(const LayoutRun& run, const PaintInfo& paintInfo, const TextRun& textRun)
     {
         if (!TextPainter::shouldUseGlyphDisplayList(paintInfo))
             TextPainter::removeGlyphDisplayList(run);
         else
-            m_glyphDisplayList = GlyphDisplayListCache<LayoutRun>::singleton().get(run, font, context, textRun);
+            m_glyphDisplayList = GlyphDisplayListCache<LayoutRun>::singleton().get(run, m_font, m_context, textRun);
     }
 
     template<typename LayoutRun>
@@ -85,7 +83,7 @@ private:
         const TextPaintStyle&, const ShadowData*, const FilterOperations*);
 
     GraphicsContext& m_context;
-    const FontCascade* m_font { nullptr };
+    const FontCascade& m_font;
     TextPaintStyle m_style;
     AtomString m_emphasisMark;
     const ShadowData* m_shadow { nullptr };

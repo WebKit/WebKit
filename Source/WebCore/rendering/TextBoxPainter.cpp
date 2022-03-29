@@ -324,8 +324,7 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
     if (!emphasisMark.isEmpty())
         emphasisMarkOffset = *m_emphasisMarkExistsAndIsAbove ? -font.metricsOfPrimaryFont().ascent() - font.emphasisMarkDescent(emphasisMark) : font.metricsOfPrimaryFont().descent() + font.emphasisMarkAscent(emphasisMark);
 
-    TextPainter textPainter { context };
-    textPainter.setFont(font);
+    TextPainter textPainter { context, font };
     textPainter.setStyle(markedText.style.textStyles);
     textPainter.setIsHorizontal(textBox().isHorizontal());
     if (markedText.style.textShadow) {
@@ -337,18 +336,18 @@ void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
     if (auto* debugShadow = debugTextShadow())
         textPainter.setShadow(debugShadow);
 
+    GraphicsContextStateSaver stateSaver(context, markedText.style.textStyles.strokeWidth > 0 || markedText.type == MarkedText::DraggedContent);
+    if (markedText.type == MarkedText::DraggedContent)
+        context.setAlpha(markedText.style.alpha);
+    updateGraphicsContext(context, markedText.style.textStyles);
+
     if (auto* legacyInlineBox = textBox().legacyInlineBox())
-        textPainter.setGlyphDisplayListIfNeeded(*legacyInlineBox, m_paintInfo, font, context, m_paintTextRun);
+        textPainter.setGlyphDisplayListIfNeeded(*legacyInlineBox, m_paintInfo, m_paintTextRun);
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     else
-        textPainter.setGlyphDisplayListIfNeeded(*textBox().inlineBox(), m_paintInfo, font, context, m_paintTextRun);
+        textPainter.setGlyphDisplayListIfNeeded(*textBox().inlineBox(), m_paintInfo, m_paintTextRun);
 #endif
 
-    GraphicsContextStateSaver stateSaver { context, false };
-    if (markedText.type == MarkedText::DraggedContent) {
-        stateSaver.save();
-        context.setAlpha(markedText.style.alpha);
-    }
     // TextPainter wants the box rectangle and text origin of the entire line box.
     textPainter.paintRange(m_paintTextRun, m_paintRect, textOriginFromPaintRect(m_paintRect), markedText.startOffset, markedText.endOffset);
 }
