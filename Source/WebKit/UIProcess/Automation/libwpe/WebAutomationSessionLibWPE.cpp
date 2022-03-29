@@ -28,6 +28,7 @@
 
 #include "WebAutomationSessionMacros.h"
 #include "WebPageProxy.h"
+#include <wpe/wpe.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -147,12 +148,18 @@ OptionSet<WebEvent::Modifier> WebAutomationSession::platformWebModifiersFromRaw(
 #if ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 static void doKeyStrokeEvent(struct wpe_view_backend* viewBackend, bool pressed, uint32_t keyCode, uint32_t modifiers, bool doReleaseAfterPress = false)
 {
+#if defined(WPE_ENABLE_XKB) && WPE_ENABLE_XKB
     struct wpe_input_xkb_keymap_entry* entries;
     uint32_t entriesCount;
     wpe_input_xkb_context_get_entries_for_key_code(wpe_input_xkb_context_get_default(), keyCode, &entries, &entriesCount);
     struct wpe_input_keyboard_event event = { 0, keyCode, entriesCount ? entries[0].hardware_key_code : 0, pressed, modifiers };
+#else
+    struct wpe_input_keyboard_event event = { 0, keyCode, 0, pressed, modifiers };
+#endif
     wpe_view_backend_dispatch_keyboard_event(viewBackend, &event);
+#if defined(WPE_ENABLE_XKB) && WPE_ENABLE_XKB
     free(entries);
+#endif
 
     if (doReleaseAfterPress) {
         ASSERT(pressed);

@@ -1,3 +1,15 @@
+2022-03-29  Don Olmstead  <don.olmstead@sony.com>
+
+        [LibWPE] Guard libxkbcommon code with WPE_ENABLE_XKB
+        https://bugs.webkit.org/show_bug.cgi?id=238510
+
+        Reviewed by Adrian Perez de Castro.
+
+        Guard libwpe xkb code with WPE_ENABLE_XKB.
+
+        * WebKitTestRunner/libwpe/EventSenderProxyLibWPE.cpp:
+        (WTR::EventSenderProxy::keyDown):
+
 2022-03-29  Jonathan Bedard  <jbedard@apple.com>
 
         [Merge-Queue] Canonicalize commit

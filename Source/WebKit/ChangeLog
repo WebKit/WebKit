@@ -1,3 +1,15 @@
+2022-03-29  Don Olmstead  <don.olmstead@sony.com>
+
+        [LibWPE] Guard libxkbcommon code with WPE_ENABLE_XKB
+        https://bugs.webkit.org/show_bug.cgi?id=238510
+
+        Reviewed by Adrian Perez de Castro.
+
+        Guard libwpe xkb code with WPE_ENABLE_XKB.
+
+        * UIProcess/Automation/libwpe/WebAutomationSessionLibWPE.cpp:
+        (WebKit::doKeyStrokeEvent):
+
 2022-03-29  Sihui Liu  <sihui_liu@apple.com>
 
         Unreviewed test fix after r292024.
