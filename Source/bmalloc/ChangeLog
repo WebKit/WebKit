@@ -1,3 +1,15 @@
+2022-03-29  Brandon Stewart  <brandonstewart@apple.com>
+
+        Rename Libpas README to README.md
+        https://bugs.webkit.org/show_bug.cgi?id=238517
+
+        Reviewed by Yusuke Suzuki.
+
+        Libpas README does not correctly display markdown output on github.com
+        without .md file extension.
+
+        * libpas/ReadMe.md: Renamed from Source/bmalloc/libpas/README.
+
 2022-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use unary static_assert
