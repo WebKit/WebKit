@@ -35,7 +35,8 @@
 
 namespace WebCore {
 
-class GPUUncapturedErrorEvent : public Event {
+class GPUUncapturedErrorEvent final : public Event {
+    WTF_MAKE_ISO_ALLOCATED(GPUUncapturedErrorEvent);
 public:
     static Ref<GPUUncapturedErrorEvent> create(String&& type, const GPUUncapturedErrorEventInit& gpuUncapturedErrorEventInitDict)
     {
