@@ -1,3 +1,39 @@
+2022-03-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Muted video is sometimes paused when entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=238462
+        rdar://89104216
+
+        Reviewed by Jer Noble.
+
+        Test: media/fullscreen-when-muted.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didMoveToNewDocument): Add logging.
+        (WebCore::HTMLMediaElement::elementIsHidden const): Consider both element fullscreen
+        and video fullscreen.
+        (WebCore::HTMLMediaElement::visibilityStateChanged): Use elementIsHidden.
+        (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction const): Add
+        logging for the one case that didn't have it.
+        (WebCore::HTMLMediaElement::updateMediaPlayer): New, wrap MediaPlayer functions
+        that are called frequently by RenderVideo so we can only call them when necessary.
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::elementIsHidden const): Deleted.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::visibilityChanged): Just use elementIsHidden, it 
+        already accounts for fullscreen.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setVisibleInViewport): Do nothing when visibility is not changing.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setPageIsVisible): Add logging.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer): Call HTMLMediaElement::updateMediaPlayer instead
+        of calling MediaPlayer directly.
+
 2022-03-29  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Support CSSOM

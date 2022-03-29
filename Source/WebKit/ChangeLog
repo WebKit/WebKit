@@ -1,5 +1,20 @@
 2022-03-29  Eric Carlson  <eric.carlson@apple.com>
 
+        [macOS] Muted video is sometimes paused when entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=238462
+        rdar://89104216
+
+        Reviewed by Jer Noble.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::setPageIsVisible): Track visibility and do
+        nothing when it doesn't change.
+        (WebKit::MediaPlayerPrivateRemote::setShouldMaintainAspectRatio): Ditto for aspect
+        ratio.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
+2022-03-29  Eric Carlson  <eric.carlson@apple.com>
+
         Don't send sync RemoteMediaPlayerProxy messages that we know will fail
         https://bugs.webkit.org/show_bug.cgi?id=238467
         rdar://86662565

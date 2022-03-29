@@ -466,6 +466,8 @@ private:
     bool m_waitingForKey { false };
     bool m_timeIsProgressing { false };
     bool m_renderingCanBeAccelerated { false };
+    bool m_shouldMaintainAspectRatio { false };
+    bool m_pageIsVisible { false };
     RefPtr<RemoteVideoFrameProxy> m_videoFrameForCurrentTime;
 #if PLATFORM(COCOA)
     RetainPtr<CVPixelBufferRef> m_pixelBufferGatheredWithVideoFrameMetadata;

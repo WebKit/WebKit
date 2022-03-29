@@ -1,3 +1,14 @@
+2022-03-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Muted video is sometimes paused when entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=238462
+        rdar://89104216
+
+        Reviewed by Jer Noble.
+
+        * media/fullscreen-when-muted-expected.txt: Added.
+        * media/fullscreen-when-muted.html: Added.
+
 2022-03-29  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Support CSSOM

@@ -272,18 +272,10 @@ void RenderVideo::updatePlayer()
     if (!mediaPlayer)
         return;
 
-    if (!videoElement().inActiveDocument()) {
-        mediaPlayer->setPageIsVisible(false);
-        return;
-    }
+    if (videoElement().inActiveDocument())
+        contentChanged(VideoChanged);
 
-    contentChanged(VideoChanged);
-    
-    IntRect videoBounds = videoBox(); 
-    mediaPlayer->setSize(IntSize(videoBounds.width(), videoBounds.height()));
-    mediaPlayer->setPageIsVisible(!videoElement().elementIsHidden());
-    mediaPlayer->setVisibleInViewport(videoElement().isVisibleInViewport());
-    mediaPlayer->setShouldMaintainAspectRatio(style().objectFit() != ObjectFit::Fill);
+    videoElement().updateMediaPlayer(videoBox().size(), style().objectFit() != ObjectFit::Fill);
 }
 
 LayoutUnit RenderVideo::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const

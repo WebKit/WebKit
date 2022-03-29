@@ -295,8 +295,6 @@ public:
     WEBCORE_EXPORT bool webkitClosedCaptionsVisible() const;
     WEBCORE_EXPORT void setWebkitClosedCaptionsVisible(bool);
 
-    bool elementIsHidden() const { return m_elementIsHidden; }
-
 #if ENABLE(MEDIA_STATISTICS)
 // Statistics
     unsigned webkitAudioDecodedByteCount() const;
@@ -609,6 +607,9 @@ public:
     WEBCORE_EXPORT AudioSessionCategory categoryAtMostRecentPlayback() const { return m_categoryAtMostRecentPlayback; }
 #endif
 
+    void updateMediaPlayer(IntSize, bool);
+    WEBCORE_EXPORT bool elementIsHidden() const;
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -645,7 +646,6 @@ protected:
     void setChangingVideoFullscreenMode(bool value) { m_changingVideoFullscreenMode = value; }
     bool isChangingVideoFullscreenMode() const { return m_changingVideoFullscreenMode; }
 
-protected:
     void mediaPlayerEngineUpdated() override;
 
 private:
