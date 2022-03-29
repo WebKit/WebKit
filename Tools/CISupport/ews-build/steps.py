@@ -4692,6 +4692,54 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         return not self.doStepIf(step)
 
 
+class AddReviewerToChangeLog(steps.ShellSequence, ShellMixin, AddReviewerMixin):
+    name = 'add-reviewer-to-changelog'
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(AddReviewerToChangeLog, self).__init__(logEnviron=False, timeout=60, **kwargs)
+
+    def _files(self):
+        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
+        if sourcestamp and sourcestamp.changes:
+            return sourcestamp.changes[0].files
+        return []
+
+    def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        self.commands = []
+        for file in self._files():
+            if not file.startswith('+++') or not file.endswith('ChangeLog'):
+                continue
+            self.commands.append(util.ShellArg(
+                command=['sed', '-i', '', self.NOBODY_SED.format(self.reviewers()), file[4:]],
+                logname='stdio',
+                haltOnFailure=True,
+            ))
+
+        for command in [
+            ['git', 'add', '-A'],
+            ['git', 'commit', '--amend', '--date=now', '-C', 'HEAD'],
+        ]:
+            self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
+
+        self.env = self.environment()
+
+        return super(AddReviewerToChangeLog, self).run()
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'No reviewer defined' if self.getProperty('github.number') else 'Patches are edited upon application'}
+        elif self.results == SUCCESS:
+            return {'step': f'Reviewed by {self.reviewers()}'}
+        return {'step': 'Failed to add reviewers to ChangeLogs'}
+
+    def doStepIf(self, step):
+        return self.getProperty('github.number') and self.getProperty('reviewers_full_names')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
 class ValidateCommitMessage(shell.ShellCommand):
     name = 'validate-commit-message'
     haltOnFailure = True

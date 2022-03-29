@@ -1,5 +1,26 @@
 2022-03-29  Jonathan Bedard  <jbedard@apple.com>
 
+        [Merge-Queue] Add Reviewers to ChangeLog files
+        https://bugs.webkit.org/show_bug.cgi?id=238396
+        <rdar://problem/90860335>
+
+        Reviewed by Dewei Zhu.
+
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory.__init__): Add AddReviewerToChangeLog.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Ditto.
+        * CISupport/ews-build/steps.py:
+        (AddReviewerToChangeLog.__init__):
+        (AddReviewerToChangeLog._files): List files in the pull-request.
+        (AddReviewerToChangeLog.run): Replace "NOBODY" with reviewers.
+        (AddReviewerToChangeLog.getResultSummary):
+        (AddReviewerToChangeLog.doStepIf): Skip step if patch or if reviewers are undefined.
+        (AddReviewerToChangeLog.hideStepIf): Hide step if skipped.
+        * CISupport/ews-build/steps_unittest.py:
+
+2022-03-29  Jonathan Bedard  <jbedard@apple.com>
+
         [Merge-Queue] Add Reviewers to commit message
         https://bugs.webkit.org/show_bug.cgi?id=238354
         <rdar://problem/90800671>

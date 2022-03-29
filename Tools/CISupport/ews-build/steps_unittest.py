@@ -41,7 +41,7 @@ from twisted.python import failure, log
 from twisted.trial import unittest
 import send_email
 
-from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
+from steps import (AddReviewerToCommitMessage, AddReviewerToChangeLog, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
@@ -5739,6 +5739,121 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
 
     def test_no_reviewers(self):
         self.setupStep(AddReviewerToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('reviewers_full_names', [])
+        self.expectOutcome(result=SKIPPED, state_string='No reviewer defined')
+        return self.runStep()
+
+
+class TestAddReviewerToChangeLog(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = dict(
+        GIT_COMMITTER_NAME='WebKit Committer',
+        GIT_COMMITTER_EMAIL='committer@webkit.org',
+        FILTER_BRANCH_SQUELCH_WARNING='1',
+    )
+
+    def setUp(self):
+        self.longMessage = True
+        Contributors.load = mock_load_contributors
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_skipped_patch(self):
+        self.setupStep(AddReviewerToChangeLog())
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='Patches are edited upon application')
+        return self.runStep()
+
+    def test_success(self):
+        self.setupStep(AddReviewerToChangeLog())
+        AddReviewerToChangeLog._files = lambda x: ['+++ Tools/ChangeLog', '+++ Tools/CISupport/ews-build/steps.py']
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('reviewers_full_names', ['Aakash Jain'])
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                env=self.ENV,
+                timeout=60,
+                command=['sed', '-i', '', 's/NOBODY (OO*PP*S!*)/Aakash Jain/g', 'Tools/ChangeLog'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                env=self.ENV,
+                timeout=60,
+                command=['git', 'add', '-A'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                env=self.ENV,
+                timeout=60,
+                command=['git', 'commit', '--amend', '--date=now', '-C', 'HEAD'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Reviewed by Aakash Jain')
+        return self.runStep()
+
+    def test_no_changelog(self):
+        self.setupStep(AddReviewerToChangeLog())
+        AddReviewerToChangeLog._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('reviewers_full_names', ['Aakash Jain'])
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                env=self.ENV,
+                timeout=60,
+                command=['git', 'add', '-A'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                env=self.ENV,
+                timeout=60,
+                command=['git', 'commit', '--amend', '--date=now', '-C', 'HEAD'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Reviewed by Aakash Jain')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(AddReviewerToChangeLog())
+        AddReviewerToChangeLog._files = lambda x: ['+++ Tools/CISupport/ews-build/steps.py']
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('reviewers_full_names', ['Aakash Jain'])
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                env=self.ENV,
+                timeout=60,
+                command=['git', 'add', '-A'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                env=self.ENV,
+                timeout=60,
+                command=['git', 'commit', '--amend', '--date=now', '-C', 'HEAD'],
+            ) + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to add reviewers to ChangeLogs')
+        return self.runStep()
+
+    def test_no_reviewers(self):
+        self.setupStep(AddReviewerToChangeLog())
         self.setProperty('github.number', '1234')
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
