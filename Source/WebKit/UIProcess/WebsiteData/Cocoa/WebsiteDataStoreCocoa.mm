@@ -93,6 +93,15 @@ WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlocking
 }
 #endif
 
+static bool internalFeatureEnabled(const String& key, bool defaultValue = false)
+{
+    auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"InternalDebug%@", static_cast<NSString *>(key)]);
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:defaultsKey.get()] != nil)
+        return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
+
+    return defaultValue;
+}
+
 static bool experimentalFeatureEnabled(const String& key)
 {
 #if PLATFORM(MAC)
@@ -619,8 +628,8 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String& enti
 
 bool WebsiteDataStore::defaultShouldUseCustomStoragePaths()
 {
-    static const bool useGeneralStorageDirectory = isFeatureFlagEnabled("general_directory_for_storage"_s);
-    return !useGeneralStorageDirectory;
+    bool useGeneralDirectoryForStorageFeatureFlag = isFeatureFlagEnabled("general_directory_for_storage"_s, true);
+    return !internalFeatureEnabled(WebPreferencesKey::useGeneralDirectoryForStorageKey(), useGeneralDirectoryForStorageFeatureFlag);
 }
 
 }

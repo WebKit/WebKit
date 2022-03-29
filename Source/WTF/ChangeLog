@@ -1,3 +1,15 @@
+2022-03-28  Sihui Liu  <sihui_liu@apple.com>
+
+        Disable custom storage paths for IndexedDB and LocalStorage by default
+        https://bugs.webkit.org/show_bug.cgi?id=236977
+        <rdar://problem/89559929>
+
+        Reviewed by Geoffrey Garen.
+
+        Add an internal debug feature for using genreal directory for storage.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
 2022-03-28  Chris Dumez  <cdumez@apple.com>
 
         Prepare WebCore for making the String(const char*) constructor explicit
