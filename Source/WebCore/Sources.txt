@@ -715,6 +715,7 @@ css/CSSBorderImageSliceValue.cpp
 css/CSSCanvasValue.cpp
 css/CSSComputedStyleDeclaration.cpp
 css/CSSConditionRule.cpp
+css/CSSContainerRule.cpp
 css/CSSContentDistributionValue.cpp
 css/CSSCounterStyleRule.cpp
 css/CSSCrossfadeValue.cpp
@@ -2947,6 +2948,7 @@ JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
 JSCSSAnimation.cpp
 JSCSSConditionRule.cpp
+JSCSSContainerRule.cpp
 JSCSSCounterStyleRule.cpp
 JSCSSFontFaceRule.cpp
 JSCSSFontPaletteValuesRule.cpp

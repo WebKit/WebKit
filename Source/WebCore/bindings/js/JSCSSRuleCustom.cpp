@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSCSSRule.h"
 
+#include "CSSContainerRule.h"
 #include "CSSCounterStyleRule.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontPaletteValuesRule.h"
@@ -39,6 +40,7 @@
 #include "CSSPageRule.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
+#include "JSCSSContainerRule.h"
 #include "JSCSSCounterStyleRule.h"
 #include "JSCSSFontFaceRule.h"
 #include "JSCSSFontPaletteValuesRule.h"
@@ -97,6 +99,7 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
     case StyleRuleType::LayerStatement:
         return createWrapper<CSSLayerStatementRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Container:
+        return createWrapper<CSSContainerRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Margin:

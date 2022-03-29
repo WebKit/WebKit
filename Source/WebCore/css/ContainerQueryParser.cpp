@@ -61,9 +61,10 @@ std::optional<FilteredContainerQuery> ContainerQueryParser::consumeFilteredConta
 std::optional<CQ::ContainerQuery> ContainerQueryParser::consumeContainerQuery(CSSParserTokenRange& range)
 {
     if (range.peek().type() == FunctionToken) {
-        range.consumeBlock();
+        auto name = range.peek().value();
+        auto functionRange = range.consumeBlock();
         // This is where we would support style() queries.
-        return CQ::UnknownQuery { };
+        return CQ::UnknownQuery { name.toString(), functionRange.serialize() };
     }
 
     if (range.peek().type() == LeftParenthesisToken) {

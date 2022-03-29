@@ -39,7 +39,10 @@ struct ContainerCondition;
 struct SizeCondition;
 struct SizeFeature;
 
-struct UnknownQuery { };
+struct UnknownQuery {
+    String name;
+    String text;
+};
 
 using SizeQuery = std::variant<SizeCondition, SizeFeature>;
 using ContainerQuery = std::variant<ContainerCondition, SizeQuery, UnknownQuery>;
@@ -96,5 +99,7 @@ struct FilteredContainerQuery {
 };
 
 using CachedQueryContainers = Vector<Ref<const Element>>;
+
+void serialize(StringBuilder&, const ContainerQuery&);
 
 }

@@ -1,3 +1,50 @@
+2022-03-29  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Support CSSOM
+        https://bugs.webkit.org/show_bug.cgi?id=238500
+
+        Reviewed by Simon Fraser.
+
+        Add CSSContainerRule interface.
+
+        https://drafts.csswg.org/css-contain-3/#the-csscontainerrule-interface
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * css/CSSContainerRule.cpp: Added.
+        (WebCore::CSSContainerRule::CSSContainerRule):
+        (WebCore::CSSContainerRule::create):
+        (WebCore::CSSContainerRule::styleRuleContainer const):
+        (WebCore::CSSContainerRule::cssText const):
+        (WebCore::CSSContainerRule::conditionText const):
+
+        Implementation, the only real functionality is serialization.
+
+        * css/CSSContainerRule.h: Added.
+        * css/CSSContainerRule.idl: Added.
+
+        Interface.
+
+        * css/ContainerQuery.cpp:
+        (WebCore::CQ::serialize):
+        (WebCore::serialize):
+
+        Query syntax serialization support.
+
+        * css/ContainerQuery.h:
+        * css/ContainerQueryParser.cpp:
+        (WebCore::ContainerQueryParser::consumeContainerQuery):
+
+        Remember the text of unknown queries.
+
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::createCSSOMWrapper const):
+
 2022-03-29  Alan Bujtas  <zalan@apple.com>
 
         RenderText::width should call FontCascade directly on single space characters

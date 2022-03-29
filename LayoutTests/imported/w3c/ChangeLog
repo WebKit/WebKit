@@ -1,3 +1,13 @@
+2022-03-29  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Support CSSOM
+        https://bugs.webkit.org/show_bug.cgi?id=238500
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-contain/container-queries/at-container-serialization-expected.txt:
+        * web-platform-tests/css/css-contain/container-queries/idlharness-expected.txt:
+
 2022-03-29  Sam Sneddon  <gsnedders@apple.com>
 
         Re-import web-platform-tests/css/css-conditional

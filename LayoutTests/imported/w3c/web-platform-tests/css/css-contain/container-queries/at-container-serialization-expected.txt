@@ -1,5 +1,5 @@
 
-FAIL Serialization of conditionText null is not an object (evaluating 'rules[0].cssRules')
-FAIL Serialization of inner @container rule null is not an object (evaluating 'rules[0].cssRules')
-FAIL Serialization of nested @container rule null is not an object (evaluating 'rules[0].cssText')
+PASS Serialization of conditionText
+PASS Serialization of inner @container rule
+PASS Serialization of nested @container rule
 

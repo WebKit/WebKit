@@ -763,6 +763,7 @@ set(WebCore_NON_SVG_IDL_FILES
     crypto/parameters/RsaPssParams.idl
 
     css/CSSConditionRule.idl
+    css/CSSContainerRule.idl
     css/CSSCounterStyleRule.idl
     css/CSSFontFaceRule.idl
     css/CSSFontPaletteValuesRule.idl

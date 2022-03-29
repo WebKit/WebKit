@@ -22,6 +22,7 @@
 #include "config.h"
 #include "StyleRule.h"
 
+#include "CSSContainerRule.h"
 #include "CSSCounterStyleRule.h"
 #include "CSSDeferredParser.h"
 #include "CSSFontFaceRule.h"
@@ -194,7 +195,7 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
         rule = CSSLayerStatementRule::create(downcast<StyleRuleLayer>(self), parentSheet);
         break;
     case StyleRuleType::Container:
-        // FIXME: Implement CSSOM.
+        rule = CSSContainerRule::create(downcast<StyleRuleContainer>(self), parentSheet);
         break;
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
