@@ -980,6 +980,16 @@ UseGPUProcessForMediaEnabled:
     WebKit:
       default: WebKit::defaultUseGPUProcessForMediaEnabled()
 
+UseGeneralDirectoryForStorage:
+  type: bool
+  humanReadableName: "Use General Directory For Storage"
+  humanReadableDescription: "Use general storage directory for IndexedDB and LocalStorage"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: true
+
 UseSceneKitForModel:
   type: bool
   humanReadableName: "Use SceneKit for <model>"

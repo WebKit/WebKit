@@ -100,7 +100,7 @@
 	<key>general_directory_for_storage</key>
 	<dict>
 		<key>Enabled</key>
-		<false/>
+		<true/>
 	</dict>
 </dict>
 </plist>

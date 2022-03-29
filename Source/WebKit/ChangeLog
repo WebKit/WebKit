@@ -1,3 +1,54 @@
+2022-03-29  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r292010. rdar://problem/89559929
+
+    Disable custom storage paths for IndexedDB and LocalStorage by default
+    https://bugs.webkit.org/show_bug.cgi?id=236977
+    <rdar://problem/89559929>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebKit:
+    
+    Developers can enable them by disabling "general directory for storage" via internal debug feature or system
+    feature flag.
+    
+    * FeatureFlags/WebKit-appletvos.plist:
+    * FeatureFlags/WebKit-ios.plist:
+    * FeatureFlags/WebKit-macos.plist:
+    * FeatureFlags/WebKit-watchos.plist:
+    * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+    (WebKit::internalFeatureEnabled):
+    (WebKit::WebsiteDataStore::defaultShouldUseCustomStoragePaths):
+    
+    Source/WTF:
+    
+    Add an internal debug feature for using genreal directory for storage.
+    
+    * Scripts/Preferences/WebPreferencesInternal.yaml:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292010 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-28  Sihui Liu  <sihui_liu@apple.com>
+
+            Disable custom storage paths for IndexedDB and LocalStorage by default
+            https://bugs.webkit.org/show_bug.cgi?id=236977
+            <rdar://problem/89559929>
+
+            Reviewed by Geoffrey Garen.
+
+            Developers can enable them by disabling "general directory for storage" via internal debug feature or system
+            feature flag.
+
+            * FeatureFlags/WebKit-appletvos.plist:
+            * FeatureFlags/WebKit-ios.plist:
+            * FeatureFlags/WebKit-macos.plist:
+            * FeatureFlags/WebKit-watchos.plist:
+            * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+            (WebKit::internalFeatureEnabled):
+            (WebKit::WebsiteDataStore::defaultShouldUseCustomStoragePaths):
+
 2022-03-28  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r291982. rdar://problem/90927474
