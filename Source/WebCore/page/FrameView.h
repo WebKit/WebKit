@@ -228,21 +228,32 @@ public:
 
     WEBCORE_EXPORT void adjustViewSize();
 
+    struct OverrideViewportSize {
+        std::optional<float> width;
+        std::optional<float> height;
+    
+        bool operator==(const OverrideViewportSize& rhs) const { return rhs.width == width && rhs.height == height; }
+    };
+
+    WEBCORE_EXPORT void setOverrideSizeForCSSDefaultViewportUnits(OverrideViewportSize);
+    std::optional<OverrideViewportSize> overrideSizeForCSSDefaultViewportUnits() const { return m_defaultViewportSizeOverride; }
     WEBCORE_EXPORT void setSizeForCSSDefaultViewportUnits(FloatSize);
     void clearSizeOverrideForCSSDefaultViewportUnits();
     FloatSize sizeForCSSDefaultViewportUnits() const;
 
+    WEBCORE_EXPORT void setOverrideSizeForCSSSmallViewportUnits(OverrideViewportSize);
+    std::optional<OverrideViewportSize> overrideSizeForCSSSmallViewportUnits() const { return m_smallViewportSizeOverride; }
     WEBCORE_EXPORT void setSizeForCSSSmallViewportUnits(FloatSize);
     void clearSizeOverrideForCSSSmallViewportUnits();
     FloatSize sizeForCSSSmallViewportUnits() const;
 
+    WEBCORE_EXPORT void setOverrideSizeForCSSLargeViewportUnits(OverrideViewportSize);
+    std::optional<OverrideViewportSize> overrideSizeForCSSLargeViewportUnits() const { return m_largeViewportSizeOverride; }
     WEBCORE_EXPORT void setSizeForCSSLargeViewportUnits(FloatSize);
     void clearSizeOverrideForCSSLargeViewportUnits();
     FloatSize sizeForCSSLargeViewportUnits() const;
 
     FloatSize sizeForCSSDynamicViewportUnits() const;
-
-    WEBCORE_EXPORT void copyCSSViewportSizeOverrides(FrameView&);
 
     IntRect windowClipRect() const final;
     WEBCORE_EXPORT IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
@@ -863,23 +874,14 @@ private:
     void willDoLayout(WeakPtr<RenderElement> layoutRoot);
     void didLayout(WeakPtr<RenderElement> layoutRoot);
 
-    struct OverrideViewportSize {
-        std::optional<float> width;
-        std::optional<float> height;
-
-        bool operator==(const OverrideViewportSize& rhs) const { return rhs.width == width && rhs.height == height; }
-    };
     FloatSize calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize>) const;
 
-    void overrideSizeForCSSDefaultViewportUnits(OverrideViewportSize);
     void overrideWidthForCSSDefaultViewportUnits(float);
     void resetOverriddenWidthForCSSDefaultViewportUnits();
 
-    void overrideSizeForCSSSmallViewportUnits(OverrideViewportSize);
     void overrideWidthForCSSSmallViewportUnits(float);
     void resetOverriddenWidthForCSSSmallViewportUnits();
 
-    void overrideSizeForCSSLargeViewportUnits(OverrideViewportSize);
     void overrideWidthForCSSLargeViewportUnits(float);
     void resetOverriddenWidthForCSSLargeViewportUnits();
 

@@ -1,5 +1,52 @@
 2022-03-29  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r292042. rdar://problem/90999175
+
+    Unreviewed, fix UAF after r291980
+    
+    Source/WebCore:
+    
+    * page/FrameView.h:
+    (WebCore::FrameView::overrideSizeForCSSDefaultViewportUnits): Added.
+    (WebCore::FrameView::overrideSizeForCSSSmallViewportUnits): Added.
+    (WebCore::FrameView::overrideSizeForCSSLargeViewportUnits): Added.
+    * page/FrameView.cpp:
+    (WebCore::FrameView::setSizeForCSSDefaultViewportUnits):
+    (WebCore::FrameView::overrideWidthForCSSDefaultViewportUnits):
+    (WebCore::FrameView::resetOverriddenWidthForCSSDefaultViewportUnits):
+    (WebCore::FrameView::setOverrideSizeForCSSDefaultViewportUnits): Renamed from `overrideSizeForCSSDefaultViewportUnits`.
+    (WebCore::FrameView::setSizeForCSSSmallViewportUnits):
+    (WebCore::FrameView::overrideWidthForCSSSmallViewportUnits):
+    (WebCore::FrameView::resetOverriddenWidthForCSSSmallViewportUnits):
+    (WebCore::FrameView::setOverrideSizeForCSSSmallViewportUnits): Renamed from `overrideSizeForCSSSmallViewportUnits`.
+    (WebCore::FrameView::setSizeForCSSLargeViewportUnits):
+    (WebCore::FrameView::overrideWidthForCSSLargeViewportUnits):
+    (WebCore::FrameView::resetOverriddenWidthForCSSLargeViewportUnits):
+    (WebCore::FrameView::setOverrideSizeForCSSLargeViewportUnits): Renamed from `overrideSizeForCSSLargeViewportUnits`.
+    (WebCore::FrameView::copyCSSViewportSizeOverrides): Deleted.
+    Expose `OverrideViewportSize` so that we can copy those members specifically instead of
+    having to keep alive the old `FrameView` when transitioning to a new page.
+    
+    Source/WebKit:
+    
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+    Expose `OverrideViewportSize` so that we can copy those members specifically instead of
+    having to keep alive the old `FrameView` when transitioning to a new page.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292042 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-29  Devin Rousso  <drousso@apple.com>
+
+            Unreviewed, fix UAF after r291980
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+            Expose `OverrideViewportSize` so that we can copy those members specifically instead of
+            having to keep alive the old `FrameView` when transitioning to a new page.
+
+2022-03-29  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r292035. rdar://problem/88717577
 
     [iOS GPUProcess] Image decoding should not trigger IOSurface usage in the web process
