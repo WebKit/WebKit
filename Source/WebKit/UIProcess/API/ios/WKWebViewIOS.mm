@@ -712,8 +712,6 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
     _didDeferUpdateVisibleContentRectsForUnstableScrollView = NO;
     _currentlyAdjustingScrollViewInsetsForKeyboard = NO;
     _lastSentViewLayoutSize = std::nullopt;
-    _lastSentMinimumUnobscuredSize = std::nullopt;
-    _lastSentMaximumUnobscuredSize = std::nullopt;
     _lastSentDeviceOrientation = std::nullopt;
 
     _frozenVisibleContentRect = std::nullopt;
@@ -1920,24 +1918,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _lastSentViewLayoutSize = viewLayoutSize;
 }
 
-- (void)_dispatchSetMinimumUnobscuredSize:(WebCore::FloatSize)minimumUnobscuredSize
-{
-    if (_lastSentMinimumUnobscuredSize && CGSizeEqualToSize(_lastSentMinimumUnobscuredSize.value(), minimumUnobscuredSize))
-        return;
-
-    _page->setMinimumUnobscuredSize(minimumUnobscuredSize);
-    _lastSentMinimumUnobscuredSize = minimumUnobscuredSize;
-}
-
-- (void)_dispatchSetMaximumUnobscuredSize:(WebCore::FloatSize)maximumUnobscuredSize
-{
-    if (_lastSentMaximumUnobscuredSize && CGSizeEqualToSize(_lastSentMaximumUnobscuredSize.value(), maximumUnobscuredSize))
-        return;
-
-    _page->setMaximumUnobscuredSize(maximumUnobscuredSize);
-    _lastSentMaximumUnobscuredSize = maximumUnobscuredSize;
-}
-
 - (void)_dispatchSetDeviceOrientation:(int32_t)deviceOrientation
 {
     if (_lastSentDeviceOrientation && _lastSentDeviceOrientation.value() == deviceOrientation)
@@ -1964,10 +1944,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing) {
         if (!_viewLayoutSizeOverride)
             [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
-        if (!_minimumUnobscuredSizeOverride)
-            [self _dispatchSetMinimumUnobscuredSize:WebCore::FloatSize(bounds.size)];
         if (!_maximumUnobscuredSizeOverride)
-            [self _dispatchSetMaximumUnobscuredSize:WebCore::FloatSize(bounds.size)];
+            _page->setDefaultUnobscuredSize(WebCore::FloatSize(bounds.size));
+        [self _recalculateViewportSizesWithMinimumViewportInset:_minimumViewportInset maximumViewportInset:_maximumViewportInset throwOnInvalidInput:NO];
 
         BOOL sizeChanged = NO;
         if (_page) {
@@ -2387,11 +2366,13 @@ static int32_t activeOrientation(WKWebView *webView)
     if (!_lastSentViewLayoutSize || newViewLayoutSize != _lastSentViewLayoutSize.value())
         [self _dispatchSetViewLayoutSize:newViewLayoutSize];
 
-    if (!_lastSentMinimumUnobscuredSize || newMinimumUnobscuredSize != _lastSentMinimumUnobscuredSize.value())
-        [self _dispatchSetMinimumUnobscuredSize:WebCore::FloatSize(newMinimumUnobscuredSize)];
-
-    if (!_lastSentMaximumUnobscuredSize || newMaximumUnobscuredSize != _lastSentMaximumUnobscuredSize.value())
-        [self _dispatchSetMaximumUnobscuredSize:WebCore::FloatSize(newMaximumUnobscuredSize)];
+    if (_minimumUnobscuredSizeOverride)
+        _page->setMinimumUnobscuredSize(WebCore::FloatSize(newMinimumUnobscuredSize));
+    if (_maximumUnobscuredSizeOverride) {
+        _page->setDefaultUnobscuredSize(WebCore::FloatSize(newMaximumUnobscuredSize));
+        _page->setMaximumUnobscuredSize(WebCore::FloatSize(newMaximumUnobscuredSize));
+    }
+    [self _recalculateViewportSizesWithMinimumViewportInset:_minimumViewportInset maximumViewportInset:_maximumViewportInset throwOnInvalidInput:NO];
 
     if (!_lastSentDeviceOrientation || newOrientation != _lastSentDeviceOrientation.value())
         [self _dispatchSetDeviceOrientation:newOrientation];
@@ -2757,7 +2738,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     _minimumUnobscuredSizeOverride = size;
 
     if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
-        [self _dispatchSetMinimumUnobscuredSize:WebCore::FloatSize(size)];
+        _page->setMinimumUnobscuredSize(WebCore::FloatSize(size));
 }
 
 // Deprecated SPI
@@ -2772,8 +2753,10 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     ASSERT(size.width <= self.bounds.size.width && size.height <= self.bounds.size.height);
     _maximumUnobscuredSizeOverride = size;
 
-    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing)
-        [self _dispatchSetMaximumUnobscuredSize:WebCore::FloatSize(size)];
+    if (_dynamicViewportUpdateMode == WebKit::DynamicViewportUpdateMode::NotResizing) {
+        _page->setDefaultUnobscuredSize(WebCore::FloatSize(size));
+        _page->setMaximumUnobscuredSize(WebCore::FloatSize(size));
+    }
 }
 
 - (UIEdgeInsets)_obscuredInsets
@@ -3115,9 +3098,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         if (_viewLayoutSizeOverride)
             [self _dispatchSetViewLayoutSize:newViewLayoutSize];
         if (_minimumUnobscuredSizeOverride)
-            [self _dispatchSetMinimumUnobscuredSize:WebCore::FloatSize(newMinimumUnobscuredSize)];
-        if (_maximumUnobscuredSizeOverride)
-            [self _dispatchSetMaximumUnobscuredSize:WebCore::FloatSize(newMaximumUnobscuredSize)];
+            _page->setMinimumUnobscuredSize(WebCore::FloatSize(newMinimumUnobscuredSize));
+        if (_maximumUnobscuredSizeOverride) {
+            _page->setDefaultUnobscuredSize(WebCore::FloatSize(newMaximumUnobscuredSize));
+            _page->setMaximumUnobscuredSize(WebCore::FloatSize(newMaximumUnobscuredSize));
+        }
         if (_overridesInterfaceOrientation)
             [self _dispatchSetDeviceOrientation:newOrientation];
 
@@ -3194,8 +3179,6 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     WebCore::FloatBoxExtent unobscuredSafeAreaInsetsExtent(unobscuredSafeAreaInsets.top, unobscuredSafeAreaInsets.right, unobscuredSafeAreaInsets.bottom, unobscuredSafeAreaInsets.left);
 
     _lastSentViewLayoutSize = newViewLayoutSize;
-    _lastSentMinimumUnobscuredSize = newMinimumUnobscuredSize;
-    _lastSentMaximumUnobscuredSize = newMaximumUnobscuredSize;
     _lastSentDeviceOrientation = newOrientation;
 
     _page->dynamicViewportSizeUpdate(newViewLayoutSize, newMinimumUnobscuredSize, newMaximumUnobscuredSize, visibleRectInContentCoordinates, unobscuredRectInContentCoordinates, futureUnobscuredRectInSelfCoordinates, unobscuredSafeAreaInsetsExtent, targetScale, newOrientation, newMinimumEffectiveDeviceWidth, ++_currentDynamicViewportSizeUpdateID);

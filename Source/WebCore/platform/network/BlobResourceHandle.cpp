@@ -579,8 +579,13 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     addCrossOriginOpenerPolicyHeaders(response, m_blobData->policyContainer().crossOriginOpenerPolicy);
     addCrossOriginEmbedderPolicyHeaders(response, m_blobData->policyContainer().crossOriginEmbedderPolicy);
 
-    if (isRangeRequest)
-        response.setHTTPHeaderField(HTTPHeaderName::ContentRange, ParsedContentRange(m_rangeOffset, m_rangeEnd, m_totalSize).headerValue());
+    if (isRangeRequest) {
+        auto rangeEnd = m_rangeEnd;
+        if (rangeEnd == kPositionNotSpecified)
+            rangeEnd = m_totalSize - 1;
+
+        response.setHTTPHeaderField(HTTPHeaderName::ContentRange, ParsedContentRange(m_rangeOffset, rangeEnd, m_totalSize).headerValue());
+    }
     // FIXME: If a resource identified with a blob: URL is a File object, user agents must use that file's name attribute,
     // as if the response had a Content-Disposition header with the filename parameter set to the File's name attribute.
     // Notably, this will affect a name suggested in "File Save As".

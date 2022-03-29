@@ -4043,6 +4043,45 @@ void WebPageProxy::setFixedLayoutSize(const IntSize& size)
     send(Messages::WebPage::SetFixedLayoutSize(size));
 }
 
+void WebPageProxy::setDefaultUnobscuredSize(const FloatSize& size)
+{
+    if (size == m_defaultUnobscuredSize)
+        return;
+
+    m_defaultUnobscuredSize = size;
+
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::SetDefaultUnobscuredSize(m_defaultUnobscuredSize));
+}
+
+void WebPageProxy::setMinimumUnobscuredSize(const FloatSize& size)
+{
+    if (size == m_minimumUnobscuredSize)
+        return;
+
+    m_minimumUnobscuredSize = size;
+
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::SetMinimumUnobscuredSize(m_minimumUnobscuredSize));
+}
+
+void WebPageProxy::setMaximumUnobscuredSize(const FloatSize& size)
+{
+    if (size == m_maximumUnobscuredSize)
+        return;
+
+    m_maximumUnobscuredSize = size;
+
+    if (!hasRunningProcess())
+        return;
+
+    send(Messages::WebPage::SetMaximumUnobscuredSize(m_maximumUnobscuredSize));
+}
+
 void WebPageProxy::setViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
 {
     if (m_viewExposedRect == viewExposedRect)
@@ -8197,6 +8236,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.underlayColor = m_underlayColor;
     parameters.useFixedLayout = m_useFixedLayout;
     parameters.fixedLayoutSize = m_fixedLayoutSize;
+    parameters.defaultUnobscuredSize = m_defaultUnobscuredSize;
+    parameters.minimumUnobscuredSize = m_minimumUnobscuredSize;
+    parameters.maximumUnobscuredSize = m_maximumUnobscuredSize;
     parameters.viewExposedRect = m_viewExposedRect;
     parameters.alwaysShowsHorizontalScroller = m_alwaysShowsHorizontalScroller;
     parameters.alwaysShowsVerticalScroller = m_alwaysShowsVerticalScroller;
@@ -8255,8 +8297,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.overrideScreenSize = overrideScreenSize();
     parameters.textAutosizingWidth = textAutosizingWidth();
     parameters.mimeTypesWithCustomContentProviders = pageClient().mimeTypesWithCustomContentProviders();
-    parameters.minimumUnobscuredSize = m_minimumUnobscuredSize;
-    parameters.maximumUnobscuredSize = m_maximumUnobscuredSize;
     parameters.deviceOrientation = m_deviceOrientation;
     parameters.keyboardIsAttached = isInHardwareKeyboardMode();
     parameters.canShowWhileLocked = m_configuration->canShowWhileLocked();

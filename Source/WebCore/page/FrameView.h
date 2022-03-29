@@ -228,6 +228,10 @@ public:
 
     WEBCORE_EXPORT void adjustViewSize();
 
+    WEBCORE_EXPORT void setSizeForCSSDefaultViewportUnits(FloatSize);
+    void clearSizeOverrideForCSSDefaultViewportUnits();
+    FloatSize sizeForCSSDefaultViewportUnits() const;
+
     WEBCORE_EXPORT void setSizeForCSSSmallViewportUnits(FloatSize);
     void clearSizeOverrideForCSSSmallViewportUnits();
     FloatSize sizeForCSSSmallViewportUnits() const;
@@ -238,7 +242,7 @@ public:
 
     FloatSize sizeForCSSDynamicViewportUnits() const;
 
-    FloatSize sizeForCSSDefaultViewportUnits() const;
+    WEBCORE_EXPORT void copyCSSViewportSizeOverrides(FrameView&);
 
     IntRect windowClipRect() const final;
     WEBCORE_EXPORT IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
@@ -867,6 +871,10 @@ private:
     };
     FloatSize calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize>) const;
 
+    void overrideSizeForCSSDefaultViewportUnits(OverrideViewportSize);
+    void overrideWidthForCSSDefaultViewportUnits(float);
+    void resetOverriddenWidthForCSSDefaultViewportUnits();
+
     void overrideSizeForCSSSmallViewportUnits(OverrideViewportSize);
     void overrideWidthForCSSSmallViewportUnits(float);
     void resetOverriddenWidthForCSSSmallViewportUnits();
@@ -944,6 +952,7 @@ private:
     std::optional<IntSize> m_customSizeForResizeEvent;
 #endif
 
+    std::optional<OverrideViewportSize> m_defaultViewportSizeOverride;
     std::optional<OverrideViewportSize> m_smallViewportSizeOverride;
     std::optional<OverrideViewportSize> m_largeViewportSizeOverride;
 
