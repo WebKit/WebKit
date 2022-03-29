@@ -2131,7 +2131,9 @@ void WebsiteDataStore::openWindowFromServiceWorker(const String& urlString, cons
             callback(newPage->webPageID());
         };
 
+#if ENABLE(SERVICE_WORKER)
         newPage->setServiceWorkerOpenWindowCompletionCallback(WTFMove(innerCallback));
+#endif
     };
 
     m_client->openWindowFromServiceWorker(urlString, serviceWorkerOrigin, WTFMove(innerCallback));

@@ -1,3 +1,14 @@
+2022-03-29  Jigen Zhou  <jigen.zhou@sony.com>
+
+        [Playstation] Fix build break after r292041 when ENABLE_SERVICE_WORKER is off
+        https://bugs.webkit.org/show_bug.cgi?id=238520
+
+        Reviewed by Darin Adler.
+
+        Unreviewed build fix after r292041 / r291979 for Playsation platform builds. 
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+
 2022-03-29  Alex Christensen  <achristensen@webkit.org>
 
         Don't create directories on iOS if we are only using ephemeral storages
