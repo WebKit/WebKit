@@ -1,3 +1,18 @@
+2022-03-28  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Clean up some 32bit load/store with 64bit load/store
+        https://bugs.webkit.org/show_bug.cgi?id=238440
+
+        Reviewed by Mark Lam.
+
+        1. On OSR entry, we should copy values from scratch to stack via loadValue / storeValue instead of 32bit load/store.
+        2. We should initialize tail-call's argumentCountIncludingThis slot via store64.
+
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrEntryThunkGenerator):
+        * jit/CallFrameShuffler.cpp:
+        (JSC::CallFrameShuffler::prepareAny):
+
 2022-03-28  Mark Lam  <mark.lam@apple.com>
 
         The lazy symbolObjectStructure should be realized before we allocate a SymbolObject.

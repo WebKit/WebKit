@@ -739,11 +739,14 @@ void CallFrameShuffler::prepareAny()
     // m_newFrameBase, which could be a wanted register.
     if (verbose)
         dataLog("   * Storing the argument count into ", VirtualRegister { CallFrameSlot::argumentCountIncludingThis }, "\n");
-    m_jit.store32(MacroAssembler::TrustedImm32(0),
-        addressForNew(VirtualRegister { CallFrameSlot::argumentCountIncludingThis }).withOffset(TagOffset));
     RELEASE_ASSERT(m_numPassedArgs != UINT_MAX);
-    m_jit.store32(MacroAssembler::TrustedImm32(m_numPassedArgs),
-        addressForNew(VirtualRegister { CallFrameSlot::argumentCountIncludingThis }).withOffset(PayloadOffset));
+#if USE(JSVALUE64)
+    // Initialize CallFrameSlot::argumentCountIncludingThis's TagOffset and PayloadOffset with 0 and m_numPassedArgs.
+    m_jit.store64(MacroAssembler::TrustedImm32(m_numPassedArgs), addressForNew(VirtualRegister { CallFrameSlot::argumentCountIncludingThis }));
+#else
+    m_jit.store32(MacroAssembler::TrustedImm32(0), addressForNew(VirtualRegister { CallFrameSlot::argumentCountIncludingThis }).withOffset(TagOffset));
+    m_jit.store32(MacroAssembler::TrustedImm32(m_numPassedArgs), addressForNew(VirtualRegister { CallFrameSlot::argumentCountIncludingThis }).withOffset(PayloadOffset));
+#endif
 
     if (!isSlowPath()) {
         ASSERT(m_newFrameBase != MacroAssembler::stackPointerRegister);
