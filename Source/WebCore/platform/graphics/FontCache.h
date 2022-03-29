@@ -328,6 +328,7 @@ public:
 
     unsigned short generation() const { return m_generation; }
     WEBCORE_EXPORT void invalidate();
+    static void registerFontCacheInvalidationCallback(Function<void()>&&);
     WEBCORE_EXPORT static void invalidateAllFontCaches();
 
     WEBCORE_EXPORT size_t fontCount();

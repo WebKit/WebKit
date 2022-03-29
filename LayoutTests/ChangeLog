@@ -1,3 +1,14 @@
+2022-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Automatically relayout the page when new fonts are installed
+        https://bugs.webkit.org/show_bug.cgi?id=238483
+        <rdar://problem/80544133>
+
+        Reviewed by Chris Dumez.
+
+        * fast/text/install-font-style-recalc-expected.txt: Added.
+        * fast/text/install-font-style-recalc.html: Added.
+
 2022-03-29  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [GLIB] Update test expectations and baselines. Unreviewed test gardening.

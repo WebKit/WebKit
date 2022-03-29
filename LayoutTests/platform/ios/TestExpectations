@@ -3567,3 +3567,5 @@ fast/text/accessibility-bold.html [ Skip ]
 
 # iOS has a WebGPU implementation.
 http/tests/webgpu [ Pass ]
+
+fast/text/install-font-style-recalc.html [ Pass ]

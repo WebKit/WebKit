@@ -2415,3 +2415,5 @@ fast/text/accessibility-bold.html [ Skip ]
 
 # macOS has a WebGPU implementation.
 http/tests/webgpu [ Pass ]
+
+fast/text/install-font-style-recalc.html [ Pass ]
