@@ -1166,6 +1166,13 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsign
     if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Text))
         return JSStringCreateWithCharacters(nullptr, 0);
 
+    m_element->updateBackingStore();
+    auto text = m_element->text();
+    auto limit = location + length;
+
+    if (limit > text.length())
+        return JSStringCreateWithCharacters(nullptr, 0);
+
     StringBuilder builder;
 
     auto buildAttributes = [&](const WebCore::AccessibilityObjectAtspi::TextAttributes& attributes) {
@@ -1179,12 +1186,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::attributedStringForRange(unsign
     builder.append("\n\tDefault text attributes:");
     buildAttributes(m_element->textAttributes());
 
-    auto text = m_element->text();
     int endOffset = 0;
-    for (unsigned i = location; i < location + length; i = endOffset) {
+    for (unsigned i = location; i < limit; i = endOffset) {
         auto attributes = m_element->textAttributes(i);
         auto rangeStart = std::max<int>(location, attributes.startOffset);
-        auto rangeEnd = std::min<int>(location + length, attributes.endOffset);
+        auto rangeEnd = std::min<int>(limit, attributes.endOffset);
         builder.append("\n\tRange attributes for '", text.substring(rangeStart, rangeEnd - rangeStart).replace("\n", "<\\n>").replace(objectReplacementCharacter, "<obj>"), "':");
         buildAttributes(attributes);
         endOffset = attributes.endOffset;

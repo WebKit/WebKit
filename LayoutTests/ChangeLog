@@ -1,3 +1,14 @@
+2022-03-28  Lauro Moura  <lmoura@igalia.com>
+
+        [AT-SPI] accessibility/native-text-control-attributed-string.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=237821
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/native-text-control-attributed-string-expected.txt: Added.
+        * platform/wpe/TestExpectations:
+
 2022-03-28  Matteo Flores  <matteo_flores@apple.com>
 
         [ iPadOS ] 3 svg/filters/* tests are constant image failures

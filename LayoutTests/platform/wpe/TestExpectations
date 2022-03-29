@@ -163,6 +163,7 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.ht
 # Accessibility
 webkit.org/b/225479 accessibility/aria-modal.html [ Timeout ]
 webkit.org/b/225479 accessibility/dialog-showModal.html [ Timeout ]
+webkit.org/b/237820 accessibility/native-text-control-attributed-string.html [ Timeout ]
 
 # Animations
 webkit.org/b/232745 fast/animation/request-animation-frame-throttling-lowPowerMode.html [ Timeout ]
