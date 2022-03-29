@@ -302,10 +302,7 @@ else
     if C_LOOP or C_LOOP_WIN
         const PB = csr0
         const metadataTable = csr3
-    elsif ARMv7
-        const metadataTable = csr0
-        const PB = csr1
-    elsif MIPS
+    elsif ARMv7 or MIPS
         const metadataTable = csr0
         const PB = csr1
     else
@@ -842,18 +839,7 @@ macro preserveCalleeSavesUsedByLLInt()
     subp CalleeSaveSpaceStackAligned, sp
     if C_LOOP or C_LOOP_WIN
         storep metadataTable, -PtrSize[cfr]
-
-    # Next ARMv7 and MIPS differ in how we store metadataTable and PB,
-    # because this codes needs to be in sync with how registers are
-    # restored in Baseline JIT (specifically in emitRestoreCalleeSavesFor).
-    # emitRestoreCalleeSavesFor restores registers in order instead of by name.
-    # However, ARMv7 and MIPS differ in the order in which registers are assigned
-    # to metadataTable and PB, therefore they can also not have the same saving
-    # order.
-    elsif ARMv7
-        storep metadataTable, -4[cfr]
-        storep PB, -8[cfr]
-    elsif MIPS
+    elsif ARMv7 or MIPS
         storep PB, -4[cfr]
         storep metadataTable, -8[cfr]
     elsif ARM64 or ARM64E
@@ -882,12 +868,7 @@ end
 macro restoreCalleeSavesUsedByLLInt()
     if C_LOOP or C_LOOP_WIN
         loadp -PtrSize[cfr], metadataTable
-    # To understand why ARMv7 and MIPS differ in restore order,
-    # see comment in preserveCalleeSavesUsedByLLInt
-    elsif ARMv7
-        loadp -4[cfr], metadataTable
-        loadp -8[cfr], PB
-    elsif MIPS
+    elsif ARMv7 or MIPS
         loadp -4[cfr], PB
         loadp -8[cfr], metadataTable
     elsif ARM64 or ARM64E
@@ -950,12 +931,7 @@ macro copyCalleeSavesToEntryFrameCalleeSavesBuffer(entryFrame)
             storeq csr4, 32[entryFrame]
             storeq csr5, 40[entryFrame]
             storeq csr6, 48[entryFrame]
-        # To understand why ARMv7 and MIPS differ in store order,
-        # see comment in preserveCalleeSavesUsedByLLInt
-        elsif ARMv7
-            storep csr1, [entryFrame]
-            storep csr0, 4[entryFrame]
-        elsif MIPS
+        elsif ARMv7 or MIPS
             storep csr0, [entryFrame]
             storep csr1, 4[entryFrame]
         elsif RISCV64
@@ -1031,12 +1007,7 @@ macro restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(vm, temp)
             loadq 32[temp], csr4
             loadq 40[temp], csr5
             loadq 48[temp], csr6
-        # To understand why ARMv7 and MIPS differ in restore order,
-        # see comment in preserveCalleeSavesUsedByLLInt
-        elsif ARMv7
-            loadp [temp], csr1
-            loadp 4[temp], csr0
-        elsif MIPS
+        elsif ARMv7 or MIPS
             loadp [temp], csr0
             loadp 4[temp], csr1
         elsif RISCV64
@@ -1810,32 +1781,37 @@ if not (C_LOOP or C_LOOP_WIN)
     _sanitizeStackForVMImpl:
         tagReturnAddress sp
         # We need three non-aliased caller-save registers. We are guaranteed
-        # this for a0, a1 and a2 on all architectures.
+        # this for a0, a1 and a2 on all architectures. Beware also that
+        # offlineasm might use temporary registers when lowering complex
+        # instructions on some platforms, which might be callee-save. To avoid
+        # this, we use the simplest instructions so we never need a temporary
+        # and hence don't clobber any callee-save registers.
         if X86 or X86_WIN
             loadp 4[sp], a0
         end
-        const vmOrStartSP = a0
         const address = a1
-        const zeroValue = a2
-    
-        loadp VM::m_lastStackTop[vmOrStartSP], address
-        move sp, zeroValue
-        storep zeroValue, VM::m_lastStackTop[vmOrStartSP]
-        move sp, vmOrStartSP
+        const scratch = a2
+
+        move VM::m_lastStackTop, scratch
+        addp scratch, a0
+        loadp [a0], address
+        move sp, scratch
+        storep scratch, [a0]
+        move sp, a0
 
         bpbeq sp, address, .zeroFillDone
         move address, sp
 
-        move 0, zeroValue
+        move 0, scratch
     .zeroFillLoop:
-        storep zeroValue, [address]
+        storep scratch, [address]
         addp PtrSize, address
-        bpa vmOrStartSP, address, .zeroFillLoop
+        bpa a0, address, .zeroFillLoop
 
     .zeroFillDone:
-        move vmOrStartSP, sp
+        move a0, sp
         ret
-    
+
     # VMEntryRecord* vmEntryRecord(const EntryFrame* entryFrame)
     global _vmEntryRecord
     _vmEntryRecord:

@@ -381,7 +381,7 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::valueJSR;
     using BaselineJITRegisters::PutByVal::profileGPR;
-    using BaselineJITRegisters::PutByVal::FastPath::stubInfoGPR;
+    using BaselineJITRegisters::PutByVal::stubInfoGPR;
 
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(property, propertyJSR);
@@ -430,7 +430,7 @@ void JIT::emitSlow_op_put_by_val(const JSInstruction*, Vector<SlowCaseEntry>::it
     ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
     JITPutByValGenerator& gen = m_putByVals[m_putByValIndex++];
 
-    using BaselineJITRegisters::PutByVal::SlowPath::stubInfoGPR;
+    using BaselineJITRegisters::PutByVal::stubInfoGPR;
     using BaselineJITRegisters::PutByVal::SlowPath::bytecodeOffsetGPR;
 
     Label coldPathBegin = label();
@@ -458,9 +458,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_by_val_callSlowOperationT
     using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::valueJSR;
     using BaselineJITRegisters::PutByVal::profileGPR;
+    using BaselineJITRegisters::PutByVal::stubInfoGPR;
     using BaselineJITRegisters::PutByVal::SlowPath::globalObjectGPR;
     using BaselineJITRegisters::PutByVal::SlowPath::bytecodeOffsetGPR;
-    using BaselineJITRegisters::PutByVal::SlowPath::stubInfoGPR;
 
     jit.emitCTIThunkPrologue();
 
@@ -493,7 +493,7 @@ void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::PutByVal::baseJSR;
     using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::valueJSR;
-    using BaselineJITRegisters::PutByVal::FastPath::stubInfoGPR;
+    using BaselineJITRegisters::PutByVal::stubInfoGPR;
 
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(property, propertyJSR);
@@ -529,7 +529,7 @@ void JIT::emitSlow_op_put_private_name(const JSInstruction*, Vector<SlowCaseEntr
     JITPutByValGenerator& gen = m_putByVals[m_putByValIndex++];
 
     using BaselineJITRegisters::PutByVal::SlowPath::bytecodeOffsetGPR;
-    using BaselineJITRegisters::PutByVal::SlowPath::stubInfoGPR;
+    using BaselineJITRegisters::PutByVal::stubInfoGPR;
 
     Label coldPathBegin = label();
     linkAllSlowCases(iter);
@@ -556,9 +556,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_private_name_callSlowOper
     using BaselineJITRegisters::PutByVal::propertyJSR;
     using BaselineJITRegisters::PutByVal::valueJSR;
     using BaselineJITRegisters::PutByVal::profileGPR;
+    using BaselineJITRegisters::PutByVal::stubInfoGPR;
     using BaselineJITRegisters::PutByVal::SlowPath::globalObjectGPR;
     using BaselineJITRegisters::PutByVal::SlowPath::bytecodeOffsetGPR;
-    using BaselineJITRegisters::PutByVal::SlowPath::stubInfoGPR;
 
     jit.emitCTIThunkPrologue();
 

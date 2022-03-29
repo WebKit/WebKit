@@ -156,9 +156,9 @@ void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
     using BaselineJITRegisters::Instanceof::resultJSR;
     using BaselineJITRegisters::Instanceof::valueJSR;
     using BaselineJITRegisters::Instanceof::protoJSR;
-    using BaselineJITRegisters::Instanceof::stubInfoGPR;
-    using BaselineJITRegisters::Instanceof::scratch1GPR;
-    using BaselineJITRegisters::Instanceof::scratch2GPR;
+    using BaselineJITRegisters::Instanceof::FastPath::stubInfoGPR;
+    using BaselineJITRegisters::Instanceof::FastPath::scratch1GPR;
+    using BaselineJITRegisters::Instanceof::FastPath::scratch2GPR;
 
     emitGetVirtualRegister(value, valueJSR);
     emitGetVirtualRegister(proto, protoJSR);
@@ -189,36 +189,29 @@ void JIT::emit_op_instanceof(const JSInstruction* currentInstruction)
     addSlowCase();
     m_instanceOfs.append(gen);
 
+    setFastPathResumePoint();
     emitPutVirtualRegister(dst, resultJSR);
 }
 
-void JIT::emitSlow_op_instanceof(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_instanceof(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
-    auto bytecode = currentInstruction->as<OpInstanceof>();
-    VirtualRegister resultVReg = bytecode.m_dst;
-    
     JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
-    
+
     Label coldPathBegin = label();
 
-    using SlowOperation = decltype(operationInstanceOfOptimize);
-    constexpr GPRReg globalObjectGPR = preferredArgumentGPR<SlowOperation, 0>();
-    constexpr GPRReg stubInfoGPR = preferredArgumentGPR<SlowOperation, 1>();
     using BaselineJITRegisters::Instanceof::valueJSR;
-    static_assert(valueJSR == preferredArgumentJSR<SlowOperation, 2>());
     using BaselineJITRegisters::Instanceof::protoJSR;
-    // On JSVALUE32_64, 'proto' will be passed on stack anyway
-    static_assert(protoJSR == preferredArgumentJSR<SlowOperation, 3>() || is32Bit());
-    static_assert(noOverlap(globalObjectGPR, stubInfoGPR, valueJSR, protoJSR));
+    using BaselineJITRegisters::Instanceof::SlowPath::globalObjectGPR;
+    using BaselineJITRegisters::Instanceof::SlowPath::stubInfoGPR;
 
     loadGlobalObject(globalObjectGPR);
     loadConstant(gen.m_unlinkedStubInfoConstantIndex, stubInfoGPR);
-    callOperation<SlowOperation>(
+    callOperation<decltype(operationInstanceOfOptimize)>(
         Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()),
-        resultVReg,
         globalObjectGPR, stubInfoGPR, valueJSR, protoJSR);
+    static_assert(BaselineJITRegisters::Instanceof::resultJSR == returnValueJSR);
     gen.reportSlowPathCall(coldPathBegin, Call());
 }
 

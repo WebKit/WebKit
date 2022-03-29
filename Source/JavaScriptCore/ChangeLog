@@ -1,3 +1,47 @@
+2022-03-29  Geza Lore  <glore@igalia.com>
+
+        [JSC][ARMv7] Cleanup GPR numbering
+        https://bugs.webkit.org/show_bug.cgi?id=235027
+
+        Reviewed by Yusuke Suzuki.
+
+        - Make the the lower order callee save register be regCS0/llint csr0.
+        Some of the CSR store/restore code relies on this and using a
+        numbering scheme consistent with other targets (that is: regCS<N> maps
+        to a lower number machine register than regCS<N+1>) eliminates some
+        ifdefs in LLInt, and hopefully will prevent hard to find issues due to
+        the mismatch from other targets that all follow this rule.
+
+        - In the Thumb-2 instruction set, use of r0-r7 can often be encoded
+        using a shorter, 16-bit instruction. Swap regT4/regT5 with
+        regT7/regT6, so lower order temporaries (which are usually used first)
+        map to the lower order registers that can yield denser code. This
+        then simplifies BaselineJITRegisters.h, and also saves about ~1% DFG
+        code size.
+
+        - In offlineasm, prefer low order registers for temporaries.
+
+        - Also clean up baseline instanceof op implementation.
+
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::initializeFromUnlinkedStructureStubInfo):
+        * jit/BaselineJITRegisters.h:
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::toIndex):
+        (JSC::PreferredArgumentImpl::preferredArgumentJSR):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::slow_op_put_by_val_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::emit_op_put_private_name):
+        (JSC::JIT::emitSlow_op_put_private_name):
+        (JSC::JIT::slow_op_put_private_name_callSlowOperationThenCheckExceptionGenerator):
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/arm.rb:
+
 2022-03-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use spoolers in FTL OSR exit thunk

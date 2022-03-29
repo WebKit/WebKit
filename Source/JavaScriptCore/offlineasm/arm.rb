@@ -31,15 +31,17 @@ require "risc"
 #
 #  x0 => t0, a0, r0
 #  x1 => t1, a1, r1
-#  x2 => t2, a2, r2
-#  x3 => t3, a3, r3
-#  x6 =>            (callee-save scratch)
+#  x2 => t2, a2
+#  x3 => t3, a3
+#  x4 => t4                 (callee-save, PC)
+#  x5 => t5                 (callee-save)
+#  x6 => scratch            (callee-save)
 #  x7 => cfr
-#  x8 => t4         (callee-save)
-#  x9 => t5         (callee-save)
-# x10 => csr1       (callee-save, PB)
-# x11 => cfr, csr0  (callee-save, metadataTable)
-# x12 =>            (callee-save scratch)
+#  x8 => t6                 (callee-save)
+#  x9 => t7, also scratch!  (callee-save)
+# x10 => csr0               (callee-save, metadataTable)
+# x11 => csr1               (callee-save, PB)
+# x12 => scratch            (callee-save)
 #  lr => lr
 #  sp => sp
 #  pc => pc
@@ -69,7 +71,10 @@ class SpecialRegister
     end
 end
 
-ARM_EXTRA_GPRS = [SpecialRegister.new("r6"), SpecialRegister.new("r4"), SpecialRegister.new("r12")]
+# These are allocated from the end. Use the low order r6 first, ast it's often
+# cheaper to encode. r12 and r9 are equivalent, but r9 conflicts with t7, so r9
+# only as last resort.
+ARM_EXTRA_GPRS = [SpecialRegister.new("r9"), SpecialRegister.new("r12"), SpecialRegister.new("r6")]
 ARM_EXTRA_FPRS = [SpecialRegister.new("d7")]
 ARM_SCRATCH_FPR = SpecialRegister.new("d6")
 OS_DARWIN = ((RUBY_PLATFORM =~ /darwin/i) != nil)
@@ -99,20 +104,22 @@ class RegisterID
             "r1"
         when "t2", "a2"
             "r2"
-        when "a3"
+        when "t3", "a3"
             "r3"
-        when "t3"
-            "r3"
-        when "t4"
-            "r8"
+        when "t4" # LLInt PC
+            "r4"
         when "t5"
-            "r9"
+            "r5"
         when "cfr"
             "r7"
+        when "t6"
+            "r8"
+        when "t7"
+            "r9" # r9 is also a scratch register, so use carefully!
         when "csr0"
-            "r11"
-        when "csr1"
             "r10"
+        when "csr1"
+            "r11"
         when "lr"
             "lr"
         when "sp"

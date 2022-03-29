@@ -566,12 +566,12 @@ public:
     static constexpr GPRReg regT1 = ARMRegisters::r1;
     static constexpr GPRReg regT2 = ARMRegisters::r2;
     static constexpr GPRReg regT3 = ARMRegisters::r3;
-    static constexpr GPRReg regT4 = ARMRegisters::r8;
-    static constexpr GPRReg regT5 = ARMRegisters::r9;
-    static constexpr GPRReg regT6 = ARMRegisters::r5;
-    static constexpr GPRReg regT7 = ARMRegisters::r4;
-    static constexpr GPRReg regCS0 = ARMRegisters::r11;
-    static constexpr GPRReg regCS1 = ARMRegisters::r10;
+    static constexpr GPRReg regT4 = ARMRegisters::r4;
+    static constexpr GPRReg regT5 = ARMRegisters::r5;
+    static constexpr GPRReg regT6 = ARMRegisters::r8;
+    static constexpr GPRReg regT7 = ARMRegisters::r9;
+    static constexpr GPRReg regCS0 = ARMRegisters::r10;
+    static constexpr GPRReg regCS1 = ARMRegisters::r11;
     // These registers match the baseline JIT.
     static constexpr GPRReg callFrameRegister = ARMRegisters::fp;
     // These constants provide the names for the general purpose argument & return value registers.
@@ -579,7 +579,7 @@ public:
     static constexpr GPRReg argumentGPR1 = ARMRegisters::r1; // regT1
     static constexpr GPRReg argumentGPR2 = ARMRegisters::r2; // regT2
     static constexpr GPRReg argumentGPR3 = ARMRegisters::r3; // regT3
-    static constexpr GPRReg nonArgGPR0 = ARMRegisters::r4; // regT7
+    static constexpr GPRReg nonArgGPR0 = ARMRegisters::r4; // regT4
     static constexpr GPRReg returnValueGPR = ARMRegisters::r0; // regT0
     static constexpr GPRReg returnValueGPR2 = ARMRegisters::r1; // regT1
     static constexpr GPRReg nonPreservedNonReturnGPR = ARMRegisters::r5;
@@ -603,7 +603,7 @@ public:
         ASSERT(reg != InvalidGPRReg);
         ASSERT(static_cast<int>(reg) < 16);
         static const unsigned indexForRegister[16] =
-            { 0, 1, 2, 3, 7, 6, InvalidIndex, InvalidIndex, 4, 5, 9, 8, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
+            { 0, 1, 2, 3, 4, 5, InvalidIndex, InvalidIndex, 6, 7, 8, 9, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
         unsigned result = indexForRegister[reg];
         return result;
     }
@@ -1136,8 +1136,8 @@ public:
         // the link register as a temporary.
         return pickJSR<OperationType, ArgNum>(
             GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
-            GPRInfo::argumentGPR3, GPRInfo::regT7,        GPRInfo::regT6,
-            GPRInfo::regT4,        GPRInfo::regT5,        ARMRegisters::lr);
+            GPRInfo::argumentGPR3, GPRInfo::regT4,        GPRInfo::regT5,
+            GPRInfo::regT6,        GPRInfo::regT7,        ARMRegisters::lr);
 #elif CPU(MIPS)
         return pickJSR<OperationType, ArgNum>(
             GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2,
