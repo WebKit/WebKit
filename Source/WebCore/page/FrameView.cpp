@@ -5618,20 +5618,20 @@ void FrameView::clearSizeOverrideForCSSDefaultViewportUnits()
 
 void FrameView::setSizeForCSSDefaultViewportUnits(FloatSize size)
 {
-    overrideSizeForCSSDefaultViewportUnits({ size.width(), size.height() });
+    setOverrideSizeForCSSDefaultViewportUnits({ size.width(), size.height() });
 }
 
 void FrameView::overrideWidthForCSSDefaultViewportUnits(float width)
 {
-    overrideSizeForCSSDefaultViewportUnits({ width, m_defaultViewportSizeOverride ? m_defaultViewportSizeOverride->height : std::nullopt });
+    setOverrideSizeForCSSDefaultViewportUnits({ width, m_defaultViewportSizeOverride ? m_defaultViewportSizeOverride->height : std::nullopt });
 }
 
 void FrameView::resetOverriddenWidthForCSSDefaultViewportUnits()
 {
-    overrideSizeForCSSDefaultViewportUnits({ { }, m_defaultViewportSizeOverride ? m_defaultViewportSizeOverride->height : std::nullopt });
+    setOverrideSizeForCSSDefaultViewportUnits({ { }, m_defaultViewportSizeOverride ? m_defaultViewportSizeOverride->height : std::nullopt });
 }
 
-void FrameView::overrideSizeForCSSDefaultViewportUnits(OverrideViewportSize size)
+void FrameView::setOverrideSizeForCSSDefaultViewportUnits(OverrideViewportSize size)
 {
     if (m_defaultViewportSizeOverride == size)
         return;
@@ -5659,20 +5659,20 @@ void FrameView::clearSizeOverrideForCSSSmallViewportUnits()
 
 void FrameView::setSizeForCSSSmallViewportUnits(FloatSize size)
 {
-    overrideSizeForCSSSmallViewportUnits({ size.width(), size.height() });
+    setOverrideSizeForCSSSmallViewportUnits({ size.width(), size.height() });
 }
 
 void FrameView::overrideWidthForCSSSmallViewportUnits(float width)
 {
-    overrideSizeForCSSSmallViewportUnits({ width, m_smallViewportSizeOverride ? m_smallViewportSizeOverride->height : std::nullopt });
+    setOverrideSizeForCSSSmallViewportUnits({ width, m_smallViewportSizeOverride ? m_smallViewportSizeOverride->height : std::nullopt });
 }
 
 void FrameView::resetOverriddenWidthForCSSSmallViewportUnits()
 {
-    overrideSizeForCSSSmallViewportUnits({ { }, m_smallViewportSizeOverride ? m_smallViewportSizeOverride->height : std::nullopt });
+    setOverrideSizeForCSSSmallViewportUnits({ { }, m_smallViewportSizeOverride ? m_smallViewportSizeOverride->height : std::nullopt });
 }
 
-void FrameView::overrideSizeForCSSSmallViewportUnits(OverrideViewportSize size)
+void FrameView::setOverrideSizeForCSSSmallViewportUnits(OverrideViewportSize size)
 {
     if (m_smallViewportSizeOverride && *m_smallViewportSizeOverride == size)
         return;
@@ -5700,20 +5700,20 @@ void FrameView::clearSizeOverrideForCSSLargeViewportUnits()
 
 void FrameView::setSizeForCSSLargeViewportUnits(FloatSize size)
 {
-    overrideSizeForCSSLargeViewportUnits({ size.width(), size.height() });
+    setOverrideSizeForCSSLargeViewportUnits({ size.width(), size.height() });
 }
 
 void FrameView::overrideWidthForCSSLargeViewportUnits(float width)
 {
-    overrideSizeForCSSLargeViewportUnits({ width, m_largeViewportSizeOverride ? m_largeViewportSizeOverride->height : std::nullopt });
+    setOverrideSizeForCSSLargeViewportUnits({ width, m_largeViewportSizeOverride ? m_largeViewportSizeOverride->height : std::nullopt });
 }
 
 void FrameView::resetOverriddenWidthForCSSLargeViewportUnits()
 {
-    overrideSizeForCSSLargeViewportUnits({ { }, m_largeViewportSizeOverride ? m_largeViewportSizeOverride->height : std::nullopt });
+    setOverrideSizeForCSSLargeViewportUnits({ { }, m_largeViewportSizeOverride ? m_largeViewportSizeOverride->height : std::nullopt });
 }
 
-void FrameView::overrideSizeForCSSLargeViewportUnits(OverrideViewportSize size)
+void FrameView::setOverrideSizeForCSSLargeViewportUnits(OverrideViewportSize size)
 {
     if (m_largeViewportSizeOverride && *m_largeViewportSizeOverride == size)
         return;
@@ -5759,13 +5759,6 @@ FloatSize FrameView::calculateSizeForCSSViewportUnitsOverride(std::optional<Over
 FloatSize FrameView::sizeForCSSDynamicViewportUnits() const
 {
     return rectForFixedPositionLayout().size();
-}
-
-void FrameView::copyCSSViewportSizeOverrides(FrameView& view)
-{
-    m_defaultViewportSizeOverride = view.m_defaultViewportSizeOverride;
-    m_smallViewportSizeOverride = view.m_smallViewportSizeOverride;
-    m_largeViewportSizeOverride = view.m_largeViewportSizeOverride;
 }
 
 bool FrameView::shouldPlaceVerticalScrollbarOnLeft() const

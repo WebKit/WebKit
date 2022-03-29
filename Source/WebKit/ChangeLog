@@ -1,3 +1,12 @@
+2022-03-29  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, fix UAF after r291980
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::transitionToCommittedForNewPage):
+        Expose `OverrideViewportSize` so that we can copy those members specifically instead of
+        having to keep alive the old `FrameView` when transitioning to a new page.
+
 2022-03-29  Jigen Zhou  <jigen.zhou@sony.com>
 
         [Playstation] Fix build break after r291979 if ENABLE_SERVICE_WORKER is off
