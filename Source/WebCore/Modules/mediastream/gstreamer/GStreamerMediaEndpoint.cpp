@@ -586,7 +586,7 @@ bool GStreamerMediaEndpoint::addTrack(GStreamerRtpSenderBackend& sender, MediaSt
     GStreamerRtpSenderBackend::Source source;
     GRefPtr<GstWebRTCRTPSender> rtcSender;
 
-    if (track.privateTrack().hasAudio()) {
+    if (track.privateTrack().isAudio()) {
         GST_DEBUG_OBJECT(m_pipeline.get(), "Adding outgoing audio source");
         auto audioSource = RealtimeOutgoingAudioSourceGStreamer::create(track.privateTrack());
         configureAndLinkSource(audioSource);
@@ -594,7 +594,7 @@ bool GStreamerMediaEndpoint::addTrack(GStreamerRtpSenderBackend& sender, MediaSt
         rtcSender = audioSource->sender();
         source = WTFMove(audioSource);
     } else {
-        ASSERT(track.privateTrack().hasVideo());
+        ASSERT(track.privateTrack().isVideo());
         GST_DEBUG_OBJECT(m_pipeline.get(), "Adding outgoing video source");
         auto videoSource = RealtimeOutgoingVideoSourceGStreamer::create(track.privateTrack());
         configureAndLinkSource(videoSource);
@@ -880,10 +880,10 @@ std::optional<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::addTrans
 
 GStreamerRtpSenderBackend::Source GStreamerMediaEndpoint::createSourceForTrack(MediaStreamTrack& track)
 {
-    if (track.privateTrack().hasAudio())
+    if (track.privateTrack().isAudio())
         return RealtimeOutgoingAudioSourceGStreamer::create(track.privateTrack());
 
-    ASSERT(track.privateTrack().hasVideo());
+    ASSERT(track.privateTrack().isVideo());
     return RealtimeOutgoingVideoSourceGStreamer::create(track.privateTrack());
 }
 

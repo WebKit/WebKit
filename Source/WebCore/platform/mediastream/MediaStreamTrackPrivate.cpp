@@ -173,11 +173,6 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
     return clonedMediaStreamTrackPrivate;
 }
 
-RealtimeMediaSource::Type MediaStreamTrackPrivate::type() const
-{
-    return m_source->type();
-}
-
 const RealtimeMediaSourceSettings& MediaStreamTrackPrivate::settings() const
 {
     return m_source->settings();

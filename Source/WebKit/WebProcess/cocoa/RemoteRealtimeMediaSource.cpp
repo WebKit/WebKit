@@ -40,15 +40,12 @@ static RealtimeMediaSource::Type toSourceType(CaptureDevice::DeviceType type)
 {
     switch (type) {
     case CaptureDevice::DeviceType::Microphone:
+    case CaptureDevice::DeviceType::SystemAudio:
         return RealtimeMediaSource::Type::Audio;
     case CaptureDevice::DeviceType::Camera:
-        return RealtimeMediaSource::Type::Video;
     case CaptureDevice::DeviceType::Screen:
-        return RealtimeMediaSource::Type::Screen;
     case CaptureDevice::DeviceType::Window:
-        return RealtimeMediaSource::Type::Window;
-    case CaptureDevice::DeviceType::SystemAudio:
-        return RealtimeMediaSource::Type::SystemAudio;
+        return RealtimeMediaSource::Type::Video;
     case CaptureDevice::DeviceType::Unknown:
     case CaptureDevice::DeviceType::Speaker:
         ASSERT_NOT_REACHED();

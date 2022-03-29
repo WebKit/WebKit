@@ -68,16 +68,11 @@ public:
         m_source->addObserver(*this);
         switch (m_source->type()) {
         case RealtimeMediaSource::Type::Audio:
-        case RealtimeMediaSource::Type::SystemAudio:
             m_source->addAudioSampleObserver(*this);
             break;
         case RealtimeMediaSource::Type::Video:
-        case RealtimeMediaSource::Type::Screen:
-        case RealtimeMediaSource::Type::Window:
             m_source->addVideoFrameObserver(*this);
             break;
-        case RealtimeMediaSource::Type::None:
-            ASSERT_NOT_REACHED();
         }
     }
 
@@ -85,16 +80,11 @@ public:
     {
         switch (m_source->type()) {
         case RealtimeMediaSource::Type::Audio:
-        case RealtimeMediaSource::Type::SystemAudio:
             m_source->removeAudioSampleObserver(*this);
             break;
         case RealtimeMediaSource::Type::Video:
-        case RealtimeMediaSource::Type::Screen:
-        case RealtimeMediaSource::Type::Window:
             m_source->removeVideoFrameObserver(*this);
             break;
-        case RealtimeMediaSource::Type::None:
-            ASSERT_NOT_REACHED();
         }
         m_source->removeObserver(*this);
 

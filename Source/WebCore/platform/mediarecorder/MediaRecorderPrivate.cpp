@@ -44,8 +44,6 @@ MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTrack
         if (track.ended())
             return;
         switch (track.type()) {
-        case RealtimeMediaSource::Type::Screen:
-        case RealtimeMediaSource::Type::Window:
         case RealtimeMediaSource::Type::Video: {
             auto& settings = track.settings();
             if (!selectedTracks.videoTrack && settings.supportsWidth() && settings.supportsHeight())
@@ -53,11 +51,8 @@ MediaRecorderPrivate::AudioVideoSelectedTracks MediaRecorderPrivate::selectTrack
             break;
         }
         case RealtimeMediaSource::Type::Audio:
-        case RealtimeMediaSource::Type::SystemAudio:
             if (!selectedTracks.audioTrack)
                 selectedTracks.audioTrack = &track;
-            break;
-        case RealtimeMediaSource::Type::None:
             break;
         }
     });

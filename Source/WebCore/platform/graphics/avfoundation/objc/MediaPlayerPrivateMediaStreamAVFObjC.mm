@@ -836,7 +836,7 @@ void updateTracksOfKind(HashMap<String, RefT>& trackMap, TrackKind trackKind, Me
 
     bool wantsVideo = trackKind == TrackKind::Video;
     for (const auto& track : currentTracks) {
-        if (wantsVideo != track->hasVideo())
+        if (wantsVideo != track->isVideo())
             continue;
 
         if (!trackMap.contains(track->id()))

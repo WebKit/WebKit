@@ -5531,16 +5531,11 @@ void Internals::stopObservingRealtimeMediaSource()
 
     switch (m_trackSource->type()) {
     case RealtimeMediaSource::Type::Audio:
-    case RealtimeMediaSource::Type::SystemAudio:
         m_trackSource->removeAudioSampleObserver(*this);
         break;
     case RealtimeMediaSource::Type::Video:
-    case RealtimeMediaSource::Type::Screen:
-    case RealtimeMediaSource::Type::Window:
         m_trackSource->removeVideoFrameObserver(*this);
         break;
-    case RealtimeMediaSource::Type::None:
-        ASSERT_NOT_REACHED();
     }
     m_trackSource->removeObserver(*this);
 
@@ -5558,16 +5553,11 @@ void Internals::observeMediaStreamTrack(MediaStreamTrack& track)
     m_trackSource->addObserver(*this);
     switch (m_trackSource->type()) {
     case RealtimeMediaSource::Type::Audio:
-    case RealtimeMediaSource::Type::SystemAudio:
         m_trackSource->addAudioSampleObserver(*this);
         break;
     case RealtimeMediaSource::Type::Video:
-    case RealtimeMediaSource::Type::Screen:
-    case RealtimeMediaSource::Type::Window:
         m_trackSource->addVideoFrameObserver(*this);
         break;
-    case RealtimeMediaSource::Type::None:
-        ASSERT_NOT_REACHED();
     }
 }
 

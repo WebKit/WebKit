@@ -919,7 +919,6 @@ template<> struct EnumTraits<WebCore::IndexedDB::GetAllType> {
 template<> struct EnumTraits<WebCore::RealtimeMediaSource::Type> {
     using values = EnumValues<
         WebCore::RealtimeMediaSource::Type,
-        WebCore::RealtimeMediaSource::Type::None,
         WebCore::RealtimeMediaSource::Type::Audio,
         WebCore::RealtimeMediaSource::Type::Video
     >;

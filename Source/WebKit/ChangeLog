@@ -1,3 +1,17 @@
+2022-03-29  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeMediaSource::Type::Video is misleading as it is actually referring to camera sources
+        https://bugs.webkit.org/show_bug.cgi?id=238449
+
+        Reviewed by Eric Carlson.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::SourceProxy):
+        (WebKit::UserMediaCaptureManagerProxy::SourceProxy::~SourceProxy):
+        * WebProcess/cocoa/RemoteRealtimeMediaSource.cpp:
+        (WebKit::toSourceType):
+
 2022-03-28  Sihui Liu  <sihui_liu@apple.com>
 
         Add logging about process entering background to NetworkProcess::processDidResume

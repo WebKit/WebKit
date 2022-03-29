@@ -156,14 +156,14 @@ MediaStreamTrack* MediaStream::getTrackById(String id)
 MediaStreamTrackVector MediaStream::getAudioTracks() const
 {
     return filteredTracks([] (auto& track) mutable {
-        return track.hasAudio();
+        return track.isAudio();
     });
 }
 
 MediaStreamTrackVector MediaStream::getVideoTracks() const
 {
     return filteredTracks([] (auto& track) mutable {
-        return track.hasVideo();
+        return track.isVideo();
     });
 }
 

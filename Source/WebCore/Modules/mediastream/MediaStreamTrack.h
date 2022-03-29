@@ -100,8 +100,8 @@ public:
     void stopTrack(StopMode = StopMode::Silently);
 
     bool isCaptureTrack() const { return m_isCaptureTrack; }
-    bool hasVideo() const { return m_private->hasVideo(); }
-    bool hasAudio() const { return m_private->hasAudio(); }
+    bool isVideo() const { return m_private->isVideo(); }
+    bool isAudio() const { return m_private->isAudio(); }
 
     struct TrackSettings {
         std::optional<int> width;

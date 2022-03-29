@@ -94,7 +94,7 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     m_isInterrupted = m_private->source().interrupted();
     allCaptureTracks().add(this);
 
-    if (m_private->hasAudio())
+    if (m_private->isAudio())
         PlatformMediaSessionManager::sharedManager().addAudioCaptureSource(*this);
 }
 
@@ -107,7 +107,7 @@ MediaStreamTrack::~MediaStreamTrack()
 
     allCaptureTracks().remove(this);
 
-    if (m_private->hasAudio())
+    if (m_private->isAudio())
         PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
 }
 
@@ -116,7 +116,7 @@ const AtomString& MediaStreamTrack::kind() const
     static MainThreadNeverDestroyed<const AtomString> audioKind("audio", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> videoKind("video", AtomString::ConstructFromLiteral);
 
-    if (m_private->hasAudio())
+    if (m_private->isAudio())
         return audioKind;
     return videoKind;
 }
@@ -160,7 +160,7 @@ const AtomString& MediaStreamTrack::contentHint() const
 void MediaStreamTrack::setContentHint(const String& hintValue)
 {
     MediaStreamTrackPrivate::HintValue value;
-    if (m_private->hasAudio()) {
+    if (m_private->isAudio()) {
         if (hintValue == "")
             value = MediaStreamTrackPrivate::HintValue::Empty;
         else if (hintValue == "speech")
@@ -485,7 +485,7 @@ static void updateVideoCaptureAccordingMicrophoneInterruption(Document& document
         if (!captureTrack->document() || captureTrack->document()->page() != page)
             continue;
         auto& source = captureTrack->source();
-        if (!source.isEnded() && source.type() == RealtimeMediaSource::Type::Video)
+        if (!source.isEnded() && source.deviceType() == CaptureDevice::DeviceType::Camera)
             source.setMuted(isMicrophoneInterrupted);
     }
 }
@@ -522,19 +522,20 @@ void MediaStreamTrack::updateToPageMutedState()
     }
 }
 
-static MediaProducerMediaCaptureKind trackTypeForMediaProducerCaptureKind(RealtimeMediaSource::Type type)
+static MediaProducerMediaCaptureKind trackTypeForMediaProducerCaptureKind(CaptureDevice::DeviceType type)
 {
     switch (type) {
-    case RealtimeMediaSource::Type::Audio:
+    case CaptureDevice::DeviceType::Microphone:
         return MediaProducerMediaCaptureKind::Microphone;
-    case RealtimeMediaSource::Type::SystemAudio:
+    case CaptureDevice::DeviceType::SystemAudio:
         return MediaProducerMediaCaptureKind::SystemAudio;
-    case RealtimeMediaSource::Type::Video:
+    case CaptureDevice::DeviceType::Camera:
         return MediaProducerMediaCaptureKind::Camera;
-    case RealtimeMediaSource::Type::Screen:
-    case RealtimeMediaSource::Type::Window:
+    case CaptureDevice::DeviceType::Screen:
+    case CaptureDevice::DeviceType::Window:
         return MediaProducerMediaCaptureKind::Display;
-    case RealtimeMediaSource::Type::None:
+    case CaptureDevice::DeviceType::Speaker:
+    case CaptureDevice::DeviceType::Unknown:
         break;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -546,7 +547,7 @@ void MediaStreamTrack::endCapture(Document& document, MediaProducerMediaCaptureK
     for (auto* captureTrack : allCaptureTracks()) {
         if (captureTrack->document() != &document)
             continue;
-        if (kind != MediaProducerMediaCaptureKind::EveryKind && kind != trackTypeForMediaProducerCaptureKind(captureTrack->privateTrack().type()))
+        if (kind != MediaProducerMediaCaptureKind::EveryKind && kind != trackTypeForMediaProducerCaptureKind(captureTrack->privateTrack().deviceType()))
             continue;
         captureTrack->stopTrack(MediaStreamTrack::StopMode::PostEvent);
         didEndCapture = true;
@@ -563,7 +564,7 @@ void MediaStreamTrack::trackStarted(MediaStreamTrackPrivate&)
 
 void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 {
-    if (m_isCaptureTrack && m_private->hasAudio())
+    if (m_isCaptureTrack && m_private->isAudio())
         PlatformMediaSessionManager::sharedManager().removeAudioCaptureSource(*this);
 
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -672,7 +673,7 @@ Document* MediaStreamTrack::document() const
 
 bool MediaStreamTrack::isCapturingAudio() const
 {
-    ASSERT(isCaptureTrack() && m_private->hasAudio());
+    ASSERT(isCaptureTrack() && m_private->isAudio());
     return !ended() && !muted();
 }
 

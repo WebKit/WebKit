@@ -95,9 +95,10 @@ public:
 
     RealtimeMediaSource& source() { return m_source.get(); }
     const RealtimeMediaSource& source() const { return m_source.get(); }
-    WEBCORE_EXPORT RealtimeMediaSource::Type type() const;
-    bool hasVideo() const { return m_source->hasVideo(); }
-    bool hasAudio() const { return m_source->hasAudio(); }
+    RealtimeMediaSource::Type type() const { return m_source->type(); }
+    CaptureDevice::DeviceType deviceType() const { return m_source->deviceType(); }
+    bool isVideo() const { return m_source->isVideo(); }
+    bool isAudio() const { return m_source->isAudio(); }
 
     void endTrack();
 

@@ -84,8 +84,6 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final;
 
-    void mediaStreamDidFail(RealtimeMediaSource::Type);
-
     UserMediaRequestIdentifier m_identifier;
 
     Vector<String> m_videoDeviceUIDs;

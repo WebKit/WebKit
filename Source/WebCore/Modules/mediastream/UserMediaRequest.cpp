@@ -260,33 +260,6 @@ Document* UserMediaRequest::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-void UserMediaRequest::mediaStreamDidFail(RealtimeMediaSource::Type type)
-{
-    RELEASE_LOG(MediaStream, "UserMediaRequest::mediaStreamDidFail");
-    const char* typeDescription = "";
-    switch (type) {
-    case RealtimeMediaSource::Type::Audio:
-        typeDescription = "audio";
-        break;
-    case RealtimeMediaSource::Type::Video:
-        typeDescription = "video";
-        break;
-    case RealtimeMediaSource::Type::Screen:
-        typeDescription = "screen";
-        break;
-    case RealtimeMediaSource::Type::Window:
-        typeDescription = "window";
-        break;
-    case RealtimeMediaSource::Type::SystemAudio:
-        typeDescription = "system audio";
-        break;
-    case RealtimeMediaSource::Type::None:
-        typeDescription = "unknown";
-        break;
-    }
-    m_promise->reject(NotReadableError, makeString("Failed starting capture of a "_s, typeDescription, " track"_s));
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

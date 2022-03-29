@@ -115,10 +115,10 @@ public:
 
     const String& persistentID() const { return m_persistentID; }
 
-    enum class Type { None, Audio, Video, Screen, Window, SystemAudio };
+    enum class Type : bool { Audio, Video };
     Type type() const { return m_type; }
-    bool hasVideo() const { return m_type == Type::Video || m_type == Type::Window || m_type == Type::Screen; }
-    bool hasAudio() const { return m_type == Type::Audio || m_type == Type::SystemAudio; }
+    bool isVideo() const { return m_type == Type::Video; }
+    bool isAudio() const { return m_type == Type::Audio; }
 
     virtual void whenReady(CompletionHandler<void(String)>&&);
 

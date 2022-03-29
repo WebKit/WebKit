@@ -59,8 +59,7 @@ CaptureSourceOrError MockDisplayCaptureSourceGStreamer::create(const CaptureDevi
             return WTFMove(error.value().badConstraint);
     }
 
-    auto type = device.type() == CaptureDevice::DeviceType::Screen ? RealtimeMediaSource::Type::Screen : RealtimeMediaSource::Type::Window;
-    auto source = adoptRef(*new MockDisplayCaptureSourceGStreamer(type, WTFMove(mockSource), WTFMove(hashSalt), device.type()));
+    auto source = adoptRef(*new MockDisplayCaptureSourceGStreamer(RealtimeMediaSource::Type::Video, WTFMove(mockSource), WTFMove(hashSalt), device.type()));
     return CaptureSourceOrError(WTFMove(source));
 }
 
