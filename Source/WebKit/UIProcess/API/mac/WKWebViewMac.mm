@@ -140,6 +140,8 @@ std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScr
     [_safeBrowsingWarning setFrame:self.bounds];
     if (_impl)
         _impl->setFrameSize(NSSizeToCGSize(size));
+
+    [self _recalculateViewportSizesWithMinimumViewportInset:_minimumViewportInset maximumViewportInset:_maximumViewportInset throwOnInvalidInput:NO];
 }
 
 - (void)setUserInterfaceLayoutDirection:(NSUserInterfaceLayoutDirection)userInterfaceLayoutDirection

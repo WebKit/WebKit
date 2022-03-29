@@ -638,6 +638,10 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 @property (nonatomic, readonly) UIEdgeInsets minimumViewportInset WK_API_AVAILABLE(ios(WK_IOS_TBA));
 @property (nonatomic, readonly) UIEdgeInsets maximumViewportInset WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)setMinimumViewportInset:(UIEdgeInsets)minimumViewportInset maximumViewportInset:(UIEdgeInsets)maximumViewportInset WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#else
+@property (nonatomic, readonly) NSEdgeInsets minimumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, readonly) NSEdgeInsets maximumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
+- (void)setMinimumViewportInset:(NSEdgeInsets)minimumViewportInset maximumViewportInset:(NSEdgeInsets)maximumViewportInset WK_API_AVAILABLE(macos(WK_MAC_TBA));
 #endif
 
 @end

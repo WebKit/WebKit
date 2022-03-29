@@ -1865,8 +1865,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 #endif
 }
 
-#if PLATFORM(IOS_FAMILY)
-
 - (void)setMinimumViewportInset:(CocoaEdgeInsets)minimumViewportInset maximumViewportInset:(CocoaEdgeInsets)maximumViewportInset
 {
     if (minimumViewportInset.top < 0 || minimumViewportInset.left < 0 || minimumViewportInset.bottom < 0 || minimumViewportInset.right < 0)
@@ -1883,8 +1881,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     _minimumViewportInset = minimumViewportInset;
     _maximumViewportInset = maximumViewportInset;
 }
-
-#endif // PLATFORM(IOS_FAMILY)
 
 @end
 

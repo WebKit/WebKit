@@ -1,5 +1,46 @@
 2022-03-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r292007. rdar://problem/90602918
+
+    [macOS] Add `WKWebView` API to control CSS "small viewport" `sv*` and "large viewport" `lv*` units
+    https://bugs.webkit.org/show_bug.cgi?id=238173
+    <rdar://problem/90602918>
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebKit:
+    
+    See <https://webkit.org/b/237979> for information about this API. This change just also
+    enables it on macOS (the other change was iOS-only).
+    
+    * UIProcess/API/Cocoa/WKWebView.h:
+    * UIProcess/API/Cocoa/WKWebViewInternal.h:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    * UIProcess/API/mac/WKWebViewMac.mm:
+    (-[WKWebView setFrameSize:]):
+    Remove the `#if PLATFORM(IOS_FAMILY)` around all things related to `-[WKWebview setMinimumViewportInset:maximumViewportInset:]`.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/CSSViewportUnits.mm:
+    Enable tests for `-[WKWebView setMinimumViewportInset:maximumViewportInset:]` on macOS.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292007 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-28  Devin Rousso  <drousso@apple.com>
+
+            [macOS] Add `WKWebView` API to control CSS "small viewport" `sv*` and "large viewport" `lv*` units
+            https://bugs.webkit.org/show_bug.cgi?id=238173
+            <rdar://problem/90602918>
+
+            Reviewed by Wenson Hsieh.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/CSSViewportUnits.mm:
+            Enable tests for `-[WKWebView setMinimumViewportInset:maximumViewportInset:]` on macOS.
+
+2022-03-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r291980. rdar://problem/89434696
 
     [iOS] Add `WKWebView` API to control CSS "small viewport" `sv*` and "large viewport" `lv*` units
