@@ -24,7 +24,7 @@
 from buildbot.process import factory
 from buildbot.steps import trigger
 
-from steps import (ApplyPatch, ApplyWatchList, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
+from steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance,
                    CheckPatchStatusOnEWSQueues, CheckStyle, CleanGitRepo, CompileJSC, CompileWebKit, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, ExtractBuiltProduct, FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests,
                    InstallGtkDependencies, InstallWpeDependencies, KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo,
@@ -32,7 +32,7 @@ from steps import (ApplyPatch, ApplyWatchList, CheckOutPullRequest, CheckOutSour
                    RunEWSUnitTests, RunResultsdbpyTests, RunJavaScriptCoreTests, RunWebKit1Tests, RunWebKitPerlTests, RunWebKitPyPython2Tests,
                    RunWebKitPyPython3Tests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                    SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateWorkingDirectory,
-                   ValidateChange, ValidateChangeLogAndReviewer, ValidateCommitterAndReviewer, WaitForCrashCollection,
+                   ValidateCommitMessage, ValidateChange, ValidateChangeLogAndReviewer, ValidateCommitterAndReviewer, WaitForCrashCollection,
                    InstallBuiltProduct, VerifyGitHubIntegrity, ValidateSquashed)
 
 
@@ -331,3 +331,5 @@ class MergeQueueFactory(factory.BuildFactory):
         self.addStep(UpdateWorkingDirectory())
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateSquashed())
+        self.addStep(AddReviewerToCommitMessage())
+        self.addStep(ValidateCommitMessage())

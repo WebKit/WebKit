@@ -4623,3 +4623,117 @@ class ValidateSquashed(shell.ShellCommand):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+
+class AddReviewerMixin(object):
+    NOBODY_SED = 's/NOBODY (OO*PP*S!*)/{}/g'
+
+    def environment(self):
+        owners = self.getProperty('owners', [])
+        if not owners:
+            return dict(
+                GIT_COMMITTER_NAME='EWS',
+                GIT_COMMITTER_EMAIL=FROM_EMAIL,
+                FILTER_BRANCH_SQUELCH_WARNING='1',
+            )
+
+        contributors, _ = Contributors.load(use_network=False)
+        return dict(
+            GIT_COMMITTER_NAME=contributors.get(owners[0], {}).get('name', 'EWS'),
+            GIT_COMMITTER_EMAIL=contributors.get(owners[0], {}).get('email', FROM_EMAIL),
+            FILTER_BRANCH_SQUELCH_WARNING='1',
+        )
+
+    def reviewers(self):
+        reviewers = self.getProperty('reviewers_full_names', [])
+        if len(reviewers) == 1:
+            return reviewers[0]
+        if reviewers:
+            return f'{", ".join(reviewers[:-1])} and {reviewers[-1]}'
+        return 'NOBODY (OOPS!)'
+
+
+class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
+    name = 'add-reviewer-to-commit-message'
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(AddReviewerToCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
+
+    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        head_ref = self.getProperty('github.head.ref', DEFAULT_BRANCH)
+
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        date = f'{int(time.time())} {gmtoffset}'
+        self.command = [
+            'git', 'filter-branch', '-f',
+            '--env-filter', f"GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'",
+            '--msg-filter', f'sed "{self.NOBODY_SED.format(self.reviewers())}"',
+            f'{head_ref}...{base_ref}',
+        ]
+
+        for key, value in self.environment().items():
+            self.workerEnvironment[key] = value
+
+        return super(AddReviewerToCommitMessage, self).start()
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'No reviewer defined' if self.getProperty('github.number') else 'Patches have no commit message'}
+        elif self.results == SUCCESS:
+            return {'step': f'Reviewed by {self.reviewers()}'}
+        return {'step': 'Failed to apply reviewers'}
+
+    def doStepIf(self, step):
+        return self.getProperty('github.number') and self.getProperty('reviewers_full_names')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+
+class ValidateCommitMessage(shell.ShellCommand):
+    name = 'validate-commit-message'
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(ValidateCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
+        self.summary = 'Patches have no commit message'
+
+    def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        head_ref = self.getProperty('github.head.ref', DEFAULT_BRANCH)
+        self.command = ['git', 'log', head_ref, f'^{base_ref}']
+
+        self.log_observer = BufferLogObserverClass(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+        return super(ValidateCommitMessage, self).start()
+
+    def getResultSummary(self):
+        return {'step': self.summary}
+
+    def evaluateCommand(self, cmd):
+        rc = super(ValidateCommitMessage, self).evaluateCommand(cmd)
+        if rc == SKIPPED:
+            return rc
+        if rc != SUCCESS:
+            self.summary = 'Error parsing commit message'
+            return rc
+
+        log_text = self.log_observer.getStdout()
+        if '(OOPS!)' in log_text:
+            self.summary = 'Commit message contains (OOPS!)'
+            return FAILURE
+        if 'Reviewed by' not in log_text and 'Unreviewed' not in log_text:
+            self.summary = 'No reviewer information in commit message'
+            return FAILURE
+
+        self.summary = 'Validated commit message'
+        return SUCCESS
+
+    def doStepIf(self, step):
+        return self.getProperty('github.number')
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)

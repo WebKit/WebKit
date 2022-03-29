@@ -27,6 +27,7 @@ import os
 import shutil
 import sys
 import tempfile
+import time
 
 from buildbot.process import remotetransfer
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
@@ -40,7 +41,7 @@ from twisted.python import failure, log
 from twisted.trial import unittest
 import send_email
 
-from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
+from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
                    CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
@@ -56,7 +57,8 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    RunWebKitTestsWithoutChange, RunWebKitTestsRedTree, RunWebKitTestsRepeatFailuresRedTree, RunWebKitTestsRepeatFailuresWithoutChangeRedTree,
                    RunWebKitTestsWithoutChangeRedTree, AnalyzeLayoutTestsResultsRedTree, TestWithFailureCount, ShowIdentifier,
                    Trigger, TransferToS3, UnApplyPatch, UpdateWorkingDirectory, UploadBuiltProduct,
-                   UploadTestResults, ValidateChangeLogAndReviewer, ValidateCommitterAndReviewer, ValidateChange, VerifyGitHubIntegrity, ValidateSquashed)
+                   UploadTestResults, ValidateCommitMessage, ValidateChangeLogAndReviewer, ValidateCommitterAndReviewer, ValidateChange,
+                   VerifyGitHubIntegrity, ValidateSquashed)
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
 from buildbot.test.fake.fakebuild import FakeBuild
@@ -68,6 +70,15 @@ def mock_step(step, logs='', results=SUCCESS, stopped=False, properties=None):
     step.results = results
     step.stopped = stopped
     return step
+
+
+def mock_load_contributors(*args, **kwargs):
+    return {
+        'reviewer@apple.com': {'name': 'WebKit Reviewer', 'status': 'reviewer', 'email': 'reviewer@apple.com'},
+        'webkit-reviewer': {'name': 'WebKit Reviewer', 'status': 'reviewer', 'email': 'reviewer@apple.com'},
+        'committer@webkit.org': {'name': 'WebKit Committer', 'status': 'committer', 'email': 'committer@webkit.org'},
+        'webkit-commit-queue': {'name': 'WebKit Committer', 'status': 'committer', 'email': 'committer@webkit.org'},
+    }, []
 
 
 class ExpectMasterShellCommand(object):
@@ -5160,15 +5171,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
 class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
-
-        def mock_load_contributors(*args, **kwargs):
-            return {
-                'reviewer@apple.com': {'name': 'WebKit Reviewer', 'status': 'reviewer'},
-                'webkit-reviewer': {'name': 'WebKit Reviewer', 'status': 'reviewer'},
-                'committer@webkit.org': {'name': 'WebKit Committer', 'status': 'committer'},
-                'webkit-commit-queue': {'name': 'WebKit Committer', 'status': 'committer'},
-            }, []
-
         Contributors.load = mock_load_contributors
         return self.setUpBuildStep()
 
@@ -5653,6 +5655,188 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
             + ExpectShell.log('stdio', stdout=''),
         )
         self.expectOutcome(result=FAILURE, state_string='Can only land squashed branches')
+        return self.runStep()
+
+
+class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
+    ENV = dict(
+        GIT_COMMITTER_NAME='WebKit Committer',
+        GIT_COMMITTER_EMAIL='committer@webkit.org',
+        FILTER_BRANCH_SQUELCH_WARNING='1',
+    )
+
+    def setUp(self):
+        self.longMessage = True
+        Contributors.load = mock_load_contributors
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_skipped_patch(self):
+        self.setupStep(AddReviewerToCommitMessage())
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='Patches have no commit message')
+        return self.runStep()
+
+    def test_success(self):
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        date = f'{int(time.time())} {gmtoffset}'
+        time.time = lambda: fixed_time
+
+        self.setupStep(AddReviewerToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('reviewers_full_names', ['WebKit Reviewer', 'Other Reviewer'])
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        env=self.ENV,
+                        timeout=60,
+                        command=[
+                            'git', 'filter-branch', '-f',
+                            '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(date=date),
+                            '--msg-filter', 'sed "s/NOBODY (OO*PP*S!*)/WebKit Reviewer and Other Reviewer/g"',
+                            'eng/pull-request-branch...main',
+                        ])
+            + 0
+            + ExpectShell.log('stdio', stdout="Ref 'refs/heads/eng/pull-request-branch' was rewritten\n"),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Reviewed by WebKit Reviewer and Other Reviewer')
+        return self.runStep()
+
+    def test_failure(self):
+        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        fixed_time = int(time.time())
+        date = f'{int(time.time())} {gmtoffset}'
+        time.time = lambda: fixed_time
+
+        self.setupStep(AddReviewerToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('reviewers_full_names', ['WebKit Reviewer', 'Other Reviewer'])
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        env=self.ENV,
+                        timeout=60,
+                        command=[
+                            'git', 'filter-branch', '-f',
+                            '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}'".format(date=date),
+                            '--msg-filter', 'sed "s/NOBODY (OO*PP*S!*)/WebKit Reviewer and Other Reviewer/g"',
+                            'eng/pull-request-branch...main',
+                        ])
+            + 2
+            + ExpectShell.log('stdio', stdout="Failed to rewrite 'refs/heads/eng/pull-request-branch'\n"),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to apply reviewers')
+        return self.runStep()
+
+    def test_no_reviewers(self):
+        self.setupStep(AddReviewerToCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.setProperty('reviewers_full_names', [])
+        self.expectOutcome(result=SKIPPED, state_string='No reviewer defined')
+        return self.runStep()
+
+
+class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_skipped_patch(self):
+        self.setupStep(ValidateCommitMessage())
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='Patches have no commit message')
+        return self.runStep()
+
+    def test_success(self):
+        self.setupStep(ValidateCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['git', 'log', 'eng/pull-request-branch', '^main'])
+            + 0
+            + ExpectShell.log('stdio', stdout='''[Merge-Queue] Add ValidateSquashed
+https://bugs.webkit.org/show_bug.cgi?id=238172
+<rdar://problem/90602594>
+
+Reviewed by Aakash Jain.'''),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
+        return self.runStep()
+
+    def test_success_unreviewed(self):
+        self.setupStep(ValidateCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['git', 'log', 'eng/pull-request-branch', '^main'])
+            + 0
+            + ExpectShell.log('stdio', stdout='''[Merge-Queue] Add ValidateSquashed (Follow-up)
+https://bugs.webkit.org/show_bug.cgi?id=238172
+<rdar://problem/90602594>
+
+Unreviewed follow-up fix.'''),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Validated commit message')
+        return self.runStep()
+
+    def test_failure_oops(self):
+        self.setupStep(ValidateCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['git', 'log', 'eng/pull-request-branch', '^main'])
+            + 0
+            + ExpectShell.log('stdio', stdout='''[Merge-Queue] Add ValidateSquashed
+https://bugs.webkit.org/show_bug.cgi?id=238172
+<rdar://problem/90602594>
+
+Reviewed by NOBODY (OOPS!)'''),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Commit message contains (OOPS!)')
+        return self.runStep()
+
+    def test_failure_no_reviewer(self):
+        self.setupStep(ValidateCommitMessage())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        timeout=60,
+                        command=['git', 'log', 'eng/pull-request-branch', '^main'])
+            + 0
+            + ExpectShell.log('stdio', stdout='''[Merge-Queue] Add ValidateSquashed
+https://bugs.webkit.org/show_bug.cgi?id=238172
+<rdar://problem/90602594>'''),
+        )
+        self.expectOutcome(result=FAILURE, state_string='No reviewer information in commit message')
         return self.runStep()
 
 

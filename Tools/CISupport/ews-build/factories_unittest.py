@@ -639,6 +639,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'update-working-directory',
             'checkout-pull-request',
             'validate-squashed',
+            'add-reviewer-to-commit-message',
+            'validate-commit-message',
         ],
     }
 

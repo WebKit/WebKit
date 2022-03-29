@@ -1,3 +1,36 @@
+2022-03-29  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Add Reviewers to commit message
+        https://bugs.webkit.org/show_bug.cgi?id=238354
+        <rdar://problem/90800671>
+
+        Reviewed by Dewei Zhu.
+
+        When a PR has been reviewed, Merge-Queue should insert those
+        reviewers into the commit message.
+
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory.__init__): Add AddReviewerToCommitMessage and ValidateCommitMessage steps.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Ditto.
+        * CISupport/ews-build/steps.py:
+        (AddReviewerMixin):
+        (AddReviewerMixin.environment): Set committer to action owner.
+        (AddReviewerMixin.reviewers): Return a combined string of all reviewers.
+        (AddReviewerToCommitMessage.__init__):
+        (AddReviewerToCommitMessage.start): Insert reviewer string into commit message.
+        (AddReviewerToCommitMessage.getResultSummary):
+        (AddReviewerToCommitMessage.doStepIf): Skip step if patch or if reviewers are undefined.
+        (AddReviewerToCommitMessage.hideStepIf): Hide step if skipped.
+        (ValidateCommitMessage.__init__):
+        (ValidateCommitMessage.start): List commit message for commit.
+        (ValidateCommitMessage.getResultSummary):
+        (ValidateCommitMessage.evaluateCommand):
+        (ValidateCommitMessage.doStepIf): Skip step if patch.
+        (ValidateCommitMessage.hideStepIf): Hide step if skipped.
+        * CISupport/ews-build/steps_unittest.py:
+        (mock_load_contributors): Share with multiple functions.
+
 2022-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         HTMLAttachmentElement.getAttachmentIdentifier() should propagate attachment data to the client
