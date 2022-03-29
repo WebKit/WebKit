@@ -247,7 +247,7 @@ private:
     CompositeOperation m_compositeOperation { CompositeOperation::Replace };
     AcceleratedProperties m_acceleratedPropertiesState { AcceleratedProperties::None };
     AnimationEffectPhase m_phaseAtLastApplication { AnimationEffectPhase::Idle };
-    RunningAccelerated m_runningAccelerated;
+    RunningAccelerated m_runningAccelerated { RunningAccelerated::No };
     bool m_needsForcedLayout { false };
     bool m_triggersStackingContext { false };
     size_t m_transformFunctionListsMatchPrefix { 0 };
