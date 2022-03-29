@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ExceptionData.h"
+#include "PageIdentifier.h"
 #include "RegistrableDomain.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientQueryOptions.h"

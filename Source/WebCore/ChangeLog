@@ -1,3 +1,10 @@
+2022-03-28  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified buildfix after 248938@main
+        https://bugs.webkit.org/show_bug.cgi?id=238478
+
+        * workers/service/server/SWServerToContextConnection.h:
+
 2022-03-28  Nikolaos Mouchtaris  <nmouchtaris@apple.com>
 
         Clamp degenerate calc() values for <angle>
