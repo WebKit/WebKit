@@ -82,7 +82,7 @@ const String& HTMLAttachmentElement::getAttachmentIdentifier(HTMLImageElement& i
     auto attachment = create(HTMLNames::attachmentTag, document);
     auto& identifier = attachment->ensureUniqueIdentifier();
 
-    document.registerAttachmentIdentifier(identifier);
+    document.registerAttachmentIdentifier(identifier, image);
     image.setAttachmentElement(WTFMove(attachment));
 
     return identifier;

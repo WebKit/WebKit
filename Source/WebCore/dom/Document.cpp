@@ -8634,11 +8634,9 @@ HTMLDialogElement* Document::activeModalDialog() const
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void Document::registerAttachmentIdentifier(const String& identifier)
+void Document::registerAttachmentIdentifier(const String& identifier, const HTMLImageElement& image)
 {
-    // FIXME: Can this null check for Frame be removed?
-    if (frame())
-        editor().registerAttachmentIdentifier(identifier);
+    editor().registerAttachmentIdentifier(identifier, image);
 }
 
 void Document::didInsertAttachmentElement(HTMLAttachmentElement& attachment)

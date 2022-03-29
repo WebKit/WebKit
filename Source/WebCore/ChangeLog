@@ -1,3 +1,36 @@
+2022-03-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        HTMLAttachmentElement.getAttachmentIdentifier() should propagate attachment data to the client
+        https://bugs.webkit.org/show_bug.cgi?id=238473
+        rdar://90938796
+
+        Reviewed by Devin Rousso.
+
+        In the case where a WebKit client that has enabled the attachment element uses
+        `HTMLAttachmentElement.getAttachmentIdentifier` on an image element to create a new attachment-backed image, we
+        currently propagate an empty `_WKAttachment` to the UI delegate in the UI process, even in the case where the
+        image element has a visible image that has been loaded.
+
+        To support plain-text editing mode, Mail needs to be able to call `getAttachmentIdentifier` to create attachment
+        elements for images that already contain images with blob sources, but are inserted into the document via
+        JavaScript (as opposed to native editing code).
+
+        To make this work, we plumb the image element itself through the `registerAttachmentIdentifier` method that
+        currently only takes a single attachment identifier, and use it to send the image data, image name, and MIME
+        type to the attachment client if the image has a loaded image; otherwise, we fall back to creating and surfacing
+        an empty _WKAttachment to the client.
+
+        Test: WKAttachmentTests.CreateAttachmentsFromExistingImage
+
+        * dom/Document.cpp:
+        (WebCore::Document::registerAttachmentIdentifier):
+        * dom/Document.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::registerAttachmentIdentifier):
+        * editing/Editor.h:
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::getAttachmentIdentifier):
+
 2022-03-29  Tim Nguyen  <ntim@apple.com>
 
         Use Canvas/CanvasText system colors for <dialog> default styling

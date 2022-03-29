@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "Test.h"
 
 #if PLATFORM(MAC) || PLATFORM(IOS)
 
@@ -1727,6 +1728,32 @@ TEST(WKAttachmentTests, CopyAndPasteRemoteImages)
         EXPECT_WK_STREQ("test.jpg", [attachmentInfo[4] name]);
         EXPECT_WK_STREQ("image/jpeg", [attachmentInfo[4] contentType]);
     }
+}
+
+TEST(WKAttachmentTests, CreateAttachmentsFromExistingImage)
+{
+    auto webView = webViewForTestingAttachments();
+    NSString *asyncScript = @"return new Promise(resolve => {"
+        "const image = document.createElement('img');"
+        "image.addEventListener('load', () => resolve(HTMLAttachmentElement.getAttachmentIdentifier(image)), { once: true });"
+        "image.src = 'icon.png';"
+        "document.body.appendChild(image);"
+        "})";
+
+    __block RetainPtr<NSString> attachmentIdentifier;
+    __block bool doneWithScript = false;
+    [webView callAsyncJavaScript:asyncScript arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:^(NSString *result, NSError *error) {
+        EXPECT_NULL(error);
+        attachmentIdentifier = result;
+        doneWithScript = true;
+    }];
+    Util::run(&doneWithScript);
+
+    EXPECT_NOT_NULL(attachmentIdentifier);
+    RetainPtr info = [[webView _attachmentForIdentifier:attachmentIdentifier.get()] info];
+    EXPECT_WK_STREQ("image/png", [info contentType]);
+    EXPECT_WK_STREQ("icon.png", [info name]);
+    EXPECT_TRUE([[info data] isEqualToData:testImageData()]);
 }
 
 #pragma mark - Platform-specific tests
