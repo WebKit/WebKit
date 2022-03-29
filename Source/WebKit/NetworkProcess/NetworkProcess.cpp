@@ -2129,7 +2129,7 @@ void NetworkProcess::terminateRemoteWorkerContextConnectionWhenPossible(RemoteWo
 
 void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&& completionHandler)
 {
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(), isSuspensionImminent=%d", this, isSuspensionImminent);
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend(), isSuspensionImminent=%d Process is %{public}sin background", this, isSuspensionImminent, m_enterBackgroundTimestamp ? "" : "not ");
 
     m_isSuspended = true;
     lowMemoryHandler(Critical::Yes);
@@ -2160,17 +2160,26 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, CompletionHandl
 
 void NetworkProcess::applicationDidEnterBackground()
 {
+    if (!m_enterBackgroundTimestamp)
+        m_enterBackgroundTimestamp = MonotonicTime::now();
+
     m_downloadManager.applicationDidEnterBackground();
 }
 
 void NetworkProcess::applicationWillEnterForeground()
 {
+    if (m_enterBackgroundTimestamp)
+        m_enterBackgroundTimestamp = std::nullopt;
+
     m_downloadManager.applicationWillEnterForeground();
 }
 
-void NetworkProcess::processDidResume()
+void NetworkProcess::processDidResume(bool forForegroundActivity)
 {
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume()", this);
+    if (m_enterBackgroundTimestamp)
+        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume() forForegroundActivity=%d", this, forForegroundActivity);
+    else
+        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume() forForegroundActivity=%d Process has been in background for %f seconds", this, forForegroundActivity, (MonotonicTime::now() - m_enterBackgroundTimestamp.value()).value());
 
     m_isSuspended = false;
 

@@ -61,11 +61,7 @@ public:
     void downloadFinished(DownloadProxy&);
 
     bool isEmpty() const { return m_downloads.isEmpty(); }
-
     void invalidate();
-
-    void applicationDidEnterBackground();
-    void applicationWillEnterForeground();
 
 private:
     void platformCreate();
@@ -77,11 +73,6 @@ private:
     bool m_shouldTakeAssertion { false };
     RefPtr<ProcessAssertion> m_downloadUIAssertion;
     RefPtr<ProcessAssertion> m_downloadNetworkingAssertion;
-
-#if PLATFORM(IOS_FAMILY)
-    RetainPtr<id> m_backgroundObserver;
-    RetainPtr<id> m_foregroundObserver;
-#endif
 };
 
 } // namespace WebKit

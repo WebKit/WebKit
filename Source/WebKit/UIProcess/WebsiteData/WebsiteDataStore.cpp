@@ -1575,7 +1575,7 @@ void WebsiteDataStore::sendNetworkProcessWillSuspendImminentlyForTesting()
 
 void WebsiteDataStore::sendNetworkProcessDidResume()
 {
-    networkProcess().sendProcessDidResume();
+    networkProcess().sendProcessDidResume(ProcessThrottlerClient::ResumeReason::ForegroundActivity);
 }
 
 bool WebsiteDataStore::resourceLoadStatisticsEnabled() const

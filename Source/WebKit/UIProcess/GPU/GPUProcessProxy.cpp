@@ -578,7 +578,7 @@ void GPUProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImmi
     sendWithAsyncReply(Messages::GPUProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
-void GPUProcessProxy::sendProcessDidResume()
+void GPUProcessProxy::sendProcessDidResume(ResumeReason)
 {
     if (canSendMessage())
         send(Messages::GPUProcess::ProcessDidResume(), 0);

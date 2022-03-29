@@ -213,7 +213,7 @@
 - (void)_processDidResumeForTesting
 {
     if (_page)
-        _page->process().sendProcessDidResume();
+        _page->process().sendProcessDidResume(WebKit::ProcessThrottlerClient::ResumeReason::ForegroundActivity);
 }
 
 - (void)_setAssertionTypeForTesting:(int)value

@@ -159,7 +159,7 @@ void ProcessThrottler::updateAssertionIfNeeded()
                 PROCESSTHROTTLER_RELEASE_LOG("updateAssertionIfNeeded: sending ProcessDidResume IPC because the process was suspended");
             else
                 PROCESSTHROTTLER_RELEASE_LOG("updateAssertionIfNeeded: sending ProcessDidResume IPC because the WebProcess is still processing request to suspend=%" PRIu64, *m_pendingRequestToSuspendID);
-            m_process.sendProcessDidResume();
+            m_process.sendProcessDidResume(expectedAssertionType() == ProcessAssertionType::Foreground ? ProcessThrottlerClient::ResumeReason::ForegroundActivity : ProcessThrottlerClient::ResumeReason::BackgroundActivity);
             clearPendingRequestToSuspend();
         }
     } else {

@@ -37,7 +37,8 @@ public:
     virtual ~ProcessThrottlerClient() { }
 
     virtual void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) = 0;
-    virtual void sendProcessDidResume() = 0;
+    enum ResumeReason : bool { ForegroundActivity, BackgroundActivity };
+    virtual void sendProcessDidResume(ResumeReason) = 0;
     virtual void didSetAssertionType(ProcessAssertionType) { };
     virtual ASCIILiteral clientName() const = 0;
 };

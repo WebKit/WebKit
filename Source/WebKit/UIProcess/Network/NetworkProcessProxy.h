@@ -237,7 +237,7 @@ public:
     void createSymLinkForFileUpgrade(const String& indexedDatabaseDirectory);
 
     // ProcessThrottlerClient
-    void sendProcessDidResume() final;
+    void sendProcessDidResume(ResumeReason) final;
     ASCIILiteral clientName() const final { return "NetworkProcess"_s; }
     
     static void setSuspensionAllowedForTesting(bool);
@@ -374,6 +374,13 @@ private:
     void didExceedMemoryLimit();
 #endif
 
+    void applicationDidEnterBackground();
+    void applicationWillEnterForeground();
+#if PLATFORM(IOS_FAMILY)
+    void addBackgroundStateObservers();
+    void removeBackgroundStateObservers();
+#endif
+
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
 
     UniqueRef<API::CustomProtocolManagerClient> m_customProtocolManagerClient;
@@ -411,6 +418,11 @@ private:
     WeakHashSet<WebsiteDataStore> m_websiteDataStores;
     UniqueRef<WebCookieManagerProxy> m_cookieManager;
     HashMap<DataTaskIdentifier, Ref<API::DataTask>> m_dataTasks;
+
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr<id> m_backgroundObserver;
+    RetainPtr<id> m_foregroundObserver;
+#endif
 };
 
 } // namespace WebKit

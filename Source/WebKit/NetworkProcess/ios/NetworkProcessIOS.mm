@@ -33,6 +33,7 @@
 #import "ProcessAssertion.h"
 #import "SandboxInitializationParameters.h"
 #import "SecItemShim.h"
+#import <UIKit/UIKit.h>
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>

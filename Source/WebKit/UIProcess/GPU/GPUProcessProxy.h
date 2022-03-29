@@ -127,7 +127,7 @@ private:
     // ProcessThrottlerClient
     ASCIILiteral clientName() const final { return "GPUProcess"_s; }
     void sendPrepareToSuspend(IsSuspensionImminent, CompletionHandler<void()>&&) final;
-    void sendProcessDidResume() final;
+    void sendProcessDidResume(ResumeReason) final;
 
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;

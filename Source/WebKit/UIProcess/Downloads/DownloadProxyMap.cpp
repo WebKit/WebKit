@@ -69,16 +69,6 @@ void DownloadProxyMap::platformDestroy()
 }
 #endif
 
-void DownloadProxyMap::applicationDidEnterBackground()
-{
-    m_process.send(Messages::NetworkProcess::ApplicationDidEnterBackground(), 0);
-}
-
-void DownloadProxyMap::applicationWillEnterForeground()
-{
-    m_process.send(Messages::NetworkProcess::ApplicationWillEnterForeground(), 0);
-}
-
 DownloadProxy& DownloadProxyMap::createDownloadProxy(WebsiteDataStore& dataStore, WebProcessPool& processPool, const WebCore::ResourceRequest& resourceRequest, const FrameInfoData& frameInfo, WebPageProxy* originatingPage)
 {
     auto* legacyDownloadClient = processPool.legacyDownloadClient();

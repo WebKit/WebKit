@@ -76,7 +76,7 @@ messages -> NetworkProcess LegacyReceiver {
 
     ProcessWillSuspendImminentlyForTestingSync() -> () Synchronous
     PrepareToSuspend(bool isSuspensionImminent) -> ()
-    ProcessDidResume()
+    ProcessDidResume(bool forForegroundActivity)
 
     PreconnectTo(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, URL url, String userAgent, enum:uint8_t WebCore::StoredCredentialsPolicy storedCredentialsPolicy, enum:bool std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, enum:bool WebKit::LastNavigationWasAppInitiated lastNavigationWasAppInitiated);
 

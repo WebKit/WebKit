@@ -269,6 +269,9 @@ NetworkProcessProxy::NetworkProcessProxy()
     sendCreationParametersToNewProcess();
     updateProcessAssertion();
     networkProcessesSet().add(this);
+#if PLATFORM(IOS_FAMILY)
+    addBackgroundStateObservers();
+#endif
 }
 
 NetworkProcessProxy::~NetworkProcessProxy()
@@ -281,6 +284,9 @@ NetworkProcessProxy::~NetworkProcessProxy()
     if (m_downloadProxyMap)
         m_downloadProxyMap->invalidate();
     networkProcessesSet().remove(this);
+#if PLATFORM(IOS_FAMILY)
+    removeBackgroundStateObservers();
+#endif
 }
 
 void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -336,12 +342,10 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
 
 void NetworkProcessProxy::synthesizeAppIsBackground(bool background)
 {
-    if (m_downloadProxyMap) {
-        if (background)
-            m_downloadProxyMap->applicationDidEnterBackground();
-        else
-            m_downloadProxyMap->applicationWillEnterForeground();
-    }
+    if (background)
+        applicationDidEnterBackground();
+    else
+        applicationWillEnterForeground();
 }
 
 DownloadProxy& NetworkProcessProxy::createDownloadProxy(WebsiteDataStore& dataStore, WebProcessPool& processPool, const ResourceRequest& resourceRequest, const FrameInfoData& frameInfo, WebPageProxy* originatingPage)
@@ -1396,10 +1400,10 @@ void NetworkProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspension
     sendWithAsyncReply(Messages::NetworkProcess::PrepareToSuspend(isSuspensionImminent == IsSuspensionImminent::Yes), WTFMove(completionHandler), 0, { }, ShouldStartProcessThrottlerActivity::No);
 }
 
-void NetworkProcessProxy::sendProcessDidResume()
+void NetworkProcessProxy::sendProcessDidResume(ResumeReason reason)
 {
     if (canSendMessage())
-        send(Messages::NetworkProcess::ProcessDidResume(), 0);
+        send(Messages::NetworkProcess::ProcessDidResume(reason == ResumeReason::ForegroundActivity), 0);
 }
 
 void NetworkProcessProxy::flushCookies(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -1806,6 +1810,16 @@ void NetworkProcessProxy::openWindowFromServiceWorker(PAL::SessionID sessionID, 
     }
 
     callback(std::nullopt);
+}
+
+void NetworkProcessProxy::applicationDidEnterBackground()
+{
+    send(Messages::NetworkProcess::ApplicationDidEnterBackground(), 0);
+}
+
+void NetworkProcessProxy::applicationWillEnterForeground()
+{
+    send(Messages::NetworkProcess::ApplicationWillEnterForeground(), 0);
 }
 
 } // namespace WebKit

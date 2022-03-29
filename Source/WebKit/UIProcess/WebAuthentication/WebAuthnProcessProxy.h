@@ -55,7 +55,7 @@ public:
     void updateProcessAssertion();
 
     // ProcessThrottlerClient
-    void sendProcessDidResume() final { }
+    void sendProcessDidResume(ResumeReason) final { }
     ASCIILiteral clientName() const final { return "WebAuthnProcess"_s; }
 
 private:

@@ -27,8 +27,15 @@
 #import "NetworkProcessProxy.h"
 
 #import "LaunchServicesDatabaseXPCConstants.h"
+#import "NetworkProcessMessages.h"
 #import "WebProcessPool.h"
 #import "XPCEndpoint.h"
+
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIKit.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/WeakPtr.h>
+#endif
 
 namespace WebKit {
 
@@ -84,5 +91,27 @@ bool NetworkProcessProxy::sendXPCEndpointToProcess(AuxiliaryProcessProxy& proces
     xpc_connection_send_message(connection->xpcConnection(), message);
     return true;
 }
+
+#if PLATFORM(IOS_FAMILY)
+
+void NetworkProcessProxy::addBackgroundStateObservers()
+{
+    m_backgroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }](NSNotification *) {
+        if (weakThis)
+            weakThis->applicationDidEnterBackground();
+    }).get()];
+    m_foregroundObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication] queue:nil usingBlock:makeBlockPtr([weakThis = WeakPtr { *this }](NSNotification *) {
+        if (weakThis)
+            weakThis->applicationWillEnterForeground();
+    }).get()];
+}
+
+void NetworkProcessProxy::removeBackgroundStateObservers()
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:m_backgroundObserver.get()];
+    [[NSNotificationCenter defaultCenter] removeObserver:m_foregroundObserver.get()];
+}
+
+#endif
 
 }

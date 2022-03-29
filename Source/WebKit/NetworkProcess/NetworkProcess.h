@@ -174,7 +174,7 @@ public:
 
     void processWillSuspendImminentlyForTestingSync(CompletionHandler<void()>&&);
     void prepareToSuspend(bool isSuspensionImminent, CompletionHandler<void()>&&);
-    void processDidResume();
+    void processDidResume(bool forForegroundActivity);
 
     CacheModel cacheModel() const { return m_cacheModel; }
 
@@ -527,6 +527,7 @@ private:
     bool m_privateClickMeasurementEnabled { true };
     bool m_ftpEnabled { false };
     bool m_isSuspended { false };
+    std::optional<MonotonicTime> m_enterBackgroundTimestamp;
 };
 
 #if !PLATFORM(COCOA)

@@ -1,5 +1,61 @@
 2022-03-28  Sihui Liu  <sihui_liu@apple.com>
 
+        Add logging about process entering background to NetworkProcess::processDidResume
+        https://bugs.webkit.org/show_bug.cgi?id=238082
+        <rdar://problem/90844775>
+
+        Reviewed by Chris Dumez.
+
+        In rdar://82412733, we found network process can be suspended right after it receives processDidResume message. 
+        For network process, processDidResume means process is not suspended and it is safe to perform database 
+        operations. Let's add logging to check when and why processDidResume message is sent. If the logging confirms
+        that processDidResume message can be received when process is close to assertion timeout, we probably want to 
+        ignore such message and resume database operations when application actually enters foreground.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::applicationDidEnterBackground):
+        (WebKit::NetworkProcess::applicationWillEnterForeground):
+        (WebKit::NetworkProcess::processDidResume):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/ios/NetworkProcessIOS.mm:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _processDidResumeForTesting]):
+        * UIProcess/Cocoa/DownloadProxyMapCocoa.mm:
+        (WebKit::DownloadProxyMap::platformCreate):
+        (WebKit::DownloadProxyMap::platformDestroy):
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::applicationDidEnterBackground): Deleted.
+        (WebKit::DownloadProxyMap::applicationWillEnterForeground): Deleted.
+        * UIProcess/Downloads/DownloadProxyMap.h:
+        (WebKit::DownloadProxyMap::isEmpty const):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::sendProcessDidResume):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::synthesizeAppIsBackground):
+        (WebKit::NetworkProcessProxy::sendProcessDidResume):
+        (WebKit::NetworkProcessProxy::applicationDidEnterBackground):
+        (WebKit::NetworkProcessProxy::applicationWillEnterForeground):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxyCocoa.mm:
+        (WebKit::NetworkProcessProxy::addBackgroundStateObservers):
+        (WebKit::NetworkProcessProxy::removeBackgroundStateObservers):
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::updateAssertionIfNeeded):
+        * UIProcess/ProcessThrottlerClient.h:
+        * UIProcess/WebAuthentication/WebAuthnProcessProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendProcessDidResume):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::sendNetworkProcessDidResume):
+
+2022-03-28  Sihui Liu  <sihui_liu@apple.com>
+
         Disable custom storage paths for IndexedDB and LocalStorage by default
         https://bugs.webkit.org/show_bug.cgi?id=236977
         <rdar://problem/89559929>
