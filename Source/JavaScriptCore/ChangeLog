@@ -1,5 +1,23 @@
 2022-03-29  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Add check for null `entryScope` in JSC::Debugger::detach
+        https://bugs.webkit.org/show_bug.cgi?id=238518
+
+        Reviewed by Devin Rousso.
+
+        A virtual machine may not always have an `entryScope`, which can occur if a `JSGlobalObject` is being destructed
+        (which will call into `JSC::Debugger::Detach`) before a `VMEntryScope` is created or after a `VMEntryScope` has
+        fallen out of scope, causing the VM's `entryScope` to be null again. In the original internal issue that led to
+        finding this, this most commonly occurred in conjunction with page refresh while the debugger was paused.
+
+        Because it is possible that we were previously paused in the VM that now has no `entryScope`, we should go ahead
+        and unpause.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::detach):
+
+2022-03-29  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: [Cocoa] Indicate a request was sent through proxy/private relay in Network tab
         https://bugs.webkit.org/show_bug.cgi?id=233202
 
