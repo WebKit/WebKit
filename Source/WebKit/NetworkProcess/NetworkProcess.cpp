@@ -2176,7 +2176,7 @@ void NetworkProcess::applicationWillEnterForeground()
 
 void NetworkProcess::processDidResume(bool forForegroundActivity)
 {
-    if (m_enterBackgroundTimestamp)
+    if (!m_enterBackgroundTimestamp)
         RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume() forForegroundActivity=%d", this, forForegroundActivity);
     else
         RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume() forForegroundActivity=%d Process has been in background for %f seconds", this, forForegroundActivity, (MonotonicTime::now() - m_enterBackgroundTimestamp.value()).value());

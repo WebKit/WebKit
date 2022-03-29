@@ -1,3 +1,14 @@
+2022-03-29  Sihui Liu  <sihui_liu@apple.com>
+
+        Unreviewed test fix after r292024.
+        https://bugs.webkit.org/show_bug.cgi?id=238082
+        <rdar://problem/90844775>
+
+        Correcting an if condition.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processDidResume):
+
 2022-03-29  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Muted video is sometimes paused when entering fullscreen
