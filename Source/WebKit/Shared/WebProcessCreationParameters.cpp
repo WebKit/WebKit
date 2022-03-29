@@ -52,11 +52,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << injectedBundlePathExtensionHandle;
     encoder << additionalSandboxExtensionHandles;
     encoder << initializationUserData;
-#if PLATFORM(IOS_FAMILY)
-    encoder << cookieStorageDirectoryExtensionHandle;
-    encoder << containerCachesDirectoryExtensionHandle;
-    encoder << containerTemporaryDirectoryExtensionHandle;
-#endif
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     encoder << enableRemoteWebInspectorExtensionHandle;
 #endif
@@ -241,28 +236,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     parameters.additionalSandboxExtensionHandles = WTFMove(*additionalSandboxExtensionHandles);
     if (!decoder.decode(parameters.initializationUserData))
         return false;
-
-#if PLATFORM(IOS_FAMILY)
-    
-    std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
-    decoder >> cookieStorageDirectoryExtensionHandle;
-    if (!cookieStorageDirectoryExtensionHandle)
-        return false;
-    parameters.cookieStorageDirectoryExtensionHandle = WTFMove(*cookieStorageDirectoryExtensionHandle);
-
-    std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
-    decoder >> containerCachesDirectoryExtensionHandle;
-    if (!containerCachesDirectoryExtensionHandle)
-        return false;
-    parameters.containerCachesDirectoryExtensionHandle = WTFMove(*containerCachesDirectoryExtensionHandle);
-
-    std::optional<SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
-    decoder >> containerTemporaryDirectoryExtensionHandle;
-    if (!containerTemporaryDirectoryExtensionHandle)
-        return false;
-    parameters.containerTemporaryDirectoryExtensionHandle = WTFMove(*containerTemporaryDirectoryExtensionHandle);
-
-#endif
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     std::optional<SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandle;
     decoder >> enableRemoteWebInspectorExtensionHandle;

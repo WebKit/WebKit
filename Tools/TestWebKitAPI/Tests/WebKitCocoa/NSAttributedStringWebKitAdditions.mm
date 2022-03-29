@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import "TestCocoa.h"
+#import "TestWKWebView.h"
 #import <WebKit/NSAttributedString.h>
 #import <wtf/RetainPtr.h>
 
@@ -51,3 +52,27 @@ TEST(NSAttributedStringWebKitAdditions, MultipleParagraphs)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+#if PLATFORM(IOS_FAMILY)
+TEST(NSAttributedStringWebKitAdditions, DirectoriesNotCreated)
+{
+    NSString *directory = [NSHomeDirectory() stringByAppendingString:@"/Library/Cookies"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtPath:directory error:nil];
+
+    __block bool done = false;
+    [NSAttributedString loadFromHTMLWithData:[NSData data] options:@{ } completionHandler:^(NSAttributedString *attributedString, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    auto cookieDirectoryExists = [&] {
+        return [[NSFileManager defaultManager] fileExistsAtPath:directory];
+    };
+    EXPECT_FALSE(cookieDirectoryExists());
+
+    auto webView = adoptNS([TestWKWebView new]);
+    [webView synchronouslyLoadHTMLString:@"hi"];
+    EXPECT_TRUE(cookieDirectoryExists());
+}
+#endif

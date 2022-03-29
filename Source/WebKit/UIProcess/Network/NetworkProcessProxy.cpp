@@ -192,23 +192,6 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
     parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();
     parameters.urlSchemesRegisteredForCustomProtocols = WebProcessPool::urlSchemesWithCustomProtocolHandlers();
 
-#if PLATFORM(IOS_FAMILY)
-    if (String cookieStorageDirectory = WebProcessPool::cookieStorageDirectory(); !cookieStorageDirectory.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(cookieStorageDirectory))
-            parameters.cookieStorageDirectoryExtensionHandle = WTFMove(*handle);
-    }
-    if (String containerCachesDirectory = WebProcessPool::networkingCachesDirectory(); !containerCachesDirectory.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandleForReadWriteDirectory(containerCachesDirectory))
-            parameters.containerCachesDirectoryExtensionHandle = WTFMove(*handle);
-    }
-    if (String parentBundleDirectory = WebProcessPool::parentBundleDirectory(); !parentBundleDirectory.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly))
-            parameters.parentBundleDirectoryExtensionHandle = WTFMove(*handle);
-    }
-    if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(emptyString(), SandboxExtension::Type::ReadWrite))
-        parameters.tempDirectoryExtensionHandle = WTFMove(handleAndFilePath->first);
-#endif
-
 #if !PLATFORM(GTK) && !PLATFORM(WPE) // GTK and WPE don't use defaultNetworkProcess
     parameters.websiteDataStoreParameters = WebsiteDataStore::parametersFromEachWebsiteDataStore();
     HashMap<String, PAL::SessionID> sessionForDirectory;

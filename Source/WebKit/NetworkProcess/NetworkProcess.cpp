@@ -440,6 +440,17 @@ void NetworkProcess::addStorageSession(PAL::SessionID sessionID, bool shouldUseT
 void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters)
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
+#if PLATFORM(IOS_FAMILY)
+    if (auto& handle = parameters.cookieStorageDirectoryExtensionHandle)
+        SandboxExtension::consumePermanently(*handle);
+    if (auto& handle = parameters.containerCachesDirectoryExtensionHandle)
+        SandboxExtension::consumePermanently(*handle);
+    if (auto& handle = parameters.parentBundleDirectoryExtensionHandle)
+        SandboxExtension::consumePermanently(*handle);
+    if (auto& handle = parameters.tempDirectoryExtensionHandle)
+        SandboxExtension::consumePermanently(*handle);
+#endif
+
     addStorageSession(sessionID, parameters.networkSessionParameters.shouldUseTestingNetworkSession, parameters.uiProcessCookieStorageIdentifier, parameters.cookieStoragePathExtensionHandle);
 
     auto& session = m_networkSessions.ensure(sessionID, [&]() {

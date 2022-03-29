@@ -278,11 +278,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if ENABLE(MEDIA_STREAM)
     SandboxExtension::consumePermanently(parameters.audioCaptureExtensionHandle);
 #endif
-#if PLATFORM(IOS_FAMILY)
-    SandboxExtension::consumePermanently(parameters.cookieStorageDirectoryExtensionHandle);
-    SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
-    SandboxExtension::consumePermanently(parameters.containerTemporaryDirectoryExtensionHandle);
-#endif
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     Inspector::RemoteInspector::setNeedMachSandboxExtension(!SandboxExtension::consumePermanently(parameters.enableRemoteWebInspectorExtensionHandle));
 #endif
@@ -474,6 +469,15 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     SandboxExtension::consumePermanently(parameters.modelElementCacheDirectoryExtensionHandle);
 #endif
+#endif
+#if PLATFORM(IOS_FAMILY)
+    // FIXME: Does the web process still need access to the cookie storage directory? Probably not.
+    if (auto& handle = parameters.cookieStorageDirectoryExtensionHandle)
+        SandboxExtension::consumePermanently(*handle);
+    if (auto& handle = parameters.containerCachesDirectoryExtensionHandle)
+        SandboxExtension::consumePermanently(*handle);
+    if (auto& handle = parameters.containerTemporaryDirectoryExtensionHandle)
+        SandboxExtension::consumePermanently(*handle);
 #endif
 
     if (!parameters.javaScriptConfigurationDirectory.isEmpty()) {

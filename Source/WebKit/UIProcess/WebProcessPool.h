@@ -748,12 +748,6 @@ private:
         String injectedBundlePath;
         String uiProcessBundleResourcePath;
 
-#if PLATFORM(IOS_FAMILY)
-        String cookieStorageDirectory;
-        String containerCachesDirectory;
-        String containerTemporaryDirectory;
-#endif
-
 #if PLATFORM(PLAYSTATION)
         String webProcessPath;
         String networkProcessPath;

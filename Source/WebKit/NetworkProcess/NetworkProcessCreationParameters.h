@@ -63,12 +63,6 @@ struct NetworkProcessCreationParameters {
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif
-#if PLATFORM(IOS_FAMILY)
-    SandboxExtension::Handle cookieStorageDirectoryExtensionHandle;
-    SandboxExtension::Handle containerCachesDirectoryExtensionHandle;
-    SandboxExtension::Handle parentBundleDirectoryExtensionHandle;
-    SandboxExtension::Handle tempDirectoryExtensionHandle;
-#endif
     bool shouldSuppressMemoryPressureHandler { false };
 
     Vector<String> urlSchemesRegisteredForCustomProtocols;

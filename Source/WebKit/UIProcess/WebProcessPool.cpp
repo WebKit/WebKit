@@ -773,6 +773,18 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
+    if (auto& directory = websiteDataStore.cookieStorageDirectory(); !directory.isEmpty())
+        cookieStorageDirectoryExtensionHandle = SandboxExtension::createHandleWithoutResolvingPath(directory, SandboxExtension::Type::ReadWrite);
+    std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
+    if (auto& directory = websiteDataStore.containerCachesDirectory(); !directory.isEmpty())
+        containerCachesDirectoryExtensionHandle = SandboxExtension::createHandleWithoutResolvingPath(directory, SandboxExtension::Type::ReadWrite);
+    std::optional<SandboxExtension::Handle> containerTemporaryDirectoryExtensionHandle;
+    if (auto& directory = websiteDataStore.containerTemporaryDirectory(); !directory.isEmpty())
+        containerTemporaryDirectoryExtensionHandle = SandboxExtension::createHandleWithoutResolvingPath(directory, SandboxExtension::Type::ReadWrite);
+#endif
+
     return WebProcessDataStoreParameters {
         websiteDataStore.sessionID(),
         WTFMove(applicationCacheDirectory),
@@ -792,6 +804,11 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
 #if ENABLE(ARKIT_INLINE_PREVIEW)
         WTFMove(modelElementCacheDirectory),
         WTFMove(modelElementCacheDirectoryExtensionHandle),
+#endif
+#if PLATFORM(IOS_FAMILY)
+        WTFMove(cookieStorageDirectoryExtensionHandle),
+        WTFMove(containerCachesDirectoryExtensionHandle),
+        WTFMove(containerTemporaryDirectoryExtensionHandle),
 #endif
         websiteDataStore.resourceLoadStatisticsEnabled()
     };

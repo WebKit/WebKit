@@ -283,12 +283,6 @@ String WebProcessPool::cookieStorageDirectory()
 void WebProcessPool::platformResolvePathsForSandboxExtensions()
 {
     m_resolvedPaths.uiProcessBundleResourcePath = resolvePathForSandboxExtension([[NSBundle mainBundle] resourcePath]);
-
-#if PLATFORM(IOS_FAMILY)
-    m_resolvedPaths.cookieStorageDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::cookieStorageDirectory());
-    m_resolvedPaths.containerCachesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::webContentCachesDirectory());
-    m_resolvedPaths.containerTemporaryDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(WebProcessPool::containerTemporaryDirectory());
-#endif
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -335,23 +329,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
     parameters.latencyQOS = webProcessLatencyQOS();
     parameters.throughputQOS = webProcessThroughputQOS();
-    
-#if PLATFORM(IOS_FAMILY)
-    if (!m_resolvedPaths.cookieStorageDirectory.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.cookieStorageDirectory, SandboxExtension::Type::ReadWrite))
-            parameters.cookieStorageDirectoryExtensionHandle = WTFMove(*handle);
-    }
 
-    if (!m_resolvedPaths.containerCachesDirectory.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.containerCachesDirectory, SandboxExtension::Type::ReadWrite))
-            parameters.containerCachesDirectoryExtensionHandle = WTFMove(*handle);
-    }
-
-    if (!m_resolvedPaths.containerTemporaryDirectory.isEmpty()) {
-        if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(m_resolvedPaths.containerTemporaryDirectory, SandboxExtension::Type::ReadWrite))
-            parameters.containerTemporaryDirectoryExtensionHandle = WTFMove(*handle);
-    }
-#endif
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     if (WebProcessProxy::shouldEnableRemoteInspector()) {
         if (auto handle = SandboxExtension::createHandleForMachLookup("com.apple.webinspector"_s, std::nullopt))

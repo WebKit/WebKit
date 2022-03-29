@@ -48,12 +48,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     encoder << uiProcessCookieStorageIdentifier;
 #endif
-#if PLATFORM(IOS_FAMILY)
-    encoder << cookieStorageDirectoryExtensionHandle;
-    encoder << containerCachesDirectoryExtensionHandle;
-    encoder << parentBundleDirectoryExtensionHandle;
-    encoder << tempDirectoryExtensionHandle;
-#endif
     encoder << shouldSuppressMemoryPressureHandler;
     encoder << urlSchemesRegisteredForCustomProtocols;
 #if PLATFORM(COCOA)
@@ -87,31 +81,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (!decoder.decode(result.uiProcessCookieStorageIdentifier))
         return false;
-#endif
-#if PLATFORM(IOS_FAMILY)
-    std::optional<SandboxExtension::Handle> cookieStorageDirectoryExtensionHandle;
-    decoder >> cookieStorageDirectoryExtensionHandle;
-    if (!cookieStorageDirectoryExtensionHandle)
-        return false;
-    result.cookieStorageDirectoryExtensionHandle = WTFMove(*cookieStorageDirectoryExtensionHandle);
-
-    std::optional<SandboxExtension::Handle> containerCachesDirectoryExtensionHandle;
-    decoder >> containerCachesDirectoryExtensionHandle;
-    if (!containerCachesDirectoryExtensionHandle)
-        return false;
-    result.containerCachesDirectoryExtensionHandle = WTFMove(*containerCachesDirectoryExtensionHandle);
-
-    std::optional<SandboxExtension::Handle> parentBundleDirectoryExtensionHandle;
-    decoder >> parentBundleDirectoryExtensionHandle;
-    if (!parentBundleDirectoryExtensionHandle)
-        return false;
-    result.parentBundleDirectoryExtensionHandle = WTFMove(*parentBundleDirectoryExtensionHandle);
-
-    std::optional<SandboxExtension::Handle> tempDirectoryExtensionHandle;
-    decoder >> tempDirectoryExtensionHandle;
-    if (!tempDirectoryExtensionHandle)
-        return false;
-    result.tempDirectoryExtensionHandle = WTFMove(*tempDirectoryExtensionHandle);
 #endif
     if (!decoder.decode(result.shouldSuppressMemoryPressureHandler))
         return false;

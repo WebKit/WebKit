@@ -38,6 +38,12 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
     encoder << networkSessionParameters;
     encoder << uiProcessCookieStorageIdentifier;
     encoder << cookieStoragePathExtensionHandle;
+#if PLATFORM(IOS_FAMILY)
+    encoder << cookieStorageDirectoryExtensionHandle;
+    encoder << containerCachesDirectoryExtensionHandle;
+    encoder << parentBundleDirectoryExtensionHandle;
+    encoder << tempDirectoryExtensionHandle;
+#endif
 }
 
 std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Decoder& decoder)
@@ -61,6 +67,32 @@ std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC
     if (!cookieStoragePathExtensionHandle)
         return std::nullopt;
     parameters.cookieStoragePathExtensionHandle = WTFMove(*cookieStoragePathExtensionHandle);
+
+#if PLATFORM(IOS_FAMILY)
+    std::optional<std::optional<SandboxExtension::Handle>> cookieStorageDirectoryExtensionHandle;
+    decoder >> cookieStorageDirectoryExtensionHandle;
+    if (!cookieStorageDirectoryExtensionHandle)
+        return std::nullopt;
+    parameters.cookieStorageDirectoryExtensionHandle = WTFMove(*cookieStorageDirectoryExtensionHandle);
+
+    std::optional<std::optional<SandboxExtension::Handle>> containerCachesDirectoryExtensionHandle;
+    decoder >> containerCachesDirectoryExtensionHandle;
+    if (!containerCachesDirectoryExtensionHandle)
+        return std::nullopt;
+    parameters.containerCachesDirectoryExtensionHandle = WTFMove(*containerCachesDirectoryExtensionHandle);
+
+    std::optional<std::optional<SandboxExtension::Handle>> parentBundleDirectoryExtensionHandle;
+    decoder >> parentBundleDirectoryExtensionHandle;
+    if (!parentBundleDirectoryExtensionHandle)
+        return std::nullopt;
+    parameters.parentBundleDirectoryExtensionHandle = WTFMove(*parentBundleDirectoryExtensionHandle);
+
+    std::optional<std::optional<SandboxExtension::Handle>> tempDirectoryExtensionHandle;
+    decoder >> tempDirectoryExtensionHandle;
+    if (!tempDirectoryExtensionHandle)
+        return std::nullopt;
+    parameters.tempDirectoryExtensionHandle = WTFMove(*tempDirectoryExtensionHandle);
+#endif
 
     return parameters;
 }
