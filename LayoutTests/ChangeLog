@@ -1,3 +1,21 @@
+2022-03-29  Tim Nguyen  <ntim@apple.com>
+
+        Re-import inert and <dialog> WPT
+        https://bugs.webkit.org/show_bug.cgi?id=238502
+
+        Reviewed by Antti Koivisto.
+
+        Upstream commit: https://github.com/web-platform-tests/wpt/commit/46e50fc357127c76c898675cd30ae34090a2268d
+
+        Main changes:
+        - Removes .tentative.html suffix from inert tests
+        - Adds default-color.html test for <dialog>
+
+        * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-hittest-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-hittest.tentative-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-tabbing-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-iframe-tabbing.tentative-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-node-is-uneditable-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-node-is-uneditable.tentative-expected.txt.
+        * platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-svg-hittest-expected.txt: Renamed from LayoutTests/platform/ios-wk2/imported/w3c/web-platform-tests/inert/inert-svg-hittest.tentative-expected.txt.
+
 2022-03-28  Alan Bujtas  <zalan@apple.com>
 
         [ macOS & Win ] fast/repaint/list-item-equal-style-change-no-repaint.html is a flaky failure
