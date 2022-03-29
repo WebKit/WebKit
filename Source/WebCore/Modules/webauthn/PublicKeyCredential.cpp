@@ -66,7 +66,8 @@ PublicKeyCredential::PublicKeyCredential(Ref<AuthenticatorResponse>&& response)
 
 void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Document& document, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
-    document.page()->authenticatorCoordinator().isUserVerifyingPlatformAuthenticatorAvailable(WTFMove(promise));
+    if (auto* page = document.page())
+        page->authenticatorCoordinator().isUserVerifyingPlatformAuthenticatorAvailable(WTFMove(promise));
 }
 
 } // namespace WebCore
