@@ -4243,6 +4243,11 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
         // Otherwise: Queue a task on the WebGL task source to perform the following steps:
         // FIXME: add a way to verify that we're using a compatible graphics adapter.
         m_isXRCompatible = true;
+
+#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+        enableSupportedExtension("GL_OES_EGL_image"_s);
+#endif
+
         promise.resolve();
         rejectPromiseWithInvalidStateError.release();
     });

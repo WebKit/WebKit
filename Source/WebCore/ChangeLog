@@ -1,3 +1,16 @@
+2022-03-28  Ada Chan  <adachan@apple.com>
+
+        [WebXR][Cocoa] Enable GL_OES_EGL_image extension when makeXRCompatible() is called on GL context
+        https://bugs.webkit.org/show_bug.cgi?id=238477
+
+        Reviewed by Dean Jackson.
+
+        Without this extension, EGLImageTargetTexture2DOES() will fail
+        in GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture().
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::makeXRCompatible):
+
 2022-03-28  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified buildfix after 248938@main
