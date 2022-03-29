@@ -1,3 +1,64 @@
+2022-03-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Use GBMBufferSwapchain in GraphicsContextGLTextureMapperANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=237883
+
+        Reviewed by Alejandro G. Castro.
+
+        Use the generic GBMBufferSwapchain for managing dmabuf-based buffer
+        objects in GraphicsContextGLTextureMapperANGLE. This usage is guarded
+        behind the USE(TEXTURE_MAPPER_DMABUF) build guards.
+
+        When that build guard is enabled, we can avoid using additional textures
+        but instead have to manage a GBMBufferSwapchain instance from which we
+        can retrieve buffers that should be acting as backing for the different
+        draw operations.
+
+        This buffer setup is handled in the
+        GraphicsContextGLTextureMapperANGLE::makeContextCurrent() method. Once
+        called, if there's a swapchain available (after initial or each
+        subsequent backing reshaping) a buffer will be retrieved from that
+        swapchain, a corresponding EGLImage created and associated to the GL
+        texture that acts as the color attachment for the default buffer. All
+        subsequent drawing will be done onto this buffer object, all the way
+        to the prepareForDisplay() method where that buffer is moved into the
+        display-buffer position, waiting for the display to occur.
+
+        The display of this buffer is still handled in Nicosia::GCGLANGLELayer.
+        In the swapBuffersIfNeeded() method, if the pending buffer is detected,
+        the dmabuf information is pushed into the
+        TextureMapperPlatformLayerProxyDMABuf instance and prepared for
+        presentation.
+
+        No new tests -- covered by existing tests, where the ANGLE-backed
+        GraphicsContextGL continues to improve the overall state of WebGL tests.
+        Only problem is the software-backed rasterization in the WPE/GTK testing
+        tooling which disables a few features and to a degree breaks WebGL
+        content display, but this specific issue will be resolved later.
+
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.cpp:
+        (Nicosia::GCGLANGLELayer::swapBuffersIfNeeded):
+        (Nicosia::GCGLANGLELayer::GCGLANGLELayer):
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp:
+        (WebCore::GraphicsContextGLANGLE::makeContextCurrent):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::~GraphicsContextGLTextureMapperANGLE):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::platformInitializeContext):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::platformInitialize):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::prepareTexture):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::reshapeDisplayBufferBacking):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::prepareForDisplay):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::Swapchain::Swapchain):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::Swapchain::~Swapchain):
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::EGLImageBacking): Deleted.
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::~EGLImageBacking): Deleted.
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::format const): Deleted.
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::stride const): Deleted.
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::releaseResources): Deleted.
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::isReleased): Deleted.
+        (WebCore::GraphicsContextGLTextureMapperANGLE::EGLImageBacking::reset): Deleted.
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h:
+
 2022-03-28  Alan Bujtas  <zalan@apple.com>
 
         [ macOS & Win ] fast/repaint/list-item-equal-style-change-no-repaint.html is a flaky failure

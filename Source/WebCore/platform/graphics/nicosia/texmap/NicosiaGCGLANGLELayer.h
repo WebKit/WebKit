@@ -31,7 +31,6 @@
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
 #include "NicosiaContentLayerTextureMapperImpl.h"
-#include <memory>
 
 typedef void *EGLConfig;
 typedef void *EGLContext;
@@ -40,7 +39,6 @@ typedef void *EGLSurface;
 
 namespace WebCore {
 class IntSize;
-class GLContext;
 class GraphicsContextGLTextureMapperANGLE;
 class PlatformDisplay;
 }

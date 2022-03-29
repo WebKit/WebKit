@@ -29,6 +29,12 @@
 
 #include "GraphicsContextGLANGLE.h"
 
+#if USE(TEXTURE_MAPPER_DMABUF)
+#include "ANGLEHeaders.h"
+#include "GBMBufferSwapchain.h"
+#include <wtf/HashMap.h>
+#endif
+
 #if USE(NICOSIA)
 namespace Nicosia {
 class GCGLANGLELayer;
@@ -73,44 +79,39 @@ private:
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 
+#if USE(TEXTURE_MAPPER_DMABUF)
+    struct Swapchain {
+        Swapchain() = default;
+        Swapchain(GCGLDisplay);
+        ~Swapchain();
+
+        GCGLDisplay platformDisplay { EGL_NO_DISPLAY };
+        RefPtr<GBMBufferSwapchain> swapchain;
+        RefPtr<GBMBufferSwapchain::Buffer> drawBO;
+        RefPtr<GBMBufferSwapchain::Buffer> displayBO;
+
+        // Cache for EGLImage objects corresponding to the buffers originating from the swapchain.
+        // The swapchain is regenerated (and these EGLImage objects destroyed) upon each buffer reshaping,
+        // so we should be fine without managing stale buffers and corresponding EGLImages (which shouldn't occur anyway).
+        HashMap<uint32_t, EGLImageKHR, WTF::DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> images;
+    } m_swapchain;
+#else
     GCGLuint m_compositorTexture { 0 };
 #if USE(COORDINATED_GRAPHICS)
     GCGLuint m_intermediateTexture { 0 };
 #endif
+#endif
 
 #if USE(NICOSIA)
     std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
-
-    class EGLImageBacking {
-    WTF_MAKE_FAST_ALLOCATED;
-    public:
-        EGLImageBacking(GCGLDisplay);
-        ~EGLImageBacking();
-
-        bool reset(int width, int height, bool hasAlpha);
-
-        EGLImage image() const { return m_image; }
-        int fd() const { return m_FD; }
-
-        uint32_t format() const;
-        uint32_t stride() const;
-
-        bool isReleased();
-    private:
-        void releaseResources();
-
-        GCGLDisplay m_display;
-
-        gbm_bo* m_BO { nullptr };
-        int m_FD { -1 };
-        EGLImage m_image;
-    };
-
-    std::unique_ptr<EGLImageBacking> m_textureBacking;
-    std::unique_ptr<EGLImageBacking> m_compositorTextureBacking;
-    std::unique_ptr<EGLImageBacking> m_intermediateTextureBacking;
 #else
     std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
+#endif
+
+#if USE(TEXTURE_MAPPER_DMABUF)
+    // Required (for now) in GraphicsContextGLANGLE::makeContextCurrent()
+    // to construct and set the draw buffer-object.
+    friend class GraphicsContextGLANGLE;
 #endif
 
 #if USE(NICOSIA)
