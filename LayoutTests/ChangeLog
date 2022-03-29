@@ -1,3 +1,20 @@
+2022-03-29  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Don't mutate children during RenderGrid::computeIntrinsicLogicalWidths unless we're about to re-layout.
+        https://bugs.webkit.org/show_bug.cgi?id=237732
+
+        Reviewed by Dean Jackson.
+
+        Don't mutate children during computeIntrinsicWidth
+
+        * TestExpectations:
+        * fast/css-grid-layout/compute-intrinsic-logical-widths-should-not-mutate-children-expected.html: Added.
+        * fast/css-grid-layout/compute-intrinsic-logical-widths-should-not-mutate-children.html: Added.
+        * platform/ios/TestExpectations:
+
+        Marked existing WPT as passing on MacOS (since we run layout multiple times there).
+        Added new test for this implementation-specific bug.
+
 2022-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Automatically relayout the page when new fonts are installed

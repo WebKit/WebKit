@@ -1,3 +1,29 @@
+2022-03-29  Matt Woodrow  <mattwoodrow@apple.com>
+
+        Don't mutate children during RenderGrid::computeIntrinsicLogicalWidths unless we're about to re-layout.
+        https://bugs.webkit.org/show_bug.cgi?id=237732
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/css-grid-layout/compute-intrinsic-logical-widths-should-not-mutate-children.html
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::gridAreaBreadthForChild const):
+        (WebCore::GridTrackSizingAlgorithm::advanceNextState):
+        (WebCore::GridTrackSizingAlgorithm::isValidTransition const):
+        * rendering/GridTrackSizingAlgorithm.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutBlock):
+        (WebCore::RenderGrid::computeIntrinsicLogicalWidths const):
+        * rendering/RenderGrid.h:
+
+        computeIntrinsicLogicalWidths can re-layout children (via performGridItemsPreLayout, as well as during
+        the track sizing algorithm), and does so using the estimated track sizes. This can be incorrect, and if
+        we're not about to do a full layout on this RenderGrid, it can leave the children in an invalid state.
+
+        This caches the intrinsic sizes when we do a full layout, so that we can use these values instead when
+        we just want to query the RenderGrid without mutating anything.
+
 2022-03-29  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Automatically relayout the page when new fonts are installed
