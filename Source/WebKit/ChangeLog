@@ -1,3 +1,20 @@
+2022-03-29  Don Olmstead  <don.olmstead@sony.com>
+
+        Share WebAutomationSession among USE(LIBWPE) ports
+        https://bugs.webkit.org/show_bug.cgi?id=238470
+
+        Reviewed by Adrian Perez de Castro.
+
+        Rename WebAutomationSessionWPE.cpp to WebAutomationSessionLibWPE since its just using the
+        libWPE API. Remove glib specific code in WebAutomationSession::platformSimulateKeySequence
+        to use a StringView::codePoints. The same code was in GTK so replace that as well.
+
+        * SourcesWPE.txt:
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+        * UIProcess/Automation/libwpe/WebAutomationSessionLibWPE.cpp: Renamed from Source/WebKit/UIProcess/Automation/wpe/WebAutomationSessionWPE.cpp.
+        (WebKit::WebAutomationSession::platformSimulateKeySequence):
+
 2022-03-29  Youenn Fablet  <youenn@apple.com>
 
         RealtimeMediaSource::Type::Video is misleading as it is actually referring to camera sources

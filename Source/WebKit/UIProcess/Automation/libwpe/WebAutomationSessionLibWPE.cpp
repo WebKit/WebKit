@@ -357,12 +357,8 @@ void WebAutomationSession::platformSimulateKeyboardInteraction(WebPageProxy& pag
 
 void WebAutomationSession::platformSimulateKeySequence(WebPageProxy& page, const String& keySequence)
 {
-    CString keySequenceUTF8 = keySequence.utf8();
-    const char* p = keySequenceUTF8.data();
-    do {
-        doKeyStrokeEvent(page.viewBackend(), true, wpe_unicode_to_key_code(g_utf8_get_char(p)), m_currentModifiers, true);
-        p = g_utf8_next_char(p);
-    } while (*p);
+    for (auto codePoint : StringView(keySequence).codePoints())
+        doKeyStrokeEvent(page.viewBackend(), true, wpe_unicode_to_key_code(codePoint), m_currentModifiers, true);
 }
 #endif // ENABLE(WEBDRIVER_KEYBOARD_INTERACTIONS)
 
