@@ -1,3 +1,26 @@
+2022-03-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        drop-shadow filter doesn't work correctly in tiled backing layer
+        https://bugs.webkit.org/show_bug.cgi?id=236800
+        <rdar://problem/89382612>
+
+        Reviewed by Simon Fraser.
+
+        If an element with drop-shadow filter wasn't placed in the
+        painting rect, the drop-shadow wasn't rendered correctly. This
+        issue tended to be observed in tiled backing layers becuase each
+        tile is painted separately. But, not necessary. If an element with
+        drop-shadow filter was placed in the outside of view, this issue
+        could arise.
+
+        Tests: css3/filters/drop-shadow-in-tiled-backing.html
+               imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-003.html
+
+        * rendering/RenderLayerFilters.cpp:
+        (WebCore::RenderLayerFilters::beginFilterEffect): If the
+        drop-shadow is cast to the right direction, dirtyRect needs to be
+        extended to left direction to calculate targetBoundingBox.
+
 2022-03-29  Chris Dumez  <cdumez@apple.com>
 
         Use "UTF-8"_s instead of PAL::UTF8Encoding().domName()

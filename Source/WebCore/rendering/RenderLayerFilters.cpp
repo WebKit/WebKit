@@ -143,8 +143,14 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     if (!m_filter)
         return nullptr;
 
+    auto expandedDirtyRect = dirtyRect;
+    if (m_filter->hasFilterThatMovesPixels()) {
+        auto outsets = m_filter->outsets();
+        LayoutBoxExtent flippedOutsets { outsets.bottom(), outsets.left(), outsets.top(), outsets.right() };
+        expandedDirtyRect.expand(flippedOutsets);
+    }
     // Calculate targetBoundingBox since it will be used if the filter is created.
-    auto targetBoundingBox = intersection(filterBoxRect, dirtyRect);
+    auto targetBoundingBox = intersection(filterBoxRect, expandedDirtyRect);
     if (targetBoundingBox.isEmpty())
         return nullptr;
 

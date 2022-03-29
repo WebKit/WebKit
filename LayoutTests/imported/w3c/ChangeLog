@@ -1,3 +1,14 @@
+2022-03-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        drop-shadow filter doesn't work correctly in tiled backing layer
+        https://bugs.webkit.org/show_bug.cgi?id=236800
+        <rdar://problem/89382612>
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/filter-effects/filters-drop-shadow-003-expected.html: Added.
+        * web-platform-tests/css/filter-effects/filters-drop-shadow-003.html: Added.
+
 2022-03-29  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Support CSSOM

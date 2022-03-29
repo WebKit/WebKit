@@ -2325,3 +2325,5 @@ webkit.org/b/237358 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-t
 fast/text/accessibility-bold.html [ Pass ]
 
 webkit.org/b/233621 http/tests/webgpu [ Skip ]
+
+webkit.org/b/237849 imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-003.html [ ImageOnlyFailure ]
