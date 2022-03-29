@@ -1,5 +1,31 @@
 2022-03-29  Jonathan Bedard  <jbedard@apple.com>
 
+        [Merge-Queue] Canonicalize commit
+        https://bugs.webkit.org/show_bug.cgi?id=238453
+        <rdar://problem/90921217>
+
+        Reviewed by Dewei Zhu.
+
+        Before pushing to Subversion, we want to include the canonical
+        link in the commit message.
+
+        * CISupport/ews-build/factories.py:
+        (MergeQueueFactory.__init__): Add Canonicalize step.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestExpectedBuildSteps): Ditto.
+        * CISupport/ews-build/steps.py:
+        (Canonicalize):
+        (Canonicalize.__init__):
+        (Canonicalize.doStepIf): Only canonicalize pull requests.
+        (Canonicalize.hideStepIf): Hide step if we aren't doing it.
+        (Canonicalize.run): Update the base branch, rebase the source branch
+        then move the base branch to the tip of the source branch. Finally,
+        canonicalize the new commit.
+        (Canonicalize.getResultSummary):
+        * CISupport/ews-build/steps_unittest.py:
+
+2022-03-29  Jonathan Bedard  <jbedard@apple.com>
+
         [Merge-Queue] Add Reviewers to ChangeLog files
         https://bugs.webkit.org/show_bug.cgi?id=238396
         <rdar://problem/90860335>

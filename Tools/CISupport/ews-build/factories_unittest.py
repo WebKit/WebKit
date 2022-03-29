@@ -643,6 +643,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'add-reviewer-to-changelog',
             'validate-commit-message',
             'validate-changelog-and-reviewer',
+            'canonicalize-commit',
         ],
     }
 

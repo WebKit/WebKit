@@ -4785,3 +4785,41 @@ class ValidateCommitMessage(shell.ShellCommand):
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
+
+
+class Canonicalize(steps.ShellSequence, ShellMixin):
+    name = 'canonicalize-commit'
+    description = ['canonicalize-commit']
+    descriptionDone = ['Canonicalize Commit']
+    haltOnFailure = True
+
+    def __init__(self, **kwargs):
+        super(Canonicalize, self).__init__(logEnviron=False, timeout=300, **kwargs)
+
+    def run(self):
+        self.commands = []
+
+        base_ref = self.getProperty('github.base.ref', DEFAULT_BRANCH)
+        head_ref = self.getProperty('github.head.ref', DEFAULT_BRANCH)
+
+        for command in [
+            ['git', 'pull', 'origin', base_ref],
+            ['git', 'branch', '-f', base_ref, head_ref],
+            ['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
+        ]:
+            self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
+
+        return super(Canonicalize, self).run()
+
+    def getResultSummary(self):
+        if self.results == SKIPPED:
+            return {'step': 'Cannot canonicalize patches'}
+        if self.results != SUCCESS:
+            return {'step': 'Failed to canonicalize commit'}
+        return {'step': 'Canonicalized commit'}
+
+    def doStepIf(self, step):
+        return self.getProperty('github.number', False)
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)

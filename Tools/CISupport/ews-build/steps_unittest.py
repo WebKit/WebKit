@@ -43,7 +43,7 @@ import send_email
 
 from steps import (AddReviewerToCommitMessage, AddReviewerToChangeLog, AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults, BugzillaMixin,
-                   CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
+                   Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
@@ -5952,6 +5952,75 @@ https://bugs.webkit.org/show_bug.cgi?id=238172
 <rdar://problem/90602594>'''),
         )
         self.expectOutcome(result=FAILURE, state_string='No reviewer information in commit message')
+        return self.runStep()
+
+
+class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_skipped_patch(self):
+        self.setupStep(Canonicalize())
+        self.setProperty('patch_id', '1234')
+        self.expectOutcome(result=SKIPPED, state_string='Cannot canonicalize patches')
+        return self.runStep()
+
+    def test_success(self):
+        self.setupStep(Canonicalize())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'pull', 'origin', 'main'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'branch', '-f', 'main', 'eng/pull-request-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Canonicalized commit')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(Canonicalize())
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
+        self.setProperty('github.head.ref', 'eng/pull-request-branch')
+
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'pull', 'origin', 'main'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['git', 'branch', '-f', 'main', 'eng/pull-request-branch'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                timeout=300,
+                logEnviron=False,
+                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
+            ) + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to canonicalize commit')
         return self.runStep()
 
 
