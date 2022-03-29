@@ -1,5 +1,38 @@
 2022-03-28  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r291982. rdar://problem/90927474
+
+    [iOS] Fix sandbox violation related to Network content filtering
+    https://bugs.webkit.org/show_bug.cgi?id=238458
+    <rdar://90927474>
+    
+    Reviewed by Brent Fulgham.
+    
+    After enabling Network content filtering in the Network process, a related sandbox rule should
+    be moved to the Network process' sandbox.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291982 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-28  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Fix sandbox violation related to Network content filtering
+            https://bugs.webkit.org/show_bug.cgi?id=238458
+            <rdar://90927474>
+
+            Reviewed by Brent Fulgham.
+
+            After enabling Network content filtering in the Network process, a related sandbox rule should
+            be moved to the Network process' sandbox.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+
+2022-03-28  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r292007. rdar://problem/90602918
 
     [macOS] Add `WKWebView` API to control CSS "small viewport" `sv*` and "large viewport" `lv*` units
