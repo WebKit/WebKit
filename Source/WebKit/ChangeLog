@@ -1,5 +1,53 @@
 2022-03-28  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r291622. rdar://problem/90935942
+
+    Fetching a Blob URL with an unbounded Range header do not generate a Content-Range response header
+    https://bugs.webkit.org/show_bug.cgi?id=238170
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Test: fetch/fetch-blob-unbounded-range.html
+    
+    Handle the case where the request contains an unbounded range, and property calculate the rangeEnd
+    to pass into ParsedContentRange.
+    
+    * platform/network/BlobResourceHandle.cpp:
+    (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+    
+    Source/WebKit:
+    
+    Handle the case where the request contains an unbounded range, and property calculate the rangeEnd
+    to pass into ParsedContentRange.
+    
+    * NetworkProcess/NetworkDataTaskBlob.cpp:
+    (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+    
+    LayoutTests:
+    
+    * fetch/fetch-blob-unbounded-range-expected.txt: Added.
+    * fetch/fetch-blob-unbounded-range.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@291622 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-22  Jer Noble  <jer.noble@apple.com>
+
+            Fetching a Blob URL with an unbounded Range header do not generate a Content-Range response header
+            https://bugs.webkit.org/show_bug.cgi?id=238170
+
+            Reviewed by Eric Carlson.
+
+            Handle the case where the request contains an unbounded range, and property calculate the rangeEnd
+            to pass into ParsedContentRange.
+
+            * NetworkProcess/NetworkDataTaskBlob.cpp:
+            (WebKit::NetworkDataTaskBlob::dispatchDidReceiveResponse):
+
+2022-03-28  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r291980. rdar://problem/89434696
 
     [iOS] Add `WKWebView` API to control CSS "small viewport" `sv*` and "large viewport" `lv*` units
