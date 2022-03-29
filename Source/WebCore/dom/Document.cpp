@@ -1493,13 +1493,13 @@ String Document::characterSetWithUTF8Fallback() const
     AtomString name = encoding();
     if (!name.isNull())
         return name;
-    return String { PAL::UTF8Encoding().domName() };
+    return "UTF-8"_s;
 }
 
 String Document::defaultCharsetForLegacyBindings() const
 {
     if (!frame())
-        PAL::UTF8Encoding().domName();
+        return "UTF-8"_s;
     return settings().defaultTextEncodingName();
 }
 
