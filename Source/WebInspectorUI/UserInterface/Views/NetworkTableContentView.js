@@ -1898,7 +1898,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             protocol: resource.protocol,
             initiator: resource.initiatorSourceCodeLocation ? resource.initiatorSourceCodeLocation.displayLocationString() : "",
             priority: resource.priority,
-            remoteAddress: resource.remoteAddress,
+            remoteAddress: resource.displayRemoteAddress,
             connectionIdentifier: resource.connectionIdentifier,
             startTime: resource.firstTimestamp,
             currentSession: true,

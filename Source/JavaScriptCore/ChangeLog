@@ -1,3 +1,14 @@
+2022-03-29  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Cocoa] Indicate a request was sent through proxy/private relay in Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=233202
+
+        Reviewed by Devin Rousso.
+
+        Add new `isProxyConnection` property to network metrics protocol object.
+
+        * inspector/protocol/Network.json:
+
 2022-03-28  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Clean up some 32bit load/store with 64bit load/store

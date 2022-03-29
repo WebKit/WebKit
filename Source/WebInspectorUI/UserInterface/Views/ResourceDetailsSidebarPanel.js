@@ -364,7 +364,7 @@ WI.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel extends WI.De
             this._protocolRow.value = protocolDisplayName || emDash;
             this._protocolRow.tooltip = protocolDisplayName ? this._resource.protocol : "";
             this._priorityRow.value = WI.Resource.displayNameForPriority(this._resource.priority) || emDash;
-            this._remoteAddressRow.value = this._resource.remoteAddress || emDash;
+            this._remoteAddressRow.value = this._resource.displayRemoteAddress || emDash;
             this._connectionIdentifierRow.value = this._resource.connectionIdentifier || emDash;
         }
 

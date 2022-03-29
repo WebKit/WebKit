@@ -264,7 +264,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._summarySection.appendKeyValuePair(WI.UIString("Source"), source);
 
         if (this._resource.remoteAddress)
-            this._summarySection.appendKeyValuePair(WI.UIString("Address"), this._resource.remoteAddress);
+            this._summarySection.appendKeyValuePair(WI.UIString("Address"), this._resource.displayRemoteAddress);
 
         let initiatorLocation = this._resource.initiatorSourceCodeLocation;
         if (initiatorLocation) {

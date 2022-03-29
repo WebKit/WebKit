@@ -95,7 +95,8 @@
                 { "name": "responseHeaderBytesReceived", "type": "number", "optional": true, "description": "Total HTTP response header bytes received over the network." },
                 { "name": "responseBodyBytesReceived", "type": "number", "optional": true, "description": "Total HTTP response body bytes received over the network." },
                 { "name": "responseBodyDecodedSize", "type": "number", "optional": true, "description": "Total decoded response body size in bytes." },
-                { "name": "securityConnection", "$ref": "Security.Connection", "optional": true, "description": "Connection information for the completed request." }
+                { "name": "securityConnection", "$ref": "Security.Connection", "optional": true, "description": "Connection information for the completed request." },
+                { "name": "isProxyConnection", "type": "boolean", "optional": true, "description": "Whether or not the connection was proxied through a server. If <code>true</code>, the <code>remoteAddress</code> will be for the proxy server, not the server that provided the resource to the proxy server."}
             ]
         },
         {

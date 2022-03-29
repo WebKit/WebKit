@@ -72,6 +72,7 @@ WI.LocalResource = class LocalResource extends WI.Resource
         this._responseHeadersTransferSize = !isNaN(metrics.responseHeaderBytesReceived) ? metrics.responseHeaderBytesReceived : NaN;
         this._responseBodyTransferSize = !isNaN(metrics.responseBodyBytesReceived) ? metrics.responseBodyBytesReceived : NaN;
         this._responseBodySize = !isNaN(metrics.responseBodyDecodedSize) ? metrics.responseBodyDecodedSize : NaN;
+        this._isProxyConnection = !!metrics.isProxyConnection;
 
         // Set by `WI.LocalResourceOverride`.
         this._localResourceOverride = null;

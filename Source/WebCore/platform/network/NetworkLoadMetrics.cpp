@@ -91,6 +91,7 @@ Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsFor
     copy->requestHeaderBytesSent = requestHeaderBytesSent;
     copy->responseHeaderBytesReceived = responseHeaderBytesReceived;
     copy->requestBodyBytesSent = requestBodyBytesSent;
+    copy->isProxyConnection = isProxyConnection;
     return copy;
 }
 

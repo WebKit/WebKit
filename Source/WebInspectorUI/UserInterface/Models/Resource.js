@@ -79,6 +79,7 @@ WI.Resource = class Resource extends WI.SourceCode
         this._priority = WI.Resource.NetworkPriority.Unknown;
         this._remoteAddress = null;
         this._connectionIdentifier = null;
+        this._isProxyConnection = false;
         this._target = targetId ? WI.targetManager.targetForIdentifier(targetId) : WI.mainTarget;
         this._redirects = [];
 
@@ -380,6 +381,14 @@ WI.Resource = class Resource extends WI.SourceCode
         const isMultiLine = true;
         const dataURIMaxSize = 64;
         return WI.truncateURL(this._url, isMultiLine, dataURIMaxSize);
+    }
+
+    get displayRemoteAddress()
+    {
+        if (this._isProxyConnection)
+            return WI.UIString("%s (Proxy)", "%s (Proxy) @ Resource Remote Address", "Label for the IP address of a proxy server used to retrieve a network resource.").format(this._remoteAddress);
+
+        return this._remoteAddress;
     }
 
     get mimeTypeComponents()
@@ -821,6 +830,8 @@ WI.Resource = class Resource extends WI.SourceCode
                 this._security = {};
             this._security.connection = metrics.securityConnection;
         }
+
+        this._isProxyConnection = !!metrics.isProxyConnection;
 
         this.dispatchEventToListeners(WI.Resource.Event.MetricsDidChange);
     }

@@ -902,6 +902,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             additionalMetrics->requestHeaderBytesSent = requestHeaderBytesSent;
             additionalMetrics->requestBodyBytesSent = task.countOfBytesSent;
             additionalMetrics->responseHeaderBytesReceived = responseHeaderBytesReceived;
+
+            additionalMetrics->isProxyConnection = m.proxyConnection;
+
             networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector = WTFMove(additionalMetrics);
         }
 #if HAVE(CFNETWORK_METRICS_APIS_V4)

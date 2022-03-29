@@ -275,7 +275,9 @@ Ref<Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(con
             metrics->setRequestBodyBytesSent(additionalMetrics->requestBodyBytesSent);
         if (additionalMetrics->responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
             metrics->setResponseHeaderBytesReceived(additionalMetrics->responseHeaderBytesReceived);
+        metrics->setIsProxyConnection(additionalMetrics->isProxyConnection);
     }
+
     if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
         metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
     if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())

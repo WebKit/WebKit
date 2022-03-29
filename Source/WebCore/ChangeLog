@@ -1,3 +1,20 @@
+2022-03-29  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Cocoa] Indicate a request was sent through proxy/private relay in Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=233202
+
+        Reviewed by Devin Rousso.
+
+        Add plumbing for the new `isProxyConnection` network metric.
+
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::buildObjectForMetrics):
+        * platform/network/NetworkLoadMetrics.cpp:
+        (WebCore::AdditionalNetworkLoadMetricsForWebInspector::isolatedCopy):
+        * platform/network/NetworkLoadMetrics.h:
+        (WebCore::AdditionalNetworkLoadMetricsForWebInspector::encode const):
+        (WebCore::AdditionalNetworkLoadMetricsForWebInspector::decode):
+
 2022-03-29  Brandon Stewart  <brandonstewart@apple.com>
 
         Need to add ISO annotations to GPUUncapturedErrorEvent

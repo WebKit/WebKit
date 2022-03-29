@@ -1,3 +1,32 @@
+2022-03-29  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Cocoa] Indicate a request was sent through proxy/private relay in Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=233202
+
+        Reviewed by Devin Rousso.
+
+        For resources that are sent through a proxy or relay (like iCloud Private Relay), the remoteAddress will be that
+        of the proxy or relay server, not the server that provided the page to the proxy or relay. To indicate this, we
+        now append `(Proxy)` to these remote IP addresses in Web Inspector so that it is clearer what server the remote
+        address actually represents in these cases.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Models/LocalResource.js:
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.get displayRemoteAddress):
+        - Similar to `displayName` and `displayURL` which provide user-facing strings, add a `displayRemoteAddress` that
+        will denote the address is a proxy if applicable.
+        
+        (WI.Resource.prototype.updateWithMetrics):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._entryForResource):
+        * UserInterface/Views/ResourceDetailsSidebarPanel.js:
+        (WI.ResourceDetailsSidebarPanel.prototype._refreshRequestAndResponse):
+        * UserInterface/Views/ResourceHeadersContentView.js:
+        (WI.ResourceHeadersContentView.prototype._refreshSummarySection):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WI.ResourceTimelineDataGridNode.prototype.get data):
+
 2022-03-23  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Styles panel: Unwanted extra dash when autocompleting CSS variable names

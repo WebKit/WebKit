@@ -56,6 +56,8 @@ localizedStrings["%s (%s)"] = "%s (%s)";
 localizedStrings["%s (%s, %s)"] = "%s (%s, %s)";
 /* Label for case-insensitive URL match pattern of a local override. */
 localizedStrings["%s (Case Insensitive) @ Local Override"] = "%s (Case Insensitive)";
+/* Label for the IP address of a proxy server used to retrieve a network resource. */
+localizedStrings["%s (Proxy) @ Resource Remote Address"] = "%s (Proxy)";
 localizedStrings["%s (default)"] = "%s (default)";
 localizedStrings["%s (hidden)"] = "%s (hidden)";
 localizedStrings["%s Callback"] = "%s Callback";
