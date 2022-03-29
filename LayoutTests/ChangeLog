@@ -1,3 +1,15 @@
+2022-03-29  Sam Sneddon  <gsnedders@apple.com>
+
+        Re-import web-platform-tests/css/css-conditional
+        https://bugs.webkit.org/show_bug.cgi?id=237896
+
+        Reviewed by Tim Nguyen.
+
+        This used to be web-platform-tests/css/conditional, so this also
+        combines the rename, but is ultimately this is just an update.
+
+        * TestExpectations:
+
 2022-03-29  Alan Bujtas  <zalan@apple.com>
 
         Make fast/repaint/list-item-equal-style-change-no-repaint.html less prone to flakiness

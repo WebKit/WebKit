@@ -2026,7 +2026,7 @@ webkit.org/b/226598 animations/leak-document-with-css-animation.html [ Pass Fail
 
 webkit.org/b/229338 animations/unprefixed-events.html [ Pass Failure ]
 
-webkit.org/b/227931 imported/w3c/web-platform-tests/css/conditional/idlharness.html [ Pass Failure ]
+webkit.org/b/227931 imported/w3c/web-platform-tests/css/css-conditional/idlharness.html [ Pass Failure ]
 
 webkit.org/b/228114 imported/w3c/web-platform-tests/fetch/content-type/script.window.html [ Pass Failure ]
 

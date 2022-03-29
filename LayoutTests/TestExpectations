@@ -1750,8 +1750,16 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-elemen
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/video-poster-shown-preload-auto.html [ Skip ]
 
 # @supports W3C Failures
-webkit.org/b/137568 imported/w3c/web-platform-tests/css/conditional/at-supports-014.html [ ImageOnlyFailure ]
-webkit.org/b/216003 imported/w3c/web-platform-tests/css/conditional/at-supports-043.html [ ImageOnlyFailure ]
+webkit.org/b/137568 imported/w3c/web-platform-tests/css/css-conditional/at-supports-014.html [ ImageOnlyFailure ]
+webkit.org/b/216003 imported/w3c/web-platform-tests/css/css-conditional/at-supports-043.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/at-supports-046.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/css-supports-036.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/css-supports-038.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/css-supports-039.xht [ ImageOnlyFailure ]
+
+[ Debug ] imported/w3c/web-platform-tests/css/css-conditional/js/CSS-supports-CSSStyleDeclaration.html [ Crash ]
 
 transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/137883 transitions/background-transitions.html [ Failure Pass ]
@@ -4757,6 +4765,10 @@ imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-symbols-sette
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-1.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-2.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/cssom/cssom-system-setter-invalid.html [ ImageOnlyFailure ]
+
+# More @counter-style failures due to not being implemented.
+imported/w3c/web-platform-tests/css/css-conditional/at-media-content-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/at-supports-content-004.html [ ImageOnlyFailure ]
 
 # CSS will-change failures
 webkit.org/b/224928 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001.html [ ImageOnlyFailure ]
