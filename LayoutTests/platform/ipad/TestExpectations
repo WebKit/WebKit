@@ -65,6 +65,11 @@ webkit.org/b/194234 media/modern-media-controls/media-documents/background-color
 
 webkit.org/b/165311 platform/ipad/media/modern-media-controls/pip-support/pip-support-tap.html [ Skip ]
 
+# webkit.org/b/237689 These tests are constantly failing on iPad 
+webkit.org/b/237689 svg/filters/big-height-filter.svg [ Failure ]
+webkit.org/b/237689 svg/filters/big-sized-off-viewport-filter.svg [ Failure ]
+webkit.org/b/237689 svg/filters/big-width-filter.svg [ Failure ]
+
 webkit.org/b/194226 quicklook/word-legacy.html [ Failure ]
 webkit.org/b/194226 quicklook/word.html [ Failure ]
 
