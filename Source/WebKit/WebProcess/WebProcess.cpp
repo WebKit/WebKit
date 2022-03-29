@@ -166,6 +166,10 @@
 #include "UserMediaCaptureManager.h"
 #endif
 
+#if USE(CG)
+#include <WebCore/ImageDecoderCG.h>
+#endif
+
 #if PLATFORM(MAC)
 #include <WebCore/DisplayRefreshMonitorManager.h>
 #endif
@@ -2102,7 +2106,14 @@ void WebProcess::setUseGPUProcessForCanvasRendering(bool useGPUProcessForCanvasR
 
 void WebProcess::setUseGPUProcessForDOMRendering(bool useGPUProcessForDOMRendering)
 {
+    if (useGPUProcessForDOMRendering == m_useGPUProcessForDOMRendering)
+        return;
+
     m_useGPUProcessForDOMRendering = useGPUProcessForDOMRendering;
+#if USE(CG)
+    if (m_useGPUProcessForDOMRendering)
+        ImageDecoderCG::disableHardwareAcceleratedDecoding();
+#endif
 }
 
 void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
@@ -2201,10 +2212,9 @@ bool WebProcess::shouldUseRemoteRenderingForWebGL() const
 {
     return m_useGPUProcessForWebGL;
 }
+#endif // ENABLE(WEBGL)
 
-#endif
-
-#endif
+#endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(MEDIA_STREAM)
 SpeechRecognitionRealtimeMediaSourceManager& WebProcess::ensureSpeechRecognitionRealtimeMediaSourceManager()

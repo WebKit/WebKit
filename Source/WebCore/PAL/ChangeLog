@@ -1,3 +1,52 @@
+2022-03-29  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r292035. rdar://problem/88717577
+
+    [iOS GPUProcess] Image decoding should not trigger IOSurface usage in the web process
+    https://bugs.webkit.org/show_bug.cgi?id=238489
+    <rdar://88717577>
+    
+    Reviewed by Per Arne Vollan.
+    
+    Source/WebCore:
+    
+    When hardwareAcceleratedDecodingDisabled() has been called, turn off hardware acceleration
+    for image decoding.
+    
+    * platform/graphics/cg/ImageDecoderCG.cpp:
+    (WebCore::createImageSourceOptions):
+    (WebCore::ImageDecoderCG::disableHardwareAcceleratedDecoding):
+    (WebCore::ImageDecoderCG::hardwareAcceleratedDecodingDisabled):
+    * platform/graphics/cg/ImageDecoderCG.h:
+    
+    Source/WebCore/PAL:
+    
+    Expose kCGImageSourceUseHardwareAcceleration.
+    
+    * pal/spi/cg/ImageIOSPI.h:
+    
+    Source/WebKit:
+    
+    When useGPUProcessForDOMRendering is true, disable hardware image decoding since
+    we need to avoid IOSurface access in the web process.
+    
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::setUseGPUProcessForDOMRendering):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@292035 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-28  Simon Fraser  <simon.fraser@apple.com>
+
+            [iOS GPUProcess] Image decoding should not trigger IOSurface usage in the web process
+            https://bugs.webkit.org/show_bug.cgi?id=238489
+            <rdar://88717577>
+
+            Reviewed by Per Arne Vollan.
+
+            Expose kCGImageSourceUseHardwareAcceleration.
+
+            * pal/spi/cg/ImageIOSPI.h:
+
 2022-03-24  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] REGRESSION(r281291): When accessibility bold is enabled, font-family:system-ui is supposed to be bold
