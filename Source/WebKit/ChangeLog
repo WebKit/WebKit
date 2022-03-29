@@ -1,3 +1,16 @@
+2022-03-29  Jigen Zhou  <jigen.zhou@sony.com>
+
+        [Playstation] Fix build break after r291979 if ENABLE_SERVICE_WORKER is off
+        https://bugs.webkit.org/show_bug.cgi?id=238471
+
+        Reviewed by Don Olmstead.
+
+        Build fix for playstation platform after r291979 to support ServiceWorkerClients.openWindow. 
+        This patch resolves compiling errors occurs in WebPageProxy::callLoadCompletionHandlersIfNecessary 
+        if ENABLE_SERVICE_WORKER is off.
+
+        * UIProcess/WebPageProxy.cpp:
+
 2022-03-29  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Cocoa] Indicate a request was sent through proxy/private relay in Network tab

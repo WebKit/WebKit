@@ -4949,10 +4949,10 @@ void WebPageProxy::callLoadCompletionHandlersIfNecessary(bool success)
 #if ENABLE(SERVICE_WORKER)
     if (m_isServiceWorkerPage && m_serviceWorkerLaunchCompletionHandler && !success)
         m_serviceWorkerLaunchCompletionHandler(false);
-#endif
 
     if (m_serviceWorkerOpenWindowCompletionCallback)
         m_serviceWorkerOpenWindowCompletionCallback(success);
+#endif
 }
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
