@@ -1618,6 +1618,8 @@ webkit.org/b/208078 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-textur
 
 webkit.org/b/208450 webanimations/accelerated-animation-renderer-change.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/238469 imported/w3c/web-platform-tests/fetch/metadata/download.https.sub.html [ Skip ]
+
 webkit.org/b/208467 [ Debug ] imported/w3c/IndexedDB-private-browsing/idbobjectstore_createIndex6-event_order.html [ Pass Failure ]
 
 webkit.org/b/208519 [ Catalina ] webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
