@@ -1,3 +1,19 @@
+2022-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Navigation Timing data is corrupt in WebView (UIWebView/WKWebView)
+        https://bugs.webkit.org/show_bug.cgi?id=186919
+        <rdar://41393423>
+
+        Reviewed by Simon Fraser.
+
+        Sometimes the observed requestStart time is after the observed responseStart time.
+        This may be due to the device's clock changing.  It may be due to something else,
+        but currently CFNetwork does not use a monotonic timer to gather the data.
+        When this happens, use the later of the two times for responseStart.
+
+        * platform/network/cocoa/NetworkLoadMetrics.mm:
+        (WebCore::packageTimingData):
+
 2022-03-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         drop-shadow filter doesn't work correctly in tiled backing layer

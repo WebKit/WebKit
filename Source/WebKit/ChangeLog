@@ -1,3 +1,14 @@
+2022-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Navigation Timing data is corrupt in WebView (UIWebView/WKWebView)
+        https://bugs.webkit.org/show_bug.cgi?id=186919
+        <rdar://41393423>
+
+        Reviewed by Simon Fraser.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+
 2022-03-29  C Lopez  <clopez1@apple.com>
 
         Add Captive Portal alert to WKWebView
