@@ -1543,6 +1543,41 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     });
 }
 
+- (void)_recalculateViewportSizesWithMinimumViewportInset:(CocoaEdgeInsets)minimumViewportInset maximumViewportInset:(CocoaEdgeInsets)maximumViewportInset throwOnInvalidInput:(BOOL)throwOnInvalidInput
+{
+    auto frame = WebCore::FloatSize(self.frame.size);
+
+    auto minimumUnobscuredSize = frame - WebCore::FloatSize(maximumViewportInset.left + maximumViewportInset.right, maximumViewportInset.top + maximumViewportInset.bottom);
+    if (minimumUnobscuredSize.isEmpty()) {
+        if (throwOnInvalidInput) {
+            [NSException raise:NSInvalidArgumentException format:@"maximumViewportInset cannot be larger than frame"];
+            return;
+        }
+
+        RELEASE_LOG_ERROR(ViewportSizing, "maximumViewportInset cannot be larger than frame");
+        minimumUnobscuredSize = frame;
+    }
+
+    auto maximumUnobscuredSize = frame - WebCore::FloatSize(minimumViewportInset.left + minimumViewportInset.right, minimumViewportInset.top + minimumViewportInset.bottom);
+    if (maximumUnobscuredSize.isEmpty()) {
+        if (throwOnInvalidInput) {
+            [NSException raise:NSInvalidArgumentException format:@"minimumViewportInset cannot be larger than frame"];
+            return;
+        }
+
+        RELEASE_LOG_ERROR(ViewportSizing, "minimumViewportInset cannot be larger than frame");
+        maximumUnobscuredSize = frame;
+    }
+
+#if PLATFORM(IOS_FAMILY)
+    if (_viewLayoutSizeOverride || _minimumUnobscuredSizeOverride || _maximumUnobscuredSizeOverride)
+        return;
+#endif
+
+    _page->setMinimumUnobscuredSize(minimumUnobscuredSize);
+    _page->setMaximumUnobscuredSize(maximumUnobscuredSize);
+}
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 - (void)_didInsertAttachment:(API::Attachment&)attachment withSource:(NSString *)source
@@ -1823,6 +1858,27 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     return WKFullscreenStateNotInFullscreen;
 #endif
 }
+
+#if PLATFORM(IOS_FAMILY)
+
+- (void)setMinimumViewportInset:(CocoaEdgeInsets)minimumViewportInset maximumViewportInset:(CocoaEdgeInsets)maximumViewportInset
+{
+    if (minimumViewportInset.top < 0 || minimumViewportInset.left < 0 || minimumViewportInset.bottom < 0 || minimumViewportInset.right < 0)
+        [NSException raise:NSInvalidArgumentException format:@"minimumViewportInset cannot be negative"];
+
+    if (maximumViewportInset.top < 0 || maximumViewportInset.left < 0 || maximumViewportInset.bottom < 0 || maximumViewportInset.right < 0)
+        [NSException raise:NSInvalidArgumentException format:@"maximumViewportInset cannot be negative"];
+
+    if (minimumViewportInset.top + minimumViewportInset.bottom > maximumViewportInset.top + maximumViewportInset.bottom || minimumViewportInset.right + minimumViewportInset.left > maximumViewportInset.right + maximumViewportInset.left)
+        [NSException raise:NSInvalidArgumentException format:@"minimumViewportInset cannot be larger than maximumViewportInset"];
+
+    [self _recalculateViewportSizesWithMinimumViewportInset:minimumViewportInset maximumViewportInset:maximumViewportInset throwOnInvalidInput:YES];
+
+    _minimumViewportInset = minimumViewportInset;
+    _maximumViewportInset = maximumViewportInset;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 @end
 
