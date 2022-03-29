@@ -1520,6 +1520,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     auto oldView = m_frame->coreFrame()->view();
 
+    auto overrideSizeForCSSDefaultViewportUnits = oldView ? oldView->overrideSizeForCSSDefaultViewportUnits() : std::nullopt;
+    auto overrideSizeForCSSSmallViewportUnits = oldView ? oldView->overrideSizeForCSSSmallViewportUnits() : std::nullopt;
+    auto overrideSizeForCSSLargeViewportUnits = oldView ? oldView->overrideSizeForCSSLargeViewportUnits() : std::nullopt;
+
 #if USE(COORDINATED_GRAPHICS)
     if (oldView)
         fixedVisibleContentRect = oldView->fixedVisibleContentRect();
@@ -1546,8 +1550,14 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     RefPtr<FrameView> view = m_frame->coreFrame()->view();
 
-    if (view && oldView)
-        view->copyCSSViewportSizeOverrides(*oldView);
+    if (overrideSizeForCSSDefaultViewportUnits)
+        view->setOverrideSizeForCSSDefaultViewportUnits(*overrideSizeForCSSDefaultViewportUnits);
+
+    if (overrideSizeForCSSSmallViewportUnits)
+        view->setOverrideSizeForCSSSmallViewportUnits(*overrideSizeForCSSSmallViewportUnits);
+
+    if (overrideSizeForCSSLargeViewportUnits)
+        view->setOverrideSizeForCSSLargeViewportUnits(*overrideSizeForCSSLargeViewportUnits);
 
     if (int width = webPage->minimumSizeForAutoLayout().width()) {
         int height = std::max(webPage->minimumSizeForAutoLayout().height(), 1);
