@@ -1,3 +1,33 @@
+2022-03-29  Said Abou-Hallawa  <said@apple.com>
+
+        REGRESSION(r291771): [ iOS ] Text sometimes draw with incorrect color
+        https://bugs.webkit.org/show_bug.cgi?id=238466
+        rdar://90941790
+
+        Reviewed by Simon Fraser.
+
+        r291771 uncovers this bug: TextBoxPainter::paintForeground() records the
+        glyphs to a DisplayList before settings the destination GraphicsContext.
+
+        The fix is to apply all the changes to the GraphicsContext before calling
+        TextPainter::setGlyphDisplayListIfNeeded().
+
+        Delete TextPainter::paint() because it is not used.
+
+        Initialize TextPainter with a reference to FontCascade.
+
+        * rendering/TextBoxPainter.cpp:
+        (WebCore::TextBoxPainter::paintForeground):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::TextPainter):
+        (WebCore::TextPainter::paintTextAndEmphasisMarksIfNeeded):
+        (WebCore::TextPainter::paintRange):
+        (WebCore::TextPainter::paint): Deleted.
+        * rendering/TextPainter.h:
+        (WebCore::TextPainter::setShadowColorFilter):
+        (WebCore::TextPainter::setGlyphDisplayListIfNeeded):
+        (WebCore::TextPainter::setFont): Deleted.
+
 2022-03-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][WPE] Use GBMBufferSwapchain in GraphicsContextGLTextureMapperANGLE
