@@ -27,6 +27,8 @@
 
 #include "ImageDecoder.h"
 
+#if USE(CG)
+
 namespace WebCore {
 
 class ImageDecoderCG final : public ImageDecoder {
@@ -71,11 +73,17 @@ public:
     WEBCORE_EXPORT static void enableRestrictedDecoding();
     static bool restrictedDecodingEnabled();
 
+    WEBCORE_EXPORT static void disableHardwareAcceleratedDecoding();
+    static bool hardwareAcceleratedDecodingDisabled();
+
 private:
     bool m_isAllDataReceived { false };
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
     RetainPtr<CGImageSourceRef> m_nativeDecoder;
     static bool s_enableRestrictedDecoding;
+    static bool s_hardwareAcceleratedDecodingDisabled;
 };
 
-}
+} // namespace WebCore
+
+#endif // USE(CG)

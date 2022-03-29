@@ -36,6 +36,7 @@ IMAGEIO_EXTERN const CFStringRef kCGImageSourceShouldPreferRGB32;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceSkipMetadata;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceSubsampleFactor;
 IMAGEIO_EXTERN const CFStringRef kCGImageSourceShouldCacheImmediately;
+IMAGEIO_EXTERN const CFStringRef kCGImageSourceUseHardwareAcceleration;
 #endif
 
 WTF_EXTERN_C_BEGIN
