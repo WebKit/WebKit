@@ -644,6 +644,8 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-commit-message',
             'validate-changelog-and-reviewer',
             'canonicalize-commit',
+            'push-pull-request-branch',
+            'update-pull-request',
         ],
     }
 
