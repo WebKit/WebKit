@@ -92,9 +92,9 @@ user_activation_test(async (test) => {
         assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].identifier, detailsUpdate.shippingOptions[i].id, `shipping option ${i} id should change`);
         assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].label, detailsUpdate.shippingOptions[i].label, `shipping option ${i} label should change`);
         assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].amount, detailsUpdate.shippingOptions[i].amount.value, `shipping option ${i} amount should change`);
+        assert_equals(internals.mockPaymentCoordinator.shippingMethods[i].selected, detailsUpdate.shippingOptions[i].selected, `shipping option ${i} selected should change`);
     }
     assert_equals(request.shippingOption, detailsUpdate.shippingOptions.findLast((shippingOption) => shippingOption.selected).id, "selected shipping option should change");
-    assert_equals(request.shippingOption, detailsUpdate.shippingOptions[0].id, "selected shipping option should change");
     assert_equals(response.shippingOption, request.shippingOption, "selected shipping option should also be exposed on the response");
 
     await response.complete("success");

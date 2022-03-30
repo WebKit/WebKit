@@ -1,3 +1,11 @@
+2022-03-30  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, fix test after r285521 and r271735
+
+        * http/tests/paymentrequest/updateWith-shippingOptions.https.html:
+        Remove a duplicate `assert_equals` added in r271735 (which should've been removed in r285521).
+        Drive-by: Also check that the `selected` of each provided shipping method/option matches.
+
 2022-03-30  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorker WindowClient.ancestorOrigins
