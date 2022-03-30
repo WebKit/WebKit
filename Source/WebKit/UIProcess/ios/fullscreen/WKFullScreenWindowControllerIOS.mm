@@ -671,7 +671,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
             page->setSuppressVisibilityUpdates(false);
 
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-            configureViewForEnteringFullscreen(_fullscreenViewController.get().view, kAnimationDuration, _finalFrame.size);
+            auto* view = [_fullscreenViewController view];
+            configureViewForEnteringFullscreen(view, kAnimationDuration, [view frame].size);
 #endif
 
             if (auto* videoFullscreenManager = self._videoFullscreenManager) {
