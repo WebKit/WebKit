@@ -3476,69 +3476,6 @@
 
 2022-02-07  Russell Epstein  <repstein@apple.com>
 
-        Cherry-pick r288387. rdar://problem/87468788
-
-    Inject Launch Services database before NSApplication is initialized
-    https://bugs.webkit.org/show_bug.cgi?id=235186
-    <rdar://87468788>
-    
-    Reviewed by Chris Dumez.
-    
-    To avoid the main thread getting stuck, the Launch Services database should be injected before NSApplication
-    is initialized, since the initialization now depends on the database. To make sure also prewarmed WebContent
-    processes are receiving the Launch Services database, the WebsiteDataStore method
-    sendNetworkProcessXPCEndpointToProcess is moved to the class NetworkProcessProxy, since prewarmed processes
-    will not have a data store initially. This allows us to simplify the code, since we are no longer depending
-    on having a Website data store before sending the XPC endpoint.
-    
-    * UIProcess/WebProcessProxy.cpp:
-    (WebKit::WebProcessProxy::didFinishLaunching):
-    * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
-    (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToProcess):
-    (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToProcess const): Deleted.
-    * UIProcess/WebsiteData/WebsiteDataStore.h:
-    * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
-    (WebKit::WebPage::platformDidReceiveLoadParameters):
-    * WebProcess/cocoa/LaunchServicesDatabaseManager.h:
-    * WebProcess/cocoa/LaunchServicesDatabaseManager.mm:
-    (WebKit::LaunchServicesDatabaseManager::waitForDatabaseUpdate):
-    * WebProcess/cocoa/WebProcessCocoa.mm:
-    (WebKit::WebProcess::platformInitializeWebProcess):
-    
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@288387 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2022-01-21  Per Arne Vollan  <pvollan@apple.com>
-
-            Inject Launch Services database before NSApplication is initialized
-            https://bugs.webkit.org/show_bug.cgi?id=235186
-            <rdar://87468788>
-
-            Reviewed by Chris Dumez.
-
-            To avoid the main thread getting stuck, the Launch Services database should be injected before NSApplication
-            is initialized, since the initialization now depends on the database. To make sure also prewarmed WebContent
-            processes are receiving the Launch Services database, the WebsiteDataStore method
-            sendNetworkProcessXPCEndpointToProcess is moved to the class NetworkProcessProxy, since prewarmed processes
-            will not have a data store initially. This allows us to simplify the code, since we are no longer depending
-            on having a Website data store before sending the XPC endpoint.
-
-            * UIProcess/WebProcessProxy.cpp:
-            (WebKit::WebProcessProxy::didFinishLaunching):
-            * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
-            (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToProcess):
-            (WebKit::WebsiteDataStore::sendNetworkProcessXPCEndpointToProcess const): Deleted.
-            * UIProcess/WebsiteData/WebsiteDataStore.h:
-            * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
-            (WebKit::WebPage::platformDidReceiveLoadParameters):
-            * WebProcess/cocoa/LaunchServicesDatabaseManager.h:
-            * WebProcess/cocoa/LaunchServicesDatabaseManager.mm:
-            (WebKit::LaunchServicesDatabaseManager::waitForDatabaseUpdate):
-            * WebProcess/cocoa/WebProcessCocoa.mm:
-            (WebKit::WebProcess::platformInitializeWebProcess):
-
-2022-02-07  Russell Epstein  <repstein@apple.com>
-
         Cherry-pick r288296. rdar://problem/88593227
 
     Disable fallback path to WebRTC platform sockets

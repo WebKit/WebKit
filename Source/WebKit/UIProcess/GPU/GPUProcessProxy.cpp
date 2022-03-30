@@ -441,8 +441,15 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #endif
 
 #if PLATFORM(COCOA)
-    if (auto networkProcess = NetworkProcessProxy::defaultNetworkProcess())
-        networkProcess->sendXPCEndpointToProcess(*this);
+    // Use any session ID to get any Website data store. It is OK to use any Website data store,
+    // since we are using it to access any Networking process, which all have the XPC endpoint.
+    // The XPC endpoint is used to receive the Launch Services database from the Network process.
+    if (m_sessionIDs.isEmpty())
+        return;
+    auto store = WebsiteDataStore::existingDataStoreForSessionID(*m_sessionIDs.begin());
+    if (!store)
+        return;
+    m_hasSentNetworkProcessXPCEndpoint = store->sendNetworkProcessXPCEndpointToProcess(*this);
 #endif
 
     beginResponsivenessChecks();
@@ -510,6 +517,11 @@ void GPUProcessProxy::addSession(const WebsiteDataStore& store)
 
     send(Messages::GPUProcess::AddSession { store.sessionID(), gpuProcessSessionParameters(store) }, 0);
     m_sessionIDs.add(store.sessionID());
+
+#if PLATFORM(COCOA)
+    if (!m_hasSentNetworkProcessXPCEndpoint)
+        m_hasSentNetworkProcessXPCEndpoint = store.sendNetworkProcessXPCEndpointToProcess(*this);
+#endif
 }
 
 void GPUProcessProxy::removeSession(PAL::SessionID sessionID)
