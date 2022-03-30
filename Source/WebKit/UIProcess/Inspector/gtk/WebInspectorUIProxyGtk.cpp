@@ -562,6 +562,12 @@ void WebInspectorUIProxy::platformAppend(const String&, const String&)
     notImplemented();
 }
 
+void WebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler(nullString());
+}
+
 void WebInspectorUIProxy::platformAttachAvailabilityChanged(bool available)
 {
     if (m_client)

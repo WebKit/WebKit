@@ -1,3 +1,62 @@
+2022-03-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: allow Response Local Overrides to map to a file on disk
+        https://bugs.webkit.org/show_bug.cgi?id=238236
+        <rdar://problem/59009154>
+
+        Reviewed by Patrick Angle.
+
+        This makes Response Local Overrides even more powerful by allowing developers to map the
+        contents of the (Local Override) resource to a file on disk (e.g. a local copy of the file),
+        meaning that they can use their preferred editor of choice (and all the tools that may come
+        with it) to make changes instead of having to stay within Web Inspector.
+
+        * UserInterface/Models/LocalResource.js:
+        (WI.LocalResource):
+        (WI.LocalResource.canMapToFile): Added.
+        (WI.LocalResource.prototype.toJSON):
+        (WI.LocalResource.prototype.get mappedFilePath): Added.
+        (WI.LocalResource.prototype.set mappedFilePath): Added.
+        (WI.LocalResource.prototype.async requestContent):
+        (WI.LocalResource.prototype.async _loadFromFileSystem): Added.
+        * UserInterface/Models/LocalResourceOverride.js:
+        (WI.LocalResourceOverride.prototype.get canMapToFile): Added.
+        Save the given local file path as a member variable and use `InspectorFrontendHost.load` to
+        grab its contents (saving it inside the `WI.LocalResource` so that it can still be used in
+        case the file is moved/deleted) whenever anyone `requestContent`.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView):
+        (WI.ResourceContentView.prototype.get navigationItems):
+        (WI.ResourceContentView.prototype.showMessage):
+        (WI.ResourceContentView.prototype.addIssue):
+        (WI.ResourceContentView.prototype._contentAvailable):
+        (WI.ResourceContentView.prototype.async _handleMapLocalResourceOverrideToFile): Added.
+        (WI.ResourceContentView.prototype._handleMappedFilePathChanged): Added.
+        Add a new "[Disk.svg] Map to File" navigation item when viewing Response Local Overrides. If
+        the Response Local Override has already been mapped to a file, show the path of the file
+        instead of the contents of the resource. This allows us to not have to monitor the file for
+        changes, instead only grabbing the current contents when necessary (i.e. when replacing the
+        response of an intercepted network request).
+
+        * UserInterface/Views/ResourceContentView.css: Added.
+        (.content-view.resource > .local-resource-override-label-view + .message-text-view):
+        Still show the Local Override banner if the Local Override has been mapped to a file.
+
+        * UserInterface/Views/TextResourceContentView.js:
+        (WI.TextResourceContentView.prototype._contentWillPopulate):
+        Don't show the `WI.SourceCodeTextEditor` if there's already something else being shown.
+
+        * UserInterface/Controllers/NetworkManager.js:
+        (WI.NetworkManager.prototype.async requestIntercepted):
+        (WI.NetworkManager.prototype.async responseIntercepted):
+        Make sure to `requestContent` before using the `currentRevision` so that any file-mapped
+        `WI.LocalResource` have a chance to load from disk before handling the interception.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Images/Disk.svg: Added.
+
 2022-03-29  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Cocoa] Indicate a request was sent through proxy/private relay in Network tab

@@ -842,6 +842,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean pageDefersLoading();
 
     File? createFile(DOMString url);
+    DOMString createTemporaryFile(DOMString name, DOMString contents);
+
     undefined queueMicroTask(long testNumber);
     boolean testPreloaderSettingViewport();
 

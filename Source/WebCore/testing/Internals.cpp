@@ -234,6 +234,7 @@
 #include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCJSValue.h>
+#include <wtf/FileSystem.h>
 #include <wtf/HexNumber.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Language.h>
@@ -4869,6 +4870,24 @@ RefPtr<File> Internals::createFile(const String& path)
         return nullptr;
 
     return File::create(document, url.fileSystemPath());
+}
+
+String Internals::createTemporaryFile(const String& name, const String& contents)
+{
+    if (name.isEmpty())
+        return nullString();
+
+    auto file = FileSystem::invalidPlatformFileHandle;
+    auto path = FileSystem::openTemporaryFile(makeString("WebCoreTesting-", name), file);
+    if (!FileSystem::isHandleValid(file))
+        return nullString();
+
+    auto contentsUTF8 = contents.utf8();
+    FileSystem::writeToFile(file, contentsUTF8.data(), contentsUTF8.length());
+
+    FileSystem::closeFile(file);
+
+    return path;
 }
 
 void Internals::queueMicroTask(int testNumber)

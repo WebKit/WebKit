@@ -236,6 +236,7 @@ private:
     void platformStartWindowDrag();
     void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);
+    void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
 
 #if PLATFORM(MAC)
     bool platformCanAttach(bool webProcessCanAttach);
@@ -262,6 +263,7 @@ private:
 
     void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void append(const String& filename, const String& content);
+    void load(const String& path, CompletionHandler<void(const String&)>&&);
 
     bool canAttach() const { return m_canAttach; }
     bool shouldOpenAttached();

@@ -83,6 +83,8 @@ public:
     bool canSave()  override { return false; }
     void save(const String&, const String&, bool, bool) override { }
     void append(const String&, const String&) override { }
+    bool canLoad()  override { return false; }
+    void load(const String&, CompletionHandler<void(const String&)>&& completionHandler) override { completionHandler(nullString()); }
 
     virtual void attachWindow(DockSide) = 0;
     virtual void detachWindow() = 0;

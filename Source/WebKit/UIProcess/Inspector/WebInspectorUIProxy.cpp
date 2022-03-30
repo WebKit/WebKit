@@ -729,6 +729,18 @@ void WebInspectorUIProxy::append(const String& filename, const String& content)
     platformAppend(filename, content);
 }
 
+void WebInspectorUIProxy::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    if (!m_inspectedPage->preferences().developerExtrasEnabled())
+        return;
+
+    ASSERT(!path.isEmpty());
+    if (path.isEmpty())
+        return;
+
+    platformLoad(path, WTFMove(completionHandler));
+}
+
 bool WebInspectorUIProxy::shouldOpenAttached()
 {
     return inspectorPagePreferences().inspectorStartsAttached() && canAttach();
@@ -821,6 +833,12 @@ void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String&
 void WebInspectorUIProxy::platformAppend(const String& suggestedURL, const String& content)
 {
     notImplemented();
+}
+
+void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler(nullString());
 }
 
 unsigned WebInspectorUIProxy::platformInspectedWindowHeight()

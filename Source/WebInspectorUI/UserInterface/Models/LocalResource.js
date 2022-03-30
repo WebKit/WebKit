@@ -36,7 +36,7 @@
 
 WI.LocalResource = class LocalResource extends WI.Resource
 {
-    constructor({request, response, metrics, timing})
+    constructor({request, response, metrics, timing, mappedFilePath})
     {
         console.assert(request);
         console.assert(typeof request.url === "string");
@@ -87,9 +87,16 @@ WI.LocalResource = class LocalResource extends WI.Resource
         let base64Encoded = response.base64Encoded || false;
         this._originalRevision = new WI.SourceCodeRevision(this, content, base64Encoded, this._mimeType);
         this._currentRevision = this._originalRevision;
+
+        this._mappedFilePath = mappedFilePath || null;
     }
 
     // Static
+
+    static canMapToFile()
+    {
+        return InspectorFrontendHost.canLoad();
+    }
 
     static headersArrayToHeadersObject(headers)
     {
@@ -227,6 +234,7 @@ WI.LocalResource = class LocalResource extends WI.Resource
                 content: this.currentRevision.content,
                 base64Encoded: this.currentRevision.base64Encoded,
             },
+            mappedFilePath: this._mappedFilePath,
         };
     }
 
@@ -234,7 +242,35 @@ WI.LocalResource = class LocalResource extends WI.Resource
 
     get localResourceOverride() { return this._localResourceOverride; }
 
+    get mappedFilePath()
+    {
+        return this._mappedFilePath;
+    }
+
+    set mappedFilePath(mappedFilePath)
+    {
+        console.assert(WI.LocalResource.canMapToFile());
+        console.assert(mappedFilePath);
+
+        if (mappedFilePath === this._mappedFilePath)
+            return;
+
+        this._mappedFilePath = mappedFilePath;
+
+        const forceUpdate = true;
+        this._loadFromFileSystem(forceUpdate).then(() => {
+            this.dispatchEventToListeners(WI.LocalResource.Event.MappedFilePathChanged);
+        });
+    }
+
     // Protected
+
+    async requestContent()
+    {
+        await this._loadFromFileSystem();
+
+        return super.requestContent();
+    }
 
     requestContentFromBackend()
     {
@@ -252,4 +288,47 @@ WI.LocalResource = class LocalResource extends WI.Resource
             this.dispatchEventToListeners(WI.Resource.Event.MIMETypeDidChange, {oldMIMEType});
         }
     }
+
+    // Private
+
+    async _loadFromFileSystem(forceUpdate)
+    {
+        if (!this._mappedFilePath)
+            return;
+
+        let content = "";
+        try {
+            content = await InspectorFrontendHost.load(this._mappedFilePath);
+        } catch {
+            if (this._didWarnAboutFailureToLoadFromFileSystem)
+                return;
+
+            this._didWarnAboutFailureToLoadFromFileSystem = true;
+            setTimeout(() => {
+                this._didWarnAboutFailureToLoadFromFileSystem = false;
+            });
+
+            let message = WI.UIString("Local Override: could not load \u201C%s\u201D").format(this._mappedFilePath);
+
+            if (window.InspectorTest) {
+                console.warn(message);
+                return;
+            }
+
+            let consoleMessage = new WI.ConsoleMessage(WI.mainTarget, WI.ConsoleMessage.MessageSource.Other, WI.ConsoleMessage.MessageLevel.Warning, message);
+            consoleMessage.shouldRevealConsole = true;
+
+            WI.consoleLogViewController.appendConsoleMessage(consoleMessage);
+            return;
+        }
+
+        if (!forceUpdate && content === this.currentRevision.content)
+            return;
+
+        this.editableRevision.updateRevisionContent(content);
+    }
+};
+
+WI.LocalResource.Event = {
+    MappedFilePathChanged: "local-resource-mapped-file-path-changed",
 };

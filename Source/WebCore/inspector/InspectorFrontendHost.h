@@ -38,7 +38,9 @@
 namespace WebCore {
 
 class DOMWrapperWorld;
+class DeferredPromise;
 class Event;
+class File;
 class FrontendMenuProvider;
 class HTMLIFrameElement;
 class InspectorFrontendClient;
@@ -109,7 +111,11 @@ public:
     bool canSave();
     void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs);
     void append(const String& url, const String& content);
+    bool canLoad();
+    void load(const String& path, Ref<DeferredPromise>&&);
     void close(const String& url);
+
+    String getPath(const File&);
 
     struct ContextMenuItem {
         String type;

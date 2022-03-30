@@ -327,6 +327,11 @@ void WebInspectorUI::append(const WTF::String& filename, const WTF::String& cont
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::Append(filename, content), m_inspectedPageIdentifier);
 }
 
+void WebInspectorUI::load(const WTF::String& path, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    WebProcess::singleton().parentProcessConnection()->sendWithAsyncReply(Messages::WebInspectorUIProxy::Load(path), WTFMove(completionHandler), m_inspectedPageIdentifier);
+}
+
 void WebInspectorUI::inspectedURLChanged(const String& urlString)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::InspectedURLChanged(urlString), m_inspectedPageIdentifier);
@@ -490,6 +495,12 @@ WebCore::Page* WebInspectorUI::frontendPage()
 
 #if !PLATFORM(MAC) && !PLATFORM(GTK) && !PLATFORM(WIN)
 bool WebInspectorUI::canSave()
+{
+    notImplemented();
+    return false;
+}
+
+bool WebInspectorUI::canLoad()
 {
     notImplemented();
     return false;

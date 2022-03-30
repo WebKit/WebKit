@@ -39,6 +39,7 @@
 #include "Document.h"
 #include "Editor.h"
 #include "Event.h"
+#include "File.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -49,6 +50,7 @@
 #include "InspectorFrontendClient.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMPromiseDeferred.h"
 #include "JSExecState.h"
 #include "JSInspectorFrontendHost.h"
 #include "MouseEvent.h"
@@ -460,8 +462,35 @@ void InspectorFrontendHost::append(const String& url, const String& content)
         m_client->append(url, content);
 }
 
+bool InspectorFrontendHost::canLoad()
+{
+    if (m_client)
+        return m_client->canLoad();
+    return false;
+}
+
+void InspectorFrontendHost::load(const String& path, Ref<DeferredPromise>&& promise)
+{
+    if (!m_client) {
+        promise->reject(InvalidStateError);
+        return;
+    }
+
+    m_client->load(path, [promise = WTFMove(promise)](const String& content) {
+        if (!content)
+            promise->reject(NotFoundError);
+        else
+            promise->resolve<IDLDOMString>(content);
+    });
+}
+
 void InspectorFrontendHost::close(const String&)
 {
+}
+
+String InspectorFrontendHost::getPath(const File& file)
+{
+    return file.path();
 }
 
 void InspectorFrontendHost::sendMessageToBackend(const String& message)

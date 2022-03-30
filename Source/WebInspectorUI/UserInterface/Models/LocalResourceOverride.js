@@ -164,6 +164,24 @@ WI.LocalResourceOverride = class LocalResourceOverride extends WI.Object
         return displayName;
     }
 
+    get canMapToFile()
+    {
+        if (!WI.LocalResource.canMapToFile())
+            return false;
+
+        switch (this._type) {
+        case WI.LocalResourceOverride.InterceptType.Request:
+            return false;
+
+        case WI.LocalResourceOverride.InterceptType.Response:
+        case WI.LocalResourceOverride.InterceptType.ResponseSkippingNetwork:
+            return true;
+        }
+
+        console.assert(false, "not reached");
+        return false;
+    }
+
     matches(url)
     {
         if (this._isRegex) {

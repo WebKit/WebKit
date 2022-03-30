@@ -233,6 +233,14 @@ void RemoteWebInspectorUIProxy::platformAppend(const String& suggestedURL, const
     inspectorPage->send(Messages::RemoteWebInspectorUI::DidAppend([actualURL absoluteString]));
 }
 
+void RemoteWebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    if (auto contents = FileSystem::readEntireFile(path))
+        completionHandler(String::adopt(WTFMove(*contents)));
+    else
+        completionHandler(nullString());
+}
+
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect& rect)
 {
     m_sheetRect = rect;

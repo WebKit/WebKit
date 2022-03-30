@@ -577,6 +577,14 @@ void WebInspectorUIProxy::platformAppend(const String& suggestedURL, const Strin
     m_inspectorPage->send(Messages::WebInspectorUI::DidAppend([actualURL absoluteString]));
 }
 
+void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    if (auto contents = FileSystem::readEntireFile(path))
+        completionHandler(String::adopt(WTFMove(*contents)));
+    else
+        completionHandler(nullString());
+}
+
 void WebInspectorUIProxy::windowFrameDidChange()
 {
     ASSERT(!m_isAttached);

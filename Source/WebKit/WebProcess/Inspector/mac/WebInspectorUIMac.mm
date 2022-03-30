@@ -37,6 +37,11 @@ bool WebInspectorUI::canSave()
     return true;
 }
 
+bool WebInspectorUI::canLoad()
+{
+    return true;
+}
+
 static String webInspectorUILocalizedStringsURL()
 {
     return [WKInspectorViewController URLForInspectorResource:@"localizedStrings.js"].absoluteString;

@@ -776,6 +776,8 @@ public:
     ExceptionOr<bool> pageDefersLoading();
 
     RefPtr<File> createFile(const String&);
+    String createTemporaryFile(const String& name, const String& contents);
+
     void queueMicroTask(int);
     bool testPreloaderSettingViewport();
 

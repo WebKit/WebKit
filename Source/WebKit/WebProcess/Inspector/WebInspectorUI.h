@@ -143,6 +143,8 @@ public:
     bool canSave() override;
     void save(const WTF::String& url, const WTF::String& content, bool base64Encoded, bool forceSaveAs) override;
     void append(const WTF::String& url, const WTF::String& content) override;
+    bool canLoad() override;
+    void load(const WTF::String& path, WTF::CompletionHandler<void(const WTF::String&)>&&) override;
 
     void inspectedURLChanged(const String&) override;
     void showCertificate(const WebCore::CertificateInfo&) override;

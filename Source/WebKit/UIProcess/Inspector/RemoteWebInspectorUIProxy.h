@@ -85,7 +85,7 @@ public:
 
     void invalidate();
 
-    void load(Ref<API::DebuggableInfo>&&, const String& backendCommandsURL);
+    void initialize(Ref<API::DebuggableInfo>&&, const String& backendCommandsURL);
     void closeFromBackend();
     void show();
     void showConsole();
@@ -133,6 +133,7 @@ private:
     void bringToFront();
     void save(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void append(const String& filename, const String& content);
+    void load(const String& path, CompletionHandler<void(const String&)>&&);
     void setSheetRect(const WebCore::FloatRect&);
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void startWindowDrag();
@@ -150,6 +151,7 @@ private:
     void platformBringToFront();
     void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);
+    void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);
     void platformSetSheetRect(const WebCore::FloatRect&);
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformStartWindowDrag();

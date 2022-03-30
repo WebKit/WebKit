@@ -107,6 +107,7 @@ public:
     void openURLExternally(const String& url) override;
     void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs) override;
     void append(const String& url, const String& content) override;
+    void load(const String& path, CompletionHandler<void(const String&)>&&) override;
     void inspectedURLChanged(const String&) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
     void sendMessageToBackend(const String&) override;
@@ -128,6 +129,7 @@ public:
 #endif
 
     bool canSave() override { return true; }
+    bool canLoad() override { return true; }
     bool isUnderTest() override { return false; }
     unsigned inspectionLevel() const override { return 1; }
     void requestSetDockSide(DockSide) override { }

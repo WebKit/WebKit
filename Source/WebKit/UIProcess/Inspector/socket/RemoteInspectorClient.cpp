@@ -55,12 +55,12 @@ public:
         m_proxy->invalidate();
     }
 
-    void load()
+    void initialize()
     {
         // FIXME <https://webkit.org/b/205537>: this should infer more useful data about the debug target.
         Ref<API::DebuggableInfo> debuggableInfo = API::DebuggableInfo::create(DebuggableInfoData::empty());
         debuggableInfo->setDebuggableType(m_debuggableType);
-        m_proxy->load(WTFMove(debuggableInfo), m_inspectorClient.backendCommandsURL());
+        m_proxy->initialize(WTFMove(debuggableInfo), m_inspectorClient.backendCommandsURL());
     }
 
     void show()
@@ -177,7 +177,7 @@ void RemoteInspectorClient::inspect(ConnectionID connectionID, TargetID targetID
     setupEvent->setInteger("targetID"_s, targetID);
     sendWebInspectorEvent(setupEvent->toJSONString());
 
-    addResult.iterator->value->load();
+    addResult.iterator->value->initialize();
 }
 
 void RemoteInspectorClient::sendMessageToBackend(ConnectionID connectionID, TargetID targetID, const String& message)

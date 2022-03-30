@@ -223,6 +223,9 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         if (this._textEditor.parentView === this)
             return;
 
+        if (this._hasContent())
+            return;
+
         this.removeLoadingIndicator();
 
         this.addSubview(this._textEditor);

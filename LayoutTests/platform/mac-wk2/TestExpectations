@@ -691,6 +691,9 @@ webkit.org/b/141085 http/tests/media/video-query-url.html [ Pass Timeout ]
 # Accessibility isolated tree mode is enabled in Big Sur and beyond, no in Catalina and before.
 [ Mojave Catalina ] accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
 
+# Network interception with a mapped file is only mac-wk2 for now.
+http/tests/inspector/network/local-resource-override-mapped-to-file.html [ Pass ]
+
 # Content Extensions tests must be enabled explicitly on mac-wk2.
 http/tests/contentextensions [ Pass ]
 http/tests/inspector/network/contentextensions [ Pass ]

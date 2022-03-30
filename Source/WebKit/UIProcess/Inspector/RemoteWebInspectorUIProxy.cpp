@@ -67,7 +67,7 @@ void RemoteWebInspectorUIProxy::setDiagnosticLoggingAvailable(bool available)
 #endif
 }
 
-void RemoteWebInspectorUIProxy::load(Ref<API::DebuggableInfo>&& debuggableInfo, const String& backendCommandsURL)
+void RemoteWebInspectorUIProxy::initialize(Ref<API::DebuggableInfo>&& debuggableInfo, const String& backendCommandsURL)
 {
     m_debuggableInfo = WTFMove(debuggableInfo);
     m_backendCommandsURL = backendCommandsURL;
@@ -131,7 +131,7 @@ void RemoteWebInspectorUIProxy::reopen()
     ASSERT(!m_backendCommandsURL.isEmpty());
 
     closeFrontendPageAndWindow();
-    load(m_debuggableInfo.copyRef(), m_backendCommandsURL);
+    initialize(m_debuggableInfo.copyRef(), m_backendCommandsURL);
 }
 
 void RemoteWebInspectorUIProxy::resetState()
@@ -152,6 +152,11 @@ void RemoteWebInspectorUIProxy::save(const String& suggestedURL, const String& c
 void RemoteWebInspectorUIProxy::append(const String& suggestedURL, const String& content)
 {
     platformAppend(suggestedURL, content);
+}
+
+void RemoteWebInspectorUIProxy::load(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
+{
+    platformLoad(path, WTFMove(completionHandler));
 }
 
 void RemoteWebInspectorUIProxy::setSheetRect(const FloatRect& rect)
@@ -233,6 +238,7 @@ void RemoteWebInspectorUIProxy::platformResetState() { }
 void RemoteWebInspectorUIProxy::platformBringToFront() { }
 void RemoteWebInspectorUIProxy::platformSave(const String&, const String&, bool, bool) { }
 void RemoteWebInspectorUIProxy::platformAppend(const String&, const String&) { }
+void RemoteWebInspectorUIProxy::platformLoad(const String&, CompletionHandler<void(const String&)>&& completionHandler) { completionHandler(nullString()); }
 void RemoteWebInspectorUIProxy::platformSetSheetRect(const FloatRect&) { }
 void RemoteWebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance) { }
 void RemoteWebInspectorUIProxy::platformStartWindowDrag() { }

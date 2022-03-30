@@ -946,7 +946,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         this._resourceRequestIdentifierMap.delete(requestIdentifier);
     }
 
-    requestIntercepted(target, requestId, request)
+    async requestIntercepted(target, requestId, request)
     {
         let url = WI.urlWithoutFragment(request.url);
         for (let localResourceOverride of this.localResourceOverridesForURL(url)) {
@@ -954,6 +954,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 continue;
 
             let localResource = localResourceOverride.localResource;
+            await localResource.requestContent();
+
             let revision = localResource.currentRevision;
 
             switch (localResourceOverride.type) {
@@ -992,7 +994,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
         });
     }
 
-    responseIntercepted(target, requestId, response)
+    async responseIntercepted(target, requestId, response)
     {
         let url = WI.urlWithoutFragment(response.url);
         for (let localResourceOverride of this.localResourceOverridesForURL(url)) {
@@ -1000,6 +1002,8 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                 continue;
 
             let localResource = localResourceOverride.localResource;
+            await localResource.requestContent();
+
             let revision = localResource.currentRevision;
 
             switch (localResourceOverride.type) {

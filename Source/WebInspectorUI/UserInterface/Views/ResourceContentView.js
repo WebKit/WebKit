@@ -37,10 +37,12 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         this.element.classList.add(styleClassName, "resource");
 
         this._spinnerTimeout = setTimeout(() => {
-            // Append a spinner while waiting for contentAvailable. Subclasses are responsible for
-            // removing the spinner before showing the resource content by calling removeLoadingIndicator.
-            let spinner = new WI.IndeterminateProgressSpinner;
-            this.element.appendChild(spinner.element);
+            if (!this._hasContent()) {
+                // Append a spinner while waiting for contentAvailable. Subclasses are responsible for
+                // removing the spinner before showing the resource content by calling removeLoadingIndicator.
+                let spinner = new WI.IndeterminateProgressSpinner;
+                this.element.appendChild(spinner.element);
+            }
 
             this._spinnerTimeout = undefined;
         }, 100);
@@ -66,6 +68,15 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
                 this._importLocalResourceOverrideButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
                 this._importLocalResourceOverrideButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
                 this._importLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportLocalResourceOverride, this);
+
+                if (resource.localResourceOverride.canMapToFile) {
+                    this._mapLocalResourceOverrideToFileButtonNavigationItem = new WI.ButtonNavigationItem("map-local-resource-override", WI.UIString("Map to File"), "Images/Disk.svg", 15, 15);
+                    this._mapLocalResourceOverrideToFileButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+                    this._mapLocalResourceOverrideToFileButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+                    this._mapLocalResourceOverrideToFileButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleMapLocalResourceOverrideToFile, this);
+
+                    resource.addEventListener(WI.LocalResource.Event.MappedFilePathChanged, this._handleMappedFilePathChanged, this);
+                }
 
                 this._removeLocalResourceOverrideButtonNavigationItem = new WI.ButtonNavigationItem("remove-local-resource-override", WI.UIString("Delete Local Override"), "Images/NavigationItemTrash.svg", 15, 15);
                 this._removeLocalResourceOverrideButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleRemoveLocalResourceOverride, this);
@@ -96,7 +107,13 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         let items = [];
 
         if (this._importLocalResourceOverrideButtonNavigationItem)
-            items.push(this._importLocalResourceOverrideButtonNavigationItem, new WI.DividerNavigationItem);
+            items.push(this._importLocalResourceOverrideButtonNavigationItem);
+        if (this._mapLocalResourceOverrideToFileButtonNavigationItem)
+            items.push(this._mapLocalResourceOverrideToFileButtonNavigationItem);
+
+        if (items.length)
+            items.push(new WI.DividerNavigationItem);
+
         if (this._removeLocalResourceOverrideButtonNavigationItem)
             items.push(this._removeLocalResourceOverrideButtonNavigationItem);
         if (this._createLocalResourceOverrideButtonNavigationItem)
@@ -172,14 +189,16 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
     showMessage(message)
     {
-        this.element.removeChildren();
+        this.removeAllSubviews();
+
         this.element.appendChild(WI.createMessageTextView(message));
     }
 
     addIssue(issue)
     {
         // This generically shows only the last issue, subclasses can override for better handling.
-        this.element.removeChildren();
+        this.removeAllSubviews();
+
         this.element.appendChild(WI.createMessageTextView(issue.text, issue.level === WI.IssueMessage.Level.Error));
     }
 
@@ -229,6 +248,13 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         if (parameters.message) {
             this.showMessage(parameters.message);
             return;
+        }
+
+        if (parameters.sourceCode instanceof WI.LocalResource) {
+            if (this.resource.mappedFilePath) {
+                this._handleMappedFilePathChanged();
+                return;
+            }
         }
 
         // The view maybe populated with inline scripts content by the time resource
@@ -345,6 +371,25 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
             if (!this._resource.localResourceOverride)
                 WI.showLocalResourceOverride(localResourceOverride);
         });
+    }
+
+    _handleMapLocalResourceOverrideToFile(event)
+    {
+        WI.FileUtilities.import((files) => {
+            console.assert(files.length === 1, files);
+
+            this.resource.mappedFilePath = InspectorFrontendHost.getPath(files[0]);
+        });
+    }
+
+    _handleMappedFilePathChanged(event)
+    {
+        this.showMessage(WI.UIString("Mapped to \u201C%s\u201D").format(this.resource.mappedFilePath));
+
+        if (this._localResourceOverrideBannerView) {
+            this.element.insertBefore(this._localResourceOverrideBannerView.element, this.element.firstChild);
+            this.addSubview(this._localResourceOverrideBannerView);
+        }
     }
 
     _handleRemoveLocalResourceOverride(event)

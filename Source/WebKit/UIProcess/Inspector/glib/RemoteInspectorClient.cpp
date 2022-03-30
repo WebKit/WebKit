@@ -60,14 +60,14 @@ public:
             RemoteInspectorHTTPServer::singleton().targetDidClose(m_connectionID, m_targetID);
     }
 
-    void load(Inspector::DebuggableType debuggableType)
+    void initialize(Inspector::DebuggableType debuggableType)
     {
         m_proxy = RemoteWebInspectorUIProxy::create();
         m_proxy->setClient(this);
         // FIXME <https://webkit.org/b/205536>: this should infer more useful data about the debug target.
         Ref<API::DebuggableInfo> debuggableInfo = API::DebuggableInfo::create(DebuggableInfoData::empty());
         debuggableInfo->setDebuggableType(debuggableType);
-        m_proxy->load(WTFMove(debuggableInfo), m_inspectorClient.backendCommandsURL());
+        m_proxy->initialize(WTFMove(debuggableInfo), m_inspectorClient.backendCommandsURL());
     }
 
     void show()
@@ -243,7 +243,7 @@ void RemoteInspectorClient::inspect(uint64_t connectionID, uint64_t targetID, co
 
     m_socketConnection->sendMessage("Setup", g_variant_new("(tt)", connectionID, targetID));
     if (inspectorType == InspectorType::UI)
-        addResult.iterator->value->load(debuggableType(targetType));
+        addResult.iterator->value->initialize(debuggableType(targetType));
 }
 
 void RemoteInspectorClient::sendMessageToBackend(uint64_t connectionID, uint64_t targetID, const String& message)

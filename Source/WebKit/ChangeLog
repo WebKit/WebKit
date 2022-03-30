@@ -1,3 +1,65 @@
+2022-03-29  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: allow Response Local Overrides to map to a file on disk
+        https://bugs.webkit.org/show_bug.cgi?id=238236
+        <rdar://problem/59009154>
+
+        Reviewed by Patrick Angle.
+
+        This makes Response Local Overrides even more powerful by allowing developers to map the
+        contents of the (Local Override) resource to a file on disk (e.g. a local copy of the file),
+        meaning that they can use their preferred editor of choice (and all the tools that may come
+        with it) to make changes instead of having to stay within Web Inspector.
+
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::load): Added.
+        (WebKit::WebInspectorUI::canLoad): Added.
+        * WebProcess/Inspector/gtk/WebInspectorUIGtk.cpp:
+        (WebKit::WebInspectorUI::canLoad): Added.
+        * WebProcess/Inspector/mac/WebInspectorUIMac.mm:
+        (WebKit::WebInspectorUI::canLoad): Added.
+        * WebProcess/Inspector/win/WebInspectorUIWin.cpp:
+        (WebKit::WebInspectorUI::canLoad): Added.
+        * WebProcess/Inspector/RemoteWebInspectorUI.h:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::load): Added.
+        * UIProcess/Inspector/WebInspectorUIProxy.messages.in:
+        * UIProcess/Inspector/WebInspectorUIProxy.h:
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp:
+        (WebKit::WebInspectorUIProxy::load): Added.
+        (WebKit::WebInspectorUIProxy::platformLoad): Added.
+        * UIProcess/Inspector/gtk/WebInspectorUIProxyGtk.cpp:
+        (WebKit::WebInspectorUIProxy::platformLoad): Added.
+        * UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm:
+        (WebKit::WebInspectorUIProxy::platformLoad): Added.
+        * UIProcess/Inspector/win/WebInspectorUIProxyWin.cpp:
+        (WebKit::WebInspectorUIProxy::platformLoad): Added.
+        * UIProcess/Inspector/RemoteWebInspectorUIProxy.messages.in:
+        * UIProcess/Inspector/RemoteWebInspectorUIProxy.h:
+        * UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp:
+        (WebKit::RemoteWebInspectorUIProxy::initialize): Renamed from `load`.
+        (WebKit::RemoteWebInspectorUIProxy::reopen):
+        (WebKit::RemoteWebInspectorUIProxy::load): Added.
+        (WebKit::RemoteWebInspectorUIProxy::platformLoad): Added.
+        * UIProcess/Inspector/gtk/RemoteWebInspectorUIProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorUIProxy::platformLoad): Added.
+        * UIProcess/Inspector/mac/RemoteWebInspectorUIProxyMac.mm:
+        (WebKit::RemoteWebInspectorUIProxy::platformLoad): Added.
+        * UIProcess/Inspector/win/RemoteWebInspectorUIProxyWin.cpp:
+        (WebKit::RemoteWebInspectorUIProxy::platformLoad): Added.
+        Add helpers for loading the contents of a file on disk.
+
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm:
+        (-[_WKRemoteWebInspectorViewController loadForDebuggable:backendCommandsURL:]):
+        * UIProcess/Inspector/glib/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorProxy::initialize): Renamed from `load`.
+        (WebKit::RemoteInspectorClient::inspect):
+        * UIProcess/Inspector/socket/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorProxy::initialize): Renamed from `load`.
+        (WebKit::RemoteInspectorClient::inspect):
+        Use renamed `WebKit::RemoteWebInspectorUIProxy::initialize`.
+
 2022-03-29  Jigen Zhou  <jigen.zhou@sony.com>
 
         [Playstation] Fix build break after r292041 when ENABLE_SERVICE_WORKER is off

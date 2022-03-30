@@ -109,6 +109,8 @@ public:
     virtual bool canSave() = 0;
     virtual void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs) = 0;
     virtual void append(const String& url, const String& content) = 0;
+    virtual bool canLoad() = 0;
+    virtual void load(const String& path, CompletionHandler<void(const String&)>&&) = 0;
 
     virtual void inspectedURLChanged(const String&) = 0;
     virtual void showCertificate(const CertificateInfo&) = 0;

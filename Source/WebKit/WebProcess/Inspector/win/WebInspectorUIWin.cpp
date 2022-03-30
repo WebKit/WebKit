@@ -39,6 +39,11 @@ bool WebInspectorUI::canSave()
     return false;
 }
 
+bool WebInspectorUI::canLoad()
+{
+    return false;
+}
+
 String WebInspectorUI::localizedStringsURL() const
 {
     return "inspector-resource:///localizedStrings.js"_s;
