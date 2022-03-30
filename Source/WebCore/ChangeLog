@@ -1,5 +1,41 @@
 2022-03-29  Tyler Wilcock  <tyler_w@apple.com>
 
+        AX: Don't detach children in AXIsolatedTree::applyPendingChanges for nodes being updated (removed and added)
+        https://bugs.webkit.org/show_bug.cgi?id=238460
+
+        Reviewed by Chris Fleizach and Andres Gonzalez.
+
+        In AXIsolatedTree::updateNode, we perform the update by queuing the node to be
+        removed, and then queueing it to be added. When performing the removal in
+        AXIsolatedTree::applyPendingChanges, we call AXCoreObject::detach, which unconditionally
+        calls AXCoreObject::detachRemoteParts. Specifically, AXIsolatedObject::detachRemoteParts
+        detaches all the object's children from the itself (by setting their m_parentID to zero).
+        Then, when we start applying m_pendingAppends, we re-add the object, but never re-attach
+        the children, resulting in a broken tree.
+
+        This patch fixes this by storing the reason (AccessibilityDetachmentType) the node is
+        being removed in m_pendingNodeRemovals, and not detaching children if the type is
+        AccessibilityDetachmentType::ElementChanged, as in the case of a node update.
+
+        This patch also removes AXIsolatedObject::setParent. It's never called, and
+        its existence is therefore confusing.
+
+        Test: accessibility/search-traversal-after-role-change.html.
+        This test exercises the behavior in this patch because changing an
+        object's role triggers AXIsolatedTree::updateNode.
+
+        * accessibility/AccessibilityObjectInterface.h:
+        (WebCore::AXCoreObject::detach):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::setParent): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/AXIsolatedTree.cpp:
+        (WebCore::AXIsolatedTree::updateNode):
+        (WebCore::AXIsolatedTree::applyPendingChanges):
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+
+2022-03-29  Tyler Wilcock  <tyler_w@apple.com>
+
         AXIsolatedObject::isAccessibilityObject should not be ASSERT_NOT_REACHED
         https://bugs.webkit.org/show_bug.cgi?id=238511
 

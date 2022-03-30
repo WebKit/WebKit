@@ -1569,7 +1569,8 @@ inline AXCoreObject::AXValue AXCoreObject::value()
 inline void AXCoreObject::detach(AccessibilityDetachmentType detachmentType)
 {
     detachWrapper(detachmentType);
-    detachRemoteParts(detachmentType);
+    if (detachmentType != AccessibilityDetachmentType::ElementChanged)
+        detachRemoteParts(detachmentType);
     setObjectID({ });
 }
 

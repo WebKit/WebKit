@@ -307,7 +307,7 @@ void AXIsolatedTree::updateNode(AXCoreObject& axObject)
 
     // Remove the old object and set the new one to be updated on the AX thread.
     Locker locker { m_changeLogLock };
-    m_pendingNodeRemovals.append(axID);
+    m_pendingNodeRemovals.append({ axID, AccessibilityDetachmentType::ElementChanged });
     queueChange(change);
 }
 
@@ -545,11 +545,11 @@ void AXIsolatedTree::applyPendingChanges()
     }
 
     while (m_pendingNodeRemovals.size()) {
-        auto axID = m_pendingNodeRemovals.takeLast();
-        AXLOG(makeString("removing axID ", axID.loggingString()));
-        if (auto object = nodeForID(axID)) {
-            object->detach(AccessibilityDetachmentType::ElementDestroyed);
-            m_readerThreadNodeMap.remove(axID);
+        auto removal = m_pendingNodeRemovals.takeLast();
+        AXLOG(makeString("removing axID ", removal.first.loggingString()));
+        if (auto object = nodeForID(removal.first)) {
+            object->detach(removal.second);
+            m_readerThreadNodeMap.remove(removal.first);
         }
     }
 

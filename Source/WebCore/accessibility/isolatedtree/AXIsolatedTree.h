@@ -411,7 +411,8 @@ private:
     RefPtr<AXIsolatedObject> m_rootNode WTF_GUARDED_BY_LOCK(m_changeLogLock);
     Vector<NodeChange> m_pendingAppends WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes to be added to the tree and platform-wrapped.
     Vector<AXPropertyChange> m_pendingPropertyChanges WTF_GUARDED_BY_LOCK(m_changeLogLock);
-    Vector<AXID> m_pendingNodeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes to be removed from the tree.
+    // Nodes to be removed from the tree (and the AccessibilityDetachmentType reason for the removal).
+    Vector<std::pair<AXID, AccessibilityDetachmentType>> m_pendingNodeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock);
     Vector<AXID> m_pendingSubtreeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes whose subtrees are to be removed from the tree.
     Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);

@@ -57,8 +57,6 @@ public:
     void attachPlatformWrapper(AccessibilityObjectWrapper*);
     bool isDetached() const override;
 
-    void setParent(AXID);
-
 private:
     void detachRemoteParts(AccessibilityDetachmentType) override;
     void detachPlatformWrapper(AccessibilityDetachmentType) override;
