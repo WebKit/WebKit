@@ -227,6 +227,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         UIScrollView *scrollView = webView.scrollView;
         [scrollView _removeAllAnimations:YES];
         [scrollView setZoomScale:1 animated:NO];
+        scrollView.firstResponderKeyboardAvoidanceEnabled = YES;
 
         auto currentContentInset = scrollView.contentInset;
         auto contentInsetTop = options.contentInsetTop();

@@ -2473,6 +2473,7 @@ static int32_t activeOrientation(WKWebView *webView)
 - (void)_keyboardDidShow:(NSNotification *)notification
 {
     _page->setIsKeyboardAnimatingIn(false);
+    [_contentView _keyboardDidShow];
 }
 
 - (void)_keyboardWillHide:(NSNotification *)notification

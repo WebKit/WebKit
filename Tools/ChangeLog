@@ -584,10 +584,6 @@
             (verifyCertificateAndPublicKey):
             (TestWebKitAPI::TEST):
 
-2022-03-01  Russell Epstein  <repstein@apple.com>
-
-        Revert r289282. rdar://problem/88876661
-
 2022-02-28  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r289502. rdar://problem/88528286
