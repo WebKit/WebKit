@@ -799,6 +799,7 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
         rebase_target_hash = self.getProperty('ews_revision') or self.getProperty('got_revision')
 
         commands = [
+            ['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
             self.shell_command('git remote add {} {}{}.git || {}'.format(remote, GITHUB_URL, project, self.shell_exit_0())),
             ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
             ['git', 'fetch', remote],
