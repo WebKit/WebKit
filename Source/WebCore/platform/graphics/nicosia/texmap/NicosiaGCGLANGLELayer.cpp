@@ -31,7 +31,6 @@
 
 #if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
-#include "ANGLEHeaders.h"
 #include "GraphicsContextGLTextureMapperANGLE.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
@@ -39,6 +38,10 @@
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxyDMABuf.h"
 #include "TextureMapperPlatformLayerProxyGL.h"
+
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#endif
 
 namespace Nicosia {
 

@@ -41,52 +41,14 @@
 #define GL_GLEXT_PROTOTYPES 0
 #endif
 
-#if USE(LIBEPOXY)
-#include <epoxy/gl.h>
-typedef uint64_t EGLFrameTokenANGLE;
-#endif
+// Avoid including and platfrom-specific headers that might bring in identifiers colliding with WebKit code.
+#define EGL_NO_PLATFORM_SPECIFIC_TYPES
 
 #include <ANGLE/entry_points_egl_autogen.h>
 #include <ANGLE/entry_points_egl_ext_autogen.h>
 #include <ANGLE/entry_points_gles_2_0_autogen.h>
 #include <ANGLE/entry_points_gles_3_0_autogen.h>
 #include <ANGLE/entry_points_gles_ext_autogen.h>
-
-// X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF enum values.
-// As a workaround, we explicitly undef them here.
-#if defined(None)
-#undef None
-#endif
-#if defined(Above)
-#undef Above
-#endif
-#if defined(Below)
-#undef Below
-#endif
-#if defined(Success)
-#undef Success
-#endif
-#if defined(False)
-#undef False
-#endif
-#if defined(True)
-#undef True
-#endif
-#if defined(Bool)
-#undef Bool
-#endif
-#if defined(Always)
-#undef Always
-#endif
-#if defined(Status)
-#undef Status
-#endif
-#if defined(Continue)
-#undef Continue
-#endif
-#if defined(Region)
-#undef Region
-#endif
 
 // Note: this file can't be compiled in the same unified source file
 // as others which include the system's OpenGL headers.

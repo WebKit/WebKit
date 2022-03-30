@@ -1,3 +1,23 @@
+2022-03-30  Zan Dobersek  <zdobersek@igalia.com>
+
+        Slim down ANGLEHeaders.h
+        https://bugs.webkit.org/show_bug.cgi?id=238539
+
+        Reviewed by Adrian Perez de Castro.
+
+        Define the EGL_NO_PLATFORM_SPECIFIC_TYPES macro in ANGLEHeaders.h before
+        including the ANGLE entrypoint headers. These will subsequently include
+        EGL's platform headers, but the macro prevents including additional
+        platform-specific headers (e.g. X11 development headers) that often
+        bring in additional generically-named identifiers and macros that end up
+        colliding with WebCore and WebKit types. The libepoxy header inclusion
+        is also removed, it should be done where necessary and not everywhere
+        ANGLEHeaders.h ends up included.
+
+        * platform/graphics/angle/ANGLEHeaders.h:
+        * platform/graphics/nicosia/texmap/NicosiaGCGLANGLELayer.cpp:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h:
+
 2022-03-30  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed, non-unified build fixes

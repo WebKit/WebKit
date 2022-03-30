@@ -30,7 +30,6 @@
 #include "GraphicsContextGLANGLE.h"
 
 #if USE(TEXTURE_MAPPER_DMABUF)
-#include "ANGLEHeaders.h"
 #include "GBMBufferSwapchain.h"
 #include <wtf/HashMap.h>
 #endif
@@ -44,7 +43,7 @@ class GCGLLayer;
 struct gbm_device;
 struct gbm_bo;
 
-typedef void *EGLImage;
+typedef void *EGLImageKHR;
 #endif
 
 namespace WebCore {
@@ -85,7 +84,7 @@ private:
         Swapchain(GCGLDisplay);
         ~Swapchain();
 
-        GCGLDisplay platformDisplay { EGL_NO_DISPLAY };
+        GCGLDisplay platformDisplay { nullptr };
         RefPtr<GBMBufferSwapchain> swapchain;
         RefPtr<GBMBufferSwapchain::Buffer> drawBO;
         RefPtr<GBMBufferSwapchain::Buffer> displayBO;
