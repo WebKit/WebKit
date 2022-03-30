@@ -1097,7 +1097,23 @@ These are cross browser vendor tests developed by W3C. Mozilla, Google, and Appl
 
 ### HTTP Tests
 
-FIXME: Explain how to start and open tests that require HTTP server.
+To open tests under [LayoutTests/http](https://github.com/WebKit/WebKit/tree/main/LayoutTests/http) or
+[LayoutTests/imported/w3c/web-platform-tests](https://github.com/WebKit/WebKit/tree/main/LayoutTests/imported/w3c/web-platform-tests),
+use [Tools/Scripts/open-layout-test](https://github.com/WebKit/WebKit/blob/main/Tools/Scripts/open-layout-test) with the path to a test.
+
+You can also manually start HTTP servers with [`Tools/Scripts/run-webkit-httpd`](https://github.com/WebKit/WebKit/blob/main/Tools/Scripts/run-webkit-httpd).
+To stop the HTTP servers, exit the script (e.g. Control + C on macOS).
+
+Tests under [LayoutTests/http](https://github.com/WebKit/WebKit/tree/main/LayoutTests/http) are accessible at [http://127.0.0.1:8000](http://127.0.0.1:8000)
+except tests in [LayoutTests/http/wpt](https://github.com/WebKit/WebKit/tree/main/LayoutTests/http/wpt),
+which are available at [http://localhost:8800/WebKit/](http://localhost:8800/WebKit/) instead.
+
+The [Web Platform Tests](https://web-platform-tests.org/) imported under
+[LayoutTests/imported/w3c/web-platform-tests](https://github.com/WebKit/WebKit/tree/main/LayoutTests/imported/w3c/web-platform-tests)
+are accessible under HTTP at [http://localhost:8800/](http://localhost:8800/) and HTTPS at [http://localhost:9443/](http://localhost:9443/)
+
+Note that it's important to use the exact host names such as `127.0.0.1` and `localhost` above verbatim
+since some tests rely on or test same-origin or cross-origin behaviors based on those host names.
 
 ## Test Expectations
 
