@@ -29,6 +29,8 @@
 
 #include <system_error>
 
+#include <wtf/Forward.h>
+
 namespace WebCore {
 namespace ContentExtensions {
 

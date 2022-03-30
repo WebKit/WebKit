@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ContentSecurityPolicyDirectiveNames.h"
 
+#include <wtf/text/ASCIILiteral.h>
+
 namespace WebCore {
 
 namespace ContentSecurityPolicyDirectiveNames {

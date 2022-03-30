@@ -30,6 +30,7 @@
 
 #include <string>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 namespace ContentExtensions {

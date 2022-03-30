@@ -26,6 +26,7 @@
 #include "ContainerQuery.h"
 
 #include "CSSMarkup.h"
+#include "CSSValue.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 

@@ -64,6 +64,7 @@
 #include "UserGestureIndicator.h"
 #include <JavaScriptCore/ScriptFunctionCall.h>
 #include <pal/system/Sound.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/persistence/PersistentDecoder.h>

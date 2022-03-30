@@ -1,3 +1,16 @@
+2022-03-30  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed, non-unified build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=238536
+
+        * contentextensions/ContentExtensionError.cpp:
+        * contentextensions/ContentExtensionError.h:
+        * css/ContainerQuery.cpp:
+        * html/HTMLTextFormControlElement.cpp:
+        * inspector/InspectorFrontendHost.cpp:
+        * page/Page.cpp:
+        * page/csp/ContentSecurityPolicyDirectiveNames.cpp:
+
 2022-03-29  Brandon Stewart  <brandonstewart@apple.com>
 
         Ensure m_layerRulesBeforeImportRules is properly copied during StyleSheetContents instantiation
