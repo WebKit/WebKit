@@ -1,3 +1,11 @@
+2022-03-29  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wincairo/fast/text/softHyphen-expected.txt: Removed.
+
 2022-03-29  Tyler Wilcock  <tyler_w@apple.com>
 
         AX: Don't detach children in AXIsolatedTree::applyPendingChanges for nodes being updated (removed and added)

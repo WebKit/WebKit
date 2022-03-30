@@ -1468,6 +1468,8 @@ webkit.org/b/225258 js/dom/Promise-reject-large-string.html [ Pass Failure ]
 
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.
 
+webkit.org/b/238491 fast/editing/apply-relative-font-style-change-crash-004.html [ Crash ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # TEMPORARY SKIPS -- these areas still need to be addressed individually
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1554,14 +1556,11 @@ imported/w3c/i18n [ Skip ]
 imported/w3c/web-platform-tests/FileAPI [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB [ Skip ]
 imported/w3c/web-platform-tests/WebCryptoAPI [ Skip ]
-imported/w3c/web-platform-tests/WebIDL [ Skip ]
-imported/w3c/web-platform-tests/WebKit [ Skip ]
 imported/w3c/web-platform-tests/apng [ Skip ]
 imported/w3c/web-platform-tests/audio-output [ Skip ]
 imported/w3c/web-platform-tests/background-fetch [ Skip ]
 imported/w3c/web-platform-tests/beacon [ Skip ]
 imported/w3c/web-platform-tests/clipboard-apis [ Skip ]
-imported/w3c/web-platform-tests/common [ Skip ]
 imported/w3c/web-platform-tests/compat [ Skip ]
 imported/w3c/web-platform-tests/console [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy [ Skip ]
@@ -1727,7 +1726,6 @@ css2.1/t1503-c522-font-family-00-b.html [ Failure Pass ]
 css3/flexbox/flexbox-baseline-margins.html [ Failure ]
 css3/flexbox/flexitem.html [ Failure ]
 css3/font-feature-settings-stylistic-set.html [ ImageOnlyFailure ]
-editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-1.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-2.html [ Failure ]
 editing/selection/move-by-word-visually-across-object-element-3.html [ Failure ]
@@ -1777,7 +1775,6 @@ fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Skip ] # Timeout
 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Skip ] # Timeout
 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Skip ] # Timeout
 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Skip ] # Timeout
-fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-astc.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
@@ -2118,3 +2115,13 @@ fast/text/synthetic-bold-percentage-word-spacing.html [ ImageOnlyFailure ]
 fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]
 
 http/tests/misc/ftp-eplf-directory.py [ Failure ]
+
+fast/css/stylesheet-candidate-nodes-crash.xhtml [ Failure ]
+http/tests/websocket/tests/hybi/close-and-server-script-exception.html [ Failure ]
+http/wpt/fetch/fetch-metadata-same-origin-redirect.html [ Failure ]
+storage/indexeddb/modern/leak-1.html [ Failure ]
+webgl/2.0.0/conformance/textures/misc/default-texture.html [ Failure ]
+webgl/lose-context-after-context-lost.html [ Failure ]
+webgl/max-active-contexts-gc.html [ Failure ]
+webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Failure ]
+webgl/multiple-context-losses.html [ Failure ]
