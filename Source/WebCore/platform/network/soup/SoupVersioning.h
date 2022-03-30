@@ -158,4 +158,11 @@ soup_session_set_accept_language(SoupSession* session, const char* acceptLanguag
 {
     g_object_set(session, "accept-language", acceptLanguage, nullptr);
 }
+
+static inline void
+soup_session_set_tls_database(SoupSession *session, GTlsDatabase *tls_database)
+{
+    g_object_set(session, "tls-database", tls_database, NULL);
+}
+
 #endif // USE(SOUP2)

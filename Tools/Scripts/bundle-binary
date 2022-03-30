@@ -46,11 +46,11 @@ def main():
 
     if interpreter is None:
         raise RuntimeError("Could not determine interpreter for binary %s" % object)
-    bundler = BinaryBundler(args.dest_dir, False)
-    bundler.copy_and_remove_rpath(interpreter, type='interpreter')
-    bundler.copy_and_remove_rpath(args.binary, type='bin')
+    bundler = BinaryBundler(args.dest_dir)
+    bundler.copy_and_maybe_strip_patchelf(interpreter, type='interpreter', strip=False, patchelf_removerpath=True, patchelf_nodefaultlib=False)
+    bundler.copy_and_maybe_strip_patchelf(args.binary, type='bin', strip=False, patchelf_removerpath=True, patchelf_nodefaultlib=False)
     for lib in libraries:
-        bundler.copy_and_remove_rpath(lib, type='lib')
+        bundler.copy_and_maybe_strip_patchelf(lib, type='lib', strip=False, patchelf_removerpath=True, patchelf_nodefaultlib=False)
     bundler.generate_wrapper_script(interpreter, os.path.basename(args.binary))
     return 0
 

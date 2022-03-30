@@ -133,6 +133,21 @@ SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)
     if (soup_auth_negotiate_supported() && !m_sessionID.isEphemeral())
         soup_session_add_feature_by_type(m_soupSession.get(), SOUP_TYPE_AUTH_NEGOTIATE);
 
+#if ENABLE(DEVELOPER_MODE)
+    // Optionally load a custom path with the TLS CAFile. This is used on the GTK/WPE bundles. See script generate-bundle
+    // Don't enable this outside DEVELOPER_MODE because using a non-default TLS database has surprising undesired effects
+    // on how certificate verification is performed. See https://webkit.org/b/237107#c14 and git commit 82999879b on glib
+    const char* customTLSCAFile = g_getenv("WEBKIT_TLS_CAFILE_PEM");
+    if (customTLSCAFile) {
+        GUniqueOutPtr<GError> error;
+        GRefPtr<GTlsDatabase> customTLSDB = adoptGRef(g_tls_file_database_new(customTLSCAFile, &error.outPtr()));
+        if (error)
+            WTFLogAlways("Failed to load TLS database \"%s\": %s", customTLSCAFile, error->message);
+        else
+            soup_session_set_tls_database(m_soupSession.get(), customTLSDB.get());
+    }
+#endif // ENABLE(DEVELOPER_MODE)
+
     setupLogger();
 }
 

@@ -1,3 +1,18 @@
+2022-03-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] generate-bundle: self-contained bundle for the MiniBrowser that can work on any distro
+        https://bugs.webkit.org/show_bug.cgi?id=237107
+
+        Rubber-stamped by Philippe Normand.
+
+        No new tests, no change in behaviour.
+
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::SoupNetworkSession): Allow to load the TLS database specified on the
+        environment variable WEBKIT_TLS_CAFILE_PEM when DEVELOPER_MODE is enabled
+        * platform/network/soup/SoupVersioning.h:
+        (soup_session_set_tls_database):
+
 2022-03-30  Chris Dumez  <cdumez@apple.com>
 
         Add HashTranslator for ASCIILiteral for faster lookup in HashMaps / HashSets

@@ -305,6 +305,11 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'ThirdParty', 'libwebrtc', 'Source', 'webrtc'),
       os.path.join('Source', 'WebCore', 'PAL', 'pal', 'spi')],
      ["-readability/naming/underscores"]),
+
+    ([  # c code with underscores in variable names and tabs for the Makefile
+     os.path.join('Tools', 'Scripts', 'webkitpy', 'binary_bundling', 'dlopenwrap')],
+     ["-readability/naming/underscores",
+      "-whitespace/tab"]),
 ]
 
 

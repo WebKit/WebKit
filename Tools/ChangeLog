@@ -1,3 +1,43 @@
+2022-03-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] generate-bundle: self-contained bundle for the MiniBrowser that can work on any distro
+        https://bugs.webkit.org/show_bug.cgi?id=237107
+
+        Rubber-stamped by Philippe Normand.
+
+        This implements in the generate-bundle script the support to generate a bundle self-contained that can work on any distro.
+        To achieve that the bundle contains all the required system libraries inside the bundle (even the graphics drivers).
+        It also contains the required system resources: icons (for gtk), fontconfig files and fonts, etc.
+        A custom dlopenwrap library is also added and preloaded. The purpose of this library is to wrap all dlopen() calls
+        and rewrite the paths to ensure that only libraries inside the bundle are loaded.
+
+        The bundle has been tested to be generated with the flatpak build and executed on a range of very different distributions
+        with sucess: Fedora, Ubuntu, Debian, Alpine, CentOS (different versions of each)
+
+        * Scripts/bundle-binary:
+        * Scripts/generate-bundle:
+        * Scripts/webkitpy/binary_bundling/bundle.py:
+        (BinaryBundler):
+        (BinaryBundler.__init__):
+        (BinaryBundler._is_system_dep):
+        (BinaryBundler.set_use_sys_lib_directory):
+        (BinaryBundler.copy_and_maybe_strip_patchelf):
+        (BinaryBundler.destination_dir):
+        (BinaryBundler.generate_wrapper_script):
+        (BinaryBundler.copy_and_remove_rpath): Deleted.
+        * Scripts/webkitpy/binary_bundling/dlopenwrap/Makefile: Added.
+        * Scripts/webkitpy/binary_bundling/dlopenwrap/README.txt: Added.
+        * Scripts/webkitpy/binary_bundling/dlopenwrap/dlopenwrap.c: Added.
+        (dlopen_wrapper_path_join):
+        (is_dir):
+        (dlopen_wrapper_recursive_find):
+        (dlopen_wrapper_get_path_for_file_under_dir):
+        (dlopen_wrapper_find_library_on_libpath):
+        (dlopen):
+        (dlmopen):
+        (dlerror):
+        * Scripts/webkitpy/style/checker.py:
+
 2022-03-29  Alex Christensen  <achristensen@webkit.org>
 
         Don't create directories on iOS if we are only using ephemeral storages
