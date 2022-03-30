@@ -1216,6 +1216,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _pointerInteraction = nil;
 #endif
 
+    [self resetShouldZoomToFocusRectAfterShowingKeyboard];
+
 #if HAVE(PENCILKIT_TEXT_INPUT)
     [self cleanUpScribbleInteraction];
 #endif
@@ -2344,6 +2346,22 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     return boundingRect;
 }
 
+- (void)_keyboardDidShow
+{
+    if (!_shouldZoomToFocusRectAfterShowingKeyboard)
+        return;
+
+    // FIXME: This deferred call to -_zoomToRevealFocusedElement works around the fact that Mail compose
+    // disables automatic content inset adjustment using the keyboard height, and instead has logic to
+    // explicitly set WKScrollView's contentScrollInset after receiving UIKeyboardDidShowNotification.
+    // This means that if we -_zoomToRevealFocusedElement immediately after focusing the body field in
+    // Mail, we won't take the keyboard height into account when scrolling.
+    // Mitigate this by deferring the call to -_zoomToRevealFocusedElement in this case until after the
+    // keyboard has finished animating. We can revert this once rdar://87733414 is fixed.
+    [self resetShouldZoomToFocusRectAfterShowingKeyboard];
+    [self performSelector:@selector(_zoomToRevealFocusedElement) withObject:nil afterDelay:0];
+}
+
 - (void)_zoomToRevealFocusedElement
 {
     if (_focusedElementInformation.preventScroll)
@@ -2351,6 +2369,11 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
     if (_suppressSelectionAssistantReasons || _activeTextInteractionCount)
         return;
+
+    if (!self._scroller.firstResponderKeyboardAvoidanceEnabled && _page->isKeyboardAnimatingIn()) {
+        _shouldZoomToFocusRectAfterShowingKeyboard = YES;
+        return;
+    }
 
     // In case user scaling is force enabled, do not use that scaling when zooming in with an input field.
     // Zooming above the page's default scale factor should only happen when the user performs it.
@@ -2361,6 +2384,12 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         maximumScale:_focusedElementInformation.maximumScaleFactorIgnoringAlwaysScalable
         allowScaling:_focusedElementInformation.allowsUserScalingIgnoringAlwaysScalable && WebKit::currentUserInterfaceIdiomIsSmallScreen()
         forceScroll:[self requiresAccessoryView]];
+}
+
+- (void)resetShouldZoomToFocusRectAfterShowingKeyboard
+{
+    _shouldZoomToFocusRectAfterShowingKeyboard = NO;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_zoomToRevealFocusedElement) object:nil];
 }
 
 - (UIView *)inputView
@@ -6578,6 +6607,8 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     _inputPeripheral = nil;
     _focusRequiresStrongPasswordAssistance = NO;
     _additionalContextForStrongPasswordAssistance = nil;
+
+    [self resetShouldZoomToFocusRectAfterShowingKeyboard];
 
     // When defocusing an editable element reset a seen keydown before calling -_hideKeyboard so that we
     // re-evaluate whether we still need a keyboard when UIKit calls us back in -_requiresKeyboardWhenFirstResponder.

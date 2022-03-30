@@ -1272,6 +1272,11 @@ void UIScriptControllerIOS::setAllowsViewportShrinkToFit(bool allows)
     webView()._allowsViewportShrinkToFit = allows;
 }
 
+void UIScriptControllerIOS::setScrollViewKeyboardAvoidanceEnabled(bool enabled)
+{
+    webView().scrollView.firstResponderKeyboardAvoidanceEnabled = enabled;
+}
+
 void UIScriptControllerIOS::doAfterDoubleTapDelay(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
