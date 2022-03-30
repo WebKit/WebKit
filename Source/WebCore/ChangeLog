@@ -1,3 +1,21 @@
+2022-03-29  Tyler Wilcock  <tyler_w@apple.com>
+
+        AXIsolatedObject::isAccessibilityObject should not be ASSERT_NOT_REACHED
+        https://bugs.webkit.org/show_bug.cgi?id=238511
+
+        Reviewed by Chris Fleizach.
+
+        We try to downcast AXCoreObjects to AccessibilityObjects here in AXLogger's TextStream& operator<<(TextStream&, const AXCoreObject&):
+
+        if (auto* axObject = dynamicDowncast<AccessibilityObject>(&object); axObject && axObject->hasDisplayContents())
+            stream.dumpProperty("hasDisplayContents", true);
+
+        So this should not ASSERT_NOT_REACHED in AXIsolatedObject.
+
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::isAccessibilityObject const): Deleted.
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+
 2022-03-29  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: allow Response Local Overrides to map to a file on disk

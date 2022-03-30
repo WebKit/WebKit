@@ -1310,12 +1310,6 @@ bool AXIsolatedObject::performDefaultAction()
     return false;
 }
 
-bool AXIsolatedObject::isAccessibilityObject() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isAccessibilityNodeObject() const
 {
     ASSERT_NOT_REACHED();
