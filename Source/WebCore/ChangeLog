@@ -1,3 +1,23 @@
+2022-03-30  Alan Bujtas  <zalan@apple.com>
+
+        [CSS contain] Containment disables the special handling of the HTML body element for overflow viewport propagation.
+        https://bugs.webkit.org/show_bug.cgi?id=238526
+
+        Reviewed by Simon Fraser.
+
+        https://www.w3.org/TR/css-overflow-3/#overflow-propagation
+
+        "...UAs must apply the overflow-* values set on the root element to the viewport when the root element’s display value is not none.
+        However, when the root element is an html element whose overflow value is visible, and that element has as a
+        child a body element whose display value is also not none, user agents must instead apply the
+        overflow-* values of the first such child element to the viewport.
+        The element from which the value is propagated must then have a used overflow value of visible.
+
+        Note: Using containment disables this special handling of the HTML body element..."
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateFromStyle):
+
 2022-03-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Sources: the mapped file URL of a Response Local Override should be clickable

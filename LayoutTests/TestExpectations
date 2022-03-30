@@ -4696,13 +4696,11 @@ imported/w3c/web-platform-tests/css/css-contain/quote-scoping-001.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-body-overflow-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-body-overflow-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-body-overflow-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-body-overflow-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-html-overflow-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-html-overflow-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-html-overflow-004.html [ ImageOnlyFailure ]
+# innerText bug
+webkit.org/b/238555 imported/w3c/web-platform-tests/css/css-contain/contain-flexbox-outline.html [ Failure ]
 
 # Container queries
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-layout-container-001.https.html [ ImageOnlyFailure ]

@@ -513,7 +513,8 @@ void RenderBox::updateFromStyle()
             // (3) The root element has visible overflow.
             if (is<HTMLHtmlElement>(*document().documentElement())
                 && document().body() == element()
-                && document().documentElement()->renderer()->effectiveOverflowX() == Overflow::Visible) {
+                && document().documentElement()->renderer()->effectiveOverflowX() == Overflow::Visible
+                && !styleToUse.effectiveContainment()) {
                 boxHasNonVisibleOverflow = false;
             }
         }

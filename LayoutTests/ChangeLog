@@ -1,3 +1,14 @@
+2022-03-30  Alan Bujtas  <zalan@apple.com>
+
+        [CSS contain] Containment disables the special handling of the HTML body element for overflow viewport propagation.
+        https://bugs.webkit.org/show_bug.cgi?id=238526
+
+        Reviewed by Simon Fraser.
+
+        * TestExpectations:
+        * fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping-expected.html:
+        * fast/layers/parent-clipping-overflow-is-overwritten-by-child-clipping.html:
+
 2022-03-30  Youenn Fablet  <youenn@apple.com>
 
         Implement persistent notification handling
