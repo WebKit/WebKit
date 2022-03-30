@@ -51,18 +51,18 @@ WebAuthnProcess::~WebAuthnProcess()
 
 void WebAuthnProcess::createWebAuthnConnectionToWebProcess(ProcessIdentifier identifier, CompletionHandler<void(std::optional<IPC::Attachment>&&)>&& completionHandler)
 {
-    auto ipcConnection = createIPCConnectionPair();
-    if (!ipcConnection) {
+    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+    if (!connectionIdentifiers) {
         completionHandler({ });
         return;
     }
 
-    auto newConnection = WebAuthnConnectionToWebProcess::create(*this, identifier, ipcConnection->first);
+    auto newConnection = WebAuthnConnectionToWebProcess::create(*this, identifier, connectionIdentifiers->server);
 
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
 
-    completionHandler(WTFMove(ipcConnection->second));
+    completionHandler(WTFMove(connectionIdentifiers->client));
 }
 
 void WebAuthnProcess::removeWebAuthnConnectionToWebProcess(WebAuthnConnectionToWebProcess& connection)

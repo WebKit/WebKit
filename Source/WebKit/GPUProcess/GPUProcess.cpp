@@ -118,13 +118,13 @@ void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
 void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters, CompletionHandler<void(std::optional<IPC::Attachment>&&, GPUProcessConnectionInitializationParameters&&)>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
-    auto ipcConnection = createIPCConnectionPair();
-    if (!ipcConnection) {
+    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+    if (!connectionIdentifiers) {
         completionHandler({ }, { });
         return;
     }
 
-    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, ipcConnection->first, sessionID, WTFMove(parameters));
+    auto newConnection = GPUConnectionToWebProcess::create(*this, identifier, connectionIdentifiers->server, sessionID, WTFMove(parameters));
 
 #if ENABLE(MEDIA_STREAM)
     // FIXME: We should refactor code to go from WebProcess -> GPUProcess -> UIProcess when getUserMedia is called instead of going from WebProcess -> UIProcess directly.
@@ -145,7 +145,7 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
 #if ENABLE(VP9)
     connectionParameters.hasVP9HardwareDecoder = WebCore::vp9HardwareDecoderAvailable();
 #endif
-    completionHandler(WTFMove(ipcConnection->second), WTFMove(connectionParameters));
+    completionHandler(WTFMove(connectionIdentifiers->client), WTFMove(connectionParameters));
 }
 
 void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& connection)

@@ -1,3 +1,36 @@
+2022-03-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Move AuxiliaryProcess::createIPCConnectionPair to IPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=238504
+
+        Reviewed by Chris Dumez.
+
+        Move connection port/socket/pipe pair creation function from AuxiliaryProcess
+        to IPC::Connection. This way other components than AuxiliaryProcess subclasses
+        can create and send new connections.
+
+        No new tests, refactor.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::createGPUConnectionToWebProcess):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::createConnectionIdentifierPair):
+        * Platform/IPC/Connection.h:
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::createConnectionIdentifierPair):
+        * Platform/IPC/unix/ConnectionUnix.cpp:
+        (IPC::Connection::createConnectionIdentifierPair):
+        * Platform/IPC/win/ConnectionWin.cpp:
+        (IPC::Connection::createConnectionIdentifierPair):
+        * Shared/AuxiliaryProcess.cpp:
+        * Shared/AuxiliaryProcess.h:
+        * WebAuthnProcess/WebAuthnProcess.cpp:
+        (WebKit::WebAuthnProcess::createWebAuthnConnectionToWebProcess):
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::updateConnection):
+
 2022-03-30  Pablo Saavedra  <psaavedra@igalia.com>
 
         [GTK][WPE] Exit cleanly if Connection to UIProcess severed. Regression (r214307)

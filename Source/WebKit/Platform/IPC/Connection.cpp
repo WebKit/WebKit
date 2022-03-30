@@ -1301,4 +1301,12 @@ void Connection::wakeUpRunLoop()
     RunLoop::main().wakeUp();
 }
 
+#if !USE(UNIX_DOMAIN_SOCKETS) && !OS(DARWIN) && !OS(WINDOWS)
+std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
+{
+    notImplemented();
+    return std::nullopt;
+}
+#endif
+
 } // namespace IPC
