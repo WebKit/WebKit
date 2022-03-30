@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@ messages -> WebSWContextManagerConnection NotRefCounted {
     FireInstallEvent(WebCore::ServiceWorkerIdentifier identifier)
     FireActivateEvent(WebCore::ServiceWorkerIdentifier identifier)
     FirePushEvent(WebCore::ServiceWorkerIdentifier identifier, std::optional<IPC::DataReference> data) -> (bool result)
+    FireNotificationEvent(WebCore::ServiceWorkerIdentifier identifier, struct WebCore::NotificationData data, enum:bool WebCore::NotificationEventType type) -> (bool result)
 
     TerminateWorker(WebCore::ServiceWorkerIdentifier identifier)
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)

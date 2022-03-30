@@ -61,6 +61,15 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, String&&
     return notification;
 }
 
+Ref<Notification> Notification::create(ScriptExecutionContext& context, NotificationData&& data)
+{
+    Options options { data.direction, WTFMove(data.language), WTFMove(data.body), WTFMove(data.tag), WTFMove(data.iconURL) };
+    auto notification = adoptRef(*new Notification(context, WTFMove(data.title), WTFMove(options)));
+    notification->suspendIfNeeded();
+    notification->m_relatedNotificationIdentifier = data.notificationID;
+    return notification;
+}
+
 Notification::Notification(ScriptExecutionContext& context, String&& title, Options&& options)
     : ActiveDOMObject(&context)
     , m_title(WTFMove(title).isolatedCopy())
@@ -130,6 +139,11 @@ void Notification::showSoon()
     queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this] {
         show();
     });
+}
+
+void Notification::markAsShown()
+{
+    m_state = Showing;
 }
 
 void Notification::show()
@@ -224,37 +238,18 @@ void Notification::dispatchShowEvent()
 void Notification::dispatchClickEvent()
 {
     ASSERT(isMainThread());
-
-    switch (m_notificationSource) {
-    case NotificationSource::Document:
-        queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this] {
-            WindowFocusAllowedIndicator windowFocusAllowed;
-            dispatchEvent(Event::create(eventNames().clickEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        });
-        break;
-    case NotificationSource::ServiceWorker:
-        ServiceWorkerGlobalScope::ensureOnContextThread(m_contextIdentifier, [this, protectedThis = Ref { *this }](auto& context) {
-            downcast<ServiceWorkerGlobalScope>(context).postTaskToFireNotificationEvent(NotificationEventType::Click, *this, { });
-        });
-        break;
-    }
+    ASSERT(m_notificationSource == NotificationSource::Document);
+    queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this] {
+        WindowFocusAllowedIndicator windowFocusAllowed;
+        dispatchEvent(Event::create(eventNames().clickEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    });
 }
 
 void Notification::dispatchCloseEvent()
 {
     ASSERT(isMainThread());
-
-    switch (m_notificationSource) {
-    case NotificationSource::Document:
-        queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        break;
-    case NotificationSource::ServiceWorker:
-        ServiceWorkerGlobalScope::ensureOnContextThread(m_contextIdentifier, [this, protectedThis = Ref { *this }](auto& context) {
-            downcast<ServiceWorkerGlobalScope>(context).postTaskToFireNotificationEvent(NotificationEventType::Close, *this, { });
-        });
-        break;
-    }
-
+    ASSERT(m_notificationSource == NotificationSource::Document);
+    queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
     finalize();
 }
 
@@ -324,9 +319,15 @@ bool Notification::virtualHasPendingActivity() const
 
 NotificationData Notification::data() const
 {
-    auto sessionID = scriptExecutionContext()->sessionID();
+    auto& context = *scriptExecutionContext();
+    auto sessionID = context.sessionID();
     RELEASE_ASSERT(sessionID);
 
+    URL serviceWorkerRegistrationURL;
+#if ENABLE(SERVICE_WORKER)
+    if (is<ServiceWorkerGlobalScope>(context))
+        serviceWorkerRegistrationURL = downcast<ServiceWorkerGlobalScope>(context).registration().data().scopeURL;
+#endif
     return {
         m_title.isolatedCopy(),
         m_body.isolatedCopy(),
@@ -335,6 +336,7 @@ NotificationData Notification::data() const
         m_lang,
         m_direction,
         scriptExecutionContext()->securityOrigin()->toString().isolatedCopy(),
+        WTFMove(serviceWorkerRegistrationURL).isolatedCopy(),
         identifier(),
         *sessionID,
     };

@@ -29,6 +29,7 @@
 #include "APISecurityOrigin.h"
 #include "Connection.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/NotificationData.h>
 #include <wtf/Identified.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -47,17 +48,22 @@ public:
         return adoptRef(*new WebNotification(data, pageIdentifier, sourceConnection));
     }
 
-    const String& title() const { return m_title; }
-    const String& body() const { return m_body; }
-    const String& iconURL() const { return m_iconURL; }
-    const String& tag() const { return m_tag; }
-    const String& lang() const { return m_lang; }
-    WebCore::NotificationDirection dir() const { return m_dir; }
+    const String& title() const { return m_data.title; }
+    const String& body() const { return m_data.body; }
+    const String& iconURL() const { return m_data.iconURL; }
+    const String& tag() const { return m_data.tag; }
+    const String& lang() const { return m_data.language; }
+    WebCore::NotificationDirection dir() const { return m_data.direction; }
+    const UUID& coreNotificationID() const { return m_data.notificationID; }
+    PAL::SessionID sessionID() const { return m_data.sourceSession; }
+
+    const WebCore::NotificationData& data() const { return m_data; }
+    bool isPersistentNotification() const { return !m_data.serviceWorkerRegistrationURL.isEmpty(); }
+
     const API::SecurityOrigin* origin() const { return m_origin.get(); }
     API::SecurityOrigin* origin() { return m_origin.get(); }
 
     uint64_t notificationID() const { return identifier(); }
-    const UUID& coreNotificationID() const { return m_coreNotificationID; }
 
     WebPageProxyIdentifier pageIdentifier() const { return m_pageIdentifier; }
     IPC::Connection* sourceConnection() const { return m_sourceConnection.get(); }
@@ -65,15 +71,8 @@ public:
 private:
     WebNotification(const WebCore::NotificationData&, WebPageProxyIdentifier, IPC::Connection&);
 
-    String m_title;
-    String m_body;
-    String m_iconURL;
-    String m_tag;
-    String m_lang;
-    WebCore::NotificationDirection m_dir;
+    WebCore::NotificationData m_data;
     RefPtr<API::SecurityOrigin> m_origin;
-    UUID m_coreNotificationID;
-
     WebPageProxyIdentifier m_pageIdentifier;
     WeakPtr<IPC::Connection> m_sourceConnection;
 };

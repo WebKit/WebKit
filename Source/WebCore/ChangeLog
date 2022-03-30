@@ -1,3 +1,71 @@
+2022-03-30  Youenn Fablet  <youenn@apple.com>
+
+        Implement persistent notification handling
+        https://bugs.webkit.org/show_bug.cgi?id=238498
+
+        Reviewed by Brady Eidson.
+
+        Before the patch, we were directly going from UIProcess to service worker process.
+        This works if the service worker is running but does not otherwise.
+        To make sure we now go to NetworkProcess.
+        To implement https://notifications.spec.whatwg.org/#persistent-notification,
+        we add a service worker registration URL to NotficationData.
+        We remove the notfication handling going through NotificationEvent and make it Document specific.
+        Instead, we go through ServiceWorkerThreadProxy.
+        Make sure SWServer treats notification events as functional events.
+        Covered by updated test.
+
+        * Headers.cmake:
+        * Modules/notifications/Notification.cpp:
+        (WebCore::Notification::create):
+        (WebCore::Notification::dispatchClickEvent):
+        (WebCore::Notification::dispatchCloseEvent):
+        (WebCore::Notification::data const):
+        * Modules/notifications/Notification.h:
+        * Modules/notifications/NotificationData.cpp:
+        (WebCore::NotificationData::isolatedCopy const):
+        (WebCore::NotificationData::isolatedCopy):
+        * Modules/notifications/NotificationData.h:
+        (WebCore::NotificationData::encode const):
+        (WebCore::NotificationData::decode):
+        * Modules/notifications/NotificationEvent.h:
+        * Modules/notifications/NotificationEventType.h: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::postTaskToFireNotificationEvent): Deleted.
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::fireNotificationEvent):
+        * workers/service/context/SWContextManager.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::queueTaskToFirePushSubscriptionChangeEvent):
+        (WebCore::ServiceWorkerThread::queueTaskToFireNotificationEvent):
+        (WebCore::ServiceWorkerThread::startFunctionalEventMonitoring):
+        (WebCore::ServiceWorkerThread::heartBeatTimerFired):
+        (WebCore::ServiceWorkerThread::startPushEventMonitoring): Deleted.
+        * workers/service/context/ServiceWorkerThread.h:
+        (WebCore::ServiceWorkerThread::stopFunctionalEventMonitoring):
+        (WebCore::ServiceWorkerThread::stopPushEventMonitoring): Deleted.
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy):
+        (WebCore::ServiceWorkerThreadProxy::firePushEvent):
+        (WebCore::ServiceWorkerThreadProxy::fireNotificationEvent):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::unregisterServiceWorkerClient):
+        (WebCore::SWServer::processPushMessage):
+        (WebCore::SWServer::processNotificationEvent):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerToContextConnection.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::decrementFunctionalEventCounter):
+        (WebCore::SWServerWorker::terminateIfPossible):
+        (WebCore::SWServerWorker::decrementPushEventCounter): Deleted.
+        * workers/service/server/SWServerWorker.h:
+        (WebCore::SWServerWorker::incrementFunctionalEventCounter):
+        (WebCore::SWServerWorker::shouldContinue const):
+        (WebCore::SWServerWorker::incrementPushEventCounter): Deleted.
+
 2022-03-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK][WPE] generate-bundle: self-contained bundle for the MiniBrowser that can work on any distro

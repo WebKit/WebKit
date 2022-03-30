@@ -30,13 +30,9 @@
 #include "ExtendableEvent.h"
 #include "ExtendableEventInit.h"
 #include "Notification.h"
+#include "NotificationEventType.h"
 
 namespace WebCore {
-
-enum class NotificationEventType : bool {
-    Click,
-    Close,
-};
 
 struct NotificationEventInit : ExtendableEventInit {
     RefPtr<Notification> notification;

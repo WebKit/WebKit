@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebNotification.h"
+#pragma once
 
-#include <WebCore/NotificationData.h>
+#include <wtf/EnumTraits.h>
 
-namespace WebKit {
+namespace WebCore {
 
-WebNotification::WebNotification(const WebCore::NotificationData& data, WebPageProxyIdentifier pageIdentifier, IPC::Connection& sourceConnection)
-    : m_data(data)
-    , m_origin(API::SecurityOrigin::createFromString(data.originString))
-    , m_pageIdentifier(pageIdentifier)
-    , m_sourceConnection(sourceConnection)
-{
+enum class NotificationEventType : bool {
+    Click,
+    Close,
+};
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::NotificationEventType> {
+    using values = EnumValues<
+        WebCore::NotificationEventType,
+        WebCore::NotificationEventType::Click,
+        WebCore::NotificationEventType::Close
+    >;
+};
+
 }
-
-} // namespace WebKit

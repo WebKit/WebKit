@@ -174,12 +174,17 @@ void WebNotificationManager::cancel(Notification& notification, WebPage* page)
     ASSERT(isMainRunLoop());
 
 #if ENABLE(NOTIFICATIONS)
-    auto mappedNotification = m_notificationIDMap.get(notification.identifier());
-    if (!mappedNotification)
-        return;
-    ASSERT(mappedNotification == &notification);
+    auto identifier = notification.identifier();
+    auto mappedNotification = m_notificationIDMap.get(identifier);
+    if (!mappedNotification) {
+        auto relatedIdentifier = notification.relatedNotificationIdentifier();
+        if (!relatedIdentifier)
+            return;
+        identifier = *relatedIdentifier;
+    } else
+        ASSERT(mappedNotification == &notification);
 
-    if (!sendNotificationMessage(Messages::NotificationManagerMessageHandler::CancelNotification(notification.identifier()), notification, page))
+    if (!sendNotificationMessage(Messages::NotificationManagerMessageHandler::CancelNotification(identifier), notification, page))
         return;
 #else
     UNUSED_PARAM(notification);
@@ -194,12 +199,17 @@ void WebNotificationManager::didDestroyNotification(Notification& notification, 
 #if ENABLE(NOTIFICATIONS)
     Ref protectedNotification { notification };
 
-    auto takenNotification = m_notificationIDMap.take(notification.identifier());
-    if (!takenNotification)
-        return;
-    ASSERT(takenNotification == &notification);
+    auto identifier = notification.identifier();
+    auto takenNotification = m_notificationIDMap.take(identifier);
+    if (!takenNotification) {
+        auto relatedIdentifier = notification.relatedNotificationIdentifier();
+        if (!relatedIdentifier)
+            return;
+        identifier = *relatedIdentifier;
+    } else
+        ASSERT(takenNotification == &notification);
 
-    sendNotificationMessage(Messages::NotificationManagerMessageHandler::DidDestroyNotification(notification.identifier()), notification, page);
+    sendNotificationMessage(Messages::NotificationManagerMessageHandler::DidDestroyNotification(identifier), notification, page);
 #else
     UNUSED_PARAM(notification);
     UNUSED_PARAM(page);

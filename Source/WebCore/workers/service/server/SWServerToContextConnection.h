@@ -28,6 +28,7 @@
 #if ENABLE(SERVICE_WORKER)
 
 #include "ExceptionData.h"
+#include "NotificationEventType.h"
 #include "PageIdentifier.h"
 #include "RegistrableDomain.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -39,6 +40,7 @@
 
 namespace WebCore {
 
+struct NotificationData;
 class SWServer;
 struct ServiceWorkerClientData;
 struct ServiceWorkerContextData;
@@ -65,7 +67,8 @@ public:
     virtual void terminateWorker(ServiceWorkerIdentifier) = 0;
     virtual void didSaveScriptsToDisk(ServiceWorkerIdentifier, const ScriptBuffer&, const HashMap<URL, ScriptBuffer>& importedScripts) = 0;
     virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>&) = 0;
-    virtual void firePushEvent(ServiceWorkerIdentifier, const std::optional<Vector<uint8_t>>&, CompletionHandler<void(bool)>&& callback) = 0;
+    virtual void firePushEvent(ServiceWorkerIdentifier, const std::optional<Vector<uint8_t>>&, CompletionHandler<void(bool)>&&) = 0;
+    virtual void fireNotificationEvent(ServiceWorkerIdentifier, const NotificationData&, NotificationEventType, CompletionHandler<void(bool)>&&) = 0;
     virtual ProcessIdentifier webProcessIdentifier() const = 0;
 
     // Messages back from the SW host process

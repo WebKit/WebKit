@@ -397,10 +397,10 @@ std::optional<ScriptExecutionContextIdentifier> SWServerWorker::serviceWorkerPag
     return m_registration->serviceWorkerPageIdentifier();
 }
 
-void SWServerWorker::decrementPushEventCounter()
+void SWServerWorker::decrementFunctionalEventCounter()
 {
-    ASSERT(m_pushEventCounter);
-    --m_pushEventCounter;
+    ASSERT(m_functionalEventCounter);
+    --m_functionalEventCounter;
     terminateIfPossible();
 }
 
@@ -412,7 +412,7 @@ void SWServerWorker::setAsInspected(bool isInspected)
 
 void SWServerWorker::terminateIfPossible()
 {
-    if (m_pushEventCounter || m_isInspected || !m_server || m_server->hasClientsWithOrigin(origin()))
+    if (m_functionalEventCounter || m_isInspected || !m_server || m_server->hasClientsWithOrigin(origin()))
         return;
 
     terminate();

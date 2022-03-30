@@ -291,6 +291,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/notifications/NotificationController.h
     Modules/notifications/NotificationData.h
     Modules/notifications/NotificationDirection.h
+    Modules/notifications/NotificationEventType.h
     Modules/notifications/NotificationPermission.h
     Modules/notifications/NotificationPermissionCallback.h
 

@@ -186,11 +186,16 @@ static void dispatchDidClickNotification(WebNotification* notification)
     if (!notification)
         return;
 
-    auto* connection = notification->sourceConnection();
-    if (!connection)
+#if ENABLE(SERVICE_WORKER)
+    if (notification->isPersistentNotification()) {
+        if (auto* dataStore = WebsiteDataStore::existingDataStoreForSessionID(notification->sessionID()))
+            dataStore->networkProcess().processNotificationEvent(notification->data(), NotificationEventType::Click);
         return;
+    }
+#endif
 
-    connection->send(Messages::WebNotificationManager::DidClickNotification(notification->coreNotificationID()), 0);
+    if (auto* connection = notification->sourceConnection())
+        connection->send(Messages::WebNotificationManager::DidClickNotification(notification->coreNotificationID()), 0);
 }
 
 void WebNotificationManagerProxy::providerDidClickNotification(uint64_t globalNotificationID)
@@ -241,6 +246,14 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
         auto notification = m_notifications.take(*coreNotificationID);
         if (!notification)
             continue;
+
+#if ENABLE(SERVICE_WORKER)
+        if (notification->isPersistentNotification()) {
+            if (auto* dataStore = WebsiteDataStore::existingDataStoreForSessionID(notification->sessionID()))
+                dataStore->networkProcess().processNotificationEvent(notification->data(), NotificationEventType::Close);
+            return;
+        }
+#endif
 
         m_globalNotificationMap.remove(notification->notificationID());
         closedNotifications.append(WTFMove(notification));

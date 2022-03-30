@@ -76,6 +76,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetworkStateNotifier.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/NotificationData.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
@@ -2290,6 +2291,12 @@ void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID session
 }
 
 #if ENABLE(SERVICE_WORKER)
+void NetworkProcess::processNotificationEvent(NotificationData&& data, NotificationEventType eventType)
+{
+    if (auto* session = networkSession(data.sourceSession))
+        session->ensureSWServer().processNotificationEvent(WTFMove(data), eventType);
+}
+
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
 
 void NetworkProcess::getPendingPushMessages(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&& callback)

@@ -65,7 +65,8 @@ public:
         String icon;
     };
     static Ref<Notification> create(ScriptExecutionContext&, String&& title, Options&&);
-    
+    static Ref<Notification> create(ScriptExecutionContext&, NotificationData&&);
+
     WEBCORE_EXPORT virtual ~Notification();
 
     void show();
@@ -99,6 +100,11 @@ public:
     using ThreadSafeRefCounted::ref;
     using ThreadSafeRefCounted::deref;
 
+    void markAsShown();
+    void showSoon();
+
+    std::optional<UUID> relatedNotificationIdentifier() const { return m_relatedNotificationIdentifier; }
+
 private:
     Notification(ScriptExecutionContext&, String&& title, Options&&);
     Notification(const Notification&);
@@ -107,8 +113,6 @@ private:
 
     NotificationClient* clientFromContext();
     EventTargetInterface eventTargetInterface() const final { return NotificationEventTargetInterfaceType; }
-
-    void showSoon();
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -138,6 +142,7 @@ private:
     };
     NotificationSource m_notificationSource;
     ScriptExecutionContextIdentifier m_contextIdentifier;
+    std::optional<UUID> m_relatedNotificationIdentifier;
 };
 
 } // namespace WebCore

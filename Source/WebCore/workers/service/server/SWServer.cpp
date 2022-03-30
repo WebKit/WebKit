@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "ExceptionData.h"
 #include "Logging.h"
+#include "NotificationData.h"
 #include "RegistrationStore.h"
 #include "SWOriginStore.h"
 #include "SWServerJobQueue.h"
@@ -1049,7 +1050,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
             if (removeContextConnectionIfPossible(clientRegistrableDomain) == ShouldDelayRemoval::Yes) {
                 auto iterator = m_clientIdentifiersPerOrigin.find(clientOrigin);
                 ASSERT(iterator != m_clientIdentifiersPerOrigin.end());
-                iterator->value.terminateServiceWorkersTimer->startOneShot(m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultPushMessageDuration);
+                iterator->value.terminateServiceWorkersTimer->startOneShot(m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
                 return;
             }
 
@@ -1303,19 +1304,58 @@ void SWServer::processPushMessage(std::optional<Vector<uint8_t>>&& data, URL&& r
 
             auto serviceWorkerIdentifier = worker->identifier();
 
-            worker->incrementPushEventCounter();
+            worker->incrementFunctionalEventCounter();
             auto terminateWorkerTimer = makeUnique<Timer>([worker] {
                 RELEASE_LOG_ERROR(ServiceWorker, "Service worker is taking too much time to process a push event");
-                worker->decrementPushEventCounter();
+                worker->decrementFunctionalEventCounter();
             });
-            terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultPushMessageDuration);
+            terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
             connectionOrStatus.value()->firePushEvent(serviceWorkerIdentifier, data, [callback = WTFMove(callback), terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool succeeded) mutable {
                 if (terminateWorkerTimer->isActive()) {
-                    worker->decrementPushEventCounter();
+                    worker->decrementFunctionalEventCounter();
                     terminateWorkerTimer->stop();
                 }
 
                 callback(succeeded);
+            });
+        });
+    });
+}
+
+void SWServer::processNotificationEvent(NotificationData&& data, NotificationEventType type)
+{
+    whenImportIsCompletedIfNeeded([this, weakThis = WeakPtr { *this }, data = WTFMove(data), type]() mutable {
+        if (!weakThis)
+            return;
+
+        auto origin = SecurityOriginData::fromURL(data.serviceWorkerRegistrationURL);
+        ServiceWorkerRegistrationKey registrationKey { WTFMove(origin), URL { data.serviceWorkerRegistrationURL } };
+        auto registration = m_scopeToRegistrationMap.get(registrationKey);
+        if (!registration)
+            return;
+
+        auto* worker = registration->activeWorker();
+        if (!worker)
+            return;
+
+        fireFunctionalEvent(*registration, [worker = Ref { *worker }, weakThis = WTFMove(weakThis), data = WTFMove(data), type](auto&& connectionOrStatus) mutable {
+            if (!connectionOrStatus.has_value())
+                return;
+
+            auto serviceWorkerIdentifier = worker->identifier();
+
+            worker->incrementFunctionalEventCounter();
+            auto terminateWorkerTimer = makeUnique<Timer>([worker] {
+                RELEASE_LOG_ERROR(ServiceWorker, "Service worker is taking too much time to process a notification event");
+                worker->decrementFunctionalEventCounter();
+            });
+            terminateWorkerTimer->startOneShot(weakThis && weakThis->m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration);
+            connectionOrStatus.value()->fireNotificationEvent(serviceWorkerIdentifier, data, type, [terminateWorkerTimer = WTFMove(terminateWorkerTimer), worker = WTFMove(worker)](bool /* succeeded */) mutable {
+                // FIXME: if succeeded is false, should we implement a default action like opening a new page?
+                if (terminateWorkerTimer->isActive()) {
+                    worker->decrementFunctionalEventCounter();
+                    terminateWorkerTimer->stop();
+                }
             });
         });
     });

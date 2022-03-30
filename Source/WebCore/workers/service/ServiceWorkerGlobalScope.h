@@ -81,10 +81,6 @@ public:
 
     WEBCORE_EXPORT Page* serviceWorkerPage();
 
-#if ENABLE(NOTIFICATION_EVENT)
-    void postTaskToFireNotificationEvent(NotificationEventType, Notification&, const String& action);
-#endif
-
     bool hasPendingSilentPushEvent() const { return m_hasPendingSilentPushEvent; }
     void setHasPendingSilentPushEvent(bool value) { m_hasPendingSilentPushEvent = value; }
 

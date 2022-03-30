@@ -1,3 +1,51 @@
+2022-03-30  Youenn Fablet  <youenn@apple.com>
+
+        Implement persistent notification handling
+        https://bugs.webkit.org/show_bug.cgi?id=238498
+
+        Reviewed by Brady Eidson.
+
+        When receiving an update for a notification, check if the notification is tied to a service worker registration.
+        If so, go to network process to fire a functional event, as per https://notifications.spec.whatwg.org/#activating-a-notification
+        and https://notifications.spec.whatwg.org/#ref-for-fire-a-service-worker-notification-event①
+        UIProcess sends the corresponding NotficationData to NetworkProcess.
+        NetworkProcess gets the service worker registration, runs the service worker as needed and fires the functional event.
+        Add IPC plumbing code to support this flow.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::processNotificationEvent):
+        (WebKit::NetworkProcess::processPushMessage):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::firePushEvent):
+        (WebKit::WebSWServerToContextConnection::fireNotificationEvent):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::processNotificationEvent):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Notifications/WebNotification.cpp:
+        (WebKit::WebNotification::WebNotification):
+        * UIProcess/Notifications/WebNotification.h:
+        (WebKit::WebNotification::title const):
+        (WebKit::WebNotification::body const):
+        (WebKit::WebNotification::iconURL const):
+        (WebKit::WebNotification::tag const):
+        (WebKit::WebNotification::lang const):
+        (WebKit::WebNotification::dir const):
+        (WebKit::WebNotification::coreNotificationID const):
+        (WebKit::WebNotification::sessionID const):
+        (WebKit::WebNotification::data const):
+        (WebKit::WebNotification::isPersistentNotification const):
+        (WebKit::WebNotification::notificationID const):
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::dispatchDidClickNotification):
+        (WebKit::WebNotificationManagerProxy::providerDidCloseNotifications):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::fireNotificationEvent):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+
 2022-03-30  Chris Dumez  <cdumez@apple.com>
 
         Add HashTranslator for ASCIILiteral for faster lookup in HashMaps / HashSets

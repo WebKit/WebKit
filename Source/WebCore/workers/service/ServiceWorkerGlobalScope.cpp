@@ -199,29 +199,6 @@ void ServiceWorkerGlobalScope::didSaveScriptsToDisk(ScriptBuffer&& script, HashM
     }
 }
 
-#if ENABLE(NOTIFICATION_EVENT)
-void ServiceWorkerGlobalScope::postTaskToFireNotificationEvent(NotificationEventType eventType, Notification& notification, const String& action)
-{
-    thread().runLoop().postTaskForMode([eventType, protectedNotification = Ref { notification }, action = action.isolatedCopy()](auto& scope) {
-        scope.eventLoop().queueTask(TaskSource::DOMManipulation, [&scope, protectedScope = Ref { scope }, eventType, protectedNotification, action] {
-            AtomString eventName;
-            switch (eventType) {
-            case NotificationEventType::Click:
-                eventName = eventNames().notificationclickEvent;
-                downcast<ServiceWorkerGlobalScope>(scope).recordUserGesture();
-                break;
-            case NotificationEventType::Close:
-                eventName = eventNames().notificationcloseEvent;
-                break;
-            }
-
-            auto event = NotificationEvent::create(eventName, protectedNotification.ptr(), action, ExtendableEvent::IsTrusted::Yes);
-            downcast<ServiceWorkerGlobalScope>(scope).dispatchEvent(event);
-        });
-    }, WorkerRunLoop::defaultMode());
-}
-#endif
-
 void ServiceWorkerGlobalScope::recordUserGesture()
 {
     m_isProcessingUserGesture = true;

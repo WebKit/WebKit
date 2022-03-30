@@ -1763,6 +1763,11 @@ void NetworkProcessProxy::processPushMessage(PAL::SessionID sessionID, const Web
 {
     sendWithAsyncReply(Messages::NetworkProcess::ProcessPushMessage { sessionID, pushMessage }, WTFMove(callback));
 }
+
+void NetworkProcessProxy::processNotificationEvent(const NotificationData& data, NotificationEventType eventType)
+{
+    send(Messages::NetworkProcess::ProcessNotificationEvent { data, eventType }, 0);
+}
 #endif // ENABLE(SERVICE_WORKER)
 
 void NetworkProcessProxy::deletePushAndNotificationRegistration(PAL::SessionID sessionID, const SecurityOriginData& origin, CompletionHandler<void(const String&)>&& callback)

@@ -41,6 +41,7 @@
 #include "WebsiteDataStore.h"
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/NotificationEventType.h>
 #include <WebCore/RegistrableDomain.h>
 #include <memory>
 #include <wtf/Deque.h>
@@ -72,13 +73,14 @@ class AuthenticationChallenge;
 class SharedBuffer;
 class ProtectionSpace;
 class ResourceRequest;
+class SecurityOrigin;
 enum class ShouldSample : bool;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : bool;
 enum class StoredCredentialsPolicy : uint8_t;
-class SecurityOrigin;
-struct SecurityOriginData;
 struct ClientOrigin;
+struct NotificationData;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
@@ -284,6 +286,7 @@ public:
 #if ENABLE(SERVICE_WORKER)
     void getPendingPushMessages(PAL::SessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
     void processPushMessage(PAL::SessionID, const WebPushMessage&, CompletionHandler<void(bool wasProcessed)>&&);
+    void processNotificationEvent(const WebCore::NotificationData&, WebCore::NotificationEventType);
 #endif
 
     void deletePushAndNotificationRegistration(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);

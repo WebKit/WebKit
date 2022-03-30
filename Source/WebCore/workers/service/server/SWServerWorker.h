@@ -135,11 +135,11 @@ public:
 
     WorkerThreadMode workerThreadMode() const;
 
-    void incrementPushEventCounter() { ++m_pushEventCounter; }
-    void decrementPushEventCounter();
+    void incrementFunctionalEventCounter() { ++m_functionalEventCounter; }
+    void decrementFunctionalEventCounter();
     void setAsInspected(bool);
 
-    bool shouldContinue() const { return !!m_pushEventCounter || m_isInspected; }
+    bool shouldContinue() const { return !!m_functionalEventCounter || m_isInspected; }
 
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
@@ -173,7 +173,7 @@ private:
     Vector<CompletionHandler<void()>> m_terminationCallbacks;
     Timer m_terminationTimer;
     LastNavigationWasAppInitiated m_lastNavigationWasAppInitiated;
-    int m_pushEventCounter { 0 };
+    int m_functionalEventCounter { 0 };
     bool m_isInspected { false };
 };
 

@@ -85,6 +85,7 @@ public:
     void fireActivateEvent();
     void firePushEvent(std::optional<Vector<uint8_t>>&&, CompletionHandler<void(bool)>&&);
     void firePushSubscriptionChangeEvent(std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData);
+    void fireNotificationEvent(NotificationData&&, NotificationEventType, CompletionHandler<void(bool)>&&);
 
     void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
 
@@ -118,8 +119,8 @@ private:
 
     ServiceWorkerInspectorProxy m_inspectorProxy;
     HashMap<std::pair<SWServerConnectionIdentifier, FetchIdentifier>, Ref<ServiceWorkerFetch::Client>> m_ongoingFetchTasks;
-    uint64_t m_pushTasksCounter { 0 };
-    HashMap<uint64_t, CompletionHandler<void(bool)>> m_ongoingPushTasks;
+    uint64_t m_functionalEventTasksCounter { 0 };
+    HashMap<uint64_t, CompletionHandler<void(bool)>> m_ongoingFunctionalEventTasks;
 };
 
 } // namespace WebKit

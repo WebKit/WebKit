@@ -92,8 +92,8 @@ ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
     ASSERT(allServiceWorkerThreadProxies().contains(this));
     allServiceWorkerThreadProxies().remove(this);
 
-    auto pushTasks = WTFMove(m_ongoingPushTasks);
-    for (auto& callback : pushTasks.values())
+    auto functionalEventTasks = WTFMove(m_ongoingFunctionalEventTasks);
+    for (auto& callback : functionalEventTasks.values())
         callback(false);
 }
 
@@ -283,24 +283,24 @@ void ServiceWorkerThreadProxy::didSaveScriptsToDisk(ScriptBuffer&& script, HashM
 
 void ServiceWorkerThreadProxy::firePushEvent(std::optional<Vector<uint8_t>>&& data, CompletionHandler<void(bool)>&& callback)
 {
-    if (m_ongoingPushTasks.isEmpty())
-        thread().startPushEventMonitoring();
+    if (m_ongoingFunctionalEventTasks.isEmpty())
+        thread().startFunctionalEventMonitoring();
 
-    auto identifier = ++m_pushTasksCounter;
-    ASSERT(!m_ongoingPushTasks.contains(identifier));
-    m_ongoingPushTasks.add(identifier, WTFMove(callback));
+    auto identifier = ++m_functionalEventTasksCounter;
+    ASSERT(!m_ongoingFunctionalEventTasks.contains(identifier));
+    m_ongoingFunctionalEventTasks.add(identifier, WTFMove(callback));
     bool isPosted = postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, identifier, data = WTFMove(data)](auto&) mutable {
         thread().queueTaskToFirePushEvent(WTFMove(data), [this, protectedThis = WTFMove(protectedThis), identifier](bool result) mutable {
             callOnMainThread([this, protectedThis = WTFMove(protectedThis), identifier, result]() mutable {
-                if (auto callback = m_ongoingPushTasks.take(identifier))
+                if (auto callback = m_ongoingFunctionalEventTasks.take(identifier))
                     callback(result);
-                if (m_ongoingPushTasks.isEmpty())
-                    thread().stopPushEventMonitoring();
+                if (m_ongoingFunctionalEventTasks.isEmpty())
+                    thread().stopFunctionalEventMonitoring();
             });
         });
     }, WorkerRunLoop::defaultMode());
     if (!isPosted)
-        m_ongoingPushTasks.take(identifier)(false);
+        m_ongoingFunctionalEventTasks.take(identifier)(false);
 }
 
 void ServiceWorkerThreadProxy::firePushSubscriptionChangeEvent(std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData)
@@ -309,6 +309,34 @@ void ServiceWorkerThreadProxy::firePushSubscriptionChangeEvent(std::optional<Pus
     thread().runLoop().postTask([this, protectedThis = Ref { *this }, newSubscriptionData = crossThreadCopy(WTFMove(newSubscriptionData)), oldSubscriptionData = crossThreadCopy(WTFMove(oldSubscriptionData))](auto&) mutable {
         thread().queueTaskToFirePushSubscriptionChangeEvent(WTFMove(newSubscriptionData), WTFMove(oldSubscriptionData));
     });
+}
+
+void ServiceWorkerThreadProxy::fireNotificationEvent(NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
+{
+#if ENABLE(NOTIFICATION_EVENT)
+    if (m_ongoingFunctionalEventTasks.isEmpty())
+        thread().startFunctionalEventMonitoring();
+
+    auto identifier = ++m_functionalEventTasksCounter;
+    ASSERT(!m_ongoingFunctionalEventTasks.contains(identifier));
+    m_ongoingFunctionalEventTasks.add(identifier, WTFMove(callback));
+    bool isPosted = postTaskForModeToWorkerOrWorkletGlobalScope([this, protectedThis = Ref { *this }, identifier, data = WTFMove(data).isolatedCopy(), eventType](auto&) mutable {
+        thread().queueTaskToFireNotificationEvent(WTFMove(data), eventType, [this, protectedThis = WTFMove(protectedThis), identifier](bool result) mutable {
+            callOnMainThread([this, protectedThis = WTFMove(protectedThis), identifier, result]() mutable {
+                if (auto callback = m_ongoingFunctionalEventTasks.take(identifier))
+                    callback(result);
+                if (m_ongoingFunctionalEventTasks.isEmpty())
+                    thread().stopFunctionalEventMonitoring();
+            });
+        });
+    }, WorkerRunLoop::defaultMode());
+    if (!isPosted)
+        m_ongoingFunctionalEventTasks.take(identifier)(false);
+#else
+    UNUSED_PARAM(data);
+    UNUSED_PARAM(eventType);
+    callback(false);
+#endif
 }
 
 } // namespace WebCore

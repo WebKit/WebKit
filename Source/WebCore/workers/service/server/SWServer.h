@@ -58,10 +58,12 @@ class SWServerJobQueue;
 class SWServerRegistration;
 class SWServerToContextConnection;
 class Timer;
+enum class NotificationEventType : bool;
 enum class ServiceWorkerRegistrationState : uint8_t;
 enum class ServiceWorkerState : uint8_t;
 struct ExceptionData;
 struct MessageWithMessagePorts;
+struct NotificationData;
 struct ServiceWorkerClientQueryOptions;
 struct ServiceWorkerContextData;
 struct ServiceWorkerRegistrationData;
@@ -219,12 +221,13 @@ public:
     WEBCORE_EXPORT void handleLowMemoryWarning();
 
     static constexpr Seconds defaultTerminationDelay = 10_s;
-    static constexpr Seconds defaultPushMessageDuration = 2_s;
+    static constexpr Seconds defaultFunctionalEventDuration = 2_s;
 
     LastNavigationWasAppInitiated clientIsAppInitiatedForRegistrableDomain(const RegistrableDomain&);
     bool shouldRunServiceWorkersOnMainThreadForTesting() const { return m_shouldRunServiceWorkersOnMainThreadForTesting; }
 
     WEBCORE_EXPORT void processPushMessage(std::optional<Vector<uint8_t>>&&, URL&&, CompletionHandler<void(bool)>&&);
+    WEBCORE_EXPORT void processNotificationEvent(NotificationData&&, NotificationEventType);
 
     enum class ShouldSkipEvent : bool { No, Yes };
     void fireFunctionalEvent(SWServerRegistration&, CompletionHandler<void(Expected<SWServerToContextConnection*, ShouldSkipEvent>)>&&);
