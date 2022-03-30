@@ -114,7 +114,7 @@ void serialize(StringBuilder& builder, const SizeQuery& sizeQuery)
 
 void serialize(StringBuilder& builder, const SizeFeature& sizeFeature)
 {
-    auto serializeComparisonOperator = [&](ComparisonOperator op) {
+    auto serializeRangeComparisonOperator = [&](ComparisonOperator op) {
         builder.append(' ');
         switch (op) {
         case ComparisonOperator::LessThan:
@@ -136,16 +136,45 @@ void serialize(StringBuilder& builder, const SizeFeature& sizeFeature)
         builder.append(' ');
     };
 
-    if (sizeFeature.leftComparison) {
-        builder.append(sizeFeature.leftComparison->value->cssText());
-        serializeComparisonOperator(sizeFeature.leftComparison->op);
-    }
+    switch (sizeFeature.syntax) {
+    case Syntax::Boolean:
+        serializeIdentifier(sizeFeature.name, builder);
+        break;
 
-    serializeIdentifier(sizeFeature.name, builder);
+    case Syntax::Colon:
+        switch (sizeFeature.rightComparison->op) {
+        case ComparisonOperator::LessThanOrEqual:
+            builder.append("max-");
+            break;
+        case ComparisonOperator::Equal:
+            break;
+        case ComparisonOperator::GreaterThanOrEqual:
+            builder.append("min-");
+            break;
+        case ComparisonOperator::LessThan:
+        case ComparisonOperator::GreaterThan:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+        serializeIdentifier(sizeFeature.name, builder);
 
-    if (sizeFeature.rightComparison) {
-        serializeComparisonOperator(sizeFeature.rightComparison->op);
+        builder.append(": ");
         builder.append(sizeFeature.rightComparison->value->cssText());
+        break;
+
+    case Syntax::Range:
+        if (sizeFeature.leftComparison) {
+            builder.append(sizeFeature.leftComparison->value->cssText());
+            serializeRangeComparisonOperator(sizeFeature.leftComparison->op);
+        }
+
+        serializeIdentifier(sizeFeature.name, builder);
+
+        if (sizeFeature.rightComparison) {
+            serializeRangeComparisonOperator(sizeFeature.rightComparison->op);
+            builder.append(sizeFeature.rightComparison->value->cssText());
+        }
+        break;
     }
 }
 

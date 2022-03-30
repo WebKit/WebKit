@@ -176,19 +176,25 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumeSizeFeature(CSSParse
     return consumeRangeSizeFeature(range);
 }
 
+static String consumeFeatureName(CSSParserTokenRange& range)
+{
+    if (range.peek().type() != IdentToken)
+        return nullAtom();
+    return range.consumeIncludingWhitespace().value().convertToASCIILowercase();
+}
+
 std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSSParserTokenRange& range)
 {
     auto consumePlainFeatureName = [&]() -> std::pair<AtomString, CQ::ComparisonOperator> {
-        if (range.peek().type() != IdentToken)
+        auto name = consumeFeatureName(range);
+        if (name.isEmpty())
             return { };
-        auto token = range.consumeIncludingWhitespace();
-        auto name = token.value();
         if (name.startsWith("min-"))
-            return { name.substring(4).toAtomString(), CQ::ComparisonOperator::GreaterThanOrEqual };
+            return { name.substring(4), CQ::ComparisonOperator::GreaterThanOrEqual };
         if (name.startsWith("max-"))
-            return { name.substring(4).toAtomString(), CQ::ComparisonOperator::LessThanOrEqual };
+            return { name.substring(4), CQ::ComparisonOperator::LessThanOrEqual };
 
-        return { name.toAtomString(), CQ::ComparisonOperator::Equal };
+        return { name, CQ::ComparisonOperator::Equal };
     };
 
     auto [featureName, op] = consumePlainFeatureName();
@@ -200,7 +206,7 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSS
     if (range.atEnd()) {
         if (op != CQ::ComparisonOperator::Equal)
             return { };
-        return CQ::SizeFeature { featureName, { }, { } };
+        return CQ::SizeFeature { featureName, CQ::Syntax::Boolean, { }, { } };
     }
 
     if (range.peek().type() != ColonToken)
@@ -212,17 +218,11 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumePlainSizeFeature(CSS
 
     auto value = consumeValue(range);
     
-    return CQ::SizeFeature { featureName, { }, CQ::Comparison { op, WTFMove(value) } };
+    return CQ::SizeFeature { featureName, CQ::Syntax::Colon, { }, CQ::Comparison { op, WTFMove(value) } };
 }
 
 std::optional<CQ::SizeFeature> ContainerQueryParser::consumeRangeSizeFeature(CSSParserTokenRange& range)
 {
-    auto consumeFeatureName = [&]() -> AtomString {
-        if (range.peek().type() != IdentToken)
-            return { };
-        return range.consumeIncludingWhitespace().value().toAtomString();
-    };
-
     auto consumeRangeOperator = [&]() -> std::optional<CQ::ComparisonOperator> {
         if (range.atEnd())
             return { };
@@ -275,7 +275,7 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumeRangeSizeFeature(CSS
 
     auto leftComparison = consumeLeftComparison();
 
-    auto featureName = consumeFeatureName();
+    auto featureName = consumeFeatureName(range);
     if (featureName.isEmpty())
         return { };
 
@@ -284,7 +284,7 @@ std::optional<CQ::SizeFeature> ContainerQueryParser::consumeRangeSizeFeature(CSS
     if (!leftComparison && !rightComparison)
         return { };
 
-    return CQ::SizeFeature { WTFMove(featureName), WTFMove(leftComparison), WTFMove(rightComparison) };
+    return CQ::SizeFeature { WTFMove(featureName), CQ::Syntax::Range, WTFMove(leftComparison), WTFMove(rightComparison) };
 }
 
 RefPtr<CSSValue> ContainerQueryParser::consumeValue(CSSParserTokenRange& range)

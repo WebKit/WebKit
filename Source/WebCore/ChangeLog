@@ -1,3 +1,26 @@
+2022-03-30  Antti Koivisto  <antti@apple.com>
+
+        [CSS Container Queries] Keep colon syntax when serializing container condition
+        https://bugs.webkit.org/show_bug.cgi?id=238542
+
+        Reviewed by Tim Nguyen.
+
+        Don't switch to the range syntax when serializing (min-width: 100px) and similar.
+
+        * css/ContainerQuery.cpp:
+        (WebCore::CQ::serialize):
+
+        Add an enum that remembers the syntax used and use it when deciding how to serialize.
+
+        * css/ContainerQuery.h:
+        * css/ContainerQueryParser.cpp:
+        (WebCore::consumeFeatureName):
+        (WebCore::ContainerQueryParser::consumePlainSizeFeature):
+
+        Also fix a bug where plain size feature names were not lowercased.
+
+        (WebCore::ContainerQueryParser::consumeRangeSizeFeature):
+
 2022-03-30  Youenn Fablet  <youenn@apple.com>
 
         Implement persistent notification handling

@@ -49,6 +49,7 @@ using ContainerQuery = std::variant<ContainerCondition, SizeQuery, UnknownQuery>
 
 enum class LogicalOperator : uint8_t { And, Or, Not };
 enum class ComparisonOperator : uint8_t { LessThan, LessThanOrEqual, Equal, GreaterThan, GreaterThanOrEqual };
+enum class Syntax : uint8_t { Boolean, Colon, Range };
 
 struct ContainerCondition {
     LogicalOperator logicalOperator { LogicalOperator::And };
@@ -67,6 +68,7 @@ struct Comparison {
 
 struct SizeFeature {
     AtomString name;
+    Syntax syntax;
     std::optional<Comparison> leftComparison;
     std::optional<Comparison> rightComparison;
 };
