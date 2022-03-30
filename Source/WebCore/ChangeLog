@@ -1,3 +1,16 @@
+2022-03-29  Brandon Stewart  <brandonstewart@apple.com>
+
+        Ensure m_layerRulesBeforeImportRules is properly copied during StyleSheetContents instantiation
+        https://bugs.webkit.org/show_bug.cgi?id=238537
+
+        Reviewed by Antti Koivisto.
+
+        During the instantiation of the StyleSheetContents the m_layerRulesBeforeImportRules was not being
+        properly copied.
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::StyleSheetContents):
+
 2022-03-29  Diego Pino Garcia  <dpino@igalia.com>
 
         [GCC] Ubuntu LTS build broken after r291956
