@@ -696,7 +696,7 @@ LastNavigationWasAppInitiated SWServer::clientIsAppInitiatedForRegistrableDomain
     for (auto& client : clientsForRegistrableDomain) {
         auto data = m_clientsById.find(client);
         ASSERT(data != m_clientsById.end());
-        if (data->value.lastNavigationWasAppInitiated == LastNavigationWasAppInitiated::Yes)
+        if (data->value->lastNavigationWasAppInitiated == LastNavigationWasAppInitiated::Yes)
             return LastNavigationWasAppInitiated::Yes;
     }
 
@@ -967,12 +967,12 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
         ASSERT(m_clientsById.contains(clientIdentifier));
         if (data.isFocused)
             data.focusOrder = ++m_focusOrder;
-        m_clientsById.set(clientIdentifier, WTFMove(data));
+        m_clientsById.set(clientIdentifier, makeUniqueRef<ServiceWorkerClientData>(WTFMove(data)));
         return;
     }
 
     ASSERT(!m_clientsById.contains(clientIdentifier));
-    m_clientsById.add(clientIdentifier, WTFMove(data));
+    m_clientsById.add(clientIdentifier, makeUniqueRef<ServiceWorkerClientData>(WTFMove(data)));
 
     auto& clientIdentifiersForOrigin = m_clientIdentifiersPerOrigin.ensure(clientOrigin, [] {
         return Clients { };

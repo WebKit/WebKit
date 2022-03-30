@@ -164,7 +164,7 @@ void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier wo
     send(Messages::WebSWClientConnection::UpdateWorkerState(worker, state));
 }
 
-void WebSWServerConnection::controlClient(ScriptExecutionContextIdentifier clientIdentifier, SWServerRegistration& registration, const ResourceRequest& request)
+void WebSWServerConnection::controlClient(const Vector<RefPtr<SecurityOrigin>>& frameAncestorOrigins, ScriptExecutionContextIdentifier clientIdentifier, SWServerRegistration& registration, const ResourceRequest& request)
 {
     // As per step 12 of https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm, the active service worker should be controlling the document.
     // We register a temporary service worker client using the identifier provided by DocumentLoader and notify DocumentLoader about it.
@@ -175,7 +175,8 @@ void WebSWServerConnection::controlClient(ScriptExecutionContextIdentifier clien
         unregisterServiceWorkerClient(clientIdentifier);
     });
 
-    ServiceWorkerClientData data { clientIdentifier, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, request.url(), { }, request.isAppInitiated() ? WebCore::LastNavigationWasAppInitiated::Yes : WebCore::LastNavigationWasAppInitiated::No };
+    auto ancestorOrigins = map(frameAncestorOrigins, [](auto& origin) { return origin->toString(); });
+    ServiceWorkerClientData data { clientIdentifier, ServiceWorkerClientType::Window, ServiceWorkerClientFrameType::None, request.url(), { }, request.isAppInitiated() ? WebCore::LastNavigationWasAppInitiated::Yes : WebCore::LastNavigationWasAppInitiated::No, false, false, 0, WTFMove(ancestorOrigins) };
     registerServiceWorkerClient(SecurityOriginData { registration.key().topOrigin() }, WTFMove(data), registration.identifier(), request.httpUserAgent());
 }
 
@@ -200,7 +201,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
             return nullptr;
 
         serviceWorkerRegistrationIdentifier = registration->identifier();
-        controlClient(*loader.parameters().options.clientIdentifier, *registration, request);
+        controlClient(loader.parameters().frameAncestorOrigins, *loader.parameters().options.clientIdentifier, *registration, request);
         loader.setResultingClientIdentifier(loader.parameters().options.clientIdentifier->toString());
     } else {
         if (!loader.parameters().serviceWorkerRegistrationIdentifier)

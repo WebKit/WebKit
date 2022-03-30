@@ -1,3 +1,13 @@
+2022-03-30  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorker WindowClient.ancestorOrigins
+        https://bugs.webkit.org/show_bug.cgi?id=238441
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::controlClient):
+
 2022-03-30  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Move AuxiliaryProcess::createIPCConnectionPair to IPC::Connection

@@ -1,3 +1,15 @@
+2022-03-30  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorker WindowClient.ancestorOrigins
+        https://bugs.webkit.org/show_bug.cgi?id=238441
+
+        Reviewed by Chris Dumez.
+
+        Update UniqueRef and HashTraits to not use a private constructor when creating empty values.
+
+        * wtf/HashTraits.h:
+        * wtf/UniqueRef.h:
+
 2022-03-28  Sihui Liu  <sihui_liu@apple.com>
 
         Disable custom storage paths for IndexedDB and LocalStorage by default

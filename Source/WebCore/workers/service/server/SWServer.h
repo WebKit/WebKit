@@ -280,7 +280,7 @@ private:
     };
     HashMap<ClientOrigin, Clients> m_clientIdentifiersPerOrigin;
     HashMap<ScriptExecutionContextIdentifier, WeakPtr<SWServerRegistration>> m_serviceWorkerPageIdentifierToRegistrationMap;
-    HashMap<ScriptExecutionContextIdentifier, ServiceWorkerClientData> m_clientsById;
+    HashMap<ScriptExecutionContextIdentifier, UniqueRef<ServiceWorkerClientData>> m_clientsById;
     HashMap<ScriptExecutionContextIdentifier, ServiceWorkerRegistrationIdentifier> m_clientToControllingRegistration;
     HashMap<String, ScriptExecutionContextIdentifier> m_visibleClientIdToInternalClientIdMap;
 

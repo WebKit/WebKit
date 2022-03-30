@@ -43,7 +43,8 @@ public:
     }
 
     VisibilityState visibilityState() const { return data().isVisible ? VisibilityState::Visible : VisibilityState::Hidden; }
-    bool isFocused() const { return data().isFocused; }
+    bool focused() const { return data().isFocused; }
+    const Vector<String>& ancestorOrigins() const { return data().ancestorOrigins; }
 
     void focus(ScriptExecutionContext&, Ref<DeferredPromise>&&);
     void navigate(ScriptExecutionContext&, const String& url, Ref<DeferredPromise>&&);

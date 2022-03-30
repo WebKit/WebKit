@@ -182,6 +182,12 @@ template<typename T> struct HashTraits<UniqueRef<T>> : SimpleClassHashTraits<Uni
     typedef std::nullptr_t EmptyValueType;
     static EmptyValueType emptyValue() { return nullptr; }
 
+    template <typename>
+    static void constructEmptyValue(UniqueRef<T>& slot)
+    {
+        new (NotNull, std::addressof(slot)) UniqueRef<T>(HashTableEmptyValue);
+    }
+
     static void constructDeletedValue(UniqueRef<T>& slot) { new (NotNull, std::addressof(slot)) UniqueRef<T> { reinterpret_cast<T*>(-1) }; }
     static bool isDeletedValue(const UniqueRef<T>& value) { return value.get() == reinterpret_cast<T*>(-1); }
 

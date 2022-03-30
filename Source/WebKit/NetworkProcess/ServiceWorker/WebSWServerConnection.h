@@ -129,7 +129,7 @@ private:
     void getPushPermissionState(WebCore::ServiceWorkerRegistrationIdentifier, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&&);
 
     void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destination, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source);
-    void controlClient(WebCore::ScriptExecutionContextIdentifier, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&);
+    void controlClient(const Vector<RefPtr<WebCore::SecurityOrigin>>&, WebCore::ScriptExecutionContextIdentifier, WebCore::SWServerRegistration&, const WebCore::ResourceRequest&);
 
     using ExceptionOrVoidCallback = CompletionHandler<void(std::optional<WebCore::ExceptionData>&&)>;
     void enableNavigationPreload(WebCore::ServiceWorkerRegistrationIdentifier, ExceptionOrVoidCallback&&);

@@ -1,3 +1,22 @@
+2022-03-30  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorker WindowClient.ancestorOrigins
+        https://bugs.webkit.org/show_bug.cgi?id=238441
+
+        Reviewed by Chris Dumez.
+
+        Add ancestorOrigins to ServiceWorkerClientData.
+        Migrate client map to UniqueRef since ServiceWorkerClientData size goes above 128.
+
+        Covered by updated tests.
+
+        * workers/service/ServiceWorkerClientData.cpp:
+        * workers/service/ServiceWorkerClientData.h:
+        * workers/service/ServiceWorkerWindowClient.h:
+        * workers/service/ServiceWorkerWindowClient.idl:
+        * workers/service/server/SWServer.cpp:
+        * workers/service/server/SWServer.h:
+
 2022-03-30  Zan Dobersek  <zdobersek@igalia.com>
 
         Slim down ANGLEHeaders.h

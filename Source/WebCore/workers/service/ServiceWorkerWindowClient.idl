@@ -30,7 +30,8 @@
     InterfaceName=WindowClient,
 ] interface ServiceWorkerWindowClient : ServiceWorkerClient {
     readonly attribute VisibilityState visibilityState;
-    [ImplementedAs=isFocused] readonly attribute boolean focused;
+    readonly attribute boolean focused;
+    [SameObject] readonly attribute FrozenArray<USVString> ancestorOrigins;
 
     [NewObject, CallWith=CurrentScriptExecutionContext] Promise<ServiceWorkerWindowClient> focus();
     [NewObject, CallWith=CurrentScriptExecutionContext] Promise<ServiceWorkerWindowClient> navigate(USVString url);

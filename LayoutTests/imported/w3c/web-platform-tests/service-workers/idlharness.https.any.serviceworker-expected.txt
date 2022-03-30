@@ -171,7 +171,7 @@ PASS WindowClient interface: existence and properties of interface prototype obj
 PASS WindowClient interface: existence and properties of interface prototype object's @@unscopables property
 PASS WindowClient interface: attribute visibilityState
 PASS WindowClient interface: attribute focused
-FAIL WindowClient interface: attribute ancestorOrigins assert_true: The prototype object must have a property "ancestorOrigins" expected true got false
+PASS WindowClient interface: attribute ancestorOrigins
 PASS WindowClient interface: operation focus()
 PASS WindowClient interface: operation navigate(USVString)
 PASS Clients interface: existence and properties of interface object

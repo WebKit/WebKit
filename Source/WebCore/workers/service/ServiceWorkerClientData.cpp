@@ -33,6 +33,7 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "SWClientConnection.h"
+#include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
 
@@ -58,12 +59,12 @@ static ServiceWorkerClientFrameType toServiceWorkerClientFrameType(ScriptExecuti
 
 ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() const &
 {
-    return { identifier, type, frameType, url.isolatedCopy(), pageIdentifier, lastNavigationWasAppInitiated, isVisible, isFocused, focusOrder };
+    return { identifier, type, frameType, url.isolatedCopy(), pageIdentifier, lastNavigationWasAppInitiated, isVisible, isFocused, focusOrder, crossThreadCopy(ancestorOrigins) };
 }
 
 ServiceWorkerClientData ServiceWorkerClientData::isolatedCopy() &&
 {
-    return { identifier, type, frameType, WTFMove(url).isolatedCopy(), pageIdentifier, lastNavigationWasAppInitiated, isVisible, isFocused, focusOrder };
+    return { identifier, type, frameType, WTFMove(url).isolatedCopy(), pageIdentifier, lastNavigationWasAppInitiated, isVisible, isFocused, focusOrder, crossThreadCopy(WTFMove(ancestorOrigins)) };
 }
 
 ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& context)
@@ -74,6 +75,12 @@ ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& co
     auto& document = downcast<Document>(context);
     auto lastNavigationWasAppInitiated = document.loader() && document.loader()->lastNavigationWasAppInitiated() ? LastNavigationWasAppInitiated::Yes : LastNavigationWasAppInitiated::No;
 
+    Vector<String> ancestorOrigins;
+    if (auto* frame = document.frame()) {
+        for (auto* ancestor = frame->tree().parent(); ancestor; ancestor = ancestor->tree().parent())
+            ancestorOrigins.append(ancestor->document()->securityOrigin().toString());
+    }
+
     return {
         context.identifier(),
         isDocument ? ServiceWorkerClientType::Window : ServiceWorkerClientType::Worker,
@@ -83,7 +90,8 @@ ServiceWorkerClientData ServiceWorkerClientData::from(ScriptExecutionContext& co
         lastNavigationWasAppInitiated,
         !document.hidden(),
         document.hasFocus(),
-        0
+        0,
+        WTFMove(ancestorOrigins)
     };
 }
 

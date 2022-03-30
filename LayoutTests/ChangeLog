@@ -1,3 +1,13 @@
+2022-03-30  Youenn Fablet  <youenn@apple.com>
+
+        Implement ServiceWorker WindowClient.ancestorOrigins
+        https://bugs.webkit.org/show_bug.cgi?id=238441
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/resources/third-party-worker.js:
+        * http/wpt/service-workers/third-party-registration.html:
+
 2022-03-29  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening

@@ -23,6 +23,10 @@ addEventListener('message', async (e) => {
             e.source.postMessage('cookie-is-set');
             return;
         }
+        if (e.data === 'ancestorOrigins') {
+            e.source.postMessage(e.source.ancestorOrigins);
+            return;
+        }
         e.source.postMessage('error');
     } catch (e) {
         e.source.postMessage('Got error:' + e);
