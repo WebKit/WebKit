@@ -145,7 +145,7 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
             return pubKeyCredParam.type != PublicKeyCredentialType::PublicKey;
         })) {
 
-            promise.reject(Exception { NotSupportedError, "options.pubKeyCredParams contains unsupported PublicKeyCredentialType value."_s });
+            promise.reject(Exception { NotSupportedError, "Unable to create credential because options.pubKeyCredParams is empty."_s });
             return;
         }
     }
