@@ -134,7 +134,7 @@ void JIT::emit_op_overrides_has_instance(const JSInstruction* currentInstruction
     // We don't jump if we know what Symbol.hasInstance would do.
     move(TrustedImm32(1), regT0);
     loadGlobalObject(regT1);
-    Jump customHasInstanceValue = branchPtr(NotEqual, regT2, Address(regT1, OBJECT_OFFSETOF(JSGlobalObject, m_functionProtoHasInstanceSymbolFunction)));
+    Jump customHasInstanceValue = branchPtr(NotEqual, regT2, Address(regT1, JSGlobalObject::offsetOfFunctionProtoHasInstanceSymbolFunction()));
     // We know that constructor is an object from the way bytecode is emitted for instanceof expressions.
     emitGetVirtualRegisterPayload(constructor, regT2);
     // Check that constructor 'ImplementsDefaultHasInstance' i.e. the object is not a C-API user nor a bound function.
@@ -470,8 +470,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsFalseyGenerator(VM& vm)
 
     jit.tagReturnAddress();
 
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.move(TrustedImm32(1), regT0);
     auto isFalsey = jit.branchIfFalsey(vm, valueJSR, scratch1GPR, scratch2GPR, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, globalObjectGPR);
     jit.move(TrustedImm32(0), regT0);
@@ -657,8 +656,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::valueIsTruthyGenerator(VM& vm)
 
     jit.tagReturnAddress();
 
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.move(TrustedImm32(1), regT0);
     auto isTruthy = jit.branchIfTruthy(vm, valueJSR, scratch1GPR, scratch2GPR, fpRegT0, fpRegT1, shouldCheckMasqueradesAsUndefined, globalObjectGPR);
     jit.move(TrustedImm32(0), regT0);
@@ -728,8 +726,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_throw_handlerGenerator(VM& vm)
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<decltype(operationThrow)>(globalObjectGPR, thrownValueJSR);
     Call operation = jit.call(OperationPtrTag);
 
@@ -1558,8 +1555,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::op_check_traps_handlerGenerator(VM& v
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<decltype(operationHandleTraps)>(globalObjectGPR);
     CCallHelpers::Call operation = jit.call(OperationPtrTag);
 

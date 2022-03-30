@@ -269,7 +269,6 @@
 		0F2DD8121AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD80D1AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h */; };
 		0F2DD8141AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD80F1AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.h */; };
 		0F2DD8151AB3D8BE00BBB8E8 /* DFGForAllKills.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2DD8101AB3D8BE00BBB8E8 /* DFGForAllKills.h */; };
-		0F2E892C16D028AD009E4FD2 /* UnusedPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 65987F2F16828A7E003C2F8D /* UnusedPointer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2E892D16D02BAF009E4FD2 /* DFGMinifiedID.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB4B51016B3A964003F696B /* DFGMinifiedID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F2FC77316E12F740038D976 /* DFGDCEPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2FC77116E12F6F0038D976 /* DFGDCEPhase.h */; };
 		0F2FCCFA18A60070001A27F8 /* DFGGraphSafepoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2FCCF318A60070001A27F8 /* DFGGraphSafepoint.h */; };
@@ -4213,7 +4212,6 @@
 		658824B01E5CFDF400FB7359 /* ConfigFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigFile.cpp; sourceTree = "<group>"; };
 		658D3A5519638268003C45D6 /* VMEntryRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = VMEntryRecord.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		65987F2C167FE84B003C2F8D /* DFGOSRExitCompilationInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGOSRExitCompilationInfo.h; path = dfg/DFGOSRExitCompilationInfo.h; sourceTree = "<group>"; };
-		65987F2F16828A7E003C2F8D /* UnusedPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnusedPointer.h; sourceTree = "<group>"; };
 		659CDA591F67509800D3E53F /* YarrUnicodeProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrUnicodeProperties.cpp; path = yarr/YarrUnicodeProperties.cpp; sourceTree = "<group>"; };
 		659CDA5A1F67509800D3E53F /* YarrUnicodeProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrUnicodeProperties.h; path = yarr/YarrUnicodeProperties.h; sourceTree = "<group>"; };
 		65A946131C8E9F2000A7209A /* generateYarrCanonicalizeUnicode */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generateYarrCanonicalizeUnicode; path = yarr/generateYarrCanonicalizeUnicode; sourceTree = "<group>"; };
@@ -6680,7 +6678,6 @@
 				0F572D4D16879FDB00E57FBD /* ThunkGenerator.h */,
 				A7386552118697B400540279 /* ThunkGenerators.cpp */,
 				A7386553118697B400540279 /* ThunkGenerators.h */,
-				65987F2F16828A7E003C2F8D /* UnusedPointer.h */,
 			);
 			path = jit;
 			sourceTree = "<group>";
@@ -11205,7 +11202,6 @@
 				14AD91251DCA9FA40014F9FE /* UnlinkedModuleProgramCodeBlock.h in Headers */,
 				14AD91261DCA9FA40014F9FE /* UnlinkedProgramCodeBlock.h in Headers */,
 				14AB66761DECF40900A56C26 /* UnlinkedSourceCode.h in Headers */,
-				0F2E892C16D028AD009E4FD2 /* UnusedPointer.h in Headers */,
 				99DA00B11BD5994E00F4575C /* UpdateContents.py in Headers */,
 				0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */,
 				0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */,

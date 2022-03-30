@@ -47,7 +47,6 @@
 #include "JSInterfaceJIT.h"
 #include "LLIntData.h"
 #include "PCToCodeOriginMap.h"
-#include "UnusedPointer.h"
 #include <wtf/UniqueRef.h>
 
 namespace JSC {
@@ -169,16 +168,10 @@ namespace JSC {
         using MacroAssembler::JumpList;
         using MacroAssembler::Label;
 
-        static constexpr uintptr_t patchGetByIdDefaultStructure = unusedPointer;
-        static constexpr int patchGetByIdDefaultOffset = 0;
-        // Magic number - initial offset cannot be representable as a signed 8bit value, or the X86Assembler
-        // will compress the displacement, and we may not be able to fit a patched offset.
-        static constexpr int patchPutByIdDefaultOffset = 256;
-
         using Base = JSInterfaceJIT;
 
     public:
-        JIT(VM&, CodeBlock* = nullptr, BytecodeIndex loopOSREntryBytecodeOffset = BytecodeIndex(0));
+        JIT(VM&, CodeBlock*, BytecodeIndex loopOSREntryBytecodeOffset);
         ~JIT();
 
         VM& vm() { return *JSInterfaceJIT::vm(); }
@@ -189,9 +182,9 @@ namespace JSC {
 
         void doMainThreadPreparationBeforeCompile();
         
-        static CompilationResult compile(VM& vm, CodeBlock* codeBlock, JITCompilationEffort effort, BytecodeIndex bytecodeOffset = BytecodeIndex(0))
+        static CompilationResult compile(VM& vm, CodeBlock* codeBlock, JITCompilationEffort effort)
         {
-            return JIT(vm, codeBlock, bytecodeOffset).privateCompile(codeBlock, effort);
+            return JIT(vm, codeBlock, BytecodeIndex(0)).privateCompile(codeBlock, effort);
         }
 
         static unsigned frameRegisterCountFor(UnlinkedCodeBlock*);
@@ -204,6 +197,7 @@ namespace JSC {
 
         static constexpr GPRReg s_metadataGPR = LLInt::Registers::metadataTableGPR;
         static constexpr GPRReg s_constantsGPR = LLInt::Registers::pbGPR;
+        static constexpr JITConstantPool::Constant s_globalObjectConstant { 0 };
 
     private:
         void privateCompileMainPass();
@@ -256,6 +250,11 @@ namespace JSC {
         void loadConstant(unsigned constantIndex, GPRReg);
     private:
         void loadGlobalObject(GPRReg);
+
+        // Assuming s_constantsGPR is available.
+        static void loadGlobalObject(CCallHelpers&, GPRReg);
+        static void loadConstant(CCallHelpers&, unsigned constantIndex, GPRReg);
+
         void loadCodeBlockConstant(VirtualRegister, JSValueRegs);
         void loadCodeBlockConstantPayload(VirtualRegister, RegisterID);
 #if USE(JSVALUE32_64)
@@ -962,7 +961,6 @@ namespace JSC {
         RefPtr<BaselineJITCode> m_jitCode;
 
         Vector<JITConstantPool::Value> m_constantPool;
-        JITConstantPool::Constant m_globalObjectConstant { std::numeric_limits<unsigned>::max() };
         SegmentedVector<UnlinkedCallLinkInfo> m_unlinkedCalls;
         SegmentedVector<UnlinkedStructureStubInfo> m_unlinkedStubInfos;
         FixedVector<SimpleJumpTable> m_switchJumpTables;

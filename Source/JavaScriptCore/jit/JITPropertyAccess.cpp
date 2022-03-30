@@ -149,8 +149,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_val_callSlowOperationT
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<SlowOperation>(globalObjectGPR, stubInfoGPR, profileGPR, baseJSR, propertyJSR);
     static_assert(preferredArgumentGPR<SlowOperation, 1>() == argumentGPR1, "Needed for branch to slow operation via StubInfo");
     jit.call(Address(argumentGPR1, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
@@ -244,8 +243,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_private_name_callSlowOper
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<SlowOperation>(globalObjectGPR, stubInfoGPR, baseJSR, propertyJSR);
     static_assert(preferredArgumentGPR<SlowOperation, 1>() == argumentGPR1, "Needed for branch to slow operation via StubInfo");
     jit.call(Address(argumentGPR1, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
@@ -467,8 +465,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_by_val_callSlowOperationT
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.setupArgumentsForIndirectCall<SlowOperatoin>(stubInfoGPR,
         globalObjectGPR, baseJSR, propertyJSR, valueJSR, stubInfoGPR, profileGPR);
     jit.call(Address(nonArgGPR0, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
@@ -565,8 +562,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_private_name_callSlowOper
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     // Loading nullptr to this register is necessary for setupArgumentsForIndirectCall
     // to not clobber globalObjectGPR on ARM_THUMB2, and is otherwise harmless.
     jit.move(TrustedImmPtr(nullptr), profileGPR);
@@ -745,8 +741,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_del_by_id_callSlowOperationTh
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<SlowOperation>(globalObjectGPR, stubInfoGPR, baseJSR, propertyGPR, ecmaModeGPR);
     static_assert(preferredArgumentGPR<SlowOperation, 1>() == argumentGPR1, "Needed for branch to slow operation via StubInfo");
     jit.call(Address(argumentGPR1, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
@@ -857,8 +852,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_del_by_val_callSlowOperationT
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<SlowOperation>(globalObjectGPR, stubInfoGPR, baseJSR, propertyJSR, ecmaModeGPR);
     static_assert(preferredArgumentGPR<SlowOperation, 1>() == argumentGPR1, "Needed for branch to slow operation via StubInfo");
     jit.call(Address(argumentGPR1, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
@@ -1084,8 +1078,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_id_callSlowOperationTh
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<SlowOperation>(globalObjectGPR, stubInfoGPR, baseJSR, propertyGPR);
     static_assert(preferredArgumentGPR<SlowOperation, 1>() == argumentGPR1, "Needed for branch to slow operation via StubInfo");
     jit.call(Address(argumentGPR1, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
@@ -1185,8 +1178,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_by_id_with_this_callSlowO
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<SlowOperation>(globalObjectGPR, stubInfoGPR, baseJSR, thisJSR, propertyGPR);
     static_assert(preferredArgumentGPR<SlowOperation, 1>() == argumentGPR1, "Needed for branch to slow operation via StubInfo");
     jit.call(Address(argumentGPR1, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
@@ -1294,8 +1286,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_by_id_callSlowOperationTh
     // Call slow operation
     jit.store32(bytecodeOffsetGPR, tagFor(CallFrameSlot::argumentCountIncludingThis));
     jit.prepareCallOperation(vm);
-    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), globalObjectGPR);
-    jit.loadPtr(Address(globalObjectGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+    loadGlobalObject(jit, globalObjectGPR);
     jit.setupArguments<SlowOperation>(globalObjectGPR, stubInfoGPR, valueJSR, baseJSR, propertyGPR);
     static_assert(preferredArgumentGPR<SlowOperation, 1>() == argumentGPR1, "Needed for branch to slow operation via StubInfo");
     jit.call(Address(argumentGPR1, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
@@ -1592,10 +1583,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
             return;
         if (globalObjectGPR == InvalidGPRReg) {
             globalObjectGPR = scratchGPR;
-            jit.loadPtr(addressFor(CallFrameSlot::codeBlock), scratchGPR);
-            jit.loadPtr(Address(scratchGPR, CodeBlock::offsetOfGlobalObject()), globalObjectGPR);
+            loadGlobalObject(jit, globalObjectGPR);
         }
-        jit.loadPtr(Address(globalObjectGPR, OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpoint)), scratchGPR);
+        jit.loadPtr(Address(globalObjectGPR, JSGlobalObject::offsetOfVarInjectionWatchpoint()), scratchGPR);
         slowCase.append(jit.branch8(Equal, Address(scratchGPR, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
     };
 
@@ -1617,8 +1607,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
         case GlobalProperty:
         case GlobalPropertyWithVarInjectionChecks: {
             // JSScope::constantScopeForCodeBlock() loads codeBlock->globalObject().
-            jit.loadPtr(addressFor(CallFrameSlot::codeBlock), scratchGPR);
-            jit.loadPtr(Address(scratchGPR, CodeBlock::offsetOfGlobalObject()), returnValueGPR);
+            loadGlobalObject(jit, returnValueGPR);
             doVarInjectionCheck(needsVarInjectionChecks(resolveType), returnValueGPR);
             jit.load32(Address(metadataGPR, Metadata::offsetOfGlobalLexicalBindingEpoch()), scratchGPR);
             slowCase.append(jit.branch32(NotEqual, Address(returnValueGPR, JSGlobalObject::offsetOfGlobalLexicalBindingEpoch()), scratchGPR));
@@ -1631,8 +1620,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
         case GlobalLexicalVarWithVarInjectionChecks: {
             // JSScope::constantScopeForCodeBlock() loads codeBlock->globalObject() for GlobalVar*,
             // and codeBlock->globalObject()->globalLexicalEnvironment() for GlobalLexicalVar*.
-            jit.loadPtr(addressFor(CallFrameSlot::codeBlock), scratchGPR);
-            jit.loadPtr(Address(scratchGPR, CodeBlock::offsetOfGlobalObject()), returnValueGPR);
+            loadGlobalObject(jit, returnValueGPR);
             doVarInjectionCheck(needsVarInjectionChecks(resolveType), returnValueGPR);
             if (resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
                 jit.loadPtr(Address(returnValueGPR, JSGlobalObject::offsetOfGlobalLexicalEnvironment()), returnValueGPR);
@@ -1809,9 +1797,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm)
     auto doVarInjectionCheck = [&] (bool needsVarInjectionChecks) {
         if (!needsVarInjectionChecks)
             return;
-        jit.loadPtr(addressFor(CallFrameSlot::codeBlock), scratchGPR);
-        jit.loadPtr(Address(scratchGPR, CodeBlock::offsetOfGlobalObject()), scratchGPR);
-        jit.loadPtr(Address(scratchGPR, OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpoint)), scratchGPR);
+        loadGlobalObject(jit, scratchGPR);
+        jit.loadPtr(Address(scratchGPR, JSGlobalObject::offsetOfVarInjectionWatchpoint()), scratchGPR);
         slowCase.append(jit.branch8(Equal, Address(scratchGPR, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
     };
 
@@ -1826,8 +1813,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm)
             slowCase.append(jit.branch32(NotEqual, Address(scopeGPR, JSCell::structureIDOffset()), scratchGPR));
 
             jit.jitAssert(scopedLambda<Jump(void)>([&] () -> Jump {
-                jit.loadPtr(addressFor(CallFrameSlot::codeBlock), scratchGPR);
-                jit.loadPtr(Address(scratchGPR, CodeBlock::offsetOfGlobalObject()), scratchGPR);
+                loadGlobalObject(jit, scratchGPR);
                 return jit.branchPtr(Equal, scopeGPR, scratchGPR);
             }));
 
@@ -2569,7 +2555,7 @@ void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg scratchGPR)
         return;
 
     loadGlobalObject(scratchGPR);
-    loadPtr(Address(scratchGPR, OBJECT_OFFSETOF(JSGlobalObject, m_varInjectionWatchpoint)), scratchGPR);
+    loadPtr(Address(scratchGPR, JSGlobalObject::offsetOfVarInjectionWatchpoint()), scratchGPR);
     addSlowCase(branch8(Equal, Address(scratchGPR, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
 }
 

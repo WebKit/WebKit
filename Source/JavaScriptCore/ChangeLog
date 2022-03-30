@@ -1,3 +1,55 @@
+2022-03-29  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use constants buffer to load JSGlobalObject in BaselineJIT thunks
+        https://bugs.webkit.org/show_bug.cgi?id=238414
+
+        Reviewed by Saam Barati.
+
+        Since these thunks are only called from BaselineJIT, we can assume constants
+        buffer register. And since we are always using 0 index for JSGlobalObject,
+        we can encode this into these shared thunks directly instead of loading
+        CodeBlock pointer from the stack.
+
+        We also fix using OBJECT_OFFSETOF for JSGlobalObject directly. We should use
+        it as JSGlobalObject::offsetOfXXX to make it clean and make it annotated that
+        these fields are accessed by JIT.
+
+        This patch also removes UnusedPointer.h since it is no longer used.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::emitVarReadOnlyCheck):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::loadConstant):
+        (JSC::JIT::loadGlobalObject):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_overrides_has_instance):
+        (JSC::JIT::valueIsFalseyGenerator):
+        (JSC::JIT::valueIsTruthyGenerator):
+        (JSC::JIT::op_throw_handlerGenerator):
+        (JSC::JIT::op_check_traps_handlerGenerator):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::slow_op_get_by_val_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_get_private_name_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_put_by_val_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_put_private_name_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_del_by_id_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_del_by_val_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_get_by_id_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_get_by_id_with_this_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::slow_op_put_by_id_callSlowOperationThenCheckExceptionGenerator):
+        (JSC::JIT::generateOpResolveScopeThunk):
+        (JSC::JIT::generateOpGetFromScopeThunk):
+        (JSC::JIT::emitVarInjectionCheck):
+        * jit/UnusedPointer.h: Removed.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::offsetOfVarInjectionWatchpoint):
+        (JSC::JSGlobalObject::offsetOfVarReadOnlyWatchpoint):
+        (JSC::JSGlobalObject::offsetOfFunctionProtoHasInstanceSymbolFunction):
+
 2022-03-29  Geza Lore  <glore@igalia.com>
 
         [JSC][ARMv7] Cleanup GPR numbering

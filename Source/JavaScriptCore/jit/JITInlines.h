@@ -493,14 +493,24 @@ ALWAYS_INLINE void JIT::materializePointerIntoMetadata(const Bytecode& bytecode,
     addPtr(TrustedImm32(m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), s_metadataGPR, result);
 }
 
+ALWAYS_INLINE void JIT::loadConstant(CCallHelpers& jit, JITConstantPool::Constant constantIndex, GPRReg result)
+{
+    jit.loadPtr(Address(s_constantsGPR, BaselineJITData::offsetOfData() + static_cast<uintptr_t>(constantIndex) * sizeof(void*)), result);
+}
+
+ALWAYS_INLINE void JIT::loadGlobalObject(CCallHelpers& jit, GPRReg result)
+{
+    loadConstant(jit, s_globalObjectConstant, result);
+}
+
 ALWAYS_INLINE void JIT::loadConstant(JITConstantPool::Constant constantIndex, GPRReg result)
 {
-    loadPtr(Address(s_constantsGPR, BaselineJITData::offsetOfData() + static_cast<uintptr_t>(constantIndex) * sizeof(void*)), result);
+    loadConstant(*this, constantIndex, result);
 }
 
 ALWAYS_INLINE void JIT::loadGlobalObject(GPRReg result)
 {
-    loadConstant(m_globalObjectConstant, result);
+    loadGlobalObject(*this, result);
 }
 
 ALWAYS_INLINE static void loadAddrOfCodeBlockConstantBuffer(JIT &jit, GPRReg dst)

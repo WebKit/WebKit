@@ -876,7 +876,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/TagRegistersMode.h
     jit/TempRegisterSet.h
     jit/ThunkGenerator.h
-    jit/UnusedPointer.h
 
     llint/LLIntOpcode.h
 

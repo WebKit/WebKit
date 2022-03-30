@@ -77,7 +77,8 @@ JIT::JIT(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     , m_shouldEmitProfiling(false)
     , m_loopOSREntryBytecodeIndex(loopOSREntryBytecodeIndex)
 {
-    m_globalObjectConstant = addToConstantPool(JITConstantPool::Type::GlobalObject);
+    auto globalObjectConstant = addToConstantPool(JITConstantPool::Type::GlobalObject);
+    ASSERT_UNUSED(globalObjectConstant, globalObjectConstant == s_globalObjectConstant);
     m_profiledCodeBlock = codeBlock;
     m_unlinkedCodeBlock = codeBlock->unlinkedCodeBlock();
 }
@@ -137,7 +138,7 @@ void JIT::emitVarReadOnlyCheck(ResolveType resolveType, GPRReg scratchGPR)
 {
     if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks) {
         loadGlobalObject(scratchGPR);
-        loadPtr(Address(scratchGPR, OBJECT_OFFSETOF(JSGlobalObject, m_varReadOnlyWatchpoint)), scratchGPR);
+        loadPtr(Address(scratchGPR, JSGlobalObject::offsetOfVarReadOnlyWatchpoint()), scratchGPR);
         addSlowCase(branch8(Equal, Address(scratchGPR, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
     }
 }
