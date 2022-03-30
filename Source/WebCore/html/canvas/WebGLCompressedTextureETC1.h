@@ -37,7 +37,7 @@ public:
     explicit WebGLCompressedTextureETC1(WebGLRenderingContextBase&);
     virtual ~WebGLCompressedTextureETC1();
 
-    static bool supported(WebGLRenderingContextBase&);
+    static bool supported(GraphicsContextGL&);
     ExtensionName getName() const override;
 };
 

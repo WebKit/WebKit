@@ -39,7 +39,7 @@ public:
     explicit WebGLCompressedTextureS3TCsRGB(WebGLRenderingContextBase&);
     virtual ~WebGLCompressedTextureS3TCsRGB();
 
-    static bool supported(WebGLRenderingContextBase&);
+    static bool supported(GraphicsContextGL&);
 
     ExtensionName getName() const override;
 };

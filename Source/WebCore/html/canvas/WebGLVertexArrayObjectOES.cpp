@@ -29,7 +29,6 @@
 
 #include "WebGLVertexArrayObjectOES.h"
 
-#include "ExtensionsGL.h"
 #include "WebGLRenderingContextBase.h"
 
 namespace WebCore {

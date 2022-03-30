@@ -79,17 +79,23 @@ public:
     RefPtr<MediaSample> paintCompositedResultsToMediaSample() final;
 #endif
     void setContextVisibility(bool) final;
+    void prepareForDisplay() override;
 
 #if PLATFORM(MAC)
     void updateContextOnDisplayReconfiguration();
 #endif
 protected:
     GraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes&&, ProcessIdentity&& resourceOwner);
-    bool isValid() const;
 
     // GraphicsContextGLANGLE overrides.
+    bool platformInitializeContext() final;
+    bool platformInitialize() final;
     void invalidateKnownTextureContent(GCGLuint) final;
+    bool reshapeDisplayBufferBacking() final;
+    bool allocateAndBindDisplayBufferBacking();
+    bool bindDisplayBufferBacking(std::unique_ptr<IOSurface> backing, void* pbuffer);
 
+    ProcessIdentity m_resourceOwner;
 #if ENABLE(VIDEO)
     std::unique_ptr<GraphicsContextGLCVCocoa> m_cv;
 #endif
@@ -100,6 +106,7 @@ protected:
 #if ENABLE(MEDIA_STREAM)
     std::unique_ptr<ImageRotationSessionVT> m_mediaSampleRotationSession;
 #endif
+
     friend class GraphicsContextGLCVCocoa;
 };
 
