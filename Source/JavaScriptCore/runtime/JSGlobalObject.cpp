@@ -1569,16 +1569,16 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 
     if (Options::exposeProfilersOnGlobalObject()) {
 #if ENABLE(SAMPLING_PROFILER)
-        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__enableSamplingProfiler"), JSFunction::create(vm, this, 1, String(), enableSamplingProfiler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__disableSamplingProfiler"), JSFunction::create(vm, this, 1, String(), disableSamplingProfiler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__enableSamplingProfiler"_s), JSFunction::create(vm, this, 1, String(), enableSamplingProfiler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__disableSamplingProfiler"_s), JSFunction::create(vm, this, 1, String(), disableSamplingProfiler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 #endif
-        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__enableSuperSampler"), JSFunction::create(vm, this, 1, String(), enableSuperSampler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__disableSuperSampler"), JSFunction::create(vm, this, 1, String(), disableSuperSampler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__enableSuperSampler"_s), JSFunction::create(vm, this, 1, String(), enableSuperSampler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__disableSuperSampler"_s), JSFunction::create(vm, this, 1, String(), disableSuperSampler), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 
-        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__tracePointStart"), JSFunction::create(vm, this, 4, String(), tracePointStart), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__tracePointStop"), JSFunction::create(vm, this, 4, String(), tracePointStop), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__signpostStart"), JSFunction::create(vm, this, 1, String(), signpostStart), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__signpostStop"), JSFunction::create(vm, this, 1, String(), signpostStop), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__tracePointStart"_s), JSFunction::create(vm, this, 4, String(), tracePointStart), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__tracePointStop"_s), JSFunction::create(vm, this, 4, String(), tracePointStop), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__signpostStart"_s), JSFunction::create(vm, this, 1, String(), signpostStart), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "__signpostStop"_s), JSFunction::create(vm, this, 1, String(), signpostStop), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     }
 
     initStaticGlobals(vm);
@@ -1605,7 +1605,7 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
                 init.set(WebAssemblyWrapperFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
             });
         auto* webAssembly = JSWebAssembly::create(vm, this, JSWebAssembly::createStructure(vm, this, m_objectPrototype.get()));
-        putDirectWithoutTransition(vm, Identifier::fromString(vm, "WebAssembly"), webAssembly, static_cast<unsigned>(PropertyAttribute::DontEnum));
+        putDirectWithoutTransition(vm, Identifier::fromString(vm, "WebAssembly"_s), webAssembly, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
 #define CREATE_WEBASSEMBLY_PROTOTYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase, featureFlag) \
     if (featureFlag) {\
@@ -2365,7 +2365,7 @@ SUPPRESS_ASAN void JSGlobalObject::exposeDollarVM(VM& vm)
     };
     addStaticGlobals(extraStaticGlobals, WTF_ARRAY_LENGTH(extraStaticGlobals));
 
-    putDirect(vm, Identifier::fromString(vm, "$vm"), dollarVM, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, Identifier::fromString(vm, "$vm"_s), dollarVM, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)

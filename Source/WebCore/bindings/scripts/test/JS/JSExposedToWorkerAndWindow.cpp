@@ -65,7 +65,7 @@ template<> ExposedToWorkerAndWindow::Dict convertDictionary<ExposedToWorkerAndWi
     if (isNullOrUndefined)
         objValue = jsUndefined();
     else {
-        objValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "obj"));
+        objValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "obj"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!objValue.isUndefined()) {
@@ -85,7 +85,7 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
     if (!IDLInterface<TestObj>::isNullValue(dictionary.obj)) {
         auto objValue = toJS<IDLInterface<TestObj>>(lexicalGlobalObject, globalObject, throwScope, IDLInterface<TestObj>::extractValueFromNullable(dictionary.obj));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "obj"), objValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "obj"_s), objValue);
     }
     return result;
 }

@@ -49,7 +49,7 @@ template<> TestDictionaryWithOnlyConditionalMembers convertDictionary<TestDictio
     if (isNullOrUndefined)
         conditionalMemberValue = jsUndefined();
     else {
-        conditionalMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "conditionalMember"));
+        conditionalMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "conditionalMember"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!conditionalMemberValue.isUndefined()) {
@@ -71,7 +71,7 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
     if (!IDLDictionary<TestDictionary>::isNullValue(dictionary.conditionalMember)) {
         auto conditionalMemberValue = toJS<IDLDictionary<TestDictionary>>(lexicalGlobalObject, globalObject, throwScope, IDLDictionary<TestDictionary>::extractValueFromNullable(dictionary.conditionalMember));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "conditionalMember"), conditionalMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "conditionalMember"_s), conditionalMemberValue);
     }
 #endif
     UNUSED_PARAM(dictionary);

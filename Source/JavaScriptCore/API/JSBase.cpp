@@ -210,14 +210,14 @@ JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx)
         objectTypeCounts->putDirect(vm, Identifier::fromString(vm, it.key), jsNumber(it.value));
 
     JSObject* object = constructEmptyObject(globalObject);
-    object->putDirect(vm, Identifier::fromString(vm, "heapSize"), jsNumber(vm.heap.size()));
-    object->putDirect(vm, Identifier::fromString(vm, "heapCapacity"), jsNumber(vm.heap.capacity()));
-    object->putDirect(vm, Identifier::fromString(vm, "extraMemorySize"), jsNumber(vm.heap.extraMemorySize()));
-    object->putDirect(vm, Identifier::fromString(vm, "objectCount"), jsNumber(vm.heap.objectCount()));
-    object->putDirect(vm, Identifier::fromString(vm, "protectedObjectCount"), jsNumber(vm.heap.protectedObjectCount()));
-    object->putDirect(vm, Identifier::fromString(vm, "globalObjectCount"), jsNumber(vm.heap.globalObjectCount()));
-    object->putDirect(vm, Identifier::fromString(vm, "protectedGlobalObjectCount"), jsNumber(vm.heap.protectedGlobalObjectCount()));
-    object->putDirect(vm, Identifier::fromString(vm, "objectTypeCounts"), objectTypeCounts);
+    object->putDirect(vm, Identifier::fromString(vm, "heapSize"_s), jsNumber(vm.heap.size()));
+    object->putDirect(vm, Identifier::fromString(vm, "heapCapacity"_s), jsNumber(vm.heap.capacity()));
+    object->putDirect(vm, Identifier::fromString(vm, "extraMemorySize"_s), jsNumber(vm.heap.extraMemorySize()));
+    object->putDirect(vm, Identifier::fromString(vm, "objectCount"_s), jsNumber(vm.heap.objectCount()));
+    object->putDirect(vm, Identifier::fromString(vm, "protectedObjectCount"_s), jsNumber(vm.heap.protectedObjectCount()));
+    object->putDirect(vm, Identifier::fromString(vm, "globalObjectCount"_s), jsNumber(vm.heap.globalObjectCount()));
+    object->putDirect(vm, Identifier::fromString(vm, "protectedGlobalObjectCount"_s), jsNumber(vm.heap.protectedGlobalObjectCount()));
+    object->putDirect(vm, Identifier::fromString(vm, "objectTypeCounts"_s), objectTypeCounts);
 
     return toRef(object);
 }

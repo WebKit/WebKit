@@ -1,3 +1,135 @@
+2022-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Optimize the construction of a JSC::Identifier from an ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=238552
+
+        Reviewed by Geoffrey Garen.
+
+        Adopt the JSC::Identifier constructor from an ASCIILiteral more widely.
+
+        * Modules/applepay-ams-ui/ApplePayAMSUIPaymentHandler.cpp:
+        (WebCore::ApplePayAMSUIPaymentHandler::finishSession):
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::update):
+        * Modules/webaudio/AudioWorkletGlobalScope.cpp:
+        (WebCore::AudioWorkletGlobalScope::registerProcessor):
+        * Modules/webaudio/AudioWorkletProcessor.cpp:
+        (WebCore::AudioWorkletProcessor::process):
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::JSCustomElementRegistry::define):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::DialogHandler::dialogCreated):
+        (WebCore::DialogHandler::returnValue const):
+        (WebCore::JSDOMWindow::setOpener):
+        (WebCore::JSDOMWindow::setOpenDatabase):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::createImportMetaProperties):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent):
+        (addUnscopableProperties):
+        (GenerateImplementation):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateDefaultToJSONOperationDefinition):
+        (GenerateCallbackImplementationContent):
+        (GenerateConstructorHelperMethods):
+        * bindings/scripts/test/JS/JSExposedStar.cpp:
+        (WebCore::JSExposedStarPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSExposedToWorkerAndWindow.cpp:
+        (WebCore::convertDictionary<ExposedToWorkerAndWindow::Dict>):
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::setJSTestCEReactions_stringifierAttributeSetter):
+        (WebCore::setJSTestCEReactions_stringifierAttributeNotNeededSetter):
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        (WebCore::convertDictionary<TestCallbackInterface::Dictionary>):
+        (WebCore::JSTestCallbackInterface::callbackWithNoParam):
+        (WebCore::JSTestCallbackInterface::callbackWithArrayParam):
+        (WebCore::JSTestCallbackInterface::callbackWithSerializedScriptValueParam):
+        (WebCore::JSTestCallbackInterface::callbackWithStringList):
+        (WebCore::JSTestCallbackInterface::callbackWithBoolean):
+        (WebCore::JSTestCallbackInterface::callbackRequiresThisToPass):
+        (WebCore::JSTestCallbackInterface::callbackWithAReturnValue):
+        (WebCore::JSTestCallbackInterface::callbackThatRethrowsExceptions):
+        (WebCore::JSTestCallbackInterface::callbackWithThisObject):
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.cpp:
+        (WebCore::JSTestConditionalIncludesDOMConstructor::initializeProperties):
+        (WebCore::JSTestConditionalIncludesPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestConditionallyReadWrite.cpp:
+        (WebCore::JSTestConditionallyReadWritePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestDefaultToJSON.cpp:
+        (WebCore::JSTestDefaultToJSONPrototype::finishCreation):
+        (WebCore::jsTestDefaultToJSONPrototypeFunction_toJSONBody):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONFilteredByExposed.cpp:
+        (WebCore::JSTestDefaultToJSONFilteredByExposedPrototype::finishCreation):
+        (WebCore::jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSONBody):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONInherit.cpp:
+        (WebCore::jsTestDefaultToJSONInheritPrototypeFunction_toJSONBody):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONInheritFinal.cpp:
+        (WebCore::jsTestDefaultToJSONInheritFinalPrototypeFunction_toJSONBody):
+        * bindings/scripts/test/JS/JSTestDerivedDictionary.cpp:
+        (WebCore::convertDictionary<TestDerivedDictionary>):
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/JS/JSTestDerivedDictionary2.cpp:
+        (WebCore::convertDictionary<TestDerivedDictionary2>):
+        (WebCore::convertDictionaryToJS):
+        (WebCore::convertDictionary<TestDerivedDictionary2::Dictionary>):
+        * bindings/scripts/test/JS/JSTestDictionary.cpp:
+        (WebCore::convertDictionary<TestDictionary>):
+        * bindings/scripts/test/JS/JSTestDictionaryWithOnlyConditionalMembers.cpp:
+        (WebCore::convertDictionary<TestDictionaryWithOnlyConditionalMembers>):
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::JSTestEnabledBySettingDOMConstructor::initializeProperties):
+        (WebCore::JSTestEnabledBySettingPrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::convertDictionary<TestEventConstructor::Init>):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachablePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestInheritedDictionary.cpp:
+        (WebCore::convertDictionary<TestInheritedDictionary>):
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/JS/JSTestInheritedDictionary2.cpp:
+        (WebCore::convertDictionary<TestInheritedDictionary2>):
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfacePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestNamespaceObject.cpp:
+        (WebCore::JSTestNamespaceObjectDOMConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodePrototype::finishCreation):
+        (WebCore::jsTestNodePrototypeFunction_toJSONBody):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionary<TestObj::Dictionary>):
+        (WebCore::convertDictionaryToJS):
+        (WebCore::convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>):
+        (WebCore::convertDictionary<TestObj::DictionaryThatShouldTolerateNull>):
+        (WebCore::convertDictionary<AlternateDictionaryName>):
+        (WebCore::convertDictionary<TestObj::ParentDictionary>):
+        (WebCore::convertDictionary<TestObj::ChildDictionary>):
+        (WebCore::convertDictionary<TestObj::ConditionalDictionaryA>):
+        (WebCore::convertDictionary<TestObj::ConditionalDictionaryB>):
+        (WebCore::convertDictionary<TestObj::ConditionalDictionaryC>):
+        (WebCore::JSTestObjDOMConstructor::initializeProperties):
+        (WebCore::JSTestObjPrototype::finishCreation):
+        (WebCore::setJSTestObj_putForwardsAttributeSetter):
+        (WebCore::setJSTestObj_putForwardsNullableAttributeSetter):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::convertDictionary<TestPromiseRejectionEvent::Init>):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertDictionary<DictionaryImplName>):
+        (WebCore::convertDictionaryToJS):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::controllerJSValue):
+        (WebCore::HTMLMediaElement::updateCaptionContainer):
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLMediaElement::updateMediaControlsAfterPresentationModeChange):
+        (WebCore::HTMLMediaElement::getCurrentMediaControlsStatus):
+
 2022-03-30  Antti Koivisto  <antti@apple.com>
 
         [CSS Container Queries] Keep colon syntax when serializing container condition

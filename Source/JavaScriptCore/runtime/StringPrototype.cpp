@@ -156,10 +156,10 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     JSFunction* trimStartFunction = JSFunction::create(vm, globalObject, 0, "trimStart"_s, stringProtoFuncTrimStart, NoIntrinsic);
     JSFunction* trimEndFunction = JSFunction::create(vm, globalObject, 0, "trimEnd"_s, stringProtoFuncTrimEnd, NoIntrinsic);
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimStart"), trimStartFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimLeft"), trimStartFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimEnd"), trimEndFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimRight"), trimEndFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimStart"_s), trimStartFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimLeft"_s), trimStartFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimEnd"_s), trimEndFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "trimRight"_s), trimEndFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, "[Symbol.iterator]"_s, stringProtoFuncIterator, NoIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, iteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));

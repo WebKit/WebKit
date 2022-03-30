@@ -141,12 +141,12 @@ JSObject* JSWebAssemblyMemory::type(JSGlobalObject* globalObject)
     JSObject* result;
     if (maximum.isValid()) {
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
-        result->putDirect(vm, Identifier::fromString(vm, "maximum"), jsNumber(maximum.pageCount()));
+        result->putDirect(vm, Identifier::fromString(vm, "maximum"_s), jsNumber(maximum.pageCount()));
     } else
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
 
-    result->putDirect(vm, Identifier::fromString(vm, "minimum"), jsNumber(minimum.pageCount()));
-    result->putDirect(vm, Identifier::fromString(vm, "shared"), jsBoolean(m_memory->sharingMode() == Wasm::MemorySharingMode::Shared));
+    result->putDirect(vm, Identifier::fromString(vm, "minimum"_s), jsNumber(minimum.pageCount()));
+    result->putDirect(vm, Identifier::fromString(vm, "shared"_s), jsBoolean(m_memory->sharingMode() == Wasm::MemorySharingMode::Shared));
 
     return result;
 }

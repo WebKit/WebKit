@@ -90,7 +90,7 @@ ExceptionOr<void> AudioWorkletGlobalScope::registerProcessor(String&& name, Ref<
     if (!prototype.isObject())
         return Exception { TypeError, "Class definition passed to registerProcessor() has invalid prototype"_s };
 
-    auto parameterDescriptorsValue = jsConstructor->get(globalObject, JSC::Identifier::fromString(vm, "parameterDescriptors"));
+    auto parameterDescriptorsValue = jsConstructor->get(globalObject, JSC::Identifier::fromString(vm, "parameterDescriptors"_s));
     RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
     Vector<AudioParamDescriptor> parameterDescriptors;

@@ -113,7 +113,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTagProtoFuncType, (JSGlobalObject* globalObj
 
     JSArray* parameters = constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), argList);
     JSObject* type = constructEmptyObject(globalObject, globalObject->objectPrototype(), 1);
-    type->putDirect(vm, Identifier::fromString(vm, "parameters"), parameters);
+    type->putDirect(vm, Identifier::fromString(vm, "parameters"_s), parameters);
 
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     RELEASE_AND_RETURN(throwScope, JSValue::encode(type));

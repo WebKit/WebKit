@@ -266,20 +266,20 @@ JSValue JSInjectedScriptHost::functionDetails(JSGlobalObject* globalObject, Call
 
     String scriptID = String::number(sourceCode->provider()->asID());
     JSObject* location = constructEmptyObject(globalObject);
-    location->putDirect(vm, Identifier::fromString(vm, "scriptId"), jsString(vm, scriptID));
-    location->putDirect(vm, Identifier::fromString(vm, "lineNumber"), jsNumber(lineNumber));
-    location->putDirect(vm, Identifier::fromString(vm, "columnNumber"), jsNumber(columnNumber));
+    location->putDirect(vm, Identifier::fromString(vm, "scriptId"_s), jsString(vm, scriptID));
+    location->putDirect(vm, Identifier::fromString(vm, "lineNumber"_s), jsNumber(lineNumber));
+    location->putDirect(vm, Identifier::fromString(vm, "columnNumber"_s), jsNumber(columnNumber));
 
     JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, Identifier::fromString(vm, "location"), location);
+    result->putDirect(vm, Identifier::fromString(vm, "location"_s), location);
 
     String name = function->name(vm);
     if (!name.isEmpty())
-        result->putDirect(vm, Identifier::fromString(vm, "name"), jsString(vm, name));
+        result->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, name));
 
     String displayName = function->displayName(vm);
     if (!displayName.isEmpty())
-        result->putDirect(vm, Identifier::fromString(vm, "displayName"), jsString(vm, displayName));
+        result->putDirect(vm, Identifier::fromString(vm, "displayName"_s), jsString(vm, displayName));
 
     return result;
 }
@@ -288,8 +288,8 @@ static JSObject* constructInternalProperty(JSGlobalObject* globalObject, const S
 {
     VM& vm = globalObject->vm();
     JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, Identifier::fromString(vm, "name"), jsString(vm, name));
-    result->putDirect(vm, Identifier::fromString(vm, "value"), value);
+    result->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, name));
+    result->putDirect(vm, Identifier::fromString(vm, "value"_s), value);
     return result;
 }
 
@@ -488,8 +488,8 @@ JSValue JSInjectedScriptHost::weakMapEntries(JSGlobalObject* globalObject, CallF
 
     for (unsigned index = 0; index < buffer.size(); index += 2) {
         JSObject* entry = constructEmptyObject(globalObject);
-        entry->putDirect(vm, Identifier::fromString(vm, "key"), buffer.at(index));
-        entry->putDirect(vm, Identifier::fromString(vm, "value"), buffer.at(index + 1));
+        entry->putDirect(vm, Identifier::fromString(vm, "key"_s), buffer.at(index));
+        entry->putDirect(vm, Identifier::fromString(vm, "value"_s), buffer.at(index + 1));
         array->putDirectIndex(globalObject, index / 2, entry);
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
@@ -532,7 +532,7 @@ JSValue JSInjectedScriptHost::weakSetEntries(JSGlobalObject* globalObject, CallF
 
     for (unsigned index = 0; index < buffer.size(); ++index) {
         JSObject* entry = constructEmptyObject(globalObject);
-        entry->putDirect(vm, Identifier::fromString(vm, "value"), buffer.at(index));
+        entry->putDirect(vm, Identifier::fromString(vm, "value"_s), buffer.at(index));
         array->putDirectIndex(globalObject, index, entry);
         RETURN_IF_EXCEPTION(scope, JSValue());
     }
@@ -618,7 +618,7 @@ JSValue JSInjectedScriptHost::iteratorEntries(JSGlobalObject* globalObject, Call
         RETURN_IF_EXCEPTION(scope, { });
 
         JSObject* entry = constructEmptyObject(globalObject);
-        entry->putDirect(vm, Identifier::fromString(vm, "value"), nextValue);
+        entry->putDirect(vm, Identifier::fromString(vm, "value"_s), nextValue);
         array->putDirectIndex(globalObject, i, entry);
         if (UNLIKELY(scope.exception())) {
             scope.release();

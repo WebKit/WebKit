@@ -235,7 +235,7 @@ JSObject* JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObje
     JSObject* metaProperties = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    metaProperties->putDirect(vm, Identifier::fromString(vm, "filename"), key);
+    metaProperties->putDirect(vm, Identifier::fromString(vm, "filename"_s), key);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return metaProperties;

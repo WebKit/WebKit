@@ -132,14 +132,14 @@ void JSTestDefaultToJSONFilteredByExposedPrototype::finishCreation(VM& vm)
     bool hasDisabledRuntimeProperties = false;
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isDocument()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("filteredByExposedWindowAttribute"), strlen("filteredByExposedWindowAttribute"));
+        auto propertyName = Identifier::fromString(vm, "filteredByExposedWindowAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isWorkerGlobalScope()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("filteredByExposedWorkerAttribute"), strlen("filteredByExposedWorkerAttribute"));
+        auto propertyName = Identifier::fromString(vm, "filteredByExposedWorkerAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -244,16 +244,16 @@ static inline EncodedJSValue jsTestDefaultToJSONFilteredByExposedPrototypeFuncti
     auto* result = constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype());
     auto normalAttributeValue = toJS<IDLLong>(*lexicalGlobalObject, throwScope, impl.normalAttribute());
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, Identifier::fromString(vm, "normalAttribute"), normalAttributeValue);
+    result->putDirect(vm, Identifier::fromString(vm, "normalAttribute"_s), normalAttributeValue);
     if (jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext()->isDocument()) {
         auto filteredByExposedWindowAttributeValue = toJS<IDLDouble>(*lexicalGlobalObject, throwScope, impl.filteredByExposedWindowAttribute());
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, Identifier::fromString(vm, "filteredByExposedWindowAttribute"), filteredByExposedWindowAttributeValue);
+        result->putDirect(vm, Identifier::fromString(vm, "filteredByExposedWindowAttribute"_s), filteredByExposedWindowAttributeValue);
     }
     if (jsCast<JSDOMGlobalObject*>(castedThis->globalObject())->scriptExecutionContext()->isWorkerGlobalScope()) {
         auto filteredByExposedWorkerAttributeValue = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.filteredByExposedWorkerAttribute());
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, Identifier::fromString(vm, "filteredByExposedWorkerAttribute"), filteredByExposedWorkerAttributeValue);
+        result->putDirect(vm, Identifier::fromString(vm, "filteredByExposedWorkerAttribute"_s), filteredByExposedWorkerAttributeValue);
     }
     return JSValue::encode(result);
 }

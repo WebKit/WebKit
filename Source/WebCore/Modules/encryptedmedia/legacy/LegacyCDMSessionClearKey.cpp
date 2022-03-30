@@ -109,7 +109,7 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
             break;
         }
 
-        auto keysArrayValue = asObject(keysDataValue)->get(&lexicalGlobalObject, Identifier::fromString(vm, "keys"));
+        auto keysArrayValue = asObject(keysDataValue)->get(&lexicalGlobalObject, Identifier::fromString(vm, "keys"_s));
         if (scope.exception() || !isJSArray(keysArrayValue)) {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: keys array missing or empty", this);
             break;

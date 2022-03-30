@@ -280,14 +280,14 @@ static inline bool setJSTestCEReactions_stringifierAttributeSetter(JSGlobalObjec
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto id = Identifier::fromString(vm, reinterpret_cast<const LChar*>("stringifierAttribute"), strlen("stringifierAttribute"));
+    auto id = Identifier::fromString(vm, "stringifierAttribute"_s);
     auto valueToForwardTo = thisObject.get(&lexicalGlobalObject, id);
     RETURN_IF_EXCEPTION(throwScope, false);
     if (UNLIKELY(!valueToForwardTo.isObject())) {
         throwTypeError(&lexicalGlobalObject, throwScope);
         return false;
     }
-    auto forwardId = Identifier::fromString(vm, reinterpret_cast<const LChar*>("value"), strlen("value"));
+    auto forwardId = Identifier::fromString(vm, "value"_s);
     PutPropertySlot slot(valueToForwardTo, false);
     asObject(valueToForwardTo)->methodTable(vm)->put(asObject(valueToForwardTo), &lexicalGlobalObject, forwardId, value, slot);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -380,14 +380,14 @@ static inline bool setJSTestCEReactions_stringifierAttributeNotNeededSetter(JSGl
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto id = Identifier::fromString(vm, reinterpret_cast<const LChar*>("stringifierAttributeNotNeeded"), strlen("stringifierAttributeNotNeeded"));
+    auto id = Identifier::fromString(vm, "stringifierAttributeNotNeeded"_s);
     auto valueToForwardTo = thisObject.get(&lexicalGlobalObject, id);
     RETURN_IF_EXCEPTION(throwScope, false);
     if (UNLIKELY(!valueToForwardTo.isObject())) {
         throwTypeError(&lexicalGlobalObject, throwScope);
         return false;
     }
-    auto forwardId = Identifier::fromString(vm, reinterpret_cast<const LChar*>("valueWithoutReactions"), strlen("valueWithoutReactions"));
+    auto forwardId = Identifier::fromString(vm, "valueWithoutReactions"_s);
     PutPropertySlot slot(valueToForwardTo, false);
     asObject(valueToForwardTo)->methodTable(vm)->put(asObject(valueToForwardTo), &lexicalGlobalObject, forwardId, value, slot);
     RETURN_IF_EXCEPTION(throwScope, false);

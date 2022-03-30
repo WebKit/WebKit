@@ -476,7 +476,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         annotatedTypeInSequenceMemberValue = jsUndefined();
     else {
-        annotatedTypeInSequenceMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "annotatedTypeInSequenceMember"));
+        annotatedTypeInSequenceMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "annotatedTypeInSequenceMember"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!annotatedTypeInSequenceMemberValue.isUndefined()) {
@@ -487,7 +487,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         annotatedTypeInUnionMemberValue = jsUndefined();
     else {
-        annotatedTypeInUnionMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "annotatedTypeInUnionMember"));
+        annotatedTypeInUnionMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "annotatedTypeInUnionMember"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!annotatedTypeInUnionMemberValue.isUndefined()) {
@@ -498,7 +498,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         anyTypedefValueValue = jsUndefined();
     else {
-        anyTypedefValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "anyTypedefValue"));
+        anyTypedefValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "anyTypedefValue"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!anyTypedefValueValue.isUndefined()) {
@@ -510,7 +510,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         anyValueValue = jsUndefined();
     else {
-        anyValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "anyValue"));
+        anyValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "anyValue"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!anyValueValue.isUndefined()) {
@@ -522,7 +522,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         anyValueWithNullDefaultValue = jsUndefined();
     else {
-        anyValueWithNullDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "anyValueWithNullDefault"));
+        anyValueWithNullDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "anyValueWithNullDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!anyValueWithNullDefaultValue.isUndefined()) {
@@ -534,7 +534,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         booleanWithDefaultValue = jsUndefined();
     else {
-        booleanWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "booleanWithDefault"));
+        booleanWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "booleanWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!booleanWithDefaultValue.isUndefined()) {
@@ -546,7 +546,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
     else {
-        booleanWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "booleanWithoutDefault"));
+        booleanWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "booleanWithoutDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!booleanWithoutDefaultValue.isUndefined()) {
@@ -557,7 +557,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         bufferSourceValueValue = jsUndefined();
     else {
-        bufferSourceValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bufferSourceValue"));
+        bufferSourceValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bufferSourceValue"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!bufferSourceValueValue.isUndefined()) {
@@ -568,7 +568,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         dictionaryMemberValue = jsUndefined();
     else {
-        dictionaryMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "dictionaryMember"));
+        dictionaryMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "dictionaryMember"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!dictionaryMemberValue.isUndefined()) {
@@ -579,7 +579,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         enumerationValueWithDefaultValue = jsUndefined();
     else {
-        enumerationValueWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "enumerationValueWithDefault"));
+        enumerationValueWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "enumerationValueWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumerationValueWithDefaultValue.isUndefined()) {
@@ -591,7 +591,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         enumerationValueWithEmptyStringDefaultValue = jsUndefined();
     else {
-        enumerationValueWithEmptyStringDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "enumerationValueWithEmptyStringDefault"));
+        enumerationValueWithEmptyStringDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "enumerationValueWithEmptyStringDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumerationValueWithEmptyStringDefaultValue.isUndefined()) {
@@ -603,7 +603,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         enumerationValueWithoutDefaultValue = jsUndefined();
     else {
-        enumerationValueWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "enumerationValueWithoutDefault"));
+        enumerationValueWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "enumerationValueWithoutDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumerationValueWithoutDefaultValue.isUndefined()) {
@@ -614,7 +614,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         fooAliasValue = jsUndefined();
     else {
-        fooAliasValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "fooAlias"));
+        fooAliasValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "fooAlias"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!fooAliasValue.isUndefined()) {
@@ -626,7 +626,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         fooWithDefaultAliasValue = jsUndefined();
     else {
-        fooWithDefaultAliasValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "fooWithDefaultAlias"));
+        fooWithDefaultAliasValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "fooWithDefaultAlias"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!fooWithDefaultAliasValue.isUndefined()) {
@@ -638,7 +638,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         integerValue = jsUndefined();
     else {
-        integerValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "integer"));
+        integerValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "integer"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!integerValue.isUndefined()) {
@@ -649,7 +649,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         integerWithDefaultValue = jsUndefined();
     else {
-        integerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "integerWithDefault"));
+        integerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "integerWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!integerWithDefaultValue.isUndefined()) {
@@ -661,7 +661,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         largeIntegerValue = jsUndefined();
     else {
-        largeIntegerValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "largeInteger"));
+        largeIntegerValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "largeInteger"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!largeIntegerValue.isUndefined()) {
@@ -672,7 +672,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         largeIntegerWithDefaultValue = jsUndefined();
     else {
-        largeIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "largeIntegerWithDefault"));
+        largeIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "largeIntegerWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!largeIntegerWithDefaultValue.isUndefined()) {
@@ -684,7 +684,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         nullableEnumValue = jsUndefined();
     else {
-        nullableEnumValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableEnum"));
+        nullableEnumValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableEnum"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nullableEnumValue.isUndefined()) {
@@ -696,7 +696,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         nullableIntegerWithDefaultValue = jsUndefined();
     else {
-        nullableIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableIntegerWithDefault"));
+        nullableIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableIntegerWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nullableIntegerWithDefaultValue.isUndefined()) {
@@ -708,7 +708,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         nullableNodeValue = jsUndefined();
     else {
-        nullableNodeValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableNode"));
+        nullableNodeValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableNode"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nullableNodeValue.isUndefined()) {
@@ -720,7 +720,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         nullableStringWithDefaultValue = jsUndefined();
     else {
-        nullableStringWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableStringWithDefault"));
+        nullableStringWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableStringWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nullableStringWithDefaultValue.isUndefined()) {
@@ -732,7 +732,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         nullableUnionMemberValue = jsUndefined();
     else {
-        nullableUnionMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableUnionMember"));
+        nullableUnionMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nullableUnionMember"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nullableUnionMemberValue.isUndefined()) {
@@ -744,7 +744,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         requiredBufferSourceValueValue = jsUndefined();
     else {
-        requiredBufferSourceValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "requiredBufferSourceValue"));
+        requiredBufferSourceValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "requiredBufferSourceValue"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!requiredBufferSourceValueValue.isUndefined()) {
@@ -758,7 +758,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         restrictedDoubleValue = jsUndefined();
     else {
-        restrictedDoubleValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "restrictedDouble"));
+        restrictedDoubleValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "restrictedDouble"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!restrictedDoubleValue.isUndefined()) {
@@ -769,7 +769,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         restrictedDoubleWithDefaultValue = jsUndefined();
     else {
-        restrictedDoubleWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "restrictedDoubleWithDefault"));
+        restrictedDoubleWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "restrictedDoubleWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!restrictedDoubleWithDefaultValue.isUndefined()) {
@@ -781,7 +781,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         restrictedFloatValue = jsUndefined();
     else {
-        restrictedFloatValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "restrictedFloat"));
+        restrictedFloatValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "restrictedFloat"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!restrictedFloatValue.isUndefined()) {
@@ -792,7 +792,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         restrictedFloatWithDefaultValue = jsUndefined();
     else {
-        restrictedFloatWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "restrictedFloatWithDefault"));
+        restrictedFloatWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "restrictedFloatWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!restrictedFloatWithDefaultValue.isUndefined()) {
@@ -804,7 +804,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         sequenceOfStringsValue = jsUndefined();
     else {
-        sequenceOfStringsValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "sequenceOfStrings"));
+        sequenceOfStringsValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "sequenceOfStrings"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!sequenceOfStringsValue.isUndefined()) {
@@ -815,7 +815,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         smallIntegerClampedValue = jsUndefined();
     else {
-        smallIntegerClampedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "smallIntegerClamped"));
+        smallIntegerClampedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "smallIntegerClamped"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!smallIntegerClampedValue.isUndefined()) {
@@ -826,7 +826,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         smallIntegerWithDefaultValue = jsUndefined();
     else {
-        smallIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "smallIntegerWithDefault"));
+        smallIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "smallIntegerWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!smallIntegerWithDefaultValue.isUndefined()) {
@@ -837,7 +837,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         smallUnsignedIntegerEnforcedRangeValue = jsUndefined();
     else {
-        smallUnsignedIntegerEnforcedRangeValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "smallUnsignedIntegerEnforcedRange"));
+        smallUnsignedIntegerEnforcedRangeValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "smallUnsignedIntegerEnforcedRange"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!smallUnsignedIntegerEnforcedRangeValue.isUndefined()) {
@@ -848,7 +848,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         smallUnsignedIntegerWithDefaultValue = jsUndefined();
     else {
-        smallUnsignedIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "smallUnsignedIntegerWithDefault"));
+        smallUnsignedIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "smallUnsignedIntegerWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!smallUnsignedIntegerWithDefaultValue.isUndefined()) {
@@ -860,7 +860,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         stringTreatNullAsEmptyStringValue = jsUndefined();
     else {
-        stringTreatNullAsEmptyStringValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringTreatNullAsEmptyString"));
+        stringTreatNullAsEmptyStringValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringTreatNullAsEmptyString"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringTreatNullAsEmptyStringValue.isUndefined()) {
@@ -871,7 +871,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         stringWithDefaultValue = jsUndefined();
     else {
-        stringWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringWithDefault"));
+        stringWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringWithDefaultValue.isUndefined()) {
@@ -883,7 +883,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
     else {
-        stringWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringWithoutDefault"));
+        stringWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringWithoutDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringWithoutDefaultValue.isUndefined()) {
@@ -894,7 +894,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         unionMemberValue = jsUndefined();
     else {
-        unionMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unionMember"));
+        unionMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unionMember"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unionMemberValue.isUndefined()) {
@@ -905,7 +905,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         unrestrictedDoubleValue = jsUndefined();
     else {
-        unrestrictedDoubleValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unrestrictedDouble"));
+        unrestrictedDoubleValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unrestrictedDouble"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unrestrictedDoubleValue.isUndefined()) {
@@ -916,7 +916,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         unrestrictedDoubleWithDefaultValue = jsUndefined();
     else {
-        unrestrictedDoubleWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unrestrictedDoubleWithDefault"));
+        unrestrictedDoubleWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unrestrictedDoubleWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unrestrictedDoubleWithDefaultValue.isUndefined()) {
@@ -928,7 +928,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         unrestrictedFloatValue = jsUndefined();
     else {
-        unrestrictedFloatValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unrestrictedFloat"));
+        unrestrictedFloatValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unrestrictedFloat"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unrestrictedFloatValue.isUndefined()) {
@@ -939,7 +939,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         unrestrictedFloatWithDefaultValue = jsUndefined();
     else {
-        unrestrictedFloatWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unrestrictedFloatWithDefault"));
+        unrestrictedFloatWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unrestrictedFloatWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unrestrictedFloatWithDefaultValue.isUndefined()) {
@@ -951,7 +951,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         unsignedIntegerValue = jsUndefined();
     else {
-        unsignedIntegerValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unsignedInteger"));
+        unsignedIntegerValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unsignedInteger"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unsignedIntegerValue.isUndefined()) {
@@ -962,7 +962,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         unsignedIntegerWithDefaultValue = jsUndefined();
     else {
-        unsignedIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unsignedIntegerWithDefault"));
+        unsignedIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unsignedIntegerWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unsignedIntegerWithDefaultValue.isUndefined()) {
@@ -974,7 +974,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         unsignedLargeIntegerValue = jsUndefined();
     else {
-        unsignedLargeIntegerValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unsignedLargeInteger"));
+        unsignedLargeIntegerValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unsignedLargeInteger"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unsignedLargeIntegerValue.isUndefined()) {
@@ -985,7 +985,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
     if (isNullOrUndefined)
         unsignedLargeIntegerWithDefaultValue = jsUndefined();
     else {
-        unsignedLargeIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unsignedLargeIntegerWithDefault"));
+        unsignedLargeIntegerWithDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "unsignedLargeIntegerWithDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!unsignedLargeIntegerWithDefaultValue.isUndefined()) {
@@ -1006,180 +1006,180 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
     if (!IDLSequence<IDLClampAdaptor<IDLLong>>::isNullValue(dictionary.annotatedTypeInSequenceMember)) {
         auto annotatedTypeInSequenceMemberValue = toJS<IDLSequence<IDLClampAdaptor<IDLLong>>>(lexicalGlobalObject, globalObject, throwScope, IDLSequence<IDLClampAdaptor<IDLLong>>::extractValueFromNullable(dictionary.annotatedTypeInSequenceMember));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "annotatedTypeInSequenceMember"), annotatedTypeInSequenceMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "annotatedTypeInSequenceMember"_s), annotatedTypeInSequenceMemberValue);
     }
     if (!IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>::isNullValue(dictionary.annotatedTypeInUnionMember)) {
         auto annotatedTypeInUnionMemberValue = toJS<IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>>(lexicalGlobalObject, globalObject, throwScope, IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>::extractValueFromNullable(dictionary.annotatedTypeInUnionMember));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "annotatedTypeInUnionMember"), annotatedTypeInUnionMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "annotatedTypeInUnionMember"_s), annotatedTypeInUnionMemberValue);
     }
     auto anyTypedefValueValue = toJS<IDLAny>(lexicalGlobalObject, throwScope, dictionary.anyTypedefValue);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "anyTypedefValue"), anyTypedefValueValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "anyTypedefValue"_s), anyTypedefValueValue);
     auto anyValueValue = toJS<IDLAny>(lexicalGlobalObject, throwScope, dictionary.anyValue);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "anyValue"), anyValueValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "anyValue"_s), anyValueValue);
     auto anyValueWithNullDefaultValue = toJS<IDLAny>(lexicalGlobalObject, throwScope, dictionary.anyValueWithNullDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "anyValueWithNullDefault"), anyValueWithNullDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "anyValueWithNullDefault"_s), anyValueWithNullDefaultValue);
     auto booleanWithDefaultValue = toJS<IDLBoolean>(lexicalGlobalObject, throwScope, dictionary.booleanWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "booleanWithDefault"), booleanWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "booleanWithDefault"_s), booleanWithDefaultValue);
     if (!IDLBoolean::isNullValue(dictionary.booleanWithoutDefault)) {
         auto booleanWithoutDefaultValue = toJS<IDLBoolean>(lexicalGlobalObject, throwScope, IDLBoolean::extractValueFromNullable(dictionary.booleanWithoutDefault));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "booleanWithoutDefault"), booleanWithoutDefaultValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "booleanWithoutDefault"_s), booleanWithoutDefaultValue);
     }
     if (!IDLUnion<IDLArrayBufferView, IDLArrayBuffer>::isNullValue(dictionary.bufferSourceValue)) {
         auto bufferSourceValueValue = toJS<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(lexicalGlobalObject, globalObject, throwScope, IDLUnion<IDLArrayBufferView, IDLArrayBuffer>::extractValueFromNullable(dictionary.bufferSourceValue));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "bufferSourceValue"), bufferSourceValueValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "bufferSourceValue"_s), bufferSourceValueValue);
     }
     if (!IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>::isNullValue(dictionary.dictionaryMember)) {
         auto dictionaryMemberValue = toJS<IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>>(lexicalGlobalObject, globalObject, throwScope, IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>::extractValueFromNullable(dictionary.dictionaryMember));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "dictionaryMember"), dictionaryMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "dictionaryMember"_s), dictionaryMemberValue);
     }
     auto enumerationValueWithDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(lexicalGlobalObject, throwScope, dictionary.enumerationValueWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "enumerationValueWithDefault"), enumerationValueWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "enumerationValueWithDefault"_s), enumerationValueWithDefaultValue);
     auto enumerationValueWithEmptyStringDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(lexicalGlobalObject, throwScope, dictionary.enumerationValueWithEmptyStringDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "enumerationValueWithEmptyStringDefault"), enumerationValueWithEmptyStringDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "enumerationValueWithEmptyStringDefault"_s), enumerationValueWithEmptyStringDefaultValue);
     if (!IDLEnumeration<TestObj::EnumType>::isNullValue(dictionary.enumerationValueWithoutDefault)) {
         auto enumerationValueWithoutDefaultValue = toJS<IDLEnumeration<TestObj::EnumType>>(lexicalGlobalObject, throwScope, IDLEnumeration<TestObj::EnumType>::extractValueFromNullable(dictionary.enumerationValueWithoutDefault));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "enumerationValueWithoutDefault"), enumerationValueWithoutDefaultValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "enumerationValueWithoutDefault"_s), enumerationValueWithoutDefaultValue);
     }
     auto fooAliasValue = toJS<IDLAny>(lexicalGlobalObject, throwScope, dictionary.foo);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "fooAlias"), fooAliasValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "fooAlias"_s), fooAliasValue);
     auto fooWithDefaultAliasValue = toJS<IDLAny>(lexicalGlobalObject, throwScope, dictionary.fooWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "fooWithDefaultAlias"), fooWithDefaultAliasValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "fooWithDefaultAlias"_s), fooWithDefaultAliasValue);
     if (!IDLLong::isNullValue(dictionary.integer)) {
         auto integerValue = toJS<IDLLong>(lexicalGlobalObject, throwScope, IDLLong::extractValueFromNullable(dictionary.integer));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "integer"), integerValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "integer"_s), integerValue);
     }
     auto integerWithDefaultValue = toJS<IDLLong>(lexicalGlobalObject, throwScope, dictionary.integerWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "integerWithDefault"), integerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "integerWithDefault"_s), integerWithDefaultValue);
     if (!IDLLongLong::isNullValue(dictionary.largeInteger)) {
         auto largeIntegerValue = toJS<IDLLongLong>(lexicalGlobalObject, throwScope, IDLLongLong::extractValueFromNullable(dictionary.largeInteger));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "largeInteger"), largeIntegerValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "largeInteger"_s), largeIntegerValue);
     }
     auto largeIntegerWithDefaultValue = toJS<IDLLongLong>(lexicalGlobalObject, throwScope, dictionary.largeIntegerWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "largeIntegerWithDefault"), largeIntegerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "largeIntegerWithDefault"_s), largeIntegerWithDefaultValue);
     auto nullableEnumValue = toJS<IDLNullable<IDLEnumeration<TestObj::EnumType>>>(lexicalGlobalObject, throwScope, dictionary.nullableEnum);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableEnum"), nullableEnumValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableEnum"_s), nullableEnumValue);
     auto nullableIntegerWithDefaultValue = toJS<IDLNullable<IDLLong>>(lexicalGlobalObject, throwScope, dictionary.nullableIntegerWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableIntegerWithDefault"), nullableIntegerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableIntegerWithDefault"_s), nullableIntegerWithDefaultValue);
     auto nullableNodeValue = toJS<IDLNullable<IDLInterface<Node>>>(lexicalGlobalObject, globalObject, throwScope, dictionary.nullableNode);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableNode"), nullableNodeValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableNode"_s), nullableNodeValue);
     auto nullableStringWithDefaultValue = toJS<IDLNullable<IDLDOMString>>(lexicalGlobalObject, throwScope, dictionary.nullableStringWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableStringWithDefault"), nullableStringWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableStringWithDefault"_s), nullableStringWithDefaultValue);
     auto nullableUnionMemberValue = toJS<IDLNullable<IDLUnion<IDLLong, IDLInterface<Node>>>>(lexicalGlobalObject, globalObject, throwScope, dictionary.nullableUnionMember);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableUnionMember"), nullableUnionMemberValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "nullableUnionMember"_s), nullableUnionMemberValue);
     auto requiredBufferSourceValueValue = toJS<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(lexicalGlobalObject, globalObject, throwScope, dictionary.requiredBufferSourceValue);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "requiredBufferSourceValue"), requiredBufferSourceValueValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "requiredBufferSourceValue"_s), requiredBufferSourceValueValue);
     if (!IDLDouble::isNullValue(dictionary.restrictedDouble)) {
         auto restrictedDoubleValue = toJS<IDLDouble>(lexicalGlobalObject, throwScope, IDLDouble::extractValueFromNullable(dictionary.restrictedDouble));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedDouble"), restrictedDoubleValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedDouble"_s), restrictedDoubleValue);
     }
     auto restrictedDoubleWithDefaultValue = toJS<IDLDouble>(lexicalGlobalObject, throwScope, dictionary.restrictedDoubleWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedDoubleWithDefault"), restrictedDoubleWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedDoubleWithDefault"_s), restrictedDoubleWithDefaultValue);
     if (!IDLFloat::isNullValue(dictionary.restrictedFloat)) {
         auto restrictedFloatValue = toJS<IDLFloat>(lexicalGlobalObject, throwScope, IDLFloat::extractValueFromNullable(dictionary.restrictedFloat));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedFloat"), restrictedFloatValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedFloat"_s), restrictedFloatValue);
     }
     auto restrictedFloatWithDefaultValue = toJS<IDLFloat>(lexicalGlobalObject, throwScope, dictionary.restrictedFloatWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedFloatWithDefault"), restrictedFloatWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "restrictedFloatWithDefault"_s), restrictedFloatWithDefaultValue);
     if (!IDLSequence<IDLDOMString>::isNullValue(dictionary.sequenceOfStrings)) {
         auto sequenceOfStringsValue = toJS<IDLSequence<IDLDOMString>>(lexicalGlobalObject, globalObject, throwScope, IDLSequence<IDLDOMString>::extractValueFromNullable(dictionary.sequenceOfStrings));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "sequenceOfStrings"), sequenceOfStringsValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "sequenceOfStrings"_s), sequenceOfStringsValue);
     }
     if (!IDLClampAdaptor<IDLByte>::isNullValue(dictionary.smallIntegerClamped)) {
         auto smallIntegerClampedValue = toJS<IDLClampAdaptor<IDLByte>>(lexicalGlobalObject, throwScope, IDLClampAdaptor<IDLByte>::extractValueFromNullable(dictionary.smallIntegerClamped));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "smallIntegerClamped"), smallIntegerClampedValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "smallIntegerClamped"_s), smallIntegerClampedValue);
     }
     if (!IDLByte::isNullValue(dictionary.smallIntegerWithDefault)) {
         auto smallIntegerWithDefaultValue = toJS<IDLByte>(lexicalGlobalObject, throwScope, IDLByte::extractValueFromNullable(dictionary.smallIntegerWithDefault));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "smallIntegerWithDefault"), smallIntegerWithDefaultValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "smallIntegerWithDefault"_s), smallIntegerWithDefaultValue);
     }
     if (!IDLEnforceRangeAdaptor<IDLOctet>::isNullValue(dictionary.smallUnsignedIntegerEnforcedRange)) {
         auto smallUnsignedIntegerEnforcedRangeValue = toJS<IDLEnforceRangeAdaptor<IDLOctet>>(lexicalGlobalObject, throwScope, IDLEnforceRangeAdaptor<IDLOctet>::extractValueFromNullable(dictionary.smallUnsignedIntegerEnforcedRange));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "smallUnsignedIntegerEnforcedRange"), smallUnsignedIntegerEnforcedRangeValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "smallUnsignedIntegerEnforcedRange"_s), smallUnsignedIntegerEnforcedRangeValue);
     }
     auto smallUnsignedIntegerWithDefaultValue = toJS<IDLOctet>(lexicalGlobalObject, throwScope, dictionary.smallUnsignedIntegerWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "smallUnsignedIntegerWithDefault"), smallUnsignedIntegerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "smallUnsignedIntegerWithDefault"_s), smallUnsignedIntegerWithDefaultValue);
     if (!IDLLegacyNullToEmptyStringAdaptor<IDLDOMString>::isNullValue(dictionary.stringTreatNullAsEmptyString)) {
         auto stringTreatNullAsEmptyStringValue = toJS<IDLLegacyNullToEmptyStringAdaptor<IDLDOMString>>(lexicalGlobalObject, throwScope, IDLLegacyNullToEmptyStringAdaptor<IDLDOMString>::extractValueFromNullable(dictionary.stringTreatNullAsEmptyString));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "stringTreatNullAsEmptyString"), stringTreatNullAsEmptyStringValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "stringTreatNullAsEmptyString"_s), stringTreatNullAsEmptyStringValue);
     }
     auto stringWithDefaultValue = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, dictionary.stringWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "stringWithDefault"), stringWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "stringWithDefault"_s), stringWithDefaultValue);
     if (!IDLDOMString::isNullValue(dictionary.stringWithoutDefault)) {
         auto stringWithoutDefaultValue = toJS<IDLDOMString>(lexicalGlobalObject, throwScope, IDLDOMString::extractValueFromNullable(dictionary.stringWithoutDefault));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "stringWithoutDefault"), stringWithoutDefaultValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "stringWithoutDefault"_s), stringWithoutDefaultValue);
     }
     if (!IDLUnion<IDLLong, IDLInterface<Node>>::isNullValue(dictionary.unionMember)) {
         auto unionMemberValue = toJS<IDLUnion<IDLLong, IDLInterface<Node>>>(lexicalGlobalObject, globalObject, throwScope, IDLUnion<IDLLong, IDLInterface<Node>>::extractValueFromNullable(dictionary.unionMember));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "unionMember"), unionMemberValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "unionMember"_s), unionMemberValue);
     }
     if (!IDLUnrestrictedDouble::isNullValue(dictionary.unrestrictedDouble)) {
         auto unrestrictedDoubleValue = toJS<IDLUnrestrictedDouble>(lexicalGlobalObject, throwScope, IDLUnrestrictedDouble::extractValueFromNullable(dictionary.unrestrictedDouble));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedDouble"), unrestrictedDoubleValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedDouble"_s), unrestrictedDoubleValue);
     }
     auto unrestrictedDoubleWithDefaultValue = toJS<IDLUnrestrictedDouble>(lexicalGlobalObject, throwScope, dictionary.unrestrictedDoubleWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedDoubleWithDefault"), unrestrictedDoubleWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedDoubleWithDefault"_s), unrestrictedDoubleWithDefaultValue);
     if (!IDLUnrestrictedFloat::isNullValue(dictionary.unrestrictedFloat)) {
         auto unrestrictedFloatValue = toJS<IDLUnrestrictedFloat>(lexicalGlobalObject, throwScope, IDLUnrestrictedFloat::extractValueFromNullable(dictionary.unrestrictedFloat));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedFloat"), unrestrictedFloatValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedFloat"_s), unrestrictedFloatValue);
     }
     auto unrestrictedFloatWithDefaultValue = toJS<IDLUnrestrictedFloat>(lexicalGlobalObject, throwScope, dictionary.unrestrictedFloatWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedFloatWithDefault"), unrestrictedFloatWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "unrestrictedFloatWithDefault"_s), unrestrictedFloatWithDefaultValue);
     if (!IDLUnsignedLong::isNullValue(dictionary.unsignedInteger)) {
         auto unsignedIntegerValue = toJS<IDLUnsignedLong>(lexicalGlobalObject, throwScope, IDLUnsignedLong::extractValueFromNullable(dictionary.unsignedInteger));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedInteger"), unsignedIntegerValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedInteger"_s), unsignedIntegerValue);
     }
     auto unsignedIntegerWithDefaultValue = toJS<IDLUnsignedLong>(lexicalGlobalObject, throwScope, dictionary.unsignedIntegerWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedIntegerWithDefault"), unsignedIntegerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedIntegerWithDefault"_s), unsignedIntegerWithDefaultValue);
     if (!IDLUnsignedLongLong::isNullValue(dictionary.unsignedLargeInteger)) {
         auto unsignedLargeIntegerValue = toJS<IDLUnsignedLongLong>(lexicalGlobalObject, throwScope, IDLUnsignedLongLong::extractValueFromNullable(dictionary.unsignedLargeInteger));
         RETURN_IF_EXCEPTION(throwScope, { });
-        result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedLargeInteger"), unsignedLargeIntegerValue);
+        result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedLargeInteger"_s), unsignedLargeIntegerValue);
     }
     auto unsignedLargeIntegerWithDefaultValue = toJS<IDLUnsignedLongLong>(lexicalGlobalObject, throwScope, dictionary.unsignedLargeIntegerWithDefault);
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedLargeIntegerWithDefault"), unsignedLargeIntegerWithDefaultValue);
+    result->putDirect(vm, JSC::Identifier::fromString(vm, "unsignedLargeIntegerWithDefault"_s), unsignedLargeIntegerWithDefaultValue);
     return result;
 }
 
@@ -1198,7 +1198,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
     else {
-        booleanWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "booleanWithoutDefault"));
+        booleanWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "booleanWithoutDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!booleanWithoutDefaultValue.isUndefined()) {
@@ -1209,7 +1209,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
     if (isNullOrUndefined)
         nonNullableNodeValue = jsUndefined();
     else {
-        nonNullableNodeValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nonNullableNode"));
+        nonNullableNodeValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "nonNullableNode"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!nonNullableNodeValue.isUndefined()) {
@@ -1223,7 +1223,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
     if (isNullOrUndefined)
         requiredDictionaryMemberValue = jsUndefined();
     else {
-        requiredDictionaryMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "requiredDictionaryMember"));
+        requiredDictionaryMemberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "requiredDictionaryMember"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!requiredDictionaryMemberValue.isUndefined()) {
@@ -1237,7 +1237,7 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
     if (isNullOrUndefined)
         requiredEnumerationValueValue = jsUndefined();
     else {
-        requiredEnumerationValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "requiredEnumerationValue"));
+        requiredEnumerationValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "requiredEnumerationValue"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!requiredEnumerationValueValue.isUndefined()) {
@@ -1265,7 +1265,7 @@ template<> TestObj::DictionaryThatShouldTolerateNull convertDictionary<TestObj::
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
     else {
-        booleanWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "booleanWithoutDefault"));
+        booleanWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "booleanWithoutDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!booleanWithoutDefaultValue.isUndefined()) {
@@ -1276,7 +1276,7 @@ template<> TestObj::DictionaryThatShouldTolerateNull convertDictionary<TestObj::
     if (isNullOrUndefined)
         enumerationValueValue = jsUndefined();
     else {
-        enumerationValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "enumerationValue"));
+        enumerationValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "enumerationValue"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumerationValueValue.isUndefined()) {
@@ -1301,7 +1301,7 @@ template<> AlternateDictionaryName convertDictionary<AlternateDictionaryName>(JS
     if (isNullOrUndefined)
         booleanWithoutDefaultValue = jsUndefined();
     else {
-        booleanWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "booleanWithoutDefault"));
+        booleanWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "booleanWithoutDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!booleanWithoutDefaultValue.isUndefined()) {
@@ -1312,7 +1312,7 @@ template<> AlternateDictionaryName convertDictionary<AlternateDictionaryName>(JS
     if (isNullOrUndefined)
         enumerationValueValue = jsUndefined();
     else {
-        enumerationValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "enumerationValue"));
+        enumerationValueValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "enumerationValue"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!enumerationValueValue.isUndefined()) {
@@ -1337,7 +1337,7 @@ template<> TestObj::ParentDictionary convertDictionary<TestObj::ParentDictionary
     if (isNullOrUndefined)
         parentMember1Value = jsUndefined();
     else {
-        parentMember1Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "parentMember1"));
+        parentMember1Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "parentMember1"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!parentMember1Value.isUndefined()) {
@@ -1348,7 +1348,7 @@ template<> TestObj::ParentDictionary convertDictionary<TestObj::ParentDictionary
     if (isNullOrUndefined)
         parentMember2Value = jsUndefined();
     else {
-        parentMember2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "parentMember2"));
+        parentMember2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "parentMember2"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!parentMember2Value.isUndefined()) {
@@ -1373,7 +1373,7 @@ template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(
     if (isNullOrUndefined)
         parentMember1Value = jsUndefined();
     else {
-        parentMember1Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "parentMember1"));
+        parentMember1Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "parentMember1"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!parentMember1Value.isUndefined()) {
@@ -1384,7 +1384,7 @@ template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(
     if (isNullOrUndefined)
         parentMember2Value = jsUndefined();
     else {
-        parentMember2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "parentMember2"));
+        parentMember2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "parentMember2"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!parentMember2Value.isUndefined()) {
@@ -1395,7 +1395,7 @@ template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(
     if (isNullOrUndefined)
         childMember1Value = jsUndefined();
     else {
-        childMember1Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "childMember1"));
+        childMember1Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "childMember1"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!childMember1Value.isUndefined()) {
@@ -1406,7 +1406,7 @@ template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(
     if (isNullOrUndefined)
         childMember2Value = jsUndefined();
     else {
-        childMember2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "childMember2"));
+        childMember2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "childMember2"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!childMember2Value.isUndefined()) {
@@ -1433,7 +1433,7 @@ template<> TestObj::ConditionalDictionaryA convertDictionary<TestObj::Conditiona
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
     else {
-        stringWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringWithoutDefault"));
+        stringWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringWithoutDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringWithoutDefaultValue.isUndefined()) {
@@ -1462,7 +1462,7 @@ template<> TestObj::ConditionalDictionaryB convertDictionary<TestObj::Conditiona
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
     else {
-        stringWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringWithoutDefault"));
+        stringWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringWithoutDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringWithoutDefaultValue.isUndefined()) {
@@ -1491,7 +1491,7 @@ template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::Conditiona
     if (isNullOrUndefined)
         stringWithoutDefaultValue = jsUndefined();
     else {
-        stringWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringWithoutDefault"));
+        stringWithoutDefaultValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "stringWithoutDefault"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!stringWithoutDefaultValue.isUndefined()) {
@@ -2081,7 +2081,7 @@ template<> void JSTestObjDOMConstructor::initializeProperties(VM& vm, JSDOMGloba
     reifyStaticProperties(vm, JSTestObj::info(), JSTestObjConstructorTableValues, *this);
 #if ENABLE(TEST_FEATURE)
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledAtRuntimeAttributeStatic"), strlen("enabledAtRuntimeAttributeStatic"));
+        auto propertyName = Identifier::fromString(vm, "enabledAtRuntimeAttributeStatic"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);
@@ -2089,7 +2089,7 @@ template<> void JSTestObjDOMConstructor::initializeProperties(VM& vm, JSDOMGloba
 #endif
 #if ENABLE(TEST_FEATURE)
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledAtRuntimeOperationStatic"), strlen("enabledAtRuntimeOperationStatic"));
+        auto propertyName = Identifier::fromString(vm, "enabledAtRuntimeOperationStatic"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);
@@ -2439,7 +2439,7 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 #if ENABLE(TEST_FEATURE)
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledAtRuntimeOperation"), strlen("enabledAtRuntimeOperation"));
+        auto propertyName = Identifier::fromString(vm, "enabledAtRuntimeOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -2447,28 +2447,28 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 #endif
     if (!(worldForDOMObject(*this).someWorld() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledInSpecificWorldWhenRuntimeFeatureEnabled"), strlen("enabledInSpecificWorldWhenRuntimeFeatureEnabled"));
+        auto propertyName = Identifier::fromString(vm, "enabledInSpecificWorldWhenRuntimeFeatureEnabled"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!worldForDOMObject(*this).someWorld()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("worldSpecificMethod"), strlen("worldSpecificMethod"));
+        auto propertyName = Identifier::fromString(vm, "worldSpecificMethod"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("calculateSecretResult"), strlen("calculateSecretResult"));
+        auto propertyName = Identifier::fromString(vm, "calculateSecretResult"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("getSecretBoolean"), strlen("getSecretBoolean"));
+        auto propertyName = Identifier::fromString(vm, "getSecretBoolean"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -2476,7 +2476,7 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 #if ENABLE(TEST_FEATURE)
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("testFeatureGetSecretBoolean"), strlen("testFeatureGetSecretBoolean"));
+        auto propertyName = Identifier::fromString(vm, "testFeatureGetSecretBoolean"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -2484,21 +2484,21 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 #endif
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isDocument()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionallyExposedToWindowFunction"), strlen("conditionallyExposedToWindowFunction"));
+        auto propertyName = Identifier::fromString(vm, "conditionallyExposedToWindowFunction"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isWorkerGlobalScope()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionallyExposedToWorkerFunction"), strlen("conditionallyExposedToWorkerFunction"));
+        auto propertyName = Identifier::fromString(vm, "conditionallyExposedToWorkerFunction"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()|| jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->allowsMediaDevices())) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mediaDevices"), strlen("mediaDevices"));
+        auto propertyName = Identifier::fromString(vm, "mediaDevices"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -2506,7 +2506,7 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 #if ENABLE(TEST_FEATURE)
     if (!(RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled() && RuntimeEnabledFeatures::sharedFeatures().testFeature1Enabled())) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledAtRuntimeAttribute"), strlen("enabledAtRuntimeAttribute"));
+        auto propertyName = Identifier::fromString(vm, "enabledAtRuntimeAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -2514,14 +2514,14 @@ void JSTestObjPrototype::finishCreation(VM& vm)
 #endif
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isDocument()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionallyExposedToWindowAttribute"), strlen("conditionallyExposedToWindowAttribute"));
+        auto propertyName = Identifier::fromString(vm, "conditionallyExposedToWindowAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isWorkerGlobalScope()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("conditionallyExposedToWorkerAttribute"), strlen("conditionallyExposedToWorkerAttribute"));
+        auto propertyName = Identifier::fromString(vm, "conditionallyExposedToWorkerAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -2533,8 +2533,8 @@ void JSTestObjPrototype::finishCreation(VM& vm)
     putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     addValueIterableMethods(*globalObject(), *this);
     JSObject& unscopables = *constructEmptyObject(globalObject()->vm(), globalObject()->nullPrototypeObjectStructure());
-    unscopables.putDirect(vm, Identifier::fromString(vm, "undefinedMethod"), jsBoolean(true));
-    unscopables.putDirect(vm, Identifier::fromString(vm, "shortAttr"), jsBoolean(true));
+    unscopables.putDirect(vm, Identifier::fromString(vm, "undefinedMethod"_s), jsBoolean(true));
+    unscopables.putDirect(vm, Identifier::fromString(vm, "shortAttr"_s), jsBoolean(true));
     putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
@@ -5039,14 +5039,14 @@ static inline bool setJSTestObj_putForwardsAttributeSetter(JSGlobalObject& lexic
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto id = Identifier::fromString(vm, reinterpret_cast<const LChar*>("putForwardsAttribute"), strlen("putForwardsAttribute"));
+    auto id = Identifier::fromString(vm, "putForwardsAttribute"_s);
     auto valueToForwardTo = thisObject.get(&lexicalGlobalObject, id);
     RETURN_IF_EXCEPTION(throwScope, false);
     if (UNLIKELY(!valueToForwardTo.isObject())) {
         throwTypeError(&lexicalGlobalObject, throwScope);
         return false;
     }
-    auto forwardId = Identifier::fromString(vm, reinterpret_cast<const LChar*>("name"), strlen("name"));
+    auto forwardId = Identifier::fromString(vm, "name"_s);
     PutPropertySlot slot(valueToForwardTo, false);
     asObject(valueToForwardTo)->methodTable(vm)->put(asObject(valueToForwardTo), &lexicalGlobalObject, forwardId, value, slot);
     RETURN_IF_EXCEPTION(throwScope, false);
@@ -5075,14 +5075,14 @@ static inline bool setJSTestObj_putForwardsNullableAttributeSetter(JSGlobalObjec
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto id = Identifier::fromString(vm, reinterpret_cast<const LChar*>("putForwardsNullableAttribute"), strlen("putForwardsNullableAttribute"));
+    auto id = Identifier::fromString(vm, "putForwardsNullableAttribute"_s);
     auto valueToForwardTo = thisObject.get(&lexicalGlobalObject, id);
     RETURN_IF_EXCEPTION(throwScope, false);
     if (UNLIKELY(!valueToForwardTo.isObject())) {
         throwTypeError(&lexicalGlobalObject, throwScope);
         return false;
     }
-    auto forwardId = Identifier::fromString(vm, reinterpret_cast<const LChar*>("name"), strlen("name"));
+    auto forwardId = Identifier::fromString(vm, "name"_s);
     PutPropertySlot slot(valueToForwardTo, false);
     asObject(valueToForwardTo)->methodTable(vm)->put(asObject(valueToForwardTo), &lexicalGlobalObject, forwardId, value, slot);
     RETURN_IF_EXCEPTION(throwScope, false);

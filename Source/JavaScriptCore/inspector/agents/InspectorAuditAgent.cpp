@@ -142,7 +142,7 @@ void InspectorAuditAgent::populateAuditObject(JSC::JSGlobalObject* globalObject,
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder lock(vm);
 
-    auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Version"), JSC::JSValue(Protocol::Audit::VERSION));
+    auditObject->putDirect(vm, JSC::Identifier::fromString(vm, "Version"_s), JSC::JSValue(Protocol::Audit::VERSION));
 }
 
 } // namespace Inspector

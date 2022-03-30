@@ -129,25 +129,25 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
     QualifiedName name(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI);
     auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
 
-    auto* connectedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "connectedCallback"));
+    auto* connectedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "connectedCallback"_s));
     if (connectedCallback)
         elementInterface->setConnectedCallback(connectedCallback);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto* disconnectedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "disconnectedCallback"));
+    auto* disconnectedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "disconnectedCallback"_s));
     if (disconnectedCallback)
         elementInterface->setDisconnectedCallback(disconnectedCallback);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto* adoptedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "adoptedCallback"));
+    auto* adoptedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "adoptedCallback"_s));
     if (adoptedCallback)
         elementInterface->setAdoptedCallback(adoptedCallback);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    auto* attributeChangedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "attributeChangedCallback"));
+    auto* attributeChangedCallback = getCustomElementCallback(lexicalGlobalObject, prototypeObject, Identifier::fromString(vm, "attributeChangedCallback"_s));
     RETURN_IF_EXCEPTION(scope, JSValue());
     if (attributeChangedCallback) {
-        auto observedAttributesValue = constructor->get(&lexicalGlobalObject, Identifier::fromString(vm, "observedAttributes"));
+        auto observedAttributesValue = constructor->get(&lexicalGlobalObject, Identifier::fromString(vm, "observedAttributes"_s));
         RETURN_IF_EXCEPTION(scope, JSValue());
         if (!observedAttributesValue.isUndefined()) {
             auto observedAttributes = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, observedAttributesValue);
@@ -156,7 +156,7 @@ JSValue JSCustomElementRegistry::define(JSGlobalObject& lexicalGlobalObject, Cal
         }
     }
 
-    auto disabledFeaturesValue = constructor->get(&lexicalGlobalObject, Identifier::fromString(vm, "disabledFeatures"));
+    auto disabledFeaturesValue = constructor->get(&lexicalGlobalObject, Identifier::fromString(vm, "disabledFeatures"_s));
     RETURN_IF_EXCEPTION(scope, { });
     if (!disabledFeaturesValue.isUndefined()) {
         auto disabledFeatures = convert<IDLSequence<IDLDOMString>>(lexicalGlobalObject, disabledFeaturesValue);

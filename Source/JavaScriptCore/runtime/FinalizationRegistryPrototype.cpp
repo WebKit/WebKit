@@ -43,8 +43,8 @@ void FinalizationRegistryPrototype::finishCreation(VM& vm, JSGlobalObject* globa
     ASSERT(inherits(vm, info()));
 
     // We can't make this a property name because it's a resevered word in C++...
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(Identifier::fromString(vm, "register"), protoFuncFinalizationRegistryRegister, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(Identifier::fromString(vm, "unregister"), protoFuncFinalizationRegistryUnregister, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(Identifier::fromString(vm, "register"_s), protoFuncFinalizationRegistryRegister, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(Identifier::fromString(vm, "unregister"_s), protoFuncFinalizationRegistryUnregister, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 }
 

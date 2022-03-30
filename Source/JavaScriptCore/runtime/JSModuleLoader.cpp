@@ -106,7 +106,7 @@ void JSModuleLoader::finishCreation(JSGlobalObject* globalObject, VM& vm)
     ASSERT(inherits(vm, info()));
     JSMap* map = JSMap::create(globalObject, vm, globalObject->mapStructure());
     scope.releaseAssertNoException();
-    putDirect(vm, Identifier::fromString(vm, "registry"), map);
+    putDirect(vm, Identifier::fromString(vm, "registry"_s), map);
 }
 
 // ------------------------------ Functions --------------------------------

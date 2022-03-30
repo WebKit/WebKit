@@ -111,9 +111,9 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleImports, (JSGlobalObject* globalObject
 
     const auto& imports = module->moduleInformation().imports;
     if (imports.size()) {
-        Identifier module = Identifier::fromString(vm, "module");
-        Identifier name = Identifier::fromString(vm, "name");
-        Identifier kind = Identifier::fromString(vm, "kind");
+        Identifier module = Identifier::fromString(vm, "module"_s);
+        Identifier name = Identifier::fromString(vm, "name"_s);
+        Identifier kind = Identifier::fromString(vm, "kind"_s);
         for (const Wasm::Import& imp : imports) {
             JSObject* obj = constructEmptyObject(globalObject);
             RETURN_IF_EXCEPTION(throwScope, { });
@@ -142,8 +142,8 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleExports, (JSGlobalObject* globalObject
 
     const auto& exports = module->moduleInformation().exports;
     if (exports.size()) {
-        Identifier name = Identifier::fromString(vm, "name");
-        Identifier kind = Identifier::fromString(vm, "kind");
+        Identifier name = Identifier::fromString(vm, "name"_s);
+        Identifier kind = Identifier::fromString(vm, "kind"_s);
         for (const Wasm::Export& exp : exports) {
             JSObject* obj = constructEmptyObject(globalObject);
             RETURN_IF_EXCEPTION(throwScope, { });

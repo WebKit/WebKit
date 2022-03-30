@@ -26,18 +26,18 @@
 
 namespace JSC {
 
-#define INITIALIZE_PROPERTY_NAME(name) , name(Identifier::fromString(vm, #name))
-#define INITIALIZE_KEYWORD(name) , name##Keyword(Identifier::fromString(vm, #name))
+#define INITIALIZE_PROPERTY_NAME(name) , name(Identifier::fromString(vm, #name ""_s))
+#define INITIALIZE_KEYWORD(name) , name##Keyword(Identifier::fromString(vm, #name ""_s))
 #define INITIALIZE_PRIVATE_NAME(name) , name##PrivateName(m_builtinNames->name##PrivateName())
 #define INITIALIZE_SYMBOL(name) , name##Symbol(m_builtinNames->name##Symbol())
-#define INITIALIZE_PRIVATE_FIELD_NAME(name) , name##PrivateField(Identifier::fromString(vm, "#" #name))
+#define INITIALIZE_PRIVATE_FIELD_NAME(name) , name##PrivateField(Identifier::fromString(vm, "#" #name ""_s))
 
 CommonIdentifiers::CommonIdentifiers(VM& vm)
     : nullIdentifier()
     , emptyIdentifier(Identifier::EmptyIdentifier)
-    , underscoreProto(Identifier::fromString(vm, "__proto__"))
-    , useStrictIdentifier(Identifier::fromString(vm, "use strict"))
-    , timesIdentifier(Identifier::fromString(vm, "*"))
+    , underscoreProto(Identifier::fromString(vm, "__proto__"_s))
+    , useStrictIdentifier(Identifier::fromString(vm, "use strict"_s))
+    , timesIdentifier(Identifier::fromString(vm, "*"_s))
     , m_builtinNames(makeUnique<BuiltinNames>(vm, this))
     JSC_PARSER_PRIVATE_NAMES(INITIALIZE_PRIVATE_NAME)
     JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(INITIALIZE_KEYWORD)

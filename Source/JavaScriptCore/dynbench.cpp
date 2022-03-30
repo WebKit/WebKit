@@ -98,8 +98,8 @@ int main(int argc, char** argv) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         JSGlobalObject* globalObject =
             JSGlobalObject::create(vm, JSGlobalObject::createStructure(vm, jsNull()));
 
-        Identifier identF = Identifier::fromString(vm, "f");
-        Identifier identG = Identifier::fromString(vm, "g");
+        Identifier identF = Identifier::fromString(vm, "f"_s);
+        Identifier identG = Identifier::fromString(vm, "g"_s);
 
         Structure* objectStructure =
             JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 2);

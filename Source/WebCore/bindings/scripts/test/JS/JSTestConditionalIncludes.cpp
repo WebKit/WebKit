@@ -196,7 +196,7 @@ template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM
     reifyStaticProperties(vm, JSTestConditionalIncludes::info(), JSTestConditionalIncludesConstructorTableValues, *this);
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("MIXIN_CONSTANT"), strlen("MIXIN_CONSTANT"));
+        auto propertyName = Identifier::fromString(vm, "MIXIN_CONSTANT"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);
@@ -204,7 +204,7 @@ template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("MIXIN_REFLECTED_CONSTANT"), strlen("MIXIN_REFLECTED_CONSTANT"));
+        auto propertyName = Identifier::fromString(vm, "MIXIN_REFLECTED_CONSTANT"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);
@@ -212,7 +212,7 @@ template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM
 #endif
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"), strlen("PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"));
+        auto propertyName = Identifier::fromString(vm, "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);
@@ -313,7 +313,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinOperation"), strlen("mixinOperation"));
+        auto propertyName = Identifier::fromString(vm, "mixinOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -322,7 +322,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinComplexOperation"), strlen("mixinComplexOperation"));
+        auto propertyName = Identifier::fromString(vm, "mixinComplexOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -331,7 +331,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinCustomOperation"), strlen("mixinCustomOperation"));
+        auto propertyName = Identifier::fromString(vm, "mixinCustomOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -340,7 +340,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if (ENABLE(Condition11) && ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinConditionalOperation"), strlen("mixinConditionalOperation"));
+        auto propertyName = Identifier::fromString(vm, "mixinConditionalOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -349,7 +349,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled && jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled)) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinSettingsConditionalOperation"), strlen("mixinSettingsConditionalOperation"));
+        auto propertyName = Identifier::fromString(vm, "mixinSettingsConditionalOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -358,7 +358,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if (ENABLE(Condition12) && ENABLE(Condition22)) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinResultFieldOperation"), strlen("mixinResultFieldOperation"));
+        auto propertyName = Identifier::fromString(vm, "mixinResultFieldOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -367,7 +367,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if (ENABLE(Condition12) && ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("partialMixinOperationFromPartial"), strlen("partialMixinOperationFromPartial"));
+        auto propertyName = Identifier::fromString(vm, "partialMixinOperationFromPartial"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -376,7 +376,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinReadOnlyAttribute"), strlen("mixinReadOnlyAttribute"));
+        auto propertyName = Identifier::fromString(vm, "mixinReadOnlyAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -385,7 +385,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinAttribute"), strlen("mixinAttribute"));
+        auto propertyName = Identifier::fromString(vm, "mixinAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -394,7 +394,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinCustomAttribute"), strlen("mixinCustomAttribute"));
+        auto propertyName = Identifier::fromString(vm, "mixinCustomAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -403,7 +403,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinNodeAttribute"), strlen("mixinNodeAttribute"));
+        auto propertyName = Identifier::fromString(vm, "mixinNodeAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -412,7 +412,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("partialMixinAttributeFromPartial"), strlen("partialMixinAttributeFromPartial"));
+        auto propertyName = Identifier::fromString(vm, "partialMixinAttributeFromPartial"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -421,7 +421,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("MIXIN_CONSTANT"), strlen("MIXIN_CONSTANT"));
+        auto propertyName = Identifier::fromString(vm, "MIXIN_CONSTANT"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -430,7 +430,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("MIXIN_REFLECTED_CONSTANT"), strlen("MIXIN_REFLECTED_CONSTANT"));
+        auto propertyName = Identifier::fromString(vm, "MIXIN_REFLECTED_CONSTANT"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -439,7 +439,7 @@ void JSTestConditionalIncludesPrototype::finishCreation(VM& vm)
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"), strlen("PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"));
+        auto propertyName = Identifier::fromString(vm, "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);

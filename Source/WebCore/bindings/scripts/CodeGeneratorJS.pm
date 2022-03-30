@@ -2669,7 +2669,7 @@ sub GenerateDictionaryImplementationContent
             $result .= "${indent}    if (isNullOrUndefined)\n";
             $result .= "${indent}        ${key}Value = jsUndefined();\n";
             $result .= "${indent}    else {\n";
-            $result .= "${indent}        ${key}Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, \"${key}\"));\n";
+            $result .= "${indent}        ${key}Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, \"${key}\"_s));\n";
             $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, { });\n";
             $result .= "${indent}    }\n";
 
@@ -2765,14 +2765,14 @@ sub GenerateDictionaryImplementationContent
                     $result .= "${indent}    if (!${IDLType}::isNullValue(${valueExpression})) {\n";
                     $result .= "${indent}        auto ${key}Value = ${conversionExpression};\n";
                     $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, { });\n";
-                    $result .= "${indent}        result->putDirect(vm, JSC::Identifier::fromString(vm, \"${key}\"), ${key}Value);\n";
+                    $result .= "${indent}        result->putDirect(vm, JSC::Identifier::fromString(vm, \"${key}\"_s), ${key}Value);\n";
                     $result .= "${indent}    }\n";
                 } else {
                     my $conversionExpression = NativeToJSValueUsingReferences($member, $typeScope, $valueExpression, "globalObject");
 
                     $result .= "${indent}    auto ${key}Value = ${conversionExpression};\n";
                     $result .= "${indent}    RETURN_IF_EXCEPTION(throwScope, { });\n";
-                    $result .= "${indent}    result->putDirect(vm, JSC::Identifier::fromString(vm, \"${key}\"), ${key}Value);\n";
+                    $result .= "${indent}    result->putDirect(vm, JSC::Identifier::fromString(vm, \"${key}\"_s), ${key}Value);\n";
                 }
                 if ($needsRuntimeCheck) {
                     $result .= "    }\n";
@@ -4176,7 +4176,7 @@ sub addUnscopableProperties
     AddToImplIncludes("<JavaScriptCore/ObjectConstructor.h>");
     push(@implContent, "    JSObject& unscopables = *constructEmptyObject(globalObject()->vm(), globalObject()->nullPrototypeObjectStructure());\n");
     foreach my $unscopable (@unscopables) {
-        push(@implContent, "    unscopables.putDirect(vm, Identifier::fromString(vm, \"$unscopable\"), jsBoolean(true));\n");
+        push(@implContent, "    unscopables.putDirect(vm, Identifier::fromString(vm, \"$unscopable\"_s), jsBoolean(true));\n");
     }
     push(@implContent, "    putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);\n");
 }
@@ -4579,7 +4579,7 @@ sub GenerateImplementation
             my $name = $operationOrAttribute->name;
             push(@implContent, "    if (!${runtimeEnableConditionalString}) {\n");
             push(@implContent, "        hasDisabledRuntimeProperties = true;\n");
-            push(@implContent, "        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
+            push(@implContent, "        auto propertyName = Identifier::fromString(vm, \"$name\"_s);\n");
             push(@implContent, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
             push(@implContent, "        DeletePropertySlot slot;\n");
             push(@implContent, "        JSObject::deleteProperty(this, globalObject(), propertyName, slot);\n");
@@ -5479,7 +5479,7 @@ sub GenerateAttributeSetterBodyDefinition
         
         # 3.5.9.1. Let Q be ? Get(O, id).
         my $id = $attribute->name;
-        push(@$outputArray, "    auto id = Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"${id}\"), strlen(\"${id}\"));\n");
+        push(@$outputArray, "    auto id = Identifier::fromString(vm, \"${id}\"_s);\n");
         push(@$outputArray, "    auto valueToForwardTo = thisObject.get(&lexicalGlobalObject, id);\n");
         push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
         
@@ -5491,7 +5491,7 @@ sub GenerateAttributeSetterBodyDefinition
         
         # 3.5.9.3. Let forwardId be the identifier argument of the [PutForwards] extended attribute.
         my $forwardId = $attribute->extendedAttributes->{PutForwards};
-        push(@$outputArray, "    auto forwardId = Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"${forwardId}\"), strlen(\"${forwardId}\"));\n");
+        push(@$outputArray, "    auto forwardId = Identifier::fromString(vm, \"${forwardId}\"_s);\n");
         
         # 3.5.9.4. Perform ? Set(Q, forwardId, V, false).
         push(@$outputArray, "    PutPropertySlot slot(valueToForwardTo, false);\n");
@@ -5898,12 +5898,12 @@ sub GenerateDefaultToJSONOperationDefinition
                     push(@$outputArray, "    if (${runtimeEnableConditionalString}) {\n");
                     push(@$outputArray, "        auto ${attributeName}Value = ${toJSExpression};\n");
                     push(@$outputArray, "        RETURN_IF_EXCEPTION(throwScope, { });\n") if $mayThrowException;
-                    push(@$outputArray, "        result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${attributeName}Value);\n");
+                    push(@$outputArray, "        result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"_s), ${attributeName}Value);\n");
                     push(@$outputArray, "    }\n");
                 } else {
                     push(@$outputArray, "    auto ${attributeName}Value = ${toJSExpression};\n");
                     push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n") if $mayThrowException;
-                    push(@$outputArray, "    result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${attributeName}Value);\n");
+                    push(@$outputArray, "    result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"_s), ${attributeName}Value);\n");
                 }
 
                 if ($conditional) {
@@ -6623,7 +6623,7 @@ sub GenerateCallbackImplementationContent
                 $callbackInvocation = "m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException)";
             } else {
                 my $callbackType = $numOperations > 1 ? "Object" : "FunctionOrObject";
-                $callbackInvocation = "m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(vm, \"${functionName}\"), returnedException)";
+                $callbackInvocation = "m_data->invokeCallback(vm, thisValue, args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(vm, \"${functionName}\"_s), returnedException)";
             }
 
             if ($operation->type->name eq "undefined") {
@@ -7906,7 +7906,7 @@ sub GenerateConstructorHelperMethods
         my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operationOrAttribute, "&globalObject");
         my $name = $operationOrAttribute->name;
         push(@$outputArray, "    if (!${runtimeEnableConditionalString}) {\n");
-        push(@$outputArray, "        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
+        push(@$outputArray, "        auto propertyName = Identifier::fromString(vm, \"$name\"_s);\n");
         push(@$outputArray, "        VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);\n");
         push(@$outputArray, "        DeletePropertySlot slot;\n");
         push(@$outputArray, "        JSObject::deleteProperty(this, &globalObject, propertyName, slot);\n");

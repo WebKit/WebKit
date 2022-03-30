@@ -1,3 +1,115 @@
+2022-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Optimize the construction of a JSC::Identifier from an ASCIILiteral
+        https://bugs.webkit.org/show_bug.cgi?id=238552
+
+        Reviewed by Geoffrey Garen.
+
+        There are two ways to construct a JSC::Identifier from a string literal and both
+        were sub-optimal:
+        - template<unsigned charactersCount> static Identifier fromString(VM&, const char (&characters)[charactersCount]):
+          Even though it knows the charactersCount at compile time, it doesn't leverage this information
+          at all. Also, it ends up calling AtomStringImpl::add() instead of AtomStringImpl::addLiteral()
+          which means we lose the knowledge that it was a string literal and the optimization that come
+          with it (e.g. not copying the characters over). In this patch, I am deprecating this function
+          in favor of fromString(ASCIILiteral) which is now more efficient. I'll remove it in a follow up.
+        - static Identifier fromString(VM&, ASCIILiteral):
+          It ended up calling the Identifier(VM&, String) constructor which meant that we were potentially constructing
+          a String/StringImpl unnecessarily before atomizing it since the string may already be in the
+          AtomString table. We also failed to use the smallStrings cache for literals whose length is 1,
+          which would happen when calling `fromString(VM&, const char (&characters)[charactersCount])`.
+
+        In this patch, I optimized `fromString(VM&, ASCIILiteral)` to leverage the smallStrings cache
+        when necessary and call AtomStringImpl::addLiteral() instead of AtomStringImpl::add(). I also
+        made sure to mark `fromString(VM&, ASCIILiteral)` and `Identifier(VM&, ASCIILiteral)` as
+        ALWAYS_INLINE to make sure the compiler can optimize out the strlen() calls.
+
+        According to A/B bots, this is a 1-1.5% progression on Speedometer and and a 1.3% progression on
+        JetStream on iMac 20,1 (Intel). Sadly, this is perf-neutral on those two benchmarks on Apple
+        Silicon.
+
+        * API/JSAPIGlobalObject.mm:
+        (JSC::JSAPIGlobalObject::moduleLoaderCreateImportMetaProperties):
+        * API/JSBase.cpp:
+        (JSGetMemoryUsageStatistics):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        * builtins/BuiltinNames.cpp:
+        (JSC::BuiltinNames::BuiltinNames):
+        * builtins/BuiltinUtils.h:
+        * dynbench.cpp:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::functionDetails):
+        (Inspector::constructInternalProperty):
+        (Inspector::JSInjectedScriptHost::weakMapEntries):
+        (Inspector::JSInjectedScriptHost::weakSetEntries):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * inspector/JSJavaScriptCallFrame.cpp:
+        (Inspector::valueForScopeLocation):
+        (Inspector::JSJavaScriptCallFrame::scopeDescriptions):
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::extractSourceInformationFromException):
+        * inspector/agents/InspectorAuditAgent.cpp:
+        (Inspector::InspectorAuditAgent::populateAuditObject):
+        * jsc.cpp:
+        (GlobalObject::moduleLoaderCreateImportMetaProperties):
+        (JSC_DEFINE_HOST_FUNCTION):
+        (dumpException):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::hostResolveImportedModule):
+        * runtime/AtomicsObject.cpp:
+        (JSC::AtomicsObject::finishCreation):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/FinalizationRegistryPrototype.cpp:
+        (JSC::FinalizationRegistryPrototype::finishCreation):
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::addLiteral):
+        * runtime/Identifier.h:
+        (JSC::Identifier::Identifier):
+        * runtime/IdentifierInlines.h:
+        (JSC::Identifier::fromString):
+        * runtime/IntlLocale.cpp:
+        (JSC::IntlLocale::textInfo):
+        (JSC::IntlLocale::weekInfo):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        (JSC::IntlNumberFormat::resolvedOptions const):
+        (JSC::IntlNumberFormat::formatToPartsInternal):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::resolvedOptions const):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::exposeDollarVM):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::finishCreation):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        * runtime/SymbolConstructor.cpp:
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+        * wasm/js/JSWebAssemblyGlobal.cpp:
+        (JSC::JSWebAssemblyGlobal::type):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::type):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::type):
+        * wasm/js/WebAssemblyGlobalConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTagPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2022-03-30  Mark Lam  <mark.lam@apple.com>
 
         Remove obsolete --useProbeOSRExit option.

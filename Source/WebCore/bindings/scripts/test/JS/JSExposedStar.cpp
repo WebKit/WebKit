@@ -126,14 +126,14 @@ void JSExposedStarPrototype::finishCreation(VM& vm)
     bool hasDisabledRuntimeProperties = false;
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isDocument()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("operationJustForWindowContexts"), strlen("operationJustForWindowContexts"));
+        auto propertyName = Identifier::fromString(vm, "operationJustForWindowContexts"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isWorkerGlobalScope()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("operationJustForWorkerContexts"), strlen("operationJustForWorkerContexts"));
+        auto propertyName = Identifier::fromString(vm, "operationJustForWorkerContexts"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);

@@ -42,7 +42,7 @@ JSValue toJSNewlyCreated(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject*
     VM& vm = lexicalGlobalObject->vm();
     auto& data = imageData->data();
     auto* wrapper = createWrapper<ImageData>(globalObject, WTFMove(imageData));
-    Identifier dataName = Identifier::fromString(vm, "data");
+    Identifier dataName = Identifier::fromString(vm, "data"_s);
     wrapper->putDirect(vm, dataName, toJS(lexicalGlobalObject, globalObject, data), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
     // https://bugs.webkit.org/show_bug.cgi?id=142595

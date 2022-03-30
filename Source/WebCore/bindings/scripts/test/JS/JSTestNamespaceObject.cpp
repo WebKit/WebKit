@@ -109,21 +109,21 @@ template<> void JSTestNamespaceObjectDOMConstructor::initializeProperties(VM& vm
     reifyStaticProperties(vm, JSTestNamespaceObject::info(), JSTestNamespaceObjectConstructorTableValues, *this);
 #if ENABLE(Condition1)
     if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting1Enabled) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("namespaceAttributeFromPartial"), strlen("namespaceAttributeFromPartial"));
+        auto propertyName = Identifier::fromString(vm, "namespaceAttributeFromPartial"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);
     }
 #endif
     if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting2Enabled) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledBySettingNamespaceOperation"), strlen("enabledBySettingNamespaceOperation"));
+        auto propertyName = Identifier::fromString(vm, "enabledBySettingNamespaceOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);
     }
 #if ENABLE(Condition1)
     if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSetting1Enabled) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("namespaceOperationFromPartial"), strlen("namespaceOperationFromPartial"));
+        auto propertyName = Identifier::fromString(vm, "namespaceOperationFromPartial"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);

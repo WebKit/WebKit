@@ -63,7 +63,7 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
     if (isNullOrUndefined)
         bubblesValue = jsUndefined();
     else {
-        bubblesValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bubbles"));
+        bubblesValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bubbles"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!bubblesValue.isUndefined()) {
@@ -75,7 +75,7 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
     if (isNullOrUndefined)
         cancelableValue = jsUndefined();
     else {
-        cancelableValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "cancelable"));
+        cancelableValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "cancelable"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!cancelableValue.isUndefined()) {
@@ -87,7 +87,7 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
     if (isNullOrUndefined)
         composedValue = jsUndefined();
     else {
-        composedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "composed"));
+        composedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "composed"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!composedValue.isUndefined()) {
@@ -99,7 +99,7 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
     if (isNullOrUndefined)
         attr2Value = jsUndefined();
     else {
-        attr2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "attr2"));
+        attr2Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "attr2"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!attr2Value.isUndefined()) {
@@ -112,7 +112,7 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
     if (isNullOrUndefined)
         attr3Value = jsUndefined();
     else {
-        attr3Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "attr3"));
+        attr3Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "attr3"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!attr3Value.isUndefined()) {

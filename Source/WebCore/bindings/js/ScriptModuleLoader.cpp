@@ -371,7 +371,7 @@ JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObjec
     URL responseURL = responseURLFromRequestURL(*jsGlobalObject, moduleKeyValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    metaProperties->putDirect(vm, JSC::Identifier::fromString(vm, "url"), JSC::jsString(vm, responseURL.string()));
+    metaProperties->putDirect(vm, JSC::Identifier::fromString(vm, "url"_s), JSC::jsString(vm, responseURL.string()));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return metaProperties;

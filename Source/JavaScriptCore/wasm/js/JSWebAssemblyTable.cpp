@@ -140,13 +140,13 @@ JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
     auto maximum = m_table->maximum();
     if (maximum) {
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
-        result->putDirect(vm, Identifier::fromString(vm, "maximum"), jsNumber(*maximum));
+        result->putDirect(vm, Identifier::fromString(vm, "maximum"_s), jsNumber(*maximum));
     } else
         result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
 
     uint32_t minimum = m_table->length();
-    result->putDirect(vm, Identifier::fromString(vm, "minimum"), jsNumber(minimum));
-    result->putDirect(vm, Identifier::fromString(vm, "element"), elementString);
+    result->putDirect(vm, Identifier::fromString(vm, "minimum"_s), jsNumber(minimum));
+    result->putDirect(vm, Identifier::fromString(vm, "element"_s), elementString);
     return result;
 }
 

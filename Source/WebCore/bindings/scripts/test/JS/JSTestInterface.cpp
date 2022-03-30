@@ -467,7 +467,7 @@ void JSTestInterfacePrototype::finishCreation(VM& vm)
 #if ENABLE(Condition22) || ENABLE(Condition23)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("mixinSettingsConditionalOperation"), strlen("mixinSettingsConditionalOperation"));
+        auto propertyName = Identifier::fromString(vm, "mixinSettingsConditionalOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);

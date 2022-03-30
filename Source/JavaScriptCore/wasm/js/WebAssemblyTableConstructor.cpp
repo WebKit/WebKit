@@ -69,7 +69,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
 
     Wasm::TableElementType type;
     {
-        Identifier elementIdent = Identifier::fromString(vm, "element");
+        Identifier elementIdent = Identifier::fromString(vm, "element"_s);
         JSValue elementValue = memoryDescriptor->get(globalObject, elementIdent);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         String elementString = elementValue.toWTFString(globalObject);
@@ -82,10 +82,10 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
             return throwVMTypeError(globalObject, throwScope, "WebAssembly.Table expects its 'element' field to be the string 'funcref' or 'externref'"_s);
     }
 
-    Identifier initialIdent = Identifier::fromString(vm, "initial");
+    Identifier initialIdent = Identifier::fromString(vm, "initial"_s);
     JSValue initialSizeValue = memoryDescriptor->get(globalObject, initialIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    Identifier minimumIdent = Identifier::fromString(vm, "minimum");
+    Identifier minimumIdent = Identifier::fromString(vm, "minimum"_s);
     JSValue minSizeValue = memoryDescriptor->get(globalObject, minimumIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (!initialSizeValue.isUndefined() && !minSizeValue.isUndefined())
@@ -100,7 +100,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
     // In WebIDL, "present" means that [[Get]] result is undefined, not [[HasProperty]] result.
     // https://webidl.spec.whatwg.org/#idl-dictionaries
     std::optional<uint32_t> maximum;
-    Identifier maximumIdent = Identifier::fromString(vm, "maximum");
+    Identifier maximumIdent = Identifier::fromString(vm, "maximum"_s);
     JSValue maxSizeValue = memoryDescriptor->get(globalObject, maximumIdent);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     if (!maxSizeValue.isUndefined()) {

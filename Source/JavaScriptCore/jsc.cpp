@@ -572,12 +572,12 @@ private:
         addFunction(vm, "clearSamplingFlags", functionClearSamplingFlags, 1);
 #endif
 
-        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "OSRExit"), 0, functionUndefined1, OSRExitIntrinsic, DontEnum);
-        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "isFinalTier"), 0, functionFalse, IsFinalTierIntrinsic, DontEnum);
-        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "predictInt32"), 0, functionUndefined2, SetInt32HeapPredictionIntrinsic, DontEnum);
-        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "isInt32"), 0, functionIsInt32, CheckInt32Intrinsic, DontEnum);
-        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "isPureNaN"), 0, functionIsPureNaN, CheckInt32Intrinsic, DontEnum);
-        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "fiatInt52"), 0, functionIdentity, FiatInt52Intrinsic, DontEnum);
+        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "OSRExit"_s), 0, functionUndefined1, OSRExitIntrinsic, DontEnum);
+        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "isFinalTier"_s), 0, functionFalse, IsFinalTierIntrinsic, DontEnum);
+        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "predictInt32"_s), 0, functionUndefined2, SetInt32HeapPredictionIntrinsic, DontEnum);
+        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "isInt32"_s), 0, functionIsInt32, CheckInt32Intrinsic, DontEnum);
+        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "isPureNaN"_s), 0, functionIsPureNaN, CheckInt32Intrinsic, DontEnum);
+        putDirectNativeFunction(vm, this, Identifier::fromString(vm, "fiatInt52"_s), 0, functionIdentity, FiatInt52Intrinsic, DontEnum);
         
         addFunction(vm, "effectful42", functionEffectful42, 0);
         addFunction(vm, "makeMasquerader", functionMakeMasquerader, 0);
@@ -634,16 +634,16 @@ private:
             JSArray* array = constructEmptyArray(this, nullptr);
             for (size_t i = 0; i < arguments.size(); ++i)
                 array->putDirectIndex(this, i, jsString(vm, arguments[i]));
-            putDirect(vm, Identifier::fromString(vm, "arguments"), array, DontEnum);
+            putDirect(vm, Identifier::fromString(vm, "arguments"_s), array, DontEnum);
         }
 
-        putDirect(vm, Identifier::fromString(vm, "console"), jsUndefined(), DontEnum);
+        putDirect(vm, Identifier::fromString(vm, "console"_s), jsUndefined(), DontEnum);
         
         Structure* plainObjectStructure = JSFinalObject::createStructure(vm, this, objectPrototype(), 0);
         
         JSObject* dollar = JSFinalObject::create(vm, plainObjectStructure);
-        putDirect(vm, Identifier::fromString(vm, "$"), dollar, DontEnum);
-        putDirect(vm, Identifier::fromString(vm, "$262"), dollar, DontEnum);
+        putDirect(vm, Identifier::fromString(vm, "$"_s), dollar, DontEnum);
+        putDirect(vm, Identifier::fromString(vm, "$262"_s), dollar, DontEnum);
         
         addFunction(vm, dollar, "createRealm", functionDollarCreateRealm, 0, static_cast<unsigned>(PropertyAttribute::None));
         addFunction(vm, dollar, "detachArrayBuffer", functionTransferArrayBuffer, 1, static_cast<unsigned>(PropertyAttribute::None));
@@ -653,14 +653,14 @@ private:
         addFunction(vm, dollar, "globalObjectFor", functionDollarGlobalObjectFor, 1, static_cast<unsigned>(PropertyAttribute::None));
         addFunction(vm, dollar, "isRemoteFunction", functionDollarIsRemoteFunction, 1, static_cast<unsigned>(PropertyAttribute::None));
         
-        dollar->putDirect(vm, Identifier::fromString(vm, "global"), globalThis());
-        dollar->putDirectCustomAccessor(vm, Identifier::fromString(vm, "IsHTMLDDA"),
+        dollar->putDirect(vm, Identifier::fromString(vm, "global"_s), globalThis());
+        dollar->putDirectCustomAccessor(vm, Identifier::fromString(vm, "IsHTMLDDA"_s),
             CustomGetterSetter::create(vm, accessorMakeMasquerader, nullptr),
             static_cast<unsigned>(PropertyAttribute::CustomValue)
         );
 
         JSObject* agent = JSFinalObject::create(vm, plainObjectStructure);
-        dollar->putDirect(vm, Identifier::fromString(vm, "agent"), agent);
+        dollar->putDirect(vm, Identifier::fromString(vm, "agent"_s), agent);
         
         // The test262 INTERPRETING.md document says that some of these functions are just in the main
         // thread and some are in the other threads. We just put them in all threads.
@@ -691,13 +691,13 @@ private:
         if (Options::exposeCustomSettersOnGlobalObjectForTesting()) {
             {
                 CustomGetterSetter* custom = CustomGetterSetter::create(vm, nullptr, testCustomAccessorSetter);
-                Identifier identifier = Identifier::fromString(vm, "testCustomAccessorSetter");
+                Identifier identifier = Identifier::fromString(vm, "testCustomAccessorSetter"_s);
                 this->putDirectCustomAccessor(vm, identifier, custom, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::CustomAccessor);
             }
 
             {
                 CustomGetterSetter* custom = CustomGetterSetter::create(vm, nullptr, testCustomValueSetter);
-                Identifier identifier = Identifier::fromString(vm, "testCustomValueSetter");
+                Identifier identifier = Identifier::fromString(vm, "testCustomValueSetter"_s);
                 this->putDirectCustomAccessor(vm, identifier, custom, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::CustomValue);
             }
         }
@@ -1242,7 +1242,7 @@ JSObject* GlobalObject::moduleLoaderCreateImportMetaProperties(JSGlobalObject* g
     JSObject* metaProperties = constructEmptyObject(vm, globalObject->nullPrototypeObjectStructure());
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    metaProperties->putDirect(vm, Identifier::fromString(vm, "filename"), key);
+    metaProperties->putDirect(vm, Identifier::fromString(vm, "filename"_s), key);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     return metaProperties;
@@ -2030,7 +2030,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarCreateRealm, (JSGlobalObject* globalObjec
 {
     VM& vm = globalObject->vm();
     GlobalObject* result = GlobalObject::create(vm, GlobalObject::createStructure(vm, jsNull()), Vector<String>());
-    return JSValue::encode(result->getDirect(vm, Identifier::fromString(vm, "$")));
+    return JSValue::encode(result->getDirect(vm, Identifier::fromString(vm, "$"_s)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDollarEvalScript, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -2041,7 +2041,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarEvalScript, (JSGlobalObject* globalObject
     String sourceCode = callFrame->argument(0).toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
-    JSValue global = callFrame->thisValue().get(globalObject, Identifier::fromString(vm, "global"));
+    JSValue global = callFrame->thisValue().get(globalObject, Identifier::fromString(vm, "global"_s));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     while (global.inherits<JSProxy>(vm))
         global = jsCast<JSProxy*>(global)->target();
@@ -2371,7 +2371,7 @@ JSC_DEFINE_HOST_FUNCTION(functionJSCOptions, (JSGlobalObject* globalObject, Call
     VM& vm = globalObject->vm();
     JSObject* optionsObject = constructEmptyObject(globalObject);
 #define READ_OPTION(type_, name_, defaultValue_, availability_, description_) \
-    addOption(vm, optionsObject, Identifier::fromString(vm, #name_), Options::name_());
+    addOption(vm, optionsObject, Identifier::fromString(vm, #name_ ""_s), Options::name_());
     FOR_EACH_JSC_OPTION(READ_OPTION)
 #undef READ_OPTION
     return JSValue::encode(optionsObject);
@@ -3050,13 +3050,13 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
     else
         printf("Exception: <out of memory while extracting exception string>\n");
 
-    Identifier nameID = Identifier::fromString(vm, "name");
+    Identifier nameID = Identifier::fromString(vm, "name"_s);
     CHECK_EXCEPTION();
-    Identifier fileNameID = Identifier::fromString(vm, "sourceURL");
+    Identifier fileNameID = Identifier::fromString(vm, "sourceURL"_s);
     CHECK_EXCEPTION();
-    Identifier lineNumberID = Identifier::fromString(vm, "line");
+    Identifier lineNumberID = Identifier::fromString(vm, "line"_s);
     CHECK_EXCEPTION();
-    Identifier stackID = Identifier::fromString(vm, "stack");
+    Identifier stackID = Identifier::fromString(vm, "stack"_s);
     CHECK_EXCEPTION();
 
     JSValue nameValue = exception.get(globalObject, nameID);

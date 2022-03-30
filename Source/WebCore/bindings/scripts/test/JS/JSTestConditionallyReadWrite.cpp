@@ -190,28 +190,28 @@ void JSTestConditionallyReadWritePrototype::finishCreation(VM& vm)
     bool hasDisabledRuntimeProperties = false;
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("runtimeConditionallyReadWriteAttribute"), strlen("runtimeConditionallyReadWriteAttribute"));
+        auto propertyName = Identifier::fromString(vm, "runtimeConditionallyReadWriteAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("runtimeConditionallyReadWriteAttributePromise"), strlen("runtimeConditionallyReadWriteAttributePromise"));
+        auto propertyName = Identifier::fromString(vm, "runtimeConditionallyReadWriteAttributePromise"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testFeatureEnabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("settingsConditionallyReadWriteAttribute"), strlen("settingsConditionallyReadWriteAttribute"));
+        auto propertyName = Identifier::fromString(vm, "settingsConditionallyReadWriteAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!downcast<Document>(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext())->settingsValues().testFeatureEnabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("settingsConditionallyReadWriteAttributePromise"), strlen("settingsConditionallyReadWriteAttributePromise"));
+        auto propertyName = Identifier::fromString(vm, "settingsConditionallyReadWriteAttributePromise"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);

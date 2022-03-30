@@ -120,7 +120,7 @@ void JSTestGenerateIsReachablePrototype::finishCreation(VM& vm)
     bool hasDisabledRuntimeProperties = false;
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("aSecretAttribute"), strlen("aSecretAttribute"));
+        auto propertyName = Identifier::fromString(vm, "aSecretAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);

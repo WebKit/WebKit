@@ -472,7 +472,7 @@ inline void DialogHandler::dialogCreated(DOMWindow& dialog)
     //        world if dialogArguments comes from an isolated world.
     JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(vm));
     if (JSValue dialogArguments = m_callFrame.argument(1))
-        globalObject->putDirect(vm, Identifier::fromString(vm, "dialogArguments"), dialogArguments);
+        globalObject->putDirect(vm, Identifier::fromString(vm, "dialogArguments"_s), dialogArguments);
 }
 
 inline JSValue DialogHandler::returnValue() const
@@ -481,7 +481,7 @@ inline JSValue DialogHandler::returnValue() const
     JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(vm));
     if (!globalObject)
         return jsUndefined();
-    Identifier identifier = Identifier::fromString(vm, "returnValue");
+    Identifier identifier = Identifier::fromString(vm, "returnValue"_s);
     PropertySlot slot(globalObject, PropertySlot::InternalMethodType::Get);
     if (!JSGlobalObject::getOwnPropertySlot(globalObject, &m_globalObject, identifier, slot))
         return jsUndefined();
@@ -586,7 +586,7 @@ void JSDOMWindow::setOpener(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSVal
     }
 
     bool shouldThrow = true;
-    createDataProperty(&lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject.vm(), "opener"), value, shouldThrow);
+    createDataProperty(&lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject.vm(), "opener"_s), value, shouldThrow);
 }
 
 JSValue JSDOMWindow::self(JSC::JSGlobalObject&) const
@@ -657,7 +657,7 @@ void JSDOMWindow::setOpenDatabase(JSC::JSGlobalObject& lexicalGlobalObject, JSC:
         return;
 
     bool shouldThrow = true;
-    createDataProperty(&lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject.vm(), "openDatabase"), value, shouldThrow);
+    createDataProperty(&lexicalGlobalObject, Identifier::fromString(lexicalGlobalObject.vm(), "openDatabase"_s), value, shouldThrow);
 }
 
 JSDOMWindow& mainWorldGlobalObject(Frame& frame)

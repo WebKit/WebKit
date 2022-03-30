@@ -71,10 +71,10 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
 
     Wasm::PageCount initialPageCount;
     {
-        Identifier initial = Identifier::fromString(vm, "initial");
+        Identifier initial = Identifier::fromString(vm, "initial"_s);
         JSValue initSizeValue = memoryDescriptor->get(globalObject, initial);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-        Identifier minimum = Identifier::fromString(vm, "minimum");
+        Identifier minimum = Identifier::fromString(vm, "minimum"_s);
         JSValue minSizeValue = memoryDescriptor->get(globalObject, minimum);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (!minSizeValue.isUndefined() && !initSizeValue.isUndefined()) {
@@ -97,7 +97,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
     {
         // In WebIDL, "present" means that [[Get]] result is undefined, not [[HasProperty]] result.
         // https://webidl.spec.whatwg.org/#idl-dictionaries
-        Identifier maximum = Identifier::fromString(vm, "maximum");
+        Identifier maximum = Identifier::fromString(vm, "maximum"_s);
         JSValue maxSizeValue = memoryDescriptor->get(globalObject, maximum);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         if (!maxSizeValue.isUndefined()) {
@@ -116,7 +116,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyMemory, (JSGlobalObject* globalOb
 
     Wasm::MemorySharingMode sharingMode = Wasm::MemorySharingMode::Default;
     if (Options::useSharedArrayBuffer()) {
-        JSValue sharedValue = memoryDescriptor->get(globalObject, Identifier::fromString(vm, "shared"));
+        JSValue sharedValue = memoryDescriptor->get(globalObject, Identifier::fromString(vm, "shared"_s));
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
         bool shared = sharedValue.toBoolean(globalObject);
         RETURN_IF_EXCEPTION(throwScope, encodedJSValue());

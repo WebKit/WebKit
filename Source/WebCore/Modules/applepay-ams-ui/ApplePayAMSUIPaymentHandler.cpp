@@ -90,7 +90,7 @@ void ApplePayAMSUIPaymentHandler::finishSession(std::optional<bool>&& result)
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
         auto* object = constructEmptyObject(&lexicalGlobalObject);
-        object->putDirect(vm, JSC::Identifier::fromString(vm, "success"), JSC::jsBoolean(success));
+        object->putDirect(vm, JSC::Identifier::fromString(vm, "success"_s), JSC::jsBoolean(success));
 
         RETURN_IF_EXCEPTION(throwScope, { });
 

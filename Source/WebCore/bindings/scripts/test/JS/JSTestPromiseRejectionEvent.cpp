@@ -67,7 +67,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         bubblesValue = jsUndefined();
     else {
-        bubblesValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bubbles"));
+        bubblesValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "bubbles"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!bubblesValue.isUndefined()) {
@@ -79,7 +79,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         cancelableValue = jsUndefined();
     else {
-        cancelableValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "cancelable"));
+        cancelableValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "cancelable"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!cancelableValue.isUndefined()) {
@@ -91,7 +91,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         composedValue = jsUndefined();
     else {
-        composedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "composed"));
+        composedValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "composed"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!composedValue.isUndefined()) {
@@ -103,7 +103,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         promiseValue = jsUndefined();
     else {
-        promiseValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "promise"));
+        promiseValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "promise"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!promiseValue.isUndefined()) {
@@ -117,7 +117,7 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
     if (isNullOrUndefined)
         reasonValue = jsUndefined();
     else {
-        reasonValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "reason"));
+        reasonValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "reason"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!reasonValue.isUndefined()) {

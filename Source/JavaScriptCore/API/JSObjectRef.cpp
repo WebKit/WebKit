@@ -138,7 +138,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     startingLineNumber = std::max(1, startingLineNumber);
-    Identifier nameID = name ? name->identifier(&vm) : Identifier::fromString(vm, "anonymous");
+    Identifier nameID = name ? name->identifier(&vm) : Identifier::fromString(vm, "anonymous"_s);
     
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < parameterCount; i++)

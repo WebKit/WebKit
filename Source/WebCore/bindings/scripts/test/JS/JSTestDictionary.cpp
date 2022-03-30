@@ -43,7 +43,7 @@ template<> TestDictionary convertDictionary<TestDictionary>(JSGlobalObject& lexi
     if (isNullOrUndefined)
         memberValue = jsUndefined();
     else {
-        memberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "member"));
+        memberValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "member"_s));
         RETURN_IF_EXCEPTION(throwScope, { });
     }
     if (!memberValue.isUndefined()) {

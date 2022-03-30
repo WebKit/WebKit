@@ -152,7 +152,7 @@ template<> void JSTestEnabledBySettingDOMConstructor::initializeProperties(VM& v
     putDirect(vm, vm.propertyNames->prototype, JSTestEnabledBySetting::prototype(vm, globalObject), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::DontDelete);
     reifyStaticProperties(vm, JSTestEnabledBySetting::info(), JSTestEnabledBySettingConstructorTableValues, *this);
     if (!jsCast<JSDOMGlobalObject*>(&globalObject)->scriptExecutionContext()->settingsValues().testSettingEnabled) {
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledBySettingConstant"), strlen("enabledBySettingConstant"));
+        auto propertyName = Identifier::fromString(vm, "enabledBySettingConstant"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, &globalObject, propertyName, slot);
@@ -193,7 +193,7 @@ void JSTestEnabledBySettingPrototype::finishCreation(VM& vm)
 #if ENABLE(TEST_FEATURE)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledBySettingOperation"), strlen("enabledBySettingOperation"));
+        auto propertyName = Identifier::fromString(vm, "enabledBySettingOperation"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -202,7 +202,7 @@ void JSTestEnabledBySettingPrototype::finishCreation(VM& vm)
 #if ENABLE(TEST_FEATURE)
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledBySettingAttribute"), strlen("enabledBySettingAttribute"));
+        auto propertyName = Identifier::fromString(vm, "enabledBySettingAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -211,7 +211,7 @@ void JSTestEnabledBySettingPrototype::finishCreation(VM& vm)
 #if ENABLE(TEST_FEATURE)
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled && jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().otherTestSettingEnabled)) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledByTwoSettingsAttribute"), strlen("enabledByTwoSettingsAttribute"));
+        auto propertyName = Identifier::fromString(vm, "enabledByTwoSettingsAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -219,14 +219,14 @@ void JSTestEnabledBySettingPrototype::finishCreation(VM& vm)
 #endif
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingFromPartialInterfaceAttributeEnabled && jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingFromPartialInterfaceEnabled)) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("supplementalAttribute"), strlen("supplementalAttribute"));
+        auto propertyName = Identifier::fromString(vm, "supplementalAttribute"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->settingsValues().testSettingEnabled) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("enabledBySettingConstant"), strlen("enabledBySettingConstant"));
+        auto propertyName = Identifier::fromString(vm, "enabledBySettingConstant"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);

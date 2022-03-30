@@ -180,14 +180,14 @@ void JSTestNodePrototype::finishCreation(VM& vm)
     bool hasDisabledRuntimeProperties = false;
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("calculateSecretResult"), strlen("calculateSecretResult"));
+        auto propertyName = Identifier::fromString(vm, "calculateSecretResult"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("getSecretBoolean"), strlen("getSecretBoolean"));
+        auto propertyName = Identifier::fromString(vm, "getSecretBoolean"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -195,7 +195,7 @@ void JSTestNodePrototype::finishCreation(VM& vm)
 #if ENABLE(TEST_FEATURE)
     if (!(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("testFeatureGetSecretBoolean"), strlen("testFeatureGetSecretBoolean"));
+        auto propertyName = Identifier::fromString(vm, "testFeatureGetSecretBoolean"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -203,28 +203,28 @@ void JSTestNodePrototype::finishCreation(VM& vm)
 #endif
     if (!RuntimeEnabledFeatures::sharedFeatures().domIteratorEnabled()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("entries"), strlen("entries"));
+        auto propertyName = Identifier::fromString(vm, "entries"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!RuntimeEnabledFeatures::sharedFeatures().domIteratorEnabled()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("keys"), strlen("keys"));
+        auto propertyName = Identifier::fromString(vm, "keys"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!RuntimeEnabledFeatures::sharedFeatures().domIteratorEnabled()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("values"), strlen("values"));
+        auto propertyName = Identifier::fromString(vm, "values"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
     }
     if (!RuntimeEnabledFeatures::sharedFeatures().domIteratorEnabled()) {
         hasDisabledRuntimeProperties = true;
-        auto propertyName = Identifier::fromString(vm, reinterpret_cast<const LChar*>("forEach"), strlen("forEach"));
+        auto propertyName = Identifier::fromString(vm, "forEach"_s);
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         DeletePropertySlot slot;
         JSObject::deleteProperty(this, globalObject(), propertyName, slot);
@@ -377,7 +377,7 @@ static inline EncodedJSValue jsTestNodePrototypeFunction_toJSONBody(JSGlobalObje
     auto* result = constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype());
     auto nameValue = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.name());
     RETURN_IF_EXCEPTION(throwScope, { });
-    result->putDirect(vm, Identifier::fromString(vm, "name"), nameValue);
+    result->putDirect(vm, Identifier::fromString(vm, "name"_s), nameValue);
     return JSValue::encode(result);
 }
 

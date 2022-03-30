@@ -119,9 +119,9 @@ static JSValue valueForScopeLocation(JSGlobalObject* globalObject, const Debugge
     // Debugger.Location protocol object.
     VM& vm = globalObject->vm();
     JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, Identifier::fromString(vm, "scriptId"), jsString(vm, String::number(location.sourceID)));
-    result->putDirect(vm, Identifier::fromString(vm, "lineNumber"), jsNumber(location.line));
-    result->putDirect(vm, Identifier::fromString(vm, "columnNumber"), jsNumber(location.column));
+    result->putDirect(vm, Identifier::fromString(vm, "scriptId"_s), jsString(vm, String::number(location.sourceID)));
+    result->putDirect(vm, Identifier::fromString(vm, "lineNumber"_s), jsNumber(location.line));
+    result->putDirect(vm, Identifier::fromString(vm, "columnNumber"_s), jsNumber(location.column));
     return result;
 }
 
@@ -141,9 +141,9 @@ JSValue JSJavaScriptCallFrame::scopeDescriptions(JSGlobalObject* globalObject)
     for (DebuggerScope::iterator iter = scopeChain->begin(); iter != end; ++iter) {
         DebuggerScope* scope = iter.get();
         JSObject* description = constructEmptyObject(globalObject);
-        description->putDirect(vm, Identifier::fromString(vm, "type"), valueForScopeType(scope));
-        description->putDirect(vm, Identifier::fromString(vm, "name"), jsString(vm, scope->name()));
-        description->putDirect(vm, Identifier::fromString(vm, "location"), valueForScopeLocation(globalObject, scope->location()));
+        description->putDirect(vm, Identifier::fromString(vm, "type"_s), valueForScopeType(scope));
+        description->putDirect(vm, Identifier::fromString(vm, "name"_s), jsString(vm, scope->name()));
+        description->putDirect(vm, Identifier::fromString(vm, "location"_s), valueForScopeLocation(globalObject, scope->location()));
         array->putDirectIndex(globalObject, index++, description);
         RETURN_IF_EXCEPTION(throwScope, JSValue());
     }

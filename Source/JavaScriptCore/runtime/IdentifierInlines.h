@@ -86,9 +86,9 @@ inline Identifier Identifier::fromString(VM& vm, const char (&characters)[charac
     return Identifier(&vm, characters);
 }
 
-inline Identifier Identifier::fromString(VM& vm, ASCIILiteral s)
+ALWAYS_INLINE Identifier Identifier::fromString(VM& vm, ASCIILiteral s)
 {
-    return Identifier(vm, String(s));
+    return Identifier(vm, s);
 }
 
 inline Identifier Identifier::fromString(VM& vm, const LChar* s, int length)

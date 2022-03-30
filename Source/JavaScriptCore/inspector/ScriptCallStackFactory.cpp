@@ -124,9 +124,9 @@ static bool extractSourceInformationFromException(JSC::JSGlobalObject* globalObj
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not need to evaluate JavaScript handling exceptions
-    JSValue lineValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "line"));
-    JSValue columnValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "column"));
-    JSValue sourceURLValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "sourceURL"));
+    JSValue lineValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "line"_s));
+    JSValue columnValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "column"_s));
+    JSValue sourceURLValue = exceptionObject->getDirect(vm, Identifier::fromString(vm, "sourceURL"_s));
     
     bool result = false;
     if (lineValue && lineValue.isNumber()

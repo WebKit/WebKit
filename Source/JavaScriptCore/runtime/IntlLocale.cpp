@@ -757,7 +757,7 @@ JSObject* IntlLocale::textInfo(JSGlobalObject* globalObject)
     }
 
     JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, Identifier::fromString(vm, "direction"), layoutString);
+    result->putDirect(vm, Identifier::fromString(vm, "direction"_s), layoutString);
     return result;
 }
 
@@ -840,9 +840,9 @@ JSObject* IntlLocale::weekInfo(JSGlobalObject* globalObject)
     RETURN_IF_EXCEPTION(scope, { });
 
     JSObject* result = constructEmptyObject(globalObject);
-    result->putDirect(vm, Identifier::fromString(vm, "firstDay"), jsNumber(convertUCalendarDaysOfWeekToMondayBasedDay(firstDayOfWeek)));
-    result->putDirect(vm, Identifier::fromString(vm, "weekend"), weekendArray);
-    result->putDirect(vm, Identifier::fromString(vm, "minimalDays"), jsNumber(minimalDays));
+    result->putDirect(vm, Identifier::fromString(vm, "firstDay"_s), jsNumber(convertUCalendarDaysOfWeekToMondayBasedDay(firstDayOfWeek)));
+    result->putDirect(vm, Identifier::fromString(vm, "weekend"_s), weekendArray);
+    result->putDirect(vm, Identifier::fromString(vm, "minimalDays"_s), jsNumber(minimalDays));
     return result;
 }
 
