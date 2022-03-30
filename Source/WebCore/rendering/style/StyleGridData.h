@@ -44,16 +44,25 @@ typedef std::variant<GridTrackSize, Vector<String>> RepeatEntry;
 typedef Vector<RepeatEntry> RepeatTrackList;
 
 struct GridTrackEntrySubgrid {
-    bool operator==(const GridTrackEntrySubgrid&) const = default;
+    bool operator==(const GridTrackEntrySubgrid&) const
+    {
+        return true;
+    }
 };
 struct GridTrackEntryRepeat {
-    bool operator==(const GridTrackEntryRepeat&) const = default;
+    bool operator==(const GridTrackEntryRepeat& other) const
+    {
+        return repeats == other.repeats && list == other.list;
+    }
 
     unsigned repeats;
     RepeatTrackList list;
 };
 struct GridTrackEntryAutoRepeat {
-    bool operator==(const GridTrackEntryAutoRepeat&) const = default;
+    bool operator==(const GridTrackEntryAutoRepeat& other) const
+    {
+        return type == other.type && list == other.list;
+    }
 
     AutoRepeatType type;
     RepeatTrackList list;
