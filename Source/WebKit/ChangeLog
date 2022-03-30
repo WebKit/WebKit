@@ -1,3 +1,36 @@
+2022-03-29  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r290840. rdar://problem/90957274
+
+    [WebAuthn] Don't use decidePolicyForLocalAuthenticator for Web Authentication Modern
+    https://bugs.webkit.org/show_bug.cgi?id=225646
+    rdar://78147681
+    
+    Reviewed by Brent Fulgham.
+    
+    decidePolicyForLocalAuthenticator is not implemented for the _WKWebAuthenticationPanelDelegate
+    used for modern because the prompt to allow Touch/FaceID comes earlier in the process.
+    
+    * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+    (WebKit::LocalAuthenticator::makeCredential):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@290840 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2022-03-04  J Pascoe  <j_pascoe@apple.com>
+
+            [WebAuthn] Don't use decidePolicyForLocalAuthenticator for Web Authentication Modern
+            https://bugs.webkit.org/show_bug.cgi?id=225646
+            rdar://78147681
+
+            Reviewed by Brent Fulgham.
+
+            decidePolicyForLocalAuthenticator is not implemented for the _WKWebAuthenticationPanelDelegate
+            used for modern because the prompt to allow Touch/FaceID comes earlier in the process.
+
+            * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+            (WebKit::LocalAuthenticator::makeCredential):
+
 2022-03-29  Alex Christensen  <achristensen@webkit.org>
 
         Revert r292055
