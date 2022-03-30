@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -248,11 +248,11 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     auto target = CodeLocationLabel<JITThunkPtrTag>(osrExitThunk.code());
     for (unsigned i = 0; i < m_osrExit.size(); ++i) {
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
-        if (!Options::useProbeOSRExit()) {
-            linkBuffer.link(info.m_patchableJump.m_jump, target);
-            OSRExit& exit = m_osrExit[i];
-            exit.m_patchableJumpLocation = linkBuffer.locationOf<JSInternalPtrTag>(info.m_patchableJump);
-        }
+
+        linkBuffer.link(info.m_patchableJump.m_jump, target);
+        OSRExit& exit = m_osrExit[i];
+        exit.m_patchableJumpLocation = linkBuffer.locationOf<JSInternalPtrTag>(info.m_patchableJump);
+
         if (info.m_replacementSource.isSet()) {
             m_jitCode->common.m_jumpReplacements.append(JumpReplacement(
                 linkBuffer.locationOf<JSInternalPtrTag>(info.m_replacementSource),

@@ -1,3 +1,16 @@
+2022-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Remove obsolete --useProbeOSRExit option.
+        https://bugs.webkit.org/show_bug.cgi?id=238534
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+
 2022-03-29  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use constants buffer to load JSGlobalObject in BaselineJIT thunks
