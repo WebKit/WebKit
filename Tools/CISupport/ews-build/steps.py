@@ -4628,7 +4628,7 @@ class ValidateSquashed(shell.ShellCommand):
 class AddReviewerMixin(object):
     NOBODY_SED = 's/NOBODY (OO*PP*S!*)/{}/g'
 
-    def environment(self):
+    def gitCommitEnvironment(self):
         owners = self.getProperty('owners', [])
         if not owners:
             return dict(
@@ -4673,7 +4673,7 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
             f'{head_ref}...{base_ref}',
         ]
 
-        for key, value in self.environment().items():
+        for key, value in self.gitCommitEnvironment().items():
             self.workerEnvironment[key] = value
 
         return super(AddReviewerToCommitMessage, self).start()
@@ -4722,7 +4722,7 @@ class AddReviewerToChangeLog(steps.ShellSequence, ShellMixin, AddReviewerMixin):
         ]:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
 
-        self.env = self.environment()
+        self.env = self.gitCommitEnvironment()
 
         return super(AddReviewerToChangeLog, self).run()
 

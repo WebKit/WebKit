@@ -1,3 +1,17 @@
+2022-03-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [Merge-Queue] Add Reviewers to commit message (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=238354
+        <rdar://problem/90800671>
+
+        Reviewed by Aakash Jain.
+
+        * CISupport/ews-build/steps.py:
+        (AddReviewerMixin.gitCommitEnvironment) Renamed from environment:
+        (AddReviewerToCommitMessage.start):
+        (AddReviewerToChangeLog.run):
+        (AddReviewerMixin.environment): Renamed to gitCommitEnvironment.
+
 2022-03-30  Sihui Liu  <sihui_liu@apple.com>
 
         Avoid initializing default WKWebsiteDataStore in -[WKWebViewConfiguration copyWithZone]
