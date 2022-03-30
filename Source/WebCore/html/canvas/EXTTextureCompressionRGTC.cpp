@@ -27,7 +27,6 @@
 
 #if ENABLE(WEBGL)
 #include "EXTTextureCompressionRGTC.h"
-#include "ExtensionsGL.h"
 
 #include <wtf/IsoMallocInlines.h>
 
@@ -38,12 +37,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(EXTTextureCompressionRGTC);
 EXTTextureCompressionRGTC::EXTTextureCompressionRGTC(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_EXT_texture_compression_rgtc");
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_texture_compression_rgtc");
 
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RED_RGTC1_EXT);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SIGNED_RED_RGTC1_EXT);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_RED_GREEN_RGTC2_EXT);
-    context.addCompressedTextureFormat(ExtensionsGL::COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RED_RGTC1_EXT);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SIGNED_RED_RGTC1_EXT);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_RED_GREEN_RGTC2_EXT);
+    context.addCompressedTextureFormat(GraphicsContextGL::COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT);
 }
 
 EXTTextureCompressionRGTC::~EXTTextureCompressionRGTC() = default;

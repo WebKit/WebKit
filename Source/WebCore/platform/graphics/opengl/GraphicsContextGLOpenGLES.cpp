@@ -104,7 +104,7 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
 
     // We don't allow the logic where stencil is required and depth is not.
     // See GraphicsContextGLOpenGL::validateAttributes.
-    bool supportPackedDepthStencilBuffer = (attributes.stencil || attributes.depth) && getExtensions().supports("GL_OES_packed_depth_stencil");
+    bool supportPackedDepthStencilBuffer = (attributes.stencil || attributes.depth) && supportsExtension("GL_OES_packed_depth_stencil");
 
     // Resize regular FBO.
     bool mustRestoreFBO = false;
@@ -131,10 +131,10 @@ bool GraphicsContextGLOpenGL::reshapeFBOs(const IntSize& size)
     ::glBindTexture(GL_TEXTURE_2D, 0);
 #endif
 
-    ExtensionsGLOpenGLES& extensions = static_cast<ExtensionsGLOpenGLES&>(getExtensions());
+    ExtensionsGLOpenGLES& extensions = getExtensions();
     if (extensions.isImagination() && attributes.antialias) {
         GLint maxSampleCount;
-        ::glGetIntegerv(ExtensionsGL::MAX_SAMPLES_IMG, &maxSampleCount); 
+        ::glGetIntegerv(ExtensionsGLOpenGLES::MAX_SAMPLES_IMG, &maxSampleCount); 
         GLint sampleCount = std::min(8, maxSampleCount);
 
         extensions.framebufferTexture2DMultisampleIMG(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0, sampleCount);
@@ -244,7 +244,7 @@ void GraphicsContextGLOpenGL::validateAttributes()
 
     auto attributes = contextAttributes();
 
-    if (attributes.antialias && !getExtensions().supports("GL_IMG_multisampled_render_to_texture")) {
+    if (attributes.antialias && !supportsExtension("GL_IMG_multisampled_render_to_texture")) {
         attributes.antialias = false;
         setContextAttributes(attributes);
     }
@@ -267,7 +267,7 @@ void GraphicsContextGLOpenGL::clearDepth(GCGLclampf depth)
 }
 
 #if !PLATFORM(GTK)
-ExtensionsGLOpenGLCommon& GraphicsContextGLOpenGL::getExtensions()
+ExtensionsGLOpenGLES& GraphicsContextGLOpenGL::getExtensions()
 {
     if (!m_extensions)
         m_extensions = makeUnique<ExtensionsGLOpenGLES>(this, isGLES2Compliant());

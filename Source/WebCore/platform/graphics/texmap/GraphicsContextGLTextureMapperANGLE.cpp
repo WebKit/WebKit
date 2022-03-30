@@ -31,7 +31,6 @@
 
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
-#include "ExtensionsGLANGLE.h"
 #include "GraphicsContextGLOpenGLManager.h"
 #include "PixelBuffer.h"
 
@@ -55,6 +54,8 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
     m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
 #endif
     bool success = makeContextCurrent();
+    ASSERT_UNUSED(success, success);
+    success = initialize();
     ASSERT_UNUSED(success, success);
 
     validateAttributes();
@@ -176,11 +177,11 @@ void GraphicsContextGLTextureMapper::setContextVisibility(bool)
 {
 }
 
-void GraphicsContextGLANGLE::prepareForDisplay()
+void GraphicsContextGLTextureMapper::prepareForDisplay()
 {
 }
 
-bool GraphicsContextGLANGLE::reshapeDisplayBufferBacking()
+bool GraphicsContextGLTextureMapper::reshapeDisplayBufferBacking()
 {
     auto attrs = contextAttributes();
     const auto size = getInternalFramebufferSize();

@@ -28,7 +28,6 @@
 
 #if ENABLE(WEBGL)
 
-#include "ExtensionsGL.h"
 #include "WebGLRenderingContext.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>

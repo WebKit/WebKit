@@ -1337,20 +1337,20 @@
     {
         GCGLint returnValue = { };
         assertIsCurrent(m_streamThread);
-        returnValue = m_context->getExtensions().getGraphicsResetStatusARB();
+        returnValue = m_context->getGraphicsResetStatusARB();
         completionHandler(returnValue);
     }
     void getTranslatedShaderSourceANGLE(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
         String returnValue = { };
         assertIsCurrent(m_streamThread);
-        returnValue = m_context->getExtensions().getTranslatedShaderSourceANGLE(arg0);
+        returnValue = m_context->getTranslatedShaderSourceANGLE(arg0);
         completionHandler(WTFMove(returnValue));
     }
     void drawBuffersEXT(IPC::ArrayReference<uint32_t>&& bufs)
     {
         assertIsCurrent(m_streamThread);
-        m_context->getExtensions().drawBuffersEXT(makeGCGLSpan(reinterpret_cast<const GCGLenum*>(bufs.data()), bufs.size()));
+        m_context->drawBuffersEXT(makeGCGLSpan(reinterpret_cast<const GCGLenum*>(bufs.data()), bufs.size()));
     }
     void getInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, uint64_t paramsSize, CompletionHandler<void(IPC::ArrayReference<int32_t>)>&& completionHandler)
     {

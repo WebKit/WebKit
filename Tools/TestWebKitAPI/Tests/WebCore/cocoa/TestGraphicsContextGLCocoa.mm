@@ -46,6 +46,8 @@ public:
     static RefPtr<TestedGraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&& attributes)
     {
         auto context = adoptRef(*new TestedGraphicsContextGLCocoa(WTFMove(attributes)));
+        if (!context->initialize())
+            return nullptr;
         return context;
     }
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return nullptr; }

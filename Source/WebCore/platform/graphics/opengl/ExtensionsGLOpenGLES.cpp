@@ -75,7 +75,7 @@ bool ExtensionsGLOpenGLES::isEnabled(const String& name)
 
     // For GL_EXT_robustness, check that the context supports robust access.
     if (name == "GL_EXT_robustness")
-        return m_context->getInteger(ExtensionsGL::CONTEXT_ROBUST_ACCESS) == GL_TRUE;
+        return m_context->getInteger(GraphicsContextGL::CONTEXT_ROBUST_ACCESS) == GL_TRUE;
 
     return true;
 }
@@ -174,7 +174,7 @@ int ExtensionsGLOpenGLES::getGraphicsResetStatusARB()
     if (m_contextResetStatus != GL_NO_ERROR)
         return m_contextResetStatus;
     if (m_glGetGraphicsResetStatusEXT) {
-        int reasonForReset = UNKNOWN_CONTEXT_RESET_ARB;
+        int reasonForReset = GraphicsContextGL::UNKNOWN_CONTEXT_RESET_ARB;
         if (m_context->makeContextCurrent())
             reasonForReset = m_glGetGraphicsResetStatusEXT();
         if (reasonForReset != GL_NO_ERROR)
@@ -270,7 +270,7 @@ void ExtensionsGLOpenGLES::vertexAttribDivisorANGLE(GCGLuint index, GCGLuint div
     m_glVertexAttribDivisorANGLE(index, divisor);
 }
 
-bool ExtensionsGLOpenGLES::supportsExtension(const String& name)
+bool ExtensionsGLOpenGLES::platformSupportsExtension(const String& name)
 {
     if (name == "GL_ANGLE_instanced_arrays") {
         auto majorVersion = []() {

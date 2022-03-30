@@ -28,7 +28,6 @@
 #if ENABLE(WEBGL)
 #include "OESTextureFloat.h"
 
-#include "ExtensionsGL.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -38,12 +37,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(OESTextureFloat);
 OESTextureFloat::OESTextureFloat(WebGLRenderingContextBase& context)
     : WebGLExtension(context)
 {
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_OES_texture_float"_s);
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_CHROMIUM_color_buffer_float_rgb"_s);
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_texture_float"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgb"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_CHROMIUM_color_buffer_float_rgba"_s);
     // https://github.com/KhronosGroup/WebGL/pull/2830
     // Spec requires EXT_float_blend to be turned on implicitly here.
-    context.graphicsContextGL()->getExtensions().ensureEnabled("GL_EXT_float_blend"_s);
+    context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_float_blend"_s);
 }
 
 OESTextureFloat::~OESTextureFloat() = default;
@@ -53,9 +52,9 @@ WebGLExtension::ExtensionName OESTextureFloat::getName() const
     return OESTextureFloatName;
 }
 
-bool OESTextureFloat::supported(const WebGLRenderingContextBase& context)
+bool OESTextureFloat::supported(GraphicsContextGL& context)
 {
-    return context.graphicsContextGL()->getExtensions().supports("GL_OES_texture_float"_s);
+    return context.supportsExtension("GL_OES_texture_float"_s);
 }
 
 } // namespace WebCore
