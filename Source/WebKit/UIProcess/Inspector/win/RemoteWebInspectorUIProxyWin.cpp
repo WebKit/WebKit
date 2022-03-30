@@ -139,6 +139,7 @@ void RemoteWebInspectorUIProxy::platformSetSheetRect(const WebCore::FloatRect&) 
 void RemoteWebInspectorUIProxy::platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance) { }
 void RemoteWebInspectorUIProxy::platformStartWindowDrag() { }
 void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String&) { }
+void RemoteWebInspectorUIProxy::platformRevealFileExternally(const String&) { }
 void RemoteWebInspectorUIProxy::platformShowCertificate(const WebCore::CertificateInfo&) { }
 
 void RemoteWebInspectorUIProxy::platformCloseFrontendPageAndWindow()

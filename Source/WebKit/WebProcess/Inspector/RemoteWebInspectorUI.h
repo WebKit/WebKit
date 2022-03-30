@@ -105,6 +105,7 @@ public:
     void resetState() override;
 
     void openURLExternally(const String& url) override;
+    void revealFileExternally(const String& path) override;
     void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs) override;
     void append(const String& url, const String& content) override;
     void load(const String& path, CompletionHandler<void(const String&)>&&) override;

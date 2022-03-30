@@ -1,3 +1,40 @@
+2022-03-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: the mapped file URL of a Response Local Override should be clickable
+        https://bugs.webkit.org/show_bug.cgi?id=238533
+
+        Reviewed by Patrick Angle.
+
+        * WebProcess/Inspector/RemoteWebInspectorUI.h:
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::revealFileExternally): Added.
+        * WebProcess/Inspector/WebInspectorUI.h:
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::revealFileExternally): Added.
+        * UIProcess/Inspector/WebInspectorUIProxy.messages.in:
+        * UIProcess/Inspector/WebInspectorUIProxy.h:
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp:
+        (WebKit::WebInspectorUIProxy::revealFileExternally): Added.
+        (WebKit::WebInspectorUIProxy::platformRevealFileExternally): Added.
+        * UIProcess/Inspector/gtk/WebInspectorUIProxyGtk.mm:
+        (WebKit::WebInspectorUIProxy::platformRevealFileExternally): Added.
+        * UIProcess/Inspector/mac/WebInspectorUIProxyMac.mm:
+        (WebKit::WebInspectorUIProxy::platformRevealFileExternally): Added.
+        * UIProcess/Inspector/win/WebInspectorUIProxyWin.mm:
+        (WebKit::WebInspectorUIProxy::platformRevealFileExternally): Added.
+        * UIProcess/Inspector/RemoteWebInspectorUIProxy.messages.in:
+        * UIProcess/Inspector/RemoteWebInspectorUIProxy.h:
+        * UIProcess/Inspector/RemoteWebInspectorUIProxy.cpp:
+        (WebKit::RemoteWebInspectorUIProxy::revealFileExternally): Added.
+        (WebKit::RemoteWebInspectorUIProxy::platformRevealFileExternally): Added.
+        * UIProcess/Inspector/gtk/RemoteWebInspectorUIProxyGtk.cpp:
+        (WebKit::RemoteWebInspectorUIProxy::platformRevealFileExternally): Added.
+        * UIProcess/Inspector/mac/RemoteWebInspectorUIProxyMac.mm:
+        (WebKit::RemoteWebInspectorUIProxy::platformRevealFileExternally): Added.
+        * UIProcess/Inspector/win/RemoteWebInspectorUIProxyWin.cpp:
+        (WebKit::RemoteWebInspectorUIProxy::platformRevealFileExternally): Added.
+        Add a helper for selecting a file in the system file explorer.
+
 2022-03-30  Sihui Liu  <sihui_liu@apple.com>
 
         Avoid initializing default WKWebsiteDataStore in -[WKWebViewConfiguration copyWithZone]

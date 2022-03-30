@@ -139,7 +139,7 @@ public:
     void changeSheetRect(const WebCore::FloatRect&) override;
 
     void openURLExternally(const String& url) override;
-
+    void revealFileExternally(const String& path) override;
     bool canSave() override;
     void save(const WTF::String& url, const WTF::String& content, bool base64Encoded, bool forceSaveAs) override;
     void append(const WTF::String& url, const WTF::String& content) override;

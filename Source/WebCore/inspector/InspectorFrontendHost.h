@@ -108,6 +108,7 @@ public:
     void copyText(const String& text);
     void killText(const String& text, bool shouldPrependToKillRing, bool shouldStartNewSequence);
     void openURLExternally(const String& url);
+    void revealFileExternally(const String& path);
     bool canSave();
     void save(const String& url, const String& content, bool base64Encoded, bool forceSaveAs);
     void append(const String& url, const String& content);

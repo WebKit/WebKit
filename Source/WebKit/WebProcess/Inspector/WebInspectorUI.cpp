@@ -293,6 +293,11 @@ void WebInspectorUI::openURLExternally(const String& url)
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::OpenURLExternally(url), m_inspectedPageIdentifier);
 }
 
+void WebInspectorUI::revealFileExternally(const String& path)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::RevealFileExternally(path), m_inspectedPageIdentifier);
+}
+
 void WebInspectorUI::save(const WTF::String& filename, const WTF::String& content, bool base64Encoded, bool forceSaveAs)
 {
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::Save(filename, content, base64Encoded, forceSaveAs), m_inspectedPageIdentifier);

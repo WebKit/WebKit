@@ -496,6 +496,11 @@ void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certifi
     [certificateView setDetailsDisclosed:YES];
 }
 
+void WebInspectorUIProxy::platformRevealFileExternally(const String& path)
+{
+    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[ [NSURL URLWithString:path] ]];
+}
+
 void WebInspectorUIProxy::platformSave(const String& suggestedURL, const String& content, bool base64Encoded, bool forceSaveDialog)
 {
     ASSERT(!suggestedURL.isEmpty());

@@ -71,6 +71,7 @@
     undefined copyText(DOMString text);
     undefined killText(DOMString text, boolean shouldPrependToKillRing, boolean shouldStartNewSequence);
     undefined openURLExternally(DOMString url);
+    undefined revealFileExternally(DOMString path);
     boolean canSave();
     undefined save(DOMString url, DOMString content, boolean base64Encoded, boolean forceSaveAs);
     undefined append(DOMString url, DOMString content);

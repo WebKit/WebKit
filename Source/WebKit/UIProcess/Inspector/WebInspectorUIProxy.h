@@ -158,6 +158,7 @@ public:
     void showResources();
     void showMainResourceForFrame(WebFrameProxy*);
     void openURLExternally(const String& url);
+    void revealFileExternally(const String& path);
 
     AttachmentSide attachmentSide() const { return m_attachmentSide; }
     bool isAttached() const { return m_isAttached; }
@@ -234,6 +235,7 @@ private:
     void platformSetAttachedWindowWidth(unsigned);
     void platformSetSheetRect(const WebCore::FloatRect&);
     void platformStartWindowDrag();
+    void platformRevealFileExternally(const String&);
     void platformSave(const String& filename, const String& content, bool base64Encoded, bool forceSaveAs);
     void platformAppend(const String& filename, const String& content);
     void platformLoad(const String& path, CompletionHandler<void(const String&)>&&);

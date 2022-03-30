@@ -640,6 +640,11 @@ void WebInspectorUIProxy::openURLExternally(const String& url)
         m_inspectorClient->openURLExternally(*this, url);
 }
 
+void WebInspectorUIProxy::revealFileExternally(const String& path)
+{
+    platformRevealFileExternally(path);
+}
+
 void WebInspectorUIProxy::inspectedURLChanged(const String& urlString)
 {
     platformInspectedURLChanged(urlString);
@@ -811,6 +816,11 @@ bool WebInspectorUIProxy::platformIsFront()
 }
 
 void WebInspectorUIProxy::platformSetForcedAppearance(InspectorFrontendClient::Appearance)
+{
+    notImplemented();
+}
+
+void WebInspectorUIProxy::platformRevealFileExternally(const String&)
 {
     notImplemented();
 }

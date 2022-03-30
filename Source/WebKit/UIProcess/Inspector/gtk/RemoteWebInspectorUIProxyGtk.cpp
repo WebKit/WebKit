@@ -183,6 +183,10 @@ void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String&)
 {
 }
 
+void RemoteWebInspectorUIProxy::platformRevealFileExternally(const String&)
+{
+}
+
 void RemoteWebInspectorUIProxy::platformShowCertificate(const CertificateInfo&)
 {
 }

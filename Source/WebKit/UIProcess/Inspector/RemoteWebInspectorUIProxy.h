@@ -138,6 +138,7 @@ private:
     void setForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void startWindowDrag();
     void openURLExternally(const String& url);
+    void revealFileExternally(const String& path);
     void showCertificate(const WebCore::CertificateInfo&);
     void sendMessageToBackend(const String& message);
 
@@ -156,6 +157,7 @@ private:
     void platformSetForcedAppearance(WebCore::InspectorFrontendClient::Appearance);
     void platformStartWindowDrag();
     void platformOpenURLExternally(const String& url);
+    void platformRevealFileExternally(const String& path);
     void platformShowCertificate(const WebCore::CertificateInfo&);
 
     RemoteWebInspectorUIProxyClient* m_client { nullptr };

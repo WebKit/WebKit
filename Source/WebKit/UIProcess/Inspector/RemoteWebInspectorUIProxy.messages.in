@@ -38,6 +38,8 @@ messages -> RemoteWebInspectorUIProxy {
     StartWindowDrag()
 
     OpenURLExternally(String url)
+    RevealFileExternally(String path)
+
     ShowCertificate(WebCore::CertificateInfo certificateInfo)
 
     SendMessageToBackend(String message)

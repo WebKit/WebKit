@@ -280,6 +280,11 @@ void RemoteWebInspectorUIProxy::platformOpenURLExternally(const String& url)
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];
 }
 
+void RemoteWebInspectorUIProxy::platformRevealFileExternally(const String& path)
+{
+    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[ [NSURL URLWithString:path] ]];
+}
+
 void RemoteWebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certificateInfo)
 {
     ASSERT(!certificateInfo.isEmpty());

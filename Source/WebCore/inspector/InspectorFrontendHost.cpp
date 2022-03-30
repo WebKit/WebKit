@@ -444,6 +444,15 @@ void InspectorFrontendHost::openURLExternally(const String& url)
         m_client->openURLExternally(url);
 }
 
+void InspectorFrontendHost::revealFileExternally(const String& path)
+{
+    if (!WTF::protocolIs(path, "file"))
+        return;
+
+    if (m_client)
+        m_client->revealFileExternally(path);
+}
+
 bool InspectorFrontendHost::canSave()
 {
     if (m_client)

@@ -384,7 +384,23 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
     _handleMappedFilePathChanged(event)
     {
-        this.showMessage(WI.UIString("Mapped to \u201C%s\u201D").format(this.resource.mappedFilePath));
+        let mappedFilePath = this.resource.mappedFilePath;
+
+        let mappedFilePathLink = document.createElement("a");
+        mappedFilePathLink.href = "file://" + mappedFilePath;
+        mappedFilePathLink.textContent = mappedFilePath;
+        mappedFilePathLink.addEventListener("click", (event) => {
+            event.stop();
+
+            InspectorFrontendHost.revealFileExternally(event.target.href);
+        });
+
+        let fragment = document.createDocumentFragment();
+        String.format(WI.UIString("Mapped to \u201C%s\u201D"), [mappedFilePathLink], String.standardFormatters, fragment, (a, b) => {
+            a.append(b);
+            return a;
+        });
+        this.showMessage(fragment);
 
         if (this._localResourceOverrideBannerView) {
             this.element.insertBefore(this._localResourceOverrideBannerView.element, this.element.firstChild);
