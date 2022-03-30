@@ -1,3 +1,24 @@
+2022-03-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WebGPU] Refactor isDepthOrStencilFormat() for upcoming data transfer patches
+        https://bugs.webkit.org/show_bug.cgi?id=238427
+
+        Reviewed by Kimmo Kinnunen.
+
+        This exposes isDepthOrStencilFormat() outside of Texture.mm, and changes its implementation
+        to use depthSpecificFormat() and stencilSpecificFormat(), which will become useful in the
+        implementation of subsequent data transfer patches.
+
+        * WebGPU/Texture.h:
+        * WebGPU/Texture.mm:
+        (WebGPU::depthSpecificFormat):
+        (WebGPU::stencilSpecificFormat):
+        (WebGPU::Texture::containsDepthAspect):
+        (WebGPU::Texture::containsStencilAspect):
+        (WebGPU::Texture::isDepthOrStencilFormat):
+        (WebGPU::Device::validateCreateTexture):
+        (WebGPU::isDepthOrStencilFormat): Deleted.
+
 2022-03-25  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [WebGPU] Remove default: from switch statements, in favor of exhaustively listing all cases

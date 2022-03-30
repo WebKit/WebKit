@@ -51,6 +51,12 @@ public:
     void destroy();
     void setLabel(String&&);
 
+    static uint32_t texelBlockWidth(WGPUTextureFormat); // Texels
+    static uint32_t texelBlockHeight(WGPUTextureFormat); // Texels
+    static bool containsDepthAspect(WGPUTextureFormat);
+    static bool containsStencilAspect(WGPUTextureFormat);
+    static bool isDepthOrStencilFormat(WGPUTextureFormat);
+
     id<MTLTexture> texture() const { return m_texture; }
     const WGPUTextureDescriptor& descriptor() const { return m_descriptor; }
 
