@@ -77,7 +77,7 @@ TEST(IndexedDB, IndexedDBUserDelete)
 
 TEST(IndexedDB, IndexedDBUserDeleteBeforeLoading)
 {
-    NSURL *idbURL = [[WKWebsiteDataStore defaultDataStore] _indexedDBDatabaseDirectory];
+    NSURL *idbURL = [[[WKWebsiteDataStore defaultDataStore] _configuration] _indexedDBDatabaseDirectory];
     NSURL *fileIDBURL = [[idbURL URLByAppendingPathComponent:@"file__0"] URLByAppendingPathComponent:@"IndexedDBUserDeleteBeforeLoading"];
     NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"IndexedDB" withExtension:@"sqlite3" subdirectory:@"TestWebKitAPI.resources"];
     [[NSFileManager defaultManager] createDirectoryAtURL:fileIDBURL withIntermediateDirectories:YES attributes:nil error:nil];

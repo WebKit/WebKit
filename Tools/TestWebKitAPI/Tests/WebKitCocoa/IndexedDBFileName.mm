@@ -110,7 +110,7 @@ static void runTest()
 static void createDirectories(String testName)
 {
     auto defaultFileManager = [NSFileManager defaultManager];
-    NSURL *idbRootURL = [[WKWebsiteDataStore defaultDataStore] _indexedDBDatabaseDirectory];
+    NSURL *idbRootURL = [[[WKWebsiteDataStore defaultDataStore] _configuration] _indexedDBDatabaseDirectory];
     [defaultFileManager removeItemAtURL:idbRootURL error:nil];
     
     NSString *existingDatabaseName = @"IndexedDBTest";
@@ -200,7 +200,7 @@ TEST(IndexedDB, IndexedDBFileNameAPI)
     TestWebKitAPI::Util::run(&readyToContinue);
     
     auto defaultFileManager = [NSFileManager defaultManager];
-    NSURL *idbRootURL = [[WKWebsiteDataStore defaultDataStore] _indexedDBDatabaseDirectory];
+    NSURL *idbRootURL = [[[WKWebsiteDataStore defaultDataStore] _configuration] _indexedDBDatabaseDirectory];
     NSURL *newVersionDirectoryURL = [idbRootURL URLByAppendingPathComponent:@"v1"];
     NSArray *directories = [defaultFileManager contentsOfDirectoryAtPath:idbRootURL.path error:nullptr];
     EXPECT_EQ(2U, [directories count]);

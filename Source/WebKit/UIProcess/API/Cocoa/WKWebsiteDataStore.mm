@@ -403,11 +403,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return nil;
 }
 
-- (NSURL *)_indexedDBDatabaseDirectory
-{
-    return [NSURL fileURLWithPath:_websiteDataStore->configuration().indexedDBDatabaseDirectory() isDirectory:YES];
-}
-
 - (void)_setResourceLoadStatisticsTestingCallback:(void (^)(WKWebsiteDataStore *, NSString *))callback
 {
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
