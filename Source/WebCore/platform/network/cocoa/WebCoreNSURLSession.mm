@@ -300,7 +300,7 @@ NS_ASSUME_NONNULL_END
             [task setSession:nil];
     }
 
-    callOnMainThread([loader = WTFMove(_loader)] {
+    callOnMainThread([loader = std::exchange(_loader, nullptr)] {
     });
     [super dealloc];
 }
@@ -740,13 +740,14 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 
     [self _cancel];
 
-    if (!self.session)
+    RetainPtr<WebCoreNSURLSession> retainedSession = self.session;
+    if (!retainedSession)
         return;
 
-    if ([self.session rangeResponseGenerator].willHandleRequest(self, self.originalRequest))
+    if ([retainedSession rangeResponseGenerator].willHandleRequest(self, self.originalRequest))
         return;
 
-    _resource = self.session.loader.requestResource(self.originalRequest, PlatformMediaResourceLoader::LoadOption::DisallowCaching);
+    _resource = [retainedSession loader].requestResource(self.originalRequest, PlatformMediaResourceLoader::LoadOption::DisallowCaching);
     if (_resource) {
         _resource->setClient(adoptRef(*new WebCoreNSURLSessionDataTaskClient(self)));
         return;
@@ -764,7 +765,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
         _resource->setClient(nullptr);
         _resource = nil;
     }
-    if (auto *session = self.session)
+    if (RetainPtr<WebCoreNSURLSession> session = self.session)
         [session rangeResponseGenerator].removeTask(self);
 }
 
@@ -884,20 +885,21 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     ASSERT(response.source() == ResourceResponse::Source::Network || response.source() == ResourceResponse::Source::DiskCache || response.source() == ResourceResponse::Source::DiskCacheAfterValidation || response.source() == ResourceResponse::Source::ServiceWorker);
     ASSERT_UNUSED(resource, !resource || resource == _resource);
     ASSERT(isMainThread());
-    [self.session task:self didReceiveResponseFromOrigin:SecurityOrigin::create(response.url())];
-    [self.session task:self didReceiveCORSAccessCheckResult:resource ? resource->didPassAccessControlCheck() : YES];
+    RetainPtr<WebCoreNSURLSession> strongSession { self.session };
+    [strongSession task:self didReceiveResponseFromOrigin:SecurityOrigin::create(response.url())];
+    [strongSession task:self didReceiveCORSAccessCheckResult:resource ? resource->didPassAccessControlCheck() : YES];
     self.countOfBytesExpectedToReceive = response.expectedContentLength();
     RetainPtr<NSURLResponse> strongResponse = response.nsURLResponse();
 
-    if (resource && self.session && [self.session rangeResponseGenerator].willSynthesizeRangeResponses(self, *resource, response)) {
+    if (resource && strongSession && [strongSession rangeResponseGenerator].willSynthesizeRangeResponses(self, *resource, response)) {
         _resource = nullptr;
         return completionHandler(ShouldContinuePolicyCheck::Yes);
     }
     
     RetainPtr<WebCoreNSURLSessionDataTask> strongSelf { self };
-    if (!self.session)
+    if (!strongSession)
         return completionHandler(ShouldContinuePolicyCheck::No);
-    [self.session addDelegateOperation:[strongSelf, strongResponse, completionHandler = WTFMove(completionHandler)] () mutable {
+    [strongSession addDelegateOperation:[strongSelf, strongResponse, completionHandler = WTFMove(completionHandler)] () mutable {
         strongSelf->_response = strongResponse.get();
 
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
@@ -934,7 +936,8 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 - (void)resource:(PlatformMediaResource*)resource receivedData:(RetainPtr<NSData>&&)data
 {
     ASSERT_UNUSED(resource, !resource || resource == _resource);
-    [self.session addDelegateOperation:[strongSelf = RetainPtr { self }, data = WTFMove(data)] {
+    RetainPtr<WebCoreNSURLSession> strongSession { self.session };
+    [strongSession addDelegateOperation:[strongSelf = RetainPtr { self }, data = WTFMove(data)] {
         strongSelf.get().countOfBytesReceived += [data length];
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:dataTask:didReceiveData:)])
@@ -945,7 +948,8 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 - (void)resource:(PlatformMediaResource*)resource receivedRedirect:(const ResourceResponse&)response request:(ResourceRequest&&)request completionHandler:(CompletionHandler<void(ResourceRequest&&)>&&)completionHandler
 {
     ASSERT_UNUSED(resource, !resource || resource == _resource);
-    [self.session addDelegateOperation:[strongSelf = retainPtr(self), response = retainPtr(response.nsURLResponse()), request = request.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+    RetainPtr<WebCoreNSURLSession> strongSession { self.session };
+    [strongSession addDelegateOperation:[strongSelf = retainPtr(self), response = retainPtr(response.nsURLResponse()), request = request.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
         if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
             ASSERT_NOT_REACHED();
             callOnMainThread([request = WTFMove(request), completionHandler = WTFMove(completionHandler)] () mutable {
@@ -981,7 +985,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     RetainPtr<WebCoreNSURLSession> strongSession { self.session };
     RetainPtr<NSError> strongError { error };
     auto taskMetrics = adoptNS([[WebCoreNSURLSessionTaskMetrics alloc] _initWithMetrics:NetworkLoadMetrics(metrics)]);
-    [self.session addDelegateOperation:[strongSelf, strongSession, strongError, taskMetrics = WTFMove(taskMetrics)] () mutable {
+    [strongSession addDelegateOperation:[strongSelf, strongSession, strongError, taskMetrics = WTFMove(taskMetrics)] () mutable {
         id<NSURLSessionTaskDelegate> delegate = (id<NSURLSessionTaskDelegate>)strongSession.get().delegate;
 
         if ([delegate respondsToSelector:@selector(URLSession:task:didFinishCollectingMetrics:)])
