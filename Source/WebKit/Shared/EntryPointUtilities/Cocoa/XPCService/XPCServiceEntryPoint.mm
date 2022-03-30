@@ -168,13 +168,15 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
     // services ourselves. However, one of the side effects of leaking this transaction is that the default SIGTERM
     // handler doesn't cleanly exit our XPC services when logging out or rebooting. This led to crashes with
     // XPC_EXIT_REASON_SIGTERM_TIMEOUT as termination reason (rdar://88940229). To address the issue, we now set our
-    // own SIGTERM handler that calls _exit(0). In the future, we should likely adopt RunningBoard on macOS and
+    // own SIGTERM handler that calls exit(0). In the future, we should likely adopt RunningBoard on macOS and
     // control our lifetime via process assertions instead of leaking this OS transaction.
-    static std::once_flag onceKey;
-    std::call_once(onceKey, [] {
-        signal(SIGTERM, [](int) {
-            _exit(0);
+    static dispatch_once_t flag;
+    dispatch_once(&flag, ^{
+        auto sigTermSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM, 0, dispatch_get_main_queue());
+        dispatch_source_set_event_handler(sigTermSource, ^{
+            exit(0);
         });
+        dispatch_resume(sigTermSource);
     });
 
     globalTransaction.get() = WTFMove(transaction);

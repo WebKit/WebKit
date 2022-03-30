@@ -1,3 +1,20 @@
+2022-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Use dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM) in setOSTransaction()
+        https://bugs.webkit.org/show_bug.cgi?id=238559
+
+        Reviewed by Darin Adler.
+
+        Use dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGTERM) in setOSTransaction() instead of a
+        low-level signal(SIGTERM) handler, as recommended by the XPC team.
+
+        This is better becomes it has less limitations about what you can do in the handler. It is also
+        possible to set several handlers this way, in different parts of the code (i.e. also not worry about
+        some other code overriding our handler).
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::setOSTransaction):
+
 2022-03-30  Sihui Liu  <sihui_liu@apple.com>
 
         Remove -[WKWebsiteDataStore _indexedDBDatabaseDirectory]
