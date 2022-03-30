@@ -9,13 +9,15 @@ sources:
 - kind: patch
   path: patches/fdo-0001-pango-Bump-to-1.50.4.patch
 - kind: patch
-  path: patches/fdo-0001-meson-Bump-to-0.60.3.patch
-- kind: patch
   path: patches/fdo-0001-shared-mime-info-Backport-meson-0.60-build-fix.patch
 - kind: patch
   path: patches/fdo-0001-gdk-pixbuf-Remove-invalid-meson-options.patch
 - kind: patch
   path: patches/fdo-0001-gst-plugins-bad-Remove-invalid-meson-option.patch
+- kind: patch
+  path: patches/fdo-0001-gobject-introspection-Bump-to-1.72.patch
+- kind: patch
+  path: patches/fdo-0002-meson-Bump-to-1.62.patch
 config:
   options:
     target_arch: '%{arch}'

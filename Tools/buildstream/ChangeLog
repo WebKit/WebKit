@@ -1,3 +1,17 @@
+2022-03-30  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Bump to Meson 0.62.
+        https://bugs.webkit.org/show_bug.cgi?id=238454
+
+        Reviewed by Adrian Perez de Castro.
+
+        Needed for meson devenv --dump support in local dependencies builds.
+
+        * elements/freedesktop-sdk.bst:
+        * patches/fdo-0001-gobject-introspection-Bump-to-1.72.patch: Added.
+        * patches/fdo-0001-meson-Bump-to-0.60.3.patch: Removed.
+        * patches/fdo-0002-meson-Bump-to-1.62.patch: Added.
+
 2022-03-20  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Bump to meson 0.60
