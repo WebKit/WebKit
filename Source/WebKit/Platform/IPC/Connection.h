@@ -205,6 +205,13 @@ public:
 
     static Ref<Connection> createServerConnection(Identifier, Client&);
     static Ref<Connection> createClientConnection(Identifier, Client&);
+
+    struct ConnectionIdentifierPair {
+        IPC::Connection::Identifier server;
+        IPC::Attachment client;
+    };
+    static std::optional<ConnectionIdentifierPair> createConnectionIdentifierPair();
+
     ~Connection();
 
     Client& client() const { return m_client; }

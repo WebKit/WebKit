@@ -635,4 +635,9 @@ void Connection::didReceiveSyncReply(OptionSet<SendSyncOption>)
 {
 }
 
+std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
+{
+    Connection::SocketPair socketPair = Connection::createPlatformConnection();
+    return ConnectionIdentifierPair { socketPair.server, Attachment { socketPair.client } };
+}
 } // namespace IPC

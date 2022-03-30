@@ -98,38 +98,14 @@ void WebInspectorUI::updateConnection()
         m_backendConnection->invalidate();
         m_backendConnection = nullptr;
     }
+    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
+    if (!connectionIdentifiers)
+        return;
 
-#if USE(UNIX_DOMAIN_SOCKETS)
-    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection();
-    IPC::Connection::Identifier connectionIdentifier(socketPair.server);
-    UNUSED_PARAM(connectionIdentifier);
-    IPC::Attachment connectionClientPort(socketPair.client);
-#elif OS(DARWIN)
-    mach_port_t listeningPort = MACH_PORT_NULL;
-    if (mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort) != KERN_SUCCESS)
-        CRASH();
-
-    if (mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND) != KERN_SUCCESS)
-        CRASH();
-
-    IPC::Connection::Identifier connectionIdentifier(listeningPort);
-    UNUSED_PARAM(connectionIdentifier);
-    IPC::Attachment connectionClientPort(listeningPort, MACH_MSG_TYPE_MOVE_SEND);
-#elif PLATFORM(WIN)
-    IPC::Connection::Identifier connectionIdentifier, connClient;
-    IPC::Connection::createServerAndClientIdentifiers(connectionIdentifier, connClient);
-    IPC::Attachment connectionClientPort(connClient);
-#else
-    notImplemented();
-    return;
-#endif
-
-#if USE(UNIX_DOMAIN_SOCKETS) || OS(DARWIN) || PLATFORM(WIN)
-    m_backendConnection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
+    m_backendConnection = IPC::Connection::createServerConnection(connectionIdentifiers->server, *this);
     m_backendConnection->open();
-#endif
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::SetFrontendConnection(connectionClientPort), m_inspectedPageIdentifier);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::SetFrontendConnection(connectionIdentifiers->client), m_inspectedPageIdentifier);
 }
 
 void WebInspectorUI::windowObjectCleared()

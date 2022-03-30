@@ -360,4 +360,14 @@ void Connection::EventListener::close()
     m_handler = Function<void()>();
 }
 
+std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
+{
+    Connection::Identifier serverIdentifier, clientIdentifier;
+    if (!Connection::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
+        LOG_ERROR("Failed to create server and client identifiers");
+        return std::nullopt;
+    }
+    return ConnectionIdentifierPair { serverIdentifier, Attachment { clientIdentifier } };
+}
+
 } // namespace IPC
