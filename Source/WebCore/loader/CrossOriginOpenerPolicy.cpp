@@ -149,7 +149,7 @@ CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse& re
         } else if (coopParsingResult->first == "same-origin-allow-popups")
             value = CrossOriginOpenerPolicyValue::SameOriginAllowPopups;
 
-        reportingEndpoint = coopParsingResult->second.get("report-to"_s);
+        reportingEndpoint = coopParsingResult->second.get<HashTranslatorASCIILiteral>("report-to"_s);
     };
 
     CrossOriginOpenerPolicy policy;

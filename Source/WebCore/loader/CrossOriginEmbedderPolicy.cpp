@@ -45,7 +45,7 @@ CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse
         auto coepParsingResult = parseStructuredFieldValue(response.httpHeaderField(headerName));
         if (coepParsingResult && coepParsingResult->first == "require-corp") {
             value = CrossOriginEmbedderPolicyValue::RequireCORP;
-            reportingEndpoint = coepParsingResult->second.get("report-to"_s);
+            reportingEndpoint = coepParsingResult->second.get<HashTranslatorASCIILiteral>("report-to"_s);
         }
     };
 

@@ -138,7 +138,7 @@ void ProcessLauncher::launchProcess()
 
 #if OS(LINUX)
     const char* sandboxEnv = g_getenv("WEBKIT_FORCE_SANDBOX");
-    bool sandboxEnabled = m_launchOptions.extraInitializationData.get("enable-sandbox") == "true";
+    bool sandboxEnabled = m_launchOptions.extraInitializationData.get<HashTranslatorASCIILiteral>("enable-sandbox"_s) == "true";
 
     if (sandboxEnv)
         sandboxEnabled = !strcmp(sandboxEnv, "1");

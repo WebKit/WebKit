@@ -638,17 +638,17 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
     MainThreadSharedTimer::shouldSetupPowerObserver() = false;
 #endif // PLATFORM(MAC)
 
-    if (parameters.extraInitializationData.get("inspector-process"_s) == "1")
+    if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("inspector-process"_s) == "1")
         m_processType = ProcessType::Inspector;
 #if ENABLE(SERVICE_WORKER)
-    else if (parameters.extraInitializationData.get("service-worker-process"_s) == "1") {
+    else if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("service-worker-process"_s) == "1") {
         m_processType = ProcessType::ServiceWorker;
 #if PLATFORM(MAC)
-        m_registrableDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(parameters.extraInitializationData.get("registrable-domain"_s));
+        m_registrableDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("registrable-domain"_s));
 #endif
     }
 #endif
-    else if (parameters.extraInitializationData.get("is-prewarmed"_s) == "1")
+    else if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("is-prewarmed"_s) == "1")
         m_processType = ProcessType::PrewarmedWebContent;
     else
         m_processType = ProcessType::WebContent;

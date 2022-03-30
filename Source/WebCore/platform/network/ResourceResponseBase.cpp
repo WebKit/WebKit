@@ -193,7 +193,7 @@ ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response, 
     filteredResponse.setType(Type::Cors);
 
     auto accessControlExposeHeaderSet = valueOrDefault(parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)));
-    if (performCheck == PerformExposeAllHeadersCheck::Yes && accessControlExposeHeaderSet.contains("*"_s))
+    if (performCheck == PerformExposeAllHeadersCheck::Yes && accessControlExposeHeaderSet.contains<HashTranslatorASCIILiteral>("*"_s))
         return filteredResponse;
 
     filteredResponse.m_httpHeaderFields.uncommonHeaders().removeAllMatching([&](auto& entry) {
@@ -459,7 +459,7 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
         break;
     case ResourceResponse::Tainting::Cors: {
         auto corsSafeHeaderSet = valueOrDefault(parseAccessControlAllowList<ASCIICaseInsensitiveHash>(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)));
-        if (corsSafeHeaderSet.contains("*"_str))
+        if (corsSafeHeaderSet.contains<HashTranslatorASCIILiteral>("*"_s))
             return;
 
         m_httpHeaderFields.commonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) {

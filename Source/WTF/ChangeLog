@@ -1,3 +1,19 @@
+2022-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Add HashTranslator for ASCIILiteral for faster lookup in HashMaps / HashSets
+        https://bugs.webkit.org/show_bug.cgi?id=238521
+
+        Reviewed by Geoffrey Garen.
+
+        Add HashTranslator for ASCIILiteral for faster lookup in HashMaps / HashSets using an ASCIILiteral,
+        without the need for allocating a String.
+
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.h:
+        (WTF::HashTranslatorASCIILiteral::hash):
+        (WTF::HashTranslatorASCIILiteral::equal):
+        (WTF::HashTranslatorASCIILiteral::translate):
+
 2022-03-30  Youenn Fablet  <youenn@apple.com>
 
         Implement ServiceWorker WindowClient.ancestorOrigins

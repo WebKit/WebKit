@@ -642,7 +642,7 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
 
 static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParameters& parameters)
 {
-    auto userDirectorySuffix = parameters.extraInitializationData.find("user-directory-suffix");
+    auto userDirectorySuffix = parameters.extraInitializationData.find<HashTranslatorASCIILiteral>("user-directory-suffix"_s);
     if (userDirectorySuffix != parameters.extraInitializationData.end()) {
         String suffix = userDirectorySuffix->value;
         auto firstPathSeparator = suffix.find('/');

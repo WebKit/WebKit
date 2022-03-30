@@ -609,6 +609,24 @@ template<unsigned length> inline bool startsWithLettersIgnoringASCIICase(const S
     return startsWithLettersIgnoringASCIICase(string.impl(), lowercaseLetters);
 }
 
+struct HashTranslatorASCIILiteral {
+    static unsigned hash(ASCIILiteral literal)
+    {
+        return StringHasher::computeHashAndMaskTop8Bits(literal.characters(), literal.length());
+    }
+
+    static bool equal(const String& a, ASCIILiteral b)
+    {
+        return a == b;
+    }
+
+    static void translate(String& location, ASCIILiteral literal, unsigned hash)
+    {
+        location = literal;
+        location.impl()->setHash(hash);
+    }
+};
+
 inline namespace StringLiterals {
 
 inline String operator"" _str(const char* characters, size_t)
@@ -620,6 +638,7 @@ inline String operator"" _str(const char* characters, size_t)
 
 } // namespace WTF
 
+using WTF::HashTranslatorASCIILiteral;
 using WTF::KeepTrailingZeros;
 using WTF::String;
 using WTF::appendNumber;

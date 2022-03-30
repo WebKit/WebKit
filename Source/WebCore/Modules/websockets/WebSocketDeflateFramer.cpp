@@ -76,7 +76,7 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
 
     unsigned expectedNumParameters = 0;
     int windowBits = 15;
-    auto parameter = serverParameters.find("max_window_bits"_s);
+    auto parameter = serverParameters.find<HashTranslatorASCIILiteral>("max_window_bits"_s);
     if (parameter != serverParameters.end()) {
         windowBits = parseIntegerAllowingTrailingJunk<int>(parameter->value).value_or(0);
         if (windowBits < 8 || windowBits > 15) {
@@ -87,7 +87,7 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
     }
 
     WebSocketDeflater::ContextTakeOverMode mode = WebSocketDeflater::TakeOverContext;
-    parameter = serverParameters.find("no_context_takeover"_s);
+    parameter = serverParameters.find<HashTranslatorASCIILiteral>("no_context_takeover"_s);
     if (parameter != serverParameters.end()) {
         if (!parameter->value.isNull()) {
             m_failureReason = "Received invalid no_context_takeover parameter"_s;

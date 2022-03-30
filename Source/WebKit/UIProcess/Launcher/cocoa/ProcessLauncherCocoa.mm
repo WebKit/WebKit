@@ -154,7 +154,7 @@ void ProcessLauncher::launchProcess()
     xpc_dictionary_set_value(initializationMessage.get(), "ContainerEnvironmentVariables", containerEnvironmentVariables.get());
 #endif
 
-    auto languagesIterator = m_launchOptions.extraInitializationData.find("OverrideLanguages");
+    auto languagesIterator = m_launchOptions.extraInitializationData.find<HashTranslatorASCIILiteral>("OverrideLanguages"_s);
     if (languagesIterator != m_launchOptions.extraInitializationData.end()) {
         LOG_WITH_STREAM(Language, stream << "Process Launcher is copying OverrideLanguages into initialization message: " << languagesIterator->value);
         auto languages = adoptOSObject(xpc_array_create(nullptr, 0));

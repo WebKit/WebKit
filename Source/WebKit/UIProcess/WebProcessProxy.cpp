@@ -407,7 +407,7 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
     if (!m_processPool->customWebContentServiceBundleIdentifier().isEmpty())
         launchOptions.customWebContentServiceBundleIdentifier = m_processPool->customWebContentServiceBundleIdentifier().ascii();
     if (WebKit::isInspectorProcessPool(processPool()))
-        launchOptions.extraInitializationData.add("inspector-process"_s, "1"_s);
+        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("inspector-process"_s, "1"_s);
 
     LOG(Language, "WebProcessProxy is getting launch options.");
     auto overrideLanguages = m_processPool->configuration().overrideLanguages();
@@ -423,14 +423,14 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
             languageString.append(overrideLanguages[i]);
         }
         LOG_WITH_STREAM(Language, stream << "Setting WebProcess's launch OverrideLanguages to " << languageString);
-        launchOptions.extraInitializationData.add("OverrideLanguages"_s, languageString.toString());
+        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("OverrideLanguages"_s, languageString.toString());
     } else
         LOG(Language, "overrideLanguages is still empty. Not setting WebProcess's launch OverrideLanguages.");
 
     launchOptions.nonValidInjectedCodeAllowed = shouldAllowNonValidInjectedCode();
 
     if (isPrewarmed())
-        launchOptions.extraInitializationData.add("is-prewarmed"_s, "1"_s);
+        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("is-prewarmed"_s, "1"_s);
 
 #if PLATFORM(PLAYSTATION)
     launchOptions.processPath = m_processPool->webProcessPath();
@@ -443,8 +443,8 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
     }
 
     if (m_serviceWorkerInformation) {
-        launchOptions.extraInitializationData.add("service-worker-process"_s, "1"_s);
-        launchOptions.extraInitializationData.add("registrable-domain"_s, m_registrableDomain->string());
+        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("service-worker-process"_s, "1"_s);
+        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("registrable-domain"_s, m_registrableDomain->string());
     }
 }
 
