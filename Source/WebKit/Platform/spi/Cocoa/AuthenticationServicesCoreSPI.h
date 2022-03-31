@@ -324,6 +324,8 @@ typedef NS_OPTIONS(NSUInteger, ASCCredentialRequestTypes) {
 - (void)requestCompletedWithCredential:(nullable id<ASCCredentialProtocol>)credential error:(nullable NSError *)error;
 #endif
 
+- (void)cancelCurrentRequest;
+
 @end
 
 @interface ASCAgentProxy : NSObject <ASCAgentProtocol>
